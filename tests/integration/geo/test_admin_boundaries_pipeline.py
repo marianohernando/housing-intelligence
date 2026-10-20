@@ -9,38 +9,10 @@ import pytest
 from shapely import affinity
 from sqlalchemy import Engine, text
 
-from hi_ingestion.catalog.loader import load_catalog
-from hi_ingestion.pipelines.admin_boundaries.run import (
-    RunSummary,
-    load_zones,
-    local_inputs,
-    run_admin_boundaries,
-)
+from hi_ingestion.pipelines.admin_boundaries.run import RunSummary, load_zones
+from tests.integration.conftest import FIXTURE, run_fixture
 
 pytestmark = pytest.mark.db
-FIXTURE = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "golden" / "admin_sample"
-
-
-def _run(engine: Engine, inputs_dir: Path, tmp: Path) -> RunSummary:
-    return run_admin_boundaries(
-        engine,
-        load_catalog(),
-        local_inputs(inputs_dir),
-        evidence_root=tmp / "evidence",
-        data_dir=tmp / "data",
-    )
-
-
-@pytest.fixture(scope="module")
-def published(migrated_engine: Engine, tmp_path_factory: pytest.TempPathFactory) -> RunSummary:
-    with migrated_engine.begin() as conn:
-        conn.execute(
-            text(
-                "TRUNCATE h3_cell_admin_unit, h3_cell, geo_admin_unit, ingestion_run, "
-                "dataset_version CASCADE"
-            )
-        )
-    return _run(migrated_engine, FIXTURE, tmp_path_factory.mktemp("valid"))
 
 
 def _scalar(engine: Engine, sql: str, **params: object) -> object:
@@ -134,7 +106,7 @@ def test_rerun_same_input_is_skipped(
     published: RunSummary, migrated_engine: Engine, tmp_path: Path
 ) -> None:
     assert published.status == "SUCCESS"
-    again = _run(migrated_engine, FIXTURE, tmp_path)
+    again = run_fixture(migrated_engine, FIXTURE, tmp_path)
     assert again.status == "SKIPPED"
     assert again.version_label == published.version_label
 
@@ -152,7 +124,7 @@ def test_broken_ingestion_keeps_last_valid(
     sections.to_file(broken / "sections.gpkg", driver="GPKG")
     before = _scalar(migrated_engine, "SELECT count(*) FROM geo_admin_unit")
 
-    result = _run(migrated_engine, broken, tmp_path)
+    result = run_fixture(migrated_engine, broken, tmp_path)
 
     assert result.status == "FAILED"
     failed = {c["name"] for c in result.quality["checks"] if c["critical"] and not c["passed"]}

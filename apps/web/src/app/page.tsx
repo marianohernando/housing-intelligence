@@ -3,6 +3,9 @@ export default function HomePage() {
     <main>
       <h1>Housing Intelligence</h1>
       <p>Data foundation en construcción: geografía canónica de la Comunidad de Madrid.</p>
+      <p>
+        <a href="/map">Ver el mapa de municipios y barrios</a>
+      </p>
     </main>
   );
 }

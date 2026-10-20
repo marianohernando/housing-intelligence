@@ -17,6 +17,7 @@ Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa 
 - DATA-006 QA geoespacial (CRS, validez 25830/4326, bounds, contención, golden points) · G2
 - CORE-002 Golden user profiles (9) y golden Madrid zones (5) · G4
 - DATAMAD-PREWORK-01 Resuelto por §6 de las bases (D-174)
+- MAP-001 Map shell: API GeoJSON + MapLibre, zona seleccionable con procedencia · G6 (parcial) · `evidence/map-001/2026-10-20`
 
 ## 02 — READY THIS SPRINT (siguientes)
 - DATA-007 CRTM GTFS (metro, EMT, cercanías, interurbanos, metro ligero) · G1/G2 · P0
@@ -24,9 +25,10 @@ Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa 
 - DATA-010 Alquiler €/m² por código postal y municipio → features de affordability · G1/G3 · P0
 - DATA-011 Población, hogares, viviendas por superficie y renta municipal · G1/G3 · P0
 - DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento) · G1 · P0
-- MAP-001 Map shell sobre la geografía canónica (API GeoJSON + MapLibre) · G6
 
 ## 01 — BACKLOG
+- MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
+- MAP-003 Vector tiles para secciones censales (payload)
 - DATA-008 Seccionado INE 2025 como actualización declarada de la geografía
 - DATA-013 Códigos postales (geometría) para cruzar alquiler por CP
 - CORE-001 ScenarioState contracts · G4
