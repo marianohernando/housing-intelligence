@@ -19,6 +19,7 @@ node_modules/
 out/
 *.tsbuildinfo
 next-env.d.ts
+apps/web/public/maplibre/
 # data lakes (manifests are versioned)
 data/bronze/**
 data/silver/**

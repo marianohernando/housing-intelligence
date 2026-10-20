@@ -2,7 +2,13 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import maplibregl, { type MapLayerMouseEvent } from "maplibre-gl";
+import {
+  Map as MapLibreMap,
+  type MapLayerMouseEvent,
+  NavigationControl,
+  setWorkerUrl,
+  type StyleSpecification,
+} from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -16,11 +22,12 @@ import {
 } from "@/lib/geo";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
+const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
 const LAYERS: { level: AdminLevel; simplify: number; fill: string; line: string; minzoom: number }[] = [
   { level: "municipio", simplify: 50, fill: "#d9d4c7", line: "#6b6353", minzoom: 0 },
   { level: "barrio", simplify: 10, fill: "#f0a35e", line: "#b5531c", minzoom: 9 },
 ];
-const BLANK_STYLE: maplibregl.StyleSpecification = {
+const BLANK_STYLE: StyleSpecification = {
   version: 8,
   sources: {},
   layers: [{ id: "background", type: "background", paint: { "background-color": "#f6f4ef" } }],
@@ -34,14 +41,15 @@ export default function AdminMap() {
 
   useEffect(() => {
     if (!container.current) return;
-    const map = new maplibregl.Map({
+    setWorkerUrl(WORKER_URL);
+    const map = new MapLibreMap({
       container: container.current,
       style: BLANK_STYLE,
       center: [-3.7, 40.42],
       zoom: 8,
       attributionControl: { compact: false, customAttribution: "Comunidad de Madrid — CC BY 4.0" },
     });
-    map.addControl(new maplibregl.NavigationControl(), "top-right");
+    map.addControl(new NavigationControl(), "top-right");
 
     map.on("load", async () => {
       for (const layer of LAYERS) {
