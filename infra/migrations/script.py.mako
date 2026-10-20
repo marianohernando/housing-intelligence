@@ -1,3 +1,5 @@
+# pyright: reportAttributeAccessIssue=false
+# geoalchemy2 registers create/drop_geospatial_* on alembic.op at runtime.
 """${message}
 
 Revision ID: ${up_revision}

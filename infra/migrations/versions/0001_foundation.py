@@ -1,3 +1,5 @@
+# pyright: reportAttributeAccessIssue=false
+# geoalchemy2 registers create/drop_geospatial_* on alembic.op at runtime.
 """Foundation: source/dataset registries, ingestion runs and canonical geography (admin units, H3).
 
 Revision ID: 0001

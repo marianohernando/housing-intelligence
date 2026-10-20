@@ -1,6 +1,7 @@
 """Alembic environment. URL comes from DATABASE_URL (or -x url=...)."""
 
 from logging.config import fileConfig
+from typing import Any
 
 from alembic import context
 from geoalchemy2 import alembic_helpers
@@ -19,7 +20,7 @@ config.set_main_option("sqlalchemy.url", override_url or DatabaseSettings().data
 target_metadata = Base.metadata
 
 
-def _configure_kwargs() -> dict[str, object]:
+def _configure_kwargs() -> dict[str, Any]:
     return {
         "target_metadata": target_metadata,
         "compare_type": True,
