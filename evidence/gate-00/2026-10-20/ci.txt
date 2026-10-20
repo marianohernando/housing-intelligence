@@ -1,0 +1,4 @@
+$ gh run list --branch claude/sprint-p0 --limit 10 --json databaseId,headSha,conclusion,status,url,workflowName
+# exit 0
+
+[{"conclusion":"success","databaseId":39412421777,"headSha":"0337d620b81f9c73aaff5b8e8a78b10e7654a18b","status":"completed","url":"https://github.com/marianohernando/housing-intelligence/actions/runs/39412421777","workflowName":"ci"},{"conclusion":"failure","databaseId":39411789525,"headSha":"31037a1c67de0ae39a5db07d7eb908061eef21e1","status":"completed","url":"https://github.com/marianohernando/housing-intelligence/actions/runs/39411789525","workflowName":"ci"}]

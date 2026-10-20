@@ -1,0 +1,15 @@
+$ npm run -w apps/web test -- --run
+# exit 0
+
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  13:06:27
+   Duration  66ms (import 37%, tests 28%, transform 20%, worker 15%)
