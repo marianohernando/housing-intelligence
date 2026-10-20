@@ -1,6 +1,9 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 -include .env
+POSTGRES_PORT ?= 5440
+DATABASE_URL ?= postgresql+psycopg://housing:housing@localhost:$(POSTGRES_PORT)/housing
+TEST_DATABASE_URL ?= postgresql+psycopg://housing:housing@localhost:$(POSTGRES_PORT)/housing_test
 export
 
 ALEMBIC := uv run alembic -c infra/migrations/alembic.ini

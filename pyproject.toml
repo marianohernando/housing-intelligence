@@ -49,6 +49,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "S311"]
 "scripts/**" = ["S603", "S607"]
+"infra/migrations/versions/**" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["hi_contracts", "hi_domain", "hi_db", "hi_ingestion", "hi_api"]

@@ -1,0 +1,38 @@
+# Local development stack. Defaults are local-only credentials; override via .env.
+name: housing-intelligence
+
+services:
+  db:
+    build: infra/docker/postgres
+    image: housing-intelligence-db:17-3
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-housing}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-housing}
+      POSTGRES_DB: ${POSTGRES_DB:-housing}
+    ports:
+      - "${POSTGRES_PORT:-5440}:5432"
+    volumes:
+      - hi_pgdata:/var/lib/postgresql/data
+      - ./infra/docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+    shm_size: 512mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6390}:6379"
+    volumes:
+      - hi_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  hi_pgdata:
+  hi_redis:
