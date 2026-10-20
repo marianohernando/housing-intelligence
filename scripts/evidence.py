@@ -107,7 +107,73 @@ GATE_00 = [
     ),
 ]
 
-GATES: dict[str, list[Check]] = {"00": GATE_00}
+
+def _quality_report_passed(result: subprocess.CompletedProcess[str]) -> bool:
+    try:
+        return result.returncode == 0 and json.loads(result.stdout)["passed"] is True
+    except (json.JSONDecodeError, KeyError):
+        return False
+
+
+TODAY = date.today().isoformat()
+GATE_01_DATASET = "cm_secciones_censales"
+GATE_01 = [
+    Check(
+        "registry",
+        "Source/dataset registry valid",
+        ["uv", "run", "hi-ingest", "catalog", "validate"],
+    ),
+    Check(
+        "pipeline-unit",
+        "parser deterministic + QA + H3 invariants (fixture)",
+        ["uv", "run", "pytest", "tests/unit/pipelines", "tests/unit/harvester", "-q"],
+    ),
+    Check(
+        "pipeline-integration",
+        "Bronze->Silver->PostGIS, skip on same checksum, last-valid survives broken ingestion",
+        ["uv", "run", "pytest", "-m", "db", "tests/integration/geo", "-q"],
+    ),
+    Check(
+        "real-run-quality",
+        f"{GATE_01_DATASET} full-region QA report PASS",
+        ["cat", f"evidence/gate-01/{TODAY}/{GATE_01_DATASET}/quality_report.json"],
+        _quality_report_passed,
+    ),
+    Check(
+        "last-valid-version",
+        "dataset_version marked last valid with QA PASSED",
+        [
+            "docker",
+            "compose",
+            "exec",
+            "-T",
+            "db",
+            "psql",
+            "-U",
+            "housing",
+            "-d",
+            "housing",
+            "-Atc",
+            "select version_label, parser_version, quality_status, is_last_valid "
+            "from dataset_version where dataset_id = 'cm_secciones_censales' and is_last_valid",
+        ],
+        lambda r: r.returncode == 0 and "|PASSED|t" in r.stdout,
+    ),
+    Check(
+        "idempotent-rerun",
+        "re-fetch + rerun with same content is SKIPPED",
+        ["uv", "run", "hi-ingest", "run", GATE_01_DATASET, "--no-evidence"],
+        lambda r: r.returncode == 0 and '"status": "SKIPPED"' in r.stdout,
+    ),
+    GATE_00[-1],  # CI green for HEAD
+]
+
+GATES: dict[str, list[Check]] = {"00": GATE_00, "01": GATE_01}
+SCOPES = {
+    "00": "Repository / foundation.",
+    "01": f"Source / Bronze ingestion — scope: {GATE_01_DATASET} (1 of 17 P0 datasets). "
+    "Remaining P0 datasets are registered and licensed but not yet ingested.",
+}
 
 
 def environment() -> dict[str, str]:
@@ -157,6 +223,7 @@ def main() -> int:
         f"# Gate {args.gate} — {verdict}\n\n"
         f"- Fecha: {args.date}\n- Commit: `{env['git_head']}` ({env['git_branch']})\n"
         f"- Generado: {env['generated_at']} por `scripts/evidence.py`\n\n"
+        f"- Alcance: {SCOPES[args.gate]}\n\n"
         f"| Check | Criterio | Resultado |\n|---|---|---|\n{table}\n\n"
         "Cada fila tiene su salida completa en `<check>.txt`. Entorno en `environment.json`.\n"
     )

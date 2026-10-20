@@ -36,3 +36,21 @@ def test_admin_unit_ids() -> None:
 def test_admin_unit_id_rejects_invalid(level: str, code: str) -> None:
     with pytest.raises(ValueError, match=r"(?i)invalid|unsupported"):
         admin_unit_id(level, code)
+
+
+def test_parse_gseccion() -> None:
+    from hi_domain.geo.codes import parse_gseccion
+
+    assert parse_gseccion("079-12-062") == ("28079", "2807912", "2807912062")
+    with pytest.raises(ValueError, match="Unparseable"):
+        parse_gseccion("07912062")
+
+
+def test_barrio_codes_from_both_sources_agree() -> None:
+    from hi_domain.geo.codes import barrio_from_cm_csv, barrio_from_shp
+
+    # Palacio (district 01, barrio 1) in SHP form and CM CSV form
+    assert barrio_from_shp("079011", "28079") == barrio_from_cm_csv("0796011") == "28079011"
+    assert barrio_from_shp("13601", "28136") is None  # 5-digit codes outside Madrid are not barrios
+    assert barrio_from_shp(None, "28079") is None
+    assert admin_unit_id("barrio", "28079011") == "ES.28.BAR.28079011"

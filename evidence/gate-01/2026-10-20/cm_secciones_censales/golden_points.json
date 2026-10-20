@@ -1,0 +1,44 @@
+[
+  {
+    "zone_id": "sol",
+    "expected_municipio": "28079",
+    "resolved_barrio": "28079016",
+    "resolved_distrito": "2807901",
+    "resolved_municipio": "28079",
+    "resolved_seccion_censal": "2807901124",
+    "ok": true
+  },
+  {
+    "zone_id": "chamartin_plaza_castilla",
+    "expected_municipio": "28079",
+    "resolved_barrio": "28079064",
+    "resolved_distrito": "2807906",
+    "resolved_municipio": "28079",
+    "resolved_seccion_censal": "2807906076",
+    "ok": true
+  },
+  {
+    "zone_id": "getafe_centro",
+    "expected_municipio": "28065",
+    "resolved_distrito": "2806501",
+    "resolved_municipio": "28065",
+    "resolved_seccion_censal": "2806501011",
+    "ok": true
+  },
+  {
+    "zone_id": "alcala_henares_centro",
+    "expected_municipio": "28005",
+    "resolved_distrito": "2800501",
+    "resolved_municipio": "28005",
+    "resolved_seccion_censal": "2800501001",
+    "ok": true
+  },
+  {
+    "zone_id": "aranjuez_centro",
+    "expected_municipio": "28013",
+    "resolved_distrito": "2801301",
+    "resolved_municipio": "28013",
+    "resolved_seccion_censal": "2801301001",
+    "ok": true
+  }
+]

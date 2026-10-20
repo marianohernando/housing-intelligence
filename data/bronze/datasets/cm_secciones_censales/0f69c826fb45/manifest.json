@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_secciones_censales",
+      "role": "names",
+      "path": "data/bronze/datasets/cm_secciones_censales/0f69c826fb45/secciones_censales.csv",
+      "sha256": "0f69c826fb454a3c7748391b45b4d7758e9bc92e5a3e51f1ce1cdf3158523b0d",
+      "bytes": 185373,
+      "url": "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/d96741f3-f789-41df-a58b-e263dc57dd8a/download/secciones_censales.csv",
+      "retrieved_at": "2026-10-20T11:30:19.146307+00:00"
+    }
+  ]
+}

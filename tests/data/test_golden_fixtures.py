@@ -68,3 +68,10 @@ def test_golden_zones_h3_are_frozen_and_correct() -> None:
         assert h3.latlng_to_cell(zone["lat"], zone["lon"], 8) == zone["expected_h3_r8"]
         assert h3.latlng_to_cell(zone["lat"], zone["lon"], 9) == zone["expected_h3_r9"]
         assert h3.cell_to_parent(zone["expected_h3_r9"], 8) == zone["expected_h3_r8"]
+
+
+def test_golden_zones_have_frozen_sections() -> None:
+    zones = json.loads((GOLDEN / "madrid_zones.json").read_text())["zones"]
+    for zone in zones:
+        code = zone["expected_seccion_censal"]
+        assert code and len(code) == 10 and code.startswith(zone["municipio_ine"]), zone["zone_id"]

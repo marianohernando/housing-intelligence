@@ -21,6 +21,14 @@ from hi_ingestion.catalog_harvester.drafts import (
     write_report,
 )
 from hi_ingestion.catalog_harvester.runner import HARVESTABLE, harvest_sources, read_candidates
+from hi_ingestion.pipelines.admin_boundaries import config as admin_config
+from hi_ingestion.pipelines.admin_boundaries.run import (
+    fetch_inputs,
+    local_inputs,
+    run_admin_boundaries,
+)
+
+EVIDENCE_GATE_01 = DEFAULT_CATALOG_DIR.parents[1] / "evidence" / "gate-01"
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
 catalog_app = typer.Typer(help="Source catalog commands", no_args_is_help=True)
@@ -101,6 +109,38 @@ def catalog_curate(curation_file: Path) -> None:
     """Apply a versioned curation file (candidates -> curated datasets)."""
     written = curate(curation_file, read_candidates())
     typer.echo(f"curated {len(written)} datasets")
+
+
+@app.command("run")
+def run_dataset(
+    dataset_id: str,
+    local_dir: Annotated[
+        Path | None, typer.Option(help="Offline inputs (sections + names.csv + barrios.csv)")
+    ] = None,
+    evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
+    database_url: DatabaseUrl = None,
+) -> None:
+    """Run a dataset pipeline (Bronze -> Silver -> PostGIS)."""
+    if dataset_id != admin_config.SECTIONS_DATASET:
+        typer.echo(f"No pipeline registered for {dataset_id}", err=True)
+        raise typer.Exit(2)
+    catalog = load_catalog()
+    inputs = local_inputs(local_dir) if local_dir else fetch_inputs(catalog)
+    summary = run_admin_boundaries(
+        make_engine(database_url),
+        catalog,
+        inputs,
+        evidence_root=EVIDENCE_GATE_01 if evidence else None,
+    )
+    typer.echo(json.dumps({
+        "status": summary.status,
+        "version": summary.version_label,
+        "counts": summary.counts,
+        "quality_passed": summary.quality.get("passed"),
+        "evidence": str(summary.evidence_dir) if summary.evidence_dir else None,
+    }, indent=2))  # fmt: skip
+    if summary.status == "FAILED":
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":

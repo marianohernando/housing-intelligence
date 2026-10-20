@@ -1,5 +1,5 @@
 {
-  "_note": "Golden Madrid zones. Coordinates are public landmarks. H3 frozen with h3 4.5.0. expected_seccion_censal is filled after the first real ingestion.",
+  "_note": "Golden Madrid zones. Coordinates are public landmarks. H3 frozen with h3 4.5.0. expected_seccion_censal/barrio frozen from the 2026-10-20 ingestion of cm_secciones_censales (seccionado 2019).",
   "zones": [
     {
       "zone_id": "sol",
@@ -11,7 +11,8 @@
       "role": "centro urbano",
       "expected_h3_r8": "88390cb1b1fffff",
       "expected_h3_r9": "89390cb1b0bffff",
-      "expected_seccion_censal": null
+      "expected_seccion_censal": "2807901124",
+      "expected_barrio": "28079016"
     },
     {
       "zone_id": "chamartin_plaza_castilla",
@@ -23,7 +24,8 @@
       "role": "nodo de transporte norte",
       "expected_h3_r8": "88390cb0adfffff",
       "expected_h3_r9": "89390cb0ac7ffff",
-      "expected_seccion_censal": null
+      "expected_seccion_censal": "2807906076",
+      "expected_barrio": "28079064"
     },
     {
       "zone_id": "getafe_centro",
@@ -35,7 +37,8 @@
       "role": "periferia sur",
       "expected_h3_r8": "88390caa49fffff",
       "expected_h3_r9": "89390caa497ffff",
-      "expected_seccion_censal": null
+      "expected_seccion_censal": "2806501011",
+      "expected_barrio": null
     },
     {
       "zone_id": "alcala_henares_centro",
@@ -47,7 +50,8 @@
       "role": "corredor del Henares",
       "expected_h3_r8": "88392b69e5fffff",
       "expected_h3_r9": "89392b69e4bffff",
-      "expected_seccion_censal": null
+      "expected_seccion_censal": "2800501001",
+      "expected_barrio": null
     },
     {
       "zone_id": "aranjuez_centro",
@@ -59,7 +63,8 @@
       "role": "borde sur de la región",
       "expected_h3_r8": "88390c3121fffff",
       "expected_h3_r9": "89390c31217ffff",
-      "expected_seccion_censal": null
+      "expected_seccion_censal": "2801301001",
+      "expected_barrio": null
     }
   ]
 }

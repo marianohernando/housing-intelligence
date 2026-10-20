@@ -1,0 +1,36 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_secciones_censales",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_secciones_censales/00198d017d03/558.zip",
+      "sha256": "00198d017d032e83fdf5bcbb3327b1adbba21394264968c0c6508ba4473b09fc",
+      "bytes": 9250149,
+      "url": "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/b53b766c-e013-444c-b3b0-0992c4a0dbfc/download/558.zip",
+      "retrieved_at": "2026-10-20T11:29:41.205689+00:00"
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "role": "names",
+      "path": "data/bronze/datasets/cm_secciones_censales/0f69c826fb45/secciones_censales.csv",
+      "sha256": "0f69c826fb454a3c7748391b45b4d7758e9bc92e5a3e51f1ce1cdf3158523b0d",
+      "bytes": 185373,
+      "url": "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/d96741f3-f789-41df-a58b-e263dc57dd8a/download/secciones_censales.csv",
+      "retrieved_at": "2026-10-20T11:29:41.403715+00:00"
+    },
+    {
+      "dataset_id": "cm_barrios_madrid",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_barrios_madrid/5357aabf7e1d/barrios_municipio_madrid.csv",
+      "sha256": "5357aabf7e1dcc5253f7c64bed5bc2894e7eeeafb32e3f84dafa0e37b55cb4cf",
+      "bytes": 10033,
+      "url": "https://datos.comunidad.madrid/dataset/1f704f27-8e07-42ae-b456-e4b6321d7dc3/resource/2dfa85cc-c5ce-4e08-aa1f-491f398d00a0/download/barrios_municipio_madrid.csv",
+      "retrieved_at": "2026-10-20T11:29:41.509173+00:00"
+    }
+  ],
+  "checksum": "37703ffcdfd01628f79d3a58e8f554b0b4490140ca856dc199def007b6186fb9",
+  "dataset_version": "2026-10-20-37703ffcdfd0",
+  "parser_version": "admin_boundaries-1.1.0",
+  "correlation_id": "c9df4396892c4b83980cb2952ceaaf17",
+  "silver": "data/silver/cm_secciones_censales/37703ffcdfd0/admin_units.gpkg"
+}
