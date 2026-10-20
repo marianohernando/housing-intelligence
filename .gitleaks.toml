@@ -1,0 +1,10 @@
+title = "housing-intelligence gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "supabase-personal-access-token"
+description = "Supabase personal access token"
+regex = '''sbp_[a-f0-9]{40}'''
+keywords = ["sbp_"]
