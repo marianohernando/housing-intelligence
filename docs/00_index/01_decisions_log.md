@@ -525,3 +525,37 @@ Toda funcionalidad se clasifica por criticidad/valor/riesgo para ordenar impleme
 
 ## D-173 — No throwaway hackathon code
 Evitar mocks/arquitecturas temporales que haya que desechar salvo prototipos estrictamente de investigación.
+
+
+## D-174 — Trabajo previo permitido por las bases (2026-10-20)
+Las bases oficiales DATAMAD 2026 (§6 "Proyectos preexistentes") permiten usar código, componentes e investigación previos si se identifican, siempre que la propuesta evolucione de forma sustancial entre el 7 y el 26 de noviembre. Se cierra `DATAMAD-PREWORK-01`. Se creará el tag git `pre-datamad` el 6 de noviembre y se declarará el trabajo previo en README y slides. Fuente: `09_datamad/24_bases_oficiales_2026.md`.
+
+## D-175 — Google Maps / Gosom fuera del proyecto DATAMAD (2026-10-20)
+`google_maps_scraped` queda `REJECTED`: los términos de Google prohíben la extracción automatizada y las bases (§6.3, §6.7, §16) excluyen datos obtenidos ilícitamente. POIs desde Ayuntamiento, Comunidad de Madrid y OpenStreetMap. Pendiente de Mariano: confirmar o permitir un benchmark privado fuera del repo. Ver `07_privacy_legal/source_reviews/google_maps_gosom.md`.
+
+## D-176 — Entornos de base de datos (2026-10-20)
+Docker local (Postgres 17 + PostGIS 3.6 + pgvector 0.8) para desarrollo, tests y CI. Proyecto Supabase free dedicado (`ilvbivfnqvfqslbbiuts`) como entorno remoto/demo, accesible por el MCP de proyecto `supabase-datamad`. Sin h3-pg en Supabase: H3 se calcula siempre en Python. El código solo cambia `DATABASE_URL`.
+
+## D-177 — Toolchain (2026-10-20)
+Python 3.12 con uv workspace (wheels geo en arm64), ruff, pyright (strict en `packages/contracts`), pytest + hypothesis, gitleaks con regla explícita para tokens `sbp_`. Node 24 con npm workspaces, Next.js 16, TypeScript 5.9 strict, ESLint 9, Vitest 5.
+
+## D-178 — Imagen de base de datos propia (2026-10-20)
+`postgis/postgis` no publica arm64. Se extiende `pgvector/pgvector:pg17` con `postgresql-17-postgis-3`. Extensiones en schema `extensions` (convención Supabase). CI construye la misma imagen en el job de integración.
+
+## D-179 — Capa de datos (2026-10-20)
+Nuevo paquete `packages/db` (SQLAlchemy 2 + GeoAlchemy2 + psycopg 3 + Alembic). Vocabularios como `text + CHECK` generados desde los `StrEnum` de `hi_contracts`, no como tipos ENUM de Postgres. Geometrías administrativas en EPSG:4326 y EPSG:25830.
+
+## D-180 — Geografía canónica (2026-10-20)
+Fuente estructural: `cm_secciones_censales` (portal de la Comunidad de Madrid, seccionado 2019, EPSG:25830). Municipios, distritos censales y los 131 barrios de Madrid capital se derivan por dissolve. Identificadores canónicos `ES.28.{MUN|DIS|BAR|SEC}.<código INE>`. El seccionado 2025 del INE entra como actualización declarada (DATA-008), no como sustituto.
+
+## D-181 — Scorecard y curación (2026-10-20)
+El criterio "ingestion difficulty" del doc 38 se almacena como `ingestion_ease` (5 = más fácil) para que todos los criterios tengan la misma dirección. Los borradores del harvester nunca son P0. La promoción a catálogo curado se hace con ficheros de curación versionados en `data/catalog/curation/`.
+
+## D-182 — Candidatos fuera de git (2026-10-20)
+`data/catalog/candidates/*.jsonl` (4–14 MB) se regeneran desde Bronze con `make catalog-harvest` y no se versionan. Sí se versionan manifests Bronze, informe, borradores y catálogo curado.
+
+## D-183 — Idempotencia de pipelines (2026-10-20)
+Un pipeline se omite solo si coinciden checksum de entrada y `parser_version` con la última versión válida. Mismo Bronze con código nuevo regenera Silver. Una ingesta que falla la calidad nunca sustituye a la última versión válida.
+
+## D-184 — Integración en P0 (2026-10-20)
+Trabajo en la rama `claude/sprint-p0` con CI en cada push. La integración en `main` la decide Mariano mediante PR.
