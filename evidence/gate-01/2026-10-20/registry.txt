@@ -1,0 +1,5 @@
+$ uv run hi-ingest catalog validate
+# exit 0
+
+OK: 8 sources, 28 datasets, 120 drafts, 1 features
+

@@ -1,0 +1,5 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc select version_label, parser_version, quality_status, is_last_valid from dataset_version where dataset_id = 'cm_secciones_censales' and is_last_valid
+# exit 0
+
+2026-10-20-37703ffcdfd0|admin_boundaries-1.1.0|PASSED|t
+

@@ -1,0 +1,11 @@
+$ uv run hi-ingest run cm_secciones_censales --no-evidence
+# exit 0
+
+{
+  "status": "SKIPPED",
+  "version": "2026-10-20-37703ffcdfd0",
+  "counts": {},
+  "quality_passed": null,
+  "evidence": null
+}
+

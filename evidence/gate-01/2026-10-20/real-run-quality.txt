@@ -1,0 +1,185 @@
+$ cat evidence/gate-01/2026-10-20/cm_secciones_censales/quality_report.json
+# exit 0
+
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "source_crs_is_epsg_25830",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "crs": "EPSG:25830"
+      }
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "ratio": 0.0
+      }
+    },
+    {
+      "name": "unique_admin_unit_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": []
+      }
+    },
+    {
+      "name": "geometries_valid",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "invalid": 0
+      }
+    },
+    {
+      "name": "geometries_valid_epsg_4326",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "invalid": 0,
+        "empty": 0
+      }
+    },
+    {
+      "name": "area_positive",
+      "critical": true,
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "within_madrid_bounds_and_not_swapped",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "total_bounds_4326": [
+          -4.57908,
+          39.88472,
+          -3.05298,
+          41.16584
+        ]
+      }
+    },
+    {
+      "name": "child_inside_parent",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "checked": 4794,
+        "failures": []
+      }
+    },
+    {
+      "name": "area_matches_declared_within_1pct",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "share_ok": 1.0,
+        "outliers_sample": [],
+        "outliers": 0
+      }
+    },
+    {
+      "name": "sections_cover_municipalities",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "sections_over_municipios_area": 1.0
+      }
+    },
+    {
+      "name": "expected_region_counts",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "observed": {
+          "municipio": 179,
+          "madrid_distritos": 21,
+          "madrid_barrios": 131
+        },
+        "expected": {
+          "municipio": 179,
+          "madrid_distritos": 21,
+          "madrid_barrios": 131
+        },
+        "enforced": true,
+        "by_level": {
+          "barrio": 131,
+          "distrito": 246,
+          "municipio": 179,
+          "seccion_censal": 4417
+        }
+      }
+    },
+    {
+      "name": "golden_points_resolve",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "evaluated": 5
+      }
+    },
+    {
+      "name": "barrio_names_present",
+      "critical": false,
+      "passed": false,
+      "details": {
+        "missing": [
+          "28079183",
+          "28079193",
+          "28079194"
+        ]
+      }
+    }
+  ],
+  "golden_points": [
+    {
+      "zone_id": "sol",
+      "expected_municipio": "28079",
+      "resolved_barrio": "28079016",
+      "resolved_distrito": "2807901",
+      "resolved_municipio": "28079",
+      "resolved_seccion_censal": "2807901124",
+      "ok": true
+    },
+    {
+      "zone_id": "chamartin_plaza_castilla",
+      "expected_municipio": "28079",
+      "resolved_barrio": "28079064",
+      "resolved_distrito": "2807906",
+      "resolved_municipio": "28079",
+      "resolved_seccion_censal": "2807906076",
+      "ok": true
+    },
+    {
+      "zone_id": "getafe_centro",
+      "expected_municipio": "28065",
+      "resolved_distrito": "2806501",
+      "resolved_municipio": "28065",
+      "resolved_seccion_censal": "2806501011",
+      "ok": true
+    },
+    {
+      "zone_id": "alcala_henares_centro",
+      "expected_municipio": "28005",
+      "resolved_distrito": "2800501",
+      "resolved_municipio": "28005",
+      "resolved_seccion_censal": "2800501001",
+      "ok": true
+    },
+    {
+      "zone_id": "aranjuez_centro",
+      "expected_municipio": "28013",
+      "resolved_distrito": "2801301",
+      "resolved_municipio": "28013",
+      "resolved_seccion_censal": "2801301001",
+      "ok": true
+    }
+  ]
+}
+
