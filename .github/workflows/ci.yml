@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
       - run: uv sync --all-packages --frozen
@@ -74,7 +74,7 @@ jobs:
       DATABASE_URL: postgresql+psycopg://housing:housing@localhost:5440/housing
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
       - name: Boot database (same image as local compose)
@@ -95,7 +95,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.0
       - run: uv export --all-packages --frozen --no-hashes --format requirements-txt > /tmp/req.txt
       - run: uvx pip-audit -r /tmp/req.txt --progress-spinner off
       - uses: actions/setup-node@v7
