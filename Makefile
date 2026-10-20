@@ -74,8 +74,8 @@ ingest: ## Run a dataset pipeline: make ingest DATASET=cm_secciones_censales
 	@test -n "$(DATASET)" || (echo "DATASET is required" && exit 2)
 	uv run hi-ingest run $(DATASET)
 
-secret-scan: ## gitleaks over the working tree
-	uv run pre-commit run gitleaks --all-files
+secret-scan: ## gitleaks over full git history (requires gitleaks binary)
+	gitleaks git --config .gitleaks.toml --redact --no-banner .
 
 evidence: ## Generate evidence folder: make evidence GATE=00
 	uv run python scripts/evidence.py --gate $(GATE)
