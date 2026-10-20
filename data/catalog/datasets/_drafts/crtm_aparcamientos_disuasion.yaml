@@ -1,0 +1,32 @@
+dataset_id: crtm_aparcamientos_disuasion
+source_id: crtm_open_data
+name: Aparcamientos Disuasión
+domain: transport
+owner: Consorcio Regional de Transportes de Madrid
+format: FEATURE SERVICE
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.crtm.es/datasets/2a2b8fcbd4fc4115a57519ef1587b011
+resources:
+- name: AparcamientosCM
+  format: Feature Service
+  url: https://www.arcgis.com/sharing/rest/content/items/2a2b8fcbd4fc4115a57519ef1587b011/data
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: heuristic-v2; keywords=['transporte', 'aparcamiento']; strong=True
+discovery:
+  harvested_from: crtm_open_data
+  external_id: 2a2b8fcbd4fc4115a57519ef1587b011
+  harvested_at: '2026-10-20T11:17:01.436194+00:00'
+notes: Auto-draft. composite=4.7; license_id=CRTM-LDA

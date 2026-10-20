@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914784_base_liquidable_del_ahorro_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Base liquidable del ahorro del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914784
+resources:
+- name: Base liquidable del ahorro del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/84a71ee5-a5ec-4709-b899-972d207971f5/resource/1dbf9272-bb1e-490a-8f58-f107f944d484/download/base-liquidable-del-ahorro-del-irpf.-municipios.csv
+- name: Base liquidable del ahorro del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/84a71ee5-a5ec-4709-b899-972d207971f5/resource/5c4de703-3ed3-4dbe-8a7c-a74e8b9d326c/download/base-liquidable-del-ahorro-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914784'
+  harvested_at: '2026-10-20T11:17:01.446430+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,38 @@
+dataset_id: cm_barrios_madrid
+source_id: comunidad_madrid_ckan
+name: Barrios del Municipio de Madrid
+domain: geography
+owner: Comunidad de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: barrio
+temporal_resolution: null
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/barrios_municipio_madrid
+resources:
+- name: Barrios del Municipio de Madrid
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1f704f27-8e07-42ae-b456-e4b6321d7dc3/resource/2dfa85cc-c5ce-4e08-aa1f-491f398d00a0/download/barrios_municipio_madrid.csv
+- name: Barrios del Municipio de Madrid
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/1f704f27-8e07-42ae-b456-e4b6321d7dc3/resource/493cb0fb-4393-440e-bf78-24317bc65eee/download/barrios_municipio_madrid.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: barrios_municipio_madrid
+  harvested_at: '2026-10-20T11:16:21.697110+00:00'
+notes: Barrio codes/names; geometry derived from cm_secciones_censales | curated from
+  2026-10-20_sprint_p0.yaml | Auto-draft. composite=4.7; license_id=cc-by

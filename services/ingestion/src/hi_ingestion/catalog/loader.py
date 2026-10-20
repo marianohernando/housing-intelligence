@@ -56,13 +56,19 @@ def _load_dir[M: BaseModel](
     return items
 
 
-def load_catalog(catalog_dir: Path = DEFAULT_CATALOG_DIR) -> Catalog:
+def load_catalog(
+    catalog_dir: Path = DEFAULT_CATALOG_DIR, *, include_drafts: bool = True
+) -> Catalog:
     errors: list[str] = []
     paths: dict[str, Path] = {}
     sources = _load_dir(catalog_dir / "sources", SourceSpec, "source_id", errors, paths)
     datasets = _load_dir(catalog_dir / "datasets", DatasetSpec, "dataset_id", errors, paths)
-    drafts = _load_dir(
-        catalog_dir / "datasets" / DRAFTS_DIRNAME, DatasetSpec, "dataset_id", errors, paths
+    drafts = (
+        _load_dir(
+            catalog_dir / "datasets" / DRAFTS_DIRNAME, DatasetSpec, "dataset_id", errors, paths
+        )
+        if include_drafts
+        else {}
     )
     features = _load_dir(catalog_dir / "features", FeatureSpec, "feature_id", errors, paths)
 

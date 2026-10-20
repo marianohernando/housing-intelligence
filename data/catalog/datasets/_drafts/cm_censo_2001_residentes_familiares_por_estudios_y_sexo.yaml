@@ -1,0 +1,37 @@
+dataset_id: cm_censo_2001_residentes_familiares_por_estudios_y_sexo
+source_id: comunidad_madrid_ckan
+name: Residentes en viviendas familiares por estudios realizados y sexo. Censo 2001.
+  Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_residentes_familiares_por_estudios_y_sexo
+resources:
+- name: Residentes en viviendas familiares por estudios realizados y sexo. Censo 2001.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1e548170-e15e-45b1-b48e-4aec509ac729/resource/3cf4d20a-c692-4c30-9efd-ce0201ddc01a/download/residentes-en-viviendas-familiares-por-estudios-realizados-y-sexo.-censo-2001.-municipios.csv
+- name: Residentes en viviendas familiares por estudios realizados y sexo. Censo 2001.
+    Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/1e548170-e15e-45b1-b48e-4aec509ac729/resource/ddca1c8c-3188-4ed2-a8e2-d9e4bba90a85/download/residentes-en-viviendas-familiares-por-estudios-realizados-y-sexo.-censo-2001.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_residentes_familiares_por_estudios_y_sexo
+  harvested_at: '2026-10-20T11:17:01.485850+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

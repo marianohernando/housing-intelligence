@@ -1,0 +1,37 @@
+dataset_id: cm_censo_2001_residentes_familiares_por_tipo_y_sexo
+source_id: comunidad_madrid_ckan
+name: Residentes en viviendas familiares por tipo de vivienda y sexo. Censo 2001.
+  Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_residentes_familiares_por_tipo_y_sexo
+resources:
+- name: Residentes en viviendas familiares por tipo de vivienda y sexo. Censo 2001.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/36e4b158-86f3-4fc6-b437-9bfcb234bbde/resource/ae0f3e85-59d3-46ea-8f15-019d042e5aaa/download/residentes-en-viviendas-familiares-por-tipo-de-vivienda-y-sexo.-censo-2001.-municipios.csv
+- name: Residentes en viviendas familiares por tipo de vivienda y sexo. Censo 2001.
+    Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/36e4b158-86f3-4fc6-b437-9bfcb234bbde/resource/88bd0be9-7d0c-483f-bd8b-88a763b7ac0b/download/residentes-en-viviendas-familiares-por-tipo-de-vivienda-y-sexo.-censo-2001.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_residentes_familiares_por_tipo_y_sexo
+  harvested_at: '2026-10-20T11:17:01.486557+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,38 @@
+dataset_id: cm_ie1929104_poblacion_en_establecimientos_colectivos_por_tipo
+source_id: comunidad_madrid_ckan
+name: Población en establecimientos colectivos por tipo de establecimiento y tamaño
+  de muncipio
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1929104
+resources:
+- name: Población en establecimientos colectivos por tipo de establecimiento y tamaño
+    de muncipio.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/64118440-45bd-442d-99f5-b374c81e819d/resource/9aaf7826-bfe4-4fa3-95db-3d13c571e3cb/download/poblacion-en-establecimientos-colectivos-por-tipo-de-establecimiento-y-tamano-de-muncipio.csv
+- name: Población en establecimientos colectivos por tipo de establecimiento y tamaño
+    de muncipio.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/64118440-45bd-442d-99f5-b374c81e819d/resource/11d3e170-849f-4bd2-8d00-df6ca7e3dd77/download/poblacion-en-establecimientos-colectivos-por-tipo-de-establecimiento-y-tamano-de-muncipio.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1929104'
+  harvested_at: '2026-10-20T11:17:01.461408+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

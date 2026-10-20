@@ -1,0 +1,36 @@
+dataset_id: cm_ie202193_porcentaje_de_nacimientos_de_madres_residentes_men
+source_id: comunidad_madrid_ckan
+name: 'Porcentaje de nacimientos de madres residentes: Menores de 30 años. Municipios'
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/202193
+resources:
+- name: 'Porcentaje de nacimientos de madres residentes: Menores de 30 años.csv'
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/86d71ffe-c448-4d73-84b0-ab3e71d82d03/resource/fcac25a3-2b17-4423-b127-18640bc22808/download/porcentaje-de-nacimientos-de-madres-residentes-menores-de-30-anos.-municipios.csv
+- name: 'Porcentaje de nacimientos de madres residentes: Menores de 30 años. Municipios.json'
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/86d71ffe-c448-4d73-84b0-ab3e71d82d03/resource/a575bd1d-66c7-4f70-add6-95dc1998a1f3/download/porcentaje-de-nacimientos-de-madres-residentes-menores-de-30-anos.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'nacimientos', 'movimiento natural'];
+    strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '202193'
+  harvested_at: '2026-10-20T11:17:01.476870+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

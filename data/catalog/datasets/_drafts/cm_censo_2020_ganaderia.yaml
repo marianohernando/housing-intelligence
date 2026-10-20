@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2020_ganaderia
+source_id: comunidad_madrid_ckan
+name: Censo agrario 2020. Ganadería. Unidades, explotaciones y cabezas ganaderas por
+  tipo de ganado. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2020_ganaderia
+resources:
+- name: Censo agrario 2020. Ganadería. Unidades, explotaciones y cabezas ganaderas
+    por tipo de ganado.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/c35fa2df-c80d-451e-8ec2-40b8f71a9d84/resource/289fdb6d-ffb5-4a77-8a28-113ced42c553/download/censo-agrario-2020.-ganaderia.-unidades-explotaciones-y-cabezas-ganaderas-por-tipo-de-ganado.-mu.csv
+- name: Censo agrario 2020. Ganadería. Unidades, explotaciones y cabezas ganaderas
+    por tipo de ganado. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/c35fa2df-c80d-451e-8ec2-40b8f71a9d84/resource/42e9e413-0558-4a54-8387-53d4ccdcb252/download/censo-agrario-2020.-ganaderia.-unidades-explotaciones-y-cabezas-ganaderas-por-tipo-de-ganado.-m.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2020_ganaderia
+  harvested_at: '2026-10-20T11:17:01.490282+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

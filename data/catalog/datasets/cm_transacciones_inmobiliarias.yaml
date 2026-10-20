@@ -1,0 +1,42 @@
+dataset_id: cm_transacciones_inmobiliarias
+source_id: comunidad_madrid_ckan
+name: Número de transacciones inmobiliarias, por municipio. Vivienda libre y vivienda
+  protegida. Comunidad de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/transacciones_inmobiliarias_municipio
+resources:
+- name: Número de transacciones inmobiliarias, por municipio. Vivienda libre y vivienda
+    protegida. Comunidad de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/10546bef-2bd5-4e91-8b55-7c2c733694c4/resource/bef92a14-7e9b-408f-ac1a-779b8f81a6a6/download/extraccionesnumero-de-transacciones-inmobiliarias-por-municipio.-vivienda-libre-y-vivienda-prote.csv
+- name: Número de transacciones inmobiliarias, por municipio. Vivienda libre y vivienda
+    protegida. Comunidad de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/10546bef-2bd5-4e91-8b55-7c2c733694c4/resource/c4390723-39fe-4cc9-9d73-5be323c64649/download/extraccionesnumero-de-transacciones-inmobiliarias-por-municipio.-vivienda-libre-y-vivienda-prot.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'compraventa', 'transacciones inmobiliarias',
+    'inmobiliari', 'vivienda protegida']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: transacciones_inmobiliarias_municipio
+  harvested_at: '2026-10-20T11:16:21.703043+00:00'
+notes: P1-03 market activity | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.6; license_id=cc-by

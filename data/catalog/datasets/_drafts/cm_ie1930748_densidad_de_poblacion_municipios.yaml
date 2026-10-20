@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930748_densidad_de_poblacion_municipios
+source_id: comunidad_madrid_ckan
+name: Densidad de población. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930748
+resources:
+- name: Densidad de población.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/81592bc2-a5c0-423a-88b2-82ced433f290/resource/58ffa899-970e-4559-9e8a-550e21b29b3c/download/densidad-de-poblacion.-municipios.csv
+- name: Densidad de población. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/81592bc2-a5c0-423a-88b2-82ced433f290/resource/cc714040-3c83-4ff7-887c-1d7a4e15bc1a/download/densidad-de-poblacion.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930748'
+  harvested_at: '2026-10-20T11:17:01.466417+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

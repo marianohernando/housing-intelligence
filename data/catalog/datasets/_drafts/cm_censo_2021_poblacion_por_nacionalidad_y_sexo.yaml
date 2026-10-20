@@ -1,0 +1,35 @@
+dataset_id: cm_censo_2021_poblacion_por_nacionalidad_y_sexo
+source_id: comunidad_madrid_ckan
+name: Población censada por nacionalidad y sexo. Censo 2021. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2021_poblacion_por_nacionalidad_y_sexo
+resources:
+- name: Población censada por nacionalidad y sexo. Censo 2021.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/f271b592-c05a-4309-805e-a2c1df2593f3/resource/8c496ef3-22da-4c0f-976c-c587f58b8cf7/download/poblacion-censada-por-nacionalidad-y-sexo.-censo-2021.-municipios.csv
+- name: Población censada por nacionalidad y sexo. Censo 2021. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/f271b592-c05a-4309-805e-a2c1df2593f3/resource/2bbbe30f-8bd3-4c79-a73a-43a79700d3ef/download/poblacion-censada-por-nacionalidad-y-sexo.-censo-2021.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2021_poblacion_por_nacionalidad_y_sexo
+  harvested_at: '2026-10-20T11:17:01.494666+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

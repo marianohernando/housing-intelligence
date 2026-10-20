@@ -1,0 +1,32 @@
+dataset_id: crtm_datos_abiertos_lineas_de_la_red_de_metro_ligero
+source_id: crtm_open_data
+name: 'Datos abiertos: Líneas de la Red de Metro Ligero'
+domain: transport
+owner: Consorcio Regional de Transportes de Madrid
+format: FEATURE SERVICE
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.crtm.es/datasets/2abf1cf229514fff96bcc3fadfa37935
+resources:
+- name: M10_Lineas
+  format: Feature Service
+  url: https://www.arcgis.com/sharing/rest/content/items/2abf1cf229514fff96bcc3fadfa37935/data
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: heuristic-v2; keywords=['metro']; strong=True
+discovery:
+  harvested_from: crtm_open_data
+  external_id: 2abf1cf229514fff96bcc3fadfa37935
+  harvested_at: '2026-10-20T11:17:01.436874+00:00'
+notes: Auto-draft. composite=4.7; license_id=CRTM-LDA

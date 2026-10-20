@@ -1,0 +1,49 @@
+{
+  "namespace": "catalog/comunidad_madrid_ckan",
+  "run_label": "2026-10-20",
+  "written_at": "2026-10-20T11:11:42.398938+00:00",
+  "artifacts": [
+    {
+      "name": "page_0001.json",
+      "path": "data/bronze/catalog/comunidad_madrid_ckan/2026-10-20/page_0001.json",
+      "sha256": "a018d1e1d5fcd7e9e053a95bc2674f3dda90e4b1a070cca857929f2c0481883e",
+      "bytes": 17299208,
+      "url": "https://datos.comunidad.madrid/api/3/action/package_search?rows=1000&start=0",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:40.157347+00:00",
+      "headers": {
+        "content-type": "application/json;charset=utf-8",
+        "content-length": "17877478"
+      }
+    },
+    {
+      "name": "page_0002.json",
+      "path": "data/bronze/catalog/comunidad_madrid_ckan/2026-10-20/page_0002.json",
+      "sha256": "04d1fc54b5852595dcc6a6210c2547c727fd9e8fe4294e1eafa4be2db234735a",
+      "bytes": 10411187,
+      "url": "https://datos.comunidad.madrid/api/3/action/package_search?rows=1000&start=1000",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:41.895110+00:00",
+      "headers": {
+        "content-type": "application/json;charset=utf-8",
+        "content-length": "10781149"
+      }
+    },
+    {
+      "name": "page_0003.json",
+      "path": "data/bronze/catalog/comunidad_madrid_ckan/2026-10-20/page_0003.json",
+      "sha256": "36d9e8563390d49295d61ebc9a67df7099c2c36bbb7e5aaa530eb9d97fc559fe",
+      "bytes": 1437454,
+      "url": "https://datos.comunidad.madrid/api/3/action/package_search?rows=1000&start=2000",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:42.385193+00:00",
+      "headers": {
+        "content-type": "application/json;charset=utf-8",
+        "content-length": "1467070"
+      }
+    }
+  ],
+  "status": "OK",
+  "message": null,
+  "pages": 3
+}

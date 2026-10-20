@@ -1,0 +1,35 @@
+dataset_id: cm_ie1915804_tasa_de_migracion_con_el_extranjero_municipios
+source_id: comunidad_madrid_ckan
+name: Tasa de migración con el extranjero. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1915804
+resources:
+- name: Tasa de migración con el extranjero.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/be8824d9-3759-4059-8eaa-58c703dbc676/resource/4e4e3ff1-127e-4c07-8526-620ef5e8f601/download/tasa-de-migracion-con-el-extranjero.-municipios.csv
+- name: Tasa de migración con el extranjero. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/be8824d9-3759-4059-8eaa-58c703dbc676/resource/d37dc34f-959c-4fbc-9f3a-01b28d3d3c60/download/tasa-de-migracion-con-el-extranjero.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'migraciones']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1915804'
+  harvested_at: '2026-10-20T11:17:01.455879+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

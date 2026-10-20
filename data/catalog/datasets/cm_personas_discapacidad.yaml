@@ -1,0 +1,38 @@
+dataset_id: cm_personas_discapacidad
+source_id: comunidad_madrid_ckan
+name: Personas con discapacidad por edad y sexo. Municipios
+domain: social
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/personas_discapacidad_por_edad_y_sexo
+resources:
+- name: Personas con discapacidad por edad y sexo. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/d0ad4071-4cfa-47c5-8740-50f0ebb77530/resource/060b17d5-f651-4e47-92a0-006e385572ea/download/personas-con-discapacidad-por-edad-y-sexo.-municipios.csv
+- name: Personas con discapacidad por edad y sexo. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/d0ad4071-4cfa-47c5-8740-50f0ebb77530/resource/00e35e41-ca2e-42ec-8498-6c0c8a38dad1/download/personas-con-discapacidad-por-edad-y-sexo.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['servicios sociales', 'discapacidad']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: personas_discapacidad_por_edad_y_sexo
+  harvested_at: '2026-10-20T11:16:21.705072+00:00'
+notes: P1-06 aggregate only, accessible housing planning | curated from 2026-10-20_sprint_p0.yaml
+  | Auto-draft. composite=4.3; license_id=cc-by

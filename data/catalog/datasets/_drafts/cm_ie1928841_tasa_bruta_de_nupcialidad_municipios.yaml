@@ -1,0 +1,36 @@
+dataset_id: cm_ie1928841_tasa_bruta_de_nupcialidad_municipios
+source_id: comunidad_madrid_ckan
+name: Tasa bruta de nupcialidad. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1928841
+resources:
+- name: Tasa bruta de nupcialidad.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/a373b05e-a513-4937-8377-b7b2b5a77a6f/resource/6175ecae-463e-45e7-99e8-8d3420628adc/download/tasa-bruta-de-nupcialidad.-municipios.csv
+- name: Tasa bruta de nupcialidad. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/a373b05e-a513-4937-8377-b7b2b5a77a6f/resource/9766ffc2-5bde-45a3-8092-d253669d5d33/download/tasa-bruta-de-nupcialidad.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'habitantes', 'movimiento
+    natural']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1928841'
+  harvested_at: '2026-10-20T11:17:01.460883+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,35 @@
+dataset_id: cm_censo_2021_poblacion_por_nacimiento_y_sexo
+source_id: comunidad_madrid_ckan
+name: Población censada por país de nacimiento y sexo. Censo 2021. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2021_poblacion_por_nacimiento_y_sexo
+resources:
+- name: Población censada por país de nacimiento y sexo. Censo 2021.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/6731169a-ab04-41a1-9a9f-42aaac91fdbf/resource/04e07e3d-a2fd-4f31-857c-e0506e87b9e4/download/poblacion-censada-por-pais-de-nacimiento-y-sexo.-censo-2021.-municipios.csv
+- name: Población censada por país de nacimiento y sexo. Censo 2021. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/6731169a-ab04-41a1-9a9f-42aaac91fdbf/resource/250631f1-6764-411e-aa7b-039e47d2e41a/download/poblacion-censada-por-pais-de-nacimiento-y-sexo.-censo-2021.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2021_poblacion_por_nacimiento_y_sexo
+  harvested_at: '2026-10-20T11:17:01.493968+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

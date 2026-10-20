@@ -1,0 +1,38 @@
+dataset_id: cm_ie1931714_porcentaje_de_personas_de_16_y_mas_anos_que_estudi
+source_id: comunidad_madrid_ckan
+name: Porcentaje de personas de 16 y más años que estudian por lugar de estudio y
+  tiempo de desplazamiento empleado
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1931714
+resources:
+- name: Porcentaje de personas de 16 y más años que estudian por lugar de estudio
+    y tiempo de desplazamiento empleado.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/e5ca8bef-c891-47a8-9623-935974d70aa4/resource/3f02059e-d57e-438e-a306-f3b482df1e2e/download/porcentaje-de-personas-de-16-y-mas-anos-que-estudian-por-lugar-de-estudio-y-tiempo-de-desplazami.csv
+- name: Porcentaje de personas de 16 y más años que estudian por lugar de estudio
+    y tiempo de desplazamiento empleado.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/e5ca8bef-c891-47a8-9623-935974d70aa4/resource/73678cc4-b9a0-4e2f-bd22-6a863a10a9ef/download/porcentaje-de-personas-de-16-y-mas-anos-que-estudian-por-lugar-de-estudio-y-tiempo-de-desplazam.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1931714'
+  harvested_at: '2026-10-20T11:17:01.468246+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

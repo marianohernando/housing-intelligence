@@ -1,0 +1,37 @@
+dataset_id: cm_ie1931746_porcentaje_de_viviendas_familiares_segun_regimen_d
+source_id: comunidad_madrid_ckan
+name: Porcentaje de viviendas familiares según régimen de tenencia y tamaño del municipio
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1931746
+resources:
+- name: Porcentaje de viviendas familiares según régimen de tenencia y tamaño del
+    municipio.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/f43406a5-14ec-463f-b81a-92ab4c354ff9/resource/0ba4faa7-c776-448c-ab07-622d5d90f6bc/download/porcentaje-de-viviendas-familiares-segun-regimen-de-tenencia-y-tamano-del-municipio.csv
+- name: Porcentaje de viviendas familiares según régimen de tenencia y tamaño del
+    municipio.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/f43406a5-14ec-463f-b81a-92ab4c354ff9/resource/19ee8d23-a74b-4dfc-a74d-ab3116e73283/download/porcentaje-de-viviendas-familiares-segun-regimen-de-tenencia-y-tamano-del-municipio.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'hogares', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1931746'
+  harvested_at: '2026-10-20T11:17:01.470103+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2001_porcentaje_viviendas_familiares_por_regimen
+source_id: comunidad_madrid_ckan
+name: Censo de vivienda y locales 2001. Porcentaje de viviendas familiares principales
+  por régimen de tenencia. Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_porcentaje_viviendas_familiares_por_regimen
+resources:
+- name: Censo de vivienda y locales 2001. Porcentaje de viviendas familiares principales
+    por régimen de tenencia.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/0b6870d2-f9ac-4a34-aeea-501b904d604c/resource/ed1af516-597a-4b63-a91e-9b971aa910fa/download/censo-de-vivienda-y-locales-2001.-porcentaje-de-viviendas-familiares-principales-por-regimen-de-.csv
+- name: Censo de vivienda y locales 2001. Porcentaje de viviendas familiares principales
+    por régimen de tenencia. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/0b6870d2-f9ac-4a34-aeea-501b904d604c/resource/2d63d4a5-ea3f-49cd-899c-b7d067523a76/download/censo-de-vivienda-y-locales-2001.-porcentaje-de-viviendas-familiares-principales-por-regimen-de.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_porcentaje_viviendas_familiares_por_regimen
+  harvested_at: '2026-10-20T11:17:01.483836+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

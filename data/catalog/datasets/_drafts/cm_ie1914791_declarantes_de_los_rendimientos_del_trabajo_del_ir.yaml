@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914791_declarantes_de_los_rendimientos_del_trabajo_del_ir
+source_id: comunidad_madrid_ckan
+name: Declarantes de los rendimientos del trabajo del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914791
+resources:
+- name: Declaraciones de los rendimientos del trabajo del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/5ccc1327-70f9-4ca2-9a33-40bac031b64c/resource/a5f942b6-4e3c-4ba3-8a79-8c66012666bc/download/declarantes-de-los-rendimientos-del-trabajo-del-irpf.-municipios.csv
+- name: Declarantes de los rendimientos del trabajo del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/5ccc1327-70f9-4ca2-9a33-40bac031b64c/resource/512cc95e-0153-45b6-93a4-35eeb78ff844/download/declarantes-de-los-rendimientos-del-trabajo-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914791'
+  harvested_at: '2026-10-20T11:17:01.450959+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

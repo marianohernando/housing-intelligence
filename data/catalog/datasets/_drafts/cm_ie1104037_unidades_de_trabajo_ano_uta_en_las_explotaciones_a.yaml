@@ -1,0 +1,35 @@
+dataset_id: cm_ie1104037_unidades_de_trabajo_ano_uta_en_las_explotaciones_a
+source_id: comunidad_madrid_ckan
+name: Unidades de Trabajo Año (UTA) en las explotaciones agrícolas. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1104037
+resources:
+- name: Unidades de Trabajo Año (UTA) en las explotaciones agrícolas.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/8f832008-e4db-4309-9765-756d87f75eab/resource/68c513da-d88f-463e-a861-dc362a586dc9/download/unidades-de-trabajo-ano-uta-en-las-explotaciones-agricolas.-municipios.csv
+- name: Unidades de Trabajo Año (UTA) en las explotaciones agrícolas. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/8f832008-e4db-4309-9765-756d87f75eab/resource/599e5015-e3c0-40d3-b788-bc5517bea119/download/unidades-de-trabajo-ano-uta-en-las-explotaciones-agricolas.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1104037'
+  harvested_at: '2026-10-20T11:17:01.440901+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

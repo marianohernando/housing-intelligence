@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2020_jefes_por_sexo
+source_id: comunidad_madrid_ckan
+name: Censo agrario 2020. Edad media y número de jefes de explotaciones agrarias por
+  sexo. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2020_jefes_por_sexo
+resources:
+- name: Censo agrario 2020. Edad media y número de jefes de explotaciones agrarias
+    por sexo.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/8a5897b9-1915-460c-9d26-d0b559711a63/resource/d2f4987d-a314-44b8-9edc-c5bb42c8353f/download/censo-agrario-2020.-edad-media-y-numero-de-jefes-de-explotaciones-agrarias-por-sexo.-municipios.csv
+- name: Censo agrario 2020. Edad media y número de jefes de explotaciones agrarias
+    por sexo. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/8a5897b9-1915-460c-9d26-d0b559711a63/resource/36be4262-ddb0-407a-bb0a-f8b16dad64be/download/censo-agrario-2020.-edad-media-y-numero-de-jefes-de-explotaciones-agrarias-por-sexo.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2020_jefes_por_sexo
+  harvested_at: '2026-10-20T11:17:01.492136+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

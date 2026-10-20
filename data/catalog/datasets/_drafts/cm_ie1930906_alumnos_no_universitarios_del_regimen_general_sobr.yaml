@@ -1,0 +1,38 @@
+dataset_id: cm_ie1930906_alumnos_no_universitarios_del_regimen_general_sobr
+source_id: comunidad_madrid_ckan
+name: Alumnos no universitarios del régimen general sobre población de 0 a 19 años
+  matriculados en centros escolares. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930906
+resources:
+- name: Alumnos no universitarios del régimen general sobre población de 0 a 19 años
+    matriculados en centros escolares.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4887029a-fc7e-4b4b-ade3-8d58a211b822/resource/8e987a0d-4303-47e9-98ff-f61961e85d4c/download/alumnos-no-universitarios-del-regimen-general-sobre-poblacion-de-0-a-19-anos-matriculados-en-cen.csv
+- name: Alumnos no universitarios del régimen general sobre población de 0 a 19 años
+    matriculados en centros escolares. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4887029a-fc7e-4b4b-ade3-8d58a211b822/resource/8f683ee9-936a-46b4-911f-f576243bd577/download/alumnos-no-universitarios-del-regimen-general-sobre-poblacion-de-0-a-19-anos-matriculados-en-ce.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930906'
+  harvested_at: '2026-10-20T11:17:01.466962+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

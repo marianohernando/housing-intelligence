@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930730_razon_de_progresividad_municipios
+source_id: comunidad_madrid_ckan
+name: Razón de progresividad. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930730
+resources:
+- name: Razón de progresividad.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/5bcd3de0-aba3-4d68-b175-eebe6e7baaa9/resource/dd0d6be7-f26c-4737-846f-8bb4cff5bbc7/download/razon-de-progresividad.-municipios.csv
+- name: Razón de progresividad. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/5bcd3de0-aba3-4d68-b175-eebe6e7baaa9/resource/ef22f534-91ed-4921-a2d5-85693083790e/download/razon-de-progresividad.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930730'
+  harvested_at: '2026-10-20T11:17:01.465283+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

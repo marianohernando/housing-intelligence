@@ -1,0 +1,35 @@
+dataset_id: cm_ie604010_centros_para_personas_sin_hogar_por_diversas_carac
+source_id: comunidad_madrid_ckan
+name: Centros para personas sin hogar por diversas características
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/604010
+resources:
+- name: Centros para personas sin hogar por diversas características.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/10c96e5a-c7cc-410f-a9d5-703ec2e2c6ed/resource/7c326b80-8a8a-4490-9499-17803a1fcb2c/download/centros-para-personas-sin-hogar-por-diversas-caracteristicas.csv
+- name: Centros para personas sin hogar por diversas características.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/10c96e5a-c7cc-410f-a9d5-703ec2e2c6ed/resource/a9977c04-1fc3-43ac-a715-c1e532bfc029/download/centros-para-personas-sin-hogar-por-diversas-caracteristicas.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '604010'
+  harvested_at: '2026-10-20T11:17:01.478628+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

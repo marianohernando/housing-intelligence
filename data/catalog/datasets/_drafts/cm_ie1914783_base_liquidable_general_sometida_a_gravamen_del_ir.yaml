@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914783_base_liquidable_general_sometida_a_gravamen_del_ir
+source_id: comunidad_madrid_ckan
+name: Base liquidable general sometida a gravamen del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914783
+resources:
+- name: Base liquidable general sometida a gravamen del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/f8ffbe2d-7a30-47c5-b992-fb58ad37b088/resource/6684848f-8e8c-4c1a-a1d8-7dcc473d31b5/download/base-liquidable-general-sometida-a-gravamen-del-irpf.-municipios.csv
+- name: Base liquidable general sometida a gravamen del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/f8ffbe2d-7a30-47c5-b992-fb58ad37b088/resource/9e81e947-152f-4c39-b556-64aae1e3fc57/download/base-liquidable-general-sometida-a-gravamen-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914783'
+  harvested_at: '2026-10-20T11:17:01.445734+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

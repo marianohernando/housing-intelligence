@@ -1,0 +1,38 @@
+dataset_id: cm_censo_89_99_09_ganaderia_porcentaje
+source_id: comunidad_madrid_ckan
+name: Censo agrario (1989, 1999, 2009). Porcentaje de unidades ganaderas por tipo
+  de ganado. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_89_99_09_ganaderia_porcentaje
+resources:
+- name: Censo agrario (1989, 1999, 2009). Porcentaje de unidades ganaderas por tipo
+    de ganado.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/94099607-fb0a-49d8-bc92-bf8d9825b1df/resource/6d50f69d-3220-4fea-8923-8eb052bef4d5/download/censo-agrario-1989-1999-2009.-porcentaje-de-unidades-ganaderas-por-tipo-de-ganado.-municipios.csv
+- name: Censo agrario (1989, 1999, 2009). Porcentaje de unidades ganaderas por tipo
+    de ganado. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/94099607-fb0a-49d8-bc92-bf8d9825b1df/resource/bafcca76-f931-4eed-84ca-3015ae4e9798/download/censo-agrario-1989-1999-2009.-porcentaje-de-unidades-ganaderas-por-tipo-de-ganado.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_89_99_09_ganaderia_porcentaje
+  harvested_at: '2026-10-20T11:17:01.500812+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

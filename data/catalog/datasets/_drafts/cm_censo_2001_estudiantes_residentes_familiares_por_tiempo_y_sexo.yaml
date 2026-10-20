@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2001_estudiantes_residentes_familiares_por_tiempo_y_sexo
+source_id: comunidad_madrid_ckan
+name: Población estudiante de 16 años o más censada en viviendas familiares por tiempo
+  de desplazamiento y sexo. Censo 2001. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_estudiantes_residentes_familiares_por_tiempo_y_sexo
+resources:
+- name: Población estudiante de 16 años o más censada en viviendas familiares por
+    tiempo de desplazamiento y sexo. Censo 2001.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/71a72755-8b7c-4572-90dd-72e9d83ff0e9/resource/cb3318a1-8536-4f34-bf69-a7ea5703bd4b/download/poblacion-estudiante-de-16-anos-o-mas-censada-en-viviendas-familiares-por-tiempo-de-desplazamien.csv
+- name: Población estudiante de 16 años o más censada en viviendas familiares por
+    tiempo de desplazamiento y sexo. Censo 2001. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/71a72755-8b7c-4572-90dd-72e9d83ff0e9/resource/f852ebb6-03ab-4b6e-9d70-b538f7777d10/download/poblacion-estudiante-de-16-anos-o-mas-censada-en-viviendas-familiares-por-tiempo-de-desplazamie.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_estudiantes_residentes_familiares_por_tiempo_y_sexo
+  harvested_at: '2026-10-20T11:17:01.479352+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

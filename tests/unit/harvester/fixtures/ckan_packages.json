@@ -1,0 +1,846 @@
+[
+ {
+  "author": null,
+  "author_email": null,
+  "creator_user_id": "1b0067e9-eb08-424a-819a-709640541b70",
+  "extras": [
+   {
+    "key": "Fecha Actualización",
+    "value": "20-07-2026"
+   },
+   {
+    "key": "Fuente",
+    "value": "Estadística de Viviendas Declaradas en el Impuesto sobre la Renta de las Personas Físicas. Agencia Estatal de Administración Tributaria."
+   },
+   {
+    "key": "Origen",
+    "value": "Desvan"
+   },
+   {
+    "key": "Unidad",
+    "value": "Euros"
+   },
+   {
+    "key": "Ámbito",
+    "value": "Toda España"
+   }
+  ],
+  "groups": [],
+  "id": "7b1e0527-da4c-4c93-8a58-a53879f9c6b8",
+  "isopen": true,
+  "license_id": "cc-by",
+  "license_title": "Creative Commons Attribution",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/legalcode.es",
+  "maintainer": null,
+  "maintainer_email": null,
+  "metadata_created": "2026-05-21T16:31:36.297310",
+  "metadata_modified": "2026-08-06T16:42:00.283516",
+  "name": "1934259",
+  "notes": "Sólo se muestran códigos postales con más de 200 viviendas arrendadas como habituales.",
+  "num_resources": 2,
+  "num_tags": 59,
+  "organization": {
+   "approval_status": "approved",
+   "created": "2025-06-02T09:53:23.552735",
+   "description": "Instituto de Estadística de la Comunidad de Madrid",
+   "id": "estadistica",
+   "image_url": "",
+   "is_organization": true,
+   "name": "estadistica",
+   "state": "active",
+   "title": "Instituto de Estadística",
+   "type": "organization"
+  },
+  "owner_org": "estadistica",
+  "private": false,
+  "relationships_as_object": [],
+  "relationships_as_subject": [],
+  "resources": [
+   {
+    "cache_last_updated": null,
+    "cache_url": null,
+    "created": "2026-05-21T16:31:36.524234",
+    "datastore_active": true,
+    "description": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid.csv",
+    "format": "CSV",
+    "hash": "",
+    "id": "70c3f1f8-534d-41bc-b4ba-6125cdf10628",
+    "last_modified": "2026-07-27T16:32:51.428026",
+    "metadata_modified": "2026-07-27T16:32:51.449973",
+    "mimetype": "text/csv",
+    "mimetype_inner": null,
+    "name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid.csv",
+    "package_id": "7b1e0527-da4c-4c93-8a58-a53879f9c6b8",
+    "position": 0,
+    "resource_type": null,
+    "size": 15200,
+    "state": "active",
+    "url": "https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/70c3f1f8-534d-41bc-b4ba-6125cdf10628/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-p.csv",
+    "url_type": "upload"
+   },
+   {
+    "cache_last_updated": null,
+    "cache_url": null,
+    "created": "2026-05-21T16:31:37.021395",
+    "datastore_active": false,
+    "description": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid.json",
+    "format": "JSON",
+    "hash": "",
+    "id": "ba4f7189-9cea-4907-93d6-ff759e3ce98c",
+    "last_modified": "2026-07-27T16:32:51.798002",
+    "metadata_modified": "2026-07-27T16:32:51.817018",
+    "mimetype": "application/json",
+    "mimetype_inner": null,
+    "name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid.json",
+    "package_id": "7b1e0527-da4c-4c93-8a58-a53879f9c6b8",
+    "position": 1,
+    "resource_type": null,
+    "size": 30388,
+    "state": "active",
+    "url": "https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/ba4f7189-9cea-4907-93d6-ff759e3ce98c/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-.json",
+    "url_type": "upload"
+   }
+  ],
+  "state": "active",
+  "tags": [
+   {
+    "display_name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para",
+    "id": "71c1a891-d9e6-451f-a855-5d9fdd057905",
+    "name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28001 Sa",
+    "id": "2701aaeb-6948-41cd-bb76-b123765a1a43",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28001 Sa",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28002 Ch",
+    "id": "04107805-e509-4ca0-b6c0-89097b255259",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28002 Ch",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28003 Ch",
+    "id": "fdf19025-f93d-4f0d-aaff-a4c5d8753bf1",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28003 Ch",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28004 Ju",
+    "id": "2eda4424-b31a-4adb-a09d-c531b5f653ae",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28004 Ju",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28005 Ar",
+    "id": "be2d1bc6-973b-4219-bf11-ec2fc0c4ce8f",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28005 Ar",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28006 Ca",
+    "id": "9d7e902b-1d82-45cf-9779-68f722692e0d",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28006 Ca",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28007 Ad",
+    "id": "f8371a8d-de99-4233-b7dd-396934330cb1",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28007 Ad",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28008 Mo",
+    "id": "862d937e-fc67-4d1e-be85-411c44cd6ec1",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28008 Mo",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28009 Ib",
+    "id": "119038ad-d890-408c-baf1-cf2931ee198d",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28009 Ib",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28010 Al",
+    "id": "39bedf30-c24f-4a52-92a6-28d0b4be9b03",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28010 Al",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28011 La",
+    "id": "b875e91e-be5d-4d91-946e-80f98f91194a",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28011 La",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28012 Em",
+    "id": "29f68ee1-25af-45a6-bee5-28cc70a2c59c",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28012 Em",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28013 Ce",
+    "id": "cbf62dee-4db6-4f08-ae53-56f84b60ebaa",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28013 Ce",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28014 Re",
+    "id": "0396018f-ccab-4c7b-91dc-2706ee002336",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28014 Re",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28015 Un",
+    "id": "dafbd5d7-8ce8-43fb-b3e2-6081f31202c8",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28015 Un",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28016 Hi",
+    "id": "e604c5a4-5555-4054-bc06-b37e068492f8",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28016 Hi",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28017 Ve",
+    "id": "363ec2c4-fa21-4455-8ec1-95ba1df74a4e",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28017 Ve",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28018 Pa",
+    "id": "66472745-4c05-42f4-85e1-05e5821f229c",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28018 Pa",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28019 Op",
+    "id": "cf1ce867-ec41-40bd-9a5c-515c2750a1b6",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28019 Op",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28020 Te",
+    "id": "87a7b359-07d8-4bb0-b526-ae1f9308a56e",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28020 Te",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28021 Vi",
+    "id": "c0ce915e-0a15-4fd9-a1fd-99540da38713",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28021 Vi",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28022 Sa",
+    "id": "57f2a1a3-b6c1-417f-9ab3-c7d7d48235d3",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28022 Sa",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28023 Ar",
+    "id": "8d41a204-eb23-4056-a5bc-711404d25f61",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28023 Ar",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28024 Ca",
+    "id": "17a00f5a-11c5-4a35-93ea-6f1df3c89fc3",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28024 Ca",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28025 Ca",
+    "id": "4e799c3f-419a-4f60-9c79-736c00bbe74e",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28025 Ca",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28026 Us",
+    "id": "1b0366f7-43f2-4dfb-8bdd-d2b06cc3b803",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28026 Us",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28027 Sa",
+    "id": "80656e6a-b9ca-4b87-ae3b-267c286433c7",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28027 Sa",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28028 Gu",
+    "id": "955caf0b-ef1c-4e92-b551-26a95e3be6a1",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28028 Gu",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28029 Te",
+    "id": "34762e23-f6fc-42ba-99f0-0c5fe5b78f7e",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28029 Te",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28030 Mo",
+    "id": "ed0fcc8c-5e23-4aca-82b6-919c5a08f00c",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28030 Mo",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28031 Vi",
+    "id": "23f3e77b-ce48-4fdd-91e5-4dd117829dea",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28031 Vi",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28032 Vi",
+    "id": "37353803-cfee-4e06-bd20-a6a1154a6a82",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28032 Vi",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28033 Ho",
+    "id": "3480610d-00bb-4e6e-956e-392468ace894",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28033 Ho",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28034 Tr",
+    "id": "f330070a-33f3-47d1-9202-bb6e45152996",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28034 Tr",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28035 Fu",
+    "id": "5c15b82a-a4e5-4a7d-82f0-d918592b5563",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28035 Fu",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28036 Nu",
+    "id": "f97251f9-24e9-4ab5-b363-d5e7521069dc",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28036 Nu",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28037 Sa",
+    "id": "5e642706-851f-42ff-8757-d18d6cf6cd61",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28037 Sa",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28038 Pa",
+    "id": "fb6c8766-1d5d-4900-b6dd-52fc6321f049",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28038 Pa",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28039 Be",
+    "id": "1c0fc4cc-dca4-494c-ab4f-d3c4a100aa55",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28039 Be",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28040 Ci",
+    "id": "c7987d6c-12be-45a5-9c42-1975370d33b9",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28040 Ci",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28041 Or",
+    "id": "923f281a-4b01-4232-834b-66c5f3d8bcee",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28041 Or",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28042 Ba",
+    "id": "3e2e8273-091b-474f-b863-56518bbf8e9d",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28042 Ba",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28043 Ho",
+    "id": "bd64e36d-7676-46af-b4ab-298ced1e7b01",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28043 Ho",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28044 Cu",
+    "id": "0247c249-3f9a-4cf3-a760-75e5006652b0",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28044 Cu",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28045 De",
+    "id": "fc4e691a-4d60-4e78-b90d-36fd0d62a248",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28045 De",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28046 Ca",
+    "id": "9c477eff-e25b-4b44-a1be-923190866de5",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28046 Ca",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28047 Al",
+    "id": "0c309f41-ee6e-4084-a34a-937f50b14474",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28047 Al",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28049 El",
+    "id": "0ade871d-561b-4867-b663-7e976fd5f397",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28049 El",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28050 La",
+    "id": "54394a7e-e63c-4718-9ef7-ded3283ef8ed",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28050 La",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28051 Vi",
+    "id": "f09162cb-6de7-4c08-9719-ba6bd713159f",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28051 Vi",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28052 El",
+    "id": "7ba1712f-a2e4-418d-bebd-c5eda87e56ac",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28052 El",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28053 En",
+    "id": "cb1fdc06-f739-4868-8390-908e649218a4",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28053 En",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28054 Bu",
+    "id": "4ca36f42-f1d9-4e8d-add2-bdfda6064ced",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28054 Bu",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28055 Va",
+    "id": "964ebe9f-7af0-49e3-92aa-4a413f3f230b",
+    "name": "Alquiler del metro cuadrado mensual de viviendas habituales arrendadas en el código postal 28055 Va",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Urbanismo vivienda y construcción",
+    "id": "45efe5ac-3719-417f-8336-d6801e162936",
+    "name": "Urbanismo vivienda y construcción",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Vivienda",
+    "id": "01c23458-1407-4ac4-9ef9-298f1e0ec8d8",
+    "name": "Vivienda",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Viviendas declaradas en el IRPF",
+    "id": "27f5850c-30cd-4994-8dd1-54ed0fd2e6b7",
+    "name": "Viviendas declaradas en el IRPF",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Viviendas por ubicación del inmueble",
+    "id": "6c10de2e-c512-414b-a0d6-d27f302b1881",
+    "name": "Viviendas por ubicación del inmueble",
+    "state": "active",
+    "vocabulary_id": null
+   }
+  ],
+  "title": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid",
+  "type": "dataset",
+  "url": null,
+  "version": null
+ },
+ {
+  "author": "",
+  "author_email": "",
+  "creator_user_id": "1b0067e9-eb08-424a-819a-709640541b70",
+  "extras": [
+   {
+    "key": "Cobertura geográfica",
+    "value": "TODA la Comunidad de Madrid"
+   },
+   {
+    "key": "Cobertura temporal",
+    "value": "CURSO ESCOLAR"
+   },
+   {
+    "key": "Consejería",
+    "value": "Educación, Ciencia y Universidades"
+   },
+   {
+    "key": "Dirección General",
+    "value": "Subdirección General de Régimen Jurídico"
+   },
+   {
+    "key": "Frecuencia de actualización de datos",
+    "value": "ANUAL"
+   },
+   {
+    "key": "Identificador secuencial",
+    "value": "453"
+   },
+   {
+    "key": "Viceconsejería",
+    "value": "Secretaría General Técnica"
+   },
+   {
+    "key": "visualizacionSuperior",
+    "value": "https://idem.comunidad.madrid/visor/?v=localizacion&l=centros_educativos"
+   },
+   {
+    "key": "Ámbito - Subámbito",
+    "value": "Sociedad - Educación"
+   }
+  ],
+  "groups": [
+   {
+    "description": "Incluye: Formación.",
+    "display_name": "Educación",
+    "id": "educacion",
+    "image_display_url": "https://datos.comunidad.madrid/recursos/grupos/7.png",
+    "name": "educacion",
+    "title": "Educación"
+   }
+  ],
+  "id": "c750856d-3166-4dac-8e80-d1b824c968b5",
+  "isopen": true,
+  "license_id": "cc-by",
+  "license_title": "Creative Commons Attribution",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/legalcode.es",
+  "maintainer": "",
+  "maintainer_email": "",
+  "metadata_created": "2019-03-01T13:23:22.185976",
+  "metadata_modified": "2026-05-05T10:27:22.106787",
+  "name": "centros_educativos",
+  "notes": "Datos de los centros educativos de la Comunidad de Madrid en los que se imparten enseñanzas no universitarias:  Datos identificativos,  de localización, etapas educativas",
+  "num_resources": 2,
+  "num_tags": 3,
+  "organization": {
+   "approval_status": "approved",
+   "created": "2023-06-22T14:16:43.570043",
+   "description": "Comunidad de Madrid",
+   "id": "f483a299-1775-4d87-a2f7-39bf554735a1",
+   "image_url": "",
+   "is_organization": true,
+   "name": "comunidad-de-madrid",
+   "state": "active",
+   "title": "Comunidad de Madrid",
+   "type": "organization"
+  },
+  "owner_org": "f483a299-1775-4d87-a2f7-39bf554735a1",
+  "private": false,
+  "relationships_as_object": [],
+  "relationships_as_subject": [],
+  "resources": [
+   {
+    "cache_last_updated": null,
+    "cache_url": null,
+    "created": "2019-03-01T13:23:22.185976",
+    "datastore_active": true,
+    "description": "En formato CSV",
+    "format": "CSV",
+    "hash": "",
+    "id": "28d60557-1d73-4281-ab08-6cfd3b2f5f83",
+    "last_modified": "2026-05-05T10:27:22.097107",
+    "metadata_modified": "2026-05-05T10:27:22.111605",
+    "mimetype": "text/csv",
+    "mimetype_inner": null,
+    "name": "Centros educativos de la comunidad de Madrid",
+    "package_id": "c750856d-3166-4dac-8e80-d1b824c968b5",
+    "position": 0,
+    "resource_type": null,
+    "size": 2284653,
+    "state": "active",
+    "url": "https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/28d60557-1d73-4281-ab08-6cfd3b2f5f83/download/centros_educativos.csv",
+    "url_type": "upload"
+   },
+   {
+    "cache_last_updated": null,
+    "cache_url": null,
+    "created": "2019-03-01T13:23:22.185976",
+    "datastore_active": false,
+    "description": "En formato JSON",
+    "format": "JSON",
+    "hash": "",
+    "id": "be2264df-c720-4619-ab79-aebad9b248e0",
+    "last_modified": "2026-05-05T10:27:16.554415",
+    "metadata_modified": "2026-05-05T10:27:16.570352",
+    "mimetype": "application/json",
+    "mimetype_inner": null,
+    "name": "Centros educativos de la comunidad de Madrid",
+    "package_id": "c750856d-3166-4dac-8e80-d1b824c968b5",
+    "position": 1,
+    "resource_type": null,
+    "size": 8885600,
+    "state": "active",
+    "url": "https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/be2264df-c720-4619-ab79-aebad9b248e0/download/centros_educativos.json",
+    "url_type": "upload"
+   }
+  ],
+  "state": "active",
+  "tags": [
+   {
+    "display_name": " nombre centro",
+    "id": "4ccfa152-5bd6-42cf-b895-aa8c69148cfa",
+    "name": " nombre centro",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": " titularidad",
+    "id": "1a8ca9bd-69a4-4022-afb6-0ce181362b33",
+    "name": " titularidad",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "Genérico",
+    "id": "ebd50f89-f67f-4601-b41e-7c93edd58c56",
+    "name": "Genérico",
+    "state": "active",
+    "vocabulary_id": null
+   }
+  ],
+  "title": "Centros educativos de la comunidad de Madrid",
+  "type": "dataset",
+  "url": "",
+  "version": ""
+ },
+ {
+  "author": "",
+  "author_email": "",
+  "creator_user_id": "1b0067e9-eb08-424a-819a-709640541b70",
+  "extras": [
+   {
+    "key": "Cobertura geográfica",
+    "value": "INFERIOR a la Comunidad de Madrid"
+   },
+   {
+    "key": "Consejería",
+    "value": "Economía, Empleo y Hacienda"
+   },
+   {
+    "key": "Dirección General",
+    "value": "Dirección General de Economía"
+   },
+   {
+    "key": "Frecuencia de actualización de datos",
+    "value": "ANUAL"
+   },
+   {
+    "key": "Identificador secuencial",
+    "value": "558"
+   },
+   {
+    "key": "Viceconsejería",
+    "value": "Viceconsejería de Economía y Empleo"
+   }
+  ],
+  "groups": [
+   {
+    "description": "Incluye: Registros.",
+    "display_name": "Legislación y justicia",
+    "id": "legislacion-justicia",
+    "image_display_url": "https://datos.comunidad.madrid/recursos/grupos/12.png",
+    "name": "legislacion-justicia",
+    "title": "Legislación y justicia"
+   }
+  ],
+  "id": "2c176a23-a6cd-4c18-b5df-b32a3a3a1219",
+  "isopen": true,
+  "license_id": "cc-by",
+  "license_title": "Creative Commons Attribution",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/legalcode.es",
+  "maintainer": "",
+  "maintainer_email": "",
+  "metadata_created": "2019-07-05T10:16:54.009487",
+  "metadata_modified": "2025-02-07T09:42:18.651377",
+  "name": "secciones_censales",
+  "notes": "Códigos de las secciones censales, código y denominación del municipio al que pertenecen, código y denominación del distrito al que pertenecen (denominación sólo para el municipio de Madrid).",
+  "num_resources": 3,
+  "num_tags": 6,
+  "organization": {
+   "approval_status": "approved",
+   "created": "2023-06-22T14:16:43.570043",
+   "description": "Comunidad de Madrid",
+   "id": "f483a299-1775-4d87-a2f7-39bf554735a1",
+   "image_url": "",
+   "is_organization": true,
+   "name": "comunidad-de-madrid",
+   "state": "active",
+   "title": "Comunidad de Madrid",
+   "type": "organization"
+  },
+  "owner_org": "f483a299-1775-4d87-a2f7-39bf554735a1",
+  "private": false,
+  "relationships_as_object": [],
+  "relationships_as_subject": [],
+  "resources": [
+   {
+    "cache_last_updated": null,
+    "cache_url": null,
+    "created": "2019-07-05T10:16:54.009487",
+    "datastore_active": true,
+    "description": "En formato csv",
+    "format": "CSV",
+    "hash": "",
+    "id": "d96741f3-f789-41df-a58b-e263dc57dd8a",
+    "last_modified": "2024-06-03T11:37:37.254190",
+    "metadata_modified": "2024-06-04T12:00:50.373332",
+    "mimetype": "text/csv",
+    "mimetype_inner": null,
+    "name": "Secciones censales",
+    "package_id": "2c176a23-a6cd-4c18-b5df-b32a3a3a1219",
+    "position": 0,
+    "resource_type": null,
+    "size": 185373,
+    "state": "active",
+    "url": "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/d96741f3-f789-41df-a58b-e263dc57dd8a/download/secciones_censales.csv",
+    "url_type": "upload"
+   },
+   {
+    "cache_last_updated": null,
+    "cache_url": null,
+    "created": "2019-07-05T10:16:54.009487",
+    "datastore_active": false,
+    "description": "En formato json",
+    "format": "JSON",
+    "hash": "",
+    "id": "7c0c475c-af1e-4e76-a06d-43cb5d113aab",
+    "last_modified": "2024-06-03T11:37:40.388724",
+    "metadata_modified": "2024-06-04T12:00:50.373530",
+    "mimetype": "application/json",
+    "mimetype_inner": null,
+    "name": "Secciones censales",
+    "package_id": "2c176a23-a6cd-4c18-b5df-b32a3a3a1219",
+    "position": 1,
+    "resource_type": null,
+    "size": 936192,
+    "state": "active",
+    "url": "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/7c0c475c-af1e-4e76-a06d-43cb5d113aab/download/secciones_censales.json",
+    "url_type": "upload"
+   }
+  ],
+  "state": "active",
+  "tags": [
+   {
+    "display_name": "barrio",
+    "id": "1b94cce5-fbfb-4181-a71a-f013f6916971",
+    "name": "barrio",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "barrios_de_madrid",
+    "id": "c0628e23-c4af-43b6-8753-67a51234a11b",
+    "name": "barrios_de_madrid",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "densidad_de_población",
+    "id": "32f5c49d-41b1-4cea-b1f2-6a4400a1d965",
+    "name": "densidad_de_población",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "distrito",
+    "id": "ccdcf26b-130d-495e-98cf-1b119cd938d0",
+    "name": "distrito",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "distrito_de_madrid",
+    "id": "c8ef51e7-e8fb-48bb-8faa-6041610db002",
+    "name": "distrito_de_madrid",
+    "state": "active",
+    "vocabulary_id": null
+   },
+   {
+    "display_name": "superficie",
+    "id": "b4957ba6-8cb9-425c-ac1d-8d8a5e1b67bf",
+    "name": "superficie",
+    "state": "active",
+    "vocabulary_id": null
+   }
+  ],
+  "title": "Secciones censales",
+  "type": "dataset",
+  "url": "",
+  "version": ""
+ }
+]

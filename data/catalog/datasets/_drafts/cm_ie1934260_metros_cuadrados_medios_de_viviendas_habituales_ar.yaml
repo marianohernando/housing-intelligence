@@ -1,0 +1,38 @@
+dataset_id: cm_ie1934260_metros_cuadrados_medios_de_viviendas_habituales_ar
+source_id: comunidad_madrid_ckan
+name: Metros cuadrados medios de viviendas habituales arrendadas por código postal
+  para el municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934260
+resources:
+- name: Metros cuadrados medios de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4c4a7b85-649b-4680-b2ac-6663583fbd45/resource/5e17cfe1-fba2-403d-9937-03aea76be241/download/metros-cuadrados-medios-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-d.csv
+- name: Metros cuadrados medios de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4c4a7b85-649b-4680-b2ac-6663583fbd45/resource/7db3ece8-df34-44c1-8308-ba94198f473e/download/metros-cuadrados-medios-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'arrendad']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934260'
+  harvested_at: '2026-10-20T11:17:01.425689+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

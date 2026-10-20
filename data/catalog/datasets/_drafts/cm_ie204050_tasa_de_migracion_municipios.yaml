@@ -1,0 +1,35 @@
+dataset_id: cm_ie204050_tasa_de_migracion_municipios
+source_id: comunidad_madrid_ckan
+name: Tasa de migración. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/204050
+resources:
+- name: Tasa de migración.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/03905f25-da6d-41f2-8b0f-2389cb441671/resource/c72b2657-bb43-485e-bf9f-faa68700646b/download/tasa-de-migracion.-municipios.csv
+- name: Tasa de migración. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/03905f25-da6d-41f2-8b0f-2389cb441671/resource/46c189dd-8f91-423c-87c9-6f978d7e6fc5/download/tasa-de-migracion.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'migraciones']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '204050'
+  harvested_at: '2026-10-20T11:17:01.478068+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

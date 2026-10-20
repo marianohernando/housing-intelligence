@@ -1,0 +1,35 @@
+dataset_id: cm_ie1904060_centros_no_universitarios_del_regimen_general_por
+source_id: comunidad_madrid_ckan
+name: Centros no universitarios del régimen general por 10.000 habitantes. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1904060
+resources:
+- name: Centros no universitarios del régimen general por 10.000 habitantes.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/a12e5b22-4e76-46a1-a1e1-bf70bdb5ae14/resource/1bb380fc-1366-412a-8108-b86941b1b73a/download/centros-no-universitarios-del-regimen-general-por-10.000-habitantes.-municipios.csv
+- name: Centros no universitarios del régimen general por 10.000 habitantes. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/a12e5b22-4e76-46a1-a1e1-bf70bdb5ae14/resource/bd8051c3-db5e-4440-8a2f-55bba5ade71d/download/centros-no-universitarios-del-regimen-general-por-10.000-habitantes.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1904060'
+  harvested_at: '2026-10-20T11:17:01.442796+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

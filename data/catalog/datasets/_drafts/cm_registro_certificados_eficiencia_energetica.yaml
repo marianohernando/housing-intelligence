@@ -1,0 +1,41 @@
+dataset_id: cm_registro_certificados_eficiencia_energetica
+source_id: comunidad_madrid_ckan
+name: Registro de Certificados de Eficiencia Energética de Edificios
+domain: urbanism
+owner: Comunidad de Madrid
+format: ZIP
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: mensual
+landing_url: https://datos.comunidad.madrid/dataset/registro_certificados_eficiencia_energetica
+resources:
+- name: Registro CEEE anterior a 2024
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/971ee067-8ec1-47a1-a973-f1f3704d5d20/resource/93a01a59-d4ee-427f-a21f-9e24a8ae496d/download/registro_ceee_anterior_a_2024.zip
+- name: Registro CEEE 2024
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/971ee067-8ec1-47a1-a973-f1f3704d5d20/resource/88c7e1be-195d-43f6-b817-000d36d92d27/download/registro_certificados_eficiencia_energetica_2024.zip
+- name: Registro CEEE 2025
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/971ee067-8ec1-47a1-a973-f1f3704d5d20/resource/5d7a31ec-322a-4868-877a-24885251ce5c/download/registro_certificados_eficiencia_energetica_2025.zip
+- name: Registro CEEE 2026
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/971ee067-8ec1-47a1-a973-f1f3704d5d20/resource/4e42b49c-bb6b-485a-a7b7-8f760f356855/download/registro_certificados_eficiencia_energetica_2026.csv
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['edificios']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: registro_certificados_eficiencia_energetica
+  harvested_at: '2026-10-20T11:17:01.433238+00:00'
+notes: Auto-draft. composite=4.7; license_id=cc-by

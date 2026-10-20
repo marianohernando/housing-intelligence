@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914781_otros_rendimientos_generales_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Otros rendimientos generales del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914781
+resources:
+- name: Otros rendimientos generales del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/7e893081-510c-4a74-bf5d-dffb46eba5c3/resource/c226414e-2d77-4812-882c-8090bcd75e05/download/otros-rendimientos-generales-del-irpf.-municipios.csv
+- name: Otros rendimientos generales del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/7e893081-510c-4a74-bf5d-dffb46eba5c3/resource/b6fb168a-7a2e-41ec-a21c-722461ada426/download/otros-rendimientos-generales-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914781'
+  harvested_at: '2026-10-20T11:17:01.445041+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

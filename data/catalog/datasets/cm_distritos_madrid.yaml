@@ -1,0 +1,38 @@
+dataset_id: cm_distritos_madrid
+source_id: comunidad_madrid_ckan
+name: Distritos del Municipio de Madrid
+domain: geography
+owner: Comunidad de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: null
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/distritos_municipio_madrid
+resources:
+- name: Distritos del Municipio de Madrid
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/91ae8acd-b504-41f5-86ca-3b9c8b1f82d6/resource/8d9717e3-ff8c-4e1a-9429-a1538e7916c7/download/distritos_municipio_madrid.csv
+- name: Distritos del Municipio de Madrid
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/91ae8acd-b504-41f5-86ca-3b9c8b1f82d6/resource/39dce877-7c49-4ae9-89bf-324967842f38/download/distritos_municipio_madrid.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: distritos_municipio_madrid
+  harvested_at: '2026-10-20T11:16:21.702497+00:00'
+notes: District codes/names | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.7; license_id=cc-by

@@ -1,0 +1,38 @@
+dataset_id: cm_ie1934258_alquiler_medio_mensual_de_viviendas_habituales_arr
+source_id: comunidad_madrid_ckan
+name: Alquiler medio mensual de viviendas habituales arrendadas por código postal
+  para el municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934258
+resources:
+- name: Alquiler medio mensual de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/c9b49b8c-47a5-4deb-83b5-080b582fda7e/resource/54fbc230-31fd-4cf3-9673-7a85fed2a784/download/alquiler-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-de.csv
+- name: Alquiler medio mensual de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/c9b49b8c-47a5-4deb-83b5-080b582fda7e/resource/5bfca7dd-422c-4a24-b56e-f19bb9cf7df2/download/alquiler-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-d.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler', 'arrendad']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934258'
+  harvested_at: '2026-10-20T11:17:01.425008+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

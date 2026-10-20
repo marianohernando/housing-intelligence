@@ -1,0 +1,35 @@
+# Curation of harvested candidates into the curated catalog (Sprint P0, 2026-10-20).
+# Basis: docs/02_data/08_initial_madrid_dataset_map.md (P0-01..P0-12, P1-01..P1-09),
+# START_HERE §5 order, DATAMAD bases §6/§10 (Comunidad de Madrid portal is structural).
+# Apply with: uv run hi-ingest catalog curate data/catalog/curation/2026-10-20_sprint_p0.yaml
+reviewed_by: claude-code
+point: &point {geography: point, geo: {resolution: point, h3_join_method: centroid}}
+entries:
+  # --- P0: core ingest now ---
+  - {candidate_id: "comunidad_madrid_ckan:1934259", dataset_id: cm_alquiler_m2_codigo_postal_madrid, priority: P0, note: "P0-02 affordability, Reality Check"}
+  - {candidate_id: "comunidad_madrid_ckan:alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000", dataset_id: cm_alquiler_m2_municipios, priority: P0, note: "P0-03 affordability outside Madrid capital", overrides: {geo: {resolution: municipio}}}
+  - {candidate_id: "comunidad_madrid_ckan:poblacion_censada_por_edad_nacionalidad_y_sexo", dataset_id: cm_poblacion_edad_nacionalidad_sexo, priority: P0, note: "P0-04 demographic structure"}
+  - {candidate_id: "comunidad_madrid_ckan:censo_2021_hogares_por_tamanyo", dataset_id: cm_hogares_tamano_censo_2021, priority: P0, note: "P0-05 Housing Gap demand"}
+  - {candidate_id: "comunidad_madrid_ckan:censo_anual_vivienda_por_superficie_agregada", dataset_id: cm_viviendas_superficie, priority: P0, note: "P0-06 housing stock vs household size", overrides: {domain: housing}}
+  - {candidate_id: "comunidad_madrid_ckan:irpf_indicador_renta", dataset_id: cm_renta_disponible_municipal, priority: P0, note: "P0-07 territorial affordability"}
+  - {candidate_id: "comunidad_madrid_ckan:centros_educativos", dataset_id: cm_centros_educativos, priority: P0, note: "P0-08 FamilyFit, school access", overrides: *point}
+  - {candidate_id: "comunidad_madrid_ckan:centros_servicios_establecimientos_sanitarios", dataset_id: cm_centros_sanitarios, priority: P0, note: "P0-09 health access, SeniorFit", overrides: *point}
+  - {candidate_id: "comunidad_madrid_ckan:atencion_social_registro_centros", dataset_id: cm_centros_atencion_social, priority: P0, note: "P0-10 senior/dependency services", overrides: *point}
+  - {candidate_id: "comunidad_madrid_ckan:barrios_municipio_madrid", dataset_id: cm_barrios_madrid, priority: P0, note: "Barrio codes/names; geometry derived from cm_secciones_censales", overrides: {domain: geography}}
+  - {candidate_id: "crtm_open_data:5c7f2951962540d69ffe8f640d94c246", dataset_id: crtm_gtfs_metro, priority: P0, note: "P0-11 mobility", overrides: *point}
+  - {candidate_id: "crtm_open_data:868df0e58fca47e79b942902dffd7da0", dataset_id: crtm_gtfs_emt, priority: P0, note: "P0-11 mobility (EMT Madrid)", overrides: *point}
+  - {candidate_id: "crtm_open_data:1a25440bf66f499bae2657ec7fb40144", dataset_id: crtm_gtfs_cercanias, priority: P0, note: "P0-11 mobility", overrides: *point}
+  - {candidate_id: "crtm_open_data:885399f83408473c8d815e40c5e702b7", dataset_id: crtm_gtfs_interurbanos, priority: P0, note: "P0-11 mobility (76 MB)", overrides: *point}
+  - {candidate_id: "crtm_open_data:aaed26cc0ff64b0c947ac0bc3e033196", dataset_id: crtm_gtfs_metro_ligero, priority: P0, note: "P0-11 mobility", overrides: *point}
+  - {candidate_id: "ayuntamiento_madrid_ckan:300087-0-indicadores-distritos", dataset_id: ayto_panel_indicadores_distritos_barrios, priority: P0, note: "P0-01 territorial profile (complements CM data)", overrides: {domain: population, geo: {resolution: barrio}}}
+  # --- P1: next ---
+  - {candidate_id: "comunidad_madrid_ckan:oficinas_farmacia", dataset_id: cm_oficinas_farmacia, priority: P1, note: "P1-05 essential services", overrides: *point}
+  - {candidate_id: "comunidad_madrid_ckan:distritos_municipio_madrid", dataset_id: cm_distritos_madrid, priority: P1, note: "District codes/names", overrides: {domain: geography}}
+  - {candidate_id: "comunidad_madrid_ckan:transacciones_inmobiliarias_municipio", dataset_id: cm_transacciones_inmobiliarias, priority: P1, note: "P1-03 market activity"}
+  - {candidate_id: "comunidad_madrid_ckan:transacciones_vivienda_nueva_usada_municipio", dataset_id: cm_transacciones_nueva_usada, priority: P1, note: "P1-04 market structure"}
+  - {candidate_id: "comunidad_madrid_ckan:parcelas_portal_suelo", dataset_id: cm_parcelas_portal_suelo, priority: P1, note: "P1-02 Parcel Analyzer (PRO)"}
+  - {candidate_id: "comunidad_madrid_ckan:personas_discapacidad_por_edad_y_sexo", dataset_id: cm_personas_discapacidad, priority: P1, note: "P1-06 aggregate only, accessible housing planning"}
+  - {candidate_id: "crtm_open_data:357e63c2904f43aeb5d8a267a64346d8", dataset_id: crtm_gtfs_autobuses_urbanos, priority: P1, note: "Urban buses outside Madrid capital", overrides: *point}
+  - {candidate_id: "ayuntamiento_madrid_ckan:200085-0-censo-locales", dataset_id: ayto_censo_locales_actividades, priority: P1, note: "Commercial activity, Madrid capital (docs/02_data/33)", overrides: {domain: economy}}
+  - {candidate_id: "ayuntamiento_madrid_ckan:300331-0-equipamientos-municipales", dataset_id: ayto_equipamientos_municipales, priority: P1, note: "P1-09 POIs", overrides: {<<: *point, domain: urbanism}}
+  - {candidate_id: "ayuntamiento_madrid_ckan:300761-0-arbolado-especies", dataset_id: ayto_arbolado_parques, priority: P1, note: "P1-08 green access", overrides: {domain: environment}}

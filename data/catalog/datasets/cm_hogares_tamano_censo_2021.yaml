@@ -1,0 +1,38 @@
+dataset_id: cm_hogares_tamano_censo_2021
+source_id: comunidad_madrid_ckan
+name: Hogares por tamaño del hogar. Censo 2021. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo
+resources:
+- name: Hogares por tamaño del hogar. Censo 2021.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/da87c72e-dc76-41f4-a677-2d0b51fe58e4/resource/f3610af6-0aca-44e7-811b-6dfc0538c081/download/hogares-por-tamano-del-hogar.-censo-2021.-municipios.csv
+- name: Hogares por tamaño del hogar. Censo 2021. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/da87c72e-dc76-41f4-a677-2d0b51fe58e4/resource/856d9b72-3102-478e-bb2c-65bbba331cc9/download/hogares-por-tamano-del-hogar.-censo-2021.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo', 'hogares']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2021_hogares_por_tamanyo
+  harvested_at: '2026-10-20T11:16:21.693319+00:00'
+notes: P0-05 Housing Gap demand | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.6; license_id=cc-by

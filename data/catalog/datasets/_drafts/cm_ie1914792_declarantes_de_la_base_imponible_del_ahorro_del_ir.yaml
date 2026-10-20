@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914792_declarantes_de_la_base_imponible_del_ahorro_del_ir
+source_id: comunidad_madrid_ckan
+name: Declarantes de la base imponible del ahorro del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914792
+resources:
+- name: Declaraciones de la base imponible del ahorro del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1c3d310a-cb87-4450-b0da-86905488a821/resource/9f365598-8194-4df1-8a60-e62e33579c1c/download/declarantes-de-la-base-imponible-del-ahorro-del-irpf.-municipios.csv
+- name: Declarantes de la base imponible del ahorro del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/1c3d310a-cb87-4450-b0da-86905488a821/resource/ea57239c-e603-407e-92ea-56d23d97ab8d/download/declarantes-de-la-base-imponible-del-ahorro-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914792'
+  harvested_at: '2026-10-20T11:17:01.452735+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

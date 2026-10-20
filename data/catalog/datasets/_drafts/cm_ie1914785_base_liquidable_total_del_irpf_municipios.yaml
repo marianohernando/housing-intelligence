@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914785_base_liquidable_total_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Base liquidable total del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914785
+resources:
+- name: Base liquidable total del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/49331ea7-10c2-4465-adc1-54b66d4fcc9d/resource/ce935204-1db7-44ba-9c13-dda2711310ae/download/base-liquidable-total-del-irpf.-municipios.csv
+- name: Base liquidable total del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/49331ea7-10c2-4465-adc1-54b66d4fcc9d/resource/e966d8e1-b1d2-404d-926e-72046a5b3b6d/download/base-liquidable-total-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914785'
+  harvested_at: '2026-10-20T11:17:01.447123+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

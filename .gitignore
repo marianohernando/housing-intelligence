@@ -31,6 +31,8 @@ data/quarantine/**
 !data/bronze/**/
 !data/silver/**/
 !data/quarantine/**/
+# harvested candidates: regenerable from Bronze with `make catalog-harvest` (4-14 MB each)
+data/catalog/candidates/*.jsonl
 # misc
 .DS_Store
 .playwright-mcp/

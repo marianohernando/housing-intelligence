@@ -1,0 +1,38 @@
+dataset_id: cm_ie1934263_rentabilidad_bruta_de_viviendas_habituales_arrenda
+source_id: comunidad_madrid_ckan
+name: Rentabilidad bruta de viviendas habituales arrendadas por código postal para
+  el municipio de Madrid
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934263
+resources:
+- name: Rentabilidad bruta de viviendas habituales arrendadas por código postal para
+    el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/74d7fbb6-1f8a-497f-aafb-9d3fa51181db/resource/4e3ce51d-9519-44da-8ae7-5427cece5ec7/download/rentabilidad-bruta-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-de-mad.csv
+- name: Rentabilidad bruta de viviendas habituales arrendadas por código postal para
+    el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/74d7fbb6-1f8a-497f-aafb-9d3fa51181db/resource/06a215d9-914a-4e17-b66d-043bee24a07d/download/rentabilidad-bruta-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-de-ma.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934263'
+  harvested_at: '2026-10-20T11:17:01.427814+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

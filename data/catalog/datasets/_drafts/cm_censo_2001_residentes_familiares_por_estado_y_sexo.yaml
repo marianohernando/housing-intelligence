@@ -1,0 +1,35 @@
+dataset_id: cm_censo_2001_residentes_familiares_por_estado_y_sexo
+source_id: comunidad_madrid_ckan
+name: Residentes en viviendas familiares por estado civil y sexo. Censo 2001. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_residentes_familiares_por_estado_y_sexo
+resources:
+- name: Residentes en viviendas familiares por estado civil y sexo. Censo 2001.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/6c487051-15e7-435c-830d-c2056ecf5a5c/resource/a9ae4a1b-8903-4e99-9f41-30ae838a8567/download/residentes-en-viviendas-familiares-por-estado-civil-y-sexo.-censo-2001.-municipios.csv
+- name: Residentes en viviendas familiares por estado civil y sexo. Censo 2001. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/6c487051-15e7-435c-830d-c2056ecf5a5c/resource/aaeabb57-8752-4eae-8e47-ec92f7c9c803/download/residentes-en-viviendas-familiares-por-estado-civil-y-sexo.-censo-2001.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_residentes_familiares_por_estado_y_sexo
+  harvested_at: '2026-10-20T11:17:01.485155+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

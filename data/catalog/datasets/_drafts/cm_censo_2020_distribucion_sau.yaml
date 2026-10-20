@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2020_distribucion_sau
+source_id: comunidad_madrid_ckan
+name: Censo agrario 2020. Distribución general de la superficie agrícola (SAU) por
+  tipo de cultivo. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2020_distribucion_sau
+resources:
+- name: Censo agrario 2020. Distribución general de la superficie agrícola (SAU) por
+    tipo de cultivo.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/a51e5efd-3650-4bfd-932c-54c89fdc732f/resource/a0788789-fe1e-4bcf-af54-095ed243ea00/download/censo-agrario-2020.-distribucion-general-de-la-superficie-agricola-sau-por-tipo-de-cultivo.-muni.csv
+- name: Censo agrario 2020. Distribución general de la superficie agrícola (SAU) por
+    tipo de cultivo. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/a51e5efd-3650-4bfd-932c-54c89fdc732f/resource/1da3b192-5117-43ed-9b3b-b1f7d7864927/download/censo-agrario-2020.-distribucion-general-de-la-superficie-agricola-sau-por-tipo-de-cultivo.-mun.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2020_distribucion_sau
+  harvested_at: '2026-10-20T11:17:01.489590+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

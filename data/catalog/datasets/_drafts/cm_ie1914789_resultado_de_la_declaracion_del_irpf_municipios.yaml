@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914789_resultado_de_la_declaracion_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Resultado de la declaración del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914789
+resources:
+- name: Resultado de la declaración del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/c2b56bf7-a09a-4c2b-8cf2-d72c31a3bd92/resource/b6ca0b3a-bba8-4515-aee0-382ffd7aea27/download/resultado-de-la-declaracion-del-irpf.-municipios.csv
+- name: Resultado de la declaración del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/c2b56bf7-a09a-4c2b-8cf2-d72c31a3bd92/resource/5825417a-4b2f-433a-8350-6986d8162c4f/download/resultado-de-la-declaracion-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914789'
+  harvested_at: '2026-10-20T11:17:01.449914+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

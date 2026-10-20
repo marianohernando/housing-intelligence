@@ -1,0 +1,35 @@
+dataset_id: cm_ie201161_crecimiento_relativo_de_la_poblacion_municipios
+source_id: comunidad_madrid_ckan
+name: Crecimiento relativo de la población. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/201161
+resources:
+- name: Crecimiento relativo de la población.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/c9b19f1a-7d09-4e52-aeb7-67c72aabc16e/resource/10067f1e-d1b4-4c35-8d4b-673f9cb1925e/download/crecimiento-relativo-de-la-poblacion.-municipios.csv
+- name: Crecimiento relativo de la población. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/c9b19f1a-7d09-4e52-aeb7-67c72aabc16e/resource/9b8e5a78-9d0b-45b9-9b8d-20baf87a10bb/download/crecimiento-relativo-de-la-poblacion.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '201161'
+  harvested_at: '2026-10-20T11:17:01.473093+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

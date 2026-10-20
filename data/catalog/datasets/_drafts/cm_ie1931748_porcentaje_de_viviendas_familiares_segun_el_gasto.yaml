@@ -1,0 +1,38 @@
+dataset_id: cm_ie1931748_porcentaje_de_viviendas_familiares_segun_el_gasto
+source_id: comunidad_madrid_ckan
+name: Porcentaje de viviendas familiares según el gasto en alquiler/hipoteca mensual,
+  para cada tamaño del municipio
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1931748
+resources:
+- name: Porcentaje de viviendas familiares según el gasto en alquilerhipoteca mensual,
+    para cada tamaño del municipio.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1de717de-b638-4253-a6fb-95dec72616be/resource/f66e014c-71a0-469e-adcd-b6e47a2ec316/download/porcentaje-de-viviendas-familiares-segun-el-gasto-en-alquilerhipoteca-mensual-para-cada-tamano-d.csv
+- name: Porcentaje de viviendas familiares según el gasto en alquilerhipoteca mensual,
+    para cada tamaño del municipio.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/1de717de-b638-4253-a6fb-95dec72616be/resource/842ea8df-2412-4eb7-8e98-8665af2b7e5c/download/porcentaje-de-viviendas-familiares-segun-el-gasto-en-alquilerhipoteca-mensual-para-cada-tamano-.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler', 'hipoteca']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1931748'
+  harvested_at: '2026-10-20T11:17:01.470703+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

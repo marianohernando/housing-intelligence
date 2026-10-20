@@ -1,0 +1,35 @@
+dataset_id: cm_censo_2011_poblacion_censada_por_nacimiento_y_sexo
+source_id: comunidad_madrid_ckan
+name: Población censada por lugar de nacimiento y sexo. Censo 2011. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2011_poblacion_censada_por_nacimiento_y_sexo
+resources:
+- name: Población censada por lugar de nacimiento y sexo. Censo 2011.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/c20cefa2-3823-4b1c-9670-08dd8537b531/resource/0bcae996-4f42-465a-accb-979bbfea001e/download/poblacion-censada-por-lugar-de-nacimiento-y-sexo.-censo-2011.-municipios.csv
+- name: Población censada por lugar de nacimiento y sexo. Censo 2011. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/c20cefa2-3823-4b1c-9670-08dd8537b531/resource/247205e2-e8f8-4e44-bd1b-4332c52957f9/download/poblacion-censada-por-lugar-de-nacimiento-y-sexo.-censo-2011.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2011_poblacion_censada_por_nacimiento_y_sexo
+  harvested_at: '2026-10-20T11:17:01.488372+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

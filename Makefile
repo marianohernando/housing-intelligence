@@ -10,7 +10,7 @@ ALEMBIC := uv run alembic -c infra/migrations/alembic.ini
 GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
-        schemas catalog-validate catalog-harvest catalog-draft ingest secret-scan evidence ci web-install
+        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest secret-scan evidence ci web-install
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -67,8 +67,11 @@ catalog-validate: ## Validate every catalog YAML
 catalog-harvest: ## Harvest candidate datasets (SOURCE=ckan_cm for one)
 	uv run hi-ingest catalog harvest $(if $(SOURCE),--source $(SOURCE),--all)
 
-catalog-draft: ## Score candidates and write dataset drafts
+catalog-draft: ## Score candidates and write dataset drafts + report
 	uv run hi-ingest catalog draft
+
+catalog-curate: ## Apply curation files (candidates -> curated datasets)
+	for f in data/catalog/curation/*.yaml; do uv run hi-ingest catalog curate $$f; done
 
 ingest: ## Run a dataset pipeline: make ingest DATASET=cm_secciones_censales
 	@test -n "$(DATASET)" || (echo "DATASET is required" && exit 2)

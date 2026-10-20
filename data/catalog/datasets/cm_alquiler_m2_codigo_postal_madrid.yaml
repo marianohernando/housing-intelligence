@@ -1,0 +1,41 @@
+dataset_id: cm_alquiler_m2_codigo_postal_madrid
+source_id: comunidad_madrid_ckan
+name: Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas
+  por código postal para el municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934259
+resources:
+- name: Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas
+    por código postal para el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/70c3f1f8-534d-41bc-b4ba-6125cdf10628/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-p.csv
+- name: Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas
+    por código postal para el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/ba4f7189-9cea-4907-93d6-ff759e3ce98c/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler', 'arrendad']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934259'
+  harvested_at: '2026-10-20T11:16:21.690355+00:00'
+notes: P0-02 affordability, Reality Check | curated from 2026-10-20_sprint_p0.yaml
+  | Auto-draft. composite=4.8; license_id=cc-by

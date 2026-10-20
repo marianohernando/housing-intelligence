@@ -1,0 +1,35 @@
+dataset_id: cm_censo_2011_poblacion_censada_por_sexo
+source_id: comunidad_madrid_ckan
+name: Población censada por sexo. Censo 2011. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2011_poblacion_censada_por_sexo
+resources:
+- name: Población censada por sexo. Censo 2011.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/06608d66-f8ac-4223-b20d-5938d22b5e77/resource/04c4407e-fef4-484c-bab7-c8c44048c223/download/poblacion-censada-por-sexo.-censo-2011.-municipios.csv
+- name: Población censada por sexo. Censo 2011. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/06608d66-f8ac-4223-b20d-5938d22b5e77/resource/f81b2a86-16a6-41af-9d47-b5e40dcb9192/download/poblacion-censada-por-sexo.-censo-2011.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2011_poblacion_censada_por_sexo
+  harvested_at: '2026-10-20T11:17:01.489086+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

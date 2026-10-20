@@ -1,0 +1,42 @@
+dataset_id: cm_transacciones_nueva_usada
+source_id: comunidad_madrid_ckan
+name: Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio.
+  Comunidad de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio
+resources:
+- name: Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio.
+    Comunidad de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/55469ce8-f90d-4cf7-b113-12c3449f89e8/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comun.csv
+- name: Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio.
+    Comunidad de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/4b0d85d3-7c2a-487c-bdde-c8c8c768bd81/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comu.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'compraventa', 'transacciones inmobiliarias',
+    'inmobiliari']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: transacciones_vivienda_nueva_usada_municipio
+  harvested_at: '2026-10-20T11:16:21.703749+00:00'
+notes: P1-04 market structure | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.6; license_id=cc-by

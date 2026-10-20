@@ -1,0 +1,38 @@
+dataset_id: cm_viviendas_superficie
+source_id: comunidad_madrid_ckan
+name: Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada
+resources:
+- name: Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/11c43ccd-c06d-4abe-ae60-10e7726fbb55/resource/60404ea4-6df2-4b64-b2da-11794475e014/download/censo-anual-comunidad-de-madrid.-viviendas-por-superficie-agregada.-municipios.csv
+- name: Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/11c43ccd-c06d-4abe-ae60-10e7726fbb55/resource/7ee02f38-3149-4381-8a53-98a67c2da4b1/download/censo-anual-comunidad-de-madrid.-viviendas-por-superficie-agregada.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['urbanismo', 'construccion']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_anual_vivienda_por_superficie_agregada
+  harvested_at: '2026-10-20T11:16:21.693934+00:00'
+notes: P0-06 housing stock vs household size | curated from 2026-10-20_sprint_p0.yaml
+  | Auto-draft. composite=4.3; license_id=cc-by

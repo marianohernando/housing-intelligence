@@ -1,0 +1,48 @@
+dataset_id: ayto_equipamientos_municipales
+source_id: ayuntamiento_madrid_ckan
+name: Equipamientos y entidades de la ciudad de Madrid (que hay publicados en www.madrid.es)
+domain: urbanism
+owner: Ayuntamiento de Madrid
+format: RDF
+geography: point
+geo:
+  resolution: point
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.madrid.es/dataset/300331-0-equipamientos-municipales
+resources:
+- name: 300331-0-equipamientos-municipales-rdf
+  format: RDF
+  url: https://datos.madrid.es/dataset/300331-0-equipamientos-municipales/resource/300331-0-equipamientos-municipales-rdf/download/300331-0-equipamientos-municipales.rdf
+- name: 300331-1-equipamientos-municipales-csv
+  format: CSV
+  url: https://datos.madrid.es/dataset/300331-0-equipamientos-municipales/resource/300331-1-equipamientos-municipales-csv/download/300331-0-equipamientos-municipales.csv
+- name: 300331-2-equipamientos-municipales-json
+  format: JSON
+  url: https://datos.madrid.es/dataset/300331-0-equipamientos-municipales/resource/300331-2-equipamientos-municipales-json/download/300331-0-equipamientos-municipales.json
+- name: 300331-3-equipamientos-municipales
+  format: PDF
+  url: https://datos.madrid.es/dataset/300331-0-equipamientos-municipales/resource/300331-3-equipamientos-municipales/download/estructura_conjuntodatos_entidadesyorganismos.pdf
+- name: 300331-4-equipamientos-municipales-xml
+  format: XML
+  url: https://datos.madrid.es/dataset/300331-0-equipamientos-municipales/resource/300331-4-equipamientos-municipales-xml/download/300331-0-equipamientos-municipales.xml
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 2
+  product_impact: 1
+  geographic_granularity: 2
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=[]; strong=False
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 300331-0-equipamientos-municipales
+  harvested_at: '2026-10-20T11:16:21.707398+00:00'
+notes: P1-09 POIs | curated from 2026-10-20_sprint_p0.yaml | Auto-draft. composite=2.6;
+  license_id=cc-by
