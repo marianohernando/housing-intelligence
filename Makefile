@@ -1,0 +1,83 @@
+SHELL := /bin/bash
+.DEFAULT_GOAL := help
+-include .env
+export
+
+ALEMBIC := uv run alembic -c infra/migrations/alembic.ini
+GATE ?= 00
+
+.PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
+        schemas catalog-validate catalog-harvest catalog-draft ingest secret-scan evidence ci web-install
+
+help: ## Show targets
+	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
+
+dev: up migrate seed ## Boot db+redis, migrate and seed
+	@echo "Postgres: localhost:$${POSTGRES_PORT:-5440}  Redis: localhost:$${REDIS_PORT:-6390}"
+
+up: ## Start db and redis
+	docker compose up -d --wait db redis
+
+down: ## Stop local services
+	docker compose down
+
+logs: ## Tail service logs
+	docker compose logs -f
+
+migrate: ## Apply migrations to DATABASE_URL
+	$(ALEMBIC) upgrade head
+
+migrate-down: ## Revert last migration
+	$(ALEMBIC) downgrade -1
+
+seed: ## Sync catalog YAML into registry tables
+	uv run hi-ingest catalog sync
+
+lint: ## Ruff + ESLint
+	uv run ruff check .
+	uv run ruff format --check .
+	@if [ -d node_modules ]; then npm run -w apps/web lint; else echo "skip web lint (run npm ci)"; fi
+
+format: ## Auto-format Python
+	uv run ruff format .
+	uv run ruff check --fix .
+
+typecheck: ## Pyright + tsc
+	uv run pyright
+	@if [ -d node_modules ]; then npm run -w apps/web typecheck; else echo "skip web typecheck (run npm ci)"; fi
+
+test: test-unit test-db ## All tests
+
+test-unit: ## Unit + data contract tests (no DB, no network)
+	uv run pytest tests/unit tests/data -q
+	@if [ -d node_modules ]; then npm run -w apps/web test -- --run; else echo "skip web tests (run npm ci)"; fi
+
+test-db: ## Integration tests against TEST_DATABASE_URL
+	uv run pytest -m db tests/integration -q
+
+schemas: ## Regenerate JSON Schemas from Pydantic contracts
+	uv run python scripts/export_schemas.py
+
+catalog-validate: ## Validate every catalog YAML
+	uv run pytest tests/data -q
+
+catalog-harvest: ## Harvest candidate datasets (SOURCE=ckan_cm for one)
+	uv run hi-ingest catalog harvest $(if $(SOURCE),--source $(SOURCE),--all)
+
+catalog-draft: ## Score candidates and write dataset drafts
+	uv run hi-ingest catalog draft
+
+ingest: ## Run a dataset pipeline: make ingest DATASET=cm_secciones_censales
+	@test -n "$(DATASET)" || (echo "DATASET is required" && exit 2)
+	uv run hi-ingest run $(DATASET)
+
+secret-scan: ## gitleaks over the working tree
+	uv run pre-commit run gitleaks --all-files
+
+evidence: ## Generate evidence folder: make evidence GATE=00
+	uv run python scripts/evidence.py --gate $(GATE)
+
+web-install: ## Install JS deps
+	npm ci
+
+ci: lint typecheck test-unit secret-scan ## Local equivalent of PR CI

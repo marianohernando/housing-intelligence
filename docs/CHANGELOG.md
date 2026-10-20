@@ -1,0 +1,189 @@
+# Changelog
+
+## v0.5.1 — Computer handoff
+- Última auditoría de falsos pendientes/TODOs.
+- Marcados documentos de preguntas históricas como superados.
+- Aclarado qué pendientes son deliberadamente dependientes de datos, legal o validación comercial.
+- Añadido `START_HERE_ON_COMPUTER.md`.
+- Añadido plan operativo de primeras 72 horas.
+- Definido orden exacto de arranque: Control Tower → Data Foundation → first real pipeline → map proof.
+
+## v0.5.0 — DATAMAD execution roadmap
+- Verificado calendario oficial DATAMAD 2026.
+- Añadido blocker para confirmar si la implementación específica previa al 7 de noviembre está permitida.
+- Creada hoja de ruta por sprints del 20 de octubre al 26 de noviembre.
+- Mapeados Sprints a Quality Gates.
+- Definida estructura Trello/kanban.
+- Creado protocolo operativo para Claude Code.
+- Añadida Definition of Ready.
+- Añadido template de daily/sprint review.
+- Añadidos milestones internos, feature freeze y final freeze.
+
+## v0.4.0 — Auditoría integral de completitud
+- Auditoría completa de producto, datos, ML/AI, mapa, seguridad, privacidad, negocio, validación e ingeniería.
+- Actualizado índice y eliminado backlog conceptual obsoleto.
+- Añadidos account lifecycle, alerts, reports, roles PRO y listing analysis.
+- Añadidos geocoding, geospatial QA, data drift, source onboarding y demo snapshots.
+- Añadidas especificaciones de affordability, Housing Gap, calibration, uncertainty, spatial validation, JEV/RAG/LLM gates, fairness y model drift.
+- Añadidos auth, tenancy, jobs, object storage, backup/restore, release/rollback, threat model, SLO/cost budgets, billing, API/MCP security y offline resilience.
+- Añadidos requisitos WCAG, responsive map, performance budget y visual regression.
+- Completado framework financiero, TAM/SAM/SOM y unit economics.
+- Añadidos GDPR lifecycle, sensitive-data assessment, analytics consent, license workflow y open-source policy.
+- Añadidos planes de validación de UX, datos, modelos, PRO y pricing.
+- Añadidos submission checklist, demo runbook, jury evidence matrix, offline pack y open-source pack para DataMad.
+- Creado sistema obligatorio de 14 Quality Gates, Master Test Catalog, CI/CD gates y planes de test especializados.
+- Actualizada Definition of Done: ninguna fase puede cerrarse sin evidence artifact.
+
+## v0.3.1
+- Cambiada la estrategia a final-product-first.
+- Añadida clasificación Tier 0–3 de capabilities.
+- Añadidos capability flags y fallbacks.
+- Añadido Scope Cut Registry.
+- Prohibida conceptualmente una arquitectura paralela desechable para DATAMAD.
+
+## v0.3.0
+- Cerrada ronda 09: PRO, DATA y monetización.
+- Definido ICP inicial de promotoras/inmobiliarias medianas.
+- Añadida escalera de oferta desde informes hasta Enterprise.
+- Definida arquitectura de pricing FREE/PLUS/PRO/DATA.
+- Añadido flywheel PUBLIC → PRO → DATA.
+- Añadido PRO Project Workspace.
+- Añadido Opportunity Finder y Price Sensitivity Engine.
+- Añadido modo manual de investigación de anuncios para DATAMAD cuando no exista acceso automatizado autorizado.
+
+## v0.2.9
+- Cerrada ronda 08 de Data Foundation operativa.
+- Formalizada arquitectura Bronze/Silver/Gold.
+- Añadido contrato de null/missingness.
+- Añadida resolución de conflictos entre fuentes.
+- Definidos feature stores por dominio y ventanas multiescala.
+- Formalizada política de adquisición de anuncios y limitación de scraping no autorizado.
+- Añadidas especificaciones de ingestión Catastro, CRTM, comercio y ambiente.
+- Añadido pipeline de feature selection/redundancia.
+- Añadido Feature Dictionary machine-readable.
+- Añadidas reglas de adquisición para Claude Code.
+- DATAMAD: 30–50 datasets profundamente integrados como objetivo MVP.
+
+## v0.2.8
+- Cerrada ronda 07 del Residential Fit.
+- Especificado pipeline multi-stage.
+- Formalizado hard/soft constraints con PASS/FAIL/UNKNOWN.
+- Añadido Pareto/Trade-off Engine.
+- Añadido contrato de componentes de score.
+- Definida curva de presupuesto.
+- Añadida diversificación de resultados.
+- Añadida adaptación en sesión.
+- Añadidos invariantes algorítmicos.
+- Formalizada política de web enrichment subjetivo.
+
+## v0.2.7
+- Cerrada ronda 06 de onboarding y perfil.
+- Sustituido formulario tradicional por experiencia map-first.
+- Añadida capa Inclusive Living / Accessibility.
+- Formalizado Accessibility Needs Model basado en necesidades, no diagnósticos.
+- Añadidos modelos sensorial/cognitivo y reglas anti-inferencia sensible.
+- Incorporadas fuentes reales de Madrid para accesibilidad visual, aceras, cruces y aforos.
+- Añadidos modos de mapa de accesibilidad y confidence de cobertura.
+
+## v0.2.6
+- Añadida ronda 06 de decisiones sobre onboarding, perfil y semántica.
+- Preparado bloque para convertir lenguaje natural en variables estructuradas y scoring.
+
+## v0.2.5
+- Cerrada ronda 05: contextual scoring, clustering, movilidad temporal y calidad.
+- Añadido Active Questioning Engine.
+- Añadido Service Pressure Model con fallback.
+- Añadidos submodelos por etapa de vida.
+- Añadido Data Coverage Map.
+- Formalizado versionado temporal y correcciones históricas.
+- Añadido pipeline de anomalías con reglas + estadística + JEV.
+- Añadido Lineage & Dependency Graph.
+- Knowledge Graph marcado como opcional.
+- Scenario Engine DATAMAD definido como parcial y explícito.
+
+## v0.2.4
+- Cerrada ronda 04 del feature universe.
+- Formalizado el principio micro-location: barrio no homogéneo.
+- Especificado modelo de accesibilidad multimodal completo.
+- Añadido 15-Minute Living Model y Car Dependency Model.
+- Añadida política de seguridad objetiva y no estigmatizante.
+- Añadido Urban Activity Model y Emerging Opportunity Model.
+- Ratificado Total Housing Cost completo.
+- Añadido blueprint de 300–500 features.
+- Añadido Timeline/SimCity Mode.
+- Especificado motor híbrido GIS + RAG + métricas.
+- Añadido fallback de Building Intelligence.
+
+## v0.2.3
+- Cerrada ronda 03: privacidad, perfil, precisión, ML y forecasting.
+- Formalizada política Madrid-first para DATAMAD.
+- Añadido modelo de datos de usuario con separación de identidad, finanzas y necesidades sensibles.
+- Añadida política de missing data y confidence.
+- Definida evolución del Residential Fit desde baseline experto a Learning-to-Rank.
+- Añadida explicabilidad ultra-simple orientada a consecuencias reales.
+- Definida estrategia temporal 3–5 años + forecast 1–3 y escenarios posteriores.
+- Añadida estrategia de cold start con perfiles sintéticos.
+- Especificado simulador PRO de proyectos residenciales.
+- Añadida narrativa de datos para el jurado DATAMAD.
+
+## v0.2.2
+- Añadida ronda de decisiones sobre perfil, privacidad, ML, confidence, fairness y simulación.
+- Añadido documento de decisiones pendientes del ML core.
+- Bloqueado conceptualmente el inicio de modelos productivos hasta cerrar esta ronda.
+
+## v0.2.1
+- Cerradas 19 decisiones técnicas/producto de la segunda ronda.
+- Definido plan FREE/PLUS/PRO y monetización de particulares.
+- Especificado Natural Language GIS y MapState estructurado.
+- Añadido lenguaje visual SimCity/Jarvis.
+- Definido Reality Check como optimizador.
+- Añadida estrategia de aprendizaje por comportamiento.
+- Especificado Housing Gap Product Recommender.
+- Añadidas fases de adquisición de datos y scraping.
+- Definido contrato para capas dinámicas generadas vía MCP.
+- Añadidos escenarios completos de demo DATAMAD.
+
+## v0.2.0
+- Convertida la documentación en un paquete ejecutable para Claude Code.
+- Añadido `CLAUDE.md` raíz con reglas no negociables.
+- Añadidos contratos de fuentes, datasets, métricas y Entity Resolution.
+- Especificado pipeline de ingestión y política geoespacial.
+- Detallada orquestación IA, JEV, RAG, Place Embeddings y model registry.
+- Añadidos contratos API/MCP, telemetría, observabilidad y testing.
+- Añadida estructura recomendada del repositorio.
+- Añadidas reglas de ingeniería, desarrollo local, secretos y ADRs.
+- Añadido backlog y criterios de aceptación DATAMAD.
+- Ampliada la documentación para minimizar decisiones implícitas durante implementación.
+
+## v0.1.2
+- Añadida estrategia de enriquecimiento externo multi-fuente.
+- Definida jerarquía de confianza A/B/C/D.
+- Añadida estrategia de Entity Resolution y place_master.
+- Definido enfoque de POIs basado en accesibilidad, cobertura y diversidad.
+- Documentado uso de Catastro, OSM, APIs comerciales y scraping selectivo.
+
+## v0.1.1
+- Iniciada Fase 1: Data Foundation.
+- Añadida primera cartografía validada de fuentes oficiales de Madrid.
+- Clasificación P0/P1 de datasets.
+- Añadido plan para diccionario de 200–400 features.
+- Actualizados índice y registro de decisiones.
+
+## v0.1.0
+Primera estructura completa del repositorio de documentación.
+
+Incluye:
+- visión de producto;
+- especificación funcional;
+- arquitectura técnica;
+- estrategia de datos;
+- PostGIS + pgvector + H3;
+- IA generativa + JEV + ML;
+- MCP/API;
+- mapa 3D tipo digital twin;
+- capa pública, PRO y DATA;
+- modelo de negocio bootstrapped;
+- privacidad;
+- validación;
+- estrategia DATAMAD;
+- inventario de áreas pendientes.

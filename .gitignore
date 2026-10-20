@@ -1,0 +1,36 @@
+# secrets
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+htmlcov/
+reports/
+# node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+# data lakes (manifests are versioned)
+data/bronze/**
+data/silver/**
+data/gold/**
+data/quarantine/**
+!data/bronze/.gitkeep
+!data/silver/.gitkeep
+!data/quarantine/.gitkeep
+!data/**/manifest.json
+!data/bronze/**/
+!data/silver/**/
+!data/quarantine/**/
+# misc
+.DS_Store
+.playwright-mcp/

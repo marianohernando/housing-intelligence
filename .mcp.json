@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "supabase-datamad": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@0.14.0",
+        "--project-ref=ilvbivfnqvfqslbbiuts",
+        "--features=database,docs,development,debugging"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_DATAMAD_ACCESS_TOKEN}"
+      }
+    }
+  }
+}
