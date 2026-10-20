@@ -1,0 +1,32 @@
+dataset_id: crtm_datos_abiertos_elementos_de_la_red_de_cercanias
+source_id: crtm_open_data
+name: 'Datos abiertos: Elementos de la Red de Cercanías'
+domain: transport
+owner: Consorcio Regional de Transportes de Madrid
+format: FEATURE SERVICE
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.crtm.es/datasets/9e353bbf4c5d4bea87f01d6d579d06ab
+resources:
+- name: M5_Red
+  format: Feature Service
+  url: https://www.arcgis.com/sharing/rest/content/items/9e353bbf4c5d4bea87f01d6d579d06ab/data
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: heuristic-v2; keywords=['transporte', 'cercanias', 'tren']; strong=True
+discovery:
+  harvested_from: crtm_open_data
+  external_id: 9e353bbf4c5d4bea87f01d6d579d06ab
+  harvested_at: '2026-10-20T11:17:01.439230+00:00'
+notes: Auto-draft. composite=4.7; license_id=CRTM-LDA

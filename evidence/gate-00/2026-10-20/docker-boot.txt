@@ -1,0 +1,5 @@
+$ docker compose ps --format {{.Name}} {{.Status}}
+# exit 0
+
+housing-intelligence-db-1 Up 41 minutes (healthy)
+housing-intelligence-redis-1 Up 41 minutes (healthy)

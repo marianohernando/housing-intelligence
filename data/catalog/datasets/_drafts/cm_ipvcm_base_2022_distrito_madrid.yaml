@@ -1,0 +1,38 @@
+dataset_id: cm_ipvcm_base_2022_distrito_madrid
+source_id: comunidad_madrid_ckan
+name: Índice de precios de vivienda de segunda mano de la Comunidad de Madrid (IPVCM).
+  Base 2022. Por distrito del municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/ipvcm_base_2022_distrito_madrid
+resources:
+- name: Índice de precios de vivienda de segunda mano de la Comunidad de Madrid (IPVCM).
+    Base 2022. Por distrito del municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/88305477-79e6-411e-bc0c-39529ef3d9e1/resource/5198dc55-8b52-44a8-b9f1-c7b47389bfe8/download/extraccionesindice-de-precios-de-vivienda-de-segunda-mano-de-la-comunidad-de-madrid-ipvcm.-base-.csv
+- name: Índice de precios de vivienda de segunda mano de la Comunidad de Madrid (IPVCM).
+    Base 2022. Por distrito del municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/88305477-79e6-411e-bc0c-39529ef3d9e1/resource/5f258422-089e-4881-8dad-2b019085eab5/download/extraccionesindice-de-precios-de-vivienda-de-segunda-mano-de-la-comunidad-de-madrid-ipvcm.-base.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: ipvcm_base_2022_distrito_madrid
+  harvested_at: '2026-10-20T11:17:01.429133+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

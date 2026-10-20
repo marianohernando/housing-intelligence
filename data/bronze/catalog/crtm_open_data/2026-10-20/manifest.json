@@ -1,0 +1,24 @@
+{
+  "namespace": "catalog/crtm_open_data",
+  "run_label": "2026-10-20",
+  "written_at": "2026-10-20T11:11:46.980917+00:00",
+  "artifacts": [
+    {
+      "name": "page_0001.json",
+      "path": "data/bronze/catalog/crtm_open_data/2026-10-20/page_0001.json",
+      "sha256": "3fce4eb16324353dc98fd18dac1c901abe3b0a18fb19ac565e09981f84c061c1",
+      "bytes": 146053,
+      "url": "https://datos.crtm.es/api/search/v1/collections/dataset/items?limit=100",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:46.979629+00:00",
+      "headers": {
+        "content-type": "application/geo+json; charset=utf-8",
+        "content-length": "138741",
+        "etag": "W/\"21df5-mjiamEADcBXah9yoislWtnox/eM\""
+      }
+    }
+  ],
+  "status": "OK",
+  "message": null,
+  "pages": 1
+}

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.5.2 — Sprint P0 en ordenador (2026-10-20)
+- Leídas las bases oficiales DATAMAD 2026: añadido `09_datamad/24_bases_oficiales_2026.md`; blocker de trabajo previo cerrado.
+- Añadida source review de Google Maps/Gosom (`07_privacy_legal/source_reviews/`), estado REJECTED.
+- Decisiones D-174 a D-184 (entornos, toolchain, imagen DB, capa de datos, geografía canónica, scorecard, idempotencia).
+- Calendario actualizado con criterios ponderados, formato de entrega y jornada final.
+- Documentación movida a `docs/` del monorepo `housing-intelligence`; `CLAUDE.md` vive en la raíz.
+
 ## v0.5.1 — Computer handoff
 - Última auditoría de falsos pendientes/TODOs.
 - Marcados documentos de preguntas históricas como superados.

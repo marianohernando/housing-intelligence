@@ -1,0 +1,38 @@
+dataset_id: cm_censo_89_99_09_sau
+source_id: comunidad_madrid_ckan
+name: Censo agrario (1989, 1999, 2009). Superficie agrícola utilizada (SAU) de las
+  explotaciones agrícolas por régimen de tenencia. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_89_99_09_sau
+resources:
+- name: Censo agrario (1989, 1999, 2009). Superficie agrícola utilizada (SAU) de las
+    explotaciones agrícolas por régimen de tenencia.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/2ea550d9-2104-42e5-9549-efbf9c651549/resource/1ffd791c-cccb-4c43-b0df-6d6438110ae8/download/censo-agrario-1989-1999-2009.-superficie-agricola-utilizada-sau-de-las-explotaciones-agricolas-p.csv
+- name: Censo agrario (1989, 1999, 2009). Superficie agrícola utilizada (SAU) de las
+    explotaciones agrícolas por régimen de tenencia. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/2ea550d9-2104-42e5-9549-efbf9c651549/resource/ac8ad806-e835-41db-b99f-d8d93a32d4fe/download/censo-agrario-1989-1999-2009.-superficie-agricola-utilizada-sau-de-las-explotaciones-agricolas-.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_89_99_09_sau
+  harvested_at: '2026-10-20T11:17:01.501540+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

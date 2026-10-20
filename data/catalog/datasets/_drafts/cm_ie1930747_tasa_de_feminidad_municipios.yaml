@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930747_tasa_de_feminidad_municipios
+source_id: comunidad_madrid_ckan
+name: Tasa de feminidad. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930747
+resources:
+- name: Tasa de feminidad.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/675f78e7-911d-47ac-8933-e02a45a1e327/resource/504618ee-81c8-4e0a-b8c7-7eae549ae7d7/download/tasa-de-feminidad.-municipios.csv
+- name: Tasa de feminidad. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/675f78e7-911d-47ac-8933-e02a45a1e327/resource/e0060693-f81f-4396-8836-11dadac0d95a/download/tasa-de-feminidad.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930747'
+  harvested_at: '2026-10-20T11:17:01.465867+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

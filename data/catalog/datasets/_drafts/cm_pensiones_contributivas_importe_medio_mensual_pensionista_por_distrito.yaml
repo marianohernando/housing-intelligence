@@ -1,0 +1,38 @@
+dataset_id: cm_pensiones_contributivas_importe_medio_mensual_pensionista_por_distrito
+source_id: comunidad_madrid_ckan
+name: Pensiones contributivas. Importe medio mensual por pensionista por distritos
+  y sexo
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/pensiones_contributivas_importe_medio_mensual_pensionista_por_distritos_y_sexo
+resources:
+- name: Pensiones contributivas. Importe medio mensual por pensionista por distritos
+    y sexo.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/461f75f5-8463-4c3e-a715-2e7c7cb7ea9e/resource/f42990ee-ffc9-42f0-849e-507f130d2fc9/download/pensiones-contributivas.-importe-medio-mensual-por-pensionista-por-distritos-y-sexo.csv
+- name: Pensiones contributivas. Importe medio mensual por pensionista por distritos
+    y sexo.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/461f75f5-8463-4c3e-a715-2e7c7cb7ea9e/resource/b0cfcf20-c46f-485e-8b88-0f9f0e2eb96e/download/pensiones-contributivas.-importe-medio-mensual-por-pensionista-por-distritos-y-sexo.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['hogares']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: pensiones_contributivas_importe_medio_mensual_pensionista_por_distritos_y_sexo
+  harvested_at: '2026-10-20T11:17:01.429764+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

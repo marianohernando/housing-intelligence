@@ -1,0 +1,35 @@
+dataset_id: cm_censo_89_99_09_ganaderia
+source_id: comunidad_madrid_ckan
+name: Censo agrario (1989, 1999, 2009). Unidades ganaderas por tipo de ganado. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_89_99_09_ganaderia
+resources:
+- name: Censo agrario (1989, 1999, 2009). Unidades ganaderas por tipo de ganado.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/43aff3b2-eaca-41ea-8065-42df976de587/resource/fb3002d2-29cb-42fc-8a1d-ad9c86d9f46d/download/censo-agrario-1989-1999-2009.-unidades-ganaderas-por-tipo-de-ganado.-municipios.csv
+- name: Censo agrario (1989, 1999, 2009). Unidades ganaderas por tipo de ganado. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/43aff3b2-eaca-41ea-8065-42df976de587/resource/f5c6c7e9-36fa-42fc-8faa-3b5fed007524/download/censo-agrario-1989-1999-2009.-unidades-ganaderas-por-tipo-de-ganado.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_89_99_09_ganaderia
+  harvested_at: '2026-10-20T11:17:01.500146+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

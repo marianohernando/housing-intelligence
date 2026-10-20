@@ -1,0 +1,38 @@
+dataset_id: cm_ie1934262_valor_de_referencia_medio_de_viviendas_habituales
+source_id: comunidad_madrid_ckan
+name: Valor de referencia medio de viviendas habituales arrendadas por código postal
+  para el municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934262
+resources:
+- name: Valor de referencia medio de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4de80808-3629-4e0f-b14d-296702aaa848/resource/c4ac8670-e9c9-442b-983b-f8c6a2435a01/download/valor-de-referencia-medio-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio.csv
+- name: Valor de referencia medio de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4de80808-3629-4e0f-b14d-296702aaa848/resource/69b8a20f-b976-444c-be85-e28260af769d/download/valor-de-referencia-medio-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipi.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'arrendad']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934262'
+  harvested_at: '2026-10-20T11:17:01.427112+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

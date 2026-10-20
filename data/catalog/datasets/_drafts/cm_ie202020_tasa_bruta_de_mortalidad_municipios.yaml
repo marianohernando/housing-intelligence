@@ -1,0 +1,36 @@
+dataset_id: cm_ie202020_tasa_bruta_de_mortalidad_municipios
+source_id: comunidad_madrid_ckan
+name: Tasa bruta de mortalidad. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/202020
+resources:
+- name: Tasa bruta de mortalidad.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/b94bacd2-188a-423c-9de9-9d4d042366fc/resource/3c5fa640-b178-4c2c-a303-1e3bea67d834/download/tasa-bruta-de-mortalidad.-municipios.csv
+- name: Tasa bruta de mortalidad. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/b94bacd2-188a-423c-9de9-9d4d042366fc/resource/6321fa38-dbc7-414f-93bb-ec9cbf3aac70/download/tasa-bruta-de-mortalidad.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'habitantes', 'defunciones',
+    'movimiento natural']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '202020'
+  harvested_at: '2026-10-20T11:17:01.475149+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,38 @@
+dataset_id: cm_ie1931713_porcentaje_de_personas_de_16_y_mas_anos_que_trabaj
+source_id: comunidad_madrid_ckan
+name: Porcentaje de personas de 16 y más años que trabajan por lugar de trabajo y
+  tiempo de desplazamiento empleado
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1931713
+resources:
+- name: Porcentaje de personas de 16 y más años que trabajan por lugar de trabajo
+    y tiempo de desplazamiento empleado.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/8f2d17f6-4a8a-46e2-b016-0363025d396e/resource/24311eb2-963e-453b-8950-a008e5e39ed6/download/porcentaje-de-personas-de-16-y-mas-anos-que-trabajan-por-lugar-de-trabajo-y-tiempo-de-desplazami.csv
+- name: Porcentaje de personas de 16 y más años que trabajan por lugar de trabajo
+    y tiempo de desplazamiento empleado.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/8f2d17f6-4a8a-46e2-b016-0363025d396e/resource/fb355db4-88cd-491f-b796-fc01073c4478/download/porcentaje-de-personas-de-16-y-mas-anos-que-trabajan-por-lugar-de-trabajo-y-tiempo-de-desplazam.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1931713'
+  harvested_at: '2026-10-20T11:17:01.467640+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

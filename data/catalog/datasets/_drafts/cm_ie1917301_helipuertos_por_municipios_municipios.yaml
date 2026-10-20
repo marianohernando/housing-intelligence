@@ -1,0 +1,35 @@
+dataset_id: cm_ie1917301_helipuertos_por_municipios_municipios
+source_id: comunidad_madrid_ckan
+name: Helipuertos por municipios. Municipios
+domain: transport
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1917301
+resources:
+- name: Helipuertos por municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/fd5d94cb-1302-42dd-b510-9eeb6458a896/resource/75550790-383e-48aa-935e-22f7a4940f02/download/helipuertos-por-municipios.-municipios.csv
+- name: Helipuertos por municipios. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/fd5d94cb-1302-42dd-b510-9eeb6458a896/resource/75a69595-701f-48fb-b143-a3a16d1a8d42/download/helipuertos-por-municipios.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['transporte']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1917301'
+  harvested_at: '2026-10-20T11:17:01.457655+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

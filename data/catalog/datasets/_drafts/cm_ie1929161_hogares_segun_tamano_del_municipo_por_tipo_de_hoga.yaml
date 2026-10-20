@@ -1,0 +1,35 @@
+dataset_id: cm_ie1929161_hogares_segun_tamano_del_municipo_por_tipo_de_hoga
+source_id: comunidad_madrid_ckan
+name: Hogares según tamaño del municipo por tipo de hogar
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1929161
+resources:
+- name: Hogares según tamaño del municipo por tipo de hogar.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/9ad527de-fed4-4275-8407-7ca68a6dcfbc/resource/e167ba0d-fd31-4b43-9828-48a7ee7cc6d4/download/hogares-segun-tamano-del-municipo-por-tipo-de-hogar.csv
+- name: Hogares según tamaño del municipo por tipo de hogar.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/9ad527de-fed4-4275-8407-7ca68a6dcfbc/resource/f164d944-05f0-4972-aa80-cc5f879596ff/download/hogares-segun-tamano-del-municipo-por-tipo-de-hogar.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo', 'hogares', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1929161'
+  harvested_at: '2026-10-20T11:17:01.462563+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

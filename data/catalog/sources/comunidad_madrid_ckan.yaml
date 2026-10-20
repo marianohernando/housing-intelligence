@@ -1,0 +1,24 @@
+source_id: comunidad_madrid_ckan
+name: Portal de Datos Abiertos de la Comunidad de Madrid
+provider: Comunidad de Madrid (incl. Instituto de Estadística)
+source_type: open_data_portal
+api_type: ckan
+base_url: https://datos.comunidad.madrid
+catalog_url: https://datos.comunidad.madrid/api/3/action/package_search
+license_name: Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)
+license_url: https://creativecommons.org/licenses/by/4.0/legalcode.es
+license_status: CLEAR
+attribution_text: "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: per_dataset
+geographic_scope: Comunidad de Madrid
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: api_access
+active: true
+notes: >-
+  Fuente estructural para DATAMAD (bases §6 y §10). CKAN API verificada el 2026-10-20:
+  2.265 datasets (2.087 Instituto de Estadística, 178 Comunidad de Madrid). La licencia
+  se revisa dataset a dataset: el campo license_id de CKAN se copia al dataset YAML.

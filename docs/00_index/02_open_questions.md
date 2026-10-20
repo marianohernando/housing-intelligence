@@ -41,6 +41,9 @@ Estos números no deben fijarse por intuición antes de tener datos.
 - revisión final de fuentes de terceros.
 
 ## DATAMAD
+- ~~qué trabajo previo está permitido~~ → resuelto por las bases (D-174).
+- licencia open source del repositorio (card LEGAL-001, puntúa en §10).
+- política final sobre Google Maps/Gosom (D-175, pendiente de confirmación de Mariano).
 - perfil/caso exacto de la demo final;
 - datasets definitivos usados en la demo;
 - qué capabilities se mantienen activadas en la build del 26 de noviembre.

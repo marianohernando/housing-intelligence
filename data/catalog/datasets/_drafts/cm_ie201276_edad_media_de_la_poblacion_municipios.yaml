@@ -1,0 +1,35 @@
+dataset_id: cm_ie201276_edad_media_de_la_poblacion_municipios
+source_id: comunidad_madrid_ckan
+name: Edad media de la población. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/201276
+resources:
+- name: Edad media de la población.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/eb85755c-68c5-41d5-8c87-969f99a3c6c8/resource/c6b26c2c-fa2e-4c8e-9629-5d2d3f3ef383/download/edad-media-de-la-poblacion.-municipios.csv
+- name: Edad media de la población. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/eb85755c-68c5-41d5-8c87-969f99a3c6c8/resource/98ac0190-3554-4da2-895d-269497f3159b/download/edad-media-de-la-poblacion.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '201276'
+  harvested_at: '2026-10-20T11:17:01.474599+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

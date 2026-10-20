@@ -1,0 +1,38 @@
+dataset_id: cm_ie1931725_porcentaje_de_personas_de_16_y_mas_anos_que_trabaj
+source_id: comunidad_madrid_ckan
+name: Porcentaje de personas de 16 y más años que trabajan por lugar de trabajo y
+  medio utilizado en el viaje de mayor distancia
+domain: transport
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1931725
+resources:
+- name: Porcentaje de personas de 16 y más años que trabajan por lugar de trabajo
+    y medio utilizado en el viaje de mayor distancia.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/921444ff-7069-49b9-afa0-99fdaedda6be/resource/dcde4cdc-e326-4b12-847f-1582965a6f23/download/porcentaje-de-personas-de-16-y-mas-anos-que-trabajan-por-lugar-de-trabajo-y-medio-utilizado-en-e.csv
+- name: Porcentaje de personas de 16 y más años que trabajan por lugar de trabajo
+    y medio utilizado en el viaje de mayor distancia.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/921444ff-7069-49b9-afa0-99fdaedda6be/resource/a008a9e8-bbd4-4484-b73c-f7c922cb547a/download/porcentaje-de-personas-de-16-y-mas-anos-que-trabajan-por-lugar-de-trabajo-y-medio-utilizado-en-.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['transporte', 'metro', 'tren']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1931725'
+  harvested_at: '2026-10-20T11:17:01.468869+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

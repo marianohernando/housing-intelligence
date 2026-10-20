@@ -1,0 +1,38 @@
+dataset_id: cm_atencion_social_registro_servicios
+source_id: comunidad_madrid_ckan
+name: Registro de servicios de atención social
+domain: social
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: mensual
+landing_url: https://datos.comunidad.madrid/dataset/atencion_social_registro_servicios
+resources:
+- name: ' Registro de servicios de atención social'
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/95c75a5f-40ea-4af7-8b62-860918224c02/resource/1feb4b85-58da-4178-9391-f8821629ed7e/download/atencion_social_registro_servicios.csv
+- name: ' Registro de servicios de atención social'
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/95c75a5f-40ea-4af7-8b62-860918224c02/resource/53f985cc-bb05-4ba2-8590-d20c7ce31053/download/atencion_social_registro_servicios.json
+- name: Histórico -  Registro de servicios de atención social
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/95c75a5f-40ea-4af7-8b62-860918224c02/resource/e0fe71b5-9c8d-4272-8c71-91e9ea3223b8/download/atencion_social_registro_servicios_historico.zip
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['atencion social', 'servicios sociales']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: atencion_social_registro_servicios
+  harvested_at: '2026-10-20T11:17:01.431575+00:00'
+notes: Auto-draft. composite=4.7; license_id=cc-by

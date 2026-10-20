@@ -1,0 +1,70 @@
+{
+  "_note": "Golden Madrid zones. Coordinates are public landmarks. H3 frozen with h3 4.5.0. expected_seccion_censal/barrio frozen from the 2026-10-20 ingestion of cm_secciones_censales (seccionado 2019).",
+  "zones": [
+    {
+      "zone_id": "sol",
+      "label": "Puerta del Sol",
+      "lon": -3.7035,
+      "lat": 40.4169,
+      "municipio_ine": "28079",
+      "municipio_name": "Madrid",
+      "role": "centro urbano",
+      "expected_h3_r8": "88390cb1b1fffff",
+      "expected_h3_r9": "89390cb1b0bffff",
+      "expected_seccion_censal": "2807901124",
+      "expected_barrio": "28079016"
+    },
+    {
+      "zone_id": "chamartin_plaza_castilla",
+      "label": "Plaza de Castilla",
+      "lon": -3.6895,
+      "lat": 40.4667,
+      "municipio_ine": "28079",
+      "municipio_name": "Madrid",
+      "role": "nodo de transporte norte",
+      "expected_h3_r8": "88390cb0adfffff",
+      "expected_h3_r9": "89390cb0ac7ffff",
+      "expected_seccion_censal": "2807906076",
+      "expected_barrio": "28079064"
+    },
+    {
+      "zone_id": "getafe_centro",
+      "label": "Getafe centro",
+      "lon": -3.7329,
+      "lat": 40.3057,
+      "municipio_ine": "28065",
+      "municipio_name": "Getafe",
+      "role": "periferia sur",
+      "expected_h3_r8": "88390caa49fffff",
+      "expected_h3_r9": "89390caa497ffff",
+      "expected_seccion_censal": "2806501011",
+      "expected_barrio": null
+    },
+    {
+      "zone_id": "alcala_henares_centro",
+      "label": "Alcalá de Henares centro",
+      "lon": -3.3643,
+      "lat": 40.4818,
+      "municipio_ine": "28005",
+      "municipio_name": "Alcalá de Henares",
+      "role": "corredor del Henares",
+      "expected_h3_r8": "88392b69e5fffff",
+      "expected_h3_r9": "89392b69e4bffff",
+      "expected_seccion_censal": "2800501001",
+      "expected_barrio": null
+    },
+    {
+      "zone_id": "aranjuez_centro",
+      "label": "Aranjuez centro",
+      "lon": -3.6025,
+      "lat": 40.0333,
+      "municipio_ine": "28013",
+      "municipio_name": "Aranjuez",
+      "role": "borde sur de la región",
+      "expected_h3_r8": "88390c3121fffff",
+      "expected_h3_r9": "89390c31217ffff",
+      "expected_seccion_censal": "2801301001",
+      "expected_barrio": null
+    }
+  ]
+}

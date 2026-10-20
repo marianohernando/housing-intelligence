@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930645_porcentaje_de_poblacion_censada_espanola_municipio
+source_id: comunidad_madrid_ckan
+name: Porcentaje de población censada española. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930645
+resources:
+- name: Porcentaje de población censada española. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/920685aa-295b-4242-a264-1702ee11678a/resource/3e038a5d-8753-4e99-bfec-0d59fa3fe1cd/download/porcentaje-de-poblacion-censada-espanola.-municipios.csv
+- name: Porcentaje de población censada española. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/920685aa-295b-4242-a264-1702ee11678a/resource/8bcc4e38-e71b-4aad-94f3-0571acc73ee3/download/porcentaje-de-poblacion-censada-espanola.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930645'
+  harvested_at: '2026-10-20T11:17:01.464146+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

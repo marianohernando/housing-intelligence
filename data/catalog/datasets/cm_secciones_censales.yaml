@@ -1,0 +1,57 @@
+dataset_id: cm_secciones_censales
+source_id: comunidad_madrid_ckan
+name: Secciones censales de la Comunidad de Madrid (seccionado 2019)
+domain: geography
+owner: Comunidad de Madrid
+format: SHP
+geography: polygon
+geo:
+  resolution: seccion_censal
+  crs_expected: EPSG:25830
+  geometry_type: Polygon/MultiPolygon
+  h3_join_method: overlap
+temporal_resolution: anual (geometría vigente 2019)
+refresh_policy: annual
+landing_url: https://datos.comunidad.madrid/dataset/secciones_censales
+resources:
+  - name: secciones_censales (SHP)
+    format: SHP
+    url: https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/b53b766c-e013-444c-b3b0-0992c4a0dbfc/download/558.zip
+    role: primary
+  - name: Secciones censales (CSV con nombres de municipio y distrito)
+    format: CSV
+    url: https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/d96741f3-f789-41df-a58b-e263dc57dd8a/download/secciones_censales.csv
+    role: names
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 5
+  temporal_depth: 1
+  freshness: 2
+  coverage: 5
+  quality: 4
+  license_clarity: 5
+  ingestion_ease: 4
+  uniqueness: 4
+  demo_visibility: 4
+  notes: >-
+    Geografía canónica de toda la región (179 municipios, 4.417 secciones). Permite derivar
+    municipios, distritos censales y los 131 barrios de Madrid capital por dissolve. Geometría
+    de 2019: actualizar con INE seccionado_2025 como fuente secundaria declarada.
+  reviewed_by: claude-code
+  reviewed_at: 2026-10-20T00:00:00Z
+schema:
+  primary_key: [CDGSECCION]
+  columns:
+    CDMUNI: {type: string, description: "Código INE de municipio (3 dígitos, sin provincia)", nullable: false}
+    CDDISTRITO: {type: string, description: "Distrito censal (2 dígitos); nulo en 76 filas, derivable de CDGSECCION", nullable: true, null_reason_default: SOURCE_MISSING}
+    CDSECCION: {type: string, description: "Sección (3 dígitos); nulo en 106 filas, derivable de CDGSECCION", nullable: true, null_reason_default: SOURCE_MISSING}
+    CDTSECCION: {type: string, description: "MMM+DD+SSS concatenado", nullable: true, null_reason_default: SOURCE_MISSING}
+    CDGSECCION: {type: string, description: "MMM-DD-SSS, siempre presente: clave", nullable: false}
+    CDTBARRIO: {type: string, description: "Barrio: 6 dígitos en Madrid capital (MMM+DD+B), 5 en el resto", nullable: true, null_reason_default: NOT_APPLICABLE}
+    Area_k2: {type: float, unit: km2, description: "Área declarada por la fuente", nullable: false}
+feeds_features: [admin_unit_area_km2]
+notes: "Inspeccionado el 2026-10-20 — 4.417 filas, EPSG:25830, 1 geometría inválida (119-01-002) a reparar con make_valid."

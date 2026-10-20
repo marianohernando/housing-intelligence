@@ -77,3 +77,14 @@ El calendario público consultado no muestra:
 - selección previa de finalistas.
 
 Por ello se crean checkpoints internos más exigentes.
+
+
+## Actualización 2026-10-20 — bases oficiales leídas
+Las bases completas están resumidas en `24_bases_oficiales_2026.md`. Cambios respecto a lo anterior:
+- **Trabajo previo:** permitido si se identifica (§6). Blocker cerrado (D-174).
+- **Entrega:** antes de las 14:00 del 26 nov, en la plataforma que se facilita ese día. Presentación de 3 slides + 1 pantallazo.
+- **Presentación:** 5 minutos + 5 minutos de preguntas. Puede haber preselección de finalistas.
+- **Criterios ponderados:** datos CM 25, originalidad 20, impacto 25, viabilidad 15, código abierto y reproducibilidad 10, presentación 5.
+- **Premios:** 3.000 / 2.000 / 1.000 € brutos.
+- **Jornada final (URJC Vicálvaro):** 11:00 inauguración, 13:30–17:00 talleres, 17:00–19:00 presentaciones, 20:00 premios.
+- **Jurado publicado:** Alberto Abella, Olga Quirós, Loren Escot, Ricardo Curto.

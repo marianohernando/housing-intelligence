@@ -1,0 +1,98 @@
+dataset_id: ayto_panel_indicadores_distritos_barrios
+source_id: ayuntamiento_madrid_ckan
+name: Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico
+domain: population
+owner: Ayuntamiento de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: barrio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos
+resources:
+- name: 300087-0-indicadores-distritos-csv
+  format: CSV
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-0-indicadores-distritos-csv/download/panelcsv.csv
+- name: 300087-1-indicadores-distritos-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-1-indicadores-distritos-xlsx/download/estructura_conjunto_datos_panel_indicadores_distritos_barrios-documento-tecnico.xlsx
+- name: 300087-2-indicadores-distritos-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-2-indicadores-distritos-xlsx/download/300087-2-indicadores-distritos-xlsx.xlsx
+- name: 300087-3-indicadores-distritos-xls
+  format: XLS
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-3-indicadores-distritos-xls/download/300087-3-indicadores-distritos-xls.xls
+- name: 300087-4-indicadores-distritos-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-4-indicadores-distritos-xlsx/download/300087-4-indicadores-distritos-xlsx.xlsx
+- name: 300087-5-indicadores-distritos-xls
+  format: XLS
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-5-indicadores-distritos-xls/download/300087-5-indicadores-distritos-xls.xls
+- name: 300087-6-indicadores-distritos-xls
+  format: XLS
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-6-indicadores-distritos-xls/download/300087-6-indicadores-distritos-xls.xls
+- name: 300087-7-indicadores-distritos-xls
+  format: XLS
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-7-indicadores-distritos-xls/download/300087-7-indicadores-distritos-xls.xls
+- name: 300087-8-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-8-indicadores-distritos/download/panel_indicadores_distritos_barrios_2023.pdf
+- name: 300087-9-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-9-indicadores-distritos/download/panel_indicadores_distritos_barrios_2022.pdf
+- name: 300087-10-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-10-indicadores-distritos/download/panel_indicadores_distritos_barrios_2025.pdf
+- name: 300087-11-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-11-indicadores-distritos/download/panel_indicadores_distritos_barrios_2024.pdf
+- name: 300087-12-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-12-indicadores-distritos/download/panel_indicadores_distritos_barrios_2021.pdf
+- name: 300087-13-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-13-indicadores-distritos/download/panel_indicadores_distritos_barrios_2020.pdf
+- name: 300087-14-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-14-indicadores-distritos/download/panel_indicadores_distritos_barrios_2019.pdf
+- name: 300087-15-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-15-indicadores-distritos/download/panel_indicadores_distritos_barrios_2018.pdf
+- name: 300087-16-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-16-indicadores-distritos/download/panel_indicadores_distritos_barrios_2017.pdf
+- name: 300087-17-indicadores-distritos-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-17-indicadores-distritos-xlsx/download/300087-17-indicadores-distritos-xlsx.xlsx
+- name: 300087-18-indicadores-distritos-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-18-indicadores-distritos-xlsx/download/300087-18-indicadores-distritos-xlsx.xlsx
+- name: 300087-19-indicadores-distritos-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-19-indicadores-distritos-xlsx/download/300087-19-indicadores-distritos-xlsx.xlsx
+- name: 300087-20-indicadores-distritos
+  format: PDF
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-20-indicadores-distritos/download/documento-de-ayuda-cm-panel-indicadores.pdf
+- name: 300087-21-indicadores-distritos
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-21-indicadores-distritos/download/300087-indicadores-distritos-xlsx.xlsx
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 3
+  product_impact: 3
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['medio ambiente']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 300087-0-indicadores-distritos
+  harvested_at: '2026-10-20T11:16:21.700337+00:00'
+notes: P0-01 territorial profile (complements CM data) | curated from 2026-10-20_sprint_p0.yaml
+  | Auto-draft. composite=3.8; license_id=cc-by

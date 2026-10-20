@@ -1,0 +1,35 @@
+dataset_id: cm_ie1915803_tasa_de_migracion_con_el_resto_de_comunidades_auto
+source_id: comunidad_madrid_ckan
+name: Tasa de migración con el resto de Comunidades Autónomas. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1915803
+resources:
+- name: Tasa de migración con el resto de Comunidades Autónomas.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/31d0fd3d-91ae-440d-9492-1cd3b6f33e46/resource/42ec403e-37af-4711-b1bf-2084957a4eae/download/tasa-de-migracion-con-el-resto-de-comunidades-autonomas.-municipios.csv
+- name: Tasa de migración con el resto de Comunidades Autónomas. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/31d0fd3d-91ae-440d-9492-1cd3b6f33e46/resource/93f0ea9f-9de2-4922-8c7e-83aa5f6babf0/download/tasa-de-migracion-con-el-resto-de-comunidades-autonomas.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'migraciones']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1915803'
+  harvested_at: '2026-10-20T11:17:01.455295+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

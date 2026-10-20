@@ -1,0 +1,10 @@
+$ make lint
+# exit 0
+
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+60 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .

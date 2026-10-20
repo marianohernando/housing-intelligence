@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2001_ocupados_residentes_familiares_por_sexo
+source_id: comunidad_madrid_ckan
+name: Población ocupada censada residente en viviendas familiares por sexo. Censo
+  2001. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_ocupados_residentes_familiares_por_sexo
+resources:
+- name: Población ocupada censada residente en viviendas familiares por sexo. Censo
+    2001.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/107a4ba2-f8b9-43ba-8f16-e20f96143fe5/resource/860443b8-7691-495b-922d-71ffe2ffd163/download/poblacion-ocupada-censada-residente-en-viviendas-familiares-por-sexo.-censo-2001.-municipios.csv
+- name: Población ocupada censada residente en viviendas familiares por sexo. Censo
+    2001. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/107a4ba2-f8b9-43ba-8f16-e20f96143fe5/resource/6817da90-64af-41f7-b938-7eb2065b86ca/download/poblacion-ocupada-censada-residente-en-viviendas-familiares-por-sexo.-censo-2001.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_ocupados_residentes_familiares_por_sexo
+  harvested_at: '2026-10-20T11:17:01.481266+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

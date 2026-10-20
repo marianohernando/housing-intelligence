@@ -1,0 +1,35 @@
+dataset_id: cm_ie1934257_viviendas_habituales_arrendadas_por_codigo_postal
+source_id: comunidad_madrid_ckan
+name: Viviendas habituales arrendadas por código postal para el municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934257
+resources:
+- name: Viviendas habituales arrendadas por código postal para el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/d2816177-d10e-4337-9bde-c6127ebc014c/resource/f17f0038-0ce7-451b-9e2f-d997febc8867/download/viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-de-madrid.csv
+- name: Viviendas habituales arrendadas por código postal para el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/d2816177-d10e-4337-9bde-c6127ebc014c/resource/3bb14bd8-5ed3-4b86-a10e-24e4d94ae8a9/download/viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-de-madrid.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'arrendad']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934257'
+  harvested_at: '2026-10-20T11:17:01.424019+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

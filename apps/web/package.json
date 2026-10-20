@@ -1,0 +1,31 @@
+{
+  "name": "@hi/web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/copy-maplibre-worker.mjs",
+    "prebuild": "node scripts/copy-maplibre-worker.mjs",
+    "dev": "next dev --port ${WEB_PORT:-3010}",
+    "build": "next build",
+    "start": "next start --port ${WEB_PORT:-3010}",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "maplibre-gl": "6.11.2",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "^9.39.0",
+    "eslint-config-next": "16.4.2",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  }
+}

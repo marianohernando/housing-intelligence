@@ -1,0 +1,36 @@
+dataset_id: cm_ie202021_porcentaje_de_nacimientos_de_madres_residentes_ext
+source_id: comunidad_madrid_ckan
+name: Porcentaje de nacimientos de madres residentes extranjeras. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/202021
+resources:
+- name: Porcentaje de nacimientos de madres residentes extranjeras.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/fb50aa27-e150-4cae-ad31-4b196c74f3ce/resource/80d9d567-dce3-4202-a24c-0f90e7934a22/download/porcentaje-de-nacimientos-de-madres-residentes-extranjeras.-municipios.csv
+- name: Porcentaje de nacimientos de madres residentes extranjeras. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/fb50aa27-e150-4cae-ad31-4b196c74f3ce/resource/16af1086-ef1d-411f-a168-a93c9e2e199e/download/porcentaje-de-nacimientos-de-madres-residentes-extranjeras.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'nacimientos', 'movimiento natural'];
+    strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '202021'
+  harvested_at: '2026-10-20T11:17:01.475701+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

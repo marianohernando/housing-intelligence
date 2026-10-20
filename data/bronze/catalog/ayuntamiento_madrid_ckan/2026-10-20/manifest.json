@@ -1,0 +1,22 @@
+{
+  "namespace": "catalog/ayuntamiento_madrid_ckan",
+  "run_label": "2026-10-20",
+  "written_at": "2026-10-20T11:11:46.156554+00:00",
+  "artifacts": [
+    {
+      "name": "page_0001.json",
+      "path": "data/bronze/catalog/ayuntamiento_madrid_ckan/2026-10-20/page_0001.json",
+      "sha256": "482231a6020def0ed25042bc777d3c14b2b0bb61c5d9ec4342eb501cb816ae58",
+      "bytes": 20053546,
+      "url": "https://datos.madrid.es/api/3/action/package_search?rows=1000&start=0",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:46.135232+00:00",
+      "headers": {
+        "content-type": "application/json;charset=utf-8"
+      }
+    }
+  ],
+  "status": "OK",
+  "message": null,
+  "pages": 1
+}

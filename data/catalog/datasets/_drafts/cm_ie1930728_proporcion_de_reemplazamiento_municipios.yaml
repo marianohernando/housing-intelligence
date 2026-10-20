@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930728_proporcion_de_reemplazamiento_municipios
+source_id: comunidad_madrid_ckan
+name: Proporción de reemplazamiento. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930728
+resources:
+- name: Proporción de reemplazamiento.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/134d4e04-e5fa-4755-b7a6-77c08ec91ac1/resource/a8870a08-fbab-4b78-a6b6-221592842946/download/proporcion-de-reemplazamiento.-municipios.csv
+- name: Proporción de reemplazamiento. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/134d4e04-e5fa-4755-b7a6-77c08ec91ac1/resource/cdebacf1-3b0b-43d6-a111-6aac79a638a9/download/proporcion-de-reemplazamiento.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930728'
+  harvested_at: '2026-10-20T11:17:01.464734+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

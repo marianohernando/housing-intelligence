@@ -1,0 +1,35 @@
+dataset_id: cm_ie1912951_documentacion_notarial_creditos_prestamos_y_garant
+source_id: comunidad_madrid_ckan
+name: Documentación notarial. Créditos, préstamos y garantías hipotecarias. Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1912951
+resources:
+- name: Documentación notarial. Créditos, préstamos y garantías hipotecarias.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1f3a350e-42c6-495e-9613-88802b6f31b4/resource/f1524352-311b-4b39-a48a-a7acbdfbd581/download/documentacion-notarial.-creditos-prestamos-y-garantias-hipotecarias.-municipios.csv
+- name: Documentación notarial. Créditos, préstamos y garantías hipotecarias. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/1f3a350e-42c6-495e-9613-88802b6f31b4/resource/e4b26898-d191-4089-94d3-6b9e5c51b76d/download/documentacion-notarial.-creditos-prestamos-y-garantias-hipotecarias.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['hipoteca']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1912951'
+  harvested_at: '2026-10-20T11:17:01.443926+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,28 @@
+feature_id: admin_unit_area_km2
+version: 1
+human_name: Superficie de la unidad administrativa (km²)
+domain: geography
+type: derived
+unit: km2
+direction: neutral
+geo_level: seccion_censal
+h3_join_method: overlap
+time_semantics: snapshot
+sources:
+  - dataset_id: cm_secciones_censales
+    role: primary
+formula:
+  method: planar_area_epsg_25830
+  expression: ST_Area(geom_25830) / 1e6
+null_policy:
+  no_coverage: unknown
+  confirmed_zero: unknown
+confidence:
+  inputs: [source_freshness, geometry_validity]
+public_use: false
+pro_use: true
+models: []
+tests: [positive_area, matches_source_area_k2_within_1pct, children_sum_matches_parent]
+limitations:
+  - Geometría del seccionado 2019; secciones modificadas después no se reflejan.
+  - Superficie planimétrica en ETRS89/UTM30N, no superficie útil ni edificable.

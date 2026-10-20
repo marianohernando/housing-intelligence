@@ -1,0 +1,39 @@
+dataset_id: cm_centros_sanitarios
+source_id: comunidad_madrid_ckan
+name: Centros, servicios y establecimientos sanitarios
+domain: health
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: diario
+landing_url: https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios
+resources:
+- name: Centros, servicios y establecimientos sanitarios
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv
+- name: Centros, servicios y establecimientos sanitarios
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/94090084-2276-4a07-87b4-cd028ea6b46d/download/centros_servicios_establecimientos_sanitarios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 2
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['hospital', 'establecimientos sanitarios']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: centros_servicios_establecimientos_sanitarios
+  harvested_at: '2026-10-20T11:16:21.695688+00:00'
+notes: P0-09 health access, SeniorFit | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.1; license_id=cc-by

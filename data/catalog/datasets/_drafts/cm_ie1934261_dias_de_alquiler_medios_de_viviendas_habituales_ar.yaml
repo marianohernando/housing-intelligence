@@ -1,0 +1,38 @@
+dataset_id: cm_ie1934261_dias_de_alquiler_medios_de_viviendas_habituales_ar
+source_id: comunidad_madrid_ckan
+name: Días de alquiler medios de viviendas habituales arrendadas por código postal
+  para el municipio de Madrid
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934261
+resources:
+- name: Días de alquiler medios de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1826c94a-cb3d-4c2a-adc5-4c4b59c6b5e2/resource/b23f1a70-8782-4247-89e9-8bdbafffe853/download/dias-de-alquiler-medios-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-d.csv
+- name: Días de alquiler medios de viviendas habituales arrendadas por código postal
+    para el municipio de Madrid.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/1826c94a-cb3d-4c2a-adc5-4c4b59c6b5e2/resource/79d7843a-7be3-458e-8e10-094ada18d871/download/dias-de-alquiler-medios-de-viviendas-habituales-arrendadas-por-codigo-postal-para-el-municipio-.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler', 'arrendad']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934261'
+  harvested_at: '2026-10-20T11:17:01.426332+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

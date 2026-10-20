@@ -1,0 +1,8 @@
+$ make typecheck
+# exit 0
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit

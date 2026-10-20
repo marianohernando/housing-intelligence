@@ -1,0 +1,39 @@
+dataset_id: cm_oficinas_farmacia
+source_id: comunidad_madrid_ckan
+name: Oficinas de farmacia
+domain: health
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: semanal
+landing_url: https://datos.comunidad.madrid/dataset/oficinas_farmacia
+resources:
+- name: Oficinas de farmacia
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/2d682b1d-e2e8-4c6f-b902-7a3f108e2fb9/resource/904a161b-f339-4296-be61-1ae914494c89/download/oficinas_farmacia.csv
+- name: Oficinas de farmacia
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/2d682b1d-e2e8-4c6f-b902-7a3f108e2fb9/resource/6f1a2274-740c-47b5-a06d-2ab6ffb30685/download/oficinas_farmacia.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 2
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['farmacia']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: oficinas_farmacia
+  harvested_at: '2026-10-20T11:16:21.701953+00:00'
+notes: P1-05 essential services | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.1; license_id=cc-by

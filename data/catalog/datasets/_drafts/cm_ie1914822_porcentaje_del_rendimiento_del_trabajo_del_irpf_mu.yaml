@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914822_porcentaje_del_rendimiento_del_trabajo_del_irpf_mu
+source_id: comunidad_madrid_ckan
+name: Porcentaje del rendimiento del trabajo del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914822
+resources:
+- name: Porcentaje del rendimiento del trabajo del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/b5164ee6-e0f0-44ae-a154-72c4b99039a3/resource/6ba0f9c1-afd7-47cc-8568-99fbd76bfa05/download/porcentaje-del-rendimiento-del-trabajo-del-irpf.-municipios.csv
+- name: Porcentaje del rendimiento del trabajo del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/b5164ee6-e0f0-44ae-a154-72c4b99039a3/resource/d449ddad-1f1b-4b10-97fd-601b96fb4ec9/download/porcentaje-del-rendimiento-del-trabajo-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914822'
+  harvested_at: '2026-10-20T11:17:01.454141+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,39 @@
+dataset_id: cm_censo_2001_estudiantes_residentes_familiares_por_transporte_y_sexo
+source_id: comunidad_madrid_ckan
+name: Población estudiante de 16 años o más censada en viviendas familiares por medio
+  de transporte y sexo. Censo 2001. Municipios
+domain: transport
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2001_estudiantes_residentes_familiares_por_transporte_y_sexo
+resources:
+- name: Población estudiante de 16 años o más censada en viviendas familiares por
+    medio de transporte y sexo. Censo 2001.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/7907f27c-4fbf-4a21-8087-cdba8675f2e2/resource/68d94c68-1527-4bcf-a5fb-09162e65951c/download/poblacion-estudiante-de-16-anos-o-mas-censada-en-viviendas-familiares-por-medio-de-transporte-y-.csv
+- name: Población estudiante de 16 años o más censada en viviendas familiares por
+    medio de transporte y sexo. Censo 2001. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/7907f27c-4fbf-4a21-8087-cdba8675f2e2/resource/e05ede5d-5389-47cf-9a1d-1e565682ff8d/download/poblacion-estudiante-de-16-anos-o-mas-censada-en-viviendas-familiares-por-medio-de-transporte-y.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['transporte', 'metro', 'autobus', 'bicicleta', 'tren'];
+    strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2001_estudiantes_residentes_familiares_por_transporte_y_sexo
+  harvested_at: '2026-10-20T11:17:01.480000+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,230 @@
+[
+ {
+  "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades",
+  "accrualPeriodicity": {
+   "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/Frequency",
+   "value": {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/DurationDescription",
+    "years": 1.0
+   }
+  },
+  "description": [
+   {
+    "_value": "muestra recortada",
+    "_lang": "es"
+   }
+  ],
+  "distribution": [
+   {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/resource/89966d45-2b2c-41d3-8ddb-ab793302e463",
+    "accessURL": "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Cuentas_Anuales_Consolidadas_del_Impuesto_sobre_Sociedades.shtml",
+    "format": {
+     "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/resource/89966d45-2b2c-41d3-8ddb-ab793302e463/format",
+     "type": "http://purl.org/dc/terms/IMT",
+     "value": "application/xhtml+xml"
+    },
+    "title": [
+     {
+      "_lang": "es",
+      "_value": "Cuentas consolidadas IS"
+     }
+    ],
+    "type": "http://www.w3.org/ns/dcat#Distribution"
+   },
+   {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/resource/95df93f7-c633-48ef-ba73-cc0a226c07cf",
+    "accessURL": "https://sede.agenciatributaria.gob.es/Sede/estadisticas/estadisticas-impuesto/cuentas-anuales-consolidadas-impuesto-sobre-sociedades/metodologia.html",
+    "format": {
+     "_about": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/resource/95df93f7-c633-48ef-ba73-cc0a226c07cf/format",
+     "type": "http://purl.org/dc/terms/IMT",
+     "value": "application/xhtml+xml"
+    },
+    "relation": [
+     "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/sociedadesdc/2018/docf21d6fa813545af1c2f44036c9bcaade8dbfcf967.html",
+     "https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/Estadisticas/Estadisticas_impuesto/Sociedades/Sociedadesdc/Documentacion/Infografia_DC_2016.pdf"
+    ],
+    "title": [
+     {
+      "_lang": "es",
+      "_value": "Metodología"
+     }
+    ],
+    "type": "http://www.w3.org/ns/dcat#Distribution"
+   }
+  ],
+  "identifier": "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Cuentas_Anuales_Consolidadas_del_Impuesto_sobre_Sociedades.shtml",
+  "issued": "lun, 17 dic 2018 23:00:00 GMT+0000",
+  "language": "http://publications.europa.eu/resource/authority/language/SPA",
+  "modified": "mar, 21 oct 2025 22:00:00 GMT+0000",
+  "publisher": "http://datos.gob.es/recurso/sector-publico/org/Organismo/EA0028512",
+  "references": [
+   "https://www.agenciatributaria.es/AEAT.internet/Inicio/La_Agencia_Tributaria/Memorias_y_estadisticas_tributarias/Estadisticas/Estadisticas_por_impuesto/Impuesto_sobre_Sociedades/Cuentas_Anuales_Consolidadas_del_Impuesto_sobre_Sociedades/Documentacion/Documentacion.shtml",
+   "https://www.agenciatributaria.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/sociedadesdc/2016/doc314e0b4d32a47b7ec37e408016d5556c73b7298d.html"
+  ],
+  "spatial": [
+   "http://datos.gob.es/recurso/sector-publico/territorio/Autonomia/Andalucia",
+   "http://datos.gob.es/recurso/sector-publico/territorio/Autonomia/Aragon",
+   "http://datos.gob.es/recurso/sector-publico/territorio/Autonomia/Canarias"
+  ],
+  "temporal": "https://datos.gob.es/catalogo/ea0028512-cuentas-anuales-en-el-impuesto-sobre-sociedades/PeriodOfTime-1",
+  "theme": "http://datos.gob.es/kos/sector-publico/sector/hacienda",
+  "title": [
+   {
+    "_lang": "es",
+    "_value": "Cuentas anuales consolidadas en el Impuesto sobre Sociedades"
+   }
+  ],
+  "type": "http://www.w3.org/ns/dcat#Dataset",
+  "valid": "vie, 23 oct 2026 22:00:00 GMT+0000"
+ },
+ {
+  "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm",
+  "description": [
+   {
+    "_value": "muestra recortada",
+    "_lang": "es"
+   }
+  ],
+  "distribution": [
+   {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/8da3c88c-b04d-488a-b54e-087841184680",
+    "accessURL": "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Estadistica_de_los_declarantes_del_IRPF_por_municipios.shtml",
+    "format": {
+     "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/8da3c88c-b04d-488a-b54e-087841184680/format",
+     "type": "http://purl.org/dc/terms/IMT",
+     "value": "application/xhtml+xml"
+    },
+    "relation": [
+     "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfmunicipios/2018/docf43e2d110d6e9743d50da02defabfd3c3b6793897.html",
+     "https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/Estadisticas/Estadisticas_impuesto/Irpf_patrimonio/Irpfmunicipios/Documentacion/Nota_presentacion_IRPFM_2013.pdf"
+    ],
+    "title": [
+     {
+      "_lang": "es",
+      "_value": "Estadística (todos los ejercicios)"
+     }
+    ],
+    "type": "http://www.w3.org/ns/dcat#Distribution"
+   },
+   {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/9501a1da-66f4-4e9b-b04a-f3b14a3a604a",
+    "accessURL": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfmunicipios/2023/home.html",
+    "format": {
+     "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/9501a1da-66f4-4e9b-b04a-f3b14a3a604a/format",
+     "type": "http://purl.org/dc/terms/IMT",
+     "value": "application/xhtml+xml"
+    },
+    "relation": [
+     "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfmunicipios/2018/docf43e2d110d6e9743d50da02defabfd3c3b6793897.html",
+     "https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/Estadisticas/Estadisticas_impuesto/Irpf_patrimonio/Irpfmunicipios/Documentacion/Nota_presentacion_IRPFM_2013.pdf"
+    ],
+    "title": [
+     {
+      "_lang": "es",
+      "_value": "Estadística 2023"
+     }
+    ],
+    "type": "http://www.w3.org/ns/dcat#Distribution"
+   },
+   {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/af922d10-2247-42b0-8c23-9af08060a1c2",
+    "accessURL": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfmunicipios_ccaa/2023/home.html",
+    "format": {
+     "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/af922d10-2247-42b0-8c23-9af08060a1c2/format",
+     "type": "http://purl.org/dc/terms/IMT",
+     "value": "application/xhtml+xml"
+    },
+    "title": [
+     {
+      "_lang": "es",
+      "_value": "Datos estadísticos base 2023"
+     }
+    ],
+    "type": "http://www.w3.org/ns/dcat#Distribution"
+   },
+   {
+    "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/d18f5c4e-fff6-4911-81d6-7cf15903c48e",
+    "accessURL": "https://sede.agenciatributaria.gob.es/Sede/estadisticas/estadisticas-impuesto/estadistica-declarantes-irpf-municipios/metodologia.html",
+    "format": {
+     "_about": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/resource/d18f5c4e-fff6-4911-81d6-7cf15903c48e/format",
+     "type": "http://purl.org/dc/terms/IMT",
+     "value": "application/xhtml+xml"
+    },
+    "title": [
+     {
+      "_lang": "es",
+      "_value": "Metodología"
+     }
+    ],
+    "type": "http://www.w3.org/ns/dcat#Distribution"
+   }
+  ],
+  "identifier": "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Estadistica_de_los_declarantes_del_IRPF_por_municipios.shtml",
+  "issued": "mar, 19 jul 2016 22:00:00 GMT+0000",
+  "keyword": [
+   {
+    "_lang": "es",
+    "_value": "Agua"
+   },
+   {
+    "_lang": "es",
+    "_value": "Cultura"
+   },
+   {
+    "_lang": "es",
+    "_value": "Divisiones territoriales"
+   },
+   {
+    "_lang": "es",
+    "_value": "Espacios Naturales"
+   },
+   {
+    "_lang": "es",
+    "_value": "Fauna"
+   },
+   {
+    "_lang": "es",
+    "_value": "Flora"
+   },
+   {
+    "_lang": "es",
+    "_value": "IRPF"
+   },
+   {
+    "_lang": "es",
+    "_value": "La Rioja"
+   },
+   {
+    "_lang": "es",
+    "_value": "Municipios"
+   },
+   {
+    "_lang": "es",
+    "_value": "Salud"
+   },
+   {
+    "_lang": "es",
+    "_value": "renta"
+   }
+  ],
+  "language": "http://publications.europa.eu/resource/authority/language/SPA",
+  "modified": "mar, 29 sep 2026 22:00:00 GMT+0000",
+  "publisher": "http://datos.gob.es/recurso/sector-publico/org/Organismo/EA0028512",
+  "references": "https://sede.agenciatributaria.gob.es/Sede/datosabiertos/catalogo/hacienda/Estadistica_de_los_declarantes_del_IRPF_por_municipios.shtml",
+  "spatial": [
+   "http://datos.gob.es/recurso/sector-publico/territorio/Autonomia/Andalucia",
+   "http://datos.gob.es/recurso/sector-publico/territorio/Autonomia/Aragon",
+   "http://datos.gob.es/recurso/sector-publico/territorio/Autonomia/Canarias"
+  ],
+  "temporal": "https://datos.gob.es/catalogo/ea0028512-estadistica-de-los-declarantes-de-irpf-por-municipios-edm/PeriodOfTime-1",
+  "theme": "http://datos.gob.es/kos/sector-publico/sector/hacienda",
+  "title": [
+   {
+    "_lang": "es",
+    "_value": "Estadística de los declarantes de IRPF por municipios (EDM)"
+   }
+  ],
+  "type": "http://www.w3.org/ns/dcat#Dataset",
+  "valid": "jue, 30 sep 2027 22:00:00 GMT+0000"
+ }
+]

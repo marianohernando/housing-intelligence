@@ -4,8 +4,11 @@ Plataforma de inteligencia residencial para la Comunidad de Madrid (PUBLIC · PR
 
 > Idealista sabe qué vivienda hay. Nosotros queremos saber qué vivienda hace falta.
 
-## Estado
-Sprint P0 — Control Tower + Data Recon. Ver `board/BOARD.md` y `evidence/`.
+## Estado (2026-10-20)
+Sprint P0 — Control Tower + Data Recon. Gate 0 PASS y Gate 1 PASS (alcance: geografía canónica).
+- Geografía canónica de la Comunidad de Madrid en PostGIS: 179 municipios, 246 distritos censales, 131 barrios de Madrid, 4.417 secciones censales, 86.361 celdas H3 (r8/r9).
+- Catálogo: 6.736 datasets candidatos cosechados, 28 curados (17 P0).
+- Ver `board/BOARD.md`, `evidence/` y `data/catalog/reports/`.
 
 ## Quickstart
 ```bash
@@ -13,6 +16,7 @@ cp .env.example .env          # rellenar POSTGRES_PASSWORD
 make dev                      # db + redis + migraciones + seed
 make lint typecheck test      # Gate 0
 make catalog-harvest          # catálogo de fuentes candidatas
+make catalog-curate           # aplica data/catalog/curation/*.yaml
 make ingest DATASET=cm_secciones_censales
 ```
 

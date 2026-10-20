@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914780_base_imponible_general_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Base imponible general del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914780
+resources:
+- name: Base imponible general del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/b6699667-caa0-4575-abb0-0242856b6f4f/resource/5a9a3992-8b60-46a5-8fe9-10558a57faa4/download/base-imponible-general-del-irpf.-municipios.csv
+- name: Base imponible general del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/b6699667-caa0-4575-abb0-0242856b6f4f/resource/5d1f0de2-9bd1-4a6e-b585-0b9093850446/download/base-imponible-general-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914780'
+  harvested_at: '2026-10-20T11:17:01.444517+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

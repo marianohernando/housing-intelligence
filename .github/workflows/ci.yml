@@ -1,0 +1,103 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  UV_PYTHON: "3.12"
+
+jobs:
+  python:
+    name: python (lint, typecheck, unit, data)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+      - run: uv sync --all-packages --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+      - run: uv run python scripts/export_schemas.py --check
+      - run: uv run python scripts/check_docs_manifest.py docs
+      - run: uv run pytest tests/unit tests/data -q --junitxml=reports/unit.xml
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unit-report
+          path: reports/
+
+  web:
+    name: web (lint, typecheck, test, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run -w apps/web lint
+      - run: npm run -w apps/web typecheck
+      - run: npm run -w apps/web test -- --run
+      - run: npm run -w apps/web build
+
+  secrets:
+    name: secrets (gitleaks full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: "8.30.1"
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar -xz -C /usr/local/bin gitleaks
+      - run: gitleaks git --config .gitleaks.toml --redact --no-banner .
+
+  integration:
+    name: integration (PostGIS + pgvector, migrations, registry)
+    runs-on: ubuntu-latest
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://housing:housing@localhost:5440/housing_test
+      DATABASE_URL: postgresql+psycopg://housing:housing@localhost:5440/housing
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+      - name: Boot database (same image as local compose)
+        run: docker compose up -d --wait db
+      - run: uv sync --all-packages --frozen
+      - run: uv run pytest -m db tests/integration -q --junitxml=reports/integration.xml
+      - run: uv run alembic -c infra/migrations/alembic.ini upgrade head
+      - run: uv run hi-ingest catalog sync
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: integration-report
+          path: reports/
+
+  deps:
+    name: dependency audit (blocking on high/critical)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+      - run: uv export --all-packages --frozen --no-hashes --format requirements-txt > /tmp/req.txt
+      - run: uvx pip-audit -r /tmp/req.txt --progress-spinner off
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm audit --omit=dev --audit-level=high

@@ -1,0 +1,35 @@
+dataset_id: cm_pensiones_contributivas_pensionistas_por_distritos_y_sexo
+source_id: comunidad_madrid_ckan
+name: Pensiones contributivas. Pensionistas por distritos y sexo
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/pensiones_contributivas_pensionistas_por_distritos_y_sexo
+resources:
+- name: Pensiones contributivas. Pensionistas por distritos y sexo.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/2ab33307-baeb-4efd-9182-a19143f9a134/resource/dabc4c17-2408-45d6-927a-6fafa3bcd09e/download/pensiones-contributivas.-pensionistas-por-distritos-y-sexo.csv
+- name: Pensiones contributivas. Pensionistas por distritos y sexo.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/2ab33307-baeb-4efd-9182-a19143f9a134/resource/34e8a491-c189-4c5b-9d4f-1fdcc78c86b6/download/pensiones-contributivas.-pensionistas-por-distritos-y-sexo.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['hogares']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: pensiones_contributivas_pensionistas_por_distritos_y_sexo
+  harvested_at: '2026-10-20T11:17:01.430575+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

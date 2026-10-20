@@ -1,0 +1,35 @@
+dataset_id: cm_ie1104059_superficie_agricola_por_habitante_municipios
+source_id: comunidad_madrid_ckan
+name: Superficie agrícola por habitante. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1104059
+resources:
+- name: Superficie agrícola por habitante.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/26525ffb-a8a5-434f-bd4e-136e7f8f2638/resource/ddfccbd9-32aa-4e82-ada5-0e1de1ff35cd/download/superficie-agricola-por-habitante.-municipios.csv
+- name: Superficie agrícola por habitante. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/26525ffb-a8a5-434f-bd4e-136e7f8f2638/resource/3323588a-dc6b-48a3-9044-dbdd14383fc8/download/superficie-agricola-por-habitante.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1104059'
+  harvested_at: '2026-10-20T11:17:01.442207+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

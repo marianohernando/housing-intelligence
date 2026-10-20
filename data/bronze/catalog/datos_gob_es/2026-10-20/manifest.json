@@ -1,0 +1,910 @@
+{
+  "namespace": "catalog/datos_gob_es",
+  "run_label": "2026-10-20",
+  "written_at": "2026-10-20T11:13:30.045577+00:00",
+  "artifacts": [
+    {
+      "name": "page_0001.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0001.json",
+      "sha256": "b760c609e0d37f4272bb90c0de1ed5a701577821c45bd5a7cea2f8453d39b0b0",
+      "bytes": 191004,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=0",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:47.537818+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0002.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0002.json",
+      "sha256": "4e53503bf7eda3feb4be8dd7d3119280f10b3d62ab571802be2b0bf74fe9e589",
+      "bytes": 494772,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=1",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:48.701379+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0003.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0003.json",
+      "sha256": "60005b245a5ff1c7ca589599df6a9fc8d198448f601c353e4faf6264d61e6807",
+      "bytes": 796443,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=2",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:50.348630+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0004.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0004.json",
+      "sha256": "47935cacf52d5e723bda1dc50bb7d2960113b2ea7e6c64324a9a770b1b1250e5",
+      "bytes": 507718,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=3",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:51.700376+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0005.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0005.json",
+      "sha256": "44e5b9654e9c1550b2dedeaf415ce01f5010b433ce043e935e85dded773569ee",
+      "bytes": 508375,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=4",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:52.857403+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0006.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0006.json",
+      "sha256": "0b56bbe778c771f7f095601c56c4542eebfe9989c67a68b77b0f332116081345",
+      "bytes": 500155,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=5",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:54.207492+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0007.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0007.json",
+      "sha256": "437e11b5fe6d8fe99bac2986a305743c5733454d9c794008ccec1084b0dd56f4",
+      "bytes": 566381,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=6",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:55.585708+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0008.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0008.json",
+      "sha256": "41c6ea33149e0ead9685063755fef09edc3f0b7e54915c6c806c27596358c153",
+      "bytes": 882904,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=7",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:57.311492+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0009.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0009.json",
+      "sha256": "979babd2e401e472caa6311fdd62671bf543d28da7bf912712c18198978e53ef",
+      "bytes": 611562,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=8",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:11:58.812553+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0010.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0010.json",
+      "sha256": "4908accf3e43aa709f2906d62d7acd1ad9a300e60956df4eef915866d7269d01",
+      "bytes": 499518,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=9",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:00.141227+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0011.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0011.json",
+      "sha256": "fa72f2a37374acddd48cc2091e088c445ecc3841f14b3c5d9fd25ae9ae98a4eb",
+      "bytes": 647206,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=10",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:01.561812+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0012.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0012.json",
+      "sha256": "832ec82d9b1280c45a4594ddac40b5a6c70fe7680668457036bc54419f7800ec",
+      "bytes": 359071,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=11",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:02.733336+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0013.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0013.json",
+      "sha256": "e62eeda80ef8a94ff29cf9a8783c8f90554f0efb51ef961432cfb02ff1d1d079",
+      "bytes": 601493,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=12",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:04.155582+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0014.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0014.json",
+      "sha256": "883fdac329e39897eb6866c45761620fbdd5f47fe3caef4a7406ff818a600333",
+      "bytes": 830958,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=13",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:05.869324+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0015.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0015.json",
+      "sha256": "84b0fb7435f70a8f0ce9d9a0efcf60599e99dc728565fe6f8fbdb6e5f6338b71",
+      "bytes": 527422,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=14",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:07.210477+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0016.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0016.json",
+      "sha256": "52356aa05581a4cac527d32e9fccace4861e52d225c804665fea1cab5d5c444d",
+      "bytes": 489391,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=15",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:08.480906+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0017.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0017.json",
+      "sha256": "3c3d170a21934f41aa000635a2296bb0a75b282f55f018d96cdc8d9812931f6a",
+      "bytes": 486815,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=16",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:09.580797+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0018.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0018.json",
+      "sha256": "189e49404e66a95a4d82bf914d16f5c5eb63e32c2344ef984835b824df8f16e0",
+      "bytes": 576784,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=17",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:10.889511+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0019.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0019.json",
+      "sha256": "4f932d0ffa5e2a2b3d83477ff3ac56343b1e1633eb2b9de8051616e734a54bd4",
+      "bytes": 504129,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=18",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:12.054915+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0020.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0020.json",
+      "sha256": "8022819f108452987035b1b246009201170e6d1edc54e4fae6c6063e5460249b",
+      "bytes": 572305,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=19",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:13.534821+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0021.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0021.json",
+      "sha256": "dad0cd6e4a701e39eddc276d2ed0321686d0ef83708baaa1c5d4af074b752d83",
+      "bytes": 484969,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=20",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:14.669397+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0022.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0022.json",
+      "sha256": "fb98e7549b99afb1e474f7c634530f1355474815d480625062f6951d6c50cced",
+      "bytes": 443139,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=21",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:15.719409+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0023.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0023.json",
+      "sha256": "0878a29b5c0fdbcac72654c6fd1334626ef15e9cdfba2d52eef0a53fd7113498",
+      "bytes": 435438,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=22",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:17.074950+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0024.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0024.json",
+      "sha256": "d368f099df99a0b2c25fe0508c2efbd350dada4a1c142d0b8aa6b2a8d7afd6ad",
+      "bytes": 546160,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=23",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:18.445906+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0025.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0025.json",
+      "sha256": "25ec105d1c84f73e76bea87db394b33b5a05406903ddd39d20f5874a9d17f0e1",
+      "bytes": 615124,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=24",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:19.791717+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0026.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0026.json",
+      "sha256": "934c0e6072340c363d230ef53b1df0e2acdc7843667fb2cf2d6f1c69f7c5fccb",
+      "bytes": 646501,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=25",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:21.180128+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0027.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0027.json",
+      "sha256": "92fa9f8c6728a826049e92251beda79414e2ccb6626b157e389e2d31d59d28b4",
+      "bytes": 593038,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=26",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:24.384239+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0028.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0028.json",
+      "sha256": "4760fdc4d924fa7e4979eb50594d393ed9bd2dcadd1b490b7735011307ce73d2",
+      "bytes": 524903,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=27",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:25.666529+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0029.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0029.json",
+      "sha256": "ffe59bac294503caecc9960e622d62bfde6c9976c655a30ebbf048c50f48f0c8",
+      "bytes": 533726,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=28",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:26.829623+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0030.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0030.json",
+      "sha256": "c9812c73c7c924e6211667f5a496e0f084dbafa8b058e4216dba1d0d1df919c4",
+      "bytes": 488051,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=29",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:27.957100+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0031.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0031.json",
+      "sha256": "c1dcf2b06d2b33030278229e1964e631f78176897620077a25415ef973081dee",
+      "bytes": 597978,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=30",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:29.268292+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0032.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0032.json",
+      "sha256": "1f9e4954f1a4df8c30438bc989cd2b5692419fd0b013dcdc41cb532eedba2cf7",
+      "bytes": 675324,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=31",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:30.878132+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0033.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0033.json",
+      "sha256": "9dc1c12f789cd161c22b1e9ce01270eaed015c28ee773344cc3b637686bbbf02",
+      "bytes": 760351,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=32",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:32.416986+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0034.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0034.json",
+      "sha256": "8ba15b49dec04133d6faa4bf0e5bbbd78cac1118eeb6d5b035fbf8bc99bf2488",
+      "bytes": 631066,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=33",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:33.745306+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0035.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0035.json",
+      "sha256": "e57b360b11b352633c6d1c45d60e9157fbd822ae7274d7021520c0e9311fbc31",
+      "bytes": 568081,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=34",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:34.943721+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0036.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0036.json",
+      "sha256": "5ca9cc133cece2ff8d2b515ed38ca744e8ec41c43f124f8c0141152f0cac9448",
+      "bytes": 569243,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=35",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:36.625877+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0037.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0037.json",
+      "sha256": "ad4376023c02d095a5d9746d251b0af6cee243e5cfbc95adcb9f410f1d12d53e",
+      "bytes": 593473,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=36",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:37.859640+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0038.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0038.json",
+      "sha256": "4a8e867d96a40820587a848d0dc9d7bccf15c7f8060eccd8507a6b786340a85f",
+      "bytes": 502878,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=37",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:39.228650+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0039.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0039.json",
+      "sha256": "8b560ad22b94797a17c8b3465c79cc74280ef3a47b194bd48b6d9a26d5b2553b",
+      "bytes": 451635,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=38",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:40.367733+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0040.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0040.json",
+      "sha256": "ccf37e8da36e2eee56f88fbc55c5cdbd37c50e0abd896fcb7141f6f3e8cc9809",
+      "bytes": 670706,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=39",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:42.162338+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0041.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0041.json",
+      "sha256": "a783dc32d416c64788ed101594c533eed4201b87391eae81ca18bce6adbc0083",
+      "bytes": 511258,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=40",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:43.386092+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0042.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0042.json",
+      "sha256": "2451224471b6302b8b94896406253c038defa17ababf52c466c7cbeb3f19096c",
+      "bytes": 478810,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=41",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:44.551990+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0043.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0043.json",
+      "sha256": "b4648b3eb4bb60bf1fee9cd019e43d7181b51040ee0d8b747a72646ed44af9a1",
+      "bytes": 515176,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=42",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:45.705386+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0044.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0044.json",
+      "sha256": "6eecc6069c8e29b4e4f6656388162280cafcc644790cc7f9e6055e35cc92626e",
+      "bytes": 500348,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=43",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:47.343231+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0045.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0045.json",
+      "sha256": "eaa9ee1a66a505cdcfd380d49f7d3f51f4a8168c99721a79a6d1978d7559e442",
+      "bytes": 514850,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=44",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:48.402082+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0046.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0046.json",
+      "sha256": "9ec8091593adb2a0820a90d9b04429a57f377ee3e097cbbcc83930d02aa85306",
+      "bytes": 503283,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=45",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:49.427199+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0047.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0047.json",
+      "sha256": "3d8273dfbbadfe14c2c7e18d855b2ad028cfb27e0cfdf89756bce0dff016b75a",
+      "bytes": 595359,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=46",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:50.793043+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0048.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0048.json",
+      "sha256": "9c5c324abea3cc37fe6c1234587058c7298ac6d3f80119ee3859f3741239847b",
+      "bytes": 520298,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=47",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:52.264160+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0049.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0049.json",
+      "sha256": "86ffb034cc47008185e42d875a263b0ac76223a37bbe56fbf8f9c8e604d5a679",
+      "bytes": 446262,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=48",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:53.375876+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0050.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0050.json",
+      "sha256": "fb769bad13507056231d1b9351e0e92bb9b032f7077115d5bf66bbfd9c80203e",
+      "bytes": 481251,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=49",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:54.611718+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0051.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0051.json",
+      "sha256": "7e254ddbda7f5819494b558893657fdc3af7ae25c9890c49a464a9741a7ff100",
+      "bytes": 630176,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=50",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:55.981509+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0052.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0052.json",
+      "sha256": "f5c897c84baa2c675ad45ce818d6ea47dc02bd18d0aca0657d2478e2a5bb062b",
+      "bytes": 476712,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=51",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:57.242595+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0053.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0053.json",
+      "sha256": "c1474910583583048b69b092d62c2125659cb2c52525deaf9b742cb47a701235",
+      "bytes": 545925,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=52",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:58.330405+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0054.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0054.json",
+      "sha256": "2f4da84cc9d84f8563f431679b4f82cd77e8f58ab096048c8116b0e0984efdeb",
+      "bytes": 803376,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=53",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:12:59.909677+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0055.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0055.json",
+      "sha256": "7cdb06eded791054bd683c2021f3303528ac2d377b2007e062efe88f8dfcfae7",
+      "bytes": 616541,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=54",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:01.321627+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0056.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0056.json",
+      "sha256": "1c93ac70a203edd471ec7f7da8da546427e7ccabbf3218a5a037b1da9410cc60",
+      "bytes": 670287,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=55",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:02.786990+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0057.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0057.json",
+      "sha256": "ff2b7d1f4eff4c5b0b4e339d78f193664398ee5f8af468f81398272b7858b585",
+      "bytes": 655505,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=56",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:04.055583+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0058.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0058.json",
+      "sha256": "e337f1b3a92bad3c5fc3f2ec00c00f73f28effdd21c59cd496cffddf5c1c4d36",
+      "bytes": 604930,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=57",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:05.470761+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0059.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0059.json",
+      "sha256": "ed147856ce366807e88adc1549b4b69ca7f0c1771e92cf3ba3285412a36d3951",
+      "bytes": 1175088,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=58",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:07.963542+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0060.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0060.json",
+      "sha256": "49857ee056f0d155e300f206a18ab27d06ae79c710f529dec81c424c3f662cd6",
+      "bytes": 534525,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=59",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:09.299204+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0061.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0061.json",
+      "sha256": "c315a626c77485c26969ee0878c55fb8cb307f42aadf2b42dfe52063949301fa",
+      "bytes": 581122,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=60",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:10.551937+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0062.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0062.json",
+      "sha256": "5d56f6fa983497aedd6862e180c575896c82265d16dc2c150aed2e971820f81a",
+      "bytes": 521536,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=61",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:11.783194+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0063.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0063.json",
+      "sha256": "5e0e82b2fe57e2bba93adc1c4c6ddfc7a40a47ed24553458b13158987ff4cd92",
+      "bytes": 486736,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=62",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:12.981920+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0064.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0064.json",
+      "sha256": "02c2f56777fb580e3e882ce94c52e44a0a90ae6bd0198f75906d12dee3e1e74c",
+      "bytes": 535232,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=63",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:14.248521+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0065.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0065.json",
+      "sha256": "a7c927c480d18d7d214a696ca1da3e70a6c66291a322d0e4f8a67c90d6b6e073",
+      "bytes": 905417,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=64",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:16.145403+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0066.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0066.json",
+      "sha256": "922518893efebaa1822b558d093f990a4dd2320ce6b1ef37207e7fb39c4f62c6",
+      "bytes": 680910,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=65",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:17.548420+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0067.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0067.json",
+      "sha256": "180d8bd84cb270590ce43af2d0bca56a941d532efb565c82f57892037f45de1b",
+      "bytes": 534536,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=66",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:19.044041+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0068.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0068.json",
+      "sha256": "ebc778fd5a2da0e83553d1dd12b3203ce248b0c1802bd538c14da9a6b7ad3d96",
+      "bytes": 530689,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=67",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:20.217656+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0069.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0069.json",
+      "sha256": "2d726cbe5fe07d859627df8e3e322e19dad248e7dee1eb1cf04a7c89c0e3d12b",
+      "bytes": 538534,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=68",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:21.881087+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0070.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0070.json",
+      "sha256": "29d10adccc6948f9f8253f64418a4b708aaf576314650535f32f1533e96bb6e1",
+      "bytes": 533730,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=69",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:23.674321+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0071.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0071.json",
+      "sha256": "e903b8017e0c0bca4e1ba421f4609b118dfbffe8b9853853b8fcf9edc954a834",
+      "bytes": 609657,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=70",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:24.933328+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0072.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0072.json",
+      "sha256": "5bfcc2ae11e1372338dfd1e329cdad20a6dbe4fc609da0072349acde0d7b8cf2",
+      "bytes": 471618,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=71",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:26.076166+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0073.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0073.json",
+      "sha256": "de04258061da5b8b4ca7e3692482d274a1f389dbcc63ef6a1dd43e23950ea1af",
+      "bytes": 501631,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=72",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:27.220180+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0074.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0074.json",
+      "sha256": "895006608c50a9cb01efe1f9df0c1f862168ceaaf5301529ca5294a7c0830b5c",
+      "bytes": 514678,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=73",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:28.723975+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    {
+      "name": "page_0075.json",
+      "path": "data/bronze/catalog/datos_gob_es/2026-10-20/page_0075.json",
+      "sha256": "23f9ecdb7d80249511e3584630dc6bbe222f01e2d9703595d13b05350c24e5af",
+      "bytes": 544363,
+      "url": "https://datos.gob.es/apidata/catalog/dataset/spatial/Autonomia/Comunidad-Madrid.json?_pageSize=50&_page=74",
+      "status_code": 200,
+      "retrieved_at": "2026-10-20T11:13:30.038290+00:00",
+      "headers": {
+        "content-type": "application/json"
+      }
+    }
+  ],
+  "status": "OK",
+  "message": null,
+  "pages": 75
+}

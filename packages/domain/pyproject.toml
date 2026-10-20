@@ -1,0 +1,23 @@
+[project]
+name = "hi-domain"
+version = "0.0.1"
+description = "Pure domain logic (geo, catalog scoring)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "hi-contracts",
+    "h3>=4.3,<5",
+    "shapely>=2.1",
+    "pyproj>=3.7",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hi_domain"]
+
+[tool.uv.sources]
+hi-contracts = { workspace = true }
+hi-domain = { workspace = true }
+hi-db = { workspace = true }

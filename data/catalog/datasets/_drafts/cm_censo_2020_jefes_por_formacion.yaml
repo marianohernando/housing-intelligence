@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2020_jefes_por_formacion
+source_id: comunidad_madrid_ckan
+name: Censo agrario 2020. Número de jefes de explotaciones agrarias por nivel de formación
+  agraria. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2020_jefes_por_formacion
+resources:
+- name: Censo agrario 2020. Número de jefes de explotaciones agrarias por nivel de
+    formación agraria.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/67ae2677-b283-422a-969f-8c84ff64918c/resource/fe6191fa-f8ad-45ea-8232-3c072969c042/download/censo-agrario-2020.-numero-de-jefes-de-explotaciones-agrarias-por-nivel-de-formacion-agraria.-mu.csv
+- name: Censo agrario 2020. Número de jefes de explotaciones agrarias por nivel de
+    formación agraria. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/67ae2677-b283-422a-969f-8c84ff64918c/resource/9049e7dd-49aa-443a-9249-36840dcb491e/download/censo-agrario-2020.-numero-de-jefes-de-explotaciones-agrarias-por-nivel-de-formacion-agraria.-m.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2020_jefes_por_formacion
+  harvested_at: '2026-10-20T11:17:01.491486+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

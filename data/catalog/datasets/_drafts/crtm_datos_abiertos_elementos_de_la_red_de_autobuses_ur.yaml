@@ -1,0 +1,32 @@
+dataset_id: crtm_datos_abiertos_elementos_de_la_red_de_autobuses_ur
+source_id: crtm_open_data
+name: 'Datos abiertos: Elementos de la Red de Autobuses Urbanos de Madrid'
+domain: transport
+owner: Consorcio Regional de Transportes de Madrid
+format: FEATURE SERVICE
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.crtm.es/datasets/8d7616e278194f4bb878deca42b2369a
+resources:
+- name: M9_Red
+  format: Feature Service
+  url: https://www.arcgis.com/sharing/rest/content/items/8d7616e278194f4bb878deca42b2369a/data
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: heuristic-v2; keywords=['transporte', 'autobus', 'movilidad']; strong=True
+discovery:
+  harvested_from: crtm_open_data
+  external_id: 8d7616e278194f4bb878deca42b2369a
+  harvested_at: '2026-10-20T11:17:01.438737+00:00'
+notes: Auto-draft. composite=4.7; license_id=CRTM-LDA

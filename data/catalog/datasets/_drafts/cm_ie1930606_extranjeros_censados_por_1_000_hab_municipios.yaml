@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930606_extranjeros_censados_por_1_000_hab_municipios
+source_id: comunidad_madrid_ckan
+name: Extranjeros censados por 1.000 hab. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930606
+resources:
+- name: Extranjeros censados por 1.000 hab. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4ac6290e-ca5d-4169-94b4-7e10510f0c21/resource/55a1f4be-eef3-4519-8c0f-615c724fe589/download/extranjeros-censados-por-1.000-hab.-municipios.csv
+- name: Extranjeros censados por 1.000 hab. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4ac6290e-ca5d-4169-94b4-7e10510f0c21/resource/3829d8dc-6c41-4fc4-b3fa-4ac5600a0258/download/extranjeros-censados-por-1.000-hab.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo', 'extranjeros']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930606'
+  harvested_at: '2026-10-20T11:17:01.463093+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

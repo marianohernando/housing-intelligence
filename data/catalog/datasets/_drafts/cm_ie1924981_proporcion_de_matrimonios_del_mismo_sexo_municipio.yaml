@@ -1,0 +1,35 @@
+dataset_id: cm_ie1924981_proporcion_de_matrimonios_del_mismo_sexo_municipio
+source_id: comunidad_madrid_ckan
+name: Proporción de matrimonios del mismo sexo. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1924981
+resources:
+- name: Proporción de matrimonios del mismo sexo.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/3d9aa4ef-33de-4248-9f00-7418624a1912/resource/d9bbfc68-b6fb-4606-ae85-44cfe388ac38/download/proporcion-de-matrimonios-del-mismo-sexo.-municipios.csv
+- name: Proporción de matrimonios del mismo sexo. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/3d9aa4ef-33de-4248-9f00-7418624a1912/resource/8707159e-b013-4b45-a1f6-7be493f6c59a/download/proporcion-de-matrimonios-del-mismo-sexo.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'movimiento natural']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1924981'
+  harvested_at: '2026-10-20T11:17:01.460299+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,35 @@
+dataset_id: cm_ie1915080_cuota_liquida_total_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Cuota liquida total del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1915080
+resources:
+- name: Cuota liquida total del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/7bcfcd14-5136-4036-a689-847ef18565e8/resource/460446cb-9f33-4910-9267-8cc4238f0b07/download/cuota-liquida-total-del-irpf.-municipios.csv
+- name: Cuota liquida total del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/7bcfcd14-5136-4036-a689-847ef18565e8/resource/9dede4a7-ad45-4d2c-a758-d4927ffc6004/download/cuota-liquida-total-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1915080'
+  harvested_at: '2026-10-20T11:17:01.454724+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

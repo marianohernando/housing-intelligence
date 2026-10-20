@@ -1,0 +1,35 @@
+dataset_id: cm_ie1104042_unidades_ganaderas_por_habitante_municipios
+source_id: comunidad_madrid_ckan
+name: Unidades ganaderas por habitante. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1104042
+resources:
+- name: Unidades ganaderas por habitante.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/0d0cbfc2-ab13-4f6d-b795-b7437585f25f/resource/a58f9464-6af0-44bb-a5ec-b749630ee185/download/unidades-ganaderas-por-habitante.-municipios.csv
+- name: Unidades ganaderas por habitante. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/0d0cbfc2-ab13-4f6d-b795-b7437585f25f/resource/42e6b8f8-dd62-49fc-9bfe-1b19b271b6ea/download/unidades-ganaderas-por-habitante.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1104042'
+  harvested_at: '2026-10-20T11:17:01.441461+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

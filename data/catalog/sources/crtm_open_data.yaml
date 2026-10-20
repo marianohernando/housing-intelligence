@@ -1,0 +1,26 @@
+source_id: crtm_open_data
+name: Datos Abiertos del Consorcio Regional de Transportes de Madrid
+provider: Consorcio Regional de Transportes de Madrid (CRTM)
+source_type: open_data_portal
+api_type: arcgis_hub
+base_url: https://datos.crtm.es
+catalog_url: https://datos.crtm.es/api/search/v1/collections/dataset/items
+license_name: CRTM Licencia de datos abiertos (LDA)
+license_url: https://www.crtm.es/licencia-de-uso
+license_status: CLEAR
+attribution_text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: per_dataset
+geographic_scope: Comunidad de Madrid
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: api_access
+active: true
+notes: >-
+  Licencia leída el 2026-10-20. Condiciones: citar CRTM y "Powered by CRTM" con enlace,
+  indicar si los datos son en bruto o explotados, conservar metadatos de fecha de
+  actualización, mantener la información actualizada, no sugerir respaldo del CRTM.
+  Redistribución de datos en bruto bajo la misma licencia; derivados con valor añadido
+  pueden llevar otra licencia. Acceso abusivo puede bloquearse: cachear y respetar ritmo.

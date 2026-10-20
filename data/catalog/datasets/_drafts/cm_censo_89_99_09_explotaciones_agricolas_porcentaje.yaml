@@ -1,0 +1,38 @@
+dataset_id: cm_censo_89_99_09_explotaciones_agricolas_porcentaje
+source_id: comunidad_madrid_ckan
+name: Censo agrario (1989, 1999, 2009). Porcentaje de explotaciones agrícolas con
+  tierras por superficie. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_89_99_09_explotaciones_agricolas_porcentaje
+resources:
+- name: Censo agrario (1989, 1999, 2009). Porcentaje de explotaciones agrícolas con
+    tierras por superficie.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/d5687c03-4d52-4d34-9aec-c21c76f40a8b/resource/b3bfda27-3a50-49eb-990a-9553cf4c81de/download/censo-agrario-1989-1999-2009.-porcentaje-de-explotaciones-agricolas-con-tierras-por-superficie.-.csv
+- name: Censo agrario (1989, 1999, 2009). Porcentaje de explotaciones agrícolas con
+    tierras por superficie. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/d5687c03-4d52-4d34-9aec-c21c76f40a8b/resource/9317bcfc-fb0f-4f4e-83b4-97000af04e18/download/censo-agrario-1989-1999-2009.-porcentaje-de-explotaciones-agricolas-con-tierras-por-superficie..json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_89_99_09_explotaciones_agricolas_porcentaje
+  harvested_at: '2026-10-20T11:17:01.499392+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,35 @@
+dataset_id: cm_ie1905840_afiliados_en_alta_laboral_a_la_seguridad_social_po
+source_id: comunidad_madrid_ckan
+name: Afiliados en alta laboral a la Seguridad Social por 1.000 habitantes. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1905840
+resources:
+- name: Afiliados en alta laboral a la Seguridad Social por 1.000 habitantes.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/ce3a84fd-a4bd-45be-9631-21fe921c6701/resource/466802a5-cddb-4597-834f-fda317397238/download/afiliados-en-alta-laboral-a-la-seguridad-social-por-1.000-habitantes.-municipios.csv
+- name: Afiliados en alta laboral a la Seguridad Social por 1.000 habitantes. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/ce3a84fd-a4bd-45be-9631-21fe921c6701/resource/f0a9ccc9-815f-4555-9221-443b95370960/download/afiliados-en-alta-laboral-a-la-seguridad-social-por-1.000-habitantes.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1905840'
+  harvested_at: '2026-10-20T11:17:01.443362+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

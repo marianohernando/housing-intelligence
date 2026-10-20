@@ -1,0 +1,38 @@
+dataset_id: cm_poblacion_edad_nacionalidad_sexo
+source_id: comunidad_madrid_ckan
+name: Población censada por edad, nacionalidad y sexo. Censo anual. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo
+resources:
+- name: Población censada por edad, nacionalidad y sexo. Censo anual.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/0a14fbfe-783e-4de3-81b1-ff3792bfd402/resource/bab16922-8df1-49b5-9791-aed4edf8ced1/download/poblacion-censada-por-edad-nacionalidad-y-sexo.-censo-anual.-municipios.csv
+- name: Población censada por edad, nacionalidad y sexo. Censo anual. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/0a14fbfe-783e-4de3-81b1-ff3792bfd402/resource/b30133ad-58c4-4532-b7cc-d63ca3f50e7a/download/poblacion-censada-por-edad-nacionalidad-y-sexo.-censo-anual.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo', 'extranjeros']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: poblacion_censada_por_edad_nacionalidad_y_sexo
+  harvested_at: '2026-10-20T11:16:21.692656+00:00'
+notes: P0-04 demographic structure | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.6; license_id=cc-by

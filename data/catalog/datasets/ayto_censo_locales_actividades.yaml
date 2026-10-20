@@ -1,0 +1,78 @@
+dataset_id: ayto_censo_locales_actividades
+source_id: ayuntamiento_madrid_ckan
+name: Censo de locales, sus actividades y terrazas de hostelería y restauración
+domain: economy
+owner: Ayuntamiento de Madrid
+format: JSON
+geography: table
+geo:
+  resolution: unknown
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.madrid.es/dataset/200085-0-censo-locales
+resources:
+- name: 200085-0-censo-locales
+  format: JSON
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-0-censo-locales/download/200085_20261020_053109.json
+- name: 200085-1-censo-locales
+  format: CSV
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-1-censo-locales/download/200085_20261020_053109.csv
+- name: 200085-2-censo-locales
+  format: XML
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-2-censo-locales/download/200085_20261020_053109.xml
+- name: 200085-3-censo-locales
+  format: CSV
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-3-censo-locales/download/200085_20261020_053943.csv
+- name: 200085-4-censo-locales
+  format: XML
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-4-censo-locales/download/200085_20261020_053943.xml
+- name: 200085-5-censo-locales
+  format: CSV
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-5-censo-locales/download/200085_20261020_053555.csv
+- name: 200085-6-censo-locales
+  format: CSV
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-6-censo-locales/download/200085_20261020_053441.csv
+- name: 200085-7-censo-locales
+  format: JSON
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-7-censo-locales/download/200085_20261020_053441.json
+- name: 200085-8-censo-locales
+  format: XML
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-8-censo-locales/download/200085_20261020_053441.xml
+- name: 200085-9-censo-locales
+  format: PDF
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-9-censo-locales/download/estructura_ds_ficherocla.pdf
+- name: 200085-10-censo-locales
+  format: PDF
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-10-censo-locales/download/estructura_ds_ficherocla_terrazas.pdf
+- name: 200085-11-censo-locales
+  format: PDF
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-11-censo-locales/download/estructura_ds_20ficherocla_licencias.pdf
+- name: 200085-12-censo-locales
+  format: JSON
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-12-censo-locales/download/200085_20261020_053943.json
+- name: 200085-13-censo-locales
+  format: XML
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-13-censo-locales/download/200085_20261020_053555.xml
+- name: 200085-14-censo-locales
+  format: JSON
+  url: https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-14-censo-locales/download/200085_20261020_053555.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 3
+  geographic_granularity: 2
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['empresas', 'locales', 'actividad economica', 'terrazas'];
+    strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 200085-0-censo-locales
+  harvested_at: '2026-10-20T11:16:21.706204+00:00'
+notes: Commercial activity, Madrid capital (docs/02_data/33) | curated from 2026-10-20_sprint_p0.yaml
+  | Auto-draft. composite=3.4; license_id=cc-by

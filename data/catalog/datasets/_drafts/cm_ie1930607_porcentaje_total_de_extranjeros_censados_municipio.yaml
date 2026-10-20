@@ -1,0 +1,35 @@
+dataset_id: cm_ie1930607_porcentaje_total_de_extranjeros_censados_municipio
+source_id: comunidad_madrid_ckan
+name: Porcentaje total de extranjeros censados. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1930607
+resources:
+- name: Porcentaje total de extranjeros censados. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4a5c4841-db78-4bb3-aaaf-c8ab8fd1ca7d/resource/6f95fc11-cf11-4054-841a-bc82f1237353/download/porcentaje-total-de-extranjeros-censados.-municipios.csv
+- name: Porcentaje total de extranjeros censados. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4a5c4841-db78-4bb3-aaaf-c8ab8fd1ca7d/resource/c27eccdf-c499-445a-ab8c-68db30ac1d05/download/porcentaje-total-de-extranjeros-censados.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'censo', 'extranjeros']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1930607'
+  harvested_at: '2026-10-20T11:17:01.463621+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

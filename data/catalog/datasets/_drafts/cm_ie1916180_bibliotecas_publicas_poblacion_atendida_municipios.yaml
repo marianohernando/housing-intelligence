@@ -1,0 +1,35 @@
+dataset_id: cm_ie1916180_bibliotecas_publicas_poblacion_atendida_municipios
+source_id: comunidad_madrid_ckan
+name: Bibliotecas públicas. Población atendida. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1916180
+resources:
+- name: Bibliotecas públicas. Población atendida.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/e96e85fd-61b5-4817-a6f1-083e3960fedd/resource/70ff1cb7-3af2-458d-8712-b2b0369115b4/download/bibliotecas-publicas.-poblacion-atendida.-municipios.csv
+- name: Bibliotecas públicas. Población atendida. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/e96e85fd-61b5-4817-a6f1-083e3960fedd/resource/17f073f2-104f-47d9-83aa-4fbb4af8de59/download/bibliotecas-publicas.-poblacion-atendida.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1916180'
+  harvested_at: '2026-10-20T11:17:01.457087+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

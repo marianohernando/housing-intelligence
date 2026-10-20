@@ -1,0 +1,38 @@
+dataset_id: cm_registro_explotaciones_ganaderas
+source_id: comunidad_madrid_ckan
+name: Registro de Explotaciones Ganaderas de la Comunidad de Madrid
+domain: population
+owner: Comunidad de Madrid
+format: ZIP
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: mensual
+landing_url: https://datos.comunidad.madrid/dataset/registro_explotaciones_ganaderas
+resources:
+- name: Histórico - Registro de Explotaciones Ganaderas de la Comunidad de Madrid
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/8b31db17-311c-4285-a9d1-a22ccfe781e9/resource/75265e8a-5a54-4139-980f-1f68c0874352/download/registro_explotaciones_ganaderas_historico.zip
+- name: Registro de Explotaciones Ganaderas de la Comunidad de Madrid
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/8b31db17-311c-4285-a9d1-a22ccfe781e9/resource/1d5edcd3-bcf7-4ea3-a86c-b529ddd3d487/download/registro_explotaciones_ganaderas.csv
+- name: Registro de Explotaciones Ganaderas de la Comunidad de Madrid
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/8b31db17-311c-4285-a9d1-a22ccfe781e9/resource/abaf01b7-a59f-47af-8d11-fc606560da8f/download/registro_explotaciones_ganaderas.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: registro_explotaciones_ganaderas
+  harvested_at: '2026-10-20T11:17:01.422539+00:00'
+notes: Auto-draft. composite=5.0; license_id=cc-by

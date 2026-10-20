@@ -1,0 +1,38 @@
+dataset_id: cm_censo_89_99_09_explotaciones_agricolas
+source_id: comunidad_madrid_ckan
+name: Censo agrario (1989, 1999, 2009). Explotaciones agrícolas por superficie de
+  tierras. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_89_99_09_explotaciones_agricolas
+resources:
+- name: Censo agrario (1989, 1999, 2009). Explotaciones agrícolas por superficie de
+    tierras.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/e4c6e8c6-f5ed-494e-903b-f3dada581e68/resource/fc257bb1-909d-48e1-9665-cc534247500c/download/censo-agrario-1989-1999-2009.-explotaciones-agricolas-por-superficie-de-tierras.-municipios.csv
+- name: Censo agrario (1989, 1999, 2009). Explotaciones agrícolas por superficie de
+    tierras. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/e4c6e8c6-f5ed-494e-903b-f3dada581e68/resource/cec0ce13-85c7-44e4-8123-08cf153795c0/download/censo-agrario-1989-1999-2009.-explotaciones-agricolas-por-superficie-de-tierras.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['censo']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_89_99_09_explotaciones_agricolas
+  harvested_at: '2026-10-20T11:17:01.498712+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

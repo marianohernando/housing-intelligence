@@ -1,0 +1,622 @@
+{
+  "$defs": {
+    "ColumnSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "null_reason_default": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NullReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "nullable": {
+          "default": true,
+          "title": "Nullable",
+          "type": "boolean"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "ColumnSpec",
+      "type": "object"
+    },
+    "DatasetStatus": {
+      "enum": [
+        "DISCOVERED",
+        "REVIEWED",
+        "INGESTING",
+        "VALIDATED",
+        "PRODUCTION",
+        "DEGRADED",
+        "RETIRED"
+      ],
+      "title": "DatasetStatus",
+      "type": "string"
+    },
+    "DiscoverySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "external_id": {
+          "title": "External Id",
+          "type": "string"
+        },
+        "harvested_at": {
+          "format": "date-time",
+          "title": "Harvested At",
+          "type": "string"
+        },
+        "harvested_from": {
+          "title": "Harvested From",
+          "type": "string"
+        }
+      },
+      "required": [
+        "harvested_from",
+        "external_id",
+        "harvested_at"
+      ],
+      "title": "DiscoverySpec",
+      "type": "object"
+    },
+    "Domain": {
+      "enum": [
+        "housing",
+        "population",
+        "income",
+        "education",
+        "health",
+        "social",
+        "transport",
+        "urbanism",
+        "environment",
+        "economy",
+        "employment",
+        "safety",
+        "geography",
+        "other"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "GeoResolution": {
+      "enum": [
+        "ccaa",
+        "provincia",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "h3",
+        "parcela",
+        "edificio",
+        "point",
+        "line",
+        "none",
+        "unknown"
+      ],
+      "title": "GeoResolution",
+      "type": "string"
+    },
+    "GeoSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "crs_expected": {
+          "anyOf": [
+            {
+              "pattern": "^EPSG:\\d{4,5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crs Expected"
+        },
+        "geometry_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geometry Type"
+        },
+        "h3_join_method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/H3JoinMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "resolution": {
+          "$ref": "#/$defs/GeoResolution"
+        }
+      },
+      "required": [
+        "resolution"
+      ],
+      "title": "GeoSpec",
+      "type": "object"
+    },
+    "H3JoinMethod": {
+      "enum": [
+        "centroid",
+        "overlap",
+        "population_weighted",
+        "network_access"
+      ],
+      "title": "H3JoinMethod",
+      "type": "string"
+    },
+    "LicenseStatus": {
+      "enum": [
+        "CLEAR",
+        "RESTRICTED",
+        "PERMISSION_REQUIRED",
+        "RESEARCH_ONLY",
+        "REJECTED",
+        "PENDING_REVIEW"
+      ],
+      "title": "LicenseStatus",
+      "type": "string"
+    },
+    "NullReason": {
+      "enum": [
+        "NOT_APPLICABLE",
+        "SOURCE_NO_COVERAGE",
+        "SOURCE_MISSING",
+        "TEMPORARILY_UNAVAILABLE",
+        "STALE",
+        "PARSE_ERROR",
+        "ENTITY_NOT_RESOLVED",
+        "ESTIMATION_NOT_ALLOWED",
+        "UNKNOWN"
+      ],
+      "title": "NullReason",
+      "type": "string"
+    },
+    "Priority": {
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "ResourceSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "title": "Format",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "default": "primary",
+          "description": "primary | names | cross_check | docs",
+          "title": "Role",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "format",
+        "url"
+      ],
+      "title": "ResourceSpec",
+      "type": "object"
+    },
+    "Scorecard": {
+      "additionalProperties": false,
+      "description": "Every criterion is 0-5 and higher is better.\n\n`ingestion_ease` is the doc's \"ingestion difficulty\" expressed so that 5 = easiest,\nkeeping every criterion in the same direction.",
+      "properties": {
+        "coverage": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coverage"
+        },
+        "datamad_relevance": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datamad Relevance"
+        },
+        "demo_visibility": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Demo Visibility"
+        },
+        "freshness": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freshness"
+        },
+        "geographic_granularity": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geographic Granularity"
+        },
+        "ingestion_ease": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ingestion Ease"
+        },
+        "license_clarity": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License Clarity"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "product_impact": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Impact"
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "reviewed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewed At"
+        },
+        "reviewed_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewed By"
+        },
+        "temporal_depth": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temporal Depth"
+        },
+        "uniqueness": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uniqueness"
+        }
+      },
+      "title": "Scorecard",
+      "type": "object"
+    },
+    "TableSchemaSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ColumnSpec"
+          },
+          "title": "Columns",
+          "type": "object"
+        },
+        "primary_key": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Primary Key",
+          "type": "array"
+        }
+      },
+      "title": "TableSchemaSpec",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/dataset.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "dataset_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,95}$",
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "discovery": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DiscoverySpec"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "feeds_features": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Feeds Features",
+      "type": "array"
+    },
+    "format": {
+      "title": "Format",
+      "type": "string"
+    },
+    "geo": {
+      "$ref": "#/$defs/GeoSpec"
+    },
+    "geography": {
+      "description": "polygon | point | line | table | none",
+      "title": "Geography",
+      "type": "string"
+    },
+    "landing_url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Landing Url"
+    },
+    "license_status": {
+      "$ref": "#/$defs/LicenseStatus"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notes"
+    },
+    "owner": {
+      "title": "Owner",
+      "type": "string"
+    },
+    "priority": {
+      "$ref": "#/$defs/Priority"
+    },
+    "refresh_policy": {
+      "title": "Refresh Policy",
+      "type": "string"
+    },
+    "resources": {
+      "items": {
+        "$ref": "#/$defs/ResourceSpec"
+      },
+      "title": "Resources",
+      "type": "array"
+    },
+    "schema": {
+      "$ref": "#/$defs/TableSchemaSpec"
+    },
+    "scorecard": {
+      "$ref": "#/$defs/Scorecard"
+    },
+    "source_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,63}$",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/DatasetStatus",
+      "default": "DISCOVERED"
+    },
+    "temporal_resolution": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Temporal Resolution"
+    }
+  },
+  "required": [
+    "dataset_id",
+    "source_id",
+    "name",
+    "domain",
+    "owner",
+    "format",
+    "geography",
+    "geo",
+    "refresh_policy",
+    "license_status",
+    "priority"
+  ],
+  "title": "DatasetSpec",
+  "type": "object"
+}

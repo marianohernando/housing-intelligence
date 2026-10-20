@@ -1,0 +1,266 @@
+{
+  "$defs": {
+    "Domain": {
+      "enum": [
+        "housing",
+        "population",
+        "income",
+        "education",
+        "health",
+        "social",
+        "transport",
+        "urbanism",
+        "environment",
+        "economy",
+        "employment",
+        "safety",
+        "geography",
+        "other"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "FeatureConfidence": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        }
+      },
+      "title": "FeatureConfidence",
+      "type": "object"
+    },
+    "FeatureFormula": {
+      "additionalProperties": true,
+      "properties": {
+        "method": {
+          "title": "Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "FeatureFormula",
+      "type": "object"
+    },
+    "FeatureSource": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "role": {
+          "default": "primary",
+          "enum": [
+            "primary",
+            "secondary",
+            "denominator",
+            "validation"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "FeatureSource",
+      "type": "object"
+    },
+    "GeoResolution": {
+      "enum": [
+        "ccaa",
+        "provincia",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "h3",
+        "parcela",
+        "edificio",
+        "point",
+        "line",
+        "none",
+        "unknown"
+      ],
+      "title": "GeoResolution",
+      "type": "string"
+    },
+    "H3JoinMethod": {
+      "enum": [
+        "centroid",
+        "overlap",
+        "population_weighted",
+        "network_access"
+      ],
+      "title": "H3JoinMethod",
+      "type": "string"
+    },
+    "NullPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed_zero": {
+          "default": 0,
+          "enum": [
+            0,
+            "unknown"
+          ],
+          "title": "Confirmed Zero"
+        },
+        "no_coverage": {
+          "default": "unknown",
+          "enum": [
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "No Coverage",
+          "type": "string"
+        }
+      },
+      "title": "NullPolicy",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/feature.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "confidence": {
+      "$ref": "#/$defs/FeatureConfidence"
+    },
+    "direction": {
+      "enum": [
+        "higher_is_better",
+        "lower_is_better",
+        "neutral",
+        "target_range"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "feature_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,95}$",
+      "title": "Feature Id",
+      "type": "string"
+    },
+    "formula": {
+      "$ref": "#/$defs/FeatureFormula"
+    },
+    "geo_level": {
+      "$ref": "#/$defs/GeoResolution"
+    },
+    "h3_join_method": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/H3JoinMethod"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "human_name": {
+      "title": "Human Name",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "models": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Models",
+      "type": "array"
+    },
+    "null_policy": {
+      "$ref": "#/$defs/NullPolicy"
+    },
+    "pro_use": {
+      "default": false,
+      "title": "Pro Use",
+      "type": "boolean"
+    },
+    "public_use": {
+      "default": false,
+      "title": "Public Use",
+      "type": "boolean"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/FeatureSource"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "tests": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tests",
+      "type": "array"
+    },
+    "time_semantics": {
+      "enum": [
+        "current",
+        "snapshot",
+        "period",
+        "forecast",
+        "scenario"
+      ],
+      "title": "Time Semantics",
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "raw",
+        "derived",
+        "aggregate",
+        "model_output"
+      ],
+      "title": "Type",
+      "type": "string"
+    },
+    "unit": {
+      "title": "Unit",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "feature_id",
+    "version",
+    "human_name",
+    "domain",
+    "type",
+    "unit",
+    "direction",
+    "geo_level",
+    "time_semantics",
+    "sources",
+    "formula"
+  ],
+  "title": "FeatureSpec",
+  "type": "object"
+}

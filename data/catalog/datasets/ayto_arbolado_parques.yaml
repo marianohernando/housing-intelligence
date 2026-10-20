@@ -1,0 +1,59 @@
+dataset_id: ayto_arbolado_parques
+source_id: ayuntamiento_madrid_ckan
+name: Arbolado en parques y zonas verdes de Madrid (detalle)
+domain: environment
+owner: Ayuntamiento de Madrid
+format: XLSX
+geography: table
+geo:
+  resolution: unknown
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.madrid.es/dataset/300761-0-arbolado-especies
+resources:
+- name: 300761-0-arbolado-especies-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-0-arbolado-especies-xlsx/download/arbolado2025.xlsx
+- name: 300761-1-arbolado-especies-zip
+  format: ZIP
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-1-arbolado-especies-zip/download/300761-1-arbolado-especies-zip.zip
+- name: 300761-2-arbolado-especies-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-2-arbolado-especies-xlsx/download/300761-2-arbolado-especies-xlsx.xlsx
+- name: 300761-3-arbolado-especies-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-3-arbolado-especies-xlsx/download/300761-3-arbolado-especies-xlsx.xlsx
+- name: 300761-4-arbolado-especies-xlsx
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-4-arbolado-especies-xlsx/download/300761-4-arbolado-especies-xlsx.xlsx
+- name: 300761-5-arbolado-especies
+  format: PDF
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-5-arbolado-especies/download/estructura_datosarbolado.pdf
+- name: 300761-6-arbolado-especies
+  format: XLSX
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-6-arbolado-especies/download/arbolado_madrid_7_7_26.xlsx
+- name: 300761-7-arbolado-especies
+  format: ZIP
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-7-arbolado-especies/download/arbolado_madrid_7_7_26.zip
+- name: 300761-8-arbolado-especies
+  format: CSV
+  url: https://datos.madrid.es/dataset/300761-0-arbolado-especies/resource/300761-8-arbolado-especies/download/300761-6-arbolado-especies.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 3
+  geographic_granularity: 2
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['zonas verdes', 'arbolado', 'parques']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 300761-0-arbolado-especies
+  harvested_at: '2026-10-20T11:16:21.708170+00:00'
+notes: P1-08 green access | curated from 2026-10-20_sprint_p0.yaml | Auto-draft. composite=3.4;
+  license_id=cc-by

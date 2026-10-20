@@ -1,0 +1,41 @@
+dataset_id: cm_parcelas_portal_suelo
+source_id: comunidad_madrid_ckan
+name: Parcelas publicadas en el Portal del Suelo 4.0
+domain: urbanism
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: parcela
+temporal_resolution: null
+refresh_policy: diario
+landing_url: https://datos.comunidad.madrid/dataset/parcelas_portal_suelo
+resources:
+- name: Parcelas publicadas en el Portal del Suelo 4.0
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/32af1c4e-1e19-4c22-87c9-df1c5b656f56/download/parcelas_portal_suelo.csv
+- name: Parcelas publicadas en el Portal del Suelo 4.0
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/f853f1c6-76f5-438d-97db-579738048435/download/parcelas_portal_suelo.json
+- name: Enlace a la Información Geográfica del Portal del Suelo 4.0
+  format: HTML
+  url: https://idem.comunidad.madrid/catalogocartografia/srv/spa/catalog.search#/metadata/spacm_parcelaspsuelo
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['parcela', 'suelo', 'portal del suelo']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: parcelas_portal_suelo
+  harvested_at: '2026-10-20T11:16:21.704411+00:00'
+notes: P1-02 Parcel Analyzer (PRO) | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=4.7; license_id=cc-by

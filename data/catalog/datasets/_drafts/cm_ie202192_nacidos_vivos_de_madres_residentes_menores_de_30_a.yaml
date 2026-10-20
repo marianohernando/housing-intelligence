@@ -1,0 +1,36 @@
+dataset_id: cm_ie202192_nacidos_vivos_de_madres_residentes_menores_de_30_a
+source_id: comunidad_madrid_ckan
+name: 'Nacidos vivos de madres residentes: Menores de 30 años. Municipios'
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/202192
+resources:
+- name: 'Nacidos vivos de madres residentes: Menores de 30 años.csv'
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/46b1f324-ac4b-4464-ba90-50ded8a9ba97/resource/ccaaadc4-0293-4b65-b80d-b6ffcc066060/download/nacidos-vivos-de-madres-residentes-menores-de-30-anos.-municipios.csv
+- name: 'Nacidos vivos de madres residentes: Menores de 30 años. Municipios.json'
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/46b1f324-ac4b-4464-ba90-50ded8a9ba97/resource/117782c7-c954-4b96-ba7f-c721a74fabb3/download/nacidos-vivos-de-madres-residentes-menores-de-30-anos.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'nacimientos', 'movimiento natural'];
+    strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '202192'
+  harvested_at: '2026-10-20T11:17:01.476265+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

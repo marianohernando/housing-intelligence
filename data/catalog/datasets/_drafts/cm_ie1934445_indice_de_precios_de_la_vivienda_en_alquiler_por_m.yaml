@@ -1,0 +1,38 @@
+dataset_id: cm_ie1934445_indice_de_precios_de_la_vivienda_en_alquiler_por_m
+source_id: comunidad_madrid_ckan
+name: Índice de precios de la vivienda en alquiler por municipios mayores de 10.000
+  habitantes (Base 2015). Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934445
+resources:
+- name: Índice de precios de la vivienda en alquiler por municipios mayores de 10.000
+    habitantes (Base 2015). Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4c5a6c8b-fdf7-4e20-a92d-92c119571fc6/resource/71a7d332-7298-4347-ab43-7471c1d7f9c3/download/indice-de-precios-de-la-vivienda-en-alquiler-por-municipios-mayores-de-10.000-habitantes-base-20.csv
+- name: Índice de precios de la vivienda en alquiler por municipios mayores de 10.000
+    habitantes (Base 2015). Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4c5a6c8b-fdf7-4e20-a92d-92c119571fc6/resource/f51466a3-a59a-4192-87e8-117ce08265da/download/indice-de-precios-de-la-vivienda-en-alquiler-por-municipios-mayores-de-10.000-habitantes-base-2.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler', 'valor tasado']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934445'
+  harvested_at: '2026-10-20T11:17:01.472285+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,35 @@
+dataset_id: cm_spacm_listado_bibliotecas_servicios_lectura
+source_id: comunidad_madrid_ckan
+name: Relación  de  Bibliotecas  Directorio  de  Bibliotecas  de  la  Comunidad  de  Madrid
+domain: transport
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/spacm_listado_bibliotecas_servicios_lectura
+resources:
+- name: Relación  de  Bibliotecas  Directorio  de  Bibliotecas  de  la  Comunidad  de  Madrid
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/e6a74331-d329-4ba2-8bb9-6be2669417a2/resource/c7a913c5-5bdf-4ba6-b3a9-4c14c89d555a/download/spacm_listado_bibliotecas_servicios_lectura.csv
+- name: Relación  de  Bibliotecas  Directorio  de  Bibliotecas  de  la  Comunidad  de  Madrid
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/e6a74331-d329-4ba2-8bb9-6be2669417a2/resource/4ec65c21-f008-4564-90d3-14c9b3a0c157/download/spacm_listado_bibliotecas_servicios_lectura.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['metro']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: spacm_listado_bibliotecas_servicios_lectura
+  harvested_at: '2026-10-20T11:17:01.423278+00:00'
+notes: Auto-draft. composite=5.0; license_id=cc-by

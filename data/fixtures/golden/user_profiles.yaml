@@ -1,0 +1,105 @@
+# Golden user profiles (docs/11_engineering/22_test_fixtures_strategy.md).
+# Fully synthetic: no real person, no PII. Anchors are public landmarks at analysis precision.
+# Sensitive needs are explicit opt-in needs, never diagnoses (CLAUDE.md §13).
+profiles:
+  - profile_id: golden_single
+    household: {adults: 1, children: 0, dependents: 0}
+    tenure: rent
+    income_band_net_monthly_eur: [1800, 2200]
+    budget_rent_max_eur: 900
+    car: false
+    anchors:
+      - {type: work, label: Nuevos Ministerios, lon: -3.6912, lat: 40.4460, days_per_week: 4, max_minutes: 35}
+    priorities: [transport, cost, urban_activity]
+    sensitive_needs: []
+  - profile_id: golden_couple
+    household: {adults: 2, children: 0, dependents: 0}
+    tenure: buy
+    income_band_net_monthly_eur: [3500, 4200]
+    budget_purchase_max_eur: 320000
+    car: true
+    anchors:
+      - {type: work, label: Méndez Álvaro, lon: -3.6795, lat: 40.3964, days_per_week: 3, max_minutes: 40}
+      - {type: work, label: Alcobendas centro, lon: -3.6409, lat: 40.5475, days_per_week: 5, max_minutes: 40}
+    priorities: [cost, green, transport]
+    sensitive_needs: []
+  - profile_id: golden_family
+    household: {adults: 2, children: 2, children_ages: [4, 8], dependents: 0}
+    tenure: rent
+    income_band_net_monthly_eur: [4000, 4500]
+    budget_rent_max_eur: 1500
+    car: false
+    anchors:
+      - {type: work, label: Paseo de la Castellana (Azca), lon: -3.6930, lat: 40.4500, days_per_week: 4, max_minutes: 40}
+      - {type: work, label: Atocha, lon: -3.6907, lat: 40.4066, days_per_week: 5, max_minutes: 40}
+    priorities: [schools, green, cost, safety]
+    sensitive_needs: []
+    demo_scenario: docs/09_datamad/08_demo_scenarios.md#escenario-1
+  - profile_id: golden_single_parent_no_car
+    household: {adults: 1, children: 2, children_ages: [6, 10], dependents: 0}
+    tenure: rent
+    income_band_net_monthly_eur: [2600, 3000]
+    budget_rent_max_eur: 1200
+    car: false
+    anchors:
+      - {type: work, label: Atocha, lon: -3.6907, lat: 40.4066, days_per_week: 5, max_minutes: 45}
+    priorities: [schools, transport, cost]
+    sensitive_needs: []
+    demo_scenario: docs/01_product/03_user_profiles.md (madre sola + 2 hijos + sin coche)
+  - profile_id: golden_senior
+    household: {adults: 1, children: 0, dependents: 0, ages: [74]}
+    tenure: rent
+    income_band_net_monthly_eur: [1300, 1600]
+    budget_rent_max_eur: 750
+    car: false
+    anchors:
+      - {type: family, label: Hijo en Getafe centro, lon: -3.7329, lat: 40.3057, days_per_week: 2, max_minutes: 45}
+    priorities: [health, pharmacy, accessibility, transport]
+    sensitive_needs: []
+    demo_scenario: docs/09_datamad/08_demo_scenarios.md#escenario-3
+  - profile_id: golden_student
+    household: {adults: 1, children: 0, dependents: 0, shared_flat: true}
+    tenure: rent
+    income_band_net_monthly_eur: [700, 1000]
+    budget_rent_max_eur: 500
+    car: false
+    anchors:
+      - {type: campus, label: URJC Vicálvaro, lon: -3.6090, lat: 40.4050, days_per_week: 5, max_minutes: 40}
+    priorities: [cost, transport, urban_activity]
+    sensitive_needs: []
+  - profile_id: golden_visual_accessibility
+    household: {adults: 1, children: 0, dependents: 0}
+    tenure: rent
+    income_band_net_monthly_eur: [1800, 2200]
+    budget_rent_max_eur: 950
+    car: false
+    anchors:
+      - {type: work, label: Sol, lon: -3.7035, lat: 40.4169, days_per_week: 5, max_minutes: 40}
+    priorities: [transport, accessibility, services]
+    sensitive_needs:
+      - {need: acoustic_crossing_signals, kind: strong_preference, consent: explicit}
+      - {need: few_complex_crossings_to_transit, kind: strong_preference, consent: explicit}
+  - profile_id: golden_reduced_mobility
+    household: {adults: 2, children: 0, dependents: 0}
+    tenure: rent
+    income_band_net_monthly_eur: [2400, 2800]
+    budget_rent_max_eur: 1100
+    car: true
+    anchors:
+      - {type: health, label: Hospital La Paz, lon: -3.6873, lat: 40.4813, days_per_week: 1, max_minutes: 30}
+    priorities: [accessibility, health, transport]
+    sensitive_needs:
+      - {need: building_elevator, kind: hard_constraint, consent: explicit}
+      - {need: step_free_transit_station, kind: hard_constraint, consent: explicit}
+  - profile_id: golden_sensory_preferences
+    household: {adults: 1, children: 1, children_ages: [9], dependents: 0}
+    tenure: rent
+    income_band_net_monthly_eur: [2200, 2600]
+    budget_rent_max_eur: 1000
+    car: false
+    anchors:
+      - {type: school, label: Colegio en Chamberí, lon: -3.7037, lat: 40.4340, days_per_week: 5, max_minutes: 25}
+    priorities: [low_noise, simple_routes, green]
+    sensitive_needs:
+      - {need: low_noise_environment, kind: preference, consent: explicit}
+      - {need: simple_predictable_routes, kind: preference, consent: explicit}

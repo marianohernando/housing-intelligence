@@ -1,0 +1,35 @@
+dataset_id: cm_ie1914786_cuota_integra_del_irpf_municipios
+source_id: comunidad_madrid_ckan
+name: Cuota íntegra del IRPF. Municipios
+domain: income
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1914786
+resources:
+- name: Cuota íntegra del IRPF.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/88ddde02-3b6f-4129-a2f5-bdc8a7f88c28/resource/e2ed85ac-2a30-4e03-99e6-3648c9906690/download/cuota-integra-del-irpf.-municipios.csv
+- name: Cuota íntegra del IRPF. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/88ddde02-3b6f-4129-a2f5-bdc8a7f88c28/resource/e7da820a-efa9-4aaf-b91c-b4e528db9f8d/download/cuota-integra-del-irpf.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['renta', 'ingresos', 'irpf']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1914786'
+  harvested_at: '2026-10-20T11:17:01.447875+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,38 @@
+dataset_id: cm_registro_agentes_inmobiliarios
+source_id: comunidad_madrid_ckan
+name: Registro de Agentes Inmobiliarios (RAIN)
+domain: housing
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/registro_agentes_inmobiliarios
+resources:
+- name: Registro de Agentes Inmobiliarios (RAIN)
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4c426a78-87bd-4767-aafa-4b90aa8485ba/resource/ec5bce1c-a8c6-41cc-a008-df02a2dec4cd/download/registro_agentes_inmobiliarios.csv
+- name: Registro de Agentes Inmobiliarios (RAIN)
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/4c426a78-87bd-4767-aafa-4b90aa8485ba/resource/c1e88fd3-6d05-48ec-9013-680ab28cd6fa/download/registro_agentes_inmobiliarios.json
+- name: Histórico - Registro de Agentes Inmobiliarios (RAIN)
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/4c426a78-87bd-4767-aafa-4b90aa8485ba/resource/338eb51e-6d41-4be6-be0d-240b32e3a0c4/download/registro_agentes_inmobiliarios_historico.zip
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'inmobiliari']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: registro_agentes_inmobiliarios
+  harvested_at: '2026-10-20T11:17:01.421549+00:00'
+notes: Auto-draft. composite=5.0; license_id=cc-by

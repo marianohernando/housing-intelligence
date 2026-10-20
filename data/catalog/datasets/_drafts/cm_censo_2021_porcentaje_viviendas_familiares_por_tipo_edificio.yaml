@@ -1,0 +1,38 @@
+dataset_id: cm_censo_2021_porcentaje_viviendas_familiares_por_tipo_edificio
+source_id: comunidad_madrid_ckan
+name: Censo de vivienda y locales 2021. Porcentaje de viviendas familiares por tipo
+  de edificio. Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2021_porcentaje_viviendas_familiares_por_tipo_edificio
+resources:
+- name: Censo de vivienda y locales 2021. Porcentaje de viviendas familiares por tipo
+    de edificio.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/438b95d7-f4fc-4160-957c-00627ba21875/resource/17d3584a-e56e-4221-9832-4028e4dbbe2d/download/censo-de-vivienda-y-locales-2021.-porcentaje-de-viviendas-familiares-por-tipo-de-edificio.-munic.csv
+- name: Censo de vivienda y locales 2021. Porcentaje de viviendas familiares por tipo
+    de edificio. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/438b95d7-f4fc-4160-957c-00627ba21875/resource/9a6fd212-1f78-46bc-9339-c55b7443f7fb/download/censo-de-vivienda-y-locales-2021.-porcentaje-de-viviendas-familiares-por-tipo-de-edificio.-muni.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'residencial']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2021_porcentaje_viviendas_familiares_por_tipo_edificio
+  harvested_at: '2026-10-20T11:17:01.496579+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

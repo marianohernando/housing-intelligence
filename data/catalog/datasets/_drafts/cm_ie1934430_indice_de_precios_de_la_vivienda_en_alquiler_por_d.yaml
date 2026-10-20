@@ -1,0 +1,35 @@
+dataset_id: cm_ie1934430_indice_de_precios_de_la_vivienda_en_alquiler_por_d
+source_id: comunidad_madrid_ckan
+name: Índice de precios de la vivienda en alquiler por distritos (Base 2015)
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1934430
+resources:
+- name: Índice de precios de la vivienda en alquiler por distritos (Base 2015).csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/0afaeb64-b7a5-48e7-bc08-46c9b6af11b6/resource/1aa11373-9e00-418d-a35e-a73e9b37e439/download/indice-de-precios-de-la-vivienda-en-alquiler-por-distritos-base-2015.csv
+- name: Índice de precios de la vivienda en alquiler por distritos (Base 2015).json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/0afaeb64-b7a5-48e7-bc08-46c9b6af11b6/resource/e9c84486-bf37-4455-8ecc-6d90a54e64d8/download/indice-de-precios-de-la-vivienda-en-alquiler-por-distritos-base-2015.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler', 'valor tasado']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1934430'
+  harvested_at: '2026-10-20T11:17:01.428514+00:00'
+notes: Auto-draft. composite=4.8; license_id=cc-by

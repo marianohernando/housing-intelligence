@@ -1,0 +1,49 @@
+dataset_id: cm_centros_atencion_social
+source_id: comunidad_madrid_ckan
+name: Registro de centros de atención social
+domain: social
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: mensual
+landing_url: https://datos.comunidad.madrid/dataset/atencion_social_registro_centros
+resources:
+- name: ' Registro de centros de atención social'
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/0d815439-396e-4975-983e-5bb421f617a0/download/atencion_social_registro_centros.csv
+- name: ' Registro de centros de atención social'
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/fb98d116-eb79-4100-8cd4-d5ce2e2c439b/download/atencion_social_registro_centros.json
+- name: Histórico -  Registro de centros de atención social
+  format: ZIP
+  url: https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/154afcc2-ba9b-4121-a4b1-e8f140f8702f/download/atencion_social_registro_centros_historico.zip
+- name: ' Registro de centros de atención social'
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/1df4036b-b5cb-4c57-a6a0-e91296801639/download/servicios_sociales_registro_centros.json
+- name: ' Registro de centros de atención social'
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/253e3c3a-9ce1-4d13-a555-4f6ac5cffb93/download/servicios_sociales_registro_centros.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['atencion social', 'servicios sociales', 'residencia',
+    'mayores', 'discapacidad', 'centros de dia']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: atencion_social_registro_centros
+  harvested_at: '2026-10-20T11:16:21.696306+00:00'
+notes: P0-10 senior/dependency services | curated from 2026-10-20_sprint_p0.yaml |
+  Auto-draft. composite=4.7; license_id=cc-by

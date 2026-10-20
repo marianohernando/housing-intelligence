@@ -1,0 +1,36 @@
+dataset_id: cm_ie1919187_demanda_del_servicio_publico_de_bicicletas_por_mun
+source_id: comunidad_madrid_ckan
+name: Demanda del servicio público de bicicletas por municipios
+domain: transport
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1919187
+resources:
+- name: Demanda del servicio público de bicicletas por municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/149bf8da-404f-457e-8216-dc5e7a018636/resource/902f2a9e-9ade-4097-9642-665c06b11679/download/demanda-del-servicio-publico-de-bicicletas-por-municipios.csv
+- name: Demanda del servicio público de bicicletas por municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/149bf8da-404f-457e-8216-dc5e7a018636/resource/6c2cc32b-8727-4417-a97f-f741b2aebdb1/download/demanda-del-servicio-publico-de-bicicletas-por-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['transporte', 'metro', 'movilidad', 'bicicleta'];
+    strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1919187'
+  harvested_at: '2026-10-20T11:17:01.458326+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

@@ -1,0 +1,269 @@
+[
+ {
+  "geometry": {
+   "coordinates": [
+    [
+     [
+      -4.393,
+      41.127
+     ],
+     [
+      -2.989,
+      41.127
+     ],
+     [
+      -2.989,
+      39.723
+     ],
+     [
+      -4.393,
+      39.723
+     ],
+     [
+      -4.393,
+      41.127
+     ]
+    ]
+   ],
+   "type": "Polygon"
+  },
+  "id": "5c7f2951962540d69ffe8f640d94c246",
+  "links": [
+   {
+    "href": "https://datos.crtm.es/api/search/v1/collections/dataset/items/5c7f2951962540d69ffe8f640d94c246",
+    "rel": "self",
+    "title": "This document as GeoJSON",
+    "type": "application/geo+json"
+   },
+   {
+    "href": "https://datos.crtm.es/api/search/v1/collections/dataset",
+    "rel": "collection",
+    "title": "Datos",
+    "type": "application/json"
+   }
+  ],
+  "properties": {
+   "access": "public",
+   "accessInformation": "© CRTM",
+   "advancedSettings": null,
+   "apiToken1ExpirationDate": -1,
+   "apiToken2ExpirationDate": -1,
+   "appCategories": [],
+   "avgRating": 0,
+   "banner": null,
+   "categories": [],
+   "classification": null,
+   "commentsEnabled": false,
+   "created": 1459841423000,
+   "culture": "es-es",
+   "description": "<span style='color: rgb(33, 33, 33); font-size: 16px; line-height: 24px;'><font face='Arial'>Conjunto de datos con los horarios de transporte público y la información geográfica asociada a ellos para la red de Metro.</font></span><br /><div><span style='color: rgb(33, 33, 33); line-height: 24px;'><f",
+   "documentation": null,
+   "extent": {
+    "coordinates": [
+     [
+      [
+       -4.393,
+       41.127
+      ],
+      [
+       -2.989,
+       41.127
+      ],
+      [
+       -2.989,
+       39.723
+      ],
+      [
+       -4.393,
+       39.723
+      ],
+      [
+       -4.393,
+       41.127
+      ]
+     ]
+    ],
+    "type": "Polygon"
+   },
+   "groupDesignations": null,
+   "guid": null,
+   "id": "5c7f2951962540d69ffe8f640d94c246",
+   "industries": [],
+   "languages": [],
+   "largeThumbnail": null,
+   "lastViewed": 1748606400000,
+   "license": "custom",
+   "licenseInfo": "<a href='https://www.crtm.es/licencia-de-uso' target='_blank' rel='nofollow ugc noopener noreferrer'>https://www.crtm.es/licencia-de-uso</a>",
+   "listed": false,
+   "modified": 1748606452000,
+   "name": "google_transit_M4.zip",
+   "numComments": 0,
+   "numRatings": 0,
+   "numViews": 240565,
+   "orgId": "UxADft6QPcvFyDU1",
+   "owner": "ConsorcioRegional",
+   "properties": null,
+   "proxyFilter": null,
+   "scoreCompleteness": 98,
+   "screenshots": [],
+   "size": 1536390,
+   "snippet": "Red de Metro en formato GTFS (General Transit Feed Specification)",
+   "source": "Consorcio Regional de Transportes de Madrid",
+   "spatialReference": null,
+   "subInfo": 0,
+   "tags": [
+    "GTFS",
+    "Metro",
+    "Consorcio Regional de Transportes de Madrid",
+    "Comunidad de Madrid",
+    "Transporte público"
+   ],
+   "thumbnail": "thumbnail/gtfs_metro.png",
+   "title": "GTFS Red de Metro",
+   "type": "CSV Collection",
+   "typeKeywords": [
+    "CSV Collection"
+   ],
+   "url": ""
+  },
+  "time": null,
+  "type": "Feature"
+ },
+ {
+  "geometry": {
+   "coordinates": [
+    [
+     [
+      -3.878795957728159,
+      40.560940147947036
+     ],
+     [
+      -3.447363847104709,
+      40.560940147947036
+     ],
+     [
+      -3.447363847104709,
+      40.281009937038114
+     ],
+     [
+      -3.878795957728159,
+      40.281009937038114
+     ],
+     [
+      -3.878795957728159,
+      40.560940147947036
+     ]
+    ]
+   ],
+   "type": "Polygon"
+  },
+  "id": "0a6c45e7bdd94679b67a2ae662c8838b",
+  "links": [
+   {
+    "href": "https://datos.crtm.es/api/search/v1/collections/dataset/items/0a6c45e7bdd94679b67a2ae662c8838b",
+    "rel": "self",
+    "title": "This document as GeoJSON",
+    "type": "application/geo+json"
+   },
+   {
+    "href": "https://datos.crtm.es/api/search/v1/collections/dataset",
+    "rel": "collection",
+    "title": "Datos",
+    "type": "application/json"
+   }
+  ],
+  "properties": {
+   "access": "public",
+   "accessInformation": "© CRTM ",
+   "advancedSettings": null,
+   "apiToken1ExpirationDate": -1,
+   "apiToken2ExpirationDate": -1,
+   "appCategories": [],
+   "avgRating": 0,
+   "banner": null,
+   "categories": [],
+   "classification": null,
+   "commentsEnabled": false,
+   "created": 1496223684000,
+   "culture": "es-es",
+   "description": "Estaciones, accesos, vestíbulos, andenes, Relación de paradas por itinerario e itinerarios de la Red de Metro",
+   "documentation": null,
+   "extent": {
+    "coordinates": [
+     [
+      [
+       -3.878795957728159,
+       40.560940147947036
+      ],
+      [
+       -3.447363847104709,
+       40.560940147947036
+      ],
+      [
+       -3.447363847104709,
+       40.281009937038114
+      ],
+      [
+       -3.878795957728159,
+       40.281009937038114
+      ],
+      [
+       -3.878795957728159,
+       40.560940147947036
+      ]
+     ]
+    ],
+    "type": "Polygon"
+   },
+   "groupDesignations": null,
+   "guid": null,
+   "id": "0a6c45e7bdd94679b67a2ae662c8838b",
+   "industries": [],
+   "languages": [],
+   "largeThumbnail": null,
+   "lastViewed": 1780642800000,
+   "license": "custom",
+   "licenseInfo": "http://www.crtm.es/licencia-de-uso",
+   "listed": false,
+   "modified": 1780644456000,
+   "name": "M4_Red",
+   "numComments": 0,
+   "numRatings": 0,
+   "numViews": 106308,
+   "orgId": "UxADft6QPcvFyDU1",
+   "owner": "ConsorcioRegional",
+   "properties": null,
+   "proxyFilter": null,
+   "scoreCompleteness": 86,
+   "screenshots": [],
+   "size": 3096576,
+   "snippet": "Elementos de la Red de Metro",
+   "source": "Consorcio Regional de Transportes de Madrid",
+   "spatialReference": "25830",
+   "subInfo": 0,
+   "tags": [
+    "Metro",
+    "         CRTM",
+    "         Consorcio Regional de Transportes de Madrid",
+    "         Transporte público",
+    "         Madrid",
+    "         Comunidad de Madrid"
+   ],
+   "thumbnail": "thumbnail/thumbnail1780579967722.png",
+   "title": "Datos abiertos: Elementos de la Red de Metro",
+   "type": "Feature Service",
+   "typeKeywords": [
+    "ArcGIS Server",
+    "Data",
+    "Feature Access",
+    "Feature Service",
+    "Multilayer",
+    "Service",
+    "Hosted Service"
+   ],
+   "url": "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M4_Red/FeatureServer"
+  },
+  "time": null,
+  "type": "Feature"
+ }
+]

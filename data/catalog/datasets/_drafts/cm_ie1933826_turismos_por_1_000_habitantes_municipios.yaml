@@ -1,0 +1,35 @@
+dataset_id: cm_ie1933826_turismos_por_1_000_habitantes_municipios
+source_id: comunidad_madrid_ckan
+name: Turismos por 1.000 habitantes. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/1933826
+resources:
+- name: Turismos por 1.000 habitantes. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/6f6f6cf3-d137-4f83-b85f-1a2ff1f1fd62/resource/e4c4bcf9-4120-4b22-b2bc-7b43659bd33b/download/turismos-por-1.000-habitantes.-municipios.csv
+- name: Turismos por 1.000 habitantes. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/6f6f6cf3-d137-4f83-b85f-1a2ff1f1fd62/resource/d23da215-2b0e-47fb-b972-b224cf0b6942/download/turismos-por-1.000-habitantes.-municipios.json
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'padron', 'habitantes']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1933826'
+  harvested_at: '2026-10-20T11:17:01.471774+00:00'
+notes: Auto-draft. composite=4.6; license_id=cc-by

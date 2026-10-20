@@ -1,0 +1,39 @@
+dataset_id: cm_centros_educativos
+source_id: comunidad_madrid_ckan
+name: Centros educativos de la comunidad de Madrid
+domain: education
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/centros_educativos
+resources:
+- name: Centros educativos de la comunidad de Madrid
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/28d60557-1d73-4281-ab08-6cfd3b2f5f83/download/centros_educativos.csv
+- name: Centros educativos de la comunidad de Madrid
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/be2264df-c720-4619-ab79-aebad9b248e0/download/centros_educativos.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 1
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['centros educativos']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: centros_educativos
+  harvested_at: '2026-10-20T11:16:21.695127+00:00'
+notes: P0-08 FamilyFit, school access | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
+  composite=3.9; license_id=cc-by

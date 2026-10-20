@@ -1,0 +1,41 @@
+dataset_id: cm_covid19_tia_muni_y_distritos_60ymas
+source_id: comunidad_madrid_ckan
+name: Covid 19 -TIA para población de 60 y más años de edad por Municipios y Distritos
+  de Madrid
+domain: population
+owner: Comunidad de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: null
+refresh_policy: otros
+landing_url: https://datos.comunidad.madrid/dataset/covid19_tia_muni_y_distritos_60ymas
+resources:
+- name: Covid 19 -TIA para población de 60 y más años de edad por Municipios y Distritos
+    de Madrid
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/f888667a-c513-4758-b2fd-11b819b48dd5/resource/8e56fad4-9d6f-436e-83da-48e34e74593a/download/covid19_tia_muni_y_distritos_s_60ymas.csv
+- name: Covid 19 -TIA para población de 60 y más años de edad por Municipios y Distritos
+    de Madrid
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/f888667a-c513-4758-b2fd-11b819b48dd5/resource/9b93d243-0662-419a-a7e9-7a479f49d8e9/download/covid19_tia_muni_y_distritos_s_60ymas.json
+- name: 'Municipios y Distritos de Madrid (2021) '
+  format: SHP
+  url: https://datos.comunidad.madrid/dataset/f888667a-c513-4758-b2fd-11b819b48dd5/resource/9c07860c-d95d-49ad-aa0b-f1bba0cbf7d3/download/municipios_y_distritos_madrid_21_60ymas.zip
+license_status: CLEAR
+status: DISCOVERED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion']; strong=True
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: covid19_tia_muni_y_distritos_60ymas
+  harvested_at: '2026-10-20T11:17:01.432347+00:00'
+notes: Auto-draft. composite=4.7; license_id=cc-by
