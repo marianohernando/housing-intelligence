@@ -1,0 +1,24 @@
+source_id: ayuntamiento_madrid_ckan
+name: Portal de Datos Abiertos del Ayuntamiento de Madrid
+provider: Ayuntamiento de Madrid
+source_type: open_data_portal
+api_type: ckan
+base_url: https://datos.madrid.es
+catalog_url: https://datos.madrid.es/api/3/action/package_search
+license_name: Condiciones generales de reutilización del Ayuntamiento de Madrid
+license_url: https://datos.madrid.es/egob/catalogo/aviso-legal
+license_status: PENDING_REVIEW
+attribution_text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es."
+commercial_use: null
+redistribution_allowed: null
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: per_dataset
+geographic_scope: Municipio de Madrid
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: unknown
+active: true
+notes: >-
+  CKAN 2.9. El 2026-10-20 el portal devolvía página de mantenimiento (404 en API).
+  Revisar condiciones de uso cuando vuelva. Clave para censo de locales, barrios con
+  nombre, arbolado, equipamientos y accesibilidad.

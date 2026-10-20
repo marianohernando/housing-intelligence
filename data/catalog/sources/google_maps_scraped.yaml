@@ -1,0 +1,23 @@
+source_id: google_maps_scraped
+name: Google Maps (scraping con gosom/google-maps-scraper)
+provider: Google LLC
+source_type: scraped_web
+api_type: none
+base_url: https://www.google.com/maps
+license_name: Términos de servicio de Google Maps (sin licencia de reutilización)
+license_url: https://maps.google.com/help/terms_maps/
+license_status: REJECTED
+attribution_text: null
+commercial_use: false
+redistribution_allowed: false
+trust_tier: D_SCRAPED
+default_confidence: null
+update_frequency: null
+geographic_scope: null
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: automated_access_prohibited_by_terms
+active: false
+notes: >-
+  REJECTED para DATAMAD: términos de Google prohíben la extracción automatizada y las
+  bases (§6.3, §6.7, §16) excluyen datos obtenidos ilícitamente. Ver
+  docs/07_privacy_legal/source_reviews/google_maps_gosom.md.

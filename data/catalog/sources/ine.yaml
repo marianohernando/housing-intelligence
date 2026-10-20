@@ -1,0 +1,21 @@
+source_id: ine
+name: Instituto Nacional de Estadística
+provider: INE
+source_type: official_statistics
+api_type: download
+base_url: https://www.ine.es
+catalog_url: https://www.ine.es/dyngs/DAB/index.htm?cid=1099
+license_name: Aviso legal INE (reutilización con cita de fuente)
+license_url: https://www.ine.es/aviso_legal
+license_status: PENDING_REVIEW
+attribution_text: "Fuente: Instituto Nacional de Estadística (INE)."
+commercial_use: null
+redistribution_allowed: null
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: per_dataset
+geographic_scope: España
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: unknown
+active: true
+notes: Fallback y actualización del seccionado (seccionado_2025.zip responde 200). Complementa a la Comunidad de Madrid, no la sustituye.

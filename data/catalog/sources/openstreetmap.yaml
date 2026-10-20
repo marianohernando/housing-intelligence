@@ -1,0 +1,21 @@
+source_id: openstreetmap
+name: OpenStreetMap (extracto Geofabrik Madrid)
+provider: OpenStreetMap contributors / Geofabrik
+source_type: open_dataset
+api_type: download
+base_url: https://download.geofabrik.de/europe/spain/madrid.html
+catalog_url: https://download.geofabrik.de/europe/spain/madrid.html
+license_name: Open Database License (ODbL) 1.0
+license_url: https://opendatacommons.org/licenses/odbl/1-0/
+license_status: CLEAR
+attribution_text: "© OpenStreetMap contributors, ODbL."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: B_OPEN_STRUCTURED
+default_confidence: 0.9
+update_frequency: daily
+geographic_scope: Comunidad de Madrid
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: bulk_download
+active: true
+notes: Red peatonal/viaria y POIs complementarios. Bases derivadas de OSM que se publiquen deben mantenerse bajo ODbL (share-alike). Overpass solo para exploración.

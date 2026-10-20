@@ -1,0 +1,255 @@
+{
+  "$defs": {
+    "ApiType": {
+      "enum": [
+        "ckan",
+        "arcgis_hub",
+        "dcat_apidata",
+        "ogc_wfs",
+        "download",
+        "none"
+      ],
+      "title": "ApiType",
+      "type": "string"
+    },
+    "LicenseStatus": {
+      "enum": [
+        "CLEAR",
+        "RESTRICTED",
+        "PERMISSION_REQUIRED",
+        "RESEARCH_ONLY",
+        "REJECTED",
+        "PENDING_REVIEW"
+      ],
+      "title": "LicenseStatus",
+      "type": "string"
+    },
+    "TrustTier": {
+      "enum": [
+        "A_OFFICIAL",
+        "B_OPEN_STRUCTURED",
+        "C_COMMERCIAL_API",
+        "D_SCRAPED"
+      ],
+      "title": "TrustTier",
+      "type": "string"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/source.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One provider/endpoint we may pull data from.",
+  "properties": {
+    "active": {
+      "default": true,
+      "title": "Active",
+      "type": "boolean"
+    },
+    "api_type": {
+      "$ref": "#/$defs/ApiType"
+    },
+    "attribution_text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Attribution Text"
+    },
+    "base_url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Url"
+    },
+    "catalog_url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Catalog Url"
+    },
+    "commercial_use": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Commercial Use"
+    },
+    "default_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Default Confidence"
+    },
+    "geographic_scope": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Geographic Scope"
+    },
+    "license_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "License Name"
+    },
+    "license_status": {
+      "$ref": "#/$defs/LicenseStatus"
+    },
+    "license_url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "License Url"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notes"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "redistribution_allowed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Redistribution Allowed"
+    },
+    "robots_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Robots Status"
+    },
+    "source_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,63}$",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_type": {
+      "description": "open_data_portal | official_service | open_dataset | ...",
+      "title": "Source Type",
+      "type": "string"
+    },
+    "terms_reviewed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Terms Reviewed At"
+    },
+    "trust_tier": {
+      "$ref": "#/$defs/TrustTier"
+    },
+    "update_frequency": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Update Frequency"
+    }
+  },
+  "required": [
+    "source_id",
+    "name",
+    "provider",
+    "source_type",
+    "api_type",
+    "license_status",
+    "trust_tier"
+  ],
+  "title": "SourceSpec",
+  "type": "object"
+}

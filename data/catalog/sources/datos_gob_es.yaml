@@ -1,0 +1,21 @@
+source_id: datos_gob_es
+name: Catálogo Nacional de Datos Abiertos (datos.gob.es)
+provider: Ministerio para la Transformación Digital y de la Función Pública
+source_type: federated_catalog
+api_type: dcat_apidata
+base_url: https://datos.gob.es
+catalog_url: https://datos.gob.es/apidata/catalog/dataset
+license_name: Licencia por dataset (catálogo federado)
+license_url: https://datos.gob.es/es/aviso-legal
+license_status: PENDING_REVIEW
+attribution_text: "Fuente: datos.gob.es y organismo publicador de cada dataset."
+commercial_use: null
+redistribution_allowed: null
+trust_tier: A_OFFICIAL
+default_confidence: 0.95
+update_frequency: per_dataset
+geographic_scope: España (filtrado a Comunidad de Madrid)
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: api_access
+active: true
+notes: Solo para descubrir datasets nacionales/estatales que cubran Madrid. Cada dataset hereda la licencia de su publicador.

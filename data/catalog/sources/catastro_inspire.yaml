@@ -1,0 +1,24 @@
+source_id: catastro_inspire
+name: Dirección General del Catastro — servicios INSPIRE
+provider: Dirección General del Catastro
+source_type: official_service
+api_type: ogc_wfs
+base_url: https://ovc.catastro.meh.es/INSPIRE/wfsBU.aspx
+catalog_url: https://www.catastro.hacienda.gob.es/webinspire/index.html
+license_name: Condiciones de uso de la información catastral (INSPIRE)
+license_url: https://www.catastro.hacienda.gob.es/webinspire/index.html
+license_status: PENDING_REVIEW
+attribution_text: "Fuente: Dirección General del Catastro."
+commercial_use: null
+redistribution_allowed: null
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: semestral
+geographic_scope: España (descarga por municipio)
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: api_access
+active: true
+notes: >-
+  WFS de edificios responde (GetCapabilities OK el 2026-10-20). Usar ATOM por municipio
+  para cargas masivas (docs/02_data/31). La URL ATOM de edificios provincia 28 devolvió
+  HTML: localizar la ruta correcta en DATA-012. Revisar condiciones antes de producción.

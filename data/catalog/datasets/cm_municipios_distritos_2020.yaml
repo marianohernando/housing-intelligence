@@ -1,0 +1,32 @@
+dataset_id: cm_municipios_distritos_2020
+source_id: comunidad_madrid_ckan
+name: Municipios y Distritos de Madrid (2020) — recurso SHP del dataset COVID-19 TIA
+domain: geography
+owner: Comunidad de Madrid
+format: SHP
+geography: polygon
+geo:
+  resolution: municipio
+  crs_expected: null
+  geometry_type: Polygon/MultiPolygon
+  h3_join_method: overlap
+temporal_resolution: snapshot 2020
+refresh_policy: none
+landing_url: https://datos.comunidad.madrid/dataset/covid19_tia_muni_y_distritos
+resources:
+  - name: Municipios y Distritos de Madrid (2020)
+    format: SHP
+    url: https://datos.comunidad.madrid/dataset/6c63b14c-9f5d-414f-958f-b8a9c53d69fc/resource/3f4435b7-ecdb-4c1e-961a-dd55506c2e10/download/municipios_y_distritos_madrid_20.zip
+    role: cross_check
+license_status: CLEAR
+status: DISCOVERED
+priority: P2
+scorecard:
+  datamad_relevance: 3
+  product_impact: 2
+  geographic_granularity: 3
+  freshness: 2
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: Solo validación cruzada de límites derivados por dissolve.
+feeds_features: []
