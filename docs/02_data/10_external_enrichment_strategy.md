@@ -158,6 +158,16 @@ Evaluar:
 
 ---
 
+# 6b. Overture Maps Places y FSQ OS Places (añadido 2026-10-20)
+
+Datasets abiertos de POIs con licencia permisiva por registro (CDLA Permissive 2.0, Apache 2.0, CC0).
+Sustituyen a cualquier extracción de Google Maps (D-185). Uso:
+- enriquecimiento de comercio y servicios fuera de Madrid capital;
+- validación cruzada del censo de locales del Ayuntamiento;
+- altas y cierres para el Urban Activity Model.
+
+Requisitos: conservar la licencia de cada registro, distribuir textos de licencia y NOTICE, pasar por Entity Resolution.
+
 # 7. Scraping
 
 ## Permitido conceptualmente

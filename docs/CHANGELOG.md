@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.3 — POIs abiertos (2026-10-20)
+- D-185: Gosom descartado definitivamente; registradas Overture Places y FSQ OS Places.
+- Estrategia de enriquecimiento ampliada con POIs abiertos (sección 6b).
+
 ## v0.5.2 — Sprint P0 en ordenador (2026-10-20)
 - Leídas las bases oficiales DATAMAD 2026: añadido `09_datamad/24_bases_oficiales_2026.md`; blocker de trabajo previo cerrado.
 - Añadida source review de Google Maps/Gosom (`07_privacy_legal/source_reviews/`), estado REJECTED.

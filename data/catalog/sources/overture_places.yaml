@@ -1,0 +1,25 @@
+source_id: overture_places
+name: Overture Maps — tema Places (POIs)
+provider: Overture Maps Foundation (datos de Meta, Microsoft, Foursquare, AllThePlaces y otros)
+source_type: open_dataset
+api_type: download
+base_url: https://docs.overturemaps.org/guides/places/
+catalog_url: https://docs.overturemaps.org/getting-data/
+license_name: Licencias por fuente — CDLA Permissive 2.0, Apache 2.0 (Foursquare), CC0 1.0 (AllThePlaces)
+license_url: https://docs.overturemaps.org/attribution/
+license_status: CLEAR
+attribution_text: "Overture Maps Foundation (overturemaps.org). Places: datos de Meta, Microsoft y otros (CDLA Permissive 2.0); Foursquare (Apache 2.0, © 2024 Foursquare Labs, Inc.); AllThePlaces (CC0)."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: B_OPEN_STRUCTURED
+default_confidence: 0.85
+update_frequency: monthly
+geographic_scope: Global (filtrar por bbox de la Comunidad de Madrid)
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: bulk_download
+active: true
+notes: >-
+  Alternativa legal a Google Maps/Gosom para negocios y servicios (D-185). GeoParquet en
+  la nube, versión mensual; cada lugar trae su fuente y licencia (propiedad sources).
+  Conservar la licencia por registro y redistribuir con el texto CDLA y el NOTICE de
+  Foursquare. Sin valoraciones ni reseñas. Complementa, no sustituye, a las fuentes oficiales.

@@ -1,6 +1,6 @@
 {
-  "version": "0.5.2",
-  "updated": "2026-10-20T11:39:13.891654+00:00",
+  "version": "0.5.3",
+  "updated": "2026-10-20T12:55:42.419589+00:00",
   "markdown_files": 275,
   "files": {
     "00_index/00_master_index.md": {
@@ -8,12 +8,12 @@
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "724bf316ca2b6fea695da7cebc973f5c13dd8c9190b4eca90b978efe0aaea28b",
-      "bytes": 30436
+      "sha256": "c9fa12dc025b175e69f6d9231588e081f83b05ddb4c55782f550bf24b437c1b3",
+      "bytes": 30827
     },
     "00_index/02_open_questions.md": {
-      "sha256": "48206067276814575055549be22a4ae2600891179398f8cba8315c20d2442940",
-      "bytes": 2261
+      "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
+      "bytes": 2268
     },
     "00_index/03_glossary.md": {
       "sha256": "1f407d4f36ba696cd53a370dd529135451d6ee09a9a358dd0401cbee67e051c3",
@@ -144,8 +144,8 @@
       "bytes": 1726
     },
     "02_data/10_external_enrichment_strategy.md": {
-      "sha256": "f60cd8ba28d4ba4568bfba9efa5ef5c693f930f0d9c0a9e1cd143cb1155d03f5",
-      "bytes": 4694
+      "sha256": "1077fe471081000cfbdefbed28b73b2b002bf489fdc73b6f0c2a0e185b3b429d",
+      "bytes": 5225
     },
     "02_data/11_source_registry_contract.md": {
       "sha256": "01a6531877bb00c43cdc2135f83196093b07fb0cb61e770a5ba98aad39e7f3de",
@@ -784,8 +784,8 @@
       "bytes": 612
     },
     "07_privacy_legal/source_reviews/google_maps_gosom.md": {
-      "sha256": "e67790be2c554e4ee101576a00334a1331ac279556ae6f0d35ecd9143420002f",
-      "bytes": 2632
+      "sha256": "52657eac87c0dce6431bbf7e0b6f7db3f4b09dc6c8cc9776eeb6ee2845dbca7f",
+      "bytes": 3221
     },
     "08_validation/01_research_plan.md": {
       "sha256": "71656063b2bc7a8a26539abd6c2d0d59e28539dff2b4521af9c0761a11792022",
@@ -1088,8 +1088,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "8be5c5ddb34993a02b5a3812a478d44602b9d6b99c0a31d37280c07790ae3b17",
-      "bytes": 9761
+      "sha256": "42276d5f63faac4eda8b6a0095d2fffbf72497ddeb095ddef0b829c12cbb13e0",
+      "bytes": 9965
     },
     "CLAUDE.md": {
       "sha256": "9defb79ae85c8bf2c298604842fedc9ff8a6a452eb1d6a34433b19da3ae44607",
