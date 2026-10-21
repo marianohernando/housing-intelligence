@@ -14,9 +14,9 @@ from sqlalchemy.orm import Session
 
 from hi_db.models import DatasetVersion, GeoAdminUnit, H3Cell, H3CellAdminUnit
 from hi_ingestion.pipelines.admin_boundaries import config
-from hi_ingestion.pipelines.admin_boundaries.fetch import FetchedFile
 from hi_ingestion.pipelines.admin_boundaries.h3map import H3Mapping
 from hi_ingestion.pipelines.admin_boundaries.transform import to_wgs84
+from hi_ingestion.pipelines.fetch import FetchedFile
 
 LEVELS_CHILD_FIRST = ("seccion_censal", "barrio", "distrito", "municipio")
 

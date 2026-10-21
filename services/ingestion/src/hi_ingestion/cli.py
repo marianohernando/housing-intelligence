@@ -6,12 +6,14 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
+from sqlalchemy import Engine
 
 from hi_contracts.catalog.enums import Priority
+from hi_contracts.catalog.pipeline import CmPostcodeConceptPipeline, CmStatTablePipeline
 from hi_db.session import make_engine
 from hi_domain.catalog.scoring import score_candidate
 from hi_ingestion import __version__
-from hi_ingestion.catalog.loader import DEFAULT_CATALOG_DIR, load_catalog
+from hi_ingestion.catalog.loader import DEFAULT_CATALOG_DIR, Catalog, load_catalog
 from hi_ingestion.catalog.sync import sync_catalog
 from hi_ingestion.catalog_harvester.drafts import (
     DRAFTS_DIR,
@@ -27,8 +29,9 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     local_inputs,
     run_admin_boundaries,
 )
-
-EVIDENCE_GATE_01 = DEFAULT_CATALOG_DIR.parents[1] / "evidence" / "gate-01"
+from hi_ingestion.pipelines.common import EVIDENCE_GATE_01, RunSummary
+from hi_ingestion.pipelines.fetch import local_file
+from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
 catalog_app = typer.Typer(help="Source catalog commands", no_args_is_help=True)
@@ -112,35 +115,66 @@ def catalog_curate(curation_file: Path) -> None:
     typer.echo(f"curated {len(written)} datasets")
 
 
-@app.command("run")
-def run_dataset(
-    dataset_id: str,
-    local_dir: Annotated[
-        Path | None, typer.Option(help="Offline inputs (sections + names.csv + barrios.csv)")
-    ] = None,
-    evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
-    database_url: DatabaseUrl = None,
-) -> None:
-    """Run a dataset pipeline (Bronze -> Silver -> PostGIS)."""
-    if dataset_id != admin_config.SECTIONS_DATASET:
-        typer.echo(f"No pipeline registered for {dataset_id}", err=True)
-        raise typer.Exit(2)
-    catalog = load_catalog()
-    inputs = local_inputs(local_dir) if local_dir else fetch_inputs(catalog)
-    summary = run_admin_boundaries(
-        make_engine(database_url),
-        catalog,
-        inputs,
-        evidence_root=EVIDENCE_GATE_01 if evidence else None,
-    )
-    typer.echo(json.dumps({
+def _print_summary(summary: RunSummary) -> None:
+    payload = {
+        "dataset_id": summary.dataset_id,
         "status": summary.status,
         "version": summary.version_label,
         "counts": summary.counts,
         "quality_passed": summary.quality.get("passed"),
         "evidence": str(summary.evidence_dir) if summary.evidence_dir else None,
-    }, indent=2))  # fmt: skip
+    }
+    typer.echo(json.dumps(payload, indent=2, ensure_ascii=False))
+
+
+def _run_one(
+    dataset_id: str, catalog: Catalog, engine: Engine, local: Path | None, evidence: bool
+) -> RunSummary:
+    evidence_root = EVIDENCE_GATE_01 if evidence else None
+    if dataset_id == admin_config.SECTIONS_DATASET:
+        inputs = local_inputs(local) if local else fetch_inputs(catalog)
+        return run_admin_boundaries(engine, catalog, inputs, evidence_root=evidence_root)
+    spec = catalog.pipelines.get(dataset_id)
+    if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    typer.echo(f"No pipeline registered for {dataset_id}", err=True)
+    raise typer.Exit(2)
+
+
+@app.command("run")
+def run_dataset(
+    dataset_id: str,
+    local: Annotated[
+        Path | None, typer.Option(help="Offline input: directory (geography) or file")
+    ] = None,
+    evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
+    database_url: DatabaseUrl = None,
+) -> None:
+    """Run one dataset pipeline (Bronze -> Silver -> PostGIS)."""
+    summary = _run_one(dataset_id, load_catalog(), make_engine(database_url), local, evidence)
+    _print_summary(summary)
     if summary.status == "FAILED":
+        raise typer.Exit(1)
+
+
+@app.command("run-all")
+def run_all(
+    evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
+    database_url: DatabaseUrl = None,
+) -> None:
+    """Geography first, then every declared pipeline. Exit 1 if any run fails quality."""
+    catalog = load_catalog()
+    engine = make_engine(database_url)
+    order = [admin_config.SECTIONS_DATASET, *sorted(catalog.pipelines)]
+    failed: list[str] = []
+    for dataset_id in order:
+        summary = _run_one(dataset_id, catalog, engine, None, evidence)
+        typer.echo(f"{dataset_id}: {summary.status} {summary.version_label or ''}")
+        if summary.status == "FAILED":
+            failed.append(dataset_id)
+    if failed:
+        typer.echo(f"FAILED: {failed}", err=True)
         raise typer.Exit(1)
 
 

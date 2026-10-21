@@ -8,7 +8,7 @@ from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
 from hi_api.main import app
-from hi_ingestion.pipelines.admin_boundaries.run import RunSummary
+from hi_ingestion.pipelines.common import RunSummary
 
 pytestmark = pytest.mark.db
 

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_poblacion_edad_nacionalidad_sexo/dd75084475aa/poblacion-censada-por-edad-nacionalidad-y-sexo.-censo-anual.-municipios.csv",
+      "sha256": "dd75084475aa4e35cbcc70dc993e31e9af4de5b6e93b1cfd7fd40431cc351252",
+      "bytes": 15083940,
+      "url": "https://datos.comunidad.madrid/dataset/0a14fbfe-783e-4de3-81b1-ff3792bfd402/resource/bab16922-8df1-49b5-9791-aed4edf8ced1/download/poblacion-censada-por-edad-nacionalidad-y-sexo.-censo-anual.-municipios.csv",
+      "retrieved_at": "2026-10-21T23:46:55.620452+00:00"
+    }
+  ],
+  "checksum": "fd59e782664816257af46cc0e0de09bea9d947bffb368065955206b2ec018d50",
+  "parser_version": "stat_tables-1.0.0",
+  "dataset_version": "2026-10-21-fd59e7826648",
+  "correlation_id": "7593309d21a2407cb0ad64e2f80d44dc",
+  "silver": "data/silver/cm_poblacion_edad_nacionalidad_sexo/fd59e7826648/observations.csv.gz"
+}

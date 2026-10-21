@@ -7,14 +7,15 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import Engine, create_engine, text
+from sqlalchemy import Engine, create_engine, make_url, text
 
+from hi_db.session import make_engine
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.admin_boundaries.run import (
-    RunSummary,
     local_inputs,
     run_admin_boundaries,
 )
+from hi_ingestion.pipelines.common import RunSummary
 
 ALEMBIC_INI = Path(__file__).resolve().parents[2] / "infra" / "migrations" / "alembic.ini"
 
@@ -40,11 +41,26 @@ def test_db_url() -> str:
 
 
 @pytest.fixture(scope="session")
+def scratch_db_url(test_db_url: str) -> Iterator[str]:
+    """A throwaway database for destructive migration tests (up/down/up)."""
+    url = make_url(test_db_url)
+    name = f"{url.database}_migrations"
+    admin = create_engine(url.set(database="postgres"), isolation_level="AUTOCOMMIT")
+    with admin.connect() as conn:
+        conn.execute(text(f'DROP DATABASE IF EXISTS "{name}"'))
+        conn.execute(text(f'CREATE DATABASE "{name}"'))
+    yield url.set(database=name).render_as_string(hide_password=False)
+    with admin.connect() as conn:
+        conn.execute(text(f'DROP DATABASE IF EXISTS "{name}" WITH (FORCE)'))
+    admin.dispose()
+
+
+@pytest.fixture(scope="session")
 def migrated_engine(test_db_url: str) -> Iterator[Engine]:
     cfg = alembic_config(test_db_url)
     command.downgrade(cfg, "base")
     command.upgrade(cfg, "head")
-    engine = create_engine(test_db_url)
+    engine = make_engine(test_db_url)  # same connection setup as the application
     yield engine
     engine.dispose()
 

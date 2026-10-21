@@ -9,7 +9,8 @@ import pytest
 from shapely import affinity
 from sqlalchemy import Engine, text
 
-from hi_ingestion.pipelines.admin_boundaries.run import RunSummary, load_zones
+from hi_ingestion.pipelines.admin_boundaries.run import load_zones
+from hi_ingestion.pipelines.common import RunSummary
 from tests.integration.conftest import FIXTURE, run_fixture
 
 pytestmark = pytest.mark.db
