@@ -1,0 +1,410 @@
+{
+  "$defs": {
+    "CmPostcodeConceptPipeline": {
+      "additionalProperties": false,
+      "description": "Tables where the postcode is embedded in a free-text 'Concepto' column.",
+      "properties": {
+        "concept_column": {
+          "default": "Concepto",
+          "title": "Concept Column",
+          "type": "string"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "cm_postcode_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "period_column": {
+          "default": "Año",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "postcode_pattern": {
+          "default": "c[oó]digo postal (\\d{5})",
+          "title": "Postcode Pattern",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "value_column": {
+          "default": "Valor",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id"
+      ],
+      "title": "CmPostcodeConceptPipeline",
+      "type": "object"
+    },
+    "CmStatTablePipeline": {
+      "additionalProperties": false,
+      "description": "Instituto de Estadística long tables: Año | Tipo territorio | Código | ... | Valor.",
+      "properties": {
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dimension_columns": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Dimension Columns",
+          "type": "object"
+        },
+        "kind": {
+          "const": "cm_stat_table",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]{2,95}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metric Id"
+        },
+        "metric_split": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MetricSplit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "period_column": {
+          "default": "Año",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "territory_code_column": {
+          "default": "Código territorio",
+          "title": "Territory Code Column",
+          "type": "string"
+        },
+        "territory_name_column": {
+          "default": "Territorio",
+          "title": "Territory Name Column",
+          "type": "string"
+        },
+        "territory_type_column": {
+          "default": "Tipo territorio",
+          "title": "Territory Type Column",
+          "type": "string"
+        },
+        "territory_types": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TerritoryLevel"
+          },
+          "title": "Territory Types",
+          "type": "object"
+        },
+        "unit_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Unidad",
+          "title": "Unit Column"
+        },
+        "value_column": {
+          "default": "Valor",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "territory_types"
+      ],
+      "title": "CmStatTablePipeline",
+      "type": "object"
+    },
+    "CsvFormat": {
+      "additionalProperties": false,
+      "properties": {
+        "decimal": {
+          "default": ".",
+          "title": "Decimal",
+          "type": "string"
+        },
+        "encodings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Encodings",
+          "type": "array"
+        },
+        "separator": {
+          "default": ";",
+          "title": "Separator",
+          "type": "string"
+        }
+      },
+      "title": "CsvFormat",
+      "type": "object"
+    },
+    "MetricSplit": {
+      "additionalProperties": false,
+      "description": "One source column decides which metric a row belongs to (e.g. 'Medida').",
+      "properties": {
+        "column": {
+          "title": "Column",
+          "type": "string"
+        },
+        "metrics": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]{2,95}$",
+            "type": "string"
+          },
+          "title": "Metrics",
+          "type": "object"
+        }
+      },
+      "required": [
+        "column",
+        "metrics"
+      ],
+      "title": "MetricSplit",
+      "type": "object"
+    },
+    "PlaceCategory": {
+      "enum": [
+        "education",
+        "health",
+        "social",
+        "transport",
+        "commerce",
+        "culture",
+        "sport",
+        "administration",
+        "green",
+        "other"
+      ],
+      "title": "PlaceCategory",
+      "type": "string"
+    },
+    "PointsPipeline": {
+      "additionalProperties": false,
+      "description": "Point facilities with projected coordinates -> place_master.",
+      "properties": {
+        "active_values": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Active Values",
+          "type": "array"
+        },
+        "attribute_columns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Attribute Columns",
+          "type": "array"
+        },
+        "category": {
+          "$ref": "#/$defs/PlaceCategory"
+        },
+        "crs": {
+          "default": "EPSG:25830",
+          "pattern": "^EPSG:\\d{4,5}$",
+          "title": "Crs",
+          "type": "string"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "group_by_id": {
+          "default": false,
+          "title": "Group By Id",
+          "type": "boolean"
+        },
+        "grouped_list_columns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Grouped List Columns",
+          "type": "array"
+        },
+        "id_column": {
+          "title": "Id Column",
+          "type": "string"
+        },
+        "kind": {
+          "const": "points_csv",
+          "title": "Kind",
+          "type": "string"
+        },
+        "municipio_code_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Code Column"
+        },
+        "name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Column"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "status_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Column"
+        },
+        "subcategory_column": {
+          "title": "Subcategory Column",
+          "type": "string"
+        },
+        "subcategory_include": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subcategory Include",
+          "type": "array"
+        },
+        "x_column": {
+          "title": "X Column",
+          "type": "string"
+        },
+        "y_column": {
+          "title": "Y Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "category",
+        "id_column",
+        "subcategory_column",
+        "x_column",
+        "y_column"
+      ],
+      "title": "PointsPipeline",
+      "type": "object"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/pipeline.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "discriminator": {
+    "mapping": {
+      "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
+      "cm_stat_table": "#/$defs/CmStatTablePipeline",
+      "points_csv": "#/$defs/PointsPipeline"
+    },
+    "propertyName": "kind"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CmStatTablePipeline"
+    },
+    {
+      "$ref": "#/$defs/CmPostcodeConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/PointsPipeline"
+    }
+  ]
+}

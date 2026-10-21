@@ -1,0 +1,10 @@
+metric_id: renta_disponible_bruta_per_capita
+human_name: Renta disponible bruta per cápita
+description: Renta disponible bruta municipal dividida por la población.
+domain: income
+unit: EUR/persona
+direction: higher_is_better
+aggregation_method: weighted_mean
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_renta_disponible_municipal

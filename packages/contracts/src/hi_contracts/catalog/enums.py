@@ -126,3 +126,52 @@ class H3JoinMethod(StrEnum):
     OVERLAP = "overlap"
     POPULATION_WEIGHTED = "population_weighted"
     NETWORK_ACCESS = "network_access"
+
+
+class TerritoryLevel(StrEnum):
+    """Territorial units observations can refer to (superset of AdminLevel)."""
+
+    CCAA = "ccaa"
+    MUNICIPIO = "municipio"
+    DISTRITO = "distrito"
+    BARRIO = "barrio"
+    SECCION_CENSAL = "seccion_censal"
+    CODIGO_POSTAL = "codigo_postal"
+    ZONA_ESTADISTICA = "zona_estadistica"
+    H3_R8 = "h3_r8"
+    H3_R9 = "h3_r9"
+
+
+class Direction(StrEnum):
+    HIGHER_IS_BETTER = "higher_is_better"
+    LOWER_IS_BETTER = "lower_is_better"
+    NEUTRAL = "neutral"
+    TARGET_RANGE = "target_range"
+
+
+class AggregationMethod(StrEnum):
+    SUM = "sum"
+    MEAN = "mean"
+    WEIGHTED_MEAN = "weighted_mean"
+    COUNT = "count"
+    NONE = "none"
+
+
+class PlaceCategory(StrEnum):
+    EDUCATION = "education"
+    HEALTH = "health"
+    SOCIAL = "social"
+    TRANSPORT = "transport"
+    COMMERCE = "commerce"
+    CULTURE = "culture"
+    SPORT = "sport"
+    ADMINISTRATION = "administration"
+    GREEN = "green"
+    OTHER = "other"
+
+
+class PlaceStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    CLOSED = "CLOSED"
+    UNKNOWN = "UNKNOWN"

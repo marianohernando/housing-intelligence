@@ -1,0 +1,5 @@
+kind: cm_stat_table
+dataset_id: cm_alquiler_m2_municipios
+metric_id: alquiler_m2_mensual_municipio
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}
+dimension_columns: {"Tipo de vivienda": tipo_vivienda}

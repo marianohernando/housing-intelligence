@@ -7,20 +7,25 @@ import json
 import sys
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 
-from hi_contracts.catalog import DatasetSpec, FeatureSpec, SourceSpec
+from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineSpec, SourceSpec
 
 OUT_DIR = Path(__file__).resolve().parents[1] / "data" / "schemas"
-MODELS: dict[str, type[BaseModel]] = {
+MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "source": SourceSpec,
     "dataset": DatasetSpec,
     "feature": FeatureSpec,
+    "metric": MetricSpec,
+    "pipeline": TypeAdapter(PipelineSpec),
 }
 
 
-def render(name: str, model: type[BaseModel]) -> str:
-    schema = model.model_json_schema(by_alias=True)
+def render(name: str, model: type[BaseModel] | TypeAdapter[object]) -> str:
+    if isinstance(model, TypeAdapter):
+        schema = model.json_schema(by_alias=True)
+    else:
+        schema = model.model_json_schema(by_alias=True)
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     schema["$id"] = f"https://housing-intelligence/schemas/{name}.schema.json"
     return json.dumps(schema, indent=2, ensure_ascii=False, sort_keys=True) + "\n"

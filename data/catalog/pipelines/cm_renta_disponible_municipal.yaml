@@ -1,0 +1,9 @@
+kind: cm_stat_table
+dataset_id: cm_renta_disponible_municipal
+metric_split:
+  column: Medida
+  metrics:
+    Total: renta_disponible_bruta_total
+    Per cápita: renta_disponible_bruta_per_capita
+    Porcentaje sobre la media: renta_disponible_bruta_indice_media
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}

@@ -1,0 +1,150 @@
+{
+  "$defs": {
+    "AggregationMethod": {
+      "enum": [
+        "sum",
+        "mean",
+        "weighted_mean",
+        "count",
+        "none"
+      ],
+      "title": "AggregationMethod",
+      "type": "string"
+    },
+    "Direction": {
+      "enum": [
+        "higher_is_better",
+        "lower_is_better",
+        "neutral",
+        "target_range"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "Domain": {
+      "enum": [
+        "housing",
+        "population",
+        "income",
+        "education",
+        "health",
+        "social",
+        "transport",
+        "urbanism",
+        "environment",
+        "economy",
+        "employment",
+        "safety",
+        "geography",
+        "other"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/metric.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aggregation_method": {
+      "$ref": "#/$defs/AggregationMethod"
+    },
+    "dataset_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,95}$",
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "dimensions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dimensions",
+      "type": "array"
+    },
+    "direction": {
+      "$ref": "#/$defs/Direction",
+      "default": "neutral"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "geo_resolution_min": {
+      "$ref": "#/$defs/TerritoryLevel"
+    },
+    "human_name": {
+      "title": "Human Name",
+      "type": "string"
+    },
+    "methodology_version": {
+      "default": "1",
+      "title": "Methodology Version",
+      "type": "string"
+    },
+    "metric_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,95}$",
+      "title": "Metric Id",
+      "type": "string"
+    },
+    "null_policy": {
+      "default": "do_not_impute",
+      "title": "Null Policy",
+      "type": "string"
+    },
+    "pro_visible": {
+      "default": true,
+      "title": "Pro Visible",
+      "type": "boolean"
+    },
+    "public_visible": {
+      "default": true,
+      "title": "Public Visible",
+      "type": "boolean"
+    },
+    "sensitive": {
+      "default": false,
+      "title": "Sensitive",
+      "type": "boolean"
+    },
+    "temporal_resolution": {
+      "title": "Temporal Resolution",
+      "type": "string"
+    },
+    "unit": {
+      "title": "Unit",
+      "type": "string"
+    }
+  },
+  "required": [
+    "metric_id",
+    "human_name",
+    "description",
+    "domain",
+    "unit",
+    "aggregation_method",
+    "geo_resolution_min",
+    "temporal_resolution",
+    "dataset_id"
+  ],
+  "title": "MetricSpec",
+  "type": "object"
+}

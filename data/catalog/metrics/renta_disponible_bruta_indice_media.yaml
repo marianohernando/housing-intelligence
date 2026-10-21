@@ -1,0 +1,10 @@
+metric_id: renta_disponible_bruta_indice_media
+human_name: Renta per cápita sobre la media regional
+description: Renta disponible bruta per cápita como porcentaje de la media de la Comunidad de Madrid.
+domain: income
+unit: "%"
+direction: neutral
+aggregation_method: none
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_renta_disponible_municipal

@@ -1,0 +1,11 @@
+metric_id: alquiler_m2_mensual_municipio
+human_name: Alquiler mensual por metro cuadrado (municipios)
+description: Alquiler medio mensual por m² de viviendas arrendadas con valor catastral, municipios de más de 20.000 habitantes.
+domain: housing
+unit: EUR/m2/mes
+direction: lower_is_better
+aggregation_method: none
+geo_resolution_min: municipio
+temporal_resolution: annual
+dataset_id: cm_alquiler_m2_municipios
+dimensions: [tipo_vivienda]

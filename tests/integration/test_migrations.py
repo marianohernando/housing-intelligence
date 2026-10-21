@@ -21,6 +21,12 @@ EXPECTED_TABLES = {
     "geo_admin_unit",
     "h3_cell",
     "h3_cell_admin_unit",
+    "metric_registry",
+    "metric_observation",
+    "place_master",
+    "place_source_alias",
+    "feature_registry",
+    "feature_value",
 }
 
 

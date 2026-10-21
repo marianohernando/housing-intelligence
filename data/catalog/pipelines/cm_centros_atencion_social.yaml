@@ -1,0 +1,10 @@
+kind: points_csv
+dataset_id: cm_centros_atencion_social
+category: social
+id_column: numero_registro
+name_column: denominacion
+subcategory_column: subtipo
+x_column: direccion_coor_x
+y_column: direccion_coor_y
+municipio_code_column: municipio_codigo
+attribute_columns: [sector, tipo, plazas_autorizadas_numero, tipo_gestion, entidad_naturaleza, direccion_codigo_postal]

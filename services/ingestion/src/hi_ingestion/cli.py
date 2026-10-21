@@ -50,7 +50,8 @@ def catalog_validate(catalog_dir: CatalogDir = DEFAULT_CATALOG_DIR) -> None:
     catalog = load_catalog(catalog_dir)
     typer.echo(
         f"OK: {len(catalog.sources)} sources, {len(catalog.datasets)} datasets, "
-        f"{len(catalog.drafts)} drafts, {len(catalog.features)} features"
+        f"{len(catalog.drafts)} drafts, {len(catalog.features)} features, "
+        f"{len(catalog.metrics)} metrics, {len(catalog.pipelines)} pipelines"
     )
 
 
@@ -60,7 +61,7 @@ def catalog_sync(
 ) -> None:
     """Upsert curated sources and datasets into the registry tables."""
     counts = sync_catalog(make_engine(database_url), load_catalog(catalog_dir))
-    typer.echo(f"synced {counts['sources']} sources, {counts['datasets']} datasets")
+    typer.echo("synced " + ", ".join(f"{v} {k}" for k, v in counts.items()))
 
 
 @catalog_app.command("harvest")

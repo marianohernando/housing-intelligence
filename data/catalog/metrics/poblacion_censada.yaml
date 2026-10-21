@@ -1,0 +1,10 @@
+metric_id: poblacion_censada
+human_name: Población censada
+description: Personas residentes según el censo anual, por edad quinquenal, nacionalidad y sexo.
+domain: population
+unit: personas
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_poblacion_edad_nacionalidad_sexo
+dimensions: [edad, nacionalidad, sexo]

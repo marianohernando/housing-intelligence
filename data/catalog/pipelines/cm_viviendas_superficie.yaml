@@ -1,0 +1,5 @@
+kind: cm_stat_table
+dataset_id: cm_viviendas_superficie
+metric_id: viviendas_por_superficie
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}
+dimension_columns: {"Superficie": superficie}

@@ -49,3 +49,34 @@ def test_p0_datasets_have_clear_license(catalog: Catalog) -> None:
 
 def test_drafts_are_never_p0(catalog: Catalog) -> None:
     assert all(d.priority is not Priority.P0 for d in catalog.drafts.values())
+
+
+PII_COLUMNS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web")
+
+
+def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
+    for dataset_id, pipeline in catalog.pipelines.items():
+        assert dataset_id in catalog.datasets
+        if pipeline.kind == "points_csv":
+            assert pipeline.attribute_columns, dataset_id
+        else:
+            assert pipeline.metric_ids(), dataset_id
+
+
+def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None:
+    """Data minimisation: facilities keep service attributes, never phones, emails or NIF."""
+    for pipeline in catalog.pipelines.values():
+        if pipeline.kind != "points_csv":
+            continue
+        kept = [pipeline.id_column, pipeline.name_column or "", *pipeline.attribute_columns]
+        for column in kept:
+            assert not any(term in column.lower() for term in PII_COLUMNS), (
+                pipeline.dataset_id,
+                column,
+            )
+
+
+def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:
+    stats = {m.dataset_id for m in catalog.metrics.values()}
+    assert stats <= set(catalog.pipelines)
+    assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats)

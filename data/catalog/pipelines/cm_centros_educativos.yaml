@@ -1,0 +1,12 @@
+kind: points_csv
+dataset_id: cm_centros_educativos
+category: education
+id_column: CODIGO
+name_column: CENTRO
+subcategory_column: TIPO_EXT
+x_column: UTM_X
+y_column: UTM_Y
+municipio_code_column: CDMUNI
+status_column: SITUACIÓN
+active_values: [ALTA]
+attribute_columns: [TITULARIDAD, TIPO_ABRV, COD_TIPO, CDPOSTAL, DAT]

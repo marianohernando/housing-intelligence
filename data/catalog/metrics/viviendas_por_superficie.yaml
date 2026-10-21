@@ -1,0 +1,10 @@
+metric_id: viviendas_por_superficie
+human_name: Viviendas por superficie útil
+description: Viviendas principales por tramo de superficie (censo anual).
+domain: housing
+unit: viviendas
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_viviendas_superficie
+dimensions: [superficie]
