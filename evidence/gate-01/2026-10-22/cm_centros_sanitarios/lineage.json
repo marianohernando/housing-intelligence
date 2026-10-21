@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_centros_sanitarios/361afe8836a1/centros_servicios_establecimientos_sanitarios.csv",
+      "sha256": "361afe8836a1bdde596367a276ebd4df646b98c8731152bc0395aa87309ce0aa",
+      "bytes": 7889813,
+      "url": "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv",
+      "retrieved_at": "2026-10-21T23:54:02.556627+00:00"
+    }
+  ],
+  "checksum": "f2602e9e9275fc4c76ee23f26c57f77ef1e56ee22c67ebc80729255f925e581c",
+  "parser_version": "places-1.0.0",
+  "dataset_version": "2026-10-21-f2602e9e9275",
+  "correlation_id": "7929e02fef2b4715803fa341d5243cf0",
+  "silver": "data/silver/cm_centros_sanitarios/f2602e9e9275/places.csv.gz"
+}

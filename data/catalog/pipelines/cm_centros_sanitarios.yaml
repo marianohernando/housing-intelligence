@@ -5,15 +5,16 @@ id_column: centro_nro_registro
 subcategory_column: centro_tipo
 # Only care facilities relevant for residential access. Individual private practices
 # ("Consulta médica", "Clínica dental", ...) are excluded: data minimisation (CLAUDE.md §3).
-subcategory_include:
-  - Centro de salud
-  - Consultorio de atención primaria
-  - Hospital general
-  - Hospital especializado
-  - Hospital de media y larga estancia
-  - Hospital de salud mental y tratamiento de toxicomanías
-  - Centro de salud mental
-  - Centro Polivalente
+row_filters:
+  centro_tipo:
+    - Centro de salud
+    - Consultorio de atención primaria
+    - Hospital general
+    - Hospital especializado
+    - Hospital de media y larga estancia
+    - Hospital de salud mental y tratamiento de toxicomanías
+    - Centro de salud mental
+    - Centro Polivalente
 x_column: localizacion_coordenada_x
 y_column: localizacion_coordenada_y
 group_by_id: true

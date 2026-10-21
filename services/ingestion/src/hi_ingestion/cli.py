@@ -9,7 +9,11 @@ import typer
 from sqlalchemy import Engine
 
 from hi_contracts.catalog.enums import Priority
-from hi_contracts.catalog.pipeline import CmPostcodeConceptPipeline, CmStatTablePipeline
+from hi_contracts.catalog.pipeline import (
+    CmPostcodeConceptPipeline,
+    CmStatTablePipeline,
+    PointsPipeline,
+)
 from hi_db.session import make_engine
 from hi_domain.catalog.scoring import score_candidate
 from hi_ingestion import __version__
@@ -31,6 +35,7 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
 )
 from hi_ingestion.pipelines.common import EVIDENCE_GATE_01, RunSummary
 from hi_ingestion.pipelines.fetch import local_file
+from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
@@ -138,6 +143,9 @@ def _run_one(
     if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, PointsPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_places_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     typer.echo(f"No pipeline registered for {dataset_id}", err=True)
     raise typer.Exit(2)
 

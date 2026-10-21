@@ -4,7 +4,19 @@ category: social
 id_column: numero_registro
 name_column: denominacion
 subcategory_column: subtipo
+# Protection of vulnerable people (D-186): only senior services are mapped. Supervised flats,
+# shelters, women's refuges, child protection and residences for people with mental illness or
+# disability are excluded even though the source publishes their location.
+row_filters:
+  sector:
+    - Personas mayores
+  subtipo:
+    - RESIDENCIAS DE PERSONAS MAYORES DEPENDIENTES
+    - RESIDENCIAS DE PERSONAS MAYORES MIXTA
+    - RESIDENCIAS DE PERSONAS MAYORES AUTONOMAS
+    - "CENTROS DE DÍA: OTROS"
+    - HOGARES Y CLUBES
 x_column: direccion_coor_x
 y_column: direccion_coor_y
 municipio_code_column: municipio_codigo
-attribute_columns: [sector, tipo, plazas_autorizadas_numero, tipo_gestion, entidad_naturaleza, direccion_codigo_postal]
+attribute_columns: [tipo, plazas_autorizadas_numero, tipo_gestion, entidad_naturaleza, direccion_codigo_postal]

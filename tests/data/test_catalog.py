@@ -80,3 +80,16 @@ def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:
     stats = {m.dataset_id for m in catalog.metrics.values()}
     assert stats <= set(catalog.pipelines)
     assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats)
+
+
+PROTECTED_SUBTYPES = ("PISOS TUTELADOS", "MUJERES MALTRATADAS", "ACOGIDA DE MENORES", "ALBERGUES")
+
+
+def test_social_facilities_exclude_protected_housing(catalog: Catalog) -> None:
+    """D-186: locations of protected housing and shelters are never mapped."""
+    spec = catalog.pipelines["cm_centros_atencion_social"]
+    assert spec.kind == "points_csv"
+    allowed = spec.row_filters.get(spec.subcategory_column, [])
+    assert allowed, "social facilities must use an explicit subtype allowlist"
+    assert not any(p in a for a in allowed for p in PROTECTED_SUBTYPES)
+    assert spec.row_filters.get("sector") == ["Personas mayores"]

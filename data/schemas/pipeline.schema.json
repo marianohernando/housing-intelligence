@@ -325,6 +325,16 @@
           "title": "Resource Role",
           "type": "string"
         },
+        "row_filters": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Row Filters",
+          "type": "object"
+        },
         "status_column": {
           "anyOf": [
             {
@@ -340,13 +350,6 @@
         "subcategory_column": {
           "title": "Subcategory Column",
           "type": "string"
-        },
-        "subcategory_include": {
-          "items": {
-            "type": "string"
-          },
-          "title": "Subcategory Include",
-          "type": "array"
         },
         "x_column": {
           "title": "X Column",

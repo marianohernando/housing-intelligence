@@ -99,7 +99,8 @@ class PointsPipeline(BaseModel):
     id_column: str
     name_column: str | None = None  # None -> "<subcategory> (<municipio>)"
     subcategory_column: str
-    subcategory_include: list[str] = Field(default_factory=list[str])  # empty = all
+    # Only rows whose column values are in the allowlist enter the product (all filters apply).
+    row_filters: dict[str, list[str]] = Field(default_factory=dict[str, list[str]])
     x_column: str
     y_column: str
     crs: str = Field(default="EPSG:25830", pattern=r"^EPSG:\d{4,5}$")

@@ -1,0 +1,14 @@
+{
+  "places_normalized": 1001,
+  "quarantined": 46,
+  "top_subcategories": {
+    "RESIDENCIAS DE PERSONAS MAYORES DEPENDIENTES": 332,
+    "CENTROS DE DÍA: OTROS": 312,
+    "HOGARES Y CLUBES": 211,
+    "RESIDENCIAS DE PERSONAS MAYORES MIXTA": 138,
+    "RESIDENCIAS DE PERSONAS MAYORES AUTONOMAS": 8
+  },
+  "places": 1001,
+  "assigned_to_section": 1001,
+  "municipio_mismatch": 0
+}

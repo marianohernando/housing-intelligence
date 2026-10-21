@@ -1,0 +1,17 @@
+{
+  "places_normalized": 1543,
+  "quarantined": 11,
+  "top_subcategories": {
+    "Centro Polivalente": 997,
+    "Centro de salud": 270,
+    "Consultorio de atención primaria": 152,
+    "Hospital general": 59,
+    "Centro de salud mental": 40,
+    "Hospital de salud mental y tratamiento de toxicomanías": 10,
+    "Hospital de media y larga estancia": 8,
+    "Hospital especializado": 7
+  },
+  "places": 1543,
+  "assigned_to_section": 1543,
+  "municipio_mismatch": 0
+}
