@@ -10,7 +10,7 @@ ALEMBIC := uv run alembic -c infra/migrations/alembic.ini
 GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
-        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all secret-scan evidence ci web-install
+        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all supabase-migrate supabase-sync secret-scan evidence ci web-install
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -79,6 +79,14 @@ ingest: ## Run a dataset pipeline: make ingest DATASET=cm_secciones_censales
 
 ingest-all: ## Geography + every declared pipeline
 	uv run hi-ingest run-all
+
+supabase-migrate: ## Apply migrations to SUPABASE_DATABASE_URL
+	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)
+	$(ALEMBIC) -x url="$(SUPABASE_DATABASE_URL)" upgrade head
+
+supabase-sync: ## Copy local tables to Supabase: make supabase-sync PROFILE=demo|full
+	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)
+	scripts/supabase_sync.sh $(or $(PROFILE),demo)
 
 secret-scan: ## gitleaks over full git history (requires gitleaks binary)
 	gitleaks git --config .gitleaks.toml --redact --no-banner .
