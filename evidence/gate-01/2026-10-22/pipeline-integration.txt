@@ -2,5 +2,5 @@ $ uv run pytest -m db tests/integration/geo tests/integration/test_stat_pipeline
 # exit 0
 
 ..................                                                       [100%]
-18 passed in 5.82s
+18 passed in 5.89s
 
