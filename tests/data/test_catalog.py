@@ -93,3 +93,27 @@ def test_social_facilities_exclude_protected_housing(catalog: Catalog) -> None:
     assert allowed, "social facilities must use an explicit subtype allowlist"
     assert not any(p in a for a in allowed for p in PROTECTED_SUBTYPES)
     assert spec.row_filters.get("sector") == ["Personas mayores"]
+
+
+PROTECTED_DIMENSION_VALUES = ("extranjeros", "espanoles", "hombres", "mujeres")
+
+
+def test_features_never_score_by_protected_characteristics(catalog: Catalog) -> None:
+    """CLAUDE.md §3: nationality or sex never become features (aggregate or not)."""
+    for feature in catalog.features.values():
+        formula = feature.formula.model_dump()
+        text = str({k: v for k, v in formula.items() if k != "method"}).lower()
+        hits = [v for v in PROTECTED_DIMENSION_VALUES if v in text]
+        assert not hits, (feature.feature_id, hits)
+
+
+PIPELINE_COMPUTED_METHODS = {"planar_area_epsg_25830"}
+
+
+def test_every_feature_method_is_implemented(catalog: Catalog) -> None:
+    from hi_features.compute import METHODS
+
+    for feature in catalog.features.values():
+        assert (
+            feature.formula.method in METHODS or feature.formula.method in PIPELINE_COMPUTED_METHODS
+        ), feature.feature_id

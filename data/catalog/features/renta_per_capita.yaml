@@ -1,0 +1,18 @@
+feature_id: renta_per_capita
+version: 1
+human_name: Renta disponible bruta per cápita
+domain: income
+type: raw
+unit: EUR/persona/año
+direction: higher_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_renta_disponible_municipal, role: primary}]
+formula: {method: metric_value, metric: renta_disponible_bruta_per_capita, dims: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [affordability, housing_gap]
+tests: [positive]
+limitations: [Media municipal; no refleja la distribución de la renta dentro del municipio. Algunos municipios pequeños no se publican (secreto estadístico).]

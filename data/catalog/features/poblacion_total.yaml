@@ -1,0 +1,18 @@
+feature_id: poblacion_total
+version: 1
+human_name: Población residente
+domain: population
+type: raw
+unit: personas
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: primary}]
+formula: {method: metric_value, metric: poblacion_censada, dims: {edad: total, nacionalidad: total, sexo: total}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [residential_fit, housing_gap]
+tests: [non_negative, equals_source_total]
+limitations: [Censo anual a 1 de enero; no incluye población flotante ni turística.]

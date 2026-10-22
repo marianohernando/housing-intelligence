@@ -1,0 +1,23 @@
+feature_id: tamano_medio_hogar
+version: 1
+human_name: Tamaño medio del hogar (aproximado)
+domain: population
+type: derived
+unit: personas/hogar
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_hogares_tamano_censo_2021, role: primary}]
+formula:
+  method: metric_weighted_mean
+  metric: hogares_por_tamano
+  dim: tamano
+  weights: {de_1_persona: 1, de_2_personas: 2, de_3_personas: 3, de_4_personas: 4, de_5_o_mas_personas: 5}
+  confidence: 0.9  # open upper bin counted as 5
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness, open_upper_bin]}
+public_use: true
+pro_use: true
+models: [housing_gap]
+tests: [range_1_5, monotonic_in_large_households]
+limitations: ["El tramo '5 o más' se cuenta como 5: subestima ligeramente el tamaño en municipios con hogares muy grandes (confidence 0,9)."]

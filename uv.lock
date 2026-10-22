@@ -13,6 +13,7 @@ members = [
     "hi-contracts",
     "hi-db",
     "hi-domain",
+    "hi-features",
     "hi-ingestion",
     "housing-intelligence",
 ]
@@ -335,6 +336,27 @@ requires-dist = [
 ]
 
 [[package]]
+name = "hi-features"
+version = "0.0.1"
+source = { editable = "services/features" }
+dependencies = [
+    { name = "hi-contracts" },
+    { name = "hi-db" },
+    { name = "hi-ingestion" },
+    { name = "pandas" },
+    { name = "typer" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "hi-contracts", editable = "packages/contracts" },
+    { name = "hi-db", editable = "packages/db" },
+    { name = "hi-ingestion", editable = "services/ingestion" },
+    { name = "pandas", specifier = ">=2.2" },
+    { name = "typer", specifier = ">=0.17" },
+]
+
+[[package]]
 name = "hi-ingestion"
 version = "0.0.1"
 source = { editable = "services/ingestion" }
@@ -372,6 +394,7 @@ dependencies = [
     { name = "hi-contracts" },
     { name = "hi-db" },
     { name = "hi-domain" },
+    { name = "hi-features" },
     { name = "hi-ingestion" },
 ]
 
@@ -394,6 +417,7 @@ requires-dist = [
     { name = "hi-contracts", editable = "packages/contracts" },
     { name = "hi-db", editable = "packages/db" },
     { name = "hi-domain", editable = "packages/domain" },
+    { name = "hi-features", editable = "services/features" },
     { name = "hi-ingestion", editable = "services/ingestion" },
 ]
 
