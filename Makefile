@@ -10,7 +10,7 @@ ALEMBIC := uv run alembic -c infra/migrations/alembic.ini
 GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
-        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all supabase-migrate supabase-sync secret-scan evidence ci web-install
+        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all features supabase-migrate supabase-sync secret-scan evidence ci web-install
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -77,8 +77,12 @@ ingest: ## Run a dataset pipeline: make ingest DATASET=cm_secciones_censales
 	@test -n "$(DATASET)" || (echo "DATASET is required" && exit 2)
 	uv run hi-ingest run $(DATASET)
 
-ingest-all: ## Geography + every declared pipeline
+ingest-all: ## Geography + every declared pipeline, then features
 	uv run hi-ingest run-all
+	uv run hi-features compute
+
+features: ## Recompute every feature (Gold)
+	uv run hi-features compute
 
 supabase-migrate: ## Apply migrations to SUPABASE_DATABASE_URL
 	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)

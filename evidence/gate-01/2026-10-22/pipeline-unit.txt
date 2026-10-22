@@ -1,0 +1,6 @@
+$ uv run pytest tests/unit/pipelines tests/unit/harvester -q
+# exit 0
+
+....................................                                     [100%]
+36 passed in 1.20s
+

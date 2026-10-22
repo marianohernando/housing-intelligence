@@ -1,0 +1,5 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc select count(*) from dataset_version where is_last_valid and quality_status = 'PASSED'
+# exit 0
+
+10
+

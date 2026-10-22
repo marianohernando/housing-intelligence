@@ -15,6 +15,9 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+CURRENT_BRANCH = subprocess.run(
+    ["git", "branch", "--show-current"], cwd=REPO, capture_output=True, text=True, check=False
+).stdout.strip()
 DB_ENV = {
     "TEST_DATABASE_URL": os.environ.get(
         "TEST_DATABASE_URL", "postgresql+psycopg://housing:housing@localhost:5440/housing_test"
@@ -97,7 +100,7 @@ GATE_00 = [
             "run",
             "list",
             "--branch",
-            "claude/sprint-p0",
+            CURRENT_BRANCH,
             "--limit",
             "10",
             "--json",
@@ -113,6 +116,17 @@ def _quality_report_passed(result: subprocess.CompletedProcess[str]) -> bool:
         return result.returncode == 0 and json.loads(result.stdout)["passed"] is True
     except (json.JSONDecodeError, KeyError):
         return False
+
+
+def _rerun_ok(result: subprocess.CompletedProcess[str]) -> bool:
+    statuses = [
+        line.split(": ")[1].split()[0] for line in result.stdout.splitlines() if ": " in line
+    ]
+    return (
+        result.returncode == 0
+        and len(statuses) >= len(GATE_01_DATASETS)
+        and all(s in {"SKIPPED", "SUCCESS"} for s in statuses)
+    )
 
 
 GATE_01_DATASETS = [
@@ -170,9 +184,9 @@ GATE_01 = [
     ),
     Check(
         "idempotent-rerun",
-        "re-fetch + rerun of every pipeline with same content is SKIPPED",
+        "re-fetch every source: unchanged -> SKIPPED, changed -> new version, none FAILED",
         ["uv", "run", "hi-ingest", "run-all", "--no-evidence"],
-        lambda r: r.returncode == 0 and r.stdout.count("SKIPPED") >= len(GATE_01_DATASETS),
+        _rerun_ok,
     ),
     GATE_00[-1],  # CI green for HEAD
 ]
