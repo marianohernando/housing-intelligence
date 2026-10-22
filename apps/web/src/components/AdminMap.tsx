@@ -9,102 +9,118 @@ import {
   setWorkerUrl,
   type StyleSpecification,
 } from "maplibre-gl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  type AdminLevel,
-  type AdminUnitProperties,
-  adminUnitsUrl,
-  DEFAULT_API_URL,
-  describeLineage,
-  describeUnit,
-  type Lineage,
-} from "@/lib/geo";
+import MapPanel, { PLACE_LAYERS, type PlaceLayer } from "@/components/MapPanel";
+import { colorFor, type FeatureInfo, type FeatureValueRow, quantileBreaks } from "@/lib/features";
+import { type AdminUnitProperties, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
-const LAYERS: { level: AdminLevel; simplify: number; fill: string; line: string; minzoom: number }[] = [
-  { level: "municipio", simplify: 50, fill: "#d9d4c7", line: "#6b6353", minzoom: 0 },
-  { level: "barrio", simplify: 10, fill: "#f0a35e", line: "#b5531c", minzoom: 9 },
-];
+const DEFAULT_FEATURE = "renta_per_capita";
 const BLANK_STYLE: StyleSpecification = {
   version: 8,
   sources: {},
   layers: [{ id: "background", type: "background", paint: { "background-color": "#f6f4ef" } }],
 };
 
+async function getJson<T>(path: string): Promise<T> {
+  const response = await fetch(new URL(path, API_URL));
+  if (!response.ok) throw new Error(`HTTP ${response.status} en ${path}`);
+  return (await response.json()) as T;
+}
+
 export default function AdminMap() {
   const container = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const [ready, setReady] = useState(false);
+  const [features, setFeatures] = useState<FeatureInfo[]>([]);
+  const [featureId, setFeatureId] = useState(DEFAULT_FEATURE);
+  const [values, setValues] = useState<Map<string, FeatureValueRow>>(new Map());
+  const [breaks, setBreaks] = useState<number[]>([]);
+  const [featureLineage, setFeatureLineage] = useState("");
   const [selected, setSelected] = useState<AdminUnitProperties | null>(null);
   const [lineage, setLineage] = useState<Lineage>({});
+  const [layers, setLayers] = useState<Record<PlaceLayer, boolean>>({ education: false, health: false, social: false });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!container.current) return;
     setWorkerUrl(WORKER_URL);
-    const map = new MapLibreMap({
-      container: container.current,
-      style: BLANK_STYLE,
-      center: [-3.7, 40.42],
-      zoom: 8,
-      attributionControl: { compact: false, customAttribution: "Comunidad de Madrid — CC BY 4.0" },
-    });
+    const map = new MapLibreMap({ container: container.current, style: BLANK_STYLE, center: [-3.7, 40.42], zoom: 8, attributionControl: { compact: false, customAttribution: "Comunidad de Madrid — CC BY 4.0" } });
     map.addControl(new NavigationControl(), "top-right");
-
+    mapRef.current = map;
     map.on("load", async () => {
-      for (const layer of LAYERS) {
-        try {
-          const response = await fetch(adminUnitsUrl(API_URL, layer.level, layer.simplify));
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const body = await response.json();
-          setLineage(body.data.lineage as Lineage);
-          const id = `admin-${layer.level}`;
-          map.addSource(id, { type: "geojson", data: { type: "FeatureCollection", features: body.data.features } });
-          map.addLayer({ id: `${id}-fill`, type: "fill", source: id, minzoom: layer.minzoom, paint: { "fill-color": layer.fill, "fill-opacity": 0.45 } });
-          map.addLayer({ id: `${id}-line`, type: "line", source: id, minzoom: layer.minzoom, paint: { "line-color": layer.line, "line-width": 0.8 } });
-          map.on("click", `${id}-fill`, (event: MapLayerMouseEvent) => {
+      try {
+        for (const [level, simplify, minzoom] of [["municipio", 50, 0], ["barrio", 10, 10]] as const) {
+          const body = await getJson<{ data: { features: GeoJSON.Feature[]; lineage: Lineage } }>(adminUnitsUrl(API_URL, level, simplify));
+          setLineage(body.data.lineage);
+          map.addSource(level, { type: "geojson", data: { type: "FeatureCollection", features: body.data.features }, promoteId: "admin_unit_id" });
+          map.addLayer({ id: `${level}-fill`, type: "fill", source: level, minzoom, paint: { "fill-color": ["coalesce", ["feature-state", "color"], level === "barrio" ? "rgba(0,0,0,0)" : "#e8e4da"], "fill-opacity": 0.8 } });
+          map.addLayer({ id: `${level}-line`, type: "line", source: level, minzoom, paint: { "line-color": level === "barrio" ? "#7a4a2a" : "#6b6353", "line-width": level === "barrio" ? 0.4 : 0.7 } });
+          map.on("click", `${level}-fill`, (event: MapLayerMouseEvent) => {
             const props = event.features?.[0]?.properties as AdminUnitProperties | undefined;
             if (props) setSelected({ ...props, area_km2: Number(props.area_km2), name: props.name || null });
           });
-          map.on("mouseenter", `${id}-fill`, () => (map.getCanvas().style.cursor = "pointer"));
-          map.on("mouseleave", `${id}-fill`, () => (map.getCanvas().style.cursor = ""));
-        } catch (exc) {
-          setError(`No se pudo cargar la capa ${layer.level}: ${(exc as Error).message}`);
         }
+        setReady(true);
+      } catch (exc) {
+        setError(`No se pudo cargar la geografía: ${(exc as Error).message}`);
       }
     });
+    getJson<{ data: FeatureInfo[] }>("/api/v1/features").then((b) => setFeatures(b.data)).catch((exc: Error) => setError(exc.message));
     return () => map.remove();
   }, []);
 
-  const detail = selected ? describeUnit(selected) : null;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    getJson<{ data: { values: FeatureValueRow[]; lineage: { dataset_versions?: Record<string, string> } } }>(`/api/v1/features/${featureId}/values`)
+      .then((body) => {
+        const rows = body.data.values;
+        const known = rows.flatMap((r) => (r.value === null ? [] : [r.value]));
+        const nextBreaks = quantileBreaks(known);
+        for (const row of rows) {
+          if (row.admin_unit_id) map.setFeatureState({ source: "municipio", id: row.admin_unit_id }, { color: colorFor(row.value, nextBreaks) });
+        }
+        setBreaks(nextBreaks);
+        setValues(new Map(rows.map((r) => [r.admin_unit_id ?? r.territory_code, r])));
+        setFeatureLineage(Object.entries(body.data.lineage.dataset_versions ?? {}).map(([d, v]) => `${d} ${v}`).join(" · "));
+      })
+      .catch((exc: Error) => setError(`No se pudo cargar el indicador: ${exc.message}`));
+  }, [featureId, ready]);
+
+  const toggle = useCallback(async (id: PlaceLayer) => {
+    const map = mapRef.current;
+    const next = !layers[id];
+    setLayers((prev) => ({ ...prev, [id]: next }));
+    if (!map) return;
+    if (!map.getSource(`places-${id}`)) {
+      const body = await getJson<{ data: GeoJSON.FeatureCollection }>(`/api/v1/places?category=${id}`);
+      map.addSource(`places-${id}`, { type: "geojson", data: body.data });
+      const color = PLACE_LAYERS.find((l) => l.id === id)?.color ?? "#000";
+      map.addLayer({ id: `places-${id}`, type: "circle", source: `places-${id}`, paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 1.5, 13, 5], "circle-color": color, "circle-stroke-color": "#fff", "circle-stroke-width": 0.5 } });
+    }
+    map.setLayoutProperty(`places-${id}`, "visibility", next ? "visible" : "none");
+  }, [layers]);
+
+  const municipioId = selected ? (selected.level === "municipio" ? selected.admin_unit_id : null) : null;
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", height: "100vh" }}>
-      <div ref={container} role="region" aria-label="Mapa de unidades administrativas de la Comunidad de Madrid" />
-      <aside aria-live="polite" style={{ padding: 16, borderLeft: "1px solid #ddd", fontFamily: "system-ui", overflowY: "auto" }}>
-        <h1 style={{ fontSize: 18, margin: "0 0 8px" }}>Geografía canónica</h1>
-        <p style={{ fontSize: 13, color: "#555", margin: "0 0 16px" }}>
-          179 municipios y 131 barrios de Madrid desde el seccionado censal de la Comunidad de Madrid. Haz zoom y pulsa una zona.
-        </p>
-        {error && <p role="alert" style={{ color: "#a00", fontSize: 13 }}>{error}</p>}
-        {detail ? (
-          <section>
-            <h2 style={{ fontSize: 16, margin: "0 0 8px" }}>{detail.title}</h2>
-            <dl style={{ fontSize: 13, display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 12px" }}>
-              {detail.rows.map(([k, v]) => (
-                <div key={k} style={{ display: "contents" }}>
-                  <dt style={{ color: "#666" }}>{k}</dt>
-                  <dd style={{ margin: 0 }}>{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        ) : (
-          <p style={{ fontSize: 13 }}>Ninguna zona seleccionada.</p>
-        )}
-        <footer style={{ marginTop: 24, fontSize: 12, color: "#666" }}>
-          <strong>Procedencia:</strong> {describeLineage(lineage) || "cargando…"}
-        </footer>
-      </aside>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", height: "100vh" }}>
+      <div ref={container} role="region" aria-label="Mapa de la Comunidad de Madrid por municipios y barrios" />
+      <MapPanel
+        features={features}
+        featureId={featureId}
+        onFeature={setFeatureId}
+        breaks={breaks}
+        selected={selected}
+        selectedValue={municipioId ? values.get(municipioId) ?? null : null}
+        lineage={lineage}
+        featureLineage={featureLineage}
+        layers={layers}
+        onToggle={(id) => void toggle(id)}
+        error={error}
+      />
     </div>
   );
 }

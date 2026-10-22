@@ -5,17 +5,8 @@ from pathlib import Path
 import pytest
 from sqlalchemy import Engine, text
 
-from hi_contracts.catalog.pipeline import (
-    CmPostcodeConceptPipeline,
-    CmStatTablePipeline,
-    PointsPipeline,
-)
 from hi_features.compute import METHODS, compute, persist
 from hi_ingestion.catalog.loader import load_catalog
-from hi_ingestion.pipelines.common import RunSummary
-from hi_ingestion.pipelines.fetch import local_file
-from hi_ingestion.pipelines.places.run import run_places_pipeline
-from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 
 pytestmark = pytest.mark.db
 GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
@@ -25,29 +16,6 @@ INVARIANTS = {
     "non_negative": (0.0, float("inf")),
     "positive": (1e-12, float("inf")),
 }
-
-
-@pytest.fixture(scope="module")
-def fixtures_ingested(
-    published: RunSummary, migrated_engine: Engine, tmp_path_factory: pytest.TempPathFactory
-) -> None:
-    assert published.status == "SUCCESS"
-    catalog = load_catalog()
-    tmp = tmp_path_factory.mktemp("features")
-    for dataset_id, spec in sorted(catalog.pipelines.items()):
-        if isinstance(spec, PointsPipeline):
-            src = local_file(dataset_id, "primary", GOLDEN / "places_sample" / f"{dataset_id}.csv")
-            result = run_places_pipeline(
-                migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
-            )
-        elif isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
-            src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
-            result = run_metric_pipeline(
-                migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
-            )
-        else:
-            continue
-        assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
 
 
 def test_features_satisfy_declared_invariants(
