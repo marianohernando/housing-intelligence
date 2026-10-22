@@ -1,7 +1,7 @@
 # Board — Sprint P0 (20–25 oct 2026) · Control Tower + Data Recon
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
-Última actualización: 2026-10-20 (sesión autónoma, rama `claude/sprint-p0`).
+Última actualización: 2026-10-22 (Sprint P1, rama `claude/sprint-p1-cm-data`).
 
 ## 07 — DONE (con evidencia)
 - ENG-001 Bootstrap monorepo · G0 · `evidence/gate-00/2026-10-20`
@@ -19,14 +19,19 @@ Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa 
 - DATAMAD-PREWORK-01 Resuelto por §6 de las bases (D-174)
 - MAP-001 Map shell: API GeoJSON + MapLibre, zona seleccionable con procedencia · G6 (parcial) · `evidence/map-001/2026-10-20`
 
+- DATA-009 Equipamientos CM → place_master: 3.851 centros educativos, 1.543 de atención primaria y hospitales, 1.001 servicios para mayores · G1/G2 · `evidence/gate-01/2026-10-22`
+- DATA-010 Alquiler €/m² por municipio y por código postal → metric_observation · G1
+- DATA-011 Población (189.090 obs), hogares, viviendas por superficie y renta (3 métricas) · G1
+- CORE-004 Feature Store: 12 features municipales con lineage, confidence y nulos explícitos · G3 (inicio) · `evidence/gate-03`
+- MAP-002 Coropletas por municipio y capas de equipamientos · G6 (parcial) · `evidence/map-002/2026-10-22`
+
 ## 02 — READY THIS SPRINT (siguientes)
 - DATA-007 CRTM GTFS (metro, EMT, cercanías, interurbanos, metro ligero) · G1/G2 · P0
-- DATA-009 Centros educativos, sanitarios y de atención social (puntos) → PostGIS + H3 · G1/G2 · P0
-- DATA-010 Alquiler €/m² por código postal y municipio → features de affordability · G1/G3 · P0
-- DATA-011 Población, hogares, viviendas por superficie y renta municipal · G1/G3 · P0
 - DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento) · G1 · P0
 
 ## 01 — BACKLOG
+- CORE-005 Features a nivel sección censal y H3 (accesibilidad a pie a colegios, salud y servicios)
+- DATA-015 Zonas estadísticas de la Comunidad (sin geometría publicada; observaciones ya guardadas)
 - DATA-014 POIs abiertos: Overture Places + FSQ OS Places para Madrid (bbox), Entity Resolution con censo de locales y OSM
 - MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
 - MAP-003 Vector tiles para secciones censales (payload)
@@ -38,7 +43,7 @@ Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa 
 - LEGAL-001 Licencia open source del repo (propuesta Apache-2.0 código + CC BY 4.0 docs)
 
 ## 06 — BLOCKED (decisión de Mariano)
-- OPS-001 necesita la connection string de Supabase (Session pooler) y aprobar el MCP `supabase-datamad`.
+- OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`); falta la contraseña de la base de datos.
 - LEGAL-001 necesita decisión de licencia.
 
 ## 08 — CUT / LATER

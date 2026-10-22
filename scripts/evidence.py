@@ -115,64 +115,117 @@ def _quality_report_passed(result: subprocess.CompletedProcess[str]) -> bool:
         return False
 
 
-TODAY = date.today().isoformat()
-GATE_01_DATASET = "cm_secciones_censales"
+GATE_01_DATASETS = [
+    "cm_secciones_censales",
+    "cm_poblacion_edad_nacionalidad_sexo",
+    "cm_hogares_tamano_censo_2021",
+    "cm_viviendas_superficie",
+    "cm_renta_disponible_municipal",
+    "cm_alquiler_m2_municipios",
+    "cm_alquiler_m2_codigo_postal_madrid",
+    "cm_centros_educativos",
+    "cm_centros_sanitarios",
+    "cm_centros_atencion_social",
+]
+PSQL = ["docker", "compose", "exec", "-T", "db", "psql", "-U", "housing", "-d", "housing", "-Atc"]
+LAST_VALID_SQL = (
+    "select count(*) from dataset_version where is_last_valid and quality_status = 'PASSED'"
+)
 GATE_01 = [
     Check(
         "registry",
-        "Source/dataset registry valid",
+        "Source/dataset/metric/pipeline registry valid",
         ["uv", "run", "hi-ingest", "catalog", "validate"],
     ),
     Check(
         "pipeline-unit",
-        "parser deterministic + QA + H3 invariants (fixture)",
+        "parsers deterministic, QA, null semantics, privacy filters (fixtures)",
         ["uv", "run", "pytest", "tests/unit/pipelines", "tests/unit/harvester", "-q"],
     ),
     Check(
         "pipeline-integration",
         "Bronze->Silver->PostGIS, skip on same checksum, last-valid survives broken ingestion",
-        ["uv", "run", "pytest", "-m", "db", "tests/integration/geo", "-q"],
+        [
+            "uv",
+            "run",
+            "pytest",
+            "-m",
+            "db",
+            "tests/integration/geo",
+            "tests/integration/test_stat_pipelines.py",
+            "tests/integration/test_places_pipeline.py",
+            "-q",
+        ],
     ),
     Check(
         "real-run-quality",
-        f"{GATE_01_DATASET} full-region QA report PASS",
-        ["cat", f"evidence/gate-01/{TODAY}/{GATE_01_DATASET}/quality_report.json"],
-        _quality_report_passed,
+        f"latest full-region QA report PASS for {len(GATE_01_DATASETS)} datasets",
+        ["uv", "run", "python", "scripts/check_quality_reports.py", *GATE_01_DATASETS],
     ),
     Check(
-        "last-valid-version",
-        "dataset_version marked last valid with QA PASSED",
-        [
-            "docker",
-            "compose",
-            "exec",
-            "-T",
-            "db",
-            "psql",
-            "-U",
-            "housing",
-            "-d",
-            "housing",
-            "-Atc",
-            "select version_label, parser_version, quality_status, is_last_valid "
-            "from dataset_version where dataset_id = 'cm_secciones_censales' and is_last_valid",
-        ],
-        lambda r: r.returncode == 0 and "|PASSED|t" in r.stdout,
+        "last-valid-versions",
+        "every dataset has a last-valid version with QA PASSED",
+        [*PSQL, LAST_VALID_SQL],
+        lambda r: r.returncode == 0 and int(r.stdout.strip() or 0) >= len(GATE_01_DATASETS),
     ),
     Check(
         "idempotent-rerun",
-        "re-fetch + rerun with same content is SKIPPED",
-        ["uv", "run", "hi-ingest", "run", GATE_01_DATASET, "--no-evidence"],
-        lambda r: r.returncode == 0 and '"status": "SKIPPED"' in r.stdout,
+        "re-fetch + rerun of every pipeline with same content is SKIPPED",
+        ["uv", "run", "hi-ingest", "run-all", "--no-evidence"],
+        lambda r: r.returncode == 0 and r.stdout.count("SKIPPED") >= len(GATE_01_DATASETS),
     ),
     GATE_00[-1],  # CI green for HEAD
 ]
 
-GATES: dict[str, list[Check]] = {"00": GATE_00, "01": GATE_01}
+FEATURE_COVERAGE_SQL = """
+select count(distinct feature_id)
+    || '|' || count(*) filter (where (value is null) = (null_reason is null))
+    || '|' || count(*) filter (where not (inputs ? 'dataset_versions'))
+    || '|' || min(n)
+  from feature_value v
+  join (select feature_id as fid, count(*) as n from feature_value group by 1) c
+    on c.fid = v.feature_id
+"""
+GATE_03 = [
+    Check(
+        "dictionary",
+        "Feature Dictionary entries valid; no protected characteristics; methods implemented",
+        ["uv", "run", "pytest", "tests/data/test_catalog.py", "-q"],
+    ),
+    Check(
+        "methods",
+        "deterministic methods, null propagation, monotonicity (property tests)",
+        ["uv", "run", "pytest", "tests/unit/features", "-q"],
+    ),
+    Check(
+        "invariants",
+        "computed values satisfy the invariants declared in each dictionary entry",
+        [
+            "uv",
+            "run",
+            "pytest",
+            "-m",
+            "db",
+            "tests/integration/test_features.py",
+            "tests/integration/test_api_features.py",
+            "-q",
+        ],
+    ),
+    Check(
+        "coverage",
+        "12 features x 179 municipios, null contract and lineage in the dev DB",
+        [*PSQL, FEATURE_COVERAGE_SQL],
+        lambda r: r.returncode == 0 and r.stdout.strip() == "12|0|0|179",
+    ),
+    GATE_00[-1],
+]
+
+GATES: dict[str, list[Check]] = {"00": GATE_00, "01": GATE_01, "03": GATE_03}
 SCOPES = {
     "00": "Repository / foundation.",
-    "01": f"Source / Bronze ingestion — scope: {GATE_01_DATASET} (1 of 17 P0 datasets). "
-    "Remaining P0 datasets are registered and licensed but not yet ingested.",
+    "01": f"Source / Bronze ingestion — {len(GATE_01_DATASETS)} datasets "
+    "(geography, 6 statistical tables, 3 facility registers).",
+    "03": "Metrics / Feature Store — started: 12 municipal features (target 75–125 for Sprint P1).",
 }
 
 

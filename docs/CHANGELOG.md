@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.4 — Sprint P1: datos de la Comunidad de Madrid (2026-10-22)
+- Decisiones D-186 a D-190: protección de personas vulnerables, modelo de observaciones, pipelines declarativos, Supabase, features, search_path.
+- 9 datasets nuevos de la Comunidad de Madrid ingeridos con Quality Gate; 12 features municipales en el Feature Store.
+
 ## v0.5.3 — POIs abiertos (2026-10-20)
 - D-185: Gosom descartado definitivamente; registradas Overture Places y FSQ OS Places.
 - Estrategia de enriquecimiento ampliada con POIs abiertos (sección 6b).
