@@ -32,7 +32,7 @@ Reglas de honestidad:
 
 | Criterio | Puntos | Qué buscan | Nuestra prueba |
 |---|---|---|---|
-| Datos CM | 25 | Uso intensivo y efectivo; primer desempate | Pasar de 10 a 14–16 datasets CM; contador en la app y fuente en cada resultado |
+| Datos CM | 25 | Uso intensivo y efectivo; primer desempate | 21 datasets del portal CM con Quality Gate (10 nov: 10 iniciales + 6 GTFS del CRTM + 5 de DATA-016); contador en la app y fuente en cada resultado |
 | Impacto | 25 | Beneficio social y económico concreto | Un barrio real con su lista de lo que falta y una familia real buscando dónde vivir |
 | Originalidad | 20 | Algo que no existe | «Lo que falta» en vez de «lo que hay», Reality Check y MCP para agentes |
 | Viabilidad | 15 | Que se sostenga | Demo desplegada, modelo (pagan las empresas), coste casi nulo, privacidad (D-186) |

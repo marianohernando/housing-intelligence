@@ -129,23 +129,38 @@ def _rerun_ok(result: subprocess.CompletedProcess[str]) -> bool:
     )
 
 
-GATE_01_DATASETS = [
-    "cm_secciones_censales",
+GEOGRAPHY_DATASETS = ["cm_secciones_censales"]
+STAT_TABLE_DATASETS = [
     "cm_poblacion_edad_nacionalidad_sexo",
     "cm_hogares_tamano_censo_2021",
     "cm_viviendas_superficie",
     "cm_renta_disponible_municipal",
     "cm_alquiler_m2_municipios",
     "cm_alquiler_m2_codigo_postal_madrid",
+    "cm_farmacias_municipios",
+    "cm_unidades_escolares",
+    "cm_nacidos_vivos_municipios",
+    "cm_viviendas_tenencia_censo_2021",
+]
+FACILITY_DATASETS = [
     "cm_centros_educativos",
     "cm_centros_sanitarios",
     "cm_centros_atencion_social",
+    "cm_oficinas_farmacia",
+]
+TRANSPORT_DATASETS = [
     "crtm_gtfs_metro",
     "crtm_gtfs_metro_ligero",
     "crtm_gtfs_cercanias",
     "crtm_gtfs_emt",
     "crtm_gtfs_autobuses_urbanos",
     "crtm_gtfs_interurbanos",
+]
+GATE_01_DATASETS = [
+    *GEOGRAPHY_DATASETS,
+    *STAT_TABLE_DATASETS,
+    *FACILITY_DATASETS,
+    *TRANSPORT_DATASETS,
 ]
 PSQL = ["docker", "compose", "exec", "-T", "db", "psql", "-U", "housing", "-d", "housing", "-Atc"]
 LAST_VALID_SQL = (
@@ -345,12 +360,11 @@ GATE_03 = [
 ]
 
 GATES: dict[str, list[Check]] = {"00": GATE_00, "01": GATE_01, "02": GATE_02, "03": GATE_03}
-GATE_01_TRANSPORT = [d for d in GATE_01_DATASETS if d.startswith("crtm_gtfs_")]
 SCOPES = {
     "00": "Repository / foundation.",
-    "01": f"Source / Bronze ingestion — {len(GATE_01_DATASETS)} datasets "
-    "(geography, 6 statistical tables, 3 facility registers, "
-    f"{len(GATE_01_TRANSPORT)} CRTM GTFS feeds).",
+    "01": f"Source / Bronze ingestion — {len(GATE_01_DATASETS)} datasets of the Comunidad de "
+    f"Madrid open data portal (geography, {len(STAT_TABLE_DATASETS)} statistical tables, "
+    f"{len(FACILITY_DATASETS)} facility registers, {len(TRANSPORT_DATASETS)} CRTM GTFS feeds).",
     "02": "Geospatial QA — transport stops and stations from the CRTM GTFS feeds "
     "(the 2026-10-20 geography QA lives in gate-01/2026-10-20).",
     "03": "Metrics / Feature Store — started: 12 municipal features (target 75–125 for Sprint P1).",

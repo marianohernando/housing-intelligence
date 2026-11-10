@@ -34,6 +34,7 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
 - CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)
+- DATA-017 Transacciones inmobiliarias (libre/protegida y nueva/usada) por municipio: trimestrales y solo con nombre de municipio → tipo de pipeline nuevo (periodo trimestral + resolución de nombre a código INE). Recortado de DATA-016: el objetivo de datasets CM ya se superó (21)
 - MCP-001 / API-001 API versionada + 3–5 tools MCP sobre servicios de dominio (nunca SQL)
 - MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
 - DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento)

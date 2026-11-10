@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.8 — Datasets CM nuevos (2026-11-10)
+- DATA-016: farmacias (registro y tabla municipal), unidades escolares, nacidos vivos y viviendas por régimen de tenencia. El plan pasa a 21 datasets del portal CM con Quality Gate.
+
 ## v0.5.7 — Transporte CRTM nivel A (2026-11-10)
 - D-196: los 6 GTFS del CRTM (también publicados en el portal CM) pasan a paradas y estaciones con frecuencias en `place_master`; día de referencia y punta declarados.
 - `02_data/32_transport_ingestion_spec.md`: estado de la implementación y pendientes.
