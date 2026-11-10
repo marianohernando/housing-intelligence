@@ -20,7 +20,7 @@ from hi_ingestion.pipelines.places.quality import CheckResult, QualityReport, ru
 from hi_ingestion.pipelines.places.run import write_places_silver
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "gtfs-1.0.0"
+PARSER_VERSION = "gtfs-1.1.0"
 SERVICE_ATTRIBUTES = [
     "departures_day",
     "departures_peak_per_hour",

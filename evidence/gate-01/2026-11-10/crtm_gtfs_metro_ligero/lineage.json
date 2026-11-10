@@ -7,12 +7,12 @@
       "sha256": "e23e0ba93b91e64027ac784612a5d4327076ff6e6b7adcd63b323bef415e3255",
       "bytes": 395268,
       "url": "https://www.arcgis.com/sharing/rest/content/items/aaed26cc0ff64b0c947ac0bc3e033196/data",
-      "retrieved_at": "2026-11-10T18:25:07.032951+00:00"
+      "retrieved_at": "2026-11-10T18:37:21.741380+00:00"
     }
   ],
   "checksum": "599f9acfa27077e140a6ff3971bf1b7e854ad93d6f04c4fc6503d0afddb55f84",
-  "parser_version": "gtfs-1.0.0",
+  "parser_version": "gtfs-1.1.0",
   "dataset_version": "2026-11-10-599f9acfa270",
-  "correlation_id": "b732d051185b44a5bd8c9b5e901151ba",
+  "correlation_id": "07e54ae9dcbc42dcbc35dbd800f74e55",
   "silver": "data/silver/crtm_gtfs_metro_ligero/599f9acfa270/places.csv.gz"
 }

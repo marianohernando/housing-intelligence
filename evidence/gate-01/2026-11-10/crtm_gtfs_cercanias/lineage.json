@@ -7,12 +7,12 @@
       "sha256": "c6e6683ddc0e3f819a033db48d1657330cdbb9395a4ac95c5a2f38d9501d77d0",
       "bytes": 3793681,
       "url": "https://www.arcgis.com/sharing/rest/content/items/1a25440bf66f499bae2657ec7fb40144/data",
-      "retrieved_at": "2026-11-10T18:25:10.920752+00:00"
+      "retrieved_at": "2026-11-10T18:37:24.834995+00:00"
     }
   ],
   "checksum": "1b018a22325c43c41be0e817ef3fde132170dd8aa5b56d2b7c67bda8f5a55d79",
-  "parser_version": "gtfs-1.0.0",
+  "parser_version": "gtfs-1.1.0",
   "dataset_version": "2026-11-10-1b018a22325c",
-  "correlation_id": "cbf6649efd36491fb449429bbc691ccb",
+  "correlation_id": "d18c6265577d40ad9b54a822fa4fc63e",
   "silver": "data/silver/crtm_gtfs_cercanias/1b018a22325c/places.csv.gz"
 }

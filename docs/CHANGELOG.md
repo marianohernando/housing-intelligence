@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.7 — Transporte CRTM nivel A (2026-11-10)
+- D-196: los 6 GTFS del CRTM (también publicados en el portal CM) pasan a paradas y estaciones con frecuencias en `place_master`; día de referencia y punta declarados.
+- `02_data/32_transport_ingestion_spec.md`: estado de la implementación y pendientes.
+
 ## v0.5.6 — Plan de competición (2026-11-10)
 - `09_datamad/25_plan_competicion.md`: fases, criterios del jurado, calendario con responsables, formulario, repo público, pitch y día 26.
 - D-194: la demo se centra en el buscador para personas y la lista de lo que falta por zona. D-195: repo público como tarde el 18 nov.

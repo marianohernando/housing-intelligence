@@ -150,6 +150,25 @@ def test_station_aggregates_platforms_and_expands_frequencies(feed: Path) -> Non
     assert station["service_date"] == "2026-11-17"
 
 
+def test_platform_without_parent_joins_the_station_at_the_same_place(tmp_path: Path) -> None:
+    # P1 loses its parent_station but sits exactly on STA and has the same name.
+    stops = STOPS.replace(
+        "P1,Andén 1,40.4168,-3.7034,0,STA,", "P1,Estación Sol,40.4169,-3.7035,0,,"
+    )
+    rows = _rows(write_feed(tmp_path / "orphan.zip", {**TABLES, "stops": stops}))
+    assert "P1" not in rows
+    assert rows["STA"]["departures_day"] == 5
+
+
+def test_platform_elsewhere_is_not_merged(tmp_path: Path) -> None:
+    stops = STOPS.replace(
+        "P1,Andén 1,40.4168,-3.7034,0,STA,", "P1,Estación Sol,40.4168,-3.7034,0,,"
+    )
+    rows = _rows(write_feed(tmp_path / "apart.zip", {**TABLES, "stops": stops}))
+    assert rows["P1"]["departures_day"] == 2  # T1 07:00 and T4 00:30
+    assert rows["STA"]["departures_day"] == 3
+
+
 def test_last_stop_and_no_pickup_are_not_departures(feed: Path) -> None:
     rows = _rows(feed)
     # S3: T2 07:30 plus T3 at 07:05, 07:25, 07:45; T1 and T4 end there.

@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 57
+        "places": 56
       }
     },
     {
@@ -43,7 +43,7 @@
         "filtered_out": {
           "has_service_not_allowed": 0
         },
-        "source_rows": 57
+        "source_rows": 56
       }
     },
     {
@@ -88,7 +88,7 @@
       "passed": true,
       "details": {
         "min_headway_peak_min": 4.0,
-        "with_peak_service": 57
+        "with_peak_service": 56
       }
     },
     {

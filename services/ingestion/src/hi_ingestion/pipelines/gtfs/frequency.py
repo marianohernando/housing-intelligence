@@ -109,13 +109,38 @@ def expand_frequencies(events: pd.DataFrame, frequencies: pd.DataFrame) -> pd.Da
     return pd.concat([plain, repeated[columns]], ignore_index=True)
 
 
+def _place_key(stop: dict[str, Any]) -> str:
+    name = str(stop["stop_name"]).strip().lower()
+    return f"{name}|{str(stop['stop_lat']).strip()}|{str(stop['stop_lon']).strip()}"
+
+
+def _stations_by_place(stations: pd.DataFrame) -> dict[str, str]:
+    """Name+position -> station id, only where that place holds exactly one station."""
+    found: dict[str, list[str]] = {}
+    for station in stations.to_dict("records"):
+        found.setdefault(_place_key(station), []).append(str(station["stop_id"]))
+    return {key: ids[0] for key, ids in found.items() if len(ids) == 1}
+
+
 def station_groups(stops: pd.DataFrame) -> dict[str, str]:
-    """Boardable stop -> its parent station when the feed declares one, else itself."""
-    stations = list(set(stops.loc[stops["location_type"].str.strip() == STATION, "stop_id"]))
-    boardable = stops.loc[stops["location_type"].str.strip().isin(BOARDABLE_LOCATION_TYPES)]
-    parent = boardable["parent_station"].str.strip()
-    group = parent.where(parent.isin(stations), boardable["stop_id"])
-    return dict(zip(boardable["stop_id"], group, strict=True))
+    """Boardable stop -> its parent station, else itself.
+
+    Some feeds omit parent_station on one platform of a transfer station (CRTM metro: 25
+    stations). A platform without parent that sits exactly where a station of the same name
+    is joins that station; otherwise the station would appear twice with half its service.
+    """
+    location = stops["location_type"].str.strip()
+    stations = stops.loc[location == STATION]
+    station_ids = set(stations["stop_id"])
+    by_place = _stations_by_place(stations)
+    groups: dict[str, str] = {}
+    for stop in stops.loc[location.isin(BOARDABLE_LOCATION_TYPES)].to_dict("records"):
+        stop_id, parent = str(stop["stop_id"]), str(stop["parent_station"]).strip()
+        if parent in station_ids:
+            groups[stop_id] = parent
+        else:
+            groups[stop_id] = by_place.get(_place_key(stop), stop_id)
+    return groups
 
 
 def _route_labels(tables: GtfsTables) -> dict[str, str]:

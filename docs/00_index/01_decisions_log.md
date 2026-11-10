@@ -608,3 +608,13 @@ Plan: `09_datamad/25_plan_competicion.md`.
 
 ## D-195 — Repo público (2026-11-10)
 Mariano aprueba hacer público el repo en cuanto haya algo enseñable, como tarde el 18 nov (formulario). Antes se cumple el checklist del §7 del plan de competición. Ya están en verde secretos (gitleaks), tokens y licencias. Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) quedarán visibles; el historial no se reescribe.
+
+## D-196 — Transporte nivel A: paradas y frecuencias desde los GTFS del CRTM (2026-11-10)
+DATA-007. Los 6 GTFS del CRTM (metro, metro ligero, cercanías, EMT, autobuses urbanos e interurbanos) también están publicados en el Portal de Datos Abiertos de la Comunidad de Madrid, así que cuentan como datasets CM. Cada dataset lo enlaza con un recurso `role: cm_portal`.
+- Cada parada, o estación cuando el feed declara `parent_station`, se guarda en `place_master` con `category=transport` y `subcategory=<modo>`. El servicio va en `attributes`: salidas al día, salidas por hora en punta, headway en punta de la línea más frecuente, primer y último servicio, líneas y accesibilidad declarada.
+- El servicio se mide en un día de referencia: el martes mediano (por número de viajes activos) dentro de la vigencia del propio feed. El resultado depende solo del fichero, no del día en que se ejecuta. El GTFS de metro venció el 27-05-2026 y sigue siendo el último publicado; se usa y la calidad lo avisa (`feed_current`).
+- La punta es de 07:00 a 09:00. La última parada de un viaje y las paradas sin subida no cuentan como salidas. Las salidas antes de las 04:00 se leen como servicio de la noche anterior. El headway es por línea y sentido; en cercanías, que no declara `direction_id`, es por línea con ambos sentidos (`headway_basis`).
+- Las paradas sin servicio el día de referencia no se publican y se cuentan en la calidad: nunca se guardan como 0.
+- `stop_times` solo vive en Bronze/Silver; la base de datos guarda unas 15.000 paradas agregadas.
+- Particularidades de los feeds, declaradas y no ocultas: el `frequencies.txt` de EMT solo anota viajes que ya están listados uno a uno (`expand_frequencies: false`). En metro, 25 andenes de transbordo no declaran estación: se unen a la estación que está en el mismo punto y tiene el mismo nombre.
+- El tiempo a polos de empleo (nivel B) queda en CORE-009.
