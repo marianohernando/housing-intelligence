@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones D-191 a D-195. Rama de trabajo: `claude/sprint-1-public` (solo la escribe la sesión de desarrollo).
-Última actualización: 2026-11-10.
+Última actualización: 2026-11-10 (noche).
 
 ## Calendario hasta la entrega
 | Fechas | Bloque | Salida |
@@ -18,21 +18,20 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 | 26 nov | Final | Slides antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
 
 ## 03 — CLAUDE CODE (en curso)
-_(vacío: la siguiente card es DATA-007)_
+- DATA-007 Transporte CRTM, nivel A · plan en 4 fases (F1 descargas binarias con reintento y ficha del portal CM · F2 contrato `gtfs_feed` y frecuencias · F3 pipeline hasta `place_master` · F4 Gate 2 y cierre). Los 6 GTFS también están publicados en el Portal de Datos Abiertos de la CM, así que cuentan como datasets CM.
 
 ## 02 — READY THIS SPRINT (en orden)
-1. DATA-007 Transporte CRTM (GTFS metro, EMT, cercanías, interurbanos, metro ligero, urbanos) → paradas y frecuencias de paso · G1/G2 · 11–12 nov
-2. DATA-016 Datasets CM nuevos con pipelines declarativos (oficinas de farmacia, transacciones inmobiliarias, y los que encajen del catálogo curado). Objetivo: 14–16 datasets del portal CM · G1 · 11–12 nov
-3. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
-4. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de hogares frente a superficie de viviendas) · G3/G4 · 13–14 nov · D-194
-5. CORE-001 Contrato ScenarioState mínimo (presupuesto, tamaño del hogar, lugar de trabajo, prioridades) · G4 · 15 nov
-6. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 15 nov
-7. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
-8. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
-9. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
-10. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
-11. DATAMAD-PUBLIC-01 Repo público (checklist en §7 del plan) · como tarde 18 nov · D-195
-12. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
+1. DATA-016 Datasets CM nuevos con pipelines declarativos (oficinas de farmacia, transacciones inmobiliarias, y los que encajen del catálogo curado). Objetivo: 14–16 datasets del portal CM · G1 · 11–12 nov
+2. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
+3. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de hogares frente a superficie de viviendas) · G3/G4 · 13–14 nov · D-194
+4. CORE-001 Contrato ScenarioState mínimo (presupuesto, tamaño del hogar, lugar de trabajo, prioridades) · G4 · 15 nov
+5. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 15 nov
+6. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
+7. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
+8. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
+9. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
+10. DATAMAD-PUBLIC-01 Repo público (checklist en §7 del plan) · como tarde 18 nov · D-195
+11. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
 - CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)

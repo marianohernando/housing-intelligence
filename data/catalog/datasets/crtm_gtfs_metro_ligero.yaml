@@ -15,6 +15,11 @@ resources:
 - name: google_transit_M10.zip
   format: CSV Collection
   url: https://www.arcgis.com/sharing/rest/content/items/aaed26cc0ff64b0c947ac0bc3e033196/data
+  file_name: google_transit_M10.zip
+- name: Ficha en el Portal de Datos Abiertos de la Comunidad de Madrid
+  format: HTML
+  url: https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia
+  role: cm_portal
 license_status: CLEAR
 status: REVIEWED
 priority: P0

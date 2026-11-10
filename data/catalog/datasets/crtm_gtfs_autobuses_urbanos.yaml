@@ -15,6 +15,11 @@ resources:
 - name: google_transit_M9.zip
   format: CSV Collection
   url: https://www.arcgis.com/sharing/rest/content/items/357e63c2904f43aeb5d8a267a64346d8/data
+  file_name: google_transit_M9.zip
+- name: Ficha en el Portal de Datos Abiertos de la Comunidad de Madrid
+  format: HTML
+  url: https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia
+  role: cm_portal
 license_status: CLEAR
 status: REVIEWED
 priority: P1

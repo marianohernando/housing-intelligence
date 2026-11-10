@@ -9,9 +9,11 @@ from pathlib import Path
 
 import httpx
 
-from hi_contracts.catalog import DatasetSpec
+from hi_contracts.catalog import DatasetSpec, ResourceSpec
 from hi_ingestion.bronze import DEFAULT_BRONZE_ROOT, REPO_ROOT, sha256_file
-from hi_ingestion.http import make_client
+from hi_ingestion.http import make_client, polite_retry
+
+DOWNLOAD_HEADERS = {"Accept": "*/*"}
 
 
 @dataclass(frozen=True)
@@ -62,12 +64,17 @@ def _store(
     return fetched
 
 
+@polite_retry
 def download(client: httpx.Client, url: str, dest: Path) -> None:
-    with client.stream("GET", url) as response:
+    with client.stream("GET", url, headers=DOWNLOAD_HEADERS) as response:
         response.raise_for_status()
         with dest.open("wb") as fh:
             for chunk in response.iter_bytes(1 << 20):
                 fh.write(chunk)
+
+
+def resource_filename(resource: ResourceSpec) -> str:
+    return resource.file_name or str(resource.url).rstrip("/").rsplit("/", 1)[-1]
 
 
 def fetch_role(spec: DatasetSpec, role: str, root: Path = DEFAULT_BRONZE_ROOT) -> FetchedFile:
@@ -76,13 +83,16 @@ def fetch_role(spec: DatasetSpec, role: str, root: Path = DEFAULT_BRONZE_ROOT) -
         msg = f"{spec.dataset_id}: no resource with role {role!r}"
         raise KeyError(msg)
     url = str(resource.url)
-    filename = url.rstrip("/").rsplit("/", 1)[-1]
     root.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(dir=root, delete=False, suffix=".part") as handle:
         tmp = Path(handle.name)
-    with make_client(timeout=300) as client:
-        download(client, url, tmp)
-    return _store(spec.dataset_id, role, tmp, url, filename, root)
+    try:
+        with make_client(timeout=300) as client:
+            download(client, url, tmp)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
+    return _store(spec.dataset_id, role, tmp, url, resource_filename(resource), root)
 
 
 def local_file(dataset_id: str, role: str, path: Path) -> FetchedFile:

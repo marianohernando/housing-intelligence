@@ -15,6 +15,11 @@ resources:
 - name: google_transit_M4.zip
   format: CSV Collection
   url: https://www.arcgis.com/sharing/rest/content/items/5c7f2951962540d69ffe8f640d94c246/data
+  file_name: google_transit_M4.zip
+- name: Ficha en el Portal de Datos Abiertos de la Comunidad de Madrid
+  format: HTML
+  url: https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia
+  role: cm_portal
 license_status: CLEAR
 status: REVIEWED
 priority: P0

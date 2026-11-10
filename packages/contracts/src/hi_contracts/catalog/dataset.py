@@ -55,7 +55,14 @@ class ResourceSpec(BaseModel):
     name: str
     format: str
     url: HttpUrl
-    role: str = Field(default="primary", description="primary | names | cross_check | docs")
+    role: str = Field(
+        default="primary", description="primary | names | cross_check | docs | cm_portal"
+    )
+    file_name: str | None = Field(
+        default=None,
+        pattern=r"^[\w.\-]+$",
+        description="Bronze file name when the URL does not end in one (e.g. ArcGIS /data)",
+    )
 
 
 class ColumnSpec(BaseModel):
