@@ -9,6 +9,7 @@ from sqlalchemy import engine_from_config, pool
 
 import hi_db.models  # noqa: F401  (registers every table on Base.metadata)
 from hi_db.base import Base
+from hi_db.session import SEARCH_PATH_SQL
 from hi_db.settings import DatabaseSettings
 
 config = context.config
@@ -48,6 +49,9 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
+        # Extensions live in schema `extensions` (Supabase convention); never rely on DB defaults.
+        connection.exec_driver_sql(SEARCH_PATH_SQL)
+        connection.commit()
         context.configure(connection=connection, **_configure_kwargs())
         with context.begin_transaction():
             context.run_migrations()

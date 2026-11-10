@@ -1,0 +1,22 @@
+feature_id: poblacion_0_14_pct
+version: 1
+human_name: Porcentaje de población menor de 15 años
+domain: population
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: primary}]
+formula:
+  method: metric_share
+  metric: poblacion_censada
+  numerator: {edad: [de_0_4_anos, de_5_9_anos, de_10_14_anos], nacionalidad: [total], sexo: [total]}
+  denominator: {edad: [total], nacionalidad: [total], sexo: [total]}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [family_fit, housing_gap]
+tests: [range_0_100, additive_inputs]
+limitations: [Indicador de estructura de edad; no indica demanda escolar por etapa.]

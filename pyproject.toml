@@ -9,13 +9,14 @@ dependencies = [
     "hi-db",
     "hi-ingestion",
     "hi-api",
+    "hi-features",
 ]
 
 [tool.uv]
 package = false
 
 [tool.uv.workspace]
-members = ["apps/api", "packages/contracts", "packages/domain", "packages/db", "services/ingestion"]
+members = ["apps/api", "packages/contracts", "packages/domain", "packages/db", "services/ingestion", "services/features"]
 
 [tool.uv.sources]
 hi-contracts = { workspace = true }
@@ -23,6 +24,7 @@ hi-domain = { workspace = true }
 hi-db = { workspace = true }
 hi-ingestion = { workspace = true }
 hi-api = { workspace = true }
+hi-features = { workspace = true }
 
 [dependency-groups]
 dev = [
@@ -52,7 +54,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 "infra/migrations/versions/**" = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["hi_contracts", "hi_domain", "hi_db", "hi_ingestion", "hi_api"]
+known-first-party = ["hi_contracts", "hi_domain", "hi_db", "hi_ingestion", "hi_api", "hi_features"]
 
 [tool.pyright]
 pythonVersion = "3.12"

@@ -1,0 +1,30 @@
+feature_id: plazas_residencia_por_100_mayores
+version: 1
+human_name: Plazas en residencias de mayores por cada 100 personas de 65 años o más
+domain: social
+type: derived
+unit: plazas/100 mayores
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_centros_atencion_social, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+formula:
+  method: place_attribute_per_population
+  category: social
+  subcategories: [RESIDENCIAS DE PERSONAS MAYORES DEPENDIENTES, RESIDENCIAS DE PERSONAS MAYORES MIXTA, RESIDENCIAS DE PERSONAS MAYORES AUTONOMAS]
+  attribute: plazas_autorizadas_numero
+  population_metric: poblacion_censada
+  population_dims: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos], nacionalidad: [total], sexo: [total]}
+  small_population_threshold: 500  # denominator below this -> confidence 0.5
+  per: 100
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, geocoding_quarantine]}
+public_use: true
+pro_use: true
+models: [senior_fit, housing_gap]
+tests: [non_negative, monotonic_in_places]
+limitations:
+  - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
+  - "Plazas autorizadas, no ocupación real ni lista de espera. Los residentes pueden venir de otros municipios."

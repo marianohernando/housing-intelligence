@@ -1,0 +1,18 @@
+feature_id: alquiler_m2_mensual
+version: 1
+human_name: Alquiler medio por metro cuadrado (viviendas habituales)
+domain: housing
+type: raw
+unit: EUR/m2/mes
+direction: lower_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_alquiler_m2_municipios, role: primary}]
+formula: {method: metric_value, metric: alquiler_m2_mensual_municipio, dims: {tipo_vivienda: viviendas_habituales}}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [affordability, reality_check]
+tests: [positive]
+limitations: [Solo municipios de más de 20.000 habitantes con contratos suficientes; el resto queda como desconocido, nunca como 0.]

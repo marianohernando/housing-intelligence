@@ -1,0 +1,14 @@
+$ uv run hi-ingest run-all --no-evidence
+# exit 0
+
+cm_secciones_censales: SKIPPED 2026-10-20-37703ffcdfd0
+cm_alquiler_m2_codigo_postal_madrid: SKIPPED 2026-10-21-bc14c1e36441
+cm_alquiler_m2_municipios: SKIPPED 2026-10-21-82cdb192ed1b
+cm_centros_atencion_social: SKIPPED 2026-10-21-9cadf73e6ea9
+cm_centros_educativos: SKIPPED 2026-10-21-27483ff8498b
+cm_centros_sanitarios: SKIPPED 2026-10-22-0185564731a4
+cm_hogares_tamano_censo_2021: SKIPPED 2026-10-21-823dd42839c0
+cm_poblacion_edad_nacionalidad_sexo: SKIPPED 2026-10-21-fd59e7826648
+cm_renta_disponible_municipal: SKIPPED 2026-10-21-66a17af60f8e
+cm_viviendas_superficie: SKIPPED 2026-10-21-1673f7e6ca4a
+

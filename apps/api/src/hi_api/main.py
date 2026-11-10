@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from hi_api.routes import geo, health
+from hi_api.routes import features, geo, health, places
 from hi_api.settings import ApiSettings
 
 app = FastAPI(title="Housing Intelligence API", version="0.0.1", openapi_url="/api/v1/openapi.json")
@@ -15,3 +15,5 @@ app.add_middleware(
 )
 app.include_router(health.router, prefix="/api/v1")
 app.include_router(geo.router, prefix="/api/v1")
+app.include_router(features.router, prefix="/api/v1")
+app.include_router(places.router, prefix="/api/v1")

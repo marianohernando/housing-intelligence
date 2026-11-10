@@ -7,7 +7,7 @@ from sqlalchemy import Engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from hi_db.models import DatasetRegistry, SourceRegistry
+from hi_db.models import DatasetRegistry, FeatureRegistry, MetricRegistry, SourceRegistry
 from hi_ingestion.catalog.loader import Catalog
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
@@ -53,4 +53,28 @@ def sync_catalog(engine: Engine, catalog: Catalog) -> dict[str, int]:
             stmt = insert(DatasetRegistry).values(**row)
             update = {k: stmt.excluded[k] for k in row if k != "dataset_id"}
             session.execute(stmt.on_conflict_do_update(index_elements=["dataset_id"], set_=update))
-    return {"sources": len(catalog.sources), "datasets": len(catalog.datasets)}
+        for spec in catalog.metrics.values():
+            row = spec.model_dump(mode="json")
+            stmt = insert(MetricRegistry).values(**row)
+            update = {k: stmt.excluded[k] for k in row if k != "metric_id"}
+            session.execute(stmt.on_conflict_do_update(index_elements=["metric_id"], set_=update))
+        for spec in catalog.features.values():
+            row = {
+                "feature_id": spec.feature_id,
+                "version": spec.version,
+                "human_name": spec.human_name,
+                "domain": spec.domain.value,
+                "unit": spec.unit,
+                "direction": spec.direction,
+                "geo_level": spec.geo_level.value,
+                "spec": spec.model_dump(mode="json"),
+            }
+            stmt = insert(FeatureRegistry).values(**row)
+            update = {k: stmt.excluded[k] for k in row if k != "feature_id"}
+            session.execute(stmt.on_conflict_do_update(index_elements=["feature_id"], set_=update))
+    return {
+        "sources": len(catalog.sources),
+        "datasets": len(catalog.datasets),
+        "metrics": len(catalog.metrics),
+        "features": len(catalog.features),
+    }

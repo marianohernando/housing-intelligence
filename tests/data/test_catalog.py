@@ -49,3 +49,71 @@ def test_p0_datasets_have_clear_license(catalog: Catalog) -> None:
 
 def test_drafts_are_never_p0(catalog: Catalog) -> None:
     assert all(d.priority is not Priority.P0 for d in catalog.drafts.values())
+
+
+PII_COLUMNS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web")
+
+
+def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
+    for dataset_id, pipeline in catalog.pipelines.items():
+        assert dataset_id in catalog.datasets
+        if pipeline.kind == "points_csv":
+            assert pipeline.attribute_columns, dataset_id
+        else:
+            assert pipeline.metric_ids(), dataset_id
+
+
+def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None:
+    """Data minimisation: facilities keep service attributes, never phones, emails or NIF."""
+    for pipeline in catalog.pipelines.values():
+        if pipeline.kind != "points_csv":
+            continue
+        kept = [pipeline.id_column, pipeline.name_column or "", *pipeline.attribute_columns]
+        for column in kept:
+            assert not any(term in column.lower() for term in PII_COLUMNS), (
+                pipeline.dataset_id,
+                column,
+            )
+
+
+def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:
+    stats = {m.dataset_id for m in catalog.metrics.values()}
+    assert stats <= set(catalog.pipelines)
+    assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats)
+
+
+PROTECTED_SUBTYPES = ("PISOS TUTELADOS", "MUJERES MALTRATADAS", "ACOGIDA DE MENORES", "ALBERGUES")
+
+
+def test_social_facilities_exclude_protected_housing(catalog: Catalog) -> None:
+    """D-186: locations of protected housing and shelters are never mapped."""
+    spec = catalog.pipelines["cm_centros_atencion_social"]
+    assert spec.kind == "points_csv"
+    allowed = spec.row_filters.get(spec.subcategory_column, [])
+    assert allowed, "social facilities must use an explicit subtype allowlist"
+    assert not any(p in a for a in allowed for p in PROTECTED_SUBTYPES)
+    assert spec.row_filters.get("sector") == ["Personas mayores"]
+
+
+PROTECTED_DIMENSION_VALUES = ("extranjeros", "espanoles", "hombres", "mujeres")
+
+
+def test_features_never_score_by_protected_characteristics(catalog: Catalog) -> None:
+    """CLAUDE.md §3: nationality or sex never become features (aggregate or not)."""
+    for feature in catalog.features.values():
+        formula = feature.formula.model_dump()
+        text = str({k: v for k, v in formula.items() if k != "method"}).lower()
+        hits = [v for v in PROTECTED_DIMENSION_VALUES if v in text]
+        assert not hits, (feature.feature_id, hits)
+
+
+PIPELINE_COMPUTED_METHODS = {"planar_area_epsg_25830"}
+
+
+def test_every_feature_method_is_implemented(catalog: Catalog) -> None:
+    from hi_features.compute import METHODS
+
+    for feature in catalog.features.values():
+        assert (
+            feature.formula.method in METHODS or feature.formula.method in PIPELINE_COMPUTED_METHODS
+        ), feature.feature_id

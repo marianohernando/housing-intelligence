@@ -1,0 +1,14 @@
+$ uv run python scripts/check_quality_reports.py cm_secciones_censales cm_poblacion_edad_nacionalidad_sexo cm_hogares_tamano_censo_2021 cm_viviendas_superficie cm_renta_disponible_municipal cm_alquiler_m2_municipios cm_alquiler_m2_codigo_postal_madrid cm_centros_educativos cm_centros_sanitarios cm_centros_atencion_social
+# exit 0
+
+cm_secciones_censales                    2026-10-20 PASS
+cm_poblacion_edad_nacionalidad_sexo      2026-10-22 PASS
+cm_hogares_tamano_censo_2021             2026-10-22 PASS
+cm_viviendas_superficie                  2026-10-22 PASS
+cm_renta_disponible_municipal            2026-10-22 PASS
+cm_alquiler_m2_municipios                2026-10-22 PASS
+cm_alquiler_m2_codigo_postal_madrid      2026-10-22 PASS
+cm_centros_educativos                    2026-10-22 PASS
+cm_centros_sanitarios                    2026-10-22 PASS
+cm_centros_atencion_social               2026-10-22 PASS
+

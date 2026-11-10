@@ -2,7 +2,7 @@
 
 import hashlib
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -18,7 +18,6 @@ from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.catalog.sync import sync_catalog
 from hi_ingestion.pipelines.admin_boundaries import config, transform
 from hi_ingestion.pipelines.admin_boundaries.evidence import render_sample, write_json
-from hi_ingestion.pipelines.admin_boundaries.fetch import FetchedFile, fetch_role, local_file
 from hi_ingestion.pipelines.admin_boundaries.h3map import build_h3_mapping
 from hi_ingestion.pipelines.admin_boundaries.publish import (
     find_version,
@@ -28,6 +27,8 @@ from hi_ingestion.pipelines.admin_boundaries.publish import (
     upsert_h3,
 )
 from hi_ingestion.pipelines.admin_boundaries.quality import row_counts, run_quality
+from hi_ingestion.pipelines.common import RunSummary
+from hi_ingestion.pipelines.fetch import FetchedFile, fetch_role, local_file
 from hi_ingestion.pipelines.tracking import StageTracker
 
 DATA_DIR = REPO_ROOT / "data"
@@ -50,18 +51,6 @@ class Inputs:
     def reader_path(self) -> str:
         path = self.sections.path
         return f"zip://{path}" if path.suffix == ".zip" else str(path)
-
-
-@dataclass
-class RunSummary:
-    status: str
-    dataset_id: str
-    checksum: str
-    correlation_id: str
-    version_label: str | None = None
-    counts: dict[str, Any] = field(default_factory=dict[str, Any])
-    quality: dict[str, Any] = field(default_factory=dict[str, Any])
-    evidence_dir: Path | None = None
 
 
 def fetch_inputs(catalog: Catalog) -> Inputs:

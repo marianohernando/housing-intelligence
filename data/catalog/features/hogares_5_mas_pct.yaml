@@ -1,0 +1,18 @@
+feature_id: hogares_5_mas_pct
+version: 1
+human_name: Porcentaje de hogares de cinco o más personas
+domain: population
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_hogares_tamano_censo_2021, role: primary}]
+formula: {method: metric_share, metric: hogares_por_tamano, numerator: {tamano: [de_5_o_mas_personas]}, denominator: {tamano: [total]}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [housing_gap, family_fit]
+tests: [range_0_100]
+limitations: [Censo 2021.]

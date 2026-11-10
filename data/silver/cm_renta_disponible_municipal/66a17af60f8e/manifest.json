@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_renta_disponible_municipal",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_renta_disponible_municipal/bc23b1d2e3ee/indicador-de-renta-disponible-bruta-municipal.-municipios.csv",
+      "sha256": "bc23b1d2e3eefc169cd8ac766cbd97f2d77f98e781951773cd1113d3c92b4179",
+      "bytes": 349984,
+      "url": "https://datos.comunidad.madrid/dataset/1715068e-0527-4632-aba1-37da355b346f/resource/fc9d4336-3c4a-4dd3-8f8f-dac0a4e29033/download/indicador-de-renta-disponible-bruta-municipal.-municipios.csv",
+      "retrieved_at": "2026-10-21T23:47:22.247582+00:00"
+    }
+  ],
+  "checksum": "66a17af60f8e8bc1a36700627fe929012148634ad115106e5b439c0465157cde",
+  "parser_version": "stat_tables-1.0.0"
+}

@@ -1,0 +1,22 @@
+feature_id: viviendas_menos_60m2_pct
+version: 1
+human_name: Porcentaje de viviendas de menos de 60 m²
+domain: housing
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_viviendas_superficie, role: primary}]
+formula:
+  method: metric_share
+  metric: viviendas_por_superficie
+  numerator: {superficie: [menos_de_30_m2, de_30_a_45_m2, de_46_a_60_m2]}
+  denominator: {superficie: "*"}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [housing_gap]
+tests: [range_0_100]
+limitations: [Viviendas principales; no incluye vacías ni secundarias.]

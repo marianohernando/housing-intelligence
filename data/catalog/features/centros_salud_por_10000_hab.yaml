@@ -1,0 +1,29 @@
+feature_id: centros_salud_por_10000_hab
+version: 1
+human_name: Centros de atención primaria por cada 10.000 habitantes
+domain: health
+type: derived
+unit: centros/10000 hab
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_centros_sanitarios, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+formula:
+  method: places_per_population
+  category: health
+  subcategories: [Centro de salud, Consultorio de atención primaria]
+  population_metric: poblacion_censada
+  population_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  small_population_threshold: 2000  # denominator below this -> confidence 0.5
+  per: 10000
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, geocoding_quarantine]}
+public_use: true
+pro_use: true
+models: [residential_fit, senior_fit]
+tests: [non_negative, monotonic_in_places]
+limitations:
+  - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
+  - "No mide capacidad ni horarios; los consultorios rurales cuentan igual que un centro de salud."

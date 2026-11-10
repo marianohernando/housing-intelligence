@@ -21,12 +21,18 @@ EXPECTED_TABLES = {
     "geo_admin_unit",
     "h3_cell",
     "h3_cell_admin_unit",
+    "metric_registry",
+    "metric_observation",
+    "place_master",
+    "place_source_alias",
+    "feature_registry",
+    "feature_value",
 }
 
 
-def test_upgrade_downgrade_upgrade(test_db_url: str) -> None:
-    cfg = alembic_config(test_db_url)
-    engine = create_engine(test_db_url)
+def test_upgrade_downgrade_upgrade(scratch_db_url: str) -> None:
+    cfg = alembic_config(scratch_db_url)
+    engine = create_engine(scratch_db_url)
 
     command.downgrade(cfg, "base")
     assert EXPECTED_TABLES.isdisjoint(inspect(engine).get_table_names())

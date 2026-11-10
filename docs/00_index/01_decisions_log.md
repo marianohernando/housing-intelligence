@@ -562,3 +562,18 @@ Trabajo en la rama `claude/sprint-p0` con CI en cada push. La integración en `m
 
 ## D-185 — Gosom descartado; POIs abiertos como alternativa (2026-10-20)
 Mariano confirma el criterio: no usar nada que pueda dar problemas. Google Maps/Gosom queda REJECTED también como investigación dentro del repo. Se registran `overture_places` y `fsq_os_places` (licencias permisivas por registro) para cubrir negocios y servicios. Valoraciones y reseñas quedan fuera de alcance.
+
+## D-186 — Protección de personas vulnerables en equipamientos (2026-10-22)
+Del registro de centros de atención social solo se mapean servicios para mayores (residencias, centros de día y hogares/clubes). Pisos tutelados, viviendas comunitarias, albergues, centros de acogida de menores, centros para mujeres maltratadas y residencias para personas con enfermedad mental o discapacidad no entran en el producto aunque la fuente publique su ubicación. Del registro sanitario se excluyen las consultas privadas individuales (minimización). Nunca se guardan teléfonos, correos ni NIF. Reglas en `data/catalog/pipelines/*.yaml` y tests en `tests/data/test_catalog.py`.
+
+## D-187 — Modelo de observaciones y pipelines declarativos (2026-10-22)
+Las estadísticas oficiales se guardan como `metric_observation` (valor XOR motivo del vacío, dimensiones canónicas, territorio, periodo, versión de dataset). Cada dataset declara su pipeline en `data/catalog/pipelines/<dataset_id>.yaml` (`cm_stat_table`, `cm_postcode_concept`, `points_csv`); el código implementa cada tipo una vez sobre un orquestador común. Los equipamientos se guardan en `place_master` + `place_source_alias` con id canónico estable (uuid5).
+
+## D-188 — Sincronización con Supabase (2026-10-22)
+El entorno remoto se carga copiando tablas validadas desde la base local (`make supabase-sync PROFILE=demo|full`), no re-ejecutando pipelines. Perfil demo 77 MB y completo 276 MB, simulados con un rol sin superusuario. Pendiente solo la contraseña de la base de datos.
+
+## D-189 — Features (2026-10-22)
+Las features se calculan con métodos genéricos (`metric_value`, `metric_share`, `metric_weighted_mean`, `places_per_population`, `place_attribute_per_population`) parametrizados en su YAML. Ratios con denominador por debajo del umbral declarado se publican con confidence 0,5. Nacionalidad y sexo no pueden ser features (test que lo impide); se descartó `poblacion_extranjera_pct`.
+
+## D-190 — search_path explícito (2026-10-22)
+Migraciones y motor de la aplicación fijan `search_path TO public, extensions` al conectar; una base recién creada sin esa configuración rompía la migración (detectado al aislar el test de migraciones).

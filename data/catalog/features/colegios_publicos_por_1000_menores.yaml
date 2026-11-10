@@ -1,0 +1,29 @@
+feature_id: colegios_publicos_por_1000_menores
+version: 1
+human_name: Centros educativos públicos por cada 1.000 menores de 15 años
+domain: education
+type: derived
+unit: centros/1000 menores
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_centros_educativos, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+formula:
+  method: places_per_population
+  category: education
+  attributes: {titularidad: [PÚBLICO]}
+  population_metric: poblacion_censada
+  population_dims: {edad: [de_0_4_anos, de_5_9_anos, de_10_14_anos], nacionalidad: [total], sexo: [total]}
+  small_population_threshold: 500  # denominator below this -> confidence 0.5
+  per: 1000
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, geocoding_quarantine]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative, monotonic_in_places]
+limitations:
+  - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
+  - "Cuenta centros, no plazas ni etapas; un centro grande y uno pequeño pesan igual. Medida de cobertura, no de acceso a pie."

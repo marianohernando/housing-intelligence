@@ -1,0 +1,10 @@
+metric_id: renta_disponible_bruta_total
+human_name: Renta disponible bruta total
+description: Renta disponible bruta municipal total (indicador del Instituto de Estadística de la Comunidad de Madrid).
+domain: income
+unit: EUR
+direction: neutral
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_renta_disponible_municipal

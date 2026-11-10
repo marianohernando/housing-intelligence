@@ -1,0 +1,10 @@
+metric_id: hogares_por_tamano
+human_name: Hogares por tamaño
+description: Número de hogares según su número de miembros (Censo 2021).
+domain: population
+unit: hogares
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: decennial
+dataset_id: cm_hogares_tamano_censo_2021
+dimensions: [tamano]

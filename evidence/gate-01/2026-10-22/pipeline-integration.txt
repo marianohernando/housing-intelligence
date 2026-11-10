@@ -1,0 +1,6 @@
+$ uv run pytest -m db tests/integration/geo tests/integration/test_stat_pipelines.py tests/integration/test_places_pipeline.py -q
+# exit 0
+
+..................                                                       [100%]
+18 passed in 5.89s
+

@@ -1,0 +1,22 @@
+feature_id: poblacion_65_mas_pct
+version: 1
+human_name: Porcentaje de población de 65 años o más
+domain: population
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: primary}]
+formula:
+  method: metric_share
+  metric: poblacion_censada
+  numerator: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos], nacionalidad: [total], sexo: [total]}
+  denominator: {edad: [total], nacionalidad: [total], sexo: [total]}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [residential_fit, senior_fit, housing_gap]
+tests: [range_0_100, additive_inputs]
+limitations: [Indicador de estructura; no mide dependencia ni necesidad de cuidados.]

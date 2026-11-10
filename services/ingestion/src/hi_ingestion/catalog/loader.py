@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from hi_contracts.catalog import DatasetSpec, FeatureSpec, SourceSpec
+from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineSpec, SourceSpec
 
 DEFAULT_CATALOG_DIR = Path(__file__).resolve().parents[5] / "data" / "catalog"
 DRAFTS_DIRNAME = "_drafts"
@@ -17,6 +17,9 @@ class CatalogError(ValueError):
     """Raised when catalog files are invalid or inconsistent."""
 
 
+PIPELINE_ADAPTER: TypeAdapter[PipelineSpec] = TypeAdapter(PipelineSpec)
+
+
 @dataclass(frozen=True)
 class Catalog:
     sources: dict[str, SourceSpec]
@@ -24,6 +27,8 @@ class Catalog:
     drafts: dict[str, DatasetSpec]
     features: dict[str, FeatureSpec]
     paths: dict[str, Path] = field(default_factory=dict[str, Path])
+    metrics: dict[str, MetricSpec] = field(default_factory=dict[str, MetricSpec])
+    pipelines: dict[str, PipelineSpec] = field(default_factory=dict[str, PipelineSpec])
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -56,6 +61,42 @@ def _load_dir[M: BaseModel](
     return items
 
 
+def _load_pipelines(directory: Path, errors: list[str]) -> dict[str, PipelineSpec]:
+    pipelines: dict[str, PipelineSpec] = {}
+    for path in sorted(directory.glob("*.yaml")) if directory.exists() else []:
+        try:
+            spec = PIPELINE_ADAPTER.validate_python(_read_yaml(path))
+        except (ValidationError, CatalogError, yaml.YAMLError) as exc:
+            errors.append(f"{path.name}: {exc}")
+            continue
+        if path.stem != spec.dataset_id:
+            errors.append(f"{path.name}: file name must equal dataset_id '{spec.dataset_id}'")
+        pipelines[spec.dataset_id] = spec
+    return pipelines
+
+
+def _cross_check_metrics(
+    datasets: dict[str, DatasetSpec],
+    metrics: dict[str, MetricSpec],
+    pipelines: dict[str, PipelineSpec],
+    errors: list[str],
+) -> None:
+    for metric in metrics.values():
+        if metric.dataset_id not in datasets:
+            errors.append(f"{metric.metric_id}: unknown curated dataset '{metric.dataset_id}'")
+    for dataset_id, pipeline in pipelines.items():
+        if dataset_id not in datasets:
+            errors.append(f"pipeline {dataset_id}: no curated dataset with that id")
+        for metric_id in pipeline.metric_ids():
+            metric = metrics.get(metric_id)
+            if metric is None:
+                errors.append(f"pipeline {dataset_id}: unknown metric '{metric_id}'")
+            elif metric.dataset_id != dataset_id:
+                errors.append(
+                    f"pipeline {dataset_id}: metric '{metric_id}' belongs to {metric.dataset_id}"
+                )
+
+
 def load_catalog(
     catalog_dir: Path = DEFAULT_CATALOG_DIR, *, include_drafts: bool = True
 ) -> Catalog:
@@ -71,6 +112,9 @@ def load_catalog(
         else {}
     )
     features = _load_dir(catalog_dir / "features", FeatureSpec, "feature_id", errors, paths)
+    metrics = _load_dir(catalog_dir / "metrics", MetricSpec, "metric_id", errors, paths)
+    pipelines = _load_pipelines(catalog_dir / "pipelines", errors)
+    _cross_check_metrics(datasets, metrics, pipelines, errors)
 
     for dataset_id in datasets.keys() & drafts.keys():
         errors.append(f"{dataset_id}: exists both as curated dataset and as draft")
@@ -87,4 +131,4 @@ def load_catalog(
 
     if errors:
         raise CatalogError("Invalid catalog:\n  " + "\n  ".join(errors))
-    return Catalog(sources, datasets, drafts, features, paths)
+    return Catalog(sources, datasets, drafts, features, paths, metrics, pipelines)
