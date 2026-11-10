@@ -200,6 +200,72 @@
       "title": "CsvFormat",
       "type": "object"
     },
+    "GtfsFeedPipeline": {
+      "additionalProperties": false,
+      "description": "Static GTFS feed -> one transport place per stop or parent station, with service levels.\n\nService is measured on one reference day: the median (by active trips) of the feed's\n`reference_weekday` dates inside its own validity window, so the result never depends on\nthe day the pipeline runs.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "expand_frequencies": {
+          "default": true,
+          "description": "False when frequencies.txt only annotates trips already listed one by one",
+          "title": "Expand Frequencies",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "gtfs_feed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "mode": {
+          "description": "place subcategory, e.g. metro, emt",
+          "pattern": "^[a-z_]+$",
+          "title": "Mode",
+          "type": "string"
+        },
+        "peak_end": {
+          "default": "09:00",
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+          "title": "Peak End",
+          "type": "string"
+        },
+        "peak_start": {
+          "default": "07:00",
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+          "title": "Peak Start",
+          "type": "string"
+        },
+        "reference_weekday": {
+          "default": "tuesday",
+          "enum": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "title": "Reference Weekday",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "mode"
+      ],
+      "title": "GtfsFeedPipeline",
+      "type": "object"
+    },
     "MetricSplit": {
       "additionalProperties": false,
       "description": "One source column decides which metric a row belongs to (e.g. 'Medida').",
@@ -395,6 +461,7 @@
     "mapping": {
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
+      "gtfs_feed": "#/$defs/GtfsFeedPipeline",
       "points_csv": "#/$defs/PointsPipeline"
     },
     "propertyName": "kind"
@@ -408,6 +475,9 @@
     },
     {
       "$ref": "#/$defs/PointsPipeline"
+    },
+    {
+      "$ref": "#/$defs/GtfsFeedPipeline"
     }
   ]
 }

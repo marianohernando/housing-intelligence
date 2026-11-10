@@ -122,6 +122,44 @@ class PointsPipeline(BaseModel):
         return []
 
 
+Weekday = Literal["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+CLOCK_PATTERN = r"^([01]\d|2[0-3]):[0-5]\d$"
+
+
+class GtfsFeedPipeline(BaseModel):
+    """Static GTFS feed -> one transport place per stop or parent station, with service levels.
+
+    Service is measured on one reference day: the median (by active trips) of the feed's
+    `reference_weekday` dates inside its own validity window, so the result never depends on
+    the day the pipeline runs.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["gtfs_feed"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    mode: str = Field(pattern=r"^[a-z_]+$", description="place subcategory, e.g. metro, emt")
+    reference_weekday: Weekday = "tuesday"
+    peak_start: str = Field(default="07:00", pattern=CLOCK_PATTERN)
+    peak_end: str = Field(default="09:00", pattern=CLOCK_PATTERN)
+    expand_frequencies: bool = Field(
+        default=True,
+        description="False when frequencies.txt only annotates trips already listed one by one",
+    )
+
+    @model_validator(mode="after")
+    def _peak_is_a_window(self) -> Self:
+        if self.peak_end <= self.peak_start:
+            msg = f"{self.dataset_id}: peak_end must be after peak_start"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 PipelineSpec = Annotated[
-    CmStatTablePipeline | CmPostcodeConceptPipeline | PointsPipeline, Field(discriminator="kind")
+    CmStatTablePipeline | CmPostcodeConceptPipeline | PointsPipeline | GtfsFeedPipeline,
+    Field(discriminator="kind"),
 ]

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from hi_contracts.catalog.pipeline import CmStatTablePipeline
+from hi_contracts.catalog.pipeline import CmPostcodeConceptPipeline, CmStatTablePipeline
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.common import read_csv
 
@@ -48,7 +48,7 @@ def main() -> None:
     catalog = load_catalog()
     OUT.mkdir(parents=True, exist_ok=True)
     for dataset_id, spec in sorted(catalog.pipelines.items()):
-        if spec.kind == "points_csv":
+        if not isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
             continue
         frame = read_csv(_latest_bronze(dataset_id), spec.csv)
         if isinstance(spec, CmStatTablePipeline):
