@@ -1,6 +1,6 @@
 {
   "version": "0.5.5",
-  "updated": "2026-11-10T17:38:15.257061+00:00",
+  "updated": "2026-11-10T17:41:41.115014+00:00",
   "markdown_files": 275,
   "files": {
     "00_index/00_master_index.md": {
@@ -8,8 +8,8 @@
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "ee5532036b8162e94e3584f05a2418989973c4002211fa4a56c3a8b149680de6",
-      "bytes": 34405
+      "sha256": "d28b175cda942201b5304fdbbe1c9d19d751ff6ed0c5d01c8d6a9681af055a22",
+      "bytes": 35078
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -916,8 +916,8 @@
       "bytes": 763
     },
     "09_datamad/24_bases_oficiales_2026.md": {
-      "sha256": "dc8aa13fe759a70b2ad965ebc4183f1478c5ac7d83a8d1ec370039733c1ac5c9",
-      "bytes": 3770
+      "sha256": "a52069bcbb1400ef4ffdcc7b02be4da226bf375d64c11176e46e3fc897c722fb",
+      "bytes": 4321
     },
     "10_research/01_references.md": {
       "sha256": "ec2758e37420b9a7fcb7ebb10a41bf78d03bc6c16b1fc45d19c8ef5921d1241e",
@@ -1088,8 +1088,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "fa20a5bdd1177ec90aeeafe9915ab00ff8c7324e163cc5028a18f5d055d64ca9",
-      "bytes": 10646
+      "sha256": "e38447b9ac75e9ef8b0349e9b241fa6d0c15fef5c8f8b4a846cd2c92b7680eaf",
+      "bytes": 10753
     },
     "CLAUDE.md": {
       "sha256": "9defb79ae85c8bf2c298604842fedc9ff8a6a452eb1d6a34433b19da3ae44607",

@@ -588,3 +588,10 @@ No hubo commits entre el 22 oct y el 10 nov, así que P2 y Sprint 1 quedaron sin
 - 21–22 nov: cut review. 23 nov: freeze. 24–25 nov: slides §8 y ensayos. 26 nov: entrega antes de las 14:00.
 Quedan en CUT/LATER: PRO workspace, parcel analysis, ML/embeddings, timeline, 3D polish y HomeFit por URL. Si el PUBLIC core no está en verde el 16 nov, el Housing Gap pasa a YELLOW.
 Hechos del mismo día: tag `pre-datamad` en `08cc526` (último commit anterior al 7 nov) y merge de PR #2 y #3 en `main`; el trabajo de competición sigue en `claude/sprint-1-public`.
+
+## D-193 — Formulario de presentación antes del 20 nov (2026-11-10)
+La organización comunicó el 9 nov (correo de madrid.datamad@urjc.es, recibido en la cuenta de inscripción de Mariano) que es imprescindible enviar el formulario de presentación antes del 20 nov para seguir en la selección: hasta 50 preseleccionados y 12 finalistas que presentan el 26 nov. Ajuste sobre D-192:
+- Despliegue de la demo (OPS-001) adelantado al 17 nov.
+- Repo público y formulario el 18 nov, con el 19 nov como límite real.
+- El Housing Gap y las tools MCP pasan al 19–22 nov, sobre la demo ya publicada.
+El formulario lo envía Mariano; Claude prepara el resumen y los enlaces.

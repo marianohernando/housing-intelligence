@@ -10,10 +10,12 @@ Calendario vigente: D-192 (`docs/00_index/01_decisions_log.md`). Rama de trabajo
 | 10–11 nov | Arranque | Tag `pre-datamad`, merge de P0/P1/POIs, licencia, board |
 | 11–16 nov | PUBLIC core | Demo de principio a fin sin mocks críticos (G4/G5/G6 mínimo) |
 | 16 nov (noche) | Cut review 1 | Si el PUBLIC core no está en verde, Housing Gap pasa a YELLOW |
-| 17–20 nov | Diferenciador | Housing Gap municipal + API/MCP con 3–5 tools + demo desplegada |
-| 21–22 nov | Cut review 2 | Clasificación GREEN/YELLOW/RED, pulido y snapshot offline |
+| 17 nov | Demo pública | OPS-001: Supabase + despliegue; enlace estable a la demo |
+| 18 nov | **Formulario** | Repo público + README pulido · Mariano envía el formulario (objetivo 18, límite real 19 nov) |
+| 19–22 nov | Diferenciador | Housing Gap municipal + API/MCP con 3–5 tools sobre la demo ya publicada |
+| 22 nov | Cut review 2 | Clasificación GREEN/YELLOW/RED, pulido y snapshot offline |
 | 23 nov | Freeze | Solo fixes, manifest final de fuentes, README |
-| 24–25 nov | Pitch | 4 slides (§8 de las bases), ensayos de 5 min y 10 demos seguidas |
+| 24–25 nov | Pitch | 4 slides (§8 de las bases), ensayos de 5 min y 10 demos seguidas (si estamos entre los 12) |
 | 26 nov | Entrega | Antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
 
 ## 03 — CLAUDE CODE (en curso)
@@ -27,11 +29,12 @@ _(vacío: la siguiente card es DATA-007)_
 5. CORE-003 Residential Fit baseline: constraints PASS/FAIL/UNKNOWN → scoring → golden profiles · G4 · 14–15 nov
 6. MAP-004 PUBLIC map-first: chips y filtros sobre ScenarioState y ranking de zonas en el mapa · G6 · 15–16 nov
 7. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM usados) · G5/G7 · 16 nov
+8. OPS-001 Supabase remoto + despliegue de la demo con enlace público · G6 · 17 nov
+9. DATAMAD-FORM-01 Formulario de presentación (https://forms.gle/NyatKHN95aPxvQro8): nombre, resumen ≤100 palabras, participantes, asistencia al 26 nov, enlaces a demo y repo · lo envía Mariano · 18 nov (límite real 19 nov) · D-193
 
 ## 01 — BACKLOG (17–20 nov si el cut review 1 está en verde)
 - CORE-008 Housing Gap municipal: qué vivienda necesita el territorio (hogares, tamaño, renta, oferta)
 - API-001 / MCP-001 API versionada + 3–5 tools MCP sobre servicios de dominio (nunca SQL)
-- OPS-001 Supabase remoto + despliegue de la demo (bloqueado por la contraseña)
 - DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento)
 - MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
 - MAP-003 Vector tiles para secciones censales (payload)
@@ -40,7 +43,8 @@ _(vacío: la siguiente card es DATA-007)_
 - DATA-008 Seccionado INE 2025 como actualización declarada de la geografía
 
 ## 06 — BLOCKED (decisión de Mariano)
-- OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`). Falta `SUPABASE_DATABASE_URL` con la contraseña en `.env` (ver `.env.example`).
+- OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`). Falta `SUPABASE_DATABASE_URL` con la contraseña en `.env` (ver `.env.example`). **Necesaria antes del 17 nov.**
+- DATAMAD-PUBLIC-01 Hacer público el repo en GitHub antes del formulario (el código abierto puntúa 10/100 y el enlace ayuda en la preselección). Decisión antes del 18 nov.
 
 ## 07 — DONE (con evidencia)
 - DATAMAD-TAG-01 Tag `pre-datamad` en `08cc526` (22 oct) y merge de PR #2 y #3 en `main` · 2026-11-10
