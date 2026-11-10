@@ -1,0 +1,31 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select subcategory || '|' || canonical_name || '|' || coalesce(municipio_ine, '-')
+    || '|' || round(ST_Y(geom_4326)::numeric, 5) || ',' || round(ST_X(geom_4326)::numeric, 5)
+    || '|' || coalesce(attributes->>'headway_peak_min', '-')
+    || '|' || coalesce(attributes->>'departures_day', '-')
+  from place_master where category = 'transport'
+ order by md5(canonical_place_id::text) limit 20
+
+# exit 0
+
+autobus_interurbano|CTRA.M506-BEMBIBRE|28058|40.26830,-3.74542|60.0|13
+autobus_urbano|AV.EJÉRCITO-CASA DEL REY|28014|40.30151,-3.44491|10.9|108
+cercanias|Méndez Álvaro P.V.|28079|40.39578,-3.67784|2.5|435
+autobus_urbano|AV.ONU-SAO PAULO|28092|40.31590,-3.85120|12.0|106
+autobus_interurbano|AV.REAL DE PINTO-PUNTO LIMPIO RECICLAJE|28079|40.33849,-3.70965|30.0|24
+autobus_urbano|CAMINO DEL GOLF-CAMINO MESONCILLOS|28006|40.52028,-3.61627|60.0|22
+emt|Entrevías Cercanías|28079|40.38139,-3.66899|10.0|167
+autobus_interurbano|SAN JUAN-FÁBRICA DE HARINAS|28160|40.49963,-4.06165|30.0|86
+emt|Opañel|28079|40.38708,-3.72280|13.3|191
+autobus_urbano|AV.TENERIFE-MARÍA PACHECO|28134|40.56102,-3.62006|24.0|34
+emt|Centro Cultural Los Rosales|28079|40.35251,-3.67834|7.5|200
+autobus_interurbano|AV.ASTURIAS-UNIVERSIDAD|28072|40.60045,-3.94722|24.0|41
+autobus_interurbano|VASCOS-POL.IND.LA TOCA|28058|40.26311,-3.75447|17.1|66
+emt|Darío Aparicio - Viñas De El Pardo|28079|40.47205,-3.77069|8.6|91
+autobus_interurbano|AV.PABLO IGLESIAS-MARIA MOLINER|28058|40.29610,-3.84060|20.0|185
+autobus_urbano|APALACHES-NARANJO DE BULNES|28045|40.63126,-3.59621|20.0|42
+autobus_interurbano|C7-C19|28100|40.38338,-3.26390|40.0|25
+autobus_interurbano|AV.BURGOS-C.C.SANCHINARRO|28079|40.49805,-3.66300|6.7|815
+emt|Cardenal Tarancón - Pilar Madariaga|28079|40.36426,-3.58941|15.0|80
+autobus_urbano|VALLE DE TENA-VALLE DE SANTA ANA|28022|40.43199,-3.89381|12.0|68
+

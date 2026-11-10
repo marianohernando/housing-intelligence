@@ -1,0 +1,13 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select subcategory || '|' || count(seccion_admin_unit_id) || '|' || count(*)
+  from place_master where category = 'transport' group by subcategory order by subcategory
+
+# exit 0
+
+autobus_interurbano|6414|6645
+autobus_urbano|3023|3023
+cercanias|91|93
+emt|4935|4935
+metro|230|230
+metro_ligero|56|56
+

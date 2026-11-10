@@ -1,0 +1,15 @@
+$ uv run python scripts/check_transport_golden.py
+# exit 0
+
+PASS  sol_metro: Puerta del Sol (metro) -> nearest Puerta del Sol at 16.0 m 
+PASS  sol_cercanias: Sol (Cercanías) -> nearest Sol at 53.0 m 
+PASS  atocha_cercanias: Madrid-Atocha (Cercanías) -> nearest Madrid-Atocha Cercanías at 12.0 m 
+PASS  colonia_jardin_metro_ligero: Colonia Jardín (Metro Ligero) -> nearest COLONIA JARDIN at 12.0 m 
+PASS  plaza_castilla_interurbanos: Intercambiador de Plaza de Castilla (interurbanos) -> nearest Intercambiador de Plaza de Castilla at 34.0 m 
+PASS  alcala_cercanias: Alcalá de Henares (Cercanías) -> nearest Alcalá de Henares at 25.0 m 
+PASS  getafe_centro_cercanias: Getafe Centro (Cercanías) -> nearest Getafe-Centro at 16.0 m 
+PASS  aranjuez_cercanias: Aranjuez (Cercanías) -> nearest Aranjuez at 41.0 m 
+PASS  ajalvir_interurbanos: Ajalvir, small municipality (interurban buses) -> nearest AJALVIR-CTRA.DAGANZO at 155.0 m 
+PASS  sol_emt_density: EMT stops around Puerta del Sol -> nearest Canalejas at 243.0 m 
+10/10 golden transport cases PASS
+

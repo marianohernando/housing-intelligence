@@ -18,20 +18,19 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 | 26 nov | Final | Slides antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
 
 ## 03 — CLAUDE CODE (en curso)
-- DATA-007 Transporte CRTM, nivel A · plan en 4 fases (F1 descargas binarias con reintento y ficha del portal CM · F2 contrato `gtfs_feed` y frecuencias · F3 pipeline hasta `place_master` · F4 Gate 2 y cierre). Los 6 GTFS también están publicados en el Portal de Datos Abiertos de la CM, así que cuentan como datasets CM.
+- DATA-016 Datasets CM nuevos · F1 descubrimiento con ficheros reales hecho: oficinas de farmacia (puntos), farmacias por municipio, unidades escolares por tipo y enseñanza, nacidos vivos y viviendas por régimen de tenencia encajan en `cm_stat_table`/`points_csv`. Transacciones inmobiliarias (trimestrales, solo con nombre de municipio) necesitan un tipo nuevo: reserva con tope de medio día.
 
 ## 02 — READY THIS SPRINT (en orden)
-1. DATA-016 Datasets CM nuevos con pipelines declarativos (oficinas de farmacia, transacciones inmobiliarias, y los que encajen del catálogo curado). Objetivo: 14–16 datasets del portal CM · G1 · 11–12 nov
-2. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
-3. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de hogares frente a superficie de viviendas) · G3/G4 · 13–14 nov · D-194
-4. CORE-001 Contrato ScenarioState mínimo (presupuesto, tamaño del hogar, lugar de trabajo, prioridades) · G4 · 15 nov
-5. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 15 nov
-6. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
-7. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
-8. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
-9. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
-10. DATAMAD-PUBLIC-01 Repo público (checklist en §7 del plan) · como tarde 18 nov · D-195
-11. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
+1. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
+2. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de hogares frente a superficie de viviendas) · G3/G4 · 13–14 nov · D-194
+3. CORE-001 Contrato ScenarioState mínimo (presupuesto, tamaño del hogar, lugar de trabajo, prioridades) · G4 · 15 nov
+4. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 15 nov
+5. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
+6. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
+7. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
+8. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
+9. DATAMAD-PUBLIC-01 Repo público (checklist en §7 del plan) · como tarde 18 nov · D-195
+10. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
 - CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)
@@ -54,6 +53,7 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 - DATAMAD-PUBLIC-01 Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) serán visibles.
 
 ## 07 — DONE (con evidencia)
+- DATA-007 Transporte CRTM nivel A: 6 GTFS (también en el portal CM) → 14.982 paradas y estaciones con salidas/día, salidas en punta, headway, primer/último servicio y líneas · G1 `evidence/gate-01/2026-11-10/crtm_gtfs_*` · G2 PASS `evidence/gate-02/2026-11-10` (10/10 golden) · D-196 · 2026-11-10
 - DATAMAD-PLAN-01 Plan de competición y criterios del jurado (`docs/09_datamad/25_plan_competicion.md`) · D-194/D-195 · 2026-11-10
 - DATAMAD-TAG-01 Tag `pre-datamad` en `08cc526` (22 oct) y merge de PR #2 y #3 en `main` · 2026-11-10
 - LEGAL-001 Licencia: Apache-2.0 (código) + CC BY 4.0 (docs y catálogo) · D-191

@@ -1,0 +1,16 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select count(*) filter (where not ST_IsValid(geom_4326) or not ST_IsValid(geom_25830))
+    || '|' || count(*) filter (
+           where not ST_Within(geom_4326, ST_MakeEnvelope(-4.58, 39.88, -3.05, 41.17, 4326)))
+    || '|' || count(*) filter (
+           where ST_Distance(ST_Transform(geom_4326, 25830), geom_25830) > 1)
+    || '|' || count(*) filter (
+           where seccion_admin_unit_id is null and exists (
+               select 1 from geo_admin_unit u
+                where u.level = 'seccion_censal' and ST_Contains(u.geom_25830, p.geom_25830)))
+  from place_master p where category = 'transport'
+
+# exit 0
+
+0|0|0|0
+
