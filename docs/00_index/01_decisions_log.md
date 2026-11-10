@@ -595,3 +595,16 @@ La organización comunicó el 9 nov (correo de madrid.datamad@urjc.es, recibido 
 - Repo público y formulario el 18 nov, con el 19 nov como límite real.
 - El Housing Gap y las tools MCP pasan al 19–22 nov, sobre la demo ya publicada.
 El formulario lo envía Mariano; Claude prepara el resumen y los enlaces.
+
+## D-194 — Alcance de la demo: lista de lo que falta por zona (2026-11-10)
+Mariano confirma el enfoque de su documento «Housing Intelligence — la idea» (31 oct):
+- El diferenciador es la lista FALTA / JUSTO / CUBIERTO por zona, no el Housing Gap como recomendador de producto residencial.
+- La vivienda entra como una fila más de la lista (tamaño de los hogares frente a superficie de las viviendas). El resto de filas: escuela infantil, colegio, centro de salud, mayores y farmacia.
+- La clasificación se hace frente a la referencia regional, con confidence y con los proxies declarados.
+- Empresas («qué abrir») queda solo en slides y API/MCP.
+- Zonas verdes quedan fuera porque solo hay datos de Madrid capital.
+- La necesidad declarada por usuarios se presenta como siguiente paso y nunca se simula.
+Plan: `09_datamad/25_plan_competicion.md`.
+
+## D-195 — Repo público (2026-11-10)
+Mariano aprueba hacer público el repo en cuanto haya algo enseñable, como tarde el 18 nov (formulario). Antes se cumple el checklist del §7 del plan de competición. Ya están en verde secretos (gitleaks), tokens y licencias. Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) quedarán visibles; el historial no se reescribe.

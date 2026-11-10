@@ -1,52 +1,61 @@
-# Board — Sprint 1 comprimido (10–16 nov 2026) · PUBLIC core
+# Board — Sprint 1 comprimido (10–18 nov 2026) · Demo para el formulario
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
-Calendario vigente: D-192 (`docs/00_index/01_decisions_log.md`). Rama de trabajo: `claude/sprint-1-public`.
+Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones D-191 a D-195. Rama de trabajo: `claude/sprint-1-public` (solo la escribe la sesión de desarrollo).
 Última actualización: 2026-11-10.
 
 ## Calendario hasta la entrega
 | Fechas | Bloque | Salida |
 |---|---|---|
-| 10–11 nov | Arranque | Tag `pre-datamad`, merge de P0/P1/POIs, licencia, board |
-| 11–16 nov | PUBLIC core | Demo de principio a fin sin mocks críticos (G4/G5/G6 mínimo) |
-| 16 nov (noche) | Cut review 1 | Si el PUBLIC core no está en verde, Housing Gap pasa a YELLOW |
-| 17 nov | Demo pública | OPS-001: Supabase + despliegue; enlace estable a la demo |
-| 18 nov | **Formulario** | Repo público + README pulido · Mariano envía el formulario (objetivo 18, límite real 19 nov) |
-| 19–22 nov | Diferenciador | Housing Gap municipal + API/MCP con 3–5 tools sobre la demo ya publicada |
-| 22 nov | Cut review 2 | Clasificación GREEN/YELLOW/RED, pulido y snapshot offline |
+| 10 nov | Arranque | Tag `pre-datamad`, merge de P0/P1/POIs, licencia, plan y board |
+| 11–16 nov | Demo core | Buscador para personas + lista de lo que falta por zona, con datos CM reales |
+| 16 nov (noche) | Cut review 1 | Mariano prueba la demo 20 min; lo que no esté en verde se recorta |
+| 17 nov | Demo pública | OPS-001: Supabase + despliegue; enlace estable con caso precargado |
+| 18 nov | **Formulario** | Repo público (antes si hay algo enseñable) · Mariano envía el formulario (límite real 19 nov) |
+| 19–22 nov | Mejoras | Tiempo a polos de empleo, MCP 3–5 tools, más datasets, accesibilidad · 22: cut review 2 |
 | 23 nov | Freeze | Solo fixes, manifest final de fuentes, README |
-| 24–25 nov | Pitch | 4 slides (§8 de las bases), ensayos de 5 min y 10 demos seguidas (si estamos entre los 12) |
-| 26 nov | Entrega | Antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
+| 24–25 nov | Pitch | 4 slides (§8), guion, vídeo de respaldo, banco de preguntas, 5 ensayos |
+| 26 nov | Final | Slides antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
 
 ## 03 — CLAUDE CODE (en curso)
 _(vacío: la siguiente card es DATA-007)_
 
 ## 02 — READY THIS SPRINT (en orden)
-1. DATA-007 CRTM GTFS (metro, EMT, cercanías, interurbanos, metro ligero) → paradas y frecuencias · G1/G2 · 11–12 nov
-2. CORE-005 Features por sección censal y H3: accesibilidad a pie a colegios, salud, mayores y transporte · G3 · 12–13 nov
-3. CORE-001 Contrato ScenarioState mínimo (perfil, presupuesto, anchors, prioridades) · G4 · 13 nov
-4. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 13–14 nov
-5. CORE-003 Residential Fit baseline: constraints PASS/FAIL/UNKNOWN → scoring → golden profiles · G4 · 14–15 nov
-6. MAP-004 PUBLIC map-first: chips y filtros sobre ScenarioState y ranking de zonas en el mapa · G6 · 15–16 nov
-7. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM usados) · G5/G7 · 16 nov
-8. OPS-001 Supabase remoto + despliegue de la demo con enlace público · G6 · 17 nov
-9. DATAMAD-FORM-01 Formulario de presentación (https://forms.gle/NyatKHN95aPxvQro8): nombre, resumen ≤100 palabras, participantes, asistencia al 26 nov, enlaces a demo y repo · lo envía Mariano · 18 nov (límite real 19 nov) · D-193
+1. DATA-007 Transporte CRTM (GTFS metro, EMT, cercanías, interurbanos, metro ligero, urbanos) → paradas y frecuencias de paso · G1/G2 · 11–12 nov
+2. DATA-016 Datasets CM nuevos con pipelines declarativos (oficinas de farmacia, transacciones inmobiliarias, y los que encajen del catálogo curado). Objetivo: 14–16 datasets del portal CM · G1 · 11–12 nov
+3. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
+4. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de hogares frente a superficie de viviendas) · G3/G4 · 13–14 nov · D-194
+5. CORE-001 Contrato ScenarioState mínimo (presupuesto, tamaño del hogar, lugar de trabajo, prioridades) · G4 · 15 nov
+6. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 15 nov
+7. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
+8. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
+9. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
+10. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
+11. DATAMAD-PUBLIC-01 Repo público (checklist en §7 del plan) · como tarde 18 nov · D-195
+12. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
 
-## 01 — BACKLOG (17–20 nov si el cut review 1 está en verde)
-- CORE-008 Housing Gap municipal: qué vivienda necesita el territorio (hogares, tamaño, renta, oferta)
-- API-001 / MCP-001 API versionada + 3–5 tools MCP sobre servicios de dominio (nunca SQL)
-- DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento)
+## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
+- CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)
+- MCP-001 / API-001 API versionada + 3–5 tools MCP sobre servicios de dominio (nunca SQL)
 - MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
+- DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento)
 - MAP-003 Vector tiles para secciones censales (payload)
 - DATA-013 Códigos postales (geometría) para cruzar alquiler por CP
 - DATA-015 Zonas estadísticas de la Comunidad (sin geometría publicada; observaciones ya guardadas)
 - DATA-008 Seccionado INE 2025 como actualización declarada de la geografía
 
+## 01b — PITCH (23–25 nov)
+- PITCH-001 4 slides de §8 con el estilo del PDF del 31 oct
+- PITCH-002 Guion de 5 min y banco de preguntas (§8 del plan)
+- PITCH-003 Vídeo de respaldo de 2 min y snapshot offline de la demo
+- PITCH-004 5 ensayos cronometrados (Mariano)
+
 ## 06 — BLOCKED (decisión de Mariano)
 - OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`). Falta `SUPABASE_DATABASE_URL` con la contraseña en `.env` (ver `.env.example`). **Necesaria antes del 17 nov.**
-- DATAMAD-PUBLIC-01 Hacer público el repo en GitHub antes del formulario (el código abierto puntúa 10/100 y el enlace ayuda en la preselección). Decisión antes del 18 nov.
+- DATAMAD-PUBLIC-01 Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) serán visibles.
 
 ## 07 — DONE (con evidencia)
+- DATAMAD-PLAN-01 Plan de competición y criterios del jurado (`docs/09_datamad/25_plan_competicion.md`) · D-194/D-195 · 2026-11-10
 - DATAMAD-TAG-01 Tag `pre-datamad` en `08cc526` (22 oct) y merge de PR #2 y #3 en `main` · 2026-11-10
 - LEGAL-001 Licencia: Apache-2.0 (código) + CC BY 4.0 (docs y catálogo) · D-191
 - ENG-001 Bootstrap monorepo · G0 · `evidence/gate-00/2026-10-20`
@@ -69,12 +78,12 @@ _(vacío: la siguiente card es DATA-007)_
 - CORE-004 Feature Store: 12 features municipales con lineage, confidence y nulos explícitos · G3 (inicio) · `evidence/gate-03`
 - MAP-002 Coropletas por municipio y capas de equipamientos · G6 (parcial) · `evidence/map-002/2026-10-22`
 
-## 08 — CUT / LATER (D-192)
-- PRO workspace, parcel analysis y Product Recommender
-- ML, Place Model y embeddings
-- Timeline histórico, scenario engine ampliado y 3D polish
-- HomeFit por URL o dirección
-- Chat con LLM (la demo usa chips y filtros sobre ScenarioState)
-- DATA-014 POIs abiertos (Overture Places + FSQ OS Places) con Entity Resolution
+## 08 — CUT / LATER (D-192, D-194)
+- Housing Gap como recomendador de producto residencial (la vivienda entra como fila de GAP-001)
+- Empresas «qué abrir» calculado (solo slides + API/MCP)
+- Zonas verdes (solo hay datos de Madrid capital)
+- Necesidad declarada por usuarios agregada por zona (siguiente paso; nunca se simula)
+- PRO workspace, parcel analysis, ML, embeddings, timeline, 3D polish, HomeFit, chat con LLM
+- DATA-014 POIs abiertos (Overture + FSQ) con Entity Resolution
 - Catastro (INSPIRE) y geocoding de direcciones
 - Google Maps vía Gosom — REJECTED, confirmado por Mariano (D-185)

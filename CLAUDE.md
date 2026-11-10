@@ -128,16 +128,12 @@ LLM explanation and interaction
 
 ## 7. Prioridad actual
 
-Estamos en **DATA FOUNDATION**.
+Estamos en **fase de competición DATAMAD 2026** (hasta el 26 nov 2026).
 
-No optimices UI final antes de tener:
-- source registry;
-- dataset inventory;
-- metric registry;
-- entity model;
-- feature contracts;
-- pipeline de ingestión mínimo;
-- geografía común.
+- Plan vigente: `docs/09_datamad/25_plan_competicion.md`. Cards y calendario: `board/BOARD.md`. Decisiones D-191 a D-195.
+- Objetivo inmediato: demo desplegada el 17 nov con datos reales de la Comunidad de Madrid (buscador para personas + lista de lo que falta por zona) para el formulario del 18 nov.
+- La base de DATA FOUNDATION ya existe (source registry, inventario, métricas, entidades, contratos de features, ingestión y geografía común): se amplía, no se rehace.
+- Solo la sesión de desarrollo escribe en la carpeta principal (rama `claude/sprint-1-public`); cualquier otra sesión usa un worktree propio. Commits de rutas explícitas, nunca `git add -A`.
 
 ## 8. Principio técnico central
 

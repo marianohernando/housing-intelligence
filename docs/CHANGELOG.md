@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.6 — Plan de competición (2026-11-10)
+- `09_datamad/25_plan_competicion.md`: fases, criterios del jurado, calendario con responsables, formulario, repo público, pitch y día 26.
+- D-194: la demo se centra en el buscador para personas y la lista de lo que falta por zona. D-195: repo público como tarde el 18 nov.
+- `CLAUDE.md` §7: prioridad actual = fase de competición; regla de una sola sesión escribiendo en la carpeta principal.
+
 ## v0.5.5 — Arranque de la fase de competición (2026-11-10)
 - D-191: licencia Apache-2.0 (código) + CC BY 4.0 (docs y catálogo); cierra LEGAL-001.
 - D-192: replan comprimido hasta el 26 nov; tag `pre-datamad` y merge de P0, P1 y POIs abiertos en `main`.

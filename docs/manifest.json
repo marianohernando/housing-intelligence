@@ -1,15 +1,15 @@
 {
-  "version": "0.5.5",
-  "updated": "2026-11-10T17:41:41.115014+00:00",
-  "markdown_files": 275,
+  "version": "0.5.6",
+  "updated": "2026-11-10T18:02:35.451014+00:00",
+  "markdown_files": 276,
   "files": {
     "00_index/00_master_index.md": {
       "sha256": "1f57f07bded9a4082c4b339b44429c65ca27a8500be60d72a580d1223325ae52",
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "d28b175cda942201b5304fdbbe1c9d19d751ff6ed0c5d01c8d6a9681af055a22",
-      "bytes": 35078
+      "sha256": "0b94d2905bed214567f32c53078236303477407d4fdcc7cfed4e37f1d753f58e",
+      "bytes": 36343
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -919,6 +919,10 @@
       "sha256": "a52069bcbb1400ef4ffdcc7b02be4da226bf375d64c11176e46e3fc897c722fb",
       "bytes": 4321
     },
+    "09_datamad/25_plan_competicion.md": {
+      "sha256": "3aa6f41a76989ec4a56e19dce987e477ba9b94363396a7bed55aef97ba5a82d2",
+      "bytes": 10925
+    },
     "10_research/01_references.md": {
       "sha256": "ec2758e37420b9a7fcb7ebb10a41bf78d03bc6c16b1fc45d19c8ef5921d1241e",
       "bytes": 911
@@ -1088,12 +1092,12 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "e38447b9ac75e9ef8b0349e9b241fa6d0c15fef5c8f8b4a846cd2c92b7680eaf",
-      "bytes": 10753
+      "sha256": "f978e8ca5caa9e5270a0a0d69052000e2216bdaa6558b1982a18508f1fc90b4d",
+      "bytes": 11202
     },
     "CLAUDE.md": {
-      "sha256": "9defb79ae85c8bf2c298604842fedc9ff8a6a452eb1d6a34433b19da3ae44607",
-      "bytes": 13025
+      "sha256": "efe4ca25f0f87dc0a25adca9e95374dd1964ea40ece65544e8b051133b13305d",
+      "bytes": 13546
     },
     "README.md": {
       "sha256": "9173eb2acbe65fcd1062e72d4799de50baf4076ae4ec80986a5454b188c8a033",
