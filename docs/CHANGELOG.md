@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.5 — Arranque de la fase de competición (2026-11-10)
+- D-191: licencia Apache-2.0 (código) + CC BY 4.0 (docs y catálogo); cierra LEGAL-001.
+- D-192: replan comprimido hasta el 26 nov; tag `pre-datamad` y merge de P0, P1 y POIs abiertos en `main`.
+- Roadmap del doc 19 marcado como superado por D-192 en las fechas de competición.
+
 ## v0.5.4 — Sprint P1: datos de la Comunidad de Madrid (2026-10-22)
 - Decisiones D-186 a D-190: protección de personas vulnerables, modelo de observaciones, pipelines declarativos, Supabase, features, search_path.
 - 9 datasets nuevos de la Comunidad de Madrid ingeridos con Quality Gate; 12 features municipales en el Feature Store.

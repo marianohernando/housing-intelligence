@@ -577,3 +577,14 @@ Las features se calculan con métodos genéricos (`metric_value`, `metric_share`
 
 ## D-190 — search_path explícito (2026-10-22)
 Migraciones y motor de la aplicación fijan `search_path TO public, extensions` al conectar; una base recién creada sin esa configuración rompía la migración (detectado al aislar el test de migraciones).
+
+## D-191 — Licencia open source (2026-11-10)
+Mariano elige Apache-2.0 para el código (`LICENSE`, texto canónico de apache.org) y CC BY 4.0 para la documentación y los metadatos del catálogo (`docs/LICENSE`). Los datos de terceros mantienen su licencia original por fuente. Cierra LEGAL-001.
+
+## D-192 — Replan comprimido de la fase de competición (2026-11-10)
+No hubo commits entre el 22 oct y el 10 nov, así que P2 y Sprint 1 quedaron sin hacer y el roadmap del doc 19 ya no cabe (unos 22 días de trabajo para 13 hasta el freeze del 23 nov). Se prioriza lo que más puntúa (datos CM 25 + impacto 25):
+- 11–16 nov: PUBLIC core (CRTM GTFS, features por sección/H3, ScenarioState, affordability, Residential Fit baseline, mapa con chips/filtros, explicación y procedencia).
+- 17–20 nov: Housing Gap municipal + API/MCP con 3–5 tools + demo desplegada.
+- 21–22 nov: cut review. 23 nov: freeze. 24–25 nov: slides §8 y ensayos. 26 nov: entrega antes de las 14:00.
+Quedan en CUT/LATER: PRO workspace, parcel analysis, ML/embeddings, timeline, 3D polish y HomeFit por URL. Si el PUBLIC core no está en verde el 16 nov, el Housing Gap pasa a YELLOW.
+Hechos del mismo día: tag `pre-datamad` en `08cc526` (último commit anterior al 7 nov) y merge de PR #2 y #3 en `main`; el trabajo de competición sigue en `claude/sprint-1-public`.

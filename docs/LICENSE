@@ -1,0 +1,9 @@
+La documentación de este directorio (`docs/`) y los metadatos del catálogo
+(`data/catalog/`) se publican bajo Creative Commons Attribution 4.0 International
+(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+
+El código del repositorio se publica bajo Apache License 2.0 (ver `LICENSE` en la raíz).
+
+Los datos de terceros (Comunidad de Madrid, Ayuntamiento de Madrid, CRTM, INE y
+otros) conservan su licencia y atribución originales, registradas por fuente en
+`data/catalog/sources/`.

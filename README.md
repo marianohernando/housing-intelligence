@@ -4,8 +4,8 @@ Plataforma de inteligencia residencial para la Comunidad de Madrid (PUBLIC · PR
 
 > Idealista sabe qué vivienda hay. Nosotros queremos saber qué vivienda hace falta.
 
-## Estado (2026-10-22)
-Sprint P1 en curso. Gate 0 y Gate 1 PASS; Gate 3 iniciado.
+## Estado (2026-11-10)
+Fase de competición: Sprint 1 (PUBLIC core) en curso según D-192. Gate 0 y Gate 1 PASS; Gate 3 iniciado.
 - Geografía canónica: 179 municipios, 246 distritos censales, 131 barrios, 4.417 secciones, 86.361 celdas H3.
 - 10 datasets de la Comunidad de Madrid en producción local: geografía, población, hogares, vivienda, renta, alquiler y equipamientos (educación, atención primaria, mayores).
 - 12 features municipales con lineage y confidence; mapa con coropletas y capas de equipamientos en `/map`.
@@ -29,4 +29,7 @@ uv run hi-features compute    # Feature Store
 Datos abiertos de la Comunidad de Madrid como fuente estructural, complementados con Ayuntamiento de Madrid, CRTM, Catastro (INSPIRE), INE y datos.gob.es. Cada fuente tiene licencia y atribución en `data/catalog/sources/`.
 
 ## Trabajo previo a DATAMAD
-Según §6 de las bases, este repositorio identifica el trabajo realizado antes del 7 de noviembre de 2026 mediante el tag `pre-datamad`.
+Según §6 de las bases, este repositorio identifica el trabajo realizado antes del 7 de noviembre de 2026 mediante el tag `pre-datamad` (commit `08cc526`, 22 oct 2026: Sprints P0 y P1). Todo lo posterior a ese tag se ha desarrollado durante la competición.
+
+## Licencia
+Código bajo [Apache License 2.0](LICENSE). Documentación y metadatos del catálogo bajo [CC BY 4.0](docs/LICENSE). Los datos de terceros conservan su licencia original, registrada en `data/catalog/sources/`.
