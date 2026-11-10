@@ -1,0 +1,41 @@
+dataset_id: cm_viviendas_tenencia_censo_2021
+source_id: comunidad_madrid_ckan
+name: Censo de vivienda y locales 2021. Viviendas familiares principales por régimen
+  de tenencia. Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia
+resources:
+- name: Censo de vivienda y locales 2021. Viviendas familiares principales por régimen
+    de tenencia.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/e50045e7-5f31-4bfc-bccd-7f502ed7c95e/resource/9c9e2b00-a74d-461c-af49-82b1c168b23a/download/censo-de-vivienda-y-locales-2021.-viviendas-familiares-principales-por-regimen-de-tenencia.-muni.csv
+- name: Censo de vivienda y locales 2021. Viviendas familiares principales por régimen
+    de tenencia. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/e50045e7-5f31-4bfc-bccd-7f502ed7c95e/resource/e80037f0-ec48-4f95-973a-265bb9e679f9/download/censo-de-vivienda-y-locales-2021.-viviendas-familiares-principales-por-regimen-de-tenencia.-mun.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['vivienda', 'alquiler']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-10T18:48:56.227117+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_2021_viviendas_familiares_por_tenencia
+  harvested_at: '2026-11-10T18:48:56.230080+00:00'
+notes: 'GAP-001 housing row and people search: share of rented homes | curated from
+  2026-11-10_sprint_1.yaml | Auto-draft. composite=4.6; license_id=cc-by'

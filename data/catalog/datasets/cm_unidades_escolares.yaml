@@ -1,0 +1,41 @@
+dataset_id: cm_unidades_escolares
+source_id: comunidad_madrid_ckan
+name: Unidades escolares en centros no universitarios del régimen general por tipo
+  de centro y enseñanza que imparten. Municipios
+domain: education
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza
+resources:
+- name: Unidades escolares en centros no universitarios del régimen general por tipo
+    de centro y enseñanza que imparten.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/2487b8a6-52c0-4332-85a6-bfe61d378e27/resource/d40cf2d7-b2f6-4820-8c1b-7e8f582f37a0/download/unidades-escolares-en-centros-no-universitarios-del-regimen-general-por-tipo-de-centro-y-ensenan.csv
+- name: Unidades escolares en centros no universitarios del régimen general por tipo
+    de centro y enseñanza que imparten. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/2487b8a6-52c0-4332-85a6-bfe61d378e27/resource/1d7a4942-2118-4299-894d-626744c9cdc5/download/unidades-escolares-en-centros-no-universitarios-del-regimen-general-por-tipo-de-centro-y-ensena.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['alumnado', 'alumnos', 'educacion infantil']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-10T18:48:56.227117+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: unidades_centros_no_universitarios_general_por_tipo_y_ensenanza
+  harvested_at: '2026-11-10T18:48:56.228634+00:00'
+notes: 'GAP-001 nursery and school rows: school units (classrooms) as capacity proxy
+  | curated from 2026-11-10_sprint_1.yaml | Auto-draft. composite=4.3; license_id=cc-by'
