@@ -45,6 +45,8 @@ class CmStatTablePipeline(BaseModel):
     metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
     metric_split: MetricSplit | None = None
     period_column: str = "Año"
+    # Older years are left out to fit the storage budget; counted as out_of_window, never hidden.
+    period_min: int | None = Field(default=None, ge=1900, le=2100)
     value_column: str = "Valor"
     unit_column: str | None = "Unidad"
     territory_type_column: str = "Tipo territorio"

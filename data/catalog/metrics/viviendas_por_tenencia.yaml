@@ -1,0 +1,10 @@
+metric_id: viviendas_por_tenencia
+human_name: Viviendas principales por régimen de tenencia
+description: Viviendas familiares principales en propiedad, alquiler u otro régimen (Censo 2021).
+domain: housing
+unit: viviendas
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: decennial
+dataset_id: cm_viviendas_tenencia_censo_2021
+dimensions: [regimen]

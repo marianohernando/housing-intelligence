@@ -3,7 +3,7 @@
 import re
 from dataclasses import dataclass
 from datetime import date
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -39,6 +39,7 @@ class Observations:
     frame: pd.DataFrame
     quarantine: pd.DataFrame
     source_rows: int
+    out_of_window: int = 0
 
 
 def parse_period(raw: str) -> tuple[date, date]:
@@ -154,9 +155,21 @@ def _postcode_row(row: dict[str, str], spec: CmPostcodeConceptPipeline) -> dict[
     )
 
 
+def within_period_window(frame: pd.DataFrame, spec: CmStatTablePipeline) -> pd.DataFrame:
+    """Rows from period_min on; non-year periods stay so they still reach quarantine."""
+    if spec.period_min is None:
+        return frame
+    periods: list[str] = frame[spec.period_column].astype(str).str.strip().tolist()
+    keep = [not _YEAR.match(p) or int(p) >= spec.period_min for p in periods]
+    return cast(pd.DataFrame, frame.loc[keep])
+
+
 def normalize(
     frame: pd.DataFrame, spec: CmStatTablePipeline | CmPostcodeConceptPipeline
 ) -> Observations:
+    source_rows = len(frame)
+    if isinstance(spec, CmStatTablePipeline):
+        frame = within_period_window(frame, spec)
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, Any]] = []
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
@@ -172,4 +185,5 @@ def normalize(
         pd.DataFrame(rows, columns=OBS_COLUMNS),
         pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
         len(frame),
+        source_rows - len(frame),
     )

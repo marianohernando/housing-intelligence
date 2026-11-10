@@ -123,6 +123,20 @@
           "title": "Period Column",
           "type": "string"
         },
+        "period_min": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period Min"
+        },
         "resource_role": {
           "default": "primary",
           "title": "Resource Role",

@@ -34,6 +34,10 @@ def _run(engine: Engine, dataset_id: str, tmp: Path, path: Path | None = None) -
         "cm_renta_disponible_municipal",
         "cm_alquiler_m2_municipios",
         "cm_alquiler_m2_codigo_postal_madrid",
+        "cm_farmacias_municipios",
+        "cm_unidades_escolares",
+        "cm_nacidos_vivos_municipios",
+        "cm_viviendas_tenencia_censo_2021",
     ],
 )
 def test_fixture_publishes_and_reruns_are_skipped(

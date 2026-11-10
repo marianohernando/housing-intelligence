@@ -116,3 +116,38 @@ def test_unknown_territory_type_is_quarantined(catalog: Catalog) -> None:
     obs = normalize(pd.DataFrame(frame), spec)
     assert len(obs.quarantine) == 1
     assert "unknown territory type" in obs.quarantine.iloc[0]["reason"]
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    [
+        "cm_farmacias_municipios",
+        "cm_unidades_escolares",
+        "cm_nacidos_vivos_municipios",
+        "cm_viviendas_tenencia_censo_2021",
+    ],
+)
+def test_new_cm_tables_pass_critical_quality(catalog: Catalog, dataset_id: str) -> None:
+    spec, obs = _obs(catalog, dataset_id)
+    report = run_quality(obs, {m: catalog.metrics[m] for m in spec.metric_ids()}, KNOWN)
+    assert report.passed, [c for c in report.checks if c.critical and not c.passed]
+    assert len(obs.quarantine) == 0
+    assert set(obs.frame["metric_id"]) == set(spec.metric_ids())
+
+
+def test_pharmacy_ratio_is_its_own_metric(catalog: Catalog) -> None:
+    _, obs = _obs(catalog, "cm_farmacias_municipios")
+    units = obs.frame.groupby("metric_id")["unit"].first().to_dict()
+    assert units == {"farmacias_total": "Número", "farmacias_por_10000_hab": "Ratio"}
+
+
+def test_period_window_drops_old_years_and_counts_them(catalog: Catalog) -> None:
+    spec, _ = _obs(catalog, "cm_unidades_escolares")
+    assert isinstance(spec, CmStatTablePipeline) and spec.period_min == 2015
+    frame = read_csv(FIXTURES / "cm_unidades_escolares.csv", spec.csv)
+    old, bad = frame.iloc[[0]].copy(), frame.iloc[[1]].copy()
+    old[spec.period_column], bad[spec.period_column] = "1994", "2016T1"
+    obs = normalize(pd.concat([frame, old, bad], ignore_index=True), spec)
+    assert obs.out_of_window == 1
+    assert obs.source_rows == len(frame) + 1  # the malformed period is kept and quarantined
+    assert obs.quarantine["reason"].str.contains("unsupported period").any()

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_viviendas_tenencia_censo_2021",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_viviendas_tenencia_censo_2021/74df9e64224b/censo-de-vivienda-y-locales-2021.-viviendas-familiares-principales-por-regimen-de-tenencia.-muni.csv",
+      "sha256": "74df9e64224b9f4af1890d9cf5324b66e84cddd18f9f67750cff4d9c77d43229",
+      "bytes": 33842,
+      "url": "https://datos.comunidad.madrid/dataset/e50045e7-5f31-4bfc-bccd-7f502ed7c95e/resource/9c9e2b00-a74d-461c-af49-82b1c168b23a/download/censo-de-vivienda-y-locales-2021.-viviendas-familiares-principales-por-regimen-de-tenencia.-muni.csv",
+      "retrieved_at": "2026-11-10T18:53:53.518247+00:00"
+    }
+  ],
+  "checksum": "048892fa99bc266522736bda2b876a2559eabf854239597800b2965631ed2a58",
+  "parser_version": "stat_tables-1.0.0",
+  "dataset_version": "2026-11-10-048892fa99bc",
+  "correlation_id": "cdf04f1fa1a347c89bed4dd1c9787ed6",
+  "silver": "data/silver/cm_viviendas_tenencia_censo_2021/048892fa99bc/observations.csv.gz"
+}

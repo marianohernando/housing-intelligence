@@ -1,0 +1,10 @@
+metric_id: nacidos_vivos
+human_name: Nacidos vivos
+description: Nacimientos por municipio de residencia de la madre (Movimiento Natural de la Población). Demanda futura de escuela infantil.
+domain: population
+unit: nacimientos
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_nacidos_vivos_municipios
+dimensions: [sexo]

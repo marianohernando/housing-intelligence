@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_unidades_escolares/b874575763c7/unidades-escolares-en-centros-no-universitarios-del-regimen-general-por-tipo-de-centro-y-ensenan.csv",
+      "sha256": "b874575763c787f02ca02aa101a4a7e0516e5468b250c09cf2c4afc475fe947f",
+      "bytes": 19774591,
+      "url": "https://datos.comunidad.madrid/dataset/2487b8a6-52c0-4332-85a6-bfe61d378e27/resource/d40cf2d7-b2f6-4820-8c1b-7e8f582f37a0/download/unidades-escolares-en-centros-no-universitarios-del-regimen-general-por-tipo-de-centro-y-ensenan.csv",
+      "retrieved_at": "2026-11-10T18:53:57.662177+00:00"
+    }
+  ]
+}

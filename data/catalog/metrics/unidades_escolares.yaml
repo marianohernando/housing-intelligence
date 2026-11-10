@@ -1,0 +1,10 @@
+metric_id: unidades_escolares
+human_name: Unidades escolares
+description: Unidades escolares (aulas o grupos) en centros no universitarios del régimen general, por titularidad y enseñanza. Proxy de capacidad, no de plazas.
+domain: education
+unit: unidades
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_unidades_escolares
+dimensions: [titularidad, ensenanza]

@@ -2,9 +2,10 @@
 
 Keeps the territories present in the admin_sample fixture (Madrid, La Acebeda, Ajalvir), the
 regional total, one statistical zone and the latest period, preserving the source encoding.
-Usage: uv run python scripts/build_stat_fixtures.py
+Usage: uv run python scripts/build_stat_fixtures.py [dataset_id ...]
 """
 
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -47,8 +48,11 @@ def _sample_stat(frame: pd.DataFrame, spec: CmStatTablePipeline) -> pd.DataFrame
 def main() -> None:
     catalog = load_catalog()
     OUT.mkdir(parents=True, exist_ok=True)
+    only = set(sys.argv[1:])
     for dataset_id, spec in sorted(catalog.pipelines.items()):
         if not isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
+            continue
+        if only and dataset_id not in only:
             continue
         frame = read_csv(_latest_bronze(dataset_id), spec.csv)
         if isinstance(spec, CmStatTablePipeline):

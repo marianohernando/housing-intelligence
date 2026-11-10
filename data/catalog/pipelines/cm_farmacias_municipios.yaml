@@ -1,0 +1,8 @@
+kind: cm_stat_table
+dataset_id: cm_farmacias_municipios
+metric_split:
+  column: Medida
+  metrics:
+    Total: farmacias_total
+    Por 10.000 habitantes: farmacias_por_10000_hab
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}

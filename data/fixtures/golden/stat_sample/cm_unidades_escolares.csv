@@ -1,0 +1,236 @@
+Año;Tipo territorio;Código territorio;Territorio;Tipo;Enseñanza;Valor;Unidad;Estado dato
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Educación Infantil;3342;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Educación Infantil;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Educación Infantil;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Educación Infantil;2135;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Educación Infantil;222;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Educación Primaria;6151;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Educación Primaria;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Educación Primaria;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Educación Primaria;3769;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Educación Primaria;430;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Educación Secundaria Obligatoria (ESO);4602;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Educación Secundaria Obligatoria (ESO);0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Educación Secundaria Obligatoria (ESO);0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Educación Secundaria Obligatoria (ESO);2772;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Educación Secundaria Obligatoria (ESO);325;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Bachillerato;257;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Bachillerato;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Bachillerato;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Bachillerato;219;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Bachillerato;8;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Ciclos Formativos;632;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Ciclos Formativos;379;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Ciclos Formativos;34;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Educación Especial;422;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Educación Especial;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Educación Especial;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Educación Especial;292;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Educación Especial;48;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Total;15701;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Total;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Total;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Total;9764;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Total;1083;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Total;57507;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Total;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Total;37;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Total;25177;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Total;5963;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Educación Infantil;15365;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Educación Infantil;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Educación Infantil;12;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Educación Infantil;6813;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Educación Infantil;1619;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Educación Primaria;17629;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Educación Primaria;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Educación Primaria;13;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Educación Primaria;7500;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Educación Primaria;1829;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Educación Secundaria Obligatoria (ESO);12802;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Educación Secundaria Obligatoria (ESO);0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Educación Secundaria Obligatoria (ESO);12;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Educación Secundaria Obligatoria (ESO);5249;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Educación Secundaria Obligatoria (ESO);1371;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Bachillerato;4308;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Bachillerato;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Bachillerato;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Bachillerato;1888;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Bachillerato;411;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Ciclos Formativos;5273;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Ciclos Formativos;2696;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Ciclos Formativos;478;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Educación Especial;1108;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Educación Especial;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Educación Especial;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Educación Especial;551;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Educación Especial;128;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Total;31159;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Total;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Total;37;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Total;10183;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Total;4364;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Educación Infantil;8064;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Educación Infantil;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Educación Infantil;12;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Educación Infantil;2711;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Educación Infantil;1098;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Educación Primaria;9589;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Educación Primaria;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Educación Primaria;13;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Educación Primaria;2884;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Educación Primaria;1363;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Educación Secundaria Obligatoria (ESO);6834;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Educación Secundaria Obligatoria (ESO);0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Educación Secundaria Obligatoria (ESO);12;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Educación Secundaria Obligatoria (ESO);1929;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Educación Secundaria Obligatoria (ESO);1024;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Bachillerato;2166;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Bachillerato;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Bachillerato;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Bachillerato;703;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Bachillerato;312;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Ciclos Formativos;3115;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Ciclos Formativos;1430;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Ciclos Formativos;376;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Educación Especial;678;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Educación Especial;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Educación Especial;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Educación Especial;253;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Educación Especial;80;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Total;26348;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Total;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Total;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Total;14994;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Total;1599;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Educación Infantil;7301;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Educación Infantil;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Educación Infantil;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Educación Infantil;4102;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Educación Infantil;521;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Educación Primaria;8040;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Educación Primaria;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Educación Primaria;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Educación Primaria;4616;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Educación Primaria;466;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Bachillerato;2142;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Bachillerato;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Bachillerato;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Bachillerato;1185;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Bachillerato;99;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Educación Secundaria Obligatoria (ESO);5968;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Educación Secundaria Obligatoria (ESO);0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Educación Secundaria Obligatoria (ESO);0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Educación Secundaria Obligatoria (ESO);3320;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Educación Secundaria Obligatoria (ESO);347;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Ciclos Formativos;2158;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Ciclos Formativos;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Ciclos Formativos;1266;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Ciclos Formativos;102;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Educación Especial;430;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Educación Especial;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Educación Especial;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Educación Especial;298;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Educación Especial;48;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Ciclos Formativos de grado medio;2244;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Ciclos Formativos de grado medio;1130;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Ciclos Formativos de grado medio;227;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Ciclos Formativos de grado superior;3029;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Ciclos Formativos de grado superior;1566;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Ciclos Formativos de grado superior;251;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Ciclos Formativos de grado medio;889;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Ciclos Formativos de grado medio;511;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Ciclos Formativos de grado medio;69;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Ciclos Formativos de grado superior;1269;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Ciclos Formativos de grado superior;755;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Ciclos Formativos de grado superior;33;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Ciclos Formativos de grado medio;1355;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Ciclos Formativos de grado medio;619;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Ciclos Formativos de grado medio;158;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Ciclos Formativos de grado superior;1760;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Ciclos Formativos de grado superior;811;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Ciclos Formativos de grado superior;218;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Ciclos Formativos de grado medio;569;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Ciclos Formativos de grado medio;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Ciclos Formativos de grado medio;329;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Ciclos Formativos de grado medio;34;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Ciclos Formativos de grado superior;63;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Ciclos Formativos de grado superior;50;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Ciclos Formativos de grado superior;0;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Formación Profesional Básica;839;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Formación Profesional Básica;383;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Formación Profesional Básica;112;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Otros Programas Formativos de Formación Profesional;159;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Otros Programas Formativos de Formación Profesional;86;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Otros Programas Formativos de Formación Profesional;15;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Formación Profesional Básica;583;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Formación Profesional Básica;218;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Formación Profesional Básica;98;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Otros Programas Formativos de Formación Profesional;118;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Otros Programas Formativos de Formación Profesional;53;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Otros Programas Formativos de Formación Profesional;13;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Formación Profesional Básica;254;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Formación Profesional Básica;165;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Formación Profesional Básica;14;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado concertado;Otros Programas Formativos de Formación Profesional;41;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado concertado;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado concertado;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado concertado;Otros Programas Formativos de Formación Profesional;33;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado concertado;Otros Programas Formativos de Formación Profesional;2;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Formación Profesional Básica;256;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Formación Profesional Básica;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Formación Profesional Básica;165;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Formación Profesional Básica;14;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Otros Programas Formativos de Formación Profesional;41;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Otros Programas Formativos de Formación Profesional;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Otros Programas Formativos de Formación Profesional;33;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Otros Programas Formativos de Formación Profesional;2;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Total;Cursos de especialización;24;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Total;Cursos de especialización;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Total;Cursos de especialización;0;Número;Provisional
+2025;Municipios;0796;Madrid;Total;Cursos de especialización;11;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Total;Cursos de especialización;0;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Público;Cursos de especialización;12;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Público;Cursos de especialización;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Público;Cursos de especialización;0;Número;Provisional
+2025;Municipios;0796;Madrid;Público;Cursos de especialización;2;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Público;Cursos de especialización;0;Número;Provisional
+2025;Comunidad de Madrid;;Comunidad de Madrid;Privado;Cursos de especialización;12;Número;Provisional
+2025;Municipios;0014;Acebeda (La);Privado;Cursos de especialización;0;Número;Provisional
+2025;Municipios;0029;Ajalvir;Privado;Cursos de especialización;0;Número;Provisional
+2025;Municipios;0796;Madrid;Privado;Cursos de especialización;9;Número;Provisional
+2025;Zonas Estadísticas;03;Este Metropolitano;Privado;Cursos de especialización;0;Número;Provisional
