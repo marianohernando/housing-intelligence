@@ -1,0 +1,25 @@
+$ uv run python scripts/check_quality_reports.py cm_secciones_censales cm_poblacion_edad_nacionalidad_sexo cm_hogares_tamano_censo_2021 cm_viviendas_superficie cm_renta_disponible_municipal cm_alquiler_m2_municipios cm_alquiler_m2_codigo_postal_madrid cm_farmacias_municipios cm_unidades_escolares cm_nacidos_vivos_municipios cm_viviendas_tenencia_censo_2021 cm_centros_educativos cm_centros_sanitarios cm_centros_atencion_social cm_oficinas_farmacia crtm_gtfs_metro crtm_gtfs_metro_ligero crtm_gtfs_cercanias crtm_gtfs_emt crtm_gtfs_autobuses_urbanos crtm_gtfs_interurbanos
+# exit 0
+
+cm_secciones_censales                    2026-10-20 PASS
+cm_poblacion_edad_nacionalidad_sexo      2026-10-22 PASS
+cm_hogares_tamano_censo_2021             2026-10-22 PASS
+cm_viviendas_superficie                  2026-10-22 PASS
+cm_renta_disponible_municipal            2026-10-22 PASS
+cm_alquiler_m2_municipios                2026-10-22 PASS
+cm_alquiler_m2_codigo_postal_madrid      2026-10-22 PASS
+cm_farmacias_municipios                  2026-11-10 PASS
+cm_unidades_escolares                    2026-11-10 PASS
+cm_nacidos_vivos_municipios              2026-11-10 PASS
+cm_viviendas_tenencia_censo_2021         2026-11-10 PASS
+cm_centros_educativos                    2026-10-22 PASS
+cm_centros_sanitarios                    2026-10-22 PASS
+cm_centros_atencion_social               2026-10-22 PASS
+cm_oficinas_farmacia                     2026-11-10 PASS
+crtm_gtfs_metro                          2026-11-10 PASS
+crtm_gtfs_metro_ligero                   2026-11-10 PASS
+crtm_gtfs_cercanias                      2026-11-10 PASS
+crtm_gtfs_emt                            2026-11-10 PASS
+crtm_gtfs_autobuses_urbanos              2026-11-10 PASS
+crtm_gtfs_interurbanos                   2026-11-10 PASS
+

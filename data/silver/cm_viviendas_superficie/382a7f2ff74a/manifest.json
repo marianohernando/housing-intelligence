@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_viviendas_superficie",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_viviendas_superficie/96a387d88d76/censo-anual-comunidad-de-madrid.-viviendas-por-superficie-agregada.-municipios.csv",
+      "sha256": "96a387d88d7623da5c513879ccef21f3c0add8747dfb2ea45c636794f906f94c",
+      "bytes": 252498,
+      "url": "https://datos.comunidad.madrid/dataset/11c43ccd-c06d-4abe-ae60-10e7726fbb55/resource/60404ea4-6df2-4b64-b2da-11794475e014/download/censo-anual-comunidad-de-madrid.-viviendas-por-superficie-agregada.-municipios.csv",
+      "retrieved_at": "2026-11-10T19:39:50.169496+00:00"
+    }
+  ],
+  "checksum": "382a7f2ff74aa0b4baec95f53eecd37708a063dde067d513bb11f49e34dad50b",
+  "parser_version": "stat_tables-1.0.0"
+}

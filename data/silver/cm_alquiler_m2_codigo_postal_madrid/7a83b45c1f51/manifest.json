@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_alquiler_m2_codigo_postal_madrid/d7255f36b767/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-p.csv",
+      "sha256": "d7255f36b767741780c1e940b633af8eebc53fa83ad70d992bd9fe8b8804c4be",
+      "bytes": 15347,
+      "url": "https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/70c3f1f8-534d-41bc-b4ba-6125cdf10628/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-p.csv",
+      "retrieved_at": "2026-11-10T19:39:29.967103+00:00"
+    }
+  ],
+  "checksum": "7a83b45c1f51a92f4a0832e51a210636577fca3105de9b47eb191706d0b78443",
+  "parser_version": "stat_tables-1.0.0"
+}

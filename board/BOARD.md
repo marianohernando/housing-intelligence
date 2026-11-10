@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones D-191 a D-195. Rama de trabajo: `claude/sprint-1-public` (solo la escribe la sesión de desarrollo).
-Última actualización: 2026-11-10 (noche).
+Última actualización: 2026-11-10 (noche, cierre de DATA-007 y DATA-016).
 
 ## Calendario hasta la entrega
 | Fechas | Bloque | Salida |
@@ -18,7 +18,17 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 | 26 nov | Final | Slides antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
 
 ## 03 — CLAUDE CODE (en curso)
-- DATA-016 Datasets CM nuevos · F1 descubrimiento con ficheros reales hecho: oficinas de farmacia (puntos), farmacias por municipio, unidades escolares por tipo y enseñanza, nacidos vivos y viviendas por régimen de tenencia encajan en `cm_stat_table`/`points_csv`. Transacciones inmobiliarias (trimestrales, solo con nombre de municipio) necesitan un tipo nuevo: reserva con tope de medio día.
+_(vacío: la siguiente card es CORE-005)_
+
+### Estado de la sesión del 10 nov (noche)
+- **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos). En total hay 21 datasets del portal CM con Quality Gate.
+- **Blocked:** OPS-001, porque falta la contraseña de Supabase en `.env` (antes del 17 nov). DATAMAD-PUBLIC-01, porque falta el OK de Mariano a que sean visibles el email de autor y `docs/`.
+- **Next:** CORE-005, indicadores por sección y H3 (distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte). Hay que empezar proponiendo su plan de fases.
+- **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). CI en verde.
+- **Notas para las siguientes cards:**
+  - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001).
+  - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004.
+  - Unidades escolares: elegir el nivel de enseñanza, nunca sumar miembros.
 
 ## 02 — READY THIS SPRINT (en orden)
 1. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
@@ -54,6 +64,7 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 - DATAMAD-PUBLIC-01 Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) serán visibles.
 
 ## 07 — DONE (con evidencia)
+- DATA-016 Datasets CM nuevos: oficinas de farmacia (2.953 puntos, sin nombres de titulares), farmacias por municipio, unidades escolares (desde 2015), nacidos vivos y viviendas por régimen de tenencia. `cm_stat_table` gana `period_min` y `points_csv` gana `subcategory_value`/`name_template`. Total: 21 datasets del portal CM · G1 PASS `evidence/gate-01/2026-11-10` · 2026-11-10
 - DATA-007 Transporte CRTM nivel A: 6 GTFS (también en el portal CM) → 14.982 paradas y estaciones con salidas/día, salidas en punta, headway, primer/último servicio y líneas · G1 `evidence/gate-01/2026-11-10/crtm_gtfs_*` · G2 PASS `evidence/gate-02/2026-11-10` (10/10 golden) · D-196 · 2026-11-10
 - DATAMAD-PLAN-01 Plan de competición y criterios del jurado (`docs/09_datamad/25_plan_competicion.md`) · D-194/D-195 · 2026-11-10
 - DATAMAD-TAG-01 Tag `pre-datamad` en `08cc526` (22 oct) y merge de PR #2 y #3 en `main` · 2026-11-10

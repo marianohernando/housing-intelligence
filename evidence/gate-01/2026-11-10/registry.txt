@@ -1,0 +1,5 @@
+$ uv run hi-ingest catalog validate
+# exit 0
+
+OK: 10 sources, 32 datasets, 120 drafts, 13 features, 13 metrics, 20 pipelines
+
