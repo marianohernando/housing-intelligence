@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "crtm_gtfs_interurbanos",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_gtfs_interurbanos/ab1a0f07aed4/google_transit_M89.zip",
+      "sha256": "ab1a0f07aed4a7aba0e53aac1731e140e4c7c78f79a77f18c21ffbd0d9b5d64a",
+      "bytes": 76437176,
+      "url": "https://www.arcgis.com/sharing/rest/content/items/885399f83408473c8d815e40c5e702b7/data",
+      "retrieved_at": "2026-11-10T18:25:23.320943+00:00"
+    }
+  ]
+}

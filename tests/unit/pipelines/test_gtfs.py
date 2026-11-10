@@ -12,9 +12,14 @@ from hypothesis import strategies as st
 from pydantic import ValidationError
 
 from hi_contracts.catalog.pipeline import GtfsFeedPipeline
+from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.gtfs.feed import GtfsFeedError, open_feed, read_tables
 from hi_ingestion.pipelines.gtfs.parse import parse_feed
+from hi_ingestion.pipelines.gtfs.run import points_spec
 from hi_ingestion.pipelines.gtfs.service_day import parse_gtfs_time, reference_day
+from hi_ingestion.pipelines.places.normalize import normalize_places
+
+FIXTURES = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "golden" / "gtfs_sample"
 
 STOPS = """stop_id,stop_name,stop_lat,stop_lon,location_type,parent_station,wheelchair_boarding
 STA,Estación Sol,40.4169,-3.7035,1,,1
@@ -197,3 +202,14 @@ def test_published_columns_have_no_nan(feed: Path) -> None:
     served = frame.loc[frame["has_service"] == "yes"]
     values = [v for row in served.to_dict("records") for v in row.values()]
     assert not any(isinstance(v, float) and pd.isna(v) for v in values)
+
+
+def test_real_fixture_quarantines_stops_outside_the_region() -> None:
+    spec = load_catalog().pipelines["crtm_gtfs_interurbanos"]
+    assert isinstance(spec, GtfsFeedPipeline)
+    fixture = FIXTURES / "crtm_gtfs_interurbanos.zip"
+    places = normalize_places(parse_feed(fixture, spec), points_spec(spec))
+    assert len(places.frame) > 0
+    assert set(places.quarantine["reason"].str.split(" \\(").str[0]) == {"outside Madrid bounds"}
+    assert places.filtered_out["has_service_not_allowed"] > 0  # unserved stops are not zeros
+    assert set(places.frame["category"]) == {"transport"}

@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "crtm_gtfs_cercanias",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_gtfs_cercanias/c6e6683ddc0e/google_transit_M5.zip",
+      "sha256": "c6e6683ddc0e3f819a033db48d1657330cdbb9395a4ac95c5a2f38d9501d77d0",
+      "bytes": 3793681,
+      "url": "https://www.arcgis.com/sharing/rest/content/items/1a25440bf66f499bae2657ec7fb40144/data",
+      "retrieved_at": "2026-11-10T18:25:10.920752+00:00"
+    }
+  ]
+}

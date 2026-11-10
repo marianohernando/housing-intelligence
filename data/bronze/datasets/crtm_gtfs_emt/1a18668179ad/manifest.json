@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "crtm_gtfs_emt",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_gtfs_emt/1a18668179ad/google_transit_M6.zip",
+      "sha256": "1a18668179adf9ed1fd5e950fcc1100cf88591cb2fc8ddd352ef55ba902c5aa3",
+      "bytes": 21052114,
+      "url": "https://www.arcgis.com/sharing/rest/content/items/868df0e58fca47e79b942902dffd7da0/data",
+      "retrieved_at": "2026-11-10T18:25:13.205006+00:00"
+    }
+  ]
+}

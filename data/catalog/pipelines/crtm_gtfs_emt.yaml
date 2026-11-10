@@ -1,0 +1,9 @@
+kind: gtfs_feed
+dataset_id: crtm_gtfs_emt
+mode: emt
+reference_weekday: tuesday
+peak_start: "07:00"
+peak_end: "09:00"
+# EMT lists every trip in stop_times; frequencies.txt only annotates each trip with the
+# planned headway of its hour, so expanding it would count each trip ~10 times.
+expand_frequencies: false

@@ -1,0 +1,6 @@
+kind: gtfs_feed
+dataset_id: crtm_gtfs_autobuses_urbanos
+mode: autobus_urbano
+reference_weekday: tuesday
+peak_start: "07:00"
+peak_end: "09:00"

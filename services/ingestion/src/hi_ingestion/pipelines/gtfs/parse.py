@@ -15,7 +15,12 @@ from hi_ingestion.pipelines.gtfs.frequency import (
 from hi_ingestion.pipelines.gtfs.service_day import reference_day
 
 # Feed-level facts kept on every row so quality checks can read them; never published.
-FEED_STAT_COLUMNS = ["reference_trips", "reference_candidate_days", "invalid_stop_times"]
+FEED_STAT_COLUMNS = [
+    "reference_trips",
+    "reference_candidate_days",
+    "reference_stop_times",
+    "invalid_stop_times",
+]
 
 
 def parse_feed(path: Path, spec: GtfsFeedPipeline) -> pd.DataFrame:
@@ -33,5 +38,6 @@ def parse_feed(path: Path, spec: GtfsFeedPipeline) -> pd.DataFrame:
     return table.assign(
         reference_trips=day.active_trips,
         reference_candidate_days=day.candidate_days,
+        reference_stop_times=len(stop_times),
         invalid_stop_times=invalid,
     )
