@@ -27,6 +27,7 @@ Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa 
 - DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento) · G1 · P0
 
 ## 01 — BACKLOG
+- DATA-014 POIs abiertos: Overture Places + FSQ OS Places para Madrid (bbox), Entity Resolution con censo de locales y OSM
 - MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
 - MAP-003 Vector tiles para secciones censales (payload)
 - DATA-008 Seccionado INE 2025 como actualización declarada de la geografía
@@ -39,7 +40,6 @@ Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa 
 ## 06 — BLOCKED (decisión de Mariano)
 - OPS-001 necesita la connection string de Supabase (Session pooler) y aprobar el MCP `supabase-datamad`.
 - LEGAL-001 necesita decisión de licencia.
-- DATA-GMAPS necesita confirmar REJECTED o benchmark privado (D-175).
 
 ## 08 — CUT / LATER
-- Google Maps vía Gosom como fuente del producto — REJECTED (D-175).
+- Google Maps vía Gosom — REJECTED, confirmado por Mariano (D-185).

@@ -4,7 +4,7 @@
 - **Owner:** Google LLC
 - **Herramienta:** `gosom/google-maps-scraper` (imagen Docker disponible en la máquina local)
 - **Fecha de revisión:** 2026-10-20
-- **Estado:** `REJECTED` para el proyecto DATAMAD. Como máximo `RESEARCH_ONLY` privado, fuera del repositorio, si Mariano lo decide.
+- **Estado:** `REJECTED` para el proyecto DATAMAD. Confirmado por Mariano el 2026-10-20 (D-185): no se usa si puede dar problemas.
 
 ## Qué haría
 Extraer fichas de negocios (nombre, categoría, dirección, valoración, horarios) navegando la web pública de Google Maps de forma automatizada.
@@ -37,5 +37,12 @@ No hay forma de justificar ante el jurado datos scrapeados de Google Maps sin co
 | POIs generales, resto de municipios | OpenStreetMap (extracto Geofabrik) | ODbL, con atribución |
 | Validación puntual | Google Places API oficial, si se justifica coste | Términos de la API; sin almacenamiento persistente |
 
-## Decisión pendiente de Mariano
-Confirmar `REJECTED` o permitir un benchmark privado de cobertura (POIs oficiales+OSM frente a Google) que nunca entre al producto, al repo ni a la presentación.
+## Decisión (2026-10-20)
+Mariano: "si vamos a tener problemas en el futuro no lo usamos, pero si podemos conseguir más datos que realmente nos sirvan, sí".
+Los problemas son ciertos (términos de Google y bases §6.3, §6.7, §16), así que Gosom no se usa ni en el producto ni en investigación dentro del repo.
+Los datos que aportaría (negocios, categorías, ubicación, altas y cierres) se cubren con fuentes abiertas:
+- `overture_places` — Overture Maps Places (CDLA Permissive 2.0 / Apache 2.0 / CC0 por registro).
+- `fsq_os_places` — Foursquare Open Source Places (Apache 2.0, token gratuito).
+- `openstreetmap` y `ayto_censo_locales_actividades` (ya registradas).
+
+Lo que no se puede obtener legalmente en abierto: valoraciones y reseñas. No se sustituyen por inferencias.

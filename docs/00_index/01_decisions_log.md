@@ -559,3 +559,6 @@ Un pipeline se omite solo si coinciden checksum de entrada y `parser_version` co
 
 ## D-184 — Integración en P0 (2026-10-20)
 Trabajo en la rama `claude/sprint-p0` con CI en cada push. La integración en `main` la decide Mariano mediante PR.
+
+## D-185 — Gosom descartado; POIs abiertos como alternativa (2026-10-20)
+Mariano confirma el criterio: no usar nada que pueda dar problemas. Google Maps/Gosom queda REJECTED también como investigación dentro del repo. Se registran `overture_places` y `fsq_os_places` (licencias permisivas por registro) para cubrir negocios y servicios. Valoraciones y reseñas quedan fuera de alcance.

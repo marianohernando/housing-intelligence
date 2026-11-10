@@ -1,0 +1,25 @@
+source_id: fsq_os_places
+name: Foursquare Open Source Places (FSQ OS Places)
+provider: Foursquare Labs, Inc.
+source_type: open_dataset
+api_type: download
+base_url: https://docs.foursquare.com/data-products/docs/fsq-places-open-source
+catalog_url: https://docs.foursquare.com/data-products/docs/fsq-places-open-source
+license_name: Apache License 2.0
+license_url: https://www.apache.org/licenses/LICENSE-2.0
+license_status: CLEAR
+attribution_text: "Foursquare Open Source Places, © 2024 Foursquare Labs, Inc., Apache 2.0 (NOTICE incluido)."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: B_OPEN_STRUCTURED
+default_confidence: 0.8
+update_frequency: monthly
+geographic_scope: Global (filtrar por bbox de la Comunidad de Madrid)
+terms_reviewed_at: 2026-10-20T00:00:00Z
+robots_status: bulk_download_with_free_token
+active: true
+notes: >-
+  Unos 100 M de lugares con categoría, dirección, coordenadas y fechas de alta/cierre.
+  Desde la versión de octubre el acceso es por el Places portal (registro y token gratuito)
+  o Hugging Face con aprobación: requiere que Mariano cree la cuenta. Overture ya incorpora
+  parte de estos POIs; deduplicar con Entity Resolution (docs/02_data/13).
