@@ -7,7 +7,7 @@ from hi_contracts.catalog.pipeline import PointsPipeline
 from hi_ingestion.pipelines.places.normalize import Places
 
 MAX_QUARANTINE_RATIO = 0.12
-PII_TERMS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web")
+PII_TERMS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web", "titulares")
 
 
 @dataclass(frozen=True)

@@ -4,6 +4,7 @@ Pipelines live in data/catalog/pipelines/<dataset_id>.yaml. Code implements each
 datasets only declare columns and mappings, so no dataset id or formula is hardcoded.
 """
 
+from string import Formatter
 from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -97,8 +98,11 @@ class PointsPipeline(BaseModel):
     csv: CsvFormat = Field(default_factory=CsvFormat)
     category: PlaceCategory
     id_column: str
-    name_column: str | None = None  # None -> "<subcategory> (<municipio>)"
-    subcategory_column: str
+    name_column: str | None = None  # None -> name_template or "<subcategory> (<municipio>)"
+    # e.g. "Farmacia · {VIA} {NUMERO}" when the register has no name column; fields are columns
+    name_template: str | None = None
+    subcategory_column: str | None = None
+    subcategory_value: str | None = None  # registers with a single kind of place
     # Only rows whose column values are in the allowlist enter the product (all filters apply).
     row_filters: dict[str, list[str]] = Field(default_factory=dict[str, list[str]])
     x_column: str
@@ -116,7 +120,20 @@ class PointsPipeline(BaseModel):
         if self.status_column and not self.active_values:
             msg = f"{self.dataset_id}: status_column requires active_values"
             raise ValueError(msg)
+        if (self.subcategory_column is None) == (self.subcategory_value is None):
+            msg = (
+                f"{self.dataset_id}: declare exactly one of subcategory_column or subcategory_value"
+            )
+            raise ValueError(msg)
+        if self.name_column and self.name_template:
+            msg = f"{self.dataset_id}: declare name_column or name_template, not both"
+            raise ValueError(msg)
         return self
+
+    def name_template_columns(self) -> list[str]:
+        if not self.name_template:
+            return []
+        return [field for _, field, _, _ in Formatter().parse(self.name_template) if field]
 
     def metric_ids(self) -> list[str]:
         return []

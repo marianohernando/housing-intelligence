@@ -51,7 +51,7 @@ def test_drafts_are_never_p0(catalog: Catalog) -> None:
     assert all(d.priority is not Priority.P0 for d in catalog.drafts.values())
 
 
-PII_COLUMNS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web")
+PII_COLUMNS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web", "titulares")
 
 
 def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
@@ -66,11 +66,17 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
 
 
 def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None:
-    """Data minimisation: facilities keep service attributes, never phones, emails or NIF."""
+    """Data minimisation: facilities keep service attributes, never phones, emails, NIF or
+    the names of the people who own them (e.g. pharmacy holders)."""
     for pipeline in catalog.pipelines.values():
         if pipeline.kind != "points_csv":
             continue
-        kept = [pipeline.id_column, pipeline.name_column or "", *pipeline.attribute_columns]
+        kept = [
+            pipeline.id_column,
+            pipeline.name_column or "",
+            *pipeline.name_template_columns(),
+            *pipeline.attribute_columns,
+        ]
         for column in kept:
             assert not any(term in column.lower() for term in PII_COLUMNS), (
                 pipeline.dataset_id,
@@ -91,7 +97,7 @@ def test_social_facilities_exclude_protected_housing(catalog: Catalog) -> None:
     """D-186: locations of protected housing and shelters are never mapped."""
     spec = catalog.pipelines["cm_centros_atencion_social"]
     assert spec.kind == "points_csv"
-    allowed = spec.row_filters.get(spec.subcategory_column, [])
+    allowed = spec.row_filters.get(spec.subcategory_column or "", [])
     assert allowed, "social facilities must use an explicit subtype allowlist"
     assert not any(p in a for a in allowed for p in PROTECTED_SUBTYPES)
     assert spec.row_filters.get("sector") == ["Personas mayores"]

@@ -386,6 +386,18 @@
           "default": null,
           "title": "Name Column"
         },
+        "name_template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Template"
+        },
         "resource_role": {
           "default": "primary",
           "title": "Resource Role",
@@ -414,8 +426,28 @@
           "title": "Status Column"
         },
         "subcategory_column": {
-          "title": "Subcategory Column",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subcategory Column"
+        },
+        "subcategory_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subcategory Value"
         },
         "x_column": {
           "title": "X Column",
@@ -431,7 +463,6 @@
         "dataset_id",
         "category",
         "id_column",
-        "subcategory_column",
         "x_column",
         "y_column"
       ],

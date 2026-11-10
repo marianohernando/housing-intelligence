@@ -13,7 +13,12 @@ from hi_ingestion.pipelines.places.run import run_places_pipeline
 
 pytestmark = pytest.mark.db
 FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden" / "places_sample"
-DATASETS = ["cm_centros_educativos", "cm_centros_sanitarios", "cm_centros_atencion_social"]
+DATASETS = [
+    "cm_centros_educativos",
+    "cm_centros_sanitarios",
+    "cm_centros_atencion_social",
+    "cm_oficinas_farmacia",
+]
 STATS_SQL = text(
     """
     SELECT count(*) AS n,
