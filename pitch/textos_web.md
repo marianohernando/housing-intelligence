@@ -200,7 +200,7 @@ La línea de explicación vale para cualquier fila, porque la API ya orienta la 
 | `falta.fila.referencia` | En el conjunto de la Comunidad de Madrid: {referencia} | Si la web separa la referencia de `explanation` |
 | `falta.fila.ojo` | Ojo: {proxy_note} | Aviso de lo que el dato no mide. `proxy_note` llega de la API |
 | `falta.fila.fuente` | De dónde sale: {conjuntos} | Nombres de `datasets`, cada uno enlazado a su ficha |
-| `falta.fila.a_pie` | A pie: {texto} | `extra_indicators` (distancia andando). Calculada en CORE-005 (`fc025b6`, D-210); en la API y a 4 km/h, **pendiente de A** (GAP-001) |
+| `falta.fila.a_pie` | A pie: {texto} | `extra_indicators` (distancia andando). Calculada a 4 km/h en CORE-005 (D-210, D-211); en la API, **pendiente de A** (GAP-001) |
 | `falta.filas_pendientes` | Estamos calculando el resto de servicios para esta zona. | Si la API avisa en `warnings` de filas aún no calculadas. Nunca se pintan como SIN DATOS |
 | `falta.como` | ¿Cómo lo decidimos? | Enlace a «Cómo lo calculamos», sección «Qué falta» |
 

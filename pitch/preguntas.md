@@ -82,7 +82,7 @@ Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: 
 **14. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
 Sí, por eso Madrid se divide en sus 21 distritos. Además, la distancia a pie se calcula por sección censal, que es mucho más fina que el municipio.
 - Evidencia: D-200 · D-210 · `evidence/gate-03/2026-11-11/walk-coverage.txt` (las 4.843 zonas: secciones, municipios, distritos y región).
-- Estado: distritos hechos con el padrón municipal (D-209; ejemplo real: Chamartín, `GET /api/v1/gaps/distrito/2807905`). Distancia a pie calculada (CORE-005, `fc025b6`, Gate 3 PASS); recalcularla a 4 km/h y enseñarla en la web, **pendiente de A**.
+- Estado: distritos hechos con el padrón municipal (D-209; ejemplo real: Chamartín, `GET /api/v1/gaps/distrito/2807905`). Distancia a pie calculada a 4 km/h (CORE-005, D-211, Gate 3 PASS); enseñarla en la web, **pendiente de A** (GAP-001).
 
 **15. ¿Cómo calculáis el % de encaje?**
 Primero se comprueban las condiciones de la persona, cada una con PASS, FAIL o «sin dato», y un «sin dato» nunca cuenta como PASS. Después se puntúan las prioridades con pesos declarados. El método y su versión se ven en «Cómo lo calculamos».
@@ -95,8 +95,8 @@ Así es: el dataset del portal cubre los municipios de más de 20.000 habitantes
 
 **17. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
 Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. Damos los minutos en los que llega la mitad de las calles de la zona y qué parte de ellas está a 10 minutos o menos; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.
-- Evidencia: D-210 · `data/catalog/features/min_a_pie_*.yaml` y `pct_calle_*.yaml` · `scripts/check_walk_golden.py` y `evidence/gate-03/2026-11-11/walk-golden.txt` (La Acebeda: 97,5 min a 4,5 km/h) · estudio del Ayuntamiento: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf («Velocidad de desplazamiento estimada en 4 Km/h»).
-- Estado: cálculo hecho a 4,5 km/h (CORE-005, `fc025b6`, Gate 3 PASS). 4 km/h es decisión de Mariano (11 nov); el recálculo y su uso en la web están **pendientes de A** (con GAP-001).
+- Evidencia: D-210 · D-211 · `data/catalog/features/min_a_pie_*.yaml` y `pct_calle_*.yaml` · `scripts/check_walk_golden.py` y `evidence/gate-03/2026-11-11/phase-core005-f5.txt` (La Acebeda: farmacia a 109,7 min, D-211) · estudio del Ayuntamiento: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf («Velocidad de desplazamiento estimada en 4 Km/h»).
+- Estado: hecho a 4 km/h, decisión de Mariano del 11 nov (CORE-005 Fase 5, `ad2129a`, D-211, Gate 3 PASS). En la web, **pendiente de A** (con GAP-001).
 
 ---
 

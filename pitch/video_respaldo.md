@@ -69,7 +69,7 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 - **Acción:** clic en «Ver zonas que encajan». Esperar a que se coloree el mapa y señalar la tarjeta de zona con el cursor, despacio.
 - **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje» y 3–5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** **pendiente de A** (CORE-003; los minutos a pie de CORE-005 ya existen y falta recalcularlos a 4 km/h) y **pendiente de B** (pantalla).
+- **Estado:** **pendiente de A** (CORE-003; los minutos a pie ya existen a 4 km/h, CORE-005 y D-211) y **pendiente de B** (pantalla).
 
 <!-- voz:p3:inicio -->
 Pulsamos «Ver zonas que encajan». El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.

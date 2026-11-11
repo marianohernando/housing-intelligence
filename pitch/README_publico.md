@@ -51,7 +51,7 @@ Fuentes:
 Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»** de la demo.
 
 <!--
-- Pasos 1–3: contratos ScenarioState y SearchResult v2 (packages/contracts/src/hi_contracts/public/, D-202 a D-204). El cálculo está pendiente de A (CORE-003 y CORE-006, para el 15–16 nov). Las distancias a pie ya están calculadas (CORE-005, fc025b6, D-210); falta recalcularlas a 4 km/h, decisión de Mariano del 11 nov.
+- Pasos 1–3: contratos ScenarioState y SearchResult v2 (packages/contracts/src/hi_contracts/public/, D-202 a D-204). El cálculo está pendiente de A (CORE-003 y CORE-006, para el 15–16 nov). Las distancias a pie ya están calculadas a 4 km/h (CORE-005, D-210 y D-211).
 - «6 min andando» y «+100 €/mes» / «+10 min» son ejemplos de formato del brief de diseño y del contrato (Relaxation.label), no cifras de una zona.
 - Paso 4: GET /api/v1/gaps/{level}/{code} (D-194). Hoy tiene 2 de las 6 filas; el resto está pendiente de A (GAP-001, 16 nov). Si alguna fila no llega, se quita de la lista.
 - Compra: orientativa (D-203).
@@ -107,7 +107,7 @@ Al publicar el repositorio, el 11 nov, reescribimos el historial solo para quita
 - §6: docs/09_datamad/24_bases_oficiales_2026.md · D-174.
 - Tag cf39459 = pre-datamad^{commit} (el tag anotado es e6bead3) · D-198.
 - 10 conjuntos antes del concurso: evidence/gate-01/2026-10-22/summary.md (Gate 01 PASS, 10 datasets).
-- Durante el concurso: board/BOARD.md (DATA-007, DATA-016, GAP-001, CORE-003, CORE-005, OPS-001). Las distancias a pie están hechas (CORE-005, fc025b6, D-210) y la demo está desplegada (PR #6). El buscador está pendiente de A (CORE-003) hasta el 16 nov: si no llega, se quita de la lista.
+- Durante el concurso: board/BOARD.md (DATA-007, DATA-016, GAP-001, CORE-003, CORE-005, OPS-001). Las distancias a pie están hechas (CORE-005, D-210 y D-211) y la demo está desplegada (PR #6). El buscador está pendiente de A (CORE-003) hasta el 16 nov: si no llega, se quita de la lista.
 -->
 
 ## Equipo

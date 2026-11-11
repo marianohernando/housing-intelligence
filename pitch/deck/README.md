@@ -43,7 +43,7 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | Nada: el nombre completo se pasa con `DECK_INTEGRANTES` al construir | — |
-| Slide 3 | Cifras de Chamartín con los cortes finales de GAP-001 (hoy `gap-0.1`, provisionales) y los minutos a pie recalculados a 4 km/h (hoy 8,4 min a 4,5 km/h; saldrán unos 9,5) | A (GAP-001 y CORE-005) |
+| Slide 3 | Cifras de Chamartín con los cortes finales de GAP-001 (hoy `gap-0.1`, provisionales) | A (GAP-001) |
 | Todas | Capturas C1–C6 | B / D el 24 nov |
 
 Para cerrar una marca, se quita `class="pending"` y su `data-pending` en `deck.html`. Si lo marcado no llega, se borra el elemento entero: nunca se deja un hueco ni un «próximamente».
