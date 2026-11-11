@@ -2,6 +2,8 @@
 # Smoke test of the public demo: web, API liveness and readiness, one zone and one map layer.
 #   scripts/smoke_demo.sh [BASE_URL]                       # default https://vidafacil-madrid.vercel.app
 #   SMOKE_API_ONLY=1 scripts/smoke_demo.sh http://localhost:8012   # API container, no web
+#   SMOKE_TAG=<id> scripts/smoke_demo.sh   # User-Agent vida-facil-smoke/<id>, to find the requests
+#                                          # in `vercel logs requests` (infra/deploy/deploy.sh)
 # Exits 0 only if every check passes. Needs curl and jq. Prints no secrets.
 set -euo pipefail
 export LC_ALL=C
@@ -15,6 +17,12 @@ ZONE="${SMOKE_ZONE:-municipio/28079}"   # Madrid
 LAYER="${SMOKE_LAYER:-education}"
 TIMEOUT="${SMOKE_TIMEOUT:-60}"          # the first request after idle may cold start
 MAX_BYTES=4500000                       # Vercel Functions response body limit (4.5 MB)
+TAG="${SMOKE_TAG:-}"
+if [[ -n "$TAG" && ! "$TAG" =~ ^[A-Za-z0-9._-]+$ ]]; then
+  echo "smoke: SMOKE_TAG may only contain letters, digits, '.', '_' and '-'" >&2
+  exit 2
+fi
+USER_AGENT="vida-facil-smoke${TAG:+/$TAG}"
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -25,7 +33,7 @@ failures=0
 # prints a summary (no output or false means the body is wrong).
 check() {
   local name="$1" path="$2" filter="$3" code secs bytes detail="" ok=1
-  read -r code secs bytes < <(curl -sS -o "$TMP/$name" --max-time "$TIMEOUT" \
+  read -r code secs bytes < <(curl -sS -o "$TMP/$name" --max-time "$TIMEOUT" -A "$USER_AGENT" \
     -w '%{http_code} %{time_total} %{size_download}\n' "$BASE$path" 2>/dev/null || echo "000 0 0")
   if [[ "$code" != "200" ]]; then
     ok=0 detail="HTTP $code"
@@ -40,7 +48,7 @@ check() {
     "$( ((ok)) && echo OK || echo FAIL)" "$name" "$secs" "$bytes" "$path" "$detail"
 }
 
-echo "smoke: $BASE ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
+echo "smoke: $BASE ($(date -u +%Y-%m-%dT%H:%M:%SZ))${TAG:+ tag $TAG}"
 if [[ "${SMOKE_API_ONLY:-0}" != "1" ]]; then
   check web "/" ""
 fi
@@ -55,7 +63,7 @@ check layer "/api/v1/places?category=$LAYER" \
 # The largest layer, paginated since 879101a: page 1 is the biggest single response the map asks
 # for, so this guards the 4.5 MB limit per page (not the size of the whole layer).
 check largest "/api/v1/places?category=transport" \
-  'select(.data.page == 1 and (.data.features | length) > 0
+  'select(.data.page == 1 and .data.pages >= 1 and (.data.features | length) > 0
           and .data.total >= (.data.features | length))
    | "\(.data.total) stops, page \(.data.page)/\(.data.pages)"'
 

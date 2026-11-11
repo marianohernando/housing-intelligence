@@ -4,7 +4,7 @@ Command: `npx vercel@65.12.1 deploy --prod --yes` from `claude/s1-deploy`, at 72
 
 | Field | Value |
 |---|---|
-| Project | `mariano-hernando-s-projects/vida-facil` (preset Services: `web` Next.js, `api` container) |
+| Project | `<equipo>/vida-facil` (preset Services: `web` Next.js, `api` container) |
 | Deployment | `dpl_DDUofMsMnv7rRtBeWh838R5j48rA` · READY · target production |
 | Production URL | **https://vida-facil-eight.vercel.app** |
 | Build machine | 4 cores, 8 GB |

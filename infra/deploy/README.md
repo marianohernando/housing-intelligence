@@ -6,7 +6,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 - Alias secundario: `https://vida-facil-eight.vercel.app`. Es el que asignó Vercel al crear el proyecto (otra cuenta ya usa `vida-facil.vercel.app`) y se mantiene para no romper los enlaces ya compartidos. `CORS_ORIGINS` acepta los dos.
 - Si se cambia el dominio, hay que actualizar `NEXT_PUBLIC_API_URL`, `CORS_ORIGINS` y `DEMO_URL` en `deploy.sh` y en `smoke_demo.sh`, y volver a desplegar.
 - Región de cómputo: `dub1` (Dublín), junto a la base de datos.
-- Equipo de Vercel: `mariano-hernando-s-projects`, la cuenta del CLI de Mariano.
+- Equipo de Vercel: el de la cuenta del CLI de Mariano. Su slug lleva su apellido, así que no se escribe en el repo (LINEAS.md); `deploy.sh` lo enmascara en su salida.
 - Por qué Vercel y no Render ni Cloud Run: [evidence/gate-06/2026-11-11-deploy/provider-research.md](../../evidence/gate-06/2026-11-11-deploy/provider-research.md).
 
 ## Piezas
@@ -16,9 +16,9 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 | [`vercel.json`](../../vercel.json) | Dos servicios (Vercel Services, beta): `web` sale de `apps/web` (Next.js) y `api` es un contenedor construido con `infra/deploy/api/Dockerfile`. También fija la región y las reglas de enrutado. |
 | [`.vercelignore`](../../.vercelignore) | Lista de lo que se sube. Solo sale el código: nunca `.env*`, `*.pem`, `*.key`, `*.db`, `*.sqlite`, `node_modules`, `data/` ni `docs/`. |
 | [`api/Dockerfile`](api/Dockerfile) | Imagen de la API con solo las dependencias de `hi-api` (`uv sync --package hi-api`). Usuario no root y puerto `$PORT`. |
-| [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción y pasa el smoke. |
+| [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción, pasa el smoke y comprueba en `vercel logs` que todas sus peticiones las sirvió el despliegue nuevo. |
 | [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
-| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación) y la página 1 de la capa más grande (transporte). También comprueba que ninguna respuesta pase de 4,5 MB. |
+| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación) y la página 1 de la capa más grande (transporte). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
 | [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql) | Rol `vf_api_ro`: solo lectura, con una política RLS por cada tabla que lee la API. Es idempotente. |
 
 ## Variables de entorno (proyecto Vercel, entorno Production)
@@ -74,19 +74,32 @@ Cómo se detecta:
 2. Desde un checkout limpio de `claude/sprint-1-public`, o de `main` después del merge, ejecuta `make deploy-demo`. El checkout se enlaza una sola vez con `npx vercel@65.12.1 link --project vida-facil`.
 
    El comando:
-   - despliega web y API en producción;
+   - despliega web y API en producción y anota el id del despliegue nuevo (`dpl_…`);
    - publica los dos dominios, `vidafacil-madrid` y `vida-facil-eight`;
-   - pasa `scripts/smoke_demo.sh`;
-   - si el smoke falla, lo repite **una vez a los 20 s** («smoke failed right after the switch; retrying once in 20 s»);
-   - solo si falla también la segunda vez, sale con un código distinto de 0 e imprime el comando de rollback.
+   - pasa `scripts/smoke_demo.sh` con una etiqueta única en el User-Agent;
+   - busca esas peticiones en `vercel logs requests` (tardan 10–20 s en aparecer) y comprueba que **todas** las sirvió el despliegue nuevo. Imprime cuántas vienen de cada despliegue;
+   - si el smoke falla, o si alguna petición vino de otro despliegue, espera 20 s y repite smoke y comprobación, **hasta 3 veces**.
 
-   **Por qué el reintento:** durante unos segundos después de cambiar el dominio, el despliegue anterior puede seguir atendiendo alguna petición con sus variables de entonces. El 11 nov dio un 500 porque se había creado antes de existir `DATABASE_URL`, y a los pocos segundos el smoke dio 6/6. Los logs lo distinguen: `npx vercel@65.12.1 logs --environment production --since 15m --json`, campo `deploymentId`. Un fallo real falla las dos veces.
+   **Por qué:** durante unos segundos después de cambiar el dominio, el despliegue anterior sigue atendiendo parte del tráfico. El 11 nov dio un 500, porque se había creado antes de existir `DATABASE_URL`. Más tarde ese día, dos veces seguidas, un smoke 7/7 recién desplegado tenía 3 o 4 de sus 7 peticiones servidas por el despliegue anterior. Un smoke en verde, por sí solo, no prueba el despliegue nuevo.
+
+   **Cómo termina:**
+
+   | Código | Qué significa | Qué hacer |
+   |---|---|---|
+   | 0 | Smoke en verde y todas sus peticiones del despliegue nuevo («verified: …») | Nada |
+   | 1 | Falló el despliegue, o el smoke falló las 4 veces | Rollback (imprime el comando) |
+   | 2 | No ha desplegado: árbol sucio, rama no permitida, falta `jq` o el enlace con Vercel | Corregir y repetir |
+   | 3 | Ha desplegado pero no está verificado: el smoke pasa y alguna petición sigue viniendo de otro despliegue, o los logs no muestran todas | No presentar así. Revisar `npx vercel@65.12.1 logs requests --environment production --since 10m` y repetir `make smoke-demo` |
+
+   El script solo imprime ids de despliegue y recuentos, nunca tokens ni variables.
 
    Desde otra rama solo se despliega a propósito, con `ALLOW_BRANCH=1 make deploy-demo`.
 
-3. Guarda la salida en `evidence/gate-06/<fecha>-deploy/`.
+3. Guarda la salida en `evidence/gate-06/<fecha>-deploy/`, pasándola por `scripts/redact_paths.py`: `set -o pipefail; ALLOW_BRANCH=1 make deploy-demo 2>&1 | uv run python scripts/redact_paths.py > evidence/…`.
+   - `deploy.sh` ya cambia por `<panel de Vercel>` y `<despliegue>` las URLs del CLI que llevan el slug del equipo.
+   - Antes del commit, revisa que no quede ninguna ruta local ni ninguna URL con ese slug (LINEAS.md).
 
-**Tiempo:** unos 85–110 s con el smoke incluido. Construye la imagen de la API y la web. Si salta el reintento, suma 20 s más un segundo smoke.
+**Tiempo:** unos 2–3 minutos. La construcción de la imagen de la API y de la web lleva unos 85–110 s, y la comprobación en los logs unos 20 s por ronda. Lo normal es que la primera ronda aún pille el despliegue anterior y la segunda verifique: 157 s el 11 nov.
 
 **Sin Git:** la integración con GitHub está desconectada a propósito. Los push de las líneas no despliegan nada; solo despliega `make deploy-demo`.
 
@@ -131,13 +144,17 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - `make smoke-demo` tiene que dar 7/7. Si falla, sigue la sección «Si la demo se cae».
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
-2. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
-3. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
-   - Sus 6 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y capa.
+2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
+   - El sync vacía con `TRUNCATE` las 9 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
+   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 7/7.
+   - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
+3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
+4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
+   - Sus 7 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y dos capas.
    - Así el contenedor de la API ya está arrancado y no te comes los 3–4 s del arranque en frío delante del jurado.
    - Deja después la pestaña de la demo abierta y recárgala una vez.
    - El contenedor se apaga tras 5 min sin tráfico. Si entre el calentamiento y tu turno pasan más de 5 min, repítelo.
-4. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
+5. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
 
 ## Si la demo se cae
 
@@ -212,3 +229,7 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 - **Versión del CLI:** usa `npx vercel@65.12.1`. El CLI global 54.x no entiende `services` en `vercel.json`.
 - **`vercel link`:** añade `.env*` a `.gitignore`, con lo que vuelve a ignorar `.env.example`. Hay que revertir esa línea. Además escribe un token OIDC en `.env.local`, que está ignorado por git y por `.vercelignore`.
 - **Docker Desktop (macOS):** si `docker build` se queda en `resolve image config`, el helper de credenciales `desktop` no responde. Solución: `DOCKER_CONFIG` temporal con `{}` y un enlace a `~/.docker/cli-plugins`.
+- **Build de la web con fuentes de Google:** la web descarga Plus Jakarta Sans e Inter de Google Fonts al compilar (`next/font/google`).
+  - El 11 nov, el primer build en Vercel falló con `Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'` («next/font/google queries have exactly one entry»). El mismo commit compiló en local, y en Vercel al segundo intento.
+  - Si pasa: `deploy.sh` sale con 1 y producción no cambia. Repite `make deploy-demo`.
+  - Para quitar esa dependencia de la red, B puede servir las fuentes desde el repo con `next/font/local`. Es un cambio en `apps/web`, de B.
