@@ -91,26 +91,26 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
-### Estado de la sesión del 11 nov (noche, relevo de la línea A)
-- **Done (esta sesión, A v3):**
-  - Peticiones de B a la API, todas cerradas:
-    - `d3127d3`: `/gaps` avisa por cada fila que falta (`INSUFFICIENT_DATA: row <fila> not computed at <nivel> level yet`);
-    - `d7037b7`: `/places` filtra con `?admin_unit_id=` y `?subcategory=` repetible;
-    - `12c834a`: `/geo/admin-units` con nombres legibles y `?parent=`;
-    - `879101a`: `/places` paginada de 5.000 en 5.000 (1,4 MB como máximo; Vercel corta en 4,5 MB).
-  - **CORE-005 DONE** (`23b7531`, `fc025b6`, D-210): 12 features a pie por sección, municipio y distrito, y **Gate 3 PASS**.
-  - PR #6 de C integrado (`877d4fd`) con `reviewer`.
-  - CI de la rama en verde otra vez (`29a688e`). `make lint` comprueba ahora los schemas y el manifest de docs, igual que la CI (`bc60e1f`).
-  - La base local tiene las 24 features recalculadas (`make features`, 29 s).
+### Estado de la sesión del 11 nov (noche, relevo de la línea A v4)
+- **Done (esta sesión, A v4):**
+  - PR #7 de C integrado (`93af627`) con `reviewer`: el smoke mide la página 1 de transporte (7/7). Pendiente menor de C: exigir `.data.pages >= 1` en el check `largest`.
+  - **CORE-005 Fase 5** (`ad2129a`, **D-211**): 4 km/h en las 12 features a pie, que pasan a la versión 2. Los 15 golden cumplen sin tocar los límites y el **Gate 3 da PASS**. Chamartín: centro de salud 9,47 min y farmacia 2,57 (enviados a D por `datamad-10`).
+  - **Supabase** sincronizado por Mariano y comprobado por MCP.
+  - **DATAMAD-PUBLIC-01 Fase 3** (`12bd103`): no quedan rutas locales en el árbol. `scripts/redact_paths.py` las sanea y `tests/data/test_no_local_paths.py` las vigila en la CI.
+  - Antes (A v3): peticiones de B a la API cerradas (`d3127d3`, `d7037b7`, `12c834a` y `879101a`), CORE-005 DONE (`fc025b6`) y PR #6 de C (`877d4fd`).
 - **Blocked / a la espera:** nada. **Supabase:** sincronizado por Mariano tras los 4 km/h y comprobado por MCP (12 features a pie en `feature_version` 2, con 4.843 filas cada una). La API pública no necesita redespliegue hasta que GAP-001 sirva las features a pie: entonces hay que avisar a `datamad-10`.
 - **Next (línea A), en orden.** Las tres decisiones de Mariano del 11 nov por la noche están hechas: PR #7 de C (`93af627`), 4 km/h (D-211, `ad2129a`, ya en Supabase) y sin rutas locales en el árbol (`12bd103`).
-  4. **GAP-001 completo.**
-     - Filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy cuenta escuelas infantiles e IES; usar los mismos destinos que `min_a_pie_colegio`).
-     - Las features a pie ya traen `gap_row: {role: extra}`: conectarlas como `extra_indicators` en `services/gaps.py`.
-     - Lista por sección y `GET /api/v1/gaps?level=&row=`.
-     - ADR de los cortes con criterio estadístico. Chamartín salud = 0,79: no mover los cortes por ese caso, y decirle a D si cambia de estado.
-     - Por distrito, la vivienda queda SIN DATOS.
-     - En la web, minutos muy altos (hasta 380 en pueblos sin colegio, a 4 km/h) mejor como «más de 60 min»: proponérselo a B.
+  4. **GAP-001 completo** (checkpoint del 13 nov). Fases propuestas, cada una con su commit:
+     - **F1 `extra_indicators`:** las features a pie ya traen `gap_row: {role: extra}`. Conectarlas en `apps/api/src/hi_api/services/gaps.py` (hoy `zone_gap_list` solo lee las `primary`). Con esto la API ya sirve las features a pie: avisar a `datamad-10` para que C redespliegue. Revisar los fixtures de `data/fixtures/contracts/` y docs/04/31.
+     - **F2 filtro de colegios:** usar los mismos destinos que `min_a_pie_colegio` (primaria, público o concertado); hoy cuenta escuelas infantiles e IES. Nueva versión de la feature y del `proxy_note`.
+     - **F3 filas nuevas por municipio y distrito**, con los tests primero:
+       - farmacia: puntos de `cm_oficinas_farmacia` por población, con `places_per_population`; `cm_farmacias_municipios` publica la ratio oficial y sirve para contrastar;
+       - mayores: centros de mayores (los mismos destinos que `min_a_pie_mayores`) por cada 1.000 mayores de 65; las plazas de residencia son otra medida;
+       - escuela infantil: `cm_unidades_escolares` de un único nivel (nunca sumando miembros) frente a la población de 0 a 4 años o a `cm_nacidos_vivos_municipios`;
+       - vivienda: tamaño de los hogares (`cm_hogares_tamano_censo_2021`) frente a la superficie de las viviendas (`cm_viviendas_superficie`); por distrito queda SIN DATOS.
+     - **F4 nivel sección y `GET /api/v1/gaps?level=&row=`.**
+     - **F5 ADR de los cortes** con criterio estadístico, golden y `reviewer`. Chamartín salud = 0,79: no mover los cortes por ese caso, y decirle a D si cambia de estado.
+     - En la web, mejor mostrar los minutos muy altos (hasta 380 en pueblos sin colegio, a 4 km/h) como «más de 60 min»: proponérselo a B.
   5. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
   6. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que aparece el Reality Check.
   7. `POST /api/v1/search`; los distritos entran en `all_zones`.
