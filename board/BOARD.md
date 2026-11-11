@@ -2,14 +2,14 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche: contratos v2 de Vida Fácil, D-199 a D-207).
+Última actualización: 2026-11-11 (PR #4 de C integrado y migración 0005 del rol `vf_api_ro`, D-208; sigue DATA-012).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, noche) |
 |---|---|---|---|
 | **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, DATA-012, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos v2 publicados: `2bcc35e`** (sustituyen a `7541527`). `/gaps` (municipio, distrito y sección) y `/datasets` funcionan con datos reales. Siguiente: DATA-012 |
 | **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | PR #2 (borrador): F1 hecha (`4402edd`). **Antes de su F2, rebase sobre `2bcc35e` y tipos desde `data/schemas/api/` (v2)** |
-| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | Trabajo sin commit en `hi-deploy`: Dockerfile, `vercel.json`, readiness y SQL de un rol de solo lectura `vf_api_ro`. Sin PR todavía |
+| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #4 fusionado (`c8ae262`)**: Vercel (web + API) en `vida-facil-eight.vercel.app`, readiness, smoke diario y rol `vf_api_ro` (migración 0005, `ad16393`). Smoke 2/6 hasta que Mariano ponga `DATABASE_URL` y Supabase llegue a 0005. Mejoras pendientes de C: R-07 (`.vercelignore` y ficheros ignorados en `deploy.sh`) y R-08 (desplegar solo desde la rama de la demo) |
 | **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | PR #3 (borrador): formulario de 98 palabras, slides, guion y banco de preguntas. «Vida Fácil» está libre (TMview) |
 
 **Respuestas de A a lo que piden las líneas (11 nov, noche):**
@@ -35,6 +35,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | OPS-001 · Fase A (migración 0005) | verde | `ad16393` | `evidence/gate-06/2026-11-11/phase-ops001-0005.txt` | Rol `vf_api_ro` como migración (D-208): solo lectura y una política `FOR SELECT` en las 7 tablas de la API. Test unitario contra la migración y test de integración del rol real. Base local en 0005 |
+| 11 nov | C → A | OPS-001 · PR #4 integrado | CI verde | `c8ae262` | `evidence/gate-06/2026-11-11-deploy/` | Despliegue en Vercel con un comando, `/api/v1/health/ready`, smoke diario (activo cuando llegue a `main`). Revisado con `reviewer`: sin bloqueantes |
 | 11 nov | A | CONTRACTS · Fase 2 (v2) | verde | `2bcc35e` | `evidence/gate-04/2026-11-11/phase-contracts-f2.txt` | **Contratos v2 de Vida Fácil** (D-199 a D-207): compra o alquiler, hogar, 6 prioridades, distritos de Madrid, % de encaje con hechos y Reality Check aplicable. `/gaps` acepta distrito; nuevas `/datasets` y CORS con `POST`; títulos oficiales en el catálogo; plan §1, §6 y §8 |
 | 11 nov | A | Mantenimiento | — | `d4a03dd` | — | Token `sbp_…` del MCP rotado (lo confirma Mariano). El MCP `supabase-datamad` sigue respondiendo: 14 tablas con RLS y perfil demo |
 | 11 nov | A | GAP-001 · Fase 0 (esqueleto andante) | verde | `2da5d4d` | `evidence/gate-04/2026-11-11/phase-gap001-f0.txt` | `GET /api/v1/gaps/{level}/{code}` con datos reales: colegio y centro de salud por municipio frente a la referencia regional. Madrid: FALTA en los dos (1,56 frente a 2,18 y 0,37 frente a 0,59). Migración 0004 |
@@ -86,13 +88,20 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   4. CORE-006.
   5. CORE-003 con Reality Check.
   6. `POST /api/v1/search` (CORS con `POST`).
-- **Para Supabase (17 nov):** `make supabase-migrate` (ya hay migración 0004) y después `make supabase-sync PROFILE=demo`.
+- **Para Supabase (los ejecuta Mariano; en las sesiones lo bloquea el clasificador de permisos).** En `housing-intelligence`, en este orden:
+  1. `make supabase-migrate`: pasa de 0003 a 0005 (0004: enlace al portal e `is_cm_open_data`; 0005: rol `vf_api_ro`). Se puede hacer ya.
+  2. `make supabase-sync PROFILE=demo`: **esperar a que A avise** de que la base local está estable (después de DATA-012 Fase 2, con las filas por distrito).
+  3. En el SQL editor de Supabase: `ALTER ROLE vf_api_ro PASSWORD '<nueva>';`.
+  4. En Vercel, `DATABASE_URL` con el usuario `vf_api_ro.<project_ref>` (guía en `infra/deploy/README.md`).
+  5. `make deploy-demo`: despliega y pasa el smoke.
+
+  Después, A comprueba por MCP la versión de alembic, las políticas y el recuento de filas.
 - **Gate status:**
   - G1 PASS (21 datasets CM); la red OSM pasa su calidad.
   - G2 PASS.
   - G3: fases de CORE-005 en verde; el Gate 3 completo llega con la Fase 4.
   - G4: contratos y esqueleto de la lista en verde.
-  - G6: Supabase en la migración 0003. Le falta la 0004 (se aplica el 17 nov o antes, si C despliega).
+  - G6: Supabase sigue en la migración 0003 y le faltan la 0004 y la 0005; la base local ya está en 0005. Despliegue de C en Vercel funcionando, con el smoke en 2/6 hasta tener `DATABASE_URL` y la sincronización.
 - **Notas para las siguientes cards:**
   - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001; el `proxy_note` ya lo avisa).
   - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004 (línea B).
