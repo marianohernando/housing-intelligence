@@ -10,9 +10,9 @@ import styles from "../section.module.css";
 
 export const metadata: Metadata = { title: "Zonas" };
 
-// «Con su estado en…» is provisional (pending line D)
+// zonas.fila.intro of pitch/textos_web.md (gap-0.2, D-213)
 const rowIntro = (name: string) =>
-  `Con su estado en ${name.toLowerCase()} frente a la Comunidad de Madrid: FALTA, JUSTO, CUBIERTO o SIN DATOS.`;
+  `Con su estado en ${name.toLowerCase()} frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS.`;
 
 /**
  * The zones in a list (pitch/textos_web.md, mapa.alternativa): the same zones as the map, without

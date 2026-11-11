@@ -261,7 +261,7 @@
   list-style: none;
 }
 
-/* «Colegio a menos de [10] min andando» on top; «Imprescindible» and «Quitar» below */
+/* «Colegio a [10] min andando como mucho» on top; «Imprescindible» and «Quitar» below */
 .nearItem {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -288,7 +288,7 @@
   color: var(--violet-strong);
 }
 
-/* «a menos de [10] min andando»: the selector inside the sentence */
+/* «a [10] min andando como mucho»: the selector inside the sentence */
 .nearMinutes {
   display: inline-flex;
   align-items: center;

@@ -15,6 +15,7 @@ import {
   passingText,
   rankText,
   relaxOptions,
+  unknownText,
   zoneFit,
   zoneKeyOf,
 } from "../fit";
@@ -152,12 +153,19 @@ describe("«¿Y si cambias algo?»", () => {
     expect(passingText(1)).toBe("Con tu búsqueda tal cual sale 1 zona.");
     expect(passingText(32)).toBe("Con tu búsqueda tal cual salen 32 zonas.");
     expect(passingText(49, true)).toBe("Con este cambio salen 49 zonas.");
+    expect(passingText(1, true)).toBe("Con este cambio sale 1 zona.");
+  });
+
+  it("says in how many zones something could not be checked, in singular with one (rc.sin_dato)", () => {
+    expect(unknownText(3)).toBe("En 3 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas.");
+    expect(unknownText(1)).toBe("En 1 zona no podemos comprobarlo todo por falta de datos. No la contamos como buena.");
   });
 
   it("tells each option with the API's figures, never recomputed", () => {
     const option = { label: "+5 min a pie hasta colegio con primaria", zones_if_relaxed: 49, added_zones: 17 };
     expect(optionText(option)).toEqual({ label: option.label, count: "saldrían 49 zonas, 17 más" });
-    expect(optionText({ ...option, zones_if_relaxed: 1, added_zones: 1 }).count).toBe("saldrían 1 zona, 1 más");
+    // Singular with 1 zone (rc.opcion.cuenta, pitch/textos_web.md 8c49e33)
+    expect(optionText({ ...option, zones_if_relaxed: 1, added_zones: 1 }).count).toBe("saldría 1 zona, 1 más");
   });
 
   it("writes the place in the ranking (zona.puesto)", () => {

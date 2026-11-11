@@ -18,7 +18,7 @@ import GapBadge from "./GapBadge";
 import SmallZoneTag from "./SmallZoneTag";
 import styles from "./ZoneDirectory.module.css";
 
-// Copy: carga.mapa and error.reintentar from pitch/textos_web.md; the rest is provisional (pending line D).
+// Copy from pitch/textos_web.md (zonas.*, carga.zonas, carga.estado_zonas, error.reintentar).
 const TEXT = {
   loading: "Cargando las zonas…",
   retry: "Reintentar",

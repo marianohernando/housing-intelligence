@@ -52,7 +52,8 @@ export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 
 /**
  * A failed call. `code` comes from the API (`ErrorCode`), or is NETWORK when the API cannot be
- * reached, VALIDATION for a rejected request and HTTP_<status> when the body says nothing.
+ * reached, ABORTED when the caller cancelled it, VALIDATION for a rejected request and
+ * HTTP_<status> when the body says nothing.
  */
 export class ApiError extends Error {
   constructor(
@@ -83,7 +84,8 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     try {
       response = await fetchImpl(new URL(path, base).toString(), init);
     } catch (exc) {
-      throw new ApiError(0, "NETWORK", (exc as Error).message);
+      const aborted = init?.signal?.aborted || (exc as Error).name === "AbortError";
+      throw new ApiError(0, aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
     }
     if (!response.ok) throw await toApiError(response);
     return (await response.json()) as T;
@@ -114,12 +116,13 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
       );
       return [first, ...rest].flatMap((body) => body.data.features);
     },
-    /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check. */
-    search(scenario: ScenarioState) {
+    /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
+    search(scenario: ScenarioState, { signal }: { signal?: AbortSignal } = {}) {
       return call<SearchResponse>("/api/v1/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scenario),
+        signal,
       });
     },
   };

@@ -141,7 +141,10 @@ export default function ComoLoCalculamosPage() {
       <h1 className={styles.title}>Cómo lo calculamos</h1>
       <Section id="principios" title="Tres reglas que seguimos siempre">
         <ul className={styles.text}>
-          <li>Comparamos cada zona con el conjunto de la Comunidad de Madrid, siempre según cuánta gente vive en ella.</li>
+          <li>
+            Comparamos cada zona con los demás municipios de la Comunidad de Madrid de su mismo tipo, urbanos o rurales,
+            siempre según cuánta gente vive en ella.
+          </li>
           <li>Si un dato no existe, lo decimos: «sin datos» no es lo mismo que cero.</li>
           <li>Cada dato dice de dónde sale y cuánto podemos fiarnos de él.</li>
         </ul>
@@ -171,7 +174,7 @@ export default function ComoLoCalculamosPage() {
           «Casi encajan», para que decidas tú.
         </p>
         <p className={styles.para}>
-          <strong>Debajo del %</strong> van entre 3 y 5 hechos que puedes comprobar, como «Colegio público a 6 min
+          <strong>Debajo del %</strong> van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min
             andando», y cada uno dice cuánto nos fiamos del dato.
         </p>
       </Section>

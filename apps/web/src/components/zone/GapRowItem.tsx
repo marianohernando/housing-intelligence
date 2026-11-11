@@ -15,10 +15,10 @@ import styles from "./GapRowItem.module.css";
 // Copy from pitch/textos_web.md (falta.fila.*, confianza.aria, estado.sin_datos).
 const TEXT = {
   noData: "Sin datos",
-  regional: "En toda la Comunidad de Madrid:", // gap-0.2 context; provisional (pending line D)
+  regional: "En toda la Comunidad de Madrid:", // falta.fila.region (gap-0.2 context)
   walk: "A pie hasta",
   note: "Ojo:",
-  sources: "De dónde sale:", // falta.fila.fuente; the count is provisional (pending line D)
+  sources: "De dónde sale:", // falta.fila.fuente, with the number of datasets
   confidence: "Fiabilidad del dato: ",
 };
 

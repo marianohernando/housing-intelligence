@@ -80,8 +80,8 @@ const TEXT = {
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  // Provisional (pending line D)
-  ariaRow: (label: string) => `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a la Comunidad de Madrid; la leyenda lo explica.`,
+  // mapa.aria.fila of pitch/textos_web.md (gap-0.2, D-213)
+  ariaRow: (label: string) => `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo; la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
 };
 
@@ -129,7 +129,10 @@ function source(map: MapLibreMap, id: string): GeoJSONSource {
   return map.getSource(id) as GeoJSONSource;
 }
 
-/** The FALTA stripes, JUSTO dots and small-zone lines the zones are filled with when the map shows a row of «Qué falta». */
+/**
+ * The FALTA stripes, JUSTO dots and small-zone lines the zones are filled with when the map shows
+ * a row of «Qué falta», and the crossed diagonals of the zones that fail a condition after a search.
+ */
 function addPatterns(map: MapLibreMap, palette: MapPalette): void {
   const scale = Math.min(2, Math.ceil(window.devicePixelRatio || 1));
   const ink = (color: string, alpha: number): Rgba8 => {
@@ -139,6 +142,7 @@ function addPatterns(map: MapLibreMap, palette: MapPalette): void {
   map.addImage(PATTERN_IMAGE.FALTA, patternPixels("stripes", ink(palette.gapFaltaInk, 170), scale), { pixelRatio: scale });
   map.addImage(PATTERN_IMAGE.JUSTO, patternPixels("dots", ink(palette.gapJustoInk, 200), scale), { pixelRatio: scale });
   map.addImage(PATTERN_IMAGE.ZONA_PEQUENA, patternPixels("lines", ink(palette.gapZonaPequenaInk, 120), scale), { pixelRatio: scale });
+  map.addImage(PATTERN_IMAGE.NO_CUMPLE, patternPixels("cross", ink(palette.fitNoCumpleInk, 80), scale), { pixelRatio: scale });
 }
 
 function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: ZoneProperties) => void): void {

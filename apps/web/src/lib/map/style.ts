@@ -31,6 +31,7 @@ export const MAP_PALETTE_TOKENS = {
   gapZonaPequenaInk: "zona-pequena-ink",
   fitLow: "map-fit-low",
   fitNoCumple: "map-no-cumple",
+  fitNoCumpleInk: "ink-soft",
   gapFaltaInk: "falta-ink",
   gapJustoInk: "justo-ink",
   sinDatos: "sin-datos",
@@ -149,7 +150,8 @@ export function baseStyle(p: MapPalette): StyleSpecification {
  * added by the map). A zone with a `gap` property (lib/map/gapMap.ts) is filled by its status in
  * the row the person picked, with the FALTA, JUSTO and small-zone patterns and a dashed edge for
  * SIN DATOS. After a search, a zone with a `fit` property (lib/fit.ts) is filled by its % when it
- * fits, almost white when it fails a condition and grey with a dashed edge when unknown. The
+ * fits, almost white and crossed out when it fails a condition and grey with a dashed edge when
+ * unknown. The
  * zone under the pointer gets a violet edge of its own layer, whatever its fill.
  * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
  * first, so the white mask drawn above fades the surroundings, buildings included.
@@ -191,19 +193,18 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         },
       },
       {
+        // FALTA, JUSTO and small zones of a row; after a search, the zones that fail a condition
+        // are crossed out, so they read apart from those that fit by more than their tone (R-06)
         id: "zones-pattern",
         type: "fill",
         source: "zones",
-        filter: ["match", ["get", "gap"], ["FALTA", "JUSTO", "ZONA_PEQUENA"], true, false],
+        filter: ["any", ["match", ["get", "gap"], ["FALTA", "JUSTO", "ZONA_PEQUENA"], true, false], ["==", ["get", "fit"], "NO_CUMPLE"]],
         paint: {
           "fill-pattern": [
-            "match",
-            ["get", "gap"],
-            "FALTA",
-            PATTERN_IMAGE.FALTA,
-            "JUSTO",
-            PATTERN_IMAGE.JUSTO,
-            PATTERN_IMAGE.ZONA_PEQUENA,
+            "case",
+            ["==", ["get", "fit"], "NO_CUMPLE"],
+            PATTERN_IMAGE.NO_CUMPLE,
+            ["match", ["get", "gap"], "FALTA", PATTERN_IMAGE.FALTA, "JUSTO", PATTERN_IMAGE.JUSTO, PATTERN_IMAGE.ZONA_PEQUENA],
           ],
           "fill-opacity": fadeOut(1),
         },

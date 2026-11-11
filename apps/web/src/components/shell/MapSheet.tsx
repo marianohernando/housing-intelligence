@@ -7,7 +7,7 @@ import { SHEET_PEEK } from "@/lib/map/camera";
 
 import styles from "./MapSheet.module.css";
 
-// Copy from pitch/textos_web.md (movil.hoja.tirador); «Ver el mapa» is provisional (asked to line D).
+// Copy from pitch/textos_web.md (movil.hoja.tirador, movil.hoja.mapa).
 const TEXT = {
   more: "Desliza hacia arriba para ver más",
   map: "Ver el mapa",

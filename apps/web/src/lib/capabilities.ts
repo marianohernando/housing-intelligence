@@ -15,11 +15,12 @@ export function flagOn(value: string | undefined): boolean {
  */
 export const SEARCH_ENABLED = flagOn(process.env.NEXT_PUBLIC_FEATURE_SEARCH);
 
-/** Runs the search only when the capability is on; off, the API is never called. */
+/** Runs the search only when the capability is on; off, the API is never called. `signal` cancels it. */
 export async function runSearch(
-  api: { search: (scenario: ScenarioState) => Promise<SearchResponse> },
+  api: { search: (scenario: ScenarioState, init?: { signal?: AbortSignal }) => Promise<SearchResponse> },
   scenario: ScenarioState,
   enabled: boolean = SEARCH_ENABLED,
+  signal?: AbortSignal,
 ): Promise<SearchResponse | null> {
-  return enabled ? api.search(scenario) : null;
+  return enabled ? api.search(scenario, { signal }) : null;
 }

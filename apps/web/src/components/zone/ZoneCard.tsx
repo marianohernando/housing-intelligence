@@ -26,7 +26,7 @@ const TEXT = {
   beforeSearch: "Haz tu búsqueda para ver qué zonas encajan contigo.",
   fitSoon: "Muy pronto verás cuánto encaja esta zona contigo.", // zona.encaje.pronto
   fitHelp: "Cuánto se parece esta zona a lo que buscas. No es una nota de la zona.", // zona.encaje.ayuda
-  stale: "Este encaje es de tu búsqueda anterior.", // provisional (pending line D)
+  stale: "Este encaje es de tu búsqueda anterior.", // zona.encaje.antiguo
   missing: "Qué falta aquí",
   walk: "A pie:",
   retry: "Reintentar",

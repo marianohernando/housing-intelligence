@@ -57,10 +57,13 @@ export function searchReducer<E>(state: SearchState<E>, action: SearchAction<E>)
     case "done":
       if (state.attempt?.id !== action.id) return state;
       return { ...state, result: action.result, searched: state.attempt.scenario, applied: state.attempt.applied, status: "done", attempt: null };
-    case "fail":
+    case "fail": {
       if (state.attempt?.id !== action.id) return state;
-      // The result on screen is still the previous one: so is its scenario
-      return { ...state, scenario: state.attempt.before, status: "error", error: action.error };
+      // The result on screen is still the previous one, and so is its scenario, unless the user
+      // edited the search while the attempt was in flight: those edits are kept.
+      const untouched = state.scenario === state.attempt.scenario;
+      return { ...state, scenario: untouched ? state.attempt.before : state.scenario, status: "error", error: action.error };
+    }
   }
 }
 
@@ -80,9 +83,24 @@ export function undoAttempt(state: SearchState<unknown>, id: number): Attempt | 
   return state.applied ? plainAttempt(state, id, state.applied.previous) : null;
 }
 
-/** The scenario on screen is not the one behind the result (same content counts as the same). */
+/**
+ * Canonical JSON of a value: object keys sorted and undefined members left out, as JSON does.
+ * Arrays keep their order (the priorities go first to last).
+ */
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map((v) => (v === undefined ? "null" : canonical(v))).join(",")}]`;
+  if (value !== null && typeof value === "object") {
+    const entries = Object.entries(value)
+      .filter(([, v]) => v !== undefined)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${canonical(v)}`).join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "null";
+}
+
+/** The scenario on screen is not the one behind the result (same content counts as the same, whatever the key order). */
 export function isStale(state: Pick<SearchState<unknown>, "result" | "searched" | "scenario">): boolean {
-  return state.result !== null && JSON.stringify(state.searched) !== JSON.stringify(state.scenario);
+  return state.result !== null && canonical(state.searched) !== canonical(state.scenario);
 }
 
 /** «Reintentar»: the failed attempt again, as it was (with its option, if any). */

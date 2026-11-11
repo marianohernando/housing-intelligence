@@ -4,6 +4,7 @@ import { validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
 import type { StyleSpecification } from "maplibre-gl";
 import { describe, expect, it } from "vitest";
 
+import { PATTERN_IMAGE } from "../map/gapMap";
 import {
   baseStyle,
   BUILDING_LAYER,
@@ -93,6 +94,14 @@ describe("map style", () => {
     for (const c of ["ENCAJA", "NO_CUMPLE", "SIN_DATOS", "fit_pct", palette.fitLow, palette.violet, palette.fitNoCumple]) expect(fill).toContain(c);
     const noData = zoneLayers(palette).above.find((l) => l.id === "zones-nodata");
     expect(JSON.stringify(noData?.type === "line" && noData.filter)).toContain('"fit"');
+  });
+
+  it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {
+    const pattern = zoneLayers(palette).below.find((l) => l.id === "zones-pattern");
+    const json = JSON.stringify(pattern?.type === "fill" && { filter: pattern.filter, paint: pattern.paint });
+    expect(json).toContain('["==",["get","fit"],"NO_CUMPLE"]');
+    expect(json).toContain(PATTERN_IMAGE.NO_CUMPLE);
+    for (const image of [PATTERN_IMAGE.FALTA, PATTERN_IMAGE.JUSTO, PATTERN_IMAGE.ZONA_PEQUENA]) expect(json).toContain(image);
   });
 
   it("outlines the barrio in focus above the buildings, dashed so it reads apart from the district", () => {

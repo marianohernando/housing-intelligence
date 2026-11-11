@@ -16,9 +16,8 @@ import RealityCheck from "./RealityCheck";
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer,
-// zona.cerca_de_encajar.*, error.reintentar). The title, «De {n} zonas…», «Ver las {n} primeras»,
-// «Y {n} más en el mapa» and the stale notice are provisional (pending line D).
+// Copy from pitch/textos_web.md (resultados.*, carga.busqueda, vacio.sin_resultados, rc.aplicado,
+// rc.deshacer, zona.cerca_de_encajar.*, error.reintentar; 8c49e33).
 const TEXT = {
   title: "Zonas que encajan",
   loading: "Buscando zonas que encajan…",
@@ -31,7 +30,7 @@ const TEXT = {
   fewer: "Ver menos",
   rest: (n: number) => `Y ${zonesText(n)} más en el mapa.`,
   near: "Casi encajan",
-  nearHelp: "Fallan en una sola cosa.",
+  nearHelp: "Cumplen todo menos una cosa.",
   fails: "No cumple:",
   retry: "Reintentar",
   district: (city: string | null | undefined) => `Distrito de ${city ?? "Madrid"}`,

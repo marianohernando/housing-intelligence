@@ -157,8 +157,12 @@
   background: linear-gradient(90deg, var(--map-fit-low), var(--violet));
 }
 
+/* Crossed out, as on the map (R-06): it reads apart from «Cumple todo» by more than its tone */
 .fit_NO_CUMPLE {
-  background: var(--map-no-cumple);
+  background:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink-soft) 34%, transparent) 0 1.5px, transparent 1.5px 4.25px),
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink-soft) 34%, transparent) 0 1.5px, transparent 1.5px 4.25px),
+    var(--map-no-cumple);
 }
 
 /* The three classes side by side, each count under its name */

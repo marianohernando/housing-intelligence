@@ -90,26 +90,49 @@ export function countByStatus(painted: PaintedCollection): StatusCounts {
 }
 
 /**
- * Pattern tiles in CSS px: FALTA diagonal stripes, JUSTO dots and small-zone horizontal lines
- * (the legend draws the same in CSS).
+ * Pattern tiles in CSS px: FALTA diagonal stripes, JUSTO dots, small-zone horizontal lines and,
+ * after a search, crossed diagonals for the zones that fail a condition (the legend draws the
+ * same in CSS).
  */
 export const GAP_PATTERN = { size: 12, period: 6, stripe: 1.5, dot: 2 } as const;
-export const PATTERN_IMAGE = { FALTA: "gap-falta", JUSTO: "gap-justo", ZONA_PEQUENA: "gap-zona-pequena" } as const;
+/** Map pattern images: the statuses of «Qué falta» and, after a search, the zones that fail a condition. */
+export const PATTERN_IMAGE = {
+  FALTA: "gap-falta",
+  JUSTO: "gap-justo",
+  ZONA_PEQUENA: "gap-zona-pequena",
+  NO_CUMPLE: "fit-no-cumple",
+} as const;
 
-export type PatternKind = "stripes" | "dots" | "lines";
+export type PatternKind = "stripes" | "dots" | "lines" | "cross";
 export type Rgba8 = [r: number, g: number, b: number, a: number];
+
+/** Whether pixel (x, y) of a tile of `size` carries ink; `size` is a multiple of `period`. */
+function inked(kind: PatternKind, x: number, y: number, { size, period, mark }: { size: number; period: number; mark: number }): boolean {
+  const down = (x + y) % period < mark;
+  switch (kind) {
+    case "stripes":
+      return down;
+    case "cross":
+      return down || (x - y + size) % period < mark;
+    case "lines":
+      return y % period < mark;
+    case "dots":
+      return x % period < mark && y % period < mark;
+  }
+}
 
 /** RGBA pixels of a seamless pattern tile at `scale` device pixels per CSS pixel. */
 export function patternPixels(kind: PatternKind, ink: Rgba8, scale: number): { width: number; height: number; data: Uint8Array } {
   const size = GAP_PATTERN.size * scale;
-  const period = GAP_PATTERN.period * scale;
-  const mark = Math.max(1, Math.round((kind === "dots" ? GAP_PATTERN.dot : GAP_PATTERN.stripe) * scale));
+  const tile = {
+    size,
+    period: GAP_PATTERN.period * scale,
+    mark: Math.max(1, Math.round((kind === "dots" ? GAP_PATTERN.dot : GAP_PATTERN.stripe) * scale)),
+  };
   const data = new Uint8Array(size * size * 4);
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      const on =
-        kind === "stripes" ? (x + y) % period < mark : kind === "lines" ? y % period < mark : x % period < mark && y % period < mark;
-      if (on) data.set(ink, (y * size + x) * 4);
+      if (inked(kind, x, y, tile)) data.set(ink, (y * size + x) * 4);
     }
   }
   return { width: size, height: size, data };
