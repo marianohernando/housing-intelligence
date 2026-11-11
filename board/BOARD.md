@@ -1,16 +1,32 @@
-# Board — Sprint 1 comprimido (10–18 nov 2026) · Demo para el formulario
+# Board — Vida Fácil · Sprint 1 comprimido (10–18 nov 2026) · Demo para el formulario
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (tarde: contratos publicados y lista con datos reales por la API).
+Última actualización: 2026-11-11 (noche: contratos v2 de Vida Fácil, D-199 a D-207).
 
 ## Líneas paralelas (LINEAS.md)
-| Línea | Rama | Alcance | Estado |
+| Línea | Rama | Alcance | Estado (11 nov, noche) |
 |---|---|---|---|
-| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos publicados: `7541527`** · lista de lo que falta por la API con datos reales (`2da5d4d`) · siguiente: CORE-005 Fase 3 |
-| **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | Sin PR todavía |
-| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento de la API y la web) | Sin PR todavía |
-| **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | Sin PR todavía |
+| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, DATA-012, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos v2 publicados: `2bcc35e`** (sustituyen a `7541527`). `/gaps` (municipio, distrito y sección) y `/datasets` funcionan con datos reales. Siguiente: DATA-012 |
+| **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | PR #2 (borrador): F1 hecha (`4402edd`). **Antes de su F2, rebase sobre `2bcc35e` y tipos desde `data/schemas/api/` (v2)** |
+| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | Trabajo sin commit en `hi-deploy`: Dockerfile, `vercel.json`, readiness y SQL de un rol de solo lectura `vf_api_ro`. Sin PR todavía |
+| **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | PR #3 (borrador): formulario de 98 palabras, slides, guion y banco de preguntas. «Vida Fácil» está libre (TMview) |
+
+**Respuestas de A a lo que piden las líneas (11 nov, noche):**
+- **B (PR #2):**
+  1. Nivel distrito: `GET /api/v1/gaps/distrito/{2807901–2807921}` ya responde con nombre y zona; las filas llegan con DATA-012. El buscador siempre usa municipios + distritos (D-200).
+  2. Compra: `ScenarioState.budget = {kind: rent|buy, amount_eur}` (D-203).
+  3. `GET /api/v1/datasets?cm_only=true` funciona: 22 datasets, 21 CM.
+  4. CORS: la API admite `GET` y `POST`; los orígenes van en `CORS_ORIGINS` al arrancar.
+
+  Además: `match_pct` + `facts` (D-202), `gap_highlights`, `all_zones` para la coropleta y `relaxed_scenario` en cada opción del Reality Check. Rutas y reglas en `docs/04_technical_architecture/31_public_api_routes.md`. Hay fixtures v2 en `data/fixtures/contracts/`.
+- **D (PR #3):**
+  1. Plan §1, §6 y §8 actualizados con «Vida Fácil» y el estilo nuevo.
+  2. Títulos oficiales en el catálogo para los 6 GTFS y las secciones censales.
+  3. Los 12 datasets CM que aún no alimentan nada se conectan así: farmacias, unidades escolares y nacidos vivos en GAP-001; los 6 GTFS en CORE-005 (transporte a pie) y GAP-001; tenencia en GAP-001 (vivienda); alquiler por código postal en CORE-006. Si alguno no llega el 16 nov, A lo avisa aquí para bajar la cifra.
+  4. DATA-012 y las 6 filas de GAP-001 están comprometidas para el 16 nov (checkpoint del 13: la lista con datos reales).
+  5. `/datasets` funciona.
+- **C:** A convierte `vf_api_ro` en migración en cuanto llegue el PR. La API ya depende de hi-domain (scipy, shapely, pyproj y h3): conviene medirlo para el alojamiento. Supabase necesita `make supabase-migrate` (0004) antes de la siguiente carga.
 
 Checkpoints: **13 nov** la lista de lo que falta sale por la API con datos reales · **15 nov** el buscador funciona con un perfil dorado · **16 nov (noche)** todo integrado con la web de B.
 
@@ -19,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | CONTRACTS · Fase 2 (v2) | verde | `2bcc35e` | `evidence/gate-04/2026-11-11/phase-contracts-f2.txt` | **Contratos v2 de Vida Fácil** (D-199 a D-207): compra o alquiler, hogar, 6 prioridades, distritos de Madrid, % de encaje con hechos y Reality Check aplicable. `/gaps` acepta distrito; nuevas `/datasets` y CORS con `POST`; títulos oficiales en el catálogo; plan §1, §6 y §8 |
 | 11 nov | A | Mantenimiento | — | `d4a03dd` | — | Token `sbp_…` del MCP rotado (lo confirma Mariano). El MCP `supabase-datamad` sigue respondiendo: 14 tablas con RLS y perfil demo |
 | 11 nov | A | GAP-001 · Fase 0 (esqueleto andante) | verde | `2da5d4d` | `evidence/gate-04/2026-11-11/phase-gap001-f0.txt` | `GET /api/v1/gaps/{level}/{code}` con datos reales: colegio y centro de salud por municipio frente a la referencia regional. Madrid: FALTA en los dos (1,56 frente a 2,18 y 0,37 frente a 0,59). Migración 0004 |
 | 11 nov | A | Organización | — | `c0faef8` | — | Cuatro líneas paralelas (LINEAS.md); el board recoge las cuatro |
@@ -84,21 +101,25 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - La API depende ya de hi-domain, que arrastra scipy, shapely, pyproj y h3. C debe medirlo para el alojamiento.
 
 ## 02 — READY THIS SPRINT (en orden)
-1. CORE-005 Fases 3 y 4 (ver 03) · G3 · 12–13 nov
-2. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO / SIN DATOS frente a la referencia regional por población, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de los hogares frente a superficie de las viviendas) · G3/G4 · Fase 0 hecha el 11 nov (`2da5d4d`); completa el 13–14 nov · D-194
-3. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 14–15 nov
-4. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · perfiles dorados · G4 · 15 nov
-5. API-002 `POST /api/v1/search` sobre `ScenarioState` · 15–16 nov
-6. MAP-004 / PUB-001: parte web en la línea B; la línea A da la API y la procedencia · 16 nov
-7. OPS-001: el alojamiento es de la línea C. La línea A hace `make supabase-sync PROFILE=demo` el 17 nov y avisa a C para que vuelva a desplegar · G6
-8. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo prepara la línea D y lo envía Mariano · 18 nov (límite real 19) · D-193
+1. DATA-012 Panel de distritos y barrios del Ayuntamiento: población por edad y hogares por distrito de Madrid capital (D-200), para que Madrid no sea un único bloque · G1 · 12 nov · va antes de GAP-001
+2. CORE-005 Fases 3 y 4 (ver 03); los indicadores salen también por distrito · G3 · 12–13 nov
+3. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO / SIN DATOS frente a la referencia regional por población, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de los hogares frente a superficie de las viviendas) · G3/G4 · Fase 0 hecha el 11 nov (`2da5d4d`); completa el 13–14 nov, también por distrito · D-194
+4. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 14–15 nov
+5. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · perfiles dorados · G4 · 15 nov
+6. API-002 `POST /api/v1/search` sobre `ScenarioState` · 15–16 nov
+7. MAP-004 / PUB-001: parte web en la línea B; la línea A da la API y la procedencia · 16 nov
+8. OPS-001: el alojamiento es de la línea C. La línea A hace `make supabase-sync PROFILE=demo` el 17 nov y avisa a C para que vuelva a desplegar · G6
+9. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo prepara la línea D y lo envía Mariano · 18 nov (límite real 19) · D-193
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
+- DATA-018 Zonas verdes: inventario del Ayuntamiento (Madrid capital) + parques de OSM (ODbL) en el resto (D-205)
+- DATA-019 Accesibilidad física: instalaciones accesibles del Ayuntamiento + `wheelchair_boarding` de metro y cercanías; el resto, SIN DATOS (D-205)
+- DATA-020 Seguridad: actuaciones de la Policía Municipal por distrito por cada 1.000 habitantes; nunca características de personas ni «peligroso»; fuera de Madrid, SIN DATOS (D-205)
+- DATA-021 Precio de compra: fuente oficial abierta por municipio (por ejemplo, el valor tasado del Ministerio de Vivienda), con confidence baja; si no hay una fiable, SIN DATOS (D-203)
 - CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)
 - DATA-017 Transacciones inmobiliarias (libre/protegida y nueva/usada) por municipio: trimestrales y solo con nombre de municipio → tipo de pipeline nuevo (periodo trimestral + resolución de nombre a código INE). Recortado de DATA-016: el objetivo de datasets CM ya se superó (21)
 - MCP-001 / API-001 API versionada + 3–5 tools MCP sobre servicios de dominio (nunca SQL)
 - MAP-002 Resaltar selección, navegación por teclado y lista accesible (WCAG, Gate 6)
-- DATA-012 Panel de indicadores de distritos y barrios (Ayuntamiento)
 - MAP-003 Vector tiles para secciones censales (payload)
 - DATA-013 Códigos postales (geometría) para cruzar alquiler por CP
 - DATA-015 Zonas estadísticas de la Comunidad (sin geometría publicada; observaciones ya guardadas)
