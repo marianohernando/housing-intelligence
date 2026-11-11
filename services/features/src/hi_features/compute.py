@@ -1,8 +1,9 @@
 """Dispatch FeatureSpec.formula.method to a pure method and persist feature_value rows.
 
 A feature is computed at its `geo_level` and, when `formula.levels` declares overrides (e.g.
-districts with their own population metric), once more per extra level with the same method.
-The regional reference only comes from the base level.
+districts with their own population metric), once more per extra level. An override replaces
+the keys it names (a shallow merge: unused keys of the base formula are simply ignored). The
+regional reference only comes from the base level.
 """
 
 from collections.abc import Callable, Mapping
@@ -94,7 +95,28 @@ def compute(engine: Engine, spec: FeatureSpec) -> pd.DataFrame:
         level: _run(spec, {**formula, **override}, engine, level)
         for level, override in levels.items()
     }
-    return combine_levels(base, extra)
+    combined = combine_levels(base, extra)
+    if "category" not in formula:
+        return combined
+    shares = loaders.section_share(engine, formula["category"])
+    for level in extra:
+        combined = scale_by_section_share(combined, shares, level)
+    return combined
+
+
+def scale_by_section_share(
+    rows: pd.DataFrame, share_by_municipio: Mapping[str, float], level: str = "distrito"
+) -> pd.DataFrame:
+    """Places are assigned to sub-municipal zones through their census section. Where some
+    places of a municipio have none, its zones keep their value with confidence times the
+    share of places that do (a missing place must not read as a sure 0)."""
+    out = rows.copy()
+    factors = [
+        share_by_municipio.get(str(code)[:5], 1.0) if row_level == level else 1.0
+        for code, row_level in zip(out["territory_code"], out["territory_level"], strict=True)
+    ]
+    out["confidence"] = out["confidence"] * factors
+    return out
 
 
 def _run(spec: FeatureSpec, formula: dict[str, Any], engine: Engine, level: str) -> pd.DataFrame:

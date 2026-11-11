@@ -90,3 +90,18 @@ def test_quality_requires_every_district(
     sample = spec.model_copy(update={"expected_districts": 3})
     assert run_panel_quality(obs, sample, metrics, SAMPLE_DISTRICTS).passed
     assert not run_panel_quality(obs, spec, metrics, SAMPLE_DISTRICTS).passed
+
+
+def test_quarantine_points_at_the_source_row_and_lost_district_codes_are_not_hidden(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    rows = source.loc[
+        (source["indicador_completo"] == "Total hogares") & (source["cod_barrio"] == "")
+    ].copy()
+    district = rows.loc[rows["cod_distrito"] != ""].index[0]
+    rows.loc[district, "cod_distrito"] = ""  # a district row that lost its code, name kept
+    obs = normalize(rows.reset_index(drop=True), spec)
+    position = rows.index.get_loc(district)
+    assert obs.quarantine["source_row"].tolist() == [position]
+    city = int((rows["cod_distrito"] == "").sum()) - 1
+    assert obs.out_of_window == city  # only the real city rows are outside the scope

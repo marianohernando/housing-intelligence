@@ -4,7 +4,12 @@ import pandas as pd
 import pytest
 
 from hi_contracts.catalog import FeatureSpec
-from hi_features.compute import combine_levels, pass_level, versions_by_pass
+from hi_features.compute import (
+    combine_levels,
+    pass_level,
+    scale_by_section_share,
+    versions_by_pass,
+)
 from hi_features.methods import RESULT_COLUMNS
 from hi_ingestion.catalog.loader import load_catalog
 
@@ -62,3 +67,13 @@ def test_each_pass_cites_only_the_datasets_it_used(colegios: FeatureSpec) -> Non
         "cm_centros_educativos": "v-centros",
         "ayto_padron_municipal": "v-padron",
     }
+
+
+def test_places_without_a_census_section_lower_district_confidence() -> None:
+    """A place outside every section has no district: its absence cannot read as a sure 0."""
+    rows = _rows(("2807901", 1.0, None), ("2807905", 0.0, None), ("2800101", 2.0, None))
+    out = combine_levels(_rows(), {"distrito": rows})
+    scaled = scale_by_section_share(out, {"28079": 0.9})
+    confidence = dict(zip(scaled["territory_code"], scaled["confidence"], strict=True))
+    assert confidence == {"2807901": 0.9, "2807905": 0.9, "2800101": 1.0}
+    assert scaled["value"].tolist() == [1.0, 0.0, 2.0]  # values never change

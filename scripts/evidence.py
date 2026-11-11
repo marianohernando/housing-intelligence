@@ -193,6 +193,8 @@ GATE_01 = [
             "tests/integration/test_stat_pipelines.py",
             "tests/integration/test_places_pipeline.py",
             "tests/integration/test_gtfs_pipeline.py",
+            "tests/integration/test_padron_pipeline.py",
+            "tests/integration/test_district_panel_pipeline.py",
             "-q",
         ],
     ),
@@ -328,6 +330,13 @@ select count(distinct feature_id)
   join (select feature_id as fid, count(*) as n from feature_value group by 1) c
     on c.fid = v.feature_id
 """
+# Features with rows for the 21 districts of Madrid (D-200/D-209): 7 expected today.
+DISTRICT_COVERAGE_SQL = """
+select count(*) from (
+  select feature_id from feature_value where territory_level = 'distrito'
+   group by 1 having count(*) = 21
+) d
+"""
 GATE_03 = [
     Check(
         "dictionary",
@@ -355,9 +364,15 @@ GATE_03 = [
     ),
     Check(
         "coverage",
-        "12 features x 179 municipios, null contract and lineage in the dev DB",
+        "12 features with at least the 179 municipios, null contract and lineage in the dev DB",
         [*PSQL, FEATURE_COVERAGE_SQL],
         lambda r: r.returncode == 0 and r.stdout.strip() == "12|0|0|179",
+    ),
+    Check(
+        "district-coverage",
+        "7 features with the 21 districts of Madrid (D-200, D-209)",
+        [*PSQL, DISTRICT_COVERAGE_SQL],
+        lambda r: r.returncode == 0 and r.stdout.strip() == "7",
     ),
     GATE_00[-1],
 ]

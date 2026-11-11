@@ -22,7 +22,7 @@ from hi_ingestion.pipelines.stat_tables.quality import (
 )
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
-PARSER_VERSION = "madrid_district_panel-1.0.0"
+PARSER_VERSION = "madrid_district_panel-1.1.0"
 
 
 def run_panel_quality(

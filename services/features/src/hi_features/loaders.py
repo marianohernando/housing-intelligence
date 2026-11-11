@@ -29,6 +29,15 @@ _PLACES = {
         """
     ),
 }
+# Share of a municipio's places (of one category) that lie in a census section.
+_SECTION_SHARE = text(
+    """
+    SELECT municipio_ine, avg((seccion_admin_unit_id IS NOT NULL)::int)::float AS share
+      FROM place_master
+     WHERE category = :category AND status = 'ACTIVE' AND municipio_ine IS NOT NULL
+     GROUP BY municipio_ine
+    """
+)
 _VERSIONS = text(
     """
     SELECT dataset_id, version_label FROM dataset_version
@@ -55,6 +64,12 @@ def places(engine: Engine, category: str, level: str = "municipio") -> pd.DataFr
     return pd.DataFrame(
         [dict(r) for r in rows], columns=["territory_code", "subcategory", "attributes"]
     )
+
+
+def section_share(engine: Engine, category: str) -> dict[str, float]:
+    with engine.connect() as conn:
+        rows = conn.execute(_SECTION_SHARE, {"category": category}).all()
+    return {str(code): float(share) for code, share in rows}
 
 
 def last_valid_versions(engine: Engine, dataset_ids: list[str]) -> dict[str, str]:

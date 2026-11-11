@@ -1,8 +1,10 @@
 """Panel rows -> one observation per declared indicator, district and reference date.
 
 Rows of other indicators, of barrios or of the whole city are outside the scope: they are
-counted (`out_of_window`), not quarantined. `source_rows` counts the rows in scope, so the
-quarantine ratio measures what the pipeline actually reads.
+counted (`out_of_window`), not quarantined. The city row is the one with neither district code
+nor district name; a row with a name but no code lost its code and goes to quarantine.
+`source_rows` counts the rows in scope, so the quarantine ratio measures what the pipeline
+actually reads; `source_row` in the quarantine is the position in the source file.
 """
 
 from datetime import date, datetime
@@ -31,11 +33,12 @@ def _period(raw: str) -> date:
 
 
 def _in_scope(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> bool:
-    return (
-        row.get(spec.indicator_column) in spec.indicators
-        and bool(row.get(spec.district_column))
-        and not row.get(spec.barrio_column)
+    if row.get(spec.indicator_column) not in spec.indicators or row.get(spec.barrio_column):
+        return False
+    city = not row.get(spec.district_column) and not (
+        spec.district_name_column and row.get(spec.district_name_column)
     )
+    return not city
 
 
 def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict[str, Any]:
@@ -62,10 +65,10 @@ def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict
 
 def normalize(frame: pd.DataFrame, spec: MadridDistrictPanelPipeline) -> Observations:
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
-    in_scope = [row for row in records if _in_scope(row, spec)]
+    in_scope = [(index, row) for index, row in enumerate(records) if _in_scope(row, spec)]
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, Any]] = []
-    for index, row in enumerate(in_scope):
+    for index, row in in_scope:
         try:
             rows.append(_observation(row, spec))
         except (RowError, KeyError) as exc:

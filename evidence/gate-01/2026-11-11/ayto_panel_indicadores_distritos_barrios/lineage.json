@@ -7,12 +7,12 @@
       "sha256": "11a758e6249d81ede44a6fad9e4456dee8145e459464a3419929c579262ac6fc",
       "bytes": 36060277,
       "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-0-indicadores-distritos-csv/download/panelcsv.csv",
-      "retrieved_at": "2026-11-11T14:21:20.456216+00:00"
+      "retrieved_at": "2026-11-11T14:30:58.645710+00:00"
     }
   ],
   "checksum": "4726abc60a15e411263beefe17506575bb979498132ece33c97c0740369ffc9d",
-  "parser_version": "madrid_district_panel-1.0.0",
+  "parser_version": "madrid_district_panel-1.1.0",
   "dataset_version": "2026-11-11-4726abc60a15",
-  "correlation_id": "57dff9a89dc84981a81ce097280fb0a7",
+  "correlation_id": "47a0cecf7c7846bca75e0fdd73493c75",
   "silver": "data/silver/ayto_panel_indicadores_distritos_barrios/4726abc60a15/observations.csv.gz"
 }

@@ -104,15 +104,36 @@ def test_total_is_the_sum_of_every_count_column(
     assert dict(zip(totals["territory_code"], totals["value"], strict=True)) == expected
 
 
+def _people(row: pd.Series, spec: MadridPadronPipeline) -> int:
+    return sum(int(str(row[column])) for column in spec.count_columns)
+
+
 def test_bad_rows_go_to_quarantine_never_to_zero(
     spec: MadridPadronPipeline, source: pd.DataFrame
 ) -> None:
-    broken = source.head(3).copy()
-    broken.loc[broken.index[0], spec.count_columns[0]] = ""
-    broken.loc[broken.index[1], spec.age_column] = "n/a"
-    obs = normalize(broken, spec)
+    rows = source.loc[source["COD_DISTRITO"] == "6"].head(3).copy()
+    good = _people(rows.iloc[2], spec)
+    rows.loc[rows.index[0], spec.count_columns[0]] = ""
+    rows.loc[rows.index[1], spec.age_column] = "n/a"
+    obs = normalize(rows, spec)
     assert len(obs.quarantine) == 2
     assert obs.source_rows == 3
+    totals = obs.frame.loc[[d["edad"] == TOTAL_AGE for d in obs.frame["dims"]], "value"].tolist()
+    assert totals == [good]  # the broken rows add nothing, not even a 0
+
+
+def test_an_age_without_rows_is_published_as_zero(
+    spec: MadridPadronPipeline, source: pd.DataFrame
+) -> None:
+    """D-209: the padrón is exhaustive, so a band with nobody in it is 0, not missing."""
+    row = source.loc[source["COD_DISTRITO"] == "1"].head(1)
+    band = five_year_age_band(parse_age(str(row[spec.age_column].iloc[0])))
+    frame = normalize(row, spec).frame
+    assert len(frame) == len(five_year_age_bands()) + 1
+    values = {d["edad"]: v for d, v in zip(frame["dims"], frame["value"], strict=True)}
+    people = _people(row.iloc[0], spec)
+    assert values[band] == values[TOTAL_AGE] == people
+    assert all(v == 0.0 for b, v in values.items() if b not in {band, TOTAL_AGE})
 
 
 def test_quality_requires_every_district(spec: MadridPadronPipeline, source: pd.DataFrame) -> None:
@@ -125,6 +146,25 @@ def test_quality_requires_every_district(spec: MadridPadronPipeline, source: pd.
     assert not missing.passed  # 3 of 21 districts
     unknown = run_padron_quality(obs, sample, metrics, {"2807901"}, census_total=None)
     assert not unknown.passed
+
+
+def test_a_district_that_shrinks_suddenly_blocks_publication(
+    spec: MadridPadronPipeline, source: pd.DataFrame
+) -> None:
+    """A truncated file would publish missing ages as 0; the last valid totals catch it."""
+    obs = normalize(source, spec)
+    sample = spec.model_copy(update={"expected_districts": 3})
+    metrics = load_catalog().metrics
+    totals = obs.frame.loc[[d["edad"] == TOTAL_AGE for d in obs.frame["dims"]]]
+    previous = dict(zip(totals["territory_code"], totals["value"], strict=True))
+    same = run_padron_quality(obs, sample, metrics, SAMPLE_DISTRICTS, None, previous)
+    assert same.passed
+    previous["2807905"] *= 2  # Chamartín had twice the people in the last valid version
+    halved = run_padron_quality(obs, sample, metrics, SAMPLE_DISTRICTS, None, previous)
+    check = next(c for c in halved.checks if c.name == "district_totals_stable")
+    assert check.critical
+    assert not check.passed
+    assert check.details["changed"] == ["2807905"]
 
 
 def test_census_comparison_is_reported_not_blocking(

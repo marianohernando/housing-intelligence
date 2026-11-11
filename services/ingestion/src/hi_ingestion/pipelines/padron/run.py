@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from hi_contracts.catalog.pipeline import MadridPadronPipeline
 from hi_db.models import GeoAdminUnit
+from hi_domain.population import TOTAL_AGE
 from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
 from hi_ingestion.pipelines.fetch import FetchedFile
@@ -19,6 +20,14 @@ from hi_ingestion.pipelines.stat_tables.quality import row_counts
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
 PARSER_VERSION = "madrid_padron-1.0.0"
+_LAST_DISTRICT_TOTALS = text(
+    """
+    SELECT territory_code, value FROM metric_observation
+     WHERE metric_id = :metric_id AND territory_level = 'distrito' AND dims_key = :dims_key
+       AND period_start = (SELECT max(period_start) FROM metric_observation
+                            WHERE metric_id = :metric_id AND territory_level = 'distrito')
+    """
+)
 _LATEST_MUNICIPIO_VALUE = text(
     """
     SELECT value FROM metric_observation
@@ -52,6 +61,14 @@ def census_total(engine: Engine, catalog: Catalog, spec: MadridPadronPipeline) -
     return float(value) if value is not None else None
 
 
+def last_district_totals(engine: Engine, spec: MadridPadronPipeline) -> dict[str, float]:
+    """Totals of the last valid version (observations are only replaced by a passing run)."""
+    params = {"metric_id": spec.metric_id, "dims_key": dims_key({"edad": TOTAL_AGE})}
+    with engine.connect() as conn:
+        rows = conn.execute(_LAST_DISTRICT_TOTALS, params).all()
+    return {str(code): float(value) for code, value in rows if value is not None}
+
+
 def padron_steps(
     engine: Engine, catalog: Catalog, spec: MadridPadronPipeline
 ) -> PipelineSteps[Observations]:
@@ -67,6 +84,7 @@ def padron_steps(
             catalog.metrics,
             known_districts(engine, spec.municipio_ine),
             census_total(engine, catalog, spec),
+            last_district_totals(engine, spec),
         ).to_dict(),
         counts=lambda obs: row_counts(obs.frame),
         write_silver=write_silver,
