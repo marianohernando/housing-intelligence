@@ -1,0 +1,4 @@
+# Docs manifest v0.5.19 tras los cambios de docs/04/31 (d3127d3, d7037b7, 12c834a, 879101a)
+# 2026-11-11T15:29:26Z
+277 files OK, 0 changed, 0 missing
+exit=0
