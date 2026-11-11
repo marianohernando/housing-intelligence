@@ -1,0 +1,51 @@
+# Offline demo for the final (OPS-001, line C): isolated Postgres + the demo API image.
+# Its own compose project, volume and ports (5441, 8012); never the development stack
+# (housing-intelligence: 5440/8010/3010). Driven by infra/deploy/offline/demo_offline.sh.
+name: vida-facil-offline
+
+services:
+  db:
+    build: ../../docker/postgres
+    image: vida-facil-offline-db:17
+    environment:
+      POSTGRES_USER: vidafacil
+      POSTGRES_PASSWORD: vidafacil
+      POSTGRES_DB: vidafacil
+    ports:
+      - "127.0.0.1:5441:5432"
+    volumes:
+      - offline_pgdata:/var/lib/postgresql/data
+      - ../../docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+    shm_size: 512mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vidafacil -d vidafacil"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build:
+      context: ../../..   # repository root (paths are relative to this file)
+      dockerfile: infra/deploy/api/Dockerfile
+    image: vida-facil-api:offline
+    environment:
+      DATABASE_URL: postgresql+psycopg://vidafacil:vidafacil@db:5432/vidafacil
+      CORS_ORIGINS: '["http://localhost:3012", "http://127.0.0.1:3012"]'
+      PORT: "8080"
+    ports:
+      - "127.0.0.1:8012:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/v1/health/ready')"
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  offline_pgdata:

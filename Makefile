@@ -11,7 +11,7 @@ GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
         schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all features supabase-migrate supabase-sync secret-scan evidence ci web-install \
-        deploy-demo smoke-demo
+        deploy-demo smoke-demo demo-offline-prepare demo-offline demo-offline-stop
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -98,6 +98,15 @@ deploy-demo: ## Deploy web + API to Vercel production, then smoke test (infra/de
 
 smoke-demo: ## Smoke test the public demo: make smoke-demo [DEMO_URL=https://...]
 	scripts/smoke_demo.sh $(DEMO_URL)
+
+demo-offline-prepare: ## Offline demo package (online, ~23 Nov): dump, images, isolated DB :5441, web build
+	infra/deploy/offline/demo_offline.sh prepare
+
+demo-offline: ## Start the offline demo (API :8012, web :3012) from the package, no network needed
+	infra/deploy/offline/demo_offline.sh start
+
+demo-offline-stop: ## Stop the offline demo (keeps its data volume)
+	infra/deploy/offline/demo_offline.sh stop
 
 secret-scan: ## gitleaks over full git history (requires gitleaks binary)
 	gitleaks git --config .gitleaks.toml --redact --no-banner .
