@@ -130,7 +130,8 @@ export function baseStyle(p: MapPalette): StyleSpecification {
 }
 
 /**
- * Zone overlays (sources `zones`, `zone-mask`, `zone-selected` and `zone-base` are added by the map).
+ * Zone overlays (sources `zones`, `zone-mask`, `zone-selected`, `zone-base` and `zone-barrio` are
+ * added by the map).
  * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
  * first, so the white mask drawn above fades the surroundings, buildings included.
  */
@@ -185,6 +186,13 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         source: "zone-selected",
         layout: { "line-join": "round" },
         paint: { "line-color": p.violet, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 15, 3.5] },
+      },
+      {
+        id: "zone-barrio-line",
+        type: "line",
+        source: "zone-barrio",
+        layout: { "line-join": "round" },
+        paint: { "line-color": p.violet, "line-width": 4, "line-dasharray": [2, 1] },
       },
     ],
   };

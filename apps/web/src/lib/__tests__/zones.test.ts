@@ -7,6 +7,7 @@ import {
   edgeWall,
   findZone,
   maskAround,
+  outlinePoints,
   regionOf,
   ringArea,
   zoneHref,
@@ -82,6 +83,21 @@ describe("buildZoneCollection", () => {
 });
 
 describe("zone helpers", () => {
+  it("lists the points of every outer ring, to frame the whole zone (holes do not matter)", () => {
+    const hole = [
+      [0.4, 0.4],
+      [0.6, 0.4],
+      [0.6, 0.6],
+      [0.4, 0.4],
+    ];
+    const multi: GeoJSON.MultiPolygon = {
+      type: "MultiPolygon",
+      coordinates: [[...square(0, 0).coordinates, hole], square(5, 5).coordinates],
+    };
+    expect(outlinePoints(multi)).toHaveLength(10);
+    expect(outlinePoints(square(1, 2))).toContainEqual([2, 3]);
+  });
+
   it("links a zone to its screen", () => {
     expect(zoneHref({ level: "distrito", code: "2807905" })).toBe("/zona/distrito/2807905");
   });

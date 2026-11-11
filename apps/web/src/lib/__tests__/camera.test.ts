@@ -1,23 +1,136 @@
 import { describe, expect, it } from "vitest";
 
-import { cameraPadding, SHEET_PEEK, zoneZoom } from "../map/camera";
+import {
+  APPROACH_MAX_KM,
+  approachZoom,
+  cameraPadding,
+  extentKm,
+  ISLAND_MARGIN,
+  islandZoom,
+  type Padding,
+  projectAt,
+  SHEET_PEEK,
+  type ZoneCamera,
+} from "../map/camera";
 import { BUILDINGS_3D_ZOOM } from "../map/style";
 
-describe("zoneZoom", () => {
-  it("takes a district-sized zone to the zoom where buildings stand up (zoom-14 tiles)", () => {
+const PAD: Padding = { top: 90, right: 380, bottom: 200, left: 440 };
+const DESKTOP = { width: 1440, height: 900, padding: PAD };
+// Centre of the padded area: where the camera centre lands on screen
+const OX = 440 + (1440 - 440 - 380) / 2;
+const OY = 90 + (900 - 90 - 200) / 2;
+const CENTER: [number, number] = [-3.68, 40.46];
+
+function camera(over: Partial<ZoneCamera> = {}): ZoneCamera {
+  return { center: CENTER, zoom: 14, pitch: 0, bearing: 0, ...DESKTOP, ...over };
+}
+
+describe("projectAt", () => {
+  it("puts the camera centre in the middle of the padded area", () => {
+    const at = projectAt(camera({ pitch: 55, bearing: -20 }), CENTER);
+    expect(at?.x).toBeCloseTo(OX);
+    expect(at?.y).toBeCloseTo(OY);
+  });
+
+  it("seen from above, scales linearly: 512 px per 360° of longitude at zoom 0", () => {
+    const at = projectAt(camera({ zoom: 10 }), [CENTER[0] + 0.01, CENTER[1]]);
+    expect(at?.x).toBeCloseTo(OX + (512 * 2 ** 10 * 0.01) / 360);
+    expect(at?.y).toBeCloseTo(OY);
+  });
+
+  it("tilted, the near side (south) looks bigger than the far side", () => {
+    const tilted = camera({ pitch: 55 });
+    const south = projectAt(tilted, [CENTER[0], CENTER[1] - 0.005]);
+    const north = projectAt(tilted, [CENTER[0], CENTER[1] + 0.005]);
+    expect(south && north).toBeTruthy();
+    expect((south?.y ?? 0) - OY).toBeGreaterThan(OY - (north?.y ?? 0));
+  });
+
+  it("turns with the bearing: looking east, a point to the east is above the centre", () => {
+    const at = projectAt(camera({ bearing: 90 }), [CENTER[0] + 0.005, CENTER[1]]);
+    expect(at?.x).toBeCloseTo(OX);
+    expect(at?.y).toBeLessThan(OY);
+  });
+
+  it("returns null for a point behind the camera", () => {
+    expect(projectAt(camera({ pitch: 70, zoom: 16 }), [CENTER[0], CENTER[1] - 1])).toBeNull();
+  });
+});
+
+describe("islandZoom", () => {
+  // A district-sized square, about 3 km a side
+  const ring: [number, number][] = [
+    [-3.7, 40.445],
+    [-3.665, 40.445],
+    [-3.665, 40.472],
+    [-3.7, 40.472],
+    [-3.7, 40.445],
+  ];
+  const inside = (cam: ZoneCamera) =>
+    ring.every((point) => {
+      const at = projectAt(cam, point);
+      return (
+        at !== null &&
+        at.x >= PAD.left + ISLAND_MARGIN &&
+        at.x <= 1440 - PAD.right - ISLAND_MARGIN &&
+        at.y >= PAD.top + ISLAND_MARGIN &&
+        at.y <= 900 - PAD.bottom - ISLAND_MARGIN
+      );
+    });
+
+  for (const view of [
+    { pitch: 0, bearing: 0 },
+    { pitch: 55, bearing: -20 },
+  ]) {
+    it(`is the closest zoom that keeps the whole outline in view (pitch ${view.pitch})`, () => {
+      const base = { center: CENTER, ...view, ...DESKTOP };
+      const zoom = islandZoom(ring, base);
+      expect(inside({ ...base, zoom })).toBe(true);
+      expect(inside({ ...base, zoom: zoom + 0.05 })).toBe(false);
+    });
+  }
+
+  it("keeps the island clear of the cards, centred where the zone camera centres it", () => {
+    const island = cameraPadding("island", { mobile: false, height: 900 });
+    const base = { center: CENTER, pitch: 55, bearing: -20, ...DESKTOP };
+    const zoom = islandZoom(ring, base, island);
+    expect(zoom).toBeLessThan(islandZoom(ring, base));
+    for (const point of ring) {
+      const at = projectAt({ ...base, zoom }, point);
+      expect(at?.x).toBeGreaterThanOrEqual(island.left);
+      expect(at?.x).toBeLessThanOrEqual(1440 - island.right);
+    }
+    // Same centre as the zone padding, so coming closer does not pan
+    expect(island.left + (1440 - island.left - island.right) / 2).toBe(OX);
+  });
+
+  it("stays below the zoom of 3D buildings for a district-sized zone", () => {
+    expect(islandZoom(ring, { center: CENTER, pitch: 55, bearing: -20, ...DESKTOP })).toBeLessThan(BUILDINGS_3D_ZOOM);
+  });
+});
+
+describe("approachZoom", () => {
+  const chamartin = { district: true, extentKm: 4.6 };
+
+  it("takes a compact district from its island to the zoom where buildings stand up (zoom-14 tiles)", () => {
     expect(BUILDINGS_3D_ZOOM).toBe(14);
-    expect(zoneZoom(12.85, false)).toBe(14);
-    expect(zoneZoom(12.2, true)).toBe(14);
+    expect(approachZoom(12.9, chamartin)).toBe(14);
+    expect(approachZoom(11.3, chamartin)).toBe(14); // mobile: the whole district fits from farther away
   });
 
-  it("only adds the tilt boost when the zone already fits closer", () => {
-    expect(zoneZoom(14.2, false)).toBeCloseTo(14.95);
-    expect(zoneZoom(14.2, true)).toBeCloseTo(14.6);
+  it("leaves a large district on its island instead of landing on fields", () => {
+    expect(APPROACH_MAX_KM).toBe(10);
+    expect(approachZoom(11, { district: true, extentKm: 31.1 })).toBe(11); // Fuencarral-El Pardo
   });
 
-  it("does not crop a large municipio to force 3D buildings", () => {
-    expect(zoneZoom(11, false)).toBeCloseTo(11.75);
-    expect(zoneZoom(11.9, true)).toBeCloseTo(12.3);
+  it("does not crop a municipio to force 3D buildings, and never zooms out", () => {
+    expect(approachZoom(11.4, { district: false, extentKm: 11.7 })).toBe(11.4);
+    expect(approachZoom(14.6, chamartin)).toBe(14.6);
+  });
+
+  it("measures a zone by the diagonal of its box, in km", () => {
+    // 0.01° of latitude is 1.11 km; of longitude, at 40.45°, 0.85 km
+    expect(extentKm([-3.7, 40.44, -3.69, 40.45])).toBeCloseTo(Math.hypot(0.847, 1.113), 2);
   });
 });
 

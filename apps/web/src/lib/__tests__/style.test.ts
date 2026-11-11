@@ -38,6 +38,7 @@ function withZone(style: StyleSpecification): StyleSpecification {
       "zone-selected": { type: "geojson", data: empty },
       "zone-mask": { type: "geojson", data: empty },
       "zone-base": { type: "geojson", data: empty },
+      "zone-barrio": { type: "geojson", data: empty },
     },
     layers: [...style.layers, ...below, ...above],
   };
@@ -76,5 +77,11 @@ describe("map style", () => {
     const { below, above } = zoneLayers(palette);
     expect(above.map((l) => l.id)).toContain("zone-mask");
     expect(below.map((l) => l.id)).not.toContain("zone-mask");
+  });
+
+  it("outlines the barrio in focus above the buildings, dashed so it reads apart from the district", () => {
+    const barrio = zoneLayers(palette).above.find((l) => l.id === "zone-barrio-line");
+    expect(barrio).toMatchObject({ type: "line", source: "zone-barrio" });
+    expect(barrio?.type === "line" && barrio.paint?.["line-dasharray"]).toBeTruthy();
   });
 });

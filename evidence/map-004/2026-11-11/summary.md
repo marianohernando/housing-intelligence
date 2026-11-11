@@ -334,3 +334,49 @@ Desde `879101a`, `/places` va en páginas de 5.000. La web pedía capas enteras:
 ## Pendiente
 - **`/map`:** la página heredada, que la demo no enlaza, sigue pidiendo capas enteras con su propio `fetch`. Ahora solo verá la página 1 de transporte. Fuera del alcance de la demo.
 - **«Mostoles» sin tilde:** así viene en la fuente, y la API no la repone.
+
+---
+
+# MAP-004 Fase 5c — Encuadre «isla» y barra «Barrios de la zona» (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `fbc7e37`. Decisión de Mariano, transmitida por datamad-10: aterrizar con el distrito entero a la vista y con el borde de maqueta, y acercarse despacio hasta el 3D. Con `prefers-reduced-motion`, sin animación.
+
+## Qué hay
+- **Isla:** la cámara aterriza con la zona entera inclinada, libre de las tarjetas y de la barra. `cameraPadding("island")` deja el mismo centro que el modo zona, así que el acercamiento no desplaza la vista.
+- **`projectAt` e `islandZoom`** (puras, con tests):
+  - proyectan como MapLibre: campo de visión de 36,87°, cámara a 1,5 alturas de pantalla y punto de fuga en el centro del área con relleno;
+  - buscan el zoom más cercano al que cabe todo el contorno. `cameraForBounds` ignora la inclinación, y el lado cercano, que se ve más grande, se salía.
+- **Acercamiento:** tras 0,7 s en la isla, 4 s con aceleración suave hasta el zoom 14, donde OpenFreeMap trae alturas. Después, el giro lento de siempre.
+  - Solo en distritos de hasta 10 km de diagonal (14 de 21).
+  - Fuencarral-El Pardo (31 km), Moncloa-Aravaca, Villa de Vallecas, Vicálvaro, Latina, Barajas, San Blas y los municipios se quedan en la isla. Si no, la cámara aterrizaba en el monte de El Pardo, sin nada que ver.
+- **Puntos clave:**
+  - se eligen y se muestran al llegar al final, con la cámara final (`projectAt`). En la isla se amontonaban: en móvil está unas 6 veces más lejos;
+  - los lugares se piden durante el vuelo y aparecen sin espera.
+- **Móvil:** Chamartín llega ya al 3D. Era lo pendiente de la F5.
+- **Barra «Barrios de la zona»** (`BarriosBar`):
+  - barrios del distrito con `/geo/admin-units?level=barrio&parent=…` (6 en Chamartín);
+  - chips con `aria-pressed`: «Todo {distrito}» y uno por barrio;
+  - pulsar uno lleva la cámara a ese barrio (isla y acercamiento), con contorno discontinuo y las etiquetas del distrito que quedan a la vista;
+  - solo navega: no hay cifras por barrio. Los municipios no la muestran;
+  - en escritorio va fija abajo; en una columna o en móvil, dentro del flujo.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` / `typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 17 ficheros, 145 tests. Nuevos: `projectAt` (5), `islandZoom` (4), `approachZoom` y `extentKm` (4), `outlinePoints` y la capa del barrio. Fuera: 3 de `zoneZoom` |
+| `npm run -w apps/web build` | 0 |
+| `make lint typecheck test-unit` | 0 (277 pytest, 145 vitest) |
+| `capture -- --prefix f5c_ --wait 9500 …` | 6 capturas sin errores en la consola, con `overflow_px: 0` |
+
+## Vuelo (`f5c_vuelo.json` y `f5c_vuelo_*`)
+- **Isla y final de Chamartín** en escritorio y móvil: `f5c_vuelo_chamartin_isla_*` y `f5c_vuelo_chamartin_3d_*`.
+- **Fuencarral-El Pardo:** se queda en la isla, con 2 puntos clave (`f5c_vuelo_fuencarral_isla_desktop.png`).
+- **Barrio:** Tab hasta «Hispanoamérica» e Intro dejan `aria-pressed="true"`; la cámara va al barrio con 3 etiquetas (`f5c_barrio_hispanoamerica_desktop.png`).
+- **`prefers-reduced-motion`:** a los 2,5 s la cámara ya está en el final, con 4 etiquetas (`f5c_sin_movimiento_desktop.png`).
+- **Consola:** sin errores en ninguna ruta.
+
+## Pendiente
+- **Para D:** «Todo {distrito}» es provisional. `barrios.titulo` dice que la barra no se muestra sin datos por barrio; datamad-10 pidió una barra que solo navega. Hay que alinear la nota.
+- **Para A:** nombres de municipio mal codificados en `/geo/admin-units`: «Redue/a», «Griðon», «Villanueva de la Ca/ada», «Pi/uecar-Gandullas».
+- **En la isla, el móvil no muestra el borde de maqueta:** se quitó en la F5 por rendimiento.

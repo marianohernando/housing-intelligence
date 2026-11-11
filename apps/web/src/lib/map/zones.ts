@@ -76,6 +76,11 @@ function polygons(geometry: ZoneGeometry): GeoJSON.Position[][][] {
   return geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
 }
 
+/** Points of the outer rings: what the camera must keep in view to show the whole zone. */
+export function outlinePoints(geometry: ZoneGeometry): [number, number][] {
+  return polygons(geometry).flatMap((polygon) => (polygon[0] ?? []).map(([lon = 0, lat = 0]) => [lon, lat] as [number, number]));
+}
+
 export function boundsOf(geometry: ZoneGeometry): Bounds {
   const bounds: Bounds = [Infinity, Infinity, -Infinity, -Infinity];
   for (const polygon of polygons(geometry)) {

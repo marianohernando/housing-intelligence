@@ -17,16 +17,29 @@ import { createPortal } from "react-dom";
 
 import { createApi } from "@/lib/api";
 import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
-import { cameraPadding, MOBILE_QUERY, ZONE_BEARING, ZONE_PITCH, zoneZoom } from "@/lib/map/camera";
+import {
+  approachZoom,
+  cameraPadding,
+  extentKm,
+  islandZoom,
+  MOBILE_QUERY,
+  projectAt,
+  ZONE_BEARING,
+  ZONE_PITCH,
+  type ZoneCamera,
+} from "@/lib/map/camera";
 import { baseStyle, BUILDING_LAYER, MAP_PALETTE_TOKENS, type MapPalette, ZONE_BASE, zoneLayers } from "@/lib/map/style";
 import {
+  type AdminFeature,
   boundsOf,
   boundsOfAll,
   edgeWall,
   maskAround,
+  outlinePoints,
   regionOf,
   type ZoneCollection,
   type ZoneFeature,
+  type ZoneGeometry,
   zoneHref,
   type ZoneProperties,
 } from "@/lib/map/zones";
@@ -39,6 +52,9 @@ const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const FLIGHT_MS = 2800;
+/** The island stays still a moment before the camera comes closer to the buildings. */
+const ISLAND_HOLD_MS = 700;
+const APPROACH_MS = 4000;
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 const NO_POINTS: KeyPoint[] = [];
 /** Room a label needs around its pin (it is centred above it), beyond the cards' padding. */
@@ -64,25 +80,29 @@ function readPalette(): MapPalette {
   return Object.fromEntries(entries) as MapPalette;
 }
 
-function padding(mode: "overview" | "zone") {
+function padding(mode: "overview" | "zone" | "island") {
   return cameraPadding(mode, { mobile: matches(MOBILE), height: window.innerHeight });
 }
 
-/** Key points are labelled only where the label is seen whole: between the cards and apart from each other. */
-function labelOptions(map: MapLibreMap): KeyPointOptions {
-  const pad = padding("zone");
+/**
+ * Key points are labelled only where the label is seen whole: between the cards and apart from
+ * each other, with the camera where it ends (`end`), so they stay in view while it comes closer.
+ */
+function labelOptions(end: ZoneCamera): KeyPointOptions {
+  const { padding: pad, width, height } = end;
   const mobile = matches(MOBILE);
   const room = mobile ? LABEL_ROOM.mobile : LABEL_ROOM.desktop;
   const size = mobile ? LABEL_SIZE.mobile : LABEL_SIZE.desktop;
-  const { clientWidth: width, clientHeight: height } = map.getContainer();
-  const screen = (p: { lon: number; lat: number }) => map.project([p.lon, p.lat]);
+  const screen = (p: { lon: number; lat: number }) => projectAt(end, [p.lon, p.lat]);
   return {
     inView: (lon, lat) => {
-      const { x, y } = screen({ lon, lat });
-      return x >= pad.left + room.x && x <= width - pad.right - room.x && y >= pad.top + room.top && y <= height - pad.bottom;
+      const at = screen({ lon, lat });
+      if (!at) return false;
+      return at.x >= pad.left + room.x && at.x <= width - pad.right - room.x && at.y >= pad.top + room.top && at.y <= height - pad.bottom;
     },
     apart: (a, b) => {
       const [pa, pb] = [screen(a), screen(b)];
+      if (!pa || !pb) return false;
       return Math.abs(pa.x - pb.x) >= size.width || Math.abs(pa.y - pb.y) >= size.height;
     },
   };
@@ -97,6 +117,7 @@ function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: Zon
   map.addSource("zone-selected", { type: "geojson", data: EMPTY });
   map.addSource("zone-mask", { type: "geojson", data: EMPTY });
   map.addSource("zone-base", { type: "geojson", data: EMPTY });
+  map.addSource("zone-barrio", { type: "geojson", data: EMPTY });
   const { below, above } = zoneLayers(palette);
   for (const layer of below) map.addLayer(layer, BUILDING_LAYER);
   for (const layer of above) map.addLayer(layer);
@@ -119,6 +140,7 @@ function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: Zon
 function showOverview(map: MapLibreMap, zones: ZoneCollection, animate: boolean): void {
   source(map, "zone-selected").setData(EMPTY);
   source(map, "zone-base").setData(EMPTY);
+  source(map, "zone-barrio").setData(EMPTY);
   source(map, "zone-mask").setData({ type: "Feature", geometry: maskAround(regionOf(zones)), properties: {} });
   map.fitBounds(boundsOfAll(zones) as LngLatBoundsLike, {
     padding: padding("overview"),
@@ -128,33 +150,69 @@ function showOverview(map: MapLibreMap, zones: ZoneCollection, animate: boolean)
   });
 }
 
-/** Camera flight to the zone, tilted ~60° (45° on mobile), then a slow turn. `onLanded` fires when the flight ends. */
-function showZone(map: MapLibreMap, zone: ZoneFeature, onLanded: () => void): () => void {
+/** The «island» (the whole area in view, tilted, between the cards) and where the camera ends. */
+function zoneCameras(map: MapLibreMap, area: ZoneGeometry, district: boolean): { island: ZoneCamera; end: ZoneCamera } {
+  const bounds = boundsOf(area);
+  const [west, south, east, north] = bounds;
+  const { clientWidth: width, clientHeight: height } = map.getContainer();
+  const base = {
+    center: [(west + east) / 2, (south + north) / 2] as [number, number],
+    pitch: matches(MOBILE) ? ZONE_PITCH.mobile : ZONE_PITCH.desktop,
+    bearing: ZONE_BEARING,
+    padding: padding("zone"),
+    width,
+    height,
+  };
+  const zoom = islandZoom(outlinePoints(area), base, padding("island"));
+  return { island: { ...base, zoom }, end: { ...base, zoom: approachZoom(zoom, { district, extentKm: extentKm(bounds) }) } };
+}
+
+function easeInOut(t: number): number {
+  return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+}
+
+/**
+ * Camera flight to the zone (or to one of its barrios): it lands on the island, with the raised
+ * edge in view, holds a moment and comes slowly closer to the 3D buildings, then turns gently.
+ * With prefers-reduced-motion it goes straight to the end, without animation. `onLanded` fires
+ * when the camera reaches its end, to label the key points in view (on the island they would
+ * pile up: on mobile it is about six times farther).
+ */
+function showZone(map: MapLibreMap, zone: ZoneFeature, barrio: AdminFeature | null, onLanded: (end: ZoneCamera) => void): () => void {
   source(map, "zone-selected").setData(zone);
   source(map, "zone-mask").setData({ type: "Feature", geometry: maskAround(zone.geometry), properties: {} });
   source(map, "zone-base").setData(edgeWall(zone.geometry, ZONE_BASE.widthM));
-  const mobile = matches(MOBILE);
-  const bounds = boundsOf(zone.geometry);
-  const fit = map.cameraForBounds(bounds as LngLatBoundsLike, { padding: padding("zone"), bearing: ZONE_BEARING });
-  // Centre the zone in the free area between the cards (padding), at the zone zoom.
-  map.flyTo({
-    center: [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2],
-    zoom: fit?.zoom === undefined ? undefined : zoneZoom(fit.zoom, mobile),
-    pitch: mobile ? ZONE_PITCH.mobile : ZONE_PITCH.desktop,
-    bearing: ZONE_BEARING,
-    padding: padding("zone"),
-    duration: FLIGHT_MS,
-    essential: false, // with prefers-reduced-motion MapLibre jumps instead of flying
-  });
-  const turn = () => {
-    onLanded();
-    if (!matches(REDUCED_MOTION)) map.easeTo({ bearing: ZONE_BEARING + 15, duration: 18000, easing: (t) => t });
+  source(map, "zone-barrio").setData(barrio ?? EMPTY);
+  const area = barrio?.geometry ?? zone.geometry;
+  const { island, end } = zoneCameras(map, area, barrio !== null || zone.properties.level === "distrito");
+  const camera = ({ center, zoom, pitch, bearing, padding: pad }: ZoneCamera) => ({ center, zoom, pitch, bearing, padding: pad });
+  if (matches(REDUCED_MOTION)) {
+    map.jumpTo(camera(end));
+    onLanded(end);
+    return () => map.stop();
+  }
+  let hold: number | undefined;
+  const arrive = () => {
+    onLanded(end);
+    map.easeTo({ bearing: ZONE_BEARING + 15, duration: 18000, easing: (t) => t });
   };
-  // With prefers-reduced-motion flyTo jumps at once, so the flight has already ended here.
-  if (map.isMoving()) map.once("moveend", turn);
-  else turn();
+  const approach = () => {
+    if (end.zoom <= island.zoom) {
+      arrive();
+      return;
+    }
+    hold = window.setTimeout(() => {
+      map.easeTo({ ...camera(end), duration: APPROACH_MS, easing: easeInOut });
+      map.once("moveend", arrive);
+    }, ISLAND_HOLD_MS);
+  };
+  map.flyTo({ ...camera(island), duration: FLIGHT_MS });
+  if (map.isMoving()) map.once("moveend", approach);
+  else approach();
   return () => {
-    map.off("moveend", turn);
+    window.clearTimeout(hold);
+    map.off("moveend", approach);
+    map.off("moveend", arrive);
     map.stop();
   };
 }
@@ -173,7 +231,7 @@ function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: st
 }
 
 export default function VidaMap() {
-  const { zones, activeZone, selectedZone, select } = useMapZones();
+  const { zones, activeZone, selectedZone, select, barrio } = useMapZones();
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -182,8 +240,9 @@ export default function VidaMap() {
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
   const [keyPoints, setKeyPoints] = useState<{ key: string; points: KeyPoint[] } | null>(null);
-  // Zone whose camera flight has ended: its key points are picked from what is then in view.
-  const [landed, setLanded] = useState<string | null>(null);
+  // Zone (or barrio) whose flight has landed, and where its camera ends: key points are picked from that view.
+  const [landed, setLanded] = useState<{ key: string; end: ZoneCamera } | null>(null);
+  const view = activeZone ? `${activeZone.properties.zone_key}#${barrio?.properties.admin_unit_id ?? ""}` : null;
 
   // The map's click handler is registered once: it reads the current mode and actions from a ref.
   const pickRef = useRef<(zone: ZoneProperties) => void>(() => undefined);
@@ -238,8 +297,10 @@ export default function VidaMap() {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !zones) return;
-    if (activeZone) {
-      const stop = showZone(map, activeZone, () => setLanded(activeZone.properties.zone_key));
+    if (activeZone && view) {
+      // Ask for the key points during the flight; a failure is handled when they are labelled.
+      loadPlaces(placesCache.current, activeZone.properties.admin_unit_id).catch(() => undefined);
+      const stop = showZone(map, activeZone, barrio, (end) => setLanded({ key: view, end }));
       return () => {
         stop();
         setLanded(null);
@@ -247,7 +308,7 @@ export default function VidaMap() {
     }
     showOverview(map, zones, shownOverview.current);
     shownOverview.current = true;
-  }, [ready, zones, activeZone]);
+  }, [ready, zones, activeZone, barrio, view]);
 
   // Overview: outline the zone picked on the map (its card shows on the right).
   useEffect(() => {
@@ -257,27 +318,24 @@ export default function VidaMap() {
   }, [ready, activeZone, selectedZone]);
 
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !activeZone || landed !== activeZone.properties.zone_key) return;
+    if (!activeZone || !landed || landed.key !== view) return;
     let cancelled = false;
-    const [west, south, east, north] = boundsOf(activeZone.geometry);
+    const { key, end } = landed;
+    // The district's places: in a barrio, those of the district that end in view are labelled.
     loadPlaces(placesCache.current, activeZone.properties.admin_unit_id)
       .then((places) => {
-        if (cancelled) return;
-        const center: [number, number] = [(west + east) / 2, (south + north) / 2];
-        const points = pickKeyPoints(places, center, labelOptions(map));
-        setKeyPoints({ key: activeZone.properties.zone_key, points });
+        if (!cancelled) setKeyPoints({ key, points: pickKeyPoints(places, end.center, labelOptions(end)) });
       })
       .catch(() => {
         // Key points are a complement: without them the zone, its outline and buildings still show.
-        if (!cancelled) setKeyPoints({ key: activeZone.properties.zone_key, points: NO_POINTS });
+        if (!cancelled) setKeyPoints({ key, points: NO_POINTS });
       });
     return () => {
       cancelled = true;
     };
-  }, [activeZone, landed]);
+  }, [activeZone, landed, view]);
 
-  const points = activeZone && keyPoints?.key === activeZone.properties.zone_key ? keyPoints.points : NO_POINTS;
+  const points = view && keyPoints?.key === view ? keyPoints.points : NO_POINTS;
   const labels = useMemo(
     () => (typeof document === "undefined" ? [] : points.map((point) => ({ point, element: document.createElement("div") }))),
     [points],

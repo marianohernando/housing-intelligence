@@ -5,6 +5,7 @@ import { createContext, type ReactNode, useCallback, useContext, useEffect, useM
 
 import { ApiError, createApi } from "@/lib/api";
 import {
+  type AdminFeature,
   buildZoneCollection,
   findZone,
   MUNICIPIOS_BY_DISTRITO,
@@ -12,8 +13,8 @@ import {
   type ZoneFeature,
 } from "@/lib/map/zones";
 
-/** Simplification of the outlines: municipios are seen from far, districts up close. */
-const SIMPLIFY_M = { municipio: 50, distrito: 25 } as const;
+/** Simplification of the outlines: municipios are seen from far, districts and barrios up close. */
+const SIMPLIFY_M = { municipio: 50, distrito: 25, barrio: 10 } as const;
 
 export type ZonesStatus = "loading" | "ready" | "error";
 
@@ -27,6 +28,11 @@ interface MapContextValue {
   /** Zone picked on the overview map (its card shows on the right). */
   selectedZone: ZoneFeature | null;
   select: (zoneKey: string | null) => void;
+  /** Barrios of the active district, for the «Barrios de la zona» bar: navigation only, no figures. */
+  barrios: AdminFeature[] | null;
+  /** Barrio the camera shows, inside the active district (null: the whole district). */
+  barrio: AdminFeature | null;
+  focusBarrio: (adminUnitId: string | null) => void;
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -43,6 +49,9 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<ApiError | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  // Both remember their district, so moving to another zone needs no reset.
+  const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
+  const [focus, setFocus] = useState<{ parent: string; id: string } | null>(null);
 
   useEffect(() => {
     const api = createApi();
@@ -63,19 +72,48 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     };
   }, [attempt]);
 
+  const code = params.code ? decodeURIComponent(params.code) : undefined;
+  const activeZone = useMemo(
+    () => (zones && params.level && code ? (findZone(zones, params.level, code) ?? null) : null),
+    [zones, params.level, code],
+  );
+  const districtId = activeZone?.properties.level === "distrito" ? activeZone.properties.admin_unit_id : null;
+
+  useEffect(() => {
+    if (!districtId || barrioList?.parent === districtId) return;
+    let cancelled = false;
+    createApi()
+      .adminUnits("barrio", SIMPLIFY_M.barrio, districtId)
+      .then((body) => body.data.features)
+      // The bar only helps to move around the district: without barrios it is not shown.
+      .catch((): AdminFeature[] => [])
+      .then((features) => {
+        if (!cancelled) setBarrioList({ parent: districtId, features });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [districtId, barrioList?.parent]);
+
   const retry = useCallback(() => {
     setError(null);
     setAttempt((n) => n + 1);
   }, []);
 
+  const focusBarrio = useCallback(
+    (id: string | null) => setFocus(id && districtId ? { parent: districtId, id } : null),
+    [districtId],
+  );
+
   const value = useMemo<MapContextValue>(() => {
-    const code = params.code ? decodeURIComponent(params.code) : undefined;
-    const activeZone = zones && params.level && code ? (findZone(zones, params.level, code) ?? null) : null;
     const status: ZonesStatus = error ? "error" : zones ? "ready" : "loading";
     const [level = "", selectedCode = ""] = selectedKey?.split("/") ?? [];
     const selectedZone = zones && selectedKey ? (findZone(zones, level, selectedCode) ?? null) : null;
-    return { zones, status, error, retry, activeZone, selectedZone, select: setSelectedKey };
-  }, [zones, error, retry, params.level, params.code, selectedKey]);
+    const barrios = districtId && barrioList?.parent === districtId ? barrioList.features : null;
+    const barrio =
+      focus?.parent === districtId ? (barrios?.find((b) => b.properties.admin_unit_id === focus.id) ?? null) : null;
+    return { zones, status, error, retry, activeZone, selectedZone, select: setSelectedKey, barrios, barrio, focusBarrio };
+  }, [zones, error, retry, activeZone, selectedKey, districtId, barrioList, focus, focusBarrio]);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }

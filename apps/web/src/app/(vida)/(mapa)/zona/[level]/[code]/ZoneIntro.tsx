@@ -7,6 +7,7 @@ import { useMapZones } from "@/components/map/MapProvider";
 import SearchCard from "@/components/search/SearchCard";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import BarriosBar from "@/components/zone/BarriosBar";
 import ZoneCard from "@/components/zone/ZoneCard";
 
 import styles from "./zone.module.css";
@@ -64,6 +65,7 @@ export default function ZoneIntro() {
       <div className={styles.search}>
         <SearchCard collapsible />
       </div>
+      <BarriosBar />
     </div>
   );
 }
