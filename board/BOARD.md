@@ -2,14 +2,14 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 de C integrado; PR #7 a la espera de ajustes de C).
+Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 y PR #7 de C integrados).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
 |---|---|---|---|
 | **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, DATA-012, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **DATA-012 hecha** (`f62f0d0`…`be40c2f`): `/gaps/distrito` con filas reales en los 21 distritos (población del padrón, D-209). Contratos v2 en `2bcc35e`. Siguiente: peticiones de B para la API (warnings de `/gaps`, `/places` y `/geo/admin-units`) y CORE-005 F3 |
 | **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | PR #2 (borrador): F1 hecha (`4402edd`). **Antes de su F2, rebase sobre `2bcc35e` y tipos desde `data/schemas/api/` (v2)** |
-| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #6 fusionado** (`877d4fd`): demo pública sobre Supabase con smoke 6/6 y reintento del smoke en `deploy.sh`. Antes, **PR #4 y PR #5 fusionados** (`c8ae262`, `d917162`): Vercel (web + API) en `vidafacil-madrid.vercel.app` (`vida-facil-eight` sigue de alias), readiness, smoke diario, guardas de deploy, paquete offline (5441/8012/3012) y rol `vf_api_ro` (migración 0005). Supabase en 0005 y sincronizado; Mariano ya puso `DATABASE_URL`. C despliega y pasa el smoke público |
+| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #7 fusionado** (`93af627`): el README cuenta el reintento del smoke y el smoke mide la página 1 de transporte (7/7 en producción con `879101a`; offline 6/6). Pendiente menor: exigir también `.data.pages >= 1` en el check `largest`. **PR #6 fusionado** (`877d4fd`): demo pública sobre Supabase con smoke 6/6 y reintento del smoke en `deploy.sh`. Antes, **PR #4 y PR #5 fusionados** (`c8ae262`, `d917162`): Vercel (web + API) en `vidafacil-madrid.vercel.app` (`vida-facil-eight` sigue de alias), readiness, smoke diario, guardas de deploy, paquete offline (5441/8012/3012) y rol `vf_api_ro` (migración 0005). Supabase en 0005 y sincronizado; Mariano ya puso `DATABASE_URL`. C despliega y pasa el smoke público |
 | **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | PR #3 (borrador): formulario de 98 palabras, slides, guion y banco de preguntas. «Vida Fácil» está libre (TMview) |
 
 **Respuestas de A a lo que piden las líneas (11 nov, noche):**
@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | C → A | OPS-001 · PR #7 integrado | CI verde + gate local verde | `93af627` | `evidence/gate-06/2026-11-11/merge-pr7.txt`, `evidence/gate-06/2026-11-11-deploy/deploy-6-paginated.md` | El README explica el reintento único del smoke a los 20 s. El smoke gana el check `largest` (página 1 de transporte, unos 1,4 MB): 7/7 en producción con `/places` paginada y 6/6 en el paquete offline. Revisado con `reviewer`: fusionar; pendiente menor de C: exigir `.data.pages >= 1` en el filtro |
 | 11 nov | A | CORE-005 · Fase 4 (cierre) | verde · G3 PASS | `fc025b6` | `evidence/gate-03/2026-11-11/summary.md`, `phase-core005-f4.txt` | Ejecución real: 24 features en 29 s. 15 casos golden (Sol, Plaza de Castilla, Centro, Getafe, Alcalá, La Acebeda sin farmacia y la región) y coherencia mediana/% en 4.819 zonas por destino. D-210 con velocidad, ventanas, destinos y calles de origen. **CORE-005 DONE** |
 | 11 nov | A | Mantenimiento CI | verde | `29a688e`, `bc60e1f` | `evidence/gate-04/2026-11-11/docs-manifest-0.5.19.txt` | La CI de la rama estaba en rojo desde `6d02abb` porque faltaba regenerar el manifest de docs. Ahora `make lint` comprueba también los schemas y el manifest, igual que la CI |
 | 11 nov | A | API para B · Fase 3 (`/places` paginada) | verde | `879101a` | `evidence/gate-04/2026-11-11/phase-apib-f3-places-pages.txt` | Páginas de 5.000 lugares (1,4 MB como máximo, frente al límite de 4,5 MB de Vercel), con `total`, `page` y `pages`. Si quedan páginas, `warnings` dice cómo pedir la siguiente; una página fuera de rango → 422. Riesgo detectado por el smoke de C |
@@ -98,8 +99,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - CI de la rama en verde otra vez (`29a688e`). `make lint` comprueba ahora los schemas y el manifest de docs, igual que la CI (`bc60e1f`).
   - La base local tiene las 24 features recalculadas (`make features`, 29 s).
 - **Blocked / a la espera:** nada. **Supabase:** Mariano hará `make supabase-sync PROFILE=demo` **una sola vez**, cuando las features estén recalculadas a 4 km/h (Next 2). Hay que avisar a `datamad-10` en ese momento y comprobarlo después por MCP: 24 features y 4.843 filas en cada feature a pie.
-- **Next (línea A), en orden.** Los puntos 1 a 3 son decisiones de Mariano del 11 nov por la noche, transmitidas por `datamad-10`:
-  1. **Integrar el PR #7 de C.** Ya está rebasado y lleva los ajustes de la revisión (`cf33a5b`, `23e89a0`); el smoke de producción da 7/7 con `/places` paginada. Pasar `reviewer` sobre los ajustes, comprobar la CI en verde, hacer el merge y añadir la fila al board.
+- **Next (línea A), en orden.** Los puntos 2 y 3 son decisiones de Mariano del 11 nov por la noche, transmitidas por `datamad-10`. El 1 (integrar el PR #7 de C) está hecho: `93af627`.
   2. **Velocidad a pie: 4 km/h** (Mariano), como el estudio «El Madrid de los 15 minutos» del Ayuntamiento, porque la demo también es para personas mayores.
      - Cambiar `speed_kmh` en los 12 YAML `min_a_pie_*` y `pct_calle_*`.
      - Recalcular con `make features`, pasar `scripts/check_walk_golden.py` y `make evidence GATE=03`.
@@ -129,7 +129,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - G2 PASS.
   - G3 PASS (11 nov, `evidence/gate-03/2026-11-11/summary.md`): 24 features (`24|0|0|179`), 7 con los 21 distritos, 12 a pie con las 4.843 zonas y los golden de la red real.
   - G4: contratos, `/gaps`, `/places` y `/geo` en verde.
-  - G6: Supabase en 0005; el sync único llega tras recalcular a 4 km/h. C sirve la demo desde `1c22212` y le falta redesplegar `879101a` (paginación).
+  - G6: Supabase en 0005; el sync único llega tras recalcular a 4 km/h. C sirve la demo desde `cf33a5b`, con `/places` paginada (smoke 7/7).
 - **Notas para las siguientes cards:**
   - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.20.
   - **Features a pie (D-210):**
