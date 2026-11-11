@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | GAP-001 · Fase 0b (avisos por fila) | verde | `d3127d3` | `evidence/gate-04/2026-11-11/phase-gap001-f0b.txt` | `/gaps` trae un aviso por cada una de las 6 filas que aún no está calculada a ese nivel (`INSUFFICIENT_DATA: row <fila> not computed at <nivel> level yet`). Responde al punto 5 del PR #2 de B |
 | 11 nov | A | DATA-012 · Fase 4 (revisión) | verde | `be40c2f` | `evidence/gate-01/2026-11-11/phase-data012-f4-review.txt` | Ajustes del `reviewer`: confidence por lugares sin sección, guarda contra un padrón truncado (±10 % por distrito), tests más estrictos y cobertura por distrito en el Gate 3 |
 | 11 nov | C → A | OPS-001 · PR #5 integrado | CI verde | `d917162` | `evidence/gate-06/2026-11-11-deploy/` | URL `vidafacil-madrid.vercel.app`, guardas de deploy (R-07/R-08) y paquete offline aislado. Revisado con `reviewer` y con los 7 ajustes de C |
 | 11 nov | A | DATA-012 · Fase 3 | verde | `d87c561` | `evidence/gate-01/2026-11-11/phase-data012-f3.txt` | Hogares por distrito (panel del Ayuntamiento, 2019–2025): los 21 distritos suman los 1.411.646 hogares de la ciudad. `tamano_medio_hogar` por distrito |
@@ -90,7 +91,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - La base local está en la 0005, con el padrón y el panel ingeridos y las features recalculadas.
 - **Blocked:** nada. PR #1 a `main` sigue abierto (lo fusiona Mariano).
 - **Next (línea A), en orden:**
-  1. **`/gaps`: un warning por cada fila esperada que no esté** (B, PR #2; contrato en docs/04/31). Hoy solo avisa si no hay ninguna. Antes de completar GAP-001.
+  1. ~~`/gaps`: un warning por cada fila esperada que no esté~~ → hecho en `d3127d3` (GAP-001 F0b).
   2. **Peticiones de B para la API** (PR #2), mejor antes del 14 nov:
      - `/places` corta en 10.000 resultados (transporte tiene 14.982) y no filtra: añadir `?admin_unit_id=` y `?subcategory=`;
      - `/geo/admin-units`: nombres de municipio con mayúsculas normales y filtro por padre (p. ej. los distritos de Madrid).
