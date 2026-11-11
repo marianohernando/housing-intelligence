@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (tarde: DATA-012 completa con `/gaps` por distrito, D-209; PR #4 y PR #5 de C integrados; Supabase en 0005 y sincronizado).
+Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 de C integrado; PR #7 a la espera de ajustes de C).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | CORE-005 · Fase 4 (cierre) | verde · G3 PASS | `fc025b6` | `evidence/gate-03/2026-11-11/summary.md`, `phase-core005-f4.txt` | Ejecución real: 24 features en 29 s. 15 casos golden (Sol, Plaza de Castilla, Centro, Getafe, Alcalá, La Acebeda sin farmacia y la región) y coherencia mediana/% en 4.819 zonas por destino. D-210 con velocidad, ventanas, destinos y calles de origen. **CORE-005 DONE** |
+| 11 nov | A | Mantenimiento CI | verde | `29a688e`, `bc60e1f` | `evidence/gate-04/2026-11-11/docs-manifest-0.5.19.txt` | La CI de la rama estaba en rojo desde `6d02abb` porque faltaba regenerar el manifest de docs. Ahora `make lint` comprueba también los schemas y el manifest, igual que la CI |
 | 11 nov | A | API para B · Fase 3 (`/places` paginada) | verde | `879101a` | `evidence/gate-04/2026-11-11/phase-apib-f3-places-pages.txt` | Páginas de 5.000 lugares (1,4 MB como máximo, frente al límite de 4,5 MB de Vercel), con `total`, `page` y `pages`. Si quedan páginas, `warnings` dice cómo pedir la siguiente; una página fuera de rango → 422. Riesgo detectado por el smoke de C |
 | 11 nov | A | CORE-005 · Fase 3 | verde | `23b7531` | `evidence/gate-03/2026-11-11/phase-core005-f3.txt` | 12 features a pie por sección, municipio y distrito: mediana de minutos y % de calle a ≤ 10 min (salud 15, transporte 5) hasta escuela infantil, colegio, centro de salud, farmacia, centro de mayores y parada. Zona sin calles = SIN DATOS; calles aisladas = desconocido; nunca 0 |
 | 11 nov | A | API para B · Fase 2 (`/geo/admin-units`) | verde | `12c834a` | `evidence/gate-04/2026-11-11/phase-apib-f2-geo.txt` | Nombres legibles («Las Rozas de Madrid»), como en `/gaps`, y `?parent=`: `ES.28.MUN.28079` devuelve los 21 distritos (0,03 MB frente a 0,54 MB). Las tildes que faltan en la fuente siguen faltando («Vicalvaro») |
@@ -80,7 +82,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - Fase 1 `4cdee28`: red peatonal OSM como dataset `osm_red_peatonal` (solo Silver; 2,38 M nodos y 57.659 km; componente principal del 98,25 %). Evidencia en `evidence/gate-01/2026-11-11`.
   - Fase 2 `e31770b`: dominio puro de accesibilidad con tests de propiedades (`evidence/gate-03/2026-11-11`).
   - Fase 3 `23b7531`: método `network_walk_time` y 12 features (6 destinos × mediana de minutos y % de calle dentro de la ventana) en sección, municipio y distrito, con referencia regional. Evidencia en `evidence/gate-03/2026-11-11/phase-core005-f3.txt`. El H3 r9 queda para cuando lo pida la vista 3D (serían unas 300.000 filas más en Supabase).
-  - Falta la Fase 4 (ejecución real, golden checks, Gate 3 y ADR).
+  - Fase 4 `fc025b6`: ejecución real (24 features en 29 s), 15 casos golden y coherencia mediana/% en todas las zonas, **Gate 3 PASS** (`evidence/gate-03/2026-11-11/summary.md`) y **D-210**. **CORE-005 DONE.**
 
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
@@ -102,7 +104,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
      - ~~`/places` corta en 10.000 resultados y no filtra~~ → hecho en `d7037b7` (`?admin_unit_id=`, `?subcategory=` repetible, sin corte);
      - ~~`/geo/admin-units`: nombres normales y filtro por padre~~ → hecho en `12c834a`. C tiene que redesplegar para que la API pública sirva las fases 0b, 1 y 2.
   3. ~~CORE-005 Fase 3~~ → hecha en `23b7531` (sección, municipio y distrito; H3 r9 aplazado).
-  4. CORE-005 Fase 4: ejecución real, golden checks y Gate 3. ADR nuevo (D-199 ya es el nombre del producto): 4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min. D pide confirmar los 4,5 km/h.
+  4. ~~CORE-005 Fase 4~~ → hecha en `fc025b6` (D-210: 4,5 km/h, con la referencia de la FHWA y del Ayuntamiento; ventanas 5/15/10 min).
   5. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
      - Por distrito: la vivienda queda SIN DATOS, porque no hay superficie de viviendas por distrito.
      - D pide, en lenguaje llano, qué mide cada fila nueva y si los cortes 0,8 / 1,0 cambian.
@@ -116,7 +118,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **Gate status:**
   - G1 PASS: 21 datasets CM y 2 complementarios del Ayuntamiento (padrón y panel); la red OSM pasa su calidad.
   - G2 PASS.
-  - G3: fases de CORE-005 en verde, coverage `12|0|0|179` y la nueva comprobación por distrito (7 features × 21) en verde. El Gate 3 completo llega con CORE-005 F4.
+  - G3 PASS (11 nov, `evidence/gate-03/2026-11-11/summary.md`): 24 features (`24|0|0|179`), 7 con los 21 distritos, 12 a pie con las 4.843 zonas y los golden de la red real.
   - G4: contratos y `/gaps` (municipio y distrito) en verde; fixture `zone_gap_list.centro` para B.
   - G6: Supabase en 0005 y sincronizado. C está desplegando con `vf_api_ro` en `vidafacil-madrid.vercel.app`.
 - **Notas para las siguientes cards:**
@@ -169,6 +171,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 _(vacío)_
 
 ## 07 — DONE (con evidencia)
+- CORE-005 Distancia a pie por la red de calles (D-210): 12 features (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y parada × mediana de minutos y % de calle dentro de la ventana) por sección, municipio y distrito, con referencia regional; nunca 0 sin datos · G1 `evidence/gate-01/2026-11-11` (red OSM) · G3 PASS `evidence/gate-03/2026-11-11/summary.md` · `4cdee28` `e31770b` `23b7531` `fc025b6` · 2026-11-11
 - DATA-012 Población por edad y hogares por distrito de Madrid (D-200, D-209): padrón municipal (21 distritos × 21 bandas CM + total; nacionalidad y sexo nunca se guardan) y panel de distritos (hogares, 2019–2025), complementarios y no CM. 7 features por distrito y `/gaps/distrito` con filas reales en los 21 distritos · G1 `evidence/gate-01/2026-11-11/phase-data012-f1.txt`, `-f3.txt` y `-f4-review.txt` · G4 `evidence/gate-04/2026-11-11/phase-data012-f2.txt` · `f62f0d0` `83c74dd` `d87c561` `be40c2f` · 2026-11-11
 - OPS-001 (parte de A): PR #4 y PR #5 de C integrados con `reviewer`; migración 0005 del rol `vf_api_ro` (D-208) · `evidence/gate-06/2026-11-11/phase-ops001-0005.txt` · `c8ae262` `ad16393` `d917162` · 2026-11-11
 - CORE-001 Contrato ScenarioState mínimo (presupuesto, hogar, lugares de referencia, servicios cerca y prioridades), publicado con los contratos PUBLIC · G4 · `7541527` · `evidence/gate-04/2026-11-11/phase-contracts-f1.txt` · 2026-11-11
