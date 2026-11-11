@@ -1,0 +1,1835 @@
+{
+  "row": "colegio",
+  "label": "Colegios",
+  "level": "municipio",
+  "indicator_label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
+  "unit": "centros/1000 menores",
+  "direction": "higher_is_better",
+  "reference": 1.315,
+  "reference_label": "Comunidad de Madrid",
+  "proxy_note": "Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual. No dice cuál te corresponde por zona.",
+  "method": {
+    "version": "gap-0.1",
+    "reference": "Comunidad de Madrid: total de la región dividido por su población",
+    "falta_below": 0.8,
+    "cubierto_from": 1.0
+  },
+  "counts": {
+    "falta": 65,
+    "justo": 27,
+    "cubierto": 87,
+    "sin_datos": 0
+  },
+  "zones": [
+    {
+      "admin_unit_id": "ES.28.MUN.28001",
+      "code": "28001",
+      "name": "La Acebeda",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28002",
+      "code": "28002",
+      "name": "Ajalvir",
+      "status": "CUBIERTO",
+      "value": 1.497,
+      "ratio_to_reference": 1.139,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28003",
+      "code": "28003",
+      "name": "Alameda del Valle",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28004",
+      "code": "28004",
+      "name": "El Álamo",
+      "status": "JUSTO",
+      "value": 1.238,
+      "ratio_to_reference": 0.9417,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28005",
+      "code": "28005",
+      "name": "Alcalá de Henares",
+      "status": "CUBIERTO",
+      "value": 1.516,
+      "ratio_to_reference": 1.153,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28006",
+      "code": "28006",
+      "name": "Alcobendas",
+      "status": "FALTA",
+      "value": 1.048,
+      "ratio_to_reference": 0.7972,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28007",
+      "code": "28007",
+      "name": "Alcorcón",
+      "status": "CUBIERTO",
+      "value": 1.591,
+      "ratio_to_reference": 1.21,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28008",
+      "code": "28008",
+      "name": "Aldea del Fresno",
+      "status": "CUBIERTO",
+      "value": 1.855,
+      "ratio_to_reference": 1.411,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28009",
+      "code": "28009",
+      "name": "Algete",
+      "status": "CUBIERTO",
+      "value": 2.195,
+      "ratio_to_reference": 1.67,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28010",
+      "code": "28010",
+      "name": "Alpedrete",
+      "status": "CUBIERTO",
+      "value": 2.373,
+      "ratio_to_reference": 1.805,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28011",
+      "code": "28011",
+      "name": "Ambite",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28012",
+      "code": "28012",
+      "name": "Anchuelo",
+      "status": "CUBIERTO",
+      "value": 3.968,
+      "ratio_to_reference": 3.018,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28013",
+      "code": "28013",
+      "name": "Aranjuez",
+      "status": "JUSTO",
+      "value": 1.265,
+      "ratio_to_reference": 0.9622,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28014",
+      "code": "28014",
+      "name": "Arganda del Rey",
+      "status": "JUSTO",
+      "value": 1.162,
+      "ratio_to_reference": 0.8839,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28015",
+      "code": "28015",
+      "name": "Arroyomolinos",
+      "status": "FALTA",
+      "value": 0.8162,
+      "ratio_to_reference": 0.6208,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28016",
+      "code": "28016",
+      "name": "El Atazar",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28017",
+      "code": "28017",
+      "name": "Batres",
+      "status": "CUBIERTO",
+      "value": 4.082,
+      "ratio_to_reference": 3.105,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28018",
+      "code": "28018",
+      "name": "Becerril de la Sierra",
+      "status": "JUSTO",
+      "value": 1.103,
+      "ratio_to_reference": 0.839,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28019",
+      "code": "28019",
+      "name": "Belmonte de Tajo",
+      "status": "CUBIERTO",
+      "value": 3.636,
+      "ratio_to_reference": 2.766,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28020",
+      "code": "28020",
+      "name": "Berzosa del Lozoya",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28021",
+      "code": "28021",
+      "name": "El Berrueco",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28022",
+      "code": "28022",
+      "name": "Boadilla del Monte",
+      "status": "FALTA",
+      "value": 0.6665,
+      "ratio_to_reference": 0.507,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28023",
+      "code": "28023",
+      "name": "El Boalo",
+      "status": "CUBIERTO",
+      "value": 2.723,
+      "ratio_to_reference": 2.071,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28024",
+      "code": "28024",
+      "name": "Braojos",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28025",
+      "code": "28025",
+      "name": "Brea de Tajo",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28026",
+      "code": "28026",
+      "name": "Brunete",
+      "status": "JUSTO",
+      "value": 1.262,
+      "ratio_to_reference": 0.9599,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28027",
+      "code": "28027",
+      "name": "Buitrago del Lozoya",
+      "status": "CUBIERTO",
+      "value": 6.873,
+      "ratio_to_reference": 5.228,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28028",
+      "code": "28028",
+      "name": "Bustarviejo",
+      "status": "CUBIERTO",
+      "value": 2.457,
+      "ratio_to_reference": 1.869,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28029",
+      "code": "28029",
+      "name": "Cabanillas de la Sierra",
+      "status": "CUBIERTO",
+      "value": 7.576,
+      "ratio_to_reference": 5.763,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28030",
+      "code": "28030",
+      "name": "La Cabrera",
+      "status": "CUBIERTO",
+      "value": 2.611,
+      "ratio_to_reference": 1.986,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28031",
+      "code": "28031",
+      "name": "Cadalso de los Vidrios",
+      "status": "CUBIERTO",
+      "value": 2.132,
+      "ratio_to_reference": 1.622,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28032",
+      "code": "28032",
+      "name": "Camarma de Esteruelas",
+      "status": "FALTA",
+      "value": 0.815,
+      "ratio_to_reference": 0.6199,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28033",
+      "code": "28033",
+      "name": "Campo Real",
+      "status": "FALTA",
+      "value": 0.8897,
+      "ratio_to_reference": 0.6768,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28034",
+      "code": "28034",
+      "name": "Canencia",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28035",
+      "code": "28035",
+      "name": "Carabaña",
+      "status": "CUBIERTO",
+      "value": 2.841,
+      "ratio_to_reference": 2.161,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28036",
+      "code": "28036",
+      "name": "Casarrubuelos",
+      "status": "CUBIERTO",
+      "value": 1.443,
+      "ratio_to_reference": 1.098,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28037",
+      "code": "28037",
+      "name": "Cenicientos",
+      "status": "CUBIERTO",
+      "value": 4.274,
+      "ratio_to_reference": 3.251,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28038",
+      "code": "28038",
+      "name": "Cercedilla",
+      "status": "CUBIERTO",
+      "value": 2.035,
+      "ratio_to_reference": 1.548,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28039",
+      "code": "28039",
+      "name": "Cervera de Buitrago",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28040",
+      "code": "28040",
+      "name": "Ciempozuelos",
+      "status": "JUSTO",
+      "value": 1.073,
+      "ratio_to_reference": 0.8162,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28041",
+      "code": "28041",
+      "name": "Cobeña",
+      "status": "CUBIERTO",
+      "value": 1.494,
+      "ratio_to_reference": 1.136,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28042",
+      "code": "28042",
+      "name": "Colmenar del Arroyo",
+      "status": "CUBIERTO",
+      "value": 3.636,
+      "ratio_to_reference": 2.766,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28043",
+      "code": "28043",
+      "name": "Colmenar de Oreja",
+      "status": "FALTA",
+      "value": 0.8496,
+      "ratio_to_reference": 0.6463,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28044",
+      "code": "28044",
+      "name": "Colmenarejo",
+      "status": "CUBIERTO",
+      "value": 1.494,
+      "ratio_to_reference": 1.136,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28045",
+      "code": "28045",
+      "name": "Colmenar Viejo",
+      "status": "JUSTO",
+      "value": 1.152,
+      "ratio_to_reference": 0.8763,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28046",
+      "code": "28046",
+      "name": "Collado Mediano",
+      "status": "FALTA",
+      "value": 0.9452,
+      "ratio_to_reference": 0.719,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28047",
+      "code": "28047",
+      "name": "Collado Villalba",
+      "status": "CUBIERTO",
+      "value": 1.458,
+      "ratio_to_reference": 1.109,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28048",
+      "code": "28048",
+      "name": "Corpa",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28049",
+      "code": "28049",
+      "name": "Coslada",
+      "status": "CUBIERTO",
+      "value": 1.835,
+      "ratio_to_reference": 1.396,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28050",
+      "code": "28050",
+      "name": "Cubas de la Sagra",
+      "status": "CUBIERTO",
+      "value": 1.485,
+      "ratio_to_reference": 1.13,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28051",
+      "code": "28051",
+      "name": "Chapinería",
+      "status": "CUBIERTO",
+      "value": 2.083,
+      "ratio_to_reference": 1.584,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28052",
+      "code": "28052",
+      "name": "Chinchón",
+      "status": "JUSTO",
+      "value": 1.267,
+      "ratio_to_reference": 0.9638,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28053",
+      "code": "28053",
+      "name": "Daganzo de Arriba",
+      "status": "JUSTO",
+      "value": 1.155,
+      "ratio_to_reference": 0.8786,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28054",
+      "code": "28054",
+      "name": "El Escorial",
+      "status": "FALTA",
+      "value": 0.9091,
+      "ratio_to_reference": 0.6915,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28055",
+      "code": "28055",
+      "name": "Estremera",
+      "status": "CUBIERTO",
+      "value": 5.65,
+      "ratio_to_reference": 4.298,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28056",
+      "code": "28056",
+      "name": "Fresnedillas de la Oliva",
+      "status": "CUBIERTO",
+      "value": 3.125,
+      "ratio_to_reference": 2.377,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28057",
+      "code": "28057",
+      "name": "Fresno de Torote",
+      "status": "CUBIERTO",
+      "value": 2.358,
+      "ratio_to_reference": 1.794,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28058",
+      "code": "28058",
+      "name": "Fuenlabrada",
+      "status": "CUBIERTO",
+      "value": 1.986,
+      "ratio_to_reference": 1.511,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28059",
+      "code": "28059",
+      "name": "Fuente el Saz de Jarama",
+      "status": "FALTA",
+      "value": 0.9328,
+      "ratio_to_reference": 0.7095,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28060",
+      "code": "28060",
+      "name": "Fuentidueña de Tajo",
+      "status": "CUBIERTO",
+      "value": 3.289,
+      "ratio_to_reference": 2.502,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28061",
+      "code": "28061",
+      "name": "Galapagar",
+      "status": "FALTA",
+      "value": 0.9619,
+      "ratio_to_reference": 0.7317,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28062",
+      "code": "28062",
+      "name": "Garganta de los Montes",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28063",
+      "code": "28063",
+      "name": "Gargantilla del Lozoya y Pinilla de Buitrago",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28064",
+      "code": "28064",
+      "name": "Gascones",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28065",
+      "code": "28065",
+      "name": "Getafe",
+      "status": "JUSTO",
+      "value": 1.297,
+      "ratio_to_reference": 0.9866,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28066",
+      "code": "28066",
+      "name": "Griñón",
+      "status": "JUSTO",
+      "value": 1.292,
+      "ratio_to_reference": 0.9828,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28067",
+      "code": "28067",
+      "name": "Guadalix de la Sierra",
+      "status": "FALTA",
+      "value": 1.012,
+      "ratio_to_reference": 0.7698,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28068",
+      "code": "28068",
+      "name": "Guadarrama",
+      "status": "CUBIERTO",
+      "value": 2.106,
+      "ratio_to_reference": 1.602,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28069",
+      "code": "28069",
+      "name": "La Hiruela",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28070",
+      "code": "28070",
+      "name": "Horcajo de la Sierra-Aoslos",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28071",
+      "code": "28071",
+      "name": "Horcajuelo de la Sierra",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28072",
+      "code": "28072",
+      "name": "Hoyo de Manzanares",
+      "status": "FALTA",
+      "value": 0.8197,
+      "ratio_to_reference": 0.6235,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28073",
+      "code": "28073",
+      "name": "Humanes de Madrid",
+      "status": "CUBIERTO",
+      "value": 1.429,
+      "ratio_to_reference": 1.087,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28074",
+      "code": "28074",
+      "name": "Leganés",
+      "status": "CUBIERTO",
+      "value": 1.539,
+      "ratio_to_reference": 1.171,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28075",
+      "code": "28075",
+      "name": "Loeches",
+      "status": "CUBIERTO",
+      "value": 1.995,
+      "ratio_to_reference": 1.518,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28076",
+      "code": "28076",
+      "name": "Lozoya",
+      "status": "CUBIERTO",
+      "value": 22.73,
+      "ratio_to_reference": 17.29,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28078",
+      "code": "28078",
+      "name": "Madarcos",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28079",
+      "code": "28079",
+      "name": "Madrid",
+      "status": "JUSTO",
+      "value": 1.267,
+      "ratio_to_reference": 0.9638,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28080",
+      "code": "28080",
+      "name": "Majadahonda",
+      "status": "JUSTO",
+      "value": 1.105,
+      "ratio_to_reference": 0.8405,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28082",
+      "code": "28082",
+      "name": "Manzanares el Real",
+      "status": "CUBIERTO",
+      "value": 1.367,
+      "ratio_to_reference": 1.04,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28083",
+      "code": "28083",
+      "name": "Meco",
+      "status": "JUSTO",
+      "value": 1.187,
+      "ratio_to_reference": 0.9029,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28084",
+      "code": "28084",
+      "name": "Mejorada del Campo",
+      "status": "CUBIERTO",
+      "value": 1.386,
+      "ratio_to_reference": 1.054,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28085",
+      "code": "28085",
+      "name": "Miraflores de la Sierra",
+      "status": "CUBIERTO",
+      "value": 2.03,
+      "ratio_to_reference": 1.544,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28086",
+      "code": "28086",
+      "name": "El Molar",
+      "status": "JUSTO",
+      "value": 1.289,
+      "ratio_to_reference": 0.9805,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28087",
+      "code": "28087",
+      "name": "Los Molinos",
+      "status": "CUBIERTO",
+      "value": 1.808,
+      "ratio_to_reference": 1.375,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28088",
+      "code": "28088",
+      "name": "Montejo de la Sierra",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28089",
+      "code": "28089",
+      "name": "Moraleja de Enmedio",
+      "status": "JUSTO",
+      "value": 1.119,
+      "ratio_to_reference": 0.8512,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28090",
+      "code": "28090",
+      "name": "Moralzarzal",
+      "status": "CUBIERTO",
+      "value": 1.392,
+      "ratio_to_reference": 1.059,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28091",
+      "code": "28091",
+      "name": "Morata de Tajuña",
+      "status": "FALTA",
+      "value": 0.8613,
+      "ratio_to_reference": 0.6552,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28092",
+      "code": "28092",
+      "name": "Móstoles",
+      "status": "CUBIERTO",
+      "value": 1.443,
+      "ratio_to_reference": 1.098,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28093",
+      "code": "28093",
+      "name": "Navacerrada",
+      "status": "CUBIERTO",
+      "value": 2.525,
+      "ratio_to_reference": 1.921,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28094",
+      "code": "28094",
+      "name": "Navalafuente",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28095",
+      "code": "28095",
+      "name": "Navalagamella",
+      "status": "CUBIERTO",
+      "value": 2.119,
+      "ratio_to_reference": 1.612,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28096",
+      "code": "28096",
+      "name": "Navalcarnero",
+      "status": "JUSTO",
+      "value": 1.134,
+      "ratio_to_reference": 0.8626,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28097",
+      "code": "28097",
+      "name": "Navarredonda y San Mamés",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28099",
+      "code": "28099",
+      "name": "Navas del Rey",
+      "status": "CUBIERTO",
+      "value": 2.041,
+      "ratio_to_reference": 1.553,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28100",
+      "code": "28100",
+      "name": "Nuevo Baztán",
+      "status": "CUBIERTO",
+      "value": 1.929,
+      "ratio_to_reference": 1.467,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28101",
+      "code": "28101",
+      "name": "Olmeda de las Fuentes",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28102",
+      "code": "28102",
+      "name": "Orusco de Tajuña",
+      "status": "CUBIERTO",
+      "value": 5.0,
+      "ratio_to_reference": 3.803,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28104",
+      "code": "28104",
+      "name": "Paracuellos de Jarama",
+      "status": "FALTA",
+      "value": 0.8706,
+      "ratio_to_reference": 0.6622,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28106",
+      "code": "28106",
+      "name": "Parla",
+      "status": "JUSTO",
+      "value": 1.057,
+      "ratio_to_reference": 0.804,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28107",
+      "code": "28107",
+      "name": "Patones",
+      "status": "CUBIERTO",
+      "value": 13.16,
+      "ratio_to_reference": 10.01,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28108",
+      "code": "28108",
+      "name": "Pedrezuela",
+      "status": "CUBIERTO",
+      "value": 1.732,
+      "ratio_to_reference": 1.317,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28109",
+      "code": "28109",
+      "name": "Pelayos de la Presa",
+      "status": "CUBIERTO",
+      "value": 2.212,
+      "ratio_to_reference": 1.683,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28110",
+      "code": "28110",
+      "name": "Perales de Tajuña",
+      "status": "CUBIERTO",
+      "value": 2.165,
+      "ratio_to_reference": 1.647,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28111",
+      "code": "28111",
+      "name": "Pezuela de las Torres",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28112",
+      "code": "28112",
+      "name": "Pinilla del Valle",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28113",
+      "code": "28113",
+      "name": "Pinto",
+      "status": "JUSTO",
+      "value": 1.132,
+      "ratio_to_reference": 0.8611,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28114",
+      "code": "28114",
+      "name": "Piñuécar-Gandullas",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28115",
+      "code": "28115",
+      "name": "Pozuelo de Alarcón",
+      "status": "JUSTO",
+      "value": 1.056,
+      "ratio_to_reference": 0.8033,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28116",
+      "code": "28116",
+      "name": "Pozuelo del Rey",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28117",
+      "code": "28117",
+      "name": "Prádena del Rincón",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28118",
+      "code": "28118",
+      "name": "Puebla de la Sierra",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28119",
+      "code": "28119",
+      "name": "Quijorna",
+      "status": "CUBIERTO",
+      "value": 1.634,
+      "ratio_to_reference": 1.243,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28120",
+      "code": "28120",
+      "name": "Rascafría",
+      "status": "CUBIERTO",
+      "value": 6.993,
+      "ratio_to_reference": 5.319,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28121",
+      "code": "28121",
+      "name": "Redueña",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28122",
+      "code": "28122",
+      "name": "Ribatejada",
+      "status": "CUBIERTO",
+      "value": 9.615,
+      "ratio_to_reference": 7.314,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28123",
+      "code": "28123",
+      "name": "Rivas-Vaciamadrid",
+      "status": "FALTA",
+      "value": 0.9718,
+      "ratio_to_reference": 0.7392,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28124",
+      "code": "28124",
+      "name": "Robledillo de la Jara",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28125",
+      "code": "28125",
+      "name": "Robledo de Chavela",
+      "status": "CUBIERTO",
+      "value": 1.776,
+      "ratio_to_reference": 1.351,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28126",
+      "code": "28126",
+      "name": "Robregordo",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28127",
+      "code": "28127",
+      "name": "Las Rozas de Madrid",
+      "status": "FALTA",
+      "value": 1.009,
+      "ratio_to_reference": 0.7675,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28128",
+      "code": "28128",
+      "name": "Rozas de Puerto Real",
+      "status": "CUBIERTO",
+      "value": 23.81,
+      "ratio_to_reference": 18.11,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28129",
+      "code": "28129",
+      "name": "San Agustín del Guadalix",
+      "status": "FALTA",
+      "value": 0.9062,
+      "ratio_to_reference": 0.6893,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28130",
+      "code": "28130",
+      "name": "San Fernando de Henares",
+      "status": "CUBIERTO",
+      "value": 1.502,
+      "ratio_to_reference": 1.143,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28131",
+      "code": "28131",
+      "name": "San Lorenzo de El Escorial",
+      "status": "CUBIERTO",
+      "value": 1.652,
+      "ratio_to_reference": 1.257,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28132",
+      "code": "28132",
+      "name": "San Martín de la Vega",
+      "status": "CUBIERTO",
+      "value": 1.721,
+      "ratio_to_reference": 1.309,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28133",
+      "code": "28133",
+      "name": "San Martín de Valdeiglesias",
+      "status": "CUBIERTO",
+      "value": 1.543,
+      "ratio_to_reference": 1.174,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28134",
+      "code": "28134",
+      "name": "San Sebastián de los Reyes",
+      "status": "JUSTO",
+      "value": 1.066,
+      "ratio_to_reference": 0.8109,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28135",
+      "code": "28135",
+      "name": "Santa María de la Alameda",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28136",
+      "code": "28136",
+      "name": "Santorcaz",
+      "status": "CUBIERTO",
+      "value": 8.403,
+      "ratio_to_reference": 6.392,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28137",
+      "code": "28137",
+      "name": "Los Santos de la Humosa",
+      "status": "CUBIERTO",
+      "value": 1.949,
+      "ratio_to_reference": 1.483,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28138",
+      "code": "28138",
+      "name": "La Serna del Monte",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28140",
+      "code": "28140",
+      "name": "Serranillos del Valle",
+      "status": "CUBIERTO",
+      "value": 1.37,
+      "ratio_to_reference": 1.042,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28141",
+      "code": "28141",
+      "name": "Sevilla la Nueva",
+      "status": "CUBIERTO",
+      "value": 2.056,
+      "ratio_to_reference": 1.564,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28143",
+      "code": "28143",
+      "name": "Somosierra",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28144",
+      "code": "28144",
+      "name": "Soto del Real",
+      "status": "CUBIERTO",
+      "value": 2.465,
+      "ratio_to_reference": 1.875,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28145",
+      "code": "28145",
+      "name": "Talamanca de Jarama",
+      "status": "JUSTO",
+      "value": 1.294,
+      "ratio_to_reference": 0.9843,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28146",
+      "code": "28146",
+      "name": "Tielmes",
+      "status": "CUBIERTO",
+      "value": 2.294,
+      "ratio_to_reference": 1.745,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28147",
+      "code": "28147",
+      "name": "Titulcia",
+      "status": "CUBIERTO",
+      "value": 5.181,
+      "ratio_to_reference": 3.941,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28148",
+      "code": "28148",
+      "name": "Torrejón de Ardoz",
+      "status": "JUSTO",
+      "value": 1.181,
+      "ratio_to_reference": 0.8983,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28149",
+      "code": "28149",
+      "name": "Torrejón de la Calzada",
+      "status": "CUBIERTO",
+      "value": 1.527,
+      "ratio_to_reference": 1.162,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28150",
+      "code": "28150",
+      "name": "Torrejón de Velasco",
+      "status": "CUBIERTO",
+      "value": 2.674,
+      "ratio_to_reference": 2.034,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28151",
+      "code": "28151",
+      "name": "Torrelaguna",
+      "status": "CUBIERTO",
+      "value": 1.429,
+      "ratio_to_reference": 1.087,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28152",
+      "code": "28152",
+      "name": "Torrelodones",
+      "status": "JUSTO",
+      "value": 1.263,
+      "ratio_to_reference": 0.9607,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28153",
+      "code": "28153",
+      "name": "Torremocha de Jarama",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28154",
+      "code": "28154",
+      "name": "Torres de la Alameda",
+      "status": "FALTA",
+      "value": 0.9217,
+      "ratio_to_reference": 0.7011,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28155",
+      "code": "28155",
+      "name": "Valdaracete",
+      "status": "CUBIERTO",
+      "value": 13.33,
+      "ratio_to_reference": 10.14,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28156",
+      "code": "28156",
+      "name": "Valdeavero",
+      "status": "CUBIERTO",
+      "value": 3.165,
+      "ratio_to_reference": 2.407,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28157",
+      "code": "28157",
+      "name": "Valdelaguna",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28158",
+      "code": "28158",
+      "name": "Valdemanco",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28159",
+      "code": "28159",
+      "name": "Valdemaqueda",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28160",
+      "code": "28160",
+      "name": "Valdemorillo",
+      "status": "FALTA",
+      "value": 0.947,
+      "ratio_to_reference": 0.7203,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28161",
+      "code": "28161",
+      "name": "Valdemoro",
+      "status": "JUSTO",
+      "value": 1.17,
+      "ratio_to_reference": 0.89,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28162",
+      "code": "28162",
+      "name": "Valdeolmos-Alalpardo",
+      "status": "CUBIERTO",
+      "value": 2.472,
+      "ratio_to_reference": 1.88,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28163",
+      "code": "28163",
+      "name": "Valdepiélagos",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28164",
+      "code": "28164",
+      "name": "Valdetorres de Jarama",
+      "status": "CUBIERTO",
+      "value": 1.429,
+      "ratio_to_reference": 1.087,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28165",
+      "code": "28165",
+      "name": "Valdilecha",
+      "status": "CUBIERTO",
+      "value": 1.866,
+      "ratio_to_reference": 1.419,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28166",
+      "code": "28166",
+      "name": "Valverde de Alcalá",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28167",
+      "code": "28167",
+      "name": "Velilla de San Antonio",
+      "status": "FALTA",
+      "value": 0.9145,
+      "ratio_to_reference": 0.6956,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28168",
+      "code": "28168",
+      "name": "El Vellón",
+      "status": "CUBIERTO",
+      "value": 3.012,
+      "ratio_to_reference": 2.291,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28169",
+      "code": "28169",
+      "name": "Venturada",
+      "status": "CUBIERTO",
+      "value": 2.725,
+      "ratio_to_reference": 2.073,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28170",
+      "code": "28170",
+      "name": "Villaconejos",
+      "status": "CUBIERTO",
+      "value": 1.965,
+      "ratio_to_reference": 1.495,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28171",
+      "code": "28171",
+      "name": "Villa del Prado",
+      "status": "FALTA",
+      "value": 0.8591,
+      "ratio_to_reference": 0.6535,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28172",
+      "code": "28172",
+      "name": "Villalbilla",
+      "status": "CUBIERTO",
+      "value": 1.338,
+      "ratio_to_reference": 1.018,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28173",
+      "code": "28173",
+      "name": "Villamanrique de Tajo",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28174",
+      "code": "28174",
+      "name": "Villamanta",
+      "status": "CUBIERTO",
+      "value": 2.451,
+      "ratio_to_reference": 1.864,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28175",
+      "code": "28175",
+      "name": "Villamantilla",
+      "status": "CUBIERTO",
+      "value": 3.333,
+      "ratio_to_reference": 2.535,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28176",
+      "code": "28176",
+      "name": "Villanueva de la Cañada",
+      "status": "CUBIERTO",
+      "value": 1.566,
+      "ratio_to_reference": 1.191,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28177",
+      "code": "28177",
+      "name": "Villanueva del Pardillo",
+      "status": "CUBIERTO",
+      "value": 1.708,
+      "ratio_to_reference": 1.299,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28178",
+      "code": "28178",
+      "name": "Villanueva de Perales",
+      "status": "CUBIERTO",
+      "value": 3.774,
+      "ratio_to_reference": 2.871,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28179",
+      "code": "28179",
+      "name": "Villar del Olmo",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28180",
+      "code": "28180",
+      "name": "Villarejo de Salvanés",
+      "status": "CUBIERTO",
+      "value": 1.753,
+      "ratio_to_reference": 1.333,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28181",
+      "code": "28181",
+      "name": "Villaviciosa de Odón",
+      "status": "JUSTO",
+      "value": 1.063,
+      "ratio_to_reference": 0.8086,
+      "confidence": 1.0,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28182",
+      "code": "28182",
+      "name": "Villavieja del Lozoya",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28183",
+      "code": "28183",
+      "name": "Zarzalejo",
+      "status": "CUBIERTO",
+      "value": 3.344,
+      "ratio_to_reference": 2.544,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28901",
+      "code": "28901",
+      "name": "Lozoyuela-Navas-Sieteiglesias",
+      "status": "CUBIERTO",
+      "value": 4.854,
+      "ratio_to_reference": 3.692,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28902",
+      "code": "28902",
+      "name": "Puentes Viejas",
+      "status": "FALTA",
+      "value": 0.0,
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28903",
+      "code": "28903",
+      "name": "Tres Cantos",
+      "status": "JUSTO",
+      "value": 1.249,
+      "ratio_to_reference": 0.9501,
+      "confidence": 1.0,
+      "null_reason": null
+    }
+  ],
+  "datasets": [
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    }
+  ]
+}

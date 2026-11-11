@@ -7,7 +7,11 @@ from sqlalchemy import Engine, text
 from hi_api.deps import get_engine
 from hi_api.main import app
 from hi_contracts.catalog.enums import GapRowKey
-from hi_contracts.public.responses import DatasetListResponse, ZoneGapListResponse
+from hi_contracts.public.responses import (
+    DatasetListResponse,
+    GapRowMapResponse,
+    ZoneGapListResponse,
+)
 
 pytestmark = pytest.mark.db
 
@@ -205,3 +209,51 @@ def test_level_without_computed_indicators_returns_no_rows(
     assert payload.data.rows == []
     assert len(payload.warnings) == len(GapRowKey)
     assert all("seccion_censal level" in w for w in payload.warnings)
+
+
+def test_row_map_agrees_with_each_zone_list(client: TestClient) -> None:
+    """GAP-001 F4: the map colour of every zone is the status of its row in /gaps/{level}/{code}."""
+    for level, row in [("municipio", "colegio"), ("distrito", "centro_salud")]:
+        response = client.get("/api/v1/gaps", params={"level": level, "row": row})
+        assert response.status_code == 200
+        body = GapRowMapResponse.model_validate(response.json())
+        assert body.meta.methodology_version == body.data.method.version
+        assert body.meta.data_version
+        assert body.data.zones, (level, row)
+        assert body.data.datasets
+        for zone in body.data.zones:
+            listed = ZoneGapListResponse.model_validate(
+                client.get(f"/api/v1/gaps/{level}/{zone.code}").json()
+            )
+            same = next(r for r in listed.data.rows if r.row.value == row)
+            assert zone.status == same.status
+            assert zone.value == same.indicator.value
+            assert zone.ratio_to_reference == same.ratio_to_reference
+            assert zone.name == listed.data.zone.name
+            assert zone.admin_unit_id == listed.data.zone.admin_unit_id
+            assert body.data.reference == same.reference
+
+
+def test_row_map_keeps_sin_datos_and_flags_rows_not_computed(client: TestClient) -> None:
+    housing = GapRowMapResponse.model_validate(
+        client.get("/api/v1/gaps", params={"level": "distrito", "row": "vivienda"}).json()
+    )
+    assert housing.data.zones
+    assert {z.status.value for z in housing.data.zones} == {"SIN_DATOS"}
+    assert housing.data.counts.sin_datos == len(housing.data.zones)
+    assert all(z.null_reason is not None and z.value is None for z in housing.data.zones)
+    sections = client.get("/api/v1/gaps", params={"level": "seccion_censal", "row": "colegio"})
+    assert sections.status_code == 200
+    body = GapRowMapResponse.model_validate(sections.json())
+    assert body.data.zones == []
+    assert body.warnings == [
+        "INSUFFICIENT_DATA: row colegio not computed at seccion_censal level yet"
+    ]
+
+
+def test_row_map_rejects_unknown_rows_and_levels(client: TestClient) -> None:
+    assert client.get("/api/v1/gaps", params={"level": "municipio", "row": "x"}).status_code == 422
+    barrio = client.get("/api/v1/gaps", params={"level": "barrio", "row": "colegio"})
+    assert barrio.status_code == 422
+    assert barrio.json()["detail"]["code"] == "OUT_OF_COVERAGE"
+    assert client.get("/api/v1/gaps", params={"level": "municipio"}).status_code == 422

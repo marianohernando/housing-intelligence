@@ -11,6 +11,7 @@ from hi_contracts.public import (
     DatasetList,
     GapMethod,
     GapRow,
+    GapRowMap,
     RealityCheck,
     ScenarioState,
     SearchResult,
@@ -23,6 +24,7 @@ FIXTURES = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "contract
 CONTRACTS: dict[str, type[BaseModel]] = {
     "scenario_state": ScenarioState,
     "zone_gap_list": ZoneGapList,
+    "gap_row_map": GapRowMap,
     "search_result": SearchResult,
     "dataset_list": DatasetList,
 }
@@ -142,3 +144,17 @@ def test_provenance_counts_cm_portal_datasets() -> None:
     ref = dataset_ref(catalog, "crtm_gtfs_metro", "v1")
     assert ref.url is not None
     assert ref.url.host == "datos.comunidad.madrid"
+
+
+def test_row_map_counts_match_its_zones_and_sin_datos_needs_no_value() -> None:
+    path = FIXTURES / "gap_row_map.colegio_municipio.fixture.json"
+    payload: dict[str, Any] = json.loads(path.read_text())
+    GapRowMap.model_validate(payload)
+    wrong = payload | {"counts": payload["counts"] | {"falta": payload["counts"]["falta"] + 1}}
+    with pytest.raises(ValidationError):
+        GapRowMap.model_validate(wrong)
+    zone = payload["zones"][0]
+    with pytest.raises(ValidationError):
+        GapRowMap.model_validate(payload | {"zones": [zone | {"status": "SIN_DATOS"}]})
+    with pytest.raises(ValidationError):
+        GapRowMap.model_validate(payload | {"zones": [zone, zone]})

@@ -6,7 +6,16 @@ Version 2 (11 Nov): rent or purchase budget, household with older people in care
 """
 
 from hi_contracts.public.common import DatasetList, DatasetRef, IndicatorValue, ZoneRef
-from hi_contracts.public.gaps import GapMethod, GapRow, GapRowKey, GapStatus, ZoneGapList
+from hi_contracts.public.gaps import (
+    GapMethod,
+    GapRow,
+    GapRowKey,
+    GapRowMap,
+    GapStatus,
+    GapStatusCounts,
+    ZoneGapList,
+    ZoneGapStatus,
+)
 from hi_contracts.public.scenario import (
     Anchor,
     AnchorKind,
@@ -48,7 +57,9 @@ __all__ = [
     "GapMethod",
     "GapRow",
     "GapRowKey",
+    "GapRowMap",
     "GapStatus",
+    "GapStatusCounts",
     "Household",
     "IndicatorValue",
     "NearbyNeed",
@@ -60,6 +71,7 @@ __all__ = [
     "ScenarioState",
     "SearchResult",
     "ZoneGapList",
+    "ZoneGapStatus",
     "ZoneMatch",
     "ZoneRef",
 ]

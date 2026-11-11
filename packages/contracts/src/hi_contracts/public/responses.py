@@ -2,12 +2,16 @@
 
 from hi_contracts.api.envelope import Envelope
 from hi_contracts.public.common import DatasetList
-from hi_contracts.public.gaps import ZoneGapList
+from hi_contracts.public.gaps import GapRowMap, ZoneGapList
 from hi_contracts.public.search import SearchResult
 
 
 class ZoneGapListResponse(Envelope[ZoneGapList]):
     """GET /api/v1/gaps/{level}/{code}"""
+
+
+class GapRowMapResponse(Envelope[GapRowMap]):
+    """GET /api/v1/gaps?level=&row="""
 
 
 class SearchResponse(Envelope[SearchResult]):

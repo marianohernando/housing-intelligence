@@ -15,6 +15,7 @@ from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineS
 from hi_contracts.public import ScenarioState
 from hi_contracts.public.responses import (
     DatasetListResponse,
+    GapRowMapResponse,
     SearchResponse,
     ZoneGapListResponse,
 )
@@ -29,6 +30,7 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "api/scenario_state": ScenarioState,
     "api/search_response": SearchResponse,
     "api/zone_gap_list_response": ZoneGapListResponse,
+    "api/gap_row_map_response": GapRowMapResponse,
     "api/dataset_list_response": DatasetListResponse,
     "api/error_response": ErrorEnvelope,
 }

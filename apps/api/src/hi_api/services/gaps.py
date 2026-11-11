@@ -31,7 +31,7 @@ REGION_LEVEL, REGION_CODE = "ccaa", "28"
 SIGNIFICANT_DIGITS = 4
 
 
-def _significant(value: float) -> float:
+def significant(value: float) -> float:
     """Round for display without erasing small ratios (0.00287 stays 0.002871)."""
     return float(f"{value:.{SIGNIFICANT_DIGITS}g}")
 
@@ -127,7 +127,7 @@ def _indicator(
     return IndicatorValue(
         feature_id=feature["feature_id"],
         label=feature["human_name"],
-        value=None if row["value"] is None else _significant(float(row["value"])),
+        value=None if row["value"] is None else significant(float(row["value"])),
         unit=feature["unit"],
         confidence=float(row["confidence"]),
         null_reason=row["null_reason"],
@@ -168,10 +168,10 @@ def _gap_row(
         label=binding["label"],
         status=classify(ratio),
         indicator=indicator,
-        reference=None if reference is None else _significant(float(reference)),
+        reference=None if reference is None else significant(float(reference)),
         reference_label="Comunidad de Madrid",
         direction=feature["direction"],
-        ratio_to_reference=None if ratio is None else _significant(ratio),
+        ratio_to_reference=None if ratio is None else significant(ratio),
         explanation=text_,
         proxy_note=binding.get("proxy_note"),
         extra_indicators=[_indicator(e.feature, e.value, level) for e in extras],

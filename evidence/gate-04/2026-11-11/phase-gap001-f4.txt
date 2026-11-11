@@ -1,0 +1,65 @@
+# GAP-001 Fase 4: GET /api/v1/gaps?level=&row= (mapa de una fila)
+$ datos reales (base local), las 6 filas por municipio y por distrito
+municipio escuela_infantil 200 zonas 179 {'falta': 44, 'justo': 17, 'cubierto': 117, 'sin_datos': 1} ref 4.714 bytes 32196 warnings []
+municipio colegio 200 zonas 179 {'falta': 65, 'justo': 27, 'cubierto': 87, 'sin_datos': 0} ref 1.315 bytes 32126 warnings []
+municipio centro_salud 200 zonas 179 {'falta': 27, 'justo': 8, 'cubierto': 144, 'sin_datos': 0} ref 0.5918 bytes 32442 warnings []
+municipio mayores 200 zonas 179 {'falta': 90, 'justo': 12, 'cubierto': 77, 'sin_datos': 0} ref 0.3895 bytes 31965 warnings []
+municipio farmacia 200 zonas 179 {'falta': 94, 'justo': 30, 'cubierto': 55, 'sin_datos': 0} ref 4.151 bytes 31972 warnings []
+municipio vivienda 200 zonas 179 {'falta': 8, 'justo': 11, 'cubierto': 160, 'sin_datos': 0} ref 177.6 bytes 32502 warnings []
+distrito escuela_infantil 200 zonas 21 {'falta': 8, 'justo': 2, 'cubierto': 11, 'sin_datos': 0} ref 4.714 bytes 5452 warnings []
+distrito colegio 200 zonas 21 {'falta': 4, 'justo': 5, 'cubierto': 12, 'sin_datos': 0} ref 1.315 bytes 5516 warnings []
+distrito centro_salud 200 zonas 21 {'falta': 18, 'justo': 3, 'cubierto': 0, 'sin_datos': 0} ref 0.5918 bytes 5476 warnings []
+distrito mayores 200 zonas 21 {'falta': 7, 'justo': 8, 'cubierto': 6, 'sin_datos': 0} ref 0.3895 bytes 5510 warnings []
+distrito farmacia 200 zonas 21 {'falta': 0, 'justo': 5, 'cubierto': 16, 'sin_datos': 0} ref 4.151 bytes 5339 warnings []
+distrito vivienda 200 zonas 21 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 21} ref 177.6 bytes 5777 warnings []
+seccion_censal escuela_infantil 200 zonas 0 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 0} ref 4.714 bytes 1649 warnings ['INSUFFICIENT_DATA: row escuela_infantil not computed at seccion_censal level yet']
+seccion_censal colegio 200 zonas 0 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 0} ref 1.315 bytes 1696 warnings ['INSUFFICIENT_DATA: row colegio not computed at seccion_censal level yet']
+seccion_censal centro_salud 200 zonas 0 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 0} ref 0.5918 bytes 1673 warnings ['INSUFFICIENT_DATA: row centro_salud not computed at seccion_censal level yet']
+seccion_censal mayores 200 zonas 0 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 0} ref 0.3895 bytes 1683 warnings ['INSUFFICIENT_DATA: row mayores not computed at seccion_censal level yet']
+seccion_censal farmacia 200 zonas 0 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 0} ref 4.151 bytes 1520 warnings ['INSUFFICIENT_DATA: row farmacia not computed at seccion_censal level yet']
+seccion_censal vivienda 200 zonas 0 {'falta': 0, 'justo': 0, 'cubierto': 0, 'sin_datos': 0} ref 177.6 bytes 1709 warnings ['INSUFFICIENT_DATA: row vivienda not computed at seccion_censal level yet']
+Chamartín: [{'admin_unit_id': 'ES.28.DIS.2807905', 'code': '2807905', 'name': 'Chamartín', 'status': 'FALTA', 'value': 0.469, 'ratio_to_reference': 0.7925, 'confidence': 1.0, 'null_reason': None}]
+422 barrio: 422
+$ make lint typecheck test
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+257 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+........................................................................ [ 69%]
+........................................................................ [ 92%]
+.........................                                                [100%]
+313 passed in 6.60s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  18:36:09
+   Duration  103ms (tests 41%, import 28%, transform 19%, worker 11%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 91%]
+.......                                                                  [100%]
+79 passed in 30.29s
+exit=0

@@ -17,8 +17,9 @@ from typing import Any
 from sqlalchemy import Connection, create_engine, text
 
 from hi_api.services.datasets import dataset_list
+from hi_api.services.gap_map import gap_row_map
 from hi_api.services.gaps import missing_row_warnings, zone_gap_list, zone_ref
-from hi_contracts.catalog.enums import TerritoryLevel
+from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
     Budget,
     BudgetKind,
@@ -29,6 +30,7 @@ from hi_contracts.public import (
     FactKind,
     FactTopic,
     GapHighlight,
+    GapRowMap,
     IndicatorValue,
     RankedZone,
     RealityCheck,
@@ -111,6 +113,13 @@ def gap_list(
     pending = missing_row_warnings({r.row for r in gaps.rows}, level)
     assert warnings == pending, warnings  # noqa: S101 - only the rows not computed yet
     return gaps
+
+
+def row_map(conn: Connection, level: TerritoryLevel, row: GapRowKey) -> GapRowMap:
+    """Exactly what GET /api/v1/gaps?level=&row= returns today."""
+    gap_map, warnings, _ = gap_row_map(conn, level, row)
+    assert not warnings, warnings  # noqa: S101 - every zone classified
+    return gap_map
 
 
 def demo_scenario() -> ScenarioState:
@@ -313,6 +322,14 @@ def main() -> None:
         write("zone_gap_list.madrid", gap_list(conn, "28079"))
         write("zone_gap_list.mostoles", gap_list(conn, "28092"))
         write("zone_gap_list.centro", gap_list(conn, "2807901", TerritoryLevel.DISTRITO))
+        write(
+            "gap_row_map.colegio_municipio",
+            row_map(conn, TerritoryLevel.MUNICIPIO, GapRowKey.COLEGIO),
+        )
+        write(
+            "gap_row_map.centro_salud_distrito",
+            row_map(conn, TerritoryLevel.DISTRITO, GapRowKey.CENTRO_SALUD),
+        )
         write("search_result.familia_presupuesto", search_result(conn, catalog))
         write("dataset_list.all", dataset_list(conn, cm_only=False))
 
