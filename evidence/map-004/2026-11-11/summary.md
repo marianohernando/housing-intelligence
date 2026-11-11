@@ -627,3 +627,29 @@ Rama `claude/s1-web-map`, hecha sobre `f1b487a` (GAP-001 F5, D-213, `gap-0.2`) y
 
 ## Para D (textos provisionales)
 «¿Qué quieres ver?» (de datamad-10), «Leyenda del mapa», «Qué falta» como grupo del `select`, «{indicador}, frente a los municipios de su tipo (urbanos o rurales).», «{n} zonas», «Ver estas zonas en una lista», «Cargando el estado de cada zona…», «Madrid (toda la ciudad)» y la frase del mapa para lectores de pantalla.
+
+---
+
+# PUB-001 Fase 3e — Fuentes desde el repo, `/map` a la portada y capturas de producción (2026-11-11)
+
+Notas de C después del primer despliegue.
+
+## Qué hay
+- **Fuentes servidas desde el repo** (`next/font/local`): Plus Jakarta Sans e Inter en `apps/web/src/fonts/`, con el subconjunto latino de las fuentes variables (el mismo que servía `next/font/google`) y la licencia SIL Open Font License 1.1 (`OFL.txt`) junto a cada una. El build ya no pide nada a Google: el primer build en Vercel había fallado con `next/font/google`.
+- **`/map`** (el mapa anterior a Vida Fácil, titulado «Mapa — Housing Intelligence», que cargaba capas enteras) ahora lleva a la portada. Sus componentes `AdminMap` y `MapPanel` siguen en el repo, sin uso; borrarlos queda a decisión de Mariano.
+- **Capturas C4, C5 y C7 contra producción** (`https://vidafacil-madrid.vercel.app`, gap-0.2), a 1440 y 390 px, sin errores en la consola:
+  - C4, «Qué falta» de Madrid capital, página entera: `prod_c4_madrid_que_falta_*`. Centros de salud sale FALTA, 0,37 frente a 0,56;
+  - C5, Chamartín en 3D: `prod_c5_chamartin_3d_*`, también junto al mockup;
+  - C7, «Cómo lo calculamos»: `prod_c7_como_lo_calculamos_*`.
+  - Producción todavía es el PR #2: no lleva «Zona pequeña para comparar» ni los textos definitivos de D, que llegan con el PR #9.
+
+## Comprobado
+- **`f8e_fuentes_y_map.json`:**
+  - las 4 peticiones de fuentes van a `/_next/static/media` del propio servidor, ninguna a Google;
+  - `titleFont` (600 y 700) y `bodyFont` (400 y 500) están cargadas y el `h1` usa Plus Jakarta Sans;
+  - `/map` acaba en `/` con el título de Vida Fácil;
+  - la consola no da errores.
+- **`f8e_inicio_fuentes_locales_*`:** la portada con las fuentes del repo.
+
+## Gate (`f8e_gate.txt`)
+`make lint typecheck test-unit` y lint, typecheck y build de la web, en verde.

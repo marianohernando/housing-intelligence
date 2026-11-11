@@ -1,0 +1,28 @@
+{
+  "base": "https://vidafacil-madrid.vercel.app",
+  "generated_at": "2026-11-11T20:44:31.810Z",
+  "shots": [
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "desktop",
+      "file": "prod_c5_chamartin_3d_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "[.WebGL-0x13400438a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13400438a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13400438a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13400438a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ],
+      "comparison": "prod_c5_chamartin_3d_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "mobile",
+      "file": "prod_c5_chamartin_3d_mobile.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": []
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+ "peticiones_de_fuentes": [
+  "localhost:3011/_next/static/media/…",
+  "localhost:3011/_next/static/media/…",
+  "localhost:3011/_next/static/media/…",
+  "localhost:3011/_next/static/media/…"
+ ],
+ "sin_google": true,
+ "fuentes_cargadas": [
+  "titleFont 600 700",
+  "bodyFont 400 500"
+ ],
+ "h1_font_family": "titleFont, \"titleFont Fallback\", \"Plus Jakarta Sans\", system-ui, sans-serif",
+ "map_lleva_a": "/",
+ "map_titulo": "Vida Fácil · Encuentra tu sitio en Madrid",
+ "map_estado": 200,
+ "errores": []
+}
