@@ -1,0 +1,204 @@
+{
+  "total": 22,
+  "cm_open_data_count": 21,
+  "datasets": [
+    {
+      "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
+      "name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1934259",
+      "version": "2026-11-10-7a83b45c1f51",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_alquiler_m2_municipios",
+      "name": "Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
+      "version": "2026-11-10-19b2da9645e3",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "name": "Registro de centros de atención social",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "version": "2026-11-10-1332ab0048a6",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "name": "Centros, servicios y establecimientos sanitarios",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+      "version": "2026-11-10-d6ac8db8f003",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_farmacias_municipios",
+      "name": "Recursos sanitarios. Farmacias. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/farmacias",
+      "version": "2026-11-10-a2011625bc89",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_hogares_tamano_censo_2021",
+      "name": "Hogares por tamaño del hogar. Censo 2021. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
+      "version": "2026-11-10-acfd552e1c9c",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_nacidos_vivos_municipios",
+      "name": "Nacidos vivos por lugar de residencia de la madre y sexo. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo",
+      "version": "2026-11-10-9119056a0e09",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "name": "Oficinas de farmacia",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "version": "2026-11-10-de61d48d7b4a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_renta_disponible_municipal",
+      "name": "Indicador de Renta Disponible Bruta Municipal. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/irpf_indicador_renta",
+      "version": "2026-11-10-ed4ec9cec646",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "name": "Secciones censales",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "version": "2026-10-20-37703ffcdfd0",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_viviendas_superficie",
+      "name": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
+      "version": "2026-11-10-382a7f2ff74a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_viviendas_tenencia_censo_2021",
+      "name": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia",
+      "version": "2026-11-10-048892fa99bc",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "crtm_gtfs_autobuses_urbanos",
+      "name": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
+      "version": "2026-11-10-41f7f9c15b61",
+      "license": "CRTM Licencia de datos abiertos (LDA)"
+    },
+    {
+      "dataset_id": "crtm_gtfs_cercanias",
+      "name": "Oferta planificada de la Red de Cercanías Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
+      "version": "2026-11-10-1b018a22325c",
+      "license": "CRTM Licencia de datos abiertos (LDA)"
+    },
+    {
+      "dataset_id": "crtm_gtfs_emt",
+      "name": "Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia",
+      "version": "2026-11-10-8478ae5c9262",
+      "license": "CRTM Licencia de datos abiertos (LDA)"
+    },
+    {
+      "dataset_id": "crtm_gtfs_interurbanos",
+      "name": "Oferta planificada de la Red de Autobuses Interurbanos",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia",
+      "version": "2026-11-10-5bbf3c95047c",
+      "license": "CRTM Licencia de datos abiertos (LDA)"
+    },
+    {
+      "dataset_id": "crtm_gtfs_metro",
+      "name": "Oferta planificada de la Red de Metro",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
+      "version": "2026-11-10-cccabfd6f025",
+      "license": "CRTM Licencia de datos abiertos (LDA)"
+    },
+    {
+      "dataset_id": "crtm_gtfs_metro_ligero",
+      "name": "Oferta planificada de la Red de Metro Ligero",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
+      "version": "2026-11-10-599f9acfa270",
+      "license": "CRTM Licencia de datos abiertos (LDA)"
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0"
+    }
+  ]
+}

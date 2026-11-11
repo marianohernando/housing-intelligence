@@ -58,3 +58,13 @@ class IndicatorValue(BaseModel):
     )
     level: TerritoryLevel = Field(description="Level the value was computed at")
     datasets: list[str] = Field(default_factory=list[str], description="dataset_id values")
+
+
+class DatasetList(BaseModel):
+    """Datasets behind the product (GET /api/v1/datasets): the footer counter and provenance."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total: int = Field(ge=0)
+    cm_open_data_count: int = Field(ge=0, description="Published in the CM open data portal")
+    datasets: list[DatasetRef]

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.14 — Vida Fácil y contratos v2 (2026-11-11)
+- D-199 a D-207: nombre «Vida Fácil», escala (municipios + 21 distritos de Madrid), mapa 2D/3D y estilo, % de encaje con hechos, presupuesto de alquiler o compra, prioridades, extras con sus reglas de seguridad y accesibilidad, orden núcleo/extras y contratos PUBLIC v2.
+- `09_datamad/25_plan_competicion.md` §1, §6 y §8 con el nombre y el estilo nuevos.
+- `04_technical_architecture/31_public_api_routes.md`: contratos v2, nivel `distrito` en la lista, `GET /api/v1/datasets` y CORS con `POST`.
+
 ## v0.5.13 — Lista de lo que falta: esqueleto andante (2026-11-11)
 - `04_technical_architecture/31_public_api_routes.md`: `GET /api/v1/gaps/{level}/{code}` ya responde con datos reales (colegio y centro de salud por municipio). La referencia regional es una fila `ccaa` del Feature Store: el total de la región dividido por su población. Las filas se declaran en el Feature Dictionary (`gap_row`). Con la migración 0004, `dataset_registry` guarda el enlace al portal CM e `is_cm_open_data`.
 

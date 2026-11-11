@@ -1,8 +1,15 @@
 # Plan de competición DATAMAD 2026 (10 → 26 nov)
 
-Vigente desde el 10 nov 2026. Decisiones: D-192 (replan), D-193 (formulario), D-194 (alcance de la demo), D-195 (repo público). Las cards y su estado viven en `board/BOARD.md`; este documento explica el porqué y lo que espera el jurado.
+Vigente desde el 10 nov 2026. Decisiones: D-192 (replan), D-193 (formulario), D-194 (alcance de la demo), D-195 (repo público) y, del 11 nov, D-199 a D-207 (nombre «Vida Fácil», escala, mapa, estilo, encaje, presupuesto, prioridades, extras y contratos v2). Las cards y su estado viven en `board/BOARD.md`; este documento explica el porqué y lo que espera el jurado.
 
 ## 1. Qué presentamos
+
+**Producto: «Vida Fácil». Lema: «Encuentra tu sitio en Madrid» (D-199).** El repo sigue llamándose `housing-intelligence`.
+- **Escala (D-200):** municipios (179), con Madrid capital por sus 21 distritos.
+- **Mapa (D-201):** 2D en la vista general y 3D al entrar en una zona.
+- **Encaje (D-202):** % de encaje con hechos tangibles y su confianza, nunca notas sobre 100.
+- **Presupuesto (D-203):** de alquiler o de compra.
+- **Prioridades (D-204):** transporte, salud, colegios, zonas verdes, seguridad y «sin escaleras».
 
 Propuesta (documento «Housing Intelligence — la idea», 31 oct): **«Qué necesita la gente. Qué le falta a cada barrio.»** Otros servicios enseñan lo que hay; nosotros enseñamos lo que falta.
 
@@ -72,9 +79,9 @@ Regla de recorte: si una card se atasca más de medio día, se recorta al mínim
 
 URL: https://forms.gle/NyatKHN95aPxvQro8. Pide nombre, resumen ≤100 palabras, participantes, confirmación de asistencia al 26 nov y enlaces opcionales. Lo envía Mariano.
 
-Nombre: **Housing Intelligence**
+Nombre: **Vida Fácil** (D-199). «Housing Intelligence» puede figurar como plataforma o equipo.
 
-Borrador del resumen (revisar el 18 nov con lo que esté hecho y añadir el número real de datasets CM):
+El resumen vigente, de 98 palabras y con su variante de 95, lo mantiene la línea D en `pitch/formulario.md` (PR #3). Debajo queda el borrador inicial del 10 nov como referencia:
 
 > Housing Intelligence convierte los datos abiertos de la Comunidad de Madrid en un mapa de lo que falta. A las personas les recomienda zonas donde vivir según su presupuesto, hogar y lugares de referencia, explica el porqué en lenguaje cotidiano y propone alternativas cuando lo que buscan no existe. A ayuntamientos y empresas les muestra, zona a zona, qué falta, qué está justo y qué está cubierto: escuelas infantiles, colegios, salud, servicios para mayores, farmacias y tipos de vivienda. Cada resultado cita sus datasets oficiales y su nivel de confianza. Código abierto y API para reutilizarlo.
 
@@ -104,7 +111,7 @@ Entrega antes de las 14:00 del 26 nov (§8 de las bases), en este orden:
 3. Resultados: utilidad, impacto y viabilidad, con enlaces a la demo y al repo.
 4. Pantallazo del sistema.
 
-Estilo: el del PDF del 31 oct.
+Estilo: el del brief `DISENO_VIDA_FACIL.md` (D-201): modo claro, navy + violeta + tarjetas de cristal. Ya no el del PDF del 31 oct.
 
 Guion de 5 minutos:
 | Tiempo | Contenido |

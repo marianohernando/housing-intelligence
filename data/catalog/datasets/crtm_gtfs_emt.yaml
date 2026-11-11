@@ -1,6 +1,6 @@
 dataset_id: crtm_gtfs_emt
 source_id: crtm_open_data
-name: GTFS Red de EMT
+name: Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT
 domain: transport
 owner: Consorcio Regional de Transportes de Madrid
 format: CSV COLLECTION

@@ -12,7 +12,7 @@ from hi_contracts.catalog.enums import TerritoryLevel
 from hi_contracts.public.responses import ZoneGapListResponse
 
 router = APIRouter(prefix="/gaps", tags=["gaps"])
-ZONE_LEVELS = (TerritoryLevel.MUNICIPIO, TerritoryLevel.SECCION_CENSAL)
+ZONE_LEVELS = (TerritoryLevel.MUNICIPIO, TerritoryLevel.DISTRITO, TerritoryLevel.SECCION_CENSAL)
 
 
 @router.get("/{level}/{code}")
@@ -24,7 +24,7 @@ def get_zone_gaps(
             status_code=422,
             detail={
                 "code": ErrorCode.OUT_OF_COVERAGE.value,
-                "message": "The list is available for municipio and seccion_censal",
+                "message": "The list is available for municipio, distrito and seccion_censal",
             },
         )
     with engine.connect() as conn:

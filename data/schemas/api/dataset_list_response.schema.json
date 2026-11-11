@@ -1,0 +1,175 @@
+{
+  "$defs": {
+    "DatasetList": {
+      "additionalProperties": false,
+      "description": "Datasets behind the product (GET /api/v1/datasets): the footer counter and provenance.",
+      "properties": {
+        "cm_open_data_count": {
+          "description": "Published in the CM open data portal",
+          "minimum": 0,
+          "title": "Cm Open Data Count",
+          "type": "integer"
+        },
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "total": {
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "cm_open_data_count",
+        "datasets"
+      ],
+      "title": "DatasetList",
+      "type": "object"
+    },
+    "DatasetRef": {
+      "additionalProperties": false,
+      "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "is_cm_open_data": {
+          "description": "Published in the Comunidad de Madrid open data portal (counts for DATAMAD)",
+          "title": "Is Cm Open Data",
+          "type": "boolean"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Portal page (CM portal when it exists)",
+          "title": "Url"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dataset_version label used",
+          "title": "Version"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name",
+        "publisher",
+        "is_cm_open_data"
+      ],
+      "title": "DatasetRef",
+      "type": "object"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/dataset_list_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GET /api/v1/datasets",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/DatasetList"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "DatasetListResponse",
+  "type": "object"
+}

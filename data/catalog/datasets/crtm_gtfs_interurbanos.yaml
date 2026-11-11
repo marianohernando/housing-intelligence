@@ -1,6 +1,6 @@
 dataset_id: crtm_gtfs_interurbanos
 source_id: crtm_open_data
-name: GTFS Red de Autobuses Interurbanos
+name: Oferta planificada de la Red de Autobuses Interurbanos
 domain: transport
 owner: Consorcio Regional de Transportes de Madrid
 format: CSV COLLECTION

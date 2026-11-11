@@ -14,6 +14,8 @@ from hi_domain.geo.names import display_name
         ("SAN SEBASTIAN DE LOS REYES", "San Sebastian de los Reyes"),
         ("VILLANUEVA DE LA CAÑADA", "Villanueva de la Cañada"),
         ("  TORREJON   DE ARDOZ ", "Torrejon de Ardoz"),
+        ("Fuencarral-El Pardo", "Fuencarral-El Pardo"),  # districts come in mixed case
+        ("Chamartín", "Chamartín"),
     ],
 )
 def test_display_name(official: str, readable: str) -> None:

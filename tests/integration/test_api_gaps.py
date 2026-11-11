@@ -6,7 +6,7 @@ from sqlalchemy import Engine, text
 
 from hi_api.deps import get_engine
 from hi_api.main import app
-from hi_contracts.public.responses import ZoneGapListResponse
+from hi_contracts.public.responses import DatasetListResponse, ZoneGapListResponse
 
 pytestmark = pytest.mark.db
 
@@ -43,6 +43,29 @@ def test_municipio_list_has_real_rows_against_the_region(
     cm = [d for d in body.data.datasets if d.is_cm_open_data]
     assert {d.dataset_id for d in cm} >= {"cm_centros_sanitarios", "cm_centros_educativos"}
     assert all(d.url and d.url.host == "datos.comunidad.madrid" for d in cm)
+
+
+def test_madrid_district_answers_with_its_name_before_district_indicators_exist(
+    client: TestClient,
+) -> None:
+    """Decision of 11 Nov: Madrid capital by district. DATA-012 adds the district rows."""
+    response = client.get("/api/v1/gaps/distrito/2807901")
+    assert response.status_code == 200
+    payload = ZoneGapListResponse.model_validate(response.json())
+    assert payload.data.zone.municipio_ine == "28079"
+    assert payload.data.zone.admin_unit_id == "ES.28.DIS.2807901"
+    assert payload.data.rows == []
+    assert payload.warnings
+
+
+def test_dataset_list_counts_cm_open_data(client: TestClient) -> None:
+    every = DatasetListResponse.model_validate(client.get("/api/v1/datasets").json()).data
+    cm = DatasetListResponse.model_validate(
+        client.get("/api/v1/datasets", params={"cm_only": True}).json()
+    ).data
+    assert every.total >= cm.total == cm.cm_open_data_count > 0
+    assert all(d.is_cm_open_data and d.version for d in cm.datasets)
+    assert every.cm_open_data_count == cm.total
 
 
 def test_unknown_zone_is_404_and_unsupported_level_is_422(client: TestClient) -> None:

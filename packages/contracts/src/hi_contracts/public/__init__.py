@@ -1,37 +1,50 @@
-"""PUBLIC product contracts: the people search and the per-zone list of what is missing.
+"""PUBLIC contracts (Vida Fácil): the people search and the per-zone list of what is missing.
 
 Shared with the web (TypeScript types are generated from data/schemas/api/*.schema.json).
+Version 2 (11 Nov): rent or purchase budget, household with older people in care, the six
+«Me importa» priorities, Madrid capital by district and % of fit with tangible facts.
 """
 
-from hi_contracts.public.common import DatasetRef, IndicatorValue, ZoneRef
+from hi_contracts.public.common import DatasetList, DatasetRef, IndicatorValue, ZoneRef
 from hi_contracts.public.gaps import GapMethod, GapRow, GapRowKey, GapStatus, ZoneGapList
 from hi_contracts.public.scenario import (
     Anchor,
     AnchorKind,
+    Budget,
+    BudgetKind,
     Household,
     NearbyNeed,
     NeedKey,
     PriorityKey,
     ScenarioState,
-    Tenure,
 )
 from hi_contracts.public.search import (
     ConstraintCheck,
     ConstraintStatus,
+    Fact,
+    FactKind,
+    FactTopic,
+    GapHighlight,
     RankedZone,
     RealityCheck,
-    Reason,
-    ReasonKind,
     Relaxation,
     SearchResult,
+    ZoneMatch,
 )
 
 __all__ = [
     "Anchor",
     "AnchorKind",
+    "Budget",
+    "BudgetKind",
     "ConstraintCheck",
     "ConstraintStatus",
+    "DatasetList",
     "DatasetRef",
+    "Fact",
+    "FactKind",
+    "FactTopic",
+    "GapHighlight",
     "GapMethod",
     "GapRow",
     "GapRowKey",
@@ -43,12 +56,10 @@ __all__ = [
     "PriorityKey",
     "RankedZone",
     "RealityCheck",
-    "Reason",
-    "ReasonKind",
     "Relaxation",
     "ScenarioState",
     "SearchResult",
-    "Tenure",
     "ZoneGapList",
+    "ZoneMatch",
     "ZoneRef",
 ]

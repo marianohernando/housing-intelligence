@@ -2,7 +2,7 @@
   "$defs": {
     "Anchor": {
       "additionalProperties": false,
-      "description": "A place the household travels to often (work, school, family).",
+      "description": "A place the household travels to often («Trabajo en»).",
       "properties": {
         "days_per_week": {
           "default": 5,
@@ -70,8 +70,38 @@
       "title": "AnchorKind",
       "type": "string"
     },
+    "Budget": {
+      "additionalProperties": false,
+      "description": "Rent in €/month or purchase price in €; the purchase result is always «orientativo».",
+      "properties": {
+        "amount_eur": {
+          "description": "€/month when kind=rent, € when kind=buy",
+          "exclusiveMinimum": 0,
+          "title": "Amount Eur",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/BudgetKind"
+        }
+      },
+      "required": [
+        "kind",
+        "amount_eur"
+      ],
+      "title": "Budget",
+      "type": "object"
+    },
+    "BudgetKind": {
+      "enum": [
+        "rent",
+        "buy"
+      ],
+      "title": "BudgetKind",
+      "type": "string"
+    },
     "Household": {
       "additionalProperties": false,
+      "description": "«Tu hogar»: adults, children and older people they look after (all live together).",
       "properties": {
         "adults": {
           "default": 1,
@@ -80,27 +110,27 @@
           "title": "Adults",
           "type": "integer"
         },
-        "children": {
-          "default": 0,
-          "maximum": 8,
-          "minimum": 0,
-          "title": "Children",
-          "type": "integer"
-        },
-        "children_ages": {
+        "minor_ages": {
           "description": "0-17, optional",
           "items": {
             "type": "integer"
           },
-          "title": "Children Ages",
+          "title": "Minor Ages",
           "type": "array"
         },
-        "seniors": {
+        "minors": {
           "default": 0,
-          "description": "People aged 65+, counted in adults",
           "maximum": 8,
           "minimum": 0,
-          "title": "Seniors",
+          "title": "Minors",
+          "type": "integer"
+        },
+        "seniors_in_care": {
+          "default": 0,
+          "description": "People aged 65+ cared for",
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Seniors In Care",
           "type": "integer"
         }
       },
@@ -148,41 +178,16 @@
       "type": "string"
     },
     "PriorityKey": {
+      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.",
       "enum": [
-        "coste",
-        "trayecto",
-        "escuela_infantil",
-        "colegio",
-        "centro_salud",
-        "farmacia",
-        "mayores",
-        "transporte"
+        "transporte",
+        "salud",
+        "colegios",
+        "zonas_verdes",
+        "seguridad",
+        "sin_escaleras"
       ],
       "title": "PriorityKey",
-      "type": "string"
-    },
-    "Tenure": {
-      "enum": [
-        "rent",
-        "buy"
-      ],
-      "title": "Tenure",
-      "type": "string"
-    },
-    "TerritoryLevel": {
-      "description": "Territorial units observations can refer to (superset of AdminLevel).",
-      "enum": [
-        "ccaa",
-        "municipio",
-        "distrito",
-        "barrio",
-        "seccion_censal",
-        "codigo_postal",
-        "zona_estadistica",
-        "h3_r8",
-        "h3_r9"
-      ],
-      "title": "TerritoryLevel",
       "type": "string"
     }
   },
@@ -198,20 +203,17 @@
       "title": "Anchors",
       "type": "array"
     },
-    "budget_monthly_eur": {
+    "budget": {
       "anyOf": [
         {
-          "maximum": 20000,
-          "minimum": 100,
-          "type": "integer"
+          "$ref": "#/$defs/Budget"
         },
         {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Maximum monthly rent; None = no limit",
-      "title": "Budget Monthly Eur"
+      "description": "None = no budget limit"
     },
     "household": {
       "$ref": "#/$defs/Household"
@@ -244,24 +246,15 @@
       "items": {
         "$ref": "#/$defs/PriorityKey"
       },
-      "maxItems": 5,
+      "maxItems": 6,
       "title": "Priorities",
       "type": "array"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
-    },
-    "tenure": {
-      "$ref": "#/$defs/Tenure",
-      "default": "rent"
-    },
-    "zone_level": {
-      "$ref": "#/$defs/TerritoryLevel",
-      "default": "municipio",
-      "description": "Granularity of the ranking"
     }
   },
   "title": "ScenarioState",

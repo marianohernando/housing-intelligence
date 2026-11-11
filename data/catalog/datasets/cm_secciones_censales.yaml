@@ -1,6 +1,6 @@
 dataset_id: cm_secciones_censales
 source_id: comunidad_madrid_ckan
-name: Secciones censales de la Comunidad de Madrid (seccionado 2019)
+name: Secciones censales
 domain: geography
 owner: Comunidad de Madrid
 format: SHP

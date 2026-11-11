@@ -1,7 +1,9 @@
-"""ScenarioState (CORE-001): the single state that chips, filters and map edit together.
+"""ScenarioState v2 (CORE-001, decisions of 11 Nov): the single state chips, filters and map edit.
 
-Minimal for the DATAMAD demo: budget, household, places of reference and services needed
-nearby. Sensitive needs are not part of this version (opt-in later, CLAUDE.md §13).
+Budget to rent (€/month) or to buy (€), the household, where they work, what matters to them
+and services wanted within walking distance. The search ranks the region by municipio with
+Madrid capital split into its 21 districts. Sensitive needs are not part of this version;
+«sin escaleras» is a functional preference, never a disability label (CLAUDE.md §13).
 """
 
 from enum import StrEnum
@@ -9,10 +11,11 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from hi_contracts.catalog.enums import TerritoryLevel
+RENT_RANGE_EUR = (100, 20_000)
+BUY_RANGE_EUR = (10_000, 5_000_000)
 
 
-class Tenure(StrEnum):
+class BudgetKind(StrEnum):
     RENT = "rent"
     BUY = "buy"
 
@@ -29,14 +32,14 @@ class NeedKey(StrEnum):
 
 
 class PriorityKey(StrEnum):
-    COSTE = "coste"
-    TRAYECTO = "trayecto"
-    ESCUELA_INFANTIL = "escuela_infantil"
-    COLEGIO = "colegio"
-    CENTRO_SALUD = "centro_salud"
-    FARMACIA = "farmacia"
-    MAYORES = "mayores"
+    """«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional."""
+
     TRANSPORTE = "transporte"
+    SALUD = "salud"
+    COLEGIOS = "colegios"
+    ZONAS_VERDES = "zonas_verdes"
+    SEGURIDAD = "seguridad"
+    SIN_ESCALERAS = "sin_escaleras"
 
 
 class AnchorKind(StrEnum):
@@ -46,34 +49,50 @@ class AnchorKind(StrEnum):
     OTHER = "other"
 
 
+class Budget(BaseModel):
+    """Rent in €/month or purchase price in €; the purchase result is always «orientativo»."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: BudgetKind
+    amount_eur: int = Field(gt=0, description="€/month when kind=rent, € when kind=buy")
+
+    @model_validator(mode="after")
+    def _plausible(self) -> Self:
+        low, high = RENT_RANGE_EUR if self.kind is BudgetKind.RENT else BUY_RANGE_EUR
+        if not low <= self.amount_eur <= high:
+            msg = f"{self.kind} budget must be between {low} and {high} €"
+            raise ValueError(msg)
+        return self
+
+
 class Household(BaseModel):
+    """«Tu hogar»: adults, children and older people they look after (all live together)."""
+
     model_config = ConfigDict(extra="forbid")
 
     adults: int = Field(default=1, ge=1, le=8)
-    children: int = Field(default=0, ge=0, le=8)
-    children_ages: list[int] = Field(default_factory=list[int], description="0-17, optional")
-    seniors: int = Field(default=0, ge=0, le=8, description="People aged 65+, counted in adults")
+    minors: int = Field(default=0, ge=0, le=8)
+    minor_ages: list[int] = Field(default_factory=list[int], description="0-17, optional")
+    seniors_in_care: int = Field(default=0, ge=0, le=4, description="People aged 65+ cared for")
 
     @model_validator(mode="after")
     def _coherent(self) -> Self:
-        if self.children_ages and len(self.children_ages) != self.children:
-            msg = "children_ages must list every child or be empty"
+        if self.minor_ages and len(self.minor_ages) != self.minors:
+            msg = "minor_ages must list every minor or be empty"
             raise ValueError(msg)
-        if any(not 0 <= age <= 17 for age in self.children_ages):
-            msg = "children_ages must be between 0 and 17"
-            raise ValueError(msg)
-        if self.seniors > self.adults:
-            msg = "seniors are counted among adults"
+        if any(not 0 <= age <= 17 for age in self.minor_ages):
+            msg = "minor_ages must be between 0 and 17"
             raise ValueError(msg)
         return self
 
     @property
-    def size(self) -> int:
-        return self.adults + self.children
+    def people(self) -> int:
+        return self.adults + self.minors + self.seniors_in_care
 
 
 class Anchor(BaseModel):
-    """A place the household travels to often (work, school, family)."""
+    """A place the household travels to often («Trabajo en»)."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -100,11 +119,8 @@ class NearbyNeed(BaseModel):
 class ScenarioState(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: Literal[1] = 1
-    tenure: Tenure = Tenure.RENT
-    budget_monthly_eur: int | None = Field(
-        default=None, ge=100, le=20_000, description="Maximum monthly rent; None = no limit"
-    )
+    schema_version: Literal[2] = 2
+    budget: Budget | None = Field(default=None, description="None = no budget limit")
     min_floor_area_m2: int | None = Field(
         default=None, ge=15, le=400, description="None = derived from the household size"
     )
@@ -112,22 +128,16 @@ class ScenarioState(BaseModel):
     anchors: list[Anchor] = Field(default_factory=list[Anchor], max_length=3)
     nearby: list[NearbyNeed] = Field(default_factory=list[NearbyNeed], max_length=6)
     priorities: list[PriorityKey] = Field(
-        default_factory=list[PriorityKey], max_length=5, description="Most important first"
-    )
-    zone_level: TerritoryLevel = Field(
-        default=TerritoryLevel.MUNICIPIO, description="Granularity of the ranking"
+        default_factory=list[PriorityKey], max_length=6, description="Most important first"
     )
 
     @model_validator(mode="after")
-    def _unique_and_supported(self) -> Self:
+    def _unique(self) -> Self:
         needs = [n.need for n in self.nearby]
         if len(needs) != len(set(needs)):
             msg = "each nearby need can appear once"
             raise ValueError(msg)
         if len(self.priorities) != len(set(self.priorities)):
             msg = "priorities must be unique"
-            raise ValueError(msg)
-        if self.zone_level not in {TerritoryLevel.MUNICIPIO, TerritoryLevel.SECCION_CENSAL}:
-            msg = "zone_level must be municipio or seccion_censal"
             raise ValueError(msg)
         return self

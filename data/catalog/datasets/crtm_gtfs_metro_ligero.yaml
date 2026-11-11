@@ -1,6 +1,6 @@
 dataset_id: crtm_gtfs_metro_ligero
 source_id: crtm_open_data
-name: GTFS Red de Metro Ligero
+name: Oferta planificada de la Red de Metro Ligero
 domain: transport
 owner: Consorcio Regional de Transportes de Madrid
 format: CSV COLLECTION

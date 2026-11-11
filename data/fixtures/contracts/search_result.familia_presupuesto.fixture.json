@@ -1,17 +1,19 @@
 {
   "scenario": {
-    "schema_version": 1,
-    "tenure": "rent",
-    "budget_monthly_eur": 1200,
+    "schema_version": 2,
+    "budget": {
+      "kind": "rent",
+      "amount_eur": 1200
+    },
     "min_floor_area_m2": 90,
     "household": {
       "adults": 2,
-      "children": 2,
-      "children_ages": [
+      "minors": 2,
+      "minor_ages": [
         4,
         8
       ],
-      "seniors": 0
+      "seniors_in_care": 0
     },
     "anchors": [
       {
@@ -31,13 +33,11 @@
       }
     ],
     "priorities": [
-      "colegio",
-      "coste",
-      "trayecto"
-    ],
-    "zone_level": "municipio"
+      "colegios",
+      "transporte",
+      "salud"
+    ]
   },
-  "zone_level": "municipio",
   "results": [
     {
       "rank": 1,
@@ -51,24 +51,14 @@
         "center_lon": -3.49867,
         "center_lat": 40.61846
       },
-      "score": 100.0,
+      "match_pct": 100,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "PASS",
-          "value": 774.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 774 €/mes aquí (8,6 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "strength",
-          "text": "Un piso de 90 m² cuesta unos 774 €/mes aquí (8,6 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 774 €/mes por 90 m² (8,6 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -84,7 +74,9 @@
         },
         {
           "kind": "strength",
-          "text": "4,1 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "4,1 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -101,12 +93,38 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 774.0,
-      "failed_constraints": []
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 774.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 774 €/mes por 90 m² (8,6 €/m²)"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 774.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "CUBIERTO"
+        }
+      ]
     },
     {
       "rank": 2,
@@ -120,24 +138,14 @@
         "center_lon": -3.56972,
         "center_lat": 40.24299
       },
-      "score": 98.6,
+      "match_pct": 99,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "PASS",
-          "value": 639.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 639 €/mes aquí (7,1 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "strength",
-          "text": "Un piso de 90 m² cuesta unos 639 €/mes aquí (7,1 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 639 €/mes por 90 m² (7,1 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -153,7 +161,9 @@
         },
         {
           "kind": "strength",
-          "text": "3,2 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "3,2 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -170,12 +180,38 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 639.0,
-      "failed_constraints": []
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 639.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 639 €/mes por 90 m² (7,1 €/m²)"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 639.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        }
+      ]
     },
     {
       "rank": 3,
@@ -189,24 +225,14 @@
         "center_lon": -3.80102,
         "center_lat": 40.28867
       },
-      "score": 97.0,
+      "match_pct": 97,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "PASS",
-          "value": 846.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 846 €/mes aquí (9,4 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "strength",
-          "text": "Un piso de 90 m² cuesta unos 846 €/mes aquí (9,4 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 846 €/mes por 90 m² (9,4 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -222,7 +248,9 @@
         },
         {
           "kind": "strength",
-          "text": "3,1 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "3,1 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -239,12 +267,38 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 846.0,
-      "failed_constraints": []
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 846.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 846 €/mes por 90 m² (9,4 €/m²)"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 846.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "FALTA"
+        }
+      ]
     },
     {
       "rank": 4,
@@ -258,24 +312,14 @@
         "center_lon": -3.82697,
         "center_lat": 40.25235
       },
-      "score": 95.0,
+      "match_pct": 95,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "PASS",
-          "value": 783.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 783 €/mes aquí (8,7 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "strength",
-          "text": "Un piso de 90 m² cuesta unos 783 €/mes aquí (8,7 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 783 €/mes por 90 m² (8,7 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -291,7 +335,9 @@
         },
         {
           "kind": "strength",
-          "text": "2,9 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "2,9 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -308,12 +354,38 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 783.0,
-      "failed_constraints": []
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 783.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 783 €/mes por 90 m² (8,7 €/m²)"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 783.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "CUBIERTO"
+        }
+      ]
     },
     {
       "rank": 5,
@@ -327,24 +399,14 @@
         "center_lon": -3.47676,
         "center_lat": 40.39987
       },
-      "score": 93.9,
+      "match_pct": 94,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "PASS",
-          "value": 819.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 819 €/mes aquí (9,1 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "strength",
-          "text": "Un piso de 90 m² cuesta unos 819 €/mes aquí (9,1 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 819 €/mes por 90 m² (9,1 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -360,7 +422,9 @@
         },
         {
           "kind": "strength",
-          "text": "2,8 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "2,8 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -377,12 +441,38 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 819.0,
-      "failed_constraints": []
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 819.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 819 €/mes por 90 m² (9,1 €/m²)"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 819.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "FALTA"
+        }
+      ]
     }
   ],
   "near_misses": [
@@ -398,24 +488,14 @@
         "center_lon": -3.88787,
         "center_lat": 40.47175
       },
-      "score": 23.7,
+      "match_pct": 24,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "FAIL",
-          "value": 1224.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "weakness",
-          "text": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -431,7 +511,9 @@
         },
         {
           "kind": "weakness",
-          "text": "1,9 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "1,9 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -448,13 +530,39 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 1224.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "FAIL",
+          "value": 1224.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)"
+        }
+      ],
       "failed_constraints": [
         "budget"
+      ],
+      "estimated_cost_eur": 1224.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "JUSTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "FALTA"
+        }
       ]
     },
     {
@@ -469,24 +577,14 @@
         "center_lon": -3.89666,
         "center_lat": 40.52482
       },
-      "score": 18.5,
+      "match_pct": 19,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "FAIL",
-          "value": 1224.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "weakness",
-          "text": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -502,7 +600,9 @@
         },
         {
           "kind": "weakness",
-          "text": "1,5 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "1,5 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -519,13 +619,39 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 1224.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "FAIL",
+          "value": 1224.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)"
+        }
+      ],
       "failed_constraints": [
         "budget"
+      ],
+      "estimated_cost_eur": 1224.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "FALTA"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "FALTA"
+        }
       ]
     },
     {
@@ -540,24 +666,14 @@
         "center_lon": -3.81188,
         "center_lat": 40.42921
       },
-      "score": 17.6,
+      "match_pct": 18,
       "confidence": 1.0,
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "FAIL",
-          "value": 1242.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Un piso de 90 m² cuesta unos 1.242 €/mes aquí (13,8 €/m²)"
-        }
-      ],
-      "reasons": [
+      "facts": [
         {
           "kind": "weakness",
-          "text": "Un piso de 90 m² cuesta unos 1.242 €/mes aquí (13,8 €/m²)",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 1.242 €/mes por 90 m² (13,8 €/m²)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
@@ -573,7 +689,9 @@
         },
         {
           "kind": "weakness",
-          "text": "1,4 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "topic": "colegios",
+          "text": "1,4 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
             "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
@@ -590,14 +708,2735 @@
         },
         {
           "kind": "unknown",
+          "topic": "colegios",
           "text": "Distancia a pie al colegio: aún sin calcular",
+          "confidence": 0.0,
           "indicator": null
         }
       ],
-      "estimated_rent_eur": 1242.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "FAIL",
+          "value": 1242.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 1.242 €/mes por 90 m² (13,8 €/m²)"
+        }
+      ],
+      "failed_constraints": [
+        "budget"
+      ],
+      "estimated_cost_eur": 1242.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "FALTA"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "FALTA"
+        }
+      ]
+    }
+  ],
+  "all_zones": [
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28001",
+        "admin_unit_id": "ES.28.MUN.28001",
+        "name": "La Acebeda",
+        "municipio_ine": "28001",
+        "municipio_name": "La Acebeda",
+        "center_lon": -3.63444,
+        "center_lat": 41.09507
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28002",
+        "admin_unit_id": "ES.28.MUN.28002",
+        "name": "Ajalvir",
+        "municipio_ine": "28002",
+        "municipio_name": "Ajalvir",
+        "center_lon": -3.48394,
+        "center_lat": 40.52764
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28003",
+        "admin_unit_id": "ES.28.MUN.28003",
+        "name": "Alameda del Valle",
+        "municipio_ine": "28003",
+        "municipio_name": "Alameda del Valle",
+        "center_lon": -3.83933,
+        "center_lat": 40.91561
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28004",
+        "admin_unit_id": "ES.28.MUN.28004",
+        "name": "El Alamo",
+        "municipio_ine": "28004",
+        "municipio_name": "El Alamo",
+        "center_lon": -3.99292,
+        "center_lat": 40.23265
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28005",
+        "admin_unit_id": "ES.28.MUN.28005",
+        "name": "Alcala de Henares",
+        "municipio_ine": "28005",
+        "municipio_name": "Alcala de Henares",
+        "center_lon": -3.36464,
+        "center_lat": 40.49562
+      },
+      "match_pct": 84,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28006",
+        "admin_unit_id": "ES.28.MUN.28006",
+        "name": "Alcobendas",
+        "municipio_ine": "28006",
+        "municipio_name": "Alcobendas",
+        "center_lon": -3.65558,
+        "center_lat": 40.54503
+      },
+      "match_pct": 30,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28007",
+        "admin_unit_id": "ES.28.MUN.28007",
+        "name": "Alcorcon",
+        "municipio_ine": "28007",
+        "municipio_name": "Alcorcon",
+        "center_lon": -3.83886,
+        "center_lat": 40.36347
+      },
+      "match_pct": 72,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28008",
+        "admin_unit_id": "ES.28.MUN.28008",
+        "name": "Aldea del Fresno",
+        "municipio_ine": "28008",
+        "municipio_name": "Aldea del Fresno",
+        "center_lon": -4.22362,
+        "center_lat": 40.30947
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28009",
+        "admin_unit_id": "ES.28.MUN.28009",
+        "name": "Algete",
+        "municipio_ine": "28009",
+        "municipio_name": "Algete",
+        "center_lon": -3.49867,
+        "center_lat": 40.61846
+      },
+      "match_pct": 100,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28010",
+        "admin_unit_id": "ES.28.MUN.28010",
+        "name": "Alpedrete",
+        "municipio_ine": "28010",
+        "municipio_name": "Alpedrete",
+        "center_lon": -4.02776,
+        "center_lat": 40.65818
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28011",
+        "admin_unit_id": "ES.28.MUN.28011",
+        "name": "Ambite",
+        "municipio_ine": "28011",
+        "municipio_name": "Ambite",
+        "center_lon": -3.1789,
+        "center_lat": 40.34148
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28012",
+        "admin_unit_id": "ES.28.MUN.28012",
+        "name": "Anchuelo",
+        "municipio_ine": "28012",
+        "municipio_name": "Anchuelo",
+        "center_lon": -3.28078,
+        "center_lat": 40.46613
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28013",
+        "admin_unit_id": "ES.28.MUN.28013",
+        "name": "Aranjuez",
+        "municipio_ine": "28013",
+        "municipio_name": "Aranjuez",
+        "center_lon": -3.65302,
+        "center_lat": 40.00748
+      },
+      "match_pct": 87,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28014",
+        "admin_unit_id": "ES.28.MUN.28014",
+        "name": "Arganda del Rey",
+        "municipio_ine": "28014",
+        "municipio_name": "Arganda del Rey",
+        "center_lon": -3.45072,
+        "center_lat": 40.30031
+      },
+      "match_pct": 91,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28015",
+        "admin_unit_id": "ES.28.MUN.28015",
+        "name": "Arroyomolinos",
+        "municipio_ine": "28015",
+        "municipio_name": "Arroyomolinos",
+        "center_lon": -3.91461,
+        "center_lat": 40.28047
+      },
+      "match_pct": 77,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28016",
+        "admin_unit_id": "ES.28.MUN.28016",
+        "name": "El Atazar",
+        "municipio_ine": "28016",
+        "municipio_name": "El Atazar",
+        "center_lon": -3.46621,
+        "center_lat": 40.93795
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28017",
+        "admin_unit_id": "ES.28.MUN.28017",
+        "name": "Batres",
+        "municipio_ine": "28017",
+        "municipio_name": "Batres",
+        "center_lon": -3.92442,
+        "center_lat": 40.22377
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28018",
+        "admin_unit_id": "ES.28.MUN.28018",
+        "name": "Becerril de la Sierra",
+        "municipio_ine": "28018",
+        "municipio_name": "Becerril de la Sierra",
+        "center_lon": -3.97463,
+        "center_lat": 40.72893
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28019",
+        "admin_unit_id": "ES.28.MUN.28019",
+        "name": "Belmonte de Tajo",
+        "municipio_ine": "28019",
+        "municipio_name": "Belmonte de Tajo",
+        "center_lon": -3.33478,
+        "center_lat": 40.13778
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28020",
+        "admin_unit_id": "ES.28.MUN.28020",
+        "name": "Berzosa del Lozoya",
+        "municipio_ine": "28020",
+        "municipio_name": "Berzosa del Lozoya",
+        "center_lon": -3.53302,
+        "center_lat": 40.97204
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28021",
+        "admin_unit_id": "ES.28.MUN.28021",
+        "name": "El Berrueco",
+        "municipio_ine": "28021",
+        "municipio_name": "El Berrueco",
+        "center_lon": -3.55901,
+        "center_lat": 40.87838
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28022",
+        "admin_unit_id": "ES.28.MUN.28022",
+        "name": "Boadilla del Monte",
+        "municipio_ine": "28022",
+        "municipio_name": "Boadilla del Monte",
+        "center_lon": -3.89703,
+        "center_lat": 40.41704
+      },
+      "match_pct": 23,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28023",
+        "admin_unit_id": "ES.28.MUN.28023",
+        "name": "El Boalo",
+        "municipio_ine": "28023",
+        "municipio_name": "El Boalo",
+        "center_lon": -3.91623,
+        "center_lat": 40.72286
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28024",
+        "admin_unit_id": "ES.28.MUN.28024",
+        "name": "Braojos",
+        "municipio_ine": "28024",
+        "municipio_name": "Braojos",
+        "center_lon": -3.65678,
+        "center_lat": 41.05929
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28025",
+        "admin_unit_id": "ES.28.MUN.28025",
+        "name": "Brea de Tajo",
+        "municipio_ine": "28025",
+        "municipio_name": "Brea de Tajo",
+        "center_lon": -3.12917,
+        "center_lat": 40.24301
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28026",
+        "admin_unit_id": "ES.28.MUN.28026",
+        "name": "Brunete",
+        "municipio_ine": "28026",
+        "municipio_name": "Brunete",
+        "center_lon": -3.99473,
+        "center_lat": 40.39766
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28027",
+        "admin_unit_id": "ES.28.MUN.28027",
+        "name": "Buitrago del Lozoya",
+        "municipio_ine": "28027",
+        "municipio_name": "Buitrago del Lozoya",
+        "center_lon": -3.62362,
+        "center_lat": 40.98917
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28028",
+        "admin_unit_id": "ES.28.MUN.28028",
+        "name": "Bustarviejo",
+        "municipio_ine": "28028",
+        "municipio_name": "Bustarviejo",
+        "center_lon": -3.72997,
+        "center_lat": 40.83762
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28029",
+        "admin_unit_id": "ES.28.MUN.28029",
+        "name": "Cabanillas de la Sierra",
+        "municipio_ine": "28029",
+        "municipio_name": "Cabanillas de la Sierra",
+        "center_lon": -3.63173,
+        "center_lat": 40.82635
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28030",
+        "admin_unit_id": "ES.28.MUN.28030",
+        "name": "La Cabrera",
+        "municipio_ine": "28030",
+        "municipio_name": "La Cabrera",
+        "center_lon": -3.61383,
+        "center_lat": 40.8643
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28031",
+        "admin_unit_id": "ES.28.MUN.28031",
+        "name": "Cadalso de los Vidrios",
+        "municipio_ine": "28031",
+        "municipio_name": "Cadalso de los Vidrios",
+        "center_lon": -4.4352,
+        "center_lat": 40.29533
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28032",
+        "admin_unit_id": "ES.28.MUN.28032",
+        "name": "Camarma de Esteruelas",
+        "municipio_ine": "28032",
+        "municipio_name": "Camarma de Esteruelas",
+        "center_lon": -3.38059,
+        "center_lat": 40.56606
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28033",
+        "admin_unit_id": "ES.28.MUN.28033",
+        "name": "Campo Real",
+        "municipio_ine": "28033",
+        "municipio_name": "Campo Real",
+        "center_lon": -3.37867,
+        "center_lat": 40.3145
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28034",
+        "admin_unit_id": "ES.28.MUN.28034",
+        "name": "Canencia",
+        "municipio_ine": "28034",
+        "municipio_name": "Canencia",
+        "center_lon": -3.75691,
+        "center_lat": 40.89428
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28035",
+        "admin_unit_id": "ES.28.MUN.28035",
+        "name": "Caraba/a",
+        "municipio_ine": "28035",
+        "municipio_name": "Caraba/a",
+        "center_lon": -3.24085,
+        "center_lat": 40.25825
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28036",
+        "admin_unit_id": "ES.28.MUN.28036",
+        "name": "Casarrubuelos",
+        "municipio_ine": "28036",
+        "municipio_name": "Casarrubuelos",
+        "center_lon": -3.8357,
+        "center_lat": 40.17066
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28037",
+        "admin_unit_id": "ES.28.MUN.28037",
+        "name": "Cenicientos",
+        "municipio_ine": "28037",
+        "municipio_name": "Cenicientos",
+        "center_lon": -4.50137,
+        "center_lat": 40.24088
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28038",
+        "admin_unit_id": "ES.28.MUN.28038",
+        "name": "Cercedilla",
+        "municipio_ine": "28038",
+        "municipio_name": "Cercedilla",
+        "center_lon": -4.05531,
+        "center_lat": 40.75384
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28039",
+        "admin_unit_id": "ES.28.MUN.28039",
+        "name": "Cervera de Buitrago",
+        "municipio_ine": "28039",
+        "municipio_name": "Cervera de Buitrago",
+        "center_lon": -3.52058,
+        "center_lat": 40.91671
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28040",
+        "admin_unit_id": "ES.28.MUN.28040",
+        "name": "Ciempozuelos",
+        "municipio_ine": "28040",
+        "municipio_name": "Ciempozuelos",
+        "center_lon": -3.61036,
+        "center_lat": 40.15248
+      },
+      "match_pct": 86,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28041",
+        "admin_unit_id": "ES.28.MUN.28041",
+        "name": "Cobe/a",
+        "municipio_ine": "28041",
+        "municipio_name": "Cobe/a",
+        "center_lon": -3.51156,
+        "center_lat": 40.56705
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28042",
+        "admin_unit_id": "ES.28.MUN.28042",
+        "name": "Colmenar del Arroyo",
+        "municipio_ine": "28042",
+        "municipio_name": "Colmenar del Arroyo",
+        "center_lon": -4.23578,
+        "center_lat": 40.40147
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28043",
+        "admin_unit_id": "ES.28.MUN.28043",
+        "name": "Colmenar de Oreja",
+        "municipio_ine": "28043",
+        "municipio_name": "Colmenar de Oreja",
+        "center_lon": -3.42487,
+        "center_lat": 40.08498
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28044",
+        "admin_unit_id": "ES.28.MUN.28044",
+        "name": "Colmenarejo",
+        "municipio_ine": "28044",
+        "municipio_name": "Colmenarejo",
+        "center_lon": -4.01663,
+        "center_lat": 40.53489
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28045",
+        "admin_unit_id": "ES.28.MUN.28045",
+        "name": "Colmenar Viejo",
+        "municipio_ine": "28045",
+        "municipio_name": "Colmenar Viejo",
+        "center_lon": -3.74921,
+        "center_lat": 40.66175
+      },
+      "match_pct": 88,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28046",
+        "admin_unit_id": "ES.28.MUN.28046",
+        "name": "Collado Mediano",
+        "municipio_ine": "28046",
+        "municipio_name": "Collado Mediano",
+        "center_lon": -4.02802,
+        "center_lat": 40.69057
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28047",
+        "admin_unit_id": "ES.28.MUN.28047",
+        "name": "Collado Villalba",
+        "municipio_ine": "28047",
+        "municipio_name": "Collado Villalba",
+        "center_lon": -3.98192,
+        "center_lat": 40.64857
+      },
+      "match_pct": 86,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28048",
+        "admin_unit_id": "ES.28.MUN.28048",
+        "name": "Corpa",
+        "municipio_ine": "28048",
+        "municipio_name": "Corpa",
+        "center_lon": -3.24997,
+        "center_lat": 40.41895
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28049",
+        "admin_unit_id": "ES.28.MUN.28049",
+        "name": "Coslada",
+        "municipio_ine": "28049",
+        "municipio_name": "Coslada",
+        "center_lon": -3.55714,
+        "center_lat": 40.42849
+      },
+      "match_pct": 84,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28050",
+        "admin_unit_id": "ES.28.MUN.28050",
+        "name": "Cubas de la Sagra",
+        "municipio_ine": "28050",
+        "municipio_name": "Cubas de la Sagra",
+        "center_lon": -3.84223,
+        "center_lat": 40.19133
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28051",
+        "admin_unit_id": "ES.28.MUN.28051",
+        "name": "Chapineria",
+        "municipio_ine": "28051",
+        "municipio_name": "Chapineria",
+        "center_lon": -4.2159,
+        "center_lat": 40.36898
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28052",
+        "admin_unit_id": "ES.28.MUN.28052",
+        "name": "Chinchon",
+        "municipio_ine": "28052",
+        "municipio_name": "Chinchon",
+        "center_lon": -3.47031,
+        "center_lat": 40.1581
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28053",
+        "admin_unit_id": "ES.28.MUN.28053",
+        "name": "Daganzo de Arriba",
+        "municipio_ine": "28053",
+        "municipio_name": "Daganzo de Arriba",
+        "center_lon": -3.4417,
+        "center_lat": 40.56311
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28054",
+        "admin_unit_id": "ES.28.MUN.28054",
+        "name": "El Escorial",
+        "municipio_ine": "28054",
+        "municipio_name": "El Escorial",
+        "center_lon": -4.09437,
+        "center_lat": 40.57809
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28055",
+        "admin_unit_id": "ES.28.MUN.28055",
+        "name": "Estremera",
+        "municipio_ine": "28055",
+        "municipio_name": "Estremera",
+        "center_lon": -3.11668,
+        "center_lat": 40.14213
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28056",
+        "admin_unit_id": "ES.28.MUN.28056",
+        "name": "Fresnedillas de la Oliva",
+        "municipio_ine": "28056",
+        "municipio_name": "Fresnedillas de la Oliva",
+        "center_lon": -4.1872,
+        "center_lat": 40.47346
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28057",
+        "admin_unit_id": "ES.28.MUN.28057",
+        "name": "Fresno de Torote",
+        "municipio_ine": "28057",
+        "municipio_name": "Fresno de Torote",
+        "center_lon": -3.41153,
+        "center_lat": 40.60898
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28058",
+        "admin_unit_id": "ES.28.MUN.28058",
+        "name": "Fuenlabrada",
+        "municipio_ine": "28058",
+        "municipio_name": "Fuenlabrada",
+        "center_lon": -3.80102,
+        "center_lat": 40.28867
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28059",
+        "admin_unit_id": "ES.28.MUN.28059",
+        "name": "Fuente el Saz de Jarama",
+        "municipio_ine": "28059",
+        "municipio_name": "Fuente el Saz de Jarama",
+        "center_lon": -3.52302,
+        "center_lat": 40.64138
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28060",
+        "admin_unit_id": "ES.28.MUN.28060",
+        "name": "Fuentidueða de Tajo",
+        "municipio_ine": "28060",
+        "municipio_name": "Fuentidueða de Tajo",
+        "center_lon": -3.16522,
+        "center_lat": 40.11161
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28061",
+        "admin_unit_id": "ES.28.MUN.28061",
+        "name": "Galapagar",
+        "municipio_ine": "28061",
+        "municipio_name": "Galapagar",
+        "center_lon": -3.988,
+        "center_lat": 40.57005
+      },
+      "match_pct": 84,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28062",
+        "admin_unit_id": "ES.28.MUN.28062",
+        "name": "Garganta de los Montes",
+        "municipio_ine": "28062",
+        "municipio_name": "Garganta de los Montes",
+        "center_lon": -3.6892,
+        "center_lat": 40.92898
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28063",
+        "admin_unit_id": "ES.28.MUN.28063",
+        "name": "Gargantilla del Lozoya y Pinilla de Buitrago",
+        "municipio_ine": "28063",
+        "municipio_name": "Gargantilla del Lozoya y Pinilla de Buitrago",
+        "center_lon": -3.70879,
+        "center_lat": 40.96519
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28064",
+        "admin_unit_id": "ES.28.MUN.28064",
+        "name": "Gascones",
+        "municipio_ine": "28064",
+        "municipio_name": "Gascones",
+        "center_lon": -3.67988,
+        "center_lat": 41.0383
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28065",
+        "admin_unit_id": "ES.28.MUN.28065",
+        "name": "Getafe",
+        "municipio_ine": "28065",
+        "municipio_name": "Getafe",
+        "center_lon": -3.66802,
+        "center_lat": 40.30045
+      },
+      "match_pct": 69,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28066",
+        "admin_unit_id": "ES.28.MUN.28066",
+        "name": "Griðon",
+        "municipio_ine": "28066",
+        "municipio_name": "Griðon",
+        "center_lon": -3.83882,
+        "center_lat": 40.21878
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28067",
+        "admin_unit_id": "ES.28.MUN.28067",
+        "name": "Guadalix de la Sierra",
+        "municipio_ine": "28067",
+        "municipio_name": "Guadalix de la Sierra",
+        "center_lon": -3.68674,
+        "center_lat": 40.76465
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28068",
+        "admin_unit_id": "ES.28.MUN.28068",
+        "name": "Guadarrama",
+        "municipio_ine": "28068",
+        "municipio_name": "Guadarrama",
+        "center_lon": -4.11457,
+        "center_lat": 40.67716
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28069",
+        "admin_unit_id": "ES.28.MUN.28069",
+        "name": "La Hiruela",
+        "municipio_ine": "28069",
+        "municipio_name": "La Hiruela",
+        "center_lon": -3.45625,
+        "center_lat": 41.06898
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28070",
+        "admin_unit_id": "ES.28.MUN.28070",
+        "name": "Horcajo de la Sierra-Aoslos",
+        "municipio_ine": "28070",
+        "municipio_name": "Horcajo de la Sierra-Aoslos",
+        "center_lon": -3.58352,
+        "center_lat": 41.07889
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28071",
+        "admin_unit_id": "ES.28.MUN.28071",
+        "name": "Horcajuelo de la Sierra",
+        "municipio_ine": "28071",
+        "municipio_name": "Horcajuelo de la Sierra",
+        "center_lon": -3.54035,
+        "center_lat": 41.08713
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28072",
+        "admin_unit_id": "ES.28.MUN.28072",
+        "name": "Hoyo de Manzanares",
+        "municipio_ine": "28072",
+        "municipio_name": "Hoyo de Manzanares",
+        "center_lon": -3.8969,
+        "center_lat": 40.61953
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28073",
+        "admin_unit_id": "ES.28.MUN.28073",
+        "name": "Humanes de Madrid",
+        "municipio_ine": "28073",
+        "municipio_name": "Humanes de Madrid",
+        "center_lon": -3.82697,
+        "center_lat": 40.25235
+      },
+      "match_pct": 95,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28074",
+        "admin_unit_id": "ES.28.MUN.28074",
+        "name": "Leganes",
+        "municipio_ine": "28074",
+        "municipio_name": "Leganes",
+        "center_lon": -3.77683,
+        "center_lat": 40.32907
+      },
+      "match_pct": 86,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28075",
+        "admin_unit_id": "ES.28.MUN.28075",
+        "name": "Loeches",
+        "municipio_ine": "28075",
+        "municipio_name": "Loeches",
+        "center_lon": -3.42312,
+        "center_lat": 40.3878
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28076",
+        "admin_unit_id": "ES.28.MUN.28076",
+        "name": "Lozoya",
+        "municipio_ine": "28076",
+        "municipio_name": "Lozoya",
+        "center_lon": -3.7849,
+        "center_lat": 40.96262
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28078",
+        "admin_unit_id": "ES.28.MUN.28078",
+        "name": "Madarcos",
+        "municipio_ine": "28078",
+        "municipio_name": "Madarcos",
+        "center_lon": -3.57193,
+        "center_lat": 41.04028
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28079",
+        "admin_unit_id": "ES.28.MUN.28079",
+        "name": "Madrid",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.68585,
+        "center_lat": 40.47761
+      },
+      "match_pct": 19,
+      "passes_all": false,
       "failed_constraints": [
         "budget"
       ]
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28080",
+        "admin_unit_id": "ES.28.MUN.28080",
+        "name": "Majadahonda",
+        "municipio_ine": "28080",
+        "municipio_name": "Majadahonda",
+        "center_lon": -3.88787,
+        "center_lat": 40.47175
+      },
+      "match_pct": 24,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28082",
+        "admin_unit_id": "ES.28.MUN.28082",
+        "name": "Manzanares el Real",
+        "municipio_ine": "28082",
+        "municipio_name": "Manzanares el Real",
+        "center_lon": -3.87221,
+        "center_lat": 40.74608
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28083",
+        "admin_unit_id": "ES.28.MUN.28083",
+        "name": "Meco",
+        "municipio_ine": "28083",
+        "municipio_name": "Meco",
+        "center_lon": -3.3238,
+        "center_lat": 40.561
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28084",
+        "admin_unit_id": "ES.28.MUN.28084",
+        "name": "Mejorada del Campo",
+        "municipio_ine": "28084",
+        "municipio_name": "Mejorada del Campo",
+        "center_lon": -3.47676,
+        "center_lat": 40.39987
+      },
+      "match_pct": 94,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28085",
+        "admin_unit_id": "ES.28.MUN.28085",
+        "name": "Miraflores de la Sierra",
+        "municipio_ine": "28085",
+        "municipio_name": "Miraflores de la Sierra",
+        "center_lon": -3.77326,
+        "center_lat": 40.78863
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28086",
+        "admin_unit_id": "ES.28.MUN.28086",
+        "name": "El Molar",
+        "municipio_ine": "28086",
+        "municipio_name": "El Molar",
+        "center_lon": -3.57276,
+        "center_lat": 40.69694
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28087",
+        "admin_unit_id": "ES.28.MUN.28087",
+        "name": "Los Molinos",
+        "municipio_ine": "28087",
+        "municipio_name": "Los Molinos",
+        "center_lon": -4.09603,
+        "center_lat": 40.72335
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28088",
+        "admin_unit_id": "ES.28.MUN.28088",
+        "name": "Montejo de la Sierra",
+        "municipio_ine": "28088",
+        "municipio_name": "Montejo de la Sierra",
+        "center_lon": -3.50715,
+        "center_lat": 41.09942
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28089",
+        "admin_unit_id": "ES.28.MUN.28089",
+        "name": "Moraleja de Enmedio",
+        "municipio_ine": "28089",
+        "municipio_name": "Moraleja de Enmedio",
+        "center_lon": -3.87987,
+        "center_lat": 40.25755
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28090",
+        "admin_unit_id": "ES.28.MUN.28090",
+        "name": "Moralzarzal",
+        "municipio_ine": "28090",
+        "municipio_name": "Moralzarzal",
+        "center_lon": -3.88956,
+        "center_lat": 40.65761
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28091",
+        "admin_unit_id": "ES.28.MUN.28091",
+        "name": "Morata de Tajuða",
+        "municipio_ine": "28091",
+        "municipio_name": "Morata de Tajuða",
+        "center_lon": -3.4485,
+        "center_lat": 40.22733
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28092",
+        "admin_unit_id": "ES.28.MUN.28092",
+        "name": "Mostoles",
+        "municipio_ine": "28092",
+        "municipio_name": "Mostoles",
+        "center_lon": -3.89355,
+        "center_lat": 40.31991
+      },
+      "match_pct": 89,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28093",
+        "admin_unit_id": "ES.28.MUN.28093",
+        "name": "Navacerrada",
+        "municipio_ine": "28093",
+        "municipio_name": "Navacerrada",
+        "center_lon": -4.00724,
+        "center_lat": 40.74959
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28094",
+        "admin_unit_id": "ES.28.MUN.28094",
+        "name": "Navalafuente",
+        "municipio_ine": "28094",
+        "municipio_name": "Navalafuente",
+        "center_lon": -3.67803,
+        "center_lat": 40.81645
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28095",
+        "admin_unit_id": "ES.28.MUN.28095",
+        "name": "Navalagamella",
+        "municipio_ine": "28095",
+        "municipio_name": "Navalagamella",
+        "center_lon": -4.12533,
+        "center_lat": 40.44235
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28096",
+        "admin_unit_id": "ES.28.MUN.28096",
+        "name": "Navalcarnero",
+        "municipio_ine": "28096",
+        "municipio_name": "Navalcarnero",
+        "center_lon": -4.01501,
+        "center_lat": 40.28227
+      },
+      "match_pct": 90,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28097",
+        "admin_unit_id": "ES.28.MUN.28097",
+        "name": "Navarredonda y San Mames",
+        "municipio_ine": "28097",
+        "municipio_name": "Navarredonda y San Mames",
+        "center_lon": -3.72739,
+        "center_lat": 41.00553
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28099",
+        "admin_unit_id": "ES.28.MUN.28099",
+        "name": "Navas del Rey",
+        "municipio_ine": "28099",
+        "municipio_name": "Navas del Rey",
+        "center_lon": -4.26522,
+        "center_lat": 40.37733
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28100",
+        "admin_unit_id": "ES.28.MUN.28100",
+        "name": "Nuevo Baztan",
+        "municipio_ine": "28100",
+        "municipio_name": "Nuevo Baztan",
+        "center_lon": -3.25502,
+        "center_lat": 40.37462
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28101",
+        "admin_unit_id": "ES.28.MUN.28101",
+        "name": "Olmeda de las Fuentes",
+        "municipio_ine": "28101",
+        "municipio_name": "Olmeda de las Fuentes",
+        "center_lon": -3.2033,
+        "center_lat": 40.36765
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28102",
+        "admin_unit_id": "ES.28.MUN.28102",
+        "name": "Orusco de Taju/a",
+        "municipio_ine": "28102",
+        "municipio_name": "Orusco de Taju/a",
+        "center_lon": -3.2066,
+        "center_lat": 40.28597
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28104",
+        "admin_unit_id": "ES.28.MUN.28104",
+        "name": "Paracuellos de Jarama",
+        "municipio_ine": "28104",
+        "municipio_name": "Paracuellos de Jarama",
+        "center_lon": -3.52596,
+        "center_lat": 40.52211
+      },
+      "match_pct": 75,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28106",
+        "admin_unit_id": "ES.28.MUN.28106",
+        "name": "Parla",
+        "municipio_ine": "28106",
+        "municipio_name": "Parla",
+        "center_lon": -3.77305,
+        "center_lat": 40.22839
+      },
+      "match_pct": 85,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28107",
+        "admin_unit_id": "ES.28.MUN.28107",
+        "name": "Patones",
+        "municipio_ine": "28107",
+        "municipio_name": "Patones",
+        "center_lon": -3.48101,
+        "center_lat": 40.88244
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28108",
+        "admin_unit_id": "ES.28.MUN.28108",
+        "name": "Pedrezuela",
+        "municipio_ine": "28108",
+        "municipio_name": "Pedrezuela",
+        "center_lon": -3.62492,
+        "center_lat": 40.74322
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28109",
+        "admin_unit_id": "ES.28.MUN.28109",
+        "name": "Pelayos de la Presa",
+        "municipio_ine": "28109",
+        "municipio_name": "Pelayos de la Presa",
+        "center_lon": -4.32863,
+        "center_lat": 40.35995
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28110",
+        "admin_unit_id": "ES.28.MUN.28110",
+        "name": "Perales de Taju/a",
+        "municipio_ine": "28110",
+        "municipio_name": "Perales de Taju/a",
+        "center_lon": -3.35817,
+        "center_lat": 40.22578
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28111",
+        "admin_unit_id": "ES.28.MUN.28111",
+        "name": "Pezuela de las Torres",
+        "municipio_ine": "28111",
+        "municipio_name": "Pezuela de las Torres",
+        "center_lon": -3.17578,
+        "center_lat": 40.40726
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28112",
+        "admin_unit_id": "ES.28.MUN.28112",
+        "name": "Pinilla del Valle",
+        "municipio_ine": "28112",
+        "municipio_name": "Pinilla del Valle",
+        "center_lon": -3.8293,
+        "center_lat": 40.93535
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28113",
+        "admin_unit_id": "ES.28.MUN.28113",
+        "name": "Pinto",
+        "municipio_ine": "28113",
+        "municipio_name": "Pinto",
+        "center_lon": -3.68656,
+        "center_lat": 40.24585
+      },
+      "match_pct": 77,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28114",
+        "admin_unit_id": "ES.28.MUN.28114",
+        "name": "Pi/uecar-Gandullas",
+        "municipio_ine": "28114",
+        "municipio_name": "Pi/uecar-Gandullas",
+        "center_lon": -3.59934,
+        "center_lat": 41.03499
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28115",
+        "admin_unit_id": "ES.28.MUN.28115",
+        "name": "Pozuelo de Alarcon",
+        "municipio_ine": "28115",
+        "municipio_name": "Pozuelo de Alarcon",
+        "center_lon": -3.81188,
+        "center_lat": 40.42921
+      },
+      "match_pct": 18,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28116",
+        "admin_unit_id": "ES.28.MUN.28116",
+        "name": "Pozuelo del Rey",
+        "municipio_ine": "28116",
+        "municipio_name": "Pozuelo del Rey",
+        "center_lon": -3.31374,
+        "center_lat": 40.36488
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28117",
+        "admin_unit_id": "ES.28.MUN.28117",
+        "name": "Pradena del Rincon",
+        "municipio_ine": "28117",
+        "municipio_name": "Pradena del Rincon",
+        "center_lon": -3.51602,
+        "center_lat": 41.03923
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28118",
+        "admin_unit_id": "ES.28.MUN.28118",
+        "name": "Puebla de la Sierra",
+        "municipio_ine": "28118",
+        "municipio_name": "Puebla de la Sierra",
+        "center_lon": -3.44548,
+        "center_lat": 41.00637
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28119",
+        "admin_unit_id": "ES.28.MUN.28119",
+        "name": "Quijorna",
+        "municipio_ine": "28119",
+        "municipio_name": "Quijorna",
+        "center_lon": -4.05875,
+        "center_lat": 40.41843
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28120",
+        "admin_unit_id": "ES.28.MUN.28120",
+        "name": "Rascafria",
+        "municipio_ine": "28120",
+        "municipio_name": "Rascafria",
+        "center_lon": -3.89,
+        "center_lat": 40.87318
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28121",
+        "admin_unit_id": "ES.28.MUN.28121",
+        "name": "Redue/a",
+        "municipio_ine": "28121",
+        "municipio_name": "Redue/a",
+        "center_lon": -3.59416,
+        "center_lat": 40.81635
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28122",
+        "admin_unit_id": "ES.28.MUN.28122",
+        "name": "Ribatejada",
+        "municipio_ine": "28122",
+        "municipio_name": "Ribatejada",
+        "center_lon": -3.41174,
+        "center_lat": 40.66136
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28123",
+        "admin_unit_id": "ES.28.MUN.28123",
+        "name": "Rivas-Vaciamadrid",
+        "municipio_ine": "28123",
+        "municipio_name": "Rivas-Vaciamadrid",
+        "center_lon": -3.51885,
+        "center_lat": 40.34912
+      },
+      "match_pct": 81,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28124",
+        "admin_unit_id": "ES.28.MUN.28124",
+        "name": "Robledillo de la Jara",
+        "municipio_ine": "28124",
+        "municipio_name": "Robledillo de la Jara",
+        "center_lon": -3.5276,
+        "center_lat": 40.94987
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28125",
+        "admin_unit_id": "ES.28.MUN.28125",
+        "name": "Robledo de Chavela",
+        "municipio_ine": "28125",
+        "municipio_name": "Robledo de Chavela",
+        "center_lon": -4.25024,
+        "center_lat": 40.48218
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28126",
+        "admin_unit_id": "ES.28.MUN.28126",
+        "name": "Robregordo",
+        "municipio_ine": "28126",
+        "municipio_name": "Robregordo",
+        "center_lon": -3.61452,
+        "center_lat": 41.12372
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28127",
+        "admin_unit_id": "ES.28.MUN.28127",
+        "name": "Las Rozas de Madrid",
+        "municipio_ine": "28127",
+        "municipio_name": "Las Rozas de Madrid",
+        "center_lon": -3.89666,
+        "center_lat": 40.52482
+      },
+      "match_pct": 19,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28128",
+        "admin_unit_id": "ES.28.MUN.28128",
+        "name": "Rozas de Puerto Real",
+        "municipio_ine": "28128",
+        "municipio_name": "Rozas de Puerto Real",
+        "center_lon": -4.50445,
+        "center_lat": 40.3055
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28129",
+        "admin_unit_id": "ES.28.MUN.28129",
+        "name": "San Agustin del Guadalix",
+        "municipio_ine": "28129",
+        "municipio_name": "San Agustin del Guadalix",
+        "center_lon": -3.6265,
+        "center_lat": 40.68273
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28130",
+        "admin_unit_id": "ES.28.MUN.28130",
+        "name": "San Fernando de Henares",
+        "municipio_ine": "28130",
+        "municipio_name": "San Fernando de Henares",
+        "center_lon": -3.50967,
+        "center_lat": 40.43973
+      },
+      "match_pct": 89,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28131",
+        "admin_unit_id": "ES.28.MUN.28131",
+        "name": "San Lorenzo de el Escorial",
+        "municipio_ine": "28131",
+        "municipio_name": "San Lorenzo de el Escorial",
+        "center_lon": -4.14273,
+        "center_lat": 40.6088
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28132",
+        "admin_unit_id": "ES.28.MUN.28132",
+        "name": "San Martin de la Vega",
+        "municipio_ine": "28132",
+        "municipio_name": "San Martin de la Vega",
+        "center_lon": -3.56972,
+        "center_lat": 40.24299
+      },
+      "match_pct": 99,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28133",
+        "admin_unit_id": "ES.28.MUN.28133",
+        "name": "San Martin de Valdeiglesias",
+        "municipio_ine": "28133",
+        "municipio_name": "San Martin de Valdeiglesias",
+        "center_lon": -4.39313,
+        "center_lat": 40.36024
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28134",
+        "admin_unit_id": "ES.28.MUN.28134",
+        "name": "San Sebastian de los Reyes",
+        "municipio_ine": "28134",
+        "municipio_name": "San Sebastian de los Reyes",
+        "center_lon": -3.57622,
+        "center_lat": 40.58161
+      },
+      "match_pct": 47,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28135",
+        "admin_unit_id": "ES.28.MUN.28135",
+        "name": "Santa Maria de la Alameda",
+        "municipio_ine": "28135",
+        "municipio_name": "Santa Maria de la Alameda",
+        "center_lon": -4.23976,
+        "center_lat": 40.58043
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28136",
+        "admin_unit_id": "ES.28.MUN.28136",
+        "name": "Santorcaz",
+        "municipio_ine": "28136",
+        "municipio_name": "Santorcaz",
+        "center_lon": -3.2264,
+        "center_lat": 40.46953
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28137",
+        "admin_unit_id": "ES.28.MUN.28137",
+        "name": "Los Santos de la Humosa",
+        "municipio_ine": "28137",
+        "municipio_name": "Los Santos de la Humosa",
+        "center_lon": -3.24929,
+        "center_lat": 40.51413
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28138",
+        "admin_unit_id": "ES.28.MUN.28138",
+        "name": "La Serna del Monte",
+        "municipio_ine": "28138",
+        "municipio_name": "La Serna del Monte",
+        "center_lon": -3.62244,
+        "center_lat": 41.04186
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28140",
+        "admin_unit_id": "ES.28.MUN.28140",
+        "name": "Serranillos del Valle",
+        "municipio_ine": "28140",
+        "municipio_name": "Serranillos del Valle",
+        "center_lon": -3.8821,
+        "center_lat": 40.21172
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28141",
+        "admin_unit_id": "ES.28.MUN.28141",
+        "name": "Sevilla la Nueva",
+        "municipio_ine": "28141",
+        "municipio_name": "Sevilla la Nueva",
+        "center_lon": -4.03984,
+        "center_lat": 40.35671
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28143",
+        "admin_unit_id": "ES.28.MUN.28143",
+        "name": "Somosierra",
+        "municipio_ine": "28143",
+        "municipio_name": "Somosierra",
+        "center_lon": -3.5696,
+        "center_lat": 41.13996
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28144",
+        "admin_unit_id": "ES.28.MUN.28144",
+        "name": "Soto del Real",
+        "municipio_ine": "28144",
+        "municipio_name": "Soto del Real",
+        "center_lon": -3.79047,
+        "center_lat": 40.75935
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28145",
+        "admin_unit_id": "ES.28.MUN.28145",
+        "name": "Talamanca de Jarama",
+        "municipio_ine": "28145",
+        "municipio_name": "Talamanca de Jarama",
+        "center_lon": -3.49474,
+        "center_lat": 40.73962
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28146",
+        "admin_unit_id": "ES.28.MUN.28146",
+        "name": "Tielmes",
+        "municipio_ine": "28146",
+        "municipio_name": "Tielmes",
+        "center_lon": -3.29865,
+        "center_lat": 40.22737
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28147",
+        "admin_unit_id": "ES.28.MUN.28147",
+        "name": "Titulcia",
+        "municipio_ine": "28147",
+        "municipio_name": "Titulcia",
+        "center_lon": -3.55825,
+        "center_lat": 40.14649
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28148",
+        "admin_unit_id": "ES.28.MUN.28148",
+        "name": "Torrejon de Ardoz",
+        "municipio_ine": "28148",
+        "municipio_name": "Torrejon de Ardoz",
+        "center_lon": -3.46298,
+        "center_lat": 40.47063
+      },
+      "match_pct": 79,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28149",
+        "admin_unit_id": "ES.28.MUN.28149",
+        "name": "Torrejon de la Calzada",
+        "municipio_ine": "28149",
+        "municipio_name": "Torrejon de la Calzada",
+        "center_lon": -3.79834,
+        "center_lat": 40.19915
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28150",
+        "admin_unit_id": "ES.28.MUN.28150",
+        "name": "Torrejon de Velasco",
+        "municipio_ine": "28150",
+        "municipio_name": "Torrejon de Velasco",
+        "center_lon": -3.75068,
+        "center_lat": 40.17199
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28151",
+        "admin_unit_id": "ES.28.MUN.28151",
+        "name": "Torrelaguna",
+        "municipio_ine": "28151",
+        "municipio_name": "Torrelaguna",
+        "center_lon": -3.54504,
+        "center_lat": 40.82624
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28152",
+        "admin_unit_id": "ES.28.MUN.28152",
+        "name": "Torrelodones",
+        "municipio_ine": "28152",
+        "municipio_name": "Torrelodones",
+        "center_lon": -3.92398,
+        "center_lat": 40.5727
+      },
+      "match_pct": 55,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28153",
+        "admin_unit_id": "ES.28.MUN.28153",
+        "name": "Torremocha de Jarama",
+        "municipio_ine": "28153",
+        "municipio_name": "Torremocha de Jarama",
+        "center_lon": -3.49596,
+        "center_lat": 40.8364
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28154",
+        "admin_unit_id": "ES.28.MUN.28154",
+        "name": "Torres de la Alameda",
+        "municipio_ine": "28154",
+        "municipio_name": "Torres de la Alameda",
+        "center_lon": -3.36481,
+        "center_lat": 40.41141
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28155",
+        "admin_unit_id": "ES.28.MUN.28155",
+        "name": "Valdaracete",
+        "municipio_ine": "28155",
+        "municipio_name": "Valdaracete",
+        "center_lon": -3.21428,
+        "center_lat": 40.2018
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28156",
+        "admin_unit_id": "ES.28.MUN.28156",
+        "name": "Valdeavero",
+        "municipio_ine": "28156",
+        "municipio_name": "Valdeavero",
+        "center_lon": -3.35511,
+        "center_lat": 40.62588
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28157",
+        "admin_unit_id": "ES.28.MUN.28157",
+        "name": "Valdelaguna",
+        "municipio_ine": "28157",
+        "municipio_name": "Valdelaguna",
+        "center_lon": -3.36207,
+        "center_lat": 40.17696
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28158",
+        "admin_unit_id": "ES.28.MUN.28158",
+        "name": "Valdemanco",
+        "municipio_ine": "28158",
+        "municipio_name": "Valdemanco",
+        "center_lon": -3.66387,
+        "center_lat": 40.86247
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28159",
+        "admin_unit_id": "ES.28.MUN.28159",
+        "name": "Valdemaqueda",
+        "municipio_ine": "28159",
+        "municipio_name": "Valdemaqueda",
+        "center_lon": -4.30409,
+        "center_lat": 40.49856
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28160",
+        "admin_unit_id": "ES.28.MUN.28160",
+        "name": "Valdemorillo",
+        "municipio_ine": "28160",
+        "municipio_name": "Valdemorillo",
+        "center_lon": -4.07182,
+        "center_lat": 40.50673
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28161",
+        "admin_unit_id": "ES.28.MUN.28161",
+        "name": "Valdemoro",
+        "municipio_ine": "28161",
+        "municipio_name": "Valdemoro",
+        "center_lon": -3.65225,
+        "center_lat": 40.18098
+      },
+      "match_pct": 81,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28162",
+        "admin_unit_id": "ES.28.MUN.28162",
+        "name": "Valdeolmos-Alalpardo",
+        "municipio_ine": "28162",
+        "municipio_name": "Valdeolmos-Alalpardo",
+        "center_lon": -3.45788,
+        "center_lat": 40.63784
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28163",
+        "admin_unit_id": "ES.28.MUN.28163",
+        "name": "Valdepielagos",
+        "municipio_ine": "28163",
+        "municipio_name": "Valdepielagos",
+        "center_lon": -3.46682,
+        "center_lat": 40.76347
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28164",
+        "admin_unit_id": "ES.28.MUN.28164",
+        "name": "Valdetorres de Jarama",
+        "municipio_ine": "28164",
+        "municipio_name": "Valdetorres de Jarama",
+        "center_lon": -3.50892,
+        "center_lat": 40.69637
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28165",
+        "admin_unit_id": "ES.28.MUN.28165",
+        "name": "Valdilecha",
+        "municipio_ine": "28165",
+        "municipio_name": "Valdilecha",
+        "center_lon": -3.30128,
+        "center_lat": 40.29729
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28166",
+        "admin_unit_id": "ES.28.MUN.28166",
+        "name": "Valverde de Alcala",
+        "municipio_ine": "28166",
+        "municipio_name": "Valverde de Alcala",
+        "center_lon": -3.29736,
+        "center_lat": 40.40246
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28167",
+        "admin_unit_id": "ES.28.MUN.28167",
+        "name": "Velilla de San Antonio",
+        "municipio_ine": "28167",
+        "municipio_name": "Velilla de San Antonio",
+        "center_lon": -3.47455,
+        "center_lat": 40.36332
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28168",
+        "admin_unit_id": "ES.28.MUN.28168",
+        "name": "El Vellon",
+        "municipio_ine": "28168",
+        "municipio_name": "El Vellon",
+        "center_lon": -3.56236,
+        "center_lat": 40.76336
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28169",
+        "admin_unit_id": "ES.28.MUN.28169",
+        "name": "Venturada",
+        "municipio_ine": "28169",
+        "municipio_name": "Venturada",
+        "center_lon": -3.62126,
+        "center_lat": 40.79757
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28170",
+        "admin_unit_id": "ES.28.MUN.28170",
+        "name": "Villaconejos",
+        "municipio_ine": "28170",
+        "municipio_name": "Villaconejos",
+        "center_lon": -3.49995,
+        "center_lat": 40.11253
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28171",
+        "admin_unit_id": "ES.28.MUN.28171",
+        "name": "Villa del Prado",
+        "municipio_ine": "28171",
+        "municipio_name": "Villa del Prado",
+        "center_lon": -4.3034,
+        "center_lat": 40.27249
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28172",
+        "admin_unit_id": "ES.28.MUN.28172",
+        "name": "Villalbilla",
+        "municipio_ine": "28172",
+        "municipio_name": "Villalbilla",
+        "center_lon": -3.32817,
+        "center_lat": 40.44508
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28173",
+        "admin_unit_id": "ES.28.MUN.28173",
+        "name": "Villamanrique de Tajo",
+        "municipio_ine": "28173",
+        "municipio_name": "Villamanrique de Tajo",
+        "center_lon": -3.25248,
+        "center_lat": 40.07933
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28174",
+        "admin_unit_id": "ES.28.MUN.28174",
+        "name": "Villamanta",
+        "municipio_ine": "28174",
+        "municipio_name": "Villamanta",
+        "center_lon": -4.12661,
+        "center_lat": 40.29254
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28175",
+        "admin_unit_id": "ES.28.MUN.28175",
+        "name": "Villamantilla",
+        "municipio_ine": "28175",
+        "municipio_name": "Villamantilla",
+        "center_lon": -4.14484,
+        "center_lat": 40.34318
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28176",
+        "admin_unit_id": "ES.28.MUN.28176",
+        "name": "Villanueva de la Ca/ada",
+        "municipio_ine": "28176",
+        "municipio_name": "Villanueva de la Ca/ada",
+        "center_lon": -3.99469,
+        "center_lat": 40.44623
+      },
+      "match_pct": 50,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28177",
+        "admin_unit_id": "ES.28.MUN.28177",
+        "name": "Villanueva del Pardillo",
+        "municipio_ine": "28177",
+        "municipio_name": "Villanueva del Pardillo",
+        "center_lon": -3.96875,
+        "center_lat": 40.48629
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28178",
+        "admin_unit_id": "ES.28.MUN.28178",
+        "name": "Villanueva de Perales",
+        "municipio_ine": "28178",
+        "municipio_name": "Villanueva de Perales",
+        "center_lon": -4.09903,
+        "center_lat": 40.36913
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28179",
+        "admin_unit_id": "ES.28.MUN.28179",
+        "name": "Villar del Olmo",
+        "municipio_ine": "28179",
+        "municipio_name": "Villar del Olmo",
+        "center_lon": -3.2421,
+        "center_lat": 40.33106
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28180",
+        "admin_unit_id": "ES.28.MUN.28180",
+        "name": "Villarejo de Salvanes",
+        "municipio_ine": "28180",
+        "municipio_name": "Villarejo de Salvanes",
+        "center_lon": -3.25012,
+        "center_lat": 40.134
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28181",
+        "admin_unit_id": "ES.28.MUN.28181",
+        "name": "Villaviciosa de Odon",
+        "municipio_ine": "28181",
+        "municipio_name": "Villaviciosa de Odon",
+        "center_lon": -3.93685,
+        "center_lat": 40.35765
+      },
+      "match_pct": 40,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28182",
+        "admin_unit_id": "ES.28.MUN.28182",
+        "name": "Villavieja del Lozoya",
+        "municipio_ine": "28182",
+        "municipio_name": "Villavieja del Lozoya",
+        "center_lon": -3.69938,
+        "center_lat": 41.02768
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28183",
+        "admin_unit_id": "ES.28.MUN.28183",
+        "name": "Zarzalejo",
+        "municipio_ine": "28183",
+        "municipio_name": "Zarzalejo",
+        "center_lon": -4.17696,
+        "center_lat": 40.54131
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28901",
+        "admin_unit_id": "ES.28.MUN.28901",
+        "name": "Lozoyuela-Navas-Sieteiglesias",
+        "municipio_ine": "28901",
+        "municipio_name": "Lozoyuela-Navas-Sieteiglesias",
+        "center_lon": -3.61936,
+        "center_lat": 40.92016
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28902",
+        "admin_unit_id": "ES.28.MUN.28902",
+        "name": "Puentes Viejas",
+        "municipio_ine": "28902",
+        "municipio_name": "Puentes Viejas",
+        "center_lon": -3.59418,
+        "center_lat": 40.9688
+      },
+      "match_pct": null,
+      "passes_all": false,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "municipio",
+        "code": "28903",
+        "admin_unit_id": "ES.28.MUN.28903",
+        "name": "Tres Cantos",
+        "municipio_ine": "28903",
+        "municipio_name": "Tres Cantos",
+        "center_lon": -3.70833,
+        "center_lat": 40.61376
+      },
+      "match_pct": 49,
+      "passes_all": true,
+      "failed_constraints": []
     }
   ],
   "reality_check": {
@@ -608,19 +3447,90 @@
     "relaxations": [
       {
         "constraint_id": "budget",
-        "label": "Hasta 1.400 €/mes (+200 €)",
-        "relaxed_to": 1400.0,
-        "unit": "€/mes",
+        "label": "+200 €/mes",
         "zones_if_relaxed": 37,
-        "added_zones": 4
+        "added_zones": 4,
+        "relaxed_scenario": {
+          "schema_version": 2,
+          "budget": {
+            "kind": "rent",
+            "amount_eur": 1400
+          },
+          "min_floor_area_m2": 90,
+          "household": {
+            "adults": 2,
+            "minors": 2,
+            "minor_ages": [
+              4,
+              8
+            ],
+            "seniors_in_care": 0
+          },
+          "anchors": [
+            {
+              "kind": "work",
+              "label": "Paseo de la Castellana (Azca)",
+              "lon": -3.693,
+              "lat": 40.45,
+              "days_per_week": 4,
+              "max_minutes": null
+            }
+          ],
+          "nearby": [
+            {
+              "need": "colegio",
+              "max_walk_minutes": 10,
+              "required": false
+            }
+          ],
+          "priorities": [
+            "colegios",
+            "transporte",
+            "salud"
+          ]
+        }
       },
       {
         "constraint_id": "budget",
         "label": "Sin límite de presupuesto",
-        "relaxed_to": null,
-        "unit": null,
         "zones_if_relaxed": 37,
-        "added_zones": 4
+        "added_zones": 4,
+        "relaxed_scenario": {
+          "schema_version": 2,
+          "budget": null,
+          "min_floor_area_m2": 90,
+          "household": {
+            "adults": 2,
+            "minors": 2,
+            "minor_ages": [
+              4,
+              8
+            ],
+            "seniors_in_care": 0
+          },
+          "anchors": [
+            {
+              "kind": "work",
+              "label": "Paseo de la Castellana (Azca)",
+              "lon": -3.693,
+              "lat": 40.45,
+              "days_per_week": 4,
+              "max_minutes": null
+            }
+          ],
+          "nearby": [
+            {
+              "need": "colegio",
+              "max_walk_minutes": 10,
+              "required": false
+            }
+          ],
+          "priorities": [
+            "colegios",
+            "transporte",
+            "salud"
+          ]
+        }
       }
     ]
   },

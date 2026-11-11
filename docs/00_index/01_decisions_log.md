@@ -633,3 +633,57 @@ DATAMAD-PUBLIC-01; completa D-195. Mariano acepta que se vean el email de autor 
 - En la misma URL se publica una copia cuyo historial reescrito solo cambia esos 3 ficheros. Se conservan las fechas y el tag `pre-datamad`, que ahora apunta a `cf39459`.
 - `scripts/build_places_fixtures.py` redacta los datos de contacto, los NIF y los titulares.
 - Evidencia y tabla de SHAs antiguos y nuevos: `evidence/gate-00/2026-11-11/`.
+
+## D-199 — Nombre del producto: «Vida Fácil» (2026-11-11)
+Mariano decide llamar al producto **«Vida Fácil»**, con el lema «Encuentra tu sitio en Madrid»: corto, en español y fácil de recordar para personas mayores. El repo sigue siendo `housing-intelligence`, y «Housing Intelligence» puede aparecer como plataforma o equipo en el pie.
+- Nombres descartados:
+  - «Madrid 360»: es la marca del Ayuntamiento y parecería un producto municipal.
+  - «Madrid Mejor»: suena a eslogan político.
+  - «Fix360»: está en inglés.
+- La línea D comprobó el 11 nov en TMview y en búsqueda web que no choca con ninguna marca del sector vivienda.
+
+## D-200 — Escala: municipios y distritos de Madrid capital (2026-11-11)
+La región se muestra por municipios (179) y Madrid capital por sus 21 distritos, para que no sea un único bloque de 3,3 M habitantes. El buscador y la lista de lo que falta funcionan en los dos niveles. La geometría y los nombres de los 21 distritos ya están en `geo_admin_unit` (nivel `distrito`, códigos 2807901–2807921). La población por edad y los hogares por distrito llegan con DATA-012, que va antes de GAP-001.
+
+## D-201 — Mapa y estilo (2026-11-11)
+- **Mapa:** 2D en la vista general. Al entrar en una zona, la cámara se inclina y muestra en 3D edificios, parques y puntos clave.
+- **Estilo:** modo claro, navy + violeta + tarjetas de cristal, según el brief `DISENO_VIDA_FACIL.md` y sus dos mockups. Las slides siguen este estilo, no el del PDF del 31 oct.
+
+## D-202 — Encaje en % con hechos tangibles (2026-11-11)
+El buscador da un **% de encaje** y, debajo, 3–5 hechos tangibles con su nivel de confianza (por ejemplo, «colegio a 6 min andando»). Nunca notas sobre 100 ni barras. Los hechos siempre se pueden trazar a un indicador y a sus datasets.
+
+## D-203 — Presupuesto de alquiler o de compra (2026-11-11)
+El presupuesto puede ser de alquiler (€/mes) o de compra (€). La compra va con confianza baja y con la cobertura declarada. Si no hay una fuente oficial abierta y fiable (DATA-021), la compra queda como SIN DATOS y la web lo explica.
+
+## D-204 — Prioridades del buscador (2026-11-11)
+«Me importa»: transporte, salud, colegios, zonas verdes, seguridad y «sin escaleras». «Sin escaleras» es una necesidad funcional opcional, nunca una etiqueta de discapacidad (CLAUDE.md §13). La seguridad solo cuenta si la persona la marca como prioridad.
+
+## D-205 — Extras: zonas verdes, accesibilidad física y seguridad (2026-11-11)
+- **Fuentes:** el Ayuntamiento de Madrid y OpenStreetMap (ODbL, con atribución). Son datos complementarios: no cuentan como datos CM, pero suman impacto. Sin fotos de zona.
+- **Seguridad (DATA-020):**
+  - solo datos oficiales agregados (actuaciones de la Policía Municipal por distrito, por cada 1.000 habitantes);
+  - nunca nacionalidad ni otras características de personas, por lo que los datos de «delitos» del portal CM quedan descartados;
+  - nunca etiquetas como «peligroso»;
+  - fuera de Madrid capital, SIN DATOS salvo una fuente oficial equivalente.
+- **Accesibilidad física (DATA-019):** instalaciones accesibles del Ayuntamiento y `wheelchair_boarding` del GTFS de metro y cercanías; el resto, SIN DATOS.
+- **Zonas verdes (DATA-018):** inventario del Ayuntamiento en Madrid capital y parques de OSM en el resto.
+
+## D-206 — Orden: núcleo antes que extras (2026-11-11)
+Para el formulario del 18 nov va primero el núcleo: el buscador, la lista de lo que falta y el 3D de zona. Los extras (D-205) y el precio de compra (DATA-021) entran del 19 al 22 nov, salvo que la línea A vaya adelantada. El trabajo se reparte en cuatro líneas paralelas según `prompts/LINEAS.md`: A (datos, motor, API e integración), B (web), C (despliegue) y D (formulario y pitch).
+
+## D-207 — Contratos PUBLIC v2 (2026-11-11)
+Aplica D-200 a D-204 en `packages/contracts/src/hi_contracts/public/`. La v1 (`7541527`) no llegó a usarse.
+- **`ScenarioState` v2:**
+  - `budget` con tipo alquiler o compra;
+  - hogar con adultos, menores y mayores a cargo;
+  - las 6 prioridades;
+  - `zone_level` desaparece, porque el buscador siempre usa municipios + distritos de Madrid.
+- **`SearchResult` v2:**
+  - `match_pct` y `facts` (con `topic` para el icono y `confidence`);
+  - `gap_highlights` (3 filas de «Qué falta aquí»);
+  - `all_zones` para la coropleta;
+  - `relaxed_scenario` en cada opción del Reality Check, para aplicarla con un toque.
+- **Rutas:**
+  - `GET /api/v1/gaps/{level}/{code}` acepta `distrito`;
+  - nueva `GET /api/v1/datasets?cm_only=` para el contador y la procedencia;
+  - CORS con `POST`.

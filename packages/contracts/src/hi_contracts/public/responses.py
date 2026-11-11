@@ -1,6 +1,7 @@
 """Named response envelopes, so generated TypeScript types get readable names."""
 
 from hi_contracts.api.envelope import Envelope
+from hi_contracts.public.common import DatasetList
 from hi_contracts.public.gaps import ZoneGapList
 from hi_contracts.public.search import SearchResult
 
@@ -11,3 +12,7 @@ class ZoneGapListResponse(Envelope[ZoneGapList]):
 
 class SearchResponse(Envelope[SearchResult]):
     """POST /api/v1/search"""
+
+
+class DatasetListResponse(Envelope[DatasetList]):
+    """GET /api/v1/datasets"""

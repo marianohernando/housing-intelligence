@@ -2,7 +2,7 @@
   "$defs": {
     "Anchor": {
       "additionalProperties": false,
-      "description": "A place the household travels to often (work, school, family).",
+      "description": "A place the household travels to often («Trabajo en»).",
       "properties": {
         "days_per_week": {
           "default": 5,
@@ -68,6 +68,35 @@
         "other"
       ],
       "title": "AnchorKind",
+      "type": "string"
+    },
+    "Budget": {
+      "additionalProperties": false,
+      "description": "Rent in €/month or purchase price in €; the purchase result is always «orientativo».",
+      "properties": {
+        "amount_eur": {
+          "description": "€/month when kind=rent, € when kind=buy",
+          "exclusiveMinimum": 0,
+          "title": "Amount Eur",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/BudgetKind"
+        }
+      },
+      "required": [
+        "kind",
+        "amount_eur"
+      ],
+      "title": "Budget",
+      "type": "object"
+    },
+    "BudgetKind": {
+      "enum": [
+        "rent",
+        "buy"
+      ],
+      "title": "BudgetKind",
       "type": "string"
     },
     "ConstraintCheck": {
@@ -236,8 +265,124 @@
       "title": "DatasetRef",
       "type": "object"
     },
+    "Fact": {
+      "additionalProperties": false,
+      "description": "A tangible, plain-language fact («Colegio público a 6 min andando») with its confidence,\nalways traceable to an indicator and its datasets.",
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "indicator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IndicatorValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "$ref": "#/$defs/FactKind"
+        },
+        "text": {
+          "examples": [
+            "Colegio público a 6 min andando desde la mitad de sus calles"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "topic": {
+          "$ref": "#/$defs/FactTopic"
+        }
+      },
+      "required": [
+        "kind",
+        "topic",
+        "text",
+        "confidence"
+      ],
+      "title": "Fact",
+      "type": "object"
+    },
+    "FactKind": {
+      "enum": [
+        "strength",
+        "weakness",
+        "unknown"
+      ],
+      "title": "FactKind",
+      "type": "string"
+    },
+    "FactTopic": {
+      "description": "Which icon the web shows next to a fact.",
+      "enum": [
+        "coste",
+        "transporte",
+        "salud",
+        "colegios",
+        "zonas_verdes",
+        "seguridad",
+        "accesibilidad",
+        "trayecto",
+        "otro"
+      ],
+      "title": "FactTopic",
+      "type": "string"
+    },
+    "GapHighlight": {
+      "additionalProperties": false,
+      "description": "One row of «Qué falta aquí» for the zone card; the full list is GET /gaps.",
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "row": {
+          "$ref": "#/$defs/GapRowKey"
+        },
+        "status": {
+          "$ref": "#/$defs/GapStatus"
+        }
+      },
+      "required": [
+        "row",
+        "label",
+        "status"
+      ],
+      "title": "GapHighlight",
+      "type": "object"
+    },
+    "GapRowKey": {
+      "description": "Rows of the per-zone list of what is missing (GAP-001, D-194).",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "mayores",
+        "farmacia",
+        "vivienda"
+      ],
+      "title": "GapRowKey",
+      "type": "string"
+    },
+    "GapStatus": {
+      "enum": [
+        "FALTA",
+        "JUSTO",
+        "CUBIERTO",
+        "SIN_DATOS"
+      ],
+      "title": "GapStatus",
+      "type": "string"
+    },
     "Household": {
       "additionalProperties": false,
+      "description": "«Tu hogar»: adults, children and older people they look after (all live together).",
       "properties": {
         "adults": {
           "default": 1,
@@ -246,27 +391,27 @@
           "title": "Adults",
           "type": "integer"
         },
-        "children": {
-          "default": 0,
-          "maximum": 8,
-          "minimum": 0,
-          "title": "Children",
-          "type": "integer"
-        },
-        "children_ages": {
+        "minor_ages": {
           "description": "0-17, optional",
           "items": {
             "type": "integer"
           },
-          "title": "Children Ages",
+          "title": "Minor Ages",
           "type": "array"
         },
-        "seniors": {
+        "minors": {
           "default": 0,
-          "description": "People aged 65+, counted in adults",
           "maximum": 8,
           "minimum": 0,
-          "title": "Seniors",
+          "title": "Minors",
+          "type": "integer"
+        },
+        "seniors_in_care": {
+          "default": 0,
+          "description": "People aged 65+ cared for",
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Seniors In Care",
           "type": "integer"
         }
       },
@@ -443,15 +588,14 @@
       "type": "string"
     },
     "PriorityKey": {
+      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.",
       "enum": [
-        "coste",
-        "trayecto",
-        "escuela_infantil",
-        "colegio",
-        "centro_salud",
-        "farmacia",
-        "mayores",
-        "transporte"
+        "transporte",
+        "salud",
+        "colegios",
+        "zonas_verdes",
+        "seguridad",
+        "sin_escaleras"
       ],
       "title": "PriorityKey",
       "type": "string"
@@ -472,7 +616,7 @@
           "title": "Constraints",
           "type": "array"
         },
-        "estimated_rent_eur": {
+        "estimated_cost_eur": {
           "anyOf": [
             {
               "minimum": 0,
@@ -483,8 +627,17 @@
             }
           ],
           "default": null,
-          "description": "Monthly rent for the needed floor area",
-          "title": "Estimated Rent Eur"
+          "description": "Monthly rent or purchase price for the needed area",
+          "title": "Estimated Cost Eur"
+        },
+        "facts": {
+          "description": "3-5 tangible facts, strongest first",
+          "items": {
+            "$ref": "#/$defs/Fact"
+          },
+          "maxItems": 5,
+          "title": "Facts",
+          "type": "array"
         },
         "failed_constraints": {
           "description": "constraint_id values with FAIL (near misses)",
@@ -494,25 +647,25 @@
           "title": "Failed Constraints",
           "type": "array"
         },
+        "gap_highlights": {
+          "items": {
+            "$ref": "#/$defs/GapHighlight"
+          },
+          "maxItems": 3,
+          "title": "Gap Highlights",
+          "type": "array"
+        },
+        "match_pct": {
+          "description": "% of fit with the search, not a grade",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Match Pct",
+          "type": "integer"
+        },
         "rank": {
           "minimum": 1,
           "title": "Rank",
           "type": "integer"
-        },
-        "reasons": {
-          "items": {
-            "$ref": "#/$defs/Reason"
-          },
-          "maxItems": 6,
-          "title": "Reasons",
-          "type": "array"
-        },
-        "score": {
-          "description": "Personal fit, not a territorial grade",
-          "maximum": 100,
-          "minimum": 0,
-          "title": "Score",
-          "type": "number"
         },
         "zone": {
           "$ref": "#/$defs/ZoneRef"
@@ -521,10 +674,10 @@
       "required": [
         "rank",
         "zone",
-        "score",
+        "match_pct",
         "confidence",
-        "constraints",
-        "reasons"
+        "facts",
+        "constraints"
       ],
       "title": "RankedZone",
       "type": "object"
@@ -580,51 +733,9 @@
       "title": "RealityCheck",
       "type": "object"
     },
-    "Reason": {
-      "additionalProperties": false,
-      "description": "A plain-language «why» line, always traceable to an indicator and its datasets.",
-      "properties": {
-        "indicator": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/IndicatorValue"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        },
-        "kind": {
-          "$ref": "#/$defs/ReasonKind"
-        },
-        "text": {
-          "examples": [
-            "Hay un colegio a 6 minutos a pie desde la mitad de sus calles"
-          ],
-          "title": "Text",
-          "type": "string"
-        }
-      },
-      "required": [
-        "kind",
-        "text"
-      ],
-      "title": "Reason",
-      "type": "object"
-    },
-    "ReasonKind": {
-      "enum": [
-        "strength",
-        "weakness",
-        "unknown"
-      ],
-      "title": "ReasonKind",
-      "type": "string"
-    },
     "Relaxation": {
       "additionalProperties": false,
-      "description": "How many more zones appear when one condition is relaxed and the rest stay.",
+      "description": "How many more zones appear when one condition is relaxed and the rest stay.\n\n`relaxed_scenario` is the scenario with that change applied: the web sends it back to\nPOST /search when the person taps the option.",
       "properties": {
         "added_zones": {
           "minimum": 0,
@@ -637,35 +748,14 @@
         },
         "label": {
           "examples": [
-            "Colegio a 15 minutos en vez de 10"
+            "+100 €/mes",
+            "+10 min de trayecto"
           ],
           "title": "Label",
           "type": "string"
         },
-        "relaxed_to": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "None = condition removed",
-          "title": "Relaxed To"
-        },
-        "unit": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Unit"
+        "relaxed_scenario": {
+          "$ref": "#/$defs/ScenarioState"
         },
         "zones_if_relaxed": {
           "minimum": 0,
@@ -677,7 +767,8 @@
         "constraint_id",
         "label",
         "zones_if_relaxed",
-        "added_zones"
+        "added_zones",
+        "relaxed_scenario"
       ],
       "title": "Relaxation",
       "type": "object"
@@ -693,20 +784,17 @@
           "title": "Anchors",
           "type": "array"
         },
-        "budget_monthly_eur": {
+        "budget": {
           "anyOf": [
             {
-              "maximum": 20000,
-              "minimum": 100,
-              "type": "integer"
+              "$ref": "#/$defs/Budget"
             },
             {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "Maximum monthly rent; None = no limit",
-          "title": "Budget Monthly Eur"
+          "description": "None = no budget limit"
         },
         "household": {
           "$ref": "#/$defs/Household"
@@ -739,24 +827,15 @@
           "items": {
             "$ref": "#/$defs/PriorityKey"
           },
-          "maxItems": 5,
+          "maxItems": 6,
           "title": "Priorities",
           "type": "array"
         },
         "schema_version": {
-          "const": 1,
-          "default": 1,
+          "const": 2,
+          "default": 2,
           "title": "Schema Version",
           "type": "integer"
-        },
-        "tenure": {
-          "$ref": "#/$defs/Tenure",
-          "default": "rent"
-        },
-        "zone_level": {
-          "$ref": "#/$defs/TerritoryLevel",
-          "default": "municipio",
-          "description": "Granularity of the ranking"
         }
       },
       "title": "ScenarioState",
@@ -765,6 +844,14 @@
     "SearchResult": {
       "additionalProperties": false,
       "properties": {
+        "all_zones": {
+          "description": "Every evaluated zone, for the map",
+          "items": {
+            "$ref": "#/$defs/ZoneMatch"
+          },
+          "title": "All Zones",
+          "type": "array"
+        },
         "datasets": {
           "description": "Every dataset behind this result",
           "items": {
@@ -798,29 +885,18 @@
         },
         "scenario": {
           "$ref": "#/$defs/ScenarioState"
-        },
-        "zone_level": {
-          "$ref": "#/$defs/TerritoryLevel"
         }
       },
       "required": [
         "scenario",
-        "zone_level",
         "results",
+        "all_zones",
         "reality_check",
         "datasets",
         "methodology_version"
       ],
       "title": "SearchResult",
       "type": "object"
-    },
-    "Tenure": {
-      "enum": [
-        "rent",
-        "buy"
-      ],
-      "title": "Tenure",
-      "type": "string"
     },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",
@@ -837,6 +913,47 @@
       ],
       "title": "TerritoryLevel",
       "type": "string"
+    },
+    "ZoneMatch": {
+      "additionalProperties": false,
+      "description": "Every evaluated zone, for the choropleth («Encaje con tu búsqueda»).",
+      "properties": {
+        "failed_constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Constraints",
+          "type": "array"
+        },
+        "match_pct": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = unknown",
+          "title": "Match Pct"
+        },
+        "passes_all": {
+          "title": "Passes All",
+          "type": "boolean"
+        },
+        "zone": {
+          "$ref": "#/$defs/ZoneRef"
+        }
+      },
+      "required": [
+        "zone",
+        "passes_all"
+      ],
+      "title": "ZoneMatch",
+      "type": "object"
     },
     "ZoneRef": {
       "additionalProperties": false,

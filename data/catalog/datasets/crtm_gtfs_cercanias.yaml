@@ -1,6 +1,6 @@
 dataset_id: crtm_gtfs_cercanias
 source_id: crtm_open_data
-name: GTFS Red de Cercanías
+name: Oferta planificada de la Red de Cercanías Madrid
 domain: transport
 owner: Consorcio Regional de Transportes de Madrid
 format: CSV COLLECTION

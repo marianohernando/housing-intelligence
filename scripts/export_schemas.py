@@ -13,7 +13,11 @@ from pydantic import BaseModel, TypeAdapter
 from hi_contracts.api.envelope import ErrorEnvelope
 from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineSpec, SourceSpec
 from hi_contracts.public import ScenarioState
-from hi_contracts.public.responses import SearchResponse, ZoneGapListResponse
+from hi_contracts.public.responses import (
+    DatasetListResponse,
+    SearchResponse,
+    ZoneGapListResponse,
+)
 
 OUT_DIR = Path(__file__).resolve().parents[1] / "data" / "schemas"
 MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
@@ -25,6 +29,7 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "api/scenario_state": ScenarioState,
     "api/search_response": SearchResponse,
     "api/zone_gap_list_response": ZoneGapListResponse,
+    "api/dataset_list_response": DatasetListResponse,
     "api/error_response": ErrorEnvelope,
 }
 

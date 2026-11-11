@@ -1,16 +1,18 @@
 {
-  "schema_version": 1,
-  "tenure": "rent",
-  "budget_monthly_eur": 1500,
+  "schema_version": 2,
+  "budget": {
+    "kind": "rent",
+    "amount_eur": 1500
+  },
   "min_floor_area_m2": null,
   "household": {
     "adults": 2,
-    "children": 2,
-    "children_ages": [
+    "minors": 2,
+    "minor_ages": [
       4,
       8
     ],
-    "seniors": 0
+    "seniors_in_care": 0
   },
   "anchors": [
     {
@@ -30,9 +32,8 @@
     }
   ],
   "priorities": [
-    "colegio",
-    "coste",
-    "trayecto"
-  ],
-  "zone_level": "municipio"
+    "colegios",
+    "transporte",
+    "salud"
+  ]
 }

@@ -8,6 +8,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from hi_contracts.public import (
+    DatasetList,
     GapMethod,
     GapRow,
     RealityCheck,
@@ -23,6 +24,7 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "scenario_state": ScenarioState,
     "zone_gap_list": ZoneGapList,
     "search_result": SearchResult,
+    "dataset_list": DatasetList,
 }
 
 
@@ -58,34 +60,44 @@ def test_sin_datos_if_and_only_if_the_value_is_unknown() -> None:
         GapRow.model_validate(no_reason)
 
 
+def _relaxation(**overrides: Any) -> dict[str, Any]:
+    return {
+        "constraint_id": "budget",
+        "label": "+200 €/mes",
+        "zones_if_relaxed": 5,
+        "added_zones": 2,
+        "relaxed_scenario": {"budget": {"kind": "rent", "amount_eur": 1400}},
+    } | overrides
+
+
 def test_reality_check_counts_add_up() -> None:
     base: dict[str, Any] = {
         "zones_evaluated": 10,
         "zones_passing": 3,
         "zones_unknown": 2,
-        "relaxations": [
-            {"constraint_id": "budget", "label": "+200 €", "zones_if_relaxed": 5, "added_zones": 2}
-        ],
+        "relaxations": [_relaxation()],
     }
     RealityCheck.model_validate(base)
     with pytest.raises(ValidationError):
         RealityCheck.model_validate(base | {"zones_unknown": 8})
-    wrong = base | {"relaxations": [base["relaxations"][0] | {"zones_if_relaxed": 4}]}
     with pytest.raises(ValidationError):
-        RealityCheck.model_validate(wrong)
+        RealityCheck.model_validate(base | {"relaxations": [_relaxation(zones_if_relaxed=4)]})
 
 
 @pytest.mark.parametrize(
     "change",
     [
         {"nearby": [{"need": "colegio"}, {"need": "colegio"}]},
-        {"priorities": ["coste", "coste"]},
-        {"household": {"adults": 2, "children": 2, "children_ages": [4]}},
-        {"household": {"adults": 1, "children": 1, "children_ages": [19]}},
-        {"household": {"adults": 1, "seniors": 2}},
-        {"zone_level": "h3_r9"},
+        {"priorities": ["transporte", "transporte"]},
+        {"priorities": ["coste"]},  # not one of the six «Me importa» priorities
+        {"household": {"adults": 2, "minors": 2, "minor_ages": [4]}},
+        {"household": {"adults": 1, "minors": 1, "minor_ages": [19]}},
+        {"household": {"adults": 0}},
         {"anchors": [{"label": "Lisboa", "lon": -9.14, "lat": 38.72}]},
-        {"budget_monthly_eur": 0},
+        {"budget": {"kind": "rent", "amount_eur": 300_000}},  # a purchase price as rent
+        {"budget": {"kind": "buy", "amount_eur": 1200}},  # a rent as purchase price
+        {"budget_monthly_eur": 1200},  # v1 field
+        {"schema_version": 1},
         {"sexo": "mujer"},
     ],
 )
@@ -94,11 +106,27 @@ def test_scenario_rejects_incoherent_or_unknown_input(change: dict[str, Any]) ->
         ScenarioState.model_validate(change)
 
 
-def test_default_scenario_is_valid_and_rents_by_municipio() -> None:
+def test_default_scenario_and_household_size() -> None:
     scenario = ScenarioState()
-    assert scenario.tenure == "rent"
-    assert scenario.zone_level == "municipio"
-    assert scenario.household.size == 1
+    assert scenario.schema_version == 2
+    assert scenario.budget is None
+    household = ScenarioState.model_validate(
+        {"household": {"adults": 2, "minors": 2, "seniors_in_care": 1}}
+    ).household
+    assert household.people == 5
+    buy = ScenarioState.model_validate({"budget": {"kind": "buy", "amount_eur": 320_000}})
+    assert buy.budget is not None
+    assert buy.budget.kind == "buy"
+
+
+def test_search_fixture_never_shows_a_grade_and_maps_every_zone() -> None:
+    result = SearchResult.model_validate(
+        json.loads((FIXTURES / "search_result.familia_presupuesto.fixture.json").read_text())
+    )
+    assert all(0 <= z.match_pct <= 100 and 1 <= len(z.facts) <= 5 for z in result.results)
+    assert len(result.all_zones) == result.reality_check.zones_evaluated
+    unknown = [z for z in result.all_zones if z.match_pct is None]
+    assert len(unknown) == result.reality_check.zones_unknown  # unknown is never painted as a fit
 
 
 def test_gap_method_cut_offs_are_ordered() -> None:
