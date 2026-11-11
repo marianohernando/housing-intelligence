@@ -75,11 +75,11 @@
         {
           "kind": "strength",
           "topic": "colegios",
-          "text": "2,2 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "2,2 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 2.195,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -114,6 +114,11 @@
       "failed_constraints": [],
       "estimated_cost_eur": 774.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "CUBIERTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -162,11 +167,11 @@
         {
           "kind": "strength",
           "topic": "colegios",
-          "text": "2,0 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "2,0 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.986,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -201,6 +206,11 @@
       "failed_constraints": [],
       "estimated_cost_eur": 846.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "JUSTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -249,11 +259,11 @@
         {
           "kind": "strength",
           "topic": "colegios",
-          "text": "1,7 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "1,7 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.721,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -288,6 +298,11 @@
       "failed_constraints": [],
       "estimated_cost_eur": 639.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "CUBIERTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -336,11 +351,11 @@
         {
           "kind": "strength",
           "topic": "colegios",
-          "text": "1,4 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "1,4 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.429,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -375,6 +390,11 @@
       "failed_constraints": [],
       "estimated_cost_eur": 783.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "CUBIERTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -423,11 +443,11 @@
         {
           "kind": "strength",
           "topic": "colegios",
-          "text": "1,4 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "1,4 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.386,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -462,6 +482,11 @@
       "failed_constraints": [],
       "estimated_cost_eur": 819.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "FALTA"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -512,11 +537,11 @@
         {
           "kind": "weakness",
           "topic": "colegios",
-          "text": "1,1 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "1,1 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.105,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -553,6 +578,11 @@
       ],
       "estimated_cost_eur": 1224.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "JUSTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -601,11 +631,11 @@
         {
           "kind": "weakness",
           "topic": "colegios",
-          "text": "1,0 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "1,0 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.009,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -642,6 +672,11 @@
       ],
       "estimated_cost_eur": 1224.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "JUSTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",
@@ -690,11 +725,11 @@
         {
           "kind": "weakness",
           "topic": "colegios",
-          "text": "1,1 colegios públicos por cada 1.000 menores (la región tiene 1,3)",
+          "text": "1,1 colegios con primaria, públicos o concertados, por cada 1.000 menores (la región tiene 1,3)",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+            "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
             "value": 1.056,
             "unit": "centros/1000 menores",
             "confidence": 1.0,
@@ -731,6 +766,11 @@
       ],
       "estimated_cost_eur": 1242.0,
       "gap_highlights": [
+        {
+          "row": "escuela_infantil",
+          "label": "Escuelas infantiles",
+          "status": "CUBIERTO"
+        },
         {
           "row": "colegio",
           "label": "Colegios",

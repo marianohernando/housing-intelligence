@@ -180,7 +180,8 @@ def _ranked(
     reference = regional_reference(conn, SCHOOLS)
     school_ratio = float(school.value) / reference
     school_text = (
-        f"{es(float(school.value))} colegios públicos por cada 1.000 menores "
+        f"{es(float(school.value))} colegios con primaria, públicos o concertados, por cada "
+        "1.000 menores "
         f"(la región tiene {es(reference)})"
     )
     facts = [

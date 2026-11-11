@@ -88,6 +88,42 @@ def test_rows_carry_walking_minutes_as_extra_indicators(
     assert "osm_red_peatonal" in {d.dataset_id for d in body.data.datasets}
 
 
+def test_new_rows_by_municipio_and_district_with_their_extras(client: TestClient) -> None:
+    """GAP-001 F3a: escuela infantil, mayores and farmacia, in a municipio and in a district.
+    The official CM pharmacy ratio is only published by municipio."""
+    new_rows = {"escuela_infantil", "mayores", "farmacia"}
+    madrid = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
+    district = ZoneGapListResponse.model_validate(
+        client.get("/api/v1/gaps/distrito/2807906").json()
+    )
+    for body in (madrid, district):
+        rows = {r.row.value: r for r in body.data.rows}
+        assert new_rows <= set(rows)
+        for key in new_rows:
+            assert rows[key].reference is not None
+            assert rows[key].proxy_note
+    madrid_extras = {
+        e.feature_id
+        for r in madrid.data.rows
+        if r.row.value == "farmacia"
+        for e in r.extra_indicators
+    }
+    district_extras = {
+        e.feature_id
+        for r in district.data.rows
+        if r.row.value == "farmacia"
+        for e in r.extra_indicators
+    }
+    assert {"min_a_pie_farmacia", "farmacias_por_10000_hab_oficial"} <= madrid_extras
+    assert "min_a_pie_farmacia" in district_extras
+    assert "farmacias_por_10000_hab_oficial" not in district_extras
+    madrid_rows = {r.row.value: r for r in madrid.data.rows}
+    mayores = {e.feature_id for e in madrid_rows["mayores"].extra_indicators}
+    assert {"min_a_pie_mayores", "plazas_residencia_por_100_mayores"} <= mayores
+    cm = {d.dataset_id for d in madrid_rows["farmacia"].datasets if d.is_cm_open_data}
+    assert {"cm_oficinas_farmacia", "cm_farmacias_municipios"} <= cm
+
+
 def test_municipio_rows_never_cite_the_district_population(client: TestClient) -> None:
     body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
     assert "ayto_padron_municipal" not in {d.dataset_id for d in body.data.datasets}

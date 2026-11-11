@@ -1,0 +1,34 @@
+feature_id: centros_mayores_por_1000_mayores
+version: 1
+human_name: Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más
+domain: social
+type: derived
+unit: centros/1000 mayores
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_centros_atencion_social, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
+formula:
+  method: places_per_population
+  category: social
+  subcategories: ["HOGARES Y CLUBES", "CENTROS DE DÍA: OTROS"]  # the same destinations as min_a_pie_mayores
+  population_metric: poblacion_censada
+  population_dims: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos], nacionalidad: [total], sexo: [total]}
+  small_population_threshold: 300  # denominator below this -> confidence 0.5
+  per: 1000
+  levels:
+    distrito: {population_metric: poblacion_padron, population_dims: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos]}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, geocoding_quarantine]}
+public_use: true
+pro_use: true
+models: [senior_fit]
+tests: [non_negative, monotonic_in_places]
+limitations:
+  - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
+  - "Cuenta hogares, clubes y centros de día del registro de servicios sociales de la CM, no sus plazas ni sus actividades. Las residencias son otra medida (plazas_residencia_por_100_mayores)."
+  - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
+gap_row: {row: mayores, role: primary, label: "Centros de mayores", phrase: "centros de mayores por cada 1.000 personas de 65 años o más", proxy_note: "Cuenta hogares, clubes y centros de día, no plazas ni actividades; las residencias van aparte."}

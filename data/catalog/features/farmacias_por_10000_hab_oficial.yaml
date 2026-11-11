@@ -1,0 +1,21 @@
+feature_id: farmacias_por_10000_hab_oficial
+version: 1
+human_name: Farmacias por cada 10.000 habitantes según la Comunidad de Madrid (ratio oficial)
+domain: health
+type: raw
+unit: farmacias/10000 hab
+direction: higher_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_farmacias_municipios, role: primary}]
+formula: {method: metric_value, metric: farmacias_por_10000_hab, dims: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [residential_fit]
+tests: [non_negative]
+limitations:
+  - "Ratio publicada por el Instituto de Estadística de la CM, solo por municipio: en los distritos de Madrid no hay dato."
+  - "Sirve de contraste de la ratio calculada con el registro de farmacias (oficinas_farmacia_por_10000_hab); la población que usa la CM no es exactamente la del censo anual."
+gap_row: {row: farmacia, role: extra, phrase: "farmacias por cada 10.000 habitantes según la Comunidad de Madrid"}

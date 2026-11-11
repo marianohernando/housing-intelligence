@@ -17,12 +17,80 @@
   },
   "rows": [
     {
+      "row": "escuela_infantil",
+      "label": "Escuelas infantiles",
+      "status": "JUSTO",
+      "indicator": {
+        "feature_id": "escuelas_infantiles_por_1000_ninos",
+        "label": "Escuelas infantiles por cada 1.000 niños de 0 a 4 años",
+        "value": 3.881,
+        "unit": "escuelas/1000 niños",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "municipio",
+        "datasets": [
+          "cm_centros_educativos",
+          "cm_poblacion_edad_nacionalidad_sexo"
+        ]
+      },
+      "reference": 4.714,
+      "reference_label": "Comunidad de Madrid",
+      "direction": "higher_is_better",
+      "ratio_to_reference": 0.8234,
+      "explanation": "3,9 escuelas infantiles por cada 1.000 niños de 0 a 4 años; en el conjunto de la Comunidad de Madrid, 4,7",
+      "proxy_note": "Cuenta escuelas infantiles públicas y privadas, no plazas: una grande y una pequeña pesan igual.",
+      "extra_indicators": [
+        {
+          "feature_id": "min_a_pie_escuela_infantil",
+          "label": "Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona)",
+          "value": 8.979,
+          "unit": "min",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_educativos",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "cm_centros_educativos",
+          "name": "Centros educativos de la comunidad de Madrid",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+          "version": "2026-10-21-27483ff8498b",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0"
+        }
+      ]
+    },
+    {
       "row": "colegio",
       "label": "Colegios",
       "status": "CUBIERTO",
       "indicator": {
         "feature_id": "colegios_publicos_por_1000_menores",
-        "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+        "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
         "value": 1.443,
         "unit": "centros/1000 menores",
         "confidence": 1.0,
@@ -151,9 +219,188 @@
           "license": "Open Database License (ODbL) 1.0"
         }
       ]
+    },
+    {
+      "row": "mayores",
+      "label": "Centros de mayores",
+      "status": "FALTA",
+      "indicator": {
+        "feature_id": "centros_mayores_por_1000_mayores",
+        "label": "Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más",
+        "value": 0.2809,
+        "unit": "centros/1000 mayores",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "municipio",
+        "datasets": [
+          "cm_centros_atencion_social",
+          "cm_poblacion_edad_nacionalidad_sexo"
+        ]
+      },
+      "reference": 0.3895,
+      "reference_label": "Comunidad de Madrid",
+      "direction": "higher_is_better",
+      "ratio_to_reference": 0.7211,
+      "explanation": "0,28 centros de mayores por cada 1.000 personas de 65 años o más; en el conjunto de la Comunidad de Madrid, 0,39",
+      "proxy_note": "Cuenta hogares, clubes y centros de día, no plazas ni actividades; las residencias van aparte.",
+      "extra_indicators": [
+        {
+          "feature_id": "min_a_pie_mayores",
+          "label": "Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona)",
+          "value": 12.24,
+          "unit": "min",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_atencion_social",
+            "osm_red_peatonal"
+          ]
+        },
+        {
+          "feature_id": "plazas_residencia_por_100_mayores",
+          "label": "Plazas en residencias de mayores por cada 100 personas de 65 años o más",
+          "value": 2.183,
+          "unit": "plazas/100 mayores",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_atencion_social",
+            "cm_poblacion_edad_nacionalidad_sexo"
+          ]
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "cm_centros_atencion_social",
+          "name": "Registro de centros de atención social",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+          "version": "2026-11-10-1332ab0048a6",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0"
+        }
+      ]
+    },
+    {
+      "row": "farmacia",
+      "label": "Farmacias",
+      "status": "JUSTO",
+      "indicator": {
+        "feature_id": "oficinas_farmacia_por_10000_hab",
+        "label": "Farmacias por cada 10.000 habitantes",
+        "value": 3.407,
+        "unit": "farmacias/10000 hab",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "municipio",
+        "datasets": [
+          "cm_oficinas_farmacia",
+          "cm_poblacion_edad_nacionalidad_sexo"
+        ]
+      },
+      "reference": 4.151,
+      "reference_label": "Comunidad de Madrid",
+      "direction": "higher_is_better",
+      "ratio_to_reference": 0.8208,
+      "explanation": "3,4 farmacias por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 4,2",
+      "proxy_note": "Cuenta farmacias, no horarios ni guardias.",
+      "extra_indicators": [
+        {
+          "feature_id": "farmacias_por_10000_hab_oficial",
+          "label": "Farmacias por cada 10.000 habitantes según la Comunidad de Madrid (ratio oficial)",
+          "value": 3.4,
+          "unit": "farmacias/10000 hab",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_farmacias_municipios"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_farmacia",
+          "label": "Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona)",
+          "value": 6.171,
+          "unit": "min",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_oficinas_farmacia",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "cm_farmacias_municipios",
+          "name": "Recursos sanitarios. Farmacias. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/farmacias",
+          "version": "2026-11-10-a2011625bc89",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_oficinas_farmacia",
+          "name": "Oficinas de farmacia",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+          "version": "2026-11-10-de61d48d7b4a",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0"
+        }
+      ]
     }
   ],
   "datasets": [
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "name": "Registro de centros de atención social",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "version": "2026-11-10-1332ab0048a6",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
     {
       "dataset_id": "cm_centros_educativos",
       "name": "Centros educativos de la comunidad de Madrid",
@@ -170,6 +417,24 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
       "version": "2026-11-10-d6ac8db8f003",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_farmacias_municipios",
+      "name": "Recursos sanitarios. Farmacias. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/farmacias",
+      "version": "2026-11-10-a2011625bc89",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "name": "Oficinas de farmacia",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "version": "2026-11-10-de61d48d7b4a",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {

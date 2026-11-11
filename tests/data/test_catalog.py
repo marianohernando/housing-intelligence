@@ -144,7 +144,7 @@ def test_gap_rows_have_one_primary_indicator_at_most(catalog: Catalog) -> None:
         if f.gap_row and f.gap_row.role == "primary"
     ]
     assert len(primaries) == len(set(primaries))
-    assert {"colegio", "centro_salud"} <= set(primaries)
+    assert {"escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia"} <= set(primaries)
 
 
 def _destinations(formula: dict[str, Any]) -> tuple[Any, ...]:
@@ -172,11 +172,13 @@ def test_gap_row_counts_the_same_places_as_its_walking_minutes(catalog: Catalog)
         primary = counted.get(walk.gap_row.row)
         if primary is None:
             continue
-        assert _destinations(primary.formula.model_extra or {}) == _destinations(
-            walk.formula.model_extra or {}
-        ), f"{primary.feature_id} vs {walk.feature_id}"
+        counted_places = _destinations(primary.formula.model_extra or {})
+        assert counted_places[0] is not None, primary.feature_id  # never compares empty filters
+        assert counted_places == _destinations(walk.formula.model_extra or {}), (
+            f"{primary.feature_id} vs {walk.feature_id}"
+        )
         checked += 1
-    assert checked >= 2
+    assert checked >= 5  # escuela infantil, colegio, centro de salud, mayores, farmacia
 
 
 def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Catalog) -> None:

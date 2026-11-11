@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.23 — Lista de lo que falta: cinco filas (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: `/gaps` trae escuela infantil, mayores y farmacia por municipio y por los 21 distritos (GAP-001 F3a), además de colegio y centro de salud. La fila de colegios cuenta colegios con primaria, públicos o concertados (F2). Extras: la ratio oficial de farmacias de la CM y las plazas de residencia.
+
 ## v0.5.22 — Lista de lo que falta: minutos a pie (2026-11-11)
 - `04_technical_architecture/31_public_api_routes.md`: `GET /api/v1/gaps/{level}/{code}` trae en `extra_indicators` los minutos a pie hasta el colegio y el centro de salud más cercanos (GAP-001 F1). Son indicadores que acompañan a la fila, sin estado propio, y sus datasets se suman a la procedencia de la fila.
 

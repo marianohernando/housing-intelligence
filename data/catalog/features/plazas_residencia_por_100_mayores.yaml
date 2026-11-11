@@ -32,3 +32,4 @@ limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "Plazas autorizadas, no ocupación real ni lista de espera. Los residentes pueden venir de otros municipios."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
+gap_row: {row: mayores, role: extra, phrase: "plazas de residencia por cada 100 personas de 65 años o más"}
