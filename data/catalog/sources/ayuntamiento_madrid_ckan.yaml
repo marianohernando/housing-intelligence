@@ -5,20 +5,24 @@ source_type: open_data_portal
 api_type: ckan
 base_url: https://datos.madrid.es
 catalog_url: https://datos.madrid.es/api/3/action/package_search
-license_name: Condiciones generales de reutilización del Ayuntamiento de Madrid
-license_url: https://datos.madrid.es/egob/catalogo/aviso-legal
-license_status: PENDING_REVIEW
-attribution_text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es."
-commercial_use: null
-redistribution_allowed: null
+license_name: Creative Commons Attribution 4.0 International (CC BY 4.0)
+license_url: https://datos.madrid.es/pages/condiciones-de-uso
+license_status: CLEAR
+attribution_text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+commercial_use: true
+redistribution_allowed: true
 trust_tier: A_OFFICIAL
 default_confidence: 1.0
 update_frequency: per_dataset
 geographic_scope: Municipio de Madrid
-terms_reviewed_at: 2026-10-20T00:00:00Z
+terms_reviewed_at: 2026-11-11T00:00:00Z
 robots_status: unknown
 active: true
 notes: >-
-  CKAN 2.9. El 2026-10-20 el portal devolvía página de mantenimiento (404 en API).
-  Revisar condiciones de uso cuando vuelva. Clave para censo de locales, barrios con
-  nombre, arbolado, equipamientos y accesibilidad.
+  CKAN. El 2026-10-20 el portal estaba en mantenimiento. El 2026-11-11 la página vigente
+  de condiciones de uso (https://datos.madrid.es/pages/condiciones-de-uso) dice que las
+  condiciones generales permiten la reutilización para fines comerciales y no comerciales
+  bajo CC BY 4.0; la URL antigua del aviso legal (/egob/catalogo/aviso-legal) da 404.
+  Los datasets usados declaran license_id cc-by en CKAN. Datos complementarios, no CM
+  (D-205, D-209). Clave para padrón por distrito, censo de locales, barrios con nombre,
+  arbolado, equipamientos y accesibilidad.

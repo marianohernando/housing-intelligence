@@ -89,6 +89,34 @@ class CmPostcodeConceptPipeline(BaseModel):
         return [self.metric_id]
 
 
+class MadridPadronPipeline(BaseModel):
+    """Ayuntamiento de Madrid padrón: one row per census section and single year of age.
+
+    Districts get the CM census 5-year age bands plus their total, so ratios over this
+    population compare like with like. The count columns (nationality x sex) are only summed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_padron"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    district_column: str
+    district_name_column: str | None = None
+    age_column: str
+    count_columns: list[str] = Field(min_length=1)
+    period_column: str
+    expected_districts: int = Field(gt=0)
+    # Its municipio total (every dimension 'total') is compared with the padrón total; warning only.
+    census_metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
 class PointsPipeline(BaseModel):
     """Point facilities with projected coordinates -> place_master."""
 
@@ -204,6 +232,7 @@ class OsmWalkNetworkPipeline(BaseModel):
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
+    | MadridPadronPipeline
     | PointsPipeline
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline,

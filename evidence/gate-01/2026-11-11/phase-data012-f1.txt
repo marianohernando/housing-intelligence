@@ -1,0 +1,59 @@
+DATA-012 Fase 1 (line A) · padrón municipal -> population by district in CM age bands · 2026-11-11T12:24:31Z
+source: https://datos.madrid.es/dataset/200076-0-padron (CC BY 4.0; terms: https://datos.madrid.es/pages/condiciones-de-uso)
+
+## make ingest DATASET=ayto_padron_municipal (real run, local DB)
+status SUCCESS · version 2026-11-11-f052edc26159 · 462 observations (21 districts x (21 bands + total)) · quarantine 0
+bronze sha256: 1d4622efbcf32d10005ea1c4041be209055bf44447f01b9e5cae571e2cc65192
+## quality report (evidence/gate-01/2026-11-11/ayto_padron_municipal/quality_report.json)
+passed: True
+  has_observations                   critical=True  passed=True  {"observations": 462}
+  quarantine_ratio                   critical=True  passed=True  {"quarantined": 0, "reasons": {}}
+  unique_keys                        critical=True  passed=True  {"duplicates": 0}
+  municipios_resolve_to_geography    critical=True  passed=True  {"unknown": [], "municipios": 0}
+  non_negative_counts                critical=True  passed=True  {"negatives": 0}
+  parse_error_ratio                  critical=True  passed=True  {"parse_errors": 0}
+  missing_is_explicit_not_zero       critical=False passed=True  {"source_missing": 0, "ratio": 0.0}
+  municipio_coverage                 critical=False passed=True  {"covered": 0, "expected": 0}
+  totals_are_additive                critical=False passed=True  {"groups_checked": 21, "failures": 0, "failures_sample": [], "share_ok": 1.0}
+  districts_resolve_to_geography     critical=True  passed=True  {"unknown": [], "districts": 21}
+  district_coverage                  critical=True  passed=True  {"covered": 21, "expected": 21}
+  total_vs_cm_census                 critical=False passed=True  {"padron_total": 3535868.0, "census_total": 3477497.0, "ratio": 1.0168, "tolerance": 0.05}
+## second run (idempotent)
+  "status": "SKIPPED",
+## check_quality_reports
+ayto_padron_municipal                    2026-11-11 PASS
+
+## local DB: population by district (total), padrón 2026-10-01
+2807901|Centro|143174
+2807902|Arganzuela|160741
+2807903|Retiro|119534
+2807904|Salamanca|147514
+2807905|Chamartín|149253
+2807906|Tetuán|170473
+2807907|Chamberí|142067
+2807908|Fuencarral-El Pardo|258385
+2807909|Moncloa-Aravaca|128162
+2807910|Latina|254222
+2807911|Carabanchel|281557
+2807912|Usera|155109
+2807913|Puente de Vallecas|260732
+2807914|Moratalaz|94752
+2807915|Ciudad Lineal|231447
+2807916|Hortaleza|212062
+2807917|Villaverde|175697
+2807918|Villa de Vallecas|129463
+2807919|Vicalvaro|100165
+2807920|San Blas-Canillejas|170138
+2807921|Barajas|51221
+## sum of districts vs CM census Madrid (poblacion_censada 28079, 2025-01-01)
+3535868|3477497
+
+## fixture: real excerpt, reproducible from Bronze (scripts/build_padron_fixture.py), 588 rows
+
+## gate: make lint typecheck test
+All checks passed!
+230 files already formatted
+0 errors, 0 warnings, 0 informations
+252 passed in 3.93s
+      Tests  11 passed (11)
+54 passed in 24.99s

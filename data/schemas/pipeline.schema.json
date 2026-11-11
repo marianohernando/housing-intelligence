@@ -280,6 +280,103 @@
       "title": "GtfsFeedPipeline",
       "type": "object"
     },
+    "MadridPadronPipeline": {
+      "additionalProperties": false,
+      "description": "Ayuntamiento de Madrid padrón: one row per census section and single year of age.\n\nDistricts get the CM census 5-year age bands plus their total, so ratios over this\npopulation compare like with like. The count columns (nationality x sex) are only summed.",
+      "properties": {
+        "age_column": {
+          "title": "Age Column",
+          "type": "string"
+        },
+        "census_metric_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]{2,95}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Census Metric Id"
+        },
+        "count_columns": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Count Columns",
+          "type": "array"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "district_column": {
+          "title": "District Column",
+          "type": "string"
+        },
+        "district_name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "District Name Column"
+        },
+        "expected_districts": {
+          "exclusiveMinimum": 0,
+          "title": "Expected Districts",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "madrid_padron",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "municipio_ine": {
+          "pattern": "^28\\d{3}$",
+          "title": "Municipio Ine",
+          "type": "string"
+        },
+        "period_column": {
+          "title": "Period Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "municipio_ine",
+        "district_column",
+        "age_column",
+        "count_columns",
+        "period_column",
+        "expected_districts"
+      ],
+      "title": "MadridPadronPipeline",
+      "type": "object"
+    },
     "MetricSplit": {
       "additionalProperties": false,
       "description": "One source column decides which metric a row belongs to (e.g. 'Medida').",
@@ -571,6 +668,7 @@
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
+      "madrid_padron": "#/$defs/MadridPadronPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
       "points_csv": "#/$defs/PointsPipeline"
     },
@@ -582,6 +680,9 @@
     },
     {
       "$ref": "#/$defs/CmPostcodeConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/MadridPadronPipeline"
     },
     {
       "$ref": "#/$defs/PointsPipeline"

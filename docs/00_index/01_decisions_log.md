@@ -701,3 +701,14 @@ OPS-001; amplía D-197. La API de la demo se conecta a Supabase como `vf_api_ro`
   - un test unitario falla si la API empieza a leer una tabla que no esté en `API_TABLES`, porque esa tabla se vería vacía en producción;
   - un test de integración comprueba que el rol lee esas tablas, no ve las demás y no puede escribir.
 - **Downgrade:** quita permisos y políticas, pero conserva el rol, porque los roles son de todo el servidor.
+
+## D-209 — Población por distrito de Madrid desde el padrón municipal (2026-11-11)
+DATA-012; aplica D-200. La CM no publica la población por distrito de Madrid: `cm_distritos_madrid` solo trae superficie y densidad, y sus «Zonas Estadísticas» no son distritos.
+- **Fuente:** padrón municipal del Ayuntamiento (`ayto_padron_municipal`, datos.madrid.es, CC BY 4.0). Trae una fila por sección censal y edad, con 4 recuentos (españoles y extranjeros, hombres y mujeres). Se usa el último mes publicado; la carga del 11 nov es del 1 oct 2026.
+- **Qué se guarda:** la métrica `poblacion_padron` por distrito, con las **mismas bandas quinquenales que `poblacion_censada` de la CM** más el total. Así, los filtros de edad de las features valen para los dos niveles sin traducción.
+  - El padrón es un registro exhaustivo: una edad sin filas en un distrito es 0 personas, y se publica como 0. Una fila que no se puede leer va a cuarentena y nunca cuenta como 0.
+  - Solo se guarda la suma de los 4 recuentos. La nacionalidad y el sexo nunca se guardan (D-189, D-205).
+- **Comparabilidad:** el total de Madrid en el padrón es un 1,68 % mayor que el del censo anual de la CM (3.535.868 frente a 3.477.497 a 1 ene 2025), por fecha y por método. No se calibra: se publica tal cual y se declara en las features. La calidad compara los dos totales en cada carga y avisa si la diferencia pasa del 5 %, sin bloquear.
+- **Calidad bloqueante:** los 21 distritos tienen que estar y resolver en `geo_admin_unit`. Un fichero incompleto no sustituye a la última versión válida.
+- **Procedencia:** es un dato complementario, no CM (`is_cm_open_data=false`), y la procedencia de cada fila lo muestra. El test del catálogo que exige que las estadísticas vengan de la CM admite esta excepción explícita y ninguna más.
+- **Hogares por distrito** (DATA-012 Fase 3, recortable): saldrán del panel de indicadores del Ayuntamiento.

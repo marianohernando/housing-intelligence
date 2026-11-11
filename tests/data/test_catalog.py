@@ -86,10 +86,15 @@ def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None
             )
 
 
+# Statistics the CM does not publish at the level the product needs (D-209: population by
+# district of Madrid). They complement CM data, never replace it.
+COMPLEMENTARY_STATISTICS = {"ayto_padron_municipal"}
+
+
 def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:
     stats = {m.dataset_id for m in catalog.metrics.values()}
     assert stats <= set(catalog.pipelines)
-    assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats)
+    assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats - COMPLEMENTARY_STATISTICS)
 
 
 PROTECTED_SUBTYPES = ("PISOS TUTELADOS", "MUJERES MALTRATADAS", "ACOGIDA DE MENORES", "ALBERGUES")

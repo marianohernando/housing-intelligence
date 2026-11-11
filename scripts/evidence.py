@@ -148,6 +148,8 @@ FACILITY_DATASETS = [
     "cm_centros_atencion_social",
     "cm_oficinas_farmacia",
 ]
+# Complementary (not CM): statistics the CM portal does not publish at the level needed (D-209).
+COMPLEMENTARY_DATASETS = ["ayto_padron_municipal"]
 TRANSPORT_DATASETS = [
     "crtm_gtfs_metro",
     "crtm_gtfs_metro_ligero",
@@ -161,6 +163,7 @@ GATE_01_DATASETS = [
     *STAT_TABLE_DATASETS,
     *FACILITY_DATASETS,
     *TRANSPORT_DATASETS,
+    *COMPLEMENTARY_DATASETS,
 ]
 PSQL = ["docker", "compose", "exec", "-T", "db", "psql", "-U", "housing", "-d", "housing", "-Atc"]
 LAST_VALID_SQL = (
@@ -362,9 +365,11 @@ GATE_03 = [
 GATES: dict[str, list[Check]] = {"00": GATE_00, "01": GATE_01, "02": GATE_02, "03": GATE_03}
 SCOPES = {
     "00": "Repository / foundation.",
-    "01": f"Source / Bronze ingestion — {len(GATE_01_DATASETS)} datasets of the Comunidad de "
-    f"Madrid open data portal (geography, {len(STAT_TABLE_DATASETS)} statistical tables, "
-    f"{len(FACILITY_DATASETS)} facility registers, {len(TRANSPORT_DATASETS)} CRTM GTFS feeds).",
+    "01": f"Source / Bronze ingestion — {len(GATE_01_DATASETS) - len(COMPLEMENTARY_DATASETS)} "
+    f"datasets of the Comunidad de Madrid open data portal (geography, "
+    f"{len(STAT_TABLE_DATASETS)} statistical tables, {len(FACILITY_DATASETS)} facility "
+    f"registers, {len(TRANSPORT_DATASETS)} CRTM GTFS feeds) and {len(COMPLEMENTARY_DATASETS)} "
+    "complementary dataset of the Ayuntamiento de Madrid (padrón by district).",
     "02": "Geospatial QA — transport stops and stations from the CRTM GTFS feeds "
     "(the 2026-10-20 geography QA lives in gate-01/2026-10-20).",
     "03": "Metrics / Feature Store — started: 12 municipal features (target 75–125 for Sprint P1).",

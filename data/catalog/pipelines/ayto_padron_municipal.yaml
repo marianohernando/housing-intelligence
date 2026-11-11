@@ -1,0 +1,11 @@
+kind: madrid_padron
+dataset_id: ayto_padron_municipal
+metric_id: poblacion_padron
+municipio_ine: "28079"
+district_column: COD_DISTRITO
+age_column: COD_EDAD_INT
+count_columns: [ESPANOLESHOMBRES, ESPANOLESMUJERES, EXTRANJEROSHOMBRES, EXTRANJEROSMUJERES]
+period_column: FX_DATOS_INI
+expected_districts: 21
+district_name_column: DESC_DISTRITO
+census_metric_id: poblacion_censada
