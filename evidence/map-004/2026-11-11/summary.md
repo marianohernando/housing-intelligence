@@ -79,3 +79,54 @@ Esta fase no cambia ninguna pantalla: las capturas de la Fase 1 siguen vigentes.
 ## Notas para A (en el PR)
 - Los schemas se exportan en modo validación, así que en los tipos de respuesta los campos con valor por defecto salen opcionales (`near_misses?`, `warnings?`, `meta?`). La web los trata con `?? []`. Si se exportaran en modo serialización, saldrían obligatorios.
 - La API devuelve el nombre «Mostoles» sin tilde: viene así de la fuente.
+
+---
+
+# MAP-004 Fase 3 — Mapa 2D de la región y 3D de zona (2026-11-11)
+
+## Qué hay
+- **Mapa persistente** en el grupo `(vida)/(mapa)`. La portada y `/zona/[level]/[code]` comparten la misma instancia de MapLibre 6.11.2, así que la cámara vuela de la vista general a la zona sin recargar.
+- **Teselas:** OpenFreeMap (`https://tiles.openfreemap.org/planet`), esquema OpenMapTiles, sin clave.
+  - Uso gratuito, también comercial, sin límite de peticiones; solo se prohíbe la descarga masiva.
+  - Atribución en el mapa: «OpenFreeMap © OpenMapTiles Data from OpenStreetMap» (viene del TileJSON), seguida de «Comunidad de Madrid · Powered by CRTM».
+- **Estilo propio** (`src/lib/map/style.ts`): suelo lavanda, carreteras blancas, parques y agua suaves, sin etiquetas (no hace falta servidor de glifos). Los colores salen de `tokens.css` (`--map-*`). El test lo valida con el validador oficial `@maplibre/maplibre-gl-style-spec`.
+- **Vista general:**
+  - 179 municipios, con Madrid capital partido en sus 21 distritos (`buildZoneCollection`, D-200).
+  - Coropleta neutra hasta que exista el buscador: no se inventa ningún encaje.
+  - Lo que queda fuera de la Comunidad se atenúa; al pasar el ratón se resalta la zona y al pulsar se entra en ella.
+- **Zona:**
+  - **Vuelo:** 2,8 s, inclinación de 55° (45° en móvil) y giro lento de 15° en 18 s. Con `prefers-reduced-motion`, MapLibre salta sin animar y no hay giro.
+  - **Contorno:** violeta con brillo; el exterior se atenúa con una máscara blanca pintada encima de los edificios.
+  - **Edificios:** extruidos con su altura ×2 (vista estilizada; la altura no se muestra como dato).
+  - **Puntos clave:** etiquetas de cristal con datos reales de `/api/v1/places`, dentro de la zona según su sección censal. Hay una estación (Cercanías antes que metro), un centro de salud y un colegio público, repartidos para que no se tapen. Las farmacias, las paradas de autobús y los colegios privados quedan fuera.
+- **Pantalla de zona** con las migas «Madrid › Chamartín» o «Comunidad de Madrid › Móstoles», el título y «Volver al mapa de la región». Textos de `pitch/textos_web.md` (línea D).
+- **Velo de lectura** detrás del texto (arriba a la izquierda; en móvil, de arriba abajo) para leerlo sobre el 3D.
+
+## Hallazgos técnicos (comprobados)
+- OpenFreeMap solo trae `render_height` en las teselas de zoom 14. En las de 13, los edificios llegan fusionados y sin altura: tesela 13/4012/3087 con 1 polígono; tesela 14/8024/6175 con 55 y todas con altura. Por eso la cámara lleva las zonas del tamaño de un distrito a zoom 14 (`zoneZoom`, con test). Los municipios grandes conservan su encuadre en 2D.
+- A zoom 14 los edificios vienen agrupados por altura en multipolígonos que cruzan el límite de la zona. Separarlos dentro y fuera con `distance` no es fiable, así que se usa una máscara 2D encima. `within` solo admite puntos y líneas.
+- Las teselas que MapLibre cancela durante el vuelo (`net::ERR_ABORTED`) no son errores: el script de capturas ya no las cuenta.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` | 0, sin avisos |
+| `npm run -w apps/web typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 13 ficheros, 106 tests (nuevos: `names`, `zones`, `places`, `style` y `camera`, más 2 de `api`) |
+| `npm run -w apps/web build` | 0 (`NEXT_PUBLIC_API_URL=http://localhost:8011`) |
+| `make lint typecheck test-unit` | 0 (233 pytest y 106 vitest) |
+| `npm run -w apps/web capture -- --prefix f3_ --wait 8000 …` | 6 capturas sin errores en la consola (`f3_capture.json`) |
+
+## Capturas
+- `f3_inicio_desktop_vs_mockup.jpg`: región por municipios y distritos frente a `mockup_1_mapa.png`. Faltan la tarjeta «Tu búsqueda», la de zona y la leyenda (Fase 4).
+- `f3_chamartin_desktop_vs_mockup.jpg`: Chamartín en 3D frente a `mockup_2_detalle.png`. Se ven edificios con altura (las torres de Castellana y Plaza de Castilla), parques, contorno, exterior atenuado y 4 puntos clave reales. Faltan las tarjetas de cristal y la barra de barrios (Fase 4).
+- `f3_chamartin_mobile.png`: en móvil la zona entera, con menos inclinación y etiquetas compactas.
+- `f3_mostoles_{desktop,mobile}.png`: una zona de nivel municipio.
+- `f3_inicio_mobile.png`: el contenido tapa el mapa; lo resuelve la hoja inferior (Fase 5).
+
+## Limitaciones y pendientes
+- **No se ha medido el rendimiento:** Playwright usa SwiftShader, un renderizador por software, así que esas cifras no valen como fps reales. Queda medirlo en un navegador real.
+- **El distrito no cabe entero en pantalla a zoom 14:** la parte más ancha queda bajo las tarjetas de cristal, que dejan ver el mapa. Es un compromiso entre ver el distrito completo y ver los edificios en 3D.
+- **Peticiones a la línea A:**
+  - `/api/v1/places` corta en 10.000 lugares (transporte tiene 14.982) y no filtra por zona, así que la web descarga unos 2 MB.
+  - `/geo/admin-units` devuelve los municipios en mayúsculas y no filtra por `parent`. La web aplica `displayName`, una réplica de `hi_domain.geo.names` con los mismos casos de test.

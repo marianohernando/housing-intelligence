@@ -1,0 +1,261 @@
+"use client";
+
+import "maplibre-gl/dist/maplibre-gl.css";
+
+import {
+  type GeoJSONSource,
+  type LngLatBoundsLike,
+  Map as MapLibreMap,
+  type MapLayerMouseEvent,
+  Marker,
+  NavigationControl,
+  setWorkerUrl,
+} from "maplibre-gl";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
+import { createApi, type PlaceCategory } from "@/lib/api";
+import { type KeyPoint, type PlaceFeature, pickKeyPoints, placesInZone } from "@/lib/map/places";
+import { ZONE_BEARING, ZONE_PITCH, zoneZoom } from "@/lib/map/camera";
+import { baseStyle, BUILDING_LAYER, MAP_PALETTE_TOKENS, type MapPalette, zoneLayers } from "@/lib/map/style";
+import {
+  boundsOf,
+  boundsOfAll,
+  maskAround,
+  regionOf,
+  type ZoneCollection,
+  type ZoneFeature,
+  zoneHref,
+  type ZoneProperties,
+} from "@/lib/map/zones";
+
+import KeyPointLabel from "./KeyPointLabel";
+import { useMapZones } from "./MapProvider";
+import styles from "./VidaMap.module.css";
+
+const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
+const MOBILE = "(max-width: 760px)";
+const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+const FLIGHT_MS = 2800;
+const KEY_POINT_CATEGORIES: PlaceCategory[] = ["transport", "health", "education"];
+const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
+const NO_POINTS: KeyPoint[] = [];
+
+const TEXT = {
+  aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
+  noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
+  noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
+};
+
+type Failure = "webgl" | "tiles";
+
+function matches(query: string): boolean {
+  return window.matchMedia(query).matches;
+}
+
+function readPalette(): MapPalette {
+  const css = getComputedStyle(document.documentElement);
+  const entries = Object.entries(MAP_PALETTE_TOKENS).map(([key, token]) => [key, css.getPropertyValue(`--${token}`).trim()]);
+  return Object.fromEntries(entries) as MapPalette;
+}
+
+/** Room for the glass cards: search on the left, zone on the right, bottom sheet on mobile. */
+function padding(mode: "overview" | "zone") {
+  if (matches(MOBILE)) return mode === "zone" ? { top: 380, right: 0, bottom: 40, left: 0 } : { top: 150, right: 16, bottom: 200, left: 16 };
+  // Zone view: a district at building zoom is wider than the gap, and the glass cards let the
+  // map show through, so the side padding is smaller there.
+  if (mode === "zone") return { top: 90, right: 380, bottom: 200, left: 440 };
+  return { top: 100, right: 460, bottom: 40, left: 500 };
+}
+
+function source(map: MapLibreMap, id: string): GeoJSONSource {
+  return map.getSource(id) as GeoJSONSource;
+}
+
+function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: ZoneProperties) => void): void {
+  map.addSource("zones", { type: "geojson", data: EMPTY, promoteId: "admin_unit_id" });
+  map.addSource("zone-selected", { type: "geojson", data: EMPTY });
+  map.addSource("zone-mask", { type: "geojson", data: EMPTY });
+  const { below, above } = zoneLayers(palette);
+  for (const layer of below) map.addLayer(layer, BUILDING_LAYER);
+  for (const layer of above) map.addLayer(layer);
+
+  let hovered: string | number | undefined;
+  const setHover = (id: string | number | undefined) => {
+    if (hovered !== undefined) map.setFeatureState({ source: "zones", id: hovered }, { hover: false });
+    hovered = id;
+    if (id !== undefined) map.setFeatureState({ source: "zones", id }, { hover: true });
+    map.getCanvas().style.cursor = id === undefined ? "" : "pointer";
+  };
+  map.on("mousemove", "zones-fill", (e: MapLayerMouseEvent) => setHover(e.features?.[0]?.id));
+  map.on("mouseleave", "zones-fill", () => setHover(undefined));
+  map.on("click", "zones-fill", (e: MapLayerMouseEvent) => {
+    const zone = e.features?.[0]?.properties as ZoneProperties | undefined;
+    if (zone) onPick(zone);
+  });
+}
+
+function showOverview(map: MapLibreMap, zones: ZoneCollection, animate: boolean): void {
+  source(map, "zone-selected").setData(EMPTY);
+  source(map, "zone-mask").setData({ type: "Feature", geometry: maskAround(regionOf(zones)), properties: {} });
+  map.fitBounds(boundsOfAll(zones) as LngLatBoundsLike, {
+    padding: padding("overview"),
+    pitch: 0,
+    bearing: 0,
+    duration: animate ? 1600 : 0,
+  });
+}
+
+/** Camera flight to the zone, tilted ~60° (45° on mobile), then a slow turn. */
+function showZone(map: MapLibreMap, zone: ZoneFeature): () => void {
+  source(map, "zone-selected").setData(zone);
+  source(map, "zone-mask").setData({ type: "Feature", geometry: maskAround(zone.geometry), properties: {} });
+  const mobile = matches(MOBILE);
+  const bounds = boundsOf(zone.geometry);
+  const fit = map.cameraForBounds(bounds as LngLatBoundsLike, { padding: padding("zone"), bearing: ZONE_BEARING });
+  // Centre the zone in the free area between the cards (padding), at the zone zoom.
+  map.flyTo({
+    center: [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2],
+    zoom: fit?.zoom === undefined ? undefined : zoneZoom(fit.zoom, mobile),
+    pitch: mobile ? ZONE_PITCH.mobile : ZONE_PITCH.desktop,
+    bearing: ZONE_BEARING,
+    padding: padding("zone"),
+    duration: FLIGHT_MS,
+    essential: false, // with prefers-reduced-motion MapLibre jumps instead of flying
+  });
+  const turn = () => {
+    if (!matches(REDUCED_MOTION)) map.easeTo({ bearing: ZONE_BEARING + 15, duration: 18000, easing: (t) => t });
+  };
+  map.once("moveend", turn);
+  return () => {
+    map.off("moveend", turn);
+    map.stop();
+  };
+}
+
+function loadPlaces(cache: Map<PlaceCategory, Promise<PlaceFeature[]>>): Promise<PlaceFeature[]> {
+  const api = createApi();
+  const lists = KEY_POINT_CATEGORIES.map((category) => {
+    let request = cache.get(category);
+    if (!request) {
+      request = api.places(category).then((body) => body.data.features);
+      cache.set(category, request);
+      request.catch(() => cache.delete(category));
+    }
+    return request;
+  });
+  return Promise.all(lists).then((all) => all.flat());
+}
+
+export default function VidaMap() {
+  const { zones, activeZone } = useMapZones();
+  const router = useRouter();
+  const routerRef = useRef(router);
+  const container = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const placesCache = useRef(new Map<PlaceCategory, Promise<PlaceFeature[]>>());
+  const shownOverview = useRef(false);
+  const [ready, setReady] = useState(false);
+  const [failure, setFailure] = useState<Failure | null>(null);
+  const [keyPoints, setKeyPoints] = useState<{ key: string; points: KeyPoint[] } | null>(null);
+
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
+
+  useEffect(() => {
+    const element = container.current;
+    if (!element) return;
+    let map: MapLibreMap;
+    try {
+      setWorkerUrl(WORKER_URL);
+      map = new MapLibreMap({
+        container: element,
+        style: baseStyle(readPalette()),
+        center: [-3.7, 40.42],
+        zoom: 8.3,
+        maxPitch: 70,
+        attributionControl: { compact: matches(MOBILE), customAttribution: "Comunidad de Madrid · Powered by CRTM" },
+      });
+    } catch {
+      queueMicrotask(() => setFailure("webgl"));
+      return;
+    }
+    mapRef.current = map;
+    if (!matches(MOBILE)) map.addControl(new NavigationControl({ visualizePitch: true }), "bottom-right");
+    map.on("load", () => {
+      addZoneLayers(map, readPalette(), (zone) => routerRef.current.push(zoneHref(zone)));
+      // Fewer layers on mobile: no blurred glow around the zone outline.
+      if (matches(MOBILE)) map.setLayoutProperty("zone-glow", "visibility", "none");
+      setReady(true);
+    });
+    map.on("error", (event) => {
+      if ((event as { sourceId?: string }).sourceId === "openmaptiles") setFailure("tiles");
+    });
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !zones) return;
+    source(map, "zones").setData(zones);
+  }, [ready, zones]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !zones) return;
+    if (activeZone) return showZone(map, activeZone);
+    showOverview(map, zones, shownOverview.current);
+    shownOverview.current = true;
+  }, [ready, zones, activeZone]);
+
+  useEffect(() => {
+    if (!activeZone) return;
+    let cancelled = false;
+    const [west, south, east, north] = boundsOf(activeZone.geometry);
+    loadPlaces(placesCache.current)
+      .then((places) => {
+        if (cancelled) return;
+        const points = pickKeyPoints(placesInZone(places, activeZone.properties), [(west + east) / 2, (south + north) / 2]);
+        setKeyPoints({ key: activeZone.properties.zone_key, points });
+      })
+      .catch(() => {
+        // Key points are a complement: without them the zone, its outline and buildings still show.
+        if (!cancelled) setKeyPoints({ key: activeZone.properties.zone_key, points: NO_POINTS });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeZone]);
+
+  const points = activeZone && keyPoints?.key === activeZone.properties.zone_key ? keyPoints.points : NO_POINTS;
+  const labels = useMemo(
+    () => (typeof document === "undefined" ? [] : points.map((point) => ({ point, element: document.createElement("div") }))),
+    [points],
+  );
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const markers = labels.map(({ point, element }) =>
+      new Marker({ element, anchor: "bottom" }).setLngLat([point.lon, point.lat]).addTo(map),
+    );
+    return () => markers.forEach((marker) => marker.remove());
+  }, [labels]);
+
+  return (
+    <>
+      <div ref={container} className={styles.map} role="region" aria-label={TEXT.aria} />
+      {failure && (
+        <p role="alert" className={`glass ${styles.failure}`}>
+          {failure === "webgl" ? TEXT.noWebgl : TEXT.noTiles}
+        </p>
+      )}
+      {labels.map(({ point, element }) => createPortal(<KeyPointLabel point={point} />, element, point.id))}
+    </>
+  );
+}

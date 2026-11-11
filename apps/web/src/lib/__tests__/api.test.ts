@@ -88,3 +88,17 @@ describe("api client", () => {
     await expect(api.datasets()).rejects.toMatchObject({ status: 0, code: "NETWORK" });
   });
 });
+
+describe("api client, routes used by the map", () => {
+  it("asks for simplified zone outlines by level", async () => {
+    const calls: Call[] = [];
+    await createApi(BASE, fakeFetch(200, envelope({ type: "FeatureCollection", features: [] }), calls)).adminUnits("distrito", 25);
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/geo/admin-units?level=distrito&simplify_m=25`);
+  });
+
+  it("asks for the places of one category", async () => {
+    const calls: Call[] = [];
+    await createApi(BASE, fakeFetch(200, envelope({ type: "FeatureCollection", features: [] }), calls)).places("transport");
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/places?category=transport`);
+  });
+});

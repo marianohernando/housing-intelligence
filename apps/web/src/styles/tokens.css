@@ -45,6 +45,16 @@
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
   --map-darkest: var(--violet);
 
+  /* Map palette (read by src/lib/map/style.ts at runtime): lavender city, soft parks and water */
+  --map-land: #ebe8f6;
+  --map-water: #cfe2f6;
+  --map-park: #d6eedb;
+  --map-road: #ffffff;
+  --map-rail: #c9c3ec;
+  --map-zone: #dcd6fa;
+  --map-building: #f0ecfd;
+  --map-building-tall: #a99df0;
+
   /* Type */
   --font-title: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-body: var(--font-inter), "Inter", system-ui, sans-serif;

@@ -62,7 +62,12 @@ async function capture(browser, route, profile, outDir) {
     if (msg.type() === "warning") warnings.push(msg.text());
   });
   page.on("pageerror", (err) => problems.push(`pageerror: ${err.message}`));
-  page.on("requestfailed", (req) => problems.push(`requestfailed: ${req.url()} ${req.failure()?.errorText ?? ""}`));
+  page.on("requestfailed", (req) => {
+    const reason = req.failure()?.errorText ?? "";
+    // MapLibre cancels tile requests it no longer needs while the camera moves: not a failure.
+    if (reason === "net::ERR_ABORTED") return;
+    problems.push(`requestfailed: ${req.url()} ${reason}`);
+  });
   page.on("response", (res) => {
     if (res.status() >= 400) problems.push(`http ${res.status()}: ${res.url()}`);
   });

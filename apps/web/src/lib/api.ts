@@ -6,12 +6,22 @@ import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
 import type { ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
-import { DEFAULT_API_URL } from "@/lib/geo";
+import type { Envelope } from "@/lib/envelope";
+import { type AdminLevel, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
+import type { PlaceFeature } from "@/lib/map/places";
+import type { AdminFeature } from "@/lib/map/zones";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
 
 /** Levels with a «Qué falta» list: municipios, Madrid's 21 districts and census sections. */
 export type GapLevel = "municipio" | "distrito" | "seccion_censal";
+
+/** Place categories the map uses for a zone's key points (PlaceCategory in the API). */
+export type PlaceCategory = "transport" | "health" | "education" | "social";
+
+/** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
+export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
+export type PlacesResponse = Envelope<{ type: "FeatureCollection"; features: PlaceFeature[] }>;
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 
@@ -62,6 +72,14 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     /** GET /api/v1/datasets: every dataset behind the product (footer counter and provenance). */
     datasets({ cmOnly = false }: { cmOnly?: boolean } = {}) {
       return call<DatasetListResponse>(`/api/v1/datasets${cmOnly ? "?cm_only=true" : ""}`);
+    },
+    /** GET /api/v1/geo/admin-units: zone outlines, simplified by `simplifyM` metres. */
+    adminUnits(level: AdminLevel, simplifyM: number) {
+      return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM));
+    },
+    /** GET /api/v1/places: facilities of one category as points. */
+    places(category: PlaceCategory) {
+      return call<PlacesResponse>(`/api/v1/places?category=${category}`);
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check. */
     search(scenario: ScenarioState) {

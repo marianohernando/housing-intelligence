@@ -16,12 +16,14 @@
     "contracts": "node scripts/gen-contracts.mjs"
   },
   "dependencies": {
+    "lucide-react": "1.72.0",
     "maplibre-gl": "6.11.2",
     "next": "16.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@maplibre/maplibre-gl-style-spec": "26.4.4",
     "@types/node": "^24",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
