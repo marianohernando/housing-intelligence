@@ -162,3 +162,18 @@ export function edgeWall(geometry: ZoneGeometry, widthM: number): GeoJSON.Featur
   });
   return { type: "FeatureCollection", features };
 }
+
+/** Lower case without accents, to find «Chamartín» by typing «chamartin». */
+function searchable(text: string): string {
+  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
+}
+
+/** The zones as a list (the map's alternative): Madrid's districts and the other municipios, by name. */
+export function zoneDirectory(zones: ZoneCollection, query: string): { distritos: ZoneProperties[]; municipios: ZoneProperties[] } {
+  const wanted = searchable(query);
+  const listed = zones.features
+    .map((f) => f.properties)
+    .filter((z) => searchable(z.name).includes(wanted))
+    .sort((a, b) => a.name.localeCompare(b.name, "es"));
+  return { distritos: listed.filter((z) => z.level === "distrito"), municipios: listed.filter((z) => z.level === "municipio") };
+}

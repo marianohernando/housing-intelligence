@@ -1,4 +1,5 @@
 import Legend from "@/components/map/Legend";
+import ZoneListLink from "@/components/map/ZoneListLink";
 import DataCounter from "@/components/provenance/DataCounter";
 import SearchCard from "@/components/search/SearchCard";
 import GlassCard from "@/components/ui/GlassCard";
@@ -37,6 +38,7 @@ export default function MapaPage() {
           </GlassCard>
         </OverviewSide>
         <DataCounter />
+        <ZoneListLink />
       </div>
       <Legend />
     </div>

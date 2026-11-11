@@ -5,12 +5,14 @@
   background: var(--map-land);
 }
 
+/* Notices over the map: at the top, between the columns, clear of the search button and the legend */
 .failure {
   position: fixed;
   left: 50%;
-  bottom: var(--space-6);
+  top: 5rem;
   z-index: 3;
-  max-width: min(32rem, calc(100% - 2rem));
+  width: max-content;
+  max-width: min(27rem, calc(100% - 2rem));
   padding: var(--space-4) var(--space-5);
   transform: translateX(-50%);
   color: var(--ink);
@@ -83,5 +85,23 @@
 
   .labelName {
     display: none;
+  }
+}
+
+/* Notices with a link or a button (map failure, zones not loaded) */
+div.failure {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.failure a {
+  color: var(--violet-strong);
+}
+
+/* Mobile: just under the header (brand and tabs), above the bottom sheet */
+@media (max-width: 760px) {
+  .failure {
+    top: 8.5rem;
   }
 }

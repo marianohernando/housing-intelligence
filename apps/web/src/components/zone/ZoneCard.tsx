@@ -5,6 +5,7 @@ import { useId } from "react";
 
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
+import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
 import { rowsPending, topRows } from "@/lib/gaps";
@@ -39,6 +40,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   const titleId = useId();
   const { result } = useScenario();
   const gaps = useZoneGaps(level, code);
+  const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
   const pct = match?.match_pct;
 
@@ -68,7 +70,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>
         {gaps.loading && (
           <p role="status" className={styles.hint}>
-            Calculando qué falta en {name}…
+            Calculando qué falta en {name}…{slow && ` ${SLOW_TEXT}`}
           </p>
         )}
         {gaps.error && (

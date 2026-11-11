@@ -3,6 +3,7 @@
 import { ExternalLink } from "lucide-react";
 
 import Button from "@/components/ui/Button";
+import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { datasetLines, sortDatasets } from "@/lib/provenance";
 
@@ -19,8 +20,16 @@ const TEXT = {
 /** Every dataset behind Vida Fácil (GET /api/v1/datasets): who publishes it, version, licence and link. */
 export default function DatasetList() {
   const { loading, data, error, retry } = useDatasets();
+  const slow = useSlow(loading);
 
-  if (loading) return <p role="status">{TEXT.loading}</p>;
+  if (loading) {
+    return (
+      <p role="status">
+        {TEXT.loading}
+        {slow && ` ${SLOW_TEXT}`}
+      </p>
+    );
+  }
   if (error || !data) {
     return (
       <div role="alert" className={styles.error}>

@@ -11,11 +11,15 @@ import {
   NavigationControl,
   setWorkerUrl,
 } from "maplibre-gl";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import Button from "@/components/ui/Button";
+import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { createApi } from "@/lib/api";
+import { errorMessage } from "@/lib/errors";
 import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
 import {
   approachZoom,
@@ -45,6 +49,7 @@ import {
 } from "@/lib/map/zones";
 
 import KeyPointLabel from "./KeyPointLabel";
+import { ZONE_LIST_TEXT } from "./ZoneListLink";
 import { useMapZones } from "./MapProvider";
 import styles from "./VidaMap.module.css";
 
@@ -68,6 +73,8 @@ const TEXT = {
   aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
   noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
+  loading: "Cargando el mapa…",
+  retry: "Reintentar",
 };
 
 type Failure = "webgl" | "tiles";
@@ -233,7 +240,9 @@ function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: st
 }
 
 export default function VidaMap() {
-  const { zones, activeZone, selectedZone, select, barrio } = useMapZones();
+  const { zones, status, error, retry, activeZone, selectedZone, select, barrio } = useMapZones();
+  const overview = usePathname() === "/";
+  const slow = useSlow(status === "loading");
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -359,9 +368,25 @@ export default function VidaMap() {
     <>
       <div ref={container} className={styles.map} role="region" aria-label={TEXT.aria} />
       {failure && (
-        <p role="alert" className={`glass ${styles.failure}`}>
-          {failure === "webgl" ? TEXT.noWebgl : TEXT.noTiles}
+        <div role="alert" className={`glass ${styles.failure}`}>
+          <p>{failure === "webgl" ? TEXT.noWebgl : TEXT.noTiles}</p>
+          <Link href="/zonas">{ZONE_LIST_TEXT}</Link>
+        </div>
+      )}
+      {/* The outlines of the zones; a zone screen tells its own loading and errors (ZoneIntro). */}
+      {!failure && overview && status === "loading" && (
+        <p role="status" className={`glass ${styles.failure}`}>
+          {TEXT.loading}
+          {slow && ` ${SLOW_TEXT}`}
         </p>
+      )}
+      {!failure && overview && status === "error" && error && (
+        <div role="alert" className={`glass ${styles.failure}`}>
+          <p>{errorMessage(error)}</p>
+          <Button variant="secondary" onClick={retry}>
+            {TEXT.retry}
+          </Button>
+        </div>
       )}
       {labels.map(({ point, element }) => createPortal(<KeyPointLabel point={point} />, element, point.id))}
     </>

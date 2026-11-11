@@ -1,0 +1,41 @@
+{
+ "fase": "PUB-001 F2 (F7)",
+ "como": "Playwright contra web 3011 y API 8011; peticiones retrasadas 7 s o cortadas con page.route",
+ "mapa_cargando": {
+  "a_1_5_s": 1,
+  "lento_a_6_s": 1,
+  "al_llegar": 0,
+  "errores": []
+ },
+ "mapa_error": {
+  "mensaje": 1,
+  "tras_reintentar": 0,
+  "errores": []
+ },
+ "zona_error": {
+  "red": 1,
+  "no_encontramos": 0,
+  "reintentar": 1,
+  "lista": 1,
+  "errores": []
+ },
+ "falta_lento": {
+  "calculando": 1,
+  "lento": 1,
+  "errores": []
+ },
+ "teselas_caidas": {
+  "mensaje": 1,
+  "enlace": 1,
+  "errores": []
+ },
+ "lista": {
+  "zonas": 199,
+  "filtro_chamartin": [
+   "Chamartín"
+  ],
+  "foco_tras_tab": "Chamartín",
+  "intro_lleva_a": "/zona/distrito/2807905",
+  "errores": []
+ }
+}

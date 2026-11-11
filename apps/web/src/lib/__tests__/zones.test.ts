@@ -10,6 +10,7 @@ import {
   outlinePoints,
   regionOf,
   ringArea,
+  zoneDirectory,
   zoneHref,
 } from "../map/zones";
 
@@ -171,5 +172,24 @@ describe("edgeWall", () => {
   it("walls every part of a multipolygon", () => {
     const multi: GeoJSON.MultiPolygon = { type: "MultiPolygon", coordinates: [ccw.coordinates, square(-3.6, 40.45, 0.01).coordinates] };
     expect(edgeWall(multi, 20).features).toHaveLength(8);
+  });
+});
+
+describe("zoneDirectory", () => {
+  const zones = buildZoneCollection(
+    [...municipios, unit("municipio", "28006", "Alcobendas", null, square(3, 3))],
+    distritos,
+  );
+
+  it("lists Madrid's districts and the other municipios apart, each by name", () => {
+    const { distritos: d, municipios: m } = zoneDirectory(zones, "");
+    expect(d.map((z) => z.name)).toEqual(["Centro", "Chamartín"]);
+    expect(m.map((z) => z.name)).toEqual(["Alcobendas", "Las Rozas de Madrid", "Mostoles"]);
+  });
+
+  it("filters by name ignoring case and accents", () => {
+    expect(zoneDirectory(zones, "chamartin").distritos.map((z) => z.name)).toEqual(["Chamartín"]);
+    expect(zoneDirectory(zones, "  ROZAS ").municipios.map((z) => z.name)).toEqual(["Las Rozas de Madrid"]);
+    expect(zoneDirectory(zones, "zzz")).toEqual({ distritos: [], municipios: [] });
   });
 });

@@ -4,12 +4,15 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { useMapZones } from "@/components/map/MapProvider";
+import ZoneListLink from "@/components/map/ZoneListLink";
 import DataCounter from "@/components/provenance/DataCounter";
 import SearchCard from "@/components/search/SearchCard";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import BarriosBar from "@/components/zone/BarriosBar";
 import ZoneCard from "@/components/zone/ZoneCard";
+import { errorMessage } from "@/lib/errors";
 
 import styles from "./zone.module.css";
 
@@ -19,18 +22,37 @@ const TEXT = {
   back: "Volver al mapa de la región",
   loading: "Preparando la zona…",
   notFound: "No encontramos esa zona. Elige otra en el mapa.",
+  retry: "Reintentar",
   lead: "Mira sus servicios y puntos clave, con datos oficiales.",
 };
 
 export default function ZoneIntro() {
-  const { status, activeZone } = useMapZones();
+  const { status, error, retry, activeZone } = useMapZones();
+  const slow = useSlow(status === "loading");
 
   if (!activeZone) {
-    const message = status === "loading" ? TEXT.loading : TEXT.notFound;
+    if (status === "loading") {
+      return (
+        <GlassCard className={styles.state} role="status">
+          <p>
+            {TEXT.loading}
+            {slow && ` ${SLOW_TEXT}`}
+          </p>
+        </GlassCard>
+      );
+    }
+    // The zones could not be loaded (error) or this one does not exist (ready)
     return (
-      <GlassCard className={styles.state} role={status === "loading" ? "status" : "alert"}>
-        <p>{message}</p>
-        {status !== "loading" && <Button href="/">{TEXT.back}</Button>}
+      <GlassCard className={styles.state} role="alert">
+        <p>{error ? errorMessage(error) : TEXT.notFound}</p>
+        {error ? (
+          <Button variant="secondary" onClick={retry}>
+            {TEXT.retry}
+          </Button>
+        ) : (
+          <Button href="/">{TEXT.back}</Button>
+        )}
+        <ZoneListLink />
       </GlassCard>
     );
   }
@@ -63,6 +85,7 @@ export default function ZoneIntro() {
       <div className={styles.side}>
         <ZoneCard zone={activeZone} mode="zone" />
         <DataCounter />
+        <ZoneListLink />
       </div>
       <div className={styles.search}>
         <SearchCard collapsible />

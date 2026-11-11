@@ -444,3 +444,49 @@ Sobre `origin/claude/sprint-1-public` en `4523d69`.
 - **Números de la API:** «21 conjuntos de datos del Portal…» y el contador del pie.
 - **Enlaces:** 24 «Abrir en el portal» con «se abre en una pestaña nueva» en el nombre accesible.
 - **CRTM:** 1 enlace a crtm.es en la atribución del mapa.
+
+---
+
+# PUB-001 Fase 2 (F7) — Estados de vacío, carga y error (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `98b842a`. Textos de la sección 8 de `pitch/textos_web.md`.
+
+## Qué hay
+- **Lista de zonas** (`/zonas`, `mapa.alternativa`):
+  - las 199 zonas del mapa (21 distritos de Madrid y 178 municipios) como enlaces, con un filtro por nombre que ignora mayúsculas y tildes (`zoneDirectory`, pura, con tests);
+  - es la alternativa al mapa para teclado y lectores de pantalla, y el destino de los mensajes de fallo, que la prometían y no existía.
+- **«Ver las zonas en una lista»:** siempre a la vista, en la columna derecha del mapa y de la zona, y dentro de los avisos de fallo del mapa.
+- **Carga del mapa** (`carga.mapa`): «Cargando el mapa…» mientras llegan los contornos.
+- **Error del mapa:** el mensaje del código (`error.*`) y «Reintentar».
+- **Avisos del mapa:** van arriba, entre las columnas, sin tapar el botón de búsqueda ni la leyenda.
+- **Pantalla de zona sin contornos:** si falla la red, dice «No hemos podido conectar…» con «Reintentar» y el enlace a la lista. Antes decía «No encontramos esa zona».
+- **`carga.lento`** (`useSlow`): «Está tardando un poco más de lo normal. Gracias por esperar.» tras 5 s, en el mapa, en «Preparando la zona…», en «Calculando qué falta en {zona}…», en la lista de fuentes y en la de zonas.
+- **`fetchZones`:** la carga de zonas se comparte entre el mapa y la lista.
+- **Fuera de esta fase:** los vacíos de la búsqueda (`vacio.sin_busqueda`, `vacio.sin_resultados`), que llegan con el buscador (F9).
+
+## Comprobado con Playwright (`f7_estados.json`, peticiones retrasadas 7 s o cortadas)
+- **Contornos retrasados:** «Cargando el mapa…» a 1,5 s; «Está tardando…» a 6 s; desaparece al llegar (`f7_mapa_cargando_lento_desktop.png`).
+- **Contornos cortados:**
+  - en el mapa: «No hemos podido conectar…»; tras quitar el corte y pulsar «Reintentar», el mapa carga (`f7_mapa_error_desktop.png`);
+  - en la zona: error de red con «Reintentar» y el enlace a la lista, sin «No encontramos esa zona» (`f7_zona_error_desktop.png`).
+- **`/gaps` retrasado:** «Calculando qué falta en Chamartín…» y «Está tardando…».
+- **Teselas caídas (móvil):** el aviso enlaza a `/zonas` (`f7_teselas_caidas_mobile.png`).
+- **`/zonas`:** 199 enlaces. Con «chamartin» queda solo «Chamartín»; Tab lleva el foco a ese enlace e Intro abre `/zona/distrito/2807905`.
+- **Consola:** sin errores de página en ningún caso.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` / `typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 18 ficheros, 151 tests (nuevos: 2 de `zoneDirectory`) |
+| `npm run -w apps/web build` | 0 |
+| `make lint typecheck test-unit` | 0 (285 pytest, 151 vitest) |
+| `capture -- --prefix f7_ …` | 6 capturas (inicio, Chamartín y `/zonas` a 1440 y 390 px), sin errores en la consola. `overflow_px: 0` en las de mapa; en `/zonas` es el desplazamiento vertical de la lista |
+
+## Para D
+Textos provisionales:
+- título «Todas las zonas»;
+- «Busca una zona»;
+- «Distritos de Madrid» y «Municipios»;
+- «No hay ninguna zona con ese nombre.»;
+- «Cargando las zonas…».
