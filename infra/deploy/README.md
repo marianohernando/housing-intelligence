@@ -139,6 +139,25 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
 
 **Solo se activa cuando el fichero está en `main`:** GitHub ejecuta los `schedule` y los `workflow_dispatch` desde la rama por defecto. Cubre del 17 al 26 nov si `claude/sprint-1-public` se fusiona en `main` antes del 17.
 
+### Recorridos del pitch en un navegador (`make e2e-prod`)
+[`e2e/e2e_prod.mjs`](e2e/e2e_prod.mjs) hace en un navegador real los recorridos del guion (`pitch/guion.md`):
+1. **J1:** portada → «Ver un ejemplo» → la 1.ª zona → «¿Y si cambias algo?», aplicar y deshacer.
+2. **J2:** «Qué falta» → «Madrid (toda la ciudad)».
+3. **J3:** el mapa por fila («¿Qué quieres ver?»), las 6 filas.
+4. **J4:** la lista de zonas.
+
+**Qué comprueba:**
+- Cada cifra de la pantalla, contra la respuesta de la API que recibió la propia página: zonas que encajan, leyenda, % y hechos de la tarjeta, opciones de «¿Y si cambias algo?», estado de cada fila y recuentos de la lista. No hay cifras fijas, así que sigue valiendo tras un sync.
+- Que todas las peticiones a `/search` lleven `max_minutes: null`.
+- Que no haya errores de consola ni desbordamiento horizontal.
+
+**Cómo se ejecuta:**
+- `make e2e-prod`: Chromium a 1440 y 390 px, unos 30 s. Sale con 0 solo si pasa todo.
+- Más navegadores, tamaños y capturas: `make e2e-prod E2E_ARGS="--browsers chromium,webkit,firefox --devices desktop-1440,desktop-1920,mobile-390,projector-125 --shots --out <carpeta>"`. Los navegadores se instalan una vez con `npx playwright install chromium webkit firefox`.
+- El workflow diario ejecuta además un job `e2e` con Chromium. El informe se guarda 14 días como artefacto `e2e-report`.
+
+**Comprobaciones omitidas, no superadas:** en móvil, la leyenda oculta los recuentos a propósito, así que esas comprobaciones salen como `skipped`.
+
 ## Día de la final (26 nov): lista
 
 1. **Por la mañana:**
