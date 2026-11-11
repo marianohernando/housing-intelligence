@@ -304,6 +304,70 @@
       "title": "MetricSplit",
       "type": "object"
     },
+    "OsmWalkNetworkPipeline": {
+      "additionalProperties": false,
+      "description": "OpenStreetMap extract -> undirected walkable street graph, kept in Silver only.\n\nA way is walkable when its `highway` value is listed or it explicitly allows people on foot;\n`foot=no`, or `access=no/private` without a foot permission, removes it. One-way rules apply\nto vehicles, so the graph is undirected. Only indicators computed on it reach the database.",
+      "properties": {
+        "access_denied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Access Denied",
+          "type": "array"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "foot_allowed": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Foot Allowed",
+          "type": "array"
+        },
+        "kind": {
+          "const": "osm_walk_network",
+          "title": "Kind",
+          "type": "string"
+        },
+        "min_main_component_share": {
+          "default": 0.9,
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Min Main Component Share",
+          "type": "number"
+        },
+        "min_total_km": {
+          "description": "below this the extract is truncated",
+          "exclusiveMinimum": 0,
+          "title": "Min Total Km",
+          "type": "number"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "walkable_highways": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Walkable Highways",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "walkable_highways",
+        "min_total_km"
+      ],
+      "title": "OsmWalkNetworkPipeline",
+      "type": "object"
+    },
     "PlaceCategory": {
       "enum": [
         "education",
@@ -507,6 +571,7 @@
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
+      "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
       "points_csv": "#/$defs/PointsPipeline"
     },
     "propertyName": "kind"
@@ -523,6 +588,9 @@
     },
     {
       "$ref": "#/$defs/GtfsFeedPipeline"
+    },
+    {
+      "$ref": "#/$defs/OsmWalkNetworkPipeline"
     }
   ]
 }

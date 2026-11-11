@@ -178,7 +178,34 @@ class GtfsFeedPipeline(BaseModel):
         return []
 
 
+class OsmWalkNetworkPipeline(BaseModel):
+    """OpenStreetMap extract -> undirected walkable street graph, kept in Silver only.
+
+    A way is walkable when its `highway` value is listed or it explicitly allows people on foot;
+    `foot=no`, or `access=no/private` without a foot permission, removes it. One-way rules apply
+    to vehicles, so the graph is undirected. Only indicators computed on it reach the database.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["osm_walk_network"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    walkable_highways: list[str] = Field(min_length=1)
+    foot_allowed: list[str] = Field(default_factory=lambda: ["yes", "designated", "permissive"])
+    access_denied: list[str] = Field(default_factory=lambda: ["no", "private"])
+    min_total_km: float = Field(gt=0, description="below this the extract is truncated")
+    min_main_component_share: float = Field(default=0.9, gt=0, le=1)
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 PipelineSpec = Annotated[
-    CmStatTablePipeline | CmPostcodeConceptPipeline | PointsPipeline | GtfsFeedPipeline,
+    CmStatTablePipeline
+    | CmPostcodeConceptPipeline
+    | PointsPipeline
+    | GtfsFeedPipeline
+    | OsmWalkNetworkPipeline,
     Field(discriminator="kind"),
 ]

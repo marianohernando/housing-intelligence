@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_network",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "nodes": 2382128,
+        "edges": 2615712
+      }
+    },
+    {
+      "name": "edge_lengths_positive",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "max_edge_m": 1788.7
+      }
+    },
+    {
+      "name": "total_length_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "total_km": 57658.8,
+        "min_total_km": 30000.0
+      }
+    },
+    {
+      "name": "main_component_share",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "share_of_length": 0.9825,
+        "min": 0.9
+      }
+    },
+    {
+      "name": "missing_node_locations",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined_segments": 0,
+        "segments": 2615712
+      }
+    },
+    {
+      "name": "nodes_inside_region_bbox",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "share": 0.9997,
+        "note": "the Geofabrik extract is padded beyond the regional limit"
+      }
+    },
+    {
+      "name": "length_by_highway",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "km": {
+          "corridor": 14.4,
+          "cycleway": 286.3,
+          "footway": 8924.1,
+          "living_street": 353.4,
+          "motorway_link": 1.4,
+          "path": 7478.6,
+          "pedestrian": 701.8,
+          "primary": 1163.1,
+          "primary_link": 58.6,
+          "residential": 11238.7,
+          "secondary": 1339.1,
+          "secondary_link": 37.5,
+          "service": 3821.1,
+          "steps": 97.8,
+          "tertiary": 2358.1,
+          "tertiary_link": 36.6,
+          "track": 18647.1,
+          "trunk": 8.8,
+          "trunk_link": 1.6,
+          "unclassified": 1090.4,
+          "via_ferrata": 0.1
+        }
+      }
+    }
+  ]
+}

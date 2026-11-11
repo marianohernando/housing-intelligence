@@ -1,0 +1,39 @@
+dataset_id: osm_red_peatonal
+source_id: openstreetmap
+name: Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
+domain: urbanism
+owner: OpenStreetMap contributors (extracto de Geofabrik)
+format: PBF
+geography: line
+geo:
+  resolution: line
+  crs_expected: EPSG:4326
+  geometry_type: LineString
+temporal_resolution: null
+refresh_policy: daily
+landing_url: https://download.geofabrik.de/europe/spain/madrid.html
+resources:
+- name: madrid-latest.osm.pbf
+  format: PBF
+  url: https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf
+  file_name: madrid-latest.osm.pbf
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 3
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 4
+  ingestion_ease: 4
+  notes: >-
+    CORE-005. Fuente complementaria, no es dataset CM: solo aporta la red de calles para medir
+    a pie la distancia a los equipamientos publicados por la Comunidad de Madrid (D-070, D-199).
+    ODbL: los indicadores derivados citan "© OpenStreetMap contributors".
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-11T18:00:00+00:00'
+notes: >-
+  La red vive solo en Bronze/Silver (network.npz); a la base de datos solo llegan los
+  indicadores calculados sobre ella. El extracto se actualiza a diario en origen; cada descarga
+  con contenido nuevo es una versión nueva.

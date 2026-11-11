@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "osm_red_peatonal",
+      "role": "primary",
+      "path": "data/bronze/datasets/osm_red_peatonal/e6fa128706ac/madrid-latest.osm.pbf",
+      "sha256": "e6fa128706ac271a7631acfeadb2750624e8f084cba6d20af043ce356875a187",
+      "bytes": 85566792,
+      "url": "https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf",
+      "retrieved_at": "2026-11-11T10:36:30.684083+00:00"
+    }
+  ],
+  "checksum": "a3206c2d1d5f80a19a2564ccf59037d50aa06aa27639df013d89c4a06da1ad50",
+  "parser_version": "osm-walk-1.0.1",
+  "dataset_version": "2026-11-11-a3206c2d1d5f",
+  "correlation_id": "e7993c5f54a9492dbadf0870e7853872",
+  "silver": "data/silver/osm_red_peatonal/a3206c2d1d5f/network.npz"
+}

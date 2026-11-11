@@ -61,6 +61,8 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert pipeline.attribute_columns, dataset_id
         elif pipeline.kind == "gtfs_feed":
             assert catalog.datasets[dataset_id].domain.value == "transport", dataset_id
+        elif pipeline.kind == "osm_walk_network":
+            assert pipeline.walkable_highways, dataset_id
         else:
             assert pipeline.metric_ids(), dataset_id
 
