@@ -106,6 +106,17 @@ Cómo se detecta:
 | Arranque en frío | El contenedor se apaga tras 5 min sin tráfico ([container runtime](https://vercel.com/docs/functions/runtimes/container)) | Medido en la evidencia del despliegue |
 | Supabase free | La base pasa a solo lectura por encima de 500 MB (la demo ocupa 100 MB). Los proyectos inactivos se pausan | Abrir la demo durante la semana anterior |
 
+## Vigilancia diaria
+
+[`.github/workflows/smoke-demo.yml`](../../.github/workflows/smoke-demo.yml) ejecuta `scripts/smoke_demo.sh` contra la URL pública todos los días a las 07:30 (hora de Madrid). También se puede lanzar a mano:
+
+- desde la pestaña Actions → smoke-demo → Run workflow, con `base_url` opcional;
+- o con `gh workflow run smoke-demo.yml`.
+
+Si falla, GitHub manda un email a la cuenta que cambió por última vez la línea `cron`.
+
+**Solo se activa cuando el fichero está en `main`:** GitHub ejecuta los `schedule` y los `workflow_dispatch` desde la rama por defecto. Cubre del 17 al 26 nov si `claude/sprint-1-public` se fusiona en `main` antes del 17.
+
 ## Si la demo se cae
 
 1. **Diagnóstico (1 minuto):** `make smoke-demo`.
