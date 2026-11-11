@@ -26,14 +26,20 @@ def list_admin_units(
     engine: Annotated[Engine, Depends(get_engine)],
     level: AdminLevel = AdminLevel.MUNICIPIO,
     simplify_m: Annotated[float, Query(ge=0, le=MAX_SIMPLIFY_METERS)] = 25.0,
+    parent: Annotated[
+        str | None, Query(description="Only direct children of this admin_unit_id")
+    ] = None,
 ) -> Envelope[AdminUnitsData]:
     with engine.connect() as conn:
-        result = admin_units_geojson(conn, level, simplify_m)
+        result = admin_units_geojson(conn, level, simplify_m, parent)
     features = result.feature_collection["features"]
     warnings = (
         []
         if features
-        else [f"{ErrorCode.INSUFFICIENT_DATA.value}: no units for level {level.value}"]
+        else [
+            f"{ErrorCode.INSUFFICIENT_DATA.value}: no units for level {level.value}"
+            + (f" under {parent}" if parent else "")
+        ]
     )
     return Envelope(
         data=AdminUnitsData(type="FeatureCollection", features=features, lineage=result.lineage),
