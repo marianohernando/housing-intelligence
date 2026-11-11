@@ -18,6 +18,8 @@ from hi_domain.fit import ZoneData, ZoneFit, evaluate, ranking_key
 from hi_domain.reality_check import reality_check
 
 RESULT_LIMIT, NEAR_MISS_LIMIT = 10, 5
+# D-200: the search ranks municipios, with Madrid capital split into its 21 districts.
+SPLIT_BY_DISTRICT = ("28079",)
 HIGHLIGHTS = 3
 INFANT_MAX_AGE = 2  # escuela infantil (0-3): first cycle of educación infantil
 
@@ -72,6 +74,14 @@ def is_near_miss(fit: ZoneFit) -> bool:
     )
 
 
+def painted_match(fit: ZoneFit) -> int | None:
+    """The % painted on the map. A zone with an UNKNOWN condition and no FAIL may or may not
+    fit, so it is never painted as a fit (None); a zone that fails keeps its % to compare."""
+    if not fit.failed and not fit.passes_all:
+        return None
+    return fit.match_pct
+
+
 def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutcome:
     fits = [evaluate(scenario, zone) for zone in zones]
     passing = [f for f in fits if f.passes_all]
@@ -81,7 +91,7 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
         all_zones=[
             ZoneMatch(
                 zone=f.data.zone,
-                match_pct=f.match_pct,
+                match_pct=painted_match(f),
                 passes_all=f.passes_all,
                 failed_constraints=f.failed,
             )

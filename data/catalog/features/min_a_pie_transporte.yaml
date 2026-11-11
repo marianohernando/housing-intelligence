@@ -35,3 +35,4 @@ limitations:
   - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
   - "Cada destino se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
   - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."
+fit: {role: walk_minutes, need: transporte}

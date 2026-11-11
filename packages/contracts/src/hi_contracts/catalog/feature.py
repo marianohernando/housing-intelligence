@@ -61,6 +61,26 @@ class GapRowBinding(BaseModel):
         return self
 
 
+class FitBinding(BaseModel):
+    """Where the people search (CORE-003) reads the feature: the rent per m² of the budget
+    condition, or the walking minutes to the nearest service of a kind (a ScenarioState
+    NeedKey). The search has no feature id written in its code."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    role: Literal["rent_m2", "walk_minutes"]
+    need: str | None = Field(
+        default=None, pattern=r"^[a-z_]+$", description="NeedKey, only for walk_minutes"
+    )
+
+    @model_validator(mode="after")
+    def _need_only_for_walking(self) -> Self:
+        if (self.role == "walk_minutes") != (self.need is not None):
+            msg = "walk_minutes needs `need`; rent_m2 takes none"
+            raise ValueError(msg)
+        return self
+
+
 class FeatureSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -84,6 +104,7 @@ class FeatureSpec(BaseModel):
     tests: list[str] = Field(default_factory=list[str])
     limitations: list[str] = Field(default_factory=list[str])
     gap_row: GapRowBinding | None = None
+    fit: FitBinding | None = None
 
     @model_validator(mode="after")
     def _productive_features_are_tested(self) -> Self:

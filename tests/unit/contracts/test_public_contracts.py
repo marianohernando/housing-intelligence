@@ -127,8 +127,9 @@ def test_search_fixture_never_shows_a_grade_and_maps_every_zone() -> None:
     )
     assert all(0 <= z.match_pct <= 100 and 1 <= len(z.facts) <= 5 for z in result.results)
     assert len(result.all_zones) == result.reality_check.zones_evaluated
-    unknown = [z for z in result.all_zones if z.match_pct is None]
-    assert len(unknown) == result.reality_check.zones_unknown  # unknown is never painted as a fit
+    unknown = [z for z in result.all_zones if not z.passes_all and not z.failed_constraints]
+    assert len(unknown) == result.reality_check.zones_unknown
+    assert all(z.match_pct is None for z in unknown)  # unknown is never painted as a fit
 
 
 def test_gap_method_cut_offs_are_ordered() -> None:

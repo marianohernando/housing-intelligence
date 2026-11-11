@@ -886,7 +886,7 @@ CORE-003. Método `fit-0.1`, en `hi_domain/fit.py`, `hi_domain/reality_check.py`
    - **Servicio a pie** (transporte → parada; salud → centro de salud; colegios → colegio con primaria): vale 1 hasta la ventana de D-210 y baja a 0 en el triple de esa ventana.
      - Ventanas: transporte 5 min, centro de salud 15 y los demás 10. Si la persona fija sus minutos, se usan los suyos.
      - Ejemplo: un colegio a 10 min vale 1, a 20 min vale 0,5 y a 30 min o más vale 0.
-   - **Trabajo:** distancia en línea recta desde el centro de la zona. Vale 1 hasta 3 km y 0 desde 30 km. Es un proxy declarado (no es tiempo de trayecto), con confidence 0,5.
+   - **Trabajo:** distancia en línea recta desde el centro de la zona. Vale 1 hasta 2 km (unos 30 min a pie) y 0 desde 20 km, que es más o menos el radio del municipio de Madrid más la primera corona. Es un proxy declarado, porque la distancia no es tiempo de trayecto, y lleva confidence 0,5. Es un parámetro de diseño: se sustituye por el tiempo real con CORE-009.
    - **Margen de presupuesto:** vale 1 si el coste es el 75 % del presupuesto o menos, y 0 si lo iguala.
    - **Zonas verdes, seguridad y «sin escaleras»:** aún sin datos (D-205, del 19 al 22 nov). Nunca puntúan como 0: salen como hecho «sin datos» y bajan la confidence.
 6. **Paso a %:** media ponderada de las utilidades de los criterios con dato, por 100 y redondeada.
@@ -905,7 +905,13 @@ CORE-003. Método `fit-0.1`, en `hi_domain/fit.py`, `hi_domain/reality_check.py`
    - **trayecto:** sin límite.
 
    `binding_constraint` es la condición que deja fuera más zonas por sí sola. Relajar nunca quita zonas (test de propiedades).
-9. **Pendiente:**
+9. **Caso demo con los datos del 11 nov** (`scripts/golden_search.py`, `evidence/gate-04/2026-11-11/phase-core003-f2.txt`): pareja con 2 hijos (4 y 8 años), 1.500 €/mes, colegio a 10 min como requisito, prioridades colegios, transporte y salud, y trabajo en la Castellana como preferencia.
+   - **Recuento:** 32 de las 199 zonas cumplen todo y 15 quedan desconocidas (sin alquiler publicado o sin minutos a pie).
+   - **Primera:** Ciudad Lineal, con un 99 %: colegio a 5 min, parada a 2 min, centro de salud a 11 min, a 3,2 km de Azca y unos 1.075 €/mes por 77 m².
+   - **Siguientes:** Hortaleza, Tetuán y Moratalaz (97 %). Chamartín sale novena (95 %), porque sus 1.384 €/mes dejan poco margen.
+   - **Reality Check:** la condición que más zonas quita es el colegio a 10 min. Con 5 min más aparecen 17 zonas, y con 150 € más, 1.
+   - **Casi:** Salamanca, que falla solo por presupuesto (≈ 1.526 €/mes).
+10. **Pendiente:**
    - diversificación y soluciones Pareto (§14): hoy el orden es solo por % de encaje;
    - tiempo de trayecto real (CORE-009);
    - ML/JEV.

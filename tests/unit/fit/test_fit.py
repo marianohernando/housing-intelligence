@@ -117,6 +117,7 @@ def test_unknown_never_passes_and_is_not_a_result() -> None:
     assert all(r.failed_constraints == [] for r in outcome.results)
     for match in outcome.all_zones:
         assert match.passes_all == (match.zone.code == "1")
+        assert (match.match_pct is None) == (match.zone.code != "1")  # never painted as a fit
 
 
 def test_failing_one_condition_is_a_near_miss_with_its_reason() -> None:

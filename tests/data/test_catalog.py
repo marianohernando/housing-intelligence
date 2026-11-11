@@ -5,6 +5,7 @@ from typing import Any
 import pytest
 
 from hi_contracts.catalog.enums import LicenseStatus, Priority, TrustTier
+from hi_contracts.public import NeedKey
 from hi_ingestion.catalog.loader import Catalog, load_catalog
 
 CM_SOURCE = "comunidad_madrid_ckan"
@@ -203,3 +204,17 @@ def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Cat
                     continue
                 assert metric_id in catalog.metrics, (spec.feature_id, level, metric_id)
                 assert catalog.metrics[str(metric_id)].dataset_id in used, (spec.feature_id, level)
+
+
+def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
+    """CORE-003: the search finds its features through `fit`: one rent per m² and one walking
+    feature per NeedKey, computed at the municipio and distrito levels it ranks."""
+    bound = [s for s in catalog.features.values() if s.fit is not None]
+    rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
+    walks = {s.fit.need: s for s in bound if s.fit is not None and s.fit.role == "walk_minutes"}
+    assert len(rents) == 1
+    assert len(walks) == len([s for s in bound if s.fit and s.fit.role == "walk_minutes"])
+    assert set(walks) == {n.value for n in NeedKey}
+    for spec in bound:
+        levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
+        assert {"municipio", "distrito"} <= levels, spec.feature_id

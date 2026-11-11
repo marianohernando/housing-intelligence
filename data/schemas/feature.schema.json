@@ -90,6 +90,39 @@
       "title": "FeatureSource",
       "type": "object"
     },
+    "FitBinding": {
+      "additionalProperties": false,
+      "description": "Where the people search (CORE-003) reads the feature: the rent per m² of the budget\ncondition, or the walking minutes to the nearest service of a kind (a ScenarioState\nNeedKey). The search has no feature id written in its code.",
+      "properties": {
+        "need": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NeedKey, only for walk_minutes",
+          "title": "Need"
+        },
+        "role": {
+          "enum": [
+            "rent_m2",
+            "walk_minutes"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role"
+      ],
+      "title": "FitBinding",
+      "type": "object"
+    },
     "GapRowBinding": {
       "additionalProperties": false,
       "description": "Where the feature shows up in the per-zone list (GAP-001): the row's main indicator,\nor an extra one next to it (e.g. walking minutes).",
@@ -237,6 +270,17 @@
       "pattern": "^[a-z][a-z0-9_]{2,95}$",
       "title": "Feature Id",
       "type": "string"
+    },
+    "fit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FitBinding"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "formula": {
       "$ref": "#/$defs/FeatureFormula"

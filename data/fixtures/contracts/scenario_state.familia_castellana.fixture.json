@@ -21,7 +21,7 @@
       "lon": -3.693,
       "lat": 40.45,
       "days_per_week": 4,
-      "max_minutes": 40
+      "max_minutes": null
     }
   ],
   "nearby": [

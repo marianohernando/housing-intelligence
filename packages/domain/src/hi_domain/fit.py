@@ -50,7 +50,7 @@ DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.TRANSPORTE: 5,
 }
 WALK_ZERO_AT = 3.0  # utility falls linearly to 0 at three times the window
-NEAR_KM, FAR_KM = 3.0, 30.0  # straight line to a place of work: 1 within 3 km, 0 from 30 km
+NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 0 from 20 km
 STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
 BUDGET_MARGIN_SHARE = 0.25  # full utility when the cost is 75 % of the budget or less
 MAX_WALK_SHOWN = 60

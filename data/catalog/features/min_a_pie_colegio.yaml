@@ -33,3 +33,4 @@ limitations:
   - "Cada destino se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
   - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."
 gap_row: {row: colegio, role: extra, phrase: "minutos a pie hasta el colegio de primaria más cercano"}
+fit: {role: walk_minutes, need: colegio}

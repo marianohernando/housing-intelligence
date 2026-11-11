@@ -7,6 +7,7 @@ from typing import Any
 import h3
 import yaml
 
+from hi_contracts.public import ScenarioState
 from hi_domain.geo.bounds import is_within_madrid
 
 GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
@@ -75,3 +76,16 @@ def test_golden_zones_have_frozen_sections() -> None:
     for zone in zones:
         code = zone["expected_seccion_censal"]
         assert code and len(code) == 10 and code.startswith(zone["municipio_ine"]), zone["zone_id"]
+
+
+def test_golden_search_scenarios_are_valid_and_cover_the_demo_case() -> None:
+    """CORE-003: every golden search is a valid ScenarioState v2 and the demo case is there."""
+    scenarios = yaml.safe_load((GOLDEN / "search_scenarios.yaml").read_text())["scenarios"]
+    ids = {s["profile_id"] for s in scenarios}
+    assert "golden_family" in ids
+    assert ids <= {p["profile_id"] for p in _profiles()}
+    for item in scenarios:
+        scenario = ScenarioState.model_validate(item["scenario"])
+        assert all(a.max_minutes is None for a in scenario.anchors)  # no travel times yet
+        for anchor in scenario.anchors:
+            assert is_within_madrid(anchor.lon, anchor.lat), anchor.label
