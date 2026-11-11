@@ -8,7 +8,7 @@
 
 **Perfiles:** salen de `docs/09_datamad/25_plan_competicion.md` §4. Lo que valora cada miembro del jurado es una inferencia a partir de su trayectoria pública.
 
-> Las rutas `~/Desktop/DATAMAD/prompts/…` son documentos internos de coordinación, fuera del repo: no sirven como evidencia pública. **Pendiente de A:** registrarlos como D-xxx; entonces se cita la decisión.
+> Las decisiones del 11 nov están registradas como D-199 a D-207 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
@@ -58,9 +58,9 @@ Los portales enseñan la oferta de pisos; nosotros enseñamos la necesidad y el 
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §8.
 
 **10. ¿Cuánto cuesta mantenerlo?**
-Muy poco: la base de la demo cabe en el plan gratuito de Supabase y los datos se recargan copiando tablas ya validadas.
+Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base en el de Supabase, y los datos se recargan copiando tablas ya validadas. Para un uso comercial habría que pasar a planes de pago, porque el gratuito de Vercel no lo admite.
 - Evidencia: `evidence/gate-06/2026-11-11/supabase-sync-demo.txt` (base de la demo: 100 MB de los 500 del plan gratuito) · D-188.
-- Alojamiento: **pendiente de C** (OPS-001); añadir aquí su coste real.
+- Alojamiento: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4) (plan Hobby: «solo personal y no comercial»).
 
 ---
 
@@ -81,7 +81,7 @@ Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: 
 
 **14. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
 Sí, por eso Madrid se divide en sus 21 distritos. Además, la distancia a pie se calcula por sección censal, que es mucho más fina que el municipio.
-- Evidencia: `~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §2 · board CORE-005 · `evidence/gate-01/2026-11-11/osm_red_peatonal/`.
+- Evidencia: D-200 · board CORE-005 · `evidence/gate-01/2026-11-11/osm_red_peatonal/`.
 - Estado: distritos **pendiente de A** (DATA-012) y distancia a pie **pendiente de A** (CORE-005, Fases 3 y 4).
 
 **15. ¿Cómo calculáis el % de encaje?**
@@ -149,7 +149,7 @@ Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen re
 
 **28. ¿Incluís seguridad? Es delicado.**
 Solo si la persona la marca como prioridad y solo con datos oficiales agregados: actuaciones de la Policía Municipal por cada 1.000 habitantes y por distrito. Nunca nacionalidad ni etiquetas como «peligroso»; fuera de Madrid capital, SIN DATOS.
-- Evidencia: `~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §8.
+- Evidencia: D-204 y D-205.
 - Estado: extra **pendiente de A** (DATA-020, 19–22 nov). Si no está, decir «no lo incluimos todavía, y así es como lo haríamos».
 
 **29. ¿Funciona fuera de la Comunidad de Madrid?**
@@ -163,4 +163,4 @@ Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px 
 
 **31. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
-- Evidencia: `~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §1 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.
+- Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.

@@ -6,7 +6,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - **24 nov:** solo maquetar con capturas reales de la demo desplegada.
 - **Estado:** borrador del 11 nov. Lo marcado «pendiente de A/B/C» se cierra en el freeze del 23 nov.
 
-> Las rutas `~/Desktop/DATAMAD/prompts/…` son documentos internos de coordinación, fuera del repo: no sirven como evidencia pública. **Pendiente de A:** registrarlos como D-xxx; entonces se cita la decisión.
+> Las decisiones del 11 nov están registradas como D-199 a D-207 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
 
 ## El mensaje (del documento de la idea del 31 oct; solo el mensaje)
 - **Tesis:** «Otros te enseñan lo que hay. Nosotros te enseñamos lo que falta.»
@@ -20,7 +20,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - ninguna de sus cifras de ejemplo: zonas del Reality Check, 4.000–4.500 €/mes ni «10 conjuntos de datos»;
 - el barrio de ejemplo con coworking, gimnasio y «lo que la gente dice que necesita». La necesidad declarada es un siguiente paso y nunca se simula (D-194);
 - su estilo visual;
-- el nombre «Housing Intelligence», que solo puede ir en el pie como plataforma o equipo (`~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §1).
+- el nombre «Housing Intelligence», que solo puede ir en el pie como plataforma o equipo (D-199).
 
 ---
 
@@ -105,7 +105,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);
   - la base de la demo está cerrada a accesos directos (D-197);
   - los fixtures no llevan datos de contacto (D-198).
-- **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). El alojamiento de la web y la API está **pendiente de C** (OPS-001).
+- **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). La web y la API van en el plan gratuito Hobby de Vercel: 0 €/mes y sin dominio propio (`infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4)). Límite: Hobby solo admite uso no comercial; para cobrar a empresas habría que pasar a un plan de pago.
 - **Reproducible y abierto:**
   - Apache-2.0 (`LICENSE`, D-191);
   - `make` como entrada única;
@@ -113,7 +113,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
 ### Banda de enlaces (con QR)
-- Demo: **pendiente de C** (URL estable el 17 nov).
+- Demo: https://vida-facil-eight.vercel.app (**pendiente de verificación el 17 nov**, C).
 - Código: https://github.com/marianohernando/housing-intelligence
 
 ---
@@ -126,7 +126,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   1. «Cuéntanos tu hogar, tu presupuesto y dónde trabajas»: tarjeta «Tu búsqueda».
   2. «Zonas que encajan, con el porqué»: tarjeta de zona.
   3. «Qué falta en cada zona, con su fuente»: mini lista o pestaña «Qué falta».
-- Pie: «Demo en vivo: <URL> (pendiente de C)».
+- Pie: «Demo en vivo: vida-facil-eight.vercel.app».
 
 **Fuentes en la slide:** ninguna cifra nueva. Si la captura muestra cifras, son las de la API en ese momento.
 
@@ -148,7 +148,7 @@ Fuente única: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`. Los valores de 
 | Idioma | Español llano, sin anglicismos («Qué falta», «Cómo lo calculamos»; nunca «Análisis» ni «Metodología») |
 
 **Lo que no puede salir en ninguna slide:**
-- Nada de los mockups que no sea estilo. Llevan «Madrid 360», chips de discapacidad, un icono de usuario, foto de zona y «92/100» con barras; todo eso está descartado (`~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §1, §5 y §8; `CLAUDE.md` §13).
+- Nada de los mockups que no sea estilo. Llevan «Madrid 360», chips de discapacidad, un icono de usuario, foto de zona y «92/100» con barras; todo eso está descartado (D-199, D-202 y D-205; `CLAUDE.md` §13).
 - Notas sobre 100 o barras de puntuación: el encaje es un % con hechos debajo.
 - Fotos de zonas.
 - Etiquetas como «peligroso» ni datos de nacionalidad.
@@ -170,7 +170,7 @@ Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | **Pendiente de B** |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | **Pendiente de B** |
 | C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 2 (opcional) | **Pendiente de B** |
-| QR | Códigos QR de la demo y del repo | — | 3 | **Pendiente de C** (URL de la demo) |
+| QR | Códigos QR de la demo (https://vida-facil-eight.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
 
 ## Checklist del 24 nov (maquetar)
 1. Rebase de `hi-coord` y `uv run python pitch/build_datasets_cm.py --refresh-portal`. Si cambia el total de datasets CM o algún grupo, actualizar la slide 2.
