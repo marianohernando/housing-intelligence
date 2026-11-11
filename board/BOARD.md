@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | API para B · Fase 2 (`/geo/admin-units`) | verde | `12c834a` | `evidence/gate-04/2026-11-11/phase-apib-f2-geo.txt` | Nombres legibles («Las Rozas de Madrid»), como en `/gaps`, y `?parent=`: `ES.28.MUN.28079` devuelve los 21 distritos (0,03 MB frente a 0,54 MB). Las tildes que faltan en la fuente siguen faltando («Vicalvaro») |
 | 11 nov | A | API para B · Fase 1 (`/places`) | verde | `d7037b7` | `evidence/gate-04/2026-11-11/phase-apib-f1-places.txt` | `/places` filtra por `?admin_unit_id=` (municipio, distrito o sección, con la misma regla que los features) y por `?subcategory=` repetible. Transporte sale entero (14.982, 4,2 MB); Chamartín con metro y cercanías son 15 puntos. Tope 20.000 con aviso si se alcanza |
 | 11 nov | C → A | OPS-001 · PR #6 integrado | CI verde + gate local verde | `877d4fd` | `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md`, `evidence/gate-06/2026-11-11/merge-pr6.txt` | Demo pública sobre Supabase con `vf_api_ro` (smoke 6/6). `deploy.sh` repite el smoke una vez a los 20 s; un fallo real sigue saliendo con 1 y la sugerencia de rollback. Revisado con `reviewer`: fusionar; pendiente menor de C: contarlo en `infra/deploy/README.md` |
 | 11 nov | A | GAP-001 · Fase 0b (avisos por fila) | verde | `d3127d3` | `evidence/gate-04/2026-11-11/phase-gap001-f0b.txt` | `/gaps` trae un aviso por cada una de las 6 filas que aún no está calculada a ese nivel (`INSUFFICIENT_DATA: row <fila> not computed at <nivel> level yet`). Responde al punto 5 del PR #2 de B |
@@ -96,7 +97,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   1. ~~`/gaps`: un warning por cada fila esperada que no esté~~ → hecho en `d3127d3` (GAP-001 F0b).
   2. **Peticiones de B para la API** (PR #2), mejor antes del 14 nov:
      - ~~`/places` corta en 10.000 resultados y no filtra~~ → hecho en `d7037b7` (`?admin_unit_id=`, `?subcategory=` repetible, sin corte);
-     - `/geo/admin-units`: nombres de municipio con mayúsculas normales y filtro por padre (p. ej. los distritos de Madrid).
+     - ~~`/geo/admin-units`: nombres normales y filtro por padre~~ → hecho en `12c834a`. C tiene que redesplegar para que la API pública sirva las fases 0b, 1 y 2.
   3. CORE-005 Fase 3: método `network_walk_time` sobre `hi_domain.access`; 12 features (6 servicios × mediana de minutos y % de calle a ≤ N min) en sección, municipio y H3 r9, también por distrito con `formula.levels`; fixture OSM recortado.
   4. CORE-005 Fase 4: ejecución real, golden checks y Gate 3. ADR nuevo (D-199 ya es el nombre del producto): 4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min. D pide confirmar los 4,5 km/h.
   5. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
