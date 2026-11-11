@@ -2,6 +2,26 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Novedades del 11 nov (última hora), con el buscador ya encendido en producción.** Son para los textos que B dejó provisionales en los PR #9 y #10, marcados con «pending line D» en `apps/web/src`:
+- **Definitivos tal cual** (B puede quitar la marca):
+  - de la lista del PR #10, todos menos los cambios de abajo: resultados, «¿Y si cambias algo?», leyenda, tarjeta, «Lo quiero a un paseo» y «Trabajo en»;
+  - además, `movil.hoja.mapa`, `falta.fila.region`, `falta.fila.fuente` (con el número), la leyenda por fila, `zonas.ciudad_entera` y `carga.estado_zonas`.
+- **Cambian:**
+  - `cerca.item`: «a menos de {n} min andando» pasa a «a {n} min andando como mucho». Así coincide con la condición que devuelve la API («Colegio con primaria a 10 min andando como mucho») y con el caso de ejemplo. Además, «a menos de 10» dejaría fuera los 10 justos, y la API los cuenta.
+  - `cerca.servicio.transporte`: «Parada de transporte» pasa a «Parada de transporte público», como el hecho de la API («Parada de transporte público a 2 min andando»).
+  - `resultados.casi.ayuda`: «Fallan en una sola cosa.» pasa a «Cumplen todo menos una cosa.».
+  - `rc.opcion.cuenta`, `rc.cambio` y `leyenda.zonas`: con 1 zona va en singular («saldría 1 zona, 1 más»; «Con este cambio sale 1 zona.»). Hoy la web escribiría «saldrían 1 zona».
+  - `carga.fuentes`: la lista de «Cómo lo calculamos» dice «Cargando la lista de datos…»; vale «Cargando los conjuntos de datos…», que ya estaba aquí.
+- **Aún comparan con toda la Comunidad (D-213).** Quedan tres textos de la web con el método anterior. En producción se ven los tres:
+  - la primera de las «Tres reglas» de «Cómo lo calculamos» (`como-lo-calculamos/page.tsx`): va la de `pitch/metodologia.md` §1.1;
+  - `zonas.fila.intro` (`zonas/page.tsx`);
+  - `mapa.aria.fila` (`VidaMap.tsx`).
+- **Sin usar, se quitan:**
+  - `rc.opcion.aria`: un nombre accesible distinto del texto visible incumple WCAG 2.5.3;
+  - `zona.coste.alquiler`: el hecho de coste de la API ya trae la cifra, los m² y el aviso de que es orientativo.
+
+  `trabajo.dias` y `hogar.hijos.edades` se quedan como referencia: los rellena el caso de ejemplo, pero la web no deja cambiarlos.
+
 **Novedades del 11 nov (noche), para los textos que B dejó provisionales en el PR #2:**
 - **Barra de barrios:** `barrios.titulo` pasa a «Ir a un barrio», porque la barra solo mueve el mapa. Nuevos: `barrios.todo` («Todo {distrito}») y `barrios.ayuda`.
 - **«Qué falta»:** «Cambiar de zona» pasa a `falta.otra_zona` («Elegir otra zona»), el mismo texto que ya sale cuando la zona no existe.
@@ -11,7 +31,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
   - de navegación y carga: `movil.hoja.mapa`, `zonas.*`, `carga.zonas` y `carga.fuentes`.
 - **Nombres de fila:** `fila.mayores` y `fila.vivienda` igualan las etiquetas del catálogo: «Centros de mayores» y «Vivienda para familias».
 - **Método nuevo (D-213, `gap-0.2`):** cada zona se compara con los demás municipios de su tipo y no con toda la Comunidad. Cambian `estado.falta`, `estado.justo`, `estado.cubierto`, `falta.intro`, `falta.fila.referencia` y `portada.paso3`; hay `falta.fila.region` nuevo.
-- **Buscador (D-214, D-215):** cambian la ayuda de `zona.coste.alquiler` (el coste es orientativo y tira a la baja), `importa.colegios`, `trabajo.max_min` (la web envía el trabajo sin límite) y `presupuesto.compra.sin_datos`. La distancia al trabajo llega ya escrita en `facts` («A 3,2 km en línea recta de…»).
+- **Buscador (D-214, D-215):** cambian `importa.colegios`, `trabajo.max_min` (la web envía el trabajo sin límite) y `presupuesto.compra.sin_datos`. La distancia al trabajo llega ya escrita en `facts` («A 3,2 km en línea recta de…»).
 - **«Poco fiable» (`reliable: false`):** propongo `fila.zona_pequena`, «Zona pequeña para comparar», en lugar de «Pocos datos para saberlo con seguridad». El dato sí lo tenemos; lo que pasa es que en la zona vive muy poca gente. Además, «pocos datos» se confunde con SIN DATOS y con la fiabilidad del dato (sección 6), que es otra cosa.
 
 ## Reglas de escritura (D-199, D-202, D-204 y brief de diseño)
@@ -71,7 +91,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
 | `hogar.pareja` | En pareja | |
 | `hogar.hijos` | Con hijos | Al marcarlo aparece el contador |
 | `hogar.hijos.cuantos` | ¿Cuántos hijos? | Contador de 1 a 8 (`Household.minors`, máximo 8) |
-| `hogar.hijos.edades` | Edades (si quieres) | Opcional (`minor_ages`). Ayuda: «Nos sirve para saber si buscas escuela infantil o colegio.» |
+| `hogar.hijos.edades` | Edades (si quieres) | Opcional (`minor_ages`). Ayuda: «Nos sirve para saber si buscas escuela infantil o colegio.» Hoy no se muestra: las rellena el caso de ejemplo (4 y 8 años) y la web no deja cambiarlas |
 | `hogar.mayores` | Con mayores a cargo | Al marcarlo aparece el contador |
 | `hogar.mayores.cuantos` | ¿Cuántas personas mayores? | Contador de 1 a 4 (`seniors_in_care`, máximo 4) |
 | `hogar.contador.menos` | Quitar uno | `aria-label` del botón «−» |
@@ -97,20 +117,34 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | Clave | Texto | Notas |
 |---|---|---|
 | `trabajo.titulo` | Trabajo en | |
-| `trabajo.placeholder` | Escribe una calle, un barrio o un municipio | |
+| `trabajo.placeholder` | Escribe una estación, un distrito o un municipio | Sin calles: no hay búsqueda de calles sin un geocodificador externo. Los lugares son las estaciones del CRTM (`/places`) y las zonas del mapa |
 | `trabajo.ayuda` | Así miramos lo lejos que te queda cada zona. | |
-| `trabajo.dias` | ¿Cuántos días vas a la semana? | Opcional (`days_per_week`) |
+| `trabajo.dias` | ¿Cuántos días vas a la semana? | Opcional (`days_per_week`). Hoy no se muestra: lo rellena el caso de ejemplo (4 días) y la web no deja cambiarlo |
 | `trabajo.max_min` | Tardar como mucho {n} min | **Pendiente de A** (CORE-009, tiempo en transporte público, 19–22 nov). Hasta entonces no se muestra y la web envía el trabajo sin límite (`max_minutes: null`): con límite, ninguna zona pasaría (D-215, punto 2) |
-| `trabajo.sin_resultados` | No encontramos ese lugar. Prueba con otra calle o con el nombre del municipio. | |
+| `trabajo.transporte_pronto` | Tiempo en transporte: muy pronto | Etiqueta pequeña bajo el campo, en lugar de `trabajo.max_min` |
+| `trabajo.sin_resultados` | No encontramos ese lugar. Prueba con una estación o con el nombre del municipio. | |
+| `trabajo.encontrados` | {n} lugares encontrados. Usa las flechas para elegir uno. | Región viva del combobox. Con 1: «1 lugar encontrado. Usa las flechas para elegirlo.» |
+| `trabajo.lugar.estacion` | {estación} ({tipo}) | {tipo}: «metro», «Cercanías» o «Metro Ligero». Por ejemplo, «Nuevos Ministerios (metro)» |
+| `trabajo.lugar.distrito` | {distrito} (Madrid) | Por ejemplo, «Chamartín (Madrid)». Los municipios van solo con su nombre |
 | `trabajo.quitar` | Quitar este lugar | |
 
-### Cerca de casa (opcional, si B lo muestra)
-`ScenarioState.nearby` admite servicios a un paseo. El caso de ejemplo pide colegio a 10 min andando como mínimo.
+### «Lo quiero a un paseo»
+`ScenarioState.nearby`: servicios a un paseo. El caso de ejemplo pide colegio a 10 min andando como mucho, imprescindible.
 
 | Clave | Texto | Notas |
 |---|---|---|
 | `cerca.titulo` | Lo quiero a un paseo | |
-| `cerca.item` | {servicio} a menos de {n} min andando | Servicios: escuela infantil, colegio, centro de salud, farmacia, mayores y transporte (`NeedKey`) |
+| `cerca.item` | {servicio} a [{n}] min andando como mucho | Los minutos son un selector dentro de la frase. Antes, «a menos de {n} min andando»: ver las novedades de última hora, arriba |
+| `cerca.minutos.aria` | Minutos andando hasta {servicio} | `aria-label` del selector, con {servicio} en minúscula |
+| `cerca.servicio.escuela_infantil` | Escuela infantil | Nombres de `NeedKey` |
+| `cerca.servicio.colegio` | Colegio | |
+| `cerca.servicio.centro_salud` | Centro de salud | |
+| `cerca.servicio.farmacia` | Farmacia | |
+| `cerca.servicio.mayores` | Centro de mayores | |
+| `cerca.servicio.transporte` | Parada de transporte público | |
+| `cerca.anadir` | Añadir un servicio… | Primera opción del selector |
+| `cerca.anadir.aria` | Añadir un servicio a un paseo | `aria-label` del selector |
+| `cerca.quitar` | Quitar {servicio} | Con {servicio} en minúscula: «Quitar colegio» |
 | `cerca.obligatorio` | Imprescindible | Interruptor (`required`). Ayuda: «Si lo marcas, solo verás zonas que lo cumplen.» |
 
 ### Presupuesto (D-203)
@@ -135,8 +169,10 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `busqueda.boton` | Ver zonas que encajan |
 | `busqueda.boton.cargando` | Buscando zonas… |
 
-### Mientras el buscador no esté
-El buscador sale como «Muy pronto» hasta que la web lo conecte y producción lo encienda. `POST /api/v1/search` ya funciona con datos reales (CORE-003, D-215). La web lo enciende con `NEXT_PUBLIC_FEATURE_SEARCH=true` (`apps/web/src/lib/capabilities.ts`).
+### Si el buscador se apaga
+Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SEARCH=true`, `apps/web/src/lib/capabilities.ts`; `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11). Estos textos solo salen en dos casos:
+- si C vuelve a una versión sin buscador;
+- en el paquete sin red (`make demo-offline`), que compila la web sin ninguna variable `NEXT_PUBLIC_*` salvo la URL de la API (`infra/deploy/offline/demo_offline.sh`).
 
 | Clave | Texto | Notas |
 |---|---|---|
@@ -156,6 +192,16 @@ El buscador sale como «Muy pronto» hasta que la web lo conecte y producción l
 | `leyenda.mas` | Encaja más | Extremo violeta |
 | `leyenda.sin_datos` | Sin datos | Gris con borde discontinuo (`match_pct: null` nunca es 0) |
 | `leyenda.antes_de_buscar` | Haz tu búsqueda para ver qué zonas encajan contigo. | Antes del primer resultado |
+| `leyenda.cumple` | Cumple todo | Tras buscar: zonas con todas las condiciones en PASS |
+| `leyenda.no_cumple` | No cumple todo | Falla alguna condición |
+| `leyenda.zonas` | {n} zonas | Junto a cada clase. Con 1: «1 zona» |
+| `leyenda.ver` | ¿Qué quieres ver? | Selector del mapa (decisión de datamad-10). Opciones: «Encaje con tu búsqueda» y los nombres de las 6 filas (sección 5) |
+| `leyenda.fila.frente` | frente a los municipios de su tipo (urbanos o rurales). | Tras la definición de la fila elegida |
+| `leyenda.sin_calcular` | {n} zonas sin calcular todavía. | Con 1: «1 zona sin calcular todavía.» |
+| `leyenda.nivel_caido` | No hemos podido cargar {los municipios \| los distritos de Madrid}: salen sin calcular. | Con «Reintentar» |
+| `leyenda.lista` | Ver estas zonas en una lista | Abre `/zonas?fila=…` |
+| `mapa.aria.encaje` | Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa. | `aria-label` del mapa tras buscar |
+| `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo; la leyenda lo explica. | {fila} en minúscula. Hoy la web dice «frente a la Comunidad de Madrid»: método anterior a D-213 |
 | `mapa.zona.tooltip` | {zona}: {pct} % de encaje | Al pasar por encima |
 | `mapa.zona.tooltip.sin_datos` | {zona}: sin datos suficientes | |
 | `migas.region` | Comunidad de Madrid | Primer nivel de las migas |
@@ -176,10 +222,29 @@ El buscador sale como «Muy pronto» hasta que la web lo conecte y producción l
 | `zonas.distritos` | Distritos de Madrid | Grupo de la lista |
 | `zonas.municipios` | Municipios | Grupo de la lista |
 | `zonas.ninguna` | No hay ninguna zona con ese nombre. | Búsqueda sin resultados |
+| `zonas.ciudad_entera` | {ciudad} (toda la ciudad) | «Madrid (toda la ciudad)»: lleva a su lista de «Qué falta». En el mapa, Madrid capital son sus distritos |
+| `zonas.titulo` | Todas las zonas | Página `/zonas` |
+| `zonas.fila.intro` | Con su estado en {fila} frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS. | `/zonas?fila=…`, con {fila} en minúscula. Hoy la web dice «frente a la Comunidad de Madrid»: método anterior a D-213 |
+| `carga.estado_zonas` | Cargando el estado de cada zona… | Lista de zonas con una fila elegida |
 
 ---
 
-## 4. Tarjeta de zona
+## 4. Zonas que encajan y tarjeta de zona
+
+### Lista «Zonas que encajan»
+Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va en la hoja inferior.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `resultados.titulo` | Zonas que encajan | |
+| `resultados.de` | De {n} zonas de la Comunidad de Madrid. | Bajo `rc.varias` («Con tu búsqueda tal cual salen 32 zonas.»). {n} = `zones_evaluated` (hoy 199) |
+| `resultados.primeras` | Ver las {n} primeras | Se ven 5 y el botón abre hasta 10 |
+| `resultados.menos` | Ver menos | |
+| `resultados.resto` | Y {n} zonas más en el mapa. | Con 1: «Y 1 zona más en el mapa.» |
+| `resultados.casi.ayuda` | Cumplen todo menos una cosa. | Bajo `zona.cerca_de_encajar.titulo` («Casi encajan»). Antes, «Fallan en una sola cosa.» |
+| `resultados.cambiada` | Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día. | Los resultados son de la búsqueda anterior |
+
+### Tarjeta de zona
 
 | Clave | Texto | Notas |
 |---|---|---|
@@ -189,9 +254,11 @@ El buscador sale como «Muy pronto» hasta que la web lo conecte y producción l
 | `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`) |
 | `zona.hechos.titulo` | Lo que tienes aquí | Encima de los 3–5 hechos (`facts`) |
 | `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6 |
-| `zona.coste.alquiler` | Alquiler estimado: unos {importe} € al mes | `estimated_cost_eur` (D-214). Ayuda: «Para una vivienda de {m2} m², con el precio medio de los alquileres ya firmados en la zona. Uno nuevo suele costar más: tómalo como orientación.» |
-| `zona.coste.compra` | Precio estimado: unos {importe} € (orientativo) | |
-| `zona.coste.sin_datos` | Precio: sin datos en esta zona | |
+| `zona.coste.compra` | Precio estimado: unos {importe} € (orientativo) | Sin usar hoy: con compra no hay coste (D-214, punto 5). El alquiler llega como hecho de la API, con la cifra, los m² y el aviso («Alquiler medio ≈ 1.075 €/mes por 77 m² (14,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)»), y no lleva clave aquí |
+| `zona.coste.sin_datos` | Precio: sin datos en esta zona | Sin usar hoy, como `zona.coste.compra` |
+| `zona.no_cumple` | No cumple todo lo que pides. | Si la API no nombra la condición que falla |
+| `zona.no_sabemos` | No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno. | Zona con alguna condición `UNKNOWN` |
+| `zona.encaje.antiguo` | Este encaje es de tu búsqueda anterior. | Tarjeta abierta tras cambiar la búsqueda (`resultados.cambiada`) |
 | `zona.falta.titulo` | Qué falta aquí | Mini lista de 3 filas (`gap_highlights`) |
 | `zona.falta.ver_todo` | Ver todo lo que falta | Abre la pestaña «Qué falta» con esta zona |
 | `zona.boton` | Ver la zona | Del brief |
@@ -219,7 +286,7 @@ La barra **solo mueve el mapa**: la demo no tiene cifras por barrio y no las va 
 
 Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su tipo**, urbanos o rurales (Ley 45/2007), y no con toda la región. La línea de explicación vale para cualquier fila, porque la API ya orienta la comparación: por encima de 1, la zona está mejor que su referencia (`ratio_to_reference`). El texto de cada fila (valor, referencia de su tipo y, entre paréntesis, la de toda la Comunidad) llega en `explanation` y se muestra debajo.
 
-| Clave | Etiqueta | Línea de explicación | Icono (propuesta, **pendiente de B**) |
+| Clave | Etiqueta | Línea de explicación | Icono (en producción, como se propuso) |
 |---|---|---|---|
 | `estado.falta` | FALTA | Tiene claramente menos que los municipios de su tipo, y no es por el tamaño de la zona. | Círculo con exclamación |
 | `estado.justo` | JUSTO | Tiene menos que los municipios de su tipo, pero no tanto como para decir que falta. | Círculo con una raya |
@@ -297,7 +364,7 @@ Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su t
 
 ## 7. «¿Y si cambias algo?» (Reality Check)
 
-Aparece cuando salen pocas zonas o ninguna (brief). Las cifras y las etiquetas de cada opción (`label`, por ejemplo «+100 €/mes») llegan de la API. Al tocar una opción, la web reenvía `relaxed_scenario`.
+Siempre visible bajo «Zonas que encajan». Va plegado a la opción que más zonas añade y se despliega solo con 5 zonas o menos (decisión de datamad-10; `FEW_ZONES`, PR #10). No salen las opciones que añaden 0 zonas. Las cifras y las etiquetas de cada opción (`label`, por ejemplo «+150 €/mes») llegan de la API. Al tocar una opción, la web reenvía `relaxed_scenario`.
 
 | Clave | Texto | Notas |
 |---|---|---|
@@ -305,10 +372,14 @@ Aparece cuando salen pocas zonas o ninguna (brief). Las cifras y las etiquetas d
 | `rc.ninguna` | Con tu búsqueda tal cual no sale ninguna zona. | `zones_passing = 0` |
 | `rc.una` | Con tu búsqueda tal cual sale 1 zona. | |
 | `rc.varias` | Con tu búsqueda tal cual salen {n} zonas. | |
+| `rc.cambio` | Con este cambio salen {n} zonas. | En lugar de `rc.varias` tras aplicar una opción. Con 1: «Con este cambio sale 1 zona.»; con 0: «Con este cambio no sale ninguna zona.» |
 | `rc.intro` | Mira cuántas salen si cambias una sola cosa: | |
-| `rc.opcion` | {label}: {n} zonas | `zones_if_relaxed` |
-| `rc.opcion.aria` | Probar con {label}. Saldrían {n} zonas. | |
+| `rc.opcion` | {label} | Primera línea de cada opción |
+| `rc.opcion.cuenta` | saldrían {n} zonas, {añadidas} más | Segunda línea. {n} = `zones_if_relaxed`, {añadidas} = `added_zones`. Con 1 zona: «saldría 1 zona, 1 más». El nombre accesible de la opción es su texto visible (WCAG 2.5.3) |
 | `rc.boton` | Probar así | En cada opción |
+| `rc.mas` | Ver todas las opciones | Con el bloque plegado |
+| `rc.menos` | Ver menos | |
+| `rc.sin_opciones` | Cambiar una sola cosa no añade zonas. | Ninguna opción añade zonas |
 | `rc.sin_dato` | En {n} zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. | `zones_unknown` > 0 |
 | `rc.limite` | Lo que más limita tu búsqueda es: {condición} | `binding_constraint` |
 | `rc.nota` | No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. | Frase del mensaje de la idea (sin cifras) |
@@ -368,7 +439,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 | `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. | https://www.crtm.es | Obligatorio con enlace |
 | `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. | https://datos.madrid.es | En uso desde DATA-012 (padrón y panel de distritos). Condiciones vigentes: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); no fijan un texto de cita, así que se usa el `attribution_text` del catálogo con la licencia añadida |
 | `pie.osm` | © OpenStreetMap contributors, ODbL. | https://www.openstreetmap.org/copyright | Red peatonal (`osm_red_peatonal`) |
-| `pie.mapa_base` | Mapa: OpenFreeMap © OpenMapTiles. Datos de © OpenStreetMap. | openfreemap.org · openmaptiles.org · openstreetmap.org/copyright | Texto del ejemplo de OpenFreeMap. **Pendiente de B:** confirmar el proveedor de teselas; si MapLibre ya pinta la atribución en el mapa, aquí no se repite |
+| `pie.mapa_base` | Mapa: OpenFreeMap © OpenMapTiles. Datos de © OpenStreetMap. | openfreemap.org · openmaptiles.org · openstreetmap.org/copyright | Texto del ejemplo de OpenFreeMap. Hecho: el mapa de producción ya pinta «OpenFreeMap © OpenMapTiles Data from OpenStreetMap» en su esquina, así que en el pie no se repite (capturas `prod_*` de `evidence/map-004/2026-11-11/`) |
 | `pie.independiente` | Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento ni del CRTM. | | Cumple el «no sugerir respaldo» del CRTM y evita parecer un servicio oficial |
 | `pie.proyecto` | Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026 | | «Housing Intelligence» solo como plataforma o equipo (D-199) |
 | `pie.codigo` | Código abierto (Apache-2.0) | https://github.com/marianohernando/housing-intelligence | D-191 |

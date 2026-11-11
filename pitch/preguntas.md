@@ -69,7 +69,7 @@ Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base e
 **11. ¿Cómo decidís que algo «falta»?**
 Comparamos la tasa de la zona con la de los demás municipios de su tipo, rurales o urbanos. FALTA exige dos cosas: menos del 80 % de esa referencia (la regla de los cuatro quintos) y que la diferencia no se explique por el azar del tamaño de la zona; CUBIERTO es llegar al 100 %, y lo demás es JUSTO. Es una señal para priorizar, no un veredicto, y el método está declarado y versionado (`gap-0.2`).
 - Evidencia: D-213 (puntos 1 y 2: 29 CFR 1607.4(D); intervalo exacto de Poisson de Garwood al 95 %, como en Fingertips y en los gráficos en embudo de Spiegelhalter, 2005) · `packages/domain/src/hi_domain/gaps.py` · `apps/api/src/hi_api/services/gap_reference.py` · `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
-- Estado: hecho en la API (GAP-001 F5, `d02574f`, `f626e1f`). La demo pública lo enseña cuando C despliegue: hoy aún da `gap-0.1` (**pendiente de C**).
+- Estado: hecho en la API y en producción (GAP-001 F5, `d02574f`, `f626e1f`; `GET /api/v1/gaps/municipio/28079` da `gap-0.2`, comprobado el 11 nov).
 
 **12. ¿Por qué comparáis con municipios del mismo tipo y no con toda la región?**
 Porque la tasa depende del tipo de territorio: cada pueblo tiene su consultorio, y los municipios rurales tienen 14,8 veces más centros de atención primaria por habitante que los urbanos. Con la media de la región, ningún distrito de Madrid salía cubierto en centros de salud, y la diferencia entre rural y urbano es significativa en las 6 filas (χ², p < 0,05). Usamos la definición legal de medio rural de la Ley 45/2007 (menos de 30.000 habitantes y menos de 100 por km²), y ninguna zona se compara consigo misma: Madrid es la mitad de la población urbana.
@@ -80,7 +80,7 @@ Porque la tasa depende del tipo de territorio: cada pueblo tiene su consultorio,
 **13. ¿Qué pasa con los municipios pequeños, donde una ratio se dispara?**
 Si en la zona se esperan menos de 3,69 casos, que es el límite superior al 95 % de un recuento de cero, la zona es demasiado pequeña para comparar y nunca sale FALTA, aunque se ve su valor. Por ejemplo, La Acebeda, con 70 habitantes y sin farmacia, sale JUSTO y marcada como «zona pequeña para comparar». Además, por debajo de un umbral de población el dato se publica con confianza 0,5, y si falta sale SIN DATOS, nunca un cero.
 - Evidencia: D-213 (punto 3, `reliable: false`) · `phase-gap001-f5-review.txt` (La Acebeda, farmacia) · `small_population_threshold` en los YAML de las 6 filas · `null_policy`.
-- Estado: hecho en la API; la web lo enseñará como «Zona pequeña para comparar» (**pendiente de B**, `pitch/textos_web.md`).
+- Estado: hecho en la API y en producción. La Acebeda, farmacia: JUSTO con `reliable: false` (`GET /api/v1/gaps/municipio/28001`, comprobado el 11 nov). La leyenda del mapa por fila lo enseña como «Zona pequeña para comparar» (en colegios, 140 zonas: `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11).
 
 **14. «Centros por habitante» no es lo mismo que «plazas». ¿No es engañoso?**
 Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: «Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual». Donde haya un dato de capacidad oficial, lo usaremos.
@@ -95,7 +95,7 @@ Sí, por eso Madrid se divide en sus 21 distritos, y la distancia a pie se calcu
 Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.1`).
 - Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
 - Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
-- Estado: hecho en la API (CORE-003). En la web, **pendiente de B y C**.
+- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). El caso de la Castellana da lo mismo que en local: Ciudad Lineal, 99 % (`evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`).
 
 **17. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
 Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
@@ -114,7 +114,7 @@ Todavía no en tiempo: hoy cuenta la distancia en línea recta desde la zona al 
 **20. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
 Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. En cada fila damos los minutos en los que llega la mitad de las calles de la zona; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.
 - Evidencia: D-210 · D-211 · `data/catalog/features/min_a_pie_*.yaml` y `pct_calle_*.yaml` · `scripts/check_walk_golden.py` y `evidence/gate-03/2026-11-11/phase-core005-f5.txt` (La Acebeda: farmacia a 109,7 min, D-211) · estudio del Ayuntamiento: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf («Velocidad de desplazamiento estimada en 4 Km/h»).
-- Estado: hecho a 4 km/h, decisión de Mariano del 11 nov (CORE-005 Fase 5, `ad2129a`, D-211, Gate 3 PASS). En la API, con GAP-001 F1 (`2d05d78`), y en la web (`evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`); online cuando C despliegue la web nueva. El % de calle a 10 minutos también está calculado (`pct_calle_*.yaml`), pero no se enseña.
+- Estado: hecho a 4 km/h, decisión de Mariano del 11 nov (CORE-005 Fase 5, `ad2129a`, D-211, Gate 3 PASS). En la API, con GAP-001 F1 (`2d05d78`), y en producción. Por ejemplo, Madrid capital: «A pie hasta el centro de salud más cercano: 12 min» (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`). El % de calle a 10 minutos también está calculado (`pct_calle_*.yaml`), pero no se enseña.
 
 ---
 
@@ -143,16 +143,16 @@ Cada fuente se recarga según su propia frecuencia de publicación, y en los GTF
 **26. ¿Cómo citáis las fuentes en la propia aplicación?**
 Cada fila de la lista y cada resultado llevan los datasets de los que salen, con el enlace a su ficha, la versión y la licencia. Además, la web muestra la atribución que pide cada licencia, incluido «Powered by CRTM».
 - Evidencia: campo `datasets` de la API (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) · `attribution_text` en `data/catalog/sources/*.yaml`.
-- Estado: hecho en la web nueva: pie con Comunidad de Madrid, Ayuntamiento, «Powered by CRTM» y OpenStreetMap (`evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`). Online cuando C la despliegue.
+- Estado: hecho en producción: pie con Comunidad de Madrid, Ayuntamiento, «Powered by CRTM» y OpenStreetMap (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`).
 
 ---
 
 ## Generales (cualquier miembro)
 
 **27. ¿Qué hicisteis durante la competición y qué ya existía?**
-El trabajo previo está identificado con el tag `pre-datamad` (22 oct): la geografía, los 10 primeros datasets y el mapa base. Desde el 7 nov hemos añadido el transporte del CRTM, 5 datasets más, la lista de lo que falta con sus 6 filas, la red peatonal, la web y el despliegue. [Solo si el buscador funciona en la demo: «y el buscador».]
+El trabajo previo está identificado con el tag `pre-datamad` (22 oct): la geografía, los 10 primeros datasets y el mapa base. Desde el 7 nov hemos añadido el transporte del CRTM, 5 datasets más, la lista de lo que falta con sus 6 filas, la red peatonal, la web, el buscador y el despliegue.
 - Evidencia: `README.md` («Trabajo previo a DATAMAD») · tag `pre-datamad` = `cf39459` · D-174 · `board/BOARD.md` (07 — DONE).
-- Estado: lista, web y buscador hechos (el buscador, en la API: CORE-003, D-215). Conectarlo en la web y encenderlo en producción, **pendiente de B y C**.
+- Estado: hecho. La lista, la web y el buscador están en producción; el buscador, desde el 11 nov (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
 
 **28. ¿Habéis usado IA?**
 Sí, como asistente de programación, que las bases permiten (§7), y nosotros respondemos de todo el código y los resultados. El producto no usa IA para calcular nada: todas las cifras salen de reglas deterministas, versionadas y con tests.
@@ -181,8 +181,8 @@ La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geo
 
 **34. ¿Es accesible para personas mayores?**
 Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px y contraste AA verificado también sobre el cristal. El estado de cada fila nunca depende solo del color: siempre va con texto e icono.
-- Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` (rama `claude/s1-web`, PR #2).
-- Estado: verificación en navegador **pendiente de B**.
+- Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` · axe WCAG 2.2 AA en producción sin fallos (`prod-buscador-check.json`, PR #11).
+- Estado: hecho. axe AA da 0 fallos en producción (11 nov): en escritorio, en la portada, los resultados, la tarjeta de zona y la compra; en el móvil, en los resultados y la tarjeta.
 
 **35. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.

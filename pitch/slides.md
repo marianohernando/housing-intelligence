@@ -34,7 +34,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 
 **Composición:**
 - Mitad izquierda: título, lema y descripción sobre `--bg`.
-- Mitad derecha: captura **C5** (zona en 3D) dentro de una tarjeta de cristal grande, con el contorno violeta de la zona visible. Hoy es la captura real de B (`evidence/map-004/2026-11-11/c_zona_3d_desktop.png`, Chamartín), recortada para enseñar el mapa 3D y la tarjeta «Qué falta aquí». Esa tarjeta tiene los estados de `gap-0.1`, así que **hay que rehacerla con `gap-0.2`** (D-213; **pendiente de B**, tras el despliegue de C).
+- Mitad derecha: captura **C5** (zona en 3D) dentro de una tarjeta de cristal grande, con el contorno violeta de la zona visible. Es la captura de producción de B con `gap-0.2` (`evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png`, Chamartín), recortada para enseñar el mapa 3D y la tarjeta «Qué falta aquí». El recorte deja fuera el título de la barra de barrios, que en esa captura aún dice «Barrios de la zona»: es de antes del despliegue del PR #9.
 - Sin más elementos.
 
 **Fuentes en la slide:** ninguna cifra.
@@ -81,22 +81,22 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 ### Utilidad: personas que buscan dónde vivir
-**Condición:** esta tarjeta va así solo si el 24 nov la demo desplegada tiene el buscador encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`). El cálculo ya está hecho en la API (`POST /api/v1/search`, CORE-003 y CORE-006, D-214 y D-215). Falta que B lo conecte en la web (**pendiente de B**) y que producción lo encienda (**pendiente de C**; el orquestador avisa). Si no, va la **versión sin buscador**, sin «próximamente»:
+**Va con buscador:** producción lo tiene encendido desde el 11 nov y verificado (`NEXT_PUBLIC_FEATURE_SEARCH=true`; `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11: smoke 7/7, axe AA sin fallos, consola limpia). La **versión sin buscador** queda de reserva, sin «próximamente», por si el 24 nov la demo vuelve a enseñar «Muy pronto»:
 - Título: «Mira qué tienes cerca de casa».
 - «Minutos a pie, por la calle, hasta el colegio, el centro de salud o la farmacia más cercanos.» (CORE-005, D-211; en la web: `evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`).
 - «Cada dato con su fuente y su fiabilidad.»
 - Captura: la tarjeta de zona con «A pie: N min» (recorte de C5) en lugar de C2 y C3.
 
-Versión con buscador:
+Versión con buscador (la que vale):
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, y lo que no tiene datos nunca cuenta como 0 (D-215; `pitch/metodologia.md` §1.3).
-- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado con los datos del 11 nov (D-215, punto 9 · `evidence/gate-04/2026-11-11/phase-core003-f2.txt`, base local):
-  - encajan **32 de las 199 zonas**;
-  - 1.ª **Ciudad Lineal, 99 %**: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 11 min, a 3,2 km en línea recta de Azca y unos 1.075 €/mes por 77 m²;
-  - después Hortaleza, Tetuán y Moratalaz (97 %). Chamartín sale 8.ª (95 %), porque sus 1.384 €/mes dejan poco margen.
-- **Reality Check:** cuántas zonas aparecen al relajar cada condición. En el caso demo lo que más quita es el colegio a 10 min: con 5 min más aparecen 17 zonas, y con 150 € más al mes, 1. Casi encaja Salamanca, que solo falla por presupuesto (≈ 1.526 €/mes). Captura **C3**.
+- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 11 nov (`evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11), igual que en la base local (D-215, punto 9 · `evidence/gate-04/2026-11-11/phase-core003-f2.txt`):
+  - encajan **32 de las 199 zonas**, y en 15 falta algún dato;
+  - 1.ª **Ciudad Lineal, 99 %**: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 11 min, a 3,2 km en línea recta de Azca y «Alquiler medio ≈ 1.075 €/mes por 77 m²»;
+  - después, Tetuán, Hortaleza y Moratalaz, **empatadas al 97 %**: no se presenta un orden entre ellas. Chamartín sale 8.ª (95 %), porque sus 1.384 €/mes dejan poco margen (base local).
+- **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo lo que más limita es el colegio a 10 min: «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más»; «+150 €/mes: saldrían 33 zonas, 1 más». Casi encaja Salamanca, que solo falla por presupuesto (≈ 1.526 €/mes; base local). Captura **C3**.
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Límite que se dice si preguntan:** el trabajo cuenta por distancia en línea recta, como preferencia. El tiempo en transporte público llega con CORE-009 (**pendiente de A**).
-- Antes de maquetar, comprobar estas cifras en la demo desplegada: el buscador lee la base de Supabase, cuya sincronización está pendiente de Mariano (`board/BOARD.md`, «Blocked»). Capturas **C1–C3**: **pendiente de B**, cuando lo conecte.
+- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas **C1–C3**: las de producción de C (PR #11).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b):
@@ -113,7 +113,7 @@ Versión con buscador:
   - **FALTA:** 0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos, 0,56. Ratio 0,67 (0,6681): un tercio menos, y con tanta población la diferencia es significativa.
   - **Matiz, si preguntan:** ningún distrito por sí solo basta para afirmarlo. Los 21 salen JUSTO en centros de salud; por ejemplo, Chamartín tiene 0,47 (ratio 0,84).
   - **A pie:** la mitad de las calles de Madrid está a 11,6 min o menos de un centro de salud; la web lo redondea a «12 min» (`min_a_pie_centro_salud`, municipio 28079, versión 2, `feature_value` leído el 11 nov).
-  - **Antes de maquetar:** la demo pública aún da `gap-0.1` (hoy, Madrid sale FALTA frente a 0,59). Hay que comprobar estas cifras en `/gaps` de la demo cuando C despliegue `gap-0.2` (**pendiente de C**). La captura **C4** se rehace sobre Madrid capital (**pendiente de B**).
+  - **Comprobado en producción el 11 nov:** `GET /api/v1/gaps/municipio/28079` da `gap-0.2`, con 0,371 frente a 0,5553 (ratio 0,6681). La captura **C4** de B es de Madrid capital en producción (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`).
   - **Ya no vale «Chamartín: faltan centros de salud»:** con D-213, Chamartín pasa a JUSTO.
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
@@ -127,7 +127,7 @@ Versión con buscador:
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);
   - la base de la demo está cerrada a accesos directos (D-197);
   - los fixtures no llevan datos de contacto (D-198).
-- **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). La web y la API van en el plan gratuito Hobby de Vercel: 0 €/mes y sin dominio propio (`infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4)). Límite: Hobby solo admite uso no comercial; para cobrar a empresas habría que pasar a un plan de pago.
+- **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). La web y la API van en el plan gratuito Hobby de Vercel: 0 €/mes y sin dominio propio (`infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md`). Límite: Hobby solo admite uso no comercial; para cobrar a empresas habría que pasar a un plan de pago.
 - **Reproducible y abierto:**
   - Apache-2.0 (`LICENSE`, D-191);
   - `make` como entrada única;
@@ -135,7 +135,7 @@ Versión con buscador:
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
 ### Banda de enlaces (con QR)
-- Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov: smoke 6/6, `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6)).
+- Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11).
 - Código: https://github.com/marianohernando/housing-intelligence
 
 ---
@@ -146,8 +146,8 @@ Versión con buscador:
 - Encima, abajo a la derecha, la captura **C6** (móvil, 390 px) en un marco de teléfono sencillo, sin marca de fabricante.
 - Tres notas de cristal numeradas que apuntan a la captura:
   1. «Cuéntanos tu hogar, tu presupuesto y dónde trabajas»: tarjeta «Tu búsqueda».
-  2. «Zonas que encajan, con el porqué»: tarjeta de zona.
-  3. «Qué falta en cada zona, con su fuente»: mini lista o pestaña «Qué falta».
+  2. «Zonas que encajan, con el porqué»: cabecera de la tarjeta de zona (% de encaje y hechos).
+  3. «Qué falta en cada zona, con su fuente»: mini lista «Qué falta aquí» de la tarjeta.
 - Pie: «Demo en vivo: vidafacil-madrid.vercel.app».
 
 **Fuentes en la slide:** ninguna cifra nueva. Si la captura muestra cifras, son las de la API en ese momento.
@@ -183,17 +183,19 @@ Fuente única: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`. Los valores de 
 ## Capturas necesarias
 Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440 × 900 (escritorio) y 390 × 844 (móvil) y con densidad 2×. Se guardan en `pitch/capturas/` con estos nombres. B puede adelantarlas en `evidence/map-004/<fecha>/`.
 
-El deck ya usa las de B del 11 nov (`evidence/map-004/2026-11-11/`, web local con datos reales): `pitch/deck/build.py` las toma de ahí si no hay una en `pitch/capturas/`. Son de antes de D-213, así que C4, C5 y C7 se rehacen con `gap-0.2`; el build lo avisa y `--final` no deja pasar sin ellas.
+El deck ya usa las capturas de producción del 11 nov. `pitch/deck/build.py` las toma de la evidencia si no hay una con el mismo id en `pitch/capturas/`:
+- C4–C7 son de B (`evidence/map-004/2026-11-11/prod_*`), con `gap-0.2`. Se hicieron antes de desplegar el PR #9, así que algunos textos son anteriores. Los recortes los dejan fuera; ver cada fila.
+- C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`), en la rama `claude/s1-deploy` (PR #11). Hasta que se fusione, el build las da por faltantes y `--final` no deja pasar.
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
-| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Pendiente de B**, cuando conecte el buscador (la API ya da `all_zones` para la coropleta: D-215) |
-| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Pendiente de B** (la API ya da los hechos: D-215) |
-| C3 | Bloque Reality Check con cifras reales de la API | 1440 | 3 | **Pendiente de B** (la API ya lo calcula: D-215) |
-| C4 | Pestaña «Qué falta» de la zona del ejemplo (Madrid capital): 6 filas con valor, referencia, confianza y datasets enlazados | 1440 | 3 | Hecha por B el 11 nov sobre Chamartín (`c_que_falta_desktop.png`; también `c4_que_falta_completa_*`). **Rehacer con `gap-0.2` sobre Madrid capital** (B, tras el despliegue de C) |
-| C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B el 11 nov (`c_zona_3d_desktop.png`, Chamartín). **Rehacer con `gap-0.2`**: su tarjeta enseña los estados de antes (B) |
-| C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B el 11 nov (`c_zona_3d_mobile.png`). No enseña estados: vale tal cual |
-| C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 3 (Viabilidad) | Hecha por B el 11 nov (`c_como_lo_calculamos_desktop.png`). **Rehacer** cuando la página tenga el texto de D-213 (`pitch/metodologia.md` 1.1 y 1.4; B) |
+| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Hecha por C en producción (`prod-buscador-c1_busqueda_desktop.png`, PR #11): caso de la Castellana y tarjeta de Ciudad Lineal |
+| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | Hecha por C en producción (`prod-buscador-c2_tarjeta_zona_desktop.png`, PR #11). El hueco de la slide 3 enseña la cabecera: «99 % de encaje» y «La 1.ª que más encaja» |
+| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | Hecha por C en producción (`prod-buscador-c3_y_si_cambias_desktop.png`, PR #11): el bloque desplegado. El hueco enseña la primera opción, «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más» |
+| C4 | Pestaña «Qué falta» de la zona del ejemplo (Madrid capital): 6 filas con valor, referencia, confianza y datasets enlazados | 1440 | 3 | Hecha por B en producción con `gap-0.2` (`prod_c4_madrid_que_falta_desktop.png`). El hueco enseña los valores de centros de salud: Madrid 0,37 y otros municipios urbanos 0,56. La entrada y la leyenda de esa captura aún comparan con «el conjunto de la Comunidad»: son de antes del PR #9, y el recorte las deja fuera |
+| C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B en producción con `gap-0.2` (`prod_c5_chamartin_3d_desktop.png`, Chamartín). El recorte deja fuera el título de la barra, «Barrios de la zona», que hoy se llama «Ir a un barrio»; se ven solo los barrios |
+| C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B en producción (`prod_c5_chamartin_3d_mobile.png`). No enseña estados |
+| C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 3 (Viabilidad) | Hecha por B en producción (`prod_c7_como_lo_calculamos_desktop.png`). El hueco enseña «Cómo sale el % de encaje»: la primera de las «Tres reglas» aún compara con toda la Comunidad, también en producción. Cuando B la cambie (`pitch/metodologia.md` 1.1), se puede rehacer y volver a enseñar las reglas |
 | QR | Códigos QR de la demo (https://vidafacil-madrid.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
 
 ## Checklist del 24 nov (maquetar)

@@ -32,19 +32,17 @@ ROOT = PITCH.parent
 BUILD = DECK / "build"
 CAPTURES = PITCH / "capturas"
 PDF_NAME = "VidaFacil_DATAMAD2026.pdf"
-# Real captures by line B (MAP-004 evidence). A pitch/capturas/<id>.png with the same id wins.
-B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"
-B_CAPTURE_FILES = {
-    "C4": B_CAPTURES / "c_que_falta_desktop.png",
-    "C5": B_CAPTURES / "c_zona_3d_desktop.png",
-    "C6": B_CAPTURES / "c_zona_3d_mobile.png",
-    "C7": B_CAPTURES / "c_como_lo_calculamos_desktop.png",
-}
-# B's captures taken before D-213 (gap-0.2) still show the old statuses or texts.
-B_CAPTURES_TO_RETAKE = {
-    "C4": "«Qué falta» de Madrid capital con gap-0.2 (D-213)",
-    "C5": "tarjeta de zona con gap-0.2 (D-213)",
-    "C7": "«Cómo lo calculamos» con el texto de D-213",
+# Production captures of 11 Nov. A pitch/capturas/<id>.png with the same id wins.
+B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"  # line B: zone, «Qué falta», method page
+C_CAPTURES = ROOT / "evidence" / "gate-06" / "2026-11-11-deploy"  # line C: search (PR #11)
+EVIDENCE_CAPTURES = {
+    "C1": C_CAPTURES / "prod-buscador-c1_busqueda_desktop.png",
+    "C2": C_CAPTURES / "prod-buscador-c2_tarjeta_zona_desktop.png",
+    "C3": C_CAPTURES / "prod-buscador-c3_y_si_cambias_desktop.png",
+    "C4": B_CAPTURES / "prod_c4_madrid_que_falta_desktop.png",
+    "C5": B_CAPTURES / "prod_c5_chamartin_3d_desktop.png",
+    "C6": B_CAPTURES / "prod_c5_chamartin_3d_mobile.png",
+    "C7": B_CAPTURES / "prod_c7_como_lo_calculamos_desktop.png",
 }
 
 sys.path.insert(0, str(PITCH))
@@ -194,7 +192,7 @@ def qr_svg(url: str) -> str:
 
 
 def capture_file(shot: str) -> Path | None:
-    for candidate in (CAPTURES / f"{shot}.png", B_CAPTURE_FILES.get(shot)):
+    for candidate in (CAPTURES / f"{shot}.png", EVIDENCE_CAPTURES.get(shot)):
         if candidate is not None and candidate.exists():
             return candidate
     return None
@@ -309,17 +307,10 @@ def main() -> None:
     problems += check_pdf(pdf)
 
     pending = re.findall(r'data-pending="([^"]+)"', page)
-    retake = [
-        f"{shot}: {why}"
-        for shot, why in B_CAPTURES_TO_RETAKE.items()
-        if capture_file(shot) == B_CAPTURE_FILES.get(shot)
-    ]
     print(f"Capturas que faltan: {', '.join(missing) or 'ninguna'}")
-    print(f"Capturas que hay que rehacer: {'; '.join(retake) or 'ninguna'}")
     print(f"Marcas pendientes: {'; '.join(pending) or 'ninguna'}")
     if args.final:
         problems += [f"falta la captura {shot}" for shot in missing]
-        problems += [f"rehacer la captura {item}" for item in retake]
         problems += [f"pendiente: {item}" for item in pending]
     print(f"Escrito {pdf.relative_to(ROOT)} y vistas previas en {BUILD.relative_to(ROOT)}/")
     if problems:

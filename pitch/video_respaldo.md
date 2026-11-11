@@ -3,7 +3,7 @@
 ## Para qué sirve
 Es el plan B de la final del 26 nov: si cae la wifi o la demo, se pone este vídeo en lugar de los bloques 2 y 3 del guion (`pitch/guion.md`, «Antes de empezar», punto 4). Cuenta el mismo recorrido que la demo en directo y se entiende solo, también sin sonido, gracias a los rótulos.
 
-- **Cuándo se graba:** el 23 nov (freeze), sobre la demo desplegada y verificada (https://vidafacil-madrid.vercel.app). Así coincide con lo que verá el jurado. Antes no: hasta el 16–17 nov faltan piezas de A, B y C.
+- **Cuándo se graba:** el 23 nov (freeze), sobre la demo desplegada y verificada (https://vidafacil-madrid.vercel.app). Así coincide con lo que verá el jurado. Antes no: hasta el freeze la web todavía puede cambiar.
 - **Quién:** la voz es de Mariano; el montaje lo puede hacer la línea D con las tomas.
 - **Dónde se guarda:** **no se sube al repo** (es binario y pesa). Se guardan 3 copias:
   - en el escritorio del portátil de la final;
@@ -33,8 +33,8 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 |---|---|---|---|---|
 | 1 | 0:00–0:08 | 8 s | 14 (≤ 15) | 6 s |
 | 2 | 0:08–0:20 | 12 s | 24 (≤ 26) | 11 s |
-| 3 | 0:20–0:38 | 18 s | 33 (≤ 39) | 15 s |
-| 4 | 0:38–0:55 | 17 s | 27 (≤ 37) | 12 s |
+| 3 | 0:20–0:38 | 18 s | 32 (≤ 39) | 15 s |
+| 4 | 0:38–0:55 | 17 s | 28 (≤ 37) | 13 s |
 | 5 | 0:55–1:07 | 12 s | 24 (≤ 26) | 11 s |
 | 6 | 1:07–1:22 | 15 s | 21 (≤ 32) | 10 s |
 | 7 | 1:22–1:44 | 22 s | 34 (≤ 47) | 16 s |
@@ -43,10 +43,12 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 
 **Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
-**Si el 23 nov el buscador sigue saliendo «Muy pronto»** (ya calcula en la API, D-215; falta conectarlo y encenderlo: **pendiente de B y C**; `apps/web/src/lib/capabilities.ts`), los planos 2, 3 y 4 no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
+**El buscador está encendido en producción desde el 11 nov** (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11), así que los planos 2, 3 y 4 se graban.
+
+**Reserva: si el 23 nov la demo vuelve a enseñar «Muy pronto»** (C ha vuelto a una versión sin buscador), esos tres planos no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
 - **Plano 6 entra desde el mapa:** clic en un distrito de la región (propuesta: Chamartín) y vuelo a 3D. Se alarga hasta 30 s y suma la tarjeta «Qué falta aquí» con «A pie: N min».
 - **Locución añadida:** «Y cuánto se tarda andando, por las calles de verdad: [N] minutos hasta el centro de salud más cercano».
-- **Plano 5:** pasa detrás del 6 (la fuente se abre desde una fila de «Qué falta»).
+- **Plano 5:** pasa detrás del 6. Desde la zona, «Ver todo lo que falta» y la fuente de una fila.
 - **El resto:** pausas más largas en los planos 7 y 8.
 
 Se vuelve a contar con el comando de arriba.
@@ -64,8 +66,8 @@ Vida Fácil te ayuda a encontrar tu sitio en Madrid con datos abiertos oficiales
 <!-- voz:p1:fin -->
 
 ### Plano 2 · 0:08–0:20 · El caso de ejemplo
-- **Acción:** clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (`textos_web.md`, `portada.ejemplo.boton`; texto final **pendiente de B**).
-- **Se ve:** la tarjeta «Tu búsqueda» rellena: «Con hijos (2)», «Colegios», «Trabajo en: Castellana», «Hasta 1.500 € al mes».
+- **Acción:** clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (`textos_web.md`, `portada.ejemplo.boton`). Rellena la búsqueda y la lanza.
+- **Se ve:** la tarjeta «Tu búsqueda» rellena con el caso. Se recorre con el cursor: «En pareja», «Con hijos» (2), «Colegios», «Transporte» y «Salud», «Colegio a 10 min andando», «Trabajo en» y el alquiler de hasta 1.500 € al mes.
 - **Rótulo:** «Pareja con 2 hijos · alquiler hasta 1.500 €/mes · trabajo en la Castellana».
 - **Fuente:** `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`. Si A cambia el caso precargado, se cambian la locución y el rótulo.
 
@@ -74,51 +76,50 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 <!-- voz:p2:fin -->
 
 ### Plano 3 · 0:20–0:38 · Zonas que encajan
-- **Acción:** clic en «Ver zonas que encajan». Esperar a que se coloree el mapa y señalar la tarjeta de zona con el cursor, despacio.
-- **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje» y 3–5 hechos con su fiabilidad.
+- **Acción:** señalar el mapa ya coloreado y la lista «Zonas que encajan». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio.
+- **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje», «La 1.ª que más encaja» y 5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** la API ya lo calcula (D-215; caso real: Ciudad Lineal, 99 %, `evidence/gate-04/2026-11-11/phase-core003-f2.txt`). Pantalla **pendiente de B**.
+- **Estado:** hecho en producción. El 11 nov la 1.ª era Ciudad Lineal, con un 99 % (`evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11).
 
 <!-- voz:p3:inicio -->
-Pulsamos «Ver zonas que encajan». El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
+La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
 <!-- voz:p3:fin -->
 
 ### Plano 4 · 0:38–0:55 · ¿Y si cambias algo?
-- **Acción:** bajar hasta el bloque «¿Y si cambias algo?», señalar las opciones y pulsar una. El mapa se recalcula.
-  - Si el caso precargado no hace aparecer el bloque, antes se baja el presupuesto con el slider a [Y] €/mes (`pitch/guion.md`, nota del bloque 2).
+- **Acción:** cerrar la tarjeta (×) y bajar hasta «¿Y si cambias algo?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Probar así» en la primera. El mapa se recalcula y sale «Ahora ves las zonas con: [opción]».
 - **Se ve:** «Con tu búsqueda tal cual salen [N] zonas» y las opciones con sus cifras de la API.
 - **Rótulo:** «Con tu búsqueda: [N] zonas · [opción]: [N] zonas».
-- **Estado:** la API lo calcula (D-215: colegio a 15 min, +17 zonas; +150 €/mes, +1). Pantalla **pendiente de B**. Con 32 zonas, el bloque puede no aparecer: ver la nota del bloque 2 del guion.
+- **Estado:** hecho en producción. El 11 nov: «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más» y «+150 €/mes: saldrían 33 zonas, 1 más» (`prod-buscador-check.json`, PR #11).
 
 <!-- voz:p4:inicio -->
-¿Y si salen pocas? Con su búsqueda tal cual salen [N] zonas. Si cambian una sola cosa, por ejemplo [opción], salen [N]. Un toque y se aplica.
+¿Y si quieren más opciones? Con su búsqueda tal cual salen [N] zonas. Si cambian una sola cosa, por ejemplo [opción], salen [N]. Un toque y se aplica.
 <!-- voz:p4:fin -->
 
 ### Plano 5 · 0:55–1:07 · De dónde sale cada dato
-- **Acción:** en la tarjeta de zona, clic en «¿De dónde sale?» y después en «Abrir en el portal». Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve.
-- **Se ve:** el nombre del conjunto de datos, su versión y su licencia, y luego la ficha del portal CM.
+- **Acción:** «Volver a mi búsqueda», abrir otra vez la tarjeta de la 1.ª zona y pulsar «Ver todo lo que falta». En una fila, «De dónde sale: [N] conjuntos de datos» y clic en uno. Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve. En el montaje se corta entre clics: en 12 s no cabe el recorrido entero.
+- **Se ve:** los nombres de los conjuntos de datos de la fila, cada uno enlazado, y luego la ficha del portal CM con su licencia.
 - **Rótulo:** «Cada dato enlaza a su fuente oficial».
-- **Estado:** **pendiente de B** (panel de procedencia).
+- **Estado:** hecho en producción: la lista de «Qué falta» enlaza cada conjunto a su ficha (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`). La tarjeta del buscador no tiene enlace a la fuente: por eso se pasa por «Qué falta».
 
 <!-- voz:p5:inicio -->
 Cada dato dice de dónde sale. Aquí, la ficha oficial en el Portal de Datos Abiertos de la Comunidad de Madrid, con su licencia.
 <!-- voz:p5:fin -->
 
 ### Plano 6 · 1:07–1:22 · La zona en 3D
-- **Acción:** clic en «Ver la zona». Dejar que la cámara vuele y se incline; no tocar nada durante el vuelo.
+- **Acción:** en la misma lista de «Qué falta», clic en «Ver la zona». Dejar que la cámara vuele y se incline; no tocar nada durante el vuelo.
 - **Se ve:** la zona en 3D con contorno violeta y etiquetas de colegios, centros de salud y estaciones, y las migas «Madrid › [distrito]» o «Comunidad de Madrid › [municipio]».
 - **Rótulo:** «[zona] en 3D».
-- **Estado:** **pendiente de B**. Si el 3D no está, se graba la vista 2D y se quita «en tres dimensiones».
+- **Estado:** hecho en producción (`evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png`, Chamartín). Si el 3D no carga el 23, se graba la vista 2D y se quita «en tres dimensiones».
 
 <!-- voz:p6:inicio -->
 Entramos en la zona en tres dimensiones: sus colegios, sus centros de salud y sus estaciones, sacados de los datos oficiales.
 <!-- voz:p6:fin -->
 
 ### Plano 7 · 1:22–1:44 · Qué falta
-- **Acción:** clic en la pestaña «Qué falta». Recorrer las filas con el cursor de arriba abajo, despacio.
+- **Acción:** pestaña «Qué falta» y elegir «Madrid (toda la ciudad)» en la lista de zonas, o abrir `/que-falta?zona=municipio/28079`. Recorrer las filas con el cursor de arriba abajo, despacio.
 - **Se ve:** las 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS, cada una con su valor, la referencia de los municipios de su tipo, la fiabilidad, los minutos a pie y de dónde sale.
 - **Rótulo:** «Comparado con los municipios de su tipo, urbanos o rurales».
-- **Zona:** la misma que en el bloque 3 del guion: Madrid capital (`/que-falta?zona=municipio/28079`). Con `gap-0.2` (D-213), centros de salud sale FALTA y farmacias CUBIERTO (`data/fixtures/contracts/zone_gap_list.madrid.fixture.json`). Se comprueba en la demo cuando C despliegue `gap-0.2` (**pendiente de C**).
+- **Zona:** la misma que en el bloque 3 del guion: Madrid capital (`/que-falta?zona=municipio/28079`). Con `gap-0.2` (D-213), centros de salud sale FALTA y farmacias CUBIERTO (`data/fixtures/contracts/zone_gap_list.madrid.fixture.json`). Comprobado en producción el 11 nov (`GET /api/v1/gaps/municipio/28079` y captura `prod_c4_madrid_que_falta_desktop.png`).
   - Tiene que tener al menos una fila FALTA y otra CUBIERTO.
 
 <!-- voz:p7:inicio -->

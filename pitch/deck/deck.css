@@ -188,9 +188,22 @@ a {
   display: none;
 }
 
-/* Recortes de las capturas reales de B (evidence/map-004): cada hueco enseña la parte que cuenta */
+/* Recortes de las capturas de producción (build.py, EVIDENCE_CAPTURES). Cada hueco enseña la parte
+   que cuenta, con la proporción del hueco, y deja fuera los textos anteriores al despliegue del PR #9
+   (pitch/slides.md, «Capturas necesarias») */
+/* C2: la cabecera de la tarjeta, entera; el fondo blanco del hueco rellena lo que sobra */
+.shot[data-shot="C2"] img {
+  object-view-box: inset(4% 5.1% 78% 5.1%);
+  object-fit: contain;
+  object-position: center;
+}
+
+.shot[data-shot="C3"] img {
+  object-view-box: inset(11% 5.1% 57.2% 5.1%);
+}
+
 .shot[data-shot="C4"] img {
-  object-view-box: inset(45% 52.6% 41% 3%);
+  object-view-box: inset(14.5% 54.2% 81.3% 4.6%);
 }
 
 .shot[data-shot="C5"] img {
@@ -198,7 +211,7 @@ a {
 }
 
 .shot[data-shot="C7"] img {
-  object-view-box: inset(10% 44% 70% 2%);
+  object-view-box: inset(67.2% 44.9% 16.7% 3.1%);
 }
 
 /* Marca de pendiente: se ve en los borradores y build.py --final la rechaza */
@@ -588,21 +601,21 @@ a {
   font-size: 34px;
 }
 
-/* Posiciones por defecto según la maqueta del brief (búsqueda a la izquierda, mapa, zona a la
-   derecha). Se ajustan el 24 nov sobre la captura real. */
+/* Sobre la captura C1 de producción: 1 junto a «Tu búsqueda», 2 en la cabecera de la tarjeta de
+   zona (% de encaje y hechos) y 3 en su «Qué falta aquí». Se revisan si cambia la captura. */
 .s4 .m1 {
-  left: 48px;
-  top: 64px;
+  left: 328px;
+  top: 260px;
 }
 
 .s4 .m2 {
-  left: 500px;
-  top: 300px;
+  left: 692px;
+  top: 142px;
 }
 
 .s4 .m3 {
-  left: 880px;
-  top: 96px;
+  left: 692px;
+  top: 457px;
 }
 
 /* Móvil 390 × 844 superpuesto al escritorio */
