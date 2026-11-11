@@ -11,7 +11,7 @@
 | # | Campo del formulario | Obligatorio | Qué poner |
 |---|---|---|---|
 | 1 | ¿Cómo vas a participar? | Sí | Marca: `Individualmente` (Mariano se presenta solo) |
-| 2 | Nombre y apellidos | Sí | **Lo rellenas tú:** tu nombre y apellidos, como en la inscripción |
+| 2 | Nombre y apellidos | Sí | Tu nombre completo, listo para copiar en `pitch/formulario.local.md`. Ese fichero es local y git lo ignora: el nombre completo no se guarda en el repo público |
 | 3 | Correo electrónico de contacto | Sí | **Lo rellenas tú:** el mismo email del formulario de inscripción inicial |
 | 4 | Teléfono de contacto | Sí | **Lo rellenas tú** |
 | 5 | Si participáis en equipo, indica los datos del resto de integrantes | Sí | Copia esto: `No aplica: participo individualmente.` |

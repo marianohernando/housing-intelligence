@@ -29,7 +29,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - **Vida Fácil** (logotipo de texto, Plus Jakarta Sans 700).
 - *Encuentra tu sitio en Madrid* (lema, en violeta).
 - Descripción, una frase: «El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.»
-- Integrantes: equipo de una persona, Mariano. El nombre completo lo pone el build del deck con `DECK_INTEGRANTES` y no se guarda en el repo público hasta que Mariano lo confirme en su sesión (`pitch/deck/README.md`).
+- Integrantes: equipo de una persona. En el PDF va el nombre completo, que el build toma de `DECK_INTEGRANTES` (`pitch/deck/README.md`). Decisión de Mariano (11 nov): en el repo público solo «Mariano»; el nombre completo va solo en el PDF del deck y en el formulario.
 - Pie: «DATAMAD 2026 · Datos abiertos de la Comunidad de Madrid · Código abierto (Apache-2.0) · Plataforma Housing Intelligence».
 
 **Composición:**

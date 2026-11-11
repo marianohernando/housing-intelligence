@@ -114,7 +114,7 @@ Al publicar el repositorio, el 11 nov, reescribimos el historial solo para quita
 
 Equipo de una persona: **Mariano** · [github.com/marianohernando](https://github.com/marianohernando)
 
-<!-- Nombre completo: se añade cuando Mariano lo confirme en su propia sesión (repo público). -->
+<!-- Decisión de Mariano (11 nov): en el repo público solo «Mariano»; el nombre completo va solo en el PDF del deck y en el formulario. -->
 
 Hecho con ayuda de asistentes de programación con IA, que las bases permiten (§7). Las decisiones, los datos y los resultados son responsabilidad del equipo.
 

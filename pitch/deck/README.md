@@ -27,7 +27,7 @@ DECK_INTEGRANTES="…" uv run --with segno==1.6.6 python pitch/deck/build.py --f
 Lo que rellena el build:
 - **Slide 2:** las filas de datasets y el número de la cabecera salen del catálogo y de la instantánea del portal, igual que `pitch/datasets_cm.md`. Solo los nombres cortos están escritos a mano, en `SHORT_NAMES`.
 - **QR:** los de la demo y el repo los genera `segno` (versión fijada; se usa con `--with`, sin tocar `uv.lock`).
-- **Equipo (slide 1):** el nombre sale de `DECK_INTEGRANTES`, para no guardarlo en el repo público hasta que Mariano lo confirme; sin la variable sale «Mariano» marcado como pendiente.
+- **Equipo (slide 1):** el nombre completo sale de `DECK_INTEGRANTES` al construir. Decisión de Mariano (11 nov): en el repo público solo «Mariano»; el nombre completo va solo en el PDF del deck y en el formulario. Sin la variable sale «Mariano» marcado como pendiente, y `--final` no deja pasar.
 
 ## Qué comprueba
 | Comprobación | Umbral | Resultado del 11 nov |
@@ -35,14 +35,14 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra «21», números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 6 capturas presentes | Hoy falla a propósito: faltan las capturas y 2 marcas (nombre completo y cortes de GAP-001) |
+| `--final` | Ninguna marca «pendiente» y las 6 capturas presentes | Hoy falla a propósito: faltan las capturas y la marca de los cortes de GAP-001 (el nombre se pasa con `DECK_INTEGRANTES`) |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
 ## Marcas pendientes hoy
 | Dónde | Qué falta | De quién |
 |---|---|---|
-| Slide 1 | Nombre completo del equipo (`DECK_INTEGRANTES`) | Mariano |
+| Slide 1 | Nada: el nombre completo se pasa con `DECK_INTEGRANTES` al construir | — |
 | Slide 3 | Cifras de Chamartín con los cortes finales de GAP-001 (hoy `gap-0.1`, provisionales) | A (GAP-001) |
 | Todas | Capturas C1–C6 | B / D el 24 nov |
 
