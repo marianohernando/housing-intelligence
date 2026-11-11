@@ -152,7 +152,10 @@ Es la demo completa en el portátil, sin Internet: la API (la misma imagen que e
 - proyecto de compose `vida-facil-offline`, con su propio volumen;
 - Postgres en `127.0.0.1:5441`, API en `:8012` y web en `:3012`.
 
-No toca la base de desarrollo (`housing`, puerto 5440) ni sus puertos 8010 y 3010. A la base de desarrollo solo la lee para hacer el volcado.
+Qué no toca nunca:
+- **La base de desarrollo** (`housing`, puerto 5440) ni sus puertos 8010 y 3010. A esa base solo la lee para hacer el volcado.
+- **El proyecto de compose de desarrollo.** El script fija `-p vida-facil-offline`, así que un `COMPOSE_PROJECT_NAME` del entorno, por ejemplo exportado desde `.env` por `make`, no puede hacer que sus comandos actúen sobre `housing-intelligence`.
+- **`apps/web/.next`.** La web se compila en una copia privada (`data/offline/web-build`). Así no pisa el `next dev` de A o de B, y no hereda ninguna `NEXT_PUBLIC_*` del entorno ni de un `.env`.
 
 ### Regenerarlo (23 nov, con Internet, tras el freeze)
 
@@ -162,16 +165,21 @@ En el checkout que se vaya a usar el 26, con la base de desarrollo arrancada y e
 make demo-offline-prepare
 ```
 
-Unos 25 s. El comando hace lo siguiente:
-1. Construye las imágenes (Postgres con PostGIS y la API).
-2. Recrea vacía la base offline.
-3. Comprueba que la migración de la base de origen coincide con la del checkout.
-4. Vuelca, en modo solo lectura, las 9 tablas del perfil demo (las mismas que `make supabase-sync PROFILE=demo`).
-5. Crea el esquema con Alembic y carga los datos.
-6. **Compara los conteos de filas** con la base de origen.
-7. Compila la web (Next.js standalone) contra `http://localhost:8012`.
+Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.** El comando hace lo siguiente:
+1. Construye las imágenes: Postgres con PostGIS, y la API.
+2. Comprueba que la base de origen responde. Si no, da un mensaje claro con la URL enmascarada y para.
+3. Comprueba que la migración de la base de origen es la misma que la del checkout.
+4. Vuelca, en modo solo lectura, las 9 tablas del perfil demo (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
+5. Crea el esquema con Alembic en una base **staging**, carga el volcado y **compara los conteos de filas** con la base de origen.
+6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada.
+7. Solo si todo lo anterior sale bien: la base staging pasa a ser la base de la demo y los ficheros `.tmp` sustituyen a los anteriores.
 
-El resultado se guarda en `data/offline/`, que git ignora: `demo-data.sql.gz` (41 MB el 11 nov) y `manifest.txt` (fecha, commit, migración y conteos).
+Si algo falla, el paquete anterior sigue intacto y `make demo-offline` funciona con él.
+
+El resultado se guarda en `data/offline/`, que git ignora:
+- `demo-data.sql.gz`: 41 MB el 11 nov;
+- `manifest.txt`: fecha, commit, migración y conteos;
+- `web/`: el servidor web listo para arrancar.
 
 - Si la base de origen va por delante del checkout con una migración que no toca las tablas de la demo (por ejemplo, un rol), se puede forzar con `DEMO_OFFLINE_ALLOW_HEAD_MISMATCH=1`.
 - El volcado sale de la base local de desarrollo, que es la que A sincroniza con Supabase. Si se quiere exactamente lo publicado, hay que regenerar justo después de `make supabase-sync PROFILE=demo`.
@@ -185,11 +193,13 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
 
 - `start` no construye ni descarga nada (`--no-build`). Comprobado con un navegador headless: 0 peticiones a hosts externos y la consola sin errores.
+- **`start` comprueba el volumen**, no solo el volcado. Si la base no coincide con `manifest.txt` (por ejemplo, porque se borró el volumen de Docker), la restaura desde `demo-data.sql.gz` en unos 11 s. Para eso necesita `uv`, que ya está instalado.
+- **`stop` solo mata su propio servidor web.** Antes comprueba que el pid de `web.pid` sigue siendo el de Next.js. Si algo falla a medias, el script lo dice: «Clean up with: make demo-offline-stop».
 - No hace falta calentarlo. Los procesos quedan arrancados y el propio `make demo-offline` pasa el smoke al terminar, así que la API ya ha respondido una vez.
 - **Requisitos el 26:**
   - Docker Desktop abierto, con las imágenes `vida-facil-offline-db:17` y `vida-facil-api:offline` ya construidas el 23;
-  - Node, con `node_modules` instalado;
-  - no hace falta `uv` ni Internet.
+  - Node;
+  - no hace falta Internet.
 - **Si un puerto está ocupado:** `make demo-offline-stop`, o cierra lo que use el 3012, el 8012 o el 5441.
 - **Ensayo:** hazlo el 24–25 con el wifi apagado. Si la web nueva de B usa teselas, fuentes o imágenes externas, lo verás ahí: tienen que venir incluidas en la build.
 
