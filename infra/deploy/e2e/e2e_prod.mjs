@@ -61,6 +61,7 @@ class Run {
   }
   async shot(page, step) {
     if (!opts.shots) return;
+    await page.waitForTimeout(1500); // headless WebKit and Firefox paint the WebGL map later than Chromium
     const file = `${this.browserName}-${this.device}-${step}.jpg`;
     await page.screenshot({ path: join(opts.out, file), type: "jpeg", quality: 70 });
     this.shots.push(file);
