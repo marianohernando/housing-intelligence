@@ -25,7 +25,13 @@ def _run(catalog: Catalog, dataset_id: str) -> tuple[PointsPipeline, Places]:
 
 
 @pytest.mark.parametrize(
-    "dataset_id", ["cm_centros_educativos", "cm_centros_sanitarios", "cm_centros_atencion_social"]
+    "dataset_id",
+    [
+        "cm_centros_educativos",
+        "cm_centros_sanitarios",
+        "cm_centros_atencion_social",
+        "cm_oficinas_farmacia",
+    ],
 )
 def test_fixture_passes_quality(catalog: Catalog, dataset_id: str) -> None:
     spec, places = _run(catalog, dataset_id)
@@ -71,6 +77,16 @@ def test_no_contact_data_in_attributes(catalog: Catalog) -> None:
         assert not {
             k for k in keys if any(t in k for t in ("telefono", "correo", "mail", "nif", "web"))
         }
+
+
+def test_pharmacies_are_named_by_address_never_by_holder(catalog: Catalog) -> None:
+    _, places = _run(catalog, "cm_oficinas_farmacia")
+    assert set(places.frame["subcategory"]) == {"Farmacia"}
+    assert places.frame["canonical_name"].str.startswith("Farmacia · CALLE").any()
+    assert not places.frame["canonical_name"].str.contains("redactado").any()
+    keys = {k for attrs in places.frame["attributes"] for k in attrs}
+    assert not any("titular" in k for k in keys)
+    assert (places.quarantine["reason"] == "missing or unparseable coordinates").any()
 
 
 def test_canonical_ids_are_stable() -> None:

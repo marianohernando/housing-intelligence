@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_alquiler_m2_municipios",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_alquiler_m2_municipios/bfaaf366deb8/alquiler-del-metro-cuadrado-mensual-de-viviendas-arrendadas-con-valor-catastral-para-municipios-.csv",
+      "sha256": "bfaaf366deb8dd17d01a6d0e65c7cd78c0caa7463b828d246f6fd531a175d508",
+      "bytes": 50444,
+      "url": "https://datos.comunidad.madrid/dataset/244448f3-7df9-4318-8603-92fb550fc865/resource/eb71efce-a7de-46d2-8447-dbf2c8d196b6/download/alquiler-del-metro-cuadrado-mensual-de-viviendas-arrendadas-con-valor-catastral-para-municipios-.csv",
+      "retrieved_at": "2026-11-10T19:39:30.216459+00:00"
+    }
+  ]
+}

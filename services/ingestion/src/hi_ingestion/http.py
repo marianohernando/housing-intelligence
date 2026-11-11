@@ -29,18 +29,21 @@ def make_client(timeout: float = 60.0) -> httpx.Client:
     )
 
 
-def _is_retryable(exc: BaseException) -> bool:
+def is_retryable(exc: BaseException) -> bool:
     if isinstance(exc, httpx.HTTPStatusError):
         return exc.response.status_code in RETRYABLE_STATUS
     return isinstance(exc, httpx.TransportError)
 
 
-@retry(
-    retry=retry_if_exception(_is_retryable),
+polite_retry = retry(
+    retry=retry_if_exception(is_retryable),
     stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=2, max=30),
     reraise=True,
 )
+
+
+@polite_retry
 def get_json(
     client: httpx.Client, url: str, params: dict[str, Any] | None = None
 ) -> tuple[Any, httpx.Response]:

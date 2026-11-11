@@ -95,4 +95,6 @@ discovery:
   external_id: 300087-0-indicadores-distritos
   harvested_at: '2026-10-20T11:16:21.700337+00:00'
 notes: P0-01 territorial profile (complements CM data) | curated from 2026-10-20_sprint_p0.yaml
-  | Auto-draft. composite=3.8; license_id=cc-by
+  | Auto-draft. composite=3.8; license_id=cc-by | DATA-012 Fase 3 (D-209) ingests only the
+  household indicators by district (Total hogares, Tamaño medio del hogar) from the CSV, the
+  first resource; complementary, not CM.

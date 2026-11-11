@@ -1,0 +1,9 @@
+metric_id: farmacias_total
+human_name: Farmacias
+description: Oficinas de farmacia abiertas al público según el registro sanitario.
+domain: health
+unit: farmacias
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_farmacias_municipios

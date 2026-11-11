@@ -1,15 +1,15 @@
 {
-  "version": "0.5.4",
-  "updated": "2026-10-22T00:11:29.629522+00:00",
-  "markdown_files": 275,
+  "version": "0.5.18",
+  "updated": "2026-11-11T14:21:52.176332+00:00",
+  "markdown_files": 277,
   "files": {
     "00_index/00_master_index.md": {
       "sha256": "1f57f07bded9a4082c4b339b44429c65ca27a8500be60d72a580d1223325ae52",
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "dce33c4c65a24d77c52686984b8468e01d31b17cd9058d6dbca282a9cccb551b",
-      "bytes": 33052
+      "sha256": "08919c316c0d36388ed6821e53bd6ad250f2a7c7643cee034812d7a0945fc38a",
+      "bytes": 48742
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -232,8 +232,8 @@
       "bytes": 758
     },
     "02_data/32_transport_ingestion_spec.md": {
-      "sha256": "a9ca11b738ce1c794263697c5623e54958e07da4555e2f3a7c25f5233cbcc9ec",
-      "bytes": 697
+      "sha256": "ee100c2d7222d235ac329116cdf8612fd4d2e7f30cec49c18509d459af43c707",
+      "bytes": 1688
     },
     "02_data/33_commercial_activity_ingestion.md": {
       "sha256": "2a4a344e093bc52797a2c474ecc9ede86f60993778d2b7f9369123587c83fadc",
@@ -639,6 +639,10 @@
       "sha256": "7df460422814f234b7b1f2204fdd308c2f26fcfd2b376cb0057e773fcd1222a6",
       "bytes": 498
     },
+    "04_technical_architecture/31_public_api_routes.md": {
+      "sha256": "331106815c05650738d1ee9df6438fb254ff1f592462c0ebce86c7a21520f2a9",
+      "bytes": 5655
+    },
     "05_map_ux/01_map_3d_digital_twin.md": {
       "sha256": "9bb353ceabb6802e8a05e2deec172d62a9996498dcecbcd70e5b463294eac0a3",
       "bytes": 562
@@ -896,8 +900,8 @@
       "bytes": 3246
     },
     "09_datamad/19_master_roadmap_oct20_nov26.md": {
-      "sha256": "3b126452f9d28f9598e9cb67a4912c2a196c18948df9b89be509b02088b49e12",
-      "bytes": 7646
+      "sha256": "621b44bebc5795e824965aba66ed0b3dfae9fdf36337546f96efcc92c850764e",
+      "bytes": 7925
     },
     "09_datamad/20_weekly_sprint_gate_matrix.md": {
       "sha256": "698fb3d2c211ae77906e05da8fc328897d00e664d4bc8c6a387dd9a98ef4c2ba",
@@ -916,8 +920,12 @@
       "bytes": 763
     },
     "09_datamad/24_bases_oficiales_2026.md": {
-      "sha256": "dc8aa13fe759a70b2ad965ebc4183f1478c5ac7d83a8d1ec370039733c1ac5c9",
-      "bytes": 3770
+      "sha256": "a52069bcbb1400ef4ffdcc7b02be4da226bf375d64c11176e46e3fc897c722fb",
+      "bytes": 4321
+    },
+    "09_datamad/25_plan_competicion.md": {
+      "sha256": "411fb5c0b88ed373e552b7970c11ad12c4c15109446407b128d85cd57c9c4562",
+      "bytes": 12630
     },
     "10_research/01_references.md": {
       "sha256": "ec2758e37420b9a7fcb7ebb10a41bf78d03bc6c16b1fc45d19c8ef5921d1241e",
@@ -1088,12 +1096,12 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "bd96f35c771165752dc819287e01551510faff29b90c31a04f6c42ac2c10239f",
-      "bytes": 10302
+      "sha256": "650a43fbfc84c58540d82774828c7e4c2885760e2975cfd3d363c6435fb28b37",
+      "bytes": 13994
     },
     "CLAUDE.md": {
-      "sha256": "9defb79ae85c8bf2c298604842fedc9ff8a6a452eb1d6a34433b19da3ae44607",
-      "bytes": 13025
+      "sha256": "cb9b95b379aaa00fc3064ab11c286d2d13426aa44e1ffeb4bc7995f0ac2bede3",
+      "bytes": 13909
     },
     "README.md": {
       "sha256": "9173eb2acbe65fcd1062e72d4799de50baf4076ae4ec80986a5454b188c8a033",

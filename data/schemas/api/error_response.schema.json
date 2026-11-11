@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "ErrorBody": {
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorBody",
+      "type": "object"
+    },
+    "ErrorCode": {
+      "enum": [
+        "INSUFFICIENT_DATA",
+        "INVALID_PROFILE",
+        "OUT_OF_COVERAGE",
+        "SOURCE_DEGRADED",
+        "MODEL_UNAVAILABLE",
+        "CONSENT_REQUIRED",
+        "RATE_LIMITED",
+        "NOT_FOUND"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/error_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "error": {
+      "$ref": "#/$defs/ErrorBody"
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "title": "ErrorEnvelope",
+  "type": "object"
+}

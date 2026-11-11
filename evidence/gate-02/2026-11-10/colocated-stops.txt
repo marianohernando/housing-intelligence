@@ -1,0 +1,11 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select ds || '|' || count(*) from (
+    select official_dataset_id as ds, ST_AsText(geom_4326) as wkt
+      from place_master where category = 'transport'
+     group by 1, 2 having count(*) > 1) d
+ group by ds order by ds
+
+# exit 0
+
+crtm_gtfs_interurbanos|3
+

@@ -577,3 +577,142 @@ Las features se calculan con métodos genéricos (`metric_value`, `metric_share`
 
 ## D-190 — search_path explícito (2026-10-22)
 Migraciones y motor de la aplicación fijan `search_path TO public, extensions` al conectar; una base recién creada sin esa configuración rompía la migración (detectado al aislar el test de migraciones).
+
+## D-191 — Licencia open source (2026-11-10)
+Mariano elige Apache-2.0 para el código (`LICENSE`, texto canónico de apache.org) y CC BY 4.0 para la documentación y los metadatos del catálogo (`docs/LICENSE`). Los datos de terceros mantienen su licencia original por fuente. Cierra LEGAL-001.
+
+## D-192 — Replan comprimido de la fase de competición (2026-11-10)
+No hubo commits entre el 22 oct y el 10 nov, así que P2 y Sprint 1 quedaron sin hacer y el roadmap del doc 19 ya no cabe (unos 22 días de trabajo para 13 hasta el freeze del 23 nov). Se prioriza lo que más puntúa (datos CM 25 + impacto 25):
+- 11–16 nov: PUBLIC core (CRTM GTFS, features por sección/H3, ScenarioState, affordability, Residential Fit baseline, mapa con chips/filtros, explicación y procedencia).
+- 17–20 nov: Housing Gap municipal + API/MCP con 3–5 tools + demo desplegada.
+- 21–22 nov: cut review. 23 nov: freeze. 24–25 nov: slides §8 y ensayos. 26 nov: entrega antes de las 14:00.
+Quedan en CUT/LATER: PRO workspace, parcel analysis, ML/embeddings, timeline, 3D polish y HomeFit por URL. Si el PUBLIC core no está en verde el 16 nov, el Housing Gap pasa a YELLOW.
+Hechos del mismo día: tag `pre-datamad` en `08cc526` (último commit anterior al 7 nov) y merge de PR #2 y #3 en `main`; el trabajo de competición sigue en `claude/sprint-1-public`.
+
+## D-193 — Formulario de presentación antes del 20 nov (2026-11-10)
+La organización comunicó el 9 nov (correo de madrid.datamad@urjc.es, recibido en la cuenta de inscripción de Mariano) que es imprescindible enviar el formulario de presentación antes del 20 nov para seguir en la selección: hasta 50 preseleccionados y 12 finalistas que presentan el 26 nov. Ajuste sobre D-192:
+- Despliegue de la demo (OPS-001) adelantado al 17 nov.
+- Repo público y formulario el 18 nov, con el 19 nov como límite real.
+- El Housing Gap y las tools MCP pasan al 19–22 nov, sobre la demo ya publicada.
+El formulario lo envía Mariano; Claude prepara el resumen y los enlaces.
+
+## D-194 — Alcance de la demo: lista de lo que falta por zona (2026-11-10)
+Mariano confirma el enfoque de su documento «Housing Intelligence — la idea» (31 oct):
+- El diferenciador es la lista FALTA / JUSTO / CUBIERTO por zona, no el Housing Gap como recomendador de producto residencial.
+- La vivienda entra como una fila más de la lista (tamaño de los hogares frente a superficie de las viviendas). El resto de filas: escuela infantil, colegio, centro de salud, mayores y farmacia.
+- La clasificación se hace frente a la referencia regional, con confidence y con los proxies declarados.
+- Empresas («qué abrir») queda solo en slides y API/MCP.
+- Zonas verdes quedan fuera porque solo hay datos de Madrid capital.
+- La necesidad declarada por usuarios se presenta como siguiente paso y nunca se simula.
+Plan: `09_datamad/25_plan_competicion.md`.
+
+## D-195 — Repo público (2026-11-10)
+Mariano aprueba hacer público el repo en cuanto haya algo enseñable, como tarde el 18 nov (formulario). Antes se cumple el checklist del §7 del plan de competición. Ya están en verde secretos (gitleaks), tokens y licencias. Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) quedarán visibles; el historial no se reescribe.
+
+## D-196 — Transporte nivel A: paradas y frecuencias desde los GTFS del CRTM (2026-11-10)
+DATA-007. Los 6 GTFS del CRTM (metro, metro ligero, cercanías, EMT, autobuses urbanos e interurbanos) también están publicados en el Portal de Datos Abiertos de la Comunidad de Madrid, así que cuentan como datasets CM. Cada dataset lo enlaza con un recurso `role: cm_portal`.
+- Cada parada, o estación cuando el feed declara `parent_station`, se guarda en `place_master` con `category=transport` y `subcategory=<modo>`. El servicio va en `attributes`: salidas al día, salidas por hora en punta, headway en punta de la línea más frecuente, primer y último servicio, líneas y accesibilidad declarada.
+- El servicio se mide en un día de referencia: el martes mediano (por número de viajes activos) dentro de la vigencia del propio feed. El resultado depende solo del fichero, no del día en que se ejecuta. El GTFS de metro venció el 27-05-2026 y sigue siendo el último publicado; se usa y la calidad lo avisa (`feed_current`).
+- La punta es de 07:00 a 09:00. La última parada de un viaje y las paradas sin subida no cuentan como salidas. Las salidas antes de las 04:00 se leen como servicio de la noche anterior. El headway es por línea y sentido; en cercanías, que no declara `direction_id`, es por línea con ambos sentidos (`headway_basis`).
+- Las paradas sin servicio el día de referencia no se publican y se cuentan en la calidad: nunca se guardan como 0.
+- `stop_times` solo vive en Bronze/Silver; la base de datos guarda unas 15.000 paradas agregadas.
+- Particularidades de los feeds, declaradas y no ocultas: el `frequencies.txt` de EMT solo anota viajes que ya están listados uno a uno (`expand_frequencies: false`). En metro, 25 andenes de transbordo no declaran estación: se unen a la estación que está en el mismo punto y tiene el mismo nombre.
+- El tiempo a polos de empleo (nivel B) queda en CORE-009.
+
+## D-197 — RLS en todas las tablas públicas, sin políticas (2026-11-11)
+OPS-001. Supabase expone el schema `public` a los roles `anon` y `authenticated` a través de su Data API. Su advisor marcó las 14 tablas como críticas (`rls_disabled_in_public`): con la clave pública se podían leer **y modificar** filas.
+- El producto no usa esa API: el frontend nunca accede a la base de datos y el backend se conecta como dueño de las tablas.
+- La migración 0003 activa RLS en las 14 tablas sin crear ninguna política. Así la Data API no ve filas ni puede escribir. En Supabase, `postgres` tiene BYPASSRLS, y en local el dueño se salta RLS, así que la API, los pipelines y `make supabase-sync` siguen igual.
+- Un test de migraciones falla si una tabla nueva de `public` no tiene RLS.
+- Comprobado el 11 nov con datos cargados: la Data API devuelve `[]` con la clave publishable. El advisor solo deja el aviso informativo `rls_enabled_no_policy`, que es el estado buscado.
+- Si un día se quiere exponer algo por la Data API, se hace con políticas explícitas de solo lectura y por tabla.
+
+## D-198 — Repo público con el historial limpio (2026-11-11)
+DATAMAD-PUBLIC-01; completa D-195. Mariano acepta que se vean el email de autor y `docs/`. Antes de publicar apareció un problema: los fixtures de equipamientos del 22 oct llevaban teléfonos, emails de contacto, NIF y titulares, copiados del portal CM. La licencia CC BY no cubre la protección de datos (bases §6.6 y §16).
+- El repo original pasa a llamarse `housing-intelligence-archive`, privado y archivado, como prueba de fechas.
+- En la misma URL se publica una copia cuyo historial reescrito solo cambia esos 3 ficheros. Se conservan las fechas y el tag `pre-datamad`, que ahora apunta a `cf39459`.
+- `scripts/build_places_fixtures.py` redacta los datos de contacto, los NIF y los titulares.
+- Evidencia y tabla de SHAs antiguos y nuevos: `evidence/gate-00/2026-11-11/`.
+
+## D-199 — Nombre del producto: «Vida Fácil» (2026-11-11)
+Mariano decide llamar al producto **«Vida Fácil»**, con el lema «Encuentra tu sitio en Madrid»: corto, en español y fácil de recordar para personas mayores. El repo sigue siendo `housing-intelligence`, y «Housing Intelligence» puede aparecer como plataforma o equipo en el pie.
+- Nombres descartados:
+  - «Madrid 360»: es la marca del Ayuntamiento y parecería un producto municipal.
+  - «Madrid Mejor»: suena a eslogan político.
+  - «Fix360»: está en inglés.
+- La línea D comprobó el 11 nov en TMview y en búsqueda web que no choca con ninguna marca del sector vivienda.
+
+## D-200 — Escala: municipios y distritos de Madrid capital (2026-11-11)
+La región se muestra por municipios (179) y Madrid capital por sus 21 distritos, para que no sea un único bloque de 3,3 M habitantes. El buscador y la lista de lo que falta funcionan en los dos niveles. La geometría y los nombres de los 21 distritos ya están en `geo_admin_unit` (nivel `distrito`, códigos 2807901–2807921). La población por edad y los hogares por distrito llegan con DATA-012, que va antes de GAP-001.
+
+## D-201 — Mapa y estilo (2026-11-11)
+- **Mapa:** 2D en la vista general. Al entrar en una zona, la cámara se inclina y muestra en 3D edificios, parques y puntos clave.
+- **Estilo:** modo claro, navy + violeta + tarjetas de cristal, según el brief `DISENO_VIDA_FACIL.md` y sus dos mockups. Las slides siguen este estilo, no el del PDF del 31 oct.
+
+## D-202 — Encaje en % con hechos tangibles (2026-11-11)
+El buscador da un **% de encaje** y, debajo, 3–5 hechos tangibles con su nivel de confianza (por ejemplo, «colegio a 6 min andando»). Nunca notas sobre 100 ni barras. Los hechos siempre se pueden trazar a un indicador y a sus datasets.
+
+## D-203 — Presupuesto de alquiler o de compra (2026-11-11)
+El presupuesto puede ser de alquiler (€/mes) o de compra (€). La compra va con confianza baja y con la cobertura declarada. Si no hay una fuente oficial abierta y fiable (DATA-021), la compra queda como SIN DATOS y la web lo explica.
+
+## D-204 — Prioridades del buscador (2026-11-11)
+«Me importa»: transporte, salud, colegios, zonas verdes, seguridad y «sin escaleras». «Sin escaleras» es una necesidad funcional opcional, nunca una etiqueta de discapacidad (CLAUDE.md §13). La seguridad solo cuenta si la persona la marca como prioridad.
+
+## D-205 — Extras: zonas verdes, accesibilidad física y seguridad (2026-11-11)
+- **Fuentes:** el Ayuntamiento de Madrid y OpenStreetMap (ODbL, con atribución). Son datos complementarios: no cuentan como datos CM, pero suman impacto. Sin fotos de zona.
+- **Seguridad (DATA-020):**
+  - solo datos oficiales agregados (actuaciones de la Policía Municipal por distrito, por cada 1.000 habitantes);
+  - nunca nacionalidad ni otras características de personas, por lo que los datos de «delitos» del portal CM quedan descartados;
+  - nunca etiquetas como «peligroso»;
+  - fuera de Madrid capital, SIN DATOS salvo una fuente oficial equivalente.
+- **Accesibilidad física (DATA-019):** instalaciones accesibles del Ayuntamiento y `wheelchair_boarding` del GTFS de metro y cercanías; el resto, SIN DATOS.
+- **Zonas verdes (DATA-018):** inventario del Ayuntamiento en Madrid capital y parques de OSM en el resto.
+
+## D-206 — Orden: núcleo antes que extras (2026-11-11)
+Para el formulario del 18 nov va primero el núcleo: el buscador, la lista de lo que falta y el 3D de zona. Los extras (D-205) y el precio de compra (DATA-021) entran del 19 al 22 nov, salvo que la línea A vaya adelantada. El trabajo se reparte en cuatro líneas paralelas según `prompts/LINEAS.md`: A (datos, motor, API e integración), B (web), C (despliegue) y D (formulario y pitch).
+
+## D-207 — Contratos PUBLIC v2 (2026-11-11)
+Aplica D-200 a D-204 en `packages/contracts/src/hi_contracts/public/`. La v1 (`7541527`) no llegó a usarse.
+- **`ScenarioState` v2:**
+  - `budget` con tipo alquiler o compra;
+  - hogar con adultos, menores y mayores a cargo;
+  - las 6 prioridades;
+  - `zone_level` desaparece, porque el buscador siempre usa municipios + distritos de Madrid.
+- **`SearchResult` v2:**
+  - `match_pct` y `facts` (con `topic` para el icono y `confidence`);
+  - `gap_highlights` (3 filas de «Qué falta aquí»);
+  - `all_zones` para la coropleta;
+  - `relaxed_scenario` en cada opción del Reality Check, para aplicarla con un toque.
+- **Rutas:**
+  - `GET /api/v1/gaps/{level}/{code}` acepta `distrito`;
+  - nueva `GET /api/v1/datasets?cm_only=` para el contador y la procedencia;
+  - CORS con `POST`.
+
+## D-208 — Rol de solo lectura para la API pública (2026-11-11)
+OPS-001; amplía D-197. La API de la demo se conecta a Supabase como `vf_api_ro` (migración 0005, a partir del SQL de la línea C en `infra/deploy/sql/api_readonly_role.sql`).
+- **Permisos del rol:**
+  - solo lectura por defecto (`default_transaction_read_only`) y por privilegios: solo tiene `SELECT`;
+  - sin superusuario, sin `BYPASSRLS` y sin contraseña en el repo. Mariano la pone a mano (`ALTER ROLE vf_api_ro PASSWORD …`) y solo la usa en la `DATABASE_URL` del alojamiento.
+- **Políticas:**
+  - cada tabla que lee la API tiene una política `vf_api_ro_read` (`FOR SELECT`, solo para ese rol): `dataset_registry`, `dataset_version`, `feature_registry`, `feature_value`, `geo_admin_unit`, `place_master` y `source_registry`;
+  - `anon` y `authenticated` siguen sin ninguna política, así que la Data API de Supabase sigue cerrada;
+  - el advisor ya no avisará `rls_enabled_no_policy` en esas 7 tablas, y no es un problema.
+- **Tests que lo vigilan:**
+  - un test unitario falla si la API empieza a leer una tabla que no esté en `API_TABLES`, porque esa tabla se vería vacía en producción;
+  - un test de integración comprueba que el rol lee esas tablas, no ve las demás y no puede escribir.
+- **Downgrade:** quita permisos y políticas, pero conserva el rol, porque los roles son de todo el servidor.
+
+## D-209 — Población por distrito de Madrid desde el padrón municipal (2026-11-11)
+DATA-012; aplica D-200. La CM no publica la población por distrito de Madrid: `cm_distritos_madrid` solo trae superficie y densidad, y sus «Zonas Estadísticas» no son distritos.
+- **Fuente:** padrón municipal del Ayuntamiento (`ayto_padron_municipal`, datos.madrid.es, CC BY 4.0). Trae una fila por sección censal y edad, con 4 recuentos (españoles y extranjeros, hombres y mujeres). Se usa el último mes publicado; la carga del 11 nov es del 1 oct 2026.
+- **Qué se guarda:** la métrica `poblacion_padron` por distrito, con las **mismas bandas quinquenales que `poblacion_censada` de la CM** más el total. Así, los filtros de edad de las features valen para los dos niveles sin traducción.
+  - El padrón es un registro exhaustivo: una edad sin filas en un distrito es 0 personas, y se publica como 0. Una fila que no se puede leer va a cuarentena y nunca cuenta como 0.
+  - Solo se guarda la suma de los 4 recuentos. La nacionalidad y el sexo nunca se guardan (D-189, D-205).
+- **Comparabilidad:** el total de Madrid en el padrón es un 1,68 % mayor que el del censo anual de la CM (3.535.868 frente a 3.477.497 a 1 ene 2025), por fecha y por método. No se calibra: se publica tal cual y se declara en las features. La calidad compara los dos totales en cada carga y avisa si la diferencia pasa del 5 %, sin bloquear.
+- **Calidad bloqueante:** los 21 distritos tienen que estar y resolver en `geo_admin_unit`. Un fichero incompleto no sustituye a la última versión válida.
+- **Procedencia:** es un dato complementario, no CM (`is_cm_open_data=false`), y la procedencia de cada fila lo muestra. El test del catálogo que exige que las estadísticas vengan de la CM admite esta excepción explícita y ninguna más.
+- **Hogares por distrito** (DATA-012 Fase 3): salen del panel de indicadores de distritos y barrios del Ayuntamiento (`ayto_panel_indicadores_distritos_barrios`, CC BY 4.0, complementario y no CM).
+  - Se guardan el total de hogares y el tamaño medio del hogar que publica el Ayuntamiento, a 1 de enero de cada año del panel (2019–2025).
+  - Son hogares del padrón (personas inscritas en una misma vivienda), no el hogar del censo 2021 de la CM.
+  - En los distritos, `tamano_medio_hogar` toma la media publicada, sin recalcularla. En los municipios sigue la del censo.
+  - La fila de vivienda de GAP-001 queda SIN DATOS por distrito mientras no haya superficie de las viviendas por distrito.

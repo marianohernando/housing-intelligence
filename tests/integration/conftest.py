@@ -12,6 +12,8 @@ from sqlalchemy import Engine, create_engine, make_url, text
 from hi_contracts.catalog.pipeline import (
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    MadridDistrictPanelPipeline,
+    MadridPadronPipeline,
     PointsPipeline,
 )
 from hi_db.session import make_engine
@@ -21,7 +23,9 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     run_admin_boundaries,
 )
 from hi_ingestion.pipelines.common import RunSummary
+from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
+from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 
@@ -99,6 +103,7 @@ def published(migrated_engine: Engine, tmp_path_factory: pytest.TempPathFactory)
 
 
 GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
+MADRID_SAMPLE_DISTRICTS = 3  # Madrid fixtures keep Centro, Chamartín and Tetuán
 
 
 @pytest.fixture(scope="session")
@@ -118,6 +123,18 @@ def fixtures_ingested(
             src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
             result = run_metric_pipeline(
                 migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, MadridPadronPipeline):
+            src = local_file(dataset_id, "primary", GOLDEN / "padron_sample" / f"{dataset_id}.csv")
+            sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
+            result = run_padron_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, MadridDistrictPanelPipeline):
+            src = local_file(dataset_id, "primary", GOLDEN / "panel_sample" / f"{dataset_id}.csv")
+            sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
+            result = run_panel_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )
         else:
             continue

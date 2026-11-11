@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "crtm_gtfs_metro",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_gtfs_metro/16e8e53ce16a/google_transit_M4.zip",
+      "sha256": "16e8e53ce16ab6d73efc2896be7aaeeb351a1f48f661ac7faa0a9e5b38204fb7",
+      "bytes": 1503773,
+      "url": "https://www.arcgis.com/sharing/rest/content/items/5c7f2951962540d69ffe8f640d94c246/data",
+      "retrieved_at": "2026-11-10T19:39:58.159322+00:00"
+    }
+  ]
+}

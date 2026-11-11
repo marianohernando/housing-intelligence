@@ -28,7 +28,7 @@ def known_municipios(engine: Engine) -> set[str]:
         )
 
 
-def _write_silver(obs: Observations, directory: Path) -> Path:
+def write_silver(obs: Observations, directory: Path) -> Path:
     path = directory / "observations.csv.gz"
     obs.frame.to_csv(path, index=False)
     return path
@@ -45,8 +45,8 @@ def metric_steps(
         normalize=lambda frame: normalize(frame, spec),
         quarantine=lambda obs: obs.quarantine,
         quality=lambda obs: run_quality(obs, metrics, known_municipios(engine)).to_dict(),
-        counts=lambda obs: row_counts(obs.frame),
-        write_silver=_write_silver,
+        counts=lambda obs: row_counts(obs.frame) | {"out_of_window": obs.out_of_window},
+        write_silver=write_silver,
         publish=lambda session, obs, version_id: {
             "observations": replace_observations(session, obs.frame, spec.metric_ids(), version_id)
         },

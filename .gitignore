@@ -37,3 +37,7 @@ data/catalog/candidates/*.jsonl
 # misc
 .DS_Store
 .playwright-mcp/
+# Vercel CLI link (line C deploy)
+.vercel
+# Offline demo package (dump, logs, pid): regenerated with make demo-offline-prepare
+data/offline/

@@ -1,0 +1,10 @@
+metric_id: farmacias_por_10000_hab
+human_name: Farmacias por cada 10.000 habitantes
+description: Oficinas de farmacia por cada 10.000 habitantes, calculado por el Instituto de Estadística.
+domain: health
+unit: farmacias/10000 hab
+direction: higher_is_better
+aggregation_method: none
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_farmacias_municipios

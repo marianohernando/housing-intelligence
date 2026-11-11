@@ -1,0 +1,11 @@
+metric_id: tamano_medio_hogar_padron
+human_name: Tamaño medio del hogar según el padrón
+description: >-
+  Personas por hogar en cada distrito de Madrid según el padrón municipal, a 1 de enero.
+  Publicado por el Ayuntamiento; no se recalcula.
+domain: population
+unit: personas/hogar
+aggregation_method: weighted_mean
+geo_resolution_min: distrito
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios

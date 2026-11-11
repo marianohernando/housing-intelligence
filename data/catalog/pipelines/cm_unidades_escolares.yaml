@@ -1,0 +1,8 @@
+kind: cm_stat_table
+dataset_id: cm_unidades_escolares
+metric_id: unidades_escolares
+# The series starts in 1994; from 2015 is enough for the demo and keeps metric_observation
+# within the Supabase free-tier budget (see D-188).
+period_min: 2015
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}
+dimension_columns: {"Tipo": titularidad, "Enseñanza": ensenanza}

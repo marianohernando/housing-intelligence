@@ -1,6 +1,6 @@
 dataset_id: crtm_gtfs_emt
 source_id: crtm_open_data
-name: GTFS Red de EMT
+name: Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT
 domain: transport
 owner: Consorcio Regional de Transportes de Madrid
 format: CSV COLLECTION
@@ -15,6 +15,11 @@ resources:
 - name: google_transit_M6.zip
   format: CSV Collection
   url: https://www.arcgis.com/sharing/rest/content/items/868df0e58fca47e79b942902dffd7da0/data
+  file_name: google_transit_M6.zip
+- name: Ficha en el Portal de Datos Abiertos de la Comunidad de Madrid
+  format: HTML
+  url: https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia
+  role: cm_portal
 license_status: CLEAR
 status: REVIEWED
 priority: P0

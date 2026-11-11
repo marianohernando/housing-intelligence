@@ -3,7 +3,7 @@
 from pathlib import Path
 
 import pytest
-from sqlalchemy import Engine, text
+from sqlalchemy import Engine, RowMapping, text
 
 from hi_features.compute import METHODS, compute, persist
 from hi_ingestion.catalog.loader import load_catalog
@@ -50,3 +50,57 @@ def test_feature_rows_respect_null_contract(
         ).scalar()
     assert broken == 0
     assert no_lineage == 0
+
+
+def test_madrid_districts_get_their_own_rows_and_lineage(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-200/D-209: district rows use the padrón; the regional reference stays single."""
+    with migrated_engine.connect() as conn:
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT feature_id, territory_level, territory_code, admin_unit_id, inputs "
+                    "FROM feature_value WHERE feature_id IN "
+                    "('colegios_publicos_por_1000_menores', 'poblacion_total') "
+                    "AND territory_level IN ('distrito', 'ccaa', 'municipio')"
+                )
+            )
+            .mappings()
+            .all()
+        )
+    by_level: dict[tuple[str, str], list[RowMapping]] = {}
+    for row in rows:
+        by_level.setdefault((row["feature_id"], row["territory_level"]), []).append(row)
+    districts = by_level[("colegios_publicos_por_1000_menores", "distrito")]
+    assert {r["territory_code"] for r in districts} == {"2807901", "2807905", "2807906"}
+    assert all(r["admin_unit_id"] == f"ES.28.DIS.{r['territory_code']}" for r in districts)
+    assert len(by_level[("colegios_publicos_por_1000_menores", "ccaa")]) == 1
+    assert ("poblacion_total", "ccaa") not in by_level
+    for (_, level), level_rows in by_level.items():
+        for row in level_rows:
+            cited = set(row["inputs"]["dataset_versions"])
+            if level == "distrito":
+                assert "ayto_padron_municipal" in cited
+                assert "cm_poblacion_edad_nacionalidad_sexo" not in cited
+            else:
+                assert "ayto_padron_municipal" not in cited
+
+
+def test_madrid_districts_get_the_published_household_size(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-209: districts take the Ayuntamiento's published mean; municipios keep the census one."""
+    with migrated_engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT territory_level, territory_code, value, confidence, inputs "
+                "FROM feature_value WHERE feature_id = 'tamano_medio_hogar' "
+                "AND territory_level = 'distrito' ORDER BY territory_code"
+            )
+        ).all()
+    assert [r.territory_code for r in rows] == ["2807901", "2807905", "2807906"]
+    for row in rows:
+        assert 1.0 <= row.value <= 5.0
+        assert row.confidence == 1.0
+        assert set(row.inputs["dataset_versions"]) == {"ayto_panel_indicadores_distritos_barrios"}

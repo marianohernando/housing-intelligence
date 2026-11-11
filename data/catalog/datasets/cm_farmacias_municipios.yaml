@@ -1,0 +1,38 @@
+dataset_id: cm_farmacias_municipios
+source_id: comunidad_madrid_ckan
+name: Recursos sanitarios. Farmacias. Municipios
+domain: health
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/farmacias
+resources:
+- name: Recursos sanitarios. Farmacias.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/b5e80c83-8e90-4bb5-8648-9f107174fd56/resource/b1187273-5f62-4938-82a3-69d736c3ab0b/download/recursos-sanitarios.-farmacias.-municipios.csv
+- name: Recursos sanitarios. Farmacias. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/b5e80c83-8e90-4bb5-8648-9f107174fd56/resource/fdcd465c-4ae2-49e2-8b08-a5da610bb6cc/download/recursos-sanitarios.-farmacias.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['farmacia']; strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-10T18:48:56.227117+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: farmacias
+  harvested_at: '2026-11-10T18:48:56.227352+00:00'
+notes: 'GAP-001 pharmacy row: pharmacies per 10,000 inhabitants by municipio | curated
+  from 2026-11-10_sprint_1.yaml | Auto-draft. composite=4.3; license_id=cc-by'

@@ -86,13 +86,20 @@ def _municipio(row: dict[str, Any], spec: PointsPipeline) -> str | None:
     return MADRID_PROVINCE_CODE + code[:3] if code[:3].isdigit() and len(code) >= 3 else None
 
 
+def _name(row: dict[str, Any], spec: PointsPipeline) -> str:
+    if spec.name_template:
+        values = {c: str(row.get(c) or "") for c in spec.name_template_columns()}
+        return " ".join(spec.name_template.format_map(values).split())
+    return str(row[spec.name_column]) if spec.name_column and row.get(spec.name_column) else ""
+
+
 def _place(
     row: dict[str, Any], spec: PointsPipeline, lon: float, lat: float, x: float, y: float
 ) -> dict[str, Any]:
     external_id = str(row[spec.id_column])
-    subcategory = str(row[spec.subcategory_column])
+    subcategory = spec.subcategory_value or str(row[spec.subcategory_column or ""])
     municipio = _municipio(row, spec)
-    name = str(row[spec.name_column]) if spec.name_column and row.get(spec.name_column) else ""
+    name = _name(row, spec)
     attributes = {
         c.lower(): row.get(c) for c in [*spec.attribute_columns, *spec.grouped_list_columns]
     }

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ayto_padron_municipal",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_padron_municipal/1d4622efbcf3/padron.csv",
+      "sha256": "1d4622efbcf32d10005ea1c4041be209055bf44447f01b9e5cae571e2cc65192",
+      "bytes": 34089439,
+      "url": "https://datos.madrid.es/dataset/200076-0-padron/resource/200076-2-padron-csv/download/padron.csv",
+      "retrieved_at": "2026-11-11T12:22:38.620106+00:00"
+    }
+  ],
+  "checksum": "f052edc26159eaff38f72f2af476754801d6a3b2c1e540b412a9ed5b21bd0843",
+  "parser_version": "madrid_padron-1.0.0",
+  "dataset_version": "2026-11-11-f052edc26159",
+  "correlation_id": "e427daef292543ff90347af6a639032b",
+  "silver": "data/silver/ayto_padron_municipal/f052edc26159/observations.csv.gz"
+}

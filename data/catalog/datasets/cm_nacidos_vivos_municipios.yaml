@@ -1,0 +1,39 @@
+dataset_id: cm_nacidos_vivos_municipios
+source_id: comunidad_madrid_ckan
+name: Nacidos vivos por lugar de residencia de la madre y sexo. Municipios
+domain: population
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo
+resources:
+- name: Nacidos vivos por municipio de residencia de la madre y sexo.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/12b40587-add2-4467-b2a0-205b8b99af7d/resource/00a2fcf4-671f-4ea8-8cde-ac56d2dd352f/download/nacidos-vivos-por-lugar-de-residencia-de-la-madre-y-sexo.-municipios.csv
+- name: Nacidos vivos por lugar de residencia de la madre y sexo. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/12b40587-add2-4467-b2a0-205b8b99af7d/resource/ff4065a9-09a7-48c7-b12f-55ad5fde484e/download/nacidos-vivos-por-lugar-de-residencia-de-la-madre-y-sexo.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: heuristic-v2; keywords=['poblacion', 'nacimientos', 'movimiento natural'];
+    strong=True
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-10T18:48:56.227117+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: mnp_nacidos_vivos_por_residencia_y_sexo
+  harvested_at: '2026-11-10T18:48:56.229381+00:00'
+notes: 'GAP-001 nursery row: births as demand for 0-3 places | curated from 2026-11-10_sprint_1.yaml
+  | Auto-draft. composite=4.6; license_id=cc-by'

@@ -1,5 +1,7 @@
 # Master Roadmap — 20 octubre → 26 noviembre 2026
 
+> **Superado el 10 nov 2026 por D-192** (`00_index/01_decisions_log.md`): replan comprimido de la fase de competición. El calendario vigente está en `board/BOARD.md`. Este documento se conserva como referencia de alcance y de reglas (freeze, cut review y rutina del día 26).
+
 ## Filosofía
 - Final-product-first.
 - Claude Code ejecuta tareas cerradas desde documentación.

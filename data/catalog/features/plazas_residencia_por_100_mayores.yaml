@@ -9,7 +9,8 @@ geo_level: municipio
 time_semantics: current
 sources:
   - {dataset_id: cm_centros_atencion_social, role: primary}
-  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
 formula:
   method: place_attribute_per_population
   category: social
@@ -19,6 +20,8 @@ formula:
   population_dims: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos], nacionalidad: [total], sexo: [total]}
   small_population_threshold: 500  # denominator below this -> confidence 0.5
   per: 100
+  levels:
+    distrito: {population_metric: poblacion_padron, population_dims: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos]}}
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
 confidence: {inputs: [source_freshness, geocoding_quarantine]}
 public_use: true
@@ -28,3 +31,4 @@ tests: [non_negative, monotonic_in_places]
 limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "Plazas autorizadas, no ocupación real ni lista de espera. Los residentes pueden venir de otros municipios."
+  - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."

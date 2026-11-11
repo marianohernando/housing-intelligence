@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_centros_atencion_social/e14431a3beff/atencion_social_registro_centros.csv",
+      "sha256": "e14431a3beff4c1843c834e7b096e33e471feef353aebbf832d1600170403624",
+      "bytes": 1053887,
+      "url": "https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/0d815439-396e-4975-983e-5bb421f617a0/download/atencion_social_registro_centros.csv",
+      "retrieved_at": "2026-11-10T19:39:30.848606+00:00"
+    }
+  ],
+  "checksum": "1332ab0048a645438b956b1dcd8729ec5de2b3dc0182762e8641f5d30cbea549",
+  "parser_version": "places-1.0.0"
+}

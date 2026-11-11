@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_hogares_tamano_censo_2021",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_hogares_tamano_censo_2021/54d842392d02/hogares-por-tamano-del-hogar.-censo-2021.-municipios.csv",
+      "sha256": "54d842392d02f84082007e615004184f867945986be16098421b46275115d7a0",
+      "bytes": 74824,
+      "url": "https://datos.comunidad.madrid/dataset/da87c72e-dc76-41f4-a677-2d0b51fe58e4/resource/f3610af6-0aca-44e7-811b-6dfc0538c081/download/hogares-por-tamano-del-hogar.-censo-2021.-municipios.csv",
+      "retrieved_at": "2026-11-10T19:39:33.080344+00:00"
+    }
+  ]
+}

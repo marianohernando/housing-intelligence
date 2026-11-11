@@ -1,0 +1,7 @@
+old                                      new                                      ref
+eebeca22bd050a60bd6285ac9cb9d31224e020a4 8ae9a59a20a411d4c88c4584f8ef7aaddc27553d refs/heads/claude/open-poi-sources
+a2f8dea02ce7be7eb3f5e9957195895161793e0c 103229b34a94c3340891dd0d528601e926a1f478 refs/heads/claude/sprint-1-public
+092b60d492c3d1f834fdebfda31cc3a29e2cd88a 092b60d492c3d1f834fdebfda31cc3a29e2cd88a refs/heads/claude/sprint-p0
+08cc52660f2badf59b8c1fff95f3f5686fa7e8f1 cf3945976b9a45af2d388db850d8e0ab896efc21 refs/heads/claude/sprint-p1-cm-data
+59f4b1c2a7ab2b18feb25e11356914382575403f 89bdfea10a3cdf7ae5d4d1e348f55d405db9955f refs/heads/main
+951a33e33c27ccccdd68164c6465b2cd7442020a e6bead328cc57504b62871425ed165b974affc26 refs/tags/pre-datamad

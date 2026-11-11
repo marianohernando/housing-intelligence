@@ -124,7 +124,16 @@ def load_catalog(
         for feature_id in dataset.feeds_features:
             if feature_id not in features:
                 errors.append(f"{dataset.dataset_id}: feeds unknown feature '{feature_id}'")
+    primaries: dict[str, str] = {}
     for feature in features.values():
+        binding = feature.gap_row
+        if binding and binding.role == "primary":
+            if binding.row in primaries:
+                errors.append(
+                    f"{feature.feature_id}: gap row '{binding.row}' already has its primary "
+                    f"indicator ({primaries[binding.row]})"
+                )
+            primaries[binding.row] = feature.feature_id
         for src in feature.sources:
             if src.dataset_id not in datasets:
                 errors.append(f"{feature.feature_id}: unknown curated dataset '{src.dataset_id}'")

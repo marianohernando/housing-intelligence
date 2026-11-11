@@ -51,7 +51,7 @@ def test_drafts_are_never_p0(catalog: Catalog) -> None:
     assert all(d.priority is not Priority.P0 for d in catalog.drafts.values())
 
 
-PII_COLUMNS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web")
+PII_COLUMNS = ("telefono", "correo", "e_mail", "email", "nif", "fax", "web", "titulares")
 
 
 def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
@@ -59,16 +59,26 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
         assert dataset_id in catalog.datasets
         if pipeline.kind == "points_csv":
             assert pipeline.attribute_columns, dataset_id
+        elif pipeline.kind == "gtfs_feed":
+            assert catalog.datasets[dataset_id].domain.value == "transport", dataset_id
+        elif pipeline.kind == "osm_walk_network":
+            assert pipeline.walkable_highways, dataset_id
         else:
             assert pipeline.metric_ids(), dataset_id
 
 
 def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None:
-    """Data minimisation: facilities keep service attributes, never phones, emails or NIF."""
+    """Data minimisation: facilities keep service attributes, never phones, emails, NIF or
+    the names of the people who own them (e.g. pharmacy holders)."""
     for pipeline in catalog.pipelines.values():
         if pipeline.kind != "points_csv":
             continue
-        kept = [pipeline.id_column, pipeline.name_column or "", *pipeline.attribute_columns]
+        kept = [
+            pipeline.id_column,
+            pipeline.name_column or "",
+            *pipeline.name_template_columns(),
+            *pipeline.attribute_columns,
+        ]
         for column in kept:
             assert not any(term in column.lower() for term in PII_COLUMNS), (
                 pipeline.dataset_id,
@@ -76,10 +86,15 @@ def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None
             )
 
 
+# Statistics the CM does not publish at the level the product needs (D-209: population and
+# households by district of Madrid). They complement CM data, never replace it.
+COMPLEMENTARY_STATISTICS = {"ayto_padron_municipal", "ayto_panel_indicadores_distritos_barrios"}
+
+
 def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:
     stats = {m.dataset_id for m in catalog.metrics.values()}
     assert stats <= set(catalog.pipelines)
-    assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats)
+    assert all(catalog.datasets[d].source_id == CM_SOURCE for d in stats - COMPLEMENTARY_STATISTICS)
 
 
 PROTECTED_SUBTYPES = ("PISOS TUTELADOS", "MUJERES MALTRATADAS", "ACOGIDA DE MENORES", "ALBERGUES")
@@ -89,7 +104,7 @@ def test_social_facilities_exclude_protected_housing(catalog: Catalog) -> None:
     """D-186: locations of protected housing and shelters are never mapped."""
     spec = catalog.pipelines["cm_centros_atencion_social"]
     assert spec.kind == "points_csv"
-    allowed = spec.row_filters.get(spec.subcategory_column, [])
+    allowed = spec.row_filters.get(spec.subcategory_column or "", [])
     assert allowed, "social facilities must use an explicit subtype allowlist"
     assert not any(p in a for a in allowed for p in PROTECTED_SUBTYPES)
     assert spec.row_filters.get("sector") == ["Personas mayores"]
@@ -117,3 +132,31 @@ def test_every_feature_method_is_implemented(catalog: Catalog) -> None:
         assert (
             feature.formula.method in METHODS or feature.formula.method in PIPELINE_COMPUTED_METHODS
         ), feature.feature_id
+
+
+def test_gap_rows_have_one_primary_indicator_at_most(catalog: Catalog) -> None:
+    """GAP-001: each row of the per-zone list is driven by a single declared feature."""
+    primaries = [
+        f.gap_row.row
+        for f in catalog.features.values()
+        if f.gap_row and f.gap_row.role == "primary"
+    ]
+    assert len(primaries) == len(set(primaries))
+    assert {"colegio", "centro_salud"} <= set(primaries)
+
+
+def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Catalog) -> None:
+    """A level override (e.g. districts) names metrics that exist, and lineage cites them."""
+    for spec in catalog.features.values():
+        levels: dict[str, dict[str, object]] = (spec.formula.model_extra or {}).get("levels") or {}
+        passes = {spec.geo_level.value, *levels}
+        for source in spec.sources:
+            assert source.levels is None or set(source.levels) <= passes, spec.feature_id
+        for level, override in levels.items():
+            used = {s.dataset_id for s in spec.sources if s.levels is None or level in s.levels}
+            for key in ("metric", "population_metric"):
+                metric_id = override.get(key)
+                if metric_id is None:
+                    continue
+                assert metric_id in catalog.metrics, (spec.feature_id, level, metric_id)
+                assert catalog.metrics[str(metric_id)].dataset_id in used, (spec.feature_id, level)

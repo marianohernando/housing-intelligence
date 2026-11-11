@@ -1,0 +1,38 @@
+DATA-012 Fase 4 (line A) · fixes from the reviewer agent (R-01..R-08) · 2026-11-11T14:30:00Z
+
+## R-02: quality of the real padrón file against the last valid district totals (local DB)
+previous districts: 21 · passed: True
+  district_coverage critical True {'covered': 21, 'expected': 21}
+  district_totals_stable critical True {'changed': [], 'tolerance': 0.1}
+  total_vs_cm_census warning True {'padron_total': 3535868.0, 'census_total': 3477497.0, 'ratio': 1.0168, 'tolerance': 0.05}
+
+## R-01: share of active places with a census section, Madrid (1.0 -> district confidence unchanged)
+education|1.0000
+health|1.0000
+social|1.0000
+centros_salud_por_10000_hab: 201 rows, 201 with value, 0 explicit unknown
+colegios_publicos_por_1000_menores: 201 rows, 201 with value, 0 explicit unknown
+plazas_residencia_por_100_mayores: 201 rows, 201 with value, 0 explicit unknown
+centros_salud_por_10000_hab|1|1
+colegios_publicos_por_1000_menores|1|1
+plazas_residencia_por_100_mayores|1|1
+
+## R-06: Gate 3 coverage and district coverage
+12|0|0|179
+7
+
+## Applied: R-01 section-share confidence for sub-municipal place counts; R-02 blocking district_totals_stable (±10 % vs last valid);
+## R-03 tests: empty band published as 0, broken rows add nothing; R-04 panel quarantine keeps the source row; R-05 a district row
+## that lost its code goes to quarantine (city = no code and no name); R-06 district-coverage check in Gate 3; R-07 padrón and
+## panel integration tests in Gate 1 (new test_district_panel_pipeline.py); R-08 shallow merge of level overrides documented.
+
+## R-05 changed the panel parser: madrid_district_panel-1.1.0, re-ingested (same 294 observations, 134,363 rows out of scope,
+## quarantine 0), rerun SKIPPED. The padrón parser is unchanged (only its quality checks grew).
+
+## gate: make lint typecheck test
+All checks passed!
+240 files already formatted
+0 errors, 0 warnings, 0 informations
+266 passed in 4.61s
+      Tests  11 passed (11)
+59 passed in 24.41s

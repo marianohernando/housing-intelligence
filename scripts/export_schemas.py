@@ -1,5 +1,6 @@
-"""Write JSON Schemas for catalog YAML files from the Pydantic contracts.
+"""Write JSON Schemas from the Pydantic contracts: catalog YAML files and API payloads.
 
+API schemas (data/schemas/api/) are what the web generates its TypeScript types from.
 Usage: uv run python scripts/export_schemas.py [--check]
 """
 
@@ -9,7 +10,14 @@ from pathlib import Path
 
 from pydantic import BaseModel, TypeAdapter
 
+from hi_contracts.api.envelope import ErrorEnvelope
 from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineSpec, SourceSpec
+from hi_contracts.public import ScenarioState
+from hi_contracts.public.responses import (
+    DatasetListResponse,
+    SearchResponse,
+    ZoneGapListResponse,
+)
 
 OUT_DIR = Path(__file__).resolve().parents[1] / "data" / "schemas"
 MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
@@ -18,6 +26,11 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "feature": FeatureSpec,
     "metric": MetricSpec,
     "pipeline": TypeAdapter(PipelineSpec),
+    "api/scenario_state": ScenarioState,
+    "api/search_response": SearchResponse,
+    "api/zone_gap_list_response": ZoneGapListResponse,
+    "api/dataset_list_response": DatasetListResponse,
+    "api/error_response": ErrorEnvelope,
 }
 
 
@@ -37,6 +50,7 @@ def main() -> int:
     stale: list[str] = []
     for name, model in MODELS.items():
         path = OUT_DIR / f"{name}.schema.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
         content = render(name, model)
         if check:
             if not path.exists() or path.read_text() != content:

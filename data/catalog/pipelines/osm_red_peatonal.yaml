@@ -1,0 +1,23 @@
+# Walkable OSM ways (CORE-005). Motorways, trunk roads and cycleways are left out unless the way
+# explicitly allows people on foot; foot=no and access=no/private without a foot permission too.
+kind: osm_walk_network
+dataset_id: osm_red_peatonal
+walkable_highways:
+  - primary
+  - primary_link
+  - secondary
+  - secondary_link
+  - tertiary
+  - tertiary_link
+  - unclassified
+  - residential
+  - living_street
+  - service
+  - pedestrian
+  - footway
+  - path
+  - steps
+  - track
+  - corridor
+  - bridleway
+min_total_km: 30000  # ~half of the 57,659 km seen on 2026-11-11: catches truncated downloads

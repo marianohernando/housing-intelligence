@@ -1,0 +1,49 @@
+DATA-012 Fase 3 (line A) · households by district of Madrid (Ayuntamiento district panel) · 2026-11-11T14:22:03Z
+source: https://datos.madrid.es/dataset/300087-0-indicadores-distritos (CSV panelcsv.csv, CC BY 4.0)
+
+## make ingest DATASET=ayto_panel_indicadores_distritos_barrios (real run, local DB)
+status SUCCESS · version 2026-11-11-4726abc60a15 · 294 observations (21 districts x 7 panel years x 2 indicators) · out of scope 134,363 rows (other indicators, barrios, city) · quarantine 0
+bronze sha256: 11a758e6249d81ede44a6fad9e4456dee8145e459464a3419929c579262ac6fc
+ayto_panel_indicadores_distritos_barrios 2026-11-11 PASS
+## second run (idempotent)
+  "status": "SKIPPED",
+
+## latest households by district (2025-01-01)
+2807901|Centro|75159|1.95
+2807902|Arganzuela|70128|2.26
+2807903|Retiro|51364|2.34
+2807904|Salamanca|68255|2.21
+2807905|Chamartín|62245|2.4
+2807906|Tetuán|73024|2.32
+2807907|Chamberí|66875|2.15
+2807908|Fuencarral-El Pardo|97180|2.65
+2807909|Moncloa-Aravaca|49739|2.55
+2807910|Latina|101594|2.5
+2807911|Carabanchel|104358|2.69
+2807912|Usera|54079|2.85
+2807913|Puente de Vallecas|96037|2.71
+2807914|Moratalaz|38823|2.47
+2807915|Ciudad Lineal|95202|2.46
+2807916|Hortaleza|79487|2.64
+2807917|Villaverde|60162|2.88
+2807918|Villa de Vallecas|48601|2.6
+2807919|Vicalvaro|35256|2.7
+2807920|San Blas-Canillejas|64453|2.64
+2807921|Barajas|19625|2.58
+## sum of districts vs the panel's city row (1,411,646 households at 2025-01-01 in the source)
+1411646
+
+## make features: tamano_medio_hogar 179 municipios (census) + 21 districts (published mean)
+tamano_medio_hogar: 200 rows, 200 with value, 0 explicit unknown
+distrito|21|1|ayto_panel_indicadores_distritos_barrios
+municipio|179|0.9|cm_hogares_tamano_censo_2021
+## Gate 3 coverage (expected 12|0|0|179)
+12|0|0|179
+
+## gate: make lint typecheck test
+All checks passed!
+236 files already formatted
+0 errors, 0 warnings, 0 informations
+261 passed in 4.86s
+      Tests  11 passed (11)
+57 passed in 29.36s

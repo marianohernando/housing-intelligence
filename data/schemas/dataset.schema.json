@@ -231,6 +231,20 @@
     "ResourceSpec": {
       "additionalProperties": false,
       "properties": {
+        "file_name": {
+          "anyOf": [
+            {
+              "pattern": "^[\\w.\\-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bronze file name when the URL does not end in one (e.g. ArcGIS /data)",
+          "title": "File Name"
+        },
         "format": {
           "title": "Format",
           "type": "string"
@@ -241,7 +255,7 @@
         },
         "role": {
           "default": "primary",
-          "description": "primary | names | cross_check | docs",
+          "description": "primary | names | cross_check | docs | cm_portal",
           "title": "Role",
           "type": "string"
         },

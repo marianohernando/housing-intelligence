@@ -1,0 +1,104 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 56
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "ratio": 0.0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {
+          "has_service_not_allowed": 0
+        },
+        "source_rows": 56
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "transport"
+      }
+    },
+    {
+      "name": "reference_service_day",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "service_date": "2027-04-27",
+        "reference_trips": 949,
+        "candidate_days": 53
+      }
+    },
+    {
+      "name": "stop_times_parsed",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "stop_times": 12507,
+        "invalid_stop_times": 0
+      }
+    },
+    {
+      "name": "peak_departures_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "max_departures_peak_per_hour": 22.0,
+        "limit": 1200
+      }
+    },
+    {
+      "name": "headway_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "min_headway_peak_min": 4.0,
+        "with_peak_service": 56
+      }
+    },
+    {
+      "name": "feed_current",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "feed_end_date": "2027-10-28",
+        "note": "expired feeds stay the latest official schedule"
+      }
+    }
+  ]
+}

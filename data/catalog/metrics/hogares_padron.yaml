@@ -1,0 +1,11 @@
+metric_id: hogares_padron
+human_name: Hogares según el padrón
+description: >-
+  Hogares de Madrid por distrito según el padrón municipal (personas inscritas en una misma
+  vivienda), a 1 de enero. No es el hogar censal de la CM.
+domain: population
+unit: hogares
+aggregation_method: sum
+geo_resolution_min: distrito
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios

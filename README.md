@@ -4,12 +4,17 @@ Plataforma de inteligencia residencial para la Comunidad de Madrid (PUBLIC · PR
 
 > Idealista sabe qué vivienda hay. Nosotros queremos saber qué vivienda hace falta.
 
-## Estado (2026-10-22)
-Sprint P1 en curso. Gate 0 y Gate 1 PASS; Gate 3 iniciado.
+## Estado (2026-11-11)
+Fase de competición: Sprint 1 (PUBLIC core) en curso según D-192. Gate 0, Gate 1 y Gate 2 PASS; Gate 3 iniciado.
 - Geografía canónica: 179 municipios, 246 distritos censales, 131 barrios, 4.417 secciones, 86.361 celdas H3.
-- 10 datasets de la Comunidad de Madrid en producción local: geografía, población, hogares, vivienda, renta, alquiler y equipamientos (educación, atención primaria, mayores).
-- 12 features municipales con lineage y confidence; mapa con coropletas y capas de equipamientos en `/map`.
-- Ver `board/BOARD.md`, `evidence/` y `data/catalog/reports/`.
+- 21 datasets del Portal de Datos Abiertos de la Comunidad de Madrid con Quality Gate: geografía, población, hogares, vivienda, renta, alquiler, nacimientos, equipamientos (educación, centros sanitarios, mayores, farmacias) y los 6 GTFS del CRTM (14.982 paradas y estaciones con frecuencias).
+- 12 features municipales con lineage y confidence (7 de ellas también para los 21 distritos de Madrid); mapa con coropletas y capas de equipamientos en `/map`.
+- Madrid capital por distritos: población por edad del padrón municipal y hogares del panel de distritos del Ayuntamiento (datos complementarios, no CM; D-209).
+- API de la lista de lo que falta por zona (`GET /api/v1/gaps/{level}/{code}`): FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence, proxy declarado y datasets de origen. Hoy tiene las filas de colegio y centro de salud por municipio y por distrito de Madrid.
+- Contratos PUBLIC del buscador y de la lista, con sus JSON Schema en `data/schemas/api/` y sus rutas en `docs/04_technical_architecture/31_public_api_routes.md`.
+- Red peatonal de OpenStreetMap (57.659 km) para medir la distancia a pie a los equipamientos: en curso (CORE-005).
+- Base de datos de la demo en Supabase con RLS en todas las tablas (D-197); la API pública lee con un rol de solo lectura (D-208).
+- Progreso fase a fase: `board/BOARD.md` («Registro de progreso»). Evidencias en `evidence/`.
 
 ## Quickstart
 ```bash
@@ -29,4 +34,9 @@ uv run hi-features compute    # Feature Store
 Datos abiertos de la Comunidad de Madrid como fuente estructural, complementados con Ayuntamiento de Madrid, CRTM, Catastro (INSPIRE), INE y datos.gob.es. Cada fuente tiene licencia y atribución en `data/catalog/sources/`.
 
 ## Trabajo previo a DATAMAD
-Según §6 de las bases, este repositorio identifica el trabajo realizado antes del 7 de noviembre de 2026 mediante el tag `pre-datamad`.
+Según §6 de las bases, este repositorio identifica el trabajo realizado antes del 7 de noviembre de 2026 mediante el tag `pre-datamad` (commit `cf39459`, 22 oct 2026: Sprints P0 y P1). Todo lo posterior a ese tag se ha desarrollado durante la competición.
+
+El repositorio se publicó el 11 nov con el historial reescrito para quitar datos de contacto de unos fixtures (D-198); las fechas de los commits no cambian. El repositorio original, archivado y privado, conserva los commits, PR y ejecuciones de CI de octubre con sus SHAs originales como prueba de fechas (antes el tag apuntaba a `08cc526`). La correspondencia entre SHAs antiguos y nuevos está en `evidence/gate-00/2026-11-11/commit-map.txt`.
+
+## Licencia
+Código bajo [Apache License 2.0](LICENSE). Documentación y metadatos del catálogo bajo [CC BY 4.0](docs/LICENSE). Los datos de terceros conservan su licencia original, registrada en `data/catalog/sources/`.

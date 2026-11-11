@@ -1,0 +1,12 @@
+metric_id: poblacion_padron
+human_name: Población empadronada
+description: >-
+  Personas inscritas en el padrón municipal de Madrid, por distrito y edad quinquenal (las mismas
+  bandas que la población censada de la CM). Foto mensual del Ayuntamiento.
+domain: population
+unit: personas
+aggregation_method: sum
+geo_resolution_min: distrito
+temporal_resolution: monthly snapshot
+dataset_id: ayto_padron_municipal
+dimensions: [edad]

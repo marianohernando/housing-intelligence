@@ -46,6 +46,7 @@ class PipelineSteps[T]:
     counts: Callable[[T], dict[str, Any]]
     write_silver: Callable[[T, Path], Path]
     publish: Callable[[Session, T, uuid.UUID], dict[str, Any]]
+    parse: Callable[[Path], pd.DataFrame] | None = None  # None -> one CSV read with `csv`
 
 
 def _skip_if_current(
@@ -103,7 +104,7 @@ def run_pipeline[T](
         return summary
 
     with tracker.stage(PipelineStage.PARSE) as metrics:
-        frame = read_csv(source.path, steps.csv)
+        frame = steps.parse(source.path) if steps.parse else read_csv(source.path, steps.csv)
         metrics |= {"rows": len(frame), "columns": list(frame.columns)}
     silver_dir = data_dir / "silver" / dataset_id / summary.checksum[:12]
     manifest = {

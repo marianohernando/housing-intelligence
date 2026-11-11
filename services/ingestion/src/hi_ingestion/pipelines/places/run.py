@@ -28,7 +28,7 @@ def _counts(places: Places) -> dict[str, Any]:
     }
 
 
-def _write_silver(places: Places, directory: Path) -> Path:
+def write_places_silver(places: Places, directory: Path) -> Path:
     path = directory / "places.csv.gz"
     places.frame.to_csv(path, index=False)
     return path
@@ -52,7 +52,7 @@ def run_places_pipeline(
         quarantine=lambda places: places.quarantine,
         quality=lambda places: run_quality(places, spec).to_dict(),
         counts=_counts,
-        write_silver=_write_silver,
+        write_silver=write_places_silver,
         publish=lambda session, places, version_id: replace_places(
             session, places, spec.dataset_id, source_id, version_id
         ),

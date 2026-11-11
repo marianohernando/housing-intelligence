@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "ayto_padron_municipal",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_padron_municipal/1d4622efbcf3/padron.csv",
+      "sha256": "1d4622efbcf32d10005ea1c4041be209055bf44447f01b9e5cae571e2cc65192",
+      "bytes": 34089439,
+      "url": "https://datos.madrid.es/dataset/200076-0-padron/resource/200076-2-padron-csv/download/padron.csv",
+      "retrieved_at": "2026-11-11T12:24:35.596593+00:00"
+    }
+  ]
+}

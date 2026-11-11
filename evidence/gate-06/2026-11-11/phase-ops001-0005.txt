@@ -1,0 +1,30 @@
+OPS-001 integration (line A) · PR #4 merged + migration 0005 (vf_api_ro) · 2026-11-11T12:14:01Z
+branch: claude/sprint-1-public · merge of origin/claude/s1-deploy at c8ae262
+
+## reviewer agent on PR #4: no blockers. Applied on integration: R-01 (unit guard reads API_TABLES from the migrations, hand-run SQL must match), R-02 (db test of the real role), R-03 (D-208), R-09 (write-grant regex covers privilege lists).
+## Left for line C (its paths): R-07 .vercelignore extra patterns + ignored-file check in deploy.sh, R-08 refuse deploys from other branches. Follow-ups: R-05 readiness 503 on settings errors, R-06 connect_timeout.
+
+## local DB (housing): alembic version
+0005
+## role vf_api_ro
+vf_api_ro|f|f|t|{default_transaction_read_only=on,statement_timeout=15s,"search_path=public, extensions"}
+## policies vf_api_ro_read (FOR SELECT, TO vf_api_ro)
+dataset_registry|SELECT|{vf_api_ro}
+dataset_version|SELECT|{vf_api_ro}
+feature_registry|SELECT|{vf_api_ro}
+feature_value|SELECT|{vf_api_ro}
+geo_admin_unit|SELECT|{vf_api_ro}
+place_master|SELECT|{vf_api_ro}
+source_registry|SELECT|{vf_api_ro}
+## as vf_api_ro: reads geo_admin_unit, cannot read metric_observation, cannot write
+SET
+geo_admin_unit rows|4973
+ERROR:  permission denied for table metric_observation
+ERROR:  permission denied for table source_registry
+
+## gate: make lint typecheck test
+All checks passed!
+0 errors, 0 warnings, 0 informations
+243 passed in 3.66s
+      Tests  11 passed (11)
+52 passed in 24.30s

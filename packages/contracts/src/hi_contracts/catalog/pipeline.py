@@ -4,6 +4,7 @@ Pipelines live in data/catalog/pipelines/<dataset_id>.yaml. Code implements each
 datasets only declare columns and mappings, so no dataset id or formula is hardcoded.
 """
 
+from string import Formatter
 from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -44,6 +45,8 @@ class CmStatTablePipeline(BaseModel):
     metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
     metric_split: MetricSplit | None = None
     period_column: str = "Año"
+    # Older years are left out to fit the storage budget; counted as out_of_window, never hidden.
+    period_min: int | None = Field(default=None, ge=1900, le=2100)
     value_column: str = "Valor"
     unit_column: str | None = "Unidad"
     territory_type_column: str = "Tipo territorio"
@@ -86,6 +89,63 @@ class CmPostcodeConceptPipeline(BaseModel):
         return [self.metric_id]
 
 
+class MadridPadronPipeline(BaseModel):
+    """Ayuntamiento de Madrid padrón: one row per census section and single year of age.
+
+    Districts get the CM census 5-year age bands plus their total, so ratios over this
+    population compare like with like. The count columns (nationality x sex) are only summed.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_padron"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    district_column: str
+    district_name_column: str | None = None
+    age_column: str
+    count_columns: list[str] = Field(min_length=1)
+    period_column: str
+    expected_districts: int = Field(gt=0)
+    # Its municipio total (every dimension 'total') is compared with the padrón total; warning only.
+    census_metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
+class MadridDistrictPanelPipeline(BaseModel):
+    """Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.
+
+    Only the declared indicators are kept, at district level: barrio rows and the city row are
+    outside the scope; every panel year is kept (each one carries its own reference date).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_district_panel"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=lambda: CsvFormat(decimal=","))
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    indicators: dict[str, Annotated[str, Field(pattern=METRIC_ID_PATTERN)]] = Field(min_length=1)
+    indicator_column: str = "indicador_completo"
+    district_column: str = "cod_distrito"
+    district_name_column: str | None = "distrito"
+    barrio_column: str = "cod_barrio"
+    period_column: str = "fecha_indicador"  # DD/MM/YYYY
+    value_column: str = "valor_indicador"
+    unit_column: str | None = "unidad_indicador"
+    expected_districts: int = Field(gt=0)
+    missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
+
+    def metric_ids(self) -> list[str]:
+        return sorted(set(self.indicators.values()))
+
+
 class PointsPipeline(BaseModel):
     """Point facilities with projected coordinates -> place_master."""
 
@@ -97,8 +157,11 @@ class PointsPipeline(BaseModel):
     csv: CsvFormat = Field(default_factory=CsvFormat)
     category: PlaceCategory
     id_column: str
-    name_column: str | None = None  # None -> "<subcategory> (<municipio>)"
-    subcategory_column: str
+    name_column: str | None = None  # None -> name_template or "<subcategory> (<municipio>)"
+    # e.g. "Farmacia · {VIA} {NUMERO}" when the register has no name column; fields are columns
+    name_template: str | None = None
+    subcategory_column: str | None = None
+    subcategory_value: str | None = None  # registers with a single kind of place
     # Only rows whose column values are in the allowlist enter the product (all filters apply).
     row_filters: dict[str, list[str]] = Field(default_factory=dict[str, list[str]])
     x_column: str
@@ -116,12 +179,92 @@ class PointsPipeline(BaseModel):
         if self.status_column and not self.active_values:
             msg = f"{self.dataset_id}: status_column requires active_values"
             raise ValueError(msg)
+        if (self.subcategory_column is None) == (self.subcategory_value is None):
+            msg = (
+                f"{self.dataset_id}: declare exactly one of subcategory_column or subcategory_value"
+            )
+            raise ValueError(msg)
+        if self.name_column and self.name_template:
+            msg = f"{self.dataset_id}: declare name_column or name_template, not both"
+            raise ValueError(msg)
+        return self
+
+    def name_template_columns(self) -> list[str]:
+        if not self.name_template:
+            return []
+        return [field for _, field, _, _ in Formatter().parse(self.name_template) if field]
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
+Weekday = Literal["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+CLOCK_PATTERN = r"^([01]\d|2[0-3]):[0-5]\d$"
+
+
+class GtfsFeedPipeline(BaseModel):
+    """Static GTFS feed -> one transport place per stop or parent station, with service levels.
+
+    Service is measured on one reference day: the median (by active trips) of the feed's
+    `reference_weekday` dates inside its own validity window, so the result never depends on
+    the day the pipeline runs.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["gtfs_feed"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    mode: str = Field(pattern=r"^[a-z_]+$", description="place subcategory, e.g. metro, emt")
+    reference_weekday: Weekday = "tuesday"
+    peak_start: str = Field(default="07:00", pattern=CLOCK_PATTERN)
+    peak_end: str = Field(default="09:00", pattern=CLOCK_PATTERN)
+    expand_frequencies: bool = Field(
+        default=True,
+        description="False when frequencies.txt only annotates trips already listed one by one",
+    )
+
+    @model_validator(mode="after")
+    def _peak_is_a_window(self) -> Self:
+        if self.peak_end <= self.peak_start:
+            msg = f"{self.dataset_id}: peak_end must be after peak_start"
+            raise ValueError(msg)
         return self
 
     def metric_ids(self) -> list[str]:
         return []
 
 
+class OsmWalkNetworkPipeline(BaseModel):
+    """OpenStreetMap extract -> undirected walkable street graph, kept in Silver only.
+
+    A way is walkable when its `highway` value is listed or it explicitly allows people on foot;
+    `foot=no`, or `access=no/private` without a foot permission, removes it. One-way rules apply
+    to vehicles, so the graph is undirected. Only indicators computed on it reach the database.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["osm_walk_network"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    walkable_highways: list[str] = Field(min_length=1)
+    foot_allowed: list[str] = Field(default_factory=lambda: ["yes", "designated", "permissive"])
+    access_denied: list[str] = Field(default_factory=lambda: ["no", "private"])
+    min_total_km: float = Field(gt=0, description="below this the extract is truncated")
+    min_main_component_share: float = Field(default=0.9, gt=0, le=1)
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 PipelineSpec = Annotated[
-    CmStatTablePipeline | CmPostcodeConceptPipeline | PointsPipeline, Field(discriminator="kind")
+    CmStatTablePipeline
+    | CmPostcodeConceptPipeline
+    | MadridPadronPipeline
+    | MadridDistrictPanelPipeline
+    | PointsPipeline
+    | GtfsFeedPipeline
+    | OsmWalkNetworkPipeline,
+    Field(discriminator="kind"),
 ]

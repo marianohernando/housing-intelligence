@@ -1,0 +1,90 @@
+_note: >
+  Golden transport cases (Gate 2). Coordinates are public landmarks (stations and town halls),
+  not copied from the feeds. Each case says which dataset must have a stop near the landmark,
+  where it must fall and what service it must show. Checked against the CRTM feeds downloaded
+  on 2026-11-10.
+cases:
+  - id: sol_metro
+    label: Puerta del Sol (metro)
+    lon: -3.7035
+    lat: 40.4169
+    dataset_id: crtm_gtfs_metro
+    radius_m: 300
+    name_contains: sol
+    municipio_ine: "28079"
+    headway_peak_min: [2, 10]
+    min_departures_day: 300
+  - id: sol_cercanias
+    label: Sol (Cercanías)
+    lon: -3.7035
+    lat: 40.4169
+    dataset_id: crtm_gtfs_cercanias
+    radius_m: 300
+    name_contains: sol
+    municipio_ine: "28079"
+    min_routes: 2
+  - id: atocha_cercanias
+    label: Madrid-Atocha (Cercanías)
+    lon: -3.6893
+    lat: 40.4066
+    dataset_id: crtm_gtfs_cercanias
+    radius_m: 300
+    name_contains: atocha
+    municipio_ine: "28079"
+    headway_peak_min: [1, 10]
+    min_routes: 5
+  - id: colonia_jardin_metro_ligero
+    label: Colonia Jardín (Metro Ligero)
+    lon: -3.7747
+    lat: 40.3970
+    dataset_id: crtm_gtfs_metro_ligero
+    radius_m: 300
+    name_contains: colonia jardin
+    municipio_ine: "28079"
+  - id: plaza_castilla_interurbanos
+    label: Intercambiador de Plaza de Castilla (interurbanos)
+    lon: -3.6895
+    lat: 40.4667
+    dataset_id: crtm_gtfs_interurbanos
+    radius_m: 300
+    name_contains: plaza de castilla
+    municipio_ine: "28079"
+    min_routes: 5
+  - id: alcala_cercanias
+    label: Alcalá de Henares (Cercanías)
+    lon: -3.3665
+    lat: 40.4892
+    dataset_id: crtm_gtfs_cercanias
+    radius_m: 300
+    name_contains: alcala de henares
+    municipio_ine: "28005"
+  - id: getafe_centro_cercanias
+    label: Getafe Centro (Cercanías)
+    lon: -3.7338
+    lat: 40.3100
+    dataset_id: crtm_gtfs_cercanias
+    radius_m: 300
+    name_contains: getafe
+    municipio_ine: "28065"
+  - id: aranjuez_cercanias
+    label: Aranjuez (Cercanías)
+    lon: -3.6187
+    lat: 40.0349
+    dataset_id: crtm_gtfs_cercanias
+    radius_m: 300
+    name_contains: aranjuez
+    municipio_ine: "28013"
+  - id: ajalvir_interurbanos
+    label: Ajalvir, small municipality (interurban buses)
+    lon: -3.4808
+    lat: 40.5338
+    dataset_id: crtm_gtfs_interurbanos
+    radius_m: 600
+    municipio_ine: "28002"
+  - id: sol_emt_density
+    label: EMT stops around Puerta del Sol
+    lon: -3.7035
+    lat: 40.4169
+    dataset_id: crtm_gtfs_emt
+    radius_m: 400
+    min_count: 5

@@ -1,0 +1,35 @@
+# Daily smoke test of the public demo (OPS-001, line C): web, API health and readiness, one zone,
+# the geography and one map layer. GitHub emails a failed scheduled run to the account that last
+# changed the cron line, so a demo that goes down between 17 and 26 Nov is noticed the same day.
+# Scheduled and manual runs only start once this file is on the default branch (main).
+name: smoke-demo
+
+on:
+  schedule:
+    - cron: "30 6 * * *" # 07:30 Madrid (CET), before the working day
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Demo URL to test (default: the production domain)"
+        required: false
+        type: string
+
+concurrency:
+  group: smoke-demo
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: smoke (public demo)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Smoke test
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          SMOKE_TIMEOUT: "60"
+        run: scripts/smoke_demo.sh ${BASE_URL:+"$BASE_URL"}

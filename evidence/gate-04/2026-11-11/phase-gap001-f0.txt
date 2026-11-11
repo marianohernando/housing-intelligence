@@ -1,0 +1,53 @@
+# GAP-001 Fase 0 (esqueleto andante de la lista) — gate 2026-11-11T11:06:30Z — base c0faef8
+$ make lint
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+211 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+lint exit=0
+$ make typecheck
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+typecheck exit=0
+$ make test
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 31%]
+........................................................................ [ 63%]
+........................................................................ [ 95%]
+..........                                                               [100%]
+226 passed in 3.34s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  12:06:41
+   Duration  78ms (tests 49%, import 25%, transform 15%, worker 10%)
+
+uv run pytest -m db tests/integration -q
+.................................................                        [100%]
+49 passed in 22.84s
+test exit=0
+$ uv run python scripts/export_schemas.py --check
+schemas exit=0
+$ uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+manifest exit=0
+$ make migrate && make seed && make features  (base local)
+0003 -> 0004 aplicada; catálogo sincronizado; 12 features recalculadas (filas ccaa: colegios 2.1780, centros_salud 0.5918, plazas_residencia 4.0216)
+$ curl localhost:8010/api/v1/gaps/municipio/28079
+200 · Madrid · colegio FALTA 1.558 vs 2.178 (0.715) · centro_salud FALTA 0.371 vs 0.5918 (0.627) · methodology gap-0.1 · data_version 2026-11-11
+exit=0

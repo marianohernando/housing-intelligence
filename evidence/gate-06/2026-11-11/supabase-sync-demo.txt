@@ -1,0 +1,30 @@
+-> truncating 9 remote tables (demo)
+NOTICE:  truncate cascades to table "ingestion_run"
+NOTICE:  truncate cascades to table "h3_cell_admin_unit"
+NOTICE:  truncate cascades to table "metric_observation"
+-> copying
+ set_config 
+------------
+ 
+(1 row)
+
+ setval 
+--------
+  10740
+(1 row)
+
+-> row counts (remote)
+source_registry        10
+dataset_registry       32
+dataset_version        30
+metric_registry        13
+feature_registry       13
+geo_admin_unit         4973
+place_master           24334
+place_source_alias     24334
+feature_value          2148
+database size: 100 MB
+real 12.89
+user 0.63
+sys 0.69
+exit=0

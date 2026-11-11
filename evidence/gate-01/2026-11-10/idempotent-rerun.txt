@@ -1,0 +1,25 @@
+$ uv run hi-ingest run-all --no-evidence
+# exit 0
+
+cm_secciones_censales: SKIPPED 2026-10-20-37703ffcdfd0
+cm_alquiler_m2_codigo_postal_madrid: SUCCESS 2026-11-10-7a83b45c1f51
+cm_alquiler_m2_municipios: SUCCESS 2026-11-10-19b2da9645e3
+cm_centros_atencion_social: SUCCESS 2026-11-10-1332ab0048a6
+cm_centros_educativos: SKIPPED 2026-10-21-27483ff8498b
+cm_centros_sanitarios: SUCCESS 2026-11-10-d6ac8db8f003
+cm_farmacias_municipios: SKIPPED 2026-11-10-a2011625bc89
+cm_hogares_tamano_censo_2021: SUCCESS 2026-11-10-acfd552e1c9c
+cm_nacidos_vivos_municipios: SKIPPED 2026-11-10-9119056a0e09
+cm_oficinas_farmacia: SKIPPED 2026-11-10-de61d48d7b4a
+cm_poblacion_edad_nacionalidad_sexo: SUCCESS 2026-11-10-de171e22295d
+cm_renta_disponible_municipal: SUCCESS 2026-11-10-ed4ec9cec646
+cm_unidades_escolares: SKIPPED 2026-11-10-bdf7c1ff864a
+cm_viviendas_superficie: SUCCESS 2026-11-10-382a7f2ff74a
+cm_viviendas_tenencia_censo_2021: SKIPPED 2026-11-10-048892fa99bc
+crtm_gtfs_autobuses_urbanos: SKIPPED 2026-11-10-41f7f9c15b61
+crtm_gtfs_cercanias: SKIPPED 2026-11-10-1b018a22325c
+crtm_gtfs_emt: SKIPPED 2026-11-10-8478ae5c9262
+crtm_gtfs_interurbanos: SKIPPED 2026-11-10-5bbf3c95047c
+crtm_gtfs_metro: SKIPPED 2026-11-10-cccabfd6f025
+crtm_gtfs_metro_ligero: SKIPPED 2026-11-10-599f9acfa270
+

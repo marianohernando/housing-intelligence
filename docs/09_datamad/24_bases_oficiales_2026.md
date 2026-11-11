@@ -6,6 +6,8 @@ Fuente: "Bases de participación DATAMAD 2026", PDF enlazado desde https://event
 - Inscripción: 15 jun – 5 nov 2026. Cambio de composición de equipo hasta el 7 nov.
 - Formación: 5 y 6 nov (UCM, híbrido). 5 nov: APIs, MCP y espacios de datos (Alberto Abella, Gaia-X). 6 nov: IA aplicada a datos abiertos (Juan Tomás García, Santander AI Lab).
 - Desarrollo: 7–26 nov.
+- **Formulario de presentación de proyectos: antes del 20 nov** (correo de madrid.datamad@urjc.es del 9 nov; https://forms.gle/NyatKHN95aPxvQro8). Es imprescindible para seguir en la selección. Pide nombre del proyecto, resumen de 100 palabras como máximo, datos de participantes y confirmación de asistencia al 26 nov; enlaces a demo o repositorio opcionales. No hace falta el proyecto terminado.
+- Preselección: hasta 50 proyectos, de los que 12 presentan ante el jurado el 26 nov. Al menos una persona del equipo debe asistir presencialmente.
 - Entrega: **antes de las 14:00 del 26 nov**, en la plataforma que la organización facilita ese día.
 - Jornada final 26 nov, URJC Vicálvaro: 11:00 inauguración · 11:20–13:30 plenarias · 13:30–17:00 talleres · 17:00–19:00 presentaciones · 19:00 deliberación · 20:00 premios.
 

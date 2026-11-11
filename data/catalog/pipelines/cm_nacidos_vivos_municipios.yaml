@@ -1,0 +1,5 @@
+kind: cm_stat_table
+dataset_id: cm_nacidos_vivos_municipios
+metric_id: nacidos_vivos
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}
+dimension_columns: {"Sexo": sexo}

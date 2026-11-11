@@ -1,0 +1,44 @@
+dataset_id: ayto_padron_municipal
+source_id: ayuntamiento_madrid_ckan
+name: Padrón municipal
+domain: population
+owner: Ayuntamiento de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: seccion_censal
+temporal_resolution: monthly snapshot
+refresh_policy: mensual
+landing_url: https://datos.madrid.es/dataset/200076-0-padron
+resources:
+- name: Padrón municipal (último mes publicado)
+  format: CSV
+  # Stable link: CKAN serves the current upload whatever the file name (checked 2026-11-11).
+  url: https://datos.madrid.es/dataset/200076-0-padron/resource/200076-2-padron-csv/download/padron.csv
+- name: Conceptos fundamentales del padrón
+  format: PDF
+  url: https://datos.madrid.es/dataset/200076-0-padron/resource/200076-3-padron/download/conceptos_fundamentales.pdf
+  role: docs
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 4
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    DATA-012. The CM portal publishes no population by district of Madrid; this register gives
+    people by census section and single year of age, so districts get the CM's 5-year bands.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-11T13:30:00+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 200076-0-padron
+  harvested_at: '2026-10-20T11:16:21.700337+00:00'
+notes: >-
+  Complementary, not CM open data (D-205, D-209). Rows: census section x single year of age,
+  with Spanish/foreign men/women counts; only their sum is kept (nationality and sex are never
+  stored). The first resource is the one ingested.
