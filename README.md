@@ -8,11 +8,12 @@ Plataforma de inteligencia residencial para la Comunidad de Madrid (PUBLIC · PR
 Fase de competición: Sprint 1 (PUBLIC core) en curso según D-192. Gate 0, Gate 1 y Gate 2 PASS; Gate 3 iniciado.
 - Geografía canónica: 179 municipios, 246 distritos censales, 131 barrios, 4.417 secciones, 86.361 celdas H3.
 - 21 datasets del Portal de Datos Abiertos de la Comunidad de Madrid con Quality Gate: geografía, población, hogares, vivienda, renta, alquiler, nacimientos, equipamientos (educación, centros sanitarios, mayores, farmacias) y los 6 GTFS del CRTM (14.982 paradas y estaciones con frecuencias).
-- 12 features municipales con lineage y confidence; mapa con coropletas y capas de equipamientos en `/map`.
-- API de la lista de lo que falta por zona (`GET /api/v1/gaps/{level}/{code}`): FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence, proxy declarado y datasets de origen. Hoy tiene las filas de colegio y centro de salud por municipio.
+- 12 features municipales con lineage y confidence (7 de ellas también para los 21 distritos de Madrid); mapa con coropletas y capas de equipamientos en `/map`.
+- Madrid capital por distritos: población por edad del padrón municipal y hogares del panel de distritos del Ayuntamiento (datos complementarios, no CM; D-209).
+- API de la lista de lo que falta por zona (`GET /api/v1/gaps/{level}/{code}`): FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence, proxy declarado y datasets de origen. Hoy tiene las filas de colegio y centro de salud por municipio y por distrito de Madrid.
 - Contratos PUBLIC del buscador y de la lista, con sus JSON Schema en `data/schemas/api/` y sus rutas en `docs/04_technical_architecture/31_public_api_routes.md`.
 - Red peatonal de OpenStreetMap (57.659 km) para medir la distancia a pie a los equipamientos: en curso (CORE-005).
-- Base de datos de la demo en Supabase con RLS en todas las tablas (D-197).
+- Base de datos de la demo en Supabase con RLS en todas las tablas (D-197); la API pública lee con un rol de solo lectura (D-208).
 - Progreso fase a fase: `board/BOARD.md` («Registro de progreso»). Evidencias en `evidence/`.
 
 ## Quickstart
