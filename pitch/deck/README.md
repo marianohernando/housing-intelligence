@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra «21», números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | Hoy falla solo por C1–C3, hasta que se fusione el PR #11. Con ellas en su sitio, el 11 nov pasó todo menos el nombre, que se pasa con `DECK_INTEGRANTES` |
+| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | Hoy solo falla por el nombre, que se pasa con `DECK_INTEGRANTES` (12 nov, con el PR #11 ya fusionado) |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,16 +43,14 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slides 3 y 4 | Capturas C1, C2 y C3: ya están hechas en producción, en la rama `claude/s1-deploy` (PR #11). El build las encuentra en cuanto se fusiona | A, al fusionar el PR #11 |
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
 - las cifras de Madrid capital se comprobaron en producción con `gap-0.2` (0,371 frente a 0,5553);
-- C4, C5, C6 y C7 son capturas de producción de B.
+- C1–C3 son capturas de producción de C (PR #11, fusionado el 12 nov) y C4–C7, de B.
 
-Esas capturas se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias»).
+Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias»).
 
-Para comprobar el encuadre de C1–C3 antes de la fusión, se copian de esa rama a `pitch/capturas/` y se borran después: no se versionan dos veces.
 
 Para cerrar una marca, se quita `class="pending"` y su `data-pending` en `deck.html`. Si lo marcado no llega, se borra el elemento entero: nunca se deja un hueco ni un «próximamente».
 

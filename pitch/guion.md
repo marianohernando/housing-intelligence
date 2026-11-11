@@ -9,7 +9,7 @@
   ```
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
 - **Textos de los botones:** son los de producción, comprobados en las capturas del 11 nov:
-  - buscador: `evidence/gate-06/2026-11-11-deploy/prod-buscador-*.png` y `prod-buscador-check.json`, en la rama `claude/s1-deploy` (PR #11);
+  - buscador: `evidence/gate-06/2026-11-11-deploy/prod-buscador-*.png` y `prod-buscador-check.json` (PR #11);
   - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`.
 - **Buscador:** encendido en producción desde el 11 nov y verificado por C: smoke 7/7, axe AA sin fallos y la consola limpia (`deploy-12-buscador.md`, misma rama y PR). El bloque 2 va con buscador.
 - **El bloque 2 sin buscador queda de reserva.** Sirve si la demo vuelve a enseñar «Muy pronto», en dos casos:
@@ -33,7 +33,7 @@
 ## Antes de empezar (en la sala, 13:30–17:00)
 1. Portátil con cargador, wifi del evento probada, HDMI probado y resolución 1920 × 1080 (`docs/09_datamad/25_plan_competicion.md` §9).
 2. Navegador en ventana limpia, zoom al 100 %, sin extensiones visibles y con las notificaciones desactivadas.
-3. Pestaña 1: las slides en PDF, en la slide 1. Pestaña 2: la portada de la demo, ya cargada una vez para tener la caché caliente. URL: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11).
+3. Pestaña 1: las slides en PDF, en la slide 1. Pestaña 2: la portada de la demo, ya cargada una vez para tener la caché caliente. URL: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
 4. Plan B abierto en una pestaña oculta: el vídeo de 2 min (PITCH-003, `pitch/video_respaldo.md`; lo graba Mariano el 23 nov) y el paquete sin red de C (`make demo-offline`, `infra/deploy/offline/`). Sin red no hay buscador: con el paquete va el bloque 2 sin buscador.
 5. Pestaña de respaldo del bloque 3, ya cargada: https://vidafacil-madrid.vercel.app/que-falta?zona=municipio/28079.
 
@@ -60,7 +60,7 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 - colegio a 10 min andando como mucho, obligatorio;
 - le importan, por este orden, los colegios, el transporte y la salud.
 
-**Resultado en producción** (11 nov, 22:27 UTC · `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, rama `claude/s1-deploy`, PR #11; las mismas cifras que D-215, punto 9, en la base local). Se lee en pantalla, nunca de memoria; el 25 nov se vuelve a comprobar:
+**Resultado en producción** (11 nov, 22:27 UTC · `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11; las mismas cifras que D-215, punto 9, en la base local). Se lee en pantalla, nunca de memoria; el 25 nov se vuelve a comprobar:
 - encajan 32 de las 199 zonas (178 municipios y los 21 distritos de Madrid), y en 15 falta algún dato;
 - 1.ª, Ciudad Lineal, 99 %: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 11 min, a 3,2 km en línea recta de Azca y «Alquiler medio ≈ 1.075 €/mes por 77 m²»;
 - después, Tetuán, Hortaleza y Moratalaz, empatadas al 97 %: no se dice un orden entre ellas. Chamartín sale 8.ª (95 %);

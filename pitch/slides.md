@@ -81,7 +81,7 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 ### Utilidad: personas que buscan dónde vivir
-**Va con buscador:** producción lo tiene encendido desde el 11 nov y verificado (`NEXT_PUBLIC_FEATURE_SEARCH=true`; `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11: smoke 7/7, axe AA sin fallos, consola limpia). La **versión sin buscador** queda de reserva, sin «próximamente», por si el 24 nov la demo vuelve a enseñar «Muy pronto»:
+**Va con buscador:** producción lo tiene encendido desde el 11 nov y verificado (`NEXT_PUBLIC_FEATURE_SEARCH=true`; `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11: smoke 7/7, axe AA sin fallos, consola limpia). La **versión sin buscador** queda de reserva, sin «próximamente», por si el 24 nov la demo vuelve a enseñar «Muy pronto»:
 - Título: «Mira qué tienes cerca de casa».
 - «Minutos a pie, por la calle, hasta el colegio, el centro de salud o la farmacia más cercanos.» (CORE-005, D-211; en la web: `evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`).
 - «Cada dato con su fuente y su fiabilidad.»
@@ -135,7 +135,7 @@ Versión con buscador (la que vale):
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
 ### Banda de enlaces (con QR)
-- Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11).
+- Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
 - Código: https://github.com/marianohernando/housing-intelligence
 
 ---
@@ -185,7 +185,7 @@ Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440
 
 El deck ya usa las capturas de producción del 11 nov. `pitch/deck/build.py` las toma de la evidencia si no hay una con el mismo id en `pitch/capturas/`:
 - C4–C7 son de B (`evidence/map-004/2026-11-11/prod_*`), con `gap-0.2`. Se hicieron antes de desplegar el PR #9, así que algunos textos son anteriores. Los recortes los dejan fuera; ver cada fila.
-- C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`), en la rama `claude/s1-deploy` (PR #11). Hasta que se fusione, el build las da por faltantes y `--final` no deja pasar.
+- C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11, fusionado el 12 nov).
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|

@@ -43,7 +43,7 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 
 **Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
-**El buscador está encendido en producción desde el 11 nov** (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11), así que los planos 2, 3 y 4 se graban.
+**El buscador está encendido en producción desde el 11 nov** (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11), así que los planos 2, 3 y 4 se graban.
 
 **Reserva: si el 23 nov la demo vuelve a enseñar «Muy pronto»** (C ha vuelto a una versión sin buscador), esos tres planos no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
 - **Plano 6 entra desde el mapa:** clic en un distrito de la región (propuesta: Chamartín) y vuelo a 3D. Se alarga hasta 30 s y suma la tarjeta «Qué falta aquí» con «A pie: N min».

@@ -170,7 +170,7 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `busqueda.boton.cargando` | Buscando zonas… |
 
 ### Si el buscador se apaga
-Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SEARCH=true`, `apps/web/src/lib/capabilities.ts`; `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11). Estos textos solo salen en dos casos:
+Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SEARCH=true`, `apps/web/src/lib/capabilities.ts`; `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11). Estos textos solo salen en dos casos:
 - si C vuelve a una versión sin buscador;
 - en el paquete sin red (`make demo-offline`), que compila la web sin ninguna variable `NEXT_PUBLIC_*` salvo la URL de la API (`infra/deploy/offline/demo_offline.sh`).
 

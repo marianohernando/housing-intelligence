@@ -60,7 +60,7 @@ Los portales enseñan la oferta de pisos; nosotros enseñamos la necesidad y el 
 **10. ¿Cuánto cuesta mantenerlo?**
 Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base en el de Supabase, y los datos se recargan copiando tablas ya validadas. Para un uso comercial habría que pasar a planes de pago, porque el gratuito de Vercel no lo admite.
 - Evidencia: `evidence/gate-06/2026-11-11/supabase-sync-demo.txt` (base de la demo: 100 MB de los 500 del plan gratuito) · D-188.
-- Alojamiento: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4) (plan Hobby: «solo personal y no comercial»).
+- Alojamiento: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (plan Hobby: «solo personal y no comercial»).
 
 ---
 

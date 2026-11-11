@@ -2,7 +2,7 @@
 Borrador de la línea D para el README.md de la raíz (lo integra la línea A, que es su dueña).
 - Los enlaces son relativos a la raíz del repo, como quedarán en README.md; desde pitch/ no funcionan.
 - Las notas entre comentarios como este no se ven en GitHub: dicen de dónde sale cada cifra y qué está pendiente.
-- Antes de integrarlo: fusionar el PR #11 (trae la captura C1), quitar las marcas «pendiente» y revisar las cifras con `uv run python pitch/build_datasets_cm.py`.
+- Antes de integrarlo: quitar las marcas «pendiente» y revisar las cifras con `uv run python pitch/build_datasets_cm.py`.
 -->
 
 # Vida Fácil · Encuentra tu sitio en Madrid
@@ -15,7 +15,7 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ![Vida Fácil: mapa de la Comunidad de Madrid con la búsqueda de una pareja con 2 hijos, las zonas coloreadas según cuánto encajan y la tarjeta de la zona que más encaja](evidence/gate-06/2026-11-11-deploy/prod-buscador-c1_busqueda_desktop.png)
 
-<!-- Captura C1 de pitch/slides.md: producción, 11 nov, 1440 px, caso de la Castellana con la tarjeta de Ciudad Lineal. La hizo C y está en la rama claude/s1-deploy (PR #11): la imagen se ve cuando se fusione. -->
+<!-- Captura C1 de pitch/slides.md: producción, 11 nov, 1440 px, caso de la Castellana con la tarjeta de Ciudad Lineal. La hizo C (PR #11, fusionado el 12 nov). -->
 
 ---
 

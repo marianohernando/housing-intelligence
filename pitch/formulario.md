@@ -26,7 +26,7 @@ La ayuda del campo 7 pide «qué queréis construir, qué problema aborda y cóm
 ## Campo 7 · Resumen principal (98 palabras) · la que vale hoy
 Este texto da el buscador por hecho («le recomienda dónde vivir», «enseña cuántas zonas aparecen»). Ya lo es:
 - el cálculo funciona en la API con datos reales (`POST /api/v1/search`, D-214 y D-215);
-- producción lo tiene encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SEARCH=true`). Lo verificó C con smoke 7/7, axe AA sin fallos y la consola limpia (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11).
+- producción lo tiene encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SEARCH=true`). Lo verificó C con smoke 7/7, axe AA sin fallos y la consola limpia (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
 
 
 <!-- resumen:inicio -->
@@ -65,7 +65,7 @@ Código abierto (Apache-2.0): https://github.com/marianohernando/housing-intelli
 Datasets que integra, con licencia y control de calidad: https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md
 ```
 
-- **URL de la demo: verificada el 11 nov con el buscador encendido.** Smoke 7/7 con datos reales de Supabase (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, rama `claude/s1-deploy`, PR #11). El 18 nov se abre una vez más en el móvil antes de enviar (checklist, paso 5).
+- **URL de la demo: verificada el 11 nov con el buscador encendido.** Smoke 7/7 con datos reales de Supabase (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11). El 18 nov se abre una vez más en el móvil antes de enviar (checklist, paso 5).
 - **Enlace a `datasets_cm.md`:** funciona en cuanto A fusione este PR en `claude/sprint-1-public`. Si para el 18 nov Mariano ha fusionado en `main`, cambia `claude/sprint-1-public` por `main` en la URL.
 - **Repo:** público desde el 11 nov (D-198); comprobado con `gh repo view` → `"visibility":"PUBLIC"`.
 
@@ -83,7 +83,7 @@ Datasets que integra, con licencia y control de calidad: https://github.com/mari
 | «explica el porqué en lenguaje cotidiano» | Campo `explanation` de la lista. Ejemplo real: «0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)» (`data/fixtures/contracts/zone_gap_list.madrid.fixture.json`, `gap-0.2`) | Hecho en la lista y en la API del buscador (`facts`, D-215: «Colegio con primaria a 5 min andando») |
 | «cada resultado cita su fuente y su fiabilidad» | Cada fila de la lista lleva `datasets` (nombre, portal, versión, licencia) y `confidence` (mismo fixture) | Hecho en la lista y en la API del buscador (`datasets` y `confidence` por zona y por hecho, D-215) |
 | «Código abierto con API» | `LICENSE` (Apache-2.0, D-191) · repo público (D-198) · rutas en `docs/04_technical_architecture/31_public_api_routes.md` | Hecho |
-| Demo con enlace público | https://vidafacil-madrid.vercel.app (URL elegida por Mariano) · `infra/deploy/README.md` · `evidence/gate-06/2026-11-11-deploy/deploy-9-web-nueva.md` (web nueva y `gap-0.2`) · `deploy-12-buscador.md` (buscador; rama `claude/s1-deploy`, PR #11) | Hecho: la web nueva con el buscador, smoke 7/7 con datos reales (11 nov). Coste 0 €/mes. El 18 nov se vuelve a abrir antes de enviar |
+| Demo con enlace público | https://vidafacil-madrid.vercel.app (URL elegida por Mariano) · `infra/deploy/README.md` · `evidence/gate-06/2026-11-11-deploy/deploy-9-web-nueva.md` (web nueva y `gap-0.2`) · `deploy-12-buscador.md` (buscador, PR #11) | Hecho: la web nueva con el buscador, smoke 7/7 con datos reales (11 nov). Coste 0 €/mes. El 18 nov se vuelve a abrir antes de enviar |
 
 No se prometen los extras del 19 al 22 nov: zonas verdes, seguridad, «sin escaleras», precio de compra ni MCP (D-206).
 
