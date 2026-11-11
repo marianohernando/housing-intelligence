@@ -53,6 +53,19 @@ def test_extensions_available(migrated_engine: Engine) -> None:
         assert conn.execute(text("SELECT '[1,2,3]'::vector::text")).scalar() == "[1,2,3]"
 
 
+def test_every_public_table_has_row_level_security(migrated_engine: Engine) -> None:
+    """D-197: Supabase's Data API must never read or write a table; new tables need RLS too."""
+    tables_without_rls = text(
+        "SELECT c.relname FROM pg_class c "
+        "JOIN pg_namespace n ON n.oid = c.relnamespace "
+        "WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p') AND NOT c.relrowsecurity "
+        "ORDER BY 1"
+    )
+    with migrated_engine.connect() as conn:
+        without_rls = conn.execute(tables_without_rls).scalars().all()
+    assert without_rls == [], f"tables without row level security: {without_rls}"
+
+
 def test_models_match_migrations(migrated_engine: Engine) -> None:
     with migrated_engine.connect() as conn:
         ctx = MigrationContext.configure(
