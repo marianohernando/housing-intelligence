@@ -10,7 +10,7 @@
     "center_lat": 40.47761
   },
   "method": {
-    "version": "gap-0.1-fixture",
+    "version": "gap-0.1",
     "reference": "Comunidad de Madrid: total de la región dividido por su población",
     "falta_below": 0.8,
     "cubierto_from": 1.0
@@ -36,9 +36,9 @@
       "reference": 2.178,
       "reference_label": "Comunidad de Madrid",
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.715,
+      "ratio_to_reference": 0.7153,
       "explanation": "1,6 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2",
-      "proxy_note": "Cuenta centros, no plazas ni etapas; un centro grande y uno pequeño pesan igual. Medida de cobertura, no de acceso a pie.",
+      "proxy_note": "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos.",
       "extra_indicators": [],
       "datasets": [
         {
@@ -78,12 +78,12 @@
           "cm_poblacion_edad_nacionalidad_sexo"
         ]
       },
-      "reference": 0.592,
+      "reference": 0.5918,
       "reference_label": "Comunidad de Madrid",
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.627,
-      "explanation": "0,4 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,6",
-      "proxy_note": "No mide capacidad ni horarios; los consultorios rurales cuentan igual que un centro de salud.",
+      "ratio_to_reference": 0.6269,
+      "explanation": "0,37 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,59",
+      "proxy_note": "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande.",
       "extra_indicators": [],
       "datasets": [
         {

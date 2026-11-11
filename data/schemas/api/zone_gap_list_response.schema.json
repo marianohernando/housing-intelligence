@@ -226,6 +226,7 @@
       "type": "object"
     },
     "GapRowKey": {
+      "description": "Rows of the per-zone list of what is missing (GAP-001, D-194).",
       "enum": [
         "escuela_infantil",
         "colegio",

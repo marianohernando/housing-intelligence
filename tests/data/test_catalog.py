@@ -127,3 +127,14 @@ def test_every_feature_method_is_implemented(catalog: Catalog) -> None:
         assert (
             feature.formula.method in METHODS or feature.formula.method in PIPELINE_COMPUTED_METHODS
         ), feature.feature_id
+
+
+def test_gap_rows_have_one_primary_indicator_at_most(catalog: Catalog) -> None:
+    """GAP-001: each row of the per-zone list is driven by a single declared feature."""
+    primaries = [
+        f.gap_row.row
+        for f in catalog.features.values()
+        if f.gap_row and f.gap_row.role == "primary"
+    ]
+    assert len(primaries) == len(set(primaries))
+    assert {"colegio", "centro_salud"} <= set(primaries)

@@ -27,3 +27,4 @@ tests: [non_negative, monotonic_in_places]
 limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "Cuenta centros, no plazas ni etapas; un centro grande y uno pequeño pesan igual. Medida de cobertura, no de acceso a pie."
+gap_row: {row: colegio, role: primary, label: "Colegios", phrase: "centros educativos públicos por cada 1.000 menores de 15 años", proxy_note: "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos."}

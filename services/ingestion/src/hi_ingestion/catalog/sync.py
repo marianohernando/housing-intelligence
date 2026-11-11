@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from hi_db.models import DatasetRegistry, FeatureRegistry, MetricRegistry, SourceRegistry
 from hi_ingestion.catalog.loader import Catalog
+from hi_ingestion.catalog.provenance import is_cm_open_data, portal_url
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
 
@@ -37,6 +38,8 @@ def _dataset_row(spec: Any, yaml_path: Path | None) -> dict[str, Any]:
         "priority": spec.priority.value,
         "scorecard": spec.scorecard.model_dump(mode="json"),
         "catalog_yaml_path": str(yaml_path.relative_to(REPO_ROOT)) if yaml_path else None,
+        "portal_url": portal_url(spec),
+        "is_cm_open_data": is_cm_open_data(spec),
     }
 
 

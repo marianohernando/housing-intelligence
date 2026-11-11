@@ -2,7 +2,8 @@
 
 Observation frame columns: territory_code, period_start, dims (dict), value, null_reason.
 Place frame columns: municipio_ine, subcategory, attributes (dict).
-Result columns: territory_code, period_start, value, null_reason, confidence.
+Result columns: territory_code, period_start, value, null_reason, confidence and, when a row is
+not at the feature's own level (the regional reference), territory_level.
 """
 
 from collections.abc import Mapping, Sequence
@@ -12,7 +13,16 @@ import pandas as pd
 
 from hi_contracts.catalog.enums import NullReason
 
-RESULT_COLUMNS = ["territory_code", "period_start", "value", "null_reason", "confidence"]
+RESULT_COLUMNS = [
+    "territory_code",
+    "period_start",
+    "value",
+    "null_reason",
+    "confidence",
+    "territory_level",
+]
+REGION_LEVEL = "ccaa"
+REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
 DimFilter = Mapping[str, Sequence[str] | str]
 ANY = "*"
 
@@ -197,7 +207,30 @@ def _per_population(
             if population < small_population:
                 conf = min(conf, SMALL_POPULATION_CONFIDENCE)
             out.append(_ok(code, period, per * totals.get(code, 0.0) / population, conf))
-    return _result(out)
+    region = _regional_reference(totals, pop, per, confidence)
+    return _result([*out, region] if region else out)
+
+
+def _regional_reference(
+    totals: dict[str, float],
+    pop: dict[str, tuple[Any, float | None, str | None]],
+    per: float,
+    confidence: dict[str, float],
+) -> dict[str, Any] | None:
+    """Region total over region population (GAP-001 reference), over municipios whose
+    population is known; confidence is the share of municipios known times their own."""
+    known = {code: p for code, (_, p, _) in pop.items() if p is not None}
+    population = sum(known.values())
+    if not known or population <= 0:
+        return None
+    weighted = sum(confidence.get(code, 1.0) * p for code, p in known.items()) / population
+    row = _ok(
+        REGION_CODE,
+        max(period for period, _, _ in pop.values()),
+        per * sum(totals.get(code, 0.0) for code in known) / population,
+        len(known) / len(pop) * weighted,
+    )
+    return row | {"territory_level": REGION_LEVEL}
 
 
 def places_per_population(

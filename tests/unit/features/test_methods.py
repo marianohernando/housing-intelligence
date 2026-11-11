@@ -139,3 +139,41 @@ def test_shares_stay_within_0_100_when_members_are_subsets(part: float, rest: fl
         "value"
     ]
     assert value is None or 0.0 <= value <= 100.0 + 1e-9  # type: ignore[operator]
+
+
+def test_regional_reference_is_region_total_over_region_population() -> None:
+    """GAP-001: the reference is the region's total over its population, not a mean of ratios."""
+    pop = _obs(
+        [
+            ("28001", {"edad": "total"}, 1000.0),
+            ("28002", {"edad": "total"}, 3000.0),
+            ("28003", {"edad": "total"}, 0.0),
+        ]
+    )
+    frame = methods.places_per_population(
+        _places(["28001", "28002", "28002", "28002", "28003"]), pop, {"edad": ["total"]}, 1000.0
+    )
+    region = frame.loc[frame["territory_level"] == methods.REGION_LEVEL]
+    assert region["territory_code"].tolist() == [methods.REGION_CODE]
+    assert region["value"].iloc[0] == 1000.0 * 5 / 4000  # the place in a 0-population town counts
+    assert region["confidence"].iloc[0] == 1.0
+    municipal = frame.loc[frame["territory_level"] != methods.REGION_LEVEL]
+    assert set(municipal["territory_code"]) == {"28001", "28002", "28003"}
+
+
+def test_regional_reference_confidence_drops_with_unknown_population() -> None:
+    frame = methods.places_per_population(_places(["28001"]), POP, {"edad": ["total"]}, 1000.0)
+    region = _by_code(frame)[methods.REGION_CODE]
+    assert region["value"] == 1000.0 * 1 / 100  # 28003 has unknown population: left out
+    assert region["confidence"] == 2 / 3  # 2 of 3 municipios have a known population
+
+
+@given(st.integers(min_value=0, max_value=50), st.integers(min_value=1, max_value=20))
+def test_more_places_never_lowers_the_regional_reference(n: int, extra: int) -> None:
+    base = methods.places_per_population(_places(["28001"] * n), POP, {"edad": ["total"]}, 1000.0)
+    more = methods.places_per_population(
+        _places(["28001"] * (n + extra)), POP, {"edad": ["total"]}, 1000.0
+    )
+    assert (
+        _by_code(more)[methods.REGION_CODE]["value"] > _by_code(base)[methods.REGION_CODE]["value"]
+    )  # type: ignore[operator]

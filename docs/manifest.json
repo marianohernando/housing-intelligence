@@ -1,6 +1,6 @@
 {
-  "version": "0.5.12",
-  "updated": "2026-11-11T10:51:39.985334+00:00",
+  "version": "0.5.13",
+  "updated": "2026-11-11T11:05:09.419033+00:00",
   "markdown_files": 277,
   "files": {
     "00_index/00_master_index.md": {
@@ -640,8 +640,8 @@
       "bytes": 498
     },
     "04_technical_architecture/31_public_api_routes.md": {
-      "sha256": "3b805e060d6f22885d3e04bf9a5d87cf4deaa5cce1dd73ea0fccdc1ee8c1a41e",
-      "bytes": 3665
+      "sha256": "84e2fb612b29f019a6bd40b07cc6e2b1c174b364801fee4eb489fa37d26e9c30",
+      "bytes": 4086
     },
     "05_map_ux/01_map_3d_digital_twin.md": {
       "sha256": "9bb353ceabb6802e8a05e2deec172d62a9996498dcecbcd70e5b463294eac0a3",
@@ -1096,8 +1096,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "ea457f1212a10888e365e621a0e670a27ec98a1fc0656f95b6c5c3cf8b5e0aa4",
-      "bytes": 12938
+      "sha256": "ed05f1efed6582cc05aae0e234cb01f0072d7ad284bbe021d7fa25955f1d9504",
+      "bytes": 13435
     },
     "CLAUDE.md": {
       "sha256": "cb9b95b379aaa00fc3064ab11c286d2d13426aa44e1ffeb4bc7995f0ac2bede3",

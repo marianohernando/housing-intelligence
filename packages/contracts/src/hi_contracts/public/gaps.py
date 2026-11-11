@@ -9,7 +9,10 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public.common import DatasetRef, IndicatorValue, ZoneRef
+
+__all__ = ["GapMethod", "GapRow", "GapRowKey", "GapStatus", "ZoneGapList"]
 
 
 class GapStatus(StrEnum):
@@ -17,15 +20,6 @@ class GapStatus(StrEnum):
     JUSTO = "JUSTO"
     CUBIERTO = "CUBIERTO"
     SIN_DATOS = "SIN_DATOS"
-
-
-class GapRowKey(StrEnum):
-    ESCUELA_INFANTIL = "escuela_infantil"
-    COLEGIO = "colegio"
-    CENTRO_SALUD = "centro_salud"
-    MAYORES = "mayores"
-    FARMACIA = "farmacia"
-    VIVIENDA = "vivienda"
 
 
 class GapMethod(BaseModel):

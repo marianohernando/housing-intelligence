@@ -98,6 +98,10 @@ class DatasetRegistry(Base):
         JSONB, nullable=False, server_default=text("'{}'::jsonb")
     )
     catalog_yaml_path: Mapped[str | None] = mapped_column(Text)
+    portal_url: Mapped[str | None] = mapped_column(Text)  # CM portal page when there is one
+    is_cm_open_data: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
     created_at: Mapped[datetime] = _created()
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False

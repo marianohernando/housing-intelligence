@@ -74,6 +74,74 @@
       "title": "FeatureSource",
       "type": "object"
     },
+    "GapRowBinding": {
+      "additionalProperties": false,
+      "description": "Where the feature shows up in the per-zone list (GAP-001): the row's main indicator,\nor an extra one next to it (e.g. walking minutes).",
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Row title; required for primary",
+          "title": "Label"
+        },
+        "phrase": {
+          "description": "Unit in words, e.g. 'colegios por cada 1.000 menores'",
+          "title": "Phrase",
+          "type": "string"
+        },
+        "proxy_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the indicator does not measure",
+          "title": "Proxy Note"
+        },
+        "role": {
+          "default": "primary",
+          "enum": [
+            "primary",
+            "extra"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "row": {
+          "$ref": "#/$defs/GapRowKey"
+        }
+      },
+      "required": [
+        "row",
+        "phrase"
+      ],
+      "title": "GapRowBinding",
+      "type": "object"
+    },
+    "GapRowKey": {
+      "description": "Rows of the per-zone list of what is missing (GAP-001, D-194).",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "mayores",
+        "farmacia",
+        "vivienda"
+      ],
+      "title": "GapRowKey",
+      "type": "string"
+    },
     "GeoResolution": {
       "enum": [
         "ccaa",
@@ -156,6 +224,17 @@
     },
     "formula": {
       "$ref": "#/$defs/FeatureFormula"
+    },
+    "gap_row": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GapRowBinding"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "geo_level": {
       "$ref": "#/$defs/GeoResolution"

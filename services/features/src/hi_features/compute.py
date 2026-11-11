@@ -73,6 +73,19 @@ def compute(engine: Engine, spec: FeatureSpec) -> pd.DataFrame:
     return method(engine, formula)
 
 
+ADMIN_LEVELS = frozenset({"municipio", "distrito", "barrio", "seccion_censal"})
+
+
+def _level(spec: FeatureSpec, record: dict[str, Any]) -> str:
+    """A method may return rows at another level (e.g. the regional reference)."""
+    level = record.get("territory_level")
+    return level if isinstance(level, str) else spec.geo_level.value
+
+
+def _admin_unit(level: str, code: str) -> str | None:
+    return admin_unit_id(level, code) if level in ADMIN_LEVELS else None
+
+
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
     versions = loaders.last_valid_versions(engine, [s.dataset_id for s in spec.sources])
     records: list[dict[str, Any]] = result.to_dict("records")  # pyright: ignore[reportAssignmentType]
@@ -80,9 +93,9 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
         {
             "feature_id": spec.feature_id,
             "feature_version": spec.version,
-            "territory_level": spec.geo_level.value,
+            "territory_level": _level(spec, r),
             "territory_code": r["territory_code"],
-            "admin_unit_id": admin_unit_id(spec.geo_level.value, r["territory_code"]),
+            "admin_unit_id": _admin_unit(_level(spec, r), r["territory_code"]),
             "period_start": r["period_start"],
             "value": None if r["value"] is None or pd.isna(r["value"]) else float(r["value"]),
             "null_reason": r["null_reason"] if isinstance(r["null_reason"], str) else None,

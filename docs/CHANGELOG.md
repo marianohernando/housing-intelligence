@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.13 — Lista de lo que falta: esqueleto andante (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: `GET /api/v1/gaps/{level}/{code}` ya responde con datos reales (colegio y centro de salud por municipio). La referencia regional es una fila `ccaa` del Feature Store: el total de la región dividido por su población. Las filas se declaran en el Feature Dictionary (`gap_row`). Con la migración 0004, `dataset_registry` guarda el enlace al portal CM e `is_cm_open_data`.
+
 ## v0.5.12 — Contratos PUBLIC de la demo (2026-11-11)
 - `04_technical_architecture/31_public_api_routes.md`: contratos `ScenarioState`, `SearchResult` (ranking, motivos y Reality Check) y `ZoneGapList` (FALTA / JUSTO / CUBIERTO / SIN DATOS), sus JSON Schema en `data/schemas/api/` y las rutas previstas. La web (línea B) genera sus tipos desde ahí.
 

@@ -175,3 +175,14 @@ class PlaceStatus(StrEnum):
     INACTIVE = "INACTIVE"
     CLOSED = "CLOSED"
     UNKNOWN = "UNKNOWN"
+
+
+class GapRowKey(StrEnum):
+    """Rows of the per-zone list of what is missing (GAP-001, D-194)."""
+
+    ESCUELA_INFANTIL = "escuela_infantil"
+    COLEGIO = "colegio"
+    CENTRO_SALUD = "centro_salud"
+    MAYORES = "mayores"
+    FARMACIA = "farmacia"
+    VIVIENDA = "vivienda"

@@ -308,6 +308,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "hi-contracts" },
     { name = "hi-db" },
+    { name = "hi-domain" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -316,6 +317,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.118" },
     { name = "hi-contracts", editable = "packages/contracts" },
     { name = "hi-db", editable = "packages/db" },
+    { name = "hi-domain", editable = "packages/domain" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.35" },
 ]
 

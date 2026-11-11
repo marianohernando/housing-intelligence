@@ -16,12 +16,13 @@ Contratos publicados el 11 nov 2026 (línea A). Los consume la web (línea B). S
 
 - Los schemas se regeneran con `make schemas`. CI falla si no están al día.
 - Hay ejemplos con zonas e indicadores reales en `data/fixtures/contracts/` (son fixtures: solo para tests y desarrollo).
+- Las filas de la lista salen del Feature Dictionary: cada feature declara su fila en `gap_row`, con su título, la unidad en palabras y el proxy. La API no tiene ningún id de feature escrito a mano.
 
 ## Rutas
 
 | Método y ruta | Entrada | Salida | Estado |
 |---|---|---|---|
-| `GET /api/v1/gaps/{level}/{code}` | `level`: `municipio` (después también `seccion_censal`) · `code`: código INE | `ZoneGapListResponse` | Esqueleto andante: filas de colegio y centro de salud por municipio. GAP-001 añade escuela infantil, mayores, farmacia y vivienda, y CORE-005 la distancia a pie (`extra_indicators`) |
+| `GET /api/v1/gaps/{level}/{code}` | `level`: `municipio` (después también `seccion_censal`) · `code`: código INE | `ZoneGapListResponse` | **Funciona desde el 11 nov** (esqueleto andante): filas de colegio y centro de salud por municipio con datos reales, frente a la referencia regional del Feature Store. Las filas que aún no están calculadas a un nivel no aparecen (no son SIN DATOS) y la respuesta lo avisa en `warnings`. GAP-001 añade escuela infantil, mayores, farmacia y vivienda, y CORE-005 la distancia a pie (`extra_indicators`) |
 | `GET /api/v1/gaps?level=municipio&row=colegio` | nivel y fila | estado por zona para colorear el mapa | Prevista (GAP-001) |
 | `POST /api/v1/search` | `ScenarioState` en el cuerpo | `SearchResponse` | Prevista (CORE-003). Necesita CORS con `POST` |
 | `GET /api/v1/datasets?cm_only=true` | — | lista de `DatasetRef` (contador y panel de procedencia) | Prevista |

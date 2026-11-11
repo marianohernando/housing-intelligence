@@ -5,7 +5,7 @@ from typing import Literal, Self
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from hi_contracts.catalog.dataset import DATASET_ID_PATTERN
-from hi_contracts.catalog.enums import Domain, GeoResolution, H3JoinMethod
+from hi_contracts.catalog.enums import Domain, GapRowKey, GeoResolution, H3JoinMethod
 
 FEATURE_ID_PATTERN = r"^[a-z][a-z0-9_]{2,95}$"
 
@@ -36,6 +36,26 @@ class FeatureConfidence(BaseModel):
     inputs: list[str] = Field(default_factory=list[str])
 
 
+class GapRowBinding(BaseModel):
+    """Where the feature shows up in the per-zone list (GAP-001): the row's main indicator,
+    or an extra one next to it (e.g. walking minutes)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    row: GapRowKey
+    role: Literal["primary", "extra"] = "primary"
+    label: str | None = Field(default=None, description="Row title; required for primary")
+    phrase: str = Field(description="Unit in words, e.g. 'colegios por cada 1.000 menores'")
+    proxy_note: str | None = Field(default=None, description="What the indicator does not measure")
+
+    @model_validator(mode="after")
+    def _primary_has_label(self) -> Self:
+        if self.role == "primary" and not self.label:
+            msg = f"{self.row}: a primary indicator needs the row label"
+            raise ValueError(msg)
+        return self
+
+
 class FeatureSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -58,6 +78,7 @@ class FeatureSpec(BaseModel):
     models: list[str] = Field(default_factory=list[str])
     tests: list[str] = Field(default_factory=list[str])
     limitations: list[str] = Field(default_factory=list[str])
+    gap_row: GapRowBinding | None = None
 
     @model_validator(mode="after")
     def _productive_features_are_tested(self) -> Self:
