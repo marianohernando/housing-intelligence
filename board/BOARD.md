@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | CORE-005 · Fase 3 | verde | `23b7531` | `evidence/gate-03/2026-11-11/phase-core005-f3.txt` | 12 features a pie por sección, municipio y distrito: mediana de minutos y % de calle a ≤ 10 min (salud 15, transporte 5) hasta escuela infantil, colegio, centro de salud, farmacia, centro de mayores y parada. Zona sin calles = SIN DATOS; calles aisladas = desconocido; nunca 0 |
 | 11 nov | A | API para B · Fase 2 (`/geo/admin-units`) | verde | `12c834a` | `evidence/gate-04/2026-11-11/phase-apib-f2-geo.txt` | Nombres legibles («Las Rozas de Madrid»), como en `/gaps`, y `?parent=`: `ES.28.MUN.28079` devuelve los 21 distritos (0,03 MB frente a 0,54 MB). Las tildes que faltan en la fuente siguen faltando («Vicalvaro») |
 | 11 nov | A | API para B · Fase 1 (`/places`) | verde | `d7037b7` | `evidence/gate-04/2026-11-11/phase-apib-f1-places.txt` | `/places` filtra por `?admin_unit_id=` (municipio, distrito o sección, con la misma regla que los features) y por `?subcategory=` repetible. Transporte sale entero (14.982, 4,2 MB); Chamartín con metro y cercanías son 15 puntos. Tope 20.000 con aviso si se alcanza |
 | 11 nov | C → A | OPS-001 · PR #6 integrado | CI verde + gate local verde | `877d4fd` | `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md`, `evidence/gate-06/2026-11-11/merge-pr6.txt` | Demo pública sobre Supabase con `vf_api_ro` (smoke 6/6). `deploy.sh` repite el smoke una vez a los 20 s; un fallo real sigue saliendo con 1 y la sugerencia de rollback. Revisado con `reviewer`: fusionar; pendiente menor de C: contarlo en `infra/deploy/README.md` |
@@ -77,7 +78,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **CORE-005** Distancia a pie por sección censal y H3:
   - Fase 1 `4cdee28`: red peatonal OSM como dataset `osm_red_peatonal` (solo Silver; 2,38 M nodos y 57.659 km; componente principal del 98,25 %). Evidencia en `evidence/gate-01/2026-11-11`.
   - Fase 2 `e31770b`: dominio puro de accesibilidad con tests de propiedades (`evidence/gate-03/2026-11-11`).
-  - Faltan la Fase 3 (método de features y 12 features en 3 niveles) y la Fase 4 (ejecución real y Gate 3).
+  - Fase 3 `23b7531`: método `network_walk_time` y 12 features (6 destinos × mediana de minutos y % de calle dentro de la ventana) en sección, municipio y distrito, con referencia regional. Evidencia en `evidence/gate-03/2026-11-11/phase-core005-f3.txt`. El H3 r9 queda para cuando lo pida la vista 3D (serían unas 300.000 filas más en Supabase).
+  - Falta la Fase 4 (ejecución real, golden checks, Gate 3 y ADR).
 
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
@@ -98,7 +100,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   2. **Peticiones de B para la API** (PR #2), mejor antes del 14 nov:
      - ~~`/places` corta en 10.000 resultados y no filtra~~ → hecho en `d7037b7` (`?admin_unit_id=`, `?subcategory=` repetible, sin corte);
      - ~~`/geo/admin-units`: nombres normales y filtro por padre~~ → hecho en `12c834a`. C tiene que redesplegar para que la API pública sirva las fases 0b, 1 y 2.
-  3. CORE-005 Fase 3: método `network_walk_time` sobre `hi_domain.access`; 12 features (6 servicios × mediana de minutos y % de calle a ≤ N min) en sección, municipio y H3 r9, también por distrito con `formula.levels`; fixture OSM recortado.
+  3. ~~CORE-005 Fase 3~~ → hecha en `23b7531` (sección, municipio y distrito; H3 r9 aplazado).
   4. CORE-005 Fase 4: ejecución real, golden checks y Gate 3. ADR nuevo (D-199 ya es el nombre del producto): 4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min. D pide confirmar los 4,5 km/h.
   5. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
      - Por distrito: la vivienda queda SIN DATOS, porque no hay superficie de viviendas por distrito.
@@ -153,6 +155,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - DATA-013 Códigos postales (geometría) para cruzar alquiler por CP
 - DATA-015 Zonas estadísticas de la Comunidad (sin geometría publicada; observaciones ya guardadas)
 - DATA-008 Seccionado INE 2025 como actualización declarada de la geografía
+- DATA-022 Nombres con tilde («El Álamo», «Vicálvaro», «Móstoles»): nombre oficial del INE o relación de municipios de la CM, con su fuente declarada, en los datos y no parcheado en la web (propuesta de `datamad-10`, prioridad baja)
+- CORE-005b Distancia a pie por H3 r9, cuando la vista 3D de la zona lo necesite (vigilar el tamaño en Supabase)
 
 ## 01b — PITCH (23–25 nov)
 - PITCH-001 4 slides de §8 con el estilo del PDF del 31 oct
