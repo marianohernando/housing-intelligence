@@ -6,6 +6,7 @@ from sqlalchemy import Engine, text
 
 from hi_api.deps import get_engine
 from hi_api.main import app
+from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public.responses import DatasetListResponse, ZoneGapListResponse
 
 pytestmark = pytest.mark.db
@@ -52,9 +53,10 @@ def test_madrid_district_has_real_rows_against_the_region(client: TestClient) ->
     payload = ZoneGapListResponse.model_validate(response.json())
     assert payload.data.zone.municipio_ine == "28079"
     assert payload.data.zone.admin_unit_id == "ES.28.DIS.2807906"
-    assert payload.warnings == []
     rows = {r.row.value: r for r in payload.data.rows}
     assert {"colegio", "centro_salud"} <= set(rows)
+    warned = {w.split(" row ")[1].split()[0] for w in payload.warnings}
+    assert warned == {k.value for k in GapRowKey} - set(rows)  # one per row not computed yet
     for row in rows.values():
         assert row.indicator.level.value == "distrito"
         assert row.indicator.value is not None
@@ -94,4 +96,5 @@ def test_level_without_computed_indicators_returns_no_rows(client: TestClient) -
     payload = ZoneGapListResponse.model_validate(response.json())
     assert payload.data.zone.name == "Sección 01-006 · Madrid"
     assert payload.data.rows == []
-    assert payload.warnings
+    assert len(payload.warnings) == len(GapRowKey)
+    assert all("seccion_censal level" in w for w in payload.warnings)

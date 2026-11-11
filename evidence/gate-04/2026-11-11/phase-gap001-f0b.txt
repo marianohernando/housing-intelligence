@@ -1,0 +1,58 @@
+# GAP-001 Fase 0b: un warning por fila esperada que falte en /gaps
+# 2026-11-11T14:50:04Z · rama claude/sprint-1-public · base c384a2b
+
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+241 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 26%]
+........................................................................ [ 53%]
+........................................................................ [ 80%]
+.....................................................                    [100%]
+269 passed in 5.48s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  15:50:21
+   Duration  82ms (tests 49%, import 24%, transform 16%, worker 10%)
+
+uv run pytest -m db tests/integration -q
+...........................................................              [100%]
+59 passed in 27.15s
+
+# Respuesta real (base local housing) vía TestClient
+/api/v1/gaps/distrito/2807905 200 rows= ['colegio:FALTA', 'centro_salud:FALTA']
+  warning: INSUFFICIENT_DATA: row escuela_infantil not computed at distrito level yet
+  warning: INSUFFICIENT_DATA: row mayores not computed at distrito level yet
+  warning: INSUFFICIENT_DATA: row farmacia not computed at distrito level yet
+  warning: INSUFFICIENT_DATA: row vivienda not computed at distrito level yet
+/api/v1/gaps/municipio/28079 200 rows= ['colegio:FALTA', 'centro_salud:FALTA']
+  warning: INSUFFICIENT_DATA: row escuela_infantil not computed at municipio level yet
+  warning: INSUFFICIENT_DATA: row mayores not computed at municipio level yet
+  warning: INSUFFICIENT_DATA: row farmacia not computed at municipio level yet
+  warning: INSUFFICIENT_DATA: row vivienda not computed at municipio level yet
+/api/v1/gaps/seccion_censal/2807901001 200 rows= []
+  warning: INSUFFICIENT_DATA: row escuela_infantil not computed at seccion_censal level yet
+  warning: INSUFFICIENT_DATA: row colegio not computed at seccion_censal level yet
+  warning: INSUFFICIENT_DATA: row centro_salud not computed at seccion_censal level yet
+  warning: INSUFFICIENT_DATA: row mayores not computed at seccion_censal level yet
+  warning: INSUFFICIENT_DATA: row farmacia not computed at seccion_censal level yet
+  warning: INSUFFICIENT_DATA: row vivienda not computed at seccion_censal level yet

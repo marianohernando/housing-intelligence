@@ -23,7 +23,7 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
 
 | Método y ruta | Entrada | Salida | Estado |
 |---|---|---|---|
-| `GET /api/v1/gaps/{level}/{code}` | `level`: `municipio`, `distrito` (los 21 de Madrid capital, códigos 2807901–2807921) o `seccion_censal` · `code`: código INE | `ZoneGapListResponse` | **Funciona desde el 11 nov** (esqueleto andante): filas de colegio y centro de salud por municipio con datos reales, frente a la referencia regional del Feature Store. **Desde DATA-012 también por distrito de Madrid**: la población del distrito sale del padrón municipal (D-209) y cada fila cita también los datasets de la referencia regional. Las filas que aún no están calculadas a un nivel no aparecen (no son SIN DATOS) y la respuesta lo avisa en `warnings`. GAP-001 añade escuela infantil, mayores, farmacia y vivienda, y CORE-005 la distancia a pie (`extra_indicators`) |
+| `GET /api/v1/gaps/{level}/{code}` | `level`: `municipio`, `distrito` (los 21 de Madrid capital, códigos 2807901–2807921) o `seccion_censal` · `code`: código INE | `ZoneGapListResponse` | **Funciona desde el 11 nov** (esqueleto andante): filas de colegio y centro de salud por municipio con datos reales, frente a la referencia regional del Feature Store. **Desde DATA-012 también por distrito de Madrid**: la población del distrito sale del padrón municipal (D-209) y cada fila cita también los datasets de la referencia regional. Las filas que aún no están calculadas a un nivel no aparecen (no son SIN DATOS) y la respuesta trae un aviso por cada una en `warnings` (ver «Lista de lo que falta»). GAP-001 añade escuela infantil, mayores, farmacia y vivienda, y CORE-005 la distancia a pie (`extra_indicators`) |
 | `GET /api/v1/gaps?level=municipio&row=colegio` | nivel y fila | estado por zona para colorear el mapa | Prevista (GAP-001) |
 | `POST /api/v1/search` | `ScenarioState` en el cuerpo | `SearchResponse` | Prevista (CORE-003). CORS ya admite `POST`. Las zonas son municipios con Madrid capital por distritos (D-200) |
 | `GET /api/v1/datasets?cm_only=true` | `cm_only` (opcional) | `DatasetListResponse`: `total`, `cm_open_data_count` y los `DatasetRef` con versión | **Funciona desde el 11 nov**. Lista los datasets con una versión válida (QA superado): hoy 22, de los que 21 son CM |
@@ -40,6 +40,7 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
   - `ratio_to_reference` está orientado: por encima de 1 la zona está mejor que la región.
   - Los cortes van en `method` (`falta_below`, `cubierto_from`).
   - `proxy_note` declara lo que el indicador no mide (por ejemplo, centros no es lo mismo que plazas).
+  - Las 6 filas esperadas son las de `GapRowKey`. Por cada una que aún no esté calculada a ese nivel, `warnings` trae `INSUFFICIENT_DATA: row <fila> not computed at <nivel> level yet` (por ejemplo, `row farmacia … distrito`). La web puede leer la clave de la fila de ese texto o compararlas con `rows`.
 - **Buscador (D-202).**
   - `match_pct` es el % de encaje con la búsqueda: nunca se muestra como nota sobre 100 ni con barras.
   - `facts` trae 3–5 hechos tangibles, cada uno con su `confidence` y un `topic` para el icono.

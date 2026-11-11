@@ -9,6 +9,7 @@ from typing import Any
 
 from sqlalchemy import Connection, text
 
+from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
     DatasetRef,
@@ -175,6 +176,18 @@ def _versions(row: dict[str, Any], reference_row: dict[str, Any] | None) -> dict
     return {**reference, **row["inputs"].get("dataset_versions", {})}
 
 
+def missing_row_warnings(present: Iterable[GapRowKey], level: TerritoryLevel) -> list[str]:
+    """One warning per expected row the list does not carry because it is not computed at this
+    level yet. That is not SIN_DATOS, which is a row computed with no data for the zone."""
+    carried = set(present)
+    return [
+        f"{ErrorCode.INSUFFICIENT_DATA.value}: row {key.value} not computed at {level.value} "
+        "level yet"
+        for key in ROW_ORDER
+        if key not in carried
+    ]
+
+
 def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
     unique = {r.dataset_id: r for r in refs}
     return [unique[k] for k in sorted(unique)]
@@ -183,7 +196,8 @@ def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
 def zone_gap_list(
     conn: Connection, level: TerritoryLevel, code: str
 ) -> tuple[ZoneGapList, list[str], str | None]:
-    """The list, warnings for rows that could not be classified, and the data version."""
+    """The list, warnings for rows not computed at this level or that could not be classified,
+    and the data version."""
     zone = zone_ref(conn, level, code)
     features = [dict(f) for f in conn.execute(_BOUND_FEATURES).mappings().all()]
     primaries = {f["feature_id"]: f for f in features if f["gap_row"]["role"] == "primary"}
@@ -200,14 +214,17 @@ def zone_gap_list(
     }
     rows: list[GapRow] = []
     warnings: list[str] = []
+    computed_rows: set[GapRowKey] = set()
     for feature_id, feature in primaries.items():
         row = values.get((feature_id, level.value))
         if row is None:
             continue  # not computed at this level yet: the row is absent, not SIN_DATOS
+        computed_rows.add(GapRowKey(feature["gap_row"]["row"]))
         try:
             rows.append(_gap_row(conn, feature, row, values.get((feature_id, REGION_LEVEL)), level))
         except UnclassifiableError as exc:
             warnings.append(str(exc))
+    warnings.extend(missing_row_warnings(computed_rows, level))
     rows.sort(key=lambda r: ROW_ORDER.index(r.row))
     computed = [v["computed_at"] for v in values.values()]
     data_version = max(computed).date().isoformat() if computed else None

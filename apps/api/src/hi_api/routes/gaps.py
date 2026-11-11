@@ -34,8 +34,6 @@ def get_zone_gaps(
             raise HTTPException(
                 status_code=404, detail={"code": ErrorCode.NOT_FOUND.value, "message": str(exc)}
             ) from exc
-    if not gaps.rows:
-        warnings.append("No indicators computed at this level yet")
     return ZoneGapListResponse(
         data=gaps,
         meta=Meta(methodology_version=gaps.method.version, data_version=data_version),

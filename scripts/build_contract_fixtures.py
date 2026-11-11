@@ -17,7 +17,7 @@ from typing import Any
 from sqlalchemy import Connection, create_engine, text
 
 from hi_api.services.datasets import dataset_list
-from hi_api.services.gaps import zone_gap_list, zone_ref
+from hi_api.services.gaps import missing_row_warnings, zone_gap_list, zone_ref
 from hi_contracts.catalog.enums import TerritoryLevel
 from hi_contracts.public import (
     Budget,
@@ -108,7 +108,8 @@ def gap_list(
 ) -> ZoneGapList:
     """Exactly what GET /api/v1/gaps/{level}/{code} returns today."""
     gaps, warnings, _ = zone_gap_list(conn, level, code)
-    assert not warnings, warnings  # noqa: S101 - a fixture must not hide a warning
+    pending = missing_row_warnings({r.row for r in gaps.rows}, level)
+    assert warnings == pending, warnings  # noqa: S101 - only the rows not computed yet
     return gaps
 
 
