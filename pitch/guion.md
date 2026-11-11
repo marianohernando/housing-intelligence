@@ -8,7 +8,7 @@
   for b in 1 2 3 4 5; do printf "b$b "; awk -v b=$b '$0 ~ "^<!-- habla:b"b":fin"{f=0} f; $0 ~ "^<!-- habla:b"b":inicio"{f=1}' pitch/guion.md | wc -w; done
   ```
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
-- **Textos de los botones:** salen del brief (`prompts/DISENO_VIDA_FACIL.md`). Siguen marcados **«pendiente de B»** hasta comprobarlos en la web real.
+- **Textos de los botones:** salen del brief (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`). Siguen marcados **«pendiente de B»** hasta comprobarlos en la web real.
 
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
@@ -16,10 +16,12 @@
 | 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y Reality Check | 187 | 86 s + clics |
 | 3 | 2:40–3:40 | 60 s | Una zona real y su lista de lo que falta | 107 | 49 s + clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 43 s |
-| 5 | 4:30–5:00 | 30 s | Impacto y cierre | 53 | 24 s |
-| **Total** | | **300 s** | | **521** | **240 s + unos 35 s de clics = unos 25 s de margen** |
+| 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
+| **Total** | | **300 s** | | **518** | **239 s + unos 35 s de clics = unos 25 s de margen** |
 
 ---
+
+> Las rutas `~/Desktop/DATAMAD/prompts/…` son documentos internos de coordinación, fuera del repo: no sirven como evidencia pública. **Pendiente de A:** registrarlos como D-xxx; entonces se cita la decisión.
 
 ## Antes de empezar (en la sala, 13:30–17:00)
 1. Portátil con cargador, wifi del evento probada, HDMI probado y resolución 1920 × 1080 (`docs/09_datamad/25_plan_competicion.md` §9).
@@ -60,7 +62,7 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 | 2.5 | Clic en una opción del Reality Check | El mapa se recalcula con la condición relajada | Solo señalarla, sin pulsar |
 | 2.6 | Clic en la fuente de un hecho o en «Cómo lo calculamos» (**pendiente de B**) | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: N conjuntos de la Comunidad de Madrid…» |
 
-**Nota sobre el Reality Check (**pendiente de A y B**):** el bloque solo aparece si salen pocas zonas o ninguna (`prompts/DISENO_VIDA_FACIL.md`).
+**Nota sobre el Reality Check (**pendiente de A y B**):** el bloque solo aparece si salen pocas zonas o ninguna (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`).
 - **Antes del 16 nov hay que comprobar con datos reales** si el caso precargado lo dispara.
 - **Si no lo dispara**, el guion añade en el paso 2.4: «Bajo el presupuesto a [Y] €/mes» con el slider. A elige [Y] con la API para que salgan 0–3 zonas.
 - **La frase hablada** se ajusta a la acción que se haga.
@@ -70,6 +72,8 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 ## Bloque 3 · 2:40–3:40 · Qué le falta a una zona real
 **Zona:** **pendiente de A** (GAP-001 completo).
 - **Criterio:** una zona real con al menos una fila FALTA, una CUBIERTO y, si la hay, una SIN DATOS, para enseñar las tres. Si llega DATA-012, mejor un distrito de Madrid que se conozca.
+- **El texto hablado depende de GAP-001 (pendiente de A):** «Seis filas» y «cada una» solo se dicen si salen las 6. Si no, se dice «[N] filas» y se nombran solo las que estén.
+- **No usar colegios como ejemplo de CUBIERTO** hasta que GAP-001 corrija el filtro: hoy cuenta también escuelas infantiles e institutos (`proxy_note` de `colegios_publicos_por_1000_menores`).
 - **Hoy, como referencia provisional:** Móstoles. Centros de salud FALTA (0,47 frente a 0,59 en la región) y colegios CUBIERTO (2,7 frente a 2,2). Fuente: `data/fixtures/contracts/zone_gap_list.mostoles.fixture.json` = `GET /api/v1/gaps/municipio/28092`, con los cortes provisionales `gap-0.1`.
 
 <!-- habla:b3:inicio -->
@@ -106,10 +110,10 @@ Ahora cambio de usuario: un ayuntamiento. Pulso «Ver la zona». La cámara entr
 **Pantalla:** la slide 4 (pantallazo) con la URL y los QR.
 
 <!-- habla:b5:inicio -->
-Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. Ya funciona con datos reales de los ciento setenta y nueve municipios de la Comunidad. Encuentra tu sitio en Madrid. Gracias.
+Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. Funciona con datos reales y oficiales de toda la Comunidad de Madrid. Encuentra tu sitio en Madrid. Gracias.
 <!-- habla:b5:fin -->
 
-**Fuente:** «179 municipios» sale de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. Antes del 26 hay que confirmar que el buscador y la lista cubren los 179 en la demo desplegada (**pendiente de A y C**).
+**Fuente:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. **Pendiente de A y C:** confirmar antes del 26 que el buscador y la lista cubren los 179 en la demo desplegada. Si no, se dice «con datos reales y oficiales de la Comunidad de Madrid», sin «toda».
 
 ---
 

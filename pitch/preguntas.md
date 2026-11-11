@@ -8,6 +8,8 @@
 
 **Perfiles:** salen de `docs/09_datamad/25_plan_competicion.md` §4. Lo que valora cada miembro del jurado es una inferencia a partir de su trayectoria pública.
 
+> Las rutas `~/Desktop/DATAMAD/prompts/…` son documentos internos de coordinación, fuera del repo: no sirven como evidencia pública. **Pendiente de A:** registrarlos como D-xxx; entonces se cita la decisión.
+
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
 ---
@@ -44,8 +46,8 @@ Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, re
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
-Por el trabajo que hay encima: cruzar 21 conjuntos con formatos distintos, controlar su calidad, compararlos con la región y explicarlos con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho y se actualiza solo.
-- Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md`.
+Por el trabajo que hay encima: cruzar 21 conjuntos con formatos distintos, controlar su calidad, compararlos con la región y explicarlos con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
+- Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md` · `evidence/gate-01/2026-11-10/idempotent-rerun.txt`.
 
 **8. ¿La licencia de los datos permite un uso comercial?**
 Sí. Los datos del portal CM son CC BY y la licencia del CRTM permite reutilizarlos citando la fuente. En ambos casos cumplimos la atribución y no vendemos el dato en bruto, sino el análisis.
@@ -57,7 +59,7 @@ Los portales enseñan la oferta de pisos; nosotros enseñamos la necesidad y el 
 
 **10. ¿Cuánto cuesta mantenerlo?**
 Muy poco: la base de la demo cabe en el plan gratuito de Supabase y los datos se recargan copiando tablas ya validadas.
-- Evidencia: D-188 (perfil demo de 77 MB).
+- Evidencia: `evidence/gate-06/2026-11-11/supabase-sync-demo.txt` (base de la demo: 100 MB de los 500 del plan gratuito) · D-188.
 - Alojamiento: **pendiente de C** (OPS-001); añadir aquí su coste real.
 
 ---
@@ -79,7 +81,7 @@ Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: 
 
 **14. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
 Sí, por eso Madrid se divide en sus 21 distritos. Además, la distancia a pie se calcula por sección censal, que es mucho más fina que el municipio.
-- Evidencia: `prompts/DECISIONES_11nov.md` §2 · board CORE-005 · `evidence/gate-01/2026-11-11/osm_red_peatonal/`.
+- Evidencia: `~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §2 · board CORE-005 · `evidence/gate-01/2026-11-11/osm_red_peatonal/`.
 - Estado: distritos **pendiente de A** (DATA-012) y distancia a pie **pendiente de A** (CORE-005, Fases 3 y 4).
 
 **15. ¿Cómo calculáis el % de encaje?**
@@ -112,7 +114,7 @@ Sí, y los tratamos sin ocultarlos. Por ejemplo: una geometría inválida en las
 - Evidencia: `notes` de `data/catalog/datasets/cm_secciones_censales.yaml` · `evidence/gate-01/2026-10-22/cm_centros_educativos/row_counts.json`.
 
 **21. ¿Los datos están al día?**
-Cada fuente se actualiza con su propia frecuencia, y el sistema avisa cuando un fichero está caducado. Por ejemplo, el GTFS de metro venció el 27 de mayo de 2026 y sigue siendo el último publicado: lo usamos y el control de calidad lo marca.
+Cada fuente se recarga según su propia frecuencia de publicación, y en los GTFS el control de calidad avisa si el horario está caducado. Por ejemplo, el GTFS de metro venció el 27 de mayo de 2026 y sigue siendo el último publicado: lo usamos y el control de calidad lo marca.
 - Evidencia: control `feed_current` en `evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json` · D-196.
 
 **22. ¿Cómo citáis las fuentes en la propia aplicación?**
@@ -147,7 +149,7 @@ Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen re
 
 **28. ¿Incluís seguridad? Es delicado.**
 Solo si la persona la marca como prioridad y solo con datos oficiales agregados: actuaciones de la Policía Municipal por cada 1.000 habitantes y por distrito. Nunca nacionalidad ni etiquetas como «peligroso»; fuera de Madrid capital, SIN DATOS.
-- Evidencia: `prompts/DECISIONES_11nov.md` §8.
+- Evidencia: `~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §8.
 - Estado: extra **pendiente de A** (DATA-020, 19–22 nov). Si no está, decir «no lo incluimos todavía, y así es como lo haríamos».
 
 **29. ¿Funciona fuera de la Comunidad de Madrid?**
@@ -156,9 +158,9 @@ La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geo
 
 **30. ¿Es accesible para personas mayores?**
 Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px y contraste AA verificado también sobre el cristal. El estado de cada fila nunca depende solo del color: siempre va con texto e icono.
-- Evidencia: `prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` (rama `claude/s1-web`, PR #2).
+- Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` (rama `claude/s1-web`, PR #2).
 - Estado: verificación en navegador **pendiente de B**.
 
 **31. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
-- Evidencia: `prompts/DECISIONES_11nov.md` §1 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.
+- Evidencia: `~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §1 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.

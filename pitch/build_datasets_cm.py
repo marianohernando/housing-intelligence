@@ -85,8 +85,10 @@ def latest_gate1(dataset_id: str) -> Gate1 | None:
         passed=quality["passed"] is True,
         critical_ok=sum(1 for check in critical if check["passed"]),
         critical_total=len(critical),
-        version=json.loads(lineage.read_text())["dataset_version"] if lineage.exists() else None,
-        volume=volume(json.loads(counts.read_text())) if counts.exists() else None,
+        version=json.loads(lineage.read_text(encoding="utf-8"))["dataset_version"]
+        if lineage.exists()
+        else None,
+        volume=volume(json.loads(counts.read_text(encoding="utf-8"))) if counts.exists() else None,
         report=report,
     )
 

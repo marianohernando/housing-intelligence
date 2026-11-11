@@ -4,6 +4,8 @@
 - **Quién lo envía:** Mariano. Este fichero no guarda datos personales porque el repo es público.
 - **Campos:** son los del formulario real, leídos el 11 nov.
 
+> Las rutas `~/Desktop/DATAMAD/prompts/…` son documentos internos de coordinación, fuera del repo: no sirven como evidencia pública. **Pendiente de A:** registrarlos como D-xxx; entonces se cita la decisión.
+
 ## Campos, en orden
 
 | # | Campo del formulario | Obligatorio | Qué poner |
@@ -24,7 +26,7 @@ La ayuda del campo 7 pide «qué queréis construir, qué problema aborda y cóm
 ## Campo 7 · Resumen principal (98 palabras)
 
 <!-- resumen:inicio -->
-Vida Fácil convierte los datos abiertos de la Comunidad de Madrid en un mapa de lo que falta. A cada persona le recomienda dónde vivir según su alquiler, hogar y trabajo, explica el porqué en lenguaje cotidiano y, si nada encaja, enseña cuántas zonas aparecen al relajar cada condición. A ayuntamientos y empresas les muestra, por municipio y por distrito de Madrid, qué falta, qué está justo y qué está cubierto: escuelas infantiles, colegios, salud, mayores, farmacias y vivienda. Usa 21 datasets del portal regional y cada resultado cita su fuente y su fiabilidad. Código abierto con API.
+Vida Fácil convierte los datos abiertos de la Comunidad de Madrid en un mapa de lo que falta. A cada persona le recomienda dónde vivir según su alquiler, hogar y trabajo, explica el porqué en lenguaje cotidiano y, si nada encaja, enseña cuántas zonas aparecen al relajar cada condición. A ayuntamientos y empresas les muestra, por municipio y por distrito de Madrid, qué falta, qué está justo y qué está cubierto: escuelas infantiles, colegios, salud, mayores, farmacias y vivienda. Integra 21 datasets del portal regional y cada resultado cita su fuente y su fiabilidad. Código abierto con API.
 <!-- resumen:fin -->
 
 Recuento:
@@ -36,7 +38,7 @@ awk '/^<!-- resumen:fin/{f=0} f; /^<!-- resumen:inicio/{f=1}' pitch/formulario.m
 Esta versión no promete el buscador como hecho: lo presenta como lo que estamos construyendo.
 
 <!-- variante-b:inicio -->
-Vida Fácil convierte los datos abiertos de la Comunidad de Madrid en un mapa de lo que falta. A ayuntamientos y empresas les muestra, por municipio y por distrito de Madrid, qué falta, qué está justo y qué está cubierto frente a la media regional: escuelas infantiles, colegios, salud, mayores, farmacias y vivienda. Para las personas construimos un buscador que recomienda dónde vivir según su alquiler, su hogar y su trabajo, con alternativas cuando nada encaja. Usa 21 datasets del portal regional y cada resultado cita su fuente y su fiabilidad. Código abierto con API.
+Vida Fácil convierte los datos abiertos de la Comunidad de Madrid en un mapa de lo que falta. A ayuntamientos y empresas les muestra, por municipio y por distrito de Madrid, qué falta, qué está justo y qué está cubierto frente a la media regional: escuelas infantiles, colegios, salud, mayores, farmacias y vivienda. Para las personas construimos un buscador que recomienda dónde vivir según su alquiler, su hogar y su trabajo, con alternativas cuando nada encaja. Integra 21 datasets del portal regional y cada resultado cita su fuente y su fiabilidad. Código abierto con API.
 <!-- variante-b:fin -->
 
 ```bash
@@ -46,6 +48,7 @@ awk '/^<!-- variante-b:fin/{f=0} f; /^<!-- variante-b:inicio/{f=1}' pitch/formul
 ### Cuándo usar cada versión
 - **Resumen principal:** si en el cut review del 16 nov por la noche el buscador funciona con el perfil dorado. Es decir, si `POST /api/v1/search` devuelve zonas y Reality Check con datos reales.
 - **Variante B:** si el buscador se recorta. La lista de lo que falta es el diferenciador (D-194), así que va primero.
+- **Si DATA-012 no llega** (en `board/BOARD.md` sigue en BACKLOG; la ampliación del 11 nov lo pide antes del 16 nov), cambia «por municipio y por distrito de Madrid» por «por municipio» en las dos versiones y vuelve a contar.
 - **Si una fila de la lista no llega** (por ejemplo, vivienda), quítala del texto y vuelve a contar las palabras.
 - **Si cambia el número de datasets**, usa el de `pitch/datasets_cm.md` regenerado (ver checklist).
 
@@ -64,10 +67,10 @@ Datasets usados, con licencia y control de calidad: https://github.com/marianohe
 
 | Afirmación | Evidencia hoy (11 nov) | Estado |
 |---|---|---|
-| Datos abiertos de la Comunidad de Madrid · «21 datasets del portal regional» | `pitch/datasets_cm.md` (generado desde `data/catalog/`) · `evidence/gate-01/2026-11-10/real-run-quality.txt` (21 PASS) · `evidence/gate-01/2026-11-10/summary.md` | Hecho. En `datasets_cm.md`, 12 de los 21 aún llevan «uso en la lista o en el buscador: **pendiente de A**» (ver checklist) |
+| Datos abiertos de la Comunidad de Madrid · «Integra 21 datasets del portal regional» | `pitch/datasets_cm.md` (generado desde `data/catalog/`) · `evidence/gate-01/2026-11-10/real-run-quality.txt` (21 PASS) · `evidence/gate-01/2026-11-10/summary.md` | Hecho: los 21 están ingeridos y validados. Por eso dice «integra» y no «usa»: en `datasets_cm.md`, 12 de los 21 aún llevan «uso en la lista o en el buscador: **pendiente de A**». Si el 18 nov los 21 alimentan la demo, se puede volver a «usa» (ver checklist) |
 | «Un mapa de lo que falta» · «qué falta, qué está justo y qué está cubierto» | `GET /api/v1/gaps/{level}/{code}` · `evidence/gate-04/2026-11-11/phase-gap001-f0.txt` · `data/fixtures/contracts/zone_gap_list.mostoles.fixture.json` | Hecho para colegio y centro de salud por municipio. El resto, **pendiente de A** (GAP-001, 13–14 nov) |
 | «escuelas infantiles, … mayores, farmacias y vivienda» | Filas previstas en D-194 y en `board/BOARD.md` (GAP-001) | **Pendiente de A** (GAP-001) |
-| «por distrito de Madrid» | `prompts/DECISIONES_11nov.md` §2 y DATA-012 en `prompts/A_ampliacion.md` (núcleo antes del 16 nov) | **Pendiente de A** (DATA-012) |
+| «por distrito de Madrid» | DATA-012: sigue en BACKLOG (19–22 nov) en `board/BOARD.md`; la ampliación del 11 nov (`~/Desktop/DATAMAD/prompts/A_ampliacion.md`, interno) lo adelanta a antes del 16 nov | **Pendiente de A** (DATA-012). Si no llega, se quita del resumen (ver «Cuándo usar cada versión») |
 | «recomienda dónde vivir según su alquiler, hogar y trabajo» | Contrato `ScenarioState` (`packages/contracts/src/hi_contracts/public/scenario.py`, commit `7541527`): presupuesto, hogar y lugar de trabajo | Contrato hecho. Cálculo **pendiente de A** (CORE-006, CORE-003 y `POST /api/v1/search`, 15–16 nov) y pantalla **pendiente de B** |
 | «si nada encaja, enseña cuántas zonas aparecen al relajar cada condición» (Reality Check) | Contrato `SearchResult` (`packages/contracts/src/hi_contracts/public/search.py`, `7541527`) | Contrato hecho. Cálculo **pendiente de A** (CORE-003) |
 | «explica el porqué en lenguaje cotidiano» | Campo `explanation` de la lista. Ejemplo real: «2,7 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2» (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) | Hecho en la lista; en el buscador, **pendiente de A** |
@@ -75,7 +78,7 @@ Datasets usados, con licencia y control de calidad: https://github.com/marianohe
 | «Código abierto con API» | `LICENSE` (Apache-2.0, D-191) · repo público (D-198) · rutas en `docs/04_technical_architecture/31_public_api_routes.md` | Hecho |
 | Demo con enlace público | — | **Pendiente de C** (OPS-001, 17 nov) |
 
-No se prometen los extras del 19 al 22 nov: zonas verdes, seguridad, «sin escaleras», precio de compra ni MCP (`prompts/DECISIONES_11nov.md` §9).
+No se prometen los extras del 19 al 22 nov: zonas verdes, seguridad, «sin escaleras», precio de compra ni MCP (`~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §9).
 
 ## Checklist del 18 nov (antes de enviar)
 1. En `hi-coord`, hacer `git fetch origin && git rebase origin/claude/sprint-1-public`.

@@ -6,6 +6,8 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - **24 nov:** solo maquetar con capturas reales de la demo desplegada.
 - **Estado:** borrador del 11 nov. Lo marcado «pendiente de A/B/C» se cierra en el freeze del 23 nov.
 
+> Las rutas `~/Desktop/DATAMAD/prompts/…` son documentos internos de coordinación, fuera del repo: no sirven como evidencia pública. **Pendiente de A:** registrarlos como D-xxx; entonces se cita la decisión.
+
 ## El mensaje (del documento de la idea del 31 oct; solo el mensaje)
 - **Tesis:** «Otros te enseñan lo que hay. Nosotros te enseñamos lo que falta.»
 - **Tres usuarios:**
@@ -18,7 +20,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - ninguna de sus cifras de ejemplo: zonas del Reality Check, 4.000–4.500 €/mes ni «10 conjuntos de datos»;
 - el barrio de ejemplo con coworking, gimnasio y «lo que la gente dice que necesita». La necesidad declarada es un siguiente paso y nunca se simula (D-194);
 - su estilo visual;
-- el nombre «Housing Intelligence», que solo puede ir en el pie como plataforma o equipo (`prompts/DECISIONES_11nov.md` §1).
+- el nombre «Housing Intelligence», que solo puede ir en el pie como plataforma o equipo (`~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §1).
 
 ---
 
@@ -80,7 +82,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 ### Utilidad: personas que buscan dónde vivir
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras.
-  - Ejemplo de formato (`prompts/DISENO_VIDA_FACIL.md`): «Colegio público a 6 min andando».
+  - Ejemplo de formato (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`): «Colegio público a 6 min andando».
   - Los hechos reales de la zona del caso demo: **pendiente de A** (CORE-005 y CORE-003) y **pendiente de B** (captura C2).
 - **Reality Check:** si nada encaja, enseña cuántas zonas aparecen al relajar cada condición, con cifras reales de la API. Hoy solo existe el contrato (`packages/contracts/src/hi_contracts/public/search.py`, `7541527`); el cálculo está **pendiente de A** (CORE-003). Captura **C3**.
 - **Caso demo:** pareja con 2 hijos que trabaja en la Castellana (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`).
@@ -90,7 +92,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 - **Ejemplo real de hoy**, Móstoles en `GET /api/v1/gaps/municipio/28092` (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`):
   - Centros de salud: **FALTA**. 0,47 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad, 0,59.
   - Colegios: **CUBIERTO**. 2,7 centros educativos públicos por cada 1.000 menores de 15 años; en la Comunidad, 2,2.
-  - **Provisional:** los cortes `gap-0.1` y el filtro de colegios, que hoy incluye escuelas infantiles e institutos, cambian con GAP-001. La zona definitiva y sus cifras: **pendiente de A** (GAP-001). Puede ser un distrito de Madrid si DATA-012 llega. Captura **C4**.
+  - **Provisional:** los cortes `gap-0.1` y el filtro de colegios, que hoy incluye escuelas infantiles e institutos, cambian con GAP-001. La zona definitiva y sus cifras: **pendiente de A** (GAP-001). Hasta entonces, la fila de colegios no se usa como ejemplo de CUBIERTO. Puede ser un distrito de Madrid si DATA-012 llega. Captura **C4**.
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (**pendiente de A**, DATA-012);
   - 3.851 centros educativos, 1.543 centros sanitarios, 1.001 servicios para mayores y 2.953 farmacias (`evidence/gate-01/*/cm_*/row_counts.json`, campo `places`);
@@ -103,7 +105,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);
   - la base de la demo está cerrada a accesos directos (D-197);
   - los fixtures no llevan datos de contacto (D-198).
-- **Coste:** la base de la demo cabe en el plan gratuito de Supabase (perfil demo de 77 MB, D-188). El alojamiento de la web y la API está **pendiente de C** (OPS-001).
+- **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). El alojamiento de la web y la API está **pendiente de C** (OPS-001).
 - **Reproducible y abierto:**
   - Apache-2.0 (`LICENSE`, D-191);
   - `make` como entrada única;
@@ -131,7 +133,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 ---
 
 ## Dirección visual (brief de diseño, no el PDF)
-Fuente única: `prompts/DISENO_VIDA_FACIL.md`. Los valores de la tabla son los que B ya validó en AA en la web (`apps/web/src/styles/tokens.css` en `claude/s1-web`, commit `4402edd`, PR #2). Si cambian antes del 24 nov, mandan los de la web.
+Fuente única: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`. Los valores de la tabla son los que B ya validó en AA en la web (`apps/web/src/styles/tokens.css` en `claude/s1-web`, commit `4402edd`, PR #2). Si cambian antes del 24 nov, mandan los de la web.
 
 | Elemento | Valor |
 |---|---|
@@ -146,7 +148,7 @@ Fuente única: `prompts/DISENO_VIDA_FACIL.md`. Los valores de la tabla son los q
 | Idioma | Español llano, sin anglicismos («Qué falta», «Cómo lo calculamos»; nunca «Análisis» ni «Metodología») |
 
 **Lo que no puede salir en ninguna slide:**
-- Nada de los mockups que no sea estilo. Llevan «Madrid 360», chips de discapacidad, un icono de usuario, foto de zona y «92/100» con barras; todo eso está descartado (`prompts/DECISIONES_11nov.md` §1, §5 y §8; `CLAUDE.md` §13).
+- Nada de los mockups que no sea estilo. Llevan «Madrid 360», chips de discapacidad, un icono de usuario, foto de zona y «92/100» con barras; todo eso está descartado (`~/Desktop/DATAMAD/prompts/DECISIONES_11nov.md` §1, §5 y §8; `CLAUDE.md` §13).
 - Notas sobre 100 o barras de puntuación: el encaje es un % con hechos debajo.
 - Fotos de zonas.
 - Etiquetas como «peligroso» ni datos de nacionalidad.
