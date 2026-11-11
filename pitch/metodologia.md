@@ -18,7 +18,7 @@ Los textos de B en `apps/web/src/app/(vida)/como-lo-calculamos/page.tsx` («Tres
 - Cada dato dice de dónde sale y cuánto podemos fiarnos de él.
 
 ### 1.2 Qué zonas comparamos
-Los 179 municipios de la Comunidad de Madrid. Madrid capital no va como un solo bloque: la dividimos en sus 21 distritos, porque no es lo mismo vivir en un distrito que en otro.
+Los 179 municipios de la Comunidad de Madrid. Madrid capital no va como un solo bloque: la dividimos en sus 21 distritos, porque no es lo mismo vivir en un distrito que en otro. En el buscador son 199 zonas: los otros 178 municipios y los 21 distritos. En «Qué falta» también puedes ver Madrid entera.
 
 ### 1.3 Cómo sale el % de encaje
 El % de encaje dice **cuánto se parece una zona a lo que tú buscas**. No es una nota de la zona: la misma zona puede encajar mucho con una familia con niños y poco con una persona mayor que vive sola.
@@ -30,11 +30,21 @@ El % de encaje dice **cuánto se parece una zona a lo que tú buscas**. No es un
 
 Solo te enseñamos como «zonas que encajan» las que cumplen todo. Las que fallan en una sola cosa salen aparte, en «Casi encajan», para que decidas tú.
 
-**Paso 2. Lo que te importa.** Entre las zonas que cumplen, pesa más lo que marcaste primero en «Me importa». **[pendiente de A: CORE-003. Explicar aquí cómo se reparten los pesos entre las prioridades y cómo se pasa a %, con un ejemplo real del caso de la Castellana.]**
+**Paso 2. Lo que te importa.** Entre las zonas que cumplen, cada cosa que te importa recibe una nota de 0 a 1, y pesa más lo que marcaste primero. Con 5 cosas, la primera cuenta un 33 %, la segunda un 27 %, la tercera un 20 %, la cuarta un 13 % y la quinta un 7 %. El % de encaje es la media de esas notas con sus pesos.
 
-**Debajo del %** van entre 3 y 5 hechos que puedes comprobar, como «Colegio público a 6 min andando», y cada uno dice cuánto nos fiamos del dato.
+Así se pone cada nota:
+- **Un servicio a pie** (colegio, centro de salud o parada): vale 1 si está a la distancia que consideramos cerca y baja hasta 0 al triple de ese tiempo. Un colegio a 10 min vale 1; a 20 min, 0,5; a 30 min o más, 0. Para el centro de salud, cerca son 15 min, y para la parada, 5.
+- **El trabajo:** de momento cuenta la distancia en línea recta desde la zona. Vale 1 hasta 2 km y 0 desde 20 km. Todavía no calculamos el tiempo en transporte público, así que el trabajo cuenta como preferencia, no como condición.
+- **El margen de presupuesto:** vale 1 si la zona te cuesta el 75 % de tu presupuesto o menos, y 0 si te lo come entero.
+- **Lo que aún no tiene datos** (zonas verdes, seguridad y «sin escaleras»): nunca cuenta como 0. Sale «sin datos» y baja la fiabilidad del %.
 
-**El alquiler estimado** sale del precio medio por metro cuadrado que publica la Comunidad de Madrid para cada municipio, multiplicado por los metros que necesita tu hogar. **[pendiente de A: CORE-006. Decir cuántos metros se cuentan según el tamaño del hogar.]**
+**Debajo del %** van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min andando», y cada uno dice cuánto nos fiamos del dato.
+
+**Ejemplo real.** Una pareja con 2 hijos de 4 y 8 años trabaja en la Castellana, puede pagar 1.500 € al mes y quiere un colegio a 10 min andando como mucho. Le importan, por este orden, los colegios, el transporte y la salud. Encajan 32 de las 199 zonas. La primera es Ciudad Lineal, con un 99 %: colegio a 5 min, parada a 2 min, centro de salud a 11 min, a 3,2 km de Azca y unos 1.075 € al mes por 77 m². Lo que más zonas le quita es el colegio a 10 min: con 5 min más aparecen 17 zonas.
+
+**El alquiler estimado** es el alquiler medio por metro cuadrado de la zona multiplicado por los metros de tu hogar. Si no nos dices cuántos necesitas, usamos los de la vivienda mediana de los hogares de tu tamaño en la Comunidad de Madrid, según el Censo 2021 del INE: 61 m² para una persona, 68 para dos, 71 para tres y 77 para cuatro o más. Si cabe en tu presupuesto, cumple; si no, no cumple; y si la zona no tiene alquiler publicado, no lo sabemos y no lo damos por bueno.
+
+**Ojo: el alquiler estimado es orientativo y tira a la baja.** La Comunidad publica la media de los alquileres declarados a Hacienda, es decir, de los contratos ya firmados, no de los pisos que se anuncian hoy, y un contrato nuevo suele costar más. Además, esos metros son construidos, no útiles, así que el precio corresponde a un piso algo más pequeño. Por eso, si te decimos que una zona no entra en tu presupuesto, puedes fiarte; si te decimos que sí, cuenta con que puede costar algo más.
 
 ### 1.4 Cómo decidimos qué falta en una zona
 Para cada servicio contamos cuántos hay en la zona por cada número fijo de vecinos. Por ejemplo, centros de salud por cada 10.000 habitantes.
@@ -99,8 +109,8 @@ La fiabilidad baja en estos casos:
 ### 1.8 Lo que estos datos no te dicen
 - **Contamos centros, no plazas.** Un colegio grande y uno pequeño cuentan igual, y un consultorio rural cuenta como un centro de salud. Las plazas de residencia de mayores van aparte y son plazas autorizadas: no sabemos cuántas están libres.
 - **Vivienda:** comparamos las viviendas grandes con los hogares grandes, no el mercado. No sabemos cuántas están libres ni a qué precio.
-- **Alquiler:** la Comunidad solo publica el precio medio de los municipios de más de 20.000 habitantes. En los demás no tenemos el dato y lo decimos.
-- **Compra:** el precio de compra es solo orientativo. **[pendiente de A: DATA-021. Si no hay una fuente oficial fiable, decir: «Todavía no tenemos precios oficiales de compra por zona, así que no podemos comprobar si una zona entra en tu presupuesto».]**
+- **Alquiler:** la Comunidad publica el precio medio de 37 municipios (los de más de 20.000 habitantes con contratos suficientes) y el de los códigos postales de Madrid capital. En el resto no tenemos el dato y lo decimos. Para cada distrito de Madrid hacemos la media de sus códigos postales, y cada código pesa según cuántos colegios, centros de salud y centros sociales del distrito están en él, porque eso aproxima dónde vive la gente. Es una aproximación, así que cuenta con menos fiabilidad. Cuadra con la cifra oficial: con los distritos sale 14,5 € el metro cuadrado, y la Comunidad publica 15,1 para todo Madrid.
+- **Compra:** todavía no tenemos precios oficiales de compra por zona, así que no podemos comprobar si una zona entra en tu presupuesto: sale «sin datos» y no inventamos un precio.
 - **Seguridad:** solo hay datos de Madrid capital, por distrito. Usamos las actuaciones de la Policía Municipal registradas por cada 1.000 habitantes y solo cuentan si marcas «Seguridad». Nunca usamos datos sobre las personas (como la nacionalidad) ni ponemos etiquetas a ninguna zona. Fuera de Madrid capital sale «sin datos». **[pendiente de A: DATA-020.]**
 - **Zonas verdes y «sin escaleras»:** **[pendiente de A: DATA-018 y DATA-019. Decir dónde hay datos (parques: Ayuntamiento en Madrid capital y OpenStreetMap en el resto; sin escaleras: estaciones de metro y Cercanías, y edificios públicos del Ayuntamiento) y que en lo demás sale «sin datos».]**
 - **No enseñamos pisos en venta ni en alquiler.** Te ayudamos a elegir zona; el piso lo buscas donde prefieras.
@@ -112,7 +122,7 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 
 ### 1.10 Versiones
 - Método de «Qué falta»: `{method.version}` (hoy, `gap-0.2`).
-- Método del encaje: `{methodology_version}` **[pendiente de A: CORE-003]**.
+- Método del encaje: `{methodology_version}` (hoy, `fit-0.1`).
 
 ---
 
@@ -122,9 +132,16 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 |---|---|---|---|
 | 1.2 | 179 municipios + 21 distritos, con su nombre oficial («Redueña», «Griñón», «El Álamo», «Vicálvaro») | `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json` · D-200 · D-209 · nombres: D-212 (`evidence/gate-01/2026-11-11/phase-data022-f1.txt`) | Hecho (DATA-012, `be40c2f`; DATA-022, `c4f1bc0`) |
 | 1.7 | Ayuntamiento como apoyo | `pitch/datasets_cm.md` §3 (`ayto_padron_municipal`, `ayto_panel_indicadores_distritos_barrios`) · D-209 | Hecho |
-| 1.3 | Condiciones PASS / FAIL / UNKNOWN; UNKNOWN nunca es PASS; `results` solo con todo en PASS; `near_misses` | `packages/contracts/src/hi_contracts/public/search.py` · `CLAUDE.md` §14 · `docs/04_technical_architecture/31_public_api_routes.md` | Contrato hecho; cálculo **pendiente de A** (CORE-003) |
-| 1.3 | % de encaje, no nota; 3–5 hechos con su confianza | D-202 · `search.py` (`match_pct`, `facts`) | Contrato hecho |
-| 1.3 | Alquiler estimado = €/m² × m² | `data/catalog/features/alquiler_m2_mensual.yaml` · `search.py` (`estimated_cost_eur`, `min_floor_area_m2`: «None = derived from the household size») | **Pendiente de A** (CORE-006) |
+| 1.3 | Condiciones PASS / FAIL / UNKNOWN; UNKNOWN nunca es PASS; `results` solo con todo en PASS; `near_misses` con una sola condición fallida | D-215 (puntos 2 y 7) · `packages/domain/src/hi_domain/fit.py` y `search.py` · `CLAUDE.md` §14 · `docs/04_technical_architecture/31_public_api_routes.md` | Hecho en la API (CORE-003, `1507deb`, `915be3c`; `POST /api/v1/search`). En la web, **pendiente de B** (conectarlo) y en producción, **pendiente de C** (buscador encendido) |
+| 1.3 | % de encaje, no nota; 3–5 hechos con su confianza | D-202 · D-215 (punto 7, `facts`) · `search.py` (`match_pct`, `facts`) | Hecho (CORE-003) |
+| 1.3 | Pesos por orden: con 5 criterios, 33 / 27 / 20 / 13 / 7 %; % = media ponderada × 100 | D-215 (puntos 3, 4 y 6: rank sum) · `fit.py` (`fit-0.1`) | Hecho |
+| 1.3 | Curvas: servicio a pie, 1 hasta su ventana y 0 al triple (colegio 10/30, centro de salud 15/45, parada 5/15); trabajo, 1 hasta 2 km y 0 desde 20 km en línea recta (confianza 0,5); margen, 1 con el 75 % del presupuesto o menos | D-215 (punto 5) · `fit.py` (`WALK_ZERO_AT = 3.0`, `NEAR_KM, FAR_KM = 2.0, 20.0`, `BUDGET_MARGIN_SHARE = 0.25`) · ventanas de D-210 | Hecho |
+| 1.3 | Sin datos nunca es 0 y baja la confianza | D-215 (puntos 5 y 6) | Hecho; zonas verdes, seguridad y «sin escaleras», del 19 al 22 nov (D-205) |
+| 1.3 | Trabajo: tiempo en transporte público aún no calculado; cuenta como preferencia | D-215 (punto 2, `commute`: UNKNOWN hasta CORE-009) | Límite declarado; **pendiente de A** (CORE-009) |
+| 1.3 | Caso de la Castellana: 32 de 199 zonas; Ciudad Lineal 99 % (colegio 5 min, parada 2, centro de salud 11, 3,2 km de Azca, ≈ 1.075 €/mes por 77 m²); colegio +5 min, +17 zonas | D-215 (punto 9) · `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (`scripts/golden_search.py`, base local) · `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json` | Hecho en local; comprobar en la demo cuando C sincronice y encienda el buscador |
+| 1.3 | Alquiler estimado = €/m² de la zona × m² del hogar; PASS / FAIL / UNKNOWN | D-214 (punto 1) · `packages/domain/src/hi_domain/affordability.py` · `data/catalog/features/alquiler_m2_mensual.yaml` | Hecho (CORE-006, `92eab6b`) |
+| 1.3 | m² supuestos: 61 / 68 / 71 / 77 / 77 (mediana de los hogares de cada tamaño en la CM) | D-214 (punto 2) · INE, Censo de Población y Viviendas 2021, tabla 59524, «Viviendas familiares principales convencionales según tamaño del hogar por superficie» (https://www.ine.es/jaxi/Tabla.htm?tpx=59524&L=0, título comprobado el 11 nov) · `affordability.py` | Hecho |
+| 1.3 | Orientativo y a la baja: media de contratos vigentes declarados en el IRPF, no de anuncios; m² construidos del Catastro | D-214 (punto 3) · ficha del portal CM, campo «Fuente»: «Estadística de Viviendas Declaradas en el Impuesto sobre la Renta de las Personas Físicas. Agencia Estatal de Administración Tributaria» (https://datos.comunidad.madrid/dataset/1934259, leída el 11 nov) · `limitations` de `alquiler_m2_mensual.yaml` | Hecho (límite declarado) |
 | 1.4 | Referencia = los demás municipios del mismo tipo (rural o urbano, Ley 45/2007 art. 3.a: < 30.000 hab. y < 100 hab./km²), sin el municipio de la zona; los distritos heredan el tipo de su municipio | D-213 (punto 1) · `packages/domain/src/hi_domain/gaps.py` (`gap-0.2`) · `apps/api/src/hi_api/services/gap_reference.py` · `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt` (84 rurales, 95 urbanos) | Hecho (GAP-001 F5, `d02574f`, `f626e1f`). La demo pública lo enseña cuando C despliegue (hoy `/gaps` aún da `gap-0.1`) |
 | 1.4 | Rurales, 14,8 veces más centros de atención primaria por habitante; la diferencia rural/urbano es significativa en las 6 filas | D-213 (tabla χ²) · `phase-gap001-f5-review.txt` | Hecho |
 | 1.4 | FALTA = ratio < 0,8 y significativa (intervalo exacto de Poisson al 95 %); CUBIERTO = ratio ≥ 1; JUSTO, el resto | D-213 (punto 2: regla de los cuatro quintos, Garwood, Fingertips, Spiegelhalter 2005) | Hecho |
@@ -147,10 +164,11 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 | 1.7 | Control de calidad | `evidence/gate-01/*/<dataset>/quality_report.json` | Hecho |
 | 1.8 | Centros, no plazas; residencias aparte y con plazas autorizadas; vivienda: parque, no mercado | `proxy_note` de las 6 filas · `plazas_residencia_por_100_mayores.yaml` · `viviendas_grandes_por_100_hogares_grandes.yaml` (`limitations`) | Hecho |
 | 1.8 | Alquiler: solo municipios de más de 20.000 habitantes | `alquiler_m2_mensual.yaml` (`limitations`) · título del dataset en `pitch/datasets_cm.md` | Hecho |
-| 1.8 | Compra orientativa o SIN DATOS | D-203 | **Pendiente de A** (DATA-021) |
+| 1.8 | Compra: «sin datos» en todas las zonas, sin inventar precio | D-214 (punto 5) · D-203 | Hecho. Fuente oficial: DATA-021, del 19 al 22 nov (**pendiente de A**) |
+| 1.8 | Alquiler: 37 de 179 municipios; distritos por la media de sus códigos postales, ponderada por lugares (confianza ≤ 0,8); 14,46 €/m² frente a 15,10 de la CM | D-214 (puntos 3 y 4) · `alquiler_m2_mensual.yaml` v2 (`postcode_weighted_mean`) · `evidence/gate-04/2026-11-11/phase-core006-f1.txt` | Hecho (CORE-006, `100cb29`) |
 | 1.8 | Seguridad: Madrid capital, por distrito, por 1.000 habitantes, sin datos de personas ni etiquetas, solo si se marca | D-204 · D-205 | **Pendiente de A** (DATA-020) |
 | 1.8 | Zonas verdes y «sin escaleras» | D-205 | **Pendiente de A** (DATA-018 y DATA-019) |
 | 1.8 | Necesidad declarada: siguiente paso, nunca simulada | D-194 | Hecho (no está en la demo) |
 | 1.8 | GTFS de metro vencido el 27-05-2026 | `evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json` (`feed_current`) · D-196 | Hecho |
 | 1.9 | Sin cuenta; solo datos de zonas | Brief de diseño (sin login) · D-186 · D-197 | Hecho. No se afirma nada sobre registros del servidor: C no lo ha documentado |
-| 1.10 | Versiones de método | `GapMethod.version` · `SearchResult.methodology_version` | `gap-0.2` hecho (D-213); encaje **pendiente de A** |
+| 1.10 | Versiones de método | `GapMethod.version` · `SearchResult.methodology_version` | `gap-0.2` (D-213) y `fit-0.1` (D-215), hechos |

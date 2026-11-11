@@ -92,15 +92,26 @@ Sí, por eso Madrid se divide en sus 21 distritos, y la distancia a pie se calcu
 - Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211), en la API (GAP-001 F1) y en la web (`evidence/map-004/2026-11-11/`).
 
 **16. ¿Cómo calculáis el % de encaje?**
-Primero se comprueban las condiciones de la persona, cada una con PASS, FAIL o «sin dato», y un «sin dato» nunca cuenta como PASS. Después se puntúan las prioridades con pesos declarados. El método y su versión se ven en «Cómo lo calculamos».
-- Evidencia: `CLAUDE.md` §14 · contrato `packages/contracts/src/hi_contracts/public/search.py`.
-- Estado: **pendiente de A** (CORE-003). Confirmar los pesos reales antes del 25 nov.
+Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.1`).
+- Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
+- Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
+- Estado: hecho en la API (CORE-003). En la web, **pendiente de B y C**.
 
 **17. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
-Así es: el dataset del portal cubre los municipios de más de 20.000 habitantes. En los demás, la condición de presupuesto queda como «sin dato», se dice y nunca se da por buena.
-- Evidencia: título del dataset en `pitch/datasets_cm.md` · `CLAUDE.md` §14 (UNKNOWN nunca equivale a PASS).
+Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
+- Evidencia: D-214 (puntos 3 y 4) · `data/catalog/features/alquiler_m2_mensual.yaml` v2 · `evidence/gate-04/2026-11-11/phase-core006-f1.txt` (14,46 frente a 15,10) · `CLAUDE.md` §14 (UNKNOWN nunca equivale a PASS).
 
-**18. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
+**18. Vuestro alquiler estimado parece bajo. ¿Es real?**
+Es orientativo y tira a la baja, y lo decimos en cada resultado: la Comunidad publica la media de los contratos vigentes declarados en el IRPF, no la de los anuncios, y un contrato nuevo suele costar más. Además, esos m² son construidos, del Catastro, así que el precio corresponde a un piso algo menor que el que suponemos (77 m² para 4 personas, la vivienda mediana de ese hogar en el Censo 2021). Por eso, cuando decimos que una zona no entra en el presupuesto, es fiable; cuando decimos que sí, avisamos de que puede costar más.
+- Evidencia: D-214 (puntos 2 y 3) · ficha del portal CM (https://datos.comunidad.madrid/dataset/1934259, campo «Fuente»: «Estadística de Viviendas Declaradas en el Impuesto sobre la Renta de las Personas Físicas. Agencia Estatal de Administración Tributaria») · INE, tabla 59524 (https://www.ine.es/jaxi/Tabla.htm?tpx=59524&L=0) · `limitations` de `alquiler_m2_mensual.yaml`.
+- Si preguntan por qué no usamos anuncios: no hay una fuente oficial y abierta de precios de oferta, y no hacemos scraping (pregunta 31).
+
+**19. ¿Tenéis en cuenta lo que se tarda en llegar al trabajo?**
+Todavía no en tiempo: hoy cuenta la distancia en línea recta desde la zona al trabajo, como preferencia y con confianza 0,5, nunca como condición. Vale 1 hasta 2 km y 0 desde 20 km, y la explicación de cada zona da los kilómetros. El tiempo en transporte público, con los horarios del CRTM que ya tenemos, es el siguiente paso (CORE-009).
+- Evidencia: D-215 (puntos 2 y 5) · `fit.py` (`NEAR_KM, FAR_KM = 2.0, 20.0`).
+- Estado: **pendiente de A** (CORE-009, 19–22 nov). Si llega, cambiar esta respuesta.
+
+**20. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
 Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. En cada fila damos los minutos en los que llega la mitad de las calles de la zona; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.
 - Evidencia: D-210 · D-211 · `data/catalog/features/min_a_pie_*.yaml` y `pct_calle_*.yaml` · `scripts/check_walk_golden.py` y `evidence/gate-03/2026-11-11/phase-core005-f5.txt` (La Acebeda: farmacia a 109,7 min, D-211) · estudio del Ayuntamiento: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf («Velocidad de desplazamiento estimada en 4 Km/h»).
 - Estado: hecho a 4 km/h, decisión de Mariano del 11 nov (CORE-005 Fase 5, `ad2129a`, D-211, Gate 3 PASS). En la API, con GAP-001 F1 (`2d05d78`), y en la web (`evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`); online cuando C despliegue la web nueva. El % de calle a 10 minutos también está calculado (`pct_calle_*.yaml`), pero no se enseña.
@@ -109,27 +120,27 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
-**19. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
+**21. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
 21 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
 - Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py`.
 
-**20. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
+**22. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
 - Evidencia: D-196 · `pitch/datasets_cm.md` §2 (6 fichas con licencia «CRTM Licencia de datos abiertos (LDA)» en el portal CM).
 
-**21. ¿Qué control de calidad pasa un dataset antes de entrar?**
+**23. ¿Qué control de calidad pasa un dataset antes de entrar?**
 Claves únicas, que cada municipio exista en la geografía oficial, errores de lectura, ratio de registros en cuarentena y faltantes marcados como faltantes, no como cero. Los registros dudosos van a cuarentena, no se borran, y cada versión guarda la huella del fichero original.
 - Evidencia: `evidence/gate-01/*/<dataset>/quality_report.json` · `lineage.json` (sha256 y URL) · `row_counts.json` (`quarantined`).
 
-**22. ¿Encontrasteis errores en los datos del portal?**
+**24. ¿Encontrasteis errores en los datos del portal?**
 Sí, y los tratamos sin ocultarlos. Por ejemplo: una geometría inválida en las secciones censales, reparada y documentada, y centros sin coordenadas válidas que van a cuarentena (55 de centros educativos).
 - Evidencia: `notes` de `data/catalog/datasets/cm_secciones_censales.yaml` · `evidence/gate-01/2026-10-22/cm_centros_educativos/row_counts.json`.
 
-**23. ¿Los datos están al día?**
+**25. ¿Los datos están al día?**
 Cada fuente se recarga según su propia frecuencia de publicación, y en los GTFS el control de calidad avisa si el horario está caducado. Por ejemplo, el GTFS de metro venció el 27 de mayo de 2026 y sigue siendo el último publicado: lo usamos y el control de calidad lo marca.
 - Evidencia: control `feed_current` en `evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json` · D-196.
 
-**24. ¿Cómo citáis las fuentes en la propia aplicación?**
+**26. ¿Cómo citáis las fuentes en la propia aplicación?**
 Cada fila de la lista y cada resultado llevan los datasets de los que salen, con el enlace a su ficha, la versión y la licencia. Además, la web muestra la atribución que pide cada licencia, incluido «Powered by CRTM».
 - Evidencia: campo `datasets` de la API (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) · `attribution_text` en `data/catalog/sources/*.yaml`.
 - Estado: hecho en la web nueva: pie con Comunidad de Madrid, Ayuntamiento, «Powered by CRTM» y OpenStreetMap (`evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`). Online cuando C la despliegue.
@@ -138,41 +149,41 @@ Cada fila de la lista y cada resultado llevan los datasets de los que salen, con
 
 ## Generales (cualquier miembro)
 
-**25. ¿Qué hicisteis durante la competición y qué ya existía?**
+**27. ¿Qué hicisteis durante la competición y qué ya existía?**
 El trabajo previo está identificado con el tag `pre-datamad` (22 oct): la geografía, los 10 primeros datasets y el mapa base. Desde el 7 nov hemos añadido el transporte del CRTM, 5 datasets más, la lista de lo que falta con sus 6 filas, la red peatonal, la web y el despliegue. [Solo si el buscador funciona en la demo: «y el buscador».]
 - Evidencia: `README.md` («Trabajo previo a DATAMAD») · tag `pre-datamad` = `cf39459` · D-174 · `board/BOARD.md` (07 — DONE).
-- Estado: lista y web hechas; buscador **pendiente de A** (CORE-003); despliegue de la web nueva, **pendiente de C**.
+- Estado: lista, web y buscador hechos (el buscador, en la API: CORE-003, D-215). Conectarlo en la web y encenderlo en producción, **pendiente de B y C**.
 
-**26. ¿Habéis usado IA?**
+**28. ¿Habéis usado IA?**
 Sí, como asistente de programación, que las bases permiten (§7), y nosotros respondemos de todo el código y los resultados. El producto no usa IA para calcular nada: todas las cifras salen de reglas deterministas, versionadas y con tests.
 - Evidencia: `docs/09_datamad/24_bases_oficiales_2026.md` §7 · `CLAUDE.md` §3 (IA).
 
-**27. ¿Qué pasa con la privacidad?**
+**29. ¿Qué pasa con la privacidad?**
 Nunca tratamos datos de personas: solo agregados por zona. Además, no mostramos equipamientos que expondrían a personas vulnerables, quitamos teléfonos, emails y NIF que publicaba la fuente, y la base de la demo no se puede leer desde fuera de la API.
 - Evidencia: D-186 · D-198 · D-197 · control `no_contact_or_tax_ids` en los `quality_report.json` de puntos.
 
-**28. ¿De dónde sale «lo que falta» si no tenéis usuarios?**
+**30. ¿De dónde sale «lo que falta» si no tenéis usuarios?**
 Hoy, de datos oficiales: población, hogares y equipamientos, comparados con los demás municipios del mismo tipo. El siguiente paso es sumar lo que la gente declare que necesita, anónimo y agregado por zona, y no lo simulamos en la demo.
 - Evidencia: D-194 · `docs/09_datamad/25_plan_competicion.md` §8.
 
-**29. ¿Por qué no usáis datos de los portales inmobiliarios?**
+**31. ¿Por qué no usáis datos de los portales inmobiliarios?**
 Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen respetar licencias. Además, enseñan la oferta, y lo que nosotros medimos es la necesidad.
 - Evidencia: `CLAUDE.md` §15 · D-175 y D-185 (Google Maps y Gosom descartados) · bases §6.
 
-**30. ¿Incluís seguridad? Es delicado.**
+**32. ¿Incluís seguridad? Es delicado.**
 Solo si la persona la marca como prioridad y solo con datos oficiales agregados: actuaciones de la Policía Municipal por cada 1.000 habitantes y por distrito. Nunca nacionalidad ni etiquetas como «peligroso»; fuera de Madrid capital, SIN DATOS.
 - Evidencia: D-204 y D-205.
 - Estado: extra **pendiente de A** (DATA-020, 19–22 nov). Si no está, decir «no lo incluimos todavía, y así es como lo haríamos».
 
-**31. ¿Funciona fuera de la Comunidad de Madrid?**
+**33. ¿Funciona fuera de la Comunidad de Madrid?**
 La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geografía se basa en códigos INE. Lo que haría falta en otra región es su portal de datos con equivalentes.
 - Evidencia: `data/catalog/pipelines/` · `README.md` (Quickstart).
 
-**32. ¿Es accesible para personas mayores?**
+**34. ¿Es accesible para personas mayores?**
 Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px y contraste AA verificado también sobre el cristal. El estado de cada fila nunca depende solo del color: siempre va con texto e icono.
 - Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` (rama `claude/s1-web`, PR #2).
 - Estado: verificación en navegador **pendiente de B**.
 
-**33. ¿Por qué «Vida Fácil»?**
+**35. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
 - Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.

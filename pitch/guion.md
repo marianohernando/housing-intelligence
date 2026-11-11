@@ -9,7 +9,7 @@
   ```
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
 - **Textos de los botones:** salen del brief (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`). Siguen marcados **«pendiente de B»** hasta comprobarlos en la web real.
-- **Buscador:** el bloque 2 se hace con el buscador **solo si** el 26 nov la demo desplegada lo tiene encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`) y `POST /api/v1/search` responde con datos reales (CORE-003, **pendiente de A**). Si no, se usa el **bloque 2 sin buscador**, que no lo nombra ni lo promete. Se decide en el freeze del 23 nov.
+- **Buscador:** el bloque 2 se hace con el buscador **solo si** el 26 nov la demo desplegada lo tiene encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`). El cálculo ya funciona en la API con datos reales (`POST /api/v1/search`, CORE-003 y CORE-006, D-214 y D-215); faltan la conexión en la web (**pendiente de B**) y el encendido en producción (**pendiente de C**; avisa el orquestador). Si no, se usa el **bloque 2 sin buscador**, que no lo nombra ni lo promete.
 
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
@@ -52,7 +52,15 @@ Buenas tardes. Imaginad una familia que busca piso en Madrid. El precio lo mira 
 - alquiler de hasta 1.500 €/mes;
 - 2 adultos y 2 hijos de 4 y 8 años;
 - trabajo en el Paseo de la Castellana (Azca), 4 días por semana;
-- colegio a 10 min andando como mínimo.
+- colegio a 10 min andando como mucho, obligatorio;
+- le importan, por este orden, los colegios, el transporte y la salud.
+
+**Resultado real** (D-215, punto 9 · `evidence/gate-04/2026-11-11/phase-core003-f2.txt`, base local del 11 nov). Se lee en pantalla, nunca de memoria; antes del 26 se comprueba en la demo, que lee Supabase (sincronización pendiente de Mariano, `board/BOARD.md`):
+- encajan 32 de las 199 zonas (178 municipios y los 21 distritos de Madrid);
+- 1.ª, Ciudad Lineal, 99 %: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 11 min, a 3,2 km en línea recta de Azca y unos 1.075 €/mes por 77 m²;
+- después, Hortaleza, Tetuán y Moratalaz (97 %);
+- Reality Check: lo que más quita es el colegio a 10 min (+17 zonas con 5 min más; +1 con 150 €/mes más);
+- casi: Salamanca, que solo falla por presupuesto (≈ 1.526 €/mes).
 
 <!-- habla:b2:inicio -->
 Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro y ocho años. Trabajan en la Castellana, pueden pagar hasta mil quinientos euros de alquiler y quieren un colegio a diez minutos andando. No rellenan un formulario: marcan su hogar, lo que les importa y dónde trabajan. Pulso «Ver zonas que encajan». El mapa se colorea: cuanto más violeta, mejor encaja la zona con esta familia. A la derecha, la zona que más encaja. No le damos una nota sobre cien. Le damos un porcentaje de encaje y, debajo, hechos que cualquiera entiende: [leer dos hechos de la tarjeta]. Y cada hecho dice cuánto nos fiamos del dato. ¿Y si lo que buscan no existe? Esto es el Reality Check. Con su búsqueda tal cual salen [N] zonas. Si suben [X] euros, salen [N]. Si aceptan [otra condición], [N]. No le decimos a nadie «gastad más»: le enseñamos sus alternativas y lo que cuesta cada una. Y cada dato tiene su origen: pulso aquí y me lleva a la ficha del portal de datos abiertos de la Comunidad de donde sale.
@@ -62,14 +70,14 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 |---|---|---|---|
 | 2.1 | Clic en «Pareja con 2 hijos que trabaja en la Castellana» (portada; **pendiente de B**) | Tarjeta «Tu búsqueda» rellena: «Con hijos (2)», «Colegios», «Trabajo en: Castellana», alquiler hasta 1.500 €/mes | Rellenar a mano los chips: es más lento, así que acortar la frase del formulario |
 | 2.2 | Clic en «Ver zonas que encajan» (**pendiente de B**) | Coropleta violeta y tarjeta de zona con el % de encaje y 3–5 hechos con su confianza | Si tarda más de 3 s, seguir hablando del mapa; si no llega, pasar al vídeo (plan B) |
-| 2.3 | Señalar la tarjeta de zona y leer dos hechos | Hechos tipo «Colegio público a [N] min andando» y «Metro a [N] min» (**pendiente de A**: CORE-003; los minutos a pie ya existen a 4 km/h, CORE-005 y D-211) | Leer solo el % de encaje y la confianza |
-| 2.4 | Señalar el bloque Reality Check (**pendiente de A y B**) | «Con tu búsqueda: [N] zonas · +[X] €/mes: [N] · …» con cifras de la API | Ver la nota sobre el Reality Check, debajo |
+| 2.3 | Señalar la tarjeta de zona y leer dos hechos | En Ciudad Lineal: «Colegio con primaria a 5 min andando» y «Parada de transporte público a 2 min andando» (D-215). Si preguntan por el trabajo: cuenta por distancia en línea recta (3,2 km), porque el tiempo en transporte público llega con CORE-009 | Leer solo el % de encaje y la confianza |
+| 2.4 | Señalar el bloque Reality Check (la API lo calcula: D-215; pantalla **pendiente de B**) | «Con tu búsqueda: [N] zonas · +[X] €/mes: [N] · …» con cifras de la API | Ver la nota sobre el Reality Check, debajo |
 | 2.5 | Clic en una opción del Reality Check | El mapa se recalcula con la condición relajada | Solo señalarla, sin pulsar |
 | 2.6 | Clic en la fuente de un hecho o en «Cómo lo calculamos» (**pendiente de B**) | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: N conjuntos de la Comunidad de Madrid…» |
 
-**Nota sobre el Reality Check (**pendiente de A y B**):** el bloque solo aparece si salen pocas zonas o ninguna (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`).
-- **Antes del 16 nov hay que comprobar con datos reales** si el caso precargado lo dispara.
-- **Si no lo dispara**, el guion añade en el paso 2.4: «Bajo el presupuesto a [Y] €/mes» con el slider. A elige [Y] con la API para que salgan 0–3 zonas.
+**Nota sobre el Reality Check (**pendiente de B**):** el bloque solo aparece si salen pocas zonas o ninguna (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`).
+- **Con datos reales, el caso precargado deja 32 zonas** (D-215). Si B solo enseña el bloque cuando salen pocas, no aparecerá: hay que confirmarlo con B.
+- **Si no aparece**, el paso 2.4 enseña la opción que más zonas suma, el colegio a 15 min (+17 zonas), o se baja el presupuesto con el slider a [Y] €/mes. [Y] se elige con la API para que salgan 0–3 zonas.
 - **La frase hablada** se ajusta a la acción que se haga.
 
 ### Bloque 2 sin buscador · 0:40–2:40 · Qué tiene cerca una familia
@@ -135,7 +143,7 @@ Ahora cambio de usuario: un ayuntamiento. Abro «Qué falta» de Madrid capital.
 Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. Funciona con datos reales y oficiales de toda la Comunidad de Madrid. Encuentra tu sitio en Madrid. Gracias.
 <!-- habla:b5:fin -->
 
-**Fuente:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. **Pendiente de A:** confirmar antes del 26 que el buscador cubre los 179 municipios en la demo. La lista ya responde en municipios y distritos (smoke de C, PR #6). Si no, se dice «con datos reales y oficiales de la Comunidad de Madrid», sin «toda».
+**Fuente:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. El buscador cubre las 199 zonas: 178 municipios y los 21 distritos de Madrid, que sustituyen al municipio (D-215, punto 1). La lista de lo que falta responde en municipios y distritos.
 
 ---
 

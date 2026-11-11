@@ -43,7 +43,7 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 
 **Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
-**Si el 23 nov el buscador sigue saliendo «Muy pronto»** (CORE-003, **pendiente de A**; `apps/web/src/lib/capabilities.ts`), los planos 2, 3 y 4 no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
+**Si el 23 nov el buscador sigue saliendo «Muy pronto»** (ya calcula en la API, D-215; falta conectarlo y encenderlo: **pendiente de B y C**; `apps/web/src/lib/capabilities.ts`), los planos 2, 3 y 4 no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
 - **Plano 6 entra desde el mapa:** clic en un distrito de la región (propuesta: Chamartín) y vuelo a 3D. Se alarga hasta 30 s y suma la tarjeta «Qué falta aquí» con «A pie: N min».
 - **Locución añadida:** «Y cuánto se tarda andando, por las calles de verdad: [N] minutos hasta el centro de salud más cercano».
 - **Plano 5:** pasa detrás del 6 (la fuente se abre desde una fila de «Qué falta»).
@@ -77,7 +77,7 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 - **Acción:** clic en «Ver zonas que encajan». Esperar a que se coloree el mapa y señalar la tarjeta de zona con el cursor, despacio.
 - **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje» y 3–5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** **pendiente de A** (CORE-003; los minutos a pie ya existen a 4 km/h, CORE-005 y D-211) y **pendiente de B** (pantalla).
+- **Estado:** la API ya lo calcula (D-215; caso real: Ciudad Lineal, 99 %, `evidence/gate-04/2026-11-11/phase-core003-f2.txt`). Pantalla **pendiente de B**.
 
 <!-- voz:p3:inicio -->
 Pulsamos «Ver zonas que encajan». El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
@@ -88,7 +88,7 @@ Pulsamos «Ver zonas que encajan». El mapa se colorea según cuánto encaja cad
   - Si el caso precargado no hace aparecer el bloque, antes se baja el presupuesto con el slider a [Y] €/mes (`pitch/guion.md`, nota del bloque 2).
 - **Se ve:** «Con tu búsqueda tal cual salen [N] zonas» y las opciones con sus cifras de la API.
 - **Rótulo:** «Con tu búsqueda: [N] zonas · [opción]: [N] zonas».
-- **Estado:** **pendiente de A y B**.
+- **Estado:** la API lo calcula (D-215: colegio a 15 min, +17 zonas; +150 €/mes, +1). Pantalla **pendiente de B**. Con 32 zonas, el bloque puede no aparecer: ver la nota del bloque 2 del guion.
 
 <!-- voz:p4:inicio -->
 ¿Y si salen pocas? Con su búsqueda tal cual salen [N] zonas. Si cambian una sola cosa, por ejemplo [opción], salen [N]. Un toque y se aplica.

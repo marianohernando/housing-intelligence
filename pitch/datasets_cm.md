@@ -39,8 +39,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/1934259 · id `cm_alquiler_m2_codigo_postal_madrid` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Métrica cargada: Alquiler mensual por metro cuadrado (códigos postales de Madrid) (`alquiler_m2_mensual_codigo_postal`)
-  - Uso en la lista o en el buscador: **pendiente de A**
+  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, dato principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-bc14c1e36441` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_alquiler_m2_codigo_postal_madrid/quality_report.json)
 
 ### Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios
@@ -54,6 +53,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/atencion_social_registro_centros · id `cm_centros_atencion_social` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, dato de apoyo)
   - «Qué falta», fila «Centros de mayores»: Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más (`centros_mayores_por_1000_mayores`, dato principal)
   - «Qué falta», fila «Centros de mayores» (dato extra): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, dato principal)
@@ -65,6 +65,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_educativos · id `cm_centros_educativos` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, dato de apoyo)
   - «Qué falta», fila «Colegios»: Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, dato principal)
   - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_por_1000_ninos`, dato principal)
   - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, dato principal)
@@ -78,6 +79,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios · id `cm_centros_sanitarios` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, dato de apoyo)
   - «Qué falta», fila «Centros de salud»: Centros de atención primaria por cada 10.000 habitantes (`centros_salud_por_10000_hab`, dato principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, dato principal)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, dato principal)

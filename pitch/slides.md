@@ -81,18 +81,22 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 ### Utilidad: personas que buscan dónde vivir
-**Condición:** esta tarjeta va así solo si el 24 nov la demo desplegada tiene el buscador encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`) y `POST /api/v1/search` responde (CORE-003, **pendiente de A**). Si no, va la **versión sin buscador**, sin «próximamente»:
+**Condición:** esta tarjeta va así solo si el 24 nov la demo desplegada tiene el buscador encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`). El cálculo ya está hecho en la API (`POST /api/v1/search`, CORE-003 y CORE-006, D-214 y D-215). Falta que B lo conecte en la web (**pendiente de B**) y que producción lo encienda (**pendiente de C**; el orquestador avisa). Si no, va la **versión sin buscador**, sin «próximamente»:
 - Título: «Mira qué tienes cerca de casa».
 - «Minutos a pie, por la calle, hasta el colegio, el centro de salud o la farmacia más cercanos.» (CORE-005, D-211; en la web: `evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`).
 - «Cada dato con su fuente y su fiabilidad.»
 - Captura: la tarjeta de zona con «A pie: N min» (recorte de C5) en lugar de C2 y C3.
 
 Versión con buscador:
-- Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras.
-  - Ejemplo de formato (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`): «Colegio público a 6 min andando».
-  - Los hechos reales de la zona del caso demo: **pendiente de A** (CORE-003; las distancias a pie ya están calculadas a 4 km/h en CORE-005, D-211) y **pendiente de B** (captura C2).
-- **Reality Check:** si nada encaja, enseña cuántas zonas aparecen al relajar cada condición, con cifras reales de la API. Hoy solo existe el contrato (`packages/contracts/src/hi_contracts/public/search.py`, `7541527`); el cálculo está **pendiente de A** (CORE-003). Captura **C3**.
-- **Caso demo:** pareja con 2 hijos que trabaja en la Castellana (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`).
+- Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, y lo que no tiene datos nunca cuenta como 0 (D-215; `pitch/metodologia.md` §1.3).
+- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado con los datos del 11 nov (D-215, punto 9 · `evidence/gate-04/2026-11-11/phase-core003-f2.txt`, base local):
+  - encajan **32 de las 199 zonas**;
+  - 1.ª **Ciudad Lineal, 99 %**: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 11 min, a 3,2 km en línea recta de Azca y unos 1.075 €/mes por 77 m²;
+  - después Hortaleza, Tetuán y Moratalaz (97 %). Chamartín sale 8.ª (95 %), porque sus 1.384 €/mes dejan poco margen.
+- **Reality Check:** cuántas zonas aparecen al relajar cada condición. En el caso demo lo que más quita es el colegio a 10 min: con 5 min más aparecen 17 zonas, y con 150 € más al mes, 1. Casi encaja Salamanca, que solo falla por presupuesto (≈ 1.526 €/mes). Captura **C3**.
+- **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
+- **Límite que se dice si preguntan:** el trabajo cuenta por distancia en línea recta, como preferencia. El tiempo en transporte público llega con CORE-009 (**pendiente de A**).
+- Antes de maquetar, comprobar estas cifras en la demo desplegada: el buscador lee la base de Supabase, cuya sincronización está pendiente de Mariano (`board/BOARD.md`, «Blocked»). Capturas **C1–C3**: **pendiente de B**, cuando lo conecte.
 
 ### Impacto: ayuntamientos que deciden dónde invertir
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b):
@@ -183,9 +187,9 @@ El deck ya usa las de B del 11 nov (`evidence/map-004/2026-11-11/`, web local co
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
-| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Pendiente de B** |
-| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Pendiente de B** (y A para los hechos) |
-| C3 | Bloque Reality Check con cifras reales de la API | 1440 | 3 | **Pendiente de A y B** |
+| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Pendiente de B**, cuando conecte el buscador (la API ya da `all_zones` para la coropleta: D-215) |
+| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Pendiente de B** (la API ya da los hechos: D-215) |
+| C3 | Bloque Reality Check con cifras reales de la API | 1440 | 3 | **Pendiente de B** (la API ya lo calcula: D-215) |
 | C4 | Pestaña «Qué falta» de la zona del ejemplo (Madrid capital): 6 filas con valor, referencia, confianza y datasets enlazados | 1440 | 3 | Hecha por B el 11 nov sobre Chamartín (`c_que_falta_desktop.png`; también `c4_que_falta_completa_*`). **Rehacer con `gap-0.2` sobre Madrid capital** (B, tras el despliegue de C) |
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B el 11 nov (`c_zona_3d_desktop.png`, Chamartín). **Rehacer con `gap-0.2`**: su tarjeta enseña los estados de antes (B) |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B el 11 nov (`c_zona_3d_mobile.png`). No enseña estados: vale tal cual |

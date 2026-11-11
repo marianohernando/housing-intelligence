@@ -44,20 +44,20 @@ Fuentes:
 ## Cómo funciona
 
 1. **Cuéntanos cómo es tu hogar:** quién vive contigo, cuánto puedes pagar de alquiler o de compra, dónde trabajas y qué te importa (transporte, salud, colegios…).
-2. **Mira las zonas que encajan contigo,** con su % de encaje y, debajo, hechos que puedes comprobar, como «colegio público a 6 min andando». Cada uno dice cuánto nos fiamos del dato.
-3. **¿Salen pocas?** Te enseñamos cuántas zonas aparecen si cambias una sola cosa, por ejemplo 100 € más al mes o 10 minutos más de trayecto.
+2. **Mira las zonas que encajan contigo,** con su % de encaje y, debajo, hechos que puedes comprobar, como «colegio con primaria a 5 min andando». Cada uno dice cuánto nos fiamos del dato.
+3. **¿Salen pocas?** Te enseñamos cuántas zonas aparecen si cambias una sola cosa, por ejemplo 150 € más al mes o el colegio a 5 minutos más.
 4. **Entra en una zona y mira qué le falta:** escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda, comparados con los demás municipios de su tipo, urbanos o rurales. Cada fila dice de qué datos sale y a cuántos minutos andando está lo más cercano.
 
 Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»** de la demo.
 
 <!--
-- Pasos 1–3: contratos ScenarioState y SearchResult v2 (packages/contracts/src/hi_contracts/public/, D-202 a D-204). El cálculo está pendiente de A (CORE-003 y CORE-006, para el 15–16 nov). Las distancias a pie ya están calculadas a 4 km/h (CORE-005, D-210 y D-211).
+- Pasos 1–3: POST /api/v1/search con datos reales (CORE-003 y CORE-006; D-214 y D-215; evidence/gate-04/2026-11-11/phase-core003-f2.txt). En la web, pendiente de B (conectarlo) y de C (encenderlo en producción). El coste es orientativo y tira a la baja (D-214); el trabajo cuenta por distancia en línea recta hasta CORE-009.
 - CONDICIÓN: los pasos 1–3 y la frase «qué zonas encajan contigo» de la entrada solo se integran si la demo desplegada tiene el buscador encendido (sin «Muy pronto»: apps/web/src/lib/capabilities.ts). Si no, la sección queda así:
   1. **Elige una zona en el mapa:** cualquiera de los 179 municipios o de los 21 distritos de Madrid.
   2. **Mira qué tienes cerca:** sus colegios, centros de salud y estaciones en 3D, y cuántos minutos se tarda andando hasta cada servicio.
   3. **Mira qué le falta:** (el paso 4 de arriba).
   Y la entrada dice «para enseñarte qué tiene cerca cada zona y qué le falta».
-- «6 min andando» y «+100 €/mes» / «+10 min» son ejemplos de formato del brief de diseño y del contrato (Relaxation.label), no cifras de una zona.
+- «colegio con primaria a 5 min andando» es un hecho real del caso de la Castellana (Ciudad Lineal, D-215). «150 € más» y «5 minutos más» son las relajaciones de D-215 (punto 8: presupuesto +10 % redondeado a 50 €; servicio cerca +5 min) en ese mismo caso.
 - Paso 4: GET /api/v1/gaps/{level}/{code} (D-194), con las 6 filas en los 179 municipios y los 21 distritos (GAP-001 F1–F3b; en los distritos, vivienda sale SIN DATOS). Comparación con los municipios del mismo tipo: D-213 (gap-0.2, GAP-001 F5); la demo pública lo enseña cuando C despliegue. Minutos a pie en extra_indicators (GAP-001 F1).
 - Compra: orientativa (D-203).
 -->
@@ -112,7 +112,7 @@ Al publicar el repositorio, el 11 nov, reescribimos el historial solo para quita
 - §6: docs/09_datamad/24_bases_oficiales_2026.md · D-174.
 - Tag cf39459 = pre-datamad^{commit} (el tag anotado es e6bead3) · D-198.
 - 10 conjuntos antes del concurso: evidence/gate-01/2026-10-22/summary.md (Gate 01 PASS, 10 datasets).
-- Durante el concurso: board/BOARD.md (DATA-007, DATA-016, GAP-001, CORE-003, CORE-005, OPS-001). Las distancias a pie están hechas (CORE-005, D-210 y D-211) y la demo está desplegada (PR #6). El buscador está pendiente de A (CORE-003) hasta el 16 nov: si no llega, se quita de la lista.
+- Durante el concurso: board/BOARD.md (DATA-007, DATA-016, GAP-001, CORE-003, CORE-005, OPS-001). Las distancias a pie están hechas (CORE-005, D-210 y D-211) y la demo está desplegada (PR #6). El buscador funciona en la API (CORE-003, D-215); si el 18 nov no está encendido en la web, se quita de la lista.
 -->
 
 ## Equipo

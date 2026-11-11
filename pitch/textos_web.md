@@ -11,6 +11,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
   - de navegación y carga: `movil.hoja.mapa`, `zonas.*`, `carga.zonas` y `carga.fuentes`.
 - **Nombres de fila:** `fila.mayores` y `fila.vivienda` igualan las etiquetas del catálogo: «Centros de mayores» y «Vivienda para familias».
 - **Método nuevo (D-213, `gap-0.2`):** cada zona se compara con los demás municipios de su tipo y no con toda la Comunidad. Cambian `estado.falta`, `estado.justo`, `estado.cubierto`, `falta.intro`, `falta.fila.referencia` y `portada.paso3`; hay `falta.fila.region` nuevo.
+- **Buscador (D-214, D-215):** cambian la ayuda de `zona.coste.alquiler` (el coste es orientativo y tira a la baja), `importa.colegios`, `trabajo.max_min` (la web envía el trabajo sin límite) y `presupuesto.compra.sin_datos`. La distancia al trabajo llega ya escrita en `facts` («A 3,2 km en línea recta de…»).
 - **«Poco fiable» (`reliable: false`):** propongo `fila.zona_pequena`, «Zona pequeña para comparar», en lugar de «Pocos datos para saberlo con seguridad». El dato sí lo tenemos; lo que pasa es que en la zona vive muy poca gente. Además, «pocos datos» se confunde con SIN DATOS y con la fiabilidad del dato (sección 6), que es otra cosa.
 
 ## Reglas de escritura (D-199, D-202, D-204 y brief de diseño)
@@ -85,7 +86,7 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `importa.titulo` | Me importa | Marca lo que más te importa. Lo primero que marques cuenta más. | |
 | `importa.transporte` | Transporte | Paradas cerca de casa y con autobuses o trenes a menudo. | |
 | `importa.salud` | Salud | Centro de salud cerca de casa. | |
-| `importa.colegios` | Colegios | Colegios públicos cerca de casa. | |
+| `importa.colegios` | Colegios | Colegios con primaria, públicos o concertados, cerca de casa. | Los mismos que cuenta la fila de colegios (GAP-001 F2) |
 | `importa.zonas_verdes` | Zonas verdes | Parques y jardines cerca de casa. | **Pendiente de A** (DATA-018, 19–22 nov). Mientras no exista, el chip va desactivado con `importa.pronto` |
 | `importa.seguridad` | Seguridad | Actuaciones policiales registradas por cada 1.000 habitantes. Solo hay datos de Madrid capital. | Texto neutro del brief. **Pendiente de A** (DATA-020) |
 | `importa.sin_escaleras` | Sin escaleras | Estaciones de metro y Cercanías con acceso sin escaleras y edificios públicos accesibles. | Opcional (D-204). **Pendiente de A** (DATA-019) |
@@ -99,7 +100,7 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `trabajo.placeholder` | Escribe una calle, un barrio o un municipio | |
 | `trabajo.ayuda` | Así miramos lo lejos que te queda cada zona. | |
 | `trabajo.dias` | ¿Cuántos días vas a la semana? | Opcional (`days_per_week`) |
-| `trabajo.max_min` | Tardar como mucho {n} min | **Pendiente de A** (CORE-009, tiempo en transporte público, 19–22 nov). Si no está, no se muestra |
+| `trabajo.max_min` | Tardar como mucho {n} min | **Pendiente de A** (CORE-009, tiempo en transporte público, 19–22 nov). Hasta entonces no se muestra y la web envía el trabajo sin límite (`max_minutes: null`): con límite, ninguna zona pasaría (D-215, punto 2) |
 | `trabajo.sin_resultados` | No encontramos ese lugar. Prueba con otra calle o con el nombre del municipio. | |
 | `trabajo.quitar` | Quitar este lugar | |
 
@@ -122,7 +123,7 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `presupuesto.compra.valor` | Hasta {importe} € | Rango del slider: 10.000–5.000.000 € (`BUY_RANGE_EUR`) |
 | `presupuesto.compra.etiqueta` | Orientativo | Etiqueta junto al importe de compra, siempre visible |
 | `presupuesto.compra.ayuda` | No hay un precio oficial de compra por zona tan completo como el del alquiler. Lo usamos solo como orientación. | |
-| `presupuesto.compra.sin_datos` | Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto. | Mientras falte DATA-021: la condición sale «sin dato» (D-203). **Pendiente de A** |
+| `presupuesto.compra.sin_datos` | Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto. | Hecho en la API: con compra, la condición sale UNKNOWN en todas las zonas (D-214, punto 5). Cambia si llega DATA-021 (19–22 nov) |
 | `presupuesto.sin_limite` | Sin límite de presupuesto | Opción del slider (`budget: null`) |
 | `presupuesto.slider.aria` | Presupuesto máximo | `aria-label` |
 | `presupuesto.fuera_rango.alquiler` | El alquiler tiene que estar entre 100 y 20.000 € al mes. | |
@@ -135,7 +136,7 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `busqueda.boton.cargando` | Buscando zonas… |
 
 ### Mientras el buscador no esté
-El buscador sale como «Muy pronto» hasta que exista `POST /api/v1/search` (CORE-003, **pendiente de A**). La web lo enciende con `NEXT_PUBLIC_FEATURE_SEARCH=true` (`apps/web/src/lib/capabilities.ts`).
+El buscador sale como «Muy pronto» hasta que la web lo conecte y producción lo encienda. `POST /api/v1/search` ya funciona con datos reales (CORE-003, D-215). La web lo enciende con `NEXT_PUBLIC_FEATURE_SEARCH=true` (`apps/web/src/lib/capabilities.ts`).
 
 | Clave | Texto | Notas |
 |---|---|---|
@@ -188,7 +189,7 @@ El buscador sale como «Muy pronto» hasta que exista `POST /api/v1/search` (COR
 | `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`) |
 | `zona.hechos.titulo` | Lo que tienes aquí | Encima de los 3–5 hechos (`facts`) |
 | `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6 |
-| `zona.coste.alquiler` | Alquiler estimado: unos {importe} € al mes | `estimated_cost_eur`. Ayuda: «Para una vivienda del tamaño que necesita tu hogar, según el precio medio publicado.» |
+| `zona.coste.alquiler` | Alquiler estimado: unos {importe} € al mes | `estimated_cost_eur` (D-214). Ayuda: «Para una vivienda de {m2} m², con el precio medio de los alquileres ya firmados en la zona. Uno nuevo suele costar más: tómalo como orientación.» |
 | `zona.coste.compra` | Precio estimado: unos {importe} € (orientativo) | |
 | `zona.coste.sin_datos` | Precio: sin datos en esta zona | |
 | `zona.falta.titulo` | Qué falta aquí | Mini lista de 3 filas (`gap_highlights`) |

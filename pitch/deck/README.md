@@ -43,7 +43,7 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | Captura C5 con `gap-0.2`: la de B (Chamartín, 11 nov) enseña en su tarjeta los estados de antes de D-213. El nombre completo se pasa con `DECK_INTEGRANTES` | B, cuando C despliegue |
-| Slide 3 · utilidad | El buscador (CORE-003). Si el 24 nov sigue saliendo «Muy pronto», va la versión sin buscador de `pitch/slides.md` | A |
+| Slide 3 · utilidad | El buscador ya calcula en la API (CORE-003, D-215); falta conectarlo en la web y encenderlo en producción. Si el 24 nov sigue saliendo «Muy pronto», va la versión sin buscador de `pitch/slides.md` | B y C |
 | Slide 3 · impacto | Cifras de Madrid capital (0,37 frente a 0,56, FALTA) comprobadas en `/gaps` de la demo con `gap-0.2`, y captura C4 de Madrid | C y B |
 | Slide 3 · viabilidad | Captura C7 con el texto de D-213 en «Cómo lo calculamos» | B |
 | Slides 3 y 4 | Capturas C1, C2 y C3, que dependen del buscador | A y B |
