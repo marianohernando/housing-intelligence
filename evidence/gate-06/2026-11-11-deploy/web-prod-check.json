@@ -1,0 +1,136 @@
+{
+  "base": "https://vidafacil-madrid.vercel.app",
+  "checked_at": "2026-11-11T20:18:42.673Z",
+  "runs": [
+    {
+      "viewport": "desktop",
+      "page": "/",
+      "screenshot": "web-prod-inicio-desktop.png",
+      "title": "Vida Fácil · Encuentra tu sitio en Madrid",
+      "housing_intelligence": false,
+      "vida_facil": true,
+      "map_canvas": 1,
+      "overflow_x_px": 0,
+      "search_button": {
+        "text": "Ver zonas que encajan Muy pronto",
+        "disabled": true
+      }
+    },
+    {
+      "viewport": "desktop",
+      "page": "/zona/distrito/2807905",
+      "screenshot": "web-prod-chamartin-desktop.png",
+      "title": "Zona · Vida Fácil",
+      "housing_intelligence": false,
+      "vida_facil": true,
+      "map_canvas": 1,
+      "overflow_x_px": 0,
+      "card_heading": "Qué falta aquí",
+      "card_rows": 3
+    },
+    {
+      "viewport": "desktop",
+      "page": "/que-falta?zona=distrito/2807905",
+      "screenshot": "web-prod-que-falta-chamartin-desktop.png",
+      "title": "Qué falta · Vida Fácil",
+      "housing_intelligence": true,
+      "vida_facil": true,
+      "map_canvas": 0,
+      "overflow_x_px": 0,
+      "heading": "Qué falta en Chamartín",
+      "rows": 6,
+      "row_labels": [
+        "Centros de salud",
+        "Centros de mayores",
+        "Escuelas infantiles",
+        "Colegios",
+        "Farmacias",
+        "Vivienda para familias"
+      ]
+    },
+    {
+      "viewport": "desktop",
+      "network": {
+        "console_errors": [],
+        "page_errors": [],
+        "failed": [],
+        "http_errors": [],
+        "search_calls": [],
+        "api_origins": [
+          "https://vidafacil-madrid.vercel.app"
+        ],
+        "localhost_calls": []
+      },
+      "bundle": {
+        "scripts": 13,
+        "localhost_8010": true,
+        "public_api": true
+      }
+    },
+    {
+      "viewport": "mobile",
+      "page": "/",
+      "screenshot": "web-prod-inicio-mobile.png",
+      "title": "Vida Fácil · Encuentra tu sitio en Madrid",
+      "housing_intelligence": false,
+      "vida_facil": true,
+      "map_canvas": 1,
+      "overflow_x_px": 0,
+      "search_button": {
+        "text": "Ver zonas que encajan Muy pronto",
+        "disabled": true
+      }
+    },
+    {
+      "viewport": "mobile",
+      "page": "/zona/distrito/2807905",
+      "screenshot": "web-prod-chamartin-mobile.png",
+      "title": "Zona · Vida Fácil",
+      "housing_intelligence": false,
+      "vida_facil": true,
+      "map_canvas": 1,
+      "overflow_x_px": 0,
+      "card_heading": "Qué falta aquí",
+      "card_rows": 3
+    },
+    {
+      "viewport": "mobile",
+      "page": "/que-falta?zona=distrito/2807905",
+      "screenshot": "web-prod-que-falta-chamartin-mobile.png",
+      "title": "Qué falta · Vida Fácil",
+      "housing_intelligence": true,
+      "vida_facil": true,
+      "map_canvas": 0,
+      "overflow_x_px": 0,
+      "heading": "Qué falta en Chamartín",
+      "rows": 6,
+      "row_labels": [
+        "Centros de salud",
+        "Centros de mayores",
+        "Escuelas infantiles",
+        "Colegios",
+        "Farmacias",
+        "Vivienda para familias"
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "network": {
+        "console_errors": [],
+        "page_errors": [],
+        "failed": [],
+        "http_errors": [],
+        "search_calls": [],
+        "api_origins": [
+          "https://vidafacil-madrid.vercel.app"
+        ],
+        "localhost_calls": []
+      },
+      "bundle": {
+        "scripts": 13,
+        "localhost_8010": true,
+        "public_api": true
+      }
+    }
+  ]
+}

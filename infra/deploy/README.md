@@ -95,7 +95,9 @@ Cómo se detecta:
 
    Desde otra rama solo se despliega a propósito, con `ALLOW_BRANCH=1 make deploy-demo`.
 
-3. Guarda la salida en `evidence/gate-06/<fecha>-deploy/`.
+3. Guarda la salida en `evidence/gate-06/<fecha>-deploy/`, pasándola por `scripts/redact_paths.py`: `set -o pipefail; ALLOW_BRANCH=1 make deploy-demo 2>&1 | uv run python scripts/redact_paths.py > evidence/…`.
+   - `deploy.sh` ya cambia por `<panel de Vercel>` y `<despliegue>` las URLs del CLI que llevan el slug del equipo.
+   - Antes del commit, revisa que no quede ninguna ruta local ni ninguna URL con ese slug (LINEAS.md).
 
 **Tiempo:** unos 2–3 minutos. La construcción de la imagen de la API y de la web lleva unos 85–110 s, y la comprobación en los logs unos 20 s por ronda. Lo normal es que la primera ronda aún pille el despliegue anterior y la segunda verifique: 157 s el 11 nov.
 
@@ -227,3 +229,7 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 - **Versión del CLI:** usa `npx vercel@65.12.1`. El CLI global 54.x no entiende `services` en `vercel.json`.
 - **`vercel link`:** añade `.env*` a `.gitignore`, con lo que vuelve a ignorar `.env.example`. Hay que revertir esa línea. Además escribe un token OIDC en `.env.local`, que está ignorado por git y por `.vercelignore`.
 - **Docker Desktop (macOS):** si `docker build` se queda en `resolve image config`, el helper de credenciales `desktop` no responde. Solución: `DOCKER_CONFIG` temporal con `{}` y un enlace a `~/.docker/cli-plugins`.
+- **Build de la web con fuentes de Google:** la web descarga Plus Jakarta Sans e Inter de Google Fonts al compilar (`next/font/google`).
+  - El 11 nov, el primer build en Vercel falló con `Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'` («next/font/google queries have exactly one entry»). El mismo commit compiló en local, y en Vercel al segundo intento.
+  - Si pasa: `deploy.sh` sale con 1 y producción no cambia. Repite `make deploy-demo`.
+  - Para quitar esa dependencia de la red, B puede servir las fuentes desde el repo con `next/font/local`. Es un cambio en `apps/web`, de B.
