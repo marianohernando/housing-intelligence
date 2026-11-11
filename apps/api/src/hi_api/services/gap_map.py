@@ -159,7 +159,9 @@ def gap_row_map(
         method=GAP_METHOD,
         counts=_counts(zones),
         zones=zones,
-        datasets=dataset_refs(conn, references.versions | _versions(used)),
+        datasets=dataset_refs(
+            conn, (references.versions if references.used else {}) | _versions(used)
+        ),
     )
     data_version = max(v["computed_at"] for v in used).date().isoformat() if used else None
     return gap_map, warnings, data_version

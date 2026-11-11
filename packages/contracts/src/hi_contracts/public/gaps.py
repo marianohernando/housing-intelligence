@@ -91,7 +91,7 @@ class GapRow(BaseModel):
         description="False when the zone is too small for this row: the count expected at the "
         "reference rate is under the 95 % bound of a zero count (3,7), so not even having none "
         "would be a significant shortfall. The status is then never FALTA; show it as "
-        "«poco fiable» (D-213)",
+        "«poco fiable» (D-213). True also when the test does not apply (no counts)",
     )
     extra_indicators: list[IndicatorValue] = Field(
         default_factory=list[IndicatorValue], description="e.g. walking minutes (CORE-005)"
@@ -155,7 +155,7 @@ class ZoneGapStatus(BaseModel):
         description="False when the zone is too small for this row: the count expected at the "
         "reference rate is under the 95 % bound of a zero count (3,7), so not even having none "
         "would be a significant shortfall. The status is then never FALTA; show it as "
-        "«poco fiable» (D-213)",
+        "«poco fiable» (D-213). True also when the test does not apply (no counts)",
     )
 
     @model_validator(mode="after")

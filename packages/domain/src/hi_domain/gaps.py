@@ -44,14 +44,14 @@ class ReferenceText(NamedTuple):
 
 
 REGION_TEXT = ReferenceText("Comunidad de Madrid", "en el conjunto de la Comunidad de Madrid")
-TYPE_TEXT = {
+TYPE_TEXT = {  # the zone's own municipio is left out of its reference
     TerritoryType.RURAL: ReferenceText(
-        "Municipios rurales de la Comunidad de Madrid",
-        "en los municipios rurales de la Comunidad de Madrid",
+        "Otros municipios rurales de la Comunidad de Madrid",
+        "en los demás municipios rurales de la Comunidad de Madrid",
     ),
     TerritoryType.URBANO: ReferenceText(
-        "Municipios urbanos de la Comunidad de Madrid",
-        "en los municipios urbanos de la Comunidad de Madrid",
+        "Otros municipios urbanos de la Comunidad de Madrid",
+        "en los demás municipios urbanos de la Comunidad de Madrid",
     ),
 }
 

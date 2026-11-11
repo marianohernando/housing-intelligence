@@ -777,19 +777,20 @@ DATA-022 y los nombres con la Ñ rota que pidió B. El CSV de nombres de `cm_sec
 - **Presentación:** `display_name` pone delante el artículo que las tablas de la CM escriben detrás: «Álamo (El)» se muestra «El Álamo». La API lo aplica en `/gaps`, `/geo/admin-units` y `/features`.
 
 ## D-213 — Lista de lo que falta: referencia por tipo de territorio y cortes con prueba estadística (2026-11-11)
-GAP-001, Fase 5. Sustituye los cortes provisionales de `gap-0.1` (ratio frente a la región: FALTA < 0,8 ≤ JUSTO < 1,0 ≤ CUBIERTO). Método `gap-0.2`, en `hi_domain/gaps.py`; la API lo publica en `method`. **Pendiente de validar por Mariano**: refina la decisión cerrada «frente a la referencia regional por población» (sigue siendo una tasa de la región por población, pero de las zonas del mismo tipo). Si no la acepta, se vuelve a `gap-0.1` sin tocar datos.
+GAP-001, Fase 5. Sustituye los cortes provisionales de `gap-0.1` (ratio frente a la región: FALTA < 0,8 ≤ JUSTO < 1,0 ≤ CUBIERTO). Método `gap-0.2`, en `hi_domain/gaps.py` y `hi_api/services/gap_reference.py`; la API lo publica en `method`. **Pendiente de validar por Mariano**: refina la decisión cerrada «frente a la referencia regional por población» (sigue siendo una tasa de la región por población, pero de las zonas comparables). Si no la acepta, se vuelve a `gap-0.1` sin tocar datos.
 
 **Problemas de `gap-0.1`, medidos con los datos reales del 11 nov:**
-- La tasa de casi todas las filas depende del tipo de territorio. Ejemplo: cada pueblo tiene su consultorio, así que los municipios rurales tienen 14,8 veces más centros de atención primaria por habitante que los urbanos. La media regional (0,59 por 10.000) queda por encima de cualquier zona urbana: los 21 distritos de Madrid salían FALTA o JUSTO y ninguno CUBIERTO.
+- La tasa de casi todas las filas depende del tipo de territorio. Ejemplo: cada pueblo tiene su consultorio, así que los municipios rurales tienen 14,8 veces más centros de atención primaria por habitante que los urbanos. La media regional (0,59 por 10.000) quedaba por encima de cualquier zona urbana: los 21 distritos de Madrid salían FALTA o JUSTO y ninguno CUBIERTO.
 - Una zona pequeña salía FALTA por no tener un servicio que, por su tamaño, ni siquiera se espera que tenga. Ejemplo: un pueblo de 500 habitantes sin farmacia, cuando la región tiene 4,2 por cada 10.000.
 - Una zona pequeña podía dar cifras extremas. B señaló La Acebeda, con 10.700 viviendas grandes por cada 100 hogares grandes. Faltaba una regla común para los denominadores pequeños.
 
 **Decisión** (igual para las 6 filas, sin ajustar a ninguna zona concreta):
-1. **Referencia: los municipios del mismo tipo de la Comunidad de Madrid.**
+1. **Referencia: los demás municipios del mismo tipo de la Comunidad de Madrid.**
    - **Tipo:** la definición legal de medio rural de la Ley 45/2007, de desarrollo sostenible del medio rural (art. 3.a): menos de 30.000 habitantes y menos de 100 habitantes por km². Con la población del censo de la CM y la superficie de la geografía canónica salen 84 municipios rurales (143.000 habitantes) y 95 urbanos.
    - **Herencia:** un distrito o una sección toma el tipo de su municipio. Los distritos de Madrid son urbanos.
-   - **Cálculo:** la tasa del tipo es la suma de los recuentos de sus municipios dividida por la suma de sus poblaciones. Equivale a la estandarización indirecta: los casos esperados de una zona son su población por la tasa de su tipo.
-   - **Contexto:** la región entera sigue apareciendo en `regional_reference` y en la explicación («… en los municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)»).
+   - **Cálculo:** la tasa de referencia es la suma de los recuentos de los municipios del tipo dividida por la suma de sus poblaciones, **sin el municipio de la propia zona**. Un distrito o una sección dejan fuera su municipio entero. Madrid es la mitad de la población urbana y no puede compararse consigo mismo. Equivale a la estandarización indirecta: los casos esperados de una zona son su población por esa tasa.
+   - **Contexto:** la región entera sigue apareciendo en `regional_reference` y en la explicación («… en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)»).
+   - **Procedencia:** las filas citan también la población del censo y la geografía, que fijan el tipo.
    - **Justificación:** una prueba de homogeneidad (χ², 1 gl) de la tasa entre rural y urbano, fila por fila. Todas las filas la rechazan al 5 %:
 
      | Fila | Tasa rural / urbana | χ² | p |
@@ -802,30 +803,33 @@ GAP-001, Fase 5. Sustituye los cortes provisionales de `gap-0.1` (ratio frente a
      | Vivienda | 2,52 | 49.523 | < 10⁻³⁰⁰ |
 
 2. **Cortes:**
-   - **CUBIERTO:** ratio ≥ 1, es decir, igual o por encima de las zonas de su tipo.
+   - **CUBIERTO:** ratio ≥ 1, es decir, igual o por encima de la referencia.
    - **FALTA:** la falta tiene que ser grande y no deberse al azar del tamaño de la zona. Hacen falta dos condiciones:
      - **material:** ratio < 0,8. Es la regla de los cuatro quintos, que se usa para decidir cuándo una tasa es sustancialmente menor que la de referencia (29 CFR 1607.4(D)). El corte no cambia respecto a `gap-0.1`;
-     - **significativa:** el límite superior del intervalo de confianza exacto de Poisson al 95 % (Garwood) del recuento de la zona queda por debajo de los casos esperados. Es el criterio de «peor que la referencia» de los indicadores de salud pública inglesa (Fingertips) y de los gráficos en embudo (Spiegelhalter, 2005).
+     - **significativa:** el límite superior del intervalo de confianza exacto de Poisson de la zona (Garwood, bilateral al 95 %; equivale a una prueba unilateral al 2,5 %) queda por debajo de los casos esperados. Es el criterio de «peor que la referencia» de los indicadores de salud pública inglesa (Fingertips) y de los gráficos en embudo (Spiegelhalter, 2005).
    - **JUSTO:** el resto de valores conocidos. **SIN DATOS** sigue siendo solo un valor desconocido.
 3. **Zonas demasiado pequeñas (respuesta a B):**
    - **Regla:** una zona es «poco fiable» en una fila (`reliable: false`) cuando sus casos esperados son menos de 3,69. Es el límite superior al 95 % de un recuento de cero: por debajo, ni siquiera no tener ninguno sería una falta significativa.
    - El umbral sale de la propia prueba, no de un tope arbitrario, y es el mismo en todas las filas.
-   - Una zona poco fiable nunca sale FALTA. La web la muestra como «poco fiable» y conserva su valor.
+   - Una zona poco fiable nunca sale FALTA y conserva su valor. La API la marca; **la web aún no la muestra** (pendiente de B: «poco fiable»).
+   - `reliable` es `true` también cuando la prueba no se aplica (fila sin recuentos o de «menos es mejor»).
    - **La Acebeda en vivienda:** espera 4,3 viviendas grandes y tiene unas 107 por cada hogar grande. El dato es fiable y sale CUBIERTO. La cifra de 10.700 es real: la produce un denominador de un hogar. Mejor mostrarla como «más de 10 veces la referencia».
    - La confidence de los features (umbrales de población pequeña) no cambia: mide la calidad del dato, no la prueba.
-4. **Recuentos:** las features por población guardan en `inputs.counts` el numerador y el denominador de cada fila (`places_per_population`, `metric_ratio` y `place_attribute_per_population`). Los valores no cambian, así que la versión de las features tampoco.
-   - Sin recuentos, o si el tipo no tiene ningún caso, la fila se compara con la región entera y decide solo el ratio.
+4. **Recuentos:** las features por población guardan en `inputs.counts` el numerador y el denominador de cada fila (`places_per_population`, `metric_ratio` y `place_attribute_per_population`; la clasificación solo usa los de las filas principales). Los valores no cambian, así que la versión de las features tampoco, pero los recuentos solo existen tras recalcular las features (`make features`) y sincronizar Supabase.
+   - **Comparación con la región entera:** si la región no tiene recuentos o el tipo se queda sin casos. Entonces la comparación es con la región entera y decide solo el ratio. Una zona concreta sin recuentos se compara con su tipo, también solo por el ratio.
 5. **Límites declarados:**
-   - La prueba supone variación de Poisson, sin sobredispersión.
+   - **Modelo de Poisson:** encaja con recuentos de centros sobre una población.
+   - **Vivienda** (viviendas grandes sobre hogares grandes) es un cociente de dos recuentos grandes. La prueba casi siempre sale significativa, así que en esa fila decide en la práctica el corte de 0,8. No se modela la sobredispersión.
    - Contar centros no es contar plazas (`proxy_note`).
-   - El tipo se asigna por municipio.
-   - La superficie sale de la geometría de 2019.
+   - El tipo se asigna por municipio y la superficie sale de la geometría de 2019.
+   - Los casos esperados de un distrito usan el padrón (D-209) con una tasa calculada con el censo de la CM.
+   - En `metric_ratio`, la región suma también el numerador de los municipios con denominador 0, y las sumas por tipo no lo hacen. El efecto es despreciable.
 
 **Efecto con los datos del 11 nov** (`evidence/gate-04/2026-11-11/phase-gap001-f5.txt`):
-- **Por municipio (179):** FALTA pasa de 44, 65, 27, 90 y 94 a 0, 0, 3, 1 y 5 (escuela infantil, colegio, centro de salud, mayores y farmacia). Entre 116 y 161 municipios quedan poco fiables en esas filas. En vivienda, con recuentos grandes, FALTA sube de 8 a 25.
-- **Por distrito de Madrid (21):** en centro de salud, de 18 FALTA, 3 JUSTO y 0 CUBIERTO se pasa a 0 FALTA, 17 JUSTO y 4 CUBIERTO.
+- **Por municipio (179):** FALTA pasa de 44, 65, 27, 90 y 94 a 0, 0, 5, 2 y 5 (escuela infantil, colegio, centro de salud, mayores y farmacia). Entre 116 y 161 municipios quedan poco fiables en esas filas. En vivienda, con recuentos grandes, FALTA sube de 8 a 25.
+- **Por distrito de Madrid (21):** centro de salud pasa de 18 FALTA y 3 JUSTO a 21 JUSTO; ningún distrito por sí solo tiene una falta significativa. Escuela infantil: 4 FALTA (antes 8). Colegio: 1 FALTA (antes 4).
 - **Casos de la demo:**
-  - Chamartín (2807905), centro de salud: antes FALTA (0,79 frente a la región); ahora CUBIERTO (0,47 frente a 0,46 de los municipios urbanos, ratio 1,01);
-  - Madrid: colegio JUSTO (0,98) y centro de salud JUSTO (0,80);
+  - Chamartín (2807905), centro de salud: antes FALTA (0,79 frente a la región); ahora JUSTO (0,47 frente a 0,56 de los demás municipios urbanos, ratio 0,84);
+  - Madrid capital: centro de salud FALTA (0,37 frente a 0,56, ratio 0,67, significativa) y colegio JUSTO (0,96);
   - La Acebeda: farmacia JUSTO y poco fiable (0 farmacias para 70 habitantes).
-- **Lectura para el pitch:** FALTA pasa a ser una afirmación fuerte y rara: menos del 80 % de lo que tienen las zonas de su tipo, con datos suficientes para afirmarlo.
+- **Lectura para el pitch:** FALTA pasa a ser una afirmación fuerte y rara: menos del 80 % de lo que tienen las zonas comparables, con datos suficientes para afirmarlo. Por ejemplo, Madrid capital tiene un tercio menos de centros de atención primaria por habitante que el resto de municipios urbanos, aunque ningún distrito por sí solo baste para afirmarlo.

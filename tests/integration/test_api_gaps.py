@@ -68,7 +68,7 @@ def test_madrid_district_has_real_rows_against_the_region(client: TestClient) ->
         # D-213: compared with the urban municipios (Madrid is urban), or with the whole region
         # when the urban ones have none of it in the sample
         assert row.reference_label in {
-            "Municipios urbanos de la Comunidad de Madrid",
+            "Otros municipios urbanos de la Comunidad de Madrid",
             "Comunidad de Madrid",
         }
     datasets = {d.dataset_id: d for d in rows["colegio"].datasets}
@@ -236,7 +236,10 @@ def test_row_map_agrees_with_each_zone_list(client: TestClient) -> None:
             assert zone.ratio_to_reference == same.ratio_to_reference
             assert zone.name == listed.data.zone.name
             assert zone.admin_unit_id == listed.data.zone.admin_unit_id
-            assert body.data.reference == same.reference
+            assert zone.reference == same.reference
+            assert zone.reference_label == same.reference_label
+            assert zone.reliable == same.reliable
+            assert body.data.reference == (same.regional_reference or same.reference)
 
 
 def test_row_map_keeps_sin_datos_and_flags_rows_not_computed(client: TestClient) -> None:
@@ -279,12 +282,13 @@ def test_rows_compare_with_municipios_of_the_same_type(
                 )
             ).all()
         )
-    # In the sample La Acebeda is rural (70 inhabitants); Ajalvir and Madrid are urban.
-    urban = [counts["28002"], counts["28079"]]
-    rate = sum(c["numerator"] for c in urban) / sum(c["denominator"] for c in urban)
+    # In the sample La Acebeda is rural (70 inhabitants); Ajalvir and Madrid are urban, and each
+    # is compared with the other one (its own counts are left out).
+    other = counts["28079"]
+    rate = other["numerator"] / other["denominator"]
     body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28002").json())
     school = next(r for r in body.data.rows if r.row.value == "colegio")
-    assert school.reference_label == "Municipios urbanos de la Comunidad de Madrid"
+    assert school.reference_label == "Otros municipios urbanos de la Comunidad de Madrid"
     assert school.reference == pytest.approx(1000 * rate, rel=1e-3)
     assert school.regional_reference is not None
     assert "en toda la Comunidad" in school.explanation

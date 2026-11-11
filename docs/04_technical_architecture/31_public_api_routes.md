@@ -40,7 +40,7 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
   - `SIN_DATOS` aparece si y solo si `indicator.value` es `null`, y entonces `indicator.null_reason` dice por qué. Un 0 es un dato real (ningún centro en un registro exhaustivo).
   - `ratio_to_reference` está orientado: por encima de 1 la zona está mejor que la región.
   - Los cortes van en `method` (`falta_below`, `cubierto_from`, `confidence_level`). **Desde GAP-001 F5 (`gap-0.2`, D-213):**
-    - `reference` es la tasa de los municipios del mismo tipo (rural o urbano, Ley 45/2007) y `reference_label` lo dice («Municipios urbanos de la Comunidad de Madrid»). La región entera va en `regional_reference` y en la explicación.
+    - `reference` es la tasa de los demás municipios del mismo tipo (rural o urbano, Ley 45/2007; sin el municipio de la zona) y `reference_label` lo dice («Otros municipios urbanos de la Comunidad de Madrid»). La región entera va en `regional_reference` y en la explicación.
     - FALTA exige ratio < 0,8 y que la falta sea significativa (Poisson exacto al 95 %); CUBIERTO es ratio ≥ 1; el resto es JUSTO.
     - `reliable: false` marca una zona demasiado pequeña para esa fila (menos de 3,7 casos esperados): nunca sale FALTA y la web debería mostrarla como «poco fiable», con su valor. En `/gaps?level=&row=`, cada zona trae su `reference`, `reference_label` y `reliable`.
     - Ratios muy altos (La Acebeda, vivienda: 10.700 por 100 hogares, un solo hogar grande) son reales; se leen mejor como «más de 10 veces la referencia».

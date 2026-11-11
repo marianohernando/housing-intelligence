@@ -34,12 +34,12 @@
           "cm_poblacion_edad_nacionalidad_sexo"
         ]
       },
-      "reference": 4.559,
-      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "reference": 4.895,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
       "regional_reference": 4.714,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.9217,
-      "explanation": "4,2 escuelas infantiles por cada 1.000 niños de 0 a 4 años; en los municipios urbanos de la Comunidad de Madrid, 4,6 (en toda la Comunidad, 4,7)",
+      "ratio_to_reference": 0.8584,
+      "explanation": "4,2 escuelas infantiles por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)",
       "proxy_note": "Cuenta escuelas infantiles públicas y privadas, no plazas: una grande y una pequeña pesan igual.",
       "reliable": true,
       "extra_indicators": [
@@ -112,6 +112,15 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "cm_unidades_escolares",
           "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
           "publisher": "Instituto de Estadística",
@@ -148,12 +157,12 @@
           "cm_poblacion_edad_nacionalidad_sexo"
         ]
       },
-      "reference": 1.293,
-      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "reference": 1.314,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
       "regional_reference": 1.315,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.98,
-      "explanation": "1,3 colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años; en los municipios urbanos de la Comunidad de Madrid, 1,3 (en toda la Comunidad, 1,3)",
+      "ratio_to_reference": 0.9644,
+      "explanation": "1,3 colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años; en los demás municipios urbanos de la Comunidad de Madrid, 1,3 (en toda la Comunidad, 1,3)",
       "proxy_note": "Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual. No dice cuál te corresponde por zona.",
       "reliable": true,
       "extra_indicators": [
@@ -191,6 +200,15 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "osm_red_peatonal",
           "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
           "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
@@ -204,7 +222,7 @@
     {
       "row": "centro_salud",
       "label": "Centros de salud",
-      "status": "JUSTO",
+      "status": "FALTA",
       "indicator": {
         "feature_id": "centros_salud_por_10000_hab",
         "label": "Centros de atención primaria por cada 10.000 habitantes",
@@ -218,12 +236,12 @@
           "cm_poblacion_edad_nacionalidad_sexo"
         ]
       },
-      "reference": 0.4633,
-      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "reference": 0.5553,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
       "regional_reference": 0.5918,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.8007,
-      "explanation": "0,37 centros de atención primaria por cada 10.000 habitantes; en los municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)",
+      "ratio_to_reference": 0.6681,
+      "explanation": "0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)",
       "proxy_note": "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande.",
       "reliable": true,
       "extra_indicators": [
@@ -261,6 +279,15 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "osm_red_peatonal",
           "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
           "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
@@ -288,12 +315,12 @@
           "cm_poblacion_edad_nacionalidad_sexo"
         ]
       },
-      "reference": 0.3755,
-      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "reference": 0.3715,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
       "regional_reference": 0.3895,
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.009,
-      "explanation": "0,38 centros de mayores por cada 1.000 personas de 65 años o más; en los municipios urbanos de la Comunidad de Madrid, 0,38 (en toda la Comunidad, 0,39)",
+      "ratio_to_reference": 1.02,
+      "explanation": "0,38 centros de mayores por cada 1.000 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 0,37 (en toda la Comunidad, 0,39)",
       "proxy_note": "Cuenta hogares, clubes y centros de día, no plazas ni actividades; las residencias van aparte.",
       "reliable": true,
       "extra_indicators": [
@@ -344,6 +371,15 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "osm_red_peatonal",
           "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
           "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
@@ -371,12 +407,12 @@
           "cm_poblacion_edad_nacionalidad_sexo"
         ]
       },
-      "reference": 4.128,
-      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "reference": 3.054,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
       "regional_reference": 4.151,
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.261,
-      "explanation": "5,2 farmacias por cada 10.000 habitantes; en los municipios urbanos de la Comunidad de Madrid, 4,1 (en toda la Comunidad, 4,2)",
+      "ratio_to_reference": 1.705,
+      "explanation": "5,2 farmacias por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 3,1 (en toda la Comunidad, 4,2)",
       "proxy_note": "Cuenta farmacias, no horarios ni guardias.",
       "reliable": true,
       "extra_indicators": [
@@ -435,6 +471,15 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "osm_red_peatonal",
           "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
           "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
@@ -462,12 +507,12 @@
           "cm_viviendas_superficie"
         ]
       },
-      "reference": 172.5,
-      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "reference": 179.9,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
       "regional_reference": 177.6,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.9463,
-      "explanation": "163,2 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los municipios urbanos de la Comunidad de Madrid, 172,5 (en toda la Comunidad, 177,6)",
+      "ratio_to_reference": 0.9072,
+      "explanation": "163,2 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios urbanos de la Comunidad de Madrid, 179,9 (en toda la Comunidad, 177,6)",
       "proxy_note": "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio.",
       "reliable": true,
       "extra_indicators": [
@@ -513,6 +558,15 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "version": "2026-10-20-37703ffcdfd0",
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
@@ -607,6 +661,15 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
       "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "name": "Secciones censales",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "version": "2026-10-20-37703ffcdfd0",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {
