@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche, A v6: nombres oficiales (D-212), `/gaps?level=&row=` y método `gap-0.2` (D-213, aprobado por Mariano); PR #2 de B fusionado; siguen el sync de F5, CORE-006 y CORE-003).
+Última actualización: 2026-11-11 (noche, A v7: CORE-006 y CORE-003 hechas; `POST /api/v1/search` con datos reales (D-214, D-215); falta el sync y conectar la web).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,7 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
-| 11 nov | A | CORE-003 · Fase 2 (`POST /api/v1/search`) | verde | ver git log | `evidence/gate-04/2026-11-11/phase-core003-f2.txt` | **El buscador funciona con datos reales** (método `fit-0.1`, D-215): 199 zonas (178 municipios y 21 distritos), los rasgos `fit` del Feature Dictionary (sin ids en el código), `gap_highlights` iguales que `/gaps`, Reality Check con `relaxed_scenario` y procedencia (16 datasets, 14 CM). 6 tests de integración y 6 escenarios dorados en datos reales (`scripts/golden_search.py`). Caso demo: Ciudad Lineal 99 %, Tetuán, Hortaleza y Moratalaz 97 %; el colegio a 10 min es la condición que más quita (+17 zonas con 5 min más). Fixture de búsqueda real (ya no ilustrativo). **B puede conectar el buscador; encender `NEXT_PUBLIC_FEATURE_SEARCH` tras el sync** |
+| 11 nov | A | CORE-003 · Fase 2 (`POST /api/v1/search`) | verde | `915be3c`, `5f373b6` | `evidence/gate-04/2026-11-11/phase-core003-f2.txt` | **El buscador funciona con datos reales** (método `fit-0.1`, D-215): 199 zonas (178 municipios y 21 distritos), los rasgos `fit` del Feature Dictionary (sin ids en el código), `gap_highlights` iguales que `/gaps`, Reality Check con `relaxed_scenario` y procedencia (16 datasets, 14 CM). 6 tests de integración y 6 escenarios dorados en datos reales (`scripts/golden_search.py`). Caso demo: Ciudad Lineal 99 %, Tetuán, Hortaleza y Moratalaz 97 %; el colegio a 10 min es la condición que más quita (+17 zonas con 5 min más). Fixture de búsqueda real (ya no ilustrativo). **B puede conectar el buscador; encender `NEXT_PUBLIC_FEATURE_SEARCH` tras el sync** |
 | 11 nov | A | CORE-003 · Fase 1 (dominio del encaje) | verde | `1507deb` | `evidence/gate-04/2026-11-11/phase-core003-f1.txt` | `hi_domain/fit.py`, `reality_check.py` y `search.py`: condiciones PASS/FAIL/UNKNOWN, pesos por rango, utilidades con saturación y Reality Check; tests de propiedades (UNKNOWN nunca PASS, relajar nunca quita zonas) |
 | 11 nov | A | CORE-006 · Fase 2 (m² por hogar y presupuesto, D-214) | verde | `92eab6b`, `7311370` | `evidence/gate-04/2026-11-11/phase-core006-f2.txt` | `hi_domain/affordability.py`: condición de presupuesto PASS/FAIL/UNKNOWN (UNKNOWN sin alquiler publicado; compra siempre UNKNOWN con «Sin datos», D-203). m² supuestos = vivienda mediana de los hogares de ese tamaño en la CM (Censo 2021, INE tabla 59524): 61, 68, 71, 77 y 77 m² para 1, 2, 3, 4 y 5+ personas. El coste es una cota baja (contratos vigentes; m² catastrales), declarado en D-214. **CORE-006 DONE** a falta del sync |
 | 11 nov | A | CORE-006 · Fase 1 (alquiler por distrito) | verde | `100cb29` | `evidence/gate-04/2026-11-11/phase-core006-f1.txt` | `alquiler_m2_mensual` v2 con nivel distrito: media de los códigos postales de cada distrito ponderada por los lugares que llevan ese código (proxy declarado, confidence ≤ 0,8). Conecta `cm_alquiler_m2_codigo_postal_madrid`: **21 de 21 datasets CM alimentan features**. Media de distritos ponderada por población 14,46 frente a 15,10 publicados para Madrid. `/features/{id}/values` da el linaje del nivel pedido. Necesita sync |
@@ -105,6 +105,23 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 11 nov (noche, relevo de la línea A v7)
+- **Done (A v7):**
+  - **CORE-006** (`100cb29`, `92eab6b`, `7311370`, **D-214**): alquiler €/m² en los 21 distritos desde el dataset CM de códigos postales (proxy por lugares, confidence ≤ 0,8; **21 de 21 datasets CM alimentan features**); condición de presupuesto PASS/FAIL/UNKNOWN; m² por hogar según el Censo 2021 (61, 68, 71, 77 y 77); compra «Sin datos» hasta DATA-021. Revisado con `reviewer`.
+  - **CORE-003** (`1507deb`, `915be3c`, `5f373b6`, **D-215**): Residential Fit `fit-0.1`, Reality Check y **`POST /api/v1/search`** con datos reales (199 zonas, 0,2 s en local). 6 escenarios dorados en datos reales (`scripts/golden_search.py`); el fixture de búsqueda es ya la salida real. Revisado con `reviewer`.
+  - D-213: ya figuraba como aprobada (pedido de `datamad-10`), sin cambios.
+- **Blocked / a la espera de Mariano:**
+  - `make supabase-sync PROFILE=demo`, **sin migración** (Alembic sigue en 0005): lleva `alquiler_m2_mensual` v2 (distritos) y los enlaces `fit` del Feature Dictionary. Comprobación por MCP: 21 filas de `alquiler_m2_mensual` por distrito con valor y 7 features con `spec->'fit'`. El sync de F5 (`inputs.counts`) ya está en Supabase: 1.744 filas, comprobado por MCP.
+  - Después, C redespliega la API (la ruta `/search` es código nuevo) y `datamad-10` enciende `NEXT_PUBLIC_FEATURE_SEARCH`. B conecta el buscador con `max_minutes: null` en el trabajo (el límite de trayecto sale UNKNOWN hasta CORE-009).
+- **Next (línea A), en orden:**
+  1. Medir `POST /search` contra Supabase tras el sync (en local 0,2 s; los mapas de `/gaps` quedan en caché por proceso hasta que cambian las features).
+  2. Repetir el Gate 3 (`make evidence GATE=03`) con las features actuales.
+  3. Pendientes de D-215: diversificación/Pareto, tiempo de trayecto real (CORE-009) y los extras (zonas verdes, seguridad, «sin escaleras») del 19 al 22 nov.
+- **Gate status:** `make lint typecheck test` en verde en `5f373b6` (367 unit, 172 web y 89 de integración). G4: `/gaps`, `/search` y `/datasets` con datos reales.
+- **Notas:**
+  - Los m² supuestos y el coste son orientativos y tiran a la baja (contratos vigentes; m² catastrales), D-214.
+  - `scripts/build_contract_fixtures.py` usa ya el servicio real de búsqueda (el constructor ilustrativo se sustituyó).
 
 ### Estado de la sesión del 11 nov (noche, relevo de la línea A v6)
 - **Done (A v6):**
@@ -237,6 +254,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 _(vacío)_
 
 ## 07 — DONE (con evidencia)
+- CORE-003 Residential Fit + Reality Check + API-002 `POST /api/v1/search` (D-215, `fit-0.1`): condiciones PASS/FAIL/UNKNOWN, % de encaje con hechos, Reality Check aplicable y 6 perfiles dorados en datos reales · G4 `evidence/gate-04/2026-11-11/phase-core003-f1.txt`, `-f2.txt`, `-f2-review.txt` · `1507deb` `915be3c` `5f373b6` · 2026-11-11 (falta el sync)
+- CORE-006 Asequibilidad (D-214): alquiler €/m² por municipio y por los 21 distritos (CP → distrito), m² por hogar del Censo 2021, presupuesto PASS/FAIL/UNKNOWN y compra «Sin datos» · G4 `evidence/gate-04/2026-11-11/phase-core006-f1.txt`, `-f2.txt`, `-f2-review.txt` · `100cb29` `92eab6b` `7311370` · 2026-11-11 (falta el sync)
 - CORE-005 Distancia a pie por la red de calles (D-210; 4 km/h desde D-211): 12 features (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y parada × mediana de minutos y % de calle dentro de la ventana) por sección, municipio y distrito, con referencia regional; nunca 0 sin datos · G1 `evidence/gate-01/2026-11-11` (red OSM) · G3 PASS `evidence/gate-03/2026-11-11/summary.md` · `4cdee28` `e31770b` `23b7531` `fc025b6` · 2026-11-11
 - DATA-012 Población por edad y hogares por distrito de Madrid (D-200, D-209): padrón municipal (21 distritos × 21 bandas CM + total; nacionalidad y sexo nunca se guardan) y panel de distritos (hogares, 2019–2025), complementarios y no CM. 7 features por distrito y `/gaps/distrito` con filas reales en los 21 distritos · G1 `evidence/gate-01/2026-11-11/phase-data012-f1.txt`, `-f3.txt` y `-f4-review.txt` · G4 `evidence/gate-04/2026-11-11/phase-data012-f2.txt` · `f62f0d0` `83c74dd` `d87c561` `be40c2f` · 2026-11-11
 - OPS-001 (parte de A): PR #4 y PR #5 de C integrados con `reviewer`; migración 0005 del rol `vf_api_ro` (D-208) · `evidence/gate-06/2026-11-11/phase-ops001-0005.txt` · `c8ae262` `ad16393` `d917162` · 2026-11-11
