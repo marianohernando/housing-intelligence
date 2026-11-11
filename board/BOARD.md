@@ -2,12 +2,12 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (tarde: contratos publicados).
+Última actualización: 2026-11-11 (tarde: contratos publicados y lista con datos reales por la API).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado |
 |---|---|---|---|
-| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos publicados: `7541527`** · siguiente: esqueleto andante de la lista |
+| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos publicados: `7541527`** · lista de lo que falta por la API con datos reales (`2da5d4d`) · siguiente: CORE-005 Fase 3 |
 | **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | Sin PR todavía |
 | **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento de la API y la web) | Sin PR todavía |
 | **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | Sin PR todavía |
@@ -34,36 +34,41 @@ Checkpoints: **13 nov** la lista de lo que falta sale por la API con datos reale
   - Fase 2 `e31770b`: dominio puro de accesibilidad con tests de propiedades (`evidence/gate-03/2026-11-11`).
   - Faltan la Fase 3 (método de features y 12 features en 3 niveles) y la Fase 4 (ejecución real y Gate 3).
 
-### Estado de la sesión del 11 nov (tarde)
+- **GAP-001** Fase 0 `2da5d4d`, esqueleto andante. `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 11 nov (cierre)
 - **Done:**
-  - README con el tag `cf39459` y PR #1 a `main` abierto (lo fusiona Mariano).
+  - README con el tag `cf39459` y PR #1 a `main` (abierto; lo fusiona Mariano).
   - CORE-005 Fases 1 y 2.
-  - Contratos publicados.
+  - Contratos publicados (`7541527`).
+  - GAP-001 Fase 0 (`2da5d4d`).
+  - La base local está en la migración 0004, con el catálogo sincronizado y las features recalculadas (incluidas las 3 filas regionales).
 - **Blocked:** nada. Seguridad pendiente de Mariano: rotar el token `sbp_…` del MCP que se pegó en el chat.
-- **Next (línea A):**
-  1. GAP-001 Fase 0, esqueleto andante: `GET /api/v1/gaps/{level}/{code}` con colegio y centro de salud por municipio y datos reales.
-  2. CORE-005 Fases 3 y 4.
-  3. GAP-001 completo.
+- **Next (línea A), en orden:**
+  1. CORE-005 Fase 3: método `network_walk_time` sobre `hi_domain.access`; 12 features (6 servicios × mediana de minutos y % de calle a ≤ N min) en sección, municipio y H3 r9; fixture OSM recortado; persist multinivel ya preparado.
+  2. CORE-005 Fase 4: ejecución real, golden checks, Gate 3 y ADR D-199 (4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min).
+  3. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
   4. CORE-006.
   5. CORE-003 con Reality Check.
-  6. `POST /api/v1/search`.
+  6. `POST /api/v1/search` (CORS con `POST`).
+- **Para Supabase (17 nov):** `make supabase-migrate` (ya hay migración 0004) y después `make supabase-sync PROFILE=demo`.
 - **Gate status:**
-  - G1 PASS con 21 datasets CM (`evidence/gate-01/2026-11-10`); la red OSM pasa su calidad.
-  - G2 PASS para transporte.
+  - G1 PASS (21 datasets CM); la red OSM pasa su calidad.
+  - G2 PASS.
   - G3: fases de CORE-005 en verde; el Gate 3 completo llega con la Fase 4.
-  - G4: contratos en verde.
-  - G6, parte Supabase: hecho el 11 nov.
-  - CI en verde hasta `4cdee28`.
+  - G4: contratos y esqueleto de la lista en verde.
+  - G6: Supabase en la migración 0003. Le falta la 0004 (se aplica el 17 nov o antes, si C despliega).
 - **Notas para las siguientes cards:**
-  - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001).
+  - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001; el `proxy_note` ya lo avisa).
   - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004 (línea B).
   - Unidades escolares: elegir el nivel de enseñanza, nunca sumar miembros.
   - La API devuelve los errores como `{"detail": {code, message}}`; `ErrorEnvelope` es el formato objetivo.
-  - `dataset_registry` no guarda el enlace al portal CM de los GTFS (está en los recursos YAML). Hay que resolverlo antes de la ruta de procedencia.
+  - El `center` de Madrid usa `ST_PointOnSurface` (cae al norte del municipio). Si B centra el mapa con él, valorar usar el centroide cuando esté dentro.
+  - La API depende ya de hi-domain, que arrastra scipy, shapely, pyproj y h3. C debe medirlo para el alojamiento.
 
 ## 02 — READY THIS SPRINT (en orden)
-1. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO / SIN DATOS frente a la referencia regional por población, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de los hogares frente a superficie de las viviendas) · G3/G4 · Fase 0 (esqueleto) el 11–12 nov, completa el 13–14 nov · D-194
-2. CORE-005 Fases 3 y 4 (ver 03) · G3 · 12–13 nov
+1. CORE-005 Fases 3 y 4 (ver 03) · G3 · 12–13 nov
+2. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO / SIN DATOS frente a la referencia regional por población, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de los hogares frente a superficie de las viviendas) · G3/G4 · Fase 0 hecha el 11 nov (`2da5d4d`); completa el 13–14 nov · D-194
 3. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 14–15 nov
 4. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · perfiles dorados · G4 · 15 nov
 5. API-002 `POST /api/v1/search` sobre `ScenarioState` · 15–16 nov
