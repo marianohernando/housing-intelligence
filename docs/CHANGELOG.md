@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.24 — Lista de lo que falta: las 6 filas (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: fila de vivienda (GAP-001 F3b), `SIN_DATOS` explícito por distrito y extras de escuela infantil (aulas y nacimientos) y de vivienda (% en alquiler y tamaño medio del hogar).
+
 ## v0.5.23 — Lista de lo que falta: cinco filas (2026-11-11)
 - `04_technical_architecture/31_public_api_routes.md`: `/gaps` trae escuela infantil, mayores y farmacia por municipio y por los 21 distritos (GAP-001 F3a), además de colegio y centro de salud. La fila de colegios cuenta colegios con primaria, públicos o concertados (F2). Extras: la ratio oficial de farmacias de la CM y las plazas de residencia.
 

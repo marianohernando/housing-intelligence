@@ -1,0 +1,21 @@
+feature_id: viviendas_alquiler_pct
+version: 1
+human_name: Viviendas principales en alquiler (%)
+domain: housing
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_viviendas_tenencia_censo_2021, role: primary}]
+formula: {method: metric_share, metric: viviendas_por_tenencia, numerator: {regimen: [alquiler]}, denominator: {regimen: "*"}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [affordability, housing_gap]
+tests: [range_0_100]
+limitations:
+  - "Censo 2021 de la CM: no refleja los cambios del mercado desde entonces."
+  - "Solo por municipio (falta Zarzalejo en la fuente); en los distritos de Madrid no hay dato."
+gap_row: {row: vivienda, role: extra, phrase: "% de viviendas principales en alquiler"}

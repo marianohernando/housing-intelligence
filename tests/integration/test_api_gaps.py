@@ -57,9 +57,9 @@ def test_madrid_district_has_real_rows_against_the_region(client: TestClient) ->
     assert {"colegio", "centro_salud"} <= set(rows)
     warned = {w.split(" row ")[1].split()[0] for w in payload.warnings}
     assert warned == {k.value for k in GapRowKey} - set(rows)  # one per row not computed yet
-    for row in rows.values():
+    for key, row in rows.items():
         assert row.indicator.level.value == "distrito"
-        assert row.indicator.value is not None
+        assert (row.indicator.value is None) == (key == "vivienda")  # see the SIN DATOS test
         assert row.reference is not None
         assert row.reference_label == "Comunidad de Madrid"
     datasets = {d.dataset_id: d for d in rows["colegio"].datasets}
@@ -122,6 +122,46 @@ def test_new_rows_by_municipio_and_district_with_their_extras(client: TestClient
     assert {"min_a_pie_mayores", "plazas_residencia_por_100_mayores"} <= mayores
     cm = {d.dataset_id for d in madrid_rows["farmacia"].datasets if d.is_cm_open_data}
     assert {"cm_oficinas_farmacia", "cm_farmacias_municipios"} <= cm
+
+
+def test_housing_row_by_municipio_and_explicit_sin_datos_by_district(client: TestClient) -> None:
+    """GAP-001 F3b: the CM publishes no housing tables by district, so the row is there with
+    SIN_DATOS and its reason (never 0, never absent); its district extras still show."""
+    madrid = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
+    rows = {r.row.value: r for r in madrid.data.rows}
+    assert set(rows) == {k.value for k in GapRowKey}
+    assert madrid.warnings == []
+    housing = rows["vivienda"]
+    assert housing.indicator.value is not None
+    assert housing.indicator.confidence <= 0.8  # two sources, different universes and years
+    assert {"viviendas_alquiler_pct", "tamano_medio_hogar"} <= {
+        e.feature_id for e in housing.extra_indicators
+    }
+    nursery = {e.feature_id for e in rows["escuela_infantil"].extra_indicators}
+    assert {"unidades_infantil_por_1000_ninos", "nacimientos_por_1000_hab"} <= nursery
+    cm = {d.dataset_id for r in madrid.data.rows for d in r.datasets if d.is_cm_open_data}
+    assert {
+        "cm_viviendas_superficie",
+        "cm_hogares_tamano_censo_2021",
+        "cm_viviendas_tenencia_censo_2021",
+        "cm_unidades_escolares",
+        "cm_nacidos_vivos_municipios",
+    } <= cm
+
+    district = ZoneGapListResponse.model_validate(
+        client.get("/api/v1/gaps/distrito/2807906").json()
+    )
+    by_key = {r.row.value: r for r in district.data.rows}
+    assert set(by_key) == {k.value for k in GapRowKey}
+    housing = by_key["vivienda"]
+    assert housing.status.value == "SIN_DATOS"
+    assert housing.indicator.value is None
+    assert housing.indicator.null_reason is not None
+    assert housing.indicator.null_reason.value == "SOURCE_MISSING"
+    assert housing.ratio_to_reference is None
+    assert {e.feature_id for e in housing.extra_indicators} == {"tamano_medio_hogar"}
+    mayores = {e.feature_id for e in by_key["mayores"].extra_indicators}
+    assert {"min_a_pie_mayores", "plazas_residencia_por_100_mayores"} <= mayores
 
 
 def test_municipio_rows_never_cite_the_district_population(client: TestClient) -> None:

@@ -256,6 +256,44 @@ def places_per_population(
     )
 
 
+def metric_ratio(
+    numerator: pd.DataFrame,
+    numerator_dims: DimFilter,
+    denominator: pd.DataFrame,
+    denominator_dims: DimFilter,
+    per: float,
+    small_population: float = 0.0,
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """per x numerator / denominator for two metrics of the same zones (e.g. dwellings over
+    90 m2 per 100 households of 4 or more). Each metric uses its own latest period. A zone
+    whose numerator is unknown or absent is unknown, never 0; the regional reference adds up
+    the zones where both are known."""
+    numerators = _population(numerator, numerator_dims)
+    denominators = _population(denominator, denominator_dims)
+    totals: dict[str, float] = {}
+    for code, (period, den, den_reason) in list(denominators.items()):
+        _, num, num_reason = numerators.get(code, (None, None, NullReason.SOURCE_MISSING.value))
+        if num is None:
+            denominators[code] = (period, None, den_reason if den is None else num_reason)
+        else:
+            totals[code] = num
+    shared = dict.fromkeys(denominators, confidence)
+    return _per_population(totals, denominators, per, shared, small_population)
+
+
+def not_published(territories: pd.DataFrame) -> pd.DataFrame:
+    """One explicit SOURCE_MISSING row per zone of the level, for an indicator its sources do
+    not publish there (e.g. the CM housing tables have no district rows): never 0, never an
+    absent row."""
+    return _result(
+        [
+            _null(code, period, NullReason.SOURCE_MISSING)
+            for code, period in sorted(_by_territory(territories))
+        ]
+    )
+
+
 WALK_STATISTICS = ("median_minutes", "share_within")
 
 

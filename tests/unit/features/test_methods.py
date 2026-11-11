@@ -177,3 +177,70 @@ def test_more_places_never_lowers_the_regional_reference(n: int, extra: int) -> 
     assert (
         _by_code(more)[methods.REGION_CODE]["value"] > _by_code(base)[methods.REGION_CODE]["value"]
     )  # type: ignore[operator]
+
+
+NUM = _obs(
+    [
+        ("28001", {"superficie": "grande"}, 30.0),
+        ("28001", {"superficie": "otra"}, 70.0),
+        ("28002", {"superficie": "grande"}, None),  # unknown numerator
+        ("28004", {"superficie": "grande"}, 5.0),
+    ]
+)
+DEN = _obs(
+    [
+        ("28001", {"tamano": "grande"}, 20.0),
+        ("28002", {"tamano": "grande"}, 10.0),
+        ("28003", {"tamano": "grande"}, 10.0),  # no numerator row at all
+        ("28004", {"tamano": "grande"}, 0.0),
+    ]
+)
+
+
+def test_metric_ratio_of_two_metrics_never_turns_unknown_into_zero() -> None:
+    """GAP-001 F3b: per x numerator / denominator, two metrics of the same zones."""
+    out = _by_code(
+        methods.metric_ratio(
+            NUM, {"superficie": ["grande"]}, DEN, {"tamano": ["grande"]}, 100.0, confidence=0.8
+        )
+    )
+    assert out["28001"]["value"] == 150.0
+    assert out["28001"]["confidence"] == 0.8
+    assert out["28002"]["null_reason"] == "SOURCE_MISSING"  # unknown numerator, never 0
+    assert out["28003"]["null_reason"] == "SOURCE_MISSING"  # no numerator row, never 0
+    assert out["28004"]["null_reason"] == "NOT_APPLICABLE"  # 5 / 0
+    region = out[methods.REGION_CODE]
+    assert region["value"] == 100.0 * (30.0 + 5.0) / (20.0 + 0.0)  # zones with both known
+    assert region["confidence"] == 0.8 * 2 / 4
+
+
+def test_metric_ratio_small_denominator_lowers_confidence() -> None:
+    out = _by_code(
+        methods.metric_ratio(
+            NUM, {"superficie": "*"}, DEN, {"tamano": "*"}, 100.0, small_population=50.0
+        )
+    )
+    assert out["28001"]["value"] == 500.0
+    assert out["28001"]["confidence"] == methods.SMALL_POPULATION_CONFIDENCE
+
+
+@given(st.floats(min_value=0, max_value=1e6), st.floats(min_value=1, max_value=1e6))
+def test_metric_ratio_grows_with_its_numerator(part: float, more: float) -> None:
+    def ratio(value: float) -> float:
+        num = _obs([("28001", {"k": "v"}, value)])
+        den = _obs([("28001", {"k": "v"}, 1000.0)])
+        return _by_code(methods.metric_ratio(num, {"k": "v"}, den, {"k": "v"}, 100.0))["28001"][
+            "value"
+        ]  # type: ignore[return-value]
+
+    assert ratio(part + more) > ratio(part)
+
+
+def test_not_published_gives_one_explicit_unknown_per_zone() -> None:
+    """A source with no rows at a level (e.g. housing tables by district) is SIN DATOS there,
+    with its reason: never 0 and never an absent row."""
+    out = methods.not_published(POP)
+    assert sorted(out["territory_code"]) == ["28001", "28002", "28003"]
+    assert all(pd.isna(v) for v in out["value"].tolist())
+    assert set(out["null_reason"]) == {"SOURCE_MISSING"}
+    assert set(out["confidence"]) == {0.0}

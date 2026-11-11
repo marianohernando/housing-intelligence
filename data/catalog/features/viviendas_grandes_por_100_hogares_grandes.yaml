@@ -1,0 +1,35 @@
+feature_id: viviendas_grandes_por_100_hogares_grandes
+version: 1
+human_name: Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas
+domain: housing
+type: derived
+unit: viviendas/100 hogares
+direction: higher_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_viviendas_superficie, role: primary, levels: [municipio]}
+  - {dataset_id: cm_hogares_tamano_censo_2021, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: secondary, levels: [distrito]}
+formula:
+  method: metric_ratio
+  numerator_metric: viviendas_por_superficie
+  numerator_dims: {superficie: [de_91_a_105_m2, de_106_a_120_m2, de_121_a_150_m2, de_151_a_180_m2, mas_de_180_m2]}
+  denominator_metric: hogares_por_tamano
+  denominator_dims: {tamano: [de_4_personas, de_5_o_mas_personas]}
+  per: 100
+  small_population_threshold: 100  # fewer large households than this -> confidence 0.5
+  confidence: 0.8  # two sources with different universes and years (see limitations)
+  levels:
+    distrito: {method: not_published, territories_metric: poblacion_padron}  # SIN DATOS, never 0
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [family_fit, housing_gap]
+tests: [non_negative]
+limitations:
+  - "Compara dos tablas de la CM que no miden el mismo universo ni el mismo año: viviendas por superficie (2023) y hogares por tamaño (censo 2021). Por eso la confidence es 0,8 y lo que se lee es la comparación con la región, no la cifra suelta."
+  - "No dice si las viviendas grandes están libres, en venta o en alquiler, ni si las ocupan hogares grandes."
+  - "La CM no publica estas tablas por distrito: en los distritos de Madrid la fila sale SIN DATOS."
+gap_row: {row: vivienda, role: primary, label: "Vivienda para familias", phrase: "viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", proxy_note: "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio."}

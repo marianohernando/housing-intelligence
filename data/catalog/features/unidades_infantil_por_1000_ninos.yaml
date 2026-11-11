@@ -1,0 +1,30 @@
+feature_id: unidades_infantil_por_1000_ninos
+version: 1
+human_name: Aulas de educación infantil por cada 1.000 niños de 0 a 4 años
+domain: education
+type: derived
+unit: aulas/1000 niños
+direction: higher_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_unidades_escolares, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+formula:
+  method: metric_ratio
+  numerator_metric: unidades_escolares
+  numerator_dims: {titularidad: [total], ensenanza: [educacion_infantil]}  # one member: never sum the hierarchy
+  denominator_metric: poblacion_censada
+  denominator_dims: {edad: [de_0_4_anos], nacionalidad: [total], sexo: [total]}
+  per: 1000
+  small_population_threshold: 200  # denominator below this -> confidence 0.5
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative]
+limitations:
+  - "Aulas (unidades) de toda la educación infantil, de 0 a 6 años, públicas y privadas, frente a los niños de 0 a 4 años, el tramo más fino que publica el censo: es una medida de capacidad aproximada, no de plazas libres."
+  - "Solo por municipio; en los distritos de Madrid no hay dato."
+gap_row: {row: escuela_infantil, role: extra, phrase: "aulas de educación infantil por cada 1.000 niños de 0 a 4 años"}

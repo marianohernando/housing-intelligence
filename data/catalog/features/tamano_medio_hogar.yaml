@@ -27,3 +27,4 @@ tests: [range_1_5, monotonic_in_large_households]
 limitations:
   - "El tramo '5 o más' se cuenta como 5: subestima ligeramente el tamaño en municipios con hogares muy grandes (confidence 0,9)."
   - "En los distritos de Madrid es el tamaño medio que publica el Ayuntamiento con el padrón (personas inscritas en una misma vivienda, a 1 de enero), no el hogar del censo 2021 de la CM (D-209)."
+gap_row: {row: vivienda, role: extra, phrase: "personas por hogar de media"}

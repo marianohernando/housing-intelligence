@@ -174,6 +174,7 @@ def test_gap_row_counts_the_same_places_as_its_walking_minutes(catalog: Catalog)
             continue
         counted_places = _destinations(primary.formula.model_extra or {})
         assert counted_places[0] is not None, primary.feature_id  # never compares empty filters
+        assert counted_places[1] or counted_places[2], primary.feature_id
         assert counted_places == _destinations(walk.formula.model_extra or {}), (
             f"{primary.feature_id} vs {walk.feature_id}"
         )

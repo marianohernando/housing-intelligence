@@ -52,6 +52,32 @@
             "cm_centros_educativos",
             "osm_red_peatonal"
           ]
+        },
+        {
+          "feature_id": "nacimientos_por_1000_hab",
+          "label": "Nacimientos por cada 1.000 habitantes (último año publicado)",
+          "value": 7.574,
+          "unit": "nacimientos/1000 hab",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_nacidos_vivos_municipios",
+            "cm_poblacion_edad_nacionalidad_sexo"
+          ]
+        },
+        {
+          "feature_id": "unidades_infantil_por_1000_ninos",
+          "label": "Aulas de educación infantil por cada 1.000 niños de 0 a 4 años",
+          "value": 55.05,
+          "unit": "aulas/1000 niños",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_poblacion_edad_nacionalidad_sexo",
+            "cm_unidades_escolares"
+          ]
         }
       ],
       "datasets": [
@@ -65,12 +91,30 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_nacidos_vivos_municipios",
+          "name": "Nacidos vivos por lugar de residencia de la madre y sexo. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo",
+          "version": "2026-11-10-9119056a0e09",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
           "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
           "publisher": "Instituto de Estadística",
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_unidades_escolares",
+          "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+          "version": "2026-11-10-bdf7c1ff864a",
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
@@ -389,6 +433,85 @@
           "license": "Open Database License (ODbL) 1.0"
         }
       ]
+    },
+    {
+      "row": "vivienda",
+      "label": "Vivienda para familias",
+      "status": "JUSTO",
+      "indicator": {
+        "feature_id": "viviendas_grandes_por_100_hogares_grandes",
+        "label": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
+        "value": 163.2,
+        "unit": "viviendas/100 hogares",
+        "confidence": 0.8,
+        "null_reason": null,
+        "level": "municipio",
+        "datasets": [
+          "cm_hogares_tamano_censo_2021",
+          "cm_viviendas_superficie"
+        ]
+      },
+      "reference": 177.6,
+      "reference_label": "Comunidad de Madrid",
+      "direction": "higher_is_better",
+      "ratio_to_reference": 0.919,
+      "explanation": "163,2 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en el conjunto de la Comunidad de Madrid, 177,6",
+      "proxy_note": "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio.",
+      "extra_indicators": [
+        {
+          "feature_id": "tamano_medio_hogar",
+          "label": "Tamaño medio del hogar (aproximado)",
+          "value": 2.41,
+          "unit": "personas/hogar",
+          "confidence": 0.9,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_hogares_tamano_censo_2021"
+          ]
+        },
+        {
+          "feature_id": "viviendas_alquiler_pct",
+          "label": "Viviendas principales en alquiler (%)",
+          "value": 24.02,
+          "unit": "%",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_viviendas_tenencia_censo_2021"
+          ]
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "cm_hogares_tamano_censo_2021",
+          "name": "Hogares por tamaño del hogar. Censo 2021. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
+          "version": "2026-11-10-acfd552e1c9c",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_viviendas_superficie",
+          "name": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
+          "version": "2026-11-10-382a7f2ff74a",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_viviendas_tenencia_censo_2021",
+          "name": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia",
+          "version": "2026-11-10-048892fa99bc",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        }
+      ]
     }
   ],
   "datasets": [
@@ -429,6 +552,24 @@
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {
+      "dataset_id": "cm_hogares_tamano_censo_2021",
+      "name": "Hogares por tamaño del hogar. Censo 2021. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
+      "version": "2026-11-10-acfd552e1c9c",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_nacidos_vivos_municipios",
+      "name": "Nacidos vivos por lugar de residencia de la madre y sexo. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo",
+      "version": "2026-11-10-9119056a0e09",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
       "dataset_id": "cm_oficinas_farmacia",
       "name": "Oficinas de farmacia",
       "publisher": "Comunidad de Madrid",
@@ -444,6 +585,33 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
       "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_viviendas_superficie",
+      "name": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
+      "version": "2026-11-10-382a7f2ff74a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_viviendas_tenencia_censo_2021",
+      "name": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia",
+      "version": "2026-11-10-048892fa99bc",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {

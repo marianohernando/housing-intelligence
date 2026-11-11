@@ -63,6 +63,23 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
     )
 
 
+def _metric_ratio(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    return methods.metric_ratio(
+        loaders.observations(engine, f["numerator_metric"], level),
+        f["numerator_dims"],
+        loaders.observations(engine, f["denominator_metric"], level),
+        f["denominator_dims"],
+        float(f["per"]),
+        small_population=float(f.get("small_population_threshold", 0)),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
+def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """The zones of the level are those of `territories_metric` (e.g. the padrón districts)."""
+    return methods.not_published(loaders.observations(engine, f["territories_metric"], level))
+
+
 def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """CORE-005: walking access to the nearest destination of a kind, by zone."""
     version = walk.network_version(engine)
@@ -98,6 +115,8 @@ METHODS: dict[str, Method] = {
     "places_per_population": _places_per_population,
     "place_attribute_per_population": _place_attribute_per_population,
     "network_walk_time": _network_walk_time,
+    "metric_ratio": _metric_ratio,
+    "not_published": _not_published,
 }
 
 

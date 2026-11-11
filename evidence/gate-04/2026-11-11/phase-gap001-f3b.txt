@@ -1,0 +1,67 @@
+# GAP-001 F3b: housing row (metric_ratio), explicit SIN DATOS by district (not_published) and extras from 3 more CM datasets (local db housing)
+## Coverage by level (rows, with value, null reasons)
+nacimientos_por_1000_hab|ccaa|1|1|-
+nacimientos_por_1000_hab|municipio|179|179|-
+unidades_infantil_por_1000_ninos|ccaa|1|1|-
+unidades_infantil_por_1000_ninos|municipio|179|178|NOT_APPLICABLE
+viviendas_alquiler_pct|municipio|178|178|-
+viviendas_grandes_por_100_hogares_grandes|ccaa|1|1|-
+viviendas_grandes_por_100_hogares_grandes|distrito|21|0|SOURCE_MISSING
+viviendas_grandes_por_100_hogares_grandes|municipio|179|179|-
+## Values: region, Madrid, Móstoles, Chamartín
+nacimientos_por_1000_hab|ccaa|28|7.14||1.00
+nacimientos_por_1000_hab|municipio|28079|7.57||1.00
+nacimientos_por_1000_hab|municipio|28092|6.19||1.00
+unidades_infantil_por_1000_ninos|ccaa|28|59.03||1.00
+unidades_infantil_por_1000_ninos|municipio|28079|55.05||1.00
+unidades_infantil_por_1000_ninos|municipio|28092|55.13||1.00
+viviendas_alquiler_pct|municipio|28079|24.02||1.00
+viviendas_alquiler_pct|municipio|28092|14.60||1.00
+viviendas_grandes_por_100_hogares_grandes|ccaa|28|177.58||0.80
+viviendas_grandes_por_100_hogares_grandes|distrito|2807905||SOURCE_MISSING|0.00
+viviendas_grandes_por_100_hogares_grandes|municipio|28079|163.21||0.80
+viviendas_grandes_por_100_hogares_grandes|municipio|28092|152.05||0.80
+## CM open data datasets (is_cm_open_data, with a version, as /datasets) cited by at least one feature
+cm_with_version=21 feeding_a_feature=20 not_feeding=cm_alquiler_m2_codigo_postal_madrid
+
+## Gate: make lint typecheck test (2026-11-11T16:49:24Z)
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+253 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 25%]
+........................................................................ [ 50%]
+........................................................................ [ 75%]
+.....................................................................    [100%]
+285 passed in 6.78s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  17:49:40
+   Duration  107ms (tests 45%, import 25%, transform 19%, worker 10%, environment 1%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [100%]
+72 passed in 33.52s
+exit=0
