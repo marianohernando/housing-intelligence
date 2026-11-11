@@ -1,5 +1,7 @@
 """Every catalog YAML is valid, consistent and respects DATAMAD source rules."""
 
+from typing import Any
+
 import pytest
 
 from hi_contracts.catalog.enums import LicenseStatus, Priority, TrustTier
@@ -143,6 +145,38 @@ def test_gap_rows_have_one_primary_indicator_at_most(catalog: Catalog) -> None:
     ]
     assert len(primaries) == len(set(primaries))
     assert {"colegio", "centro_salud"} <= set(primaries)
+
+
+def _destinations(formula: dict[str, Any]) -> tuple[Any, ...]:
+    attributes = formula.get("attributes") or {}
+    return (
+        formula.get("category") or formula.get("destination_category"),
+        sorted(formula.get("subcategories") or []),
+        sorted((k, sorted(v)) for k, v in attributes.items()),
+    )
+
+
+def test_gap_row_counts_the_same_places_as_its_walking_minutes(catalog: Catalog) -> None:
+    """GAP-001: a row's main indicator (places per population) and its walking minutes describe
+    the same kind of place, e.g. colegios with primaria, public or concertado, in both."""
+    features = catalog.features.values()
+    counted = {
+        f.gap_row.row: f
+        for f in features
+        if f.gap_row and f.gap_row.role == "primary" and f.formula.method == "places_per_population"
+    }
+    checked = 0
+    for walk in features:
+        if not (walk.gap_row and walk.formula.method == "network_walk_time"):
+            continue
+        primary = counted.get(walk.gap_row.row)
+        if primary is None:
+            continue
+        assert _destinations(primary.formula.model_extra or {}) == _destinations(
+            walk.formula.model_extra or {}
+        ), f"{primary.feature_id} vs {walk.feature_id}"
+        checked += 1
+    assert checked >= 2
 
 
 def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Catalog) -> None:

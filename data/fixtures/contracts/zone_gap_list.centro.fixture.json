@@ -22,8 +22,8 @@
       "status": "CUBIERTO",
       "indicator": {
         "feature_id": "colegios_publicos_por_1000_menores",
-        "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-        "value": 3.512,
+        "label": "Colegios con primaria sostenidos con fondos públicos (públicos o concertados) por cada 1.000 menores de 15 años",
+        "value": 2.039,
         "unit": "centros/1000 menores",
         "confidence": 1.0,
         "null_reason": null,
@@ -33,12 +33,12 @@
           "cm_centros_educativos"
         ]
       },
-      "reference": 2.178,
+      "reference": 1.315,
       "reference_label": "Comunidad de Madrid",
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.612,
-      "explanation": "3,5 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2",
-      "proxy_note": "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos.",
+      "ratio_to_reference": 1.551,
+      "explanation": "2,0 colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 1,3",
+      "proxy_note": "Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual. No dice cuál te corresponde por zona.",
       "extra_indicators": [
         {
           "feature_id": "min_a_pie_colegio",
