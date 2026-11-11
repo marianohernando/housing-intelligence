@@ -9,7 +9,7 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 |---|---|---|---|
 | **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, DATA-012, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **DATA-012 hecha** (`f62f0d0`…`be40c2f`): `/gaps/distrito` con filas reales en los 21 distritos (población del padrón, D-209). Contratos v2 en `2bcc35e`. Siguiente: peticiones de B para la API (warnings de `/gaps`, `/places` y `/geo/admin-units`) y CORE-005 F3 |
 | **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | PR #2 (borrador): F1 hecha (`4402edd`). **Antes de su F2, rebase sobre `2bcc35e` y tipos desde `data/schemas/api/` (v2)** |
-| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #4 y PR #5 fusionados** (`c8ae262`, `d917162`): Vercel (web + API) en `vidafacil-madrid.vercel.app` (`vida-facil-eight` sigue de alias), readiness, smoke diario, guardas de deploy, paquete offline (5441/8012/3012) y rol `vf_api_ro` (migración 0005). Supabase en 0005 y sincronizado; Mariano ya puso `DATABASE_URL`. C despliega y pasa el smoke público |
+| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #6 fusionado** (`877d4fd`): demo pública sobre Supabase con smoke 6/6 y reintento del smoke en `deploy.sh`. Antes, **PR #4 y PR #5 fusionados** (`c8ae262`, `d917162`): Vercel (web + API) en `vidafacil-madrid.vercel.app` (`vida-facil-eight` sigue de alias), readiness, smoke diario, guardas de deploy, paquete offline (5441/8012/3012) y rol `vf_api_ro` (migración 0005). Supabase en 0005 y sincronizado; Mariano ya puso `DATABASE_URL`. C despliega y pasa el smoke público |
 | **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | PR #3 (borrador): formulario de 98 palabras, slides, guion y banco de preguntas. «Vida Fácil» está libre (TMview) |
 
 **Respuestas de A a lo que piden las líneas (11 nov, noche):**
@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | C → A | OPS-001 · PR #6 integrado | CI verde + gate local verde | `877d4fd` | `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md`, `evidence/gate-06/2026-11-11/merge-pr6.txt` | Demo pública sobre Supabase con `vf_api_ro` (smoke 6/6). `deploy.sh` repite el smoke una vez a los 20 s; un fallo real sigue saliendo con 1 y la sugerencia de rollback. Revisado con `reviewer`: fusionar; pendiente menor de C: contarlo en `infra/deploy/README.md` |
 | 11 nov | A | GAP-001 · Fase 0b (avisos por fila) | verde | `d3127d3` | `evidence/gate-04/2026-11-11/phase-gap001-f0b.txt` | `/gaps` trae un aviso por cada una de las 6 filas que aún no está calculada a ese nivel (`INSUFFICIENT_DATA: row <fila> not computed at <nivel> level yet`). Responde al punto 5 del PR #2 de B |
 | 11 nov | A | DATA-012 · Fase 4 (revisión) | verde | `be40c2f` | `evidence/gate-01/2026-11-11/phase-data012-f4-review.txt` | Ajustes del `reviewer`: confidence por lugares sin sección, guarda contra un padrón truncado (±10 % por distrito), tests más estrictos y cobertura por distrito en el Gate 3 |
 | 11 nov | C → A | OPS-001 · PR #5 integrado | CI verde | `d917162` | `evidence/gate-06/2026-11-11-deploy/` | URL `vidafacil-madrid.vercel.app`, guardas de deploy (R-07/R-08) y paquete offline aislado. Revisado con `reviewer` y con los 7 ajustes de C |
@@ -89,7 +90,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - PR #5 de C integrado (`d917162`): URL `vidafacil-madrid.vercel.app`, guardas de deploy y paquete offline, revisado con `reviewer`.
   - Supabase comprobado por MCP tras el sync de Mariano: alembic 0005, 7 políticas de `vf_api_ro`, `feature_value` 2.298 (147 de distrito = 7 features × 21) y los 2 datasets del Ayuntamiento como no CM.
   - La base local está en la 0005, con el padrón y el panel ingeridos y las features recalculadas.
-- **Blocked:** nada. PR #1 a `main` sigue abierto (lo fusiona Mariano).
+- **Blocked:** nada. Mariano fusionó el PR #1 en `main` (`2107119`); el siguiente paso a `main` lo decide él.
 - **Next (línea A), en orden:**
   1. ~~`/gaps`: un warning por cada fila esperada que no esté~~ → hecho en `d3127d3` (GAP-001 F0b).
   2. **Peticiones de B para la API** (PR #2), mejor antes del 14 nov:
