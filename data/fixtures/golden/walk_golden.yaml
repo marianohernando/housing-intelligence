@@ -5,7 +5,7 @@ _note: >
   happened to compute. Zones are the census sections of the golden Madrid zones
   (madrid_zones.json), two districts, two municipios and the region. Every case also needs a
   value and a confidence of at least 0.5. Checked against the OSM network and the CM registers
-  loaded on 2026-11-11.
+  loaded on 2026-11-11, at 4 km/h since D-211 (the bounds did not change).
 cases:
   - {id: sol_farmacia, feature: min_a_pie_farmacia, level: seccion_censal, code: "2807901124", max: 5}
   - {id: sol_transporte, feature: min_a_pie_transporte, level: seccion_censal, code: "2807901124", max: 4}

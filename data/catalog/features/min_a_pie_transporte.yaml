@@ -1,5 +1,5 @@
 feature_id: min_a_pie_transporte
-version: 1
+version: 2
 human_name: "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)"
 domain: transport
 type: derived
@@ -19,7 +19,7 @@ formula:
   method: network_walk_time
   destination_category: transport
   statistic: median_minutes
-  speed_kmh: 4.5
+  speed_kmh: 4.0
   origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
   min_street_m: 300  # less origin street than this -> confidence 0.5 at most
   levels: {municipio: {}, distrito: {}}
@@ -31,7 +31,7 @@ models: [residential_fit]
 tests: [non_negative, explicit_null_without_streets, unknown_never_near]
 limitations:
   - "Cuenta cualquier parada de autobús, metro, metro ligero o cercanías, sin mirar la frecuencia (llega con CORE-009)."
-  - "Velocidad de 4,5 km/h para todo el mundo: con movilidad reducida o con carrito los minutos son más."
+  - "Velocidad de 4 km/h para todo el mundo, la del estudio «El Madrid de los 15 minutos» del Ayuntamiento: con movilidad reducida o con carrito los minutos son más."
   - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
   - "Cada destino se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
   - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."

@@ -723,7 +723,7 @@ CORE-005, Fases 3 y 4. Doce features por sección censal, municipio y distrito, 
 - el % de calle a N minutos o menos.
 
 Datos: la red peatonal de OSM (`osm_red_peatonal`, ODbL, complementaria) y los registros de la CM para los destinos.
-- **Velocidad: 4,5 km/h (1,25 m/s) para todo el mundo.**
+- **Velocidad: 4,5 km/h (1,25 m/s) para todo el mundo.** Sustituida por D-211: 4 km/h.
   - La guía de la FHWA de EE. UU. recomienda 1,2 m/s para la mayoría de los casos y 1,0 m/s donde más del 20 % son mayores de 65 (https://www.fhwa.dot.gov/publications/research/safety/pedbike/98107/section2.cfm).
   - El estudio «El Madrid de los 15 minutos» del Ayuntamiento usa 4 km/h (https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf).
   - 4,5 km/h es un paso adulto tranquilo y la parte alta para personas mayores, y se declara en cada feature. A 4 km/h los minutos salen un 12,5 % más altos y a 3,6 km/h, un 25 % más.
@@ -752,3 +752,15 @@ Datos: la red peatonal de OSM (`osm_red_peatonal`, ODbL, complementaria) y los r
   - la coherencia entre mediana y % en las 4.819 zonas con valor de cada destino;
   - la cobertura de las 4.843 zonas.
   - El cálculo completo de las 24 features tarda 29 s y ocupa 0,9 GB de memoria.
+
+## D-211 — Distancia a pie a 4 km/h (2026-11-11)
+CORE-005, Fase 5. Sustituye la velocidad de D-210; el resto de D-210 (ventanas, destinos, calles de origen, cálculo, nulos y confianza) no cambia.
+- **Velocidad: 4 km/h (1,11 m/s) para todo el mundo**, en lugar de 4,5 km/h. Decisión de Mariano: la demo también se dirige a personas mayores.
+  - Fuente: el estudio «El Madrid de los 15 minutos» del Ayuntamiento («Velocidad de desplazamiento estimada en 4 Km/h»), https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf. Así las cifras se pueden comparar con las del Ayuntamiento.
+  - Referencia: 1,11 m/s queda entre los 1,2 m/s que la FHWA de EE. UU. recomienda para la mayoría de los casos y los 1,0 m/s que recomienda donde más del 20 % son mayores de 65 (https://www.fhwa.dot.gov/publications/research/safety/pedbike/98107/section2.cfm). No se afirma que sea la velocidad de las personas mayores: con movilidad reducida los minutos son más, y la feature lo declara.
+- **Efecto:** los minutos suben un 12,5 % (×1,125) y las ventanas del % cubren menos calle: 5 min son unos 333 m (antes 375), 10 min unos 667 m y 15 min unos 1.000 m.
+- **Versión:** las 12 features a pie pasan a la versión 2 (`feature_version` en cada fila).
+- **Comprobación (Gate 3), con el recálculo real:**
+  - los 15 casos golden de D-210 cumplen sus límites sin tocarlos. Los más justos: Sol a una parada, 3,1 min (límite 4), y el centro de Madrid a un centro de salud, 6,9 min (límite 10). La Acebeda: farmacia a 109,7 min y consultorio a 14,3 min (límite 20);
+  - la coherencia entre mediana y % sigue sin desacuerdos en las 4.819 zonas con valor de cada destino;
+  - por ejemplo, Chamartín (distrito 2807905): centro de salud 9,5 min (antes 8,4) y farmacia 2,6 min (antes 2,3). La mediana regional a una parada pasa de 3,4 a 3,8 min y la de la sección típica, de 2,1 a 2,4 min.

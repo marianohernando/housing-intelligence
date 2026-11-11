@@ -1,8 +1,8 @@
 # Gate 03 — PASS
 
 - Fecha: 2026-11-11
-- Commit: `bc60e1f922d0c0f8070d778b7e1524c0dd95cb04` (claude/sprint-1-public)
-- Generado: 2026-11-11T15:35:12.382669+00:00 por `scripts/evidence.py`
+- Commit: `ec126b077cf782bcc365ae54840b9a11d1303e60` (claude/sprint-1-public)
+- Generado: 2026-11-11T16:15:06.357822+00:00 por `scripts/evidence.py`
 
 - Alcance: Metrics / Feature Store — 12 municipal features (7 also by district of Madrid) and 12 walking-access features by census section, municipio and district (CORE-005).
 

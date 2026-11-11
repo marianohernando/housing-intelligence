@@ -2,5 +2,5 @@ $ uv run pytest -m db tests/integration/test_features.py tests/integration/test_
 # exit 0
 
 ........                                                                 [100%]
-8 passed in 4.81s
+8 passed in 4.65s
 
