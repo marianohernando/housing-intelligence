@@ -21,10 +21,10 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 _(vacío: la siguiente card es CORE-005)_
 
 ### Estado de la sesión del 11 nov (mañana)
-- **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos): hay 21 datasets del portal CM con Quality Gate. DATAMAD-PUBLIC-01: repo público con el historial limpio. OPS-001 paso 0: Supabase conectado y con el esquema en 0002 (`evidence/gate-06/2026-11-11`).
-- **Blocked:** OPS-001 carga de datos. Falta que Mariano decida sobre RLS: el advisor de Supabase marca las 14 tablas como expuestas a la Data API (`rls_disabled_in_public`). Hoy están vacías.
+- **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos): hay 21 datasets del portal CM con Quality Gate. DATAMAD-PUBLIC-01: repo público con el historial limpio (D-198). OPS-001 (parte Supabase): esquema en 0003 con RLS en todas las tablas (D-197) y perfil demo cargado (100 MB). La Data API no expone nada (`evidence/gate-06/2026-11-11`).
+- **Blocked:** nada. Seguridad pendiente de Mariano: rotar el token `sbp_…` del MCP que se pegó en el chat.
 - **Next:** CORE-005, indicadores por sección y H3 (distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte). Hay que empezar proponiendo su plan de fases.
-- **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). CI en verde.
+- **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). G6, parte Supabase: esquema 0003, RLS, perfil demo cargado y Data API cerrada (`evidence/gate-06/2026-11-11`). CI en verde.
 - **Notas para las siguientes cards:**
   - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001).
   - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004.
@@ -38,7 +38,7 @@ _(vacío: la siguiente card es CORE-005)_
 5. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
 6. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
 7. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
-8. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
+8. OPS-001 Despliegue de la demo con caso precargado · G6 · 17 nov. Supabase ya está listo el 11 nov (esquema 0003, RLS y perfil demo cargado). Falta volver a cargar con `make supabase-sync PROFILE=demo` después de CORE-005 y GAP-001, y desplegar la API y la web
 9. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
@@ -59,7 +59,7 @@ _(vacío: la siguiente card es CORE-005)_
 - PITCH-004 5 ensayos cronometrados (Mariano)
 
 ## 06 — BLOCKED (decisión de Mariano)
-- OPS-001 Supabase: `.env` configurado y esquema migrado (0002) el 11 nov. Antes de `make supabase-sync PROFILE=demo`, Mariano tiene que decidir sobre RLS en las 14 tablas: la propuesta es activar RLS sin políticas, porque la API se conecta como dueño y la Data API queda cerrada. La carga va después de CORE-005 y GAP-001.
+_(vacío)_
 
 ## 07 — DONE (con evidencia)
 - DATAMAD-PUBLIC-01 Repo público en la misma URL, con el historial limpio de datos de contacto de los fixtures. El original queda en `housing-intelligence-archive` (privado y archivado, prueba de fechas). `pre-datamad` = `cf39459` (22 oct) · `evidence/gate-00/2026-11-11/public-repo.md` · D-195 · 2026-11-11

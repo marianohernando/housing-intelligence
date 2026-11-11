@@ -284,7 +284,8 @@ Estamos en **fase de competición DATAMAD 2026** (hasta el 26 nov 2026).
 - Puertos locales: Postgres 5440, Redis 6390, API 8010, Web 3010 (configurables en `.env`). 3000/5432/8000 están ocupados por otros proyectos.
 - Postgres 17 + PostGIS + pgvector en Docker (`infra/docker/postgres`). Extensiones en schema `extensions`.
 - Supabase (proyecto free `ilvbivfnqvfqslbbiuts`) es entorno remoto/demo; sin h3-pg: **H3 se calcula siempre en Python**.
-- MCP de proyecto `supabase-datamad` en `.mcp.json`; no confundir con el conector claude.ai "Supabase" (otra cuenta).
+- MCP `supabase-datamad`: registrado por Mariano con scope local en `~/Desktop/DATAMAD` y `--read-only` (11 nov). `.mcp.json` es la plantilla y necesita `SUPABASE_DATAMAD_ACCESS_TOKEN`. No confundir con el conector claude.ai "Supabase" (otra cuenta).
+- Supabase remoto (11 nov): esquema en head, RLS en todas las tablas (D-197) y perfil demo cargado. Para volver a cargar datos tras cambiar features o lugares: `make supabase-migrate` y después `make supabase-sync PROFILE=demo`.
 - `make` es la entrada única: `make dev`, `make lint`, `make typecheck`, `make test`, `make ingest DATASET=...`.
 
 ## 22. Convenciones del repo

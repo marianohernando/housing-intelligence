@@ -618,3 +618,18 @@ DATA-007. Los 6 GTFS del CRTM (metro, metro ligero, cercanías, EMT, autobuses u
 - `stop_times` solo vive en Bronze/Silver; la base de datos guarda unas 15.000 paradas agregadas.
 - Particularidades de los feeds, declaradas y no ocultas: el `frequencies.txt` de EMT solo anota viajes que ya están listados uno a uno (`expand_frequencies: false`). En metro, 25 andenes de transbordo no declaran estación: se unen a la estación que está en el mismo punto y tiene el mismo nombre.
 - El tiempo a polos de empleo (nivel B) queda en CORE-009.
+
+## D-197 — RLS en todas las tablas públicas, sin políticas (2026-11-11)
+OPS-001. Supabase expone el schema `public` a los roles `anon` y `authenticated` a través de su Data API. Su advisor marcó las 14 tablas como críticas (`rls_disabled_in_public`): con la clave pública se podían leer **y modificar** filas.
+- El producto no usa esa API: el frontend nunca accede a la base de datos y el backend se conecta como dueño de las tablas.
+- La migración 0003 activa RLS en las 14 tablas sin crear ninguna política. Así la Data API no ve filas ni puede escribir. En Supabase, `postgres` tiene BYPASSRLS, y en local el dueño se salta RLS, así que la API, los pipelines y `make supabase-sync` siguen igual.
+- Un test de migraciones falla si una tabla nueva de `public` no tiene RLS.
+- Comprobado el 11 nov con datos cargados: la Data API devuelve `[]` con la clave publishable. El advisor solo deja el aviso informativo `rls_enabled_no_policy`, que es el estado buscado.
+- Si un día se quiere exponer algo por la Data API, se hace con políticas explícitas de solo lectura y por tabla.
+
+## D-198 — Repo público con el historial limpio (2026-11-11)
+DATAMAD-PUBLIC-01; completa D-195. Mariano acepta que se vean el email de autor y `docs/`. Antes de publicar apareció un problema: los fixtures de equipamientos del 22 oct llevaban teléfonos, emails de contacto, NIF y titulares, copiados del portal CM. La licencia CC BY no cubre la protección de datos (bases §6.6 y §16).
+- El repo original pasa a llamarse `housing-intelligence-archive`, privado y archivado, como prueba de fechas.
+- En la misma URL se publica una copia cuyo historial reescrito solo cambia esos 3 ficheros. Se conservan las fechas y el tag `pre-datamad`, que ahora apunta a `cf39459`.
+- `scripts/build_places_fixtures.py` redacta los datos de contacto, los NIF y los titulares.
+- Evidencia y tabla de SHAs antiguos y nuevos: `evidence/gate-00/2026-11-11/`.

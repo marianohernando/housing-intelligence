@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.11 — Supabase configurado (2026-11-11)
+- D-197: RLS en todas las tablas públicas, sin políticas (migración 0003). Supabase queda con el esquema en head y el perfil demo cargado (100 MB). La Data API no expone filas.
+- D-198: repo público con el historial limpio; completa D-195.
+
 ## v0.5.10 — Repo público (2026-11-11)
 - `09_datamad/25_plan_competicion.md` §7: el historial se publica limpio en la misma URL. El original queda en `housing-intelligence-archive` (privado). El tag `pre-datamad` pasa a `cf39459` y mantiene la fecha del 22 oct.
 
