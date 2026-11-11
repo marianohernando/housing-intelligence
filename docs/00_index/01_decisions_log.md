@@ -687,3 +687,17 @@ Aplica D-200 a D-204 en `packages/contracts/src/hi_contracts/public/`. La v1 (`7
   - `GET /api/v1/gaps/{level}/{code}` acepta `distrito`;
   - nueva `GET /api/v1/datasets?cm_only=` para el contador y la procedencia;
   - CORS con `POST`.
+
+## D-208 — Rol de solo lectura para la API pública (2026-11-11)
+OPS-001; amplía D-197. La API de la demo se conecta a Supabase como `vf_api_ro` (migración 0005, a partir del SQL de la línea C en `infra/deploy/sql/api_readonly_role.sql`).
+- **Permisos del rol:**
+  - solo lectura por defecto (`default_transaction_read_only`) y por privilegios: solo tiene `SELECT`;
+  - sin superusuario, sin `BYPASSRLS` y sin contraseña en el repo. Mariano la pone a mano (`ALTER ROLE vf_api_ro PASSWORD …`) y solo la usa en la `DATABASE_URL` del alojamiento.
+- **Políticas:**
+  - cada tabla que lee la API tiene una política `vf_api_ro_read` (`FOR SELECT`, solo para ese rol): `dataset_registry`, `dataset_version`, `feature_registry`, `feature_value`, `geo_admin_unit`, `place_master` y `source_registry`;
+  - `anon` y `authenticated` siguen sin ninguna política, así que la Data API de Supabase sigue cerrada;
+  - el advisor ya no avisará `rls_enabled_no_policy` en esas 7 tablas, y no es un problema.
+- **Tests que lo vigilan:**
+  - un test unitario falla si la API empieza a leer una tabla que no esté en `API_TABLES`, porque esa tabla se vería vacía en producción;
+  - un test de integración comprueba que el rol lee esas tablas, no ve las demás y no puede escribir.
+- **Downgrade:** quita permisos y políticas, pero conserva el rol, porque los roles son de todo el servidor.
