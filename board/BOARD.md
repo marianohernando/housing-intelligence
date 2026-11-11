@@ -43,7 +43,7 @@ Checkpoints: **13 nov** la lista de lo que falta sale por la API con datos reale
   - Contratos publicados (`7541527`).
   - GAP-001 Fase 0 (`2da5d4d`).
   - La base local está en la migración 0004, con el catálogo sincronizado y las features recalculadas (incluidas las 3 filas regionales).
-- **Blocked:** nada. Seguridad pendiente de Mariano: rotar el token `sbp_…` del MCP que se pegó en el chat.
+- **Blocked:** nada. Token `sbp_…` del MCP rotado (Mariano lo confirma el 11 nov). PR #1 a `main` sigue abierto.
 - **Next (línea A), en orden:**
   1. CORE-005 Fase 3: método `network_walk_time` sobre `hi_domain.access`; 12 features (6 servicios × mediana de minutos y % de calle a ≤ N min) en sección, municipio y H3 r9; fixture OSM recortado; persist multinivel ya preparado.
   2. CORE-005 Fase 4: ejecución real, golden checks, Gate 3 y ADR D-199 (4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min).
