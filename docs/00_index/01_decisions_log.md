@@ -833,3 +833,37 @@ GAP-001, Fase 5. Sustituye los cortes provisionales de `gap-0.1` (ratio frente a
   - Madrid capital: centro de salud FALTA (0,37 frente a 0,56, ratio 0,67, significativa) y colegio JUSTO (0,96);
   - La Acebeda: farmacia JUSTO y poco fiable (0 farmacias para 70 habitantes).
 - **Lectura para el pitch:** FALTA pasa a ser una afirmación fuerte y rara: menos del 80 % de lo que tienen las zonas comparables, con datos suficientes para afirmarlo. Por ejemplo, Madrid capital tiene un tercio menos de centros de atención primaria por habitante que el resto de municipios urbanos, aunque ningún distrito por sí solo baste para afirmarlo.
+
+## D-214 — Asequibilidad: m² supuestos por tamaño del hogar, alquiler por distrito y compra sin datos (2026-11-11)
+CORE-006. Código en `hi_domain/affordability.py` y en el método `postcode_weighted_mean` de `hi_features`. Responde a la línea D, que pidió qué m² se suponen según el tamaño del hogar. Es una decisión reversible: cambiar la tabla no toca ningún contrato.
+
+1. **Coste estimado.** El alquiler de una zona es su alquiler medio por m² (feature `alquiler_m2_mensual`) multiplicado por los m² que necesita el hogar. La condición de presupuesto es:
+   - **PASS** si ese coste es igual o menor que el presupuesto;
+   - **FAIL** si lo supera;
+   - **UNKNOWN** si la zona no tiene alquiler publicado. Nunca cuenta como PASS.
+2. **m² supuestos por tamaño del hogar.** Si la persona no los fija (`min_floor_area_m2`), se toman los de la vivienda mediana de los hogares de su tamaño en la Comunidad de Madrid:
+   - **Fuente:** Censo de Población y Viviendas 2021 del INE, tabla 59524 («Viviendas familiares principales convencionales según tamaño del hogar por superficie»), fila de la Comunidad de Madrid. Son 2.532.510 hogares con superficie conocida.
+   - **Cálculo:** mediana interpolada dentro de los tramos de superficie del INE. Las personas del hogar son adultos, menores y mayores a cargo.
+
+     | Personas | 1 | 2 | 3 | 4 | 5 o más |
+     |---|---|---|---|---|---|
+     | m² supuestos | 61 | 68 | 71 | 77 | 77 |
+
+   - **Por qué la mediana del censo:** es lo que ocupa de verdad la mitad de los hogares de ese tamaño en la región, con una fuente oficial. Una norma de habitabilidad daría mínimos legales, no lo habitual. Con 5 o más personas sale 76,7 m², casi lo mismo que con 4: las familias grandes no viven en pisos mucho mayores. Se fija en 77 para que los m² nunca bajen al crecer el hogar (lo comprueba un test).
+3. **Límites declarados (el coste es orientativo y tiende a quedarse corto):**
+   - **Contratos vigentes:** el alquiler por m² de la CM sale de la Estadística de viviendas declaradas en el IRPF de la Agencia Tributaria. Es la media de los contratos vigentes, no de los anuncios, y un contrato nuevo suele costar más.
+   - **m² de distinta base:** los m² de esa estadística son los del Catastro, que solo tiene superficie construida. El INE estima la superficie útil del censo a partir de esa misma superficie construida, con una recta por el origen. Por eso el coste estimado corresponde a un piso algo menor que el mediano. El INE no publica el coeficiente, así que no se corrige.
+   - **Qué FAIL es fiable:** como el coste es una cota baja, FAIL es una afirmación fiable. PASS conserva la confidence del dato y la explicación lo dice («media de los contratos vigentes; uno nuevo suele costar más»).
+   - **Cobertura:** la fuente municipal solo publica los municipios de más de 20.000 habitantes con contratos suficientes (37 de 179). El resto queda UNKNOWN, nunca 0 ni estimado.
+4. **Alquiler por distrito de Madrid** (versión 2 de `alquiler_m2_mensual`). Conecta `cm_alquiler_m2_codigo_postal_madrid`, el dataset CM número 21:
+   - **Problema:** la tabla de la CM publica el alquiler por código postal (54 códigos de Madrid capital, 2024), y no hay geometría de códigos postales (DATA-013 está en el backlog).
+   - **Proxy:** el alquiler de cada distrito es la media de sus códigos postales, ponderada por cuántos lugares geocodificados del distrito llevan ese código en su dirección: colegios, centros de salud y centros sociales de la CM (2.885 lugares de Madrid). Los lugares aproximan dónde vive la gente; se declara como proxy.
+   - **Confidence:** 0,8 como máximo, multiplicada por la parte de ese peso cuyo código tiene alquiler publicado.
+   - **Restricción:** solo cuentan los lugares del municipio de Madrid, porque la fuente solo publica sus códigos.
+   - **Comprobación:** la media de los 21 distritos ponderada por población da 14,46 €/m², frente a los 15,10 publicados para Madrid. La cifra municipal pondera por viviendas alquiladas, que se concentran en el centro.
+   - **Ejemplos:** Salamanca 19,8 €/m², Chamartín 18,0, Fuencarral-El Pardo 14,4 y Villaverde 10,8.
+   - **Por qué la media y no la mediana ponderada** (como proponía el board): la fuente publica medias, y con 1 a 5 códigos por distrito una mediana saltaría de un código a otro.
+5. **Compra.** Aún no hay una fuente oficial abierta y fiable de precio de compra por zona: DATA-021 entra del 19 al 22 nov (D-206). Mientras tanto, con `budget.kind = buy` la condición sale UNKNOWN en todas las zonas, con la explicación «Sin datos: aún no hay una fuente oficial abierta y fiable de precios de compra por zona». El buscador no inventa un precio.
+   - **Candidatas para DATA-021:**
+     - el valor tasado de vivienda libre del Ministerio de Vivienda (municipios de más de 25.000 habitantes);
+     - el valor de referencia del Catastro que publica la CM para las viviendas arrendadas (municipios de más de 20.000 habitantes y códigos postales de Madrid).
