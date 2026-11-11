@@ -2,14 +2,14 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (PR #4 de C integrado y migración 0005 del rol `vf_api_ro`, D-208; sigue DATA-012).
+Última actualización: 2026-11-11 (tarde: DATA-012 completa con `/gaps` por distrito, D-209; PR #4 y PR #5 de C integrados; Supabase en 0005 y sincronizado).
 
 ## Líneas paralelas (LINEAS.md)
-| Línea | Rama | Alcance | Estado (11 nov, noche) |
+| Línea | Rama | Alcance | Estado (11 nov, tarde) |
 |---|---|---|---|
-| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, DATA-012, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos v2 publicados: `2bcc35e`** (sustituyen a `7541527`). `/gaps` (municipio, distrito y sección) y `/datasets` funcionan con datos reales. Siguiente: DATA-012 |
+| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, DATA-012, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **DATA-012 hecha** (`f62f0d0`…`be40c2f`): `/gaps/distrito` con filas reales en los 21 distritos (población del padrón, D-209). Contratos v2 en `2bcc35e`. Siguiente: peticiones de B para la API (warnings de `/gaps`, `/places` y `/geo/admin-units`) y CORE-005 F3 |
 | **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | PR #2 (borrador): F1 hecha (`4402edd`). **Antes de su F2, rebase sobre `2bcc35e` y tipos desde `data/schemas/api/` (v2)** |
-| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #4 fusionado (`c8ae262`)**: Vercel (web + API) en `vida-facil-eight.vercel.app`, readiness, smoke diario y rol `vf_api_ro` (migración 0005, `ad16393`). Smoke 2/6 hasta que Mariano ponga `DATABASE_URL` y Supabase llegue a 0005. Mejoras pendientes de C: R-07 (`.vercelignore` y ficheros ignorados en `deploy.sh`) y R-08 (desplegar solo desde la rama de la demo) |
+| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento) | **PR #4 y PR #5 fusionados** (`c8ae262`, `d917162`): Vercel (web + API) en `vidafacil-madrid.vercel.app` (`vida-facil-eight` sigue de alias), readiness, smoke diario, guardas de deploy, paquete offline (5441/8012/3012) y rol `vf_api_ro` (migración 0005). Supabase en 0005 y sincronizado; Mariano ya puso `DATABASE_URL`. C despliega y pasa el smoke público |
 | **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | PR #3 (borrador): formulario de 98 palabras, slides, guion y banco de preguntas. «Vida Fácil» está libre (TMview) |
 
 **Respuestas de A a lo que piden las líneas (11 nov, noche):**
@@ -35,6 +35,11 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | DATA-012 · Fase 4 (revisión) | verde | `be40c2f` | `evidence/gate-01/2026-11-11/phase-data012-f4-review.txt` | Ajustes del `reviewer`: confidence por lugares sin sección, guarda contra un padrón truncado (±10 % por distrito), tests más estrictos y cobertura por distrito en el Gate 3 |
+| 11 nov | C → A | OPS-001 · PR #5 integrado | CI verde | `d917162` | `evidence/gate-06/2026-11-11-deploy/` | URL `vidafacil-madrid.vercel.app`, guardas de deploy (R-07/R-08) y paquete offline aislado. Revisado con `reviewer` y con los 7 ajustes de C |
+| 11 nov | A | DATA-012 · Fase 3 | verde | `d87c561` | `evidence/gate-01/2026-11-11/phase-data012-f3.txt` | Hogares por distrito (panel del Ayuntamiento, 2019–2025): los 21 distritos suman los 1.411.646 hogares de la ciudad. `tamano_medio_hogar` por distrito |
+| 11 nov | A | DATA-012 · Fase 2 | verde | `83c74dd` | `evidence/gate-04/2026-11-11/phase-data012-f2.txt` | **`/gaps/distrito` con filas reales en los 21 distritos.** Ejemplos: Centro sale colegios CUBIERTO y salud JUSTO; Fuencarral-El Pardo, FALTA en las dos. 7 features por distrito con procedencia por nivel |
+| 11 nov | A | DATA-012 · Fase 1 | verde | `f62f0d0` | `evidence/gate-01/2026-11-11/phase-data012-f1.txt` | Padrón por distrito en las bandas de edad de la CM: 3.535.868 personas (+1,68 % frente al censo, declarado, D-209). Nacionalidad y sexo nunca se guardan |
 | 11 nov | A | OPS-001 · Fase A (migración 0005) | verde | `ad16393` | `evidence/gate-06/2026-11-11/phase-ops001-0005.txt` | Rol `vf_api_ro` como migración (D-208): solo lectura y una política `FOR SELECT` en las 7 tablas de la API. Test unitario contra la migración y test de integración del rol real. Base local en 0005 |
 | 11 nov | C → A | OPS-001 · PR #4 integrado | CI verde | `c8ae262` | `evidence/gate-06/2026-11-11-deploy/` | Despliegue en Vercel con un comando, `/api/v1/health/ready`, smoke diario (activo cuando llegue a `main`). Revisado con `reviewer`: sin bloqueantes |
 | 11 nov | A | CONTRACTS · Fase 2 (v2) | verde | `2bcc35e` | `evidence/gate-04/2026-11-11/phase-contracts-f2.txt` | **Contratos v2 de Vida Fácil** (D-199 a D-207): compra o alquiler, hogar, 6 prioridades, distritos de Madrid, % de encaje con hechos y Reality Check aplicable. `/gaps` acepta distrito; nuevas `/datasets` y CORS con `POST`; títulos oficiales en el catálogo; plan §1, §6 y §8 |
@@ -70,48 +75,58 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - Fase 2 `e31770b`: dominio puro de accesibilidad con tests de propiedades (`evidence/gate-03/2026-11-11`).
   - Faltan la Fase 3 (método de features y 12 features en 3 niveles) y la Fase 4 (ejecución real y Gate 3).
 
-- **GAP-001** Fase 0 `2da5d4d`, esqueleto andante. `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+- **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
-### Estado de la sesión del 11 nov (cierre)
-- **Done:**
-  - README con el tag `cf39459` y PR #1 a `main` (abierto; lo fusiona Mariano).
-  - CORE-005 Fases 1 y 2.
-  - Contratos publicados (`7541527`).
-  - GAP-001 Fase 0 (`2da5d4d`).
-  - La base local está en la migración 0004, con el catálogo sincronizado y las features recalculadas (incluidas las 3 filas regionales).
-- **Blocked:** nada. Token `sbp_…` del MCP rotado (Mariano lo confirma el 11 nov). PR #1 a `main` sigue abierto.
-- **Next (línea A), en orden** (actualizado por la noche: contratos v2 `2bcc35e` hechos):
-  0. DATA-012: población por edad y hogares por distrito de Madrid (D-200), para que `/gaps/distrito` tenga filas.
-  1. CORE-005 Fase 3: método `network_walk_time` sobre `hi_domain.access`; 12 features (6 servicios × mediana de minutos y % de calle a ≤ N min) en sección, municipio y H3 r9; fixture OSM recortado; persist multinivel ya preparado.
-  2. CORE-005 Fase 4: ejecución real, golden checks, Gate 3 y ADR D-199 (4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min).
-  3. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
-  4. CORE-006.
-  5. CORE-003 con Reality Check.
-  6. `POST /api/v1/search` (CORS con `POST`).
-- **Para Supabase (los ejecuta Mariano; en las sesiones lo bloquea el clasificador de permisos).** En `housing-intelligence`, en este orden:
-  1. `make supabase-migrate`: pasa de 0003 a 0005 (0004: enlace al portal e `is_cm_open_data`; 0005: rol `vf_api_ro`). Se puede hacer ya.
-  2. `make supabase-sync PROFILE=demo`: **esperar a que A avise** de que la base local está estable (después de DATA-012 Fase 2, con las filas por distrito).
-  3. En el SQL editor de Supabase: `ALTER ROLE vf_api_ro PASSWORD '<nueva>';`.
-  4. En Vercel, `DATABASE_URL` con el usuario `vf_api_ro.<project_ref>` (guía en `infra/deploy/README.md`).
-  5. `make deploy-demo`: despliega y pasa el smoke.
-
-  Después, A comprueba por MCP la versión de alembic, las políticas y el recuento de filas.
+### Estado de la sesión del 11 nov (tarde, relevo de la línea A)
+- **Done (esta sesión):**
+  - PR #4 de C integrado (`c8ae262`) y migración 0005 del rol `vf_api_ro` (`ad16393`, D-208).
+  - **DATA-012 completa** (D-209). Commits:
+    - F1 `f62f0d0`: padrón por distrito en bandas CM;
+    - F2 `83c74dd`: features por distrito y `/gaps/distrito` con filas reales;
+    - F3 `d87c561`: hogares por distrito;
+    - F4 `be40c2f`: ajustes del `reviewer`.
+  - PR #5 de C integrado (`d917162`): URL `vidafacil-madrid.vercel.app`, guardas de deploy y paquete offline, revisado con `reviewer`.
+  - Supabase comprobado por MCP tras el sync de Mariano: alembic 0005, 7 políticas de `vf_api_ro`, `feature_value` 2.298 (147 de distrito = 7 features × 21) y los 2 datasets del Ayuntamiento como no CM.
+  - La base local está en la 0005, con el padrón y el panel ingeridos y las features recalculadas.
+- **Blocked:** nada. PR #1 a `main` sigue abierto (lo fusiona Mariano).
+- **Next (línea A), en orden:**
+  1. **`/gaps`: un warning por cada fila esperada que no esté** (B, PR #2; contrato en docs/04/31). Hoy solo avisa si no hay ninguna. Antes de completar GAP-001.
+  2. **Peticiones de B para la API** (PR #2), mejor antes del 14 nov:
+     - `/places` corta en 10.000 resultados (transporte tiene 14.982) y no filtra: añadir `?admin_unit_id=` y `?subcategory=`;
+     - `/geo/admin-units`: nombres de municipio con mayúsculas normales y filtro por padre (p. ej. los distritos de Madrid).
+  3. CORE-005 Fase 3: método `network_walk_time` sobre `hi_domain.access`; 12 features (6 servicios × mediana de minutos y % de calle a ≤ N min) en sección, municipio y H3 r9, también por distrito con `formula.levels`; fixture OSM recortado.
+  4. CORE-005 Fase 4: ejecución real, golden checks y Gate 3. ADR nuevo (D-199 ya es el nombre del producto): 4,5 km/h; ventanas: transporte 5 min, salud 15 min y el resto 10 min. D pide confirmar los 4,5 km/h.
+  5. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
+     - Por distrito: la vivienda queda SIN DATOS, porque no hay superficie de viviendas por distrito.
+     - D pide, en lenguaje llano, qué mide cada fila nueva y si los cortes 0,8 / 1,0 cambian.
+  6. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
+  7. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que el caso de ejemplo hace aparecer el Reality Check.
+  8. `POST /api/v1/search`; los distritos entran en `all_zones`.
+- **Peticiones abiertas de otras líneas:**
+  - **D:** conectar los 12 datasets CM que aún no alimentan nada (6 GTFS, 2 de farmacias, nacidos vivos, unidades escolares, viviendas por tenencia y alquiler por código postal) y la zona real para el bloque 3 del guion.
+  - **B:** los JSON Schema se exportan en modo validación, así que `near_misses`, `meta` y `warnings` salen opcionales en TypeScript; valorar el modo serialización.
+- **Para Supabase:** migrate y sync hechos por Mariano el 11 nov. Tras cada cambio de features o de lugares, pedir a Mariano `make supabase-sync PROFILE=demo` (las sesiones no pueden) y comprobarlo después por MCP.
 - **Gate status:**
-  - G1 PASS (21 datasets CM); la red OSM pasa su calidad.
+  - G1 PASS: 21 datasets CM y 2 complementarios del Ayuntamiento (padrón y panel); la red OSM pasa su calidad.
   - G2 PASS.
-  - G3: fases de CORE-005 en verde; el Gate 3 completo llega con la Fase 4.
-  - G4: contratos y esqueleto de la lista en verde.
-  - G6: Supabase sigue en la migración 0003 y le faltan la 0004 y la 0005; la base local ya está en 0005. Despliegue de C en Vercel funcionando, con el smoke en 2/6 hasta tener `DATABASE_URL` y la sincronización.
+  - G3: fases de CORE-005 en verde, coverage `12|0|0|179` y la nueva comprobación por distrito (7 features × 21) en verde. El Gate 3 completo llega con CORE-005 F4.
+  - G4: contratos y `/gaps` (municipio y distrito) en verde; fixture `zone_gap_list.centro` para B.
+  - G6: Supabase en 0005 y sincronizado. C está desplegando con `vf_api_ro` en `vidafacil-madrid.vercel.app`.
 - **Notas para las siguientes cards:**
   - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001; el `proxy_note` ya lo avisa).
   - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004 (línea B).
   - Unidades escolares: elegir el nivel de enseñanza, nunca sumar miembros.
   - La API devuelve los errores como `{"detail": {code, message}}`; `ErrorEnvelope` es el formato objetivo.
   - El `center` de Madrid usa `ST_PointOnSurface` (cae al norte del municipio). Si B centra el mapa con él, valorar usar el centroide cuando esté dentro.
-  - La API depende ya de hi-domain, que arrastra scipy, shapely, pyproj y h3. C debe medirlo para el alojamiento.
+  - **Features por nivel** (DATA-012):
+    - `formula.levels.<nivel>` es un override superficial (puede cambiar el método);
+    - `FeatureSource.levels` dice qué datasets cita cada nivel;
+    - los lugares llegan a un distrito por su sección censal, y si a un municipio le faltan secciones, la confidence baja;
+    - la referencia regional sale solo del nivel base. CORE-005 y GAP-001 deben usar este mecanismo para los distritos.
+  - `places_per_population` declara `geocoding_quarantine` en `confidence.inputs`, pero no lo aplica (deuda anterior a DATA-012).
 
 ## 02 — READY THIS SPRINT (en orden)
-1. DATA-012 Panel de distritos y barrios del Ayuntamiento: población por edad y hogares por distrito de Madrid capital (D-200), para que Madrid no sea un único bloque · G1 · 12 nov · va antes de GAP-001
+1. API para B: un warning por cada fila de `/gaps` que falte; `/places` con `?admin_unit_id=` y `?subcategory=` y sin el corte de 10.000; `/geo/admin-units` con nombres en mayúsculas normales y filtro por padre · G4 · 12 nov
 2. CORE-005 Fases 3 y 4 (ver 03); los indicadores salen también por distrito · G3 · 12–13 nov
 3. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO / SIN DATOS frente a la referencia regional por población, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de los hogares frente a superficie de las viviendas) · G3/G4 · Fase 0 hecha el 11 nov (`2da5d4d`); completa el 13–14 nov, también por distrito · D-194
 4. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 14–15 nov
@@ -145,6 +160,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 _(vacío)_
 
 ## 07 — DONE (con evidencia)
+- DATA-012 Población por edad y hogares por distrito de Madrid (D-200, D-209): padrón municipal (21 distritos × 21 bandas CM + total; nacionalidad y sexo nunca se guardan) y panel de distritos (hogares, 2019–2025), complementarios y no CM. 7 features por distrito y `/gaps/distrito` con filas reales en los 21 distritos · G1 `evidence/gate-01/2026-11-11/phase-data012-f1.txt`, `-f3.txt` y `-f4-review.txt` · G4 `evidence/gate-04/2026-11-11/phase-data012-f2.txt` · `f62f0d0` `83c74dd` `d87c561` `be40c2f` · 2026-11-11
+- OPS-001 (parte de A): PR #4 y PR #5 de C integrados con `reviewer`; migración 0005 del rol `vf_api_ro` (D-208) · `evidence/gate-06/2026-11-11/phase-ops001-0005.txt` · `c8ae262` `ad16393` `d917162` · 2026-11-11
 - CORE-001 Contrato ScenarioState mínimo (presupuesto, hogar, lugares de referencia, servicios cerca y prioridades), publicado con los contratos PUBLIC · G4 · `7541527` · `evidence/gate-04/2026-11-11/phase-contracts-f1.txt` · 2026-11-11
 - DATAMAD-PUBLIC-01 Repo público en la misma URL, con el historial limpio de datos de contacto de los fixtures. El original queda en `housing-intelligence-archive` (privado y archivado, prueba de fechas). `pre-datamad` = `cf39459` (22 oct) · `evidence/gate-00/2026-11-11/public-repo.md` · D-195 · 2026-11-11
 - DATA-016 Datasets CM nuevos: oficinas de farmacia (2.953 puntos, sin nombres de titulares), farmacias por municipio, unidades escolares (desde 2015), nacidos vivos y viviendas por régimen de tenencia. `cm_stat_table` gana `period_min` y `points_csv` gana `subcategory_value`/`name_template`. Total: 21 datasets del portal CM · G1 PASS `evidence/gate-01/2026-11-10` · 2026-11-10
