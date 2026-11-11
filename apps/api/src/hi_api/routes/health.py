@@ -1,14 +1,13 @@
 """Liveness (process up) and readiness (database reachable and data visible) endpoints."""
 
 import logging
-from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import Engine, text
+from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
-from hi_api.deps import get_engine
+from hi_api import deps
 from hi_contracts.api.envelope import Envelope, ErrorCode
 
 router = APIRouter(tags=["health"])
@@ -30,9 +29,10 @@ def health() -> Envelope[HealthStatus]:
 
 
 @router.get("/health/ready")
-def ready(engine: Annotated[Engine, Depends(get_engine)]) -> Envelope[HealthStatus]:
+def ready() -> Envelope[HealthStatus]:
+    # The engine is built inside the try: a malformed DATABASE_URL must answer 503, not 500.
     try:
-        with engine.connect() as conn:
+        with deps.get_engine().connect() as conn:
             geography_visible = bool(conn.execute(_GEOGRAPHY_VISIBLE).scalar())
     except SQLAlchemyError as exc:
         logger.warning("readiness: database error %s", type(exc).__name__)

@@ -5,6 +5,9 @@
 # Exits 0 only if every check passes. Needs curl and jq. Prints no secrets.
 set -euo pipefail
 export LC_ALL=C
+for tool in curl jq; do
+  command -v "$tool" >/dev/null || { echo "smoke: $tool is required" >&2; exit 2; }
+done
 
 BASE="${1:-${SMOKE_BASE_URL:-https://vida-facil-eight.vercel.app}}"
 BASE="${BASE%/}"

@@ -1,0 +1,34 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+217 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 30%]
+........................................................................ [ 61%]
+........................................................................ [ 92%]
+..................                                                       [100%]
+234 passed in 3.65s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/hi-deploy/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  12:57:26
+   Duration  139ms (tests 57%, import 22%, transform 12%, worker 10%)
+
+exit=0

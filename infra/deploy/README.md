@@ -39,6 +39,27 @@ npx vercel@65.12.1 env add DATABASE_URL --environment production --sensitive
 
 También se puede meter desde el panel: Project `vida-facil` → Settings → Environment Variables → `DATABASE_URL`, marcando Production y Sensitive. Después hay que volver a desplegar: las variables nuevas solo se aplican en los despliegues que vienen detrás.
 
+## Rol de solo lectura `vf_api_ro`
+
+- **Cómo se crea:** con [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql). Es idempotente y A lo convierte en migración. También se puede pegar a mano en el SQL Editor de Supabase. La contraseña se fija aparte, con `ALTER ROLE vf_api_ro PASSWORD '…'`, y solo va en `DATABASE_URL`. Por el pooler, el usuario es `vf_api_ro.ilvbivfnqvfqslbbiuts`.
+- **Qué impide escribir:** los privilegios. Solo tiene `SELECT` en las 7 tablas de la lista y ningún `CREATE` en `public`. `default_transaction_read_only` es una segunda capa, pero el rol podría desactivarla en su sesión.
+- **Requisito:** el SQL necesita el esquema `extensions`, donde viven PostGIS y pgvector. Existe en local y en Supabase.
+- **Quitar una tabla de la lista no revoca nada.** Si se quita, hay que hacer `REVOKE SELECT` y `DROP POLICY vf_api_ro_read` sobre esa tabla.
+
+### Riesgo: una tabla nueva sale vacía, sin dar error
+
+Con RLS activo (D-197), una tabla que lee la API pero que no tiene `GRANT SELECT` ni política `vf_api_ro_read` se comporta así:
+- **Sin `GRANT`:** la petición falla con `permission denied` y la API devuelve 500.
+- **Con `GRANT` pero sin política:** la tabla **se ve vacía**. Es el peor caso, porque la API responde 200 con listas vacías o filas «SIN DATOS».
+
+Cómo se detecta:
+1. **Antes del merge:** `tests/unit/api/test_readonly_role.py` falla si el SQL de la API (`text(...)` en `apps/api`) consulta una tabla que no está en el `ARRAY[...]` del rol. Cuando se añada una tabla, hay que añadirla a la lista, crear la migración y volver a aplicarla en Supabase.
+2. **En producción:** `make smoke-demo`.
+   - `ready` da 503 `INSUFFICIENT_DATA` si el rol no ve `geo_admin_unit`.
+   - `zone` falla si la lista de la zona sale sin filas.
+   - `geography` y `layer` fallan si no hay municipios o lugares.
+   - Los datos que no cubre el smoke (por ejemplo, el buscador cuando exista) hay que comprobarlos con el rol: `SET ROLE vf_api_ro; SELECT count(*) FROM <tabla>;` en el SQL Editor tiene que dar el mismo número que como `postgres`.
+
 ## Volver a desplegar (17 nov)
 
 1. **A** carga los datos en Supabase:

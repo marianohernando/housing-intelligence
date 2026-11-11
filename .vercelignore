@@ -9,3 +9,8 @@
 !packages
 !services
 !infra
+# ...and nothing local inside the allowed folders
+**/.env*
+**/.venv
+**/.next
+**/__pycache__
