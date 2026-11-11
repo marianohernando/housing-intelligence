@@ -867,3 +867,45 @@ CORE-006. Código en `hi_domain/affordability.py` y en el método `postcode_weig
    - **Candidatas para DATA-021:**
      - el valor tasado de vivienda libre del Ministerio de Vivienda (municipios de más de 25.000 habitantes);
      - el valor de referencia del Catastro que publica la CM para las viviendas arrendadas (municipios de más de 20.000 habitantes y códigos postales de Madrid).
+
+## D-215 — Encaje residencial: condiciones, % de encaje y Reality Check (2026-11-11)
+CORE-003. Método `fit-0.1`, en `hi_domain/fit.py`, `hi_domain/reality_check.py` y `hi_domain/search.py`, sobre los contratos v2 (D-202, D-207). Responde a la línea D, que pidió cómo se reparten los pesos y cómo se pasa a %. Es reversible: cambiar un peso o una curva solo cambia `methodology_version`.
+
+1. **Zonas.** Los 178 municipios distintos de Madrid y los 21 distritos de Madrid capital (D-200): 199 zonas.
+2. **Condiciones** (PASS, FAIL o UNKNOWN; UNKNOWN nunca cuenta como PASS):
+   - **Presupuesto (`budget`):** según D-214.
+   - **Servicio cerca obligatorio (`near:<servicio>`):** la mediana de los minutos a pie de las calles de la zona (CORE-005, 4 km/h) frente al máximo que pide la persona. Sin dato, UNKNOWN.
+   - **Trayecto con límite (`commute:<i>`):** UNKNOWN en todas las zonas hasta que exista el tiempo en transporte público (CORE-009). La explicación da la distancia en línea recta. Si la persona pone un límite de minutos, ninguna zona pasa y el Reality Check propone quitarlo. Por eso, mientras tanto, la web debería enviar el trabajo sin límite (`max_minutes: null`), como preferencia.
+3. **Criterios del % de encaje.** Van en este orden:
+   1. las prioridades «Me importa», en el orden en que las marca la persona;
+   2. cada lugar de trabajo o estudio;
+   3. los servicios cerca que marca como deseables y que no están ya entre sus prioridades;
+   4. el margen de presupuesto, si es de alquiler.
+4. **Pesos por rango (rank sum):** con n criterios, el primero pesa n, el segundo n − 1 y el último 1, y se normalizan para sumar 1. Ejemplo con 5 criterios: 33 %, 27 %, 20 %, 13 % y 7 %. Es el método de pesos por orden más fácil de explicar: lo que marcas primero cuenta más.
+5. **Utilidad de cada criterio** (de 0 a 1, curvas lineales con saturación, CLAUDE.md §14):
+   - **Servicio a pie** (transporte → parada; salud → centro de salud; colegios → colegio con primaria): vale 1 hasta la ventana de D-210 y baja a 0 en el triple de esa ventana.
+     - Ventanas: transporte 5 min, centro de salud 15 y los demás 10. Si la persona fija sus minutos, se usan los suyos.
+     - Ejemplo: un colegio a 10 min vale 1, a 20 min vale 0,5 y a 30 min o más vale 0.
+   - **Trabajo:** distancia en línea recta desde el centro de la zona. Vale 1 hasta 3 km y 0 desde 30 km. Es un proxy declarado (no es tiempo de trayecto), con confidence 0,5.
+   - **Margen de presupuesto:** vale 1 si el coste es el 75 % del presupuesto o menos, y 0 si lo iguala.
+   - **Zonas verdes, seguridad y «sin escaleras»:** aún sin datos (D-205, del 19 al 22 nov). Nunca puntúan como 0: salen como hecho «sin datos» y bajan la confidence.
+6. **Paso a %:** media ponderada de las utilidades de los criterios con dato, por 100 y redondeada.
+   - La confidence de la zona es la suma de peso × confidence de los criterios con dato, sobre el peso total. Así un criterio sin dato la baja.
+   - Sin ningún criterio, una zona que cumple todo encaja al 100 %. Con criterios pero ninguno con dato, el % es desconocido (`null`), nunca 0.
+7. **Resultado:**
+   - **`results`:** las 10 mejores zonas con todas las condiciones en PASS, ordenadas por % de encaje, confidence y nombre.
+   - **`near_misses`:** hasta 5 zonas que fallan exactamente una condición y cumplen las demás.
+   - **`all_zones`:** las 199 zonas, para la coropleta.
+   - **`facts`:** de 3 a 5 hechos tangibles por zona. Primero los criterios con dato, por orden de importancia; si hay menos de 3, se completan con minutos a pie de contexto; los «sin datos» van al final.
+   - **`gap_highlights`:** 3 filas de GAP-001 elegidas por el hogar: escuela infantil si hay menores de 3 años, colegio si hay menores, mayores si hay mayores a cargo, y después centro de salud, farmacia y vivienda.
+8. **Reality Check:** para cada condición, cuántas zonas pasarían si solo esa se relajara, con las demás fijas:
+   - **presupuesto de alquiler:** +10 %, redondeado hacia arriba a 50 €;
+   - **presupuesto de compra:** quitarlo;
+   - **servicio cerca:** +5 min, hasta 60; a partir de ahí pasa a ser preferencia;
+   - **trayecto:** sin límite.
+
+   `binding_constraint` es la condición que deja fuera más zonas por sí sola. Relajar nunca quita zonas (test de propiedades).
+9. **Pendiente:**
+   - diversificación y soluciones Pareto (§14): hoy el orden es solo por % de encaje;
+   - tiempo de trayecto real (CORE-009);
+   - ML/JEV.
