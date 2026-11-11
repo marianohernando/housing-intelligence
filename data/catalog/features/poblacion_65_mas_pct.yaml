@@ -7,16 +7,22 @@ unit: "%"
 direction: neutral
 geo_level: municipio
 time_semantics: snapshot
-sources: [{dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: primary}]
+sources:
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: primary, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: primary, levels: [distrito]}
 formula:
   method: metric_share
   metric: poblacion_censada
   numerator: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos], nacionalidad: [total], sexo: [total]}
   denominator: {edad: [total], nacionalidad: [total], sexo: [total]}
+  levels:
+    distrito: {metric: poblacion_padron, numerator: {edad: [de_65_69_anos, de_70_74_anos, de_75_79_anos, de_80_84_anos, de_85_89_anos, de_90_94_anos, de_95_99_anos, de_100_y_mas_anos]}, denominator: {edad: [total]}}
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
 confidence: {inputs: [source_freshness]}
 public_use: true
 pro_use: true
 models: [residential_fit, senior_fit, housing_gap]
 tests: [range_0_100, additive_inputs]
-limitations: [Indicador de estructura; no mide dependencia ni necesidad de cuidados.]
+limitations:
+  - "Indicador de estructura; no mide dependencia ni necesidad de cuidados."
+  - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."

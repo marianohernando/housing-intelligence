@@ -244,7 +244,7 @@ def places_per_population(
 ) -> pd.DataFrame:
     counts: dict[str, float] = {}
     for record in _place_filter(places, subcategories, attributes):
-        code = record["municipio_ine"]
+        code = record["territory_code"]
         if code:
             counts[code] = counts.get(code, 0.0) + 1.0
     return _per_population(
@@ -266,7 +266,7 @@ def place_attribute_per_population(
     seen: dict[str, int] = {}
     known: dict[str, int] = {}
     for record in _place_filter(places, subcategories, None):
-        code = record["municipio_ine"]
+        code = record["territory_code"]
         if not code:
             continue
         seen[code] = seen.get(code, 0) + 1

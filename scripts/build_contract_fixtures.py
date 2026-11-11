@@ -103,9 +103,11 @@ def refs(catalog: Catalog, versions: dict[str, str]) -> list[DatasetRef]:
     return [dataset_ref(catalog, d, v) for d, v in sorted(versions.items())]
 
 
-def gap_list(conn: Connection, code: str) -> ZoneGapList:
-    """Exactly what GET /api/v1/gaps/municipio/{code} returns today."""
-    gaps, warnings, _ = zone_gap_list(conn, TerritoryLevel.MUNICIPIO, code)
+def gap_list(
+    conn: Connection, code: str, level: TerritoryLevel = TerritoryLevel.MUNICIPIO
+) -> ZoneGapList:
+    """Exactly what GET /api/v1/gaps/{level}/{code} returns today."""
+    gaps, warnings, _ = zone_gap_list(conn, level, code)
     assert not warnings, warnings  # noqa: S101 - a fixture must not hide a warning
     return gaps
 
@@ -308,6 +310,7 @@ def main() -> None:
         write("scenario_state.familia_castellana", demo_scenario())
         write("zone_gap_list.madrid", gap_list(conn, "28079"))
         write("zone_gap_list.mostoles", gap_list(conn, "28092"))
+        write("zone_gap_list.centro", gap_list(conn, "2807901", TerritoryLevel.DISTRITO))
         write("search_result.familia_presupuesto", search_result(conn, catalog))
         write("dataset_list.all", dataset_list(conn, cm_only=False))
 

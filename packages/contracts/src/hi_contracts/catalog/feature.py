@@ -15,6 +15,11 @@ class FeatureSource(BaseModel):
 
     dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
     role: Literal["primary", "secondary", "denominator", "validation"] = "primary"
+    levels: list[GeoResolution] | None = Field(
+        default=None,
+        description="Levels whose computation uses this dataset (the feature's geo_level or a "
+        "key of formula.levels); None means every level. Each row cites only its own.",
+    )
 
 
 class FeatureFormula(BaseModel):

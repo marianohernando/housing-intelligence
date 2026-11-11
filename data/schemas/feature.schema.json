@@ -56,6 +56,22 @@
           "title": "Dataset Id",
           "type": "string"
         },
+        "levels": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/GeoResolution"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Levels whose computation uses this dataset (the feature's geo_level or a key of formula.levels); None means every level. Each row cites only its own.",
+          "title": "Levels"
+        },
         "role": {
           "default": "primary",
           "enum": [

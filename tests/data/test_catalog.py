@@ -143,3 +143,20 @@ def test_gap_rows_have_one_primary_indicator_at_most(catalog: Catalog) -> None:
     ]
     assert len(primaries) == len(set(primaries))
     assert {"colegio", "centro_salud"} <= set(primaries)
+
+
+def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Catalog) -> None:
+    """A level override (e.g. districts) names metrics that exist, and lineage cites them."""
+    for spec in catalog.features.values():
+        levels: dict[str, dict[str, object]] = (spec.formula.model_extra or {}).get("levels") or {}
+        passes = {spec.geo_level.value, *levels}
+        for source in spec.sources:
+            assert source.levels is None or set(source.levels) <= passes, spec.feature_id
+        for level, override in levels.items():
+            used = {s.dataset_id for s in spec.sources if s.levels is None or level in s.levels}
+            for key in ("metric", "population_metric"):
+                metric_id = override.get(key)
+                if metric_id is None:
+                    continue
+                assert metric_id in catalog.metrics, (spec.feature_id, level, metric_id)
+                assert catalog.metrics[str(metric_id)].dataset_id in used, (spec.feature_id, level)

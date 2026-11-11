@@ -9,7 +9,8 @@ geo_level: municipio
 time_semantics: current
 sources:
   - {dataset_id: cm_centros_educativos, role: primary}
-  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
 formula:
   method: places_per_population
   category: education
@@ -18,6 +19,8 @@ formula:
   population_dims: {edad: [de_0_4_anos, de_5_9_anos, de_10_14_anos], nacionalidad: [total], sexo: [total]}
   small_population_threshold: 500  # denominator below this -> confidence 0.5
   per: 1000
+  levels:
+    distrito: {population_metric: poblacion_padron, population_dims: {edad: [de_0_4_anos, de_5_9_anos, de_10_14_anos]}}
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
 confidence: {inputs: [source_freshness, geocoding_quarantine]}
 public_use: true
@@ -27,4 +30,5 @@ tests: [non_negative, monotonic_in_places]
 limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "Cuenta centros, no plazas ni etapas; un centro grande y uno pequeño pesan igual. Medida de cobertura, no de acceso a pie."
+  - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
 gap_row: {row: colegio, role: primary, label: "Colegios", phrase: "centros educativos públicos por cada 1.000 menores de 15 años", proxy_note: "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos."}

@@ -164,8 +164,15 @@ def _gap_row(
         ratio_to_reference=None if ratio is None else _significant(ratio),
         explanation=text_,
         proxy_note=binding.get("proxy_note"),
-        datasets=dataset_refs(conn, row["inputs"].get("dataset_versions", {})),
+        datasets=dataset_refs(conn, _versions(row, reference_row)),
     )
+
+
+def _versions(row: dict[str, Any], reference_row: dict[str, Any] | None) -> dict[str, str]:
+    """The datasets behind the zone's value and behind the reference it is compared with
+    (e.g. a district uses the padrón, the region the CM census)."""
+    reference = {} if reference_row is None else reference_row["inputs"].get("dataset_versions", {})
+    return {**reference, **row["inputs"].get("dataset_versions", {})}
 
 
 def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:

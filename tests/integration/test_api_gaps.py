@@ -45,17 +45,30 @@ def test_municipio_list_has_real_rows_against_the_region(
     assert all(d.url and d.url.host == "datos.comunidad.madrid" for d in cm)
 
 
-def test_madrid_district_answers_with_its_name_before_district_indicators_exist(
-    client: TestClient,
-) -> None:
-    """Decision of 11 Nov: Madrid capital by district. DATA-012 adds the district rows."""
-    response = client.get("/api/v1/gaps/distrito/2807901")
+def test_madrid_district_has_real_rows_against_the_region(client: TestClient) -> None:
+    """D-200: Madrid capital by district, with the padrón as its population (D-209)."""
+    response = client.get("/api/v1/gaps/distrito/2807906")
     assert response.status_code == 200
     payload = ZoneGapListResponse.model_validate(response.json())
     assert payload.data.zone.municipio_ine == "28079"
-    assert payload.data.zone.admin_unit_id == "ES.28.DIS.2807901"
-    assert payload.data.rows == []
-    assert payload.warnings
+    assert payload.data.zone.admin_unit_id == "ES.28.DIS.2807906"
+    assert payload.warnings == []
+    rows = {r.row.value: r for r in payload.data.rows}
+    assert {"colegio", "centro_salud"} <= set(rows)
+    for row in rows.values():
+        assert row.indicator.level.value == "distrito"
+        assert row.indicator.value is not None
+        assert row.reference is not None
+        assert row.reference_label == "Comunidad de Madrid"
+    datasets = {d.dataset_id: d for d in rows["colegio"].datasets}
+    assert datasets["ayto_padron_municipal"].is_cm_open_data is False  # the district population
+    assert datasets["cm_poblacion_edad_nacionalidad_sexo"].is_cm_open_data  # the reference
+    assert datasets["cm_centros_educativos"].is_cm_open_data
+
+
+def test_municipio_rows_never_cite_the_district_population(client: TestClient) -> None:
+    body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
+    assert "ayto_padron_municipal" not in {d.dataset_id for d in body.data.datasets}
 
 
 def test_dataset_list_counts_cm_open_data(client: TestClient) -> None:

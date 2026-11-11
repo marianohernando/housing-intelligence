@@ -1,0 +1,59 @@
+DATA-012 Fase 2 (line A) · features by district of Madrid -> /api/v1/gaps/distrito with real rows · 2026-11-11T14:15:52Z
+
+## make features (local DB): municipio 179 + distrito 21 (+ ccaa 1 for gap features)
+centros_salud_por_10000_hab: 201 rows, 201 with value, 0 explicit unknown
+colegios_publicos_por_1000_menores: 201 rows, 201 with value, 0 explicit unknown
+plazas_residencia_por_100_mayores: 201 rows, 201 with value, 0 explicit unknown
+poblacion_0_14_pct: 200 rows, 200 with value, 0 explicit unknown
+poblacion_65_mas_pct: 200 rows, 200 with value, 0 explicit unknown
+poblacion_total: 200 rows, 200 with value, 0 explicit unknown
+
+## places: sum over districts == Madrid (every active Madrid place has a census section)
+education|1642|1642
+health|2625|2625
+social|431|431
+## lineage per level (colegios): municipio and ccaa cite the CM census; distrito cites the padrón
+ccaa|1|cm_centros_educativos,cm_poblacion_edad_nacionalidad_sexo
+distrito|21|ayto_padron_municipal,cm_centros_educativos
+municipio|179|cm_centros_educativos,cm_poblacion_edad_nacionalidad_sexo
+## Gate 3 coverage query (expected 12|0|0|179)
+12|0|0|179
+
+## API on :8010 — GET /api/v1/gaps/distrito/{code} for the 21 districts (status colegio / centro_salud)
+2807901 Centro                 colegio CUBIERTO    3.512 (ref 2.178) · centro_salud JUSTO      0.4889 (ref 0.5918) · warnings=0
+2807902 Arganzuela             colegio FALTA       1.222 (ref 2.178) · centro_salud JUSTO      0.4977 (ref 0.5918) · warnings=0
+2807903 Retiro                 colegio FALTA        1.46 (ref 2.178) · centro_salud FALTA       0.251 (ref 0.5918) · warnings=0
+2807904 Salamanca              colegio FALTA      0.5137 (ref 2.178) · centro_salud FALTA       0.339 (ref 0.5918) · warnings=0
+2807905 Chamartín              colegio FALTA      0.8793 (ref 2.178) · centro_salud FALTA       0.469 (ref 0.5918) · warnings=0
+2807906 Tetuán                 colegio FALTA       1.312 (ref 2.178) · centro_salud FALTA       0.352 (ref 0.5918) · warnings=0
+2807907 Chamberí               colegio FALTA       1.312 (ref 2.178) · centro_salud FALTA      0.4223 (ref 0.5918) · warnings=0
+2807908 Fuencarral-El Pardo    colegio FALTA       1.486 (ref 2.178) · centro_salud FALTA       0.387 (ref 0.5918) · warnings=0
+2807909 Moncloa-Aravaca        colegio JUSTO       1.799 (ref 2.178) · centro_salud JUSTO      0.5462 (ref 0.5918) · warnings=0
+2807910 Latina                 colegio JUSTO       1.801 (ref 2.178) · centro_salud FALTA       0.354 (ref 0.5918) · warnings=0
+2807911 Carabanchel            colegio FALTA       1.551 (ref 2.178) · centro_salud FALTA      0.2841 (ref 0.5918) · warnings=0
+2807912 Usera                  colegio JUSTO       2.135 (ref 2.178) · centro_salud FALTA      0.3224 (ref 0.5918) · warnings=0
+2807913 Puente de Vallecas     colegio JUSTO       1.839 (ref 2.178) · centro_salud FALTA      0.4602 (ref 0.5918) · warnings=0
+2807914 Moratalaz              colegio CUBIERTO    3.116 (ref 2.178) · centro_salud FALTA      0.3166 (ref 0.5918) · warnings=0
+2807915 Ciudad Lineal          colegio FALTA        1.29 (ref 2.178) · centro_salud FALTA      0.3457 (ref 0.5918) · warnings=0
+2807916 Hortaleza              colegio FALTA       1.315 (ref 2.178) · centro_salud FALTA      0.2829 (ref 0.5918) · warnings=0
+2807917 Villaverde             colegio JUSTO       1.872 (ref 2.178) · centro_salud FALTA      0.3984 (ref 0.5918) · warnings=0
+2807918 Villa de Vallecas      colegio FALTA       1.118 (ref 2.178) · centro_salud FALTA      0.2317 (ref 0.5918) · warnings=0
+2807919 Vicalvaro              colegio FALTA       1.381 (ref 2.178) · centro_salud FALTA      0.2995 (ref 0.5918) · warnings=0
+2807920 San Blas-Canillejas    colegio CUBIERTO    2.473 (ref 2.178) · centro_salud FALTA      0.2351 (ref 0.5918) · warnings=0
+2807921 Barajas                colegio JUSTO       2.142 (ref 2.178) · centro_salud FALTA      0.3905 (ref 0.5918) · warnings=0
+
+## API — full response for Centro (2807901), datasets per row
+colegio CUBIERTO 3,5 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2 | ['ayto_padron_municipal (no CM)', 'cm_centros_educativos (CM)', 'cm_poblacion_edad_nacionalidad_sexo (CM)']
+centro_salud JUSTO 0,49 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,59 | ['ayto_padron_municipal (no CM)', 'cm_centros_sanitarios (CM)', 'cm_poblacion_edad_nacionalidad_sexo (CM)']
+## API — municipio 28079 unchanged (no padrón cited)
+[('colegio', 'FALTA', 1.558, 2.178), ('centro_salud', 'FALTA', 0.371, 0.5918)] ['cm_centros_educativos', 'cm_centros_sanitarios', 'cm_poblacion_edad_nacionalidad_sexo']
+## API — /datasets counter
+total 23 cm 21
+
+## gate: make lint typecheck test
+All checks passed!
+231 files already formatted
+0 errors, 0 warnings, 0 informations
+257 passed in 4.54s
+      Tests  11 passed (11)
+56 passed in 24.41s

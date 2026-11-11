@@ -83,7 +83,7 @@ def test_weighted_mean_and_its_confidence() -> None:
 def _places(codes: list[str]) -> pd.DataFrame:
     return pd.DataFrame(
         [
-            {"municipio_ine": c, "subcategory": "Centro de salud", "attributes": {"plazas": "10"}}
+            {"territory_code": c, "subcategory": "Centro de salud", "attributes": {"plazas": "10"}}
             for c in codes
         ]
     )
@@ -112,7 +112,7 @@ def test_attribute_sum_confidence_reflects_missing_attributes() -> None:
         [
             _places(["28001"]),
             pd.DataFrame(
-                [{"municipio_ine": "28001", "subcategory": "Centro de salud", "attributes": {}}]
+                [{"territory_code": "28001", "subcategory": "Centro de salud", "attributes": {}}]
             ),
         ]
     )
