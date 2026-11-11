@@ -380,3 +380,18 @@ Sobre `origin/claude/sprint-1-public` en `fbc7e37`. Decisión de Mariano, transm
 - **Para D:** «Todo {distrito}» es provisional. `barrios.titulo` dice que la barra no se muestra sin datos por barrio; datamad-10 pidió una barra que solo navega. Hay que alinear la nota.
 - **Para A:** nombres de municipio mal codificados en `/geo/admin-units`: «Redue/a», «Griðon», «Villanueva de la Ca/ada», «Pi/uecar-Gandullas».
 - **En la isla, el móvil no muestra el borde de maqueta:** se quitó en la F5 por rendimiento.
+
+## Revisión (agente `reviewer`, cierre de MAP-004)
+- **Ningún bloqueante.** `projectAt` coincide con `Transform` de MapLibre: signo del bearing, distancia de cámara, perspectiva y padding.
+- **Corregido:**
+  - **Etiquetas antiguas:** al volver a una vista ya vista salían sobre la isla. Ahora exigen haber aterrizado.
+  - **Foco de barrio:** se recordaba al volver al distrito. Ahora vuelve a «Todo {distrito}».
+  - **Anillo de foco:** se recortaba en la lista desplazable.
+  - **Barrios:** un fallo puntual al pedirlos ya no se queda guardado; se reintentan en la siguiente visita.
+  - **`stop()`:** no se llama sobre un mapa ya desmontado.
+  - **Barra:** deja sitio a los controles del mapa.
+- **Comprobado** en `f5c_reviewer.json`: 0 etiquetas durante el vuelo de vuelta y 4 al llegar; al volver, «Todo Chamartín» queda pulsado; consola sin errores.
+- **Aceptado sin cambio:**
+  - si el usuario arrastra durante el vuelo, las etiquetas se calculan para la cámara prevista;
+  - el giro lento final (+15°) puede llevar alguna etiqueta bajo el cristal;
+  - un cambio de tamaño de la ventana no recalcula la isla.

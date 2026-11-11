@@ -302,7 +302,8 @@ export default function VidaMap() {
       loadPlaces(placesCache.current, activeZone.properties.admin_unit_id).catch(() => undefined);
       const stop = showZone(map, activeZone, barrio, (end) => setLanded({ key: view, end }));
       return () => {
-        stop();
+        // On unmount the map is already removed (its effect cleans up first).
+        if (mapRef.current) stop();
         setLanded(null);
       };
     }
@@ -335,7 +336,8 @@ export default function VidaMap() {
     };
   }, [activeZone, landed, view]);
 
-  const points = view && keyPoints?.key === view ? keyPoints.points : NO_POINTS;
+  // Only once landed: back on a view already seen, its old labels would show over the island.
+  const points = view && landed?.key === view && keyPoints?.key === view ? keyPoints.points : NO_POINTS;
   const labels = useMemo(
     () => (typeof document === "undefined" ? [] : points.map((point) => ({ point, element: document.createElement("div") }))),
     [points],

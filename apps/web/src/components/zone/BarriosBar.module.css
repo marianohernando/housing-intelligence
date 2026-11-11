@@ -12,11 +12,12 @@
   font-weight: 600;
 }
 
+/* Room for the focus ring (3 px + 2 px offset), which a scrolling list would otherwise clip */
 .list {
   display: flex;
   gap: var(--space-2);
-  margin: 0;
-  padding: 0;
+  margin: -6px;
+  padding: 6px;
   overflow-x: auto;
   list-style: none;
 }
@@ -25,14 +26,17 @@
   flex: none;
 }
 
-/* Wide screens: fixed at the bottom, centred, clear of the camera (its bottom padding is 200 px) */
+/*
+ * Wide screens: fixed at the bottom, centred, clear of the camera (its bottom padding is 200 px)
+ * and of the map controls and attribution in the bottom right corner.
+ */
 @media (min-width: 1101px) {
   .bar {
     position: fixed;
     bottom: var(--space-5);
     left: 50%;
     width: max-content;
-    max-width: calc(100vw - 2 * var(--page-gutter));
+    max-width: calc(100vw - 2 * var(--page-gutter) - 8rem);
     transform: translateX(-50%);
   }
 }

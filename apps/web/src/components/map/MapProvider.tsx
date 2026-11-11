@@ -49,9 +49,9 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<ApiError | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  // Both remember their district, so moving to another zone needs no reset.
+  // The list remembers its district, so another zone never shows the wrong barrios.
   const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
-  const [focus, setFocus] = useState<{ parent: string; id: string } | null>(null);
+  const [focus, setFocus] = useState<string | null>(null);
 
   useEffect(() => {
     const api = createApi();
@@ -79,17 +79,24 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   );
   const districtId = activeZone?.properties.level === "distrito" ? activeZone.properties.admin_unit_id : null;
 
+  // Entering another district (or coming back to one) starts from the whole district.
+  const [focusDistrict, setFocusDistrict] = useState(districtId);
+  if (focusDistrict !== districtId) {
+    setFocusDistrict(districtId);
+    setFocus(null);
+  }
+
   useEffect(() => {
     if (!districtId || barrioList?.parent === districtId) return;
     let cancelled = false;
     createApi()
       .adminUnits("barrio", SIMPLIFY_M.barrio, districtId)
-      .then((body) => body.data.features)
-      // The bar only helps to move around the district: without barrios it is not shown.
-      .catch((): AdminFeature[] => [])
-      .then((features) => {
-        if (!cancelled) setBarrioList({ parent: districtId, features });
-      });
+      .then((body) => {
+        if (!cancelled) setBarrioList({ parent: districtId, features: body.data.features });
+      })
+      // The bar only helps to move around the district: on failure it is not shown, and the
+      // next visit to the district asks again.
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
@@ -100,18 +107,14 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     setAttempt((n) => n + 1);
   }, []);
 
-  const focusBarrio = useCallback(
-    (id: string | null) => setFocus(id && districtId ? { parent: districtId, id } : null),
-    [districtId],
-  );
+  const focusBarrio = useCallback((id: string | null) => setFocus(id), []);
 
   const value = useMemo<MapContextValue>(() => {
     const status: ZonesStatus = error ? "error" : zones ? "ready" : "loading";
     const [level = "", selectedCode = ""] = selectedKey?.split("/") ?? [];
     const selectedZone = zones && selectedKey ? (findZone(zones, level, selectedCode) ?? null) : null;
     const barrios = districtId && barrioList?.parent === districtId ? barrioList.features : null;
-    const barrio =
-      focus?.parent === districtId ? (barrios?.find((b) => b.properties.admin_unit_id === focus.id) ?? null) : null;
+    const barrio = focus ? (barrios?.find((b) => b.properties.admin_unit_id === focus) ?? null) : null;
     return { zones, status, error, retry, activeZone, selectedZone, select: setSelectedKey, barrios, barrio, focusBarrio };
   }, [zones, error, retry, activeZone, selectedKey, districtId, barrioList, focus, focusBarrio]);
 
