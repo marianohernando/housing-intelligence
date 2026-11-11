@@ -31,6 +31,7 @@ Aquí solo van los nombres, nunca los valores. Las variables que no son secretas
 | `CORS_ORIGINS` | api | Config | `["https://vidafacil-madrid.vercel.app","https://vida-facil-eight.vercel.app"]`, una lista JSON |
 | `PORT` | api | Config | `8080`. El contenedor escucha ahí y Vercel enruta a `$PORT` |
 | `NEXT_PUBLIC_API_URL` | web | Config | `https://vidafacil-madrid.vercel.app`. Se incrusta al compilar: si cambia, hay que volver a desplegar |
+| `NEXT_PUBLIC_FEATURE_SEARCH` | web | Config | `true` desde el 11 nov: enciende el buscador. Se incrusta al compilar. Para apagarlo: `npx vercel@65.12.1 env rm NEXT_PUBLIC_FEATURE_SEARCH production` y volver a desplegar. Si el despliegue anterior se compiló sin ella, también vale un rollback |
 
 Cómo mete Mariano el secreto. En la carpeta enlazada (la que tiene `.vercel/`):
 
