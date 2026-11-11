@@ -889,14 +889,14 @@ CORE-003. Método `fit-0.1`, en `hi_domain/fit.py`, `hi_domain/reality_check.py`
    - **Trabajo:** distancia en línea recta desde el centro de la zona. Vale 1 hasta 2 km (unos 30 min a pie) y 0 desde 20 km, que es más o menos el radio del municipio de Madrid más la primera corona. Es un proxy declarado, porque la distancia no es tiempo de trayecto, y lleva confidence 0,5. Es un parámetro de diseño: se sustituye por el tiempo real con CORE-009.
    - **Margen de presupuesto:** vale 1 si el coste es el 75 % del presupuesto o menos, y 0 si lo iguala.
    - **Zonas verdes, seguridad y «sin escaleras»:** aún sin datos (D-205, del 19 al 22 nov). Nunca puntúan como 0: salen como hecho «sin datos» y bajan la confidence.
-6. **Paso a %:** media ponderada de las utilidades de los criterios con dato, por 100 y redondeada.
+6. **Paso a %:** media ponderada de las utilidades de los criterios con dato, por 100 y redondeada a la unidad (0,5 hacia arriba). El orden usa el valor sin redondear.
    - La confidence de la zona es la suma de peso × confidence de los criterios con dato, sobre el peso total. Así un criterio sin dato la baja.
    - Sin ningún criterio, una zona que cumple todo encaja al 100 %. Con criterios pero ninguno con dato, el % es desconocido (`null`), nunca 0.
 7. **Resultado:**
    - **`results`:** las 10 mejores zonas con todas las condiciones en PASS, ordenadas por % de encaje, confidence y nombre.
    - **`near_misses`:** hasta 5 zonas que fallan exactamente una condición y cumplen las demás.
    - **`all_zones`:** las 199 zonas, para la coropleta.
-   - **`facts`:** de 3 a 5 hechos tangibles por zona. Primero los criterios con dato, por orden de importancia; si hay menos de 3, se completan con minutos a pie de contexto; los «sin datos» van al final.
+   - **`facts`:** hasta 5 hechos tangibles por zona (3 o más cuando hay datos). Primero los criterios con dato, por orden de importancia para la persona, sean fortaleza o debilidad; si hay menos de 3, se completan con minutos a pie de contexto; los «sin datos» van al final.
    - **`gap_highlights`:** 3 filas de GAP-001 elegidas por el hogar: escuela infantil si hay menores de 3 años, colegio si hay menores, mayores si hay mayores a cargo, y después centro de salud, farmacia y vivienda.
 8. **Reality Check:** para cada condición, cuántas zonas pasarían si solo esa se relajara, con las demás fijas:
    - **presupuesto de alquiler:** +10 %, redondeado hacia arriba a 50 €;
@@ -904,11 +904,11 @@ CORE-003. Método `fit-0.1`, en `hi_domain/fit.py`, `hi_domain/reality_check.py`
    - **servicio cerca:** +5 min, hasta 60; a partir de ahí pasa a ser preferencia;
    - **trayecto:** sin límite.
 
-   `binding_constraint` es la condición que deja fuera más zonas por sí sola. Relajar nunca quita zonas (test de propiedades).
+   `binding_constraint` es la condición que no se cumple (FAIL o UNKNOWN) en más zonas, digan lo que digan las demás. Con un límite de trayecto, que siempre es UNKNOWN, esa es la que gana. Relajar nunca quita zonas (test de propiedades).
 9. **Caso demo con los datos del 11 nov** (`scripts/golden_search.py`, `evidence/gate-04/2026-11-11/phase-core003-f2.txt`): pareja con 2 hijos (4 y 8 años), 1.500 €/mes, colegio a 10 min como requisito, prioridades colegios, transporte y salud, y trabajo en la Castellana como preferencia.
    - **Recuento:** 32 de las 199 zonas cumplen todo y 15 quedan desconocidas (sin alquiler publicado o sin minutos a pie).
    - **Primera:** Ciudad Lineal, con un 99 %: colegio a 5 min, parada a 2 min, centro de salud a 11 min, a 3,2 km de Azca y unos 1.075 €/mes por 77 m².
-   - **Siguientes:** Hortaleza, Tetuán y Moratalaz (97 %). Chamartín sale novena (95 %), porque sus 1.384 €/mes dejan poco margen.
+   - **Siguientes:** Tetuán, Hortaleza y Moratalaz (97 %). Chamartín sale octava (95 %), porque sus 1.384 €/mes dejan poco margen.
    - **Reality Check:** la condición que más zonas quita es el colegio a 10 min. Con 5 min más aparecen 17 zonas, y con 150 € más, 1.
    - **Casi:** Salamanca, que falla solo por presupuesto (≈ 1.526 €/mes).
 10. **Pendiente:**

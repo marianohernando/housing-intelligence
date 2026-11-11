@@ -26,6 +26,7 @@ from hi_contracts.public import (
 )
 from hi_domain.fit import (
     ZoneData,
+    as_pct,
     criteria,
     evaluate,
     rank_weights,
@@ -224,3 +225,56 @@ def test_highlights_follow_the_household() -> None:
     assert highlight_rows(baby)[:2] == [GapRowKey.ESCUELA_INFANTIL, GapRowKey.COLEGIO]
     carer = family(household=Household(adults=1, seniors_in_care=1))
     assert highlight_rows(carer) == [GapRowKey.MAYORES, GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA]
+
+
+scenario_strategy = st.builds(
+    lambda budget, buy, minutes, required, limit: family(
+        budget=Budget(kind=BudgetKind.BUY, amount_eur=300_000) if buy else budget,
+        nearby=[NearbyNeed(need=NeedKey.COLEGIO, max_walk_minutes=minutes, required=required)],
+        anchors=[CASTELLANA.model_copy(update={"max_minutes": limit})],
+    ),
+    budget=st.sampled_from([400, 1500, 19_000, 20_000]),
+    buy=st.booleans(),
+    minutes=st.sampled_from([5, 10, 58, 60]),
+    required=st.booleans(),
+    limit=st.sampled_from([None, 40]),
+)
+
+
+@settings(max_examples=80)
+@given(st.lists(zone_strategy, min_size=1, max_size=8), scenario_strategy)
+def test_every_relaxation_is_valid_and_keeps_every_passing_zone(
+    zones: list[ZoneData], scenario: ScenarioState
+) -> None:
+    outcome = run_search(scenario, zones)
+    before = {z.zone.code for z in outcome.all_zones if z.passes_all}
+    for option in outcome.reality_check.relaxations:
+        again = ScenarioState.model_validate(option.relaxed_scenario.model_dump())
+        after = run_search(again, zones)
+        assert before <= {z.zone.code for z in after.all_zones if z.passes_all}
+        assert after.reality_check.zones_passing == option.zones_if_relaxed
+
+
+def test_zones_passing_without_data_to_score_are_counted_not_ranked() -> None:
+    scenario = ScenarioState(priorities=[PriorityKey.ZONAS_VERDES])
+    outcome = run_search(scenario, [zone("1")])
+    assert outcome.results == []
+    assert outcome.unscored_passing == 1
+    assert outcome.all_zones[0].passes_all
+    assert outcome.all_zones[0].match_pct is None
+
+
+def test_facts_never_exceed_five_with_many_criteria() -> None:
+    scenario = family(
+        priorities=list(PriorityKey),
+        nearby=[NearbyNeed(need=n, required=False) for n in NeedKey],
+    )
+    fit = evaluate(scenario, zone("1"))
+    assert len(fit.facts) == 5
+    assert fit.facts[0].text.startswith("Parada")  # transporte is the first priority
+
+
+def test_match_rounds_half_up() -> None:
+    assert as_pct(0.005) == 1
+    assert as_pct(0.125) == 13
+    assert as_pct(None) is None

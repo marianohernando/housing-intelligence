@@ -25,7 +25,8 @@ WALK_STEP_MINUTES, WALK_MAX_MINUTES = 5, 60
 
 
 def budget_step(amount: int) -> int:
-    return max(BUDGET_STEP_ROUND, math.ceil(amount * BUDGET_STEP_SHARE / BUDGET_STEP_ROUND) * 50)
+    steps = math.ceil(amount * BUDGET_STEP_SHARE / BUDGET_STEP_ROUND)
+    return max(BUDGET_STEP_ROUND, steps * BUDGET_STEP_ROUND)
 
 
 def relaxed(scenario: ScenarioState, constraint_id: str) -> tuple[str, ScenarioState] | None:
@@ -82,7 +83,8 @@ def passing(scenario: ScenarioState, zones: Sequence[ZoneData]) -> int:
 
 
 def binding_constraint(fits: Sequence[ZoneFit]) -> str | None:
-    """The condition that leaves out the most zones on its own (not PASS there)."""
+    """The condition that leaves out the most zones: those where it is not PASS, whatever the
+    other conditions say (a first-in-order condition wins a tie)."""
     excluded: dict[str, int] = {}
     for fit in fits:
         for check in fit.constraints:

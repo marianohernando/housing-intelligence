@@ -91,7 +91,10 @@ class RankedZone(BaseModel):
     zone: ZoneRef
     match_pct: int = Field(ge=0, le=100, description="% of fit with the search, not a grade")
     confidence: float = Field(ge=0, le=1)
-    facts: list[Fact] = Field(max_length=5, description="3-5 tangible facts, strongest first")
+    facts: list[Fact] = Field(
+        max_length=5,
+        description="Up to 5 tangible facts, most important to the person first; unknown last",
+    )
     constraints: list[ConstraintCheck]
     failed_constraints: list[str] = Field(
         default_factory=list[str], description="constraint_id values with FAIL (near misses)"

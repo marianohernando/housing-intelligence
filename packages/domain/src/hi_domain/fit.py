@@ -117,10 +117,14 @@ class Score:
 class ZoneFit:
     data: ZoneData
     constraints: list[ConstraintCheck]
-    match_pct: int | None
+    utility: float | None  # unrounded % / 100: ranks before the rounding
     confidence: float
     facts: list[Fact]
     cost_eur: float | None
+
+    @property
+    def match_pct(self) -> int | None:
+        return as_pct(self.utility)
 
     @property
     def failed(self) -> list[str]:
@@ -329,11 +333,11 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
 
 def match_and_confidence(
     weighted: Sequence[tuple[float, Score]],
-) -> tuple[int | None, float]:
-    """Weighted mean utility over the criteria with data; confidence counts the missing ones
-    as 0. No criteria at all: the zone fits everything that was asked (100 %)."""
+) -> tuple[float | None, float]:
+    """Weighted mean utility (0-1) over the criteria with data; confidence counts the missing
+    ones as 0. No criteria at all: the zone fits everything that was asked (1)."""
     if not weighted:
-        return 100, 1.0
+        return 1.0, 1.0
     known = [(w, s) for w, s in weighted if s.utility is not None]
     total = sum(w for w, _ in weighted)
     confidence = sum(w * s.confidence for w, s in known) / total
@@ -341,7 +345,12 @@ def match_and_confidence(
     if known_weight <= 0:
         return None, 0.0
     utility = sum(w * (s.utility or 0.0) for w, s in known) / known_weight
-    return round(100 * utility), round(confidence, 3)
+    return utility, round(confidence, 3)
+
+
+def as_pct(utility: float | None) -> int | None:
+    """Half up (0.5 -> 1), not to even: the shown % is what the person reads."""
+    return None if utility is None else math.floor(100 * utility + 0.5)
 
 
 def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
@@ -366,7 +375,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     area = assumed_floor_area(scenario)
     checks = constraint_checks(scenario, data, area)
     weighted = [(c.weight, score(c, scenario, data, area)) for c in criteria(scenario)]
-    match, confidence = match_and_confidence(weighted)
+    utility, confidence = match_and_confidence(weighted)
     if not weighted:  # nothing to score: the zone is as sure as its conditions
         confidence = min((c.confidence for c in checks), default=1.0)
     rent = data.rent.value if data.rent is not None else None
@@ -376,7 +385,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     return ZoneFit(
         data=data,
         constraints=checks,
-        match_pct=match,
+        utility=utility,
         confidence=confidence,
         facts=facts([s for _, s in weighted], data),
         cost_eur=cost,
@@ -389,9 +398,9 @@ def statuses(scenario: ScenarioState, data: ZoneData) -> list[ConstraintStatus]:
     return [c.status for c in constraint_checks(scenario, data, area)]
 
 
-def ranking_key(fit: ZoneFit) -> tuple[int, float, str]:
+def ranking_key(fit: ZoneFit) -> tuple[float, float, str]:
     return (
-        -(fit.match_pct if fit.match_pct is not None else -1),
+        -(fit.utility if fit.utility is not None else -1.0),
         -fit.confidence,
         fit.data.zone.name,
     )

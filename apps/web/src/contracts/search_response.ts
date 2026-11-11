@@ -124,7 +124,7 @@ export type FactTopic =
   | "trayecto"
   | "otro";
 /**
- * 3-5 tangible facts, strongest first
+ * Up to 5 tangible facts, most important to the person first; unknown last
  *
  * @maxItems 5
  */

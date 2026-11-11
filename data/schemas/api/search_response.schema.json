@@ -631,7 +631,7 @@
           "title": "Estimated Cost Eur"
         },
         "facts": {
-          "description": "3-5 tangible facts, strongest first",
+          "description": "Up to 5 tangible facts, most important to the person first; unknown last",
           "items": {
             "$ref": "#/$defs/Fact"
           },

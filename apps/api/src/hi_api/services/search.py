@@ -16,6 +16,7 @@ from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
     DatasetRef,
     GapHighlight,
+    GapRowMap,
     IndicatorValue,
     NeedKey,
     ScenarioState,
@@ -41,16 +42,21 @@ _ZONES = text(
      ORDER BY u.level DESC, u.code_official
     """
 )
+# One row per feature and zone: the latest period of the newest version.
 _FIT_VALUES = text(
     """
-    SELECT v.feature_id, v.territory_level, v.territory_code, v.value, v.null_reason,
+    SELECT DISTINCT ON (v.feature_id, v.territory_level, v.territory_code)
+           v.feature_id, v.territory_level, v.territory_code, v.value, v.null_reason,
            v.confidence, v.inputs, v.computed_at, f.human_name, f.unit, f.spec->'fit' AS fit
       FROM feature_value v
       JOIN feature_registry f ON f.feature_id = v.feature_id
      WHERE f.spec->'fit' IS NOT NULL AND f.spec->'fit' <> 'null'::jsonb
        AND v.territory_level = ANY(:levels)
+     ORDER BY v.feature_id, v.territory_level, v.territory_code,
+              v.feature_version DESC, v.period_start DESC
     """
 )
+_DATA_STAMP = text("SELECT max(computed_at) FROM feature_value")
 
 
 class Loaded(NamedTuple):
@@ -69,8 +75,8 @@ def _zone_ref(row: dict[str, Any]) -> ZoneRef:
         name=display_name(row["name"]) if row["name"] else row["code"],
         municipio_ine=row["municipio_ine"],
         municipio_name=display_name(row["municipio_name"]) if row["municipio_name"] else None,
-        center_lon=round(row["lon"], 5),
-        center_lat=round(row["lat"], 5),
+        center_lon=None if row["lon"] is None else round(row["lon"], 5),
+        center_lat=None if row["lat"] is None else round(row["lat"], 5),
     )
 
 
@@ -104,19 +110,39 @@ def _indicators(rows: Iterable[dict[str, Any]]) -> Indicators:
     return Indicators(rent, walk)
 
 
+GapMapEntry = tuple[GapRowMap | None, list[str]]
+_GAP_MAPS: dict[tuple[str, str, str, str], GapMapEntry] = {}
+GAP_CACHE_MAX = 64
+
+
+def _gap_map(conn: Connection, level: TerritoryLevel, row: GapRowKey, stamp: str) -> GapMapEntry:
+    """GET /gaps?level=&row= for one row, cached per process until the features change (the
+    stamp is the latest computation): the same answer, without ~5 queries per row and level."""
+    key = (str(conn.engine.url), stamp, level.value, row.value)
+    if key not in _GAP_MAPS:
+        if len(_GAP_MAPS) >= GAP_CACHE_MAX:
+            _GAP_MAPS.clear()
+        try:
+            gap_map, warnings, _ = gap_row_map(conn, level, row)
+            _GAP_MAPS[key] = (gap_map, warnings)
+        except RowNotBoundError as exc:
+            _GAP_MAPS[key] = (None, [f"{ErrorCode.INSUFFICIENT_DATA.value}: {exc}"])
+    return _GAP_MAPS[key]
+
+
 def _highlights(
     conn: Connection, rows: list[GapRowKey]
 ) -> tuple[dict[tuple[str, str], list[GapHighlight]], list[DatasetRef], list[str]]:
     """Each zone's status in the household's 3 rows, from the same map as GET /gaps."""
+    stamp = str(conn.execute(_DATA_STAMP).scalar())
     highlights: dict[tuple[str, str], list[GapHighlight]] = {}
     datasets: list[DatasetRef] = []
     warnings: list[str] = []
     for row in rows:
         for level in LEVELS:
-            try:
-                gap_map, _, _ = gap_row_map(conn, level, row)
-            except RowNotBoundError as exc:
-                warnings.append(f"{ErrorCode.INSUFFICIENT_DATA.value}: {exc}")
+            gap_map, row_warnings = _gap_map(conn, level, row, stamp)
+            warnings += [w for w in row_warnings if w not in warnings]
+            if gap_map is None:
                 continue
             datasets += gap_map.datasets
             for zone in gap_map.zones:
