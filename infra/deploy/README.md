@@ -131,13 +131,17 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - `make smoke-demo` tiene que dar 7/7. Si falla, sigue la sección «Si la demo se cae».
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
-2. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
-3. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
-   - Sus 6 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y capa.
+2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
+   - El sync vacía con `TRUNCATE` las 9 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
+   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 7/7.
+   - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
+3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
+4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
+   - Sus 7 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y dos capas.
    - Así el contenedor de la API ya está arrancado y no te comes los 3–4 s del arranque en frío delante del jurado.
    - Deja después la pestaña de la demo abierta y recárgala una vez.
    - El contenedor se apaga tras 5 min sin tráfico. Si entre el calentamiento y tu turno pasan más de 5 min, repítelo.
-4. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
+5. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
 
 ## Si la demo se cae
 

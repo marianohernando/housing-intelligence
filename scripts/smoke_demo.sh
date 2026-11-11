@@ -55,7 +55,7 @@ check layer "/api/v1/places?category=$LAYER" \
 # The largest layer, paginated since 879101a: page 1 is the biggest single response the map asks
 # for, so this guards the 4.5 MB limit per page (not the size of the whole layer).
 check largest "/api/v1/places?category=transport" \
-  'select(.data.page == 1 and (.data.features | length) > 0
+  'select(.data.page == 1 and .data.pages >= 1 and (.data.features | length) > 0
           and .data.total >= (.data.features | length))
    | "\(.data.total) stops, page \(.data.page)/\(.data.pages)"'
 
