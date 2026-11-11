@@ -37,3 +37,5 @@ data/catalog/candidates/*.jsonl
 # misc
 .DS_Store
 .playwright-mcp/
+# Vercel CLI link (line C deploy)
+.vercel
