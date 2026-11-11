@@ -86,8 +86,10 @@ Checklist antes de cambiar la visibilidad:
 - [x] gitleaks sobre todo el historial en verde (CI).
 - [x] Sin tokens en ficheros versionados: `.mcp.json` solo tiene el project ref y el token llega por variable de entorno.
 - [x] `LICENSE` (Apache-2.0), `docs/LICENSE` (CC BY 4.0), README con la declaración del tag `pre-datamad`.
-- [ ] Mariano acepta que el email de autor de los commits quedará visible (no se reescribe el historial).
-- [ ] Mariano acepta que `docs/` (estrategia de producto y negocio) será visible para otros equipos.
+- [x] Mariano acepta que el email de autor de los commits quedará visible (no se reescribe el historial). OK el 11 nov.
+- [x] Mariano acepta que `docs/` (estrategia de producto y negocio) será visible para otros equipos. OK el 11 nov.
+- [x] Fixtures sin teléfonos, emails, NIF ni nombres de titulares en HEAD (11 nov; `scripts/build_places_fixtures.py` los redacta).
+- [ ] Historial: los fixtures de equipamientos de los commits del 20–22 oct conservan teléfonos, emails de contacto y titulares de centros, tal como los publica el portal CM (CC BY 4.0). Falta que Mariano decida si se publica con ese historial o se reescribe.
 
 Comando: `gh repo edit marianohernando/housing-intelligence --visibility public --accept-visibility-change-consequences`.
 

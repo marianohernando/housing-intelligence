@@ -22,7 +22,7 @@ _(vacío: la siguiente card es CORE-005)_
 
 ### Estado de la sesión del 10 nov (noche)
 - **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos). En total hay 21 datasets del portal CM con Quality Gate.
-- **Blocked:** OPS-001, porque falta la contraseña de Supabase en `.env` (antes del 17 nov). DATAMAD-PUBLIC-01, porque falta el OK de Mariano a que sean visibles el email de autor y `docs/`.
+- **Blocked:** OPS-001, porque falta la contraseña de Supabase en `.env` (antes del 17 nov). DATAMAD-PUBLIC-01, porque falta decidir qué hacer con el historial de fixtures con datos de contacto (el OK al email y a `docs/` llegó el 11 nov).
 - **Next:** CORE-005, indicadores por sección y H3 (distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte). Hay que empezar proponiendo su plan de fases.
 - **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). CI en verde.
 - **Notas para las siguientes cards:**
@@ -61,7 +61,7 @@ _(vacío: la siguiente card es CORE-005)_
 
 ## 06 — BLOCKED (decisión de Mariano)
 - OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`). Falta `SUPABASE_DATABASE_URL` con la contraseña en `.env` (ver `.env.example`). **Necesaria antes del 17 nov.**
-- DATAMAD-PUBLIC-01 Falta que Mariano acepte que el email de autor de los commits y `docs/` (estrategia) serán visibles.
+- DATAMAD-PUBLIC-01 Mariano aceptó el 11 nov que el email de autor y `docs/` sean visibles. Los fixtures de HEAD ya no tienen datos de contacto, pero el historial del 20–22 oct sí (datos abiertos CM). Falta decidir si se publica con ese historial o se reescribe (§7 del plan).
 
 ## 07 — DONE (con evidencia)
 - DATA-016 Datasets CM nuevos: oficinas de farmacia (2.953 puntos, sin nombres de titulares), farmacias por municipio, unidades escolares (desde 2015), nacidos vivos y viviendas por régimen de tenencia. `cm_stat_table` gana `period_min` y `points_csv` gana `subcategory_value`/`name_template`. Total: 21 datasets del portal CM · G1 PASS `evidence/gate-01/2026-11-10` · 2026-11-10

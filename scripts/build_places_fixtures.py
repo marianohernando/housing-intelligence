@@ -2,8 +2,9 @@
 
 Keeps real rows whose coordinates fall inside the admin_sample sections, plus edge cases the
 pipeline must handle: a closed school, missing coordinates and a protected social subtype.
-Columns that name people (e.g. pharmacy holders) are redacted: fixtures keep the column so tests
-prove the pipeline ignores it, but never copy personal names into the repository.
+Contact, tax-id and owner-name columns (owners can be natural persons, e.g. pharmacy holders or
+private nursery owners) are redacted: fixtures keep the column so tests prove the pipeline
+ignores it, but never copy personal data into the repository.
 Usage: uv run python scripts/build_places_fixtures.py [dataset_id ...]
 """
 
@@ -27,6 +28,7 @@ SECTIONS = REPO / "data" / "fixtures" / "golden" / "admin_sample" / "sections.gp
 OUT = REPO / "data" / "fixtures" / "golden" / "places_sample"
 MAX_INSIDE = 12
 OUTSIDE = 10  # valid rows outside the fixture area: must stay unassigned, never mis-assigned
+OWNER_NAME_COLUMNS = ("titular", "entidad_denominacion")
 
 
 def _latest_bronze(dataset_id: str) -> Path:
@@ -65,7 +67,11 @@ def _edge_cases(frame: pd.DataFrame, allowed: pd.DataFrame, spec: PointsPipeline
 
 
 def _redact_people(sample: pd.DataFrame) -> pd.DataFrame:
-    people = [c for c in sample.columns if any(t in c.lower() for t in PII_TERMS)]
+    people = [
+        c
+        for c in sample.columns
+        if any(t in c.lower() for t in PII_TERMS) or c.lower() in OWNER_NAME_COLUMNS
+    ]
     return sample.assign(**dict.fromkeys(people, "[redactado]"))
 
 

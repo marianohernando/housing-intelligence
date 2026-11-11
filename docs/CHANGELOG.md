@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.9 — Preparación del repo público (2026-11-11)
+- `09_datamad/25_plan_competicion.md` §7: OK de Mariano al email de autor y a `docs/` visibles. Los fixtures de equipamientos se redactan (contacto, NIF y titulares). Queda pendiente decidir qué se hace con el historial.
+
 ## v0.5.8 — Datasets CM nuevos (2026-11-10)
 - DATA-016: farmacias (registro y tabla municipal), unidades escolares, nacidos vivos y viviendas por régimen de tenencia. El plan pasa a 21 datasets del portal CM con Quality Gate.
 
