@@ -86,53 +86,58 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
-### Estado de la sesión del 11 nov (tarde, relevo de la línea A)
-- **Done (esta sesión):**
-  - PR #4 de C integrado (`c8ae262`) y migración 0005 del rol `vf_api_ro` (`ad16393`, D-208).
-  - **DATA-012 completa** (D-209). Commits:
-    - F1 `f62f0d0`: padrón por distrito en bandas CM;
-    - F2 `83c74dd`: features por distrito y `/gaps/distrito` con filas reales;
-    - F3 `d87c561`: hogares por distrito;
-    - F4 `be40c2f`: ajustes del `reviewer`.
-  - PR #5 de C integrado (`d917162`): URL `vidafacil-madrid.vercel.app`, guardas de deploy y paquete offline, revisado con `reviewer`.
-  - Supabase comprobado por MCP tras el sync de Mariano: alembic 0005, 7 políticas de `vf_api_ro`, `feature_value` 2.298 (147 de distrito = 7 features × 21) y los 2 datasets del Ayuntamiento como no CM.
-  - La base local está en la 0005, con el padrón y el panel ingeridos y las features recalculadas.
-- **Blocked:** nada. Mariano fusionó el PR #1 en `main` (`2107119`); el siguiente paso a `main` lo decide él.
+### Estado de la sesión del 11 nov (noche, relevo de la línea A)
+- **Done (esta sesión, A v3):**
+  - Peticiones de B a la API, todas cerradas:
+    - `d3127d3`: `/gaps` avisa por cada fila que falta (`INSUFFICIENT_DATA: row <fila> not computed at <nivel> level yet`);
+    - `d7037b7`: `/places` filtra con `?admin_unit_id=` y `?subcategory=` repetible;
+    - `12c834a`: `/geo/admin-units` con nombres legibles y `?parent=`;
+    - `879101a`: `/places` paginada de 5.000 en 5.000 (1,4 MB como máximo; Vercel corta en 4,5 MB).
+  - **CORE-005 DONE** (`23b7531`, `fc025b6`, D-210): 12 features a pie por sección, municipio y distrito, y **Gate 3 PASS**.
+  - PR #6 de C integrado (`877d4fd`) con `reviewer`.
+  - CI de la rama en verde otra vez (`29a688e`). `make lint` comprueba ahora los schemas y el manifest de docs, igual que la CI (`bc60e1f`).
+  - La base local tiene las 24 features recalculadas (`make features`, 29 s).
+- **Blocked / a la espera:**
+  - **PR #7 de C:** ajustes pedidos vía `datamad-10`. Con la paginación, el check «largest» del smoke queda ciego, y el README habla del riesgo de los 4,2 MB, que ya está resuelto. Cuando C lo actualice, reviewer y merge.
+  - **Supabase:** pedido a Mariano `make supabase-sync PROFILE=demo` (unas 58.000 filas más en `feature_value`). Después, comprobarlo por MCP: 24 features, y 4.843 filas en cada feature a pie.
+  - **Datos personales:** la ruta local `/Users/<usuario>/…` sale en unos 40 ficheros de evidencia antiguos (salida de vitest y pyright). Lo decide Mariano; la evidencia nueva se limpia con `sed "s#$HOME#~#g"`.
 - **Next (línea A), en orden:**
-  1. ~~`/gaps`: un warning por cada fila esperada que no esté~~ → hecho en `d3127d3` (GAP-001 F0b).
-  2. **Peticiones de B para la API** (PR #2), mejor antes del 14 nov:
-     - ~~`/places` corta en 10.000 resultados y no filtra~~ → hecho en `d7037b7` (`?admin_unit_id=`, `?subcategory=` repetible, sin corte);
-     - ~~`/geo/admin-units`: nombres normales y filtro por padre~~ → hecho en `12c834a`. C tiene que redesplegar para que la API pública sirva las fases 0b, 1 y 2.
-  3. ~~CORE-005 Fase 3~~ → hecha en `23b7531` (sección, municipio y distrito; H3 r9 aplazado).
-  4. ~~CORE-005 Fase 4~~ → hecha en `fc025b6` (D-210: 4,5 km/h, con la referencia de la FHWA y del Ayuntamiento; ventanas 5/15/10 min).
-  5. GAP-001 completo: filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy incluye escuelas infantiles e IES). Añadir la distancia a pie como `extra_indicators`, la lista por sección y `GET /api/v1/gaps?level=&row=`. ADR de los cortes.
-     - Por distrito: la vivienda queda SIN DATOS, porque no hay superficie de viviendas por distrito.
-     - D pide, en lenguaje llano, qué mide cada fila nueva y si los cortes 0,8 / 1,0 cambian.
-  6. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
-  7. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que el caso de ejemplo hace aparecer el Reality Check.
-  8. `POST /api/v1/search`; los distritos entran en `all_zones`.
+  1. **GAP-001 completo.**
+     - Filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy cuenta escuelas infantiles e IES; usar los mismos destinos que `min_a_pie_colegio`).
+     - Las features a pie ya traen `gap_row: {role: extra}`: conectarlas como `extra_indicators` en `services/gaps.py`.
+     - Lista por sección y `GET /api/v1/gaps?level=&row=`.
+     - ADR de los cortes con criterio estadístico. Chamartín salud = 0,79: no mover los cortes por ese caso, y decirle a D si cambia de estado.
+     - Por distrito, la vivienda queda SIN DATOS.
+     - En la web, minutos muy altos (hasta 337 en pueblos sin colegio) mejor como «más de 60 min»: proponérselo a B.
+  2. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
+  3. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que aparece el Reality Check.
+  4. `POST /api/v1/search`; los distritos entran en `all_zones`.
 - **Peticiones abiertas de otras líneas:**
-  - **D:** conectar los 12 datasets CM que aún no alimentan nada (6 GTFS, 2 de farmacias, nacidos vivos, unidades escolares, viviendas por tenencia y alquiler por código postal) y la zona real para el bloque 3 del guion.
-  - **B:** los JSON Schema se exportan en modo validación, así que `near_misses`, `meta` y `warnings` salen opcionales en TypeScript; valorar el modo serialización.
-- **Para Supabase:** migrate y sync hechos por Mariano el 11 nov. Tras cada cambio de features o de lugares, pedir a Mariano `make supabase-sync PROFILE=demo` (las sesiones no pueden) y comprobarlo después por MCP.
+  - **D:** el párrafo de metodología §1.5 (a pie) ya está enviado. Faltan los de GAP-001, CORE-006 y CORE-003. Conectar los datasets CM que aún no alimentan nada: unidades escolares, nacidos vivos, viviendas por tenencia, alquiler por código postal y farmacias por municipio. Los 6 GTFS y las oficinas de farmacia ya alimentan CORE-005.
+  - **B:** los JSON Schema se exportan en modo validación (`near_misses`, `meta` y `warnings` salen opcionales en TypeScript); valorar el modo serialización. Pedir transporte filtrado o recorrer `pages`.
+  - **datamad-10:** ¿4 km/h en vez de 4,5 para una demo pensada para personas mayores? D-210 da las referencias; cambiarlo es una línea por YAML.
+- **Para Supabase:** tras cada cambio de features o de lugares, pedir a Mariano `make supabase-sync PROFILE=demo` (las sesiones no pueden) y comprobarlo después por MCP.
 - **Gate status:**
-  - G1 PASS: 21 datasets CM y 2 complementarios del Ayuntamiento (padrón y panel); la red OSM pasa su calidad.
+  - G1 PASS: 21 datasets CM y 2 complementarios del Ayuntamiento; la red OSM pasa su calidad.
   - G2 PASS.
   - G3 PASS (11 nov, `evidence/gate-03/2026-11-11/summary.md`): 24 features (`24|0|0|179`), 7 con los 21 distritos, 12 a pie con las 4.843 zonas y los golden de la red real.
-  - G4: contratos y `/gaps` (municipio y distrito) en verde; fixture `zone_gap_list.centro` para B.
-  - G6: Supabase en 0005 y sincronizado. C está desplegando con `vf_api_ro` en `vidafacil-madrid.vercel.app`.
+  - G4: contratos, `/gaps`, `/places` y `/geo` en verde.
+  - G6: Supabase en 0005; sync pendiente de Mariano por CORE-005. C sirve la demo desde `1c22212` y le falta redesplegar `879101a` (paginación).
 - **Notas para las siguientes cards:**
-  - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001; el `proxy_note` ya lo avisa).
-  - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004 (línea B).
+  - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.20.
+  - **Features a pie (D-210):**
+    - `hi_features/walk.py` carga la red, los orígenes y las distancias una vez por proceso;
+    - van con la clave `destination_category`, no `category`, para que `compute` no les aplique el ajuste de los conteos por sección;
+    - en integración, una rejilla OSM sintética sobre la muestra de Madrid más la muestra GTFS (`tests/integration/conftest.py`).
+  - 24 secciones pequeñas sin calle de origen salen SIN DATOS (15 en Moratalaz y Villa de Vallecas). Una mejora posible: usar cualquier vía transitable como origen en esas secciones.
   - Unidades escolares: elegir el nivel de enseñanza, nunca sumar miembros.
   - La API devuelve los errores como `{"detail": {code, message}}`; `ErrorEnvelope` es el formato objetivo.
-  - El `center` de Madrid usa `ST_PointOnSurface` (cae al norte del municipio). Si B centra el mapa con él, valorar usar el centroide cuando esté dentro.
+  - El `center` de Madrid usa `ST_PointOnSurface` (cae al norte del municipio).
   - **Features por nivel** (DATA-012):
-    - `formula.levels.<nivel>` es un override superficial (puede cambiar el método);
+    - `formula.levels.<nivel>` es un override superficial;
     - `FeatureSource.levels` dice qué datasets cita cada nivel;
-    - los lugares llegan a un distrito por su sección censal, y si a un municipio le faltan secciones, la confidence baja;
-    - la referencia regional sale solo del nivel base. CORE-005 y GAP-001 deben usar este mecanismo para los distritos.
-  - `places_per_population` declara `geocoding_quarantine` en `confidence.inputs`, pero no lo aplica (deuda anterior a DATA-012).
+    - la referencia regional sale solo del nivel base.
+  - `places_per_population` declara `geocoding_quarantine` en `confidence.inputs`, pero no lo aplica (deuda anterior).
 
 ## 02 — READY THIS SPRINT (en orden)
 1. API para B: un warning por cada fila de `/gaps` que falte; `/places` con `?admin_unit_id=` y `?subcategory=` y sin el corte de 10.000; `/geo/admin-units` con nombres en mayúsculas normales y filtro por padre · G4 · 12 nov
