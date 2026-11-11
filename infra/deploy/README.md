@@ -76,13 +76,17 @@ Cómo se detecta:
    El comando:
    - despliega web y API en producción;
    - publica los dos dominios, `vidafacil-madrid` y `vida-facil-eight`;
-   - pasa `scripts/smoke_demo.sh`. Si el smoke falla, sale con un código distinto de 0 e imprime el comando de rollback.
+   - pasa `scripts/smoke_demo.sh`;
+   - si el smoke falla, lo repite **una vez a los 20 s** («smoke failed right after the switch; retrying once in 20 s»);
+   - solo si falla también la segunda vez, sale con un código distinto de 0 e imprime el comando de rollback.
+
+   **Por qué el reintento:** durante unos segundos después de cambiar el dominio, el despliegue anterior puede seguir atendiendo alguna petición con sus variables de entonces. El 11 nov dio un 500 porque se había creado antes de existir `DATABASE_URL`, y a los pocos segundos el smoke dio 6/6. Los logs lo distinguen: `npx vercel@65.12.1 logs --environment production --since 15m --json`, campo `deploymentId`. Un fallo real falla las dos veces.
 
    Desde otra rama solo se despliega a propósito, con `ALLOW_BRANCH=1 make deploy-demo`.
 
 3. Guarda la salida en `evidence/gate-06/<fecha>-deploy/`.
 
-**Tiempo:** unos 100 s con el smoke incluido. Construye la imagen de la API y la web.
+**Tiempo:** unos 85–110 s con el smoke incluido. Construye la imagen de la API y la web. Si salta el reintento, suma 20 s más un segundo smoke.
 
 **Sin Git:** la integración con GitHub está desconectada a propósito. Los push de las líneas no despliegan nada; solo despliega `make deploy-demo`.
 
@@ -101,8 +105,8 @@ Cómo se detecta:
 | Invocaciones | 1.000.000 al mes | Bajo |
 | CPU activa | 4 h al mes, **compartidas con los otros proyectos del equipo** | Medio: vigilar en Usage |
 | Memoria provisionada | 360 GB-h al mes | Bajo |
-| Transferencia | 100 GB al mes (Fast Data Transfer) y 10 GB (Origin Transfer) | Bajo: la respuesta más grande pesa 2,8 MB |
-| Respuesta | 4,5 MB como máximo por respuesta no streaming ([límites](https://vercel.com/docs/functions/limitations)) | El smoke lo comprueba |
+| Transferencia | 100 GB al mes (Fast Data Transfer) y 10 GB (Origin Transfer) | Bajo: la respuesta más grande (transporte) pesa 4,2 MB |
+| Respuesta | 4,5 MB como máximo por respuesta no streaming ([límites](https://vercel.com/docs/functions/limitations)) | **Alto**: desde d7037b7 `/places` ya no corta, y transporte pesa 4,2 MB (94 % del límite). El smoke la mide (`largest`). Si crece, hay que paginar, filtrar por zona o servir esa capa como estático |
 | Duración | 300 s por petición | Ninguno |
 | Memoria por instancia | 2 GB, 1 vCPU | Ninguno |
 | Región | Una sola (`dub1`) | — |
@@ -124,7 +128,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
 ## Día de la final (26 nov): lista
 
 1. **Por la mañana:**
-   - `make smoke-demo` tiene que dar 6/6. Si falla, sigue la sección «Si la demo se cae».
+   - `make smoke-demo` tiene que dar 7/7. Si falla, sigue la sección «Si la demo se cae».
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
 2. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
@@ -187,7 +191,7 @@ El resultado se guarda en `data/offline/`, que git ignora:
 ### Arrancarlo (26 nov, en 1 minuto, sin red)
 
 ```bash
-make demo-offline        # ~7 s: base, API, web y smoke 5/5
+make demo-offline        # ~7 s: base, API, web y smoke 6/6
 # abre http://localhost:3012/map
 make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```

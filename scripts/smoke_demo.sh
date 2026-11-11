@@ -52,6 +52,9 @@ check geography "/api/v1/geo/admin-units?level=municipio&simplify_m=50" \
   'select((.data.features | length) > 0) | "\(.data.features | length) municipios"'
 check layer "/api/v1/places?category=$LAYER" \
   'select((.data.features | length) > 0) | "\(.data.features | length) places"'
+# The largest response (every stop, no cap since d7037b7): guards the 4.5 MB limit.
+check largest "/api/v1/places?category=transport" \
+  'select((.data.features | length) > 0) | "\(.data.features | length) stops"'
 
 echo "smoke: $((total - failures))/$total OK"
 ((failures == 0))
