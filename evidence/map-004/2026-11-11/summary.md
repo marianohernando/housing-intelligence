@@ -681,6 +681,8 @@ Rama `claude/s1-web-search`, hecha sobre `claude/s1-web-map` (PR #9). La API es 
   - `useMemo` en `GapLayerProvider`.
 
 ## Comprobado con Playwright (web `next build` + `start` en el 3011, API real en el 8011)
+Se repite con `MOCKUP_DIR=~/Desktop/DATAMAD/prompts/ref npm run -w apps/web check-search -- on` (o `off`, con la web compilada sin la bandera): `apps/web/scripts/check-search.mjs`.
+
 - **`f9_buscador.json`, escritorio (1440 × 900):**
   - El caso demo se abre con el teclado: 32 de 199 zonas. 1.ª Ciudad Lineal (99 %); Chamartín, 8.ª (95 %).
   - «¿Y si cambias algo?» propone «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más».
