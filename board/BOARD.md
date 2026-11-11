@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 y PR #7 de C integrados; distancia a pie a 4 km/h con D-211 y Gate 3 PASS, a la espera del sync único de Supabase).
+Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 y PR #7 de C integrados; distancia a pie a 4 km/h con D-211 y Gate 3 PASS, ya en Supabase; el árbol ya no tiene rutas locales y un test lo vigila).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | DATAMAD-PUBLIC-01 · Fase 3 (rutas locales) | verde | `12bd103` | `evidence/gate-00/2026-11-11/phase-public01-f3.txt` | Ningún fichero versionado lleva la ruta del home ni la del scratchpad (llevan los apellidos); el historial no se reescribe. Se limpiaron 29 evidencias (la línea `RUN` de vitest). `scripts/redact_paths.py` sanea al escribir (`evidence.py` lo aplica a cada log) y `tests/data/test_no_local_paths.py` falla en la CI si vuelve a aparecer una. Revisado con `reviewer` |
+| 11 nov | A | Supabase · sync único (Mariano) | — | — | MCP `supabase-datamad` | `make supabase-sync PROFILE=demo` tras los 4 km/h. Por MCP: las 12 features a pie con `feature_version` 2 y 4.843 filas cada una, y los valores de Chamartín iguales que en local. Las 25 features del registro son las 24 calculadas más `admin_unit_area_km2`, que tiene su propio pipeline y no tiene filas en `feature_value` |
 | 11 nov | A | CORE-005 · Fase 5 (4 km/h) | verde · G3 PASS | `ad2129a` | `evidence/gate-03/2026-11-11/phase-core005-f5.txt`, `summary.md` | Las 12 features a pie pasan a 4 km/h y a la versión 2 (D-211, fuente: «El Madrid de los 15 minutos» del Ayuntamiento). Los minutos suben un 12,5 %. Los 15 golden cumplen sin tocar los límites y hay 0 desacuerdos entre mediana y %. Chamartín: centro de salud 9,5 min y farmacia 2,6 |
 | 11 nov | C → A | OPS-001 · PR #7 integrado | CI verde + gate local verde | `93af627` | `evidence/gate-06/2026-11-11/merge-pr7.txt`, `evidence/gate-06/2026-11-11-deploy/deploy-6-paginated.md` | El README explica el reintento único del smoke a los 20 s. El smoke gana el check `largest` (página 1 de transporte, unos 1,4 MB): 7/7 en producción con `/places` paginada y 6/6 en el paquete offline. Revisado con `reviewer`: fusionar; pendiente menor de C: exigir `.data.pages >= 1` en el filtro |
 | 11 nov | A | CORE-005 · Fase 4 (cierre) | verde · G3 PASS | `fc025b6` | `evidence/gate-03/2026-11-11/summary.md`, `phase-core005-f4.txt` | Ejecución real: 24 features en 29 s. 15 casos golden (Sol, Plaza de Castilla, Centro, Getafe, Alcalá, La Acebeda sin farmacia y la región) y coherencia mediana/% en 4.819 zonas por destino. D-210 con velocidad, ventanas, destinos y calles de origen. **CORE-005 DONE** |
@@ -100,11 +102,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - PR #6 de C integrado (`877d4fd`) con `reviewer`.
   - CI de la rama en verde otra vez (`29a688e`). `make lint` comprueba ahora los schemas y el manifest de docs, igual que la CI (`bc60e1f`).
   - La base local tiene las 24 features recalculadas (`make features`, 29 s).
-- **Blocked / a la espera:** nada. **Supabase:** las features ya están recalculadas a 4 km/h (D-211) y `datamad-10` está avisado. Mariano hará `make supabase-sync PROFILE=demo` **una sola vez**. Después, comprobarlo por MCP: 24 features, 4.843 filas en cada feature a pie y `feature_version = 2` en las 12.
-- **Next (línea A), en orden.** El punto 3 es una decisión de Mariano del 11 nov por la noche, transmitida por `datamad-10`. El 1 (integrar el PR #7 de C, `93af627`) y el 2 (4 km/h, D-211) están hechos.
-  3. **Quitar del árbol actual las rutas locales con apellidos** (Mariano; **el historial no se reescribe**).
-     - Sustituir `/Users/<usuario>/` por `~` (o por rutas relativas al repo) en todos los ficheros del árbol, también las rutas de scratchpad `/private/tmp/claude-…-Users-<usuario>-…` que salgan en la evidencia.
-     - Evitar que vuelva a pasar: sanear al escribir en `scripts/evidence.py` y en los gates de fase. Añadir un test o un check que falle si aparece la ruta.
+- **Blocked / a la espera:** nada. **Supabase:** sincronizado por Mariano tras los 4 km/h y comprobado por MCP (12 features a pie en `feature_version` 2, con 4.843 filas cada una). La API pública no necesita redespliegue hasta que GAP-001 sirva las features a pie: entonces hay que avisar a `datamad-10`.
+- **Next (línea A), en orden.** Las tres decisiones de Mariano del 11 nov por la noche están hechas: PR #7 de C (`93af627`), 4 km/h (D-211, `ad2129a`, ya en Supabase) y sin rutas locales en el árbol (`12bd103`).
   4. **GAP-001 completo.**
      - Filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy cuenta escuelas infantiles e IES; usar los mismos destinos que `min_a_pie_colegio`).
      - Las features a pie ya traen `gap_row: {role: extra}`: conectarlas como `extra_indicators` en `services/gaps.py`.
@@ -126,6 +125,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - G4: contratos, `/gaps`, `/places` y `/geo` en verde.
   - G6: Supabase en 0005; el sync único llega tras recalcular a 4 km/h. C sirve la demo desde `cf33a5b`, con `/places` paginada (smoke 7/7).
 - **Notas para las siguientes cards:**
+  - **Evidencia sin rutas locales:** guarda las salidas de los gates de fase a través del filtro: `set -o pipefail; { …; make lint typecheck test 2>&1; echo "exit=$?"; } | uv run python scripts/redact_paths.py > evidence/…`. `make evidence` ya sanea solo. `tests/data/test_no_local_paths.py` falla en la CI de cualquier línea si se cuela una ruta.
   - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.20.
   - **Features a pie (D-210, D-211: 4 km/h y versión 2):**
     - `hi_features/walk.py` carga la red, los orígenes y las distancias una vez por proceso;
