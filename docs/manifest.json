@@ -1,6 +1,6 @@
 {
-  "version": "0.5.9",
-  "updated": "2026-11-11T08:57:08.055956+00:00",
+  "version": "0.5.10",
+  "updated": "2026-11-11T09:43:43.162469+00:00",
   "markdown_files": 276,
   "files": {
     "00_index/00_master_index.md": {
@@ -920,8 +920,8 @@
       "bytes": 4321
     },
     "09_datamad/25_plan_competicion.md": {
-      "sha256": "b057d43ddc3d22ad27482f4d4f5410ecb35829d389f0659a3312e71ec08a5a0d",
-      "bytes": 11415
+      "sha256": "c565a756d4ce8efbba5934df62990e13d0db414a04abf5c0848be0d8a00f7d7b",
+      "bytes": 11729
     },
     "10_research/01_references.md": {
       "sha256": "ec2758e37420b9a7fcb7ebb10a41bf78d03bc6c16b1fc45d19c8ef5921d1241e",
@@ -1092,8 +1092,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "f2e17e92cff76ec4640299619428132d0936fbc60c1a5424608318e08ef919c0",
-      "bytes": 12023
+      "sha256": "43afc6392ba37c31f1b28a0f0825d80caff7872ca84254a063b7765106e94751",
+      "bytes": 12290
     },
     "CLAUDE.md": {
       "sha256": "efe4ca25f0f87dc0a25adca9e95374dd1964ea40ece65544e8b051133b13305d",

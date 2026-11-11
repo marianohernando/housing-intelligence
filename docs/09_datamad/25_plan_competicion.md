@@ -89,7 +89,10 @@ Checklist antes de cambiar la visibilidad:
 - [x] Mariano acepta que el email de autor de los commits quedará visible (no se reescribe el historial). OK el 11 nov.
 - [x] Mariano acepta que `docs/` (estrategia de producto y negocio) será visible para otros equipos. OK el 11 nov.
 - [x] Fixtures sin teléfonos, emails, NIF ni nombres de titulares en HEAD (11 nov; `scripts/build_places_fixtures.py` los redacta).
-- [ ] Historial: los fixtures de equipamientos de los commits del 20–22 oct conservan teléfonos, emails de contacto y titulares de centros, tal como los publica el portal CM (CC BY 4.0). Falta que Mariano decida si se publica con ese historial o se reescribe.
+- [x] Historial limpio (11 nov, decisión de Mariano). El commit del 22 oct que creó los fixtures traía teléfonos, emails de contacto y titulares del portal CM. La CC BY no cubre la protección de datos (bases §6.6 y §16), así que se hizo esto:
+  - El repo original pasa a `housing-intelligence-archive`, privado y archivado, como prueba de fechas.
+  - Se publica en la misma URL una copia cuyo historial reescrito solo cambia esos 3 ficheros. Se conservan las fechas y el tag `pre-datamad` (ahora `cf39459`).
+  - Evidencia: `evidence/gate-00/2026-11-11/public-repo.md`.
 
 Comando: `gh repo edit marianohernando/housing-intelligence --visibility public --accept-visibility-change-consequences`.
 

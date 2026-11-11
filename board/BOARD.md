@@ -22,7 +22,7 @@ _(vacío: la siguiente card es CORE-005)_
 
 ### Estado de la sesión del 10 nov (noche)
 - **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos). En total hay 21 datasets del portal CM con Quality Gate.
-- **Blocked:** OPS-001, porque falta la contraseña de Supabase en `.env` (antes del 17 nov). DATAMAD-PUBLIC-01, porque falta decidir qué hacer con el historial de fixtures con datos de contacto (el OK al email y a `docs/` llegó el 11 nov).
+- **Blocked:** OPS-001, porque falta la contraseña de Supabase en `.env` (antes del 17 nov). (DATAMAD-PUBLIC-01 cerrada el 11 nov.)
 - **Next:** CORE-005, indicadores por sección y H3 (distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte). Hay que empezar proponiendo su plan de fases.
 - **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). CI en verde.
 - **Notas para las siguientes cards:**
@@ -39,8 +39,7 @@ _(vacío: la siguiente card es CORE-005)_
 6. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
 7. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
 8. OPS-001 Supabase remoto + despliegue de la demo con caso precargado · G6 · 17 nov
-9. DATAMAD-PUBLIC-01 Repo público (checklist en §7 del plan) · como tarde 18 nov · D-195
-10. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
+9. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
 - CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)
@@ -61,9 +60,9 @@ _(vacío: la siguiente card es CORE-005)_
 
 ## 06 — BLOCKED (decisión de Mariano)
 - OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`). Falta `SUPABASE_DATABASE_URL` con la contraseña en `.env` (ver `.env.example`). **Necesaria antes del 17 nov.**
-- DATAMAD-PUBLIC-01 Mariano aceptó el 11 nov que el email de autor y `docs/` sean visibles. Los fixtures de HEAD ya no tienen datos de contacto, pero el historial del 20–22 oct sí (datos abiertos CM). Falta decidir si se publica con ese historial o se reescribe (§7 del plan).
 
 ## 07 — DONE (con evidencia)
+- DATAMAD-PUBLIC-01 Repo público en la misma URL, con el historial limpio de datos de contacto de los fixtures. El original queda en `housing-intelligence-archive` (privado y archivado, prueba de fechas). `pre-datamad` = `cf39459` (22 oct) · `evidence/gate-00/2026-11-11/public-repo.md` · D-195 · 2026-11-11
 - DATA-016 Datasets CM nuevos: oficinas de farmacia (2.953 puntos, sin nombres de titulares), farmacias por municipio, unidades escolares (desde 2015), nacidos vivos y viviendas por régimen de tenencia. `cm_stat_table` gana `period_min` y `points_csv` gana `subcategory_value`/`name_template`. Total: 21 datasets del portal CM · G1 PASS `evidence/gate-01/2026-11-10` · 2026-11-10
 - DATA-007 Transporte CRTM nivel A: 6 GTFS (también en el portal CM) → 14.982 paradas y estaciones con salidas/día, salidas en punta, headway, primer/último servicio y líneas · G1 `evidence/gate-01/2026-11-10/crtm_gtfs_*` · G2 PASS `evidence/gate-02/2026-11-10` (10/10 golden) · D-196 · 2026-11-10
 - DATAMAD-PLAN-01 Plan de competición y criterios del jurado (`docs/09_datamad/25_plan_competicion.md`) · D-194/D-195 · 2026-11-10

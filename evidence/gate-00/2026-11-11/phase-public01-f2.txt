@@ -1,0 +1,36 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+178 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 46%]
+........................................................................ [ 92%]
+...........                                                              [100%]
+155 passed in 2.50s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  10:44:28
+   Duration  83ms (tests 51%, import 24%, transform 14%, worker 10%)
+
+uv run pytest -m db tests/integration -q
+...........................................                              [100%]
+43 passed in 21.56s
+exit=0

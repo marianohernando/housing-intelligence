@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.10 — Repo público (2026-11-11)
+- `09_datamad/25_plan_competicion.md` §7: el historial se publica limpio en la misma URL. El original queda en `housing-intelligence-archive` (privado). El tag `pre-datamad` pasa a `cf39459` y mantiene la fecha del 22 oct.
+
 ## v0.5.9 — Preparación del repo público (2026-11-11)
 - `09_datamad/25_plan_competicion.md` §7: OK de Mariano al email de autor y a `docs/` visibles. Los fixtures de equipamientos se redactan (contacto, NIF y titulares). Queda pendiente decidir qué se hace con el historial.
 
