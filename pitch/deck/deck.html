@@ -1,0 +1,176 @@
+<!doctype html>
+<!--
+  Plantilla de las 4 slides de DATAMAD 2026 (bases §8). No se abre directamente: build.py la rellena
+  ({{…}}) y escribe pitch/deck/build/index.html y el PDF. Contenido: pitch/slides.md.
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Vida Fácil · DATAMAD 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../deck.css">
+</head>
+<body>
+
+<!-- 1 · Título, integrantes y descripción breve -->
+<section class="slide s1">
+  <div class="grid">
+    <div>
+      <p class="kicker">DATAMAD 2026 · Datos abiertos</p>
+      <h1 class="name">Vida Fácil</h1>
+      <p class="lema">Encuentra tu sitio en Madrid</p>
+      <p class="desc">El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.</p>
+      <p class="team">Equipo<strong{{INTEGRANTES_PENDING}}>{{INTEGRANTES}}</strong></p>
+    </div>
+    <div class="glass visual">
+      <figure class="shot" data-shot="C5">
+        <img src="../../capturas/C5.png" alt="Zona en 3D con su contorno violeta y las etiquetas de colegios, centros de salud y estaciones">
+        <figcaption class="ph">C5 · Zona en 3D (1440 px)</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="sources">Código abierto (Apache-2.0) · Plataforma Housing Intelligence</p>
+  <p class="pageno">1 / 4</p>
+</section>
+
+<!-- 2 · Problema y datasets con enlaces -->
+<section class="slide s2">
+  <p class="brand">Vida Fácil<span>.</span></p>
+  <h2 class="title">Nadie te dice qué le falta a cada zona</h2>
+  <div class="grid">
+    <div class="glass problem">
+      <div>
+        <p class="who">Personas</p>
+        <p class="what">El precio en una web, los colegios en otra y el transporte en otra. Nadie les dice qué zona va con su vida.</p>
+      </div>
+      <div>
+        <p class="who">Ayuntamientos</p>
+        <p class="what">Datos sueltos: ¿dónde falta una escuela infantil o un centro de salud frente al resto de la región?</p>
+      </div>
+      <div>
+        <p class="who">Empresas</p>
+        <p class="what">Abren por intuición, sin saber qué hace falta en la zona.</p>
+      </div>
+      <p class="punch">Otros te enseñan lo que hay. Nosotros, <span>lo que falta</span>.</p>
+    </div>
+    <div class="glass data">
+      <div class="headline">
+        <p class="big">{{CM_COUNT}}</p>
+        <p>conjuntos de datos del <a href="https://datos.comunidad.madrid">Portal de Datos Abiertos de la Comunidad de Madrid</a>, con su control de calidad superado</p>
+      </div>
+      <table>
+        {{DATASET_ROWS}}
+      </table>
+      <p class="complement">Como apoyo (no cuenta como dato CM): red peatonal de OpenStreetMap (ODbL). <span class="pending" data-pending="Ayuntamiento (DATA-012, A)">+ Ayuntamiento de Madrid (distritos).</span></p>
+    </div>
+  </div>
+  <p class="sources">Lista completa con enlaces, licencias y control de calidad: <a href="https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md">github.com/marianohernando/housing-intelligence → pitch/datasets_cm.md</a></p>
+  <p class="pageno">2 / 4</p>
+</section>
+
+<!-- 3 · Resultados: utilidad, impacto y viabilidad -->
+<section class="slide s3">
+  <p class="brand">Vida Fácil<span>.</span></p>
+  <h2 class="title">Resultados</h2>
+  <div class="cols">
+    <div class="glass col">
+      <p class="kicker">Utilidad · personas</p>
+      <h3>Encuentra la zona que encaja contigo</h3>
+      <ul>
+        <li>% de encaje con hechos que se pueden comprobar, cada uno con su fiabilidad.</li>
+        <li>¿Salen pocas? Cuántas zonas aparecen si cambias una sola cosa.</li>
+      </ul>
+      <div class="shots">
+        <figure class="shot" data-shot="C2">
+          <img src="../../capturas/C2.png" alt="Tarjeta de zona con su % de encaje y los hechos">
+          <figcaption class="ph">C2 · Tarjeta de zona</figcaption>
+        </figure>
+        <figure class="shot" data-shot="C3">
+          <img src="../../capturas/C3.png" alt="Bloque «¿Y si cambias algo?» con cifras reales">
+          <figcaption class="ph">C3 · ¿Y si cambias algo?</figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="glass col">
+      <p class="kicker">Impacto · ayuntamientos</p>
+      <h3>Qué falta en cada zona</h3>
+      <div class="states">
+        <span class="state falta"><span class="icon" aria-hidden="true">!</span>FALTA</span>
+        <span class="state justo"><span class="icon" aria-hidden="true">–</span>JUSTO</span>
+        <span class="state cubierto"><span class="icon" aria-hidden="true">✓</span>CUBIERTO</span>
+        <span class="state sin-datos"><span class="icon" aria-hidden="true">?</span>SIN DATOS</span>
+      </div>
+      <p class="example pending" data-pending="zona y cifras finales (GAP-001, A)">Móstoles · Centros de salud: <strong>FALTA</strong> (0,47 por 10.000 hab.; región: 0,59)</p>
+      <p class="example">179 municipios <span class="pending" data-pending="DATA-012 (A)">+ los 21 distritos de Madrid</span></p>
+      <div class="shots one">
+        <figure class="shot" data-shot="C4">
+          <img src="../../capturas/C4.png" alt="Pestaña «Qué falta» de una zona con sus 6 filas">
+          <figcaption class="ph">C4 · Pestaña «Qué falta»</figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="glass col">
+      <p class="kicker">Viabilidad</p>
+      <h3>Se sostiene</h3>
+      <ul>
+        <li>Pagan las empresas, por análisis agregados y por la API. Gratis para las personas.</li>
+        <li>Solo zonas, nunca datos de personas.</li>
+        <li>Hoy, 0 € al mes en planes gratuitos.</li>
+        <li>Código abierto y reproducible: Apache-2.0 y <code>make</code>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="band">
+    <div class="glass link">
+      <div class="qr">{{QR_DEMO}}</div>
+      <div>
+        <p class="label">Pruébalo</p>
+        <p class="url pending" data-pending="verificación de la demo (C, 17 nov)"><a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
+      </div>
+    </div>
+    <div class="glass link">
+      <div class="qr">{{QR_REPO}}</div>
+      <div>
+        <p class="label">Código abierto</p>
+        <p class="url"><a href="{{REPO_URL}}">github.com/marianohernando/<wbr>housing-intelligence</a></p>
+      </div>
+    </div>
+  </div>
+  <p class="sources">Fuentes: API /gaps (Móstoles), control de calidad en evidence/gate-01, despliegue en infra/deploy/README.md</p>
+  <p class="pageno">3 / 4</p>
+</section>
+
+<!-- 4 · Pantallazo del sistema -->
+<section class="slide s4">
+  <p class="brand">Vida Fácil<span>.</span></p>
+  <h2 class="title">Así se ve Vida Fácil</h2>
+  <div class="stage">
+    <div class="glass desktop">
+      <figure class="shot" data-shot="C1">
+        <img src="../../capturas/C1.png" alt="Mapa con la búsqueda de ejemplo, las zonas coloreadas según su encaje y la tarjeta de la zona que más encaja">
+        <figcaption class="ph">C1 · Mapa con la búsqueda de ejemplo (1440 × 900)</figcaption>
+      </figure>
+    </div>
+    <span class="marker m1"><span class="num">1</span></span>
+    <span class="marker m2"><span class="num">2</span></span>
+    <span class="marker m3"><span class="num">3</span></span>
+    <div class="phone">
+      <figure class="shot" data-shot="C6">
+        <img src="../../capturas/C6.png" alt="Vida Fácil en el móvil, con la tarjeta de zona como hoja inferior">
+        <figcaption class="ph">C6 · Móvil (390 × 844)</figcaption>
+      </figure>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span>Cuéntanos tu hogar, tu presupuesto y dónde trabajas</li>
+      <li><span class="num">2</span>Mira las zonas que encajan contigo y por qué</li>
+      <li><span class="num">3</span>Entra en una zona y mira qué le falta, con su fuente</li>
+    </ol>
+  </div>
+  <p class="live">Demo en vivo: <a class="pending" data-pending="verificación (C)" href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
+  <p class="pageno">4 / 4</p>
+</section>
+
+</body>
+</html>

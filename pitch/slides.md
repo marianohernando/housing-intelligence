@@ -173,6 +173,8 @@ Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440
 | QR | Códigos QR de la demo (https://vidafacil-madrid.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
 
 ## Checklist del 24 nov (maquetar)
+La maqueta ya está hecha en `pitch/deck/`: HTML a 16:9 y `build.py`, que genera el PDF y comprueba el contraste y los tamaños. Sus pasos están en `pitch/deck/README.md`; los de aquí siguen valiendo.
+
 1. Rebase de `hi-coord` y `uv run python pitch/build_datasets_cm.py --refresh-portal`. Si cambia el total de datasets CM o algún grupo, actualizar la slide 2.
 2. Cerrar todas las marcas «pendiente de A/B/C» de este fichero. Lo que no exista se quita de la slide; no se dibuja.
 3. Hacer las capturas C1–C7 sobre la demo desplegada (consola sin errores) y generar los QR.
