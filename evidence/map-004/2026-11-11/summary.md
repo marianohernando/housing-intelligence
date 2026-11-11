@@ -163,3 +163,41 @@ Esta fase no cambia ninguna pantalla: las capturas de la Fase 1 siguen vigentes.
 - Tarjeta de zona con «Qué falta aquí» real, leyenda «Encaje con tu búsqueda» y seleccionar en el mapa sin salir de la vista.
 - A 1440×900 la tarjeta de búsqueda obliga a desplazarse un poco para llegar al presupuesto y al botón.
 - En el titular de la portada, «en Madrid» se parte entre líneas.
+
+---
+
+# MAP-004 Fase 4b — Tarjeta de zona, «Qué falta aquí» real, leyenda y selección (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `83c74dd`: `/gaps/distrito` ya da filas reales en los 21 distritos.
+
+## Qué hay
+- **`ZoneCard`**, la tarjeta de zona de los mockups:
+  - antetítulo «Distrito de Madrid» o «Municipio» y el nombre;
+  - un chip «{pct} % de encaje» que solo aparece cuando la búsqueda devuelve `match_pct`: nunca «/100» ni barras, y nunca un % inventado;
+  - **«Qué falta aquí»** con `/api/v1/gaps/{level}/{code}`: hasta 3 filas, lo que falta primero (`topRows`), cada una con su icono y su texto (FALTA, JUSTO, CUBIERTO o SIN DATOS; este último con borde discontinuo);
+  - mientras carga, «Calculando qué falta en {zona}…»; si falla, el error en llano con «Reintentar»; si no hay filas, «Estamos calculando el resto…»;
+  - en la vista general, botón «Ver la zona»; en la pantalla de zona, «Ver todo lo que falta» (abre la pestaña de la Fase 8).
+- **Selección en la vista general:** al pulsar una zona se resalta su contorno y su tarjeta aparece a la derecha, en lugar de «Así funciona», con un botón para cerrarla. En la pantalla de zona, pulsar una zona vecina lleva a ella.
+- **Leyenda «Encaje con tu búsqueda»:** escala de `--violet-soft` a `--violet`, «Encaja menos» y «Encaja más», «Sin datos» con borde discontinuo y, antes de la primera búsqueda, «Haz tu búsqueda para ver qué zonas encajan contigo.». En móvil se oculta hasta la Fase 5.
+- **Pantalla de zona** con las tres columnas del mockup 2: introducción y «Tu búsqueda» plegable a la izquierda, el 3D en el centro y la tarjeta de zona a la derecha.
+- **`lib/gaps.ts`** (con tests): textos y ayudas de los estados (`estado.*` de D), orden de las filas y detección del aviso real de la API («No indicators computed at this level yet»).
+- En la portada, «en Madrid» ya no se parte entre líneas.
+
+## Datos reales en las capturas
+- Chamartín (`/gaps/distrito/2807905`): Colegios **FALTA** y Centros de salud **FALTA**.
+- Alcobendas (`f4b_seleccion_desktop.png`, seleccionada pulsando en el mapa): Colegios **FALTA** y Centros de salud **JUSTO**.
+- Móstoles: Colegios **CUBIERTO** y Centros de salud **FALTA**.
+
+## Gate
+- `npm run -w apps/web` lint, typecheck, test y build: 0, con 17 ficheros y 126 tests.
+- `make lint typecheck test-unit`: 0, con 257 pytest.
+- Capturas `f4b_*` (6) más `f4b_seleccion_desktop.png`, sin errores en la consola.
+
+## Checkpoint del 12 nov
+Cumplido:
+- 3D de zona con un distrito real: vuelo, edificios y contorno;
+- tarjetas de cristal en las dos pantallas;
+- capturas junto a los mockups (`f4b_chamartin_desktop_vs_mockup.jpg`, `f4b_inicio_desktop_vs_mockup.jpg`).
+
+## Para A
+- `31_public_api_routes.md` dice que las filas aún no calculadas se avisan en `warnings`. En el código (`services/gaps.py`, línea 206), si faltan solo algunas filas no hay aviso; solo lo hay cuando no hay ninguna.

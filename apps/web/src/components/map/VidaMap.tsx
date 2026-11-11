@@ -149,9 +149,8 @@ function loadPlaces(cache: Map<PlaceCategory, Promise<PlaceFeature[]>>): Promise
 }
 
 export default function VidaMap() {
-  const { zones, activeZone } = useMapZones();
+  const { zones, activeZone, selectedZone, select } = useMapZones();
   const router = useRouter();
-  const routerRef = useRef(router);
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const placesCache = useRef(new Map<PlaceCategory, Promise<PlaceFeature[]>>());
@@ -160,9 +159,11 @@ export default function VidaMap() {
   const [failure, setFailure] = useState<Failure | null>(null);
   const [keyPoints, setKeyPoints] = useState<{ key: string; points: KeyPoint[] } | null>(null);
 
+  // The map's click handler is registered once: it reads the current mode and actions from a ref.
+  const pickRef = useRef<(zone: ZoneProperties) => void>(() => undefined);
   useEffect(() => {
-    routerRef.current = router;
-  }, [router]);
+    pickRef.current = (zone) => (activeZone ? router.push(zoneHref(zone)) : select(zone.zone_key));
+  }, [activeZone, router, select]);
 
   useEffect(() => {
     const element = container.current;
@@ -185,7 +186,7 @@ export default function VidaMap() {
     mapRef.current = map;
     if (!matches(MOBILE)) map.addControl(new NavigationControl({ visualizePitch: true }), "bottom-right");
     map.on("load", () => {
-      addZoneLayers(map, readPalette(), (zone) => routerRef.current.push(zoneHref(zone)));
+      addZoneLayers(map, readPalette(), (zone) => pickRef.current(zone));
       // Fewer layers on mobile: no blurred glow around the zone outline.
       if (matches(MOBILE)) map.setLayoutProperty("zone-glow", "visibility", "none");
       setReady(true);
@@ -212,6 +213,13 @@ export default function VidaMap() {
     showOverview(map, zones, shownOverview.current);
     shownOverview.current = true;
   }, [ready, zones, activeZone]);
+
+  // Overview: outline the zone picked on the map (its card shows on the right).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || activeZone) return;
+    source(map, "zone-selected").setData(selectedZone ?? EMPTY);
+  }, [ready, activeZone, selectedZone]);
 
   useEffect(() => {
     if (!activeZone) return;

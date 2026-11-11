@@ -1,5 +1,19 @@
+/* Mockup 2: intro and search on the left, the 3D zone in the middle, its card on the right */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 28rem) 1fr minmax(0, 23rem);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.side {
+  grid-column: 3;
+  margin-top: var(--space-6);
+}
+
 .page {
   display: grid;
+  grid-column: 1;
   gap: var(--space-4);
   justify-items: start;
   max-width: 28rem;
@@ -77,5 +91,16 @@
 
   .lead {
     font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 28rem);
+  }
+
+  .side {
+    grid-column: 1;
+    margin-top: 0;
   }
 }

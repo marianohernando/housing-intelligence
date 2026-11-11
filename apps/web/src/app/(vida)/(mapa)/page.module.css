@@ -26,6 +26,7 @@
 
 .accent {
   color: var(--violet-strong);
+  white-space: nowrap;
 }
 
 .lead {
@@ -33,10 +34,13 @@
 }
 
 .side {
-  display: grid;
   grid-column: 3;
+  margin-top: var(--space-6);
+}
+
+.steps {
+  display: grid;
   gap: var(--space-4);
-  margin-top: var(--space-7);
 }
 
 .list {

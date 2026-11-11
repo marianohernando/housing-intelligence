@@ -7,6 +7,7 @@ import { useMapZones } from "@/components/map/MapProvider";
 import SearchCard from "@/components/search/SearchCard";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import ZoneCard from "@/components/zone/ZoneCard";
 
 import styles from "./zone.module.css";
 
@@ -35,26 +36,31 @@ export default function ZoneIntro() {
   const { name, level, municipio_name } = activeZone.properties;
   const parent = level === "distrito" ? municipio_name : TEXT.region;
   return (
-    <div className={styles.page}>
-      <nav aria-label="Estás en" className={`glass ${styles.crumbs}`}>
-        <ol>
-          <li>
-            <Link href="/">{parent}</Link>
-          </li>
-          <li aria-hidden="true" className={styles.separator}>
-            <ChevronRight size={16} />
-          </li>
-          <li aria-current="page">{name}</li>
-        </ol>
-      </nav>
-      <h1 className={styles.title}>
-        Explora <span className={styles.accent}>{name}</span>
-      </h1>
-      <p className={styles.lead}>{TEXT.lead}</p>
-      <Button href="/" variant="secondary" className={styles.back}>
-        {TEXT.back}
-      </Button>
-      <SearchCard collapsible />
+    <div className={styles.layout}>
+      <div className={styles.page}>
+        <nav aria-label="Estás en" className={`glass ${styles.crumbs}`}>
+          <ol>
+            <li>
+              <Link href="/">{parent}</Link>
+            </li>
+            <li aria-hidden="true" className={styles.separator}>
+              <ChevronRight size={16} />
+            </li>
+            <li aria-current="page">{name}</li>
+          </ol>
+        </nav>
+        <h1 className={styles.title}>
+          Explora <span className={styles.accent}>{name}</span>
+        </h1>
+        <p className={styles.lead}>{TEXT.lead}</p>
+        <Button href="/" variant="secondary" className={styles.back}>
+          {TEXT.back}
+        </Button>
+        <SearchCard collapsible />
+      </div>
+      <div className={styles.side}>
+        <ZoneCard zone={activeZone} mode="zone" />
+      </div>
     </div>
   );
 }

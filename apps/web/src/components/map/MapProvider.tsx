@@ -18,6 +18,9 @@ interface MapContextValue {
   retry: () => void;
   /** Zone of the current route (/zona/[level]/[code]), once the outlines are loaded. */
   activeZone: ZoneFeature | null;
+  /** Zone picked on the overview map (its card shows on the right). */
+  selectedZone: ZoneFeature | null;
+  select: (zoneKey: string | null) => void;
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -33,6 +36,7 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const [zones, setZones] = useState<ZoneCollection | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
   useEffect(() => {
     const api = createApi();
@@ -58,8 +62,10 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     const code = params.code ? decodeURIComponent(params.code) : undefined;
     const activeZone = zones && params.level && code ? (findZone(zones, params.level, code) ?? null) : null;
     const status: ZonesStatus = error ? "error" : zones ? "ready" : "loading";
-    return { zones, status, error, retry, activeZone };
-  }, [zones, error, retry, params.level, params.code]);
+    const [level = "", selectedCode = ""] = selectedKey?.split("/") ?? [];
+    const selectedZone = zones && selectedKey ? (findZone(zones, level, selectedCode) ?? null) : null;
+    return { zones, status, error, retry, activeZone, selectedZone, select: setSelectedKey };
+  }, [zones, error, retry, params.level, params.code, selectedKey]);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }

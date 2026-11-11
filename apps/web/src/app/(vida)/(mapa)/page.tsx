@@ -1,5 +1,7 @@
+import Legend from "@/components/map/Legend";
 import SearchCard from "@/components/search/SearchCard";
 import GlassCard from "@/components/ui/GlassCard";
+import OverviewSide from "@/components/zone/OverviewSide";
 
 import styles from "./page.module.css";
 
@@ -16,20 +18,23 @@ export default function MapaPage() {
         </section>
         <SearchCard />
       </div>
-      <GlassCard as="aside" aria-labelledby="como-funciona" className={styles.side}>
-        <h2 id="como-funciona">Así funciona</h2>
-        <ol className={styles.list}>
-          <li>
-            <strong>Cuéntanos cómo es tu hogar</strong> y lo que te importa: colegios, salud, transporte…
-          </li>
-          <li>
-            <strong>Mira las zonas que encajan</strong> y por qué, con hechos que puedes comprobar.
-          </li>
-          <li>
-            <strong>Entra en una zona</strong> y mira qué le falta frente al conjunto de la región.
-          </li>
-        </ol>
-      </GlassCard>
+      <OverviewSide className={styles.side}>
+        <GlassCard as="aside" aria-labelledby="como-funciona" className={styles.steps}>
+          <h2 id="como-funciona">Así funciona</h2>
+          <ol className={styles.list}>
+            <li>
+              <strong>Cuéntanos cómo es tu hogar</strong> y lo que te importa: colegios, salud, transporte…
+            </li>
+            <li>
+              <strong>Mira las zonas que encajan</strong> y por qué, con hechos que puedes comprobar.
+            </li>
+            <li>
+              <strong>Entra en una zona</strong> y mira qué le falta frente al conjunto de la región.
+            </li>
+          </ol>
+        </GlassCard>
+      </OverviewSide>
+      <Legend />
     </div>
   );
 }
