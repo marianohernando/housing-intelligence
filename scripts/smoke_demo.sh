@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Smoke test of the public demo: web, API liveness and readiness, one zone and one map layer.
-#   scripts/smoke_demo.sh [BASE_URL]                       # default https://vida-facil-eight.vercel.app
+#   scripts/smoke_demo.sh [BASE_URL]                       # default https://vidafacil-madrid.vercel.app
 #   SMOKE_API_ONLY=1 scripts/smoke_demo.sh http://localhost:8012   # API container, no web
 # Exits 0 only if every check passes. Needs curl and jq. Prints no secrets.
 set -euo pipefail
@@ -9,7 +9,7 @@ for tool in curl jq; do
   command -v "$tool" >/dev/null || { echo "smoke: $tool is required" >&2; exit 2; }
 done
 
-BASE="${1:-${SMOKE_BASE_URL:-https://vida-facil-eight.vercel.app}}"
+BASE="${1:-${SMOKE_BASE_URL:-https://vidafacil-madrid.vercel.app}}"
 BASE="${BASE%/}"
 ZONE="${SMOKE_ZONE:-municipio/28079}"   # Madrid
 LAYER="${SMOKE_LAYER:-education}"

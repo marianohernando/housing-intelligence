@@ -9,8 +9,13 @@
 !packages
 !services
 !infra
-# ...and nothing local inside the allowed folders
+# ...and nothing local inside the allowed folders: secrets, keys, databases, build output
 **/.env*
+*.pem
+*.key
+*.db
+*.sqlite
+**/node_modules
 **/.venv
 **/.next
 **/__pycache__
