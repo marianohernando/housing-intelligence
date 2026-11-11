@@ -41,7 +41,7 @@ interface Props {
 export default function ZoneCard({ zone, mode, onClose }: Props) {
   const { level, code, name, municipio_name } = zone.properties;
   const titleId = useId();
-  const { result } = useScenario();
+  const { result, available } = useScenario();
   const gaps = useZoneGaps(level, code);
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
@@ -67,7 +67,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
           </span>
         )}
       </div>
-      {!result && <p className={styles.hint}>{TEXT.beforeSearch}</p>}
+      {available && !result && <p className={styles.hint}>{TEXT.beforeSearch}</p>}
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
         <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>

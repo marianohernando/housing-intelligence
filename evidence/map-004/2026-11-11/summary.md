@@ -559,3 +559,33 @@ Todas sin errores en la consola (`c_capture.json`, `c4_capture.json`). Las defin
 - `falta.fila.a_pie` se escribe «A pie hasta {el colegio más cercano}: {n} min»; en la tarjeta, «A pie: {n} min».
 - «Próximamente: {filas}.» delante de `falta.filas_pendientes`.
 - «Cómo lo calculamos» no cambia hasta que `metodologia.md` tenga las definiciones de las 6 filas (1.4) y la 1.5 diga solo lo que la web enseña: hoy solo los minutos, no el % de calles.
+
+---
+
+# PUB-001 Fase 3c — Buscador tras una bandera y mejoras de la revisión de A (2026-11-11)
+
+Revisión de A en el PR #2 (comentario 6803192711): «Buscar» llamaba a `POST /api/v1/search`, que aún no existe, y acababa en «Algo ha fallado por nuestra parte».
+
+## Qué hay
+- **Bandera `NEXT_PUBLIC_FEATURE_SEARCH`** (`lib/capabilities.ts`), que se lee al compilar y está **apagada por defecto**:
+  - **apagada:** «Ver zonas que encajan» aparece desactivado con la etiqueta «Muy pronto» y el aviso «Estamos terminando el cálculo del encaje. Mientras, toca una zona del mapa para ver qué le falta.». La leyenda dice «Muy pronto verás aquí qué zonas encajan contigo.» y la tarjeta de zona ya no pide hacer la búsqueda. No se llama a la API (`runSearch`). «¿Y si cambias algo?» todavía no está en la web; llegará en la F9 detrás de la misma bandera;
+  - **encendida** (`NEXT_PUBLIC_FEATURE_SEARCH=true` al compilar): todo como antes.
+- **«Trabajo en»** (punto 3 de A): sin campo, con «Muy pronto», porque el campo no hacía nada.
+- **Fiabilidad** (punto 4): la explicación también se lee con lector de pantalla, no solo en `title`.
+- **Avisos de filas pendientes** (punto 5): un test lee los avisos literales del test de la API (`tests/unit/api/test_gaps_warnings.py`) y comprueba que la web los reconoce todos.
+
+## Comprobado
+- **Tests** (`capabilities.test.ts`): la bandera en los dos estados. Con la bandera apagada, `runSearch` no llama a la API; encendida, la llama una vez.
+- **Playwright, apagada** (`f8c_bandera_off.json`): botón desactivado con «Muy pronto», aviso visible, 0 peticiones a `/search` incluso forzando el clic, sin errores en la consola, a 1440 y 390 px (`f8c_bandera_off_inicio_*`).
+- **Playwright, encendida** (`f8c_bandera_on.json`): botón activo y un `POST /search` al pulsar. La respuesta es el 404 de hoy, porque la ruta aún no existe.
+
+## Gate (`f8c_gate.txt`)
+`make lint typecheck test-unit`: 0 (313 pytest y 172 vitest). Web: lint, typecheck y build en 0.
+
+## Para C
+Cuando A publique `POST /search`, hay que compilar la web con `NEXT_PUBLIC_FEATURE_SEARCH=true`. Hasta entonces, sin definir.
+
+## Pendiente de la revisión de A (siguiente PR)
+- Punto 2 (`NEXT_PUBLIC_API_URL` con `localhost` por defecto): toca el despliegue, así que lo hablo con C.
+- Punto 6 (textos que duplican la API): leer los cortes de `method` cuando llegue gap-0.2.
+- Punto 7 (código heredado de `/map` y teselas externas para la demo sin conexión).

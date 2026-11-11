@@ -195,3 +195,13 @@
     text-align: right;
   }
 }
+
+/* «Muy pronto» inside the search button while POST /search is not published */
+.soonTag {
+  padding: 0.05rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--violet-strong);
+  font-size: 0.78rem;
+  font-weight: 600;
+}

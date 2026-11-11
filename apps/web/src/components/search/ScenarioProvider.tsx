@@ -5,6 +5,7 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo, useSta
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResult } from "@/contracts/search_response";
 import { ApiError, createApi } from "@/lib/api";
+import { runSearch, SEARCH_ENABLED } from "@/lib/capabilities";
 import { defaultScenario } from "@/lib/scenario";
 
 export type SearchStatus = "idle" | "loading" | "done" | "error";
@@ -13,6 +14,8 @@ interface ScenarioContextValue {
   scenario: ScenarioState;
   update: (change: (s: ScenarioState) => ScenarioState) => void;
   search: () => Promise<void>;
+  /** False while POST /search is not published: the search shows as «Muy pronto». */
+  available: boolean;
   status: SearchStatus;
   result: SearchResult | null;
   error: ApiError | null;
@@ -36,10 +39,12 @@ export default function ScenarioProvider({ children }: { children: ReactNode }) 
   const update = useCallback((change: (s: ScenarioState) => ScenarioState) => setScenario(change), []);
 
   const search = useCallback(async () => {
+    if (!SEARCH_ENABLED) return;
     setStatus("loading");
     setError(null);
     try {
-      const body = await createApi().search(scenario);
+      const body = await runSearch(createApi(), scenario);
+      if (!body) return;
       setResult(body.data);
       setStatus("done");
     } catch (exc) {
@@ -49,7 +54,7 @@ export default function ScenarioProvider({ children }: { children: ReactNode }) 
   }, [scenario]);
 
   const value = useMemo(
-    () => ({ scenario, update, search, status, result, error }),
+    () => ({ scenario, update, search, available: SEARCH_ENABLED, status, result, error }),
     [scenario, update, search, status, result, error],
   );
   return <ScenarioContext.Provider value={value}>{children}</ScenarioContext.Provider>;

@@ -80,6 +80,7 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
         <p className={styles.confidence} title={confidence.help}>
           <span className="visually-hidden">{TEXT.confidence}</span>
           {confidence.label}
+          <span className="visually-hidden">. {confidence.help}</span>
         </p>
       )}
       {row.proxy_note && (

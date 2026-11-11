@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import type { IndicatorValue } from "@/contracts/zone_gap_list_response";
@@ -47,6 +49,13 @@ describe("pendingRows", () => {
       "INSUFFICIENT_DATA: row escuela_infantil not computed at distrito level yet",
     ];
     expect(pendingRows(warnings)).toEqual(["escuela_infantil", "vivienda"]);
+  });
+
+  it("reads the exact warnings the API emits (tests/unit/api/test_gaps_warnings.py)", () => {
+    const python = readFileSync(new URL("../../../../../tests/unit/api/test_gaps_warnings.py", import.meta.url), "utf8");
+    const warnings = [...python.matchAll(/"(INSUFFICIENT_DATA: row [^"]+)"/g)].map((m) => m[1] ?? "");
+    expect(warnings.length).toBeGreaterThan(0);
+    expect(pendingRows(warnings)).toHaveLength(warnings.length);
   });
 
   it("ignores other warnings, unknown rows and a missing list", () => {

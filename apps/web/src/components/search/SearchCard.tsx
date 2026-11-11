@@ -41,8 +41,8 @@ const TEXT = {
   matters: "Me importa",
   mattersHelp: "Marca lo que más te importa. Lo primero que marques cuenta más.",
   work: "Trabajo en",
-  workPlaceholder: "Escribe una calle, un barrio o un municipio",
-  workHelp: "Así miramos lo lejos que te queda cada zona.",
+  workHelp: "Así miraremos lo lejos que te queda cada zona.",
+  soon: "Muy pronto",
   budget: "Presupuesto",
   rent: "Alquilar",
   buy: "Comprar",
@@ -50,6 +50,8 @@ const TEXT = {
   budgetAria: "Presupuesto máximo",
   submit: "Ver zonas que encajan",
   loading: "Buscando zonas…",
+  // Provisional (pending line D): the search waits for POST /search of line A
+  searchSoon: "Estamos terminando el cálculo del encaje. Mientras, toca una zona del mapa para ver qué le falta.",
 };
 
 /** Priorities with data today. Zonas verdes, seguridad and sin escaleras wait for line A (DATA-018/019/020). */
@@ -70,7 +72,7 @@ function budgetText(kind: BudgetKind, amount: number): string {
 
 /** «Tu búsqueda» (brief, mockup 1). Collapsible on the zone screen. */
 export default function SearchCard({ collapsible = false }: { collapsible?: boolean }) {
-  const { scenario, update, search, status, error } = useScenario();
+  const { scenario, update, search, available, status, error } = useScenario();
   const [open, setOpen] = useState(!collapsible);
   const bodyId = useId();
   const household = scenario.household ?? { adults: 1, minors: 0, seniors_in_care: 0 };
@@ -127,14 +129,12 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           <p className={styles.help}>{UPCOMING}</p>
         </fieldset>
 
+        {/* «Trabajo en» needs the places autocomplete and the travel times (pending line A): not shown as a field yet */}
         <div className={`${styles.group} ${styles.work}`}>
-          <label htmlFor={`${bodyId}-work`} className={styles.legend}>
-            {TEXT.work}
-          </label>
-          <input id={`${bodyId}-work`} type="text" className={styles.input} placeholder={TEXT.workPlaceholder} aria-describedby={`${bodyId}-work-help`} autoComplete="off" />
-          <p id={`${bodyId}-work-help`} className={styles.help}>
-            {TEXT.workHelp}
+          <p className={styles.legend}>
+            {TEXT.work} <span className={styles.tag}>{TEXT.soon}</span>
           </p>
+          <p className={styles.help}>{TEXT.workHelp}</p>
         </div>
 
         <fieldset className={styles.group}>
@@ -167,10 +167,12 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           />
         </fieldset>
 
-        <Button className={styles.submit} onClick={() => void search()} disabled={status === "loading"}>
+        <Button className={styles.submit} onClick={() => void search()} disabled={!available || status === "loading"}>
           <Search size={20} aria-hidden="true" />
           {status === "loading" ? TEXT.loading : TEXT.submit}
+          {!available && <span className={styles.soonTag}>{TEXT.soon}</span>}
         </Button>
+        {!available && <p className={styles.help}>{TEXT.searchSoon}</p>}
         {status === "error" && error && (
           <p role="alert" className={styles.error}>
             {errorMessage(error)}
