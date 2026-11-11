@@ -5,8 +5,10 @@ The section CSV of `cm_secciones_censales` writes '/' or the byte 0xD0 where the
 come from the latest valid version of statistical tables that publish them in full ('Griñón',
 'Álamo (El)', 'Vicálvaro'). Geometry and codes stay untouched: only `geo_admin_unit.name`
 changes, the run is recorded in `ingestion_run` with the versions used, and a critical check
-blocks the update if any published name still carries a character outside Spanish spelling.
-Runs after the statistical tables (they resolve to the geography first).
+blocks the update if any published name still carries a character outside Spanish spelling
+(barrios included on purpose: nothing broken is published, even what this step does not fix).
+Runs after the statistical tables (they resolve to the geography first). Re-running the
+geography alone brings the CSV names back: run this step again after the tables.
 """
 
 import uuid
@@ -110,19 +112,22 @@ def plan_names(
     plan = NamePlan()
     for unit in units:
         if unit.level == AdminLevel.MUNICIPIO:
-            name = _single(municipio_names, unit.admin_unit_id, plan)
-            plan.names[unit.admin_unit_id] = name or unit.name or ""
+            _keep(plan, unit, _single(municipio_names, unit.admin_unit_id, plan))
     for unit in units:
         if unit.level == AdminLevel.DISTRITO:
-            plan.names[unit.admin_unit_id] = _district_name(unit, plan, madrid_district_names) or (
-                unit.name or ""
-            )
-        elif unit.level != AdminLevel.MUNICIPIO and unit.name:
-            plan.names[unit.admin_unit_id] = unit.name
+            _keep(plan, unit, _district_name(unit, plan, madrid_district_names))
+        elif unit.level != AdminLevel.MUNICIPIO:
+            _keep(plan, unit, None)
     for unit_id, name in plan.names.items():
         if bad := invalid_name_chars(name):
             plan.invalid[unit_id] = bad
     return plan
+
+
+def _keep(plan: NamePlan, unit: Unit, official: str | None) -> None:
+    """Official name if found, else the current one; a unit with neither stays out."""
+    if name := official or unit.name:
+        plan.names[unit.admin_unit_id] = name
 
 
 def _district_name(
@@ -196,7 +201,7 @@ def apply_official_names(engine: Engine, *, evidence_root: Path | None) -> RunSu
         metrics |= {"step": STEP, "names_from": names_from, "changes": len(changes)}
     with tracker.stage(PipelineStage.QUALITY_CHECK) as metrics:
         report = {"passed": plan.passed, "checks": plan.checks(), "names_from": names_from}
-        metrics |= {"passed": plan.passed}
+        metrics |= {"step": STEP, "passed": plan.passed}
     summary.quality, summary.counts = report, {"units": len(units), "changes": len(changes)}
     out = evidence_dir(evidence_root, STEP)
     if out:
@@ -205,7 +210,9 @@ def apply_official_names(engine: Engine, *, evidence_root: Path | None) -> RunSu
         summary.evidence_dir = out
     if not plan.passed:
         tracker.record(
-            PipelineStage.PUBLISH_SILVER, RunStatus.SKIPPED, {"reason": "quality failed"}
+            PipelineStage.PUBLISH_SILVER,
+            RunStatus.SKIPPED,
+            {"step": STEP, "reason": "quality failed"},
         )
         summary.status = "FAILED"
         return summary
@@ -221,6 +228,6 @@ def apply_official_names(engine: Engine, *, evidence_root: Path | None) -> RunSu
                 .where(GeoAdminUnit.admin_unit_id == change["admin_unit_id"])
                 .values(name=change["after"])
             )
-        metrics |= {"step": STEP, "updated": len(changes)}
+        metrics |= {"step": STEP, "names_from": names_from, "updated": len(changes)}
     summary.status = "SUCCESS"
     return summary

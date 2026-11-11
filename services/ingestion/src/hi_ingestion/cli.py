@@ -32,7 +32,7 @@ from hi_ingestion.catalog_harvester.drafts import (
 )
 from hi_ingestion.catalog_harvester.runner import HARVESTABLE, harvest_sources, read_candidates
 from hi_ingestion.pipelines.admin_boundaries import config as admin_config
-from hi_ingestion.pipelines.admin_boundaries.official_names import apply_official_names
+from hi_ingestion.pipelines.admin_boundaries.official_names import STEP, apply_official_names
 from hi_ingestion.pipelines.admin_boundaries.run import (
     fetch_inputs,
     local_inputs,
@@ -183,6 +183,12 @@ def run_dataset(
     """Run one dataset pipeline (Bronze -> Silver -> PostGIS)."""
     summary = _run_one(dataset_id, load_catalog(), make_engine(database_url), local, evidence)
     _print_summary(summary)
+    if dataset_id == admin_config.SECTIONS_DATASET and summary.status == "SUCCESS":
+        typer.echo(
+            "Geography republished with the CSV names: reload the statistical tables, then run "
+            "`make admin-names` (D-212).",
+            err=True,
+        )
     if summary.status == "FAILED":
         raise typer.Exit(1)
 
@@ -218,7 +224,7 @@ def run_all(
     names = apply_official_names(engine, evidence_root=EVIDENCE_GATE_01 if evidence else None)
     typer.echo(f"admin names: {names.status} {names.version_label or ''}")
     if names.status == "FAILED":
-        failed.append(names.version_label or "admin names")
+        failed.append(STEP)
     if failed:
         typer.echo(f"FAILED: {failed}", err=True)
         raise typer.Exit(1)

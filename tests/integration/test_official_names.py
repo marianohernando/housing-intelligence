@@ -51,3 +51,37 @@ def test_second_run_changes_nothing(fixtures_ingested: None, migrated_engine: En
     again = apply_official_names(migrated_engine, evidence_root=None)
     assert again.status == "SUCCESS"
     assert again.counts["changes"] == 0
+
+
+def test_a_broken_name_blocks_every_change(
+    fixtures_ingested: None, migrated_engine: Engine
+) -> None:
+    def name_of(unit_id: str) -> str:
+        with migrated_engine.connect() as conn:
+            return conn.execute(
+                text("SELECT name FROM geo_admin_unit WHERE admin_unit_id = :u"), {"u": unit_id}
+            ).scalar_one()
+
+    def set_name(unit_id: str, name: str) -> None:
+        with migrated_engine.begin() as conn:
+            conn.execute(
+                text("UPDATE geo_admin_unit SET name = :n WHERE admin_unit_id = :u"),
+                {"n": name, "u": unit_id},
+            )
+
+    with migrated_engine.connect() as conn:
+        barrio, barrio_name = conn.execute(
+            text("SELECT admin_unit_id, name FROM geo_admin_unit WHERE level = 'barrio' LIMIT 1")
+        ).one()
+    set_name("ES.28.MUN.28001", "ACEBEDA, LA")
+    set_name(barrio, "PE/A GRANDE")
+    try:
+        failed = apply_official_names(migrated_engine, evidence_root=None)
+        assert failed.status == "FAILED"
+        invalid = next(c for c in failed.quality["checks"] if c["name"].startswith("names_use"))
+        assert invalid["details"]["sample"] == {barrio: ["/"]}
+        assert name_of("ES.28.MUN.28001") == "ACEBEDA, LA"  # nothing was written
+    finally:
+        set_name(barrio, barrio_name)
+        assert apply_official_names(migrated_engine, evidence_root=None).status == "SUCCESS"
+    assert name_of("ES.28.MUN.28001") == "Acebeda (La)"

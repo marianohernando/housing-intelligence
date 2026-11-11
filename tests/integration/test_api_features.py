@@ -33,6 +33,13 @@ def test_values_include_unknowns_and_lineage(client: TestClient) -> None:
     assert "cm_alquiler_m2_municipios" in body["data"]["lineage"]["dataset_versions"]
 
 
+def test_values_carry_readable_names(client: TestClient) -> None:
+    rows = client.get("/api/v1/features/alquiler_m2_mensual/values").json()["data"]["values"]
+    names = {r["territory_code"]: r["name"] for r in rows}
+    assert names["28001"] == "La Acebeda"  # source: "ACEBEDA, LA" or "Acebeda (La)" (D-212)
+    assert names["28079"] == "Madrid"
+
+
 def test_unknown_feature_is_404(client: TestClient) -> None:
     assert client.get("/api/v1/features/no_existe/values").status_code == 404
 
