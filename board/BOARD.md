@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | GAP-001 · Fase 1 (`extra_indicators`) | verde | `2d05d78` | `evidence/gate-04/2026-11-11/phase-gap001-f1.txt` | `/gaps` trae en `extra_indicators` los minutos a pie de colegio y centro de salud (municipio y distrito); los extras no tienen estado propio, null con `null_reason` y sus datasets (red OSM) en la procedencia de la fila. Chamartín: salud FALTA (0,79) a 9,5 min a pie. `data_version` solo con lo que se muestra. Revisado con `reviewer`. C puede redesplegar (sin sync) |
 | 11 nov | A | DATAMAD-PUBLIC-01 · Fase 3 (rutas locales) | verde | `12bd103` | `evidence/gate-00/2026-11-11/phase-public01-f3.txt` | Ningún fichero versionado lleva la ruta del home ni la del scratchpad (llevan los apellidos); el historial no se reescribe. Se limpiaron 29 evidencias (la línea `RUN` de vitest). `scripts/redact_paths.py` sanea al escribir (`evidence.py` lo aplica a cada log) y `tests/data/test_no_local_paths.py` falla en la CI si vuelve a aparecer una. Revisado con `reviewer` |
 | 11 nov | A | Supabase · sync único (Mariano) | — | — | MCP `supabase-datamad` | `make supabase-sync PROFILE=demo` tras los 4 km/h. Por MCP: las 12 features a pie con `feature_version` 2 y 4.843 filas cada una, y los valores de Chamartín iguales que en local. Las 25 features del registro son las 24 calculadas más `admin_unit_area_km2`, que tiene su propio pipeline y no tiene filas en `feature_value` |
 | 11 nov | A | CORE-005 · Fase 5 (4 km/h) | verde · G3 PASS | `ad2129a` | `evidence/gate-03/2026-11-11/phase-core005-f5.txt`, `summary.md` | Las 12 features a pie pasan a 4 km/h y a la versión 2 (D-211, fuente: «El Madrid de los 15 minutos» del Ayuntamiento). Los minutos suben un 12,5 %. Los 15 golden cumplen sin tocar los límites y hay 0 desacuerdos entre mediana y %. Chamartín: centro de salud 9,5 min y farmacia 2,6 |
@@ -89,6 +90,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - Fase 4 `fc025b6`: ejecución real (24 features en 29 s), 15 casos golden y coherencia mediana/% en todas las zonas, **Gate 3 PASS** (`evidence/gate-03/2026-11-11/summary.md`) y **D-210**. **CORE-005 DONE.**
   - Fase 5 `ad2129a` (decisión de Mariano): **4 km/h** en las 12 features, que pasan a la versión 2 (**D-211**). Recálculo en 28 s; los 15 golden cumplen sin tocar los límites; **Gate 3 PASS** otra vez. Evidencia: `evidence/gate-03/2026-11-11/phase-core005-f5.txt`.
 
+- **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
 ### Estado de la sesión del 11 nov (noche, relevo de la línea A v4)
@@ -101,7 +103,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **Blocked / a la espera:** nada. **Supabase:** sincronizado por Mariano tras los 4 km/h y comprobado por MCP (12 features a pie en `feature_version` 2, con 4.843 filas cada una). La API pública no necesita redespliegue hasta que GAP-001 sirva las features a pie: entonces hay que avisar a `datamad-10`.
 - **Next (línea A), en orden.** Las tres decisiones de Mariano del 11 nov por la noche están hechas: PR #7 de C (`93af627`), 4 km/h (D-211, `ad2129a`, ya en Supabase) y sin rutas locales en el árbol (`12bd103`).
   4. **GAP-001 completo** (checkpoint del 13 nov). Fases propuestas, cada una con su commit:
-     - **F1 `extra_indicators`:** las features a pie ya traen `gap_row: {role: extra}`. Conectarlas en `apps/api/src/hi_api/services/gaps.py` (hoy `zone_gap_list` solo lee las `primary`). Con esto la API ya sirve las features a pie: avisar a `datamad-10` para que C redespliegue. Revisar los fixtures de `data/fixtures/contracts/` y docs/04/31.
+     - ~~F1 `extra_indicators`~~ **hecha** (`2d05d78`); avisado `datamad-10` para que C redespliegue.
      - **F2 filtro de colegios:** usar los mismos destinos que `min_a_pie_colegio` (primaria, público o concertado); hoy cuenta escuelas infantiles e IES. Nueva versión de la feature y del `proxy_note`.
      - **F3 filas nuevas por municipio y distrito**, con los tests primero:
        - farmacia: puntos de `cm_oficinas_farmacia` por población, con `places_per_population`; `cm_farmacias_municipios` publica la ratio oficial y sirve para contrastar;
@@ -126,7 +128,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - G6: Supabase en 0005; el sync único llega tras recalcular a 4 km/h. C sirve la demo desde `cf33a5b`, con `/places` paginada (smoke 7/7).
 - **Notas para las siguientes cards:**
   - **Evidencia sin rutas locales:** guarda las salidas de los gates de fase a través del filtro: `set -o pipefail; { …; make lint typecheck test 2>&1; echo "exit=$?"; } | uv run python scripts/redact_paths.py > evidence/…`. `make evidence` ya sanea solo. `tests/data/test_no_local_paths.py` falla en la CI de cualquier línea si se cuela una ruta.
-  - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.20.
+  - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.22.
   - **Features a pie (D-210, D-211: 4 km/h y versión 2):**
     - `hi_features/walk.py` carga la red, los orígenes y las distancias una vez por proceso;
     - van con la clave `destination_category`, no `category`, para que `compute` no les aplique el ajuste de los conteos por sección;
