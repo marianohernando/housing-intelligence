@@ -337,6 +337,16 @@ select count(*) from (
    group by 1 having count(*) = 21
 ) d
 """
+# CORE-005: every walking feature covers every section, municipio and district plus the region.
+WALK_COVERAGE_SQL = """
+select count(*) || '|' || min(n) || '|' || max(n) from (
+  select v.feature_id, count(*) as n from feature_value v
+    join feature_registry r using (feature_id)
+   where r.spec->'formula'->>'method' = 'network_walk_time'
+   group by 1
+) w
+"""
+WALK_ZONES = 4417 + 179 + 246 + 1
 GATE_03 = [
     Check(
         "dictionary",
@@ -364,9 +374,21 @@ GATE_03 = [
     ),
     Check(
         "coverage",
-        "12 features with at least the 179 municipios, null contract and lineage in the dev DB",
+        "24 features with at least the 179 municipios, null contract and lineage in the dev DB",
         [*PSQL, FEATURE_COVERAGE_SQL],
-        lambda r: r.returncode == 0 and r.stdout.strip() == "12|0|0|179",
+        lambda r: r.returncode == 0 and r.stdout.strip() == "24|0|0|179",
+    ),
+    Check(
+        "walk-coverage",
+        f"12 walking features x {WALK_ZONES} zones (4,417 sections, 179 municipios, "
+        "246 districts and the region), never 0 for a zone without streets (CORE-005)",
+        [*PSQL, WALK_COVERAGE_SQL],
+        lambda r: r.returncode == 0 and r.stdout.strip() == f"12|{WALK_ZONES}|{WALK_ZONES}",
+    ),
+    Check(
+        "walk-golden",
+        "golden zones within known bounds; median within the window <=> half the street or more",
+        ["uv", "run", "python", "scripts/check_walk_golden.py"],
     ),
     Check(
         "district-coverage",
@@ -387,7 +409,8 @@ SCOPES = {
     "complementary datasets of the Ayuntamiento de Madrid (padrón and households by district).",
     "02": "Geospatial QA — transport stops and stations from the CRTM GTFS feeds "
     "(the 2026-10-20 geography QA lives in gate-01/2026-10-20).",
-    "03": "Metrics / Feature Store — started: 12 municipal features (target 75–125 for Sprint P1).",
+    "03": "Metrics / Feature Store — 12 municipal features (7 also by district of Madrid) and "
+    "12 walking-access features by census section, municipio and district (CORE-005).",
 }
 
 

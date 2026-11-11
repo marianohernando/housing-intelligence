@@ -1,0 +1,68 @@
+# CORE-005 Fase 4: gate de la fase (lint con schemas y manifest, typecheck, unit + integración)
+# 2026-11-11T15:36:39Z · base bc60e1f
+
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+248 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 26%]
+........................................................................ [ 52%]
+........................................................................ [ 78%]
+...........................................................              [100%]
+275 passed in 5.10s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  16:36:53
+   Duration  85ms (tests 48%, import 24%, transform 15%, worker 13%)
+
+uv run pytest -m db tests/integration -q
+....................................................................     [100%]
+68 passed in 31.31s
+exit=0
+
+# Golden de la red real
+PASS sol_farmacia: ok
+PASS sol_transporte: ok
+PASS sol_transporte_5min: ok
+PASS plaza_castilla_transporte: ok
+PASS centro_farmacia: ok
+PASS centro_centro_salud: ok
+PASS madrid_colegio: ok
+PASS madrid_farmacia: ok
+PASS getafe_centro_farmacia: ok
+PASS getafe_centro_transporte: ok
+PASS alcala_centro_farmacia: ok
+PASS alcala_centro_colegio: ok
+PASS acebeda_sin_farmacia: ok
+PASS acebeda_consultorio: ok
+PASS region_transporte: ok
+PASS min_a_pie_centro_salud <= 15 min <=> pct_calle_centro_salud_15min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_colegio <= 10 min <=> pct_calle_colegio_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_escuela_infantil <= 10 min <=> pct_calle_escuela_infantil_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_farmacia <= 10 min <=> pct_calle_farmacia_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_mayores <= 10 min <=> pct_calle_mayores_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_transporte <= 5 min <=> pct_calle_transporte_5min >= 50 %: 4819 zones, 0 disagree
+0 failed
+exit=0

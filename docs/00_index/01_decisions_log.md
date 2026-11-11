@@ -716,3 +716,39 @@ DATA-012; aplica D-200. La CM no publica la población por distrito de Madrid: `
   - Son hogares del padrón (personas inscritas en una misma vivienda), no el hogar del censo 2021 de la CM.
   - En los distritos, `tamano_medio_hogar` toma la media publicada, sin recalcularla. En los municipios sigue la del censo.
   - La fila de vivienda de GAP-001 queda SIN DATOS por distrito mientras no haya superficie de las viviendas por distrito.
+
+## D-210 — Distancia a pie: velocidad, ventanas, destinos y calles de origen (2026-11-11)
+CORE-005, Fases 3 y 4. Doce features por sección censal, municipio y distrito, más la referencia regional. Son 6 destinos con dos medidas cada uno:
+- la mediana de minutos hasta el más cercano;
+- el % de calle a N minutos o menos.
+
+Datos: la red peatonal de OSM (`osm_red_peatonal`, ODbL, complementaria) y los registros de la CM para los destinos.
+- **Velocidad: 4,5 km/h (1,25 m/s) para todo el mundo.**
+  - La guía de la FHWA de EE. UU. recomienda 1,2 m/s para la mayoría de los casos y 1,0 m/s donde más del 20 % son mayores de 65 (https://www.fhwa.dot.gov/publications/research/safety/pedbike/98107/section2.cfm).
+  - El estudio «El Madrid de los 15 minutos» del Ayuntamiento usa 4 km/h (https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf).
+  - 4,5 km/h es un paso adulto tranquilo y la parte alta para personas mayores, y se declara en cada feature. A 4 km/h los minutos salen un 12,5 % más altos y a 3,6 km/h, un 25 % más.
+  - Una velocidad para movilidad reducida entra con la accesibilidad física, opcional (D-205, del 19 al 22 nov), sin cambiar este cálculo.
+- **Ventanas del %:** transporte 5 min (unos 375 m), centro de salud 15 min y el resto 10 min.
+- **Destinos** (por subcategoría del registro, en el YAML de cada feature):
+  - escuela infantil: pública y privada, de 0 a 3 años;
+  - colegio con primaria: público o concertado;
+  - centro de salud o consultorio de atención primaria;
+  - farmacia;
+  - centro de mayores: hogares, clubes y centros de día (las residencias no son destino a pie);
+  - cualquier parada de autobús, metro, metro ligero o cercanías, sin mirar la frecuencia, que llega con CORE-009.
+- **Origen: las calles donde vive la gente,** aproximadas por el tipo de vía de OSM: residencial, de convivencia, sin clasificar, peatonal y terciaria.
+  - Cada nodo pesa la mitad de la longitud de sus tramos y cae en la sección censal que lo contiene. El municipio y el distrito salen del código de la sección.
+  - Es un proxy de dónde vive la gente, no la población. Pesa más donde hay más calle, como las urbanizaciones de baja densidad, y por eso la mediana regional (por ejemplo, 3,4 min a una parada) es más alta que la de la sección típica (2,1 min).
+- **Cálculo:**
+  - Un Dijkstra multiorigen por tipo de destino sobre la componente principal de la red. Cada destino se une a ella por su nodo más cercano, en línea recta.
+  - Por zona se calculan la mediana de minutos ponderada por la longitud de calle y el % de esa calle a N minutos o menos. Las dos medidas son coherentes por construcción: la mediana está dentro de la ventana si y solo si lo está la mitad de la calle o más.
+- **Sin datos y desconocido, nunca 0:**
+  - una zona sin calles de origen en OSM es `SOURCE_NO_COVERAGE`. Pasa en 24 secciones urbanas pequeñas (0,01–0,13 km²), 15 de ellas en Moratalaz y Villa de Vallecas. Ahí las viviendas dan seguramente a vías que OSM no marca como calle de origen (peatonales o de servicio). Una mejora posible: usar en esas secciones cualquier vía transitable como origen, declarándolo;
+  - una zona cuyas calles no llegan a ningún destino es `UNKNOWN`.
+- **Confianza:** la parte de la calle de la zona que conecta con la red. Si la zona tiene menos de 300 m de calle de origen, 0,5 como máximo.
+- **Niveles:** el H3 r9 queda para cuando lo pida la vista 3D de la zona (CORE-005b). Serían unas 300.000 filas más en `feature_value`, que se copia entera a Supabase.
+- **Comprobación (Gate 3):**
+  - 15 casos golden con límites razonados, por ejemplo: Sol tiene farmacia a 5 min o menos, y La Acebeda no tiene ninguna farmacia en el registro (97,5 min a la más cercana) pero sí consultorio (12,7 min);
+  - la coherencia entre mediana y % en las 4.819 zonas con valor de cada destino;
+  - la cobertura de las 4.843 zonas.
+  - El cálculo completo de las 24 features tarda 29 s y ocupa 0,9 GB de memoria.
