@@ -19,7 +19,9 @@ import { createPortal } from "react-dom";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { createApi } from "@/lib/api";
+import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
+import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
 import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
 import {
   approachZoom,
@@ -48,6 +50,7 @@ import {
   type ZoneProperties,
 } from "@/lib/map/zones";
 
+import { useGapLayer } from "./GapLayerProvider";
 import KeyPointLabel from "./KeyPointLabel";
 import { ZONE_LIST_TEXT } from "./ZoneListLink";
 import { useMapZones } from "./MapProvider";
@@ -75,6 +78,8 @@ const TEXT = {
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
+  // Provisional (pending line D)
+  ariaRow: (label: string) => `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a la Comunidad de Madrid; la leyenda lo explica.`,
 };
 
 type Failure = "webgl" | "tiles";
@@ -119,6 +124,18 @@ function labelOptions(end: ZoneCamera): KeyPointOptions {
 
 function source(map: MapLibreMap, id: string): GeoJSONSource {
   return map.getSource(id) as GeoJSONSource;
+}
+
+/** The FALTA stripes, JUSTO dots and small-zone lines the zones are filled with when the map shows a row of «Qué falta». */
+function addPatterns(map: MapLibreMap, palette: MapPalette): void {
+  const scale = Math.min(2, Math.ceil(window.devicePixelRatio || 1));
+  const ink = (color: string, alpha: number): Rgba8 => {
+    const { r, g, b } = parseColor(color);
+    return [r, g, b, alpha];
+  };
+  map.addImage(PATTERN_IMAGE.FALTA, patternPixels("stripes", ink(palette.gapFaltaInk, 170), scale), { pixelRatio: scale });
+  map.addImage(PATTERN_IMAGE.JUSTO, patternPixels("dots", ink(palette.gapJustoInk, 200), scale), { pixelRatio: scale });
+  map.addImage(PATTERN_IMAGE.ZONA_PEQUENA, patternPixels("lines", ink(palette.gapZonaPequenaInk, 120), scale), { pixelRatio: scale });
 }
 
 function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: ZoneProperties) => void): void {
@@ -241,7 +258,13 @@ function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: st
 
 export default function VidaMap() {
   const { zones, status, error, retry, activeZone, selectedZone, select, barrio } = useMapZones();
+  const { row, data: gapData } = useGapLayer();
   const overview = usePathname() === "/";
+  // Overview coloured by a row of «Qué falta» once its statuses arrive; plain zones otherwise
+  const painted = useMemo(
+    () => (zones && overview && row && gapData ? paintZones(zones, gapData.byZone) : zones),
+    [zones, overview, row, gapData],
+  );
   const slow = useSlow(status === "loading");
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
@@ -283,7 +306,9 @@ export default function VidaMap() {
     mapRef.current = map;
     if (!matches(MOBILE)) map.addControl(new NavigationControl({ visualizePitch: true }), "bottom-right");
     map.on("load", () => {
-      addZoneLayers(map, readPalette(), (zone) => pickRef.current(zone));
+      const palette = readPalette();
+      addPatterns(map, palette);
+      addZoneLayers(map, palette, (zone) => pickRef.current(zone));
       // Fewer layers on mobile: no blurred glow and no raised edge around the zone.
       if (matches(MOBILE)) {
         map.setLayoutProperty("zone-glow", "visibility", "none");
@@ -302,9 +327,9 @@ export default function VidaMap() {
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !ready || !zones) return;
-    source(map, "zones").setData(zones);
-  }, [ready, zones]);
+    if (!map || !ready || !painted) return;
+    source(map, "zones").setData(painted);
+  }, [ready, painted]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -366,7 +391,12 @@ export default function VidaMap() {
 
   return (
     <>
-      <div ref={container} className={styles.map} role="region" aria-label={TEXT.aria} />
+      <div
+        ref={container}
+        className={styles.map}
+        role="region"
+        aria-label={painted !== zones && gapData ? `${TEXT.aria} ${TEXT.ariaRow(gapData.info.label)}` : TEXT.aria}
+      />
       {failure && (
         <div role="alert" className={`glass ${styles.failure}`}>
           <p>{failure === "webgl" ? TEXT.noWebgl : TEXT.noTiles}</p>

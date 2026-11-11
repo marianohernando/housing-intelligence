@@ -7,6 +7,8 @@ import type { IndicatorValue } from "@/contracts/zone_gap_list_response";
 import {
   GAP_STATUS,
   gapFigures,
+  isSmallZone,
+  SMALL_ZONE,
   gapsHref,
   NULL_REASON,
   parseZoneParam,
@@ -66,6 +68,15 @@ describe("pendingRows", () => {
   });
 });
 
+describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
+  it("flags only `reliable: false`; answers without the field are comparable", () => {
+    expect(isSmallZone({ reliable: false })).toBe(true);
+    expect(isSmallZone({ reliable: true })).toBe(false);
+    expect(isSmallZone({})).toBe(false);
+    expect(SMALL_ZONE.label).toBe("Zona pequeña para comparar");
+  });
+});
+
 describe("sortRows and topRows", () => {
   const rows = [
     { row: "farmacia", status: "CUBIERTO" },
@@ -79,6 +90,17 @@ describe("sortRows and topRows", () => {
     expect(sortRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud", "farmacia", "mayores"]);
   });
 
+  it("puts a small zone after a comparable one with the same status", () => {
+    const mixed = [
+      { row: "farmacia", status: "CUBIERTO" },
+      { row: "colegio", status: "JUSTO", reliable: false },
+      { row: "mayores", status: "JUSTO" },
+    ] as const;
+    expect(sortRows([...mixed]).map((r) => r.row)).toEqual(["mayores", "colegio", "farmacia"]);
+    const small = [{ row: "colegio", status: "JUSTO", reliable: false }, { row: "mayores", status: "FALTA" }] as const;
+    expect(sortRows([...small]).map((r) => r.row)).toEqual(["mayores", "colegio"]);
+  });
+
   it("keeps at most three rows for the zone card", () => {
     expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
   });
@@ -87,16 +109,23 @@ describe("sortRows and topRows", () => {
 describe("gapFigures", () => {
   // Pairs from GET /gaps (11 nov) and the decimals of their API `explanation`
   it("formats value and reference like the API explanation", () => {
-    expect(gapFigures(5.011, 4.714)).toEqual({ value: "5,0", reference: "4,7" });
-    expect(gapFigures(0.469, 0.5918)).toEqual({ value: "0,47", reference: "0,59" });
-    expect(gapFigures(0, 0.3895)).toEqual({ value: "0,00", reference: "0,39" });
-    expect(gapFigures(142.9, 0.5918)).toEqual({ value: "142,9", reference: "0,6" });
-    expect(gapFigures(10700, 177.6)).toEqual({ value: "10.700,0", reference: "177,6" });
+    expect(gapFigures(5.011, 4.714)).toMatchObject({ value: "5,0", reference: "4,7" });
+    expect(gapFigures(0.469, 0.5918)).toMatchObject({ value: "0,47", reference: "0,59" });
+    expect(gapFigures(0, 0.3895)).toMatchObject({ value: "0,00", reference: "0,39" });
+    expect(gapFigures(142.9, 0.5918)).toMatchObject({ value: "142,9", reference: "0,6" });
+    expect(gapFigures(10700, 177.6)).toMatchObject({ value: "10.700,0", reference: "177,6" });
   });
 
   it("never turns a missing value or reference into a number", () => {
-    expect(gapFigures(null, 177.6)).toEqual({ value: null, reference: "177,6" });
-    expect(gapFigures(1.2, null)).toEqual({ value: "1,2", reference: null });
+    expect(gapFigures(null, 177.6)).toEqual({ value: null, reference: "177,6", regional: null });
+    expect(gapFigures(1.2, null)).toEqual({ value: "1,2", reference: null, regional: null });
+  });
+
+  it("gives the whole region with the decimals of the value and its reference (gap-0.2 explanation)", () => {
+    // «0,47 …; en los demás municipios urbanos …, 0,56 (en toda la Comunidad, 0,59)»
+    expect(gapFigures(0.469, 0.5553, 0.5918)).toEqual({ value: "0,47", reference: "0,56", regional: "0,59" });
+    // «142,9 …; en los demás municipios rurales …, 6,8 (en toda la Comunidad, 0,6)»
+    expect(gapFigures(142.9, 6.799, 0.5918)).toEqual({ value: "142,9", reference: "6,8", regional: "0,6" });
   });
 });
 
@@ -121,8 +150,8 @@ describe("walking minutes (extra_indicators)", () => {
     expect(walkingText(extra("min_a_pie_farmacia", 0.3))).toBe("menos de 1 min");
   });
 
-  it("says «sin dato» when the value is missing, never 0", () => {
-    expect(walkingText(extra("min_a_pie_colegio", null, "SOURCE_NO_COVERAGE"))).toBe("sin dato");
+  it("says «Sin datos» when the value is missing, never 0 (a_pie.min)", () => {
+    expect(walkingText(extra("min_a_pie_colegio", null, "SOURCE_NO_COVERAGE"))).toBe("Sin datos");
   });
 });
 

@@ -11,6 +11,23 @@ import type { AdminUnitProperties } from "@/lib/geo";
 export const MUNICIPIOS_BY_DISTRITO: readonly string[] = ["ES.28.MUN.28079"];
 
 export type ZoneLevel = "municipio" | "distrito";
+
+/** A municipio the map shows by its districts (Madrid capital): it has a «Qué falta» list, not a zone screen. */
+export function isWholeCity(adminUnitId: string | null | undefined): boolean {
+  return adminUnitId != null && MUNICIPIOS_BY_DISTRITO.includes(adminUnitId);
+}
+
+/**
+ * The whole cities behind the districts of the map (MUNICIPIOS_BY_DISTRITO), named after their
+ * districts: the municipio code (INE) is the last part of its id and starts every district code.
+ */
+export function wholeCities(zones: ZoneCollection): { admin_unit_id: string; code: string; name: string }[] {
+  return MUNICIPIOS_BY_DISTRITO.flatMap((id) => {
+    const code = id.split(".").at(-1) ?? "";
+    const district = zones.features.find((f) => f.properties.level === "distrito" && f.properties.code.startsWith(code));
+    return district ? [{ admin_unit_id: id, code, name: district.properties.municipio_name }] : [];
+  });
+}
 export type ZoneGeometry = GeoJSON.Polygon | GeoJSON.MultiPolygon;
 
 /** A feature as /api/v1/geo/admin-units returns it (`level` stays a plain string here). */
@@ -164,7 +181,8 @@ export function edgeWall(geometry: ZoneGeometry, widthM: number): GeoJSON.Featur
 }
 
 /** Lower case without accents, to find «Chamartín» by typing «chamartin». */
-function searchable(text: string): string {
+/** Text as the zone filter compares it: lower case, without accents. */
+export function searchable(text: string): string {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
 }
 

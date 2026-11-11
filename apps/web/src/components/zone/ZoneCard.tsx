@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, topRows, walking, walkingText } from "@/lib/gaps";
+import { gapsHref, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
 import { type ZoneFeature, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
@@ -23,6 +23,7 @@ const TEXT = {
   municipio: "Municipio",
   close: "Cerrar",
   beforeSearch: "Haz tu búsqueda para ver qué zonas encajan contigo.",
+  fitSoon: "Muy pronto verás cuánto encaja esta zona contigo.", // zona.encaje.pronto
   missing: "Qué falta aquí",
   walk: "A pie:",
   retry: "Reintentar",
@@ -67,7 +68,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
           </span>
         )}
       </div>
-      {available && !result && <p className={styles.hint}>{TEXT.beforeSearch}</p>}
+      {!result && <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
         <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>
@@ -97,6 +98,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
                         {TEXT.walk} {walkingText(walk)}
                       </small>
                     )}
+                    {isSmallZone(row) && <small title={SMALL_ZONE.help}>{SMALL_ZONE.label}</small>}
                   </span>
                   <GapBadge status={row.status} />
                 </li>

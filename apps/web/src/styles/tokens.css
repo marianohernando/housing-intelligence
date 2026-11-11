@@ -42,6 +42,10 @@
   --sin-datos: #6e7389;
   --sin-datos-ink: #4f546a;
   --sin-datos-bg: #eeeff3;
+  /* «Zona pequeña para comparar» (gap-0.2, D-213): too few people to tell; never FALTA */
+  --zona-pequena: #6f6699;
+  --zona-pequena-ink: #4d4578;
+  --zona-pequena-bg: #eeecf6;
 
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
   --map-darkest: var(--violet);
@@ -55,6 +59,13 @@
   --map-zone: #dcd6fa;
   --map-building: #e6e3f5;
   --map-building-tall: #a99df0;
+
+  /* Map coloured by a row of «Qué falta»: light fills; FALTA and JUSTO also carry a pattern in their -ink */
+  --map-falta: #f3b0bb;
+  --map-justo: #f7d58f;
+  --map-cubierto: #b3e0cb;
+  --map-sin-datos: #e4e5ec;
+  --map-zona-pequena: #d9d6e6;
 
   /* Type */
   --font-title: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;

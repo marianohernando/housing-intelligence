@@ -6,11 +6,15 @@ import {
   buildZoneCollection,
   edgeWall,
   findZone,
+  isWholeCity,
   maskAround,
   outlinePoints,
   regionOf,
   ringArea,
+  wholeCities,
+  type ZoneCollection,
   zoneDirectory,
+  type ZoneFeature,
   zoneHref,
 } from "../map/zones";
 
@@ -191,5 +195,26 @@ describe("zoneDirectory", () => {
     expect(zoneDirectory(zones, "chamartin").distritos.map((z) => z.name)).toEqual(["Chamartín"]);
     expect(zoneDirectory(zones, "  ROZAS ").municipios.map((z) => z.name)).toEqual(["Las Rozas de Madrid"]);
     expect(zoneDirectory(zones, "zzz")).toEqual({ distritos: [], municipios: [] });
+  });
+});
+
+describe("whole cities (Madrid capital, shown by its districts)", () => {
+  const district = (code: string): ZoneFeature => ({
+    type: "Feature",
+    id: code,
+    geometry: { type: "Polygon", coordinates: [] },
+    properties: { admin_unit_id: `d${code}`, level: "distrito", code, name: code, municipio_name: "Madrid", zone_key: `distrito/${code}` },
+  });
+
+  it("names the split municipio after its districts and knows its id", () => {
+    const zones: ZoneCollection = { type: "FeatureCollection", features: [district("2807901"), district("2807905")] };
+    expect(wholeCities(zones)).toEqual([{ admin_unit_id: "ES.28.MUN.28079", code: "28079", name: "Madrid" }]);
+    expect(isWholeCity("ES.28.MUN.28079")).toBe(true);
+    expect(isWholeCity("ES.28.MUN.28092")).toBe(false);
+    expect(isWholeCity(null)).toBe(false);
+  });
+
+  it("gives none when the districts are not loaded", () => {
+    expect(wholeCities({ type: "FeatureCollection", features: [] })).toEqual([]);
   });
 });

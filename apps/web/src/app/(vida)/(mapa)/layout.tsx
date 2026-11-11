@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import GapLayerProvider from "@/components/map/GapLayerProvider";
 import MapProvider from "@/components/map/MapProvider";
 import VidaMap from "@/components/map/VidaMap";
 import ScenarioProvider from "@/components/search/ScenarioProvider";
@@ -15,10 +16,12 @@ export default function MapaLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <ScenarioProvider>
       <MapProvider>
-        <VidaMap />
-        <div className={styles.overlay}>
-          <MapSheet>{children}</MapSheet>
-        </div>
+        <GapLayerProvider>
+          <VidaMap />
+          <div className={styles.overlay}>
+            <MapSheet>{children}</MapSheet>
+          </div>
+        </GapLayerProvider>
       </MapProvider>
     </ScenarioProvider>
   );

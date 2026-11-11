@@ -38,6 +38,15 @@
   list-style: none;
 }
 
+/* A zone and, when the list shows a row of «Qué falta», its status */
+.list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  break-inside: avoid;
+}
+
 .list a {
   display: inline-flex;
   align-items: center;

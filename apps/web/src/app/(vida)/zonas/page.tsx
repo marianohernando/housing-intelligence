@@ -3,18 +3,30 @@ import type { Metadata } from "next";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
 import ZoneDirectory from "@/components/zone/ZoneDirectory";
+import { ROW_NAME } from "@/lib/gaps";
+import { isGapRow } from "@/lib/map/gapMap";
 
 import styles from "../section.module.css";
 
 export const metadata: Metadata = { title: "Zonas" };
 
-/** The zones in a list (pitch/textos_web.md, mapa.alternativa): the same zones as the map, without it. */
-export default function ZonasPage() {
+// «Con su estado en…» is provisional (pending line D)
+const rowIntro = (name: string) =>
+  `Con su estado en ${name.toLowerCase()} frente a la Comunidad de Madrid: FALTA, JUSTO, CUBIERTO o SIN DATOS.`;
+
+/**
+ * The zones in a list (pitch/textos_web.md, mapa.alternativa): the same zones as the map, without
+ * it. With ?fila=<row>, the same row of «Qué falta» the map is coloured by.
+ */
+export default async function ZonasPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { fila } = await searchParams;
+  const row = isGapRow(fila) ? fila : null;
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Todas las zonas</h1>
+      {row && <p className={styles.para}>{rowIntro(ROW_NAME[row])}</p>}
       <GlassCard className={styles.card}>
-        <ZoneDirectory />
+        <ZoneDirectory row={row} wholeCities />
       </GlassCard>
       <SiteFooter />
     </div>

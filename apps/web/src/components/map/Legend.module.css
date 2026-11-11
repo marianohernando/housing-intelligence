@@ -5,10 +5,42 @@
   z-index: 1;
   display: grid;
   gap: var(--space-2);
-  width: min(22rem, calc(100% - 2rem));
+  width: min(24rem, calc(100% - 2rem));
   margin: 0;
   padding: var(--space-3) var(--space-4);
   transform: translateX(-50%);
+}
+
+/* «¿Qué quieres ver?» and the select on one line, so the legend stays low over the map */
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+}
+
+.pickerLabel {
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.select {
+  flex: 1 1 11rem;
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.figure {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
 }
 
 .title {
@@ -50,6 +82,113 @@
   font-size: 0.8rem;
 }
 
+/* A row of «Qué falta»: what it counts, then each status with the map's colour and pattern */
+.rowTitle {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.rowTitle strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Never wider than the card: long content wraps instead of stretching it */
+.legend > *,
+.statuses li {
+  min-width: 0;
+}
+
+.statuses {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The count goes under the status when both do not fit, never the status itself */
+.statuses li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+}
+
+.patch {
+  flex: none;
+  width: 22px;
+  height: 16px;
+  border: 1px solid rgba(20, 27, 61, 0.18);
+  border-radius: 4px;
+}
+
+/* The same stripes and dots the map draws (lib/map/gapMap.ts, GAP_PATTERN) */
+.FALTA {
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--falta-ink) 67%, transparent) 0 1.5px, transparent 1.5px 4.25px),
+    var(--map-falta);
+}
+
+.JUSTO {
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--justo-ink) 78%, transparent) 1px, transparent 1.4px) 0 0 / 6px 6px,
+    var(--map-justo);
+}
+
+.CUBIERTO {
+  background: var(--map-cubierto);
+}
+
+.ZONA_PEQUENA {
+  background:
+    repeating-linear-gradient(180deg, color-mix(in srgb, var(--zona-pequena-ink) 47%, transparent) 0 1.5px, transparent 1.5px 6px),
+    var(--map-zona-pequena);
+}
+
+.SIN_DATOS {
+  border: 1px dashed var(--sin-datos);
+  background: var(--map-sin-datos);
+}
+
+.status {
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* «Zona pequeña para comparar» is a phrase, not a status word: it may wrap */
+.small {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.count {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.list {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+}
+
 /* Mobile: compact, just above the folded bottom sheet; hidden while the sheet is open */
 @media (max-width: 760px) {
   .legend {
@@ -58,7 +197,9 @@
     padding: var(--space-2) var(--space-3);
   }
 
-  .title {
+  .pickerLabel,
+  .title,
+  .rowTitle {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -69,6 +210,26 @@
 
   /* Before the first search the ramp means nothing yet: on the small map, only the hint */
   .waiting :is(.ramp, .ends, .noData) {
+    display: none;
+  }
+
+  /* The four statuses in one line, without the counts (they are in the list of zones) */
+  .statuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  .count {
+    display: none;
+  }
+
+  .status {
+    font-size: 0.75rem;
+  }
+
+  /* «Ver las zonas en una lista» in the sheet already leads to this row's list */
+  .list {
     display: none;
   }
 

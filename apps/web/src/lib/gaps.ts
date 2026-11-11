@@ -6,21 +6,32 @@ import type { GapRowKey, GapStatus, IndicatorValue, NullReason } from "@/contrac
 import { formatNumber } from "@/lib/format";
 import type { ZoneLevel } from "@/lib/map/zones";
 
+/** estado.* (gap-0.2, D-213: each zone against the other municipios of its type). */
 export const GAP_STATUS: Record<GapStatus, { label: string; help: string }> = {
-  FALTA: { label: "FALTA", help: "Esta zona está claramente peor que el conjunto de la Comunidad de Madrid." },
-  JUSTO: { label: "JUSTO", help: "Esta zona está algo peor que el conjunto de la Comunidad de Madrid." },
-  CUBIERTO: { label: "CUBIERTO", help: "Esta zona está igual o mejor que el conjunto de la Comunidad de Madrid." },
+  FALTA: { label: "FALTA", help: "Tiene claramente menos que los municipios de su tipo, y no es por el tamaño de la zona." },
+  JUSTO: { label: "JUSTO", help: "Tiene menos que los municipios de su tipo, pero no tanto como para decir que falta." },
+  CUBIERTO: { label: "CUBIERTO", help: "Tiene lo mismo o más que los municipios de su tipo." },
   SIN_DATOS: { label: "SIN DATOS", help: "No tenemos este dato para esta zona. No quiere decir que no haya." },
 };
+
+/** fila.zona_pequena: next to the status when the API sends `reliable: false` (never FALTA, D-213). */
+export const SMALL_ZONE = {
+  label: "Zona pequeña para comparar",
+  help: "Aquí vive tan poca gente que no podemos saber con seguridad si falta. Por eso no la marcamos como FALTA.",
+};
+
+export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
+  return reliable === false;
+}
 
 /** Row names when the API does not send one (fila.*): the rows it has not computed yet. */
 export const ROW_NAME: Record<GapRowKey, string> = {
   escuela_infantil: "Escuelas infantiles",
   colegio: "Colegios",
   centro_salud: "Centros de salud",
-  mayores: "Mayores",
+  mayores: "Centros de mayores",
   farmacia: "Farmacias",
-  vivienda: "Vivienda",
+  vivienda: "Vivienda para familias",
 };
 
 /** What each row counts, per population, against the whole region (line A's /gaps, 11 nov). */
@@ -60,23 +71,31 @@ export function pendingRows(warnings: readonly string[] | undefined): GapRowKey[
 
 const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3 };
 
-/** What is missing first; rows with the same status keep the API order. */
-export function sortRows<T extends { status: GapStatus }>(rows: readonly T[]): T[] {
-  return [...rows].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+type Classified = { status: GapStatus; reliable?: boolean };
+
+/** What is missing first, a small zone after a comparable one; otherwise the API order. */
+export function sortRows<T extends Classified>(rows: readonly T[]): T[] {
+  const rank = (r: T) => STATUS_ORDER[r.status] * 2 + (isSmallZone(r) ? 1 : 0);
+  return [...rows].sort((a, b) => rank(a) - rank(b));
 }
 
 /** The zone card shows three rows: what is missing first. */
-export function topRows<T extends { status: GapStatus }>(rows: readonly T[], limit = 3): T[] {
+export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[] {
   return sortRows(rows).slice(0, limit);
 }
 
-/** Value and regional reference with the decimals of the API `explanation` (hi_domain.gaps). */
-export function gapFigures(value: number | null, reference: number | null): { value: string | null; reference: string | null } {
+/**
+ * Value, reference (zones of the same type) and the whole region, with the decimals of the API
+ * `explanation` (hi_domain.gaps): set by the value and its reference.
+ */
+export function gapFigures(
+  value: number | null,
+  reference: number | null,
+  regional: number | null = null,
+): { value: string | null; reference: string | null; regional: string | null } {
   const decimals = Math.max(Math.abs(value ?? 0), Math.abs(reference ?? 0)) < 1 ? 2 : 1;
-  return {
-    value: value === null ? null : formatNumber(value, decimals),
-    reference: reference === null ? null : formatNumber(reference, decimals),
-  };
+  const format = (n: number | null) => (n === null ? null : formatNumber(n, decimals));
+  return { value: format(value), reference: format(reference), regional: format(regional) };
 }
 
 const WALKING_PREFIX = "min_a_pie_";
@@ -87,8 +106,9 @@ export function walking(extras: readonly IndicatorValue[] | undefined): Indicato
   return extras?.find((e) => e.feature_id.startsWith(WALKING_PREFIX));
 }
 
+/** a_pie.min */
 export function walkingText({ value }: Pick<IndicatorValue, "value">): string {
-  if (value === null) return "sin dato";
+  if (value === null) return "Sin datos";
   if (value > WALKING_CAP_MIN) return `más de ${WALKING_CAP_MIN} min`;
   if (value < 1) return "menos de 1 min";
   return `${Math.round(value)} min`;

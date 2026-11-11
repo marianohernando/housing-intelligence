@@ -5,6 +5,8 @@
  */
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
 
+import { PATTERN_IMAGE } from "./gapMap";
+
 /** TileJSON of OpenFreeMap's public instance; it carries the © OpenMapTiles / OSM attribution. */
 export const OPENFREEMAP_TILEJSON = "https://tiles.openfreemap.org/planet";
 
@@ -19,6 +21,15 @@ export const MAP_PALETTE_TOKENS = {
   buildingTall: "map-building-tall",
   violet: "violet",
   violetSoft: "violet-soft",
+  gapFalta: "map-falta",
+  gapJusto: "map-justo",
+  gapCubierto: "map-cubierto",
+  gapSinDatos: "map-sin-datos",
+  gapZonaPequena: "map-zona-pequena",
+  gapZonaPequenaInk: "zona-pequena-ink",
+  gapFaltaInk: "falta-ink",
+  gapJustoInk: "justo-ink",
+  sinDatos: "sin-datos",
 } as const;
 
 export type MapPalette = Record<keyof typeof MAP_PALETTE_TOKENS, string>;
@@ -131,7 +142,9 @@ export function baseStyle(p: MapPalette): StyleSpecification {
 
 /**
  * Zone overlays (sources `zones`, `zone-mask`, `zone-selected`, `zone-base` and `zone-barrio` are
- * added by the map).
+ * added by the map). A zone with a `gap` property (lib/map/gapMap.ts) is filled by its status in
+ * the row the person picked, with the FALTA, JUSTO and small-zone patterns and a dashed edge for
+ * SIN DATOS.
  * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
  * first, so the white mask drawn above fades the surroundings, buildings included.
  */
@@ -144,8 +157,45 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         type: "fill",
         source: "zones",
         paint: {
-          "fill-color": ["case", ["boolean", ["feature-state", "hover"], false], p.violetSoft, p.zone],
+          "fill-color": [
+            "case",
+            ["has", "gap"],
+            [
+              "match",
+              ["get", "gap"],
+              "FALTA",
+              p.gapFalta,
+              "JUSTO",
+              p.gapJusto,
+              "CUBIERTO",
+              p.gapCubierto,
+              "ZONA_PEQUENA",
+              p.gapZonaPequena,
+              p.gapSinDatos,
+            ],
+            ["boolean", ["feature-state", "hover"], false],
+            p.violetSoft,
+            p.zone,
+          ],
           "fill-opacity": fadeOut(0.9),
+        },
+      },
+      {
+        id: "zones-pattern",
+        type: "fill",
+        source: "zones",
+        filter: ["match", ["get", "gap"], ["FALTA", "JUSTO", "ZONA_PEQUENA"], true, false],
+        paint: {
+          "fill-pattern": [
+            "match",
+            ["get", "gap"],
+            "FALTA",
+            PATTERN_IMAGE.FALTA,
+            "JUSTO",
+            PATTERN_IMAGE.JUSTO,
+            PATTERN_IMAGE.ZONA_PEQUENA,
+          ],
+          "fill-opacity": fadeOut(1),
         },
       },
     ],
@@ -172,6 +222,13 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         type: "line",
         source: "zones",
         paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.8, 12, 1.6], "line-opacity": fadeOut(1) },
+      },
+      {
+        id: "zones-nodata",
+        type: "line",
+        source: "zones",
+        filter: ["==", ["get", "gap"], "SIN_DATOS"],
+        paint: { "line-color": p.sinDatos, "line-width": 1.5, "line-dasharray": [2, 2], "line-opacity": fadeOut(1) },
       },
       {
         id: "zone-glow",

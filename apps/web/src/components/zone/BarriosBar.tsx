@@ -9,10 +9,11 @@ import GlassCard from "@/components/ui/GlassCard";
 
 import styles from "./BarriosBar.module.css";
 
-// Copy: barrios.titulo from pitch/textos_web.md; «Todo {zona}» is provisional, pending line D.
+// Copy from pitch/textos_web.md (barrios.titulo, barrios.todo, barrios.ayuda)
 const TEXT = {
-  title: "Barrios de la zona",
+  title: "Ir a un barrio",
   all: (zone: string) => `Todo ${zone}`,
+  help: "Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero.",
 };
 
 /**
@@ -25,7 +26,10 @@ export default function BarriosBar() {
   if (!activeZone || !barrios?.length) return null;
   const focused = barrio?.properties.admin_unit_id ?? null;
   return (
-    <GlassCard as="section" aria-labelledby={titleId} className={styles.bar}>
+    <GlassCard as="section" aria-labelledby={titleId} aria-describedby={`${titleId}-ayuda`} className={styles.bar}>
+      <p id={`${titleId}-ayuda`} className="visually-hidden">
+        {TEXT.help}
+      </p>
       <h2 id={titleId} className={styles.title}>
         {TEXT.title}
       </h2>

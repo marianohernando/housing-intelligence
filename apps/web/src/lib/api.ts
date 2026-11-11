@@ -3,9 +3,10 @@
  * Response types are generated from the JSON Schemas (src/contracts), never written by hand.
  */
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
+import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
-import type { ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
+import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
 import { type AdminLevel, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
 import type { PlaceFeature } from "@/lib/map/places";
@@ -88,6 +89,10 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     /** GET /api/v1/gaps/{level}/{code}: what a zone is missing against the region. */
     zoneGaps(level: GapLevel, code: string) {
       return call<ZoneGapListResponse>(`/api/v1/gaps/${level}/${encodeURIComponent(code)}`);
+    },
+    /** GET /api/v1/gaps?level=&row=: one row of «Qué falta» for every zone of a level (the map). */
+    gapRowMap(level: "municipio" | "distrito", row: GapRowKey) {
+      return call<GapRowMapResponse>(`/api/v1/gaps?${new URLSearchParams({ level, row }).toString()}`);
     },
     /** GET /api/v1/datasets: every dataset behind the product (footer counter and provenance). */
     datasets({ cmOnly = false }: { cmOnly?: boolean } = {}) {

@@ -34,3 +34,11 @@
   background: var(--sin-datos-bg);
   color: var(--sin-datos-ink);
 }
+
+/* fila.zona_pequena, next to the status (SmallZoneTag) */
+.small {
+  border: 1px dashed var(--zona-pequena);
+  background: var(--zona-pequena-bg);
+  color: var(--zona-pequena-ink);
+  letter-spacing: 0;
+}

@@ -25,11 +25,14 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
+// gap-0.2 (D-213), with estado.* and fila.zona_pequena of pitch/textos_web.md; the long definitions
+// wait for pitch/metodologia.md (1.4)
 const STATUS_ROWS: [string, string][] = [
-  ["menos del 80 % de lo que tiene el conjunto de la región", "FALTA"],
-  ["entre el 80 % y el 100 %", "JUSTO"],
-  ["el 100 % o más", "CUBIERTO"],
-  ["no tenemos el dato", "SIN DATOS"],
+  ["claramente menos que los municipios de su tipo, y no es por el tamaño de la zona", "FALTA"],
+  ["menos que los municipios de su tipo, pero no tanto como para decir que falta", "JUSTO"],
+  ["lo mismo o más que los municipios de su tipo", "CUBIERTO"],
+  ["tan poca gente que no podemos saber con seguridad si falta (nunca sale FALTA)", "Zona pequeña para comparar"],
+  ["un dato que no tenemos", "SIN DATOS"],
 ];
 
 function GapMethod() {
@@ -37,7 +40,7 @@ function GapMethod() {
     <Section id="que-falta" title="Cómo decidimos qué falta en una zona">
       <p className={styles.para}>
         Para cada servicio contamos cuántos hay en la zona por cada número fijo de vecinos. Después hacemos la misma
-        cuenta para toda la Comunidad de Madrid y comparamos:
+        cuenta para los demás municipios de su tipo en la Comunidad de Madrid (rurales o urbanos) y comparamos:
       </p>
       <table className={styles.table}>
         <thead>
@@ -58,7 +61,7 @@ function GapMethod() {
         </tbody>
       </table>
       <p className={styles.para}>
-        Es una señal para saber dónde mirar primero, no un veredicto: comparamos con el conjunto de la región, no con una
+        Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas de la región, no con una
         norma oficial que diga cuántos centros debería haber.
       </p>
     </Section>

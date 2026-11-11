@@ -50,8 +50,8 @@ const TEXT = {
   budgetAria: "Presupuesto máximo",
   submit: "Ver zonas que encajan",
   loading: "Buscando zonas…",
-  // Provisional (pending line D): the search waits for POST /search of line A
-  searchSoon: "Estamos terminando el cálculo del encaje. Mientras, toca una zona del mapa para ver qué le falta.",
+  // busqueda.pronto: instead of the button while POST /search of line A is not published
+  searchSoon: "Muy pronto podrás ver qué zonas encajan contigo. Mientras, toca una zona del mapa para ver qué le falta.",
 };
 
 /** Priorities with data today. Zonas verdes, seguridad and sin escaleras wait for line A (DATA-018/019/020). */
@@ -167,12 +167,14 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           />
         </fieldset>
 
-        <Button className={styles.submit} onClick={() => void search()} disabled={!available || status === "loading"}>
-          <Search size={20} aria-hidden="true" />
-          {status === "loading" ? TEXT.loading : TEXT.submit}
-          {!available && <span className={styles.soonTag}>{TEXT.soon}</span>}
-        </Button>
-        {!available && <p className={styles.help}>{TEXT.searchSoon}</p>}
+        {available ? (
+          <Button className={styles.submit} onClick={() => void search()} disabled={status === "loading"}>
+            <Search size={20} aria-hidden="true" />
+            {status === "loading" ? TEXT.loading : TEXT.submit}
+          </Button>
+        ) : (
+          <p className={styles.soonNote}>{TEXT.searchSoon}</p>
+        )}
         {status === "error" && error && (
           <p role="alert" className={styles.error}>
             {errorMessage(error)}

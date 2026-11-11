@@ -5,15 +5,17 @@ import { useState } from "react";
 
 import type { GapRow } from "@/contracts/zone_gap_list_response";
 import { confidenceText } from "@/lib/confidence";
-import { GAP_STATUS, gapFigures, NULL_REASON, ROW_MEASURE, walking, walkingText, WALK_TO } from "@/lib/gaps";
+import { GAP_STATUS, gapFigures, isSmallZone, NULL_REASON, ROW_MEASURE, SMALL_ZONE, walking, walkingText, WALK_TO } from "@/lib/gaps";
 import { datasetLines, sortDatasets } from "@/lib/provenance";
 
 import GapBadge from "./GapBadge";
+import SmallZoneTag from "./SmallZoneTag";
 import styles from "./GapRowItem.module.css";
 
 // Copy from pitch/textos_web.md (falta.fila.*, confianza.aria, estado.sin_datos).
 const TEXT = {
   noData: "Sin datos",
+  regional: "En toda la Comunidad de Madrid:", // gap-0.2 context; provisional (pending line D)
   walk: "A pie hasta",
   note: "Ojo:",
   sources: "De dónde sale:", // falta.fila.fuente; the count is provisional (pending line D)
@@ -46,11 +48,21 @@ function WalkingFigure({ row }: { row: GapRow }) {
   );
 }
 
-/** One row of «Qué falta»: status, value against the region, walking minutes, confidence and sources. */
+/** Why the row shows as it does when it is not a plain status: no value, or too small to tell. */
+function reasonOf(row: GapRow): string | null {
+  if (row.indicator.value === null) return NULL_REASON[row.indicator.null_reason ?? "UNKNOWN"];
+  if (row.status === "SIN_DATOS") return GAP_STATUS.SIN_DATOS.help;
+  if (isSmallZone(row)) return SMALL_ZONE.help;
+  return null;
+}
+
+/**
+ * One row of «Qué falta»: status (with «Zona pequeña para comparar»), value against the zones of the same type and
+ * the whole region, walking minutes, confidence and sources.
+ */
 export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: string }) {
-  const figures = gapFigures(row.indicator.value, row.reference);
-  const reason =
-    row.indicator.value === null ? NULL_REASON[row.indicator.null_reason ?? "UNKNOWN"] : row.status === "SIN_DATOS" ? GAP_STATUS.SIN_DATOS.help : null;
+  const figures = gapFigures(row.indicator.value, row.reference, row.regional_reference ?? null);
+  const reason = reasonOf(row);
   const confidence = confidenceText(row.indicator.confidence);
   // Fixed once, so a resize never closes what the person opened
   const [sourcesOpen] = useState(wideScreen);
@@ -59,7 +71,10 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
     <li className={`glass ${styles.row}`}>
       <div className={styles.head}>
         <h2>{row.label}</h2>
-        <GapBadge status={row.status} />
+        <span className={styles.badges}>
+          <GapBadge status={row.status} />
+          {isSmallZone(row) && <SmallZoneTag />}
+        </span>
       </div>
       <p className={styles.measure}>{ROW_MEASURE[row.row]}</p>
 
@@ -72,6 +87,12 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
           <dt>{row.reference_label}</dt>
           <dd>{figures.reference ?? TEXT.noData}</dd>
         </div>
+        {figures.regional && figures.regional !== figures.reference && (
+          <div className={styles.regional}>
+            <dt>{TEXT.regional}</dt>
+            <dd>{figures.regional}</dd>
+          </div>
+        )}
         <WalkingFigure row={row} />
       </dl>
 

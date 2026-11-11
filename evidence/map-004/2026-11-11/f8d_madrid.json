@@ -1,0 +1,18 @@
+{
+ "foco_tras_tab": [
+  "Madrid (toda la ciudad)",
+  "/que-falta?zona=municipio/28079"
+ ],
+ "url": "?zona=municipio/28079",
+ "ver_la_zona": 0,
+ "filas": [
+  "Centros de salud · FALTA · Madrid0,37 / Otros municipios urbanos de la Comunidad de Madrid0,56",
+  "Escuelas infantiles · JUSTO · Madrid4,2 / Otros municipios urbanos de la Comunidad de Madrid4,9",
+  "Colegios · JUSTO · Madrid1,3 / Otros municipios urbanos de la Comunidad de Madrid1,3",
+  "Vivienda para familias · JUSTO · Madrid163,2 / Otros municipios urbanos de la Comunidad de Madrid179,9",
+  "Centros de mayores · CUBIERTO · Madrid0,38 / Otros municipios urbanos de la Comunidad de Madrid0,37",
+  "Farmacias · CUBIERTO · Madrid5,2 / Otros municipios urbanos de la Comunidad de Madrid3,1"
+ ],
+ "lista_madrid": "Madrid (toda la ciudad)FALTA",
+ "errores": []
+}
