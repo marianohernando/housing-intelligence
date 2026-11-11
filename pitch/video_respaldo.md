@@ -43,6 +43,14 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 
 **Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
+**Si el 23 nov el buscador sigue saliendo «Muy pronto»** (CORE-003, **pendiente de A**; `apps/web/src/lib/capabilities.ts`), los planos 2, 3 y 4 no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
+- **Plano 6 entra desde el mapa:** clic en un distrito de la región (propuesta: Chamartín) y vuelo a 3D. Se alarga hasta 30 s y suma la tarjeta «Qué falta aquí» con «A pie: N min».
+- **Locución añadida:** «Y cuánto se tarda andando, por las calles de verdad: [N] minutos hasta el centro de salud más cercano».
+- **Plano 5:** pasa detrás del 6 (la fuente se abre desde una fila de «Qué falta»).
+- **El resto:** pausas más largas en los planos 7 y 8.
+
+Se vuelve a contar con el comando de arriba.
+
 ---
 
 ## Planos
@@ -108,14 +116,13 @@ Entramos en la zona en tres dimensiones: sus colegios, sus centros de salud y su
 
 ### Plano 7 · 1:22–1:44 · Qué falta
 - **Acción:** clic en la pestaña «Qué falta». Recorrer las filas con el cursor de arriba abajo, despacio.
-- **Se ve:** las filas FALTA / JUSTO / CUBIERTO / SIN DATOS, cada una con su valor, la referencia de la región, la fiabilidad y de dónde sale.
-- **Rótulo:** «Comparado con el conjunto de la Comunidad de Madrid».
-- **Zona:** la misma que en el bloque 3 del guion: hoy Chamartín (`GET /api/v1/gaps/distrito/2807905`); sus cifras se revisan cuando cierre GAP-001 (**pendiente de A**).
+- **Se ve:** las 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS, cada una con su valor, la referencia de los municipios de su tipo, la fiabilidad, los minutos a pie y de dónde sale.
+- **Rótulo:** «Comparado con los municipios de su tipo, urbanos o rurales».
+- **Zona:** la misma que en el bloque 3 del guion: Madrid capital (`/que-falta?zona=municipio/28079`). Con `gap-0.2` (D-213), centros de salud sale FALTA y farmacias CUBIERTO (`data/fixtures/contracts/zone_gap_list.madrid.fixture.json`). Se comprueba en la demo cuando C despliegue `gap-0.2` (**pendiente de C**).
   - Tiene que tener al menos una fila FALTA y otra CUBIERTO.
-  - No se usa la fila de colegios como ejemplo de CUBIERTO hasta que GAP-001 corrija su filtro.
 
 <!-- voz:p7:inicio -->
-Y lo que le falta. Cada servicio se compara con el conjunto de la Comunidad, según cuánta gente vive aquí. [Fila]: falta. [Fila]: cubierto. Y cuando no tenemos un dato, lo decimos: sin datos.
+Y lo que le falta. Cada servicio se compara con municipios parecidos, urbanos o rurales, según cuánta gente vive aquí. [Fila]: falta. [Fila]: cubierto. Y cuando no tenemos un dato, lo decimos: sin datos.
 <!-- voz:p7:fin -->
 
 ### Plano 8 · 1:44–1:58 · Cierre

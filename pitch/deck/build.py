@@ -32,6 +32,20 @@ ROOT = PITCH.parent
 BUILD = DECK / "build"
 CAPTURES = PITCH / "capturas"
 PDF_NAME = "VidaFacil_DATAMAD2026.pdf"
+# Real captures by line B (MAP-004 evidence). A pitch/capturas/<id>.png with the same id wins.
+B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"
+B_CAPTURE_FILES = {
+    "C4": B_CAPTURES / "c_que_falta_desktop.png",
+    "C5": B_CAPTURES / "c_zona_3d_desktop.png",
+    "C6": B_CAPTURES / "c_zona_3d_mobile.png",
+    "C7": B_CAPTURES / "c_como_lo_calculamos_desktop.png",
+}
+# B's captures taken before D-213 (gap-0.2) still show the old statuses or texts.
+B_CAPTURES_TO_RETAKE = {
+    "C4": "«Qué falta» de Madrid capital con gap-0.2 (D-213)",
+    "C5": "tarjeta de zona con gap-0.2 (D-213)",
+    "C7": "«Cómo lo calculamos» con el texto de D-213",
+}
 
 sys.path.insert(0, str(PITCH))
 from build_datasets_cm import SNAPSHOT, group_datasets  # noqa: E402
@@ -179,15 +193,25 @@ def qr_svg(url: str) -> str:
     return segno.make(url, error="m").svg_inline(omitsize=True, border=0, dark="#141b3d")
 
 
+def capture_file(shot: str) -> Path | None:
+    for candidate in (CAPTURES / f"{shot}.png", B_CAPTURE_FILES.get(shot)):
+        if candidate is not None and candidate.exists():
+            return candidate
+    return None
+
+
 def place_captures(page: str) -> tuple[str, list[str]]:
     missing: list[str] = []
 
     def fill(match: re.Match[str]) -> str:
         shot, img = match.group(1), match.group(2)
-        if (CAPTURES / f"{shot}.png").exists():
-            return f'<figure class="shot has-img" data-shot="{shot}">{img}'
-        missing.append(shot)
-        return f'<figure class="shot" data-shot="{shot}">'
+        found = capture_file(shot)
+        if found is None:
+            missing.append(shot)
+            return f'<figure class="shot" data-shot="{shot}">'
+        src = Path(os.path.relpath(found, BUILD)).as_posix()
+        img = re.sub(r'src="[^"]*"', f'src="{src}"', img)
+        return f'<figure class="shot has-img" data-shot="{shot}">{img}'
 
     filled = re.sub(r'<figure class="shot" data-shot="(C\d)">\s*(<img [^>]*>)', fill, page)
     return filled, missing
@@ -285,10 +309,17 @@ def main() -> None:
     problems += check_pdf(pdf)
 
     pending = re.findall(r'data-pending="([^"]+)"', page)
+    retake = [
+        f"{shot}: {why}"
+        for shot, why in B_CAPTURES_TO_RETAKE.items()
+        if capture_file(shot) == B_CAPTURE_FILES.get(shot)
+    ]
     print(f"Capturas que faltan: {', '.join(missing) or 'ninguna'}")
+    print(f"Capturas que hay que rehacer: {'; '.join(retake) or 'ninguna'}")
     print(f"Marcas pendientes: {'; '.join(pending) or 'ninguna'}")
     if args.final:
         problems += [f"falta la captura {shot}" for shot in missing]
+        problems += [f"rehacer la captura {item}" for item in retake]
         problems += [f"pendiente: {item}" for item in pending]
     print(f"Escrito {pdf.relative_to(ROOT)} y vistas previas en {BUILD.relative_to(ROOT)}/")
     if problems:

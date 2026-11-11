@@ -2,6 +2,17 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Novedades del 11 nov (noche), para los textos que B dejó provisionales en el PR #2:**
+- **Barra de barrios:** `barrios.titulo` pasa a «Ir a un barrio», porque la barra solo mueve el mapa. Nuevos: `barrios.todo` («Todo {distrito}») y `barrios.ayuda`.
+- **«Qué falta»:** «Cambiar de zona» pasa a `falta.otra_zona` («Elegir otra zona»), el mismo texto que ya sale cuando la zona no existe.
+- **Definitivos:**
+  - de la lista: `falta.leyenda.titulo` («Cómo leer esta lista»), `falta.leyenda.a_pie`, `falta.fila.a_pie` con sus destinos, `a_pie.min`, `zona.falta.a_pie` y `falta.fila.fuente`, con el número de conjuntos;
+  - del buscador apagado: `busqueda.pronto`, `leyenda.pronto` y `zona.encaje.pronto`;
+  - de navegación y carga: `movil.hoja.mapa`, `zonas.*`, `carga.zonas` y `carga.fuentes`.
+- **Nombres de fila:** `fila.mayores` y `fila.vivienda` igualan las etiquetas del catálogo: «Centros de mayores» y «Vivienda para familias».
+- **Método nuevo (D-213, `gap-0.2`):** cada zona se compara con los demás municipios de su tipo y no con toda la Comunidad. Cambian `estado.falta`, `estado.justo`, `estado.cubierto`, `falta.intro`, `falta.fila.referencia` y `portada.paso3`; hay `falta.fila.region` nuevo.
+- **«Poco fiable» (`reliable: false`):** propongo `fila.zona_pequena`, «Zona pequeña para comparar», en lugar de «Pocos datos para saberlo con seguridad». El dato sí lo tenemos; lo que pasa es que en la zona vive muy poca gente. Además, «pocos datos» se confunde con SIN DATOS y con la fiabilidad del dato (sección 6), que es otra cosa.
+
 ## Reglas de escritura (D-199, D-202, D-204 y brief de diseño)
 - **Español llano, de tú, en frases cortas.** Pensado para cualquier persona, también mayores.
   - Sin anglicismos ni jerga: nunca «dataset», «score», «ranking», «match» ni «Reality Check» en pantalla.
@@ -34,7 +45,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
 | `portada.como_funciona.titulo` | Así funciona | Ya está así en la web de B |
 | `portada.paso1` | **Cuéntanos cómo es tu hogar** y lo que te importa: colegios, salud, transporte… | Ya está así en la web de B |
 | `portada.paso2` | **Mira las zonas que encajan** y por qué, con hechos que puedes comprobar. | Ya está así en la web de B |
-| `portada.paso3` | **Entra en una zona** y mira qué le falta frente al conjunto de la región. | Ya está así en la web de B |
+| `portada.paso3` | **Entra en una zona** y mira qué le falta frente a zonas parecidas. | Cambia el 11 nov por D-213: ya no se compara con toda la región |
 | `portada.ejemplo.boton` | Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana | Abre el caso precargado con un toque |
 | `portada.ejemplo.ayuda` | Rellenamos la búsqueda por ti para que veas cómo funciona. Luego puedes cambiar lo que quieras. | |
 | `portada.empezar` | Empezar mi búsqueda | |
@@ -123,6 +134,14 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `busqueda.boton` | Ver zonas que encajan |
 | `busqueda.boton.cargando` | Buscando zonas… |
 
+### Mientras el buscador no esté
+El buscador sale como «Muy pronto» hasta que exista `POST /api/v1/search` (CORE-003, **pendiente de A**). La web lo enciende con `NEXT_PUBLIC_FEATURE_SEARCH=true` (`apps/web/src/lib/capabilities.ts`).
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `busqueda.pronto` | Muy pronto podrás ver qué zonas encajan contigo. Mientras, toca una zona del mapa para ver qué le falta. | En la tarjeta «Tu búsqueda», en lugar del botón. Sustituye a «Estamos terminando el cálculo del encaje…» |
+| `leyenda.pronto` | Muy pronto verás aquí qué zonas encajan contigo. | Leyenda del mapa |
+
 ---
 
 ## 3. Mapa
@@ -151,6 +170,11 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `mapa.volver` | Volver al mapa de la región | |
 | `mapa.sin_webgl` | Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista. | Con enlace a `mapa.alternativa` |
 | `movil.hoja.tirador` | Desliza hacia arriba para ver más | Hoja inferior en el móvil |
+| `movil.hoja.mapa` | Ver el mapa | Botón que pliega la hoja y deja el mapa a la vista |
+| `zonas.buscar` | Busca una zona | Lista de zonas (alternativa al mapa y elección de zona en «Qué falta») |
+| `zonas.distritos` | Distritos de Madrid | Grupo de la lista |
+| `zonas.municipios` | Municipios | Grupo de la lista |
+| `zonas.ninguna` | No hay ninguna zona con ese nombre. | Búsqueda sin resultados |
 
 ---
 
@@ -176,44 +200,66 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `zona.condicion.cumple` | Cumple | `PASS` |
 | `zona.condicion.no_cumple` | No cumple | `FAIL` |
 | `zona.condicion.sin_dato` | No lo sabemos | `UNKNOWN`. Ayuda: «Nos falta el dato para comprobarlo. No lo damos por bueno.» |
-| `barrios.titulo` | Barrios de la zona | Barra inferior del brief. **Pendiente de A**: no hay datos por barrio en la demo. Si no llegan, la barra no se muestra |
+| `zona.falta.a_pie` | A pie: {minutos} | Bajo el nombre de cada fila de la mini lista. {minutos} con `a_pie.min` (sección 5) |
+| `zona.encaje.pronto` | Muy pronto verás cuánto encaja esta zona contigo. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
+
+### Barra de barrios (solo distritos de Madrid)
+La barra **solo mueve el mapa**: la demo no tiene cifras por barrio y no las va a tener antes de la final. Por eso el título dice lo que hace y no promete datos del barrio.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `barrios.titulo` | Ir a un barrio | Título de la barra inferior (MAP-004). Sustituye a «Barrios de la zona», que hacía esperar cifras de cada barrio |
+| `barrios.todo` | Todo {distrito} | Primer chip: vuelve a encuadrar el distrito entero, por ejemplo «Todo Chamartín». Marcado al entrar en la zona |
+| `barrios.ayuda` | Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. | `aria-description` de la barra, o línea pequeña si cabe |
 
 ---
 
 ## 5. «Qué falta»: FALTA / JUSTO / CUBIERTO / SIN DATOS
 
-La línea de explicación vale para cualquier fila, porque la API ya orienta la comparación: por encima de 1, la zona está mejor que la región (`ratio_to_reference`). El texto de cada fila (valor y referencia) llega en `explanation` y se muestra debajo.
+Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su tipo**, urbanos o rurales (Ley 45/2007), y no con toda la región. La línea de explicación vale para cualquier fila, porque la API ya orienta la comparación: por encima de 1, la zona está mejor que su referencia (`ratio_to_reference`). El texto de cada fila (valor, referencia de su tipo y, entre paréntesis, la de toda la Comunidad) llega en `explanation` y se muestra debajo.
 
 | Clave | Etiqueta | Línea de explicación | Icono (propuesta, **pendiente de B**) |
 |---|---|---|---|
-| `estado.falta` | FALTA | Esta zona está claramente peor que el conjunto de la Comunidad de Madrid. | Círculo con exclamación |
-| `estado.justo` | JUSTO | Esta zona está algo peor que el conjunto de la Comunidad de Madrid. | Círculo con una raya |
-| `estado.cubierto` | CUBIERTO | Esta zona está igual o mejor que el conjunto de la Comunidad de Madrid. | Círculo con visto bueno |
+| `estado.falta` | FALTA | Tiene claramente menos que los municipios de su tipo, y no es por el tamaño de la zona. | Círculo con exclamación |
+| `estado.justo` | JUSTO | Tiene menos que los municipios de su tipo, pero no tanto como para decir que falta. | Círculo con una raya |
+| `estado.cubierto` | CUBIERTO | Tiene lo mismo o más que los municipios de su tipo. | Círculo con visto bueno |
 | `estado.sin_datos` | SIN DATOS | No tenemos este dato para esta zona. No quiere decir que no haya. | Círculo con interrogación y borde discontinuo |
 
 | Clave | Texto | Notas |
 |---|---|---|
 | `falta.titulo` | Qué falta en {zona} | |
-| `falta.intro` | Comparamos cada servicio con el conjunto de la Comunidad de Madrid, según cuánta gente vive aquí. | |
+| `falta.intro` | Comparamos cada servicio con los demás municipios de su tipo, urbanos o rurales, según cuánta gente vive aquí. | Cambia el 11 nov por D-213 |
 | `falta.elige_zona` | Elige una zona en el mapa o escríbela aquí para ver qué le falta. | Sin zona elegida |
 | `falta.buscador.placeholder` | Escribe un municipio o un distrito de Madrid | |
-| `falta.fila.referencia` | En el conjunto de la Comunidad de Madrid: {referencia} | Si la web separa la referencia de `explanation` |
+| `falta.fila.referencia` | {reference_label}: {referencia} | Si la web separa la referencia de `explanation`. `reference_label` llega de la API, por ejemplo «Otros municipios urbanos de la Comunidad de Madrid» |
+| `falta.fila.region` | En toda la Comunidad de Madrid: {regional_reference} | Solo como contexto, en pequeño. `regional_reference` llega de la API |
+| `fila.zona_pequena` | Zona pequeña para comparar | Etiqueta junto al estado cuando la API manda `reliable: false` (D-213, punto 3). La fila conserva su valor y nunca sale FALTA |
+| `fila.zona_pequena.ayuda` | Aquí vive tan poca gente que no podemos saber con seguridad si falta. Por eso no la marcamos como FALTA. | Al tocar la etiqueta, y como línea en `falta.leyenda` |
 | `falta.fila.ojo` | Ojo: {proxy_note} | Aviso de lo que el dato no mide. `proxy_note` llega de la API |
-| `falta.fila.fuente` | De dónde sale: {conjuntos} | Nombres de `datasets`, cada uno enlazado a su ficha |
-| `falta.fila.a_pie` | A pie: {texto} | `extra_indicators` (distancia andando). Calculada a 4 km/h en CORE-005 (D-210, D-211); en la API, **pendiente de A** (GAP-001) |
+| `falta.otra_zona` | Elegir otra zona | Botón secundario junto a `zona.boton` («Ver la zona») y en el error `error.zona_no_existe`. Sustituye a «Cambiar de zona»: un solo texto para la misma acción |
+| `falta.fila.fuente` | De dónde sale: {n} conjuntos de datos | Con 1: «De dónde sale: 1 conjunto de datos». Al abrirlo, los nombres de `datasets`, cada uno enlazado a su ficha |
+| `falta.fila.a_pie` | A pie hasta {destino} | Con la cifra a la derecha (`a_pie.min`). Sale de `extra_indicators` (`min_a_pie_*`: mediana de las calles de la zona, a 4 km/h; D-210, D-211). La fila de vivienda no lleva |
+| `falta.fila.a_pie.escuela_infantil` | la escuela infantil más cercana | {destino} |
+| `falta.fila.a_pie.colegio` | el colegio más cercano | {destino} |
+| `falta.fila.a_pie.centro_salud` | el centro de salud más cercano | {destino} |
+| `falta.fila.a_pie.mayores` | el centro de mayores más cercano | {destino} |
+| `falta.fila.a_pie.farmacia` | la farmacia más cercana | {destino} |
+| `a_pie.min` | {n} min | Redondeado al minuto. Menos de 1: «menos de 1 min». Más de 60: «más de 60 min». Sin valor: «Sin datos», con su motivo (`null_reason`), nunca 0 |
+| `falta.leyenda.titulo` | Cómo leer esta lista | Tarjeta con los 4 estados y su línea de explicación (`estado.*`), más la línea de `fila.zona_pequena` |
+| `falta.leyenda.a_pie` | Los minutos a pie son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Desde la mitad de las calles de la zona se llega en ese tiempo o menos. | Debajo de los estados. Mismo método que `pitch/metodologia.md` §1.5 |
 | `falta.filas_pendientes` | Estamos calculando el resto de servicios para esta zona. | Si la API avisa en `warnings` de filas aún no calculadas. Nunca se pintan como SIN DATOS |
 | `falta.como` | ¿Cómo lo decidimos? | Enlace a «Cómo lo calculamos», sección «Qué falta» |
 
-**Nombres de las 6 filas** (D-194). La API los manda en `label`; estos son los de respaldo:
+**Nombres de las 6 filas** (D-194). La API los manda en `label`; estos son los de respaldo, iguales que `gap_row.label` del catálogo (`data/catalog/features/`):
 
-| Clave | Texto |
-|---|---|
-| `fila.escuela_infantil` | Escuelas infantiles |
-| `fila.colegio` | Colegios |
-| `fila.centro_salud` | Centros de salud |
-| `fila.mayores` | Mayores |
-| `fila.farmacia` | Farmacias |
-| `fila.vivienda` | Vivienda |
+| Clave | Texto | Qué mide (lo manda la API en la fila) |
+|---|---|---|
+| `fila.escuela_infantil` | Escuelas infantiles | Escuelas infantiles por cada 1.000 niños de 0 a 4 años |
+| `fila.colegio` | Colegios | Colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años |
+| `fila.centro_salud` | Centros de salud | Centros de atención primaria por cada 10.000 habitantes |
+| `fila.mayores` | Centros de mayores | Hogares, clubes y centros de día por cada 1.000 personas de 65 años o más |
+| `fila.farmacia` | Farmacias | Farmacias por cada 10.000 habitantes |
+| `fila.vivienda` | Vivienda para familias | Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas. En los distritos de Madrid, SIN DATOS (`SOURCE_MISSING`) |
 
 **Por qué falta un dato** (cuando `indicator.value` es `null`, la API manda `null_reason`):
 
@@ -275,6 +321,8 @@ Aparece cuando salen pocas zonas o ninguna (brief). Las cifras y las etiquetas d
 | Clave | Texto | Cuándo |
 |---|---|---|
 | `carga.mapa` | Cargando el mapa… | |
+| `carga.zonas` | Cargando las zonas… | Lista de zonas |
+| `carga.fuentes` | Cargando los conjuntos de datos… | Lista de «Cómo lo calculamos» (`GET /api/v1/datasets`) |
 | `carga.busqueda` | Buscando zonas que encajan… | |
 | `carga.zona` | Preparando la zona… | Vuelo de cámara y 3D |
 | `carga.falta` | Calculando qué falta en {zona}… | |

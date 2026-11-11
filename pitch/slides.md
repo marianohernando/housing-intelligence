@@ -34,7 +34,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 
 **Composición:**
 - Mitad izquierda: título, lema y descripción sobre `--bg`.
-- Mitad derecha: captura **C5** (zona en 3D) dentro de una tarjeta de cristal grande, con el contorno violeta de la zona visible.
+- Mitad derecha: captura **C5** (zona en 3D) dentro de una tarjeta de cristal grande, con el contorno violeta de la zona visible. Hoy es la captura real de B (`evidence/map-004/2026-11-11/c_zona_3d_desktop.png`, Chamartín), recortada para enseñar el mapa 3D y la tarjeta «Qué falta aquí». Esa tarjeta tiene los estados de `gap-0.1`, así que **hay que rehacerla con `gap-0.2`** (D-213; **pendiente de B**, tras el despliegue de C).
 - Sin más elementos.
 
 **Fuentes en la slide:** ninguna cifra.
@@ -81,6 +81,13 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 ### Utilidad: personas que buscan dónde vivir
+**Condición:** esta tarjeta va así solo si el 24 nov la demo desplegada tiene el buscador encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`) y `POST /api/v1/search` responde (CORE-003, **pendiente de A**). Si no, va la **versión sin buscador**, sin «próximamente»:
+- Título: «Mira qué tienes cerca de casa».
+- «Minutos a pie, por la calle, hasta el colegio, el centro de salud o la farmacia más cercanos.» (CORE-005, D-211; en la web: `evidence/map-004/2026-11-11/c4_que_falta_completa_desktop.png`).
+- «Cada dato con su fuente y su fiabilidad.»
+- Captura: la tarjeta de zona con «A pie: N min» (recorte de C5) en lugar de C2 y C3.
+
+Versión con buscador:
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras.
   - Ejemplo de formato (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`): «Colegio público a 6 min andando».
   - Los hechos reales de la zona del caso demo: **pendiente de A** (CORE-003; las distancias a pie ya están calculadas a 4 km/h en CORE-005, D-211) y **pendiente de B** (captura C2).
@@ -88,12 +95,22 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 - **Caso demo:** pareja con 2 hijos que trabaja en la Castellana (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
-- Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda (D-194). Cada fila se compara con la referencia regional y lleva su fuente y su confianza.
-- **Ejemplo real de hoy**, Chamartín (distrito de Madrid) en la demo pública (`GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín»):
-  - Centros de salud: **FALTA**. 0,47 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad, 0,59. Confianza 1,0 y 3 datasets por fila.
-  - **Cerca, pero pocos para tanta gente:** la mitad de las calles de Chamartín está a 9,5 min o menos de un centro de salud y a 2,6 min de una farmacia. Aun así hay menos centros por habitante que en la región (FALTA: 0,47 frente a 0,59; ratio 0,79 con los valores sin redondear, 0,469 / 0,592). Minutos a 4 km/h de `min_a_pie_centro_salud` (9,47) y `min_a_pie_farmacia` (2,57), versión 2, para el distrito 2807905: D-211 («por ejemplo, Chamartín») · `evidence/gate-03/2026-11-11/phase-core005-f5.txt` · `feature_value` leído el 11 nov. En la API, **pendiente de A** (GAP-001).
-  - Colegios: **FALTA**. 0,88 centros educativos públicos por cada 1.000 menores de 15 años; en la Comunidad, 2,18.
-  - **Provisional:** los cortes `gap-0.1` y el filtro de colegios, que hoy incluye escuelas infantiles e institutos, cambian con GAP-001. La de centros de salud es la fila que va en la slide; la de colegios, solo con su aviso. Hay que revisar las dos cifras cuando cierre GAP-001 (**pendiente de A**). Captura **C4**.
+- Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b):
+  - escuela infantil: escuelas infantiles por cada 1.000 niños de 0 a 4 años;
+  - colegio: colegios con primaria, públicos o concertados, por cada 1.000 menores de 15;
+  - centro de salud: centros de atención primaria por cada 10.000 habitantes;
+  - mayores: hogares, clubes y centros de día por cada 1.000 personas de 65 o más (centros, no plazas);
+  - farmacia: farmacias por cada 10.000 habitantes;
+  - vivienda: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; por distrito, SIN DATOS, porque la CM no lo publica a ese nivel.
+
+  Fuente: `gap_row` de los YAML en `data/catalog/features/` y `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt` y `-f3b.txt`. Cada fila lleva su fuente, su fiabilidad y los minutos a pie.
+- **Con qué se compara (D-213, `gap-0.2`):** con los demás municipios de su tipo, urbanos o rurales (Ley 45/2007), sin contarse a sí misma. FALTA exige menos del 80 % de esa referencia y que la diferencia no se explique por el tamaño de la zona. Las zonas demasiado pequeñas nunca salen FALTA. Detalle y fuentes en `pitch/metodologia.md` §1.4.
+- **Ejemplo de la slide: Madrid capital, centros de salud.** Fuentes: D-213 («Efecto»), `data/fixtures/contracts/zone_gap_list.madrid.fixture.json` (= `GET /api/v1/gaps/municipio/28079` con `gap-0.2`) y `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
+  - **FALTA:** 0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos, 0,56. Ratio 0,67 (0,6681): un tercio menos, y con tanta población la diferencia es significativa.
+  - **Matiz, si preguntan:** ningún distrito por sí solo basta para afirmarlo. Los 21 salen JUSTO en centros de salud; por ejemplo, Chamartín tiene 0,47 (ratio 0,84).
+  - **A pie:** la mitad de las calles de Madrid está a 11,6 min o menos de un centro de salud; la web lo redondea a «12 min» (`min_a_pie_centro_salud`, municipio 28079, versión 2, `feature_value` leído el 11 nov).
+  - **Antes de maquetar:** la demo pública aún da `gap-0.1` (hoy, Madrid sale FALTA frente a 0,59). Hay que comprobar estas cifras en `/gaps` de la demo cuando C despliegue `gap-0.2` (**pendiente de C**). La captura **C4** se rehace sobre Madrid capital (**pendiente de B**).
+  - **Ya no vale «Chamartín: faltan centros de salud»:** con D-213, Chamartín pasa a JUSTO.
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
   - 3.851 centros educativos, 1.543 centros sanitarios, 1.001 servicios para mayores y 2.953 farmacias (`evidence/gate-01/*/cm_*/row_counts.json`, campo `places`);
@@ -162,15 +179,17 @@ Fuente única: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`. Los valores de 
 ## Capturas necesarias
 Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440 × 900 (escritorio) y 390 × 844 (móvil) y con densidad 2×. Se guardan en `pitch/capturas/` con estos nombres. B puede adelantarlas en `evidence/map-004/<fecha>/`.
 
+El deck ya usa las de B del 11 nov (`evidence/map-004/2026-11-11/`, web local con datos reales): `pitch/deck/build.py` las toma de ahí si no hay una en `pitch/capturas/`. Son de antes de D-213, así que C4, C5 y C7 se rehacen con `gap-0.2`; el build lo avisa y `--final` no deja pasar sin ellas.
+
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
 | C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Pendiente de B** |
 | C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Pendiente de B** (y A para los hechos) |
 | C3 | Bloque Reality Check con cifras reales de la API | 1440 | 3 | **Pendiente de A y B** |
-| C4 | Pestaña «Qué falta» de la zona elegida: 6 filas con valor, referencia, confianza y datasets enlazados | 1440 | 3 | **Pendiente de A y B** |
-| C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | **Pendiente de B** |
-| C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | **Pendiente de B** |
-| C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 2 (opcional) | **Pendiente de B** |
+| C4 | Pestaña «Qué falta» de la zona del ejemplo (Madrid capital): 6 filas con valor, referencia, confianza y datasets enlazados | 1440 | 3 | Hecha por B el 11 nov sobre Chamartín (`c_que_falta_desktop.png`; también `c4_que_falta_completa_*`). **Rehacer con `gap-0.2` sobre Madrid capital** (B, tras el despliegue de C) |
+| C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B el 11 nov (`c_zona_3d_desktop.png`, Chamartín). **Rehacer con `gap-0.2`**: su tarjeta enseña los estados de antes (B) |
+| C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B el 11 nov (`c_zona_3d_mobile.png`). No enseña estados: vale tal cual |
+| C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 3 (Viabilidad) | Hecha por B el 11 nov (`c_como_lo_calculamos_desktop.png`). **Rehacer** cuando la página tenga el texto de D-213 (`pitch/metodologia.md` 1.1 y 1.4; B) |
 | QR | Códigos QR de la demo (https://vidafacil-madrid.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
 
 ## Checklist del 24 nov (maquetar)

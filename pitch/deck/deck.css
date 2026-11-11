@@ -188,6 +188,19 @@ a {
   display: none;
 }
 
+/* Recortes de las capturas reales de B (evidence/map-004): cada hueco enseña la parte que cuenta */
+.shot[data-shot="C4"] img {
+  object-view-box: inset(45% 52.6% 41% 3%);
+}
+
+.shot[data-shot="C5"] img {
+  object-view-box: inset(8% 0 0 37%);
+}
+
+.shot[data-shot="C7"] img {
+  object-view-box: inset(10% 44% 70% 2%);
+}
+
 /* Marca de pendiente: se ve en los borradores y build.py --final la rechaza */
 .pending {
   outline: 4px dashed var(--pending);

@@ -46,14 +46,19 @@ Fuentes:
 1. **Cuéntanos cómo es tu hogar:** quién vive contigo, cuánto puedes pagar de alquiler o de compra, dónde trabajas y qué te importa (transporte, salud, colegios…).
 2. **Mira las zonas que encajan contigo,** con su % de encaje y, debajo, hechos que puedes comprobar, como «colegio público a 6 min andando». Cada uno dice cuánto nos fiamos del dato.
 3. **¿Salen pocas?** Te enseñamos cuántas zonas aparecen si cambias una sola cosa, por ejemplo 100 € más al mes o 10 minutos más de trayecto.
-4. **Entra en una zona y mira qué le falta:** escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda, comparados con el conjunto de la Comunidad de Madrid. Cada fila dice de qué datos sale.
+4. **Entra en una zona y mira qué le falta:** escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda, comparados con los demás municipios de su tipo, urbanos o rurales. Cada fila dice de qué datos sale y a cuántos minutos andando está lo más cercano.
 
 Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»** de la demo.
 
 <!--
 - Pasos 1–3: contratos ScenarioState y SearchResult v2 (packages/contracts/src/hi_contracts/public/, D-202 a D-204). El cálculo está pendiente de A (CORE-003 y CORE-006, para el 15–16 nov). Las distancias a pie ya están calculadas a 4 km/h (CORE-005, D-210 y D-211).
+- CONDICIÓN: los pasos 1–3 y la frase «qué zonas encajan contigo» de la entrada solo se integran si la demo desplegada tiene el buscador encendido (sin «Muy pronto»: apps/web/src/lib/capabilities.ts). Si no, la sección queda así:
+  1. **Elige una zona en el mapa:** cualquiera de los 179 municipios o de los 21 distritos de Madrid.
+  2. **Mira qué tienes cerca:** sus colegios, centros de salud y estaciones en 3D, y cuántos minutos se tarda andando hasta cada servicio.
+  3. **Mira qué le falta:** (el paso 4 de arriba).
+  Y la entrada dice «para enseñarte qué tiene cerca cada zona y qué le falta».
 - «6 min andando» y «+100 €/mes» / «+10 min» son ejemplos de formato del brief de diseño y del contrato (Relaxation.label), no cifras de una zona.
-- Paso 4: GET /api/v1/gaps/{level}/{code} (D-194). Hoy tiene 2 de las 6 filas; el resto está pendiente de A (GAP-001, 16 nov). Si alguna fila no llega, se quita de la lista.
+- Paso 4: GET /api/v1/gaps/{level}/{code} (D-194), con las 6 filas en los 179 municipios y los 21 distritos (GAP-001 F1–F3b; en los distritos, vivienda sale SIN DATOS). Comparación con los municipios del mismo tipo: D-213 (gap-0.2, GAP-001 F5); la demo pública lo enseña cuando C despliegue. Minutos a pie en extra_indicators (GAP-001 F1).
 - Compra: orientativa (D-203).
 -->
 

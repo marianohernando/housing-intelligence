@@ -5,19 +5,21 @@
 - **Ritmo:** unas 130 palabras por minuto. En los bloques con demo se habla menos, porque los clics y las transiciones también ocupan tiempo.
 - **Recuento por bloque** (texto entre los marcadores `habla:bN`):
   ```bash
-  for b in 1 2 3 4 5; do printf "b$b "; awk -v b=$b '$0 ~ "^<!-- habla:b"b":fin"{f=0} f; $0 ~ "^<!-- habla:b"b":inicio"{f=1}' pitch/guion.md | wc -w; done
+  for b in 1 2 2s 3 4 5; do printf "b$b "; awk -v b=$b '$0 ~ "^<!-- habla:b"b":fin"{f=0} f; $0 ~ "^<!-- habla:b"b":inicio"{f=1}' pitch/guion.md | wc -w; done
   ```
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
 - **Textos de los botones:** salen del brief (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`). Siguen marcados **«pendiente de B»** hasta comprobarlos en la web real.
+- **Buscador:** el bloque 2 se hace con el buscador **solo si** el 26 nov la demo desplegada lo tiene encendido: ya no sale «Muy pronto» (`NEXT_PUBLIC_FEATURE_SEARCH`, `apps/web/src/lib/capabilities.ts`) y `POST /api/v1/search` responde con datos reales (CORE-003, **pendiente de A**). Si no, se usa el **bloque 2 sin buscador**, que no lo nombra ni lo promete. Se decide en el freeze del 23 nov.
 
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
 | 1 | 0:00–0:40 | 40 s | Problema: personas y ayuntamientos deciden a ciegas | 79 | 36 s |
-| 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y Reality Check | 187 | 86 s + clics |
-| 3 | 2:40–3:40 | 60 s | Una zona real y su lista de lo que falta | 111 | 51 s + clics |
+| 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y Reality Check (con buscador) | 187 | 86 s + clics |
+| 2 sin buscador | 0:40–2:40 | 120 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + clics |
+| 3 | 2:40–3:40 | 60 s | Madrid capital y su lista de lo que falta | 111 | 51 s + clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 43 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
-| **Total** | | **300 s** | | **522** | **241 s + unos 35 s de clics = unos 24 s de margen** |
+| **Total** | | **300 s** | | **522 con buscador; 471 sin él** | **Con buscador: 241 s + unos 35 s de clics = unos 24 s de margen. Sin buscador: 217 s + unos 30 s de clics = unos 53 s de margen** |
 
 ---
 
@@ -28,6 +30,7 @@
 2. Navegador en ventana limpia, zoom al 100 %, sin extensiones visibles y con las notificaciones desactivadas.
 3. Pestaña 1: las slides en PDF, en la slide 1. Pestaña 2: la portada de la demo, ya cargada una vez para tener la caché caliente. URL: https://vidafacil-madrid.vercel.app (verificada el 11 nov: smoke 6/6, `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6)).
 4. Plan B abierto en una pestaña oculta: el vídeo de 2 min y el snapshot offline (PITCH-003, **pendiente de C**).
+5. Pestaña de respaldo del bloque 3, ya cargada: https://vidafacil-madrid.vercel.app/que-falta?zona=municipio/28079.
 
 ---
 
@@ -42,7 +45,9 @@ Buenas tardes. Imaginad una familia que busca piso en Madrid. El precio lo mira 
 
 ---
 
-## Bloque 2 · 0:40–2:40 · Una familia busca dónde vivir
+## Bloque 2 · 0:40–2:40 · Una familia busca dónde vivir (con buscador)
+**Solo si el buscador está encendido** en la demo desplegada (ver «Reglas del guion»). Si no, se salta al bloque 2 sin buscador, debajo.
+
 **Caso precargado:** `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`:
 - alquiler de hasta 1.500 €/mes;
 - 2 adultos y 2 hijos de 4 y 8 años;
@@ -67,26 +72,41 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 - **Si no lo dispara**, el guion añade en el paso 2.4: «Bajo el presupuesto a [Y] €/mes» con el slider. A elige [Y] con la API para que salgan 0–3 zonas.
 - **La frase hablada** se ajusta a la acción que se haga.
 
+### Bloque 2 sin buscador · 0:40–2:40 · Qué tiene cerca una familia
+**Cuándo:** mientras el buscador salga como «Muy pronto». No se nombra el buscador ni el % de encaje.
+
+<!-- habla:b2s:inicio -->
+Esta es Vida Fácil: el mapa de toda la Comunidad de Madrid, con sus ciento setenta y nueve municipios y Madrid capital dividida en sus veintiún distritos, porque no es lo mismo vivir en uno que en otro. Pensad en esa familia. Toco un distrito, por ejemplo [zona]. La cámara entra en tres dimensiones, con sus colegios, centros de salud y estaciones. A la derecha, qué falta aquí y cuánto se tarda andando: [N] minutos hasta el centro de salud más cercano. No en línea recta: por las calles de verdad, a paso tranquilo, el mismo que usa el Ayuntamiento. Y cada dato dice de dónde sale: pulso aquí y me lleva a la ficha del portal de datos abiertos de la Comunidad. Así la familia sabe qué tiene cerca antes de mirar un solo piso.
+<!-- habla:b2s:fin -->
+
+| # | Acción | Qué tiene que verse | Si falla |
+|---|---|---|---|
+| 2s.1 | Señalar el mapa de la región | Los 179 municipios y los 21 distritos | — |
+| 2s.2 | Clic en un distrito (propuesta: Chamartín, el de la captura C5) | Vuelo de cámara y zona en 3D con etiquetas de cristal; tarjeta «Qué falta aquí» con «A pie: N min» | Sin 3D: seguir en 2D y quitar «en tres dimensiones» |
+| 2s.3 | Leer los minutos a pie del centro de salud en la tarjeta | «A pie: [N] min» (`zona.falta.a_pie`; mediana de las calles a 4 km/h, D-211) | Saltar la frase de los minutos |
+| 2s.4 | Clic en «Cómo lo calculamos» o en la fuente de una fila | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: 21 conjuntos de la Comunidad de Madrid…» |
+
+**Fuentes:** 179 municipios y 21 distritos: D-200 · D-209. Paso de 4 km/h, el del estudio «El Madrid de los 15 minutos» del Ayuntamiento: D-211. Captura de referencia: `evidence/map-004/2026-11-11/c_zona_3d_desktop.png` (MAP-004).
+
 ---
 
 ## Bloque 3 · 2:40–3:40 · Qué le falta a una zona real
-**Zona:** **pendiente de A** (GAP-001 completo).
-- **Criterio:** una zona real con al menos una fila FALTA, una CUBIERTO y, si la hay, una SIN DATOS, para enseñar las tres. Mejor un distrito de Madrid que se conozca.
-- **El texto hablado depende de GAP-001 (pendiente de A):** «Seis filas» solo se dice si salen las 6. Si no, se dice «[N] filas» y se nombran solo las que estén.
-- **No usar colegios como ejemplo de CUBIERTO** hasta que GAP-001 corrija el filtro: hoy cuenta también escuelas infantiles e institutos (`proxy_note` de `colegios_publicos_por_1000_menores`).
-- **Zona propuesta: Chamartín** (distrito de Madrid), con datos reales de la demo pública. Centros de salud FALTA (0,47 por cada 10.000 habitantes frente a 0,59 en la región) y colegios FALTA (0,88 por cada 1.000 menores frente a 2,18). Confianza 1,0 y 3 datasets por fila. Fuente: `GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín». Cortes provisionales `gap-0.1`.
-- **Dato a pie de la fila de centros de salud:** la mitad de las calles de Chamartín está a 9,5 min o menos de un centro de salud (`min_a_pie_centro_salud`, distrito 2807905, a 4 km/h: D-211). Los minutos se ven en pantalla y no se leen. La frase «Están cerca…» solo se dice si la pestaña enseña el dato a pie (`falta.fila.a_pie`, **pendiente de A**: API con GAP-001); si no, se salta.
-- **Hoy no tiene ninguna fila CUBIERTO:** «[Leer una fila cubierta]» solo se dice si GAP-001 trae una (**pendiente de A**); si no, se salta. La fila que se lee en voz alta es la de centros de salud.
+**Zona: Madrid capital** (municipio 28079). Se elige tras D-213 (`gap-0.2`), que compara cada zona con los demás municipios de su tipo: con ese método, Chamartín ya no sale FALTA en centros de salud. Madrid capital tiene una FALTA fuerte y una fila CUBIERTO, con datos reales:
+- Centros de salud **FALTA**: 0,37 por cada 10.000 habitantes frente a 0,56 en los demás municipios urbanos (ratio 0,67, significativa). Fuente: D-213 («Efecto») · `data/fixtures/contracts/zone_gap_list.madrid.fixture.json` (= `GET /api/v1/gaps/municipio/28079`) · `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
+- Farmacias **CUBIERTO**: 5,2 frente a 3,1 (mismo fixture). Mayores, CUBIERTO; escuela infantil, colegio y vivienda, JUSTO.
+- A pie, la mitad de las calles de Madrid está a 11,6 min o menos de un centro de salud; la web lo redondea a «12 min» (`min_a_pie_centro_salud`, municipio 28079, `feature_value`). Se ve en pantalla y no se lee.
+- **Antes del 26:** la demo pública aún da `gap-0.1`. Hay que comprobar estas filas en `/gaps` de la demo cuando C despliegue `gap-0.2` (**pendiente de C**). Si Madrid ya no sale FALTA, se elige otra zona con una FALTA de fiabilidad alta y se cambian las cifras de aquí y de la slide 3.
+- **Si preguntan por los distritos:** ningún distrito por sí solo basta para afirmar la falta (los 21 salen JUSTO en centros de salud; D-213). Es Madrid entera la que tiene un tercio menos.
 
 <!-- habla:b3:inicio -->
-Ahora cambio de usuario: un ayuntamiento. Pulso «Ver la zona». La cámara entra en [zona] en tres dimensiones, con sus colegios, centros de salud y estaciones. Abro la pestaña «Qué falta». Seis filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda. Aquí, centros de salud: falta. [valor] por cada diez mil habitantes, frente a [referencia] en la región. [Si se ve el dato a pie:] Están cerca, pero son pocos para tanta gente. [Leer una fila cubierta]. Y cuando no tenemos el dato, lo decimos: sin datos. No inventamos nada. Cada fila dice de qué dataset sale, con su enlace. Un concejal ve en un minuto dónde invertir primero.
+Ahora cambio de usuario: un ayuntamiento. Abro «Qué falta» de Madrid capital. Seis filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda. Cada una se compara con municipios parecidos: Madrid, con los demás municipios urbanos; un pueblo, con los rurales. Aquí, centros de salud: falta. [valor] por cada diez mil habitantes, frente a [referencia] en los demás municipios urbanos. Un tercio menos, y con tanta gente no es casualidad. [Leer una fila cubierta]. Y si no tenemos el dato, o la zona es demasiado pequeña para saberlo, lo decimos: nunca inventamos una falta. Cada fila dice de qué dataset sale. Un concejal ve en un minuto dónde invertir primero.
 <!-- habla:b3:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
 |---|---|---|---|
-| 3.1 | Clic en «Ver la zona» (**pendiente de B**) | Vuelo de cámara a unos 60° y zona en 3D con contorno violeta y etiquetas de cristal | Sin 3D: seguir en 2D y quitar «en tres dimensiones» de la frase |
-| 3.2 | Clic en la pestaña «Qué falta» (**pendiente de B**) | 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS con valor, referencia, confianza y datasets | Si faltan filas, leer solo las que estén y no nombrar las demás |
-| 3.3 | Señalar una fila FALTA y una CUBIERTO; leer el valor y la referencia | Texto tipo «0,47 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,59» | — |
+| 3.1 | Pestaña «Qué falta» y elegir «Madrid» en «Municipios» | La lista de Madrid capital con sus 6 filas FALTA / JUSTO / CUBIERTO, valor, referencia, fiabilidad, minutos a pie y datasets | Abrir la pestaña preparada con `/que-falta?zona=municipio/28079`. **Pendiente de B:** comprobar que Madrid entero se puede elegir en la lista de zonas |
+| 3.2 | Señalar la fila de centros de salud y leer el valor y la referencia | «0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)» | — |
+| 3.3 | Señalar la fila de farmacias (CUBIERTO) | «5,2 farmacias por cada 10.000 habitantes; en los demás municipios urbanos…, 3,1» | Si no está CUBIERTO, saltar «[Leer una fila cubierta]» |
 | 3.4 | (Opcional, si va sobrado de tiempo) clic en el enlace de un dataset | Ficha del portal CM en una pestaña nueva | Saltarlo |
 
 **Al terminar:** volver a la pestaña de las slides, en la slide 3.

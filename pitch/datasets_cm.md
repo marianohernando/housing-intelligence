@@ -54,9 +54,10 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/atencion_social_registro_centros · id `cm_centros_atencion_social` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - «Qué falta», fila `mayores` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
+  - «Qué falta», fila «Centros de mayores»: Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más (`centros_mayores_por_1000_mayores`, dato principal)
+  - «Qué falta», fila «Centros de mayores» (dato extra): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, dato principal)
-  - Indicador por zona: Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, dato principal)
+  - «Qué falta», fila «Centros de mayores» (dato extra): Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, dato principal)
   - Puntos del mapa (mayores y atención social): `GET /api/v1/places?category=social`
 - **Quality Gate 1:** PASS · 2026-10-22 · 5/5 checks críticos · versión `2026-10-21-9cadf73e6ea9` · 1.001 puntos · [quality_report.json](../evidence/gate-01/2026-10-22/cm_centros_atencion_social/quality_report.json)
 
@@ -64,9 +65,10 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_educativos · id `cm_centros_educativos` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - «Qué falta», fila «Colegios»: Centros educativos públicos por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, dato principal)
+  - «Qué falta», fila «Colegios»: Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, dato principal)
+  - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_por_1000_ninos`, dato principal)
   - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, dato principal)
-  - «Qué falta», fila `escuela_infantil` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, dato principal)
+  - «Qué falta», fila «Escuelas infantiles» (dato extra): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, dato principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, dato principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil (`pct_calle_escuela_infantil_10min`, dato principal)
   - Puntos del mapa (educación): `GET /api/v1/places?category=education`
@@ -86,9 +88,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/farmacias · id `cm_farmacias_municipios` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Métrica cargada: Farmacias por cada 10.000 habitantes (`farmacias_por_10000_hab`)
-  - Métrica cargada: Farmacias (`farmacias_total`)
-  - Uso en la lista o en el buscador: **pendiente de A**
+  - «Qué falta», fila «Farmacias» (dato extra): Farmacias por cada 10.000 habitantes según la Comunidad de Madrid (ratio oficial) (`farmacias_por_10000_hab_oficial`, dato principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-a2011625bc89` · 6.494 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_farmacias_municipios/quality_report.json)
 
 ### Hogares por tamaño del hogar. Censo 2021. Municipios
@@ -97,22 +97,23 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Porcentaje de hogares de cinco o más personas (`hogares_5_mas_pct`, dato principal)
   - Indicador por zona: Porcentaje de hogares de una persona (`hogares_unipersonales_pct`, dato principal)
-  - Indicador por zona: Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, dato principal)
+  - «Qué falta», fila «Vivienda para familias» (dato extra): Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, dato principal)
+  - «Qué falta», fila «Vivienda para familias»: Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas (`viviendas_grandes_por_100_hogares_grandes`, denominador)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-823dd42839c0` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_hogares_tamano_censo_2021/quality_report.json)
 
 ### Nacidos vivos por lugar de residencia de la madre y sexo. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo · id `cm_nacidos_vivos_municipios` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Métrica cargada: Nacidos vivos (`nacidos_vivos`)
-  - Uso en la lista o en el buscador: **pendiente de A**
+  - «Qué falta», fila «Escuelas infantiles» (dato extra): Nacimientos por cada 1.000 habitantes (último año publicado) (`nacimientos_por_1000_hab`, dato principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-9119056a0e09` · 22.538 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_nacidos_vivos_municipios/quality_report.json)
 
 ### Oficinas de farmacia
 - **Ficha:** https://datos.comunidad.madrid/dataset/oficinas_farmacia · id `cm_oficinas_farmacia` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - «Qué falta», fila `farmacia` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, dato principal)
+  - «Qué falta», fila «Farmacias» (dato extra): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, dato principal)
+  - «Qué falta», fila «Farmacias»: Farmacias por cada 10.000 habitantes (`oficinas_farmacia_por_10000_hab`, dato principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una farmacia (`pct_calle_farmacia_10min`, dato principal)
   - Puntos del mapa (salud): `GET /api/v1/places?category=health`
 - **Quality Gate 1:** PASS · 2026-11-10 · 5/5 checks críticos · versión `2026-11-10-de61d48d7b4a` · 2.953 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/cm_oficinas_farmacia/quality_report.json)
@@ -121,12 +122,17 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo · id `cm_poblacion_edad_nacionalidad_sexo` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - «Qué falta», fila «Centros de mayores»: Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más (`centros_mayores_por_1000_mayores`, denominador)
   - «Qué falta», fila «Centros de salud»: Centros de atención primaria por cada 10.000 habitantes (`centros_salud_por_10000_hab`, denominador)
-  - «Qué falta», fila «Colegios»: Centros educativos públicos por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, denominador)
-  - Indicador por zona: Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, denominador)
+  - «Qué falta», fila «Colegios»: Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, denominador)
+  - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_por_1000_ninos`, denominador)
+  - «Qué falta», fila «Escuelas infantiles» (dato extra): Nacimientos por cada 1.000 habitantes (último año publicado) (`nacimientos_por_1000_hab`, denominador)
+  - «Qué falta», fila «Farmacias»: Farmacias por cada 10.000 habitantes (`oficinas_farmacia_por_10000_hab`, denominador)
+  - «Qué falta», fila «Centros de mayores» (dato extra): Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, denominador)
   - Indicador por zona: Porcentaje de población menor de 15 años (`poblacion_0_14_pct`, dato principal)
   - Indicador por zona: Porcentaje de población de 65 años o más (`poblacion_65_mas_pct`, dato principal)
   - Indicador por zona: Población residente (`poblacion_total`, dato principal)
+  - «Qué falta», fila «Escuelas infantiles» (dato extra): Aulas de educación infantil por cada 1.000 niños de 0 a 4 años (`unidades_infantil_por_1000_ninos`, denominador)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-fd59e7826648` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_poblacion_edad_nacionalidad_sexo/quality_report.json)
 
 ### Indicador de Renta Disponible Bruta Municipal. Municipios
@@ -148,14 +154,14 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza · id `cm_unidades_escolares` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Métrica cargada: Unidades escolares (`unidades_escolares`)
-  - Uso en la lista o en el buscador: **pendiente de A**
+  - «Qué falta», fila «Escuelas infantiles» (dato extra): Aulas de educación infantil por cada 1.000 niños de 0 a 4 años (`unidades_infantil_por_1000_ninos`, dato principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-bdf7c1ff864a` · 95.309 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_unidades_escolares/quality_report.json)
 
 ### Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada · id `cm_viviendas_superficie` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - «Qué falta», fila «Vivienda para familias»: Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas (`viviendas_grandes_por_100_hogares_grandes`, dato principal)
   - Indicador por zona: Porcentaje de viviendas de menos de 60 m² (`viviendas_menos_60m2_pct`, dato principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-1673f7e6ca4a` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_viviendas_superficie/quality_report.json)
 
@@ -163,8 +169,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia · id `cm_viviendas_tenencia_censo_2021` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Métrica cargada: Viviendas principales por régimen de tenencia (`viviendas_por_tenencia`)
-  - Uso en la lista o en el buscador: **pendiente de A**
+  - «Qué falta», fila «Vivienda para familias» (dato extra): Viviendas principales en alquiler (%) (`viviendas_alquiler_pct`, dato principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-048892fa99bc` · 567 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_viviendas_tenencia_censo_2021/quality_report.json)
 
 ## 2. Portal CM: GTFS del CRTM con ficha en el portal (6)
@@ -237,19 +242,23 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 - **Ficha:** https://datos.madrid.es/dataset/200076-0-padron · id `ayto_padron_municipal` · publica: Ayuntamiento de Madrid
 - **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
 - **Qué alimenta:**
+  - «Qué falta», fila «Centros de mayores»: Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más (`centros_mayores_por_1000_mayores`, denominador)
   - «Qué falta», fila «Centros de salud»: Centros de atención primaria por cada 10.000 habitantes (`centros_salud_por_10000_hab`, denominador)
-  - «Qué falta», fila «Colegios»: Centros educativos públicos por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, denominador)
-  - Indicador por zona: Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, denominador)
+  - «Qué falta», fila «Colegios»: Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, denominador)
+  - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_por_1000_ninos`, denominador)
+  - «Qué falta», fila «Farmacias»: Farmacias por cada 10.000 habitantes (`oficinas_farmacia_por_10000_hab`, denominador)
+  - «Qué falta», fila «Centros de mayores» (dato extra): Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, denominador)
   - Indicador por zona: Porcentaje de población menor de 15 años (`poblacion_0_14_pct`, dato principal)
   - Indicador por zona: Porcentaje de población de 65 años o más (`poblacion_65_mas_pct`, dato principal)
   - Indicador por zona: Población residente (`poblacion_total`, dato principal)
+  - «Qué falta», fila «Vivienda para familias»: Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas (`viviendas_grandes_por_100_hogares_grandes`, dato de apoyo)
 - **Quality Gate 1:** PASS · 2026-11-11 · 8/8 checks críticos · versión `2026-11-11-f052edc26159` · 462 observaciones · [quality_report.json](../evidence/gate-01/2026-11-11/ayto_padron_municipal/quality_report.json)
 
 ### Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico
 - **Ficha:** https://datos.madrid.es/dataset/300087-0-indicadores-distritos · id `ayto_panel_indicadores_distritos_barrios` · publica: Ayuntamiento de Madrid
 - **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
 - **Qué alimenta:**
-  - Indicador por zona: Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, dato principal)
+  - «Qué falta», fila «Vivienda para familias» (dato extra): Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, dato principal)
 - **Quality Gate 1:** PASS · 2026-11-11 · 8/8 checks críticos · versión `2026-11-11-4726abc60a15` · 294 observaciones · [quality_report.json](../evidence/gate-01/2026-11-11/ayto_panel_indicadores_distritos_barrios/quality_report.json)
 
 ### Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
@@ -258,9 +267,9 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 - **Qué alimenta:**
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, dato principal)
   - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, dato principal)
-  - «Qué falta», fila `escuela_infantil` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, dato principal)
-  - «Qué falta», fila `farmacia` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, dato principal)
-  - «Qué falta», fila `mayores` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
+  - «Qué falta», fila «Escuelas infantiles» (dato extra): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, dato principal)
+  - «Qué falta», fila «Farmacias» (dato extra): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, dato principal)
+  - «Qué falta», fila «Centros de mayores» (dato extra): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, dato principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, dato principal)
