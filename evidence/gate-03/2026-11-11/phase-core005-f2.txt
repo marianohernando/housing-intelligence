@@ -1,0 +1,44 @@
+# CORE-005 Fase 2 (dominio de accesibilidad a pie) — gate 2026-11-11T10:42:12Z — base 4cdee28
+$ make lint
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+193 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+lint exit=0
+$ make typecheck
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+typecheck exit=0
+$ make test
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 38%]
+........................................................................ [ 77%]
+..........................................                               [100%]
+186 passed in 3.07s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  11:42:23
+   Duration  81ms (tests 46%, import 26%, transform 16%, worker 12%)
+
+uv run pytest -m db tests/integration -q
+..............................................                           [100%]
+46 passed in 22.25s
+test exit=0
+# Rendimiento sobre la red real (scratch, 2026-11-11): RoutableNetwork.build 2.6 s; distance_to_nearest (2.953 farmacias) 0.3 s; snap p50 16.5 m, p95 40.7 m, max 171 m; 98.98% de nodos de calle residencial alcanzables
+exit=0
