@@ -51,7 +51,13 @@ echo "-> deploying $(git rev-parse --short HEAD) (${branch}) to production"
 vercel deploy --prod --yes
 echo "-> smoke test against ${DEMO_URL}"
 if ! scripts/smoke_demo.sh "${DEMO_URL}"; then
-  echo "smoke failed and production already serves this deploy." >&2
-  echo "roll back to the previous one: npx vercel@${VERCEL_CLI_VERSION} rollback" >&2
-  exit 1
+  # Right after the domain switch the previous deployment can still answer for a few seconds
+  # (seen on 11 Nov: one 500 from the old instance, then 6/6). A real failure fails twice.
+  echo "-> smoke failed right after the switch; retrying once in 20 s" >&2
+  sleep 20
+  if ! scripts/smoke_demo.sh "${DEMO_URL}"; then
+    echo "smoke failed and production already serves this deploy." >&2
+    echo "roll back to the previous one: npx vercel@${VERCEL_CLI_VERSION} rollback" >&2
+    exit 1
+  fi
 fi
