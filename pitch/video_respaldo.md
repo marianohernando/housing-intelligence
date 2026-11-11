@@ -3,7 +3,7 @@
 ## Para qué sirve
 Es el plan B de la final del 26 nov: si cae la wifi o la demo, se pone este vídeo en lugar de los bloques 2 y 3 del guion (`pitch/guion.md`, «Antes de empezar», punto 4). Cuenta el mismo recorrido que la demo en directo y se entiende solo, también sin sonido, gracias a los rótulos.
 
-- **Cuándo se graba:** el 23 nov (freeze), sobre la demo desplegada y verificada (https://vida-facil-eight.vercel.app). Así coincide con lo que verá el jurado. Antes no: hasta el 16–17 nov faltan piezas de A, B y C.
+- **Cuándo se graba:** el 23 nov (freeze), sobre la demo desplegada y verificada (https://vidafacil-madrid.vercel.app). Así coincide con lo que verá el jurado. Antes no: hasta el 16–17 nov faltan piezas de A, B y C.
 - **Quién:** la voz es de Mariano; el montaje lo puede hacer la línea D con las tomas.
 - **Dónde se guarda:** **no se sube al repo** (es binario y pesa). Se guardan 3 copias:
   - en el escritorio del portátil de la final;
@@ -122,7 +122,7 @@ Y lo que le falta. Cada servicio se compara con el conjunto de la Comunidad, seg
 - **Pantalla:** pie de la web con el contador de conjuntos de datos y, encima, el rótulo final a pantalla completa sobre fondo `--bg`.
 - **Rótulo final (4 s):**
   - Vida Fácil · Encuentra tu sitio en Madrid
-  - vida-facil-eight.vercel.app
+  - vidafacil-madrid.vercel.app
   - github.com/marianohernando/housing-intelligence · Código abierto (Apache-2.0)
   - [N] conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid
 - **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; hoy 21, según `pitch/datasets_cm.md`).

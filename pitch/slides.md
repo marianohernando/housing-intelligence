@@ -29,7 +29,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - **Vida Fácil** (logotipo de texto, Plus Jakarta Sans 700).
 - *Encuentra tu sitio en Madrid* (lema, en violeta).
 - Descripción, una frase: «El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.»
-- Integrantes: **lo rellena Mariano** (nombre y apellidos tal como en la inscripción).
+- Integrantes: equipo de una persona, Mariano. El nombre completo lo pone el build del deck con `DECK_INTEGRANTES` y no se guarda en el repo público hasta que Mariano lo confirme en su sesión (`pitch/deck/README.md`).
 - Pie: «DATAMAD 2026 · Datos abiertos de la Comunidad de Madrid · Código abierto (Apache-2.0) · Plataforma Housing Intelligence».
 
 **Composición:**
@@ -113,7 +113,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
 ### Banda de enlaces (con QR)
-- Demo: https://vida-facil-eight.vercel.app (**pendiente de verificación el 17 nov**, C).
+- Demo: https://vidafacil-madrid.vercel.app (**pendiente de verificación el 17 nov**, C).
 - Código: https://github.com/marianohernando/housing-intelligence
 
 ---
@@ -126,7 +126,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   1. «Cuéntanos tu hogar, tu presupuesto y dónde trabajas»: tarjeta «Tu búsqueda».
   2. «Zonas que encajan, con el porqué»: tarjeta de zona.
   3. «Qué falta en cada zona, con su fuente»: mini lista o pestaña «Qué falta».
-- Pie: «Demo en vivo: vida-facil-eight.vercel.app».
+- Pie: «Demo en vivo: vidafacil-madrid.vercel.app».
 
 **Fuentes en la slide:** ninguna cifra nueva. Si la captura muestra cifras, son las de la API en ese momento.
 
@@ -170,7 +170,7 @@ Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | **Pendiente de B** |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | **Pendiente de B** |
 | C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 2 (opcional) | **Pendiente de B** |
-| QR | Códigos QR de la demo (https://vida-facil-eight.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
+| QR | Códigos QR de la demo (https://vidafacil-madrid.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
 
 ## Checklist del 24 nov (maquetar)
 1. Rebase de `hi-coord` y `uv run python pitch/build_datasets_cm.py --refresh-portal`. Si cambia el total de datasets CM o algún grupo, actualizar la slide 2.

@@ -233,7 +233,7 @@ La línea de explicación vale para cualquier fila, porque la API ya orienta la 
 
 ## 6. Confianza en palabras
 
-**Propuesta de D, pendiente de que A confirme los cortes.** La API da la confianza de 0 a 1. En zonas con poca población la baja a 0,5 como máximo, y 0 significa desconocido (`docs/04_technical_architecture/31_public_api_routes.md`, «Reglas que la web puede dar por hechas»).
+**Cortes de D, confirmados por A el 11 nov.** El 0,5 cuenta como «Dato aproximado» porque es el tope que reciben las zonas con poca población (D-189). La API da la confianza de 0 a 1. En zonas con poca población la baja a 0,5 como máximo, y 0 significa desconocido (`docs/04_technical_architecture/31_public_api_routes.md`, «Reglas que la web puede dar por hechas»).
 
 | Confianza | Clave | Texto | Ayuda (al tocar) |
 |---|---|---|---|
@@ -317,7 +317,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 | `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid + Ayuntamiento de Madrid + CRTM | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`. Hoy 21. Quitar «+ Ayuntamiento de Madrid» mientras no se use ningún dato suyo (**pendiente de A**, DATA-012) |
 | `pie.cm` | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. | https://datos.comunidad.madrid | |
 | `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. | https://www.crtm.es | Obligatorio con enlace |
-| `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es. | https://datos.madrid.es | Solo cuando se use un dato suyo. **Pendiente de A:** sus condiciones de reutilización no se pudieron leer el 11 nov (la página de aviso legal daba 404); hay que confirmarlas al ingerir DATA-012 |
+| `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. | https://datos.madrid.es | Solo cuando se use un dato suyo (DATA-012). Condiciones vigentes: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); no fijan un texto de cita, así que se usa el `attribution_text` del catálogo con la licencia añadida |
 | `pie.osm` | © OpenStreetMap contributors, ODbL. | https://www.openstreetmap.org/copyright | Red peatonal (`osm_red_peatonal`) |
 | `pie.mapa_base` | Mapa: OpenFreeMap © OpenMapTiles. Datos de © OpenStreetMap. | openfreemap.org · openmaptiles.org · openstreetmap.org/copyright | Texto del ejemplo de OpenFreeMap. **Pendiente de B:** confirmar el proveedor de teselas; si MapLibre ya pinta la atribución en el mapa, aquí no se repite |
 | `pie.independiente` | Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento ni del CRTM. | | Cumple el «no sugerir respaldo» del CRTM y evita parecer un servicio oficial |

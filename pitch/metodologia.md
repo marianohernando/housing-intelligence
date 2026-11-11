@@ -68,7 +68,13 @@ Cada dato lleva una de estas etiquetas:
 - **Dato poco seguro:** faltan bastantes datos en la fuente.
 - **Sin datos:** no lo tenemos.
 
-**[pendiente de A: confirmar los cortes de estas etiquetas, ver `pitch/textos_web.md` §6.]**
+Usamos estas etiquetas según la fiabilidad del dato, que va de 0 a 1:
+- **0,8 o más:** dato fiable.
+- **De 0,5 a menos de 0,8:** dato aproximado.
+- **Más de 0 y menos de 0,5:** dato poco seguro.
+- **0:** sin datos.
+
+El 0,5 cuenta como aproximado porque es la fiabilidad que reciben siempre las zonas con poca población.
 
 La fiabilidad baja en estos casos:
 - **Zonas con poca población.** En un pueblo pequeño, un solo centro más o menos cambia mucho la cuenta, así que el dato cuenta como aproximado. Pasa con menos de 500 menores de 15 años en colegios, menos de 2.000 habitantes en centros de salud y menos de 500 personas mayores en residencias.
@@ -77,7 +83,7 @@ La fiabilidad baja en estos casos:
 
 ### 1.7 Qué datos usamos
 - **21 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid:** población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias y las 6 redes de transporte público del Consorcio Regional de Transportes de Madrid, que también se publican en ese portal.
-- **Como apoyo,** el mapa de calles de OpenStreetMap para las distancias a pie. **[pendiente de A: Ayuntamiento de Madrid, solo cuando se use alguno de sus datos (DATA-012).]**
+- **Como apoyo,** el mapa de calles de OpenStreetMap para las distancias a pie. **[pendiente de A: Ayuntamiento de Madrid (CC BY 4.0), solo cuando se use alguno de sus datos (DATA-012).]**
 - **Antes de usar un conjunto,** pasa un control de calidad: que no haya registros repetidos, que cada municipio exista, que los errores queden apartados y que un dato que falta no se convierta en un cero.
 - **Cada resultado** dice de qué conjuntos sale, con el enlace a su ficha en el portal, su versión y su licencia.
 - **Ver la lista completa** (enlace a `pitch/datasets_cm.md` en el repositorio).
@@ -115,6 +121,7 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 | 1.4 | Colegios: públicos por 1.000 menores de 15; centros de salud: centros de salud y consultorios por 10.000 habitantes | `data/catalog/features/colegios_publicos_por_1000_menores.yaml` · `centros_salud_por_10000_hab.yaml` | Hecho |
 | 1.4 | Mayores: plazas autorizadas por 100 personas de 65 o más | `data/catalog/features/plazas_residencia_por_100_mayores.yaml` | Feature hecha; fila **pendiente de A** |
 | 1.5 | 4,5 km/h por la red de calles de OSM | `board/BOARD.md` (CORE-005 Fase 4, ADR) · `packages/domain/src/hi_domain/access/walk.py` · `evidence/gate-01/2026-11-11/osm_red_peatonal/` | **Pendiente de A** |
+| 1.6 | Etiquetas: ≥ 0,8 fiable; 0,5 ≤ c < 0,8 aproximado; 0 < c < 0,5 poco seguro; 0 sin datos | Criterio de D (`pitch/textos_web.md` §6), confirmado por A el 11 nov. Tope de 0,5 en zonas pequeñas: D-189. Rango 0–1 y 0 = desconocido: `packages/contracts/src/hi_contracts/public/common.py` (`Confidence`) | Hecho |
 | 1.6 | Confianza ≤ 0,5 en zonas pequeñas; umbrales 500 / 2.000 / 500 | `services/features/src/hi_features/methods.py` (`SMALL_POPULATION_CONFIDENCE`) · `small_population_threshold` en los 3 YAML de features | Hecho |
 | 1.6 | Fuente incompleta: confianza = parte de residencias con plazas conocidas | `methods.py` (suma de atributos: «Places lacking it lower confidence») | Hecho |
 | 1.6 | «5 o más» contado como 5 (confianza 0,9) | `data/catalog/features/tamano_medio_hogar.yaml` | Hecho |

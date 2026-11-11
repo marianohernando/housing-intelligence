@@ -9,7 +9,7 @@ Borrador de la línea D para el README.md de la raíz (lo integra la línea A, q
 
 Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el transporte en otra, y nadie le dice qué zona va con su vida. Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid para enseñarte qué zonas encajan contigo y qué le falta a cada una.**
 
-**Pruébalo:** [vida-facil-eight.vercel.app](https://vida-facil-eight.vercel.app) *(pendiente de verificación el 17 nov)*
+**Pruébalo:** [vidafacil-madrid.vercel.app](https://vidafacil-madrid.vercel.app) *(pendiente de verificación el 17 nov)*
 
 <!-- La URL sale del despliegue de la línea C: infra/deploy/README.md y evidence/gate-06/2026-11-11-deploy/deploy-1-production.md (PR #4). El 11 nov la web cargaba, pero la API aún no tenía base de datos. Quitar «pendiente de verificación» cuando el smoke esté en verde. -->
 
@@ -87,7 +87,7 @@ npm ci && NEXT_PUBLIC_API_URL=http://localhost:8010 npm run web:dev   # web en h
   - Consorcio Regional de Transportes de Madrid, licencia de datos abiertos del CRTM («Powered by CRTM»);
   - OpenStreetMap, ODbL.
 
-<!-- D-191. Licencias por fuente: data/catalog/sources/*.yaml (license_name y attribution_text). Ayuntamiento de Madrid: añadir cuando se use algún dato suyo (DATA-012). -->
+<!-- D-191. Licencias por fuente: data/catalog/sources/*.yaml (license_name y attribution_text). Ayuntamiento de Madrid: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov). Se añade a la lista cuando se use algún dato suyo (DATA-012; A lo registra en el catálogo). -->
 
 ## Qué había antes del concurso
 
@@ -111,11 +111,13 @@ Al publicar el repositorio, el 11 nov, reescribimos el historial solo para quita
 
 ## Equipo
 
-- **[Nombre y apellidos: lo rellena Mariano]** · [github.com/marianohernando](https://github.com/marianohernando)
+Equipo de una persona: **Mariano** · [github.com/marianohernando](https://github.com/marianohernando)
+
+<!-- Nombre completo: se añade cuando Mariano lo confirme en su propia sesión (repo público). -->
 
 Hecho con ayuda de asistentes de programación con IA, que las bases permiten (§7). Las decisiones, los datos y los resultados son responsabilidad del equipo.
 
-<!-- §7: docs/09_datamad/24_bases_oficiales_2026.md. Decisión de Mariano: mantener o quitar esta línea. Los commits ya lo reflejan (Co-Authored-By). -->
+<!-- §7: docs/09_datamad/24_bases_oficiales_2026.md. Mariano decide mantener esta línea (11 nov). Los commits ya lo reflejan (Co-Authored-By). -->
 
 ---
 

@@ -10,11 +10,11 @@
 
 | # | Campo del formulario | Obligatorio | Qué poner |
 |---|---|---|---|
-| 1 | ¿Cómo vas a participar? | Sí | **Lo eliges tú:** la modalidad con la que te inscribiste («Individualmente» o «En equipo») |
-| 2 | Nombre y apellidos | Sí | **Lo rellenas tú** (si es en equipo, la persona que representa al proyecto) |
+| 1 | ¿Cómo vas a participar? | Sí | Marca: `Individualmente` (Mariano se presenta solo) |
+| 2 | Nombre y apellidos | Sí | **Lo rellenas tú:** tu nombre y apellidos, como en la inscripción |
 | 3 | Correo electrónico de contacto | Sí | **Lo rellenas tú:** el mismo email del formulario de inscripción inicial |
 | 4 | Teléfono de contacto | Sí | **Lo rellenas tú** |
-| 5 | Si participáis en equipo, indica los datos del resto de integrantes | Sí | **Lo rellenas tú:** nombre, apellidos y email de cada integrante. Si vas solo: «No aplica: participo individualmente.» |
+| 5 | Si participáis en equipo, indica los datos del resto de integrantes | Sí | Copia esto: `No aplica: participo individualmente.` |
 | 6 | Nombre del proyecto | Sí | Copia esto: `Vida Fácil — Encuentra tu sitio en Madrid` |
 | 7 | Describe brevemente vuestra propuesta (máximo 100 palabras) | Sí | Copia el **resumen principal** de abajo (o la variante B, ver «Cuándo usar cada versión») |
 | 8 | ¿Quieres compartir algún material adicional? | No | Copia el bloque de **enlaces** de abajo |
@@ -55,7 +55,7 @@ awk '/^<!-- variante-b:fin/{f=0} f; /^<!-- variante-b:inicio/{f=1}' pitch/formul
 ## Campo 8 · Enlaces (copiar)
 
 ```text
-Demo: https://vida-facil-eight.vercel.app
+Demo: https://vidafacil-madrid.vercel.app
 Código abierto (Apache-2.0): https://github.com/marianohernando/housing-intelligence
 Datasets que integra, con licencia y control de calidad: https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md
 ```
@@ -77,7 +77,7 @@ Datasets que integra, con licencia y control de calidad: https://github.com/mari
 | «explica el porqué en lenguaje cotidiano» | Campo `explanation` de la lista. Ejemplo real: «2,7 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2» (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) | Hecho en la lista; en el buscador, **pendiente de A** |
 | «cada resultado cita su fuente y su fiabilidad» | Cada fila de la lista lleva `datasets` (nombre, portal, versión, licencia) y `confidence` (mismo fixture) | Hecho en la lista; en el buscador, **pendiente de A** |
 | «Código abierto con API» | `LICENSE` (Apache-2.0, D-191) · repo público (D-198) · rutas en `docs/04_technical_architecture/31_public_api_routes.md` | Hecho |
-| Demo con enlace público | https://vida-facil-eight.vercel.app · `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4) | La web carga (HTTP 200, 11 nov), pero la API aún no tiene base de datos (smoke 2/6). **Pendiente de verificación el 17 nov** (C) |
+| Demo con enlace público | https://vidafacil-madrid.vercel.app (URL definitiva elegida por Mariano; C la está asignando). Despliegue: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4; la primera publicación fue en vidafacil-madrid.vercel.app) | La web responde (HTTP 200, 11 nov), pero la API aún no tiene base de datos. **Pendiente de verificación el 17 nov** (C) |
 
 No se prometen los extras del 19 al 22 nov: zonas verdes, seguridad, «sin escaleras», precio de compra ni MCP (D-206).
 
