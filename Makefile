@@ -86,7 +86,7 @@ features: ## Recompute every feature (Gold)
 
 supabase-migrate: ## Apply migrations to SUPABASE_DATABASE_URL
 	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)
-	$(ALEMBIC) -x url="$(SUPABASE_DATABASE_URL)" upgrade head
+	@$(ALEMBIC) -x url="$(SUPABASE_DATABASE_URL)" upgrade head
 
 supabase-sync: ## Copy local tables to Supabase: make supabase-sync PROFILE=demo|full
 	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)

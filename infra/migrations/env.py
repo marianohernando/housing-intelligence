@@ -17,7 +17,9 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 override_url = context.get_x_argument(as_dictionary=True).get("url") or config.attributes.get("url")
-config.set_main_option("sqlalchemy.url", override_url or DatabaseSettings().database_url)
+database_url = override_url or DatabaseSettings().database_url
+# ConfigParser interpolates "%": escape it so percent-encoded passwords survive.
+config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 

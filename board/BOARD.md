@@ -20,9 +20,9 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 ## 03 — CLAUDE CODE (en curso)
 _(vacío: la siguiente card es CORE-005)_
 
-### Estado de la sesión del 10 nov (noche)
-- **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos). En total hay 21 datasets del portal CM con Quality Gate.
-- **Blocked:** OPS-001, porque falta la contraseña de Supabase en `.env` (antes del 17 nov). (DATAMAD-PUBLIC-01 cerrada el 11 nov.)
+### Estado de la sesión del 11 nov (mañana)
+- **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos): hay 21 datasets del portal CM con Quality Gate. DATAMAD-PUBLIC-01: repo público con el historial limpio. OPS-001 paso 0: Supabase conectado y con el esquema en 0002 (`evidence/gate-06/2026-11-11`).
+- **Blocked:** OPS-001 carga de datos. Falta que Mariano decida sobre RLS: el advisor de Supabase marca las 14 tablas como expuestas a la Data API (`rls_disabled_in_public`). Hoy están vacías.
 - **Next:** CORE-005, indicadores por sección y H3 (distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte). Hay que empezar proponiendo su plan de fases.
 - **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). CI en verde.
 - **Notas para las siguientes cards:**
@@ -59,7 +59,7 @@ _(vacío: la siguiente card es CORE-005)_
 - PITCH-004 5 ensayos cronometrados (Mariano)
 
 ## 06 — BLOCKED (decisión de Mariano)
-- OPS-001 Supabase: todo preparado y simulado (`make supabase-migrate`, `make supabase-sync`). Falta `SUPABASE_DATABASE_URL` con la contraseña en `.env` (ver `.env.example`). **Necesaria antes del 17 nov.**
+- OPS-001 Supabase: `.env` configurado y esquema migrado (0002) el 11 nov. Antes de `make supabase-sync PROFILE=demo`, Mariano tiene que decidir sobre RLS en las 14 tablas: la propuesta es activar RLS sin políticas, porque la API se conecta como dueño y la Data API queda cerrada. La carga va después de CORE-005 y GAP-001.
 
 ## 07 — DONE (con evidencia)
 - DATAMAD-PUBLIC-01 Repo público en la misma URL, con el historial limpio de datos de contacto de los fixtures. El original queda en `housing-intelligence-archive` (privado y archivado, prueba de fechas). `pre-datamad` = `cf39459` (22 oct) · `evidence/gate-00/2026-11-11/public-repo.md` · D-195 · 2026-11-11
