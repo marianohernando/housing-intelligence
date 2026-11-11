@@ -37,9 +37,11 @@ migrate-down: ## Revert last migration
 seed: ## Sync catalog YAML into registry tables
 	uv run hi-ingest catalog sync
 
-lint: ## Ruff + ESLint
+lint: ## Ruff + ESLint + generated files in sync (JSON Schemas, docs manifest), as in CI
 	uv run ruff check .
 	uv run ruff format --check .
+	uv run python scripts/export_schemas.py --check
+	uv run python scripts/check_docs_manifest.py docs
 	@if [ -d node_modules ]; then npm run -w apps/web lint; else echo "skip web lint (run npm ci)"; fi
 
 format: ## Auto-format Python
