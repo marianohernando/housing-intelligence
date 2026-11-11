@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 y PR #7 de C integrados; distancia a pie a 4 km/h con D-211 y Gate 3 PASS, ya en Supabase; el árbol ya no tiene rutas locales y un test lo vigila).
+Última actualización: 2026-11-11 (tarde-noche, A v5: GAP-001 F1–F3b hechas, con las 6 filas por municipio y por los 21 distritos y 20 de los 21 datasets CM alimentando features; sync de Supabase pendiente de Mariano; siguen los nombres con ñ, F4 y F5).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | GAP-001 · Fase 3b (vivienda, 6 filas) | verde | `98b842a`, `ea8ee74` | `evidence/gate-04/2026-11-11/phase-gap001-f3b.txt`, `-f3b-review.txt` | Método `metric_ratio` (dos métricas) y `not_published` (SIN DATOS explícito). Vivienda: viviendas > 90 m² por cada 100 hogares de 4+ (Madrid 163, región 178; confidence 0,8), SIN DATOS por distrito. Extras: aulas de infantil, nacimientos, % en alquiler, tamaño medio del hogar. **20 de 21 datasets CM alimentan features** (falta alquiler por CP: CORE-006). Revisado con `reviewer`. Necesita sync |
 | 11 nov | A | GAP-001 · Fase 3a (5 filas) | verde | `4523d69` | `evidence/gate-04/2026-11-11/phase-gap001-f3a.txt` | Escuela infantil (por 1.000 niños de 0 a 4), mayores (centros por 1.000 de 65+) y farmacia (por 10.000 hab.) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie. Extras: ratio oficial de farmacias de la CM (`cm_farmacias_municipios`, solo municipio) y plazas de residencia. Golden de farmacias frente a la ratio oficial: mediana 0,33 %, p90 1,6 %. Necesita sync |
 | 11 nov | A | GAP-001 · Fase 2 (filtro de colegios) | verde | `21939dd` | `evidence/gate-04/2026-11-11/phase-gap001-f2.txt` | La fila de colegios cuenta colegios con primaria, públicos o concertados (v2; 1.241 en la región). Chamartín FALTA → CUBIERTO (1,04); Madrid FALTA → JUSTO (0,96); región 2,18 → 1,32. Invariante de catálogo: fila y minutos a pie cuentan los mismos lugares. Revisado con `reviewer`. Necesita sync |
 | 11 nov | A | GAP-001 · Fase 1 (`extra_indicators`) | verde | `2d05d78` | `evidence/gate-04/2026-11-11/phase-gap001-f1.txt` | `/gaps` trae en `extra_indicators` los minutos a pie de colegio y centro de salud (municipio y distrito); los extras no tienen estado propio, null con `null_reason` y sus datasets (red OSM) en la procedencia de la fila. Chamartín: salud FALTA (0,79) a 9,5 min a pie. `data_version` solo con lo que se muestra. Revisado con `reviewer`. C puede redesplegar (sin sync) |
@@ -92,10 +93,25 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - Fase 4 `fc025b6`: ejecución real (24 features en 29 s), 15 casos golden y coherencia mediana/% en todas las zonas, **Gate 3 PASS** (`evidence/gate-03/2026-11-11/summary.md`) y **D-210**. **CORE-005 DONE.**
   - Fase 5 `ad2129a` (decisión de Mariano): **4 km/h** en las 12 features, que pasan a la versión 2 (**D-211**). Recálculo en 28 s; los 15 golden cumplen sin tocar los límites; **Gate 3 PASS** otra vez. Evidencia: `evidence/gate-03/2026-11-11/phase-core005-f5.txt`.
 
+- **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
-### Estado de la sesión del 11 nov (noche, relevo de la línea A v4)
+### Estado de la sesión del 11 nov (tarde-noche, relevo de la línea A v5)
+- **Done (A v5):** GAP-001 F1 (`2d05d78`), F2 (`21939dd`), F3a (`4523d69`) y F3b (`98b842a`, `ea8ee74`), todas con gate verde, evidencia y `reviewer`. `/gaps` da las 6 filas por municipio y por los 21 distritos, con extras (minutos a pie, ratio oficial de farmacias, plazas de residencia, aulas de infantil, nacimientos, % en alquiler y tamaño medio del hogar). Vivienda por distrito sale `SIN_DATOS` (`SOURCE_MISSING`). 20 de los 21 datasets CM alimentan features.
+- **Blocked / a la espera de Mariano:** `make supabase-sync PROFILE=demo` con F2–F3b (features nuevas y colegios v2; sin migración). Después, comprobarlo por MCP: 11 features nuevas o cambiadas, 21 filas `not_published` de vivienda por distrito y `colegios_publicos_por_1000_menores` en `feature_version` 2. C no necesita redesplegar: la API lee las filas de la base.
+- **Next (línea A), en orden:**
+  1. **Nombres de municipio con la ñ rota** (lo pide B a través de `datamad-10`): «REDUE/A», «GRIÐON», «CARABA/A», «COBE/A», «FUENTIDUEÐA DE TAJO», «MORATA DE TAJUÐA», «ORUSCO/PERALES DE TAJU/A», «PI/UECAR-GANDULLAS», «VILLANUEVA DE LA CA/ADA» y sus distritos censales. **La fuente está rota:** el CSV de `cm_secciones_censales` trae «/» o el byte 0xD0 en lugar de la Ñ, así que no se arregla con el encoding.
+     - Propuesta: en `admin_boundaries`, tomar los nombres de municipio de una tabla estadística de la CM que ya ingerimos (`territory_name` de `cm_poblacion_edad_nacionalidad_sexo`: «Griñón», «Alcalá de Henares», «Álamo (El)»). Que `display_name` convierta «Álamo (El)» en «El Álamo», y añadir un check de calidad crítico, más un test, que falle si un nombre lleva «/», «Ð» o caracteres fuera de las letras españolas.
+     - Resuelve también DATA-022 para los municipios. Los distritos de Madrid y los barrios vienen de otra columna: revisarlos.
+     - Necesita otro sync.
+  2. **F4:** nivel sección y `GET /api/v1/gaps?level=&row=` (estado por zona para la coropleta).
+  3. **F5:** ADR de los cortes con criterio estadístico (sin mirar el 0,79 de Chamartín) y número D-xxx. Para D: qué mide cada fila, los cortes y el estado de Chamartín después del ADR. Ojo: con los indicadores v2, la mediana municipal de vivienda es 327 frente a 178 de la región, así que casi todos los municipios saldrían CUBIERTO. El ADR debe decir si la referencia regional sirve igual para todas las filas.
+  4. CORE-006 (D pide los m² que se suponen según el tamaño del hogar; conecta `cm_alquiler_m2_codigo_postal_madrid`, el dataset CM 21 de 21) → CORE-003 → `POST /api/v1/search`.
+- **Gate status:** G4 verde con `/gaps` de 6 filas (`ea8ee74`). G3 no se ha vuelto a pasar desde el 11 nov a las 16:15; hay que repetirlo (`make evidence GATE=03`) con las features nuevas cuando HEAD tenga la CI en verde.
+- **Notas:** `metric_ratio` toma el periodo del denominador. `inputs.method` guarda el método efectivo de cada nivel. Los umbrales de población pequeña (infantil 200, mayores 300, farmacia y nacimientos 2.000) se pueden revisar en el ADR.
+
+### Estado de la sesión del 11 nov (noche, relevo de la línea A v4; su Next ya está hecho o pasado a A v5)
 - **Done (esta sesión, A v4):**
   - PR #7 de C integrado (`93af627`) con `reviewer`: el smoke mide la página 1 de transporte (7/7). Pendiente menor de C: exigir `.data.pages >= 1` en el check `largest`.
   - **CORE-005 Fase 5** (`ad2129a`, **D-211**): 4 km/h en las 12 features a pie, que pasan a la versión 2. Los 15 golden cumplen sin tocar los límites y el **Gate 3 da PASS**. Chamartín: centro de salud 9,47 min y farmacia 2,57 (enviados a D por `datamad-10`).
