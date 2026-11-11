@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (tarde-noche, A v5: GAP-001 F1–F3b hechas, con las 6 filas por municipio y por los 21 distritos y 20 de los 21 datasets CM alimentando features; sync de Supabase pendiente de Mariano; siguen los nombres con ñ, F4 y F5).
+Última actualización: 2026-11-11 (noche, A v6: nombres oficiales (D-212), `/gaps?level=&row=` y método `gap-0.2` (D-213, aprobado por Mariano); PR #2 de B fusionado; siguen el sync de F5, CORE-006 y CORE-003).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,7 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
-| 11 nov | A | GAP-001 · Fase 5 (ADR de los cortes, D-213) | verde | `d02574f`, `f626e1f` | `evidence/gate-04/2026-11-11/phase-gap001-f5.txt`, `-f5-review.txt` | Método `gap-0.2`: cada zona frente a los **demás municipios de su tipo** (rural o urbano, Ley 45/2007; χ² rechaza una tasa común en las 6 filas, centros de salud ×14,8). FALTA = ratio < 0,8 **y** falta significativa (Poisson exacto 95 %); CUBIERTO ≥ 1; `reliable: false` si se esperan menos de 3,69 casos (nunca FALTA). Las features por población guardan sus recuentos (`inputs.counts`). Chamartín salud: FALTA → **JUSTO** (0,84); Madrid capital salud **FALTA** (0,67). Revisado con `reviewer` (sin autoinclusión, tests de propiedad). Tipos TS de la web regenerados (`apps/web/src/contracts`, generados). **Pendiente de validar por Mariano. Necesita sync** |
+| 11 nov | A | GAP-001 · Fase 5 (ADR de los cortes, D-213) | verde | `d02574f`, `f626e1f` | `evidence/gate-04/2026-11-11/phase-gap001-f5.txt`, `-f5-review.txt` | Método `gap-0.2`: cada zona frente a los **demás municipios de su tipo** (rural o urbano, Ley 45/2007; χ² rechaza una tasa común en las 6 filas, centros de salud ×14,8). FALTA = ratio < 0,8 **y** falta significativa (Poisson exacto 95 %); CUBIERTO ≥ 1; `reliable: false` si se esperan menos de 3,69 casos (nunca FALTA). Las features por población guardan sus recuentos (`inputs.counts`). Chamartín salud: FALTA → **JUSTO** (0,84); Madrid capital salud **FALTA** (0,67). Revisado con `reviewer` (sin autoinclusión, tests de propiedad). Tipos TS de la web regenerados (`apps/web/src/contracts`, generados). **Aprobado por Mariano el 11 nov. Necesita sync** |
 | 11 nov | B → coord | PUB-001 / MAP-004 · PR #2 fusionado | CI verde | `bd5b006` | comentario de revisión en el PR #2 | Web de Vida Fácil. Revisado por A con `reviewer` (fusionar con mejoras); el merge lo hizo `datamad-10` con autorización de Mariano (a A se lo bloqueó el clasificador). Buscador tras `NEXT_PUBLIC_FEATURE_SEARCH`, apagado hasta `POST /search` |
 | 11 nov | Mariano | Supabase · sync | — | — | MCP (`datamad-10`) | Sincronizado hasta `c4f1bc0`/`b1f899e` (nombres oficiales): 61.935 filas en `feature_value`, 0 nombres con «/» o «Ð», 106 MB. Producción sirve `995f7ce` (smoke 7/7) |
 | 11 nov | A | GAP-001 · Fase 4 (`/gaps?level=&row=`) | verde | `697dbaf` | `evidence/gate-04/2026-11-11/phase-gap001-f4.txt` | Contrato `GapRowMap` (JSON Schema `gap_row_map_response`): una fila en todas las zonas de un nivel, con estado, valor, ratio, confidence y `null_reason` por zona, `counts`, referencia, cortes y datasets. Mismo indicador, referencia y cortes que `/gaps/{level}/{code}`; un test comprueba el color de cada zona contra su fila. Municipio: 179 zonas (unos 32 KB); distrito: 21; vivienda por distrito, 21 `SIN_DATOS`; sección, `zones: []` con aviso. Fixtures regenerados (nombres con tilde). B puede pintar la coropleta |
@@ -101,6 +101,34 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 11 nov (noche, relevo de la línea A v6)
+- **Done (A v6):**
+  - **DATA-022 F1** (`c4f1bc0`, `b1f899e`, **D-212**): nombres oficiales de municipios (tabla CM) y de los distritos de Madrid (panel del Ayuntamiento), con el paso `make admin-names` y un check crítico contra «/», «Ð» y cualquier carácter fuera de la ortografía española. Ya está en Supabase y en producción (`995f7ce`).
+  - **GAP-001 F4** (`697dbaf`): `GET /api/v1/gaps?level=&row=` (`GapRowMap`), coherente con la lista de cada zona.
+  - **GAP-001 F5** (`d02574f`, `f626e1f`, `f1b487a`, **D-213, aprobado por Mariano**): método `gap-0.2`. Referencia de los demás municipios del mismo tipo (Ley 45/2007), FALTA material y significativa (Poisson al 95 %) y `reliable` para las zonas pequeñas. Las features por población guardan `inputs.counts`. **GAP-001 queda completa a falta del sync** (y de que B pinte «poco fiable»).
+  - Revisiones con `reviewer`: PR #2 de B (lo fusionó `datamad-10` con autorización de Mariano, `bd5b006`) y PR #8 de C (comentario: antes de fusionar, quitar de `deploy-8-verified.md:36` el slug de Vercel con el apellido).
+- **Blocked / a la espera de Mariano:**
+  - `make supabase-sync PROFILE=demo`, sin migración: `feature_value` con `inputs.counts` (F5). Después, C redespliega la API para servir `gap-0.2`. Comprobación por MCP: `select count(*) from feature_value where inputs ? 'counts'` > 0 y, en la API pública, `method.version = gap-0.2`.
+  - Fusiones de PRs: a la línea A se las bloquea el clasificador de permisos (`gh pr merge` y el merge local). PR #8 de C: revisado, pendiente del cambio de datos personales y del merge por `datamad-10`/Mariano.
+- **Next (línea A), en orden:**
+  1. **CORE-006, asequibilidad.** Datos ya cargados:
+     - `alquiler_m2_mensual_municipio` (179 municipios, 2024; feature `alquiler_m2_mensual`);
+     - `alquiler_m2_mensual_codigo_postal`: 54 códigos postales de Madrid capital, 2024. Es el dataset CM 21 de 21, `cm_alquiler_m2_codigo_postal_madrid`, y hoy no alimenta ninguna feature.
+
+     No hay geometría de códigos postales (DATA-013 está en backlog). Propuesta para llevar el CP a los distritos sin geometría: una tabla de correspondencia hecha con los lugares geocodificados que traen código postal (colegios, centros de salud y farmacias tienen dirección). El distrito de cada CP sería el mayoritario y el peso, la parte de los lugares; la confianza, la parte del CP que cae en ese distrito. Hay que declararlo como proxy.
+
+     Además:
+     - el alquiler por distrito sería la mediana ponderada de sus CP;
+     - la condición de presupuesto es PASS/FAIL/UNKNOWN: alquiler del m² × m² supuestos según el hogar frente a `budget.amount_eur`. D pidió los m² que se suponen por tamaño de hogar: hay que fijarlos con una fuente (por ejemplo, el tamaño medio de vivienda del censo o la norma de vivienda protegida) en un ADR;
+     - compra: sin fuente oficial abierta fiable, `UNKNOWN` declarado (D-203).
+  2. **CORE-003:** Residential Fit, Reality Check y `POST /api/v1/search` según `hi_contracts/public/search.py` (v2). Cuando esté en verde, avisar a `datamad-10` para encender `NEXT_PUBLIC_FEATURE_SEARCH`.
+  3. Repetir el Gate 3 (`make evidence GATE=03`) con las features actuales.
+- **Gate status:** `make lint typecheck test` en verde en `f1b487a` (327 unit, 172 web y 81 de integración). G4: `/gaps` (lista y mapa) con `gap-0.2`. G3 sin repetir desde el 11 nov a las 16:15.
+- **Notas:**
+  - Si cambias `data/schemas/api`, regenera también los tipos de la web (`npm run -w apps/web contracts`): su test de sincronía falla en la CI.
+  - Un `apps/web/.next` local antiguo rompe `tsc`: bórralo, porque no se versiona.
+  - Los nombres oficiales se pierden si se vuelve a publicar la geografía: después de las tablas estadísticas, `make admin-names` (el CLI lo avisa).
 
 ### Estado de la sesión del 11 nov (tarde-noche, relevo de la línea A v5)
 - **Done (A v5):** GAP-001 F1 (`2d05d78`), F2 (`21939dd`), F3a (`4523d69`) y F3b (`98b842a`, `ea8ee74`), todas con gate verde, evidencia y `reviewer`. `/gaps` da las 6 filas por municipio y por los 21 distritos, con extras (minutos a pie, ratio oficial de farmacias, plazas de residencia, aulas de infantil, nacimientos, % en alquiler y tamaño medio del hogar). Vivienda por distrito sale `SIN_DATOS` (`SOURCE_MISSING`). 20 de los 21 datasets CM alimentan features.
