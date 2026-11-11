@@ -107,7 +107,7 @@ Cómo se detecta:
 | Memoria por instancia | 2 GB, 1 vCPU | Ninguno |
 | Región | Una sola (`dub1`) | — |
 | Subida por CLI | 100 MB de código | `.vercelignore` deja unos 4 MB |
-| Arranque en frío | El contenedor se apaga tras 5 min sin tráfico ([container runtime](https://vercel.com/docs/functions/runtimes/container)) | Medido en la evidencia del despliegue |
+| Arranque en frío | El contenedor se apaga tras 5 min sin tráfico ([container runtime](https://vercel.com/docs/functions/runtimes/container)). La primera petición tarda unos 3–4 s; las siguientes, 0,1–0,25 s | Calentar la demo antes de presentar (ver «Día de la final») |
 | Supabase free | La base pasa a solo lectura por encima de 500 MB (la demo ocupa 100 MB). Los proyectos inactivos se pausan | Abrir la demo durante la semana anterior |
 
 ## Vigilancia diaria
@@ -120,6 +120,20 @@ Cómo se detecta:
 Si falla, GitHub manda un email a la cuenta que cambió por última vez la línea `cron`.
 
 **Solo se activa cuando el fichero está en `main`:** GitHub ejecuta los `schedule` y los `workflow_dispatch` desde la rama por defecto. Cubre del 17 al 26 nov si `claude/sprint-1-public` se fusiona en `main` antes del 17.
+
+## Día de la final (26 nov): lista
+
+1. **Por la mañana:**
+   - `make smoke-demo` tiene que dar 6/6. Si falla, sigue la sección «Si la demo se cae».
+   - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
+   - Lleva las capturas y el vídeo del recorrido.
+2. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
+3. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
+   - Sus 6 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y capa.
+   - Así el contenedor de la API ya está arrancado y no te comes los 3–4 s del arranque en frío delante del jurado.
+   - Deja después la pestaña de la demo abierta y recárgala una vez.
+   - El contenedor se apaga tras 5 min sin tráfico. Si entre el calentamiento y tu turno pasan más de 5 min, repítelo.
+4. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
 
 ## Si la demo se cae
 
@@ -171,6 +185,7 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
 
 - `start` no construye ni descarga nada (`--no-build`). Comprobado con un navegador headless: 0 peticiones a hosts externos y la consola sin errores.
+- No hace falta calentarlo. Los procesos quedan arrancados y el propio `make demo-offline` pasa el smoke al terminar, así que la API ya ha respondido una vez.
 - **Requisitos el 26:**
   - Docker Desktop abierto, con las imágenes `vida-facil-offline-db:17` y `vida-facil-api:offline` ya construidas el 23;
   - Node, con `node_modules` instalado;
