@@ -1,0 +1,7 @@
+/* Wider than the text pages: the six rows go in two columns on desktop */
+.page {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 76rem;
+  padding-top: var(--space-5);
+}

@@ -1,0 +1,25 @@
+{
+ "folded": {
+  "state": "folded",
+  "height": 380,
+  "expanded": "false"
+ },
+ "handleFocused": true,
+ "openByKeyboard": {
+  "state": "open",
+  "height": 721,
+  "expanded": "true",
+  "legendVisible": false
+ },
+ "submitVisible": true,
+ "foldedBySpace": {
+  "state": "folded",
+  "height": 380
+ },
+ "openBySwipe": {
+  "state": "open",
+  "height": 721
+ },
+ "overflow": 0,
+ "consoleErrors": []
+}

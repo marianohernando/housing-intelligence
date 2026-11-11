@@ -1,0 +1,91 @@
+/*
+ * Vida Fácil design tokens: the single source for colour, type, space and motion.
+ * Starting values come from prompts/DISENO_VIDA_FACIL.md; every text, icon and focus pair is
+ * checked for WCAG 2.2 AA in src/lib/__tests__/tokens.test.ts, including glass over the map.
+ */
+:root {
+  /* Base text of 17 px that still follows the browser's font-size setting */
+  font-size: 106.25%;
+
+  /* Colour */
+  --bg: #f6f5fc;
+  --surface: #ffffff;
+  --ink: #141b3d;
+  --ink-soft: #5a6080;
+  --violet: #6a5ae0;
+  --violet-strong: #4b3bbf; /* text and links: --violet is 4.25:1 on --violet-soft */
+  --violet-soft: #ece9fd;
+  --on-violet: #ffffff;
+  --line: rgba(20, 27, 61, 0.1);
+  --control-border: #8a8fa3; /* text fields: 3:1 against white (WCAG 1.4.11) */
+  --focus: var(--violet-strong);
+
+  /* Glass cards: opacity raised from .72 so secondary text stays AA over --map-darkest */
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px rgba(20, 27, 61, 0.08);
+  --glass-blur: 18px;
+
+  /*
+   * What a zone is missing. Always shown with text and icon, never with colour alone.
+   * Base colour for icons and borders (3:1), -ink for text (4.5:1), -bg for the row tint.
+   */
+  --falta: #c93a52;
+  --falta-ink: #a61e33;
+  --falta-bg: #fce8ec;
+  --justo: #a86a00;
+  --justo-ink: #7e4c00;
+  --justo-bg: #fdf1dc;
+  --cubierto: #23805f;
+  --cubierto-ink: #17634a;
+  --cubierto-bg: #e3f4ec;
+  --sin-datos: #6e7389;
+  --sin-datos-ink: #4f546a;
+  --sin-datos-bg: #eeeff3;
+
+  /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
+  --map-darkest: var(--violet);
+
+  /* Map palette (read by src/lib/map/style.ts at runtime): lavender city, soft parks and water */
+  --map-land: #ebe8f6;
+  --map-water: #cfe2f6;
+  --map-park: #cdebd6;
+  --map-road: #ffffff;
+  --map-rail: #c9c3ec;
+  --map-zone: #dcd6fa;
+  --map-building: #e6e3f5;
+  --map-building-tall: #a99df0;
+
+  /* Type */
+  --font-title: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-hero: clamp(2.25rem, 1.4rem + 2.6vw, 3.25rem);
+  --leading-tight: 1.15;
+  --leading: 1.5;
+
+  /* Space, size and shape */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --target: max(44px, 2.75rem);
+  --radius-sm: 10px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+  --page-gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+
+  /* Motion (disabled under prefers-reduced-motion in globals.css) */
+  --duration-fast: 120ms;
+  --duration: 220ms;
+  --duration-slow: 600ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

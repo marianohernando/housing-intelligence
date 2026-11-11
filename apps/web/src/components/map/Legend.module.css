@@ -1,0 +1,78 @@
+.legend {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-2);
+  width: min(22rem, calc(100% - 2rem));
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  transform: translateX(-50%);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.ramp {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--violet-soft), var(--violet));
+}
+
+.ends,
+.noData {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.noData {
+  justify-content: flex-start;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 18px;
+  height: 12px;
+  border: 1px dashed var(--sin-datos);
+  border-radius: 3px;
+  background: var(--sin-datos-bg);
+}
+
+.before {
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+
+/* Mobile: compact, just above the folded bottom sheet; hidden while the sheet is open */
+@media (max-width: 760px) {
+  .legend {
+    bottom: calc(var(--sheet-peek) + var(--space-2));
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Before the first search the ramp means nothing yet: on the small map, only the hint */
+  .waiting :is(.ramp, .ends, .noData) {
+    display: none;
+  }
+
+  :global([data-sheet="open"]) .legend {
+    display: none;
+  }
+}

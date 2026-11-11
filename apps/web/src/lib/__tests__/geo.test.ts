@@ -9,6 +9,12 @@ describe("geo helpers", () => {
     );
   });
 
+  it("adds the parent only when asked, to keep the children of one unit", () => {
+    expect(adminUnitsUrl("http://localhost:8010", "distrito", 25, "ES.28.MUN.28079")).toBe(
+      "http://localhost:8010/api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES.28.MUN.28079",
+    );
+  });
+
   it("describes named and unnamed units without inventing names", () => {
     const named = describeUnit({
       admin_unit_id: "ES.28.BAR.28079016",

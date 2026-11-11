@@ -1,0 +1,92 @@
+{
+  "base": "http://localhost:3011",
+  "generated_at": "2026-11-11T16:55:31.562Z",
+  "shots": [
+    {
+      "route": "/",
+      "viewport": "desktop",
+      "file": "f6_inicio_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "[.WebGL-0x10400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x10400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x10400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x10400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "comparison": "f6_inicio_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/",
+      "viewport": "mobile",
+      "file": "f6_inicio_mobile.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "desktop",
+      "file": "f6_chamartin_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "comparison": "f6_chamartin_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "mobile",
+      "file": "f6_chamartin_mobile.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/como-lo-calculamos",
+      "viewport": "desktop",
+      "file": "f6_como_desktop.png",
+      "overflow_px": 7659,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/0knlc798klvo4.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/como-lo-calculamos",
+      "viewport": "mobile",
+      "file": "f6_como_mobile.png",
+      "overflow_px": 12680,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/0knlc798klvo4.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/que-falta",
+      "viewport": "desktop",
+      "file": "f6_que-falta_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/0knlc798klvo4.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/que-falta",
+      "viewport": "mobile",
+      "file": "f6_que-falta_mobile.png",
+      "overflow_px": 257,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/0knlc798klvo4.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    }
+  ]
+}

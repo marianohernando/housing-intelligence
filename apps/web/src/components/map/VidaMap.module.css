@@ -1,0 +1,107 @@
+.map {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--map-land);
+}
+
+/* Notices over the map: at the top, between the columns, clear of the search button and the legend */
+.failure {
+  position: fixed;
+  left: 50%;
+  top: 5rem;
+  z-index: 3;
+  width: max-content;
+  max-width: min(27rem, calc(100% - 2rem));
+  padding: var(--space-4) var(--space-5);
+  transform: translateX(-50%);
+  color: var(--ink);
+}
+
+/* Key point label (glass) with its pin on the exact spot */
+.label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 15rem;
+  margin-bottom: 18px;
+  padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  box-shadow: 0 6px 20px rgba(20, 27, 61, 0.14);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  color: var(--ink);
+  pointer-events: none;
+}
+
+/* Recognisable icon (train, cross, mortarboard) straight on the glass, as in mockup 2 */
+.labelIcon {
+  display: grid;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: var(--violet-strong);
+}
+
+.labelText {
+  display: grid;
+  line-height: 1.2;
+}
+
+.labelKind {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.labelName {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.labelPin {
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--violet);
+  box-shadow: 0 2px 6px rgba(20, 27, 61, 0.3);
+  transform: translate(-50%, 50%);
+}
+
+/* Mobile: compact labels (type only) so they do not cover the small map */
+@media (max-width: 760px) {
+  .label {
+    padding-right: 0.6rem;
+  }
+
+  .labelName {
+    display: none;
+  }
+}
+
+/* Notices with a link or a button (map failure, zones not loaded) */
+div.failure {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.failure a {
+  color: var(--violet-strong);
+}
+
+/* Mobile: just under the header (brand and tabs), above the bottom sheet */
+@media (max-width: 760px) {
+  .failure {
+    top: 8.5rem;
+  }
+}

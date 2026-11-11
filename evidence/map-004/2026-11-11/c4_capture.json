@@ -1,0 +1,22 @@
+{
+  "base": "http://localhost:3011",
+  "generated_at": "2026-11-11T17:38:43.925Z",
+  "shots": [
+    {
+      "route": "/que-falta?zona=distrito/2807905",
+      "viewport": "desktop",
+      "file": "c4_que_falta_completa_desktop.png",
+      "overflow_px": 1778,
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/que-falta?zona=distrito/2807905",
+      "viewport": "mobile",
+      "file": "c4_que_falta_completa_mobile.png",
+      "overflow_px": 4033,
+      "problems": [],
+      "warnings": []
+    }
+  ]
+}

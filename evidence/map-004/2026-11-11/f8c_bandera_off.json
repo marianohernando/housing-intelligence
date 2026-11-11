@@ -1,0 +1,22 @@
+{
+ "bandera": "off",
+ "como": "web 3011 compilada con NEXT_PUBLIC_FEATURE_SEARCH=(sin definir), API 8011",
+ "desktop": {
+  "boton": "Ver zonas que encajanMuy pronto",
+  "desactivado": true,
+  "trabajo_en": "Trabajo en Muy pronto",
+  "aviso": true,
+  "leyenda": "Muy pronto verás aquí qué zonas encajan contigo.",
+  "peticiones_search": [],
+  "errores": []
+ },
+ "mobile": {
+  "boton": "Ver zonas que encajanMuy pronto",
+  "desactivado": true,
+  "trabajo_en": "Trabajo en Muy pronto",
+  "aviso": true,
+  "leyenda": "Muy pronto verás aquí qué zonas encajan contigo.",
+  "peticiones_search": [],
+  "errores": []
+ }
+}

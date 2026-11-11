@@ -1,0 +1,148 @@
+.row {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.head h2 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.measure {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+/* Zone and region side by side; the walking minutes on their own line below */
+.figures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+}
+
+/* The value sits at the bottom, level with its neighbour when a label wraps */
+.figure {
+  display: grid;
+  align-content: space-between;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  background: var(--violet-soft);
+}
+
+.figure dt {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.figure dd {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.figure dd.missing {
+  color: var(--sin-datos-ink);
+  font-size: var(--text-lg);
+}
+
+.walk {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.walk dt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.walk dt svg {
+  flex: none;
+  margin-top: 0.2em;
+  color: var(--violet-strong);
+}
+
+.walk dd {
+  flex: none;
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reason {
+  padding: var(--space-2) var(--space-3);
+  border: 1px dashed var(--sin-datos);
+  border-radius: var(--radius-sm);
+  color: var(--sin-datos-ink);
+  font-size: var(--text-sm);
+}
+
+.confidence {
+  justify-self: start;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.note {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.note strong {
+  color: var(--ink);
+}
+
+.sources {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-sm);
+}
+
+/* A list item keeps the open/closed marker; the padding makes it a 44 px target */
+.sources summary {
+  padding-block: calc((var(--target) - 1.5em) / 2);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.sources ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0 0 0 var(--space-4);
+  list-style: none;
+}
+
+/* Inline, so the icon follows the last word when a long name wraps */
+.sources a {
+  color: var(--violet-strong);
+}
+
+.sources a svg {
+  margin-left: var(--space-1);
+  vertical-align: -2px;
+}
