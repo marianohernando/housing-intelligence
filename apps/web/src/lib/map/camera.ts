@@ -109,6 +109,8 @@ export const MOBILE_QUERY = "(max-width: 760px)";
 export const SHEET_PEEK = 0.45;
 /** Mobile header (brand and tabs) above the map. */
 const MOBILE_HEADER = 130;
+/** Height of the compact legend over the mobile overview map (select and one or two lines of statuses). */
+const MOBILE_LEGEND = 100;
 
 export interface Padding {
   top: number;
@@ -127,9 +129,13 @@ export interface Padding {
 export function cameraPadding(mode: "overview" | "zone" | "island", screen: { mobile: boolean; height: number }): Padding {
   if (screen.mobile) {
     const bottom = Math.round(screen.height * SHEET_PEEK) + 16;
-    return mode === "overview" ? { top: MOBILE_HEADER, right: 16, bottom, left: 16 } : { top: MOBILE_HEADER, right: 0, bottom, left: 0 };
+    // Overview: the legend («¿Qué quieres ver?» and the statuses) floats just above the sheet
+    return mode === "overview"
+      ? { top: MOBILE_HEADER, right: 16, bottom: bottom + MOBILE_LEGEND, left: 16 }
+      : { top: MOBILE_HEADER, right: 0, bottom, left: 0 };
   }
   if (mode === "zone") return { top: 90, right: 380, bottom: 200, left: 440 };
   if (mode === "island") return { top: 90, right: 460, bottom: 200, left: 520 };
-  return { top: 100, right: 460, bottom: 40, left: 500 };
+  // The bottom keeps the region above the legend («¿Qué quieres ver?» and its statuses)
+  return { top: 100, right: 460, bottom: 250, left: 500 };
 }

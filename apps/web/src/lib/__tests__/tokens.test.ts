@@ -25,7 +25,7 @@ const BACKDROPS = {
 const TEXT = 4.5; // WCAG 1.4.3, normal text
 const UI = 3; // WCAG 1.4.11, icons, borders and focus
 
-const STATUSES = ["falta", "justo", "cubierto", "sin-datos"] as const;
+const STATUSES = ["falta", "justo", "cubierto", "sin-datos", "zona-pequena"] as const;
 
 const PAIRS: [fg: string, bg: string, min: number][] = [
   ["ink", "bg", TEXT],

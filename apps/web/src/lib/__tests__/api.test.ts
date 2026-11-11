@@ -39,6 +39,14 @@ describe("api client", () => {
     expect(body.data.zone.code).toBe("28079");
   });
 
+  it("asks for one gap row for every zone of a level (the map)", async () => {
+    const calls: Call[] = [];
+    const api = createApi(BASE, fakeFetch(200, envelope(fixture("gap_row_map.centro_salud_distrito.fixture.json")), calls));
+    const body = await api.gapRowMap("distrito", "centro_salud");
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/gaps?level=distrito&row=centro_salud`);
+    expect(body.data.row).toBe("centro_salud");
+  });
+
   it("asks only for CM datasets when told so (footer counter)", async () => {
     const calls: Call[] = [];
     const api = createApi(BASE, fakeFetch(200, envelope(fixture("dataset_list.all.fixture.json")), calls));

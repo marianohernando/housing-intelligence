@@ -32,7 +32,7 @@ export default function MapaPage() {
                 <strong>Mira las zonas que encajan</strong> y por qué, con hechos que puedes comprobar.
               </li>
               <li>
-                <strong>Entra en una zona</strong> y mira qué le falta frente al conjunto de la región.
+                <strong>Entra en una zona</strong> y mira qué le falta frente a zonas parecidas.
               </li>
             </ol>
           </GlassCard>

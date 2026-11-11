@@ -13,6 +13,13 @@
   gap: var(--space-3);
 }
 
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
 .head h2 {
   font-size: var(--text-lg);
   font-weight: 600;
@@ -57,6 +64,20 @@
 .figure dd.missing {
   color: var(--sin-datos-ink);
   font-size: var(--text-lg);
+}
+
+/* The whole region, as context under the comparison */
+.regional {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.regional dd {
+  margin: 0;
+  font-weight: 600;
 }
 
 .walk {

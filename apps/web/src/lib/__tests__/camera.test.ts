@@ -135,8 +135,8 @@ describe("approachZoom", () => {
 });
 
 describe("cameraPadding", () => {
-  it("keeps the desktop cards clear: search on the left, zone card on the right", () => {
-    expect(cameraPadding("overview", { mobile: false, height: 900 })).toEqual({ top: 100, right: 460, bottom: 40, left: 500 });
+  it("keeps the desktop cards clear: search on the left, zone card on the right, legend below", () => {
+    expect(cameraPadding("overview", { mobile: false, height: 900 })).toEqual({ top: 100, right: 460, bottom: 250, left: 500 });
     expect(cameraPadding("zone", { mobile: false, height: 900 })).toEqual({ top: 90, right: 380, bottom: 200, left: 440 });
   });
 

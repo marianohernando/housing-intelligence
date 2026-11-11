@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import AdminMap from "@/components/AdminMap";
-
-export const metadata: Metadata = { title: "Mapa — Housing Intelligence" };
-
+/**
+ * The first map of the platform (before Vida Fácil) is not part of the demo: it loaded whole layers
+ * and kept the old name in its title. Its address now opens the home page.
+ */
 export default function MapPage() {
-  return <AdminMap />;
+  redirect("/");
 }

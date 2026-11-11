@@ -196,12 +196,12 @@
   }
 }
 
-/* «Muy pronto» inside the search button while POST /search is not published */
-.soonTag {
-  padding: 0.05rem 0.5rem;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
+/* busqueda.pronto, in place of the button while POST /search is not published */
+.soonNote {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
   color: var(--violet-strong);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: 500;
 }

@@ -589,3 +589,67 @@ Cuando A publique `POST /search`, hay que compilar la web con `NEXT_PUBLIC_FEATU
 - Punto 2 (`NEXT_PUBLIC_API_URL` con `localhost` por defecto): toca el despliegue, así que lo hablo con C.
 - Punto 6 (textos que duplican la API): leer los cortes de `method` cuando llegue gap-0.2.
 - Punto 7 (código heredado de `/map` y teselas externas para la demo sin conexión).
+
+---
+
+# PUB-001 Fase 3d — Mapa por fila de «Qué falta», «Zona pequeña para comparar» (gap-0.2) y textos definitivos de D (2026-11-11)
+
+Rama `claude/s1-web-map`, hecha sobre `f1b487a` (GAP-001 F5, D-213, `gap-0.2`) y rebasada sobre `92eab6b` (CORE-006 F2); el gate es de después del rebase. Textos de `pitch/textos_web.md` en `04f1e8e` (línea D).
+
+## Qué hay
+- **«¿Qué quieres ver?»** (leyenda del mapa de la vista general): un `select` nativo, que se usa con el teclado, con «Encaje con tu búsqueda» o una de las 6 filas. Con una fila elegida:
+  - pide `GET /gaps?level=municipio&row=` y `?level=distrito&row=` y las une a las zonas del mapa por `admin_unit_id` (Madrid, por sus 21 distritos);
+  - cada zona se pinta con el color de su estado y una trama: FALTA con rayas, JUSTO con puntos, zona pequeña con líneas y SIN DATOS con el borde discontinuo; CUBIERTO va sin trama. La leyenda repite colores y tramas, con el texto y el número de zonas de cada estado;
+  - una zona que la fila no trae se queda sin pintar; nunca sale como SIN DATOS;
+  - el encuadre deja la región por encima de la leyenda, en escritorio y en móvil.
+- **«Zona pequeña para comparar»** (`reliable: false`, D-213, `fila.zona_pequena`): una etiqueta con icono junto al estado, en la pestaña, en la tarjeta de zona y en la lista de zonas; en la leyenda de la pestaña, con su explicación. En el mapa, una zona pequeña tiene su propia clase, porque cada zona lleva un solo relleno.
+- **Lista de zonas como alternativa:** «Ver las zonas en una lista», desde la leyenda y desde el enlace de siempre, abre `/zonas?fila=<fila>` con el estado de cada zona.
+- **Madrid entero** (paso 3.1 del guion de D): «Madrid (toda la ciudad)» aparece en la lista de «Qué falta» y en `/zonas`, y lleva a `/que-falta?zona=municipio/28079`. Allí no sale «Ver la zona», porque en el mapa Madrid son sus distritos.
+- **gap-0.2 en la pestaña:** cada fila se compara con su `reference_label` (por ejemplo, «Otros municipios urbanos de la Comunidad de Madrid») y, en pequeño, «En toda la Comunidad de Madrid: …» (`falta.fila.region`).
+- **Textos definitivos de D:** `estado.*`, `falta.intro`, `falta.otra_zona`, `falta.leyenda.*`, `a_pie.min` («Sin datos»), `fila.mayores`, `fila.vivienda`, `portada.paso3`, `barrios.*` («Ir a un barrio», con su ayuda para lectores de pantalla), `busqueda.pronto` (en lugar del botón), `leyenda.pronto` y `zona.encaje.pronto`.
+- **«Cómo lo calculamos»:** la tabla de estados ya dice lo de gap-0.2 con los textos `estado.*`. Las definiciones largas esperan a `metodologia.md`.
+
+## Comprobado con Playwright
+- **`f8d_mapa_por_fila.json`:**
+  - con el teclado (búsqueda por letras en el `select`) se elige «Centros de salud»;
+  - la leyenda coincide con la API en centros de salud (4 FALTA, 33 JUSTO, 3 CUBIERTO, 159 zonas pequeñas), farmacias y vivienda (los 21 distritos SIN DATOS);
+  - axe WCAG 2.2 AA: 0 fallos. La lista con la fila muestra las 199 zonas y Madrid entero;
+  - en el móvil, los 5 estados se ven, no hay desplazamiento horizontal y la consola no da errores.
+- **`f8d_madrid.json`:** en la lista, Tab lleva el foco a «Madrid (toda la ciudad)» e Intro abre su lista. Centros de salud sale FALTA (0,37 frente a 0,56), como en la slide 3. No hay «Ver la zona».
+- **`f8d_que_falta.json`:**
+  - La Acebeda: JUSTO con «Zona pequeña para comparar» en colegio, mayores y farmacia;
+  - Chamartín: centro de salud JUSTO (0,47 frente a 0,56);
+  - axe sin fallos a 1440 y 390 px;
+  - las filas pendientes siguen saliendo como «Próximamente».
+
+## Gate (`f8d_gate.txt`)
+`make lint typecheck test-unit`: 0 (340 pytest y 189 vitest). Web: lint, typecheck y build en 0.
+
+## Para D (textos provisionales)
+«¿Qué quieres ver?» (de datamad-10), «Leyenda del mapa», «Qué falta» como grupo del `select`, «{indicador}, frente a los municipios de su tipo (urbanos o rurales).», «{n} zonas», «Ver estas zonas en una lista», «Cargando el estado de cada zona…», «Madrid (toda la ciudad)» y la frase del mapa para lectores de pantalla.
+
+---
+
+# PUB-001 Fase 3e — Fuentes desde el repo, `/map` a la portada y capturas de producción (2026-11-11)
+
+Notas de C después del primer despliegue.
+
+## Qué hay
+- **Fuentes servidas desde el repo** (`next/font/local`): Plus Jakarta Sans e Inter en `apps/web/src/fonts/`, con el subconjunto latino de las fuentes variables (el mismo que servía `next/font/google`) y la licencia SIL Open Font License 1.1 (`OFL.txt`) junto a cada una. El build ya no pide nada a Google: el primer build en Vercel había fallado con `next/font/google`.
+- **`/map`** (el mapa anterior a Vida Fácil, titulado «Mapa — Housing Intelligence», que cargaba capas enteras) ahora lleva a la portada. Sus componentes `AdminMap` y `MapPanel` siguen en el repo, sin uso; borrarlos queda a decisión de Mariano.
+- **Capturas C4, C5 y C7 contra producción** (`https://vidafacil-madrid.vercel.app`, gap-0.2), a 1440 y 390 px, sin errores en la consola:
+  - C4, «Qué falta» de Madrid capital, página entera: `prod_c4_madrid_que_falta_*`. Centros de salud sale FALTA, 0,37 frente a 0,56;
+  - C5, Chamartín en 3D: `prod_c5_chamartin_3d_*`, también junto al mockup;
+  - C7, «Cómo lo calculamos»: `prod_c7_como_lo_calculamos_*`.
+  - Producción todavía es el PR #2: no lleva «Zona pequeña para comparar» ni los textos definitivos de D, que llegan con el PR #9.
+
+## Comprobado
+- **`f8e_fuentes_y_map.json`:**
+  - las 4 peticiones de fuentes van a `/_next/static/media` del propio servidor, ninguna a Google;
+  - `titleFont` (600 y 700) y `bodyFont` (400 y 500) están cargadas y el `h1` usa Plus Jakarta Sans;
+  - `/map` acaba en `/` con el título de Vida Fácil;
+  - la consola no da errores.
+- **`f8e_inicio_fuentes_locales_*`:** la portada con las fuentes del repo.
+
+## Gate (`f8e_gate.txt`)
+`make lint typecheck test-unit` y lint, typecheck y build de la web, en verde.
