@@ -17,6 +17,19 @@ router = APIRouter(prefix="/places", tags=["places"])
 class PlacesData(BaseModel):
     type: str
     features: list[dict[str, Any]]
+    total: int
+    page: int
+    pages: int
+
+
+def _next_page_warning(result: places.PlacesResult) -> list[str]:
+    if result.page >= result.pages:
+        return []
+    return [
+        f"{ErrorCode.INSUFFICIENT_DATA.value}: page {result.page} of {result.pages} "
+        f"({result.total} places); ask for ?page={result.page + 1} or filter by admin_unit_id "
+        "or subcategory"
+    ]
 
 
 @router.get("")
@@ -29,25 +42,19 @@ def get_places(
     subcategory: Annotated[
         list[str] | None, Query(description="Repeat to keep several (e.g. metro and cercanias)")
     ] = None,
+    page: Annotated[int, Query(ge=1, description=f"{places.PAGE_SIZE} places per page")] = 1,
 ) -> Envelope[PlacesData]:
     with engine.connect() as conn:
         try:
-            result = places.places_geojson(conn, category, admin_unit_id, subcategory)
+            result = places.places_geojson(conn, category, admin_unit_id, subcategory, page)
         except places.ZoneNotFoundError as exc:
             raise HTTPException(
                 status_code=404, detail={"code": ErrorCode.NOT_FOUND.value, "message": str(exc)}
             ) from exc
-        except places.UnsupportedZoneLevelError as exc:
+        except (places.UnsupportedZoneLevelError, places.PageOutOfRangeError) as exc:
             raise HTTPException(
                 status_code=422,
                 detail={"code": ErrorCode.OUT_OF_COVERAGE.value, "message": str(exc)},
             ) from exc
-    warnings = (
-        [
-            f"{ErrorCode.INSUFFICIENT_DATA.value}: only the first {places.MAX_PLACES} places; "
-            "filter by admin_unit_id or subcategory"
-        ]
-        if result.truncated
-        else []
-    )
-    return Envelope(data=PlacesData.model_validate(result.collection), warnings=warnings)
+    data = PlacesData(**result.collection, total=result.total, page=result.page, pages=result.pages)
+    return Envelope(data=data, warnings=_next_page_warning(result))

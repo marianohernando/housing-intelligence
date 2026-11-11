@@ -7,9 +7,9 @@ from sqlalchemy import Connection, text
 
 from hi_contracts.catalog.enums import PlaceCategory
 
-# Above the largest category (transport: 14,982 stops) so a full layer is never cut; reaching it
-# is warned, never silent.
-MAX_PLACES = 20000
+# Vercel answers 4.5 MB at most; 5,000 places are ~1.4 MB. Larger layers (transport: 14,982
+# stops) come in pages, and the response says how to ask for the next one.
+PAGE_SIZE = 5000
 ZONE_LEVELS = ("municipio", "distrito", "seccion_censal")
 
 _UNIT = text("SELECT level, code_official FROM geo_admin_unit WHERE admin_unit_id = :id")
@@ -19,7 +19,7 @@ _PLACES = text(
     """
     SELECT p.canonical_place_id::text AS id, p.canonical_name, p.category, p.subcategory,
            p.municipio_ine, p.seccion_admin_unit_id,
-           ST_X(p.geom_4326) AS lon, ST_Y(p.geom_4326) AS lat
+           ST_X(p.geom_4326) AS lon, ST_Y(p.geom_4326) AS lat, count(*) OVER () AS total
       FROM place_master p
       LEFT JOIN geo_admin_unit s ON s.admin_unit_id = p.seccion_admin_unit_id
      WHERE p.category = :category AND p.status = 'ACTIVE'
@@ -29,7 +29,7 @@ _PLACES = text(
        AND (CAST(:distrito AS text) IS NULL OR left(s.code_official, 7) = :distrito)
        AND (CAST(:seccion_censal AS text) IS NULL OR s.code_official = :seccion_censal)
      ORDER BY p.canonical_place_id
-     LIMIT :limit
+     LIMIT :limit OFFSET :offset
     """
 )
 
@@ -42,10 +42,19 @@ class UnsupportedZoneLevelError(ValueError):
     pass
 
 
+class PageOutOfRangeError(ValueError):
+    pass
+
+
 @dataclass(frozen=True)
 class PlacesResult:
     collection: dict[str, Any]
-    truncated: bool
+    total: int
+    page: int
+
+    @property
+    def pages(self) -> int:
+        return max(1, -(-self.total // PAGE_SIZE))
 
 
 def _zone_params(conn: Connection, admin_unit_id: str | None) -> dict[str, str | None]:
@@ -83,16 +92,21 @@ def places_geojson(
     category: PlaceCategory,
     admin_unit_id: str | None = None,
     subcategories: list[str] | None = None,
+    page: int = 1,
 ) -> PlacesResult:
     params = {
         "category": category.value,
         "subcategories": subcategories or None,
         **_zone_params(conn, admin_unit_id),
-        "limit": MAX_PLACES + 1,
+        "limit": PAGE_SIZE,
+        "offset": (page - 1) * PAGE_SIZE,
     }
     rows = conn.execute(_PLACES, params).mappings().all()
-    features = [_feature(r) for r in rows[:MAX_PLACES]]
+    if not rows and page > 1:
+        msg = f"Page {page} has no places: the last page is smaller (start again at page 1)"
+        raise PageOutOfRangeError(msg)
     return PlacesResult(
-        collection={"type": "FeatureCollection", "features": features},
-        truncated=len(rows) > MAX_PLACES,
+        collection={"type": "FeatureCollection", "features": [_feature(r) for r in rows]},
+        total=int(rows[0]["total"]) if rows else 0,
+        page=page,
     )

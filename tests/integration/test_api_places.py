@@ -80,12 +80,23 @@ def test_unknown_zone_is_404_and_unsupported_level_is_422(
     assert response.json()["detail"]["code"] == "OUT_OF_COVERAGE"
 
 
-def test_reaching_the_cap_is_warned_never_silent(
+def test_large_layers_come_in_pages_that_say_how_to_ask_for_the_rest(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Vercel answers 4.5 MB at most: a page keeps the payload well below it."""
     complete = client.get("/api/v1/places", params={"category": "education"}).json()
     assert complete["warnings"] == []
-    monkeypatch.setattr(places, "MAX_PLACES", 1)
-    capped = client.get("/api/v1/places", params={"category": "education"}).json()
-    assert len(capped["data"]["features"]) == 1
-    assert capped["warnings"] and "admin_unit_id" in capped["warnings"][0]
+    total = complete["data"]["total"]
+    assert (complete["data"]["page"], complete["data"]["pages"]) == (1, 1)
+    assert total == len(complete["data"]["features"]) > 2
+    monkeypatch.setattr(places, "PAGE_SIZE", 2)
+    first = client.get("/api/v1/places", params={"category": "education"}).json()
+    second = client.get("/api/v1/places", params={"category": "education", "page": 2}).json()
+    assert len(first["data"]["features"]) == len(second["data"]["features"]) == 2
+    assert first["data"]["total"] == total
+    assert first["data"]["pages"] == -(-total // 2)
+    assert "?page=2" in first["warnings"][0] and "admin_unit_id" in first["warnings"][0]
+    assert not _ids(first["data"]["features"]) & _ids(second["data"]["features"])
+    past = client.get("/api/v1/places", params={"category": "education", "page": total})
+    assert past.status_code == 422
+    assert "last page" in past.json()["detail"]["message"]
