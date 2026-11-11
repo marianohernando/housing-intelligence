@@ -1,8 +1,11 @@
+"use client";
+
 import { ExternalLink, Footprints } from "lucide-react";
+import { useState } from "react";
 
 import type { GapRow } from "@/contracts/zone_gap_list_response";
 import { confidenceText } from "@/lib/confidence";
-import { gapFigures, NULL_REASON, ROW_MEASURE, walking, walkingText, WALK_TO } from "@/lib/gaps";
+import { GAP_STATUS, gapFigures, NULL_REASON, ROW_MEASURE, walking, walkingText, WALK_TO } from "@/lib/gaps";
 import { datasetLines, sortDatasets } from "@/lib/provenance";
 
 import GapBadge from "./GapBadge";
@@ -35,7 +38,10 @@ function WalkingFigure({ row }: { row: GapRow }) {
       <dt>
         <Footprints size={16} aria-hidden="true" /> {to ? `${TEXT.walk} ${to}` : extra.label}
       </dt>
-      <dd title={extra.value === null && extra.null_reason ? NULL_REASON[extra.null_reason] : undefined}>{walkingText(extra)}</dd>
+      <dd>
+        {walkingText(extra)}
+        {extra.value === null && <span className="visually-hidden"> ({NULL_REASON[extra.null_reason ?? "UNKNOWN"]})</span>}
+      </dd>
     </div>
   );
 }
@@ -43,13 +49,16 @@ function WalkingFigure({ row }: { row: GapRow }) {
 /** One row of «Qué falta»: status, value against the region, walking minutes, confidence and sources. */
 export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: string }) {
   const figures = gapFigures(row.indicator.value, row.reference);
-  const reason = row.indicator.value === null ? row.indicator.null_reason : null;
+  const reason =
+    row.indicator.value === null ? NULL_REASON[row.indicator.null_reason ?? "UNKNOWN"] : row.status === "SIN_DATOS" ? GAP_STATUS.SIN_DATOS.help : null;
   const confidence = confidenceText(row.indicator.confidence);
+  // Fixed once, so a resize never closes what the person opened
+  const [sourcesOpen] = useState(wideScreen);
 
   return (
     <li className={`glass ${styles.row}`}>
       <div className={styles.head}>
-        <h3>{row.label}</h3>
+        <h2>{row.label}</h2>
         <GapBadge status={row.status} />
       </div>
       <p className={styles.measure}>{ROW_MEASURE[row.row]}</p>
@@ -66,7 +75,7 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
         <WalkingFigure row={row} />
       </dl>
 
-      {reason && <p className={styles.reason}>{NULL_REASON[reason]}</p>}
+      {reason && <p className={styles.reason}>{reason}</p>}
       {row.indicator.value !== null && (
         <p className={styles.confidence} title={confidence.help}>
           <span className="visually-hidden">{TEXT.confidence}</span>
@@ -79,7 +88,7 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
         </p>
       )}
 
-      <details className={styles.sources} open={wideScreen()}>
+      <details className={styles.sources} open={sourcesOpen}>
         <summary>
           {TEXT.sources} {sourcesCount(row.datasets.length)}
         </summary>

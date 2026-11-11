@@ -120,11 +120,13 @@ function ZoneGaps({ level, code }: { level: ZoneLevel; code: string }) {
           </Button>
         </div>
       </header>
-      <ul className={styles.rows}>
-        {sortRows(rows).map((row) => (
-          <GapRowItem key={row.row} row={row} zoneName={zone.name} />
-        ))}
-      </ul>
+      {rows.length > 0 && (
+        <ul className={styles.rows}>
+          {sortRows(rows).map((row) => (
+            <GapRowItem key={row.row} row={row} zoneName={zone.name} />
+          ))}
+        </ul>
+      )}
       <PendingRows warnings={gaps.data.warnings} className={styles.pending} />
       <Legend />
     </>

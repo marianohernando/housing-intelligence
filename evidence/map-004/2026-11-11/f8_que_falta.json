@@ -117,13 +117,13 @@
   "errores": []
  },
  "acebeda": {
-  "titulo": "Qué falta en Acebeda (La)",
+  "titulo": "Qué falta en La Acebeda",
   "filas": [
    {
     "fila": "Colegios",
     "estado": "FALTA",
     "cifras": [
-     "Acebeda (La): 0,0",
+     "La Acebeda: 0,0",
      "Comunidad de Madrid: 1,3",
      " A pie hasta el colegio más cercano: más de 60 min"
     ],
@@ -136,7 +136,7 @@
     "fila": "Centros de mayores",
     "estado": "FALTA",
     "cifras": [
-     "Acebeda (La): 0,00",
+     "La Acebeda: 0,00",
      "Comunidad de Madrid: 0,39",
      " A pie hasta el centro de mayores más cercano: más de 60 min"
     ],
@@ -149,7 +149,7 @@
     "fila": "Farmacias",
     "estado": "FALTA",
     "cifras": [
-     "Acebeda (La): 0,0",
+     "La Acebeda: 0,0",
      "Comunidad de Madrid: 4,2",
      " A pie hasta la farmacia más cercana: más de 60 min"
     ],
@@ -162,7 +162,7 @@
     "fila": "Centros de salud",
     "estado": "CUBIERTO",
     "cifras": [
-     "Acebeda (La): 142,9",
+     "La Acebeda: 142,9",
      "Comunidad de Madrid: 0,6",
      " A pie hasta el centro de salud más cercano: 14 min"
     ],
@@ -175,7 +175,7 @@
     "fila": "Vivienda para familias",
     "estado": "CUBIERTO",
     "cifras": [
-     "Acebeda (La): 10.700,0",
+     "La Acebeda: 10.700,0",
      "Comunidad de Madrid: 177,6"
     ],
     "fiabilidad": "Fiabilidad del dato: Dato aproximado",
@@ -187,7 +187,7 @@
     "fila": "Escuelas infantiles",
     "estado": "SIN DATOS",
     "cifras": [
-     "Acebeda (La): Sin datos",
+     "La Acebeda: Sin datos",
      "Comunidad de Madrid: 4,7",
      " A pie hasta la escuela infantil más cercana: más de 60 min"
     ],
@@ -206,12 +206,12 @@
    "Escuelas infantiles",
    "Colegios"
   ],
-  "linea": " Próximamente: Farmacias y Vivienda. Estamos calculando el resto de servicios para esta zona.",
+  "linea": " Próximamente: farmacias y vivienda. Estamos calculando el resto de servicios para esta zona.",
   "sin_datos_pintados": [],
   "errores": []
  },
  "filas_pendientes_tarjeta": {
-  "linea": " Próximamente: Farmacias y Vivienda. Estamos calculando el resto de servicios para esta zona.",
+  "linea": " Próximamente: farmacias y vivienda. Estamos calculando el resto de servicios para esta zona.",
   "errores": []
  },
  "zona_desktop": {

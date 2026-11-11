@@ -495,7 +495,7 @@ Textos provisionales:
 
 # PUB-001 Fase 3 (F8) — «Qué falta» completo contra `/gaps` (2026-11-11)
 
-Sobre `origin/claude/sprint-1-public` en `9ced17b` (GAP-001 F1–F3b). Checkpoint del 14 nov. Datos reales de `GET /api/v1/gaps/{level}/{code}` en la API 8011: las 200 zonas (179 municipios y 21 distritos) traen las 6 filas.
+Hecha sobre `9ced17b` (GAP-001 F1–F3b) y rebasada sobre `dc2c86a` (DATA-022 F1 y GAP-001 F4); el gate y `f8_que_falta.json` son de después del rebase (ya sale «La Acebeda» con su nombre oficial). Checkpoint del 14 nov. Datos reales de `GET /api/v1/gaps/{level}/{code}` en la API 8011: las 200 zonas (179 municipios y 21 distritos) traen las 6 filas.
 
 ## Qué hay
 - **Pestaña «Qué falta»** (`/que-falta?zona=distrito/2807905`):
@@ -511,12 +511,13 @@ Sobre `origin/claude/sprint-1-public` en `9ced17b` (GAP-001 F1–F3b). Checkpoin
 - **Pestaña «Qué falta» desde una zona:** abre la lista de esa zona (`tabHref`).
 - **Funciones puras con tests:** `pendingRows`, `sortRows`, `gapFigures`, `walking`/`walkingText`, `gapsHref`/`parseZoneParam` (`lib/gaps.ts`), `confidenceText` (`lib/confidence.ts`), `formatNumber` (`lib/format.ts`) y `tabHref` (`lib/nav.ts`).
 - **`capture.mjs`:** opción `--full` para capturar la página entera.
+- **Tipos:** `src/contracts/gap_row_map_response.ts` generado del schema nuevo de A (GAP-001 F4); aún sin usar.
 
 ## Comprobado con Playwright (`f8_que_falta.json`)
 - **Chamartín, 1440 px:** 6 filas. Centros de salud FALTA (0,47 frente a 0,59; a pie, 9 min), mayores FALTA (0,25 / 0,39; 10 min), escuelas infantiles CUBIERTO (5 min), colegios CUBIERTO (6 min), farmacias CUBIERTO (3 min) y vivienda SIN DATOS con su motivo. 4 enlaces de fuentes por fila. axe (WCAG 2.2 A/AA): 0 fallos.
 - **Chamartín, 390 px:** fuentes plegadas, se abren al tocar; sin desplazamiento horizontal; axe: 0 fallos.
 - **La Acebeda:** «más de 60 min» en cuatro filas y escuelas infantiles SIN DATOS con «Este dato no tiene sentido en esta zona.» (`f8_que_falta_acebeda_desktop.png`).
-- **Filas pendientes** (respuesta real de Chamartín sin farmacia ni vivienda y con sus dos avisos, con `page.route`): quedan 4 filas, ninguna SIN DATOS de más, y la línea «Próximamente: Farmacias y Vivienda…» en la pestaña y en la tarjeta (`f8_pendientes_*`).
+- **Filas pendientes** (respuesta real de Chamartín sin farmacia ni vivienda y con sus dos avisos, con `page.route`): quedan 4 filas, ninguna SIN DATOS de más, y la línea «Próximamente: farmacias y vivienda…» en la pestaña y en la tarjeta (`f8_pendientes_*`).
 - **Zona:** mini lista «Centros de salud · A pie: 9 min · FALTA»…; la pestaña «Qué falta» y «Ver todo lo que falta» llevan a `/que-falta?zona=distrito/2807905`.
 - **Sin zona y teclado:** con «Chamar», Tab lleva el foco a «Chamartín» e Intro abre su lista.
 - **Errores:** `?zona=barrio/123` y `distrito/2807999` (404) dicen «No encontramos esa zona…»; el segundo, con «Elegir otra zona». El único error de consola es el 404 esperado del navegador.
@@ -538,10 +539,19 @@ Todas sin errores en la consola (`c_capture.json`, `c4_capture.json`). Las defin
 ## Gate (`f8_gate.txt`)
 | Comando | Resultado |
 |---|---|
-| `make lint typecheck test-unit` | 0 (286 pytest, 167 vitest) |
+| `make lint typecheck test-unit` | 0 (313 pytest, 167 vitest), tras el rebase |
 | `npm run -w apps/web lint` / `typecheck` | 0 |
 | `npm run -w apps/web test` | 19 ficheros, 167 tests (nuevos: `confidence`, y más casos en `gaps`, `format` y `nav`) |
 | `npm run -w apps/web build` | 0 |
+
+## Revisión (agente `reviewer`, sin bloqueantes) y lo corregido
+- «De dónde sale» se abre o se cierra una sola vez al pintar la fila: cambiar el ancho de la ventana ya no pisa lo que abrió la persona.
+- SIN DATOS siempre con motivo: si falta `null_reason`, el de `UNKNOWN`.
+- El motivo de un «sin dato» de minutos a pie se lee también con lector de pantalla (antes solo en `title`).
+- Encabezados sin saltos: cada fila es un `h2`, como «Cómo leer esta lista».
+- Sin `<ul>` vacío si la API no trae ninguna fila calculada.
+- «Próximamente: farmacias y vivienda.»: los nombres van en minúscula en mitad de la frase.
+- Pendiente, sin impacto hoy: una fila que la API no puede clasificar (`UnclassifiableError`) desaparece sin aviso visible; hoy no ocurre en ninguna de las 200 zonas.
 
 ## Para D (textos provisionales)
 - «Cambiar de zona», «Elegir otra zona», «Cómo leer esta lista» y «De dónde sale: {n} conjuntos de datos».

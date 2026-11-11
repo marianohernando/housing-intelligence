@@ -13,7 +13,7 @@
   gap: var(--space-3);
 }
 
-.head h3 {
+.head h2 {
   font-size: var(--text-lg);
   font-weight: 600;
 }

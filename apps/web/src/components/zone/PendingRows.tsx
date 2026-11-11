@@ -15,7 +15,7 @@ const TEXT = {
 export default function PendingRows({ warnings, className }: { warnings: readonly string[] | undefined; className?: string }) {
   const rows = pendingRows(warnings);
   if (rows.length === 0) return null;
-  const names = new Intl.ListFormat("es", { type: "conjunction" }).format(rows.map((key) => ROW_NAME[key]));
+  const names = new Intl.ListFormat("es", { type: "conjunction" }).format(rows.map((key) => ROW_NAME[key].toLowerCase()));
   return (
     <p className={className}>
       <Clock size={16} aria-hidden="true" /> <strong>{TEXT.soon}:</strong> {names}. {TEXT.pending}
