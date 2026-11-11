@@ -1,0 +1,274 @@
+/* Right column after a search: the zones that fit and «¿Y si cambias algo?» */
+.stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card,
+.rc {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.heading:focus {
+  outline: none;
+}
+
+.heading:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.card h2,
+.rcTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.rcTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rcTitle svg {
+  color: var(--violet-strong);
+}
+
+.summary {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.summary strong {
+  display: block;
+  color: var(--ink);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.muted strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* The ranking: one button per zone (it opens the zone card and outlines it on the map) */
+.ranking {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--target);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:hover {
+  border-color: var(--violet);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.rank {
+  display: inline-grid;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.rowName {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.rowName small {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.pct {
+  flex: none;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+.toggle {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  padding: 0 var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+.near {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.near > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.near > div[hidden] {
+  display: none;
+}
+
+.applied {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+}
+
+.stale {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--justo-bg);
+  color: var(--justo-ink);
+  font-size: var(--text-sm);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+}
+
+/* Each option of «¿Y si cambias algo?» is a button: what changes, how many zones, «Probar así» */
+.options {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--target);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--violet);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:hover:not([aria-disabled="true"]) {
+  background: var(--violet-soft);
+}
+
+.option[aria-disabled="true"] {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.optionText {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  line-height: 1.35;
+}
+
+.optionText strong {
+  font-weight: 600;
+}
+
+.optionText span {
+  color: var(--violet-strong);
+  font-weight: 500;
+}
+
+.try {
+  flex: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--violet-strong);
+  color: var(--on-violet);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.note {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* portada.ejemplo: the demo case with one tap */
+.example {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.example .exampleButton {
+  justify-content: flex-start;
+  min-height: var(--target);
+  height: auto;
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+  text-align: left;
+  white-space: normal;
+}

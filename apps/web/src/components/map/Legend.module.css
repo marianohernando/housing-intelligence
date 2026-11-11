@@ -52,7 +52,7 @@
 .ramp {
   height: 10px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--violet-soft), var(--violet));
+  background: linear-gradient(90deg, var(--map-fit-low), var(--violet));
 }
 
 .ends,
@@ -152,6 +152,35 @@
   background: var(--map-sin-datos);
 }
 
+/* «Encaje con tu búsqueda» after a search: the same fills as the map (lib/map/style.ts) */
+.fit_ENCAJA {
+  background: linear-gradient(90deg, var(--map-fit-low), var(--violet));
+}
+
+.fit_NO_CUMPLE {
+  background: var(--map-no-cumple);
+}
+
+/* The three classes side by side, each count under its name */
+.fitClasses {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fitClasses li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.fitClasses .count {
+  grid-column: 2;
+}
+
+.fit_SIN_DATOS {
+  border: 1px dashed var(--sin-datos);
+  background: var(--map-sin-datos);
+}
+
 .status {
   white-space: nowrap;
   font-size: 0.8rem;
@@ -226,6 +255,15 @@
 
   .status {
     font-size: 0.75rem;
+  }
+
+  /* After a search the ramp keeps its meaning without its ends; the classes go in one line */
+  .fitEnds {
+    display: none;
+  }
+
+  .fitClasses li {
+    display: flex;
   }
 
   /* «Ver las zonas en una lista» in the sheet already leads to this row's list */

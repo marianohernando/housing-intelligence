@@ -18,6 +18,36 @@ export function isGapRow(value: unknown): value is GapRowKey {
   return typeof value === "string" && (MAP_ROWS as string[]).includes(value);
 }
 
+/** Levels the overview map is made of: municipios, and Madrid capital by its districts (D-200). */
+export const MAP_LEVELS = ["municipio", "distrito"] as const;
+export type MapLevel = (typeof MAP_LEVELS)[number];
+
+export interface GapRowMapData {
+  /** The row as the API describes it (label, what it counts, reference), from the first level that answered. */
+  info: GapRowMap;
+  byZone: Map<string, ZoneGapStatus>;
+  /** Levels whose answer failed: their zones stay unpainted («sin calcular»), never SIN DATOS. */
+  failed: MapLevel[];
+}
+
+/**
+ * The answers for each of MAP_LEVELS (in that order) joined into one map. A failed level is
+ * listed in `failed` instead of losing the whole row; with no level at all, the first error is thrown.
+ */
+export function joinLevels(answers: readonly ({ map: GapRowMap } | { error: unknown })[]): GapRowMapData {
+  const maps = answers.flatMap((a) => ("map" in a ? [a.map] : []));
+  const [info] = maps;
+  if (!info) {
+    const failure = answers.find((a): a is { error: unknown } => "error" in a);
+    throw failure ? failure.error : new Error("no levels answered");
+  }
+  const answered = (i: number) => {
+    const answer = answers[i];
+    return answer !== undefined && "map" in answer;
+  };
+  return { info, byZone: gapByZone(maps), failed: MAP_LEVELS.filter((_, i) => !answered(i)) };
+}
+
 /** Each zone's status in the row, from the maps of every level. */
 export function gapByZone(maps: readonly Pick<GapRowMap, "zones">[]): Map<string, ZoneGapStatus> {
   return new Map(maps.flatMap((m) => m.zones.map((z) => [z.admin_unit_id, z] as const)));

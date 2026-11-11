@@ -6,6 +6,7 @@ import { useId } from "react";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { errorMessage } from "@/lib/errors";
+import { countFit, type FitClass, paintFit } from "@/lib/fit";
 import { GAP_STATUS, ROW_NAME, SMALL_ZONE } from "@/lib/gaps";
 import { countByStatus, isGapRow, type MapCategory, MAP_ROWS, paintZones } from "@/lib/map/gapMap";
 
@@ -30,14 +31,45 @@ const TEXT = {
   against: "frente a los municipios de su tipo (urbanos o rurales).",
   zones: (n: number) => (n === 1 ? "1 zona" : `${n} zonas`),
   pending: (n: number) => `${n === 1 ? "1 zona" : `${n} zonas`} sin calcular todavía.`,
+  failedLevel: { municipio: "los municipios", distrito: "los distritos de Madrid" } as const,
+  failed: (what: string) => `No hemos podido cargar ${what}: salen sin calcular.`,
   list: "Ver estas zonas en una lista",
+  // After a search (provisional, pending line D; «Sin datos» is leyenda.sin_datos)
+  fit: { ENCAJA: "Cumple todo", NO_CUMPLE: "No cumple todo", SIN_DATOS: "Sin datos" } satisfies Record<FitClass, string>,
 };
+
+const FIT_CLASSES: FitClass[] = ["ENCAJA", "NO_CUMPLE", "SIN_DATOS"];
 
 const CATEGORIES: MapCategory[] = ["FALTA", "JUSTO", "CUBIERTO", "ZONA_PEQUENA", "SIN_DATOS"];
 const categoryLabel = (c: MapCategory) => (c === "ZONA_PEQUENA" ? SMALL_ZONE.label : GAP_STATUS[c].label);
 
 function FitLegend({ id }: { id: string }) {
   const { result, available } = useScenario();
+  const { zones } = useMapZones();
+  if (result && zones) {
+    const counts = countFit(paintFit(zones, result.all_zones));
+    return (
+      <figure className={styles.figure} aria-labelledby={id}>
+        <figcaption id={id} className={styles.title}>
+          {TEXT.title}
+        </figcaption>
+        <div className={styles.ramp} aria-hidden="true" />
+        <div className={`${styles.ends} ${styles.fitEnds}`}>
+          <span>{TEXT.less}</span>
+          <span>{TEXT.more}</span>
+        </div>
+        <ul className={`${styles.statuses} ${styles.fitClasses}`}>
+          {FIT_CLASSES.map((c) => (
+            <li key={c}>
+              <span className={`${styles.patch} ${styles[`fit_${c}`]}`} aria-hidden="true" />
+              <span className={styles.small}>{TEXT.fit[c]}</span>
+              <span className={styles.count}>{TEXT.zones(counts[c])}</span>
+            </li>
+          ))}
+        </ul>
+      </figure>
+    );
+  }
   return (
     <figure className={`${styles.figure} ${result ? "" : styles.waiting}`} aria-labelledby={id}>
       <figcaption id={id} className={styles.title}>
@@ -88,6 +120,14 @@ function RowLegend({ id }: { id: string }) {
         ))}
       </ul>
       {counts && counts.pending > 0 && <p className={styles.before}>{TEXT.pending(counts.pending)}</p>}
+      {data.failed.length > 0 && (
+        <div role="alert" className={styles.error}>
+          <p>{TEXT.failed(data.failed.map((level) => TEXT.failedLevel[level]).join(" y "))}</p>
+          <Button variant="secondary" onClick={retry}>
+            {TEXT.retry}
+          </Button>
+        </div>
+      )}
       <Link href={`/zonas?fila=${row}`} className={styles.list}>
         {TEXT.list}
       </Link>

@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "capture": "node scripts/capture.mjs",
+    "check-search": "node scripts/check-search.mjs",
     "contracts": "node scripts/gen-contracts.mjs"
   },
   "dependencies": {

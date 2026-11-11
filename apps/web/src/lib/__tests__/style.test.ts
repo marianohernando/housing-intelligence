@@ -79,6 +79,22 @@ describe("map style", () => {
     expect(below.map((l) => l.id)).not.toContain("zone-mask");
   });
 
+  it("marks the zone under the pointer with an edge of its own, so the fill of a row or of the fit stays", () => {
+    const { below, above } = zoneLayers(palette);
+    const hover = above.find((l) => l.id === "zones-hover");
+    expect(hover).toMatchObject({ type: "line", source: "zones" });
+    expect(JSON.stringify(hover?.type === "line" && hover.paint?.["line-opacity"])).toContain('"feature-state","hover"');
+    const fill = below.find((l) => l.id === "zones-fill");
+    expect(JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-color"])).not.toContain("feature-state");
+  });
+
+  it("paints the fit after a search: a ramp for the zones that fit, apart those that fail or are unknown", () => {
+    const fill = JSON.stringify(zoneLayers(palette).below.find((l) => l.id === "zones-fill")?.paint);
+    for (const c of ["ENCAJA", "NO_CUMPLE", "SIN_DATOS", "fit_pct", palette.fitLow, palette.violet, palette.fitNoCumple]) expect(fill).toContain(c);
+    const noData = zoneLayers(palette).above.find((l) => l.id === "zones-nodata");
+    expect(JSON.stringify(noData?.type === "line" && noData.filter)).toContain('"fit"');
+  });
+
   it("outlines the barrio in focus above the buildings, dashed so it reads apart from the district", () => {
     const barrio = zoneLayers(palette).above.find((l) => l.id === "zone-barrio-line");
     expect(barrio).toMatchObject({ type: "line", source: "zone-barrio" });

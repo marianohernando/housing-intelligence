@@ -67,6 +67,11 @@
   --map-sin-datos: #e4e5ec;
   --map-zona-pequena: #d9d6e6;
 
+  /* Map after a search («Encaje con tu búsqueda»): a ramp up to --violet for the zones that fit,
+     almost white for those that fail a condition; unknown is --map-sin-datos with a dashed edge */
+  --map-fit-low: #cdc5f8;
+  --map-no-cumple: #eceaf3;
+
   /* Type */
   --font-title: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-body: var(--font-inter), "Inter", system-ui, sans-serif;

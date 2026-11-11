@@ -1,19 +1,33 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import type { ScenarioState } from "../../contracts/scenario_state";
 import {
+  addNearby,
   BUDGET_RANGE,
   decodeScenario,
   defaultScenario,
   encodeScenario,
+  exampleScenario,
   peopleAtHome,
+  removeNearby,
   setAdults,
   setBudgetAmount,
   setBudgetKind,
   setMinors,
+  setNearbyMinutes,
+  setNearbyRequired,
+  setNoBudgetLimit,
   setSeniors,
+  setWorkPlace,
   togglePriority,
+  walkMinutesOptions,
+  workPlace,
 } from "../scenario";
+
+// Line A's golden profile for the demo (data/fixtures/contracts), the body of POST /search.
+const GOLDEN = new URL("../../../../../data/fixtures/contracts/scenario_state.familia_castellana.fixture.json", import.meta.url);
 
 describe("scenario defaults", () => {
   it("starts as one adult, renting, with no priorities", () => {
@@ -93,5 +107,70 @@ describe("encode / decode (link to share a search)", () => {
     expect(decodeScenario("not-base64!")).toBeNull();
     expect(decodeScenario(encodeScenario({ ...defaultScenario(), schema_version: 1 } as unknown as ScenarioState))).toBeNull();
     expect(decodeScenario(encodeScenario({ ...defaultScenario(), priorities: ["piscina"] } as unknown as ScenarioState))).toBeNull();
+  });
+});
+
+describe("budget without a limit (presupuesto.sin_limite)", () => {
+  it("sends budget null and comes back as renting", () => {
+    const none = setNoBudgetLimit(setBudgetKind(defaultScenario(), "buy"), true);
+    expect(none.budget).toBeNull();
+    expect(setNoBudgetLimit(none, false).budget).toEqual({ kind: "rent", amount_eur: BUDGET_RANGE.rent.initial });
+    const rent = setBudgetAmount(defaultScenario(), 1500);
+    expect(setNoBudgetLimit(rent, false)).toBe(rent);
+  });
+});
+
+describe("«Lo quiero a un paseo» (nearby)", () => {
+  it("adds a service once, at 10 min and as a must (the contract defaults)", () => {
+    const s = addNearby(addNearby(defaultScenario(), "colegio"), "colegio");
+    expect(s.nearby).toEqual([{ need: "colegio", max_walk_minutes: 10, required: true }]);
+  });
+
+  it("changes the minutes inside 1–60 and whether it is a must, and removes it", () => {
+    let s = addNearby(addNearby(defaultScenario(), "colegio"), "farmacia");
+    s = setNearbyMinutes(s, "colegio", 90);
+    s = setNearbyRequired(s, "farmacia", false);
+    expect(s.nearby).toEqual([
+      { need: "colegio", max_walk_minutes: 60, required: true },
+      { need: "farmacia", max_walk_minutes: 10, required: false },
+    ]);
+    expect(removeNearby(s, "colegio").nearby?.map((n) => n.need)).toEqual(["farmacia"]);
+  });
+
+  it("offers the minutes a relaxed search brings even when they are not in the usual list", () => {
+    expect(walkMinutesOptions(15)).toEqual([5, 10, 15, 20, 30]);
+    expect(walkMinutesOptions(12)).toEqual([5, 10, 12, 15, 20, 30]);
+  });
+});
+
+describe("«Trabajo en» (work place)", () => {
+  it("goes as a reference without a minutes limit (D-215) and replaces the previous one", () => {
+    let s = setWorkPlace(defaultScenario(), { label: "Nuevos Ministerios (metro)", lat: 40.446, lon: -3.692 });
+    s = setWorkPlace(s, { label: "Alcobendas", lat: 40.54, lon: -3.64 });
+    expect(s.anchors).toEqual([{ kind: "work", label: "Alcobendas", lat: 40.54, lon: -3.64, max_minutes: null }]);
+    expect(workPlace(s)?.label).toBe("Alcobendas");
+    expect(setWorkPlace(s, null).anchors).toEqual([]);
+  });
+
+  it("keeps other kinds of places and cuts the name to the contract's 80 characters", () => {
+    const study: ScenarioState = { ...defaultScenario(), anchors: [{ kind: "study", label: "Universidad", lat: 40.4, lon: -3.7 }] };
+    const s = setWorkPlace(study, { label: "x".repeat(100), lat: 40.45, lon: -3.69 });
+    expect(s.anchors?.map((a) => [a.kind, a.label.length])).toEqual([
+      ["work", 80],
+      ["study", 11],
+    ]);
+  });
+});
+
+describe("demo case (portada.ejemplo.boton)", () => {
+  it("is line A's golden profile, with the work place as a reference until CORE-009", () => {
+    const golden = JSON.parse(readFileSync(GOLDEN, "utf8")) as ScenarioState;
+    const asReference = { ...golden, anchors: golden.anchors?.map((a) => ({ ...a, max_minutes: null })) };
+    expect(exampleScenario()).toEqual(asReference);
+    expect(exampleScenario().anchors?.every((a) => a.max_minutes === null)).toBe(true);
+  });
+
+  it("is a new object every time, so editing it never changes the next example", () => {
+    expect(exampleScenario()).not.toBe(exampleScenario());
   });
 });

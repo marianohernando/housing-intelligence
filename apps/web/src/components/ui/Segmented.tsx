@@ -5,7 +5,8 @@ import styles from "./Segmented.module.css";
 interface Props<T extends string> {
   legend: string;
   options: { value: T; label: string }[];
-  value: T;
+  /** null: none chosen (no budget limit) */
+  value: T | null;
   onChange: (value: T) => void;
 }
 

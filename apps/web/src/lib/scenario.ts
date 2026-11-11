@@ -2,7 +2,7 @@
  * The single ScenarioState of the search (CLAUDE.md §13: chips, filters and map share one
  * state). Pure helpers, unit tested; the shape is the generated contract type.
  */
-import type { BudgetKind, PriorityKey, ScenarioState } from "@/contracts/scenario_state";
+import type { Anchor, BudgetKind, NearbyNeed, NeedKey, PriorityKey, ScenarioState } from "@/contracts/scenario_state";
 
 /** Slider ranges, inside the contract ranges (RENT_RANGE_EUR, BUY_RANGE_EUR). */
 export const BUDGET_RANGE: Record<BudgetKind, { min: number; max: number; step: number; initial: number }> = {
@@ -64,6 +64,91 @@ export function setBudgetAmount(s: ScenarioState, amount: number): ScenarioState
   const kind = s.budget?.kind ?? "rent";
   const { min, max, step } = BUDGET_RANGE[kind];
   return { ...s, budget: { kind, amount_eur: clamp(Math.round(amount / step) * step, min, max) } };
+}
+
+/** presupuesto.sin_limite (`budget: null`); turned off, the budget starts again as renting. */
+export function setNoBudgetLimit(s: ScenarioState, noLimit: boolean): ScenarioState {
+  if (noLimit) return { ...s, budget: null };
+  return s.budget ? s : { ...s, budget: { kind: "rent", amount_eur: BUDGET_RANGE.rent.initial } };
+}
+
+/** «Lo quiero a un paseo» (cerca.*): services the household wants within walking minutes. */
+export const NEED_KEYS: readonly NeedKey[] = ["escuela_infantil", "colegio", "centro_salud", "farmacia", "mayores", "transporte"];
+const WALK_LIMITS = { min: 1, max: 60, initial: 10 } as const;
+/** Minutes offered in the selector; a value from the API outside them is offered too. */
+export const WALK_MINUTES: readonly number[] = [5, 10, 15, 20, 30];
+
+export function walkMinutesOptions(current: number | undefined): number[] {
+  const all = new Set([...WALK_MINUTES, ...(current === undefined ? [] : [current])]);
+  return [...all].sort((a, b) => a - b);
+}
+
+/** A new service starts at 10 min and as a must («Imprescindible»), the contract defaults. */
+export function addNearby(s: ScenarioState, need: NeedKey): ScenarioState {
+  const nearby = s.nearby ?? [];
+  if (nearby.some((n) => n.need === need)) return s;
+  return { ...s, nearby: [...nearby, { need, max_walk_minutes: WALK_LIMITS.initial, required: true }] };
+}
+
+export function removeNearby(s: ScenarioState, need: NeedKey): ScenarioState {
+  return { ...s, nearby: (s.nearby ?? []).filter((n) => n.need !== need) };
+}
+
+function changeNearby(s: ScenarioState, need: NeedKey, change: (n: NearbyNeed) => NearbyNeed): ScenarioState {
+  return { ...s, nearby: (s.nearby ?? []).map((n) => (n.need === need ? change(n) : n)) };
+}
+
+export function setNearbyMinutes(s: ScenarioState, need: NeedKey, minutes: number): ScenarioState {
+  const max_walk_minutes = clamp(Math.round(minutes), WALK_LIMITS.min, WALK_LIMITS.max);
+  return changeNearby(s, need, (n) => ({ ...n, max_walk_minutes }));
+}
+
+export function setNearbyRequired(s: ScenarioState, need: NeedKey, required: boolean): ScenarioState {
+  return changeNearby(s, need, (n) => ({ ...n, required }));
+}
+
+/** A place picked for «Trabajo en»: a name and a point. */
+export interface Place {
+  label: string;
+  lat: number;
+  lon: number;
+}
+
+const isWork = (a: Anchor) => (a.kind ?? "work") === "work";
+const LABEL_MAX = 80;
+
+/** «Trabajo en», if the search has one. */
+export function workPlace(s: ScenarioState): Anchor | null {
+  return (s.anchors ?? []).find(isWork) ?? null;
+}
+
+/**
+ * Sets (or with null, removes) the work place. It goes without a minutes limit (`max_minutes:
+ * null`): the API cannot check travel times until CORE-009, and with a limit no zone would pass
+ * (D-215). It is a reference: the zone card says how far each zone is.
+ */
+export function setWorkPlace(s: ScenarioState, place: Place | null): ScenarioState {
+  const others = (s.anchors ?? []).filter((a) => !isWork(a));
+  if (!place) return { ...s, anchors: others };
+  const anchor: Anchor = { kind: "work", label: place.label.slice(0, LABEL_MAX), lat: place.lat, lon: place.lon, max_minutes: null };
+  return { ...s, anchors: [anchor, ...others] };
+}
+
+/**
+ * The demo case (portada.ejemplo.boton): a couple with 2 children who work on the Castellana.
+ * Same as line A's golden profile (data/fixtures/contracts/scenario_state.familia_castellana.fixture.json),
+ * checked by a test, with the work place as a reference (`max_minutes: null`, D-215).
+ */
+export function exampleScenario(): ScenarioState {
+  return {
+    schema_version: 2,
+    budget: { kind: "rent", amount_eur: 1500 },
+    min_floor_area_m2: null,
+    household: { adults: 2, minors: 2, minor_ages: [4, 8], seniors_in_care: 0 },
+    anchors: [{ kind: "work", label: "Paseo de la Castellana (Azca)", lon: -3.693, lat: 40.45, days_per_week: 4, max_minutes: null }],
+    nearby: [{ need: "colegio", max_walk_minutes: 10, required: true }],
+    priorities: ["colegios", "transporte", "salud"],
+  };
 }
 
 function toBase64Url(text: string): string {

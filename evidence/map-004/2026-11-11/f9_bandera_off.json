@@ -1,0 +1,14 @@
+{
+ "fase": "PUB-001 F4 (F9): buscador y «¿Y si cambias algo?» contra POST /api/v1/search",
+ "bandera": "off",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (rama claude/sprint-1-public, datos reales)",
+ "escritorio": {
+  "boton_ejemplo": 0,
+  "muy_pronto": 1,
+  "trabajo_muy_pronto": 1,
+  "lo_quiero_a_un_paseo": 0,
+  "peticiones_search": 0,
+  "axe": [],
+  "consola": []
+ }
+}
