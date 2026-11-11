@@ -1,8 +1,18 @@
 # Board — Sprint 1 comprimido (10–18 nov 2026) · Demo para el formulario
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
-Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones D-191 a D-195. Rama de trabajo: `claude/sprint-1-public` (solo la escribe la sesión de desarrollo).
-Última actualización: 2026-11-10 (noche, cierre de DATA-007 y DATA-016).
+Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
+Última actualización: 2026-11-11 (tarde: contratos publicados).
+
+## Líneas paralelas (LINEAS.md)
+| Línea | Rama | Alcance | Estado |
+|---|---|---|---|
+| **A** · datos, motor y API · integradora | `claude/sprint-1-public` | Contratos, CORE-005, GAP-001, CORE-006, CORE-003, rutas de la API, Supabase | **Contratos publicados: `7541527`** · siguiente: esqueleto andante de la lista |
+| **B** · web de la demo | `claude/s1-web` | MAP-004 y PUB-001 (parte web) | Sin PR todavía |
+| **C** · despliegue | `claude/s1-deploy` | OPS-001 (alojamiento de la API y la web) | Sin PR todavía |
+| **D** · formulario y pitch | `claude/coord` | DATAMAD-FORM-01, PITCH-00x | Sin PR todavía |
+
+Checkpoints: **13 nov** la lista de lo que falta sale por la API con datos reales · **15 nov** el buscador funciona con un perfil dorado · **16 nov (noche)** todo integrado con la web de B.
 
 ## Calendario hasta la entrega
 | Fechas | Bloque | Salida |
@@ -17,29 +27,49 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 | 24–25 nov | Pitch | 4 slides (§8), guion, vídeo de respaldo, banco de preguntas, 5 ensayos |
 | 26 nov | Final | Slides antes de las 14:00 · presentaciones de 17:00 a 19:00 en URJC Vicálvaro |
 
-## 03 — CLAUDE CODE (en curso)
-_(vacío: la siguiente card es CORE-005)_
+## 03 — CLAUDE CODE (en curso, línea A)
+- **CONTRACTS** Contratos PUBLIC: `ScenarioState`, `SearchResult` (ranking, motivos y Reality Check) y `ZoneGapList` (FALTA / JUSTO / CUBIERTO / SIN DATOS). JSON Schema en `data/schemas/api/`, rutas en `docs/04_technical_architecture/31_public_api_routes.md` y fixtures reales en `data/fixtures/contracts/`. **Contratos publicados: `7541527`** · `evidence/gate-04/2026-11-11/phase-contracts-f1.txt`
+- **CORE-005** Distancia a pie por sección censal y H3:
+  - Fase 1 `4cdee28`: red peatonal OSM como dataset `osm_red_peatonal` (solo Silver; 2,38 M nodos y 57.659 km; componente principal del 98,25 %). Evidencia en `evidence/gate-01/2026-11-11`.
+  - Fase 2 `e31770b`: dominio puro de accesibilidad con tests de propiedades (`evidence/gate-03/2026-11-11`).
+  - Faltan la Fase 3 (método de features y 12 features en 3 niveles) y la Fase 4 (ejecución real y Gate 3).
 
-### Estado de la sesión del 11 nov (mañana)
-- **Done:** DATA-007 (transporte CRTM nivel A, D-196) y DATA-016 (5 datasets CM nuevos): hay 21 datasets del portal CM con Quality Gate. DATAMAD-PUBLIC-01: repo público con el historial limpio (D-198). OPS-001 (parte Supabase): esquema en 0003 con RLS en todas las tablas (D-197) y perfil demo cargado (100 MB). La Data API no expone nada (`evidence/gate-06/2026-11-11`).
+### Estado de la sesión del 11 nov (tarde)
+- **Done:**
+  - README con el tag `cf39459` y PR #1 a `main` abierto (lo fusiona Mariano).
+  - CORE-005 Fases 1 y 2.
+  - Contratos publicados.
 - **Blocked:** nada. Seguridad pendiente de Mariano: rotar el token `sbp_…` del MCP que se pegó en el chat.
-- **Next:** CORE-005, indicadores por sección y H3 (distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte). Hay que empezar proponiendo su plan de fases.
-- **Gate status:** G1 PASS con 21 datasets (`evidence/gate-01/2026-11-10`). G2 PASS para transporte (`evidence/gate-02/2026-11-10`). Las features se recalcularon tras la re-ejecución, con 8 fuentes que publicaron datos nuevos (12×179, contrato de nulos íntegro). G6, parte Supabase: esquema 0003, RLS, perfil demo cargado y Data API cerrada (`evidence/gate-06/2026-11-11`). CI en verde.
+- **Next (línea A):**
+  1. GAP-001 Fase 0, esqueleto andante: `GET /api/v1/gaps/{level}/{code}` con colegio y centro de salud por municipio y datos reales.
+  2. CORE-005 Fases 3 y 4.
+  3. GAP-001 completo.
+  4. CORE-006.
+  5. CORE-003 con Reality Check.
+  6. `POST /api/v1/search`.
+- **Gate status:**
+  - G1 PASS con 21 datasets CM (`evidence/gate-01/2026-11-10`); la red OSM pasa su calidad.
+  - G2 PASS para transporte.
+  - G3: fases de CORE-005 en verde; el Gate 3 completo llega con la Fase 4.
+  - G4: contratos en verde.
+  - G6, parte Supabase: hecho el 11 nov.
+  - CI en verde hasta `4cdee28`.
 - **Notas para las siguientes cards:**
   - `colegios_publicos_por_1000_menores` cuenta también escuelas infantiles e institutos públicos (corregir en GAP-001).
-  - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004.
+  - Las farmacias salen en la capa «health» del mapa: separarlas en MAP-004 (línea B).
   - Unidades escolares: elegir el nivel de enseñanza, nunca sumar miembros.
+  - La API devuelve los errores como `{"detail": {code, message}}`; `ErrorEnvelope` es el formato objetivo.
+  - `dataset_registry` no guarda el enlace al portal CM de los GTFS (está en los recursos YAML). Hay que resolverlo antes de la ruta de procedencia.
 
 ## 02 — READY THIS SPRINT (en orden)
-1. CORE-005 Indicadores por sección censal y H3: distancia a pie a escuela infantil, colegio, salud, farmacia, mayores y transporte · G3 · 12–13 nov
-2. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de hogares frente a superficie de viviendas) · G3/G4 · 13–14 nov · D-194
-3. CORE-001 Contrato ScenarioState mínimo (presupuesto, tamaño del hogar, lugar de trabajo, prioridades) · G4 · 15 nov
-4. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 15 nov
-5. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · golden profiles · G4 · 15–16 nov
-6. MAP-004 Demo map-first: chips sobre ScenarioState, ranking de zonas y vista de zona con su lista de lo que falta · G6 · 16 nov
-7. PUB-001 Explicación en lenguaje cotidiano y panel de procedencia (datasets CM con enlace) · G5/G7 · 16 nov
-8. OPS-001 Despliegue de la demo con caso precargado · G6 · 17 nov. Supabase ya está listo el 11 nov (esquema 0003, RLS y perfil demo cargado). Falta volver a cargar con `make supabase-sync PROFILE=demo` después de CORE-005 y GAP-001, y desplegar la API y la web
-9. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo envía Mariano · 18 nov (límite real 19) · D-193
+1. GAP-001 Lista de lo que falta por zona: FALTA / JUSTO / CUBIERTO / SIN DATOS frente a la referencia regional por población, con confidence. Filas: escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda (tamaño de los hogares frente a superficie de las viviendas) · G3/G4 · Fase 0 (esqueleto) el 11–12 nov, completa el 13–14 nov · D-194
+2. CORE-005 Fases 3 y 4 (ver 03) · G3 · 12–13 nov
+3. CORE-006 Affordability baseline: alquiler €/m² CM frente a presupuesto, con confidence · G4 · 14–15 nov
+4. CORE-003 Residential Fit baseline + Reality Check: constraints PASS/FAIL/UNKNOWN → scoring → cuántas zonas aparecen al relajar cada condición · perfiles dorados · G4 · 15 nov
+5. API-002 `POST /api/v1/search` sobre `ScenarioState` · 15–16 nov
+6. MAP-004 / PUB-001: parte web en la línea B; la línea A da la API y la procedencia · 16 nov
+7. OPS-001: el alojamiento es de la línea C. La línea A hace `make supabase-sync PROFILE=demo` el 17 nov y avisa a C para que vuelva a desplegar · G6
+8. DATAMAD-FORM-01 Formulario (https://forms.gle/NyatKHN95aPxvQro8) · lo prepara la línea D y lo envía Mariano · 18 nov (límite real 19) · D-193
 
 ## 01 — BACKLOG (19–22 nov, si el cut review 1 está en verde)
 - CORE-009 Tiempo en transporte público a 5 polos de empleo (nivel B de transporte)
@@ -62,6 +92,7 @@ _(vacío: la siguiente card es CORE-005)_
 _(vacío)_
 
 ## 07 — DONE (con evidencia)
+- CORE-001 Contrato ScenarioState mínimo (presupuesto, hogar, lugares de referencia, servicios cerca y prioridades), publicado con los contratos PUBLIC · G4 · `7541527` · `evidence/gate-04/2026-11-11/phase-contracts-f1.txt` · 2026-11-11
 - DATAMAD-PUBLIC-01 Repo público en la misma URL, con el historial limpio de datos de contacto de los fixtures. El original queda en `housing-intelligence-archive` (privado y archivado, prueba de fechas). `pre-datamad` = `cf39459` (22 oct) · `evidence/gate-00/2026-11-11/public-repo.md` · D-195 · 2026-11-11
 - DATA-016 Datasets CM nuevos: oficinas de farmacia (2.953 puntos, sin nombres de titulares), farmacias por municipio, unidades escolares (desde 2015), nacidos vivos y viviendas por régimen de tenencia. `cm_stat_table` gana `period_min` y `points_csv` gana `subcategory_value`/`name_template`. Total: 21 datasets del portal CM · G1 PASS `evidence/gate-01/2026-11-10` · 2026-11-10
 - DATA-007 Transporte CRTM nivel A: 6 GTFS (también en el portal CM) → 14.982 paradas y estaciones con salidas/día, salidas en punta, headway, primer/último servicio y líneas · G1 `evidence/gate-01/2026-11-10/crtm_gtfs_*` · G2 PASS `evidence/gate-02/2026-11-10` (10/10 golden) · D-196 · 2026-11-10
