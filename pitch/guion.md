@@ -14,10 +14,10 @@
 |---|---|---|---|---|---|
 | 1 | 0:00–0:40 | 40 s | Problema: personas y ayuntamientos deciden a ciegas | 79 | 36 s |
 | 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y Reality Check | 187 | 86 s + clics |
-| 3 | 2:40–3:40 | 60 s | Una zona real y su lista de lo que falta | 107 | 49 s + clics |
+| 3 | 2:40–3:40 | 60 s | Una zona real y su lista de lo que falta | 111 | 51 s + clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 43 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
-| **Total** | | **300 s** | | **518** | **239 s + unos 35 s de clics = unos 25 s de margen** |
+| **Total** | | **300 s** | | **522** | **241 s + unos 35 s de clics = unos 24 s de margen** |
 
 ---
 
@@ -57,7 +57,7 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 |---|---|---|---|
 | 2.1 | Clic en «Pareja con 2 hijos que trabaja en la Castellana» (portada; **pendiente de B**) | Tarjeta «Tu búsqueda» rellena: «Con hijos (2)», «Colegios», «Trabajo en: Castellana», alquiler hasta 1.500 €/mes | Rellenar a mano los chips: es más lento, así que acortar la frase del formulario |
 | 2.2 | Clic en «Ver zonas que encajan» (**pendiente de B**) | Coropleta violeta y tarjeta de zona con el % de encaje y 3–5 hechos con su confianza | Si tarda más de 3 s, seguir hablando del mapa; si no llega, pasar al vídeo (plan B) |
-| 2.3 | Señalar la tarjeta de zona y leer dos hechos | Hechos tipo «Colegio público a [N] min andando» y «Metro a [N] min» (**pendiente de A**: CORE-005 y CORE-003) | Leer solo el % de encaje y la confianza |
+| 2.3 | Señalar la tarjeta de zona y leer dos hechos | Hechos tipo «Colegio público a [N] min andando» y «Metro a [N] min» (**pendiente de A**: CORE-003; los minutos a pie ya existen, CORE-005, y falta recalcularlos a 4 km/h) | Leer solo el % de encaje y la confianza |
 | 2.4 | Señalar el bloque Reality Check (**pendiente de A y B**) | «Con tu búsqueda: [N] zonas · +[X] €/mes: [N] · …» con cifras de la API | Ver la nota sobre el Reality Check, debajo |
 | 2.5 | Clic en una opción del Reality Check | El mapa se recalcula con la condición relajada | Solo señalarla, sin pulsar |
 | 2.6 | Clic en la fuente de un hecho o en «Cómo lo calculamos» (**pendiente de B**) | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: N conjuntos de la Comunidad de Madrid…» |
@@ -72,13 +72,14 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 ## Bloque 3 · 2:40–3:40 · Qué le falta a una zona real
 **Zona:** **pendiente de A** (GAP-001 completo).
 - **Criterio:** una zona real con al menos una fila FALTA, una CUBIERTO y, si la hay, una SIN DATOS, para enseñar las tres. Mejor un distrito de Madrid que se conozca.
-- **El texto hablado depende de GAP-001 (pendiente de A):** «Seis filas» y «cada una» solo se dicen si salen las 6. Si no, se dice «[N] filas» y se nombran solo las que estén.
+- **El texto hablado depende de GAP-001 (pendiente de A):** «Seis filas» solo se dice si salen las 6. Si no, se dice «[N] filas» y se nombran solo las que estén.
 - **No usar colegios como ejemplo de CUBIERTO** hasta que GAP-001 corrija el filtro: hoy cuenta también escuelas infantiles e institutos (`proxy_note` de `colegios_publicos_por_1000_menores`).
 - **Zona propuesta: Chamartín** (distrito de Madrid), con datos reales de la demo pública. Centros de salud FALTA (0,47 por cada 10.000 habitantes frente a 0,59 en la región) y colegios FALTA (0,88 por cada 1.000 menores frente a 2,18). Confianza 1,0 y 3 datasets por fila. Fuente: `GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín». Cortes provisionales `gap-0.1`.
+- **Dato a pie de la fila de centros de salud:** la mitad de las calles de Chamartín está a 8,4 min o menos de un centro de salud (`min_a_pie_centro_salud`, distrito 2807905, CORE-005 `fc025b6`, a 4,5 km/h). **Pendiente de recálculo** a 4 km/h (A): unos 9,5 min. Los minutos se ven en pantalla y no se leen. La frase «Están cerca…» solo se dice si la pestaña enseña el dato a pie (`falta.fila.a_pie`, **pendiente de A**: API con GAP-001); si no, se salta.
 - **Hoy no tiene ninguna fila CUBIERTO:** «[Leer una fila cubierta]» solo se dice si GAP-001 trae una (**pendiente de A**); si no, se salta. La fila que se lee en voz alta es la de centros de salud.
 
 <!-- habla:b3:inicio -->
-Ahora cambio de usuario: un ayuntamiento. Pulso «Ver la zona». La cámara entra en [zona] en tres dimensiones, con sus colegios, centros de salud y estaciones. Abro la pestaña «Qué falta». Seis filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda. Cada una compara la zona con el conjunto de la Comunidad. Aquí, centros de salud: falta. [valor] por cada diez mil habitantes, frente a [referencia] en la región. [Leer una fila cubierta]. Y cuando no tenemos el dato, lo decimos: sin datos. No inventamos nada. Cada fila dice de qué dataset sale, con su enlace. Un concejal ve en un minuto dónde invertir primero.
+Ahora cambio de usuario: un ayuntamiento. Pulso «Ver la zona». La cámara entra en [zona] en tres dimensiones, con sus colegios, centros de salud y estaciones. Abro la pestaña «Qué falta». Seis filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda. Aquí, centros de salud: falta. [valor] por cada diez mil habitantes, frente a [referencia] en la región. [Si se ve el dato a pie:] Están cerca, pero son pocos para tanta gente. [Leer una fila cubierta]. Y cuando no tenemos el dato, lo decimos: sin datos. No inventamos nada. Cada fila dice de qué dataset sale, con su enlace. Un concejal ve en un minuto dónde invertir primero.
 <!-- habla:b3:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |

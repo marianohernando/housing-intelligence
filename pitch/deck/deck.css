@@ -383,7 +383,7 @@ a {
 }
 
 .s3 .col {
-  padding: 36px 36px 32px;
+  padding: 32px 32px 28px;
   display: flex;
   flex-direction: column;
 }
@@ -411,12 +411,12 @@ a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  height: 170px;
+  height: 120px;
 }
 
 .s3 .shots.one {
   grid-template-columns: 1fr;
-  height: 140px;
+  height: 100px;
 }
 
 .s3 .shots .ph {

@@ -102,19 +102,35 @@ def volume(row_counts: dict[str, Any]) -> str | None:
     return " · ".join(parts) or None
 
 
+def gap_row_labels(catalog: Catalog) -> dict[str, str]:
+    return {
+        feature.gap_row.row: feature.gap_row.label
+        for feature in catalog.features.values()
+        if feature.gap_row and feature.gap_row.label
+    }
+
+
+def where_shown(feature: Any, row_labels: dict[str, str]) -> str:
+    gap_row = feature.gap_row
+    if gap_row is None:
+        return "Indicador por zona"
+    if gap_row.label:
+        return f"«Qué falta», fila «{gap_row.label}»"
+    if gap_row.row in row_labels:
+        return f"«Qué falta», fila «{row_labels[gap_row.row]}» (dato extra)"
+    return f"«Qué falta», fila `{gap_row.row}` (dato extra; la fila, **pendiente de A** en GAP-001)"
+
+
 def uses(catalog: Catalog, dataset: DatasetSpec) -> list[str]:
     lines: list[str] = []
     in_features = False
+    row_labels = gap_row_labels(catalog)
     for feature in sorted(catalog.features.values(), key=lambda f: f.feature_id):
         for source in feature.sources:
             if source.dataset_id != dataset.dataset_id:
                 continue
             in_features = True
-            where = (
-                f"«Qué falta», fila «{feature.gap_row.label}»"
-                if feature.gap_row
-                else "Indicador por zona"
-            )
+            where = where_shown(feature, row_labels)
             role = ROLE_ES.get(source.role, source.role)
             lines.append(f"{where}: {feature.human_name} (`{feature.feature_id}`, {role})")
     pipeline = catalog.pipelines.get(dataset.dataset_id)

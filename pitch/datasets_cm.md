@@ -54,6 +54,8 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/atencion_social_registro_centros · id `cm_centros_atencion_social` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - «Qué falta», fila `mayores` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, dato principal)
   - Indicador por zona: Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, dato principal)
   - Puntos del mapa (mayores y atención social): `GET /api/v1/places?category=social`
 - **Quality Gate 1:** PASS · 2026-10-22 · 5/5 checks críticos · versión `2026-10-21-9cadf73e6ea9` · 1.001 puntos · [quality_report.json](../evidence/gate-01/2026-10-22/cm_centros_atencion_social/quality_report.json)
@@ -63,6 +65,10 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - «Qué falta», fila «Colegios»: Centros educativos públicos por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, dato principal)
+  - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, dato principal)
+  - «Qué falta», fila `escuela_infantil` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil (`pct_calle_escuela_infantil_10min`, dato principal)
   - Puntos del mapa (educación): `GET /api/v1/places?category=education`
 - **Quality Gate 1:** PASS · 2026-10-22 · 5/5 checks críticos · versión `2026-10-21-27483ff8498b` · 3.851 puntos · [quality_report.json](../evidence/gate-01/2026-10-22/cm_centros_educativos/quality_report.json)
 
@@ -71,6 +77,8 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - «Qué falta», fila «Centros de salud»: Centros de atención primaria por cada 10.000 habitantes (`centros_salud_por_10000_hab`, dato principal)
+  - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, dato principal)
   - Puntos del mapa (salud): `GET /api/v1/places?category=health`
 - **Quality Gate 1:** PASS · 2026-10-22 · 5/5 checks críticos · versión `2026-10-21-f2602e9e9275` · 1.543 puntos · [quality_report.json](../evidence/gate-01/2026-10-22/cm_centros_sanitarios/quality_report.json)
 
@@ -104,8 +112,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/oficinas_farmacia · id `cm_oficinas_farmacia` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - «Qué falta», fila `farmacia` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una farmacia (`pct_calle_farmacia_10min`, dato principal)
   - Puntos del mapa (salud): `GET /api/v1/places?category=health`
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 5/5 checks críticos · versión `2026-11-10-de61d48d7b4a` · 2.953 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/cm_oficinas_farmacia/quality_report.json)
 
 ### Población censada por edad, nacionalidad y sexo. Censo anual. Municipios
@@ -165,8 +174,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/357e63c2904f43aeb5d8a267a64346d8/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Paradas y estaciones de autobuses urbanos del resto de municipios con su frecuencia de paso
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-41f7f9c15b61` · 3.023 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_autobuses_urbanos/quality_report.json)
 
 ### Oferta planificada de la Red de Cercanías Madrid
@@ -174,8 +184,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/1a25440bf66f499bae2657ec7fb40144/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Paradas y estaciones de Cercanías con su frecuencia de paso
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-1b018a22325c` · 93 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_cercanias/quality_report.json)
 
 ### Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT
@@ -183,8 +194,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/868df0e58fca47e79b942902dffd7da0/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Paradas y estaciones de autobuses EMT de Madrid con su frecuencia de paso
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-8478ae5c9262` · 4.935 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_emt/quality_report.json)
 
 ### Oferta planificada de la Red de Autobuses Interurbanos
@@ -192,8 +204,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/885399f83408473c8d815e40c5e702b7/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Paradas y estaciones de autobuses interurbanos con su frecuencia de paso
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-5bbf3c95047c` · 6.645 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_interurbanos/quality_report.json)
 
 ### Oferta planificada de la Red de Metro
@@ -201,8 +214,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/5c7f2951962540d69ffe8f640d94c246/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Paradas y estaciones de metro con su frecuencia de paso
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-cccabfd6f025` · 230 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json)
 
 ### Oferta planificada de la Red de Metro Ligero
@@ -210,8 +224,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/aaed26cc0ff64b0c947ac0bc3e033196/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Paradas y estaciones de metro ligero con su frecuencia de paso
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-599f9acfa270` · 56 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_metro_ligero/quality_report.json)
 
 ## 3. Fuentes complementarias en uso (3)
@@ -241,8 +256,19 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 - **Ficha:** https://download.geofabrik.de/europe/spain/madrid.html · id `osm_red_peatonal` · publica: OpenStreetMap contributors (extracto de Geofabrik)
 - **Licencia:** [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (según el registro de fuentes)
 - **Qué alimenta:**
+  - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, dato principal)
+  - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, dato principal)
+  - «Qué falta», fila `escuela_infantil` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, dato principal)
+  - «Qué falta», fila `farmacia` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, dato principal)
+  - «Qué falta», fila `mayores` (dato extra; la fila, **pendiente de A** en GAP-001): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, dato principal)
+  - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil (`pct_calle_escuela_infantil_10min`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una farmacia (`pct_calle_farmacia_10min`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, dato principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, dato principal)
   - Red peatonal para medir la distancia a pie a cada servicio
-  - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-11 · 5/5 checks críticos · versión `2026-11-11-a3206c2d1d5f` · 57.658,8 km de calles y caminos · [quality_report.json](../evidence/gate-01/2026-11-11/osm_red_peatonal/quality_report.json)
 
 ## 4. En el catálogo, todavía sin ingerir (10)

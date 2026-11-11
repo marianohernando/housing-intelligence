@@ -81,8 +81,8 @@ Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: 
 
 **14. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
 Sí, por eso Madrid se divide en sus 21 distritos. Además, la distancia a pie se calcula por sección censal, que es mucho más fina que el municipio.
-- Evidencia: D-200 · board CORE-005 · `evidence/gate-01/2026-11-11/osm_red_peatonal/`.
-- Estado: distritos hechos con el padrón municipal (D-209; ejemplo real: Chamartín, `GET /api/v1/gaps/distrito/2807905`). Distancia a pie **pendiente de A** (CORE-005, Fases 3 y 4).
+- Evidencia: D-200 · D-210 · `evidence/gate-03/2026-11-11/walk-coverage.txt` (las 4.843 zonas: secciones, municipios, distritos y región).
+- Estado: distritos hechos con el padrón municipal (D-209; ejemplo real: Chamartín, `GET /api/v1/gaps/distrito/2807905`). Distancia a pie calculada (CORE-005, `fc025b6`, Gate 3 PASS); recalcularla a 4 km/h y enseñarla en la web, **pendiente de A**.
 
 **15. ¿Cómo calculáis el % de encaje?**
 Primero se comprueban las condiciones de la persona, cada una con PASS, FAIL o «sin dato», y un «sin dato» nunca cuenta como PASS. Después se puntúan las prioridades con pesos declarados. El método y su versión se ven en «Cómo lo calculamos».
@@ -93,31 +93,36 @@ Primero se comprueban las condiciones de la persona, cada una con PASS, FAIL o �
 Así es: el dataset del portal cubre los municipios de más de 20.000 habitantes. En los demás, la condición de presupuesto queda como «sin dato», se dice y nunca se da por buena.
 - Evidencia: título del dataset en `pitch/datasets_cm.md` · `CLAUDE.md` §14 (UNKNOWN nunca equivale a PASS).
 
+**17. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
+Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. Damos los minutos en los que llega la mitad de las calles de la zona y qué parte de ellas está a 10 minutos o menos; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.
+- Evidencia: D-210 · `data/catalog/features/min_a_pie_*.yaml` y `pct_calle_*.yaml` · `scripts/check_walk_golden.py` y `evidence/gate-03/2026-11-11/walk-golden.txt` (La Acebeda: 97,5 min a 4,5 km/h) · estudio del Ayuntamiento: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf («Velocidad de desplazamiento estimada en 4 Km/h»).
+- Estado: cálculo hecho a 4,5 km/h (CORE-005, `fc025b6`, Gate 3 PASS). 4 km/h es decisión de Mariano (11 nov); el recálculo y su uso en la web están **pendientes de A** (con GAP-001).
+
 ---
 
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
-**17. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
+**18. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
 21 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
 - Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py`.
 
-**18. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
+**19. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
 - Evidencia: D-196 · `pitch/datasets_cm.md` §2 (6 fichas con licencia «CRTM Licencia de datos abiertos (LDA)» en el portal CM).
 
-**19. ¿Qué control de calidad pasa un dataset antes de entrar?**
+**20. ¿Qué control de calidad pasa un dataset antes de entrar?**
 Claves únicas, que cada municipio exista en la geografía oficial, errores de lectura, ratio de registros en cuarentena y faltantes marcados como faltantes, no como cero. Los registros dudosos van a cuarentena, no se borran, y cada versión guarda la huella del fichero original.
 - Evidencia: `evidence/gate-01/*/<dataset>/quality_report.json` · `lineage.json` (sha256 y URL) · `row_counts.json` (`quarantined`).
 
-**20. ¿Encontrasteis errores en los datos del portal?**
+**21. ¿Encontrasteis errores en los datos del portal?**
 Sí, y los tratamos sin ocultarlos. Por ejemplo: una geometría inválida en las secciones censales, reparada y documentada, y centros sin coordenadas válidas que van a cuarentena (55 de centros educativos).
 - Evidencia: `notes` de `data/catalog/datasets/cm_secciones_censales.yaml` · `evidence/gate-01/2026-10-22/cm_centros_educativos/row_counts.json`.
 
-**21. ¿Los datos están al día?**
+**22. ¿Los datos están al día?**
 Cada fuente se recarga según su propia frecuencia de publicación, y en los GTFS el control de calidad avisa si el horario está caducado. Por ejemplo, el GTFS de metro venció el 27 de mayo de 2026 y sigue siendo el último publicado: lo usamos y el control de calidad lo marca.
 - Evidencia: control `feed_current` en `evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json` · D-196.
 
-**22. ¿Cómo citáis las fuentes en la propia aplicación?**
+**23. ¿Cómo citáis las fuentes en la propia aplicación?**
 Cada fila de la lista y cada resultado llevan los datasets de los que salen, con el enlace a su ficha, la versión y la licencia. Además, la web muestra la atribución que pide cada licencia, incluido «Powered by CRTM».
 - Evidencia: campo `datasets` de la API (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) · `attribution_text` en `data/catalog/sources/*.yaml`.
 - Estado: atribuciones en el pie de la web **pendiente de B**.
@@ -126,41 +131,41 @@ Cada fila de la lista y cada resultado llevan los datasets de los que salen, con
 
 ## Generales (cualquier miembro)
 
-**23. ¿Qué hicisteis durante la competición y qué ya existía?**
+**24. ¿Qué hicisteis durante la competición y qué ya existía?**
 El trabajo previo está identificado con el tag `pre-datamad` (22 oct): la geografía, los 10 primeros datasets y el mapa base. Desde el 7 nov hemos añadido el transporte del CRTM, 5 datasets más, la lista de lo que falta por la API, la red peatonal, el buscador y el despliegue.
 - Evidencia: `README.md` («Trabajo previo a DATAMAD») · tag `pre-datamad` = `cf39459` · D-174 · `board/BOARD.md` (07 — DONE).
 - Estado: buscador y despliegue **pendiente de A y C** hasta el 17 nov.
 
-**24. ¿Habéis usado IA?**
+**25. ¿Habéis usado IA?**
 Sí, como asistente de programación, que las bases permiten (§7), y nosotros respondemos de todo el código y los resultados. El producto no usa IA para calcular nada: todas las cifras salen de reglas deterministas, versionadas y con tests.
 - Evidencia: `docs/09_datamad/24_bases_oficiales_2026.md` §7 · `CLAUDE.md` §3 (IA).
 
-**25. ¿Qué pasa con la privacidad?**
+**26. ¿Qué pasa con la privacidad?**
 Nunca tratamos datos de personas: solo agregados por zona. Además, no mostramos equipamientos que expondrían a personas vulnerables, quitamos teléfonos, emails y NIF que publicaba la fuente, y la base de la demo no se puede leer desde fuera de la API.
 - Evidencia: D-186 · D-198 · D-197 · control `no_contact_or_tax_ids` en los `quality_report.json` de puntos.
 
-**26. ¿De dónde sale «lo que falta» si no tenéis usuarios?**
+**27. ¿De dónde sale «lo que falta» si no tenéis usuarios?**
 Hoy, de datos oficiales: población, hogares y equipamientos, comparados con la referencia regional. El siguiente paso es sumar lo que la gente declare que necesita, anónimo y agregado por zona, y no lo simulamos en la demo.
 - Evidencia: D-194 · `docs/09_datamad/25_plan_competicion.md` §8.
 
-**27. ¿Por qué no usáis datos de los portales inmobiliarios?**
+**28. ¿Por qué no usáis datos de los portales inmobiliarios?**
 Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen respetar licencias. Además, enseñan la oferta, y lo que nosotros medimos es la necesidad.
 - Evidencia: `CLAUDE.md` §15 · D-175 y D-185 (Google Maps y Gosom descartados) · bases §6.
 
-**28. ¿Incluís seguridad? Es delicado.**
+**29. ¿Incluís seguridad? Es delicado.**
 Solo si la persona la marca como prioridad y solo con datos oficiales agregados: actuaciones de la Policía Municipal por cada 1.000 habitantes y por distrito. Nunca nacionalidad ni etiquetas como «peligroso»; fuera de Madrid capital, SIN DATOS.
 - Evidencia: D-204 y D-205.
 - Estado: extra **pendiente de A** (DATA-020, 19–22 nov). Si no está, decir «no lo incluimos todavía, y así es como lo haríamos».
 
-**29. ¿Funciona fuera de la Comunidad de Madrid?**
+**30. ¿Funciona fuera de la Comunidad de Madrid?**
 La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geografía se basa en códigos INE. Lo que haría falta en otra región es su portal de datos con equivalentes.
 - Evidencia: `data/catalog/pipelines/` · `README.md` (Quickstart).
 
-**30. ¿Es accesible para personas mayores?**
+**31. ¿Es accesible para personas mayores?**
 Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px y contraste AA verificado también sobre el cristal. El estado de cada fila nunca depende solo del color: siempre va con texto e icono.
 - Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` (rama `claude/s1-web`, PR #2).
 - Estado: verificación en navegador **pendiente de B**.
 
-**31. ¿Por qué «Vida Fácil»?**
+**32. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
 - Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.

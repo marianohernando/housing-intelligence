@@ -83,7 +83,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 ### Utilidad: personas que buscan dónde vivir
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras.
   - Ejemplo de formato (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`): «Colegio público a 6 min andando».
-  - Los hechos reales de la zona del caso demo: **pendiente de A** (CORE-005 y CORE-003) y **pendiente de B** (captura C2).
+  - Los hechos reales de la zona del caso demo: **pendiente de A** (CORE-003; las distancias a pie ya están calculadas en CORE-005, `fc025b6`, y falta recalcularlas a 4 km/h) y **pendiente de B** (captura C2).
 - **Reality Check:** si nada encaja, enseña cuántas zonas aparecen al relajar cada condición, con cifras reales de la API. Hoy solo existe el contrato (`packages/contracts/src/hi_contracts/public/search.py`, `7541527`); el cálculo está **pendiente de A** (CORE-003). Captura **C3**.
 - **Caso demo:** pareja con 2 hijos que trabaja en la Castellana (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`).
 
@@ -91,6 +91,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda (D-194). Cada fila se compara con la referencia regional y lleva su fuente y su confianza.
 - **Ejemplo real de hoy**, Chamartín (distrito de Madrid) en la demo pública (`GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín»):
   - Centros de salud: **FALTA**. 0,47 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad, 0,59. Confianza 1,0 y 3 datasets por fila.
+  - **Cerca, pero pocos para tanta gente:** la mitad de las calles de Chamartín está a 8,4 min o menos de un centro de salud y a 2,3 min de una farmacia. Aun así hay menos centros por habitante que en la región (FALTA: 0,47 frente a 0,59; ratio 0,79 con los valores sin redondear, 0,469 / 0,592). Minutos de `min_a_pie_centro_salud` y `min_a_pie_farmacia` para el distrito 2807905 (`feature_value` tras `make features`, CORE-005, `fc025b6`; leído el 11 nov), calculados a 4,5 km/h. **Pendiente de recálculo** a 4 km/h (A): suben un 12,5 % (D-210), a unos 9,5 y 2,6 min. En la API, **pendiente de A** (GAP-001).
   - Colegios: **FALTA**. 0,88 centros educativos públicos por cada 1.000 menores de 15 años; en la Comunidad, 2,18.
   - **Provisional:** los cortes `gap-0.1` y el filtro de colegios, que hoy incluye escuelas infantiles e institutos, cambian con GAP-001. La de centros de salud es la fila que va en la slide; la de colegios, solo con su aviso. Hay que revisar las dos cifras cuando cierre GAP-001 (**pendiente de A**). Captura **C4**.
 - **Escala:**
