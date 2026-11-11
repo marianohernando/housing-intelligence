@@ -24,7 +24,9 @@ const TEXT = {
 
 type Result = { zones: ZoneCollection } | { error: ApiError };
 
-function ZoneLinks({ title, zones }: { title: string; zones: ZoneProperties[] }) {
+type HrefFor = (zone: ZoneProperties) => string;
+
+function ZoneLinks({ title, zones, hrefFor }: { title: string; zones: ZoneProperties[]; hrefFor: HrefFor }) {
   const id = useId();
   if (zones.length === 0) return null;
   return (
@@ -35,7 +37,7 @@ function ZoneLinks({ title, zones }: { title: string; zones: ZoneProperties[] })
       <ul className={styles.list}>
         {zones.map((zone) => (
           <li key={zone.zone_key}>
-            <Link href={zoneHref(zone)}>{zone.name}</Link>
+            <Link href={hrefFor(zone)}>{zone.name}</Link>
           </li>
         ))}
       </ul>
@@ -43,8 +45,14 @@ function ZoneLinks({ title, zones }: { title: string; zones: ZoneProperties[] })
   );
 }
 
+interface Props {
+  /** Where each zone leads: its screen by default, its «Qué falta» list from that tab. */
+  hrefFor?: HrefFor;
+  placeholder?: string;
+}
+
 /** The map's alternative: every zone as a link, with a filter by name (keyboard and screen readers). */
-export default function ZoneDirectory() {
+export default function ZoneDirectory({ hrefFor = zoneHref, placeholder }: Props) {
   const inputId = useId();
   const [result, setResult] = useState<Result | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -95,13 +103,13 @@ export default function ZoneDirectory() {
       <label htmlFor={inputId} className={styles.label}>
         {TEXT.search}
       </label>
-      <input id={inputId} type="search" value={query} onChange={(e) => setQuery(e.target.value)} className={styles.input} />
+      <input id={inputId} type="search" placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)} className={styles.input} />
       <p role="status" className="visually-hidden">
         {distritos.length + municipios.length} zonas
       </p>
       {distritos.length + municipios.length === 0 && <p>{TEXT.none}</p>}
-      <ZoneLinks title={TEXT.distritos} zones={distritos} />
-      <ZoneLinks title={TEXT.municipios} zones={municipios} />
+      <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} />
+      <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} />
     </div>
   );
 }

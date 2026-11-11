@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { activeTab, TABS } from "../nav";
+import { activeTab, type Tab, tabHref, TABS } from "../nav";
 
 describe("header tabs", () => {
   it("uses the plain-language names of the brief, in order", () => {
@@ -21,5 +21,27 @@ describe("header tabs", () => {
   it("marks nothing outside the product pages", () => {
     expect(activeTab("/map")).toBeNull();
     expect(activeTab("/que-faltaba")).toBeNull();
+  });
+});
+
+describe("tabHref", () => {
+  const tab = (href: string): Tab => {
+    const found = TABS.find((t) => t.href === href);
+    if (!found) throw new Error(`No tab ${href}`);
+    return found;
+  };
+  const [mapa, falta, como] = [tab("/"), tab("/que-falta"), tab("/como-lo-calculamos")];
+
+  it("opens the zone's list in «Qué falta» from a zone screen", () => {
+    expect(tabHref(falta, "/zona/distrito/2807905")).toBe("/que-falta?zona=distrito/2807905");
+    expect(tabHref(falta, "/zona/municipio/28092")).toBe("/que-falta?zona=municipio/28092");
+  });
+
+  it("keeps the plain tab elsewhere and for the other tabs", () => {
+    expect(tabHref(falta, "/")).toBe("/que-falta");
+    expect(tabHref(falta, "/que-falta")).toBe("/que-falta");
+    expect(tabHref(falta, "/zona/seccion_censal/2807905001")).toBe("/que-falta");
+    expect(tabHref(mapa, "/zona/distrito/2807905")).toBe("/");
+    expect(tabHref(como, "/zona/distrito/2807905")).toBe("/como-lo-calculamos");
   });
 });

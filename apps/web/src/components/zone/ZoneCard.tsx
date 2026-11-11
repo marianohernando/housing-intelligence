@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, X } from "lucide-react";
+import Link from "next/link";
 import { useId } from "react";
 
 import { useScenario } from "@/components/search/ScenarioProvider";
@@ -8,20 +9,22 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
-import { rowsPending, topRows } from "@/lib/gaps";
+import { gapsHref, topRows, walking, walkingText } from "@/lib/gaps";
 import { type ZoneFeature, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
+import PendingRows from "./PendingRows";
 import styles from "./ZoneCard.module.css";
 import { useZoneGaps } from "./useZoneGaps";
 
 // Copy from pitch/textos_web.md (zona.*, falta.*, carga.falta, error.reintentar, leyenda.antes_de_buscar)
+// «A pie» with the minutes is falta.fila.a_pie, shortened for the card.
 const TEXT = {
   municipio: "Municipio",
   close: "Cerrar",
   beforeSearch: "Haz tu búsqueda para ver qué zonas encajan contigo.",
   missing: "Qué falta aquí",
-  pending: "Estamos calculando el resto de servicios para esta zona.",
+  walk: "A pie:",
   retry: "Reintentar",
   open: "Ver la zona",
   all: "Ver todo lo que falta",
@@ -83,15 +86,30 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && (
           <ul className={styles.rows}>
-            {topRows(gaps.data.data.rows).map((row) => (
-              <li key={row.row}>
-                <span>{row.label}</span>
-                <GapBadge status={row.status} />
-              </li>
-            ))}
+            {topRows(gaps.data.data.rows).map((row) => {
+              const walk = walking(row.extra_indicators);
+              return (
+                <li key={row.row}>
+                  <span className={styles.rowName}>
+                    {row.label}
+                    {walk && (
+                      <small>
+                        {TEXT.walk} {walkingText(walk)}
+                      </small>
+                    )}
+                  </span>
+                  <GapBadge status={row.status} />
+                </li>
+              );
+            })}
           </ul>
         )}
-        {gaps.data && rowsPending(gaps.data.warnings) && <p className={styles.hint}>{TEXT.pending}</p>}
+        {gaps.data && <PendingRows warnings={gaps.data.warnings} className={styles.pending} />}
+        {gaps.data && mode === "overview" && (
+          <Link href={gapsHref(level, code)} className={styles.all}>
+            {TEXT.all}
+          </Link>
+        )}
       </section>
 
       {mode === "overview" ? (
@@ -100,7 +118,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
           <ArrowRight size={20} aria-hidden="true" />
         </Button>
       ) : (
-        <Button href={`/que-falta?zona=${encodeURIComponent(`${level}/${code}`)}`} variant="secondary" className={styles.action}>
+        <Button href={gapsHref(level, code)} variant="secondary" className={styles.action}>
           {TEXT.all}
           <ArrowRight size={20} aria-hidden="true" />
         </Button>

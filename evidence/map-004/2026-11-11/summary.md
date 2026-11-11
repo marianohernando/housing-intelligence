@@ -490,3 +490,62 @@ Textos provisionales:
 - «Distritos de Madrid» y «Municipios»;
 - «No hay ninguna zona con ese nombre.»;
 - «Cargando las zonas…».
+
+---
+
+# PUB-001 Fase 3 (F8) — «Qué falta» completo contra `/gaps` (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `9ced17b` (GAP-001 F1–F3b). Checkpoint del 14 nov. Datos reales de `GET /api/v1/gaps/{level}/{code}` en la API 8011: las 200 zonas (179 municipios y 21 distritos) traen las 6 filas.
+
+## Qué hay
+- **Pestaña «Qué falta»** (`/que-falta?zona=distrito/2807905`):
+  - título «Qué falta en {zona}», `falta.intro`, «Ver la zona» y «Cambiar de zona»;
+  - las 6 filas, lo que falta primero (FALTA, JUSTO, CUBIERTO, SIN DATOS; dentro de cada estado, el orden de la API);
+  - cada fila: estado con icono y texto, qué mide (los textos cortos que pasó datamad-10), la cifra de la zona y la de la Comunidad de Madrid con los decimales de la `explanation` de la API, los minutos a pie, la fiabilidad en palabras, «Ojo: {proxy_note}» y «De dónde sale» con cada conjunto enlazado a su ficha (abierto en escritorio; en el móvil, a un toque);
+  - **SIN DATOS** con el motivo de `null_reason` en el texto de D (vivienda por distrito: «La fuente oficial no trae este dato.»);
+  - **filas aún no calculadas** (`INSUFFICIENT_DATA: row X not computed at <nivel> level yet`): no se pintan; una línea discreta «Próximamente: {filas}. Estamos calculando el resto de servicios para esta zona.» (`falta.filas_pendientes`);
+  - «Cómo leer esta lista»: los 4 estados con su explicación, una nota sobre los minutos a pie y «¿Cómo lo decidimos?»;
+  - sin zona: `falta.elige_zona` y la lista de zonas con el filtro (`falta.buscador.placeholder`), que lleva a la lista de cada una; con una zona que no existe o un `?zona=` que no es una zona del mapa, `error.zona_no_existe`.
+- **Minutos a pie** (`extra_indicators`, `min_a_pie_*`): «A pie hasta el colegio más cercano: 6 min»; por encima de 60, «más de 60 min»; sin valor, «sin dato» (con el motivo al pasar el ratón). Los demás indicadores extra (plazas en residencias, tamaño del hogar…) no se muestran todavía.
+- **Tarjeta de zona:** la mini lista lleva «A pie: 9 min» bajo cada fila, la misma línea «Próximamente» y, en el mapa, el enlace «Ver todo lo que falta».
+- **Pestaña «Qué falta» desde una zona:** abre la lista de esa zona (`tabHref`).
+- **Funciones puras con tests:** `pendingRows`, `sortRows`, `gapFigures`, `walking`/`walkingText`, `gapsHref`/`parseZoneParam` (`lib/gaps.ts`), `confidenceText` (`lib/confidence.ts`), `formatNumber` (`lib/format.ts`) y `tabHref` (`lib/nav.ts`).
+- **`capture.mjs`:** opción `--full` para capturar la página entera.
+
+## Comprobado con Playwright (`f8_que_falta.json`)
+- **Chamartín, 1440 px:** 6 filas. Centros de salud FALTA (0,47 frente a 0,59; a pie, 9 min), mayores FALTA (0,25 / 0,39; 10 min), escuelas infantiles CUBIERTO (5 min), colegios CUBIERTO (6 min), farmacias CUBIERTO (3 min) y vivienda SIN DATOS con su motivo. 4 enlaces de fuentes por fila. axe (WCAG 2.2 A/AA): 0 fallos.
+- **Chamartín, 390 px:** fuentes plegadas, se abren al tocar; sin desplazamiento horizontal; axe: 0 fallos.
+- **La Acebeda:** «más de 60 min» en cuatro filas y escuelas infantiles SIN DATOS con «Este dato no tiene sentido en esta zona.» (`f8_que_falta_acebeda_desktop.png`).
+- **Filas pendientes** (respuesta real de Chamartín sin farmacia ni vivienda y con sus dos avisos, con `page.route`): quedan 4 filas, ninguna SIN DATOS de más, y la línea «Próximamente: Farmacias y Vivienda…» en la pestaña y en la tarjeta (`f8_pendientes_*`).
+- **Zona:** mini lista «Centros de salud · A pie: 9 min · FALTA»…; la pestaña «Qué falta» y «Ver todo lo que falta» llevan a `/que-falta?zona=distrito/2807905`.
+- **Sin zona y teclado:** con «Chamar», Tab lleva el foco a «Chamartín» e Intro abre su lista.
+- **Errores:** `?zona=barrio/123` y `distrito/2807999` (404) dicen «No encontramos esa zona…»; el segundo, con «Elegir otra zona». El único error de consola es el 404 esperado del navegador.
+- **Consola:** sin errores en el resto.
+
+## Capturas para las slides (`pitch/slides.md`, C1–C7)
+| Captura | Fichero | Estado |
+|---|---|---|
+| C1 · mapa con el caso demo y la coropleta de encaje | — | **Pendiente de A:** necesita `POST /search` |
+| C2 · tarjeta con % de encaje y hechos | — | **Pendiente de A:** necesita `POST /search` |
+| C3 · «¿Y si cambias algo?» | — | **Pendiente de A:** necesita `POST /search` |
+| C4 · «Qué falta» con las 6 filas | `c4_que_falta_completa_desktop.png` (página entera), `c_que_falta_desktop.png` (primera pantalla) y sus `_mobile` | Hecha |
+| C5 · zona en 3D | `c_zona_3d_desktop.png` y `c_zona_3d_desktop_vs_mockup.jpg` | Hecha |
+| C6 · móvil con la hoja inferior | `c_zona_3d_mobile.png` | Hecha |
+| C7 · «Cómo lo calculamos» | `c_como_lo_calculamos_desktop.png` y `_mobile` | Hecha |
+
+Todas sin errores en la consola (`c_capture.json`, `c4_capture.json`). Las definitivas, a densidad 2× y sobre la demo desplegada, las hace D el 24 nov.
+
+## Gate (`f8_gate.txt`)
+| Comando | Resultado |
+|---|---|
+| `make lint typecheck test-unit` | 0 (286 pytest, 167 vitest) |
+| `npm run -w apps/web lint` / `typecheck` | 0 |
+| `npm run -w apps/web test` | 19 ficheros, 167 tests (nuevos: `confidence`, y más casos en `gaps`, `format` y `nav`) |
+| `npm run -w apps/web build` | 0 |
+
+## Para D (textos provisionales)
+- «Cambiar de zona», «Elegir otra zona», «Cómo leer esta lista» y «De dónde sale: {n} conjuntos de datos».
+- Nota de los minutos: «Los minutos a pie se miden por la calle, a paso tranquilo (4 km/h): desde la mitad de las calles de la zona se llega en ese tiempo o menos.»
+- `falta.fila.a_pie` se escribe «A pie hasta {el colegio más cercano}: {n} min»; en la tarjeta, «A pie: {n} min».
+- «Próximamente: {filas}.» delante de `falta.filas_pendientes`.
+- «Cómo lo calculamos» no cambia hasta que `metodologia.md` tenga las definiciones de las 6 filas (1.4) y la 1.5 diga solo lo que la web enseña: hoy solo los minutos, no el % de calles.

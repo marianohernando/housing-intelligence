@@ -4,7 +4,7 @@
 //   npm run -w apps/web capture -- --route inicio=/@mockup_1_mapa.png --route que-falta=/que-falta
 //
 // Options: --base (default http://localhost:3011), --out (default evidence/map-004/<today>),
-// --prefix for file names, --wait extra ms after load (map animations).
+// --prefix for file names, --wait extra ms after load (map animations), --full for the whole page.
 // MOCKUP_DIR points to the folder with the mockups; they are read, never copied into the repo.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -25,6 +25,7 @@ const { values } = parseArgs({
     prefix: { type: "string", default: "" },
     route: { type: "string", multiple: true, default: ["inicio=/"] },
     wait: { type: "string", default: "0" },
+    full: { type: "boolean", default: false },
   },
 });
 
@@ -77,7 +78,7 @@ async function capture(browser, route, profile, outDir) {
   // How far the page scrolls past the viewport: 0 means everything fits on one screen.
   const overflowPx = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
   const file = join(outDir, `${values.prefix}${route.name}_${id}.png`);
-  await page.screenshot({ path: file });
+  await page.screenshot({ path: file, fullPage: values.full });
   await context.close();
   return { route: route.path, viewport: id, file, overflow_px: overflowPx, problems, warnings };
 }

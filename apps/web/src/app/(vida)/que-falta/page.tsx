@@ -1,25 +1,19 @@
 import type { Metadata } from "next";
 
 import SiteFooter from "@/components/shell/SiteFooter";
-import Button from "@/components/ui/Button";
-import GlassCard from "@/components/ui/GlassCard";
+import ZoneGapsView from "@/components/zone/ZoneGapsView";
+import { parseZoneParam } from "@/lib/gaps";
 
-import styles from "../section.module.css";
+import styles from "./page.module.css";
 
 export const metadata: Metadata = { title: "Qué falta" };
 
-export default function QueFaltaPage() {
+export default async function QueFaltaPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { zona } = await searchParams;
+  const zone = parseZoneParam(zona);
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Qué falta</h1>
-      <GlassCard as="section" aria-labelledby="sin-zona" className={styles.card}>
-        <h2 id="sin-zona">Todavía no has elegido una zona</h2>
-        <p className={styles.text}>
-          Elige una zona en el mapa para ver qué le falta: colegios, centros de salud y otros servicios
-          del día a día, comparados con el conjunto de la Comunidad de Madrid.
-        </p>
-        <Button href="/">Ir al mapa</Button>
-      </GlassCard>
+      <ZoneGapsView zone={zone} invalid={zona !== undefined && zone === null} />
       <SiteFooter />
     </div>
   );
