@@ -37,10 +37,11 @@ function unit(level: string, code: string, name: string, parent: string | null, 
   };
 }
 
+// Names as /api/v1/geo/admin-units returns them since 12c834a: already readable.
 const municipios = [
-  unit("municipio", "28079", "MADRID", null, square(0, 0, 2)),
-  unit("municipio", "28092", "MOSTOLES", null, square(-2, -2)),
-  unit("municipio", "28127", "ROZAS DE MADRID, LAS", null, square(-2, 2)),
+  unit("municipio", "28079", "Madrid", null, square(0, 0, 2)),
+  unit("municipio", "28092", "Mostoles", null, square(-2, -2)),
+  unit("municipio", "28127", "Las Rozas de Madrid", null, square(-2, 2)),
 ];
 const distritos = [
   unit("distrito", "2807901", "Centro", "ES.28.MUN.28079", square(0, 0)),
@@ -60,7 +61,12 @@ describe("buildZoneCollection", () => {
     ]);
   });
 
-  it("uses readable names and remembers the municipio of each district", () => {
+  it("splits the municipios named by admin_unit_id (the ids asked with ?parent=)", () => {
+    const keys = buildZoneCollection(municipios, distritos, ["ES.28.MUN.28092"]).features.map((f) => f.properties.zone_key);
+    expect(keys).toEqual(["municipio/28079", "municipio/28127", "distrito/2809201"]);
+  });
+
+  it("keeps the API's readable names and remembers the municipio of each district", () => {
     expect(findZone(zones, "municipio", "28127")?.properties.name).toBe("Las Rozas de Madrid");
     const chamartin = findZone(zones, "distrito", "2807905");
     expect(chamartin?.properties).toMatchObject({ name: "Chamartín", municipio_name: "Madrid" });

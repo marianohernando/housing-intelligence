@@ -1,12 +1,14 @@
 /**
  * Zones of the map (pure, unit tested): the region by municipio with Madrid capital split into
- * its 21 districts (D-200), built from /api/v1/geo/admin-units.
+ * its 21 districts (D-200), built from /api/v1/geo/admin-units, which already gives readable names.
  */
 import type { AdminUnitProperties } from "@/lib/geo";
-import { displayName } from "@/lib/names";
 
-/** Municipios shown by district instead of as one block (D-200: Madrid capital, 3.3 M people). */
-export const MUNICIPIOS_BY_DISTRITO: readonly string[] = ["28079"];
+/**
+ * Municipios shown by district instead of as one block (D-200: Madrid capital, 3.3 M people), by
+ * admin_unit_id: the map asks /geo/admin-units?parent= for the districts of each one.
+ */
+export const MUNICIPIOS_BY_DISTRITO: readonly string[] = ["ES.28.MUN.28079"];
 
 export type ZoneLevel = "municipio" | "distrito";
 export type ZoneGeometry = GeoJSON.Polygon | GeoJSON.MultiPolygon;
@@ -37,7 +39,7 @@ function toZone(feature: AdminFeature, level: ZoneLevel, municipioName: string):
       admin_unit_id,
       level,
       code,
-      name: displayName(name ?? code),
+      name: name ?? code,
       municipio_name: municipioName,
       zone_key: `${level}/${code}`,
     },
@@ -47,13 +49,12 @@ function toZone(feature: AdminFeature, level: ZoneLevel, municipioName: string):
 export function buildZoneCollection(
   municipios: AdminFeature[],
   distritos: AdminFeature[],
-  splitCodes: readonly string[] = MUNICIPIOS_BY_DISTRITO,
+  splitIds: readonly string[] = MUNICIPIOS_BY_DISTRITO,
 ): ZoneCollection {
-  const split = municipios.filter((m) => splitCodes.includes(m.properties.code));
-  const splitNames = new Map(split.map((m) => [m.properties.admin_unit_id, displayName(m.properties.name ?? "")]));
-  const whole = municipios
-    .filter((m) => !splitCodes.includes(m.properties.code))
-    .map((m) => toZone(m, "municipio", displayName(m.properties.name ?? m.properties.code)));
+  const isSplit = (m: AdminFeature) => splitIds.includes(m.properties.admin_unit_id);
+  const nameOf = (m: AdminFeature) => m.properties.name ?? m.properties.code;
+  const splitNames = new Map(municipios.filter(isSplit).map((m) => [m.properties.admin_unit_id, nameOf(m)]));
+  const whole = municipios.filter((m) => !isSplit(m)).map((m) => toZone(m, "municipio", nameOf(m)));
   const districts = distritos.flatMap((d) => {
     const municipioName = d.properties.parent ? splitNames.get(d.properties.parent) : undefined;
     return municipioName === undefined ? [] : [toZone(d, "distrito", municipioName)];

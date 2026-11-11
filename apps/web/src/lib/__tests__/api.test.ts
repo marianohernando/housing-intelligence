@@ -96,9 +96,37 @@ describe("api client, routes used by the map", () => {
     expect(calls[0]?.url).toBe(`${BASE}/api/v1/geo/admin-units?level=distrito&simplify_m=25`);
   });
 
-  it("asks for the places of one category", async () => {
+  it("asks only for the districts of one municipio", async () => {
     const calls: Call[] = [];
-    await createApi(BASE, fakeFetch(200, envelope({ type: "FeatureCollection", features: [] }), calls)).places("transport");
-    expect(calls[0]?.url).toBe(`${BASE}/api/v1/places?category=transport`);
+    const api = createApi(BASE, fakeFetch(200, envelope({ type: "FeatureCollection", features: [] }), calls));
+    await api.adminUnits("distrito", 25, "ES.28.MUN.28079");
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES.28.MUN.28079`);
+  });
+
+  it("asks for a zone's places of one category, repeating subcategory", async () => {
+    const calls: Call[] = [];
+    const page = envelope({ type: "FeatureCollection", features: [], total: 0, page: 1, pages: 1 });
+    await createApi(BASE, fakeFetch(200, page, calls)).places({
+      category: "transport",
+      adminUnitId: "ES.28.DIS.2807905",
+      subcategories: ["metro", "cercanias"],
+    });
+    expect(calls.map((c) => c.url)).toEqual([
+      `${BASE}/api/v1/places?category=transport&admin_unit_id=ES.28.DIS.2807905&subcategory=metro&subcategory=cercanias`,
+    ]);
+  });
+
+  it("follows every page of places instead of cutting at the first", async () => {
+    const calls: Call[] = [];
+    const point = (id: string) => ({ type: "Feature", id, geometry: { type: "Point", coordinates: [0, 0] }, properties: {} });
+    const pages: FetchLike = async (url) => {
+      calls.push({ url: String(url) });
+      const n = Number(new URL(String(url)).searchParams.get("page") ?? "1");
+      const body = envelope({ type: "FeatureCollection", features: [point(`p${n}`)], total: 3, page: n, pages: 3 });
+      return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+    };
+    const places = await createApi(BASE, pages).places({ category: "education", adminUnitId: "ES.28.MUN.28092" });
+    expect(places.map((p) => p.id)).toEqual(["p1", "p2", "p3"]);
+    expect(calls.map((c) => new URL(c.url).searchParams.get("page"))).toEqual([null, "2", "3"]);
   });
 });

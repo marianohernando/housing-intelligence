@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { type PlaceFeature, pickKeyPoints, placesInZone } from "../map/places";
+import { keyPointQueries, type PlaceFeature, pickKeyPoints } from "../map/places";
 
 function place(name: string, category: string, subcategory: string, lon: number, lat: number, seccion = "ES.28.SEC.2807905001", municipio = "28079"): PlaceFeature {
   return {
@@ -11,18 +11,13 @@ function place(name: string, category: string, subcategory: string, lon: number,
   };
 }
 
-describe("placesInZone", () => {
-  const inside = place("CONCHA ESPINA", "transport", "metro", -3.677, 40.451);
-  const otherDistrict = place("SOL", "transport", "metro", -3.703, 40.417, "ES.28.SEC.2807901001");
-  const otherMunicipio = place("MOSTOLES CENTRAL", "transport", "cercanias", -3.86, 40.32, "ES.28.SEC.2809201001", "28092");
-  const noSection = place("SIN SECCION", "transport", "metro", -3.68, 40.45, "", "28079");
-
-  it("keeps a district's places by the census section they fall in", () => {
-    expect(placesInZone([inside, otherDistrict, otherMunicipio, noSection], { level: "distrito", code: "2807905" })).toEqual([inside]);
-  });
-
-  it("keeps a municipio's places by their municipio code", () => {
-    expect(placesInZone([inside, otherMunicipio], { level: "municipio", code: "28092" })).toEqual([otherMunicipio]);
+describe("keyPointQueries", () => {
+  it("asks the API only for the classes that can become key points, one query per category", () => {
+    expect(keyPointQueries()).toEqual([
+      { category: "transport", subcategories: ["cercanias", "metro", "metro_ligero"] },
+      { category: "health", subcategories: ["Centro de salud", "Hospital general", "Consultorio de atención primaria"] },
+      { category: "education", subcategories: ["COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA"] },
+    ]);
   });
 });
 

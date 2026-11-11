@@ -1,7 +1,8 @@
 /**
  * Key points of a zone for the 3D view (pure, unit tested): a few real places from
- * /api/v1/places, inside the zone, labelled in plain words (pitch/textos_web.md, mapa.3d.*).
+ * /api/v1/places, which filters them by zone, labelled in plain words (pitch/textos_web.md, mapa.3d.*).
  */
+import type { PlaceCategory } from "@/lib/api";
 import { titleCase } from "@/lib/names";
 
 export interface PlaceProperties {
@@ -28,18 +29,9 @@ export interface KeyPoint {
   lat: number;
 }
 
-/** The section code starts with the district code (5 municipio + 2 district + 3 section digits). */
-function sectionCode(seccion: string | null): string {
-  return seccion?.split(".").at(-1) ?? "";
-}
-
-export function placesInZone(places: PlaceFeature[], zone: { level: string; code: string }): PlaceFeature[] {
-  if (zone.level === "municipio") return places.filter((p) => p.properties.municipio === zone.code);
-  return places.filter((p) => sectionCode(p.properties.seccion).startsWith(zone.code));
-}
-
 interface Rule {
   kind: KeyPointKind;
+  category: PlaceCategory;
   limit: number;
   /** Subcategories in order of preference, each with its label */
   classes: { subcategory: string; label: string }[];
@@ -48,6 +40,7 @@ interface Rule {
 const RULES: Rule[] = [
   {
     kind: "transporte",
+    category: "transport",
     limit: 2,
     classes: [
       { subcategory: "cercanias", label: "Estación" },
@@ -57,6 +50,7 @@ const RULES: Rule[] = [
   },
   {
     kind: "salud",
+    category: "health",
     limit: 1,
     classes: [
       { subcategory: "Centro de salud", label: "Centro de salud" },
@@ -66,10 +60,16 @@ const RULES: Rule[] = [
   },
   {
     kind: "colegio",
+    category: "education",
     limit: 1,
     classes: [{ subcategory: "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", label: "Colegio" }],
   },
 ];
+
+/** What to ask /api/v1/places for: only the classes that can become key points, per category. */
+export function keyPointQueries(): { category: PlaceCategory; subcategories: string[] }[] {
+  return RULES.map((rule) => ({ category: rule.category, subcategories: rule.classes.map((c) => c.subcategory) }));
+}
 
 /** «Centro de salud (Madrid)» only repeats the type: the source has no proper name for it. */
 function properName(place: PlaceFeature): string | null {

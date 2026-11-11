@@ -4,7 +4,13 @@ import { useParams } from "next/navigation";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { ApiError, createApi } from "@/lib/api";
-import { buildZoneCollection, findZone, type ZoneCollection, type ZoneFeature } from "@/lib/map/zones";
+import {
+  buildZoneCollection,
+  findZone,
+  MUNICIPIOS_BY_DISTRITO,
+  type ZoneCollection,
+  type ZoneFeature,
+} from "@/lib/map/zones";
 
 /** Simplification of the outlines: municipios are seen from far, districts up close. */
 const SIMPLIFY_M = { municipio: 50, distrito: 25 } as const;
@@ -41,9 +47,13 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const api = createApi();
     let cancelled = false;
-    Promise.all([api.adminUnits("municipio", SIMPLIFY_M.municipio), api.adminUnits("distrito", SIMPLIFY_M.distrito)])
-      .then(([municipios, distritos]) => {
-        if (!cancelled) setZones(buildZoneCollection(municipios.data.features, distritos.data.features));
+    Promise.all([
+      api.adminUnits("municipio", SIMPLIFY_M.municipio),
+      ...MUNICIPIOS_BY_DISTRITO.map((parent) => api.adminUnits("distrito", SIMPLIFY_M.distrito, parent)),
+    ])
+      .then(([municipios, ...distritos]) => {
+        const features = distritos.flatMap((d) => d.data.features);
+        if (!cancelled) setZones(buildZoneCollection(municipios.data.features, features));
       })
       .catch((exc: unknown) => {
         if (!cancelled) setError(exc instanceof ApiError ? exc : new ApiError(0, "NETWORK", String(exc)));

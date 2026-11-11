@@ -1,21 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { displayName, titleCase } from "../names";
-
-describe("displayName (same cases as tests/unit/geo/test_names.py)", () => {
-  it.each([
-    ["MADRID", "Madrid"],
-    ["ROZAS DE MADRID, LAS", "Las Rozas de Madrid"],
-    ["ALAMO, EL", "El Alamo"],
-    ["SAN SEBASTIAN DE LOS REYES", "San Sebastian de los Reyes"],
-    ["VILLANUEVA DE LA CAÑADA", "Villanueva de la Cañada"],
-    ["  TORREJON   DE ARDOZ ", "Torrejon de Ardoz"],
-    ["Fuencarral-El Pardo", "Fuencarral-El Pardo"],
-    ["Chamartín", "Chamartín"],
-  ])("%s -> %s", (official, readable) => {
-    expect(displayName(official)).toBe(readable);
-  });
-});
+import { titleCase } from "../names";
 
 describe("titleCase (place names in upper case, e.g. metro stations)", () => {
   it("capitalises words and keeps Spanish particles in lower case", () => {

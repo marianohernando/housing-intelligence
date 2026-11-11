@@ -21,7 +21,27 @@ export type PlaceCategory = "transport" | "health" | "education" | "social";
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
-export type PlacesResponse = Envelope<{ type: "FeatureCollection"; features: PlaceFeature[] }>;
+export type PlacesResponse = Envelope<{
+  type: "FeatureCollection";
+  features: PlaceFeature[];
+  total: number;
+  page: number;
+  pages: number;
+}>;
+
+/** A zone's places of one category. The map always asks by zone, never for a whole layer. */
+export interface PlacesQuery {
+  category: PlaceCategory;
+  adminUnitId: string;
+  subcategories?: readonly string[];
+}
+
+function placesPath({ category, adminUnitId, subcategories = [] }: PlacesQuery, page: number): string {
+  const params = new URLSearchParams({ category, admin_unit_id: adminUnitId });
+  for (const subcategory of subcategories) params.append("subcategory", subcategory);
+  if (page > 1) params.set("page", String(page));
+  return `/api/v1/places?${params.toString()}`;
+}
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 
@@ -73,13 +93,17 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     datasets({ cmOnly = false }: { cmOnly?: boolean } = {}) {
       return call<DatasetListResponse>(`/api/v1/datasets${cmOnly ? "?cm_only=true" : ""}`);
     },
-    /** GET /api/v1/geo/admin-units: zone outlines, simplified by `simplifyM` metres. */
-    adminUnits(level: AdminLevel, simplifyM: number) {
-      return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM));
+    /** GET /api/v1/geo/admin-units: zone outlines, simplified by `simplifyM` metres, optionally one unit's children. */
+    adminUnits(level: AdminLevel, simplifyM: number, parent?: string) {
+      return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent));
     },
-    /** GET /api/v1/places: facilities of one category as points. */
-    places(category: PlaceCategory) {
-      return call<PlacesResponse>(`/api/v1/places?category=${category}`);
+    /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
+    async places(query: PlacesQuery): Promise<PlaceFeature[]> {
+      const first = await call<PlacesResponse>(placesPath(query, 1));
+      const rest = await Promise.all(
+        Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
+      );
+      return [first, ...rest].flatMap((body) => body.data.features);
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check. */
     search(scenario: ScenarioState) {

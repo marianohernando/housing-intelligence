@@ -297,3 +297,40 @@ Sobre `origin/claude/sprint-1-public` en `6d02abb` (con `d3127d3` y `d7037b7` de
 ## Pendiente
 - **En móvil, Chamartín se ve en 2D:** el distrito entero cabe por debajo del zoom 14, y ahí OpenFreeMap no trae alturas. Se trata junto al encuadre «isla» que pide datamad-10, en la fase de pulido.
 - **Para D:** el texto de la hoja abierta («Ver el mapa»).
+
+---
+
+# MAP-004 Fase 5b — API nueva de A para puntos clave y distritos (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `ec126b0` (con `d7037b7`, `12c834a` y `879101a` de A).
+
+## Por qué
+Desde `879101a`, `/places` va en páginas de 5.000. La web pedía capas enteras: de transporte solo habría llegado la página 1 (5.000 de 14.982 paradas), sin aviso, y cada zona descargaba unos 4,4 MB. Además, para usar 21 distritos se bajaban 246.
+
+## Qué cambia
+- **Puntos clave:** `api.places({ category, adminUnitId, subcategories })` pide por zona y repite `subcategory`. Si `data.pages > 1`, pide el resto de páginas en vez de cortar.
+- **Qué se pide:** `keyPointQueries()` se deriva de las mismas reglas que eligen los puntos (`RULES`), así que las subcategorías siguen en un solo sitio. La caché va por zona (`admin_unit_id`).
+- **Zona:** fuera `placesInZone`. A filtra en servidor con la misma regla: la sección donde cae el lugar.
+- **Distritos:** `/geo/admin-units?level=distrito&parent=ES.28.MUN.28079`. `MUNICIPIOS_BY_DISTRITO` pasa a `admin_unit_id` (D-200).
+- **Nombres:** fuera la réplica de `display_name`, porque la API ya da nombres legibles. `titleCase` se queda para los nombres de `/places`, que siguen en mayúsculas.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` / `typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 17 ficheros, 133 tests. Nuevos: páginas de `/places`, `subcategory` repetida, `parent` (×2), `keyPointQueries` y partición por `admin_unit_id`. Fuera: 8 casos de `displayName` y 2 de `placesInZone` |
+| `npm run -w apps/web build` | 0 |
+| `make lint typecheck test-unit` | 0 (275 pytest, 133 vitest) |
+| `capture -- --prefix f5b_ …` | 6 capturas (inicio, Chamartín y Móstoles a 1440 y 390 px), sin errores en la consola y con `overflow_px: 0` |
+
+## Red (`f5b_red.txt`)
+- **Chamartín:** los puntos clave pasan de unos 3,9 MB a 9.932 B, en 3 peticiones filtradas. La pantalla de zona entera pide 384 KB a la API.
+- **Distritos:** de 537.540 B a 31.867 B.
+- **Ninguna petición sin filtro** en `/`, `/zona/distrito/2807905` ni `/zona/municipio/28092`.
+- **Mismos puntos clave que antes:**
+  - Chamartín: Madrid-Chamartín-Clara Campoamor, Concha Espina, centro de salud y Padre Poveda (`f5b_chamartin_desktop_vs_mockup.jpg`);
+  - Móstoles: Móstoles-El Soto y Hospital de Móstoles.
+
+## Pendiente
+- **`/map`:** la página heredada, que la demo no enlaza, sigue pidiendo capas enteras con su propio `fetch`. Ahora solo verá la página 1 de transporte. Fuera del alcance de la demo.
+- **«Mostoles» sin tilde:** así viene en la fuente, y la API no la repone.

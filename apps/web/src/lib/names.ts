@@ -1,10 +1,9 @@
 /**
- * Readable place names. `displayName` mirrors hi_domain.geo.names.display_name (same test cases),
- * because /api/v1/geo/admin-units still returns municipios in the official upper case.
+ * Readable place names. Zone names come readable from the API (display_name, since 12c834a);
+ * /api/v1/places keeps the upper case of some sources (metro stations, schools).
  */
 
 const LOWER_PARTICLES = new Set(["de", "del", "la", "las", "los", "el", "y", "e", "en"]);
-const ARTICLES = new Set(["el", "la", "los", "las"]);
 
 function isUpper(text: string): boolean {
   return text === text.toUpperCase() && text !== text.toLowerCase();
@@ -23,16 +22,4 @@ export function titleCase(text: string): string {
     .split(" ")
     .map((word, i) => (i > 0 && LOWER_PARTICLES.has(word) ? word : word.split("-").map(capitalize).join("-")))
     .join(" ");
-}
-
-/** "ROZAS DE MADRID, LAS" -> "Las Rozas de Madrid". Accents missing in the source stay so. */
-export function displayName(official: string): string {
-  let name = official.trim().split(/\s+/).join(" ");
-  if (!isUpper(name)) return name;
-  const comma = name.lastIndexOf(", ");
-  if (comma >= 0) {
-    const article = name.slice(comma + 2);
-    if (ARTICLES.has(article.toLowerCase())) name = `${article} ${name.slice(0, comma)}`;
-  }
-  return titleCase(name);
 }

@@ -15,8 +15,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { createApi, type PlaceCategory } from "@/lib/api";
-import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints, placesInZone } from "@/lib/map/places";
+import { createApi } from "@/lib/api";
+import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
 import { cameraPadding, MOBILE_QUERY, ZONE_BEARING, ZONE_PITCH, zoneZoom } from "@/lib/map/camera";
 import { baseStyle, BUILDING_LAYER, MAP_PALETTE_TOKENS, type MapPalette, ZONE_BASE, zoneLayers } from "@/lib/map/style";
 import {
@@ -39,7 +39,6 @@ const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const FLIGHT_MS = 2800;
-const KEY_POINT_CATEGORIES: PlaceCategory[] = ["transport", "health", "education"];
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 const NO_POINTS: KeyPoint[] = [];
 /** Room a label needs around its pin (it is centred above it), beyond the cards' padding. */
@@ -160,18 +159,17 @@ function showZone(map: MapLibreMap, zone: ZoneFeature, onLanded: () => void): ()
   };
 }
 
-function loadPlaces(cache: Map<PlaceCategory, Promise<PlaceFeature[]>>): Promise<PlaceFeature[]> {
-  const api = createApi();
-  const lists = KEY_POINT_CATEGORIES.map((category) => {
-    let request = cache.get(category);
-    if (!request) {
-      request = api.places(category).then((body) => body.data.features);
-      cache.set(category, request);
-      request.catch(() => cache.delete(category));
-    }
-    return request;
-  });
-  return Promise.all(lists).then((all) => all.flat());
+/** The zone's candidate key points, asked by zone and subcategory (a few KB, not whole layers). */
+function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: string): Promise<PlaceFeature[]> {
+  let request = cache.get(adminUnitId);
+  if (!request) {
+    const api = createApi();
+    const lists = keyPointQueries().map((query) => api.places({ ...query, adminUnitId }));
+    request = Promise.all(lists).then((all) => all.flat());
+    cache.set(adminUnitId, request);
+    request.catch(() => cache.delete(adminUnitId));
+  }
+  return request;
 }
 
 export default function VidaMap() {
@@ -179,7 +177,7 @@ export default function VidaMap() {
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const placesCache = useRef(new Map<PlaceCategory, Promise<PlaceFeature[]>>());
+  const placesCache = useRef(new Map<string, Promise<PlaceFeature[]>>());
   const shownOverview = useRef(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
@@ -263,11 +261,11 @@ export default function VidaMap() {
     if (!map || !activeZone || landed !== activeZone.properties.zone_key) return;
     let cancelled = false;
     const [west, south, east, north] = boundsOf(activeZone.geometry);
-    loadPlaces(placesCache.current)
+    loadPlaces(placesCache.current, activeZone.properties.admin_unit_id)
       .then((places) => {
         if (cancelled) return;
         const center: [number, number] = [(west + east) / 2, (south + north) / 2];
-        const points = pickKeyPoints(placesInZone(places, activeZone.properties), center, labelOptions(map));
+        const points = pickKeyPoints(places, center, labelOptions(map));
         setKeyPoints({ key: activeZone.properties.zone_key, points });
       })
       .catch(() => {
