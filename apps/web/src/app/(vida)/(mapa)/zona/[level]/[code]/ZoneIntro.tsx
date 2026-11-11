@@ -56,10 +56,13 @@ export default function ZoneIntro() {
         <Button href="/" variant="secondary" className={styles.back}>
           {TEXT.back}
         </Button>
-        <SearchCard collapsible />
       </div>
+      {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
         <ZoneCard zone={activeZone} mode="zone" />
+      </div>
+      <div className={styles.search}>
+        <SearchCard collapsible />
       </div>
     </div>
   );

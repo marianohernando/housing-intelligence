@@ -1,0 +1,86 @@
+/* Desktop: no sheet, the content flows over the map as before */
+.sheet,
+.content {
+  display: contents;
+}
+
+.handle {
+  display: none;
+}
+
+/*
+ * Mobile: a bottom sheet. No transform or backdrop-filter on it, so fixed children (the legend)
+ * still place themselves against the screen.
+ */
+@media (max-width: 760px) {
+  .sheet {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    height: var(--sheet-peek);
+    border-top: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: rgba(246, 245, 252, 0.97);
+    box-shadow: 0 -10px 32px rgba(20, 27, 61, 0.14);
+    pointer-events: auto;
+    transition: height var(--duration-slow) var(--ease);
+  }
+
+  /* Open: up to just below the header (brand and tabs stay usable) */
+  .sheet[data-sheet="open"] {
+    height: calc(100dvh - 7.25rem);
+  }
+
+  .handle {
+    display: grid;
+    flex: none;
+    justify-items: center;
+    gap: var(--space-1);
+    min-height: var(--target);
+    padding: var(--space-2) var(--space-4) var(--space-1);
+    border: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: none;
+    color: var(--violet-strong);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .handle:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: -3px;
+  }
+
+  .grip {
+    width: 44px;
+    height: 5px;
+    border-radius: var(--radius-pill);
+    background: var(--control-border);
+  }
+
+  .handleText {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .flip {
+    transform: rotate(180deg);
+  }
+
+  .content {
+    display: block;
+    flex: 1;
+    min-height: 0;
+    padding: 0 var(--space-4) var(--space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}

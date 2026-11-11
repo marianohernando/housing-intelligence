@@ -50,8 +50,29 @@
   font-size: 0.8rem;
 }
 
+/* Mobile: compact, just above the folded bottom sheet; hidden while the sheet is open */
 @media (max-width: 760px) {
   .legend {
+    bottom: calc(var(--sheet-peek) + var(--space-2));
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Before the first search the ramp means nothing yet: on the small map, only the hint */
+  .waiting :is(.ramp, .ends, .noData) {
+    display: none;
+  }
+
+  :global([data-sheet="open"]) .legend {
     display: none;
   }
 }

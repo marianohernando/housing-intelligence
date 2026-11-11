@@ -17,7 +17,7 @@ const TEXT = {
 export default function Legend() {
   const { result } = useScenario();
   return (
-    <figure className={`glass ${styles.legend}`} aria-labelledby="leyenda-titulo">
+    <figure className={`glass ${styles.legend} ${result ? "" : styles.waiting}`} aria-labelledby="leyenda-titulo">
       <figcaption id="leyenda-titulo" className={styles.title}>
         {TEXT.title}
       </figcaption>

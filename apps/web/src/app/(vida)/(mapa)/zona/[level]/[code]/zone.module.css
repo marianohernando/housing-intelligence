@@ -2,13 +2,19 @@
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 28rem) 1fr minmax(0, 23rem);
-  gap: var(--space-6);
+  gap: var(--space-4) var(--space-6);
   align-items: start;
 }
 
 .side {
   grid-column: 3;
+  grid-row: 1 / span 2;
   margin-top: var(--space-6);
+}
+
+.search {
+  grid-column: 1;
+  max-width: 28rem;
 }
 
 .page {
@@ -101,6 +107,7 @@
 
   .side {
     grid-column: 1;
+    grid-row: auto;
     margin-top: 0;
   }
 }

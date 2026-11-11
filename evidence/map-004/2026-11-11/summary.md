@@ -255,3 +255,45 @@ Sobre `origin/claude/sprint-1-public` en `ad31fc8`. Recoge las notas de datamad-
 - **F5:** hoja inferior en móvil, donde ahora el contenido tapa el mapa.
 - **F8:** pintar como SIN DATOS las filas de `/gaps` con aviso `INSUFFICIENT_DATA: row … not computed at … level yet` (A, `d3127d3`), en la tarjeta de zona y en «Qué falta».
 - **Nombres sin tilde:** el municipio se muestra «Mostoles» porque `/geo/admin-units` lo devuelve en mayúsculas y sin tilde («MOSTOLES»). `displayName` no puede reponer tildes que no vienen en el dato.
+
+---
+
+# MAP-004 Fase 5 — Hoja inferior en móvil (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `6d02abb` (con `d3127d3` y `d7037b7` de A).
+
+## Qué hay
+- **`MapSheet`**: en móvil (≤ 760 px) todo el contenido va en una hoja inferior y el mapa queda a la vista.
+  - Plegada ocupa el 45 % de la pantalla (`SHEET_PEEK`); abierta llega justo debajo de la cabecera, que sigue usable.
+  - El tirador es un botón de verdad, con `aria-expanded` y `aria-controls`: se maneja tocando, con Intro o Espacio, y también deslizando hacia arriba o hacia abajo.
+  - Texto: «Desliza hacia arriba para ver más» (`movil.hoja.tirador`). Abierta dice «Ver el mapa», provisional y pendiente de D.
+  - Sin `transform` ni `backdrop-filter` en la hoja, para que los hijos fijos (la leyenda) se sigan colocando respecto a la pantalla.
+  - En escritorio no se dibuja: `display: contents`.
+- **`cameraPadding`** (pura, con tests): en móvil, la cámara encuadra entre la cabecera y la hoja plegada. Las etiquetas de los puntos clave usan ese mismo hueco.
+- **Leyenda en móvil:**
+  - va compacta, justo encima de la hoja, y se oculta al abrirla;
+  - antes de la primera búsqueda solo muestra «Haz tu búsqueda para ver qué zonas encajan contigo.», porque la escala aún no significa nada;
+  - el título se mantiene accesible.
+- **Pantalla de zona:** la tarjeta de zona («Qué falta aquí») va delante de «Tu búsqueda» en el DOM, así que en móvil sale antes. En escritorio no cambia: la columna derecha abarca dos filas.
+- **Vista general en móvil:** al elegir una zona en el mapa, su tarjeta se desplaza a la vista dentro de la hoja.
+- **Velo de lectura:** desaparece en móvil, porque el texto ya va sobre la hoja.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` / `typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 17 ficheros, 138 tests (nuevos: 3 de `cameraPadding`) |
+| `npm run -w apps/web build` | 0 |
+| `make lint typecheck test-unit` | 0 (269 pytest, 138 vitest) |
+| `capture -- --prefix f5_ …` | 6 capturas sin errores en la consola; `overflow_px: 0` en las seis, también en móvil (antes, de 161 a 834) |
+
+## Hoja en móvil con Playwright (`f5_hoja_movil.json`, 390×844)
+- Plegada: 380 px y `aria-expanded="false"`.
+- Con Tab se llega al tirador; Intro la abre (721 px y `aria-expanded="true"`) y la leyenda se oculta.
+- «Ver zonas que encajan» se alcanza dentro de la hoja abierta.
+- Espacio la pliega y deslizar hacia arriba la abre.
+- Sin errores en la consola. `f5_inicio_mobile_abierta.png` es la hoja abierta con el foco en el tirador.
+
+## Pendiente
+- **En móvil, Chamartín se ve en 2D:** el distrito entero cabe por debajo del zoom 14, y ahí OpenFreeMap no trae alturas. Se trata junto al encuadre «isla» que pide datamad-10, en la fase de pulido.
+- **Para D:** el texto de la hoja abierta («Ver el mapa»).

@@ -17,7 +17,7 @@ import { createPortal } from "react-dom";
 
 import { createApi, type PlaceCategory } from "@/lib/api";
 import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints, placesInZone } from "@/lib/map/places";
-import { ZONE_BEARING, ZONE_PITCH, zoneZoom } from "@/lib/map/camera";
+import { cameraPadding, MOBILE_QUERY, ZONE_BEARING, ZONE_PITCH, zoneZoom } from "@/lib/map/camera";
 import { baseStyle, BUILDING_LAYER, MAP_PALETTE_TOKENS, type MapPalette, ZONE_BASE, zoneLayers } from "@/lib/map/style";
 import {
   boundsOf,
@@ -36,7 +36,7 @@ import { useMapZones } from "./MapProvider";
 import styles from "./VidaMap.module.css";
 
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
-const MOBILE = "(max-width: 760px)";
+const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const FLIGHT_MS = 2800;
 const KEY_POINT_CATEGORIES: PlaceCategory[] = ["transport", "health", "education"];
@@ -65,13 +65,8 @@ function readPalette(): MapPalette {
   return Object.fromEntries(entries) as MapPalette;
 }
 
-/** Room for the glass cards: search on the left, zone on the right, bottom sheet on mobile. */
 function padding(mode: "overview" | "zone") {
-  if (matches(MOBILE)) return mode === "zone" ? { top: 380, right: 0, bottom: 40, left: 0 } : { top: 150, right: 16, bottom: 200, left: 16 };
-  // Zone view: a district at building zoom is wider than the gap, and the glass cards let the
-  // map show through, so the side padding is smaller there.
-  if (mode === "zone") return { top: 90, right: 380, bottom: 200, left: 440 };
-  return { top: 100, right: 460, bottom: 40, left: 500 };
+  return cameraPadding(mode, { mobile: matches(MOBILE), height: window.innerHeight });
 }
 
 /** Key points are labelled only where the label is seen whole: between the cards and apart from each other. */
