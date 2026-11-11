@@ -1,7 +1,8 @@
 """Generate a Quality Gate evidence folder (docs/11_engineering/23_evidence_artifact_standard.md).
 
 Usage: uv run python scripts/evidence.py --gate 00 [--date YYYY-MM-DD]
-Every check runs a real command; its output is stored next to summary.md.
+Every check runs a real command; its output is stored next to summary.md, with local home and
+scratchpad paths replaced (scripts/redact_paths.py).
 """
 
 import argparse
@@ -13,6 +14,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
+
+from redact_paths import redact
 
 REPO = Path(__file__).resolve().parents[1]
 CURRENT_BRANCH = subprocess.run(
@@ -443,14 +446,14 @@ def main() -> int:
     out_dir = REPO / "evidence" / f"gate-{args.gate}" / args.date
     out_dir.mkdir(parents=True, exist_ok=True)
     env = environment()
-    (out_dir / "environment.json").write_text(json.dumps(env, indent=2) + "\n")
+    (out_dir / "environment.json").write_text(redact(json.dumps(env, indent=2)) + "\n")
 
     rows: list[tuple[str, str, bool]] = []
     for check in GATES[args.gate]:
         result = _run(check.command)
         passed = check.validate(result)
         header = f"$ {' '.join(check.command)}\n# exit {result.returncode}\n\n"
-        log = header + f"{result.stdout}\n{result.stderr}"
+        log = redact(header + f"{result.stdout}\n{result.stderr}")
         (out_dir / f"{check.check_id}.txt").write_text(log)
         rows.append((check.check_id, check.criterion, passed))
         print(f"{'PASS' if passed else 'FAIL'}  {check.criterion}")
