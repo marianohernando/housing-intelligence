@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import loaders, methods
+from hi_features import loaders, methods, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
@@ -63,12 +63,41 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
     )
 
 
+def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """CORE-005: walking access to the nearest destination of a kind, by zone."""
+    version = walk.network_version(engine)
+    origins = walk.origins(engine, version.path, tuple(f["origin_highways"]))
+    distance = walk.distances(
+        engine,
+        version.path,
+        f["destination_category"],
+        tuple(f.get("subcategories") or ()),
+        walk.frozen_attributes(f.get("attributes")),
+    )
+    settings = methods.WalkSettings(
+        statistic=f["statistic"],
+        speed_m_per_min=float(f["speed_kmh"]) * 1000 / 60,
+        within_min=float(f.get("within_minutes", 0)),
+        base_confidence=float(f.get("confidence", 1.0)),
+        min_street_m=float(f["min_street_m"]),
+    )
+    return methods.walk_access(
+        walk.zone_of_node(origins.section, level),
+        origins.weight,
+        distance[origins.node],
+        walk.zone_codes(engine, level),
+        version.observed,
+        settings,
+    )
+
+
 METHODS: dict[str, Method] = {
     "metric_value": _metric_value,
     "metric_share": _metric_share,
     "metric_weighted_mean": _metric_weighted_mean,
     "places_per_population": _places_per_population,
     "place_attribute_per_population": _place_attribute_per_population,
+    "network_walk_time": _network_walk_time,
 }
 
 

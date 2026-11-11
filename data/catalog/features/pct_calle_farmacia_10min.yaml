@@ -1,0 +1,34 @@
+feature_id: pct_calle_farmacia_10min
+version: 1
+human_name: "% de las calles de la zona a 10 minutos a pie o menos de una farmacia"
+domain: health
+type: derived
+unit: "% de calle"
+direction: higher_is_better
+geo_level: seccion_censal
+time_semantics: current
+sources:
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: cm_oficinas_farmacia, role: primary}
+formula:
+  method: network_walk_time
+  destination_category: health
+  subcategories: ["Farmacia"]
+  statistic: share_within
+  within_minutes: 10
+  speed_kmh: 4.5
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  min_street_m: 300  # less origin street than this -> confidence 0.5 at most
+  levels: {municipio: {}, distrito: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [reachable_street_share, min_street_m]}
+public_use: true
+pro_use: true
+models: [residential_fit]
+tests: [range_0_100, explicit_null_without_streets, unknown_never_near]
+limitations:
+  - "No tiene en cuenta horarios ni guardias."
+  - "Velocidad de 4,5 km/h para todo el mundo: con movilidad reducida o con carrito los minutos son más."
+  - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
+  - "Cada destino se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
+  - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."

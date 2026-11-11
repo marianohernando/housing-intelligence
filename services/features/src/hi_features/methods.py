@@ -7,11 +7,15 @@ not at the feature's own level (the regional reference), territory_level.
 """
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import Any
 
+import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 
 from hi_contracts.catalog.enums import NullReason
+from hi_domain.access.walk import access_confidence, summarise_zones
 
 RESULT_COLUMNS = [
     "territory_code",
@@ -169,7 +173,7 @@ def _population(
     return pop
 
 
-def _place_filter(
+def place_filter(
     places: pd.DataFrame,
     subcategories: Sequence[str] | None,
     attributes: Mapping[str, Sequence[str]] | None,
@@ -243,13 +247,80 @@ def places_per_population(
     small_population: float = 0.0,
 ) -> pd.DataFrame:
     counts: dict[str, float] = {}
-    for record in _place_filter(places, subcategories, attributes):
+    for record in place_filter(places, subcategories, attributes):
         code = record["territory_code"]
         if code:
             counts[code] = counts.get(code, 0.0) + 1.0
     return _per_population(
         counts, _population(population, population_dims), per, {}, small_population
     )
+
+
+WALK_STATISTICS = ("median_minutes", "share_within")
+
+
+@dataclass(frozen=True)
+class WalkSettings:
+    statistic: str  # one of WALK_STATISTICS
+    speed_m_per_min: float
+    within_min: float
+    base_confidence: float
+    min_street_m: float  # zones with less origin street keep confidence 0.5 at most
+
+    def __post_init__(self) -> None:
+        if self.statistic not in WALK_STATISTICS:
+            msg = f"unknown walking statistic {self.statistic!r} (known: {WALK_STATISTICS})"
+            raise ValueError(msg)
+
+
+def _walk_rows(
+    codes: Sequence[str],
+    zone: NDArray[np.int64],
+    weight: NDArray[np.float64],
+    distance_m: NDArray[np.float64],
+    period: Any,
+    settings: WalkSettings,
+) -> list[dict[str, Any]]:
+    within_m = settings.within_min * settings.speed_m_per_min
+    summary = summarise_zones(zone, weight, distance_m, len(codes), within_m)
+    confidence = access_confidence(
+        summary.reachable_share(),
+        summary.street_m,
+        settings.base_confidence,
+        settings.min_street_m,
+    )
+    if settings.statistic == "median_minutes":
+        values = summary.median_m / settings.speed_m_per_min
+    else:
+        values = 100.0 * summary.within_share
+    rows: list[dict[str, Any]] = []
+    for i, code in enumerate(codes):
+        if summary.street_m[i] <= 0:  # no origin street mapped in the zone
+            rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+        elif summary.reachable_m[i] <= 0:  # its streets are cut off from every destination
+            rows.append(_null(code, period, NullReason.UNKNOWN))
+        else:
+            rows.append(_ok(code, period, float(values[i]), float(confidence[i])))
+    return rows
+
+
+def walk_access(
+    zone_of_node: NDArray[np.str_],
+    weight: NDArray[np.float64],
+    distance_m: NDArray[np.float64],
+    zones: Sequence[str],
+    period: Any,
+    settings: WalkSettings,
+) -> pd.DataFrame:
+    """Per zone: street-weighted median minutes to the nearest destination, or % of street
+    within `within_min`. Every zone gets a row (null when it has no reachable origin street),
+    plus the regional reference pooling every node that lies in some zone."""
+    index = {code: i for i, code in enumerate(zones)}
+    zone = np.array([index.get(str(c), -1) for c in zone_of_node], dtype=np.int64)
+    in_region = np.where(zone >= 0, 0, -1)
+    rows = _walk_rows(zones, zone, weight, distance_m, period, settings)
+    region = _walk_rows([REGION_CODE], in_region, weight, distance_m, period, settings)
+    return _result([*rows, *(r | {"territory_level": REGION_LEVEL} for r in region)])
 
 
 def place_attribute_per_population(
@@ -265,7 +336,7 @@ def place_attribute_per_population(
     sums: dict[str, float] = {}
     seen: dict[str, int] = {}
     known: dict[str, int] = {}
-    for record in _place_filter(places, subcategories, None):
+    for record in place_filter(places, subcategories, None):
         code = record["territory_code"]
         if not code:
             continue
