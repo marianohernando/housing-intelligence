@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 y PR #7 de C integrados).
+Última actualización: 2026-11-11 (noche: CORE-005 DONE con Gate 3 PASS y D-210; las peticiones de B a la API están cerradas y `/places` va paginada; PR #6 y PR #7 de C integrados; distancia a pie a 4 km/h con D-211 y Gate 3 PASS, a la espera del sync único de Supabase).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 11 nov | A | CORE-005 · Fase 5 (4 km/h) | verde · G3 PASS | `ad2129a` | `evidence/gate-03/2026-11-11/phase-core005-f5.txt`, `summary.md` | Las 12 features a pie pasan a 4 km/h y a la versión 2 (D-211, fuente: «El Madrid de los 15 minutos» del Ayuntamiento). Los minutos suben un 12,5 %. Los 15 golden cumplen sin tocar los límites y hay 0 desacuerdos entre mediana y %. Chamartín: centro de salud 9,5 min y farmacia 2,6 |
 | 11 nov | C → A | OPS-001 · PR #7 integrado | CI verde + gate local verde | `93af627` | `evidence/gate-06/2026-11-11/merge-pr7.txt`, `evidence/gate-06/2026-11-11-deploy/deploy-6-paginated.md` | El README explica el reintento único del smoke a los 20 s. El smoke gana el check `largest` (página 1 de transporte, unos 1,4 MB): 7/7 en producción con `/places` paginada y 6/6 en el paquete offline. Revisado con `reviewer`: fusionar; pendiente menor de C: exigir `.data.pages >= 1` en el filtro |
 | 11 nov | A | CORE-005 · Fase 4 (cierre) | verde · G3 PASS | `fc025b6` | `evidence/gate-03/2026-11-11/summary.md`, `phase-core005-f4.txt` | Ejecución real: 24 features en 29 s. 15 casos golden (Sol, Plaza de Castilla, Centro, Getafe, Alcalá, La Acebeda sin farmacia y la región) y coherencia mediana/% en 4.819 zonas por destino. D-210 con velocidad, ventanas, destinos y calles de origen. **CORE-005 DONE** |
 | 11 nov | A | Mantenimiento CI | verde | `29a688e`, `bc60e1f` | `evidence/gate-04/2026-11-11/docs-manifest-0.5.19.txt` | La CI de la rama estaba en rojo desde `6d02abb` porque faltaba regenerar el manifest de docs. Ahora `make lint` comprueba también los schemas y el manifest, igual que la CI |
@@ -84,6 +85,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - Fase 2 `e31770b`: dominio puro de accesibilidad con tests de propiedades (`evidence/gate-03/2026-11-11`).
   - Fase 3 `23b7531`: método `network_walk_time` y 12 features (6 destinos × mediana de minutos y % de calle dentro de la ventana) en sección, municipio y distrito, con referencia regional. Evidencia en `evidence/gate-03/2026-11-11/phase-core005-f3.txt`. El H3 r9 queda para cuando lo pida la vista 3D (serían unas 300.000 filas más en Supabase).
   - Fase 4 `fc025b6`: ejecución real (24 features en 29 s), 15 casos golden y coherencia mediana/% en todas las zonas, **Gate 3 PASS** (`evidence/gate-03/2026-11-11/summary.md`) y **D-210**. **CORE-005 DONE.**
+  - Fase 5 `ad2129a` (decisión de Mariano): **4 km/h** en las 12 features, que pasan a la versión 2 (**D-211**). Recálculo en 28 s; los 15 golden cumplen sin tocar los límites; **Gate 3 PASS** otra vez. Evidencia: `evidence/gate-03/2026-11-11/phase-core005-f5.txt`.
 
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
@@ -98,15 +100,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - PR #6 de C integrado (`877d4fd`) con `reviewer`.
   - CI de la rama en verde otra vez (`29a688e`). `make lint` comprueba ahora los schemas y el manifest de docs, igual que la CI (`bc60e1f`).
   - La base local tiene las 24 features recalculadas (`make features`, 29 s).
-- **Blocked / a la espera:** nada. **Supabase:** Mariano hará `make supabase-sync PROFILE=demo` **una sola vez**, cuando las features estén recalculadas a 4 km/h (Next 2). Hay que avisar a `datamad-10` en ese momento y comprobarlo después por MCP: 24 features y 4.843 filas en cada feature a pie.
-- **Next (línea A), en orden.** Los puntos 2 y 3 son decisiones de Mariano del 11 nov por la noche, transmitidas por `datamad-10`. El 1 (integrar el PR #7 de C) está hecho: `93af627`.
-  2. **Velocidad a pie: 4 km/h** (Mariano), como el estudio «El Madrid de los 15 minutos» del Ayuntamiento, porque la demo también es para personas mayores.
-     - Cambiar `speed_kmh` en los 12 YAML `min_a_pie_*` y `pct_calle_*`.
-     - Recalcular con `make features`, pasar `scripts/check_walk_golden.py` y `make evidence GATE=03`.
-     - Revisar los golden: con los minutos un 12,5 % más altos, algún límite puede no cumplirse. Si pasa, investigar el caso antes de tocar el límite.
-     - Actualizar D-210 (o hacer un D-211) con la fuente: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf
-     - Pasar a D la cifra y los ejemplos nuevos (Chamartín) para `metodologia.md` §1.5.
-     - Avisar a `datamad-10` para el sync único de Supabase.
+- **Blocked / a la espera:** nada. **Supabase:** las features ya están recalculadas a 4 km/h (D-211) y `datamad-10` está avisado. Mariano hará `make supabase-sync PROFILE=demo` **una sola vez**. Después, comprobarlo por MCP: 24 features, 4.843 filas en cada feature a pie y `feature_version = 2` en las 12.
+- **Next (línea A), en orden.** El punto 3 es una decisión de Mariano del 11 nov por la noche, transmitida por `datamad-10`. El 1 (integrar el PR #7 de C, `93af627`) y el 2 (4 km/h, D-211) están hechos.
   3. **Quitar del árbol actual las rutas locales con apellidos** (Mariano; **el historial no se reescribe**).
      - Sustituir `/Users/<usuario>/` por `~` (o por rutas relativas al repo) en todos los ficheros del árbol, también las rutas de scratchpad `/private/tmp/claude-…-Users-<usuario>-…` que salgan en la evidencia.
      - Evitar que vuelva a pasar: sanear al escribir en `scripts/evidence.py` y en los gates de fase. Añadir un test o un check que falle si aparece la ruta.
@@ -116,7 +111,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
      - Lista por sección y `GET /api/v1/gaps?level=&row=`.
      - ADR de los cortes con criterio estadístico. Chamartín salud = 0,79: no mover los cortes por ese caso, y decirle a D si cambia de estado.
      - Por distrito, la vivienda queda SIN DATOS.
-     - En la web, minutos muy altos (hasta 337 en pueblos sin colegio) mejor como «más de 60 min»: proponérselo a B.
+     - En la web, minutos muy altos (hasta 380 en pueblos sin colegio, a 4 km/h) mejor como «más de 60 min»: proponérselo a B.
   5. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
   6. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que aparece el Reality Check.
   7. `POST /api/v1/search`; los distritos entran en `all_zones`.
@@ -127,12 +122,12 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **Gate status:**
   - G1 PASS: 21 datasets CM y 2 complementarios del Ayuntamiento; la red OSM pasa su calidad.
   - G2 PASS.
-  - G3 PASS (11 nov, `evidence/gate-03/2026-11-11/summary.md`): 24 features (`24|0|0|179`), 7 con los 21 distritos, 12 a pie con las 4.843 zonas y los golden de la red real.
+  - G3 PASS (11 nov, `evidence/gate-03/2026-11-11/summary.md`, a 4 km/h): 24 features (`24|0|0|179`), 7 con los 21 distritos, 12 a pie con las 4.843 zonas y los golden de la red real.
   - G4: contratos, `/gaps`, `/places` y `/geo` en verde.
   - G6: Supabase en 0005; el sync único llega tras recalcular a 4 km/h. C sirve la demo desde `cf33a5b`, con `/places` paginada (smoke 7/7).
 - **Notas para las siguientes cards:**
   - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.20.
-  - **Features a pie (D-210):**
+  - **Features a pie (D-210, D-211: 4 km/h y versión 2):**
     - `hi_features/walk.py` carga la red, los orígenes y las distancias una vez por proceso;
     - van con la clave `destination_category`, no `category`, para que `compute` no les aplique el ajuste de los conteos por sección;
     - en integración, una rejilla OSM sintética sobre la muestra de Madrid más la muestra GTFS (`tests/integration/conftest.py`).
@@ -183,7 +178,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 _(vacío)_
 
 ## 07 — DONE (con evidencia)
-- CORE-005 Distancia a pie por la red de calles (D-210): 12 features (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y parada × mediana de minutos y % de calle dentro de la ventana) por sección, municipio y distrito, con referencia regional; nunca 0 sin datos · G1 `evidence/gate-01/2026-11-11` (red OSM) · G3 PASS `evidence/gate-03/2026-11-11/summary.md` · `4cdee28` `e31770b` `23b7531` `fc025b6` · 2026-11-11
+- CORE-005 Distancia a pie por la red de calles (D-210; 4 km/h desde D-211): 12 features (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y parada × mediana de minutos y % de calle dentro de la ventana) por sección, municipio y distrito, con referencia regional; nunca 0 sin datos · G1 `evidence/gate-01/2026-11-11` (red OSM) · G3 PASS `evidence/gate-03/2026-11-11/summary.md` · `4cdee28` `e31770b` `23b7531` `fc025b6` · 2026-11-11
 - DATA-012 Población por edad y hogares por distrito de Madrid (D-200, D-209): padrón municipal (21 distritos × 21 bandas CM + total; nacionalidad y sexo nunca se guardan) y panel de distritos (hogares, 2019–2025), complementarios y no CM. 7 features por distrito y `/gaps/distrito` con filas reales en los 21 distritos · G1 `evidence/gate-01/2026-11-11/phase-data012-f1.txt`, `-f3.txt` y `-f4-review.txt` · G4 `evidence/gate-04/2026-11-11/phase-data012-f2.txt` · `f62f0d0` `83c74dd` `d87c561` `be40c2f` · 2026-11-11
 - OPS-001 (parte de A): PR #4 y PR #5 de C integrados con `reviewer`; migración 0005 del rol `vf_api_ro` (D-208) · `evidence/gate-06/2026-11-11/phase-ops001-0005.txt` · `c8ae262` `ad16393` `d917162` · 2026-11-11
 - CORE-001 Contrato ScenarioState mínimo (presupuesto, hogar, lugares de referencia, servicios cerca y prioridades), publicado con los contratos PUBLIC · G4 · `7541527` · `evidence/gate-04/2026-11-11/phase-contracts-f1.txt` · 2026-11-11
