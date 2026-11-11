@@ -1,5 +1,7 @@
 """Read Silver from PostGIS into frames for the pure feature methods."""
 
+from collections.abc import Mapping
+
 import pandas as pd
 from sqlalchemy import Engine, text
 
@@ -88,7 +90,7 @@ def last_valid_versions(engine: Engine, dataset_ids: list[str]) -> dict[str, str
     return {str(d): str(v) for d, v in rows}
 
 
-def _postcode(attributes: dict[str, object], keys: list[str]) -> str | None:
+def postcode_from_address(attributes: Mapping[str, object], keys: list[str]) -> str | None:
     """The first postcode found among the declared address keys, as five digits."""
     for key in keys:
         raw = str(attributes.get(key) or "").strip()
@@ -110,7 +112,7 @@ def place_postcodes(
         rows = conn.execute(_PLACE_POSTCODES, params).mappings().all()
     counts: dict[tuple[str, str], int] = {}
     for row in rows:
-        postcode = _postcode(row["attributes"] or {}, keys)
+        postcode = postcode_from_address(row["attributes"] or {}, keys)
         if postcode is not None:
             pair = (str(row["territory_code"]), postcode)
             counts[pair] = counts.get(pair, 0) + 1

@@ -317,3 +317,10 @@ def test_postcode_mean_stays_between_its_postcodes(
     weights = _weights([("2807901", "28001", wa), ("2807901", "28002", wb)])
     value = methods.postcode_weighted_mean(obs, weights, {}).iloc[0]["value"]
     assert min(a, b) - 1e-9 <= value <= max(a, b) + 1e-9
+
+
+def test_postcode_mean_uses_the_latest_period_only() -> None:
+    old = _obs([("28001", {}, 99.0)]).assign(period_start=date(2023, 1, 1))
+    obs = pd.concat([old, _obs([("28001", {}, 20.0)])])
+    weights = _weights([("2807901", "28001", 1.0)])
+    assert methods.postcode_weighted_mean(obs, weights, {}).iloc[0]["value"] == 20.0

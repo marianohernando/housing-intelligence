@@ -858,7 +858,7 @@ CORE-006. Código en `hi_domain/affordability.py` y en el método `postcode_weig
 4. **Alquiler por distrito de Madrid** (versión 2 de `alquiler_m2_mensual`). Conecta `cm_alquiler_m2_codigo_postal_madrid`, el dataset CM número 21:
    - **Problema:** la tabla de la CM publica el alquiler por código postal (54 códigos de Madrid capital, 2024), y no hay geometría de códigos postales (DATA-013 está en el backlog).
    - **Proxy:** el alquiler de cada distrito es la media de sus códigos postales, ponderada por cuántos lugares geocodificados del distrito llevan ese código en su dirección: colegios, centros de salud y centros sociales de la CM (2.885 lugares de Madrid). Los lugares aproximan dónde vive la gente; se declara como proxy.
-   - **Confidence:** 0,8 como máximo, multiplicada por la parte de ese peso cuyo código tiene alquiler publicado.
+   - **Confidence:** 0,8 como máximo, multiplicada por la parte de ese peso cuyo código tiene alquiler publicado en el último periodo (2024). Los lugares sin código en la dirección no cuentan: la confidence no mide cuántos lugares sostienen la media. En Madrid son entre 51 y 242 por distrito, así que no hace falta un mínimo; si se extiende a otros municipios, habrá que fijarlo.
    - **Restricción:** solo cuentan los lugares del municipio de Madrid, porque la fuente solo publica sus códigos.
    - **Comprobación:** la media de los 21 distritos ponderada por población da 14,46 €/m², frente a los 15,10 publicados para Madrid. La cifra municipal pondera por viviendas alquiladas, que se concentran en el centro.
    - **Ejemplos:** Salamanca 19,8 €/m², Chamartín 18,0, Fuencarral-El Pardo 14,4 y Villaverde 10,8.

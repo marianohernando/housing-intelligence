@@ -107,3 +107,12 @@ def test_more_budget_never_turns_pass_into_fail(rent_m2: float, budget: int, ext
 @given(st.floats(min_value=5, max_value=30), st.integers(min_value=15, max_value=400))
 def test_monthly_rent_is_price_times_area(rent_m2: float, m2: int) -> None:
     assert monthly_rent(rent_m2, m2) == pytest.approx(rent_m2 * m2)
+
+
+def test_state_value_and_text_agree_at_the_edge() -> None:
+    """1.500,4 €/mes reads as 1.500 € everywhere, so it fits a 1.500 € budget."""
+    area = assumed_floor_area(_scenario())
+    check = budget_check(Budget(kind=BudgetKind.RENT, amount_eur=1500), _rent(1500.4 / 77), area)
+    assert check.value == 1500
+    assert check.status is ConstraintStatus.PASS
+    assert "1.500 €/mes" in check.explanation

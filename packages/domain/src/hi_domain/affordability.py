@@ -97,12 +97,12 @@ def budget_check(budget: Budget, rent: IndicatorValue | None, area: FloorArea) -
                 "contratos suficientes"
             ),
         )
-    cost = monthly_rent(rent.value, area.m2)
+    cost = round(monthly_rent(rent.value, area.m2))  # the state, value and text use one number
     return ConstraintCheck(
         constraint_id=BUDGET_ID,
         label=budget_label(budget, area),
         status=ConstraintStatus.PASS if cost <= budget.amount_eur else ConstraintStatus.FAIL,
-        value=float(round(cost)),
+        value=float(cost),
         threshold=float(budget.amount_eur),
         unit="€/mes",
         confidence=rent.confidence,
