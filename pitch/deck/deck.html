@@ -63,7 +63,7 @@
       <table>
         {{DATASET_ROWS}}
       </table>
-      <p class="complement">Como apoyo (no cuenta como dato CM): red peatonal de OpenStreetMap (ODbL). <span class="pending" data-pending="Ayuntamiento (DATA-012, A)">+ Ayuntamiento de Madrid (distritos).</span></p>
+      <p class="complement">Como apoyo (no cuenta como dato CM): red peatonal de OpenStreetMap (ODbL). Y el Ayuntamiento de Madrid (población y hogares por distrito).</p>
     </div>
   </div>
   <p class="sources">Lista completa con enlaces, licencias y control de calidad: <a href="https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md">github.com/marianohernando/housing-intelligence → pitch/datasets_cm.md</a></p>
@@ -102,8 +102,8 @@
         <span class="state cubierto"><span class="icon" aria-hidden="true">✓</span>CUBIERTO</span>
         <span class="state sin-datos"><span class="icon" aria-hidden="true">?</span>SIN DATOS</span>
       </div>
-      <p class="example pending" data-pending="zona y cifras finales (GAP-001, A)">Móstoles · Centros de salud: <strong>FALTA</strong> (0,47 por 10.000 hab.; región: 0,59)</p>
-      <p class="example">179 municipios <span class="pending" data-pending="DATA-012 (A)">+ los 21 distritos de Madrid</span></p>
+      <p class="example pending" data-pending="cortes provisionales (GAP-001, A)">Chamartín · Centros de salud: <strong>FALTA</strong> (0,47 por 10.000 hab.; región: 0,59)</p>
+      <p class="example">179 municipios + los 21 distritos de Madrid</p>
       <div class="shots one">
         <figure class="shot" data-shot="C4">
           <img src="../../capturas/C4.png" alt="Pestaña «Qué falta» de una zona con sus 6 filas">
@@ -127,7 +127,7 @@
       <div class="qr">{{QR_DEMO}}</div>
       <div>
         <p class="label">Pruébalo</p>
-        <p class="url pending" data-pending="verificación de la demo (C, 17 nov)"><a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
+        <p class="url"><a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
       </div>
     </div>
     <div class="glass link">
@@ -138,7 +138,7 @@
       </div>
     </div>
   </div>
-  <p class="sources">Fuentes: API /gaps (Móstoles), control de calidad en evidence/gate-01, despliegue en infra/deploy/README.md</p>
+  <p class="sources">Fuentes: API /gaps/distrito/2807905 (Chamartín, 11 nov), control de calidad en evidence/gate-01, despliegue en infra/deploy</p>
   <p class="pageno">3 / 4</p>
 </section>
 
@@ -168,7 +168,7 @@
       <li><span class="num">3</span>Entra en una zona y mira qué le falta, con su fuente</li>
     </ol>
   </div>
-  <p class="live">Demo en vivo: <a class="pending" data-pending="verificación (C)" href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
+  <p class="live">Demo en vivo: <a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
   <p class="pageno">4 / 4</p>
 </section>
 

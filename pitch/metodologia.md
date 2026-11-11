@@ -83,7 +83,7 @@ La fiabilidad baja en estos casos:
 
 ### 1.7 Qué datos usamos
 - **21 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid:** población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias y las 6 redes de transporte público del Consorcio Regional de Transportes de Madrid, que también se publican en ese portal.
-- **Como apoyo,** el mapa de calles de OpenStreetMap para las distancias a pie. **[pendiente de A: Ayuntamiento de Madrid (CC BY 4.0), solo cuando se use alguno de sus datos (DATA-012).]**
+- **Como apoyo,** el padrón y el panel de distritos del Ayuntamiento de Madrid para la población y los hogares de cada distrito de Madrid capital, y el mapa de calles de OpenStreetMap para las distancias a pie.
 - **Antes de usar un conjunto,** pasa un control de calidad: que no haya registros repetidos, que cada municipio exista, que los errores queden apartados y que un dato que falta no se convierta en un cero.
 - **Cada resultado** dice de qué conjuntos sale, con el enlace a su ficha en el portal, su versión y su licencia.
 - **Ver la lista completa** (enlace a `pitch/datasets_cm.md` en el repositorio).
@@ -112,7 +112,8 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 
 | Sección | Afirmación | Fuente | Estado |
 |---|---|---|---|
-| 1.2 | 179 municipios + 21 distritos | `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json` · D-200 | Distritos sin filas hasta DATA-012 (**pendiente de A**) |
+| 1.2 | 179 municipios + 21 distritos | `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json` · D-200 · D-209 | Hecho (DATA-012, `be40c2f`) |
+| 1.7 | Ayuntamiento como apoyo | `pitch/datasets_cm.md` §3 (`ayto_padron_municipal`, `ayto_panel_indicadores_distritos_barrios`) · D-209 | Hecho |
 | 1.3 | Condiciones PASS / FAIL / UNKNOWN; UNKNOWN nunca es PASS; `results` solo con todo en PASS; `near_misses` | `packages/contracts/src/hi_contracts/public/search.py` · `CLAUDE.md` §14 · `docs/04_technical_architecture/31_public_api_routes.md` | Contrato hecho; cálculo **pendiente de A** (CORE-003) |
 | 1.3 | % de encaje, no nota; 3–5 hechos con su confianza | D-202 · `search.py` (`match_pct`, `facts`) | Contrato hecho |
 | 1.3 | Alquiler estimado = €/m² × m² | `data/catalog/features/alquiler_m2_mensual.yaml` · `search.py` (`estimated_cost_eur`, `min_floor_area_m2`: «None = derived from the household size») | **Pendiente de A** (CORE-006) |

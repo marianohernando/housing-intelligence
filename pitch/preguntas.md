@@ -82,7 +82,7 @@ Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: 
 **14. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
 Sí, por eso Madrid se divide en sus 21 distritos. Además, la distancia a pie se calcula por sección censal, que es mucho más fina que el municipio.
 - Evidencia: D-200 · board CORE-005 · `evidence/gate-01/2026-11-11/osm_red_peatonal/`.
-- Estado: distritos **pendiente de A** (DATA-012) y distancia a pie **pendiente de A** (CORE-005, Fases 3 y 4).
+- Estado: distritos hechos con el padrón municipal (D-209; ejemplo real: Chamartín, `GET /api/v1/gaps/distrito/2807905`). Distancia a pie **pendiente de A** (CORE-005, Fases 3 y 4).
 
 **15. ¿Cómo calculáis el % de encaje?**
 Primero se comprueban las condiciones de la persona, cada una con PASS, FAIL o «sin dato», y un «sin dato» nunca cuenta como PASS. Después se puntúan las prioridades con pesos declarados. El método y su versión se ven en «Cómo lo calculamos».

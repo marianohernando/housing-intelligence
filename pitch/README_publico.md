@@ -9,9 +9,9 @@ Borrador de la línea D para el README.md de la raíz (lo integra la línea A, q
 
 Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el transporte en otra, y nadie le dice qué zona va con su vida. Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid para enseñarte qué zonas encajan contigo y qué le falta a cada una.**
 
-**Pruébalo:** [vidafacil-madrid.vercel.app](https://vidafacil-madrid.vercel.app) *(pendiente de verificación el 17 nov)*
+**Pruébalo:** [vidafacil-madrid.vercel.app](https://vidafacil-madrid.vercel.app)
 
-<!-- La URL sale del despliegue de la línea C: infra/deploy/README.md y evidence/gate-06/2026-11-11-deploy/deploy-1-production.md (PR #4). El 11 nov la web cargaba, pero la API aún no tenía base de datos. Quitar «pendiente de verificación» cuando el smoke esté en verde. -->
+<!-- URL verificada el 11 nov: smoke 6/6 repetido 3 veces con datos reales de Supabase (evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md, PR #6 de la línea C). Despliegue: infra/deploy/README.md. -->
 
 ![Vida Fácil: mapa de la Comunidad de Madrid con la búsqueda de una pareja con 2 hijos, las zonas coloreadas según cuánto encajan y la tarjeta de la zona que más encaja](pitch/capturas/C1.png)
 
@@ -30,14 +30,14 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 **Los cubrimos todos:** los 179 municipios de la región, y Madrid capital dividida en sus 21 distritos para que no sea un solo bloque.
 
-Como apoyo, sin contarlos como datos de la Comunidad, usamos el mapa de calles de OpenStreetMap para medir distancias a pie.
+Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón y el panel de distritos del Ayuntamiento de Madrid (población y hogares por distrito) y el mapa de calles de OpenStreetMap (distancias a pie).
 
 <!--
 Fuentes:
 - 21 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/) y evidence/gate-01/2026-11-10/real-run-quality.txt (21 PASS).
 - Los 6 GTFS del CRTM cuentan como datos CM porque el portal los publica: D-196.
 - 179 municipios: evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json.
-- 21 distritos: D-200. Sus datos llegan con DATA-012 (pendiente de A, comprometido para el 16 nov); si no llega, se quita «y Madrid capital dividida…».
+- 21 distritos: D-200 y D-209 (población por distrito del padrón municipal del Ayuntamiento). DATA-012 hecha (be40c2f); GET /api/v1/gaps/distrito/2807905 (Chamartín) responde con datos reales.
 - Red peatonal: evidence/gate-01/2026-11-11/osm_red_peatonal/.
 -->
 
@@ -85,9 +85,10 @@ npm ci && NEXT_PUBLIC_API_URL=http://localhost:8010 npm run web:dev   # web en h
 - **Datos de terceros:** cada uno conserva su licencia, recogida en [`data/catalog/sources/`](data/catalog/sources/):
   - Comunidad de Madrid, CC BY 4.0;
   - Consorcio Regional de Transportes de Madrid, licencia de datos abiertos del CRTM («Powered by CRTM»);
+  - Ayuntamiento de Madrid, CC BY 4.0;
   - OpenStreetMap, ODbL.
 
-<!-- D-191. Licencias por fuente: data/catalog/sources/*.yaml (license_name y attribution_text). Ayuntamiento de Madrid: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov). Se añade a la lista cuando se use algún dato suyo (DATA-012; A lo registra en el catálogo). -->
+<!-- D-191. Licencias por fuente: data/catalog/sources/*.yaml (license_name y attribution_text). Ayuntamiento de Madrid: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); en uso desde DATA-012 (ayto_padron_municipal y ayto_panel_indicadores_distritos_barrios, pitch/datasets_cm.md §3). -->
 
 ## Qué había antes del concurso
 

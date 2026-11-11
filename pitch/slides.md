@@ -70,7 +70,7 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 - **Grupos:** salen del campo `domain` del catálogo. Los enlaces salen de `portal_url` (`services/ingestion/src/hi_ingestion/catalog/provenance.py`), igual que en `datasets_cm.md`.
 - **Línea pequeña bajo la tabla:**
   - «Complementan, sin contar como datos CM: red peatonal de OpenStreetMap (ODbL)» (`pitch/datasets_cm.md` §3);
-  - «+ Ayuntamiento de Madrid (distritos)»: **pendiente de A** (DATA-012). Se quita si no llega.
+  - «+ Ayuntamiento de Madrid (población y hogares por distrito)»: en uso desde DATA-012 (D-209; `pitch/datasets_cm.md` §3).
 - **Pie:** «Lista completa, con licencias y control de calidad: github.com/marianohernando/housing-intelligence → `pitch/datasets_cm.md`».
 
 **Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. El «21» va grande en violeta.
@@ -89,12 +89,12 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 ### Impacto: ayuntamientos que deciden dónde invertir
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda (D-194). Cada fila se compara con la referencia regional y lleva su fuente y su confianza.
-- **Ejemplo real de hoy**, Móstoles en `GET /api/v1/gaps/municipio/28092` (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`):
-  - Centros de salud: **FALTA**. 0,47 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad, 0,59.
-  - Colegios: **CUBIERTO**. 2,7 centros educativos públicos por cada 1.000 menores de 15 años; en la Comunidad, 2,2.
-  - **Provisional:** los cortes `gap-0.1` y el filtro de colegios, que hoy incluye escuelas infantiles e institutos, cambian con GAP-001. La zona definitiva y sus cifras: **pendiente de A** (GAP-001). Hasta entonces, la fila de colegios no se usa como ejemplo de CUBIERTO. Puede ser un distrito de Madrid si DATA-012 llega. Captura **C4**.
+- **Ejemplo real de hoy**, Chamartín (distrito de Madrid) en la demo pública (`GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín»):
+  - Centros de salud: **FALTA**. 0,47 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad, 0,59. Confianza 1,0 y 3 datasets por fila.
+  - Colegios: **FALTA**. 0,88 centros educativos públicos por cada 1.000 menores de 15 años; en la Comunidad, 2,18.
+  - **Provisional:** los cortes `gap-0.1` y el filtro de colegios, que hoy incluye escuelas infantiles e institutos, cambian con GAP-001. La de centros de salud es la fila que va en la slide; la de colegios, solo con su aviso. Hay que revisar las dos cifras cuando cierre GAP-001 (**pendiente de A**). Captura **C4**.
 - **Escala:**
-  - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (**pendiente de A**, DATA-012);
+  - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
   - 3.851 centros educativos, 1.543 centros sanitarios, 1.001 servicios para mayores y 2.953 farmacias (`evidence/gate-01/*/cm_*/row_counts.json`, campo `places`);
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
@@ -113,7 +113,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
 ### Banda de enlaces (con QR)
-- Demo: https://vidafacil-madrid.vercel.app (**pendiente de verificación el 17 nov**, C).
+- Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov: smoke 6/6, `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6)).
 - Código: https://github.com/marianohernando/housing-intelligence
 
 ---

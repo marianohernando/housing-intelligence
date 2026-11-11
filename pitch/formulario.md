@@ -48,7 +48,6 @@ awk '/^<!-- variante-b:fin/{f=0} f; /^<!-- variante-b:inicio/{f=1}' pitch/formul
 ### Cuándo usar cada versión
 - **Resumen principal:** si en el cut review del 16 nov por la noche el buscador funciona con el perfil dorado. Es decir, si `POST /api/v1/search` devuelve zonas y Reality Check con datos reales.
 - **Variante B:** si el buscador se recorta. La lista de lo que falta es el diferenciador (D-194), así que va primero.
-- **Si DATA-012 no llega** (A lo compromete para el 16 nov: D-200 y `board/BOARD.md`, respuestas de A a D), cambia «por municipio y por distrito de Madrid» por «por municipio» en las dos versiones y vuelve a contar.
 - **Si una fila de la lista no llega** (por ejemplo, vivienda), quítala del texto y vuelve a contar las palabras.
 - **Si cambia el número de datasets**, usa el de `pitch/datasets_cm.md` regenerado (ver checklist).
 
@@ -60,7 +59,7 @@ Código abierto (Apache-2.0): https://github.com/marianohernando/housing-intelli
 Datasets que integra, con licencia y control de calidad: https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md
 ```
 
-- **URL de la demo: pendiente de verificación el 17 nov.** Hoy la web carga (HTTP 200), pero la API aún no tiene base de datos. No se envía hasta que C confirme el smoke en verde.
+- **URL de la demo: verificada el 11 nov.** Smoke 6/6, repetido 3 veces, con datos reales de Supabase (`evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6)). El 18 nov se abre una vez más en el móvil antes de enviar (checklist, paso 5).
 - **Enlace a `datasets_cm.md`:** funciona en cuanto A fusione este PR en `claude/sprint-1-public`. Si para el 18 nov Mariano ha fusionado en `main`, cambia `claude/sprint-1-public` por `main` en la URL.
 - **Repo:** público desde el 11 nov (D-198); comprobado con `gh repo view` → `"visibility":"PUBLIC"`.
 
@@ -71,13 +70,13 @@ Datasets que integra, con licencia y control de calidad: https://github.com/mari
 | Datos abiertos de la Comunidad de Madrid · «Integra 21 datasets del portal regional» | `pitch/datasets_cm.md` (generado desde `data/catalog/`) · `evidence/gate-01/2026-11-10/real-run-quality.txt` (21 PASS) · `evidence/gate-01/2026-11-10/summary.md` | Hecho: los 21 están ingeridos y validados. Por eso dice «integra» y no «usa»: en `datasets_cm.md`, 12 de los 21 aún llevan «uso en la lista o en el buscador: **pendiente de A**». A los conecta así: farmacias, unidades escolares, nacidos vivos y tenencia en GAP-001; los 6 GTFS en CORE-005 y GAP-001; el alquiler por código postal en CORE-006 (`board/BOARD.md`, respuestas de A a D, punto 3). Si el 18 nov los 21 alimentan la demo, se puede volver a «usa» (ver checklist) |
 | «Un mapa de lo que falta» · «qué falta, qué está justo y qué está cubierto» | `GET /api/v1/gaps/{level}/{code}` · `evidence/gate-04/2026-11-11/phase-gap001-f0.txt` · `data/fixtures/contracts/zone_gap_list.mostoles.fixture.json` | Hecho para colegio y centro de salud por municipio. El resto, **pendiente de A** (GAP-001, 13–14 nov) |
 | «escuelas infantiles, … mayores, farmacias y vivienda» | Filas previstas en D-194 y en `board/BOARD.md` (GAP-001) | **Pendiente de A** (GAP-001) |
-| «por distrito de Madrid» | D-200 · `GET /api/v1/gaps/distrito/{2807901–2807921}` ya responde con nombre y zona, sin filas · A compromete DATA-012 y las 6 filas para el 16 nov (`board/BOARD.md`, respuestas de A a D, punto 4) | **Pendiente de A** (DATA-012). Si no llega, se quita del resumen (ver «Cuándo usar cada versión») |
+| «por distrito de Madrid» | D-200 · D-209 (población por distrito del padrón del Ayuntamiento) · DATA-012 hecha (`be40c2f`, `board/BOARD.md`) · ejemplo real: Chamartín, `GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín» | Hecho para las filas que ya existen (colegio y centro de salud); el resto de filas llega con GAP-001 (**pendiente de A**) |
 | «recomienda dónde vivir según su alquiler, hogar y trabajo» | Contrato `ScenarioState` (`packages/contracts/src/hi_contracts/public/scenario.py`, commit `7541527`): presupuesto, hogar y lugar de trabajo | Contrato hecho. Cálculo **pendiente de A** (CORE-006, CORE-003 y `POST /api/v1/search`, 15–16 nov) y pantalla **pendiente de B** |
 | «si nada encaja, enseña cuántas zonas aparecen al relajar cada condición» (Reality Check) | Contrato `SearchResult` (`packages/contracts/src/hi_contracts/public/search.py`, `7541527`) | Contrato hecho. Cálculo **pendiente de A** (CORE-003) |
 | «explica el porqué en lenguaje cotidiano» | Campo `explanation` de la lista. Ejemplo real: «2,7 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2» (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) | Hecho en la lista; en el buscador, **pendiente de A** |
 | «cada resultado cita su fuente y su fiabilidad» | Cada fila de la lista lleva `datasets` (nombre, portal, versión, licencia) y `confidence` (mismo fixture) | Hecho en la lista; en el buscador, **pendiente de A** |
 | «Código abierto con API» | `LICENSE` (Apache-2.0, D-191) · repo público (D-198) · rutas en `docs/04_technical_architecture/31_public_api_routes.md` | Hecho |
-| Demo con enlace público | https://vidafacil-madrid.vercel.app (URL definitiva elegida por Mariano; C la está asignando). Despliegue: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (rama `claude/s1-deploy`, PR #4; la primera publicación fue en vidafacil-madrid.vercel.app) | La web responde (HTTP 200, 11 nov), pero la API aún no tiene base de datos. **Pendiente de verificación el 17 nov** (C) |
+| Demo con enlace público | https://vidafacil-madrid.vercel.app (URL elegida por Mariano) · `infra/deploy/README.md` · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6) | Hecho: smoke 6/6 repetido 3 veces con datos reales (11 nov). Coste 0 €/mes |
 
 No se prometen los extras del 19 al 22 nov: zonas verdes, seguridad, «sin escaleras», precio de compra ni MCP (D-206).
 

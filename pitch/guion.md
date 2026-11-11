@@ -26,7 +26,7 @@
 ## Antes de empezar (en la sala, 13:30–17:00)
 1. Portátil con cargador, wifi del evento probada, HDMI probado y resolución 1920 × 1080 (`docs/09_datamad/25_plan_competicion.md` §9).
 2. Navegador en ventana limpia, zoom al 100 %, sin extensiones visibles y con las notificaciones desactivadas.
-3. Pestaña 1: las slides en PDF, en la slide 1. Pestaña 2: la portada de la demo, ya cargada una vez para tener la caché caliente. URL: https://vidafacil-madrid.vercel.app (**pendiente de verificación el 17 nov**, C).
+3. Pestaña 1: las slides en PDF, en la slide 1. Pestaña 2: la portada de la demo, ya cargada una vez para tener la caché caliente. URL: https://vidafacil-madrid.vercel.app (verificada el 11 nov: smoke 6/6, `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6)).
 4. Plan B abierto en una pestaña oculta: el vídeo de 2 min y el snapshot offline (PITCH-003, **pendiente de C**).
 
 ---
@@ -71,10 +71,11 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 
 ## Bloque 3 · 2:40–3:40 · Qué le falta a una zona real
 **Zona:** **pendiente de A** (GAP-001 completo).
-- **Criterio:** una zona real con al menos una fila FALTA, una CUBIERTO y, si la hay, una SIN DATOS, para enseñar las tres. Si llega DATA-012, mejor un distrito de Madrid que se conozca.
+- **Criterio:** una zona real con al menos una fila FALTA, una CUBIERTO y, si la hay, una SIN DATOS, para enseñar las tres. Mejor un distrito de Madrid que se conozca.
 - **El texto hablado depende de GAP-001 (pendiente de A):** «Seis filas» y «cada una» solo se dicen si salen las 6. Si no, se dice «[N] filas» y se nombran solo las que estén.
 - **No usar colegios como ejemplo de CUBIERTO** hasta que GAP-001 corrija el filtro: hoy cuenta también escuelas infantiles e institutos (`proxy_note` de `colegios_publicos_por_1000_menores`).
-- **Hoy, como referencia provisional:** Móstoles. Centros de salud FALTA (0,47 frente a 0,59 en la región) y colegios CUBIERTO (2,7 frente a 2,2). Fuente: `data/fixtures/contracts/zone_gap_list.mostoles.fixture.json` = `GET /api/v1/gaps/municipio/28092`, con los cortes provisionales `gap-0.1`.
+- **Zona propuesta: Chamartín** (distrito de Madrid), con datos reales de la demo pública. Centros de salud FALTA (0,47 por cada 10.000 habitantes frente a 0,59 en la región) y colegios FALTA (0,88 por cada 1.000 menores frente a 2,18). Confianza 1,0 y 3 datasets por fila. Fuente: `GET /api/v1/gaps/distrito/2807905` (comprobado en la demo pública el 11 nov) · `evidence/gate-06/2026-11-11-deploy/deploy-4-supabase-smoke.md` (rama `claude/s1-deploy`, PR #6), «Manual check: Chamartín». Cortes provisionales `gap-0.1`.
+- **Hoy no tiene ninguna fila CUBIERTO:** «[Leer una fila cubierta]» solo se dice si GAP-001 trae una (**pendiente de A**); si no, se salta. La fila que se lee en voz alta es la de centros de salud.
 
 <!-- habla:b3:inicio -->
 Ahora cambio de usuario: un ayuntamiento. Pulso «Ver la zona». La cámara entra en [zona] en tres dimensiones, con sus colegios, centros de salud y estaciones. Abro la pestaña «Qué falta». Seis filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda. Cada una compara la zona con el conjunto de la Comunidad. Aquí, centros de salud: falta. [valor] por cada diez mil habitantes, frente a [referencia] en la región. [Leer una fila cubierta]. Y cuando no tenemos el dato, lo decimos: sin datos. No inventamos nada. Cada fila dice de qué dataset sale, con su enlace. Un concejal ve en un minuto dónde invertir primero.
@@ -113,7 +114,7 @@ Ahora cambio de usuario: un ayuntamiento. Pulso «Ver la zona». La cámara entr
 Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. Funciona con datos reales y oficiales de toda la Comunidad de Madrid. Encuentra tu sitio en Madrid. Gracias.
 <!-- habla:b5:fin -->
 
-**Fuente:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. **Pendiente de A y C:** confirmar antes del 26 que el buscador y la lista cubren los 179 en la demo desplegada. Si no, se dice «con datos reales y oficiales de la Comunidad de Madrid», sin «toda».
+**Fuente:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. **Pendiente de A:** confirmar antes del 26 que el buscador cubre los 179 municipios en la demo. La lista ya responde en municipios y distritos (smoke de C, PR #6). Si no, se dice «con datos reales y oficiales de la Comunidad de Madrid», sin «toda».
 
 ---
 

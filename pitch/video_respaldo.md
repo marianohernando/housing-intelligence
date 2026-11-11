@@ -110,7 +110,7 @@ Entramos en la zona en tres dimensiones: sus colegios, sus centros de salud y su
 - **Acción:** clic en la pestaña «Qué falta». Recorrer las filas con el cursor de arriba abajo, despacio.
 - **Se ve:** las filas FALTA / JUSTO / CUBIERTO / SIN DATOS, cada una con su valor, la referencia de la región, la fiabilidad y de dónde sale.
 - **Rótulo:** «Comparado con el conjunto de la Comunidad de Madrid».
-- **Zona:** la misma que en el bloque 3 del guion (**pendiente de A**, GAP-001).
+- **Zona:** la misma que en el bloque 3 del guion: hoy Chamartín (`GET /api/v1/gaps/distrito/2807905`); sus cifras se revisan cuando cierre GAP-001 (**pendiente de A**).
   - Tiene que tener al menos una fila FALTA y otra CUBIERTO.
   - No se usa la fila de colegios como ejemplo de CUBIERTO hasta que GAP-001 corrija su filtro.
 

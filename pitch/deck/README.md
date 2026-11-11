@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra «21», números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 6 capturas presentes | Hoy falla a propósito: faltan las capturas y 6 marcas |
+| `--final` | Ninguna marca «pendiente» y las 6 capturas presentes | Hoy falla a propósito: faltan las capturas y 2 marcas (nombre completo y cortes de GAP-001) |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,9 +43,7 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | Nombre completo del equipo (`DECK_INTEGRANTES`) | Mariano |
-| Slide 2 | «+ Ayuntamiento de Madrid (distritos)», solo si llega DATA-012 | A |
-| Slide 3 | Zona y cifras finales de «Qué falta» (hoy Móstoles, provisional) y «+ los 21 distritos de Madrid» | A (GAP-001, DATA-012) |
-| Slides 3 y 4 | URL de la demo verificada | C (17 nov) |
+| Slide 3 | Cifras de Chamartín con los cortes finales de GAP-001 (hoy `gap-0.1`, provisionales) | A (GAP-001) |
 | Todas | Capturas C1–C6 | B / D el 24 nov |
 
 Para cerrar una marca, se quita `class="pending"` y su `data-pending` en `deck.html`. Si lo marcado no llega, se borra el elemento entero: nunca se deja un hueco ni un «próximamente».

@@ -214,9 +214,28 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-599f9acfa270` · 56 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_metro_ligero/quality_report.json)
 
-## 3. Fuentes complementarias en uso (1)
+## 3. Fuentes complementarias en uso (3)
 
 No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regional.
+
+### Padrón municipal
+- **Ficha:** https://datos.madrid.es/dataset/200076-0-padron · id `ayto_padron_municipal` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - «Qué falta», fila «Centros de salud»: Centros de atención primaria por cada 10.000 habitantes (`centros_salud_por_10000_hab`, denominador)
+  - «Qué falta», fila «Colegios»: Centros educativos públicos por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, denominador)
+  - Indicador por zona: Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, denominador)
+  - Indicador por zona: Porcentaje de población menor de 15 años (`poblacion_0_14_pct`, dato principal)
+  - Indicador por zona: Porcentaje de población de 65 años o más (`poblacion_65_mas_pct`, dato principal)
+  - Indicador por zona: Población residente (`poblacion_total`, dato principal)
+- **Quality Gate 1:** PASS · 2026-11-11 · 8/8 checks críticos · versión `2026-11-11-f052edc26159` · 462 observaciones · [quality_report.json](../evidence/gate-01/2026-11-11/ayto_padron_municipal/quality_report.json)
+
+### Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico
+- **Ficha:** https://datos.madrid.es/dataset/300087-0-indicadores-distritos · id `ayto_panel_indicadores_distritos_barrios` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, dato principal)
+- **Quality Gate 1:** PASS · 2026-11-11 · 8/8 checks críticos · versión `2026-11-11-4726abc60a15` · 294 observaciones · [quality_report.json](../evidence/gate-01/2026-11-11/ayto_panel_indicadores_distritos_barrios/quality_report.json)
 
 ### Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
 - **Ficha:** https://download.geofabrik.de/europe/spain/madrid.html · id `osm_red_peatonal` · publica: OpenStreetMap contributors (extracto de Geofabrik)
@@ -226,7 +245,7 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-11 · 5/5 checks críticos · versión `2026-11-11-a3206c2d1d5f` · 57.658,8 km de calles y caminos · [quality_report.json](../evidence/gate-01/2026-11-11/osm_red_peatonal/quality_report.json)
 
-## 4. En el catálogo, todavía sin ingerir (11)
+## 4. En el catálogo, todavía sin ingerir (10)
 
 Revisados y con licencia clara, pero sin Quality Gate: no se citan como usados. **Pendiente de A.**
 
@@ -235,7 +254,6 @@ Revisados y con licencia clara, pero sin Quality Gate: no se citan como usados. 
 | Arbolado en parques y zonas verdes de Madrid (detalle) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300761-0-arbolado-especies |
 | Censo de locales, sus actividades y terrazas de hostelería y restauración | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/200085-0-censo-locales |
 | Equipamientos y entidades de la ciudad de Madrid (que hay publicados en www.madrid.es) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300331-0-equipamientos-municipales |
-| Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300087-0-indicadores-distritos |
 | Barrios del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/barrios_municipio_madrid |
 | Distritos del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/distritos_municipio_madrid |
 | Covid 19 -TIA por Municipios y Distritos de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/covid19_tia_muni_y_distritos |
