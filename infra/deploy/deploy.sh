@@ -22,6 +22,14 @@ trap 'rm -rf "$TMP"' EXIT
 
 vercel() { npx --yes "vercel@${VERCEL_CLI_VERSION}" "$@"; }
 
+# The CLI prints dashboard and deployment URLs that carry the Vercel team slug, which has
+# Mariano's surname: mask them, so this output can go into evidence as it is (LINEAS.md).
+mask_urls() {
+  awk '{ gsub(/https:\/\/vercel\.com\/[^ \t"]*/, "<panel de Vercel>")
+         gsub(/https:\/\/vida-facil-[a-z0-9]+-[a-z0-9-]+\.vercel\.app/, "<despliegue>")
+         print; fflush() }'
+}
+
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 2; }
 if [[ ! -f .vercel/project.json ]]; then
   echo "not linked: npx vercel@${VERCEL_CLI_VERSION} link --project vida-facil" >&2
@@ -57,8 +65,12 @@ if [[ -n "$ignored" ]]; then
 fi
 
 echo "-> deploying $(git rev-parse --short HEAD) (${branch}) to production"
-if ! vercel deploy --prod --yes --json >"$TMP/deploy.json"; then
-  cat "$TMP/deploy.json" >&2
+# stdout (JSON) to a file; the CLI's progress on stderr shown masked, and kept to find the id
+if ! vercel deploy --prod --yes --json 2>&1 >"$TMP/deploy.json" | tee "$TMP/deploy.err" | mask_urls >&2; then
+  mask_urls <"$TMP/deploy.json" >&2
+  failed="$(grep -oE 'vercel\.com/[^/ ]+/vida-facil/[A-Za-z0-9]+' "$TMP/deploy.err" | tail -1 | sed 's#.*/#dpl_#')"
+  echo "deploy failed; production is unchanged." >&2
+  echo "build logs: npx vercel@${VERCEL_CLI_VERSION} inspect ${failed:-<dpl_id>} --logs" >&2
   exit 1
 fi
 deployment="$(jq -r '.deployment.id // empty' "$TMP/deploy.json")"
@@ -66,7 +78,7 @@ if [[ ! "$deployment" =~ ^dpl_[A-Za-z0-9]+$ ]]; then
   echo "deployed, but the CLI output carries no deployment id: check npx vercel@${VERCEL_CLI_VERSION} ls" >&2
   exit 3
 fi
-echo "-> deployment ${deployment} is ready: $(jq -r '.deployment.url' "$TMP/deploy.json")"
+echo "-> deployment ${deployment} is ready"
 
 # smoke TAG: the smoke against the public domain, its requests tagged in their User-Agent.
 smoke() {

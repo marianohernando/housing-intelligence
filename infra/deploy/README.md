@@ -6,7 +6,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 - Alias secundario: `https://vida-facil-eight.vercel.app`. Es el que asignó Vercel al crear el proyecto (otra cuenta ya usa `vida-facil.vercel.app`) y se mantiene para no romper los enlaces ya compartidos. `CORS_ORIGINS` acepta los dos.
 - Si se cambia el dominio, hay que actualizar `NEXT_PUBLIC_API_URL`, `CORS_ORIGINS` y `DEMO_URL` en `deploy.sh` y en `smoke_demo.sh`, y volver a desplegar.
 - Región de cómputo: `dub1` (Dublín), junto a la base de datos.
-- Equipo de Vercel: `mariano-hernando-s-projects`, la cuenta del CLI de Mariano.
+- Equipo de Vercel: el de la cuenta del CLI de Mariano. Su slug lleva su apellido, así que no se escribe en el repo (LINEAS.md); `deploy.sh` lo enmascara en su salida.
 - Por qué Vercel y no Render ni Cloud Run: [evidence/gate-06/2026-11-11-deploy/provider-research.md](../../evidence/gate-06/2026-11-11-deploy/provider-research.md).
 
 ## Piezas

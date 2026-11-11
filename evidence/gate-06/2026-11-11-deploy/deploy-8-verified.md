@@ -33,7 +33,7 @@ Follows [deploy-7-gap001.md](deploy-7-gap001.md): a 7/7 smoke right after a depl
 ## Real deploy: 53640d6 (= origin/claude/sprint-1-public dc2c86a, with GAP-001 F4, + line C) · 157 s · exit 0
 ```
 -> deploying 53640d6 (claude/s1-deploy) to production
--> deployment dpl_3NckziR5jkhxJX6Luv31zzzaHhTJ is ready: https://vida-facil-a2i192trn-mariano-hernando-s-projects.vercel.app
+-> deployment dpl_3NckziR5jkhxJX6Luv31zzzaHhTJ is ready: <despliegue>
 -> smoke test against https://vidafacil-madrid.vercel.app
 smoke: https://vidafacil-madrid.vercel.app (2026-11-11T17:50:25Z) tag dpl_3NckziR5jkhxJX6Luv31zzzaHhTJ-0
 OK   web         0.09s      5596 B  /
