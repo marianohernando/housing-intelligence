@@ -269,3 +269,51 @@ def test_metric_ratio_keeps_the_reason_of_an_unknown_input() -> None:
     assert out["28001"]["null_reason"] == "STALE"  # both unknown: the denominator's reason
     assert out["28002"]["null_reason"] == "UNKNOWN"  # the numerator's own reason, never 0
     assert methods.REGION_CODE not in out  # no zone with both known: no reference
+
+
+def _weights(rows: list[tuple[str, str, float]]) -> pd.DataFrame:
+    return pd.DataFrame(rows, columns=["territory_code", "postcode", "weight"])
+
+
+CP_RENT = _obs([("28001", {}, 20.0), ("28002", {}, 10.0), ("28003", {}, None)])
+
+
+def test_postcode_mean_weights_each_postcode_by_its_places() -> None:
+    weights = _weights([("2807901", "28001", 3.0), ("2807901", "28002", 1.0)])
+    out = methods.postcode_weighted_mean(CP_RENT, weights, {}, confidence=0.8)
+    row = out.iloc[0]
+    assert row["territory_code"] == "2807901"
+    assert row["value"] == pytest.approx(17.5)
+    assert row["confidence"] == pytest.approx(0.8)  # every place has a published postcode
+
+
+def test_postcode_mean_confidence_is_the_share_of_places_with_a_value() -> None:
+    weights = _weights([("2807902", "28001", 1.0), ("2807902", "28003", 1.0)])
+    weights = pd.concat([weights, _weights([("2807902", "28999", 2.0)])])
+    out = methods.postcode_weighted_mean(CP_RENT, weights, {}, confidence=0.8)
+    row = out.iloc[0]
+    assert row["value"] == pytest.approx(20.0)  # unknown postcodes never count as 0
+    assert row["confidence"] == pytest.approx(0.8 * 1 / 4)
+
+
+def test_postcode_mean_without_any_published_postcode_is_unknown_not_zero() -> None:
+    weights = _weights([("2807903", "28003", 5.0), ("2807903", "28999", 1.0)])
+    row = methods.postcode_weighted_mean(CP_RENT, weights, {}).iloc[0]
+    assert row["value"] is None
+    assert row["null_reason"] == "SOURCE_NO_COVERAGE"
+    assert row["confidence"] == 0.0
+
+
+@given(
+    st.floats(min_value=1, max_value=50),
+    st.floats(min_value=1, max_value=50),
+    st.floats(min_value=0.1, max_value=100),
+    st.floats(min_value=0.1, max_value=100),
+)
+def test_postcode_mean_stays_between_its_postcodes(
+    a: float, b: float, wa: float, wb: float
+) -> None:
+    obs = _obs([("28001", {}, a), ("28002", {}, b)])
+    weights = _weights([("2807901", "28001", wa), ("2807901", "28002", wb)])
+    value = methods.postcode_weighted_mean(obs, weights, {}).iloc[0]["value"]
+    assert min(a, b) - 1e-9 <= value <= max(a, b) + 1e-9

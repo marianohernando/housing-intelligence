@@ -1,0 +1,76 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+260 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 21%]
+........................................................................ [ 43%]
+........................................................................ [ 65%]
+........................................................................ [ 87%]
+...........................................                              [100%]
+331 passed in 6.27s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  20 passed (20)
+      Tests  172 passed (172)
+   Start at  21:23:54
+   Duration  359ms (tests 45%, transform 24%, import 24%, worker 7%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 86%]
+...........                                                              [100%]
+83 passed in 28.41s
+
+== exit=0 (make lint typecheck test) ==
+
+== CORE-006 F1: alquiler €/m² por distrito desde sus códigos postales (base local, uv run hi-features compute --feature alquiler_m2_mensual) ==
+territory_level | filas | con_valor
+distrito | 21 | 21
+municipio | 179 | 37
+(2 rows)
+territory_code | name | eur_m2 | confidence | method
+2807901 | Centro | 18.44 | 0.800 | postcode_weighted_mean
+2807902 | Arganzuela | 16.91 | 0.800 | postcode_weighted_mean
+2807903 | Retiro | 17.03 | 0.800 | postcode_weighted_mean
+2807904 | Salamanca | 19.82 | 0.800 | postcode_weighted_mean
+2807905 | Chamartín | 17.98 | 0.796 | postcode_weighted_mean
+2807906 | Tetuán | 16.58 | 0.800 | postcode_weighted_mean
+2807907 | Chamberí | 19.26 | 0.796 | postcode_weighted_mean
+2807908 | Fuencarral-El Pardo | 14.41 | 0.764 | postcode_weighted_mean
+2807909 | Moncloa-Aravaca | 16.44 | 0.800 | postcode_weighted_mean
+2807910 | Latina | 12.17 | 0.800 | postcode_weighted_mean
+2807911 | Carabanchel | 12.37 | 0.800 | postcode_weighted_mean
+2807912 | Usera | 11.40 | 0.800 | postcode_weighted_mean
+2807913 | Puente de Vallecas | 12.25 | 0.800 | postcode_weighted_mean
+2807914 | Moratalaz | 12.10 | 0.800 | postcode_weighted_mean
+2807915 | Ciudad Lineal | 13.96 | 0.800 | postcode_weighted_mean
+2807916 | Hortaleza | 14.67 | 0.800 | postcode_weighted_mean
+2807917 | Villaverde | 10.84 | 0.800 | postcode_weighted_mean
+2807918 | Villa de Vallecas | 12.96 | 0.800 | postcode_weighted_mean
+2807919 | Vicálvaro | 11.86 | 0.800 | postcode_weighted_mean
+2807920 | San Blas-Canillejas | 13.18 | 0.800 | postcode_weighted_mean
+2807921 | Barajas | 13.80 | 0.800 | postcode_weighted_mean
+(21 rows)
+-- Coherencia: media de los distritos ponderada por población frente al valor publicado del municipio de Madrid
+distritos_ponderados | madrid_publicado
+14.46 | 15.10
+(1 row)

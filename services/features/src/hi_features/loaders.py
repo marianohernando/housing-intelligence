@@ -38,6 +38,16 @@ _SECTION_SHARE = text(
      GROUP BY municipio_ine
     """
 )
+# Postcodes written in the address of places geocoded to a census section, by district.
+_PLACE_POSTCODES = text(
+    """
+    SELECT left(u.code_official, 7) AS territory_code, p.attributes
+      FROM place_master p
+      JOIN geo_admin_unit u ON u.admin_unit_id = p.seccion_admin_unit_id
+     WHERE p.status = 'ACTIVE' AND p.municipio_ine = :municipio
+       AND jsonb_exists_any(p.attributes, :keys)
+    """
+)
 _VERSIONS = text(
     """
     SELECT dataset_id, version_label FROM dataset_version
@@ -76,3 +86,35 @@ def last_valid_versions(engine: Engine, dataset_ids: list[str]) -> dict[str, str
     with engine.connect() as conn:
         rows = conn.execute(_VERSIONS, {"dataset_ids": dataset_ids}).all()
     return {str(d): str(v) for d, v in rows}
+
+
+def _postcode(attributes: dict[str, object], keys: list[str]) -> str | None:
+    """The first postcode found among the declared address keys, as five digits."""
+    for key in keys:
+        raw = str(attributes.get(key) or "").strip()
+        if raw.isdigit() and len(raw) <= 5:
+            return raw.zfill(5)
+    return None
+
+
+def place_postcodes(
+    engine: Engine, keys: list[str], municipio: str, level: str = "distrito"
+) -> pd.DataFrame:
+    """How many geocoded places of each zone carry each postcode (CORE-006 weights), within
+    the municipio the postcode values are published for."""
+    if level != "distrito":
+        msg = f"postcode weights are only built by distrito, not {level!r}"
+        raise ValueError(msg)
+    with engine.connect() as conn:
+        params = {"keys": keys, "municipio": municipio}
+        rows = conn.execute(_PLACE_POSTCODES, params).mappings().all()
+    counts: dict[tuple[str, str], int] = {}
+    for row in rows:
+        postcode = _postcode(row["attributes"] or {}, keys)
+        if postcode is not None:
+            pair = (str(row["territory_code"]), postcode)
+            counts[pair] = counts.get(pair, 0) + 1
+    return pd.DataFrame(
+        [(zone, cp, float(n)) for (zone, cp), n in sorted(counts.items())],
+        columns=["territory_code", "postcode", "weight"],
+    )

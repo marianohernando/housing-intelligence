@@ -80,6 +80,18 @@ def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFram
     return methods.not_published(loaders.observations(engine, f["territories_metric"], level))
 
 
+def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """CORE-006: districts from postcode values, weighted by the places that carry each code."""
+    return methods.postcode_weighted_mean(
+        loaders.observations(engine, f["metric"], "codigo_postal"),
+        loaders.place_postcodes(
+            engine, list(f["postcode_attributes"]), str(f["postcode_municipio"]), level
+        ),
+        f.get("dims", {}),
+        float(f.get("confidence", 1.0)),
+    )
+
+
 def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """CORE-005: walking access to the nearest destination of a kind, by zone."""
     version = walk.network_version(engine)
@@ -117,6 +129,7 @@ METHODS: dict[str, Method] = {
     "network_walk_time": _network_walk_time,
     "metric_ratio": _metric_ratio,
     "not_published": _not_published,
+    "postcode_weighted_mean": _postcode_weighted_mean,
 }
 
 

@@ -121,3 +121,38 @@ def test_per_population_rows_keep_the_counts_behind_their_value(
     for level, value, inputs in rows:
         counts = inputs["counts"]
         assert 1000 * counts["numerator"] / counts["denominator"] == pytest.approx(value), level
+
+
+def test_district_rent_comes_from_its_postcodes(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """CORE-006: districts of Madrid get the rent of their postcodes (proxy, confidence <= 0.8),
+    between the lowest and highest published postcode, and cite the postcode dataset."""
+    with migrated_engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT territory_code, value, null_reason, confidence, inputs FROM feature_value "
+                "WHERE feature_id = 'alquiler_m2_mensual' AND territory_level = 'distrito'"
+            )
+        ).all()
+        published = conn.execute(
+            text(
+                "SELECT min(value), max(value) FROM metric_observation "
+                "WHERE metric_id = 'alquiler_m2_mensual_codigo_postal' AND period_start = "
+                "(SELECT max(period_start) FROM metric_observation "
+                " WHERE metric_id = 'alquiler_m2_mensual_codigo_postal')"
+            )
+        ).one()
+    assert rows, "no district rent computed on fixtures"
+    assert all(r.territory_code.startswith("28079") for r in rows)
+    known = [r for r in rows if r.value is not None]
+    assert known, "no sample place carries a published postcode"
+    for row in rows:
+        assert row.confidence <= 0.8
+        assert "cm_alquiler_m2_codigo_postal_madrid" in row.inputs["dataset_versions"]
+        assert "cm_alquiler_m2_municipios" not in row.inputs["dataset_versions"]
+        assert row.inputs["method"] == "postcode_weighted_mean"
+        if row.value is None:
+            assert row.null_reason == "SOURCE_NO_COVERAGE"
+        else:
+            assert published[0] <= row.value <= published[1]

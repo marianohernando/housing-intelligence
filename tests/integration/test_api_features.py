@@ -50,3 +50,13 @@ def test_places_geojson(client: TestClient) -> None:
     assert features
     assert all(f["geometry"]["type"] == "Point" for f in features)
     assert all(set(f["properties"]) >= {"name", "subcategory"} for f in features)
+
+
+def test_lineage_is_the_one_of_the_requested_level(client: TestClient) -> None:
+    """CORE-006: district rent cites the postcode dataset, municipio rent the municipal one."""
+    body = client.get(
+        "/api/v1/features/alquiler_m2_mensual/values", params={"level": "distrito"}
+    ).json()
+    cited = body["data"]["lineage"]["dataset_versions"]
+    assert "cm_alquiler_m2_codigo_postal_madrid" in cited
+    assert "cm_alquiler_m2_municipios" not in cited

@@ -301,6 +301,48 @@ def not_published(territories: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def _postcode_values(obs: pd.DataFrame, dims: DimFilter) -> tuple[dict[str, float], Any]:
+    """Latest published value of each postcode (exactly one matching row), and its period."""
+    values: dict[str, float] = {}
+    periods: list[Any] = []
+    for (code, period), records in _by_territory(obs).items():
+        value, reason, matched = _sum_selected(records, dims)
+        periods.append(period)
+        if matched == 1 and reason is None:
+            values[str(code)] = value
+    return values, max(periods) if periods else None
+
+
+def postcode_weighted_mean(
+    obs: pd.DataFrame, weights: pd.DataFrame, dims: DimFilter, confidence: float = 1.0
+) -> pd.DataFrame:
+    """A zone's value as the mean of its postcodes' values, each weighted by how many of the
+    zone's geocoded places carry that postcode (CORE-006: there is no postcode geometry, so the
+    places locate the postcodes; a declared proxy of where people live). The confidence is the
+    base confidence times the share of that weight whose postcode publishes a value. A zone
+    with none is SOURCE_NO_COVERAGE, never 0.
+
+    `weights` columns: territory_code (the zone), postcode, weight (places)."""
+    values, period = _postcode_values(obs, dims)
+    out: list[dict[str, Any]] = []
+    records: list[dict[str, Any]] = weights.to_dict("records")  # pyright: ignore[reportAssignmentType]
+    by_zone: dict[str, list[tuple[str, float]]] = {}
+    for record in records:
+        by_zone.setdefault(str(record["territory_code"]), []).append(
+            (str(record["postcode"]), float(record["weight"]))
+        )
+    for code, members in sorted(by_zone.items()):
+        total = sum(w for _, w in members)
+        known = [(values[cp], w) for cp, w in members if cp in values]
+        known_weight = sum(w for _, w in known)
+        if not known or known_weight <= 0 or total <= 0:
+            out.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        mean = sum(v * w for v, w in known) / known_weight
+        out.append(_ok(code, period, mean, confidence * known_weight / total))
+    return _result(out)
+
+
 WALK_STATISTICS = ("median_minutes", "share_within")
 
 
