@@ -97,32 +97,39 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - PR #6 de C integrado (`877d4fd`) con `reviewer`.
   - CI de la rama en verde otra vez (`29a688e`). `make lint` comprueba ahora los schemas y el manifest de docs, igual que la CI (`bc60e1f`).
   - La base local tiene las 24 features recalculadas (`make features`, 29 s).
-- **Blocked / a la espera:**
-  - **PR #7 de C:** ajustes pedidos vía `datamad-10`. Con la paginación, el check «largest» del smoke queda ciego, y el README habla del riesgo de los 4,2 MB, que ya está resuelto. Cuando C lo actualice, reviewer y merge.
-  - **Supabase:** pedido a Mariano `make supabase-sync PROFILE=demo` (unas 58.000 filas más en `feature_value`). Después, comprobarlo por MCP: 24 features, y 4.843 filas en cada feature a pie.
-  - **Datos personales:** la ruta local `/Users/<usuario>/…` sale en unos 40 ficheros de evidencia antiguos (salida de vitest y pyright). Lo decide Mariano; la evidencia nueva se limpia con `sed "s#$HOME#~#g"`.
-- **Next (línea A), en orden:**
-  1. **GAP-001 completo.**
+- **Blocked / a la espera:** nada. **Supabase:** Mariano hará `make supabase-sync PROFILE=demo` **una sola vez**, cuando las features estén recalculadas a 4 km/h (Next 2). Hay que avisar a `datamad-10` en ese momento y comprobarlo después por MCP: 24 features y 4.843 filas en cada feature a pie.
+- **Next (línea A), en orden.** Los puntos 1 a 3 son decisiones de Mariano del 11 nov por la noche, transmitidas por `datamad-10`:
+  1. **Integrar el PR #7 de C.** Ya está rebasado y lleva los ajustes de la revisión (`cf33a5b`, `23e89a0`); el smoke de producción da 7/7 con `/places` paginada. Pasar `reviewer` sobre los ajustes, comprobar la CI en verde, hacer el merge y añadir la fila al board.
+  2. **Velocidad a pie: 4 km/h** (Mariano), como el estudio «El Madrid de los 15 minutos» del Ayuntamiento, porque la demo también es para personas mayores.
+     - Cambiar `speed_kmh` en los 12 YAML `min_a_pie_*` y `pct_calle_*`.
+     - Recalcular con `make features`, pasar `scripts/check_walk_golden.py` y `make evidence GATE=03`.
+     - Revisar los golden: con los minutos un 12,5 % más altos, algún límite puede no cumplirse. Si pasa, investigar el caso antes de tocar el límite.
+     - Actualizar D-210 (o hacer un D-211) con la fuente: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf
+     - Pasar a D la cifra y los ejemplos nuevos (Chamartín) para `metodologia.md` §1.5.
+     - Avisar a `datamad-10` para el sync único de Supabase.
+  3. **Quitar del árbol actual las rutas locales con apellidos** (Mariano; **el historial no se reescribe**).
+     - Sustituir `/Users/<usuario>/` por `~` (o por rutas relativas al repo) en todos los ficheros del árbol, también las rutas de scratchpad `/private/tmp/claude-…-Users-<usuario>-…` que salgan en la evidencia.
+     - Evitar que vuelva a pasar: sanear al escribir en `scripts/evidence.py` y en los gates de fase. Añadir un test o un check que falle si aparece la ruta.
+  4. **GAP-001 completo.**
      - Filas de escuela infantil, mayores, farmacia y vivienda. Corregir el filtro de colegios (hoy cuenta escuelas infantiles e IES; usar los mismos destinos que `min_a_pie_colegio`).
      - Las features a pie ya traen `gap_row: {role: extra}`: conectarlas como `extra_indicators` en `services/gaps.py`.
      - Lista por sección y `GET /api/v1/gaps?level=&row=`.
      - ADR de los cortes con criterio estadístico. Chamartín salud = 0,79: no mover los cortes por ese caso, y decirle a D si cambia de estado.
      - Por distrito, la vivienda queda SIN DATOS.
      - En la web, minutos muy altos (hasta 337 en pueblos sin colegio) mejor como «más de 60 min»: proponérselo a B.
-  2. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
-  3. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que aparece el Reality Check.
-  4. `POST /api/v1/search`; los distritos entran en `all_zones`.
+  5. CORE-006: D pide los m² que se suponen según el tamaño del hogar.
+  6. CORE-003 con Reality Check: D pide cómo se reparten los pesos y cómo se pasa a %, con el caso de la Castellana, y el presupuesto con el que aparece el Reality Check.
+  7. `POST /api/v1/search`; los distritos entran en `all_zones`.
 - **Peticiones abiertas de otras líneas:**
   - **D:** el párrafo de metodología §1.5 (a pie) ya está enviado. Faltan los de GAP-001, CORE-006 y CORE-003. Conectar los datasets CM que aún no alimentan nada: unidades escolares, nacidos vivos, viviendas por tenencia, alquiler por código postal y farmacias por municipio. Los 6 GTFS y las oficinas de farmacia ya alimentan CORE-005.
   - **B:** los JSON Schema se exportan en modo validación (`near_misses`, `meta` y `warnings` salen opcionales en TypeScript); valorar el modo serialización. Pedir transporte filtrado o recorrer `pages`.
-  - **datamad-10:** ¿4 km/h en vez de 4,5 para una demo pensada para personas mayores? D-210 da las referencias; cambiarlo es una línea por YAML.
 - **Para Supabase:** tras cada cambio de features o de lugares, pedir a Mariano `make supabase-sync PROFILE=demo` (las sesiones no pueden) y comprobarlo después por MCP.
 - **Gate status:**
   - G1 PASS: 21 datasets CM y 2 complementarios del Ayuntamiento; la red OSM pasa su calidad.
   - G2 PASS.
   - G3 PASS (11 nov, `evidence/gate-03/2026-11-11/summary.md`): 24 features (`24|0|0|179`), 7 con los 21 distritos, 12 a pie con las 4.843 zonas y los golden de la red real.
   - G4: contratos, `/gaps`, `/places` y `/geo` en verde.
-  - G6: Supabase en 0005; sync pendiente de Mariano por CORE-005. C sirve la demo desde `1c22212` y le falta redesplegar `879101a` (paginación).
+  - G6: Supabase en 0005; el sync único llega tras recalcular a 4 km/h. C sirve la demo desde `1c22212` y le falta redesplegar `879101a` (paginación).
 - **Notas para las siguientes cards:**
   - **Gate local = CI:** `make lint typecheck test`. `lint` incluye `export_schemas --check` y `check_docs_manifest`. Si cambias `docs/`, regenera con `uv run python scripts/check_docs_manifest.py docs --write <versión siguiente>`; hoy está en 0.5.20.
   - **Features a pie (D-210):**
