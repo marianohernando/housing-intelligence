@@ -266,9 +266,11 @@ def metric_ratio(
     confidence: float = 1.0,
 ) -> pd.DataFrame:
     """per x numerator / denominator for two metrics of the same zones (e.g. dwellings over
-    90 m2 per 100 households of 4 or more). Each metric uses its own latest period. A zone
-    whose numerator is unknown or absent is unknown, never 0; the regional reference adds up
-    the zones where both are known."""
+    90 m2 per 100 households of 4 or more). Each metric uses its own latest period and the row
+    carries the denominator's. A zone whose numerator is unknown or absent is unknown, never 0.
+    The regional reference adds up the zones where both are known; as in places per
+    population, a zone with a 0 denominator is NOT_APPLICABLE but its numerator still counts
+    for the region."""
     numerators = _population(numerator, numerator_dims)
     denominators = _population(denominator, denominator_dims)
     totals: dict[str, float] = {}

@@ -190,6 +190,12 @@ def pass_level(spec: FeatureSpec, row_level: str) -> str:
     return row_level if row_level in extra_levels(spec) else spec.geo_level.value
 
 
+def effective_method(spec: FeatureSpec, row_level: str) -> str:
+    """The method a row was computed with: a level override may change it (e.g. not_published)."""
+    override = extra_levels(spec).get(pass_level(spec, row_level), {})
+    return str(override.get("method", spec.formula.method))
+
+
 def versions_by_pass(spec: FeatureSpec, versions: dict[str, str]) -> dict[str, dict[str, str]]:
     passes = [spec.geo_level.value, *extra_levels(spec)]
     return {
@@ -224,7 +230,7 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
             "confidence": float(r["confidence"]),
             "inputs": {
                 "dataset_versions": versions[pass_level(spec, _level(spec, r))],
-                "method": spec.formula.method,
+                "method": effective_method(spec, _level(spec, r)),
             },
         }
         for r in records

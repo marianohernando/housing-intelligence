@@ -19,7 +19,7 @@ formula:
   denominator_dims: {tamano: [de_4_personas, de_5_o_mas_personas]}
   per: 100
   small_population_threshold: 100  # fewer large households than this -> confidence 0.5
-  confidence: 0.8  # two sources with different universes and years (see limitations)
+  confidence: 0.8  # value confidence: two sources with different universes and years; confidence.inputs below lists what else lowers it
   levels:
     distrito: {method: not_published, territories_metric: poblacion_padron}  # SIN DATOS, never 0
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
@@ -30,6 +30,8 @@ models: [family_fit, housing_gap]
 tests: [non_negative]
 limitations:
   - "Compara dos tablas de la CM que no miden el mismo universo ni el mismo año: viviendas por superficie (2023) y hogares por tamaño (censo 2021). Por eso la confidence es 0,8 y lo que se lee es la comparación con la región, no la cifra suelta."
-  - "No dice si las viviendas grandes están libres, en venta o en alquiler, ni si las ocupan hogares grandes."
+  - "No dice si las viviendas grandes están libres, en venta o en alquiler, ni si las ocupan hogares grandes: muchas las ocupan hogares pequeños. Mide el ajuste del parque, no la escasez ni el precio (el precio es CORE-006)."
+  - "90 m² es el corte de las bandas de la CM más cercano a una vivienda de 3 dormitorios para 4 personas."
+  - "En municipios pequeños la cifra puede ser muy alta (pocos hogares grandes); por debajo de 100 hogares de 4 o más personas se publica con confidence 0,5."
   - "La CM no publica estas tablas por distrito: en los distritos de Madrid la fila sale SIN DATOS."
 gap_row: {row: vivienda, role: primary, label: "Vivienda para familias", phrase: "viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", proxy_note: "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio."}

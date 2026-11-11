@@ -3,6 +3,7 @@
 from datetime import date
 
 import pandas as pd
+import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -211,7 +212,7 @@ def test_metric_ratio_of_two_metrics_never_turns_unknown_into_zero() -> None:
     assert out["28004"]["null_reason"] == "NOT_APPLICABLE"  # 5 / 0
     region = out[methods.REGION_CODE]
     assert region["value"] == 100.0 * (30.0 + 5.0) / (20.0 + 0.0)  # zones with both known
-    assert region["confidence"] == 0.8 * 2 / 4
+    assert region["confidence"] == pytest.approx(0.8 * 2 / 4)
 
 
 def test_metric_ratio_small_denominator_lowers_confidence() -> None:
@@ -244,3 +245,14 @@ def test_not_published_gives_one_explicit_unknown_per_zone() -> None:
     assert all(pd.isna(v) for v in out["value"].tolist())
     assert set(out["null_reason"]) == {"SOURCE_MISSING"}
     assert set(out["confidence"]) == {0.0}
+
+
+def test_metric_ratio_keeps_the_reason_of_an_unknown_input() -> None:
+    num = _obs([("28001", {"k": "v"}, None), ("28002", {"k": "v"}, None)])
+    den = _obs([("28001", {"k": "v"}, None), ("28002", {"k": "v"}, 10.0)])
+    num.loc[1, "null_reason"] = "UNKNOWN"
+    den.loc[0, "null_reason"] = "STALE"
+    out = _by_code(methods.metric_ratio(num, {"k": "v"}, den, {"k": "v"}, 100.0))
+    assert out["28001"]["null_reason"] == "STALE"  # both unknown: the denominator's reason
+    assert out["28002"]["null_reason"] == "UNKNOWN"  # the numerator's own reason, never 0
+    assert methods.REGION_CODE not in out  # no zone with both known: no reference

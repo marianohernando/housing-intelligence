@@ -191,7 +191,13 @@ def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Cat
             assert source.levels is None or set(source.levels) <= passes, spec.feature_id
         for level, override in levels.items():
             used = {s.dataset_id for s in spec.sources if s.levels is None or level in s.levels}
-            for key in ("metric", "population_metric"):
+            for key in (
+                "metric",
+                "population_metric",
+                "numerator_metric",
+                "denominator_metric",
+                "territories_metric",
+            ):
                 metric_id = override.get(key)
                 if metric_id is None:
                     continue
