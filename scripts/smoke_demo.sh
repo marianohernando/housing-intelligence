@@ -52,9 +52,12 @@ check geography "/api/v1/geo/admin-units?level=municipio&simplify_m=50" \
   'select((.data.features | length) > 0) | "\(.data.features | length) municipios"'
 check layer "/api/v1/places?category=$LAYER" \
   'select((.data.features | length) > 0) | "\(.data.features | length) places"'
-# The largest response (every stop, no cap since d7037b7): guards the 4.5 MB limit.
+# The largest layer, paginated since 879101a: page 1 is the biggest single response the map asks
+# for, so this guards the 4.5 MB limit per page (not the size of the whole layer).
 check largest "/api/v1/places?category=transport" \
-  'select((.data.features | length) > 0) | "\(.data.features | length) stops"'
+  'select(.data.page == 1 and (.data.features | length) > 0
+          and .data.total >= (.data.features | length))
+   | "\(.data.total) stops, page \(.data.page)/\(.data.pages)"'
 
 echo "smoke: $((total - failures))/$total OK"
 ((failures == 0))

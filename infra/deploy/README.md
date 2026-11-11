@@ -18,7 +18,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 | [`api/Dockerfile`](api/Dockerfile) | Imagen de la API con solo las dependencias de `hi-api` (`uv sync --package hi-api`). Usuario no root y puerto `$PORT`. |
 | [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción y pasa el smoke. |
 | [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
-| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía y una capa, y que ninguna respuesta pase de 4,5 MB. |
+| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación) y la página 1 de la capa más grande (transporte). También comprueba que ninguna respuesta pase de 4,5 MB. |
 | [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql) | Rol `vf_api_ro`: solo lectura, con una política RLS por cada tabla que lee la API. Es idempotente. |
 
 ## Variables de entorno (proyecto Vercel, entorno Production)
@@ -105,8 +105,8 @@ Cómo se detecta:
 | Invocaciones | 1.000.000 al mes | Bajo |
 | CPU activa | 4 h al mes, **compartidas con los otros proyectos del equipo** | Medio: vigilar en Usage |
 | Memoria provisionada | 360 GB-h al mes | Bajo |
-| Transferencia | 100 GB al mes (Fast Data Transfer) y 10 GB (Origin Transfer) | Bajo: la respuesta más grande (transporte) pesa 4,2 MB |
-| Respuesta | 4,5 MB como máximo por respuesta no streaming ([límites](https://vercel.com/docs/functions/limitations)) | **Alto**: desde d7037b7 `/places` ya no corta, y transporte pesa 4,2 MB (94 % del límite). El smoke la mide (`largest`). Si crece, hay que paginar, filtrar por zona o servir esa capa como estático |
+| Transferencia | 100 GB al mes (Fast Data Transfer) y 10 GB (Origin Transfer) | Bajo: la respuesta más grande es una página de `/places`, de unos 1,4 MB |
+| Respuesta | 4,5 MB como máximo por respuesta no streaming ([límites](https://vercel.com/docs/functions/limitations)) | Bajo: `/places` va paginado desde 879101a, con 5.000 lugares por página (unos 1,4 MB). El smoke mide la página 1 de transporte (`largest`). Antes de paginar, la capa entera pesaba 4,2 MB, el 94 % del límite |
 | Duración | 300 s por petición | Ninguno |
 | Memoria por instancia | 2 GB, 1 vCPU | Ninguno |
 | Región | Una sola (`dub1`) | — |

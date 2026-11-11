@@ -51,3 +51,5 @@ OK   layer       0.23s   1156850 B  /api/v1/places?category=education  3851 plac
 OK   largest     0.66s   4215307 B  /api/v1/places?category=transport  14982 stops
 smoke: 7/7 OK
 ```
+
+**Update (later the same day):** commit 879101a paginates `/places` (5,000 places per page, about 1.4 MB). The 4.2 MB above is the size of the whole transport layer before that change. Since then the `largest` check measures page 1 (see `deploy-6-paginated.md`).
