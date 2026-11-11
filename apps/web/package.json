@@ -11,7 +11,8 @@
     "start": "next start --port ${WEB_PORT:-3010}",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "capture": "node scripts/capture.mjs"
   },
   "dependencies": {
     "maplibre-gl": "6.11.2",
@@ -25,6 +26,7 @@
     "@types/react-dom": "19.3.0",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.4.2",
+    "playwright": "1.63.0",
     "typescript": "5.9.3",
     "vitest": "5.0.5"
   }

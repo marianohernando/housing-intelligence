@@ -1,0 +1,56 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 30rem;
+  padding-top: var(--space-6);
+}
+
+.hero {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--text-hero);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.accent {
+  color: var(--violet-strong);
+}
+
+.lead {
+  max-width: 26rem;
+  color: var(--ink-soft);
+  font-size: var(--text-lg);
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  padding-left: 1.4em;
+}
+
+.list li::marker {
+  color: var(--violet-strong);
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+.list strong {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding-top: var(--space-3);
+    gap: var(--space-5);
+  }
+}

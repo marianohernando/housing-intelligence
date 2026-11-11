@@ -1,0 +1,103 @@
+@import "../styles/tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background:
+    radial-gradient(60rem 36rem at 72% 8%, rgba(106, 90, 224, 0.1), transparent 70%),
+    radial-gradient(40rem 30rem at 8% 92%, rgba(106, 90, 224, 0.06), transparent 70%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  word-spacing: 0.06em;
+  color: var(--ink);
+}
+
+p,
+ol,
+ul {
+  margin: 0;
+}
+
+a {
+  color: var(--violet-strong);
+  text-underline-offset: 0.18em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Glass card surface (brief: white glass, soft blur, light border and shadow) */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 500;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

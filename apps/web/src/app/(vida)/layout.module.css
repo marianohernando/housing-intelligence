@@ -1,0 +1,14 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.main {
+  flex: 1;
+  padding: var(--space-4) var(--page-gutter) var(--space-7);
+}
+
+.main:focus {
+  outline: none;
+}
