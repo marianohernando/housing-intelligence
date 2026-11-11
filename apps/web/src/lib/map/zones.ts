@@ -129,3 +129,30 @@ export function maskAround(geometry: ZoneGeometry): GeoJSON.Polygon {
   });
   return { type: "Polygon", coordinates: [WORLD, ...holes] };
 }
+
+const METRES_PER_DEGREE = 111320;
+
+/**
+ * Thin quads just outside the zone outline, one per side. Extruded, they read as the edge of a
+ * raised model (mockup 2) without covering the streets and parks inside the zone.
+ */
+export function edgeWall(geometry: ZoneGeometry, widthM: number): GeoJSON.FeatureCollection<GeoJSON.Polygon> {
+  const features = polygons(geometry).flatMap((polygon) => {
+    const ring = polygon[0] ?? [];
+    // Outward is to the right of a counter-clockwise ring and to the left of a clockwise one.
+    const side = ringArea(ring) > 0 ? 1 : -1;
+    return ring.slice(0, -1).map((start, i): GeoJSON.Feature<GeoJSON.Polygon> => {
+      const [x1 = 0, y1 = 0] = start;
+      const [x2 = 0, y2 = 0] = ring[i + 1] ?? [];
+      const kx = Math.cos((((y1 + y2) / 2) * Math.PI) / 180) * METRES_PER_DEGREE;
+      const dx = (x2 - x1) * kx;
+      const dy = (y2 - y1) * METRES_PER_DEGREE;
+      const length = Math.hypot(dx, dy) || 1;
+      const ox = ((side * dy) / length) * (widthM / kx);
+      const oy = ((side * -dx) / length) * (widthM / METRES_PER_DEGREE);
+      const quad = [[x1, y1], [x2, y2], [x2 + ox, y2 + oy], [x1 + ox, y1 + oy], [x1, y1]];
+      return { type: "Feature", geometry: { type: "Polygon", coordinates: [quad] }, properties: {} };
+    });
+  });
+  return { type: "FeatureCollection", features };
+}

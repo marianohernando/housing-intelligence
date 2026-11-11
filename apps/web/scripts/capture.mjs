@@ -74,10 +74,12 @@ async function capture(browser, route, profile, outDir) {
   await page.goto(new URL(route.path, values.base).toString(), { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(Number(values.wait));
+  // How far the page scrolls past the viewport: 0 means everything fits on one screen.
+  const overflowPx = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
   const file = join(outDir, `${values.prefix}${route.name}_${id}.png`);
   await page.screenshot({ path: file });
   await context.close();
-  return { route: route.path, viewport: id, file, problems, warnings };
+  return { route: route.path, viewport: id, file, overflow_px: overflowPx, problems, warnings };
 }
 
 const outDir = resolve(values.out);

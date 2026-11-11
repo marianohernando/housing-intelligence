@@ -87,3 +87,63 @@ describe("pickKeyPoints spreads labels across kinds", () => {
     expect(points.find((p) => p.kind === "colegio")?.name).toBe("Lejos Sur");
   });
 });
+
+describe("pickKeyPoints only labels places in view", () => {
+  const center: [number, number] = [-3.68, 40.46];
+  const places = [
+    place("Madrid-Chamartín-Clara Campoamor", "transport", "cercanias", -3.682, 40.472),
+    place("CONCHA ESPINA", "transport", "metro", -3.677, 40.451),
+    place("Centro de salud (Madrid)", "health", "Centro de salud", -3.69, 40.47),
+    place("Hospital general (Madrid)", "health", "Hospital general", -3.672, 40.455),
+    place("PATRIARCA OBISPO EIJO GARAY", "education", "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", -3.675, 40.455),
+  ];
+  // In view: everything east of -3.68 (the rest would sit under the side cards)
+  const eastOnly = (lon: number) => lon > -3.68;
+
+  it("skips places out of view, falling back to the next class of the same kind", () => {
+    const points = pickKeyPoints(places, center, { inView: eastOnly });
+    expect(points.map((p) => [p.label, p.name])).toEqual([
+      ["Metro", "Concha Espina"],
+      ["Hospital", null],
+      ["Colegio", "Patriarca Obispo Eijo Garay"],
+    ]);
+  });
+
+  it("leaves a kind out rather than labelling it off-screen", () => {
+    expect(pickKeyPoints(places, center, { inView: (lon) => lon > -3.674 }).map((p) => p.kind)).toEqual(["salud"]);
+    expect(pickKeyPoints(places, center, { inView: () => false })).toEqual([]);
+  });
+
+  it("passes longitude and latitude to the visibility check", () => {
+    const seen: [number, number][] = [];
+    pickKeyPoints(places.slice(0, 1), center, {
+      inView: (lon, lat) => {
+        seen.push([lon, lat]);
+        return true;
+      },
+    });
+    expect(seen).toEqual([[-3.682, 40.472]]);
+  });
+});
+
+describe("pickKeyPoints keeps labels apart", () => {
+  const center: [number, number] = [-3.68, 40.46];
+  const places = [
+    place("Madrid-Chamartín-Clara Campoamor", "transport", "cercanias", -3.682, 40.472),
+    place("PEGADA A LA ESTACION", "transport", "metro", -3.6821, 40.4721),
+    place("Centro de salud (Madrid)", "health", "Centro de salud", -3.6822, 40.4719),
+    place("PATRIARCA OBISPO EIJO GARAY", "education", "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", -3.675, 40.455),
+  ];
+  // Two labels collide when their pins are less than 0.001° apart (a stand-in for screen space)
+  const apart = (a: { lon: number; lat: number }, b: { lon: number; lat: number }) =>
+    Math.hypot(a.lon - b.lon, a.lat - b.lat) >= 0.001;
+
+  it("drops a point whose label would cover one already shown", () => {
+    const points = pickKeyPoints(places, center, { apart });
+    expect(points.map((p) => p.name)).toEqual(["Madrid-Chamartín-Clara Campoamor", "Patriarca Obispo Eijo Garay"]);
+  });
+
+  it("keeps every point when nothing collides", () => {
+    expect(pickKeyPoints(places, center).map((p) => p.kind)).toEqual(["transporte", "transporte", "salud", "colegio"]);
+  });
+});

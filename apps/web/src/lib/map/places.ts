@@ -115,19 +115,36 @@ function argmax(options: Candidate[], score: (c: Candidate) => number): Candidat
   });
 }
 
+/** Whether a place's label would be seen on screen (not under a card, not off the map). */
+export type InView = (lon: number, lat: number) => boolean;
+
+export interface KeyPointOptions {
+  inView?: InView;
+  /** Whether two labels can both show without one covering the other. */
+  apart?: (a: KeyPoint, b: KeyPoint) => boolean;
+}
+
 /**
  * Up to two stations, one health centre and one public school. The first point is the best
  * station nearest the zone centre; every later point is the one farthest from those already
  * shown, so labels spread over the zone instead of piling up. Each kind starts with its best
- * class (commuter rail before metro, health centre before hospital).
+ * class (commuter rail before metro, health centre before hospital). Only places `inView` and
+ * `apart` from the points already picked count: a kind without one is left out rather than
+ * labelled under a card or on top of another label.
  */
-export function pickKeyPoints(places: PlaceFeature[], center: [number, number]): KeyPoint[] {
+export function pickKeyPoints(
+  places: PlaceFeature[],
+  center: [number, number],
+  { inView = () => true, apart = () => true }: KeyPointOptions = {},
+): KeyPoint[] {
   const picked: Candidate[] = [];
   const at = (c: Candidate): [number, number] => [c.lon, c.lat];
   for (const rule of RULES) {
-    const pool = candidates(places, rule);
-    for (let n = 0; n < rule.limit && pool.length > 0; n += 1) {
-      const options = n === 0 ? bestClass(pool) : pool;
+    const pool = candidates(places, rule).filter((c) => inView(c.lon, c.lat));
+    for (let n = 0; n < rule.limit; n += 1) {
+      const free = pool.filter((c) => picked.every((p) => apart(c, p)));
+      if (free.length === 0) break;
+      const options = n === 0 ? bestClass(free) : free;
       const choice =
         picked.length === 0
           ? argmax(options, (c) => -distance(at(c), center))

@@ -35,14 +35,13 @@
   pointer-events: none;
 }
 
+/* Recognisable icon (train, cross, mortarboard) straight on the glass, as in mockup 2 */
 .labelIcon {
   display: grid;
   flex: none;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   place-items: center;
-  border-radius: var(--radius-sm);
-  background: var(--violet-soft);
   color: var(--violet-strong);
 }
 

@@ -37,6 +37,7 @@ function withZone(style: StyleSpecification): StyleSpecification {
       zones: { type: "geojson", data: empty },
       "zone-selected": { type: "geojson", data: empty },
       "zone-mask": { type: "geojson", data: empty },
+      "zone-base": { type: "geojson", data: empty },
     },
     layers: [...style.layers, ...below, ...above],
   };
@@ -65,6 +66,7 @@ describe("map style", () => {
 
   it("extrudes buildings from zone zoom, honouring hide_3d", () => {
     const extrusions = baseStyle(palette).layers.filter((l) => l.type === "fill-extrusion");
+    // (the zone's own raised edge, `zone-base`, is a zone overlay, not part of the base style)
     expect(extrusions.map((l) => l.id)).toEqual([BUILDING_LAYER]);
     expect(extrusions[0]?.minzoom).toBeGreaterThanOrEqual(13);
     expect(BUILDINGS_3D_ZOOM).toBe(14);

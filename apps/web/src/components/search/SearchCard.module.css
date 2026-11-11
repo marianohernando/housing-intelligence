@@ -69,10 +69,19 @@
   font-weight: 600;
 }
 
-.help {
+.help,
+.legendHelp {
   color: var(--ink-soft);
+  font-family: var(--font-body);
   font-size: var(--text-sm);
+  font-weight: 400;
   line-height: 1.4;
+}
+
+/* Help inside a legend: on its own line, like .help, except on short desktop screens */
+.legendHelp {
+  display: block;
+  margin-top: var(--space-1);
 }
 
 .chips {
@@ -134,4 +143,55 @@
   background: var(--falta-bg);
   color: var(--falta-ink);
   font-size: var(--text-sm);
+}
+
+.budgetRow {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Short desktop screens (1440×900): tighter rhythm so the button is in view without scrolling */
+@media (min-width: 1101px) and (max-height: 960px) {
+  .card {
+    gap: var(--space-2);
+    padding: var(--space-4) 1.25rem;
+  }
+
+  .body {
+    gap: var(--space-2);
+  }
+
+  .group {
+    gap: 0.375rem;
+  }
+
+  .legendHelp {
+    display: inline;
+    margin: 0 0 0 var(--space-2);
+  }
+
+  /* «Trabajo en»: its help goes next to the label, the field below (same DOM order) */
+  .work {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.375rem;
+  }
+
+  .work > .input {
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  .budgetRow {
+    grid-template-columns: minmax(12rem, auto) 1fr;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .amount {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    text-align: right;
+  }
 }

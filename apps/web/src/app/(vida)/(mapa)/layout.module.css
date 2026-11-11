@@ -9,15 +9,20 @@
   pointer-events: auto;
 }
 
-/* Soft veil behind the text column so it stays readable over the 3D city (AA over the map) */
+/*
+ * Soft veil behind the text column so it stays readable over the 3D city (AA over the map).
+ * It ends just past the 28rem column, so key point labels in the middle of the map stay clear.
+ */
 .overlay::before {
   position: fixed;
   top: 0;
   left: 0;
   z-index: -1;
-  width: min(48rem, 100%);
-  height: 36rem;
-  background: radial-gradient(ellipse at 0 35%, rgba(246, 245, 252, 0.95) 0, rgba(246, 245, 252, 0.85) 42%, rgba(246, 245, 252, 0) 72%);
+  width: min(calc(var(--page-gutter) + 31rem), 100%);
+  height: 38rem;
+  background: linear-gradient(90deg, rgba(246, 245, 252, 0.92) 0, rgba(246, 245, 252, 0.88) calc(100% - 3rem), rgba(246, 245, 252, 0) 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 75%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 75%, transparent 100%);
   content: "";
   pointer-events: none;
 }
@@ -27,5 +32,7 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(180deg, rgba(246, 245, 252, 0.95) 0, rgba(246, 245, 252, 0.85) 45%, rgba(246, 245, 252, 0) 68%);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }

@@ -4,6 +4,7 @@ import {
   type AdminFeature,
   boundsOf,
   buildZoneCollection,
+  edgeWall,
   findZone,
   maskAround,
   regionOf,
@@ -101,5 +102,52 @@ describe("regionOf", () => {
     expect(region.type).toBe("MultiPolygon");
     expect(region.coordinates).toHaveLength(zones.features.length);
     expect(maskAround(region).coordinates).toHaveLength(zones.features.length + 1);
+  });
+});
+
+describe("edgeWall", () => {
+  // A ~1 km square near Madrid, in both windings
+  const ccw = square(-3.7, 40.45, 0.01);
+  const cw: GeoJSON.Polygon = { type: "Polygon", coordinates: [[...(ccw.coordinates[0] ?? [])].reverse()] };
+
+  function inside([x, y]: GeoJSON.Position, ring: GeoJSON.Position[]): boolean {
+    let hit = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+      const [xi = 0, yi = 0] = ring[i] ?? [];
+      const [xj = 0, yj = 0] = ring[j] ?? [];
+      if (yi > (y ?? 0) !== yj > (y ?? 0) && (x ?? 0) < ((xj - xi) * ((y ?? 0) - yi)) / (yj - yi) + xi) hit = !hit;
+    }
+    return hit;
+  }
+
+  /** Middle of the wall's far side: the two offset corners of each quad. */
+  function farMiddle(quad: GeoJSON.Polygon): GeoJSON.Position {
+    const [, , c = [], d = []] = quad.coordinates[0] ?? [];
+    return [((c[0] ?? 0) + (d[0] ?? 0)) / 2, ((c[1] ?? 0) + (d[1] ?? 0)) / 2];
+  }
+
+  it("builds one thin quad per side of the outline", () => {
+    const wall = edgeWall(ccw, 20);
+    expect(wall.features).toHaveLength(4);
+    for (const quad of wall.features) expect(quad.geometry.coordinates[0]).toHaveLength(5);
+  });
+
+  it("puts the wall just outside the zone, whatever the ring winding", () => {
+    for (const zone of [ccw, cw]) {
+      const ring = zone.coordinates[0] ?? [];
+      for (const quad of edgeWall(zone, 20).features) expect(inside(farMiddle(quad.geometry), ring)).toBe(false);
+    }
+  });
+
+  it("offsets the wall by its width in metres", () => {
+    const [quad] = edgeWall(ccw, 20).features;
+    const [a = [], , , d = []] = quad?.geometry.coordinates[0] ?? [];
+    const metres = Math.hypot(((d[0] ?? 0) - (a[0] ?? 0)) * 111320 * Math.cos((40.45 * Math.PI) / 180), ((d[1] ?? 0) - (a[1] ?? 0)) * 111320);
+    expect(metres).toBeCloseTo(20, 0);
+  });
+
+  it("walls every part of a multipolygon", () => {
+    const multi: GeoJSON.MultiPolygon = { type: "MultiPolygon", coordinates: [ccw.coordinates, square(-3.6, 40.45, 0.01).coordinates] };
+    expect(edgeWall(multi, 20).features).toHaveLength(8);
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, Bus, ChevronDown, GraduationCap, HeartHandshake, type LucideIcon, Search, Stethoscope, User, Users } from "lucide-react";
+import { Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, User, Users } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { BudgetKind, PriorityKey } from "@/contracts/scenario_state";
@@ -55,7 +55,7 @@ const TEXT = {
 /** Priorities with data today. Zonas verdes, seguridad and sin escaleras wait for line A (DATA-018/019/020). */
 const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: string }[] = [
   { key: "transporte", label: "Transporte", icon: Bus, help: "Paradas cerca de casa y con autobuses o trenes a menudo." },
-  { key: "salud", label: "Salud", icon: Stethoscope, help: "Centro de salud cerca de casa." },
+  { key: "salud", label: "Salud", icon: Cross, help: "Centro de salud cerca de casa." },
   { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios públicos cerca de casa." },
 ];
 const UPCOMING = "Muy pronto: zonas verdes, seguridad y sin escaleras.";
@@ -95,8 +95,9 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
 
       <div id={bodyId} hidden={!open} className={styles.body}>
         <fieldset className={styles.group}>
-          <legend>{TEXT.home}</legend>
-          <p className={styles.help}>{TEXT.homeHelp}</p>
+          <legend>
+            {TEXT.home} <span className={styles.legendHelp}>{TEXT.homeHelp}</span>
+          </legend>
           <div className={styles.grid}>
             <Chip label={TEXT.alone} icon={User} pressed={household.adults === 1} onToggle={() => update((s) => setAdults(s, 1))} />
             <Chip label={TEXT.couple} icon={Users} pressed={household.adults === 2} onToggle={() => update((s) => setAdults(s, 2))} />
@@ -126,7 +127,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           <p className={styles.help}>{UPCOMING}</p>
         </fieldset>
 
-        <div className={styles.group}>
+        <div className={`${styles.group} ${styles.work}`}>
           <label htmlFor={`${bodyId}-work`} className={styles.legend}>
             {TEXT.work}
           </label>
@@ -138,19 +139,21 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
 
         <fieldset className={styles.group}>
           <legend>{TEXT.budget}</legend>
-          <Segmented
-            legend={TEXT.budget}
-            value={budget.kind}
-            options={[
-              { value: "rent", label: TEXT.rent },
-              { value: "buy", label: TEXT.buy },
-            ]}
-            onChange={(kind) => update((s) => setBudgetKind(s, kind))}
-          />
-          <p className={styles.amount}>
-            <span>{budgetText(budget.kind, budget.amount_eur)}</span>
-            {budget.kind === "buy" && <span className={styles.tag}>{TEXT.indicative}</span>}
-          </p>
+          <div className={styles.budgetRow}>
+            <Segmented
+              legend={TEXT.budget}
+              value={budget.kind}
+              options={[
+                { value: "rent", label: TEXT.rent },
+                { value: "buy", label: TEXT.buy },
+              ]}
+              onChange={(kind) => update((s) => setBudgetKind(s, kind))}
+            />
+            <p className={styles.amount}>
+              <span>{budgetText(budget.kind, budget.amount_eur)}</span>
+              {budget.kind === "buy" && <span className={styles.tag}>{TEXT.indicative}</span>}
+            </p>
+          </div>
           <input
             type="range"
             className={styles.range}

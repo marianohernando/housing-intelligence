@@ -201,3 +201,57 @@ Cumplido:
 
 ## Para A
 - `31_public_api_routes.md` dice que las filas aún no calculadas se avisan en `warnings`. En el código (`services/gaps.py`, línea 206), si faltan solo algunas filas no hay aviso; solo lo hay cuando no hay ninguna.
+
+---
+
+# MAP-004 Fase 4c — Pulido 3D y «Tu búsqueda» sin desplazamiento (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `ad31fc8`. Recoge las notas de datamad-10 tras comparar la F3 con el mockup 2 y un pendiente de la F4a.
+
+## Qué hay
+- **Edificios lavanda dentro y casi blancos fuera:**
+  - `--map-building` pasa a `#e6e3f5`;
+  - la luz se vuelve más suave (0,35) y con un tinte lavanda, para que las paredes no salgan grises;
+  - la máscara blanca del exterior pasa de 0,62 a 0,78, así que los edificios de fuera quedan casi blancos y el distrito se lee como una «isla».
+- **Verde:** `--map-park` pasa a `#cdebd6` y la vegetación (landcover) a 0,9 de opacidad.
+- **Base extruida** (`edgeWall`, con tests): una pared lavanda de 80 m justo por fuera del contorno, con efecto de maqueta.
+  - No tapa calles ni parques del interior.
+  - En móvil se oculta, igual que el brillo.
+- **Etiquetas:**
+  - iconos reconocibles: tren, cruz (`Cross`, también en el chip «Salud») y birrete;
+  - icono violeta directamente sobre el cristal, como en el mockup.
+- **Mismo cristal en todas las etiquetas:**
+  - en la F4b, una etiqueta quedaba bajo el velo de lectura y otra bajo la tarjeta «Tu búsqueda»;
+  - el velo ya se ciñe a la columna de texto;
+  - los puntos clave se eligen cuando la cámara aterriza, solo entre los que caen en el hueco libre entre tarjetas y sin solaparse (`pickKeyPoints` con `inView` y `apart`, con tests);
+  - si un tipo no tiene ningún punto así, no se muestra.
+- **«Tu búsqueda» cabe a 1440×900 sin desplazarse** (antes sobraban 234 px). Solo en pantallas de escritorio bajas (`min-width: 1101px` y `max-height: 960px`):
+  - cabecera y héroe más compactos, y menos separación en la tarjeta;
+  - las ayudas de «Tu hogar» y «Trabajo en» van en la línea de su etiqueta;
+  - Alquilar/Comprar y la cifra van en una sola fila.
+  
+  Se mantienen todos los textos y los objetivos de 44 px. La ayuda de «Tu hogar» pasa a formar parte del `legend`. En la de «Trabajo en» solo cambia el orden visual; el DOM y `aria-describedby` no cambian.
+- **`capture.mjs`** anota `overflow_px` por captura.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` | 0 |
+| `npm run -w apps/web typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 17 ficheros, 135 tests (nuevos: 5 de `places`, 4 de `zones`) |
+| `npm run -w apps/web build` | 0 (`NEXT_PUBLIC_API_URL=http://localhost:8011`) |
+| `make lint typecheck test-unit` | 0 (266 pytest, 135 vitest) |
+| `npm run -w apps/web capture -- --prefix f4c_ --wait 7000 …` | 6 capturas sin errores en la consola (`f4c_capture.json`) |
+
+## Capturas
+- `f4c_chamartin_desktop_vs_mockup.jpg`: Chamartín frente al mockup 2.
+  - Se ven los edificios lavanda, los parques más verdes, el exterior lavado y el borde elevado.
+  - Hay cuatro etiquetas nítidas (Estación, Centro de salud, Metro y Colegio), todas en el hueco libre.
+- `f4c_inicio_desktop_vs_mockup.jpg`: la portada con «Tu búsqueda» entera, botón incluido; `overflow_px: 0` a 1440×900.
+- `f4c_mostoles_desktop.png`: un municipio grande en 2,5D. Salen dos etiquetas: las demás caerían bajo las tarjetas o encima de otra.
+- En móvil la página se sigue desplazando (`overflow_px` de 161 a 834): lo resuelve la hoja inferior de la F5.
+
+## Pendiente
+- **F5:** hoja inferior en móvil, donde ahora el contenido tapa el mapa.
+- **F8:** pintar como SIN DATOS las filas de `/gaps` con aviso `INSUFFICIENT_DATA: row … not computed at … level yet` (A, `d3127d3`), en la tarjeta de zona y en «Qué falta».
+- **Nombres sin tilde:** el municipio se muestra «Mostoles» porque `/geo/admin-units` lo devuelve en mayúsculas y sin tilde («MOSTOLES»). `displayName` no puede reponer tildes que no vienen en el dato.

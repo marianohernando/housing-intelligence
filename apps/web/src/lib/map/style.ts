@@ -37,6 +37,9 @@ export const BUILDINGS_3D_ZOOM = 14;
  */
 export const HEIGHT_SCALE = 2;
 
+/** Edge of the zone as a raised model (mockup 2): a thin wall just outside the outline. */
+export const ZONE_BASE = { widthM: 14, heightM: 80 } as const;
+
 const SRC = "openmaptiles";
 
 function width(base: number): ExpressionSpecification {
@@ -86,7 +89,8 @@ export function baseStyle(p: MapPalette): StyleSpecification {
   return {
     version: 8,
     sources: { [SRC]: { type: "vector", url: OPENFREEMAP_TILEJSON } },
-    light: { anchor: "viewport", color: "#ffffff", intensity: 0.45, position: [1.2, 210, 35] },
+    // Soft lavender-tinted light: shaded walls stay lavender instead of turning grey.
+    light: { anchor: "viewport", color: "#f6f4ff", intensity: 0.35, position: [1.2, 210, 35] },
     sky: {
       "sky-color": p.violetSoft,
       "horizon-color": p.land,
@@ -105,7 +109,7 @@ export function baseStyle(p: MapPalette): StyleSpecification {
         "source-layer": "landcover",
         minzoom: 11, // regional vegetation is noise in the overview
         filter: ["match", ["get", "class"], ["grass", "wood"], true, false],
-        paint: { "fill-color": p.park, "fill-opacity": 0.75 },
+        paint: { "fill-color": p.park, "fill-opacity": 0.9 },
       },
       { id: "park", type: "fill", source: SRC, "source-layer": "park", paint: { "fill-color": p.park } },
       { id: "water", type: "fill", source: SRC, "source-layer": "water", paint: { "fill-color": p.water } },
@@ -126,7 +130,7 @@ export function baseStyle(p: MapPalette): StyleSpecification {
 }
 
 /**
- * Zone overlays (sources `zones`, `zone-mask` and `zone-selected` are added by the map).
+ * Zone overlays (sources `zones`, `zone-mask`, `zone-selected` and `zone-base` are added by the map).
  * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
  * first, so the white mask drawn above fades the surroundings, buildings included.
  */
@@ -149,7 +153,18 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         id: "zone-mask",
         type: "fill",
         source: "zone-mask",
-        paint: { "fill-color": "#ffffff", "fill-opacity": 0.62 },
+        paint: { "fill-color": "#ffffff", "fill-opacity": 0.78 },
+      },
+      {
+        id: "zone-base",
+        type: "fill-extrusion",
+        source: "zone-base",
+        paint: {
+          "fill-extrusion-color": p.buildingTall,
+          "fill-extrusion-height": ZONE_BASE.heightM,
+          "fill-extrusion-opacity": 0.85,
+          "fill-extrusion-vertical-gradient": true,
+        },
       },
       {
         id: "zones-line",
