@@ -1,0 +1,657 @@
+{
+  "scenario": {
+    "schema_version": 1,
+    "tenure": "rent",
+    "budget_monthly_eur": 1200,
+    "min_floor_area_m2": 90,
+    "household": {
+      "adults": 2,
+      "children": 2,
+      "children_ages": [
+        4,
+        8
+      ],
+      "seniors": 0
+    },
+    "anchors": [
+      {
+        "kind": "work",
+        "label": "Paseo de la Castellana (Azca)",
+        "lon": -3.693,
+        "lat": 40.45,
+        "days_per_week": 4,
+        "max_minutes": null
+      }
+    ],
+    "nearby": [
+      {
+        "need": "colegio",
+        "max_walk_minutes": 10,
+        "required": false
+      }
+    ],
+    "priorities": [
+      "colegio",
+      "coste",
+      "trayecto"
+    ],
+    "zone_level": "municipio"
+  },
+  "zone_level": "municipio",
+  "results": [
+    {
+      "rank": 1,
+      "zone": {
+        "level": "municipio",
+        "code": "28009",
+        "admin_unit_id": "ES.28.MUN.28009",
+        "name": "Algete",
+        "municipio_ine": "28009",
+        "municipio_name": "Algete",
+        "center_lon": -3.49867,
+        "center_lat": 40.61846
+      },
+      "score": 100.0,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 774.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 774 €/mes aquí (8,6 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "strength",
+          "text": "Un piso de 90 m² cuesta unos 774 €/mes aquí (8,6 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 8.6,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "text": "4,1 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 4.077,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 774.0,
+      "failed_constraints": []
+    },
+    {
+      "rank": 2,
+      "zone": {
+        "level": "municipio",
+        "code": "28132",
+        "admin_unit_id": "ES.28.MUN.28132",
+        "name": "San Martin de la Vega",
+        "municipio_ine": "28132",
+        "municipio_name": "San Martin de la Vega",
+        "center_lon": -3.56972,
+        "center_lat": 40.24299
+      },
+      "score": 98.6,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 639.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 639 €/mes aquí (7,1 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "strength",
+          "text": "Un piso de 90 m² cuesta unos 639 €/mes aquí (7,1 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 7.1,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "text": "3,2 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 3.155,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 639.0,
+      "failed_constraints": []
+    },
+    {
+      "rank": 3,
+      "zone": {
+        "level": "municipio",
+        "code": "28058",
+        "admin_unit_id": "ES.28.MUN.28058",
+        "name": "Fuenlabrada",
+        "municipio_ine": "28058",
+        "municipio_name": "Fuenlabrada",
+        "center_lon": -3.80102,
+        "center_lat": 40.28867
+      },
+      "score": 97.0,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 846.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 846 €/mes aquí (9,4 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "strength",
+          "text": "Un piso de 90 m² cuesta unos 846 €/mes aquí (9,4 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 9.4,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "text": "3,1 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 3.103,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 846.0,
+      "failed_constraints": []
+    },
+    {
+      "rank": 4,
+      "zone": {
+        "level": "municipio",
+        "code": "28073",
+        "admin_unit_id": "ES.28.MUN.28073",
+        "name": "Humanes de Madrid",
+        "municipio_ine": "28073",
+        "municipio_name": "Humanes de Madrid",
+        "center_lon": -3.82697,
+        "center_lat": 40.25235
+      },
+      "score": 95.0,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 783.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 783 €/mes aquí (8,7 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "strength",
+          "text": "Un piso de 90 m² cuesta unos 783 €/mes aquí (8,7 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 8.7,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "text": "2,9 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 2.859,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 783.0,
+      "failed_constraints": []
+    },
+    {
+      "rank": 5,
+      "zone": {
+        "level": "municipio",
+        "code": "28084",
+        "admin_unit_id": "ES.28.MUN.28084",
+        "name": "Mejorada del Campo",
+        "municipio_ine": "28084",
+        "municipio_name": "Mejorada del Campo",
+        "center_lon": -3.47676,
+        "center_lat": 40.39987
+      },
+      "score": 93.9,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "PASS",
+          "value": 819.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 819 €/mes aquí (9,1 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "strength",
+          "text": "Un piso de 90 m² cuesta unos 819 €/mes aquí (9,1 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 9.1,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "text": "2,8 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 2.772,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 819.0,
+      "failed_constraints": []
+    }
+  ],
+  "near_misses": [
+    {
+      "rank": 1,
+      "zone": {
+        "level": "municipio",
+        "code": "28080",
+        "admin_unit_id": "ES.28.MUN.28080",
+        "name": "Majadahonda",
+        "municipio_ine": "28080",
+        "municipio_name": "Majadahonda",
+        "center_lon": -3.88787,
+        "center_lat": 40.47175
+      },
+      "score": 23.7,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "FAIL",
+          "value": 1224.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "weakness",
+          "text": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 13.6,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "text": "1,9 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 1.934,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 1224.0,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "rank": 2,
+      "zone": {
+        "level": "municipio",
+        "code": "28127",
+        "admin_unit_id": "ES.28.MUN.28127",
+        "name": "Las Rozas de Madrid",
+        "municipio_ine": "28127",
+        "municipio_name": "Las Rozas de Madrid",
+        "center_lon": -3.89666,
+        "center_lat": 40.52482
+      },
+      "score": 18.5,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "FAIL",
+          "value": 1224.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "weakness",
+          "text": "Un piso de 90 m² cuesta unos 1.224 €/mes aquí (13,6 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 13.6,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "text": "1,5 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 1.513,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 1224.0,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "rank": 3,
+      "zone": {
+        "level": "municipio",
+        "code": "28115",
+        "admin_unit_id": "ES.28.MUN.28115",
+        "name": "Pozuelo de Alarcon",
+        "municipio_ine": "28115",
+        "municipio_name": "Pozuelo de Alarcon",
+        "center_lon": -3.81188,
+        "center_lat": 40.42921
+      },
+      "score": 17.6,
+      "confidence": 1.0,
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "status": "FAIL",
+          "value": 1242.0,
+          "threshold": 1200.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Un piso de 90 m² cuesta unos 1.242 €/mes aquí (13,8 €/m²)"
+        }
+      ],
+      "reasons": [
+        {
+          "kind": "weakness",
+          "text": "Un piso de 90 m² cuesta unos 1.242 €/mes aquí (13,8 €/m²)",
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 13.8,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "text": "1,4 colegios públicos por cada 1.000 menores; la región tiene 2,2",
+          "indicator": {
+            "feature_id": "colegios_publicos_por_1000_menores",
+            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+            "value": 1.434,
+            "unit": "centros/1000 menores",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "cm_poblacion_edad_nacionalidad_sexo"
+            ]
+          }
+        },
+        {
+          "kind": "unknown",
+          "text": "Distancia a pie al colegio: aún sin calcular",
+          "indicator": null
+        }
+      ],
+      "estimated_rent_eur": 1242.0,
+      "failed_constraints": [
+        "budget"
+      ]
+    }
+  ],
+  "reality_check": {
+    "zones_evaluated": 179,
+    "zones_passing": 33,
+    "zones_unknown": 142,
+    "binding_constraint": "budget",
+    "relaxations": [
+      {
+        "constraint_id": "budget",
+        "label": "Hasta 1.400 €/mes (+200 €)",
+        "relaxed_to": 1400.0,
+        "unit": "€/mes",
+        "zones_if_relaxed": 37,
+        "added_zones": 4
+      },
+      {
+        "constraint_id": "budget",
+        "label": "Sin límite de presupuesto",
+        "relaxed_to": null,
+        "unit": null,
+        "zones_if_relaxed": 37,
+        "added_zones": 4
+      }
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "cm_alquiler_m2_municipios",
+      "name": "Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
+      "version": "2026-11-10-19b2da9645e3",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    }
+  ],
+  "methodology_version": "search-fixture-illustrative"
+}

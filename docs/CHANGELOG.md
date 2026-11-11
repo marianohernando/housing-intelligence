@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.12 — Contratos PUBLIC de la demo (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: contratos `ScenarioState`, `SearchResult` (ranking, motivos y Reality Check) y `ZoneGapList` (FALTA / JUSTO / CUBIERTO / SIN DATOS), sus JSON Schema en `data/schemas/api/` y las rutas previstas. La web (línea B) genera sus tipos desde ahí.
+
 ## v0.5.11 — Supabase configurado (2026-11-11)
 - D-197: RLS en todas las tablas públicas, sin políticas (migración 0003). Supabase queda con el esquema en head y el perfil demo cargado (100 MB). La Data API no expone filas.
 - D-198: repo público con el historial limpio; completa D-195.

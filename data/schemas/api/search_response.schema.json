@@ -1,0 +1,966 @@
+{
+  "$defs": {
+    "Anchor": {
+      "additionalProperties": false,
+      "description": "A place the household travels to often (work, school, family).",
+      "properties": {
+        "days_per_week": {
+          "default": 5,
+          "maximum": 7,
+          "minimum": 1,
+          "title": "Days Per Week",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/AnchorKind",
+          "default": "work"
+        },
+        "label": {
+          "examples": [
+            "Paseo de la Castellana (Azca)"
+          ],
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 41.17,
+          "minimum": 39.88,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": -3.05,
+          "minimum": -4.58,
+          "title": "Lon",
+          "type": "number"
+        },
+        "max_minutes": {
+          "anyOf": [
+            {
+              "maximum": 120,
+              "minimum": 5,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hard limit for the trip; None = preference only",
+          "title": "Max Minutes"
+        }
+      },
+      "required": [
+        "label",
+        "lon",
+        "lat"
+      ],
+      "title": "Anchor",
+      "type": "object"
+    },
+    "AnchorKind": {
+      "enum": [
+        "work",
+        "study",
+        "family",
+        "other"
+      ],
+      "title": "AnchorKind",
+      "type": "string"
+    },
+    "ConstraintCheck": {
+      "additionalProperties": false,
+      "description": "One hard condition of the scenario evaluated on one zone.",
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "constraint_id": {
+          "examples": [
+            "budget",
+            "near:colegio",
+            "commute:0"
+          ],
+          "pattern": "^(budget|near:[a-z_]+|commute:\\d)$",
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "explanation": {
+          "examples": [
+            "Un piso de 90 m² cuesta unos 1.420 €/mes aquí"
+          ],
+          "title": "Explanation",
+          "type": "string"
+        },
+        "label": {
+          "examples": [
+            "Alquiler hasta 1.500 €/mes"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ConstraintStatus"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "status",
+        "confidence",
+        "explanation"
+      ],
+      "title": "ConstraintCheck",
+      "type": "object"
+    },
+    "ConstraintStatus": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "UNKNOWN"
+      ],
+      "title": "ConstraintStatus",
+      "type": "string"
+    },
+    "DatasetRef": {
+      "additionalProperties": false,
+      "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "is_cm_open_data": {
+          "description": "Published in the Comunidad de Madrid open data portal (counts for DATAMAD)",
+          "title": "Is Cm Open Data",
+          "type": "boolean"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Portal page (CM portal when it exists)",
+          "title": "Url"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dataset_version label used",
+          "title": "Version"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name",
+        "publisher",
+        "is_cm_open_data"
+      ],
+      "title": "DatasetRef",
+      "type": "object"
+    },
+    "Household": {
+      "additionalProperties": false,
+      "properties": {
+        "adults": {
+          "default": 1,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Adults",
+          "type": "integer"
+        },
+        "children": {
+          "default": 0,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Children",
+          "type": "integer"
+        },
+        "children_ages": {
+          "description": "0-17, optional",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Children Ages",
+          "type": "array"
+        },
+        "seniors": {
+          "default": 0,
+          "description": "People aged 65+, counted in adults",
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Seniors",
+          "type": "integer"
+        }
+      },
+      "title": "Household",
+      "type": "object"
+    },
+    "IndicatorValue": {
+      "additionalProperties": false,
+      "description": "One measured value with its unit, confidence and the reason when it is missing.",
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "datasets": {
+          "description": "dataset_id values",
+          "items": {
+            "type": "string"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "feature_id": {
+          "title": "Feature Id",
+          "type": "string"
+        },
+        "label": {
+          "description": "Plain-language name",
+          "title": "Label",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel",
+          "description": "Level the value was computed at"
+        },
+        "null_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NullReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why value is missing; never 0 for unknown"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "feature_id",
+        "label",
+        "value",
+        "unit",
+        "confidence",
+        "level"
+      ],
+      "title": "IndicatorValue",
+      "type": "object"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "NearbyNeed": {
+      "additionalProperties": false,
+      "description": "A service the household wants within walking distance (e.g. «colegio cerca»).",
+      "properties": {
+        "max_walk_minutes": {
+          "default": 10,
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Max Walk Minutes",
+          "type": "integer"
+        },
+        "need": {
+          "$ref": "#/$defs/NeedKey"
+        },
+        "required": {
+          "default": true,
+          "description": "True = hard constraint (PASS/FAIL/UNKNOWN)",
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "need"
+      ],
+      "title": "NearbyNeed",
+      "type": "object"
+    },
+    "NeedKey": {
+      "description": "Everyday services the search and the per-zone list both talk about.",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "farmacia",
+        "mayores",
+        "transporte"
+      ],
+      "title": "NeedKey",
+      "type": "string"
+    },
+    "NullReason": {
+      "enum": [
+        "NOT_APPLICABLE",
+        "SOURCE_NO_COVERAGE",
+        "SOURCE_MISSING",
+        "TEMPORARILY_UNAVAILABLE",
+        "STALE",
+        "PARSE_ERROR",
+        "ENTITY_NOT_RESOLVED",
+        "ESTIMATION_NOT_ALLOWED",
+        "UNKNOWN"
+      ],
+      "title": "NullReason",
+      "type": "string"
+    },
+    "PriorityKey": {
+      "enum": [
+        "coste",
+        "trayecto",
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "farmacia",
+        "mayores",
+        "transporte"
+      ],
+      "title": "PriorityKey",
+      "type": "string"
+    },
+    "RankedZone": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/ConstraintCheck"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "estimated_rent_eur": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monthly rent for the needed floor area",
+          "title": "Estimated Rent Eur"
+        },
+        "failed_constraints": {
+          "description": "constraint_id values with FAIL (near misses)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Constraints",
+          "type": "array"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "reasons": {
+          "items": {
+            "$ref": "#/$defs/Reason"
+          },
+          "maxItems": 6,
+          "title": "Reasons",
+          "type": "array"
+        },
+        "score": {
+          "description": "Personal fit, not a territorial grade",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "zone": {
+          "$ref": "#/$defs/ZoneRef"
+        }
+      },
+      "required": [
+        "rank",
+        "zone",
+        "score",
+        "confidence",
+        "constraints",
+        "reasons"
+      ],
+      "title": "RankedZone",
+      "type": "object"
+    },
+    "RealityCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_constraint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "constraint_id that removes the most zones",
+          "title": "Binding Constraint"
+        },
+        "relaxations": {
+          "description": "Sorted by added_zones, largest first",
+          "items": {
+            "$ref": "#/$defs/Relaxation"
+          },
+          "title": "Relaxations",
+          "type": "array"
+        },
+        "zones_evaluated": {
+          "minimum": 0,
+          "title": "Zones Evaluated",
+          "type": "integer"
+        },
+        "zones_passing": {
+          "description": "Every constraint PASS",
+          "minimum": 0,
+          "title": "Zones Passing",
+          "type": "integer"
+        },
+        "zones_unknown": {
+          "description": "No FAIL but some UNKNOWN: not counted as passing",
+          "minimum": 0,
+          "title": "Zones Unknown",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "zones_evaluated",
+        "zones_passing",
+        "zones_unknown",
+        "relaxations"
+      ],
+      "title": "RealityCheck",
+      "type": "object"
+    },
+    "Reason": {
+      "additionalProperties": false,
+      "description": "A plain-language «why» line, always traceable to an indicator and its datasets.",
+      "properties": {
+        "indicator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IndicatorValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "$ref": "#/$defs/ReasonKind"
+        },
+        "text": {
+          "examples": [
+            "Hay un colegio a 6 minutos a pie desde la mitad de sus calles"
+          ],
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "text"
+      ],
+      "title": "Reason",
+      "type": "object"
+    },
+    "ReasonKind": {
+      "enum": [
+        "strength",
+        "weakness",
+        "unknown"
+      ],
+      "title": "ReasonKind",
+      "type": "string"
+    },
+    "Relaxation": {
+      "additionalProperties": false,
+      "description": "How many more zones appear when one condition is relaxed and the rest stay.",
+      "properties": {
+        "added_zones": {
+          "minimum": 0,
+          "title": "Added Zones",
+          "type": "integer"
+        },
+        "constraint_id": {
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "label": {
+          "examples": [
+            "Colegio a 15 minutos en vez de 10"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "relaxed_to": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = condition removed",
+          "title": "Relaxed To"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "zones_if_relaxed": {
+          "minimum": 0,
+          "title": "Zones If Relaxed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "label",
+        "zones_if_relaxed",
+        "added_zones"
+      ],
+      "title": "Relaxation",
+      "type": "object"
+    },
+    "ScenarioState": {
+      "additionalProperties": false,
+      "properties": {
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/Anchor"
+          },
+          "maxItems": 3,
+          "title": "Anchors",
+          "type": "array"
+        },
+        "budget_monthly_eur": {
+          "anyOf": [
+            {
+              "maximum": 20000,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum monthly rent; None = no limit",
+          "title": "Budget Monthly Eur"
+        },
+        "household": {
+          "$ref": "#/$defs/Household"
+        },
+        "min_floor_area_m2": {
+          "anyOf": [
+            {
+              "maximum": 400,
+              "minimum": 15,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = derived from the household size",
+          "title": "Min Floor Area M2"
+        },
+        "nearby": {
+          "items": {
+            "$ref": "#/$defs/NearbyNeed"
+          },
+          "maxItems": 6,
+          "title": "Nearby",
+          "type": "array"
+        },
+        "priorities": {
+          "description": "Most important first",
+          "items": {
+            "$ref": "#/$defs/PriorityKey"
+          },
+          "maxItems": 5,
+          "title": "Priorities",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "tenure": {
+          "$ref": "#/$defs/Tenure",
+          "default": "rent"
+        },
+        "zone_level": {
+          "$ref": "#/$defs/TerritoryLevel",
+          "default": "municipio",
+          "description": "Granularity of the ranking"
+        }
+      },
+      "title": "ScenarioState",
+      "type": "object"
+    },
+    "SearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "datasets": {
+          "description": "Every dataset behind this result",
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "methodology_version": {
+          "title": "Methodology Version",
+          "type": "string"
+        },
+        "near_misses": {
+          "description": "Explicit alternatives failing one condition",
+          "items": {
+            "$ref": "#/$defs/RankedZone"
+          },
+          "title": "Near Misses",
+          "type": "array"
+        },
+        "reality_check": {
+          "$ref": "#/$defs/RealityCheck"
+        },
+        "results": {
+          "description": "Zones passing every constraint, best first",
+          "items": {
+            "$ref": "#/$defs/RankedZone"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "scenario": {
+          "$ref": "#/$defs/ScenarioState"
+        },
+        "zone_level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        }
+      },
+      "required": [
+        "scenario",
+        "zone_level",
+        "results",
+        "reality_check",
+        "datasets",
+        "methodology_version"
+      ],
+      "title": "SearchResult",
+      "type": "object"
+    },
+    "Tenure": {
+      "enum": [
+        "rent",
+        "buy"
+      ],
+      "title": "Tenure",
+      "type": "string"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    },
+    "ZoneRef": {
+      "additionalProperties": false,
+      "description": "A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.",
+      "properties": {
+        "admin_unit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "geo_admin_unit id for /api/v1/geo/admin-units; None for H3 cells",
+          "examples": [
+            "ES.28.MUN.28079"
+          ],
+          "title": "Admin Unit Id"
+        },
+        "center_lat": {
+          "anyOf": [
+            {
+              "maximum": 41.17,
+              "minimum": 39.88,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lat"
+        },
+        "center_lon": {
+          "anyOf": [
+            {
+              "maximum": -3.05,
+              "minimum": -4.58,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lon"
+        },
+        "code": {
+          "examples": [
+            "28079",
+            "2807901124"
+          ],
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "municipio_ine": {
+          "anyOf": [
+            {
+              "pattern": "^28\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Ine"
+        },
+        "municipio_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Name"
+        },
+        "name": {
+          "examples": [
+            "Madrid"
+          ],
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "code",
+        "name"
+      ],
+      "title": "ZoneRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/search_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "POST /api/v1/search",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/SearchResult"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "SearchResponse",
+  "type": "object"
+}

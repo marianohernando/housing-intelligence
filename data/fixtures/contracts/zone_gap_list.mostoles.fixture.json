@@ -1,0 +1,139 @@
+{
+  "zone": {
+    "level": "municipio",
+    "code": "28092",
+    "admin_unit_id": "ES.28.MUN.28092",
+    "name": "Mostoles",
+    "municipio_ine": "28092",
+    "municipio_name": "Mostoles",
+    "center_lon": -3.89355,
+    "center_lat": 40.31991
+  },
+  "method": {
+    "version": "gap-0.1-fixture",
+    "reference": "Comunidad de Madrid: total de la región dividido por su población",
+    "falta_below": 0.8,
+    "cubierto_from": 1.0
+  },
+  "rows": [
+    {
+      "row": "colegio",
+      "label": "Colegios",
+      "status": "CUBIERTO",
+      "indicator": {
+        "feature_id": "colegios_publicos_por_1000_menores",
+        "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
+        "value": 2.67,
+        "unit": "centros/1000 menores",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "municipio",
+        "datasets": [
+          "cm_centros_educativos",
+          "cm_poblacion_edad_nacionalidad_sexo"
+        ]
+      },
+      "reference": 2.178,
+      "reference_label": "Comunidad de Madrid",
+      "direction": "higher_is_better",
+      "ratio_to_reference": 1.226,
+      "explanation": "2,7 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2",
+      "proxy_note": "Cuenta centros, no plazas ni etapas; un centro grande y uno pequeño pesan igual. Medida de cobertura, no de acceso a pie.",
+      "extra_indicators": [],
+      "datasets": [
+        {
+          "dataset_id": "cm_centros_educativos",
+          "name": "Centros educativos de la comunidad de Madrid",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+          "version": "2026-10-21-27483ff8498b",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        }
+      ]
+    },
+    {
+      "row": "centro_salud",
+      "label": "Centros de salud",
+      "status": "FALTA",
+      "indicator": {
+        "feature_id": "centros_salud_por_10000_hab",
+        "label": "Centros de atención primaria por cada 10.000 habitantes",
+        "value": 0.467,
+        "unit": "centros/10000 hab",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "municipio",
+        "datasets": [
+          "cm_centros_sanitarios",
+          "cm_poblacion_edad_nacionalidad_sexo"
+        ]
+      },
+      "reference": 0.592,
+      "reference_label": "Comunidad de Madrid",
+      "direction": "higher_is_better",
+      "ratio_to_reference": 0.789,
+      "explanation": "0,5 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,6",
+      "proxy_note": "No mide capacidad ni horarios; los consultorios rurales cuentan igual que un centro de salud.",
+      "extra_indicators": [],
+      "datasets": [
+        {
+          "dataset_id": "cm_centros_sanitarios",
+          "name": "Centros, servicios y establecimientos sanitarios",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+          "version": "2026-11-10-d6ac8db8f003",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        }
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "name": "Centros, servicios y establecimientos sanitarios",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+      "version": "2026-11-10-d6ac8db8f003",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    }
+  ]
+}

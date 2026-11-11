@@ -1,0 +1,269 @@
+{
+  "$defs": {
+    "Anchor": {
+      "additionalProperties": false,
+      "description": "A place the household travels to often (work, school, family).",
+      "properties": {
+        "days_per_week": {
+          "default": 5,
+          "maximum": 7,
+          "minimum": 1,
+          "title": "Days Per Week",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/AnchorKind",
+          "default": "work"
+        },
+        "label": {
+          "examples": [
+            "Paseo de la Castellana (Azca)"
+          ],
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 41.17,
+          "minimum": 39.88,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": -3.05,
+          "minimum": -4.58,
+          "title": "Lon",
+          "type": "number"
+        },
+        "max_minutes": {
+          "anyOf": [
+            {
+              "maximum": 120,
+              "minimum": 5,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hard limit for the trip; None = preference only",
+          "title": "Max Minutes"
+        }
+      },
+      "required": [
+        "label",
+        "lon",
+        "lat"
+      ],
+      "title": "Anchor",
+      "type": "object"
+    },
+    "AnchorKind": {
+      "enum": [
+        "work",
+        "study",
+        "family",
+        "other"
+      ],
+      "title": "AnchorKind",
+      "type": "string"
+    },
+    "Household": {
+      "additionalProperties": false,
+      "properties": {
+        "adults": {
+          "default": 1,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Adults",
+          "type": "integer"
+        },
+        "children": {
+          "default": 0,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Children",
+          "type": "integer"
+        },
+        "children_ages": {
+          "description": "0-17, optional",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Children Ages",
+          "type": "array"
+        },
+        "seniors": {
+          "default": 0,
+          "description": "People aged 65+, counted in adults",
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Seniors",
+          "type": "integer"
+        }
+      },
+      "title": "Household",
+      "type": "object"
+    },
+    "NearbyNeed": {
+      "additionalProperties": false,
+      "description": "A service the household wants within walking distance (e.g. «colegio cerca»).",
+      "properties": {
+        "max_walk_minutes": {
+          "default": 10,
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Max Walk Minutes",
+          "type": "integer"
+        },
+        "need": {
+          "$ref": "#/$defs/NeedKey"
+        },
+        "required": {
+          "default": true,
+          "description": "True = hard constraint (PASS/FAIL/UNKNOWN)",
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "need"
+      ],
+      "title": "NearbyNeed",
+      "type": "object"
+    },
+    "NeedKey": {
+      "description": "Everyday services the search and the per-zone list both talk about.",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "farmacia",
+        "mayores",
+        "transporte"
+      ],
+      "title": "NeedKey",
+      "type": "string"
+    },
+    "PriorityKey": {
+      "enum": [
+        "coste",
+        "trayecto",
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "farmacia",
+        "mayores",
+        "transporte"
+      ],
+      "title": "PriorityKey",
+      "type": "string"
+    },
+    "Tenure": {
+      "enum": [
+        "rent",
+        "buy"
+      ],
+      "title": "Tenure",
+      "type": "string"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/scenario_state.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "anchors": {
+      "items": {
+        "$ref": "#/$defs/Anchor"
+      },
+      "maxItems": 3,
+      "title": "Anchors",
+      "type": "array"
+    },
+    "budget_monthly_eur": {
+      "anyOf": [
+        {
+          "maximum": 20000,
+          "minimum": 100,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Maximum monthly rent; None = no limit",
+      "title": "Budget Monthly Eur"
+    },
+    "household": {
+      "$ref": "#/$defs/Household"
+    },
+    "min_floor_area_m2": {
+      "anyOf": [
+        {
+          "maximum": 400,
+          "minimum": 15,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "None = derived from the household size",
+      "title": "Min Floor Area M2"
+    },
+    "nearby": {
+      "items": {
+        "$ref": "#/$defs/NearbyNeed"
+      },
+      "maxItems": 6,
+      "title": "Nearby",
+      "type": "array"
+    },
+    "priorities": {
+      "description": "Most important first",
+      "items": {
+        "$ref": "#/$defs/PriorityKey"
+      },
+      "maxItems": 5,
+      "title": "Priorities",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "tenure": {
+      "$ref": "#/$defs/Tenure",
+      "default": "rent"
+    },
+    "zone_level": {
+      "$ref": "#/$defs/TerritoryLevel",
+      "default": "municipio",
+      "description": "Granularity of the ranking"
+    }
+  },
+  "title": "ScenarioState",
+  "type": "object"
+}

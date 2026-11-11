@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "tenure": "rent",
+  "budget_monthly_eur": 1500,
+  "min_floor_area_m2": null,
+  "household": {
+    "adults": 2,
+    "children": 2,
+    "children_ages": [
+      4,
+      8
+    ],
+    "seniors": 0
+  },
+  "anchors": [
+    {
+      "kind": "work",
+      "label": "Paseo de la Castellana (Azca)",
+      "lon": -3.693,
+      "lat": 40.45,
+      "days_per_week": 4,
+      "max_minutes": 40
+    }
+  ],
+  "nearby": [
+    {
+      "need": "colegio",
+      "max_walk_minutes": 10,
+      "required": true
+    }
+  ],
+  "priorities": [
+    "colegio",
+    "coste",
+    "trayecto"
+  ],
+  "zone_level": "municipio"
+}

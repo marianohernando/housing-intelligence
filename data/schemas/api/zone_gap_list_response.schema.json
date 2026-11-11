@@ -1,0 +1,554 @@
+{
+  "$defs": {
+    "DatasetRef": {
+      "additionalProperties": false,
+      "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "is_cm_open_data": {
+          "description": "Published in the Comunidad de Madrid open data portal (counts for DATAMAD)",
+          "title": "Is Cm Open Data",
+          "type": "boolean"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Portal page (CM portal when it exists)",
+          "title": "Url"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dataset_version label used",
+          "title": "Version"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name",
+        "publisher",
+        "is_cm_open_data"
+      ],
+      "title": "DatasetRef",
+      "type": "object"
+    },
+    "GapMethod": {
+      "additionalProperties": false,
+      "description": "How rows are classified: value / regional reference against declared cut-offs.",
+      "properties": {
+        "cubierto_from": {
+          "description": "ratio at or above this -> CUBIERTO",
+          "exclusiveMinimum": 0,
+          "title": "Cubierto From",
+          "type": "number"
+        },
+        "falta_below": {
+          "description": "ratio to reference below this -> FALTA",
+          "exclusiveMinimum": 0,
+          "title": "Falta Below",
+          "type": "number"
+        },
+        "reference": {
+          "examples": [
+            "Comunidad de Madrid: total de centros / población total"
+          ],
+          "title": "Reference",
+          "type": "string"
+        },
+        "version": {
+          "examples": [
+            "gap-0.1"
+          ],
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "reference",
+        "falta_below",
+        "cubierto_from"
+      ],
+      "title": "GapMethod",
+      "type": "object"
+    },
+    "GapRow": {
+      "additionalProperties": false,
+      "properties": {
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "direction": {
+          "enum": [
+            "higher_is_better",
+            "lower_is_better"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "explanation": {
+          "examples": [
+            "2,1 colegios públicos por cada 1.000 menores; la región tiene 2,6"
+          ],
+          "title": "Explanation",
+          "type": "string"
+        },
+        "extra_indicators": {
+          "description": "e.g. walking minutes (CORE-005)",
+          "items": {
+            "$ref": "#/$defs/IndicatorValue"
+          },
+          "title": "Extra Indicators",
+          "type": "array"
+        },
+        "indicator": {
+          "$ref": "#/$defs/IndicatorValue"
+        },
+        "label": {
+          "examples": [
+            "Colegios"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "proxy_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Cuenta centros, no plazas: un centro grande y uno pequeño pesan igual"
+          ],
+          "title": "Proxy Note"
+        },
+        "ratio_to_reference": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Oriented so that above 1 is better than the region",
+          "title": "Ratio To Reference"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Same indicator for the whole region",
+          "title": "Reference"
+        },
+        "reference_label": {
+          "examples": [
+            "Comunidad de Madrid"
+          ],
+          "title": "Reference Label",
+          "type": "string"
+        },
+        "row": {
+          "$ref": "#/$defs/GapRowKey"
+        },
+        "status": {
+          "$ref": "#/$defs/GapStatus"
+        }
+      },
+      "required": [
+        "row",
+        "label",
+        "status",
+        "indicator",
+        "reference",
+        "reference_label",
+        "direction",
+        "explanation",
+        "datasets"
+      ],
+      "title": "GapRow",
+      "type": "object"
+    },
+    "GapRowKey": {
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "mayores",
+        "farmacia",
+        "vivienda"
+      ],
+      "title": "GapRowKey",
+      "type": "string"
+    },
+    "GapStatus": {
+      "enum": [
+        "FALTA",
+        "JUSTO",
+        "CUBIERTO",
+        "SIN_DATOS"
+      ],
+      "title": "GapStatus",
+      "type": "string"
+    },
+    "IndicatorValue": {
+      "additionalProperties": false,
+      "description": "One measured value with its unit, confidence and the reason when it is missing.",
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "datasets": {
+          "description": "dataset_id values",
+          "items": {
+            "type": "string"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "feature_id": {
+          "title": "Feature Id",
+          "type": "string"
+        },
+        "label": {
+          "description": "Plain-language name",
+          "title": "Label",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel",
+          "description": "Level the value was computed at"
+        },
+        "null_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NullReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why value is missing; never 0 for unknown"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "feature_id",
+        "label",
+        "value",
+        "unit",
+        "confidence",
+        "level"
+      ],
+      "title": "IndicatorValue",
+      "type": "object"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "NullReason": {
+      "enum": [
+        "NOT_APPLICABLE",
+        "SOURCE_NO_COVERAGE",
+        "SOURCE_MISSING",
+        "TEMPORARILY_UNAVAILABLE",
+        "STALE",
+        "PARSE_ERROR",
+        "ENTITY_NOT_RESOLVED",
+        "ESTIMATION_NOT_ALLOWED",
+        "UNKNOWN"
+      ],
+      "title": "NullReason",
+      "type": "string"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    },
+    "ZoneGapList": {
+      "additionalProperties": false,
+      "properties": {
+        "datasets": {
+          "description": "Union of the rows' datasets",
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "method": {
+          "$ref": "#/$defs/GapMethod"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/GapRow"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "zone": {
+          "$ref": "#/$defs/ZoneRef"
+        }
+      },
+      "required": [
+        "zone",
+        "method",
+        "rows",
+        "datasets"
+      ],
+      "title": "ZoneGapList",
+      "type": "object"
+    },
+    "ZoneRef": {
+      "additionalProperties": false,
+      "description": "A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.",
+      "properties": {
+        "admin_unit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "geo_admin_unit id for /api/v1/geo/admin-units; None for H3 cells",
+          "examples": [
+            "ES.28.MUN.28079"
+          ],
+          "title": "Admin Unit Id"
+        },
+        "center_lat": {
+          "anyOf": [
+            {
+              "maximum": 41.17,
+              "minimum": 39.88,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lat"
+        },
+        "center_lon": {
+          "anyOf": [
+            {
+              "maximum": -3.05,
+              "minimum": -4.58,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lon"
+        },
+        "code": {
+          "examples": [
+            "28079",
+            "2807901124"
+          ],
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "municipio_ine": {
+          "anyOf": [
+            {
+              "pattern": "^28\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Ine"
+        },
+        "municipio_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Name"
+        },
+        "name": {
+          "examples": [
+            "Madrid"
+          ],
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "code",
+        "name"
+      ],
+      "title": "ZoneRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/zone_gap_list_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GET /api/v1/gaps/{level}/{code}",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/ZoneGapList"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "ZoneGapListResponse",
+  "type": "object"
+}
