@@ -149,7 +149,7 @@ FACILITY_DATASETS = [
     "cm_oficinas_farmacia",
 ]
 # Complementary (not CM): statistics the CM portal does not publish at the level needed (D-209).
-COMPLEMENTARY_DATASETS = ["ayto_padron_municipal"]
+COMPLEMENTARY_DATASETS = ["ayto_padron_municipal", "ayto_panel_indicadores_distritos_barrios"]
 TRANSPORT_DATASETS = [
     "crtm_gtfs_metro",
     "crtm_gtfs_metro_ligero",
@@ -369,7 +369,7 @@ SCOPES = {
     f"datasets of the Comunidad de Madrid open data portal (geography, "
     f"{len(STAT_TABLE_DATASETS)} statistical tables, {len(FACILITY_DATASETS)} facility "
     f"registers, {len(TRANSPORT_DATASETS)} CRTM GTFS feeds) and {len(COMPLEMENTARY_DATASETS)} "
-    "complementary dataset of the Ayuntamiento de Madrid (padrón by district).",
+    "complementary datasets of the Ayuntamiento de Madrid (padrón and households by district).",
     "02": "Geospatial QA — transport stops and stations from the CRTM GTFS feeds "
     "(the 2026-10-20 geography QA lives in gate-01/2026-10-20).",
     "03": "Metrics / Feature Store — started: 12 municipal features (target 75–125 for Sprint P1).",

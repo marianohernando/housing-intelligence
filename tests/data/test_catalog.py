@@ -86,9 +86,9 @@ def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None
             )
 
 
-# Statistics the CM does not publish at the level the product needs (D-209: population by
-# district of Madrid). They complement CM data, never replace it.
-COMPLEMENTARY_STATISTICS = {"ayto_padron_municipal"}
+# Statistics the CM does not publish at the level the product needs (D-209: population and
+# households by district of Madrid). They complement CM data, never replace it.
+COMPLEMENTARY_STATISTICS = {"ayto_padron_municipal", "ayto_panel_indicadores_distritos_barrios"}
 
 
 def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:

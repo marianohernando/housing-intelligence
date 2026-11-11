@@ -10,7 +10,7 @@ from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
-from tests.integration.conftest import GOLDEN, PADRON_SAMPLE_DISTRICTS
+from tests.integration.conftest import GOLDEN, MADRID_SAMPLE_DISTRICTS
 
 pytestmark = pytest.mark.db
 DATASET = "ayto_padron_municipal"
@@ -32,9 +32,9 @@ def test_padron_publishes_district_bands_and_reruns_are_skipped(
     published: RunSummary, migrated_engine: Engine, tmp_path: Path
 ) -> None:
     assert published.status == "SUCCESS"
-    first = _run(migrated_engine, tmp_path, PADRON_SAMPLE_DISTRICTS)
+    first = _run(migrated_engine, tmp_path, MADRID_SAMPLE_DISTRICTS)
     assert first.status in {"SUCCESS", "SKIPPED"}, first.quality
-    assert _run(migrated_engine, tmp_path, PADRON_SAMPLE_DISTRICTS).status == "SKIPPED"
+    assert _run(migrated_engine, tmp_path, MADRID_SAMPLE_DISTRICTS).status == "SKIPPED"
     with migrated_engine.connect() as conn:
         rows = conn.execute(
             text(
@@ -56,7 +56,7 @@ def test_a_file_missing_districts_keeps_the_last_valid_observations(
     published: RunSummary, migrated_engine: Engine, tmp_path: Path
 ) -> None:
     assert published.status == "SUCCESS"
-    assert _run(migrated_engine, tmp_path, PADRON_SAMPLE_DISTRICTS).status in {
+    assert _run(migrated_engine, tmp_path, MADRID_SAMPLE_DISTRICTS).status in {
         "SUCCESS",
         "SKIPPED",
     }
@@ -66,7 +66,7 @@ def test_a_file_missing_districts_keeps_the_last_valid_observations(
         "\n".join([lines[0], *(line for line in lines[1:] if line.startswith("1;"))]) + "\n",
         encoding="utf-8-sig",
     )
-    summary = _run(migrated_engine, tmp_path, PADRON_SAMPLE_DISTRICTS, partial)
+    summary = _run(migrated_engine, tmp_path, MADRID_SAMPLE_DISTRICTS, partial)
     assert summary.status == "FAILED"
     failed = {c["name"] for c in summary.quality["checks"] if not c["passed"]}
     assert "district_coverage" in failed
@@ -77,4 +77,4 @@ def test_a_file_missing_districts_keeps_the_last_valid_observations(
                 "WHERE metric_id = 'poblacion_padron'"
             )
         ).scalar()
-    assert districts == PADRON_SAMPLE_DISTRICTS
+    assert districts == MADRID_SAMPLE_DISTRICTS

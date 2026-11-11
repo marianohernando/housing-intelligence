@@ -711,4 +711,8 @@ DATA-012; aplica D-200. La CM no publica la población por distrito de Madrid: `
 - **Comparabilidad:** el total de Madrid en el padrón es un 1,68 % mayor que el del censo anual de la CM (3.535.868 frente a 3.477.497 a 1 ene 2025), por fecha y por método. No se calibra: se publica tal cual y se declara en las features. La calidad compara los dos totales en cada carga y avisa si la diferencia pasa del 5 %, sin bloquear.
 - **Calidad bloqueante:** los 21 distritos tienen que estar y resolver en `geo_admin_unit`. Un fichero incompleto no sustituye a la última versión válida.
 - **Procedencia:** es un dato complementario, no CM (`is_cm_open_data=false`), y la procedencia de cada fila lo muestra. El test del catálogo que exige que las estadísticas vengan de la CM admite esta excepción explícita y ninguna más.
-- **Hogares por distrito** (DATA-012 Fase 3, recortable): saldrán del panel de indicadores del Ayuntamiento.
+- **Hogares por distrito** (DATA-012 Fase 3): salen del panel de indicadores de distritos y barrios del Ayuntamiento (`ayto_panel_indicadores_distritos_barrios`, CC BY 4.0, complementario y no CM).
+  - Se guardan el total de hogares y el tamaño medio del hogar que publica el Ayuntamiento, a 1 de enero de cada año del panel (2019–2025).
+  - Son hogares del padrón (personas inscritas en una misma vivienda), no el hogar del censo 2021 de la CM.
+  - En los distritos, `tamano_medio_hogar` toma la media publicada, sin recalcularla. En los municipios sigue la del censo.
+  - La fila de vivienda de GAP-001 queda SIN DATOS por distrito mientras no haya superficie de las viviendas por distrito.

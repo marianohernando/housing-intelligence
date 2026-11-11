@@ -160,6 +160,28 @@ def run_quality(
     return QualityReport(checks)
 
 
+def district_checks(
+    frame: pd.DataFrame, known_districts: set[str], expected: int
+) -> list[CheckResult]:
+    """Blocking: every district resolves in the geography and none is missing."""
+    codes = set(frame.loc[frame["territory_level"] == "distrito", "territory_code"])
+    unknown = sorted(codes - known_districts)
+    return [
+        CheckResult(
+            "districts_resolve_to_geography",
+            True,
+            not unknown,
+            {"unknown": unknown, "districts": len(codes)},
+        ),
+        CheckResult(
+            "district_coverage",
+            True,
+            len(codes) == expected,
+            {"covered": len(codes), "expected": expected},
+        ),
+    ]
+
+
 def row_counts(frame: pd.DataFrame) -> dict[str, int]:
     counts: dict[str, int] = {}
     for metric_id, level in zip(frame["metric_id"], frame["territory_level"], strict=True):

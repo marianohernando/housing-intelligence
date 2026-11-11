@@ -117,6 +117,35 @@ class MadridPadronPipeline(BaseModel):
         return [self.metric_id]
 
 
+class MadridDistrictPanelPipeline(BaseModel):
+    """Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.
+
+    Only the declared indicators are kept, at district level: barrio rows and the city row are
+    outside the scope; every panel year is kept (each one carries its own reference date).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_district_panel"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=lambda: CsvFormat(decimal=","))
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    indicators: dict[str, Annotated[str, Field(pattern=METRIC_ID_PATTERN)]] = Field(min_length=1)
+    indicator_column: str = "indicador_completo"
+    district_column: str = "cod_distrito"
+    district_name_column: str | None = "distrito"
+    barrio_column: str = "cod_barrio"
+    period_column: str = "fecha_indicador"  # DD/MM/YYYY
+    value_column: str = "valor_indicador"
+    unit_column: str | None = "unidad_indicador"
+    expected_districts: int = Field(gt=0)
+    missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
+
+    def metric_ids(self) -> list[str]:
+        return sorted(set(self.indicators.values()))
+
+
 class PointsPipeline(BaseModel):
     """Point facilities with projected coordinates -> place_master."""
 
@@ -233,6 +262,7 @@ PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
     | MadridPadronPipeline
+    | MadridDistrictPanelPipeline
     | PointsPipeline
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline,

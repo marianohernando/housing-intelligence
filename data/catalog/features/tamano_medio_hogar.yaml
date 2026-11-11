@@ -7,17 +7,23 @@ unit: personas/hogar
 direction: neutral
 geo_level: municipio
 time_semantics: snapshot
-sources: [{dataset_id: cm_hogares_tamano_censo_2021, role: primary}]
+sources:
+  - {dataset_id: cm_hogares_tamano_censo_2021, role: primary, levels: [municipio]}
+  - {dataset_id: ayto_panel_indicadores_distritos_barrios, role: primary, levels: [distrito]}
 formula:
   method: metric_weighted_mean
   metric: hogares_por_tamano
   dim: tamano
   weights: {de_1_persona: 1, de_2_personas: 2, de_3_personas: 3, de_4_personas: 4, de_5_o_mas_personas: 5}
   confidence: 0.9  # open upper bin counted as 5
+  levels:
+    distrito: {method: metric_value, metric: tamano_medio_hogar_padron, dims: {}, confidence: 1.0}
 null_policy: {no_coverage: unknown, confirmed_zero: unknown}
 confidence: {inputs: [source_freshness, open_upper_bin]}
 public_use: true
 pro_use: true
 models: [housing_gap]
 tests: [range_1_5, monotonic_in_large_households]
-limitations: ["El tramo '5 o más' se cuenta como 5: subestima ligeramente el tamaño en municipios con hogares muy grandes (confidence 0,9)."]
+limitations:
+  - "El tramo '5 o más' se cuenta como 5: subestima ligeramente el tamaño en municipios con hogares muy grandes (confidence 0,9)."
+  - "En los distritos de Madrid es el tamaño medio que publica el Ayuntamiento con el padrón (personas inscritas en una misma vivienda, a 1 de enero), no el hogar del censo 2021 de la CM (D-209)."

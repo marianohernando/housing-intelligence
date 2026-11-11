@@ -85,3 +85,22 @@ def test_madrid_districts_get_their_own_rows_and_lineage(
                 assert "cm_poblacion_edad_nacionalidad_sexo" not in cited
             else:
                 assert "ayto_padron_municipal" not in cited
+
+
+def test_madrid_districts_get_the_published_household_size(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-209: districts take the Ayuntamiento's published mean; municipios keep the census one."""
+    with migrated_engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT territory_level, territory_code, value, confidence, inputs "
+                "FROM feature_value WHERE feature_id = 'tamano_medio_hogar' "
+                "AND territory_level = 'distrito' ORDER BY territory_code"
+            )
+        ).all()
+    assert [r.territory_code for r in rows] == ["2807901", "2807905", "2807906"]
+    for row in rows:
+        assert 1.0 <= row.value <= 5.0
+        assert row.confidence == 1.0
+        assert set(row.inputs["dataset_versions"]) == {"ayto_panel_indicadores_distritos_barrios"}

@@ -42,7 +42,8 @@ def _count(raw: str) -> int:
     return int(raw)
 
 
-def _district_code(raw: str, municipio_ine: str) -> str:
+def district_code(raw: str, municipio_ine: str) -> str:
+    """Ayuntamiento district number (1-21) -> 7-digit code, e.g. '6' -> '2807906'."""
     if not raw.isdigit() or not 1 <= int(raw) <= 99:
         msg = f"invalid district {raw!r}"
         raise RowError(msg)
@@ -85,7 +86,7 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
     for index, row in enumerate(records):
         try:
-            code = _district_code(row[spec.district_column], spec.municipio_ine)
+            code = district_code(row[spec.district_column], spec.municipio_ine)
             period = _period(row[spec.period_column])
             band = five_year_age_band(parse_age(row[spec.age_column]))
             count = sum(_count(row[column]) for column in spec.count_columns)

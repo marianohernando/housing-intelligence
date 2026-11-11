@@ -89,15 +89,21 @@ def combine_levels(base: pd.DataFrame, extra: Mapping[str, pd.DataFrame]) -> pd.
 def compute(engine: Engine, spec: FeatureSpec) -> pd.DataFrame:
     formula = spec.formula.model_dump()
     levels = formula.pop("levels", None) or {}
+    base = _run(spec, formula, engine, spec.geo_level.value)
+    extra = {
+        level: _run(spec, {**formula, **override}, engine, level)
+        for level, override in levels.items()
+    }
+    return combine_levels(base, extra)
+
+
+def _run(spec: FeatureSpec, formula: dict[str, Any], engine: Engine, level: str) -> pd.DataFrame:
+    """A level override may also change the method (a published mean instead of a computed one)."""
     method = METHODS.get(formula["method"])
     if method is None:
         msg = f"{spec.feature_id}: no implementation for method {formula['method']!r}"
         raise KeyError(msg)
-    base = method(engine, formula, spec.geo_level.value)
-    extra = {
-        level: method(engine, {**formula, **override}, level) for level, override in levels.items()
-    }
-    return combine_levels(base, extra)
+    return method(engine, formula, level)
 
 
 ADMIN_LEVELS = frozenset({"municipio", "distrito", "barrio", "seccion_censal"})

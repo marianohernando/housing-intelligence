@@ -4,7 +4,12 @@ from hi_contracts.catalog import MetricSpec
 from hi_contracts.catalog.pipeline import MadridPadronPipeline
 from hi_domain.population import TOTAL_AGE
 from hi_ingestion.pipelines.stat_tables.normalize import Observations
-from hi_ingestion.pipelines.stat_tables.quality import CheckResult, QualityReport, run_quality
+from hi_ingestion.pipelines.stat_tables.quality import (
+    CheckResult,
+    QualityReport,
+    district_checks,
+    run_quality,
+)
 
 # Padrón and census differ in date and method (registered vs counted residents); beyond this
 # gap the comparison is flagged for review, never blocking.
@@ -42,21 +47,10 @@ def run_padron_quality(
     census_total: float | None,
 ) -> QualityReport:
     base = run_quality(obs, {spec.metric_id: metrics[spec.metric_id]}, known_municipios=set())
-    codes = set(obs.frame["territory_code"])
-    unknown = sorted(codes - known_districts)
-    checks = [
-        CheckResult(
-            "districts_resolve_to_geography",
-            True,
-            not unknown,
-            {"unknown": unknown, "districts": len(codes)},
-        ),
-        CheckResult(
-            "district_coverage",
-            True,
-            len(codes) == spec.expected_districts,
-            {"covered": len(codes), "expected": spec.expected_districts},
-        ),
-        _census_check(_padron_total(obs), census_total),
-    ]
-    return QualityReport([*base.checks, *checks])
+    return QualityReport(
+        [
+            *base.checks,
+            *district_checks(obs.frame, known_districts, spec.expected_districts),
+            _census_check(_padron_total(obs), census_total),
+        ]
+    )

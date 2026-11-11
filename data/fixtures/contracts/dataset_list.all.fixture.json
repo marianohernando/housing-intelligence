@@ -1,5 +1,5 @@
 {
-  "total": 23,
+  "total": 24,
   "cm_open_data_count": 21,
   "datasets": [
     {
@@ -198,6 +198,15 @@
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/200076-0-padron",
       "version": "2026-11-11-f052edc26159",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+    },
+    {
+      "dataset_id": "ayto_panel_indicadores_distritos_barrios",
+      "name": "Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
+      "version": "2026-11-11-4726abc60a15",
       "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
     },
     {

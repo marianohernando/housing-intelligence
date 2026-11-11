@@ -1,0 +1,7 @@
+kind: madrid_district_panel
+dataset_id: ayto_panel_indicadores_distritos_barrios
+municipio_ine: "28079"
+indicators:
+  "Total hogares": hogares_padron
+  "Tamaño medio del hogar": tamano_medio_hogar_padron
+expected_districts: 21

@@ -280,6 +280,114 @@
       "title": "GtfsFeedPipeline",
       "type": "object"
     },
+    "MadridDistrictPanelPipeline": {
+      "additionalProperties": false,
+      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level: barrio rows and the city row are\noutside the scope; every panel year is kept (each one carries its own reference date).",
+      "properties": {
+        "barrio_column": {
+          "default": "cod_barrio",
+          "title": "Barrio Column",
+          "type": "string"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "district_column": {
+          "default": "cod_distrito",
+          "title": "District Column",
+          "type": "string"
+        },
+        "district_name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "distrito",
+          "title": "District Name Column"
+        },
+        "expected_districts": {
+          "exclusiveMinimum": 0,
+          "title": "Expected Districts",
+          "type": "integer"
+        },
+        "indicator_column": {
+          "default": "indicador_completo",
+          "title": "Indicator Column",
+          "type": "string"
+        },
+        "indicators": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]{2,95}$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Indicators",
+          "type": "object"
+        },
+        "kind": {
+          "const": "madrid_district_panel",
+          "title": "Kind",
+          "type": "string"
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "municipio_ine": {
+          "pattern": "^28\\d{3}$",
+          "title": "Municipio Ine",
+          "type": "string"
+        },
+        "period_column": {
+          "default": "fecha_indicador",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "unit_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "unidad_indicador",
+          "title": "Unit Column"
+        },
+        "value_column": {
+          "default": "valor_indicador",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "municipio_ine",
+        "indicators",
+        "expected_districts"
+      ],
+      "title": "MadridDistrictPanelPipeline",
+      "type": "object"
+    },
     "MadridPadronPipeline": {
       "additionalProperties": false,
       "description": "Ayuntamiento de Madrid padrón: one row per census section and single year of age.\n\nDistricts get the CM census 5-year age bands plus their total, so ratios over this\npopulation compare like with like. The count columns (nationality x sex) are only summed.",
@@ -668,6 +776,7 @@
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
+      "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
       "points_csv": "#/$defs/PointsPipeline"
@@ -683,6 +792,9 @@
     },
     {
       "$ref": "#/$defs/MadridPadronPipeline"
+    },
+    {
+      "$ref": "#/$defs/MadridDistrictPanelPipeline"
     },
     {
       "$ref": "#/$defs/PointsPipeline"
