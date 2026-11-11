@@ -25,6 +25,10 @@ export type Version = string | null;
  */
 export type Datasets = DatasetRef[];
 /**
+ * FALTA also needs a significant shortfall: the exact Poisson upper bound of the zone's count at this level below the count expected at the reference rate. None: the ratio alone decides
+ */
+export type ConfidenceLevel = number | null;
+/**
  * ratio at or above this -> CUBIERTO
  */
 export type CubiertoFrom = number;
@@ -79,14 +83,22 @@ export type ExtraIndicators = IndicatorValue[];
 export type Label1 = string;
 export type ProxyNote = string | null;
 /**
- * Oriented so that above 1 is better than the region
+ * Oriented so that above 1 is better than the reference
  */
 export type RatioToReference = number | null;
 /**
- * Same indicator for the whole region
+ * Same indicator for the zones the row is compared with (D-213: the municipios of its type in the region)
  */
 export type Reference1 = number | null;
 export type ReferenceLabel = string;
+/**
+ * Same indicator for the whole Comunidad de Madrid (context)
+ */
+export type RegionalReference = number | null;
+/**
+ * False when the zone is too small for this row: the count expected at the reference rate is under the 95 % bound of a zero count (3,7), so not even having none would be a significant shortfall. The status is then never FALTA; show it as «poco fiable» (D-213). True also when the test does not apply (no counts)
+ */
+export type Reliable = boolean;
 /**
  * Rows of the per-zone list of what is missing (GAP-001, D-194).
  */
@@ -154,6 +166,7 @@ export interface DatasetRef {
  * How rows are classified: value / regional reference against declared cut-offs.
  */
 export interface GapMethod {
+  confidence_level?: ConfidenceLevel;
   cubierto_from: CubiertoFrom;
   falta_below: FaltaBelow;
   reference: Reference;
@@ -170,6 +183,8 @@ export interface GapRow {
   ratio_to_reference?: RatioToReference;
   reference: Reference1;
   reference_label: ReferenceLabel;
+  regional_reference?: RegionalReference;
+  reliable?: Reliable;
   row: GapRowKey;
   status: GapStatus;
 }

@@ -45,6 +45,10 @@ export type TerritoryLevel =
   | "h3_r8"
   | "h3_r9";
 /**
+ * FALTA also needs a significant shortfall: the exact Poisson upper bound of the zone's count at this level below the count expected at the reference rate. None: the ratio alone decides
+ */
+export type ConfidenceLevel = number | null;
+/**
  * ratio at or above this -> CUBIERTO
  */
 export type CubiertoFrom = number;
@@ -56,7 +60,7 @@ export type Reference = string;
 export type Version1 = string;
 export type ProxyNote = string | null;
 /**
- * Same indicator for the whole region
+ * Same indicator for the whole region (each zone carries its own)
  */
 export type Reference1 = number | null;
 export type ReferenceLabel = string;
@@ -84,9 +88,18 @@ export type NullReason =
   | "ESTIMATION_NOT_ALLOWED"
   | "UNKNOWN";
 /**
- * Oriented so that above 1 is better than the region
+ * Oriented so that above 1 is better than the reference
  */
 export type RatioToReference = number | null;
+/**
+ * What the zone is compared with: municipios of its type
+ */
+export type Reference2 = number | null;
+export type ReferenceLabel1 = string | null;
+/**
+ * False when the zone is too small for this row: the count expected at the reference rate is under the 95 % bound of a zero count (3,7), so not even having none would be a significant shortfall. The status is then never FALTA; show it as «poco fiable» (D-213). True also when the test does not apply (no counts)
+ */
+export type Reliable = boolean;
 export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS";
 export type Value = number | null;
 export type Zones = ZoneGapStatus[];
@@ -148,6 +161,7 @@ export interface DatasetRef {
  * How rows are classified: value / regional reference against declared cut-offs.
  */
 export interface GapMethod {
+  confidence_level?: ConfidenceLevel;
   cubierto_from: CubiertoFrom;
   falta_below: FaltaBelow;
   reference: Reference;
@@ -163,6 +177,9 @@ export interface ZoneGapStatus {
   name: Name1;
   null_reason?: NullReason | null;
   ratio_to_reference?: RatioToReference;
+  reference?: Reference2;
+  reference_label?: ReferenceLabel1;
+  reliable?: Reliable;
   status: GapStatus;
   value: Value;
 }
