@@ -1,0 +1,11 @@
+# Allowlist: upload only what the web and API services build from (never .env, data/ or docs/).
+/*
+!vercel.json
+!package.json
+!package-lock.json
+!pyproject.toml
+!uv.lock
+!apps
+!packages
+!services
+!infra

@@ -1,0 +1,52 @@
+## apply role SQL (1st run) on housing_test_c
+NOTICE:  policy "vf_api_ro_read" for relation "public.dataset_registry" does not exist, skipping
+NOTICE:  policy "vf_api_ro_read" for relation "public.dataset_version" does not exist, skipping
+NOTICE:  policy "vf_api_ro_read" for relation "public.feature_registry" does not exist, skipping
+NOTICE:  policy "vf_api_ro_read" for relation "public.feature_value" does not exist, skipping
+NOTICE:  policy "vf_api_ro_read" for relation "public.geo_admin_unit" does not exist, skipping
+NOTICE:  policy "vf_api_ro_read" for relation "public.place_master" does not exist, skipping
+NOTICE:  policy "vf_api_ro_read" for relation "public.source_registry" does not exist, skipping
+exit=0
+## apply role SQL (2nd run, idempotency)
+exit=0
+## catalog checks (as owner)
+policies: 7
+rls on all public tables: true
+## as vf_api_ro
+> show default_transaction_read_only
+  on
+> show search_path
+  public, extensions
+> show statement_timeout
+  15s
+> select 'source_registry rows: ' || count(*) from source_registry
+  source_registry rows: 10
+> select 'feature_registry rows: ' || count(*) from feature_registry
+  feature_registry rows: 13
+> select 'postgis via search_path: ' || postgis_lib_version()
+  postgis via search_path: 3.6.4
+> select count(*) from metric_observation
+  ERROR:  permission denied for table metric_observation
+> insert into source_registry (source_id) values ('x')
+  ERROR:  cannot execute INSERT in a read-only transaction
+> set default_transaction_read_only = off; insert into source_registry (source_id) values ('x')
+  ERROR:  cannot execute INSERT in a read-only transaction
+  SET
+> set default_transaction_read_only = off; create table public.vf_probe (id int)
+  SET
+  ERROR:  cannot execute CREATE TABLE in a read-only transaction
+## as vf_api_ro, read-only switched off in the session (privileges are the real guard)
+  SET
+  ERROR:  permission denied for table source_registry
+  SET
+  ERROR:  permission denied for table feature_registry
+  SET
+  ERROR:  permission denied for schema public
+  LINE 1: create table public.vf_probe (id int)
+                       ^
+  SET
+  ERROR:  permission denied for table geo_admin_unit
+## API container as vf_api_ro on housing_test_c (catalog seeded, no geography)
+/api/v1/health -> {"data":{"status":"ok","service":"hi-api"},"meta":{"request_id":"b5407886244d4e9fb02a9934783c0fd4","generated_at":"2026-11-11T11:44:07.604808Z","api_version":"v1","methodology_version":null,"data_version":null},"warnings
+/api/v1/health/ready -> {"detail":{"code":"INSUFFICIENT_DATA","message":"No geography visible to the API database role"}} [HTTP 503]
+/api/v1/features?level=municipio -> {"data":[{"feature_id":"colegios_publicos_por_1000_menores","version":1,"human_name":"Centros educativos públicos por cada 1.000 menores de 15 años","domain":"education","unit":"centros/1000 menores","direction":"highe

@@ -1,0 +1,12 @@
+# Build context is the repository root; send only what the API image copies.
+*
+!pyproject.toml
+!uv.lock
+!apps/api/**
+!packages/contracts/**
+!packages/db/**
+!packages/domain/**
+!services/features/**
+!services/ingestion/**
+**/__pycache__
+**/*.pyc
