@@ -653,3 +653,62 @@ Notas de C después del primer despliegue.
 
 ## Gate (`f8e_gate.txt`)
 `make lint typecheck test-unit` y lint, typecheck y build de la web, en verde.
+
+---
+
+# PUB-001 Fase 4 (F9) — Buscador y «¿Y si cambias algo?» contra `POST /api/v1/search` (2026-11-11)
+
+Rama `claude/s1-web-search`, hecha sobre `claude/s1-web-map` (PR #9). La API es la de `origin/claude/sprint-1-public` en `f479281` (CORE-003, `915be3c` y `5f373b6`, método `fit-0.1`, D-215), lanzada en el puerto 8011 desde un árbol de trabajo aparte, sin comitear nada de A. La bandera `NEXT_PUBLIC_FEATURE_SEARCH` sigue apagada por defecto; la evidencia es con la bandera encendida, salvo `f9_bandera_off.json`.
+
+## Qué hay
+- **«Ver zonas que encajan»:**
+  - Coropleta de encaje: las zonas que cumplen todo, en una escala de violetas según su `match_pct` (60 → 100 %); las que fallan alguna condición, casi blancas; y las de `match_pct: null`, grises con borde discontinuo («Sin datos», nunca 0). La leyenda da el número de zonas de cada clase.
+  - Ranking (`results`), con las 5 primeras a la vista y «Ver las 10 primeras», y «Casi encajan» (`near_misses`) con la condición que fallan.
+  - La tarjeta de zona añade el % de encaje, «La N.ª que más encaja», lo que no cumple o no se puede comprobar y «Lo que tienes aquí»: los hechos de la API, cada uno con su fiabilidad en palabras.
+  - La web no recalcula nada: une `all_zones`, `results` y `near_misses` a las zonas del mapa por nivel y código.
+- **«¿Y si cambias algo?»,** siempre visible y plegado a la opción que más zonas añade (decisión de datamad-10). Se despliega solo cuando salen 5 zonas o menos.
+  - Cada opción se aplica con un toque (reenvía `relaxed_scenario`), con el aviso «Ahora ves las zonas con…» y «Volver a mi búsqueda».
+  - Lleva también «Lo que más limita tu búsqueda» y las zonas sin datos (`zones_unknown`).
+- **Caso demo** desde la portada («Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana»): el perfil dorado de A, comprobado por un test contra `scenario_state.familia_castellana.fixture.json`.
+- **«Lo quiero a un paseo»** (`nearby`): cada servicio con sus minutos a pie y la casilla «Imprescindible».
+- **«Trabajo en»:**
+  - Un combobox ARIA sobre las estaciones de metro, Cercanías y Metro Ligero (`/places`, sin geocodificador externo) y sobre las zonas del mapa.
+  - Siempre se envía con `max_minutes: null` y con la etiqueta «Tiempo en transporte: muy pronto».
+- **Presupuesto:** «Sin límite de presupuesto» (`budget: null`). Con «Comprar» se ve «Sin datos» con su explicación (`presupuesto.compra.sin_datos`).
+- **Mejoras de la revisión independiente del PR #9:**
+  - Borde de *hover* en una capa aparte (`zones-hover`), que se ve con cualquier relleno.
+  - `useGapRowMap` ya no pierde la fila si falla un nivel: lo deja «sin calcular» con un aviso y «Reintentar» (`joinLevels`).
+  - `useMemo` en `GapLayerProvider`.
+
+## Comprobado con Playwright (web `next build` + `start` en el 3011, API real en el 8011)
+- **`f9_buscador.json`, escritorio (1440 × 900):**
+  - El caso demo se abre con el teclado: 32 de 199 zonas. 1.ª Ciudad Lineal (99 %); Chamartín, 8.ª (95 %).
+  - «¿Y si cambias algo?» propone «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más».
+  - Las cifras coinciden con un `POST /search` hecho aparte con el mismo cuerpo, y la leyenda («Cumple todo: 32 zonas») coincide con `zones_passing`.
+  - Aplicar la opción con Intro lleva a 49 zonas, y el selector de la búsqueda pasa a 15 min. «Volver a mi búsqueda» vuelve a 32 y a 10 min, y el foco pasa al título «Zonas que encajan».
+  - «Trabajo en», con el teclado:
+    - al quitar el lugar, el foco pasa al campo;
+    - «nuevos min» da 2 estaciones; flecha abajo e Intro eligen «Nuevos Ministerios (metro)» y el foco pasa a «Quitar»;
+    - el hecho de la tarjeta dice «A 3,2 km en línea recta de Nuevos Ministerios (metro)».
+  - Con «Comprar», la API devuelve 0 zonas y 48 sin datos, y «¿Y si cambias algo?» ofrece «Sin límite de precio de compra: saldrían 48 zonas».
+  - Las 6 peticiones a `/search` llevan `max_minutes: null`. axe WCAG 2.2 AA: 0 fallos antes y después de buscar, con la tarjeta abierta y con compra. Consola sin errores y sin desplazamiento horizontal.
+- **Móvil (390 × 844):** los resultados entran a la vista en la hoja inferior. axe da 0 fallos, la consola no da errores y no hay desplazamiento horizontal.
+- **`f9_bandera_off.json`:** con la bandera apagada no hay botón de ejemplo ni «Lo quiero a un paseo», sale «Muy pronto», no hay ninguna petición a `/search` y axe da 0 fallos.
+
+## Capturas C1–C3 (`pitch/slides.md`)
+- **C1:** `c1_busqueda_desktop.png` (y `_vs_mockup.jpg`) y `c1_busqueda_mobile.png`: «Tu búsqueda» con el caso demo, la coropleta de encaje y la tarjeta de Ciudad Lineal (en el móvil, el ranking en la hoja).
+- **C2:** `c2_tarjeta_zona_desktop.png` y `c2_tarjeta_zona_mobile.png`: 99 % de encaje, 5 hechos con su fiabilidad y la mini lista «Qué falta aquí».
+- **C3:** `c3_y_si_cambias_desktop.png` y `c3_y_si_cambias_mobile.png`: el bloque desplegado con las cifras de la API.
+- Otras: `f9_aplicada_desktop.png`, `f9_trabajo_desktop.png`, `f9_compra_desktop.png` y `f9_bandera_off_inicio_desktop.png`.
+
+## Revisión
+Agente `reviewer` sin bloqueantes. Aplicado:
+- el estado de la búsqueda pasa a un *reducer* puro (`lib/searchState.ts`, con tests): una relajación fallida ya no deja el aviso ni el escenario cambiados, y «Reintentar» repite el intento tal cual;
+- el foco ya no se pierde (combobox, «Quitar» y opciones con `aria-disabled`);
+- regiones vivas fijas, reintento de las estaciones, `stale` por contenido y el aviso «de tu búsqueda anterior» en la tarjeta.
+
+Quedan anotados en el PR el R-06 (la lista de al lado es la alternativa sin color a «Cumple todo» frente a «No cumple todo») y el R-09.
+
+## Gate (`f9_gate.txt`)
+- `make lint typecheck test-unit`: 0 (360 pytest y 226 vitest).
+- Web: lint, typecheck y build en 0, con la bandera apagada y encendida.

@@ -16,11 +16,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { createApi } from "@/lib/api";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
+import { paintFit } from "@/lib/fit";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
 import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
 import {
@@ -80,6 +82,7 @@ const TEXT = {
   retry: "Reintentar",
   // Provisional (pending line D)
   ariaRow: (label: string) => `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a la Comunidad de Madrid; la leyenda lo explica.`,
+  ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
 };
 
 type Failure = "webgl" | "tiles";
@@ -259,12 +262,16 @@ function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: st
 export default function VidaMap() {
   const { zones, status, error, retry, activeZone, selectedZone, select, barrio } = useMapZones();
   const { row, data: gapData } = useGapLayer();
+  const { result } = useScenario();
   const overview = usePathname() === "/";
-  // Overview coloured by a row of «Qué falta» once its statuses arrive; plain zones otherwise
-  const painted = useMemo(
-    () => (zones && overview && row && gapData ? paintZones(zones, gapData.byZone) : zones),
-    [zones, overview, row, gapData],
-  );
+  // Overview coloured by a row of «Qué falta» once its statuses arrive, or by the fit with the
+  // search («Encaje con tu búsqueda») once there is one; plain zones otherwise
+  const painted = useMemo(() => {
+    if (!zones || !overview) return zones;
+    if (row) return gapData ? paintZones(zones, gapData.byZone) : zones;
+    return result ? paintFit(zones, result.all_zones) : zones;
+  }, [zones, overview, row, gapData, result]);
+  const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : TEXT.ariaFit;
   const slow = useSlow(status === "loading");
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
@@ -395,7 +402,7 @@ export default function VidaMap() {
         ref={container}
         className={styles.map}
         role="region"
-        aria-label={painted !== zones && gapData ? `${TEXT.aria} ${TEXT.ariaRow(gapData.info.label)}` : TEXT.aria}
+        aria-label={paintedAria ? `${TEXT.aria} ${paintedAria}` : TEXT.aria}
       />
       {failure && (
         <div role="alert" className={`glass ${styles.failure}`}>

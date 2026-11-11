@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, type ReactNode, useContext, useState } from "react";
+import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 
@@ -24,5 +24,7 @@ export function useGapLayer(): GapLayerValue {
 export default function GapLayerProvider({ children }: { children: ReactNode }) {
   const [row, setRow] = useState<GapRowKey | null>(null);
   const rowMap = useGapRowMap(row);
-  return <GapLayerContext.Provider value={{ ...rowMap, row, setRow }}>{children}</GapLayerContext.Provider>;
+  // One value per change, so the map and the legend do not re-render on every render of the layout
+  const value = useMemo(() => ({ ...rowMap, row, setRow }), [rowMap, row]);
+  return <GapLayerContext.Provider value={value}>{children}</GapLayerContext.Provider>;
 }

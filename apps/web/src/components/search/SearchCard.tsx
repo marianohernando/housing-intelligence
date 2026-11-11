@@ -18,12 +18,15 @@ import {
   setBudgetAmount,
   setBudgetKind,
   setMinors,
+  setNoBudgetLimit,
   setSeniors,
   togglePriority,
 } from "@/lib/scenario";
 
+import NearbyField from "./NearbyField";
 import { useScenario } from "./ScenarioProvider";
 import styles from "./SearchCard.module.css";
+import WorkField from "./WorkField";
 
 // Copy from pitch/textos_web.md (busqueda.*, hogar.*, importa.*, trabajo.*, presupuesto.*)
 const TEXT = {
@@ -43,6 +46,10 @@ const TEXT = {
   work: "Trabajo en",
   workHelp: "Así miraremos lo lejos que te queda cada zona.",
   soon: "Muy pronto",
+  noLimit: "Sin límite de presupuesto",
+  // presupuesto.compra.sin_datos: with «Comprar» the budget condition is unknown in every zone (D-214)
+  buyNoData: "Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.",
+  noData: "Sin datos",
   budget: "Presupuesto",
   rent: "Alquilar",
   buy: "Comprar",
@@ -58,7 +65,7 @@ const TEXT = {
 const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: string }[] = [
   { key: "transporte", label: "Transporte", icon: Bus, help: "Paradas cerca de casa y con autobuses o trenes a menudo." },
   { key: "salud", label: "Salud", icon: Cross, help: "Centro de salud cerca de casa." },
-  { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios públicos cerca de casa." },
+  { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios con primaria, públicos o concertados, cerca de casa." },
 ];
 const UPCOMING = "Muy pronto: zonas verdes, seguridad y sin escaleras.";
 
@@ -66,8 +73,9 @@ function peopleText(n: number): string {
   return n === 1 ? "1 persona en casa" : `${n} personas en casa`;
 }
 
-function budgetText(kind: BudgetKind, amount: number): string {
-  return kind === "rent" ? `Hasta ${formatEuros(amount)} al mes` : `Hasta ${formatEuros(amount)}`;
+function budgetText(budget: { kind: BudgetKind; amount_eur: number } | null): string {
+  if (!budget) return TEXT.noLimit;
+  return budget.kind === "rent" ? `Hasta ${formatEuros(budget.amount_eur)} al mes` : `Hasta ${formatEuros(budget.amount_eur)}`;
 }
 
 /** «Tu búsqueda» (brief, mockup 1). Collapsible on the zone screen. */
@@ -79,8 +87,8 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   const minors = household.minors ?? 0;
   const seniors = household.seniors_in_care ?? 0;
   const priorities = scenario.priorities ?? [];
-  const budget = scenario.budget ?? { kind: "rent" as const, amount_eur: BUDGET_RANGE.rent.initial };
-  const range = BUDGET_RANGE[budget.kind];
+  const budget = scenario.budget ?? null;
+  const range = BUDGET_RANGE[budget?.kind ?? "rent"];
 
   return (
     <GlassCard as="section" aria-labelledby={`${bodyId}-title`} className={styles.card}>
@@ -93,7 +101,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           </button>
         )}
       </div>
-      {!open && <p className={styles.summary}>{peopleText(peopleAtHome(scenario))} · {budgetText(budget.kind, budget.amount_eur)}</p>}
+      {!open && <p className={styles.summary}>{peopleText(peopleAtHome(scenario))} · {budgetText(budget)}</p>}
 
       <div id={bodyId} hidden={!open} className={styles.body}>
         <fieldset className={styles.group}>
@@ -129,20 +137,27 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           <p className={styles.help}>{UPCOMING}</p>
         </fieldset>
 
-        {/* «Trabajo en» needs the places autocomplete and the travel times (pending line A): not shown as a field yet */}
-        <div className={`${styles.group} ${styles.work}`}>
-          <p className={styles.legend}>
-            {TEXT.work} <span className={styles.tag}>{TEXT.soon}</span>
-          </p>
-          <p className={styles.help}>{TEXT.workHelp}</p>
-        </div>
+        {available ? (
+          <>
+            <NearbyField />
+            <WorkField />
+          </>
+        ) : (
+          // Off, the search cannot use the work place yet: «Muy pronto», as before the search existed
+          <div className={`${styles.group} ${styles.work}`}>
+            <p className={styles.legend}>
+              {TEXT.work} <span className={styles.tag}>{TEXT.soon}</span>
+            </p>
+            <p className={styles.help}>{TEXT.workHelp}</p>
+          </div>
+        )}
 
         <fieldset className={styles.group}>
           <legend>{TEXT.budget}</legend>
           <div className={styles.budgetRow}>
             <Segmented
               legend={TEXT.budget}
-              value={budget.kind}
+              value={budget?.kind ?? null}
               options={[
                 { value: "rent", label: TEXT.rent },
                 { value: "buy", label: TEXT.buy },
@@ -150,21 +165,34 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               onChange={(kind) => update((s) => setBudgetKind(s, kind))}
             />
             <p className={styles.amount}>
-              <span>{budgetText(budget.kind, budget.amount_eur)}</span>
-              {budget.kind === "buy" && <span className={styles.tag}>{TEXT.indicative}</span>}
+              <span>{budgetText(budget)}</span>
+              {budget?.kind === "buy" && <span className={styles.tag}>{TEXT.indicative}</span>}
             </p>
           </div>
-          <input
-            type="range"
-            className={styles.range}
-            min={range.min}
-            max={range.max}
-            step={range.step}
-            value={budget.amount_eur}
-            aria-label={TEXT.budgetAria}
-            aria-valuetext={budgetText(budget.kind, budget.amount_eur)}
-            onChange={(e) => update((s) => setBudgetAmount(s, Number(e.target.value)))}
-          />
+          {budget && (
+            <input
+              type="range"
+              className={styles.range}
+              min={range.min}
+              max={range.max}
+              step={range.step}
+              value={budget.amount_eur}
+              aria-label={TEXT.budgetAria}
+              aria-valuetext={budgetText(budget)}
+              onChange={(e) => update((s) => setBudgetAmount(s, Number(e.target.value)))}
+            />
+          )}
+          {available && (
+            <label className={styles.check}>
+              <input type="checkbox" checked={!budget} onChange={(e) => update((s) => setNoBudgetLimit(s, e.target.checked))} />
+              {TEXT.noLimit}
+            </label>
+          )}
+          {available && budget?.kind === "buy" && (
+            <p className={styles.noDataNote}>
+              <span className={styles.noDataTag}>{TEXT.noData}</span> {TEXT.buyNoData}
+            </p>
+          )}
         </fieldset>
 
         {available ? (

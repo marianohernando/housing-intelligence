@@ -12,6 +12,7 @@ import { errorMessage } from "@/lib/errors";
 import { gapsHref, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
 import { type ZoneFeature, zoneHref } from "@/lib/map/zones";
 
+import FitDetails from "./FitDetails";
 import GapBadge from "./GapBadge";
 import PendingRows from "./PendingRows";
 import styles from "./ZoneCard.module.css";
@@ -24,6 +25,8 @@ const TEXT = {
   close: "Cerrar",
   beforeSearch: "Haz tu búsqueda para ver qué zonas encajan contigo.",
   fitSoon: "Muy pronto verás cuánto encaja esta zona contigo.", // zona.encaje.pronto
+  fitHelp: "Cuánto se parece esta zona a lo que buscas. No es una nota de la zona.", // zona.encaje.ayuda
+  stale: "Este encaje es de tu búsqueda anterior.", // provisional (pending line D)
   missing: "Qué falta aquí",
   walk: "A pie:",
   retry: "Reintentar",
@@ -42,7 +45,7 @@ interface Props {
 export default function ZoneCard({ zone, mode, onClose }: Props) {
   const { level, code, name, municipio_name } = zone.properties;
   const titleId = useId();
-  const { result, available } = useScenario();
+  const { result, available, stale } = useScenario();
   const gaps = useZoneGaps(level, code);
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
@@ -63,12 +66,16 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
           {name}
         </h2>
         {pct != null && (
-          <span className={styles.pct} aria-label={`Esta zona encaja en un ${pct} % con tu búsqueda`}>
-            {pct} %<small> de encaje</small>
+          <span className={styles.pct} title={TEXT.fitHelp}>
+            <span aria-hidden="true">
+              {pct} %<small> de encaje</small>
+            </span>
+            <span className="visually-hidden">Esta zona encaja en un {pct} % con tu búsqueda</span>
           </span>
         )}
       </div>
-      {!result && <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
+      {result && stale && pct != null && <p className={styles.hint}>{TEXT.stale}</p>}
+      {result ? <FitDetails result={result} zoneKey={zone.properties.zone_key} /> : <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
         <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>

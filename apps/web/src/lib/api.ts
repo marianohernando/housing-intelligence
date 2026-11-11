@@ -30,15 +30,19 @@ export type PlacesResponse = Envelope<{
   pages: number;
 }>;
 
-/** A zone's places of one category. The map always asks by zone, never for a whole layer. */
+/**
+ * Places of one category. The map always asks by zone, never for a whole layer; without a zone,
+ * only a few subcategories (the stations for «Trabajo en»).
+ */
 export interface PlacesQuery {
   category: PlaceCategory;
-  adminUnitId: string;
+  adminUnitId?: string;
   subcategories?: readonly string[];
 }
 
 function placesPath({ category, adminUnitId, subcategories = [] }: PlacesQuery, page: number): string {
-  const params = new URLSearchParams({ category, admin_unit_id: adminUnitId });
+  const params = new URLSearchParams({ category });
+  if (adminUnitId) params.set("admin_unit_id", adminUnitId);
   for (const subcategory of subcategories) params.append("subcategory", subcategory);
   if (page > 1) params.set("page", String(page));
   return `/api/v1/places?${params.toString()}`;

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { GapRowMap, ZoneGapStatus } from "@/contracts/gap_row_map_response";
 
-import { countByStatus, gapByZone, GAP_PATTERN, isGapRow, MAP_ROWS, paintZones, patternPixels } from "../map/gapMap";
+import { countByStatus, gapByZone, GAP_PATTERN, isGapRow, joinLevels, MAP_ROWS, paintZones, patternPixels } from "../map/gapMap";
 import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
 
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
@@ -65,6 +65,28 @@ describe("gapByZone and paintZones", () => {
   it("counts the zones of the map by status; a zone not carried is not SIN DATOS", () => {
     const counts = countByStatus(paintZones(map, byZone));
     expect(counts).toEqual({ FALTA: 1, JUSTO: 1, CUBIERTO: 0, ZONA_PEQUENA: 1, SIN_DATOS: 0, pending: 1 });
+  });
+});
+
+describe("joinLevels", () => {
+  it("joins municipios and districts when both answer", () => {
+    const data = joinLevels([{ map: municipios }, { map: distritos }]);
+    expect(data.failed).toEqual([]);
+    expect(data.info).toBe(municipios);
+    expect(data.byZone.size).toBe(3 + distritos.zones.length);
+  });
+
+  it("keeps the level that answered when the other fails: its zones stay pending, never SIN DATOS", () => {
+    const data = joinLevels([{ error: new Error("down") }, { map: distritos }]);
+    expect(data.failed).toEqual(["municipio"]);
+    expect(data.info).toBe(distritos);
+    expect(data.byZone.has("ES.28.MUN.28092")).toBe(false);
+    expect(joinLevels([{ map: municipios }, { error: new Error("down") }]).failed).toEqual(["distrito"]);
+  });
+
+  it("fails with the first error only when no level answers", () => {
+    const first = new Error("municipios down");
+    expect(() => joinLevels([{ error: first }, { error: new Error("distritos down") }])).toThrow(first);
   });
 });
 

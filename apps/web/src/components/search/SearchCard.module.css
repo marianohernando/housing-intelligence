@@ -205,3 +205,186 @@
   font-size: var(--text-sm);
   font-weight: 500;
 }
+
+/* Native selects and checkboxes of the card: 44 px targets */
+.select {
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.check input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--violet-strong);
+}
+
+.remove {
+  display: grid;
+  flex: none;
+  width: var(--target);
+  height: var(--target);
+  place-items: center;
+  margin-left: auto;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: var(--falta-ink);
+}
+
+/* «Lo quiero a un paseo»: one line per service, wrapping on narrow cards */
+.nearList {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* «Colegio a menos de [10] min andando» on top; «Imprescindible» and «Quitar» below */
+.nearItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 var(--space-2);
+}
+
+.nearSentence {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.nearName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 500;
+}
+
+.nearName svg {
+  color: var(--violet-strong);
+}
+
+/* «a menos de [10] min andando»: the selector inside the sentence */
+.nearMinutes {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}
+
+
+
+/* «Trabajo en»: the place picked, or the field with its list of places */
+.place {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  padding-left: var(--space-3);
+  border: 1px solid var(--violet);
+  border-radius: var(--radius);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-weight: 500;
+}
+
+.placeName {
+  min-width: 0;
+}
+
+.combo {
+  position: relative;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.options {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  z-index: 3;
+  max-height: 22rem;
+  margin: 0;
+  padding: var(--space-1);
+  overflow-y: auto;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--glass-shadow);
+  list-style: none;
+}
+
+.options[hidden] {
+  display: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.option small {
+  flex: none;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.option[aria-selected="true"],
+.option:hover {
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+}
+
+.soonTag {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--sin-datos-bg);
+  color: var(--sin-datos-ink);
+  font-size: 0.78rem;
+}
+
+/* presupuesto.compra.sin_datos: «Sin datos» told by text, with the dashed SIN DATOS border */
+.noDataNote {
+  padding: var(--space-2) var(--space-3);
+  border: 1px dashed var(--sin-datos);
+  border-radius: var(--radius-sm);
+  background: var(--sin-datos-bg);
+  color: var(--sin-datos-ink);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.noDataTag {
+  font-weight: 600;
+}

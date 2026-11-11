@@ -5,6 +5,8 @@
  */
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
 
+import { FIT_RAMP } from "@/lib/fit";
+
 import { PATTERN_IMAGE } from "./gapMap";
 
 /** TileJSON of OpenFreeMap's public instance; it carries the © OpenMapTiles / OSM attribution. */
@@ -27,6 +29,8 @@ export const MAP_PALETTE_TOKENS = {
   gapSinDatos: "map-sin-datos",
   gapZonaPequena: "map-zona-pequena",
   gapZonaPequenaInk: "zona-pequena-ink",
+  fitLow: "map-fit-low",
+  fitNoCumple: "map-no-cumple",
   gapFaltaInk: "falta-ink",
   gapJustoInk: "justo-ink",
   sinDatos: "sin-datos",
@@ -144,7 +148,9 @@ export function baseStyle(p: MapPalette): StyleSpecification {
  * Zone overlays (sources `zones`, `zone-mask`, `zone-selected`, `zone-base` and `zone-barrio` are
  * added by the map). A zone with a `gap` property (lib/map/gapMap.ts) is filled by its status in
  * the row the person picked, with the FALTA, JUSTO and small-zone patterns and a dashed edge for
- * SIN DATOS.
+ * SIN DATOS. After a search, a zone with a `fit` property (lib/fit.ts) is filled by its % when it
+ * fits, almost white when it fails a condition and grey with a dashed edge when unknown. The
+ * zone under the pointer gets a violet edge of its own layer, whatever its fill.
  * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
  * first, so the white mask drawn above fades the surroundings, buildings included.
  */
@@ -173,8 +179,12 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
               p.gapZonaPequena,
               p.gapSinDatos,
             ],
-            ["boolean", ["feature-state", "hover"], false],
-            p.violetSoft,
+            ["==", ["get", "fit"], "ENCAJA"],
+            ["interpolate", ["linear"], ["to-number", ["get", "fit_pct"], 0], FIT_RAMP.low, p.fitLow, FIT_RAMP.high, p.violet],
+            ["==", ["get", "fit"], "NO_CUMPLE"],
+            p.fitNoCumple,
+            ["==", ["get", "fit"], "SIN_DATOS"],
+            p.gapSinDatos,
             p.zone,
           ],
           "fill-opacity": fadeOut(0.9),
@@ -227,8 +237,20 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         id: "zones-nodata",
         type: "line",
         source: "zones",
-        filter: ["==", ["get", "gap"], "SIN_DATOS"],
+        filter: ["any", ["==", ["get", "gap"], "SIN_DATOS"], ["==", ["get", "fit"], "SIN_DATOS"]],
         paint: { "line-color": p.sinDatos, "line-width": 1.5, "line-dasharray": [2, 2], "line-opacity": fadeOut(1) },
+      },
+      {
+        id: "zones-hover",
+        type: "line",
+        source: "zones",
+        layout: { "line-join": "round" },
+        paint: {
+          "line-color": p.violet,
+          "line-width": 2.5,
+          // Camera expressions go outermost: the edge fades with the other zone layers at zone zoom
+          "line-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, ["case", ["boolean", ["feature-state", "hover"], false], 1, 0], 13, 0],
+        },
       },
       {
         id: "zone-glow",
