@@ -14,6 +14,23 @@ Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisione
 
 Checkpoints: **13 nov** la lista de lo que falta sale por la API con datos reales · **15 nov** el buscador funciona con un perfil dorado · **16 nov (noche)** todo integrado con la web de B.
 
+## Registro de progreso (lo más reciente arriba)
+Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase · gate · commit · evidencia · qué deja hecho. La escribe la línea A al cerrar cada fase propia y al integrar un PR de B, C o D. Lo anterior al 11 nov está en «07 — DONE».
+
+| Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
+|---|---|---|---|---|---|---|
+| 11 nov | A | Mantenimiento | — | `d4a03dd` | — | Token `sbp_…` del MCP rotado (lo confirma Mariano). El MCP `supabase-datamad` sigue respondiendo: 14 tablas con RLS y perfil demo |
+| 11 nov | A | GAP-001 · Fase 0 (esqueleto andante) | verde | `2da5d4d` | `evidence/gate-04/2026-11-11/phase-gap001-f0.txt` | `GET /api/v1/gaps/{level}/{code}` con datos reales: colegio y centro de salud por municipio frente a la referencia regional. Madrid: FALTA en los dos (1,56 frente a 2,18 y 0,37 frente a 0,59). Migración 0004 |
+| 11 nov | A | Organización | — | `c0faef8` | — | Cuatro líneas paralelas (LINEAS.md); el board recoge las cuatro |
+| 11 nov | A | CONTRACTS · Fase 1 | verde | `7541527` | `evidence/gate-04/2026-11-11/phase-contracts-f1.txt` | **Contratos publicados**: `ScenarioState`, `SearchResult` con Reality Check y `ZoneGapList`. JSON Schema en `data/schemas/api/`, rutas en docs/04/31 y fixtures reales. Cierra CORE-001 |
+| 11 nov | A | CORE-005 · Fase 2 | verde | `e31770b` | `evidence/gate-03/2026-11-11/phase-core005-f2.txt` | Distancia a pie al servicio más cercano por zona (Dijkstra con scipy; 0,3 s para todas las farmacias). Tests de propiedades |
+| 11 nov | A | CORE-005 · Fase 1 | verde | `4cdee28` | `evidence/gate-01/2026-11-11/phase-core005-f1.txt` | Red peatonal de OSM como dataset `osm_red_peatonal`: 2,38 M nodos, 57.659 km, componente principal del 98,25 % |
+| 11 nov | A | DATAMAD-PUBLIC-01 · Fase 0 | verde | `9356b2d` | `evidence/gate-00/2026-11-11/phase-readme-f0.txt` | El README cita el tag `cf39459` y el repo archivado. PR #1 a `main` abierto (lo fusiona Mariano) |
+| 11 nov | A | OPS-001 · parte Supabase | verde | `114023a` | `evidence/gate-06/2026-11-11` | RLS en todas las tablas (D-197) y perfil demo cargado (100 MB) |
+| 11 nov | A | DATAMAD-PUBLIC-01 | verde | `6ac1cbc` | `evidence/gate-00/2026-11-11/public-repo.md` | Repo público con el historial limpio (D-198) |
+| 10 nov | A | DATA-016 · Fase 4b | G1 PASS | `9180539` | `evidence/gate-01/2026-11-10` | 21 datasets CM con Quality Gate |
+| 10 nov | A | DATA-007 · Fase 4b | G2 PASS | `b19869b` | `evidence/gate-02/2026-11-10` | Transporte CRTM: 14.982 paradas y estaciones con frecuencias (D-196) |
+
 ## Calendario hasta la entrega
 | Fechas | Bloque | Salida |
 |---|---|---|
