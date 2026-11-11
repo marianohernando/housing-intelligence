@@ -54,4 +54,9 @@ schema:
     CDTBARRIO: {type: string, description: "Barrio: 6 dígitos en Madrid capital (MMM+DD+B), 5 en el resto", nullable: true, null_reason_default: NOT_APPLICABLE}
     Area_k2: {type: float, unit: km2, description: "Área declarada por la fuente", nullable: false}
 feeds_features: [admin_unit_area_km2]
-notes: "Inspeccionado el 2026-10-20 — 4.417 filas, EPSG:25830, 1 geometría inválida (119-01-002) a reparar con make_valid."
+notes: >-
+  Inspeccionado el 2026-10-20 — 4.417 filas, EPSG:25830, 1 geometría inválida (119-01-002) a
+  reparar con make_valid. El CSV de nombres escribe «/» o el byte 0xD0 donde va la Ñ («REDUE/A»,
+  «GRIÐON») y no lleva tildes: los nombres publicados de los 179 municipios salen de la tabla
+  estadística cm_poblacion_edad_nacionalidad_sexo y los de los 21 distritos de Madrid, del panel
+  del Ayuntamiento (paso `hi-ingest admin-names`, DATA-022, con su ejecución en ingestion_run).

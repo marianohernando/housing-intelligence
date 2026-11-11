@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "every_municipio_and_madrid_district_has_official_name",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "count": 0,
+        "sample": []
+      }
+    },
+    {
+      "name": "one_official_name_per_unit",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "count": 0,
+        "sample": {}
+      }
+    },
+    {
+      "name": "names_use_spanish_spelling_only",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "count": 0,
+        "sample": {}
+      }
+    }
+  ],
+  "names_from": {
+    "cm_poblacion_edad_nacionalidad_sexo": "2026-11-10-de171e22295d",
+    "ayto_panel_indicadores_distritos_barrios": "2026-11-11-4726abc60a15"
+  }
+}

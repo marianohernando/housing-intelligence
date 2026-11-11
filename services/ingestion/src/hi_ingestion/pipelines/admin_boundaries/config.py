@@ -16,3 +16,8 @@ EXPECTED_MUNICIPIOS = 179
 EXPECTED_MADRID_DISTRICTS = 21
 EXPECTED_MADRID_BARRIOS = 131
 INSERT_CHUNK = 5000
+# Official spellings (DATA-022). The section CSV writes '/' or 0xD0 where the Ñ goes and drops
+# accents, so names come from the latest valid version of these tables (admin_names.py).
+MUNICIPIO_NAMES_DATASET = "cm_poblacion_edad_nacionalidad_sexo"
+MADRID_DISTRICT_NAMES_DATASET = "ayto_panel_indicadores_distritos_barrios"
+CENSAL_DISTRICT_NAME = "{municipio} — distrito censal {number}"

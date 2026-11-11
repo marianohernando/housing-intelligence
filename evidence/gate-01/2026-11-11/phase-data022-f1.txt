@@ -1,0 +1,66 @@
+# DATA-022 Fase 1: nombres oficiales (D-212)
+$ make admin-names (base local)
+{
+  "dataset_id": "cm_secciones_censales",
+  "status": "SUCCESS",
+  "version": "official_names:cm_poblacion_edad_nacionalidad_sexo@2026-11-10-de171e22295d,ayto_panel_indicadores_distritos_barrios@2026-11-11-4726abc60a15",
+  "counts": {
+    "units": 556,
+    "changes": 0
+  },
+  "quality_passed": true,
+  "evidence": null
+}
+$ psql: nombres con / o Ð
+0
+ES.28.DIS.2806001 | Fuentidueña de Tajo — distrito censal 01
+ES.28.DIS.2807919 | Vicálvaro
+ES.28.MUN.28004 | Álamo (El)
+ES.28.MUN.28066 | Griñón
+ES.28.MUN.28079 | Madrid
+ES.28.MUN.28114 | Piñuécar-Gandullas
+ES.28.MUN.28121 | Redueña
+ES.28.MUN.28176 | Villanueva de la Cañada
+$ make lint typecheck test
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+256 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+........................................................................ [ 69%]
+........................................................................ [ 92%]
+......................                                                   [100%]
+310 passed in 5.05s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  18:28:16
+   Duration  83ms (tests 49%, import 24%, transform 16%, worker 11%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 97%]
+..                                                                       [100%]
+74 passed in 27.58s
+exit=0

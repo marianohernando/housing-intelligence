@@ -10,7 +10,7 @@ ALEMBIC := uv run alembic -c infra/migrations/alembic.ini
 GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
-        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all features supabase-migrate supabase-sync secret-scan evidence ci web-install \
+        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all admin-names features supabase-migrate supabase-sync secret-scan evidence ci web-install \
         deploy-demo smoke-demo demo-offline-prepare demo-offline demo-offline-stop
 
 help: ## Show targets
@@ -83,6 +83,9 @@ ingest: ## Run a dataset pipeline: make ingest DATASET=cm_secciones_censales
 ingest-all: ## Geography + every declared pipeline, then features
 	uv run hi-ingest run-all
 	uv run hi-features compute
+
+admin-names: ## Official spellings of municipios and Madrid districts (after the stat tables)
+	uv run hi-ingest admin-names
 
 features: ## Recompute every feature (Gold)
 	uv run hi-features compute

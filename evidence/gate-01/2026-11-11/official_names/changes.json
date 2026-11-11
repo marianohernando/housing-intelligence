@@ -1,0 +1,2027 @@
+[
+  {
+    "admin_unit_id": "ES.28.DIS.2800101",
+    "before": "ACEBEDA, LA — distrito censal 01",
+    "after": "Acebeda (La) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800201",
+    "before": "AJALVIR — distrito censal 01",
+    "after": "Ajalvir — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800301",
+    "before": "ALAMEDA DEL VALLE — distrito censal 01",
+    "after": "Alameda del Valle — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800401",
+    "before": "ALAMO, EL — distrito censal 01",
+    "after": "Álamo (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800501",
+    "before": "ALCALA DE HENARES — distrito censal 01",
+    "after": "Alcalá de Henares — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800502",
+    "before": "ALCALA DE HENARES — distrito censal 02",
+    "after": "Alcalá de Henares — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800503",
+    "before": "ALCALA DE HENARES — distrito censal 03",
+    "after": "Alcalá de Henares — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800504",
+    "before": "ALCALA DE HENARES — distrito censal 04",
+    "after": "Alcalá de Henares — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800505",
+    "before": "ALCALA DE HENARES — distrito censal 05",
+    "after": "Alcalá de Henares — distrito censal 05"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800601",
+    "before": "ALCOBENDAS — distrito censal 01",
+    "after": "Alcobendas — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800701",
+    "before": "ALCORCON — distrito censal 01",
+    "after": "Alcorcón — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800702",
+    "before": "ALCORCON — distrito censal 02",
+    "after": "Alcorcón — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800703",
+    "before": "ALCORCON — distrito censal 03",
+    "after": "Alcorcón — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800704",
+    "before": "ALCORCON — distrito censal 04",
+    "after": "Alcorcón — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800801",
+    "before": "ALDEA DEL FRESNO — distrito censal 01",
+    "after": "Aldea del Fresno — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2800901",
+    "before": "ALGETE — distrito censal 01",
+    "after": "Algete — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801001",
+    "before": "ALPEDRETE — distrito censal 01",
+    "after": "Alpedrete — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801101",
+    "before": "AMBITE — distrito censal 01",
+    "after": "Ambite — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801201",
+    "before": "ANCHUELO — distrito censal 01",
+    "after": "Anchuelo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801301",
+    "before": "ARANJUEZ — distrito censal 01",
+    "after": "Aranjuez — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801302",
+    "before": "ARANJUEZ — distrito censal 02",
+    "after": "Aranjuez — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801303",
+    "before": "ARANJUEZ — distrito censal 03",
+    "after": "Aranjuez — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801304",
+    "before": "ARANJUEZ — distrito censal 04",
+    "after": "Aranjuez — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801401",
+    "before": "ARGANDA DEL REY — distrito censal 01",
+    "after": "Arganda del Rey — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801501",
+    "before": "ARROYOMOLINOS — distrito censal 01",
+    "after": "Arroyomolinos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801601",
+    "before": "ATAZAR, EL — distrito censal 01",
+    "after": "Atazar (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801701",
+    "before": "BATRES — distrito censal 01",
+    "after": "Batres — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801801",
+    "before": "BECERRIL DE LA SIERRA — distrito censal 01",
+    "after": "Becerril de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2801901",
+    "before": "BELMONTE DE TAJO — distrito censal 01",
+    "after": "Belmonte de Tajo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802001",
+    "before": "BERZOSA DEL LOZOYA — distrito censal 01",
+    "after": "Berzosa del Lozoya — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802101",
+    "before": "BERRUECO, EL — distrito censal 01",
+    "after": "Berrueco (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802201",
+    "before": "BOADILLA DEL MONTE — distrito censal 01",
+    "after": "Boadilla del Monte — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802301",
+    "before": "BOALO, EL — distrito censal 01",
+    "after": "Boalo (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802401",
+    "before": "BRAOJOS — distrito censal 01",
+    "after": "Braojos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802501",
+    "before": "BREA DE TAJO — distrito censal 01",
+    "after": "Brea de Tajo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802601",
+    "before": "BRUNETE — distrito censal 01",
+    "after": "Brunete — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802701",
+    "before": "BUITRAGO DEL LOZOYA — distrito censal 01",
+    "after": "Buitrago del Lozoya — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802801",
+    "before": "BUSTARVIEJO — distrito censal 01",
+    "after": "Bustarviejo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2802901",
+    "before": "CABANILLAS DE LA SIERRA — distrito censal 01",
+    "after": "Cabanillas de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803001",
+    "before": "CABRERA, LA — distrito censal 01",
+    "after": "Cabrera (La) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803101",
+    "before": "CADALSO DE LOS VIDRIOS — distrito censal 01",
+    "after": "Cadalso de los Vidrios — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803201",
+    "before": "CAMARMA DE ESTERUELAS — distrito censal 01",
+    "after": "Camarma de Esteruelas — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803301",
+    "before": "CAMPO REAL — distrito censal 01",
+    "after": "Campo Real — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803401",
+    "before": "CANENCIA — distrito censal 01",
+    "after": "Canencia — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803501",
+    "before": "CARABA/A — distrito censal 01",
+    "after": "Carabaña — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803601",
+    "before": "CASARRUBUELOS — distrito censal 01",
+    "after": "Casarrubuelos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803701",
+    "before": "CENICIENTOS — distrito censal 01",
+    "after": "Cenicientos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803801",
+    "before": "CERCEDILLA — distrito censal 01",
+    "after": "Cercedilla — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2803901",
+    "before": "CERVERA DE BUITRAGO — distrito censal 01",
+    "after": "Cervera de Buitrago — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804001",
+    "before": "CIEMPOZUELOS — distrito censal 01",
+    "after": "Ciempozuelos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804002",
+    "before": "CIEMPOZUELOS — distrito censal 02",
+    "after": "Ciempozuelos — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804003",
+    "before": "CIEMPOZUELOS — distrito censal 03",
+    "after": "Ciempozuelos — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804101",
+    "before": "COBE/A — distrito censal 01",
+    "after": "Cobeña — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804201",
+    "before": "COLMENAR DEL ARROYO — distrito censal 01",
+    "after": "Colmenar del Arroyo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804301",
+    "before": "COLMENAR DE OREJA — distrito censal 01",
+    "after": "Colmenar de Oreja — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804302",
+    "before": "COLMENAR DE OREJA — distrito censal 02",
+    "after": "Colmenar de Oreja — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804401",
+    "before": "COLMENAREJO — distrito censal 01",
+    "after": "Colmenarejo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804501",
+    "before": "COLMENAR VIEJO — distrito censal 01",
+    "after": "Colmenar Viejo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804601",
+    "before": "COLLADO MEDIANO — distrito censal 01",
+    "after": "Collado Mediano — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804701",
+    "before": "COLLADO VILLALBA — distrito censal 01",
+    "after": "Collado Villalba — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804801",
+    "before": "CORPA — distrito censal 01",
+    "after": "Corpa — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804901",
+    "before": "COSLADA — distrito censal 01",
+    "after": "Coslada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804902",
+    "before": "COSLADA — distrito censal 02",
+    "after": "Coslada — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804903",
+    "before": "COSLADA — distrito censal 03",
+    "after": "Coslada — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2804904",
+    "before": "COSLADA — distrito censal 04",
+    "after": "Coslada — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805001",
+    "before": "CUBAS DE LA SAGRA — distrito censal 01",
+    "after": "Cubas de la Sagra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805101",
+    "before": "CHAPINERIA — distrito censal 01",
+    "after": "Chapinería — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805201",
+    "before": "CHINCHON — distrito censal 01",
+    "after": "Chinchón — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805301",
+    "before": "DAGANZO DE ARRIBA — distrito censal 01",
+    "after": "Daganzo de Arriba — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805401",
+    "before": "ESCORIAL, EL — distrito censal 01",
+    "after": "Escorial (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805402",
+    "before": "ESCORIAL, EL — distrito censal 02",
+    "after": "Escorial (El) — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805501",
+    "before": "ESTREMERA — distrito censal 01",
+    "after": "Estremera — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805601",
+    "before": "FRESNEDILLAS DE LA OLIVA — distrito censal 01",
+    "after": "Fresnedillas de la Oliva — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805701",
+    "before": "FRESNO DE TOROTE — distrito censal 01",
+    "after": "Fresno de Torote — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805801",
+    "before": "FUENLABRADA — distrito censal 01",
+    "after": "Fuenlabrada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805802",
+    "before": "FUENLABRADA — distrito censal 02",
+    "after": "Fuenlabrada — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805803",
+    "before": "FUENLABRADA — distrito censal 03",
+    "after": "Fuenlabrada — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805804",
+    "before": "FUENLABRADA — distrito censal 04",
+    "after": "Fuenlabrada — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805805",
+    "before": "FUENLABRADA — distrito censal 05",
+    "after": "Fuenlabrada — distrito censal 05"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805806",
+    "before": "FUENLABRADA — distrito censal 06",
+    "after": "Fuenlabrada — distrito censal 06"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805807",
+    "before": "FUENLABRADA — distrito censal 07",
+    "after": "Fuenlabrada — distrito censal 07"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805808",
+    "before": "FUENLABRADA — distrito censal 08",
+    "after": "Fuenlabrada — distrito censal 08"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805809",
+    "before": "FUENLABRADA — distrito censal 09",
+    "after": "Fuenlabrada — distrito censal 09"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2805901",
+    "before": "FUENTE EL SAZ DE JARAMA — distrito censal 01",
+    "after": "Fuente el Saz de Jarama — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806001",
+    "before": "FUENTIDUEÐA DE TAJO — distrito censal 01",
+    "after": "Fuentidueña de Tajo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806101",
+    "before": "GALAPAGAR — distrito censal 01",
+    "after": "Galapagar — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806201",
+    "before": "GARGANTA DE LOS MONTES — distrito censal 01",
+    "after": "Garganta de los Montes — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806301",
+    "before": "GARGANTILLA DEL LOZOYA Y PINILLA DE BUITRAGO — distrito censal 01",
+    "after": "Gargantilla del Lozoya y Pinilla de Buitrago — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806401",
+    "before": "GASCONES — distrito censal 01",
+    "after": "Gascones — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806501",
+    "before": "GETAFE — distrito censal 01",
+    "after": "Getafe — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806502",
+    "before": "GETAFE — distrito censal 02",
+    "after": "Getafe — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806503",
+    "before": "GETAFE — distrito censal 03",
+    "after": "Getafe — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806504",
+    "before": "GETAFE — distrito censal 04",
+    "after": "Getafe — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806601",
+    "before": "GRIÐON — distrito censal 01",
+    "after": "Griñón — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806701",
+    "before": "GUADALIX DE LA SIERRA — distrito censal 01",
+    "after": "Guadalix de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806801",
+    "before": "GUADARRAMA — distrito censal 01",
+    "after": "Guadarrama — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2806901",
+    "before": "HIRUELA, LA — distrito censal 01",
+    "after": "Hiruela (La) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807001",
+    "before": "HORCAJO DE LA SIERRA-AOSLOS — distrito censal 01",
+    "after": "Horcajo de la Sierra-Aoslos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807101",
+    "before": "HORCAJUELO DE LA SIERRA — distrito censal 01",
+    "after": "Horcajuelo de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807201",
+    "before": "HOYO DE MANZANARES — distrito censal 01",
+    "after": "Hoyo de Manzanares — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807301",
+    "before": "HUMANES DE MADRID — distrito censal 01",
+    "after": "Humanes de Madrid — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807401",
+    "before": "LEGANES — distrito censal 01",
+    "after": "Leganés — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807402",
+    "before": "LEGANES — distrito censal 02",
+    "after": "Leganés — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807403",
+    "before": "LEGANES — distrito censal 03",
+    "after": "Leganés — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807404",
+    "before": "LEGANES — distrito censal 04",
+    "after": "Leganés — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807405",
+    "before": "LEGANES — distrito censal 05",
+    "after": "Leganés — distrito censal 05"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807406",
+    "before": "LEGANES — distrito censal 06",
+    "after": "Leganés — distrito censal 06"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807407",
+    "before": "LEGANES — distrito censal 07",
+    "after": "Leganés — distrito censal 07"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807501",
+    "before": "LOECHES — distrito censal 01",
+    "after": "Loeches — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807601",
+    "before": "LOZOYA — distrito censal 01",
+    "after": "Lozoya — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807801",
+    "before": "MADARCOS — distrito censal 01",
+    "after": "Madarcos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2807919",
+    "before": "Vicalvaro",
+    "after": "Vicálvaro"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808001",
+    "before": "MAJADAHONDA — distrito censal 01",
+    "after": "Majadahonda — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808002",
+    "before": "MAJADAHONDA — distrito censal 02",
+    "after": "Majadahonda — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808201",
+    "before": "MANZANARES EL REAL — distrito censal 01",
+    "after": "Manzanares el Real — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808301",
+    "before": "MECO — distrito censal 01",
+    "after": "Meco — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808401",
+    "before": "MEJORADA DEL CAMPO — distrito censal 01",
+    "after": "Mejorada del Campo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808501",
+    "before": "MIRAFLORES DE LA SIERRA — distrito censal 01",
+    "after": "Miraflores de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808601",
+    "before": "MOLAR, EL — distrito censal 01",
+    "after": "Molar (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808701",
+    "before": "MOLINOS, LOS — distrito censal 01",
+    "after": "Molinos (Los) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808801",
+    "before": "MONTEJO DE LA SIERRA — distrito censal 01",
+    "after": "Montejo de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2808901",
+    "before": "MORALEJA DE ENMEDIO — distrito censal 01",
+    "after": "Moraleja de Enmedio — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809001",
+    "before": "MORALZARZAL — distrito censal 01",
+    "after": "Moralzarzal — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809101",
+    "before": "MORATA DE TAJUÐA — distrito censal 01",
+    "after": "Morata de Tajuña — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809102",
+    "before": "MORATA DE TAJUÐA — distrito censal 02",
+    "after": "Morata de Tajuña — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809201",
+    "before": "MOSTOLES — distrito censal 01",
+    "after": "Móstoles — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809202",
+    "before": "MOSTOLES — distrito censal 02",
+    "after": "Móstoles — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809203",
+    "before": "MOSTOLES — distrito censal 03",
+    "after": "Móstoles — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809204",
+    "before": "MOSTOLES — distrito censal 04",
+    "after": "Móstoles — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809301",
+    "before": "NAVACERRADA — distrito censal 01",
+    "after": "Navacerrada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809401",
+    "before": "NAVALAFUENTE — distrito censal 01",
+    "after": "Navalafuente — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809501",
+    "before": "NAVALAGAMELLA — distrito censal 01",
+    "after": "Navalagamella — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809601",
+    "before": "NAVALCARNERO — distrito censal 01",
+    "after": "Navalcarnero — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809701",
+    "before": "NAVARREDONDA Y SAN MAMES — distrito censal 01",
+    "after": "Navarredonda y San Mamés — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2809901",
+    "before": "NAVAS DEL REY — distrito censal 01",
+    "after": "Navas del Rey — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810001",
+    "before": "NUEVO BAZTAN — distrito censal 01",
+    "after": "Nuevo Baztán — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810101",
+    "before": "OLMEDA DE LAS FUENTES — distrito censal 01",
+    "after": "Olmeda de las Fuentes — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810201",
+    "before": "ORUSCO DE TAJU/A — distrito censal 01",
+    "after": "Orusco de Tajuña — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810401",
+    "before": "PARACUELLOS DE JARAMA — distrito censal 01",
+    "after": "Paracuellos de Jarama — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810601",
+    "before": "PARLA — distrito censal 01",
+    "after": "Parla — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810701",
+    "before": "PATONES — distrito censal 01",
+    "after": "Patones — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810801",
+    "before": "PEDREZUELA — distrito censal 01",
+    "after": "Pedrezuela — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2810901",
+    "before": "PELAYOS DE LA PRESA — distrito censal 01",
+    "after": "Pelayos de la Presa — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811001",
+    "before": "PERALES DE TAJU/A — distrito censal 01",
+    "after": "Perales de Tajuña — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811101",
+    "before": "PEZUELA DE LAS TORRES — distrito censal 01",
+    "after": "Pezuela de las Torres — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811201",
+    "before": "PINILLA DEL VALLE — distrito censal 01",
+    "after": "Pinilla del Valle — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811301",
+    "before": "PINTO — distrito censal 01",
+    "after": "Pinto — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811302",
+    "before": "PINTO — distrito censal 02",
+    "after": "Pinto — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811401",
+    "before": "PI/UECAR-GANDULLAS — distrito censal 01",
+    "after": "Piñuécar-Gandullas — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811501",
+    "before": "POZUELO DE ALARCON — distrito censal 01",
+    "after": "Pozuelo de Alarcón — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811502",
+    "before": "POZUELO DE ALARCON — distrito censal 02",
+    "after": "Pozuelo de Alarcón — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811601",
+    "before": "POZUELO DEL REY — distrito censal 01",
+    "after": "Pozuelo del Rey — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811701",
+    "before": "PRADENA DEL RINCON — distrito censal 01",
+    "after": "Prádena del Rincón — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811801",
+    "before": "PUEBLA DE LA SIERRA — distrito censal 01",
+    "after": "Puebla de la Sierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2811901",
+    "before": "QUIJORNA — distrito censal 01",
+    "after": "Quijorna — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812001",
+    "before": "RASCAFRIA — distrito censal 01",
+    "after": "Rascafría — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812101",
+    "before": "REDUE/A — distrito censal 01",
+    "after": "Redueña — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812201",
+    "before": "RIBATEJADA — distrito censal 01",
+    "after": "Ribatejada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812301",
+    "before": "RIVAS-VACIAMADRID — distrito censal 01",
+    "after": "Rivas-Vaciamadrid — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812401",
+    "before": "ROBLEDILLO DE LA JARA — distrito censal 01",
+    "after": "Robledillo de la Jara — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812501",
+    "before": "ROBLEDO DE CHAVELA — distrito censal 01",
+    "after": "Robledo de Chavela — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812601",
+    "before": "ROBREGORDO — distrito censal 01",
+    "after": "Robregordo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812701",
+    "before": "ROZAS DE MADRID, LAS — distrito censal 01",
+    "after": "Rozas de Madrid (Las) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812801",
+    "before": "ROZAS DE PUERTO REAL — distrito censal 01",
+    "after": "Rozas de Puerto Real — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2812901",
+    "before": "SAN AGUSTIN DEL GUADALIX — distrito censal 01",
+    "after": "San Agustín del Guadalix — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813001",
+    "before": "SAN FERNANDO DE HENARES — distrito censal 01",
+    "after": "San Fernando de Henares — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813101",
+    "before": "SAN LORENZO DE EL ESCORIAL — distrito censal 01",
+    "after": "San Lorenzo de El Escorial — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813102",
+    "before": "SAN LORENZO DE EL ESCORIAL — distrito censal 02",
+    "after": "San Lorenzo de El Escorial — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813201",
+    "before": "SAN MARTIN DE LA VEGA — distrito censal 01",
+    "after": "San Martín de la Vega — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813301",
+    "before": "SAN MARTIN DE VALDEIGLESIAS — distrito censal 01",
+    "after": "San Martín de Valdeiglesias — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813401",
+    "before": "SAN SEBASTIAN DE LOS REYES — distrito censal 01",
+    "after": "San Sebastián de los Reyes — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813501",
+    "before": "SANTA MARIA DE LA ALAMEDA — distrito censal 01",
+    "after": "Santa María de la Alameda — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813601",
+    "before": "SANTORCAZ — distrito censal 01",
+    "after": "Santorcaz — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813701",
+    "before": "SANTOS DE LA HUMOSA, LOS — distrito censal 01",
+    "after": "Santos de la Humosa (Los) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2813801",
+    "before": "SERNA DEL MONTE, LA — distrito censal 01",
+    "after": "Serna del Monte (La) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814001",
+    "before": "SERRANILLOS DEL VALLE — distrito censal 01",
+    "after": "Serranillos del Valle — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814101",
+    "before": "SEVILLA LA NUEVA — distrito censal 01",
+    "after": "Sevilla la Nueva — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814301",
+    "before": "SOMOSIERRA — distrito censal 01",
+    "after": "Somosierra — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814401",
+    "before": "SOTO DEL REAL — distrito censal 01",
+    "after": "Soto del Real — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814501",
+    "before": "TALAMANCA DE JARAMA — distrito censal 01",
+    "after": "Talamanca de Jarama — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814601",
+    "before": "TIELMES — distrito censal 01",
+    "after": "Tielmes — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814701",
+    "before": "TITULCIA — distrito censal 01",
+    "after": "Titulcia — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814801",
+    "before": "TORREJON DE ARDOZ — distrito censal 01",
+    "after": "Torrejón de Ardoz — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814802",
+    "before": "TORREJON DE ARDOZ — distrito censal 02",
+    "after": "Torrejón de Ardoz — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814803",
+    "before": "TORREJON DE ARDOZ — distrito censal 03",
+    "after": "Torrejón de Ardoz — distrito censal 03"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814804",
+    "before": "TORREJON DE ARDOZ — distrito censal 04",
+    "after": "Torrejón de Ardoz — distrito censal 04"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2814901",
+    "before": "TORREJON DE LA CALZADA — distrito censal 01",
+    "after": "Torrejón de la Calzada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815001",
+    "before": "TORREJON DE VELASCO — distrito censal 01",
+    "after": "Torrejón de Velasco — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815101",
+    "before": "TORRELAGUNA — distrito censal 01",
+    "after": "Torrelaguna — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815102",
+    "before": "TORRELAGUNA — distrito censal 02",
+    "after": "Torrelaguna — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815201",
+    "before": "TORRELODONES — distrito censal 01",
+    "after": "Torrelodones — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815301",
+    "before": "TORREMOCHA DE JARAMA — distrito censal 01",
+    "after": "Torremocha de Jarama — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815401",
+    "before": "TORRES DE LA ALAMEDA — distrito censal 01",
+    "after": "Torres de la Alameda — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815501",
+    "before": "VALDARACETE — distrito censal 01",
+    "after": "Valdaracete — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815601",
+    "before": "VALDEAVERO — distrito censal 01",
+    "after": "Valdeavero — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815701",
+    "before": "VALDELAGUNA — distrito censal 01",
+    "after": "Valdelaguna — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815801",
+    "before": "VALDEMANCO — distrito censal 01",
+    "after": "Valdemanco — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2815901",
+    "before": "VALDEMAQUEDA — distrito censal 01",
+    "after": "Valdemaqueda — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816001",
+    "before": "VALDEMORILLO — distrito censal 01",
+    "after": "Valdemorillo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816101",
+    "before": "VALDEMORO — distrito censal 01",
+    "after": "Valdemoro — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816102",
+    "before": "VALDEMORO — distrito censal 02",
+    "after": "Valdemoro — distrito censal 02"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816201",
+    "before": "VALDEOLMOS-ALALPARDO — distrito censal 01",
+    "after": "Valdeolmos-Alalpardo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816301",
+    "before": "VALDEPIELAGOS — distrito censal 01",
+    "after": "Valdepiélagos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816401",
+    "before": "VALDETORRES DE JARAMA — distrito censal 01",
+    "after": "Valdetorres de Jarama — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816501",
+    "before": "VALDILECHA — distrito censal 01",
+    "after": "Valdilecha — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816601",
+    "before": "VALVERDE DE ALCALA — distrito censal 01",
+    "after": "Valverde de Alcalá — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816701",
+    "before": "VELILLA DE SAN ANTONIO — distrito censal 01",
+    "after": "Velilla de San Antonio — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816801",
+    "before": "VELLON, EL — distrito censal 01",
+    "after": "Vellón (El) — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2816901",
+    "before": "VENTURADA — distrito censal 01",
+    "after": "Venturada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817001",
+    "before": "VILLACONEJOS — distrito censal 01",
+    "after": "Villaconejos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817101",
+    "before": "VILLA DEL PRADO — distrito censal 01",
+    "after": "Villa del Prado — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817201",
+    "before": "VILLALBILLA — distrito censal 01",
+    "after": "Villalbilla — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817301",
+    "before": "VILLAMANRIQUE DE TAJO — distrito censal 01",
+    "after": "Villamanrique de Tajo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817401",
+    "before": "VILLAMANTA — distrito censal 01",
+    "after": "Villamanta — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817501",
+    "before": "VILLAMANTILLA — distrito censal 01",
+    "after": "Villamantilla — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817601",
+    "before": "VILLANUEVA DE LA CA/ADA — distrito censal 01",
+    "after": "Villanueva de la Cañada — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817701",
+    "before": "VILLANUEVA DEL PARDILLO — distrito censal 01",
+    "after": "Villanueva del Pardillo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817801",
+    "before": "VILLANUEVA DE PERALES — distrito censal 01",
+    "after": "Villanueva de Perales — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2817901",
+    "before": "VILLAR DEL OLMO — distrito censal 01",
+    "after": "Villar del Olmo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2818001",
+    "before": "VILLAREJO DE SALVANES — distrito censal 01",
+    "after": "Villarejo de Salvanés — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2818101",
+    "before": "VILLAVICIOSA DE ODON — distrito censal 01",
+    "after": "Villaviciosa de Odón — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2818201",
+    "before": "VILLAVIEJA DEL LOZOYA — distrito censal 01",
+    "after": "Villavieja del Lozoya — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2818301",
+    "before": "ZARZALEJO — distrito censal 01",
+    "after": "Zarzalejo — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2890101",
+    "before": "LOZOYUELA-NAVAS-SIETEIGLESIAS — distrito censal 01",
+    "after": "Lozoyuela-Navas-Sieteiglesias — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2890201",
+    "before": "PUENTES VIEJAS — distrito censal 01",
+    "after": "Puentes Viejas — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.DIS.2890301",
+    "before": "TRES CANTOS — distrito censal 01",
+    "after": "Tres Cantos — distrito censal 01"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28001",
+    "before": "ACEBEDA, LA",
+    "after": "Acebeda (La)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28002",
+    "before": "AJALVIR",
+    "after": "Ajalvir"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28003",
+    "before": "ALAMEDA DEL VALLE",
+    "after": "Alameda del Valle"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28004",
+    "before": "ALAMO, EL",
+    "after": "Álamo (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28005",
+    "before": "ALCALA DE HENARES",
+    "after": "Alcalá de Henares"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28006",
+    "before": "ALCOBENDAS",
+    "after": "Alcobendas"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28007",
+    "before": "ALCORCON",
+    "after": "Alcorcón"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28008",
+    "before": "ALDEA DEL FRESNO",
+    "after": "Aldea del Fresno"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28009",
+    "before": "ALGETE",
+    "after": "Algete"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28010",
+    "before": "ALPEDRETE",
+    "after": "Alpedrete"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28011",
+    "before": "AMBITE",
+    "after": "Ambite"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28012",
+    "before": "ANCHUELO",
+    "after": "Anchuelo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28013",
+    "before": "ARANJUEZ",
+    "after": "Aranjuez"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28014",
+    "before": "ARGANDA DEL REY",
+    "after": "Arganda del Rey"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28015",
+    "before": "ARROYOMOLINOS",
+    "after": "Arroyomolinos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28016",
+    "before": "ATAZAR, EL",
+    "after": "Atazar (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28017",
+    "before": "BATRES",
+    "after": "Batres"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28018",
+    "before": "BECERRIL DE LA SIERRA",
+    "after": "Becerril de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28019",
+    "before": "BELMONTE DE TAJO",
+    "after": "Belmonte de Tajo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28020",
+    "before": "BERZOSA DEL LOZOYA",
+    "after": "Berzosa del Lozoya"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28021",
+    "before": "BERRUECO, EL",
+    "after": "Berrueco (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28022",
+    "before": "BOADILLA DEL MONTE",
+    "after": "Boadilla del Monte"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28023",
+    "before": "BOALO, EL",
+    "after": "Boalo (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28024",
+    "before": "BRAOJOS",
+    "after": "Braojos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28025",
+    "before": "BREA DE TAJO",
+    "after": "Brea de Tajo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28026",
+    "before": "BRUNETE",
+    "after": "Brunete"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28027",
+    "before": "BUITRAGO DEL LOZOYA",
+    "after": "Buitrago del Lozoya"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28028",
+    "before": "BUSTARVIEJO",
+    "after": "Bustarviejo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28029",
+    "before": "CABANILLAS DE LA SIERRA",
+    "after": "Cabanillas de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28030",
+    "before": "CABRERA, LA",
+    "after": "Cabrera (La)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28031",
+    "before": "CADALSO DE LOS VIDRIOS",
+    "after": "Cadalso de los Vidrios"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28032",
+    "before": "CAMARMA DE ESTERUELAS",
+    "after": "Camarma de Esteruelas"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28033",
+    "before": "CAMPO REAL",
+    "after": "Campo Real"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28034",
+    "before": "CANENCIA",
+    "after": "Canencia"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28035",
+    "before": "CARABA/A",
+    "after": "Carabaña"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28036",
+    "before": "CASARRUBUELOS",
+    "after": "Casarrubuelos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28037",
+    "before": "CENICIENTOS",
+    "after": "Cenicientos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28038",
+    "before": "CERCEDILLA",
+    "after": "Cercedilla"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28039",
+    "before": "CERVERA DE BUITRAGO",
+    "after": "Cervera de Buitrago"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28040",
+    "before": "CIEMPOZUELOS",
+    "after": "Ciempozuelos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28041",
+    "before": "COBE/A",
+    "after": "Cobeña"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28042",
+    "before": "COLMENAR DEL ARROYO",
+    "after": "Colmenar del Arroyo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28043",
+    "before": "COLMENAR DE OREJA",
+    "after": "Colmenar de Oreja"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28044",
+    "before": "COLMENAREJO",
+    "after": "Colmenarejo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28045",
+    "before": "COLMENAR VIEJO",
+    "after": "Colmenar Viejo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28046",
+    "before": "COLLADO MEDIANO",
+    "after": "Collado Mediano"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28047",
+    "before": "COLLADO VILLALBA",
+    "after": "Collado Villalba"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28048",
+    "before": "CORPA",
+    "after": "Corpa"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28049",
+    "before": "COSLADA",
+    "after": "Coslada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28050",
+    "before": "CUBAS DE LA SAGRA",
+    "after": "Cubas de la Sagra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28051",
+    "before": "CHAPINERIA",
+    "after": "Chapinería"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28052",
+    "before": "CHINCHON",
+    "after": "Chinchón"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28053",
+    "before": "DAGANZO DE ARRIBA",
+    "after": "Daganzo de Arriba"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28054",
+    "before": "ESCORIAL, EL",
+    "after": "Escorial (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28055",
+    "before": "ESTREMERA",
+    "after": "Estremera"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28056",
+    "before": "FRESNEDILLAS DE LA OLIVA",
+    "after": "Fresnedillas de la Oliva"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28057",
+    "before": "FRESNO DE TOROTE",
+    "after": "Fresno de Torote"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28058",
+    "before": "FUENLABRADA",
+    "after": "Fuenlabrada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28059",
+    "before": "FUENTE EL SAZ DE JARAMA",
+    "after": "Fuente el Saz de Jarama"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28060",
+    "before": "FUENTIDUEÐA DE TAJO",
+    "after": "Fuentidueña de Tajo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28061",
+    "before": "GALAPAGAR",
+    "after": "Galapagar"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28062",
+    "before": "GARGANTA DE LOS MONTES",
+    "after": "Garganta de los Montes"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28063",
+    "before": "GARGANTILLA DEL LOZOYA Y PINILLA DE BUITRAGO",
+    "after": "Gargantilla del Lozoya y Pinilla de Buitrago"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28064",
+    "before": "GASCONES",
+    "after": "Gascones"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28065",
+    "before": "GETAFE",
+    "after": "Getafe"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28066",
+    "before": "GRIÐON",
+    "after": "Griñón"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28067",
+    "before": "GUADALIX DE LA SIERRA",
+    "after": "Guadalix de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28068",
+    "before": "GUADARRAMA",
+    "after": "Guadarrama"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28069",
+    "before": "HIRUELA, LA",
+    "after": "Hiruela (La)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28070",
+    "before": "HORCAJO DE LA SIERRA-AOSLOS",
+    "after": "Horcajo de la Sierra-Aoslos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28071",
+    "before": "HORCAJUELO DE LA SIERRA",
+    "after": "Horcajuelo de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28072",
+    "before": "HOYO DE MANZANARES",
+    "after": "Hoyo de Manzanares"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28073",
+    "before": "HUMANES DE MADRID",
+    "after": "Humanes de Madrid"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28074",
+    "before": "LEGANES",
+    "after": "Leganés"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28075",
+    "before": "LOECHES",
+    "after": "Loeches"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28076",
+    "before": "LOZOYA",
+    "after": "Lozoya"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28078",
+    "before": "MADARCOS",
+    "after": "Madarcos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28079",
+    "before": "MADRID",
+    "after": "Madrid"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28080",
+    "before": "MAJADAHONDA",
+    "after": "Majadahonda"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28082",
+    "before": "MANZANARES EL REAL",
+    "after": "Manzanares el Real"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28083",
+    "before": "MECO",
+    "after": "Meco"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28084",
+    "before": "MEJORADA DEL CAMPO",
+    "after": "Mejorada del Campo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28085",
+    "before": "MIRAFLORES DE LA SIERRA",
+    "after": "Miraflores de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28086",
+    "before": "MOLAR, EL",
+    "after": "Molar (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28087",
+    "before": "MOLINOS, LOS",
+    "after": "Molinos (Los)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28088",
+    "before": "MONTEJO DE LA SIERRA",
+    "after": "Montejo de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28089",
+    "before": "MORALEJA DE ENMEDIO",
+    "after": "Moraleja de Enmedio"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28090",
+    "before": "MORALZARZAL",
+    "after": "Moralzarzal"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28091",
+    "before": "MORATA DE TAJUÐA",
+    "after": "Morata de Tajuña"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28092",
+    "before": "MOSTOLES",
+    "after": "Móstoles"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28093",
+    "before": "NAVACERRADA",
+    "after": "Navacerrada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28094",
+    "before": "NAVALAFUENTE",
+    "after": "Navalafuente"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28095",
+    "before": "NAVALAGAMELLA",
+    "after": "Navalagamella"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28096",
+    "before": "NAVALCARNERO",
+    "after": "Navalcarnero"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28097",
+    "before": "NAVARREDONDA Y SAN MAMES",
+    "after": "Navarredonda y San Mamés"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28099",
+    "before": "NAVAS DEL REY",
+    "after": "Navas del Rey"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28100",
+    "before": "NUEVO BAZTAN",
+    "after": "Nuevo Baztán"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28101",
+    "before": "OLMEDA DE LAS FUENTES",
+    "after": "Olmeda de las Fuentes"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28102",
+    "before": "ORUSCO DE TAJU/A",
+    "after": "Orusco de Tajuña"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28104",
+    "before": "PARACUELLOS DE JARAMA",
+    "after": "Paracuellos de Jarama"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28106",
+    "before": "PARLA",
+    "after": "Parla"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28107",
+    "before": "PATONES",
+    "after": "Patones"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28108",
+    "before": "PEDREZUELA",
+    "after": "Pedrezuela"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28109",
+    "before": "PELAYOS DE LA PRESA",
+    "after": "Pelayos de la Presa"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28110",
+    "before": "PERALES DE TAJU/A",
+    "after": "Perales de Tajuña"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28111",
+    "before": "PEZUELA DE LAS TORRES",
+    "after": "Pezuela de las Torres"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28112",
+    "before": "PINILLA DEL VALLE",
+    "after": "Pinilla del Valle"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28113",
+    "before": "PINTO",
+    "after": "Pinto"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28114",
+    "before": "PI/UECAR-GANDULLAS",
+    "after": "Piñuécar-Gandullas"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28115",
+    "before": "POZUELO DE ALARCON",
+    "after": "Pozuelo de Alarcón"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28116",
+    "before": "POZUELO DEL REY",
+    "after": "Pozuelo del Rey"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28117",
+    "before": "PRADENA DEL RINCON",
+    "after": "Prádena del Rincón"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28118",
+    "before": "PUEBLA DE LA SIERRA",
+    "after": "Puebla de la Sierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28119",
+    "before": "QUIJORNA",
+    "after": "Quijorna"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28120",
+    "before": "RASCAFRIA",
+    "after": "Rascafría"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28121",
+    "before": "REDUE/A",
+    "after": "Redueña"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28122",
+    "before": "RIBATEJADA",
+    "after": "Ribatejada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28123",
+    "before": "RIVAS-VACIAMADRID",
+    "after": "Rivas-Vaciamadrid"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28124",
+    "before": "ROBLEDILLO DE LA JARA",
+    "after": "Robledillo de la Jara"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28125",
+    "before": "ROBLEDO DE CHAVELA",
+    "after": "Robledo de Chavela"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28126",
+    "before": "ROBREGORDO",
+    "after": "Robregordo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28127",
+    "before": "ROZAS DE MADRID, LAS",
+    "after": "Rozas de Madrid (Las)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28128",
+    "before": "ROZAS DE PUERTO REAL",
+    "after": "Rozas de Puerto Real"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28129",
+    "before": "SAN AGUSTIN DEL GUADALIX",
+    "after": "San Agustín del Guadalix"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28130",
+    "before": "SAN FERNANDO DE HENARES",
+    "after": "San Fernando de Henares"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28131",
+    "before": "SAN LORENZO DE EL ESCORIAL",
+    "after": "San Lorenzo de El Escorial"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28132",
+    "before": "SAN MARTIN DE LA VEGA",
+    "after": "San Martín de la Vega"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28133",
+    "before": "SAN MARTIN DE VALDEIGLESIAS",
+    "after": "San Martín de Valdeiglesias"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28134",
+    "before": "SAN SEBASTIAN DE LOS REYES",
+    "after": "San Sebastián de los Reyes"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28135",
+    "before": "SANTA MARIA DE LA ALAMEDA",
+    "after": "Santa María de la Alameda"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28136",
+    "before": "SANTORCAZ",
+    "after": "Santorcaz"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28137",
+    "before": "SANTOS DE LA HUMOSA, LOS",
+    "after": "Santos de la Humosa (Los)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28138",
+    "before": "SERNA DEL MONTE, LA",
+    "after": "Serna del Monte (La)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28140",
+    "before": "SERRANILLOS DEL VALLE",
+    "after": "Serranillos del Valle"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28141",
+    "before": "SEVILLA LA NUEVA",
+    "after": "Sevilla la Nueva"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28143",
+    "before": "SOMOSIERRA",
+    "after": "Somosierra"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28144",
+    "before": "SOTO DEL REAL",
+    "after": "Soto del Real"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28145",
+    "before": "TALAMANCA DE JARAMA",
+    "after": "Talamanca de Jarama"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28146",
+    "before": "TIELMES",
+    "after": "Tielmes"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28147",
+    "before": "TITULCIA",
+    "after": "Titulcia"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28148",
+    "before": "TORREJON DE ARDOZ",
+    "after": "Torrejón de Ardoz"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28149",
+    "before": "TORREJON DE LA CALZADA",
+    "after": "Torrejón de la Calzada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28150",
+    "before": "TORREJON DE VELASCO",
+    "after": "Torrejón de Velasco"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28151",
+    "before": "TORRELAGUNA",
+    "after": "Torrelaguna"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28152",
+    "before": "TORRELODONES",
+    "after": "Torrelodones"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28153",
+    "before": "TORREMOCHA DE JARAMA",
+    "after": "Torremocha de Jarama"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28154",
+    "before": "TORRES DE LA ALAMEDA",
+    "after": "Torres de la Alameda"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28155",
+    "before": "VALDARACETE",
+    "after": "Valdaracete"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28156",
+    "before": "VALDEAVERO",
+    "after": "Valdeavero"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28157",
+    "before": "VALDELAGUNA",
+    "after": "Valdelaguna"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28158",
+    "before": "VALDEMANCO",
+    "after": "Valdemanco"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28159",
+    "before": "VALDEMAQUEDA",
+    "after": "Valdemaqueda"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28160",
+    "before": "VALDEMORILLO",
+    "after": "Valdemorillo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28161",
+    "before": "VALDEMORO",
+    "after": "Valdemoro"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28162",
+    "before": "VALDEOLMOS-ALALPARDO",
+    "after": "Valdeolmos-Alalpardo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28163",
+    "before": "VALDEPIELAGOS",
+    "after": "Valdepiélagos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28164",
+    "before": "VALDETORRES DE JARAMA",
+    "after": "Valdetorres de Jarama"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28165",
+    "before": "VALDILECHA",
+    "after": "Valdilecha"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28166",
+    "before": "VALVERDE DE ALCALA",
+    "after": "Valverde de Alcalá"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28167",
+    "before": "VELILLA DE SAN ANTONIO",
+    "after": "Velilla de San Antonio"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28168",
+    "before": "VELLON, EL",
+    "after": "Vellón (El)"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28169",
+    "before": "VENTURADA",
+    "after": "Venturada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28170",
+    "before": "VILLACONEJOS",
+    "after": "Villaconejos"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28171",
+    "before": "VILLA DEL PRADO",
+    "after": "Villa del Prado"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28172",
+    "before": "VILLALBILLA",
+    "after": "Villalbilla"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28173",
+    "before": "VILLAMANRIQUE DE TAJO",
+    "after": "Villamanrique de Tajo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28174",
+    "before": "VILLAMANTA",
+    "after": "Villamanta"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28175",
+    "before": "VILLAMANTILLA",
+    "after": "Villamantilla"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28176",
+    "before": "VILLANUEVA DE LA CA/ADA",
+    "after": "Villanueva de la Cañada"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28177",
+    "before": "VILLANUEVA DEL PARDILLO",
+    "after": "Villanueva del Pardillo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28178",
+    "before": "VILLANUEVA DE PERALES",
+    "after": "Villanueva de Perales"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28179",
+    "before": "VILLAR DEL OLMO",
+    "after": "Villar del Olmo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28180",
+    "before": "VILLAREJO DE SALVANES",
+    "after": "Villarejo de Salvanés"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28181",
+    "before": "VILLAVICIOSA DE ODON",
+    "after": "Villaviciosa de Odón"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28182",
+    "before": "VILLAVIEJA DEL LOZOYA",
+    "after": "Villavieja del Lozoya"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28183",
+    "before": "ZARZALEJO",
+    "after": "Zarzalejo"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28901",
+    "before": "LOZOYUELA-NAVAS-SIETEIGLESIAS",
+    "after": "Lozoyuela-Navas-Sieteiglesias"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28902",
+    "before": "PUENTES VIEJAS",
+    "after": "Puentes Viejas"
+  },
+  {
+    "admin_unit_id": "ES.28.MUN.28903",
+    "before": "TRES CANTOS",
+    "after": "Tres Cantos"
+  }
+]

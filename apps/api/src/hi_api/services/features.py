@@ -4,6 +4,8 @@ from typing import Any
 
 from sqlalchemy import Connection, text
 
+from hi_domain.geo.names import display_name
+
 _LIST = text(
     """
     SELECT feature_id, version, human_name, domain, unit, direction, geo_level,
@@ -35,7 +37,7 @@ def feature_values(
     conn: Connection, feature_id: str, level: str
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows = [
-        dict(r)
+        dict(r) | {"name": display_name(r["name"]) if r["name"] else None}
         for r in conn.execute(_VALUES, {"feature_id": feature_id, "level": level}).mappings().all()
     ]
     lineage = conn.execute(_LINEAGE, {"feature_id": feature_id}).scalar() or {}

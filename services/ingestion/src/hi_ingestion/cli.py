@@ -32,6 +32,7 @@ from hi_ingestion.catalog_harvester.drafts import (
 )
 from hi_ingestion.catalog_harvester.runner import HARVESTABLE, harvest_sources, read_candidates
 from hi_ingestion.pipelines.admin_boundaries import config as admin_config
+from hi_ingestion.pipelines.admin_boundaries.official_names import apply_official_names
 from hi_ingestion.pipelines.admin_boundaries.run import (
     fetch_inputs,
     local_inputs,
@@ -186,12 +187,25 @@ def run_dataset(
         raise typer.Exit(1)
 
 
+@app.command("admin-names")
+def admin_names(
+    evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
+    database_url: DatabaseUrl = None,
+) -> None:
+    """Official spellings for municipios and Madrid districts (after the statistical tables)."""
+    engine = make_engine(database_url)
+    summary = apply_official_names(engine, evidence_root=EVIDENCE_GATE_01 if evidence else None)
+    _print_summary(summary)
+    if summary.status == "FAILED":
+        raise typer.Exit(1)
+
+
 @app.command("run-all")
 def run_all(
     evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
     database_url: DatabaseUrl = None,
 ) -> None:
-    """Geography first, then every declared pipeline. Exit 1 if any run fails quality."""
+    """Geography, every declared pipeline, then official names. Exit 1 if any fails quality."""
     catalog = load_catalog()
     engine = make_engine(database_url)
     order = [admin_config.SECTIONS_DATASET, *sorted(catalog.pipelines)]
@@ -201,6 +215,10 @@ def run_all(
         typer.echo(f"{dataset_id}: {summary.status} {summary.version_label or ''}")
         if summary.status == "FAILED":
             failed.append(dataset_id)
+    names = apply_official_names(engine, evidence_root=EVIDENCE_GATE_01 if evidence else None)
+    typer.echo(f"admin names: {names.status} {names.version_label or ''}")
+    if names.status == "FAILED":
+        failed.append(names.version_label or "admin names")
     if failed:
         typer.echo(f"FAILED: {failed}", err=True)
         raise typer.Exit(1)

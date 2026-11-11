@@ -764,3 +764,14 @@ CORE-005, Fase 5. Sustituye la velocidad de D-210; el resto de D-210 (ventanas, 
   - los 15 casos golden de D-210 cumplen sus límites sin tocarlos. Los más justos: Sol a una parada, 3,1 min (límite 4), y el centro de Madrid a un centro de salud, 6,9 min (límite 10). La Acebeda: farmacia a 109,7 min y consultorio a 14,3 min (límite 20);
   - la coherencia entre mediana y % sigue sin desacuerdos en las 4.819 zonas con valor de cada destino;
   - por ejemplo, Chamartín (distrito 2807905): centro de salud 9,5 min (antes 8,4) y farmacia 2,6 min (antes 2,3). La mediana regional a una parada pasa de 3,4 a 3,8 min y la de la sección típica, de 2,1 a 2,4 min.
+
+## D-212 — Nombres oficiales de municipios y distritos (2026-11-11)
+DATA-022 y los nombres con la Ñ rota que pidió B. El CSV de nombres de `cm_secciones_censales` escribe «/» o el byte 0xD0 donde va la Ñ («REDUE/A», «GRIÐON», «PI/UECAR-GANDULLAS») y no lleva tildes («VICALVARO»). No es un problema de encoding: el carácter se perdió en la fuente.
+- **Fuente de los nombres publicados:**
+  - los 179 municipios, de la tabla estadística de la CM `cm_poblacion_edad_nacionalidad_sexo` (columna `Territorio`, última versión válida): «Griñón», «Redueña», «Álamo (El)»;
+  - los 21 distritos de Madrid, del panel de indicadores del Ayuntamiento (`ayto_panel_indicadores_distritos_barrios`): «Vicálvaro». La CM no publica tablas por distrito de Madrid (D-209);
+  - los distritos censales del resto de municipios se llaman «<municipio> — distrito censal NN», con el nombre oficial del municipio;
+  - los barrios de Madrid siguen con el nombre de `cm_barrios_madrid`, que ya trae la Ñ (a algunos les faltan tildes, como «Las Aguilas»; queda anotado).
+- **Cómo:** un paso aparte, `hi-ingest admin-names` (`make admin-names`, y al final de `run-all`), porque la geografía se publica antes que las tablas que traen los nombres. Solo cambia `geo_admin_unit.name`: la geometría y los códigos no se tocan. La ejecución queda en `ingestion_run` con las versiones usadas, y la evidencia guarda cada cambio.
+- **Calidad bloqueante:** cada municipio y cada distrito de Madrid tiene un nombre oficial y solo uno, y ningún nombre publicado lleva caracteres fuera de la ortografía española (falla con «/», «Ð» o un byte sin decodificar). Si falla, no se cambia ningún nombre.
+- **Presentación:** `display_name` pone delante el artículo que las tablas de la CM escriben detrás: «Álamo (El)» se muestra «El Álamo». La API lo aplica en `/gaps`, `/geo/admin-units` y `/features`.
