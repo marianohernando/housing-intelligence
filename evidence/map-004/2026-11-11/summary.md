@@ -40,3 +40,42 @@ Cada estado tiene además un tono de fondo (`--*-bg`). El test es de 4,5:1 para 
 ## Limitaciones
 - Todavía no hay mapa ni datos: llegan en las Fases 2 (tipos y cliente de la API) y 3 (mapa).
 - El texto de «Cómo lo calculamos» recoge solo las reglas ya cerradas. Los cortes y los datasets vendrán de la API (PUB-001 Fase 1).
+
+---
+
+# MAP-004 Fase 2 — Tipos de contrato generados y cliente de la API (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `97b47bc`, con los contratos v2 de A (`2bcc35e`).
+
+## Qué hay
+- `apps/web/scripts/gen-contracts.mjs` (`npm run -w apps/web contracts`) genera `src/contracts/*.ts` desde `data/schemas/api/*.schema.json` con `json-schema-to-typescript` 16.0.0 (MIT, fijado). Los tipos no se escriben a mano.
+- `src/lib/__tests__/contracts.test.ts` ejecuta el generador con `--check` y falla si los tipos no coinciden con los schemas. Prueba de mutación: con un tipo generado tocado, el test falla.
+- `src/lib/api.ts` es el cliente tipado:
+  - rutas: `zoneGaps(level, code)` (municipio, distrito o sección), `datasets({cmOnly})` (pie) y `search(scenario)` (`POST`);
+  - errores: `ApiError` con `status` y `code`. El código sale de `{detail:{code,message}}`, o es `VALIDATION` (422 de FastAPI), `HTTP_<status>` o `NETWORK` (API caída), que no se confunde con «sin datos».
+- `vitest.config.ts` tiene el mismo alias `@/` que el tsconfig.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` | 0, sin avisos |
+| `npm run -w apps/web typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 8 ficheros, 69 tests en verde (nuevos: `api` con 8 y `contracts` con 1) |
+| `npm run -w apps/web build` | 0 |
+| `make lint typecheck test-unit` | 0 (233 pytest y 69 vitest) |
+
+## Contra la API real
+API de la línea B en 8011 (`CORS_ORIGINS='["http://localhost:3011"]' uv run uvicorn hi_api.main:app --port 8011`), base local `housing`:
+- Preflight CORS desde `http://localhost:3011` para `POST /api/v1/search`: `200`, `allow-methods: GET, POST`.
+- `f2_api_client_live.txt`: salida del cliente tipado contra la API (prueba temporal, no queda en la suite porque usa red):
+  - `/datasets?cm_only=true`: 21 datasets CM.
+  - `/gaps/municipio/28079` (Madrid): colegio y centro de salud FALTA.
+  - `/gaps/municipio/28092` (Móstoles): colegio CUBIERTO y centro de salud FALTA.
+  - `/gaps/distrito/2807905` (Chamartín): la zona existe y aún no tiene filas, con el aviso «No indicators computed at this level yet». Llegan con DATA-012 (línea A).
+  - Una zona inexistente da `ApiError 404 NOT_FOUND`. `POST /search` da 404: la ruta está prevista para el 15 nov. Con la API caída: `ApiError 0 NETWORK`.
+
+Esta fase no cambia ninguna pantalla: las capturas de la Fase 1 siguen vigentes.
+
+## Notas para A (en el PR)
+- Los schemas se exportan en modo validación, así que en los tipos de respuesta los campos con valor por defecto salen opcionales (`near_misses?`, `warnings?`, `meta?`). La web los trata con `?? []`. Si se exportaran en modo serialización, saldrían obligatorios.
+- La API devuelve el nombre «Mostoles» sin tilde: viene así de la fuente.
