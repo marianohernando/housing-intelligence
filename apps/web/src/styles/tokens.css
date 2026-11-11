@@ -17,6 +17,7 @@
   --violet-soft: #ece9fd;
   --on-violet: #ffffff;
   --line: rgba(20, 27, 61, 0.1);
+  --control-border: #8a8fa3; /* text fields: 3:1 against white (WCAG 1.4.11) */
   --focus: var(--violet-strong);
 
   /* Glass cards: opacity raised from .72 so secondary text stays AA over --map-darkest */

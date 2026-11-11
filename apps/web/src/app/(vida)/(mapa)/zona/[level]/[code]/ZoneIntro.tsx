@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { useMapZones } from "@/components/map/MapProvider";
+import SearchCard from "@/components/search/SearchCard";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 
@@ -53,6 +54,7 @@ export default function ZoneIntro() {
       <Button href="/" variant="secondary" className={styles.back}>
         {TEXT.back}
       </Button>
+      <SearchCard collapsible />
     </div>
   );
 }

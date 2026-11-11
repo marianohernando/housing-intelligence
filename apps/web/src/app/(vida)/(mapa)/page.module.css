@@ -1,17 +1,25 @@
+/* Mockup 1: search on the left, the map in the middle, a card on the right */
 .page {
   display: grid;
+  grid-template-columns: minmax(0, 27rem) 1fr minmax(0, 23rem);
   gap: var(--space-6);
-  max-width: 30rem;
-  padding-top: var(--space-6);
+  align-items: start;
+  padding-top: var(--space-3);
+}
+
+.main {
+  display: grid;
+  grid-column: 1;
+  gap: var(--space-4);
 }
 
 .hero {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .title {
-  font-size: var(--text-hero);
+  font-size: clamp(2rem, 1.3rem + 1.6vw, 2.6rem);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
@@ -21,14 +29,14 @@
 }
 
 .lead {
-  max-width: 26rem;
   color: var(--ink-soft);
-  font-size: var(--text-lg);
 }
 
-.steps {
+.side {
   display: grid;
+  grid-column: 3;
   gap: var(--space-4);
+  margin-top: var(--space-7);
 }
 
 .list {
@@ -48,9 +56,13 @@
   color: var(--ink);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
   .page {
-    padding-top: var(--space-3);
-    gap: var(--space-5);
+    grid-template-columns: minmax(0, 27rem);
+  }
+
+  .side {
+    grid-column: 1;
+    margin-top: 0;
   }
 }

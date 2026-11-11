@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import MapProvider from "@/components/map/MapProvider";
 import VidaMap from "@/components/map/VidaMap";
+import ScenarioProvider from "@/components/search/ScenarioProvider";
 
 import styles from "./layout.module.css";
 
@@ -11,9 +12,11 @@ import styles from "./layout.module.css";
  */
 export default function MapaLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <MapProvider>
-      <VidaMap />
-      <div className={styles.overlay}>{children}</div>
-    </MapProvider>
+    <ScenarioProvider>
+      <MapProvider>
+        <VidaMap />
+        <div className={styles.overlay}>{children}</div>
+      </MapProvider>
+    </ScenarioProvider>
   );
 }

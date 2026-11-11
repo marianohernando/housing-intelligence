@@ -40,6 +40,7 @@ const PAIRS: [fg: string, bg: string, min: number][] = [
   ["violet", "glass/map", UI],
   ["focus", "bg", UI],
   ["focus", "glass/map", UI],
+  ["control-border", "surface", UI],
   ...STATUSES.flatMap((s): [string, string, number][] => [
     [`${s}-ink`, `${s}-bg`, TEXT],
     [`${s}-ink`, "surface", TEXT],

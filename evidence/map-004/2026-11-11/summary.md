@@ -130,3 +130,36 @@ Esta fase no cambia ninguna pantalla: las capturas de la Fase 1 siguen vigentes.
 - **Peticiones a la línea A:**
   - `/api/v1/places` corta en 10.000 lugares (transporte tiene 14.982) y no filtra por zona, así que la web descarga unos 2 MB.
   - `/geo/admin-units` devuelve los municipios en mayúsculas y no filtra por `parent`. La web aplica `displayName`, una réplica de `hi_domain.geo.names` con los mismos casos de test.
+
+---
+
+# MAP-004 Fase 4a — Estado de la búsqueda y tarjeta «Tu búsqueda» (2026-11-11)
+
+## Qué hay
+- **`src/lib/scenario.ts`:** el único `ScenarioState` (tipo generado del contrato v2).
+  - Hogar: adultos 1 o 2, hijos de 0 a 8 y mayores a cargo de 0 a 4. Al cambiar el número de hijos se borran sus edades.
+  - Prioridades en el orden en que se marcan; la primera cuenta más.
+  - Presupuesto de alquiler (300–5.000 €/mes) o compra (50.000–2.000.000 €), dentro de los rangos del contrato.
+  - `encodeScenario` y `decodeScenario` en base64url para compartir un enlace y precargar el caso demo (Fase 10).
+- **`ScenarioProvider`** en el layout del mapa: un estado compartido por la portada y la zona, con la llamada a `POST /api/v1/search`. Hasta el 15 nov la ruta no existe y se muestra «Algo ha fallado por nuestra parte…».
+- **Tarjeta «Tu búsqueda»** con los textos de `pitch/textos_web.md`:
+  - Tu hogar: chips con icono, contadores con «Quitar uno» y «Añadir uno», y el valor anunciado (`aria-live`).
+  - Me importa: Transporte, Salud y Colegios, con el número de orden. Zonas verdes, seguridad y sin escaleras salen como «Muy pronto» en una sola línea, en vez de como chips desactivados.
+  - Trabajo en: solo el campo; el autocompletado llega en la Fase 9.
+  - Presupuesto: Alquilar o Comprar (radios nativos) y una barra con «Hasta 1.200 € al mes». En compra se añade la etiqueta «Orientativo».
+  - Botón «Ver zonas que encajan».
+  - En la pantalla de zona la tarjeta es plegable («Ver mi búsqueda» / «Ocultar mi búsqueda») y muestra un resumen («1 persona en casa · …»).
+- **Primitivas nuevas:** `Chip` (`aria-pressed`, 44 px), `Counter` y `Segmented`.
+- **`formatEuros`:** «1.200 €». `es-ES` no agrupa los números de 4 cifras, así que se fuerza.
+- **`errorMessage`:** los textos `error.*` en lenguaje llano; un fallo de red se distingue de uno del servidor.
+- **Token `--control-border`:** borde de los campos de texto, con 3:1 frente al blanco comprobado en `tokens.test.ts`.
+
+## Gate
+- `npm run -w apps/web` lint, typecheck, test y build: 0, con 16 ficheros y 123 tests (nuevos: `scenario` 12, `format` 1, `errors` 3 y un par de contraste más).
+- `make lint typecheck test-unit`: 0, con 257 pytest.
+- Capturas `f4a_*` sin errores en la consola.
+
+## Pendiente (Fase 4b y pulido)
+- Tarjeta de zona con «Qué falta aquí» real, leyenda «Encaje con tu búsqueda» y seleccionar en el mapa sin salir de la vista.
+- A 1440×900 la tarjeta de búsqueda obliga a desplazarse un poco para llegar al presupuesto y al botón.
+- En el titular de la portada, «en Madrid» se parte entre líneas.

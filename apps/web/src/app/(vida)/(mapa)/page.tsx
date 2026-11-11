@@ -1,20 +1,22 @@
+import SearchCard from "@/components/search/SearchCard";
 import GlassCard from "@/components/ui/GlassCard";
 
 import styles from "./page.module.css";
 
+// Copy from pitch/textos_web.md (portada.*)
 export default function MapaPage() {
   return (
     <div className={styles.page}>
-      <section className={styles.hero} aria-labelledby="titulo">
-        <h1 id="titulo" className={styles.title}>
-          Encuentra tu sitio <span className={styles.accent}>en Madrid</span>
-        </h1>
-        <p className={styles.lead}>
-          Mira qué zonas encajan con tu hogar y qué le falta a cada barrio, con datos abiertos de la
-          Comunidad de Madrid.
-        </p>
-      </section>
-      <GlassCard as="section" aria-labelledby="como-funciona" className={styles.steps}>
+      <div className={styles.main}>
+        <section className={styles.hero} aria-labelledby="titulo">
+          <h1 id="titulo" className={styles.title}>
+            Encuentra tu sitio <span className={styles.accent}>en Madrid</span>
+          </h1>
+          <p className={styles.lead}>Te decimos qué zonas encajan con tu vida y qué le falta a cada una, con datos oficiales.</p>
+        </section>
+        <SearchCard />
+      </div>
+      <GlassCard as="aside" aria-labelledby="como-funciona" className={styles.side}>
         <h2 id="como-funciona">Así funciona</h2>
         <ol className={styles.list}>
           <li>
