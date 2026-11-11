@@ -77,6 +77,21 @@
       "additionalProperties": false,
       "description": "How rows are classified: value / regional reference against declared cut-offs.",
       "properties": {
+        "confidence_level": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "FALTA also needs a significant shortfall: the exact Poisson upper bound of the zone's count at this level below the count expected at the reference rate. None: the ratio alone decides",
+          "title": "Confidence Level"
+        },
         "cubierto_from": {
           "description": "ratio at or above this -> CUBIERTO",
           "exclusiveMinimum": 0,
@@ -133,7 +148,7 @@
         },
         "explanation": {
           "examples": [
-            "2,1 colegios públicos por cada 1.000 menores; la región tiene 2,6"
+            "0,47 centros por cada 10.000 habitantes; en los municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)"
           ],
           "title": "Explanation",
           "type": "string"
@@ -182,7 +197,7 @@
             }
           ],
           "default": null,
-          "description": "Oriented so that above 1 is better than the region",
+          "description": "Oriented so that above 1 is better than the reference",
           "title": "Ratio To Reference"
         },
         "reference": {
@@ -194,15 +209,34 @@
               "type": "null"
             }
           ],
-          "description": "Same indicator for the whole region",
+          "description": "Same indicator for the zones the row is compared with (D-213: the municipios of its type in the region)",
           "title": "Reference"
         },
         "reference_label": {
           "examples": [
-            "Comunidad de Madrid"
+            "Municipios urbanos de la Comunidad de Madrid"
           ],
           "title": "Reference Label",
           "type": "string"
+        },
+        "regional_reference": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Same indicator for the whole Comunidad de Madrid (context)",
+          "title": "Regional Reference"
+        },
+        "reliable": {
+          "default": true,
+          "description": "False when the zone is too small for this row: the count expected at the reference rate is under the 95 % bound of a zero count (3,7), so not even having none would be a significant shortfall. The status is then never FALTA; show it as «poco fiable» (D-213)",
+          "title": "Reliable",
+          "type": "boolean"
         },
         "row": {
           "$ref": "#/$defs/GapRowKey"

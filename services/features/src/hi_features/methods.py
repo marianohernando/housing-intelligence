@@ -24,6 +24,8 @@ RESULT_COLUMNS = [
     "null_reason",
     "confidence",
     "territory_level",
+    "numerator",  # counts behind a per-population ratio (GAP-001 significance, D-213)
+    "denominator",
 ]
 REGION_LEVEL = "ccaa"
 REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
@@ -210,7 +212,9 @@ def _per_population(
             conf = confidence.get(code, 1.0)
             if population < small_population:
                 conf = min(conf, SMALL_POPULATION_CONFIDENCE)
-            out.append(_ok(code, period, per * totals.get(code, 0.0) / population, conf))
+            count = totals.get(code, 0.0)
+            row = _ok(code, period, per * count / population, conf)
+            out.append(row | {"numerator": count, "denominator": population})
     region = _regional_reference(totals, pop, per, confidence)
     return _result([*out, region] if region else out)
 
@@ -228,13 +232,14 @@ def _regional_reference(
     if not known or population <= 0:
         return None
     weighted = sum(confidence.get(code, 1.0) * p for code, p in known.items()) / population
+    count = sum(totals.get(code, 0.0) for code in known)
     row = _ok(
         REGION_CODE,
         max(period for period, _, _ in pop.values()),
-        per * sum(totals.get(code, 0.0) for code in known) / population,
+        per * count / population,
         len(known) / len(pop) * weighted,
     )
-    return row | {"territory_level": REGION_LEVEL}
+    return row | {"territory_level": REGION_LEVEL, "numerator": count, "denominator": population}
 
 
 def places_per_population(

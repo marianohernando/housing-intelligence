@@ -40,6 +40,14 @@ class GapMethod(BaseModel):
     reference: str = Field(examples=["Comunidad de Madrid: total de centros / población total"])
     falta_below: float = Field(gt=0, description="ratio to reference below this -> FALTA")
     cubierto_from: float = Field(gt=0, description="ratio at or above this -> CUBIERTO")
+    confidence_level: float | None = Field(
+        default=None,
+        gt=0,
+        lt=1,
+        description="FALTA also needs a significant shortfall: the exact Poisson upper bound of "
+        "the zone's count at this level below the count expected at the reference rate. "
+        "None: the ratio alone decides",
+    )
 
     @model_validator(mode="after")
     def _ordered(self) -> Self:
@@ -56,18 +64,34 @@ class GapRow(BaseModel):
     label: str = Field(examples=["Colegios"])
     status: GapStatus
     indicator: IndicatorValue
-    reference: float | None = Field(description="Same indicator for the whole region")
-    reference_label: str = Field(examples=["Comunidad de Madrid"])
+    reference: float | None = Field(
+        description="Same indicator for the zones the row is compared with (D-213: the "
+        "municipios of its type in the region)"
+    )
+    reference_label: str = Field(examples=["Municipios urbanos de la Comunidad de Madrid"])
+    regional_reference: float | None = Field(
+        default=None, description="Same indicator for the whole Comunidad de Madrid (context)"
+    )
     direction: Literal["higher_is_better", "lower_is_better"]
     ratio_to_reference: float | None = Field(
-        default=None, ge=0, description="Oriented so that above 1 is better than the region"
+        default=None, ge=0, description="Oriented so that above 1 is better than the reference"
     )
     explanation: str = Field(
-        examples=["2,1 colegios públicos por cada 1.000 menores; la región tiene 2,6"]
+        examples=[
+            "0,47 centros por cada 10.000 habitantes; en los municipios urbanos de la "
+            "Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)"
+        ]
     )
     proxy_note: str | None = Field(
         default=None,
         examples=["Cuenta centros, no plazas: un centro grande y uno pequeño pesan igual"],
+    )
+    reliable: bool = Field(
+        default=True,
+        description="False when the zone is too small for this row: the count expected at the "
+        "reference rate is under the 95 % bound of a zero count (3,7), so not even having none "
+        "would be a significant shortfall. The status is then never FALTA; show it as "
+        "«poco fiable» (D-213)",
     )
     extra_indicators: list[IndicatorValue] = Field(
         default_factory=list[IndicatorValue], description="e.g. walking minutes (CORE-005)"
@@ -115,11 +139,24 @@ class ZoneGapStatus(BaseModel):
     name: str = Field(examples=["Chamartín"])
     status: GapStatus
     value: float | None
+    reference: float | None = Field(
+        default=None, description="What the zone is compared with: municipios of its type"
+    )
+    reference_label: str | None = Field(
+        default=None, examples=["Municipios urbanos de la Comunidad de Madrid"]
+    )
     ratio_to_reference: float | None = Field(
-        default=None, ge=0, description="Oriented so that above 1 is better than the region"
+        default=None, ge=0, description="Oriented so that above 1 is better than the reference"
     )
     confidence: float = Field(ge=0, le=1)
     null_reason: NullReason | None = None
+    reliable: bool = Field(
+        default=True,
+        description="False when the zone is too small for this row: the count expected at the "
+        "reference rate is under the 95 % bound of a zero count (3,7), so not even having none "
+        "would be a significant shortfall. The status is then never FALTA; show it as "
+        "«poco fiable» (D-213)",
+    )
 
     @model_validator(mode="after")
     def _status_matches_value(self) -> Self:
@@ -157,7 +194,9 @@ class GapRowMap(BaseModel):
     indicator_label: str = Field(description="Plain-language name of the indicator")
     unit: str
     direction: Literal["higher_is_better", "lower_is_better"]
-    reference: float | None = Field(description="Same indicator for the whole region")
+    reference: float | None = Field(
+        description="Same indicator for the whole region (each zone carries its own)"
+    )
     reference_label: str = Field(examples=["Comunidad de Madrid"])
     proxy_note: str | None = None
     method: GapMethod

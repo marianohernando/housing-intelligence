@@ -9,15 +9,16 @@
   "reference_label": "Comunidad de Madrid",
   "proxy_note": "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande.",
   "method": {
-    "version": "gap-0.1",
-    "reference": "Comunidad de Madrid: total de la región dividido por su población",
+    "version": "gap-0.2",
+    "reference": "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): su total dividido por su población",
     "falta_below": 0.8,
-    "cubierto_from": 1.0
+    "cubierto_from": 1.0,
+    "confidence_level": 0.95
   },
   "counts": {
-    "falta": 18,
-    "justo": 3,
-    "cubierto": 0,
+    "falta": 0,
+    "justo": 17,
+    "cubierto": 4,
     "sin_datos": 0
   },
   "zones": [
@@ -25,211 +26,274 @@
       "admin_unit_id": "ES.28.DIS.2807901",
       "code": "2807901",
       "name": "Centro",
-      "status": "JUSTO",
+      "status": "CUBIERTO",
       "value": 0.4889,
-      "ratio_to_reference": 0.8261,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.055,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807902",
       "code": "2807902",
       "name": "Arganzuela",
-      "status": "JUSTO",
+      "status": "CUBIERTO",
       "value": 0.4977,
-      "ratio_to_reference": 0.841,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.074,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807903",
       "code": "2807903",
       "name": "Retiro",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.251,
-      "ratio_to_reference": 0.4241,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5417,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807904",
       "code": "2807904",
       "name": "Salamanca",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.339,
-      "ratio_to_reference": 0.5728,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7316,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807905",
       "code": "2807905",
       "name": "Chamartín",
-      "status": "FALTA",
+      "status": "CUBIERTO",
       "value": 0.469,
-      "ratio_to_reference": 0.7925,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.012,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807906",
       "code": "2807906",
       "name": "Tetuán",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.352,
-      "ratio_to_reference": 0.5948,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7597,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807907",
       "code": "2807907",
       "name": "Chamberí",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.4223,
-      "ratio_to_reference": 0.7136,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9114,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807908",
       "code": "2807908",
       "name": "Fuencarral-El Pardo",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.387,
-      "ratio_to_reference": 0.6539,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8352,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807909",
       "code": "2807909",
       "name": "Moncloa-Aravaca",
-      "status": "JUSTO",
+      "status": "CUBIERTO",
       "value": 0.5462,
-      "ratio_to_reference": 0.9229,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.179,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807910",
       "code": "2807910",
       "name": "Latina",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.354,
-      "ratio_to_reference": 0.5982,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.764,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807911",
       "code": "2807911",
       "name": "Carabanchel",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.2841,
-      "ratio_to_reference": 0.4801,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6132,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807912",
       "code": "2807912",
       "name": "Usera",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.3224,
-      "ratio_to_reference": 0.5448,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6958,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807913",
       "code": "2807913",
       "name": "Puente de Vallecas",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.4602,
-      "ratio_to_reference": 0.7776,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9932,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807914",
       "code": "2807914",
       "name": "Moratalaz",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.3166,
-      "ratio_to_reference": 0.535,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6833,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807915",
       "code": "2807915",
       "name": "Ciudad Lineal",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.3457,
-      "ratio_to_reference": 0.5841,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7461,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807916",
       "code": "2807916",
       "name": "Hortaleza",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.2829,
-      "ratio_to_reference": 0.478,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6106,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807917",
       "code": "2807917",
       "name": "Villaverde",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.3984,
-      "ratio_to_reference": 0.6732,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8598,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807918",
       "code": "2807918",
       "name": "Villa de Vallecas",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.2317,
-      "ratio_to_reference": 0.3915,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5001,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807919",
       "code": "2807919",
       "name": "Vicálvaro",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.2995,
-      "ratio_to_reference": 0.5061,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6464,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807920",
       "code": "2807920",
       "name": "San Blas-Canillejas",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.2351,
-      "ratio_to_reference": 0.3973,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5074,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": true
     },
     {
       "admin_unit_id": "ES.28.DIS.2807921",
       "code": "2807921",
       "name": "Barajas",
-      "status": "FALTA",
+      "status": "JUSTO",
       "value": 0.3905,
-      "ratio_to_reference": 0.6599,
+      "reference": 0.4633,
+      "reference_label": "Municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8428,
       "confidence": 1.0,
-      "null_reason": null
+      "null_reason": null,
+      "reliable": false
     }
   ],
   "datasets": [

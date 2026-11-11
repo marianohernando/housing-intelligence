@@ -219,7 +219,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "JUSTO"
         }
       ]
     },
@@ -311,7 +311,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         }
       ]
     },
@@ -485,7 +485,7 @@
         {
           "row": "escuela_infantil",
           "label": "Escuelas infantiles",
-          "status": "FALTA"
+          "status": "JUSTO"
         },
         {
           "row": "colegio",
@@ -495,7 +495,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "JUSTO"
         }
       ]
     }
@@ -591,7 +591,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "JUSTO"
         }
       ]
     },
@@ -680,12 +680,12 @@
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "FALTA"
+          "status": "JUSTO"
         },
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "JUSTO"
         }
       ]
     },
@@ -779,7 +779,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "JUSTO"
         }
       ]
     }

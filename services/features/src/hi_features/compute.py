@@ -212,6 +212,14 @@ def _admin_unit(level: str, code: str) -> str | None:
     return admin_unit_id(level, code) if level in ADMIN_LEVELS else None
 
 
+def _counts(record: dict[str, Any]) -> dict[str, Any]:
+    """The counts behind a per-population ratio, when the method gives them (D-213)."""
+    numerator, denominator = record.get("numerator"), record.get("denominator")
+    if numerator is None or denominator is None or pd.isna(numerator) or pd.isna(denominator):
+        return {}
+    return {"counts": {"numerator": float(numerator), "denominator": float(denominator)}}
+
+
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
     versions = versions_by_pass(
         spec, loaders.last_valid_versions(engine, [s.dataset_id for s in spec.sources])
@@ -231,7 +239,8 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
             "inputs": {
                 "dataset_versions": versions[pass_level(spec, _level(spec, r))],
                 "method": effective_method(spec, _level(spec, r)),
-            },
+            }
+            | _counts(r),
         }
         for r in records
     ]

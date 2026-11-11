@@ -104,3 +104,20 @@ def test_madrid_districts_get_the_published_household_size(
         assert 1.0 <= row.value <= 5.0
         assert row.confidence == 1.0
         assert set(row.inputs["dataset_versions"]) == {"ayto_panel_indicadores_distritos_barrios"}
+
+
+def test_per_population_rows_keep_the_counts_behind_their_value(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-213: the list of what is missing tests shortfalls on these counts."""
+    with migrated_engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT territory_level, value, inputs FROM feature_value "
+                "WHERE feature_id = 'colegios_publicos_por_1000_menores' AND value IS NOT NULL"
+            )
+        ).all()
+    assert rows
+    for level, value, inputs in rows:
+        counts = inputs["counts"]
+        assert 1000 * counts["numerator"] / counts["denominator"] == pytest.approx(value), level

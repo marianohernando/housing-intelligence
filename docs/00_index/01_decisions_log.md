@@ -775,3 +775,57 @@ DATA-022 y los nombres con la Ñ rota que pidió B. El CSV de nombres de `cm_sec
 - **Cómo:** un paso aparte, `hi-ingest admin-names` (`make admin-names`, y al final de `run-all`), porque la geografía se publica antes que las tablas que traen los nombres. Solo cambia `geo_admin_unit.name`: la geometría y los códigos no se tocan. La ejecución queda en `ingestion_run` con las versiones usadas, y la evidencia guarda cada cambio.
 - **Calidad bloqueante:** cada municipio y cada distrito de Madrid tiene un nombre oficial y solo uno, y ningún nombre publicado lleva caracteres fuera de la ortografía española (falla con «/», «Ð» o un byte sin decodificar). Si falla, no se cambia ningún nombre.
 - **Presentación:** `display_name` pone delante el artículo que las tablas de la CM escriben detrás: «Álamo (El)» se muestra «El Álamo». La API lo aplica en `/gaps`, `/geo/admin-units` y `/features`.
+
+## D-213 — Lista de lo que falta: referencia por tipo de territorio y cortes con prueba estadística (2026-11-11)
+GAP-001, Fase 5. Sustituye los cortes provisionales de `gap-0.1` (ratio frente a la región: FALTA < 0,8 ≤ JUSTO < 1,0 ≤ CUBIERTO). Método `gap-0.2`, en `hi_domain/gaps.py`; la API lo publica en `method`. **Pendiente de validar por Mariano**: refina la decisión cerrada «frente a la referencia regional por población» (sigue siendo una tasa de la región por población, pero de las zonas del mismo tipo). Si no la acepta, se vuelve a `gap-0.1` sin tocar datos.
+
+**Problemas de `gap-0.1`, medidos con los datos reales del 11 nov:**
+- La tasa de casi todas las filas depende del tipo de territorio. Ejemplo: cada pueblo tiene su consultorio, así que los municipios rurales tienen 14,8 veces más centros de atención primaria por habitante que los urbanos. La media regional (0,59 por 10.000) queda por encima de cualquier zona urbana: los 21 distritos de Madrid salían FALTA o JUSTO y ninguno CUBIERTO.
+- Una zona pequeña salía FALTA por no tener un servicio que, por su tamaño, ni siquiera se espera que tenga. Ejemplo: un pueblo de 500 habitantes sin farmacia, cuando la región tiene 4,2 por cada 10.000.
+- Una zona pequeña podía dar cifras extremas. B señaló La Acebeda, con 10.700 viviendas grandes por cada 100 hogares grandes. Faltaba una regla común para los denominadores pequeños.
+
+**Decisión** (igual para las 6 filas, sin ajustar a ninguna zona concreta):
+1. **Referencia: los municipios del mismo tipo de la Comunidad de Madrid.**
+   - **Tipo:** la definición legal de medio rural de la Ley 45/2007, de desarrollo sostenible del medio rural (art. 3.a): menos de 30.000 habitantes y menos de 100 habitantes por km². Con la población del censo de la CM y la superficie de la geografía canónica salen 84 municipios rurales (143.000 habitantes) y 95 urbanos.
+   - **Herencia:** un distrito o una sección toma el tipo de su municipio. Los distritos de Madrid son urbanos.
+   - **Cálculo:** la tasa del tipo es la suma de los recuentos de sus municipios dividida por la suma de sus poblaciones. Equivale a la estandarización indirecta: los casos esperados de una zona son su población por la tasa de su tipo.
+   - **Contexto:** la región entera sigue apareciendo en `regional_reference` y en la explicación («… en los municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)»).
+   - **Justificación:** una prueba de homogeneidad (χ², 1 gl) de la tasa entre rural y urbano, fila por fila. Todas las filas la rechazan al 5 %:
+
+     | Fila | Tasa rural / urbana | χ² | p |
+     |---|---|---|---|
+     | Escuela infantil | 2,70 | 64,9 | 8·10⁻¹⁶ |
+     | Colegio | 1,81 | 16,0 | 6·10⁻⁵ |
+     | Centro de salud | 14,82 | 968,8 | 10⁻²¹² |
+     | Mayores | 2,86 | 33,2 | 8·10⁻⁹ |
+     | Farmacia | 1,27 | 4,3 | 0,039 |
+     | Vivienda | 2,52 | 49.523 | < 10⁻³⁰⁰ |
+
+2. **Cortes:**
+   - **CUBIERTO:** ratio ≥ 1, es decir, igual o por encima de las zonas de su tipo.
+   - **FALTA:** la falta tiene que ser grande y no deberse al azar del tamaño de la zona. Hacen falta dos condiciones:
+     - **material:** ratio < 0,8. Es la regla de los cuatro quintos, que se usa para decidir cuándo una tasa es sustancialmente menor que la de referencia (29 CFR 1607.4(D)). El corte no cambia respecto a `gap-0.1`;
+     - **significativa:** el límite superior del intervalo de confianza exacto de Poisson al 95 % (Garwood) del recuento de la zona queda por debajo de los casos esperados. Es el criterio de «peor que la referencia» de los indicadores de salud pública inglesa (Fingertips) y de los gráficos en embudo (Spiegelhalter, 2005).
+   - **JUSTO:** el resto de valores conocidos. **SIN DATOS** sigue siendo solo un valor desconocido.
+3. **Zonas demasiado pequeñas (respuesta a B):**
+   - **Regla:** una zona es «poco fiable» en una fila (`reliable: false`) cuando sus casos esperados son menos de 3,69. Es el límite superior al 95 % de un recuento de cero: por debajo, ni siquiera no tener ninguno sería una falta significativa.
+   - El umbral sale de la propia prueba, no de un tope arbitrario, y es el mismo en todas las filas.
+   - Una zona poco fiable nunca sale FALTA. La web la muestra como «poco fiable» y conserva su valor.
+   - **La Acebeda en vivienda:** espera 4,3 viviendas grandes y tiene unas 107 por cada hogar grande. El dato es fiable y sale CUBIERTO. La cifra de 10.700 es real: la produce un denominador de un hogar. Mejor mostrarla como «más de 10 veces la referencia».
+   - La confidence de los features (umbrales de población pequeña) no cambia: mide la calidad del dato, no la prueba.
+4. **Recuentos:** las features por población guardan en `inputs.counts` el numerador y el denominador de cada fila (`places_per_population`, `metric_ratio` y `place_attribute_per_population`). Los valores no cambian, así que la versión de las features tampoco.
+   - Sin recuentos, o si el tipo no tiene ningún caso, la fila se compara con la región entera y decide solo el ratio.
+5. **Límites declarados:**
+   - La prueba supone variación de Poisson, sin sobredispersión.
+   - Contar centros no es contar plazas (`proxy_note`).
+   - El tipo se asigna por municipio.
+   - La superficie sale de la geometría de 2019.
+
+**Efecto con los datos del 11 nov** (`evidence/gate-04/2026-11-11/phase-gap001-f5.txt`):
+- **Por municipio (179):** FALTA pasa de 44, 65, 27, 90 y 94 a 0, 0, 3, 1 y 5 (escuela infantil, colegio, centro de salud, mayores y farmacia). Entre 116 y 161 municipios quedan poco fiables en esas filas. En vivienda, con recuentos grandes, FALTA sube de 8 a 25.
+- **Por distrito de Madrid (21):** en centro de salud, de 18 FALTA, 3 JUSTO y 0 CUBIERTO se pasa a 0 FALTA, 17 JUSTO y 4 CUBIERTO.
+- **Casos de la demo:**
+  - Chamartín (2807905), centro de salud: antes FALTA (0,79 frente a la región); ahora CUBIERTO (0,47 frente a 0,46 de los municipios urbanos, ratio 1,01);
+  - Madrid: colegio JUSTO (0,98) y centro de salud JUSTO (0,80);
+  - La Acebeda: farmacia JUSTO y poco fiable (0 farmacias para 70 habitantes).
+- **Lectura para el pitch:** FALTA pasa a ser una afirmación fuerte y rara: menos del 80 % de lo que tienen las zonas de su tipo, con datos suficientes para afirmarlo.

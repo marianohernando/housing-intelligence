@@ -65,7 +65,12 @@ def test_madrid_district_has_real_rows_against_the_region(client: TestClient) ->
         assert row.indicator.level.value == "distrito"
         assert (row.indicator.value is None) == (key == "vivienda")  # see the SIN DATOS test
         assert row.reference is not None
-        assert row.reference_label == "Comunidad de Madrid"
+        # D-213: compared with the urban municipios (Madrid is urban), or with the whole region
+        # when the urban ones have none of it in the sample
+        assert row.reference_label in {
+            "Municipios urbanos de la Comunidad de Madrid",
+            "Comunidad de Madrid",
+        }
     datasets = {d.dataset_id: d for d in rows["colegio"].datasets}
     assert datasets["ayto_padron_municipal"].is_cm_open_data is False  # the district population
     assert datasets["cm_poblacion_edad_nacionalidad_sexo"].is_cm_open_data  # the reference
@@ -257,3 +262,31 @@ def test_row_map_rejects_unknown_rows_and_levels(client: TestClient) -> None:
     assert barrio.status_code == 422
     assert barrio.json()["detail"]["code"] == "OUT_OF_COVERAGE"
     assert client.get("/api/v1/gaps", params={"level": "municipio"}).status_code == 422
+
+
+def test_rows_compare_with_municipios_of_the_same_type(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """D-213: the reference is the rate of the municipios of the zone's type (Ley 45/2007), from
+    the counts each feature row keeps; the region stays as context."""
+    with migrated_engine.connect() as conn:
+        counts = dict(
+            conn.execute(
+                text(
+                    "SELECT territory_code, inputs->'counts' FROM feature_value "
+                    "WHERE feature_id = 'colegios_publicos_por_1000_menores' "
+                    "AND territory_level = 'municipio'"
+                )
+            ).all()
+        )
+    # In the sample La Acebeda is rural (70 inhabitants); Ajalvir and Madrid are urban.
+    urban = [counts["28002"], counts["28079"]]
+    rate = sum(c["numerator"] for c in urban) / sum(c["denominator"] for c in urban)
+    body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28002").json())
+    school = next(r for r in body.data.rows if r.row.value == "colegio")
+    assert school.reference_label == "Municipios urbanos de la Comunidad de Madrid"
+    assert school.reference == pytest.approx(1000 * rate, rel=1e-3)
+    assert school.regional_reference is not None
+    assert "en toda la Comunidad" in school.explanation
+    assert body.data.method.version == "gap-0.2"
+    assert body.data.method.confidence_level == 0.95

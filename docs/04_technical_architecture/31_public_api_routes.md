@@ -39,7 +39,11 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
 - **Lista de lo que falta.**
   - `SIN_DATOS` aparece si y solo si `indicator.value` es `null`, y entonces `indicator.null_reason` dice por qué. Un 0 es un dato real (ningún centro en un registro exhaustivo).
   - `ratio_to_reference` está orientado: por encima de 1 la zona está mejor que la región.
-  - Los cortes van en `method` (`falta_below`, `cubierto_from`).
+  - Los cortes van en `method` (`falta_below`, `cubierto_from`, `confidence_level`). **Desde GAP-001 F5 (`gap-0.2`, D-213):**
+    - `reference` es la tasa de los municipios del mismo tipo (rural o urbano, Ley 45/2007) y `reference_label` lo dice («Municipios urbanos de la Comunidad de Madrid»). La región entera va en `regional_reference` y en la explicación.
+    - FALTA exige ratio < 0,8 y que la falta sea significativa (Poisson exacto al 95 %); CUBIERTO es ratio ≥ 1; el resto es JUSTO.
+    - `reliable: false` marca una zona demasiado pequeña para esa fila (menos de 3,7 casos esperados): nunca sale FALTA y la web debería mostrarla como «poco fiable», con su valor. En `/gaps?level=&row=`, cada zona trae su `reference`, `reference_label` y `reliable`.
+    - Ratios muy altos (La Acebeda, vivienda: 10.700 por 100 hogares, un solo hogar grande) son reales; se leen mejor como «más de 10 veces la referencia».
   - `proxy_note` declara lo que el indicador no mide (por ejemplo, centros no es lo mismo que plazas).
   - `extra_indicators` acompaña al indicador principal sin cambiar el estado de la fila. Hoy son los minutos a pie hasta el servicio más cercano: la mediana de las calles de la zona a 4 km/h (D-210, D-211). No tienen estado ni referencia propios. `value: null` con su `null_reason` es desconocido, nunca 0. Un extra que aún no está calculado a ese nivel no aparece. Sus datasets, como la red peatonal de OSM (no CM), se suman a los `datasets` de la fila. Los minutos muy altos (hasta unos 380 en pueblos sin colegio) se leen mejor como «más de 60 min».
   - Una fila puede estar en `SIN_DATOS` aunque la zona exista: la vivienda por distrito, o un municipio sin niños de 0 a 4 años (`NOT_APPLICABLE`). La fila aparece con su `null_reason`; no es lo mismo que una fila que falta.

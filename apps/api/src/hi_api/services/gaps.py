@@ -1,4 +1,5 @@
-"""Per-zone list of what is missing (GAP-001): feature values against the regional reference.
+"""Per-zone list of what is missing (GAP-001): feature values against the municipios of the
+zone's type in the region (D-213, services/gap_reference.py).
 
 Rows come from the features bound to a gap row in the Feature Dictionary (`gap_row`), so no
 feature id is hardcoded here. Parameterised SQL only.
@@ -9,6 +10,7 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
+from hi_api.services.gap_reference import Assessment, References, assess, load_references
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
@@ -20,6 +22,7 @@ from hi_contracts.public import (
 )
 from hi_domain.gaps import (
     GAP_METHOD,
+    REGION_TEXT,
     UnclassifiableError,
     classify,
     explanation,
@@ -143,38 +146,54 @@ class Measured(NamedTuple):
     value: dict[str, Any]
 
 
+class ZoneContext(NamedTuple):
+    """Where the rows are computed: level, zone code and the references by type (D-213)."""
+
+    level: TerritoryLevel
+    code: str
+    references: References
+
+
 def _gap_row(
     conn: Connection,
     main: Measured,
     reference_row: dict[str, Any] | None,
     extras: list[Measured],
-    level: TerritoryLevel,
+    zone: ZoneContext,
 ) -> GapRow:
     feature, row = main
     binding = feature["gap_row"]
-    indicator = _indicator(feature, row, level)
-    reference = None if reference_row is None else reference_row["value"]
+    indicator = _indicator(feature, row, zone.level)
+    ref = zone.references.for_zone(feature["feature_id"], zone.code, reference_row)
+    judged = Assessment(None, True)
     if indicator.value is None:
         ratio, text_ = None, "Sin datos para esta zona"
-    elif reference is None:
+    elif ref is None:
         msg = f"{feature['feature_id']}: no regional reference"
         raise UnclassifiableError(msg)
     else:
-        ratio = oriented_ratio(indicator.value, float(reference), feature["direction"])
-        text_ = explanation(indicator.value, float(reference), binding["phrase"])
+        ratio = oriented_ratio(indicator.value, ref.value, feature["direction"])
+        judged = assess(row, ref, feature["direction"])
+        text_ = explanation(indicator.value, ref.value, binding["phrase"], ref.phrase, ref.regional)
     versions = merged_versions(row, reference_row, [e.value for e in extras])
+    if ref is not None and ref.regional is not None:  # the type comes from population and area
+        versions = zone.references.versions | versions
     return GapRow(
         row=binding["row"],
         label=binding["label"],
-        status=classify(ratio),
+        status=classify(ratio, significant=judged.significant),
         indicator=indicator,
-        reference=None if reference is None else significant(float(reference)),
-        reference_label="Comunidad de Madrid",
+        reference=None if ref is None else significant(ref.value),
+        reference_label=REGION_TEXT.label if ref is None else ref.label,
+        regional_reference=None
+        if ref is None or ref.regional is None
+        else significant(ref.regional),
         direction=feature["direction"],
         ratio_to_reference=None if ratio is None else significant(ratio),
         explanation=text_,
         proxy_note=binding.get("proxy_note"),
-        extra_indicators=[_indicator(e.feature, e.value, level) for e in extras],
+        reliable=judged.reliable,
+        extra_indicators=[_indicator(e.feature, e.value, zone.level) for e in extras],
         datasets=dataset_refs(conn, versions),
     )
 
@@ -253,7 +272,7 @@ def _values(
 
 def _build_rows(
     conn: Connection,
-    level: TerritoryLevel,
+    zone: ZoneContext,
     primaries: dict[str, dict[str, Any]],
     extras: dict[str, list[dict[str, Any]]],
     values: dict[tuple[str, str], dict[str, Any]],
@@ -264,6 +283,7 @@ def _build_rows(
     warnings: list[str] = []
     used: list[dict[str, Any]] = []
     computed_rows: set[GapRowKey] = set()
+    level = zone.level
     for feature_id, feature in primaries.items():
         row = values.get((feature_id, level.value))
         if row is None:
@@ -273,7 +293,7 @@ def _build_rows(
         reference_row = values.get((feature_id, REGION_LEVEL))
         row_extras = extras_at(level, extras.get(key.value, []), values)
         try:
-            rows.append(_gap_row(conn, Measured(feature, row), reference_row, row_extras, level))
+            rows.append(_gap_row(conn, Measured(feature, row), reference_row, row_extras, zone))
         except UnclassifiableError as exc:
             warnings.append(str(exc))
             continue
@@ -294,7 +314,8 @@ def zone_gap_list(
     primaries, extras = split_bound(dict(f) for f in conn.execute(_BOUND_FEATURES).mappings().all())
     queried = sorted([*primaries, *(f["feature_id"] for fs in extras.values() for f in fs)])
     values = _values(conn, queried, level, code)
-    rows, warnings, used = _build_rows(conn, level, primaries, extras, values)
+    context = ZoneContext(level, code, load_references(conn, sorted(primaries)))
+    rows, warnings, used = _build_rows(conn, context, primaries, extras, values)
     computed = [v["computed_at"] for v in used]
     data_version = max(computed).date().isoformat() if computed else None
     gap_list = ZoneGapList(

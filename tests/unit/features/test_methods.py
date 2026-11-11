@@ -99,6 +99,19 @@ def test_no_place_in_official_register_is_confirmed_zero() -> None:
     assert out["28003"]["null_reason"] == "SOURCE_MISSING"
 
 
+def test_per_population_rows_keep_their_counts() -> None:
+    """GAP-001 F5: the counts behind each ratio, so a shortfall can be tested (D-213)."""
+    out = methods.places_per_population(
+        _places(["28001", "28001", "28003"]), POP, {"edad": ["total"]}, 1000.0
+    )
+    rows = _by_code(out)
+    assert (rows["28001"]["numerator"], rows["28001"]["denominator"]) == (2.0, 100.0)
+    assert rows["28002"]["numerator"] != rows["28002"]["numerator"]  # NaN: NOT_APPLICABLE
+    assert rows["28003"]["numerator"] != rows["28003"]["numerator"]  # NaN: unknown population
+    region = out.loc[out["territory_level"] == "ccaa"].iloc[0]
+    assert (region["numerator"], region["denominator"]) == (2.0, 100.0)  # known zones only
+
+
 def test_small_denominators_lower_confidence() -> None:
     out = _by_code(
         methods.places_per_population(
