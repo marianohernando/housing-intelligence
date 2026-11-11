@@ -29,7 +29,7 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
 | `GET /api/v1/datasets?cm_only=true` | `cm_only` (opcional) | `DatasetListResponse`: `total`, `cm_open_data_count` y los `DatasetRef` con versión | **Funciona desde el 11 nov**. Lista los datasets con una versión válida (QA superado): hoy 22, de los que 21 son CM |
 | `GET /api/v1/geo/admin-units?level=` | — | geometrías GeoJSON | Existe |
 | `GET /api/v1/features`, `GET /api/v1/features/{id}/values?level=` | — | catálogo y valores de features | Existe |
-| `GET /api/v1/places?category=` | — | equipamientos como puntos | Existe |
+| `GET /api/v1/places?category=&admin_unit_id=&subcategory=` | `category` (obligatoria) · `admin_unit_id` (opcional): un municipio, distrito o sección (`ES.28.DIS.2807905`) · `subcategory` (opcional, repetible: `?subcategory=metro&subcategory=cercanias`; algunas subcategorías llevan comas, por eso no se separan por comas) | equipamientos como puntos GeoJSON | **Filtros desde el 11 nov.** Un lugar está en la zona en la que lo cuentan los features: su municipio, o el distrito o la sección de la sección censal en la que cae. Barrio u otro nivel → 422 `OUT_OF_COVERAGE`; unidad desconocida → 404. Sin filtros salen todas las capas enteras (transporte: 14.982); si alguna vez se alcanza el tope (20.000), `warnings` lo dice |
 
 ## Reglas que la web puede dar por hechas
 - **Zonas.** `ZoneRef.admin_unit_id` coincide con `promoteId` de las capas de `geo/admin-units`, y `name` ya viene legible («Las Rozas de Madrid», «Fuencarral-El Pardo»). Los distritos de Madrid traen `municipio_ine = 28079`.

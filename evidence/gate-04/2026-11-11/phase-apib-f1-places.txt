@@ -1,0 +1,49 @@
+# API para B · Fase 1: /places con ?admin_unit_id= y ?subcategory=, sin corte silencioso
+# 2026-11-11T14:56:20Z · rama claude/sprint-1-public · base 62a0d42
+
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+243 files already formatted
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 26%]
+........................................................................ [ 53%]
+........................................................................ [ 80%]
+.....................................................                    [100%]
+269 passed in 4.69s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  15:56:34
+   Duration  89ms (tests 45%, import 26%, transform 19%, worker 10%)
+
+uv run pytest -m db tests/integration -q
+................................................................         [100%]
+64 passed in 25.71s
+
+# Respuesta real (base local housing) vía TestClient
+{"category": "transport"} 200 n= 14982 4.22 MB 181 ms warnings= [] subcats= ['autobus_interurbano', 'autobus_urbano', 'cercanias', 'emt', 'metro', 'metro_ligero']
+{"category": "transport", "subcategory": ["metro", "cercanias"]} 200 n= 323 0.09 MB 6 ms warnings= [] subcats= ['cercanias', 'metro']
+{"category": "transport", "admin_unit_id": "ES.28.DIS.2807905"} 200 n= 310 0.08 MB 123 ms warnings= [] subcats= ['autobus_interurbano', 'cercanias', 'emt', 'metro']
+{"category": "transport", "admin_unit_id": "ES.28.DIS.2807905", "subcategory": ["metro", "cercanias"]} 200 n= 15 0.00 MB 5 ms warnings= [] subcats= ['cercanias', 'metro']
+{"category": "health", "admin_unit_id": "ES.28.MUN.28092", "subcategory": ["Farmacia"]} 200 n= 73 0.02 MB 4 ms warnings= [] subcats= ['Farmacia']
+{"category": "education", "admin_unit_id": "ES.28.SEC.2807901001"} 200 n= 1 0.00 MB 3 ms warnings= [] subcats= ['CENTRO AUTORIZADO SUPERIOR DE MÚSICA']
+{"category": "transport", "admin_unit_id": "ES.28.BAR.0790101"} 404 {'code': 'NOT_FOUND', 'message': 'No admin unit ES.28.BAR.0790101'}
+{"category": "transport", "admin_unit_id": "ES.28.DIS.9999999"} 404 {'code': 'NOT_FOUND', 'message': 'No admin unit ES.28.DIS.9999999'}
