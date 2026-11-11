@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { useMapZones } from "@/components/map/MapProvider";
+import DataCounter from "@/components/provenance/DataCounter";
 import SearchCard from "@/components/search/SearchCard";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
@@ -61,6 +62,7 @@ export default function ZoneIntro() {
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
         <ZoneCard zone={activeZone} mode="zone" />
+        <DataCounter />
       </div>
       <div className={styles.search}>
         <SearchCard collapsible />

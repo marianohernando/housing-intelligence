@@ -395,3 +395,52 @@ Sobre `origin/claude/sprint-1-public` en `fbc7e37`. Decisión de Mariano, transm
   - si el usuario arrastra durante el vuelo, las etiquetas se calculan para la cámara prevista;
   - el giro lento final (+15°) puede llevar alguna etiqueta bajo el cristal;
   - un cambio de tamaño de la ventana no recalcula la isla.
+
+---
+
+# PUB-001 Fase 1 (F6) — Pie de procedencia y «Cómo lo calculamos» (2026-11-11)
+
+Sobre `origin/claude/sprint-1-public` en `4523d69`.
+
+## Qué hay
+- **Contador** (`DataCounter`, `pie.contador`):
+  - «Datos: 21 conjuntos de la Comunidad de Madrid + Ayuntamiento de Madrid + CRTM»;
+  - el número es `cm_open_data_count` de `GET /api/v1/datasets`;
+  - enlaza a «Cómo lo calculamos». Mientras carga, o si falla, queda solo el enlace;
+  - va en la columna derecha del mapa y de la zona, bajo «Así funciona» y la tarjeta de zona, sin desplazar «Tu búsqueda» a 1440×900.
+- **Petición única:** `useDatasets` comparte una sola llamada a `/datasets` entre el contador, la lista y el número de la página.
+- **Pie de las páginas sin mapa** (`SiteFooter`, sección 10 de los textos):
+  - contador;
+  - atribuciones con enlace: Comunidad de Madrid, Ayuntamiento, CRTM (bruto o explotado) y OpenStreetMap;
+  - «no es un servicio oficial», proyecto y código abierto;
+  - el mapa base no se repite, porque MapLibre ya lo pinta en el mapa.
+- **CRTM:** «Powered by CRTM» es ahora un enlace a crtm.es en la atribución del mapa, como pide su licencia.
+- **«Cómo lo calculamos»:**
+  - texto de D (`pitch/metodologia.md`, parte 1) en 8 secciones;
+  - el número de conjuntos sale de la API;
+  - la lista completa de fuentes (`DatasetList`, `fuente.*`) va con cada nombre, quién lo publica, la marca del portal de la Comunidad, versión, licencia y «Abrir en el portal» (pestaña nueva, con `aria-label`).
+- **`lib/provenance.ts`** (pura, con tests): `counterText`, `datasetLines` y `sortDatasets` (primero los del portal de la Comunidad).
+
+## Qué no se publica (para D, en el PR)
+- **Pendientes de A** (regla de D): el paso 2 del encaje (CORE-003), el alquiler estimado (CORE-006), el ejemplo de Móstoles, compra, seguridad, zonas verdes y la sección 1.10 de versiones.
+- **La 1.5 (distancias a pie):** entra con la F8, cuando la web enseñe los minutos.
+- **Definiciones de fila que ya no coinciden con `/gaps`** desde GAP-001:
+  - colegios cuenta ahora los «con primaria públicos o concertados»;
+  - mayores cuenta «centros de mayores (hogares, clubes y centros de día)», no plazas en residencias;
+  - por eso no entran «Por ejemplo», «Lo que mide cada fila» ni la frase de plazas de mayores en 1.8.
+- **«Ver la lista completa»:** sobra, porque la lista está en la misma página.
+
+## Gate
+| Comando | Resultado |
+|---|---|
+| `npm run -w apps/web lint` / `typecheck` | 0 |
+| `npm run -w apps/web test -- --run` | 18 ficheros, 149 tests (nuevos: 4 de `provenance`) |
+| `npm run -w apps/web build` | 0 |
+| `make lint typecheck test-unit` | 0 |
+| `capture -- --prefix f6_ …` | 8 capturas (inicio, Chamartín, «Cómo lo calculamos» y «Qué falta» a 1440 y 390 px), sin errores en la consola. `overflow_px: 0` en las pantallas de mapa; en las de texto es el desplazamiento vertical de una página larga |
+
+## Comprobado en el navegador
+- **Secciones:** 8 `h2` en «Cómo lo calculamos».
+- **Números de la API:** «21 conjuntos de datos del Portal…» y el contador del pie.
+- **Enlaces:** 24 «Abrir en el portal» con «se abre en una pestaña nueva» en el nombre accesible.
+- **CRTM:** 1 enlace a crtm.es en la atribución del mapa.

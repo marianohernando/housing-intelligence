@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import SiteFooter from "@/components/shell/SiteFooter";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 
@@ -19,6 +20,7 @@ export default function QueFaltaPage() {
         </p>
         <Button href="/">Ir al mapa</Button>
       </GlassCard>
+      <SiteFooter />
     </div>
   );
 }

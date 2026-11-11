@@ -51,6 +51,8 @@ import styles from "./VidaMap.module.css";
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+const ATTRIBUTION =
+  'Comunidad de Madrid · <a href="https://www.crtm.es" target="_blank" rel="noopener noreferrer">Powered by CRTM</a>';
 const FLIGHT_MS = 2800;
 /** The island stays still a moment before the camera comes closer to the buildings. */
 const ISLAND_HOLD_MS = 700;
@@ -262,7 +264,8 @@ export default function VidaMap() {
         center: [-3.7, 40.42],
         zoom: 8.3,
         maxPitch: 70,
-        attributionControl: { compact: matches(MOBILE), customAttribution: "Comunidad de Madrid · Powered by CRTM" },
+        // CRTM asks for «Powered by CRTM» with a link (data/catalog/sources/crtm_open_data.yaml)
+        attributionControl: { compact: matches(MOBILE), customAttribution: ATTRIBUTION },
       });
     } catch {
       queueMicrotask(() => setFailure("webgl"));
