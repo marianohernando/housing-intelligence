@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.22 — Lista de lo que falta: minutos a pie (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: `GET /api/v1/gaps/{level}/{code}` trae en `extra_indicators` los minutos a pie hasta el colegio y el centro de salud más cercanos (GAP-001 F1). Son indicadores que acompañan a la fila, sin estado propio, y sus datasets se suman a la procedencia de la fila.
+
 ## v0.5.14 — Vida Fácil y contratos v2 (2026-11-11)
 - D-199 a D-207: nombre «Vida Fácil», escala (municipios + 21 distritos de Madrid), mapa 2D/3D y estilo, % de encaje con hechos, presupuesto de alquiler o compra, prioridades, extras con sus reglas de seguridad y accesibilidad, orden núcleo/extras y contratos PUBLIC v2.
 - `09_datamad/25_plan_competicion.md` §1, §6 y §8 con el nombre y el estilo nuevos.

@@ -39,7 +39,21 @@
       "ratio_to_reference": 0.7153,
       "explanation": "1,6 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2",
       "proxy_note": "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos.",
-      "extra_indicators": [],
+      "extra_indicators": [
+        {
+          "feature_id": "min_a_pie_colegio",
+          "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+          "value": 6.789,
+          "unit": "min",
+          "confidence": 0.9970497487134414,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_educativos",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
       "datasets": [
         {
           "dataset_id": "cm_centros_educativos",
@@ -58,6 +72,15 @@
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0"
         }
       ]
     },
@@ -84,7 +107,21 @@
       "ratio_to_reference": 0.6269,
       "explanation": "0,37 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,59",
       "proxy_note": "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande.",
-      "extra_indicators": [],
+      "extra_indicators": [
+        {
+          "feature_id": "min_a_pie_centro_salud",
+          "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+          "value": 11.64,
+          "unit": "min",
+          "confidence": 0.9970497487134414,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_sanitarios",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
       "datasets": [
         {
           "dataset_id": "cm_centros_sanitarios",
@@ -103,6 +140,15 @@
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0"
         }
       ]
     }
@@ -134,6 +180,15 @@
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
       "version": "2026-11-10-de171e22295d",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0"
     }
   ]
 }

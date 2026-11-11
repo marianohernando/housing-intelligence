@@ -68,6 +68,26 @@ def test_madrid_district_has_real_rows_against_the_region(client: TestClient) ->
     assert datasets["cm_centros_educativos"].is_cm_open_data
 
 
+@pytest.mark.parametrize(("level", "code"), [("municipio", "28079"), ("distrito", "2807906")])
+def test_rows_carry_walking_minutes_as_extra_indicators(
+    client: TestClient, level: str, code: str
+) -> None:
+    """GAP-001 F1: features bound with `role: extra` show up next to the row's main indicator."""
+    body = ZoneGapListResponse.model_validate(client.get(f"/api/v1/gaps/{level}/{code}").json())
+    rows = {r.row.value: r for r in body.data.rows}
+    expected = {"colegio": "min_a_pie_colegio", "centro_salud": "min_a_pie_centro_salud"}
+    for row_key, feature_id in expected.items():
+        extras = {e.feature_id: e for e in rows[row_key].extra_indicators}
+        assert feature_id in extras
+        walk = extras[feature_id]
+        assert walk.unit == "min"
+        assert walk.level.value == level
+        assert (walk.value is None) == (walk.null_reason is not None)  # unknown is never 0
+        assert "osm_red_peatonal" in walk.datasets
+        assert "osm_red_peatonal" in {d.dataset_id for d in rows[row_key].datasets}
+    assert "osm_red_peatonal" in {d.dataset_id for d in body.data.datasets}
+
+
 def test_municipio_rows_never_cite_the_district_population(client: TestClient) -> None:
     body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
     assert "ayto_padron_municipal" not in {d.dataset_id for d in body.data.datasets}
@@ -89,8 +109,19 @@ def test_unknown_zone_is_404_and_unsupported_level_is_422(client: TestClient) ->
     assert client.get("/api/v1/gaps/planeta/1").status_code == 422
 
 
-def test_level_without_computed_indicators_returns_no_rows(client: TestClient) -> None:
-    """Rows not computed at a level are absent (not SIN_DATOS) until CORE-005 adds them."""
+def test_level_without_computed_indicators_returns_no_rows(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """Rows not computed at a level are absent (not SIN_DATOS). The section does have walking
+    minutes, but an extra indicator never makes a row on its own."""
+    with migrated_engine.connect() as conn:
+        walk = conn.execute(
+            text(
+                "SELECT count(*) FROM feature_value WHERE feature_id = 'min_a_pie_colegio' "
+                "AND territory_level = 'seccion_censal' AND territory_code = '2807901006'"
+            )
+        ).scalar_one()
+    assert walk == 1
     response = client.get("/api/v1/gaps/seccion_censal/2807901006")  # in the admin fixture
     assert response.status_code == 200
     payload = ZoneGapListResponse.model_validate(response.json())

@@ -5,7 +5,7 @@ feature id is hardcoded here. Parameterised SQL only.
 """
 
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
@@ -136,13 +136,21 @@ def _indicator(
     )
 
 
+class Measured(NamedTuple):
+    """A feature bound to a gap row, with its value row for one zone."""
+
+    feature: dict[str, Any]
+    value: dict[str, Any]
+
+
 def _gap_row(
     conn: Connection,
-    feature: dict[str, Any],
-    row: dict[str, Any],
+    main: Measured,
     reference_row: dict[str, Any] | None,
+    extras: list[Measured],
     level: TerritoryLevel,
 ) -> GapRow:
+    feature, row = main
     binding = feature["gap_row"]
     indicator = _indicator(feature, row, level)
     reference = None if reference_row is None else reference_row["value"]
@@ -154,6 +162,7 @@ def _gap_row(
     else:
         ratio = oriented_ratio(indicator.value, float(reference), feature["direction"])
         text_ = explanation(indicator.value, float(reference), binding["phrase"])
+    versions = merged_versions(row, reference_row, [e.value for e in extras])
     return GapRow(
         row=binding["row"],
         label=binding["label"],
@@ -165,15 +174,48 @@ def _gap_row(
         ratio_to_reference=None if ratio is None else _significant(ratio),
         explanation=text_,
         proxy_note=binding.get("proxy_note"),
-        datasets=dataset_refs(conn, _versions(row, reference_row)),
+        extra_indicators=[_indicator(e.feature, e.value, level) for e in extras],
+        datasets=dataset_refs(conn, versions),
     )
 
 
-def _versions(row: dict[str, Any], reference_row: dict[str, Any] | None) -> dict[str, str]:
-    """The datasets behind the zone's value and behind the reference it is compared with
-    (e.g. a district uses the padrón, the region the CM census)."""
-    reference = {} if reference_row is None else reference_row["inputs"].get("dataset_versions", {})
-    return {**reference, **row["inputs"].get("dataset_versions", {})}
+def merged_versions(
+    row: dict[str, Any], reference_row: dict[str, Any] | None, extra_rows: list[dict[str, Any]]
+) -> dict[str, str]:
+    """The datasets behind the zone's value, behind the reference it is compared with (e.g. a
+    district uses the padrón, the region the CM census) and behind the extra indicators."""
+    versions: dict[str, str] = {}
+    for source in [reference_row, *extra_rows, row]:  # the zone's own value wins a clash
+        if source is not None:
+            versions.update(source["inputs"].get("dataset_versions", {}))
+    return versions
+
+
+def split_bound(
+    features: Iterable[dict[str, Any]],
+) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """The main feature of each row, by feature_id, and the extra features of each row, by row
+    key; both in feature_id order."""
+    ordered = sorted(features, key=lambda f: f["feature_id"])
+    primaries = {f["feature_id"]: f for f in ordered if f["gap_row"]["role"] == "primary"}
+    extras: dict[str, list[dict[str, Any]]] = {}
+    for f in ordered:
+        if f["gap_row"]["role"] == "extra":
+            extras.setdefault(f["gap_row"]["row"], []).append(f)
+    return primaries, extras
+
+
+def extras_at(
+    level: TerritoryLevel,
+    extras: list[dict[str, Any]],
+    values: dict[tuple[str, str], dict[str, Any]],
+) -> list[Measured]:
+    """The extra indicators computed at this level; one not computed there yet is left out."""
+    return [
+        Measured(feature, value)
+        for feature in extras
+        if (value := values.get((feature["feature_id"], level.value))) is not None
+    ]
 
 
 def missing_row_warnings(present: Iterable[GapRowKey], level: TerritoryLevel) -> list[str]:
@@ -193,40 +235,67 @@ def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
     return [unique[k] for k in sorted(unique)]
 
 
-def zone_gap_list(
-    conn: Connection, level: TerritoryLevel, code: str
-) -> tuple[ZoneGapList, list[str], str | None]:
-    """The list, warnings for rows not computed at this level or that could not be classified,
-    and the data version."""
-    zone = zone_ref(conn, level, code)
-    features = [dict(f) for f in conn.execute(_BOUND_FEATURES).mappings().all()]
-    primaries = {f["feature_id"]: f for f in features if f["gap_row"]["role"] == "primary"}
+def _values(
+    conn: Connection, features: list[str], level: TerritoryLevel, code: str
+) -> dict[tuple[str, str], dict[str, Any]]:
     params = {
-        "features": sorted(primaries),
+        "features": features,
         "level": level.value,
         "code": code,
         "region_level": REGION_LEVEL,
         "region_code": REGION_CODE,
     }
-    values: dict[tuple[str, str], dict[str, Any]] = {
+    return {
         (r["feature_id"], r["territory_level"]): dict(r)
         for r in conn.execute(_VALUES, params).mappings().all()
     }
+
+
+def _build_rows(
+    conn: Connection,
+    level: TerritoryLevel,
+    primaries: dict[str, dict[str, Any]],
+    extras: dict[str, list[dict[str, Any]]],
+    values: dict[tuple[str, str], dict[str, Any]],
+) -> tuple[list[GapRow], list[str], list[dict[str, Any]]]:
+    """The rows computed at this level in display order, warnings for rows not computed or not
+    classifiable, and the value rows the list uses (they set its data version)."""
     rows: list[GapRow] = []
     warnings: list[str] = []
+    used: list[dict[str, Any]] = []
     computed_rows: set[GapRowKey] = set()
     for feature_id, feature in primaries.items():
         row = values.get((feature_id, level.value))
         if row is None:
             continue  # not computed at this level yet: the row is absent, not SIN_DATOS
-        computed_rows.add(GapRowKey(feature["gap_row"]["row"]))
+        key = GapRowKey(feature["gap_row"]["row"])
+        computed_rows.add(key)
+        reference_row = values.get((feature_id, REGION_LEVEL))
+        row_extras = extras_at(level, extras.get(key.value, []), values)
         try:
-            rows.append(_gap_row(conn, feature, row, values.get((feature_id, REGION_LEVEL)), level))
+            rows.append(_gap_row(conn, Measured(feature, row), reference_row, row_extras, level))
         except UnclassifiableError as exc:
             warnings.append(str(exc))
+            continue
+        used.extend([row, *(e.value for e in row_extras)])
+        if reference_row is not None:
+            used.append(reference_row)
     warnings.extend(missing_row_warnings(computed_rows, level))
     rows.sort(key=lambda r: ROW_ORDER.index(r.row))
-    computed = [v["computed_at"] for v in values.values()]
+    return rows, warnings, used
+
+
+def zone_gap_list(
+    conn: Connection, level: TerritoryLevel, code: str
+) -> tuple[ZoneGapList, list[str], str | None]:
+    """The list, warnings for rows not computed at this level or that could not be classified,
+    and the data version (the latest computation among the values the list shows)."""
+    zone = zone_ref(conn, level, code)
+    primaries, extras = split_bound(dict(f) for f in conn.execute(_BOUND_FEATURES).mappings().all())
+    queried = sorted([*primaries, *(f["feature_id"] for fs in extras.values() for f in fs)])
+    values = _values(conn, queried, level, code)
+    rows, warnings, used = _build_rows(conn, level, primaries, extras, values)
+    computed = [v["computed_at"] for v in used]
     data_version = max(computed).date().isoformat() if computed else None
     gap_list = ZoneGapList(
         zone=zone,
