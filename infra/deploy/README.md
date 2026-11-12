@@ -172,7 +172,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
 2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
-   - El sync vacía con `TRUNCATE` las 9 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
+   - El sync vacía con `TRUNCATE` las 11 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
    - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 8/8.
    - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
 3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
@@ -218,7 +218,7 @@ Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.**
 1. Construye las imágenes: Postgres con PostGIS, y la API.
 2. Comprueba que la base de origen responde. Si no, da un mensaje claro con la URL enmascarada y para.
 3. Comprueba que la migración de la base de origen es la misma que la del checkout.
-4. Vuelca, en modo solo lectura, las 9 tablas del perfil demo (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
+4. Vuelca, en modo solo lectura, las 11 tablas del perfil demo (con `transit_hub` y `commute_time` desde CORE-009, D-220) (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
 5. Crea el esquema con Alembic en una base **staging**, carga el volcado y **compara los conteos de filas** con la base de origen.
 6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada, con el buscador encendido (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción; desde el 12 nov).
 7. Solo si todo lo anterior sale bien: la base staging pasa a ser la base de la demo y los ficheros `.tmp` sustituyen a los anteriores.
