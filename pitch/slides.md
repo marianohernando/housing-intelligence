@@ -114,7 +114,7 @@ Versión con buscador (la que vale):
 - **Cifra de impacto (A, D-229, `impact-0.1`):** «**25.551** niños de 0 a 4 años viven donde faltan escuelas infantiles», en grande, y debajo «Dónde invertir primero: Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde». Sustituye al ejemplo largo y a «179 municipios y 21 distritos de Madrid».
   - Fuente: `GET /api/v1/gaps/impact` y `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov. Son el 9,8 % de los niños de esa edad: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968, del padrón de cada distrito. Puente de Vallecas tiene ratio 0,571, con p = 0,001.
   - En el pie: «Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid».
-  - En producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310, 3 zonas). Si cambian los datos, se cambia la cifra. El ranking aún no se ve en la web (**pendiente de B**); en la slide sale de la API.
+  - En producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310, 3 zonas). Si cambian los datos, se cambia la cifra. El ranking también se ve en la web, en «Dónde invertir primero» («Qué falta» sin zona): Puente de Vallecas 9.433 (57 por cada 100), Carabanchel 9.150 (68) y Villaverde 6.968 (61).
   - Las demás filas (farmacias, mayores y vivienda) van en la pregunta 47, no en la slide.
 - **Cita 2 (Mariano):** el técnico municipal de la prueba con personas, 12 palabras como mucho. Ocupa el sitio de la captura C4, que repetía las cifras del ejemplo.
 - **Cita 1 (Mariano), en la tarjeta de utilidad:** alguien que busca casa. Ocupa el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.

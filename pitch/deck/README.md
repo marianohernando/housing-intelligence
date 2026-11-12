@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de la evidencia (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`). C1–C4 son de B con datos reales (`evidence/map-004/2026-11-12/deck/`): C3 y C4 tras gap-0.3 (PR #17) y C1 y C2 con `fit-0.2` (PR #19). Si no hay ninguna, el hueco sale con borde discontinuo |
+| `../capturas/C1.png`… | Opcional y sin versionar: una captura aquí sustituye a la de la evidencia. Si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`, que es la misma ruta que lleva cada `<img>` de `deck.html`, recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`). C1–C3 son de B con `fit-0.6` (PR #32, `evidence/map-004/2026-11-12/deck/`). Si no hay ninguna, el hueco sale con borde discontinuo |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 12 nov falla a propósito: la slide 3 tiene tres huecos (abajo) que hay que llenar antes del 24 nov. El borrador genera sin fallos |
+| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 12 nov falla a propósito: la slide 3 espera las 2 citas de la prueba con personas (abajo). El borrador genera sin fallos |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 

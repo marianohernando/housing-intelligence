@@ -205,7 +205,7 @@ Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen re
 **36. ¿Incluís seguridad? Es delicado.**
 No la puntuamos, y es una decisión. El dato oficial que evaluamos, los hechos conocidos de infracciones penales por cada 1.000 habitantes, cuenta dónde se denuncia o dónde actúa la policía, no dónde se vive: en 2024, Humanes de Madrid daba 116,2 y Madrid 58,6, frente a 47,9 de referencia, y ordenar zonas así señalaría municipios por la actividad que reciben. Además, solo cubre 36 de las 199 zonas y ninguno de los distritos de Madrid.
 - Evidencia: D-224 · D-226 · `evidence/gate-01/2026-11-12/seguridad-evaluacion.md` y `seguridad-fuentes.md` · D-204 y D-205 (nunca nacionalidad ni etiquetas como «peligroso»).
-- Si insiste: en los 21 distritos de Madrid sí damos contexto, que no puntúa ni ordena. Es cómo valoran los vecinos la seguridad de su barrio, de 0 a 10, según la Encuesta de calidad de vida de 2025 del Ayuntamiento, con unas 400 personas por distrito; la media de Madrid es 6,4 de noche y 7,8 de día (D-226 §1). Las actuaciones de la Policía Municipal miden la actividad policial, no el riesgo de vivir allí. Los atropellos, sin saber cuánta gente camina por cada calle, señalan los barrios con más vida. Ninguno de los dos puntúa (D-226 §2–3). Enseñar la tasa de criminalidad como contexto en esos 36 municipios sigue abierto (D-224 §3).
+- Si insiste: en los 21 distritos de Madrid sí damos contexto, que no puntúa ni ordena. Es cómo valoran los vecinos la seguridad de su barrio, de 0 a 10, según la Encuesta de calidad de vida de 2025 del Ayuntamiento, con unas 400 personas por distrito; la media de Madrid es 6,4 de noche y 7,8 de día (D-226 §1). En la web se ve en dos barras: por ejemplo, Villaverde da 4,9 de noche y 6,8 de día. Las actuaciones de la Policía Municipal miden la actividad policial, no el riesgo de vivir allí. Los atropellos, sin saber cuánta gente camina por cada calle, señalan los barrios con más vida. Ninguno de los dos puntúa (D-226 §2–3). Enseñar la tasa de criminalidad como contexto en esos 36 municipios sigue abierto (D-224 §3).
 - Estado: decidido (D-224 y D-226). La prioridad «Seguridad» no puntúa. La percepción vecinal está en la API y en la vista de zona de los distritos de Madrid.
 
 **37. ¿Sirve para alguien que no puede subir escaleras?**
@@ -279,8 +279,8 @@ En toda la región:
 En colegios y centros de salud no hay ninguna zona con una falta clara. Las zonas salen ordenadas por la gente afectada, y esa es la lista de dónde invertir primero.
 - Evidencia: D-229 (`impact-0.1`) · `GET /api/v1/gaps/impact` · `evidence/gate-04/2026-11-12/impact-cifras.txt` (datos del 12 nov). La gente afectada es la población que ya usa cada fila: el censo de la Comunidad y, en los distritos, el padrón. No se estima nada.
 - Detalle, si lo piden:
-  - escuelas infantiles: Puente de Vallecas (9.433), Carabanchel (9.150) y Villaverde (6.968);
+  - escuelas infantiles: Puente de Vallecas (9.433 niños; 57 escuelas por cada 100 de los municipios parecidos), Carabanchel (9.150; 68) y Villaverde (6.968; 61);
   - farmacias: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro;
   - mayores: 6 municipios, con Torrejón de Ardoz y Pozuelo de Alarcón a la cabeza;
   - vivienda: 25 municipios, con Fuenlabrada, Leganés y Alcorcón a la cabeza.
-- Estado: en producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). El ranking «dónde invertir primero» aún no se ve en la web (**pendiente de B**): si lo piden, se enseña la ruta.
+- Estado: en producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). La web lo enseña en «Dónde invertir primero», en «Qué falta» sin zona (producción, 12 nov).
