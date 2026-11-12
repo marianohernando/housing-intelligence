@@ -160,4 +160,36 @@ zonas 199 · cumplen 3 · desconocidas 142 · condición que más quita: budget
   casi: Puente de Vallecas (falla budget)
   casi: Villa de Vallecas (falla budget)
 
-6 escenarios dorados · todos OK
+## golden_sensory_preferences: OK
+zonas 199 · cumplen 49 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +100 €/mes → +0 zonas
+  1. Villaverde · 96 % · ≈ 737 €/mes
+       - Parque urbano a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 41 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 737 €/mes por 68 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  2. Usera · 96 % · ≈ 772 €/mes
+       - Parque urbano a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 39 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 772 €/mes por 68 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  3. Latina · 95 % · ≈ 826 €/mes
+       - Parque urbano a 3 min andando desde la mitad de sus calles (confianza 0.99)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - 34 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 826 €/mes por 68 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  4. Moratalaz · 95 % · ≈ 823 €/mes
+       - Parque urbano a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - 36 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 823 €/mes por 68 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  5. Carabanchel · 95 % · ≈ 842 €/mes
+       - Parque urbano a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 35 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 842 €/mes por 68 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  casi: Salamanca (falla budget)
+  casi: Chamartín (falla budget)
+  casi: Moncloa-Aravaca (falla budget)
+
+7 escenarios dorados · todos OK

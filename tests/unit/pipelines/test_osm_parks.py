@@ -11,7 +11,12 @@ from hi_contracts.catalog.corrections import ParkInclusion
 from hi_contracts.catalog.pipeline import OsmParksPipeline
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.osm_parks.inclusions import load_inclusions
-from hi_ingestion.pipelines.osm_parks.parks import EDGE_POINTS, normalize_parks
+from hi_ingestion.pipelines.osm_parks.parks import (
+    EDGE_POINTS,
+    edge_points,
+    normalize_parks,
+    polygons_only,
+)
 from hi_ingestion.pipelines.osm_parks.parse import parse_parks
 from hi_ingestion.pipelines.osm_parks.quality import run_parks_quality
 
@@ -43,6 +48,7 @@ NODES = {
     **_rectangle(21, 60, 50, 1000),  # 0.3 ha: too small
     **_rectangle(31, 200, 100, 1500),  # 2 ha garden: not a park
     **_rectangle(41, 150, 100, 2000),  # 1.5 ha: multipolygon park without a name
+    **_rectangle(51, 200, 100, 2500),  # 2 ha forest relation: a park only by its inclusion
 }
 EXTRACT = "\n".join(
     [
@@ -56,6 +62,9 @@ EXTRACT = "\n".join(
         _way(104, _closed(41)),
         '  <relation id="500"><member type="way" ref="104" role="outer"/>'
         '<tag k="type" v="multipolygon"/><tag k="leisure" v="park"/></relation>',
+        _way(105, _closed(51)),
+        '  <relation id="600"><member type="way" ref="105" role="outer"/>'
+        '<tag k="type" v="multipolygon"/><tag k="landuse" v="forest"/></relation>',
         "</osm>",
     ]
 )
@@ -141,3 +150,40 @@ def test_the_casa_de_campo_is_included_with_an_official_source() -> None:
         assert str(inclusion.source.url).startswith("https://")
     with pytest.raises(ValidationError):
         ParkInclusion.model_validate(GARDEN.model_dump() | {"osm_id": "node/1"})
+
+
+FOREST = GARDEN.model_copy(update={"osm_id": "relation/600"})
+
+
+def test_a_relation_an_official_source_lists_as_a_park_is_included(extract: Path) -> None:
+    """osmium numbers a relation's area 2 x id + 1 (D-222 §5)."""
+    places = normalize_parks(
+        parse_parks(extract, SPEC, [FOREST.osm_id]), SPEC, {FOREST.osm_id: FOREST}
+    )
+    assert "relation/600" in set(places.frame["external_id"])
+    assert run_parks_quality(places, SPEC, [FOREST.osm_id]).passed
+
+
+def test_an_inclusion_that_is_not_published_fails_the_quality_gate(extract: Path) -> None:
+    places = normalize_parks(parse_parks(extract, SPEC), SPEC)
+    assert run_parks_quality(places, SPEC).passed
+    assert not run_parks_quality(places, SPEC, ["relation/600"]).passed
+
+
+def test_an_invalid_outline_keeps_only_its_polygons() -> None:
+    mixed = shapely.GeometryCollection(
+        [
+            shapely.box(0, 0, 100, 100),
+            shapely.LineString([(0, 0), (500, 500)]),
+            shapely.MultiPolygon([shapely.box(200, 0, 300, 100)]),
+        ]
+    )
+    kept = polygons_only(mixed)
+    assert kept is not None
+    assert shapely.area(kept) == pytest.approx(20_000)
+    assert len(edge_points(kept, 50.0)) >= 16
+    assert polygons_only(shapely.LineString([(0, 0), (1, 1)])) is None
+    bowtie = shapely.Polygon([(0, 0), (200, 200), (200, 0), (0, 200), (0, 0)])
+    valid = polygons_only(shapely.make_valid(bowtie))
+    assert valid is not None
+    assert shapely.area(valid) == pytest.approx(20_000)

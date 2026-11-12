@@ -52,3 +52,10 @@ scenarios:
       anchors: [{kind: study, label: URJC Vicálvaro, lon: -3.6090, lat: 40.4050, days_per_week: 5, max_minutes: null}]
       priorities: [transporte]
     expect: {max_results: 5, binding: budget}
+  - profile_id: golden_sensory_preferences  # D-222: green areas first (the profile's «green»)
+    scenario:
+      budget: {kind: rent, amount_eur: 1000}
+      household: {adults: 1, minors: 1, minor_ages: [9]}
+      anchors: [{kind: study, label: Colegio en Chamberí, lon: -3.7037, lat: 40.4340, days_per_week: 5, max_minutes: null}]
+      priorities: [zonas_verdes, transporte]
+    expect: {min_results: 10, top_green_strength: 5}

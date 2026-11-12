@@ -36,4 +36,4 @@
 | 10–30 | 29 |
 | > 30 (sin parque urbano a un paseo) | 101 |
 
-Ejemplos: Móstoles y Madrid 4 min, Getafe 5, Alcalá de Henares y Collado Villalba 6, Aranjuez 7, Torrelodones 8; Cercedilla 62, Chinchón 192, Rascafría 343, Patones 363. Los de más de 30 minutos son, sobre todo, pueblos rodeados de campo: el indicador mide parques urbanos, no el verde (D-222 §6).
+Ejemplos: Móstoles y Madrid 4 min, Getafe 5, Alcalá de Henares y Collado Villalba 6, Aranjuez 7, Torrelodones 8; Cercedilla 62, Chinchón 192, Rascafría 343, Patones 363. De los 101 de más de 30 minutos, 78 son rurales según la Ley 45/2007 (población < 30.000 y densidad < 100 hab/km², el criterio de D-213; hay 84 rurales en la región) y 23 urbanos. Las cifras de más de 30 minutos se leen como «no hay parque urbano a un paseo», no como una distancia útil: el indicador mide parques urbanos, no el campo (D-222 §6).

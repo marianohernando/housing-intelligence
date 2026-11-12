@@ -38,6 +38,15 @@
       "details": {}
     },
     {
+      "name": "every_inclusion_published",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "included": 2,
+        "missing": []
+      }
+    },
+    {
       "name": "quarantine_ratio",
       "critical": true,
       "passed": true,

@@ -83,8 +83,8 @@ PRIORITY_NEED: dict[PriorityKey, NeedKey] = {
 @dataclass(frozen=True)
 class PriorityWalk:
     """A priority measured by walking to a kind of place (D-222): what the fact calls it, the
-    window that scores 1 and, beyond the walking range (WALK_ZERO_AT x window), what to say:
-    the indicator then tells nothing about the zone, so it is UNKNOWN, never a missing."""
+    window that scores 1 and what to say beyond the walking range (WALK_ZERO_AT x window),
+    where the place is not at a walk but what the person means may be (the countryside)."""
 
     name: str  # the priority, as the web says it
     label: str  # the place
@@ -349,26 +349,35 @@ def walk_fact(need: NeedKey, walk: IndicatorValue | None, target: int) -> Score:
     return Score(walk_utility(walk.value, target), walk.confidence, fact)
 
 
+# Beyond its walking range a priority measured on foot scores 0, as any walk does, but the
+# place may not be what the person means (a village's countryside is not a park, D-222 §7).
+OUT_OF_RANGE_CONFIDENCE = 0.5
+
+
 def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> Score:
-    """Walking minutes to the place a priority measures; beyond the walking range, UNKNOWN."""
-    unknown = None
+    """Walking minutes to the place a priority measures: 1 up to the window, 0 at the walking
+    range (WALK_ZERO_AT x window). Beyond it, 0 with `out_of_range` as the fact and low
+    confidence; never UNKNOWN, which would rank a zone without the place above one with it far."""
     if walk is None or walk.value is None:
-        unknown = f"{measured.name}: sin datos de distancia a pie en esta zona"
-    elif walk.value > WALK_ZERO_AT * measured.target_minutes:
-        unknown = measured.out_of_range
-    if unknown is not None:
-        fact = Fact(kind=FactKind.UNKNOWN, topic=measured.topic, text=unknown, confidence=0.0)
+        text = f"{measured.name}: sin datos de distancia a pie en esta zona"
+        fact = Fact(kind=FactKind.UNKNOWN, topic=measured.topic, text=text, confidence=0.0)
         return Score(None, 0.0, fact)
-    assert walk is not None and walk.value is not None  # noqa: S101 - narrowed above
+    utility = walk_utility(walk.value, measured.target_minutes)
+    if walk.value > WALK_ZERO_AT * measured.target_minutes:
+        confidence = min(walk.confidence, OUT_OF_RANGE_CONFIDENCE)
+        text = measured.out_of_range
+    else:
+        confidence = walk.confidence
+        text = f"{measured.label} a {minutes_text(walk.value)} andando desde la mitad de sus calles"
     kind = FactKind.STRENGTH if walk.value <= measured.target_minutes else FactKind.WEAKNESS
     fact = Fact(
         kind=kind,
         topic=measured.topic,
-        text=f"{measured.label} a {minutes_text(walk.value)} andando desde la mitad de sus calles",
-        confidence=walk.confidence,
+        text=text,
+        confidence=confidence,
         indicator=walk,
     )
-    return Score(walk_utility(walk.value, measured.target_minutes), walk.confidence, fact)
+    return Score(utility, confidence, fact)
 
 
 def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:

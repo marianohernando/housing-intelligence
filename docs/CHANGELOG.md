@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.44 — Revisión de las zonas verdes (2026-11-12)
+- D-222 §4–§7: sin parque urbano a un paseo puntúa 0 con confidence baja (UNKNOWN rompía el orden); Quality Gate de inclusiones; recuentos que pueden repetir parques; 78 de los 101 municipios lejos de un parque son rurales.
+
 ## v0.5.43 — Zonas verdes en el buscador (2026-11-12)
 - D-222 §7: `POST /search` pasa a `fit-0.3`; la prioridad «Zonas verdes» puntúa los minutos a pie hasta un parque urbano y, sin parque a un paseo, sale UNKNOWN («el campo no cuenta»).
 

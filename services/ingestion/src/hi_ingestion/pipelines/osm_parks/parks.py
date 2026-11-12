@@ -38,10 +38,25 @@ def _to_25830(coords: NDArray[np.float64]) -> NDArray[np.float64]:
     return np.column_stack([x, y])
 
 
+def polygons_only(geometry: shapely.Geometry) -> shapely.Geometry | None:
+    """The polygons of a geometry, at any depth (make_valid may return a collection with lines
+    or points); None when there is none."""
+    polygons: list[shapely.Polygon] = []
+    pending: list[shapely.Geometry] = [geometry]
+    while pending:
+        part = pending.pop()
+        if isinstance(part, shapely.Polygon) and not part.is_empty:
+            polygons.append(part)
+        elif isinstance(part, shapely.MultiPolygon | shapely.GeometryCollection):
+            pending.extend(part.geoms)
+    return shapely.MultiPolygon(polygons) if polygons else None
+
+
 def edge_points(park: shapely.Geometry, step_m: float) -> list[list[float]]:
     """Points along the outer rings, no farther apart than `step_m`, rounded to 0.1 m."""
-    polygons = shapely.get_parts(park)
-    rings = [shapely.segmentize(p.exterior, step_m) for p in polygons]  # pyright: ignore[reportAttributeAccessIssue]
+    rings = [
+        shapely.segmentize(shapely.get_exterior_ring(p), step_m) for p in shapely.get_parts(park)
+    ]
     coords = np.concatenate([shapely.get_coordinates(r)[:-1] for r in rings])
     unique = np.unique(np.round(coords, 1), axis=0)
     return unique.tolist()
@@ -77,7 +92,7 @@ def _geometry(wkb: str) -> shapely.Geometry | None:
     if not wkb:
         return None
     park = shapely.transform(shapely.from_wkb(wkb), _to_25830)
-    return park if park.is_valid and not park.is_empty else shapely.make_valid(park)
+    return polygons_only(park if shapely.is_valid(park) else shapely.make_valid(park))
 
 
 def normalize_parks(

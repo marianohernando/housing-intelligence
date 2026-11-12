@@ -236,6 +236,7 @@ def fixtures_ingested(
                 src,
                 evidence_root=None,
                 data_dir=tmp,
+                inclusions_file=tmp / "no_inclusions.yaml",  # the real ones are not in the grid
             )
         elif isinstance(spec, MadridDistrictPanelPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "panel_sample" / f"{dataset_id}.csv")

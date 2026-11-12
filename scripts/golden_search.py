@@ -14,7 +14,7 @@ import yaml
 from sqlalchemy import create_engine
 
 from hi_api.services.search import load, search
-from hi_contracts.public import FactTopic, RankedZone, ScenarioState, SearchResult
+from hi_contracts.public import FactKind, FactTopic, RankedZone, ScenarioState, SearchResult
 from hi_domain.fit import anchor_km
 from hi_domain.search import run_search
 
@@ -49,6 +49,17 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
             bool(result.results) and (transit_minutes(result.results[0]) or float("inf")) <= v
         ),
         "all_unknown": lambda v: (check.zones_unknown == check.zones_evaluated) is v,
+        # D-222: the first zones have an urban park within the «Zonas verdes» window
+        "top_green_strength": lambda v: (
+            len(result.results) >= v
+            and all(
+                any(
+                    f.topic is FactTopic.ZONAS_VERDES and f.kind is FactKind.STRENGTH
+                    for f in r.facts
+                )
+                for r in result.results[:v]
+            )
+        ),
         "binding": lambda v: check.binding_constraint == v,
     }
     return [f"{key}={value}" for key, value in expect.items() if not rules[key](value)]

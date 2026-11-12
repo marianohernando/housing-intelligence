@@ -286,3 +286,12 @@ def test_green_areas_are_the_walk_to_a_park(catalog: Catalog) -> None:
         if f.fit is not None and f.fit.priority == "zonas_verdes"
     ]
     assert bound == ["min_a_pie_parque"]
+
+
+def test_every_priority_binding_is_a_priority_the_search_measures(catalog: Catalog) -> None:
+    from hi_contracts.public import PriorityKey
+    from hi_domain.fit import PRIORITY_WALK
+
+    for spec in catalog.features.values():
+        if spec.fit is not None and spec.fit.priority is not None:
+            assert PriorityKey(spec.fit.priority) in PRIORITY_WALK, spec.feature_id

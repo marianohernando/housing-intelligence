@@ -1,6 +1,6 @@
 # Parques de OpenStreetMap (DATA-018, D-222) · Gate 1
 
-`uv run hi-ingest run osm_parques` (parser `osm-parks-1.1.0`): extracto de Geofabrik descargado el 12 nov (`https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf`, ODbL) y `data/catalog/corrections/parks.yaml`; versión `2026-11-12-199d4d500a72`. Calidad en verde: `osm_parques/quality_report.json`; recuentos: `osm_parques/row_counts.json`.
+`uv run hi-ingest run osm_parques` (parser `osm-parks-1.1.1`): extracto de Geofabrik descargado el 12 nov (`https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf`, ODbL) y `data/catalog/corrections/parks.yaml`; versión `2026-11-12-199d4d500a72`. Calidad en verde: `osm_parques/quality_report.json`; recuentos: `osm_parques/row_counts.json`.
 
 | | |
 |---|---|
@@ -27,3 +27,10 @@ Fuente: «Principales parques y jardines municipales» (datos.madrid.es, `200761
   - Quinta de los Molinos (21 ha) y Pan Bendito (6,7 ha) sí están en OSM como parque; la coordenada del Ayuntamiento cae a unos 300 m (su dirección postal).
   - El resto son jardines y plazas de menos de 1 ha en OSM (Jardín del Duque de Ahumada 0,5 ha, Parque Juan XXIII 0,9 ha, Parque San Juan Bautista 0,8 ha…) o no tienen área en OSM: fuera por el umbral de la OMS, no por un error.
 - No se incluye el Monte de El Pardo (Patrimonio Nacional, acceso restringido): no está en la lista del Ayuntamiento.
+
+## Límites de esta evidencia
+
+- La comparación con la lista del Ayuntamiento se hizo con un script de exploración, no versionado; su resultado está arriba y las dos inclusiones, con su fuente, en `data/catalog/corrections/parks.yaml`.
+- 711 parques (51 %) no tienen nombre en OSM y se publican como «Parque sin nombre».
+- Los recuentos pueden contar dos veces un parque dibujado como vía y como relación, o uno dentro de otro (D-222 §4); las distancias no cambian.
+- Desde `osm-parks-1.1.1`, de un contorno inválido solo se quedan sus polígonos (test con un «lazo» y con una colección con líneas), y el Quality Gate exige que cada parque incluido se publique (`every_inclusion_published`, en verde con 2 de 2).
