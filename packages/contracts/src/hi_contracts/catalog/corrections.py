@@ -3,6 +3,7 @@
 A correction never invents a value: it says which record, what to use instead, why, and where an
 official source publishes it (URL, date consulted and the exact text). The ingestion applies it
 with lineage: the file is an input of the register's run and the place says it was corrected.
+A corrected name is the source's own text (D-221): only case and quotation marks may differ.
 """
 
 from datetime import date
@@ -40,6 +41,14 @@ class DirectoryFix(BaseModel):
     entry_id: str = Field(min_length=1)
 
 
+_QUOTES = str.maketrans("", "", "\"'«»“”‘’")
+
+
+def _as_said(text: str) -> str:
+    """For comparing a name with its source: without case, quotation marks or extra spaces."""
+    return " ".join(text.translate(_QUOTES).split()).casefold()
+
+
 class PlaceCorrection(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -49,12 +58,21 @@ class PlaceCorrection(BaseModel):
     source: OfficialSource
     address: AddressFix | None = None
     directory: DirectoryFix | None = None
+    name: str | None = Field(
+        default=None,
+        min_length=3,
+        description="The name to show, as the source writes it (tildes included, D-221)",
+    )
 
     @model_validator(mode="after")
-    def _one_fix(self) -> Self:
-        if (self.address is None) == (self.directory is None):
-            msg = f"{self.dataset_id}/{self.entity_id}: give exactly one of address or directory"
-            raise ValueError(msg)
+    def _fixes(self) -> Self:
+        key = f"{self.dataset_id}/{self.entity_id}"
+        if self.address is not None and self.directory is not None:
+            raise ValueError(f"{key}: give an address or a directory entry, not both")
+        if self.address is None and self.directory is None and self.name is None:
+            raise ValueError(f"{key}: nothing to correct")
+        if self.name is not None and _as_said(self.name) not in _as_said(self.source.says):
+            raise ValueError(f"{key}: the name must be the text the source says")
         return self
 
 

@@ -7,7 +7,7 @@
       "sha256": "ec0b4644b3a83d9d4f0305f2f3475441774cdfb7882571198d1a1e6c99019c0b",
       "bytes": 7914365,
       "url": "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv",
-      "retrieved_at": "2026-11-12T11:42:13.831890+00:00"
+      "retrieved_at": "2026-11-12T12:02:44.710893+00:00"
     },
     {
       "dataset_id": "ms_catalogo_nacional_hospitales",
@@ -31,15 +31,15 @@
       "dataset_id": "cm_centros_sanitarios",
       "role": "corrections",
       "path": "data/catalog/corrections/places.yaml",
-      "sha256": "9ad288b94987b772eed2d38110ef27c4316a88223ddfd3a4f562eef9c473e3b8",
-      "bytes": 4757,
+      "sha256": "6043b23049e7107302cb8442d7aa25739c545154439e69c34dc4bb7500d3b83b",
+      "bytes": 13182,
       "url": "data/catalog/corrections/places.yaml",
-      "retrieved_at": "2026-11-12T11:41:38.845323+00:00"
+      "retrieved_at": "2026-11-12T12:02:06.526514+00:00"
     }
   ],
-  "checksum": "296653c30a0b3c05f2b7c338f3a6f273e80b845865d4c8e03aa649a676a46ce9",
-  "parser_version": "places-1.6.0",
-  "dataset_version": "2026-11-12-296653c30a0b",
-  "correlation_id": "6de99d1a20ef48f0a875a599cfd2cbbe",
-  "silver": "data/silver/cm_centros_sanitarios/296653c30a0b/places.csv.gz"
+  "checksum": "6f1013c9c79d7c6b2019faf16aa2a7f9f0b58c42aa185169add25639b3d49f48",
+  "parser_version": "places-1.7.0",
+  "dataset_version": "2026-11-12-6f1013c9c79d",
+  "correlation_id": "47cd563b23704ecd8f84f564586e5386",
+  "silver": "data/silver/cm_centros_sanitarios/6f1013c9c79d/places.csv.gz"
 }

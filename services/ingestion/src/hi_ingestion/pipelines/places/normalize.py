@@ -253,6 +253,16 @@ def _with_address(record: dict[str, Any], spec: PointsPipeline, fix: AddressFix)
     return record | {spec.address_street_column: fix.street, spec.address_number_column: fix.number}
 
 
+def _rename(rows: list[dict[str, Any]], fixes: dict[str, PlaceCorrection]) -> None:
+    """A corrected name goes last, over the register's and the directory's (D-221); the place
+    keeps the name it replaces, and the directory attribute keeps the published one."""
+    for place in rows:
+        fix = fixes.get(str(place["external_id"]))
+        if fix is not None and fix.name is not None:
+            place["attributes"]["correction"]["previous_name"] = place["canonical_name"]
+            place["canonical_name"] = fix.name
+
+
 def normalize_places(
     frame: pd.DataFrame,
     spec: PointsPipeline,
@@ -310,6 +320,7 @@ def normalize_places(
         if c.directory is not None
     }
     attached = attach_directories(rows, register, directories or [], forced)
+    _rename(rows, fixes)
     return Places(
         pd.DataFrame(rows, columns=PLACE_COLUMNS),
         pd.DataFrame(bad, columns=["external_id", "reason"]),

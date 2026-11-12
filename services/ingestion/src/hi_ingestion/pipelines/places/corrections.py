@@ -35,10 +35,20 @@ def corrections_input(dataset_id: str, path: Path = CORRECTIONS_FILE) -> Fetched
     )
 
 
+def correction_kind(correction: PlaceCorrection) -> str:
+    """«address», «directory», «name» or both of a place and its name: «directory+name»."""
+    fixes = {
+        "address": correction.address,
+        "directory": correction.directory,
+        "name": correction.name,
+    }
+    return "+".join(kind for kind, fix in fixes.items() if fix is not None)
+
+
 def correction_attribute(correction: PlaceCorrection) -> dict[str, object]:
     """What the place says about it: corrected, how and from which official source."""
     return {
-        "kind": "address" if correction.address else "directory",
+        "kind": correction_kind(correction),
         "reason": correction.reason,
         "source": correction.source.publisher,
         "url": str(correction.source.url),

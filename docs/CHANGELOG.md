@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.39 — Nombres con tilde con fuente oficial (2026-11-12)
+- D-221: `name` en las correcciones de lugares, tomado del texto de su fuente; 11 nombres de hospitales y centros de atención primaria recuperan sus tildes.
+
 ## v0.5.38 — Correcciones con fuente oficial (2026-11-12)
 - D-218 §10: fichero versionado de correcciones de lugares, aplicado con linaje; Ramón y Cajal con nombre y camas y 4 centros de salud con ubicación.
 
