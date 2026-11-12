@@ -1196,3 +1196,41 @@ Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano 
 5. **Si se elige A:**
    - versión 3 de `alquiler_m2_mensual` y `fit-0.6`, con tests antes del código y el golden actualizado;
    - el texto `RENT_NOTE` está en el código, así que primero se despliega y después se sincroniza.
+
+## D-229 — Cifras de impacto: gente que vive donde falta y «dónde invertir primero» (2026-11-12)
+Fase de mejora, punto 3 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`): es lo que más puntos da según el jurado simulado. Método `impact-0.1`. Código:
+- `hi_domain/gap_impact.py`;
+- `hi_api/services/gap_impact.py`;
+- ruta `GET /api/v1/gaps/impact`;
+- campo `people` en cada fila de `/gaps/{level}/{code}`.
+
+Evidencia: `evidence/gate-04/2026-11-12/impact-cifras.txt`. Es reversible: ruta y campo nuevos, opcionales y sin cambios en lo que ya existía.
+
+1. **Gente afectada:**
+   - **Qué es:** la población objetivo de la fila que vive en una zona en FALTA.
+     - Escuela infantil: niños de 0 a 4 años.
+     - Colegio: niños de 5 a 14 años.
+     - Centro de salud y farmacia: habitantes.
+     - Mayores: personas de 65 años o más.
+     - Vivienda: hogares de 4 o más personas.
+   - **De dónde sale:** es el mismo denominador que guarda el indicador de la fila (D-213 §4). Viene del censo de la CM y, en los distritos, del padrón escalado (D-209, D-216). No se estima nada.
+   - **Unidades:** los 2SFCA guardan el denominador por cada `per` personas y los demás métodos, en personas. La conversión está en una sola función (`people_scale`).
+   - **Coherencia con el catálogo:** un test comprueba que la etiqueta («niños de 0 a 4 años») coincide con las dimensiones de población de la feature principal de cada fila.
+2. **Zonas:** las del buscador (D-215): los municipios, con Madrid capital por sus 21 distritos cuando la fila tiene valores por distrito y entera cuando no (vivienda). `madrid_level` dice cuál se usa. Los estados salen de los mismos mapas en caché que `/gaps?level=&row=` (la caché pasa de `search.py` a `gap_map.py`), así que una zona contada aquí sale FALTA en el mapa y en su lista; lo comprueba un test.
+3. **«Dónde invertir primero»:**
+   - **Orden:** las zonas en FALTA, de más a menos gente afectada.
+   - **Significación (D-213, D-217):** cada zona trae su ratio frente a los municipios parecidos (el de su grupo si se compara con sus vecinos) y `p_value`. Es la probabilidad exacta de Poisson, unilateral, de que una zona con la tasa de referencia tenga tan poco. Es la misma prueba que decide FALTA: p < 0,025 equivale a que la cota de Garwood al 95 % quede por debajo de lo esperado (test).
+   - **Frase:** «Viven aquí 9.433 niños de 0 a 4 años. Tienen 57 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces».
+4. **Cifras con los datos del 12 nov:**
+   - **Escuelas infantiles:** 25.551 niños de 0 a 4 años (el 9,8 %) en 3 distritos (Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968).
+   - **Centros de mayores:** 54.581 personas de 65 años o más (el 4,1 %) en 6 municipios, encabezados por Torrejón de Ardoz y Pozuelo de Alarcón.
+   - **Farmacias:** 667.172 personas (el 9,4 %) en 5 municipios: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro.
+   - **Vivienda para familias:** 99.483 hogares de 4 o más personas (el 14,8 %) en 25 municipios, encabezados por Fuenlabrada, Leganés y Alcorcón.
+   - **Colegios y centros de salud:** ninguna zona tiene una falta clara.
+5. **Límites declarados:**
+   - **Contar a toda la población objetivo:** se cuenta a toda la de la zona, aunque dentro de ella unas calles estén mejor servidas que otras.
+   - **Zona comparada con sus vecinos:** cuenta su propia gente, no la del grupo.
+   - **Lo que no se calcula:**
+     - cuántos centros harían falta: la oferta del 2SFCA es compartida entre zonas y ese número se leería mal;
+     - un ranking de zonas en JUSTO.
+6. **Frase de la web «Aquí hay {n} por cada 100 que hay en municipios parecidos» (pregunta de D):** la calcula la web con lo que ya da la API, `n = round(100 × ratio_to_reference)`. Si la zona se compara con sus vecinos, se usa el `ratio_to_reference` de `comparison_group`. El `explanation` de `/gaps` no cambia.

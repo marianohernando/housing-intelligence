@@ -17,6 +17,7 @@ from hi_api.services.gaps import (
     significant,
     split_bound,
 )
+from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import GapRowMap, GapStatus, GapStatusCounts, ZoneGapStatus
 from hi_domain.gaps import (
@@ -30,7 +31,8 @@ from hi_domain.geo.names import display_name
 
 _BOUND_ROW = text(
     """
-    SELECT feature_id, human_name, unit, direction, spec->'gap_row' AS gap_row
+    SELECT feature_id, human_name, unit, direction, spec->'gap_row' AS gap_row,
+           spec->'formula' AS formula
       FROM feature_registry
      WHERE spec->'gap_row' IS NOT NULL AND spec->'gap_row' <> 'null'::jsonb
        AND spec->'gap_row'->>'row' = :row
@@ -105,7 +107,8 @@ def _versions(rows: list[dict[str, Any]]) -> dict[str, str]:
     return versions
 
 
-def _primary_feature(conn: Connection, row: GapRowKey) -> dict[str, Any]:
+def primary_feature(conn: Connection, row: GapRowKey) -> dict[str, Any]:
+    """The feature bound as the row's main indicator, with its formula."""
     bound = conn.execute(_BOUND_ROW, {"row": row.value}).mappings()
     primaries, _ = split_bound(dict(f) for f in bound)
     if not primaries:
@@ -132,7 +135,7 @@ def gap_row_map(
 ) -> tuple[GapRowMap, list[str], str | None]:
     """The map, warnings (row not computed at this level, zones that could not be classified)
     and the data version (latest computation among the values shown)."""
-    feature = _primary_feature(conn, row)
+    feature = primary_feature(conn, row)
     params = {"feature_id": feature["feature_id"]}
     region_params = params | {"level": REGION_LEVEL, "code": REGION_CODE}
     region = conn.execute(_REGION_VALUE, region_params).mappings().first()
@@ -166,3 +169,35 @@ def gap_row_map(
     )
     data_version = max(v["computed_at"] for v in used).date().isoformat() if used else None
     return gap_map, warnings, data_version
+
+
+GapMapEntry = tuple[GapRowMap | None, list[str]]
+_GAP_MAPS: dict[tuple[str, str, str, str], GapMapEntry] = {}
+GAP_CACHE_MAX = 64
+_DATA_STAMP = text("SELECT max(computed_at) FROM feature_value")
+
+
+def data_stamp(conn: Connection) -> str:
+    """The latest feature computation: cached maps are valid until it changes."""
+    return str(conn.execute(_DATA_STAMP).scalar())
+
+
+def cached_row_map(
+    conn: Connection, level: TerritoryLevel, row: GapRowKey, stamp: str
+) -> GapMapEntry:
+    """GET /gaps?level=&row= for one row, cached per process until the features change (the
+    stamp is the latest computation): the same answer, without ~5 queries per row and level.
+    A row with no main indicator comes back as None with a warning."""
+    key = (str(conn.engine.url), stamp, level.value, row.value)
+    cached = _GAP_MAPS.get(key)
+    if cached is not None:
+        return cached
+    try:
+        gap_map, warnings, _ = gap_row_map(conn, level, row)
+        entry: GapMapEntry = (gap_map, warnings)
+    except RowNotBoundError as exc:
+        entry = (None, [f"{ErrorCode.INSUFFICIENT_DATA.value}: {exc}"])
+    if len(_GAP_MAPS) >= GAP_CACHE_MAX:
+        _GAP_MAPS.clear()
+    _GAP_MAPS[key] = entry  # returned from the local: another thread may clear the cache
+    return entry

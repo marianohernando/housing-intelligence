@@ -72,6 +72,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 3138,
+        "label": "niños de 0 a 4 años"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -181,6 +185,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 5961,
+        "label": "niños de 5 a 14 años"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -312,6 +320,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 140810,
+        "label": "personas"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -433,6 +445,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 23074,
+        "label": "personas de 65 años o más"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -541,6 +557,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 140810,
+        "label": "personas"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -633,6 +653,7 @@
           ]
         }
       ],
+      "people": null,
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",

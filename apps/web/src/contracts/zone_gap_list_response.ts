@@ -99,6 +99,8 @@ export type Value = number | null;
  */
 export type ExtraIndicators = IndicatorValue[];
 export type Label1 = string;
+export type Count = number;
+export type Label2 = string;
 export type ProxyNote = string | null;
 /**
  * Oriented so that above 1 is better than the reference
@@ -202,6 +204,10 @@ export interface GapRow {
   extra_indicators?: ExtraIndicators;
   indicator: IndicatorValue;
   label: Label1;
+  /**
+   * Who the row serves in this zone (children of 0 to 4, people of 65 or more, …): the denominator of its indicator. With FALTA, the people affected (D-229). None when the indicator keeps no counts
+   */
+  people?: PeopleCount | null;
   proxy_note?: ProxyNote;
   ratio_to_reference?: RatioToReference1;
   reference: Reference1;
@@ -237,6 +243,13 @@ export interface IndicatorValue {
   null_reason?: NullReason | null;
   unit: Unit;
   value: Value;
+}
+/**
+ * The population a row serves, living in the zone (D-229): its indicator's denominator.
+ */
+export interface PeopleCount {
+  count: Count;
+  label: Label2;
 }
 /**
  * A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.

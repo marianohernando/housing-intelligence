@@ -16,12 +16,13 @@ from typing import Any
 from sqlalchemy import Connection, create_engine
 
 from hi_api.services.datasets import dataset_list
+from hi_api.services.gap_impact import gap_impact
 from hi_api.services.gap_map import gap_row_map
 from hi_api.services.gaps import missing_row_warnings, zone_gap_list
 from hi_api.services.places import places_geojson
 from hi_api.services.search import search
 from hi_contracts.catalog.enums import GapRowKey, PlaceCategory, TerritoryLevel
-from hi_contracts.public import GapRowMap, ScenarioState, SearchResult, ZoneGapList
+from hi_contracts.public import GapImpact, GapRowMap, ScenarioState, SearchResult, ZoneGapList
 from hi_contracts.public.places import PlaceCollection
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "contracts"
@@ -45,6 +46,13 @@ def row_map(conn: Connection, level: TerritoryLevel, row: GapRowKey) -> GapRowMa
     gap_map, warnings, _ = gap_row_map(conn, level, row)
     assert not warnings, warnings  # noqa: S101 - every zone classified
     return gap_map
+
+
+def impact(conn: Connection) -> GapImpact:
+    """Exactly what GET /api/v1/gaps/impact returns today (D-229)."""
+    result, warnings, _ = gap_impact(conn)
+    assert not warnings, warnings  # noqa: S101 - every FALTA zone ranked
+    return result
 
 
 def demo_scenario() -> ScenarioState:
@@ -128,6 +136,7 @@ def main() -> None:
             "gap_row_map.centro_salud_distrito",
             row_map(conn, TerritoryLevel.DISTRITO, GapRowKey.CENTRO_SALUD),
         )
+        write("gap_impact.comunidad", impact(conn))
         write("search_result.familia_presupuesto", search_result(conn))
         write("dataset_list.all", dataset_list(conn, cm_only=False))
 

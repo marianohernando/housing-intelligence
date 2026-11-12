@@ -1,0 +1,499 @@
+{
+  "$defs": {
+    "ComparisonGroup": {
+      "additionalProperties": false,
+      "description": "A zone too small to compare alone, compared with its nearest same-type neighbours.\n\ngap-0.3 (D-217): the nearest municipios of the same type are added until the group expects\n3,69 cases at the reference rate (the floor of D-213). `status` is then the group's.",
+      "properties": {
+        "codes": {
+          "description": "The zone first, then its neighbours",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Codes",
+          "type": "array"
+        },
+        "names": {
+          "examples": [
+            [
+              "La Acebeda",
+              "Robregordo"
+            ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Names",
+          "type": "array"
+        },
+        "ratio_to_reference": {
+          "description": "Group total over its expected total",
+          "minimum": 0,
+          "title": "Ratio To Reference",
+          "type": "number"
+        }
+      },
+      "required": [
+        "codes",
+        "names",
+        "ratio_to_reference"
+      ],
+      "title": "ComparisonGroup",
+      "type": "object"
+    },
+    "DatasetRef": {
+      "additionalProperties": false,
+      "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
+      "properties": {
+        "attribution_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the licence asks to show next to the data (source, date, geocoder)",
+          "title": "Attribution Text"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "is_cm_open_data": {
+          "description": "Published in the Comunidad de Madrid open data portal (counts for DATAMAD)",
+          "title": "Is Cm Open Data",
+          "type": "boolean"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Portal page (CM portal when it exists)",
+          "title": "Url"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dataset_version label used",
+          "title": "Version"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name",
+        "publisher",
+        "is_cm_open_data"
+      ],
+      "title": "DatasetRef",
+      "type": "object"
+    },
+    "GapImpact": {
+      "additionalProperties": false,
+      "description": "GET /api/v1/gaps/impact: the people affected by each row, region-wide (D-229).",
+      "properties": {
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "method": {
+          "$ref": "#/$defs/GapMethod"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/GapImpactRow"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "version": {
+          "examples": [
+            "impact-0.1"
+          ],
+          "title": "Version",
+          "type": "string"
+        },
+        "zones_note": {
+          "description": "Which zones are counted: the municipios and Madrid capital's districts",
+          "title": "Zones Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "method",
+        "zones_note",
+        "rows",
+        "datasets"
+      ],
+      "title": "GapImpact",
+      "type": "object"
+    },
+    "GapImpactRow": {
+      "additionalProperties": false,
+      "description": "One row of the list: how many people live where it is missing, and where to invest.",
+      "properties": {
+        "label": {
+          "examples": [
+            "Escuelas infantiles"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "madrid_level": {
+          "$ref": "#/$defs/TerritoryLevel",
+          "description": "Madrid capital counted by its 21 districts, or as one municipio when the row has no district values"
+        },
+        "people_in_falta": {
+          "minimum": 0,
+          "title": "People In Falta",
+          "type": "integer"
+        },
+        "people_label": {
+          "examples": [
+            "niños de 0 a 4 años"
+          ],
+          "title": "People Label",
+          "type": "string"
+        },
+        "people_total": {
+          "description": "The row's target population in the region",
+          "minimum": 0,
+          "title": "People Total",
+          "type": "integer"
+        },
+        "ranking": {
+          "description": "Where to invest first: zones in FALTA, most people affected first",
+          "items": {
+            "$ref": "#/$defs/GapImpactZone"
+          },
+          "title": "Ranking",
+          "type": "array"
+        },
+        "row": {
+          "$ref": "#/$defs/GapRowKey"
+        },
+        "share_in_falta": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Share In Falta",
+          "type": "number"
+        },
+        "summary": {
+          "examples": [
+            "En la Comunidad de Madrid, 23.456 niños de 0 a 4 años (el 9,0 %) viven en 3 zonas donde faltan escuelas infantiles"
+          ],
+          "title": "Summary",
+          "type": "string"
+        },
+        "zones": {
+          "description": "Zones classified",
+          "minimum": 0,
+          "title": "Zones",
+          "type": "integer"
+        },
+        "zones_in_falta": {
+          "minimum": 0,
+          "title": "Zones In Falta",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "row",
+        "label",
+        "people_label",
+        "madrid_level",
+        "zones",
+        "zones_in_falta",
+        "people_in_falta",
+        "people_total",
+        "share_in_falta",
+        "summary",
+        "ranking"
+      ],
+      "title": "GapImpactRow",
+      "type": "object"
+    },
+    "GapImpactZone": {
+      "additionalProperties": false,
+      "description": "A zone in FALTA, with the people affected and how clear the shortfall is (D-229).",
+      "properties": {
+        "admin_unit_id": {
+          "examples": [
+            "ES.28.DIS.2807913"
+          ],
+          "title": "Admin Unit Id",
+          "type": "string"
+        },
+        "code": {
+          "examples": [
+            "2807913"
+          ],
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "comparison_group": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComparisonGroup"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "explanation": {
+          "examples": [
+            "Viven aquí 9.876 niños de 0 a 4 años. Tienen 62 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+          ],
+          "title": "Explanation",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "name": {
+          "examples": [
+            "Puente de Vallecas"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "p_value": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "One-sided exact Poisson probability that a zone at the reference rate has this little or less; FALTA needs it below 0,025 (D-213). None when the row keeps no counts to test and the ratio alone decided",
+          "title": "P Value"
+        },
+        "people": {
+          "description": "The row's target population living in the zone",
+          "minimum": 0,
+          "title": "People",
+          "type": "integer"
+        },
+        "ratio_to_reference": {
+          "description": "Supply over the reference (the group's when compared with neighbours)",
+          "minimum": 0,
+          "title": "Ratio To Reference",
+          "type": "number"
+        }
+      },
+      "required": [
+        "admin_unit_id",
+        "code",
+        "name",
+        "level",
+        "people",
+        "ratio_to_reference",
+        "p_value",
+        "explanation"
+      ],
+      "title": "GapImpactZone",
+      "type": "object"
+    },
+    "GapMethod": {
+      "additionalProperties": false,
+      "description": "How rows are classified: value / regional reference against declared cut-offs.",
+      "properties": {
+        "confidence_level": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "FALTA also needs a significant shortfall: the exact Poisson upper bound of the zone's count at this level below the count expected at the reference rate. None: the ratio alone decides",
+          "title": "Confidence Level"
+        },
+        "cubierto_from": {
+          "description": "ratio at or above this -> CUBIERTO",
+          "exclusiveMinimum": 0,
+          "title": "Cubierto From",
+          "type": "number"
+        },
+        "falta_below": {
+          "description": "ratio to reference below this -> FALTA",
+          "exclusiveMinimum": 0,
+          "title": "Falta Below",
+          "type": "number"
+        },
+        "reference": {
+          "examples": [
+            "Comunidad de Madrid: total de centros / población total"
+          ],
+          "title": "Reference",
+          "type": "string"
+        },
+        "version": {
+          "examples": [
+            "gap-0.1"
+          ],
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "reference",
+        "falta_below",
+        "cubierto_from"
+      ],
+      "title": "GapMethod",
+      "type": "object"
+    },
+    "GapRowKey": {
+      "description": "Rows of the per-zone list of what is missing (GAP-001, D-194).",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "mayores",
+        "farmacia",
+        "vivienda"
+      ],
+      "title": "GapRowKey",
+      "type": "string"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/gap_impact_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GET /api/v1/gaps/impact",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/GapImpact"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "GapImpactResponse",
+  "type": "object"
+}

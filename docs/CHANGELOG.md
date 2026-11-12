@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.52 — Cifras de impacto (2026-11-12)
+- D-229: `GET /api/v1/gaps/impact` (`impact-0.1`) con la gente que vive donde falta cada fila y el ranking «dónde invertir primero», y `people` en cada fila de `/gaps/{level}/{code}`.
+- `04_technical_architecture/31_public_api_routes.md`: ruta, contrato `GapImpact` y cómo calcular «{n} por cada 100».
+
 ## v0.5.51 — Alquiler de contratos nuevos evaluado (2026-11-12)
 - D-228: el índice CM 1934428 (IPVA del INE por antigüedad de contrato) no permite ajustar el nivel del alquiler; propuesta pendiente de Mariano con la tabla de nuevos contratos de la Agencia Tributaria (IRPF 2024, municipios y códigos postales de Madrid).
 

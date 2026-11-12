@@ -9,6 +9,7 @@ from hi_api.main import app
 from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public.responses import (
     DatasetListResponse,
+    GapImpactResponse,
     GapRowMapResponse,
     ZoneGapListResponse,
 )
@@ -309,3 +310,77 @@ def test_rows_compare_with_municipios_of_the_same_type(
     assert "en toda la Comunidad" in housing.explanation
     assert body.data.method.version == "gap-0.3"
     assert body.data.method.confidence_level == 0.95
+
+
+def test_rows_carry_the_people_they_serve(client: TestClient, migrated_engine: Engine) -> None:
+    """D-229: each row says who it serves in the zone, from its indicator's denominator."""
+    madrid = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
+    rows = {r.row.value: r for r in madrid.data.rows}
+    with migrated_engine.connect() as conn:
+        population = conn.execute(
+            text(
+                "SELECT value FROM feature_value WHERE feature_id = 'poblacion_total' "
+                "AND territory_level = 'municipio' AND territory_code = '28079'"
+            )
+        ).scalar_one()
+    health = rows["centro_salud"].people
+    assert health is not None and health.label == "personas"
+    assert health.count == pytest.approx(population, rel=1e-6)  # the same census population
+    nursery = rows["escuela_infantil"].people
+    assert nursery is not None and nursery.label == "niños de 0 a 4 años"
+    assert 0 < nursery.count < health.count
+    housing = rows["vivienda"].people
+    assert housing is not None and housing.label == "hogares de 4 o más personas"
+    district = ZoneGapListResponse.model_validate(
+        client.get("/api/v1/gaps/distrito/2807906").json()
+    )
+    by_key = {r.row.value: r for r in district.data.rows}
+    assert by_key["vivienda"].people is None  # no counts by district: unknown, never 0
+    assert by_key["colegio"].people is not None
+
+
+def _zones_of_the_search(client: TestClient, row: str, madrid_level: str) -> dict[str, str]:
+    """code -> level of every zone the impact counts for a row, and its status."""
+    municipios = GapRowMapResponse.model_validate(
+        client.get("/api/v1/gaps", params={"level": "municipio", "row": row}).json()
+    ).data.zones
+    zones = {z.code: ("municipio", z.status.value) for z in municipios}
+    if madrid_level == "distrito":
+        del zones["28079"]
+        districts = GapRowMapResponse.model_validate(
+            client.get("/api/v1/gaps", params={"level": "distrito", "row": row}).json()
+        ).data.zones
+        zones |= {z.code: ("distrito", z.status.value) for z in districts}
+    return {code: f"{level}:{status}" for code, (level, status) in zones.items()}
+
+
+def test_impact_ranks_every_falta_zone_by_the_people_affected(client: TestClient) -> None:
+    """D-229: the zones of the search (Madrid by district when the row has district values),
+    the FALTA ones ranked by people, each with the same people as its own list."""
+    response = client.get("/api/v1/gaps/impact")
+    assert response.status_code == 200
+    body = GapImpactResponse.model_validate(response.json())
+    assert body.meta.methodology_version == body.data.version == "impact-0.1"
+    assert body.data.method.version == "gap-0.3"
+    rows = {r.row.value: r for r in body.data.rows}
+    assert set(rows) == {k.value for k in GapRowKey}
+    assert rows["vivienda"].madrid_level.value == "municipio"  # no housing tables by district
+    assert rows["colegio"].madrid_level.value == "distrito"
+    assert body.data.datasets
+    for key, impact in rows.items():
+        zones = _zones_of_the_search(client, key, impact.madrid_level.value)
+        assert impact.zones == len(zones)
+        falta = {code for code, state in zones.items() if state.endswith(":FALTA")}
+        assert {z.code for z in impact.ranking} == falta
+        assert impact.people_total > 0
+        assert impact.share_in_falta == pytest.approx(impact.people_in_falta / impact.people_total)
+        assert impact.summary.startswith(("En la Comunidad de Madrid", "Ninguna zona"))
+        for zone in impact.ranking:
+            listed = ZoneGapListResponse.model_validate(
+                client.get(f"/api/v1/gaps/{zone.level.value}/{zone.code}").json()
+            )
+            same = next(r for r in listed.data.rows if r.row.value == key)
+            assert same.status.value == "FALTA"
+            assert same.people is not None and same.people.count == zone.people
+            assert zone.p_value is None or zone.p_value < 0.025
+            assert zone.explanation.startswith("Viven aquí")

@@ -2,6 +2,7 @@
 
 GET /api/v1/gaps/{level}/{code}: every row for one zone.
 GET /api/v1/gaps?level=&row=: one row for every zone of a level (GAP-001 F4).
+GET /api/v1/gaps/impact: people affected by each row and where to invest first (D-229).
 """
 
 from typing import Annotated
@@ -10,11 +11,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
+from hi_api.services.gap_impact import gap_impact
 from hi_api.services.gap_map import RowNotBoundError, gap_row_map
 from hi_api.services.gaps import ZoneNotFoundError, zone_gap_list
 from hi_contracts.api.envelope import ErrorCode, Meta
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
-from hi_contracts.public.responses import GapRowMapResponse, ZoneGapListResponse
+from hi_contracts.public.responses import (
+    GapImpactResponse,
+    GapRowMapResponse,
+    ZoneGapListResponse,
+)
 
 router = APIRouter(prefix="/gaps", tags=["gaps"])
 ZONE_LEVELS = (TerritoryLevel.MUNICIPIO, TerritoryLevel.DISTRITO, TerritoryLevel.SECCION_CENSAL)
@@ -46,6 +52,17 @@ def get_row_map(
     return GapRowMapResponse(
         data=gap_map,
         meta=Meta(methodology_version=gap_map.method.version, data_version=data_version),
+        warnings=warnings,
+    )
+
+
+@router.get("/impact")
+def get_impact(engine: Annotated[Engine, Depends(get_engine)]) -> GapImpactResponse:
+    with engine.connect() as conn:
+        impact, warnings, data_version = gap_impact(conn)
+    return GapImpactResponse(
+        data=impact,
+        meta=Meta(methodology_version=impact.version, data_version=data_version),
         warnings=warnings,
     )
 

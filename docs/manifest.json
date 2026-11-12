@@ -1,6 +1,6 @@
 {
-  "version": "0.5.51",
-  "updated": "2026-11-12T16:39:47.199645+00:00",
+  "version": "0.5.52",
+  "updated": "2026-11-12T19:53:07.924987+00:00",
   "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
@@ -8,8 +8,8 @@
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "4352fd7b1b320914d3e40c9c4a8095ea3be6afc5b610d8adf23a36a4f87bed42",
-      "bytes": 145110
+      "sha256": "73f6580a35d664c16a6fede8487ea5c0fe10216a6ea8f44f40757aaa26cbcf6c",
+      "bytes": 149103
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -640,8 +640,8 @@
       "bytes": 498
     },
     "04_technical_architecture/31_public_api_routes.md": {
-      "sha256": "2454d95208e9e54ca0ec02ed3d58ead8c44812df664ca2a0ceef8f7d49981869",
-      "bytes": 16630
+      "sha256": "5ac46577df5236b91bb1c84653fc69d0ce6a01aeb9a4cf711505b43d5132aa85",
+      "bytes": 18269
     },
     "04_technical_architecture/32_mcp_server.md": {
       "sha256": "9efe8c1f8465b8ad93ddfc30d3e17e526570f6174ceffa1850082ed056657e36",
@@ -1100,8 +1100,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "fd2f8ddece58121698ec43c88ab6215343df9c761add4b1f8d480a4bdd91dfb1",
-      "bytes": 21491
+      "sha256": "64cd6fd351c2cd509ac6949e49b60f776f71f37a06403a9eaeb623711e4c5f60",
+      "bytes": 21846
     },
     "CLAUDE.md": {
       "sha256": "cb9b95b379aaa00fc3064ab11c286d2d13426aa44e1ffeb4bc7995f0ac2bede3",

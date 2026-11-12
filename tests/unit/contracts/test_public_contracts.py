@@ -9,6 +9,8 @@ from pydantic import BaseModel, ValidationError
 
 from hi_contracts.public import (
     DatasetList,
+    GapImpact,
+    GapImpactRow,
     GapMethod,
     GapRow,
     GapRowMap,
@@ -26,6 +28,7 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "scenario_state": ScenarioState,
     "zone_gap_list": ZoneGapList,
     "gap_row_map": GapRowMap,
+    "gap_impact": GapImpact,
     "search_result": SearchResult,
     "dataset_list": DatasetList,
     "places": PlaceCollection,
@@ -187,3 +190,45 @@ def test_places_fixture_carries_ownership_and_the_rows_that_count_them() -> None
     counted = [f for f in places.features if "colegio" in f.properties.gap_rows]
     assert counted
     assert all(f.properties.ownership in {"publica", "concertada"} for f in counted)
+
+
+def test_impact_fixture_adds_up_and_ranks_by_people() -> None:
+    """D-229: the people in FALTA add up the ranked zones, most people first."""
+    impact = GapImpact.model_validate(
+        json.loads((FIXTURES / "gap_impact.comunidad.fixture.json").read_text())
+    )
+    assert impact.rows
+    for row in impact.rows:
+        assert row.people_in_falta <= row.people_total
+        assert all(z.p_value is None or z.p_value < 0.025 for z in row.ranking)
+
+
+def test_impact_row_rejects_an_unsorted_or_inconsistent_ranking() -> None:
+    zone = {
+        "admin_unit_id": "ES.28.MUN.28092",
+        "code": "28092",
+        "name": "Móstoles",
+        "level": "municipio",
+        "ratio_to_reference": 0.5,
+        "p_value": 0.001,
+        "explanation": "…",
+    }
+    row = {
+        "row": "farmacia",
+        "label": "Farmacias",
+        "people_label": "personas",
+        "madrid_level": "distrito",
+        "zones": 199,
+        "zones_in_falta": 2,
+        "people_in_falta": 30,
+        "people_total": 100,
+        "share_in_falta": 0.3,
+        "summary": "…",
+        "ranking": [zone | {"people": 10, "code": "1"}, zone | {"people": 20, "code": "2"}],
+    }
+    with pytest.raises(ValidationError, match="most to fewest"):
+        GapImpactRow.model_validate(row)
+    with pytest.raises(ValidationError, match="add up"):
+        GapImpactRow.model_validate(row | {"people_in_falta": 31})
+    with pytest.raises(ValidationError, match="one ranked zone"):
+        GapImpactRow.model_validate(row | {"zones_in_falta": 3})

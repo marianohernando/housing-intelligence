@@ -3,7 +3,7 @@
 from hi_contracts.api.envelope import Envelope
 from hi_contracts.public.common import DatasetList
 from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
-from hi_contracts.public.gaps import GapRowMap, ZoneGapList
+from hi_contracts.public.gaps import GapImpact, GapRowMap, ZoneGapList
 from hi_contracts.public.places import PlaceCollection
 from hi_contracts.public.search import SearchResult
 
@@ -14,6 +14,10 @@ class ZoneGapListResponse(Envelope[ZoneGapList]):
 
 class GapRowMapResponse(Envelope[GapRowMap]):
     """GET /api/v1/gaps?level=&row="""
+
+
+class GapImpactResponse(Envelope[GapImpact]):
+    """GET /api/v1/gaps/impact"""
 
 
 class SearchResponse(Envelope[SearchResult]):

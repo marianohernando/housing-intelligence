@@ -10,14 +10,13 @@ from typing import Any, NamedTuple
 from sqlalchemy import Connection, text
 
 from hi_api.services.commute import commutes
-from hi_api.services.gap_map import RowNotBoundError, gap_row_map
+from hi_api.services.gap_map import cached_row_map, data_stamp
 from hi_api.services.gaps import dataset_refs, significant
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
     DatasetRef,
     GapHighlight,
-    GapRowMap,
     IndicatorValue,
     NeedKey,
     PriorityKey,
@@ -58,7 +57,6 @@ _FIT_VALUES = text(
               v.feature_version DESC, v.period_start DESC
     """
 )
-_DATA_STAMP = text("SELECT max(computed_at) FROM feature_value")
 
 
 class Loaded(NamedTuple):
@@ -123,40 +121,17 @@ def _indicators(rows: Iterable[dict[str, Any]]) -> Indicators:
     return Indicators(rent, price, walk, priority_walk)
 
 
-GapMapEntry = tuple[GapRowMap | None, list[str]]
-_GAP_MAPS: dict[tuple[str, str, str, str], GapMapEntry] = {}
-GAP_CACHE_MAX = 64
-
-
-def _gap_map(conn: Connection, level: TerritoryLevel, row: GapRowKey, stamp: str) -> GapMapEntry:
-    """GET /gaps?level=&row= for one row, cached per process until the features change (the
-    stamp is the latest computation): the same answer, without ~5 queries per row and level."""
-    key = (str(conn.engine.url), stamp, level.value, row.value)
-    cached = _GAP_MAPS.get(key)
-    if cached is not None:
-        return cached
-    try:
-        gap_map, warnings, _ = gap_row_map(conn, level, row)
-        entry: GapMapEntry = (gap_map, warnings)
-    except RowNotBoundError as exc:
-        entry = (None, [f"{ErrorCode.INSUFFICIENT_DATA.value}: {exc}"])
-    if len(_GAP_MAPS) >= GAP_CACHE_MAX:
-        _GAP_MAPS.clear()
-    _GAP_MAPS[key] = entry  # returned from the local: another thread may clear the cache
-    return entry
-
-
 def _highlights(
     conn: Connection, rows: list[GapRowKey]
 ) -> tuple[dict[tuple[str, str], list[GapHighlight]], list[DatasetRef], list[str]]:
     """Each zone's status in the household's 3 rows, from the same map as GET /gaps."""
-    stamp = str(conn.execute(_DATA_STAMP).scalar())
+    stamp = data_stamp(conn)
     highlights: dict[tuple[str, str], list[GapHighlight]] = {}
     datasets: list[DatasetRef] = []
     warnings: list[str] = []
     for row in rows:
         for level in LEVELS:
-            gap_map, row_warnings = _gap_map(conn, level, row, stamp)
+            gap_map, row_warnings = cached_row_map(conn, level, row, stamp)
             warnings += [w for w in row_warnings if w not in warnings]
             if gap_map is None:
                 continue

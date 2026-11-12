@@ -25,9 +25,11 @@ from hi_contracts.public import (
     DatasetRef,
     GapRow,
     IndicatorValue,
+    PeopleCount,
     ZoneGapList,
     ZoneRef,
 )
+from hi_domain.gap_impact import ROW_PEOPLE, people_in
 from hi_domain.gaps import (
     GAP_METHOD,
     REGION_TEXT,
@@ -60,7 +62,8 @@ _ZONE = text(
 )
 _BOUND_FEATURES = text(
     """
-    SELECT feature_id, human_name, unit, direction, spec->'gap_row' AS gap_row
+    SELECT feature_id, human_name, unit, direction, spec->'gap_row' AS gap_row,
+           spec->'formula' AS formula
       FROM feature_registry
      WHERE spec->'gap_row' IS NOT NULL AND spec->'gap_row' <> 'null'::jsonb
     """
@@ -154,6 +157,14 @@ def _indicator(
     )
 
 
+def row_people(
+    key: GapRowKey, feature: dict[str, Any], row: dict[str, Any], level: TerritoryLevel
+) -> PeopleCount | None:
+    """Who the row serves in the zone: its indicator's denominator, in people (D-229)."""
+    count = people_in((row["inputs"] or {}).get("counts"), feature["formula"] or {}, level.value)
+    return None if count is None else PeopleCount(count=count, label=ROW_PEOPLE[key].people)
+
+
 class Measured(NamedTuple):
     """A feature bound to a gap row, with its value row for one zone."""
 
@@ -213,6 +224,7 @@ def _gap_row(
         reliable=verdict.reliable,
         comparison_group=verdict.group,
         extra_indicators=[_indicator(e.feature, e.value, zone.level) for e in extras],
+        people=row_people(GapRowKey(binding["row"]), feature, row, zone.level),
         datasets=dataset_refs(conn, versions),
     )
 

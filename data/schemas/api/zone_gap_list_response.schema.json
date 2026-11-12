@@ -238,6 +238,18 @@
           "title": "Label",
           "type": "string"
         },
+        "people": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PeopleCount"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who the row serves in this zone (children of 0 to 4, people of 65 or more, …): the denominator of its indicator. With FALTA, the people affected (D-229). None when the indicator keeps no counts"
+        },
         "proxy_note": {
           "anyOf": [
             {
@@ -477,6 +489,33 @@
       ],
       "title": "NullReason",
       "type": "string"
+    },
+    "PeopleCount": {
+      "additionalProperties": false,
+      "description": "The population a row serves, living in the zone (D-229): its indicator's denominator.",
+      "properties": {
+        "count": {
+          "examples": [
+            6729
+          ],
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "label": {
+          "examples": [
+            "niños de 0 a 4 años"
+          ],
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "count",
+        "label"
+      ],
+      "title": "PeopleCount",
+      "type": "object"
     },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",

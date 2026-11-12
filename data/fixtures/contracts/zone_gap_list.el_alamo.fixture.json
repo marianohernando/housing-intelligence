@@ -108,6 +108,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 457,
+        "label": "niños de 0 a 4 años"
+      },
       "datasets": [
         {
           "dataset_id": "cm_centros_educativos",
@@ -237,6 +241,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 1158,
+        "label": "niños de 5 a 14 años"
+      },
       "datasets": [
         {
           "dataset_id": "cm_centros_educativos",
@@ -376,6 +384,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 10590,
+        "label": "personas"
+      },
       "datasets": [
         {
           "dataset_id": "cm_centros_sanitarios",
@@ -499,6 +511,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 1928,
+        "label": "personas de 65 años o más"
+      },
       "datasets": [
         {
           "dataset_id": "cm_centros_atencion_social",
@@ -609,6 +625,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 10590,
+        "label": "personas"
+      },
       "datasets": [
         {
           "dataset_id": "cm_farmacias_municipios",
@@ -714,6 +734,10 @@
           ]
         }
       ],
+      "people": {
+        "count": 1064,
+        "label": "hogares de 4 o más personas"
+      },
       "datasets": [
         {
           "dataset_id": "cm_hogares_tamano_censo_2021",

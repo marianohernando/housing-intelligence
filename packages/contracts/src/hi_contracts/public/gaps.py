@@ -13,12 +13,16 @@ from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.public.common import DatasetRef, IndicatorValue, ZoneRef
 
 __all__ = [
+    "GapImpact",
+    "GapImpactRow",
+    "GapImpactZone",
     "GapMethod",
     "GapRow",
     "GapRowKey",
     "GapRowMap",
     "GapStatus",
     "GapStatusCounts",
+    "PeopleCount",
     "ZoneGapList",
     "ZoneGapStatus",
 ]
@@ -71,6 +75,15 @@ class ComparisonGroup(BaseModel):
     ratio_to_reference: float = Field(ge=0, description="Group total over its expected total")
 
 
+class PeopleCount(BaseModel):
+    """The population a row serves, living in the zone (D-229): its indicator's denominator."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    count: int = Field(ge=0, examples=[6729])
+    label: str = Field(examples=["niños de 0 a 4 años"])
+
+
 class GapRow(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -114,6 +127,12 @@ class GapRow(BaseModel):
     )
     extra_indicators: list[IndicatorValue] = Field(
         default_factory=list[IndicatorValue], description="e.g. walking minutes (CORE-005)"
+    )
+    people: PeopleCount | None = Field(
+        default=None,
+        description="Who the row serves in this zone (children of 0 to 4, people of 65 or "
+        "more, …): the denominator of its indicator. With FALTA, the people affected (D-229). "
+        "None when the indicator keeps no counts",
     )
     datasets: list[DatasetRef]
 
@@ -240,3 +259,89 @@ class GapRowMap(BaseModel):
             msg = "counts must match the zones"
             raise ValueError(msg)
         return self
+
+
+class GapImpactZone(BaseModel):
+    """A zone in FALTA, with the people affected and how clear the shortfall is (D-229)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    admin_unit_id: str = Field(examples=["ES.28.DIS.2807913"])
+    code: str = Field(min_length=1, examples=["2807913"])
+    name: str = Field(examples=["Puente de Vallecas"])
+    level: TerritoryLevel
+    people: int = Field(ge=0, description="The row's target population living in the zone")
+    ratio_to_reference: float = Field(
+        ge=0, description="Supply over the reference (the group's when compared with neighbours)"
+    )
+    p_value: float | None = Field(
+        ge=0,
+        le=1,
+        description="One-sided exact Poisson probability that a zone at the reference rate has "
+        "this little or less; FALTA needs it below 0,025 (D-213). None when the row keeps no "
+        "counts to test and the ratio alone decided",
+    )
+    comparison_group: ComparisonGroup | None = None
+    explanation: str = Field(
+        examples=[
+            "Viven aquí 9.876 niños de 0 a 4 años. Tienen 62 por cada 100 que tienen los "
+            "municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 "
+            "veces"
+        ]
+    )
+
+
+class GapImpactRow(BaseModel):
+    """One row of the list: how many people live where it is missing, and where to invest."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    row: GapRowKey
+    label: str = Field(examples=["Escuelas infantiles"])
+    people_label: str = Field(examples=["niños de 0 a 4 años"])
+    madrid_level: TerritoryLevel = Field(
+        description="Madrid capital counted by its 21 districts, or as one municipio when the "
+        "row has no district values"
+    )
+    zones: int = Field(ge=0, description="Zones classified")
+    zones_in_falta: int = Field(ge=0)
+    people_in_falta: int = Field(ge=0)
+    people_total: int = Field(ge=0, description="The row's target population in the region")
+    share_in_falta: float = Field(ge=0, le=1)
+    summary: str = Field(
+        examples=[
+            "En la Comunidad de Madrid, 23.456 niños de 0 a 4 años (el 9,0 %) viven en 3 "
+            "zonas donde faltan escuelas infantiles"
+        ]
+    )
+    ranking: list[GapImpactZone] = Field(
+        description="Where to invest first: zones in FALTA, most people affected first"
+    )
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Self:
+        if len(self.ranking) != self.zones_in_falta:
+            msg = f"{self.row}: one ranked zone per zone in FALTA"
+            raise ValueError(msg)
+        if sum(z.people for z in self.ranking) != self.people_in_falta:
+            msg = f"{self.row}: people in FALTA must add up the ranked zones"
+            raise ValueError(msg)
+        people = [z.people for z in self.ranking]
+        if people != sorted(people, reverse=True):
+            msg = f"{self.row}: the ranking goes from most to fewest people"
+            raise ValueError(msg)
+        return self
+
+
+class GapImpact(BaseModel):
+    """GET /api/v1/gaps/impact: the people affected by each row, region-wide (D-229)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    version: str = Field(examples=["impact-0.1"])
+    method: GapMethod
+    zones_note: str = Field(
+        description="Which zones are counted: the municipios and Madrid capital's districts"
+    )
+    rows: list[GapImpactRow]
+    datasets: list[DatasetRef]
