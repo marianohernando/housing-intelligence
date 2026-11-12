@@ -198,7 +198,7 @@ a {
   object-position: center;
 }
 
-/* C3 (12 nov, B): «Con tu búsqueda tal cual salen 33 zonas» y la opción «+5 min…: saldrían 50 zonas, 17 más» */
+/* C3 (12 nov, B, fit-0.6): «Con tu búsqueda tal cual salen 27 zonas» y la opción «+5 min…: saldrían 44 zonas, 17 más» */
 .shot[data-shot="C3"] img {
   object-view-box: inset(12.8% 4.6% 50.6% 4.6%);
 }
@@ -652,7 +652,7 @@ a {
 
 .s4 .m3 {
   left: 692px;
-  top: 472px;
+  top: 514px;
 }
 
 /* Móvil 390 × 844 superpuesto al escritorio */

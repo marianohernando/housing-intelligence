@@ -102,7 +102,7 @@ Versión con buscador (la que vale):
   - lo que más limita sigue siendo el colegio a 10 min;
   - casi encajan, por el presupuesto, Chamartín, Salamanca, Centro, Chamberí y Retiro (93 %).
 
-  Captura **C3**: hay que rehacerla (**pendiente de B**), porque la de B (PR #17) dice 33 y 50 zonas.
+  Captura **C3**: la de B con `fit-0.6` (PR #32).
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Trabajo:** cuenta los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las 6 redes del CRTM (CORE-009, D-220). En producción desde el 12 nov. **Límite que se dice si preguntan:** son horarios programados de un martes, no tiempos reales, y en 45–50 zonas de la Sierra Norte y del sureste no se llega a las 9:00 (D-220 §6).
 - **«Sin escaleras»** (opcional, D-223): quien lo marca ve los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el CRTM da como totalmente accesible. Nunca se deduce de nada ni se etiqueta a nadie, y la tarjeta dice lo que no mide (autobuses, aceras y portales). En producción desde el 12 nov (despliegue de `2761696`). En la slide va una línea, solo si cabe.
@@ -215,17 +215,17 @@ El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las to
 
 | Id | Qué cambia | Dónde |
 |---|---|---|
-| C3 | **Rehacer con `fit-0.6` (pendiente de B):** «Con tu búsqueda tal cual salen 27 zonas», «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más». La de B (`deck_c3_y_si_cambias_1440.png`, PR #17) tenía 33 y 50 zonas | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
+| C3 | Rehecha por B con `fit-0.6` (PR #32): `deck_c3_y_si_cambias_1440.png`, con «Con tu búsqueda tal cual salen 27 zonas», «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más» | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
 | C4 | Hecha por B: `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, la fila de escuelas infantiles de **Puente de Vallecas** en FALTA (2,8 frente a 4,9) con «A pie: 6 min». El hueco enseña las dos cifras | `/que-falta?zona=distrito/2807913` |
 | C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
-| C1, C2 | **Rehacer con `fit-0.6` (pendiente de B):** la búsqueda del caso con 27 zonas y la tarjeta de la 1.ª (hoy, Latina al 98 %, con la línea «Encaja con lo que pides; aun así…»). Las de B (PR #19) enseñan Fuencarral-El Pardo al 100 %, que ya no es así | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
+| C1, C2 | Rehechas por B con `fit-0.6` (PR #32): `deck_c1_busqueda_1440.png` (27 zonas, tarjeta de Latina) y `deck_c2_tarjeta_zona_1440.png` (Latina, 98 %, con la línea «Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud.») | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
 | C7 | «Cómo lo calculamos» ya explica el 2SFCA; el hueco puede volver a enseñar las reglas | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
-| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Rehacer (pendiente de B):** la actual (PR #19) es del 12 nov, con Fuencarral-El Pardo 1.ª al 100 %; con `fit-0.6` son 27 zonas y la 1.ª es Latina (98 %) |
-| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Rehacer (pendiente de B):** la actual (PR #19) enseña «100 % de encaje» en Fuencarral-El Pardo. La nueva, la tarjeta de la 1.ª con `fit-0.6` y la línea bajo el % |
-| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | **Rehacer (pendiente de B):** la actual (PR #17) dice 33 y 50 zonas; con `fit-0.6`, 27, 44 y la opción de +150 €/mes |
+| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Hecha por B con `fit-0.6` (PR #32, `evidence/map-004/2026-11-12/deck/deck_c1_busqueda_1440.png`): 27 zonas y la tarjeta de Latina (98 %). El marcador 3 de la slide 4 baja a «Qué falta aquí» (`deck.css`, `.s4 .m3`) |
+| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | Hecha por B con `fit-0.6` (PR #32, `deck_c2_tarjeta_zona_1440.png`). El hueco de la slide 3 enseña la cabecera: «Latina», «98 % de encaje» y «La 1.ª que más encaja» |
+| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | Hecha por B con `fit-0.6` (PR #32, `deck_c3_y_si_cambias_1440.png`): 27 zonas, «+5 min…: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más» |
 | C4 | Pestaña «Qué falta» de la zona del ejemplo (**Puente de Vallecas**): 6 filas con valor, referencia, confianza, minutos a pie y datasets enlazados | 1440 | 3 | Hecha por B el 12 nov (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, PR #17; la página entera, en `deck_c4_puente_de_vallecas_que_falta_1440.png`). El hueco enseña las dos cifras de la fila de escuelas infantiles: 2,8 en Puente de Vallecas y 4,9 en los otros municipios urbanos |
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B en producción con `gap-0.2` (`prod_c5_chamartin_3d_desktop.png`, Chamartín). El recorte deja fuera el título de la barra, «Barrios de la zona», que hoy se llama «Ir a un barrio»; se ven solo los barrios |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B en producción (`prod_c5_chamartin_3d_mobile.png`). No enseña estados |
