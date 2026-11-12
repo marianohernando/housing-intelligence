@@ -122,6 +122,10 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
 
 ### Estado de la sesión del 12 nov (mañana, línea A v10)
+- **Done (A v10):** D-219 (pooler en modo transacción, `de9ad4b`); HOSP-001 F3–F4 (nombres de atención primaria y fichero de correcciones, D-218 §9–§10); CORE-009 F1–F3c (transporte público al trabajo, D-220, `fit-0.2`, desempates estables); API para B (`attribution_text`, `/places` con varias categorías); CI de nuevo en verde (`9cb54fe`).
+- **Next (línea A), en orden:** (1) confirmar el sync de `2ef95ca` por MCP; (2) DATA-018 a DATA-021 (zonas verdes, accesibilidad, seguridad con salvaguardas, precio de compra), cada una con su fase; (3) MCP-001: 3–5 herramientas sobre los servicios de dominio; (4) deuda: `drop_off_type` en el GTFS (M-3 de la revisión de CORE-009), matriz con aristas por pareja evento-footpath (memoria) si se amplía la ventana, y Gate 3 completo tras las correcciones.
+- **Gate status:** `make lint typecheck test` verde en `2ef95ca` (531 unit, 277 web, 102 integración); CI verde en `9cb54fe`; golden de búsqueda 6/6 con orden estable.
+- **Relevo:** la sesión A v10 cierra aquí por contexto; continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
 - **Variables de la API en Vercel (para C, D-219).** C las documenta en `infra/deploy/README.md`:
   | Variable | Valor en producción | Cuándo |
   |---|---|---|
