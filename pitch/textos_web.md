@@ -2,6 +2,14 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Fase de mejora (13 nov): textos para un jurado no técnico.** El jurado simulado se perdió en cinco sitios. Todo es **pendiente de B**, y lo que sale de la API, también **pendiente de A**:
+- **«100 %» con JUSTO debajo:** una línea bajo el %, `encaje.aviso_*` (sección 4). Mariano decidió explicarlo, no cambiar el nombre del %.
+- **«Qué falta» sin resumen:** una línea arriba, `falta.resumen.*` (sección 5), por ejemplo «Aquí falta: escuelas infantiles.».
+- **«0,46 centros de salud por 10.000 hab.»:** la frase principal de cada fila pasa a ser «Aquí hay {n} por cada 100 que hay en municipios parecidos» (`falta.fila.comparacion`). La cifra técnica se queda, más pequeña, tras «Ver la cifra».
+- **Un distrito «frente a otros municipios urbanos»:** `falta.fila.referencia.distrito` dice con quién se compara («sin contar Madrid, como Getafe o Alcalá de Henares») y por qué.
+- **«desde la mitad de sus calles»:** sale del texto de los hechos (A) y la idea se explica una vez, en `falta.leyenda.a_pie`.
+- **«A pie hasta el hospital: 51 min»:** a más de 30 min se da la distancia, «a unos 3,4 km» (`hospital.distancia`).
+
 **Revisión del PR #26 de B (12 nov, noche): chip «Sin escaleras» (D-223) y seguridad (D-224).**
 - `importa.sin_escaleras`: queda **definitiva tal cual** la ayuda de B, «Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.». Usa las mismas palabras que el hecho de la API y nombra la fuente.
 - **Icono:** propongo `TrainFront` (lucide) en vez de `Accessibility`.
@@ -318,6 +326,15 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.encaje` | {pct} % de encaje | Chip grande. Nunca «/100» |
 | `zona.encaje.aria` | Esta zona encaja en un {pct} % con tu búsqueda | |
 | `zona.encaje.ayuda` | Cuánto se parece esta zona a lo que buscas. No es una nota de la zona. | Al tocar «?» |
+| `encaje.aviso_justo` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de {lista}. | Bajo el % de la tarjeta, si alguna fila de «Qué falta» sale JUSTO y ninguna FALTA. Ejemplo real, Fuencarral-El Pardo (100 %): «… aquí van justos de escuelas infantiles, colegios y centros de salud.» (`GET /api/v1/gaps/distrito/2807908`, 12 nov). Las filas, con `fila.lista.*`. No cuentan las filas de zona muy pequeña para comparar. Fase de mejora, **pendiente de B** |
+| `encaje.aviso_falta` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan {lista}. | Si alguna fila sale FALTA y ninguna JUSTO. Ejemplo: Puente de Vallecas, «… aquí faltan escuelas infantiles.» |
+| `encaje.aviso_falta_justo` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan {lista_falta} y van justos de {lista_justo}. | Si hay filas FALTA y JUSTO. Si todas salen CUBIERTO o SIN DATOS, no va ninguna línea |
+| `fila.lista.escuela_infantil` | escuelas infantiles | Nombres de fila dentro de una frase, en minúscula. Se unen como «a», «a y b», «a, b y c» |
+| `fila.lista.colegio` | colegios | |
+| `fila.lista.centro_salud` | centros de salud | |
+| `fila.lista.mayores` | centros de mayores | |
+| `fila.lista.farmacia` | farmacias | |
+| `fila.lista.vivienda` | viviendas grandes para familias | |
 | `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`) |
 | `zona.hechos.titulo` | Lo que tienes aquí | Encima de los 3–5 hechos (`facts`) |
 | `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6 |
@@ -364,6 +381,17 @@ Desde D-217 (`gap-0.3`, 12 nov) cada fila de servicios mide **lo que la gente ti
 |---|---|---|
 | `falta.titulo` | Qué falta en {zona} | |
 | `falta.intro` | Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales. | Cambia el 12 nov por D-217 (antes: «Comparamos cada servicio con los demás municipios de su tipo…») |
+| `falta.resumen.falta` | Aquí falta: {lista}. | **Primera línea de «Qué falta»**, encima de las filas y en negrita. {lista} con `fila.lista.*`. Ejemplo: Puente de Vallecas, «Aquí falta: escuelas infantiles.». Fase de mejora, **pendiente de B** |
+| `falta.resumen.nada_claro` | Aquí no falta nada claro. | Sin ninguna FALTA pero con alguna JUSTO. Va seguida de `falta.resumen.justo` |
+| `falta.resumen.justo` | Van justos: {lista}. | Detrás de `falta.resumen.falta` o de `falta.resumen.nada_claro`. Ejemplo: Fuencarral-El Pardo, «Aquí no falta nada claro. Van justos: escuelas infantiles, colegios y centros de salud.» |
+| `falta.resumen.cubierto` | Aquí no falta nada frente a municipios parecidos. | Todas las filas comparables, CUBIERTO |
+| `falta.resumen.pequena` | Zona muy pequeña para comparar: {lista}. | Filas que no se pueden comparar ni siquiera con los vecinos (`reliable: false` y sin `comparison_group`). Esas filas no entran en «Van justos». Va con lo que haga A en «No comparable» (fase de mejora, punto 7) |
+| `falta.resumen.sin_datos` | Sin datos: {lista}. | Al final, si alguna fila sale SIN DATOS. Ejemplo: en los distritos de Madrid, «Sin datos: viviendas grandes para familias.» |
+| `falta.fila.comparacion` | Aquí hay {n} por cada 100 que hay en municipios parecidos. | **Frase principal de cada fila**, junto al estado. {n} = `ratio_to_reference` × 100, redondeado; puede pasar de 100 («Aquí hay 155 por cada 100…»). Ejemplo: Puente de Vallecas, escuelas infantiles, ratio 0,571: «Aquí hay 57 por cada 100 que hay en municipios parecidos.». Con `comparison_group`: «Junto con sus vecinos, hay {n} por cada 100…» (`grupo.frase`). Fase de mejora, **pendiente de B** |
+| `falta.fila.ver_cifra` | Ver la cifra | Despliega la cifra técnica de `explanation` (por ejemplo, «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos…, 4,9»), en pequeño. No se pierde: el jurado técnico la busca |
+| `falta.fila.referencia.distrito` | Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares) | Sustituye a `reference_label` («Otros municipios urbanos de la Comunidad de Madrid») cuando la zona es un distrito. Es lo que hace la API: el municipio de la zona se deja fuera de su referencia, y en un distrito ese municipio es Madrid (`gap_reference.py`, `_others`) |
+| `falta.referencia.ayuda.distrito` | Un distrito de Madrid se compara con las demás ciudades de la Comunidad, como Getafe o Alcalá de Henares. Madrid no puede compararse consigo misma. | Al tocar «?» junto a la referencia, en un distrito |
+| `falta.referencia.ayuda.municipio` | Cada municipio se compara con los de su tipo: los rurales (pequeños y poco poblados) con los rurales, y los urbanos con los urbanos. | Al tocar «?» junto a la referencia, en un municipio. Criterio de la Ley 45/2007 (`metodologia.md` §1.4) |
 | `falta.elige_zona` | Elige una zona en el mapa o escríbela aquí para ver qué le falta. | Sin zona elegida |
 | `falta.buscador.placeholder` | Escribe un municipio o un distrito de Madrid | |
 | `falta.fila.referencia` | {reference_label}: {referencia} | Si la web separa la referencia de `explanation`. `reference_label` llega de la API, por ejemplo «Otros municipios urbanos de la Comunidad de Madrid» |
@@ -387,7 +415,9 @@ Desde D-217 (`gap-0.3`, 12 nov) cada fila de servicios mide **lo que la gente ti
 | `hospital.nota` | Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila. | Cambia el 12 nov: se añade «y no cuenta para el estado de la fila» |
 | `a_pie.min` | {n} min | Redondeado al minuto. Menos de 1: «menos de 1 min». Más de 60: «más de 60 min». Sin valor: «Sin datos», con su motivo (`null_reason`), nunca 0 |
 | `falta.leyenda.titulo` | Cómo leer esta lista | Tarjeta con los 4 estados y su línea de explicación (`estado.*`), más la línea de `fila.zona_pequena` |
-| `falta.leyenda.a_pie` | Los minutos a pie son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Desde la mitad de las calles de la zona se llega en ese tiempo o menos. | Debajo de los estados. Mismo método que `pitch/metodologia.md` §1.5 |
+| `falta.leyenda.a_pie` | Los minutos son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Es lo que tarda la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. | Debajo de los estados. Mismo método que `pitch/metodologia.md` §1.5. Cambia el 13 nov: fuera «desde la mitad de las calles». La misma idea, como ayuda bajo «Lo que tienes aquí» en la tarjeta (`a_pie.mediana`) |
+| `a_pie.mediana` | Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. | Una vez, bajo los hechos de la tarjeta. A la vez, **pendiente de A**: quitar «desde la mitad de sus calles» del texto de los hechos de `/search` y dejar «Colegio con primaria a unos 9 min andando». El «unos» ya dice que es aproximado |
+| `hospital.distancia` | Hospital más cercano: a {n} min andando | Sustituye a «A pie hasta el hospital: {n} min». Hasta 30 min, en minutos. **Más de 30 min: «Hospital más cercano: a unos {km} km»**, con {km} = minutos × 4 / 60, con un decimal (51 min → «a unos 3,4 km»). Andar 51 minutos hasta un hospital no es un dato útil, la distancia sí. Sigue con `hospital.nota`. **Pendiente de B** |
 | `falta.filas_pendientes` | Estamos calculando el resto de servicios para esta zona. | Si la API avisa en `warnings` de filas aún no calculadas. Nunca se pintan como SIN DATOS |
 | `falta.como` | ¿Cómo lo decidimos? | Enlace a «Cómo lo calculamos», sección «Qué falta» |
 
