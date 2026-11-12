@@ -1,0 +1,384 @@
+{
+ "modo": "atribucion",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "portada_mobile": {
+  "abierta_al_cargar": false,
+  "boton": {
+   "nombre": "Fuentes y licencias de los datos",
+   "caja": {
+    "top": 133,
+    "bottom": 157,
+    "left": 10,
+    "right": 34
+   }
+  },
+  "boton_pisa": [],
+  "creditos": {
+   "texto": "© OpenStreetMap · Powered by CRTM",
+   "enlaces": [
+    "https://www.openstreetmap.org/copyright",
+    "https://www.crtm.es"
+   ],
+   "visible_plegada": true,
+   "caja": {
+    "top": 133,
+    "bottom": 157,
+    "left": 50,
+    "right": 276
+   },
+   "pisa": [],
+   "visible_abierta": false
+  },
+  "abierta_tras_un_toque": true,
+  "abierta": {
+   "caja": {
+    "top": 133,
+    "bottom": 325,
+    "left": 10,
+    "right": 380
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "abierta_tras_otro_toque": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": [],
+  "lcp_slow4g": [
+   {
+    "ms": 680,
+    "en_atribucion": false,
+    "texto": "Te decimos qué zonas encajan con tu vida y qué le "
+   }
+  ]
+ },
+ "zona_mobile": {
+  "abierta_al_cargar": false,
+  "boton": {
+   "nombre": "Fuentes y licencias de los datos",
+   "caja": {
+    "top": 133,
+    "bottom": 157,
+    "left": 10,
+    "right": 34
+   }
+  },
+  "boton_pisa": [],
+  "creditos": {
+   "texto": "© OpenStreetMap · Powered by CRTM",
+   "enlaces": [
+    "https://www.openstreetmap.org/copyright",
+    "https://www.crtm.es"
+   ],
+   "visible_plegada": true,
+   "caja": {
+    "top": 133,
+    "bottom": 157,
+    "left": 50,
+    "right": 276
+   },
+   "pisa": [],
+   "visible_abierta": false
+  },
+  "abierta_tras_un_toque": true,
+  "abierta": {
+   "caja": {
+    "top": 133,
+    "bottom": 325,
+    "left": 10,
+    "right": 380
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "abierta_tras_otro_toque": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": [],
+  "girado": {
+   "abierta_al_cargar": false,
+   "boton": {
+    "nombre": "Fuentes y licencias de los datos",
+    "caja": {
+     "top": 95,
+     "bottom": 119,
+     "left": 575,
+     "right": 599
+    }
+   },
+   "boton_pisa": [],
+   "creditos": {
+    "texto": "© OpenStreetMap · Powered by CRTM",
+    "enlaces": [
+     "https://www.openstreetmap.org/copyright",
+     "https://www.crtm.es"
+    ],
+    "visible_plegada": true,
+    "caja": {
+     "top": 95,
+     "bottom": 139,
+     "left": 615,
+     "right": 816
+    },
+    "pisa": [],
+    "visible_abierta": false
+   },
+   "abierta_tras_un_toque": true,
+   "abierta": {
+    "caja": {
+     "top": 95,
+     "bottom": 201,
+     "left": 575,
+     "right": 801
+    },
+    "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+   },
+   "abierta_pisa": [],
+   "axe_abierta": [],
+   "abierta_tras_otro_toque": false,
+   "axe": [],
+   "overflow_px": 0,
+   "consola": []
+  },
+  "vuelta": {
+   "abierta_al_cargar": false,
+   "boton": {
+    "nombre": "Fuentes y licencias de los datos",
+    "caja": {
+     "top": 133,
+     "bottom": 157,
+     "left": 10,
+     "right": 34
+    }
+   },
+   "boton_pisa": [],
+   "creditos": {
+    "texto": "© OpenStreetMap · Powered by CRTM",
+    "enlaces": [
+     "https://www.openstreetmap.org/copyright",
+     "https://www.crtm.es"
+    ],
+    "visible_plegada": true,
+    "caja": {
+     "top": 133,
+     "bottom": 157,
+     "left": 50,
+     "right": 276
+    },
+    "pisa": [],
+    "visible_abierta": false
+   },
+   "abierta_tras_un_toque": true,
+   "abierta": {
+    "caja": {
+     "top": 133,
+     "bottom": 325,
+     "left": 10,
+     "right": 380
+    },
+    "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+   },
+   "abierta_pisa": [],
+   "axe_abierta": [],
+   "abierta_tras_otro_toque": false,
+   "axe": [],
+   "overflow_px": 0,
+   "consola": []
+  },
+  "lcp_slow4g": [
+   {
+    "ms": 808,
+    "en_atribucion": false,
+    "texto": "Desliza hacia arriba para ver más"
+   },
+   {
+    "ms": 2092,
+    "en_atribucion": false,
+    "texto": "Mira sus servicios y puntos clave, con datos ofici"
+   }
+  ]
+ },
+ "portada_desktop": {
+  "abierta_al_cargar": false,
+  "boton": {
+   "nombre": "Fuentes y licencias de los datos",
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 590,
+    "right": 614
+   }
+  },
+  "boton_pisa": [],
+  "creditos": {
+   "texto": "© OpenStreetMap · Powered by CRTM",
+   "enlaces": [
+    "https://www.openstreetmap.org/copyright",
+    "https://www.crtm.es"
+   ],
+   "visible_plegada": true,
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 630,
+    "right": 856
+   },
+   "pisa": [],
+   "visible_abierta": false
+  },
+  "abierta_tras_un_toque": true,
+  "abierta": {
+   "caja": {
+    "top": 95,
+    "bottom": 399,
+    "left": 590,
+    "right": 957
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "abierta_tras_otro_toque": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "zona_desktop": {
+  "abierta_al_cargar": false,
+  "boton": {
+   "nombre": "Fuentes y licencias de los datos",
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 590,
+    "right": 614
+   }
+  },
+  "boton_pisa": [],
+  "creditos": {
+   "texto": "© OpenStreetMap · Powered by CRTM",
+   "enlaces": [
+    "https://www.openstreetmap.org/copyright",
+    "https://www.crtm.es"
+   ],
+   "visible_plegada": true,
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 630,
+    "right": 856
+   },
+   "pisa": [],
+   "visible_abierta": false
+  },
+  "abierta_tras_un_toque": true,
+  "abierta": {
+   "caja": {
+    "top": 95,
+    "bottom": 399,
+    "left": 590,
+    "right": 957
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "abierta_tras_otro_toque": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "zona_1280x720": {
+  "abierta_al_cargar": false,
+  "boton": {
+   "nombre": "Fuentes y licencias de los datos",
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 586,
+    "right": 610
+   }
+  },
+  "boton_pisa": [],
+  "creditos": {
+   "texto": "© OpenStreetMap · Powered by CRTM",
+   "enlaces": [
+    "https://www.openstreetmap.org/copyright",
+    "https://www.crtm.es"
+   ],
+   "visible_plegada": true,
+   "caja": {
+    "top": 95,
+    "bottom": 139,
+    "left": 626,
+    "right": 817
+   },
+   "pisa": [],
+   "visible_abierta": false
+  },
+  "abierta_tras_un_toque": true,
+  "abierta": {
+   "caja": {
+    "top": 95,
+    "bottom": 394,
+    "left": 586,
+    "right": 801
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "abierta_tras_otro_toque": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "portada_1024x768": {
+  "abierta_al_cargar": false,
+  "boton": {
+   "nombre": "Fuentes y licencias de los datos",
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 580,
+    "right": 604
+   }
+  },
+  "boton_pisa": [],
+  "creditos": {
+   "texto": "© OpenStreetMap · Powered by CRTM",
+   "enlaces": [
+    "https://www.openstreetmap.org/copyright",
+    "https://www.crtm.es"
+   ],
+   "visible_plegada": true,
+   "caja": {
+    "top": 95,
+    "bottom": 119,
+    "left": 620,
+    "right": 845
+   },
+   "pisa": [],
+   "visible_abierta": false
+  },
+  "abierta_tras_un_toque": true,
+  "abierta": {
+   "caja": {
+    "top": 95,
+    "bottom": 379,
+    "left": 580,
+    "right": 976
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "abierta_tras_otro_toque": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "fallos": []
+}

@@ -74,6 +74,16 @@ export function attributionsOrFallback(refs: readonly DatasetRef[] | null): read
   return cited.length ? cited : ATTRIBUTIONS_FALLBACK;
 }
 
+/**
+ * mapa.atribucion.movil of pitch/textos_web.md: the two citations whose licences want them seen
+ * without touching anything (the OSMF attribution guidelines, and the CRTM licence §2.2), always
+ * beside the map's (i), each with its link, whatever /datasets answers.
+ */
+export const MAP_CREDITS: readonly { text: string; href: string }[] = [
+  { text: "© OpenStreetMap", href: "https://www.openstreetmap.org/copyright" },
+  { text: "Powered by CRTM", href: "https://www.crtm.es" },
+];
+
 const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /**

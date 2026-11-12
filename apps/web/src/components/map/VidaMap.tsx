@@ -61,7 +61,7 @@ import {
   zoneHref,
   type ZoneProperties,
 } from "@/lib/map/zones";
-import { mapAttribution } from "@/lib/provenance";
+import { MAP_CREDITS, mapAttribution } from "@/lib/provenance";
 
 import { useFacilityLayer } from "./FacilityLayerProvider";
 import { fetchZonePlaces } from "./fetchZones";
@@ -105,15 +105,6 @@ const TEXT = {
 };
 /** MapLibre's UI strings this map shows, in Spanish (its `locale` option patches the English defaults): mapa.fuentes. */
 const MAP_LOCALE = { "AttributionControl.ToggleAttribution": "Fuentes y licencias de los datos" };
-/**
- * mapa.atribucion.movil of pitch/textos_web.md: the two citations whose licences want them seen
- * without touching anything (the OSMF attribution guidelines, and the CRTM licence §2.2), always
- * beside the (i), each with its link.
- */
-const CREDITS = [
-  { text: "© OpenStreetMap", href: "https://www.openstreetmap.org/copyright" },
-  { text: "Powered by CRTM", href: "https://www.crtm.es" },
-];
 const NEW_TAB = " (se abre en una pestaña nueva)";
 const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];
 
@@ -169,7 +160,7 @@ function source(map: MapLibreMap, id: string): GeoJSONSource {
  * (i) button (MapLibre opens it until the map is first dragged), at the top left of the map's free
  * area (VidaMap.module.css places it for each screen, also after turning the phone). One tap or
  * click opens it, and the pages with a footer list every citation. Beside it, always in view, the
- * two citations that cannot start folded (CREDITS). Returns its controls, to change the citations.
+ * two citations that cannot start folded (MAP_CREDITS). Returns its controls, to change the citations.
  */
 function addAttribution(lib: MapLibre, map: MapLibreMap, citations: string): IControl[] {
   const control = new lib.AttributionControl({ compact: true, customAttribution: citations });
@@ -183,11 +174,11 @@ function addAttribution(lib: MapLibre, map: MapLibreMap, citations: string): ICo
   return [control, credits];
 }
 
-/** CREDITS as a MapLibre control: a short line of links with the (i)'s white background (AA contrast). */
+/** MAP_CREDITS as a MapLibre control: a short line of links with the (i)'s white background (AA contrast). */
 function creditsControl(): IControl {
   const line = document.createElement("p");
   line.className = `maplibregl-ctrl ${styles.credits}`;
-  CREDITS.forEach(({ text, href }, i) => {
+  MAP_CREDITS.forEach(({ text, href }, i) => {
     if (i > 0) line.append(" · ");
     const link = document.createElement("a");
     link.href = href;
