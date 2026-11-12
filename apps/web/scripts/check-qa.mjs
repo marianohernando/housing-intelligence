@@ -11,7 +11,7 @@
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map show every attribution_text of /datasets
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
-//   node scripts/check-qa.mjs capturas-deck [outDir] # captures C3 and C4 of line D's deck, after gap-0.3
+//   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
@@ -779,9 +779,39 @@ async function texts(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
-/** Captures C3 and C4 of line D's deck (pitch/slides.md, «Recaptura tras gap-0.3»), at 1440 px. */
+/** Captures C1–C4 of line D's deck (pitch/slides.md, «Recaptura tras gap-0.3» and fit-0.2), at 1440 px. */
 async function deckCaptures(browser) {
   const failures = [];
+  // C1 and C2 (fit-0.2): the demo search, the map and the first zone's card, checked against the
+  // /search answer the page receives (first zone and its facts, the commute in transit minutes)
+  const s = await open(browser, DESKTOP);
+  const [answer] = await Promise.all([
+    s.page.waitForResponse((r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST", { timeout: 30000 }),
+    loadExample(s.page),
+  ]);
+  const api = (await answer.json()).data;
+  const top = api.results[0];
+  const commute = top.facts.find((f) => /min en transporte público/.test(f.text));
+  report.c1_c2 = { metodo: api.methodology_version, primera: [top.zone.name, top.match_pct], trabajo: commute?.text ?? null };
+  if (!commute) failures.push("C2: la 1.ª zona no trae el trabajo en minutos de transporte público");
+  await s.page.getByRole("button", { name: new RegExp(`^1 ${top.zone.name}\\b`) }).first().click();
+  const card = s.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+  await card.waitFor({ timeout: 20000 });
+  await s.page.waitForTimeout(2500);
+  const cardText = flat(await card.innerText());
+  report.c1_c2.tarjeta = cardText;
+  for (const fact of top.facts) if (!cardText.includes(flat(fact.text))) failures.push(`C2: falta «${fact.text}»`);
+  if (!cardText.includes(`${top.match_pct} %`)) failures.push("C2: % de encaje distinto de la API");
+  await s.page.screenshot({ path: `${out}/deck_c1_busqueda_1440.png` });
+  await card.screenshot({ path: `${out}/deck_c2_tarjeta_zona_1440.png` });
+  // trabajo.ayuda of fit-0.2, and no «Tiempo en transporte: muy pronto» any more (D, 0186ae9)
+  report.c1_c2.trabajo_ayuda = await s.page.getByText("Miramos cuánto tardarías en transporte público para llegar a las 9:00.").count();
+  report.c1_c2.muy_pronto = await s.page.getByText("Tiempo en transporte: muy pronto").count();
+  if (!report.c1_c2.trabajo_ayuda || report.c1_c2.muy_pronto) failures.push("C1: textos de «Trabajo en»");
+  report.c1_c2.consola = s.errors;
+  if (s.errors.length) failures.push("C1: consola");
+  await s.ctx.close();
+
   // C4: «Qué falta» of Puente de Vallecas, escuelas infantiles in FALTA
   const q = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
   await q.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
