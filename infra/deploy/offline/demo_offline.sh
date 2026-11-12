@@ -96,6 +96,7 @@ promote_staging() { # the validated staging database becomes the one the API rea
 }
 
 build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this shell stay out
+  # Search on, as in production (NEXT_PUBLIC_FEATURE_SEARCH=true there): the pitch's block 2 needs it.
   local server app unset_public=()
   rm -rf "$WEB_BUILD" "$WEB_RUN.new"
   mkdir -p "$WEB_BUILD"
@@ -103,7 +104,7 @@ build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this sh
     apps/web/ "$WEB_BUILD/"
   while read -r name; do unset_public+=(-u "$name"); done < <(compgen -e | grep '^NEXT_PUBLIC_' || true)
   (cd "$WEB_BUILD" && node scripts/copy-maplibre-worker.mjs >/dev/null &&
-    env ${unset_public[@]+"${unset_public[@]}"} NEXT_PUBLIC_API_URL="$API_URL" \
+    env ${unset_public[@]+"${unset_public[@]}"} NEXT_PUBLIC_API_URL="$API_URL" NEXT_PUBLIC_FEATURE_SEARCH=true \
       "$ROOT/node_modules/.bin/next" build >/dev/null)
   server="$(find "$WEB_BUILD/.next/standalone" -name server.js -not -path '*/node_modules/*' | head -1)"
   [[ -n "$server" ]] || { echo "the web build produced no standalone server.js" >&2; return 1; }

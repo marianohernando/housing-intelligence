@@ -1,0 +1,13 @@
+infra/deploy/offline/demo_offline.sh start
+-> database (no network needed)
+-> API
+-> web on http://localhost:3012
+smoke: http://localhost:8012 (2026-11-12T00:05:55Z)
+OK   health      0.01s       225 B  /api/v1/health  process up
+OK   ready       0.00s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone        0.04s     23992 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography   0.15s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer       0.09s   1552706 B  /api/v1/places?category=education  3867 places
+OK   largest     0.12s   1842252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+smoke: 6/6 OK
+offline demo up: http://localhost:3012/map  (data: created_at 2026-11-12T00:05:26Z)

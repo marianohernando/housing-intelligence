@@ -18,7 +18,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 | [`api/Dockerfile`](api/Dockerfile) | Imagen de la API con solo las dependencias de `hi-api` (`uv sync --package hi-api`). Usuario no root y puerto `$PORT`. |
 | [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción, pasa el smoke y comprueba en `vercel logs` que todas sus peticiones las sirvió el despliegue nuevo. |
 | [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
-| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación) y la página 1 de la capa más grande (transporte). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
+| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación), la página 1 de la capa más grande (transporte) y una búsqueda (`POST /api/v1/search` con el caso demo del guion: al menos una zona y menos de 1 MB). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
 | [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql) | Rol `vf_api_ro`: solo lectura, con una política RLS por cada tabla que lee la API. Es idempotente. |
 
 ## Variables de entorno (proyecto Vercel, entorno Production)
@@ -139,20 +139,39 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
 
 **Solo se activa cuando el fichero está en `main`:** GitHub ejecuta los `schedule` y los `workflow_dispatch` desde la rama por defecto. Cubre del 17 al 26 nov si `claude/sprint-1-public` se fusiona en `main` antes del 17.
 
+### Recorridos del pitch en un navegador (`make e2e-prod`)
+[`e2e/e2e_prod.mjs`](e2e/e2e_prod.mjs) hace en un navegador real los recorridos del guion (`pitch/guion.md`):
+1. **J1:** portada → «Ver un ejemplo» → la 1.ª zona → «¿Y si cambias algo?», aplicar y deshacer.
+2. **J2:** «Qué falta» → «Madrid (toda la ciudad)».
+3. **J3:** el mapa por fila («¿Qué quieres ver?»), las 6 filas.
+4. **J4:** la lista de zonas.
+
+**Qué comprueba:**
+- Cada cifra de la pantalla, contra la respuesta de la API que recibió la propia página: zonas que encajan, leyenda, % y hechos de la tarjeta, opciones de «¿Y si cambias algo?», estado de cada fila y recuentos de la lista. No hay cifras fijas, así que sigue valiendo tras un sync.
+- Que todas las peticiones a `/search` lleven `max_minutes: null`.
+- Que no haya errores de consola ni desbordamiento horizontal.
+
+**Cómo se ejecuta:**
+- `make e2e-prod`: Chromium a 1440 y 390 px, unos 30 s. Sale con 0 solo si pasa todo.
+- Más navegadores, tamaños y capturas: `make e2e-prod E2E_ARGS="--browsers chromium,webkit,firefox --devices desktop-1440,desktop-1920,mobile-390,projector-125 --shots --out <carpeta>"`. Los navegadores se instalan una vez con `npx playwright install chromium webkit firefox`.
+- El workflow diario ejecuta además un job `e2e` con Chromium. El informe se guarda 14 días como artefacto `e2e-report`.
+
+**Comprobaciones omitidas, no superadas:** en móvil, la leyenda oculta los recuentos a propósito, así que esas comprobaciones salen como `skipped`.
+
 ## Día de la final (26 nov): lista
 
 1. **Por la mañana:**
-   - `make smoke-demo` tiene que dar 7/7. Si falla, sigue la sección «Si la demo se cae».
+   - `make smoke-demo` tiene que dar 8/8. Si falla, sigue la sección «Si la demo se cae».
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
 2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
    - El sync vacía con `TRUNCATE` las 9 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
-   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 7/7.
+   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 8/8.
    - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
 3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
-4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
-   - Sus 7 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y dos capas.
-   - Así el contenedor de la API ya está arrancado y no te comes los 3–4 s del arranque en frío delante del jurado.
+4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`, que ya incluye `/search`.
+   - Sus 8 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía, dos capas y una búsqueda con el caso del guion.
+   - Así el contenedor de la API ya está arrancado y la búsqueda tiene su caché lista, y no te comes delante del jurado los unos 6 s de un `/search` en frío (medido el 12 nov: 3,5 s de arranque más 2,5 s de la primera búsqueda).
    - Deja después la pestaña de la demo abierta y recárgala una vez.
    - El contenedor se apaga tras 5 min sin tráfico. Si entre el calentamiento y tu turno pasan más de 5 min, repítelo.
 5. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
@@ -193,28 +212,35 @@ Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.**
 3. Comprueba que la migración de la base de origen es la misma que la del checkout.
 4. Vuelca, en modo solo lectura, las 9 tablas del perfil demo (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
 5. Crea el esquema con Alembic en una base **staging**, carga el volcado y **compara los conteos de filas** con la base de origen.
-6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada.
+6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada, con el buscador encendido (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción; desde el 12 nov).
 7. Solo si todo lo anterior sale bien: la base staging pasa a ser la base de la demo y los ficheros `.tmp` sustituyen a los anteriores.
 
 Si algo falla, el paquete anterior sigue intacto y `make demo-offline` funciona con él.
 
 El resultado se guarda en `data/offline/`, que git ignora:
-- `demo-data.sql.gz`: 41 MB el 11 nov;
+- `demo-data.sql.gz`: 43 MB el 12 nov;
 - `manifest.txt`: fecha, commit, migración y conteos;
 - `web/`: el servidor web listo para arrancar.
 
 - Si la base de origen va por delante del checkout con una migración que no toca las tablas de la demo (por ejemplo, un rol), se puede forzar con `DEMO_OFFLINE_ALLOW_HEAD_MISMATCH=1`.
 - El volcado sale de la base local de desarrollo, que es la que A sincroniza con Supabase. Si se quiere exactamente lo publicado, hay que regenerar justo después de `make supabase-sync PROFILE=demo`.
+  - Si no, las cifras pueden no coincidir con producción. El 12 nov, la base local ya tenía la auditoría de D-216 y Supabase todavía no. El caso de ejemplo daba 33 zonas en el paquete y 32 en producción.
+  - El guion siempre lee las cifras de la pantalla. Aun así, el 23 hay que regenerar después del último sync.
 
 ### Arrancarlo (26 nov, en 1 minuto, sin red)
 
 ```bash
-make demo-offline        # ~7 s: base, API, web y smoke 6/6
+make demo-offline        # ~8 s: base, API, web y smoke 7/7 (sin la web, con /search)
 # abre http://localhost:3012/map
 make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
 
-- `start` no construye ni descarga nada (`--no-build`). Comprobado con un navegador headless: 0 peticiones a hosts externos y la consola sin errores.
+- `start` no construye ni descarga nada (`--no-build`).
+- **Sin red, el mapa sale sin fondo.** La web nueva pide el mapa base a `tiles.openfreemap.org` (`apps/web/src/lib/map/style.ts`), y sin Internet ese fondo no llega.
+  - Sí funcionan las zonas coloreadas, el buscador, «¿Y si cambias algo?», «Qué falta» y la lista.
+  - La web enseña arriba el aviso «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.», y la consola registra los fallos de esas teselas.
+  - Comprobado el 12 nov con `--block-external` (ver «Ensayo»).
+  - Para tener fondo sin red, B tendría que hacer configurable el TileJSON y el paquete tendría que servir un extracto local de Madrid. Está propuesto, no hecho.
 - **`start` comprueba el volumen**, no solo el volcado. Si la base no coincide con `manifest.txt` (por ejemplo, porque se borró el volumen de Docker), la restaura desde `demo-data.sql.gz` en unos 11 s. Para eso necesita `uv`, que ya está instalado.
 - **`stop` solo mata su propio servidor web.** Antes comprueba que el pid de `web.pid` sigue siendo el de Next.js. Si algo falla a medias, el script lo dice: «Clean up with: make demo-offline-stop».
 - No hace falta calentarlo. Los procesos quedan arrancados y el propio `make demo-offline` pasa el smoke al terminar, así que la API ya ha respondido una vez.
@@ -224,6 +250,9 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
   - no hace falta Internet.
 - **Si un puerto está ocupado:** `make demo-offline-stop`, o cierra lo que use el 3012, el 8012 o el 5441.
 - **Ensayo:** hazlo el 24–25 con el wifi apagado. Si la web nueva de B usa teselas, fuentes o imágenes externas, lo verás ahí: tienen que venir incluidas en la build.
+  - Con el paquete arrancado, los recorridos del pitch se comprueban solos: `node infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3012 --block-external`.
+  - `--block-external` corta toda petición que no vaya a localhost, como si no hubiera red. El informe lista los hosts cortados.
+  - El 12 nov el único host cortado fue `tiles.openfreemap.org`, y todas las comprobaciones de datos pasaron. Solo falló la de «consola sin errores», por esas teselas.
 
 ## Problemas conocidos
 
