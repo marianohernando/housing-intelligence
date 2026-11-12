@@ -5752,6 +5752,16 @@
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
+      "dataset_id": "cm_valor_tasado_vivienda_municipios",
+      "name": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1004050",
+      "version": "2026-11-12-60a2ddbf2260",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
       "dataset_id": "crtm_gtfs_autobuses_urbanos",
       "name": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid",
       "publisher": "Consorcio Regional de Transportes de Madrid",
@@ -5862,5 +5872,5 @@
       "attribution_text": "© OpenStreetMap contributors, ODbL."
     }
   ],
-  "methodology_version": "fit-0.4"
+  "methodology_version": "fit-0.5"
 }

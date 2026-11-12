@@ -56,16 +56,19 @@ def test_demo_case_ranks_zones_that_pass_every_condition(client: TestClient) -> 
 
 
 def test_unknown_never_counts_as_pass(client: TestClient) -> None:
+    """No zone of the fixtures has a published appraised value (D-227): buying is UNKNOWN
+    everywhere, never PASS, and more budget cannot add a zone without a price."""
     scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 300000}, "nearby": []}
     data = _search(client, scenario).data
     assert data.results == []
     assert data.reality_check.zones_passing == 0
     assert data.reality_check.zones_unknown == data.reality_check.zones_evaluated
     assert all(not z.passes_all for z in data.all_zones)
-    option = data.reality_check.relaxations[0]
-    assert option.constraint_id == "budget"
-    assert option.relaxed_scenario.budget is None
-    assert option.added_zones == data.reality_check.zones_evaluated
+    option = next(o for o in data.reality_check.relaxations if o.constraint_id == "budget")
+    assert option.relaxed_scenario.budget is not None
+    assert option.relaxed_scenario.budget.amount_eur == 330000
+    assert option.added_zones == 0
+    assert data.near_misses == []  # an UNKNOWN is never an explicit alternative either
 
 
 def test_trip_limits_without_commute_times_are_unknown_and_say_why(client: TestClient) -> None:

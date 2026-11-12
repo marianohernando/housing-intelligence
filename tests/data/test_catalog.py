@@ -275,9 +275,11 @@ def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
     municipio and distrito levels it ranks."""
     bound = [s for s in catalog.features.values() if s.fit is not None]
     rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
+    prices = [s for s in bound if s.fit is not None and s.fit.role == "price_m2"]
     to_needs = [s for s in bound if s.fit is not None and s.fit.need is not None]
     walks = {s.fit.need: s for s in to_needs if s.fit is not None}
     assert len(rents) == 1
+    assert len(prices) == 1
     assert len(walks) == len(to_needs)
     assert set(walks) == {n.value for n in NeedKey}
     for spec in bound:
@@ -353,3 +355,20 @@ def test_perceived_safety_is_the_residents_view_of_madrid_only(catalog: Catalog)
         assert formula["metric"] == f"percepcion_seguridad_barrio_{part}"
         assert "distrito" in formula["levels"]
         assert spec.null_policy.no_coverage == "unknown"
+
+
+def test_purchase_price_is_the_official_appraised_value_from_the_cm_portal(
+    catalog: Catalog,
+) -> None:
+    """DATA-021 (D-227): buying reads the Ministerio de Vivienda appraised value that the CM
+    portal publishes by municipio; Madrid districts are SIN DATOS, never the city's mean."""
+    bound = [f for f in catalog.features.values() if f.fit is not None and f.fit.role == "price_m2"]
+    assert [f.feature_id for f in bound] == ["valor_tasado_vivienda_m2"]
+    spec = bound[0]
+    primary = {s.dataset_id for s in spec.sources if s.role == "primary"}
+    assert primary == {"cm_valor_tasado_vivienda_municipios"}
+    dataset = catalog.datasets["cm_valor_tasado_vivienda_municipios"]
+    assert dataset.source_id == "comunidad_madrid_ckan"
+    assert dataset.license_status == "CLEAR"
+    levels = (spec.formula.model_extra or {})["levels"]
+    assert levels["distrito"]["method"] == "not_published"

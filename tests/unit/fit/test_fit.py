@@ -62,6 +62,7 @@ def zone(
     transporte: float | None = 3.0,
     lon: float = -3.70,
     lat: float = 40.42,
+    price: float | None = None,
 ) -> ZoneData:
     walk = {NeedKey.COLEGIO: _value("min_a_pie_colegio", colegio)}
     walk[NeedKey.TRANSPORTE] = _value("min_a_pie_transporte", transporte)
@@ -75,6 +76,7 @@ def zone(
         ),
         rent=_value("alquiler_m2_mensual", rent),
         walk=walk,
+        price=None if price is None else _value("valor_tasado_vivienda_m2", price, 0.8),
     )
 
 
@@ -173,11 +175,37 @@ def test_commute_limit_is_unknown_without_travel_time() -> None:
     assert option.relaxed_scenario.anchors[0].max_minutes is None
 
 
-def test_purchase_budget_is_unknown_and_relaxing_drops_it() -> None:
-    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=300_000))
-    outcome = run_search(scenario, [zone("1")])
-    assert outcome.results == []
-    assert outcome.reality_check.relaxations[0].relaxed_scenario.budget is None
+BUY_300K = Budget(kind=BudgetKind.BUY, amount_eur=300_000)
+
+
+def test_purchase_scores_with_the_appraised_value_and_unknown_never_passes() -> None:
+    """DATA-021 (D-227): 77 m² for a family of four; 3.000 €/m² fits 300.000 €, 4.500 does
+    not and a zone without a published price is UNKNOWN, never a result."""
+    scenario = family(budget=BUY_300K, anchors=[])
+    outcome = run_search(
+        scenario, [zone("1", price=3000.0), zone("2", price=4500.0), zone("3", price=None)]
+    )
+    assert [r.zone.code for r in outcome.results] == ["1"]
+    card = outcome.results[0]
+    assert card.estimated_cost_eur == 231_000
+    budget = next(c for c in card.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.PASS
+    cost = next(f for f in card.facts if f.topic is FactTopic.COSTE)
+    assert "valor tasado" in cost.text
+    by_code = {z.zone.code: z for z in outcome.all_zones}
+    assert by_code["2"].failed_constraints == ["budget"]
+    assert by_code["3"].match_pct is None and not by_code["3"].passes_all
+    assert outcome.reality_check.zones_unknown == 1
+
+
+def test_a_purchase_budget_relaxes_by_ten_percent_in_thousands() -> None:
+    label, more = relaxed(family(budget=BUY_300K), "budget") or ("", family())
+    assert more.budget is not None
+    assert more.budget.kind is BudgetKind.BUY
+    assert more.budget.amount_eur == 330_000
+    assert label == "+30.000 €"
+    top = Budget(kind=BudgetKind.BUY, amount_eur=5_000_000)
+    assert relaxed(family(budget=top), "budget") is None
 
 
 def test_relaxations_step_budget_and_minutes() -> None:
@@ -197,6 +225,7 @@ zone_strategy = st.builds(
     code=st.text(alphabet="0123456789", min_size=1, max_size=4),
     rent=st.one_of(st.none(), st.floats(min_value=8, max_value=25)),
     colegio=st.one_of(st.none(), st.floats(min_value=0, max_value=40)),
+    price=st.one_of(st.none(), st.floats(min_value=1500, max_value=9000)),
 )
 
 

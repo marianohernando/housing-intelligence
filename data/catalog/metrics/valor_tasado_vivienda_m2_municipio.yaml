@@ -1,0 +1,13 @@
+metric_id: valor_tasado_vivienda_m2_municipio
+human_name: Valor tasado medio de la vivienda libre por m² (municipios)
+description: >-
+  Media anual del valor de tasación por metro cuadrado de la vivienda libre, en los municipios
+  de más de 25.000 habitantes con tasaciones suficientes. Estadística de Valor Tasado de la
+  Vivienda del Ministerio de Vivienda y Agenda Urbana, publicada en el portal de la CM.
+domain: housing
+unit: EUR/m2
+direction: lower_is_better
+aggregation_method: none
+geo_resolution_min: municipio
+temporal_resolution: annual
+dataset_id: cm_valor_tasado_vivienda_municipios

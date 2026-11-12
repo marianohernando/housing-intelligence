@@ -4,8 +4,10 @@ budget condition PASS / FAIL / UNKNOWN. UNKNOWN never counts as PASS (CLAUDE.md 
 Rent: the zone's published rent per m² (feature `alquiler_m2_mensual`) times the floor area
 the household needs. Unless the person sets it, that area is the median useful floor area of
 the homes of households of the same size in the Comunidad de Madrid (Censo de Población y
-Viviendas 2021, INE table 59524). Purchase: no open official source of prices by zone yet
-(DATA-021), so its condition is UNKNOWN and says so (D-203).
+Viviendas 2021, INE table 59524). Purchase (DATA-021, D-227): the zone's mean appraised value
+per m² of free-market housing (feature `valor_tasado_vivienda_m2`, Ministerio de Vivienda via
+the CM portal) times the same area; only municipios of more than 25.000 inhabitants have it,
+so everywhere else the condition is UNKNOWN and says so.
 """
 
 from typing import NamedTuple
@@ -29,6 +31,8 @@ FLOOR_AREA_SOURCE = (
     "de Madrid (Censo 2021, INE)"
 )
 RENT_NOTE = "media de los contratos vigentes; uno nuevo suele costar más"
+PURCHASE_NOTE = "valor tasado medio de la vivienda libre, no el precio de un anuncio"
+PURCHASE_ROUND_EUR = 1000  # an appraised mean is no more precise than this
 BUDGET_ID = "budget"
 
 
@@ -66,24 +70,57 @@ def rent_explanation(rent_m2: float, area: FloorArea) -> str:
     )
 
 
-def _purchase_unknown(budget: Budget, area: FloorArea) -> ConstraintCheck:
-    return ConstraintCheck(
-        constraint_id=BUDGET_ID,
-        label=budget_label(budget, area),
-        status=ConstraintStatus.UNKNOWN,
-        threshold=float(budget.amount_eur),
-        unit="€",
-        confidence=0.0,
-        explanation=(
-            "Sin datos: aún no hay una fuente oficial abierta y fiable de precios de compra por "
-            "zona, así que no podemos decir si te llega"
-        ),
+def purchase_cost(price_m2: float, area_m2: int) -> int:
+    """Appraised value per m² times the area, rounded to thousands: the state, the value and
+    the text use this one number."""
+    return round(price_m2 * area_m2 / PURCHASE_ROUND_EUR) * PURCHASE_ROUND_EUR
+
+
+def purchase_explanation(price_m2: float, area: FloorArea) -> str:
+    cost = purchase_cost(price_m2, area.m2)
+    return (
+        f"Comprar ≈ {euros(cost)} por {area.m2} m² ({es_number(price_m2, 0)} €/m², {PURCHASE_NOTE})"
     )
 
 
-def budget_check(budget: Budget, rent: IndicatorValue | None, area: FloorArea) -> ConstraintCheck:
+def _purchase_check(
+    budget: Budget, price: IndicatorValue | None, area: FloorArea
+) -> ConstraintCheck:
+    base = {
+        "constraint_id": BUDGET_ID,
+        "label": budget_label(budget, area),
+        "threshold": float(budget.amount_eur),
+        "unit": "€",
+    }
+    if price is None or price.value is None:
+        return ConstraintCheck(
+            **base,
+            status=ConstraintStatus.UNKNOWN,
+            confidence=0.0,
+            explanation=(
+                "Sin precio de compra publicado para esta zona: el valor tasado del Ministerio de "
+                "Vivienda solo llega a los municipios de más de 25.000 habitantes con tasaciones "
+                "suficientes, no a los distritos ni a los pueblos"
+            ),
+        )
+    cost = purchase_cost(price.value, area.m2)
+    return ConstraintCheck(
+        **base,
+        status=ConstraintStatus.PASS if cost <= budget.amount_eur else ConstraintStatus.FAIL,
+        value=float(cost),
+        confidence=price.confidence,
+        explanation=purchase_explanation(price.value, area),
+    )
+
+
+def budget_check(
+    budget: Budget,
+    rent: IndicatorValue | None,
+    area: FloorArea,
+    price: IndicatorValue | None = None,
+) -> ConstraintCheck:
     if budget.kind is BudgetKind.BUY:
-        return _purchase_unknown(budget, area)
+        return _purchase_check(budget, price, area)
     if rent is None or rent.value is None:
         return ConstraintCheck(
             constraint_id=BUDGET_ID,

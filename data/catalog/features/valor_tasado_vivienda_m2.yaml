@@ -1,0 +1,33 @@
+feature_id: valor_tasado_vivienda_m2
+version: 1
+human_name: Valor tasado medio de la vivienda libre por metro cuadrado
+domain: housing
+type: raw
+unit: EUR/m2
+direction: lower_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_valor_tasado_vivienda_municipios, role: primary, levels: [municipio]}
+  # The districts of the padrón get an explicit SIN DATOS row each (never left out)
+  - {dataset_id: ayto_padron_municipal, role: secondary, levels: [distrito]}
+formula:
+  method: metric_value
+  metric: valor_tasado_vivienda_m2_municipio
+  dims: {}
+  confidence: 0.8  # a municipio-wide mean of appraisals, applied to every home of the zone (D-227)
+  levels:
+    # Only municipios: a district never takes Madrid's city mean (CLAUDE.md §11). SIN DATOS.
+    distrito: {method: not_published, territories_metric: poblacion_padron}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness, municipio_mean]}
+public_use: true
+pro_use: true
+models: [affordability, reality_check]
+tests: [positive, unknown_never_zero]
+limitations:
+  - "Es el valor de tasación (lo que tasan las sociedades de tasación, sobre todo para hipotecas), no el precio de un anuncio ni el de una venta concreta."
+  - "Solo municipios de más de 25.000 habitantes con tasaciones suficientes; el resto y los distritos de Madrid quedan sin datos, nunca 0. Un distrito no toma la media de la ciudad: Madrid no es homogéneo."
+  - "Es la media de todo el municipio y de toda la vivienda libre (nueva y usada); dentro de un municipio grande el precio cambia mucho."
+  - "El coste estimado multiplica este valor por los m² útiles que se suponen para el hogar (D-214); si la tasación se expresa por m² construido, el coste queda algo corto, así que un FAIL es más fiable que un PASS."
+fit: {role: price_m2}

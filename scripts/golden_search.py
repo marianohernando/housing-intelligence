@@ -52,6 +52,14 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
             bool(result.results) and (transit_minutes(result.results[0]) or float("inf")) <= v
         ),
         "all_unknown": lambda v: (check.zones_unknown == check.zones_evaluated) is v,
+        # D-227: buying, every result has a published appraised value behind its budget PASS
+        "results_priced": lambda v: (
+            all(
+                any(c.constraint_id == "budget" and c.value is not None for c in r.constraints)
+                for r in result.results
+            )
+            is v
+        ),
         # D-222: the first zones have an urban park within the «Zonas verdes» window
         "top_green_strength": lambda v: (
             len(result.results) >= v
@@ -92,7 +100,8 @@ def report(profile: str, result: SearchResult, failed: list[str]) -> None:
     for option in check.relaxations:
         print(f"  Reality Check: {option.label} → +{option.added_zones} zonas")
     for ranked in result.results[:5]:
-        cost = f" · ≈ {ranked.estimated_cost_eur:.0f} €/mes" if ranked.estimated_cost_eur else ""
+        per = "" if result.scenario.budget and result.scenario.budget.kind == "buy" else "/mes"
+        cost = f" · ≈ {ranked.estimated_cost_eur:.0f} €{per}" if ranked.estimated_cost_eur else ""
         print(f"  {ranked.rank}. {ranked.zone.name} · {ranked.match_pct} %{cost}")
         for fact in ranked.facts:
             print(f"       - {fact.text} (confianza {fact.confidence:.2f})")

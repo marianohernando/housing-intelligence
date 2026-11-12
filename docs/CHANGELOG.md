@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.50 — Comprar con el valor tasado (2026-11-12)
+- D-227: el presupuesto de compra usa el valor tasado medio de la vivienda libre por municipio (dataset CM, Ministerio de Vivienda); los distritos de Madrid quedan sin datos. `POST /search` pasa a `fit-0.5`.
+- `04_technical_architecture/31_public_api_routes.md`: compra y `estimated_cost_eur` en €.
+
 ## v0.5.49 — Seguridad percibida como contexto (2026-11-12)
 - D-226: features `seguridad_percibida_noche` y `seguridad_percibida_dia` (21 distritos y Madrid; el resto sin datos), servidas por `GET /features/{id}/values`; el hecho de la prioridad «Seguridad» dice que no se puntúa.
 - `04_technical_architecture/31_public_api_routes.md`: cómo leer el contexto de seguridad.

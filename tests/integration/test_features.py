@@ -215,3 +215,29 @@ def test_perceived_safety_is_madrid_context_and_unknown_elsewhere(
     others = [r for (level, code), r in by_zone.items() if level == "municipio" and code != "28079"]
     assert others
     assert all(r["value"] is None and r["null_reason"] == "SOURCE_MISSING" for r in others)
+
+
+def test_appraised_value_is_by_municipio_and_districts_are_unknown(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-227: municipios with a published appraised value; a Madrid district never takes the
+    city's mean (SOURCE_MISSING), nor does a municipio without enough appraisals."""
+    with migrated_engine.connect() as conn:
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT DISTINCT ON (territory_level, territory_code) territory_level, "
+                    "territory_code, value, null_reason FROM feature_value "
+                    "WHERE feature_id = 'valor_tasado_vivienda_m2' "
+                    "ORDER BY territory_level, territory_code, period_start DESC"
+                )
+            )
+            .mappings()
+            .all()
+        )
+    by_zone = {(r["territory_level"], r["territory_code"]): r for r in rows}
+    assert float(by_zone[("municipio", "28079")]["value"]) == 4993.3
+    assert by_zone[("municipio", "28001")]["null_reason"] == "SOURCE_MISSING"
+    districts = [r for (level, _), r in by_zone.items() if level == "distrito"]
+    assert districts
+    assert all(r["value"] is None and r["null_reason"] == "SOURCE_MISSING" for r in districts)

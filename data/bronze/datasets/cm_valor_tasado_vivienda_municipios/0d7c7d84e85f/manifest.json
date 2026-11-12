@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_valor_tasado_vivienda_municipios",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_valor_tasado_vivienda_municipios/0d7c7d84e85f/valor-tasado-de-la-vivienda-libre-por-municipios-de-mas-de-25.000-habitantes.-total-base-2005.-m.csv",
+      "sha256": "0d7c7d84e85f4cfde28b2ab88274cf99b2c2700543be15d3b25b1bb4af96abf5",
+      "bytes": 190289,
+      "url": "https://datos.comunidad.madrid/dataset/8cb70b8c-c1e2-43f7-826a-1a22c573a743/resource/ef4a2c7a-4273-4116-9ff2-d5f77020ca04/download/valor-tasado-de-la-vivienda-libre-por-municipios-de-mas-de-25.000-habitantes.-total-base-2005.-m.csv",
+      "retrieved_at": "2026-11-12T15:57:13.766168+00:00"
+    }
+  ]
+}

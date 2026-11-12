@@ -28,7 +28,7 @@ class ZoneNotInSearchError(LookupError):
 
 
 def _indicators(data: ZoneData) -> list[IndicatorValue]:
-    found = [data.rent, *data.walk.values(), *data.priority_walk.values()]
+    found = [data.rent, data.price, *data.walk.values(), *data.priority_walk.values()]
     return sorted((i for i in found if i is not None), key=lambda i: i.feature_id)
 
 

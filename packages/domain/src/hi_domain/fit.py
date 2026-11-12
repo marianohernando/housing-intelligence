@@ -35,11 +35,13 @@ from hi_domain.affordability import (
     assumed_floor_area,
     budget_check,
     monthly_rent,
+    purchase_cost,
+    purchase_explanation,
     rent_explanation,
 )
 from hi_domain.gaps import es_number
 
-FIT_VERSION = "fit-0.4"  # 0.3: walk to a park (D-222); 0.4: to a step-free station (D-223)
+FIT_VERSION = "fit-0.5"  # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227)
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -138,8 +140,9 @@ class Commute:
 
 @dataclass(frozen=True)
 class ZoneData:
-    """What the search knows about one zone: rent per m², walking minutes by service and, per
-    place of work (index in `anchors`), the trip by public transport when it was computed."""
+    """What the search knows about one zone: rent and appraised purchase value per m², walking
+    minutes by service and, per place of work (index in `anchors`), the trip by public
+    transport when it was computed."""
 
     zone: ZoneRef
     rent: IndicatorValue | None = None
@@ -150,6 +153,7 @@ class ZoneData:
         default_factory=dict[PriorityKey, IndicatorValue]
     )
     commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
+    price: IndicatorValue | None = None  # appraised value per m² to buy (D-227)
 
 
 @dataclass(frozen=True)
@@ -253,7 +257,7 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
         if not nearby.required and nearby.need not in covered:
             target = nearby.max_walk_minutes
             keys.append(Criterion(f"need:{nearby.need.value}", 0.0, nearby.need, target))
-    if scenario.budget is not None and scenario.budget.kind is BudgetKind.RENT:
+    if scenario.budget is not None:
         keys.append(Criterion("budget", 0.0))
     return keys
 
@@ -336,7 +340,7 @@ def constraint_checks(
 ) -> list[ConstraintCheck]:
     checks: list[ConstraintCheck] = []
     if scenario.budget is not None:
-        checks.append(budget_check(scenario.budget, data.rent, area))
+        checks.append(budget_check(scenario.budget, data.rent, area, data.price))
     for nearby in scenario.nearby:
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
@@ -453,6 +457,23 @@ def cost_fact(rent: IndicatorValue | None, area: FloorArea, budget: float | None
     return Score(utility, rent.confidence, fact)
 
 
+def purchase_fact(price: IndicatorValue | None, area: FloorArea, budget: float) -> Score:
+    """Buying (D-227): the appraised value for the needed area against the budget."""
+    if price is None or price.value is None:
+        text = "Compra: sin precio publicado para esta zona"
+        fact = Fact(kind=FactKind.UNKNOWN, topic=FactTopic.COSTE, text=text, confidence=0.0)
+        return Score(None, 0.0, fact)
+    cost = purchase_cost(price.value, area.m2)
+    fact = Fact(
+        kind=FactKind.STRENGTH if cost <= budget else FactKind.WEAKNESS,
+        topic=FactTopic.COSTE,
+        text=purchase_explanation(price.value, area),
+        confidence=price.confidence,
+        indicator=price,
+    )
+    return Score(budget_utility(cost, budget), price.confidence, fact)
+
+
 def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: FloorArea) -> Score:
     if criterion.need is not None:
         target = criterion.target_minutes or DEFAULT_WALK_MINUTES[criterion.need]
@@ -466,6 +487,8 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
             return priority_walk_fact(measured, data.priority_walk.get(criterion.priority))
         topic, text = NO_DATA_PRIORITY[criterion.priority]
         return Score(None, 0.0, Fact(kind=FactKind.UNKNOWN, topic=topic, text=text, confidence=0))
+    if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
+        return purchase_fact(data.price, area, float(scenario.budget.amount_eur))
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)
     return cost_fact(data.rent, area, budget)
 
@@ -510,6 +533,15 @@ def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
     return [*known, *unknown][:MAX_FACTS]
 
 
+def estimated_cost(scenario: ScenarioState, data: ZoneData, area: FloorArea) -> float | None:
+    """The purchase price to buy, else the monthly rent (also without a budget)."""
+    if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
+        price = data.price.value if data.price is not None else None
+        return None if price is None else float(purchase_cost(price, area.m2))
+    rent = data.rent.value if data.rent is not None else None
+    return None if rent is None else float(round(monthly_rent(rent, area.m2)))
+
+
 def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     area = assumed_floor_area(scenario)
     checks = constraint_checks(scenario, data, area)
@@ -517,10 +549,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     utility, confidence = match_and_confidence(weighted)
     if not weighted:  # nothing to score: the zone is as sure as its conditions
         confidence = min((c.confidence for c in checks), default=1.0)
-    rent = data.rent.value if data.rent is not None else None
-    cost = None
-    if rent is not None and (scenario.budget is None or scenario.budget.kind is BudgetKind.RENT):
-        cost = float(round(monthly_rent(rent, area.m2)))
+    cost = estimated_cost(scenario, data, area)
     return ZoneFit(
         data=data,
         constraints=checks,

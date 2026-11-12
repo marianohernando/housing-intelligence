@@ -16,17 +16,18 @@ from hi_contracts.public import (
     Relaxation,
     ScenarioState,
 )
-from hi_contracts.public.scenario import RENT_RANGE_EUR
+from hi_contracts.public.scenario import BUY_RANGE_EUR, RENT_RANGE_EUR
 from hi_domain.affordability import euros
 from hi_domain.fit import NEED_TEXT, ZoneData, ZoneFit, statuses
 
 BUDGET_STEP_SHARE, BUDGET_STEP_ROUND = 0.10, 50  # +10 % of the rent, rounded up to 50 €
+BUY_STEP_ROUND = 10_000  # buying: +10 % of the budget, rounded up to 10.000 € (D-227)
 WALK_STEP_MINUTES, WALK_MAX_MINUTES = 5, 60
 
 
-def budget_step(amount: int) -> int:
-    steps = math.ceil(amount * BUDGET_STEP_SHARE / BUDGET_STEP_ROUND)
-    return max(BUDGET_STEP_ROUND, steps * BUDGET_STEP_ROUND)
+def budget_step(amount: int, rounding: int = BUDGET_STEP_ROUND) -> int:
+    steps = math.ceil(amount * BUDGET_STEP_SHARE / rounding)
+    return max(rounding, steps * rounding)
 
 
 def relaxed(scenario: ScenarioState, constraint_id: str) -> tuple[str, ScenarioState] | None:
@@ -44,14 +45,17 @@ def _relax_budget(scenario: ScenarioState) -> tuple[str, ScenarioState] | None:
     budget = scenario.budget
     if budget is None:
         return None
-    if budget.kind is BudgetKind.BUY:  # no purchase prices yet: only dropping it helps
-        return "Sin límite de precio de compra", scenario.model_copy(update={"budget": None})
-    amount = min(budget.amount_eur + budget_step(budget.amount_eur), RENT_RANGE_EUR[1])
+    buying = budget.kind is BudgetKind.BUY
+    rounding, top = (
+        (BUY_STEP_ROUND, BUY_RANGE_EUR[1]) if buying else (BUDGET_STEP_ROUND, RENT_RANGE_EUR[1])
+    )
+    amount = min(budget.amount_eur + budget_step(budget.amount_eur, rounding), top)
     if amount == budget.amount_eur:
         return None
     step = amount - budget.amount_eur
     new_budget = budget.model_copy(update={"amount_eur": amount})
-    return f"+{euros(step)}/mes", scenario.model_copy(update={"budget": new_budget})
+    label = f"+{euros(step)}" if buying else f"+{euros(step)}/mes"
+    return label, scenario.model_copy(update={"budget": new_budget})
 
 
 def _relax_near(scenario: ScenarioState, need: NeedKey) -> tuple[str, ScenarioState]:

@@ -863,7 +863,7 @@ CORE-006. Código en `hi_domain/affordability.py` y en el método `postcode_weig
    - **Comprobación:** la media de los 21 distritos ponderada por población da 14,46 €/m², frente a los 15,10 publicados para Madrid. La cifra municipal pondera por viviendas alquiladas, que se concentran en el centro.
    - **Ejemplos:** Salamanca 19,8 €/m², Chamartín 18,0, Fuencarral-El Pardo 14,4 y Villaverde 10,8.
    - **Por qué la media y no la mediana ponderada** (como proponía el board): la fuente publica medias, y con 1 a 5 códigos por distrito una mediana saltaría de un código a otro.
-5. **Compra.** Aún no hay una fuente oficial abierta y fiable de precio de compra por zona: DATA-021 entra del 19 al 22 nov (D-206). Mientras tanto, con `budget.kind = buy` la condición sale UNKNOWN en todas las zonas, con la explicación «Sin datos: aún no hay una fuente oficial abierta y fiable de precios de compra por zona». El buscador no inventa un precio.
+5. **Compra** (sustituido por D-227, que usa el valor tasado por municipio). Aún no hay una fuente oficial abierta y fiable de precio de compra por zona: DATA-021 entra del 19 al 22 nov (D-206). Mientras tanto, con `budget.kind = buy` la condición sale UNKNOWN en todas las zonas, con la explicación «Sin datos: aún no hay una fuente oficial abierta y fiable de precios de compra por zona». El buscador no inventa un precio.
    - **Candidatas para DATA-021:**
      - el valor tasado de vivienda libre del Ministerio de Vivienda (municipios de más de 25.000 habitantes);
      - el valor de referencia del Catastro que publica la CM para las viviendas arrendadas (municipios de más de 20.000 habitantes y códigos postales de Madrid).
@@ -1144,3 +1144,24 @@ DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con 
    - una edición que no es un año va a cuarentena;
    - la fila de la ciudad no lleva nombre de distrito;
    - las limitaciones públicas de las features no llevan cifras que caducan ni afirmaciones sin evidencia.
+
+## D-227 — Comprar: el valor tasado de la vivienda libre por municipio, y los distritos de Madrid sin datos (2026-11-12)
+DATA-021. Sustituye D-214 §5, donde comprar salía UNKNOWN en todas las zonas. Es reversible: un dataset CM, una feature con enlace `fit: {role: price_m2}` y el encaje `fit-0.5`. Código: `hi_domain/affordability.py` (`purchase_cost`, `_purchase_check`), `hi_domain/fit.py` (`purchase_fact`, `estimated_cost`) y `hi_domain/reality_check.py`. Evidencia: `evidence/gate-01/2026-11-12/cm_valor_tasado_vivienda_municipios/`, `evidence/gate-04/2026-11-12/golden-search-compra.txt`.
+1. **Fuente (dato CM):** «Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios», del portal de datos abiertos de la Comunidad de Madrid (id 1004050, CC BY 4.0, actualizado el 2 jun 2026). Es la Estadística de Valor Tasado de la Vivienda del Ministerio de Vivienda y Agenda Urbana.
+   - Media anual en €/m², de 2005 a 2025, con código de municipio.
+   - En 2025 tienen valor 28 municipios: los de más de 25.000 habitantes con tasaciones suficientes. Van de Aranjuez (1.931 €/m²) a Madrid (4.993 €/m²).
+   - Se cargan los años desde 2021 y la búsqueda lee el último.
+2. **Qué es y qué no es:** es lo que tasan las sociedades de tasación, sobre todo para conceder hipotecas. No es el precio de un anuncio ni el de una venta concreta. Es la media de todo el municipio y de toda la vivienda libre, nueva y usada. Confidence 0,8.
+3. **Distritos de Madrid: SIN DATOS.** Un distrito no toma la media de la ciudad: entre Salamanca y Villaverde el precio cambia demasiado (CLAUDE.md §11). La feature les da una fila `SOURCE_MISSING` y la condición sale UNKNOWN con su explicación.
+4. **Coste y condición:** valor tasado por m² × los m² que se suponen para el hogar (D-214), redondeado a miles de euros. El estado, el valor y el texto usan ese mismo número.
+   - PASS o FAIL con la confidence del dato. Sin valor publicado, UNKNOWN y nunca PASS: «Sin precio de compra publicado para esta zona…».
+   - Si la tasación se expresa por m² construido, el coste se queda algo corto, porque los m² supuestos son útiles. Por eso un FAIL es más fiable que un PASS, como con el alquiler.
+   - `estimated_cost_eur` es el precio de compra cuando se busca comprar.
+5. **Encaje (`fit-0.5`):** el presupuesto de compra puntúa como el de alquiler: utilidad 1 si el coste es el 75 % del presupuesto o menos y 0 en el presupuesto. El hecho es «Comprar ≈ 221.000 € por 77 m² (2.869 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)».
+   - El Reality Check sube el presupuesto un 10 %, redondeado al alza a 10.000 €, hasta el máximo de 5 millones. Ya no quita el límite: a una zona sin precio no la mete ningún presupuesto.
+   - Golden `golden_couple` (320.000 € para dos adultos): 10 resultados con precio publicado; la condición que más zonas deja fuera es el presupuesto, porque 172 zonas no tienen precio.
+6. **Descartado:**
+   - El valor de referencia del Catastro por código postal que publica la CM (id 1934262): es por vivienda, solo de las arrendadas, de 2023, y es un valor administrativo, no un precio.
+   - El valor tasado trimestral por antigüedad (`valor_tasado_vivienda_municipio_antiguedad`): no trae código de municipio; queda para cuando haga falta el trimestre.
+   - Repartir el valor de Madrid entre sus distritos.
+7. **Orden del cambio en producción:** primero se despliega el código y después se sincroniza. El código desplegado (`fit-0.4`) no conoce el rol `price_m2`: con la feature en la base, `/search` fallaría.

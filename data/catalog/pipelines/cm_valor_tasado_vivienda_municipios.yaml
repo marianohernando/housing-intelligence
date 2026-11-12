@@ -1,0 +1,5 @@
+kind: cm_stat_table
+dataset_id: cm_valor_tasado_vivienda_municipios
+metric_id: valor_tasado_vivienda_m2_municipio
+territory_types: {"Municipios": municipio}
+period_min: 2021  # the purchase condition reads the latest year; older years stay in Bronze

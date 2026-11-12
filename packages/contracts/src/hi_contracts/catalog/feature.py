@@ -62,14 +62,15 @@ class GapRowBinding(BaseModel):
 
 
 class FitBinding(BaseModel):
-    """Where the people search (CORE-003) reads the feature: the rent per m² of the budget
-    condition, or the walking minutes to the nearest place of a kind, either a service (a
-    ScenarioState NeedKey) or what a «me importa» priority measures (a PriorityKey: the park
-    for «Zonas verdes», D-222). The search has no feature id written in its code."""
+    """Where the people search (CORE-003) reads the feature: the rent or the appraised purchase
+    value per m² of the budget condition (D-227), or the walking minutes to the nearest place
+    of a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority
+    measures (a PriorityKey: the park for «Zonas verdes», D-222). The search has no feature id
+    written in its code."""
 
     model_config = ConfigDict(extra="forbid")
 
-    role: Literal["rent_m2", "walk_minutes"]
+    role: Literal["rent_m2", "price_m2", "walk_minutes"]
     need: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="NeedKey, only for walk_minutes"
     )
@@ -80,8 +81,10 @@ class FitBinding(BaseModel):
     @model_validator(mode="after")
     def _one_target_only_for_walking(self) -> Self:
         targets = (self.need is not None) + (self.priority is not None)
-        if (self.role == "walk_minutes") != (targets == 1) or (self.role == "rent_m2" and targets):
-            msg = "walk_minutes needs one of `need` or `priority`; rent_m2 takes none"
+        if (self.role == "walk_minutes") != (targets == 1) or (
+            self.role != "walk_minutes" and targets
+        ):
+            msg = "walk_minutes needs one of `need` or `priority`; rent_m2 and price_m2 take none"
             raise ValueError(msg)
         return self
 

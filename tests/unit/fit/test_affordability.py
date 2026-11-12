@@ -1,4 +1,5 @@
-"""CORE-006 budget condition: PASS / FAIL / UNKNOWN, never PASS without a known rent (D-214)."""
+"""CORE-006 budget condition: PASS / FAIL / UNKNOWN, never PASS without a known rent (D-214)
+or, to buy, without a published appraised value (DATA-021, D-227)."""
 
 from itertools import pairwise
 
@@ -15,6 +16,7 @@ from hi_domain.affordability import (
     assumed_floor_area,
     budget_check,
     monthly_rent,
+    purchase_cost,
 )
 
 
@@ -29,6 +31,23 @@ def _rent(value: float | None, confidence: float = 1.0) -> IndicatorValue:
         level=TerritoryLevel.MUNICIPIO,
         datasets=["cm_alquiler_m2_municipios"],
     )
+
+
+def _price(value: float | None, confidence: float = 0.8) -> IndicatorValue:
+    return IndicatorValue(
+        feature_id="valor_tasado_vivienda_m2",
+        label="Valor tasado medio de la vivienda libre por metro cuadrado",
+        value=value,
+        unit="EUR/m2",
+        confidence=confidence if value is not None else 0.0,
+        null_reason=None if value is not None else NullReason.SOURCE_MISSING,
+        level=TerritoryLevel.MUNICIPIO,
+        datasets=["cm_valor_tasado_vivienda_municipios"],
+    )
+
+
+def _buy(amount: int) -> Budget:
+    return Budget(kind=BudgetKind.BUY, amount_eur=amount)
 
 
 def _scenario(adults: int = 2, minors: int = 2, area: int | None = None) -> ScenarioState:
@@ -82,12 +101,56 @@ def test_unknown_rent_is_unknown_never_pass() -> None:
         assert check.confidence == 0.0
 
 
-def test_purchase_is_declared_without_data() -> None:
+@pytest.mark.parametrize("price", [None, _price(None)])
+def test_purchase_without_a_published_price_is_unknown(price: IndicatorValue | None) -> None:
     area = assumed_floor_area(_scenario())
-    check = budget_check(Budget(kind=BudgetKind.BUY, amount_eur=300_000), _rent(15.1), area)
+    check = budget_check(_buy(300_000), _rent(15.1), area, price)
     assert check.status is ConstraintStatus.UNKNOWN
     assert check.unit == "€"
-    assert "Sin datos" in check.explanation
+    assert check.confidence == 0.0
+    assert "Sin precio de compra publicado" in check.explanation
+
+
+def test_purchase_within_budget_passes_with_the_appraised_value() -> None:
+    area = assumed_floor_area(_scenario())  # 4 people: 77 m²
+    check = budget_check(_buy(300_000), None, area, _price(3000.0))
+    assert check.status is ConstraintStatus.PASS
+    assert check.value == 231_000
+    assert check.unit == "€"
+    assert check.confidence == 0.8
+    assert "valor tasado" in check.explanation
+    assert "3.000 €/m²" in check.explanation
+
+
+def test_purchase_over_budget_fails() -> None:
+    area = assumed_floor_area(_scenario())
+    check = budget_check(_buy(300_000), _rent(10.0), area, _price(4993.3))
+    assert check.status is ConstraintStatus.FAIL
+    assert check.value == 384_000  # 4.993,3 €/m² × 77 m², rounded to thousands
+
+
+@given(
+    st.floats(min_value=1500, max_value=9000),
+    st.integers(min_value=10_000, max_value=5_000_000),
+    st.integers(min_value=0, max_value=500_000),
+)
+def test_more_purchase_budget_never_turns_pass_into_fail(
+    price_m2: float, budget: int, extra: int
+) -> None:
+    area = assumed_floor_area(_scenario())
+    low = budget_check(_buy(budget), None, area, _price(price_m2))
+    high = budget_check(_buy(min(budget + extra, 5_000_000)), None, area, _price(price_m2))
+    if low.status is ConstraintStatus.PASS:
+        assert high.status is ConstraintStatus.PASS
+
+
+def test_purchase_state_value_and_text_agree_at_the_edge() -> None:
+    """300.400 € reads as 300.000 € everywhere, so it fits a 300.000 € budget."""
+    area = assumed_floor_area(_scenario())
+    check = budget_check(_buy(300_000), None, area, _price(300_400 / 77))
+    assert check.value == purchase_cost(300_400 / 77, 77) == 300_000
+    assert check.status is ConstraintStatus.PASS
+    assert "300.000 €" in check.explanation
 
 
 @given(

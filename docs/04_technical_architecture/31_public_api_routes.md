@@ -34,7 +34,7 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
 
 ## Reglas que la web puede dar por hechas
 - **Zonas.** `ZoneRef.admin_unit_id` coincide con `promoteId` de las capas de `geo/admin-units`, y `name` ya viene legible («Las Rozas de Madrid», «Fuencarral-El Pardo»). Los distritos de Madrid traen `municipio_ine = 28079`.
-- **Presupuesto (D-203).** `budget.kind` es `rent` (€/mes) o `buy` (€). La compra es orientativa; sin fuente fiable, su condición sale `UNKNOWN` con la explicación.
+- **Presupuesto (D-203).** `budget.kind` es `rent` (€/mes) o `buy` (€). **Desde DATA-021 (D-227, `fit-0.5`) la compra usa el valor tasado medio de la vivienda libre por m² (Ministerio de Vivienda, portal CM)** en los 28 municipios que lo publican: la condición sale PASS o FAIL con el coste (`value`, en €) y la explicación «Comprar ≈ … € por N m² (… €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)». En el resto, incluidos los 21 distritos de Madrid, sale `UNKNOWN` con «Sin precio de compra publicado para esta zona…». El Reality Check ofrece «+30.000 €» (un 10 % más, redondeado a 10.000 €), no «sin límite».
 - **CORS.** Los orígenes se configuran con `CORS_ORIGINS` al arrancar la API (por ejemplo `CORS_ORIGINS='["http://localhost:3011"]'`). Se admiten `GET` y `POST`.
 - **Lista de lo que falta.**
   - `SIN_DATOS` aparece si y solo si `indicator.value` es `null`, y entonces `indicator.null_reason` dice por qué. Un 0 es un dato real (ningún centro en un registro exhaustivo).
@@ -57,7 +57,7 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
   - **Desde CORE-003 (D-215):**
     - `results` trae las 10 mejores zonas que cumplen todo, y `near_misses` hasta 5 que fallan exactamente una condición.
     - En `all_zones`, una zona con alguna condición UNKNOWN y ningún FAIL lleva `match_pct: null` (nunca se pinta como encaje). Una que falla conserva su % para comparar.
-    - `estimated_cost_eur` es el alquiler mensual para los m² supuestos (D-214); la compra no tiene precio todavía.
+    - `estimated_cost_eur` es el alquiler mensual para los m² supuestos (D-214) o, si se busca comprar, el precio de compra en € para esos m² (D-227; `null` donde no hay valor tasado).
     - **Desde CORE-009 (D-220):** el hecho del trabajo dice los minutos en transporte público hasta el sitio, llegando a las 9:00 (confidence 0,7 hasta una estación, 0,6 hasta el centro de una zona). Donde no se llega con los horarios publicados el hecho lo dice y puntúa lo peor (confidence 0,5). Solo un sitio fuera de todas las zonas sigue en línea recta (0,5). Los GTFS usados entran en `datasets`.
   - `UNKNOWN` nunca cuenta como `PASS`. `results` solo trae zonas con todas las condiciones en `PASS`.
   - Las zonas que fallan una condición salen aparte, en `near_misses`, con `failed_constraints`.
