@@ -9,6 +9,7 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
+from hi_api.services.commute import NO_TRIP, commutes
 from hi_api.services.gap_map import RowNotBoundError, gap_row_map
 from hi_api.services.gaps import dataset_refs, significant
 from hi_contracts.api.envelope import ErrorCode
@@ -65,6 +66,7 @@ class Loaded(NamedTuple):
     computed: list[datetime]
     gap_datasets: list[DatasetRef]
     warnings: list[str]
+    unresolved_anchors: list[int]
 
 
 def _zone_ref(row: dict[str, Any]) -> ZoneRef:
@@ -158,22 +160,25 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     value_rows = [dict(r) for r in conn.execute(_FIT_VALUES, {"levels": levels}).mappings()]
     indicators = _indicators(value_rows)
     highlights, gap_datasets, warnings = _highlights(conn, highlight_rows(scenario))
+    trips = commutes(conn, scenario.anchors)
     zones = []
     for row in zone_rows:
         key = (row["level"], row["code"])
+        zone_id = str(row["admin_unit_id"])
         zones.append(
             ZoneData(
                 zone=_zone_ref(row),
                 rent=indicators.rent.get(key),
                 walk=indicators.walk.get(key, {}),
                 gaps=highlights.get(key, []),
+                commute={i: by.get(zone_id, NO_TRIP) for i, by in trips.by_zone.items()},
             )
         )
-    versions: dict[str, str] = {}
+    versions: dict[str, str] = dict(trips.versions)
     for row in value_rows:
         versions.update(row["inputs"].get("dataset_versions", {}))
     computed = [row["computed_at"] for row in value_rows]
-    return Loaded(zones, versions, computed, gap_datasets, warnings)
+    return Loaded(zones, versions, computed, gap_datasets, warnings, trips.unresolved)
 
 
 def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
@@ -186,11 +191,11 @@ def search(conn: Connection, scenario: ScenarioState) -> tuple[SearchResult, lis
     loaded = load(conn, scenario)
     outcome = run_search(scenario, loaded.zones)
     warnings = list(loaded.warnings)
-    if any(a.max_minutes is not None for a in scenario.anchors):
+    for i in loaded.unresolved_anchors:
         warnings.append(
-            f"{ErrorCode.INSUFFICIENT_DATA.value}: travel time by public transport is not "
-            "computed yet, so trip limits are UNKNOWN in every zone; send max_minutes null "
-            "to use the place as a preference"
+            f"{ErrorCode.INSUFFICIENT_DATA.value}: no computed destination holds anchor {i}, so "
+            "its trip by public transport is unknown: a trip limit is UNKNOWN and the place is "
+            "scored in a straight line"
         )
     if outcome.unscored_passing:
         warnings.append(

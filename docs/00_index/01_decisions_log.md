@@ -1032,4 +1032,10 @@ CORE-009. Hasta hoy el trabajo puntuaba en línea recta (D-215: `fit-0.1`, confi
    - 45–50 zonas, sobre todo de la Sierra Norte y del sureste, no llegan al centro de Madrid a las 9:00 saliendo desde las 5:30: sin dato, nunca 0;
    - la red a pie es en línea recta con rodeo, no por calles (la red peatonal se usa para colocar los orígenes);
    - horarios programados, no tiempos reales; un día laborable de referencia.
+8. **En la búsqueda (`fit-0.2`, F3):**
+   - **Sitio de trabajo → destino:** la estación de metro, Cercanías o Metro Ligero a 600 m o menos (más el paseo desde ella), si no el centro del distrito de Madrid o municipio que lo contiene. La web solo ofrece estaciones y zonas. Fuera de toda zona, línea recta como antes (con aviso).
+   - **Condición** (`max_minutes`): PASS o FAIL con los minutos; UNKNOWN donde no se llega con los horarios publicados (hay huecos declarados en §6, así que nunca es FAIL seguro).
+   - **Preferencia:** utilidad 1 hasta 30 minutos (o el límite si lo hay) y 0 al triple, como los minutos a pie. «No se llega a las 9:00» puntúa lo peor con confidence 0,5: es una medida con los horarios publicados, no un dato que falte, pero puede ser un hueco del GTFS.
+   - **Confidence:** 0,7 hasta una estación y 0,6 hasta el centro de una zona (representa toda la zona); horarios programados de un martes de referencia.
+   - **Golden de búsqueda:** las expectativas del trabajo pasan a minutos (`top_within_minutes`): la persona sola que trabaja en Nuevos Ministerios tiene primero Villaverde, a 35 min en transporte público y 11 km en línea recta, así que su «primera zona a 10 km o menos» ya no describe el método. Se mantienen las de km que siguen valiendo. Caso demo: Ciudad Lineal sigue primera (100 %, 30 min hasta la Castellana).
 7. **Alternativas descartadas:** polos de empleo fijos (la web deja elegir cualquier estación o zona); un motor externo (r5, OpenTripPlanner: Java y otro servicio que desplegar); RAPTOR (misma respuesta, más código para la alcanzabilidad que aquí basta); calcular en cada petición (cargar 400.000 eventos por instancia de Vercel).

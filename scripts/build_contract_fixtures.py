@@ -3,7 +3,7 @@
 These are FIXTURES, not product output: they let the web type and test its screens against real
 zones and real indicator values. Each one is exactly what the API service returns today on the
 local database (read-only): the per-zone lists, the row maps, the people search (CORE-003,
-`fit-0.1`) and the dataset list (see data/fixtures/contracts/README.md).
+`fit-0.2` with CORE-009) and the dataset list (see data/fixtures/contracts/README.md).
 
 Usage: uv run python scripts/build_contract_fixtures.py
 """

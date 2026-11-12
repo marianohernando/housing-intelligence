@@ -1,8 +1,15 @@
 """Commute matrix on the sample feeds and geography (CORE-009, D-220)."""
 
+import json
+from pathlib import Path
+
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
 
+from hi_api.deps import get_engine
+from hi_api.main import app
+from hi_contracts.public.responses import SearchResponse
 from hi_features.commute import METHOD_VERSION, compute_commutes, persist
 from hi_ingestion.catalog.loader import load_catalog
 
@@ -60,3 +67,34 @@ def test_a_zone_reaches_its_own_centre_faster_than_the_median_zone(
         assert mine <= rows.dropna().median()
         checked += 1
     assert checked > 0
+
+
+FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "contracts"
+
+
+def test_the_search_uses_the_minutes_by_public_transport(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    persist(migrated_engine, compute_commutes(migrated_engine, load_catalog()))
+    app.dependency_overrides[get_engine] = lambda: migrated_engine
+    scenario = json.loads((FIXTURES / "scenario_state.familia_castellana.fixture.json").read_text())
+    scenario["anchors"][0]["max_minutes"] = 40
+    response = TestClient(app).post("/api/v1/search", json=scenario)
+    assert response.status_code == 200, response.text
+    body = SearchResponse.model_validate(response.json())
+    assert not any("trip by public transport" in w for w in body.warnings)
+    checks = [
+        c
+        for z in [*body.data.results, *body.data.near_misses]
+        for c in z.constraints
+        if c.constraint_id == "commute:0"
+    ]
+    assert checks, "no zone ranked on the fixtures"
+    decided = [c for c in checks if c.status in {"PASS", "FAIL"}]
+    assert decided, "the sample timetable decides no trip"
+    for check in decided:
+        assert check.value is not None
+        assert (check.status == "PASS") == (check.value <= 40)
+        assert "en transporte público" in check.explanation
+    gtfs = {d.dataset_id for d in body.data.datasets if d.dataset_id.startswith("crtm_gtfs_")}
+    assert gtfs  # the timetables are in the provenance

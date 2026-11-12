@@ -25,6 +25,13 @@ IntArray = NDArray[np.int64]
 FloatArray = NDArray[np.float64]
 BoolArray = NDArray[np.bool_]
 _KEY = 10**6  # > any time of a service day in seconds (GTFS days may run past 24:00)
+WALK_M_PER_S = 4000 / 3600  # D-211
+DETOUR = 1.3  # street distance / straight line (D-220)
+
+
+def walk_seconds(metres: FloatArray) -> IntArray:
+    """Seconds on foot for a straight-line distance, with the detour of the streets."""
+    return np.ceil(metres * DETOUR / WALK_M_PER_S).astype(np.int64)
 
 
 @dataclass(frozen=True)

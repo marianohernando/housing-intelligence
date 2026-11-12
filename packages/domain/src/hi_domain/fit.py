@@ -39,7 +39,7 @@ from hi_domain.affordability import (
 )
 from hi_domain.gaps import es_number
 
-FIT_VERSION = "fit-0.1"
+FIT_VERSION = "fit-0.2"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -52,6 +52,8 @@ DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
 WALK_ZERO_AT = 3.0  # utility falls linearly to 0 at three times the window
 NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 0 from 20 km
 STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
+# Public transport (CORE-009, D-220): full utility up to 30 min, none from 90 (3x, as walking).
+DEFAULT_COMMUTE_MINUTES = 30
 BUDGET_MARGIN_SHARE = 0.25  # full utility when the cost is 75 % of the budget or less
 MAX_WALK_SHOWN = 60
 
@@ -87,13 +89,25 @@ MIN_FACTS, MAX_FACTS = 3, 5
 
 
 @dataclass(frozen=True)
+class Commute:
+    """Minutes by public transport to one place of work, arriving by 9:00 (D-220). None: with
+    the published timetables most of the zone cannot make it; as a preference that is the worst
+    score, as a hard limit it stays UNKNOWN (the timetables have declared gaps)."""
+
+    minutes: float | None
+    confidence: float
+
+
+@dataclass(frozen=True)
 class ZoneData:
-    """What the search knows about one zone: rent per m² and walking minutes by service."""
+    """What the search knows about one zone: rent per m², walking minutes by service and, per
+    place of work (index in `anchors`), the trip by public transport when it was computed."""
 
     zone: ZoneRef
     rent: IndicatorValue | None = None
     walk: Mapping[NeedKey, IndicatorValue] = field(default_factory=dict[NeedKey, IndicatorValue])
     gaps: Sequence[GapHighlight] = ()
+    commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
 
 
 @dataclass(frozen=True)
@@ -236,18 +250,41 @@ def near_check(nearby: NearbyNeed, walk: IndicatorValue | None) -> ConstraintChe
     )
 
 
-def commute_check(i: int, anchor: Anchor, zone: ZoneRef) -> ConstraintCheck:
-    """Travel time by public transport is not computed yet (CORE-009): always UNKNOWN."""
-    km = anchor_km(zone, anchor)
-    where = "" if km is None else f"; está a {es_number(km, 1)} km en línea recta"
+MAX_COMMUTE_SHOWN = 120
+
+
+def commute_text(minutes: float, label: str) -> str:
+    shown = "más de 2 h" if minutes > MAX_COMMUTE_SHOWN else f"{es_number(minutes, 0)} min"
+    return f"{shown} en transporte público hasta {label}, llegando a las 9:00"
+
+
+def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
+    """PASS/FAIL on the minutes by public transport (D-220); UNKNOWN without them."""
+    base = {
+        "constraint_id": f"commute:{i}",
+        "label": f"Trayecto a {anchor.label} de {anchor.max_minutes} min como mucho",
+        "threshold": float(anchor.max_minutes or 0),
+        "unit": "min",
+    }
+    trip = data.commute.get(i)
+    if trip is None or trip.minutes is None:
+        km = anchor_km(data.zone, anchor)
+        where = "" if km is None else f"; está a {es_number(km, 1)} km en línea recta"
+        why = (
+            "Sin datos del trayecto en transporte público"
+            if trip is None
+            else f"Con los horarios publicados no se llega a {anchor.label} a las 9:00"
+        )
+        return ConstraintCheck(
+            **base, status=ConstraintStatus.UNKNOWN, confidence=0.0, explanation=f"{why}{where}"
+        )
+    passed = anchor.max_minutes is not None and trip.minutes <= anchor.max_minutes
     return ConstraintCheck(
-        constraint_id=f"commute:{i}",
-        label=f"Trayecto a {anchor.label} de {anchor.max_minutes} min como mucho",
-        status=ConstraintStatus.UNKNOWN,
-        threshold=float(anchor.max_minutes or 0),
-        unit="min",
-        confidence=0.0,
-        explanation=f"El tiempo de trayecto en transporte público aún no está calculado{where}",
+        **base,
+        status=ConstraintStatus.PASS if passed else ConstraintStatus.FAIL,
+        value=round(trip.minutes, 1),
+        confidence=trip.confidence,
+        explanation=commute_text(trip.minutes, anchor.label),
     )
 
 
@@ -262,7 +299,7 @@ def constraint_checks(
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
     for i, anchor in enumerate(scenario.anchors):
         if anchor.max_minutes is not None:
-            checks.append(commute_check(i, anchor, data.zone))
+            checks.append(commute_check(i, anchor, data))
     return checks
 
 
@@ -284,7 +321,11 @@ def walk_fact(need: NeedKey, walk: IndicatorValue | None, target: int) -> Score:
     return Score(walk_utility(walk.value, target), walk.confidence, fact)
 
 
-def work_fact(anchor: Anchor, zone: ZoneRef) -> Score:
+def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:
+    """Minutes by public transport when computed (D-220); otherwise the straight line (D-215)."""
+    if trip is not None:
+        return transit_fact(anchor, trip)
+    zone = data.zone
     km = anchor_km(zone, anchor)
     if km is None:
         text = f"Distancia a {anchor.label}: sin datos"
@@ -298,6 +339,26 @@ def work_fact(anchor: Anchor, zone: ZoneRef) -> Score:
         confidence=STRAIGHT_LINE_CONFIDENCE,
     )
     return Score(utility, STRAIGHT_LINE_CONFIDENCE, fact)
+
+
+def transit_fact(anchor: Anchor, trip: Commute) -> Score:
+    if trip.minutes is None:
+        text = (
+            f"Con los horarios publicados no se llega a {anchor.label} a las 9:00 "
+            "en transporte público"
+        )
+        fact = Fact(
+            kind=FactKind.WEAKNESS, topic=FactTopic.TRAYECTO, text=text, confidence=trip.confidence
+        )
+        return Score(0.0, trip.confidence, fact)
+    target = anchor.max_minutes or DEFAULT_COMMUTE_MINUTES
+    fact = Fact(
+        kind=FactKind.STRENGTH if trip.minutes <= target else FactKind.WEAKNESS,
+        topic=FactTopic.TRAYECTO,
+        text=commute_text(trip.minutes, anchor.label),
+        confidence=trip.confidence,
+    )
+    return Score(walk_utility(trip.minutes, target), trip.confidence, fact)
 
 
 def cost_fact(rent: IndicatorValue | None, area: FloorArea, budget: float | None) -> Score:
@@ -323,7 +384,8 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
         target = criterion.target_minutes or DEFAULT_WALK_MINUTES[criterion.need]
         return walk_fact(criterion.need, data.walk.get(criterion.need), target)
     if criterion.anchor is not None:
-        return work_fact(criterion.anchor, data.zone)
+        index = int(criterion.key.removeprefix("work:"))
+        return work_fact(criterion.anchor, data, data.commute.get(index))
     if criterion.priority is not None:
         topic, text = NO_DATA_PRIORITY[criterion.priority]
         return Score(None, 0.0, Fact(kind=FactKind.UNKNOWN, topic=topic, text=text, confidence=0))

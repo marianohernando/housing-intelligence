@@ -22,12 +22,14 @@ from sqlalchemy import Engine, text
 
 from hi_contracts.catalog.pipeline import GtfsFeedPipeline
 from hi_domain.access.transit import (
+    DETOUR,
     Access,
     ArriveByNetwork,
     FloatArray,
     Footpaths,
     StopTimes,
     latest_leave,
+    walk_seconds,
     zone_medians,
 )
 from hi_features import walk
@@ -37,8 +39,6 @@ from hi_ingestion.pipelines.gtfs.feed import iter_stop_times, open_feed, read_ta
 from hi_ingestion.pipelines.gtfs.service_day import parse_gtfs_time, reference_day
 
 METHOD_VERSION = "commute-0.1"
-WALK_M_PER_S = 4000 / 3600  # D-211
-DETOUR = 1.3  # street distance / straight line, declared in D-220
 FOOTPATH_M = 250  # changes on foot between stops
 ACCESS_M = 1000  # home -> stop and stop -> destination, ~20 min on foot at most
 TRANSFER_S = 120  # change at the same stop
@@ -86,10 +86,6 @@ _TO_METRES = Transformer.from_crs(4326, 25830, always_xy=True)
 def _metres(lon: NDArray[np.float64], lat: NDArray[np.float64]) -> NDArray[np.float64]:
     x, y = _TO_METRES.transform(lon, lat)
     return np.c_[x, y]
-
-
-def walk_seconds(metres: NDArray[np.float64]) -> NDArray[np.int64]:
-    return np.ceil(metres * DETOUR / WALK_M_PER_S).astype(np.int64)
 
 
 @dataclass(frozen=True)

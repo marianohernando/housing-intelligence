@@ -14,6 +14,7 @@ from hi_contracts.public import (
     Anchor,
     Budget,
     BudgetKind,
+    ConstraintCheck,
     ConstraintStatus,
     FactKind,
     Household,
@@ -25,6 +26,7 @@ from hi_contracts.public import (
     ZoneRef,
 )
 from hi_domain.fit import (
+    Commute,
     ZoneData,
     as_pct,
     criteria,
@@ -159,7 +161,7 @@ def test_closer_to_work_ranks_higher_all_else_equal() -> None:
     assert outcome.results[0].match_pct > outcome.results[1].match_pct
 
 
-def test_commute_limit_is_unknown_until_travel_time_exists() -> None:
+def test_commute_limit_is_unknown_without_travel_time() -> None:
     scenario = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
     outcome = run_search(scenario, [zone("1"), zone("2")])
     assert outcome.results == []
@@ -278,3 +280,55 @@ def test_match_rounds_half_up() -> None:
     assert as_pct(0.005) == 1
     assert as_pct(0.125) == 13
     assert as_pct(None) is None
+
+
+def with_commute(data: ZoneData, minutes: float | None, confidence: float = 0.7) -> ZoneData:
+    trip = Commute(minutes=minutes, confidence=confidence)
+    return ZoneData(data.zone, data.rent, data.walk, data.gaps, commute={0: trip})
+
+
+def test_commute_limit_passes_or_fails_on_public_transport_minutes() -> None:
+    scenario = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
+    zones = {
+        "1": with_commute(zone("1"), 35.0),
+        "2": with_commute(zone("2"), 52.0),
+        "3": with_commute(zone("3"), None),
+    }
+
+    def commute(data: ZoneData) -> ConstraintCheck:
+        return next(
+            c for c in evaluate(scenario, data).constraints if c.constraint_id == "commute:0"
+        )
+
+    assert {code: commute(data).status for code, data in zones.items()} == {
+        "1": ConstraintStatus.PASS,
+        "2": ConstraintStatus.FAIL,
+        "3": ConstraintStatus.UNKNOWN,  # no trip by 9:00 is never a pass
+    }
+    assert commute(zones["1"]).value == 35.0
+    assert "35 min en transporte público" in commute(zones["1"]).explanation
+    outcome = run_search(scenario, list(zones.values()))
+    assert [r.zone.code for r in outcome.results] == ["1"]
+
+
+def test_fewer_minutes_by_public_transport_beat_a_shorter_straight_line() -> None:
+    """Near in a straight line but badly connected loses to a farther zone on the metro."""
+    near_badly_served = with_commute(zone("near", lon=-3.69, lat=40.46), 70.0)
+    far_on_the_metro = with_commute(zone("far", lon=-3.80, lat=40.25), 25.0)
+    outcome = run_search(family(), [near_badly_served, far_on_the_metro])
+    assert [r.zone.code for r in outcome.results] == ["far", "near"]
+    facts = [f.text for f in outcome.results[0].facts]
+    assert any("25 min en transporte público" in t for t in facts)
+
+
+def test_a_zone_that_cannot_arrive_by_9_scores_the_worst_on_work_but_its_limit_is_unknown() -> None:
+    """Measured with the published timetables, not missing; but they have gaps (D-220)."""
+    stranded = with_commute(zone("s"), None, confidence=0.5)
+    connected = with_commute(zone("c"), 30.0)
+    outcome = run_search(family(), [stranded, connected])
+    assert [r.zone.code for r in outcome.results] == ["c", "s"]
+    work = [f for f in outcome.results[1].facts if f.topic.value == "trayecto"]
+    assert work and work[0].kind is FactKind.WEAKNESS
+    limit = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
+    check = next(c for c in evaluate(limit, stranded).constraints if c.constraint_id == "commute:0")
+    assert check.status is ConstraintStatus.UNKNOWN

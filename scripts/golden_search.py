@@ -5,6 +5,7 @@ Usage: uv run python scripts/golden_search.py   (exit 1 if any expectation fails
 """
 
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -13,13 +14,25 @@ import yaml
 from sqlalchemy import create_engine
 
 from hi_api.services.search import search
-from hi_contracts.public import ScenarioState, SearchResult
+from hi_contracts.public import FactTopic, RankedZone, ScenarioState, SearchResult
 from hi_domain.fit import anchor_km
 
 GOLDEN = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "golden"
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql+psycopg://housing:housing@localhost:5440/housing"
 )
+
+
+TRANSIT_MINUTES = re.compile(r"^(\d+) min en transporte público")
+
+
+def transit_minutes(ranked: RankedZone) -> float | None:
+    """Minutes by public transport to the first place of work, from its fact (D-220)."""
+    for fact in ranked.facts:
+        found = TRANSIT_MINUTES.match(fact.text) if fact.topic is FactTopic.TRAYECTO else None
+        if found:
+            return float(found.group(1))
+    return None
 
 
 def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
@@ -31,6 +44,9 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
         "max_results": lambda v: len(result.results) <= v,
         "results_within_km": lambda v: all(k <= v for k in km),
         "top_within_km": lambda v: bool(km) and km[0] <= v,
+        "top_within_minutes": lambda v: (
+            bool(result.results) and (transit_minutes(result.results[0]) or float("inf")) <= v
+        ),
         "all_unknown": lambda v: (check.zones_unknown == check.zones_evaluated) is v,
         "binding": lambda v: check.binding_constraint == v,
     }

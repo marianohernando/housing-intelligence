@@ -12,6 +12,7 @@ from sqlalchemy import Engine
 from hi_api.deps import get_engine
 from hi_api.main import app
 from hi_contracts.public.responses import SearchResponse
+from hi_domain.fit import FIT_VERSION
 
 pytestmark = pytest.mark.db
 FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "contracts"
@@ -24,7 +25,7 @@ def client(migrated_engine: Engine, features_computed: None) -> TestClient:
 
 
 def _family() -> dict[str, Any]:
-    """The demo case, with the place of work as a preference (no travel times yet)."""
+    """The demo case, with the place of work as a preference."""
     scenario = json.loads((FIXTURES / "scenario_state.familia_castellana.fixture.json").read_text())
     for anchor in scenario["anchors"]:
         anchor["max_minutes"] = None
@@ -40,7 +41,7 @@ def _search(client: TestClient, scenario: dict[str, Any]) -> SearchResponse:
 def test_demo_case_ranks_zones_that_pass_every_condition(client: TestClient) -> None:
     body = _search(client, _family())
     data = body.data
-    assert body.meta.methodology_version == data.methodology_version == "fit-0.1"
+    assert body.meta.methodology_version == data.methodology_version == FIT_VERSION
     assert body.meta.data_version
     codes = {z.zone.code for z in data.all_zones}
     assert "28079" not in codes  # Madrid capital is ranked by district (D-200)
@@ -67,12 +68,13 @@ def test_unknown_never_counts_as_pass(client: TestClient) -> None:
     assert option.added_zones == data.reality_check.zones_evaluated
 
 
-def test_trip_limits_are_unknown_and_say_why(client: TestClient) -> None:
+def test_trip_limits_without_commute_times_are_unknown_and_say_why(client: TestClient) -> None:
+    """Before `hi-features commute` (test_commute.py fills it later in the session)."""
     scenario = _family()
     scenario["anchors"][0]["max_minutes"] = 40
     body = _search(client, scenario)
     assert body.data.results == []
-    assert any("travel time" in w for w in body.warnings)
+    assert any("trip by public transport" in w for w in body.warnings)
 
 
 def test_a_relaxed_scenario_sent_back_gives_the_promised_zones(client: TestClient) -> None:

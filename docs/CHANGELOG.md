@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.33 — La búsqueda usa el transporte público (2026-11-12)
+- D-220 §8: `POST /search` pasa a `fit-0.2`. Los límites de trayecto salen PASS/FAIL con los minutos en transporte público y el hecho del trabajo dice esos minutos; solo un sitio fuera de toda zona sigue en línea recta.
+- `04_technical_architecture/31_public_api_routes.md`: rutas y hechos de la búsqueda con CORE-009.
+
 ## v0.5.32 — Tiempo en transporte público al trabajo (2026-11-12)
 - D-220: minutos para llegar a las 9:00 en transporte público desde cada zona a cada estación y centro de zona, con los 6 GTFS del CRTM (migración 0007, `transit_hub` y `commute_time`).
 
