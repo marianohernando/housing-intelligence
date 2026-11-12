@@ -6,6 +6,7 @@
 //   node scripts/check-qa.mjs proyector [outDir] # phase 3: no overlaps from 1024×576 to 1440×900
 //   node scripts/check-qa.mjs offline [outDir]   # phase 5: street tiles blocked (offline package)
 //   node scripts/check-qa.mjs tiles-local [outDir] # phase 5: web built with NEXT_PUBLIC_MAP_TILES_URL=http://localhost:3999/madrid.json
+//   node scripts/check-qa.mjs gap03 [outDir]     # phase 6: gap-0.3 (D-217): neighbours, 2SFCA copy and the hospital
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -400,12 +401,145 @@ async function tilesLocal(browser) {
   await ctx.close();
 }
 
+const SMALL = { level: "municipio", code: "28004", name: "El Álamo" };
+
+/** Rows of «Qué falta» as the page shows them: label, badges, the group sentence and the walking minutes. */
+async function gapRows(page) {
+  return page.locator("main li.glass").evaluateAll((items) =>
+    items.map((li) => ({
+      fila: li.querySelector("h2")?.textContent?.trim(),
+      etiquetas: [...(li.querySelector("h2")?.nextElementSibling?.children ?? [])].map((b) => {
+        const visible = b.cloneNode(true);
+        visible.querySelectorAll(".visually-hidden").forEach((h) => h.remove());
+        return visible.textContent?.trim();
+      }),
+      mide: li.querySelector("h2")?.parentElement?.nextElementSibling?.textContent?.trim(),
+      a_pie: [...li.querySelectorAll("dl > div")].filter((d) => d.querySelector("svg")).map((d) => d.textContent?.replace(/\s+/g, " ").trim()),
+      grupo: [...li.querySelectorAll("p")].map((p) => p.textContent?.trim() ?? "").find((t) => t.startsWith("Comparado con")) ?? null,
+      hospital: [...li.querySelectorAll("p")].map((p) => p.textContent?.trim() ?? "").find((t) => t.startsWith("El hospital:")) ?? null,
+    })),
+  );
+}
+
+/** Phase 6: gap-0.3 (D-217) in the web, against the real API. */
+async function gap03(browser) {
+  const api = async (path) => {
+    const r = await fetch(`${API}${path}`);
+    if (!r.ok) throw new Error(`API ${path}: HTTP ${r.status}`);
+    return (await r.json()).data;
+  };
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    // A small municipio compared with its neighbours, and a district with the hospital minutes
+    for (const [name, zone] of [["el_alamo", SMALL], ["chamartin", { level: "distrito", code: "2807905" }]]) {
+      const p = await open(browser, profile, `/que-falta?zona=${zone.level}/${zone.code}`);
+      await p.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+      const fromApi = await api(`/api/v1/gaps/${zone.level}/${zone.code}`);
+      const entry = (report[`que_falta_${name}_${id}`] = {});
+      entry.metodo_api = fromApi.method.version;
+      entry.grupos_api = fromApi.rows.filter((r) => r.comparison_group).map((r) => [r.row, r.comparison_group.names.length - 1]);
+      entry.filas = await gapRows(p.page);
+      entry.axe = await axe(p.page);
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      const health = p.page.locator("main li.glass").filter({ has: p.page.getByRole("heading", { name: "Centros de salud" }) });
+      await health.scrollIntoViewIfNeeded();
+      await health.screenshot({ path: `${out}/g3_fila_salud_${name}_${id}.png` });
+      await p.ctx.close();
+    }
+    // The zone card on the zone screen: the group under the row name
+    const z = await open(browser, profile, `/zona/${SMALL.level}/${SMALL.code}`);
+    await z.page.getByRole("heading", { name: "Qué falta aquí" }).first().waitFor({ timeout: 20000 });
+    const card = z.page.locator("aside").filter({ has: z.page.getByRole("heading", { name: "Qué falta aquí" }) }).first();
+    await card.locator("ul li").first().waitFor({ timeout: 20000 });
+    await z.page.waitForTimeout(6000); // the camera lands, for the capture
+    report[`zona_el_alamo_${id}`] = {
+      filas: (await card.locator("ul li").allInnerTexts()).map(flat),
+      axe: await axe(z.page),
+      overflow_px: await overflow(z.page),
+      consola: z.errors,
+    };
+    await z.page.screenshot({ path: `${out}/g3_zona_el_alamo_${id}.png` });
+    await z.ctx.close();
+
+    // «Cómo lo calculamos»: 2SFCA in plain words, the old «Contamos centros» gone
+    const m = await open(browser, profile, "/como-lo-calculamos");
+    const method = m.page.locator("#que-falta").locator("..");
+    report[`como_lo_calculamos_${id}`] = {
+      a_pie: flat(await method.locator("p").first().innerText()),
+      vecinos: flat(await method.getByText(/^Los pueblos pequeños, junto con sus vecinos/).locator("..").innerText()),
+      hospital: flat(await method.getByText(/^El hospital\./).locator("..").innerText()),
+      contamos_centros: await m.page.getByText("Contamos centros, no plazas").count(),
+      limites: (await m.page.locator("#limites").locator("..").locator("li strong").allInnerTexts()).map(flat),
+      axe: await axe(m.page),
+      overflow_px: await overflow(m.page),
+      consola: m.errors,
+    };
+    await method.screenshot({ path: `${out}/g3_como_lo_calculamos_${id}.png` });
+    await m.ctx.close();
+
+    // The list of zones for one row: one «Junto con sus vecinos» per zone the API compares with its group
+    const l = await open(browser, profile, "/zonas?fila=colegio");
+    await l.page.getByText(/Cargando el estado de cada zona/).waitFor({ state: "detached", timeout: 20000 }).catch(() => undefined);
+    const grouped = l.page.locator("li:has(> a)").filter({ hasText: "Junto con sus vecinos" });
+    await grouped.first().waitFor({ timeout: 20000 });
+    const rowMap = await api("/api/v1/gaps?level=municipio&row=colegio");
+    report[`zonas_colegio_${id}`] = {
+      intro: flat(await l.page.getByText(/^Con su estado en/).innerText()),
+      con_vecinos_web: await grouped.count(),
+      con_vecinos_api: rowMap.zones.filter((zone) => zone.comparison_group).length,
+      axe: await axe(l.page),
+      overflow_px: await overflow(l.page),
+      consola: l.errors,
+    };
+    await l.page.screenshot({ path: `${out}/g3_zonas_colegio_${id}.png` });
+    await l.ctx.close();
+  }
+
+  // The map coloured by a row: the legend says the small towns go with their neighbours
+  const h = await open(browser, DESKTOP);
+  await h.page.getByLabel("¿Qué quieres ver?").selectOption("colegio");
+  await h.page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
+  await h.page.waitForTimeout(2500);
+  const legend = h.page.locator("section[aria-label='Leyenda del mapa']");
+  report.mapa_colegio = {
+    leyenda: flat(await legend.innerText()),
+    aria: await h.page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label"),
+    solapes: (await overlaps(h.page)).solapes,
+    axe: await axe(h.page),
+    consola: h.errors,
+  };
+  await h.page.screenshot({ path: `${out}/g3_mapa_colegio_desktop.png` });
+  await h.ctx.close();
+
+  // What must hold, so the run fails instead of only dumping JSON
+  const entries = Object.entries(report).filter(([, v]) => typeof v === "object");
+  const failures = [];
+  for (const [key, v] of entries) {
+    if (v.axe?.length) failures.push(`${key}: axe ${v.axe.map((a) => a.id).join(", ")}`);
+    if (v.consola?.length) failures.push(`${key}: consola`);
+    if (v.overflow_px > 0) failures.push(`${key}: desborde ${v.overflow_px}px`);
+    if (v.solapes?.length) failures.push(`${key}: solapes`);
+    if (v.metodo_api && v.metodo_api !== "gap-0.3") failures.push(`${key}: método ${v.metodo_api}`);
+    if (v.filas?.[0]?.fila !== undefined) {
+      const shown = v.filas.filter((f) => f.etiquetas.includes("Junto con sus vecinos") && f.grupo).length;
+      if (shown !== v.grupos_api.length) failures.push(`${key}: ${shown} filas con vecinos, la API ${v.grupos_api.length}`);
+      const health = v.filas.find((f) => f.fila === "Centros de salud");
+      if (!health?.a_pie.some((t) => t.includes("hospital general")) || !health.hospital) failures.push(`${key}: sin el hospital`);
+    }
+    if ("con_vecinos_api" in v && v.con_vecinos_web !== v.con_vecinos_api) failures.push(`${key}: ${v.con_vecinos_web} con vecinos, la API ${v.con_vecinos_api}`);
+    if (v.contamos_centros) failures.push(`${key}: sigue «Contamos centros»`);
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
 else if (mode === "offline") await offline(browser);
 else if (mode === "tiles-local") await tilesLocal(browser);
 else if (mode === "t3") await facilities(browser);
 else if (mode === "proyector") await projector(browser);
+else if (mode === "gap03") await gap03(browser);
 else throw new Error(`Unknown mode ${mode}`);
 await browser.close();
 

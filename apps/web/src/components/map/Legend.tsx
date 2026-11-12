@@ -27,7 +27,8 @@ const TEXT = {
   missing: "Qué falta",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  against: "frente a los municipios de su tipo (urbanos o rurales).",
+  // leyenda against D-213, with the neighbours of gap-0.3 (provisional, listed for line D)
+  against: "frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos.",
   zones: (n: number) => (n === 1 ? "1 zona" : `${n} zonas`),
   pending: (n: number) => `${n === 1 ? "1 zona" : `${n} zonas`} sin calcular todavía.`,
   failedLevel: { municipio: "los municipios", distrito: "los distritos de Madrid" } as const,

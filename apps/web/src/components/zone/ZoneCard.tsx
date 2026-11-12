@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
+import { gapsHref, GROUP, inGroup, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
 import { type ZoneFeature, zoneHref } from "@/lib/map/zones";
 
 import FitDetails from "./FitDetails";
@@ -95,7 +95,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         {gaps.data && (
           <ul className={styles.rows}>
             {topRows(gaps.data.data.rows).map((row) => {
-              const walk = walking(row.extra_indicators);
+              const walk = walking(row.extra_indicators, row.row);
               return (
                 <li key={row.row}>
                   <span className={styles.rowName}>
@@ -106,6 +106,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
                       </small>
                     )}
                     {isSmallZone(row) && <small title={SMALL_ZONE.help}>{SMALL_ZONE.label}</small>}
+                    {inGroup(row) && <small title={GROUP.help}>{GROUP.label}</small>}
                   </span>
                   <GapBadge status={row.status} />
                 </li>

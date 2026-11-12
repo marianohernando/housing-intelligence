@@ -11,10 +11,11 @@ import type { ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, isSmallZone } from "@/lib/gaps";
+import { gapsHref, inGroup, isSmallZone } from "@/lib/gaps";
 import { searchable, wholeCities, zoneDirectory, type ZoneCollection, zoneHref, type ZoneProperties } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
+import GroupTag from "./GroupTag";
 import SmallZoneTag from "./SmallZoneTag";
 import styles from "./ZoneDirectory.module.css";
 
@@ -58,6 +59,7 @@ function ZoneLinks({ title, zones, hrefFor, statuses }: LinksProps) {
               <Link href={hrefFor(zone)}>{zone.name}</Link>
               {gap && <GapBadge status={gap.status} />}
               {gap && isSmallZone(gap) && <SmallZoneTag />}
+              {gap && inGroup(gap) && <GroupTag />}
             </li>
           );
         })}
@@ -147,6 +149,7 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
                 <Link href={gapsHref("municipio", city.code)}>{TEXT.wholeCity(city.name)}</Link>
                 {gap && <GapBadge status={gap.status} />}
                 {gap && isSmallZone(gap) && <SmallZoneTag />}
+                {gap && inGroup(gap) && <GroupTag />}
               </li>
             );
           })}

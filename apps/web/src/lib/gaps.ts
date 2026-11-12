@@ -2,7 +2,7 @@
  * «Qué falta» in plain words (pure, unit tested): statuses, rows, figures and walking minutes of
  * GET /api/v1/gaps, with the copy of pitch/textos_web.md (estado.*, fila.*, falta.*).
  */
-import type { GapRowKey, GapStatus, IndicatorValue, NullReason } from "@/contracts/zone_gap_list_response";
+import type { ComparisonGroup, GapRowKey, GapStatus, IndicatorValue, NullReason } from "@/contracts/zone_gap_list_response";
 import { formatNumber } from "@/lib/format";
 import type { ZoneLevel } from "@/lib/map/zones";
 
@@ -24,6 +24,41 @@ export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
   return reliable === false;
 }
 
+/**
+ * A municipio too small alone, compared together with its nearest neighbours of the same type
+ * (gap-0.3, D-217): its status is the group's. Provisional copy of line B, listed for line D.
+ */
+export const GROUP = {
+  label: "Junto con sus vecinos",
+  help: "Comparado con municipios parecidos de la zona: es demasiado pequeño para compararlo solo, así que lo juntamos con sus vecinos más cercanos del mismo tipo.",
+};
+
+export function inGroup(zone: { comparison_group?: ComparisonGroup | null }): ComparisonGroup | null {
+  const group = zone.comparison_group ?? null;
+  return group && group.names.length >= 2 ? group : null;
+}
+
+function listNames(names: readonly string[]): string {
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} y ${names[names.length - 1]}`;
+}
+
+/**
+ * The row's group in plain words: who it is compared with and how much they have together
+ * (the API's `explanation` says the same: «junto con N municipios vecinos …, tiene el N % de lo esperado»).
+ */
+export function groupText(zoneName: string, group: ComparisonGroup): string {
+  const others = group.names.slice(1);
+  // Python's round() goes to the even number on an exact half; a float ratio is never one in practice
+  const share = Math.round(100 * group.ratio_to_reference);
+  const who = others.length === 1 ? "su vecino" : `sus ${others.length} vecinos`;
+  return (
+    `Comparado con municipios parecidos de la zona. ${zoneName} es demasiado pequeño para compararlo solo en este servicio, ` +
+    `así que lo juntamos con ${who} más ${others.length === 1 ? "cercano" : "cercanos"} del mismo tipo: ${listNames(others)}. ` +
+    `Juntos tienen el ${formatNumber(share, 0)} % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.`
+  );
+}
+
 /** Row names when the API does not send one (fila.*): the rows it has not computed yet. */
 export const ROW_NAME: Record<GapRowKey, string> = {
   escuela_infantil: "Escuelas infantiles",
@@ -34,13 +69,16 @@ export const ROW_NAME: Record<GapRowKey, string> = {
   vivienda: "Vivienda para familias",
 };
 
-/** What each row counts, per population, against the whole region (line A's /gaps, 11 nov). */
+/**
+ * What each row measures (gap-0.3, D-217): what people have within 15 min on foot, shared among
+ * everyone who has it that close. Provisional copy of line B, in plain words, listed for line D.
+ */
 export const ROW_MEASURE: Record<GapRowKey, string> = {
-  escuela_infantil: "Escuelas infantiles por cada 1.000 niños de 0 a 4 años",
-  colegio: "Colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años",
-  centro_salud: "Centros de atención primaria por cada 10.000 habitantes",
-  mayores: "Hogares, clubes y centros de día por cada 1.000 personas de 65 años o más",
-  farmacia: "Farmacias por cada 10.000 habitantes",
+  escuela_infantil: "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+  colegio: "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
+  centro_salud: "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+  mayores: "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
+  farmacia: "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
   vivienda: "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
 };
 
@@ -101,10 +139,30 @@ export function gapFigures(
 const WALKING_PREFIX = "min_a_pie_";
 const WALKING_CAP_MIN = 60;
 
-/** The walking minutes among a row's extra indicators (CORE-005, median of the zone's streets). */
-export function walking(extras: readonly IndicatorValue[] | undefined): IndicatorValue | undefined {
-  return extras?.find((e) => e.feature_id.startsWith(WALKING_PREFIX));
+const HOSPITAL = `${WALKING_PREFIX}hospital`;
+
+/**
+ * The walking minutes to the row's own service among its extra indicators (CORE-005, median of
+ * the zone's streets): `min_a_pie_<row>`, or the first walking extra that is not the hospital.
+ */
+export function walking(extras: readonly IndicatorValue[] | undefined, row?: GapRowKey): IndicatorValue | undefined {
+  const own = row ? extras?.find((e) => e.feature_id === `${WALKING_PREFIX}${row}`) : undefined;
+  return own ?? extras?.find((e) => e.feature_id.startsWith(WALKING_PREFIX) && e.feature_id !== HOSPITAL);
 }
+
+/** Walking minutes to the nearest general hospital, an extra of the health row (D-217). */
+export function hospitalWalking(extras: readonly IndicatorValue[] | undefined): IndicatorValue | undefined {
+  return extras?.find((e) => e.feature_id === HOSPITAL);
+}
+
+/**
+ * The hospital extra in plain words, declared as a proxy (D-217: no open source says which hospital
+ * has a 24 h emergency department). Provisional copy of line B, listed for line D.
+ */
+export const HOSPITAL_WALK = {
+  to: "el hospital general más cercano",
+  note: "Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia.",
+};
 
 /** a_pie.min */
 export function walkingText({ value }: Pick<IndicatorValue, "value">): string {

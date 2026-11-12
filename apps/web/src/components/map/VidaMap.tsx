@@ -100,8 +100,9 @@ const TEXT = {
   noStreets: "Mapa sin fondo de calles.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  // mapa.aria.fila of pitch/textos_web.md (gap-0.2, D-213)
-  ariaRow: (label: string) => `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo; la leyenda lo explica.`,
+  // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3 (provisional, listed for line D)
+  ariaRow: (label: string) =>
+    `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
   // Provisional (T3), listed for line D in the PR
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
