@@ -1,0 +1,367 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "measured_at": "2026-11-11T23:59:51.524Z",
+ "runs": 3,
+ "profiles": {
+  "mobile-slow4g": {
+   "pages": {
+    "portada": {
+     "path": "/",
+     "runs": [
+      {
+       "lcp_ms": 1176,
+       "fcp_ms": 1176,
+       "load_ms": 3230,
+       "requests": 37,
+       "map_tiles_slow4g_estimate_s": 3.1,
+       "kb": {
+        "web": 722,
+        "api": 99,
+        "map tiles": 644,
+        "other": 0
+       },
+       "total_kb": 1465
+      },
+      {
+       "lcp_ms": 1100,
+       "fcp_ms": 1100,
+       "load_ms": 3187,
+       "requests": 37,
+       "map_tiles_slow4g_estimate_s": 3.1,
+       "kb": {
+        "web": 722,
+        "api": 99,
+        "map tiles": 644,
+        "other": 0
+       },
+       "total_kb": 1465
+      },
+      {
+       "lcp_ms": 1092,
+       "fcp_ms": 1092,
+       "load_ms": 3182,
+       "requests": 37,
+       "map_tiles_slow4g_estimate_s": 3.1,
+       "kb": {
+        "web": 722,
+        "api": 99,
+        "map tiles": 644,
+        "other": 0
+       },
+       "total_kb": 1465
+      }
+     ],
+     "median": {
+      "lcp_ms": 1100,
+      "fcp_ms": 1100,
+      "load_ms": 3187,
+      "total_kb": 1465
+     }
+    },
+    "zona Chamartín": {
+     "path": "/zona/distrito/2807905",
+     "runs": [
+      {
+       "lcp_ms": 4544,
+       "fcp_ms": 1076,
+       "load_ms": 3144,
+       "requests": 49,
+       "map_tiles_slow4g_estimate_s": 4.8,
+       "kb": {
+        "web": 724,
+        "api": 106,
+        "map tiles": 984,
+        "other": 0
+       },
+       "total_kb": 1814
+      },
+      {
+       "lcp_ms": 4540,
+       "fcp_ms": 1076,
+       "load_ms": 3144,
+       "requests": 51,
+       "map_tiles_slow4g_estimate_s": 5.8,
+       "kb": {
+        "web": 724,
+        "api": 106,
+        "map tiles": 1178,
+        "other": 0
+       },
+       "total_kb": 2008
+      },
+      {
+       "lcp_ms": 4612,
+       "fcp_ms": 1072,
+       "load_ms": 3155,
+       "requests": 49,
+       "map_tiles_slow4g_estimate_s": 4.8,
+       "kb": {
+        "web": 724,
+        "api": 106,
+        "map tiles": 984,
+        "other": 0
+       },
+       "total_kb": 1814
+      }
+     ],
+     "median": {
+      "lcp_ms": 4544,
+      "fcp_ms": 1076,
+      "load_ms": 3144,
+      "total_kb": 1814
+     }
+    },
+    "qué falta Madrid": {
+     "path": "/que-falta?zona=municipio/28079",
+     "runs": [
+      {
+       "lcp_ms": 832,
+       "fcp_ms": 832,
+       "load_ms": 1656,
+       "requests": 28,
+       "map_tiles_slow4g_estimate_s": 0,
+       "kb": {
+        "web": 577,
+        "api": 5,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 583
+      },
+      {
+       "lcp_ms": 828,
+       "fcp_ms": 828,
+       "load_ms": 1647,
+       "requests": 28,
+       "map_tiles_slow4g_estimate_s": 0,
+       "kb": {
+        "web": 577,
+        "api": 5,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 583
+      },
+      {
+       "lcp_ms": 836,
+       "fcp_ms": 836,
+       "load_ms": 1640,
+       "requests": 28,
+       "map_tiles_slow4g_estimate_s": 0,
+       "kb": {
+        "web": 577,
+        "api": 5,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 583
+      }
+     ],
+     "median": {
+      "lcp_ms": 832,
+      "fcp_ms": 832,
+      "load_ms": 1647,
+      "total_kb": 583
+     }
+    }
+   },
+   "search": [
+    {
+     "click_to_response_ms": 353,
+     "click_to_results_ms": 393,
+     "search_body_kb": 107
+    },
+    {
+     "click_to_response_ms": 411,
+     "click_to_results_ms": 452,
+     "search_body_kb": 107
+    },
+    {
+     "click_to_response_ms": 367,
+     "click_to_results_ms": 434,
+     "search_body_kb": 107
+    }
+   ]
+  },
+  "desktop": {
+   "pages": {
+    "portada": {
+     "path": "/",
+     "runs": [
+      {
+       "lcp_ms": 200,
+       "fcp_ms": 200,
+       "load_ms": 233,
+       "requests": 49,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 717,
+        "api": 99,
+        "map tiles": 1911,
+        "other": 0
+       },
+       "total_kb": 2727
+      },
+      {
+       "lcp_ms": 164,
+       "fcp_ms": 164,
+       "load_ms": 186,
+       "requests": 48,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 716,
+        "api": 99,
+        "map tiles": 1911,
+        "other": 0
+       },
+       "total_kb": 2726
+      },
+      {
+       "lcp_ms": 188,
+       "fcp_ms": 188,
+       "load_ms": 179,
+       "requests": 47,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 715,
+        "api": 99,
+        "map tiles": 1911,
+        "other": 0
+       },
+       "total_kb": 2726
+      }
+     ],
+     "median": {
+      "lcp_ms": 188,
+      "fcp_ms": 188,
+      "load_ms": 186,
+      "total_kb": 2726
+     }
+    },
+    "zona Chamartín": {
+     "path": "/zona/distrito/2807905",
+     "runs": [
+      {
+       "lcp_ms": 872,
+       "fcp_ms": 236,
+       "load_ms": 250,
+       "requests": 96,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 718,
+        "api": 106,
+        "map tiles": 4156,
+        "other": 0
+       },
+       "total_kb": 4980
+      },
+      {
+       "lcp_ms": 1012,
+       "fcp_ms": 204,
+       "load_ms": 257,
+       "requests": 96,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 718,
+        "api": 106,
+        "map tiles": 4156,
+        "other": 0
+       },
+       "total_kb": 4980
+      },
+      {
+       "lcp_ms": 984,
+       "fcp_ms": 220,
+       "load_ms": 256,
+       "requests": 96,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 718,
+        "api": 106,
+        "map tiles": 4198,
+        "other": 0
+       },
+       "total_kb": 5022
+      }
+     ],
+     "median": {
+      "lcp_ms": 984,
+      "fcp_ms": 220,
+      "load_ms": 256,
+      "total_kb": 4980
+     }
+    },
+    "qué falta Madrid": {
+     "path": "/que-falta?zona=municipio/28079",
+     "runs": [
+      {
+       "lcp_ms": 392,
+       "fcp_ms": 176,
+       "load_ms": 202,
+       "requests": 28,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 577,
+        "api": 5,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 583
+      },
+      {
+       "lcp_ms": 444,
+       "fcp_ms": 256,
+       "load_ms": 264,
+       "requests": 28,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 577,
+        "api": 5,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 583
+      },
+      {
+       "lcp_ms": 376,
+       "fcp_ms": 184,
+       "load_ms": 213,
+       "requests": 27,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 577,
+        "api": 5,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 582
+      }
+     ],
+     "median": {
+      "lcp_ms": 392,
+      "fcp_ms": 184,
+      "load_ms": 213,
+      "total_kb": 583
+     }
+    }
+   },
+   "search": [
+    {
+     "click_to_response_ms": 536,
+     "click_to_results_ms": 541,
+     "search_body_kb": 107
+    },
+    {
+     "click_to_response_ms": 830,
+     "click_to_results_ms": 834,
+     "search_body_kb": 107
+    },
+    {
+     "click_to_response_ms": 316,
+     "click_to_results_ms": 331,
+     "search_body_kb": 107
+    }
+   ]
+  }
+ }
+}
