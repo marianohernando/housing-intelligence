@@ -12,10 +12,13 @@ def test_a_dataset_shows_its_source_and_the_geocoder_only_when_it_used_it() -> N
     row = {
         "attribution_text": "Fuente: Comunidad de Madrid, CC BY 4.0.",
         "geocoded": False,
-        "geocoder_attribution": "Geocodificación: CartoCiudad, CC BY 4.0 scne.es.",
+        "geocoder_attribution": (
+            "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+        ),
     }
     assert attribution_text(row) == "Fuente: Comunidad de Madrid, CC BY 4.0."
     assert attribution_text(row | {"geocoded": True}) == (
-        "Fuente: Comunidad de Madrid, CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+        "Fuente: Comunidad de Madrid, CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional "
+        "(CartoCiudad), CC BY 4.0 scne.es."
     )
     assert attribution_text(row | {"attribution_text": None}) is None

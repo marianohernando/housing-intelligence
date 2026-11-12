@@ -3626,7 +3626,7 @@
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
       "version": "2026-10-21-27483ff8498b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
-      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",

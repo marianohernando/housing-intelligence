@@ -8,7 +8,7 @@ catalog_url: https://datos.gob.es/es/catalogo/e0dat0002-servicio-rest-de-geocodi
 license_name: Creative Commons Attribution 4.0 (CC BY 4.0 scne.es)
 license_url: https://inspire-geoportal.ec.europa.eu/srv/api/records/spaignrest_cartociudad_address
 license_status: CLEAR
-attribution_text: "Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+attribution_text: "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
 commercial_use: true
 redistribution_allowed: true
 trust_tier: A_OFFICIAL

@@ -5689,7 +5689,7 @@
       "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
       "version": "2026-11-10-1332ab0048a6",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
-      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_educativos",
@@ -5699,7 +5699,7 @@
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
       "version": "2026-10-21-27483ff8498b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
-      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_sanitarios",
@@ -5709,7 +5709,7 @@
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
       "version": "2026-11-11-ba0e65311c5b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
-      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_oficinas_farmacia",
@@ -5719,7 +5719,7 @@
       "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
       "version": "2026-11-10-de61d48d7b4a",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
-      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",

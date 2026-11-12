@@ -336,7 +336,7 @@
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
       "version": "2026-11-11-ba0e65311c5b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
-      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
