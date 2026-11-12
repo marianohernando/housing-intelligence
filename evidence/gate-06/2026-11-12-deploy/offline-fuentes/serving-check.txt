@@ -1,0 +1,18 @@
+Offline package (web on http://localhost:3012) with the fonts copied by hand, for this check only, into
+the web's public/tiles/fonts; removed afterwards. Request -> HTTP status, bytes, content type.
+
+200 76580B application/octet-stream  /tiles/fonts/Noto%20Sans%20Regular/0-255.pbf
+200 35678B application/octet-stream  /tiles/fonts/Noto%20Sans%20Bold/8192-8447.pbf
+200 88108B application/octet-stream  /tiles/fonts/Noto%20Sans%20Italic/65280-65535.pbf
+200 4300B  text/markdown            /tiles/fonts/Noto%20Sans%20Regular/LICENSE.md
+404        (not in the bundle)       /tiles/fonts/Noto%20Sans%20Medium/0-255.pbf
+
+md5 of «Noto Sans Regular/0-255.pbf»:
+  from the pinned bundle (ofm.tar.gz)                       1e730480d00ea65bd33f45de6d0a22a7
+  served by the offline package                              1e730480d00ea65bd33f45de6d0a22a7
+  served online by tiles.openfreemap.org/fonts (same range)  1e730480d00ea65bd33f45de6d0a22a7
+
+Bundle: https://assets.openfreemap.com/fonts/ofm.tar.gz, 61,458,689 bytes, Last-Modified 10 Jan 2024,
+sha256 56b1a521aba187779194f8f983f3e103a9f7f14581227eed1297ce0e102cb4b0. 775 entries: ofm/<fontstack>/
+for Noto Sans Regular, Bold and Italic, 256 ranges each plus LICENSE.md (SIL Open Font License 1.1).
+104,607,777 bytes unpacked.
