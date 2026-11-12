@@ -20,28 +20,11 @@ Párrafos de la parte 1 que B solo publica si la web ya enseña lo que cuentan. 
 
 ---
 
-## Formulario: campos, variante B y checklist (antes en `formulario.md`)
+## Formulario: variante B y estado de cada afirmación (antes en `formulario.md`)
 
 > Las decisiones del 11 nov están registradas como D-199 a D-207 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo.
 
-- **Formulario:** plazo antes del 20 nov; objetivo 18 nov y límite real 19 (`docs/09_datamad/25_plan_competicion.md` §5, D-193).
-
-### Campos, en orden
-
-| # | Campo del formulario | Obligatorio | Qué poner |
-|---|---|---|---|
-| 1 | ¿Cómo vas a participar? | Sí | Marca: `Individualmente` (Mariano se presenta solo) |
-| 2 | Nombre y apellidos | Sí | Tu nombre completo, listo para copiar en `pitch/formulario.local.md`. Ese fichero es local y git lo ignora: el nombre completo no se guarda en el repo público |
-| 3 | Correo electrónico de contacto | Sí | **Lo rellenas tú:** el mismo email del formulario de inscripción inicial |
-| 4 | Teléfono de contacto | Sí | **Lo rellenas tú** |
-| 5 | Si participáis en equipo, indica los datos del resto de integrantes | Sí | Copia esto: `No aplica: participo individualmente.` |
-| 6 | Nombre del proyecto | Sí | Copia esto: `Vida Fácil — Encuentra tu sitio en Madrid` |
-| 7 | Describe brevemente vuestra propuesta (máximo 100 palabras) | Sí | Copia el **resumen principal**: el buscador está encendido en producción desde el 11 nov. La variante B queda de reserva (ver «Cuándo usar cada versión») |
-| 8 | ¿Quieres compartir algún material adicional? | No | Copia el bloque de **enlaces** de abajo |
-| 9 | Compromiso de asistencia presencial (26 nov) | Sí | **Lo marcas tú** |
-| 10 | Confirmación de inscripción previa | Sí | **Lo marcas tú** |
-
-La ayuda del campo 7 pide «qué queréis construir, qué problema aborda y cómo usaréis los datos abiertos». Los dos textos cubren las tres cosas.
+- **Formulario:** enviado el 12 nov con el resumen principal (`formulario.md`). La preparación campo a campo y la checklist del envío quedan en el historial: `git show 6d60ecb:pitch/formulario.md`.
 
 ### Campo 7 · Variante B (94 palabras) · no se envió
 Esta versión no promete el buscador como hecho: lo presenta como lo que estamos construyendo. Solo vale si el 18 nov la demo vuelve a enseñar «Muy pronto». «Frente a municipios parecidos» es el método de D-213, refinado por D-217: cada zona se compara con los demás municipios de su tipo, urbanos o rurales, y un pueblo muy pequeño, junto con sus vecinos parecidos (`pitch/metodologia.md` §1.4).
@@ -53,26 +36,6 @@ Vida Fácil convierte los datos abiertos de la Comunidad de Madrid en un mapa de
 ```bash
 awk '/^<!-- variante-b:fin/{f=0} f; /^<!-- variante-b:inicio/{f=1}' pitch/formulario.md | wc -w   # 94
 ```
-
-### Cuándo usar cada versión
-- **Resumen principal:** si el 18 nov se siguen cumpliendo las dos condiciones. Las dos se cumplen (comprobado el 11 y el 12 nov):
-  - `POST /api/v1/search` devuelve zonas y alternativas con datos reales para el caso de ejemplo. En producción, caso de la Castellana: 33 de 199 zonas, Fuencarral-El Pardo 1.ª al 100 % (`fit-0.3`, con el trabajo en minutos de transporte público) y «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más» (12 nov, tras el despliegue de `28a0f2f`; el 11 nov, 32 y 49 en `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11);
-  - la demo desplegada tiene el buscador encendido y ya no enseña «Muy pronto».
-- **Variante B:** solo si el 18 nov la demo vuelve a enseñar «Muy pronto», por ejemplo porque C haya vuelto a una versión sin buscador. Ahí la lista de lo que falta es el diferenciador (D-194), así que va primero, y el buscador sale como algo que «construimos», no como hecho.
-- **Si una fila de la lista no llega** (por ejemplo, vivienda), quítala del texto y vuelve a contar las palabras.
-- **Si cambia el número de datasets**, usa el de `pitch/datasets_cm.md` regenerado (ver checklist).
-
-### Campo 8 · Enlaces y notas
-
-```text
-Demo: https://vidafacil-madrid.vercel.app
-Código abierto (Apache-2.0): https://github.com/marianohernando/housing-intelligence
-Datasets que integra, con licencia y control de calidad: https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md
-```
-
-- **URL de la demo: verificada el 11 nov con el buscador encendido.** Smoke 7/7 con datos reales de Supabase (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11). El 18 nov se abre una vez más en el móvil antes de enviar (checklist, paso 5).
-- **Enlace a `datasets_cm.md`:** funciona en cuanto A fusione este PR en `claude/sprint-1-public`. Si para el 18 nov Mariano ha fusionado en `main`, cambia `claude/sprint-1-public` por `main` en la URL.
-- **Repo:** público desde el 11 nov (D-198); comprobado con `gh repo view` → `"visibility":"PUBLIC"`.
 
 ### Cada afirmación del resumen: evidencia y estado interno
 
@@ -91,14 +54,3 @@ Datasets que integra, con licencia y control de calidad: https://github.com/mari
 | Demo con enlace público | https://vidafacil-madrid.vercel.app (URL elegida por Mariano) · `infra/deploy/README.md` · `evidence/gate-06/2026-11-11-deploy/deploy-9-web-nueva.md` (web nueva) · `deploy-12-buscador.md` (buscador, PR #11) · gap-0.3 en producción: despliegue `28e53fa`, smoke 8/8 con `/search` (PR #15 de C, abierto: `deploy-13-auditoria-gap03.md`) y `GET /api/v1/gaps/distrito/2807913` con `method.version: gap-0.3` (12 nov) | Hecho: la web nueva con el buscador, smoke 7/7 con datos reales (11 nov); gap-0.3 desplegado el 12 nov. Coste 0 €/mes. El 18 nov se vuelve a abrir antes de enviar |
 
 El resumen no promete los extras: zonas verdes, «sin escaleras», precio de compra ni MCP (D-206). Las zonas verdes y «sin escaleras» ya están en la API (D-222, D-223), pero el 18 nov puede que la web aún no los enseñe y no caben en 100 palabras. La seguridad no puntúa (D-224) y no se menciona.
-
-### Checklist del 18 nov (se usó el 12 nov)
-1. En `hi-coord`, hacer `git fetch origin && git rebase origin/claude/sprint-1-public`.
-2. Ejecutar `uv run python pitch/build_datasets_cm.py --refresh-portal` y revisar el diff de `pitch/datasets_cm.md`:
-   - el total de datasets CM con Gate en PASS es el número que va en el resumen;
-   - si alguno de esos datasets sigue con «pendiente de A», no alimenta nada en la lista ni en el buscador. Se cuenta igual si la web lo lista en «Cómo lo calculamos» (hoy, los 2 de camas del 12 nov, como total de la región); si no, se cuenta solo lo que alimenta la demo.
-3. Recorrer la tabla de evidencias: cada «pendiente de A/B/C» pasa a «hecho» con su ruta o su commit, o se quita del resumen lo que no llegó.
-4. Comprobar que la demo sigue con el buscador (sin «Muy pronto») y copiar el resumen principal; si no, la variante B. Volver a contar las palabras con el comando de arriba: tienen que ser ≤ 100.
-5. Abrir la URL de la demo en el móvil y en un navegador sin sesión: carga, se ve el caso precargado y la consola no da errores.
-6. Pegar la URL de la demo en el campo 8 y comprobar que los 3 enlaces abren.
-7. Enviar el formulario (lo hace Mariano) y avisar a A para que anote en el board «Formulario enviado».

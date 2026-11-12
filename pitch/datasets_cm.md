@@ -1,7 +1,7 @@
 # Datasets que usa Vida Fácil
 
 > Fichero generado: no se edita a mano. Se regenera con `uv run python pitch/build_datasets_cm.py`.
-> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-11).
+> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-12).
 
 **27 datasets del Portal de Datos Abiertos de la Comunidad de Madrid, 27 con Quality Gate 1 en PASS:** 18 publicados por la Comunidad y su Instituto de Estadística, y 9 del Consorcio Regional de Transportes que también tienen ficha en el portal.
 
@@ -35,9 +35,9 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 | 22 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
 | 23 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
 | 24 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 25 | [Topología de la Red de Cercanías Madrid: estaciones y su grado de accesibilidad](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 26 | [Topología de la Red de Metro: estaciones y su grado de accesibilidad](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 27 | [Topología de la Red de Metro Ligero / Tranvía: estaciones y su grado de accesibilidad](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 25 | [Topología de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 26 | [Topología de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 27 | [Topología de la Red de Metro Ligero / Tranvía](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
 
 ## 1. Portal CM: publicados por la Comunidad de Madrid (18)
 
@@ -99,8 +99,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 
 ### Dotación de camas por dependencia
 - **Ficha:** https://datos.comunidad.madrid/dataset/1912720 · id `cm_dotacion_camas` · publica: Instituto de Estadística
-- **Nombre:** el del catálogo; falta verificarlo en el portal
-- **Licencia:** [Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el registro de fuentes)
+- **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - Métrica cargada: Camas en funcionamiento en establecimientos sanitarios con régimen de internado (`camas_funcionamiento`)
   - Métrica cargada: Camas en funcionamiento por 1.000 habitantes en establecimientos sanitarios con régimen de internado (`camas_funcionamiento_por_1000`)
@@ -134,8 +133,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 
 ### Hospitales y datos asistenciales
 - **Ficha:** https://datos.comunidad.madrid/dataset/1912744 · id `cm_hospitales_datos_asistenciales` · publica: Instituto de Estadística
-- **Nombre:** el del catálogo; falta verificarlo en el portal
-- **Licencia:** [Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el registro de fuentes)
+- **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - Métrica cargada: Hospitales y datos asistenciales (`hospitales_actividad`)
   - No entra en la lista de lo que falta ni en el buscador: es dato de apoyo o total de la región
@@ -206,8 +204,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 
 ### Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/1004050 · id `cm_valor_tasado_vivienda_municipios` · publica: Instituto de Estadística
-- **Nombre:** el del catálogo; falta verificarlo en el portal
-- **Licencia:** [Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el registro de fuentes)
+- **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - Indicador por zona: Valor tasado medio de la vivienda libre por metro cuadrado (`valor_tasado_vivienda_m2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-60a2ddbf2260` · 895 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/cm_valor_tasado_vivienda_municipios/quality_report.json)
@@ -292,29 +289,26 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Paradas y estaciones de metro ligero con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-e6a5daaf76ec` · 56 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_metro_ligero/quality_report.json)
 
-### Topología de la Red de Cercanías Madrid: estaciones y su grado de accesibilidad
+### Topología de la Red de Cercanías Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_cercanias` · publica: Consorcio Regional de Transportes de Madrid
-- **Nombre:** el del catálogo; falta verificarlo en el portal
 - **Descarga:** https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M5_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json (fuente original; también tiene ficha en el portal CM)
-- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el registro de fuentes)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-cbd6ab397c04` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_cercanias/quality_report.json)
 
-### Topología de la Red de Metro: estaciones y su grado de accesibilidad
+### Topología de la Red de Metro
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_metro` · publica: Consorcio Regional de Transportes de Madrid
-- **Nombre:** el del catálogo; falta verificarlo en el portal
 - **Descarga:** https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M4_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json (fuente original; también tiene ficha en el portal CM)
-- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el registro de fuentes)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-c788fd9285b8` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro/quality_report.json)
 
-### Topología de la Red de Metro Ligero / Tranvía: estaciones y su grado de accesibilidad
+### Topología de la Red de Metro Ligero / Tranvía
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_metro_ligero` · publica: Consorcio Regional de Transportes de Madrid
-- **Nombre:** el del catálogo; falta verificarlo en el portal
 - **Descarga:** https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M10_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json (fuente original; también tiene ficha en el portal CM)
-- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el registro de fuentes)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-9e34e07839c7` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro_ligero/quality_report.json)
