@@ -6,7 +6,10 @@
   (an east of 2.2e-308 for the Madrid extract).
 - MapLibre asks for every tile inside the bounds. tilemaker only writes tiles with content, so each
   missing tile inside them would be a 404 and a console error. They are filled with empty tiles: a
-  zero-length protobuf is a valid vector tile with no layers.
+  zero-length protobuf is a valid vector tile with no layers. Outside the Comunidad (the corners of
+  the bounds) the map therefore shows only its land colour, with no streets.
+- Before filling, it checks that tilemaker wrote enough tiles with content at every zoom, so a run
+  that failed half-way is not hidden behind empty tiles.
 - Writes TILES_DIR/tiles.json and prints a summary. Standard library only.
 """
 
@@ -17,6 +20,12 @@ from pathlib import Path
 
 MAXZOOM = 14
 EPSILON = 1e-6  # keeps each bound strictly inside its edge tile
+# The Madrid extract of 11 Nov 2026 gives 4,490 tiles with content; well under that means tilemaker
+# failed or the extract is not the Comunidad.
+MIN_TILES_WITH_CONTENT = 4000
+# Zooms that must have content: from the style's first street layer (roads-major, minzoom 7). At
+# z0–2 the Comunidad is too small for any feature, so those tiles are legitimately empty.
+CONTENT_ZOOMS = range(7, MAXZOOM + 1)
 ATTRIBUTION = (
     '<a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a> '
     "contributors (ODbL) · "
@@ -54,6 +63,25 @@ def bounds_from_tiles(tiles_dir: Path) -> list[float]:
     ]
 
 
+def check_written(tiles_dir: Path) -> int:
+    """Tiles with content tilemaker wrote; fails if too few overall or none at a street zoom."""
+    with_content = dict.fromkeys(range(MAXZOOM + 1), 0)
+    for path in tiles_dir.glob("*/*/*.pbf"):
+        z = int(path.parent.parent.name)
+        if z in with_content and path.stat().st_size > 0:
+            with_content[z] += 1
+    total = sum(with_content.values())
+    empty_zooms = [z for z in CONTENT_ZOOMS if with_content[z] == 0]
+    if total < MIN_TILES_WITH_CONTENT or empty_zooms:
+        missing = f", none at zoom {empty_zooms}" if empty_zooms else ""
+        minimum = MIN_TILES_WITH_CONTENT
+        raise SystemExit(
+            f"tilemaker wrote {total} tiles with content (minimum {minimum}){missing}: it may have"
+            " failed half-way. Not filling holes; check it and rerun."
+        )
+    return total
+
+
 def fill_missing(tiles_dir: Path, bounds: list[float]) -> int:
     west, south, east, north = bounds
     filled = 0
@@ -70,6 +98,7 @@ def fill_missing(tiles_dir: Path, bounds: list[float]) -> int:
 
 def main(tiles_dir: Path, base_url: str) -> None:
     written = sum(1 for _ in tiles_dir.glob("*/*/*.pbf"))
+    with_content = check_written(tiles_dir)
     bounds = bounds_from_tiles(tiles_dir)
     filled = fill_missing(tiles_dir, bounds)
     metadata = json.loads((tiles_dir / "metadata.json").read_text(encoding="utf-8"))
@@ -86,6 +115,7 @@ def main(tiles_dir: Path, base_url: str) -> None:
     tilejson_text = json.dumps(tilejson, ensure_ascii=False, indent=1)
     (tiles_dir / "tiles.json").write_text(tilejson_text, encoding="utf-8")
     print(f"tiles_written {written}")
+    print(f"tiles_with_content {with_content}")
     print(f"tiles_filled_empty {filled}")
     print(f"bounds {' '.join(f'{b:.6f}' for b in bounds)}")
     print(f"layers {' '.join(layer['id'] for layer in metadata['vector_layers'])}")

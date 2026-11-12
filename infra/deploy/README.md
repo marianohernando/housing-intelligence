@@ -112,8 +112,10 @@ Cómo se detecta:
 - **Instant Rollback en Hobby:** solo permite volver al despliegue de producción inmediatamente anterior ([docs](https://vercel.com/docs/instant-rollback)). Comando: `npx vercel@65.12.1 rollback`, o desde el panel: Production Deployment → Instant Rollback.
 - **Después de un rollback:** Vercel desactiva la asignación automática del dominio. El siguiente despliegue no queda publicado hasta que lo promueves con `npx vercel@65.12.1 promote <url-del-despliegue>`.
 - **Variables de entorno:** cada despliegue se queda con las que había al construirlo. Un rollback no corrige una variable: corrígela y vuelve a desplegar.
-- **Ningún despliegue anterior a `dpl_5efzuiwZEsn5cp74Uf4cizbe8now` (12 nov, 13:14) sirve para volver atrás.** Llevan la contraseña vieja de `vf_api_ro`, que Mariano cambió con el paso al puerto 6543. Durante el cambio de dominio, el anterior respondió `/search` con 500 y «password authentication failed for user "vf_api_ro"» (`deploy-15-6543.md`). Si hay que volver atrás, despliega desde Git la versión buena del código con `make deploy-demo`: toma la contraseña actual.
-- **Un despliegue anterior solo sirve si su código entiende los datos que hay ahora en Supabase.** El 12 nov, el sync de la prioridad de zonas verdes (DATA-018) tumbó el `/search` de `dpl_5efz…` con «ValueError: None is not a valid NeedKey»; el arreglo fue desplegar el código nuevo, fit-0.3 (`deploy-16-fit03.md`). Desde entonces, `dpl_5efz…` tampoco vale para un rollback.
+- **Ningún despliegue anterior a `dpl_AtNd6uYPahHmYPyHMp3SwRepcck8` (12 nov, 13:55) sirve para volver atrás.** Si hay que volver atrás, despliega desde Git la versión buena del código con `make deploy-demo`, que toma la contraseña y los datos actuales. Hay dos motivos:
+  - **Los anteriores a `dpl_5efz…` (13:14) llevan la contraseña vieja de `vf_api_ro`,** que Mariano cambió con el paso al puerto 6543. Durante el cambio de dominio, uno de ellos respondió `/search` con 500 y «password authentication failed for user "vf_api_ro"» (`deploy-15-6543.md`).
+  - **`dpl_5efz…` no entiende los datos actuales de Supabase.** El sync de la prioridad de zonas verdes (DATA-018) tumbó su `/search` con «ValueError: None is not a valid NeedKey» (`deploy-16-fit03.md`).
+  - En general, un despliegue solo sirve para volver atrás si su código entiende los datos que hay en Supabase.
 - **Orden al cambiar a la vez código y datos:** primero se despliega el código que entiende los datos nuevos, y después se sincroniza.
 - **Si el fallo está en los datos y no en el código:** no se arregla con un rollback. A vuelve a ejecutar `make supabase-sync PROFILE=demo` con la versión buena de la base local.
 - **Si el fallo es el límite de conexiones de la base, tampoco.** En los logs sale `EMAXCONNSESSION max clients reached in session mode`.
@@ -194,7 +196,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - `ready` falla con `INSUFFICIENT_DATA`: el rol no ve filas (falta una política o un `GRANT`) o los datos no están cargados.
    - `ready` falla y en `npx vercel@65.12.1 logs --environment production --since 15m` sale «password authentication failed»: la contraseña de `DATABASE_URL` no es la de `vf_api_ro`. Pasa si alguien hizo rollback a un despliegue anterior al 12 nov a las 13:14 (ver «Volver atrás»), o si la contraseña cambió en Supabase y no en Vercel. Mariano la corrige en Vercel y se vuelve a desplegar.
    - Hay 500 sueltos, sobre todo en la vista de zona, y en esos logs sale `EMAXCONNSESSION`: está lleno el pooler de Supabase en modo sesión, así que `DATABASE_URL` ha vuelto al puerto 5432. No hagas rollback (ver «Volver atrás»). Espera a que bajen las instancias: unos 5 min sin tráfico, una estimación hecha con el apagado por inactividad del container runtime, no una garantía. O reduce las conexiones por instancia (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`); eso exige redesplegar, porque las variables solo se aplican en los despliegues nuevos.
-2. **Si el fallo vino con el último despliegue:** Instant Rollback (ver arriba), solo si el anterior es `dpl_AtNd6uYPahHmYPyHMp3SwRepcck8` o uno posterior: los anteriores llevan la contraseña vieja o no entienden los datos actuales. Si no, vuelve a desplegar la versión buena del código con `make deploy-demo`.
+2. **Si el fallo vino con el último despliegue:** Instant Rollback (ver arriba), salvo que el anterior sea anterior a `dpl_AtNd6uYPahHmYPyHMp3SwRepcck8`. En ese caso, vuelve a desplegar la versión buena del código con `make deploy-demo`.
 3. **Si Supabase está pausada:** reanúdala desde el panel de Supabase con la cuenta dedicada a DATAMAD y vuelve a pasar el smoke.
 4. **Sin Internet o con Vercel caído durante la presentación:** `make demo-offline`, el paquete offline de la sección siguiente. Arranca en unos 7 s en el portátil, con los mismos datos. Lleva también capturas y un vídeo corto del recorrido, grabados con la versión desplegada.
 5. **Si Vercel cae varios días:** el mismo `infra/deploy/api/Dockerfile` sirve en Render o en Cloud Run. Las opciones B y C están en `provider-research.md` y necesitan cuenta.
@@ -214,17 +216,20 @@ Qué no toca nunca:
 
 Genera las teselas del mapa base de la Comunidad de Madrid para que, sin red, el mapa salga con calles, parques y edificios en 3D. Va antes de `make demo-offline-prepare`, que compila la web apuntando a ellas. Tarda alrededor de 1 minuto.
 1. **Descarga el extracto de OpenStreetMap de Geofabrik** (licencia ODbL) a `data/offline/tiles-src/`.
-   - `madrid-latest` redirige al fichero con fecha (`madrid-261111.osm.pbf`, 86 MB, datos del 11 nov), y ese es el que se usa.
-   - Lo comprueba con su `.md5`. Si ya está descargado y la suma cuadra, no lo vuelve a bajar.
-   - Para repetir exactamente el mismo: `PBF_FILE=madrid-261111.osm.pbf make demo-offline-tiles`, mientras Geofabrik lo conserve.
+   - **Extracto fijado:** `madrid-261111.osm.pbf`, con datos del 11 nov y 86 MB. El nombre y el md5 están fijados en `demo_offline.sh` (`PBF_PINNED`, `PBF_PINNED_MD5`).
+   - **Por qué el md5 va en el script:** al no tomarlo del mismo servidor que el fichero, detecta un fichero manipulado, no solo uno corrupto. Si ya está descargado y la suma cuadra, no lo vuelve a bajar.
+   - **Otro extracto:** `PBF_FILE=madrid-AAMMDD.osm.pbf PBF_MD5=<md5> make demo-offline-tiles`, y después fija los dos en el script. Si Geofabrik deja de tener el fijado, el script lo dice.
+   - **Requisito:** `jq`, para adaptar la configuración de tilemaker. El script avisa si falta.
 2. **Genera las teselas con tilemaker 3.2.0:**
    - Usa la imagen oficial del repositorio (`ghcr.io/systemed/tilemaker`), fijada por digest en `demo_offline.sh` y sin red dentro del contenedor.
    - El esquema es OpenMapTiles, el mismo que el estilo de la web. De la configuración de tilemaker se quitan las capas que salen de shapefiles (mar, glaciares, zonas urbanas de Natural Earth), porque Madrid no tiene ninguna.
    - Salen de z0 a z14 sin comprimir, para que la web las sirva como ficheros estáticos.
 3. **[`offline/tiles_meta.py`](offline/tiles_meta.py) escribe `tiles.json`, un TileJSON con la atribución «© OpenStreetMap contributors (ODbL) · © OpenMapTiles».**
    - **Límites:** los calcula con las teselas de z14, porque los de tilemaker salen mal.
+   - **Antes de rellenar, comprueba lo que escribió tilemaker:** al menos 4.000 teselas con contenido, y alguna en cada zoom desde el 7, donde empiezan las calles del estilo. De z0 a z2 la Comunidad no tiene nada que dibujar. Si no llega, para, para que un tilemaker que falló a medias no quede tapado por teselas vacías.
    - **Huecos:** rellena con teselas vacías los que hay dentro de esos límites. Si no, MapLibre los pediría, y cada 404 sería un error de consola.
-4. **Resultado** en `data/offline/tiles/`, que git ignora: 4.750 teselas con contenido y 3.365 vacías, 89 MB.
+   - **Fuera de la Comunidad,** en las esquinas de ese rectángulo y más allá, el mapa sale en blanco: solo el color de fondo, sin calles. Todas las zonas de la demo están dentro.
+4. **Resultado** en `data/offline/tiles/`, que git ignora: 4.750 teselas de tilemaker (4.490 con contenido) y 3.365 vacías de relleno, 89 MB.
    - `manifest.txt` guarda el fichero, su md5, la imagen y los límites.
    - El 12 nov: 0 hosts cortados y 0 errores de consola sin red (`offline-teselas.md`).
 
