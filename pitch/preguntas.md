@@ -8,7 +8,7 @@
 
 **Perfiles:** salen de `docs/09_datamad/25_plan_competicion.md` §4. Lo que valora cada miembro del jurado es una inferencia a partir de su trayectoria pública.
 
-> Las decisiones del 11 nov están registradas como D-199 a D-213 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
+> Las decisiones del 11 y el 12 nov están registradas como D-199 a D-218 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
@@ -46,7 +46,7 @@ Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, re
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
-Por el trabajo que hay encima: cruzar 21 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
+Por el trabajo que hay encima: cruzar 23 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
 - Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md` · `evidence/gate-01/2026-11-10/idempotent-rerun.txt`.
 
 **8. ¿La licencia de los datos permite un uso comercial?**
@@ -67,80 +67,104 @@ Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base e
 ## Loren Escot · UCM, Estudios Estadísticos (rigor de los indicadores)
 
 **11. ¿Cómo decidís que algo «falta»?**
-Comparamos la tasa de la zona con la de los demás municipios de su tipo, rurales o urbanos. FALTA exige dos cosas: menos del 80 % de esa referencia (la regla de los cuatro quintos) y que la diferencia no se explique por el azar del tamaño de la zona; CUBIERTO es llegar al 100 %, y lo demás es JUSTO. Es una señal para priorizar, no un veredicto, y el método está declarado y versionado (`gap-0.2`).
-- Evidencia: D-213 (puntos 1 y 2: 29 CFR 1607.4(D); intervalo exacto de Poisson de Garwood al 95 %, como en Fingertips y en los gráficos en embudo de Spiegelhalter, 2005) · `packages/domain/src/hi_domain/gaps.py` · `apps/api/src/hi_api/services/gap_reference.py` · `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
-- Estado: hecho en la API y en producción (GAP-001 F5, `d02574f`, `f626e1f`; `GET /api/v1/gaps/municipio/28079` da `gap-0.2`, comprobado el 11 nov).
+Medimos lo que la gente de la zona tiene a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, rurales o urbanos. FALTA exige dos cosas: menos del 80 % de esa referencia (la regla de los cuatro quintos) y que la diferencia no se explique por el azar del tamaño de la zona; CUBIERTO es llegar al 100 %, y lo demás es JUSTO. Es una señal para priorizar, no un veredicto, y el método está declarado y versionado (`gap-0.3`).
+- Evidencia: D-213 (puntos 1 y 2: 29 CFR 1607.4(D); intervalo exacto de Poisson de Garwood al 95 %, como en Fingertips y en los gráficos en embudo de Spiegelhalter, 2005) · D-217 (2SFCA: mismos cortes y misma prueba) · `packages/domain/src/hi_domain/gaps.py` · `apps/api/src/hi_api/services/gap_reference.py` · `evidence/gate-04/2026-11-12/gap-status-gap03.md`.
+- Estado: hecho en la API y en producción (GAP-001 F5; DATA-AUDIT T2, `b88c4fb`). `GET /api/v1/gaps/distrito/2807913` da `gap-0.3` (comprobado el 12 nov).
 
-**12. ¿Por qué comparáis con municipios del mismo tipo y no con toda la región?**
-Porque la tasa depende del tipo de territorio: cada pueblo tiene su consultorio, y los municipios rurales tienen 14,8 veces más centros de atención primaria por habitante que los urbanos. Con la media de la región, ningún distrito de Madrid salía cubierto en centros de salud, y la diferencia entre rural y urbano es significativa en las 6 filas (χ², p < 0,05). Usamos la definición legal de medio rural de la Ley 45/2007 (menos de 30.000 habitantes y menos de 100 por km²), y ninguna zona se compara consigo misma: Madrid es la mitad de la población urbana.
-- Evidencia: D-213 (punto 1 y tabla χ²: de p = 0,039 en farmacias a p < 10⁻³⁰⁰ en vivienda; 84 municipios rurales y 95 urbanos) · `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
+**12. ¿Qué es eso de «al alcance a pie»? ¿Por qué no contáis centros sin más?**
+Porque contar centros por habitante trata igual una clínica pequeña que un centro grande y no ve lo que hay al otro lado del límite de un distrito. Usamos el método 2SFCA (Luo y Wang, 2003): lo que ofrece cada centro se reparte entre todos los que viven a 15 minutos andando de él, cada calle suma lo que le toca de cada centro, y la zona es la media de sus calles según cuánta gente vive en cada una. Los 15 minutos a 4 km/h son los del estudio «El Madrid de los 15 minutos» del Ayuntamiento, y con 10 o 20 minutos el orden de los municipios casi no cambia (Spearman de 0,995 a 0,997).
+- Evidencia: D-217 §1–2 · `packages/domain/src/hi_domain/access/fca.py` · `services/features/src/hi_features/fca.py` (`two_step_fca`) · test de propiedades de capacidad conservada · `evidence/gate-03/2026-11-12/fca-sensitivity.md`.
+- Límite, si insiste: la captación es binaria, dentro o fuera, sin decaimiento con la distancia (E2SFCA, Luo y Qi 2009, es la mejora declarada), y la gente se coloca en las calles según su longitud, no por portal (D-217 §9).
+- Estado: hecho y en producción desde el 12 nov (`gap-0.3`).
+
+**13. ¿Por qué comparáis con municipios del mismo tipo y no con toda la región?**
+Porque la oferta depende del tipo de territorio: a pie y por niño, los municipios rurales tienen unas 2,5 veces más escuelas infantiles que los urbanos (12,3 frente a 4,9 por cada 1.000 niños). Con la media de la región a cualquier ciudad le faltaría de todo, y con el método anterior la diferencia entre rural y urbano ya era significativa en las 6 filas (χ², p < 0,05). Usamos la definición legal de medio rural de la Ley 45/2007 (menos de 30.000 habitantes y menos de 100 por km²), y ninguna zona se compara consigo misma: Madrid es la mitad de la población urbana.
+- Evidencia: referencias de `gap-0.3` en `evidence/gate-04/2026-11-12/gap-status-gap03.md` («Otros municipios rurales» 12,31; «Otros municipios urbanos» 4,87) · D-213 (punto 1 y tabla χ²: de p = 0,039 en farmacias a p < 10⁻³⁰⁰ en vivienda; 84 municipios rurales y 95 urbanos) · `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
 - Límite, si insiste: el tipo se asigna por municipio, la superficie es la de la geometría de 2019 y el modelo de Poisson no trata la sobredispersión (D-213, punto 5).
-- Estado: hecho (GAP-001 F5).
+- Estado: hecho (GAP-001 F5; D-217 mantiene la referencia).
 
-**13. ¿Qué pasa con los municipios pequeños, donde una ratio se dispara?**
-Si en la zona se esperan menos de 3,69 casos, que es el límite superior al 95 % de un recuento de cero, la zona es demasiado pequeña para comparar y nunca sale FALTA, aunque se ve su valor. Por ejemplo, La Acebeda, con 70 habitantes y sin farmacia, sale JUSTO y marcada como «zona pequeña para comparar». Además, por debajo de un umbral de población el dato se publica con confianza 0,5, y si falta sale SIN DATOS, nunca un cero.
-- Evidencia: D-213 (punto 3, `reliable: false`) · `phase-gap001-f5-review.txt` (La Acebeda, farmacia) · `small_population_threshold` en los YAML de las 6 filas · `null_policy`.
-- Estado: hecho en la API y en producción. La Acebeda, farmacia: JUSTO con `reliable: false` (`GET /api/v1/gaps/municipio/28001`, comprobado el 11 nov). La leyenda del mapa por fila lo enseña como «Zona pequeña para comparar» (en colegios, 140 zonas: `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11).
+**14. ¿Qué pasa con los municipios pequeños, donde una ratio se dispara?**
+Si en un municipio se esperan menos de 3,69 casos, el límite superior al 95 % de un recuento de cero, lo comparamos junto con sus vecinos más cercanos del mismo tipo, a 15 km o menos, hasta que el grupo llega a ese mínimo; la fila lo dice y nombra a los vecinos. Si ni así se llega, sale «zona pequeña para comparar» y nunca FALTA: La Acebeda, con 70 habitantes y sin farmacia a pie, sale JUSTO con esa marca. Con los vecinos, los municipios que no se podían comparar en colegios bajan de 140 a 65, y por debajo de un umbral de población el dato se publica con confianza 0,5.
+- Evidencia: D-213 (punto 3, `reliable: false`) · D-217 §6–7 (filtros espaciales adaptativos, Talbot et al., 2000; radio de 15 km, del orden de las zonas básicas de salud rurales) · `comparison_group` en la API · `small_population_threshold` en los YAML de las filas · `null_policy`.
+- Estado: hecho en la API y en producción (12 nov): La Acebeda, farmacia, JUSTO con `reliable: false` y sin grupo; Redueña, farmacia, CUBIERTO junto con 6 vecinos (ratio del grupo 1,51) (`GET /api/v1/gaps?level=municipio&row=farmacia`). En la web: «Junto con sus vecinos» y «Comparado con municipios parecidos de la zona» (PR #13 de B).
 
-**14. «Centros por habitante» no es lo mismo que «plazas». ¿No es engañoso?**
-Lo es si no se dice, y por eso cada fila declara su aproximación. Por ejemplo: «Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual». Donde haya un dato de capacidad oficial, lo usaremos.
-- Evidencia: campo `proxy_note` en `data/catalog/features/*.yaml` y en cada fila de la API.
+**15. Puente de Vallecas y Centro tienen cifras parecidas en escuelas infantiles. ¿Por qué uno sale FALTA y el otro no?**
+Porque FALTA pide además que la diferencia no pueda ser casualidad. Puente de Vallecas tiene 0,57 de la referencia y tantos niños que la diferencia es clara; Centro tiene 0,66, pero con menos niños podría ser azar, así que sale JUSTO. Preferimos no marcar una falta que no podemos sostener.
+- Evidencia: `GET /api/v1/gaps?level=distrito&row=escuela_infantil` (producción, 12 nov: Puente de Vallecas 2,781 frente a 4,87, FALTA; Centro 3,218, ratio 0,6608, JUSTO; los dos con `reliable: true`) · D-213 punto 2.
+- Si preguntan por otros: Villaverde (0,61) y Carabanchel (0,68) también salen FALTA; Vicálvaro (0,65), JUSTO.
 
-**15. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
-Sí, por eso Madrid se divide en sus 21 distritos, y la distancia a pie se calcula por sección censal, mucho más fina que el municipio. También pasa lo contrario: Madrid entera tiene un tercio menos de centros de atención primaria por habitante que los demás municipios urbanos (FALTA), y en cambio ningún distrito por sí solo basta para afirmarlo.
-- Evidencia: D-200 · D-209 · D-210 · D-213 («Efecto»: Madrid, 0,37 frente a 0,56; los 21 distritos, JUSTO) · `evidence/gate-03/2026-11-11/walk-coverage.txt` (las 4.843 zonas: secciones, municipios, distritos y región).
-- Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211), en la API (GAP-001 F1) y en la web (`evidence/map-004/2026-11-11/`).
+**16. ¿Contáis centros o plazas?**
+La capacidad que se publica: aulas de primaria en colegios y plazas autorizadas en hogares, clubes y centros de día de mayores. Las aulas se publican por municipio, no por colegio, así que las repartimos a partes iguales y el dato baja a «aproximado»; de escuelas infantiles, centros de salud y farmacias nadie publica plazas ni médicos, y cada uno cuenta como uno. Cada fila lo declara, y nunca estimamos una capacidad centro a centro.
+- Evidencia: D-217 §3–4 (tabla de capacidad; población asignada por centro de salud y cupos médicos no existen en abierto) · `proxy_note` en `data/catalog/features/*.yaml` y en cada fila de la API · `confidence: 0.8` en `aulas_primaria_a_pie_por_1000_ninos.yaml`.
 
-**16. ¿Cómo calculáis el % de encaje?**
+**17. Madrid capital tiene 3 millones de habitantes. ¿No esconde la media todo?**
+Sí, por eso Madrid se divide en sus 21 distritos, y lo que se tiene a pie se calcula calle a calle, mucho más fino que el municipio. Así sale, por ejemplo, que en Puente de Vallecas faltan escuelas infantiles aunque Madrid entera no sale FALTA en ninguna fila de servicios. Y lo que hay al otro lado del límite de un distrito también cuenta, porque se mide andando.
+- Evidencia: D-200 · D-209 · D-210 · D-217 §2 y §7 · `evidence/gate-04/2026-11-12/gap-status-gap03.md` (Madrid, escuela infantil, JUSTO, 0,87) · `GET /api/v1/gaps/distrito/2807913` (producción, 12 nov).
+- Si preguntan por la frase de antes («Madrid tiene un tercio menos de centros de atención primaria»): era con el método de contar centros por habitante. Midiendo lo que se alcanza a pie, Madrid sale JUSTO en centros de salud (0,95), cerca de los demás municipios urbanos (D-217 §7).
+- Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211); 2SFCA en la API y en la web desde el 12 nov.
+
+**18. ¿Cómo calculáis el % de encaje?**
 Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.1`).
 - Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
 - Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
-- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). El caso de la Castellana da lo mismo que en local: Ciudad Lineal, 99 % (`evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`).
+- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). El caso de la Castellana da lo mismo que en local: Ciudad Lineal, 99 % (12 nov, `POST /api/v1/search` y `evidence/gate-04/2026-11-12/golden-search.txt`).
 
-**17. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
+**19. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
 Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
 - Evidencia: D-214 (puntos 3 y 4) · `data/catalog/features/alquiler_m2_mensual.yaml` v2 · `evidence/gate-04/2026-11-11/phase-core006-f1.txt` (14,46 frente a 15,10) · `CLAUDE.md` §14 (UNKNOWN nunca equivale a PASS).
 
-**18. Vuestro alquiler estimado parece bajo. ¿Es real?**
+**20. Vuestro alquiler estimado parece bajo. ¿Es real?**
 Es orientativo y tira a la baja, y lo decimos en cada resultado: la Comunidad publica la media de los contratos vigentes declarados en el IRPF, no la de los anuncios, y un contrato nuevo suele costar más. Además, esos m² son construidos, del Catastro, así que el precio corresponde a un piso algo menor que el que suponemos (77 m² para 4 personas, la vivienda mediana de ese hogar en el Censo 2021). Por eso, cuando decimos que una zona no entra en el presupuesto, es fiable; cuando decimos que sí, avisamos de que puede costar más.
 - Evidencia: D-214 (puntos 2 y 3) · ficha del portal CM (https://datos.comunidad.madrid/dataset/1934259, campo «Fuente»: «Estadística de Viviendas Declaradas en el Impuesto sobre la Renta de las Personas Físicas. Agencia Estatal de Administración Tributaria») · INE, tabla 59524 (https://www.ine.es/jaxi/Tabla.htm?tpx=59524&L=0) · `limitations` de `alquiler_m2_mensual.yaml`.
-- Si preguntan por qué no usamos anuncios: no hay una fuente oficial y abierta de precios de oferta, y no hacemos scraping (pregunta 31).
+- Si preguntan por qué no usamos anuncios: no hay una fuente oficial y abierta de precios de oferta, y no hacemos scraping (pregunta 35).
 
-**19. ¿Tenéis en cuenta lo que se tarda en llegar al trabajo?**
+**21. ¿Tenéis en cuenta lo que se tarda en llegar al trabajo?**
 Todavía no en tiempo: hoy cuenta la distancia en línea recta desde la zona al trabajo, como preferencia y con confianza 0,5, nunca como condición. Vale 1 hasta 2 km y 0 desde 20 km, y la explicación de cada zona da los kilómetros. El tiempo en transporte público, con los horarios del CRTM que ya tenemos, es el siguiente paso (CORE-009).
 - Evidencia: D-215 (puntos 2 y 5) · `fit.py` (`NEAR_KM, FAR_KM = 2.0, 20.0`).
 - Estado: **pendiente de A** (CORE-009, 19–22 nov). Si llega, cambiar esta respuesta.
 
-**20. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
+**22. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
 Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. En cada fila damos los minutos en los que llega la mitad de las calles de la zona; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.
 - Evidencia: D-210 · D-211 · `data/catalog/features/min_a_pie_*.yaml` y `pct_calle_*.yaml` · `scripts/check_walk_golden.py` y `evidence/gate-03/2026-11-11/phase-core005-f5.txt` (La Acebeda: farmacia a 109,7 min, D-211) · estudio del Ayuntamiento: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf («Velocidad de desplazamiento estimada en 4 Km/h»).
-- Estado: hecho a 4 km/h, decisión de Mariano del 11 nov (CORE-005 Fase 5, `ad2129a`, D-211, Gate 3 PASS). En la API, con GAP-001 F1 (`2d05d78`), y en producción. Por ejemplo, Madrid capital: «A pie hasta el centro de salud más cercano: 12 min» (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`). El % de calle a 10 minutos también está calculado (`pct_calle_*.yaml`), pero no se enseña.
+- Estado: hecho a 4 km/h, decisión de Mariano del 11 nov (CORE-005 Fase 5, `ad2129a`, D-211, Gate 3 PASS). En la API, con GAP-001 F1 (`2d05d78`), y en producción. Por ejemplo, Puente de Vallecas: la escuela infantil más cercana, a 6 min desde la mitad de sus calles (`min_a_pie_escuela_infantil` = 6,258, `GET /api/v1/gaps/distrito/2807913`, 12 nov). El % de calle a 10 minutos también está calculado (`pct_calle_*.yaml`), pero no se enseña.
 
 ---
 
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
-**21. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
-21 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
-- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py`.
+**23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
+23 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
+- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (23 en producción, 12 nov).
+- Si insiste en cuáles se ven: 21 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**.
 
-**22. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
+**24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
 - Evidencia: D-196 · `pitch/datasets_cm.md` §2 (6 fichas con licencia «CRTM Licencia de datos abiertos (LDA)» en el portal CM).
 
-**23. ¿Qué control de calidad pasa un dataset antes de entrar?**
+**25. ¿Por qué usáis datos del Ministerio de Sanidad si el concurso es de datos de la Comunidad?**
+Porque el portal de la Comunidad solo publica las camas de toda la región (85 hospitales y 20.776 camas instaladas en 2023), no las de cada hospital. El Catálogo Nacional de Hospitales sí las da y permite reutilizarlas citando la fuente y la fecha; lo usamos solo para poner nombre y camas a los hospitales del registro de la Comunidad, que sigue siendo la fuente de cada lugar, su tipo y su ubicación. Cruzamos 79 de los 85 por su dirección postal, sin ningún desacuerdo entre público y privado.
+- Evidencia: D-217 §4 · D-218 §1–4 · `evidence/gate-01/2026-11-12/hospitales-cnh.md` · `pitch/datasets_cm.md` §3 (licencia: aviso legal del Ministerio, Ley 37/2007).
+- Límite, si preguntan por un hospital sin nombre: 6 de los 85 no se cruzan y salen como «Hospital general (Municipio)», sin camas. Entre ellos está el Ramón y Cajal (CH0049), porque el catálogo lo pone en la calle de Ayala y no en la carretera de Colmenar. Preferimos un nombre genérico a uno que no podemos comprobar.
+
+**26. ¿Las camas cuentan para decir qué falta?**
+No. A un hospital no se va andando a elegir, y medir las camas alcanzables exigiría el viaje en coche o en transporte público, que aún no calculamos. Lo que sí damos es el nombre y las camas de cada hospital, por ejemplo La Paz, con 966 camas instaladas, en Fuencarral-El Pardo, y en la fila de centros de salud los minutos a pie hasta el hospital general más cercano, como pista de dónde quedan las urgencias.
+- Evidencia: D-217 §5 (`min_a_pie_hospital`; ninguna fuente abierta marca las urgencias 24 h) · D-218 §6–7 · producción, 12 nov: `GET /api/v1/places?category=health&admin_unit_id=ES.28.DIS.2807908&subcategory=Hospital general` («Hospital Universitario La Paz», `capacity` 966 «camas instaladas», `dependency: publica`; en el mismo distrito, «Clínica Cemtro», 100).
+- Estado: hecho en la API y en la web («Todos los centros» de cada zona; comprobado a mano por C en producción, PR #15). Las camas son las instaladas a 31 de diciembre de 2024, no las que funcionan un día concreto.
+
+**27. ¿Qué control de calidad pasa un dataset antes de entrar?**
 Claves únicas, que cada municipio exista en la geografía oficial, errores de lectura, ratio de registros en cuarentena y faltantes marcados como faltantes, no como cero. Los registros dudosos van a cuarentena, no se borran, y cada versión guarda la huella del fichero original.
 - Evidencia: `evidence/gate-01/*/<dataset>/quality_report.json` · `lineage.json` (sha256 y URL) · `row_counts.json` (`quarantined`).
 
-**24. ¿Encontrasteis errores en los datos del portal?**
-Sí, y los tratamos sin ocultarlos. Por ejemplo: una geometría inválida en las secciones censales, reparada y documentada, y centros sin coordenadas válidas que van a cuarentena (55 de centros educativos).
-- Evidencia: `notes` de `data/catalog/datasets/cm_secciones_censales.yaml` · `evidence/gate-01/2026-10-22/cm_centros_educativos/row_counts.json`.
+**28. ¿Encontrasteis errores en los datos del portal?**
+Sí, y los tratamos sin ocultarlos. Comparamos 10 zonas a mano con la fuente oficial y encontramos centros sin coordenadas o en el municipio equivocado: 40 se han colocado con el geocodificador oficial del IGN, solo si la dirección cuadra, y los que no van a cuarentena, nunca al sitio equivocado. También sacamos del mapa 1.001 «centros polivalentes», casi todos clínicas privadas, que no son atención primaria ni servicios para mayores.
+- Evidencia: `pitch/revision_10_zonas.md` (D1–D7) · D-216 §1 y §3 · `evidence/gate-01/2026-11-12/audit-places.md` · `evidence/gate-01/2026-11-12/cm_centros_educativos/row_counts.json` (40 en cuarentena) · `notes` de `data/catalog/datasets/cm_secciones_censales.yaml` (geometría inválida reparada).
+- Límite: quedan sin poder colocar 4 centros de salud «S/N» (Alcalá y Madrid), el consultorio de Villar del Olmo y el colegio de Navalafuente; hoy cuentan como si no estuvieran, y A propone enseñar SIN DATOS.
 
-**25. ¿Los datos están al día?**
+**29. ¿Los datos están al día?**
 Cada fuente se recarga según su propia frecuencia de publicación, y en los GTFS el control de calidad avisa si el horario está caducado. Por ejemplo, el GTFS de metro venció el 27 de mayo de 2026 y sigue siendo el último publicado: lo usamos y el control de calidad lo marca.
 - Evidencia: control `feed_current` en `evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json` · D-196.
 
-**26. ¿Cómo citáis las fuentes en la propia aplicación?**
+**30. ¿Cómo citáis las fuentes en la propia aplicación?**
 Cada fila de la lista y cada resultado llevan los datasets de los que salen, con el enlace a su ficha, la versión y la licencia. Además, la web muestra la atribución que pide cada licencia, incluido «Powered by CRTM».
 - Evidencia: campo `datasets` de la API (`data/fixtures/contracts/zone_gap_list.mostoles.fixture.json`) · `attribution_text` en `data/catalog/sources/*.yaml`.
 - Estado: hecho en producción: pie con Comunidad de Madrid, Ayuntamiento, «Powered by CRTM» y OpenStreetMap (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`).
@@ -149,41 +173,41 @@ Cada fila de la lista y cada resultado llevan los datasets de los que salen, con
 
 ## Generales (cualquier miembro)
 
-**27. ¿Qué hicisteis durante la competición y qué ya existía?**
-El trabajo previo está identificado con el tag `pre-datamad` (22 oct): la geografía, los 10 primeros datasets y el mapa base. Desde el 7 nov hemos añadido el transporte del CRTM, 5 datasets más, la lista de lo que falta con sus 6 filas, la red peatonal, la web, el buscador y el despliegue.
+**31. ¿Qué hicisteis durante la competición y qué ya existía?**
+El trabajo previo está identificado con el tag `pre-datamad` (22 oct): la geografía, los 10 primeros datasets y el mapa base. Desde el 7 nov hemos añadido el transporte del CRTM, 7 datasets más de la Comunidad, la lista de lo que falta con sus 6 filas, la red peatonal, la capacidad a pie, la web, el buscador y el despliegue.
 - Evidencia: `README.md` («Trabajo previo a DATAMAD») · tag `pre-datamad` = `cf39459` · D-174 · `board/BOARD.md` (07 — DONE).
 - Estado: hecho. La lista, la web y el buscador están en producción; el buscador, desde el 11 nov (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
 
-**28. ¿Habéis usado IA?**
+**32. ¿Habéis usado IA?**
 Sí, como asistente de programación, que las bases permiten (§7), y nosotros respondemos de todo el código y los resultados. El producto no usa IA para calcular nada: todas las cifras salen de reglas deterministas, versionadas y con tests.
 - Evidencia: `docs/09_datamad/24_bases_oficiales_2026.md` §7 · `CLAUDE.md` §3 (IA).
 
-**29. ¿Qué pasa con la privacidad?**
+**33. ¿Qué pasa con la privacidad?**
 Nunca tratamos datos de personas: solo agregados por zona. Además, no mostramos equipamientos que expondrían a personas vulnerables, quitamos teléfonos, emails y NIF que publicaba la fuente, y la base de la demo no se puede leer desde fuera de la API.
 - Evidencia: D-186 · D-198 · D-197 · control `no_contact_or_tax_ids` en los `quality_report.json` de puntos.
 
-**30. ¿De dónde sale «lo que falta» si no tenéis usuarios?**
+**34. ¿De dónde sale «lo que falta» si no tenéis usuarios?**
 Hoy, de datos oficiales: población, hogares y equipamientos, comparados con los demás municipios del mismo tipo. El siguiente paso es sumar lo que la gente declare que necesita, anónimo y agregado por zona, y no lo simulamos en la demo.
 - Evidencia: D-194 · `docs/09_datamad/25_plan_competicion.md` §8.
 
-**31. ¿Por qué no usáis datos de los portales inmobiliarios?**
+**35. ¿Por qué no usáis datos de los portales inmobiliarios?**
 Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen respetar licencias. Además, enseñan la oferta, y lo que nosotros medimos es la necesidad.
 - Evidencia: `CLAUDE.md` §15 · D-175 y D-185 (Google Maps y Gosom descartados) · bases §6.
 
-**32. ¿Incluís seguridad? Es delicado.**
+**36. ¿Incluís seguridad? Es delicado.**
 Solo si la persona la marca como prioridad y solo con datos oficiales agregados: actuaciones de la Policía Municipal por cada 1.000 habitantes y por distrito. Nunca nacionalidad ni etiquetas como «peligroso»; fuera de Madrid capital, SIN DATOS.
 - Evidencia: D-204 y D-205.
 - Estado: extra **pendiente de A** (DATA-020, 19–22 nov). Si no está, decir «no lo incluimos todavía, y así es como lo haríamos».
 
-**33. ¿Funciona fuera de la Comunidad de Madrid?**
+**37. ¿Funciona fuera de la Comunidad de Madrid?**
 La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geografía se basa en códigos INE. Lo que haría falta en otra región es su portal de datos con equivalentes.
 - Evidencia: `data/catalog/pipelines/` · `README.md` (Quickstart).
 
-**34. ¿Es accesible para personas mayores?**
+**38. ¿Es accesible para personas mayores?**
 Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px y contraste AA verificado también sobre el cristal. El estado de cada fila nunca depende solo del color: siempre va con texto e icono.
 - Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` · axe WCAG 2.2 AA en producción sin fallos (`prod-buscador-check.json`, PR #11).
 - Estado: hecho. axe AA da 0 fallos en producción (11 nov): en escritorio, en la portada, los resultados, la tarjeta de zona y la compra; en el móvil, en los resultados y la tarjeta.
 
-**35. ¿Por qué «Vida Fácil»?**
+**39. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
 - Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.
