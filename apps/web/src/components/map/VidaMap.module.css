@@ -5,11 +5,11 @@
   background: var(--map-land);
 }
 
-/* Notices over the map: at the top, between the columns, clear of the search button and the legend */
+/* Notices over the map: at the top, between the columns, under the attribution's (i) and clear of the legend */
 .failure {
   position: fixed;
   left: 50%;
-  top: 5rem;
+  top: 7.5rem;
   z-index: 3;
   width: max-content;
   max-width: min(27rem, calc(100% - 2rem));
@@ -24,18 +24,74 @@
 }
 
 /*
- * Mobile: the attribution's (i) just under the header (VidaMap addAttribution), clear of the sheet,
- * the legend and the buttons. Opened, its citations stay in the band of map above the sheet and
- * the legend (MOBILE_LEGEND of camera.ts), scrolling if they need more room.
+ * The attribution's (i) (VidaMap addAttribution) at the top left of the map's free area: under the
+ * header, right of the text column and its veil (layout.module.css, 31rem). Opened, its citations
+ * stay in the free map, scrolling if they need more room: left of the right column (three
+ * columns), above the legend and the barrios bar, and on mobile above the sheet and its legend
+ * (MOBILE_LEGEND of camera.ts). Its margin and padding take 3.5rem of the width.
  */
+.map :global(.maplibregl-ctrl-top-left) {
+  top: 5rem;
+  left: calc(var(--page-gutter) + 31rem + var(--space-2));
+}
+
+.map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show) {
+  max-width: calc(100vw - 2 * var(--page-gutter) - 31rem - var(--space-2) - 3.5rem);
+}
+
+/*
+ * «© OpenStreetMap · Powered by CRTM» beside the folded (i), as tall as it and on the same white
+ * (VidaMap creditsControl); hidden while the full list, which cites both, is open.
+ */
+.map :global(.maplibregl-ctrl-top-left) .credits {
+  clear: none;
+  max-width: calc(100vw - 2 * var(--page-gutter) - 31rem - var(--space-2) - 48px);
+  margin: 10px 0 0 6px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* Where the free map is narrow, the line breaks between the two citations, never inside one */
+.credits a {
+  color: inherit;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.map :global(.maplibregl-compact-show) + .credits {
+  display: none;
+}
+
+.map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner) {
+  max-height: max(6rem, calc(100vh - 5rem - 20rem));
+  overflow-y: auto;
+}
+
+@media (min-width: 1260px) {
+  .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show) {
+    max-width: calc(100vw - 2 * var(--page-gutter) - 54rem - var(--space-2) - var(--space-6) - 3.5rem);
+  }
+
+  .map :global(.maplibregl-ctrl-top-left) .credits {
+    max-width: calc(100vw - 2 * var(--page-gutter) - 54rem - var(--space-2) - var(--space-6) - 48px);
+  }
+}
+
 @media (max-width: 760px) {
-  .map :global(.maplibregl-ctrl-top-right) {
+  .map :global(.maplibregl-ctrl-top-left) {
     top: 7.25rem;
+    left: 0;
+  }
+
+  .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show),
+  .map :global(.maplibregl-ctrl-top-left) .credits {
+    max-width: none;
   }
 
   .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner) {
     max-height: calc(100dvh - var(--sheet-peek) - 7.25rem - 9rem);
-    overflow-y: auto;
   }
 }
 
@@ -45,7 +101,7 @@
  */
 .note {
   position: fixed;
-  top: 5.5rem;
+  top: 7.5rem;
   right: calc(var(--page-gutter) + 23rem + var(--space-6));
   left: calc(var(--page-gutter) + 28rem + var(--space-6));
   z-index: 2;

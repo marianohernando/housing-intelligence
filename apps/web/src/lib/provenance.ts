@@ -62,7 +62,7 @@ export function attributions(refs: readonly DatasetRef[]): Attribution[] {
 export const ATTRIBUTIONS_FALLBACK: readonly Attribution[] = [
   { text: "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0.", href: "https://datos.comunidad.madrid" },
   { text: "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es.", href: "https://www.cartociudad.es" },
-  { text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso.", href: "https://www.crtm.es" },
+  { text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad.", href: "https://www.crtm.es" },
   { text: "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad.", href: "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" },
   { text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0).", href: "https://datos.madrid.es" },
   { text: "© OpenStreetMap contributors, ODbL.", href: "https://www.openstreetmap.org/copyright" },

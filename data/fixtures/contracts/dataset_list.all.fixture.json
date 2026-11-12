@@ -180,7 +180,7 @@
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
       "version": "2026-11-10-41f7f9c15b61",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_cercanias",
@@ -190,7 +190,7 @@
       "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
       "version": "2026-11-10-1b018a22325c",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_emt",
@@ -200,7 +200,7 @@
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia",
       "version": "2026-11-10-8478ae5c9262",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_interurbanos",
@@ -210,7 +210,7 @@
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia",
       "version": "2026-11-10-5bbf3c95047c",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_metro",
@@ -220,7 +220,7 @@
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
       "version": "2026-11-10-cccabfd6f025",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_metro_ligero",
@@ -230,7 +230,7 @@
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
       "version": "2026-11-10-599f9acfa270",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "ayto_padron_municipal",

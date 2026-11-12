@@ -4,7 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 // MapLibre itself loads after the page (import() below): it is the largest script of the site, and
 // a zone screen or the search can be read before it arrives. Only its types are imported here.
-import type { GeoJSONSource, LngLatBoundsLike, Map as MapLibreMap, MapLayerMouseEvent } from "maplibre-gl";
+import type { GeoJSONSource, IControl, LngLatBoundsLike, Map as MapLibreMap, MapLayerMouseEvent } from "maplibre-gl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
@@ -103,8 +103,18 @@ const TEXT = {
   // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
-/** MapLibre's UI strings this map shows, in Spanish (its `locale` option patches the English defaults). */
-const MAP_LOCALE = { "AttributionControl.ToggleAttribution": "Fuentes y licencias del mapa" };
+/** MapLibre's UI strings this map shows, in Spanish (its `locale` option patches the English defaults): mapa.fuentes. */
+const MAP_LOCALE = { "AttributionControl.ToggleAttribution": "Fuentes y licencias de los datos" };
+/**
+ * mapa.atribucion.movil of pitch/textos_web.md: the two citations whose licences want them seen
+ * without touching anything (the OSMF attribution guidelines, and the CRTM licence §2.2), always
+ * beside the (i), each with its link.
+ */
+const CREDITS = [
+  { text: "© OpenStreetMap", href: "https://www.openstreetmap.org/copyright" },
+  { text: "Powered by CRTM", href: "https://www.crtm.es" },
+];
+const NEW_TAB = " (se abre en una pestaña nueva)";
 const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];
 
 type Failure = "webgl" | "tiles" | "script";
@@ -153,19 +163,44 @@ function source(map: MapLibreMap, id: string): GeoJSONSource {
 }
 
 /**
- * The sources whose licences ask to be cited where their data shows (mapAttribution). On desktop
- * they are spelled out at the bottom right. On mobile the bottom of the map is under the sheet:
- * MapLibre's compact control goes under the header, folded behind its (i) button (MapLibre opens
- * it until the map is first dragged), so its long text neither shows through the sheet nor is the
- * page's largest paint. One tap opens it, and the pages with a footer list every citation.
+ * The sources whose licences ask to be cited where their data shows (mapAttribution). Spelled out,
+ * the cards would cover them (desktop) or they would show through the sheet and be the page's
+ * largest paint (mobile, LCP). So on every screen MapLibre's compact control is folded behind its
+ * (i) button (MapLibre opens it until the map is first dragged), at the top left of the map's free
+ * area (VidaMap.module.css places it for each screen, also after turning the phone). One tap or
+ * click opens it, and the pages with a footer list every citation. Beside it, always in view, the
+ * two citations that cannot start folded (CREDITS). Returns its controls, to change the citations.
  */
-function addAttribution(lib: MapLibre, map: MapLibreMap, citations: string): void {
-  const mobile = matches(MOBILE);
-  map.addControl(new lib.AttributionControl({ compact: mobile, customAttribution: citations }), mobile ? "top-right" : "bottom-right");
-  if (!mobile) return;
+function addAttribution(lib: MapLibre, map: MapLibreMap, citations: string): IControl[] {
+  const control = new lib.AttributionControl({ compact: true, customAttribution: citations });
+  map.addControl(control, "top-left");
   const folded = map.getContainer().querySelector(".maplibregl-ctrl-attrib");
   folded?.classList.remove("maplibregl-compact-show");
   folded?.removeAttribute("open");
+  // Right after it, so the CSS hides it while the full list (which has both) is open
+  const credits = creditsControl();
+  map.addControl(credits, "top-left");
+  return [control, credits];
+}
+
+/** CREDITS as a MapLibre control: a short line of links with the (i)'s white background (AA contrast). */
+function creditsControl(): IControl {
+  const line = document.createElement("p");
+  line.className = `maplibregl-ctrl ${styles.credits}`;
+  CREDITS.forEach(({ text, href }, i) => {
+    if (i > 0) line.append(" · ");
+    const link = document.createElement("a");
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = text;
+    const hint = document.createElement("span");
+    hint.className = "visually-hidden";
+    hint.textContent = NEW_TAB;
+    link.append(hint);
+    line.append(link);
+  });
+  return { onAdd: () => line, onRemove: () => line.remove() };
 }
 
 /**
@@ -395,12 +430,19 @@ export default function VidaMap() {
   const mapRef = useRef<MapLibreMap | null>(null);
   const libRef = useRef<MapLibre | null>(null);
   const shownOverview = useRef(false);
-  // The zone screens have no footer: the map cites the Ministry with its catalogues and dates from
-  // /datasets (shared request) if they are in when the map is created, else a link to the method page
+  // The map screens have no footer: the map cites every source with the attribution_text of
+  // /datasets (shared request), or the fallback while it has not answered
   const { data: datasets } = useDatasets();
   const attribution = useRef(mapAttribution(null));
+  // The citations the map shows and their controls, to put the API's in when they arrive
+  const attributionShown = useRef<{ citations: string; controls: IControl[] } | null>(null);
   useEffect(() => {
     attribution.current = mapAttribution(datasets?.datasets ?? null);
+    const [map, lib, shown] = [mapRef.current, libRef.current, attributionShown.current];
+    // Created before /datasets answered: the map takes its citations, still folded
+    if (!map || !lib || !shown || shown.citations === attribution.current) return;
+    for (const control of shown.controls) map.removeControl(control);
+    attributionShown.current = { citations: attribution.current, controls: addAttribution(lib, map, attribution.current) };
   }, [datasets]);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
@@ -451,7 +493,7 @@ export default function VidaMap() {
       }
       const created = instance;
       mapRef.current = created;
-      addAttribution(lib, created, attribution.current);
+      attributionShown.current = { citations: attribution.current, controls: addAttribution(lib, created, attribution.current) };
       if (!matches(MOBILE)) created.addControl(new lib.NavigationControl({ visualizePitch: true }), "bottom-right");
       created.on("load", () => {
         const palette = readPalette();
@@ -488,6 +530,7 @@ export default function VidaMap() {
       cancelled = true;
       map?.remove();
       mapRef.current = null;
+      attributionShown.current = null;
     };
   }, [mapMayLoad]);
 
