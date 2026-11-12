@@ -7,6 +7,7 @@
 //   node scripts/check-qa.mjs offline [outDir]   # phase 5: street tiles blocked (offline package)
 //   node scripts/check-qa.mjs tiles-local [outDir] # phase 5: web built with NEXT_PUBLIC_MAP_TILES_URL=http://localhost:3999/madrid.json
 //   node scripts/check-qa.mjs gap03 [outDir]     # phase 6: gap-0.3 (D-217): neighbours, 2SFCA copy and the hospital
+//   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -551,8 +552,53 @@ async function gap03(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+const FUENCARRAL = { path: "/zona/distrito/2807908", name: "Fuencarral-El Pardo" };
+
+/** HOSP-001 (D-218): hospitals with their name, beds and who runs them, and the source of the beds. */
+async function hospitals(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const { ctx, page, errors } = await open(browser, profile, FUENCARRAL.path);
+    const panel = page.getByRole("region", { name: "Todos los centros", exact: true });
+    const chip = panel.getByRole("button", { name: /^Hospitales/ });
+    await chip.waitFor({ timeout: 20000 });
+    await page.waitForTimeout(6000); // the camera lands, for the capture
+    if (id === "mobile") {
+      await page.getByRole("button", { name: /Desliza hacia arriba/ }).tap();
+      await page.waitForTimeout(600);
+    }
+    await panel.scrollIntoViewIfNeeded();
+    await (id === "mobile" ? chip.tap() : chip.click());
+    await panel.getByText(/^Camas: /).waitFor({ timeout: 20000 });
+    await panel.getByText(/^Ver la lista/).click();
+    const list = panel.getByRole("list", { name: /hospital/ });
+    const items = (await list.locator("li").allInnerTexts()).map(flat);
+    const source = panel.getByText(/^Camas: /);
+    const entry = (report[`hospitales_${id}`] = {
+      frase: flat(await panel.locator("[aria-live='polite']").innerText()),
+      lista: items,
+      fuente: flat(await source.innerText()),
+      fuente_enlace: await source.getByRole("link").getAttribute("href"),
+      axe: await axe(page),
+      overflow_px: await overflow(page),
+      consola: errors,
+    });
+    await panel.screenshot({ path: `${out}/hosp_hospitales_fuencarral_${id}.png` });
+    if (!items.some((t) => t.includes("Hospital Universitario La Paz · 966 camas instaladas · gestión pública"))) failures.push(`${id}: sin La Paz`);
+    if (items.some((t) => /privado|(^|· )privada/.test(t))) failures.push(`${id}: «privado» a secas`);
+    if (!entry.frase.includes("el nombre de algunos")) failures.push(`${id}: aviso de nombres`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde ${entry.overflow_px}px`);
+    await ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
 else if (mode === "tiles-local") await tilesLocal(browser);
 else if (mode === "t3") await facilities(browser);

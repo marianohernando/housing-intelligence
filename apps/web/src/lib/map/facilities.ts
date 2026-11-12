@@ -152,6 +152,8 @@ export interface Facility {
   label: string;
   name: string | null;
   detail: string | null;
+  /** Dataset of the capacity when it is not the register's (hospital beds, D-218), named from /datasets. */
+  source: string | null;
   lon: number;
   lat: number;
 }
@@ -198,10 +200,20 @@ const SCHOOL_BY_OWNERSHIP = { publica: PUBLIC_SCHOOL, concertada: "Colegio conce
 /** Coordinates the register lacked or had wrong, found again from the address (D-216). */
 const GEOCODED = "ubicación aproximada";
 
-/** «120 plazas autorizadas · ubicación aproximada»: only what the register and the API say. */
+/**
+ * Who runs a hospital, from the CM register (D-218). «Privada» in the register includes hospitals
+ * that also serve the public network, so it reads «gestión privada», never «privado».
+ */
+const DEPENDENCY = { publica: "gestión pública", privada: "gestión privada" } as const;
+
+/** «966 camas instaladas · gestión pública · ubicación aproximada»: only what the register and the API say. */
 function detailText(place: PlaceFeature): string | null {
   const { capacity, coordinates } = place.properties;
-  const parts = [capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null, coordinates === "geocoded" ? GEOCODED : null];
+  const parts = [
+    capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null,
+    capacity?.dependency ? DEPENDENCY[capacity.dependency] : null,
+    coordinates === "geocoded" ? GEOCODED : null,
+  ];
   return parts.filter(Boolean).join(" · ") || null;
 }
 
@@ -217,7 +229,8 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   const [lon = 0, lat = 0] = place.geometry.coordinates;
   const { ownership } = place.properties;
   const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : cls.label;
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), lon, lat };
+  const source = place.properties.capacity?.dataset_id ?? null;
+  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, lon, lat };
 }
 
 function byName(a: Facility, b: Facility): number {
