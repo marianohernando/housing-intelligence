@@ -11,7 +11,7 @@
 - **Textos de los botones:** son los de producción, comprobados en las capturas del 11 nov:
   - buscador: `evidence/gate-06/2026-11-11-deploy/prod-buscador-*.png` y `prod-buscador-check.json` (PR #11);
   - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`. La de Puente de Vallecas con gap-0.3 la hizo B en el PR #17 (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`).
-- **Cifras:** las del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado. Las del bloque 2 se comprobaron en producción el 13 nov, con `fit-0.6`: el trabajo en minutos de transporte público (D-220) y el alquiler de contratos nuevos (D-228). Fuente: `POST /api/v1/search` con el caso de ejemplo.
+- **Cifras:** las del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado. Las del bloque 2 se comprobaron en producción el 12 nov, con `fit-0.6`: el trabajo en minutos de transporte público (D-220) y el alquiler de contratos nuevos (D-228). Fuente: `POST /api/v1/search` con el caso de ejemplo.
 - **Buscador:** encendido en producción desde el 11 nov y verificado por C: smoke 7/7, axe AA sin fallos y la consola limpia (`deploy-12-buscador.md`, misma rama y PR). El bloque 2 va con buscador.
 - **El bloque 2 sin buscador queda de reserva.** Sirve solo si la demo vuelve a enseñar «Muy pronto», por ejemplo porque C ha vuelto a una versión sin buscador.
 - **Paquete sin red (`make demo-offline`):** desde el 12 nov compila la web con el buscador encendido, comprobado con y sin red (`infra/deploy/offline/demo_offline.sh`, `evidence/gate-06/2026-11-12-deploy/offline-buscador.md`, `4cc3f84`). C lo regeneró el 12 nov con `28a0f2f` y el fondo de calles sin red. Los recorridos del pitch pasan 66/66 y 40/40 sin red. La búsqueda del caso de ejemplo y «Qué falta» de Madrid, Chamartín y Fuencarral-El Pardo dan lo mismo que producción (`evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`).
@@ -60,15 +60,15 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 - colegio a 10 min andando como mucho, obligatorio;
 - le importan, por este orden, los colegios, el transporte y la salud.
 
-**Resultado en producción** (13 nov, `fit-0.6`: trabajo en minutos de transporte público, D-220, y alquiler de contratos nuevos, D-228). Sale de `POST /api/v1/search` con el fixture. Se lee en pantalla, nunca de memoria. El 25 nov se vuelve a comprobar en producción:
+**Resultado en producción** (12 nov, `fit-0.6`: trabajo en minutos de transporte público, D-220, y alquiler de contratos nuevos, D-228). Sale de `POST /api/v1/search` con el fixture. Se lee en pantalla, nunca de memoria. El 25 nov se vuelve a comprobar en producción:
 - encajan 27 de las 199 zonas (178 municipios y los 21 distritos de Madrid), y en 15 falta algún dato;
 - **cuatro empatan al 98 %:** Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas. No se dice un orden entre ellas; se abre la que la web pone 1.ª, hoy Latina;
 - **en Latina:**
   - «Colegio con primaria a unos 6 min andando», parada a unos 2 min y centro de salud a unos 10 min;
   - «39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00»;
   - «Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)»;
-- **Fuencarral-El Pardo**, la 1.ª hasta el 12 nov, queda 5.ª (97 %): con los contratos nuevos, su alquiler pasa de ≈ 1.107 a ≈ 1.276 €/mes;
-- **Puente de Vallecas** cumple todo: es una de las cuatro al 98 %, y eso da el puente con el bloque 3;
+- **Fuencarral-El Pardo**, la 1.ª hasta la noche del 12 nov, queda 5.ª (97 %): con los contratos nuevos, su alquiler pasa de ≈ 1.107 a ≈ 1.276 €/mes;
+- **Puente de Vallecas** cumple todo: es una de las cuatro al 98 %, y eso da el puente con el bloque 3. En la respuesta de producción va con `rank: 4` y el código 2807913 (`POST /api/v1/search`, comprobado el 12 nov a las 23:25), pero con el empate no se dice que sea la 4.ª;
 - antes, con la distancia en línea recta (`fit-0.1`), salía 1.ª Ciudad Lineal (99 %);
 - **«¿Y si cambias algo?»:**
   - «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más»;
@@ -129,7 +129,7 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 **Cifra de impacto** (D-229, `impact-0.1`; `GET /api/v1/gaps/impact`; `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov):
 - 25.551 niños de 0 a 4 años (el 9,8 % de la región) viven en los 3 distritos con FALTA de escuelas infantiles: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968. Es el padrón de cada distrito; no se estima nada.
 - En voz alta se redondea: «más de veinticinco mil».
-- **En producción desde el 13 nov** (`GET /api/v1/gaps/impact`, `impact-0.1`: 25.551 de 260.310 niños, en 3 zonas). El 25 nov se vuelve a comprobar con la ruta.
+- **En producción desde el 12 nov** (`GET /api/v1/gaps/impact`, `impact-0.1`: 25.551 de 260.310 niños, en 3 zonas). El 25 nov se vuelve a comprobar con la ruta.
 
 **Al terminar:** volver a la slide 2 para el bloque 4.
 
@@ -138,14 +138,14 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 ## Bloque 4 · 3:40–4:30 · Datos, código abierto y quién paga
 **Pantalla:** la slide 2 en «Veintisiete conjuntos…» y la slide 3 en «¿Quién paga?».
 
-**«¿Quién paga?»:** el modelo que eligió Mariano el 13 nov (`pitch/modelo_negocio.md`). Ayuntamientos: informe de 990–1.500 € por contrato menor. Promotoras y consultoras: estudios de 490 a 1.500 €. Las cifras no se dicen en voz alta; si preguntan, pregunta 6 de `pitch/preguntas.md`.
+**«¿Quién paga?»:** el modelo que eligió Mariano el 12 nov (`pitch/modelo_negocio.md`). Ayuntamientos: informe de 990–1.500 € por contrato menor. Promotoras y consultoras: estudios de 490 a 1.500 €. Las cifras no se dicen en voz alta; si preguntan, pregunta 6 de `pitch/preguntas.md`.
 
 <!-- habla:b4:inicio -->
 ¿Con qué datos? Veintisiete conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias, las seis redes de transporte del Consorcio y la accesibilidad de sus estaciones. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Los ayuntamientos, por el informe de lo que les falta, y las promotoras, por estudios de zona. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
 <!-- habla:b4:fin -->
 
 **Fuentes de lo que se dice:**
-- «Veintisiete conjuntos» y «control de calidad»: `pitch/datasets_cm.md` (27 con Gate 1 en PASS: el 13 nov entra el valor tasado de la vivienda, D-227) y `GET /api/v1/datasets?cm_only=true` en producción (`cm_open_data_count: 27`). El 23 nov se regenera y, si cambia el número, se cambia la frase.
+- «Veintisiete conjuntos» y «control de calidad»: `pitch/datasets_cm.md` (27 con Gate 1 en PASS: el 12 nov entra el valor tasado de la vivienda, D-227) y `GET /api/v1/datasets?cm_only=true` en producción (`cm_open_data_count: 27`). El 23 nov se regenera y, si cambia el número, se cambia la frase.
 - «Seis redes del Consorcio»: D-196.
 - «Código abierto»: `LICENSE` (Apache-2.0, D-191).
 - «Quién paga»: modelo del documento de la idea, `docs/09_datamad/25_plan_competicion.md` §1.

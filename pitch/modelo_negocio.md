@@ -2,7 +2,7 @@
 
 Fichero de trabajo para que Mariano eligiera.
 
-**Decisión de Mariano (13 nov):**
+**Decisión de Mariano (12 nov):**
 - **En el pitch:** la opción A, ayuntamientos (informe «Qué falta» por municipio, 990–1.500 €, por contrato menor).
 - **Primeros ingresos:** la opción B, promotoras y consultoras (estudios de 490 a 1.500 €).
 - **Siempre gratis:** la ciudadanía. La API y el MCP (opción C) también, sin uso comercial.

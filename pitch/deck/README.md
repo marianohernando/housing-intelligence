@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 13 nov falla a propósito: la slide 3 tiene tres huecos (abajo) que hay que llenar antes del 24 nov. El borrador genera sin fallos |
+| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 12 nov falla a propósito: la slide 3 tiene tres huecos (abajo) que hay que llenar antes del 24 nov. El borrador genera sin fallos |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -47,7 +47,7 @@ Lo que rellena el build:
 | Slide 3, utilidad | Cita 1 de la prueba con personas: alguien que busca casa, de 12 palabras como mucho, con quién es y sin nombre | Mariano (prueba con personas) |
 | Slide 3, impacto | Cita 2: el técnico municipal, de 12 palabras como mucho, con su cargo y el tipo de municipio, sin nombre | Mariano (prueba con personas) |
 
-Cerrada el 13 nov: la cifra de impacto de la slide 3 (25.551 niños de 0 a 4 años, D-229), comprobada en producción con `GET /api/v1/gaps/impact`.
+Cerrada el 12 nov: la cifra de impacto de la slide 3 (25.551 niños de 0 a 4 años, D-229), comprobada en producción con `GET /api/v1/gaps/impact`.
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
@@ -57,7 +57,7 @@ Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes n
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
-- la slide 2 cuenta 27 datasets CM (los dos de camas y las tres topologías del CRTM con la accesibilidad de las estaciones son del 12 nov; el valor tasado de la vivienda, del 13 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- la slide 2 cuenta 27 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
 
 Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias», con la lista de lo que se rehace tras gap-0.3).
 

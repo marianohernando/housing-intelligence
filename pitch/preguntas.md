@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov) y la 46 y la 47 (cifras de impacto, 13 nov).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov) y la 46 y la 47 (cifras de impacto, 12 nov).
 
 ---
 
@@ -46,7 +46,7 @@ Cada ingesta compara la huella (sha256) del fichero. Si no cambia, se salta; si 
 **6. ¿Quién paga?**
 Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, residencias, comercios) pagan por análisis agregados y por la API. Las personas lo usan gratis y los ayuntamientos lo usan para planificar.
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
-- Si piden concretar (decisión de Mariano, 13 nov; `pitch/modelo_negocio.md`):
+- Si piden concretar (decisión de Mariano, 12 nov; `pitch/modelo_negocio.md`):
   - un ayuntamiento paga 990–1.500 € por el informe de lo que falta en su municipio, que cabe en un contrato menor;
   - las promotoras y consultoras pagan estudios de zona de 490 a 1.500 €, y son los primeros ingresos;
   - para las personas es gratis, y la API y el MCP también, sin uso comercial.
@@ -114,7 +114,7 @@ Sí, por eso Madrid se divide en sus 21 distritos, y lo que se tiene a pie se ca
 Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.3` en producción).
 - Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
 - Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
-- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.6` (13 nov: trabajo en minutos de transporte, D-220, y alquiler de contratos nuevos, D-228), `POST /api/v1/search` con el caso de la Castellana da 27 de 199 zonas, con Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas empatadas al 98 %.
+- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.6` (12 nov: trabajo en minutos de transporte, D-220, y alquiler de contratos nuevos, D-228), `POST /api/v1/search` con el caso de la Castellana da 27 de 199 zonas, con Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas empatadas al 98 %.
 
 **19. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
 Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
@@ -142,7 +142,7 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 
 **23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
 27 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
-- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (27 en producción desde el 13 nov; el formulario se envió el 12 nov con 26).
+- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (27 en producción desde la noche del 12 nov; el formulario se envió ese mismo día con 26).
 - Si insiste en cuáles se ven: 25 alimentan la lista o el buscador (el 27.º, el valor tasado de la vivienda, da el precio de compra en 28 municipios, D-227); los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 25, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
 
 **24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
@@ -233,14 +233,14 @@ Porque es corto, en español y fácil de recordar para cualquiera, también para
 
 **41. Sale 1.107 € al mes por 77 m² en Fuencarral-El Pardo, y Salamanca entra con 1.500 €. ¿Eso es real?**
 Era la media de todos los contratos declarados a Hacienda, también los antiguos, y se quedaba corta. Ahora multiplicamos el precio por metro de la Comunidad por cuánto más cuestan, en cada zona, los contratos firmados en 2024 según la Agencia Tributaria. Fuencarral-El Pardo pasa a unos 1.276 € y Salamanca a unos 1.797 €, así que con 1.500 € ya no entra, y el caso de ejemplo baja de 33 a 27 zonas.
-- Evidencia: D-214 (puntos 2 y 3) · D-228, opción A, que eligió Mariano el 13 nov · producción, 13 nov (`fit-0.6`): Fuencarral-El Pardo «Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)» y Salamanca ≈ 1.797 €/mes (23,3 €/m²), que no cumple el presupuesto · Agencia Tributaria, «Estadística de viviendas declaradas en IRPF», ejercicio 2024, «contratos de arrendamiento formalizados en el ejercicio» · `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/`. Factor por zona: entre 1,05 y 1,26 (Madrid, 1,20).
-- Si preguntan por comprar: el precio es el valor tasado medio de la vivienda libre de cada municipio, que publica la Comunidad. No es el de un anuncio, y en los distritos de Madrid sale sin datos (D-227). Con el caso de ejemplo y 300.000 € para comprar, encajan 15 de 199 zonas: la 1.ª es Leganés, con un 95 % y «Comprar ≈ 221.000 € por 77 m²» (producción, 13 nov, `fit-0.5`).
+- Evidencia: D-214 (puntos 2 y 3) · D-228, opción A, que eligió Mariano el 12 nov · producción, 12 nov (`fit-0.6`): Fuencarral-El Pardo «Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)» y Salamanca ≈ 1.797 €/mes (23,3 €/m²), que no cumple el presupuesto · Agencia Tributaria, «Estadística de viviendas declaradas en IRPF», ejercicio 2024, «contratos de arrendamiento formalizados en el ejercicio» · `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/`. Factor por zona: entre 1,05 y 1,26 (Madrid, 1,20).
+- Si preguntan por comprar: el precio es el valor tasado medio de la vivienda libre de cada municipio, que publica la Comunidad. No es el de un anuncio, y en los distritos de Madrid sale sin datos (D-227). Con el caso de ejemplo y 300.000 € para comprar, encajan 15 de 199 zonas: la 1.ª es Leganés, con un 95 % y «Comprar ≈ 221.000 € por 77 m²» (producción, 12 nov, `fit-0.5`).
 - Si preguntan por el índice de la Comunidad (1934428): solo dice cuánto varían los precios, no cuánto más cuesta un contrato nuevo, y es un único valor para toda la región (D-228 §2).
-- Estado: en producción desde el 13 nov (`fit-0.6`). Con 150 € más al mes, el caso de ejemplo gana 3 zonas («¿Y si cambias algo?»), así que el presupuesto ya cuenta.
+- Estado: en producción desde el 12 nov (`fit-0.6`). Con 150 € más al mes, el caso de ejemplo gana 3 zonas («¿Y si cambias algo?»), así que el presupuesto ya cuenta.
 
-**42. Una zona sale con un 98 % de encaje (el 12 nov, Fuencarral-El Pardo con un 100 %), pero en «Qué falta» tiene filas en JUSTO. ¿Cómo puede ser?**
+**42. Una zona sale con un 98 % de encaje (hasta la noche del 12 nov, Fuencarral-El Pardo con un 100 %), pero en «Qué falta» tiene filas en JUSTO. ¿Cómo puede ser?**
 Porque son dos preguntas distintas. El % dice cuánto se parece la zona a lo que pidió esta familia: en Latina, colegio a 6 minutos, parada a 2, centro de salud a 10 y 39 minutos hasta el trabajo. «Qué falta» compara la zona con los demás municipios urbanos repartiendo cada servicio entre toda la gente que lo usa: ahí Latina va justa en escuelas infantiles y centros de salud, sin llegar a faltar, y la tarjeta lo dice en una línea bajo el %.
-- Evidencia: producción, 13 nov: `POST /api/v1/search` con el caso de ejemplo (`fit-0.6`) y `GET /api/v1/gaps/distrito/2807910`. Latina: escuela infantil 0,95 y centro de salud 0,99, JUSTO; colegio, mayores y farmacia, CUBIERTO; vivienda, SIN DATOS. Fuencarral-El Pardo (`/gaps/distrito/2807908`, 97 %): escuela infantil 0,98, colegio 0,76 y centro de salud 0,76, todas JUSTO.
+- Evidencia: producción, 12 nov: `POST /api/v1/search` con el caso de ejemplo (`fit-0.6`) y `GET /api/v1/gaps/distrito/2807910`. Latina: escuela infantil 0,95 y centro de salud 0,99, JUSTO; colegio, mayores y farmacia, CUBIERTO; vivienda, SIN DATOS. Fuencarral-El Pardo (`/gaps/distrito/2807908`, 97 %): escuela infantil 0,98, colegio 0,76 y centro de salud 0,76, todas JUSTO.
 - Si insiste en el colegio a 0,76: está por debajo del 80 %, pero la diferencia puede ser casual con esa población, y FALTA exige que no lo sea (pregunta 11).
 
 **43. ¿Quién lo ha usado?**
@@ -261,7 +261,7 @@ El método de repartir la capacidad entre quienes la comparten no es nuestro, y 
 Mariano, y está pensado para que baste una persona. Los datos se recargan con un comando, cada conjunto pasa un control de calidad antes de entrar y una prueba revisa la web pública cada mañana. Al año son unos 2–3 días para la estadística anual y medio día por trimestre para los horarios del transporte; el código es abierto y cada decisión está escrita, así que otra persona puede retomarlo.
 - Evidencia: `pitch/modelo_negocio.md` («Mantenimiento con una sola persona», estimación de D) · `.github/workflows/smoke-demo.yml` · `evidence/gate-01/` · `docs/00_index/01_decisions_log.md` · `LICENSE` (Apache-2.0).
 
-## Dos más, con las cifras de impacto (13 nov)
+## Dos más, con las cifras de impacto (12 nov)
 
 **46. ¿Cómo sabéis que en una zona «falta» y no es casualidad?**
 Porque FALTA exige dos cosas: tener menos del 80 % de lo que tienen los municipios parecidos, y que esa diferencia no se explique por azar con una prueba exacta de Poisson. En Puente de Vallecas, con 9.433 niños de 0 a 4 años, una diferencia así saldría por azar menos de 1 vez de cada 100. Por eso Centro, con una proporción parecida pero menos niños, sale JUSTO y no FALTA (pregunta 15).
@@ -283,4 +283,4 @@ En colegios y centros de salud no hay ninguna zona con una falta clara. Las zona
   - farmacias: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro;
   - mayores: 6 municipios, con Torrejón de Ardoz y Pozuelo de Alarcón a la cabeza;
   - vivienda: 25 municipios, con Fuenlabrada, Leganés y Alcorcón a la cabeza.
-- Estado: en producción desde el 13 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). El ranking «dónde invertir primero» aún no se ve en la web (**pendiente de B**): si lo piden, se enseña la ruta.
+- Estado: en producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). El ranking «dónde invertir primero» aún no se ve en la web (**pendiente de B**): si lo piden, se enseña la ruta.

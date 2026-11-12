@@ -9,7 +9,7 @@ Borrador de la línea D para el README.md de la raíz (lo integra la línea A, q
 - Antes de integrarlo: quitar las marcas «pendiente» y revisar las cifras con `uv run python pitch/build_datasets_cm.py`.
 -->
 
-> **Borrador ya integrado: el texto vigente es el [README.md de la raíz](../README.md).** Este fichero se conserva como registro. Las cifras de datos se han puesto al día el 13 nov con [`datasets_cm.md`](datasets_cm.md), que es la fuente de la lista; los enlaces de abajo son relativos a la raíz del repo y desde aquí no funcionan.
+> **Borrador ya integrado: el texto vigente es el [README.md de la raíz](../README.md).** Este fichero se conserva como registro. Las cifras de datos se han puesto al día el 12 nov con [`datasets_cm.md`](datasets_cm.md), que es la fuente de la lista; los enlaces de abajo son relativos a la raíz del repo y desde aquí no funcionan.
 
 # Vida Fácil · Encuentra tu sitio en Madrid
 
@@ -40,7 +40,7 @@ Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón y el pan
 
 <!--
 Fuentes:
-- 27 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 13 nov). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
+- 27 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
 - Los 6 GTFS del CRTM cuentan como datos CM porque el portal los publica: D-196.
 - 179 municipios: evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json.
 - 21 distritos: D-200 y D-209 (población por distrito del padrón municipal del Ayuntamiento). DATA-012 hecha (be40c2f); GET /api/v1/gaps/distrito/2807905 (Chamartín) responde con datos reales.
