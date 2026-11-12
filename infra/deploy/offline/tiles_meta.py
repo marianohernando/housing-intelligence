@@ -63,10 +63,15 @@ def bounds_from_tiles(tiles_dir: Path) -> list[float]:
     ]
 
 
+def tile_files(tiles_dir: Path) -> list[Path]:
+    """The z/x/y.pbf tiles, leaving out what sits beside them (fonts/<fontstack>/<range>.pbf)."""
+    return [p for p in tiles_dir.glob("*/*/*.pbf") if p.parent.parent.name.isdigit()]
+
+
 def check_written(tiles_dir: Path) -> int:
     """Tiles with content tilemaker wrote; fails if too few overall or none at a street zoom."""
     with_content = dict.fromkeys(range(MAXZOOM + 1), 0)
-    for path in tiles_dir.glob("*/*/*.pbf"):
+    for path in tile_files(tiles_dir):
         z = int(path.parent.parent.name)
         if z in with_content and path.stat().st_size > 0:
             with_content[z] += 1
@@ -97,7 +102,7 @@ def fill_missing(tiles_dir: Path, bounds: list[float]) -> int:
 
 
 def main(tiles_dir: Path, base_url: str) -> None:
-    written = sum(1 for _ in tiles_dir.glob("*/*/*.pbf"))
+    written = len(tile_files(tiles_dir))
     with_content = check_written(tiles_dir)
     bounds = bounds_from_tiles(tiles_dir)
     filled = fill_missing(tiles_dir, bounds)

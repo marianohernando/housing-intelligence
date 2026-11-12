@@ -33,6 +33,10 @@ PBF_PINNED="madrid-261111.osm.pbf"
 PBF_PINNED_MD5="1f5fc60a7a14235518265dd1bbfaf613"
 # tilemaker 3.2.0, the official image of github.com/systemed/tilemaker (commit 2789651), by digest
 TILEMAKER_IMAGE="ghcr.io/systemed/tilemaker@sha256:9cd8728a37a31c8a5205e091cedd3ff2c2c450c57e1ce3e5b58916185540ebba"
+# Glyphs for the map's labels: OpenFreeMap's font bundle (Noto Sans Regular, Bold and Italic, SIL OFL
+# 1.1), the same PBFs that tiles.openfreemap.org/fonts serves online. Pinned by sha256 (12 Nov).
+FONTS_URL="https://assets.openfreemap.com/fonts/ofm.tar.gz"
+FONTS_SHA256="56b1a521aba187779194f8f983f3e103a9f7f14581227eed1297ce0e102cb4b0"
 # Source of the dump, seen from inside the offline db container: the development database.
 SOURCE_URL="${SOURCE_DATABASE_URL:-postgresql://housing:housing@host.docker.internal:5440/housing}"
 DB=vidafacil
@@ -136,6 +140,19 @@ build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this sh
 }
 
 md5_of() { if command -v md5sum >/dev/null; then md5sum "$1" | cut -d' ' -f1; else md5 -q "$1"; fi; }
+sha256_of() { if command -v sha256sum >/dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -d' ' -f1; }
+
+fetch_fonts() { # DIR: the pinned glyph bundle as DIR/fonts/<fontstack>/<range>.pbf, sha256 checked
+  local bundle="$TILES_SRC/ofm-fonts.tar.gz"
+  echo "-> map fonts (OpenFreeMap: Noto Sans, SIL OFL 1.1)"
+  if [[ ! -f "$bundle" || "$(sha256_of "$bundle")" != "$FONTS_SHA256" ]]; then
+    curl -fsS -o "$bundle.tmp" "$FONTS_URL"
+    mv -f "$bundle.tmp" "$bundle"
+  fi
+  [[ "$(sha256_of "$bundle")" == "$FONTS_SHA256" ]] || { echo "sha256 mismatch for $FONTS_URL" >&2; exit 1; }
+  mkdir -p "$1/fonts"
+  tar -xzf "$bundle" -C "$1/fonts" --strip-components 1   # ofm/<fontstack>/... -> fonts/<fontstack>/...
+}
 
 fetch_pbf() { # sets PBF_NAME and PBF_MD5_OK: the pinned OSM extract in $TILES_SRC, md5 checked
   local name="${PBF_FILE:-$PBF_PINNED}" md5="${PBF_MD5:-}" pbf
@@ -167,6 +184,8 @@ tiles() { # online, once: the basemap extract, tiles at z0–14 in $TILES with a
   command -v jq >/dev/null || { echo "jq is required to adapt tilemaker's config: brew install jq" >&2; exit 2; }
   command -v md5sum >/dev/null || command -v md5 >/dev/null ||
     { echo "md5sum or md5 is required to check the extract" >&2; exit 2; }
+  command -v sha256sum >/dev/null || command -v shasum >/dev/null ||
+    { echo "sha256sum or shasum is required to check the fonts" >&2; exit 2; }
   fetch_pbf
   name="$PBF_NAME"
 
@@ -184,11 +203,13 @@ tiles() { # online, once: the basemap extract, tiles at z0–14 in $TILES with a
     --input "/in/$name" --output /out --config /cfg/config.json \
     --process /usr/src/app/resources/process-openmaptiles.lua --quiet >/dev/null
   uv run --frozen python -I infra/deploy/offline/tiles_meta.py "$TILES.tmp" "$WEB_URL/tiles" >"$TILES.tmp/summary"
+  fetch_fonts "$TILES.tmp"   # served at /tiles/fonts/{fontstack}/{range}.pbf
   {
     echo "created_at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "pbf $name md5 $PBF_MD5_OK from $PBF_BASE"
     echo "tilemaker $TILEMAKER_IMAGE"
     cat "$TILES.tmp/summary"
+    echo "fonts $FONTS_URL sha256 $FONTS_SHA256: $(ls "$TILES.tmp/fonts" | paste -sd ',' -)"
     echo "size $(du -sh "$TILES.tmp" | awk '{print $1}')"
   } >"$TILES.tmp/manifest.txt"
   rm -f "$TILES.tmp/summary"

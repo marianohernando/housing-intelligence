@@ -214,7 +214,7 @@ Qué no toca nunca:
 
 ### Mapa base sin red (`make demo-offline-tiles`, una vez, con Internet)
 
-Genera las teselas del mapa base de la Comunidad de Madrid para que, sin red, el mapa salga con calles, parques y edificios en 3D. Va antes de `make demo-offline-prepare`, que compila la web apuntando a ellas. Tarda alrededor de 1 minuto.
+Genera las teselas del mapa base de la Comunidad de Madrid, y las fuentes de sus etiquetas, para que sin red el mapa salga con calles, parques y edificios en 3D. Va antes de `make demo-offline-prepare`, que compila la web apuntando a ellas. Tarda alrededor de 1 minuto con buena conexión: son 86 MB del extracto y 61 MB de fuentes la primera vez.
 1. **Descarga el extracto de OpenStreetMap de Geofabrik** (licencia ODbL) a `data/offline/tiles-src/`.
    - **Extracto fijado:** `madrid-261111.osm.pbf`, con datos del 11 nov y 86 MB. El nombre y el md5 están fijados en `demo_offline.sh` (`PBF_PINNED`, `PBF_PINNED_MD5`).
    - **Por qué el md5 va en el script:** al no tomarlo del mismo servidor que el fichero, detecta un fichero manipulado, no solo uno corrupto. Si ya está descargado y la suma cuadra, no lo vuelve a bajar.
@@ -229,9 +229,18 @@ Genera las teselas del mapa base de la Comunidad de Madrid para que, sin red, el
    - **Antes de rellenar, comprueba lo que escribió tilemaker:** al menos 4.000 teselas con contenido, y alguna en cada zoom desde el 7, donde empiezan las calles del estilo. De z0 a z2 la Comunidad no tiene nada que dibujar. Si no llega, para, para que un tilemaker que falló a medias no quede tapado por teselas vacías.
    - **Huecos:** rellena con teselas vacías los que hay dentro de esos límites. Si no, MapLibre los pediría, y cada 404 sería un error de consola.
    - **Fuera de la Comunidad,** en las esquinas de ese rectángulo y más allá, el mapa sale en blanco: solo el color de fondo, sin calles. Todas las zonas de la demo están dentro.
-4. **Resultado** en `data/offline/tiles/`, que git ignora: 4.750 teselas de tilemaker (4.490 con contenido) y 3.365 vacías de relleno, 89 MB.
-   - `manifest.txt` guarda el fichero, su md5, la imagen y los límites.
-   - El 12 nov: 0 hosts cortados y 0 errores de consola sin red (`offline-teselas.md`).
+4. **Añade las fuentes de las etiquetas del mapa (glyphs):** el paquete de fuentes de OpenFreeMap (`https://assets.openfreemap.com/fonts/ofm.tar.gz`).
+   - **Qué trae:** `Noto Sans Regular`, `Bold` e `Italic`, con licencia SIL Open Font 1.1 (un `LICENSE.md` por fuente). Son los mismos PBF que sirve en línea `tiles.openfreemap.org/fonts`, byte a byte.
+   - **Fijado por sha256** en `demo_offline.sh` (`FONTS_URL`, `FONTS_SHA256`). Se guarda en `data/offline/tiles-src/ofm-fonts.tar.gz` y no se vuelve a bajar si la suma cuadra.
+   - **Dónde queda:** en `data/offline/tiles/fonts/<fuente>/<rango>.pbf`. La web del paquete las sirve en `/tiles/fonts/{fontstack}/{range}.pbf`, con los 256 rangos de cada una.
+   - **Una fuente que no esté en el paquete** (por ejemplo, `Noto Sans Medium`) da 404 y, sin red, error de consola. El estilo de la web solo puede usar esas tres.
+   - **Ojo:** la web aún no las pide. Mientras el estilo no tenga etiquetas, no se usan.
+5. **Resultado** en `data/offline/tiles/`, que git ignora, 191 MB:
+   - 4.750 teselas de tilemaker (4.490 con contenido) y 3.365 vacías de relleno, 89 MB;
+   - las fuentes, 105 MB.
+   - `manifest.txt` guarda el fichero, su md5, la imagen, los límites y las fuentes con su sha256.
+   - El 12 nov, el mapa base dio 0 hosts cortados y 0 errores de consola sin red (`offline-teselas.md`).
+   - **Requisito nuevo:** `sha256sum` o `shasum`, para comprobar las fuentes.
 
 Sin `data/offline/tiles/`, `prepare` avisa y compila la web con OpenFreeMap, que necesita red. El `manifest.txt` del paquete dice cuál de los dos lleva (`basemap`).
 
