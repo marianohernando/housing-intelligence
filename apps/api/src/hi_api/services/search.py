@@ -128,15 +128,18 @@ def _gap_map(conn: Connection, level: TerritoryLevel, row: GapRowKey, stamp: str
     """GET /gaps?level=&row= for one row, cached per process until the features change (the
     stamp is the latest computation): the same answer, without ~5 queries per row and level."""
     key = (str(conn.engine.url), stamp, level.value, row.value)
-    if key not in _GAP_MAPS:
-        if len(_GAP_MAPS) >= GAP_CACHE_MAX:
-            _GAP_MAPS.clear()
-        try:
-            gap_map, warnings, _ = gap_row_map(conn, level, row)
-            _GAP_MAPS[key] = (gap_map, warnings)
-        except RowNotBoundError as exc:
-            _GAP_MAPS[key] = (None, [f"{ErrorCode.INSUFFICIENT_DATA.value}: {exc}"])
-    return _GAP_MAPS[key]
+    cached = _GAP_MAPS.get(key)
+    if cached is not None:
+        return cached
+    try:
+        gap_map, warnings, _ = gap_row_map(conn, level, row)
+        entry: GapMapEntry = (gap_map, warnings)
+    except RowNotBoundError as exc:
+        entry = (None, [f"{ErrorCode.INSUFFICIENT_DATA.value}: {exc}"])
+    if len(_GAP_MAPS) >= GAP_CACHE_MAX:
+        _GAP_MAPS.clear()
+    _GAP_MAPS[key] = entry  # returned from the local: another thread may clear the cache
+    return entry
 
 
 def _highlights(
@@ -196,17 +199,25 @@ def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
     return [unique[k] for k in sorted(unique)]
 
 
+def load_warnings(loaded: Loaded) -> list[str]:
+    """What every answer built on the loaded zones must say: rows without a gap map and places
+    of work outside every computed destination (scored in a straight line)."""
+    return [
+        *loaded.warnings,
+        *(
+            f"{ErrorCode.INSUFFICIENT_DATA.value}: no computed destination holds anchor {i}, so "
+            "its trip by public transport is unknown: a trip limit is UNKNOWN and the place is "
+            "scored in a straight line"
+            for i in loaded.unresolved_anchors
+        ),
+    ]
+
+
 def search(conn: Connection, scenario: ScenarioState) -> tuple[SearchResult, list[str], str | None]:
     """The result, warnings and the data version (latest computation of the values used)."""
     loaded = load(conn, scenario)
     outcome = run_search(scenario, loaded.zones)
-    warnings = list(loaded.warnings)
-    for i in loaded.unresolved_anchors:
-        warnings.append(
-            f"{ErrorCode.INSUFFICIENT_DATA.value}: no computed destination holds anchor {i}, so "
-            "its trip by public transport is unknown: a trip limit is UNKNOWN and the place is "
-            "scored in a straight line"
-        )
+    warnings = load_warnings(loaded)
     if outcome.unscored_passing:
         warnings.append(
             f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} zones pass every "

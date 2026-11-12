@@ -1084,7 +1084,7 @@ DATA-020. Evaluada la fuente que proponía A v11: «Hechos conocidos de infracci
 
 ## D-225 — Servidor MCP local: cinco herramientas de solo lectura sobre los servicios de la API (2026-11-12)
 MCP-001. El producto DATA (API + MCP, CLAUDE.md §16) tenía `services/mcp/` vacío. Es reversible: un paquete nuevo del workspace (`hi-mcp`), dos servicios sin ruta en la API (`explanation.py` y `zones.py`) y dos contratos (`ZoneExplanation`, `ZoneLookup`). No cambia ninguna ruta ni ningún dato. Código: `services/mcp/src/hi_mcp/`. Uso: `docs/04_technical_architecture/32_mcp_server.md`. Evidencia: `evidence/gate-11/2026-11-12/`.
-1. **SDK:** el oficial de Python, `mcp` 2.3.0 (PyPI, 2 oct 2026; documentación en py.sdk.modelcontextprotocol.io). No estaba en `uv.lock`. Se usan `MCPServer` (en la v2 sustituye a `FastMCP`), herramientas con tipos de Pydantic y transporte stdio. Las firmas se comprobaron en el código instalado: `MCPServer.tool`, `Annotated[CallToolResult, Modelo]` para dar el esquema de salida, `ToolError` y el `Client` en memoria de los tests. La restricción es `>=2.3,<3`. La imagen de la API no lo instala: `uv sync --frozen --package hi-api` solo instala el cierre de `hi-api`, comprobado con uv 0.11.4 y los mismos ficheros que copia el Dockerfile.
+1. **SDK:** el oficial de Python, `mcp` 2.3.0 (PyPI, 2 oct 2026; documentación en py.sdk.modelcontextprotocol.io). No estaba en `uv.lock`. Se usan `MCPServer` (en la v2 sustituye a `FastMCP`), herramientas con tipos de Pydantic y transporte stdio. Las firmas se comprobaron en el código instalado: `MCPServer.tool`, `Annotated[CallToolResult, Modelo]` para dar el esquema de salida, `ToolError` y el `Client` en memoria de los tests. La restricción es `>=2.3,<3`. La imagen de la API no lo instala: `uv sync --frozen --package hi-api` solo instala el cierre de `hi-api` (comprobado con uv 0.11.4). El Dockerfile copia `services/mcp` como los demás miembros del workspace, sin instalarlo (revisión).
 2. **Herramientas:**
    - `buscar_zonas`: `ScenarioState` → `SearchResponse`, igual que `POST /search`. Sin `include_map`, deja vacío `all_zones`, que es la mitad de la respuesta y solo sirve para pintar un mapa.
    - `que_falta`: igual que `GET /gaps/{level}/{code}`.
@@ -1102,7 +1102,13 @@ MCP-001. El producto DATA (API + MCP, CLAUDE.md §16) tenía `services/mcp/` vac
    Cada llamada va en una transacción `READ ONLY` de Postgres. Un test lo comprueba con una escritura.
 4. **Texto para el modelo:** el mismo JSON que `structuredContent`, compacto y en UTF-8. Con la serialización por defecto del SDK (JSON sangrado) y el mapa, una búsqueda ocupa unos 130 KB, por encima del corte de 25.000 tokens de Claude Code. El caso demo, compacto y sin `all_zones`, ocupa 60 KB.
 5. **Local, sin desplegar:** stdio para una persona en su ordenador, contra la base local o la del paquete offline. Sin autenticación, límites de uso ni HTTP. Si algún día se publica, aplica `29_api_mcp_security_rate_limits.md`. `make mcp` no repite la receta, porque stdout es el protocolo.
-6. **Descartado:**
+6. **Revisión (`reviewer`):**
+   - `explicar_zona` repite el aviso de un sitio de trabajo fuera de toda zona, como `/search` (`load_warnings`, compartido);
+   - la caché de mapas de «Qué falta» de la búsqueda devuelve su valor desde una variable local, porque un `clear()` de otro hilo podía dar un `KeyError` (también en la API);
+   - `encontrar_zona` dice cuántas coincidencias deja fuera (`total` y un aviso);
+   - los registros van a stderr en nivel INFO (duración de cada herramienta);
+   - un test lee el stdout del proceso y exige que sea solo JSON-RPC.
+7. **Descartado:**
    - una herramienta de consultas genéricas sobre features o tablas (sería SQL libre con otro nombre);
    - el control del mapa (`MapState`, CLAUDE.md §9): la web no escucha a un agente;
    - rutas nuevas en la API para `explicar_zona` y `encontrar_zona`: no las pide la web y se desplegarían.

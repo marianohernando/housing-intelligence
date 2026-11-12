@@ -68,7 +68,14 @@
           "title": "Query",
           "type": "string"
         },
+        "total": {
+          "description": "Every match, also those left out of `zones`",
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
         "zones": {
+          "description": "The best matches, at most 10",
           "items": {
             "$ref": "#/$defs/ZoneRef"
           },
@@ -78,7 +85,8 @@
       },
       "required": [
         "query",
-        "zones"
+        "zones",
+        "total"
       ],
       "title": "ZoneLookup",
       "type": "object"

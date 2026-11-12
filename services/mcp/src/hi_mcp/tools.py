@@ -62,8 +62,15 @@ def zone_explanation(
 def zone_lookup(conn: Connection, name: str) -> ZoneLookupResponse:
     """Municipios and Madrid districts by name, with the codes the other tools take."""
     lookup = find_zones(conn, name)
-    missing = f"{ErrorCode.NOT_FOUND.value}: no municipio or Madrid district matches «{name}»"
-    warnings = [] if lookup.zones else [missing]
+    if not lookup.zones:
+        warnings = [
+            f"{ErrorCode.NOT_FOUND.value}: no municipio or Madrid district matches «{name}»"
+        ]
+    elif lookup.total > len(lookup.zones):
+        left_out = lookup.total - len(lookup.zones)
+        warnings = [f"{left_out} more zones match «{name}»: write more of the name"]
+    else:
+        warnings = []
     return ZoneLookupResponse(
         data=lookup, meta=Meta(methodology_version=LOOKUP_VERSION), warnings=warnings
     )

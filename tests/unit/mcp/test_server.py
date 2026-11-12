@@ -14,9 +14,10 @@ from mcp import Client, StdioServerParameters
 from mcp.server.mcpserver import MCPServer
 from mcp.types import CallToolResult, Tool
 from pydantic import BaseModel
-from sqlalchemy import Engine
+from sqlalchemy import Connection, Engine
 
-from hi_contracts.public import ScenarioState
+from hi_contracts.catalog.enums import TerritoryLevel
+from hi_contracts.public import ScenarioState, ZoneLookup, ZoneRef
 from hi_contracts.public.responses import (
     DatasetListResponse,
     SearchResponse,
@@ -25,6 +26,7 @@ from hi_contracts.public.responses import (
     ZoneLookupResponse,
 )
 from hi_db.session import make_engine
+from hi_mcp import tools
 from hi_mcp.server import DB_UNAVAILABLE, build_server, reply
 
 NO_DATABASE = "postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests"
@@ -134,7 +136,10 @@ def test_a_database_that_does_not_answer_is_a_readable_tool_error() -> None:
 
 def test_the_text_is_the_structured_content_in_compact_json() -> None:
     response = ZoneLookupResponse.model_validate(
-        {"data": {"query": "Chamartín", "zones": []}, "warnings": ["NOT_FOUND: ninguna"]}
+        {
+            "data": {"query": "Chamartín", "zones": [], "total": 0},
+            "warnings": ["NOT_FOUND: ninguna"],
+        }
     )
     result = reply(response)
     text = _text(result)
@@ -160,3 +165,56 @@ def test_the_stdio_entrypoint_speaks_the_protocol() -> None:
     assert names == set(OUTPUTS)
     assert instructions is not None
     assert "No inventes cifras" in instructions
+
+
+def test_stdout_carries_only_json_rpc() -> None:
+    """A stray print or log line on stdout would break a stricter client than the SDK's."""
+    initialize = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "protocolVersion": "2025-06-18",
+            "capabilities": {},
+            "clientInfo": {"name": "test", "version": "1"},
+        },
+    }
+
+    async def run() -> tuple[str, str]:
+        with anyio.fail_after(60):
+            process = await anyio.run_process(
+                [sys.executable, "-m", "hi_mcp.server"],
+                input=(json.dumps(initialize) + "\n").encode(),
+                env={**os.environ, "DATABASE_URL": NO_DATABASE},
+                check=False,
+            )
+        return process.stdout.decode(), process.stderr.decode()
+
+    stdout, stderr = anyio.run(run)
+    lines = [line for line in stdout.splitlines() if line.strip()]
+    assert lines, stderr
+    for line in lines:
+        message = json.loads(line)
+        assert message["jsonrpc"] == "2.0"
+    assert json.loads(lines[0])["result"]["serverInfo"]["name"] == "vida-facil"
+
+
+def _lookup(total: int, shown: int) -> Callable[[Connection, str], ZoneLookup]:
+    zone = ZoneRef(level=TerritoryLevel.DISTRITO, code="2807905", name="Chamartín")
+    return lambda _conn, name: ZoneLookup(query=name, zones=[zone] * shown, total=total)
+
+
+@pytest.mark.parametrize(
+    ("total", "shown", "warning"),
+    [(0, 0, "NOT_FOUND"), (12, 10, "2 more zones match"), (3, 3, None)],
+)
+def test_the_lookup_says_when_nothing_or_not_everything_is_shown(
+    monkeypatch: pytest.MonkeyPatch, total: int, shown: int, warning: str | None
+) -> None:
+    monkeypatch.setattr(tools, "find_zones", _lookup(total, shown))
+    warnings = tools.zone_lookup(Connection.__new__(Connection), "cha").warnings
+    if warning is None:
+        assert warnings == []
+    else:
+        assert len(warnings) == 1
+        assert warning in warnings[0]

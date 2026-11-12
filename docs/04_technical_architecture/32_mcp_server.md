@@ -19,13 +19,13 @@ Servidor MCP local del producto DATA (D-225). Un agente (Claude Desktop, Claude 
 | `buscar_zonas` | `scenario`: `ScenarioState` · `include_map` (opcional, `false`) | `SearchResponse` (`data/schemas/api/search_response.schema.json`) | `POST /api/v1/search`. Sin `include_map`, `all_zones` llega vacío: son las 199 zonas de la coropleta, la mitad de la respuesta |
 | `que_falta` | `level`: `municipio`, `distrito` o `seccion_censal` · `code`: código INE de la Comunidad de Madrid | `ZoneGapListResponse` | `GET /api/v1/gaps/{level}/{code}` |
 | `explicar_zona` | `level`: `municipio` o `distrito` · `code` · `scenario` (opcional) | `ZoneExplanationResponse` (`data/schemas/mcp/zone_explanation_response.schema.json`) | la tarjeta de la zona en `POST /search`: el mismo `match_pct`, `confidence`, `facts`, `constraints`, `estimated_cost_eur` y `gap_highlights`. Añade `indicators` (todo lo que el buscador lee de la zona), `datasets` con `attribution_text` y `cm_open_data_count` |
-| `encontrar_zona` | `name`: de 2 a 80 caracteres | `ZoneLookupResponse` (`data/schemas/mcp/zone_lookup_response.schema.json`) | los mismos `ZoneRef` que `/gaps`, para los municipios y los 21 distritos de Madrid. Ignora mayúsculas, tildes y signos y pone primero el nombre exacto, después el que empieza igual, después una palabra que empieza igual y por último el que lo contiene. Sin coincidencias, `zones: []` y un aviso `NOT_FOUND` |
+| `encontrar_zona` | `name`: de 2 a 80 caracteres | `ZoneLookupResponse` (`data/schemas/mcp/zone_lookup_response.schema.json`) | los mismos `ZoneRef` que `/gaps`, para los municipios y los 21 distritos de Madrid. Ignora mayúsculas, tildes y signos y pone primero el nombre exacto, después el que empieza igual, después una palabra que empieza igual y por último el que lo contiene. Da 10 como mucho; `total` cuenta todas y, si quedan fuera, un aviso pide escribir más del nombre. Sin coincidencias no es un error: `zones: []` y un aviso `NOT_FOUND` |
 | `fuentes_de_datos` | `cm_only` (opcional) | `DatasetListResponse` | `GET /api/v1/datasets` |
 
 Notas:
 - `explicar_zona` sin `scenario` usa el escenario vacío: no se pide nada, así que el encaje es 100 % (como en el buscador) y los hechos son los minutos a pie hasta el transporte, el centro de salud, el colegio y la farmacia.
 - Madrid capital se ordena por distritos (D-200): `explicar_zona` con el municipio 28079 da un error que lo explica. `que_falta` sí admite Madrid entera.
-- Los datasets de `explicar_zona` son los de sus indicadores, los de las filas destacadas de «Qué falta» (tal como las cita `/gaps` para esa zona) y los GTFS de los trayectos al trabajo, si hay sitio de trabajo.
+- Los datasets de `explicar_zona` son los de todos sus indicadores (también los que el escenario no puntúa y los que están sin dato, porque se leen), los de las filas destacadas de «Qué falta» (tal como las cita `/gaps` para esa zona) y los GTFS de los trayectos al trabajo, si hay sitio de trabajo. Sus `warnings` son los de `/search` para el mismo escenario, salvo el recuento de zonas sin datos para puntuar, que es de la búsqueda entera.
 
 ## Arrancarlo en local
 Necesita la base local con los datos cargados (`make up`; Postgres en el puerto 5440) o un `DATABASE_URL` que apunte a otra.
@@ -35,7 +35,7 @@ make mcp                 # stdio; para probarlo a mano (Ctrl-C para salir)
 uv run python scripts/mcp_smoke.py   # se conecta como un cliente y hace las preguntas de la demo
 ```
 
-`make mcp` no imprime nada por stdout salvo el protocolo, y los registros van a stderr. Un cliente no debería lanzarlo con `make -C`, porque esa opción escribe «Entering directory» en stdout y rompe el protocolo. Mejor `uv run --directory`, como en los ejemplos.
+`make mcp` no imprime nada por stdout salvo el protocolo; los registros (nivel INFO, con la duración de cada herramienta) van a stderr. Un cliente no debería lanzarlo con `make -C`, porque esa opción escribe «Entering directory» en stdout y rompe el protocolo. Mejor `uv run --directory`, como en los ejemplos.
 
 ## Configuración de un cliente MCP
 **Claude Code** (desde cualquier carpeta):
@@ -88,10 +88,11 @@ Claude Code avisa por encima de unos 10.000 tokens por resultado y corta en 25.0
   - las entradas inválidas no llegan a la base;
   - la base caída da un error legible sin credenciales;
   - el texto es el `structuredContent` compacto;
-  - el arranque por stdio habla el protocolo.
+  - el arranque por stdio habla el protocolo y su stdout es solo JSON-RPC;
+  - `encontrar_zona` avisa cuando no encuentra nada o deja coincidencias fuera.
 - `tests/integration/test_mcp_tools.py`, con la base de fixtures:
   - cada herramienta devuelve lo mismo que su ruta (`data`, `warnings` y versiones);
-  - `explicar_zona` coincide con la tarjeta de la zona en `/search` y cita todos los datasets de sus indicadores, con el mismo `attribution_text` que `/datasets`;
+  - `explicar_zona` coincide con las tarjetas de `/search` (resultados y alternativas) en tres escenarios: el caso demo, el vacío y un trabajo fuera de toda zona, avisos incluidos; y cita todos los datasets de sus indicadores, con el mismo `attribution_text` que `/datasets`;
   - las zonas que no existen dan errores legibles;
   - una escritura dentro de una herramienta falla por la transacción de solo lectura.
 - Evidencia: `evidence/gate-11/2026-11-12/`.

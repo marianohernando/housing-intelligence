@@ -144,7 +144,7 @@ def build_server(engine: Callable[[], Engine] = get_engine) -> MCPServer:
         title="Vida Fácil",
         instructions=INSTRUCTIONS,
         version=version("hi-mcp"),
-        log_level="WARNING",
+        log_level="INFO",  # stderr: stdout carries the protocol
     )
 
     def register(name: str) -> Callable[[ToolFn], ToolFn]:

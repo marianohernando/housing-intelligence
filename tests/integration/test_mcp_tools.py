@@ -17,6 +17,7 @@ from sqlalchemy.exc import DBAPIError
 
 from hi_api.deps import get_engine
 from hi_api.main import app
+from hi_api.services.zones import find_zones
 from hi_contracts.public import ZoneLookup
 from hi_contracts.public.responses import (
     DatasetListResponse,
@@ -99,20 +100,41 @@ def test_fuentes_de_datos_is_get_datasets(server: MCPServer, api: TestClient) ->
         _same_answer(tool.model_dump(mode="json"), route)
 
 
-def test_explicar_zona_is_the_zone_card_of_the_search(server: MCPServer, api: TestClient) -> None:
-    search = SearchResponse.model_validate(api.post("/api/v1/search", json=_family()).json()).data
-    card = (search.results or search.near_misses)[0]
-    arguments = {"level": card.zone.level.value, "code": card.zone.code, "scenario": _family()}
-    body = ZoneExplanationResponse.model_validate(_ok(server, "explicar_zona", arguments))
-    explained = body.data
-    assert explained.zone == card.zone
-    assert explained.match_pct == card.match_pct
-    assert explained.confidence == card.confidence
-    assert explained.facts == card.facts
-    assert explained.constraints == card.constraints
-    assert explained.estimated_cost_eur == card.estimated_cost_eur
-    assert explained.gap_highlights == card.gap_highlights
-    assert body.meta.methodology_version == search.methodology_version
+def _outside_every_zone() -> dict[str, Any]:
+    """A place of work no computed destination holds: scored in a straight line, with a
+    warning (south-west corner of the region's bounding box, outside the fixture zones)."""
+    anchor = {"kind": "work", "label": "Fuera de las zonas", "lon": -4.55, "lat": 39.9}
+    return {"anchors": [anchor], "priorities": ["transporte"]}
+
+
+SCENARIOS = {"familia": _family, "nada": dict, "trabajo_fuera": _outside_every_zone}
+SEARCH_ONLY_WARNING = "zones pass every condition but have no data"
+
+
+@pytest.mark.parametrize("scenario_name", sorted(SCENARIOS))
+def test_explicar_zona_is_the_zone_card_of_the_search(
+    server: MCPServer, api: TestClient, scenario_name: str
+) -> None:
+    scenario = SCENARIOS[scenario_name]()
+    route = SearchResponse.model_validate(api.post("/api/v1/search", json=scenario).json())
+    cards = [*route.data.results[:2], *route.data.near_misses[:1]]
+    assert cards
+    for card in cards:
+        arguments = {"level": card.zone.level.value, "code": card.zone.code, "scenario": scenario}
+        body = ZoneExplanationResponse.model_validate(_ok(server, "explicar_zona", arguments))
+        explained = body.data
+        assert explained.zone == card.zone
+        assert explained.match_pct == card.match_pct
+        assert explained.confidence == card.confidence
+        assert explained.facts == card.facts
+        assert explained.constraints == card.constraints
+        assert explained.estimated_cost_eur == card.estimated_cost_eur
+        assert explained.gap_highlights == card.gap_highlights
+        assert body.meta.methodology_version == route.meta.methodology_version
+        assert body.meta.data_version == route.meta.data_version
+        assert body.warnings == [w for w in route.warnings if SEARCH_ONLY_WARNING not in w]
+    if scenario_name == "trabajo_fuera":
+        assert any("anchor 0" in w for w in route.warnings)
 
 
 def test_explicar_zona_cites_every_dataset_it_reads(server: MCPServer, api: TestClient) -> None:
@@ -168,7 +190,19 @@ def test_encontrar_zona_gives_the_zone_of_the_gaps_route(
 def test_tools_read_in_a_read_only_transaction(migrated_engine: Engine) -> None:
     def write(conn: Connection) -> ZoneLookupResponse:
         conn.execute(text("CREATE TABLE mcp_must_not_write (x int)"))
-        return ZoneLookupResponse(data=ZoneLookup(query="", zones=[]))
+        return ZoneLookupResponse(data=ZoneLookup(query="", zones=[], total=0))
 
     with pytest.raises(DBAPIError, match="read-only transaction"):
         run_tool("write", migrated_engine, write)
+
+
+def test_encontrar_zona_counts_the_matches_it_leaves_out(
+    migrated_engine: Engine, features_computed: None
+) -> None:
+    with migrated_engine.connect() as conn:
+        everything = find_zones(conn, "a")
+        one = find_zones(conn, "a", limit=1)
+    assert everything.total > 1
+    assert len(one.zones) == 1
+    assert one.total == everything.total
+    assert one.zones[0] == everything.zones[0]

@@ -3,6 +3,7 @@
 ## v0.5.47 — Servidor MCP local (2026-11-12)
 - D-225: `services/mcp` con 5 herramientas de solo lectura sobre los servicios de la API (`buscar_zonas`, `que_falta`, `explicar_zona`, `encontrar_zona` y `fuentes_de_datos`), SDK oficial `mcp` 2.3.0 por stdio y `make mcp`.
 - `04_technical_architecture/32_mcp_server.md`: uso, configuración de clientes, tamaños y pruebas. Contratos `ZoneExplanation` y `ZoneLookup` en `data/schemas/mcp/`.
+- D-225 §6: ajustes de la revisión (avisos de `explicar_zona`, caché de la búsqueda entre hilos, `total` en `encontrar_zona`, registros INFO a stderr).
 
 ## v0.5.46 — Seguridad evaluada (2026-11-12)
 - D-224: la tasa oficial de hechos conocidos por municipio no entra en el buscador (denominador, cobertura y modelo); queda una opción de contexto para Mariano.

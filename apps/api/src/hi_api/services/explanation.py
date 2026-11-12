@@ -11,7 +11,7 @@ from collections.abc import Iterable
 from sqlalchemy import Connection
 
 from hi_api.services.gaps import ZoneNotFoundError, dataset_refs, zone_gap_list
-from hi_api.services.search import LEVELS, load
+from hi_api.services.search import LEVELS, load, load_warnings
 from hi_contracts.catalog.enums import TerritoryLevel
 from hi_contracts.public import (
     DatasetRef,
@@ -86,4 +86,4 @@ def explain_zone(
         methodology_version=FIT_VERSION,
     )
     data_version = max(loaded.computed).date().isoformat() if loaded.computed else None
-    return explanation, list(loaded.warnings), data_version
+    return explanation, load_warnings(loaded), data_version

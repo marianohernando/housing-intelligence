@@ -52,4 +52,5 @@ class ZoneLookup(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     query: str
-    zones: list[ZoneRef]
+    zones: list[ZoneRef] = Field(description="The best matches, at most 10")
+    total: int = Field(ge=0, description="Every match, also those left out of `zones`")

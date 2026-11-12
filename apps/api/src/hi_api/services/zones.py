@@ -39,4 +39,4 @@ def find_zones(conn: Connection, query: str, limit: int = MAX_MATCHES) -> ZoneLo
             ranked.append((rank, NAMED_LEVELS.index(level), name, level, row["code"]))
     ranked.sort()
     zones = [zone_ref(conn, level, code) for _, _, _, level, code in ranked[:limit]]
-    return ZoneLookup(query=query, zones=zones)
+    return ZoneLookup(query=query, zones=zones, total=len(ranked))
