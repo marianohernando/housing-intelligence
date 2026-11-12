@@ -26,6 +26,9 @@ const TEXT = {
 
 type Stations = WorkPlace[] | "loading" | "failed" | null;
 
+/** The stations (about 130 KB) fail after this long if the API hangs, and the field asks again when used (M4). */
+const STATIONS_TIMEOUT_MS = 15_000;
+
 /** CRTM stations, asked when the field is first used (again after a failure); without them, the zones still show. */
 function useStations(): { stations: WorkPlace[]; load: () => void } {
   const [stations, setStations] = useState<Stations>(null);
@@ -33,7 +36,7 @@ function useStations(): { stations: WorkPlace[]; load: () => void } {
     if (stations !== null && stations !== "failed") return;
     setStations("loading");
     createApi()
-      .places({ category: "transport", subcategories: Object.keys(STATION_KINDS) })
+      .places({ category: "transport", subcategories: Object.keys(STATION_KINDS) }, { timeoutMs: STATIONS_TIMEOUT_MS })
       .then((features) => setStations(stationPlaces(features)))
       .catch(() => setStations("failed"));
   }, [stations]);

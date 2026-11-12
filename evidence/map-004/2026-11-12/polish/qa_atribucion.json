@@ -1,0 +1,140 @@
+{
+ "modo": "atribucion",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "movil_portada": {
+  "al_cargar": {
+   "abierta": false,
+   "clases": "maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact"
+  },
+  "boton": {
+   "nombre": "Fuentes y licencias del mapa",
+   "caja": {
+    "top": 133,
+    "bottom": 157,
+    "left": 356,
+    "right": 380
+   }
+  },
+  "alrededor": {
+   "cabecera": {
+    "top": 0,
+    "bottom": 123,
+    "left": 0,
+    "right": 390
+   },
+   "hoja": {
+    "top": 464,
+    "bottom": 844,
+    "left": 0,
+    "right": 390
+   }
+  },
+  "boton_pisa": [],
+  "tras_un_toque": {
+   "abierta": true,
+   "clases": "maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact maplibregl-compact-show"
+  },
+  "abierta": {
+   "caja": {
+    "top": 133,
+    "bottom": 325,
+    "left": 10,
+    "right": 380
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "tras_otro_toque": {
+   "abierta": false,
+   "clases": "maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact"
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": [],
+  "lcp_slow4g": [
+   {
+    "ms": 668,
+    "en_atribucion": false,
+    "texto": "Te decimos qué zonas encajan con tu vida y qué le "
+   }
+  ]
+ },
+ "movil_zona": {
+  "al_cargar": {
+   "abierta": false,
+   "clases": "maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact"
+  },
+  "boton": {
+   "nombre": "Fuentes y licencias del mapa",
+   "caja": {
+    "top": 133,
+    "bottom": 157,
+    "left": 356,
+    "right": 380
+   }
+  },
+  "alrededor": {
+   "cabecera": {
+    "top": 0,
+    "bottom": 123,
+    "left": 0,
+    "right": 390
+   },
+   "hoja": {
+    "top": 464,
+    "bottom": 844,
+    "left": 0,
+    "right": 390
+   }
+  },
+  "boton_pisa": [],
+  "tras_un_toque": {
+   "abierta": true,
+   "clases": "maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact maplibregl-compact-show"
+  },
+  "abierta": {
+   "caja": {
+    "top": 133,
+    "bottom": 325,
+    "left": 10,
+    "right": 380
+   },
+   "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL."
+  },
+  "abierta_pisa": [],
+  "axe_abierta": [],
+  "tras_otro_toque": {
+   "abierta": false,
+   "clases": "maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact"
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": [],
+  "lcp_slow4g": [
+   {
+    "ms": 820,
+    "en_atribucion": false,
+    "texto": "Desliza hacia arriba para ver más"
+   },
+   {
+    "ms": 2088,
+    "en_atribucion": false,
+    "texto": "Mira sus servicios y puntos clave, con datos ofici"
+   }
+  ]
+ },
+ "escritorio_zona": {
+  "abierta": true,
+  "caja": {
+   "top": 840,
+   "bottom": 900,
+   "left": 0,
+   "right": 1440
+  },
+  "texto": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. · Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es. · Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso. · Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad. · Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0). · © OpenStreetMap contributors, ODbL.",
+  "axe": [],
+  "consola": []
+ },
+ "fallos": []
+}

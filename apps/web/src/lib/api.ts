@@ -58,7 +58,7 @@ export type FetchLike = (input: string, init?: ApiRequestInit) => Promise<Respon
 /**
  * A failed call. `code` comes from the API (`ErrorCode`), or is NETWORK when the API cannot be
  * reached, ABORTED when the caller cancelled it, TIMEOUT when it took longer than its `timeoutMs`,
- * VALIDATION for a rejected request and
+ * VALIDATION for a rejected request, INVALID_RESPONSE for an answer that is not JSON and
  * HTTP_<status> when the body says nothing.
  */
 export class ApiError extends Error {
@@ -111,26 +111,43 @@ export function fetchThrough(run: ReturnType<typeof createLimiter>, fetchImpl: t
 
 const fetchInTurn = fetchThrough(createLimiter(MAX_REQUESTS_IN_FLIGHT));
 
+/** A request without its answer: TIMEOUT, ABORTED when the caller cancelled it, or NETWORK. */
+function requestError(exc: unknown, init?: ApiRequestInit): ApiError {
+  // AbortSignal.timeout rejects fetch with a TimeoutError; a cancelled request with an AbortError
+  const timedOut = (exc as Error).name === "TimeoutError";
+  const aborted = init?.signal?.aborted || (exc as Error).name === "AbortError";
+  return new ApiError(0, timedOut ? "TIMEOUT" : aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
+}
+
+/** Options of a GET: `timeoutMs` as in ApiRequestInit. */
+export interface GetOptions {
+  timeoutMs?: number;
+}
+
 export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchInTurn) {
   async function call<T>(path: string, init?: ApiRequestInit): Promise<T> {
     let response: Response;
     try {
       response = await fetchImpl(new URL(path, base).toString(), init);
     } catch (exc) {
-      // AbortSignal.timeout rejects fetch with a TimeoutError; a cancelled request with an AbortError
-      const timedOut = (exc as Error).name === "TimeoutError";
-      const aborted = init?.signal?.aborted || (exc as Error).name === "AbortError";
-      throw new ApiError(0, timedOut ? "TIMEOUT" : aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
+      throw requestError(exc, init);
     }
     if (!response.ok) throw await toApiError(response);
-    return (await response.json()) as T;
+    try {
+      return (await response.json()) as T;
+    } catch (exc) {
+      // An answer that is not JSON is the server's failure («Algo ha fallado por nuestra parte»)
+      if (exc instanceof SyntaxError) throw new ApiError(response.status, "INVALID_RESPONSE", exc.message);
+      // The timeout also covers the body: a download that stops arriving fails as the request would
+      throw requestError(exc, init);
+    }
   }
 
   /** GET /api/v1/places: a zone's facilities of one or several categories as points, following every page. */
-  async function places(query: PlacesQuery): Promise<PlaceFeature[]> {
-    const first = await call<PlacesResponse>(placesPath(query, 1));
+  async function places(query: PlacesQuery, { timeoutMs }: GetOptions = {}): Promise<PlaceFeature[]> {
+    const first = await call<PlacesResponse>(placesPath(query, 1), { timeoutMs });
     const rest = await Promise.all(
-      Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
+      Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2), { timeoutMs })),
     );
     // The schema types the point as a tuple of unknowns (tuple[float, float] in Pydantic): it is GeoJSON [lon, lat]
     return [first, ...rest].flatMap((body) => body.data.features) as unknown as PlaceFeature[];
@@ -138,7 +155,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
 
   return {
     /** GET /api/v1/gaps/{level}/{code}: what a zone is missing against the region. */
-    zoneGaps(level: GapLevel, code: string, { timeoutMs }: { timeoutMs?: number } = {}) {
+    zoneGaps(level: GapLevel, code: string, { timeoutMs }: GetOptions = {}) {
       return call<ZoneGapListResponse>(zoneGapsUrl(level, code, base), { timeoutMs });
     },
     /** GET /api/v1/gaps?level=&row=: one row of «Qué falta» for every zone of a level (the map). */
@@ -150,8 +167,8 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
       return call<DatasetListResponse>(`/api/v1/datasets${cmOnly ? "?cm_only=true" : ""}`);
     },
     /** GET /api/v1/geo/admin-units: zone outlines, simplified by `simplifyM` metres, optionally one unit's children. */
-    adminUnits(level: AdminLevel, simplifyM: number, parent?: string) {
-      return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent));
+    adminUnits(level: AdminLevel, simplifyM: number, parent?: string, { timeoutMs }: GetOptions = {}) {
+      return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent), { timeoutMs });
     },
     places,
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */

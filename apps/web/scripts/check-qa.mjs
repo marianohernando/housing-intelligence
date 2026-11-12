@@ -10,6 +10,8 @@
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map show every attribution_text of /datasets
+//   node scripts/check-qa.mjs atribucion [outDir] # mobile map attribution folded behind its (i), never the LCP
+//   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -557,11 +559,25 @@ async function gap03(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
-const FUENCARRAL = { path: "/zona/distrito/2807908", name: "Fuencarral-El Pardo" };
+const FUENCARRAL = { path: "/zona/distrito/2807908", id: "ES.28.DIS.2807908", name: "Fuencarral-El Pardo" };
+const HOSPITALS = ["Hospital general", "Hospital especializado", "Hospital de media y larga estancia", "Hospital de salud mental y tratamiento de toxicomanías"];
+const NO_NAME_NOTICE = "Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.";
+
+/** Hospitals of Fuencarral-El Pardo without a proper name in the API: only the type, «Hospital general (Madrid)» (lib/map/places.ts). */
+async function unnamedHospitals() {
+  const q = new URLSearchParams({ category: "health", admin_unit_id: FUENCARRAL.id });
+  for (const s of HOSPITALS) q.append("subcategory", s);
+  const response = await fetch(`${API}/api/v1/places?${q}`);
+  if (!response.ok) throw new Error(`GET /places ${response.status}`);
+  const { data } = await response.json();
+  return data.features.filter((f) => (f.properties.name ?? "").startsWith(`${f.properties.subcategory} (`)).length;
+}
 
 /** HOSP-001 (D-218): hospitals with their name, beds and who runs them, and the source of the beds. */
 async function hospitals(browser) {
   const failures = [];
+  // The notice shows when some hospital has no name, as the API says: since D-221 all may have one
+  report.hospitales_sin_nombre_api = await unnamedHospitals();
   for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
     const { ctx, page, errors } = await open(browser, profile, FUENCARRAL.path);
     const panel = page.getByRole("region", { name: "Todos los centros", exact: true });
@@ -592,7 +608,7 @@ async function hospitals(browser) {
     await panel.screenshot({ path: `${out}/hosp_hospitales_fuencarral_${id}.png` });
     if (!items.some((t) => t.includes("Hospital Universitario La Paz · 966 camas instaladas · gestión pública"))) failures.push(`${id}: sin La Paz`);
     if (items.some((t) => /privado|(^|· )privada/.test(t))) failures.push(`${id}: «privado» a secas`);
-    if (!entry.frase.includes("Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.")) failures.push(`${id}: aviso de nombres`);
+    if (entry.frase.includes(NO_NAME_NOTICE) !== report.hospitales_sin_nombre_api > 0) failures.push(`${id}: aviso de nombres distinto de la API`);
     if (!entry.fuente.startsWith("Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025")) failures.push(`${id}: frase de las camas`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
     if (entry.consola.length) failures.push(`${id}: consola`);
@@ -707,6 +723,160 @@ async function licences(browser) {
   for (const m of citedAll(mapLines, datasets)) failures.push(`mapa: falta ${m}`);
   await z.page.locator(".maplibregl-ctrl-attrib").first().screenshot({ path: `${out}/licencias_mapa_desktop.png` });
   await z.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Candidates for the largest paint on a phone over slow 4G (the profile of infra/deploy/e2e/perf_prod.mjs). */
+async function lcpOnSlow4g(browser, path) {
+  const ctx = await browser.newContext({ ...MOBILE, locale: "es-ES" });
+  const page = await ctx.newPage();
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
+  await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 });
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  await page.addInitScript(() => {
+    window.__lcp = [];
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) {
+        window.__lcp.push({ ms: Math.round(e.startTime), en_atribucion: Boolean(e.element?.closest(".maplibregl-ctrl-attrib")), texto: (e.element?.textContent ?? "").trim().slice(0, 50) });
+      }
+    }).observe({ type: "largest-contentful-paint", buffered: true });
+  });
+  await page.goto(`${BASE}${path}`, { waitUntil: "networkidle", timeout: 180_000 });
+  const entries = await page.evaluate(() => window.__lcp);
+  await ctx.close();
+  return entries;
+}
+
+/**
+ * Attribution of the map on mobile (LCP of C on slow 4G): folded behind its (i) under the header,
+ * one tap opens every citation the API gives, clear of the sheet, the legend and the buttons; it is
+ * never the largest paint. On desktop it stays spelled out at the bottom right.
+ */
+async function attribution(browser) {
+  const failures = [];
+  const { datasets } = (await (await fetch(`${API}/api/v1/datasets`)).json()).data;
+  for (const [name, path] of [["portada", "/"], ["zona", ZONE.path]]) {
+    const p = await open(browser, MOBILE, path);
+    const control = p.page.locator(".maplibregl-ctrl-attrib").first();
+    const button = p.page.locator(".maplibregl-ctrl-attrib-button").first();
+    await control.waitFor({ timeout: 20000 });
+    const state = () => control.evaluate((el) => ({ abierta: el.classList.contains("maplibregl-compact-show") && el.hasAttribute("open"), clases: el.className }));
+    // What the attribution must stay clear of: the header, the sheet, the legend and every button or link outside the map
+    const around = () => p.page.evaluate(() => {
+      const rect = (el) => { const r = el.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) }; };
+      const sheet = document.querySelector("[data-sheet]");
+      const sheetTop = sheet ? sheet.getBoundingClientRect().top : innerHeight;
+      const controls = [...document.querySelectorAll("a, button, select, .glass")]
+        .filter((el) => !el.closest(".maplibregl-map") && el.getClientRects().length > 0)
+        .map((el) => ({ el: `${el.tagName.toLowerCase()} «${(el.getAttribute("aria-label") ?? el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 40)}»`, ...rect(el) }))
+        .filter((r) => r.top < sheetTop && r.bottom > 0);
+      return { cabecera: rect(document.querySelector("header")), hoja: sheet ? rect(sheet) : null, controles: controls };
+    });
+    const hits = (b, ctx) => ctx.controles.filter((r) => b.left < r.right - 1 && r.left < b.right - 1 && b.top < r.bottom - 1 && r.top < b.bottom - 1).map((r) => r.el);
+    const entry = (report[`movil_${name}`] = {});
+    entry.al_cargar = await state();
+    entry.boton = { nombre: await button.getAttribute("aria-label"), caja: await box(button) };
+    const ctx = await around();
+    entry.alrededor = { cabecera: ctx.cabecera, hoja: ctx.hoja };
+    entry.boton_pisa = hits(entry.boton.caja, ctx);
+    await p.page.screenshot({ path: `${out}/atribucion_${name}_plegada_mobile.png` });
+    await button.tap();
+    await p.page.waitForTimeout(300);
+    entry.tras_un_toque = await state();
+    entry.abierta = { caja: await box(control), texto: flat(await p.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()) };
+    entry.abierta_pisa = hits(entry.abierta.caja, ctx);
+    await p.page.screenshot({ path: `${out}/atribucion_${name}_abierta_mobile.png` });
+    entry.axe_abierta = await axe(p.page);
+    await button.tap();
+    await p.page.waitForTimeout(300);
+    entry.tras_otro_toque = await state();
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    entry.lcp_slow4g = await lcpOnSlow4g(browser, path);
+    const last = entry.lcp_slow4g.at(-1);
+    if (entry.al_cargar.abierta) failures.push(`${name}: abierta al cargar`);
+    if (!entry.tras_un_toque.abierta || entry.tras_otro_toque.abierta) failures.push(`${name}: el (i) no abre y cierra`);
+    if (entry.boton.nombre !== "Fuentes y licencias del mapa") failures.push(`${name}: nombre del (i) «${entry.boton.nombre}»`);
+    if (entry.boton.caja.top < ctx.cabecera.bottom || (ctx.hoja && entry.abierta.caja.bottom > ctx.hoja.top)) failures.push(`${name}: pisa la cabecera o la hoja`);
+    if (entry.boton_pisa.length || entry.abierta_pisa.length) failures.push(`${name}: pisa ${[...entry.boton_pisa, ...entry.abierta_pisa].join(", ")}`);
+    for (const m of citedAll(entry.abierta.texto.split(/ · | \| /), datasets)) failures.push(`${name}: falta ${m}`);
+    if (entry.axe.length || entry.axe_abierta.length) failures.push(`${name}: axe ${[...entry.axe, ...entry.axe_abierta].map((a) => a.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${name}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${name}: desborde`);
+    if (!last || last.en_atribucion) failures.push(`${name}: la atribución es el LCP`);
+    await p.ctx.close();
+  }
+  // Desktop: as before, every citation spelled out at the bottom right
+  const d = await open(browser, DESKTOP, ZONE.path);
+  const control = d.page.locator(".maplibregl-ctrl-attrib").first();
+  await control.waitFor({ timeout: 20000 });
+  report.escritorio_zona = {
+    abierta: await control.evaluate((el) => el.hasAttribute("open") && !el.classList.contains("maplibregl-compact")),
+    caja: await box(control),
+    texto: flat(await d.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()),
+    axe: await axe(d.page),
+    consola: d.errors,
+  };
+  await d.page.screenshot({ path: `${out}/atribucion_zona_desktop.png` });
+  const e = report.escritorio_zona;
+  if (!e.abierta) failures.push("escritorio: plegada");
+  for (const m of citedAll(e.texto.split(/ · | \| /), datasets)) failures.push(`escritorio: falta ${m}`);
+  if (e.axe.length || e.consola.length) failures.push("escritorio: axe o consola");
+  await d.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * Icons (favicon.ico and apple-touch-icon gave 404 in the deploy logs): every page links them, they
+ * load, the old fixed paths phones ask for answer too, and no request of the page fails.
+ */
+async function icons(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    for (const [name, path] of [["portada", "/"], ["zona", ZONE.path], ["que_falta", "/que-falta?zona=distrito/2807905"]]) {
+      const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+      const page = await ctx.newPage();
+      const errors = [];
+      const notFound = [];
+      page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
+      page.on("response", (r) => { if (r.status() >= 400) notFound.push(`${r.status()} ${new URL(r.url()).pathname}`); });
+      await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(1200);
+      const links = await page.locator("link[rel='icon'], link[rel='apple-touch-icon']").evaluateAll((els) =>
+        els.map((el) => ({ rel: el.getAttribute("rel"), href: el.getAttribute("href"), sizes: el.getAttribute("sizes"), type: el.getAttribute("type") })),
+      );
+      const entry = (report[`${name}_${id}`] = { links, errores_http: notFound, axe: await axe(page), consola: errors });
+      const rels = links.map((l) => `${l.rel} ${l.type}`);
+      for (const must of ["icon image/x-icon", "icon image/svg+xml", "apple-touch-icon image/png"]) {
+        if (!rels.includes(must)) failures.push(`${name} ${id}: falta <link> ${must}`);
+      }
+      if (notFound.length) failures.push(`${name} ${id}: ${notFound.join(", ")}`);
+      if (entry.axe.length || errors.length) failures.push(`${name} ${id}: axe o consola`);
+      await ctx.close();
+    }
+  }
+  report.rutas = {};
+  for (const path of ["/favicon.ico", "/icon.svg", "/apple-icon.png", "/apple-touch-icon.png", "/apple-touch-icon-precomposed.png"]) {
+    const r = await fetch(`${BASE}${path}`);
+    const body = Buffer.from(await r.arrayBuffer());
+    report.rutas[path] = { status: r.status, tipo: r.headers.get("content-type"), bytes: body.length };
+    if (r.status !== 200) failures.push(`${path}: ${r.status}`);
+  }
+  // A sheet with the icons at the sizes a browser and a phone use, from the routes themselves
+  const page = await browser.newPage({ viewport: { width: 520, height: 230 }, deviceScaleFactor: 2 });
+  await page.setContent(`<body style="margin:0;padding:24px;display:flex;gap:28px;align-items:end;font:14px sans-serif;color:#141b3d;background:#f6f5fc">
+    ${[16, 32, 48].map((s) => `<figure style="margin:0;text-align:center"><img src="${BASE}/favicon.ico" width="${s}" height="${s}" alt=""><figcaption>${s} px (.ico)</figcaption></figure>`).join("")}
+    <figure style="margin:0;text-align:center"><img src="${BASE}/icon.svg" width="64" height="64" alt=""><figcaption>SVG</figcaption></figure>
+    <figure style="margin:0;text-align:center"><img src="${BASE}/apple-icon.png" width="120" height="120" style="border-radius:27px" alt=""><figcaption>iPhone (180 px)</figcaption></figure>
+  </body>`);
+  await page.waitForLoadState("networkidle");
+  await page.screenshot({ path: `${out}/iconos.png` });
+  await page.close();
   report.fallos = failures;
   if (failures.length) process.exitCode = 1;
 }
@@ -912,6 +1082,8 @@ else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
+else if (mode === "atribucion") await attribution(browser);
+else if (mode === "iconos") await icons(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);

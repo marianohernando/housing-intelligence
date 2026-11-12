@@ -1,0 +1,182 @@
+{
+ "modo": "iconos",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "portada_desktop": {
+  "links": [
+   {
+    "rel": "icon",
+    "href": "/favicon.ico?favicon.0a03jd7k1ch0q.ico",
+    "sizes": "48x48",
+    "type": "image/x-icon"
+   },
+   {
+    "rel": "icon",
+    "href": "/icon.svg?icon.0qx5o8yx0eabc.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+   },
+   {
+    "rel": "apple-touch-icon",
+    "href": "/apple-icon.png?apple-icon.1owlzx-ujg_lg.png",
+    "sizes": "180x180",
+    "type": "image/png"
+   }
+  ],
+  "errores_http": [],
+  "axe": [],
+  "consola": []
+ },
+ "zona_desktop": {
+  "links": [
+   {
+    "rel": "icon",
+    "href": "/favicon.ico?favicon.0a03jd7k1ch0q.ico",
+    "sizes": "48x48",
+    "type": "image/x-icon"
+   },
+   {
+    "rel": "icon",
+    "href": "/icon.svg?icon.0qx5o8yx0eabc.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+   },
+   {
+    "rel": "apple-touch-icon",
+    "href": "/apple-icon.png?apple-icon.1owlzx-ujg_lg.png",
+    "sizes": "180x180",
+    "type": "image/png"
+   }
+  ],
+  "errores_http": [],
+  "axe": [],
+  "consola": []
+ },
+ "que_falta_desktop": {
+  "links": [
+   {
+    "rel": "icon",
+    "href": "/favicon.ico?favicon.0a03jd7k1ch0q.ico",
+    "sizes": "48x48",
+    "type": "image/x-icon"
+   },
+   {
+    "rel": "icon",
+    "href": "/icon.svg?icon.0qx5o8yx0eabc.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+   },
+   {
+    "rel": "apple-touch-icon",
+    "href": "/apple-icon.png?apple-icon.1owlzx-ujg_lg.png",
+    "sizes": "180x180",
+    "type": "image/png"
+   }
+  ],
+  "errores_http": [],
+  "axe": [],
+  "consola": []
+ },
+ "portada_mobile": {
+  "links": [
+   {
+    "rel": "icon",
+    "href": "/favicon.ico?favicon.0a03jd7k1ch0q.ico",
+    "sizes": "48x48",
+    "type": "image/x-icon"
+   },
+   {
+    "rel": "icon",
+    "href": "/icon.svg?icon.0qx5o8yx0eabc.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+   },
+   {
+    "rel": "apple-touch-icon",
+    "href": "/apple-icon.png?apple-icon.1owlzx-ujg_lg.png",
+    "sizes": "180x180",
+    "type": "image/png"
+   }
+  ],
+  "errores_http": [],
+  "axe": [],
+  "consola": []
+ },
+ "zona_mobile": {
+  "links": [
+   {
+    "rel": "icon",
+    "href": "/favicon.ico?favicon.0a03jd7k1ch0q.ico",
+    "sizes": "48x48",
+    "type": "image/x-icon"
+   },
+   {
+    "rel": "icon",
+    "href": "/icon.svg?icon.0qx5o8yx0eabc.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+   },
+   {
+    "rel": "apple-touch-icon",
+    "href": "/apple-icon.png?apple-icon.1owlzx-ujg_lg.png",
+    "sizes": "180x180",
+    "type": "image/png"
+   }
+  ],
+  "errores_http": [],
+  "axe": [],
+  "consola": []
+ },
+ "que_falta_mobile": {
+  "links": [
+   {
+    "rel": "icon",
+    "href": "/favicon.ico?favicon.0a03jd7k1ch0q.ico",
+    "sizes": "48x48",
+    "type": "image/x-icon"
+   },
+   {
+    "rel": "icon",
+    "href": "/icon.svg?icon.0qx5o8yx0eabc.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+   },
+   {
+    "rel": "apple-touch-icon",
+    "href": "/apple-icon.png?apple-icon.1owlzx-ujg_lg.png",
+    "sizes": "180x180",
+    "type": "image/png"
+   }
+  ],
+  "errores_http": [],
+  "axe": [],
+  "consola": []
+ },
+ "rutas": {
+  "/favicon.ico": {
+   "status": 200,
+   "tipo": "image/x-icon",
+   "bytes": 3686
+  },
+  "/icon.svg": {
+   "status": 200,
+   "tipo": "image/svg+xml",
+   "bytes": 487
+  },
+  "/apple-icon.png": {
+   "status": 200,
+   "tipo": "image/png",
+   "bytes": 8813
+  },
+  "/apple-touch-icon.png": {
+   "status": 200,
+   "tipo": "image/png",
+   "bytes": 8813
+  },
+  "/apple-touch-icon-precomposed.png": {
+   "status": 200,
+   "tipo": "image/png",
+   "bytes": 8813
+  }
+ },
+ "fallos": []
+}

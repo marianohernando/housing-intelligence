@@ -14,6 +14,7 @@ import {
   groupFacilities,
 } from "../map/facilities";
 import type { PlaceFeature } from "../map/places";
+import { searchable } from "../map/zones";
 
 function place(
   id: string,
@@ -151,7 +152,10 @@ describe("groupFacilities", () => {
     const hospitals = groupFacilities(features).hospital;
     const doce = hospitals.find((f) => f.name === "Hospital Universitario 12 de Octubre");
     expect(doce).toMatchObject({ detail: "1.161 camas instaladas · gestión pública", source: "ms_catalogo_nacional_hospitales" });
-    const jd = hospitals.find((f) => f.name === "Hospital Universitario Fundacion Jimenez Diaz");
+    // Found with or without its tildes: the API spells it «Fundación Jiménez Díaz» since D-221, the
+    // fixture will when line A regenerates it; what is checked here is its beds and management
+    const jd = hospitals.find((f) => searchable(f.name ?? "") === "hospital universitario fundacion jimenez diaz");
+    expect(jd).toBeDefined();
     expect(jd?.detail).toBe("651 camas instaladas · gestión privada");
     for (const f of hospitals) expect(f.detail ?? "").not.toMatch(/privado|(^|· )privada/);
     // Beds only with their source, and never a made-up name: the generic «Hospital general (Madrid)» stays unnamed

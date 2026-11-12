@@ -7,7 +7,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { GeoJSONSource, LngLatBoundsLike, Map as MapLibreMap, MapLayerMouseEvent } from "maplibre-gl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { useDatasets } from "@/components/provenance/useDatasets";
@@ -28,6 +28,7 @@ import {
   islandZoom,
   MOBILE_QUERY,
   projectAt,
+  SHEET_PEEK,
   ZONE_BEARING,
   ZONE_PITCH,
   type ZoneCamera,
@@ -102,6 +103,8 @@ const TEXT = {
   // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
+/** MapLibre's UI strings this map shows, in Spanish (its `locale` option patches the English defaults). */
+const MAP_LOCALE = { "AttributionControl.ToggleAttribution": "Fuentes y licencias del mapa" };
 const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];
 
 type Failure = "webgl" | "tiles" | "script";
@@ -147,6 +150,22 @@ function labelOptions(end: ZoneCamera): KeyPointOptions {
 
 function source(map: MapLibreMap, id: string): GeoJSONSource {
   return map.getSource(id) as GeoJSONSource;
+}
+
+/**
+ * The sources whose licences ask to be cited where their data shows (mapAttribution). On desktop
+ * they are spelled out at the bottom right. On mobile the bottom of the map is under the sheet:
+ * MapLibre's compact control goes under the header, folded behind its (i) button (MapLibre opens
+ * it until the map is first dragged), so its long text neither shows through the sheet nor is the
+ * page's largest paint. One tap opens it, and the pages with a footer list every citation.
+ */
+function addAttribution(lib: MapLibre, map: MapLibreMap, citations: string): void {
+  const mobile = matches(MOBILE);
+  map.addControl(new lib.AttributionControl({ compact: mobile, customAttribution: citations }), mobile ? "top-right" : "bottom-right");
+  if (!mobile) return;
+  const folded = map.getContainer().querySelector(".maplibregl-ctrl-attrib");
+  folded?.classList.remove("maplibregl-compact-show");
+  folded?.removeAttribute("open");
 }
 
 /**
@@ -422,8 +441,9 @@ export default function VidaMap() {
           center: [-3.7, 40.42],
           zoom: 8.3,
           maxPitch: 70,
-          // The sources whose licences ask to be cited where their data shows (mapAttribution)
-          attributionControl: { compact: matches(MOBILE), customAttribution: attribution.current },
+          // Added below, where it fits each screen (addAttribution)
+          attributionControl: false,
+          locale: MAP_LOCALE,
         });
       } catch {
         setFailure("webgl");
@@ -431,6 +451,7 @@ export default function VidaMap() {
       }
       const created = instance;
       mapRef.current = created;
+      addAttribution(lib, created, attribution.current);
       if (!matches(MOBILE)) created.addControl(new lib.NavigationControl({ visualizePitch: true }), "bottom-right");
       created.on("load", () => {
         const palette = readPalette();
@@ -567,6 +588,7 @@ export default function VidaMap() {
         className={styles.map}
         role="region"
         aria-label={mapAria}
+        style={{ "--sheet-peek": `${SHEET_PEEK * 100}dvh` } as CSSProperties}
       />
       {strongFailure && (
         <div role="alert" className={`glass ${styles.failure}`}>

@@ -91,6 +91,21 @@ describe("api client", () => {
     expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
   });
 
+  it("fails with TIMEOUT when the body stops arriving after the answer started", async () => {
+    const stalled: FetchLike = async () =>
+      new Response(new ReadableStream({ start: (c) => c.error(new DOMException("The operation timed out.", "TimeoutError")) }), { status: 200 });
+    const error = await createApi(BASE, stalled).adminUnits("municipio", 50, undefined, { timeoutMs: 10 }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
+  });
+
+  it("tells an answer that is not JSON apart from a network failure (INVALID_RESPONSE)", async () => {
+    const html: FetchLike = async () => new Response("<html>Bad gateway</html>", { status: 200 });
+    const error = await createApi(BASE, html).datasets().catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ status: 200, code: "INVALID_RESPONSE" });
+  });
+
   it("never waits forever for its turn behind requests that hang: the wait has the same limit (TIMEOUT)", async () => {
     const run = createLimiter(1);
     const hanging = (() => new Promise<Response>(() => undefined)) as unknown as typeof fetch;
@@ -185,6 +200,20 @@ describe("api client, routes used by the map", () => {
     expect(calls.map((c) => c.url)).toEqual([
       `${BASE}/api/v1/places?category=education%2Chealth%2Cpharmacy&admin_unit_id=ES.28.DIS.2807905&subcategory=Farmacia`,
     ]);
+  });
+
+  it("gives the outlines and every page of places a timeout too, so none holds its turn forever (M4)", async () => {
+    const calls: Call[] = [];
+    const outlines = createApi(BASE, fakeFetch(200, envelope({ type: "FeatureCollection", features: [] }), calls));
+    await outlines.adminUnits("barrio", 10, "ES.28.DIS.2807905", { timeoutMs: 15 });
+    const pages: FetchLike = async (url, init) => {
+      calls.push({ url: String(url), init });
+      const n = Number(new URL(String(url)).searchParams.get("page") ?? "1");
+      const body = envelope({ type: "FeatureCollection", features: [], total: 2, page: n, pages: 2 });
+      return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+    };
+    await createApi(BASE, pages).places({ category: "transport", subcategories: ["metro"] }, { timeoutMs: 25 });
+    expect(calls.map((c) => (c.init as { timeoutMs?: number } | undefined)?.timeoutMs)).toEqual([15, 25, 25]);
   });
 
   it("follows every page of places instead of cutting at the first", async () => {

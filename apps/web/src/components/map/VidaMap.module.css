@@ -24,6 +24,22 @@
 }
 
 /*
+ * Mobile: the attribution's (i) just under the header (VidaMap addAttribution), clear of the sheet,
+ * the legend and the buttons. Opened, its citations stay in the band of map above the sheet and
+ * the legend (MOBILE_LEGEND of camera.ts), scrolling if they need more room.
+ */
+@media (max-width: 760px) {
+  .map :global(.maplibregl-ctrl-top-right) {
+    top: 7.25rem;
+  }
+
+  .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner) {
+    max-height: calc(100dvh - var(--sheet-peek) - 7.25rem - 9rem);
+    overflow-y: auto;
+  }
+}
+
+/*
  * Quiet note when only the street background failed (offline): at the top of the map, between
  * the cards as the legend is (three columns), at the top right of the map (one column of cards).
  */
@@ -51,7 +67,7 @@
 
 @media (max-width: 760px) {
   .note {
-    top: 8.5rem;
+    top: 10rem;
     right: 1rem;
     left: 1rem;
   }
@@ -138,9 +154,9 @@ div.failure {
   color: var(--violet-strong);
 }
 
-/* Mobile: just under the header (brand and tabs), above the bottom sheet */
+/* Mobile: under the header (brand and tabs) and the attribution's (i), above the bottom sheet */
 @media (max-width: 760px) {
   .failure {
-    top: 8.5rem;
+    top: 10rem;
   }
 }
