@@ -66,6 +66,10 @@ export const ATTRIBUTIONS_FALLBACK: readonly Attribution[] = [
   { text: "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es.", href: "https://www.cartociudad.es" },
   { text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad.", href: "https://www.crtm.es" },
   { text: "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad.", href: "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" },
+  {
+    text: "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024.",
+    href: "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+  },
   { text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0).", href: "https://datos.madrid.es" },
   { text: "© OpenStreetMap contributors, ODbL.", href: "https://www.openstreetmap.org/copyright" },
 ];
