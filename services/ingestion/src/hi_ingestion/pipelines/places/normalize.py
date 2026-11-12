@@ -258,7 +258,7 @@ def _rename(rows: list[dict[str, Any]], fixes: dict[str, PlaceCorrection]) -> No
     keeps the name it replaces, and the directory attribute keeps the published one."""
     for place in rows:
         fix = fixes.get(str(place["external_id"]))
-        if fix is not None and fix.name is not None:
+        if fix is not None and fix.name is not None and fix.name != place["canonical_name"]:
             place["attributes"]["correction"]["previous_name"] = place["canonical_name"]
             place["canonical_name"] = fix.name
 

@@ -30,8 +30,9 @@ from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
 # 1.1: coordinate repair (D-216); 1.2: the street must match; 1.3: directories (D-218);
 # 1.3.1: stricter directory rules (equal street words, public/private veto); 1.4: primary care
-# 1.6: corrections with an official source (D-218 §10); 1.7: corrected names (D-221)
-PARSER_VERSION = "places-1.7.0"
+# 1.6: corrections with an official source (D-218 §10); 1.7: corrected names (D-221);
+# 1.7.1: a corrected name is whole words of its source
+PARSER_VERSION = "places-1.7.1"
 GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
 _UNITS = text(
     """

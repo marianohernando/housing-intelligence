@@ -6,10 +6,12 @@ with lineage: the file is an input of the register's run and the place says it w
 A corrected name is the source's own text (D-221): only case and quotation marks may differ.
 """
 
+import re
+import unicodedata
 from datetime import date
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
 from hi_contracts.catalog.dataset import DATASET_ID_PATTERN
 
@@ -45,8 +47,14 @@ _QUOTES = str.maketrans("", "", "\"'«»“”‘’")
 
 
 def _as_said(text: str) -> str:
-    """For comparing a name with its source: without case, quotation marks or extra spaces."""
-    return " ".join(text.translate(_QUOTES).split()).casefold()
+    """For comparing a name with its source: composed accents, without case, quotation marks
+    or extra spaces."""
+    return " ".join(unicodedata.normalize("NFC", text).translate(_QUOTES).split()).casefold()
+
+
+def _says(name: str, says: str) -> bool:
+    """The name is whole words of the source's text, in the same order."""
+    return re.search(rf"(?<!\w){re.escape(_as_said(name))}(?!\w)", _as_said(says)) is not None
 
 
 class PlaceCorrection(BaseModel):
@@ -64,6 +72,11 @@ class PlaceCorrection(BaseModel):
         description="The name to show, as the source writes it (tildes included, D-221)",
     )
 
+    @field_validator("name")
+    @classmethod
+    def _composed(cls, name: str | None) -> str | None:
+        return " ".join(unicodedata.normalize("NFC", name).split()) if name is not None else None
+
     @model_validator(mode="after")
     def _fixes(self) -> Self:
         key = f"{self.dataset_id}/{self.entity_id}"
@@ -71,7 +84,7 @@ class PlaceCorrection(BaseModel):
             raise ValueError(f"{key}: give an address or a directory entry, not both")
         if self.address is None and self.directory is None and self.name is None:
             raise ValueError(f"{key}: nothing to correct")
-        if self.name is not None and _as_said(self.name) not in _as_said(self.source.says):
+        if self.name is not None and not _says(self.name, self.source.says):
             raise ValueError(f"{key}: the name must be the text the source says")
         return self
 

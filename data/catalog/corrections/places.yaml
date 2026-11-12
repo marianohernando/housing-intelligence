@@ -143,8 +143,9 @@ corrections:
     reason: >-
       El Catálogo Nacional de Hospitales escribe «Hospital Beata Maria Ana» (CODCNH 280360, calle
       del Doctor Esquerdo 83, Madrid; privado benéfico de la Iglesia). El decreto de la Comunidad
-      que le concede la Placa de Oro nombra con tilde el mismo hospital, el de las Hermanas
-      Hospitalarias en Madrid.
+      que le concede la Placa de Oro lo nombra con tilde, sin dirección: se empareja por el nombre,
+      único en la región, y por la titularidad (las Hermanas Hospitalarias, en Madrid), no por el
+      domicilio (D-221 §3).
     source:
       publisher: Comunidad de Madrid · BOCM núm. 106 (06/05/2014), Decreto 53/2014 del Consejo de Gobierno
       url: https://www.bocm.es/boletin/CM_Orden_BOCM/2014/05/06/BOCM-20140506-22.PDF
@@ -190,8 +191,8 @@ corrections:
     reason: >-
       El Catálogo de Centros de Atención Primaria del Ministerio escribe «INFANTE LUIS DE BORBON»
       (consultorio local, calle Secundino Zuazo 6, 28660); la página del centro en comunidad.madrid
-      lo nombra con tilde y en la misma dirección. El registro lo inscribe como centro de salud
-      (D-218 §9): el tipo no cambia, solo el nombre.
+      lo nombra con tilde y en la misma dirección. Se toma su nombre entero, que dice «Consultorio»
+      (D-221 §5); el registro lo inscribe como centro de salud y ese tipo no cambia (D-218 §9).
     source:
       publisher: Comunidad de Madrid · centros sanitarios del Servicio Madrileño de Salud
       url: https://www.comunidad.madrid/centros/consultorio-infante-don-luis-borbon

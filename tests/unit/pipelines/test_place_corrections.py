@@ -1,5 +1,7 @@
 """Versioned corrections with an official source per record (D-218 §10)."""
 
+import unicodedata
+
 import pandas as pd
 import pytest
 from pydantic import ValidationError
@@ -77,9 +79,20 @@ def test_a_corrected_name_is_the_text_of_its_source_tildes_included() -> None:
     PlaceCorrection.model_validate(
         base | {"source": BOCM, "name": "hospital universitario ramón y cajal"}
     )
-    for not_said in ("Hospital Universitario Ramon y Cajal", "Hospital Ramón y Cajal"):
+    for not_said in (
+        "Hospital Universitario Ramon y Cajal",  # a tilde the source does not write
+        "Hospital Ramón y Cajal",
+        "Universitario Ramón y Caj",  # a piece of a word is not the source's text
+    ):
         with pytest.raises(ValidationError, match="says"):
             PlaceCorrection.model_validate(base | {"source": BOCM, "name": not_said})
+
+
+def test_a_corrected_name_is_compared_and_kept_in_composed_form_without_extra_spaces() -> None:
+    base = {"dataset_id": "cm_x", "entity_id": "CH0049", "reason": "una razón larga"}
+    decomposed = unicodedata.normalize("NFD", "  Hospital  Universitario Ramón y Cajal ")
+    fix = PlaceCorrection.model_validate(base | {"source": BOCM, "name": decomposed})
+    assert fix.name == unicodedata.normalize("NFC", "Hospital Universitario Ramón y Cajal")
 
 
 def test_the_ramon_y_cajal_takes_its_name_from_the_source_of_its_correction() -> None:
@@ -127,6 +140,26 @@ def test_a_name_correction_wins_over_the_directory_and_keeps_what_it_replaced() 
     assert row["attributes"]["correction"]["previous_name"] == "Hospital Fuensanta"
     untouched = places.frame.set_index("external_id").loc["CH0008"]
     assert "correction" not in untouched["attributes"]
+
+
+def test_a_name_correction_also_names_a_place_no_directory_matched() -> None:
+    spec = load_catalog().pipelines["cm_centros_sanitarios"]
+    assert isinstance(spec, PointsPipeline)
+    frame = read_csv(FIXTURES / "cm_centros_sanitarios.csv", spec.csv)
+    fix = PlaceCorrection.model_validate(
+        {
+            "dataset_id": "cm_centros_sanitarios",
+            "entity_id": "CH0008",
+            "reason": "el registro no publica su nombre",
+            "source": SOURCE | {"says": "CH0008. Clínica Ñandú. Renovación"},
+            "name": "Clínica Ñandú",
+        }
+    )
+    row = normalize_places(frame, spec, corrections=[fix]).frame.set_index("external_id")
+    assert row.loc["CH0008", "canonical_name"] == "Clínica Ñandú"
+    correction = row.loc["CH0008", "attributes"]["correction"]
+    assert correction["previous_name"] == "Hospital general (Madrid)"  # the register's
+    assert "directory" not in row.loc["CH0008", "attributes"]
 
 
 def test_a_forced_pair_goes_first_and_its_entry_is_never_offered_again() -> None:

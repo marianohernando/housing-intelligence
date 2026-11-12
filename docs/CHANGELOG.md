@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.40 — Revisión de los nombres con tilde (2026-11-12)
+- D-221 §1, §3 y §5: comparación por palabras completas y en NFC, el nombre de la fuente entero (no solo sus tildes) y la excepción declarada del Beata María Ana.
+
 ## v0.5.39 — Nombres con tilde con fuente oficial (2026-11-12)
 - D-221: `name` en las correcciones de lugares, tomado del texto de su fuente; 11 nombres de hospitales y centros de atención primaria recuperan sus tildes.
 
