@@ -22,6 +22,7 @@
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
 //   node scripts/check-qa.mjs impacto [outDir]   # «Dónde invertir primero» (D-229) and «Afecta a N …» in a FALTA row
+//   node scripts/check-qa.mjs claridad [outDir]  # line D's copy for a non-technical jury (summary, «Aquí hay n por cada 100», «Ver la cifra»)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -1185,15 +1186,17 @@ async function fitButShort(browser) {
     await p.page.waitForTimeout(800);
     // Every row of the zone's «Qué falta» in the API, not only the three the card shows
     const gapsAnswer = await fetch(`${API}/api/v1/gaps/${top.zone.level}/${top.zone.code}`);
-    const rows = (await gapsAnswer.json()).data.rows.map((r) => ({ label: r.label, status: r.status }));
-    const lower = (t) => t.charAt(0).toLowerCase() + t.slice(1);
-    const missing = rows.filter((r) => r.status === "FALTA").map((r) => lower(r.label));
-    const tight = rows.filter((r) => r.status === "JUSTO").map((r) => lower(r.label));
-    const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null].filter(Boolean);
+    const rows = (await gapsAnswer.json()).data.rows.map((r) => ({ row: r.row, status: r.status, small: r.reliable === false && !r.comparison_group }));
+    // encaje.aviso_* (pitch/textos_web.md, 13 nov): fila.lista.* names, rows too small to compare left out
+    const LIST = { escuela_infantil: "escuelas infantiles", colegio: "colegios", centro_salud: "centros de salud", mayores: "centros de mayores", farmacia: "farmacias", vivienda: "viviendas grandes para familias" };
+    const join = (n) => (n.length <= 1 ? n.join("") : `${n.slice(0, -1).join(", ")} y ${n[n.length - 1]}`);
+    const names = (status) => rows.filter((r) => r.status === status && !r.small).map((r) => LIST[r.row]);
+    const [missing, tight] = [names("FALTA"), names("JUSTO")];
+    const parts = [missing.length ? `faltan ${join(missing)}` : null, tight.length ? `van justos de ${join(tight)}` : null].filter(Boolean);
     entry.zona = [top.zone.name, top.match_pct];
     entry.filas = rows;
-    entry.esperado = parts.length ? `Encaja con lo que pides; aun así, en la zona ${parts.join("; y ")}.` : null;
-    const line = card.getByText(/^Encaja con lo que pides; aun así/);
+    entry.esperado = parts.length ? `Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí ${parts.join(" y ")}.` : null;
+    const line = card.getByText(/^Encaja con lo que pides\. Aun así/);
     entry.linea = (await line.count()) ? flat(await line.first().innerText()) : null;
     const [cardBox, pillBox] = [await box(card), await box(card.locator("span[title^='Cuánto se parece']").first())];
     entry.pastilla = { card_right: cardBox.right, pill_right: pillBox.right, dentro: pillBox.right <= cardBox.right };
@@ -1555,8 +1558,134 @@ async function impact(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** What «Qué falta» should say for a zone, from its /gaps answer (pitch/textos_web.md, falta.resumen.* and falta.fila.comparacion). */
+function expectedGapCopy(rows) {
+  const LIST = { escuela_infantil: "escuelas infantiles", colegio: "colegios", centro_salud: "centros de salud", mayores: "centros de mayores", farmacia: "farmacias", vivienda: "viviendas grandes para familias" };
+  const join = (n) => (n.length <= 1 ? n.join("") : `${n.slice(0, -1).join(", ")} y ${n[n.length - 1]}`);
+  const small = (r) => r.reliable === false && !r.comparison_group;
+  const names = (pick) => rows.filter(pick).map((r) => LIST[r.row]);
+  const [falta, justo, cubierto] = ["FALTA", "JUSTO", "CUBIERTO"].map((st) => names((r) => r.status === st && !small(r)));
+  const lines = [];
+  if (falta.length) lines.push(`Aquí falta: ${join(falta)}.`);
+  else if (justo.length) lines.push("Aquí no falta nada claro.");
+  else if (cubierto.length) lines.push("Aquí no falta nada frente a municipios parecidos.");
+  if (justo.length) lines.push(`Van justos: ${join(justo)}.`);
+  const tiny = names((r) => r.status !== "SIN_DATOS" && small(r));
+  if (tiny.length) lines.push(`Zona muy pequeña para comparar: ${join(tiny)}.`);
+  const none = names((r) => r.status === "SIN_DATOS");
+  if (none.length) lines.push(`Sin datos: ${join(none)}.`);
+  const comparison = Object.fromEntries(
+    rows.map((r) => {
+      const ratio = r.comparison_group ? r.comparison_group.ratio_to_reference : r.ratio_to_reference;
+      if (r.status === "SIN_DATOS" || ratio == null) return [r.label, null];
+      return [r.label, `${r.comparison_group ? "Junto con sus vecinos, hay" : "Aquí hay"} ${esInt(Math.round(100 * ratio))} por cada 100 que hay en municipios parecidos.`];
+    }),
+  );
+  return { summary: lines.join(" "), comparison };
+}
+
+/**
+ * Line D's copy for a non-technical jury (fase de mejora, 13 nov): the summary over the rows, the
+ * main line of each row with the technical figure behind «Ver la cifra», who a district is compared
+ * with, the hospital as a distance, no «desde la mitad de sus calles» on any screen (also in the
+ * card's facts) and one visible name in the footer.
+ */
+async function clarity(browser) {
+  const failures = [];
+  const ZONES = [
+    ["puente_de_vallecas", "distrito", "2807913"],
+    ["el_alamo", "municipio", "28004"],
+  ];
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    for (const [name, level, code] of ZONES) {
+      const p = await open(browser, profile, `/que-falta?zona=${level}/${code}`);
+      await p.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+      const api = (await (await fetch(`${API}/api/v1/gaps/${level}/${code}`)).json()).data;
+      const want = expectedGapCopy(api.rows);
+      const header = p.page.locator("main header").first();
+      const summary = flat(await header.locator("p").nth(1).innerText());
+      const lead = flat(await header.locator("p strong").first().innerText());
+      const rows = await p.page.locator("main li.glass").evaluateAll((items) =>
+        items.map((li) => ({
+          fila: li.querySelector("h2")?.textContent?.trim(),
+          frase: li.querySelector("h2")?.parentElement?.nextElementSibling?.textContent?.trim() ?? null,
+          cifra_abierta: li.querySelector("details")?.open ?? null,
+          hospital: [...li.querySelectorAll("dl > div")].map((d) => [...d.children].map((c) => c.textContent?.replace(/\s+/g, " ").trim()).join(" ")).find((t) => t.startsWith("Hospital más cercano")) ?? null,
+        })),
+      );
+      const entry = (report[`${name}_${id}`] = { resumen: summary, negrita: lead, resumen_esperado: want.summary, filas: rows });
+      if (summary !== want.summary) failures.push(`${name} ${id}: resumen «${summary}» / «${want.summary}»`);
+      if (!want.summary.startsWith(lead)) failures.push(`${name} ${id}: negrita «${lead}»`);
+      for (const r of rows) {
+        const expected = want.comparison[r.fila];
+        if (expected && r.frase !== expected) failures.push(`${name} ${id} ${r.fila}: «${r.frase}» / «${expected}»`);
+        if (r.cifra_abierta !== false) failures.push(`${name} ${id} ${r.fila}: «Ver la cifra» no empieza cerrada`);
+      }
+      const health = rows.find((r) => r.hospital);
+      if (health && !/^Hospital más cercano (a \d+ min andando|a unos \d+,\d km|Sin datos)$/.test(health.hospital)) failures.push(`${name} ${id}: hospital «${health.hospital}»`);
+      entry.axe = await axe(p.page);
+      await p.page.screenshot({ path: `${out}/claridad_${name}_arriba_${id}.png` });
+      // «Ver la cifra» of the first row: the figure and who the zone is compared with
+      const first = p.page.locator("main li.glass").first();
+      const figure = first.getByText("Ver la cifra");
+      await (touch ? figure.tap() : figure.click());
+      await p.page.waitForTimeout(300);
+      entry.referencia = flat(await first.locator("details dl > div").nth(1).locator("dt").innerText());
+      const wantRef = level === "distrito" ? "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)" : api.rows[0].reference_label;
+      if (entry.referencia !== wantRef) failures.push(`${name} ${id}: referencia «${entry.referencia}» / «${wantRef}»`);
+      entry.axe_cifra = await axe(p.page);
+      await first.screenshot({ path: `${out}/claridad_${name}_fila_cifra_${id}.png` });
+      const body = await p.page.locator("body").innerText();
+      entry.mitad_de_las_calles = /mitad de (sus|las) calles/.test(body);
+      entry.pie = flat(await p.page.locator("footer").last().getByText(/^Vida Fácil · /).innerText());
+      entry.housing_intelligence = body.includes("Housing Intelligence");
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      if (entry.mitad_de_las_calles) failures.push(`${name} ${id}: sigue «mitad de las calles»`);
+      if (!entry.pie.startsWith("Vida Fácil · Proyecto para DATAMAD 2026") || entry.housing_intelligence) failures.push(`${name} ${id}: pie «${entry.pie}»`);
+      for (const k of ["axe", "axe_cifra"]) if (entry[k].length) failures.push(`${name} ${id}: ${k} ${entry[k].map((v) => v.id).join(", ")}`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      if (entry.consola.length) failures.push(`${name} ${id}: consola`);
+      await p.ctx.close();
+    }
+    // The card of the first zone of the example: facts without «desde la mitad de sus calles», said once below
+    const c = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+    const [response] = await Promise.all([c.page.waitForResponse(isSearch, { timeout: 30000 }), press(c.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const top = (await response.json()).data.results[0];
+    await c.page.waitForTimeout(2000);
+    await press(c.page.getByRole("button", { name: new RegExp(`^1 ${top.zone.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`) }).first());
+    const card = c.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+    await card.getByRole("heading", { name: "Qué falta aquí" }).waitFor({ timeout: 20000 });
+    await c.page.waitForTimeout(800);
+    const facts = card.locator("section").filter({ has: c.page.getByRole("heading", { name: "Lo que tienes aquí" }) });
+    const entry = (report[`tarjeta_${id}`] = {
+      zona: top.zone.name,
+      hechos: (await facts.locator("li").allInnerTexts()).map(flat),
+      mediana: await facts.getByText(/^Los minutos andando son los de la mitad de la zona/).count(),
+      aviso: (await card.getByText(/^Encaja con lo que pides\. Aun así/).allInnerTexts()).map(flat),
+      axe: await axe(c.page),
+      overflow_px: await overflow(c.page),
+      consola: c.errors,
+    });
+    if (entry.hechos.some((h) => /mitad de sus calles/.test(h))) failures.push(`tarjeta ${id}: hechos con «mitad de sus calles»`);
+    if (entry.mediana !== 1) failures.push(`tarjeta ${id}: ${entry.mediana} líneas de la mediana`);
+    if (entry.axe.length) failures.push(`tarjeta ${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`tarjeta ${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`tarjeta ${id}: desborde`);
+    await card.screenshot({ path: `${out}/claridad_tarjeta_${id}.png` });
+    await c.ctx.close();
+  }
+  // The zone screen on a phone over slow 4G (its card shows encaje.aviso_*): largest paint candidates
+  report.lcp_zona_slow4g = await lcpOnSlow4g(browser, "/zona/distrito/2807913");
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "claridad") await clarity(browser);
 else if (mode === "impacto") await impact(browser);
 else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);

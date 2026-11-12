@@ -38,7 +38,8 @@ export function inGroup(zone: { comparison_group?: ComparisonGroup | null }): Co
   return group && group.names.length >= 2 ? group : null;
 }
 
-function listNames(names: readonly string[]): string {
+/** «a», «a y b», «a, b y c» (fila.lista.*). */
+export function listNames(names: readonly string[]): string {
   if (names.length <= 1) return names[0] ?? "";
   return `${names.slice(0, -1).join(", ")} y ${names[names.length - 1]}`;
 }
@@ -155,18 +156,52 @@ export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[
   return sortRows(rows).slice(0, limit);
 }
 
+type SummaryRow = Classified & { row: GapRowKey; comparison_group?: ComparisonGroup | null };
+
+/** Too small to compare even with its neighbours: it never counts as short or tight (falta.resumen.pequena). */
+function cannotCompare(row: SummaryRow): boolean {
+  return isSmallZone(row) && inGroup(row) === null;
+}
+
+/** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*). */
+function rowsByStatus(rows: readonly SummaryRow[]) {
+  const names = (pick: (r: SummaryRow) => boolean) => rows.filter(pick).map((r) => ROW_IN_LIST[r.row]);
+  const comparable = (status: GapStatus) => (r: SummaryRow) => r.status === status && !cannotCompare(r);
+  return {
+    falta: names(comparable("FALTA")),
+    justo: names(comparable("JUSTO")),
+    cubierto: names(comparable("CUBIERTO")),
+    small: names((r) => r.status !== "SIN_DATOS" && cannotCompare(r)),
+    none: names((r) => r.status === "SIN_DATOS"),
+  };
+}
+
 /**
- * A zone that fits everything asked can still be short of something (jurado simulado):
- * «Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios.»
- * From every row of the zone's «Qué falta» (not only the three the card shows), FALTA first; null
- * when none is FALTA or JUSTO. Draft text until line D writes it in textos_web.md.
+ * The first lines of «Qué falta» (falta.resumen.*): «Aquí falta: escuelas infantiles.», then what
+ * is tight, too small to compare or without data. The first line goes in bold.
  */
-export function fitsButShortText(rows: readonly { label: string; status: GapStatus }[]): string | null {
-  const names = (status: GapStatus) => rows.filter((r) => r.status === status).map((r) => r.label.charAt(0).toLowerCase() + r.label.slice(1));
-  const [missing, tight] = [names("FALTA"), names("JUSTO")];
-  if (!missing.length && !tight.length) return null;
-  const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null];
-  return `Encaja con lo que pides; aun así, en la zona ${parts.filter(Boolean).join("; y ")}.`;
+export function gapSummary(rows: readonly SummaryRow[]): string[] {
+  const { falta, justo, cubierto, small, none } = rowsByStatus(rows);
+  const lines: string[] = [];
+  if (falta.length) lines.push(`Aquí falta: ${listNames(falta)}.`);
+  else if (justo.length) lines.push("Aquí no falta nada claro.");
+  else if (cubierto.length) lines.push("Aquí no falta nada frente a municipios parecidos.");
+  if (justo.length) lines.push(`Van justos: ${listNames(justo)}.`);
+  if (small.length) lines.push(`Zona muy pequeña para comparar: ${listNames(small)}.`);
+  if (none.length) lines.push(`Sin datos: ${listNames(none)}.`);
+  return lines;
+}
+
+/**
+ * A zone that fits everything asked can still be short of something (encaje.aviso_*): from every
+ * row of its «Qué falta», not only the three the card shows. Rows too small to compare do not
+ * count; null when no row is FALTA or JUSTO.
+ */
+export function fitsButShortText(rows: readonly SummaryRow[]): string | null {
+  const { falta, justo } = rowsByStatus(rows);
+  const parts = [falta.length ? `faltan ${listNames(falta)}` : null, justo.length ? `van justos de ${listNames(justo)}` : null].filter(Boolean);
+  if (!parts.length) return null;
+  return `Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí ${parts.join(" y ")}.`;
 }
 
 /**
@@ -197,6 +232,13 @@ export function walking(extras: readonly IndicatorValue[] | undefined, row?: Gap
   return own ?? extras?.find((e) => e.feature_id.startsWith(WALKING_PREFIX) && e.feature_id !== HOSPITAL);
 }
 
+/** Who a district is compared with (falta.fila.referencia.distrito): the API leaves Madrid out of its reference. */
+export const DISTRICT_REFERENCE = "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)";
+
+export function referenceLabel(apiLabel: string, level: string): string {
+  return level === "distrito" ? DISTRICT_REFERENCE : apiLabel;
+}
+
 /** Walking minutes to the nearest general hospital, an extra of the health row (D-217). */
 export function hospitalWalking(extras: readonly IndicatorValue[] | undefined): IndicatorValue | undefined {
   return extras?.find((e) => e.feature_id === HOSPITAL);
@@ -208,7 +250,7 @@ export function hospitalWalking(extras: readonly IndicatorValue[] | undefined): 
  * Copy of pitch/textos_web.md (falta.fila.a_pie.hospital, hospital.nota).
  */
 export const HOSPITAL_WALK = {
-  to: "el hospital general más cercano",
+  label: "Hospital más cercano",
   note: "Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila.",
 };
 
@@ -218,6 +260,18 @@ export function walkingText({ value }: Pick<IndicatorValue, "value">): string {
   if (value > WALKING_CAP_MIN) return `más de ${WALKING_CAP_MIN} min`;
   if (value < 1) return "menos de 1 min";
   return `${Math.round(value)} min`;
+}
+
+const HOSPITAL_KM_FROM_MIN = 30;
+
+/**
+ * hospital.distancia: up to 30 min, «a 12 min andando»; further, the distance at 4 km/h, «a unos
+ * 3,4 km» (walking 51 minutes to a hospital is not useful, the distance is).
+ */
+export function hospitalText({ value }: Pick<IndicatorValue, "value">): string {
+  if (value === null) return "Sin datos";
+  if (value > HOSPITAL_KM_FROM_MIN) return `a unos ${formatNumber((value * 4) / 60, 1)} km`;
+  return `a ${walkingText({ value })} andando`;
 }
 
 /** Where the walking minutes go to, by row (falta.fila.a_pie); vivienda has none. */

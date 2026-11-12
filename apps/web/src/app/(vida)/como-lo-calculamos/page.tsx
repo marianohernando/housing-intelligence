@@ -154,8 +154,8 @@ function WalkingTimes() {
         Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el
         mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano:
         escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de
-        mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en
-        los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que
+        mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás lo que tarda la
+        mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. Son los mismos 15 minutos de la sección anterior: lo que
         queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay
         calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos»
         del Ayuntamiento.

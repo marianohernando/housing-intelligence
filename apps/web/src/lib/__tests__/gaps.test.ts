@@ -2,18 +2,22 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import type { IndicatorValue, ZoneGapList } from "@/contracts/zone_gap_list_response";
+import type { GapRowKey, GapStatus, IndicatorValue, ZoneGapList } from "@/contracts/zone_gap_list_response";
 
 import {
   comparisonText,
   fitsButShortText,
   GAP_STATUS,
   gapFigures,
+  gapSummary,
   GROUP,
   groupText,
+  hospitalText,
   hospitalWalking,
   inGroup,
   isSmallZone,
+  listNames,
+  referenceLabel,
   SMALL_ZONE,
   gapsHref,
   NULL_REASON,
@@ -152,39 +156,43 @@ describe("sortRows and topRows", () => {
   });
 });
 
-describe("fitsButShortText (a zone that fits, short of something)", () => {
-  const row = (label: string, status: "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS") => ({ label, status });
+describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something)", () => {
+  type Row = { row: GapRowKey; status: GapStatus; reliable?: boolean };
+  const row = (key: GapRowKey, status: GapStatus, reliable = true): Row => ({ row: key, status, reliable });
 
-  it("names the rows that are JUSTO, as the card shows them (Fuencarral-El Pardo, 12 nov)", () => {
-    expect(fitsButShortText([row("Escuelas infantiles", "JUSTO"), row("Colegios", "JUSTO"), row("Centros de salud", "JUSTO")])).toBe(
-      "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
+  it("names the rows that are JUSTO (Fuencarral-El Pardo, 12 nov)", () => {
+    expect(fitsButShortText([row("escuela_infantil", "JUSTO"), row("colegio", "JUSTO"), row("centro_salud", "JUSTO")])).toBe(
+      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
     );
   });
 
-  it("says what is missing first, then what is tight", () => {
-    expect(fitsButShortText([row("Centros de salud", "FALTA"), row("Colegios", "JUSTO"), row("Farmacias", "CUBIERTO")])).toBe(
-      "Encaja con lo que pides; aun así, en la zona faltan: centros de salud; y van justos de: colegios.",
+  it("says what is missing, and then what is tight", () => {
+    expect(fitsButShortText([row("escuela_infantil", "FALTA")])).toBe(
+      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles.",
     );
-    expect(fitsButShortText([row("Escuelas infantiles", "FALTA")])).toBe("Encaja con lo que pides; aun así, en la zona faltan: escuelas infantiles.");
+    expect(fitsButShortText([row("centro_salud", "FALTA"), row("colegio", "JUSTO"), row("farmacia", "CUBIERTO")])).toBe(
+      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
+    );
   });
 
   it("names every FALTA and JUSTO row of the API, also beyond the three the card shows", () => {
     const rows = [
-      row("Escuelas infantiles", "JUSTO"),
-      row("Colegios", "JUSTO"),
-      row("Centros de salud", "FALTA"),
-      row("Farmacias", "JUSTO"),
-      row("Centros de mayores", "CUBIERTO"),
-      row("Vivienda", "JUSTO"),
+      row("escuela_infantil", "JUSTO"),
+      row("colegio", "JUSTO"),
+      row("centro_salud", "FALTA"),
+      row("farmacia", "JUSTO"),
+      row("mayores", "CUBIERTO"),
+      row("vivienda", "JUSTO"),
     ];
     expect(topRows(rows)).toHaveLength(3);
     expect(fitsButShortText(rows)).toBe(
-      "Encaja con lo que pides; aun así, en la zona faltan: centros de salud; y van justos de: escuelas infantiles, colegios, farmacias, vivienda.",
+      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
     );
   });
 
-  it("says nothing when no row is FALTA or JUSTO: SIN DATOS is not short", () => {
-    expect(fitsButShortText([row("Colegios", "CUBIERTO"), row("Farmacias", "SIN_DATOS")])).toBeNull();
+  it("says nothing when no row is FALTA or JUSTO, and leaves out rows too small to compare", () => {
+    expect(fitsButShortText([row("colegio", "CUBIERTO"), row("farmacia", "SIN_DATOS")])).toBeNull();
+    expect(fitsButShortText([row("farmacia", "JUSTO", false)])).toBeNull();
     expect(fitsButShortText([])).toBeNull();
   });
 });
@@ -308,5 +316,60 @@ describe("each row in plain words (D-229 §6, falta.fila.comparacion)", () => {
   it("has a name inside a sentence for every row (fila.lista.*)", () => {
     expect(Object.keys(ROW_IN_LIST).sort()).toEqual(ROW_KEYS);
     expect(ROW_IN_LIST.vivienda).toBe("viviendas grandes para familias");
+  });
+});
+
+describe("the summary over the rows (falta.resumen.*)", () => {
+  type Row = { row: GapRowKey; status: GapStatus; reliable?: boolean; comparison_group?: { codes: [string, string]; names: [string, string]; ratio_to_reference: number } };
+  const row = (key: GapRowKey, status: GapStatus, extra: Partial<Row> = {}): Row => ({ row: key, status, reliable: true, ...extra });
+  const group = { codes: ["28004", "28096"] as [string, string], names: ["El Álamo", "Navalcarnero"] as [string, string], ratio_to_reference: 0.6 };
+
+  it("starts with what is missing, then what is tight and what has no data (Puente de Vallecas)", () => {
+    const rows = [row("escuela_infantil", "FALTA"), row("colegio", "CUBIERTO"), row("centro_salud", "CUBIERTO"), row("vivienda", "SIN_DATOS")];
+    expect(gapSummary(rows)).toEqual(["Aquí falta: escuelas infantiles.", "Sin datos: viviendas grandes para familias."]);
+  });
+
+  it("says nothing is clearly missing when only some are tight (Fuencarral-El Pardo)", () => {
+    const rows = [row("escuela_infantil", "JUSTO"), row("colegio", "JUSTO"), row("centro_salud", "JUSTO"), row("farmacia", "CUBIERTO")];
+    expect(gapSummary(rows)).toEqual(["Aquí no falta nada claro.", "Van justos: escuelas infantiles, colegios y centros de salud."]);
+  });
+
+  it("says nothing is missing when every comparable row is CUBIERTO", () => {
+    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual(["Aquí no falta nada frente a municipios parecidos."]);
+  });
+
+  it("keeps rows too small to compare apart, but not those compared with their neighbours", () => {
+    const rows = [row("farmacia", "JUSTO", { reliable: false }), row("colegio", "FALTA", { comparison_group: group }), row("mayores", "CUBIERTO")];
+    expect(gapSummary(rows)).toEqual(["Aquí falta: colegios.", "Zona muy pequeña para comparar: farmacias."]);
+  });
+
+  it("says the zone has no data when no row has a value", () => {
+    expect(gapSummary([row("vivienda", "SIN_DATOS")])).toEqual(["Sin datos: viviendas grandes para familias."]);
+    expect(gapSummary([])).toEqual([]);
+  });
+
+  it("joins names with commas and «y»", () => {
+    expect(listNames(["a"])).toBe("a");
+    expect(listNames(["a", "b"])).toBe("a y b");
+    expect(listNames(["a", "b", "c"])).toBe("a, b y c");
+  });
+});
+
+describe("who a zone is compared with (falta.fila.referencia.distrito)", () => {
+  it("says a district is compared with the urban municipios without Madrid", () => {
+    expect(referenceLabel("Otros municipios urbanos de la Comunidad de Madrid", "distrito")).toBe(
+      "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)",
+    );
+    expect(referenceLabel("Otros municipios rurales de la Comunidad de Madrid", "municipio")).toBe("Otros municipios rurales de la Comunidad de Madrid");
+  });
+});
+
+describe("the nearest hospital (hospital.distancia)", () => {
+  it("gives minutes up to 30, and the distance at 4 km/h beyond", () => {
+    expect(hospitalText({ value: 12.4 })).toBe("a 12 min andando");
+    expect(hospitalText({ value: 30 })).toBe("a 30 min andando");
+    expect(hospitalText({ value: 51.32 })).toBe("a unos 3,4 km");
+    expect(hospitalText({ value: 95 })).toBe("a unos 6,3 km");
+    expect(hospitalText({ value: null })).toBe("Sin datos");
   });
 });

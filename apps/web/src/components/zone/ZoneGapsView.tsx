@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { GAP_STATUS, gapsHref, SMALL_ZONE, sortRows } from "@/lib/gaps";
+import { GAP_STATUS, gapsHref, gapSummary, SMALL_ZONE, sortRows } from "@/lib/gaps";
 import { isWholeCity, type ZoneLevel, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
@@ -35,8 +35,9 @@ const TEXT = {
   municipio: "Municipio",
   notFound: "No encontramos esa zona. Elige otra en el mapa.",
   legend: "Cómo leer esta lista",
+  // falta.leyenda.a_pie (13 nov)
   walking:
-    "Los minutos a pie son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Desde la mitad de las calles de la zona se llega en ese tiempo o menos.",
+    "Los minutos son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Es lo que tarda la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.",
 };
 
 const PICK_ID = "elige-zona";
@@ -111,11 +112,17 @@ function ZoneGaps({ level, code }: { level: ZoneLevel; code: string }) {
   }
 
   const { zone, rows } = gaps.data.data;
+  const [lead, ...summary] = gapSummary(rows);
   return (
     <>
       <header className={styles.header}>
         <p className={styles.eyebrow}>{zone.level === "distrito" ? `Distrito de ${zone.municipio_name}` : TEXT.municipio}</p>
         <h1 className={styles.title}>{TEXT.titleIn(zone.name)}</h1>
+        {lead && (
+          <p className={styles.summary}>
+            <strong>{lead}</strong> {summary.join(" ")}
+          </p>
+        )}
         <p className={styles.intro}>{TEXT.intro}</p>
         <div className={styles.actions}>
           {/* Madrid capital is on the map by its districts: its whole list has no zone screen */}
@@ -133,7 +140,7 @@ function ZoneGaps({ level, code }: { level: ZoneLevel; code: string }) {
       {rows.length > 0 && (
         <ul className={styles.rows}>
           {sortRows(rows).map((row) => (
-            <GapRowItem key={row.row} row={row} zoneName={zone.name} />
+            <GapRowItem key={row.row} row={row} zoneName={zone.name} zoneLevel={zone.level} />
           ))}
         </ul>
       )}

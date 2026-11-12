@@ -16,6 +16,12 @@
   text-transform: uppercase;
 }
 
+/* falta.resumen.*: what the zone is short of, in one line over the rows */
+.summary {
+  max-width: 44rem;
+  font-size: var(--text-lg);
+}
+
 .intro {
   max-width: 44rem;
   color: var(--ink-soft);

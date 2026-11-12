@@ -25,6 +25,14 @@
   font-weight: 600;
 }
 
+/* The main line of the row (falta.fila.comparacion): what a non-technical reader reads first */
+.comparison {
+  font-family: var(--font-title);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+}
+
 .measure {
   color: var(--ink-soft);
   font-size: var(--text-sm);
@@ -36,7 +44,27 @@
   font-weight: 600;
 }
 
-/* Zone and region side by side; the walking minutes on their own line below */
+/* Walking minutes to the row's service and, in health, the nearest hospital */
+.walking {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+/* «Ver la cifra»: the technical figure, smaller and one tap away (falta.fila.ver_cifra) */
+.technical {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.technical summary {
+  padding-block: calc((var(--target) - 1.5em) / 2);
+  color: var(--violet-strong);
+  cursor: pointer;
+}
+
+/* Zone and its reference side by side; the whole region below */
 .figures {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -62,14 +90,13 @@
 .figure dd {
   margin: 0;
   font-family: var(--font-title);
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   font-weight: 700;
   line-height: var(--leading-tight);
 }
 
 .figure dd.missing {
   color: var(--sin-datos-ink);
-  font-size: var(--text-lg);
 }
 
 /* The whole region, as context under the comparison */
@@ -182,4 +209,11 @@
   background: var(--violet-soft);
   color: var(--ink);
   font-size: var(--text-sm);
+}
+
+/* On a phone the district reference is a long label: one box under the other */
+@media (max-width: 520px) {
+  .figures {
+    grid-template-columns: 1fr;
+  }
 }

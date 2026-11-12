@@ -10,12 +10,15 @@ import {
   gapFigures,
   groupText,
   HOSPITAL_WALK,
+  hospitalText,
   hospitalWalking,
   inGroup,
   isSmallZone,
   NULL_REASON,
   peopleAffectedText,
+  referenceLabel,
   ROW_MEASURE,
+  rowComparison,
   SMALL_ZONE,
   walking,
   walkingText,
@@ -28,13 +31,14 @@ import GroupTag from "./GroupTag";
 import SmallZoneTag from "./SmallZoneTag";
 import styles from "./GapRowItem.module.css";
 
-// Copy from pitch/textos_web.md (falta.fila.*, confianza.aria, estado.sin_datos).
+// Copy from pitch/textos_web.md (falta.fila.*, hospital.*, confianza.aria, estado.sin_datos).
 const TEXT = {
   noData: "Sin datos",
   regional: "En toda la Comunidad de Madrid:", // falta.fila.region (gap-0.2 context)
   walk: "A pie hasta",
+  figure: "Ver la cifra", // falta.fila.ver_cifra
   note: "Ojo:",
-  hospital: "El hospital:", // gap-0.3 (D-217), pitch/textos_web.md
+  hospital: "El hospital:", // hospital.titulo
   sources: "De dónde sale:", // falta.fila.fuente, with the number of datasets
   confidence: "Fiabilidad del dato: ",
 };
@@ -48,16 +52,23 @@ function sourcesCount(n: number): string {
   return n === 1 ? "1 conjunto de datos" : `${n} conjuntos de datos`;
 }
 
-function WalkingFigure({ extra, to, hospital = false }: { extra: IndicatorValue | undefined; to: string | undefined; hospital?: boolean }) {
+interface WalkingProps {
+  extra: IndicatorValue | undefined;
+  label: string;
+  text: (extra: IndicatorValue) => string;
+  hospital?: boolean;
+}
+
+function WalkingFigure({ extra, label, text, hospital = false }: WalkingProps) {
   if (!extra) return null;
   const Icon = hospital ? Hospital : Footprints;
   return (
     <div className={styles.walk}>
       <dt>
-        <Icon size={16} aria-hidden="true" /> {to ? `${TEXT.walk} ${to}` : extra.label}
+        <Icon size={16} aria-hidden="true" /> {label}
       </dt>
       <dd>
-        {walkingText(extra)}
+        {text(extra)}
         {extra.value === null && <span className="visually-hidden"> ({NULL_REASON[extra.null_reason ?? "UNKNOWN"]})</span>}
       </dd>
     </div>
@@ -72,17 +83,54 @@ function reasonOf(row: GapRow): string | null {
   return null;
 }
 
-/**
- * One row of «Qué falta»: status (with «Zona pequeña para comparar»), value against the zones of the same type and
- * the whole region, walking minutes, confidence and sources.
- */
-export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: string }) {
+/** The technical figure behind «Ver la cifra»: what the row measures, the zone against its reference and the region. */
+function TechnicalFigure({ row, zoneName, zoneLevel }: { row: GapRow; zoneName: string; zoneLevel: string }) {
   const figures = gapFigures(row.indicator.value, row.reference, row.regional_reference ?? null);
+  return (
+    <details className={styles.technical}>
+      <summary>{TEXT.figure}</summary>
+      <p className={styles.measure}>{ROW_MEASURE[row.row]}</p>
+      <dl className={styles.figures}>
+        <div className={styles.figure}>
+          <dt>{zoneName}</dt>
+          <dd className={row.indicator.value === null ? styles.missing : undefined}>{figures.value ?? TEXT.noData}</dd>
+        </div>
+        <div className={styles.figure}>
+          <dt>{referenceLabel(row.reference_label, zoneLevel)}</dt>
+          <dd>{figures.reference ?? TEXT.noData}</dd>
+        </div>
+        {figures.regional && figures.regional !== figures.reference && (
+          <div className={styles.regional}>
+            <dt>{TEXT.regional}</dt>
+            <dd>{figures.regional}</dd>
+          </div>
+        )}
+      </dl>
+    </details>
+  );
+}
+
+interface Props {
+  row: GapRow;
+  zoneName: string;
+  /** municipio or distrito: a district is compared with the other urban municipios, without Madrid */
+  zoneLevel: string;
+}
+
+/**
+ * One row of «Qué falta»: status (with «Zona pequeña para comparar»), «Aquí hay n por cada 100 que
+ * hay en municipios parecidos», the people a FALTA leaves short, walking minutes, confidence, the
+ * technical figure behind «Ver la cifra» and sources.
+ */
+export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
   const reason = reasonOf(row);
   const confidence = confidenceText(row.indicator.confidence);
   const group = inGroup(row);
   const hospital = hospitalWalking(row.extra_indicators);
+  const comparison = rowComparison(row);
   const affected = peopleAffectedText(row);
+  const walk = walking(row.extra_indicators, row.row);
+  const walkTo = WALK_TO[row.row];
   // Fixed once, so a resize never closes what the person opened
   const [sourcesOpen] = useState(wideScreen);
 
@@ -96,29 +144,17 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
           {group && <GroupTag described={false} />}
         </span>
       </div>
+      {comparison && <p className={styles.comparison}>{comparison}</p>}
       {affected && <p className={styles.affected}>{affected}</p>}
-      <p className={styles.measure}>{ROW_MEASURE[row.row]}</p>
-
-      <dl className={styles.figures}>
-        <div className={styles.figure}>
-          <dt>{zoneName}</dt>
-          <dd className={row.indicator.value === null ? styles.missing : undefined}>{figures.value ?? TEXT.noData}</dd>
-        </div>
-        <div className={styles.figure}>
-          <dt>{row.reference_label}</dt>
-          <dd>{figures.reference ?? TEXT.noData}</dd>
-        </div>
-        {figures.regional && figures.regional !== figures.reference && (
-          <div className={styles.regional}>
-            <dt>{TEXT.regional}</dt>
-            <dd>{figures.regional}</dd>
-          </div>
-        )}
-        <WalkingFigure extra={walking(row.extra_indicators, row.row)} to={WALK_TO[row.row]} />
-        <WalkingFigure extra={hospital} to={HOSPITAL_WALK.to} hospital />
-      </dl>
-
       {group && <p className={styles.group}>{groupText(zoneName, group)}</p>}
+
+      {(walk || hospital) && (
+        <dl className={styles.walking}>
+          <WalkingFigure extra={walk} label={walkTo ? `${TEXT.walk} ${walkTo}` : (walk?.label ?? "")} text={walkingText} />
+          <WalkingFigure extra={hospital} label={HOSPITAL_WALK.label} text={hospitalText} hospital />
+        </dl>
+      )}
+
       {reason && <p className={styles.reason}>{reason}</p>}
       {row.indicator.value !== null && (
         <p className={styles.confidence} title={confidence.help}>
@@ -137,6 +173,8 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
           <strong>{TEXT.hospital}</strong> {HOSPITAL_WALK.note}
         </p>
       )}
+
+      <TechnicalFigure row={row} zoneName={zoneName} zoneLevel={zoneLevel} />
 
       <details className={styles.sources} open={sourcesOpen}>
         <summary>
