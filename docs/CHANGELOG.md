@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.34 — Revisión del transporte público (2026-11-12)
+- D-220 §8: ajustes de la revisión (tiempo mínimo de transbordo a pie, zonas fuera de la matriz, texto del Reality Check) y caso demo con Fuencarral-El Pardo primera.
+
 ## v0.5.33 — La búsqueda usa el transporte público (2026-11-12)
 - D-220 §8: `POST /search` pasa a `fit-0.2`. Los límites de trayecto salen PASS/FAIL con los minutos en transporte público y el hecho del trabajo dice esos minutos; solo un sitio fuera de toda zona sigue en línea recta.
 - `04_technical_architecture/31_public_api_routes.md`: rutas y hechos de la búsqueda con CORE-009.

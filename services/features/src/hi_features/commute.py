@@ -462,7 +462,7 @@ def hub_minutes(timetable: Timetable, origins: Origins, hub: Hub) -> pd.DataFram
     section_s = np.median(np.vstack(per_arrival), axis=0)
     section_s[section_s > arrive_window()] = np.inf
     medians, sections, reached = zone_medians(section_s, origins.zone, len(origins.zone_ids))
-    return pd.DataFrame(
+    frame = pd.DataFrame(
         {
             "hub_id": hub.hub_id,
             "origin_admin_unit_id": origins.zone_ids,
@@ -471,6 +471,7 @@ def hub_minutes(timetable: Timetable, origins: Origins, hub: Hub) -> pd.DataFram
             "sections_reached": reached,
         }
     )
+    return frame.loc[frame["sections"] > 0]  # a zone without sections has no value
 
 
 def arrive_window() -> int:

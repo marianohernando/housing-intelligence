@@ -184,3 +184,10 @@ def test_a_trip_that_goes_back_in_time_is_never_a_shortcut() -> None:
     got = latest(timetable([back, train], 3), [(2, 0)], arrive_by=9 * H)
     assert got[0] == -np.inf
     assert got[1] == 7 * H + 35 * M
+
+
+def test_a_walk_to_a_stop_at_the_same_place_still_takes_the_transfer_time() -> None:
+    """Two stop ids at the same coordinates (metro platforms): no change in 0 s."""
+    tt = timetable([TRIP_A, [(4, 8 * H + 20 * M + 30), (3, 8 * H + 35 * M)]], 5)
+    same_place = Footpaths(np.array([2]), np.array([4]), np.array([0]))
+    assert latest(tt, [(3, 0)], 9 * H, same_place)[0] == -np.inf

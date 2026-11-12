@@ -118,6 +118,7 @@ class Criterion:
     target_minutes: int | None = None
     priority: PriorityKey | None = None
     anchor: Anchor | None = None
+    anchor_index: int | None = None  # position in ScenarioState.anchors
 
 
 @dataclass(frozen=True)
@@ -205,7 +206,7 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
         target = windows.get(need, DEFAULT_WALK_MINUTES[need])
         keys.append(Criterion(f"need:{need.value}", 0.0, need=need, target_minutes=target))
     for i, anchor in enumerate(scenario.anchors):
-        keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor))
+        keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
     for nearby in scenario.nearby:  # a wished service not already among the priorities
         if not nearby.required and nearby.need not in covered:
             target = nearby.max_walk_minutes
@@ -219,7 +220,7 @@ def criteria(scenario: ScenarioState) -> list[Criterion]:
     keys = _criteria_keys(scenario)
     weights = rank_weights(len(keys))
     return [
-        Criterion(c.key, w, c.need, c.target_minutes, c.priority, c.anchor)
+        Criterion(c.key, w, c.need, c.target_minutes, c.priority, c.anchor, c.anchor_index)
         for c, w in zip(keys, weights, strict=True)
     ]
 
@@ -384,8 +385,8 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
         target = criterion.target_minutes or DEFAULT_WALK_MINUTES[criterion.need]
         return walk_fact(criterion.need, data.walk.get(criterion.need), target)
     if criterion.anchor is not None:
-        index = int(criterion.key.removeprefix("work:"))
-        return work_fact(criterion.anchor, data, data.commute.get(index))
+        trip = None if criterion.anchor_index is None else data.commute.get(criterion.anchor_index)
+        return work_fact(criterion.anchor, data, trip)
     if criterion.priority is not None:
         topic, text = NO_DATA_PRIORITY[criterion.priority]
         return Score(None, 0.0, Fact(kind=FactKind.UNKNOWN, topic=topic, text=text, confidence=0))

@@ -43,154 +43,6 @@
       "rank": 1,
       "zone": {
         "level": "distrito",
-        "code": "2807915",
-        "admin_unit_id": "ES.28.DIS.2807915",
-        "name": "Ciudad Lineal",
-        "municipio_ine": "28079",
-        "municipio_name": "Madrid",
-        "center_lon": -3.65477,
-        "center_lat": 40.44849
-      },
-      "match_pct": 100,
-      "confidence": 0.945,
-      "facts": [
-        {
-          "kind": "strength",
-          "topic": "colegios",
-          "text": "Colegio con primaria a 5 min andando desde la mitad de sus calles",
-          "confidence": 0.998,
-          "indicator": {
-            "feature_id": "min_a_pie_colegio",
-            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 5.098,
-            "unit": "min",
-            "confidence": 0.998,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_educativos",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "transporte",
-          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
-          "confidence": 0.998,
-          "indicator": {
-            "feature_id": "min_a_pie_transporte",
-            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
-            "value": 2.236,
-            "unit": "min",
-            "confidence": 0.998,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "crtm_gtfs_autobuses_urbanos",
-              "crtm_gtfs_cercanias",
-              "crtm_gtfs_emt",
-              "crtm_gtfs_interurbanos",
-              "crtm_gtfs_metro",
-              "crtm_gtfs_metro_ligero",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "salud",
-          "text": "Centro de salud a 10 min andando desde la mitad de sus calles",
-          "confidence": 0.998,
-          "indicator": {
-            "feature_id": "min_a_pie_centro_salud",
-            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 10.41,
-            "unit": "min",
-            "confidence": 0.998,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_sanitarios",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "trayecto",
-          "text": "30 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
-          "confidence": 0.7,
-          "indicator": null
-        },
-        {
-          "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
-          "confidence": 0.8,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.9,
-            "unit": "EUR/m2/mes",
-            "confidence": 0.8,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_alquiler_m2_codigo_postal_madrid",
-              "cm_centros_atencion_social",
-              "cm_centros_educativos",
-              "cm_centros_sanitarios"
-            ]
-          }
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
-          "status": "PASS",
-          "value": 1070.0,
-          "threshold": 1500.0,
-          "unit": "€/mes",
-          "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
-        },
-        {
-          "constraint_id": "near:colegio",
-          "label": "Colegio con primaria a 10 min andando como mucho",
-          "status": "PASS",
-          "value": 5.1,
-          "threshold": 10.0,
-          "unit": "min",
-          "confidence": 0.998,
-          "explanation": "La mitad de sus calles está a 5 min andando o menos de un colegio con primaria"
-        }
-      ],
-      "failed_constraints": [],
-      "estimated_cost_eur": 1070.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "CUBIERTO"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "JUSTO"
-        },
-        {
-          "row": "farmacia",
-          "label": "Farmacias",
-          "status": "CUBIERTO"
-        }
-      ]
-    },
-    {
-      "rank": 2,
-      "zone": {
-        "level": "distrito",
         "code": "2807908",
         "admin_unit_id": "ES.28.DIS.2807908",
         "name": "Fuencarral-El Pardo",
@@ -267,7 +119,7 @@
         {
           "kind": "strength",
           "topic": "trayecto",
-          "text": "28 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
@@ -336,6 +188,154 @@
       ]
     },
     {
+      "rank": 2,
+      "zone": {
+        "level": "distrito",
+        "code": "2807915",
+        "admin_unit_id": "ES.28.DIS.2807915",
+        "name": "Ciudad Lineal",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.65477,
+        "center_lat": 40.44849
+      },
+      "match_pct": 99,
+      "confidence": 0.945,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a 5 min andando desde la mitad de sus calles",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.098,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.236,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a 10 min andando desde la mitad de sus calles",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 10.41,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 13.9,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1070.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.1,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.998,
+          "explanation": "La mitad de sus calles está a 5 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1070.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
       "rank": 3,
       "zone": {
         "level": "distrito",
@@ -347,7 +347,7 @@
         "center_lon": -3.63995,
         "center_lat": 40.48079
       },
-      "match_pct": 100,
+      "match_pct": 99,
       "confidence": 0.946,
       "facts": [
         {
@@ -413,9 +413,9 @@
           }
         },
         {
-          "kind": "strength",
+          "kind": "weakness",
           "topic": "trayecto",
-          "text": "29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "32 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
@@ -487,302 +487,6 @@
       "rank": 4,
       "zone": {
         "level": "distrito",
-        "code": "2807914",
-        "admin_unit_id": "ES.28.DIS.2807914",
-        "name": "Moratalaz",
-        "municipio_ine": "28079",
-        "municipio_name": "Madrid",
-        "center_lon": -3.64052,
-        "center_lat": 40.40558
-      },
-      "match_pct": 99,
-      "confidence": 0.94,
-      "facts": [
-        {
-          "kind": "strength",
-          "topic": "colegios",
-          "text": "Colegio con primaria a 6 min andando desde la mitad de sus calles",
-          "confidence": 0.992,
-          "indicator": {
-            "feature_id": "min_a_pie_colegio",
-            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 5.991,
-            "unit": "min",
-            "confidence": 0.992,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_educativos",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "transporte",
-          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
-          "confidence": 0.992,
-          "indicator": {
-            "feature_id": "min_a_pie_transporte",
-            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
-            "value": 2.052,
-            "unit": "min",
-            "confidence": 0.992,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "crtm_gtfs_autobuses_urbanos",
-              "crtm_gtfs_cercanias",
-              "crtm_gtfs_emt",
-              "crtm_gtfs_interurbanos",
-              "crtm_gtfs_metro",
-              "crtm_gtfs_metro_ligero",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "salud",
-          "text": "Centro de salud a 11 min andando desde la mitad de sus calles",
-          "confidence": 0.992,
-          "indicator": {
-            "feature_id": "min_a_pie_centro_salud",
-            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 11.07,
-            "unit": "min",
-            "confidence": 0.992,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_sanitarios",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "weakness",
-          "topic": "trayecto",
-          "text": "34 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
-          "confidence": 0.7,
-          "indicator": null
-        },
-        {
-          "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 932 €/mes por 77 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
-          "confidence": 0.8,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 12.1,
-            "unit": "EUR/m2/mes",
-            "confidence": 0.8,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_alquiler_m2_codigo_postal_madrid",
-              "cm_centros_atencion_social",
-              "cm_centros_educativos",
-              "cm_centros_sanitarios"
-            ]
-          }
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
-          "status": "PASS",
-          "value": 932.0,
-          "threshold": 1500.0,
-          "unit": "€/mes",
-          "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 932 €/mes por 77 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
-        },
-        {
-          "constraint_id": "near:colegio",
-          "label": "Colegio con primaria a 10 min andando como mucho",
-          "status": "PASS",
-          "value": 6.0,
-          "threshold": 10.0,
-          "unit": "min",
-          "confidence": 0.992,
-          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
-        }
-      ],
-      "failed_constraints": [],
-      "estimated_cost_eur": 932.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "CUBIERTO"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "JUSTO"
-        },
-        {
-          "row": "farmacia",
-          "label": "Farmacias",
-          "status": "CUBIERTO"
-        }
-      ]
-    },
-    {
-      "rank": 5,
-      "zone": {
-        "level": "distrito",
-        "code": "2807913",
-        "admin_unit_id": "ES.28.DIS.2807913",
-        "name": "Puente de Vallecas",
-        "municipio_ine": "28079",
-        "municipio_name": "Madrid",
-        "center_lon": -3.65518,
-        "center_lat": 40.3837
-      },
-      "match_pct": 99,
-      "confidence": 0.947,
-      "facts": [
-        {
-          "kind": "strength",
-          "topic": "colegios",
-          "text": "Colegio con primaria a 4 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "min_a_pie_colegio",
-            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 4.247,
-            "unit": "min",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_educativos",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "transporte",
-          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "min_a_pie_transporte",
-            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
-            "value": 2.089,
-            "unit": "min",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "crtm_gtfs_autobuses_urbanos",
-              "crtm_gtfs_cercanias",
-              "crtm_gtfs_emt",
-              "crtm_gtfs_interurbanos",
-              "crtm_gtfs_metro",
-              "crtm_gtfs_metro_ligero",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "salud",
-          "text": "Centro de salud a 8 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "min_a_pie_centro_salud",
-            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 7.578,
-            "unit": "min",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_sanitarios",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "weakness",
-          "topic": "trayecto",
-          "text": "36 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
-          "confidence": 0.7,
-          "indicator": null
-        },
-        {
-          "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 942 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
-          "confidence": 0.8,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 12.24,
-            "unit": "EUR/m2/mes",
-            "confidence": 0.8,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_alquiler_m2_codigo_postal_madrid",
-              "cm_centros_atencion_social",
-              "cm_centros_educativos",
-              "cm_centros_sanitarios"
-            ]
-          }
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
-          "status": "PASS",
-          "value": 942.0,
-          "threshold": 1500.0,
-          "unit": "€/mes",
-          "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 942 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
-        },
-        {
-          "constraint_id": "near:colegio",
-          "label": "Colegio con primaria a 10 min andando como mucho",
-          "status": "PASS",
-          "value": 4.2,
-          "threshold": 10.0,
-          "unit": "min",
-          "confidence": 1.0,
-          "explanation": "La mitad de sus calles está a 4 min andando o menos de un colegio con primaria"
-        }
-      ],
-      "failed_constraints": [],
-      "estimated_cost_eur": 942.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "CUBIERTO"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "CUBIERTO"
-        },
-        {
-          "row": "farmacia",
-          "label": "Farmacias",
-          "status": "CUBIERTO"
-        }
-      ]
-    },
-    {
-      "rank": 6,
-      "zone": {
-        "level": "distrito",
         "code": "2807910",
         "admin_unit_id": "ES.28.DIS.2807910",
         "name": "Latina",
@@ -791,7 +495,7 @@
         "center_lon": -3.78686,
         "center_lat": 40.3879
       },
-      "match_pct": 99,
+      "match_pct": 98,
       "confidence": 0.94,
       "facts": [
         {
@@ -859,7 +563,7 @@
         {
           "kind": "weakness",
           "topic": "trayecto",
-          "text": "37 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
@@ -928,31 +632,31 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 5,
       "zone": {
         "level": "distrito",
-        "code": "2807920",
-        "admin_unit_id": "ES.28.DIS.2807920",
-        "name": "San Blas-Canillejas",
+        "code": "2807914",
+        "admin_unit_id": "ES.28.DIS.2807914",
+        "name": "Moratalaz",
         "municipio_ine": "28079",
         "municipio_name": "Madrid",
-        "center_lon": -3.60407,
-        "center_lat": 40.42918
+        "center_lon": -3.64052,
+        "center_lat": 40.40558
       },
       "match_pct": 98,
-      "confidence": 0.947,
+      "confidence": 0.94,
       "facts": [
         {
           "kind": "strength",
           "topic": "colegios",
-          "text": "Colegio con primaria a 8 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
+          "text": "Colegio con primaria a 6 min andando desde la mitad de sus calles",
+          "confidence": 0.992,
           "indicator": {
             "feature_id": "min_a_pie_colegio",
             "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 8.058,
+            "value": 5.991,
             "unit": "min",
-            "confidence": 1.0,
+            "confidence": 0.992,
             "null_reason": null,
             "level": "distrito",
             "datasets": [
@@ -964,14 +668,14 @@
         {
           "kind": "strength",
           "topic": "transporte",
-          "text": "Parada de transporte público a 3 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
+          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
+          "confidence": 0.992,
           "indicator": {
             "feature_id": "min_a_pie_transporte",
             "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
-            "value": 2.595,
+            "value": 2.052,
             "unit": "min",
-            "confidence": 1.0,
+            "confidence": 0.992,
             "null_reason": null,
             "level": "distrito",
             "datasets": [
@@ -988,14 +692,14 @@
         {
           "kind": "strength",
           "topic": "salud",
-          "text": "Centro de salud a 14 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
+          "text": "Centro de salud a 11 min andando desde la mitad de sus calles",
+          "confidence": 0.992,
           "indicator": {
             "feature_id": "min_a_pie_centro_salud",
             "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 14.11,
+            "value": 11.07,
             "unit": "min",
-            "confidence": 1.0,
+            "confidence": 0.992,
             "null_reason": null,
             "level": "distrito",
             "datasets": [
@@ -1007,19 +711,19 @@
         {
           "kind": "weakness",
           "topic": "trayecto",
-          "text": "38 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "40 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.016 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 932 €/mes por 77 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.19,
+            "value": 12.1,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -1038,30 +742,30 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1016.0,
+          "value": 932.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.016 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 932 €/mes por 77 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
           "label": "Colegio con primaria a 10 min andando como mucho",
           "status": "PASS",
-          "value": 8.1,
+          "value": 6.0,
           "threshold": 10.0,
           "unit": "min",
-          "confidence": 1.0,
-          "explanation": "La mitad de sus calles está a 8 min andando o menos de un colegio con primaria"
+          "confidence": 0.992,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1016.0,
+      "estimated_cost_eur": 932.0,
       "gap_highlights": [
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "centro_salud",
@@ -1076,7 +780,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 6,
       "zone": {
         "level": "distrito",
         "code": "2807906",
@@ -1155,7 +859,7 @@
         {
           "kind": "strength",
           "topic": "trayecto",
-          "text": "19 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "21 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
@@ -1224,7 +928,451 @@
       ]
     },
     {
+      "rank": 7,
+      "zone": {
+        "level": "distrito",
+        "code": "2807913",
+        "admin_unit_id": "ES.28.DIS.2807913",
+        "name": "Puente de Vallecas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.65518,
+        "center_lat": 40.3837
+      },
+      "match_pct": 98,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a 4 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 4.247,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.089,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a 8 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 7.578,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 942 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 12.24,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 942.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler medio ≈ 942 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 4.2,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 4 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 942.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "zone": {
+        "level": "distrito",
+        "code": "2807920",
+        "admin_unit_id": "ES.28.DIS.2807920",
+        "name": "San Blas-Canillejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.60407,
+        "center_lat": 40.42918
+      },
+      "match_pct": 98,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a 8 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 8.058,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a 3 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.595,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a 14 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 14.11,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 1.016 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 13.19,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1016.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler medio ≈ 1.016 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 8.1,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 8 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1016.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "JUSTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
       "rank": 9,
+      "zone": {
+        "level": "distrito",
+        "code": "2807911",
+        "admin_unit_id": "ES.28.DIS.2807911",
+        "name": "Carabanchel",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.73811,
+        "center_lat": 40.38134
+      },
+      "match_pct": 97,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a 6 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.611,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.292,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a 10 min andando desde la mitad de sus calles",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 10.01,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 953 €/mes por 77 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 12.38,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 953.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler medio ≈ 953 €/mes por 77 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.6,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 953.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 10,
       "zone": {
         "level": "distrito",
         "code": "2807912",
@@ -1235,7 +1383,7 @@
         "center_lon": -3.70367,
         "center_lat": 40.37837
       },
-      "match_pct": 98,
+      "match_pct": 97,
       "confidence": 0.947,
       "facts": [
         {
@@ -1303,7 +1451,7 @@
         {
           "kind": "weakness",
           "topic": "trayecto",
-          "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
@@ -1363,154 +1511,6 @@
           "row": "centro_salud",
           "label": "Centros de salud",
           "status": "JUSTO"
-        },
-        {
-          "row": "farmacia",
-          "label": "Farmacias",
-          "status": "CUBIERTO"
-        }
-      ]
-    },
-    {
-      "rank": 10,
-      "zone": {
-        "level": "distrito",
-        "code": "2807917",
-        "admin_unit_id": "ES.28.DIS.2807917",
-        "name": "Villaverde",
-        "municipio_ine": "28079",
-        "municipio_name": "Madrid",
-        "center_lon": -3.69391,
-        "center_lat": 40.34248
-      },
-      "match_pct": 97,
-      "confidence": 0.943,
-      "facts": [
-        {
-          "kind": "strength",
-          "topic": "colegios",
-          "text": "Colegio con primaria a 6 min andando desde la mitad de sus calles",
-          "confidence": 0.996,
-          "indicator": {
-            "feature_id": "min_a_pie_colegio",
-            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 6.319,
-            "unit": "min",
-            "confidence": 0.996,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_educativos",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "transporte",
-          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
-          "confidence": 0.996,
-          "indicator": {
-            "feature_id": "min_a_pie_transporte",
-            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
-            "value": 2.42,
-            "unit": "min",
-            "confidence": 0.996,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "crtm_gtfs_autobuses_urbanos",
-              "crtm_gtfs_cercanias",
-              "crtm_gtfs_emt",
-              "crtm_gtfs_interurbanos",
-              "crtm_gtfs_metro",
-              "crtm_gtfs_metro_ligero",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "salud",
-          "text": "Centro de salud a 10 min andando desde la mitad de sus calles",
-          "confidence": 0.996,
-          "indicator": {
-            "feature_id": "min_a_pie_centro_salud",
-            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 9.937,
-            "unit": "min",
-            "confidence": 0.996,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_sanitarios",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "weakness",
-          "topic": "trayecto",
-          "text": "42 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
-          "confidence": 0.7,
-          "indicator": null
-        },
-        {
-          "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 835 €/mes por 77 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
-          "confidence": 0.8,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 10.84,
-            "unit": "EUR/m2/mes",
-            "confidence": 0.8,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_alquiler_m2_codigo_postal_madrid",
-              "cm_centros_atencion_social",
-              "cm_centros_educativos",
-              "cm_centros_sanitarios"
-            ]
-          }
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
-          "status": "PASS",
-          "value": 835.0,
-          "threshold": 1500.0,
-          "unit": "€/mes",
-          "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 835 €/mes por 77 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
-        },
-        {
-          "constraint_id": "near:colegio",
-          "label": "Colegio con primaria a 10 min andando como mucho",
-          "status": "PASS",
-          "value": 6.3,
-          "threshold": 10.0,
-          "unit": "min",
-          "confidence": 0.996,
-          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
-        }
-      ],
-      "failed_constraints": [],
-      "estimated_cost_eur": 835.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "CUBIERTO"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "CUBIERTO"
         },
         {
           "row": "farmacia",
@@ -2192,7 +2192,7 @@
         {
           "kind": "weakness",
           "topic": "trayecto",
-          "text": "38 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "text": "42 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
           "confidence": 0.7,
           "indicator": null
         },
@@ -2292,7 +2292,7 @@
         "center_lon": -3.48394,
         "center_lat": 40.52764
       },
-      "match_pct": 74,
+      "match_pct": 70,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2341,7 +2341,7 @@
         "center_lon": -3.36464,
         "center_lat": 40.49562
       },
-      "match_pct": 87,
+      "match_pct": 86,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -2356,7 +2356,7 @@
         "center_lon": -3.65558,
         "center_lat": 40.54503
       },
-      "match_pct": 79,
+      "match_pct": 78,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2422,7 +2422,7 @@
         "center_lon": -4.02776,
         "center_lat": 40.65818
       },
-      "match_pct": 83,
+      "match_pct": 82,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2486,7 +2486,7 @@
         "center_lon": -3.45072,
         "center_lat": 40.30031
       },
-      "match_pct": 84,
+      "match_pct": 83,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2554,7 +2554,7 @@
         "center_lon": -3.97463,
         "center_lat": 40.72893
       },
-      "match_pct": 68,
+      "match_pct": 67,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2807,7 +2807,7 @@
         "center_lon": -3.37867,
         "center_lat": 40.3145
       },
-      "match_pct": 78,
+      "match_pct": 77,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3041,7 +3041,7 @@
         "center_lon": -3.98192,
         "center_lat": 40.64857
       },
-      "match_pct": 91,
+      "match_pct": 90,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -3139,7 +3139,7 @@
         "center_lon": -3.4417,
         "center_lat": 40.56311
       },
-      "match_pct": 87,
+      "match_pct": 84,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3156,7 +3156,7 @@
         "center_lon": -4.09437,
         "center_lat": 40.57809
       },
-      "match_pct": 35,
+      "match_pct": 33,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3224,7 +3224,7 @@
         "center_lon": -3.80102,
         "center_lat": 40.28867
       },
-      "match_pct": 93,
+      "match_pct": 92,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -3341,7 +3341,7 @@
         "center_lon": -3.66802,
         "center_lat": 40.30045
       },
-      "match_pct": 95,
+      "match_pct": 94,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -3475,7 +3475,7 @@
         "center_lon": -3.82697,
         "center_lat": 40.25235
       },
-      "match_pct": 82,
+      "match_pct": 81,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3492,7 +3492,7 @@
         "center_lon": -3.77683,
         "center_lat": 40.32907
       },
-      "match_pct": 96,
+      "match_pct": 95,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -3758,7 +3758,7 @@
         "center_lon": -4.00724,
         "center_lat": 40.74959
       },
-      "match_pct": 69,
+      "match_pct": 67,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3905,7 +3905,7 @@
         "center_lon": -3.52596,
         "center_lat": 40.52211
       },
-      "match_pct": 77,
+      "match_pct": 75,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3922,7 +3922,7 @@
         "center_lon": -3.77305,
         "center_lat": 40.22839
       },
-      "match_pct": 94,
+      "match_pct": 92,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -4209,7 +4209,7 @@
         "center_lon": -3.51885,
         "center_lat": 40.34912
       },
-      "match_pct": 89,
+      "match_pct": 88,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -4275,7 +4275,7 @@
         "center_lon": -3.89666,
         "center_lat": 40.52482
       },
-      "match_pct": 79,
+      "match_pct": 78,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5256,7 +5256,7 @@
         "center_lon": -3.69447,
         "center_lat": 40.39861
       },
-      "match_pct": 97,
+      "match_pct": 96,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5378,7 +5378,7 @@
         "center_lon": -3.78686,
         "center_lat": 40.3879
       },
-      "match_pct": 99,
+      "match_pct": 98,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5408,7 +5408,7 @@
         "center_lon": -3.70367,
         "center_lat": 40.37837
       },
-      "match_pct": 98,
+      "match_pct": 97,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5423,7 +5423,7 @@
         "center_lon": -3.65518,
         "center_lat": 40.3837
       },
-      "match_pct": 99,
+      "match_pct": 98,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5438,7 +5438,7 @@
         "center_lon": -3.64052,
         "center_lat": 40.40558
       },
-      "match_pct": 99,
+      "match_pct": 98,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5453,7 +5453,7 @@
         "center_lon": -3.65477,
         "center_lat": 40.44849
       },
-      "match_pct": 100,
+      "match_pct": 99,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5468,7 +5468,7 @@
         "center_lon": -3.63995,
         "center_lat": 40.48079
       },
-      "match_pct": 100,
+      "match_pct": 99,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5513,7 +5513,7 @@
         "center_lon": -3.58338,
         "center_lat": 40.39115
       },
-      "match_pct": 84,
+      "match_pct": 83,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"

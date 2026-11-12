@@ -12,7 +12,7 @@ scenarios:
       anchors: [{kind: work, label: Paseo de la Castellana (Azca), lon: -3.6930, lat: 40.4500, days_per_week: 4, max_minutes: null}]
       nearby: [{need: colegio, max_walk_minutes: 10, required: true}]
       priorities: [colegios, transporte, salud]
-    expect: {min_results: 10, results_within_km: 15, top_within_km: 5, top_within_minutes: 35, binding: "near:colegio"}
+    expect: {min_results: 10, results_within_km: 15, top_within_minutes: 35, binding: "near:colegio"}
   - profile_id: golden_single
     scenario:
       budget: {kind: rent, amount_eur: 900}

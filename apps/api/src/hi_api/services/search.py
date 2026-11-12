@@ -9,7 +9,7 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
-from hi_api.services.commute import NO_TRIP, commutes
+from hi_api.services.commute import commutes
 from hi_api.services.gap_map import RowNotBoundError, gap_row_map
 from hi_api.services.gaps import dataset_refs, significant
 from hi_contracts.api.envelope import ErrorCode
@@ -171,7 +171,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
                 rent=indicators.rent.get(key),
                 walk=indicators.walk.get(key, {}),
                 gaps=highlights.get(key, []),
-                commute={i: by.get(zone_id, NO_TRIP) for i, by in trips.by_zone.items()},
+                commute={i: by[zone_id] for i, by in trips.by_zone.items() if zone_id in by},
             )
         )
     versions: dict[str, str] = dict(trips.versions)

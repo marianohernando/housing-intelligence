@@ -74,7 +74,7 @@ def _relax_commute(scenario: ScenarioState, index: int) -> tuple[str, ScenarioSt
     anchors = list(scenario.anchors)
     anchor = anchors[index]
     anchors[index] = anchor.model_copy(update={"max_minutes": None})
-    text = f"Sin límite de tiempo hasta {anchor.label} (aún sin calcular)"
+    text = f"Sin límite de tiempo hasta {anchor.label}"
     return text, scenario.model_copy(update={"anchors": anchors})
 
 

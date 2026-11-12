@@ -82,7 +82,9 @@ def _change_edges(
     stops = np.arange(events.n_stops, dtype=np.int64)
     origin = np.concatenate([stops, footpaths.origin])
     target = np.concatenate([stops, footpaths.target])
-    seconds = np.concatenate([np.full(events.n_stops, transfer_s), footpaths.seconds])
+    # A walk to another stop never makes a change faster than changing at the same stop.
+    walks = np.maximum(footpaths.seconds, transfer_s)
+    seconds = np.concatenate([np.full(events.n_stops, transfer_s), walks])
     by_origin = np.argsort(origin, kind="stable")
     origin, target, seconds = origin[by_origin], target[by_origin], seconds[by_origin]
     counts = np.bincount(origin, minlength=events.n_stops)
