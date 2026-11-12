@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-12 (madrugada, A v8: fase de prueba T1–T4 hecha; auditoría de equipamientos (D-216), 2SFCA y agrupación de municipios pequeños (D-217, `gap-0.3`), README público; Gate 3 PASS; falta migración 0006 + sync de Mariano y redespliegue).
+Última actualización: 2026-11-12 (mañana, A v10: conexiones de la API en modo transacción, D-219).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 12 nov | A | OPS-001 · pooler en modo transacción (D-219) | verde | `de9ad4b` | `evidence/gate-06/2026-11-12-pool/transaction-mode-gate.txt`, `prepared-statements-local.txt` | `DB_PREPARED_STATEMENTS=false` pasa `prepare_threshold=None` a psycopg (el pooler de Supabase en modo transacción no admite prepared statements); por defecto nada cambia. En local: 1 prepared statement tras 8 ejecuciones con el valor por defecto y 0 con `false`. `vf_api_ro` ya trae `search_path` a nivel de rol (comprobado por MCP). D-219 recoge también el pool por entorno (`4645326`). **C: variables en Vercel abajo** |
 | 12 nov | A | DATA-AUDIT · Fase 5 (CI y Gate 3) | verde · G3 PASS | `927af98` | `evidence/gate-03/2026-11-12/summary.md`, `phase-5-gate.txt`, `golden-search.txt` | CI de nuevo en verde: el test de propiedades del 2SFCA ya no genera floats subnormales y `gapMap.test.ts` (web, cambio mínimo pedido por `datamad-10`) lee Centro del fixture regenerado. El Gate 3 cuenta lo que dice el catálogo (38 features, 13 a pie, 17 por distrito) y toda feature municipal tiene fila en los 179 municipios (nulo explícito si la fuente no lo publica: Zarzalejo en tenencia) |
 | 12 nov | A | PUBLIC · Fase 4 (README) | verde | `6c4dd4b` | `README.md` | README de la raíz desde el borrador de D: Vida Fácil, 23 datasets CM, capacidad a pie, licencias (CartoCiudad incluido), sin apellidos ni rutas locales; el tag `pre-datamad` con enlace relativo |
 | 12 nov | A | DATA-AUDIT · Fase 3 (revisión) | verde | `e7864bd` | `evidence/gate-04/2026-11-12/phase-t2-review-gate.txt` | Ajustes del `reviewer`: la calle geocodificada tiene que coincidir (40 lugares geocodificados, no 42), aulas públicas también para «público-titularidad privada», caché atómica, filtros de `/places` más robustos |
@@ -110,6 +111,17 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 12 nov (mañana, línea A v10)
+- **Variables de la API en Vercel (para C, D-219).** C las documenta en `infra/deploy/README.md`:
+  | Variable | Valor en producción | Cuándo |
+  |---|---|---|
+  | `DB_POOL_SIZE` | `2` | ya (mitigación del incidente, `4645326`) |
+  | `DB_MAX_OVERFLOW` | `1` | ya |
+  | `DB_PREPARED_STATEMENTS` | `false` | **antes** de que Mariano cambie el puerto; funciona también en 5432 |
+  | `DATABASE_URL` | mismo valor con el puerto `6543` en vez de `5432` | lo cambia Mariano, después de desplegar `DB_PREPARED_STATEMENTS=false` |
+
+  Orden: (1) C pone `DB_PREPARED_STATEMENTS=false` y redespliega (smoke en verde); (2) Mariano cambia el puerto de `DATABASE_URL` a 6543; (3) C redespliega y pasa el smoke. Al revés, las consultas repetidas fallan con «prepared statement … already exists». Las migraciones y el sync siguen en 5432 (`SUPABASE_DATABASE_URL`): Alembic necesita el modo sesión. Valores no booleanos en `DB_PREPARED_STATEMENTS` hacen fallar el arranque.
 
 ### Estado de la sesión del 12 nov (madrugada, relevo de la línea A v8)
 - **Done (A v8), fase de prueba (`prompts/FASE_PRUEBAS.md`, sección A):**
