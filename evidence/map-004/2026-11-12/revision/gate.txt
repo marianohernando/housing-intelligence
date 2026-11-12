@@ -1,0 +1,39 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+315 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 14%]
+........................................................................ [ 28%]
+........................................................................ [ 43%]
+........................................................................ [ 57%]
+........................................................................ [ 71%]
+........................................................................ [ 86%]
+.....................................................................    [100%]
+501 passed in 7.41s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  28 passed (28)
+      Tests  274 passed (274)
+   Start at  11:29:08
+   Duration  539ms (tests 46%, import 31%, transform 16%, worker 7%)
+

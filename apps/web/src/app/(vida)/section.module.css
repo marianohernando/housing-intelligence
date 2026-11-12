@@ -21,7 +21,8 @@
   color: var(--ink-soft);
 }
 
-ul.text {
+ul.text,
+ol.text {
   padding-left: 1.2em;
 }
 

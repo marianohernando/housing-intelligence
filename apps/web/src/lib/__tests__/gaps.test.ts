@@ -108,7 +108,7 @@ describe("comparison groups (gap-0.3, D-217)", () => {
     expect(text).toContain("sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles.");
     // the API: «…, tiene el 105 % de lo esperado»
     expect(health.explanation).toContain(`tiene el ${Math.round(100 * group.ratio_to_reference)} % de lo esperado`);
-    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)} %`);
+    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)} % de lo que tienen de media los municipios de su tipo`);
   });
 
   it("uses the singular with one neighbour", () => {

@@ -85,6 +85,8 @@ interface Candidate extends KeyPoint {
 function candidates(places: PlaceFeature[], rule: Rule): Candidate[] {
   const seen = new Set<string>();
   return places.flatMap((place) => {
+    // The places come with those of «Todos los centros»: only this rule's category and classes count
+    if (place.properties.category !== rule.category) return [];
     const rank = rule.classes.findIndex((c) => c.subcategory === place.properties.subcategory);
     const cls = rule.classes[rank];
     if (!cls) return [];

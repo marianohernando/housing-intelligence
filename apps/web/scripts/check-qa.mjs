@@ -8,6 +8,11 @@
 //   node scripts/check-qa.mjs tiles-local [outDir] # phase 5: web built with NEXT_PUBLIC_MAP_TILES_URL=http://localhost:3999/madrid.json
 //   node scripts/check-qa.mjs gap03 [outDir]     # phase 6: gap-0.3 (D-217): neighbours, 2SFCA copy and the hospital
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
+//   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
+//   node scripts/check-qa.mjs licencias [outDir] # footer and map cite the Ministry of Health and CartoCiudad
+//   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
+//   node scripts/check-qa.mjs capturas-deck [outDir] # captures C3 and C4 of line D's deck, after gap-0.3
+//   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -596,8 +601,254 @@ async function hospitals(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/**
+ * Incident EMAXCONNSESSION (review of PR #16): if /gaps of the zone hangs, the request gives up
+ * after 10 s; the map and the zone still load from the outlines and the card offers «Reintentar».
+ */
+async function hungGaps(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    // Never answered (the preload of the HTML and the page's request), as an API that hangs; once
+    // the card shows the failure, «Reintentar» goes through
+    let hang = true;
+    await ctx.route("**/api/v1/gaps/distrito/2807905", (route) => (hang ? undefined : route.continue()));
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    const started = Date.now();
+    await page.goto(`${BASE}${ZONE.path}`, { waitUntil: "domcontentloaded" });
+    await page.getByRole("heading", { level: 1, name: /Chamartín/ }).waitFor({ timeout: 30000 });
+    const zoneAfter = Date.now() - started;
+    const alert = page.getByRole("alert").filter({ has: page.getByRole("button", { name: "Reintentar" }) }).first();
+    await alert.waitFor({ timeout: 20000 });
+    const entry = (report[`gaps_colgado_${id}`] = { zona_a_los_ms: zoneAfter, aviso: flat(await alert.innerText()) });
+    await page.screenshot({ path: `${out}/peticiones_gaps_colgado_${id}.png` });
+    hang = false;
+    await alert.getByRole("button", { name: "Reintentar" }).click();
+    await page.getByRole("heading", { name: "Qué falta aquí" }).first().locator("xpath=..").getByRole("list").first().waitFor({ timeout: 20000 });
+    entry.tras_reintentar = await page.getByRole("alert").filter({ has: page.getByRole("button", { name: "Reintentar" }) }).count();
+    // The aborted request is the only expected console line, if any
+    entry.consola = errors.filter((e) => !/gaps\/distrito\/2807905|ERR_ABORTED|TimeoutError|signal timed out/.test(e));
+    if (zoneAfter > 15000) failures.push(`${id}: la zona tardó ${zoneAfter} ms`);
+    if (entry.tras_reintentar) failures.push(`${id}: Reintentar no recupera la tarjeta`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    await ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Licences (D, 12 nov): the footer and the map cite the Ministry of Health with its update dates, and CartoCiudad. */
+async function licences(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    for (const [name, path] of [["que_falta", "/que-falta?zona=distrito/2807913"], ["como_lo_calculamos", "/como-lo-calculamos"]]) {
+      const p = await open(browser, profile, path);
+      const footer = p.page.locator("footer").last();
+      await footer.getByText(/^Datos: \d+ conjuntos/).waitFor({ timeout: 20000 });
+      await footer.scrollIntoViewIfNeeded();
+      const entry = (report[`pie_${name}_${id}`] = {
+        pie: (await footer.locator("li, p, a").allInnerTexts()).map(flat).filter(Boolean),
+        axe: await axe(p.page),
+        overflow_px: await overflow(p.page),
+        consola: p.errors,
+      });
+      await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
+      const text = entry.pie.join(" | ");
+      for (const must of [
+        "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025).",
+        "Geocodificación: CartoCiudad (IGN), CC BY 4.0 scne.es.",
+        "del CRTM ni del Ministerio de Sanidad.",
+        "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+      ]) {
+        if (!text.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
+      }
+      if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
+      if (entry.consola.length) failures.push(`${name} ${id}: consola`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      await p.ctx.close();
+    }
+  }
+  // The zone screen has no footer: the map's attribution cites them
+  const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
+  await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
+  report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
+  if (!/Ministerio de Sanidad/.test(report.mapa_atribucion) || !/CartoCiudad/.test(report.mapa_atribucion)) failures.push("mapa: atribución");
+  await z.page.locator(".maplibregl-ctrl-attrib").first().screenshot({ path: `${out}/licencias_mapa_desktop.png` });
+  await z.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Copy of line D after gap-0.3 and D-218 (pitch/textos_web.md, «Novedades del 12 nov»; metodologia §1.4–1.8). */
+async function texts(browser) {
+  const failures = [];
+  const expect = (key, text, must, mustNot = []) => {
+    for (const m of must) if (!text.includes(m)) failures.push(`${key}: falta «${m}»`);
+    for (const m of mustNot) if (text.includes(m)) failures.push(`${key}: sigue «${m}»`);
+  };
+  const clean = (key, entry) => {
+    if (entry.axe.length) failures.push(`${key}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${key}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${key}: desborde ${entry.overflow_px}px`);
+  };
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    // «Cómo lo calculamos»
+    const m = await open(browser, profile, "/como-lo-calculamos");
+    const section = (sid) => m.page.locator(`#${sid}`).locator("..");
+    const entry = (report[`como_lo_calculamos_${id}`] = {
+      hospital: flat(await section("que-falta").getByText(/^El hospital\./).locator("..").innerText()),
+      limites: (await section("limites").locator("li strong").allInnerTexts()).map(flat),
+      fiabilidad: flat(await section("fiabilidad").innerText()),
+      datos: flat(await section("datos").locator("ul").first().innerText()),
+      a_pie: flat(await section("a-pie").innerText()),
+      axe: await axe(m.page),
+      overflow_px: await overflow(m.page),
+      consola: m.errors,
+    });
+    expect(`como ${id} hospital`, entry.hospital, ["No cuenta para el estado de la fila", "camas instaladas", "Catálogo Nacional de Hospitales"], ["tampoco las tenemos"]);
+    expect(`como ${id} límites`, entry.limites.join(" | "), ["Colocamos a la gente por calles.", "Las camas de hospital no cuentan en la lista."]);
+    expect(`como ${id} fiabilidad`, entry.fiabilidad, ["300 niños de 5 a 14 años", "Aulas repartidas."], ["500 menores de 15 años"]);
+    expect(`como ${id} datos`, entry.datos, ["Ministerio de Sanidad", "CartoCiudad del IGN"]);
+    clean(`como ${id}`, entry);
+    await section("que-falta").screenshot({ path: `${out}/textos_como_lo_calculamos_metodo_${id}.png` });
+    await m.ctx.close();
+
+    // «Qué falta» of a small municipio with its neighbours (group sentence) and the hospital note
+    const q = await open(browser, profile, "/que-falta?zona=municipio/28004");
+    await q.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+    const rows = await gapRows(q.page);
+    const qEntry = (report[`que_falta_el_alamo_${id}`] = {
+      intro: flat(await q.page.getByText(/^Miramos lo que tiene la gente/).first().innerText()),
+      grupos: rows.map((r) => r.grupo).filter(Boolean),
+      hospital: rows.find((r) => r.hospital)?.hospital ?? null,
+      axe: await axe(q.page),
+      overflow_px: await overflow(q.page),
+      consola: q.errors,
+    });
+    expect(`qué falta ${id} intro`, qEntry.intro, ["a 15 minutos andando, repartido entre todos los que lo comparten"]);
+    expect(`qué falta ${id} grupo`, qEntry.grupos.join(" | "), ["de lo que tienen de media los municipios de su tipo"], ["tendrían"]);
+    expect(`qué falta ${id} hospital`, qEntry.hospital ?? "", ["y no cuenta para el estado de la fila."]);
+    clean(`qué falta ${id}`, qEntry);
+    await q.page.screenshot({ path: `${out}/textos_que_falta_el_alamo_${id}.png` });
+    await q.ctx.close();
+  }
+  // «Todos los centros»: centros de salud y consultorios
+  const z = await open(browser, DESKTOP, ZONE.path);
+  const panel = z.page.getByRole("region", { name: "Todos los centros", exact: true });
+  await panel.getByRole("button", { name: /^Centros de salud/ }).click();
+  report.centros_salud = flat(await panel.locator("[aria-live='polite']").innerText());
+  expect("centros de salud", report.centros_salud, ["centros de salud y consultorios en Chamartín"]);
+  await z.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Captures C3 and C4 of line D's deck (pitch/slides.md, «Recaptura tras gap-0.3»), at 1440 px. */
+async function deckCaptures(browser) {
+  const failures = [];
+  // C4: «Qué falta» of Puente de Vallecas, escuelas infantiles in FALTA
+  const q = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
+  await q.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+  const rows = await gapRows(q.page);
+  const nursery = rows.find((r) => r.fila === "Escuelas infantiles");
+  report.c4 = { filas: rows.map((r) => [r.fila, r.etiquetas.join(" "), r.mide]), escuelas_infantiles: nursery ?? null, consola: q.errors };
+  if (!nursery?.etiquetas.some((t) => /FALTA/.test(t ?? ""))) failures.push("C4: escuelas infantiles no sale FALTA");
+  await q.page.screenshot({ path: `${out}/deck_c4_puente_de_vallecas_que_falta_1440.png` });
+  await q.page.screenshot({ path: `${out}/deck_c4_puente_de_vallecas_que_falta_1440_completa.png`, fullPage: true });
+  const row = q.page.locator("main li.glass").filter({ has: q.page.getByRole("heading", { name: "Escuelas infantiles" }) });
+  await row.screenshot({ path: `${out}/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png` });
+  await q.ctx.close();
+
+  // C3: Portada → «Ver un ejemplo…» → «Ver todas las opciones»; then the view with the +5 min change
+  const h = await open(browser, DESKTOP);
+  await loadExample(h.page);
+  const rc = h.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+  await rc.getByRole("button", { name: /Ver todas las opciones/ }).click();
+  await h.page.waitForTimeout(800);
+  report.c3 = { y_si_cambias: flat(await rc.innerText()) };
+  if (!/50 zonas, 17 más/.test(report.c3.y_si_cambias)) failures.push("C3: no dice «50 zonas, 17 más»");
+  await rc.screenshot({ path: `${out}/deck_c3_y_si_cambias_1440.png` });
+  await h.page.screenshot({ path: `${out}/deck_c3_resultados_con_opciones_1440.png` });
+  const option = rc.getByRole("button", { name: /colegio con primaria/i }).first();
+  if (await option.count()) {
+    await option.click();
+    await h.page.getByText(/^Con este cambio salen? \d+ zonas?/).first().waitFor({ timeout: 20000 }).catch(() => undefined);
+    await h.page.waitForTimeout(2500);
+    report.c3.con_el_cambio = flat(await h.page.getByText(/^Con (este cambio|tu búsqueda)/).first().innerText());
+    await h.page.evaluate(() => window.scrollTo(0, 0));
+    await h.page.waitForTimeout(400);
+    await h.page.screenshot({ path: `${out}/deck_c3_vista_50_zonas_1440.png` });
+  } else {
+    failures.push("C3: sin botón para aplicar el cambio de +5 min");
+  }
+  report.c3.consola = h.errors;
+  await h.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Review of PR #16: beds keep their source without /datasets, and links say they open a new tab. */
+async function review(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    // /datasets down: the beds still cite their source
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    await ctx.route("**/api/v1/datasets*", (route) => route.abort("failed"));
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`${BASE}${FUENCARRAL.path}`, { waitUntil: "networkidle" });
+    const panel = page.getByRole("region", { name: "Todos los centros", exact: true });
+    const chip = panel.getByRole("button", { name: /^Hospitales/ });
+    await chip.waitFor({ timeout: 20000 });
+    if (id === "mobile") {
+      await page.getByRole("button", { name: /Desliza hacia arriba/ }).tap();
+      await page.waitForTimeout(600);
+    }
+    await chip.scrollIntoViewIfNeeded();
+    await (id === "mobile" ? chip.tap() : chip.click());
+    const source = panel.getByText(/^Camas: /);
+    await source.waitFor({ timeout: 20000 });
+    const entry = (report[`camas_sin_datasets_${id}`] = {
+      fuente: flat(await source.innerText()),
+      enlaces: await source.getByRole("link").count(),
+      consola_otros: errors.filter((e) => !/datasets|ERR_FAILED|Failed to load resource/.test(e)),
+    });
+    await panel.screenshot({ path: `${out}/revision_camas_sin_datasets_${id}.png` });
+    if (entry.fuente !== "Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales") failures.push(`${id}: fuente fija «${entry.fuente}»`);
+    if (entry.consola_otros.length) failures.push(`${id}: consola`);
+    await ctx.close();
+  }
+  // Every link of the footer and the beds' source says it opens in a new tab, for screen readers only
+  const f = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
+  const footer = f.page.locator("footer").last();
+  await footer.getByText(/^Datos: \d+ conjuntos/).waitFor({ timeout: 20000 });
+  const names = await footer.getByRole("link").evaluateAll((links) =>
+    links.filter((a) => a.target === "_blank").map((a) => a.textContent?.replace(/\s+/g, " ").trim()),
+  );
+  report.pie_enlaces = names;
+  if (!names.length || names.some((n) => !n?.endsWith("(se abre en una pestaña nueva)"))) failures.push("pie: enlaces sin aviso de pestaña nueva");
+  report.pie_axe = await axe(f.page);
+  if (report.pie_axe.length) failures.push(`pie: axe ${report.pie_axe.map((a) => a.id).join(", ")}`);
+  await f.ctx.close();
+  // A malformed zone code: Next answers it before the page (it cannot decode the path), so the
+  // page's own guard (MapProvider) only covers client navigation. Recorded, not a failure.
+  report.zona_mal_formada_http = (await fetch(`${BASE}/zona/distrito/%E0%A4%A`)).status;
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "revision") await review(browser);
+else if (mode === "capturas-deck") await deckCaptures(browser);
+else if (mode === "textos") await texts(browser);
+else if (mode === "licencias") await licences(browser);
+else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
 else if (mode === "tiles-local") await tilesLocal(browser);

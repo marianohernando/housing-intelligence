@@ -4,10 +4,10 @@ import { useParams } from "next/navigation";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { fetchZoneGaps } from "@/components/zone/useZoneGaps";
-import { ApiError, createApi } from "@/lib/api";
+import { ApiError } from "@/lib/api";
 import { type AdminFeature, findZone, type ZoneCollection, type ZoneFeature, type ZoneProperties, zonePropertiesOf } from "@/lib/map/zones";
 
-import { fetchZones, SIMPLIFY_M } from "./fetchZones";
+import { fetchBarrios, fetchZones } from "./fetchZones";
 
 export type ZonesStatus = "loading" | "ready" | "error";
 
@@ -46,6 +46,16 @@ export function useMapZones(): MapContextValue {
   return value;
 }
 
+/** The zone code of the route; a malformed one («%E0%A4%A») is no zone, as the page treats it, never a crash. */
+function decodedCode(code: string | undefined): string | undefined {
+  if (!code) return undefined;
+  try {
+    return decodeURIComponent(code);
+  } catch {
+    return undefined;
+  }
+}
+
 export default function MapProvider({ children }: { children: ReactNode }) {
   const params = useParams<{ level?: string; code?: string }>();
   const [zones, setZones] = useState<ZoneCollection | null>(null);
@@ -56,7 +66,7 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
 
-  const code = params.code ? decodeURIComponent(params.code) : undefined;
+  const code = decodedCode(params.code);
   const level = params.level;
   const routeKey = level && code ? `${level}/${code}` : null;
   const activeZone = useMemo(
@@ -116,10 +126,9 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!districtId || barrioList?.parent === districtId) return;
     let cancelled = false;
-    createApi()
-      .adminUnits("barrio", SIMPLIFY_M.barrio, districtId)
-      .then((body) => {
-        if (!cancelled) setBarrioList({ parent: districtId, features: body.data.features });
+    fetchBarrios(districtId)
+      .then((features) => {
+        if (!cancelled) setBarrioList({ parent: districtId, features });
       })
       // The bar only helps to move around the district: on failure it is not shown, and the
       // next visit to the district asks again.

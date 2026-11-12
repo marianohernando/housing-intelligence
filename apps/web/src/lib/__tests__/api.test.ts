@@ -79,6 +79,19 @@ describe("api client", () => {
     expect(error).toMatchObject({ status: 0, code: "ABORTED" });
   });
 
+  it("tells a request that took too long apart from one the caller cancelled (TIMEOUT)", async () => {
+    const calls: Call[] = [];
+    const signal = AbortSignal.timeout(1);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    const timingOut: FetchLike = async (url, init) => {
+      calls.push({ url: String(url), init });
+      throw new DOMException("The operation timed out.", "TimeoutError");
+    };
+    const error = await createApi(BASE, timingOut).zoneGaps("distrito", "2807905", { signal }).catch((e: unknown) => e);
+    expect(calls[0]?.init?.signal).toBe(signal);
+    expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
+  });
+
   it("escapes path segments", async () => {
     const calls: Call[] = [];
     await createApi(BASE, fakeFetch(200, envelope({}), calls)).zoneGaps("municipio", "28/079");

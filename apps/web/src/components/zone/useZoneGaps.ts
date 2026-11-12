@@ -11,11 +11,18 @@ type Result = { key: string; body: ZoneGapListResponse } | { key: string; error:
 // and its card for the rows, with the same answer. A failed request is forgotten, so retry asks again.
 const requests = new Map<string, Promise<ZoneGapListResponse>>();
 
+/**
+ * The zone screen and its map wait for this answer: if the API hangs, it fails after this long, so
+ * the map loads anyway and the card offers «Reintentar» (review of PR #16). A cold start of the API
+ * takes a few seconds.
+ */
+const ZONE_GAPS_TIMEOUT_MS = 10_000;
+
 export function fetchZoneGaps(level: GapLevel, code: string): Promise<ZoneGapListResponse> {
   const key = `${level}/${code}`;
   let request = requests.get(key);
   if (!request) {
-    request = createApi().zoneGaps(level, code);
+    request = createApi().zoneGaps(level, code, { signal: AbortSignal.timeout(ZONE_GAPS_TIMEOUT_MS) });
     requests.set(key, request);
     request.catch(() => requests.delete(key));
   }

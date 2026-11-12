@@ -10,6 +10,7 @@ import type { SearchResponse } from "@/contracts/search_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
 import { type AdminLevel, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
+import { createLimiter } from "@/lib/limit";
 import type { PlaceFeature } from "@/lib/map/places";
 import type { AdminFeature } from "@/lib/map/zones";
 
@@ -52,7 +53,8 @@ export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 
 /**
  * A failed call. `code` comes from the API (`ErrorCode`), or is NETWORK when the API cannot be
- * reached, ABORTED when the caller cancelled it, VALIDATION for a rejected request and
+ * reached, ABORTED when the caller cancelled it, TIMEOUT when it took longer than the caller's
+ * `AbortSignal.timeout`, VALIDATION for a rejected request and
  * HTTP_<status> when the body says nothing.
  */
 export class ApiError extends Error {
@@ -78,14 +80,27 @@ async function toApiError(response: Response): Promise<ApiError> {
   return new ApiError(response.status, `HTTP_${response.status}`, `HTTP ${response.status}`);
 }
 
-export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) {
+/**
+ * API requests in flight at once from one page; the rest wait their turn, in order. Each request
+ * can hold a database connection, and the pooler admits 15 clients: with 2 + 1 connections per API
+ * instance (OPS-001), 4 requests at once stay under it even if each one lands on its own instance
+ * (incident EMAXCONNSESSION, 12 nov). Only until the answer starts: its body downloads freely.
+ */
+export const MAX_REQUESTS_IN_FLIGHT = 4;
+
+const inTurn = createLimiter(MAX_REQUESTS_IN_FLIGHT);
+const fetchInTurn: FetchLike = (input, init) => inTurn(() => fetch(input, init));
+
+export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchInTurn) {
   async function call<T>(path: string, init?: RequestInit): Promise<T> {
     let response: Response;
     try {
       response = await fetchImpl(new URL(path, base).toString(), init);
     } catch (exc) {
+      const reason: unknown = init?.signal?.reason;
+      const timedOut = reason instanceof DOMException && reason.name === "TimeoutError";
       const aborted = init?.signal?.aborted || (exc as Error).name === "AbortError";
-      throw new ApiError(0, aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
+      throw new ApiError(0, timedOut ? "TIMEOUT" : aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
     }
     if (!response.ok) throw await toApiError(response);
     return (await response.json()) as T;
@@ -103,8 +118,8 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
 
   return {
     /** GET /api/v1/gaps/{level}/{code}: what a zone is missing against the region. */
-    zoneGaps(level: GapLevel, code: string) {
-      return call<ZoneGapListResponse>(zoneGapsUrl(level, code, base));
+    zoneGaps(level: GapLevel, code: string, { signal }: { signal?: AbortSignal } = {}) {
+      return call<ZoneGapListResponse>(zoneGapsUrl(level, code, base), { signal });
     },
     /** GET /api/v1/gaps?level=&row=: one row of «Qué falta» for every zone of a level (the map). */
     gapRowMap(level: "municipio" | "distrito", row: GapRowKey) {

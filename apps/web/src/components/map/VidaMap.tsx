@@ -13,13 +13,13 @@ import { createPortal } from "react-dom";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
-import { createApi } from "@/lib/api";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
 import { paintFit } from "@/lib/fit";
 import { facilitiesGeoJSON, facilityCountText } from "@/lib/map/facilities";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
-import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
+import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
+import { KEY_POINT_CATEGORIES } from "@/lib/map/zonePlaces";
 import {
   approachZoom,
   cameraPadding,
@@ -61,6 +61,7 @@ import {
 } from "@/lib/map/zones";
 
 import { useFacilityLayer } from "./FacilityLayerProvider";
+import { fetchZonePlaces } from "./fetchZones";
 import FacilityLabel from "./FacilityLabel";
 import { useGapLayer } from "./GapLayerProvider";
 import KeyPointLabel from "./KeyPointLabel";
@@ -73,8 +74,14 @@ const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy
 const MAP_TILES_URL = process.env.NEXT_PUBLIC_MAP_TILES_URL;
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-const ATTRIBUTION =
-  'Comunidad de Madrid · <a href="https://www.crtm.es" target="_blank" rel="noopener noreferrer">Powered by CRTM</a>';
+// The zone screens show the Ministry's hospitals and centres (D-218) and places located with
+// CartoCiudad (D-216), and have no footer: both licences ask to be cited where their data shows
+const ATTRIBUTION = [
+  "Comunidad de Madrid",
+  '<a href="https://www.crtm.es" target="_blank" rel="noopener noreferrer">Powered by CRTM</a>',
+  '<a href="https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" target="_blank" rel="noopener noreferrer">Ministerio de Sanidad</a>',
+  '<a href="https://www.cartociudad.es" target="_blank" rel="noopener noreferrer">CartoCiudad (IGN), CC BY 4.0 scne.es</a>',
+].join(" · ");
 const FLIGHT_MS = 2800;
 /** The island stays still a moment before the camera comes closer to the buildings. */
 const ISLAND_HOLD_MS = 700;
@@ -90,15 +97,15 @@ const TEXT = {
   aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
   noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
-  // Only the street background failed: the zones are there (provisional, listed for line D)
+  // Only the street background failed: the zones are there (mapa.sin_calles)
   noStreets: "Mapa sin fondo de calles.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3 (provisional, listed for line D)
+  // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3
   ariaRow: (label: string) =>
     `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
-  // Provisional (T3), listed for line D in the PR
+  // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
 const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];
@@ -340,17 +347,9 @@ function showZone(map: MapLibreMap, zone: ZoneFeature, barrio: AdminFeature | nu
   };
 }
 
-/** The zone's candidate key points, asked by zone and subcategory (a few KB, not whole layers). */
-function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: string): Promise<PlaceFeature[]> {
-  let request = cache.get(adminUnitId);
-  if (!request) {
-    const api = createApi();
-    const lists = keyPointQueries().map((query) => api.places({ ...query, adminUnitId }));
-    request = Promise.all(lists).then((all) => all.flat());
-    cache.set(adminUnitId, request);
-    request.catch(() => cache.delete(adminUnitId));
-  }
-  return request;
+/** The zone's candidate key points, asked by zone and subcategory with «Todos los centros» (a few KB, not whole layers). */
+function loadPlaces(adminUnitId: string): Promise<PlaceFeature[]> {
+  return fetchZonePlaces(adminUnitId, KEY_POINT_CATEGORIES);
 }
 
 export default function VidaMap() {
@@ -382,7 +381,6 @@ export default function VidaMap() {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const libRef = useRef<MapLibre | null>(null);
-  const placesCache = useRef(new Map<string, Promise<PlaceFeature[]>>());
   const shownOverview = useRef(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
@@ -490,7 +488,7 @@ export default function VidaMap() {
     if (!map || !ready || !zones) return;
     if (activeZone && view) {
       // Ask for the key points during the flight; a failure is handled when they are labelled.
-      loadPlaces(placesCache.current, activeZone.properties.admin_unit_id).catch(() => undefined);
+      loadPlaces(activeZone.properties.admin_unit_id).catch(() => undefined);
       const stop = showZone(map, activeZone, barrio, (end) => setLanded({ key: view, end }));
       return () => {
         // On unmount the map is already removed (its effect cleans up first).
@@ -514,7 +512,7 @@ export default function VidaMap() {
     let cancelled = false;
     const { key, end } = landed;
     // The district's places: in a barrio, those of the district that end in view are labelled.
-    loadPlaces(placesCache.current, activeZone.properties.admin_unit_id)
+    loadPlaces(activeZone.properties.admin_unit_id)
       .then((places) => {
         if (!cancelled) setKeyPoints({ key, points: pickKeyPoints(places, end.center, labelOptions(end)) });
       })
