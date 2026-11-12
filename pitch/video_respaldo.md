@@ -133,7 +133,7 @@ Y lo que le falta. Medimos lo que la gente tiene a quince minutos andando y lo c
   - vidafacil-madrid.vercel.app
   - github.com/marianohernando/housing-intelligence · Código abierto (Apache-2.0)
   - [N] conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid
-- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; 26 en producción el 12 nov, igual que `pitch/datasets_cm.md`).
+- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; 27 en producción desde el 13 nov, igual que `pitch/datasets_cm.md`).
 
 <!-- voz:p8:inicio -->
 [N] conjuntos de datos abiertos de la Comunidad de Madrid, con control de calidad y código abierto. Vida Fácil: encuentra tu sitio en Madrid.

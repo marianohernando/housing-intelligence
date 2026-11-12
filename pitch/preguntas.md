@@ -52,7 +52,7 @@ Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, re
   - para las personas es gratis, y la API y el MCP también, sin uso comercial.
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
-Por el trabajo que hay encima: cruzar 26 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
+Por el trabajo que hay encima: cruzar 27 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
 - Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md` · `evidence/gate-01/2026-11-10/idempotent-rerun.txt`.
 
 **8. ¿La licencia de los datos permite un uso comercial?**
@@ -141,9 +141,9 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
 **23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
-26 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
-- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (26 en producción, 12 nov).
-- Si insiste en cuáles se ven: 24 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
+27 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
+- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (27 en producción desde el 13 nov; el formulario se envió el 12 nov con 26).
+- Si insiste en cuáles se ven: 25 alimentan la lista o el buscador (el 27.º, el valor tasado de la vivienda, da el precio de compra en 28 municipios, D-227); los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
 
 **24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.

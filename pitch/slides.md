@@ -54,8 +54,8 @@ Título: **«Nadie te dice qué le falta a cada zona»**.
 Cierre de la columna: «Otros te enseñan lo que hay. Nosotros, lo que falta.»
 
 ### Columna derecha: los datos
-Titular: **«26 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 12 nov, con 26 en Gate 1 PASS. Los cinco nuevos son del 12 nov: los dos de camas (`evidence/gate-01/2026-11-12/cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`) y las tres topologías del CRTM con la accesibilidad de las estaciones (`crtm_topologia_metro/`, `crtm_topologia_metro_ligero/` y `crtm_topologia_cercanias/`, D-223). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 26` (12 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
-- **Matiz, si preguntan:** 24 alimentan la lista de lo que falta o el buscador. Las 3 topologías se usan con «sin escaleras», en producción desde el 12 nov. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Su uso en pantalla está **pendiente de A** (`pitch/datasets_cm.md`).
+Titular: **«27 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 13 nov, con 27 en Gate 1 PASS. Los seis últimos, en `evidence/gate-01/2026-11-12/`: los dos de camas (`cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`), las tres topologías del CRTM con la accesibilidad de las estaciones (`crtm_topologia_metro/`, `crtm_topologia_metro_ligero/` y `crtm_topologia_cercanias/`, D-223) y el valor tasado de la vivienda (`cm_valor_tasado_vivienda_municipios/`, D-227). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 27` (13 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
+- **Matiz, si preguntan:** 25 alimentan la lista de lo que falta o el buscador (el 27.º, del 13 nov, es el valor tasado de la vivienda, que da el precio de compra en 28 municipios, D-227). Las 3 topologías se usan con «sin escaleras», en producción desde el 12 nov. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Su uso en pantalla está **pendiente de A** (`pitch/datasets_cm.md`).
 
 Cada nombre lleva el hipervínculo a su ficha en el PDF:
 
@@ -75,7 +75,7 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
   - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3).
 - **Pie:** «Lista completa, con licencias y control de calidad: github.com/marianohernando/housing-intelligence → `pitch/datasets_cm.md`».
 
-**Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («26») va grande en violeta; el build la calcula del catálogo.
+**Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («27») va grande en violeta; el build la calcula del catálogo.
 
 ---
 
