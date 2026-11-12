@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | 12 nov: con `DECK_INTEGRANTES` y las C3 y C4 de B (PR #17) genera sin fallos. Hasta que se fusione el #17, falta su hueco |
+| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | 12 nov, con las C3 y C4 de B (PR #17, fusionado): genera sin fallos con `DECK_INTEGRANTES`; sin él, solo falta el nombre |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,11 +43,12 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slide 3 | Capturas C3 y C4: hechas por B (PR #17, `evidence/map-004/2026-11-12/deck/`); llegan al fusionar el #17. Con ellas, `--final` genera (probado el 12 nov con copias locales) | Fusión del #17 |
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
 - C1–C3 son capturas de producción de C (PR #11, fusionado el 12 nov) y C4–C7, de B.
+
+Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes nuevos en `deck.css`.
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);

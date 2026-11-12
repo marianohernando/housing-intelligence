@@ -193,7 +193,7 @@ El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las to
 - C4–C7 son de B (`evidence/map-004/2026-11-11/prod_*`), con `gap-0.2`. Se hicieron antes de desplegar el PR #9, así que algunos textos son anteriores. Los recortes los dejan fuera; ver cada fila.
 - C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11, fusionado el 12 nov).
 
-**Recaptura tras gap-0.3 (12 nov).** Las del 11 nov son anteriores a gap-0.3 y D-216. B ya rehízo C3 y C4 (PR #17, `evidence/map-004/2026-11-12/deck/`, en local a 1440 px con datos reales y las mismas cifras que producción), y el deck las toma de ahí: hasta que se fusione el #17 sale su hueco. Con ellas, `build.py --final` ya genera; se probó el 12 nov con copias locales. Las demás valen como borrador, pero se rehacen antes del 24 nov:
+**Recaptura tras gap-0.3 (12 nov).** Las del 11 nov son anteriores a gap-0.3 y D-216. B ya rehízo C3 y C4 (PR #17, `evidence/map-004/2026-11-12/deck/`, en local a 1440 px con datos reales y las mismas cifras que producción), y el deck las toma de ahí (el #17 se fusionó el 12 nov). Con ellas y `DECK_INTEGRANTES`, `build.py --final` genera sin fallos (12 nov). Las demás valen como borrador, pero se rehacen antes del 24 nov:
 
 | Id | Qué cambia | Dónde |
 |---|---|---|
