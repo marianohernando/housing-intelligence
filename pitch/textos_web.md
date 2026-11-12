@@ -2,6 +2,13 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Revisión de los borradores de B en el PR #32 (12 nov, noche).** Aprobados tal cual salvo lo que se indica. Todos van en la sección 5c («Dónde invertir primero», el esquema y lo demás):
+- **«Dónde invertir primero»:** aprobados el título, la intro, el ranking, «Resto de zonas…», «Ver N zonas más», «El 9,8 % de toda la Comunidad, en 3 zonas.» y la frase de la cifra. Cambia la nota (`invertir.nota`): en los distritos la gente sale del padrón escalado al censo (D-209, D-216), así que «no estimamos nada» no es del todo cierto y un estadístico lo puede discutir. La misma frase sale de la página «Cómo lo calculamos».
+- **Esquema de cinco pasos:** aprobado. Un cambio: el título del paso 3 va en plural, «Repartido entre quienes lo comparten».
+- **`fila.zona_pequena`:** aprobados «No comparable» y su ayuda.
+- **`centros.elige`:** aprobado «Toca uno o varios tipos de centro para verlos en el mapa.».
+- **Frase del alquiler en «Lo que estos datos no te dicen»:** aprobada. El 5 % y el 26 % son el factor de D-228 (de 1,05 a 1,26).
+
 **Fase de mejora (12 nov): textos para un jurado no técnico.** El jurado simulado se perdió en cinco sitios. Todo es **pendiente de B**, y lo que sale de la API, también **pendiente de A**:
 - **«100 %» con JUSTO debajo:** una línea bajo el %, `encaje.aviso_*` (sección 4). Mariano decidió explicarlo, no cambiar el nombre del %.
   - **Lo que publicó B el 12 nov** (`fitsButShortText` en `gaps.ts`, borrador): «Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, centros de salud.». Va el texto de `encaje.aviso_*`, por tres cosas: dice con qué se compara («frente a municipios parecidos»), une la lista con «y» («escuelas infantiles y centros de salud») y no lleva dos puntos tras «de». Además, las filas de zona muy pequeña no deberían contar como justas (**pendiente de B**).
@@ -448,6 +455,30 @@ Los textos de `fila.mide.*` son los de B (`ROW_MEASURE` en `gaps.ts`), definitiv
 | `ENTITY_NOT_RESOLVED` | No hemos podido situar este dato en el mapa. |
 | `ESTIMATION_NOT_ALLOWED` | No hay dato oficial y preferimos no inventarlo. |
 | `UNKNOWN` | No sabemos este dato. |
+
+## 5c. «Dónde invertir primero», esquema del método y «No comparable» (PR #32 de B)
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `invertir.titulo` | Dónde invertir primero | En «Qué falta» sin zona, antes del selector. Aprobado |
+| `invertir.intro` | Cuánta gente vive en zonas donde falta cada servicio, y qué zonas van primero porque tienen más gente afectada. | Aprobado |
+| `invertir.cifra` | {N} {gente} viven donde faltan {servicio} | Ejemplo: «25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles». {servicio} con `fila.lista.*`. Aprobado |
+| `invertir.contexto` | El {pct} % de toda la Comunidad, en {n} zonas. | Con 1: «en 1 zona». Aprobado |
+| `invertir.ranking` | Zonas donde faltan {servicio}, de más a menos gente afectada | Aprobado |
+| `invertir.resto` | Resto de zonas donde faltan {servicio} | Aprobado |
+| `invertir.mas` | Ver {n} zonas más | Con 1: «Ver 1 zona más». Aprobado |
+| `invertir.nota` | Solo cuentan las zonas en FALTA. Contamos a toda la gente de la zona que usa ese servicio (por ejemplo, los niños de 0 a 4 años para las escuelas infantiles), con el censo y, en los distritos de Madrid, el padrón. Dentro de una zona, unas calles están mejor servidas que otras. | **Cambia** respecto al borrador de B: fuera «no estimamos nada», porque en los distritos el padrón va escalado al censo (D-209, D-216), y «a la que sirve cada servicio» pasa a «que usa ese servicio». Lo mismo en el párrafo «Dónde invertir primero» de «Cómo lo calculamos» (`metodologia.md` §1.4) |
+| `metodo.pasos.titulo` | Cómo decidimos qué falta, en cinco pasos | Aprobado |
+| `metodo.paso1` | **Datos abiertos.** Dónde está cada centro y cuánta gente vive en cada zona, de la Comunidad de Madrid y otras fuentes oficiales. | Aprobado |
+| `metodo.paso2` | **Lo que hay a 15 min andando.** Por las calles de verdad, a paso tranquilo: un kilómetro. | Aprobado (15 min a 4 km/h = 1 km) |
+| `metodo.paso3` | **Repartido entre quienes lo comparten.** Si mucha gente vive alrededor de un centro, lo que ofrece toca a menos. | **Cambia** el título: plural, «quienes lo comparten» (borrador: «quien lo comparte») |
+| `metodo.paso4` | **Comparado con municipios parecidos.** Urbanos con urbanos y rurales con rurales. Un distrito de Madrid, con las demás ciudades. | Aprobado |
+| `metodo.paso5` | **FALTA, JUSTO o CUBIERTO.** FALTA solo si la diferencia es clara y no es casualidad. | Aprobado |
+| `metodo.ejemplo` | Ejemplo, con los datos del 12 de noviembre de 2026: en Puente de Vallecas hay 2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los municipios parecidos. Es decir, aquí hay 57 por cada 100: FALTA. | Aprobado |
+| `fila.zona_pequena` | No comparable | Sustituye a «Zona pequeña para comparar» (D-230). Aprobado |
+| `fila.zona_pequena.ayuda` | Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. | Aprobado |
+| `centros.elige` | Toca uno o varios tipos de centro para verlos en el mapa. | Con varios tipos a la vez. Aprobado |
+| `limites.alquiler.ajuste` | Esa media es de todos los contratos en vigor, así que la ajustamos a lo que se pagó en los contratos firmados en 2024 en la misma zona, según la Agencia Tributaria: entre un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más. | Detrás del párrafo del alquiler en «Lo que estos datos no te dicen» (`metodologia.md` §1.8). Aprobado |
 
 ## 5b. «Todos los centros» de una zona (D-216, D-218)
 Panel de la vista de zona con cada tipo de centro, su recuento, su capa en el mapa y su lista. Los nombres y las camas llegan de `/places` (`places-1`).

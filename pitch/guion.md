@@ -21,10 +21,10 @@
 | 1 | 0:00–0:40 | 40 s | Problema: personas y ayuntamientos deciden a ciegas | 74 | 34 s |
 | 2 | 0:40–2:20 | 100 s | Demo: una familia busca dónde vivir → zonas, el porqué y «¿Y si cambias algo?» | 145 | 67 s + unos 25 s de clics |
 | 2 sin buscador (reserva) | 0:40–2:20 | 100 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + unos 15 s de clics |
-| 3 | 2:20–3:40 | 80 s | Puente de Vallecas, su lista de lo que falta y a cuántos niños afecta | 129 | 60 s + unos 15 s de clics |
+| 3 | 2:20–3:40 | 80 s | Puente de Vallecas, su lista de lo que falta y a cuántos niños afecta | 126 | 58 s + unos 15 s de clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 44 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
-| **Total** | | **300 s** | | **493 con buscador; 484 sin él** | **Con buscador: 228 s + unos 40 s de clics = unos 32 s de margen. Sin buscador: 223 s + unos 30 s de clics = unos 47 s de margen** |
+| **Total** | | **300 s** | | **490 con buscador; 481 sin él** | **Con buscador: 226 s + unos 40 s de clics = unos 34 s de margen. Sin buscador: 222 s + unos 30 s de clics = unos 48 s de margen** |
 
 ---
 
@@ -110,19 +110,19 @@ Esta es Vida Fácil: el mapa de toda la Comunidad de Madrid, con sus ciento sete
 ## Bloque 3 · 2:20–3:40 · Qué le falta a una zona real
 **Zona: Puente de Vallecas** (distrito 2807913). Desde el 12 nov la lista mide lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten (D-217, `gap-0.3`; en llano, `pitch/metodologia.md` §1.4). Con ese método, Madrid capital ya no sale FALTA en centros de salud: sale JUSTO (0,95). Puente de Vallecas tiene una FALTA clara que se entiende en una frase, y además encaja con la familia del bloque 2: cumple todo y sale 7.ª en el bloque 2. Datos reales, comprobados en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913` (`gap-0.3`, `data_version: 2026-11-12`):
 - Escuelas infantiles **FALTA**: 2,781 escuelas al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,87 en los «Otros municipios urbanos de la Comunidad de Madrid» (ratio 0,571; `reliable: true`; sin `comparison_group`). En pantalla: «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)».
-- La escuela infantil más cercana está a 6 min o menos desde la mitad de las calles (`min_a_pie_escuela_infantil` = 6,258). Contando escuelas por habitante sale casi lo mismo (2,708): no es un efecto del método.
+- La mitad de la zona tiene la escuela infantil más cercana a 6 min o menos (`min_a_pie_escuela_infantil` = 6,258). Contando escuelas por habitante sale casi lo mismo (2,708): no es un efecto del método.
 - Farmacias **CUBIERTO**: 4,5 frente a 3,1. Colegio, centro de salud y mayores, también CUBIERTO; vivienda, SIN DATOS (la CM no lo publica por distrito).
 - **El 25 nov se vuelve a mirar:** si Puente de Vallecas ya no sale FALTA, se elige otra con `GET /api/v1/gaps?level=distrito&row=escuela_infantil` (hoy también Villaverde y Carabanchel) y se cambian las cifras de aquí y de la slide 3.
 - **Si preguntan por Madrid capital:** sale JUSTO en centros de salud (0,3603 frente a 0,3799). La frase «un tercio menos» ya no vale (D-217 §7).
 
 <!-- habla:b3:inicio -->
-Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas encaja, pero encajar no quiere decir que no le falte nada. Abro su lista de lo que falta. No contamos centros: medimos lo que la gente tiene a quince minutos andando, repartido entre todos los que lo comparten, y lo comparamos con municipios parecidos. Aquí, escuelas infantiles: falta. Hay una a [seis] minutos, pero son pocas para tantos niños: [dos coma ocho] por cada mil, frente a [cuatro coma nueve] en los demás municipios urbanos. [Leer una fila cubierta]. Y si no tenemos el dato, lo decimos: nunca inventamos una falta. En toda la región, [más de veinticinco mil] niños de cero a cuatro años viven donde faltan escuelas infantiles. Por ahí empezaría a invertir un concejal.
+Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas encaja, pero encajar no quiere decir que no le falte nada. Abro su lista de lo que falta. No contamos centros: medimos lo que la gente tiene a quince minutos andando, repartido entre todos los que lo comparten, y lo comparamos con municipios parecidos. Aquí, escuelas infantiles: falta. Hay una a [seis] minutos, pero son pocas para tantos niños: aquí hay [cincuenta y siete] por cada cien que hay en municipios parecidos. [Leer una fila cubierta]. Y si no tenemos el dato, lo decimos: nunca inventamos una falta. En toda la región, [más de veinticinco mil] niños de cero a cuatro años viven donde faltan escuelas infantiles. Por ahí empezaría a invertir un concejal.
 <!-- habla:b3:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
 |---|---|---|---|
 | 3.1 | Pestaña «Qué falta» y elegir «Puente de Vallecas» en la lista de zonas | La lista del distrito con sus 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS, valor, referencia, fiabilidad, minutos a pie y datasets | Abrir la pestaña preparada con `/que-falta?zona=distrito/2807913` |
-| 3.2 | Señalar la fila de escuelas infantiles y leer los minutos, el valor y la referencia | «A pie: 6 min» y «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)» | Leer solo el estado y la frase |
+| 3.2 | Señalar la fila de escuelas infantiles y leer los minutos y la frase principal | «A pie: 6 min» y «Aquí hay 57 por cada 100 que hay en municipios parecidos». La cifra técnica («2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos…, 4,9») queda tras «Ver la cifra»: no se abre, salvo que pregunten | Leer solo el estado y la frase |
 | 3.3 | Señalar la fila de farmacias (CUBIERTO) | «4,5 farmacias al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos…, 3,1» | Si no está CUBIERTO, saltar «[Leer una fila cubierta]» |
 | 3.4 | Antes de «En toda la región…», volver a la pestaña de las slides, en la slide 3, y leer la cifra grande. El orden de «dónde invertir primero» sale de la API y está en la slide; la web aún no lo enseña (**pendiente de B**), así que no se dice «en la web» | «25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles» y «Dónde invertir primero: Puente de Vallecas…, Carabanchel y Villaverde» | Si la slide no está, decir la frase sin la cifra: «En toda la región hay miles de niños pequeños donde faltan escuelas infantiles» |
 
