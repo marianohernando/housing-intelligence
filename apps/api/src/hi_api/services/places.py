@@ -24,7 +24,7 @@ _PLACES = text(
            ST_X(p.geom_4326) AS lon, ST_Y(p.geom_4326) AS lat, count(*) OVER () AS total
       FROM place_master p
       LEFT JOIN geo_admin_unit s ON s.admin_unit_id = p.seccion_admin_unit_id
-     WHERE p.category = :category AND p.status = 'ACTIVE'
+     WHERE p.category = ANY(CAST(:categories AS text[])) AND p.status = 'ACTIVE'
        AND (CAST(:subcategories AS text[]) IS NULL
             OR p.subcategory = ANY(CAST(:subcategories AS text[])))
        AND (CAST(:municipio AS text) IS NULL OR p.municipio_ine = :municipio)
@@ -179,13 +179,14 @@ def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
 
 def places_geojson(
     conn: Connection,
-    category: PlaceCategory,
+    category: PlaceCategory | list[PlaceCategory],
     admin_unit_id: str | None = None,
     subcategories: list[str] | None = None,
     page: int = 1,
 ) -> PlacesResult:
+    categories = category if isinstance(category, list) else [category]
     params = {
-        "category": category.value,
+        "categories": sorted({c.value for c in categories}),
         "subcategories": subcategories or None,
         **_zone_params(conn, admin_unit_id),
         "limit": PAGE_SIZE,

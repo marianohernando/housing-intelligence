@@ -25,10 +25,26 @@ def _next_page_warning(result: places.PlacesResult) -> list[str]:
     ]
 
 
+def _categories(raw: list[str]) -> list[PlaceCategory]:
+    """«health,pharmacy» or a repeated parameter: one call for several layers of a zone."""
+    values = [v.strip() for item in raw for v in item.split(",") if v.strip()]
+    try:
+        return [PlaceCategory(v) for v in values]
+    except ValueError as exc:
+        allowed = ", ".join(c.value for c in PlaceCategory)
+        raise HTTPException(
+            status_code=422,
+            detail={"code": ErrorCode.OUT_OF_COVERAGE.value, "message": f"category: {allowed}"},
+        ) from exc
+
+
 @router.get("")
 def get_places(
     engine: Annotated[Engine, Depends(get_engine)],
-    category: PlaceCategory,
+    category: Annotated[
+        list[str],
+        Query(description="One or several, comma-separated or repeated (education,health)"),
+    ],
     admin_unit_id: Annotated[
         str | None, Query(description="Only places in this municipio, distrito or seccion_censal")
     ] = None,
@@ -39,7 +55,9 @@ def get_places(
 ) -> PlacesResponse:
     with engine.connect() as conn:
         try:
-            result = places.places_geojson(conn, category, admin_unit_id, subcategory, page)
+            result = places.places_geojson(
+                conn, _categories(category), admin_unit_id, subcategory, page
+            )
         except places.ZoneNotFoundError as exc:
             raise HTTPException(
                 status_code=404, detail={"code": ErrorCode.NOT_FOUND.value, "message": str(exc)}

@@ -122,3 +122,23 @@ def test_hospitals_carry_their_name_and_installed_beds(client: TestClient) -> No
     }
     assert by_name["Clínica La Luz"]["capacity"]["value"] == 152.0  # «, S.L.» is not the name
     assert not any(name.startswith("Hospital general (") for name in by_name)
+
+
+def test_several_categories_in_one_call(client: TestClient) -> None:
+    """One request per zone view instead of one per layer (petición de B)."""
+    zone = {"admin_unit_id": "ES.28.MUN.28079"}
+    one = {
+        c: client.get("/api/v1/places", params={"category": c, **zone}).json()["data"]["total"]
+        for c in ("education", "health", "pharmacy")
+    }
+    both = client.get("/api/v1/places", params={"category": "education,health,pharmacy", **zone})
+    assert both.status_code == 200, both.text
+    assert both.json()["data"]["total"] == sum(one.values())
+    repeated = client.get(
+        "/api/v1/places", params=[("category", "education"), ("category", "health")]
+    )
+    assert repeated.status_code == 200
+    kinds = {f["properties"]["category"] for f in repeated.json()["data"]["features"]}
+    assert kinds <= {"education", "health"}
+    bad = client.get("/api/v1/places", params={"category": "education,bares"})
+    assert bad.status_code == 422
