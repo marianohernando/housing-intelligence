@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 
 import type { DatasetList, DatasetRef } from "../../contracts/dataset_list_response";
 import {
-  CARTOCIUDAD_ATTRIBUTION,
+  attributions,
+  ATTRIBUTIONS_FALLBACK,
+  attributionsOrFallback,
   counterText,
   datasetLines,
   mapAttribution,
-  MINISTRY_ATTRIBUTION,
-  ministryAttribution,
   sortDatasets,
 } from "../provenance";
 
@@ -40,45 +40,46 @@ describe("counterText (pie.contador)", () => {
   });
 });
 
-describe("ministryAttribution (pie.sanidad)", () => {
+describe("attributions (attribution_text of /datasets, from the source catalogue)", () => {
   // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
   const url = new URL("../../../../../data/fixtures/contracts/dataset_list.all.fixture.json", import.meta.url);
   const { datasets } = JSON.parse(readFileSync(url, "utf8")) as DatasetList;
 
-  it("cites both catalogues with their update date, read from the API, as line D wrote it", () => {
-    expect(ministryAttribution(datasets)).toBe(MINISTRY_ATTRIBUTION);
+  it("cites every source once, as the catalogue writes it, with CartoCiudad on its own", () => {
+    const cited = attributions(datasets).map((a) => a.text);
+    for (const ref of datasets) {
+      const text = ref.attribution_text ?? "";
+      // Each dataset's citation is made of the lines shown, in order
+      expect(cited.some((c) => text === c || text.startsWith(`${c} `))).toBe(true);
+    }
+    expect(new Set(cited).size).toBe(cited.length);
+    expect(cited.some((c) => c.includes("Ministerio de Sanidad") && c.includes("actualizado a 31/12/2024"))).toBe(true);
+    expect(cited.filter((c) => c.includes("CartoCiudad"))).toHaveLength(1);
+    expect(cited.filter((c) => c.includes("Comunidad de Madrid"))).toHaveLength(1);
   });
 
-  it("follows the API when a catalogue changes, and keeps D's text until it answers", () => {
-    const hospitals = datasets.find((d) => d.dataset_id === "ms_catalogo_nacional_hospitales");
-    if (!hospitals) throw new Error("fixture without the hospital catalogue");
-    const next = { ...hospitals, name: "Catálogo Nacional de Hospitales 2026 (actualizado a 31 de diciembre de 2025)" };
-    expect(ministryAttribution([next])).toBe("Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2026 (actualizado a 31/12/2025).");
-    expect(ministryAttribution(null)).toBe(MINISTRY_ATTRIBUTION);
-    expect(ministryAttribution([metro, osm])).toBe(MINISTRY_ATTRIBUTION);
+  it("keeps the fallback faithful: what the API's fixture gives today", () => {
+    expect(attributions(datasets)).toEqual(ATTRIBUTIONS_FALLBACK);
+  });
+
+  it("shows the fallback only while /datasets has not answered, or answers without citations", () => {
+    expect(attributionsOrFallback(null)).toBe(ATTRIBUTIONS_FALLBACK);
+    expect(attributionsOrFallback([{ ...metro, attribution_text: null }])).toBe(ATTRIBUTIONS_FALLBACK);
+    const next = { ...metro, attribution_text: "Powered by CRTM (texto nuevo del catálogo)." };
+    expect(attributionsOrFallback([next])).toEqual([{ text: "Powered by CRTM (texto nuevo del catálogo).", href: "https://www.crtm.es" }]);
   });
 });
 
-describe("mapAttribution (mapa.atribucion: the screens with a map have no footer)", () => {
+describe("mapAttribution (the screens with a map have no footer)", () => {
   const url = new URL("../../../../../data/fixtures/contracts/dataset_list.all.fixture.json", import.meta.url);
   const { datasets } = JSON.parse(readFileSync(url, "utf8")) as DatasetList;
   const text = (html: string) => html.replace(/<[^>]+>/g, "");
 
-  it("cites the CM, the Ayuntamiento, CRTM, the Ministry with its catalogues' dates from /datasets and CartoCiudad as the IGN asks", () => {
+  it("carries every citation of the footer, linked, in a new tab", () => {
     const html = mapAttribution(datasets);
-    expect(text(html)).toBe(
-      "Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es",
-    );
-    expect(html).toContain('<a href="https://datos.madrid.es" target="_blank" rel="noopener noreferrer">Ayuntamiento de Madrid</a>');
-    expect(CARTOCIUDAD_ATTRIBUTION).toBe("© Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es");
-  });
-
-  it("follows the API's dates, and keeps line D's text while /datasets has not answered", () => {
-    expect(text(mapAttribution(null))).toBe(text(mapAttribution(datasets)));
-    const hospitals = datasets.find((d) => d.dataset_id === "ms_catalogo_nacional_hospitales");
-    if (!hospitals) throw new Error("fixture without the hospital catalogue");
-    const next = { ...hospitals, name: "Catálogo Nacional de Hospitales 2026 (actualizado a 31 de diciembre de 2025)" };
-    expect(text(mapAttribution([next]))).toContain("Ministerio de Sanidad (catálogo a 31/12/2025)");
+    expect(text(html)).toBe(attributions(datasets).map((a) => a.text).join(" · "));
+    expect(html).toContain('<a href="https://datos.madrid.es" target="_blank" rel="noopener noreferrer">Fuente: Ayuntamiento de Madrid');
+    expect(text(mapAttribution(null))).toBe(text(html));
   });
 });
 

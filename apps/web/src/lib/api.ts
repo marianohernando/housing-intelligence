@@ -31,13 +31,14 @@ export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features:
  * only a few subcategories (the stations for «Trabajo en»).
  */
 export interface PlacesQuery {
-  category: PlaceCategory;
+  /** One or several (sent comma-separated, since 12 nov): a zone's layers in one request */
+  category: PlaceCategory | readonly PlaceCategory[];
   adminUnitId?: string;
   subcategories?: readonly string[];
 }
 
 function placesPath({ category, adminUnitId, subcategories = [] }: PlacesQuery, page: number): string {
-  const params = new URLSearchParams({ category });
+  const params = new URLSearchParams({ category: ([] as PlaceCategory[]).concat(category).join(",") });
   if (adminUnitId) params.set("admin_unit_id", adminUnitId);
   for (const subcategory of subcategories) params.append("subcategory", subcategory);
   if (page > 1) params.set("page", String(page));
@@ -125,7 +126,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
     return (await response.json()) as T;
   }
 
-  /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
+  /** GET /api/v1/places: a zone's facilities of one or several categories as points, following every page. */
   async function places(query: PlacesQuery): Promise<PlaceFeature[]> {
     const first = await call<PlacesResponse>(placesPath(query, 1));
     const rest = await Promise.all(

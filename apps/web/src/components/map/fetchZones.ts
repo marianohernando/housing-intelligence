@@ -38,17 +38,16 @@ export function fetchBarrios(districtId: string): Promise<AdminFeature[]> {
 
 /**
  * A zone's places of some categories, for «Todos los centros» and the key points: one request per
- * category and zone, with the subcategories both need; each filters out what it does not show.
+ * zone with every category and subcategory both need (/places takes several categories since
+ * 12 nov), shared by both; each keeps the categories it asks for and filters out what it does not show.
  */
 export async function fetchZonePlaces(adminUnitId: string, categories: readonly PlaceCategory[]): Promise<PlaceFeature[]> {
   const queries = zonePlaceQueries();
-  const lists = await Promise.all(
-    categories.map((category) => {
-      // Never a whole layer: a category the zone screen does not use has nothing to ask for
-      const subcategories = queries.get(category);
-      if (!subcategories) throw new Error(`The zone screen does not ask for ${category}`);
-      return once(places, `${adminUnitId}|${category}`, () => createApi().places({ category, adminUnitId, subcategories }));
-    }),
+  // Never a whole layer: a category the zone screen does not use has nothing to ask for
+  const unknown = categories.find((category) => !queries.has(category));
+  if (unknown) throw new Error(`The zone screen does not ask for ${unknown}`);
+  const all = await once(places, adminUnitId, () =>
+    createApi().places({ category: [...queries.keys()], adminUnitId, subcategories: [...queries.values()].flat() }),
   );
-  return lists.flat();
+  return all.filter((place) => categories.includes(place.properties.category));
 }

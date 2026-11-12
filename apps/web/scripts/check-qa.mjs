@@ -9,7 +9,7 @@
 //   node scripts/check-qa.mjs gap03 [outDir]     # phase 6: gap-0.3 (D-217): neighbours, 2SFCA copy and the hospital
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
-//   node scripts/check-qa.mjs licencias [outDir] # footer and map cite the Ministry of Health and CartoCiudad
+//   node scripts/check-qa.mjs licencias [outDir] # footer and map show every attribution_text of /datasets
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C3 and C4 of line D's deck, after gap-0.3
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -642,30 +642,56 @@ async function hungGaps(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
-/** Licences (D, 12 nov): the footer and the map cite the Ministry of Health with its update dates, and CartoCiudad. */
+/**
+ * Every citation in a list of lines: each dataset's attribution_text (from the source catalogue,
+ * via /datasets) must be made of lines shown, in order. Lines the API does not give are left out.
+ */
+function citedAll(lines, datasets) {
+  const missing = [];
+  for (const ref of datasets) {
+    let rest = (ref.attribution_text ?? "").trim();
+    while (rest) {
+      const line = lines.find((l) => rest.startsWith(l));
+      if (!line) {
+        missing.push(`${ref.dataset_id}: «${rest}»`);
+        break;
+      }
+      rest = rest.slice(line.length).trim();
+    }
+  }
+  return missing;
+}
+
+/** Licences: the footer and the map show every citation the API gives (attribution_text), as the catalogue writes it. */
 async function licences(browser) {
   const failures = [];
+  const { datasets } = (await (await fetch(`${API}/api/v1/datasets`)).json()).data;
+  report.citas_api = [...new Set(datasets.map((d) => d.attribution_text))];
   for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
     for (const [name, path] of [["que_falta", "/que-falta?zona=distrito/2807913"], ["como_lo_calculamos", "/como-lo-calculamos"]]) {
       const p = await open(browser, profile, path);
       const footer = p.page.locator("footer").last();
       await footer.getByText(/^Datos: \d+ conjuntos/).waitFor({ timeout: 20000 });
       await footer.scrollIntoViewIfNeeded();
+      const lines = (await footer.locator("li").evaluateAll((items) =>
+        items.map((li) => {
+          const visible = li.cloneNode(true);
+          visible.querySelectorAll(".visually-hidden").forEach((h) => h.remove());
+          return visible.textContent?.replace(/\s+/g, " ").trim() ?? "";
+        }),
+      ));
       const entry = (report[`pie_${name}_${id}`] = {
-        pie: (await footer.locator("li, p, a").allInnerTexts()).map(flat).filter(Boolean),
+        citas: lines,
+        resto: (await footer.locator(":scope > p, :scope > a").allInnerTexts()).map(flat),
         axe: await axe(p.page),
         overflow_px: await overflow(p.page),
         consola: p.errors,
       });
       await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
-      const text = entry.pie.join(" | ");
-      for (const must of [
-        "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025).",
-        "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es.",
-        "del CRTM ni del Ministerio de Sanidad.",
-        "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
-      ]) {
-        if (!text.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
+      for (const m of citedAll(lines, datasets)) failures.push(`${name} ${id}: falta ${m}`);
+      const rest = entry.resto.join(" | ");
+      for (const must of ["del CRTM ni del Ministerio de Sanidad.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad"]) {
+        if (!rest.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
       }
       if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
       if (entry.consola.length) failures.push(`${name} ${id}: consola`);
@@ -673,13 +699,12 @@ async function licences(browser) {
       await p.ctx.close();
     }
   }
-  // The zone screen has no footer: the map's attribution cites them
+  // The zone screen has no footer: the map's attribution carries the same citations
   const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
   await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
   report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
-  const mapText =
-    "Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es";
-  if (!report.mapa_atribucion.includes(mapText)) failures.push("mapa: atribución distinta de mapa.atribucion");
+  const mapLines = report.mapa_atribucion.split(/ · | \| /);
+  for (const m of citedAll(mapLines, datasets)) failures.push(`mapa: falta ${m}`);
   await z.page.locator(".maplibregl-ctrl-attrib").first().screenshot({ path: `${out}/licencias_mapa_desktop.png` });
   await z.ctx.close();
   report.fallos = failures;

@@ -1,8 +1,9 @@
 /**
  * What the zone screen asks /api/v1/places for (pure, unit tested). «Todos los centros» and the
- * key points of the 3D view want places of the same categories, so each category is asked once per
- * zone with the subcategories of both, and each side keeps its own: every request can hold a
- * database connection, and the pooler admits 15 clients (incident EMAXCONNSESSION, 12 nov).
+ * key points of the 3D view want places of the same categories, so the zone is asked once, with every
+ * category and the subcategories of both (/places takes several categories since 12 nov), and each
+ * side keeps its own: every request can hold a database connection, and the pooler admits 15 clients
+ * (incident EMAXCONNSESSION, 12 nov).
  */
 import type { PlaceCategory } from "@/lib/api";
 

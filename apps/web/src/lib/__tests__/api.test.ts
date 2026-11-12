@@ -174,6 +174,19 @@ describe("api client, routes used by the map", () => {
     ]);
   });
 
+  it("asks for several categories of a zone in one request, comma-separated (since 12 nov)", async () => {
+    const calls: Call[] = [];
+    const page = envelope({ type: "FeatureCollection", features: [], total: 0, page: 1, pages: 1 });
+    await createApi(BASE, fakeFetch(200, page, calls)).places({
+      category: ["education", "health", "pharmacy"],
+      adminUnitId: "ES.28.DIS.2807905",
+      subcategories: ["Farmacia"],
+    });
+    expect(calls.map((c) => c.url)).toEqual([
+      `${BASE}/api/v1/places?category=education%2Chealth%2Cpharmacy&admin_unit_id=ES.28.DIS.2807905&subcategory=Farmacia`,
+    ]);
+  });
+
   it("follows every page of places instead of cutting at the first", async () => {
     const calls: Call[] = [];
     const point = (id: string) => ({ type: "Feature", id, geometry: { type: "Point", coordinates: [0, 0] }, properties: {} });

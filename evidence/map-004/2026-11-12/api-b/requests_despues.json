@@ -1,0 +1,385 @@
+{
+ "como": "Playwright contra web 3011 (next build + start) y API 8011, caché vacía",
+ "visitas": [
+  {
+   "zona": "Chamartín",
+   "perfil": "desktop",
+   "carga": {
+    "peticiones": 6,
+    "max_en_paralelo": 4,
+    "max_descargando": 4,
+    "cronologia_ms": [
+     [
+      "gaps",
+      12,
+      137,
+      137
+     ],
+     [
+      "datasets",
+      57,
+      65,
+      65
+     ],
+     [
+      "places education,health,pharmacy,social,transport",
+      147,
+      165,
+      165
+     ],
+     [
+      "admin-units municipio",
+      147,
+      318,
+      331
+     ],
+     [
+      "admin-units distrito",
+      147,
+      171,
+      171
+     ],
+     [
+      "admin-units barrio",
+      147,
+      154,
+      154
+     ]
+    ],
+    "repetidas": [],
+    "por_endpoint": {
+     "gaps": 1,
+     "datasets": 1,
+     "places education,health,pharmacy,social,transport": 1,
+     "admin-units municipio": 1,
+     "admin-units distrito": 1,
+     "admin-units barrio": 1
+    },
+    "fallidas": []
+   },
+   "tipos_de_centro": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "pestana_que_falta": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "vuelta_a_la_zona": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "cambio_de_pestana_del_navegador": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "total": 6,
+   "consola": []
+  },
+  {
+   "zona": "Fuencarral-El Pardo",
+   "perfil": "desktop",
+   "carga": {
+    "peticiones": 6,
+    "max_en_paralelo": 4,
+    "max_descargando": 4,
+    "cronologia_ms": [
+     [
+      "gaps",
+      23,
+      220,
+      220
+     ],
+     [
+      "datasets",
+      74,
+      100,
+      100
+     ],
+     [
+      "places education,health,pharmacy,social,transport",
+      233,
+      291,
+      305
+     ],
+     [
+      "admin-units municipio",
+      233,
+      417,
+      422
+     ],
+     [
+      "admin-units distrito",
+      233,
+      262,
+      262
+     ],
+     [
+      "admin-units barrio",
+      233,
+      249,
+      249
+     ]
+    ],
+    "repetidas": [],
+    "por_endpoint": {
+     "gaps": 1,
+     "datasets": 1,
+     "places education,health,pharmacy,social,transport": 1,
+     "admin-units municipio": 1,
+     "admin-units distrito": 1,
+     "admin-units barrio": 1
+    },
+    "fallidas": []
+   },
+   "tipos_de_centro": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "pestana_que_falta": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "vuelta_a_la_zona": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "cambio_de_pestana_del_navegador": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "total": 6,
+   "consola": []
+  },
+  {
+   "zona": "Chamartín",
+   "perfil": "mobile",
+   "carga": {
+    "peticiones": 6,
+    "max_en_paralelo": 4,
+    "max_descargando": 4,
+    "cronologia_ms": [
+     [
+      "gaps",
+      12,
+      153,
+      153
+     ],
+     [
+      "datasets",
+      58,
+      80,
+      80
+     ],
+     [
+      "places education,health,pharmacy,social,transport",
+      161,
+      213,
+      225
+     ],
+     [
+      "admin-units municipio",
+      162,
+      315,
+      325
+     ],
+     [
+      "admin-units distrito",
+      162,
+      187,
+      187
+     ],
+     [
+      "admin-units barrio",
+      162,
+      171,
+      171
+     ]
+    ],
+    "repetidas": [],
+    "por_endpoint": {
+     "gaps": 1,
+     "datasets": 1,
+     "places education,health,pharmacy,social,transport": 1,
+     "admin-units municipio": 1,
+     "admin-units distrito": 1,
+     "admin-units barrio": 1
+    },
+    "fallidas": []
+   },
+   "tipos_de_centro": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "pestana_que_falta": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "vuelta_a_la_zona": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "cambio_de_pestana_del_navegador": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "total": 6,
+   "consola": []
+  },
+  {
+   "zona": "Fuencarral-El Pardo",
+   "perfil": "mobile",
+   "carga": {
+    "peticiones": 6,
+    "max_en_paralelo": 4,
+    "max_descargando": 4,
+    "cronologia_ms": [
+     [
+      "gaps",
+      18,
+      155,
+      155
+     ],
+     [
+      "datasets",
+      67,
+      82,
+      82
+     ],
+     [
+      "places education,health,pharmacy,social,transport",
+      164,
+      217,
+      230
+     ],
+     [
+      "admin-units municipio",
+      165,
+      320,
+      331
+     ],
+     [
+      "admin-units distrito",
+      165,
+      190,
+      190
+     ],
+     [
+      "admin-units barrio",
+      166,
+      177,
+      177
+     ]
+    ],
+    "repetidas": [],
+    "por_endpoint": {
+     "gaps": 1,
+     "datasets": 1,
+     "places education,health,pharmacy,social,transport": 1,
+     "admin-units municipio": 1,
+     "admin-units distrito": 1,
+     "admin-units barrio": 1
+    },
+    "fallidas": []
+   },
+   "tipos_de_centro": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "pestana_que_falta": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "vuelta_a_la_zona": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "cambio_de_pestana_del_navegador": {
+    "peticiones": 0,
+    "max_en_paralelo": 0,
+    "max_descargando": 0,
+    "cronologia_ms": [],
+    "repetidas": [],
+    "por_endpoint": {},
+    "fallidas": []
+   },
+   "total": 6,
+   "consola": []
+  }
+ ]
+}
