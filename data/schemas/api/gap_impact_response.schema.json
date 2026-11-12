@@ -230,7 +230,7 @@
           "type": "string"
         },
         "zones": {
-          "description": "Zones classified",
+          "description": "Zones counted, whatever their status (SIN_DATOS too)",
           "minimum": 0,
           "title": "Zones",
           "type": "integer"

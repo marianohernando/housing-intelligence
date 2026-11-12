@@ -28,7 +28,7 @@
           "level": "distrito",
           "people": 9433,
           "ratio_to_reference": 0.571,
-          "p_value": 0.00115,
+          "p_value": 0.00114,
           "comparison_group": null,
           "explanation": "Viven aquí 9.433 niños de 0 a 4 años. Tienen 57 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
         },
@@ -123,7 +123,7 @@
           "level": "municipio",
           "people": 8339,
           "ratio_to_reference": 0.2694,
-          "p_value": 0.0105,
+          "p_value": 0.0104,
           "comparison_group": {
             "codes": [
               "28022",
@@ -169,7 +169,7 @@
           "level": "municipio",
           "people": 1641,
           "ratio_to_reference": 0.2412,
-          "p_value": 0.0196,
+          "p_value": 0.0195,
           "comparison_group": {
             "codes": [
               "28167",
@@ -192,7 +192,7 @@
           "level": "municipio",
           "people": 589,
           "ratio_to_reference": 0.3654,
-          "p_value": 0.0128,
+          "p_value": 0.0127,
           "comparison_group": {
             "codes": [
               "28002",
@@ -233,7 +233,7 @@
           "level": "municipio",
           "people": 195628,
           "ratio_to_reference": 0.7379,
-          "p_value": 0.00817,
+          "p_value": 0.00816,
           "comparison_group": null,
           "explanation": "Viven aquí 195.628 personas. Tienen 74 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
         },
@@ -255,7 +255,7 @@
           "level": "municipio",
           "people": 138012,
           "ratio_to_reference": 0.486,
-          "p_value": 1.16e-05,
+          "p_value": 1.15e-05,
           "comparison_group": null,
           "explanation": "Viven aquí 138.012 personas. Tienen 49 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -266,7 +266,7 @@
           "level": "municipio",
           "people": 103243,
           "ratio_to_reference": 0.6687,
-          "p_value": 0.0141,
+          "p_value": 0.014,
           "comparison_group": null,
           "explanation": "Viven aquí 103.243 personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
         },
@@ -277,7 +277,7 @@
           "level": "municipio",
           "people": 86078,
           "ratio_to_reference": 0.559,
-          "p_value": 0.00301,
+          "p_value": 0.003,
           "comparison_group": null,
           "explanation": "Viven aquí 86.078 personas. Tienen 56 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
         }
@@ -346,7 +346,7 @@
           "level": "municipio",
           "people": 13227,
           "ratio_to_reference": 0.7828,
-          "p_value": 4.66e-256,
+          "p_value": 4.65e-256,
           "comparison_group": null,
           "explanation": "Viven aquí 13.227 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -368,7 +368,7 @@
           "level": "municipio",
           "people": 2658,
           "ratio_to_reference": 0.7804,
-          "p_value": 3.42e-54,
+          "p_value": 3.41e-54,
           "comparison_group": null,
           "explanation": "Viven aquí 2.658 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -401,7 +401,7 @@
           "level": "municipio",
           "people": 882,
           "ratio_to_reference": 0.7678,
-          "p_value": 1.05e-51,
+          "p_value": 1.04e-51,
           "comparison_group": null,
           "explanation": "Viven aquí 882 hogares de 4 o más personas. Tienen 77 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -412,7 +412,7 @@
           "level": "municipio",
           "people": 854,
           "ratio_to_reference": 0.668,
-          "p_value": 3.1e-105,
+          "p_value": 3.09e-105,
           "comparison_group": null,
           "explanation": "Viven aquí 854 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -423,7 +423,7 @@
           "level": "municipio",
           "people": 549,
           "ratio_to_reference": 0.6395,
-          "p_value": 1.18e-80,
+          "p_value": 1.17e-80,
           "comparison_group": null,
           "explanation": "Viven aquí 549 hogares de 4 o más personas. Tienen 64 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -445,7 +445,7 @@
           "level": "municipio",
           "people": 317,
           "ratio_to_reference": 0.5981,
-          "p_value": 3.6e-59,
+          "p_value": 3.59e-59,
           "comparison_group": null,
           "explanation": "Viven aquí 317 hogares de 4 o más personas. Tienen 60 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -456,7 +456,7 @@
           "level": "municipio",
           "people": 307,
           "ratio_to_reference": 0.6929,
-          "p_value": 6.62e-33,
+          "p_value": 6.61e-33,
           "comparison_group": null,
           "explanation": "Viven aquí 307 hogares de 4 o más personas. Tienen 69 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -511,7 +511,7 @@
           "level": "municipio",
           "people": 281,
           "ratio_to_reference": 0.7024,
-          "p_value": 1.88e-28,
+          "p_value": 1.87e-28,
           "comparison_group": null,
           "explanation": "Viven aquí 281 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -555,7 +555,7 @@
           "level": "municipio",
           "people": 163,
           "ratio_to_reference": 0.6828,
-          "p_value": 1.93e-19,
+          "p_value": 1.92e-19,
           "comparison_group": null,
           "explanation": "Viven aquí 163 hogares de 4 o más personas. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         },
@@ -566,7 +566,7 @@
           "level": "municipio",
           "people": 126,
           "ratio_to_reference": 0.6781,
-          "p_value": 7.57e-16,
+          "p_value": 7.56e-16,
           "comparison_group": null,
           "explanation": "Viven aquí 126 hogares de 4 o más personas. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
         }

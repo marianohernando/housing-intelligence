@@ -303,7 +303,7 @@ class GapImpactRow(BaseModel):
         description="Madrid capital counted by its 21 districts, or as one municipio when the "
         "row has no district values"
     )
-    zones: int = Field(ge=0, description="Zones classified")
+    zones: int = Field(ge=0, description="Zones counted, whatever their status (SIN_DATOS too)")
     zones_in_falta: int = Field(ge=0)
     people_in_falta: int = Field(ge=0)
     people_total: int = Field(ge=0, description="The row's target population in the region")

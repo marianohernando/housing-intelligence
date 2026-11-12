@@ -114,7 +114,7 @@ export type GapRowKey =
 export type ShareInFalta = number;
 export type Summary = string;
 /**
- * Zones classified
+ * Zones counted, whatever their status (SIN_DATOS too)
  */
 export type Zones = number;
 export type ZonesInFalta = number;

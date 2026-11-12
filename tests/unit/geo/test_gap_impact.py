@@ -16,7 +16,9 @@ from hi_domain.gap_impact import (
     people_scale,
     rank,
     row_summary,
+    share_of,
     shortfall_p_value,
+    shown_p_value,
     zone_sentence,
 )
 from hi_domain.gaps import GAP_METHOD, poisson_upper
@@ -170,3 +172,16 @@ def test_zone_sentence_without_a_test_gives_only_the_ratio() -> None:
         "Viven aquí 1.200 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los "
         "municipios parecidos"
     )
+
+
+def test_shown_p_value_never_rounds_a_significant_p_up_to_the_cut_off() -> None:
+    assert shown_p_value(0.0249999) == 0.0249
+    assert shown_p_value(0.00115372) == 0.00115
+    assert shown_p_value(0.0) == 0.0
+
+
+def test_share_is_bounded_and_the_summary_omits_an_unknown_total() -> None:
+    assert share_of(5, 0) == 0.0
+    assert share_of(12, 10) == 1.0
+    text = row_summary(GapRowKey.FARMACIA, people=12, total=0, zones=1)
+    assert text == "En la Comunidad de Madrid, 12 personas viven en 1 zona donde faltan farmacias"

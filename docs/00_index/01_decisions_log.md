@@ -1234,3 +1234,9 @@ Evidencia: `evidence/gate-04/2026-11-12/impact-cifras.txt`. Es reversible: ruta 
      - cuántos centros harían falta: la oferta del 2SFCA es compartida entre zonas y ese número se leería mal;
      - un ranking de zonas en JUSTO.
 6. **Frase de la web «Aquí hay {n} por cada 100 que hay en municipios parecidos» (pregunta de D):** la calcula la web con lo que ya da la API, `n = round(100 × ratio_to_reference)`. Si la zona se compara con sus vecinos, se usa el `ratio_to_reference` de `comparison_group`. El `explanation` de `/gaps` no cambia.
+7. **Revisión (`reviewer`, Fase 2b):**
+   - sin bloqueantes;
+   - el porcentaje del resumen sale de la misma cuota acotada que `share_in_falta` y se omite si el total es desconocido;
+   - `p_value` se redondea hacia abajo, a 3 cifras: una zona en FALTA nunca muestra 0,025;
+   - `zones` cuenta también las zonas SIN DATOS.
+   - Queda declarado que las consultas de recuentos no filtran por versión, igual que los mapas de `/gaps`: hoy hay una fila por zona y feature.

@@ -31,7 +31,9 @@ from hi_domain.gap_impact import (
     people_in,
     rank,
     row_summary,
+    share_of,
     shortfall_p_value,
+    shown_p_value,
     zone_sentence,
 )
 from hi_domain.gaps import GAP_METHOD
@@ -139,7 +141,7 @@ def _ranked(
             level=_level_of(statuses[z.code]),
             people=z.people,
             ratio_to_reference=significant(z.ratio),
-            p_value=None if z.p_value is None else float(f"{z.p_value:.3g}"),
+            p_value=None if z.p_value is None else shown_p_value(z.p_value),
             comparison_group=statuses[z.code].comparison_group,
             explanation=zone_sentence(row, z),
         )
@@ -170,7 +172,7 @@ def _impact_row(
         zones_in_falta=len(ranking),
         people_in_falta=in_falta,
         people_total=total,
-        share_in_falta=min(1.0, in_falta / total) if total else 0.0,
+        share_in_falta=share_of(in_falta, total),
         summary=row_summary(row, in_falta, total, len(ranking)),
         ranking=ranking,
     )

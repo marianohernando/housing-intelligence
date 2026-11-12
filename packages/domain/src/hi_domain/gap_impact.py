@@ -7,6 +7,7 @@ uses: nothing is estimated. Zones in FALTA are ranked by those people, with the 
 that a shortfall like theirs is chance (the test of D-213, as a number).
 """
 
+import math
 from collections.abc import Iterable, Mapping
 from typing import Any, NamedTuple
 
@@ -66,6 +67,20 @@ def shortfall_p_value(observed: float, expected: float) -> float:
     return float(chi2.sf(2 * expected, 2 * (observed + 1)))
 
 
+def shown_p_value(p_value: float, digits: int = 3) -> float:
+    """Rounded down to `digits` significant figures, so a significant p (< 0,025) is never
+    shown as 0,025."""
+    if p_value <= 0:
+        return 0.0
+    scale = 10 ** (digits - 1 - math.floor(math.log10(p_value)))
+    return math.floor(p_value * scale) / scale
+
+
+def share_of(people: int, total: int) -> float:
+    """Share of the region's target population, at most 1; 0 when the total is unknown."""
+    return min(1.0, people / total) if total > 0 else 0.0
+
+
 def chance_text(p_value: float) -> str:
     """How often chance would give such a shortfall, in words (FALTA always has p < 0,025)."""
     if p_value < 0.001:
@@ -95,10 +110,10 @@ def row_summary(row: GapRowKey, people: int, total: int, zones: int) -> str:
     words = ROW_PEOPLE[row]
     if zones == 0:
         return f"Ninguna zona de la Comunidad de Madrid tiene una falta clara de {words.lack}"
-    share = es_number(100 * people / total, 1) if total else "?"
+    share = f" (el {es_number(100 * share_of(people, total), 1)} %)" if total > 0 else ""
     where = "1 zona donde" if zones == 1 else f"{zones} zonas donde"
     return (
-        f"En la Comunidad de Madrid, {es_number(people, 0)} {words.people} (el {share} %) "
+        f"En la Comunidad de Madrid, {es_number(people, 0)} {words.people}{share} "
         f"viven en {where} {words.missing}"
     )
 
