@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.51 — Alquiler de contratos nuevos evaluado (2026-11-12)
+- D-228: el índice CM 1934428 (IPVA del INE por antigüedad de contrato) no permite ajustar el nivel del alquiler; propuesta pendiente de Mariano con la tabla de nuevos contratos de la Agencia Tributaria (IRPF 2024, municipios y códigos postales de Madrid).
+
 ## v0.5.50 — Comprar con el valor tasado (2026-11-12)
 - D-227: el presupuesto de compra usa el valor tasado medio de la vivienda libre por municipio (dataset CM, Ministerio de Vivienda); los distritos de Madrid quedan sin datos. `POST /search` pasa a `fit-0.5`.
 - `04_technical_architecture/31_public_api_routes.md`: compra y `estimated_cost_eur` en €.

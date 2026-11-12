@@ -1170,3 +1170,29 @@ DATA-021. Sustituye D-214 §5, donde comprar salía UNKNOWN en todas las zonas. 
    - un test de integración siembra un valor tasado en un municipio de los fixtures y comprueba por la API PASS, FAIL, el coste en € y el dataset citado;
    - quedan fijados en tests el redondeo del Reality Check (305.000 € → +40.000 €) y el tope de 5 millones;
    - pendiente de la web (línea B): las tarjetas aún dicen «Aún no tenemos precios oficiales de compra por zona» (`SearchCard.tsx`, `FitDetails.tsx`). Deberían decirlo solo donde la condición sale UNKNOWN, por ejemplo: «Solo hay precio en los municipios de más de 25.000 habitantes; los distritos de Madrid no lo tienen».
+
+## D-228 — Alquiler de contratos nuevos: el índice CM 1934428 no permite ajustar el nivel; propuesta con la tabla de nuevos contratos de la Agencia Tributaria (2026-11-12)
+Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano decidió «Ajustar con el índice CM».** Este ADR registra por qué ese índice no sirve y deja una propuesta **pendiente de Mariano**. No cambia código ni datos. Evidencia: `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/evaluacion.md`.
+1. **Qué publica el dataset 1934428** (comprobado el 12 nov; CC BY; actualizado el 02-06-2026):
+   - dos índices anuales del IPVA del INE (2015 = 100), contrato nuevo y contrato existente, de 2021 a 2024, sin código de territorio;
+   - los valores coinciden con los de la Comunidad de Madrid en la tabla 59004 del INE, aunque los metadatos digan «Toda España»;
+   - en 2024 los contratos nuevos subieron un 9,2 % y los existentes un 2,7 %.
+2. **Por qué no sirve:**
+   - cada serie vale 100 en su propio 2015, así que el cociente de los dos índices no dice cuánto más cuesta un contrato nuevo;
+   - el INE avisa de que su variación «solo recoge una parte del efecto del cambio de contrato»;
+   - hay un único valor para toda la región, y sacar de ahí un factor de nivel sería un ajuste a ojo.
+3. **Alternativa con fuente oficial:**
+   - **Fuente:** «Estadística de viviendas declaradas en IRPF» de la Agencia Tributaria, ejercicio 2024. Es la misma estadística que la CM republica y que ya usamos.
+   - **Qué publica:** el alquiler medio mensual y los m² medios del total y de los «contratos de arrendamiento formalizados en el ejercicio», para 37 municipios de la CM y los 54 códigos postales de Madrid.
+   - **Reutilización:** permitida, citando la fuente y la fecha.
+   - **Factor (contratos nuevos / total, en €/m²):** municipios entre 1,05 y 1,26 (Madrid 1,20); códigos postales entre 1,10 y 1,26.
+   - No está en el portal de la CM.
+4. **Propuesta:**
+   - **A, recomendada:** el €/m² de la CM por el factor de la AEAT de la misma zona; en los distritos, el de sus códigos postales, ponderado como en D-214.
+     - Efecto: Fuencarral pasa de ~1.107 a ~1.270 € y Salamanca de ~1.526 a ~1.880 €, con 77 m².
+     - Hecho: «contratos firmados en 2024».
+   - **B:** solo un aviso más fuerte con esas cifras, sin cambiar el coste.
+   - En los dos casos el índice 1934428 no entra en el cálculo.
+5. **Si se elige A:**
+   - versión 3 de `alquiler_m2_mensual` y `fit-0.6`, con tests antes del código y el golden actualizado;
+   - el texto `RENT_NOTE` está en el código, así que primero se despliega y después se sincroniza.
