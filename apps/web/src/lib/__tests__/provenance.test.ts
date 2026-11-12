@@ -84,7 +84,7 @@ describe("mapAttribution (the screens with a map have no footer)", () => {
   });
 });
 
-describe("the map always cites OpenStreetMap and the CRTM (OSMF guidelines, CRTM licence §2.2)", () => {
+describe("OpenStreetMap and the CRTM on the map, each with its link (OSMF guidelines, CRTM licence §2.2)", () => {
   const url = new URL("../../../../../data/fixtures/contracts/dataset_list.all.fixture.json", import.meta.url);
   const { datasets } = JSON.parse(readFileSync(url, "utf8")) as DatasetList;
   const required = [
@@ -93,7 +93,7 @@ describe("the map always cites OpenStreetMap and the CRTM (OSMF guidelines, CRTM
   ];
   const links = (html: string) => [...html.matchAll(/<a href="([^"]+)"[^>]*>([^<]*)<\/a>/g)].map(([, href = "", text = ""]) => ({ href, text }));
   const cases: [string, readonly DatasetRef[] | null][] = [
-    ["with /datasets", datasets],
+    ["with /datasets (the contract fixture)", datasets],
     ["with the fallback, before /datasets answers", null],
     ["with the fallback, when /datasets answers no citation", []],
   ];
@@ -105,8 +105,16 @@ describe("the map always cites OpenStreetMap and the CRTM (OSMF guidelines, CRTM
     });
   }
 
-  it("in the line beside the (i), which does not wait for /datasets", () => {
-    for (const { source, href } of required) expect(MAP_CREDITS.filter((c) => c.href === href && c.text.includes(source))).toHaveLength(1);
+  it("always in the line beside the (i), even when /datasets cites neither", () => {
+    // The folded list cites what the catalogue says: without those datasets it would not name them,
+    // so the guarantee is this line, which never depends on /datasets
+    const withoutThem = datasets.filter((ref) => !/OpenStreetMap|CRTM/.test(ref.attribution_text ?? ""));
+    const folded = links(mapAttribution(withoutThem));
+    expect(folded.length).toBeGreaterThan(0);
+    for (const { source, href } of required) {
+      expect(folded.filter((l) => l.text.includes(source))).toHaveLength(0);
+      expect(MAP_CREDITS.filter((c) => c.href === href && c.text.includes(source))).toHaveLength(1);
+    }
   });
 });
 
