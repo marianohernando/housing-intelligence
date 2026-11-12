@@ -10,7 +10,7 @@ import type { SearchResponse } from "@/contracts/search_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
 import { type AdminLevel, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
-import { createLimiter } from "@/lib/limit";
+import { anySignal, createLimiter } from "@/lib/limit";
 import type { PlaceFeature } from "@/lib/map/places";
 import type { AdminFeature } from "@/lib/map/zones";
 
@@ -31,13 +31,14 @@ export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features:
  * only a few subcategories (the stations for «Trabajo en»).
  */
 export interface PlacesQuery {
-  category: PlaceCategory;
+  /** One or several (sent comma-separated, since 12 nov): a zone's layers in one request */
+  category: PlaceCategory | readonly PlaceCategory[];
   adminUnitId?: string;
   subcategories?: readonly string[];
 }
 
 function placesPath({ category, adminUnitId, subcategories = [] }: PlacesQuery, page: number): string {
-  const params = new URLSearchParams({ category });
+  const params = new URLSearchParams({ category: ([] as PlaceCategory[]).concat(category).join(",") });
   if (adminUnitId) params.set("admin_unit_id", adminUnitId);
   for (const subcategory of subcategories) params.append("subcategory", subcategory);
   if (page > 1) params.set("page", String(page));
@@ -93,15 +94,19 @@ export const MAX_REQUESTS_IN_FLIGHT = 4;
 
 /**
  * fetch through a limiter. A request's timeout (`timeoutMs`) starts when it leaves the queue, not
- * while it waits its turn (review of PR #17).
+ * while it waits its turn (review of PR #17); the wait for its turn has the same limit, so a
+ * request never waits forever behind others that hang. Both fail with a TimeoutError.
  */
 export function fetchThrough(run: ReturnType<typeof createLimiter>, fetchImpl: typeof fetch = fetch): FetchLike {
   return (input, { timeoutMs, ...init } = {}) =>
-    run(() => {
-      if (!timeoutMs) return fetchImpl(input, init);
-      const timeout = AbortSignal.timeout(timeoutMs);
-      return fetchImpl(input, { ...init, signal: init.signal ? AbortSignal.any([init.signal, timeout]) : timeout });
-    });
+    run(
+      () => {
+        if (!timeoutMs) return fetchImpl(input, init);
+        const timeout = AbortSignal.timeout(timeoutMs);
+        return fetchImpl(input, { ...init, signal: init.signal ? anySignal([init.signal, timeout]) : timeout });
+      },
+      { signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : undefined },
+    );
 }
 
 const fetchInTurn = fetchThrough(createLimiter(MAX_REQUESTS_IN_FLIGHT));
@@ -121,7 +126,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
     return (await response.json()) as T;
   }
 
-  /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
+  /** GET /api/v1/places: a zone's facilities of one or several categories as points, following every page. */
   async function places(query: PlacesQuery): Promise<PlaceFeature[]> {
     const first = await call<PlacesResponse>(placesPath(query, 1));
     const rest = await Promise.all(

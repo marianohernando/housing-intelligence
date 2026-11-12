@@ -1,6 +1,18 @@
 {
  "modo": "capturas-deck",
  "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "c1_c2": {
+  "metodo": "fit-0.2",
+  "primera": [
+   "Fuencarral-El Pardo",
+   100
+  ],
+  "trabajo": "29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+  "tarjeta": "DISTRITO DE MADRID Fuencarral-El Pardo 100 % de encaje Esta zona encaja en un 100 % con tu búsqueda La 1.ª que más encaja Lo que tienes aquí Colegio con primaria a 9 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Parada de transporte público a 3 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a 15 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable 29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler medio ≈ 1.107 €/mes por 77 m² (14,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) · Dato aproximado Fiabilidad del dato: Dato aproximado Qué falta aquí Escuelas infantiles A pie: 8 min JUSTO Colegios A pie: 9 min JUSTO Centros de salud A pie: 15 min JUSTO Ver todo lo que falta Ver la zona",
+  "trabajo_ayuda": 1,
+  "muy_pronto": 0,
+  "consola": []
+ },
  "c4": {
   "filas": [
    [

@@ -15,13 +15,13 @@ import { useScenario } from "./ScenarioProvider";
 // of streets: there is no street search without an external geocoder.
 const TEXT = {
   title: "Trabajo en",
-  help: "Así miramos lo lejos que te queda cada zona.",
+  // trabajo.ayuda with fit-0.2 (CORE-009, D-220): the commute is measured in public transport minutes
+  help: "Miramos cuánto tardarías en transporte público para llegar a las 9:00.",
   placeholder: "Escribe una estación, un distrito o un municipio",
   noMatch: "No encontramos ese lugar. Prueba con una estación o con el nombre del municipio.",
   found: (n: number) => (n === 1 ? "1 lugar encontrado. Usa las flechas para elegirlo." : `${n} lugares encontrados. Usa las flechas para elegir uno.`),
   remove: "Quitar este lugar",
-  // trabajo.max_min is not shown until CORE-009 (the search sends the work place without a limit)
-  transitSoon: "Tiempo en transporte: muy pronto",
+  // trabajo.max_min is not shown: the search sends the work place without a limit (max_minutes: null)
 };
 
 type Stations = WorkPlace[] | "loading" | "failed" | null;
@@ -172,9 +172,6 @@ export default function WorkField() {
       {/* Always there, so screen readers hear how many places match while typing */}
       <p role="status" className="visually-hidden">
         {status}
-      </p>
-      <p className={styles.help}>
-        <span className={styles.soonTag}>{TEXT.transitSoon}</span>
       </p>
     </div>
   );

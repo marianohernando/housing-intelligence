@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
+import type { DatasetRef } from "../../contracts/dataset_list_response";
 import type { PlaceCategory } from "../../contracts/places_response";
 import {
   type Facility,
@@ -231,6 +232,14 @@ describe("capacitySources", () => {
       },
     ]);
     expect(capacitySources("hospital", items, [])).toHaveLength(1);
+  });
+
+  it("keeps the fallback of the beds faithful: what the API's fixture gives today, but for the link", () => {
+    const url = new URL("../../../../../data/fixtures/contracts/dataset_list.all.fixture.json", import.meta.url);
+    const { datasets } = JSON.parse(readFileSync(url, "utf8")) as { datasets: DatasetRef[] };
+    const [fromApi] = capacitySources("hospital", items, datasets);
+    const [fallback] = capacitySources("hospital", items, null);
+    expect({ ...fromApi, href: null }).toEqual(fallback);
   });
 
   it("has nothing to cite when no capacity comes from another dataset", () => {

@@ -91,6 +91,15 @@ describe("api client", () => {
     expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
   });
 
+  it("never waits forever for its turn behind requests that hang: the wait has the same limit (TIMEOUT)", async () => {
+    const run = createLimiter(1);
+    const hanging = (() => new Promise<Response>(() => undefined)) as unknown as typeof fetch;
+    const inTurn = fetchThrough(run, hanging);
+    void inTurn("hangs");
+    const error = await createApi(BASE, inTurn).zoneGaps("distrito", "2807905", { timeoutMs: 20 }).catch((e: unknown) => e);
+    expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
+  });
+
   it("starts a request's timeout when it leaves the queue, not while it waits its turn", async () => {
     const run = createLimiter(1);
     const signals: (AbortSignal | null | undefined)[] = [];
@@ -162,6 +171,19 @@ describe("api client, routes used by the map", () => {
     });
     expect(calls.map((c) => c.url)).toEqual([
       `${BASE}/api/v1/places?category=transport&admin_unit_id=ES.28.DIS.2807905&subcategory=metro&subcategory=cercanias`,
+    ]);
+  });
+
+  it("asks for several categories of a zone in one request, comma-separated (since 12 nov)", async () => {
+    const calls: Call[] = [];
+    const page = envelope({ type: "FeatureCollection", features: [], total: 0, page: 1, pages: 1 });
+    await createApi(BASE, fakeFetch(200, page, calls)).places({
+      category: ["education", "health", "pharmacy"],
+      adminUnitId: "ES.28.DIS.2807905",
+      subcategories: ["Farmacia"],
+    });
+    expect(calls.map((c) => c.url)).toEqual([
+      `${BASE}/api/v1/places?category=education%2Chealth%2Cpharmacy&admin_unit_id=ES.28.DIS.2807905&subcategory=Farmacia`,
     ]);
   });
 
