@@ -136,7 +136,7 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 **23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
 26 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
 - Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (26 en producción, 12 nov).
-- Si insiste en cuáles se ven: 24 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», que llega a producción con el próximo despliegue (**pendiente de C**).
+- Si insiste en cuáles se ven: 24 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
 
 **24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
@@ -197,15 +197,15 @@ Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen re
 
 **36. ¿Incluís seguridad? Es delicado.**
 No la puntuamos, y es una decisión. El dato oficial que evaluamos, los hechos conocidos de infracciones penales por cada 1.000 habitantes, cuenta dónde se denuncia o dónde actúa la policía, no dónde se vive: en 2024, Humanes de Madrid daba 116,2 y Madrid 58,6, frente a 47,9 de referencia, y ordenar zonas así señalaría municipios por la actividad que reciben. Además, solo cubre 36 de las 199 zonas y ninguno de los distritos de Madrid.
-- Evidencia: D-224 · `evidence/gate-01/2026-11-12/seguridad-evaluacion.md` · D-204 y D-205 (nunca nacionalidad ni etiquetas como «peligroso»).
-- Si insiste: como mucho, la tasa se enseñaría como contexto en esos 36 municipios, con su cifra, su referencia, el año y el aviso del denominador, sin puntuar ni ordenar. Esa opción está abierta (D-224 §3). A está mirando también los datos de la Policía Municipal por distrito y los de seguridad vial, solo como contexto (**pendiente de A**).
-- Estado: decidido (D-224). La prioridad «Seguridad» no puntúa.
+- Evidencia: D-224 · D-226 · `evidence/gate-01/2026-11-12/seguridad-evaluacion.md` y `seguridad-fuentes.md` · D-204 y D-205 (nunca nacionalidad ni etiquetas como «peligroso»).
+- Si insiste: en los 21 distritos de Madrid sí damos contexto, que no puntúa ni ordena. Es cómo valoran los vecinos la seguridad de su barrio, de 0 a 10, según la Encuesta de calidad de vida de 2025 del Ayuntamiento, con unas 400 personas por distrito; la media de Madrid es 6,4 de noche y 7,8 de día (D-226 §1). Las actuaciones de la Policía Municipal miden la actividad policial, no el riesgo de vivir allí. Los atropellos, sin saber cuánta gente camina por cada calle, señalan los barrios con más vida. Ninguno de los dos puntúa (D-226 §2–3). Enseñar la tasa de criminalidad como contexto en esos 36 municipios sigue abierto (D-224 §3).
+- Estado: decidido (D-224 y D-226). La prioridad «Seguridad» no puntúa. La percepción vecinal está en la API; en la web, **pendiente de B**.
 
 **37. ¿Sirve para alguien que no puede subir escaleras?**
 Sí, si lo marca: «Sin escaleras» puntúa los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el Consorcio da como totalmente accesible, y nunca se deduce ni se etiqueta a nadie. Es una aproximación declarada: no mide autobuses, aceras, portales ni ascensores, y la tarjeta lo dice cuando no hay ninguna estación así a un paseo. En Madrid capital va de 6,8 minutos en Chamberí a 25,5 en Usera.
 - Evidencia: D-223 · `evidence/gate-01/2026-11-12/estaciones-accesibles.md` · las 3 topologías del CRTM en el portal CM (`pitch/datasets_cm.md`, 24 a 26) · `evidence/gate-04/2026-11-12/golden-search-sin-escaleras.txt`.
 - Si insiste en el grado: el CRTM no publica qué significa cada grado. Leemos T como accesibilidad total porque las 57 estaciones de Metro Ligero son T y la Comunidad dice que toda esa red es accesible; P y N no cuentan (D-223 §3). El `wheelchair_boarding` del GTFS no se usa porque no sigue el estándar (D-223 §4).
-- Estado: hecho en la API (`fit-0.4`) y en la web (PR #26 de B). En producción, con el próximo despliegue (**pendiente de C**).
+- Estado: hecho y en producción desde el 12 nov (`fit-0.4`, despliegue de `2761696`: `evidence/gate-06/2026-11-12-deploy/deploy-18-pub002.md`).
 
 **38. ¿Funciona fuera de la Comunidad de Madrid?**
 La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geografía se basa en códigos INE. Lo que haría falta en otra región es su portal de datos con equivalentes.

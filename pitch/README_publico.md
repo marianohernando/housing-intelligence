@@ -1,5 +1,5 @@
 <!--
-INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b) y lo puso al día con 23 conjuntos CM,
+INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b) y lo puso al día con los conjuntos CM de ese momento,
 la capacidad a 15 minutos andando (D-217) y los catálogos del Ministerio de Sanidad (D-218). Este borrador ya no se
 mantiene y sus cifras son del 11 nov: el texto vigente es README.md, y los cambios se le piden a A.
 
@@ -8,6 +8,8 @@ Borrador de la línea D para el README.md de la raíz (lo integra la línea A, q
 - Las notas entre comentarios como este no se ven en GitHub: dicen de dónde sale cada cifra y qué está pendiente.
 - Antes de integrarlo: quitar las marcas «pendiente» y revisar las cifras con `uv run python pitch/build_datasets_cm.py`.
 -->
+
+> **Borrador ya integrado: el texto vigente es el [README.md de la raíz](../README.md).** Este fichero se conserva como registro. Las cifras de datos se han puesto al día el 12 nov con [`datasets_cm.md`](datasets_cm.md), que es la fuente de la lista; los enlaces de abajo son relativos a la raíz del repo y desde aquí no funcionan.
 
 # Vida Fácil · Encuentra tu sitio en Madrid
 
@@ -25,10 +27,10 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**21 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
+**26 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
 - población, hogares, vivienda, renta y alquiler;
 - colegios, centros de salud, servicios para mayores y farmacias;
-- las 6 redes de transporte público del Consorcio Regional de Transportes, que también publica ese portal.
+- las 6 redes de transporte público del Consorcio Regional de Transportes y la accesibilidad de sus estaciones de metro, Metro Ligero y Cercanías, que también publica ese portal.
 
 → **[Lista completa, con el enlace a cada ficha, su licencia, para qué la usamos y su informe de calidad](pitch/datasets_cm.md)**
 
@@ -38,7 +40,7 @@ Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón y el pan
 
 <!--
 Fuentes:
-- 21 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/) y evidence/gate-01/2026-11-10/real-run-quality.txt (21 PASS).
+- 26 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 26 PASS el 12 nov). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
 - Los 6 GTFS del CRTM cuentan como datos CM porque el portal los publica: D-196.
 - 179 municipios: evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json.
 - 21 distritos: D-200 y D-209 (población por distrito del padrón municipal del Ayuntamiento). DATA-012 hecha (be40c2f); GET /api/v1/gaps/distrito/2807905 (Chamartín) responde con datos reales.
@@ -134,7 +136,7 @@ Hecho con ayuda de asistentes de programación con IA, que las bases permiten (�
 ## Para quien quiera mirar por dentro
 
 - **Estado del proyecto, día a día:** [`board/BOARD.md`](board/BOARD.md).
-- **Controles de calidad de cada fase, con su evidencia:** [`evidence/`](evidence/). Por ejemplo, la ingesta de los 21 conjuntos de la Comunidad está en [`evidence/gate-01/2026-11-10/summary.md`](evidence/gate-01/2026-11-10/summary.md).
+- **Controles de calidad de cada fase, con su evidencia:** [`evidence/`](evidence/). Por ejemplo, la primera ingesta completa de los conjuntos de la Comunidad, del 10 nov, está en [`evidence/gate-01/2026-11-10/summary.md`](evidence/gate-01/2026-11-10/summary.md).
 - **API pública y sus contratos:** [`docs/04_technical_architecture/31_public_api_routes.md`](docs/04_technical_architecture/31_public_api_routes.md), con los JSON Schema en [`data/schemas/api/`](data/schemas/api/).
 - **Catálogo de fuentes, datasets e indicadores,** legible por máquina: [`data/catalog/`](data/catalog/).
 - **Decisiones del proyecto:** [`docs/00_index/01_decisions_log.md`](docs/00_index/01_decisions_log.md).
