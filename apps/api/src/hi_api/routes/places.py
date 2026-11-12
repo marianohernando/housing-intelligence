@@ -1,25 +1,18 @@
 """Canonical places (facilities) as GeoJSON."""
 
-from typing import Annotated, Any
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
 from hi_api.services import places
-from hi_contracts.api.envelope import Envelope, ErrorCode
+from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import PlaceCategory
+from hi_contracts.public.places import PlaceCollection
+from hi_contracts.public.responses import PlacesResponse
 
 router = APIRouter(prefix="/places", tags=["places"])
-
-
-class PlacesData(BaseModel):
-    type: str
-    features: list[dict[str, Any]]
-    total: int
-    page: int
-    pages: int
 
 
 def _next_page_warning(result: places.PlacesResult) -> list[str]:
@@ -43,7 +36,7 @@ def get_places(
         list[str] | None, Query(description="Repeat to keep several (e.g. metro and cercanias)")
     ] = None,
     page: Annotated[int, Query(ge=1, description=f"{places.PAGE_SIZE} places per page")] = 1,
-) -> Envelope[PlacesData]:
+) -> PlacesResponse:
     with engine.connect() as conn:
         try:
             result = places.places_geojson(conn, category, admin_unit_id, subcategory, page)
@@ -56,5 +49,7 @@ def get_places(
                 status_code=422,
                 detail={"code": ErrorCode.OUT_OF_COVERAGE.value, "message": str(exc)},
             ) from exc
-    data = PlacesData(**result.collection, total=result.total, page=result.page, pages=result.pages)
-    return Envelope(data=data, warnings=_next_page_warning(result))
+    data = PlaceCollection.model_validate(
+        {**result.collection, "total": result.total, "page": result.page, "pages": result.pages}
+    )
+    return PlacesResponse(data=data, warnings=_next_page_warning(result))

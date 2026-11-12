@@ -1,0 +1,16 @@
+{
+  "places_normalized": 550,
+  "quarantined": 5,
+  "top_subcategories": {
+    "Centro de salud": 272,
+    "Consultorio de atención primaria": 152,
+    "Hospital general": 60,
+    "Centro de salud mental": 41,
+    "Hospital de salud mental y tratamiento de toxicomanías": 10,
+    "Hospital de media y larga estancia": 8,
+    "Hospital especializado": 7
+  },
+  "places": 550,
+  "assigned_to_section": 550,
+  "municipio_mismatch": 0
+}

@@ -16,6 +16,7 @@ from hi_contracts.public import ScenarioState
 from hi_contracts.public.responses import (
     DatasetListResponse,
     GapRowMapResponse,
+    PlacesResponse,
     SearchResponse,
     ZoneGapListResponse,
 )
@@ -32,6 +33,7 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "api/zone_gap_list_response": ZoneGapListResponse,
     "api/gap_row_map_response": GapRowMapResponse,
     "api/dataset_list_response": DatasetListResponse,
+    "api/places_response": PlacesResponse,
     "api/error_response": ErrorEnvelope,
 }
 

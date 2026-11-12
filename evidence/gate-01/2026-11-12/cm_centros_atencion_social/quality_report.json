@@ -1,0 +1,137 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 1014
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 34,
+        "ratio": 0.0324,
+        "reasons": {
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 34
+        }
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {
+          "sector_not_allowed": 1564,
+          "subtipo_not_allowed": 24
+        },
+        "source_rows": 2636
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "social"
+      }
+    },
+    {
+      "name": "coordinate_repairs",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "geocoded": 13,
+        "kept_with_note": 0,
+        "rows": [
+          {
+            "external_id": "C0456",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 3 for number 4)"
+          },
+          {
+            "external_id": "C0684",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "C1204",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "C2296",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 7 for number 5)"
+          },
+          {
+            "external_id": "C2433",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 8 for number 4)"
+          },
+          {
+            "external_id": "C2689",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 24 for number 25)"
+          },
+          {
+            "external_id": "C3968",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "C3969",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "C4217",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 4 for number 5)"
+          },
+          {
+            "external_id": "C5145",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "C5389",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 53 for number 54)"
+          },
+          {
+            "external_id": "C8959",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "C9207",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          }
+        ]
+      }
+    }
+  ]
+}

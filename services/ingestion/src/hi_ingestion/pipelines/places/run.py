@@ -3,18 +3,54 @@
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import Engine
+from shapely import STRtree, from_wkb
+from shapely.geometry import Point
+from sqlalchemy import Engine, text
 
 from hi_contracts.catalog.pipeline import PointsPipeline
 from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
 from hi_ingestion.pipelines.fetch import FetchedFile
-from hi_ingestion.pipelines.places.normalize import Places, normalize_places
+from hi_ingestion.pipelines.places.coordinates import Located, fold_name
+from hi_ingestion.pipelines.places.geocoder import CachedGeocoder
+from hi_ingestion.pipelines.places.normalize import (
+    MADRID_MUNICIPIO,
+    Places,
+    Repair,
+    normalize_places,
+)
 from hi_ingestion.pipelines.places.publish import replace_places
 from hi_ingestion.pipelines.places.quality import run_quality
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "places-1.0.0"
+PARSER_VERSION = "places-1.1.0"  # 1.1: coordinate repair against the declared address (D-216)
+GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
+_UNITS = text(
+    """
+    SELECT level, code_official, name, ST_AsBinary(geom_4326) AS wkb
+      FROM geo_admin_unit
+     WHERE level = 'municipio' OR (level = 'distrito' AND code_official LIKE :madrid)
+    """
+)
+
+
+class GeographyLocator:
+    """Municipio and Madrid district of a lon/lat point, from the canonical geography."""
+
+    def __init__(self, rows: list[dict[str, Any]]) -> None:
+        self.levels: dict[str, tuple[STRtree, list[str]]] = {}
+        for level in ("municipio", "distrito"):
+            chosen = [r for r in rows if r["level"] == level]
+            geoms = [from_wkb(bytes(r["wkb"])) for r in chosen]
+            self.levels[level] = (STRtree(geoms), [str(r["code_official"]) for r in chosen])
+
+    def _code(self, level: str, lon: float, lat: float) -> str | None:
+        tree, codes = self.levels[level]
+        hits = tree.query(Point(lon, lat), predicate="within")
+        return codes[int(hits[0])] if len(hits) else None
+
+    def __call__(self, lon: float, lat: float) -> Located:
+        return Located(self._code("municipio", lon, lat), self._code("distrito", lon, lat))
 
 
 def _counts(places: Places) -> dict[str, Any]:
@@ -34,6 +70,22 @@ def write_places_silver(places: Places, directory: Path) -> Path:
     return path
 
 
+def build_repair(engine: Engine, spec: PointsPipeline, data_dir: Path) -> Repair | None:
+    """Coordinate repair for registers that declare an address (D-216); None otherwise."""
+    if not spec.address_template:
+        return None
+    with engine.connect() as conn:
+        rows = [
+            dict(r) for r in conn.execute(_UNITS, {"madrid": f"{MADRID_MUNICIPIO}%"}).mappings()
+        ]
+    names = {
+        fold_name(str(r["name"])): str(r["code_official"])
+        for r in rows
+        if r["level"] == "municipio"
+    }
+    return Repair(GeographyLocator(rows), CachedGeocoder(data_dir / GEOCODER_CACHE), names)
+
+
 def run_places_pipeline(
     engine: Engine,
     catalog: Catalog,
@@ -44,11 +96,12 @@ def run_places_pipeline(
     data_dir: Path = DATA_DIR,
 ) -> RunSummary:
     source_id = catalog.datasets[spec.dataset_id].source_id
+    repair = build_repair(engine, spec, data_dir)
     steps: PipelineSteps[Places] = PipelineSteps(
         parser_version=PARSER_VERSION,
         csv=spec.csv,
         resource_role=spec.resource_role,
-        normalize=lambda frame: normalize_places(frame, spec),
+        normalize=lambda frame: normalize_places(frame, spec, repair),
         quarantine=lambda places: places.quarantine,
         quality=lambda places: run_quality(places, spec).to_dict(),
         counts=_counts,

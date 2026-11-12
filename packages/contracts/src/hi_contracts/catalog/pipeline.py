@@ -146,6 +146,12 @@ class MadridDistrictPanelPipeline(BaseModel):
         return sorted(set(self.indicators.values()))
 
 
+def _template_columns(template: str | None) -> list[str]:
+    if not template:
+        return []
+    return [field for _, field, _, _ in Formatter().parse(template) if field]
+
+
 class PointsPipeline(BaseModel):
     """Point facilities with projected coordinates -> place_master."""
 
@@ -168,6 +174,13 @@ class PointsPipeline(BaseModel):
     y_column: str
     crs: str = Field(default="EPSG:25830", pattern=r"^EPSG:\d{4,5}$")
     municipio_code_column: str | None = None
+    # Declared location, to repair missing or incoherent coordinates (D-216): the municipio by
+    # name when the register has no INE code, and the Madrid district code ("01".."21").
+    municipio_name_column: str | None = None
+    district_code_column: str | None = None
+    # Postal address for the official geocoder, e.g. "{VIA} {NUMERO}, {CP} {MUNICIPIO}".
+    address_template: str | None = None
+    address_number_column: str | None = None  # house number: no number -> never geocoded
     status_column: str | None = None
     active_values: list[str] = Field(default_factory=list[str])
     group_by_id: bool = False
@@ -190,9 +203,10 @@ class PointsPipeline(BaseModel):
         return self
 
     def name_template_columns(self) -> list[str]:
-        if not self.name_template:
-            return []
-        return [field for _, field, _, _ in Formatter().parse(self.name_template) if field]
+        return _template_columns(self.name_template)
+
+    def address_template_columns(self) -> list[str]:
+        return _template_columns(self.address_template)
 
     def metric_ids(self) -> list[str]:
         return []

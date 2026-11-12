@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_oficinas_farmacia/09fac7c1e4d9/oficinas_farmacia.csv",
+      "sha256": "09fac7c1e4d93d8bdf4d067f430f38a6d89019917cd4668957d7eecf24b15bed",
+      "bytes": 293414,
+      "url": "https://datos.comunidad.madrid/dataset/2d682b1d-e2e8-4c6f-b902-7a3f108e2fb9/resource/904a161b-f339-4296-be61-1ae914494c89/download/oficinas_farmacia.csv",
+      "retrieved_at": "2026-11-11T23:50:57.644866+00:00"
+    }
+  ],
+  "checksum": "de61d48d7b4afc8c0120dd08a988dd04eeaf71d27b7e75e80613847c8e666a97",
+  "parser_version": "places-1.1.0",
+  "dataset_version": "2026-11-10-de61d48d7b4a",
+  "correlation_id": "3e45ae5ee35241829f505ce373a4f278",
+  "silver": "data/silver/cm_oficinas_farmacia/de61d48d7b4a/places.csv.gz"
+}

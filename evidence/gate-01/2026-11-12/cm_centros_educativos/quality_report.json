@@ -1,0 +1,276 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 3867
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 39,
+        "ratio": 0.01,
+        "reasons": {
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 39
+        }
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {
+          "SITUACIÓN_not_active": 3851
+        },
+        "source_rows": 7757
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "education"
+      }
+    },
+    {
+      "name": "coordinate_repairs",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "geocoded": 19,
+        "kept_with_note": 22,
+        "rows": [
+          {
+            "external_id": "28009276",
+            "origin": "source",
+            "note": "register says district 2807911, the official geography puts it in 2807910; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28011261",
+            "origin": "geocoded",
+            "note": "source coordinates fell in district 2807906"
+          },
+          {
+            "external_id": "28029241",
+            "origin": "source",
+            "note": "register says district 2807918, the official geography puts it in 2807913; the address is not found at portal level, kept"
+          },
+          {
+            "external_id": "28061420",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807915; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28062953",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807915; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28062965",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807915; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28064159",
+            "origin": "source",
+            "note": "register says district 2807920, the official geography puts it in 2807915; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28066594",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807915; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28068177",
+            "origin": "source",
+            "note": "register says district 2807906, the official geography puts it in 2807907; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28076459",
+            "origin": "source",
+            "note": "register says district 2807915, the official geography puts it in 2807920; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28079096",
+            "origin": "source",
+            "note": "register says district 2807921, the official geography puts it in 2807916; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28079424",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807921; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28079692",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28081121",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 6 for number 7)"
+          },
+          {
+            "external_id": "28081625",
+            "origin": "source",
+            "note": "register says district 2807906, the official geography puts it in 2807905; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28081935",
+            "origin": "source",
+            "note": "register says district 2807903, the official geography puts it in 2807904; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28082101",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082125",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807921; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28082150",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082198",
+            "origin": "source",
+            "note": "register says district 2807906, the official geography puts it in 2807903; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28082204",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082228",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082253",
+            "origin": "source",
+            "note": "register says district 2807911, the official geography puts it in 2807910; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28082289",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082307",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 3 for number 10)"
+          },
+          {
+            "external_id": "28082435",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082484",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082514",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082541",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 21 for number 20)"
+          },
+          {
+            "external_id": "28082575",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082599",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28082836",
+            "origin": "source",
+            "note": "register says district 2807909, the official geography puts it in 2807908; the address is not found at portal level, kept"
+          },
+          {
+            "external_id": "28082848",
+            "origin": "geocoded",
+            "note": "source coordinates fell in district 2807907"
+          },
+          {
+            "external_id": "28082927",
+            "origin": "source",
+            "note": "register says district 2807905, the official geography puts it in 2807910; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28082939",
+            "origin": "source",
+            "note": "register says district 2807918, the official geography puts it in 2807915; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28083142",
+            "origin": "geocoded",
+            "note": "source coordinates fell in district 2807902"
+          },
+          {
+            "external_id": "28083257",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "28700209",
+            "origin": "source",
+            "note": "register says district 2807901, the official geography puts it in 2807907; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28700222",
+            "origin": "source",
+            "note": "register says district 2807911, the official geography puts it in 2807910; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28701032",
+            "origin": "source",
+            "note": "register says district 2807916, the official geography puts it in 2807908; the address does not contradict the coordinates, kept"
+          },
+          {
+            "external_id": "28701241",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          }
+        ]
+      }
+    }
+  ]
+}

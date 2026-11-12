@@ -13,7 +13,7 @@ sources:
   - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
 formula:
   method: places_per_population
-  category: health
+  category: pharmacy
   subcategories: ["Farmacia"]  # the same destinations as min_a_pie_farmacia
   population_metric: poblacion_censada
   population_dims: {edad: [total], nacionalidad: [total], sexo: [total]}

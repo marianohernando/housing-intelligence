@@ -577,6 +577,7 @@
       "enum": [
         "education",
         "health",
+        "pharmacy",
         "social",
         "transport",
         "commerce",
@@ -599,6 +600,30 @@
           },
           "title": "Active Values",
           "type": "array"
+        },
+        "address_number_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Number Column"
+        },
+        "address_template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Template"
         },
         "attribute_columns": {
           "items": {
@@ -623,6 +648,18 @@
           "pattern": "^[a-z][a-z0-9_]{2,95}$",
           "title": "Dataset Id",
           "type": "string"
+        },
+        "district_code_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "District Code Column"
         },
         "group_by_id": {
           "default": false,
@@ -656,6 +693,18 @@
           ],
           "default": null,
           "title": "Municipio Code Column"
+        },
+        "municipio_name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Name Column"
         },
         "name_column": {
           "anyOf": [

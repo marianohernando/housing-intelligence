@@ -66,5 +66,15 @@ def run_quality(places: Places, spec: PointsPipeline) -> QualityReport:
         CheckResult(
             "category_declared", True, bool(spec.category), {"category": spec.category.value}
         ),
+        CheckResult(
+            "coordinate_repairs",
+            False,
+            True,
+            {
+                "geocoded": int((places.repairs["origin"] == "geocoded").sum()),
+                "kept_with_note": int((places.repairs["origin"] == "source").sum()),
+                "rows": places.repairs.to_dict("records"),  # pyright: ignore[reportUnknownMemberType]
+            },
+        ),
     ]
     return QualityReport(checks)

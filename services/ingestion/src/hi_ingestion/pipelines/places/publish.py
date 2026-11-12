@@ -65,7 +65,7 @@ def _rows(
                 "official_source_id": source_id,
                 "official_dataset_id": dataset_id,
                 "official_entity_id": record["external_id"],
-                "confidence": 1.0,
+                "confidence": float(record["confidence"]),
                 "attributes": record["attributes"],
                 "dataset_version_id": version_id,
             }

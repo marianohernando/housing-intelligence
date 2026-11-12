@@ -3,6 +3,7 @@
 from hi_contracts.api.envelope import Envelope
 from hi_contracts.public.common import DatasetList
 from hi_contracts.public.gaps import GapRowMap, ZoneGapList
+from hi_contracts.public.places import PlaceCollection
 from hi_contracts.public.search import SearchResult
 
 
@@ -20,3 +21,7 @@ class SearchResponse(Envelope[SearchResult]):
 
 class DatasetListResponse(Envelope[DatasetList]):
     """GET /api/v1/datasets"""
+
+
+class PlacesResponse(Envelope[PlaceCollection]):
+    """GET /api/v1/places"""

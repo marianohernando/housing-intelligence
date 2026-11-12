@@ -1,0 +1,96 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 550
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 5,
+        "ratio": 0.009,
+        "reasons": {
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 5
+        }
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {
+          "centro_tipo_not_allowed": 38596
+        },
+        "source_rows": 46154
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "health"
+      }
+    },
+    {
+      "name": "coordinate_repairs",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "geocoded": 5,
+        "kept_with_note": 0,
+        "rows": [
+          {
+            "external_id": "CS1135",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS12766",
+            "origin": "geocoded",
+            "note": "source coordinates fell in municipio 28902 (-3.560558936906238, 41.00557278082495) (nearest portal 13 for number 14)"
+          },
+          {
+            "external_id": "CS15364",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 1 for number 2)"
+          },
+          {
+            "external_id": "CS19950",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS9495",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          }
+        ]
+      }
+    }
+  ]
+}

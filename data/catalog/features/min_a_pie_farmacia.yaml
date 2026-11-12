@@ -12,7 +12,7 @@ sources:
   - {dataset_id: cm_oficinas_farmacia, role: primary}
 formula:
   method: network_walk_time
-  destination_category: health
+  destination_category: pharmacy
   subcategories: ["Farmacia"]
   statistic: median_minutes
   speed_kmh: 4.0
