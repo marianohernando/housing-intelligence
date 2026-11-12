@@ -1,6 +1,8 @@
 """Feature methods on synthetic frames: null semantics, invariants and monotonicity."""
 
+import math
 from datetime import date
+from typing import Any, cast
 
 import pandas as pd
 import pytest
@@ -357,3 +359,78 @@ def test_a_zone_the_source_leaves_out_gets_an_explicit_null() -> None:
     assert added["period_start"] == "2021-01-01"
     assert len(filled) == 3
     assert fill_missing_zones(filled, ["28001", "28183"], "municipio").shape == filled.shape
+
+
+# D-228: the rent of a lease signed in the year, from the Agencia Tributaria's comparison of
+# new leases with all of them (mean rent and mean m² of each).
+def _irpf(rows: list[tuple[str, float | None, float | None]]) -> pd.DataFrame:
+    """(code, value for all leases, value for new leases)."""
+    out: list[tuple[str, dict[str, str], float | None]] = []
+    for code, every, new in rows:
+        out += [(code, {"contratos": "todos"}, every), (code, {"contratos": "nuevos"}, new)]
+    return _obs(out)
+
+
+IRPF_RENT = _irpf([("28079", 1012.0, 1167.0), ("28005", 735.0, 840.0), ("28", 949.0, 1101.0)])
+IRPF_M2 = _irpf([("28079", 71.0, 68.0), ("28005", 77.0, 77.0), ("28", 75.0, 72.0)])
+
+
+def test_new_contract_factor_is_the_ratio_of_euros_per_m2() -> None:
+    factors = methods.new_contract_factors(IRPF_RENT, IRPF_M2).factors
+    assert factors["28079"] == pytest.approx((1167 / 68) / (1012 / 71))  # 1,204
+    assert factors["28005"] == pytest.approx(840 / 735)  # same m²: the ratio of rents
+
+
+def test_a_zone_without_both_contract_kinds_has_no_factor() -> None:
+    rent = _irpf([("28001", 900.0, None)])
+    m2 = _irpf([("28001", 80.0, 78.0)])
+    assert methods.new_contract_factors(rent, m2).factors == {}  # never a guessed 1
+
+
+def test_rent_of_new_leases_uses_the_zone_factor_or_the_declared_fallback() -> None:
+    rent = _obs(
+        [
+            ("28079", {"tipo_vivienda": "viviendas_habituales"}, 15.1),
+            ("28006", {"tipo_vivienda": "viviendas_habituales"}, 12.7),
+            ("28007", {"tipo_vivienda": "viviendas_habituales"}, None),
+        ]
+    )
+    base = methods.metric_value(rent, {"tipo_vivienda": "viviendas_habituales"}, 0.9)
+    factors = methods.new_contract_factors(IRPF_RENT, IRPF_M2)
+    out = _by_code(methods.apply_new_contract_factors(base, factors, fallback="28"))
+    madrid = (1167 / 68) / (1012 / 71)
+    madrid_adjustment = cast(dict[str, Any], out["28079"]["adjustment"])
+    assert out["28079"]["value"] == pytest.approx(15.1 * madrid)
+    assert madrid_adjustment["factor_from"] == "28079"
+    assert madrid_adjustment["all_contracts_value"] == pytest.approx(15.1)
+    region = (1101 / 72) / (949 / 75)
+    assert out["28006"]["value"] == pytest.approx(12.7 * region)  # no table of its own
+    assert cast(dict[str, Any], out["28006"]["adjustment"])["factor_from"] == "28"
+    assert out["28006"]["confidence"] == pytest.approx(0.9)
+    assert math.isnan(cast(float, out["28007"]["value"]))  # unknown stays unknown
+
+
+def test_without_own_factor_or_fallback_the_rent_of_new_leases_is_unknown() -> None:
+    rent = _obs([("28006", {}, 12.7)])
+    base = methods.metric_value(rent, {})
+    factors = methods.new_contract_factors(IRPF_RENT, IRPF_M2)
+    row = methods.apply_new_contract_factors(base, factors, fallback=None).iloc[0]
+    assert row["value"] is None
+    assert row["null_reason"] == "SOURCE_MISSING"  # never the old figure under a new label
+
+
+def test_district_rent_of_new_leases_adjusts_each_postcode_before_the_mean() -> None:
+    cp_rent = _irpf([("28001", 1702.0, 1940.0)])
+    cp_m2 = _irpf([("28001", 86.0, 78.0)])
+    factors = methods.new_contract_factors(cp_rent, cp_m2)
+    fallback = methods.new_contract_factors(IRPF_RENT, IRPF_M2).factors["28079"]
+    weights = _weights([("2807904", "28001", 3.0), ("2807904", "28002", 1.0)])
+    out = methods.postcode_weighted_mean(
+        CP_RENT, weights, {}, confidence=0.8, new_contracts=(factors, fallback)
+    )
+    row = out.iloc[0]
+    own = (1940 / 78) / (1702 / 86)
+    assert row["value"] == pytest.approx((20.0 * own * 3 + 10.0 * fallback) / 4)
+    assert row["adjustment"]["postcodes_with_own_factor"] == 1
+    assert row["adjustment"]["postcodes_with_fallback"] == 1
+    assert row["adjustment"]["all_contracts_value"] == pytest.approx(17.5)

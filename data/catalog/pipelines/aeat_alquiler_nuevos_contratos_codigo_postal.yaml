@@ -1,0 +1,8 @@
+kind: aeat_rent_comparison
+dataset_id: aeat_alquiler_nuevos_contratos_codigo_postal
+level: codigo_postal
+rent_metric_id: alquiler_mensual_irpf_codigo_postal
+area_metric_id: m2_alquiler_irpf_codigo_postal
+province_prefix: "28"
+min_rows: 45
+max_rows: 70

@@ -108,6 +108,20 @@
           "description": "NeedKey, only for walk_minutes",
           "title": "Need"
         },
+        "note": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the cost figure is, in the fact the search writes («contratos firmados en 2024; …», D-228); only for rent_m2. It travels with the data, so code and data never disagree on what the number means",
+          "title": "Note"
+        },
         "priority": {
           "anyOf": [
             {

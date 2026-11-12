@@ -86,6 +86,10 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
             )
         ),
         "binding": lambda v: check.binding_constraint == v,
+        # D-228: with the rent of new leases the budget limits: raising it adds zones
+        "budget_step_adds_zones": lambda v: any(
+            r.constraint_id == "budget" and r.added_zones >= v for r in check.relaxations
+        ),
     }
     return [f"{key}={value}" for key, value in expect.items() if not rules[key](value)]
 

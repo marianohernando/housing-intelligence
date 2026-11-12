@@ -27,10 +27,13 @@ from hi_contracts.public import (
     ScenarioState,
     ZoneRef,
 )
+from hi_domain.affordability import FloorArea
 from hi_domain.fit import (
     Commute,
     ZoneData,
+    about_minutes,
     as_pct,
+    cost_fact,
     criteria,
     evaluate,
     rank_weights,
@@ -420,7 +423,7 @@ def test_green_areas_score_the_walk_to_an_urban_park() -> None:
     near = evaluate(GREEN, _park_zone(4.0))
     assert near.match_pct == 100
     assert near.facts[0].kind is FactKind.STRENGTH
-    assert near.facts[0].text == "Parque urbano a 4 min andando desde la mitad de sus calles"
+    assert near.facts[0].text == "Parque urbano a unos 4 min andando"
     middle = evaluate(GREEN, _park_zone(20.0))
     assert middle.match_pct == 50
     assert middle.facts[0].kind is FactKind.WEAKNESS
@@ -484,8 +487,7 @@ def test_step_free_scores_the_walk_to_an_accessible_station() -> None:
     assert near.facts[0].kind is FactKind.STRENGTH
     assert near.facts[0].topic is FactTopic.ACCESIBILIDAD
     assert near.facts[0].text == (
-        "Estación de metro o tren accesible (sin escaleras) a 6 min andando "
-        "desde la mitad de sus calles"
+        "Estación de metro o tren accesible (sin escaleras) a unos 6 min andando"
     )
     assert evaluate(STEP_FREE, _step_free_zone(20.0)).match_pct == 50
 
@@ -514,3 +516,30 @@ def test_security_never_scores_and_says_so() -> None:
         "cada zona)"
     ]
     assert outcome.match_pct is None
+
+
+@pytest.mark.parametrize(
+    ("minutes", "text"),
+    [(0.4, "1 min o menos"), (1.4, "1 min o menos"), (9.2, "unos 9 min"), (75.0, "más de 60 min")],
+)
+def test_walking_minutes_read_as_approximate(minutes: float, text: str) -> None:
+    """Fase de mejora (D's texts): «a unos 9 min andando»; the median is explained once on the
+    web («unos vecinos lo tienen más cerca y otros más lejos»), not in every fact."""
+    assert about_minutes(minutes) == text
+
+
+def test_rent_fact_says_what_the_figure_is_from_the_data() -> None:
+    """D-228: the note comes with the rent feature (`fit.note`); without it, the old mean of
+    the leases in force, so new code on old data never mislabels the number."""
+    area = FloorArea(77, from_household=True)
+    rent = _value("alquiler_m2_mensual", 16.5)
+    new = cost_fact(
+        rent, area, 1500.0, "contratos firmados en 2024; un anuncio de hoy puede pedir más"
+    )
+    assert new.fact.text == (
+        "Alquiler ≈ 1.270 €/mes por 77 m² (16,5 €/m², contratos firmados en 2024; un anuncio "
+        "de hoy puede pedir más)"
+    )
+    old = cost_fact(rent, area, 1500.0)
+    assert old.fact.text.startswith("Alquiler medio ≈ 1.270 €/mes")
+    assert old.fact.text.endswith("media de los contratos vigentes; uno nuevo suele costar más)")

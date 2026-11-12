@@ -304,7 +304,7 @@
         },
         "text": {
           "examples": [
-            "Colegio público a 6 min andando desde la mitad de sus calles"
+            "Colegio con primaria a unos 6 min andando"
           ],
           "title": "Text",
           "type": "string"

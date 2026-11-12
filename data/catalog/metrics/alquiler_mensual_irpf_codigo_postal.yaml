@@ -1,0 +1,14 @@
+metric_id: alquiler_mensual_irpf_codigo_postal
+human_name: Alquiler medio mensual de la vivienda habitual, todos los contratos y los nuevos (códigos postales de Madrid capital)
+description: >-
+  Ingresos por alquiler de vivienda habitual declarados en el IRPF, elevados a un mes, de
+  todos los contratos (contratos=todos) y de los formalizados en el año (contratos=nuevos).
+  Agencia Tributaria, Estadística de viviendas declaradas en IRPF.
+domain: housing
+unit: EUR/mes
+direction: lower_is_better
+aggregation_method: none
+geo_resolution_min: codigo_postal
+temporal_resolution: annual
+dataset_id: aeat_alquiler_nuevos_contratos_codigo_postal
+dimensions: [contratos]

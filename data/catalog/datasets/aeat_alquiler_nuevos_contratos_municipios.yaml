@@ -1,0 +1,35 @@
+dataset_id: aeat_alquiler_nuevos_contratos_municipios
+source_id: agencia_tributaria
+name: Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos para municipios de más de 20.000 habitantes (ejercicio 2024)
+domain: housing
+owner: Agencia Tributaria
+format: HTML
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html
+resources:
+- name: Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos para municipios de más de 20.000 habitantes (ejercicio 2024)
+  format: HTML
+  url: https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/jrubik16a4b116943de994823993a0e8a448e24ac90bcd.html
+  file_name: aeat_alquiler_nuevos_contratos_municipios.html
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 4
+  ingestion_ease: 3
+  notes: >-
+    D-228. Fuente complementaria, no es dataset CM. Alquiler medio mensual y m² medios de todos
+    los contratos de vivienda habitual y de los «contratos de arrendamiento formalizados en el
+    ejercicio de referencia» (metodología de la AEAT). Página HTML: no hay CSV ni XLSX.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T22:00:00+00:00'
+notes: >-
+  37 municipios de la Comunidad de Madrid y la fila de la Comunidad (suma de esos municipios). Se usa solo el cociente contratos nuevos / todos del €/m² (D-228).

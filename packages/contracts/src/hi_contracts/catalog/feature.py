@@ -77,6 +77,13 @@ class FitBinding(BaseModel):
     priority: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="PriorityKey, only for walk_minutes"
     )
+    note: str | None = Field(
+        default=None,
+        min_length=1,
+        description="What the cost figure is, in the fact the search writes («contratos "
+        "firmados en 2024; …», D-228); only for rent_m2. It travels with the data, so code and "
+        "data never disagree on what the number means",
+    )
 
     @model_validator(mode="after")
     def _one_target_only_for_walking(self) -> Self:
@@ -85,6 +92,9 @@ class FitBinding(BaseModel):
             self.role != "walk_minutes" and targets
         ):
             msg = "walk_minutes needs one of `need` or `priority`; rent_m2 and price_m2 take none"
+            raise ValueError(msg)
+        if self.note is not None and self.role != "rent_m2":
+            msg = "only rent_m2 takes a `note`"
             raise ValueError(msg)
         return self
 

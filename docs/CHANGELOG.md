@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.53 — Alquiler de contratos nuevos (2026-11-12)
+- D-228 §6 (opción A, elegida por Mariano): el alquiler de la búsqueda es el de un contrato firmado en 2024, con el factor de la Agencia Tributaria (fuente complementaria, no CM) por municipio y código postal; `fit-0.6`. Los hechos de minutos a pie dicen «a unos N min andando».
+- `04_technical_architecture/31_public_api_routes.md`: texto del alquiler y nota que viaja con el dato.
+
 ## v0.5.52 — Cifras de impacto (2026-11-12)
 - D-229: `GET /api/v1/gaps/impact` (`impact-0.1`) con la gente que vive donde falta cada fila y el ranking «dónde invertir primero», y `people` en cada fila de `/gaps/{level}/{code}`.
 - `04_technical_architecture/31_public_api_routes.md`: ruta, contrato `GapImpact` y cómo calcular «{n} por cada 100».

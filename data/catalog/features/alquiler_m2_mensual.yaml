@@ -1,6 +1,6 @@
 feature_id: alquiler_m2_mensual
-version: 2
-human_name: Alquiler medio por metro cuadrado (viviendas habituales)
+version: 3
+human_name: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)
 domain: housing
 type: raw
 unit: EUR/m2/mes
@@ -10,6 +10,9 @@ time_semantics: snapshot
 sources:
   - {dataset_id: cm_alquiler_m2_municipios, role: primary, levels: [municipio]}
   - {dataset_id: cm_alquiler_m2_codigo_postal_madrid, role: primary, levels: [distrito]}
+  # D-228: how much more a m² costs in the leases signed in the year (Agencia Tributaria, not CM)
+  - {dataset_id: aeat_alquiler_nuevos_contratos_municipios, role: secondary}
+  - {dataset_id: aeat_alquiler_nuevos_contratos_codigo_postal, role: secondary, levels: [distrito]}
   # The places whose address carries a postcode locate each postcode in the districts (CORE-006)
   - {dataset_id: cm_centros_educativos, role: secondary, levels: [distrito]}
   - {dataset_id: cm_centros_sanitarios, role: secondary, levels: [distrito]}
@@ -18,11 +21,21 @@ formula:
   method: metric_value
   metric: alquiler_m2_mensual_municipio
   dims: {tipo_vivienda: viviendas_habituales}
+  new_contracts:  # D-228: x (rent / m² of new leases) / (rent / m² of all), same zone
+    rent_metric: alquiler_mensual_irpf_municipio
+    area_metric: m2_alquiler_irpf_municipio
+    level: municipio
+    fallback: {level: ccaa, code: "28"}  # the region's row, declared in inputs.new_contracts
   levels:
     distrito:
       method: postcode_weighted_mean
       metric: alquiler_m2_mensual_codigo_postal
       dims: {}
+      new_contracts:
+        rent_metric: alquiler_mensual_irpf_codigo_postal
+        area_metric: m2_alquiler_irpf_codigo_postal
+        level: codigo_postal
+        fallback: {rent_metric: alquiler_mensual_irpf_municipio, area_metric: m2_alquiler_irpf_municipio, level: municipio, code: "28079"}
       postcode_attributes: [cdpostal, direccion_codigo_postal]
       postcode_municipio: "28079"  # the source publishes postcodes of Madrid capital only
       confidence: 0.8  # declared proxy: places locate the postcodes, not dwellings (D-214)
@@ -34,7 +47,8 @@ models: [affordability, reality_check]
 tests: [positive, district_between_its_postcodes, unknown_never_zero]
 limitations:
   - "Solo municipios de más de 20.000 habitantes con contratos suficientes; el resto queda como desconocido, nunca como 0."
-  - "Es la media de los alquileres declarados en el IRPF (contratos vigentes, no anuncios): un contrato nuevo suele costar más."
+  - "Versión 3 (D-228): es lo que cuesta un contrato firmado en 2024. El €/m² medio de la CM (alquileres declarados en el IRPF, todos los contratos en vigor) se multiplica por el factor de la Agencia Tributaria de la misma zona: (alquiler / m² de los contratos formalizados en el año) / (alquiler / m² de todos). Sin tabla de la zona, el factor de la Comunidad (municipios) o el de Madrid (códigos postales), declarado en inputs.new_contracts. No son anuncios: un piso anunciado hoy puede pedir más."
+  - "Parte del factor se debe a que los contratos nuevos son de pisos algo más pequeños (68 frente a 71 m² en Madrid), y un piso pequeño cuesta más por m²."
   - "Los metros cuadrados son los del Catastro (superficie construida)."
   - "Distritos de Madrid (versión 2, D-214): media de los códigos postales del distrito, ponderada por cuántos colegios, centros de salud y centros sociales geocodificados del distrito llevan cada código en su dirección. No hay geometría de códigos postales: los lugares aproximan dónde vive la gente (proxy declarado, confidence 0,8 como máximo y menor si parte de esos lugares tiene un código sin alquiler publicado). Solo se publican códigos con más de 200 viviendas arrendadas y se usa el último periodo publicado."
-fit: {role: rent_m2}
+fit: {role: rent_m2, note: "contratos firmados en 2024; un anuncio de hoy puede pedir más"}

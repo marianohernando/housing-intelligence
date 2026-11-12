@@ -90,6 +90,46 @@ class CmPostcodeConceptPipeline(BaseModel):
         return [self.metric_id]
 
 
+class AeatRentComparisonPipeline(BaseModel):
+    """Agencia Tributaria, «Estadística de viviendas declaradas en IRPF»: the HTML table that
+    compares the mean monthly rent and the mean m² of all leases with those of the leases
+    signed in the year («nuevos contratos»), by municipio or by postcode (D-228).
+
+    Rows look like «Alcalá de Henares-28005» (municipio) or «28001-Salamanca- Goya» (postcode);
+    the first two numeric columns are the rents (all, new) and the next two the m² (all, new).
+    Only the rows of the province in `province_prefix` are kept; the region's own row
+    («Madrid, Comunidad de») becomes the ccaa observation.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["aeat_rent_comparison"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    level: Literal["municipio", "codigo_postal"]
+    rent_metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    area_metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    province_prefix: str = Field(pattern=r"^\d{2}$")
+    region_label: str | None = Field(
+        default=None,
+        description="Row of the region, e.g. «Madrid, Comunidad de» (municipio table only: in "
+        "the postcode table it only adds up the municipios that have postcodes)",
+    )
+    contract_dim: str = "contratos"
+    min_rows: int = Field(gt=0, description="fewer rows in scope -> the table changed or is cut")
+    max_rows: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _bounds(self) -> Self:
+        if self.max_rows < self.min_rows:
+            msg = f"{self.dataset_id}: max_rows must be >= min_rows"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.rent_metric_id, self.area_metric_id]
+
+
 class MadridPadronPipeline(BaseModel):
     """Ayuntamiento de Madrid padrón: one row per census section and single year of age.
 
@@ -469,6 +509,7 @@ class OsmParksPipeline(BaseModel):
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
+    | AeatRentComparisonPipeline
     | MadridPadronPipeline
     | MadridDistrictPanelPipeline
     | PointsPipeline

@@ -1,5 +1,90 @@
 {
   "$defs": {
+    "AeatRentComparisonPipeline": {
+      "additionalProperties": false,
+      "description": "Agencia Tributaria, «Estadística de viviendas declaradas en IRPF»: the HTML table that\ncompares the mean monthly rent and the mean m² of all leases with those of the leases\nsigned in the year («nuevos contratos»), by municipio or by postcode (D-228).\n\nRows look like «Alcalá de Henares-28005» (municipio) or «28001-Salamanca- Goya» (postcode);\nthe first two numeric columns are the rents (all, new) and the next two the m² (all, new).\nOnly the rows of the province in `province_prefix` are kept; the region's own row\n(«Madrid, Comunidad de») becomes the ccaa observation.",
+      "properties": {
+        "area_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Area Metric Id",
+          "type": "string"
+        },
+        "contract_dim": {
+          "default": "contratos",
+          "title": "Contract Dim",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aeat_rent_comparison",
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "municipio",
+            "codigo_postal"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer rows in scope -> the table changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "province_prefix": {
+          "pattern": "^\\d{2}$",
+          "title": "Province Prefix",
+          "type": "string"
+        },
+        "region_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Row of the region, e.g. «Madrid, Comunidad de» (municipio table only: in the postcode table it only adds up the municipios that have postcodes)",
+          "title": "Region Label"
+        },
+        "rent_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Rent Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "level",
+        "rent_metric_id",
+        "area_metric_id",
+        "province_prefix",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "AeatRentComparisonPipeline",
+      "type": "object"
+    },
     "CmPostcodeConceptPipeline": {
       "additionalProperties": false,
       "description": "Tables where the postcode is embedded in a free-text 'Concepto' column.",
@@ -1228,6 +1313,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "discriminator": {
     "mapping": {
+      "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
       "facility_directory": "#/$defs/FacilityDirectoryPipeline",
@@ -1247,6 +1333,9 @@
     },
     {
       "$ref": "#/$defs/CmPostcodeConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/AeatRentComparisonPipeline"
     },
     {
       "$ref": "#/$defs/MadridPadronPipeline"

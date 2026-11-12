@@ -69,7 +69,7 @@ class Fact(BaseModel):
 
     kind: FactKind
     topic: FactTopic
-    text: str = Field(examples=["Colegio público a 6 min andando desde la mitad de sus calles"])
+    text: str = Field(examples=["Colegio con primaria a unos 6 min andando"])
     confidence: float = Field(ge=0, le=1)
     indicator: IndicatorValue | None = None
 

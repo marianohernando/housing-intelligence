@@ -11,6 +11,7 @@ from pyproj import Transformer
 from sqlalchemy import Engine, create_engine, make_url, text
 
 from hi_contracts.catalog.pipeline import (
+    AeatRentComparisonPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
     FacilityDirectoryPipeline,
@@ -28,6 +29,7 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     local_inputs,
     run_admin_boundaries,
 )
+from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
@@ -216,6 +218,16 @@ def fixtures_ingested(
             src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
             result = run_metric_pipeline(
                 migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, AeatRentComparisonPipeline):  # D-228: rent of new leases
+            src = local_file(dataset_id, "primary", GOLDEN / "aeat_sample" / f"{dataset_id}.html")
+            result = run_aeat_rent_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_rows": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
             )
         elif isinstance(spec, MadridPadronPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "padron_sample" / f"{dataset_id}.csv")

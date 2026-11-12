@@ -30,6 +30,8 @@ FLOOR_AREA_SOURCE = (
     "superficie útil mediana de las viviendas de los hogares de ese tamaño en la Comunidad "
     "de Madrid (Censo 2021, INE)"
 )
+# What the rent figure is when the data does not say (its feature's `fit.note`, D-228): the
+# mean of the leases in force, as in the rent feature before version 3.
 RENT_NOTE = "media de los contratos vigentes; uno nuevo suele costar más"
 PURCHASE_NOTE = "valor tasado medio de la vivienda libre, no el precio de un anuncio"
 PURCHASE_ROUND_EUR = 1000  # an appraised mean is no more precise than this
@@ -62,11 +64,14 @@ def budget_label(budget: Budget, area: FloorArea) -> str:
     return f"Alquiler hasta {euros(budget.amount_eur)}/mes para {area.m2} m²"
 
 
-def rent_explanation(rent_m2: float, area: FloorArea) -> str:
+def rent_explanation(rent_m2: float, area: FloorArea, note: str | None = None) -> str:
+    """«Alquiler ≈ 1.270 €/mes por 77 m² (16,5 €/m², contratos firmados en 2024; …)»; without a
+    note from the data, the old mean of the leases in force."""
     cost = monthly_rent(rent_m2, area.m2)
+    head = "Alquiler medio" if note is None else "Alquiler"
     return (
-        f"Alquiler medio ≈ {euros(cost)}/mes por {area.m2} m² "
-        f"({es_number(rent_m2, 1)} €/m², {RENT_NOTE})"
+        f"{head} ≈ {euros(cost)}/mes por {area.m2} m² "
+        f"({es_number(rent_m2, 1)} €/m², {note or RENT_NOTE})"
     )
 
 
@@ -118,6 +123,7 @@ def budget_check(
     rent: IndicatorValue | None,
     area: FloorArea,
     price: IndicatorValue | None = None,
+    rent_note: str | None = None,
 ) -> ConstraintCheck:
     if budget.kind is BudgetKind.BUY:
         return _purchase_check(budget, price, area)
@@ -143,5 +149,5 @@ def budget_check(
         threshold=float(budget.amount_eur),
         unit="€/mes",
         confidence=rent.confidence,
-        explanation=rent_explanation(rent.value, area),
+        explanation=rent_explanation(rent.value, area, rent_note),
     )

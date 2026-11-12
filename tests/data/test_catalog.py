@@ -133,8 +133,14 @@ def test_directories_complement_cm_registers(catalog: Catalog) -> None:
 
 
 # Statistics the CM does not publish at the level the product needs (D-209: population and
-# households by district of Madrid). They complement CM data, never replace it.
-COMPLEMENTARY_STATISTICS = {"ayto_padron_municipal", "ayto_panel_indicadores_distritos_barrios"}
+# households by district of Madrid; D-228: the rent of the leases signed in the year, which only
+# adjusts the CM rent). They complement CM data, never replace it.
+COMPLEMENTARY_STATISTICS = {
+    "ayto_padron_municipal",
+    "ayto_panel_indicadores_distritos_barrios",
+    "aeat_alquiler_nuevos_contratos_municipios",
+    "aeat_alquiler_nuevos_contratos_codigo_postal",
+}
 
 
 def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:

@@ -26,6 +26,7 @@ RESULT_COLUMNS = [
     "territory_level",
     "numerator",  # counts behind a per-population ratio (GAP-001 significance, D-213)
     "denominator",
+    "adjustment",  # how a published value was adjusted (D-228: rent of new leases)
 ]
 REGION_LEVEL = "ccaa"
 REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
@@ -333,14 +334,87 @@ def _postcode_values(obs: pd.DataFrame, dims: DimFilter) -> tuple[dict[str, floa
     return values, max(periods) if periods else None
 
 
+@dataclass(frozen=True)
+class NewContractFactors:
+    """Per territory: how much more a m² costs in the leases signed in the year than in all
+    leases (D-228), from the Agencia Tributaria's mean rent and mean m² of each kind."""
+
+    factors: dict[str, float]
+    period: Any
+
+
+CONTRACT_DIM, ALL_LEASES, NEW_LEASES = "contratos", "todos", "nuevos"
+
+
+def _by_contract(obs: pd.DataFrame) -> tuple[dict[str, dict[str, float]], Any]:
+    values: dict[str, dict[str, float]] = {}
+    periods: list[Any] = []
+    for (code, period), records in _by_territory(obs).items():
+        periods.append(period)
+        for record in records:
+            kind = record["dims"].get(CONTRACT_DIM)
+            if record["value"] is not None and not pd.isna(record["value"]):
+                values.setdefault(str(code), {})[str(kind)] = float(record["value"])
+    return values, max(periods) if periods else None
+
+
+def new_contract_factors(rent: pd.DataFrame, area: pd.DataFrame) -> NewContractFactors:
+    """(rent of new leases / their m²) / (rent of all leases / their m²), latest period. A
+    zone without both kinds in both metrics has no factor (never a guessed 1)."""
+    rents, period = _by_contract(rent)
+    areas, _ = _by_contract(area)
+    factors: dict[str, float] = {}
+    for code in sorted(rents.keys() & areas.keys()):
+        r, a = rents[code], areas[code]
+        kinds = (ALL_LEASES, NEW_LEASES)
+        if all(r.get(k, 0) > 0 and a.get(k, 0) > 0 for k in kinds):
+            factors[code] = (r[NEW_LEASES] / a[NEW_LEASES]) / (r[ALL_LEASES] / a[ALL_LEASES])
+    return NewContractFactors(factors, period)
+
+
+def apply_new_contract_factors(
+    result: pd.DataFrame, factors: NewContractFactors, fallback: str | None
+) -> pd.DataFrame:
+    """Each known value times its zone's factor or, without one, the `fallback` territory's
+    (declared in `adjustment`). With neither the value is unknown: the old figure must not
+    pass for the rent of a new lease."""
+    out: list[dict[str, Any]] = []
+    for row in _rows(result):
+        value = row["value"]
+        if value is None or pd.isna(value):
+            out.append(row | {"value": None})
+            continue
+        code = str(row["territory_code"])
+        source = code if code in factors.factors else fallback
+        if source is None or source not in factors.factors:
+            out.append(_null(code, row["period_start"], NullReason.SOURCE_MISSING))
+            continue
+        factor = factors.factors[source]
+        adjustment = {
+            "factor": round(factor, 4),
+            "factor_from": source,
+            "all_contracts_value": float(value),
+            "period": str(factors.period),
+        }
+        out.append(row | {"value": float(value) * factor, "adjustment": adjustment})
+    return _result(out)
+
+
 def postcode_weighted_mean(
-    obs: pd.DataFrame, weights: pd.DataFrame, dims: DimFilter, confidence: float = 1.0
+    obs: pd.DataFrame,
+    weights: pd.DataFrame,
+    dims: DimFilter,
+    confidence: float = 1.0,
+    new_contracts: tuple[NewContractFactors, float | None] | None = None,
 ) -> pd.DataFrame:
     """A zone's value as the mean of its postcodes' values, each weighted by how many of the
     zone's geocoded places carry that postcode (CORE-006: there is no postcode geometry, so the
     places locate the postcodes; a declared proxy of where people live). The confidence is the
     base confidence times the share of that weight whose postcode publishes a value. A zone
     with none is SOURCE_NO_COVERAGE, never 0.
+
+    `new_contracts` (D-228): each postcode's value times its own factor or the fallback one
+    (e.g. its municipio's), before the mean; a postcode with neither counts as unknown.
 
     `weights` columns: territory_code (the zone), postcode, weight (places)."""
     values, period = _postcode_values(obs, dims)
@@ -353,14 +427,46 @@ def postcode_weighted_mean(
         )
     for code, members in sorted(by_zone.items()):
         total = sum(w for _, w in members)
-        known = [(values[cp], w) for cp, w in members if cp in values]
-        known_weight = sum(w for _, w in known)
-        if not known or known_weight <= 0 or total <= 0:
+        known = [(cp, values[cp], w) for cp, w in members if cp in values]
+        adjusted = known if new_contracts is None else _adjusted(known, *new_contracts)
+        known_weight = sum(w for _, _, w in adjusted)
+        if not adjusted or known_weight <= 0 or total <= 0:
             out.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
             continue
-        mean = sum(v * w for v, w in known) / known_weight
-        out.append(_ok(code, period, mean, confidence * known_weight / total))
+        mean = sum(v * w for _, v, w in adjusted) / known_weight
+        row = _ok(code, period, mean, confidence * known_weight / total)
+        if new_contracts is not None:
+            row["adjustment"] = _district_adjustment(adjusted, known, new_contracts[0])
+        out.append(row)
     return _result(out)
+
+
+def _adjusted(
+    known: list[tuple[str, float, float]], factors: NewContractFactors, fallback: float | None
+) -> list[tuple[str, float, float]]:
+    out: list[tuple[str, float, float]] = []
+    for cp, value, weight in known:
+        factor = factors.factors.get(cp, fallback)
+        if factor is not None:
+            out.append((cp, value * factor, weight))
+    return out
+
+
+def _district_adjustment(
+    adjusted: list[tuple[str, float, float]],
+    known: list[tuple[str, float, float]],
+    factors: NewContractFactors,
+) -> dict[str, Any]:
+    used = {cp for cp, _, _ in adjusted}
+    plain = [(v, w) for cp, v, w in known if cp in used]
+    weight = sum(w for _, w in plain)
+    own = sum(cp in factors.factors for cp in used)
+    return {
+        "all_contracts_value": sum(v * w for v, w in plain) / weight,
+        "postcodes_with_own_factor": own,
+        "postcodes_with_fallback": len(used) - own,
+        "period": str(factors.period),
+    }
 
 
 WALK_STATISTICS = ("median_minutes", "share_within")

@@ -1172,7 +1172,7 @@ DATA-021. Sustituye D-214 §5, donde comprar salía UNKNOWN en todas las zonas. 
    - pendiente de la web (línea B): las tarjetas aún dicen «Aún no tenemos precios oficiales de compra por zona» (`SearchCard.tsx`, `FitDetails.tsx`). Deberían decirlo solo donde la condición sale UNKNOWN, por ejemplo: «Solo hay precio en los municipios de más de 25.000 habitantes; los distritos de Madrid no lo tienen».
 
 ## D-228 — Alquiler de contratos nuevos: el índice CM 1934428 no permite ajustar el nivel; propuesta con la tabla de nuevos contratos de la Agencia Tributaria (2026-11-12)
-Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano decidió «Ajustar con el índice CM».** Este ADR registra por qué ese índice no sirve y deja una propuesta **pendiente de Mariano**. No cambia código ni datos. Evidencia: `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/evaluacion.md`.
+Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano decidió «Ajustar con el índice CM».** Este ADR registra por qué ese índice no sirve y la alternativa. **Mariano eligió la opción A el 12 nov** (a través de `datamad-10`), y se implanta en `fit-0.6` (§6). Evidencia: `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/evaluacion.md`.
 1. **Qué publica el dataset 1934428** (comprobado el 12 nov; CC BY; actualizado el 02-06-2026):
    - dos índices anuales del IPVA del INE (2015 = 100), contrato nuevo y contrato existente, de 2021 a 2024, sin código de territorio;
    - los valores coinciden con los de la Comunidad de Madrid en la tabla 59004 del INE, aunque los metadatos digan «Toda España»;
@@ -1196,6 +1196,28 @@ Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano 
 5. **Si se elige A:**
    - versión 3 de `alquiler_m2_mensual` y `fit-0.6`, con tests antes del código y el golden actualizado;
    - el texto `RENT_NOTE` está en el código, así que primero se despliega y después se sincroniza.
+6. **Implantación de la opción A** (`fit-0.6`, versión 3 de `alquiler_m2_mensual`; elegida por Mariano el 12 nov):
+   - **Fuente complementaria, no CM:** `agencia_tributaria`, con los datasets `aeat_alquiler_nuevos_contratos_municipios` y `aeat_alquiler_nuevos_contratos_codigo_postal`.
+     - Son las páginas HTML de la AEAT (no publica CSV ni XLSX), con la URL, la fecha de la metodología (01/07/2026) y la licencia en el catálogo.
+     - Pipeline nuevo `aeat_rent_comparison`. Comprueba la cabecera y el año, y no deja publicar la tabla si está cortada.
+     - Métricas `alquiler_mensual_irpf_*` y `m2_alquiler_irpf_*`, con la dimensión `contratos: todos | nuevos`.
+   - **Cálculo:** factor = (alquiler / m² de los nuevos) / (alquiler / m² de todos), de la misma zona y del último año.
+     - **Municipios:** su factor y, sin tabla propia, el de la fila de la Comunidad («Madrid, Comunidad de», suma de los municipios de la tabla). Hoy los 37 municipios con alquiler tienen el suyo.
+     - **Distritos:** cada código postal por su factor antes de la media ponderada de D-214, y sin tabla propia, el de Madrid. Hoy los 54 tienen el suyo.
+     - **Sin factor propio ni de reserva:** el valor queda desconocido, nunca la cifra antigua con la etiqueta nueva.
+     - **Trazabilidad:** `inputs.new_contracts` guarda el factor, de dónde sale y el valor de todos los contratos.
+   - **Texto:** «Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)».
+     - La nota va en el catálogo (`fit.note`) y no en el código, así que el código desplegado y los datos nunca se contradicen.
+     - Sin nota, se mantiene «media de los contratos vigentes».
+   - **Efecto con 77 m² (datos del 12 nov):** Fuencarral-El Pardo pasa de 1.107 a 1.276 €, Salamanca de 1.465 a 1.797 € y Madrid de 1.163 a 1.400 €.
+     - Caso de la familia (1.500 €): la condición que más zonas quita sigue siendo el colegio a 10 min, y ahora +150 €/mes añade 3 zonas (antes, ninguna). Salamanca, Chamartín y Centro quedan como «casi», porque fallan solo en el presupuesto.
+   - **Golden** (`evidence/gate-04/2026-11-12/golden-search-alquiler-nuevo.txt`): 8/8.
+     - En familia y persona sola la primera zona pasa a estar a 39 y 43 min en transporte público (Latina y Leganés, más baratas). El límite de esas dos expectativas sube de 35/40 a 45 min.
+     - A cambio se añaden dos comprobaciones: que +150 €/mes añade zonas (familia) y que el presupuesto es la condición que más quita (persona sola).
+   - **Textos de D (a la vez):** los hechos de minutos a pie dicen «a unos 9 min andando», sin «desde la mitad de sus calles».
+     - El hospital a más de 30 min como distancia («a unos 3,4 km») no es un texto de la API: lo pinta la web con el extra `min_a_pie_hospital` (línea B).
+   - **Orden en producción:** primero se despliega `fit-0.6` y después se sincroniza. El código desplegado (`fit-0.5`) no conoce la nota, así que con los datos nuevos diría «media de los contratos vigentes» junto a la cifra de los contratos nuevos.
+
 
 ## D-229 — Cifras de impacto: gente que vive donde falta y «dónde invertir primero» (2026-11-12)
 Fase de mejora, punto 3 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`): es lo que más puntos da según el jurado simulado. Método `impact-0.1`. Código:

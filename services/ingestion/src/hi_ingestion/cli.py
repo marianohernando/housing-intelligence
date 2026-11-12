@@ -10,6 +10,7 @@ from sqlalchemy import Engine
 
 from hi_contracts.catalog.enums import Priority
 from hi_contracts.catalog.pipeline import (
+    AeatRentComparisonPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
     FacilityDirectoryPipeline,
@@ -41,6 +42,7 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     local_inputs,
     run_admin_boundaries,
 )
+from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
 from hi_ingestion.pipelines.common import EVIDENCE_GATE_01, RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
@@ -158,6 +160,9 @@ def _run_one(
     if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, AeatRentComparisonPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_aeat_rent_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, MadridPadronPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_padron_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)

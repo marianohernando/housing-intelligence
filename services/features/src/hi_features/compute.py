@@ -21,12 +21,41 @@ from hi_features import fca, loaders, methods, walk
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
 
+def _factors(engine: Engine, spec: Mapping[str, Any]) -> methods.NewContractFactors:
+    return methods.new_contract_factors(
+        loaders.observations(engine, spec["rent_metric"], spec["level"]),
+        loaders.observations(engine, spec["area_metric"], spec["level"]),
+    )
+
+
+def new_contracts(
+    engine: Engine, f: Mapping[str, Any]
+) -> tuple[methods.NewContractFactors, str | None] | None:
+    """D-228: the factors of the leases signed in the year, plus the fallback territory's under
+    its own code (e.g. the region «28» for a municipio without a table of its own)."""
+    spec = f.get("new_contracts")
+    if not spec:
+        return None
+    factors = _factors(engine, spec)
+    fallback = spec.get("fallback")
+    if not fallback:
+        return factors, None
+    other = _factors(engine, {**spec, **fallback})
+    code = str(fallback["code"])
+    merged = dict(factors.factors)
+    if code in other.factors:
+        merged[code] = other.factors[code]
+    return methods.NewContractFactors(merged, factors.period), code
+
+
 def _metric_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    return methods.metric_value(
+    result = methods.metric_value(
         loaders.observations(engine, f["metric"], level),
         f.get("dims", {}),
         f.get("confidence", 1.0),
     )
+    adjust = new_contracts(engine, f)
+    return result if adjust is None else methods.apply_new_contract_factors(result, *adjust)
 
 
 def _metric_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -81,7 +110,10 @@ def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFram
 
 
 def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    """CORE-006: districts from postcode values, weighted by the places that carry each code."""
+    """CORE-006: districts from postcode values, weighted by the places that carry each code;
+    D-228: each postcode adjusted to the leases signed in the year before the mean."""
+    adjust = new_contracts(engine, f)
+    fallback = None if adjust is None or adjust[1] is None else adjust[0].factors.get(adjust[1])
     return methods.postcode_weighted_mean(
         loaders.observations(engine, f["metric"], "codigo_postal"),
         loaders.place_postcodes(
@@ -89,6 +121,7 @@ def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd
         ),
         f.get("dims", {}),
         float(f.get("confidence", 1.0)),
+        new_contracts=None if adjust is None else (adjust[0], fallback),
     )
 
 
@@ -242,6 +275,12 @@ def _counts(record: dict[str, Any]) -> dict[str, Any]:
     return {"counts": {"numerator": float(numerator), "denominator": float(denominator)}}
 
 
+def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
+    """How the published value was adjusted (D-228), kept next to the counts."""
+    adjustment = record.get("adjustment")
+    return {"new_contracts": adjustment} if isinstance(adjustment, dict) else {}
+
+
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
     versions = versions_by_pass(
         spec, loaders.last_valid_versions(engine, [s.dataset_id for s in spec.sources])
@@ -262,7 +301,8 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
                 "dataset_versions": versions[pass_level(spec, _level(spec, r))],
                 "method": effective_method(spec, _level(spec, r)),
             }
-            | _counts(r),
+            | _counts(r)
+            | _adjustment(r),
         }
         for r in records
     ]

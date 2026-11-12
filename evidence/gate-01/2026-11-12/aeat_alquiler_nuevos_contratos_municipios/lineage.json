@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "aeat_alquiler_nuevos_contratos_municipios",
+      "role": "primary",
+      "path": "data/bronze/datasets/aeat_alquiler_nuevos_contratos_municipios/ac62cd79cc65/aeat_alquiler_nuevos_contratos_municipios.html",
+      "sha256": "ac62cd79cc65bc16838df80be1d7936064e439d38d7bc4ae38c5efc31c868cdd",
+      "bytes": 356141,
+      "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/jrubik16a4b116943de994823993a0e8a448e24ac90bcd.html",
+      "retrieved_at": "2026-11-12T21:01:39.788700+00:00"
+    }
+  ],
+  "checksum": "f7bc11db960a3aba9dc96148140065221e8c1304af35b2d0c98e824bdf1bdb3a",
+  "parser_version": "aeat_rent-1.0.0",
+  "dataset_version": "2026-11-12-f7bc11db960a",
+  "correlation_id": "ad10f7dc03124310b85ddc385255b184",
+  "silver": "data/silver/aeat_alquiler_nuevos_contratos_municipios/f7bc11db960a/observations.csv.gz"
+}

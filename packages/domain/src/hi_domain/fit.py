@@ -41,7 +41,9 @@ from hi_domain.affordability import (
 )
 from hi_domain.gaps import es_number
 
-FIT_VERSION = "fit-0.5"  # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227)
+# 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
+# leases and walking minutes read as approximate (D-228)
+FIT_VERSION = "fit-0.6"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -154,6 +156,7 @@ class ZoneData:
     )
     commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
     price: IndicatorValue | None = None  # appraised value per m² to buy (D-227)
+    rent_note: str | None = None  # what the rent figure is, from its feature (D-228)
 
 
 @dataclass(frozen=True)
@@ -224,6 +227,14 @@ def anchor_km(zone: ZoneRef, anchor: Anchor) -> float | None:
     if zone.center_lon is None or zone.center_lat is None:
         return None
     return km_between(zone.center_lon, zone.center_lat, anchor.lon, anchor.lat)
+
+
+def about_minutes(minutes: float) -> str:
+    """«unos 9 min»: a zone's median walk is approximate (the web explains it once)."""
+    if minutes > MAX_WALK_SHOWN:
+        return f"más de {MAX_WALK_SHOWN} min"
+    rounded = round(minutes)
+    return "1 min o menos" if rounded <= 1 else f"unos {rounded} min"
 
 
 def minutes_text(minutes: float) -> str:
@@ -340,7 +351,7 @@ def constraint_checks(
 ) -> list[ConstraintCheck]:
     checks: list[ConstraintCheck] = []
     if scenario.budget is not None:
-        checks.append(budget_check(scenario.budget, data.rent, area, data.price))
+        checks.append(budget_check(scenario.budget, data.rent, area, data.price, data.rent_note))
     for nearby in scenario.nearby:
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
@@ -357,7 +368,7 @@ def walk_fact(need: NeedKey, walk: IndicatorValue | None, target: int) -> Score:
         fact = Fact(kind=FactKind.UNKNOWN, topic=NEED_TOPIC[need], text=text, confidence=0.0)
         return Score(None, 0.0, fact)
     kind = FactKind.STRENGTH if walk.value <= target else FactKind.WEAKNESS
-    text = f"{label} a {minutes_text(walk.value)} andando desde la mitad de sus calles"
+    text = f"{label} a {about_minutes(walk.value)} andando"
     fact = Fact(
         kind=kind,
         topic=NEED_TOPIC[need],
@@ -387,7 +398,7 @@ def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> S
         text = measured.out_of_range
     else:
         confidence = walk.confidence
-        text = f"{measured.label} a {minutes_text(walk.value)} andando desde la mitad de sus calles"
+        text = f"{measured.label} a {about_minutes(walk.value)} andando"
     kind = FactKind.STRENGTH if walk.value <= measured.target_minutes else FactKind.WEAKNESS
     fact = Fact(
         kind=kind,
@@ -439,7 +450,9 @@ def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     return Score(walk_utility(trip.minutes, target), trip.confidence, fact)
 
 
-def cost_fact(rent: IndicatorValue | None, area: FloorArea, budget: float | None) -> Score:
+def cost_fact(
+    rent: IndicatorValue | None, area: FloorArea, budget: float | None, note: str | None = None
+) -> Score:
     if rent is None or rent.value is None:
         text = "Alquiler: sin datos publicados para esta zona"
         fact = Fact(kind=FactKind.UNKNOWN, topic=FactTopic.COSTE, text=text, confidence=0.0)
@@ -449,7 +462,7 @@ def cost_fact(rent: IndicatorValue | None, area: FloorArea, budget: float | None
     fact = Fact(
         kind=FactKind.STRENGTH if fits else FactKind.WEAKNESS,
         topic=FactTopic.COSTE,
-        text=rent_explanation(rent.value, area),
+        text=rent_explanation(rent.value, area, note),
         confidence=rent.confidence,
         indicator=rent,
     )
@@ -490,7 +503,7 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
     if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
         return purchase_fact(data.price, area, float(scenario.budget.amount_eur))
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)
-    return cost_fact(data.rent, area, budget)
+    return cost_fact(data.rent, area, budget, data.rent_note)
 
 
 def match_and_confidence(

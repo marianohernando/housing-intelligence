@@ -150,3 +150,21 @@ def test_a_published_appraised_value_scores_buying(
         restore = {"value": None, "reason": "SOURCE_MISSING", "confidence": 0.0, "code": AJALVIR}
         with migrated_engine.begin() as conn:
             conn.execute(_SEED_PRICE, restore)
+
+
+def test_rent_says_it_is_the_rent_of_a_lease_signed_in_2024(client: TestClient) -> None:
+    """D-228: the budget condition and the cost fact use the rent of new leases and say so
+    with the note that travels with the rent feature (`fit.note`), and cite the AEAT table."""
+    data = _search(client, _family()).data
+    budget = [
+        c
+        for z in [*data.results, *data.near_misses]
+        for c in z.constraints
+        if c.constraint_id == "budget" and c.value is not None
+    ]
+    assert budget
+    assert all("contratos firmados en 2024" in c.explanation for c in budget)
+    assert all("vigentes" not in c.explanation for c in budget)
+    cited = {d.dataset_id: d for d in data.datasets}
+    assert "aeat_alquiler_nuevos_contratos_codigo_postal" in cited
+    assert cited["aeat_alquiler_nuevos_contratos_codigo_postal"].is_cm_open_data is False

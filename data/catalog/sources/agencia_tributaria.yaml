@@ -1,0 +1,25 @@
+source_id: agencia_tributaria
+name: Agencia Tributaria · Estadística de viviendas declaradas en IRPF
+provider: Agencia Estatal de Administración Tributaria (Servicio de Estudios Tributarios y Estadísticas)
+source_type: official_statistics
+api_type: download
+base_url: https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html
+license_name: Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)
+license_url: https://sede.agenciatributaria.gob.es/Sede/condiciones-uso-sede-electronica/aviso-legal/utilizacion-informacion-contenida-web-aeat.html
+license_status: CLEAR
+attribution_text: "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 0.9
+update_frequency: annual
+geographic_scope: España (territorio fiscal común)
+terms_reviewed_at: 2026-11-12T00:00:00Z
+robots_status: download
+active: true
+notes: >-
+  D-228. Fuente complementaria, no es dataset CM: solo aporta cuánto más cuesta por m² un
+  contrato firmado en el año que la media de los contratos en vigor, en la misma zona. El nivel
+  del alquiler sigue saliendo del dataset CM (la misma estadística del IRPF, republicada por el
+  Instituto de Estadística de la CM). El portal de la CM no publica la tabla de nuevos contratos
+  (búsqueda en su CKAN el 12 nov).

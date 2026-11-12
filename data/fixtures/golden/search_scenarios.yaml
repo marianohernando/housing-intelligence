@@ -4,6 +4,10 @@
 # transport, so the place-of-work expectations are in minutes (`top_within_minutes`); the km ones
 # that still hold stay. `expect` is what the search must give on the real local data:
 # scripts/golden_search.py checks it (evidence).
+# D-228 (fit-0.6): the rent is that of a lease signed in 2024 (~15-25 % more per m2). The budget
+# now limits: cheaper zones a few minutes further out rank first for the family (Latina, 39 min)
+# and the single person (Leganés, 43 min), so those two minute bounds move from 35/40 to 45, and
+# the family case checks instead that +150 EUR/month adds zones (before, it added none).
 scenarios:
   - profile_id: golden_family  # the demo case: a couple with two children who work on the Castellana
     scenario:
@@ -12,14 +16,14 @@ scenarios:
       anchors: [{kind: work, label: Paseo de la Castellana (Azca), lon: -3.6930, lat: 40.4500, days_per_week: 4, max_minutes: null}]
       nearby: [{need: colegio, max_walk_minutes: 10, required: true}]
       priorities: [colegios, transporte, salud]
-    expect: {min_results: 10, results_within_km: 15, top_within_minutes: 35, binding: "near:colegio"}
+    expect: {min_results: 10, results_within_km: 15, top_within_minutes: 45, binding: "near:colegio", budget_step_adds_zones: 1}
   - profile_id: golden_single
     scenario:
       budget: {kind: rent, amount_eur: 900}
       household: {adults: 1}
       anchors: [{kind: work, label: Nuevos Ministerios, lon: -3.6912, lat: 40.4460, days_per_week: 4, max_minutes: null}]
       priorities: [transporte]
-    expect: {min_results: 10, top_within_minutes: 40}
+    expect: {min_results: 10, top_within_minutes: 45, binding: budget}
   - profile_id: golden_couple  # purchase: the appraised value by municipio (DATA-021, D-227); districts stay UNKNOWN
     scenario:
       budget: {kind: buy, amount_eur: 320000}

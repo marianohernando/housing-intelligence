@@ -97,6 +97,7 @@ def _indicator(row: dict[str, Any]) -> IndicatorValue:
 
 class Indicators(NamedTuple):
     rent: dict[tuple[str, str], IndicatorValue]
+    rent_note: str | None  # what the rent figure is, from its feature's `fit.note` (D-228)
     price: dict[tuple[str, str], IndicatorValue]  # appraised value per m² to buy (D-227)
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]]
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
@@ -107,18 +108,20 @@ def _indicators(rows: Iterable[dict[str, Any]]) -> Indicators:
     price: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
+    rent_note: str | None = None
     for row in rows:
         key = (row["territory_level"], row["territory_code"])
         fit = row["fit"]
         if fit["role"] == "rent_m2":
             rent[key] = _indicator(row)
+            rent_note = fit.get("note") or rent_note
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
         elif fit.get("need"):
             walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
         else:  # a priority measured on foot: the park for «Zonas verdes» (D-222)
             priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
-    return Indicators(rent, price, walk, priority_walk)
+    return Indicators(rent, rent_note, price, walk, priority_walk)
 
 
 def _highlights(
@@ -158,6 +161,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
             ZoneData(
                 zone=_zone_ref(row),
                 rent=indicators.rent.get(key),
+                rent_note=indicators.rent_note,
                 price=indicators.price.get(key),
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),

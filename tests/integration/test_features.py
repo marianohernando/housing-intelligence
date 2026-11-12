@@ -156,8 +156,10 @@ def test_district_rent_comes_from_its_postcodes(
         assert row.inputs["method"] == "postcode_weighted_mean"
         if row.value is None:
             assert row.null_reason == "SOURCE_NO_COVERAGE"
-        else:
-            assert published[0] <= row.value <= published[1]
+        else:  # D-228: the mean of its postcodes, then the rent of new leases on top
+            plain = row.inputs["new_contracts"]["all_contracts_value"]
+            assert published[0] <= plain <= published[1]
+            assert row.value > plain
 
 
 def test_two_step_rows_keep_facility_equivalents_and_madrid_districts(
@@ -241,3 +243,38 @@ def test_appraised_value_is_by_municipio_and_districts_are_unknown(
     districts = [r for (level, _), r in by_zone.items() if level == "distrito"]
     assert districts
     assert all(r["value"] is None and r["null_reason"] == "SOURCE_MISSING" for r in districts)
+
+
+def test_rent_is_that_of_a_lease_signed_in_the_year(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-228: the CM rent per m² times the Agencia Tributaria's factor of the same zone (new
+    leases over all of them, in EUR/m2); a postcode without a table takes Madrid's factor."""
+    with migrated_engine.connect() as conn:
+        madrid = conn.execute(
+            text(
+                "SELECT value, inputs FROM feature_value WHERE feature_id = 'alquiler_m2_mensual' "
+                "AND territory_level = 'municipio' AND territory_code = '28079'"
+            )
+        ).one()
+        districts = (
+            conn.execute(
+                text(
+                    "SELECT inputs FROM feature_value WHERE feature_id = 'alquiler_m2_mensual' "
+                    "AND territory_level = 'distrito' AND value IS NOT NULL"
+                )
+            )
+            .scalars()
+            .all()
+        )
+    factor = (1167 / 68) / (1012 / 71)  # Madrid-28079 in the sample (IRPF 2024)
+    adjustment = madrid.inputs["new_contracts"]
+    assert adjustment["factor_from"] == "28079"
+    assert adjustment["all_contracts_value"] == pytest.approx(15.1)
+    assert madrid.value == pytest.approx(15.1 * factor)
+    assert "aeat_alquiler_nuevos_contratos_municipios" in madrid.inputs["dataset_versions"]
+    assert districts
+    for inputs in districts:
+        assert "aeat_alquiler_nuevos_contratos_codigo_postal" in inputs["dataset_versions"]
+        counted = inputs["new_contracts"]
+        assert counted["postcodes_with_own_factor"] + counted["postcodes_with_fallback"] >= 1
