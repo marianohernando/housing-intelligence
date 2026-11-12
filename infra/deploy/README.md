@@ -30,6 +30,8 @@ Aquí solo van los nombres, nunca los valores. Las variables que no son secretas
 | `DATABASE_URL` | api | **Secreto** (Sensitive). Lo mete Mariano | `postgresql+psycopg://<usuario>.ilvbivfnqvfqslbbiuts:<contraseña>@aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require`. Es el Session pooler: la conexión directa es solo IPv6. El usuario es `vf_api_ro` cuando exista el rol y, mientras tanto, el de `SUPABASE_DATABASE_URL`. El esquema tiene que ser `postgresql+psycopg://`. |
 | `CORS_ORIGINS` | api | Config | `["https://vidafacil-madrid.vercel.app","https://vida-facil-eight.vercel.app"]`, una lista JSON |
 | `PORT` | api | Config | `8080`. El contenedor escucha ahí y Vercel enruta a `$PORT` |
+| `DB_POOL_SIZE` | api | Config | `2` desde el 12 nov: conexiones fijas a la base por instancia. El código pone 5 por defecto (`packages/db`, `make_engine`, 4645326). El pooler de Supabase en modo sesión admite 15 clientes en total, compartidos por todas las instancias (incidente en `evidence/gate-06/2026-11-12-deploy/deploy-13-auditoria-gap03.md`) |
+| `DB_MAX_OVERFLOW` | api | Config | `1` desde el 12 nov: conexiones extra en un pico, que se cierran al devolverse. Por defecto, 10. Con 2 + 1, cada instancia usa como mucho 3, y caben 5 instancias en las 15 del pooler |
 | `NEXT_PUBLIC_API_URL` | web | Config | `https://vidafacil-madrid.vercel.app`. Se incrusta al compilar: si cambia, hay que volver a desplegar |
 | `NEXT_PUBLIC_FEATURE_SEARCH` | web | Config | `true` desde el 11 nov: enciende el buscador. Se incrusta al compilar. Para apagarlo: `npx vercel@65.12.1 env rm NEXT_PUBLIC_FEATURE_SEARCH production` y volver a desplegar. Si el despliegue anterior se compiló sin ella, también vale un rollback |
 
