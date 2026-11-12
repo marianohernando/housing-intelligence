@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-12 (mañana, A v10: conexiones de la API en modo transacción, D-219; nombres de atención primaria, D-218 §9).
+Última actualización: 2026-11-12 (A v10: D-219 pooler; D-218 §9 nombres; D-220 transporte público al trabajo, CORE-009 F1–F3b).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 12 nov | A | CORE-009 · Fase 3 + 3b (la búsqueda usa el transporte público, `fit-0.2`) | verde | `b0222af`, `7e4aa7c` | `evidence/gate-04/2026-11-12/golden-search-commute.txt`, `core009-f3b-gate.txt`, `evidence/gate-03/2026-11-12/commute-matrix.md` | El trabajo puntúa por **minutos en transporte público llegando a las 9:00** (hecho: «33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00»). Límite de trayecto PASS/FAIL; UNKNOWN donde no se llega con los horarios publicados. Sitio → estación a ≤ 600 m o centro de la zona que lo contiene. Revisado con `reviewer` (3b: transbordo a pie mínimo de 2 min). Golden 6/6 (expectativas del trabajo en minutos). **Caso demo: Fuencarral-El Pardo 100 % (29 min) y Ciudad Lineal 99 % (33 min)**. **Necesita sync** (matriz recalculada) **y redespliegue de la API** |
 | 12 nov | A | CORE-009 · Fase 2 (matriz de trayectos, D-220) | verde | `c4173ef` | `evidence/gate-03/2026-11-12/commute-matrix.md`, `core009-f2-gate.txt` | Minutos en transporte público para **llegar a las 9:00** desde las 200 zonas a las 379 estaciones y los 200 centros de zona, con los 6 GTFS del CRTM (`hi-features commute`, 107 s). Sol: Centro 9 min, Getafe 38, Alcalá 67, Aranjuez 75. Limpieza declarada de los GTFS de autobuses (horas repetidas, expediciones que retroceden). 50 zonas sin dato (Sierra Norte; las líneas 720–726 de Colmenar faltan en el GTFS). Migración **0007** (`transit_hub`, `commute_time`). **Necesita migrate + sync** |
 | 12 nov | A | CORE-009 · Fase 1 (búsqueda «llegar a las…») | verde | `a51b159` | `evidence/gate-03/2026-11-12/core009-f1-gate.txt` | Dominio puro: red expandida en el tiempo y búsqueda hacia atrás; tests de propiedades |
 | 12 nov | `datamad-10` | Supabase · sync de HOSP-001 F3 | — | `56e846f` | MCP | 17 centros de salud genéricos, 399 alias de atención primaria, CS7368 = «Centro de salud Palma Norte» |
@@ -127,7 +128,8 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
   Orden: (1) C pone `DB_PREPARED_STATEMENTS=false` y redespliega (smoke en verde); (2) Mariano cambia el puerto de `DATABASE_URL` a 6543; (3) C redespliega y pasa el smoke. Al revés, las consultas repetidas fallan con «prepared statement … already exists». Las migraciones y el sync siguen en 5432 (`SUPABASE_DATABASE_URL`): Alembic necesita el modo sesión. Valores no booleanos en `DB_PREPARED_STATEMENTS` hacen fallar el arranque.
 - **Sync de HOSP-001 F3 hecho** por `datamad-10` (12 nov) y comprobado por MCP.
-- **Pendiente (CORE-009 F2, `c4173ef`), con migración:** `make supabase-migrate` (**0007**: `transit_hub` y `commute_time`, RLS y lectura para `vf_api_ro`) y `make supabase-sync PROFILE=demo` (el perfil incluye ya las dos tablas). Comprobación por MCP: `select count(*) from transit_hub` → 579; `select count(*), count(minutes) from commute_time` → 115800 y 74292; `select minutes from commute_time where hub_id = 'estacion:metro:puerta del sol' and origin_admin_unit_id = 'ES.28.MUN.28065'` → 38,4 (Getafe). La API aún no lee estas tablas (F3).
+- **Migrate 0007 + sync de CORE-009 F2 hechos** por `datamad-10` (12 nov), comprobados por MCP.
+- **Pendiente (CORE-009 F3b, `7e4aa7c`), sin migración:** `make supabase-sync PROFILE=demo` (la matriz cambia tras la revisión). Comprobación por MCP: `select count(minutes) from commute_time` → 73783; `select minutes from commute_time where hub_id = 'estacion:metro:puerta del sol' and origin_admin_unit_id = 'ES.28.MUN.28065'` → 38,6 (Getafe). Después C redespliega la API (`fit-0.2`). Avisar a D: el caso demo cambia de orden (Fuencarral-El Pardo 100 %, Ciudad Lineal 99 %) y el hecho del trabajo ya no es en línea recta.
 - **Peticiones de B en cola (vía `datamad-10`):** `attribution_text` por dataset en `/datasets` (Ministerio de Sanidad y CartoCiudad) y, opcional, `/places?category=a,b`. Van después de CORE-009 F3.
 - **Decisión pendiente de Mariano (ya estaba en el board):** fichero de correcciones versionado con fuente oficial por registro. Lo necesitan el Ramón y Cajal (CH0049, el Catálogo Nacional de Hospitales lo sitúa en la calle de Ayala 38, 28001), los centros de salud «S/N» y el CEIP de Navalafuente.
 
