@@ -20,7 +20,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - ninguna de sus cifras de ejemplo: zonas del Reality Check, 4.000–4.500 €/mes ni «10 conjuntos de datos»;
 - el barrio de ejemplo con coworking, gimnasio y «lo que la gente dice que necesita». La necesidad declarada es un siguiente paso y nunca se simula (D-194);
 - su estilo visual;
-- el nombre «Housing Intelligence», que solo puede ir en el pie como plataforma o equipo (D-199).
+- el nombre «Housing Intelligence»: en todo lo que se ve, un solo nombre, «Vida Fácil» (jurado simulado del 12 nov). «Housing Intelligence» queda solo como nombre del repositorio.
 
 ---
 
@@ -30,7 +30,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - *Encuentra tu sitio en Madrid* (lema, en violeta).
 - Descripción, una frase: «El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.»
 - Integrantes: equipo de una persona. En el PDF va el nombre completo, que el build toma de `DECK_INTEGRANTES` (`pitch/deck/README.md`). Decisión de Mariano (11 nov): en el repo público solo «Mariano»; el nombre completo va solo en el PDF del deck y en el formulario.
-- Pie: «DATAMAD 2026 · Datos abiertos de la Comunidad de Madrid · Código abierto (Apache-2.0) · Plataforma Housing Intelligence».
+- Pie: «Código abierto (Apache-2.0) · Datos abiertos de la Comunidad de Madrid». El «DATAMAD 2026» ya va arriba, en la línea pequeña sobre el nombre.
 
 **Composición:**
 - Mitad izquierda: título, lema y descripción sobre `--bg`.

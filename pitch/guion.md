@@ -132,7 +132,7 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 <!-- habla:b4:fin -->
 
 **Fuentes de lo que se dice:**
-- «Veintitrés conjuntos» y «control de calidad»: `pitch/datasets_cm.md` (23 con Gate 1 en PASS, regenerado el 12 nov) y `GET /api/v1/datasets?cm_only=true` en producción (`cm_open_data_count: 23`). El 23 nov se regenera y, si cambia el número, se cambia la frase.
+- «Veintiséis conjuntos» y «control de calidad»: `pitch/datasets_cm.md` (26 con Gate 1 en PASS, regenerado el 12 nov) y `GET /api/v1/datasets?cm_only=true` en producción (`cm_open_data_count: 26`). El 23 nov se regenera y, si cambia el número, se cambia la frase.
 - «Seis redes del Consorcio»: D-196.
 - «Código abierto»: `LICENSE` (Apache-2.0, D-191).
 - «Quién paga»: modelo del documento de la idea, `docs/09_datamad/25_plan_competicion.md` §1.
