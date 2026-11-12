@@ -79,7 +79,7 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 - **Acción:** señalar el mapa ya coloreado y la lista «Zonas que encajan». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio.
 - **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje», «La 1.ª que más encaja» y 5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** hecho en producción. Desde el despliegue del 12 nov (`28a0f2f`, `fit-0.3`, con el trabajo en minutos de transporte público de D-220), la 1.ª es Fuencarral-El Pardo, con un 100 % y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» (`POST /api/v1/search` con el fixture; `evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`). Se graba el 23 nov con lo que salga en pantalla.
+- **Estado:** hecho en producción. Desde el 13 nov (`fit-0.6`, con el alquiler de contratos nuevos de D-228) encajan 27 zonas y la 1.ª es Latina, con un 98 % y «39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» (`POST /api/v1/search` con el fixture). Se graba el 23 nov con lo que salga en pantalla.
 
 <!-- voz:p3:inicio -->
 La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
@@ -89,7 +89,7 @@ La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con e
 - **Acción:** cerrar la tarjeta (×) y bajar hasta «¿Y si cambias algo?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Probar así» en la primera. El mapa se recalcula y sale «Ahora ves las zonas con: [opción]».
 - **Se ve:** «Con tu búsqueda tal cual salen [N] zonas» y las opciones con sus cifras de la API.
 - **Rótulo:** «Con tu búsqueda: [N] zonas · [opción]: [N] zonas».
-- **Estado:** hecho en producción. El 12 nov: «Con tu búsqueda tal cual salen 33 zonas» y una sola opción, «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir el presupuesto ya no añade zonas y la web no lo enseña (`POST /api/v1/search` con el fixture, `added_zones: 0`).
+- **Estado:** hecho en producción. El 13 nov (`fit-0.6`): «Con tu búsqueda tal cual salen 27 zonas» y dos opciones, «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más» (`POST /api/v1/search` con el fixture).
 
 <!-- voz:p4:inicio -->
 ¿Y si quieren más opciones? Con su búsqueda tal cual salen [N] zonas. Si cambian una sola cosa, por ejemplo [opción], salen [N]. Un toque y se aplica.

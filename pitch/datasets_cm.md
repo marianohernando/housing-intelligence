@@ -45,21 +45,21 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/1934259 · id `cm_alquiler_m2_codigo_postal_madrid` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-bc14c1e36441` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_alquiler_m2_codigo_postal_madrid/quality_report.json)
 
 ### Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000 · id `cm_alquiler_m2_municipios` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-82cdb192ed1b` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_alquiler_m2_municipios/quality_report.json)
 
 ### Registro de centros de atención social
 - **Ficha:** https://datos.comunidad.madrid/dataset/atencion_social_registro_centros · id `cm_centros_atencion_social` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
   - «Qué falta», fila «Centros de mayores» (dato extra): Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más (`centros_mayores_por_1000_mayores`, fuente principal)
   - «Qué falta», fila «Centros de mayores» (dato extra): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, fuente principal)
@@ -72,7 +72,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_educativos · id `cm_centros_educativos` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
   - «Qué falta», fila «Colegios»: Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años (`aulas_primaria_a_pie_por_1000_ninos`, fuente principal)
   - «Qué falta», fila «Colegios» (dato extra): Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años (`colegios_publicos_por_1000_menores`, fuente principal)
   - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_a_pie_por_1000_ninos`, fuente principal)
@@ -88,7 +88,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios · id `cm_centros_sanitarios` · publica: Comunidad de Madrid
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
-  - Indicador por zona: Alquiler medio por metro cuadrado (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
   - «Qué falta», fila «Centros de salud»: Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes (`centros_salud_a_pie_por_10000_hab`, fuente principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Centros de atención primaria por cada 10.000 habitantes (`centros_salud_por_10000_hab`, fuente principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, fuente principal)
@@ -313,9 +313,23 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-9e34e07839c7` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro_ligero/quality_report.json)
 
-## 3. Fuentes complementarias en uso (6)
+## 3. Fuentes complementarias en uso (8)
 
 No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regional.
+
+### Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos por códigos postales para municipios de más de 20.000 viviendas habituales arrendadas (ejercicio 2024)
+- **Ficha:** https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html · id `aeat_alquiler_nuevos_contratos_codigo_postal` · publica: Agencia Tributaria
+- **Licencia:** [Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)](https://sede.agenciatributaria.gob.es/Sede/condiciones-uso-sede-electronica/aviso-legal/utilizacion-informacion-contenida-web-aeat.html) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
+- **Quality Gate 1:** PASS · 2026-11-12 · 7/7 checks críticos · versión `2026-11-12-9a1c2ed26a07` · 216 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/aeat_alquiler_nuevos_contratos_codigo_postal/quality_report.json)
+
+### Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos para municipios de más de 20.000 habitantes (ejercicio 2024)
+- **Ficha:** https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html · id `aeat_alquiler_nuevos_contratos_municipios` · publica: Agencia Tributaria
+- **Licencia:** [Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)](https://sede.agenciatributaria.gob.es/Sede/condiciones-uso-sede-electronica/aviso-legal/utilizacion-informacion-contenida-web-aeat.html) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
+- **Quality Gate 1:** PASS · 2026-11-12 · 7/7 checks críticos · versión `2026-11-12-f7bc11db960a` · 152 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/aeat_alquiler_nuevos_contratos_municipios/quality_report.json)
 
 ### Padrón municipal
 - **Ficha:** https://datos.madrid.es/dataset/200076-0-padron · id `ayto_padron_municipal` · publica: Ayuntamiento de Madrid

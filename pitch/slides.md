@@ -72,7 +72,8 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 - **Línea pequeña bajo la tabla:**
   - «Complementan, sin contar como datos CM: red peatonal de OpenStreetMap (ODbL)» (`pitch/datasets_cm.md` §3). Si el 24 nov la web ya enseña las zonas verdes, va «red peatonal y parques de OpenStreetMap» (D-222);
   - «+ Ayuntamiento de Madrid (población y hogares por distrito)»: en uso desde DATA-012 (D-209; `pitch/datasets_cm.md` §3);
-  - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3).
+  - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3);
+  - «+ Agencia Tributaria (alquiler de los contratos nuevos)»: «Estadística de viviendas declaradas en IRPF», ejercicio 2024, con 2 conjuntos de apoyo que no cuentan como CM (D-228; `pitch/datasets_cm.md` §3).
 - **Pie:** «Lista completa, con licencias y control de calidad: github.com/marianohernando/housing-intelligence → `pitch/datasets_cm.md`».
 
 **Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («27») va grande en violeta; el build la calcula del catálogo.
@@ -91,12 +92,17 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 Versión con buscador (la que vale):
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, y lo que no tiene datos nunca cuenta como 0 (D-215; `pitch/metodologia.md` §1.3).
-- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 12 nov, tras el despliegue de `28a0f2f` (`POST /api/v1/search` con ese fixture, `fit-0.3`, con el trabajo en minutos de transporte público de D-220). Es igual que en la base local de A (`evidence/gate-04/2026-11-12/golden-search-commute.txt`, `golden_family`):
-  - encajan **33 de las 199 zonas**, y en 15 falta algún dato;
-  - 1.ª **Fuencarral-El Pardo, 100 %**, con «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00», colegio a 9 min y ≈ 1.107 €/mes por 77 m² (con el alquiler de contratos nuevos de D-228, unos **[1.270 €: pendiente de A]**; las cifras de este caso se vuelven a comprobar cuando A lo despliegue). Después, Ciudad Lineal (33 min) y Hortaleza (32 min), **empatadas al 99 %**: no se presenta un orden entre ellas. Puente de Vallecas, 7.ª (98 %);
-  - antes, con la distancia en línea recta (`fit-0.1`), salía 1.ª Ciudad Lineal (99 %).
-  - Cambia respecto al 11 nov (32 zonas y Ciudad Lineal ≈ 1.075 €/mes): D-216 sacó del registro los 1.001 «centros polivalentes» (clínicas privadas), que también ponderaban el alquiler por distrito. Con eso, Salamanca cabe en 1.500 €/mes y encaja (94 %): es la zona 33.
-- **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo lo que más limita es el colegio a 10 min: «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir 150 €/mes ya no añade ninguna (`added_zones: 0`), y la web no enseña las opciones que no suman (`relaxOptions` en `apps/web/src/lib/fit.ts`). Casi encajan San Sebastián de los Reyes, Tres Cantos y Moncloa-Aravaca, que solo fallan por el colegio (producción, 12 nov). Captura **C3**: la de B (PR #17).
+- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 13 nov (`POST /api/v1/search` con ese fixture, `fit-0.6`: trabajo en minutos de transporte público, D-220, y alquiler de contratos nuevos, D-228):
+  - encajan **27 de las 199 zonas**, y en 15 falta algún dato;
+  - **cuatro empatan al 98 %:** Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas. No se presenta un orden entre ellas. La web abre Latina: colegio a unos 6 min, «39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)»;
+  - **cambia respecto al 12 nov** (33 zonas, Fuencarral-El Pardo al 100 %): el alquiler ya cuenta los contratos nuevos. Fuencarral-El Pardo pasa de ≈ 1.107 a ≈ 1.276 €/mes y queda 5.ª (97 %); Salamanca, a ≈ 1.797 €/mes, ya no entra en 1.500 €.
+- **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo:
+  - «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más»;
+  - «+150 €/mes: saldrían 30 zonas, 3 más»;
+  - lo que más limita sigue siendo el colegio a 10 min;
+  - casi encajan, por el presupuesto, Chamartín, Salamanca, Centro, Chamberí y Retiro (93 %).
+
+  Captura **C3**: hay que rehacerla (**pendiente de B**), porque la de B (PR #17) dice 33 y 50 zonas.
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Trabajo:** cuenta los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las 6 redes del CRTM (CORE-009, D-220). En producción desde el 12 nov. **Límite que se dice si preguntan:** son horarios programados de un martes, no tiempos reales, y en 45–50 zonas de la Sierra Norte y del sureste no se llega a las 9:00 (D-220 §6).
 - **«Sin escaleras»** (opcional, D-223): quien lo marca ve los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el CRTM da como totalmente accesible. Nunca se deduce de nada ni se etiqueta a nadie, y la tarjeta dice lo que no mide (autobuses, aceras y portales). En producción desde el 12 nov (despliegue de `2761696`). En la slide va una línea, solo si cabe.
@@ -209,17 +215,17 @@ El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las to
 
 | Id | Qué cambia | Dónde |
 |---|---|---|
-| C3 | Hecha por B: `deck_c3_y_si_cambias_1440.png`, con «Con tu búsqueda tal cual salen 33 zonas» y «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más» | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
+| C3 | **Rehacer con `fit-0.6` (pendiente de B):** «Con tu búsqueda tal cual salen 27 zonas», «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más». La de B (`deck_c3_y_si_cambias_1440.png`, PR #17) tenía 33 y 50 zonas | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
 | C4 | Hecha por B: `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, la fila de escuelas infantiles de **Puente de Vallecas** en FALTA (2,8 frente a 4,9) con «A pie: 6 min». El hueco enseña las dos cifras | `/que-falta?zona=distrito/2807913` |
 | C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
-| C1, C2 | Hechas por B con `fit-0.2` (PR #19): `deck_c1_busqueda_1440.png` y `deck_c2_tarjeta_zona_1440.png`, con Fuencarral-El Pardo 1.ª (100 %) y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00». Son locales con datos reales, y producción da las mismas cifras desde el 12 nov (`fit-0.3`): no hace falta rehacerlas | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
+| C1, C2 | **Rehacer con `fit-0.6` (pendiente de B):** la búsqueda del caso con 27 zonas y la tarjeta de la 1.ª (hoy, Latina al 98 %, con la línea «Encaja con lo que pides; aun así…»). Las de B (PR #19) enseñan Fuencarral-El Pardo al 100 %, que ya no es así | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
 | C7 | «Cómo lo calculamos» ya explica el 2SFCA; el hueco puede volver a enseñar las reglas | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
-| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Hecha por B con `fit-0.2` (`evidence/map-004/2026-11-12/deck/deck_c1_busqueda_1440.png`, PR #19): caso de la Castellana con Fuencarral-El Pardo 1.ª (100 %), como en producción desde el 12 nov |
-| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | Hecha por B con `fit-0.2` (`evidence/map-004/2026-11-12/deck/deck_c2_tarjeta_zona_1440.png`, PR #19). El hueco de la slide 3 enseña la cabecera: «100 % de encaje» y «La 1.ª que más encaja» |
-| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | Hecha por B el 12 nov (`evidence/map-004/2026-11-12/deck/deck_c3_y_si_cambias_1440.png`, PR #17). El hueco enseña «salen 33 zonas» y la opción «+5 min…: saldrían 50 zonas, 17 más». La del 11 nov decía 49 y ya no vale |
+| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Rehacer (pendiente de B):** la actual (PR #19) es del 12 nov, con Fuencarral-El Pardo 1.ª al 100 %; con `fit-0.6` son 27 zonas y la 1.ª es Latina (98 %) |
+| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Rehacer (pendiente de B):** la actual (PR #19) enseña «100 % de encaje» en Fuencarral-El Pardo. La nueva, la tarjeta de la 1.ª con `fit-0.6` y la línea bajo el % |
+| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | **Rehacer (pendiente de B):** la actual (PR #17) dice 33 y 50 zonas; con `fit-0.6`, 27, 44 y la opción de +150 €/mes |
 | C4 | Pestaña «Qué falta» de la zona del ejemplo (**Puente de Vallecas**): 6 filas con valor, referencia, confianza, minutos a pie y datasets enlazados | 1440 | 3 | Hecha por B el 12 nov (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, PR #17; la página entera, en `deck_c4_puente_de_vallecas_que_falta_1440.png`). El hueco enseña las dos cifras de la fila de escuelas infantiles: 2,8 en Puente de Vallecas y 4,9 en los otros municipios urbanos |
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B en producción con `gap-0.2` (`prod_c5_chamartin_3d_desktop.png`, Chamartín). El recorte deja fuera el título de la barra, «Barrios de la zona», que hoy se llama «Ir a un barrio»; se ven solo los barrios |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B en producción (`prod_c5_chamartin_3d_mobile.png`). No enseña estados |

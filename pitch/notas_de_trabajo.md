@@ -14,9 +14,7 @@ Párrafos de la parte 1 que B solo publica si la web ya enseña lo que cuentan. 
 | 1.8 | «**En los 21 distritos de Madrid** te contamos, solo como contexto, cómo valoran los vecinos la seguridad…» | La vista de zona enseña `zona.seguridad_vecinos` (D-226) | B |
 | 1.8 | «**Zonas verdes:** contamos los parques de 1 hectárea o más…» | Igual que en 1.3 | B |
 
-**Cuando A despliegue el alquiler de contratos nuevos (D-228, opción A):**
-- en 1.3, «El alquiler estimado» y «Ojo: el alquiler estimado es orientativo y tira a la baja» cambian. Texto listo para entonces: «El alquiler estimado es el alquiler medio por metro cuadrado de la zona, corregido con lo que cuestan de más los contratos firmados en el último año según la Agencia Tributaria, multiplicado por los metros de tu hogar.» y «Ojo: sigue siendo una estimación. Sale de contratos declarados a Hacienda, no de los pisos que se anuncian hoy, y los metros son construidos, no útiles.»;
-- el ejemplo de 1.3 («unos 1.107 € al mes por 77 m²») pasa a la cifra que dé A, y se vuelven a comprobar las 33 zonas y las «17 zonas» más.
+**Alquiler de contratos nuevos (D-228):** aplicado el 13 nov en `metodologia.md` §1.3, con el caso de ejemplo de `fit-0.6` (27 zonas, Latina 1.ª).
 
 ---
 

@@ -43,6 +43,7 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
+| Slides 3 y 4 | C1, C2 y C3, rehechas con `fit-0.6`: 27 zonas, la 1.ª Latina (98 %), «+5 min…: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más». Las actuales son del 12 nov. Cuando lleguen, se cambian los `alt` de C2 y C3 en `deck.html` y se quitan las marcas | B |
 | Slide 3, utilidad | Cita 1 de la prueba con personas: alguien que busca casa, de 12 palabras como mucho, con quién es y sin nombre | Mariano (prueba con personas) |
 | Slide 3, impacto | Cita 2: el técnico municipal, de 12 palabras como mucho, con su cargo y el tipo de municipio, sin nombre | Mariano (prueba con personas) |
 
