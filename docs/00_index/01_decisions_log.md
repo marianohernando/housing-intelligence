@@ -1165,3 +1165,8 @@ DATA-021. Sustituye D-214 §5, donde comprar salía UNKNOWN en todas las zonas. 
    - El valor tasado trimestral por antigüedad (`valor_tasado_vivienda_municipio_antiguedad`): no trae código de municipio; queda para cuando haga falta el trimestre.
    - Repartir el valor de Madrid entre sus distritos.
 7. **Orden del cambio en producción:** primero se despliega el código y después se sincroniza. El código desplegado (`fit-0.4`) no conoce el rol `price_m2`: con la feature en la base, `/search` fallaría.
+8. **Revisión (`reviewer`, F1b):**
+   - `explicar_zona` (MCP) cita como indicador de coste el que evalúa: el valor tasado para comprar y el alquiler para alquilar o sin presupuesto;
+   - un test de integración siembra un valor tasado en un municipio de los fixtures y comprueba por la API PASS, FAIL, el coste en € y el dataset citado;
+   - quedan fijados en tests el redondeo del Reality Check (305.000 € → +40.000 €) y el tope de 5 millones;
+   - pendiente de la web (línea B): las tarjetas aún dicen «Aún no tenemos precios oficiales de compra por zona» (`SearchCard.tsx`, `FitDetails.tsx`). Deberían decirlo solo donde la condición sale UNKNOWN, por ejemplo: «Solo hay precio en los municipios de más de 25.000 habitantes; los distritos de Madrid no lo tienen».

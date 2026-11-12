@@ -1,0 +1,45 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+393 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+278 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests uv run pytest tests/unit tests/data -q
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 34%]
+........................................................................ [ 46%]
+........................................................................ [ 57%]
+........................................................................ [ 69%]
+........................................................................ [ 80%]
+........................................................................ [ 92%]
+...............................................                          [100%]
+623 passed in 12.97s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  28 passed (28)
+      Tests  286 passed (286)
+   Start at  17:10:57
+   Duration  549ms (tests 47%, import 24%, transform 22%, worker 6%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 60%]
+...............................................                          [100%]
+119 passed in 55.66s

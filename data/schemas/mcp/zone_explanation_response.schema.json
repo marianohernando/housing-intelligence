@@ -740,7 +740,7 @@
             }
           ],
           "default": null,
-          "description": "Monthly rent for the needed area; no purchase price yet",
+          "description": "Purchase price in € to buy (D-227), else monthly rent in €/month",
           "title": "Estimated Cost Eur"
         },
         "facts": {

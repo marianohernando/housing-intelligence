@@ -31,7 +31,9 @@ class ZoneExplanation(BaseModel):
     facts: list[Fact] = Field(max_length=5, description="Same facts as the zone's search card")
     constraints: list[ConstraintCheck] = Field(description="PASS / FAIL / UNKNOWN per condition")
     estimated_cost_eur: float | None = Field(
-        default=None, ge=0, description="Monthly rent for the needed area; no purchase price yet"
+        default=None,
+        ge=0,
+        description="Purchase price in € to buy (D-227), else monthly rent in €/month",
     )
     gap_highlights: list[GapHighlight] = Field(
         default_factory=list[GapHighlight], max_length=3, description="Full list: GET /gaps"

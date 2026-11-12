@@ -206,6 +206,21 @@ def test_a_purchase_budget_relaxes_by_ten_percent_in_thousands() -> None:
     assert label == "+30.000 €"
     top = Budget(kind=BudgetKind.BUY, amount_eur=5_000_000)
     assert relaxed(family(budget=top), "budget") is None
+    odd_budget = Budget(kind=BudgetKind.BUY, amount_eur=305_000)
+    label, odd = relaxed(family(budget=odd_budget), "budget") or ("", family())
+    assert odd.budget is not None and odd.budget.amount_eur == 345_000  # rounded up to 10.000
+    assert label == "+40.000 €"
+    near = Budget(kind=BudgetKind.BUY, amount_eur=4_990_000)
+    _, capped = relaxed(family(budget=near), "budget") or ("", family())
+    assert capped.budget is not None and capped.budget.amount_eur == 5_000_000
+
+
+def test_the_estimated_cost_is_the_price_to_buy_and_the_rent_otherwise() -> None:
+    priced = zone("1", rent=12.0, price=3000.0)
+    assert evaluate(family(budget=BUY_300K, anchors=[]), priced).cost_eur == 231_000
+    assert evaluate(family(budget=BUY_300K, anchors=[]), zone("2", rent=12.0)).cost_eur is None
+    no_budget = family(anchors=[]).model_copy(update={"budget": None})
+    assert evaluate(no_budget, priced).cost_eur == 924  # 12 €/m² × 77 m²
 
 
 def test_relaxations_step_budget_and_minutes() -> None:

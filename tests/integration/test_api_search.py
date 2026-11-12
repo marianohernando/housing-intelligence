@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 
 from hi_api.deps import get_engine
 from hi_api.main import app
@@ -103,3 +103,50 @@ def test_highlights_match_the_gap_map(client: TestClient) -> None:
 def test_invalid_scenario_is_rejected(client: TestClient) -> None:
     response = client.post("/api/v1/search", json={"budget": {"kind": "rent", "amount_eur": 5}})
     assert response.status_code == 422
+
+
+AJALVIR = "28002"  # a fixture municipio without a published appraised value
+_SEED_PRICE = text(
+    "UPDATE feature_value SET value = :value, null_reason = :reason, confidence = :confidence "
+    "WHERE feature_id = 'valor_tasado_vivienda_m2' AND territory_level = 'municipio' "
+    "AND territory_code = :code"
+)
+
+
+def test_a_published_appraised_value_scores_buying(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """D-227 through the API: with a value, buying is PASS or FAIL on value x m² and cites the
+    dataset; the explanation reads the purchase value to buy and the rent to rent."""
+    from hi_api.services.explanation import explain_zone
+    from hi_contracts.catalog.enums import TerritoryLevel
+    from hi_contracts.public import ScenarioState
+
+    seed = {"value": 3000.0, "reason": None, "confidence": 0.8, "code": AJALVIR}
+    with migrated_engine.begin() as conn:
+        assert conn.execute(_SEED_PRICE, seed).rowcount == 1
+    try:
+        buy = _family() | {"budget": {"kind": "buy", "amount_eur": 300000}, "nearby": []}
+        data = _search(client, buy).data
+        card = next(z for z in data.results if z.zone.code == AJALVIR)
+        budget = next(c for c in card.constraints if c.constraint_id == "budget")
+        assert budget.status == "PASS"
+        assert budget.value == card.estimated_cost_eur == 231000  # 3.000 €/m² × 77 m²
+        assert "cm_valor_tasado_vivienda_municipios" in {d.dataset_id for d in data.datasets}
+        tight = buy | {"budget": {"kind": "buy", "amount_eur": 200000}}
+        zones = {z.zone.code: z for z in _search(client, tight).data.all_zones}
+        assert zones[AJALVIR].failed_constraints == ["budget"]
+        with migrated_engine.connect() as conn:
+            to_buy, _, _ = explain_zone(
+                conn, TerritoryLevel.MUNICIPIO, AJALVIR, ScenarioState.model_validate(buy)
+            )
+            to_rent, _, _ = explain_zone(
+                conn, TerritoryLevel.MUNICIPIO, AJALVIR, ScenarioState.model_validate(_family())
+            )
+        assert "valor_tasado_vivienda_m2" in {i.feature_id for i in to_buy.indicators}
+        assert "alquiler_m2_mensual" not in {i.feature_id for i in to_buy.indicators}
+        assert "valor_tasado_vivienda_m2" not in {i.feature_id for i in to_rent.indicators}
+    finally:
+        restore = {"value": None, "reason": "SOURCE_MISSING", "confidence": 0.0, "code": AJALVIR}
+        with migrated_engine.begin() as conn:
+            conn.execute(_SEED_PRICE, restore)

@@ -14,6 +14,7 @@ from hi_api.services.gaps import ZoneNotFoundError, dataset_refs, zone_gap_list
 from hi_api.services.search import LEVELS, load, load_warnings
 from hi_contracts.catalog.enums import TerritoryLevel
 from hi_contracts.public import (
+    BudgetKind,
     DatasetRef,
     IndicatorValue,
     ScenarioState,
@@ -27,8 +28,11 @@ class ZoneNotInSearchError(LookupError):
     """The zone exists but the search does not rank it (Madrid capital goes by district)."""
 
 
-def _indicators(data: ZoneData) -> list[IndicatorValue]:
-    found = [data.rent, data.price, *data.walk.values(), *data.priority_walk.values()]
+def _indicators(data: ZoneData, scenario: ScenarioState) -> list[IndicatorValue]:
+    """What the evaluation reads: the purchase value to buy, else the rent (D-227), and every
+    walking indicator of the zone."""
+    buying = scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY
+    found = [data.price if buying else data.rent, *data.walk.values(), *data.priority_walk.values()]
     return sorted((i for i in found if i is not None), key=lambda i: i.feature_id)
 
 
@@ -67,7 +71,7 @@ def explain_zone(
         msg = f"No {level.value} with code {code}"
         raise ZoneNotFoundError(msg)
     fit = evaluate(scenario, data)
-    indicators = _indicators(data)
+    indicators = _indicators(data, scenario)
     used = {d for i in indicators for d in i.datasets}
     versions = {d: v for d, v in loaded.versions.items() if d in used} | loaded.commute_versions
     datasets = _union([*dataset_refs(conn, versions), *_highlight_datasets(conn, data)])
