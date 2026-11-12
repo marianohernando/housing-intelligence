@@ -27,6 +27,7 @@
 //   node scripts/check-qa.mjs esquema [outDir]   # «Cómo lo calculamos» in five steps: a row on desktop, a column on a phone
 //   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
 //   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
+//   node scripts/check-qa.mjs mapa [outDir] [antes|despues] # MAP-004: map labels (glyphs) and the first view, before and after
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -1917,8 +1918,82 @@ async function smallZones(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** The only font stacks the glyph servers have (OpenFreeMap, and the offline package of line C): any other is a 404. */
+const GLYPH_FONTS = ["Noto Sans Regular", "Noto Sans Bold", "Noto Sans Italic"];
+
+/** Glyph ranges the page asks for: font stack, range and HTTP status. */
+function watchGlyphs(page) {
+  const asked = [];
+  page.on("response", (r) => {
+    const m = /\/fonts\/([^/]+)\/(\d+-\d+)\.pbf/.exec(r.url());
+    if (m) asked.push({ fuente: decodeURIComponent(m[1]), rango: m[2], estado: r.status(), origen: new URL(r.url()).origin });
+  });
+  return asked;
+}
+
+/**
+ * Map labels and first view (MAP-004, Mariano's notes after trying production): the overview, the
+ * demo search and a zone at 1440 and 390 px, tagged «antes» or «despues» (third argument); the glyph
+ * ranges asked (only Noto Sans Regular, Bold or Italic, all 200), axe, console and overflow; and the
+ * LCP of the overview and of a zone on slow 4G.
+ */
+async function mapView(browser) {
+  const tag = process.argv[4] ?? "despues";
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    const glyphs = watchGlyphs(page);
+    const entry = (report[`${tag}_${id}`] = {});
+    await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(3000);
+    await page.screenshot({ path: `${out}/vista_${tag}_portada_${id}.png` });
+    entry.portada = { axe: await axe(page), overflow_px: await overflow(page) };
+    if (id === "desktop") {
+      // Closer, as someone looking for their street: four wheel steps over the middle of the free map
+      for (let i = 0; i < 4; i += 1) {
+        await page.mouse.move(740, 375);
+        await page.mouse.wheel(0, -300);
+        await page.waitForTimeout(700);
+      }
+      await page.waitForTimeout(2500);
+      await page.screenshot({ path: `${out}/vista_${tag}_cerca_${id}.png` });
+      await page.reload({ waitUntil: "networkidle" });
+      await page.waitForTimeout(3000);
+    }
+    await loadExample(page, id === "mobile");
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: `${out}/vista_${tag}_ejemplo_${id}.png` });
+    entry.ejemplo = { axe: await axe(page), overflow_px: await overflow(page) };
+    await page.goto(`${BASE}${ZONE.path}`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(9000);
+    await page.screenshot({ path: `${out}/vista_${tag}_zona_${id}.png` });
+    entry.zona = { axe: await axe(page), overflow_px: await overflow(page) };
+    entry.glifos = glyphs;
+    entry.consola = errors;
+    for (const [where, check] of Object.entries({ portada: entry.portada, ejemplo: entry.ejemplo, zona: entry.zona })) {
+      if (check.axe.length) failures.push(`${id} ${where}: axe ${check.axe.map((v) => v.id).join(", ")}`);
+      if (check.overflow_px > 0) failures.push(`${id} ${where}: desborde`);
+    }
+    if (errors.length) failures.push(`${id}: consola`);
+    for (const g of glyphs) {
+      if (!GLYPH_FONTS.includes(g.fuente)) failures.push(`${id}: fuente ${g.fuente}`);
+      if (g.estado !== 200) failures.push(`${id}: ${g.fuente} ${g.rango} → ${g.estado}`);
+    }
+    await ctx.close();
+  }
+  report[`${tag}_lcp_portada_slow4g`] = await lcpOnSlow4g(browser, "/");
+  report[`${tag}_lcp_zona_slow4g`] = await lcpOnSlow4g(browser, ZONE.path);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "mapa") await mapView(browser);
 else if (mode === "pequenas") await smallZones(browser);
 else if (mode === "mariano") await marianoNotes(browser);
 else if (mode === "esquema") await methodSteps(browser);
@@ -1946,5 +2021,7 @@ else if (mode === "gap03") await gap03(browser);
 else throw new Error(`Unknown mode ${mode}`);
 await browser.close();
 
-writeFileSync(`${out}/qa_${mode}.json`, `${JSON.stringify(report, null, 1)}\n`);
+// «mapa» runs before and after the change: each run keeps its own report
+const tagged = mode === "mapa" ? `${mode}_${process.argv[4] ?? "despues"}` : mode;
+writeFileSync(`${out}/qa_${tagged}.json`, `${JSON.stringify(report, null, 1)}\n`);
 console.log(JSON.stringify(report, null, 1));

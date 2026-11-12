@@ -46,6 +46,11 @@ const PAIRS: [fg: string, bg: string, min: number][] = [
   ["surface", "park", TEXT],
   ["park", "map-park-vivid", UI],
   ["park", "map-land", UI],
+  // Map labels (MAP-004), even before their white halo: on the land and on a plain zone
+  ...["map-label", "map-label-strong", "map-label-water"].flatMap((l): [string, string, number][] => [
+    [l, "map-land", TEXT],
+    [l, "map-zone", TEXT],
+  ]),
   // «Todos los centros» with several types (petición de Mariano, 13 nov): each type's dot on the map
   // and its icon on a pressed button
   ...["colegio", "escuela-infantil", "centro-salud", "hospital", "farmacia", "mayores"].flatMap((t): [string, string, number][] => [

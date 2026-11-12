@@ -43,7 +43,9 @@ import {
   FACILITY_CLUSTER_PROPERTIES,
   FACILITY_SOURCE,
   facilityLayers,
+  FIRST_LABEL_LAYER,
   MAP_PALETTE_TOKENS,
+  mapGlyphsUrl,
   mapTilesSource,
   type MapPalette,
   PARKS_VIVID_LAYER,
@@ -57,7 +59,6 @@ import {
   edgeWall,
   maskAround,
   outlinePoints,
-  regionOf,
   type ZoneCollection,
   type ZoneFeature,
   type ZoneGeometry,
@@ -78,6 +79,8 @@ import styles from "./VidaMap.module.css";
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
 /** Base map tiles: OpenFreeMap unless the build sets NEXT_PUBLIC_MAP_TILES_URL (offline package). */
 const MAP_TILES_URL = process.env.NEXT_PUBLIC_MAP_TILES_URL;
+/** Fonts of the map labels: OpenFreeMap unless the build sets NEXT_PUBLIC_MAP_GLYPHS_URL (offline package). */
+const MAP_GLYPHS_URL = process.env.NEXT_PUBLIC_MAP_GLYPHS_URL;
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const FLIGHT_MS = 2800;
@@ -219,8 +222,9 @@ function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: Zon
   map.addSource("zone-mask", { type: "geojson", data: EMPTY });
   map.addSource("zone-base", { type: "geojson", data: EMPTY });
   map.addSource("zone-barrio", { type: "geojson", data: EMPTY });
-  const { below, above } = zoneLayers(palette);
+  const { below, withLabels, above } = zoneLayers(palette);
   for (const layer of below) map.addLayer(layer, BUILDING_LAYER);
+  for (const layer of withLabels) map.addLayer(layer, FIRST_LABEL_LAYER);
   for (const layer of above) map.addLayer(layer);
 
   let hovered: string | number | undefined;
@@ -314,7 +318,10 @@ function showOverview(map: MapLibreMap, zones: ZoneCollection, animate: boolean)
   source(map, "zone-selected").setData(EMPTY);
   source(map, "zone-base").setData(EMPTY);
   source(map, "zone-barrio").setData(EMPTY);
-  source(map, "zone-mask").setData({ type: "Feature", geometry: maskAround(regionOf(zones)), properties: {} });
+  // No mask in the overview: with a hole per zone (outlines simplified one by one, so neighbours
+  // overlap a little) MapLibre filled white wedges across the region, over the names too. The
+  // lilac zones already tell the region apart; a zone's own mask has one hole and stays.
+  source(map, "zone-mask").setData(EMPTY);
   map.fitBounds(boundsOfAll(zones) as LngLatBoundsLike, {
     padding: padding("overview"),
     pitch: 0,
@@ -476,7 +483,11 @@ export default function VidaMap() {
         lib.setWorkerUrl(WORKER_URL);
         instance = new lib.Map({
           container: element,
-          style: baseStyle(readPalette(), mapTilesSource(MAP_TILES_URL, window.location.origin)),
+          style: baseStyle(
+            readPalette(),
+            mapTilesSource(MAP_TILES_URL, window.location.origin),
+            mapGlyphsUrl(MAP_GLYPHS_URL, window.location.origin),
+          ),
           center: [-3.7, 40.42],
           zoom: 8.3,
           maxPitch: 70,

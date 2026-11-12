@@ -72,6 +72,11 @@
   --map-zone: #dcd6fa;
   --map-building: #e6e3f5;
   --map-building-tall: #a99df0;
+  /* Map labels (MAP-004): quiet ink with a white halo, so they never compete with the statuses or the centres.
+     Darker than --ink-soft (4.4:1 on --map-zone) and lighter than --ink (the hospitals' dots) */
+  --map-label: #4e5475;
+  --map-label-strong: #2d3358;
+  --map-label-water: #30588a;
 
   /* Map coloured by a row of «Qué falta»: light fills; FALTA and JUSTO also carry a pattern in their -ink */
   --map-falta: #f3b0bb;
