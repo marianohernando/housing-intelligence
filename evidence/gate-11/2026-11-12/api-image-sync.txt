@@ -1,0 +1,26 @@
+# API image (infra/deploy/api/Dockerfile) after adding services/mcp to the workspace, without touching the Dockerfile.
+# Same files the Dockerfile copies (services/mcp is NOT copied), same uv and command:
+$ uv --version
+uv 0.11.4 (Homebrew 2026-04-08 aarch64-apple-darwin)
+$ ls services
+features
+ingestion
+$ UV_PROJECT_ENVIRONMENT=<tmp>/venv uv sync --frozen --no-dev --package hi-api --no-editable
+Using CPython 3.12.13
+Creating virtual environment at: <tmp>/venv
+   Building hi-api @ file://<tmp>/src/apps/api
+   Building hi-contracts @ file://<tmp>/src/packages/contracts
+   Building hi-db @ file://<tmp>/src/packages/db
+   Building hi-domain @ file://<tmp>/src/packages/domain
+      Built hi-domain @ file://<tmp>/src/packages/domain
+      Built hi-db @ file://<tmp>/src/packages/db
+      Built hi-api @ file://<tmp>/src/apps/api
+      Built hi-contracts @ file://<tmp>/src/packages/contracts
+Prepared 4 packages in 256ms
+Installed 39 packages in 131ms
+exit 0
+$ ls <tmp>/venv/lib/python3.12/site-packages | grep -E "^(mcp|hi_mcp|hi_api|uvicorn)"
+hi_api
+uvicorn
+$ <tmp>/venv/bin/python -c "import hi_api.main"
+hi_api.main imports

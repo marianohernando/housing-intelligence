@@ -68,6 +68,7 @@ class Loaded(NamedTuple):
     gap_datasets: list[DatasetRef]
     warnings: list[str]
     unresolved_anchors: list[int]
+    commute_versions: dict[str, str]  # the GTFS feeds behind the trips to the places of work
 
 
 def _zone_ref(row: dict[str, Any]) -> ZoneRef:
@@ -185,7 +186,9 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     for row in value_rows:
         versions.update(row["inputs"].get("dataset_versions", {}))
     computed = [row["computed_at"] for row in value_rows]
-    return Loaded(zones, versions, computed, gap_datasets, warnings, trips.unresolved)
+    return Loaded(
+        zones, versions, computed, gap_datasets, warnings, trips.unresolved, dict(trips.versions)
+    )
 
 
 def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:

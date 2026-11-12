@@ -1081,3 +1081,28 @@ DATA-020. Evaluada la fuente que proponía A v11: «Hechos conocidos de infracci
    - **Cobertura:** solo 36 de las 199 zonas del buscador. Los 21 distritos de Madrid quedan fuera porque la fuente da la ciudad entera, y repartirla supondría barrios homogéneos (§11).
    - **Modelo:** la curva que convierte la tasa en encaje es una decisión de modelo y de producto sobre un dato sensible (CLAUDE.md §4).
 3. **Opción abierta para Mariano (no se hace sin su decisión):** enseñar la tasa como dato de contexto en la vista de zona de esos 36 municipios. Iría con la cifra absoluta, la referencia, el año y el aviso del denominador. No puntuaría ni ordenaría zonas. Se descartaría la cibercriminalidad, porque no ocurre en un sitio. Faltaría resolver los nombres de municipio a código INE, porque la fuente no trae código.
+
+## D-225 — Servidor MCP local: cinco herramientas de solo lectura sobre los servicios de la API (2026-11-12)
+MCP-001. El producto DATA (API + MCP, CLAUDE.md §16) tenía `services/mcp/` vacío. Es reversible: un paquete nuevo del workspace (`hi-mcp`), dos servicios sin ruta en la API (`explanation.py` y `zones.py`) y dos contratos (`ZoneExplanation`, `ZoneLookup`). No cambia ninguna ruta ni ningún dato. Código: `services/mcp/src/hi_mcp/`. Uso: `docs/04_technical_architecture/32_mcp_server.md`. Evidencia: `evidence/gate-11/2026-11-12/`.
+1. **SDK:** el oficial de Python, `mcp` 2.3.0 (PyPI, 2 oct 2026; documentación en py.sdk.modelcontextprotocol.io). No estaba en `uv.lock`. Se usan `MCPServer` (en la v2 sustituye a `FastMCP`), herramientas con tipos de Pydantic y transporte stdio. Las firmas se comprobaron en el código instalado: `MCPServer.tool`, `Annotated[CallToolResult, Modelo]` para dar el esquema de salida, `ToolError` y el `Client` en memoria de los tests. La restricción es `>=2.3,<3`. La imagen de la API no lo instala: `uv sync --frozen --package hi-api` solo instala el cierre de `hi-api`, comprobado con uv 0.11.4 y los mismos ficheros que copia el Dockerfile.
+2. **Herramientas:**
+   - `buscar_zonas`: `ScenarioState` → `SearchResponse`, igual que `POST /search`. Sin `include_map`, deja vacío `all_zones`, que es la mitad de la respuesta y solo sirve para pintar un mapa.
+   - `que_falta`: igual que `GET /gaps/{level}/{code}`.
+   - `explicar_zona`: la tarjeta de la zona en `/search` para un escenario, con sus indicadores y sus datasets (`attribution_text` y cuántos son CM).
+   - `encontrar_zona`: los municipios y distritos de Madrid por su nombre. Los agentes no saben códigos INE.
+   - `fuentes_de_datos`: igual que `GET /datasets`.
+
+   Las herramientas devuelven el mismo sobre que sus rutas, y los tests de integración comparan las dos respuestas.
+3. **Sin SQL en el servidor ni para el LLM (CLAUDE.md §3):** las herramientas llaman a las funciones de `hi_api.services`. Las entradas tienen tipo:
+   - nivel como enumeración;
+   - código INE con patrón `^28…`;
+   - `ScenarioState`;
+   - el nombre se compara en Python (`hi_domain.geo.names.match_rank`: sin mayúsculas, tildes ni signos).
+
+   Cada llamada va en una transacción `READ ONLY` de Postgres. Un test lo comprueba con una escritura.
+4. **Texto para el modelo:** el mismo JSON que `structuredContent`, compacto y en UTF-8. Con la serialización por defecto del SDK (JSON sangrado) y el mapa, una búsqueda ocupa unos 130 KB, por encima del corte de 25.000 tokens de Claude Code. El caso demo, compacto y sin `all_zones`, ocupa 60 KB.
+5. **Local, sin desplegar:** stdio para una persona en su ordenador, contra la base local o la del paquete offline. Sin autenticación, límites de uso ni HTTP. Si algún día se publica, aplica `29_api_mcp_security_rate_limits.md`. `make mcp` no repite la receta, porque stdout es el protocolo.
+6. **Descartado:**
+   - una herramienta de consultas genéricas sobre features o tablas (sería SQL libre con otro nombre);
+   - el control del mapa (`MapState`, CLAUDE.md §9): la web no escucha a un agente;
+   - rutas nuevas en la API para `explicar_zona` y `encontrar_zona`: no las pide la web y se desplegarían.

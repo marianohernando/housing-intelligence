@@ -1,0 +1,211 @@
+{
+  "$defs": {
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    },
+    "ZoneLookup": {
+      "additionalProperties": false,
+      "description": "Municipios and Madrid districts whose official name matches a query, best match first.",
+      "properties": {
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "zones": {
+          "items": {
+            "$ref": "#/$defs/ZoneRef"
+          },
+          "title": "Zones",
+          "type": "array"
+        }
+      },
+      "required": [
+        "query",
+        "zones"
+      ],
+      "title": "ZoneLookup",
+      "type": "object"
+    },
+    "ZoneRef": {
+      "additionalProperties": false,
+      "description": "A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.",
+      "properties": {
+        "admin_unit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "geo_admin_unit id for /api/v1/geo/admin-units; None for H3 cells",
+          "examples": [
+            "ES.28.MUN.28079"
+          ],
+          "title": "Admin Unit Id"
+        },
+        "center_lat": {
+          "anyOf": [
+            {
+              "maximum": 41.17,
+              "minimum": 39.88,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lat"
+        },
+        "center_lon": {
+          "anyOf": [
+            {
+              "maximum": -3.05,
+              "minimum": -4.58,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lon"
+        },
+        "code": {
+          "examples": [
+            "28079",
+            "2807901124"
+          ],
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "municipio_ine": {
+          "anyOf": [
+            {
+              "pattern": "^28\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Ine"
+        },
+        "municipio_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Name"
+        },
+        "name": {
+          "examples": [
+            "Madrid"
+          ],
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "code",
+        "name"
+      ],
+      "title": "ZoneRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/mcp/zone_lookup_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "MCP tool encontrar_zona (MCP-001)",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/ZoneLookup"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "ZoneLookupResponse",
+  "type": "object"
+}

@@ -1,15 +1,15 @@
 {
-  "version": "0.5.46",
-  "updated": "2026-11-12T14:36:47.944026+00:00",
-  "markdown_files": 277,
+  "version": "0.5.47",
+  "updated": "2026-11-12T14:55:55.832538+00:00",
+  "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
       "sha256": "1f57f07bded9a4082c4b339b44429c65ca27a8500be60d72a580d1223325ae52",
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "acd971b79970ec33a1be94c24834c37d4323b3e61e901b78e37c683b79dcab99",
-      "bytes": 129250
+      "sha256": "1d6d23c23e718a995dd400b9f66d701d017ac51b37d652618cc808e57345bb46",
+      "bytes": 132512
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -528,8 +528,8 @@
       "bytes": 372
     },
     "04_technical_architecture/03_api_openapi_mcp.md": {
-      "sha256": "dfab6f8f848a52e86f518ed2f5939949da16eb47aad7c5718544947e62d32042",
-      "bytes": 719
+      "sha256": "ba0fab11ec7151dcd97b37a8f9fa308034c5939b9ff9d87086176f8c4e4fd5c1",
+      "bytes": 908
     },
     "04_technical_architecture/04_infra_devops_security.md": {
       "sha256": "ee6853e444cd818f6ed82772417206e360c53ef752ad0e81c06117cdce638780",
@@ -642,6 +642,10 @@
     "04_technical_architecture/31_public_api_routes.md": {
       "sha256": "802d348a4aab1ab4524d7f1a138f0ff05ffc6404b02dadfb5a010128c74b11bd",
       "bytes": 15284
+    },
+    "04_technical_architecture/32_mcp_server.md": {
+      "sha256": "403b6d8ccc826244347f6deee89755ce87f1552f6d7d7f4c1a5ad267bd7abbe8",
+      "bytes": 8271
     },
     "05_map_ux/01_map_3d_digital_twin.md": {
       "sha256": "9bb353ceabb6802e8a05e2deec172d62a9996498dcecbcd70e5b463294eac0a3",
@@ -1096,8 +1100,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "878ae54859930ece8880ac173c3bc9d8d002315aeaeea93087543d34b423f31c",
-      "bytes": 19181
+      "sha256": "c0832984866ca53e771c541fae62715edb3973813b03c5baec9fc0166d609b30",
+      "bytes": 19621
     },
     "CLAUDE.md": {
       "sha256": "cb9b95b379aaa00fc3064ab11c286d2d13426aa44e1ffeb4bc7995f0ac2bede3",

@@ -2,6 +2,7 @@
 
 from hi_contracts.api.envelope import Envelope
 from hi_contracts.public.common import DatasetList
+from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
 from hi_contracts.public.gaps import GapRowMap, ZoneGapList
 from hi_contracts.public.places import PlaceCollection
 from hi_contracts.public.search import SearchResult
@@ -25,3 +26,11 @@ class DatasetListResponse(Envelope[DatasetList]):
 
 class PlacesResponse(Envelope[PlaceCollection]):
     """GET /api/v1/places"""
+
+
+class ZoneExplanationResponse(Envelope[ZoneExplanation]):
+    """MCP tool explicar_zona (MCP-001)"""
+
+
+class ZoneLookupResponse(Envelope[ZoneLookup]):
+    """MCP tool encontrar_zona (MCP-001)"""

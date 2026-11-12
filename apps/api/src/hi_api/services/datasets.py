@@ -5,6 +5,8 @@ from sqlalchemy import Connection, text
 from hi_api.services.attribution import GEOCODER_SOURCE, attribution_text
 from hi_contracts.public import DatasetList, DatasetRef
 
+METHODOLOGY_VERSION = "datasets-v1"
+
 _DATASETS = text(
     """
     SELECT d.dataset_id, d.name, d.owner, coalesce(d.portal_url, d.landing_url) AS url,

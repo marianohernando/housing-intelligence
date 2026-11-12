@@ -6,6 +6,7 @@ Version 2 (11 Nov): rent or purchase budget, household with older people in care
 """
 
 from hi_contracts.public.common import DatasetList, DatasetRef, IndicatorValue, ZoneRef
+from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
 from hi_contracts.public.gaps import (
     ComparisonGroup,
     GapMethod,
@@ -72,8 +73,10 @@ __all__ = [
     "Relaxation",
     "ScenarioState",
     "SearchResult",
+    "ZoneExplanation",
     "ZoneGapList",
     "ZoneGapStatus",
+    "ZoneLookup",
     "ZoneMatch",
     "ZoneRef",
 ]

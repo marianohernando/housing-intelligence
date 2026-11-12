@@ -11,7 +11,7 @@ GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
         schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all admin-names features supabase-migrate supabase-sync secret-scan evidence ci web-install \
-        deploy-demo smoke-demo e2e-prod demo-offline-tiles demo-offline-prepare demo-offline demo-offline-stop
+        deploy-demo smoke-demo e2e-prod demo-offline-tiles demo-offline-prepare demo-offline demo-offline-stop mcp
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -93,6 +93,10 @@ admin-names: ## Official spellings of municipios and Madrid districts (after the
 
 features: ## Recompute every feature (Gold)
 	uv run hi-features compute
+
+# stdout is the MCP protocol: the recipe is not echoed and uv stays quiet (logs go to stderr).
+mcp: ## MCP server over stdio for local agents (MCP-001): read-only tools over the domain services
+	@uv run --quiet hi-mcp
 
 supabase-migrate: ## Apply migrations to SUPABASE_DATABASE_URL
 	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)

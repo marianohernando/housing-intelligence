@@ -1,6 +1,7 @@
 """Write JSON Schemas from the Pydantic contracts: catalog YAML files and API payloads.
 
-API schemas (data/schemas/api/) are what the web generates its TypeScript types from.
+API schemas (data/schemas/api/) are what the web generates its TypeScript types from; MCP
+schemas (data/schemas/mcp/) are the outputs of the MCP tools that have no API route.
 Usage: uv run python scripts/export_schemas.py [--check]
 """
 
@@ -18,7 +19,9 @@ from hi_contracts.public.responses import (
     GapRowMapResponse,
     PlacesResponse,
     SearchResponse,
+    ZoneExplanationResponse,
     ZoneGapListResponse,
+    ZoneLookupResponse,
 )
 
 OUT_DIR = Path(__file__).resolve().parents[1] / "data" / "schemas"
@@ -35,6 +38,8 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "api/dataset_list_response": DatasetListResponse,
     "api/places_response": PlacesResponse,
     "api/error_response": ErrorEnvelope,
+    "mcp/zone_explanation_response": ZoneExplanationResponse,
+    "mcp/zone_lookup_response": ZoneLookupResponse,
 }
 
 

@@ -2,7 +2,7 @@
 
 import pytest
 
-from hi_domain.geo.names import display_name, invalid_name_chars
+from hi_domain.geo.names import display_name, invalid_name_chars, match_rank, name_key
 
 
 @pytest.mark.parametrize(
@@ -58,3 +58,35 @@ def test_broken_source_spellings_are_rejected(name: str, bad: list[str]) -> None
 )
 def test_official_spellings_are_accepted(name: str) -> None:
     assert invalid_name_chars(name) == []
+
+
+@pytest.mark.parametrize(
+    ("typed", "key"),
+    [
+        ("Chamartín", "chamartin"),
+        ("  FUENCARRAL-el   Pardo ", "fuencarral el pardo"),
+        ("Villanueva de la Cañada", "villanueva de la canada"),
+        ("San Martín de la Vega.", "san martin de la vega"),
+        ("¿?", ""),
+    ],
+)
+def test_name_key_ignores_case_accents_and_punctuation(typed: str, key: str) -> None:
+    assert name_key(typed) == key
+
+
+@pytest.mark.parametrize(
+    ("query", "name", "rank"),
+    [
+        ("chamartin", "Chamartín", 0),
+        ("Alcalá", "Alcalá de Henares", 1),
+        ("rozas", "Las Rozas de Madrid", 2),
+        ("pardo", "Fuencarral-El Pardo", 2),
+        ("ozas", "Las Rozas de Madrid", 3),
+        ("Getafe", "Leganés", None),
+        ("", "Madrid", None),
+    ],
+)
+def test_match_rank_orders_exact_prefix_word_and_inside(
+    query: str, name: str, rank: int | None
+) -> None:
+    assert match_rank(query, name) == rank

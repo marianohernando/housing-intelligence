@@ -2,6 +2,7 @@
 
 import re
 import string
+import unicodedata
 
 LOWER_PARTICLES = frozenset({"de", "del", "la", "las", "los", "el", "y", "e", "en"})
 ARTICLES = ("El", "La", "Los", "Las")
@@ -36,3 +37,25 @@ def display_name(official: str) -> str:
         word if i and word in LOWER_PARTICLES else "-".join(p.capitalize() for p in word.split("-"))
         for i, word in enumerate(words)
     )
+
+
+def name_key(name: str) -> str:
+    """How a person may type a place name: no case, accents, punctuation or extra spaces
+    ('Fuencarral-El Pardo' and 'fuencarral el pardo' have the same key; ñ stays n)."""
+    plain = "".join(
+        c for c in unicodedata.normalize("NFKD", name.casefold()) if not unicodedata.combining(c)
+    )
+    return " ".join(re.sub(r"[^0-9a-z]+", " ", plain).split())
+
+
+def match_rank(query: str, name: str) -> int | None:
+    """How well a typed query matches a place name, best first: 0 the same name, 1 the name
+    starts with it, 2 a word of the name starts with it, 3 it is inside the name; None if not."""
+    typed, key = name_key(query), name_key(name)
+    if not typed or typed not in key:
+        return None
+    if key == typed:
+        return 0
+    if key.startswith(typed):
+        return 1
+    return 2 if f" {typed}" in f" {key}" else 3
