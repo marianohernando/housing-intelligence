@@ -43,3 +43,11 @@ ol.text {
 .para {
   color: var(--ink-soft);
 }
+
+/* A link to the detail, as a 44 px target */
+.more {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--violet-strong);
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import MethodSteps from "@/components/method/MethodSteps";
 import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
@@ -139,6 +140,14 @@ function GapMethod() {
         pocos solo sabemos el tipo y el municipio.
       </p>
       <p className={styles.para}>
+        <strong>Dónde invertir primero.</strong> En «Qué falta» sumamos la gente que vive en las zonas en FALTA de cada
+        servicio: los niños de 0 a 4 años para las escuelas infantiles, los de 5 a 14 para los colegios, las personas de 65
+        años o más para los mayores, todos los vecinos para los centros de salud y las farmacias, y los hogares de 4 o más
+        personas para la vivienda. Es la misma gente con la que hacemos la cuenta, del censo y, en los distritos de Madrid, del
+        padrón: no estimamos nada. Las zonas van de más a menos gente afectada. Contamos a toda la gente de la zona, aunque
+        dentro de ella unas calles estén mejor servidas que otras.
+      </p>
+      <p className={styles.para}>
         Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas, no con una norma oficial
         que diga cuánto debería haber.
       </p>
@@ -269,6 +278,12 @@ export default function ComoLoCalculamosPage() {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Cómo lo calculamos</h1>
+      <Section id="en-cinco-pasos" title="Cómo decidimos qué falta, en cinco pasos">
+        <MethodSteps />
+        <a href="#que-falta" className={styles.more}>
+          Ver el detalle
+        </a>
+      </Section>
       <Section id="principios" title="Tres reglas que seguimos siempre">
         <ul className={styles.text}>
           <li>

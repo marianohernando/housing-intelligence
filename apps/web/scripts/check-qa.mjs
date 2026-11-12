@@ -23,6 +23,7 @@
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
 //   node scripts/check-qa.mjs impacto [outDir]   # «Dónde invertir primero» (D-229) and «Afecta a N …» in a FALTA row
 //   node scripts/check-qa.mjs claridad [outDir]  # line D's copy for a non-technical jury (summary, «Aquí hay n por cada 100», «Ver la cifra»)
+//   node scripts/check-qa.mjs esquema [outDir]   # «Cómo lo calculamos» in five steps: a row on desktop, a column on a phone
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -1683,8 +1684,45 @@ async function clarity(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** «Cómo lo calculamos» in five steps (fase de mejora): readable on a phone, in order, accessible. */
+async function methodSteps(browser) {
+  const failures = [];
+  const TITLES = ["Datos abiertos", "Lo que hay a 15 min andando", "Repartido entre quien lo comparte", "Comparado con municipios parecidos", "FALTA, JUSTO o CUBIERTO"];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const p = await open(browser, profile, "/como-lo-calculamos");
+    const list = p.page.getByRole("list", { name: "Cómo decidimos qué falta, en cinco pasos" });
+    const steps = await list.locator(":scope > li").evaluateAll((items) =>
+      items.map((li) => {
+        const r = li.getBoundingClientRect();
+        return { titulo: li.querySelector("strong")?.textContent?.trim(), top: Math.round(r.top), left: Math.round(r.left), right: Math.round(r.right), fuente_px: parseFloat(getComputedStyle(li.querySelector("span:nth-of-type(2)")).fontSize) };
+      }),
+    );
+    const entry = (report[id] = { pasos: steps });
+    if (JSON.stringify(steps.map((s) => s.titulo)) !== JSON.stringify(TITLES)) failures.push(`${id}: pasos ${steps.map((s) => s.titulo)}`);
+    const inRow = steps.every((s, i) => i === 0 || (Math.abs(s.top - steps[0].top) <= 2 && s.left > steps[i - 1].right));
+    const inColumn = steps.every((s, i) => i === 0 || s.top > steps[i - 1].top);
+    entry.disposicion = inRow ? "fila" : inColumn ? "columna" : "otra";
+    if (entry.disposicion !== (id === "desktop" ? "fila" : "columna")) failures.push(`${id}: disposición ${entry.disposicion}`);
+    if (steps.some((s) => s.fuente_px < 14)) failures.push(`${id}: texto de menos de 14 px`);
+    entry.ejemplo = flat(await p.page.locator("figure figcaption").first().innerText());
+    entry.mitad_de_las_calles = /mitad de (sus|las) calles/.test(await p.page.locator("body").innerText());
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    if (entry.mitad_de_las_calles) failures.push(`${id}: sigue «mitad de las calles»`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    await p.page.locator("#en-cinco-pasos").locator("..").screenshot({ path: `${out}/esquema_como_lo_calculamos_${id}.png` });
+    await p.ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "esquema") await methodSteps(browser);
 else if (mode === "claridad") await clarity(browser);
 else if (mode === "impacto") await impact(browser);
 else if (mode === "revision") await review(browser);
