@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-12 (A v13: D-225 MCP local, D-226 seguridad como contexto, D-227 comprar con el valor tasado). **Formulario enviado (12 nov).**
+Última actualización: 2026-11-12 (A v14: D-228 alquiler de contratos nuevos `fit-0.6`, D-229 impacto, D-230 zonas pequeñas, D-231 fuentes; siguiente: barrios `fit-0.7`). **Formulario enviado (12 nov).**
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -143,6 +143,37 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 12 nov (madrugada, línea A v14)
+- **Done (A v14), las 4 fases de `FASE_MEJORA.md` para A:**
+  1. **Alquiler (D-228, `fit-0.6`):**
+     - el índice CM 1934428 no sirve (es el IPVA del INE para toda la CM, en base 2015 por serie);
+     - Mariano eligió la opción A: €/m² de la CM × el factor de contratos nuevos de la Agencia Tributaria de la misma zona (fuente complementaria, no CM). Commits `a400223`, `310056b` y `861af7b`;
+     - **desplegado y sincronizado** (`310056b`). `861af7b` (revisión, solo código) va en el próximo despliegue.
+  2. **Impacto (D-229):** `GET /api/v1/gaps/impact` y `people` en cada fila (`5655b76`, `c1ad3ed`). Por ejemplo, 25.551 niños de 0–4 años en 3 distritos con FALTA de escuela infantil.
+  3. **Zonas pequeñas (D-230, `195ff6d`):** «No comparable» en la explicación, suelo de 3,69 para los hogares de la vivienda y `NOT_APPLICABLE` con su motivo cuando no vive nadie de esa edad. Sincronizado por `datamad-10`.
+  4. **Fuentes (D-231, `c269100`):** `source_name` en cada `DatasetRef` y las 2 tablas de camas servidas como features de región. **Sync pendiente, en cualquier orden.**
+  - Textos de D aplicados: «a unos N min andando».
+- **Pendiente de otros:**
+  - **B:**
+    - pintar `/gaps/impact` y `people`, y «{n} por cada 100» con `ratio_to_reference` (el del grupo si lo hay);
+    - «No comparable» cuando `reliable` es `false` y no hay grupo;
+    - la `explanation` de `NOT_APPLICABLE`;
+    - «en {source_name}» en vez de «en el portal de datos»;
+    - la línea de camas en la nota del hospital (`camas_instaladas_por_1000_hab`, `hospitales_total`);
+    - el hospital a más de 30 min como distancia;
+    - la atribución de la Agencia Tributaria.
+  - **D:** retirar «el colegio, no el dinero» y contar las camas solo si la web las enseña.
+- **Next (línea A), aprobado por `datamad-10` y Mariano:** **barrios, fase 1 (`fit-0.7`, `POST /api/v1/search/barrios {scenario, distrito}`)**, unas 8–9 h:
+  - **Asignación:** cada una de las 2.443 secciones de Madrid va a uno de los 131 barrios por su punto interior (comprobado: las 131 tienen secciones).
+  - **Minutos a pie:** con `network_walk_time` en el nivel barrio (mediana de las calles del barrio, no mediana de medianas).
+  - **Alquiler:** por los códigos postales del barrio (D-214 + D-228), con la confidence más baja. Si queda UNKNOWN, el motivo va en llano.
+  - **Trayecto:** desde el centro del barrio. Si falta, el del distrito, y el hecho lo dice: «trayecto medido desde el centro del distrito».
+  - Contrato, tests, golden y ADR.
+  - **Fase 2** (ranking de los 131 barrios) solo si la fase 1 queda en verde y desplegada antes del 18 nov.
+  - «Qué falta» por barrio, no antes del freeze.
+- **Gate status:** `make lint typecheck test` en verde en `c269100`: 670 unit, 308 web y 126 integración. Golden de búsqueda 8/8.
+- **Relevo:** A v14 cierra aquí por contexto, tras 4 fases. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (noche, línea A v13)
 - **Done (A v13):**
