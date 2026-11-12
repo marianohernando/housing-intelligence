@@ -18,10 +18,10 @@
 
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
-| 1 | 0:00–0:40 | 40 s | Problema: personas y ayuntamientos deciden a ciegas | 79 | 36 s |
+| 1 | 0:00–0:40 | 40 s | Problema: personas y ayuntamientos deciden a ciegas | 74 | 34 s |
 | 2 | 0:40–2:20 | 100 s | Demo: una familia busca dónde vivir → zonas, el porqué y «¿Y si cambias algo?» | 149 | 69 s + unos 25 s de clics |
 | 2 sin buscador (reserva) | 0:40–2:20 | 100 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + unos 15 s de clics |
-| 3 | 2:20–3:40 | 80 s | Puente de Vallecas y su lista de lo que falta | 124 | 57 s + unos 15 s de clics |
+| 3 | 2:20–3:40 | 80 s | Puente de Vallecas, su lista de lo que falta y a cuántos niños afecta | 129 | 60 s + unos 15 s de clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 44 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
 | **Total** | | **300 s** | | **497 con buscador; 484 sin él** | **Con buscador: 229 s + unos 40 s de clics = unos 31 s de margen. Sin buscador: 223 s + unos 30 s de clics = unos 47 s de margen** |
@@ -43,7 +43,7 @@
 **Pantalla:** slide 1 (título), y en «Otros servicios…» se pasa a la slide 2.
 
 <!-- habla:b1:inicio -->
-Buenas tardes. Imaginad una familia que busca piso en Madrid. El precio lo mira en una web, los colegios en otra y el transporte en otra. Nadie le dice qué zona va con su vida. Un ayuntamiento tiene el problema al revés: quiere saber dónde falta una escuela infantil o un centro de salud, y los datos le llegan sueltos. Otros servicios te enseñan lo que hay. Vida Fácil te enseña lo que falta. Os lo enseño en directo.
+Buenas tardes. Imaginad una familia que busca piso en Madrid. El precio lo mira en una web, los colegios en otra y el transporte en otra. Nadie le dice qué zona va con su vida. Un ayuntamiento tiene el problema al revés: quiere saber dónde falta una escuela infantil o un centro de salud, y los datos le llegan sueltos. Otros servicios te enseñan lo que hay. Vida Fácil te enseña lo que falta.
 <!-- habla:b1:fin -->
 
 **Al terminar:** cambiar a la pestaña de la demo (Cmd + 2).
@@ -110,7 +110,7 @@ Esta es Vida Fácil: el mapa de toda la Comunidad de Madrid, con sus ciento sete
 - **Si preguntan por Madrid capital:** sale JUSTO en centros de salud (0,3603 frente a 0,3799). La frase «un tercio menos» ya no vale (D-217 §7).
 
 <!-- habla:b3:inicio -->
-Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas encaja, pero encajar no quiere decir que no le falte nada. Abro su lista de lo que falta. Seis filas: escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda. No contamos centros: medimos lo que la gente tiene a quince minutos andando, repartido entre todos los que lo comparten, y lo comparamos con municipios parecidos. Aquí, escuelas infantiles: falta. Hay una a [seis] minutos, pero son pocas para tantos niños: [dos coma ocho] por cada mil, frente a [cuatro coma nueve] en los demás municipios urbanos. [Leer una fila cubierta]. Y si no tenemos el dato, lo decimos: nunca inventamos una falta. Un concejal ve en un minuto dónde invertir primero.
+Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas encaja, pero encajar no quiere decir que no le falte nada. Abro su lista de lo que falta. No contamos centros: medimos lo que la gente tiene a quince minutos andando, repartido entre todos los que lo comparten, y lo comparamos con municipios parecidos. Aquí, escuelas infantiles: falta. Hay una a [seis] minutos, pero son pocas para tantos niños: [dos coma ocho] por cada mil, frente a [cuatro coma nueve] en los demás municipios urbanos. [Leer una fila cubierta]. Y si no tenemos el dato, lo decimos: nunca inventamos una falta. En toda la región, [más de veinticinco mil] niños de cero a cuatro años viven donde faltan escuelas infantiles. Así ve un concejal dónde invertir primero.
 <!-- habla:b3:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
@@ -118,8 +118,14 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 | 3.1 | Pestaña «Qué falta» y elegir «Puente de Vallecas» en la lista de zonas | La lista del distrito con sus 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS, valor, referencia, fiabilidad, minutos a pie y datasets | Abrir la pestaña preparada con `/que-falta?zona=distrito/2807913` |
 | 3.2 | Señalar la fila de escuelas infantiles y leer los minutos, el valor y la referencia | «A pie: 6 min» y «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)» | Leer solo el estado y la frase |
 | 3.3 | Señalar la fila de farmacias (CUBIERTO) | «4,5 farmacias al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos…, 3,1» | Si no está CUBIERTO, saltar «[Leer una fila cubierta]» |
+| 3.4 | Antes de «En toda la región…», volver a la pestaña de las slides, en la slide 3, y leer la cifra grande | «25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles» y «Dónde invertir primero: Puente de Vallecas…, Carabanchel y Villaverde» | Si la slide no está, decir la frase sin la cifra: «En toda la región hay miles de niños pequeños donde faltan escuelas infantiles» |
 
-**Al terminar:** volver a la pestaña de las slides, en la slide 3.
+**Cifra de impacto** (D-229, `impact-0.1`; `GET /api/v1/gaps/impact`; `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov):
+- 25.551 niños de 0 a 4 años (el 9,8 % de la región) viven en los 3 distritos con FALTA de escuelas infantiles: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968. Es el padrón de cada distrito; no se estima nada.
+- En voz alta se redondea: «más de veinticinco mil».
+- **Pendiente de A:** sale en producción con el próximo despliegue. El 25 nov se vuelve a comprobar con la ruta.
+
+**Al terminar:** volver a la slide 2 para el bloque 4.
 
 ---
 

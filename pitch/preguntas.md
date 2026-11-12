@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las cinco más probables** las sacó el jurado simulado del 12 nov y están al final: de la 41 a la 45. Hay que prepararlas primero.
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov) y la 46 y la 47 (cifras de impacto, 13 nov).
 
 ---
 
@@ -259,3 +259,27 @@ El método de repartir la capacidad entre quienes la comparten no es nuestro, y 
 **45. ¿Quién lo mantiene cuando acabe el concurso?**
 Mariano, y está pensado para que baste una persona. Los datos se recargan con un comando, cada conjunto pasa un control de calidad antes de entrar y una prueba revisa la web pública cada mañana. Al año son unos 2–3 días para la estadística anual y medio día por trimestre para los horarios del transporte; el código es abierto y cada decisión está escrita, así que otra persona puede retomarlo.
 - Evidencia: `pitch/modelo_negocio.md` («Mantenimiento con una sola persona», estimación de D) · `.github/workflows/smoke-demo.yml` · `evidence/gate-01/` · `docs/00_index/01_decisions_log.md` · `LICENSE` (Apache-2.0).
+
+## Dos más, con las cifras de impacto (13 nov)
+
+**46. ¿Cómo sabéis que en una zona «falta» y no es casualidad?**
+Porque FALTA exige dos cosas: tener menos del 80 % de lo que tienen los municipios parecidos, y que esa diferencia no se explique por azar con una prueba exacta de Poisson. En Puente de Vallecas, con 9.433 niños de 0 a 4 años, una diferencia así saldría por azar menos de 1 vez de cada 100. Por eso Centro, con una proporción parecida pero menos niños, sale JUSTO y no FALTA (pregunta 15).
+- Evidencia: D-213 (punto 2: regla de los cuatro quintos e intervalo exacto de Poisson de Garwood, bilateral al 95 %, que equivale a unilateral al 2,5 %) · D-217 · D-229 §3 (`p_value` de cada zona en `GET /api/v1/gaps/impact`) · `evidence/gate-04/2026-11-12/impact-cifras.txt`: p = 0,001 en Puente de Vallecas, 0,016 en Carabanchel y 0,011 en Villaverde.
+- Si insiste en los pueblos pequeños: un pueblo con muy pocos casos esperados se compara junto con sus vecinos parecidos (D-217 §6). Si ni así llega, sale «zona pequeña para comparar», nunca FALTA (pregunta 14).
+- Si insiste en las comparaciones múltiples: no corregimos por ellas. Con 199 zonas por fila, alguna FALTA podría salir por azar, así que damos la probabilidad de cada una para que se pueda juzgar. Todas las de la lista de impacto están por debajo de 0,02.
+
+**47. ¿A cuánta gente afecta lo que falta?**
+En toda la región:
+- escuelas infantiles: 25.551 niños de 0 a 4 años, el 9,8 %;
+- farmacias: 667.172 personas, el 9,4 %;
+- centros de mayores: 54.581 personas de 65 años o más, el 4,1 %;
+- vivienda grande: 99.483 hogares de 4 o más personas, el 14,8 %.
+
+En colegios y centros de salud no hay ninguna zona con una falta clara. Las zonas salen ordenadas por la gente afectada, y esa es la lista de dónde invertir primero.
+- Evidencia: D-229 (`impact-0.1`) · `GET /api/v1/gaps/impact` · `evidence/gate-04/2026-11-12/impact-cifras.txt` (datos del 12 nov). La gente afectada es la población que ya usa cada fila: el censo de la Comunidad y, en los distritos, el padrón. No se estima nada.
+- Detalle, si lo piden:
+  - escuelas infantiles: Puente de Vallecas (9.433), Carabanchel (9.150) y Villaverde (6.968);
+  - farmacias: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro;
+  - mayores: 6 municipios, con Torrejón de Ardoz y Pozuelo de Alarcón a la cabeza;
+  - vivienda: 25 municipios, con Fuenlabrada, Leganés y Alcorcón a la cabeza.
+- Estado: hecho en la API. En producción, con el próximo despliegue (**pendiente de A**).
