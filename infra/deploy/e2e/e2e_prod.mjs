@@ -95,15 +95,21 @@ async function journeySearch(run, page) {
   await run.shot(page, "j1-results");
   await checkFirstZone(run, page, result.results[0]);
   await checkRealityCheck(run, page, rc);
-  run.check(J, "every /search sends max_minutes: null", searches.length > 0 &&
-    searches.every((s) => (s?.anchors ?? []).every((a) => a.max_minutes === null)), `${searches.length} requests`);
+  run.check(J, "every /search sends max_minutes: null", searches.length > 0 && searches.every((s) =>
+    Array.isArray(s?.anchors) && s.anchors.length > 0 && s.anchors.every((a) => a.max_minutes === null)),
+  `${searches.length} requests`);
   await run.overflow(page, J);
 }
 
-/** Legend counts against the API; narrow layouts hide the counts on purpose (Legend.module.css). */
+/** Legend counts against the API. Up to 760 px the legend hides them on purpose (Legend.module.css,
+ * `@media (max-width: 760px)`): only there is a legend without counts skipped, anywhere else it fails. */
+const COUNTS_HIDDEN_UP_TO_PX = 760;
 async function checkLegendCounts(run, journey, page, expected) {
   const legend = squash(await page.locator("section[aria-label='Leyenda del mapa']").first().innerText());
-  if (!/\d+ zonas?\b/.test(legend)) return run.skip(journey, "legend counts = API", "counts hidden at this width");
+  if (!/\d+ zonas?\b/.test(legend)) {
+    if (page.viewportSize().width <= COUNTS_HIDDEN_UP_TO_PX) return run.skip(journey, "legend counts = API", "counts hidden at this width");
+    return run.check(journey, "legend shows its counts", false, legend.slice(0, 200));
+  }
   for (const [label, n] of expected) {
     const ok = new RegExp(`${escapeRe(label)}\\s*${escapeRe(zonesText(n))}`).test(legend);
     run.check(journey, `legend «${label}» = ${zonesText(n)}`, ok, ok ? "" : legend.slice(0, 200));
@@ -124,7 +130,7 @@ async function checkFirstZone(run, page, top) {
   await card.waitFor({ timeout: WAIT });
   const text = squash(await card.innerText());
   run.check(J, "card name = API 1st zone", text.includes(name), name);
-  run.check(J, "card % = API match_pct", new RegExp(`${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
+  run.check(J, "card % = API match_pct", new RegExp(`(?<!\\d)${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
   const facts = card.getByRole("region", { name: "Lo que tienes aquí" }).locator("li");
   const shown = await facts.count();
   const missing = top.facts.filter((f) => !text.includes(squash(f.text)));
@@ -224,10 +230,11 @@ async function journeyRowMap(run, page, rows) {
 async function journeyZoneList(run, page) {
   const J = "J4 zone list";
   const responses = []; // the page asks for districts and municipios separately
-  page.on("response", (r) => r.url().includes("/api/v1/geo/admin-units") && r.ok() && responses.push(r.json()));
+  // A body can be gone if the page navigates first: that response is left out, not a crash.
+  page.on("response", (r) => r.url().includes("/api/v1/geo/admin-units") && r.ok() && responses.push(r.json().catch(() => null)));
   await page.goto(`${BASE}/zonas`, { waitUntil: "networkidle" });
   const zones = new Map();
-  for (const body of await Promise.all(responses)) for (const f of body.data.features) zones.set(f.properties.admin_unit_id, f.properties);
+  for (const body of await Promise.all(responses)) for (const f of body?.data?.features ?? []) zones.set(f.properties.admin_unit_id, f.properties);
   // A municipio split into districts (Madrid) is listed as its districts plus «<name> (toda la ciudad)».
   const districts = [...zones.values()].filter((z) => z.level === "distrito");
   const split = [...zones.values()].filter((z) => z.level === "municipio" && districts.some((d) => d.code.startsWith(z.code)));
