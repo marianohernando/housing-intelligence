@@ -1,0 +1,38 @@
+infra/deploy/deploy.sh
+warning: deploying branch 'claude/s1-deploy' (ALLOW_BRANCH=1)
+warning: HEAD is not the pushed upstream; the demo will not match the remote branch
+note: these local files match .vercelignore and are NOT uploaded:
+  ./.env
+  ./.env.local
+-> deploying c678b1a (claude/s1-deploy) to production
+<claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
+  Inspect         <panel de Vercel>
+  Production      <despliegue>
+▲ Aliased         <alias>
+-> deployment dpl_5efzuiwZEsn5cp74Uf4cizbe8now is ready
+-> smoke test against https://vidafacil-madrid.vercel.app
+smoke: https://vidafacil-madrid.vercel.app (2026-11-12T12:14:31Z) tag dpl_5efzuiwZEsn5cp74Uf4cizbe8now-0
+OK   web         0.09s     30623 B  /  
+OK   health      1.12s       225 B  /api/v1/health  process up
+OK   ready       4.23s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone        1.84s     32603 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography   1.02s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer       0.66s   1552325 B  /api/v1/places?category=education  3866 places
+OK   largest     0.46s   1842252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+FAIL search      1.72s        21 B  /api/v1/search  HTTP 500
+smoke: 7/8 OK
+-> smoke failed; repeating the smoke in 20 s (1/3)
+-> smoke test against https://vidafacil-madrid.vercel.app
+smoke: https://vidafacil-madrid.vercel.app (2026-11-12T12:15:02Z) tag dpl_5efzuiwZEsn5cp74Uf4cizbe8now-1
+OK   web         0.45s     30556 B  /  
+OK   health      0.12s       225 B  /api/v1/health  process up
+OK   ready       0.13s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone        0.30s     32603 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography   0.51s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer       0.41s   1552325 B  /api/v1/places?category=education  3866 places
+OK   largest     0.41s   1842252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search      2.64s    112522 B  /api/v1/search  33 of 199 zones, 1st Fuencarral-El Pardo
+smoke: 8/8 OK
+-> which deployment served the smoke (vercel logs requests, tag dpl_5efzuiwZEsn5cp74Uf4cizbe8now-1)
+   8 from dpl_5efzuiwZEsn5cp74Uf4cizbe8now (this deploy)
+-> verified: https://vidafacil-madrid.vercel.app serves dpl_5efzuiwZEsn5cp74Uf4cizbe8now, and the smoke passed against it

@@ -1,0 +1,12 @@
+created_at 2026-11-12T10:13:22Z
+git_commit a5a2f07
+alembic_head 0006 (source 0006)
+source_registry 12
+dataset_registry 38
+dataset_version 42
+metric_registry 28
+feature_registry 39
+geo_admin_unit 4973
+place_master 23368
+place_source_alias 23846
+feature_value 67805

@@ -1,0 +1,10 @@
+2
+10:01:22 round 1 zone 2807908: 12 API requests, 0 with 5xx
+10:01:26 round 1 zone 2807905: 12 API requests, 0 with 5xx
+10:03:00 round 2 zone 2807908: 12 API requests, 0 with 5xx
+10:03:04 round 2 zone 2807905: 12 API requests, 0 with 5xx
+10:04:38 round 3 zone 2807908: 12 API requests, 0 with 5xx
+10:04:42 round 3 zone 2807905: 12 API requests, 0 with 5xx
+10:06:16 round 4 zone 2807908: 12 API requests, 0 with 5xx
+10:06:20 round 4 zone 2807905: 12 API requests, 0 with 5xx
+TOTAL {"loads":8,"api":96,"errors5xx":0,"errorStates":0}

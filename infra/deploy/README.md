@@ -27,12 +27,12 @@ Aquí solo van los nombres, nunca los valores. Las variables que no son secretas
 
 | Variable | Servicio | Tipo | Valor o forma |
 |---|---|---|---|
-| `DATABASE_URL` | api | **Secreto** (Sensitive). Lo mete Mariano | `postgresql+psycopg://<usuario>.ilvbivfnqvfqslbbiuts:<contraseña>@aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require`. Es el Session pooler: la conexión directa es solo IPv6. El usuario es `vf_api_ro` cuando exista el rol y, mientras tanto, el de `SUPABASE_DATABASE_URL`. El esquema tiene que ser `postgresql+psycopg://`. |
+| `DATABASE_URL` | api | **Secreto** (Sensitive). Lo mete Mariano | `postgresql+psycopg://vf_api_ro.ilvbivfnqvfqslbbiuts:<contraseña>@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?sslmode=require`. Desde el 12 nov a las 13:14 es el Transaction pooler (puerto 6543), con una contraseña nueva para `vf_api_ro`; antes era el Session pooler (5432). La conexión directa es solo IPv6. El esquema tiene que ser `postgresql+psycopg://`. **Cambiar la contraseña deja inservibles los despliegues anteriores** (ver «Volver atrás») |
 | `CORS_ORIGINS` | api | Config | `["https://vidafacil-madrid.vercel.app","https://vida-facil-eight.vercel.app"]`, una lista JSON |
 | `PORT` | api | Config | `8080`. El contenedor escucha ahí y Vercel enruta a `$PORT` |
-| `DB_POOL_SIZE` | api | Config | `2` desde el 12 nov: conexiones fijas a la base por instancia. El código pone 5 por defecto (`packages/db`, `make_engine`, 4645326). El pooler de Supabase en modo sesión admite tantos clientes como su `pool_size`, compartidos por todas las instancias: 15 en el plan actual del proyecto. No es un límite fijo del pooler (incidente en `evidence/gate-06/2026-11-12-deploy/deploy-13-auditoria-gap03.md`) |
-| `DB_MAX_OVERFLOW` | api | Config | `1` desde el 12 nov: conexiones extra en un pico, que se cierran al devolverse. Por defecto, 10. Con 2 + 1, cada instancia usa como mucho 3, y caben 5 instancias en los 15 clientes que admite hoy el pooler |
-| `DB_PREPARED_STATEMENTS` | api | Config | `false` desde el 12 nov: psycopg no prepara las consultas (`prepare_threshold=None`; por defecto `true`). Es el requisito del pooler en modo transacción (puerto 6543), y en el 5432 funciona igual. **Orden (D-219 §5):** primero esta variable y un redespliegue; después Mariano cambia el puerto de `DATABASE_URL` a 6543 y se vuelve a desplegar con smoke. Al revés, las consultas repetidas fallan con «prepared statement … already exists» o «does not exist» |
+| `DB_POOL_SIZE` | api | Config | `1` desde el 12 nov a las 11:00 (antes `2`): conexiones fijas a la base por instancia. El código pone 5 por defecto (`packages/db`, `make_engine`, 4645326). El pooler de Supabase en modo sesión admite tantos clientes como su `pool_size`, compartidos por todas las instancias: 15 en el plan actual del proyecto. No es un límite fijo del pooler (incidente en `evidence/gate-06/2026-11-12-deploy/deploy-13-auditoria-gap03.md`) |
+| `DB_MAX_OVERFLOW` | api | Config | `0` desde el 12 nov a las 11:00 (antes `1`): conexiones extra en un pico, que se cierran al devolverse. Por defecto, 10. **Por qué 1 + 0:** Vercel arranca casi una instancia por petición concurrente (unas 12 peticiones de una vista de zona levantaron 11 instancias), así que con 2 + 1 se pasaba de 15 (80 `EMAXCONNSESSION` en 10 min). Con 1 + 0, 10 instancias y 0 errores (`deploy-14-pool.md`). Ese límite de 15 es del modo sesión; con el puerto 6543 se mantiene 1 + 0 porque va bien: 0 errores en 10 min y la búsqueda en caliente en 0,3 s (`deploy-15-6543.md`). Subirlo no mejora la latencia |
+| `DB_PREPARED_STATEMENTS` | api | Config | `false` desde el 12 nov: psycopg no prepara las consultas (`prepare_threshold=None`; por defecto `true`). Es el requisito del pooler en modo transacción (puerto 6543), y en el 5432 funciona igual. **Orden (D-219 §5), hecho el 12 nov:** primero esta variable y un redespliegue; después Mariano cambia el puerto de `DATABASE_URL` a 6543 y se vuelve a desplegar con smoke. Al revés, las consultas repetidas fallan con «prepared statement … already exists» o «does not exist». No la vuelvas a `true` mientras se use el 6543 |
 | `NEXT_PUBLIC_API_URL` | web | Config | `https://vidafacil-madrid.vercel.app`. Se incrusta al compilar: si cambia, hay que volver a desplegar |
 | `NEXT_PUBLIC_FEATURE_SEARCH` | web | Config | `true` desde el 11 nov: enciende el buscador. Se incrusta al compilar. Para apagarlo: `npx vercel@65.12.1 env rm NEXT_PUBLIC_FEATURE_SEARCH production` y volver a desplegar. Si el despliegue anterior se compiló sin ella, también vale un rollback |
 
@@ -111,12 +111,13 @@ Cómo se detecta:
 
 - **Instant Rollback en Hobby:** solo permite volver al despliegue de producción inmediatamente anterior ([docs](https://vercel.com/docs/instant-rollback)). Comando: `npx vercel@65.12.1 rollback`, o desde el panel: Production Deployment → Instant Rollback.
 - **Después de un rollback:** Vercel desactiva la asignación automática del dominio. El siguiente despliegue no queda publicado hasta que lo promueves con `npx vercel@65.12.1 promote <url-del-despliegue>`.
-- **Variables de entorno:** el rollback no las cambia. Si el fallo era una variable, corrígela y vuelve a desplegar.
+- **Variables de entorno:** cada despliegue se queda con las que había al construirlo. Un rollback no corrige una variable: corrígela y vuelve a desplegar.
+- **Ningún despliegue anterior a `dpl_5efzuiwZEsn5cp74Uf4cizbe8now` (12 nov, 13:14) sirve para volver atrás.** Llevan la contraseña vieja de `vf_api_ro`, que Mariano cambió con el paso al puerto 6543. Durante el cambio de dominio, el anterior respondió `/search` con 500 y «password authentication failed for user "vf_api_ro"» (`deploy-15-6543.md`). Si hay que volver atrás, despliega desde Git la versión buena del código con `make deploy-demo`: toma la contraseña actual.
 - **Si el fallo está en los datos y no en el código:** no se arregla con un rollback. A vuelve a ejecutar `make supabase-sync PROFILE=demo` con la versión buena de la base local.
 - **Si el fallo es el límite de conexiones de la base, tampoco.** En los logs sale `EMAXCONNSESSION max clients reached in session mode`.
   - El pooler en modo sesión admite tantos clientes como su `pool_size`: 15 en el plan actual de Supabase. No es un límite fijo del pooler. Las instancias vivas del despliegue que falla siguen ocupándolos, y las del despliegue anterior no consiguen ninguno.
   - El 12 nov el rollback dejó el smoke en 2/8. Volver a promover el despliegue nuevo lo arregló en el acto (`deploy-13-auditoria-gap03.md`).
-  - El arreglo de fondo es menos conexiones por instancia o el pooler en modo transacción (puerto 6543).
+  - El arreglo de fondo era el pooler en modo transacción (puerto 6543), en uso desde el 12 nov a las 13:14. `EMAXCONNSESSION` solo puede volver si `DATABASE_URL` vuelve al 5432.
 
 ## Límites del plan gratuito (Hobby)
 
@@ -172,7 +173,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
 2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
-   - El sync vacía con `TRUNCATE` las 9 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
+   - El sync vacía con `TRUNCATE` las 11 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
    - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 8/8.
    - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
 3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
@@ -189,8 +190,9 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - `health` falla: la caída es de la plataforma o de la API.
    - `health` funciona pero `ready` falla con `SOURCE_DEGRADED`: la base de datos no responde (Supabase pausada o caída, o la credencial está mal).
    - `ready` falla con `INSUFFICIENT_DATA`: el rol no ve filas (falta una política o un `GRANT`) o los datos no están cargados.
-   - Hay 500 sueltos, sobre todo en la vista de zona, y en `npx vercel@65.12.1 logs --environment production --since 15m` sale `EMAXCONNSESSION`: está lleno el pooler de Supabase. No hagas rollback (ver «Volver atrás»). Espera a que bajen las instancias: unos 5 min sin tráfico, una estimación hecha con el apagado por inactividad del container runtime, no una garantía. O reduce las conexiones por instancia (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`); eso exige redesplegar, porque las variables solo se aplican en los despliegues nuevos.
-2. **Si el fallo vino con el último despliegue:** Instant Rollback (ver arriba).
+   - `ready` falla y en `npx vercel@65.12.1 logs --environment production --since 15m` sale «password authentication failed»: la contraseña de `DATABASE_URL` no es la de `vf_api_ro`. Pasa si alguien hizo rollback a un despliegue anterior al 12 nov a las 13:14 (ver «Volver atrás»), o si la contraseña cambió en Supabase y no en Vercel. Mariano la corrige en Vercel y se vuelve a desplegar.
+   - Hay 500 sueltos, sobre todo en la vista de zona, y en esos logs sale `EMAXCONNSESSION`: está lleno el pooler de Supabase en modo sesión, así que `DATABASE_URL` ha vuelto al puerto 5432. No hagas rollback (ver «Volver atrás»). Espera a que bajen las instancias: unos 5 min sin tráfico, una estimación hecha con el apagado por inactividad del container runtime, no una garantía. O reduce las conexiones por instancia (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`); eso exige redesplegar, porque las variables solo se aplican en los despliegues nuevos.
+2. **Si el fallo vino con el último despliegue:** Instant Rollback (ver arriba), solo si el anterior es `dpl_5efzuiwZEsn5cp74Uf4cizbe8now` o uno posterior. Si no, vuelve a desplegar la versión buena del código con `make deploy-demo`.
 3. **Si Supabase está pausada:** reanúdala desde el panel de Supabase con la cuenta dedicada a DATAMAD y vuelve a pasar el smoke.
 4. **Sin Internet o con Vercel caído durante la presentación:** `make demo-offline`, el paquete offline de la sección siguiente. Arranca en unos 7 s en el portátil, con los mismos datos. Lleva también capturas y un vídeo corto del recorrido, grabados con la versión desplegada.
 5. **Si Vercel cae varios días:** el mismo `infra/deploy/api/Dockerfile` sirve en Render o en Cloud Run. Las opciones B y C están en `provider-research.md` y necesitan cuenta.
@@ -218,7 +220,7 @@ Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.**
 1. Construye las imágenes: Postgres con PostGIS, y la API.
 2. Comprueba que la base de origen responde. Si no, da un mensaje claro con la URL enmascarada y para.
 3. Comprueba que la migración de la base de origen es la misma que la del checkout.
-4. Vuelca, en modo solo lectura, las 9 tablas del perfil demo (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
+4. Vuelca, en modo solo lectura, las 11 tablas del perfil demo (con `transit_hub` y `commute_time` desde CORE-009, D-220) (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
 5. Crea el esquema con Alembic en una base **staging**, carga el volcado y **compara los conteos de filas** con la base de origen.
 6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada, con el buscador encendido (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción; desde el 12 nov).
 7. Solo si todo lo anterior sale bien: la base staging pasa a ser la base de la demo y los ficheros `.tmp` sustituyen a los anteriores.

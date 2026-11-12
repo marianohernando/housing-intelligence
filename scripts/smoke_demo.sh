@@ -77,7 +77,8 @@ check largest "/api/v1/places?category=transport" \
    | "\(.data.total) stops, page \(.data.page)/\(.data.pages)"'
 # The demo case of the pitch: at least one zone passes. Its figures are read on screen, never here.
 check search "/api/v1/search" \
-  'select(.data.reality_check.zones_passing >= 1)
+  'select(.data.reality_check.zones_passing >= 1
+          and (.data.results[0].match_pct | type == "number" and . >= 0 and . <= 100))
    | "\(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) zones, 1st \(.data.results[0].zone.name)"' \
   "$SEARCH_BODY" "$SEARCH_MAX_BYTES"
 

@@ -1,0 +1,11 @@
+infra/deploy/offline/demo_offline.sh prepare
+-> images (vida-facil-offline) and the offline database on 5441
+ Image vida-facil-api:offline Building 
+ Image vida-facil-offline-db:17 Building 
+ Image vida-facil-api:offline Built 
+ Image vida-facil-offline-db:17 Built 
+-> dumping the demo profile from postgresql://housing:***@host.docker.internal:5440/housing (read only)
+-> loading into a staging database (the current package stays until this one validates)
+-> web build from a private copy of apps/web, API at http://localhost:8012
+-> switching to the new package
+ready:  42M dump, manifest data/offline/manifest.txt. Start with: make demo-offline
