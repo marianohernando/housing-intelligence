@@ -16,6 +16,7 @@
 //   node scripts/check-qa.mjs parques [outDir]   # «Parques» in «Todos los centros» and green on the map (DATA-018)
 //   node scripts/check-qa.mjs seguridad [outDir] # how the neighbours rate their barrio's safety, only in Madrid's districts (D-226)
 //   node scripts/check-qa.mjs compra [outDir]    # buying with fit-0.5 (D-227): note, «+30.000 €» and a district without price
+//   node scripts/check-qa.mjs encaje [outDir]    # «100 %» with JUSTO rows: the line that explains it, and the % pill at 390 px
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
@@ -1161,6 +1162,58 @@ async function buying(browser) {
 }
 
 /**
+ * The «100 % de encaje» with JUSTO rows below (jurado simulado): a zone that passes everything says
+ * in one line what it is short of, from the rows the card shows; and the % pill fits at 390 px.
+ */
+async function fitButShort(browser) {
+  const failures = [];
+  const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+  const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const p = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const entry = (report[id] = {});
+    const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const { data } = await response.json();
+    await p.page.waitForTimeout(2000);
+    const top = data.results[0];
+    await press(p.page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first());
+    const card = p.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+    await card.getByRole("heading", { name: "Qué falta aquí" }).waitFor({ timeout: 20000 });
+    await card.locator("ul li").first().waitFor({ timeout: 20000 });
+    await p.page.waitForTimeout(800);
+    const missingSection = card.locator("section").filter({ has: p.page.getByRole("heading", { name: "Qué falta aquí" }) });
+    const rows = await missingSection.locator("ul li").evaluateAll((lis) =>
+      lis.map((li) => ({ label: li.querySelector("span")?.childNodes[0]?.textContent?.trim() ?? "", status: (li.textContent ?? "").match(/(FALTA|JUSTO|CUBIERTO|SIN DATOS)\s*$/)?.[1] ?? "" })),
+    );
+    const lower = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+    const missing = rows.filter((r) => r.status === "FALTA").map((r) => lower(r.label));
+    const tight = rows.filter((r) => r.status === "JUSTO").map((r) => lower(r.label));
+    const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null].filter(Boolean);
+    entry.zona = [top.zone.name, top.match_pct];
+    entry.filas = rows;
+    entry.esperado = parts.length ? `Encaja con lo que pides; aun así, en la zona ${parts.join("; y ")}.` : null;
+    const line = card.getByText(/^Encaja con lo que pides; aun así/);
+    entry.linea = (await line.count()) ? flat(await line.first().innerText()) : null;
+    const [cardBox, pillBox] = [await box(card), await box(card.locator("span[title^='Cuánto se parece']").first())];
+    entry.pastilla = { card_right: cardBox.right, pill_right: pillBox.right, dentro: pillBox.right <= cardBox.right };
+    await card.screenshot({ path: `${out}/encaje_tarjeta_${id}.png` });
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    if (entry.linea !== entry.esperado) failures.push(`${id}: línea «${entry.linea}» / esperado «${entry.esperado}»`);
+    if (!entry.pastilla.dentro) failures.push(`${id}: el % se sale de la tarjeta`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    await p.ctx.close();
+  }
+  report.lcp_portada_slow4g = await lcpOnSlow4g(browser, "/");
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
  * Icons (favicon.ico and apple-touch-icon gave 404 in the deploy logs): every page links them, they
  * load, the old fixed paths phones ask for answer too, and no request of the page fails.
  */
@@ -1416,6 +1469,7 @@ else if (mode === "iconos") await icons(browser);
 else if (mode === "parques") await parks(browser);
 else if (mode === "seguridad") await perceivedSafety(browser);
 else if (mode === "compra") await buying(browser);
+else if (mode === "encaje") await fitButShort(browser);
 else if (Object.hasOwn(PRIORITY_CHIPS, mode)) await priorityChip(browser, PRIORITY_CHIPS[mode]);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);

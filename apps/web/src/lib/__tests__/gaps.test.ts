@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import type { IndicatorValue, ZoneGapList } from "@/contracts/zone_gap_list_response";
 
 import {
+  fitsButShortText,
   GAP_STATUS,
   gapFigures,
   GROUP,
@@ -144,6 +145,28 @@ describe("sortRows and topRows", () => {
 
   it("keeps at most three rows for the zone card", () => {
     expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
+  });
+});
+
+describe("fitsButShortText (a zone that fits, short of something)", () => {
+  const row = (label: string, status: "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS") => ({ label, status });
+
+  it("names the rows that are JUSTO, as the card shows them (Fuencarral-El Pardo, 12 nov)", () => {
+    expect(fitsButShortText([row("Escuelas infantiles", "JUSTO"), row("Colegios", "JUSTO"), row("Centros de salud", "JUSTO")])).toBe(
+      "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
+    );
+  });
+
+  it("says what is missing first, then what is tight", () => {
+    expect(fitsButShortText([row("Centros de salud", "FALTA"), row("Colegios", "JUSTO"), row("Farmacias", "CUBIERTO")])).toBe(
+      "Encaja con lo que pides; aun así, en la zona faltan: centros de salud; y van justos de: colegios.",
+    );
+    expect(fitsButShortText([row("Escuelas infantiles", "FALTA")])).toBe("Encaja con lo que pides; aun así, en la zona faltan: escuelas infantiles.");
+  });
+
+  it("says nothing when no row is FALTA or JUSTO: SIN DATOS is not short", () => {
+    expect(fitsButShortText([row("Colegios", "CUBIERTO"), row("Farmacias", "SIN_DATOS")])).toBeNull();
+    expect(fitsButShortText([])).toBeNull();
   });
 });
 

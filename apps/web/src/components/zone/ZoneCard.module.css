@@ -41,8 +41,10 @@
 }
 
 .name {
+  min-width: 0;
   font-size: var(--text-2xl);
   font-weight: 600;
+  overflow-wrap: break-word;
 }
 
 .pct {
@@ -56,9 +58,26 @@
   font-weight: 700;
 }
 
+/* Phones: a long name («Fuencarral-El Pardo») breaks at its hyphen beside the % pill */
+@media (max-width: 420px) {
+  .name {
+    font-size: 1.6rem;
+  }
+}
+
+/* «de encaje» under the figure: beside it, the pill did not fit at 390 px and was cut («de enca…») */
 .pct small {
+  display: block;
   font-size: 0.8rem;
   font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.fitsButShort {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.4;
 }
 
 .hint {

@@ -1,0 +1,72 @@
+{
+ "modo": "encaje",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "desktop": {
+  "zona": [
+   "Fuencarral-El Pardo",
+   100
+  ],
+  "filas": [
+   {
+    "label": "Escuelas infantiles",
+    "status": "JUSTO"
+   },
+   {
+    "label": "Colegios",
+    "status": "JUSTO"
+   },
+   {
+    "label": "Centros de salud",
+    "status": "JUSTO"
+   }
+  ],
+  "esperado": "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
+  "linea": "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
+  "pastilla": {
+   "card_right": 1396,
+   "pill_right": 1369,
+   "dentro": true
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mobile": {
+  "zona": [
+   "Fuencarral-El Pardo",
+   100
+  ],
+  "filas": [
+   {
+    "label": "Escuelas infantiles",
+    "status": "JUSTO"
+   },
+   {
+    "label": "Colegios",
+    "status": "JUSTO"
+   },
+   {
+    "label": "Centros de salud",
+    "status": "JUSTO"
+   }
+  ],
+  "esperado": "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
+  "linea": "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
+  "pastilla": {
+   "card_right": 373,
+   "pill_right": 347,
+   "dentro": true
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_portada_slow4g": [
+  {
+   "ms": 620,
+   "en_atribucion": false,
+   "texto": "Te decimos qué zonas encajan con tu vida y qué le "
+  }
+ ],
+ "fallos": []
+}

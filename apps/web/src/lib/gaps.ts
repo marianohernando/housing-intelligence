@@ -123,6 +123,20 @@ export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[
 }
 
 /**
+ * A zone that fits everything asked can still be short of something (Mariano, jurado simulado):
+ * «Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios.»
+ * From the rows the card shows, FALTA first; null when none is FALTA or JUSTO. Draft text until
+ * line D writes it in textos_web.md.
+ */
+export function fitsButShortText(rows: readonly { label: string; status: GapStatus }[]): string | null {
+  const names = (status: GapStatus) => rows.filter((r) => r.status === status).map((r) => r.label.charAt(0).toLowerCase() + r.label.slice(1));
+  const [missing, tight] = [names("FALTA"), names("JUSTO")];
+  if (!missing.length && !tight.length) return null;
+  const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null];
+  return `Encaja con lo que pides; aun así, en la zona ${parts.filter(Boolean).join("; y ")}.`;
+}
+
+/**
  * Value, reference (zones of the same type) and the whole region, with the decimals of the API
  * `explanation` (hi_domain.gaps): set by the value and its reference.
  */
