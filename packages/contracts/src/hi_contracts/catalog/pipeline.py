@@ -202,6 +202,9 @@ class MadridDistrictPanelPipeline(BaseModel):
             if unknown:
                 msg = f"{name} must be declared indicators: {unknown}"
                 raise ValueError(msg)
+        if self.barrio_indicators and self.expected_barrios is None:
+            msg = "barrio_indicators need expected_barrios: a panel short of barrios must fail"
+            raise ValueError(msg)
         return self
 
     def metric_ids(self) -> list[str]:

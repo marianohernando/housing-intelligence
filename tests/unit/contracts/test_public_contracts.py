@@ -261,3 +261,7 @@ def test_barrio_result_holds_only_barrios_of_its_district() -> None:
     district["all_zones"][0]["zone"]["level"] = "distrito"
     with pytest.raises(ValidationError, match="barrios of"):
         BarrioSearchResult.model_validate(district)
+    not_a_district = json.loads(json.dumps(data))
+    not_a_district["distrito"]["level"] = "municipio"
+    with pytest.raises(ValidationError, match="must be a district"):
+        BarrioSearchResult.model_validate(not_a_district)

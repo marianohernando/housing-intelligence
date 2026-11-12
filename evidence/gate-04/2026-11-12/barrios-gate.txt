@@ -21,3 +21,14 @@ make test-db exit=0
 
 ## golden searches
 9 escenarios dorados · todos OK
+
+# Fase 2b (review fixes), 2026-11-13: make lint typecheck test on the work tree
+All checks passed!
+278 files OK, 0 changed, 0 missing
+0 errors, 0 warnings, 0 informations
+704 passed in 15.80s
+ Test Files  30 passed (30)
+      Tests  354 passed (354)
+133 passed in 70.23s (0:01:10)
+make lint typecheck test exit=0
+golden: 9 escenarios dorados · todos OK

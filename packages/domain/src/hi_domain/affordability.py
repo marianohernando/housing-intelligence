@@ -105,7 +105,7 @@ def _purchase_check(
             explanation=(
                 "Sin precio de compra publicado para esta zona: el valor tasado del Ministerio de "
                 "Vivienda solo llega a los municipios de más de 25.000 habitantes con tasaciones "
-                "suficientes, no a los distritos ni a los pueblos"
+                "suficientes, no a los distritos y barrios de Madrid ni a los pueblos"
             ),
         )
     cost = purchase_cost(price.value, area.m2)

@@ -118,3 +118,11 @@ def test_two_names_for_one_barrio_is_a_conflict() -> None:
     plan = plan_names(_units() + _barrios(), MUNICIPIOS, DISTRICTS, barrios)
     assert not plan.passed
     assert plan.conflicts == {"ES.28.BAR.28079192": ["Ambroz", "Valdebernardo"]}
+
+
+def test_a_barrio_the_panel_does_not_name_keeps_its_name_and_a_broken_one_blocks() -> None:
+    """Barrios out of the panel keep the CM name, so its spelling is still checked."""
+    broken = Unit("ES.28.BAR.28079083", "barrio", "28079083", "PE/A GRANDE", "ES.28.DIS.2807908")
+    plan = plan_names([*_units(), broken], MUNICIPIOS, DISTRICTS, BARRIOS)
+    assert not plan.passed
+    assert plan.invalid == {"ES.28.BAR.28079083": ["/"]}

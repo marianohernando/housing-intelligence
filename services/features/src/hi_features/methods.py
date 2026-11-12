@@ -428,14 +428,15 @@ def postcode_weighted_mean(
     zone's geocoded places carry that postcode (CORE-006: there is no postcode geometry, so the
     places locate the postcodes; a declared proxy of where people live). The confidence is the
     base confidence times the share of that weight whose postcode publishes a value. A zone
-    with none is SOURCE_NO_COVERAGE, never 0.
+    without any such place is SOURCE_NO_COVERAGE (the proxy cannot locate a postcode there); one
+    whose places' postcodes have no published value is SOURCE_MISSING. Never 0.
 
     `new_contracts` (D-228): each postcode's value times its own factor or the fallback one
     (e.g. its municipio's), before the mean; a postcode with neither counts as unknown.
 
-    D-232 (barrios): a zone with fewer than `min_places` places keeps its value with its
-    confidence capped at `few_places_confidence`, and every code in `zones` gets a row (one
-    with no place at all is SOURCE_NO_COVERAGE, never absent).
+    D-232 (barrios): a zone whose mean rests on fewer than `min_places` places (with a
+    published value) keeps it with its confidence capped at `few_places_confidence`, and every
+    code in `zones` gets a row (one with no place at all is SOURCE_NO_COVERAGE, never absent).
 
     `weights` columns: territory_code (the zone), postcode, weight (places)."""
     values, period = _postcode_values(obs, dims)
@@ -453,12 +454,15 @@ def postcode_weighted_mean(
         known = [(cp, values[cp], w) for cp, w in members if cp in values]
         adjusted = known if new_contracts is None else _adjusted(known, *new_contracts)
         known_weight = sum(w for _, _, w in adjusted)
-        if not adjusted or known_weight <= 0 or total <= 0:
+        if total <= 0:  # no place locates any postcode here: the proxy has no coverage
             out.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        if not adjusted or known_weight <= 0:  # places, but no value published for their codes
+            out.append(_null(code, period, NullReason.SOURCE_MISSING))
             continue
         mean = sum(v * w for _, v, w in adjusted) / known_weight
         zone_confidence = confidence * known_weight / total
-        if total < min_places:
+        if known_weight < min_places:  # the mean rests on a handful of addresses
             zone_confidence = min(zone_confidence, few_places_confidence)
         row = _ok(code, period, mean, zone_confidence)
         if new_contracts is not None:

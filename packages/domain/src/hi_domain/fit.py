@@ -326,7 +326,9 @@ def with_note(text: str, note: str | None) -> str:
 
 
 def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
-    """PASS/FAIL on the minutes by public transport (D-220); UNKNOWN without them."""
+    """PASS/FAIL on the minutes by public transport (D-220); UNKNOWN without them, and with a
+    trip measured elsewhere (`note`, D-232: a barrio's district), which says nothing sure about
+    this zone's limit."""
     base = {
         "constraint_id": f"commute:{i}",
         "label": f"Trayecto a {anchor.label} de {anchor.max_minutes} min como mucho",
@@ -345,6 +347,14 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
         explanation = with_note(f"{why}{where}", None if trip is None else trip.note)
         return ConstraintCheck(
             **base, status=ConstraintStatus.UNKNOWN, confidence=0.0, explanation=explanation
+        )
+    if trip.note is not None:
+        return ConstraintCheck(
+            **base,
+            status=ConstraintStatus.UNKNOWN,
+            value=round(trip.minutes, 1),
+            confidence=0.0,
+            explanation=commute_text(trip.minutes, anchor.label, trip.note),
         )
     passed = anchor.max_minutes is not None and trip.minutes <= anchor.max_minutes
     return ConstraintCheck(

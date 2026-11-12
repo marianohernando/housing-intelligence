@@ -18,18 +18,27 @@ from hi_api.services.search import (
     zone_ref,
 )
 from hi_contracts.api.envelope import ErrorCode
-from hi_contracts.catalog.enums import TerritoryLevel
+from hi_contracts.catalog.enums import NullReason, TerritoryLevel
 from hi_contracts.public import BarrioSearchResult, IndicatorValue, ScenarioState, ZoneRef
 from hi_domain.fit import FIT_VERSION, Commute, ZoneData
 from hi_domain.search import run_search
 
-# A barrio's trip taken from its district stands for the whole district, not the barrio.
-DISTRICT_TRIP_CONFIDENCE = 0.8  # times the district trip's own confidence
+# A barrio without a trip of its own takes its district's, which stands for the whole district:
+# its confidence is the district's times this factor, and it never decides a trip limit.
+DISTRICT_TRIP_CONFIDENCE = 0.8
 DISTRICT_TRIP_NOTE = "trayecto medido para todo el distrito, no solo para este barrio"
-RENT_NO_PLACES = (
-    "Sin datos de alquiler para este barrio: el alquiler se publica por código postal y "
-    "ningún colegio, centro de salud o centro social del barrio lo lleva en su dirección"
-)
+# Why a barrio has no rent, by the null reason of its row (hi_features postcode_weighted_mean).
+RENT_MISSING = {
+    NullReason.SOURCE_NO_COVERAGE.value: (
+        "Sin datos de alquiler para este barrio: el alquiler se publica por código postal y "
+        "ningún colegio, centro de salud o centro social del barrio lo lleva en su dirección"
+    ),
+    NullReason.SOURCE_MISSING.value: (
+        "Sin datos de alquiler para este barrio: la fuente no publica el alquiler de los "
+        "códigos postales de sus colegios, centros de salud y centros sociales"
+    ),
+}
+RENT_UNKNOWN = "Sin datos de alquiler para este barrio"
 RENT_NOT_COMPUTED = "Sin datos de alquiler para este barrio todavía"
 
 _UNITS = """
@@ -46,13 +55,16 @@ _DISTRICT = text(_UNITS.format(where="level = 'distrito' AND code_official = :co
 _BARRIOS = text(_UNITS.format(where="level = 'barrio' AND parent_admin_unit_id = :district"))
 
 
-def _rent_missing(rent: IndicatorValue | None) -> str | None:
+def rent_missing(rent: IndicatorValue | None) -> str | None:
+    """Why the barrio has no rent, in plain words; None when it has one."""
     if rent is None:
         return RENT_NOT_COMPUTED
-    return RENT_NO_PLACES if rent.value is None else None
+    if rent.value is not None:
+        return None
+    return RENT_MISSING.get(str(rent.null_reason), RENT_UNKNOWN)
 
 
-def _trips(
+def borrowed_trips(
     by_zone: dict[int, dict[str, Commute]], barrio_id: str, district_id: str
 ) -> tuple[dict[int, Commute], bool]:
     """The barrio's own trip to each place of work, else its district's (declared)."""
@@ -94,7 +106,7 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
     for row in rows:
         key = (level, str(row["code"]))
         rent = indicators.rent.get(key)
-        commute, from_district = _trips(
+        commute, from_district = borrowed_trips(
             trips.by_zone, str(row["admin_unit_id"]), str(parent.admin_unit_id)
         )
         borrowed += from_district
@@ -103,7 +115,7 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
                 zone=zone_ref(row),
                 rent=rent,
                 rent_note=indicators.rent_note,
-                rent_missing=_rent_missing(rent),
+                rent_missing=rent_missing(rent),
                 price=indicators.price.get(key),
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
@@ -118,16 +130,18 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
         versions,
         [row["computed_at"] for row in value_rows],
         [],
-        _barrio_warnings(len(rows), bool(value_rows), borrowed),
+        barrio_warnings(len(rows), bool(value_rows), borrowed),
         trips.unresolved,
         dict(trips.versions),
     )
 
 
-def _barrio_warnings(barrios: int, indicators: bool, borrowed: int) -> list[str]:
+def barrio_warnings(barrios: int, indicators: bool, borrowed: int) -> list[str]:
     insufficient = ErrorCode.INSUFFICIENT_DATA.value
     warnings: list[str] = []
-    if barrios and not indicators:
+    if not barrios:  # never an empty answer that looks complete
+        warnings.append(f"{insufficient}: no barrio of this district is in the geography")
+    elif not indicators:
         warnings.append(
             f"{insufficient}: no indicator by barrio has been computed yet, so every condition "
             "of every barrio is UNKNOWN"
@@ -135,7 +149,8 @@ def _barrio_warnings(barrios: int, indicators: bool, borrowed: int) -> list[str]
     if borrowed:
         warnings.append(
             f"{insufficient}: {borrowed} barrios have no trip of their own by public transport; "
-            "they take the trip measured for the whole district, with lower confidence"
+            "they take the trip measured for the whole district, with lower confidence, and a "
+            "trip limit is UNKNOWN for them"
         )
     return warnings
 

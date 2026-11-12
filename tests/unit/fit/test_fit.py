@@ -549,20 +549,31 @@ def test_rent_fact_says_what_the_figure_is_from_the_data() -> None:
 def test_a_trip_measured_for_the_whole_district_says_so() -> None:
     """A barrio without its own trip takes its district's: the fact and the condition say it
     in plain words, and the lower confidence travels with them."""
-    scenario = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
     note = "trayecto medido para todo el distrito"
     trip = Commute(minutes=35.0, confidence=0.56, note=note)
     barrio = ZoneData(zone("b").zone, zone("b").rent, zone("b").walk, commute={0: trip})
-    fit = evaluate(scenario, barrio)
-    check = next(c for c in fit.constraints if c.constraint_id == "commute:0")
-    assert check.status is ConstraintStatus.PASS
-    assert check.explanation.endswith(f"({note})")
-    assert check.confidence == pytest.approx(0.56)
+    fit = evaluate(family(), barrio)  # the place of work as a preference
     work = next(f for f in fit.facts if f.topic is FactTopic.TRAYECTO)
     assert work.text.startswith("35 min en transporte público")
     assert work.text.endswith(f"({note})")
-    own = evaluate(scenario, with_commute(zone("o"), 35.0))
+    assert work.confidence == pytest.approx(0.56)
+    own = evaluate(family(), with_commute(zone("o"), 35.0))
     assert not any(note in f.text for f in own.facts if f.topic is FactTopic.TRAYECTO)
+
+
+@pytest.mark.parametrize("minutes", [35.0, 52.0, None])
+def test_a_borrowed_trip_never_decides_a_trip_limit(minutes: float | None) -> None:
+    """The district's trip says nothing sure about one of its barrios: under a hard limit it
+    is UNKNOWN, never PASS or FAIL (UNKNOWN is never a pass nor an explicit alternative)."""
+    scenario = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
+    note = "trayecto medido para todo el distrito"
+    trip = Commute(minutes=minutes, confidence=0.56, note=note)
+    barrio = ZoneData(zone("b").zone, zone("b").rent, zone("b").walk, commute={0: trip})
+    check = next(
+        c for c in evaluate(scenario, barrio).constraints if c.constraint_id == "commute:0"
+    )
+    assert check.status is ConstraintStatus.UNKNOWN
+    assert check.explanation.endswith(f"({note})")
 
 
 def test_an_unknown_rent_gives_the_reason_the_data_has_for_it() -> None:

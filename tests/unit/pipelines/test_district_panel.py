@@ -126,6 +126,9 @@ def test_barrio_indicators_must_be_declared_indicators(spec: MadridDistrictPanel
     data = spec.model_dump() | {"barrio_indicators": ["Indicador que no se lee"]}
     with pytest.raises(ValueError, match="barrio_indicators"):
         MadridDistrictPanelPipeline.model_validate(data)
+    unbounded = spec.model_dump() | {"expected_barrios": None}
+    with pytest.raises(ValueError, match="expected_barrios"):
+        MadridDistrictPanelPipeline.model_validate(unbounded)
 
 
 def test_the_city_row_is_kept_only_for_the_city_indicators(

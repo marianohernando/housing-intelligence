@@ -154,8 +154,8 @@ def test_district_rent_comes_from_its_postcodes(
         assert "cm_alquiler_m2_codigo_postal_madrid" in row.inputs["dataset_versions"]
         assert "cm_alquiler_m2_municipios" not in row.inputs["dataset_versions"]
         assert row.inputs["method"] == "postcode_weighted_mean"
-        if row.value is None:
-            assert row.null_reason == "SOURCE_NO_COVERAGE"
+        if row.value is None:  # no place with a postcode, or none published (D-232)
+            assert row.null_reason in {"SOURCE_NO_COVERAGE", "SOURCE_MISSING"}
         else:  # D-228: the mean of its postcodes, then the rent of new leases on top
             plain = row.inputs["new_contracts"]["all_contracts_value"]
             assert published[0] <= plain <= published[1]
@@ -185,7 +185,7 @@ def test_barrio_rent_is_a_weaker_proxy_and_every_barrio_has_a_row(
         assert row.inputs["method"] == "postcode_weighted_mean"
         assert "cm_alquiler_m2_codigo_postal_madrid" in row.inputs["dataset_versions"]
         if row.value is None:
-            assert row.null_reason == "SOURCE_NO_COVERAGE"
+            assert row.null_reason in {"SOURCE_NO_COVERAGE", "SOURCE_MISSING"}
             assert row.confidence == 0
 
 

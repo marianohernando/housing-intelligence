@@ -197,6 +197,9 @@ class BarrioSearchResult(SearchResult):
 
     @model_validator(mode="after")
     def _only_barrios_of_the_district(self) -> Self:
+        if self.distrito.level != TerritoryLevel.DISTRITO:
+            msg = f"distrito must be a district, got {self.distrito.level}"
+            raise ValueError(msg)
         zones = [z.zone for z in [*self.results, *self.near_misses]] + [
             z.zone for z in self.all_zones
         ]

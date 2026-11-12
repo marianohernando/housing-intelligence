@@ -52,7 +52,7 @@ formula:
       postcode_attributes: [cdpostal, direccion_codigo_postal]
       postcode_municipio: "28079"
       confidence: 0.6  # a barrio has 0-56 such places, median 16 (a district 51-242): a weaker proxy
-      few_places: {below: 5, max_confidence: 0.3}  # a handful of addresses: a rough guide
+      few_places: {below: 5, max_confidence: 0.3}  # the mean rests on a handful of addresses
 null_policy: {no_coverage: unknown, confirmed_zero: unknown}
 confidence: {inputs: [source_freshness, postcode_coverage]}
 public_use: true
@@ -65,5 +65,5 @@ limitations:
   - "Parte del factor se debe a que los contratos nuevos son de pisos algo más pequeños (68 frente a 71 m² en Madrid), y un piso pequeño cuesta más por m²."
   - "Los metros cuadrados son los del Catastro (superficie construida)."
   - "Distritos de Madrid (versión 2, D-214): media de los códigos postales del distrito, ponderada por cuántos colegios, centros de salud y centros sociales geocodificados del distrito llevan cada código en su dirección. No hay geometría de códigos postales: los lugares aproximan dónde vive la gente (proxy declarado, confidence 0,8 como máximo y menor si parte de esos lugares tiene un código sin alquiler publicado). Solo se publican códigos con más de 200 viviendas arrendadas y se usa el último periodo publicado."
-  - "Barrios de Madrid (D-232): el mismo proxy que los distritos con los lugares del barrio, que son muchos menos (entre 0 y 56, mediana 16): confidence 0,6 como máximo y 0,3 con menos de 5 lugares. Un barrio sin ningún lugar con código postal (Sol) queda SIN DATOS, nunca con el alquiler del distrito."
+  - "Barrios de Madrid (D-232): el mismo proxy que los distritos con los lugares del barrio, que son muchos menos (entre 0 y 56, mediana 16): confidence 0,6 como máximo y 0,3 si la media descansa en menos de 5 lugares con alquiler publicado. Un barrio sin ningún lugar con código postal (Sol) queda SIN DATOS, nunca con el alquiler del distrito."
 fit: {role: rent_m2, note: "contratos firmados en 2024; un anuncio de hoy puede pedir más"}

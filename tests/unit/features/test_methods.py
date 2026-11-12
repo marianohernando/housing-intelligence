@@ -303,10 +303,12 @@ def test_postcode_mean_confidence_is_the_share_of_places_with_a_value() -> None:
 
 
 def test_postcode_mean_without_any_published_postcode_is_unknown_not_zero() -> None:
+    """The zone's places carry postcodes, but the source publishes none of them: the source is
+    missing, not our proxy (D-232 tells the two apart, so the text can say which)."""
     weights = _weights([("2807903", "28003", 5.0), ("2807903", "28999", 1.0)])
     row = methods.postcode_weighted_mean(CP_RENT, weights, {}).iloc[0]
     assert row["value"] is None
-    assert row["null_reason"] == "SOURCE_NO_COVERAGE"
+    assert row["null_reason"] == "SOURCE_MISSING"
     assert row["confidence"] == 0.0
 
 
@@ -338,6 +340,12 @@ def test_a_zone_with_few_places_keeps_its_value_with_capped_confidence() -> None
     )
     assert out["28079011"]["value"] == pytest.approx(20.0)
     assert out["28079011"]["confidence"] == pytest.approx(0.3)
+    # 6 places, only 4 with a published value: the mean rests on 4, so it is capped too
+    mixed = _weights([("28079013", "28001", 4.0), ("28079013", "28999", 2.0)])
+    row = methods.postcode_weighted_mean(
+        CP_RENT, mixed, {}, confidence=0.6, min_places=5, few_places_confidence=0.3
+    ).iloc[0]
+    assert row["confidence"] == pytest.approx(0.3)
     assert out["28079012"]["value"] == pytest.approx(15.0)
     assert out["28079012"]["confidence"] == pytest.approx(0.6)
 
@@ -351,7 +359,7 @@ def test_a_zone_without_any_place_is_an_explicit_null_never_absent() -> None:
     )
     assert out["28079011"]["value"] == pytest.approx(20.0)
     assert _is_missing(out["28079016"]["value"])
-    assert out["28079016"]["null_reason"] == "SOURCE_NO_COVERAGE"
+    assert out["28079016"]["null_reason"] == "SOURCE_NO_COVERAGE"  # no place to locate a postcode
 
 
 def test_postcode_mean_uses_the_latest_period_only() -> None:

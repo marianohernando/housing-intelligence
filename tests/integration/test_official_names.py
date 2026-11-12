@@ -9,6 +9,7 @@ from hi_domain.geo.names import invalid_name_chars
 from hi_ingestion.pipelines.admin_boundaries.official_names import apply_official_names
 
 pytestmark = pytest.mark.db
+PANEL = "ayto_panel_indicadores_distritos_barrios"  # the source of Madrid's barrio names (D-232)
 
 
 def test_official_names_replace_the_csv_spelling(
@@ -71,16 +72,26 @@ def test_a_broken_name_blocks_every_change(
             )
 
     def set_source_name(unit_id: str, name: str) -> None:
-        """The barrio's name as the panel writes it (D-232: barrios take it from there)."""
+        """The barrio's name in the panel's rows only (D-232: barrios take it from there)."""
         with migrated_engine.begin() as conn:
             conn.execute(
-                text("UPDATE metric_observation SET territory_name = :n WHERE admin_unit_id = :u"),
-                {"n": name, "u": unit_id},
+                text(
+                    "UPDATE metric_observation m SET territory_name = :n FROM dataset_version v "
+                    "WHERE v.id = m.dataset_version_id AND v.dataset_id = :d "
+                    "AND m.admin_unit_id = :u"
+                ),
+                {"n": name, "u": unit_id, "d": PANEL},
             )
 
     with migrated_engine.connect() as conn:
         barrio, barrio_name = conn.execute(
-            text("SELECT admin_unit_id, name FROM geo_admin_unit WHERE level = 'barrio' LIMIT 1")
+            text(
+                "SELECT m.admin_unit_id, min(m.territory_name) FROM metric_observation m "
+                "JOIN dataset_version v ON v.id = m.dataset_version_id "
+                "WHERE v.dataset_id = :d AND m.territory_level = 'barrio' "
+                "GROUP BY 1 HAVING count(DISTINCT m.territory_name) = 1 ORDER BY 1 LIMIT 1"
+            ),
+            {"d": PANEL},
         ).one()
     set_name("ES.28.MUN.28001", "ACEBEDA, LA")
     set_source_name(barrio, "PE/A GRANDE")
