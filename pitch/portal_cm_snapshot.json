@@ -1,0 +1,174 @@
+{
+  "api": "https://datos.comunidad.madrid/api/3/action/package_show",
+  "datasets": {
+    "cm_alquiler_m2_codigo_postal_madrid": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "1934259",
+      "title": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid"
+    },
+    "cm_alquiler_m2_municipios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
+      "title": "Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios"
+    },
+    "cm_barrios_madrid": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "barrios_municipio_madrid",
+      "title": "Barrios del Municipio de Madrid"
+    },
+    "cm_centros_atencion_social": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "atencion_social_registro_centros",
+      "title": "Registro de centros de atención social"
+    },
+    "cm_centros_educativos": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "centros_educativos",
+      "title": "Centros educativos de la comunidad de Madrid"
+    },
+    "cm_centros_sanitarios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "centros_servicios_establecimientos_sanitarios",
+      "title": "Centros, servicios y establecimientos sanitarios"
+    },
+    "cm_distritos_madrid": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "distritos_municipio_madrid",
+      "title": "Distritos del Municipio de Madrid"
+    },
+    "cm_farmacias_municipios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "farmacias",
+      "title": "Recursos sanitarios. Farmacias. Municipios"
+    },
+    "cm_hogares_tamano_censo_2021": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "censo_2021_hogares_por_tamanyo",
+      "title": "Hogares por tamaño del hogar. Censo 2021. Municipios"
+    },
+    "cm_municipios_distritos_2020": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "covid19_tia_muni_y_distritos",
+      "title": "Covid 19 -TIA por Municipios y Distritos de Madrid"
+    },
+    "cm_nacidos_vivos_municipios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "mnp_nacidos_vivos_por_residencia_y_sexo",
+      "title": "Nacidos vivos por lugar de residencia de la madre y sexo. Municipios"
+    },
+    "cm_oficinas_farmacia": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "oficinas_farmacia",
+      "title": "Oficinas de farmacia"
+    },
+    "cm_parcelas_portal_suelo": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "parcelas_portal_suelo",
+      "title": "Parcelas publicadas en el Portal del Suelo 4.0"
+    },
+    "cm_personas_discapacidad": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "personas_discapacidad_por_edad_y_sexo",
+      "title": "Personas con discapacidad por edad y sexo. Municipios"
+    },
+    "cm_poblacion_edad_nacionalidad_sexo": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "title": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios"
+    },
+    "cm_renta_disponible_municipal": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "irpf_indicador_renta",
+      "title": "Indicador de Renta Disponible Bruta Municipal. Municipios"
+    },
+    "cm_secciones_censales": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "secciones_censales",
+      "title": "Secciones censales"
+    },
+    "cm_transacciones_inmobiliarias": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "transacciones_inmobiliarias_municipio",
+      "title": "Número de transacciones inmobiliarias, por municipio. Vivienda libre y vivienda protegida. Comunidad de Madrid"
+    },
+    "cm_transacciones_nueva_usada": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "transacciones_vivienda_nueva_usada_municipio",
+      "title": "Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid"
+    },
+    "cm_unidades_escolares": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "title": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios"
+    },
+    "cm_viviendas_superficie": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "censo_anual_vivienda_por_superficie_agregada",
+      "title": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios"
+    },
+    "cm_viviendas_tenencia_censo_2021": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "censo_2021_viviendas_familiares_por_tenencia",
+      "title": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios"
+    },
+    "crtm_gtfs_autobuses_urbanos": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
+      "title": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid"
+    },
+    "crtm_gtfs_cercanias": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_cercanias_oferta_planificada_horarios_topologia",
+      "title": "Oferta planificada de la Red de Cercanías Madrid"
+    },
+    "crtm_gtfs_emt": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_autobuses_urbanos_emt_horarios_topologia",
+      "title": "Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT"
+    },
+    "crtm_gtfs_interurbanos": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_autobuses_interurbanos_horarios_topologia",
+      "title": "Oferta planificada de la Red de Autobuses Interurbanos"
+    },
+    "crtm_gtfs_metro": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_metro_oferta_planificada_horarios_topologia",
+      "title": "Oferta planificada de la Red de Metro"
+    },
+    "crtm_gtfs_metro_ligero": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_metro_ligero_oferta_planificada_horarios_topologia",
+      "title": "Oferta planificada de la Red de Metro Ligero"
+    }
+  },
+  "fetched_at": "2026-11-11"
+}
