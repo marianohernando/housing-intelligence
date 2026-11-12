@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | 12 nov, con las C3 y C4 de B (PR #17, fusionado): genera sin fallos con `DECK_INTEGRANTES`; sin él, solo falta el nombre |
+| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 13 nov falla a propósito: la slide 3 tiene tres huecos (abajo) que hay que llenar antes del 24 nov. El borrador genera sin fallos |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,6 +43,9 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
+| Slide 3, impacto | La cifra de impacto: «[N] niños de 0 a 4 años viven en zonas donde faltan escuelas infantiles» (fase de mejora, punto 3). Si A da otra fila u otra cifra, se cambia la frase entera | A |
+| Slide 3, utilidad | Cita 1 de la prueba con personas: alguien que busca casa, de 12 palabras como mucho, con quién es y sin nombre | Mariano (prueba con personas) |
+| Slide 3, impacto | Cita 2: el técnico municipal, de 12 palabras como mucho, con su cargo y el tipo de municipio, sin nombre | Mariano (prueba con personas) |
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);

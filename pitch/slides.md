@@ -104,6 +104,11 @@ Versión con buscador (la que vale):
 - **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas: C1 y C2, las de B con `fit-0.2` (PR #19); C3, la de B del 12 nov (PR #17).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
+**Huecos de la fase de mejora (13 nov)**, marcados como pendientes en `deck.html`; `--final` falla hasta que se llenen:
+- **Cifra de impacto (A):** «[N] niños de 0 a 4 años viven en zonas donde faltan escuelas infantiles», en grande, debajo del ejemplo. Sustituye a «179 municipios y 21 distritos de Madrid».
+- **Cita 2 (Mariano):** el técnico municipal de la prueba con personas, 12 palabras como mucho. Ocupa el sitio de la captura C4, que repetía las cifras del ejemplo.
+- **Cita 1 (Mariano), en la tarjeta de utilidad:** alguien que busca casa. Ocupa el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.
+
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
   - escuela infantil: escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (cada escuela cuenta como una: nadie publica sus plazas);
   - colegio: aulas de primaria, públicas y concertadas, al alcance a pie por cada 1.000 niños de 5 a 14 años;
@@ -122,20 +127,21 @@ Versión con buscador (la que vale):
   - **Otros distritos con FALTA en esa fila:** Villaverde (2,984; ratio 0,613) y Carabanchel (3,322; 0,682) (`GET /api/v1/gaps?level=distrito&row=escuela_infantil`, 12 nov). Centro (0,661) y Vicálvaro (0,647) tienen un ratio parecido y salen JUSTO: con menos niños, la diferencia podría ser casualidad. Sirve para responder a Escot.
   - **Si preguntan por un municipio:** Parla, farmacias, FALTA: 2,029 frente a 4,175 (ratio 0,486). La estadística oficial de farmacias por habitante también da 2,04 (`GET /api/v1/gaps/municipio/28106`, 12 nov).
   - **Ya no vale «Madrid tiene un tercio menos de centros de atención primaria»** (D-217 §7): con gap-0.3, Madrid capital sale JUSTO en centros de salud (0,3603 frente a 0,3799; ratio 0,9484, `evidence/gate-04/2026-11-12/gap-status-gap03.md`).
-  - Captura **C4**: la de B (PR #17), `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, con las mismas cifras que producción.
+  - Captura **C4**: desde el 13 nov no va en la slide 3; su sitio es para la cita del técnico municipal. Queda de reserva (`deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, de B, con las mismas cifras que producción).
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
   - 3.866 centros educativos, 553 centros sanitarios (276 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216; con los 4 centros de salud corregidos por D-218 §10), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
 ### Viabilidad: se sostiene
-- **Quién paga:** las empresas, por análisis agregados y API. Para las personas es gratis (modelo del documento de la idea, sin cifras).
+- **Quién paga** (decisión de Mariano, 13 nov; `pitch/modelo_negocio.md`): en la slide, «Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.». Las cifras no van en la slide: un informe para un ayuntamiento cuesta 990–1.500 € (contrato menor) y un estudio, 490–1.500 €. Si preguntan, pregunta 6 de `pitch/preguntas.md`.
 - **Privacidad:**
   - solo agregados por zona y nunca datos personales;
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);
   - la base de la demo está cerrada a accesos directos (D-197);
   - los fixtures no llevan datos de contacto (D-198).
 - **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). La web y la API van en el plan gratuito Hobby de Vercel: 0 €/mes y sin dominio propio (`infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md`). Límite: Hobby solo admite uso no comercial; para cobrar a empresas habría que pasar a un plan de pago.
+- **En la slide, el coste:** «0 € hoy; unos 45 $/mes para uso comercial» (Vercel Pro 20 $ y Supabase Pro desde 25 $, precios del 12 nov en `pitch/modelo_negocio.md`). El plan gratuito de Vercel no admite uso comercial.
 - **Reproducible y abierto:**
   - Apache-2.0 (`LICENSE`, D-191);
   - `make` como entrada única;
