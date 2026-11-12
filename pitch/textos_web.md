@@ -2,6 +2,30 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Novedades del 12 nov, con gap-0.3 (D-217) y los hospitales (D-218) en producción.** Son para los textos que B dejó provisionales en el PR #13 («listed for line D» en `apps/web/src`). Las claves están en las secciones 3, 5, 5b y 10.
+- **Definitivos tal cual** (B puede quitar la marca):
+  - `grupo.etiqueta` («Junto con sus vecinos») y `grupo.ayuda`;
+  - `fila.mide.*`: lo que mide cada fila, a 15 min andando y repartido entre todos los que lo tienen cerca (`ROW_MEASURE` en `gaps.ts`);
+  - `falta.fila.a_pie.hospital` («el hospital general más cercano») y su etiqueta «El hospital:»;
+  - leyenda, `/zonas` y aria del mapa con «los pueblos muy pequeños, junto con sus vecinos» (`leyenda.fila.frente`, `zonas.fila.intro`, `mapa.aria.fila`);
+  - `mapa.sin_calles` («Mapa sin fondo de calles.»);
+  - de «Todos los centros» (sección 5b): el título, «Ver en el mapa», «Ver la lista ({n})», `centros.elige`, `centros.cargando`, `centros.colegios_fila`, `centros.sin_nombre`, «ubicación aproximada», `mapa.aria.centros` y los recuentos de colegios, escuelas infantiles, hospitales, farmacias y mayores.
+- **Cambian:**
+  - `falta.intro`: la web sigue con el texto de D-213 y no dice «a pie». Va «Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.».
+  - `grupo.frase` (`groupText` en `gaps.ts`): «Juntos tienen el {n} % de lo que tendrían con la media de los municipios de su tipo» pasa a «Juntos tienen el {n} % de lo que tienen de media los municipios de su tipo». Es más fácil de leer y dice lo mismo que `comparison_group.ratio_to_reference`.
+  - `hospital.nota`: se añade al final «y no cuenta para el estado de la fila». Así nadie lee los minutos al hospital como parte de FALTA, JUSTO o CUBIERTO (D-217 §5).
+  - **«Cómo lo calculamos»:** va `pitch/metodologia.md` §1.4–1.8, que sustituye al texto provisional de B. Las diferencias:
+    - el párrafo «El hospital» de la web dice «Las camas de cada hospital tampoco las tenemos todavía»: **desde D-218 ya no es cierto**, porque «Todos los centros» enseña las camas de cada hospital;
+    - «Qué datos usamos» no nombra al Ministerio de Sanidad ni a CartoCiudad (§1.7);
+    - faltan dos límites: «Colocamos a la gente por calles» y «Las camas de hospital no cuentan en la lista» (§1.8);
+    - los umbrales de «Qué significa la fiabilidad» son anteriores a gap-0.3 (500 menores de 15 años en colegios, 500 mayores en residencias). Ahora son 300 niños de 5 a 14 años y 300 mayores, y se añade el aviso de las aulas repartidas (§1.6);
+    - la tabla «Qué cuenta en cada servicio» suma la columna «Para quién» y el ejemplo real de Puente de Vallecas (§1.4).
+  - **Recuento de centros de salud en «Todos los centros»:** la lista incluye los consultorios, así que va «{n} centros de salud y consultorios en {zona}», «1 centro de salud o consultorio en {zona}» y «Ningún centro de salud ni consultorio en {zona}». Así cuadra con la fila, donde los consultorios no cuentan como capacidad.
+  - **Pie (sección 10), por licencia:**
+    - faltan dos atribuciones obligatorias: `pie.sanidad`, porque el aviso legal del Ministerio pide citar la fuente y la fecha de actualización, y `pie.cartociudad` (CC BY 4.0 scne.es);
+    - `pie.independiente` suma al Ministerio;
+    - `pie.contador` deja de sumar el CRTM aparte, porque sus 6 conjuntos ya cuentan en {n}.
+
 **Novedades del 11 nov (última hora), con el buscador ya encendido en producción.** Son para los textos que B dejó provisionales en los PR #9 y #10, marcados con «pending line D» en `apps/web/src`:
 - **Definitivos tal cual** (B puede quitar la marca):
   - de la lista del PR #10, todos menos los cambios de abajo: resultados, «¿Y si cambias algo?», leyenda, tarjeta, «Lo quiero a un paseo» y «Trabajo en»;
@@ -196,12 +220,14 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `leyenda.no_cumple` | No cumple todo | Falla alguna condición |
 | `leyenda.zonas` | {n} zonas | Junto a cada clase. Con 1: «1 zona» |
 | `leyenda.ver` | ¿Qué quieres ver? | Selector del mapa (decisión de datamad-10). Opciones: «Encaje con tu búsqueda» y los nombres de las 6 filas (sección 5) |
-| `leyenda.fila.frente` | frente a los municipios de su tipo (urbanos o rurales). | Tras la definición de la fila elegida |
+| `leyenda.fila.frente` | frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos. | Tras la definición de la fila elegida. Con los vecinos de gap-0.3 (D-217 §6): definitivo el 12 nov |
 | `leyenda.sin_calcular` | {n} zonas sin calcular todavía. | Con 1: «1 zona sin calcular todavía.» |
 | `leyenda.nivel_caido` | No hemos podido cargar {los municipios \| los distritos de Madrid}: salen sin calcular. | Con «Reintentar» |
 | `leyenda.lista` | Ver estas zonas en una lista | Abre `/zonas?fila=…` |
 | `mapa.aria.encaje` | Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa. | `aria-label` del mapa tras buscar |
-| `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo; la leyenda lo explica. | {fila} en minúscula. Hoy la web dice «frente a la Comunidad de Madrid»: método anterior a D-213 |
+| `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica. | {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
+| `mapa.aria.centros` | En el mapa salen, agrupados, {recuento en minúscula}; su lista está en «Todos los centros». | `aria-label` del mapa con una capa de centros (sección 5b) |
+| `mapa.sin_calles` | Mapa sin fondo de calles. | Aviso suave cuando solo falla el fondo de calles y las zonas sí se ven (paquete sin red) |
 | `mapa.zona.tooltip` | {zona}: {pct} % de encaje | Al pasar por encima |
 | `mapa.zona.tooltip.sin_datos` | {zona}: sin datos suficientes | |
 | `migas.region` | Comunidad de Madrid | Primer nivel de las migas |
@@ -224,7 +250,7 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `zonas.ninguna` | No hay ninguna zona con ese nombre. | Búsqueda sin resultados |
 | `zonas.ciudad_entera` | {ciudad} (toda la ciudad) | «Madrid (toda la ciudad)»: lleva a su lista de «Qué falta». En el mapa, Madrid capital son sus distritos |
 | `zonas.titulo` | Todas las zonas | Página `/zonas` |
-| `zonas.fila.intro` | Con su estado en {fila} frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS. | `/zonas?fila=…`, con {fila} en minúscula. Hoy la web dice «frente a la Comunidad de Madrid»: método anterior a D-213 |
+| `zonas.fila.intro` | Con su estado en {fila} frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS. Los pueblos muy pequeños se comparan junto con sus vecinos. | `/zonas?fila=…`, con {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
 | `carga.estado_zonas` | Cargando el estado de cada zona… | Lista de zonas con una fila elegida |
 
 ---
@@ -284,7 +310,7 @@ La barra **solo mueve el mapa**: la demo no tiene cifras por barrio y no las va 
 
 ## 5. «Qué falta»: FALTA / JUSTO / CUBIERTO / SIN DATOS
 
-Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su tipo**, urbanos o rurales (Ley 45/2007), y no con toda la región. La línea de explicación vale para cualquier fila, porque la API ya orienta la comparación: por encima de 1, la zona está mejor que su referencia (`ratio_to_reference`). El texto de cada fila (valor, referencia de su tipo y, entre paréntesis, la de toda la Comunidad) llega en `explanation` y se muestra debajo.
+Desde D-217 (`gap-0.3`, 12 nov) cada fila de servicios mide **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA), y no los centros por habitante. La comparación sigue siendo la de D-213: con **los demás municipios de su tipo**, urbanos o rurales (Ley 45/2007), y los pueblos demasiado pequeños para compararlos solos, junto con sus vecinos (`comparison_group`). La línea de explicación vale para cualquier fila, porque la API ya orienta la comparación: por encima de 1, la zona está mejor que su referencia (`ratio_to_reference`). El texto de cada fila (valor, referencia de su tipo y, entre paréntesis, la de toda la Comunidad) llega en `explanation` y se muestra debajo.
 
 | Clave | Etiqueta | Línea de explicación | Icono (en producción, como se propuso) |
 |---|---|---|---|
@@ -296,13 +322,16 @@ Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su t
 | Clave | Texto | Notas |
 |---|---|---|
 | `falta.titulo` | Qué falta en {zona} | |
-| `falta.intro` | Comparamos cada servicio con los demás municipios de su tipo, urbanos o rurales, según cuánta gente vive aquí. | Cambia el 11 nov por D-213 |
+| `falta.intro` | Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales. | Cambia el 12 nov por D-217 (antes: «Comparamos cada servicio con los demás municipios de su tipo…») |
 | `falta.elige_zona` | Elige una zona en el mapa o escríbela aquí para ver qué le falta. | Sin zona elegida |
 | `falta.buscador.placeholder` | Escribe un municipio o un distrito de Madrid | |
 | `falta.fila.referencia` | {reference_label}: {referencia} | Si la web separa la referencia de `explanation`. `reference_label` llega de la API, por ejemplo «Otros municipios urbanos de la Comunidad de Madrid» |
 | `falta.fila.region` | En toda la Comunidad de Madrid: {regional_reference} | Solo como contexto, en pequeño. `regional_reference` llega de la API |
 | `fila.zona_pequena` | Zona pequeña para comparar | Etiqueta junto al estado cuando la API manda `reliable: false` (D-213, punto 3). La fila conserva su valor y nunca sale FALTA |
-| `fila.zona_pequena.ayuda` | Aquí vive tan poca gente que no podemos saber con seguridad si falta. Por eso no la marcamos como FALTA. | Al tocar la etiqueta, y como línea en `falta.leyenda` |
+| `fila.zona_pequena.ayuda` | Aquí vive tan poca gente que no podemos saber con seguridad si falta. Por eso no la marcamos como FALTA. | Al tocar la etiqueta, y como línea en `falta.leyenda`. Con gap-0.3 sale solo si ni con los vecinos se puede comparar |
+| `grupo.etiqueta` | Junto con sus vecinos | Etiqueta junto al estado cuando la API manda `comparison_group` (D-217 §6). El estado es el del grupo |
+| `grupo.ayuda` | Comparado con municipios parecidos de la zona: es demasiado pequeño para compararlo solo, así que lo juntamos con sus vecinos más cercanos del mismo tipo. | Al tocar la etiqueta, y como línea en `falta.leyenda` |
+| `grupo.frase` | Comparado con municipios parecidos de la zona. {zona} es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con {sus n vecinos más cercanos \| su vecino más cercano} del mismo tipo: {lista}. Juntos tienen el {n} % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado. | En la fila, bajo las cifras de la zona: el estado es el del grupo y puede no cuadrar con la cifra propia. {lista} = `comparison_group.names` sin la propia zona, con «y» antes del último; {n} % = `comparison_group.ratio_to_reference` × 100, sin decimales |
 | `falta.fila.ojo` | Ojo: {proxy_note} | Aviso de lo que el dato no mide. `proxy_note` llega de la API |
 | `falta.otra_zona` | Elegir otra zona | Botón secundario junto a `zona.boton` («Ver la zona») y en el error `error.zona_no_existe`. Sustituye a «Cambiar de zona»: un solo texto para la misma acción |
 | `falta.fila.fuente` | De dónde sale: {n} conjuntos de datos | Con 1: «De dónde sale: 1 conjunto de datos». Al abrirlo, los nombres de `datasets`, cada uno enlazado a su ficha |
@@ -312,6 +341,9 @@ Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su t
 | `falta.fila.a_pie.centro_salud` | el centro de salud más cercano | {destino} |
 | `falta.fila.a_pie.mayores` | el centro de mayores más cercano | {destino} |
 | `falta.fila.a_pie.farmacia` | la farmacia más cercana | {destino} |
+| `falta.fila.a_pie.hospital` | el hospital general más cercano | {destino}. Solo en la fila de centros de salud, aparte de sus minutos (`min_a_pie_hospital`, D-217 §5) |
+| `hospital.titulo` | El hospital: | Delante de `hospital.nota` |
+| `hospital.nota` | Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila. | Cambia el 12 nov: se añade «y no cuenta para el estado de la fila» |
 | `a_pie.min` | {n} min | Redondeado al minuto. Menos de 1: «menos de 1 min». Más de 60: «más de 60 min». Sin valor: «Sin datos», con su motivo (`null_reason`), nunca 0 |
 | `falta.leyenda.titulo` | Cómo leer esta lista | Tarjeta con los 4 estados y su línea de explicación (`estado.*`), más la línea de `fila.zona_pequena` |
 | `falta.leyenda.a_pie` | Los minutos a pie son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Desde la mitad de las calles de la zona se llega en ese tiempo o menos. | Debajo de los estados. Mismo método que `pitch/metodologia.md` §1.5 |
@@ -320,14 +352,16 @@ Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su t
 
 **Nombres de las 6 filas** (D-194). La API los manda en `label`; estos son los de respaldo, iguales que `gap_row.label` del catálogo (`data/catalog/features/`):
 
-| Clave | Texto | Qué mide (lo manda la API en la fila) |
+| Clave | Texto | `fila.mide.*`: qué mide (gap-0.3; la API manda su propia etiqueta en `indicator.label`) |
 |---|---|---|
-| `fila.escuela_infantil` | Escuelas infantiles | Escuelas infantiles por cada 1.000 niños de 0 a 4 años |
-| `fila.colegio` | Colegios | Colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años |
-| `fila.centro_salud` | Centros de salud | Centros de atención primaria por cada 10.000 habitantes |
-| `fila.mayores` | Centros de mayores | Hogares, clubes y centros de día por cada 1.000 personas de 65 años o más |
-| `fila.farmacia` | Farmacias | Farmacias por cada 10.000 habitantes |
+| `fila.escuela_infantil` | Escuelas infantiles | Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca |
+| `fila.colegio` | Colegios | Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca |
+| `fila.centro_salud` | Centros de salud | Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca |
+| `fila.mayores` | Centros de mayores | Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca |
+| `fila.farmacia` | Farmacias | Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca |
 | `fila.vivienda` | Vivienda para familias | Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas. En los distritos de Madrid, SIN DATOS (`SOURCE_MISSING`) |
+
+Los textos de `fila.mide.*` son los de B (`ROW_MEASURE` en `gaps.ts`), definitivos el 12 nov. Las cifras de antes (centros por habitante) siguen como datos extra de cada fila (D-217 §3).
 
 **Por qué falta un dato** (cuando `indicator.value` es `null`, la API manda `null_reason`):
 
@@ -342,6 +376,26 @@ Desde D-213 (`gap-0.2`) cada zona se compara con **los demás municipios de su t
 | `ENTITY_NOT_RESOLVED` | No hemos podido situar este dato en el mapa. |
 | `ESTIMATION_NOT_ALLOWED` | No hay dato oficial y preferimos no inventarlo. |
 | `UNKNOWN` | No sabemos este dato. |
+
+## 5b. «Todos los centros» de una zona (D-216, D-218)
+Panel de la vista de zona con cada tipo de centro, su recuento, su capa en el mapa y su lista. Los nombres y las camas llegan de `/places` (`places-1`).
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `centros.titulo` | Todos los centros | |
+| `centros.ver` | Ver en el mapa | Un tipo de centro a la vez |
+| `centros.elige` | Toca un tipo de centro para verlo en el mapa. | Sin tipo elegido |
+| `centros.cargando` | Buscando los centros de {zona}… | |
+| `centros.lista` | Ver la lista ({n}) | |
+| `centros.colegios_fila` | Públicos y concertados: los mismos que cuenta «Qué falta». | Bajo el recuento de colegios |
+| `centros.sin_nombre` | La fuente oficial no publica el nombre de cada centro de este tipo. | |
+| `centros.recuento.colegio` | {n} colegios con primaria en {zona} · 1 colegio con primaria en {zona} · Ningún colegio con primaria en {zona} | |
+| `centros.recuento.escuela_infantil` | {n} escuelas infantiles en {zona} · 1 escuela infantil en {zona} · Ninguna escuela infantil en {zona} | |
+| `centros.recuento.centro_salud` | {n} centros de salud y consultorios en {zona} · 1 centro de salud o consultorio en {zona} · Ningún centro de salud ni consultorio en {zona} | Cambia el 12 nov: la lista incluye los consultorios |
+| `centros.recuento.hospital` | {n} hospitales en {zona} · 1 hospital en {zona} · Ningún hospital en {zona} | Generales, especializados, de media y larga estancia y de salud mental, cada uno con su etiqueta en la lista |
+| `centros.recuento.farmacia` | {n} farmacias en {zona} · 1 farmacia en {zona} · Ninguna farmacia en {zona} | |
+| `centros.recuento.mayores` | {n} centros de mayores en {zona} · 1 centro de mayores en {zona} · Ningún centro de mayores en {zona} | Hogares, clubes y centros de día; las residencias no salen (la fila es la misma) |
+| `centro.detalle` | {nombre} · {capacidad} · ubicación aproximada | Cada parte solo si la API la manda. {capacidad} = `capacity.value` y `capacity.unit` («966 camas instaladas», «120 plazas autorizadas»). «ubicación aproximada» si `coordinates` es `geocoded` (D-216 §3) |
 
 ---
 
@@ -434,13 +488,15 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 
 | Clave | Texto | Enlace | Notas |
 |---|---|---|---|
-| `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid + Ayuntamiento de Madrid + CRTM | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`. Hoy 21. El Ayuntamiento ya se usa (padrón y panel de distritos, D-209) |
+| `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`: 23 en producción el 12 nov. Cambia el 12 nov: los 6 del CRTM ya están dentro de {n}, y el Ministerio de Sanidad se usa desde D-218 |
 | `pie.cm` | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. | https://datos.comunidad.madrid | |
 | `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. | https://www.crtm.es | Obligatorio con enlace |
 | `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. | https://datos.madrid.es | En uso desde DATA-012 (padrón y panel de distritos). Condiciones vigentes: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); no fijan un texto de cita, así que se usa el `attribution_text` del catálogo con la licencia añadida |
 | `pie.osm` | © OpenStreetMap contributors, ODbL. | https://www.openstreetmap.org/copyright | Red peatonal (`osm_red_peatonal`) |
+| `pie.sanidad` | Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). | https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm | **Nuevo, obligatorio:** el aviso legal pide citar la fuente y la fecha de actualización (`data/catalog/sources/ministerio_sanidad.yaml`, D-218 §1). Hoy la web no lo cita |
+| `pie.cartociudad` | Geocodificación: CartoCiudad (IGN), CC BY 4.0 scne.es. | https://www.cartociudad.es | **Nuevo, obligatorio:** coloca los centros marcados «ubicación aproximada» (`data/catalog/sources/ign_cartociudad.yaml`, D-216 §3). Hoy la web no lo cita |
 | `pie.mapa_base` | Mapa: OpenFreeMap © OpenMapTiles. Datos de © OpenStreetMap. | openfreemap.org · openmaptiles.org · openstreetmap.org/copyright | Texto del ejemplo de OpenFreeMap. Hecho: el mapa de producción ya pinta «OpenFreeMap © OpenMapTiles Data from OpenStreetMap» en su esquina, así que en el pie no se repite (capturas `prod_*` de `evidence/map-004/2026-11-11/`) |
-| `pie.independiente` | Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento ni del CRTM. | | Cumple el «no sugerir respaldo» del CRTM y evita parecer un servicio oficial |
+| `pie.independiente` | Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad. | | Cumple el «no sugerir respaldo» del CRTM y evita parecer un servicio oficial. Cambia el 12 nov: suma el Ministerio |
 | `pie.proyecto` | Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026 | | «Housing Intelligence» solo como plataforma o equipo (D-199) |
 | `pie.codigo` | Código abierto (Apache-2.0) | https://github.com/marianohernando/housing-intelligence | D-191 |
 | `pie.como` | Cómo lo calculamos | Pestaña | |
