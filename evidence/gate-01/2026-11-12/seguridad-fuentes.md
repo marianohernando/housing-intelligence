@@ -17,7 +17,7 @@ Ninguna fuente tiene filas por persona residente. El fichero de accidentes trae 
 - Ítem: «Percepción de seguridad en el barrio o la zona donde vive durante la noche», de 0 a 10. Son los vecinos valorando su propio barrio, así que no tiene el problema de denominador de D-224 (no cuenta a quien está de paso).
 - Valores de 2025, de noche: Madrid 6,4; Villaverde 4,9; Puente de Vallecas 5,1; Usera 5,2; Carabanchel 5,8; Tetuán, Villa de Vallecas y San Blas-Canillejas 6,1; Latina y Ciudad Lineal 6,2; Centro y Vicálvaro 6,5; Moratalaz 6,8; Arganzuela y Hortaleza 7,0; Fuencarral-El Pardo 7,2; Chamartín y Moncloa-Aravaca 7,3; Retiro 7,4; Salamanca 7,5; Chamberí y Barajas 7,7. De día, Madrid 7,8 (de 6,8 a 8,6).
 - **El panel coincide con la encuesta** en los 21 distritos comprobados (noche: Villaverde 4,9, Chamberí 7,7, Centro 6,5, Hortaleza 7,0…). Se puede leer del panel, que ya se carga.
-- **Riesgo de estigma:** los valores más bajos son de distritos con menos renta. Por eso, si se enseña, va como lo que es («así valoran sus vecinos la seguridad de su barrio de noche»), con la media de Madrid y sin colores de alarma ni palabras como «peligroso» (D-075, CLAUDE.md §11).
+- **Riesgo de estigma:** una cifra baja puede leerse como una etiqueta del barrio. Por eso, si se enseña, va como lo que es («así valoran sus vecinos la seguridad de su barrio de noche»), con la media de Madrid y sin colores de alarma ni palabras como «peligroso» (D-075, CLAUDE.md §11).
 
 ## 3. Policía Municipal: actuaciones de seguridad ciudadana en 2025
 Suma de los 12 ficheros mensuales de 2025 (hoja «SEGURIDAD»). La fila «SIN DISTRITO ASIGNADO» vale 0. Totales de la ciudad: personas 1.961, patrimonio 4.035, armas 566, tenencia de drogas 6.784 y consumo de drogas 635.

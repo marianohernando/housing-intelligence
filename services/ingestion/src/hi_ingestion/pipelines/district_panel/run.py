@@ -22,7 +22,7 @@ from hi_ingestion.pipelines.stat_tables.quality import (
 )
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
-PARSER_VERSION = "madrid_district_panel-1.2.0"  # 1.2: city indicators, one row per date
+PARSER_VERSION = "madrid_district_panel-1.2.1"  # 1.2: city indicators, one row per date
 
 
 def run_panel_quality(

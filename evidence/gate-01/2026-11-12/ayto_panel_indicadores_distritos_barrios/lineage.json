@@ -11,8 +11,8 @@
     }
   ],
   "checksum": "4726abc60a15e411263beefe17506575bb979498132ece33c97c0740369ffc9d",
-  "parser_version": "madrid_district_panel-1.2.0",
+  "parser_version": "madrid_district_panel-1.2.1",
   "dataset_version": "2026-11-11-4726abc60a15",
-  "correlation_id": "e6c59179e7fc402b8884ffe6d579b756",
+  "correlation_id": "984910a6a24f4e268727e6d244ef899d",
   "silver": "data/silver/ayto_panel_indicadores_distritos_barrios/4726abc60a15/observations.csv.gz"
 }

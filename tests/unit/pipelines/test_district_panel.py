@@ -155,3 +155,55 @@ def test_quarantine_points_at_the_source_row_and_lost_district_codes_are_not_hid
     assert obs.quarantine["source_row"].tolist() == [position]
     city = int((rows["cod_distrito"] == "").sum()) - 1
     assert obs.out_of_window == city  # only the real city rows are outside the scope
+
+
+def test_a_duplicate_inside_one_edition_is_not_hidden(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """Only repeats across editions collapse: a repeat inside one edition fails unique_keys."""
+    row = source.loc[
+        (source["Periodo panel"] == "2026")
+        & (source["cod_distrito"] == "1")
+        & (source["cod_barrio"] == "")
+        & (source["indicador_completo"] == "Total hogares")
+    ]
+    assert len(row) == 1
+    doubled = pd.concat([source, row], ignore_index=True)
+    obs = normalize(doubled, spec)
+    sample = spec.model_copy(update={"expected_districts": 3})
+    report = run_panel_quality(obs, sample, load_catalog().metrics, SAMPLE_DISTRICTS)
+    assert not report.passed
+    failed = {c.name for c in report.checks if c.critical and not c.passed}
+    assert failed == {"unique_keys"}
+
+
+def test_an_edition_that_is_not_a_year_goes_to_quarantine(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    rows = source.loc[
+        (source["indicador_completo"] == "Total hogares")
+        & (source["cod_distrito"] == "1")
+        & (source["cod_barrio"] == "")
+    ].copy()
+    rows.loc[rows.index[0], "Periodo panel"] = ""
+    obs = normalize(rows.reset_index(drop=True), spec)
+    assert len(obs.quarantine) == 1
+    assert "edition" in obs.quarantine["reason"].iloc[0]
+
+
+def test_the_city_row_has_no_district_name(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    city = normalize(source, spec).frame
+    assert city.loc[city["territory_level"] == "municipio", "territory_name"].isna().all()
+
+
+def test_a_city_row_without_city_indicators_fails_quality(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """With no city indicators no municipio is expected: one that slips in is unknown."""
+    obs = normalize(source, spec)
+    plain = spec.model_copy(update={"expected_districts": 3, "city_indicators": []})
+    report = run_panel_quality(obs, plain, load_catalog().metrics, SAMPLE_DISTRICTS)
+    failed = {c.name for c in report.checks if c.critical and not c.passed}
+    assert failed == {"municipios_resolve_to_geography"}

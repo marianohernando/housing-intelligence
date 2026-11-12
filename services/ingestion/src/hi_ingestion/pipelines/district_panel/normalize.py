@@ -4,7 +4,9 @@ Rows of other indicators, of barrios or of the whole city are outside the scope:
 counted (`out_of_window`), not quarantined. The city row is the one with neither district code
 nor district name; a row with a name but no code lost its code and goes to quarantine. The
 city row of a `city_indicators` indicator is kept as the municipio (D-226). A reference date
-carried by several panel editions is kept once, from the latest edition (a revision).
+carried by several panel editions is kept once, from the latest edition (a revision); a repeat
+inside one edition is left for the `unique_keys` check to fail. An edition that is not a year
+goes to quarantine.
 `source_rows` counts the rows in scope, so the quarantine ratio measures what the pipeline
 actually reads; `source_row` in the quarantine is the position in the source file.
 """
@@ -65,7 +67,9 @@ def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict
         "metric_id": spec.indicators[row[spec.indicator_column]],
         "territory_level": level,
         "territory_code": code,
-        "territory_name": row[spec.district_name_column] if spec.district_name_column else None,
+        "territory_name": (row[spec.district_name_column] or None)
+        if spec.district_name_column
+        else None,
         "admin_unit_id": admin_unit_id(level, code),
         "period_start": day,
         "period_end": day,
@@ -78,23 +82,28 @@ def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict
     }
 
 
-def _edition(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> str:
-    return str(row.get(spec.edition_column) or "")
+def _edition(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> int:
+    raw = str(row.get(spec.edition_column) or "").strip()
+    if not raw.isdigit():
+        msg = f"panel edition {raw!r} is not a year"
+        raise RowError(msg)
+    return int(raw)
 
 
-def latest_edition(rows: list[tuple[str, dict[str, Any]]]) -> list[dict[str, Any]]:
-    """One observation per key: the one from the latest panel edition (stable otherwise)."""
-    ordered = sorted(enumerate(rows), key=lambda item: (item[1][0], item[0]))
-    kept: dict[tuple[Any, ...], dict[str, Any]] = {}
-    for _, (_, observation) in ordered:
-        kept[tuple(observation[k] for k in KEY)] = observation
-    return list(kept.values())
+def latest_edition(rows: list[tuple[int, dict[str, Any]]]) -> list[dict[str, Any]]:
+    """Per key, the observations of the latest panel edition that carries it, in file order.
+    Older editions are revisions and drop out; two rows of the same edition both stay."""
+    latest: dict[tuple[Any, ...], int] = {}
+    for edition, observation in rows:
+        key = tuple(observation[k] for k in KEY)
+        latest[key] = max(edition, latest.get(key, edition))
+    return [obs for edition, obs in rows if latest[tuple(obs[k] for k in KEY)] == edition]
 
 
 def normalize(frame: pd.DataFrame, spec: MadridDistrictPanelPipeline) -> Observations:
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
     in_scope = [(index, row) for index, row in enumerate(records) if _in_scope(row, spec)]
-    rows: list[tuple[str, dict[str, Any]]] = []
+    rows: list[tuple[int, dict[str, Any]]] = []
     bad: list[dict[str, Any]] = []
     for index, row in in_scope:
         try:

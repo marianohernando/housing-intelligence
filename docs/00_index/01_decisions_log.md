@@ -1119,7 +1119,7 @@ DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con 
    - Es la medida más cercana a «seguridad para quien vive allí»: los vecinos valoran su propio barrio, así que no tiene el problema de denominador de D-224.
    - Se lee del panel de indicadores que ya se carga: sus valores coinciden con la encuesta en los 21 distritos. Va con la media de Madrid (6,4 de noche y 7,8 de día en 2025).
    - No puntúa, no ordena zonas y no entra en «Qué falta».
-   - Se enseña con lo que es: «así valoran sus vecinos la seguridad de su barrio», con el año y el tamaño de la muestra. Sin colores de alarma ni palabras como «peligroso»: los valores bajos coinciden con los distritos de menos renta.
+   - Se enseña con lo que es: «así valoran sus vecinos la seguridad de su barrio», con el año y el tamaño de la muestra. Sin colores de alarma ni palabras como «peligroso»: una cifra baja no puede convertirse en una etiqueta del barrio.
 2. **Actuaciones de la Policía Municipal: la fuente existe y es abierta, pero no se lee del panel.**
    - La copia del panel repite valores entre distritos distintos y no coincide con los ficheros mensuales. Por ejemplo, Salamanca tiene 57 actuaciones de patrimonio en el panel y 349 en la fuente.
    - Si entra, será desde la fuente mensual (12 XLSX por año, un pipeline nuevo). Solo las actuaciones relacionadas con las personas y con el patrimonio, por 1.000 habitantes del padrón (D-209) en 12 meses, con la media de la ciudad.
@@ -1136,6 +1136,11 @@ DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con 
    - features `seguridad_percibida_noche` y `seguridad_percibida_dia`, de dominio `safety`, sin `fit` ni `gap_row` (un test lo exige para todo el dominio);
    - el panel conserva la fila de la ciudad de estos dos indicadores como el municipio 28079 (`city_indicators`), que da la referencia;
    - cuando dos ediciones del panel repiten una fecha (2019 sale en las de 2020 y 2021), se queda una observación, la de la edición más reciente (parser `madrid_district_panel-1.2.0`);
-   - confidence 0,9 por distrito (unas 400 personas) y 1,0 para la ciudad;
+   - confidence 0,9 por distrito (unas 400 personas) y 0,95 para la ciudad (8.893). Es un juicio editorial: el Ayuntamiento no publica el error de estas medias. No cambia ningún orden, porque no puntúan;
    - la API ya los sirve en `GET /features/{id}/values` sin cambiar código;
    - la Policía Municipal desde la fuente mensual queda pendiente.
+7. **Revisión (`reviewer`, F2b):**
+   - solo se funden las fechas repetidas entre ediciones distintas del panel; un duplicado dentro de una misma edición llega al check crítico `unique_keys` y lo hace fallar;
+   - una edición que no es un año va a cuarentena;
+   - la fila de la ciudad no lleva nombre de distrito;
+   - las limitaciones públicas de las features no llevan cifras que caducan ni afirmaciones sin evidencia.

@@ -1,6 +1,6 @@
 # DATA-020 F2 · Seguridad percibida por los vecinos (D-226)
 
-Base local, 12 nov. Panel recargado desde el mismo Bronze (`11a758e6249d`) con el parser `madrid_district_panel-1.2.0`, más `hi-features compute` de las dos features. Son datos de contexto: no tienen enlace `fit` ni `gap_row`, así que ni el buscador ni «Qué falta» los leen (`tests/data/test_catalog.py::test_safety_is_context_never_a_score`).
+Base local, 12 nov. Panel recargado desde el mismo Bronze (`11a758e6249d`) con el parser `madrid_district_panel-1.2.1`, más `hi-features compute` de las dos features. Son datos de contexto: no tienen enlace `fit` ni `gap_row`, así que ni el buscador ni «Qué falta» los leen (`tests/data/test_catalog.py::test_safety_is_context_never_a_score`).
 
 ## Valores de 2025 (de 0 a 10)
 
@@ -15,7 +15,7 @@ Base local, 12 nov. Panel recargado desde el mismo Bronze (`11a758e6249d`) con e
 | San Blas-Canillejas | 2807920 | 6.1 | 7.4 | 0.9 |
 | Latina | 2807910 | 6.2 | 7.5 | 0.9 |
 | Ciudad Lineal | 2807915 | 6.2 | 7.7 | 0.9 |
-| Madrid | 28079 | 6.4 | 7.8 | 1.0 |
+| Madrid | 28079 | 6.4 | 7.8 | 0.95 |
 | Centro | 2807901 | 6.5 | 7.9 | 0.9 |
 | Vicálvaro | 2807919 | 6.5 | 7.9 | 0.9 |
 | Moratalaz | 2807914 | 6.8 | 8.1 | 0.9 |
