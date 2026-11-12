@@ -9,7 +9,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/1934259",
       "version": "2026-11-10-7a83b45c1f51",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_alquiler_m2_municipios",
@@ -18,7 +19,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
       "version": "2026-11-10-19b2da9645e3",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_centros_atencion_social",
@@ -27,7 +29,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
       "version": "2026-11-10-1332ab0048a6",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_educativos",
@@ -36,7 +39,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
       "version": "2026-10-21-27483ff8498b",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_sanitarios",
@@ -45,7 +49,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
       "version": "2026-11-12-9e1911cf514f",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_dotacion_camas",
@@ -54,7 +59,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/1912720",
       "version": "2026-11-12-db9e8751577e",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_farmacias_municipios",
@@ -63,7 +69,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/farmacias",
       "version": "2026-11-10-a2011625bc89",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_hogares_tamano_censo_2021",
@@ -72,7 +79,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
       "version": "2026-11-10-acfd552e1c9c",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_hospitales_datos_asistenciales",
@@ -81,7 +89,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/1912744",
       "version": "2026-11-12-254596b46ee3",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_nacidos_vivos_municipios",
@@ -90,7 +99,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo",
       "version": "2026-11-10-9119056a0e09",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_oficinas_farmacia",
@@ -99,7 +109,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
       "version": "2026-11-10-de61d48d7b4a",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -108,7 +119,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
       "version": "2026-11-10-de171e22295d",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_renta_disponible_municipal",
@@ -117,7 +129,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/irpf_indicador_renta",
       "version": "2026-11-10-ed4ec9cec646",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_secciones_censales",
@@ -126,7 +139,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
       "version": "2026-10-20-37703ffcdfd0",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_unidades_escolares",
@@ -135,7 +149,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
       "version": "2026-11-10-bdf7c1ff864a",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_viviendas_superficie",
@@ -144,7 +159,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
       "version": "2026-11-10-382a7f2ff74a",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_viviendas_tenencia_censo_2021",
@@ -153,7 +169,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia",
       "version": "2026-11-10-048892fa99bc",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "crtm_gtfs_autobuses_urbanos",
@@ -162,7 +179,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
       "version": "2026-11-10-41f7f9c15b61",
-      "license": "CRTM Licencia de datos abiertos (LDA)"
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
     },
     {
       "dataset_id": "crtm_gtfs_cercanias",
@@ -171,7 +189,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
       "version": "2026-11-10-1b018a22325c",
-      "license": "CRTM Licencia de datos abiertos (LDA)"
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
     },
     {
       "dataset_id": "crtm_gtfs_emt",
@@ -180,7 +199,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia",
       "version": "2026-11-10-8478ae5c9262",
-      "license": "CRTM Licencia de datos abiertos (LDA)"
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
     },
     {
       "dataset_id": "crtm_gtfs_interurbanos",
@@ -189,7 +209,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia",
       "version": "2026-11-10-5bbf3c95047c",
-      "license": "CRTM Licencia de datos abiertos (LDA)"
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
     },
     {
       "dataset_id": "crtm_gtfs_metro",
@@ -198,7 +219,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
       "version": "2026-11-10-cccabfd6f025",
-      "license": "CRTM Licencia de datos abiertos (LDA)"
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
     },
     {
       "dataset_id": "crtm_gtfs_metro_ligero",
@@ -207,7 +229,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
       "version": "2026-11-10-599f9acfa270",
-      "license": "CRTM Licencia de datos abiertos (LDA)"
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
     },
     {
       "dataset_id": "ayto_padron_municipal",
@@ -216,7 +239,8 @@
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/200076-0-padron",
       "version": "2026-11-11-f052edc26159",
-      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
     },
     {
       "dataset_id": "ayto_panel_indicadores_distritos_barrios",
@@ -225,7 +249,8 @@
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
       "version": "2026-11-11-4726abc60a15",
-      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
     },
     {
       "dataset_id": "ms_catalogo_centros_atencion_primaria",
@@ -234,7 +259,8 @@
       "is_cm_open_data": false,
       "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/centrosSalud/home.htm",
       "version": "2026-11-12-260312fa3bc8",
-      "license": "Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)"
+      "license": "Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)",
+      "attribution_text": "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad."
     },
     {
       "dataset_id": "ms_catalogo_nacional_hospitales",
@@ -243,7 +269,8 @@
       "is_cm_open_data": false,
       "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm",
       "version": "2026-11-12-e5148a11b523",
-      "license": "Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)"
+      "license": "Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)",
+      "attribution_text": "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad."
     },
     {
       "dataset_id": "osm_red_peatonal",
@@ -252,7 +279,8 @@
       "is_cm_open_data": false,
       "url": "https://download.geofabrik.de/europe/spain/madrid.html",
       "version": "2026-11-11-a3206c2d1d5f",
-      "license": "Open Database License (ODbL) 1.0"
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
     }
   ]
 }

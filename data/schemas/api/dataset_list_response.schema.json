@@ -35,6 +35,19 @@
       "additionalProperties": false,
       "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
       "properties": {
+        "attribution_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the licence asks to show next to the data (source, date, geocoder)",
+          "title": "Attribution Text"
+        },
         "dataset_id": {
           "pattern": "^[a-z][a-z0-9_]{2,95}$",
           "title": "Dataset Id",

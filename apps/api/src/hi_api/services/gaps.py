@@ -10,6 +10,7 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
+from hi_api.services.attribution import GEOCODER_SOURCE, attribution_text
 from hi_api.services.gap_reference import (
     Assessment,
     References,
@@ -76,7 +77,13 @@ _VALUES = text(
 _DATASETS = text(
     """
     SELECT d.dataset_id, d.name, d.owner, coalesce(d.portal_url, d.landing_url) AS url,
-           d.is_cm_open_data, s.license_name
+           d.is_cm_open_data, s.license_name,
+           s.attribution_text,
+           EXISTS (SELECT 1 FROM place_master p
+                    WHERE p.official_dataset_id = d.dataset_id
+                      AND p.attributes->'coordinates'->>'origin' = 'geocoded') AS geocoded,
+           (SELECT g.attribution_text FROM source_registry g
+             WHERE g.source_id = :geocoder) AS geocoder_attribution
       FROM dataset_registry d JOIN source_registry s ON s.source_id = d.source_id
      WHERE d.dataset_id = ANY(:ids)
      ORDER BY d.dataset_id
@@ -113,7 +120,8 @@ def zone_ref(conn: Connection, level: TerritoryLevel, code: str) -> ZoneRef:
 
 
 def dataset_refs(conn: Connection, versions: dict[str, str]) -> list[DatasetRef]:
-    rows = conn.execute(_DATASETS, {"ids": sorted(versions)}).mappings().all()
+    params = {"ids": sorted(versions), "geocoder": GEOCODER_SOURCE}
+    rows = conn.execute(_DATASETS, params).mappings().all()
     return [
         DatasetRef.model_validate(
             {
@@ -124,6 +132,7 @@ def dataset_refs(conn: Connection, versions: dict[str, str]) -> list[DatasetRef]
                 "url": r["url"],
                 "version": versions.get(r["dataset_id"]),
                 "license": r["license_name"],
+                "attribution_text": attribution_text(r),
             }
         )
         for r in rows

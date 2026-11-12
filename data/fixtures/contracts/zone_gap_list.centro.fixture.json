@@ -80,7 +80,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_centros_educativos",
@@ -89,7 +90,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
           "version": "2026-10-21-27483ff8498b",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -98,7 +100,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_secciones_censales",
@@ -107,7 +110,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
           "version": "2026-10-20-37703ffcdfd0",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "osm_red_peatonal",
@@ -116,7 +120,8 @@
           "is_cm_open_data": false,
           "url": "https://download.geofabrik.de/europe/spain/madrid.html",
           "version": "2026-11-11-a3206c2d1d5f",
-          "license": "Open Database License (ODbL) 1.0"
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
         }
       ]
     },
@@ -184,7 +189,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_centros_educativos",
@@ -193,7 +199,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
           "version": "2026-10-21-27483ff8498b",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -202,7 +209,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_secciones_censales",
@@ -211,7 +219,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
           "version": "2026-10-20-37703ffcdfd0",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_unidades_escolares",
@@ -220,7 +229,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
           "version": "2026-11-10-bdf7c1ff864a",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "osm_red_peatonal",
@@ -229,7 +239,8 @@
           "is_cm_open_data": false,
           "url": "https://download.geofabrik.de/europe/spain/madrid.html",
           "version": "2026-11-11-a3206c2d1d5f",
-          "license": "Open Database License (ODbL) 1.0"
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
         }
       ]
     },
@@ -309,7 +320,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_centros_sanitarios",
@@ -318,7 +330,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
           "version": "2026-11-11-ba0e65311c5b",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -327,7 +340,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_secciones_censales",
@@ -336,7 +350,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
           "version": "2026-10-20-37703ffcdfd0",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "osm_red_peatonal",
@@ -345,7 +360,8 @@
           "is_cm_open_data": false,
           "url": "https://download.geofabrik.de/europe/spain/madrid.html",
           "version": "2026-11-11-a3206c2d1d5f",
-          "license": "Open Database License (ODbL) 1.0"
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
         }
       ]
     },
@@ -425,7 +441,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_centros_atencion_social",
@@ -434,7 +451,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
           "version": "2026-11-10-1332ab0048a6",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -443,7 +461,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_secciones_censales",
@@ -452,7 +471,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
           "version": "2026-10-20-37703ffcdfd0",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "osm_red_peatonal",
@@ -461,7 +481,8 @@
           "is_cm_open_data": false,
           "url": "https://download.geofabrik.de/europe/spain/madrid.html",
           "version": "2026-11-11-a3206c2d1d5f",
-          "license": "Open Database License (ODbL) 1.0"
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
         }
       ]
     },
@@ -528,7 +549,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_oficinas_farmacia",
@@ -537,7 +559,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
           "version": "2026-11-10-de61d48d7b4a",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -546,7 +569,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_secciones_censales",
@@ -555,7 +579,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
           "version": "2026-10-20-37703ffcdfd0",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "osm_red_peatonal",
@@ -564,7 +589,8 @@
           "is_cm_open_data": false,
           "url": "https://download.geofabrik.de/europe/spain/madrid.html",
           "version": "2026-11-11-a3206c2d1d5f",
-          "license": "Open Database License (ODbL) 1.0"
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
         }
       ]
     },
@@ -615,7 +641,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "ayto_panel_indicadores_distritos_barrios",
@@ -624,7 +651,8 @@
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
           "version": "2026-11-11-4726abc60a15",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_hogares_tamano_censo_2021",
@@ -633,7 +661,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
           "version": "2026-11-10-acfd552e1c9c",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -642,7 +671,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_secciones_censales",
@@ -651,7 +681,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
           "version": "2026-10-20-37703ffcdfd0",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         },
         {
           "dataset_id": "cm_viviendas_superficie",
@@ -660,7 +691,8 @@
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
           "version": "2026-11-10-382a7f2ff74a",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         }
       ]
     }
@@ -673,7 +705,8 @@
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/200076-0-padron",
       "version": "2026-11-11-f052edc26159",
-      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
     },
     {
       "dataset_id": "ayto_panel_indicadores_distritos_barrios",
@@ -682,7 +715,8 @@
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
       "version": "2026-11-11-4726abc60a15",
-      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
     },
     {
       "dataset_id": "cm_centros_atencion_social",
@@ -691,7 +725,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
       "version": "2026-11-10-1332ab0048a6",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_educativos",
@@ -700,7 +735,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
       "version": "2026-10-21-27483ff8498b",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_sanitarios",
@@ -709,7 +745,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
       "version": "2026-11-11-ba0e65311c5b",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_hogares_tamano_censo_2021",
@@ -718,7 +755,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
       "version": "2026-11-10-acfd552e1c9c",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_oficinas_farmacia",
@@ -727,7 +765,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
       "version": "2026-11-10-de61d48d7b4a",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: CartoCiudad, CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -736,7 +775,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
       "version": "2026-11-10-de171e22295d",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_secciones_censales",
@@ -745,7 +785,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
       "version": "2026-10-20-37703ffcdfd0",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_unidades_escolares",
@@ -754,7 +795,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
       "version": "2026-11-10-bdf7c1ff864a",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "cm_viviendas_superficie",
@@ -763,7 +805,8 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
       "version": "2026-11-10-382a7f2ff74a",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
       "dataset_id": "osm_red_peatonal",
@@ -772,7 +815,8 @@
       "is_cm_open_data": false,
       "url": "https://download.geofabrik.de/europe/spain/madrid.html",
       "version": "2026-11-11-a3206c2d1d5f",
-      "license": "Open Database License (ODbL) 1.0"
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
     }
   ]
 }

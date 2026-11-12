@@ -4,6 +4,10 @@
  * `npm run -w apps/web contracts`.
  */
 
+/**
+ * What the licence asks to show next to the data (source, date, geocoder)
+ */
+export type AttributionText = string | null;
 export type DatasetId = string;
 /**
  * Published in the Comunidad de Madrid open data portal (counts for DATAMAD)
@@ -168,6 +172,7 @@ export interface ZoneGapList {
  * Provenance of a result: the dataset, who publishes it and where to open it.
  */
 export interface DatasetRef {
+  attribution_text?: AttributionText;
   dataset_id: DatasetId;
   is_cm_open_data: IsCmOpenData;
   license?: License;

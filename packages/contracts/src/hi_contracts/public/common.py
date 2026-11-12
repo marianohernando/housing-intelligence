@@ -41,6 +41,10 @@ class DatasetRef(BaseModel):
     url: HttpUrl | None = Field(default=None, description="Portal page (CM portal when it exists)")
     version: str | None = Field(default=None, description="dataset_version label used")
     license: str | None = None
+    attribution_text: str | None = Field(
+        default=None,
+        description="What the licence asks to show next to the data (source, date, geocoder)",
+    )
 
 
 class IndicatorValue(BaseModel):

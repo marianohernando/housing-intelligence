@@ -189,6 +189,14 @@ def test_dataset_list_counts_cm_open_data(client: TestClient) -> None:
     assert every.cm_open_data_count == cm.total
 
 
+def test_every_dataset_carries_the_attribution_its_licence_asks_for(client: TestClient) -> None:
+    every = DatasetListResponse.model_validate(client.get("/api/v1/datasets").json()).data
+    by_id = {d.dataset_id: d for d in every.datasets}
+    hospitals = by_id["ms_catalogo_nacional_hospitales"].attribution_text or ""
+    assert "Ministerio de Sanidad" in hospitals and "actualizado a" in hospitals
+    assert all(d.attribution_text for d in every.datasets)  # every source used declares one
+
+
 def test_unknown_zone_is_404_and_unsupported_level_is_422(client: TestClient) -> None:
     assert client.get("/api/v1/gaps/municipio/28999").status_code == 404
     assert client.get("/api/v1/gaps/h3_r9/89390cb1b0bffff").status_code == 422

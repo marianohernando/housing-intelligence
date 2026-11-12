@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.35 — Atribución por dataset (2026-11-12)
+- `04_technical_architecture/31_public_api_routes.md`: `DatasetRef.attribution_text` (petición de B), desde el catálogo de fuentes y con CartoCiudad en los datasets geocodificados.
+
 ## v0.5.34 — Revisión del transporte público (2026-11-12)
 - D-220 §8: ajustes de la revisión (tiempo mínimo de transbordo a pie, zonas fuera de la matriz, texto del Reality Check) y caso demo con Fuencarral-El Pardo primera.
 
