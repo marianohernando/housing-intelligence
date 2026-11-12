@@ -34,22 +34,23 @@ const STATUS_ROWS: [string, string][] = [
   ["no tenemos el dato", "SIN DATOS"],
 ];
 
-// What each row counts as capacity and for whom (D-217 §3): only what is published, never estimated per centre
+// What each row counts as capacity and for whom (D-217 §3), as a list in every size (metodologia §1.4):
+// with three columns, a phone fitted two or three words per line (review of PR #17)
 const ROW_CAPACITY: [string, string, string][] = [
-  ["Escuelas infantiles", "Cada escuela, pública o privada, cuenta como una: nadie publica sus plazas", "Niños de 0 a 4 años"],
+  ["Escuelas infantiles", "niños de 0 a 4 años", "cada escuela, pública o privada, cuenta como una, porque nadie publica sus plazas."],
   [
     "Colegios",
-    "Aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios",
-    "Niños de 5 a 14 años",
+    "niños de 5 a 14 años",
+    "aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios.",
   ],
   [
     "Centros de salud",
-    "Cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad",
-    "Todos los vecinos",
+    "todos los vecinos",
+    "cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad.",
   ],
-  ["Mayores", "Plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte", "Personas de 65 años o más"],
-  ["Farmacias", "Cada farmacia cuenta como una", "Todos los vecinos"],
-  ["Vivienda", "No va a pie: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", "Hogares de 4 o más personas"],
+  ["Mayores", "personas de 65 años o más", "plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte."],
+  ["Farmacias", "todos los vecinos", "cada farmacia cuenta como una."],
+  ["Vivienda", "hogares de 4 o más personas", "no va a pie. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares."],
 ];
 
 function GapMethod() {
@@ -72,24 +73,13 @@ function GapMethod() {
       <p className={styles.para}>
         <strong>Qué cuenta en cada servicio.</strong> Solo lo que se publica; nunca nos lo inventamos centro a centro.
       </p>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th scope="col">Servicio</th>
-            <th scope="col">Qué cuenta</th>
-            <th scope="col">Para quién</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ROW_CAPACITY.map(([row, what, who]) => (
-            <tr key={row}>
-              <th scope="row">{row}</th>
-              <td>{what}</td>
-              <td>{who}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul className={styles.text}>
+        {ROW_CAPACITY.map(([row, who, what]) => (
+          <li key={row}>
+            <strong>{row},</strong> para {who}: {what}
+          </li>
+        ))}
+      </ul>
       <p className={styles.para}>
         <strong>Con qué comparamos.</strong> Hacemos la misma cuenta en <strong>los demás municipios de su mismo tipo</strong>{" "}
         en la Comunidad de Madrid: los rurales con los rurales y los urbanos con los urbanos. Rural es lo que dice la ley de
@@ -98,8 +88,8 @@ function GapMethod() {
       </p>
       <p className={styles.para}>
         ¿Por qué no con toda la región? Porque un pueblo pequeño suele tener su escuela infantil y pocos niños: a pie y por
-        niño, los municipios rurales tienen unas 2,5 veces más escuelas infantiles que los urbanos (12,3 frente a 4,9 por
-        cada 1.000 niños). Con la media de toda la región, a cualquier ciudad le faltaría de todo.
+        niño, los municipios rurales tienen más del doble de escuelas infantiles que los urbanos (unas 12 por cada 1.000
+        niños, frente a menos de 5). Con la media de toda la región, a cualquier ciudad le faltaría de todo.
       </p>
       <table className={styles.table}>
         <thead>
@@ -144,8 +134,9 @@ function GapMethod() {
         <strong>El hospital.</strong> En la fila de centros de salud verás también los minutos a pie hasta el hospital
         general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias:
         ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. No cuenta para el estado de la fila: a un
-        hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre de cada hospital y sus camas
-        instaladas, del Catálogo Nacional de Hospitales del Ministerio de Sanidad.
+        hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre y las camas instaladas de los
+        hospitales que hemos podido identificar en el Catálogo Nacional de Hospitales del Ministerio de Sanidad; de unos
+        pocos solo sabemos el tipo y el municipio.
       </p>
       <p className={styles.para}>
         Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas, no con una norma oficial
@@ -235,8 +226,9 @@ function Limits() {
           Madrid, no en cada portal: la repartimos entre sus calles según su longitud.
         </li>
         <li>
-          <strong>Las camas de hospital no cuentan en la lista.</strong> Las enseñamos en cada hospital, pero no deciden si a
-          una zona le falta algo: para eso haría falta medir el viaje en coche o en transporte público.
+          <strong>Las camas de hospital no cuentan en la lista.</strong> Las enseñamos en los hospitales que hemos podido
+          identificar, pero no deciden si a una zona le falta algo: para eso haría falta medir el viaje en coche o en
+          transporte público.
         </li>
         <li>
           <strong>Vivienda:</strong> comparamos las viviendas grandes con los hogares grandes, no el mercado. No sabemos

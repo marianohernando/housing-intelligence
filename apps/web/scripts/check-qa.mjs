@@ -574,11 +574,12 @@ async function hospitals(browser) {
     }
     await panel.scrollIntoViewIfNeeded();
     await (id === "mobile" ? chip.tap() : chip.click());
-    await panel.getByText(/^Camas: /).waitFor({ timeout: 20000 });
+    // centros.camas, with the link on the catalogue once /datasets is in
+    await panel.getByText(/^Camas instaladas a 31 de diciembre de 2024, según el /).getByRole("link").waitFor({ timeout: 20000 });
     await panel.getByText(/^Ver la lista/).click();
     const list = panel.getByRole("list", { name: /hospital/ });
     const items = (await list.locator("li").allInnerTexts()).map(flat);
-    const source = panel.getByText(/^Camas: /);
+    const source = panel.getByText(/^Camas instaladas /);
     const entry = (report[`hospitales_${id}`] = {
       frase: flat(await panel.locator("[aria-live='polite']").innerText()),
       lista: items,
@@ -591,7 +592,8 @@ async function hospitals(browser) {
     await panel.screenshot({ path: `${out}/hosp_hospitales_fuencarral_${id}.png` });
     if (!items.some((t) => t.includes("Hospital Universitario La Paz · 966 camas instaladas · gestión pública"))) failures.push(`${id}: sin La Paz`);
     if (items.some((t) => /privado|(^|· )privada/.test(t))) failures.push(`${id}: «privado» a secas`);
-    if (!entry.frase.includes("el nombre de algunos")) failures.push(`${id}: aviso de nombres`);
+    if (!entry.frase.includes("Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.")) failures.push(`${id}: aviso de nombres`);
+    if (!entry.fuente.startsWith("Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025")) failures.push(`${id}: frase de las camas`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
     if (entry.consola.length) failures.push(`${id}: consola`);
     if (entry.overflow_px > 0) failures.push(`${id}: desborde ${entry.overflow_px}px`);
@@ -659,7 +661,7 @@ async function licences(browser) {
       const text = entry.pie.join(" | ");
       for (const must of [
         "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025).",
-        "Geocodificación: CartoCiudad (IGN), CC BY 4.0 scne.es.",
+        "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es.",
         "del CRTM ni del Ministerio de Sanidad.",
         "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
       ]) {
@@ -675,7 +677,9 @@ async function licences(browser) {
   const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
   await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
   report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
-  if (!/Ministerio de Sanidad/.test(report.mapa_atribucion) || !/CartoCiudad/.test(report.mapa_atribucion)) failures.push("mapa: atribución");
+  const mapText =
+    "Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es";
+  if (!report.mapa_atribucion.includes(mapText)) failures.push("mapa: atribución distinta de mapa.atribucion");
   await z.page.locator(".maplibregl-ctrl-attrib").first().screenshot({ path: `${out}/licencias_mapa_desktop.png` });
   await z.ctx.close();
   report.fallos = failures;
@@ -712,6 +716,10 @@ async function texts(browser) {
     expect(`como ${id} límites`, entry.limites.join(" | "), ["Colocamos a la gente por calles.", "Las camas de hospital no cuentan en la lista."]);
     expect(`como ${id} fiabilidad`, entry.fiabilidad, ["300 niños de 5 a 14 años", "Aulas repartidas."], ["500 menores de 15 años"]);
     expect(`como ${id} datos`, entry.datos, ["Ministerio de Sanidad", "CartoCiudad del IGN"]);
+    entry.que_cuenta = flat(await section("que-falta").locator("ul").first().innerText());
+    entry.tablas = await section("que-falta").locator("table").count();
+    expect(`como ${id} qué cuenta`, entry.que_cuenta, ["Escuelas infantiles, para niños de 0 a 4 años: cada escuela", "Vivienda, para hogares de 4 o más personas: no va a pie."]);
+    if (entry.tablas !== 1) failures.push(`como ${id}: ${entry.tablas} tablas (solo la de estados)`);
     clean(`como ${id}`, entry);
     await section("que-falta").screenshot({ path: `${out}/textos_como_lo_calculamos_metodo_${id}.png` });
     await m.ctx.close();
@@ -811,7 +819,7 @@ async function review(browser) {
     }
     await chip.scrollIntoViewIfNeeded();
     await (id === "mobile" ? chip.tap() : chip.click());
-    const source = panel.getByText(/^Camas: /);
+    const source = panel.getByText(/^Camas instaladas /);
     await source.waitFor({ timeout: 20000 });
     const entry = (report[`camas_sin_datasets_${id}`] = {
       fuente: flat(await source.innerText()),
@@ -819,7 +827,8 @@ async function review(browser) {
       consola_otros: errors.filter((e) => !/datasets|ERR_FAILED|Failed to load resource/.test(e)),
     });
     await panel.screenshot({ path: `${out}/revision_camas_sin_datasets_${id}.png` });
-    if (entry.fuente !== "Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales") failures.push(`${id}: fuente fija «${entry.fuente}»`);
+    // Line D's fixed text, without the link that /datasets gives
+    if (entry.fuente !== "Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025 del Ministerio de Sanidad.") failures.push(`${id}: fuente sin /datasets «${entry.fuente}»`);
     if (entry.consola_otros.length) failures.push(`${id}: consola`);
     await ctx.close();
   }

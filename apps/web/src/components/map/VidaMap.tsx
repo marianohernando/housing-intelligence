@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { useDatasets } from "@/components/provenance/useDatasets";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
@@ -59,6 +60,7 @@ import {
   zoneHref,
   type ZoneProperties,
 } from "@/lib/map/zones";
+import { mapAttribution } from "@/lib/provenance";
 
 import { useFacilityLayer } from "./FacilityLayerProvider";
 import { fetchZonePlaces } from "./fetchZones";
@@ -74,14 +76,6 @@ const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy
 const MAP_TILES_URL = process.env.NEXT_PUBLIC_MAP_TILES_URL;
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-// The zone screens show the Ministry's hospitals and centres (D-218) and places located with
-// CartoCiudad (D-216), and have no footer: both licences ask to be cited where their data shows
-const ATTRIBUTION = [
-  "Comunidad de Madrid",
-  '<a href="https://www.crtm.es" target="_blank" rel="noopener noreferrer">Powered by CRTM</a>',
-  '<a href="https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" target="_blank" rel="noopener noreferrer">Ministerio de Sanidad</a>',
-  '<a href="https://www.cartociudad.es" target="_blank" rel="noopener noreferrer">CartoCiudad (IGN), CC BY 4.0 scne.es</a>',
-].join(" · ");
 const FLIGHT_MS = 2800;
 /** The island stays still a moment before the camera comes closer to the buildings. */
 const ISLAND_HOLD_MS = 700;
@@ -382,6 +376,13 @@ export default function VidaMap() {
   const mapRef = useRef<MapLibreMap | null>(null);
   const libRef = useRef<MapLibre | null>(null);
   const shownOverview = useRef(false);
+  // The zone screens have no footer: the map cites the Ministry with its catalogues and dates from
+  // /datasets (shared request) if they are in when the map is created, else a link to the method page
+  const { data: datasets } = useDatasets();
+  const attribution = useRef(mapAttribution(null));
+  useEffect(() => {
+    attribution.current = mapAttribution(datasets?.datasets ?? null);
+  }, [datasets]);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
   // No WebGL, or neither the streets nor the zones: the map cannot be used, the list can
@@ -421,8 +422,8 @@ export default function VidaMap() {
           center: [-3.7, 40.42],
           zoom: 8.3,
           maxPitch: 70,
-          // CRTM asks for «Powered by CRTM» with a link (data/catalog/sources/crtm_open_data.yaml)
-          attributionControl: { compact: matches(MOBILE), customAttribution: ATTRIBUTION },
+          // The sources whose licences ask to be cited where their data shows (mapAttribution)
+          attributionControl: { compact: matches(MOBILE), customAttribution: attribution.current },
         });
       } catch {
         setFailure("webgl");

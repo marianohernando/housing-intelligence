@@ -1,0 +1,325 @@
+{
+ "como": "API local 8011 (base housing, solo lectura), 12 nov",
+ "comprobaciones": [
+  {
+   "texto": "«12,3 frente a 4,9 por cada 1.000 niños» y «unas 2,5 veces» (Cómo lo calculamos)",
+   "peticion": "GET /api/v1/gaps?level=municipio&row=escuela_infantil",
+   "metodo": "gap-0.3",
+   "unidad": "escuelas/1000 niños",
+   "referencias": [
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.13
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.14
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.15
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.16
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.17
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.18
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.2
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.21
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.23
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.24
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.26
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.27
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.28
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.3
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.31
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.32
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.33
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.34
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.35
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.36
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.37
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.38
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.39
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.4
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.42
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.43
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.44
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.45
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.47
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.5
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.51
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.52
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.54
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.74
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.78
+    },
+    {
+     "grupo": "Otros municipios rurales de la Comunidad de Madrid",
+     "referencia": 12.86
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.531
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.538
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.545
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.549
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.553
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.554
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.556
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.558
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.559
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.56
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.561
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.562
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.563
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.564
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.565
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.566
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.567
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.568
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.569
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.57
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.571
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.572
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.573
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.574
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.578
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.582
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.586
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.587
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.603
+    },
+    {
+     "grupo": "Otros municipios urbanos de la Comunidad de Madrid",
+     "referencia": 4.87
+    }
+   ]
+  },
+  {
+   "texto": "«2,8 … frente a 4,9», «a unos 6 minutos», FALTA (Puente de Vallecas)",
+   "peticion": "GET /api/v1/gaps/distrito/2807913",
+   "respuesta": {
+    "zona": "Puente de Vallecas",
+    "metodo": "gap-0.3",
+    "fila": "escuela_infantil",
+    "estado": "FALTA",
+    "valor": 2.781,
+    "referencia": 4.87,
+    "ratio": 0.571,
+    "fiable": true,
+    "grupo": null,
+    "min_a_pie": 6.258
+   }
+  },
+  {
+   "texto": "«En Centro la cifra es parecida … sale JUSTO»",
+   "peticion": "GET /api/v1/gaps/distrito/2807901",
+   "respuesta": {
+    "zona": "Centro",
+    "metodo": "gap-0.3",
+    "fila": "escuela_infantil",
+    "estado": "JUSTO",
+    "valor": 3.218,
+    "referencia": 4.87,
+    "ratio": 0.6608,
+    "fiable": true,
+    "grupo": null,
+    "min_a_pie": 6.497
+   }
+  },
+  {
+   "texto": "«La Acebeda … no tiene ninguna farmacia a 15 minutos andando … ni junto con sus vecinos»",
+   "peticion": "GET /api/v1/gaps/municipio/28001",
+   "respuesta": {
+    "zona": "La Acebeda",
+    "metodo": "gap-0.3",
+    "fila": "farmacia",
+    "estado": "JUSTO",
+    "valor": 0.0,
+    "referencia": 5.187,
+    "ratio": 0.0,
+    "fiable": false,
+    "grupo": null,
+    "min_a_pie": 109.7
+   }
+  }
+ ]
+}

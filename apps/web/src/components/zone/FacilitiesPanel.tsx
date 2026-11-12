@@ -15,8 +15,7 @@ import { capacitySources, type Facility, type FacilityKey, facilityCountText, FA
 
 import styles from "./FacilitiesPanel.module.css";
 
-// Copy of pitch/textos_web.md, section 5b (T3). «Camas:» and «algunos de estos centros» (HOSP-001)
-// are provisional, listed for line D in the PR.
+// Copy of pitch/textos_web.md, section 5b (T3), with centros.camas and centros.sin_nombre_algunos (HOSP-001).
 const TEXT = {
   title: "Todos los centros",
   show: "Ver en el mapa",
@@ -27,36 +26,31 @@ const TEXT = {
   // The same schools as the row «Colegios» (gap_rows of places-1): public and concertado
   rowSchools: "Públicos y concertados: los mismos que cuenta «Qué falta».",
   noName: "La fuente oficial no publica el nombre de cada centro de este tipo.",
-  // Since HOSP-001 most hospitals and centros de salud have their name; a few still do not
-  someNoName: "La fuente oficial no publica el nombre de algunos de estos centros.",
-  // HOSP-001 (D-218): where the beds come from, named by /datasets (publisher, then the dataset)
-  source: "Camas: ",
+  // centros.sin_nombre_algunos: the name comes from the Ministry's catalogues; a few could not be matched
+  someNoName: "Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.",
+  // centros.camas (HOSP-001, D-218): the date and the catalogue from /datasets
+  bedsBefore: (updated: string | null) => `Camas instaladas${updated ? ` a ${updated}` : ""}, según el `,
+  bedsAfter: (publisher: string) => ` del ${publisher}.`,
   newTab: " (se abre en una pestaña nueva)",
 };
 
-/** «Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025», named by /datasets (a fixed source until it answers). */
+/** centros.camas: «Camas instaladas a 31 de diciembre de 2024, según el Catálogo … 2025 del Ministerio de Sanidad.» */
 function CapacitySourceLine({ type, items }: { type: FacilityKey; items: Facility[] }) {
   const { data } = useDatasets();
-  const sources = capacitySources(type, items, data?.datasets ?? null);
-  if (sources.length === 0) return null;
-  return (
-    <p className={styles.muted}>
-      {TEXT.source}
-      {sources.map((source, i) => (
-        <span key={source.id}>
-          {i > 0 && "; "}
-          {source.url ? (
-            <a href={source.url} target="_blank" rel="noopener noreferrer">
-              {source.label}
-              <span className="visually-hidden">{TEXT.newTab}</span>
-            </a>
-          ) : (
-            source.label
-          )}
-        </span>
-      ))}
+  return capacitySources(type, items, data?.datasets ?? null).map((source) => (
+    <p key={source.id} className={styles.muted}>
+      {TEXT.bedsBefore(source.updated)}
+      {source.href ? (
+        <a href={source.href} target="_blank" rel="noopener noreferrer">
+          {source.catalogue}
+          <span className="visually-hidden">{TEXT.newTab}</span>
+        </a>
+      ) : (
+        source.catalogue
+      )}
+      {TEXT.bedsAfter(source.publisher)}
     </p>
-  );
+  ));
 }
 
 export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
