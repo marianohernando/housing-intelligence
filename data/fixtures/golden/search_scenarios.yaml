@@ -6,7 +6,7 @@
 # scripts/golden_search.py checks it (evidence).
 # D-228 (fit-0.6): the rent is that of a lease signed in 2024 (~15-25 % more per m2). The budget
 # now limits: cheaper zones a few minutes further out rank first for the family (Latina, 39 min)
-# and the single person (Leganés, 43 min), so those two minute bounds move from 35/40 to 45, and
+# and the single person (Leganés, 43 min), so those two minute bounds move from 35/40 to 41/45, and
 # the family case checks instead that +150 EUR/month adds zones (before, it added none).
 scenarios:
   - profile_id: golden_family  # the demo case: a couple with two children who work on the Castellana
@@ -16,7 +16,7 @@ scenarios:
       anchors: [{kind: work, label: Paseo de la Castellana (Azca), lon: -3.6930, lat: 40.4500, days_per_week: 4, max_minutes: null}]
       nearby: [{need: colegio, max_walk_minutes: 10, required: true}]
       priorities: [colegios, transporte, salud]
-    expect: {min_results: 10, results_within_km: 15, top_within_minutes: 45, binding: "near:colegio", budget_step_adds_zones: 1}
+    expect: {min_results: 10, results_within_km: 15, top_within_minutes: 41, binding: "near:colegio", budget_step_adds_zones: 1}
   - profile_id: golden_single
     scenario:
       budget: {kind: rent, amount_eur: 900}

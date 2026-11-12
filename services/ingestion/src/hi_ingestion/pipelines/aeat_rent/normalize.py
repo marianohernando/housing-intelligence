@@ -76,17 +76,18 @@ def table_rows(html: str) -> list[list[str]]:
 def parse_html(path: Path) -> pd.DataFrame:
     """The table as raw strings, one row per territory, after checking its header and year."""
     html = path.read_text(encoding="utf-8", errors="replace")
-    period = _PERIOD.search(html)
-    if period is None:
-        msg = f"{path.name}: no «Ejercicio YYYY» in the page"
+    years = set(_PERIOD.findall(html))
+    if len(years) != 1:
+        msg = f"{path.name}: expected one «Ejercicio YYYY» in the page, found {sorted(years)}"
         raise ValueError(msg)
+    year = years.pop()
     rows = table_rows(html)
     header = next((r for r in rows if r and r[0] == HEADER_LABEL), None)
     if header is None or tuple(header[1:5]) != EXPECTED_HEADER:
         msg = f"{path.name}: unexpected header {header[:5] if header else None}"
         raise ValueError(msg)
     body = [r for r in rows if len(r) >= 5 and r[0] and r[0] != HEADER_LABEL]
-    return pd.DataFrame([[r[0], *r[1:5], period.group(1)] for r in body], columns=FRAME_COLUMNS)
+    return pd.DataFrame([[r[0], *r[1:5], year] for r in body], columns=FRAME_COLUMNS)
 
 
 def parse_number(raw: str) -> float:

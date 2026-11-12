@@ -40,6 +40,11 @@ def quality(
             {"zones": zones, "min": spec.min_rows, "max": spec.max_rows},
         )
     )
+    if spec.region_label is not None:  # the fallback factor of municipios without a table
+        region = int((obs.frame["territory_level"] == "ccaa").sum())
+        report.checks.append(
+            CheckResult("region_row_present", True, region > 0, {"observations": region})
+        )
     return report
 
 

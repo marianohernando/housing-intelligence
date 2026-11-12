@@ -434,3 +434,15 @@ def test_district_rent_of_new_leases_adjusts_each_postcode_before_the_mean() -> 
     assert row["adjustment"]["postcodes_with_own_factor"] == 1
     assert row["adjustment"]["postcodes_with_fallback"] == 1
     assert row["adjustment"]["all_contracts_value"] == pytest.approx(17.5)
+
+
+def test_a_factor_of_another_year_stops_the_computation() -> None:
+    """D-228 review: the note says the year; value and factor must be of the same one."""
+    rent = _obs([("28079", {}, 15.1)])
+    base = methods.metric_value(rent, {})
+    old = methods.NewContractFactors({"28079": 1.2}, date(2024, 1, 1))
+    with pytest.raises(ValueError, match="same year"):
+        methods.apply_new_contract_factors(base, old, fallback=None)
+    weights = _weights([("2807901", "28001", 1.0)])
+    with pytest.raises(ValueError, match="same year"):
+        methods.postcode_weighted_mean(CP_RENT, weights, {}, new_contracts=(old, 1.2))

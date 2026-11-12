@@ -81,3 +81,11 @@ def test_a_missing_cell_is_unknown_and_garbage_goes_to_quarantine() -> None:
     assert len(normalize(frame, _spec(MUNICIPIOS)).quarantine) == 1
     with pytest.raises(RowError):
         parse_number("n/d")
+
+
+def test_a_page_with_two_years_is_rejected(tmp_path: Path) -> None:
+    html = (SAMPLE / f"{MUNICIPIOS}.html").read_text(encoding="utf-8")
+    two = tmp_path / "two.html"
+    two.write_text(html.replace("</h1>", "</h1><p>Ejercicio 2023</p>", 1), encoding="utf-8")
+    with pytest.raises(ValueError, match="one «Ejercicio YYYY»"):
+        parse_html(two)

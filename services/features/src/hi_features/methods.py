@@ -372,6 +372,18 @@ def new_contract_factors(rent: pd.DataFrame, area: pd.DataFrame) -> NewContractF
     return NewContractFactors(factors, period)
 
 
+def _same_year(value_period: Any, factor_period: Any) -> None:
+    """The factor and the value it adjusts must be of the same year: the text says «contratos
+    firmados en <año>» (`fit.note`). A new edition of either stops the computation until both
+    agree and the note is updated (D-228)."""
+    if pd.Timestamp(value_period).year != pd.Timestamp(factor_period).year:
+        msg = (
+            f"rent of new leases: value of {value_period} with a factor of {factor_period}; "
+            "load the same year of both and update fit.note"
+        )
+        raise ValueError(msg)
+
+
 def apply_new_contract_factors(
     result: pd.DataFrame, factors: NewContractFactors, fallback: str | None
 ) -> pd.DataFrame:
@@ -389,6 +401,7 @@ def apply_new_contract_factors(
         if source is None or source not in factors.factors:
             out.append(_null(code, row["period_start"], NullReason.SOURCE_MISSING))
             continue
+        _same_year(row["period_start"], factors.period)
         factor = factors.factors[source]
         adjustment = {
             "factor": round(factor, 4),
@@ -418,6 +431,8 @@ def postcode_weighted_mean(
 
     `weights` columns: territory_code (the zone), postcode, weight (places)."""
     values, period = _postcode_values(obs, dims)
+    if new_contracts is not None and values:
+        _same_year(period, new_contracts[0].period)
     out: list[dict[str, Any]] = []
     records: list[dict[str, Any]] = weights.to_dict("records")  # pyright: ignore[reportAssignmentType]
     by_zone: dict[str, list[tuple[str, float]]] = {}

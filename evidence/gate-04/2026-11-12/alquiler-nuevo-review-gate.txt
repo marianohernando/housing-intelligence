@@ -1,0 +1,10 @@
+# Gate MEJORA-8 Fase 2b (revisión de D-228 §6): make lint typecheck test + golden
+All checks passed!
+405 files already formatted
+278 files OK, 0 changed, 0 missing
+0 errors, 0 warnings, 0 informations
+664 passed in 12.92s
+ Test Files  29 passed (29)
+      Tests  308 passed (308)
+123 passed in 55.89s
+golden: 8 escenarios dorados · todos OK

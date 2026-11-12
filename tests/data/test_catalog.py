@@ -378,3 +378,15 @@ def test_purchase_price_is_the_official_appraised_value_from_the_cm_portal(
     assert dataset.license_status == "CLEAR"
     levels = (spec.formula.model_extra or {})["levels"]
     assert levels["distrito"]["method"] == "not_published"
+
+
+def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> None:
+    """D-228: «contratos firmados en <año>» must be the year of the Agencia Tributaria tables."""
+    fit = catalog.features["alquiler_m2_mensual"].fit
+    assert fit is not None and fit.note is not None
+    for dataset_id in (
+        "aeat_alquiler_nuevos_contratos_municipios",
+        "aeat_alquiler_nuevos_contratos_codigo_postal",
+    ):
+        year = catalog.datasets[dataset_id].name.rsplit("ejercicio ", 1)[1][:4]
+        assert f"contratos firmados en {year}" in fit.note

@@ -1217,6 +1217,12 @@ Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano 
    - **Textos de D (a la vez):** los hechos de minutos a pie dicen «a unos 9 min andando», sin «desde la mitad de sus calles».
      - El hospital a más de 30 min como distancia («a unos 3,4 km») no es un texto de la API: lo pinta la web con el extra `min_a_pie_hospital` (línea B).
    - **Orden en producción:** primero se despliega `fit-0.6` y después se sincroniza. El código desplegado (`fit-0.5`) no conoce la nota, así que con los datos nuevos diría «media de los contratos vigentes» junto a la cifra de los contratos nuevos.
+7. **Revisión (`reviewer`, Fase 2b):**
+   - sin bloqueantes;
+   - el valor y el factor tienen que ser del mismo año: si una edición nueva de cualquiera de los dos llega sola, el cálculo se para con un mensaje que pide cargar ambas y actualizar `fit.note`. Un test comprueba que el año de la nota es el de las tablas de la AEAT;
+   - una página con más de un «Ejercicio» se rechaza, y la tabla de municipios exige la fila de la Comunidad (el factor de reserva);
+   - el golden de la familia baja a 41 min (con 39 observados) para no tapar una regresión;
+   - queda declarado que un factor de reserva no baja la confidence: hoy no se usa en ninguna zona.
 
 
 ## D-229 — Cifras de impacto: gente que vive donde falta y «dónde invertir primero» (2026-11-12)
