@@ -25,3 +25,4 @@ attribute_columns: [dependecia_funcional, dependecia_patrimonial, municipio_nomb
 municipio_name_column: municipio_nombre
 address_template: "{direccion_vial_tipo} {direccion_vial_nombre} {direccion_vial_nro}, {municipio_nombre}"
 address_number_column: direccion_vial_nro
+address_street_column: direccion_vial_nombre

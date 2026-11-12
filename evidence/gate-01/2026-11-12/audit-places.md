@@ -5,8 +5,8 @@ Línea A. Decisión: D-216. Script: `uv run python scripts/audit_places.py` (bas
 ## Resumen
 - **«Centro Polivalente» (1.001) no eran servicios para mayores**, sino clínicas privadas de varias especialidades (RD 1277/2003, C.2.90; 971 «Privado No Benéfico», sin nombre en el registro). Ninguna feature los usaba, pero eran el 65 % de los puntos de la capa de salud. Fuera del registro de lugares (test `test_private_polyclinics_are_not_health_places`). La coincidencia de cifras con los 1.001 servicios para mayores de DATA-009 es casual.
 - **Farmacias:** categoría propia `pharmacy` (migración 0006; test `test_pharmacies_are_their_own_category_and_never_health`). La capa `health` queda en 550 lugares: atención primaria, salud mental y hospitales.
-- **Coordenadas:** 42 lugares geocodificados con CartoCiudad (38 sin coordenadas y 4 reubicados), siempre a nivel de portal y en el municipio declarado (tests en `tests/unit/pipelines/test_place_coordinates.py`).
-- **Cuarentena:** educación 55 → 39; sanidad 11 → 5; mayores 47 → 34; farmacias 4 → 0. Lo que queda no tiene número de portal («S/N», carreteras por kilómetro) o el geocodificador no lo encuentra en su municipio.
+- **Coordenadas:** 40 lugares geocodificados con CartoCiudad (37 sin coordenadas y 3 reubicados), siempre a nivel de portal, en la calle y el municipio declarados (tests en `tests/unit/pipelines/test_place_coordinates.py`).
+- **Cuarentena:** educación 55 → 40; sanidad 11 → 6; mayores 47 → 34; farmacias 4 → 0. Lo que queda no tiene número de portal («S/N», carreteras por kilómetro) o el geocodificador no lo encuentra en su municipio.
 - **Duplicados:** ninguno con el mismo identificador. Hay 13 pares del mismo tipo a menos de 10 m; 12 tienen nombre o dirección distintos (centros distintos en el mismo edificio o parcela) y se mantienen. Un caso es sospechoso y queda anotado (§3).
 
 ## 1. Recuentos frente a los totales oficiales
@@ -14,7 +14,7 @@ Línea A. Decisión: D-216. Script: `uv run python scripts/audit_places.py` (bas
 | Tipo | Nuestro recuento | Oficial | Fecha | Fuente | Nota |
 |---|---|---|---|---|---|
 | Centros de salud (SERMAS) | 268 | 265 | 30 jun 2026 | [CM, nota de prensa sobre la Atención Primaria](https://www.comunidad.madrid/node/116506) | El registro de centros sanitarios autoriza edificios; el SERMAS cuenta equipos. D ve unos 10 consultorios inscritos como «centro de salud» (M2). |
-| Consultorios locales (SERMAS) | 149 | 163 | 30 jun 2026 | [CM, la misma nota](https://www.comunidad.madrid/node/116506) | Centros de salud + consultorios: 417 SERMAS frente a 428 (−2,6 %). |
+| Consultorios locales (SERMAS) | 148 | 163 | 30 jun 2026 | [CM, la misma nota](https://www.comunidad.madrid/node/116506) | Centros de salud + consultorios del SERMAS frente a 428 publicados (265 + 163). |
 | Hospitales (todos) | 85 | 85 (CM, 2023) · 91 (CNH 2025) | 2023 · 31 dic 2024 | [CM «Hospitales y datos asistenciales» · Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025](https://datos.comunidad.madrid/dataset/1912744) | El CNH cuenta uno a uno los hospitales de un complejo y los «otros centros con internamiento»; el registro CM coincide con la estadística CM. |
 | Oficinas de farmacia | 2957 | 2.950 (CM, 2025) · 2.948 (CGCOF) | 1 ene 2025 · 31 dic 2025 | [CM `cm_farmacias_municipios` · Consejo General de Farmacéuticos](https://www.farmaceuticos.com/wp-content/uploads/2026/05/2025-Estadisticas-Colegiados-Farmacias_version-corta-11062026.pdf) | El registro es de hoy y la estadística, anual (D7: ±1 en Alcobendas y Collado Villalba). |
 | Colegios públicos con primaria | 811 | 769 (tipo «Infantil y Primaria») | curso 2024-25 | [CM, «Datos y cifras de la educación 2025-2026», tabla 11](https://gestiona3.madrid.org/bvirtual/BVCM051753.pdf) | Nuestro recuento suma CEIP (717), CEIPSO (93) y CEP (1); la tabla oficial cuenta los CEIPSO en otro tipo, así que la comparación buena es CEIP: 717 frente a 769, el registro va un curso por delante. |
@@ -58,7 +58,7 @@ Lectura de los duplicados:
 ## 4. Revisión de D (10 zonas)
 | Caso | Estado | Detalle |
 |---|---|---|
-| D1 · 8 centros de atención primaria sin coordenadas | 4 recuperados, 4 sin resolver | Recuperados: CS1135 y CS19950 (Madrid), CS9495 (Gargantilla) y CS15364. Sin resolver: CS1184 y CS6158 (Madrid) y CS10286 y CS7529 (Alcalá), todos «S/N». CS11438 (Villar del Olmo, «calle Real 42»): el geocodificador lo lleva a Jaén y se rechaza. Alcalá sigue con 8 centros (0,39 por 10.000) |
+| D1 · 8 centros de atención primaria sin coordenadas | 3 recuperados, 5 sin resolver | Recuperados: CS1135 y CS19950 (Madrid) y CS9495 (Gargantilla). Sin resolver: CS1184 y CS6158 (Madrid) y CS10286 y CS7529 (Alcalá), todos «S/N». CS11438 (Villar del Olmo, «calle Real 42»): el geocodificador lo lleva a Jaén y se rechaza. Alcalá sigue con 8 centros (0,39 por 10.000) |
 | D2 · colegios sin coordenadas | 1 de 2 | Humanitas El Cañaveral recuperado (Vicálvaro, portal 21 por el 20). CEIP Navalafuente: el portal conocido más cercano es el 16 para el 56; queda en cuarentena y la demo sigue diciendo 0 colegios y 63 min |
 | D3 · farmacias | resuelto | Las 4 sin coordenadas, recuperadas. La 763 (Afueras a Valverde 36) pasa de Valdemoro a Madrid (Fuencarral-El Pardo) |
 | D4 · CEIP Amorós | resuelto | De Tetuán a Carabanchel (Joaquín Turina, portal 27 por el 37; confidence 0,6) |
@@ -71,3 +71,7 @@ Lectura de los duplicados:
 - Los 4 centros de salud «S/N» y el CEIP de Navalafuente necesitan coordenadas de la fuente. Propuesta: avisar al portal de la CM; mientras tanto, SIN DATOS en su lugar exacto, nunca 0 en la fila por municipio (hoy cuentan 0 porque el lugar no existe; deuda `geocoding_quarantine` del board).
 - **Bug del runner encontrado:** si una ingesta falla después de registrar la versión, la versión queda marcada con el parser nuevo y la siguiente ejecución se la salta («same checksum and parser»). Se resolvió a mano en la base local; hay que arreglarlo en `versions.register_version`.
 - El 12 nov el registro de centros sanitarios se descargó de nuevo (actualización diaria): cambian algunos recuentos de un día para otro.
+
+## 6. Tras la revisión con `reviewer` (12 nov)
+- La dirección geocodificada tiene que estar en la misma calle (palabras del nombre sin artículos ni tildes), no solo en el mismo municipio y con un número parecido. Pierde 2 de los 42: un colegio y el consultorio CS12766 de Buitrago, que tenía las coordenadas en otro municipio y pasa a cuarentena.
+- Un registro sin municipio declarado nunca se geocodifica. La caché del geocodificador se escribe de forma atómica.

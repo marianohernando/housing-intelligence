@@ -23,7 +23,7 @@ from hi_ingestion.pipelines.places.publish import replace_places
 from hi_ingestion.pipelines.places.quality import run_quality
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "places-1.1.0"  # 1.1: coordinate repair against the declared address (D-216)
+PARSER_VERSION = "places-1.2.0"  # 1.1: coordinate repair (D-216); 1.2: the street must match
 GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
 _UNITS = text(
     """

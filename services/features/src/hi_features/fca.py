@@ -71,7 +71,10 @@ def people_by_key(
     out = {code: value for code, value in municipios.items() if code != MADRID}
     madrid = {code: v for code, v in districts.items() if code.startswith(MADRID)}
     total = sum(madrid.values())
-    if MADRID in municipios and total > 0:
+    if MADRID in municipios and total <= 0:
+        msg = "Madrid has a population but no district population to place it (padrón)"
+        raise ValueError(msg)
+    if MADRID in municipios:
         scale = municipios[MADRID] / total
         out |= {code: v * scale for code, v in madrid.items()}
     return out
@@ -108,8 +111,10 @@ def supply_of(
         values = [_number((p["attributes"] or {}).get(spec["attribute"])) for p in facilities]
         return np.array([v if v is not None else np.nan for v in values])
     if kind == "municipal_share":
-        key = spec["by_attribute"]
-        groups = [(p["municipio_ine"], (p["attributes"] or {}).get(key)) for p in facilities]
+        key, mapping = spec["by_attribute"], spec["mapping"]
+        groups = [
+            (p["municipio_ine"], mapping.get((p["attributes"] or {}).get(key))) for p in facilities
+        ]
         sizes = Counter(groups)
         return np.array([shares.get(g, 0.0) / sizes[g] for g in groups])
     msg = f"unknown supply kind {kind!r}"
@@ -125,16 +130,19 @@ def _number(raw: Any) -> float | None:
 
 
 def municipal_shares(engine: Engine, spec: Mapping[str, Any]) -> dict[tuple[str, str], float]:
-    """(municipio, register value) -> units of the metric, e.g. primary classrooms (D-217)."""
+    """(municipio, statistic value) -> units of the metric, e.g. public primary classrooms.
+
+    Facilities are grouped by the statistic value their register value maps to, so two
+    register values of one ownership (e.g. public and public with private title) share it."""
     if spec["kind"] != "municipal_share":
         return {}
     obs = methods.latest(loaders.observations(engine, spec["metric"], "municipio"))
     shares: dict[tuple[str, str], float] = {}
-    for register_value, dim_value in spec["mapping"].items():
+    for dim_value in sorted(set(spec["mapping"].values())):
         dims = {**spec["dims"], spec["dim"]: [dim_value]}
         for code, (_, value, _) in methods.population_by_code(obs, dims).items():
             if value is not None:
-                shares[(code, register_value)] = value
+                shares[(code, dim_value)] = value
     return shares
 
 
@@ -161,7 +169,8 @@ def node_access(engine: Engine, key: str) -> NodeAccess:
     demand_at_origins = _demand(engine, f, origins)
     np.add.at(demand_nodes, origins.node, demand_at_origins)
     result = two_step(catch, supply[known], demand_nodes)
-    mean = float(supply[known].mean()) if known.any() else 1.0
+    positive = supply[known & (supply > 0)]
+    mean = float(positive.mean()) if len(positive) else 1.0
     return NodeAccess(
         demand_at_origins,
         result.access[origins.node],

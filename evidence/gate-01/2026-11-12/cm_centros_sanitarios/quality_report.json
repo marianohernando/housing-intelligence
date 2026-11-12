@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 550
+        "places": 549
       }
     },
     {
@@ -22,10 +22,11 @@
       "critical": true,
       "passed": true,
       "details": {
-        "quarantined": 5,
-        "ratio": 0.009,
+        "quarantined": 6,
+        "ratio": 0.0108,
         "reasons": {
-          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 5
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 5,
+          "coordinates in municipio 28902, register says 28027; address not found at portal level": 1
         }
       }
     },
@@ -61,18 +62,13 @@
       "critical": false,
       "passed": true,
       "details": {
-        "geocoded": 5,
+        "geocoded": 4,
         "kept_with_note": 0,
         "rows": [
           {
             "external_id": "CS1135",
             "origin": "geocoded",
             "note": "coordinates missing in the source"
-          },
-          {
-            "external_id": "CS12766",
-            "origin": "geocoded",
-            "note": "source coordinates fell in municipio 28902 (-3.560558936906238, 41.00557278082495) (nearest portal 13 for number 14)"
           },
           {
             "external_id": "CS15364",

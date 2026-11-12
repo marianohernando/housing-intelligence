@@ -15,6 +15,7 @@ from hi_ingestion.pipelines.places.coordinates import (
     fold_name,
     house_number,
     resolve,
+    same_street,
 )
 from hi_ingestion.pipelines.places.geocoder import hit_from_answer
 from hi_ingestion.pipelines.places.normalize import Repair, normalize_places
@@ -50,10 +51,10 @@ def test_coherent_coordinates_are_kept_and_the_geocoder_is_never_asked() -> None
 
 
 def test_missing_coordinates_take_the_portal_inside_the_declared_municipio() -> None:
-    hit = GeocodeHit(-3.68, 40.82, "28094", "portal", 56)
+    hit = GeocodeHit(-3.68, 40.82, "28094", "portal", 56, "X")
     got = resolve(
         None,
-        Declared("28094", None, "calle Eras de Arriba 56", 56),
+        Declared("28094", None, "calle Eras de Arriba 56", 56, "de X"),
         locate,
         geocoder({"calle Eras de Arriba 56": hit}),
     )
@@ -65,14 +66,14 @@ def test_missing_coordinates_take_the_portal_inside_the_declared_municipio() -> 
     [
         None,
         GeocodeHit(-3.68, 40.82, "28094", "callejero", None),  # only the street: too vague on foot
-        GeocodeHit(-3.68, 40.82, "28006", "portal", 1),  # a portal, but in another municipio
+        GeocodeHit(-3.68, 40.82, "28006", "portal", 1, "X"),  # a portal, but in another municipio
     ],
 )
 def test_missing_coordinates_without_a_good_portal_stay_in_quarantine(
     hit: GeocodeHit | None,
 ) -> None:
     got = resolve(
-        None, Declared("28094", None, "calle X 1", 1), locate, geocoder({"calle X 1": hit})
+        None, Declared("28094", None, "calle X 1", 1, "de X"), locate, geocoder({"calle X 1": hit})
     )
     assert not got.accepted
     assert got.quarantine_reason
@@ -80,8 +81,8 @@ def test_missing_coordinates_without_a_good_portal_stay_in_quarantine(
 
 def test_coordinates_in_another_municipio_are_replaced_by_the_address() -> None:
     """D3: a Madrid pharmacy whose coordinates fall in Valdemoro."""
-    hit = GeocodeHit(-3.70, 40.40, MADRID, "portal", 36)
-    declared = Declared(MADRID, None, "Afueras a Valverde 36, Madrid", 36)
+    hit = GeocodeHit(-3.70, 40.40, MADRID, "portal", 36, "X")
+    declared = Declared(MADRID, None, "Afueras a Valverde 36, Madrid", 36, "de X")
     got = resolve((-3.68, 40.19), declared, locate, geocoder({declared.address or "": hit}))
     assert (got.lon, got.lat, got.origin) == (-3.70, 40.40, GEOCODED)
 
@@ -95,9 +96,12 @@ def test_coordinates_in_another_municipio_without_address_are_quarantined_never_
 def test_wrong_district_is_fixed_only_when_the_address_lands_in_the_declared_one() -> None:
     """D4: CEIP Amorós, address in Carabanchel, coordinates in Tetuán."""
     address = "calle Joaquín Turina 37"
-    hit = GeocodeHit(-3.75, 40.38, MADRID, "portal", 27)
+    hit = GeocodeHit(-3.75, 40.38, MADRID, "portal", 27, "X")
     got = resolve(
-        (-3.69, 40.45), Declared(MADRID, CARABANCHEL, address, 37), locate, geocoder({address: hit})
+        (-3.69, 40.45),
+        Declared(MADRID, CARABANCHEL, address, 37, "de X"),
+        locate,
+        geocoder({address: hit}),
     )
     assert (got.lon, got.lat, got.origin) == (-3.75, 40.38, GEOCODED)
 
@@ -105,9 +109,14 @@ def test_wrong_district_is_fixed_only_when_the_address_lands_in_the_declared_one
 def test_district_label_alone_never_moves_a_place() -> None:
     """D5: the address agrees with the coordinates; only the register's district label differs."""
     address = "calle María Reiche 34"
-    hit = GeocodeHit(-3.69, 40.46, MADRID, "portal", 34)  # also in "Tetuán" in the toy geography
+    hit = GeocodeHit(
+        -3.69, 40.46, MADRID, "portal", 34, "X"
+    )  # also in "Tetuán" in the toy geography
     got = resolve(
-        (-3.69, 40.45), Declared(MADRID, CARABANCHEL, address, 37), locate, geocoder({address: hit})
+        (-3.69, 40.45),
+        Declared(MADRID, CARABANCHEL, address, 37, "de X"),
+        locate,
+        geocoder({address: hit}),
     )
     assert (got.lon, got.lat, got.origin) == (-3.69, 40.45, SOURCE)
     assert got.note and "kept" in got.note
@@ -119,7 +128,9 @@ def test_geocoder_answer_needs_a_point_and_a_municipio() -> None:
         hit_from_answer({"lng": 0.0, "lat": 0.0, "muniCode": "28022", "type": "callejero"}) is None
     )
     answer = {"lng": -3.67, "lat": 40.82, "muniCode": "28094", "type": "portal", "portalNumber": 56}
-    assert hit_from_answer(answer) == GeocodeHit(-3.67, 40.82, "28094", "portal", 56)
+    assert hit_from_answer(answer | {"address": "X"}) == GeocodeHit(
+        -3.67, 40.82, "28094", "portal", 56, "X"
+    )
 
 
 @pytest.mark.parametrize(
@@ -152,7 +163,7 @@ def test_normalize_repairs_and_marks_lower_confidence(catalog: Catalog) -> None:
             {
                 "FARMACIA_NRO_SOE": "1",
                 "DIRECCION_VIAL_TIPO": "CALLE",
-                "DIRECCION_VIAL_NOMBRE": "A",
+                "DIRECCION_VIAL_NOMBRE": "Atocha",
                 "DIRECCION_VIAL_NRO": "1",
                 "MUNICIPIO_NOMBRE": "Madrid",
                 "LOCALIZACION_COORDENADA_X": "",
@@ -169,8 +180,8 @@ def test_normalize_repairs_and_marks_lower_confidence(catalog: Catalog) -> None:
             },
         ]
     )
-    hit = GeocodeHit(-3.70, 40.42, MADRID, "portal", 1)
-    repair = Repair(locate, geocoder({"CALLE A 1, Madrid": hit}), {"madrid": MADRID})
+    hit = GeocodeHit(-3.70, 40.42, MADRID, "portal", 1, "ATOCHA")
+    repair = Repair(locate, geocoder({"CALLE Atocha 1, Madrid": hit}), {"madrid": MADRID})
     places = normalize_places(frame, spec, repair)
     assert places.frame["external_id"].tolist() == ["1"]
     row = places.frame.iloc[0]
@@ -223,9 +234,9 @@ def test_portal_must_match_the_house_number(
     portal: int, number: int | None, confidence: float | None
 ) -> None:
     """CartoCiudad answers some portal even without a number, or the nearest one it knows."""
-    hit = GeocodeHit(-3.68, 40.82, "28094", "portal", portal)
+    hit = GeocodeHit(-3.68, 40.82, "28094", "portal", portal, "X")
     got = resolve(
-        None, Declared("28094", None, "calle Q", number), locate, geocoder({"calle Q": hit})
+        None, Declared("28094", None, "calle Q", number, "de X"), locate, geocoder({"calle Q": hit})
     )
     assert (got.confidence if got.accepted else None) == confidence
 
@@ -235,3 +246,33 @@ def test_portal_must_match_the_house_number(
 )
 def test_house_number_takes_the_first_number(raw: str, number: int | None) -> None:
     assert house_number(raw) == number
+
+
+def test_a_portal_on_another_street_is_never_taken() -> None:
+    """CartoCiudad matches loosely: same municipio and number, but another street."""
+    hit = GeocodeHit(-3.68, 40.82, "28094", "portal", 56, "ERAS DE ABAJO")
+    declared = Declared("28094", None, "calle Eras de Arriba 56", 56, "Eras de Arriba")
+    assert not resolve(None, declared, locate, geocoder({"calle Eras de Arriba 56": hit})).accepted
+
+
+@pytest.mark.parametrize(
+    ("matched", "declared", "same"),
+    [
+        ("JOAQUIN TURINA", "de Joaquín Turina", True),
+        ("ARENAS DEL REY", "de Arenas del Rey", True),
+        ("REAL", "Real", True),
+        ("VILLARES", "Real", False),
+        ("ALCALA", "de Alcalá de Henares", False),
+        (None, "Real", False),
+    ],
+)
+def test_street_names_are_compared_without_articles_or_accents(
+    matched: str | None, declared: str, same: bool
+) -> None:
+    assert same_street(matched, declared) is same
+
+
+def test_missing_declared_municipio_never_accepts_a_portal() -> None:
+    hit = GeocodeHit(-3.68, 40.82, "28094", "portal", 56, "X")
+    declared = Declared(None, None, "calle X 56", 56, "X")
+    assert not resolve(None, declared, locate, geocoder({"calle X 56": hit})).accepted

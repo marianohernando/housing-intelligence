@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 3867
+        "places": 3866
       }
     },
     {
@@ -22,10 +22,10 @@
       "critical": true,
       "passed": true,
       "details": {
-        "quarantined": 39,
-        "ratio": 0.01,
+        "quarantined": 40,
+        "ratio": 0.0102,
         "reasons": {
-          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 39
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 40
         }
       }
     },
@@ -61,7 +61,7 @@
       "critical": false,
       "passed": true,
       "details": {
-        "geocoded": 19,
+        "geocoded": 18,
         "kept_with_note": 22,
         "rows": [
           {
@@ -183,11 +183,6 @@
             "external_id": "28082289",
             "origin": "geocoded",
             "note": "coordinates missing in the source"
-          },
-          {
-            "external_id": "28082307",
-            "origin": "geocoded",
-            "note": "coordinates missing in the source (nearest portal 3 for number 10)"
           },
           {
             "external_id": "28082435",

@@ -1,5 +1,6 @@
 """Canonical places as GeoJSON points. Parameterised SQL only."""
 
+import math
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
@@ -104,7 +105,7 @@ class RowFilter(NamedTuple):
             return False
         if self.subcategories and subcategory not in self.subcategories:
             return False
-        return all(attributes.get(k) in allowed for k, allowed in self.attributes.items())
+        return all(str(attributes.get(k)) in allowed for k, allowed in self.attributes.items())
 
 
 def row_filters(conn: Connection) -> list[RowFilter]:
@@ -119,7 +120,7 @@ def row_filters(conn: Connection) -> list[RowFilter]:
                 {k: frozenset(v) for k, v in (formula.get("attributes") or {}).items()},
             )
         )
-    return sorted(filters)
+    return sorted(filters, key=lambda f: f.row)
 
 
 def _capacity(attributes: dict[str, Any], dataset_id: str) -> dict[str, Any] | None:
@@ -129,7 +130,7 @@ def _capacity(attributes: dict[str, Any], dataset_id: str) -> dict[str, Any] | N
             value = float(str(raw).replace(",", ".")) if raw not in (None, "") else None
         except ValueError:
             value = None
-        if value is not None and value >= 0:
+        if value is not None and math.isfinite(value) and value >= 0:
             return {"value": value, "unit": unit, "dataset_id": dataset_id}
     return None
 

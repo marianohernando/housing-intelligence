@@ -181,6 +181,7 @@ class PointsPipeline(BaseModel):
     # Postal address for the official geocoder, e.g. "{VIA} {NUMERO}, {CP} {MUNICIPIO}".
     address_template: str | None = None
     address_number_column: str | None = None  # house number: no number -> never geocoded
+    address_street_column: str | None = None  # the geocoder must match this street
     status_column: str | None = None
     active_values: list[str] = Field(default_factory=list[str])
     group_by_id: bool = False

@@ -18,7 +18,7 @@ formula:
   category: education
   subcategories: ["COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", "COLEGIO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA", "COLEGIO DE EDUCACIÓN PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL Y PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA", "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA Y SECUNDARIA"]
   attributes: {"titularidad": ["PÚBLICO", "PRIVADO CONCERTADO", "PÚBLICO-TITULARIDAD PRIVADA"]}  # the same destinations as min_a_pie_colegio
-  supply: {kind: municipal_share, metric: unidades_escolares, dims: {ensenanza: [educacion_primaria]}, dim: titularidad, by_attribute: titularidad, mapping: {"PÚBLICO": publico, "PRIVADO CONCERTADO": privado_concertado}}
+  supply: {kind: municipal_share, metric: unidades_escolares, dims: {ensenanza: [educacion_primaria]}, dim: titularidad, by_attribute: titularidad, mapping: {"PÚBLICO": publico, "PÚBLICO-TITULARIDAD PRIVADA": publico, "PRIVADO CONCERTADO": privado_concertado}}
   catchment_minutes: 15  # «El Madrid de los 15 minutos» (Ayuntamiento), the source of D-211
   speed_kmh: 4.0
   origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]

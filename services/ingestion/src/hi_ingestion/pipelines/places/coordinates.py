@@ -35,6 +35,7 @@ class GeocodeHit:
     municipio: str  # INE code the geocoder reports
     match: str  # "portal" is the only accepted level
     portal: int | None = None  # the house number the point belongs to
+    street: str | None = None  # the street the geocoder matched, e.g. "JOAQUIN TURINA"
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,7 @@ class Declared:
     district: str | None
     address: str | None
     number: int | None = None  # house number in the address; None -> never geocoded
+    street: str | None = None  # street name in the register, e.g. "de Joaquín Turina"
 
 
 @dataclass(frozen=True)
@@ -64,11 +66,32 @@ Geocode = Callable[[str], GeocodeHit | None]
 
 
 def _usable(hit: GeocodeHit | None, declared: Declared) -> GeocodeHit | None:
+    """A portal on the declared street, in the declared municipio, near the declared number."""
     if hit is None or hit.match != "portal" or hit.portal is None or declared.number is None:
         return None
-    if declared.municipio and hit.municipio != declared.municipio:
+    if declared.municipio is None or hit.municipio != declared.municipio:
+        return None
+    if not same_street(hit.street, declared.street):
         return None
     return hit if abs(hit.portal - declared.number) <= MAX_PORTAL_GAP else None
+
+
+# Words that registers and the geocoder write differently or leave out of a street name.
+_STREET_FILLER = frozenset({"de", "del", "la", "las", "los", "el", "y", "a", "al"})
+
+
+def street_words(name: str) -> frozenset[str]:
+    words = fold_name(name).replace(".", " ").split()
+    return frozenset(w for w in words if w not in _STREET_FILLER)
+
+
+def same_street(matched: str | None, declared: str | None) -> bool:
+    """«JOAQUIN TURINA» and «de Joaquín Turina» are the same street; a fuzzy match to another
+    street of the municipio is not. Without both names the match cannot be trusted."""
+    if not matched or not declared:
+        return False
+    a = street_words(matched)
+    return bool(a) and a == street_words(declared)
 
 
 def _geocoded(hit: GeocodeHit, declared: Declared, note: str) -> Resolution:

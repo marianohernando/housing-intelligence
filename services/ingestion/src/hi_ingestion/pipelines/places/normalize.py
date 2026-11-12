@@ -135,7 +135,10 @@ def _declared(row: dict[str, Any], spec: PointsPipeline, repair: Repair) -> Decl
     number = None
     if spec.address_number_column:
         number = house_number(str(row.get(spec.address_number_column) or ""))
-    return Declared(municipio, district, address, number)
+    street = None
+    if spec.address_street_column:
+        street = str(row.get(spec.address_street_column) or "").strip() or None
+    return Declared(municipio, district, address, number, street)
 
 
 def _place(

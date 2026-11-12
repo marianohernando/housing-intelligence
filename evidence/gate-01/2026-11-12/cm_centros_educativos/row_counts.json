@@ -1,19 +1,19 @@
 {
-  "places_normalized": 3867,
-  "quarantined": 39,
+  "places_normalized": 3866,
+  "quarantined": 40,
   "top_subcategories": {
     "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA": 717,
     "ESCUELA INFANTIL PRIVADA": 680,
     "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA": 449,
     "ESCUELA INFANTIL": 360,
-    "INSTITUTO DE EDUCACIÓN SECUNDARIA": 345,
+    "INSTITUTO DE EDUCACIÓN SECUNDARIA": 344,
     "CENTRO PRIVADO DE FORMACIÓN PROFESIONAL ESPECÍFICA": 225,
     "ESCUELA  INFANTIL-CASA DE NIÑOS": 128,
     "CENTRO DOCENTE EXTRANJERO EN ESPAÑA": 97,
     "COLEGIO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA": 93,
     "ESCUELA MUNICIPAL DE MÚSICA": 85
   },
-  "places": 3867,
-  "assigned_to_section": 3867,
+  "places": 3866,
+  "assigned_to_section": 3866,
   "municipio_mismatch": 0
 }

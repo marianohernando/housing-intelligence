@@ -613,6 +613,18 @@
           "default": null,
           "title": "Address Number Column"
         },
+        "address_street_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Street Column"
+        },
         "address_template": {
           "anyOf": [
             {

@@ -56,7 +56,7 @@ ROWS = [
         "30 jun 2026",
         "CM, la misma nota",
         NOTA_SERMAS,
-        "Centros de salud + consultorios: 417 SERMAS frente a 428 (−2,6 %).",
+        "Centros de salud + consultorios del SERMAS frente a 428 publicados (265 + 163).",
     ),
     Official(
         "Hospitales (todos)",

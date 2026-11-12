@@ -31,6 +31,7 @@ def hit_from_answer(answer: dict[str, Any] | None) -> GeocodeHit | None:
         str(municipio),
         str(answer.get("type") or ""),
         int(portal) if isinstance(portal, int | float) else None,
+        str(answer.get("address") or "") or None,
     )
 
 
@@ -62,6 +63,9 @@ class CachedGeocoder:
         return hit_from_answer(self.cache[query])
 
     def save(self) -> None:
+        """Write to a temporary file and swap it in, so an interruption never truncates it."""
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         text = json.dumps(self.cache, ensure_ascii=False, indent=1, sort_keys=True)
-        self.cache_path.write_text(text, encoding="utf-8")
+        partial = self.cache_path.with_suffix(".partial")
+        partial.write_text(text, encoding="utf-8")
+        partial.replace(self.cache_path)
