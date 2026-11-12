@@ -14,6 +14,7 @@
 //   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
 //   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
 //   node scripts/check-qa.mjs parques [outDir]   # «Parques» in «Todos los centros» and green on the map (DATA-018)
+//   node scripts/check-qa.mjs seguridad [outDir] # how the neighbours rate their barrio's safety, only in Madrid's districts (D-226)
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
@@ -1042,6 +1043,63 @@ async function parks(browser) {
 }
 
 /**
+ * zona.seguridad_vecinos (DATA-020, D-226 §1): in a Madrid district, its neighbours' rating of the
+ * safety of their barrio with the city's, as /features gives them; nothing outside Madrid, and no
+ * request to /features there. Neutral colours, no alarm words.
+ */
+async function perceivedSafety(browser) {
+  const failures = [];
+  const latest = async (id, level, code) => {
+    const r = await fetch(`${API}/api/v1/features/${id}/values?level=${level}`);
+    const rows = (await r.json()).data.values.filter((v) => v.territory_code === code && v.value !== null);
+    return rows.sort((a, b) => b.period_start.localeCompare(a.period_start))[0]?.value ?? null;
+  };
+  const score = (v) => v.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const city = [await latest("seguridad_percibida_noche", "municipio", "28079"), await latest("seguridad_percibida_dia", "municipio", "28079")];
+  for (const zone of [
+    { id: "retiro", path: "/zona/distrito/2807903", code: "2807903" },
+    { id: "centro", path: "/zona/distrito/2807901", code: "2807901" },
+    { id: "perales", path: "/zona/municipio/28110", code: null },
+  ]) {
+    const expected = zone.code
+      ? `Así valoran sus vecinos la seguridad de su barrio: ${score(await latest("seguridad_percibida_noche", "distrito", zone.code))} de noche y ${score(await latest("seguridad_percibida_dia", "distrito", zone.code))} de día, de 0 a 10 (en todo Madrid, ${score(city[0])} y ${score(city[1])}).`
+      : null;
+    for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+      const key = `${zone.id}_${id}`;
+      const p = await open(browser, profile, zone.path);
+      await p.page.getByRole("region", { name: "Todos los centros", exact: true }).waitFor({ timeout: 20000 });
+      await p.page.waitForTimeout(2500);
+      const block = p.page.getByText(/^Así valoran sus vecinos/).locator("xpath=..");
+      const entry = (report[key] = { esperado: expected });
+      entry.bloques = await block.count();
+      if (entry.bloques) {
+        entry.texto = flat(await block.first().innerText());
+        entry.colores = await block.first().evaluate((el) => [...el.querySelectorAll("p")].map((q) => getComputedStyle(q).color));
+        await block.first().screenshot({ path: `${out}/seguridad_${key}.png` });
+      }
+      entry.peticiones_features = await p.page.evaluate(() =>
+        performance.getEntriesByType("resource").flatMap((e) => (e.name.includes("/api/v1/features/") ? [new URL(e.name).pathname.split("/")[4] + "?" + new URL(e.name).search.slice(1)] : [])),
+      );
+      entry.axe = await axe(p.page);
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      if (expected && !entry.texto?.startsWith(expected)) failures.push(`${key}: «${entry.texto}»`);
+      if (expected && !entry.texto?.includes("Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.")) failures.push(`${key}: sin la fuente`);
+      if (expected && entry.peticiones_features.length !== 4) failures.push(`${key}: ${entry.peticiones_features.length} peticiones a /features`);
+      if (!expected && (entry.bloques > 0 || entry.peticiones_features.length > 0)) failures.push(`${key}: sale fuera de Madrid`);
+      if (/peligros|insegur/i.test(entry.texto ?? "")) failures.push(`${key}: palabra de alarma`);
+      if (entry.axe.length) failures.push(`${key}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.consola.length) failures.push(`${key}: consola`);
+      if (entry.overflow_px > 0) failures.push(`${key}: desborde`);
+      await p.ctx.close();
+    }
+  }
+  report.lcp_retiro_slow4g = await lcpOnSlow4g(browser, "/zona/distrito/2807903");
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
  * Icons (favicon.ico and apple-touch-icon gave 404 in the deploy logs): every page links them, they
  * load, the old fixed paths phones ask for answer too, and no request of the page fails.
  */
@@ -1295,6 +1353,7 @@ else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
 else if (mode === "iconos") await icons(browser);
 else if (mode === "parques") await parks(browser);
+else if (mode === "seguridad") await perceivedSafety(browser);
 else if (Object.hasOwn(PRIORITY_CHIPS, mode)) await priorityChip(browser, PRIORITY_CHIPS[mode]);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);

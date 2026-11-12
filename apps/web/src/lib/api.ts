@@ -9,6 +9,7 @@ import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
+import type { FeatureValueRow } from "@/lib/features";
 import { type AdminLevel, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
 import { anySignal, createLimiter } from "@/lib/limit";
 import type { PlaceFeature } from "@/lib/map/places";
@@ -24,6 +25,7 @@ export type PlaceCategory = ContractPlaceCategory;
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
+export type FeatureValuesResponse = Envelope<{ feature_id: string; level: string; values: FeatureValueRow[]; lineage: Lineage }>;
 
 
 /**
@@ -171,6 +173,10 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
       return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent), { timeoutMs });
     },
     places,
+    /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level. */
+    featureValues(featureId: string, level: "municipio" | "distrito", { timeoutMs }: GetOptions = {}) {
+      return call<FeatureValuesResponse>(`/api/v1/features/${encodeURIComponent(featureId)}/values?level=${level}`, { timeoutMs });
+    },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
     search(scenario: ScenarioState, { signal }: { signal?: AbortSignal } = {}) {
       return call<SearchResponse>("/api/v1/search", {

@@ -12,6 +12,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import BarriosBar from "@/components/zone/BarriosBar";
 import FacilitiesPanel from "@/components/zone/FacilitiesPanel";
+import PerceivedSafety from "@/components/zone/PerceivedSafety";
 import ZoneCard from "@/components/zone/ZoneCard";
 import { errorMessage } from "@/lib/errors";
 
@@ -86,6 +87,8 @@ export default function ZoneIntro() {
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
         <ZoneCard zone={routeZone} mode="zone" />
+        {/* Context only for Madrid's districts, the survey's coverage (D-226 §1) */}
+        {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
         <DataCounter />
         <ZoneListLink />
       </div>
