@@ -10,7 +10,7 @@ import type { SearchResponse } from "@/contracts/search_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
 import { type AdminLevel, adminUnitsUrl, DEFAULT_API_URL, type Lineage } from "@/lib/geo";
-import { createLimiter } from "@/lib/limit";
+import { anySignal, createLimiter } from "@/lib/limit";
 import type { PlaceFeature } from "@/lib/map/places";
 import type { AdminFeature } from "@/lib/map/zones";
 
@@ -93,15 +93,19 @@ export const MAX_REQUESTS_IN_FLIGHT = 4;
 
 /**
  * fetch through a limiter. A request's timeout (`timeoutMs`) starts when it leaves the queue, not
- * while it waits its turn (review of PR #17).
+ * while it waits its turn (review of PR #17); the wait for its turn has the same limit, so a
+ * request never waits forever behind others that hang. Both fail with a TimeoutError.
  */
 export function fetchThrough(run: ReturnType<typeof createLimiter>, fetchImpl: typeof fetch = fetch): FetchLike {
   return (input, { timeoutMs, ...init } = {}) =>
-    run(() => {
-      if (!timeoutMs) return fetchImpl(input, init);
-      const timeout = AbortSignal.timeout(timeoutMs);
-      return fetchImpl(input, { ...init, signal: init.signal ? AbortSignal.any([init.signal, timeout]) : timeout });
-    });
+    run(
+      () => {
+        if (!timeoutMs) return fetchImpl(input, init);
+        const timeout = AbortSignal.timeout(timeoutMs);
+        return fetchImpl(input, { ...init, signal: init.signal ? anySignal([init.signal, timeout]) : timeout });
+      },
+      { signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : undefined },
+    );
 }
 
 const fetchInTurn = fetchThrough(createLimiter(MAX_REQUESTS_IN_FLIGHT));

@@ -91,6 +91,15 @@ describe("api client", () => {
     expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
   });
 
+  it("never waits forever for its turn behind requests that hang: the wait has the same limit (TIMEOUT)", async () => {
+    const run = createLimiter(1);
+    const hanging = (() => new Promise<Response>(() => undefined)) as unknown as typeof fetch;
+    const inTurn = fetchThrough(run, hanging);
+    void inTurn("hangs");
+    const error = await createApi(BASE, inTurn).zoneGaps("distrito", "2807905", { timeoutMs: 20 }).catch((e: unknown) => e);
+    expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
+  });
+
   it("starts a request's timeout when it leaves the queue, not while it waits its turn", async () => {
     const run = createLimiter(1);
     const signals: (AbortSignal | null | undefined)[] = [];
