@@ -11,6 +11,7 @@
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map show every attribution_text of /datasets
 //   node scripts/check-qa.mjs atribucion [outDir] # mobile map attribution folded behind its (i), never the LCP
+//   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -816,6 +817,56 @@ async function attribution(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/**
+ * Icons (favicon.ico and apple-touch-icon gave 404 in the deploy logs): every page links them, they
+ * load, the old fixed paths phones ask for answer too, and no request of the page fails.
+ */
+async function icons(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    for (const [name, path] of [["portada", "/"], ["zona", ZONE.path], ["que_falta", "/que-falta?zona=distrito/2807905"]]) {
+      const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+      const page = await ctx.newPage();
+      const errors = [];
+      const notFound = [];
+      page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
+      page.on("response", (r) => { if (r.status() >= 400) notFound.push(`${r.status()} ${new URL(r.url()).pathname}`); });
+      await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(1200);
+      const links = await page.locator("link[rel='icon'], link[rel='apple-touch-icon']").evaluateAll((els) =>
+        els.map((el) => ({ rel: el.getAttribute("rel"), href: el.getAttribute("href"), sizes: el.getAttribute("sizes"), type: el.getAttribute("type") })),
+      );
+      const entry = (report[`${name}_${id}`] = { links, errores_http: notFound, axe: await axe(page), consola: errors });
+      const rels = links.map((l) => `${l.rel} ${l.type}`);
+      for (const must of ["icon image/x-icon", "icon image/svg+xml", "apple-touch-icon image/png"]) {
+        if (!rels.includes(must)) failures.push(`${name} ${id}: falta <link> ${must}`);
+      }
+      if (notFound.length) failures.push(`${name} ${id}: ${notFound.join(", ")}`);
+      if (entry.axe.length || errors.length) failures.push(`${name} ${id}: axe o consola`);
+      await ctx.close();
+    }
+  }
+  report.rutas = {};
+  for (const path of ["/favicon.ico", "/icon.svg", "/apple-icon.png", "/apple-touch-icon.png", "/apple-touch-icon-precomposed.png"]) {
+    const r = await fetch(`${BASE}${path}`);
+    const body = Buffer.from(await r.arrayBuffer());
+    report.rutas[path] = { status: r.status, tipo: r.headers.get("content-type"), bytes: body.length };
+    if (r.status !== 200) failures.push(`${path}: ${r.status}`);
+  }
+  // A sheet with the icons at the sizes a browser and a phone use, from the routes themselves
+  const page = await browser.newPage({ viewport: { width: 520, height: 230 }, deviceScaleFactor: 2 });
+  await page.setContent(`<body style="margin:0;padding:24px;display:flex;gap:28px;align-items:end;font:14px sans-serif;color:#141b3d;background:#f6f5fc">
+    ${[16, 32, 48].map((s) => `<figure style="margin:0;text-align:center"><img src="${BASE}/favicon.ico" width="${s}" height="${s}" alt=""><figcaption>${s} px (.ico)</figcaption></figure>`).join("")}
+    <figure style="margin:0;text-align:center"><img src="${BASE}/icon.svg" width="64" height="64" alt=""><figcaption>SVG</figcaption></figure>
+    <figure style="margin:0;text-align:center"><img src="${BASE}/apple-icon.png" width="120" height="120" style="border-radius:27px" alt=""><figcaption>iPhone (180 px)</figcaption></figure>
+  </body>`);
+  await page.waitForLoadState("networkidle");
+  await page.screenshot({ path: `${out}/iconos.png` });
+  await page.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 /** Copy of line D after gap-0.3 and D-218 (pitch/textos_web.md, «Novedades del 12 nov»; metodologia §1.4–1.8). */
 async function texts(browser) {
   const failures = [];
@@ -1018,6 +1069,7 @@ else if (mode === "capturas-deck") await deckCaptures(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
+else if (mode === "iconos") await icons(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
