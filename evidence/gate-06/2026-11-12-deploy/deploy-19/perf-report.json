@@ -1,0 +1,179 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "measured_at": "2026-11-12T20:08:42.958Z",
+ "runs": 1,
+ "profiles": {
+  "mobile-slow4g": {
+   "pages": {
+    "portada": {
+     "path": "/",
+     "runs": [
+      {
+       "lcp_ms": 1120,
+       "fcp_ms": 1120,
+       "load_ms": 1895,
+       "requests": 41,
+       "map_tiles_slow4g_estimate_s": 3.1,
+       "kb": {
+        "web": 746,
+        "api": 100,
+        "map tiles": 644,
+        "other": 0
+       },
+       "total_kb": 1490
+      }
+     ],
+     "median": {
+      "lcp_ms": 1120,
+      "fcp_ms": 1120,
+      "load_ms": 1895,
+      "total_kb": 1490
+     }
+    },
+    "zona Chamartín": {
+     "path": "/zona/distrito/2807905",
+     "runs": [
+      {
+       "lcp_ms": 1984,
+       "fcp_ms": 1136,
+       "load_ms": 1891,
+       "requests": 49,
+       "map_tiles_slow4g_estimate_s": 1.8,
+       "kb": {
+        "web": 748,
+        "api": 125,
+        "map tiles": 372,
+        "other": 0
+       },
+       "total_kb": 1245
+      }
+     ],
+     "median": {
+      "lcp_ms": 1984,
+      "fcp_ms": 1136,
+      "load_ms": 1891,
+      "total_kb": 1245
+     }
+    },
+    "qué falta Madrid": {
+     "path": "/que-falta?zona=municipio/28079",
+     "runs": [
+      {
+       "lcp_ms": 1120,
+       "fcp_ms": 1120,
+       "load_ms": 2006,
+       "requests": 31,
+       "map_tiles_slow4g_estimate_s": 0,
+       "kb": {
+        "web": 323,
+        "api": 7,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 331
+      }
+     ],
+     "median": {
+      "lcp_ms": 1120,
+      "fcp_ms": 1120,
+      "load_ms": 2006,
+      "total_kb": 331
+     }
+    }
+   },
+   "search": [
+    {
+     "click_to_response_ms": 550,
+     "click_to_results_ms": 605,
+     "search_body_kb": 114
+    }
+   ]
+  },
+  "desktop": {
+   "pages": {
+    "portada": {
+     "path": "/",
+     "runs": [
+      {
+       "lcp_ms": 276,
+       "fcp_ms": 276,
+       "load_ms": 282,
+       "requests": 52,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 740,
+        "api": 100,
+        "map tiles": 1911,
+        "other": 0
+       },
+       "total_kb": 2752
+      }
+     ],
+     "median": {
+      "lcp_ms": 276,
+      "fcp_ms": 276,
+      "load_ms": 282,
+      "total_kb": 2752
+     }
+    },
+    "zona Chamartín": {
+     "path": "/zona/distrito/2807905",
+     "runs": [
+      {
+       "lcp_ms": 764,
+       "fcp_ms": 724,
+       "load_ms": 722,
+       "requests": 103,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 743,
+        "api": 125,
+        "map tiles": 4156,
+        "other": 0
+       },
+       "total_kb": 5024
+      }
+     ],
+     "median": {
+      "lcp_ms": 764,
+      "fcp_ms": 724,
+      "load_ms": 722,
+      "total_kb": 5024
+     }
+    },
+    "qué falta Madrid": {
+     "path": "/que-falta?zona=municipio/28079",
+     "runs": [
+      {
+       "lcp_ms": 424,
+       "fcp_ms": 212,
+       "load_ms": 232,
+       "requests": 31,
+       "map_tiles_slow4g_estimate_s": null,
+       "kb": {
+        "web": 323,
+        "api": 7,
+        "map tiles": 0,
+        "other": 0
+       },
+       "total_kb": 331
+      }
+     ],
+     "median": {
+      "lcp_ms": 424,
+      "fcp_ms": 212,
+      "load_ms": 232,
+      "total_kb": 331
+     }
+    }
+   },
+   "search": [
+    {
+     "click_to_response_ms": 397,
+     "click_to_results_ms": 404,
+     "search_body_kb": 114
+    }
+   ]
+  }
+ }
+}
