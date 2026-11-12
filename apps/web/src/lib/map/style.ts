@@ -3,7 +3,7 @@
  * with our own quiet style: lavender land, white roads, soft parks and water, no labels, and 3D
  * buildings from zone zoom. Colours come from tokens.css (--map-*), read at runtime by the map.
  */
-import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, LayerSpecification, StyleSpecification, VectorSourceSpecification } from "maplibre-gl";
 
 import { FIT_RAMP } from "@/lib/fit";
 
@@ -11,6 +11,20 @@ import { PATTERN_IMAGE } from "./gapMap";
 
 /** TileJSON of OpenFreeMap's public instance; it carries the © OpenMapTiles / OSM attribution. */
 export const OPENFREEMAP_TILEJSON = "https://tiles.openfreemap.org/planet";
+
+/** OpenMapTiles carries every layer up to zoom 14 (buildings with their heights included). */
+const OPENMAPTILES_MAXZOOM = 14;
+
+/**
+ * Where the base map comes from (OpenMapTiles schema): NEXT_PUBLIC_MAP_TILES_URL at build time,
+ * as a TileJSON URL or a {z}/{x}/{y} template, local or not (the offline package serves an extract
+ * of Madrid, e.g. with `pmtiles serve`). Unset or not http(s): OpenFreeMap, as always.
+ */
+export function mapTilesSource(url: string | undefined): VectorSourceSpecification {
+  if (!url || !/^https?:\/\//.test(url)) return { type: "vector", url: OPENFREEMAP_TILEJSON };
+  if (url.includes("{z}")) return { type: "vector", tiles: [url], maxzoom: OPENMAPTILES_MAXZOOM };
+  return { type: "vector", url };
+}
 
 export const MAP_PALETTE_TOKENS = {
   land: "map-land",
@@ -102,10 +116,10 @@ function buildingsLayer(p: MapPalette): LayerSpecification {
   };
 }
 
-export function baseStyle(p: MapPalette): StyleSpecification {
+export function baseStyle(p: MapPalette, tiles: VectorSourceSpecification = mapTilesSource(undefined)): StyleSpecification {
   return {
     version: 8,
-    sources: { [SRC]: { type: "vector", url: OPENFREEMAP_TILEJSON } },
+    sources: { [SRC]: tiles },
     // Soft lavender-tinted light: shaded walls stay lavender instead of turning grey.
     light: { anchor: "viewport", color: "#f6f4ff", intensity: 0.35, position: [1.2, 210, 35] },
     sky: {

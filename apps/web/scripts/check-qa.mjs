@@ -4,6 +4,8 @@
 //   node scripts/check-qa.mjs fixes [outDir]    # phase 1: PENDIENTES fixes (texts, search, R-06)
 //   node scripts/check-qa.mjs t3 [outDir]       # phase 2: every facility of a zone (T3)
 //   node scripts/check-qa.mjs proyector [outDir] # phase 3: no overlaps from 1024×576 to 1440×900
+//   node scripts/check-qa.mjs offline [outDir]   # phase 5: street tiles blocked (offline package)
+//   node scripts/check-qa.mjs tiles-local [outDir] # phase 5: web built with NEXT_PUBLIC_MAP_TILES_URL=http://localhost:3999/madrid.json
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -261,19 +263,35 @@ const SIZES = [[1024, 768], [1024, 576], [1280, 720], [1366, 768], [1440, 900]];
  */
 async function overlaps(page) {
   return page.evaluate(() => {
-    const visible = (r) => r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
+    // The part of an element on screen: clipped by the viewport and by its scrolling ancestors (the
+    // mobile sheet) up to the first fixed one, since overflow does not clip what is fixed above it
+    const clip = (el) => {
+      let r = el.getBoundingClientRect();
+      let box = { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+      for (let a = el; a; a = a.parentElement) {
+        const style = getComputedStyle(a);
+        if (a !== el && (style.overflowX !== "visible" || style.overflowY !== "visible")) {
+          r = a.getBoundingClientRect();
+          box = { left: Math.max(box.left, r.left), top: Math.max(box.top, r.top), right: Math.min(box.right, r.right), bottom: Math.min(box.bottom, r.bottom) };
+        }
+        if (style.position === "fixed") break;
+      }
+      box = { left: Math.max(box.left, 0), top: Math.max(box.top, 0), right: Math.min(box.right, innerWidth), bottom: Math.min(box.bottom, innerHeight) };
+      return { ...box, width: box.right - box.left, height: box.bottom - box.top };
+    };
+    const visible = (r) => r.width > 0 && r.height > 0;
     const name = (el) => (el.getAttribute("aria-label") ?? el.querySelector("h1, h2")?.textContent ?? el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 40);
     const hit = (a, b) => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
     const isFixed = (el) => getComputedStyle(el).position === "fixed";
     const skip = (el) => el.closest(".maplibregl-map, header");
-    const fixed = [...document.querySelectorAll(".glass")].filter((el) => isFixed(el) && visible(el.getBoundingClientRect()));
+    const fixed = [...document.querySelectorAll(".glass")].filter((el) => isFixed(el) && visible(clip(el)));
     const others = [...document.querySelectorAll(".glass, a, button, select, h1")].filter(
-      (el) => !skip(el) && !fixed.some((f) => f.contains(el) || el.contains(f)) && visible(el.getBoundingClientRect()),
+      (el) => !skip(el) && !fixed.some((f) => f.contains(el) || el.contains(f)) && visible(clip(el)),
     );
     const found = [];
     for (const f of fixed) {
-      const fr = f.getBoundingClientRect();
-      for (const el of others) if (hit(fr, el.getBoundingClientRect())) found.push(`${name(f)} ⟂ ${el.tagName.toLowerCase()} «${name(el)}»`);
+      const fr = clip(f);
+      for (const el of others) if (hit(fr, clip(el))) found.push(`${name(f)} ⟂ ${el.tagName.toLowerCase()} «${name(el)}»`);
     }
     return { fijos: fixed.map((f) => { const r = f.getBoundingClientRect(); return [name(f), Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]; }), solapes: found };
   });
@@ -317,8 +335,75 @@ async function projector(browser) {
   report.sin_solapes = Object.values(result).every((e) => ["portada", "resultados", "tarjeta", "zona"].every((k) => e[k].solapes.length === 0));
 }
 
+const TILES = "https://tiles.openfreemap.org/**";
+const isTileFailure = (text) => /ERR_FAILED|ERR_BLOCKED|openfreemap/.test(text);
+
+/** Phase 5: without the street tiles the zones still work with a quiet note; without zones too, the alert. */
+async function offline(browser) {
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    await ctx.route(TILES, (route) => route.abort("failed"));
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+    await page.getByText("Mapa sin fondo de calles.").waitFor({ timeout: 20000 });
+    const entry = (report[`sin_calles_${id}`] = {});
+    entry.nota = await page.getByRole("status").filter({ hasText: "Mapa sin fondo de calles." }).count();
+    entry.aviso_fuerte = await page.getByRole("alert").filter({ hasText: /No se ha podido cargar el mapa/ }).count();
+    await loadExample(page, id === "mobile");
+    entry.resultados = flat(await page.getByText(/^Con tu búsqueda tal cual/).first().innerText());
+    entry.solapes = (await overlaps(page)).solapes;
+    entry.axe = await axe(page);
+    entry.consola_esperada = errors.filter(isTileFailure).length;
+    entry.consola_otros = errors.filter((e) => !isTileFailure(e));
+    await page.screenshot({ path: `${out}/p5_sin_calles_${id}.png` });
+    await ctx.close();
+  }
+  // Neither the street tiles nor the zones: the strong alert with the list of zones
+  const ctx = await browser.newContext({ ...DESKTOP, locale: "es-ES" });
+  await ctx.route(TILES, (route) => route.abort("failed"));
+  await ctx.route("**/api/v1/geo/**", (route) => route.abort("failed"));
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await page.getByRole("alert").filter({ hasText: /No se ha podido cargar el mapa/ }).waitFor({ timeout: 20000 });
+  report.sin_calles_ni_zonas = {
+    aviso_fuerte: flat(await page.getByRole("alert").filter({ hasText: /No se ha podido cargar el mapa/ }).innerText()),
+    nota: await page.getByText("Mapa sin fondo de calles.").count(),
+  };
+  await page.screenshot({ path: `${out}/p5_sin_calles_ni_zonas_desktop.png` });
+  await ctx.close();
+}
+
+/** Phase 5: the base map from a local TileJSON (NEXT_PUBLIC_MAP_TILES_URL), served here by Playwright. */
+async function tilesLocal(browser) {
+  const tilejson = await (await fetch("https://tiles.openfreemap.org/planet")).json();
+  const ctx = await browser.newContext({ ...DESKTOP, locale: "es-ES" });
+  const asked = [];
+  await ctx.route("http://localhost:3999/madrid.json", (route) => {
+    asked.push(route.request().url());
+    return route.fulfill({ json: tilejson, headers: { "Access-Control-Allow-Origin": "*" } });
+  });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  await page.goto(`${BASE}${ZONE.path}`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(7000);
+  report.tilejson_local = {
+    pedido: asked.length > 0,
+    nota: await page.getByText("Mapa sin fondo de calles.").count(),
+    aviso_fuerte: await page.getByRole("alert").filter({ hasText: /No se ha podido cargar el mapa/ }).count(),
+    consola: errors,
+  };
+  await page.screenshot({ path: `${out}/p5_tilejson_local_zona_desktop.png` });
+  await ctx.close();
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "offline") await offline(browser);
+else if (mode === "tiles-local") await tilesLocal(browser);
 else if (mode === "t3") await facilities(browser);
 else if (mode === "proyector") await projector(browser);
 else throw new Error(`Unknown mode ${mode}`);

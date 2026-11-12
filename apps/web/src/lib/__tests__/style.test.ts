@@ -14,6 +14,7 @@ import {
   clusterRadius,
   FACILITY_SOURCE,
   facilityLayers,
+  mapTilesSource,
   MAP_PALETTE_TOKENS,
   type MapPalette,
   OPENFREEMAP_TILEJSON,
@@ -70,6 +71,24 @@ describe("map style", () => {
     expect(OPENFREEMAP_TILEJSON).not.toMatch(/key=|token=/i);
     expect(style.layers.some((l) => l.type === "symbol")).toBe(false);
     expect(style.glyphs).toBeUndefined();
+  });
+
+  it("takes its base map from NEXT_PUBLIC_MAP_TILES_URL when set (offline package), OpenFreeMap otherwise", () => {
+    expect(mapTilesSource(undefined)).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
+    expect(mapTilesSource("")).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
+    // A TileJSON, local or not (pmtiles serve, martin, tileserver-gl)
+    expect(mapTilesSource("http://localhost:8080/madrid.json")).toEqual({ type: "vector", url: "http://localhost:8080/madrid.json" });
+    // A tile template, with the OpenMapTiles zooms
+    expect(mapTilesSource("http://localhost:8080/madrid/{z}/{x}/{y}.pbf")).toEqual({
+      type: "vector",
+      tiles: ["http://localhost:8080/madrid/{z}/{x}/{y}.pbf"],
+      maxzoom: 14,
+    });
+    // Anything else is not a tile URL: the default stays
+    expect(mapTilesSource("ftp://tiles/madrid")).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
+    const local = baseStyle(palette, mapTilesSource("http://localhost:8080/madrid.json"));
+    expect(local.sources.openmaptiles).toEqual({ type: "vector", url: "http://localhost:8080/madrid.json" });
+    expect(validateStyleMin(local)).toEqual([]);
   });
 
   it("extrudes buildings from zone zoom, honouring hide_3d", () => {

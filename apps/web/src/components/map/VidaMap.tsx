@@ -46,6 +46,7 @@ import {
   FACILITY_SOURCE,
   facilityLayers,
   MAP_PALETTE_TOKENS,
+  mapTilesSource,
   type MapPalette,
   ZONE_BASE,
   zoneLayers,
@@ -74,6 +75,8 @@ import { useMapZones } from "./MapProvider";
 import styles from "./VidaMap.module.css";
 
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
+/** Base map tiles: OpenFreeMap unless the build sets NEXT_PUBLIC_MAP_TILES_URL (offline package). */
+const MAP_TILES = mapTilesSource(process.env.NEXT_PUBLIC_MAP_TILES_URL);
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const ATTRIBUTION =
@@ -93,6 +96,8 @@ const TEXT = {
   aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
   noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
+  // Only the street background failed: the zones are there (provisional, listed for line D)
+  noStreets: "Mapa sin fondo de calles.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
   // mapa.aria.fila of pitch/textos_web.md (gap-0.2, D-213)
@@ -384,6 +389,8 @@ export default function VidaMap() {
   const shownOverview = useRef(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
+  // No WebGL, or neither the streets nor the zones: the map cannot be used, the list can
+  const strongFailure = failure === "webgl" || (failure === "tiles" && status === "error");
   const [keyPoints, setKeyPoints] = useState<{ key: string; points: KeyPoint[] } | null>(null);
   // Zone (or barrio) whose flight has landed, and where its camera ends: key points are picked from that view.
   const [landed, setLanded] = useState<{ key: string; end: ZoneCamera } | null>(null);
@@ -411,7 +418,7 @@ export default function VidaMap() {
       setWorkerUrl(WORKER_URL);
       map = new MapLibreMap({
         container: element,
-        style: baseStyle(readPalette()),
+        style: baseStyle(readPalette(), MAP_TILES),
         center: [-3.7, 40.42],
         zoom: 8.3,
         maxPitch: 70,
@@ -544,11 +551,17 @@ export default function VidaMap() {
         role="region"
         aria-label={mapAria}
       />
-      {failure && (
+      {strongFailure && (
         <div role="alert" className={`glass ${styles.failure}`}>
           <p>{failure === "webgl" ? TEXT.noWebgl : TEXT.noTiles}</p>
           <Link href="/zonas">{ZONE_LIST_TEXT}</Link>
         </div>
+      )}
+      {/* Without the street background the zones still show and work: a quiet note is enough */}
+      {failure === "tiles" && !strongFailure && status === "ready" && (
+        <p role="status" className={`glass ${styles.note}`}>
+          {TEXT.noStreets}
+        </p>
       )}
       {/* The outlines of the zones; a zone screen tells its own loading and errors (ZoneIntro). */}
       {!failure && overview && status === "loading" && (
@@ -557,7 +570,7 @@ export default function VidaMap() {
           {slow && ` ${SLOW_TEXT}`}
         </p>
       )}
-      {!failure && overview && status === "error" && error && (
+      {!strongFailure && overview && status === "error" && error && (
         <div role="alert" className={`glass ${styles.failure}`}>
           <p>{errorMessage(error)}</p>
           <Button variant="secondary" onClick={retry}>
