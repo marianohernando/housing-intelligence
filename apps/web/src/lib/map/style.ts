@@ -32,6 +32,8 @@ export const MAP_PALETTE_TOKENS = {
   land: "map-land",
   water: "map-water",
   park: "map-park",
+  parkVivid: "map-park-vivid",
+  parkStrong: "park",
   road: "map-road",
   rail: "map-rail",
   zone: "map-zone",
@@ -57,6 +59,8 @@ export const MAP_PALETTE_TOKENS = {
 export type MapPalette = Record<keyof typeof MAP_PALETTE_TOKENS, string>;
 
 export const BUILDING_LAYER = "buildings";
+/** The base map's urban parks in a livelier green, hidden until «Parques» is on. */
+export const PARKS_VIVID_LAYER = "parks-vivid";
 /**
  * OpenMapTiles only carries building heights (render_height) in zoom-14 tiles; at 13 the
  * footprints come merged and flat. Buildings show from 13 and stand up from 14.
@@ -145,6 +149,18 @@ export function baseStyle(p: MapPalette, tiles: VectorSourceSpecification = mapT
         paint: { "fill-color": p.park, "fill-opacity": 0.9 },
       },
       { id: "park", type: "fill", source: SRC, "source-layer": "park", paint: { "fill-color": p.park } },
+      {
+        // The urban parks of OSM (leisure=park: landcover «park» in OpenMapTiles), lit up while
+        // «Parques» is on (VidaMap shows it); woods like the Casa de Campo are not in it
+        id: PARKS_VIVID_LAYER,
+        type: "fill",
+        source: SRC,
+        "source-layer": "landcover",
+        minzoom: 11,
+        filter: ["==", ["get", "subclass"], "park"],
+        layout: { visibility: "none" },
+        paint: { "fill-color": p.parkVivid },
+      },
       { id: "water", type: "fill", source: SRC, "source-layer": "water", paint: { "fill-color": p.water } },
       {
         id: "waterway",
@@ -298,17 +314,25 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
 /** Source of every facility of the zone on screen (lib/map/facilities.ts), clustered by MapLibre. */
 export const FACILITY_SOURCE = "facilities";
 export const FACILITY_CLUSTER = { radius: 48, maxZoom: 16 } as const;
+/** Each group counts its parks: a group made only of parks is drawn in green, any other stays violet. */
+export const FACILITY_CLUSTER_PROPERTIES = { parks: ["+", ["case", ["==", ["get", "type"], "parque"], 1, 0]] } as const;
 const CLUSTER_IMAGE = "facility-cluster-";
+const PARK_TONE = "park-";
 
-/** Each group is drawn as an image with its count (the map has no glyph server): its id says the count. */
-export function clusterImageId(count: number): string {
-  return `${CLUSTER_IMAGE}${count}`;
+export type ClusterTone = "violet" | "park";
+
+/** Each group is drawn as an image with its count (the map has no glyph server): its id says the count and colour. */
+export function clusterImageId(count: number, tone: ClusterTone = "violet"): string {
+  return `${CLUSTER_IMAGE}${tone === "park" ? PARK_TONE : ""}${count}`;
 }
 
-export function clusterImageCount(id: string): number | null {
+/** The count and colour a group image stands for, or null when the id is not a group's. */
+export function clusterImageOf(id: string): { count: number; tone: ClusterTone } | null {
   if (!id.startsWith(CLUSTER_IMAGE)) return null;
-  const count = Number(id.slice(CLUSTER_IMAGE.length));
-  return Number.isInteger(count) && count > 0 ? count : null;
+  const rest = id.slice(CLUSTER_IMAGE.length);
+  const tone: ClusterTone = rest.startsWith(PARK_TONE) ? "park" : "violet";
+  const count = Number(tone === "park" ? rest.slice(PARK_TONE.length) : rest);
+  return Number.isInteger(count) && count > 0 ? { count, tone } : null;
 }
 
 /** Radius in CSS px of a group's circle: bigger groups, bigger circles; always a 44 px target or close. */
@@ -318,7 +342,8 @@ export function clusterRadius(count: number): number {
 
 /**
  * The zone's facilities of one type (FASE_PRUEBAS, T3): groups as violet circles with their count
- * and single places as violet dots, above the buildings so none hides behind a block.
+ * and single places as violet dots, above the buildings so none hides behind a block. Parks
+ * (DATA-018) in green.
  */
 export function facilityLayers(p: MapPalette): LayerSpecification[] {
   return [
@@ -329,7 +354,7 @@ export function facilityLayers(p: MapPalette): LayerSpecification[] {
       filter: ["!", ["has", "point_count"]],
       paint: {
         "circle-radius": 7,
-        "circle-color": p.violetStrong,
+        "circle-color": ["match", ["get", "type"], "parque", p.parkStrong, p.violetStrong],
         "circle-stroke-color": "#ffffff",
         "circle-stroke-width": 2.5,
       },
@@ -340,7 +365,7 @@ export function facilityLayers(p: MapPalette): LayerSpecification[] {
       source: FACILITY_SOURCE,
       filter: ["has", "point_count"],
       layout: {
-        "icon-image": ["concat", CLUSTER_IMAGE, ["to-string", ["get", "point_count"]]],
+        "icon-image": ["concat", CLUSTER_IMAGE, ["case", ["==", ["get", "parks"], ["get", "point_count"]], PARK_TONE, ""], ["to-string", ["get", "point_count"]]],
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,
       },

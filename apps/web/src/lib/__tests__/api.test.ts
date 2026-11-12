@@ -48,6 +48,13 @@ describe("api client", () => {
     expect(body.data.row).toBe("centro_salud");
   });
 
+  it("asks for one feature's values for every zone of a level, with a timeout (perceived safety, D-226)", async () => {
+    const calls: Call[] = [];
+    const api = createApi(BASE, fakeFetch(200, envelope({ feature_id: "seguridad_percibida_noche", level: "distrito", values: [], lineage: {} }), calls));
+    await api.featureValues("seguridad_percibida_noche", "distrito", { timeoutMs: 15 });
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/features/seguridad_percibida_noche/values?level=distrito`);
+  });
+
   it("asks only for CM datasets when told so (footer counter)", async () => {
     const calls: Call[] = [];
     const api = createApi(BASE, fakeFetch(200, envelope(fixture("dataset_list.all.fixture.json")), calls));

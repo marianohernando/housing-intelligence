@@ -189,6 +189,15 @@
   transform: translate(-50%, 50%);
 }
 
+/* A park's label (DATA-018): its icon and pin in the green of its dots on the map */
+.park .labelIcon {
+  color: var(--park);
+}
+
+.park .labelPin {
+  background: var(--park);
+}
+
 /* Mobile: compact labels (type only) so they do not cover the small map */
 @media (max-width: 760px) {
   .label {

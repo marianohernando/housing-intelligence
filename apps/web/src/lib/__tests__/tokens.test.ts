@@ -41,6 +41,11 @@ const PAIRS: [fg: string, bg: string, min: number][] = [
   ["focus", "bg", UI],
   ["focus", "glass/map", UI],
   ["control-border", "surface", UI],
+  // Parks (DATA-018): the label icon on glass, the white count on a group, and a dot on the parks it marks
+  ["park", "glass/bg", UI],
+  ["surface", "park", TEXT],
+  ["park", "map-park-vivid", UI],
+  ["park", "map-land", UI],
   ...STATUSES.flatMap((s): [string, string, number][] => [
     [`${s}-ink`, `${s}-bg`, TEXT],
     [`${s}-ink`, "surface", TEXT],

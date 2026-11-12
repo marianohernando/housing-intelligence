@@ -1,0 +1,28 @@
+# Fase 2 · ¿quién usa lib/features.ts y describeLineage/describeUnit de lib/geo.ts? (e7679bf)
+# Por cada export: ficheros de src/ y scripts/ que lo nombran, sin contar el propio módulo.
+$ grep -rln "lib/features\|\.\./features" src scripts
+src/lib/__tests__/features.test.ts
+
+## src/lib/features.ts
+FeatureInfo          (solo dentro del módulo)
+FeatureValueRow      (solo dentro del módulo)
+PALETTE              src/lib/__tests__/features.test.ts 
+UNKNOWN_COLOR        src/lib/__tests__/features.test.ts 
+LOW_CONFIDENCE       (solo dentro del módulo)
+quantileBreaks       src/lib/__tests__/features.test.ts 
+classIndex           src/lib/__tests__/features.test.ts 
+classColor           (solo dentro del módulo)
+colorFor             src/lib/__tests__/features.test.ts 
+formatValue          src/lib/__tests__/features.test.ts 
+describeValue        src/lib/__tests__/features.test.ts 
+
+## src/lib/geo.ts
+AdminLevel           src/lib/api.ts 
+AdminUnitProperties  src/lib/map/zones.ts 
+Lineage              src/lib/api.ts 
+DEFAULT_API_URL      src/lib/api.ts 
+LEVEL_LABEL          (solo dentro del módulo)
+adminUnitsUrl        src/lib/api.ts src/lib/__tests__/geo.test.ts 
+describeUnit         src/lib/__tests__/geo.test.ts 
+describeLineage      src/lib/__tests__/geo.test.ts 
+

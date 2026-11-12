@@ -1,6 +1,6 @@
 "use client";
 
-import { Accessibility, Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, User, Users } from "lucide-react";
+import { Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, TrainFront, Trees, User, Users } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { BudgetKind, PriorityKey } from "@/contracts/scenario_state";
@@ -47,9 +47,9 @@ const TEXT = {
   workHelp: "Así miraremos lo lejos que te queda cada zona.",
   soon: "Muy pronto",
   noLimit: "Sin límite de presupuesto",
-  // presupuesto.compra.sin_datos: with «Comprar» the budget condition is unknown in every zone (D-214)
-  buyNoData: "Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.",
-  noData: "Sin datos",
+  // B's draft for D after fit-0.5 (D-227): where buying has an official price and where it does not
+  buySource:
+    "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda). Solo se publica para los municipios de más de 25.000 habitantes; en los distritos de Madrid y en los pueblos no podemos comprobar tu presupuesto.",
   budget: "Presupuesto",
   rent: "Alquilar",
   buy: "Comprar",
@@ -62,18 +62,19 @@ const TEXT = {
 };
 
 /**
- * Priorities with data today. Sin escaleras (fit-0.4, DATA-019, D-223) is a preference the person
- * marks, never a label about them (D-204, CLAUDE.md §13): it scores the walk to a metro or train
- * station the CRTM declares accessible (a proxy, so its help names the source and says no more).
- * Zonas verdes and seguridad wait.
+ * Every priority the search scores today. Zonas verdes (fit-0.3, D-222) scores the walk to an urban
+ * park of 1 ha or more. Sin escaleras (fit-0.4, DATA-019, D-223) is a preference the person marks,
+ * never a label about them (D-204, CLAUDE.md §13): its icon is the station it measures, not a
+ * wheelchair, and its help names the CRTM because it is a proxy. Seguridad has no chip and is not
+ * announced (D-224).
  */
 const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: string }[] = [
   { key: "transporte", label: "Transporte", icon: Bus, help: "Paradas cerca de casa y con autobuses o trenes a menudo." },
   { key: "salud", label: "Salud", icon: Cross, help: "Centro de salud cerca de casa." },
   { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios con primaria, públicos o concertados, cerca de casa." },
-  { key: "sin_escaleras", label: "Sin escaleras", icon: Accessibility, help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa." },
+  { key: "zonas_verdes", label: "Zonas verdes", icon: Trees, help: "Parques de una hectárea o más, cerca de casa." },
+  { key: "sin_escaleras", label: "Sin escaleras", icon: TrainFront, help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa." },
 ];
-const UPCOMING = "Muy pronto: zonas verdes y seguridad.";
 
 function peopleText(n: number): string {
   return n === 1 ? "1 persona en casa" : `${n} personas en casa`;
@@ -140,7 +141,6 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               />
             ))}
           </div>
-          <p className={styles.help}>{UPCOMING}</p>
         </fieldset>
 
         {available ? (
@@ -194,11 +194,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               {TEXT.noLimit}
             </label>
           )}
-          {available && budget?.kind === "buy" && (
-            <p className={styles.noDataNote}>
-              <span className={styles.noDataTag}>{TEXT.noData}</span> {TEXT.buyNoData}
-            </p>
-          )}
+          {available && budget?.kind === "buy" && <p className={styles.help}>{TEXT.buySource}</p>}
         </fieldset>
 
         {available ? (

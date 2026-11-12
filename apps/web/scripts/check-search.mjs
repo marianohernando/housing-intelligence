@@ -205,10 +205,15 @@ if (mode === "off") {
     await page.getByRole("button", { name: "Cerrar" }).click();
   }
 
-  // Buying: «Sin datos» with its explanation; what the API answers is what shows (if it says no
-  // zone, the screen says none), checked like the demo case, with no figure fixed here (M3)
+  // Buying (fit-0.5, D-227): the note says where the official price exists; what the API answers is
+  // what shows (if it says no zone, the screen says none), checked like the demo case, with no
+  // figure fixed here (M3): the first zone's card with its price fact as it comes, and the Reality Check
   await page.getByRole("radio", { name: "Comprar" }).check();
-  d.compra = { nota: squash(await page.getByText(/Aún no tenemos precios oficiales de compra/).first().innerText()) };
+  d.compra = {
+    nota: squash(await page.getByText(/^Precio de compra: el valor tasado medio/).first().innerText()),
+    sin_aun_no_tenemos: await page.getByText(/Aún no tenemos precios/).count(),
+  };
+  check("compra: ya no dice «Aún no tenemos precios»", d.compra.sin_aun_no_tenemos === 0);
   const buy = await searchAnswer(page, () => page.getByRole("button", { name: "Ver zonas que encajan" }).click());
   const buyPassing = buy.reality_check.zones_passing;
   // A screen that disagrees is reported by the checks below, not by a timeout here
@@ -221,9 +226,25 @@ if (mode === "off") {
   const buyLegend = Number((await legend.locator("li").first().innerText()).match(/(\d+) zonas?/)?.[1]);
   check("compra: leyenda «Cumple todo» = zones_passing", buyLegend === buyPassing, `${buyLegend} / ${buyPassing}`);
   d.compra.resultados = squash(await buyRegion.innerText());
-  d.compra.y_si_cambias = squash(await page.getByRole("region", { name: "¿Y si cambias algo?", exact: true }).innerText());
+  const buyChanges = page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+  // Every option the API gives, not only the first one shown folded
+  const allOptions = buyChanges.getByRole("button", { name: /Ver todas las opciones/ });
+  if (await allOptions.count()) await allOptions.click();
+  d.compra.y_si_cambias = squash(await buyChanges.innerText());
+  d.compra.api.metodo = buy.methodology_version;
+  d.compra.api.relajaciones = buy.reality_check.relaxations.map((r) => [r.label, r.added_zones]);
+  // The screen offers the options that add zones (relaxOptions), the budget's included (D-227 §5)
+  for (const r of buy.reality_check.relaxations.filter((x) => x.added_zones > 0)) {
+    check(`compra: «¿Y si cambias algo?» propone «${r.label}»`, d.compra.y_si_cambias.includes(r.label));
+  }
+  d.compra.api.primera = buy.results[0] ? [buy.results[0].zone.name, buy.results[0].facts.find((f) => f.topic === "coste")?.text] : null;
   d.compra.axe = await axe(page);
   await page.screenshot({ path: `${out}/f9_compra_desktop.png` });
+  if (buy.results[0]) {
+    await firstZone(page, buy.results[0], "compra");
+    await page.screenshot({ path: `${out}/f9_compra_tarjeta_desktop.png` });
+    await page.getByRole("button", { name: "Cerrar" }).click();
+  }
   d.peticiones_search = searches.length;
   d.todas_sin_max_minutes = searches.every((s) => (s?.anchors ?? []).every((a) => a.max_minutes === null));
   check("todas las búsquedas sin max_minutes", d.todas_sin_max_minutes);

@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, GROUP, inGroup, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
+import { fitsButShortText, gapsHref, GROUP, inGroup, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
 import { type ZoneProperties, zoneHref } from "@/lib/map/zones";
 
 import FitDetails from "./FitDetails";
@@ -50,6 +50,10 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
   const pct = match?.match_pct;
+  const rows = gaps.data?.data.rows ?? [];
+  // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
+  // every such row of the API, also those beyond the three the card shows
+  const fitsButShort = pct != null && match?.passes_all ? fitsButShortText(rows) : null;
 
   return (
     <GlassCard as="aside" aria-labelledby={titleId} className={styles.card}>
@@ -79,6 +83,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
         <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>
+        {fitsButShort && <p className={styles.fitsButShort}>{fitsButShort}</p>}
         {gaps.loading && (
           <p role="status" className={styles.hint}>
             Calculando qué falta en {name}…{slow && ` ${SLOW_TEXT}`}
@@ -94,7 +99,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && (
           <ul className={styles.rows}>
-            {topRows(gaps.data.data.rows).map((row) => {
+            {topRows(rows).map((row) => {
               const walk = walking(row.extra_indicators, row.row);
               return (
                 <li key={row.row}>

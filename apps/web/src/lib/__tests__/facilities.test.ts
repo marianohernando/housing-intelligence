@@ -55,7 +55,7 @@ describe("facility types", () => {
 
   it("ask /places once per category, by zone and subcategory, never a whole layer", () => {
     const queries = facilityQueries();
-    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social"]);
+    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green"]);
     const health = queries.find((q) => q.category === "health");
     expect(health?.subcategories).toContain("Hospital general");
     // Pharmacies have their own category since D-216
@@ -128,6 +128,8 @@ describe("groupFacilities", () => {
     ]);
     expect(geo.centro_salud[0]?.detail).toBe("ubicación aproximada");
     expect(geo.mayores[0]?.detail).toBe("120 plazas autorizadas · ubicación aproximada");
+    // The places come from their own register: never cited as «Camas instaladas … según el …»
+    expect(geo.mayores[0]?.source).toBeNull();
   });
 
   it("shows the capacity and the ownership when the API gives them (places-1, line A)", () => {
@@ -170,6 +172,42 @@ describe("groupFacilities", () => {
       place("c", "social", "HOGARES Y CLUBES", "ÁLAMOS"),
     ]);
     expect(sorted.mayores.map((f) => f.name)).toEqual(["Álamos", "Zurbano"]);
+  });
+});
+
+describe("parks (DATA-018, D-222)", () => {
+  // Test fixture: names as /places gives them for Retiro and Moncloa-Aravaca
+  const parks = groupFacilities([
+    place("r", "green", "Parque", "Parque del Retiro", -3.683, 40.415),
+    place("s", "green", "Parque", "Parque sin nombre", -3.72, 40.44),
+    place("c", "green", "Parque", "Casa de Campo", -3.756, 40.424),
+    place("x", "green", "Jardín", "Jardín pequeño"),
+  ]).parque;
+
+  it("keeps every park of 1 ha or more the API gives, and only them, named as it names them", () => {
+    expect(FACILITY_TYPES.find((t) => t.key === "parque")).toMatchObject({ category: "green", classes: [{ subcategory: "Parque" }] });
+    expect(parks.map((f) => [f.label, f.name])).toEqual([
+      ["Parque", "Casa de Campo"],
+      ["Parque", "Parque del Retiro"],
+      ["Parque", "Parque sin nombre"],
+    ]);
+    // No area in /places yet: nothing is made up
+    for (const f of parks) expect(f.detail).toBeNull();
+  });
+
+  it("shows the area when the API gives it («Parque del Retiro · 118 ha»)", () => {
+    // Test fixture: the area is made up for the test only
+    const [retiro] = groupFacilities([
+      place("r", "green", "Parque", "Parque del Retiro", -3.683, 40.415, { capacity: { value: 118, unit: "ha", dataset_id: "osm_parques" } }),
+    ]).parque;
+    // Its own dataset's area: no source line apart, as for the beds of a hospital
+    expect(retiro).toMatchObject({ name: "Parque del Retiro", detail: "118 ha", source: null });
+  });
+
+  it("counts them as parks of 1 ha or more", () => {
+    expect(facilityCountText("parque", 6, "Retiro")).toBe("6 parques de 1 ha o más en Retiro");
+    expect(facilityCountText("parque", 1, "Tres Cantos")).toBe("1 parque de 1 ha o más en Tres Cantos");
+    expect(facilityCountText("parque", 0, "Patones")).toBe("Ningún parque de 1 ha o más en Patones");
   });
 });
 

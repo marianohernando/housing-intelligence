@@ -9,6 +9,7 @@ import {
   attributionsOrFallback,
   counterText,
   datasetLines,
+  MAP_CREDITS,
   mapAttribution,
   sortDatasets,
 } from "../provenance";
@@ -80,6 +81,40 @@ describe("mapAttribution (the screens with a map have no footer)", () => {
     expect(text(html)).toBe(attributions(datasets).map((a) => a.text).join(" · "));
     expect(html).toContain('<a href="https://datos.madrid.es" target="_blank" rel="noopener noreferrer">Fuente: Ayuntamiento de Madrid');
     expect(text(mapAttribution(null))).toBe(text(html));
+  });
+});
+
+describe("OpenStreetMap and the CRTM on the map, each with its link (OSMF guidelines, CRTM licence §2.2)", () => {
+  const url = new URL("../../../../../data/fixtures/contracts/dataset_list.all.fixture.json", import.meta.url);
+  const { datasets } = JSON.parse(readFileSync(url, "utf8")) as DatasetList;
+  const required = [
+    { source: "OpenStreetMap", href: "https://www.openstreetmap.org/copyright" },
+    { source: "CRTM", href: "https://www.crtm.es" },
+  ];
+  const links = (html: string) => [...html.matchAll(/<a href="([^"]+)"[^>]*>([^<]*)<\/a>/g)].map(([, href = "", text = ""]) => ({ href, text }));
+  const cases: [string, readonly DatasetRef[] | null][] = [
+    ["with /datasets (the contract fixture)", datasets],
+    ["with the fallback, before /datasets answers", null],
+    ["with the fallback, when /datasets answers no citation", []],
+  ];
+
+  for (const [when, refs] of cases) {
+    it(`in the folded list ${when}, each with its link`, () => {
+      const cited = links(mapAttribution(refs));
+      for (const { source, href } of required) expect(cited.filter((l) => l.href === href && l.text.includes(source))).toHaveLength(1);
+    });
+  }
+
+  it("always in the line beside the (i), even when /datasets cites neither", () => {
+    // The folded list cites what the catalogue says: without those datasets it would not name them,
+    // so the guarantee is this line, which never depends on /datasets
+    const withoutThem = datasets.filter((ref) => !/OpenStreetMap|CRTM/.test(ref.attribution_text ?? ""));
+    const folded = links(mapAttribution(withoutThem));
+    expect(folded.length).toBeGreaterThan(0);
+    for (const { source, href } of required) {
+      expect(folded.filter((l) => l.text.includes(source))).toHaveLength(0);
+      expect(MAP_CREDITS.filter((c) => c.href === href && c.text.includes(source))).toHaveLength(1);
+    }
   });
 });
 

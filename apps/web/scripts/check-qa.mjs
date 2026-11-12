@@ -13,6 +13,11 @@
 //   node scripts/check-qa.mjs atribucion [outDir] # map attribution folded behind its (i) on every screen, never the LCP
 //   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
 //   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
+//   node scripts/check-qa.mjs parques [outDir]   # «Parques» in «Todos los centros» and green on the map (DATA-018)
+//   node scripts/check-qa.mjs seguridad [outDir] # how the neighbours rate their barrio's safety, only in Madrid's districts (D-226)
+//   node scripts/check-qa.mjs compra [outDir]    # buying with fit-0.5 (D-227): note, «+30.000 €» and a district without price
+//   node scripts/check-qa.mjs encaje [outDir]    # «100 %» with JUSTO rows: the line that explains it, and the % pill at 390 px
+//   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -874,11 +879,32 @@ async function attribution(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** The two chips that left «Muy pronto»: what each one says, sends and finds in the card. */
+const PRIORITY_CHIPS = {
+  // fit-0.4, DATA-019, D-223: opt-in, its icon is the station it measures (D-204, PR #26 of D)
+  escaleras: {
+    label: "Sin escaleras",
+    key: "sin_escaleras",
+    topic: "accesibilidad",
+    icon: "lucide-train-front",
+    help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.",
+  },
+  // fit-0.3, D-222: importa.zonas_verdes of line D
+  verdes: {
+    label: "Zonas verdes",
+    key: "zonas_verdes",
+    topic: "zonas_verdes",
+    icon: "lucide-trees",
+    help: "Parques de una hectárea o más, cerca de casa.",
+  },
+};
+
 /**
- * «Sin escaleras» (fit-0.4, DATA-019, D-223): an opt-in chip, never marked for the person (D-204);
- * after a search with it, the first zone's card shows the API's accessibility facts as they come.
+ * A «Me importa» chip with data (PRIORITY_CHIPS): optional and not marked for the person (D-204),
+ * with its icon and help, no «Muy pronto» line left under the chips, no wheelchair anywhere, and
+ * after a search with it the first zone's card shows the API's facts of its topic as they come.
  */
-async function stairs(browser) {
+async function priorityChip(browser, spec) {
   const failures = [];
   const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
   const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -888,44 +914,300 @@ async function stairs(browser) {
     const entry = (report[id] = {});
     // The demo case (which does not mark it), then the chip and the search
     const [base] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
-    const baseFacts = (await base.json()).data.results.flatMap((r) => r.facts).filter((f) => f.topic === "accesibilidad");
-    entry.hechos_accesibilidad_sin_chip = baseFacts.length;
+    const baseFacts = (await base.json()).data.results.flatMap((r) => r.facts).filter((f) => f.topic === spec.topic);
+    entry.hechos_sin_chip = baseFacts.length;
     await p.page.waitForTimeout(1500);
-    const chip = p.page.getByRole("button", { name: /^Sin escaleras/ });
-    entry.chip = { pulsado_antes: await chip.getAttribute("aria-pressed"), ayuda: await chip.getAttribute("title") };
+    const chip = p.page.getByRole("button", { name: new RegExp(`^${spec.label}`) });
+    entry.chip = {
+      pulsado_antes: await chip.getAttribute("aria-pressed"),
+      ayuda: await chip.getAttribute("title"),
+      icono: await chip.locator("svg").first().getAttribute("class"),
+    };
     await press(chip);
     entry.chip.pulsado_despues = await chip.getAttribute("aria-pressed");
-    entry.muy_pronto = flat(await p.page.getByText(/^Muy pronto:/).first().innerText());
+    entry.muy_pronto_lineas = await p.page.getByText(/^Muy pronto:/).count();
+    entry.sillas_de_ruedas = await p.page.locator("svg.lucide-accessibility").count();
+    await p.page.locator("fieldset").filter({ hasText: "Me importa" }).first().screenshot({ path: `${out}/${mode}_chips_${id}.png` });
     const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
     entry.prioridades_enviadas = JSON.parse(response.request().postData() ?? "{}").priorities;
     const { data } = await response.json();
     await p.page.waitForTimeout(2000);
     const top = data.results[0];
-    const facts = top.facts.filter((f) => f.topic === "accesibilidad").map((f) => f.text);
-    entry.api = { metodo: data.methodology_version, primera: top.zone.name, hechos_accesibilidad: facts };
+    const facts = top.facts.filter((f) => f.topic === spec.topic).map((f) => f.text);
+    entry.api = { metodo: data.methodology_version, primera: top.zone.name, hechos: facts };
     await press(p.page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first());
     const card = p.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
     await card.waitFor({ timeout: 20000 });
     await p.page.waitForTimeout(1200);
     const text = flat(await card.innerText());
     entry.tarjeta_muestra = facts.map((f) => text.includes(flat(f)));
-    await card.screenshot({ path: `${out}/escaleras_tarjeta_${id}.png` });
+    entry.tarjeta_sillas_de_ruedas = await card.locator("svg.lucide-accessibility").count();
+    await card.screenshot({ path: `${out}/${mode}_tarjeta_${id}.png` });
     entry.axe = await axe(p.page);
     entry.overflow_px = await overflow(p.page);
     entry.consola = p.errors;
     if (entry.chip.pulsado_antes !== "false" || entry.chip.pulsado_despues !== "true") failures.push(`${id}: el chip no es opcional (${entry.chip.pulsado_antes} → ${entry.chip.pulsado_despues})`);
-    if (entry.chip.ayuda !== "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.") failures.push(`${id}: ayuda del chip «${entry.chip.ayuda}»`);
+    if (entry.chip.ayuda !== spec.help) failures.push(`${id}: ayuda del chip «${entry.chip.ayuda}»`);
+    if (!entry.chip.icono?.split(" ").includes(spec.icon)) failures.push(`${id}: icono del chip «${entry.chip.icono}»`);
     // The fact comes with the chip: the demo case, without it, has none
-    if (entry.hechos_accesibilidad_sin_chip > 0) failures.push(`${id}: hay hechos de accesibilidad sin marcar el chip`);
-    if (/escaleras/i.test(entry.muy_pronto)) failures.push(`${id}: sigue en «Muy pronto»`);
-    if (!entry.prioridades_enviadas?.includes("sin_escaleras")) failures.push(`${id}: la búsqueda no lleva sin_escaleras`);
-    if (!facts.length) failures.push(`${id}: la API no da hecho de accesibilidad en ${top.zone.name}`);
+    if (entry.hechos_sin_chip > 0) failures.push(`${id}: hay hechos de ${spec.topic} sin marcar el chip`);
+    if (entry.muy_pronto_lineas > 0) failures.push(`${id}: sigue la línea «Muy pronto:» bajo los chips`);
+    if (entry.sillas_de_ruedas + entry.tarjeta_sillas_de_ruedas > 0) failures.push(`${id}: queda una silla de ruedas`);
+    if (!entry.prioridades_enviadas?.includes(spec.key)) failures.push(`${id}: la búsqueda no lleva ${spec.key}`);
+    if (!facts.length) failures.push(`${id}: la API no da hecho de ${spec.topic} en ${top.zone.name}`);
     if (entry.tarjeta_muestra.includes(false)) failures.push(`${id}: la tarjeta no muestra tal cual el hecho de la API`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
     if (entry.consola.length) failures.push(`${id}: consola`);
     if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
     await p.ctx.close();
   }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Zones of the parks check (DATA-018): the Retiro, the Casa de Campo, and a town with no park of 1 ha. */
+const PARK_ZONES = [
+  { id: "retiro", path: "/zona/distrito/2807903", unit: "ES.28.DIS.2807903", must: ["Parque del Retiro"] },
+  { id: "moncloa", path: "/zona/distrito/2807909", unit: "ES.28.DIS.2807909", must: ["Casa de Campo", "Parque sin nombre"] },
+  { id: "perales", path: "/zona/municipio/28110", unit: "ES.28.MUN.28110", must: [] },
+];
+
+/**
+ * «Parques» in «Todos los centros» (DATA-018, D-222, petición de Mariano): as many as /places gives
+ * for the zone, named as it names them, green on the map with the base map's parks lit up, the
+ * same single request to /places for the zone, and the zone's LCP on slow 4G.
+ */
+async function parks(browser) {
+  const failures = [];
+  for (const zone of PARK_ZONES) {
+    const r = await fetch(`${API}/api/v1/places?${new URLSearchParams({ category: "green", admin_unit_id: zone.unit })}`);
+    const api = (await r.json()).data.total;
+    for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+      const key = `${zone.id}_${id}`;
+      const p = await open(browser, profile, zone.path);
+      const press = (locator) => (touch ? locator.tap() : locator.click());
+      const panel = p.page.getByRole("region", { name: "Todos los centros", exact: true });
+      const chip = panel.getByRole("button", { name: /^Parques/ });
+      await chip.waitFor({ timeout: 20000 });
+      await p.page.waitForTimeout(6000); // the camera lands
+      const entry = (report[key] = { api_total: api });
+      if (touch) {
+        await press(p.page.getByRole("button", { name: /Desliza hacia arriba/ }));
+        await p.page.waitForTimeout(600);
+        await chip.scrollIntoViewIfNeeded();
+      }
+      entry.chip = flat(await chip.innerText());
+      await press(chip);
+      await p.page.waitForTimeout(1500);
+      entry.pulsado = await chip.getAttribute("aria-pressed");
+      entry.frase = flat(await panel.locator("[aria-live='polite']").innerText());
+      entry.icono = await chip.locator("svg").first().getAttribute("class");
+      const summary = panel.getByText(/^Ver la lista/);
+      if (await summary.count()) {
+        await press(summary);
+        const items = await panel.getByRole("list", { name: /parques? de 1 ha/ }).locator("li").allInnerTexts();
+        entry.lista = { elementos: items.length, primeras: items.slice(0, 6).map(flat), sin_nombre: items.filter((t) => /^Parque sin nombre$/.test(flat(t))).length };
+        entry.lista_tiene = Object.fromEntries(zone.must.map((name) => [name, items.some((t) => flat(t) === name)]));
+        await panel.screenshot({ path: `${out}/parques_${key}_lista.png` });
+      }
+      entry.axe = await axe(p.page);
+      if (touch) {
+        await press(p.page.getByRole("button", { name: "Ver el mapa" }));
+        await p.page.waitForTimeout(1500);
+      }
+      entry.mapa_aria = await p.page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label");
+      await p.page.screenshot({ path: `${out}/parques_${key}_mapa.png` });
+      // Every /places request of the visit (resource timing, from the start), by its categories
+      entry.peticiones_places = await p.page.evaluate(() =>
+        performance.getEntriesByType("resource").flatMap((e) => (e.name.includes("/api/v1/places") ? [new URL(e.name).searchParams.get("category")] : [])),
+      );
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      const count = Number((entry.chip.match(/\d[\d.]*/)?.[0] ?? "-1").replace(/\./g, ""));
+      if (count !== api) failures.push(`${key}: el chip dice ${count} y /places ${api}`);
+      if (entry.pulsado !== "true") failures.push(`${key}: el chip no queda pulsado`);
+      if (!entry.icono?.split(" ").includes("lucide-trees")) failures.push(`${key}: icono «${entry.icono}»`);
+      if (api === 0 && !/^Ningún parque de 1 ha o más en /.test(entry.frase)) failures.push(`${key}: frase «${entry.frase}»`);
+      if (api > 0 && entry.lista?.elementos !== api) failures.push(`${key}: la lista tiene ${entry.lista?.elementos} y /places ${api}`);
+      for (const [name, found] of Object.entries(entry.lista_tiene ?? {})) if (!found) failures.push(`${key}: falta «${name}» en la lista`);
+      if (api > 0 && !entry.mapa_aria?.includes("parques de 1 ha o más")) failures.push(`${key}: el mapa no dice que salen los parques`);
+      if (entry.peticiones_places.length !== 1 || !entry.peticiones_places[0]?.split(",").includes("green")) failures.push(`${key}: /places ${JSON.stringify(entry.peticiones_places)}`);
+      if (entry.axe.length) failures.push(`${key}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.consola.length) failures.push(`${key}: consola`);
+      if (entry.overflow_px > 0) failures.push(`${key}: desborde`);
+      await p.ctx.close();
+    }
+  }
+  // The zone's LCP on slow 4G, mobile (it was about 2 s before the parks)
+  report.lcp_retiro_slow4g = await lcpOnSlow4g(browser, PARK_ZONES[0].path);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * zona.seguridad_vecinos (DATA-020, D-226 §1): in a Madrid district, its neighbours' rating of the
+ * safety of their barrio with the city's, as /features gives them; nothing outside Madrid, and no
+ * request to /features there. Neutral colours, no alarm words.
+ */
+async function perceivedSafety(browser) {
+  const failures = [];
+  const latest = async (id, level, code) => {
+    const r = await fetch(`${API}/api/v1/features/${id}/values?level=${level}`);
+    const rows = (await r.json()).data.values.filter((v) => v.territory_code === code && v.value !== null);
+    return rows.sort((a, b) => b.period_start.localeCompare(a.period_start))[0]?.value ?? null;
+  };
+  const score = (v) => v.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const city = [await latest("seguridad_percibida_noche", "municipio", "28079"), await latest("seguridad_percibida_dia", "municipio", "28079")];
+  for (const zone of [
+    { id: "retiro", path: "/zona/distrito/2807903", code: "2807903" },
+    { id: "centro", path: "/zona/distrito/2807901", code: "2807901" },
+    { id: "perales", path: "/zona/municipio/28110", code: null },
+  ]) {
+    const expected = zone.code
+      ? `Así valoran sus vecinos la seguridad de su barrio: ${score(await latest("seguridad_percibida_noche", "distrito", zone.code))} de noche y ${score(await latest("seguridad_percibida_dia", "distrito", zone.code))} de día, de 0 a 10 (en todo Madrid, ${score(city[0])} y ${score(city[1])}).`
+      : null;
+    for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+      const key = `${zone.id}_${id}`;
+      const p = await open(browser, profile, zone.path);
+      await p.page.getByRole("region", { name: "Todos los centros", exact: true }).waitFor({ timeout: 20000 });
+      await p.page.waitForTimeout(2500);
+      const block = p.page.getByText(/^Así valoran sus vecinos/).locator("xpath=..");
+      const entry = (report[key] = { esperado: expected });
+      entry.bloques = await block.count();
+      if (entry.bloques) {
+        entry.texto = flat(await block.first().innerText());
+        entry.colores = await block.first().evaluate((el) => [...el.querySelectorAll("p")].map((q) => getComputedStyle(q).color));
+        await block.first().screenshot({ path: `${out}/seguridad_${key}.png` });
+      }
+      entry.peticiones_features = await p.page.evaluate(() =>
+        performance.getEntriesByType("resource").flatMap((e) => (e.name.includes("/api/v1/features/") ? [new URL(e.name).pathname.split("/")[4] + "?" + new URL(e.name).search.slice(1)] : [])),
+      );
+      entry.axe = await axe(p.page);
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      if (expected && !entry.texto?.startsWith(expected)) failures.push(`${key}: «${entry.texto}»`);
+      if (expected && !entry.texto?.includes("Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.")) failures.push(`${key}: sin la fuente`);
+      if (expected && entry.peticiones_features.length !== 4) failures.push(`${key}: ${entry.peticiones_features.length} peticiones a /features`);
+      if (!expected && (entry.bloques > 0 || entry.peticiones_features.length > 0)) failures.push(`${key}: sale fuera de Madrid`);
+      if (/peligros|insegur/i.test(entry.texto ?? "")) failures.push(`${key}: palabra de alarma`);
+      if (entry.axe.length) failures.push(`${key}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.consola.length) failures.push(`${key}: consola`);
+      if (entry.overflow_px > 0) failures.push(`${key}: desborde`);
+      await p.ctx.close();
+    }
+  }
+  report.lcp_retiro_slow4g = await lcpOnSlow4g(browser, "/zona/distrito/2807903");
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * Buying with fit-0.5 (DATA-021, D-227): the note says where the official price exists, the Reality
+ * Check offers the budget step the API gives, and a Madrid district says it has no price because of
+ * the source (reached from the list of zones, so the search stays).
+ */
+async function buying(browser) {
+  const failures = [];
+  const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const p = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const entry = (report[id] = {});
+    if (touch) await press(p.page.getByRole("button", { name: /Desliza hacia arriba/ }));
+    // A couple buying up to 300.000 € (the golden_couple of D-227 §5): the budget is what limits most
+    await press(p.page.getByRole("button", { name: "En pareja" }));
+    await press(p.page.getByRole("radio", { name: "Comprar" }));
+    entry.nota = flat(await p.page.getByText(/^Precio de compra: el valor tasado medio/).first().innerText());
+    entry.aun_no_tenemos = await p.page.getByText(/Aún no tenemos precios/).count();
+    const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
+    const { data } = await response.json();
+    await p.page.waitForTimeout(2000);
+    entry.api = { metodo: data.methodology_version, presupuesto: data.scenario.budget, relajaciones: data.reality_check.relaxations.map((r) => [r.label, r.added_zones]) };
+    const changes = p.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+    const all = changes.getByRole("button", { name: /Ver todas las opciones/ });
+    if (await all.count()) await press(all);
+    entry.y_si_cambias = flat(await changes.innerText());
+    await changes.screenshot({ path: `${out}/compra_y_si_cambias_${id}.png` });
+    entry.axe_resultados = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    await p.ctx.close();
+    // A district, searched from its own screen: no price, and the card says why
+    const z = await open(browser, profile, "/zona/distrito/2807905");
+    const pressZ = (locator) => (touch ? locator.tap() : locator.click());
+    if (touch) await pressZ(z.page.getByRole("button", { name: /Desliza hacia arriba/ }));
+    await pressZ(z.page.getByRole("button", { name: "Ver mi búsqueda" }));
+    await pressZ(z.page.getByRole("radio", { name: "Comprar" }));
+    await Promise.all([z.page.waitForResponse(isSearch, { timeout: 30000 }), pressZ(z.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
+    const why = z.page.getByText(/puede faltar el precio: .* solo se publica para los municipios de más de 25.000 habitantes, no para los distritos/).first();
+    await why.waitFor({ timeout: 20000 });
+    await z.page.waitForTimeout(1000);
+    const card = why.locator("xpath=..");
+    entry.chamartin = flat(await card.innerText());
+    await card.screenshot({ path: `${out}/compra_chamartin_${id}.png` });
+    entry.axe_zona = await axe(z.page);
+    entry.overflow_px = Math.max(entry.overflow_px, await overflow(z.page));
+    entry.consola = [...p.errors, ...z.errors];
+    await z.ctx.close();
+    if (entry.api.metodo !== "fit-0.5") failures.push(`${id}: método ${entry.api.metodo}`);
+    if (entry.aun_no_tenemos > 0) failures.push(`${id}: sigue «Aún no tenemos precios»`);
+    for (const [label, added] of entry.api.relajaciones) if (added > 0 && !entry.y_si_cambias.includes(label)) failures.push(`${id}: falta «${label}»`);
+    if (!entry.api.relajaciones.some(([label, added]) => /€$/.test(label) && added > 0)) failures.push(`${id}: la API no propone subir el presupuesto`);
+    if (!entry.chamartin.includes("solo se publica para los municipios de más de 25.000 habitantes")) failures.push(`${id}: Chamartín no dice por qué`);
+    if ([...entry.axe_resultados, ...entry.axe_zona].length) failures.push(`${id}: axe`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * The «100 % de encaje» with JUSTO rows below (jurado simulado): a zone that passes everything says
+ * in one line what it is short of, from every row of /gaps; and the % pill fits at 390 px.
+ */
+async function fitButShort(browser) {
+  const failures = [];
+  const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+  const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const p = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const entry = (report[id] = {});
+    const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const { data } = await response.json();
+    await p.page.waitForTimeout(2000);
+    const top = data.results[0];
+    await press(p.page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first());
+    const card = p.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+    await card.getByRole("heading", { name: "Qué falta aquí" }).waitFor({ timeout: 20000 });
+    await card.locator("ul li").first().waitFor({ timeout: 20000 });
+    await p.page.waitForTimeout(800);
+    // Every row of the zone's «Qué falta» in the API, not only the three the card shows
+    const gapsAnswer = await fetch(`${API}/api/v1/gaps/${top.zone.level}/${top.zone.code}`);
+    const rows = (await gapsAnswer.json()).data.rows.map((r) => ({ label: r.label, status: r.status }));
+    const lower = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+    const missing = rows.filter((r) => r.status === "FALTA").map((r) => lower(r.label));
+    const tight = rows.filter((r) => r.status === "JUSTO").map((r) => lower(r.label));
+    const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null].filter(Boolean);
+    entry.zona = [top.zone.name, top.match_pct];
+    entry.filas = rows;
+    entry.esperado = parts.length ? `Encaja con lo que pides; aun así, en la zona ${parts.join("; y ")}.` : null;
+    const line = card.getByText(/^Encaja con lo que pides; aun así/);
+    entry.linea = (await line.count()) ? flat(await line.first().innerText()) : null;
+    const [cardBox, pillBox] = [await box(card), await box(card.locator("span[title^='Cuánto se parece']").first())];
+    entry.pastilla = { card_right: cardBox.right, pill_right: pillBox.right, dentro: pillBox.right <= cardBox.right };
+    await card.screenshot({ path: `${out}/encaje_tarjeta_${id}.png` });
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    if (entry.linea !== entry.esperado) failures.push(`${id}: línea «${entry.linea}» / esperado «${entry.esperado}»`);
+    if (!entry.pastilla.dentro) failures.push(`${id}: el % se sale de la tarjeta`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    await p.ctx.close();
+  }
+  report.lcp_portada_slow4g = await lcpOnSlow4g(browser, "/");
   report.fallos = failures;
   if (failures.length) process.exitCode = 1;
 }
@@ -1183,7 +1465,11 @@ else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
 else if (mode === "iconos") await icons(browser);
-else if (mode === "escaleras") await stairs(browser);
+else if (mode === "parques") await parks(browser);
+else if (mode === "seguridad") await perceivedSafety(browser);
+else if (mode === "compra") await buying(browser);
+else if (mode === "encaje") await fitButShort(browser);
+else if (Object.hasOwn(PRIORITY_CHIPS, mode)) await priorityChip(browser, PRIORITY_CHIPS[mode]);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
