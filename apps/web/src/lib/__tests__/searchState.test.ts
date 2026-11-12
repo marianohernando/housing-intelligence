@@ -84,6 +84,21 @@ describe("«¿Y si cambias algo?»: apply and undo", () => {
     expect(s.scenario).toBe(edited);
   });
 
+  it("retries what is on screen when the user edited the search after the attempt started", () => {
+    let s = searched();
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });
+    s = searchReducer(s, { type: "edit", change: (x) => setAdults(x, 2) });
+    const edited = s.scenario;
+    s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
+    expect(retryAttempt(s, 3)).toMatchObject({ id: 3, scenario: edited, applied: null });
+    // Also when the edit comes after the failure
+    let t = searched();
+    t = searchReducer(t, { type: "start", attempt: plainAttempt(t, 2) });
+    t = searchReducer(t, { type: "fail", id: 2, error: "NETWORK" });
+    t = searchReducer(t, { type: "edit", change: (x) => setAdults(x, 2) });
+    expect(retryAttempt(t, 3)?.scenario).toBe(t.scenario);
+  });
+
   it("on failure of an option keeps what the user edited on top of it", () => {
     let s = searched();
     s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });

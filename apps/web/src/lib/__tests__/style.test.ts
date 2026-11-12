@@ -9,6 +9,11 @@ import {
   baseStyle,
   BUILDING_LAYER,
   BUILDINGS_3D_ZOOM,
+  clusterImageCount,
+  clusterImageId,
+  clusterRadius,
+  FACILITY_SOURCE,
+  facilityLayers,
   MAP_PALETTE_TOKENS,
   type MapPalette,
   OPENFREEMAP_TILEJSON,
@@ -40,8 +45,9 @@ function withZone(style: StyleSpecification): StyleSpecification {
       "zone-mask": { type: "geojson", data: empty },
       "zone-base": { type: "geojson", data: empty },
       "zone-barrio": { type: "geojson", data: empty },
+      [FACILITY_SOURCE]: { type: "geojson", data: empty, cluster: true },
     },
-    layers: [...style.layers, ...below, ...above],
+    layers: [...style.layers, ...below, ...above, ...facilityLayers(palette)],
   };
 }
 
@@ -102,6 +108,27 @@ describe("map style", () => {
     expect(json).toContain('["==",["get","fit"],"NO_CUMPLE"]');
     expect(json).toContain(PATTERN_IMAGE.NO_CUMPLE);
     for (const image of [PATTERN_IMAGE.FALTA, PATTERN_IMAGE.JUSTO, PATTERN_IMAGE.ZONA_PEQUENA]) expect(json).toContain(image);
+  });
+
+  it("groups the zone's facilities without text layers: each group is an image with its count", () => {
+    const layers = facilityLayers(palette);
+    expect(layers.every((l) => "source" in l && l.source === FACILITY_SOURCE)).toBe(true);
+    expect(layers.some((l) => l.type === "symbol" && l.layout && "text-field" in l.layout)).toBe(false);
+    const cluster = layers.find((l) => l.id === "facilities-cluster");
+    expect(JSON.stringify(cluster)).toContain('"point_count"');
+    const point = layers.find((l) => l.id === "facilities-point");
+    expect(point).toMatchObject({ type: "circle", filter: ["!", ["has", "point_count"]] });
+  });
+
+  it("names each group image by its count, and sizes it by how many it holds", () => {
+    expect(clusterImageId(23)).toBe("facility-cluster-23");
+    expect(clusterImageCount("facility-cluster-23")).toBe(23);
+    expect(clusterImageCount("gap-falta")).toBeNull();
+    expect(clusterImageCount("facility-cluster-x")).toBeNull();
+    expect(clusterRadius(2)).toBeLessThan(clusterRadius(20));
+    expect(clusterRadius(20)).toBeLessThan(clusterRadius(200));
+    // Big enough for three digits and a pointer target
+    expect(clusterRadius(999)).toBeGreaterThanOrEqual(22);
   });
 
   it("outlines the barrio in focus above the buildings, dashed so it reads apart from the district", () => {

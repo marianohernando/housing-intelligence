@@ -8,10 +8,11 @@
 
 .side {
   grid-column: 3;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
   margin-top: var(--space-6);
 }
 
+.centres,
 .search {
   grid-column: 1;
   max-width: 28rem;
@@ -97,6 +98,13 @@
 
   .lead {
     font-size: var(--text-base);
+  }
+}
+
+/* Wide screens: the barrios bar is fixed at the bottom; the column can scroll clear of it */
+@media (min-width: 1101px) {
+  .layout {
+    padding-bottom: calc(var(--target) + 4rem);
   }
 }
 

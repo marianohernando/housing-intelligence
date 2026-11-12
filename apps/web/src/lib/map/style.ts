@@ -22,6 +22,7 @@ export const MAP_PALETTE_TOKENS = {
   building: "map-building",
   buildingTall: "map-building-tall",
   violet: "violet",
+  violetStrong: "violet-strong",
   violetSoft: "violet-soft",
   gapFalta: "map-falta",
   gapJusto: "map-justo",
@@ -276,4 +277,57 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
       },
     ],
   };
+}
+
+/** Source of every facility of the zone on screen (lib/map/facilities.ts), clustered by MapLibre. */
+export const FACILITY_SOURCE = "facilities";
+export const FACILITY_CLUSTER = { radius: 48, maxZoom: 16 } as const;
+const CLUSTER_IMAGE = "facility-cluster-";
+
+/** Each group is drawn as an image with its count (the map has no glyph server): its id says the count. */
+export function clusterImageId(count: number): string {
+  return `${CLUSTER_IMAGE}${count}`;
+}
+
+export function clusterImageCount(id: string): number | null {
+  if (!id.startsWith(CLUSTER_IMAGE)) return null;
+  const count = Number(id.slice(CLUSTER_IMAGE.length));
+  return Number.isInteger(count) && count > 0 ? count : null;
+}
+
+/** Radius in CSS px of a group's circle: bigger groups, bigger circles; always a 44 px target or close. */
+export function clusterRadius(count: number): number {
+  return count < 10 ? 17 : count < 50 ? 20 : 23;
+}
+
+/**
+ * The zone's facilities of one type (FASE_PRUEBAS, T3): groups as violet circles with their count
+ * and single places as violet dots, above the buildings so none hides behind a block.
+ */
+export function facilityLayers(p: MapPalette): LayerSpecification[] {
+  return [
+    {
+      id: "facilities-point",
+      type: "circle",
+      source: FACILITY_SOURCE,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-radius": 7,
+        "circle-color": p.violetStrong,
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2.5,
+      },
+    },
+    {
+      id: "facilities-cluster",
+      type: "symbol",
+      source: FACILITY_SOURCE,
+      filter: ["has", "point_count"],
+      layout: {
+        "icon-image": ["concat", CLUSTER_IMAGE, ["to-string", ["get", "point_count"]]],
+        "icon-allow-overlap": true,
+        "icon-ignore-placement": true,
+      },
+    },
+  ];
 }

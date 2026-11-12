@@ -2,6 +2,7 @@
 // axe WCAG 2.2 AA and the browser console, at 1440 and 390 px:
 //
 //   node scripts/check-qa.mjs fixes [outDir]    # phase 1: PENDIENTES fixes (texts, search, R-06)
+//   node scripts/check-qa.mjs t3 [outDir]       # phase 2: every facility of a zone (T3)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -152,8 +153,103 @@ async function fixes(browser) {
   await mob.ctx.close();
 }
 
+const API = "http://localhost:8011";
+const ZONE = { path: "/zona/distrito/2807905", id: "ES.28.DIS.2807905", name: "Chamartín" };
+const box = (locator) => locator.evaluate((el) => {
+  const r = el.getBoundingClientRect();
+  return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) };
+});
+
+/** How many places of each subcategory the API has in the zone (the panel must show the same); asked from Node, not the page. */
+async function apiCount(_page, category, subcategories) {
+  const q = new URLSearchParams({ category, admin_unit_id: ZONE.id });
+  for (const s of subcategories) q.append("subcategory", s);
+  const r = await fetch(`${API}/api/v1/places?${q}`);
+  return r.ok ? (await r.json()).data.total : `HTTP ${r.status}`;
+}
+
+/** Phase 2 (T3): «Todos los centros» of a zone, its clustered layer, counts and accessible list. */
+async function facilities(browser) {
+  const d = (report.escritorio = {});
+  const { ctx, page, errors } = await open(browser, DESKTOP, ZONE.path);
+  const panel = page.getByRole("region", { name: "Todos los centros", exact: true });
+  await panel.getByRole("button", { name: /^Colegios/ }).waitFor({ timeout: 20000 });
+  await page.waitForTimeout(7000); // the camera lands and the layer shows
+  d.botones = (await panel.getByRole("group", { name: "Ver en el mapa" }).getByRole("button").allInnerTexts()).map(flat);
+  d.pulsado = flat(await panel.locator("button[aria-pressed='true']").innerText());
+  d.frase = flat(await panel.locator("[aria-live='polite']").innerText());
+  d.api_colegios = await apiCount(page, "education", [
+    "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", "COLEGIO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA", "COLEGIO DE EDUCACIÓN PRIMARIA",
+    "CENTRO PRIVADO DE EDUCACIÓN INFANTIL Y PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+    "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA Y SECUNDARIA",
+  ]);
+  d.api_hospitales = await apiCount(page, "health", ["Hospital general", "Hospital especializado", "Hospital de media y larga estancia", "Hospital de salud mental y tratamiento de toxicomanías"]);
+  d.api_farmacias = { pharmacy: await apiCount(page, "pharmacy", ["Farmacia"]), health: await apiCount(page, "health", ["Farmacia"]) };
+  d.mapa_aria = await page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label");
+  await page.screenshot({ path: `${out}/t3_zona_colegios_desktop.png` });
+
+  // The list, as the way without the map
+  await panel.getByText(/^Ver la lista/).click();
+  const list = panel.getByRole("list", { name: /colegios con primaria/ });
+  d.lista = { elementos: await list.locator("li").count(), primeros: (await list.locator("li").allInnerTexts()).slice(0, 5).map(flat) };
+  await panel.screenshot({ path: `${out}/t3_lista_colegios_desktop.png` });
+  d.axe_lista = await axe(page);
+
+  // Keyboard: another type with Tab and Enter, then none
+  const hospitals = panel.getByRole("button", { name: /^Hospitales/ });
+  await hospitals.focus();
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(1500);
+  d.hospitales = {
+    pulsado: await hospitals.getAttribute("aria-pressed"),
+    frase: flat(await panel.locator("[aria-live='polite']").innerText()),
+    mapa_aria: await page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label"),
+  };
+  await page.screenshot({ path: `${out}/t3_zona_hospitales_desktop.png` });
+  await page.keyboard.press("Enter");
+  d.ninguno = flat(await panel.locator("[aria-live='polite']").innerText());
+
+  // Nothing hidden under the fixed barrios bar once scrolled to the end
+  await panel.getByRole("button", { name: /^Colegios/ }).click();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(400);
+  const bar = await box(page.getByRole("region", { name: "Ir a un barrio" }));
+  const search = await box(page.getByRole("heading", { name: "Tu búsqueda" }).locator("xpath=ancestor::*[contains(@class,'glass')][1]"));
+  d.solape_busqueda_barra = { busqueda: search, barra: bar, libre: search.bottom <= bar.top };
+  d.axe = await axe(page);
+  d.overflow_px = await overflow(page);
+  d.consola = errors;
+  await ctx.close();
+
+  // «Qué falta» of the zone: the source links name the dataset first (WCAG 2.5.3)
+  const q = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807905");
+  await q.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+  report.que_falta = { axe: await axe(q.page), consola: q.errors };
+  await q.ctx.close();
+
+  // ---------- Mobile ----------
+  const m = (report.movil = {});
+  const mob = await open(browser, MOBILE, ZONE.path);
+  const mpanel = mob.page.getByRole("region", { name: "Todos los centros", exact: true });
+  await mpanel.getByRole("button", { name: /^Colegios/ }).waitFor({ timeout: 20000 });
+  await mob.page.waitForTimeout(7000);
+  await mob.page.screenshot({ path: `${out}/t3_zona_colegios_mobile.png` });
+  await mob.page.getByRole("button", { name: /Desliza hacia arriba/ }).tap();
+  await mob.page.waitForTimeout(600);
+  await mpanel.scrollIntoViewIfNeeded();
+  await mpanel.getByRole("button", { name: /^Centros de salud/ }).tap();
+  await mob.page.waitForTimeout(500);
+  m.frase = flat(await mpanel.locator("[aria-live='polite']").innerText());
+  await mpanel.screenshot({ path: `${out}/t3_panel_mobile.png` });
+  m.axe = await axe(mob.page);
+  m.overflow_px = await overflow(mob.page);
+  m.consola = mob.errors;
+  await mob.ctx.close();
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "t3") await facilities(browser);
 else throw new Error(`Unknown mode ${mode}`);
 await browser.close();
 

@@ -137,6 +137,14 @@ describe("api client, routes used by the map", () => {
     ]);
   });
 
+  it("says which places contract the API answers with (places-1 brings its own pharmacy category)", async () => {
+    const page = (extra: object) => envelope({ type: "FeatureCollection", features: [], total: 0, page: 1, pages: 1, ...extra });
+    const old = await createApi(BASE, fakeFetch(200, page({}))).placesCollection({ category: "health" });
+    expect(old).toEqual({ features: [], contractVersion: null });
+    const typed = await createApi(BASE, fakeFetch(200, page({ contract_version: "places-1" }))).placesCollection({ category: "health" });
+    expect(typed.contractVersion).toBe("places-1");
+  });
+
   it("follows every page of places instead of cutting at the first", async () => {
     const calls: Call[] = [];
     const point = (id: string) => ({ type: "Feature", id, geometry: { type: "Point", coordinates: [0, 0] }, properties: {} });

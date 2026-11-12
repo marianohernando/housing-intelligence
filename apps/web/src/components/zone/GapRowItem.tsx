@@ -120,8 +120,9 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
             return (
               <li key={ref.dataset_id}>
                 {lines.url ? (
-                  <a href={lines.url} target="_blank" rel="noopener noreferrer" aria-label={lines.openLabel}>
+                  <a href={lines.url} target="_blank" rel="noopener noreferrer">
                     {ref.name}
+                    <span className="visually-hidden">, {lines.openHint}</span>
                     <ExternalLink size={14} aria-hidden="true" />
                   </a>
                 ) : (

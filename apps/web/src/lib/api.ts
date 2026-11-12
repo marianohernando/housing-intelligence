@@ -18,12 +18,14 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
 export type GapLevel = "municipio" | "distrito" | "seccion_censal";
 
 /** Place categories the map uses for a zone's key points (PlaceCategory in the API). */
-export type PlaceCategory = "transport" | "health" | "education" | "social";
+export type PlaceCategory = "transport" | "health" | "pharmacy" | "education" | "social";
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
 export type PlacesResponse = Envelope<{
   type: "FeatureCollection";
+  /** "places-1" once /places is a contract (line A, D-216); absent before */
+  contract_version?: string;
   features: PlaceFeature[];
   total: number;
   page: number;
@@ -91,6 +93,15 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     return (await response.json()) as T;
   }
 
+  /** GET /api/v1/places: a zone's facilities of one category as points, following every page, and the contract that answered. */
+  async function placesCollection(query: PlacesQuery): Promise<{ features: PlaceFeature[]; contractVersion: string | null }> {
+    const first = await call<PlacesResponse>(placesPath(query, 1));
+    const rest = await Promise.all(
+      Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
+    );
+    return { features: [first, ...rest].flatMap((body) => body.data.features), contractVersion: first.data.contract_version ?? null };
+  }
+
   return {
     /** GET /api/v1/gaps/{level}/{code}: what a zone is missing against the region. */
     zoneGaps(level: GapLevel, code: string) {
@@ -108,13 +119,10 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     adminUnits(level: AdminLevel, simplifyM: number, parent?: string) {
       return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent));
     },
-    /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
+    placesCollection,
+    /** GET /api/v1/places, the points only. */
     async places(query: PlacesQuery): Promise<PlaceFeature[]> {
-      const first = await call<PlacesResponse>(placesPath(query, 1));
-      const rest = await Promise.all(
-        Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
-      );
-      return [first, ...rest].flatMap((body) => body.data.features);
+      return (await placesCollection(query)).features;
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
     search(scenario: ScenarioState, { signal }: { signal?: AbortSignal } = {}) {

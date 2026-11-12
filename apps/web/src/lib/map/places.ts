@@ -12,6 +12,12 @@ export interface PlaceProperties {
   municipio: string | null;
   /** geo_admin_unit id of the census section, e.g. ES.28.SEC.2807905001 */
   seccion: string | null;
+  /**
+   * Optional until /places is a contract (places-1, line A, D-216): ownership of schools and the
+   * capacity the register publishes. Generate these types from its JSON Schema once it lands.
+   */
+  ownership?: "publica" | "concertada" | "privada" | null;
+  capacity?: { value: number; unit: string; dataset_id: string } | null;
 }
 
 export type PlaceFeature = GeoJSON.Feature<GeoJSON.Point, PlaceProperties>;

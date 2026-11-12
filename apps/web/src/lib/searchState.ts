@@ -103,7 +103,12 @@ export function isStale(state: Pick<SearchState<unknown>, "result" | "searched" 
   return state.result !== null && canonical(state.searched) !== canonical(state.scenario);
 }
 
-/** «Reintentar»: the failed attempt again, as it was (with its option, if any). */
+/**
+ * «Reintentar»: the failed attempt again, as it was (with its option, if any). If the user edited
+ * the search since it started, what is on screen is searched instead: it is the newer wish.
+ */
 export function retryAttempt(state: SearchState<unknown>, id: number): Attempt | null {
-  return state.status === "error" && state.attempt ? { ...state.attempt, id, before: state.scenario } : null;
+  if (state.status !== "error" || !state.attempt) return null;
+  if (state.scenario !== state.attempt.before) return plainAttempt(state, id);
+  return { ...state.attempt, id, before: state.scenario };
 }

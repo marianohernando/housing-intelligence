@@ -18,7 +18,8 @@ export interface DatasetLines {
   version: string | null;
   license: string | null;
   url: string | null;
-  openLabel: string;
+  /** Said after the dataset's name in its link, hidden on screen: the name starts with the visible text (WCAG 2.5.3) */
+  openHint: string;
 }
 
 export function datasetLines(ref: DatasetRef): DatasetLines {
@@ -28,7 +29,7 @@ export function datasetLines(ref: DatasetRef): DatasetLines {
     version: ref.version ? `Versión de los datos: ${ref.version}` : null,
     license: ref.license ? `Licencia: ${ref.license}` : null,
     url: ref.url ?? null,
-    openLabel: `Abrir ${ref.name} en el portal de datos (se abre en una pestaña nueva)`,
+    openHint: "en el portal de datos (se abre en una pestaña nueva)",
   };
 }
 

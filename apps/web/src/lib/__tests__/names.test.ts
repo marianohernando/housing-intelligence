@@ -9,6 +9,11 @@ describe("titleCase (place names in upper case, e.g. metro stations)", () => {
     expect(titleCase("PLAZA DE CASTILLA")).toBe("Plaza de Castilla");
   });
 
+  it("keeps Roman numerals in upper case", () => {
+    expect(titleCase("JUAN PABLO II AYUNTAMIENTO DE MADRID")).toBe("Juan Pablo II Ayuntamiento de Madrid");
+    expect(titleCase("CARLOS III")).toBe("Carlos III");
+  });
+
   it("leaves mixed-case names alone", () => {
     expect(titleCase("Madrid-Chamartín-Clara Campoamor")).toBe("Madrid-Chamartín-Clara Campoamor");
   });
