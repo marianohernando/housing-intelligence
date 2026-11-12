@@ -13,9 +13,8 @@
   - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`. La captura de Puente de Vallecas con gap-0.3 está **pendiente de B**.
 - **Cifras:** las del bloque 2 y del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado.
 - **Buscador:** encendido en producción desde el 11 nov y verificado por C: smoke 7/7, axe AA sin fallos y la consola limpia (`deploy-12-buscador.md`, misma rama y PR). El bloque 2 va con buscador.
-- **El bloque 2 sin buscador queda de reserva.** Sirve si la demo vuelve a enseñar «Muy pronto», en dos casos:
-  - C ha vuelto a una versión sin buscador;
-  - hay que usar el paquete sin red (`make demo-offline`), que hoy compila la web sin el buscador (`infra/deploy/offline/demo_offline.sh` quita las variables `NEXT_PUBLIC_*`).
+- **El bloque 2 sin buscador queda de reserva.** Sirve solo si la demo vuelve a enseñar «Muy pronto», por ejemplo porque C ha vuelto a una versión sin buscador.
+- **Paquete sin red (`make demo-offline`):** desde el 12 nov compila la web con el buscador encendido, comprobado con y sin red (`infra/deploy/offline/demo_offline.sh`, `evidence/gate-06/2026-11-12-deploy/offline-buscador.md`, `4cc3f84`). Pero sus datos son de `1913393`, de antes de gap-0.3: **pendiente de C** regenerarlo después de gap-0.3, para que Puente de Vallecas salga igual que en producción.
 
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
@@ -35,7 +34,7 @@
 1. Portátil con cargador, wifi del evento probada, HDMI probado y resolución 1920 × 1080 (`docs/09_datamad/25_plan_competicion.md` §9).
 2. Navegador en ventana limpia, zoom al 100 %, sin extensiones visibles y con las notificaciones desactivadas.
 3. Pestaña 1: las slides en PDF, en la slide 1. Pestaña 2: la portada de la demo, ya cargada una vez para tener la caché caliente. URL: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
-4. Plan B abierto en una pestaña oculta: el vídeo de 2 min (PITCH-003, `pitch/video_respaldo.md`; lo graba Mariano el 23 nov) y el paquete sin red de C (`make demo-offline`, `infra/deploy/offline/`). Sin red no hay buscador: con el paquete va el bloque 2 sin buscador.
+4. Plan B abierto en una pestaña oculta: el vídeo de 2 min (PITCH-003, `pitch/video_respaldo.md`; lo graba Mariano el 23 nov) y el paquete sin red de C (`make demo-offline`, `infra/deploy/offline/`), que ya tiene el buscador: con el paquete el guion no cambia.
 5. Pestaña de respaldo del bloque 3, ya cargada: https://vidafacil-madrid.vercel.app/que-falta?zona=distrito/2807913 (Puente de Vallecas).
 
 ---
