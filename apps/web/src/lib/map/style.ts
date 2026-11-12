@@ -314,7 +314,7 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
 /** Source of every facility of the zone on screen (lib/map/facilities.ts), clustered by MapLibre. */
 export const FACILITY_SOURCE = "facilities";
 export const FACILITY_CLUSTER = { radius: 48, maxZoom: 16 } as const;
-/** Each group counts its parks, so a group of parks is drawn in green (only one type shows at a time). */
+/** Each group counts its parks: a group made only of parks is drawn in green, any other stays violet. */
 export const FACILITY_CLUSTER_PROPERTIES = { parks: ["+", ["case", ["==", ["get", "type"], "parque"], 1, 0]] } as const;
 const CLUSTER_IMAGE = "facility-cluster-";
 const PARK_TONE = "park-";
@@ -365,7 +365,7 @@ export function facilityLayers(p: MapPalette): LayerSpecification[] {
       source: FACILITY_SOURCE,
       filter: ["has", "point_count"],
       layout: {
-        "icon-image": ["concat", CLUSTER_IMAGE, ["case", [">", ["get", "parks"], 0], PARK_TONE, ""], ["to-string", ["get", "point_count"]]],
+        "icon-image": ["concat", CLUSTER_IMAGE, ["case", ["==", ["get", "parks"], ["get", "point_count"]], PARK_TONE, ""], ["to-string", ["get", "point_count"]]],
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,
       },

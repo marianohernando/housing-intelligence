@@ -49,7 +49,11 @@ export function perceivedSafety(districtCode: string, rows: SafetyRows): Perceiv
 
 const score = (value: number) => formatNumber(value, 1);
 
-/** zona.seguridad_vecinos of pitch/textos_web.md: what the neighbours say, then where it comes from. */
+/**
+ * zona.seguridad_vecinos of pitch/textos_web.md: what the neighbours say, then where it comes from.
+ * «Unas 400 personas por distrito» is the 2025 survey's sample (D-226 §1): line D's copy, to review
+ * if a later year comes with another sample.
+ */
 export function perceivedSafetyText(s: PerceivedSafety): { rating: string; source: string } {
   const city = s.city ? ` (en todo Madrid, ${score(s.city.night)} y ${score(s.city.day)})` : "";
   return {

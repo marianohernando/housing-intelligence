@@ -53,7 +53,7 @@ export default function PerceivedSafety({ districtCode }: { districtCode: string
   if (!safety) return null;
   const { rating, source } = perceivedSafetyText(safety);
   return (
-    <GlassCard className={styles.card}>
+    <GlassCard as="section" aria-label="Seguridad del barrio según sus vecinos" className={styles.card}>
       <p>{rating}</p>
       <p className={styles.source}>{source}</p>
     </GlassCard>

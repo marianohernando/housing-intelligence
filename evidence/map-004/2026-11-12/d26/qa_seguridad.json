@@ -91,12 +91,12 @@
  },
  "lcp_retiro_slow4g": [
   {
-   "ms": 860,
+   "ms": 892,
    "en_atribucion": false,
    "texto": "Desliza hacia arriba para ver más"
   },
   {
-   "ms": 2092,
+   "ms": 2080,
    "en_atribucion": false,
    "texto": "Mira sus servicios y puntos clave, con datos ofici"
   }

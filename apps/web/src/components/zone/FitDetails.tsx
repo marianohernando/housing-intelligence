@@ -28,7 +28,7 @@ const TEXT = {
   fails: "No cumple:",
   failsUnnamed: "No cumple todo lo que pides.",
   unknown: "No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno.",
-  buySource: "Con «Comprar», el precio oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes, no para los distritos de Madrid ni para los pueblos.",
+  buySource: "Con «Comprar», puede faltar el precio: el oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes, no para los distritos de Madrid ni para los pueblos.",
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
 };
 
@@ -77,7 +77,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
           <span>{TEXT.unknown}</span>
         </p>
       )}
-      {/* The usual reason when buying: the source, not a lack of housing (D-227 §3) */}
+      {/* The usual reason when buying, said as a possibility: another condition may be the unknown one (D-227 §3) */}
       {match.match_pct == null && buying && <p className={styles.unknownWhy}>{TEXT.buySource}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>

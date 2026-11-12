@@ -87,10 +87,10 @@ export default function ZoneIntro() {
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
         <ZoneCard zone={routeZone} mode="zone" />
-        {/* Context only for Madrid's districts, the survey's coverage (D-226 §1) */}
-        {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
         <DataCounter />
         <ZoneListLink />
+        {/* Context only for Madrid's districts, the survey's coverage (D-226 §1); last, so arriving later moves nothing */}
+        {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
       </div>
       {/* Every facility of the zone, not only its key points: left column on desktop */}
       <div className={styles.centres}>

@@ -161,7 +161,8 @@ describe("map style", () => {
     const point = facilityLayers(palette).find((l) => l.id === "facilities-point");
     expect(JSON.stringify(point?.type === "circle" && point.paint)).toContain(`["match",["get","type"],"parque","${palette.parkStrong}"`);
     const cluster = facilityLayers(palette).find((l) => l.id === "facilities-cluster");
-    expect(JSON.stringify(cluster)).toContain('["get","parks"]');
+    // Green only when every place of the group is a park
+    expect(JSON.stringify(cluster)).toContain('["==",["get","parks"],["get","point_count"]]');
     const vivid = baseStyle(palette).layers.find((l) => l.id === PARKS_VIVID_LAYER);
     expect(vivid).toMatchObject({ type: "fill", "source-layer": "landcover", filter: ["==", ["get", "subclass"], "park"], layout: { visibility: "none" } });
     // Above the soft green of the base map, under the buildings

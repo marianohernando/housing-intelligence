@@ -18,7 +18,7 @@
    "sin_escaleras"
   ],
   "api": {
-   "metodo": "fit-0.4",
+   "metodo": "fit-0.5",
    "primera": "Ciudad Lineal",
    "hechos": [
     "Estación de metro o tren accesible (sin escaleras) a 10 min andando desde la mitad de sus calles"
@@ -49,7 +49,7 @@
    "sin_escaleras"
   ],
   "api": {
-   "metodo": "fit-0.4",
+   "metodo": "fit-0.5",
    "primera": "Ciudad Lineal",
    "hechos": [
     "Estación de metro o tren accesible (sin escaleras) a 10 min andando desde la mitad de sus calles"

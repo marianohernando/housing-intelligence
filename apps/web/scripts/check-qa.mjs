@@ -1137,7 +1137,7 @@ async function buying(browser) {
     await pressZ(z.page.getByRole("button", { name: "Ver mi búsqueda" }));
     await pressZ(z.page.getByRole("radio", { name: "Comprar" }));
     await Promise.all([z.page.waitForResponse(isSearch, { timeout: 30000 }), pressZ(z.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
-    const why = z.page.getByText(/solo se publica para los municipios de más de 25.000 habitantes, no para los distritos/).first();
+    const why = z.page.getByText(/puede faltar el precio: .* solo se publica para los municipios de más de 25.000 habitantes, no para los distritos/).first();
     await why.waitFor({ timeout: 20000 });
     await z.page.waitForTimeout(1000);
     const card = why.locator("xpath=..");
