@@ -9,7 +9,7 @@ Respuesta de A en `evidence/gate-01/2026-11-12/audit-places.md` §4. Lo de abajo
 
 | Caso | Estado |
 |---|---|
-| D1 · centros de atención primaria sin coordenadas | 3 de 8 recuperados con CartoCiudad (CS1135 y CS19950 en Madrid, CS9495 en Gargantilla). Siguen sin lugar los 4 «S/N» (CS1184 y CS6158 en Madrid, CS10286 y CS7529 en Alcalá) y el consultorio de Villar del Olmo (CS11438), cuya dirección lleva a Jaén. Con gap-0.3, Alcalá ya sale CUBIERTO en centros de salud (0,395 frente a 0,3694, `evidence/gate-04/2026-11-12/gap-status-gap03.md`) aunque le falten esos dos |
+| D1 · centros de atención primaria sin coordenadas | 3 de 8 recuperados con CartoCiudad (CS1135 y CS19950 en Madrid, CS9495 en Gargantilla). Los 4 «S/N» (CS1184 Orcasur y CS6158 Campamento en Madrid, CS10286 Miguel de Cervantes y CS7529 María de Guzmán en Alcalá) se corrigieron la noche del 12 nov con el número de portal del catálogo de atención primaria del Ministerio (D-218 §10, `evidence/gate-01/2026-11-12/correcciones.md`). Alcalá pasa de 0,395 a 0,494 centros a pie por 10.000 habitantes (CUBIERTO, ratio 1,33). Sigue sin lugar el consultorio de Villar del Olmo (CS11438): su dirección lleva a Jaén y ninguna fuente oficial da sus coordenadas |
 | D2 · colegios sin coordenadas | Humanitas El Cañaveral, recuperado. El CEIP de Navalafuente sigue en cuarentena: la demo aún dice 0 colegios y 63 min |
 | D3 · farmacias | Resuelto: las 4 sin coordenadas, recuperadas; la 763 pasa de Valdemoro a Fuencarral-El Pardo |
 | D4 · CEIP Amorós | Resuelto: de Tetuán a Carabanchel |
@@ -20,7 +20,7 @@ Respuesta de A en `evidence/gate-01/2026-11-12/audit-places.md` §4. Lo de abajo
 | M2 · consultorios | Ya no cuentan como capacidad: solo para los minutos a pie (D-217 §3) |
 | M3 · La Acebeda | 0 a pie, poco fiable (D-217 §7) |
 
-Lo que queda abierto es de la fuente: 4 centros de salud y 1 colegio sin dirección geocodificable. A propone avisar al portal de la CM y, mientras tanto, enseñar SIN DATOS en vez de 0 (deuda `geocoding_quarantine` del board).
+Lo que queda abierto es de la fuente: 2 consultorios (Villar del Olmo y Buitrago) y 1 colegio (Navalafuente) sin ninguna ubicación oficial (`evidence/gate-01/2026-11-12/correcciones.md`). A propone avisar al portal de la CM y, mientras tanto, enseñar SIN DATOS en vez de 0 (deuda `geocoding_quarantine` del board).
 
 ## Cómo se ha hecho
 - **Demo:** API de producción, https://vidafacil-madrid.vercel.app/api/v1, consultada el 12 nov entre las 0:20 y las 0:40.

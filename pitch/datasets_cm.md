@@ -91,7 +91,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona) (`min_a_pie_hospital`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, fuente principal)
   - Puntos del mapa (salud): `GET /api/v1/places?category=health`
-- **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-9e1911cf514f` · 549 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_sanitarios/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-296653c30a0b` · 553 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_sanitarios/quality_report.json)
 
 ### Dotación de camas por dependencia
 - **Ficha:** https://datos.comunidad.madrid/dataset/1912720 · id `cm_dotacion_camas` · publica: Instituto de Estadística

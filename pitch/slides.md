@@ -99,7 +99,7 @@ Versión con buscador (la que vale):
 - **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo lo que más limita es el colegio a 10 min: «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir 150 €/mes ya no añade ninguna (`added_zones: 0`), y la web no enseña las opciones que no suman (`relaxOptions` en `apps/web/src/lib/fit.ts`). Casi encajan Moncloa-Aravaca, Ciempozuelos y San Sebastián de los Reyes, que solo fallan por el colegio. Captura **C3**, **pendiente de recaptura** (ver «Capturas necesarias»).
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Trabajo:** cuenta los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las 6 redes del CRTM (CORE-009, D-220). Hecho en la API; en producción, con el próximo despliegue de C. **Límite que se dice si preguntan:** son horarios programados de un martes, no tiempos reales, y en 45–50 zonas de la Sierra Norte y del sureste no se llega a las 9:00 (D-220 §6).
-- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas: C1 y C2, las de producción de C del 11 nov (PR #11), que se rehacen tras el despliegue de `fit-0.2`; C3, la de B del 12 nov (PR #17).
+- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas: C1 y C2, las de B con `fit-0.2` (PR #19); C3, la de B del 12 nov (PR #17).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
@@ -123,7 +123,7 @@ Versión con buscador (la que vale):
   - Captura **C4**: **pendiente de B**, «Qué falta» de Puente de Vallecas en producción (ver «Capturas necesarias»).
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
-  - 3.866 centros educativos, 549 centros sanitarios (272 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);
+  - 3.866 centros educativos, 553 centros sanitarios (276 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216; con los 4 centros de salud corregidos por D-218 §10), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
 ### Viabilidad: se sostiene
@@ -201,7 +201,7 @@ El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las to
 | C4 | Hecha por B: `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, la fila de escuelas infantiles de **Puente de Vallecas** en FALTA (2,8 frente a 4,9) con «A pie: 6 min». El hueco enseña las dos cifras | `/que-falta?zona=distrito/2807913` |
 | C1 | La leyenda dice 32 zonas; ahora son 33 | Portada → «Ver un ejemplo…» |
 | C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
-| C1, C2 | Con `fit-0.2` la 1.ª es Fuencarral-El Pardo (100 %) y el trabajo sale en minutos de transporte público. Se rehacen después del próximo despliegue de C (las pide el orquestador a B); hasta entonces, las de C del 11 nov son fieles a producción | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
+| C1, C2 | Hechas por B con `fit-0.2` (PR #19): `deck_c1_busqueda_1440.png` y `deck_c2_tarjeta_zona_1440.png`, con Fuencarral-El Pardo 1.ª (100 %) y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00». Son locales con datos reales; cuando C despliegue `fit-0.2`, se decide si se rehacen en producción | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
 | C7 | «Cómo lo calculamos» ya explica el 2SFCA; el hueco puede volver a enseñar las reglas | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |

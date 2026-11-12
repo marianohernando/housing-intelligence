@@ -32,14 +32,14 @@ ROOT = PITCH.parent
 BUILD = DECK / "build"
 CAPTURES = PITCH / "capturas"
 PDF_NAME = "VidaFacil_DATAMAD2026.pdf"
-# Production captures of 11 Nov. A pitch/capturas/<id>.png with the same id wins.
+# A pitch/capturas/<id>.png with the same id wins. C5–C7: B's production captures of 11 Nov.
 B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"  # line B: zone, «Qué falta», method page
-C_CAPTURES = ROOT / "evidence" / "gate-06" / "2026-11-11-deploy"  # line C: search (PR #11)
-# C3 and C4 retaken by B after gap-0.3 (PR #17, real data, 1440 px): those of 11 Nov had old figures
+# C1–C4 retaken by B with real data at 1440 px: C3 and C4 after gap-0.3 (PR #17), C1 and C2 with
+# fit-0.2, Fuencarral-El Pardo first and the commute in transit minutes (PR #19)
 B_DECK = ROOT / "evidence" / "map-004" / "2026-11-12" / "deck"
 EVIDENCE_CAPTURES = {
-    "C1": C_CAPTURES / "prod-buscador-c1_busqueda_desktop.png",
-    "C2": C_CAPTURES / "prod-buscador-c2_tarjeta_zona_desktop.png",
+    "C1": B_DECK / "deck_c1_busqueda_1440.png",
+    "C2": B_DECK / "deck_c2_tarjeta_zona_1440.png",
     "C3": B_DECK / "deck_c3_y_si_cambias_1440.png",
     "C4": B_DECK / "deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png",
     "C5": B_CAPTURES / "prod_c5_chamartin_3d_desktop.png",

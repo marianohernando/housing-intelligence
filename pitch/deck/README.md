@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de la evidencia (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`); C1 y C2, de C en producción (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11); C3 y C4, de B tras gap-0.3 (`evidence/map-004/2026-11-12/deck/`, PR #17). Si no hay ninguna, el hueco sale con borde discontinuo |
+| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de la evidencia (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`). C1–C4 son de B con datos reales (`evidence/map-004/2026-11-12/deck/`): C3 y C4 tras gap-0.3 (PR #17) y C1 y C2 con `fit-0.2` (PR #19). Si no hay ninguna, el hueco sale con borde discontinuo |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -48,7 +48,7 @@ Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
 - C1–C3 son capturas de producción de C (PR #11, fusionado el 12 nov) y C4–C7, de B.
 
-Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes nuevos en `deck.css`.
+Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes nuevos en `deck.css`; C1 y C2 rehechas con `fit-0.2` (PR #19), con el número 3 de la slide 4 bajado 15 px para que quede junto a «Qué falta aquí».
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
