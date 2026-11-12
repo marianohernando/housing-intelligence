@@ -74,6 +74,40 @@ describe("«¿Y si cambias algo?»: apply and undo", () => {
     expect(s.applied?.label).toBe("+150 €/mes");
   });
 
+  it("on failure of a plain search keeps what the user edited while it was in flight", () => {
+    let s = searched();
+    s = searchReducer(s, { type: "start", attempt: plainAttempt(s, 2) });
+    s = searchReducer(s, { type: "edit", change: (x) => setAdults(x, 2) });
+    const edited = s.scenario;
+    s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
+    expect(s.status).toBe("error");
+    expect(s.scenario).toBe(edited);
+  });
+
+  it("retries what is on screen when the user edited the search after the attempt started", () => {
+    let s = searched();
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });
+    s = searchReducer(s, { type: "edit", change: (x) => setAdults(x, 2) });
+    const edited = s.scenario;
+    s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
+    expect(retryAttempt(s, 3)).toMatchObject({ id: 3, scenario: edited, applied: null });
+    // Also when the edit comes after the failure
+    let t = searched();
+    t = searchReducer(t, { type: "start", attempt: plainAttempt(t, 2) });
+    t = searchReducer(t, { type: "fail", id: 2, error: "NETWORK" });
+    t = searchReducer(t, { type: "edit", change: (x) => setAdults(x, 2) });
+    expect(retryAttempt(t, 3)?.scenario).toBe(t.scenario);
+  });
+
+  it("on failure of an option keeps what the user edited on top of it", () => {
+    let s = searched();
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });
+    s = searchReducer(s, { type: "edit", change: (x) => setAdults(x, 2) });
+    const edited = s.scenario;
+    s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
+    expect(s.scenario).toBe(edited);
+  });
+
   it("has nothing to retry unless the last search failed", () => {
     expect(retryAttempt(searched(), 9)).toBeNull();
   });
@@ -90,5 +124,16 @@ describe("isStale", () => {
     s = searchReducer(s, { type: "edit", change: (x) => togglePriority(togglePriority(x, "salud"), "salud") });
     expect(isStale(s)).toBe(false);
     expect(isStale(initialSearchState(mine))).toBe(false);
+  });
+
+  it("does not depend on the order of the keys, but does on the order of the priorities", () => {
+    const s = searched();
+    const reordered = Object.fromEntries(Object.entries(mine).reverse()) as ScenarioState;
+    expect(isStale({ ...s, scenario: reordered })).toBe(false);
+    const withUndefined: ScenarioState = { ...mine, min_floor_area_m2: undefined };
+    expect(isStale({ ...s, scenario: withUndefined })).toBe(false);
+    const both = togglePriority(togglePriority(mine, "salud"), "colegios");
+    const swapped = togglePriority(togglePriority(mine, "colegios"), "salud");
+    expect(isStale({ ...s, searched: both, scenario: swapped })).toBe(true);
   });
 });

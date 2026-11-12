@@ -10,9 +10,8 @@ import { constraintLabels, fewZones, optionText, passingText, relaxOptions, unkn
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (rc.*). «Ver todas las opciones», «Ver menos», «Cambiar una sola
-// cosa no añade zonas.» and the count of each option are provisional (pending line D). Each option
-// is named by its visible text, not by rc.opcion.aria: a different name breaks WCAG 2.5.3 (label in name).
+// Copy from pitch/textos_web.md (rc.*, 8c49e33). Each option is named by its visible text: a
+// different name (the old rc.opcion.aria) breaks WCAG 2.5.3 (label in name).
 const TEXT = {
   title: "¿Y si cambias algo?",
   intro: "Mira cuántas salen si cambias una sola cosa:",

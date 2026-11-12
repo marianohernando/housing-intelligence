@@ -4,6 +4,7 @@
  */
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
+import type { PlaceCategory as ContractPlaceCategory, PlacesResponse } from "@/contracts/places_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
@@ -17,18 +18,12 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
 /** Levels with a «Qué falta» list: municipios, Madrid's 21 districts and census sections. */
 export type GapLevel = "municipio" | "distrito" | "seccion_censal";
 
-/** Place categories the map uses for a zone's key points (PlaceCategory in the API). */
-export type PlaceCategory = "transport" | "health" | "education" | "social";
+/** Place categories of /api/v1/places (places-1). */
+export type PlaceCategory = ContractPlaceCategory;
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
-export type PlacesResponse = Envelope<{
-  type: "FeatureCollection";
-  features: PlaceFeature[];
-  total: number;
-  page: number;
-  pages: number;
-}>;
+
 
 /**
  * Places of one category. The map always asks by zone, never for a whole layer; without a zone,
@@ -52,7 +47,8 @@ export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 
 /**
  * A failed call. `code` comes from the API (`ErrorCode`), or is NETWORK when the API cannot be
- * reached, VALIDATION for a rejected request and HTTP_<status> when the body says nothing.
+ * reached, ABORTED when the caller cancelled it, VALIDATION for a rejected request and
+ * HTTP_<status> when the body says nothing.
  */
 export class ApiError extends Error {
   constructor(
@@ -83,10 +79,21 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     try {
       response = await fetchImpl(new URL(path, base).toString(), init);
     } catch (exc) {
-      throw new ApiError(0, "NETWORK", (exc as Error).message);
+      const aborted = init?.signal?.aborted || (exc as Error).name === "AbortError";
+      throw new ApiError(0, aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
     }
     if (!response.ok) throw await toApiError(response);
     return (await response.json()) as T;
+  }
+
+  /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
+  async function places(query: PlacesQuery): Promise<PlaceFeature[]> {
+    const first = await call<PlacesResponse>(placesPath(query, 1));
+    const rest = await Promise.all(
+      Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
+    );
+    // The schema types the point as a tuple of unknowns (tuple[float, float] in Pydantic): it is GeoJSON [lon, lat]
+    return [first, ...rest].flatMap((body) => body.data.features) as unknown as PlaceFeature[];
   }
 
   return {
@@ -106,20 +113,14 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     adminUnits(level: AdminLevel, simplifyM: number, parent?: string) {
       return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent));
     },
-    /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
-    async places(query: PlacesQuery): Promise<PlaceFeature[]> {
-      const first = await call<PlacesResponse>(placesPath(query, 1));
-      const rest = await Promise.all(
-        Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
-      );
-      return [first, ...rest].flatMap((body) => body.data.features);
-    },
-    /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check. */
-    search(scenario: ScenarioState) {
+    places,
+    /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
+    search(scenario: ScenarioState, { signal }: { signal?: AbortSignal } = {}) {
       return call<SearchResponse>("/api/v1/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scenario),
+        signal,
       });
     },
   };

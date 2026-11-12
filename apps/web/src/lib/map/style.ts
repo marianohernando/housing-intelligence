@@ -3,7 +3,7 @@
  * with our own quiet style: lavender land, white roads, soft parks and water, no labels, and 3D
  * buildings from zone zoom. Colours come from tokens.css (--map-*), read at runtime by the map.
  */
-import type { ExpressionSpecification, LayerSpecification, StyleSpecification } from "maplibre-gl";
+import type { ExpressionSpecification, LayerSpecification, StyleSpecification, VectorSourceSpecification } from "maplibre-gl";
 
 import { FIT_RAMP } from "@/lib/fit";
 
@@ -11,6 +11,22 @@ import { PATTERN_IMAGE } from "./gapMap";
 
 /** TileJSON of OpenFreeMap's public instance; it carries the © OpenMapTiles / OSM attribution. */
 export const OPENFREEMAP_TILEJSON = "https://tiles.openfreemap.org/planet";
+
+/** OpenMapTiles carries every layer up to zoom 14 (buildings with their heights included). */
+const OPENMAPTILES_MAXZOOM = 14;
+
+/**
+ * Where the base map comes from (OpenMapTiles schema): NEXT_PUBLIC_MAP_TILES_URL at build time,
+ * as a TileJSON URL or a {z}/{x}/{y} template, local or not (the offline package serves an extract
+ * of Madrid, e.g. with `pmtiles serve`); a path («/tiles/…») is made absolute with `origin`.
+ * Unset or not http(s): OpenFreeMap, as always.
+ */
+export function mapTilesSource(setting: string | undefined, origin?: string): VectorSourceSpecification {
+  const url = setting?.startsWith("/") && origin ? `${origin}${setting}` : setting;
+  if (!url || !/^https?:\/\//.test(url)) return { type: "vector", url: OPENFREEMAP_TILEJSON };
+  if (url.includes("{z}")) return { type: "vector", tiles: [url], maxzoom: OPENMAPTILES_MAXZOOM };
+  return { type: "vector", url };
+}
 
 export const MAP_PALETTE_TOKENS = {
   land: "map-land",
@@ -22,6 +38,7 @@ export const MAP_PALETTE_TOKENS = {
   building: "map-building",
   buildingTall: "map-building-tall",
   violet: "violet",
+  violetStrong: "violet-strong",
   violetSoft: "violet-soft",
   gapFalta: "map-falta",
   gapJusto: "map-justo",
@@ -31,6 +48,7 @@ export const MAP_PALETTE_TOKENS = {
   gapZonaPequenaInk: "zona-pequena-ink",
   fitLow: "map-fit-low",
   fitNoCumple: "map-no-cumple",
+  fitNoCumpleInk: "ink-soft",
   gapFaltaInk: "falta-ink",
   gapJustoInk: "justo-ink",
   sinDatos: "sin-datos",
@@ -100,10 +118,10 @@ function buildingsLayer(p: MapPalette): LayerSpecification {
   };
 }
 
-export function baseStyle(p: MapPalette): StyleSpecification {
+export function baseStyle(p: MapPalette, tiles: VectorSourceSpecification = mapTilesSource(undefined)): StyleSpecification {
   return {
     version: 8,
-    sources: { [SRC]: { type: "vector", url: OPENFREEMAP_TILEJSON } },
+    sources: { [SRC]: tiles },
     // Soft lavender-tinted light: shaded walls stay lavender instead of turning grey.
     light: { anchor: "viewport", color: "#f6f4ff", intensity: 0.35, position: [1.2, 210, 35] },
     sky: {
@@ -149,7 +167,8 @@ export function baseStyle(p: MapPalette): StyleSpecification {
  * added by the map). A zone with a `gap` property (lib/map/gapMap.ts) is filled by its status in
  * the row the person picked, with the FALTA, JUSTO and small-zone patterns and a dashed edge for
  * SIN DATOS. After a search, a zone with a `fit` property (lib/fit.ts) is filled by its % when it
- * fits, almost white when it fails a condition and grey with a dashed edge when unknown. The
+ * fits, almost white and crossed out when it fails a condition and grey with a dashed edge when
+ * unknown. The
  * zone under the pointer gets a violet edge of its own layer, whatever its fill.
  * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
  * first, so the white mask drawn above fades the surroundings, buildings included.
@@ -191,19 +210,18 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         },
       },
       {
+        // FALTA, JUSTO and small zones of a row; after a search, the zones that fail a condition
+        // are crossed out, so they read apart from those that fit by more than their tone (R-06)
         id: "zones-pattern",
         type: "fill",
         source: "zones",
-        filter: ["match", ["get", "gap"], ["FALTA", "JUSTO", "ZONA_PEQUENA"], true, false],
+        filter: ["any", ["match", ["get", "gap"], ["FALTA", "JUSTO", "ZONA_PEQUENA"], true, false], ["==", ["get", "fit"], "NO_CUMPLE"]],
         paint: {
           "fill-pattern": [
-            "match",
-            ["get", "gap"],
-            "FALTA",
-            PATTERN_IMAGE.FALTA,
-            "JUSTO",
-            PATTERN_IMAGE.JUSTO,
-            PATTERN_IMAGE.ZONA_PEQUENA,
+            "case",
+            ["==", ["get", "fit"], "NO_CUMPLE"],
+            PATTERN_IMAGE.NO_CUMPLE,
+            ["match", ["get", "gap"], "FALTA", PATTERN_IMAGE.FALTA, "JUSTO", PATTERN_IMAGE.JUSTO, PATTERN_IMAGE.ZONA_PEQUENA],
           ],
           "fill-opacity": fadeOut(1),
         },
@@ -275,4 +293,57 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
       },
     ],
   };
+}
+
+/** Source of every facility of the zone on screen (lib/map/facilities.ts), clustered by MapLibre. */
+export const FACILITY_SOURCE = "facilities";
+export const FACILITY_CLUSTER = { radius: 48, maxZoom: 16 } as const;
+const CLUSTER_IMAGE = "facility-cluster-";
+
+/** Each group is drawn as an image with its count (the map has no glyph server): its id says the count. */
+export function clusterImageId(count: number): string {
+  return `${CLUSTER_IMAGE}${count}`;
+}
+
+export function clusterImageCount(id: string): number | null {
+  if (!id.startsWith(CLUSTER_IMAGE)) return null;
+  const count = Number(id.slice(CLUSTER_IMAGE.length));
+  return Number.isInteger(count) && count > 0 ? count : null;
+}
+
+/** Radius in CSS px of a group's circle: bigger groups, bigger circles; always a 44 px target or close. */
+export function clusterRadius(count: number): number {
+  return count < 10 ? 17 : count < 50 ? 20 : 23;
+}
+
+/**
+ * The zone's facilities of one type (FASE_PRUEBAS, T3): groups as violet circles with their count
+ * and single places as violet dots, above the buildings so none hides behind a block.
+ */
+export function facilityLayers(p: MapPalette): LayerSpecification[] {
+  return [
+    {
+      id: "facilities-point",
+      type: "circle",
+      source: FACILITY_SOURCE,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-radius": 7,
+        "circle-color": p.violetStrong,
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2.5,
+      },
+    },
+    {
+      id: "facilities-cluster",
+      type: "symbol",
+      source: FACILITY_SOURCE,
+      filter: ["has", "point_count"],
+      layout: {
+        "icon-image": ["concat", CLUSTER_IMAGE, ["to-string", ["get", "point_count"]]],
+        "icon-allow-overlap": true,
+        "icon-ignore-placement": true,
+      },
+    },
+  ];
 }

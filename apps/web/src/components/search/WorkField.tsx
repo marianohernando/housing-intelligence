@@ -12,8 +12,7 @@ import styles from "./SearchCard.module.css";
 import { useScenario } from "./ScenarioProvider";
 
 // Copy from pitch/textos_web.md (trabajo.*). The placeholder and «no results» name stations instead
-// of streets (there is no street search without an external geocoder), and the count of places
-// found is new: provisional, pending line D.
+// of streets: there is no street search without an external geocoder.
 const TEXT = {
   title: "Trabajo en",
   help: "Así miramos lo lejos que te queda cada zona.",

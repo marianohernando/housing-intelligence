@@ -50,6 +50,31 @@
   font-weight: 600;
 }
 
+/* In a grid the label wraps instead of pushing the count out of the button */
+.label {
+  min-width: 0;
+  overflow-wrap: break-word;
+  text-align: start;
+}
+
+.count {
+  flex: none;
+  margin-inline-start: auto;
+  min-width: 1.6rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--sin-datos-bg);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.chip[aria-pressed="true"] .count {
+  background: var(--violet-strong);
+  color: var(--on-violet);
+}
+
 .soon {
   padding: 0.05rem 0.4rem;
   border-radius: var(--radius-pill);

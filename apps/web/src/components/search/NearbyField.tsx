@@ -16,8 +16,7 @@ import {
 import styles from "./SearchCard.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (cerca.*). Service names, «Añadir un servicio» and «Quitar» are
-// provisional (pending line D).
+// Copy from pitch/textos_web.md (cerca.*, 8c49e33).
 const TEXT = {
   title: "Lo quiero a un paseo",
   required: "Imprescindible",
@@ -25,9 +24,9 @@ const TEXT = {
   add: "Añadir un servicio a un paseo",
   addPlaceholder: "Añadir un servicio…",
   remove: (name: string) => `Quitar ${name.toLowerCase()}`,
-  // cerca.item, «{servicio} a menos de {n} min andando», with the minutes as a selector
-  before: "a menos de",
-  after: "min andando",
+  // cerca.item, «{servicio} a {n} min andando como mucho», with the minutes as a selector
+  before: "a",
+  after: "min andando como mucho",
   minutesAria: (name: string) => `Minutos andando hasta ${name.toLowerCase()}`,
 };
 
@@ -37,7 +36,7 @@ export const NEED_NAME: Record<NeedKey, string> = {
   centro_salud: "Centro de salud",
   farmacia: "Farmacia",
   mayores: "Centro de mayores",
-  transporte: "Parada de transporte",
+  transporte: "Parada de transporte público",
 };
 
 /** «Lo quiero a un paseo»: each service with its walking minutes and whether it is a must. */

@@ -100,7 +100,7 @@ describe("patternPixels", () => {
   const ink: [number, number, number, number] = [166, 30, 51, 200];
 
   it("draws the FALTA stripes and the JUSTO dots on a transparent tile", () => {
-    for (const kind of ["stripes", "dots", "lines"] as const) {
+    for (const kind of ["stripes", "dots", "lines", "cross"] as const) {
       const { width, height, data } = patternPixels(kind, ink, 2);
       expect(width).toBe(GAP_PATTERN.size * 2);
       expect(height).toBe(width);
@@ -115,5 +115,24 @@ describe("patternPixels", () => {
     const { width, data } = patternPixels("stripes", ink, 1);
     const alpha = (x: number, y: number) => data[(y * width + x) * 4 + 3];
     for (let y = 0; y < width; y++) expect(alpha(0, y)).toBe(alpha(width - 1, (y + 1) % width));
+  });
+
+  it("crosses both diagonals for «No cumple todo», so it reads apart from the fit by more than its tone (R-06)", () => {
+    const { width, data } = patternPixels("cross", ink, 1);
+    const alpha = (x: number, y: number) => data[(y * width + x) * 4 + 3];
+    const p = GAP_PATTERN.period;
+    // Both diagonals through the corner
+    expect(alpha(0, 0)).toBe(200);
+    expect(alpha(p - 1, 1)).toBe(200);
+    expect(alpha(1, 1)).toBe(200);
+    expect(alpha(p / 2, 0)).toBe(0);
+    // Seamless: the tile repeats every period in both directions, and the period divides it
+    expect(width % p).toBe(0);
+    for (let y = 0; y < width; y++) {
+      for (let x = 0; x < width; x++) {
+        expect(alpha(x, y)).toBe(alpha((x + p) % width, y));
+        expect(alpha(x, y)).toBe(alpha(x, (y + p) % width));
+      }
+    }
   });
 });

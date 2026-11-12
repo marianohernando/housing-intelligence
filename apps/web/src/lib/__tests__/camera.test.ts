@@ -10,6 +10,7 @@ import {
   type Padding,
   projectAt,
   SHEET_PEEK,
+  THREE_COLUMNS_MIN,
   type ZoneCamera,
 } from "../map/camera";
 import { BUILDINGS_3D_ZOOM } from "../map/style";
@@ -91,7 +92,7 @@ describe("islandZoom", () => {
   }
 
   it("keeps the island clear of the cards, centred where the zone camera centres it", () => {
-    const island = cameraPadding("island", { mobile: false, height: 900 });
+    const island = cameraPadding("island", { mobile: false, width: 1440, height: 900 });
     const base = { center: CENTER, pitch: 55, bearing: -20, ...DESKTOP };
     const zoom = islandZoom(ring, base, island);
     expect(zoom).toBeLessThan(islandZoom(ring, base));
@@ -136,15 +137,37 @@ describe("approachZoom", () => {
 
 describe("cameraPadding", () => {
   it("keeps the desktop cards clear: search on the left, zone card on the right, legend below", () => {
-    expect(cameraPadding("overview", { mobile: false, height: 900 })).toEqual({ top: 100, right: 460, bottom: 250, left: 500 });
-    expect(cameraPadding("zone", { mobile: false, height: 900 })).toEqual({ top: 90, right: 380, bottom: 200, left: 440 });
+    expect(cameraPadding("overview", { mobile: false, width: 1440, height: 900 })).toEqual({ top: 100, right: 460, bottom: 250, left: 500 });
+    expect(cameraPadding("zone", { mobile: false, width: 1440, height: 900 })).toEqual({ top: 90, right: 380, bottom: 200, left: 440 });
+  });
+
+  it("with one column of cards (projector at 125 %: 1024 px), frames the map on the right of it", () => {
+    for (const [width, height] of [[1024, 768], [1024, 576], [1180, 700]] as const) {
+      expect(width).toBeLessThan(THREE_COLUMNS_MIN);
+      for (const mode of ["overview", "zone", "island"] as const) {
+        const pad = cameraPadding(mode, { mobile: false, width, height });
+        // Clear of the 27-28rem column of cards (17 px rem) on the left…
+        expect(pad.left).toBeGreaterThanOrEqual(27 * 17);
+        // …and a real share of the canvas left for the map, never a dot
+        expect(width - pad.left - pad.right).toBeGreaterThanOrEqual(width * 0.25);
+        expect(height - pad.top - pad.bottom).toBeGreaterThanOrEqual(height * 0.25);
+      }
+    }
+  });
+
+  it("never asks for more padding than the canvas has", () => {
+    for (const [width, height] of [[1260, 600], [1280, 720], [1366, 768], [800, 500]] as const) {
+      const pad = cameraPadding("overview", { mobile: false, width, height });
+      expect(width - pad.left - pad.right).toBeGreaterThanOrEqual(width * 0.25 - 1);
+      expect(height - pad.top - pad.bottom).toBeGreaterThanOrEqual(height * 0.25 - 1);
+    }
   });
 
   it("on mobile frames the map between the header and the bottom sheet", () => {
     const height = 844;
     const sheet = Math.round(height * SHEET_PEEK);
     for (const mode of ["overview", "zone"] as const) {
-      const pad = cameraPadding(mode, { mobile: true, height });
+      const pad = cameraPadding(mode, { mobile: true, width: 390, height });
       expect(pad.bottom).toBeGreaterThanOrEqual(sheet);
       expect(pad.top).toBeGreaterThan(100); // the header (brand and tabs)
       expect(height - pad.top - pad.bottom).toBeGreaterThan(200); // still a usable map

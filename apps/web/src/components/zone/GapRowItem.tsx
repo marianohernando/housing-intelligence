@@ -1,24 +1,40 @@
 "use client";
 
-import { ExternalLink, Footprints } from "lucide-react";
+import { ExternalLink, Footprints, Hospital } from "lucide-react";
 import { useState } from "react";
 
-import type { GapRow } from "@/contracts/zone_gap_list_response";
+import type { GapRow, IndicatorValue } from "@/contracts/zone_gap_list_response";
 import { confidenceText } from "@/lib/confidence";
-import { GAP_STATUS, gapFigures, isSmallZone, NULL_REASON, ROW_MEASURE, SMALL_ZONE, walking, walkingText, WALK_TO } from "@/lib/gaps";
+import {
+  GAP_STATUS,
+  gapFigures,
+  groupText,
+  HOSPITAL_WALK,
+  hospitalWalking,
+  inGroup,
+  isSmallZone,
+  NULL_REASON,
+  ROW_MEASURE,
+  SMALL_ZONE,
+  walking,
+  walkingText,
+  WALK_TO,
+} from "@/lib/gaps";
 import { datasetLines, sortDatasets } from "@/lib/provenance";
 
 import GapBadge from "./GapBadge";
+import GroupTag from "./GroupTag";
 import SmallZoneTag from "./SmallZoneTag";
 import styles from "./GapRowItem.module.css";
 
 // Copy from pitch/textos_web.md (falta.fila.*, confianza.aria, estado.sin_datos).
 const TEXT = {
   noData: "Sin datos",
-  regional: "En toda la Comunidad de Madrid:", // gap-0.2 context; provisional (pending line D)
+  regional: "En toda la Comunidad de Madrid:", // falta.fila.region (gap-0.2 context)
   walk: "A pie hasta",
   note: "Ojo:",
-  sources: "De dónde sale:", // falta.fila.fuente; the count is provisional (pending line D)
+  hospital: "El hospital:", // provisional (gap-0.3, D-217), listed for line D
+  sources: "De dónde sale:", // falta.fila.fuente, with the number of datasets
   confidence: "Fiabilidad del dato: ",
 };
 
@@ -31,14 +47,13 @@ function sourcesCount(n: number): string {
   return n === 1 ? "1 conjunto de datos" : `${n} conjuntos de datos`;
 }
 
-function WalkingFigure({ row }: { row: GapRow }) {
-  const extra = walking(row.extra_indicators);
+function WalkingFigure({ extra, to, hospital = false }: { extra: IndicatorValue | undefined; to: string | undefined; hospital?: boolean }) {
   if (!extra) return null;
-  const to = WALK_TO[row.row];
+  const Icon = hospital ? Hospital : Footprints;
   return (
     <div className={styles.walk}>
       <dt>
-        <Footprints size={16} aria-hidden="true" /> {to ? `${TEXT.walk} ${to}` : extra.label}
+        <Icon size={16} aria-hidden="true" /> {to ? `${TEXT.walk} ${to}` : extra.label}
       </dt>
       <dd>
         {walkingText(extra)}
@@ -64,6 +79,8 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
   const figures = gapFigures(row.indicator.value, row.reference, row.regional_reference ?? null);
   const reason = reasonOf(row);
   const confidence = confidenceText(row.indicator.confidence);
+  const group = inGroup(row);
+  const hospital = hospitalWalking(row.extra_indicators);
   // Fixed once, so a resize never closes what the person opened
   const [sourcesOpen] = useState(wideScreen);
 
@@ -74,6 +91,7 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
         <span className={styles.badges}>
           <GapBadge status={row.status} />
           {isSmallZone(row) && <SmallZoneTag />}
+          {group && <GroupTag described={false} />}
         </span>
       </div>
       <p className={styles.measure}>{ROW_MEASURE[row.row]}</p>
@@ -93,9 +111,11 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
             <dd>{figures.regional}</dd>
           </div>
         )}
-        <WalkingFigure row={row} />
+        <WalkingFigure extra={walking(row.extra_indicators, row.row)} to={WALK_TO[row.row]} />
+        <WalkingFigure extra={hospital} to={HOSPITAL_WALK.to} hospital />
       </dl>
 
+      {group && <p className={styles.group}>{groupText(zoneName, group)}</p>}
       {reason && <p className={styles.reason}>{reason}</p>}
       {row.indicator.value !== null && (
         <p className={styles.confidence} title={confidence.help}>
@@ -109,6 +129,11 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
           <strong>{TEXT.note}</strong> {row.proxy_note}
         </p>
       )}
+      {hospital && (
+        <p className={styles.note}>
+          <strong>{TEXT.hospital}</strong> {HOSPITAL_WALK.note}
+        </p>
+      )}
 
       <details className={styles.sources} open={sourcesOpen}>
         <summary>
@@ -120,8 +145,9 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
             return (
               <li key={ref.dataset_id}>
                 {lines.url ? (
-                  <a href={lines.url} target="_blank" rel="noopener noreferrer" aria-label={lines.openLabel}>
+                  <a href={lines.url} target="_blank" rel="noopener noreferrer">
                     {ref.name}
+                    <span className="visually-hidden">, {lines.openHint}</span>
                     <ExternalLink size={14} aria-hidden="true" />
                   </a>
                 ) : (

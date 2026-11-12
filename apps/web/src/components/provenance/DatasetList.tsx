@@ -10,11 +10,13 @@ import { datasetLines, sortDatasets } from "@/lib/provenance";
 import styles from "./DatasetList.module.css";
 import { useDatasets } from "./useDatasets";
 
-// Copy from pitch/textos_web.md (fuente.*, error.reintentar). The loading line is provisional (pending line D).
+// Copy from pitch/textos_web.md (fuente.*, carga.fuentes, error.reintentar).
 const TEXT = {
-  loading: "Cargando la lista de datos…",
+  loading: "Cargando los conjuntos de datos…",
   retry: "Reintentar",
   open: "Abrir en el portal",
+  // The accessible name starts with the visible text (WCAG 2.5.3) and then says which and where
+  openHint: (name: string) => `: ${name} (se abre en una pestaña nueva)`,
 };
 
 /** Every dataset behind Vida Fácil (GET /api/v1/datasets): who publishes it, version, licence and link. */
@@ -54,8 +56,9 @@ export default function DatasetList() {
               </p>
             ))}
             {lines.url && (
-              <a href={lines.url} target="_blank" rel="noopener noreferrer" aria-label={lines.openLabel} className={styles.link}>
+              <a href={lines.url} target="_blank" rel="noopener noreferrer" className={styles.link}>
                 {TEXT.open}
+                <span className="visually-hidden">{TEXT.openHint(ref.name)}</span>
                 <ExternalLink size={16} aria-hidden="true" />
               </a>
             )}

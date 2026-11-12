@@ -1,0 +1,70 @@
+{
+ "modo": "fixes",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "escritorio": {
+  "cerca_item": "Colegio a 5 10 15 20 30 min andando como mucho Imprescindible",
+  "servicios_a_un_paseo": [
+   "Añadir un servicio…",
+   "Escuela infantil",
+   "Centro de salud",
+   "Farmacia",
+   "Centro de mayores",
+   "Parada de transporte público"
+  ],
+  "casi_encajan": "Cumplen todo menos una cosa.",
+  "leyenda": "¿Qué quieres ver? Encaje con tu búsqueda Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Encaje con tu búsqueda Encaja menos Encaja más Cumple todo 32 zonas No cumple todo 152 zonas Sin datos 15 zonas",
+  "leyenda_parches": [
+   1,
+   2,
+   0
+  ],
+  "y_si_cambias": "¿Y si cambias algo? Con tu búsqueda tal cual salen 32 zonas. Mira cuántas salen si cambias una sola cosa: +5 min a pie hasta colegio con primaria saldrían 49 zonas, 17 más Probar así +150 €/mes saldrían 33 zonas, 1 más Probar así Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
+  "axe_resultados": [],
+  "fallo_simulado": {
+   "aviso": "No hemos podido conectar. Comprueba tu conexión a internet e inténtalo otra vez.",
+   "comprar_sigue_marcado": true,
+   "consola_esperada": [
+    "Failed to load resource: net::ERR_FAILED"
+   ]
+  },
+  "mapa_aria_fila": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. Cada zona tiene el color de su estado en centros de salud frente a los municipios de su tipo; la leyenda lo explica.",
+  "overflow_px": 0,
+  "busqueda_cancelada_al_salir": [
+   "net::ERR_ABORTED"
+  ],
+  "consola": []
+ },
+ "paginas": {
+  "como_lo_calculamos_desktop": {
+   "primera_regla": "Comparamos cada zona con los demás municipios de la Comunidad de Madrid de su mismo tipo, urbanos o rurales, siempre según cuánta gente vive en ella.",
+   "ejemplo_hecho": "Debajo del % van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min andando», y cada uno dice cuánto nos fiamos del dato.",
+   "axe": [],
+   "overflow_px": 0,
+   "consola": []
+  },
+  "como_lo_calculamos_mobile": {
+   "primera_regla": "Comparamos cada zona con los demás municipios de la Comunidad de Madrid de su mismo tipo, urbanos o rurales, siempre según cuánta gente vive en ella.",
+   "ejemplo_hecho": "Debajo del % van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min andando», y cada uno dice cuánto nos fiamos del dato.",
+   "axe": [],
+   "overflow_px": 0,
+   "consola": []
+  },
+  "zonas_fila_desktop": {
+   "intro": "Con su estado en centros de salud frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS.",
+   "axe": [],
+   "overflow_px": 0,
+   "consola": []
+  },
+  "zonas_fila_mobile": {
+   "intro": "Con su estado en centros de salud frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS.",
+   "axe": [],
+   "overflow_px": 0,
+   "consola": []
+  }
+ },
+ "movil": {
+  "axe_resultados": [],
+  "overflow_px": 0,
+  "consola": []
+ }
+}

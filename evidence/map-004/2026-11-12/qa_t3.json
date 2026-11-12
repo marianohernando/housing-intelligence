@@ -1,0 +1,66 @@
+{
+ "modo": "t3",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "escritorio": {
+  "botones": [
+   "Colegios 25",
+   "Escuelas infantiles 33",
+   "Centros de salud 7",
+   "Hospitales 5",
+   "Farmacias 114",
+   "Mayores 9"
+  ],
+  "pulsado": "Colegios 25",
+  "frase": "25 colegios con primaria en Chamartín Públicos y concertados: los mismos que cuenta «Qué falta».",
+  "api_colegios": 25,
+  "api_hospitales": 5,
+  "api_farmacias": 114,
+  "api_mayores": 9,
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 25 colegios con primaria en Chamartín; su lista está en «Todos los centros».",
+  "lista": {
+   "elementos": 25,
+   "primeros": [
+    "Colegio público · Arquitecto Gaudi",
+    "Colegio concertado · Cardenal Spinola",
+    "Colegio concertado · Claret",
+    "Colegio concertado · Corazon Inmaculado",
+    "Colegio concertado · Fundacion Santamarca"
+   ]
+  },
+  "axe_lista": [],
+  "hospitales": {
+   "pulsado": "true",
+   "frase": "5 hospitales en Chamartín La fuente oficial no publica el nombre de cada centro de este tipo.",
+   "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 5 hospitales en Chamartín; su lista está en «Todos los centros»."
+  },
+  "ninguno": "Toca un tipo de centro para verlo en el mapa.",
+  "solape_busqueda_barra": {
+   "busqueda": {
+    "top": 655,
+    "bottom": 768,
+    "left": 45,
+    "right": 504
+   },
+   "barra": {
+    "top": 800,
+    "bottom": 875,
+    "left": 555,
+    "right": 971
+   },
+   "libre": true
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "que_falta": {
+  "axe": [],
+  "consola": []
+ },
+ "movil": {
+  "frase": "7 centros de salud en Chamartín La fuente oficial no publica el nombre de cada centro de este tipo.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ }
+}

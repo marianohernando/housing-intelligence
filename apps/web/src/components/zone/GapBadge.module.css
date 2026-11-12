@@ -42,3 +42,11 @@
   color: var(--zona-pequena-ink);
   letter-spacing: 0;
 }
+
+/* Compared with its neighbours (GroupTag, gap-0.3): a fact about the comparison, not a status */
+.group {
+  border-color: var(--line);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  letter-spacing: 0;
+}

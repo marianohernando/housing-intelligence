@@ -1,0 +1,10 @@
+{
+ "modo": "tiles-local",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "tilejson_local": {
+  "pedido": true,
+  "nota": 0,
+  "aviso_fuerte": 0,
+  "consola": []
+ }
+}

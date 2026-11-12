@@ -63,6 +63,9 @@ export default function ScenarioProvider({ children }: { children: ReactNode }) 
     stateRef.current = state;
   }, [state]);
   const nextId = useRef(0);
+  // The search in flight: a newer one cancels it, and so does leaving the page.
+  const inFlight = useRef<AbortController | null>(null);
+  useEffect(() => () => inFlight.current?.abort(), []);
 
   const update = useCallback((change: (s: ScenarioState) => ScenarioState) => dispatch({ type: "edit", change }), []);
 
@@ -71,12 +74,19 @@ export default function ScenarioProvider({ children }: { children: ReactNode }) 
     if (!SEARCH_ENABLED) return;
     const attempt = build(stateRef.current, ++nextId.current);
     if (!attempt) return;
+    inFlight.current?.abort();
+    const controller = new AbortController();
+    inFlight.current = controller;
     dispatch({ type: "start", attempt });
     try {
-      const body = await runSearch(createApi(), attempt.scenario);
+      const body = await runSearch(createApi(), attempt.scenario, SEARCH_ENABLED, controller.signal);
       if (body) dispatch({ type: "done", id: attempt.id, result: body.data });
     } catch (exc) {
+      // Cancelled by a newer search (whose answer is the one that counts) or by leaving the page
+      if (controller.signal.aborted) return;
       dispatch({ type: "fail", id: attempt.id, error: exc instanceof ApiError ? exc : new ApiError(0, "NETWORK", String(exc)) });
+    } finally {
+      if (inFlight.current === controller) inFlight.current = null;
     }
   }, []);
 

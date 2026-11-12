@@ -36,7 +36,7 @@ describe("datasetLines (fuente.*)", () => {
       version: "Versión de los datos: 2026-11-10-cccabfd6f025",
       license: "Licencia: CRTM Licencia de datos abiertos (LDA)",
       url: "https://datos.comunidad.madrid/dataset/red_de_metro",
-      openLabel: "Abrir Oferta planificada de la Red de Metro en el portal de datos (se abre en una pestaña nueva)",
+      openHint: "en el portal de datos (se abre en una pestaña nueva)",
     });
   });
 

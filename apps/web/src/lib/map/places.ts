@@ -2,18 +2,13 @@
  * Key points of a zone for the 3D view (pure, unit tested): a few real places from
  * /api/v1/places, which filters them by zone, labelled in plain words (pitch/textos_web.md, mapa.3d.*).
  */
+import type { PlaceProperties } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { titleCase } from "@/lib/names";
 
-export interface PlaceProperties {
-  name: string;
-  category: string;
-  subcategory: string | null;
-  municipio: string | null;
-  /** geo_admin_unit id of the census section, e.g. ES.28.SEC.2807905001 */
-  seccion: string | null;
-}
+export type { PlaceProperties };
 
+/** A place of /api/v1/places (places-1): its properties from the contract, its point as GeoJSON. */
 export type PlaceFeature = GeoJSON.Feature<GeoJSON.Point, PlaceProperties>;
 
 export type KeyPointKind = "transporte" | "salud" | "colegio";

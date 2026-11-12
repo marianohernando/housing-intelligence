@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
+import type { PlaceCategory } from "../../contracts/places_response";
 import { keyPointQueries, type PlaceFeature, pickKeyPoints } from "../map/places";
 
-function place(name: string, category: string, subcategory: string, lon: number, lat: number, seccion = "ES.28.SEC.2807905001", municipio = "28079"): PlaceFeature {
+function place(name: string, category: PlaceCategory, subcategory: string, lon: number, lat: number, seccion = "ES.28.SEC.2807905001", municipio = "28079"): PlaceFeature {
   return {
     type: "Feature",
     id: `${name}-${lon}-${lat}`,
     geometry: { type: "Point", coordinates: [lon, lat] },
-    properties: { name, category, subcategory, municipio, seccion },
+    properties: { name, category, subcategory, municipio, seccion, confidence: 1 },
   };
 }
 

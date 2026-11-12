@@ -99,7 +99,7 @@ export function zonesText(n: number): string {
 
 /**
  * rc.ninguna, rc.una, rc.varias; after applying an option of «¿Y si cambias algo?» it is no longer
- * the search «tal cual»: «Con este cambio…» (provisional, pending line D).
+ * the search «tal cual»: «Con este cambio…» (rc.cambio).
  */
 export function passingText(n: number, changed = false): string {
   const start = changed ? "Con este cambio" : "Con tu búsqueda tal cual";
@@ -110,12 +110,14 @@ export function passingText(n: number, changed = false): string {
 
 /** rc.sin_dato: zones with some condition that could not be checked are never counted as good. */
 export function unknownText(n: number): string {
-  return `En ${zonesText(n)} no podemos comprobarlo todo por falta de datos. No las contamos como buenas.`;
+  const them = n === 1 ? "No la contamos como buena." : "No las contamos como buenas.";
+  return `En ${zonesText(n)} no podemos comprobarlo todo por falta de datos. ${them}`;
 }
 
-/** One option of «¿Y si cambias algo?»: what it changes, how many zones there would be and how many more (provisional, pending line D). */
+/** One option of «¿Y si cambias algo?» (rc.opcion.cuenta): what it changes, how many zones there would be and how many more. */
 export function optionText(r: Pick<Relaxation, "label" | "zones_if_relaxed" | "added_zones">): { label: string; count: string } {
-  return { label: r.label, count: `saldrían ${zonesText(r.zones_if_relaxed)}, ${r.added_zones} más` };
+  const would = r.zones_if_relaxed === 1 ? "saldría" : "saldrían";
+  return { label: r.label, count: `${would} ${zonesText(r.zones_if_relaxed)}, ${r.added_zones} más` };
 }
 
 /** zona.puesto */

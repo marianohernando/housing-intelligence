@@ -14,8 +14,7 @@ import { useGapLayer } from "./GapLayerProvider";
 import styles from "./Legend.module.css";
 import { useMapZones } from "./MapProvider";
 
-// Copy from pitch/textos_web.md (leyenda.*). «¿Qué quieres ver?» comes from datamad-10; the rest of
-// the row legend is provisional (pending line D).
+// Copy from pitch/textos_web.md (leyenda.*, 8c49e33).
 const TEXT = {
   title: "Encaje con tu búsqueda",
   less: "Encaja menos",
@@ -28,13 +27,14 @@ const TEXT = {
   missing: "Qué falta",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  against: "frente a los municipios de su tipo (urbanos o rurales).",
+  // leyenda against D-213, with the neighbours of gap-0.3 (provisional, listed for line D)
+  against: "frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos.",
   zones: (n: number) => (n === 1 ? "1 zona" : `${n} zonas`),
   pending: (n: number) => `${n === 1 ? "1 zona" : `${n} zonas`} sin calcular todavía.`,
   failedLevel: { municipio: "los municipios", distrito: "los distritos de Madrid" } as const,
   failed: (what: string) => `No hemos podido cargar ${what}: salen sin calcular.`,
   list: "Ver estas zonas en una lista",
-  // After a search (provisional, pending line D; «Sin datos» is leyenda.sin_datos)
+  // After a search: leyenda.cumple, leyenda.no_cumple and leyenda.sin_datos
   fit: { ENCAJA: "Cumple todo", NO_CUMPLE: "No cumple todo", SIN_DATOS: "Sin datos" } satisfies Record<FitClass, string>,
 };
 

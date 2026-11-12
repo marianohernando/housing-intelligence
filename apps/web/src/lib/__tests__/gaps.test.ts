@@ -2,11 +2,15 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import type { IndicatorValue } from "@/contracts/zone_gap_list_response";
+import type { IndicatorValue, ZoneGapList } from "@/contracts/zone_gap_list_response";
 
 import {
   GAP_STATUS,
   gapFigures,
+  GROUP,
+  groupText,
+  hospitalWalking,
+  inGroup,
   isSmallZone,
   SMALL_ZONE,
   gapsHref,
@@ -35,7 +39,12 @@ describe("rows", () => {
   it("names and measures the six rows of /gaps", () => {
     expect(Object.keys(ROW_NAME).sort()).toEqual(ROW_KEYS);
     expect(Object.keys(ROW_MEASURE).sort()).toEqual(ROW_KEYS);
-    expect(ROW_MEASURE.centro_salud).toBe("Centros de atención primaria por cada 10.000 habitantes");
+    // gap-0.3 (D-217): capacity within 15 min on foot, shared among those who have it that close
+    for (const key of ROW_KEYS.filter((k) => k !== "vivienda")) {
+      expect(ROW_MEASURE[key as keyof typeof ROW_MEASURE]).toMatch(/a 15 min andando .*repartid[oa]s entre todos los que l[oa]s tienen cerca$/);
+    }
+    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud del SERMAS/);
+    expect(ROW_MEASURE.vivienda).not.toMatch(/andando/);
   });
 
   it("explains every reason for a missing value in plain words (falta, null_reason)", () => {
@@ -74,6 +83,38 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
     expect(isSmallZone({ reliable: true })).toBe(false);
     expect(isSmallZone({})).toBe(false);
     expect(SMALL_ZONE.label).toBe("Zona pequeña para comparar");
+  });
+});
+
+describe("comparison groups (gap-0.3, D-217)", () => {
+  // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
+  const FIXTURE = new URL("../../../../../data/fixtures/contracts/zone_gap_list.el_alamo.fixture.json", import.meta.url);
+  const alamo = JSON.parse(readFileSync(FIXTURE, "utf8")) as ZoneGapList;
+  const row = (key: string) => alamo.rows.find((r) => r.row === key);
+
+  it("reads the group only when the API sends one", () => {
+    expect(inGroup(row("centro_salud") ?? {})?.names[0]).toBe("El Álamo");
+    expect(inGroup(row("farmacia") ?? {})).toBeNull();
+    expect(inGroup({})).toBeNull();
+    expect(GROUP.help).toMatch(/^Comparado con municipios parecidos de la zona/);
+  });
+
+  it("names the neighbours and the group's share in plain words, like the API explanation", () => {
+    const health = row("centro_salud");
+    const group = health?.comparison_group;
+    if (!health || !group) throw new Error("the fixture must carry El Álamo's health row with its group");
+    const text = groupText("El Álamo", group);
+    expect(text).toMatch(/^Comparado con municipios parecidos de la zona\./);
+    expect(text).toContain("sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles.");
+    // the API: «…, tiene el 105 % de lo esperado»
+    expect(health.explanation).toContain(`tiene el ${Math.round(100 * group.ratio_to_reference)} % de lo esperado`);
+    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)} %`);
+  });
+
+  it("uses the singular with one neighbour", () => {
+    const text = groupText("El Álamo", { codes: ["28004", "28096"], names: ["El Álamo", "Navalcarnero"], ratio_to_reference: 1.0815 });
+    expect(text).toContain("lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero.");
+    expect(text).toContain("Juntos tienen el 108 %");
   });
 });
 
@@ -139,6 +180,16 @@ describe("walking minutes (extra_indicators)", () => {
     expect(walking(extras)?.feature_id).toBe("min_a_pie_mayores");
     expect(walking([extra("tamano_medio_hogar", 2.4)])).toBeUndefined();
     expect(walking(undefined)).toBeUndefined();
+  });
+
+  it("picks the row's own minutes, never the hospital's (D-217)", () => {
+    const health = [extra("centros_salud_por_10000_hab", 0.9), extra("min_a_pie_hospital", 234.3), extra("min_a_pie_centro_salud", 12.7)];
+    expect(walking(health, "centro_salud")?.feature_id).toBe("min_a_pie_centro_salud");
+    expect(walking(health)?.feature_id).toBe("min_a_pie_centro_salud");
+    expect(walking([extra("min_a_pie_hospital", 34.2)], "centro_salud")).toBeUndefined();
+    expect(hospitalWalking(health)?.value).toBe(234.3);
+    expect(hospitalWalking([extra("min_a_pie_colegio", 5.8)])).toBeUndefined();
+    expect(walkingText(hospitalWalking(health) ?? extra("x", null))).toBe("más de 60 min");
   });
 
   it("rounds to whole minutes and caps the text above 60", () => {

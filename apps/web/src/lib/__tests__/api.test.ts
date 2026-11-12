@@ -66,6 +66,19 @@ describe("api client", () => {
     expect(JSON.parse(String(calls[0]?.init?.body))).toEqual(scenario);
   });
 
+  it("passes the abort signal of a search to fetch, and tells an aborted search apart", async () => {
+    const calls: Call[] = [];
+    const controller = new AbortController();
+    await createApi(BASE, fakeFetch(200, envelope({}), calls)).search({}, { signal: controller.signal });
+    expect(calls[0]?.init?.signal).toBe(controller.signal);
+    controller.abort();
+    const aborting: FetchLike = async () => {
+      throw new DOMException("The operation was aborted.", "AbortError");
+    };
+    const error = await createApi(BASE, aborting).search({}, { signal: controller.signal }).catch((e: unknown) => e);
+    expect(error).toMatchObject({ status: 0, code: "ABORTED" });
+  });
+
   it("escapes path segments", async () => {
     const calls: Call[] = [];
     await createApi(BASE, fakeFetch(200, envelope({}), calls)).zoneGaps("municipio", "28/079");

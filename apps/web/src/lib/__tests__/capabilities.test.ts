@@ -8,7 +8,9 @@ import { defaultScenario } from "../scenario";
 function fakeApi() {
   const calls: unknown[] = [];
   const answer = { data: {} } as SearchResponse;
-  return { calls, api: { search: async (scenario: unknown) => (calls.push(scenario), answer) }, answer };
+  const signals: (AbortSignal | undefined)[] = [];
+  const search = async (scenario: unknown, init?: { signal?: AbortSignal }) => (calls.push(scenario), signals.push(init?.signal), answer);
+  return { calls, signals, api: { search }, answer };
 }
 
 describe("capability flags", () => {
@@ -36,5 +38,12 @@ describe("runSearch", () => {
     const { calls, api, answer } = fakeApi();
     expect(await runSearch(api, defaultScenario(), true)).toBe(answer);
     expect(calls).toHaveLength(1);
+  });
+
+  it("on: hands the abort signal to the API, so a newer search can cancel it", async () => {
+    const { signals, api } = fakeApi();
+    const controller = new AbortController();
+    await runSearch(api, defaultScenario(), true, controller.signal);
+    expect(signals).toEqual([controller.signal]);
   });
 });

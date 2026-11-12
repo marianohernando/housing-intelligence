@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import BarriosBar from "@/components/zone/BarriosBar";
+import FacilitiesPanel from "@/components/zone/FacilitiesPanel";
 import ZoneCard from "@/components/zone/ZoneCard";
 import { errorMessage } from "@/lib/errors";
 
@@ -86,6 +87,10 @@ export default function ZoneIntro() {
         <ZoneCard zone={activeZone} mode="zone" />
         <DataCounter />
         <ZoneListLink />
+      </div>
+      {/* Every facility of the zone, not only its key points: left column on desktop */}
+      <div className={styles.centres}>
+        <FacilitiesPanel zone={name} />
       </div>
       <div className={styles.search}>
         <SearchCard collapsible />

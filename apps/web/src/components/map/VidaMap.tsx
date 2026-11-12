@@ -23,6 +23,7 @@ import { createApi } from "@/lib/api";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
 import { paintFit } from "@/lib/fit";
+import { facilitiesGeoJSON, facilityCountText } from "@/lib/map/facilities";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
 import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
 import {
@@ -36,7 +37,20 @@ import {
   ZONE_PITCH,
   type ZoneCamera,
 } from "@/lib/map/camera";
-import { baseStyle, BUILDING_LAYER, MAP_PALETTE_TOKENS, type MapPalette, ZONE_BASE, zoneLayers } from "@/lib/map/style";
+import {
+  baseStyle,
+  BUILDING_LAYER,
+  clusterImageCount,
+  clusterRadius,
+  FACILITY_CLUSTER,
+  FACILITY_SOURCE,
+  facilityLayers,
+  MAP_PALETTE_TOKENS,
+  mapTilesSource,
+  type MapPalette,
+  ZONE_BASE,
+  zoneLayers,
+} from "@/lib/map/style";
 import {
   type AdminFeature,
   boundsOf,
@@ -52,6 +66,8 @@ import {
   type ZoneProperties,
 } from "@/lib/map/zones";
 
+import { useFacilityLayer } from "./FacilityLayerProvider";
+import FacilityLabel from "./FacilityLabel";
 import { useGapLayer } from "./GapLayerProvider";
 import KeyPointLabel from "./KeyPointLabel";
 import { ZONE_LIST_TEXT } from "./ZoneListLink";
@@ -59,6 +75,8 @@ import { useMapZones } from "./MapProvider";
 import styles from "./VidaMap.module.css";
 
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
+/** Base map tiles: OpenFreeMap unless the build sets NEXT_PUBLIC_MAP_TILES_URL (offline package). */
+const MAP_TILES_URL = process.env.NEXT_PUBLIC_MAP_TILES_URL;
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const ATTRIBUTION =
@@ -78,12 +96,18 @@ const TEXT = {
   aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
   noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
+  // Only the street background failed: the zones are there (provisional, listed for line D)
+  noStreets: "Mapa sin fondo de calles.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  // Provisional (pending line D)
-  ariaRow: (label: string) => `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a la Comunidad de Madrid; la leyenda lo explica.`,
+  // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3 (provisional, listed for line D)
+  ariaRow: (label: string) =>
+    `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
+  // Provisional (T3), listed for line D in the PR
+  ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
+const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];
 
 type Failure = "webgl" | "tiles";
 
@@ -98,7 +122,7 @@ function readPalette(): MapPalette {
 }
 
 function padding(mode: "overview" | "zone" | "island") {
-  return cameraPadding(mode, { mobile: matches(MOBILE), height: window.innerHeight });
+  return cameraPadding(mode, { mobile: matches(MOBILE), width: window.innerWidth, height: window.innerHeight });
 }
 
 /**
@@ -129,7 +153,10 @@ function source(map: MapLibreMap, id: string): GeoJSONSource {
   return map.getSource(id) as GeoJSONSource;
 }
 
-/** The FALTA stripes, JUSTO dots and small-zone lines the zones are filled with when the map shows a row of «Qué falta». */
+/**
+ * The FALTA stripes, JUSTO dots and small-zone lines the zones are filled with when the map shows
+ * a row of «Qué falta», and the crossed diagonals of the zones that fail a condition after a search.
+ */
 function addPatterns(map: MapLibreMap, palette: MapPalette): void {
   const scale = Math.min(2, Math.ceil(window.devicePixelRatio || 1));
   const ink = (color: string, alpha: number): Rgba8 => {
@@ -139,6 +166,7 @@ function addPatterns(map: MapLibreMap, palette: MapPalette): void {
   map.addImage(PATTERN_IMAGE.FALTA, patternPixels("stripes", ink(palette.gapFaltaInk, 170), scale), { pixelRatio: scale });
   map.addImage(PATTERN_IMAGE.JUSTO, patternPixels("dots", ink(palette.gapJustoInk, 200), scale), { pixelRatio: scale });
   map.addImage(PATTERN_IMAGE.ZONA_PEQUENA, patternPixels("lines", ink(palette.gapZonaPequenaInk, 120), scale), { pixelRatio: scale });
+  map.addImage(PATTERN_IMAGE.NO_CUMPLE, patternPixels("cross", ink(palette.fitNoCumpleInk, 80), scale), { pixelRatio: scale });
 }
 
 function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: ZoneProperties) => void): void {
@@ -161,8 +189,79 @@ function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: Zon
   map.on("mousemove", "zones-fill", (e: MapLayerMouseEvent) => setHover(e.features?.[0]?.id));
   map.on("mouseleave", "zones-fill", () => setHover(undefined));
   map.on("click", "zones-fill", (e: MapLayerMouseEvent) => {
+    // A tap on a facility of the zone is not a tap on the zone under it
+    if (map.getLayer("facilities-point") && map.queryRenderedFeatures(e.point, { layers: FACILITY_LAYERS }).length > 0) return;
     const zone = e.features?.[0]?.properties as ZoneProperties | undefined;
     if (zone) onPick(zone);
+  });
+}
+
+/** A group of facilities as an image: a violet circle with its count, drawn for the screen's pixel ratio. */
+function clusterImage(count: number, palette: MapPalette): { image: ImageData; pixelRatio: number } | null {
+  const scale = Math.min(2, Math.ceil(window.devicePixelRatio || 1));
+  const radius = clusterRadius(count);
+  const size = (radius + 3) * 2 * scale;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.scale(scale, scale);
+  const centre = radius + 3;
+  ctx.beginPath();
+  ctx.arc(centre, centre, radius, 0, Math.PI * 2);
+  ctx.fillStyle = palette.violetStrong;
+  ctx.fill();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#ffffff";
+  ctx.stroke();
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `600 ${count < 100 ? 15 : 13}px ${getComputedStyle(document.body).fontFamily}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(String(count), centre, centre + 1);
+  return { image: ctx.getImageData(0, 0, size, size), pixelRatio: scale };
+}
+
+/** Clicks on the facilities layer: a group zooms in, a single place opens its label, the rest closes it. */
+interface FacilityHandlers {
+  onPlace: (id: string) => void;
+  onNothing: () => void;
+}
+
+function addFacilityLayers(map: MapLibreMap, palette: MapPalette, handlers: FacilityHandlers): void {
+  map.addSource(FACILITY_SOURCE, {
+    type: "geojson",
+    data: EMPTY,
+    cluster: true,
+    clusterRadius: FACILITY_CLUSTER.radius,
+    clusterMaxZoom: FACILITY_CLUSTER.maxZoom,
+  });
+  for (const layer of facilityLayers(palette)) map.addLayer(layer);
+  map.on("styleimagemissing", (e: { id: string }) => {
+    const count = clusterImageCount(e.id);
+    const drawn = count === null || map.hasImage(e.id) ? null : clusterImage(count, palette);
+    if (drawn) map.addImage(e.id, drawn.image, { pixelRatio: drawn.pixelRatio });
+  });
+  for (const layer of FACILITY_LAYERS) {
+    map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
+    map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = ""));
+  }
+  map.on("click", "facilities-cluster", (e: MapLayerMouseEvent) => {
+    const feature = e.features?.[0];
+    const clusterId = feature?.properties?.cluster_id as number | undefined;
+    if (!feature || clusterId === undefined || feature.geometry.type !== "Point") return;
+    const [lon = 0, lat = 0] = feature.geometry.coordinates;
+    source(map, FACILITY_SOURCE)
+      .getClusterExpansionZoom(clusterId)
+      .then((zoom) => map.easeTo({ center: [lon, lat], zoom, duration: matches(REDUCED_MOTION) ? 0 : 800 }))
+      .catch(() => undefined);
+  });
+  map.on("click", (e) => {
+    const [hit] = map.queryRenderedFeatures(e.point, { layers: ["facilities-point"] });
+    const id = hit?.properties?.id as string | undefined;
+    if (id) handlers.onPlace(id);
+    else if (map.queryRenderedFeatures(e.point, { layers: ["facilities-cluster"] }).length === 0) handlers.onNothing();
   });
 }
 
@@ -263,6 +362,7 @@ export default function VidaMap() {
   const { zones, status, error, retry, activeZone, selectedZone, select, barrio } = useMapZones();
   const { row, data: gapData } = useGapLayer();
   const { result } = useScenario();
+  const facilities = useFacilityLayer();
   const overview = usePathname() === "/";
   // Overview coloured by a row of «Qué falta» once its statuses arrive, or by the fit with the
   // search («Encaje con tu búsqueda») once there is one; plain zones otherwise
@@ -272,6 +372,16 @@ export default function VidaMap() {
     return result ? paintFit(zones, result.all_zones) : zones;
   }, [zones, overview, row, gapData, result]);
   const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : TEXT.ariaFit;
+  // The zone's facilities of the type picked in «Todos los centros», or none
+  const facilityList = useMemo(
+    () => (activeZone && facilities.type && facilities.groups ? facilities.groups[facilities.type] : null),
+    [activeZone, facilities.type, facilities.groups],
+  );
+  const facilityAria =
+    activeZone && facilities.type && facilityList?.length
+      ? TEXT.ariaFacilities(facilityCountText(facilities.type, facilityList.length, activeZone.properties.name))
+      : null;
+  const mapAria = [TEXT.aria, paintedAria, facilityAria].filter(Boolean).join(" ");
   const slow = useSlow(status === "loading");
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
@@ -280,6 +390,8 @@ export default function VidaMap() {
   const shownOverview = useRef(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
+  // No WebGL, or neither the streets nor the zones: the map cannot be used, the list can
+  const strongFailure = failure === "webgl" || (failure === "tiles" && status === "error");
   const [keyPoints, setKeyPoints] = useState<{ key: string; points: KeyPoint[] } | null>(null);
   // Zone (or barrio) whose flight has landed, and where its camera ends: key points are picked from that view.
   const [landed, setLanded] = useState<{ key: string; end: ZoneCamera } | null>(null);
@@ -290,6 +402,14 @@ export default function VidaMap() {
   useEffect(() => {
     pickRef.current = (zone) => (activeZone ? router.push(zoneHref(zone)) : select(zone.zone_key));
   }, [activeZone, router, select]);
+  const facilityRef = useRef<FacilityHandlers>({ onPlace: () => undefined, onNothing: () => undefined });
+  const { pick } = facilities;
+  useEffect(() => {
+    facilityRef.current = {
+      onPlace: (id) => pick(facilityList?.find((f) => f.id === id) ?? null),
+      onNothing: () => pick(null),
+    };
+  }, [facilityList, pick]);
 
   useEffect(() => {
     const element = container.current;
@@ -299,7 +419,7 @@ export default function VidaMap() {
       setWorkerUrl(WORKER_URL);
       map = new MapLibreMap({
         container: element,
-        style: baseStyle(readPalette()),
+        style: baseStyle(readPalette(), mapTilesSource(MAP_TILES_URL, window.location.origin)),
         center: [-3.7, 40.42],
         zoom: 8.3,
         maxPitch: 70,
@@ -316,6 +436,10 @@ export default function VidaMap() {
       const palette = readPalette();
       addPatterns(map, palette);
       addZoneLayers(map, palette, (zone) => pickRef.current(zone));
+      addFacilityLayers(map, palette, {
+        onPlace: (id) => facilityRef.current.onPlace(id),
+        onNothing: () => facilityRef.current.onNothing(),
+      });
       // Fewer layers on mobile: no blurred glow and no raised edge around the zone.
       if (matches(MOBILE)) {
         map.setLayoutProperty("zone-glow", "visibility", "none");
@@ -324,7 +448,9 @@ export default function VidaMap() {
       setReady(true);
     });
     map.on("error", (event) => {
-      if ((event as { sourceId?: string }).sourceId === "openmaptiles") setFailure("tiles");
+      // The base map source failed (its TileJSON, or the network): not one tile outside a local extract
+      const { sourceId, tile } = event as { sourceId?: string; tile?: unknown };
+      if (sourceId === "openmaptiles" && !tile) setFailure("tiles");
     });
     return () => {
       map.remove();
@@ -337,6 +463,14 @@ export default function VidaMap() {
     if (!map || !ready || !painted) return;
     source(map, "zones").setData(painted);
   }, [ready, painted]);
+
+  // Every facility of the type picked, once the camera has landed on the zone (not during the flight)
+  const facilitiesShown = Boolean(view && landed?.key === view && facilityList);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    source(map, FACILITY_SOURCE).setData(facilitiesShown && facilityList ? facilitiesGeoJSON(facilityList) : EMPTY);
+  }, [ready, facilitiesShown, facilityList]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -396,28 +530,50 @@ export default function VidaMap() {
     return () => markers.forEach((marker) => marker.remove());
   }, [labels]);
 
+  // The facility tapped on the map, with its label like a key point's
+  const picked = facilitiesShown ? facilities.picked : null;
+  const pickedLabel = useMemo(
+    () => (picked && typeof document !== "undefined" ? { facility: picked, element: document.createElement("div") } : null),
+    [picked],
+  );
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !pickedLabel) return;
+    const { facility, element } = pickedLabel;
+    const marker = new Marker({ element, anchor: "bottom" }).setLngLat([facility.lon, facility.lat]).addTo(map);
+    return () => {
+      marker.remove();
+    };
+  }, [pickedLabel]);
+
   return (
     <>
       <div
         ref={container}
         className={styles.map}
         role="region"
-        aria-label={paintedAria ? `${TEXT.aria} ${paintedAria}` : TEXT.aria}
+        aria-label={mapAria}
       />
-      {failure && (
+      {strongFailure && (
         <div role="alert" className={`glass ${styles.failure}`}>
           <p>{failure === "webgl" ? TEXT.noWebgl : TEXT.noTiles}</p>
           <Link href="/zonas">{ZONE_LIST_TEXT}</Link>
         </div>
       )}
+      {/* Without the street background the zones still show and work: a quiet note is enough */}
+      {failure === "tiles" && !strongFailure && status === "ready" && (
+        <p role="status" className={`glass ${styles.note}`}>
+          {TEXT.noStreets}
+        </p>
+      )}
       {/* The outlines of the zones; a zone screen tells its own loading and errors (ZoneIntro). */}
-      {!failure && overview && status === "loading" && (
+      {!strongFailure && overview && status === "loading" && (
         <p role="status" className={`glass ${styles.failure}`}>
           {TEXT.loading}
           {slow && ` ${SLOW_TEXT}`}
         </p>
       )}
-      {!failure && overview && status === "error" && error && (
+      {!strongFailure && overview && status === "error" && error && (
         <div role="alert" className={`glass ${styles.failure}`}>
           <p>{errorMessage(error)}</p>
           <Button variant="secondary" onClick={retry}>
@@ -426,6 +582,7 @@ export default function VidaMap() {
         </div>
       )}
       {labels.map(({ point, element }) => createPortal(<KeyPointLabel point={point} />, element, point.id))}
+      {pickedLabel && createPortal(<FacilityLabel facility={pickedLabel.facility} />, pickedLabel.element, pickedLabel.facility.id)}
     </>
   );
 }

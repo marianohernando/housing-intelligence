@@ -22,7 +22,7 @@ import styles from "./ZoneCard.module.css";
 
 // Copy from pitch/textos_web.md (zona.puesto, zona.hechos.titulo, zona.cerca_de_encajar.motivo,
 // zona.condicion.sin_dato, confianza.aria, presupuesto.compra.sin_datos). «No cumple todo lo que
-// pides» is provisional (pending line D).
+// pides» is zona.no_cumple.
 const TEXT = {
   facts: "Lo que tienes aquí",
   fails: "No cumple:",

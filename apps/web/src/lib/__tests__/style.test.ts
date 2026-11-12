@@ -4,10 +4,17 @@ import { validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
 import type { StyleSpecification } from "maplibre-gl";
 import { describe, expect, it } from "vitest";
 
+import { PATTERN_IMAGE } from "../map/gapMap";
 import {
   baseStyle,
   BUILDING_LAYER,
   BUILDINGS_3D_ZOOM,
+  clusterImageCount,
+  clusterImageId,
+  clusterRadius,
+  FACILITY_SOURCE,
+  facilityLayers,
+  mapTilesSource,
   MAP_PALETTE_TOKENS,
   type MapPalette,
   OPENFREEMAP_TILEJSON,
@@ -39,8 +46,9 @@ function withZone(style: StyleSpecification): StyleSpecification {
       "zone-mask": { type: "geojson", data: empty },
       "zone-base": { type: "geojson", data: empty },
       "zone-barrio": { type: "geojson", data: empty },
+      [FACILITY_SOURCE]: { type: "geojson", data: empty, cluster: true },
     },
-    layers: [...style.layers, ...below, ...above],
+    layers: [...style.layers, ...below, ...above, ...facilityLayers(palette)],
   };
 }
 
@@ -63,6 +71,26 @@ describe("map style", () => {
     expect(OPENFREEMAP_TILEJSON).not.toMatch(/key=|token=/i);
     expect(style.layers.some((l) => l.type === "symbol")).toBe(false);
     expect(style.glyphs).toBeUndefined();
+  });
+
+  it("takes its base map from NEXT_PUBLIC_MAP_TILES_URL when set (offline package), OpenFreeMap otherwise", () => {
+    expect(mapTilesSource(undefined)).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
+    expect(mapTilesSource("")).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
+    // A TileJSON, local or not (pmtiles serve, martin, tileserver-gl)
+    expect(mapTilesSource("http://localhost:8080/madrid.json")).toEqual({ type: "vector", url: "http://localhost:8080/madrid.json" });
+    // A tile template, with the OpenMapTiles zooms
+    expect(mapTilesSource("http://localhost:8080/madrid/{z}/{x}/{y}.pbf")).toEqual({
+      type: "vector",
+      tiles: ["http://localhost:8080/madrid/{z}/{x}/{y}.pbf"],
+      maxzoom: 14,
+    });
+    // A path on the same site, made absolute with the page's origin (the map's worker needs it)
+    expect(mapTilesSource("/tiles/madrid.json", "http://localhost:3012")).toEqual({ type: "vector", url: "http://localhost:3012/tiles/madrid.json" });
+    // Anything else is not a tile URL: the default stays
+    expect(mapTilesSource("ftp://tiles/madrid")).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
+    const local = baseStyle(palette, mapTilesSource("http://localhost:8080/madrid.json"));
+    expect(local.sources.openmaptiles).toEqual({ type: "vector", url: "http://localhost:8080/madrid.json" });
+    expect(validateStyleMin(local)).toEqual([]);
   });
 
   it("extrudes buildings from zone zoom, honouring hide_3d", () => {
@@ -93,6 +121,35 @@ describe("map style", () => {
     for (const c of ["ENCAJA", "NO_CUMPLE", "SIN_DATOS", "fit_pct", palette.fitLow, palette.violet, palette.fitNoCumple]) expect(fill).toContain(c);
     const noData = zoneLayers(palette).above.find((l) => l.id === "zones-nodata");
     expect(JSON.stringify(noData?.type === "line" && noData.filter)).toContain('"fit"');
+  });
+
+  it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {
+    const pattern = zoneLayers(palette).below.find((l) => l.id === "zones-pattern");
+    const json = JSON.stringify(pattern?.type === "fill" && { filter: pattern.filter, paint: pattern.paint });
+    expect(json).toContain('["==",["get","fit"],"NO_CUMPLE"]');
+    expect(json).toContain(PATTERN_IMAGE.NO_CUMPLE);
+    for (const image of [PATTERN_IMAGE.FALTA, PATTERN_IMAGE.JUSTO, PATTERN_IMAGE.ZONA_PEQUENA]) expect(json).toContain(image);
+  });
+
+  it("groups the zone's facilities without text layers: each group is an image with its count", () => {
+    const layers = facilityLayers(palette);
+    expect(layers.every((l) => "source" in l && l.source === FACILITY_SOURCE)).toBe(true);
+    expect(layers.some((l) => l.type === "symbol" && l.layout && "text-field" in l.layout)).toBe(false);
+    const cluster = layers.find((l) => l.id === "facilities-cluster");
+    expect(JSON.stringify(cluster)).toContain('"point_count"');
+    const point = layers.find((l) => l.id === "facilities-point");
+    expect(point).toMatchObject({ type: "circle", filter: ["!", ["has", "point_count"]] });
+  });
+
+  it("names each group image by its count, and sizes it by how many it holds", () => {
+    expect(clusterImageId(23)).toBe("facility-cluster-23");
+    expect(clusterImageCount("facility-cluster-23")).toBe(23);
+    expect(clusterImageCount("gap-falta")).toBeNull();
+    expect(clusterImageCount("facility-cluster-x")).toBeNull();
+    expect(clusterRadius(2)).toBeLessThan(clusterRadius(20));
+    expect(clusterRadius(20)).toBeLessThan(clusterRadius(200));
+    // Big enough for three digits and a pointer target
+    expect(clusterRadius(999)).toBeGreaterThanOrEqual(22);
   });
 
   it("outlines the barrio in focus above the buildings, dashed so it reads apart from the district", () => {
