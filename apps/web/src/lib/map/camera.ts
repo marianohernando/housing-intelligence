@@ -120,13 +120,52 @@ export interface Padding {
 }
 
 /**
- * Room for the glass cards around the map: search on the left and zone card on the right on
- * desktop; on mobile, the header above and the bottom sheet below. In the zone view a district
- * at building zoom is wider than the gap and the glass lets the map show through, so the
- * desktop side padding is smaller there. The island (the whole zone, before coming closer) must
- * be clear of the cards and of the barrios bar: it keeps the zone's centre, with wider margins.
+ * From this width the map screens have three columns (cards, map, cards); below it, one column of
+ * cards on the left and the map on the right. The same breakpoint as the CSS (min-width: 1260px).
  */
-export function cameraPadding(mode: "overview" | "zone" | "island", screen: { mobile: boolean; height: number }): Padding {
+export const THREE_COLUMNS_MIN = 1260;
+/** Root font size (tokens.css: 106.25 %) and the CSS page gutter, clamp(1rem, 0.5rem + 2.5vw, 3rem). */
+const REM = 17;
+const gutter = (width: number) => Math.min(3 * REM, Math.max(REM, 0.5 * REM + 0.025 * width));
+/** Share of the canvas the map always keeps, so the region is never a dot. */
+const MIN_MAP_SHARE = 0.25;
+
+/** Scales the padding of one axis down when it would leave the map less than its share of the canvas. */
+function fitAxis(a: number, b: number, size: number): [number, number] {
+  const room = size * (1 - MIN_MAP_SHARE);
+  if (a + b <= room) return [a, b];
+  const scale = room / (a + b);
+  return [Math.floor(a * scale), Math.floor(b * scale)];
+}
+
+function fitPadding(pad: Padding, width: number, height: number): Padding {
+  const [left, right] = fitAxis(pad.left, pad.right, width);
+  const [top, bottom] = fitAxis(pad.top, pad.bottom, height);
+  return { top, right, bottom, left };
+}
+
+/** One column of cards (28rem in the zone, 27rem in the overview) on the left, the map on the right. */
+function oneColumnPadding(mode: "overview" | "zone" | "island", width: number): Padding {
+  const left = Math.round(gutter(width) + (mode === "overview" ? 27 : 28) * REM + 2 * REM);
+  if (mode === "zone") return { top: 90, right: 24, bottom: 60, left };
+  if (mode === "island") return { top: 90, right: 104, bottom: 60, left: left + 80 };
+  // The legend sits at the bottom right, over the map
+  return { top: 100, right: 24, bottom: 250, left };
+}
+
+/**
+ * Room for the glass cards around the map: search on the left and zone card on the right on
+ * desktop; one column of cards on the left below THREE_COLUMNS_MIN (a projector at 125 %); on
+ * mobile, the header above and the bottom sheet below. In the zone view a district at building
+ * zoom is wider than the gap and the glass lets the map show through, so the desktop side
+ * padding is smaller there. The island (the whole zone, before coming closer) must be clear of
+ * the cards and of the barrios bar: it keeps the zone's centre, with wider margins. Whatever the
+ * screen, the padding leaves the map a share of the canvas.
+ */
+export function cameraPadding(
+  mode: "overview" | "zone" | "island",
+  screen: { mobile: boolean; width: number; height: number },
+): Padding {
   if (screen.mobile) {
     const bottom = Math.round(screen.height * SHEET_PEEK) + 16;
     // Overview: the legend («¿Qué quieres ver?» and the statuses) floats just above the sheet
@@ -134,8 +173,13 @@ export function cameraPadding(mode: "overview" | "zone" | "island", screen: { mo
       ? { top: MOBILE_HEADER, right: 16, bottom: bottom + MOBILE_LEGEND, left: 16 }
       : { top: MOBILE_HEADER, right: 0, bottom, left: 0 };
   }
-  if (mode === "zone") return { top: 90, right: 380, bottom: 200, left: 440 };
-  if (mode === "island") return { top: 90, right: 460, bottom: 200, left: 520 };
-  // The bottom keeps the region above the legend («¿Qué quieres ver?» and its statuses)
-  return { top: 100, right: 460, bottom: 250, left: 500 };
+  if (screen.width < THREE_COLUMNS_MIN) return fitPadding(oneColumnPadding(mode, screen.width), screen.width, screen.height);
+  const pad =
+    mode === "zone"
+      ? { top: 90, right: 380, bottom: 200, left: 440 }
+      : mode === "island"
+        ? { top: 90, right: 460, bottom: 200, left: 520 }
+        : // The bottom keeps the region above the legend («¿Qué quieres ver?» and its statuses)
+          { top: 100, right: 460, bottom: 250, left: 500 };
+  return fitPadding(pad, screen.width, screen.height);
 }

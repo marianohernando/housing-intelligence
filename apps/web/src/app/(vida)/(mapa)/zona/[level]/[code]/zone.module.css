@@ -101,14 +101,15 @@
   }
 }
 
-/* Wide screens: the barrios bar is fixed at the bottom; the column can scroll clear of it */
-@media (min-width: 1101px) {
+/* Three columns: the barrios bar is fixed at the bottom of the middle one; the columns can scroll */
+@media (min-width: 1260px) {
   .layout {
     padding-bottom: calc(var(--target) + 4rem);
   }
 }
 
-@media (max-width: 1100px) {
+/* One column of cards, the map on the right: up to THREE_COLUMNS_MIN (lib/map/camera.ts) */
+@media (max-width: 1259px) {
   .layout {
     grid-template-columns: minmax(0, 28rem);
   }

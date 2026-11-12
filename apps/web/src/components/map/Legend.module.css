@@ -1,14 +1,27 @@
+/*
+ * Three columns: at the bottom of the middle one, between the search and the right card, so it
+ * never covers them (1280 px leaves it about 16rem). One column of cards (up to 1259 px, a
+ * projector at 125 %): at the bottom right, over the map, clear of the column.
+ */
 .legend {
   position: fixed;
+  right: calc(var(--page-gutter) + 23rem + var(--space-6));
   bottom: var(--space-6);
-  left: 50%;
+  left: calc(var(--page-gutter) + 27rem + var(--space-6));
   z-index: 1;
   display: grid;
   gap: var(--space-2);
-  width: min(24rem, calc(100% - 2rem));
-  margin: 0;
+  max-width: 24rem;
+  margin: 0 auto;
   padding: var(--space-3) var(--space-4);
-  transform: translateX(-50%);
+}
+
+@media (min-width: 761px) and (max-width: 1259px) {
+  .legend {
+    right: var(--page-gutter);
+    left: auto;
+    width: min(24rem, calc(100vw - 27rem - 3 * var(--page-gutter) - var(--space-6)));
+  }
 }
 
 /* «¿Qué quieres ver?» and the select on one line, so the legend stays low over the map */
@@ -225,6 +238,8 @@
 /* Mobile: compact, just above the folded bottom sheet; hidden while the sheet is open */
 @media (max-width: 760px) {
   .legend {
+    right: 1rem;
+    left: 1rem;
     bottom: calc(var(--sheet-peek) + var(--space-2));
     gap: var(--space-1);
     padding: var(--space-2) var(--space-3);

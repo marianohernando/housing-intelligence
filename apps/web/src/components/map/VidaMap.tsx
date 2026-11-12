@@ -116,7 +116,7 @@ function readPalette(): MapPalette {
 }
 
 function padding(mode: "overview" | "zone" | "island") {
-  return cameraPadding(mode, { mobile: matches(MOBILE), height: window.innerHeight });
+  return cameraPadding(mode, { mobile: matches(MOBILE), width: window.innerWidth, height: window.innerHeight });
 }
 
 /**

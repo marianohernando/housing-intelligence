@@ -3,6 +3,7 @@
 //
 //   node scripts/check-qa.mjs fixes [outDir]    # phase 1: PENDIENTES fixes (texts, search, R-06)
 //   node scripts/check-qa.mjs t3 [outDir]       # phase 2: every facility of a zone (T3)
+//   node scripts/check-qa.mjs proyector [outDir] # phase 3: no overlaps from 1024×576 to 1440×900
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -19,7 +20,6 @@ const [mode = "fixes", out = join("..", "..", "evidence", "map-004", today)] = p
 const BASE = "http://localhost:3011";
 const DESKTOP = { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 };
 const MOBILE = { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
-const PASSING = "Con tu búsqueda tal cual salen 32 zonas.";
 
 mkdirSync(out, { recursive: true });
 const report = { modo: mode, como: "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)" };
@@ -55,7 +55,7 @@ const overflow = (page) => page.evaluate(() => document.documentElement.scrollWi
 async function loadExample(page, tap = false) {
   const button = page.getByRole("button", { name: /Ver un ejemplo/ });
   await (tap ? button.tap() : button.click());
-  await page.getByText(PASSING).first().waitFor({ timeout: 20000 });
+  await page.getByText(/^Con tu búsqueda tal cual (sale|salen|no sale)/).first().waitFor({ timeout: 20000 });
   await page.waitForTimeout(2500);
 }
 
@@ -247,9 +247,74 @@ async function facilities(browser) {
   await mob.ctx.close();
 }
 
+const SIZES = [[1024, 768], [1024, 576], [1280, 720], [1366, 768], [1440, 900]];
+
+/**
+ * Overlaps of the fixed elements (map legend, barrios bar) with any card, link or button of the
+ * page, by their bounding boxes in the viewport; and cards that cover each other.
+ */
+async function overlaps(page) {
+  return page.evaluate(() => {
+    const visible = (r) => r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
+    const name = (el) => (el.getAttribute("aria-label") ?? el.querySelector("h1, h2")?.textContent ?? el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 40);
+    const hit = (a, b) => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
+    const isFixed = (el) => getComputedStyle(el).position === "fixed";
+    const skip = (el) => el.closest(".maplibregl-map, header");
+    const fixed = [...document.querySelectorAll(".glass")].filter((el) => isFixed(el) && visible(el.getBoundingClientRect()));
+    const others = [...document.querySelectorAll(".glass, a, button, select, h1")].filter(
+      (el) => !skip(el) && !fixed.some((f) => f.contains(el) || el.contains(f)) && visible(el.getBoundingClientRect()),
+    );
+    const found = [];
+    for (const f of fixed) {
+      const fr = f.getBoundingClientRect();
+      for (const el of others) if (hit(fr, el.getBoundingClientRect())) found.push(`${name(f)} ⟂ ${el.tagName.toLowerCase()} «${name(el)}»`);
+    }
+    return { fijos: fixed.map((f) => { const r = f.getBoundingClientRect(); return [name(f), Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]; }), solapes: found };
+  });
+}
+
+/** Phase 3: the projector at 125 % (1024 px) and short screens, overview and zone. */
+async function projector(browser) {
+  const result = (report.tamanos = {});
+  for (const [width, height] of SIZES) {
+    const id = `${width}x${height}`;
+    const entry = (result[id] = {});
+    const profile = { viewport: { width, height }, deviceScaleFactor: 1 };
+    const home = await open(browser, profile);
+    await home.page.waitForTimeout(1500);
+    entry.portada = await overlaps(home.page);
+    await home.page.screenshot({ path: `${out}/p3_portada_${id}.png` });
+    await loadExample(home.page);
+    entry.resultados = await overlaps(home.page);
+    await home.page.screenshot({ path: `${out}/p3_resultados_${id}.png` });
+    await home.page.getByRole("button", { name: /^1 Ciudad Lineal/ }).click();
+    await home.page.waitForTimeout(1500);
+    entry.tarjeta = await overlaps(home.page);
+    entry.axe = await axe(home.page);
+    entry.overflow_px = await overflow(home.page);
+    entry.consola = home.errors;
+    await home.ctx.close();
+
+    const zone = await open(browser, profile, ZONE.path);
+    await zone.page.getByRole("region", { name: "Todos los centros", exact: true }).waitFor({ timeout: 20000 });
+    await zone.page.waitForTimeout(7000);
+    entry.zona = await overlaps(zone.page);
+    entry.zona_axe = await axe(zone.page);
+    entry.zona_consola = zone.errors;
+    await zone.page.screenshot({ path: `${out}/p3_zona_${id}.png` });
+    await zone.ctx.close();
+  }
+  const mob = await open(browser, MOBILE);
+  report.movil = { portada: await overlaps(mob.page), consola: mob.errors };
+  await mob.page.screenshot({ path: `${out}/p3_portada_390x844.png` });
+  await mob.ctx.close();
+  report.sin_solapes = Object.values(result).every((e) => ["portada", "resultados", "tarjeta", "zona"].every((k) => e[k].solapes.length === 0));
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
 else if (mode === "t3") await facilities(browser);
+else if (mode === "proyector") await projector(browser);
 else throw new Error(`Unknown mode ${mode}`);
 await browser.close();
 
