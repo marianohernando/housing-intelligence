@@ -15,6 +15,7 @@
 //   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
 //   node scripts/check-qa.mjs parques [outDir]   # «Parques» in «Todos los centros» and green on the map (DATA-018)
 //   node scripts/check-qa.mjs seguridad [outDir] # how the neighbours rate their barrio's safety, only in Madrid's districts (D-226)
+//   node scripts/check-qa.mjs compra [outDir]    # buying with fit-0.5 (D-227): note, «+30.000 €» and a district without price
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
@@ -1100,6 +1101,66 @@ async function perceivedSafety(browser) {
 }
 
 /**
+ * Buying with fit-0.5 (DATA-021, D-227): the note says where the official price exists, the Reality
+ * Check offers the budget step the API gives, and a Madrid district says it has no price because of
+ * the source (reached from the list of zones, so the search stays).
+ */
+async function buying(browser) {
+  const failures = [];
+  const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const p = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const entry = (report[id] = {});
+    if (touch) await press(p.page.getByRole("button", { name: /Desliza hacia arriba/ }));
+    // A couple buying up to 300.000 € (the golden_couple of D-227 §5): the budget is what limits most
+    await press(p.page.getByRole("button", { name: "En pareja" }));
+    await press(p.page.getByRole("radio", { name: "Comprar" }));
+    entry.nota = flat(await p.page.getByText(/^Precio de compra: el valor tasado medio/).first().innerText());
+    entry.aun_no_tenemos = await p.page.getByText(/Aún no tenemos precios/).count();
+    const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
+    const { data } = await response.json();
+    await p.page.waitForTimeout(2000);
+    entry.api = { metodo: data.methodology_version, presupuesto: data.scenario.budget, relajaciones: data.reality_check.relaxations.map((r) => [r.label, r.added_zones]) };
+    const changes = p.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+    const all = changes.getByRole("button", { name: /Ver todas las opciones/ });
+    if (await all.count()) await press(all);
+    entry.y_si_cambias = flat(await changes.innerText());
+    await changes.screenshot({ path: `${out}/compra_y_si_cambias_${id}.png` });
+    entry.axe_resultados = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    await p.ctx.close();
+    // A district, searched from its own screen: no price, and the card says why
+    const z = await open(browser, profile, "/zona/distrito/2807905");
+    const pressZ = (locator) => (touch ? locator.tap() : locator.click());
+    if (touch) await pressZ(z.page.getByRole("button", { name: /Desliza hacia arriba/ }));
+    await pressZ(z.page.getByRole("button", { name: "Ver mi búsqueda" }));
+    await pressZ(z.page.getByRole("radio", { name: "Comprar" }));
+    await Promise.all([z.page.waitForResponse(isSearch, { timeout: 30000 }), pressZ(z.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
+    const why = z.page.getByText(/solo se publica para los municipios de más de 25.000 habitantes, no para los distritos/).first();
+    await why.waitFor({ timeout: 20000 });
+    await z.page.waitForTimeout(1000);
+    const card = why.locator("xpath=..");
+    entry.chamartin = flat(await card.innerText());
+    await card.screenshot({ path: `${out}/compra_chamartin_${id}.png` });
+    entry.axe_zona = await axe(z.page);
+    entry.overflow_px = Math.max(entry.overflow_px, await overflow(z.page));
+    entry.consola = [...p.errors, ...z.errors];
+    await z.ctx.close();
+    if (entry.api.metodo !== "fit-0.5") failures.push(`${id}: método ${entry.api.metodo}`);
+    if (entry.aun_no_tenemos > 0) failures.push(`${id}: sigue «Aún no tenemos precios»`);
+    for (const [label, added] of entry.api.relajaciones) if (added > 0 && !entry.y_si_cambias.includes(label)) failures.push(`${id}: falta «${label}»`);
+    if (!entry.api.relajaciones.some(([label, added]) => /€$/.test(label) && added > 0)) failures.push(`${id}: la API no propone subir el presupuesto`);
+    if (!entry.chamartin.includes("solo se publica para los municipios de más de 25.000 habitantes")) failures.push(`${id}: Chamartín no dice por qué`);
+    if ([...entry.axe_resultados, ...entry.axe_zona].length) failures.push(`${id}: axe`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
  * Icons (favicon.ico and apple-touch-icon gave 404 in the deploy logs): every page links them, they
  * load, the old fixed paths phones ask for answer too, and no request of the page fails.
  */
@@ -1354,6 +1415,7 @@ else if (mode === "atribucion") await attribution(browser);
 else if (mode === "iconos") await icons(browser);
 else if (mode === "parques") await parks(browser);
 else if (mode === "seguridad") await perceivedSafety(browser);
+else if (mode === "compra") await buying(browser);
 else if (Object.hasOwn(PRIORITY_CHIPS, mode)) await priorityChip(browser, PRIORITY_CHIPS[mode]);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);

@@ -47,9 +47,9 @@ const TEXT = {
   workHelp: "Así miraremos lo lejos que te queda cada zona.",
   soon: "Muy pronto",
   noLimit: "Sin límite de presupuesto",
-  // presupuesto.compra.sin_datos: with «Comprar» the budget condition is unknown in every zone (D-214)
-  buyNoData: "Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.",
-  noData: "Sin datos",
+  // B's draft for D after fit-0.5 (D-227): where buying has an official price and where it does not
+  buySource:
+    "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda). Solo se publica para los municipios de más de 25.000 habitantes; en los distritos de Madrid y en los pueblos no podemos comprobar tu presupuesto.",
   budget: "Presupuesto",
   rent: "Alquilar",
   buy: "Comprar",
@@ -194,11 +194,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               {TEXT.noLimit}
             </label>
           )}
-          {available && budget?.kind === "buy" && (
-            <p className={styles.noDataNote}>
-              <span className={styles.noDataTag}>{TEXT.noData}</span> {TEXT.buyNoData}
-            </p>
-          )}
+          {available && budget?.kind === "buy" && <p className={styles.help}>{TEXT.buySource}</p>}
         </fieldset>
 
         {available ? (

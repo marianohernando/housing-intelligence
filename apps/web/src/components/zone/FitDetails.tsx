@@ -21,14 +21,14 @@ import { constraintLabels, failedLabels, rankText, zoneFit } from "@/lib/fit";
 import styles from "./ZoneCard.module.css";
 
 // Copy from pitch/textos_web.md (zona.puesto, zona.hechos.titulo, zona.cerca_de_encajar.motivo,
-// zona.condicion.sin_dato, confianza.aria, presupuesto.compra.sin_datos). «No cumple todo lo que
-// pides» is zona.no_cumple.
+// zona.condicion.sin_dato, confianza.aria). «No cumple todo lo que pides» is zona.no_cumple. buySource
+// is B's draft for D after fit-0.5 (D-227): why a zone may have no purchase price.
 const TEXT = {
   facts: "Lo que tienes aquí",
   fails: "No cumple:",
   failsUnnamed: "No cumple todo lo que pides.",
   unknown: "No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno.",
-  buyNoData: "Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.",
+  buySource: "Con «Comprar», el precio oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes, no para los distritos de Madrid ni para los pueblos.",
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
 };
 
@@ -74,9 +74,11 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
       {match.match_pct == null && (
         <p className={styles.unknown}>
           <CircleQuestionMark size={18} aria-hidden="true" />
-          <span>{buying ? TEXT.buyNoData : TEXT.unknown}</span>
+          <span>{TEXT.unknown}</span>
         </p>
       )}
+      {/* The usual reason when buying: the source, not a lack of housing (D-227 §3) */}
+      {match.match_pct == null && buying && <p className={styles.unknownWhy}>{TEXT.buySource}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>
           <h3 id={factsId}>{TEXT.facts}</h3>

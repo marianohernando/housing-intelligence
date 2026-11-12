@@ -169,6 +169,13 @@
   color: var(--sin-datos-ink);
 }
 
+/* Why there is no purchase price (D-227): the source, said after «No lo sabemos» */
+.unknownWhy {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
 .facts {
   display: grid;
   gap: var(--space-2);
