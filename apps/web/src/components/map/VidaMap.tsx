@@ -439,10 +439,14 @@ export default function VidaMap() {
   useEffect(() => {
     attribution.current = mapAttribution(datasets?.datasets ?? null);
     const [map, lib, shown] = [mapRef.current, libRef.current, attributionShown.current];
-    // Created before /datasets answered: the map takes its citations, still folded
+    // Created before /datasets answered: the map takes its citations, open if the person opened them
     if (!map || !lib || !shown || shown.citations === attribution.current) return;
+    const wasOpen = map.getContainer().querySelector(".maplibregl-compact-show") !== null;
     for (const control of shown.controls) map.removeControl(control);
     attributionShown.current = { citations: attribution.current, controls: addAttribution(lib, map, attribution.current) };
+    const details = wasOpen ? map.getContainer().querySelector(".maplibregl-ctrl-attrib") : null;
+    details?.classList.add("maplibregl-compact-show");
+    details?.setAttribute("open", "");
   }, [datasets]);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);

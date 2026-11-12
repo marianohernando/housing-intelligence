@@ -40,8 +40,9 @@
 }
 
 /*
- * «© OpenStreetMap · Powered by CRTM» beside the folded (i), as tall as it and on the same white
- * (VidaMap creditsControl); hidden while the full list, which cites both, is open.
+ * «© OpenStreetMap · Powered by CRTM» beside the folded (i), on the same white (VidaMap
+ * creditsControl): one line as tall as the (i), or two where the free map is narrow. Hidden while
+ * the full list, which cites both, is open.
  */
 .map :global(.maplibregl-ctrl-top-left) .credits {
   clear: none;

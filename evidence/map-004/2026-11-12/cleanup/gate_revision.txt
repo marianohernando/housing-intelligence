@@ -1,0 +1,57 @@
+$ make lint typecheck test-unit
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+363 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests uv run pytest tests/unit tests/data -q
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+........................................................................ [ 37%]
+........................................................................ [ 50%]
+........................................................................ [ 63%]
+........................................................................ [ 75%]
+........................................................................ [ 88%]
+...................................................................      [100%]
+571 passed in 9.24s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  28 passed (28)
+      Tests  286 passed (286)
+   Start at  15:57:41
+   Duration  470ms (tests 46%, import 28%, transform 18%, worker 8%)
+
+exit 0
+$ npm run -w apps/web test -- --run
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  28 passed (28)
+      Tests  286 passed (286)
+   Start at  15:57:41
+   Duration  468ms (tests 53%, import 28%, transform 11%, worker 7%)
+
+exit 0

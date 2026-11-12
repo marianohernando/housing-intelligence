@@ -2,9 +2,10 @@
  "modo": "escaleras",
  "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
  "desktop": {
+  "hechos_accesibilidad_sin_chip": 0,
   "chip": {
    "pulsado_antes": "false",
-   "ayuda": "Estación de metro o tren accesible, sin escaleras, cerca de casa.",
+   "ayuda": "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.",
    "pulsado_despues": "true"
   },
   "muy_pronto": "Muy pronto: zonas verdes y seguridad.",
@@ -29,9 +30,10 @@
   "consola": []
  },
  "mobile": {
+  "hechos_accesibilidad_sin_chip": 0,
   "chip": {
    "pulsado_antes": "false",
-   "ayuda": "Estación de metro o tren accesible, sin escaleras, cerca de casa.",
+   "ayuda": "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.",
    "pulsado_despues": "true"
   },
   "muy_pronto": "Muy pronto: zonas verdes y seguridad.",

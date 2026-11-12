@@ -728,7 +728,7 @@ async function licences(browser) {
   const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
   await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
   await z.page.locator(".maplibregl-ctrl-attrib-button").first().click();
-  await z.page.waitForTimeout(300);
+  await z.page.locator(".maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner").first().waitFor({ timeout: 10000 });
   report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
   const mapLines = report.mapa_atribucion.split(/ · | \| /);
   for (const m of citedAll(mapLines, datasets)) failures.push(`mapa: falta ${m}`);
@@ -887,7 +887,9 @@ async function stairs(browser) {
     const press = (locator) => (touch ? locator.tap() : locator.click());
     const entry = (report[id] = {});
     // The demo case (which does not mark it), then the chip and the search
-    await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const [base] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const baseFacts = (await base.json()).data.results.flatMap((r) => r.facts).filter((f) => f.topic === "accesibilidad");
+    entry.hechos_accesibilidad_sin_chip = baseFacts.length;
     await p.page.waitForTimeout(1500);
     const chip = p.page.getByRole("button", { name: /^Sin escaleras/ });
     entry.chip = { pulsado_antes: await chip.getAttribute("aria-pressed"), ayuda: await chip.getAttribute("title") };
@@ -912,6 +914,9 @@ async function stairs(browser) {
     entry.overflow_px = await overflow(p.page);
     entry.consola = p.errors;
     if (entry.chip.pulsado_antes !== "false" || entry.chip.pulsado_despues !== "true") failures.push(`${id}: el chip no es opcional (${entry.chip.pulsado_antes} → ${entry.chip.pulsado_despues})`);
+    if (entry.chip.ayuda !== "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.") failures.push(`${id}: ayuda del chip «${entry.chip.ayuda}»`);
+    // The fact comes with the chip: the demo case, without it, has none
+    if (entry.hechos_accesibilidad_sin_chip > 0) failures.push(`${id}: hay hechos de accesibilidad sin marcar el chip`);
     if (/escaleras/i.test(entry.muy_pronto)) failures.push(`${id}: sigue en «Muy pronto»`);
     if (!entry.prioridades_enviadas?.includes("sin_escaleras")) failures.push(`${id}: la búsqueda no lleva sin_escaleras`);
     if (!facts.length) failures.push(`${id}: la API no da hecho de accesibilidad en ${top.zone.name}`);
