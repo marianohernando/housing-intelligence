@@ -197,14 +197,20 @@ class Assessment(NamedTuple):
     reliable: bool  # False: too small to show a shortfall; True also when not testable
 
 
-def assess(row: dict[str, Any], reference: Reference, direction: str) -> Assessment:
-    """Significance of a shortfall and reliability of a count-based row (D-213)."""
+def assess(
+    row: dict[str, Any], reference: Reference, direction: str, denominator_is_count: bool = False
+) -> Assessment:
+    """Significance of a shortfall and reliability of a count-based row (D-213). When the
+    denominator is itself a count (households, not a population per `per`), it must reach the
+    same floor: below it the count is compatible with none and the ratio compares nothing."""
     counts = (row.get("inputs") or {}).get("counts")
     if direction != "higher_is_better" or not counts or reference.rate is None:
         return Assessment(None, True)
     expected = counts["denominator"] * reference.rate
     floor = min_expected()
-    reliable = floor is None or expected >= floor
+    reliable = floor is None or (
+        expected >= floor and (not denominator_is_count or counts["denominator"] >= floor)
+    )
     return Assessment(significant_shortfall(counts["numerator"], expected), reliable)
 
 

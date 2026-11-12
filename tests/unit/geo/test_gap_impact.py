@@ -12,6 +12,9 @@ from hi_domain.gap_impact import (
     ROW_PEOPLE,
     ImpactZone,
     chance_text,
+    denominator_is_count,
+    nobody_text,
+    not_comparable_text,
     people_in,
     people_scale,
     rank,
@@ -185,3 +188,30 @@ def test_share_is_bounded_and_the_summary_omits_an_unknown_total() -> None:
     assert share_of(12, 10) == 1.0
     text = row_summary(GapRowKey.FARMACIA, people=12, total=0, zones=1)
     assert text == "En la Comunidad de Madrid, 12 personas viven en 1 zona donde faltan farmacias"
+
+
+def test_denominator_is_a_count_only_outside_the_per_unit_methods() -> None:
+    assert denominator_is_count({"method": "metric_ratio", "per": 100}, "municipio")
+    assert not denominator_is_count({"method": "two_step_fca", "per": 1000}, "municipio")
+
+
+def test_texts_for_zones_that_cannot_be_compared() -> None:
+    """Fase de mejora: «0,0 frente a 28,0» must not read as JUSTO, and 0 children is a reason,
+    not «the source does not publish it»."""
+    text = "0,0 aulas de primaria…; en los demás municipios rurales de la Comunidad de Madrid, 28,0"
+    assert not_comparable_text(GapRowKey.COLEGIO, 12, text) == (
+        "No comparable: aquí viven muy pocos niños de 5 a 14 años (12) para saber si falta. " + text
+    )
+    assert not_comparable_text(GapRowKey.COLEGIO, None, text).startswith(
+        "No comparable: la zona es demasiado pequeña para saber si falta. "
+    )
+    assert nobody_text(GapRowKey.ESCUELA_INFANTIL) == (
+        "No viven niños de 0 a 4 años en esta zona según el censo, así que no hay nada que comparar"
+    )
+
+
+def test_not_comparable_text_agrees_in_gender() -> None:
+    assert "muy pocas personas (70)" in not_comparable_text(GapRowKey.FARMACIA, 70, "…")
+    assert "muy pocos hogares de 4 o más personas (1)" in not_comparable_text(
+        GapRowKey.VIVIENDA, 1, "…"
+    )

@@ -101,3 +101,16 @@ def test_more_supply_never_worsens_the_status(
     before = _status(numerator, denominator, ref)
     after = _status(numerator + extra, denominator, ref)
     assert ORDER.index(after) >= ORDER.index(before)
+
+
+def test_a_ratio_of_two_counts_needs_a_denominator_distinguishable_from_zero() -> None:
+    """Fase de mejora (zonas pequeñas): La Acebeda had 107 large dwellings for 1 large household
+    (10.700 per 100, CUBIERTO). When the denominator is itself a count, it must reach the same
+    3,69 floor of D-213: below it the count is compatible with none, so nothing is compared."""
+    reference = Reference(430.0, REGION_TEXT.label, REGION_TEXT.phrase, None, 4.3)  # D-213
+    village = {"value": 10_700.0, "inputs": {"counts": {"numerator": 107.0, "denominator": 1.0}}}
+    assert not assess(village, reference, "higher_is_better", denominator_is_count=True).reliable
+    # the same counts as a population per `per` (2SFCA) keep the expected-count rule alone
+    assert assess(village, reference, "higher_is_better").reliable
+    town = {"value": 150.0, "inputs": {"counts": {"numerator": 60.0, "denominator": 40.0}}}
+    assert assess(town, reference, "higher_is_better", denominator_is_count=True).reliable

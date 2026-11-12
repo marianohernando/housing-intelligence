@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.54 — Zonas pequeñas (2026-11-12)
+- D-230: «No comparable» en la explicación de las zonas poco fiables sin grupo, suelo de 3,69 para el denominador de la vivienda (un recuento de hogares) y `NOT_APPLICABLE` con su motivo cuando no vive nadie de la edad de la fila.
+- `04_technical_architecture/31_public_api_routes.md`: cómo pintarlo.
+
 ## v0.5.53 — Alquiler de contratos nuevos (2026-11-12)
 - D-228 §6 (opción A, elegida por Mariano): el alquiler de la búsqueda es el de un contrato firmado en 2024, con el factor de la Agencia Tributaria (fuente complementaria, no CM) por municipio y código postal; `fit-0.6`. Los hechos de minutos a pie dicen «a unos N min andando».
 - `04_technical_architecture/31_public_api_routes.md`: texto del alquiler y nota que viaja con el dato.

@@ -384,3 +384,24 @@ def test_impact_ranks_every_falta_zone_by_the_people_affected(client: TestClient
             assert same.people is not None and same.people.count == zone.people
             assert zone.p_value is None or zone.p_value < 0.025
             assert zone.explanation.startswith("Viven aquí")
+
+
+def test_small_zones_say_why_they_cannot_be_compared(client: TestClient) -> None:
+    """Fase de mejora (zonas pequeñas): La Acebeda has 1 household of 4 or more and 0 children
+    of 0 to 4. Housing is not comparable (its denominator is a count below the 3,69 floor of
+    D-213), and the nursery row says nobody of that age lives there, not «no data»."""
+    body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28001").json())
+    rows = {r.row.value: r for r in body.data.rows}
+    housing = rows["vivienda"]
+    assert housing.reliable is False and housing.status.value != "FALTA"
+    assert housing.comparison_group is None
+    assert housing.explanation.startswith("No comparable: aquí viven muy pocos hogares")
+    nursery = rows["escuela_infantil"]
+    assert nursery.status.value == "SIN_DATOS"
+    assert nursery.indicator.null_reason is not None
+    assert nursery.indicator.null_reason.value == "NOT_APPLICABLE"
+    assert nursery.explanation.startswith("No viven niños de 0 a 4 años en esta zona")
+    ajalvir = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28002").json())
+    without_streets = next(r for r in ajalvir.data.rows if r.row.value == "escuela_infantil")
+    assert without_streets.indicator.null_reason is not None
+    assert without_streets.indicator.null_reason.value == "SOURCE_NO_COVERAGE"  # people, no streets

@@ -21,6 +21,7 @@ class RowPeople(NamedTuple):
     people: str  # the row's target population, plural («niños de 0 a 4 años»)
     missing: str  # what a FALTA lacks («faltan escuelas infantiles»)
     lack: str  # the noun after «una falta clara de» («escuelas infantiles»)
+    few: str = "pocos"  # agrees with `people`: «pocas personas», «pocos niños»
 
 
 ROW_PEOPLE: dict[GapRowKey, RowPeople] = {
@@ -28,11 +29,13 @@ ROW_PEOPLE: dict[GapRowKey, RowPeople] = {
         "niños de 0 a 4 años", "faltan escuelas infantiles", "escuelas infantiles"
     ),
     GapRowKey.COLEGIO: RowPeople("niños de 5 a 14 años", "faltan colegios", "colegios"),
-    GapRowKey.CENTRO_SALUD: RowPeople("personas", "faltan centros de salud", "centros de salud"),
-    GapRowKey.MAYORES: RowPeople(
-        "personas de 65 años o más", "faltan centros de mayores", "centros de mayores"
+    GapRowKey.CENTRO_SALUD: RowPeople(
+        "personas", "faltan centros de salud", "centros de salud", "pocas"
     ),
-    GapRowKey.FARMACIA: RowPeople("personas", "faltan farmacias", "farmacias"),
+    GapRowKey.MAYORES: RowPeople(
+        "personas de 65 años o más", "faltan centros de mayores", "centros de mayores", "pocas"
+    ),
+    GapRowKey.FARMACIA: RowPeople("personas", "faltan farmacias", "farmacias", "pocas"),
     GapRowKey.VIVIENDA: RowPeople(
         "hogares de 4 o más personas", "falta vivienda para familias", "vivienda para familias"
     ),
@@ -48,6 +51,31 @@ def people_scale(formula: Mapping[str, Any], level: str) -> float:
     override = (formula.get("levels") or {}).get(level) or {}
     method = override.get("method", formula.get("method"))
     return float(formula.get("per", 1)) if method in _PER_UNIT_METHODS else 1.0
+
+
+def denominator_is_count(formula: Mapping[str, Any], level: str) -> bool:
+    """True when the stored denominator counts units (households), not people per `per`."""
+    return people_scale(formula, level) == 1.0
+
+
+def not_comparable_text(row: GapRowKey, people: int | None, text: str) -> str:
+    """A zone too small to compare (`reliable: false`, not grouped): its status says nothing,
+    so the explanation starts by saying so."""
+    if people is None:
+        return f"No comparable: la zona es demasiado pequeña para saber si falta. {text}"
+    words = ROW_PEOPLE[row]
+    return (
+        f"No comparable: aquí viven muy {words.few} {words.people} ({es_number(people, 0)}) "
+        f"para saber si falta. {text}"
+    )
+
+
+def nobody_text(row: GapRowKey) -> str:
+    """The row has no value because nobody it serves lives there (NOT_APPLICABLE)."""
+    return (
+        f"No viven {ROW_PEOPLE[row].people} en esta zona según el censo, así que no hay nada "
+        "que comparar"
+    )
 
 
 def people_in(

@@ -80,12 +80,29 @@ def people_by_key(
     return out
 
 
-def _demand(engine: Engine, f: Mapping[str, Any], origins: walk.Origins) -> FloatArray:
+def _people(engine: Engine, f: Mapping[str, Any]) -> dict[str, float]:
     district = f["district_population"]
-    people = people_by_key(
+    return people_by_key(
         _population(engine, f["population_metric"], f["population_dims"], "municipio"),
         _population(engine, district["metric"], district["dims"], "distrito"),
     )
+
+
+def census_by_zone(people: Mapping[str, float], level: str) -> dict[str, float]:
+    """The census population of each zone of the level, from the keys of `people_by_key`
+    (municipios, with Madrid as the sum of its districts; or the districts themselves)."""
+    out: dict[str, float] = {}
+    for key, value in people.items():
+        if level == "distrito":
+            if len(key) == 7:
+                out[key] = value
+        else:
+            out[key[:5]] = out.get(key[:5], 0.0) + value
+    return out
+
+
+def _demand(engine: Engine, f: Mapping[str, Any], origins: walk.Origins) -> FloatArray:
+    people = _people(engine, f)
     keys = demand_keys(origins.section.tolist())
     index = {k: i for i, k in enumerate(people)}
     zone = np.array([index.get(k, -1) for k in keys], dtype=np.int64)
@@ -193,13 +210,18 @@ def rows_for(
     period: Any,
     f: Mapping[str, Any],
     per_facility: float,
+    census: Mapping[str, float] | None = None,
 ) -> list[dict[str, Any]]:
+    """A zone where the census says nobody of the row's age lives is NOT_APPLICABLE (nothing to
+    compare); one with people but no street to place them on is SOURCE_NO_COVERAGE."""
     per, base = float(f["per"]), float(f.get("confidence", 1.0))
     small = float(f.get("small_population_threshold", 0))
     rows: list[dict[str, Any]] = []
     for code, cap, pop in zip(zones, capacity, people, strict=True):
         if pop <= 0:
-            rows.append(methods.null_row(code, period, NullReason.SOURCE_NO_COVERAGE))
+            nobody = census is not None and census.get(code) == 0
+            reason = NullReason.NOT_APPLICABLE if nobody else NullReason.SOURCE_NO_COVERAGE
+            rows.append(methods.null_row(code, period, reason))
             continue
         confidence = min(base, SMALL_POPULATION_CONFIDENCE) if pop < small else base
         rows.append(
@@ -230,7 +252,8 @@ def fca_feature(engine: Engine, f: Mapping[str, Any], level: str, period: Any) -
     )
     in_region = np.array([0 if s else -1 for s in section], dtype=np.int64)
     region_cap, region_pop = zone_totals(in_region, result.demand, result.access, 1)
-    rows = rows_for(zones, capacity, people, period, f, result.capacity_per_facility)
+    census = census_by_zone(_people(engine, f), level)
+    rows = rows_for(zones, capacity, people, period, f, result.capacity_per_facility, census)
     region = rows_for(
         [methods.REGION_CODE], region_cap, region_pop, period, f, result.capacity_per_facility
     )

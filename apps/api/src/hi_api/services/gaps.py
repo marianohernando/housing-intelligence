@@ -20,7 +20,7 @@ from hi_api.services.gap_reference import (
     load_references,
 )
 from hi_contracts.api.envelope import ErrorCode
-from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
+from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.public import (
     DatasetRef,
     GapRow,
@@ -29,7 +29,13 @@ from hi_contracts.public import (
     ZoneGapList,
     ZoneRef,
 )
-from hi_domain.gap_impact import ROW_PEOPLE, people_in
+from hi_domain.gap_impact import (
+    ROW_PEOPLE,
+    denominator_is_count,
+    nobody_text,
+    not_comparable_text,
+    people_in,
+)
 from hi_domain.gaps import (
     GAP_METHOD,
     REGION_TEXT,
@@ -165,6 +171,13 @@ def row_people(
     return None if count is None else PeopleCount(count=count, label=ROW_PEOPLE[key].people)
 
 
+def missing_text(key: GapRowKey, row: dict[str, Any]) -> str:
+    """Why the row has no value: nobody it serves lives there, or the data is missing."""
+    if row["null_reason"] == NullReason.NOT_APPLICABLE.value:
+        return nobody_text(key)
+    return "Sin datos para esta zona"
+
+
 class Measured(NamedTuple):
     """A feature bound to a gap row, with its value row for one zone."""
 
@@ -189,17 +202,20 @@ def _gap_row(
 ) -> GapRow:
     feature, row = main
     binding = feature["gap_row"]
+    key = GapRowKey(binding["row"])
+    people = row_people(key, feature, row, zone.level)
     indicator = _indicator(feature, row, zone.level)
     ref = zone.references.for_zone(feature["feature_id"], zone.code, reference_row)
     judged = Assessment(None, True)
     if indicator.value is None:
-        ratio, text_ = None, "Sin datos para esta zona"
+        ratio, text_ = None, missing_text(key, row)
     elif ref is None:
         msg = f"{feature['feature_id']}: no regional reference"
         raise UnclassifiableError(msg)
     else:
         ratio = oriented_ratio(indicator.value, ref.value, feature["direction"])
-        judged = assess(row, ref, feature["direction"])
+        counted = denominator_is_count(feature["formula"] or {}, zone.level.value)
+        judged = assess(row, ref, feature["direction"], counted)
         text_ = explanation(indicator.value, ref.value, binding["phrase"], ref.phrase, ref.regional)
     versions = merged_versions(row, reference_row, [e.value for e in extras])
     if ref is not None and ref.regional is not None:  # the type comes from population and area
@@ -207,6 +223,8 @@ def _gap_row(
     verdict = judge(ratio, judged, zone.references, feature["feature_id"], zone.code)
     if verdict.group is not None:
         text_ += "; " + group_sentence(verdict.group)
+    elif not verdict.reliable and indicator.value is not None:
+        text_ = not_comparable_text(key, None if people is None else people.count, text_)
     return GapRow(
         row=binding["row"],
         label=binding["label"],
@@ -224,7 +242,7 @@ def _gap_row(
         reliable=verdict.reliable,
         comparison_group=verdict.group,
         extra_indicators=[_indicator(e.feature, e.value, zone.level) for e in extras],
-        people=row_people(GapRowKey(binding["row"]), feature, row, zone.level),
+        people=people,
         datasets=dataset_refs(conn, versions),
     )
 

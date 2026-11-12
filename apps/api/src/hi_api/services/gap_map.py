@@ -20,6 +20,7 @@ from hi_api.services.gaps import (
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import GapRowMap, GapStatus, GapStatusCounts, ZoneGapStatus
+from hi_domain.gap_impact import denominator_is_count
 from hi_domain.gaps import (
     GAP_METHOD,
     REGION_TEXT,
@@ -65,6 +66,7 @@ class RowContext(NamedTuple):
     direction: Direction
     region: dict[str, Any] | None
     references: References
+    denominator_is_count: bool  # households, not people per `per`: same floor (zonas pequeñas)
 
 
 def _zone(row: dict[str, Any], context: RowContext) -> ZoneGapStatus:
@@ -76,7 +78,7 @@ def _zone(row: dict[str, Any], context: RowContext) -> ZoneGapStatus:
             msg = f"{row['territory_code']}: no regional reference"
             raise UnclassifiableError(msg)
         ratio = oriented_ratio(value, ref.value, context.direction)
-        judged = assess(row, ref, context.direction)
+        judged = assess(row, ref, context.direction, context.denominator_is_count)
     verdict = judge(ratio, judged, context.references, context.feature_id, row["territory_code"])
     return ZoneGapStatus(
         admin_unit_id=row["admin_unit_id"] or row["territory_code"],
@@ -144,7 +146,10 @@ def gap_row_map(
     values = [dict(r) for r in conn.execute(_LEVEL_VALUES, level_params).mappings()]
     references = load_references(conn, [feature["feature_id"]])
     region_row = None if region is None else dict(region)
-    context = RowContext(feature["feature_id"], feature["direction"], region_row, references)
+    counted = denominator_is_count(feature["formula"] or {}, level.value)
+    context = RowContext(
+        feature["feature_id"], feature["direction"], region_row, references, counted
+    )
     zones, warnings = _zones(values, context)
     if not values:  # not computed at this level yet: no zones, not SIN_DATOS
         warnings += missing_row_warnings(set(GapRowKey) - {row}, level)

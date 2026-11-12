@@ -1268,3 +1268,25 @@ Evidencia: `evidence/gate-04/2026-11-12/impact-cifras.txt`. Es reversible: ruta 
    - `p_value` se redondea hacia abajo, a 3 cifras: una zona en FALTA nunca muestra 0,025;
    - `zones` cuenta también las zonas SIN DATOS.
    - Queda declarado que las consultas de recuentos no filtran por versión, igual que los mapas de `/gaps`: hoy hay una fila por zona y feature.
+
+## D-230 — Zonas pequeñas: «No comparable», suelo del denominador cuando es un recuento y el motivo real cuando no vive nadie (2026-11-12)
+Fase de mejora, punto 7. Refina D-213 y D-217 con el mismo umbral, sin ajustar ninguna zona a mano. Código:
+- `hi_api/services/gap_reference.py` (`assess`);
+- `hi_api/services/gaps.py` y `gap_map.py`;
+- `hi_domain/gap_impact.py` (textos);
+- `hi_features/fca.py` (`rows_for`, `census_by_zone`).
+
+Evidencia: `evidence/gate-04/2026-11-12/zonas-pequenas.md`.
+1. **«0,0 frente a 28,0 = JUSTO» (La Acebeda, colegio).** Una zona poco fiable (`reliable: false`) y sin grupo de vecinos no puede decir si le falta algo. Su explicación empieza por «No comparable: aquí viven muy pocos niños de 5 a 14 años (3) para saber si falta.» y sigue con las cifras.
+   - El estado no cambia de valor: `GapStatus` no gana un valor nuevo, porque la web lo trata como un conjunto cerrado.
+   - **Pendiente de B:** pintar «No comparable» en vez del estado cuando `reliable` es `false` y `comparison_group` es `null`.
+2. **Vivienda en pueblos pequeños (La Acebeda: 10.700 viviendas por 100 hogares, CUBIERTO).**
+   - **Regla:** cuando el denominador de la fila es un recuento (hogares de 4 o más personas, `metric_ratio`), y no una población por cada `per` (2SFCA), también tiene que llegar al suelo de 3,69 de D-213. Por debajo, el recuento es compatible con cero hogares al 95 % y la comparación no dice nada: la zona queda poco fiable y «No comparable».
+   - **Efecto:** pasa a 2 municipios de 179, entre ellos La Acebeda, con 1 hogar grande. Ninguna FALTA cambia.
+   - **Grupos de vecinos:** este suelo no entra en ellos; un grupo se forma solo por los casos esperados (D-217).
+3. **0 niños de 0 a 4 años.**
+   - **Qué cambia en los datos:** las filas 2SFCA de una zona donde el censo no tiene a nadie de la edad de la fila salen `NOT_APPLICABLE`, no `SOURCE_NO_COVERAGE`.
+   - **Texto:** la API explica «No viven niños de 0 a 4 años en esta zona según el censo, así que no hay nada que comparar».
+   - **Lo que no cambia:** una zona con gente pero sin calles donde colocarla sigue `SOURCE_NO_COVERAGE`.
+   - **Para B:** hoy la web dice para `NOT_APPLICABLE` «Este dato no tiene sentido en esta zona.». Debería enseñar la `explanation` de la fila o el mismo texto.
+4. **Datos:** se recalculan las 5 features 2SFCA. Los valores no cambian; solo el motivo de un nulo (La Acebeda, escuela infantil) y la versión del registro de centros en el linaje. Es compatible con el código desplegado: se puede sincronizar en cualquier orden.
