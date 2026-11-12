@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill } from "lucide-react";
+import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
 import { useId } from "react";
 
 import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
@@ -11,7 +11,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { formatNumber } from "@/lib/format";
-import { capacitySources, type Facility, type FacilityKey, facilityCountText, FACILITY_TYPES } from "@/lib/map/facilities";
+import { capacitySources, type Facility, type FacilityKey, facilityCountText, facilityType, FACILITY_TYPES } from "@/lib/map/facilities";
 
 import styles from "./FacilitiesPanel.module.css";
 
@@ -60,12 +60,18 @@ export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
   hospital: Hospital,
   farmacia: Pill,
   mayores: HeartHandshake,
+  parque: Trees,
 };
 
 /** «Hospital La Paz · 1.300 camas» when the API gives the name and the capacity; the label alone otherwise. */
 export function facilityLine(f: Facility): { label: string; rest: string | null } {
   const rest = [f.name, f.detail].filter(Boolean).join(" · ");
   return { label: f.label, rest: rest || null };
+}
+
+/** In the list a park leads with its own name («Parque del Retiro · 118 ha»): the list already says it is a park. */
+function listLine(f: Facility): { label: string; rest: string | null } {
+  return f.name && facilityType(f.type).nameFirst ? { label: f.name, rest: f.detail } : facilityLine(f);
 }
 
 function FacilityList({ items, count }: { items: Facility[]; count: string }) {
@@ -75,7 +81,7 @@ function FacilityList({ items, count }: { items: Facility[]; count: string }) {
       {/* Focusable, so the list can be scrolled with the keyboard */}
       <ul className={styles.list} tabIndex={0} aria-label={count}>
         {items.map((f) => {
-          const { label, rest } = facilityLine(f);
+          const { label, rest } = listLine(f);
           return (
             <li key={f.id}>
               <strong>{label}</strong>

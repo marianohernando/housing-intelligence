@@ -47,6 +47,9 @@
   --zona-pequena-ink: #4d4578;
   --zona-pequena-bg: #eeecf6;
 
+  /* Parks (DATA-018): their dots, groups and icons on the map; white text on it is AA */
+  --park: #1f7a55;
+
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
   --map-darkest: var(--violet);
 
@@ -54,6 +57,7 @@
   --map-land: #ebe8f6;
   --map-water: #cfe2f6;
   --map-park: #cdebd6;
+  --map-park-vivid: #9edcb2; /* the base map's parks while «Parques» is on */
   --map-road: #ffffff;
   --map-rail: #c9c3ec;
   --map-zone: #dcd6fa;

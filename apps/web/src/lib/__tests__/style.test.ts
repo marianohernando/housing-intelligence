@@ -9,15 +9,17 @@ import {
   baseStyle,
   BUILDING_LAYER,
   BUILDINGS_3D_ZOOM,
-  clusterImageCount,
   clusterImageId,
+  clusterImageOf,
   clusterRadius,
+  FACILITY_CLUSTER_PROPERTIES,
   FACILITY_SOURCE,
   facilityLayers,
   mapTilesSource,
   MAP_PALETTE_TOKENS,
   type MapPalette,
   OPENFREEMAP_TILEJSON,
+  PARKS_VIVID_LAYER,
   zoneLayers,
 } from "../map/style";
 
@@ -46,7 +48,7 @@ function withZone(style: StyleSpecification): StyleSpecification {
       "zone-mask": { type: "geojson", data: empty },
       "zone-base": { type: "geojson", data: empty },
       "zone-barrio": { type: "geojson", data: empty },
-      [FACILITY_SOURCE]: { type: "geojson", data: empty, cluster: true },
+      [FACILITY_SOURCE]: { type: "geojson", data: empty, cluster: true, clusterProperties: FACILITY_CLUSTER_PROPERTIES },
     },
     layers: [...style.layers, ...below, ...above, ...facilityLayers(palette)],
   };
@@ -141,15 +143,31 @@ describe("map style", () => {
     expect(point).toMatchObject({ type: "circle", filter: ["!", ["has", "point_count"]] });
   });
 
-  it("names each group image by its count, and sizes it by how many it holds", () => {
+  it("names each group image by its count and colour, and sizes it by how many it holds", () => {
     expect(clusterImageId(23)).toBe("facility-cluster-23");
-    expect(clusterImageCount("facility-cluster-23")).toBe(23);
-    expect(clusterImageCount("gap-falta")).toBeNull();
-    expect(clusterImageCount("facility-cluster-x")).toBeNull();
+    expect(clusterImageOf("facility-cluster-23")).toEqual({ count: 23, tone: "violet" });
+    expect(clusterImageId(7, "park")).toBe("facility-cluster-park-7");
+    expect(clusterImageOf(clusterImageId(7, "park"))).toEqual({ count: 7, tone: "park" });
+    expect(clusterImageOf("gap-falta")).toBeNull();
+    expect(clusterImageOf("facility-cluster-x")).toBeNull();
+    expect(clusterImageOf("facility-cluster-park-")).toBeNull();
     expect(clusterRadius(2)).toBeLessThan(clusterRadius(20));
     expect(clusterRadius(20)).toBeLessThan(clusterRadius(200));
     // Big enough for three digits and a pointer target
     expect(clusterRadius(999)).toBeGreaterThanOrEqual(22);
+  });
+
+  it("paints parks in green: their dots and groups, and the base map's parks while «Parques» is on (DATA-018)", () => {
+    const point = facilityLayers(palette).find((l) => l.id === "facilities-point");
+    expect(JSON.stringify(point?.type === "circle" && point.paint)).toContain(`["match",["get","type"],"parque","${palette.parkStrong}"`);
+    const cluster = facilityLayers(palette).find((l) => l.id === "facilities-cluster");
+    expect(JSON.stringify(cluster)).toContain('["get","parks"]');
+    const vivid = baseStyle(palette).layers.find((l) => l.id === PARKS_VIVID_LAYER);
+    expect(vivid).toMatchObject({ type: "fill", "source-layer": "landcover", filter: ["==", ["get", "subclass"], "park"], layout: { visibility: "none" } });
+    // Above the soft green of the base map, under the buildings
+    const ids = baseStyle(palette).layers.map((l) => l.id);
+    expect(ids.indexOf(PARKS_VIVID_LAYER)).toBeGreaterThan(ids.indexOf("green"));
+    expect(ids.indexOf(PARKS_VIVID_LAYER)).toBeLessThan(ids.indexOf(BUILDING_LAYER));
   });
 
   it("outlines the barrio in focus above the buildings, dashed so it reads apart from the district", () => {

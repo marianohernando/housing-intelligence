@@ -13,6 +13,7 @@
 //   node scripts/check-qa.mjs atribucion [outDir] # map attribution folded behind its (i) on every screen, never the LCP
 //   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
 //   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
+//   node scripts/check-qa.mjs parques [outDir]   # «Parques» in «Todos los centros» and green on the map (DATA-018)
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
@@ -961,6 +962,85 @@ async function priorityChip(browser, spec) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** Zones of the parks check (DATA-018): the Retiro, the Casa de Campo, and a town with no park of 1 ha. */
+const PARK_ZONES = [
+  { id: "retiro", path: "/zona/distrito/2807903", unit: "ES.28.DIS.2807903", must: ["Parque del Retiro"] },
+  { id: "moncloa", path: "/zona/distrito/2807909", unit: "ES.28.DIS.2807909", must: ["Casa de Campo", "Parque sin nombre"] },
+  { id: "perales", path: "/zona/municipio/28110", unit: "ES.28.MUN.28110", must: [] },
+];
+
+/**
+ * «Parques» in «Todos los centros» (DATA-018, D-222, petición de Mariano): as many as /places gives
+ * for the zone, named as it names them, green on the map with the base map's parks lit up, the
+ * same single request to /places for the zone, and the zone's LCP on slow 4G.
+ */
+async function parks(browser) {
+  const failures = [];
+  for (const zone of PARK_ZONES) {
+    const r = await fetch(`${API}/api/v1/places?${new URLSearchParams({ category: "green", admin_unit_id: zone.unit })}`);
+    const api = (await r.json()).data.total;
+    for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+      const key = `${zone.id}_${id}`;
+      const p = await open(browser, profile, zone.path);
+      const press = (locator) => (touch ? locator.tap() : locator.click());
+      const panel = p.page.getByRole("region", { name: "Todos los centros", exact: true });
+      const chip = panel.getByRole("button", { name: /^Parques/ });
+      await chip.waitFor({ timeout: 20000 });
+      await p.page.waitForTimeout(6000); // the camera lands
+      const entry = (report[key] = { api_total: api });
+      if (touch) {
+        await press(p.page.getByRole("button", { name: /Desliza hacia arriba/ }));
+        await p.page.waitForTimeout(600);
+        await chip.scrollIntoViewIfNeeded();
+      }
+      entry.chip = flat(await chip.innerText());
+      await press(chip);
+      await p.page.waitForTimeout(1500);
+      entry.pulsado = await chip.getAttribute("aria-pressed");
+      entry.frase = flat(await panel.locator("[aria-live='polite']").innerText());
+      entry.icono = await chip.locator("svg").first().getAttribute("class");
+      const summary = panel.getByText(/^Ver la lista/);
+      if (await summary.count()) {
+        await press(summary);
+        const items = await panel.getByRole("list", { name: /parques? de 1 ha/ }).locator("li").allInnerTexts();
+        entry.lista = { elementos: items.length, primeras: items.slice(0, 6).map(flat), sin_nombre: items.filter((t) => /^Parque sin nombre$/.test(flat(t))).length };
+        entry.lista_tiene = Object.fromEntries(zone.must.map((name) => [name, items.some((t) => flat(t) === name)]));
+        await panel.screenshot({ path: `${out}/parques_${key}_lista.png` });
+      }
+      entry.axe = await axe(p.page);
+      if (touch) {
+        await press(p.page.getByRole("button", { name: "Ver el mapa" }));
+        await p.page.waitForTimeout(1500);
+      }
+      entry.mapa_aria = await p.page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label");
+      await p.page.screenshot({ path: `${out}/parques_${key}_mapa.png` });
+      // Every /places request of the visit (resource timing, from the start), by its categories
+      entry.peticiones_places = await p.page.evaluate(() =>
+        performance.getEntriesByType("resource").flatMap((e) => (e.name.includes("/api/v1/places") ? [new URL(e.name).searchParams.get("category")] : [])),
+      );
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      const count = Number((entry.chip.match(/\d[\d.]*/)?.[0] ?? "-1").replace(/\./g, ""));
+      if (count !== api) failures.push(`${key}: el chip dice ${count} y /places ${api}`);
+      if (entry.pulsado !== "true") failures.push(`${key}: el chip no queda pulsado`);
+      if (!entry.icono?.split(" ").includes("lucide-trees")) failures.push(`${key}: icono «${entry.icono}»`);
+      if (api === 0 && !/^Ningún parque de 1 ha o más en /.test(entry.frase)) failures.push(`${key}: frase «${entry.frase}»`);
+      if (api > 0 && entry.lista?.elementos !== api) failures.push(`${key}: la lista tiene ${entry.lista?.elementos} y /places ${api}`);
+      for (const [name, found] of Object.entries(entry.lista_tiene ?? {})) if (!found) failures.push(`${key}: falta «${name}» en la lista`);
+      if (api > 0 && !entry.mapa_aria?.includes("parques de 1 ha o más")) failures.push(`${key}: el mapa no dice que salen los parques`);
+      if (entry.peticiones_places.length !== 1 || !entry.peticiones_places[0]?.split(",").includes("green")) failures.push(`${key}: /places ${JSON.stringify(entry.peticiones_places)}`);
+      if (entry.axe.length) failures.push(`${key}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.consola.length) failures.push(`${key}: consola`);
+      if (entry.overflow_px > 0) failures.push(`${key}: desborde`);
+      await p.ctx.close();
+    }
+  }
+  // The zone's LCP on slow 4G, mobile (it was about 2 s before the parks)
+  report.lcp_retiro_slow4g = await lcpOnSlow4g(browser, PARK_ZONES[0].path);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 /**
  * Icons (favicon.ico and apple-touch-icon gave 404 in the deploy logs): every page links them, they
  * load, the old fixed paths phones ask for answer too, and no request of the page fails.
@@ -1214,6 +1294,7 @@ else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
 else if (mode === "iconos") await icons(browser);
+else if (mode === "parques") await parks(browser);
 else if (Object.hasOwn(PRIORITY_CHIPS, mode)) await priorityChip(browser, PRIORITY_CHIPS[mode]);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);

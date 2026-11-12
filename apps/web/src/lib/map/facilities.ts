@@ -2,7 +2,7 @@
  * Every facility of a zone (pure, unit tested), not only its key points (FASE_PRUEBAS, T3): the
  * places of /api/v1/places (places-1) asked by zone and subcategory, grouped in the types a person
  * looks for and named in plain words. A type with a row of «Qué falta» counts the places the API
- * says that row counts (`gap_rows`), so the figures agree; hospitals have no row yet.
+ * says that row counts (`gap_rows`), so the figures agree; hospitals and parks have no row.
  */
 import type { DatasetRef } from "@/contracts/dataset_list_response";
 import type { GapRowKey } from "@/contracts/places_response";
@@ -13,7 +13,7 @@ import { titleCase } from "@/lib/names";
 
 import type { PlaceFeature } from "./places";
 
-export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores";
+export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque";
 
 export interface FacilityType {
   key: FacilityKey;
@@ -28,6 +28,8 @@ export interface FacilityType {
   none: string;
   /** Subcategories of /places that count, each with the label of one place */
   classes: { subcategory: string; label: string }[];
+  /** The list leads with the place's own name, which already says what it is («Parque del Retiro») */
+  nameFirst?: boolean;
 }
 
 const PUBLIC_SCHOOL = "Colegio público";
@@ -117,6 +119,18 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
       { subcategory: "CENTROS DE DÍA: OTROS", label: "Centro de día" },
       { subcategory: "HOGARES Y CLUBES", label: "Hogar o club de mayores" },
     ],
+  },
+  {
+    // DATA-018 (D-222): urban parks of 1 ha or more from OSM, Casa de Campo and Torre Arias included.
+    // Their names come as the API gives them, «Parque sin nombre» too.
+    key: "parque",
+    category: "green",
+    chip: "Parques",
+    one: "parque de 1 ha o más",
+    many: "parques de 1 ha o más",
+    none: "Ningún parque de 1 ha o más",
+    classes: [{ subcategory: "Parque", label: "Parque" }],
+    nameFirst: true,
   },
 ];
 
@@ -267,7 +281,9 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   const [lon = 0, lat = 0] = place.geometry.coordinates;
   const { ownership } = place.properties;
   const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : cls.label;
-  const source = place.properties.capacity?.dataset_id ?? null;
+  // Only a capacity from another catalogue is cited apart (hospital beds): the places of mayores
+  // carry their own register's «plazas autorizadas», which are not beds
+  const source = CAPACITY_SOURCE[type.key] ? (place.properties.capacity?.dataset_id ?? null) : null;
   return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, lon, lat };
 }
 

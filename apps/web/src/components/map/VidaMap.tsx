@@ -36,14 +36,17 @@ import {
 import {
   baseStyle,
   BUILDING_LAYER,
-  clusterImageCount,
+  clusterImageOf,
   clusterRadius,
+  type ClusterTone,
   FACILITY_CLUSTER,
+  FACILITY_CLUSTER_PROPERTIES,
   FACILITY_SOURCE,
   facilityLayers,
   MAP_PALETTE_TOKENS,
   mapTilesSource,
   type MapPalette,
+  PARKS_VIVID_LAYER,
   ZONE_BASE,
   zoneLayers,
 } from "@/lib/map/style";
@@ -237,8 +240,8 @@ function addZoneLayers(map: MapLibreMap, palette: MapPalette, onPick: (zone: Zon
   });
 }
 
-/** A group of facilities as an image: a violet circle with its count, drawn for the screen's pixel ratio. */
-function clusterImage(count: number, palette: MapPalette): { image: ImageData; pixelRatio: number } | null {
+/** A group of facilities as an image: a violet (or, for parks, green) circle with its count, for the screen's pixel ratio. */
+function clusterImage(count: number, tone: ClusterTone, palette: MapPalette): { image: ImageData; pixelRatio: number } | null {
   const scale = Math.min(2, Math.ceil(window.devicePixelRatio || 1));
   const radius = clusterRadius(count);
   const size = (radius + 3) * 2 * scale;
@@ -251,7 +254,7 @@ function clusterImage(count: number, palette: MapPalette): { image: ImageData; p
   const centre = radius + 3;
   ctx.beginPath();
   ctx.arc(centre, centre, radius, 0, Math.PI * 2);
-  ctx.fillStyle = palette.violetStrong;
+  ctx.fillStyle = tone === "park" ? palette.parkStrong : palette.violetStrong;
   ctx.fill();
   ctx.lineWidth = 3;
   ctx.strokeStyle = "#ffffff";
@@ -277,11 +280,12 @@ function addFacilityLayers(map: MapLibreMap, palette: MapPalette, handlers: Faci
     cluster: true,
     clusterRadius: FACILITY_CLUSTER.radius,
     clusterMaxZoom: FACILITY_CLUSTER.maxZoom,
+    clusterProperties: FACILITY_CLUSTER_PROPERTIES,
   });
   for (const layer of facilityLayers(palette)) map.addLayer(layer);
   map.on("styleimagemissing", (e: { id: string }) => {
-    const count = clusterImageCount(e.id);
-    const drawn = count === null || map.hasImage(e.id) ? null : clusterImage(count, palette);
+    const group = clusterImageOf(e.id);
+    const drawn = group === null || map.hasImage(e.id) ? null : clusterImage(group.count, group.tone, palette);
     if (drawn) map.addImage(e.id, drawn.image, { pixelRatio: drawn.pixelRatio });
   });
   for (const layer of FACILITY_LAYERS) {
@@ -542,6 +546,14 @@ export default function VidaMap() {
     if (!map || !ready) return;
     source(map, FACILITY_SOURCE).setData(facilitiesShown && facilityList ? facilitiesGeoJSON(facilityList) : EMPTY);
   }, [ready, facilitiesShown, facilityList]);
+
+  // With «Parques» on, the base map's parks light up under their green dots
+  const parksLit = facilitiesShown && facilities.type === "parque";
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !map.getLayer(PARKS_VIVID_LAYER)) return;
+    map.setLayoutProperty(PARKS_VIVID_LAYER, "visibility", parksLit ? "visible" : "none");
+  }, [ready, parksLit]);
 
   useEffect(() => {
     const map = mapRef.current;
