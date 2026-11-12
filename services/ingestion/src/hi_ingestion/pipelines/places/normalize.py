@@ -8,6 +8,7 @@ import geopandas as gpd
 import h3
 import pandas as pd
 
+from hi_contracts.catalog.corrections import AddressFix, PlaceCorrection
 from hi_contracts.catalog.enums import PlaceStatus
 from hi_contracts.catalog.pipeline import PointsPipeline
 from hi_domain.facilities import dependency
@@ -24,6 +25,7 @@ from hi_ingestion.pipelines.places.coordinates import (
     house_number,
     resolve,
 )
+from hi_ingestion.pipelines.places.corrections import correction_attribute
 from hi_ingestion.pipelines.places.directory import (
     LINK_COLUMNS,
     LoadedDirectory,
@@ -243,11 +245,20 @@ def _register_place(
     )
 
 
+def _with_address(record: dict[str, Any], spec: PointsPipeline, fix: AddressFix) -> dict[str, Any]:
+    """The record with the corrected street and number, for the geocoder and the matching."""
+    if spec.address_street_column is None or spec.address_number_column is None:
+        msg = f"{spec.dataset_id}: an address correction needs street and number columns"
+        raise ValueError(msg)
+    return record | {spec.address_street_column: fix.street, spec.address_number_column: fix.number}
+
+
 def normalize_places(
     frame: pd.DataFrame,
     spec: PointsPipeline,
     repair: Repair | None = None,
     directories: list[LoadedDirectory] | None = None,
+    corrections: list[PlaceCorrection] | None = None,
 ) -> Places:
     source_rows = len(frame)
     filtered, removed = apply_filters(frame, spec)
@@ -258,8 +269,12 @@ def normalize_places(
     bad: list[dict[str, Any]] = []
     repairs: list[dict[str, Any]] = []
     register: dict[str, RegisterPlace] = {}
+    fixes = {c.entity_id: c for c in corrections or []}
     for i, record in enumerate(records):
         external_id = record[spec.id_column]
+        fix = fixes.get(str(external_id))
+        if fix is not None and fix.address is not None:
+            record = _with_address(record, spec, fix.address)
         resolution = _resolve(record, spec, source.get(i), repair)
         if resolution.lon is None or resolution.lat is None:
             bad.append({"external_id": external_id, "reason": resolution.quarantine_reason})
@@ -285,9 +300,16 @@ def normalize_places(
             repairs.append(
                 {"external_id": external_id, "origin": resolution.origin, "note": resolution.note}
             )
+        if fix is not None:
+            place["attributes"]["correction"] = correction_attribute(fix)
         rows.append(place)
         register[place["external_id"]] = _register_place(record, spec, place["subcategory"])
-    attached = attach_directories(rows, register, directories or [])
+    forced = {
+        c.entity_id: (c.directory.dataset_id, c.directory.entry_id)
+        for c in fixes.values()
+        if c.directory is not None
+    }
+    attached = attach_directories(rows, register, directories or [], forced)
     return Places(
         pd.DataFrame(rows, columns=PLACE_COLUMNS),
         pd.DataFrame(bad, columns=["external_id", "reason"]),

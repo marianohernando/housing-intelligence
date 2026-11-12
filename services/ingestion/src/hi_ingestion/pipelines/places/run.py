@@ -15,6 +15,7 @@ from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
 from hi_ingestion.pipelines.directory.normalize import DIRECTORY_FILE
 from hi_ingestion.pipelines.fetch import FetchedFile
 from hi_ingestion.pipelines.places.coordinates import Located, fold_name
+from hi_ingestion.pipelines.places.corrections import corrections_input, load_corrections
 from hi_ingestion.pipelines.places.directory import LoadedDirectory, read_entries
 from hi_ingestion.pipelines.places.geocoder import CachedGeocoder
 from hi_ingestion.pipelines.places.normalize import (
@@ -29,7 +30,7 @@ from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
 # 1.1: coordinate repair (D-216); 1.2: the street must match; 1.3: directories (D-218);
 # 1.3.1: stricter directory rules (equal street words, public/private veto); 1.4: primary care
-PARSER_VERSION = "places-1.5.4"
+PARSER_VERSION = "places-1.6.0"
 GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
 _UNITS = text(
     """
@@ -165,11 +166,14 @@ def run_places_pipeline(
     source_id = catalog.datasets[spec.dataset_id].source_id
     repair = build_repair(engine, spec, data_dir)
     directories, directory_inputs = load_directories(engine, catalog, spec)
+    corrections = load_corrections().for_dataset(spec.dataset_id)
+    if corrections:  # the file enters the checksum and the lineage of this register only
+        directory_inputs.append(corrections_input(spec.dataset_id))
     steps: PipelineSteps[Places] = PipelineSteps(
         parser_version=PARSER_VERSION,
         csv=spec.csv,
         resource_role=spec.resource_role,
-        normalize=lambda frame: normalize_places(frame, spec, repair, directories),
+        normalize=lambda frame: normalize_places(frame, spec, repair, directories, corrections),
         quarantine=lambda places: places.quarantine,
         quality=lambda places: run_quality(places, spec).to_dict(),
         counts=_counts,

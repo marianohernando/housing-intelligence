@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 549
+        "places": 553
       }
     },
     {
@@ -22,10 +22,10 @@
       "critical": true,
       "passed": true,
       "details": {
-        "quarantined": 6,
-        "ratio": 0.0108,
+        "quarantined": 2,
+        "ratio": 0.0036,
         "reasons": {
-          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 5,
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 1,
           "coordinates in municipio 28902, register says 28027; address not found at portal level": 1
         }
       }
@@ -62,11 +62,21 @@
       "critical": false,
       "passed": true,
       "details": {
-        "geocoded": 4,
+        "geocoded": 8,
         "kept_with_note": 0,
         "rows": [
           {
+            "external_id": "CS10286",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 21 for number 23)"
+          },
+          {
             "external_id": "CS1135",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS1184",
             "origin": "geocoded",
             "note": "coordinates missing in the source"
           },
@@ -77,6 +87,16 @@
           },
           {
             "external_id": "CS19950",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS6158",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS7529",
             "origin": "geocoded",
             "note": "coordinates missing in the source"
           },
@@ -109,7 +129,7 @@
       "critical": false,
       "passed": true,
       "details": {
-        "compared": 478,
+        "compared": 483,
         "disagree": 0
       }
     },
@@ -122,8 +142,9 @@
           "version": "2026-11-12-e5148a11b523",
           "entries": 91,
           "register_places": 85,
-          "matched": 79,
+          "matched": 80,
           "by_method": {
+            "correccion": 1,
             "direccion": 64,
             "calle": 13,
             "direccion_municipio": 0,
@@ -157,11 +178,6 @@
             }
           ],
           "unmatched_places": [
-            {
-              "external_id": "CH0049",
-              "subcategory": "Hospital general",
-              "reason": "no unique entry among 1 in postal code 28034"
-            },
             {
               "external_id": "CH0068",
               "subcategory": "Hospital general",
@@ -225,11 +241,6 @@
               "kind": "Hospitales Generales"
             },
             {
-              "external_id": "280029",
-              "name": "Hospital Universitario Ramon y Cajal",
-              "kind": "Hospitales Generales"
-            },
-            {
               "external_id": "280210",
               "name": "Hospital de Cantoblanco",
               "kind": "Otros Centros con Internamiento"
@@ -254,12 +265,13 @@
         "ms_catalogo_centros_atencion_primaria": {
           "version": "2026-11-12-260312fa3bc8",
           "entries": 419,
-          "register_places": 423,
-          "matched": 399,
+          "register_places": 427,
+          "matched": 403,
           "by_method": {
-            "direccion": 288,
+            "correccion": 0,
+            "direccion": 291,
             "calle": 57,
-            "direccion_municipio": 25,
+            "direccion_municipio": 26,
             "codigo_postal": 28,
             "municipio": 1
           },
@@ -393,11 +405,6 @@
               "kind": "CENTRO SALUD"
             },
             {
-              "external_id": "1328006222",
-              "name": "CAMPAMENTO",
-              "kind": "CENTRO SALUD"
-            },
-            {
               "external_id": "1328020934",
               "name": "CASTELLÓ",
               "kind": "CENTRO SALUD"
@@ -415,21 +422,6 @@
             {
               "external_id": "1328000454",
               "name": "GUAYABA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328002018",
-              "name": "ORCASUR",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328007478",
-              "name": "MARÍA DE GUZMÁN",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328001013",
-              "name": "MIGUEL DE CERVANTES",
               "kind": "CENTRO SALUD"
             },
             {

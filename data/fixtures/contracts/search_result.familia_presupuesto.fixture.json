@@ -549,7 +549,7 @@
           "indicator": {
             "feature_id": "min_a_pie_centro_salud",
             "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 10.47,
+            "value": 10.23,
             "unit": "min",
             "confidence": 0.992,
             "null_reason": null,
@@ -1432,12 +1432,12 @@
         {
           "kind": "strength",
           "topic": "salud",
-          "text": "Centro de salud a 9 min andando desde la mitad de sus calles",
+          "text": "Centro de salud a 8 min andando desde la mitad de sus calles",
           "confidence": 1.0,
           "indicator": {
             "feature_id": "min_a_pie_centro_salud",
             "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 8.973,
+            "value": 8.217,
             "unit": "min",
             "confidence": 1.0,
             "null_reason": null,
@@ -1510,7 +1510,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "farmacia",
@@ -2341,7 +2341,7 @@
         "center_lon": -3.36464,
         "center_lat": 40.49562
       },
-      "match_pct": 86,
+      "match_pct": 90,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5707,7 +5707,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-11-ba0e65311c5b",
+      "version": "2026-11-12-296653c30a0b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },

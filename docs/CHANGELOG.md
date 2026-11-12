@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.38 — Correcciones con fuente oficial (2026-11-12)
+- D-218 §10: fichero versionado de correcciones de lugares, aplicado con linaje; Ramón y Cajal con nombre y camas y 4 centros de salud con ubicación.
+
 ## v0.5.35 — Atribución por dataset y varias capas en /places (2026-11-12)
 - `04_technical_architecture/31_public_api_routes.md`: `DatasetRef.attribution_text` (petición de B), desde el catálogo de fuentes y con CartoCiudad en los datasets geocodificados.
 - `GET /places?category=a,b,…`: varias categorías en una llamada (petición de B).

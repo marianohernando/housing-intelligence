@@ -1,0 +1,72 @@
+# Versioned corrections to registered places (D-218 §10). Decision of Mariano (delegated to
+# datamad-10, 12 Nov): only with an official source per record, cited with URL, date consulted
+# and its exact text; never from memory or private sources. The places pipeline applies them
+# with lineage (this file is an input of the register's run) and each corrected place says so
+# in attributes.correction. Records without an official source stay declared in the evidence.
+corrections:
+  # Hospital Universitario Ramón y Cajal: the Catálogo Nacional de Hospitales 2025 publishes
+  # «Calle De Ayala 38, 28001» for CODCNH 280029; the CM register (CH0049) and the hospital's
+  # own page put it on the Colmenar Viejo road, so no address rule can pair them.
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0049
+    reason: >-
+      El Catálogo Nacional de Hospitales sitúa el Hospital Universitario Ramón y Cajal (CODCNH
+      280029, 886 camas) en la calle de Ayala 38 (28001), no en su dirección asistencial; el
+      registro de la CM y la web del hospital lo ponen en la carretera de Colmenar Viejo, km 9,1
+      (28034). Mismo hospital general público del SERMAS: se empareja a mano.
+    source:
+      publisher: Comunidad de Madrid · Hospital Universitario Ramón y Cajal (SERMAS)
+      url: https://www.comunidad.madrid/hospital/ramonycajal/
+      consulted: 2026-11-12
+      says: "Hospital Universitario Ramón y Cajal · Ctra. de Colmenar Viejo km. 9,100 28034 Madrid"
+    directory:
+      dataset_id: ms_catalogo_nacional_hospitales
+      entry_id: "280029"
+  # Centros de salud whose register address is «S/N» (D-216: no portal to geocode). The
+  # Ministry's primary care catalogue publishes the portal number of the same centre (same
+  # street and municipality); the coordinates then come from CartoCiudad as in D-216.
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS1184
+    reason: >-
+      El registro de la CM da «calle de Arenas del Rey S/N» (28041) sin coordenadas; el catálogo
+      del Ministerio publica el centro de salud Orcasur en el número 1 de esa calle.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328002018 · CENTRO SALUD · ORCASUR · CALLE ARENAS DEL REY, Nº 1 · 28041 · Madrid"
+    address: {street: "de Arenas del Rey", number: "1"}
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS6158
+    reason: >-
+      El registro de la CM da «calle de Mirueña S/N» (28024) sin coordenadas; el catálogo del
+      Ministerio publica el centro de salud Campamento en el número 5 de esa calle.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328006222 · CENTRO SALUD · CAMPAMENTO · CALLE MIRUEÑA, Nº 5 · 28024 · Madrid"
+    address: {street: "de Mirueña", number: "5"}
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS10286
+    reason: >-
+      El registro de la CM da «calle Ramón María del Valle Inclán S/N, c/v G. A. Bécquer»
+      (Alcalá de Henares) sin coordenadas; el catálogo del Ministerio publica el centro de salud
+      Miguel de Cervantes en la calle Gustavo Adolfo Bécquer 23, la calle de la esquina.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328001013 · CENTRO SALUD · MIGUEL DE CERVANTES · CALLE GUSTAVO ADOLFO BECQUER,Nº 23 · 28805 · Alcalá de Henares"
+    address: {street: "Gustavo Adolfo Bécquer", number: "23"}
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS7529
+    reason: >-
+      El registro de la CM da «calle Juan de Borgoña s/n» (Alcalá de Henares) sin coordenadas;
+      el catálogo del Ministerio publica el centro de salud María de Guzmán en el número 1.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328007478 · CENTRO SALUD · MARÍA DE GUZMÁN · CALLE JUAN DE BORGOÑA, Nº 1 · 28805 · Alcalá de Henares"
+    address: {street: "Juan de Borgoña", number: "1"}

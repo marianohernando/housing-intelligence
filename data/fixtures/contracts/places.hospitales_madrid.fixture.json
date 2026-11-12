@@ -842,14 +842,20 @@
         ]
       },
       "properties": {
-        "name": "Hospital general (Madrid)",
+        "name": "Hospital Universitario Ramon y Cajal",
         "category": "health",
         "subcategory": "Hospital general",
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807908111",
         "ownership": null,
         "gap_rows": [],
-        "capacity": null,
+        "capacity": {
+          "value": 886.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
         "coordinates": "source",
         "confidence": 1.0
       }

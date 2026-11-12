@@ -288,11 +288,11 @@
           "osm_red_peatonal"
         ]
       },
-      "reference": 0.3671,
+      "reference": 0.373,
       "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
-      "regional_reference": 0.3767,
+      "regional_reference": 0.3824,
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.264,
+      "ratio_to_reference": 1.244,
       "explanation": "0,46 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,37 (en toda la Comunidad, 0,38)",
       "proxy_note": "Cuenta equipos de atención primaria (un centro de salud del SERMAS por equipo), no médicos ni población asignada, que no se publican en abierto. Los consultorios locales son puntos de consulta del mismo equipo: cuentan en los minutos a pie, no como capacidad.",
       "reliable": true,
@@ -345,7 +345,7 @@
           "publisher": "Comunidad de Madrid",
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-          "version": "2026-11-11-ba0e65311c5b",
+          "version": "2026-11-12-296653c30a0b",
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
           "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
         },
@@ -745,7 +745,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-11-ba0e65311c5b",
+      "version": "2026-11-12-296653c30a0b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },

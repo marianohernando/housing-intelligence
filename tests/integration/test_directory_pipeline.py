@@ -80,6 +80,7 @@ def test_hospitals_take_the_directory_name_and_keep_the_register_as_source(
     manifest = json.loads((path if path.is_absolute() else REPO_ROOT / path).read_text())
     roles = sorted((i["dataset_id"], i["role"]) for i in manifest["inputs"])
     assert roles == [
+        (REGISTER, "corrections"),  # the versioned corrections file (D-218 §10)
         (REGISTER, "primary"),
         (PRIMARY_CARE, f"directory@{DIRECTORY_PARSER}"),
         (HOSPITALS, f"directory@{DIRECTORY_PARSER}"),

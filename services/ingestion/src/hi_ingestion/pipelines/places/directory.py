@@ -40,7 +40,16 @@ ADDRESS, STREET, MUNICIPALITY, POSTCODE, ONLY_IN_MUNICIPALITY = (
     "codigo_postal",
     "municipio",
 )
-SCORES = {ADDRESS: 1.0, STREET: 0.9, MUNICIPALITY: 0.85, POSTCODE: 0.7, ONLY_IN_MUNICIPALITY: 0.6}
+# A pair set by hand in the versioned corrections, with an official source (D-218 §10).
+CORRECTION = "correccion"
+SCORES = {
+    CORRECTION: 1.0,
+    ADDRESS: 1.0,
+    STREET: 0.9,
+    MUNICIPALITY: 0.85,
+    POSTCODE: 0.7,
+    ONLY_IN_MUNICIPALITY: 0.6,
+}
 RULES = (ADDRESS, STREET, MUNICIPALITY, POSTCODE, ONLY_IN_MUNICIPALITY)
 
 # Street types, fillers and number markers that registers and directories write differently.
@@ -257,9 +266,13 @@ def _claims(
 
 
 def resolve_places(
-    places: list[RegisterPlace], entries: list[Entry], kinds: dict[str, str]
+    places: list[RegisterPlace],
+    entries: list[Entry],
+    kinds: dict[str, str],
+    forced: dict[str, str] | None = None,
 ) -> Resolution:
-    """Match each place to at most one entry and each entry to at most one place."""
+    """Match each place to at most one entry and each entry to at most one place. `forced`
+    (place id -> entry id) are the corrections: they go first and their entries are taken."""
     pools = _Pools.of(entries)
     entry_by_id = {e.external_id: e for e in entries}
     pending = {p.external_id: p for p in places if p.subcategory in kinds and p.postal_code}
@@ -270,6 +283,11 @@ def resolve_places(
     }
     taken: set[str] = set()  # entries matched or contested: never offered to a weaker rule
     matches: list[Match] = []
+    for place_id, entry_id in (forced or {}).items():
+        if place_id in pending and entry_id in entry_by_id and entry_id not in taken:
+            matches.append(Match(place_id, entry_by_id[entry_id], CORRECTION))
+            taken.add(entry_id)
+            pending.pop(place_id)
     for method in RULES:
         for entry_id, claimants in _claims(pending, pools, taken, method, kinds).items():
             taken.add(entry_id)
@@ -408,7 +426,7 @@ def _report(
         "entries": len(directory.entries),
         "register_places": sum(p.subcategory in directory.kinds for p in places.values()),
         "matched": len(resolution.matches),
-        "by_method": {m: methods.count(m) for m in RULES},
+        "by_method": {m: methods.count(m) for m in (CORRECTION, *RULES)},
         "names_rejected": rejected,
         "unmatched_places": [
             {"external_id": pid, "subcategory": places[pid].subcategory, "reason": reason}
@@ -426,13 +444,20 @@ def attach_directories(
     rows: list[dict[str, object]],
     places: dict[str, RegisterPlace],
     directories: list[LoadedDirectory],
+    forced: dict[str, tuple[str, str]] | None = None,
 ) -> Attached:
-    """Name and size the rows (in place) with the entries they match; return the aliases."""
+    """Name and size the rows (in place) with the entries they match; return the aliases.
+    `forced`: place id -> (directory dataset id, entry id), from the corrections."""
     by_id = {str(r["external_id"]): r for r in rows}
     links: list[dict[str, object]] = []
     report: dict[str, dict[str, object]] = {}
     for directory in directories:
-        resolution = resolve_places(list(places.values()), directory.entries, directory.kinds)
+        mine = {
+            place_id: entry_id
+            for place_id, (dataset_id, entry_id) in (forced or {}).items()
+            if dataset_id == directory.dataset_id
+        }
+        resolution = resolve_places(list(places.values()), directory.entries, directory.kinds, mine)
         rejected: list[dict[str, str]] = []
         for match in resolution.matches:
             row = by_id[match.place_id]

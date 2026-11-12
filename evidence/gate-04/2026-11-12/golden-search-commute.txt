@@ -103,7 +103,7 @@ zonas 199 · cumplen 28 · desconocidas 6 · condición que más quita: near:col
   casi: Salamanca (falla budget)
 
 ## golden_senior: OK
-zonas 199 · cumplen 12 · desconocidas 28 · condición que más quita: budget
+zonas 199 · cumplen 13 · desconocidas 28 · condición que más quita: budget
   Reality Check: +5 min a pie hasta centro de salud → +6 zonas
   Reality Check: +100 €/mes → +3 zonas
   Reality Check: +5 min a pie hasta farmacia → +0 zonas
