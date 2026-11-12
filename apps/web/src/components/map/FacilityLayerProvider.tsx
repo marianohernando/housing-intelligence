@@ -48,8 +48,8 @@ async function fetchFacilities(adminUnitId: string): Promise<Groups> {
  * schools are shown first, the first thing families look for and what looked scarce before.
  */
 export default function FacilityLayerProvider({ children }: { children: ReactNode }) {
-  const { activeZone } = useMapZones();
-  const zoneId = activeZone?.properties.admin_unit_id ?? null;
+  const { routeZone } = useMapZones();
+  const zoneId = routeZone?.admin_unit_id ?? null;
   const [results, setResults] = useState<ReadonlyMap<string, Result>>(new Map());
   const [attempt, setAttempt] = useState(0);
   const [type, setTypeState] = useState<FacilityKey | null>("colegio");

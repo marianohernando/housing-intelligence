@@ -1,0 +1,444 @@
+{
+ "modo": "gap03",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "que_falta_el_alamo_desktop": {
+  "metodo_api": "gap-0.3",
+  "grupos_api": [
+   [
+    "escuela_infantil",
+    1
+   ],
+   [
+    "colegio",
+    1
+   ],
+   [
+    "centro_salud",
+    5
+   ],
+   [
+    "mayores",
+    2
+   ]
+  ],
+  "filas": [
+   {
+    "fila": "Farmacias",
+    "etiquetas": [
+     "JUSTO"
+    ],
+    "mide": "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la farmacia más cercana10 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la escuela infantil más cercana13 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 108 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el colegio más cercano10 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 106 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de salud más cercano13 min",
+     "A pie hasta el hospital general más cercanomás de 60 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles. Juntos tienen el 105 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": "El hospital: Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia."
+   },
+   {
+    "fila": "Centros de mayores",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de mayores más cercano10 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 2 vecinos más cercanos del mismo tipo: Navalcarnero y Arroyomolinos. Juntos tienen el 111 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
+    "a_pie": [],
+    "grupo": null,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "que_falta_chamartin_desktop": {
+  "metodo_api": "gap-0.3",
+  "grupos_api": [],
+  "filas": [
+   {
+    "fila": "Escuelas infantiles",
+    "etiquetas": [
+     "JUSTO"
+    ],
+    "mide": "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la escuela infantil más cercana5 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de mayores",
+    "etiquetas": [
+     "JUSTO"
+    ],
+    "mide": "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de mayores más cercano10 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el colegio más cercano6 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de salud más cercano9 min",
+     "A pie hasta el hospital general más cercano12 min"
+    ],
+    "grupo": null,
+    "hospital": "El hospital: Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia."
+   },
+   {
+    "fila": "Farmacias",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la farmacia más cercana3 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "etiquetas": [
+     "SIN DATOS"
+    ],
+    "mide": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
+    "a_pie": [],
+    "grupo": null,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "zona_el_alamo_desktop": {
+  "filas": [
+   "Farmacias A pie: 10 min JUSTO",
+   "Escuelas infantiles A pie: 13 min Junto con sus vecinos CUBIERTO",
+   "Colegios A pie: 10 min Junto con sus vecinos CUBIERTO"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "como_lo_calculamos_desktop": {
+  "a_pie": "Para cada servicio miramos cuánto tiene la gente de la zona a 15 minutos andando: un kilómetro por la calle, a paso tranquilo (4 km/h). Lo que hay a esa distancia se reparte entre todos los vecinos que también lo tienen cerca, vivan en la zona o en la de al lado, porque lo comparten. Así un colegio en el límite de dos distritos sirve a los dos, y un centro con mucha gente alrededor cuenta menos para cada uno.",
+  "vecinos": "Los pueblos pequeños, junto con sus vecinos. Si en un municipio vive tan poca gente que no se puede comparar solo, lo juntamos con sus vecinos más cercanos del mismo tipo, a 15 km como mucho en línea recta, hasta tener un grupo con el que sí se puede. Su estado es entonces el del grupo, y la fila lo dice: «comparado con municipios parecidos de la zona». Si ni así se llega, sale «Zona pequeña para comparar».",
+  "hospital": "El hospital. En centros de salud verás también los minutos a pie hasta el hospital general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Las camas de cada hospital tampoco las tenemos todavía: la Comunidad solo publica el total de la región.",
+  "contamos_centros": 0,
+  "limites": [
+   "Solo usamos la capacidad que se publica.",
+   "Medimos lo que tienes andando.",
+   "Alquiler:",
+   "No enseñamos pisos en venta ni en alquiler.",
+   "Todavía no sabemos qué echan en falta los vecinos.",
+   "Cada dato tiene su fecha."
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "zonas_colegio_desktop": {
+  "intro": "Con su estado en colegios frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS. Los pueblos muy pequeños se comparan junto con sus vecinos.",
+  "con_vecinos_web": 75,
+  "con_vecinos_api": 75,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "que_falta_el_alamo_mobile": {
+  "metodo_api": "gap-0.3",
+  "grupos_api": [
+   [
+    "escuela_infantil",
+    1
+   ],
+   [
+    "colegio",
+    1
+   ],
+   [
+    "centro_salud",
+    5
+   ],
+   [
+    "mayores",
+    2
+   ]
+  ],
+  "filas": [
+   {
+    "fila": "Farmacias",
+    "etiquetas": [
+     "JUSTO"
+    ],
+    "mide": "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la farmacia más cercana10 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la escuela infantil más cercana13 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 108 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el colegio más cercano10 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 106 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de salud más cercano13 min",
+     "A pie hasta el hospital general más cercanomás de 60 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles. Juntos tienen el 105 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": "El hospital: Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia."
+   },
+   {
+    "fila": "Centros de mayores",
+    "etiquetas": [
+     "CUBIERTO",
+     "Junto con sus vecinos"
+    ],
+    "mide": "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de mayores más cercano10 min"
+    ],
+    "grupo": "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 2 vecinos más cercanos del mismo tipo: Navalcarnero y Arroyomolinos. Juntos tienen el 111 % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.",
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
+    "a_pie": [],
+    "grupo": null,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "que_falta_chamartin_mobile": {
+  "metodo_api": "gap-0.3",
+  "grupos_api": [],
+  "filas": [
+   {
+    "fila": "Escuelas infantiles",
+    "etiquetas": [
+     "JUSTO"
+    ],
+    "mide": "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la escuela infantil más cercana5 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de mayores",
+    "etiquetas": [
+     "JUSTO"
+    ],
+    "mide": "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de mayores más cercano10 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta el colegio más cercano6 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+    "a_pie": [
+     "A pie hasta el centro de salud más cercano9 min",
+     "A pie hasta el hospital general más cercano12 min"
+    ],
+    "grupo": null,
+    "hospital": "El hospital: Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia."
+   },
+   {
+    "fila": "Farmacias",
+    "etiquetas": [
+     "CUBIERTO"
+    ],
+    "mide": "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
+    "a_pie": [
+     "A pie hasta la farmacia más cercana3 min"
+    ],
+    "grupo": null,
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "etiquetas": [
+     "SIN DATOS"
+    ],
+    "mide": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
+    "a_pie": [],
+    "grupo": null,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "zona_el_alamo_mobile": {
+  "filas": [
+   "Farmacias A pie: 10 min JUSTO",
+   "Escuelas infantiles A pie: 13 min Junto con sus vecinos CUBIERTO",
+   "Colegios A pie: 10 min Junto con sus vecinos CUBIERTO"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "como_lo_calculamos_mobile": {
+  "a_pie": "Para cada servicio miramos cuánto tiene la gente de la zona a 15 minutos andando: un kilómetro por la calle, a paso tranquilo (4 km/h). Lo que hay a esa distancia se reparte entre todos los vecinos que también lo tienen cerca, vivan en la zona o en la de al lado, porque lo comparten. Así un colegio en el límite de dos distritos sirve a los dos, y un centro con mucha gente alrededor cuenta menos para cada uno.",
+  "vecinos": "Los pueblos pequeños, junto con sus vecinos. Si en un municipio vive tan poca gente que no se puede comparar solo, lo juntamos con sus vecinos más cercanos del mismo tipo, a 15 km como mucho en línea recta, hasta tener un grupo con el que sí se puede. Su estado es entonces el del grupo, y la fila lo dice: «comparado con municipios parecidos de la zona». Si ni así se llega, sale «Zona pequeña para comparar».",
+  "hospital": "El hospital. En centros de salud verás también los minutos a pie hasta el hospital general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Las camas de cada hospital tampoco las tenemos todavía: la Comunidad solo publica el total de la región.",
+  "contamos_centros": 0,
+  "limites": [
+   "Solo usamos la capacidad que se publica.",
+   "Medimos lo que tienes andando.",
+   "Alquiler:",
+   "No enseñamos pisos en venta ni en alquiler.",
+   "Todavía no sabemos qué echan en falta los vecinos.",
+   "Cada dato tiene su fecha."
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "zonas_colegio_mobile": {
+  "intro": "Con su estado en colegios frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS. Los pueblos muy pequeños se comparan junto con sus vecinos.",
+  "con_vecinos_web": 75,
+  "con_vecinos_api": 75,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mapa_colegio": {
+  "leyenda": "¿Qué quieres ver? Encaje con tu búsqueda Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años, frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos. FALTA 0 zonas JUSTO 75 zonas CUBIERTO 59 zonas Zona pequeña para comparar 65 zonas SIN DATOS 0 zonas Ver estas zonas en una lista",
+  "aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. Cada zona tiene el color de su estado en colegios frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.",
+  "solapes": [],
+  "axe": [],
+  "consola": []
+ },
+ "fallos": []
+}

@@ -7,6 +7,21 @@ import { ApiError, createApi, type GapLevel } from "@/lib/api";
 
 type Result = { key: string; body: ZoneGapListResponse } | { key: string; error: ApiError };
 
+// One request per zone for the whole page: the zone screen asks for its name as soon as it opens,
+// and its card for the rows, with the same answer. A failed request is forgotten, so retry asks again.
+const requests = new Map<string, Promise<ZoneGapListResponse>>();
+
+export function fetchZoneGaps(level: GapLevel, code: string): Promise<ZoneGapListResponse> {
+  const key = `${level}/${code}`;
+  let request = requests.get(key);
+  if (!request) {
+    request = createApi().zoneGaps(level, code);
+    requests.set(key, request);
+    request.catch(() => requests.delete(key));
+  }
+  return request;
+}
+
 /** GET /api/v1/gaps/{level}/{code} for one zone; loading while the answer is for another zone. */
 export function useZoneGaps(level: GapLevel, code: string) {
   const key = `${level}/${code}`;
@@ -15,8 +30,7 @@ export function useZoneGaps(level: GapLevel, code: string) {
 
   useEffect(() => {
     let cancelled = false;
-    createApi()
-      .zoneGaps(level, code)
+    fetchZoneGaps(level, code)
       .then((body) => {
         if (!cancelled) setResult({ key, body });
       })

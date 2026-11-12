@@ -79,6 +79,24 @@ export function buildZoneCollection(
   return { type: "FeatureCollection", features: [...whole, ...districts] };
 }
 
+/**
+ * A zone of the map from a zone reference of the API (the `zone` of GET /gaps), so the zone screen
+ * can name it before the outlines arrive. Null when it is not a zone of the map's levels.
+ */
+export function zonePropertiesOf(ref: {
+  level: string;
+  code: string;
+  name: string;
+  admin_unit_id?: string | null;
+  municipio_name?: string | null;
+}): ZoneProperties | null {
+  const { level, code, name, admin_unit_id } = ref;
+  if ((level !== "municipio" && level !== "distrito") || !admin_unit_id) return null;
+  const municipioName = level === "municipio" ? name : ref.municipio_name;
+  if (!municipioName) return null;
+  return { admin_unit_id, level, code, name, municipio_name: municipioName, zone_key: `${level}/${code}` };
+}
+
 export function findZone(zones: ZoneCollection, level: string, code: string): ZoneFeature | undefined {
   return zones.features.find((f) => f.properties.level === level && f.properties.code === code);
 }

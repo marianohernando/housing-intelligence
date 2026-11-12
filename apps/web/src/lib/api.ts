@@ -43,6 +43,11 @@ function placesPath({ category, adminUnitId, subcategories = [] }: PlacesQuery, 
   return `/api/v1/places?${params.toString()}`;
 }
 
+/** URL of GET /api/v1/gaps/{level}/{code}, also preloaded by the zone screen's HTML. */
+export function zoneGapsUrl(level: GapLevel, code: string, base: string = API_URL): string {
+  return new URL(`/api/v1/gaps/${level}/${encodeURIComponent(code)}`, base).toString();
+}
+
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 
 /**
@@ -99,7 +104,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
   return {
     /** GET /api/v1/gaps/{level}/{code}: what a zone is missing against the region. */
     zoneGaps(level: GapLevel, code: string) {
-      return call<ZoneGapListResponse>(`/api/v1/gaps/${level}/${encodeURIComponent(code)}`);
+      return call<ZoneGapListResponse>(zoneGapsUrl(level, code, base));
     },
     /** GET /api/v1/gaps?level=&row=: one row of «Qué falta» for every zone of a level (the map). */
     gapRowMap(level: "municipio" | "distrito", row: GapRowKey) {

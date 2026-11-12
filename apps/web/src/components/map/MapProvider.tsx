@@ -3,8 +3,9 @@
 import { useParams } from "next/navigation";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+import { fetchZoneGaps } from "@/components/zone/useZoneGaps";
 import { ApiError, createApi } from "@/lib/api";
-import { type AdminFeature, findZone, type ZoneCollection, type ZoneFeature } from "@/lib/map/zones";
+import { type AdminFeature, findZone, type ZoneCollection, type ZoneFeature, type ZoneProperties, zonePropertiesOf } from "@/lib/map/zones";
 
 import { fetchZones, SIMPLIFY_M } from "./fetchZones";
 
@@ -17,6 +18,16 @@ interface MapContextValue {
   retry: () => void;
   /** Zone of the current route (/zona/[level]/[code]), once the outlines are loaded. */
   activeZone: ZoneFeature | null;
+  /**
+   * The same zone without its outline: from the outlines once loaded, before that from the zone's
+   * «Qué falta» answer, which is small. The zone screen and its requests start with it.
+   */
+  routeZone: ZoneProperties | null;
+  /**
+   * False while a zone screen opened from its link waits for the zone's name: the outlines and the
+   * map's script (the heaviest downloads) start right after it, so they do not slow it down.
+   */
+  mapMayLoad: boolean;
   /** Zone picked on the overview map (its card shows on the right). */
   selectedZone: ZoneFeature | null;
   select: (zoneKey: string | null) => void;
@@ -45,7 +56,39 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
 
+  const code = params.code ? decodeURIComponent(params.code) : undefined;
+  const level = params.level;
+  const routeKey = level && code ? `${level}/${code}` : null;
+  const activeZone = useMemo(
+    () => (zones && level && code ? (findZone(zones, level, code) ?? null) : null),
+    [zones, level, code],
+  );
+
+  // The route's zone by name, from its small «Qué falta» answer (preloaded with the zone's HTML);
+  // `settled` is the zone it was asked for, answered or failed
+  const [routeRef, setRouteRef] = useState<{ settled: string; zone: ZoneProperties | null } | null>(null);
   useEffect(() => {
+    if ((level !== "municipio" && level !== "distrito") || !code) return;
+    let cancelled = false;
+    const settled = `${level}/${code}`;
+    fetchZoneGaps(level, code)
+      .then((body) => {
+        if (!cancelled) setRouteRef({ settled, zone: zonePropertiesOf(body.data.zone) });
+      })
+      .catch(() => {
+        if (!cancelled) setRouteRef({ settled, zone: null });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [level, code]);
+  const routeAnswer = routeKey && routeRef?.settled === routeKey ? routeRef : null;
+  // Only the first load waits, and only for the zone it opened on; from then on, nothing does
+  const [mapMayLoad, setMapMayLoad] = useState(false);
+  if (!mapMayLoad && (!routeKey || routeAnswer !== null)) setMapMayLoad(true);
+
+  useEffect(() => {
+    if (!mapMayLoad) return;
     let cancelled = false;
     fetchZones()
       .then((collection) => {
@@ -57,14 +100,11 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, mapMayLoad]);
 
-  const code = params.code ? decodeURIComponent(params.code) : undefined;
-  const activeZone = useMemo(
-    () => (zones && params.level && code ? (findZone(zones, params.level, code) ?? null) : null),
-    [zones, params.level, code],
-  );
-  const districtId = activeZone?.properties.level === "distrito" ? activeZone.properties.admin_unit_id : null;
+  // Once the outlines are in, only a zone of the map counts (Madrid as a whole is its districts)
+  const routeZone = zones || error ? (activeZone?.properties ?? null) : (routeAnswer?.zone ?? null);
+  const districtId = routeZone?.level === "distrito" ? routeZone.admin_unit_id : null;
 
   // Entering another district (or coming back to one) starts from the whole district.
   const [focusDistrict, setFocusDistrict] = useState(districtId);
@@ -102,8 +142,8 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     const selectedZone = zones && selectedKey ? (findZone(zones, level, selectedCode) ?? null) : null;
     const barrios = districtId && barrioList?.parent === districtId ? barrioList.features : null;
     const barrio = focus ? (barrios?.find((b) => b.properties.admin_unit_id === focus) ?? null) : null;
-    return { zones, status, error, retry, activeZone, selectedZone, select: setSelectedKey, barrios, barrio, focusBarrio };
-  }, [zones, error, retry, activeZone, selectedKey, districtId, barrioList, focus, focusBarrio]);
+    return { zones, status, error, retry, activeZone, routeZone, mapMayLoad, selectedZone, select: setSelectedKey, barrios, barrio, focusBarrio };
+  }, [zones, error, retry, activeZone, routeZone, mapMayLoad, selectedKey, districtId, barrioList, focus, focusBarrio]);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }

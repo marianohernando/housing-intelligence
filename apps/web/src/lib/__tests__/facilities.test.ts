@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import type { PlaceCategory } from "../../contracts/places_response";
@@ -138,6 +140,21 @@ describe("groupFacilities", () => {
     expect(typed.hospital[0]).toMatchObject({ name: "Hospital Universitario la Paz", detail: "1.300 camas" });
     expect(typed.colegio.map((f) => f.label)).toEqual(["Colegio concertado", "Colegio privado"]);
     expect(typed.farmacia[0]).toMatchObject({ name: "Calle de Serrano 1" });
+  });
+
+  it("names hospitals and their beds from the Catálogo Nacional de Hospitales, «gestión privada» never «privado» (D-218)", () => {
+    // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
+    const url = new URL("../../../../../data/fixtures/contracts/places.hospitales_madrid.fixture.json", import.meta.url);
+    const { features } = JSON.parse(readFileSync(url, "utf8")) as { features: PlaceFeature[] };
+    const hospitals = groupFacilities(features).hospital;
+    const doce = hospitals.find((f) => f.name === "Hospital Universitario 12 de Octubre");
+    expect(doce).toMatchObject({ detail: "1.161 camas instaladas · gestión pública", source: "ms_catalogo_nacional_hospitales" });
+    const jd = hospitals.find((f) => f.name === "Hospital Universitario Fundacion Jimenez Diaz");
+    expect(jd?.detail).toBe("651 camas instaladas · gestión privada");
+    for (const f of hospitals) expect(f.detail ?? "").not.toMatch(/privado|(^|· )privada/);
+    // Beds only with their source, and never a made-up name: the generic «Hospital general (Madrid)» stays unnamed
+    expect(hospitals.some((f) => f.name === null)).toBe(true);
+    for (const f of hospitals) expect(f.source !== null).toBe(/camas/.test(f.detail ?? ""));
   });
 
   it("sorts named places by name, after them the ones without a name", () => {

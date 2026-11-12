@@ -28,10 +28,11 @@ const TEXT = {
 };
 
 export default function ZoneIntro() {
-  const { status, error, retry, activeZone } = useMapZones();
+  // The zone by name from its small «Qué falta» answer: the screen does not wait for the outlines
+  const { status, error, retry, routeZone } = useMapZones();
   const slow = useSlow(status === "loading");
 
-  if (!activeZone) {
+  if (!routeZone) {
     if (status === "loading") {
       return (
         <GlassCard className={styles.state} role="status">
@@ -58,7 +59,7 @@ export default function ZoneIntro() {
     );
   }
 
-  const { name, level, municipio_name } = activeZone.properties;
+  const { name, level, municipio_name } = routeZone;
   const parent = level === "distrito" ? municipio_name : TEXT.region;
   return (
     <div className={styles.layout}>
@@ -84,7 +85,7 @@ export default function ZoneIntro() {
       </div>
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
-        <ZoneCard zone={activeZone} mode="zone" />
+        <ZoneCard zone={routeZone} mode="zone" />
         <DataCounter />
         <ZoneListLink />
       </div>

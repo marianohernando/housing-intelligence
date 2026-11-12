@@ -4,6 +4,7 @@ import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, 
 import { useId } from "react";
 
 import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
+import { useDatasets } from "@/components/provenance/useDatasets";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import GlassCard from "@/components/ui/GlassCard";
@@ -25,7 +26,36 @@ const TEXT = {
   // The same schools as the row «Colegios» (gap_rows of places-1): public and concertado
   rowSchools: "Públicos y concertados: los mismos que cuenta «Qué falta».",
   noName: "La fuente oficial no publica el nombre de cada centro de este tipo.",
+  // Since HOSP-001 most hospitals and centros de salud have their name; a few still do not
+  someNoName: "La fuente oficial no publica el nombre de algunos de estos centros.",
+  // HOSP-001 (D-218): where the beds come from, named by /datasets (publisher, then the dataset)
+  source: "Camas: ",
 };
+
+/** «Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025», from the dataset list of the API. */
+function CapacitySource({ items }: { items: Facility[] }) {
+  const { data } = useDatasets();
+  const ids = [...new Set(items.map((f) => f.source).filter((id): id is string => id !== null))];
+  const sources = ids.flatMap((id) => data?.datasets.find((d) => d.dataset_id === id) ?? []);
+  if (sources.length === 0) return null;
+  return (
+    <p className={styles.muted}>
+      {TEXT.source}
+      {sources.map((d, i) => (
+        <span key={d.dataset_id}>
+          {i > 0 && "; "}
+          {d.url ? (
+            <a href={d.url} target="_blank" rel="noopener noreferrer">
+              {d.publisher}, {d.name.split(" (")[0]}
+            </a>
+          ) : (
+            `${d.publisher}, ${d.name.split(" (")[0]}`
+          )}
+        </span>
+      ))}
+    </p>
+  );
+}
 
 export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
   colegio: GraduationCap,
@@ -118,7 +148,10 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
               <>
                 <p className={styles.count}>{count}</p>
                 {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
-                {items.some((f) => f.name === null) && <p className={styles.muted}>{TEXT.noName}</p>}
+                {items.some((f) => f.name === null) && (
+                  <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
+                )}
+                <CapacitySource items={items} />
               </>
             ) : (
               <p className={styles.muted}>{TEXT.none}</p>
