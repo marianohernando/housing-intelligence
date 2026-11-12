@@ -21,9 +21,9 @@ const TEXT = {
  * has no figures by barrio, so it only navigates; zones without barrios do not show it.
  */
 export default function BarriosBar() {
-  const { activeZone, barrios, barrio, focusBarrio } = useMapZones();
+  const { routeZone, barrios, barrio, focusBarrio } = useMapZones();
   const titleId = useId();
-  if (!activeZone || !barrios?.length) return null;
+  if (!routeZone || !barrios?.length) return null;
   const focused = barrio?.properties.admin_unit_id ?? null;
   return (
     <GlassCard as="section" aria-labelledby={titleId} aria-describedby={`${titleId}-ayuda`} className={styles.bar}>
@@ -35,7 +35,7 @@ export default function BarriosBar() {
       </h2>
       <ul className={styles.list}>
         <li>
-          <Chip label={TEXT.all(activeZone.properties.name)} pressed={focused === null} onToggle={() => focusBarrio(null)} />
+          <Chip label={TEXT.all(routeZone.name)} pressed={focused === null} onToggle={() => focusBarrio(null)} />
         </li>
         {barrios.map(({ properties: { admin_unit_id: id, name, code } }) => (
           <li key={id}>

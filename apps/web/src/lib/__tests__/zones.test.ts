@@ -1,4 +1,8 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
+
+import type { ZoneGapList } from "@/contracts/zone_gap_list_response";
 
 import {
   type AdminFeature,
@@ -16,6 +20,7 @@ import {
   zoneDirectory,
   type ZoneFeature,
   zoneHref,
+  zonePropertiesOf,
 } from "../map/zones";
 
 function square(x: number, y: number, size = 1): GeoJSON.Polygon {
@@ -216,5 +221,31 @@ describe("whole cities (Madrid capital, shown by its districts)", () => {
 
   it("gives none when the districts are not loaded", () => {
     expect(wholeCities({ type: "FeatureCollection", features: [] })).toEqual([]);
+  });
+});
+
+describe("zonePropertiesOf (the zone screen before the outlines)", () => {
+  // Test fixtures published by line A with the contract (data/fixtures/contracts), not demo data.
+  const fixture = (name: string) =>
+    JSON.parse(readFileSync(new URL(`../../../../../data/fixtures/contracts/${name}.fixture.json`, import.meta.url), "utf8")) as ZoneGapList;
+
+  it("names a municipio and a Madrid district as the outlines would", () => {
+    expect(zonePropertiesOf(fixture("zone_gap_list.el_alamo").zone)).toEqual({
+      admin_unit_id: "ES.28.MUN.28004",
+      level: "municipio",
+      code: "28004",
+      name: "El Álamo",
+      municipio_name: "El Álamo",
+      zone_key: "municipio/28004",
+    });
+    const district = { level: "distrito", code: "2807905", name: "Chamartín", admin_unit_id: "ES.28.DIS.2807905", municipio_name: "Madrid" };
+    expect(zonePropertiesOf(district)).toMatchObject({ municipio_name: "Madrid", level: "distrito" });
+    expect(zonePropertiesOf(district)?.zone_key).toBe(`${district.level}/${district.code}`);
+  });
+
+  it("is null for levels the map has not, or without an id to ask for its places", () => {
+    expect(zonePropertiesOf({ level: "seccion_censal", code: "2807905001", name: "x", admin_unit_id: "ES.28.SEC.2807905001" })).toBeNull();
+    expect(zonePropertiesOf({ level: "municipio", code: "28004", name: "El Álamo" })).toBeNull();
+    expect(zonePropertiesOf({ level: "distrito", code: "2807905", name: "Chamartín", admin_unit_id: "ES.28.DIS.2807905" })).toBeNull();
   });
 });

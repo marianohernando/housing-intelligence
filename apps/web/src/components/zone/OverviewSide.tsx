@@ -22,7 +22,7 @@ export default function OverviewSide({ children, className }: { children: ReactN
 
   return (
     <div ref={ref} className={className}>
-      {selectedZone ? <ZoneCard zone={selectedZone} mode="overview" onClose={() => select(null)} /> : children}
+      {selectedZone ? <ZoneCard zone={selectedZone.properties} mode="overview" onClose={() => select(null)} /> : children}
     </div>
   );
 }

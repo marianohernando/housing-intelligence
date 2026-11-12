@@ -10,7 +10,7 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
 import { gapsHref, GROUP, inGroup, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
-import { type ZoneFeature, zoneHref } from "@/lib/map/zones";
+import { type ZoneProperties, zoneHref } from "@/lib/map/zones";
 
 import FitDetails from "./FitDetails";
 import GapBadge from "./GapBadge";
@@ -35,7 +35,7 @@ const TEXT = {
 };
 
 interface Props {
-  zone: ZoneFeature;
+  zone: ZoneProperties;
   /** Overview: from the map, with «Ver la zona». Zone: on its own screen, with the full list link. */
   mode: "overview" | "zone";
   onClose?: () => void;
@@ -43,7 +43,7 @@ interface Props {
 
 /** Zone card of the mockups: name, % of fit once there is a search, and «Qué falta aquí». */
 export default function ZoneCard({ zone, mode, onClose }: Props) {
-  const { level, code, name, municipio_name } = zone.properties;
+  const { level, code, name, municipio_name, zone_key } = zone;
   const titleId = useId();
   const { result, available, stale } = useScenario();
   const gaps = useZoneGaps(level, code);
@@ -75,7 +75,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
       </div>
       {result && stale && pct != null && <p className={styles.hint}>{TEXT.stale}</p>}
-      {result ? <FitDetails result={result} zoneKey={zone.properties.zone_key} /> : <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
+      {result ? <FitDetails result={result} zoneKey={zone_key} /> : <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
         <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>
@@ -123,7 +123,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
       </section>
 
       {mode === "overview" ? (
-        <Button href={zoneHref(zone.properties)} className={styles.action}>
+        <Button href={zoneHref(zone)} className={styles.action}>
           {TEXT.open}
           <ArrowRight size={20} aria-hidden="true" />
         </Button>

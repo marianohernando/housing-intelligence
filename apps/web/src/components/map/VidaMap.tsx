@@ -2,15 +2,9 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import {
-  type GeoJSONSource,
-  type LngLatBoundsLike,
-  Map as MapLibreMap,
-  type MapLayerMouseEvent,
-  Marker,
-  NavigationControl,
-  setWorkerUrl,
-} from "maplibre-gl";
+// MapLibre itself loads after the page (import() below): it is the largest script of the site, and
+// a zone screen or the search can be read before it arrives. Only its types are imported here.
+import type { GeoJSONSource, LngLatBoundsLike, Map as MapLibreMap, MapLayerMouseEvent } from "maplibre-gl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -109,7 +103,8 @@ const TEXT = {
 };
 const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];
 
-type Failure = "webgl" | "tiles";
+type Failure = "webgl" | "tiles" | "script";
+type MapLibre = typeof import("maplibre-gl");
 
 function matches(query: string): boolean {
   return window.matchMedia(query).matches;
@@ -359,7 +354,7 @@ function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: st
 }
 
 export default function VidaMap() {
-  const { zones, status, error, retry, activeZone, selectedZone, select, barrio } = useMapZones();
+  const { zones, status, error, retry, activeZone, selectedZone, select, barrio, mapMayLoad } = useMapZones();
   const { row, data: gapData } = useGapLayer();
   const { result } = useScenario();
   const facilities = useFacilityLayer();
@@ -386,12 +381,13 @@ export default function VidaMap() {
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const libRef = useRef<MapLibre | null>(null);
   const placesCache = useRef(new Map<string, Promise<PlaceFeature[]>>());
   const shownOverview = useRef(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
   // No WebGL, or neither the streets nor the zones: the map cannot be used, the list can
-  const strongFailure = failure === "webgl" || (failure === "tiles" && status === "error");
+  const strongFailure = failure === "webgl" || failure === "script" || (failure === "tiles" && status === "error");
   const [keyPoints, setKeyPoints] = useState<{ key: string; points: KeyPoint[] } | null>(null);
   // Zone (or barrio) whose flight has landed, and where its camera ends: key points are picked from that view.
   const [landed, setLanded] = useState<{ key: string; end: ZoneCamera } | null>(null);
@@ -413,50 +409,67 @@ export default function VidaMap() {
 
   useEffect(() => {
     const element = container.current;
-    if (!element) return;
-    let map: MapLibreMap;
-    try {
-      setWorkerUrl(WORKER_URL);
-      map = new MapLibreMap({
-        container: element,
-        style: baseStyle(readPalette(), mapTilesSource(MAP_TILES_URL, window.location.origin)),
-        center: [-3.7, 40.42],
-        zoom: 8.3,
-        maxPitch: 70,
-        // CRTM asks for «Powered by CRTM» with a link (data/catalog/sources/crtm_open_data.yaml)
-        attributionControl: { compact: matches(MOBILE), customAttribution: ATTRIBUTION },
-      });
-    } catch {
-      queueMicrotask(() => setFailure("webgl"));
-      return;
-    }
-    mapRef.current = map;
-    if (!matches(MOBILE)) map.addControl(new NavigationControl({ visualizePitch: true }), "bottom-right");
-    map.on("load", () => {
-      const palette = readPalette();
-      addPatterns(map, palette);
-      addZoneLayers(map, palette, (zone) => pickRef.current(zone));
-      addFacilityLayers(map, palette, {
-        onPlace: (id) => facilityRef.current.onPlace(id),
-        onNothing: () => facilityRef.current.onNothing(),
-      });
-      // Fewer layers on mobile: no blurred glow and no raised edge around the zone.
-      if (matches(MOBILE)) {
-        map.setLayoutProperty("zone-glow", "visibility", "none");
-        map.setLayoutProperty("zone-base", "visibility", "none");
+    if (!element || !mapMayLoad) return;
+    let map: MapLibreMap | null = null;
+    let cancelled = false;
+    // The map once MapLibre is in: base style, zone and facility layers, controls and errors
+    const createMap = (lib: MapLibre, element: HTMLDivElement): MapLibreMap | null => {
+      let instance: MapLibreMap;
+      try {
+        lib.setWorkerUrl(WORKER_URL);
+        instance = new lib.Map({
+          container: element,
+          style: baseStyle(readPalette(), mapTilesSource(MAP_TILES_URL, window.location.origin)),
+          center: [-3.7, 40.42],
+          zoom: 8.3,
+          maxPitch: 70,
+          // CRTM asks for «Powered by CRTM» with a link (data/catalog/sources/crtm_open_data.yaml)
+          attributionControl: { compact: matches(MOBILE), customAttribution: ATTRIBUTION },
+        });
+      } catch {
+        setFailure("webgl");
+        return null;
       }
-      setReady(true);
-    });
-    map.on("error", (event) => {
-      // The base map source failed (its TileJSON, or the network): not one tile outside a local extract
-      const { sourceId, tile } = event as { sourceId?: string; tile?: unknown };
-      if (sourceId === "openmaptiles" && !tile) setFailure("tiles");
-    });
+      const created = instance;
+      mapRef.current = created;
+      if (!matches(MOBILE)) created.addControl(new lib.NavigationControl({ visualizePitch: true }), "bottom-right");
+      created.on("load", () => {
+        const palette = readPalette();
+        addPatterns(created, palette);
+        addZoneLayers(created, palette, (zone) => pickRef.current(zone));
+        addFacilityLayers(created, palette, {
+          onPlace: (id) => facilityRef.current.onPlace(id),
+          onNothing: () => facilityRef.current.onNothing(),
+        });
+        // Fewer layers on mobile: no blurred glow and no raised edge around the zone.
+        if (matches(MOBILE)) {
+          created.setLayoutProperty("zone-glow", "visibility", "none");
+          created.setLayoutProperty("zone-base", "visibility", "none");
+        }
+        setReady(true);
+      });
+      created.on("error", (event) => {
+        // The base map source failed (its TileJSON, or the network): not one tile outside a local extract
+        const { sourceId, tile } = event as { sourceId?: string; tile?: unknown };
+        if (sourceId === "openmaptiles" && !tile) setFailure("tiles");
+      });
+      return created;
+    };
+    import("maplibre-gl")
+      .then((lib) => {
+        if (cancelled) return;
+        libRef.current = lib;
+        map = createMap(lib, element);
+      })
+      .catch(() => {
+        if (!cancelled) setFailure("script");
+      });
     return () => {
-      map.remove();
+      cancelled = true;
+      map?.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [mapMayLoad]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -523,9 +536,10 @@ export default function VidaMap() {
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    const lib = libRef.current;
+    if (!map || !lib) return;
     const markers = labels.map(({ point, element }) =>
-      new Marker({ element, anchor: "bottom" }).setLngLat([point.lon, point.lat]).addTo(map),
+      new lib.Marker({ element, anchor: "bottom" }).setLngLat([point.lon, point.lat]).addTo(map),
     );
     return () => markers.forEach((marker) => marker.remove());
   }, [labels]);
@@ -538,9 +552,10 @@ export default function VidaMap() {
   );
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !pickedLabel) return;
+    const lib = libRef.current;
+    if (!map || !lib || !pickedLabel) return;
     const { facility, element } = pickedLabel;
-    const marker = new Marker({ element, anchor: "bottom" }).setLngLat([facility.lon, facility.lat]).addTo(map);
+    const marker = new lib.Marker({ element, anchor: "bottom" }).setLngLat([facility.lon, facility.lat]).addTo(map);
     return () => {
       marker.remove();
     };
