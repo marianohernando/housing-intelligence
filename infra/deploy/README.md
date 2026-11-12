@@ -234,7 +234,7 @@ Genera las teselas del mapa base de la Comunidad de Madrid, y las fuentes de sus
    - **Fijado por sha256** en `demo_offline.sh` (`FONTS_URL`, `FONTS_SHA256`). Se guarda en `data/offline/tiles-src/ofm-fonts.tar.gz` y no se vuelve a bajar si la suma cuadra.
    - **Dónde queda:** en `data/offline/tiles/fonts/<fuente>/<rango>.pbf`. La web del paquete las sirve en `/tiles/fonts/{fontstack}/{range}.pbf`, con los 256 rangos de cada una.
    - **Una fuente que no esté en el paquete** (por ejemplo, `Noto Sans Medium`) da 404 y, sin red, error de consola. El estilo de la web solo puede usar esas tres.
-   - **Ojo:** la web aún no las pide. Mientras el estilo no tenga etiquetas, no se usan.
+   - **Cómo las usa la web:** `prepare` compila la web con `NEXT_PUBLIC_MAP_GLYPHS_URL=/tiles/fonts/{fontstack}/{range}.pbf`. La web la hace absoluta con su origen, igual que `NEXT_PUBLIC_MAP_TILES_URL`. Desde el PR #37 de B, las etiquetas del mapa usan `Noto Sans Regular` e `Italic`, cada una sola. Sin `data/offline/tiles/fonts`, `prepare` avisa y la web pide las fuentes a OpenFreeMap, que necesita red.
 5. **Resultado** en `data/offline/tiles/`, que git ignora, 191 MB:
    - 4.750 teselas de tilemaker (4.490 con contenido) y 3.365 vacías de relleno, 89 MB;
    - las fuentes, 105 MB.
