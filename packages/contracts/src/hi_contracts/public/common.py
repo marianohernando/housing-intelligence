@@ -39,6 +39,12 @@ class DatasetRef(BaseModel):
         description="Published in the Comunidad de Madrid open data portal (counts for DATAMAD)"
     )
     url: HttpUrl | None = Field(default=None, description="Portal page (CM portal when it exists)")
+    source_name: str | None = Field(
+        default=None,
+        description="Where it is published, to name where `url` opens (the CM portal, the "
+        "Ayuntamiento's, OpenStreetMap, the Ministerio de Sanidad, the Agencia Tributaria…)",
+        examples=["Portal de Datos Abiertos del Ayuntamiento de Madrid"],
+    )
     version: str | None = Field(default=None, description="dataset_version label used")
     license: str | None = None
     attribution_text: str | None = Field(

@@ -239,6 +239,22 @@
           "title": "Publisher",
           "type": "string"
         },
+        "source_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where it is published, to name where `url` opens (the CM portal, the Ayuntamiento's, OpenStreetMap, the Ministerio de Sanidad, the Agencia Tributaria…)",
+          "examples": [
+            "Portal de Datos Abiertos del Ayuntamiento de Madrid"
+          ],
+          "title": "Source Name"
+        },
         "url": {
           "anyOf": [
             {

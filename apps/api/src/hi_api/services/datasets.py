@@ -2,7 +2,12 @@
 
 from sqlalchemy import Connection, text
 
-from hi_api.services.attribution import GEOCODER_SOURCE, attribution_text
+from hi_api.services.attribution import (
+    CM_SOURCE,
+    GEOCODER_SOURCE,
+    SOURCE_NAME_SQL,
+    attribution_text,
+)
 from hi_contracts.public import DatasetList, DatasetRef
 
 METHODOLOGY_VERSION = "datasets-v1"
@@ -11,7 +16,7 @@ _DATASETS = text(
     """
     SELECT d.dataset_id, d.name, d.owner, coalesce(d.portal_url, d.landing_url) AS url,
            d.is_cm_open_data, s.license_name, v.version_label,
-           s.attribution_text,
+           s.attribution_text, {source_name},
            EXISTS (SELECT 1 FROM place_master p
                     WHERE p.official_dataset_id = d.dataset_id
                       AND p.attributes->'coordinates'->>'origin' = 'geocoded') AS geocoded,
@@ -22,7 +27,7 @@ _DATASETS = text(
       JOIN dataset_version v ON v.dataset_id = d.dataset_id AND v.is_last_valid
      WHERE (NOT :cm_only OR d.is_cm_open_data)
      ORDER BY d.is_cm_open_data DESC, d.dataset_id
-    """
+    """.replace("{source_name}", SOURCE_NAME_SQL)
 )
 
 
@@ -38,10 +43,11 @@ def dataset_list(conn: Connection, *, cm_only: bool) -> DatasetList:
                 "version": r["version_label"],
                 "license": r["license_name"],
                 "attribution_text": attribution_text(r),
+                "source_name": r["source_name"],
             }
         )
         for r in conn.execute(
-            _DATASETS, {"cm_only": cm_only, "geocoder": GEOCODER_SOURCE}
+            _DATASETS, {"cm_only": cm_only, "geocoder": GEOCODER_SOURCE, "cm_source": CM_SOURCE}
         ).mappings()
     ]
     return DatasetList(

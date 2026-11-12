@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.55 — Fuentes con su nombre y camas como contexto (2026-11-12)
+- D-231: `source_name` en cada `DatasetRef`; features de región `camas_instaladas_por_1000_hab` y `hospitales_total` para la nota del hospital.
+
 ## v0.5.54 — Zonas pequeñas (2026-11-12)
 - D-230: «No comparable» en la explicación de las zonas poco fiables sin grupo, suelo de 3,69 para el denominador de la vivienda (un recuento de hogares) y `NOT_APPLICABLE` con su motivo cuando no vive nadie de la edad de la fila.
 - `04_technical_architecture/31_public_api_routes.md`: cómo pintarlo.

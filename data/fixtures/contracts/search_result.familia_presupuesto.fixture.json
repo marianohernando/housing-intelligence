@@ -5708,6 +5708,7 @@
       "publisher": "Agencia Tributaria",
       "is_cm_open_data": false,
       "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+      "source_name": "Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
       "version": "2026-11-12-9a1c2ed26a07",
       "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
       "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
@@ -5718,6 +5719,7 @@
       "publisher": "Agencia Tributaria",
       "is_cm_open_data": false,
       "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+      "source_name": "Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
       "version": "2026-11-12-f7bc11db960a",
       "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
       "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
@@ -5728,6 +5730,7 @@
       "publisher": "Ayuntamiento de Madrid",
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/200076-0-padron",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
       "version": "2026-11-11-f052edc26159",
       "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
       "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
@@ -5738,6 +5741,7 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/1934259",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-7a83b45c1f51",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
@@ -5748,6 +5752,7 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-19b2da9645e3",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
@@ -5758,6 +5763,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-1332ab0048a6",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
@@ -5768,6 +5774,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-10-21-27483ff8498b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
@@ -5778,6 +5785,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-adef54b3fabc",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
@@ -5788,6 +5796,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-de61d48d7b4a",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
@@ -5798,6 +5807,7 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-de171e22295d",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
@@ -5808,6 +5818,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-10-20-37703ffcdfd0",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
@@ -5818,6 +5829,7 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-bdf7c1ff864a",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
@@ -5828,6 +5840,7 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/1004050",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-60a2ddbf2260",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
@@ -5838,6 +5851,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-41f7f9c15b61",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5848,6 +5862,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-1b018a22325c",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5858,6 +5873,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-8478ae5c9262",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5868,6 +5884,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-5bbf3c95047c",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5878,6 +5895,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-cccabfd6f025",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5888,6 +5906,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-599f9acfa270",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5898,6 +5917,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-cbd6ab397c04",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5908,6 +5928,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-c788fd9285b8",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5918,6 +5939,7 @@
       "publisher": "Consorcio Regional de Transportes de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-9e34e07839c7",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
@@ -5928,6 +5950,7 @@
       "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
       "is_cm_open_data": false,
       "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
       "version": "2026-11-12-199d4d500a72",
       "license": "Open Database License (ODbL) 1.0",
       "attribution_text": "© OpenStreetMap contributors, ODbL."
@@ -5938,6 +5961,7 @@
       "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
       "is_cm_open_data": false,
       "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
       "version": "2026-11-11-a3206c2d1d5f",
       "license": "Open Database License (ODbL) 1.0",
       "attribution_text": "© OpenStreetMap contributors, ODbL."

@@ -22,6 +22,11 @@ def portal_url(dataset: DatasetSpec) -> str | None:
     return str(url) if url else None
 
 
+def _source_name(catalog: Catalog, dataset: DatasetSpec, own: str) -> str:
+    """Where `url` opens (D-231): the CM portal for CM open data, whoever produces it."""
+    return catalog.sources[CM_SOURCE_ID].name if is_cm_open_data(dataset) else own
+
+
 def dataset_ref(catalog: Catalog, dataset_id: str, version: str | None = None) -> DatasetRef:
     dataset = catalog.datasets[dataset_id]
     source = catalog.sources[dataset.source_id]
@@ -34,5 +39,6 @@ def dataset_ref(catalog: Catalog, dataset_id: str, version: str | None = None) -
             "url": portal_url(dataset),
             "version": version,
             "license": source.license_name,
+            "source_name": _source_name(catalog, dataset, source.name),
         }
     )

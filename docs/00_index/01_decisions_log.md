@@ -1290,3 +1290,15 @@ Evidencia: `evidence/gate-04/2026-11-12/zonas-pequenas.md`.
    - **Lo que no cambia:** una zona con gente pero sin calles donde colocarla sigue `SOURCE_NO_COVERAGE`.
    - **Para B:** hoy la web dice para `NOT_APPLICABLE` «Este dato no tiene sentido en esta zona.». Debería enseñar la `explanation` de la fila o el mismo texto.
 4. **Datos:** se recalculan las 5 features 2SFCA. Los valores no cambian; solo el motivo de un nulo (La Acebeda, escuela infantil) y la versión del registro de centros en el linaje. Es compatible con el código desplegado: se puede sincronizar en cualquier orden.
+
+## D-231 — Fuentes: cada dataset dice dónde se publica, y las dos tablas de camas se sirven como contexto (2026-11-12)
+Fase de mejora, punto 10 (parte de A). Es aditivo y reversible.
+1. **`source_name` en cada `DatasetRef`** (`/datasets`, `/gaps`, `/search` y MCP): es el nombre del registro de fuentes.
+   - Ejemplos: «Portal de Datos Abiertos de la Comunidad de Madrid», «Portal de Datos Abiertos del Ayuntamiento de Madrid» (el padrón y el panel de distritos), «OpenStreetMap (extracto Geofabrik Madrid)», el Ministerio de Sanidad y la Agencia Tributaria.
+   - **Para B:** la web dice «en el portal de datos» en todos los enlaces (`openHint` en `provenance.ts`). Debería decir «en {source_name}».
+2. **Camas (los 2 datasets CM que contamos y no se veían).**
+   - **Qué eran:** «Dotación de camas por dependencia» y «Hospitales y datos asistenciales» solo publican el total de la región (D-217 §4). Estaban cargados como métricas, pero ninguna ruta los servía.
+   - **Qué se hace:** pasan a dos features de nivel región, `camas_instaladas_por_1000_hab` (3,0 en 2023) y `hospitales_total` (85), en `GET /api/v1/features/{id}/values?level=ccaa`.
+   - **Para B:** pintarlas en la nota del hospital («En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023)») con sus dos enlaces.
+   - Mientras la web no las enseñe, la cifra pública de datasets CM debería contar 2 menos (decisión de D y Mariano).
+   - No entran en «Qué falta» (D-218 §7).

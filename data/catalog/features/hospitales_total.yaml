@@ -1,0 +1,23 @@
+feature_id: hospitales_total
+version: 1
+human_name: Hospitales con régimen de internado (Comunidad de Madrid)
+domain: health
+type: raw
+unit: hospitales
+direction: neutral
+geo_level: ccaa
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_hospitales_datos_asistenciales, role: primary}
+formula:
+  method: metric_value
+  metric: hospitales_actividad
+  dims: {concepto: total_hospitales}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative]
+limitations:
+  - "Solo el total de la región (públicos y privados), de la estadística «Hospitales y datos asistenciales» de la CM. Es contexto de la nota del hospital, junto a las camas por 1.000 habitantes; no entra en «Qué falta» (D-218 §7)."

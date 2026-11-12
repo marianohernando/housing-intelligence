@@ -1,0 +1,23 @@
+feature_id: camas_instaladas_por_1000_hab
+version: 1
+human_name: Camas de hospital instaladas por cada 1.000 habitantes (Comunidad de Madrid)
+domain: health
+type: raw
+unit: camas por 1.000 habitantes
+direction: higher_is_better
+geo_level: ccaa
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_dotacion_camas, role: primary}
+formula:
+  method: metric_value
+  metric: camas_instaladas_por_1000
+  dims: {}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative]
+limitations:
+  - "Solo el total de la región: el portal de la CM no publica camas por hospital ni por zona (D-217 §4). Es contexto de la nota del hospital, no entra en «Qué falta» (D-218 §7)."

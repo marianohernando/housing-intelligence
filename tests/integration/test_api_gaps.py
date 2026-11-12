@@ -405,3 +405,32 @@ def test_small_zones_say_why_they_cannot_be_compared(client: TestClient) -> None
     without_streets = next(r for r in ajalvir.data.rows if r.row.value == "escuela_infantil")
     assert without_streets.indicator.null_reason is not None
     assert without_streets.indicator.null_reason.value == "SOURCE_NO_COVERAGE"  # people, no streets
+
+
+def test_every_dataset_says_where_it_is_published(client: TestClient) -> None:
+    """Fase de mejora 4: the padrón and OSM are not «en el portal de datos» of the CM; each
+    dataset names the portal or site where it opens (`source_name`)."""
+    every = DatasetListResponse.model_validate(client.get("/api/v1/datasets").json()).data
+    by_id = {d.dataset_id: d for d in every.datasets}
+    assert by_id["ayto_padron_municipal"].source_name == (
+        "Portal de Datos Abiertos del Ayuntamiento de Madrid"
+    )
+    assert (by_id["osm_red_peatonal"].source_name or "").startswith("OpenStreetMap")
+    cm = [d for d in every.datasets if d.is_cm_open_data]
+    assert {d.source_name for d in cm} == {"Portal de Datos Abiertos de la Comunidad de Madrid"}
+    madrid = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28079").json())
+    assert all(d.source_name for d in madrid.data.datasets)
+
+
+def test_the_bed_datasets_are_served_as_regional_context(client: TestClient) -> None:
+    """Fase de mejora 4: the two CM bed datasets are counted, so the API serves them: hospitals
+    and installed beds per 1.000 inhabitants of the region, for the hospital note."""
+    for feature_id, dataset_id in (
+        ("camas_instaladas_por_1000_hab", "cm_dotacion_camas"),
+        ("hospitales_total", "cm_hospitales_datos_asistenciales"),
+    ):
+        response = client.get(f"/api/v1/features/{feature_id}/values", params={"level": "ccaa"})
+        assert response.status_code == 200, feature_id
+        data = response.json()["data"]
+        assert data["values"][0]["value"] > 0
+        assert dataset_id in data["lineage"]["dataset_versions"]

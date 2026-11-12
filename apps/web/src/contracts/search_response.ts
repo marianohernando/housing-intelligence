@@ -50,6 +50,10 @@ export type License = string | null;
 export type Name1 = string;
 export type Publisher = string;
 /**
+ * Where it is published, to name where `url` opens (the CM portal, the Ayuntamiento's, OpenStreetMap, the Ministerio de Sanidad, the Agencia Tributaria…)
+ */
+export type SourceName = string | null;
+/**
  * Portal page (CM portal when it exists)
  */
 export type Url = string | null;
@@ -296,6 +300,7 @@ export interface DatasetRef {
   license?: License;
   name: Name1;
   publisher: Publisher;
+  source_name?: SourceName;
   url?: Url;
   version?: Version;
 }
