@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-12 (A v11: D-221 nombres con tilde con fuente oficial; D-222 zonas verdes, `fit-0.3`).
+Última actualización: 2026-11-12 (A v12: D-223 «sin escaleras», `fit-0.4`; D-224 seguridad evaluada, no entra en el buscador).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,7 +35,9 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
-| 12 nov | A | DATA-019 · Fase 1 («sin escaleras», revisado con `reviewer`) | verde | (este commit) | `evidence/gate-01/2026-11-12/estaciones-accesibles.md`, `evidence/gate-04/2026-11-12/sin-escaleras-gate.txt`, `golden-search-sin-escaleras.txt` | **D-223:** topología del CRTM (portal CM) con el grado de accesibilidad de cada estación; T = total, contrastado con «Metro Ligero 100 % accesible» (CM y CRTM). El `wheelchair_boarding` del GTFS del CRTM no sigue el estándar (2 = T en metro y Metro Ligero): se guarda en bruto y no se usa. Feature `min_a_pie_estacion_sin_escaleras`; la prioridad «sin escaleras» puntúa (`fit-0.4`). Golden 8/8 con `golden_reduced_mobility`. **Sync pendiente** (no rompe la API desplegada); B tiene que encender el chip. |
+| 12 nov | A | DATA-020 · Fase 0 (evaluación de la fuente) | verde (sin código) | (este commit) | `evidence/gate-01/2026-11-12/seguridad-evaluacion.md` | **D-224:** la tasa oficial de hechos conocidos (portal CM, Interior) no entra en el buscador. El denominador es el padrón y los hechos se cuentan donde se denuncian (Humanes 116,2 y Madrid 58,6 por 1.000, con una referencia de 47,9). Solo cubre 36 de 199 zonas y no tiene distritos de Madrid. «Seguridad» sigue «aún sin datos oficiales». La opción de contexto (sin puntuar) queda para Mariano. |
+| 12 nov | A | DATA-019 · Fase 1b (atribución del CRTM, petición de D) | verde | `555c2b4` | `tests/data/test_catalog.py` | `attribution_text` dice qué es en bruto (nombres de estaciones) y qué explotado (minutos). Sincronizado por `datamad-10` junto con DATA-019. B cambia `ATTRIBUTIONS_FALLBACK` y el fixture a la vez. |
+| 12 nov | A | DATA-019 · Fase 1 («sin escaleras», revisado con `reviewer`) | verde | `d6c6f0f` | `evidence/gate-01/2026-11-12/estaciones-accesibles.md`, `evidence/gate-04/2026-11-12/sin-escaleras-gate.txt`, `golden-search-sin-escaleras.txt` | **D-223:** topología del CRTM (portal CM) con el grado de accesibilidad de cada estación; T = total, contrastado con «Metro Ligero 100 % accesible» (CM y CRTM). El `wheelchair_boarding` del GTFS del CRTM no sigue el estándar (2 = T en metro y Metro Ligero): se guarda en bruto y no se usa. Feature `min_a_pie_estacion_sin_escaleras`; la prioridad «sin escaleras» puntúa (`fit-0.4`). Golden 8/8 con `golden_reduced_mobility`. Sincronizado y verificado por `datamad-10` (smoke 8/8). `fit-0.4` sale con el próximo PR de B, que además enciende el chip. |
 | 12 nov | A | DATA-018 · Fase 3b (revisión con `reviewer`) | verde | `8330771` | `evidence/gate-04/2026-11-12/zonas-verdes-revision-gate.txt`, `golden-search-parques.txt` | **Sin parque a un paseo pasa de UNKNOWN a 0 con confidence ≤ 0,5** (el texto sigue diciendo «el campo no cuenta»): con UNKNOWN un pueblo sin parque adelantaba a una ciudad con el parque a 25 min (test de propiedad de monotonía). Quality Gate `every_inclusion_published`; de un contorno inválido solo quedan sus polígonos; golden 7/7 con un escenario de zonas verdes; 78 de los 101 municipios lejos de un parque son rurales (Ley 45/2007). Mismos parques y features (sync opcional: solo cambia el parser de la versión); **C puede desplegar `fit-0.3` con este commit** |
 | 12 nov | A | DATA-018 · Fase 3 (la prioridad «Zonas verdes» puntúa, `fit-0.3`) | verde | `f7e29ab` | `evidence/gate-04/2026-11-12/golden-search-parques.txt`, `zonas-verdes-gate.txt` | `FitBinding` admite una prioridad: «Zonas verdes» lee `min_a_pie_parque` (1 hasta 10 min, 0 a 30; «Parque urbano a N min…»). **Sin parque a un paseo (> 30 min) es UNKNOWN**, con «Sin parque urbano de 1 ha o más a un paseo (el campo no cuenta)»: los pueblos no salen como si les faltara verde (D-222 §7). No entra en «Qué falta». Golden 6/6. **Necesita sync y redespliegue de la API** (B no tiene que cambiar nada: los hechos llegan como texto) |
 | 12 nov | A | DATA-018 · Fase 2 (a pie hasta el parque; Casa de Campo) | verde | `70b112c` | `evidence/gate-03/2026-11-12/parques-features.md`, `parques-features-gate.txt`, `evidence/gate-01/2026-11-12/parques.md` | Petición de `datamad-10`: comparada la lista oficial de parques del Ayuntamiento con OSM; **Casa de Campo y Quinta de Torre Arias** entran con fuente oficial (`data/catalog/corrections/parks.yaml`, D-222 §5). Features `min_a_pie_parque` y `pct_calle_parque_5min` hasta **cualquier punto del borde** del parque (Moratalaz 1,8 min, Chamberí 8,4). 101 municipios a más de 30 min: pueblos rodeados de campo (el indicador no mide ese verde). **Necesita sync** |
@@ -127,6 +129,29 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 12 nov (tarde-noche, línea A v12)
+- **Done (A v12):**
+  - **DATA-019 F1–F1b** (`d6c6f0f`, `555c2b4`, **D-223**): «sin escaleras» puntúa los minutos a pie hasta una estación de metro, Metro Ligero o Cercanías con accesibilidad total (grado T de la topología del CRTM, portal CM). Pipeline nuevo `station_topology`; los GTFS de tren enlazan sus estaciones por código oficial (los intercambiadores toman la menos accesible). El `wheelchair_boarding` del CRTM no sigue el estándar GTFS: se guarda en bruto y no se usa. `local_file` conserva la URL oficial de lo que ya está en Bronze. Golden 8/8 con `golden_reduced_mobility`. Revisado con `reviewer` (R-01 y R-02 resueltos). Sincronizado; la atribución del CRTM dice qué es en bruto y qué explotado.
+  - **DATA-020 F0** (**D-224**): la tasa oficial de hechos conocidos no entra en el buscador (denominador, cobertura y modelo). Sin código.
+- **Pendiente de otros:**
+  - B: encender el chip «sin escaleras». Cambiar a la vez `ATTRIBUTIONS_FALLBACK` y `data/fixtures/contracts/dataset_list.all.fixture.json`. Con su próximo PR se despliega `fit-0.4`.
+  - Mariano: si la tasa de seguridad va como dato de contexto sin puntuar (D-224 §3).
+- **Next (línea A), en orden:**
+  1. **MCP-001: 3–5 herramientas sobre los servicios de dominio**, sin SQL libre (CLAUDE.md §3). `services/mcp/` solo tiene un README. Propuesta:
+     - `buscar_zonas(ScenarioState)`, que llame a `hi_api.services.search.search`;
+     - `que_falta(level, code)`, sobre el servicio de `/gaps`;
+     - `explicar_zona(level, code)`, con indicadores y datasets citados (`dataset_refs`, atribuciones);
+     - opcional: `lugares_cerca(categoría, zona)`.
+     Con tests y documentación de uso.
+  2. DATA-021: precio de compra con fuente oficial, o SIN DATOS declarado.
+  3. Deuda:
+     - `drop_off_type` del GTFS (M-3 de CORE-009);
+     - Gate 3 completo tras las correcciones;
+     - script de comparación de parques sin versionar;
+     - los recuentos del GTFS de autobuses siguen con la versión de `gtfs-1.2.0` recargada desde Bronze (mismos lugares).
+- **Gate status:** `make lint typecheck test` en verde en `d6c6f0f`: 570 unit, 282 web y 102 integración. Tras el rebase, `555c2b4`: 571 unit y 286 web. Golden de búsqueda 8/8.
+- **Relevo:** A v12 cierra aquí por contexto, tras 2 cards. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (tarde, línea A v11)
 - **Done (A v11):**

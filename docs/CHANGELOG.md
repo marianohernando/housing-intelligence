@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.46 — Seguridad evaluada (2026-11-12)
+- D-224: la tasa oficial de hechos conocidos por municipio no entra en el buscador (denominador, cobertura y modelo); queda una opción de contexto para Mariano.
+
 ## v0.5.45 — «Sin escaleras» en el buscador (2026-11-12)
 - D-223: topología del CRTM (grado de accesibilidad de cada estación) como dato CM; el GTFS guarda `wheelchair_boarding` sin interpretarlo; feature `min_a_pie_estacion_sin_escaleras`; `POST /search` pasa a `fit-0.4` y la prioridad «sin escaleras» puntúa los minutos a pie hasta una estación con accesibilidad total.
 
