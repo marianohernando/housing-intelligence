@@ -234,6 +234,7 @@ Porque es corto, en español y fácil de recordar para cualquiera, también para
 **41. Sale 1.107 € al mes por 77 m² en Fuencarral-El Pardo, y Salamanca entra con 1.500 €. ¿Eso es real?**
 Era la media de todos los contratos declarados a Hacienda, también los antiguos, y se quedaba corta. Ahora multiplicamos el precio por metro de la Comunidad por cuánto más cuestan, en cada zona, los contratos firmados en 2024 según la Agencia Tributaria. Fuencarral-El Pardo pasa a unos **[1.270 €: cifra final pendiente de A]** y Salamanca a unos **[1.880 €: pendiente de A]**, así que con 1.500 € ya no entra.
 - Evidencia: D-214 (puntos 2 y 3) · D-228, opción A, que eligió Mariano el 13 nov · Agencia Tributaria, «Estadística de viviendas declaradas en IRPF», ejercicio 2024, «contratos de arrendamiento formalizados en el ejercicio» · `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/`. Factor por zona: entre 1,05 y 1,26 (Madrid, 1,20).
+- Si preguntan por comprar: el precio es el valor tasado medio de la vivienda libre de cada municipio, que publica la Comunidad. No es el de un anuncio, y en los distritos de Madrid sale sin datos (D-227). Con el caso de ejemplo y 300.000 € para comprar, encajan 15 de 199 zonas: la 1.ª es Leganés, con un 95 % y «Comprar ≈ 221.000 € por 77 m²» (producción, 13 nov, `fit-0.5`).
 - Si preguntan por el índice de la Comunidad (1934428): solo dice cuánto varían los precios, no cuánto más cuesta un contrato nuevo, y es un único valor para toda la región (D-228 §2).
 - Estado: decidido. En producción cuando A lo despliegue (**pendiente de A**). Hasta entonces, la demo enseña la cifra antigua con su aviso: «la media de los contratos vigentes; uno nuevo suele costar más».
 
@@ -282,4 +283,4 @@ En colegios y centros de salud no hay ninguna zona con una falta clara. Las zona
   - farmacias: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro;
   - mayores: 6 municipios, con Torrejón de Ardoz y Pozuelo de Alarcón a la cabeza;
   - vivienda: 25 municipios, con Fuenlabrada, Leganés y Alcorcón a la cabeza.
-- Estado: hecho en la API. En producción, con el próximo despliegue (**pendiente de A**).
+- Estado: en producción desde el 13 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). El ranking «dónde invertir primero» aún no se ve en la web (**pendiente de B**): si lo piden, se enseña la ruta.

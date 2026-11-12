@@ -123,7 +123,7 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 **Cifra de impacto** (D-229, `impact-0.1`; `GET /api/v1/gaps/impact`; `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov):
 - 25.551 niños de 0 a 4 años (el 9,8 % de la región) viven en los 3 distritos con FALTA de escuelas infantiles: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968. Es el padrón de cada distrito; no se estima nada.
 - En voz alta se redondea: «más de veinticinco mil».
-- **Pendiente de A:** sale en producción con el próximo despliegue. El 25 nov se vuelve a comprobar con la ruta.
+- **En producción desde el 13 nov** (`GET /api/v1/gaps/impact`, `impact-0.1`: 25.551 de 260.310 niños, en 3 zonas). El 25 nov se vuelve a comprobar con la ruta.
 
 **Al terminar:** volver a la slide 2 para el bloque 4.
 

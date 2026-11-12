@@ -43,9 +43,10 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slide 3, impacto | La cifra ya está puesta (25.551 niños de 0 a 4 años, D-229), pero sigue marcada hasta que salga en producción. Si cambia con los datos, se cambia la frase | A (despliegue) |
 | Slide 3, utilidad | Cita 1 de la prueba con personas: alguien que busca casa, de 12 palabras como mucho, con quién es y sin nombre | Mariano (prueba con personas) |
 | Slide 3, impacto | Cita 2: el técnico municipal, de 12 palabras como mucho, con su cargo y el tipo de municipio, sin nombre | Mariano (prueba con personas) |
+
+Cerrada el 13 nov: la cifra de impacto de la slide 3 (25.551 niños de 0 a 4 años, D-229), comprobada en producción con `GET /api/v1/gaps/impact`.
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
