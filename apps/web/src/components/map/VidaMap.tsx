@@ -76,7 +76,7 @@ import styles from "./VidaMap.module.css";
 
 const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy-maplibre-worker.mjs
 /** Base map tiles: OpenFreeMap unless the build sets NEXT_PUBLIC_MAP_TILES_URL (offline package). */
-const MAP_TILES = mapTilesSource(process.env.NEXT_PUBLIC_MAP_TILES_URL);
+const MAP_TILES_URL = process.env.NEXT_PUBLIC_MAP_TILES_URL;
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const ATTRIBUTION =
@@ -418,7 +418,7 @@ export default function VidaMap() {
       setWorkerUrl(WORKER_URL);
       map = new MapLibreMap({
         container: element,
-        style: baseStyle(readPalette(), MAP_TILES),
+        style: baseStyle(readPalette(), mapTilesSource(MAP_TILES_URL, window.location.origin)),
         center: [-3.7, 40.42],
         zoom: 8.3,
         maxPitch: 70,
@@ -447,7 +447,9 @@ export default function VidaMap() {
       setReady(true);
     });
     map.on("error", (event) => {
-      if ((event as { sourceId?: string }).sourceId === "openmaptiles") setFailure("tiles");
+      // The base map source failed (its TileJSON, or the network): not one tile outside a local extract
+      const { sourceId, tile } = event as { sourceId?: string; tile?: unknown };
+      if (sourceId === "openmaptiles" && !tile) setFailure("tiles");
     });
     return () => {
       map.remove();
@@ -564,7 +566,7 @@ export default function VidaMap() {
         </p>
       )}
       {/* The outlines of the zones; a zone screen tells its own loading and errors (ZoneIntro). */}
-      {!failure && overview && status === "loading" && (
+      {!strongFailure && overview && status === "loading" && (
         <p role="status" className={`glass ${styles.failure}`}>
           {TEXT.loading}
           {slow && ` ${SLOW_TEXT}`}

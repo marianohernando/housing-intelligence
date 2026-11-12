@@ -84,6 +84,8 @@ describe("map style", () => {
       tiles: ["http://localhost:8080/madrid/{z}/{x}/{y}.pbf"],
       maxzoom: 14,
     });
+    // A path on the same site, made absolute with the page's origin (the map's worker needs it)
+    expect(mapTilesSource("/tiles/madrid.json", "http://localhost:3012")).toEqual({ type: "vector", url: "http://localhost:3012/tiles/madrid.json" });
     // Anything else is not a tile URL: the default stays
     expect(mapTilesSource("ftp://tiles/madrid")).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
     const local = baseStyle(palette, mapTilesSource("http://localhost:8080/madrid.json"));

@@ -54,8 +54,9 @@ export default function FacilityLayerProvider({ children }: { children: ReactNod
   const [attempt, setAttempt] = useState(0);
   const [type, setTypeState] = useState<FacilityKey | null>("colegio");
   const [picked, setPicked] = useState<{ zoneId: string; facility: Facility } | null>(null);
-  // A zone with an answer is not asked again (a failure waits for «Reintentar»)
-  const answered = zoneId !== null && results.has(zoneId);
+  // A zone already loaded is not asked again; a failure is asked again on «Reintentar» or on coming back
+  const cached = zoneId ? results.get(zoneId) : undefined;
+  const answered = cached !== undefined && "groups" in cached;
 
   useEffect(() => {
     if (!zoneId || answered) return;

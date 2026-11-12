@@ -18,9 +18,11 @@ const OPENMAPTILES_MAXZOOM = 14;
 /**
  * Where the base map comes from (OpenMapTiles schema): NEXT_PUBLIC_MAP_TILES_URL at build time,
  * as a TileJSON URL or a {z}/{x}/{y} template, local or not (the offline package serves an extract
- * of Madrid, e.g. with `pmtiles serve`). Unset or not http(s): OpenFreeMap, as always.
+ * of Madrid, e.g. with `pmtiles serve`); a path («/tiles/…») is made absolute with `origin`.
+ * Unset or not http(s): OpenFreeMap, as always.
  */
-export function mapTilesSource(url: string | undefined): VectorSourceSpecification {
+export function mapTilesSource(setting: string | undefined, origin?: string): VectorSourceSpecification {
+  const url = setting?.startsWith("/") && origin ? `${origin}${setting}` : setting;
   if (!url || !/^https?:\/\//.test(url)) return { type: "vector", url: OPENFREEMAP_TILEJSON };
   if (url.includes("{z}")) return { type: "vector", tiles: [url], maxzoom: OPENMAPTILES_MAXZOOM };
   return { type: "vector", url };
