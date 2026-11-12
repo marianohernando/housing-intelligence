@@ -1,0 +1,159 @@
+{
+ "fase": "PUB-001 F4 (F9): buscador y «¿Y si cambias algo?» contra POST /api/v1/search",
+ "bandera": "on",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (rama claude/sprint-1-public, datos reales)",
+ "fallos": [],
+ "escritorio": {
+  "axe_antes": [],
+  "api": {
+   "methodology_version": "fit-0.4",
+   "zones_evaluated": 199,
+   "zones_passing": 33,
+   "zones_unknown": 15,
+   "primera": [
+    "Fuencarral-El Pardo",
+    100
+   ],
+   "primera_relajacion": [
+    "+5 min a pie hasta colegio con primaria",
+    17,
+    50
+   ]
+  },
+  "peticion": {
+   "schema_version": 2,
+   "budget": {
+    "kind": "rent",
+    "amount_eur": 1500
+   },
+   "min_floor_area_m2": null,
+   "household": {
+    "adults": 2,
+    "minors": 2,
+    "minor_ages": [
+     4,
+     8
+    ],
+    "seniors_in_care": 0
+   },
+   "anchors": [
+    {
+     "kind": "work",
+     "label": "Paseo de la Castellana (Azca)",
+     "lon": -3.693,
+     "lat": 40.45,
+     "days_per_week": 4,
+     "max_minutes": null
+    }
+   ],
+   "nearby": [
+    {
+     "need": "colegio",
+     "max_walk_minutes": 10,
+     "required": true
+    }
+   ],
+   "priorities": [
+    "colegios",
+    "transporte",
+    "salud"
+   ]
+  },
+  "max_minutes_enviados": [
+   null
+  ],
+  "resumen": "Con tu búsqueda tal cual salen 33 zonas.",
+  "ranking": [
+   "1 Fuencarral-El Pardo Distrito de Madrid 100 % de encaje",
+   "2 Ciudad Lineal Distrito de Madrid 99 % de encaje",
+   "3 Hortaleza Distrito de Madrid 99 % de encaje",
+   "4 Latina Distrito de Madrid 98 % de encaje",
+   "5 Moratalaz Distrito de Madrid 98 % de encaje",
+   "6 Tetuán Distrito de Madrid 98 % de encaje",
+   "7 Puente de Vallecas Distrito de Madrid 98 % de encaje",
+   "8 San Blas-Canillejas Distrito de Madrid 98 % de encaje",
+   "9 Carabanchel Distrito de Madrid 97 % de encaje",
+   "10 Usera Distrito de Madrid 97 % de encaje"
+  ],
+  "y_si_cambias_plegado": "¿Y si cambias algo? +5 min a pie hasta colegio con primaria saldrían 50 zonas, 17 más Probar así Ver todas las opciones",
+  "leyenda": "¿Qué quieres ver? Encaje con tu búsqueda Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Encaje con tu búsqueda Encaja menos Encaja más Cumple todo 33 zonas No cumple todo 151 zonas Sin datos 15 zonas",
+  "axe_resultados": [],
+  "tarjeta": "DISTRITO DE MADRID Fuencarral-El Pardo 100 % de encaje Esta zona encaja en un 100 % con tu búsqueda La 1.ª que más encaja Lo que tienes aquí Colegio con primaria a 9 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Parada de transporte público a 3 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a 15 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable 29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler medio ≈ 1.107 €/mes por 77 m² (14,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) · Dato aproximado Fiabilidad del dato: Dato aproximado Qué falta aquí Escuelas infantiles A pie: 8 min JUSTO Colegios A pie: 9 min JUSTO Centros de salud A pie: 15 min JUSTO Ver todo lo que falta Ver la zona",
+  "axe_tarjeta": [],
+  "y_si_cambias_desplegado": "¿Y si cambias algo? Con tu búsqueda tal cual salen 33 zonas. Mira cuántas salen si cambias una sola cosa: +5 min a pie hasta colegio con primaria saldrían 50 zonas, 17 más Probar así Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
+  "aplicada": {
+   "zonas_api": 50,
+   "aviso": "Ahora ves las zonas con: +5 min a pie hasta colegio con primaria",
+   "minutos_en_tu_busqueda": "15",
+   "foco": "button: +5 min a pie hasta colegio con primariasaldrían 55 zonas, 5 másProbar así",
+   "relaxed_enviado": [
+    {
+     "need": "colegio",
+     "max_walk_minutes": 15,
+     "required": true
+    }
+   ]
+  },
+  "deshecha": {
+   "minutos": "10",
+   "foco": "h2: Zonas que encajan"
+  },
+  "trabajo": {
+   "foco_tras_quitar": "input: ",
+   "opciones": [
+    "Nuevos Ministerios (metro) Metro",
+    "Madrid-Nuevos Ministerios (Cercanías) Cercanías"
+   ],
+   "activa": "_R_2fpavd5vivb_-option-0",
+   "elegido": "Quitar este lugar: Nuevos Ministerios (metro)",
+   "foco_tras_elegir": "button: Quitar este lugar: Nuevos Ministerios (metro)",
+   "ancla_enviada": [
+    {
+     "kind": "work",
+     "label": "Nuevos Ministerios (metro)",
+     "lat": 40.44662,
+     "lon": -3.69246,
+     "max_minutes": null
+    }
+   ],
+   "api": {
+    "zones_passing": 33,
+    "primera": [
+     "Ciudad Lineal",
+     100
+    ]
+   },
+   "tarjeta": "DISTRITO DE MADRID Ciudad Lineal 100 % de encaje Esta zona encaja en un 100 % con tu búsqueda La 1.ª que más encaja Lo que tienes aquí Colegio con primaria a 5 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Parada de transporte público a 2 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a 10 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable 23 min en transporte público hasta Nuevos Ministerios (metro), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más) · Dato fiable Fiabilidad del dato: Dato fiable Qué falta aquí Escuelas infantiles A pie: 5 min JUSTO Centros de salud A pie: 10 min JUSTO Colegios A pie: 5 min CUBIERTO Ver todo lo que falta Ver la zona"
+  },
+  "compra": {
+   "nota": "Sin datos Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.",
+   "api": {
+    "zones_passing": 0,
+    "zones_unknown": 48
+   },
+   "resumen": "Con tu búsqueda tal cual no sale ninguna zona.",
+   "resultados": "Zonas que encajan Con tu búsqueda tal cual no sale ninguna zona. De 199 zonas de la Comunidad de Madrid. Ninguna zona cumple todo lo que pides. Mira abajo qué pasa si cambias algo. En 48 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas.",
+   "y_si_cambias": "¿Y si cambias algo? Con tu búsqueda tal cual no sale ninguna zona. Mira cuántas salen si cambias una sola cosa: Sin límite de precio de compra saldrían 48 zonas, 48 más Probar así En 48 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
+   "axe": []
+  },
+  "peticiones_search": 5,
+  "todas_sin_max_minutes": true,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mockup": "sin comparación: MOCKUP_DIR not set",
+ "movil": {
+  "api": {
+   "zones_passing": 33,
+   "primera": [
+    "Fuencarral-El Pardo",
+    100
+   ]
+  },
+  "resultados_a_la_vista": true,
+  "axe_resultados": [],
+  "axe_tarjeta": [],
+  "overflow_px": 0,
+  "consola": []
+ }
+}

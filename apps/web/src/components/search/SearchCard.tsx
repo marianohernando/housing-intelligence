@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, User, Users } from "lucide-react";
+import { Accessibility, Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, User, Users } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { BudgetKind, PriorityKey } from "@/contracts/scenario_state";
@@ -61,13 +61,18 @@ const TEXT = {
   searchSoon: "Muy pronto podrás ver qué zonas encajan contigo. Mientras, toca una zona del mapa para ver qué le falta.",
 };
 
-/** Priorities with data today. Zonas verdes, seguridad and sin escaleras wait for line A (DATA-018/019/020). */
+/**
+ * Priorities with data today. Sin escaleras (fit-0.4, DATA-019, D-223) is a preference the person
+ * marks, never a label about them (D-204, CLAUDE.md §13): it scores the walk to a fully accessible
+ * metro or train station, and its help says no more than that. Zonas verdes and seguridad wait.
+ */
 const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: string }[] = [
   { key: "transporte", label: "Transporte", icon: Bus, help: "Paradas cerca de casa y con autobuses o trenes a menudo." },
   { key: "salud", label: "Salud", icon: Cross, help: "Centro de salud cerca de casa." },
   { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios con primaria, públicos o concertados, cerca de casa." },
+  { key: "sin_escaleras", label: "Sin escaleras", icon: Accessibility, help: "Estación de metro o tren accesible, sin escaleras, cerca de casa." },
 ];
-const UPCOMING = "Muy pronto: zonas verdes, seguridad y sin escaleras.";
+const UPCOMING = "Muy pronto: zonas verdes y seguridad.";
 
 function peopleText(n: number): string {
   return n === 1 ? "1 persona en casa" : `${n} personas en casa`;
