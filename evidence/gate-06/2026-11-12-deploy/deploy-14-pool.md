@@ -26,3 +26,20 @@
 ## Options sent to the orchestration
 - **(a)** Mariano moves `DATABASE_URL` to port 6543 (transaction mode), then a redeploy with smoke and a watch.
 - **(b2)** Meanwhile, `DB_POOL_SIZE=1` and `DB_MAX_OVERFLOW=0` (1 connection per instance) and a redeploy.
+
+## (b2) applied: 1 connection per instance · green
+- **Change:** `DB_POOL_SIZE=1` and `DB_MAX_OVERFLOW=0` (Config, overwritten with `--force`); `DB_PREPARED_STATEMENTS=false` unchanged.
+- **Deploy:** the same code (`e2e8336` = `0e50ead` + guide), from a detached checkout so B's web stays out. `dpl_FrpvQbWWLvhXRm8XdzaCsfWYa2oq`, 130 s, verified on round 2 (round 1 had 2 of 8 requests from `dpl_CB8U…`), smoke 8/8. Output: [deploy-14/deploy-b2-output.txt](deploy-14/deploy-b2-output.txt).
+- **Watch:** 10:01–10:06 UTC, 8 zone view loads, 96 API requests. Output: [deploy-14/watch-b2-zone-views.txt](deploy-14/watch-b2-zone-views.txt).
+
+| Measure | Value |
+|---|---|
+| Responses 5xx | 0 |
+| Loads in the error state | 0 |
+| `EMAXCONNSESSION` in the deployment's logs | 0 |
+| «prepared statement» errors | 0 |
+| Tracebacks | 0 |
+| Responses 2xx | 127 |
+| Instances | 10, one connection each: 10 of 15 |
+
+- **Still tight:** with more than one person, or more than about 15 instances, it would fail again. The real fix is port 6543 (D-219 §5).
