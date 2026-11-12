@@ -21,7 +21,7 @@ const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", 
 const UPDATED = /actualizado a (\d{1,2}) de ([a-z]+) de (\d{4})/;
 
 /** «Catálogo Nacional de Hospitales 2025 (directorio…, actualizado a 31 de diciembre de 2024)» -> «… 2025 (actualizado a 31/12/2024)». */
-export function citedName(name: string): string {
+function citedName(name: string): string {
   const title = name.split(" (")[0] ?? name;
   const [, day = "", monthName = "", year = ""] = UPDATED.exec(name) ?? [];
   const month = MONTHS.indexOf(monthName) + 1;
@@ -50,32 +50,53 @@ function ministryCitation(refs: readonly DatasetRef[] | null): string | null {
   return `${MINISTRY} — ${list}`;
 }
 
-/** Where the method page lists every source with its date: the fallback when /datasets has not answered. */
-export const SOURCES_HREF = "/como-lo-calculamos#datos";
+/** CartoCiudad, as the IGN asks to be cited (CC BY 4.0 scne.es), in the footer and on the map. */
+export const CARTOCIUDAD_ATTRIBUTION = "© Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es";
 
-/** pie.cartociudad, as the IGN asks to be cited (CC BY 4.0 scne.es). */
-export const CARTOCIUDAD_ATTRIBUTION = "© Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es";
+const MINISTRY_URL = "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm";
+
+/** «31/12/2024» from «… actualizado a 31 de diciembre de 2024)», or null. */
+function updatedDate(name: string): string | null {
+  const [, day = "", monthName = "", year = ""] = UPDATED.exec(name) ?? [];
+  const month = MONTHS.indexOf(monthName) + 1;
+  return day && month > 0 ? `${day.padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}` : null;
+}
+
+/** «31 de diciembre de 2024» from «… actualizado a 31 de diciembre de 2024)», or null. */
+export function updatedInWords(name: string): string | null {
+  return UPDATED.exec(name)?.slice(1, 4).join(" de ") ?? null;
+}
+
+/** mapa.atribucion of line D while /datasets has not answered. */
+const MINISTRY_ON_MAP = "Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025)";
+
+/** «Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025)», the dates from /datasets. */
+function ministryOnMap(refs: readonly DatasetRef[] | null): string {
+  const dates = ministryRefs(refs).flatMap((ref) => updatedDate(ref.name) ?? []);
+  if (dates.length === 0) return MINISTRY_ON_MAP;
+  const list = dates.length === 1 ? dates[0] : `${dates.slice(0, -1).join(", ")} y ${dates.at(-1)}`;
+  return `${MINISTRY} (${dates.length === 1 ? "catálogo" : "catálogos"} a ${list})`;
+}
 
 const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-function link(href: string, text: string, external = true): string {
-  const target = external ? ' target="_blank" rel="noopener noreferrer"' : "";
-  return `<a href="${escapeHtml(href)}"${target}>${escapeHtml(text)}</a>`;
+function link(href: string, text: string): string {
+  return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(text)}</a>`;
 }
 
 /**
- * The map's attribution (HTML for MapLibre): the zone screens have no footer, so the sources whose
- * licences ask to be cited where their data shows go here. The Ministry with its catalogues and
- * dates from /datasets, as the footer; until it answers, a link to where they are listed.
+ * mapa.atribucion (HTML for MapLibre): the screens with a map have no footer, so the sources whose
+ * licences ask to be cited where their data shows go here, the Ministry with the update dates its
+ * legal notice asks for (from /datasets; line D's text until it answers).
  */
 export function mapAttribution(refs: readonly DatasetRef[] | null): string {
-  const citation = ministryCitation(refs);
-  const ministryUrl = ministryRefs(refs).find((ref) => ref.url)?.url;
+  const ministryUrl = ministryRefs(refs).find((ref) => ref.url)?.url ?? MINISTRY_URL;
   return [
     "Comunidad de Madrid",
+    link("https://datos.madrid.es", "Ayuntamiento de Madrid"),
     // CRTM asks for «Powered by CRTM» with a link (data/catalog/sources/crtm_open_data.yaml)
     link("https://www.crtm.es", "Powered by CRTM"),
-    citation && ministryUrl ? link(ministryUrl, citation) : link(SOURCES_HREF, `${MINISTRY} (fuentes y fechas en «Cómo lo calculamos»)`, false),
+    link(ministryUrl, ministryOnMap(refs)),
     link("https://www.cartociudad.es", CARTOCIUDAD_ATTRIBUTION),
   ].join(" · ");
 }

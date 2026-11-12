@@ -34,22 +34,23 @@ const STATUS_ROWS: [string, string][] = [
   ["no tenemos el dato", "SIN DATOS"],
 ];
 
-// What each row counts as capacity and for whom (D-217 §3): only what is published, never estimated per centre
+// What each row counts as capacity and for whom (D-217 §3), as a list in every size (metodologia §1.4):
+// with three columns, a phone fitted two or three words per line (review of PR #17)
 const ROW_CAPACITY: [string, string, string][] = [
-  ["Escuelas infantiles", "Cada escuela, pública o privada, cuenta como una: nadie publica sus plazas", "Niños de 0 a 4 años"],
+  ["Escuelas infantiles", "niños de 0 a 4 años", "cada escuela, pública o privada, cuenta como una, porque nadie publica sus plazas."],
   [
     "Colegios",
-    "Aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios",
-    "Niños de 5 a 14 años",
+    "niños de 5 a 14 años",
+    "aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios.",
   ],
   [
     "Centros de salud",
-    "Cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad",
-    "Todos los vecinos",
+    "todos los vecinos",
+    "cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad.",
   ],
-  ["Mayores", "Plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte", "Personas de 65 años o más"],
-  ["Farmacias", "Cada farmacia cuenta como una", "Todos los vecinos"],
-  ["Vivienda", "No va a pie: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", "Hogares de 4 o más personas"],
+  ["Mayores", "personas de 65 años o más", "plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte."],
+  ["Farmacias", "todos los vecinos", "cada farmacia cuenta como una."],
+  ["Vivienda", "hogares de 4 o más personas", "no va a pie. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares."],
 ];
 
 function GapMethod() {
@@ -72,24 +73,13 @@ function GapMethod() {
       <p className={styles.para}>
         <strong>Qué cuenta en cada servicio.</strong> Solo lo que se publica; nunca nos lo inventamos centro a centro.
       </p>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th scope="col">Servicio</th>
-            <th scope="col">Qué cuenta</th>
-            <th scope="col">Para quién</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ROW_CAPACITY.map(([row, what, who]) => (
-            <tr key={row}>
-              <th scope="row">{row}</th>
-              <td>{what}</td>
-              <td>{who}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul className={styles.text}>
+        {ROW_CAPACITY.map(([row, who, what]) => (
+          <li key={row}>
+            <strong>{row},</strong> para {who}: {what}
+          </li>
+        ))}
+      </ul>
       <p className={styles.para}>
         <strong>Con qué comparamos.</strong> Hacemos la misma cuenta en <strong>los demás municipios de su mismo tipo</strong>{" "}
         en la Comunidad de Madrid: los rurales con los rurales y los urbanos con los urbanos. Rural es lo que dice la ley de

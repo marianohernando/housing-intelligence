@@ -20,7 +20,9 @@
   "a_pie": "Distancias a pie Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano: escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento.",
   "axe": [],
   "overflow_px": 0,
-  "consola": []
+  "consola": [],
+  "que_cuenta": "Escuelas infantiles, para niños de 0 a 4 años: cada escuela, pública o privada, cuenta como una, porque nadie publica sus plazas. Colegios, para niños de 5 a 14 años: aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios. Centros de salud, para todos los vecinos: cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad. Mayores, para personas de 65 años o más: plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte. Farmacias, para todos los vecinos: cada farmacia cuenta como una. Vivienda, para hogares de 4 o más personas: no va a pie. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares.",
+  "tablas": 1
  },
  "que_falta_el_alamo_desktop": {
   "intro": "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.",
@@ -54,7 +56,9 @@
   "a_pie": "Distancias a pie Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano: escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento.",
   "axe": [],
   "overflow_px": 0,
-  "consola": []
+  "consola": [],
+  "que_cuenta": "Escuelas infantiles, para niños de 0 a 4 años: cada escuela, pública o privada, cuenta como una, porque nadie publica sus plazas. Colegios, para niños de 5 a 14 años: aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios. Centros de salud, para todos los vecinos: cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad. Mayores, para personas de 65 años o más: plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte. Farmacias, para todos los vecinos: cada farmacia cuenta como una. Vivienda, para hogares de 4 o más personas: no va a pie. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares.",
+  "tablas": 1
  },
  "que_falta_el_alamo_mobile": {
   "intro": "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.",
@@ -69,6 +73,6 @@
   "overflow_px": 0,
   "consola": []
  },
- "centros_salud": "7 centros de salud y consultorios en Chamartín La fuente oficial no publica el nombre de algunos de estos centros.",
+ "centros_salud": "7 centros de salud y consultorios en Chamartín Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.",
  "fallos": []
 }

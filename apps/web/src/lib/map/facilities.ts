@@ -8,7 +8,7 @@ import type { DatasetRef } from "@/contracts/dataset_list_response";
 import type { GapRowKey } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
-import { citedName, SOURCES_HREF } from "@/lib/provenance";
+import { updatedInWords } from "@/lib/provenance";
 import { titleCase } from "@/lib/names";
 
 import type { PlaceFeature } from "./places";
@@ -161,30 +161,38 @@ export interface Facility {
   lat: number;
 }
 
-/** The source of some capacities, as the panel cites it: «Ministerio de Sanidad, Catálogo … 2025 (actualizado a 31/12/2024)». */
+/**
+ * The source of some capacities, as the panel cites it (centros.camas): «Camas instaladas a {updated},
+ * según el {catalogue} del {publisher}.», with the link on the catalogue.
+ */
 export interface CapacitySource {
   id: string;
-  label: string;
+  catalogue: string;
+  publisher: string;
+  /** «31 de diciembre de 2024», from the dataset's name */
+  updated: string | null;
   href: string | null;
-  /** The dataset's own page (a new tab), or «Cómo lo calculamos» (this site) */
-  external: boolean;
 }
 
 /**
- * Who publishes the hospital beds (D-218), named while /datasets has not answered or failed, with a
- * link to «Cómo lo calculamos», which lists the source and its date: the beds never show without
- * their source (review of PR #16). Named from /datasets otherwise, with its update date.
+ * The hospital beds' source as line D wrote it (D-218), while /datasets has not answered or failed:
+ * the beds never show without their source and date (reviews of PR #16 and #17).
  */
-const CAPACITY_PUBLISHER: Partial<Record<FacilityKey, string>> = { hospital: "Ministerio de Sanidad" };
+const CAPACITY_SOURCE: Partial<Record<FacilityKey, Omit<CapacitySource, "id">>> = {
+  hospital: { catalogue: "Catálogo Nacional de Hospitales 2025", publisher: "Ministerio de Sanidad", updated: "31 de diciembre de 2024", href: null },
+};
 
 /** Where the capacities of a type's list come from, when not from the register (Facility.source). */
 export function capacitySources(type: FacilityKey, items: readonly Facility[], datasets: readonly DatasetRef[] | null): CapacitySource[] {
   const ids = [...new Set(items.flatMap((f) => (f.source ? [f.source] : [])))];
   return ids.flatMap((id): CapacitySource[] => {
     const ref = datasets?.find((d) => d.dataset_id === id);
-    if (ref) return [{ id, label: `${ref.publisher}, ${citedName(ref.name)}`, href: ref.url ?? null, external: true }];
-    const publisher = CAPACITY_PUBLISHER[type];
-    return publisher ? [{ id, label: `${publisher} (fuente y fecha en «Cómo lo calculamos»)`, href: SOURCES_HREF, external: false }] : [];
+    if (ref) {
+      const catalogue = ref.name.split(" (")[0] ?? ref.name;
+      return [{ id, catalogue, publisher: ref.publisher, updated: updatedInWords(ref.name), href: ref.url ?? null }];
+    }
+    const fixed = CAPACITY_SOURCE[type];
+    return fixed ? [{ id, ...fixed }] : [];
   });
 }
 
