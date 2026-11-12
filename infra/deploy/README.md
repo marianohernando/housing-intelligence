@@ -30,8 +30,8 @@ Aquí solo van los nombres, nunca los valores. Las variables que no son secretas
 | `DATABASE_URL` | api | **Secreto** (Sensitive). Lo mete Mariano | `postgresql+psycopg://<usuario>.ilvbivfnqvfqslbbiuts:<contraseña>@aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require`. Es el Session pooler: la conexión directa es solo IPv6. El usuario es `vf_api_ro` cuando exista el rol y, mientras tanto, el de `SUPABASE_DATABASE_URL`. El esquema tiene que ser `postgresql+psycopg://`. |
 | `CORS_ORIGINS` | api | Config | `["https://vidafacil-madrid.vercel.app","https://vida-facil-eight.vercel.app"]`, una lista JSON |
 | `PORT` | api | Config | `8080`. El contenedor escucha ahí y Vercel enruta a `$PORT` |
-| `DB_POOL_SIZE` | api | Config | `2` desde el 12 nov: conexiones fijas a la base por instancia. El código pone 5 por defecto (`packages/db`, `make_engine`, 4645326). El pooler de Supabase en modo sesión admite 15 clientes en total, compartidos por todas las instancias (incidente en `evidence/gate-06/2026-11-12-deploy/deploy-13-auditoria-gap03.md`) |
-| `DB_MAX_OVERFLOW` | api | Config | `1` desde el 12 nov: conexiones extra en un pico, que se cierran al devolverse. Por defecto, 10. Con 2 + 1, cada instancia usa como mucho 3, y caben 5 instancias en las 15 del pooler |
+| `DB_POOL_SIZE` | api | Config | `2` desde el 12 nov: conexiones fijas a la base por instancia. El código pone 5 por defecto (`packages/db`, `make_engine`, 4645326). El pooler de Supabase en modo sesión admite tantos clientes como su `pool_size`, compartidos por todas las instancias: 15 en el plan actual del proyecto. No es un límite fijo del pooler (incidente en `evidence/gate-06/2026-11-12-deploy/deploy-13-auditoria-gap03.md`) |
+| `DB_MAX_OVERFLOW` | api | Config | `1` desde el 12 nov: conexiones extra en un pico, que se cierran al devolverse. Por defecto, 10. Con 2 + 1, cada instancia usa como mucho 3, y caben 5 instancias en los 15 clientes que admite hoy el pooler |
 | `NEXT_PUBLIC_API_URL` | web | Config | `https://vidafacil-madrid.vercel.app`. Se incrusta al compilar: si cambia, hay que volver a desplegar |
 | `NEXT_PUBLIC_FEATURE_SEARCH` | web | Config | `true` desde el 11 nov: enciende el buscador. Se incrusta al compilar. Para apagarlo: `npx vercel@65.12.1 env rm NEXT_PUBLIC_FEATURE_SEARCH production` y volver a desplegar. Si el despliegue anterior se compiló sin ella, también vale un rollback |
 
@@ -113,7 +113,7 @@ Cómo se detecta:
 - **Variables de entorno:** el rollback no las cambia. Si el fallo era una variable, corrígela y vuelve a desplegar.
 - **Si el fallo está en los datos y no en el código:** no se arregla con un rollback. A vuelve a ejecutar `make supabase-sync PROFILE=demo` con la versión buena de la base local.
 - **Si el fallo es el límite de conexiones de la base, tampoco.** En los logs sale `EMAXCONNSESSION max clients reached in session mode`.
-  - El pooler en modo sesión admite 15 clientes en total. Las instancias vivas del despliegue que falla siguen ocupándolos, y las del despliegue anterior no consiguen ninguno.
+  - El pooler en modo sesión admite tantos clientes como su `pool_size`: 15 en el plan actual de Supabase. No es un límite fijo del pooler. Las instancias vivas del despliegue que falla siguen ocupándolos, y las del despliegue anterior no consiguen ninguno.
   - El 12 nov el rollback dejó el smoke en 2/8. Volver a promover el despliegue nuevo lo arregló en el acto (`deploy-13-auditoria-gap03.md`).
   - El arreglo de fondo es menos conexiones por instancia o el pooler en modo transacción (puerto 6543).
 
@@ -188,7 +188,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - `health` falla: la caída es de la plataforma o de la API.
    - `health` funciona pero `ready` falla con `SOURCE_DEGRADED`: la base de datos no responde (Supabase pausada o caída, o la credencial está mal).
    - `ready` falla con `INSUFFICIENT_DATA`: el rol no ve filas (falta una política o un `GRANT`) o los datos no están cargados.
-   - Hay 500 sueltos, sobre todo en la vista de zona, y en `npx vercel@65.12.1 logs --environment production --since 15m` sale `EMAXCONNSESSION`: está lleno el pooler de Supabase. No hagas rollback (ver «Volver atrás»). Espera a que bajen las instancias, unos 5 min sin tráfico, o reduce las conexiones por instancia.
+   - Hay 500 sueltos, sobre todo en la vista de zona, y en `npx vercel@65.12.1 logs --environment production --since 15m` sale `EMAXCONNSESSION`: está lleno el pooler de Supabase. No hagas rollback (ver «Volver atrás»). Espera a que bajen las instancias: unos 5 min sin tráfico, una estimación hecha con el apagado por inactividad del container runtime, no una garantía. O reduce las conexiones por instancia (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`); eso exige redesplegar, porque las variables solo se aplican en los despliegues nuevos.
 2. **Si el fallo vino con el último despliegue:** Instant Rollback (ver arriba).
 3. **Si Supabase está pausada:** reanúdala desde el panel de Supabase con la cuenta dedicada a DATAMAD y vuelve a pasar el smoke.
 4. **Sin Internet o con Vercel caído durante la presentación:** `make demo-offline`, el paquete offline de la sección siguiente. Arranca en unos 7 s en el portátil, con los mismos datos. Lleva también capturas y un vídeo corto del recorrido, grabados con la versión desplegada.

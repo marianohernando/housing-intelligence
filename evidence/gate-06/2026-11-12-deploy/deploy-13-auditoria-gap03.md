@@ -26,7 +26,7 @@ Supabase migrated to 0006 and synced by Mariano before the deploy (orchestrator 
 - The error: `FATAL: (EMAXCONNSESSION) max clients reached in session mode - max clients are limited to pool_size: 15`.
 - Its scale: 14 connection failures and 10 responses with 500 out of 212 requests in 30 min.
 - The connection setup:
-  - `DATABASE_URL` uses the Supavisor pooler in session mode (port 5432), capped at 15 clients in total.
+  - `DATABASE_URL` uses the Supavisor pooler in session mode (port 5432), which accepts as many clients as its `pool_size`: 15 on the project's current Supabase plan, not a fixed limit of the pooler.
   - Each API instance uses SQLAlchemy's default pool: 5 fixed connections plus 10 of overflow. This is `make_engine` in `packages/db/src/hi_db/session.py`, with no settings.
 - Why it fills up:
   - The new web fires many requests in parallel: `places` by subcategory for «Todos los centros», barrios, gaps, datasets.

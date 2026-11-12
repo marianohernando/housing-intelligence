@@ -7,7 +7,7 @@ note: these local files match .vercelignore and are NOT uploaded:
 <claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
   Inspect         <panel de Vercel>
   Production      <despliegue>
-▲ Aliased         https://vida-facil-eight.vercel.app
+▲ Aliased         <alias>
 -> deployment dpl_Dn6j3oK7FUxBwnUnrLdsMmzK8NHq is ready
 -> smoke test against https://vidafacil-madrid.vercel.app
 smoke: https://vidafacil-madrid.vercel.app (2026-11-12T01:40:49Z) tag dpl_Dn6j3oK7FUxBwnUnrLdsMmzK8NHq-0
