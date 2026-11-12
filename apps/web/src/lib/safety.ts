@@ -61,3 +61,29 @@ export function perceivedSafetyText(s: PerceivedSafety): { rating: string; sourc
     source: `Encuesta de calidad de vida del Ayuntamiento de Madrid, ${s.year}, unas 400 personas por distrito.`,
   };
 }
+
+export interface SafetyBar {
+  label: string;
+  /** «4,9» */
+  value: string;
+  /** Width of the bar, 0–100, on the 0–10 scale */
+  pct: number;
+  /** Where Madrid's mark goes, 0–100, and its figure; null without the city's */
+  city: { pct: number; value: string } | null;
+}
+
+const toPct = (value: number) => Math.min(100, Math.max(0, value * 10));
+
+/**
+ * The two bars of the block (petición de Mariano, 13 nov): night and day on the 0–10 scale, each
+ * with Madrid's mark. A picture of the same figures the sentence says, never a status.
+ */
+export function safetyBars(s: PerceivedSafety): SafetyBar[] {
+  const bar = (label: string, value: number, city: number | undefined): SafetyBar => ({
+    label,
+    value: score(value),
+    pct: toPct(value),
+    city: city === undefined ? null : { pct: toPct(city), value: score(city) },
+  });
+  return [bar("De noche", s.night, s.city?.night), bar("De día", s.day, s.city?.day)];
+}

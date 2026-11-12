@@ -25,6 +25,8 @@
 //   node scripts/check-qa.mjs impacto [outDir]   # «Dónde invertir primero» (D-229) and «Afecta a N …» in a FALTA row
 //   node scripts/check-qa.mjs claridad [outDir]  # line D's copy for a non-technical jury (summary, «Aquí hay n por cada 100», «Ver la cifra»)
 //   node scripts/check-qa.mjs esquema [outDir]   # «Cómo lo calculamos» in five steps: a row on desktop, a column on a phone
+//   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
+//   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -724,7 +726,7 @@ async function licences(browser) {
       await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
       for (const m of citedAll(lines, datasets)) failures.push(`${name} ${id}: falta ${m}`);
       const rest = entry.resto.join(" | ");
-      for (const must of ["del CRTM ni del Ministerio de Sanidad.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad"]) {
+      for (const must of ["del Ministerio de Sanidad ni de la Agencia Tributaria.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria"]) {
         if (!rest.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
       }
       if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
@@ -1001,10 +1003,12 @@ async function parks(browser) {
         await chip.scrollIntoViewIfNeeded();
       }
       entry.chip = flat(await chip.innerText());
+      // Several types at once since 13 nov: «Ninguno» first, so only the parks are on
+      await press(panel.getByRole("button", { name: "Ninguno", exact: true }));
       await press(chip);
       await p.page.waitForTimeout(1500);
       entry.pulsado = await chip.getAttribute("aria-pressed");
-      entry.frase = flat(await panel.locator("[aria-live='polite']").innerText());
+      entry.frase = flat(await panel.getByRole("status").last().innerText());
       entry.icono = await chip.locator("svg").first().getAttribute("class");
       const summary = panel.getByText(/^Ver la lista/);
       if (await summary.count()) {
@@ -1745,8 +1749,178 @@ async function methodSteps(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/**
+ * Mariano's notes after trying production (13 nov): the perceived safety of a district as two bars
+ * on 0–10 with Madrid's mark, in the brand's colours; and «Todos los centros» with several types at
+ * once, filtered on the client (no new request to /places), with «Todos» and «Ninguno».
+ */
+async function marianoNotes(browser) {
+  const failures = [];
+  const latest = async (id, level, code) => {
+    const r = await fetch(`${API}/api/v1/features/${id}/values?level=${level}`);
+    const rows = (await r.json()).data.values.filter((v) => v.territory_code === code && v.value !== null);
+    return rows.sort((a, b) => b.period_start.localeCompare(a.period_start))[0]?.value ?? null;
+  };
+  const score = (v) => v.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const VIOLET = "rgb(106, 90, 224)";
+  const district = { name: "villaverde", path: "/zona/distrito/2807917", code: "2807917" };
+  const want = {
+    De_noche: [await latest("seguridad_percibida_noche", "distrito", district.code), await latest("seguridad_percibida_noche", "municipio", "28079")],
+    De_día: [await latest("seguridad_percibida_dia", "distrito", district.code), await latest("seguridad_percibida_dia", "municipio", "28079")],
+  };
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    // 1. Safety: two bars, the figure beside each, Madrid's mark, violet and navy only
+    const p = await open(browser, profile, district.path);
+    const block = p.page.getByRole("region", { name: "Seguridad del barrio según sus vecinos" });
+    await block.waitFor({ timeout: 20000 });
+    await p.page.waitForTimeout(1500);
+    const bars = await block.locator("div[aria-hidden='true'] > div").evaluateAll((rows) =>
+      rows.map((row) => {
+        const [label, track, value] = [...row.children];
+        const fill = track?.children[0];
+        const mark = track?.children[1];
+        return {
+          etiqueta: label?.textContent?.trim(),
+          cifra: value?.textContent?.trim(),
+          ancho: fill?.style.width,
+          color: fill ? getComputedStyle(fill).backgroundColor : null,
+          marca: mark ? mark.style.left : null,
+          marca_texto: mark?.textContent?.trim() ?? null,
+        };
+      }),
+    );
+    const entry = (report[`seguridad_${district.name}_${id}`] = { barras: bars, texto: flat(await block.innerText()) });
+    for (const bar of bars) {
+      const [value, city] = want[bar.etiqueta.replace(" ", "_")] ?? [];
+      if (value == null) {
+        failures.push(`${id}: barra «${bar.etiqueta}»`);
+        continue;
+      }
+      if (bar.cifra !== score(value) || bar.ancho !== `${Math.round(value * 1000) / 100}%`) failures.push(`${id} ${bar.etiqueta}: ${bar.cifra} ${bar.ancho} / ${score(value)}`);
+      if (bar.marca_texto !== `Madrid ${score(city)}` || bar.marca !== `${Math.round(city * 1000) / 100}%`) failures.push(`${id} ${bar.etiqueta}: marca ${bar.marca_texto} ${bar.marca}`);
+      if (bar.color !== VIOLET) failures.push(`${id} ${bar.etiqueta}: color ${bar.color}`);
+    }
+    if (bars.length !== 2) failures.push(`${id}: ${bars.length} barras`);
+    if (/peligros|insegur/i.test(entry.texto)) failures.push(`${id}: palabra de alarma`);
+    if (!entry.texto.includes("unas 400 personas por distrito")) failures.push(`${id}: sin la fuente`);
+    await block.screenshot({ path: `${out}/mariano_seguridad_${district.name}_${id}.png` });
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    if (entry.axe.length) failures.push(`${id}: axe seguridad ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    await p.ctx.close();
+
+    // 2. «Todos los centros» with several types at once, without new requests
+    const c = await open(browser, profile, ZONE.path);
+    const places = [];
+    c.page.on("request", (r) => r.url().includes("/api/v1/places") && places.push(r.url()));
+    const panel = c.page.getByRole("region", { name: "Todos los centros", exact: true });
+    await panel.getByRole("button", { name: /^Colegios/ }).waitFor({ timeout: 20000 });
+    await c.page.waitForTimeout(3000);
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const pressed = () => panel.locator("button[aria-pressed='true']").evaluateAll((b) => b.map((x) => x.querySelector("span")?.textContent?.trim()));
+    const status = () => panel.getByRole("status").last().innerText().then(flat);
+    const centres = (report[`centros_${id}`] = {
+      al_abrir: await pressed(),
+      // Asked when the zone opens: the facilities (every category in one request) and the key points
+      peticiones_places_al_abrir: await c.page.evaluate(() => performance.getEntriesByType("resource").filter((e) => e.name.includes("/api/v1/places")).length),
+    });
+    await press(panel.getByRole("button", { name: /^Farmacias/ }));
+    await press(panel.getByRole("button", { name: /^Parques/ }));
+    await c.page.waitForTimeout(1500);
+    centres.tres = await pressed();
+    centres.tres_estado = await status();
+    centres.tres_mapa = await c.page.locator(".maplibregl-map, [aria-label^='Mapa']").first().getAttribute("aria-label").catch(() => null);
+    await c.page.screenshot({ path: `${out}/mariano_centros_tres_tipos_${id}.png` });
+    await press(panel.getByRole("button", { name: "Todos", exact: true }));
+    await c.page.waitForTimeout(2500);
+    centres.todos = await pressed();
+    centres.listas = await panel.getByText(/^Ver la lista \(/).count();
+    centres.axe_todos = await axe(c.page);
+    await c.page.screenshot({ path: `${out}/mariano_centros_todos_${id}.png` });
+    await panel.screenshot({ path: `${out}/mariano_centros_panel_todos_${id}.png` });
+    await press(panel.getByRole("button", { name: "Ninguno", exact: true }));
+    await c.page.waitForTimeout(800);
+    centres.ninguno = await pressed();
+    centres.ninguno_estado = await status();
+    centres.peticiones_places_al_pulsar = places.length;
+    centres.overflow_px = await overflow(c.page);
+    centres.consola = c.errors;
+    if (JSON.stringify(centres.al_abrir) !== JSON.stringify(["Colegios"])) failures.push(`${id}: al abrir ${centres.al_abrir}`);
+    if (JSON.stringify(centres.tres) !== JSON.stringify(["Colegios", "Farmacias", "Parques"])) failures.push(`${id}: tres tipos ${centres.tres}`);
+    if (!/colegios con primaria en .* farmacias? en .* y \d+ parques? de 1 ha o más/.test(centres.tres_estado)) failures.push(`${id}: estado «${centres.tres_estado}»`);
+    if (centres.todos.length !== 7 || centres.listas < 6) failures.push(`${id}: todos ${centres.todos.length} tipos, ${centres.listas} listas`);
+    if (centres.ninguno.length !== 0 || !centres.ninguno_estado.startsWith("Toca uno o varios")) failures.push(`${id}: ninguno`);
+    if (centres.peticiones_places_al_pulsar !== 0) failures.push(`${id}: ${centres.peticiones_places_al_pulsar} peticiones nuevas a /places al pulsar`);
+    if (centres.axe_todos.length) failures.push(`${id}: axe centros ${centres.axe_todos.map((v) => v.id).join(", ")}`);
+    if (centres.overflow_px > 0) failures.push(`${id}: desborde centros`);
+    if (centres.consola.length) failures.push(`${id}: consola centros`);
+    await c.ctx.close();
+  }
+  report.lcp_zona_slow4g = await lcpOnSlow4g(browser, ZONE.path);
+  report.lcp_villaverde_slow4g = await lcpOnSlow4g(browser, district.path);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * D-230 in the web: a row with `reliable: false` and no group of neighbours shows «No comparable»
+ * (never JUSTO or CUBIERTO) with the API's explanation; a NOT_APPLICABLE row says the API's reason.
+ * La Acebeda (70 inhabitants) and El Álamo (compared with its neighbours).
+ */
+async function smallZones(browser) {
+  const failures = [];
+  for (const [name, code] of [["la_acebeda", "28001"], ["el_alamo", "28004"]]) {
+    const api = (await (await fetch(`${API}/api/v1/gaps/municipio/${code}`)).json()).data;
+    const want = api.rows.map((r) => ({
+      fila: r.label,
+      no_comparable: r.status !== "SIN_DATOS" && r.reliable === false && !r.comparison_group,
+      no_aplica: r.indicator.null_reason === "NOT_APPLICABLE" ? r.explanation : null,
+      explicacion: r.explanation,
+    }));
+    report[`${name}_api`] = want;
+    for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+      const p = await open(browser, profile, `/que-falta?zona=municipio/${code}`);
+      await p.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+      const rows = await p.page.locator("main li.glass").evaluateAll((items) =>
+        items.map((li) => ({
+          fila: li.querySelector("h2")?.textContent?.trim(),
+          etiquetas: [...(li.querySelector("h2")?.nextElementSibling?.children ?? [])].map((b) => b.childNodes[1]?.textContent?.trim() ?? b.textContent?.trim()),
+          texto: li.textContent?.replace(/\s+/g, " ") ?? "",
+        })),
+      );
+      const entry = (report[`${name}_${id}`] = { filas: rows.map(({ fila, etiquetas }) => ({ fila, etiquetas })) });
+      for (const w of want) {
+        const row = rows.find((r) => r.fila === w.fila);
+        if (!row) continue;
+        const tags = row.etiquetas.join(" ");
+        if (w.no_comparable && (!tags.includes("No comparable") || /JUSTO|CUBIERTO|FALTA/.test(tags))) failures.push(`${name} ${id} ${w.fila}: etiquetas «${tags}»`);
+        if (w.no_comparable && w.explicacion.startsWith("No comparable") && !row.texto.includes(w.explicacion)) failures.push(`${name} ${id} ${w.fila}: sin la explicación de la API`);
+        if (!w.no_comparable && /No comparable/.test(tags)) failures.push(`${name} ${id} ${w.fila}: «No comparable» de más`);
+        if (w.no_aplica && !row.texto.includes(w.no_aplica)) failures.push(`${name} ${id} ${w.fila}: sin el motivo de NOT_APPLICABLE`);
+        if (w.no_aplica && row.texto.includes("Este dato no tiene sentido en esta zona.")) failures.push(`${name} ${id} ${w.fila}: texto genérico de NOT_APPLICABLE`);
+      }
+      entry.resumen = flat(await p.page.locator("main header p").nth(1).innerText());
+      entry.axe = await axe(p.page);
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      if (entry.consola.length) failures.push(`${name} ${id}: consola`);
+      await p.page.screenshot({ path: `${out}/pequenas_${name}_${id}.png`, fullPage: id === "desktop" });
+      await p.ctx.close();
+    }
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "pequenas") await smallZones(browser);
+else if (mode === "mariano") await marianoNotes(browser);
 else if (mode === "esquema") await methodSteps(browser);
 else if (mode === "claridad") await clarity(browser);
 else if (mode === "impacto") await impact(browser);

@@ -9,12 +9,13 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
-import { fitsButShortText, gapsHref, GROUP, inGroup, isSmallZone, SMALL_ZONE, topRows, walking, walkingText } from "@/lib/gaps";
+import { fitsButShortText, gapsHref, GROUP, inGroup, notComparable, topRows, walking, walkingText } from "@/lib/gaps";
 import { type ZoneProperties, zoneHref } from "@/lib/map/zones";
 
 import FitDetails from "./FitDetails";
 import GapBadge from "./GapBadge";
 import PendingRows from "./PendingRows";
+import SmallZoneTag from "./SmallZoneTag";
 import styles from "./ZoneCard.module.css";
 import { useZoneGaps } from "./useZoneGaps";
 
@@ -110,10 +111,9 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
                         {TEXT.walk} {walkingText(walk)}
                       </small>
                     )}
-                    {isSmallZone(row) && <small title={SMALL_ZONE.help}>{SMALL_ZONE.label}</small>}
                     {inGroup(row) && <small title={GROUP.help}>{GROUP.label}</small>}
                   </span>
-                  <GapBadge status={row.status} />
+                  {notComparable(row) ? <SmallZoneTag /> : <GapBadge status={row.status} />}
                 </li>
               );
             })}

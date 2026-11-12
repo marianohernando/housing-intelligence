@@ -1,0 +1,105 @@
+{
+ "modo": "seguridad",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "retiro_desktop": {
+  "esperado": "Así valoran sus vecinos la seguridad de su barrio: 7,4 de noche y 8,4 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8).",
+  "bloques": 1,
+  "texto": "Así valoran sus vecinos la seguridad de su barrio: 7,4 de noche y 8,4 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8). De noche Madrid 6,4 7,4 De día Madrid 7,8 8,4 0 10 Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.",
+  "colores": [
+   "rgb(20, 27, 61)",
+   "rgb(90, 96, 128)"
+  ],
+  "peticiones_features": [
+   "seguridad_percibida_noche?level=distrito",
+   "seguridad_percibida_dia?level=distrito",
+   "seguridad_percibida_noche?level=municipio",
+   "seguridad_percibida_dia?level=municipio"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "retiro_mobile": {
+  "esperado": "Así valoran sus vecinos la seguridad de su barrio: 7,4 de noche y 8,4 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8).",
+  "bloques": 1,
+  "texto": "Así valoran sus vecinos la seguridad de su barrio: 7,4 de noche y 8,4 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8). De noche Madrid 6,4 7,4 De día Madrid 7,8 8,4 0 10 Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.",
+  "colores": [
+   "rgb(20, 27, 61)",
+   "rgb(90, 96, 128)"
+  ],
+  "peticiones_features": [
+   "seguridad_percibida_noche?level=distrito",
+   "seguridad_percibida_dia?level=distrito",
+   "seguridad_percibida_noche?level=municipio",
+   "seguridad_percibida_dia?level=municipio"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "centro_desktop": {
+  "esperado": "Así valoran sus vecinos la seguridad de su barrio: 6,5 de noche y 7,9 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8).",
+  "bloques": 1,
+  "texto": "Así valoran sus vecinos la seguridad de su barrio: 6,5 de noche y 7,9 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8). De noche Madrid 6,4 6,5 De día Madrid 7,8 7,9 0 10 Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.",
+  "colores": [
+   "rgb(20, 27, 61)",
+   "rgb(90, 96, 128)"
+  ],
+  "peticiones_features": [
+   "seguridad_percibida_noche?level=distrito",
+   "seguridad_percibida_dia?level=distrito",
+   "seguridad_percibida_noche?level=municipio",
+   "seguridad_percibida_dia?level=municipio"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "centro_mobile": {
+  "esperado": "Así valoran sus vecinos la seguridad de su barrio: 6,5 de noche y 7,9 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8).",
+  "bloques": 1,
+  "texto": "Así valoran sus vecinos la seguridad de su barrio: 6,5 de noche y 7,9 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8). De noche Madrid 6,4 6,5 De día Madrid 7,8 7,9 0 10 Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.",
+  "colores": [
+   "rgb(20, 27, 61)",
+   "rgb(90, 96, 128)"
+  ],
+  "peticiones_features": [
+   "seguridad_percibida_noche?level=distrito",
+   "seguridad_percibida_dia?level=distrito",
+   "seguridad_percibida_noche?level=municipio",
+   "seguridad_percibida_dia?level=municipio"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "perales_desktop": {
+  "esperado": null,
+  "bloques": 0,
+  "peticiones_features": [],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "perales_mobile": {
+  "esperado": null,
+  "bloques": 0,
+  "peticiones_features": [],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_retiro_slow4g": [
+  {
+   "ms": 880,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2108,
+   "en_atribucion": false,
+   "texto": "Mira sus servicios y puntos clave, con datos ofici"
+  }
+ ],
+ "fallos": []
+}

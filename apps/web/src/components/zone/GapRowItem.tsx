@@ -13,8 +13,8 @@ import {
   hospitalText,
   hospitalWalking,
   inGroup,
-  isSmallZone,
   NULL_REASON,
+  notComparable,
   peopleAffectedText,
   referenceLabel,
   ROW_MEASURE,
@@ -75,11 +75,16 @@ function WalkingFigure({ extra, label, text, hospital = false }: WalkingProps) {
   );
 }
 
-/** Why the row shows as it does when it is not a plain status: no value, or too small to tell. */
+/**
+ * Why the row shows as it does when it is not a plain status: no value, or too small to tell. The
+ * API's `explanation` gives the real reason when nobody of the row's age lives there
+ * (NOT_APPLICABLE) and when the zone is not comparable (D-230); our own words otherwise.
+ */
 function reasonOf(row: GapRow): string | null {
+  if (row.indicator.null_reason === "NOT_APPLICABLE" && row.explanation) return row.explanation;
   if (row.indicator.value === null) return NULL_REASON[row.indicator.null_reason ?? "UNKNOWN"];
   if (row.status === "SIN_DATOS") return GAP_STATUS.SIN_DATOS.help;
-  if (isSmallZone(row)) return SMALL_ZONE.help;
+  if (notComparable(row)) return row.explanation.startsWith("No comparable") ? row.explanation : SMALL_ZONE.help;
   return null;
 }
 
@@ -139,8 +144,7 @@ export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
       <div className={styles.head}>
         <h2>{row.label}</h2>
         <span className={styles.badges}>
-          <GapBadge status={row.status} />
-          {isSmallZone(row) && <SmallZoneTag />}
+          {notComparable(row) ? <SmallZoneTag /> : <GapBadge status={row.status} />}
           {group && <GroupTag described={false} />}
         </span>
       </div>

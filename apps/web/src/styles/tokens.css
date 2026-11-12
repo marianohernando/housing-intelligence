@@ -50,6 +50,15 @@
   /* Parks (DATA-018): their dots, groups and icons on the map; white text on it is AA */
   --park: #1f7a55;
 
+  /* «Todos los centros» with several types at once: one colour per type for its dots and its button
+     icon, never a state colour (FALTA / JUSTO / CUBIERTO). Parks keep --park */
+  --fac-colegio: #4b3bbf;
+  --fac-escuela-infantil: #a8327f;
+  --fac-centro-salud: #1f5fbf;
+  --fac-hospital: #141b3d;
+  --fac-farmacia: #0b6f7c;
+  --fac-mayores: #6d4c41;
+
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
   --map-darkest: var(--violet);
 

@@ -11,7 +11,17 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { formatNumber } from "@/lib/format";
-import { capacitySources, type Facility, type FacilityKey, facilityCountText, facilityType, FACILITY_TYPES } from "@/lib/map/facilities";
+import {
+  capacitySources,
+  type Facility,
+  FACILITY_COLOR_TOKEN,
+  type FacilityKey,
+  facilityCountText,
+  facilityType,
+  FACILITY_TYPES,
+  orderedTypes,
+  selectedCountText,
+} from "@/lib/map/facilities";
 
 import styles from "./FacilitiesPanel.module.css";
 
@@ -21,7 +31,9 @@ const TEXT = {
   show: "Ver en el mapa",
   loading: (zone: string) => `Buscando los centros de ${zone}…`,
   retry: "Reintentar",
-  none: "Toca un tipo de centro para verlo en el mapa.",
+  none: "Toca uno o varios tipos de centro para verlos en el mapa.", // B's draft for D (several at once)
+  all: "Todos",
+  nothing: "Ninguno",
   list: (n: number) => `Ver la lista (${formatNumber(n, 0)})`,
   // The same schools as the row «Colegios» (gap_rows of places-1): public and concertado
   rowSchools: "Públicos y concertados: los mismos que cuenta «Qué falta».",
@@ -94,17 +106,36 @@ function FacilityList({ items, count }: { items: Facility[]; count: string }) {
   );
 }
 
+/** One type pressed: how many there are in the zone, what the source does not say, and its list. */
+function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility[]; zone: string }) {
+  const count = facilityCountText(type, items.length, zone);
+  return (
+    <div className={styles.typeSummary}>
+      <p className={styles.count}>
+        <span className={styles.dot} style={{ background: `var(--${FACILITY_COLOR_TOKEN[type]})` }} aria-hidden="true" />
+        {count}
+      </p>
+      {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
+      {items.some((f) => f.name === null) && (
+        <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
+      )}
+      <CapacitySourceLine type={type} items={items} />
+      {items.length > 0 && <FacilityList items={items} count={count} />}
+    </div>
+  );
+}
+
 /**
  * «Todos los centros» (FASE_PRUEBAS, T3): every facility of the zone, not only its key points. A
- * button per type with how many there are; the type pressed is shown on the map, grouped, and
- * listed here, which is also the way to see them without the map.
+ * button per type with how many there are; several types can be on at once (petición de Mariano,
+ * 13 nov), each with its colour on the map, grouped, and listed here, which is also the way to see
+ * them without the map. Filtered on the client: /places brought them all in one request.
  */
 export default function FacilitiesPanel({ zone }: { zone: string }) {
-  const { status, groups, error, retry, type, setType } = useFacilityLayer();
+  const { status, groups, error, retry, types, toggle, setAll } = useFacilityLayer();
   const titleId = useId();
   const slow = useSlow(status === "loading");
-  const items = type && groups ? groups[type] : null;
-  const count = type && items ? facilityCountText(type, items.length, zone) : null;
+  const shown = orderedTypes(types);
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
@@ -137,29 +168,34 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
                   <Chip
                     label={t.chip}
                     icon={FACILITY_ICON[t.key]}
+                    color={`var(--${FACILITY_COLOR_TOKEN[t.key]})`}
                     count={formatNumber(groups[t.key].length, 0)}
-                    pressed={type === t.key}
-                    onToggle={() => setType(type === t.key ? null : t.key)}
+                    pressed={types.includes(t.key)}
+                    onToggle={() => toggle(t.key)}
                   />
                 </li>
               ))}
             </ul>
+            <div className={styles.all}>
+              <button type="button" onClick={() => setAll(true)} disabled={shown.length === FACILITY_TYPES.length}>
+                {TEXT.all}
+              </button>
+              <button type="button" onClick={() => setAll(false)} disabled={shown.length === 0}>
+                {TEXT.nothing}
+              </button>
+            </div>
           </div>
-          <div aria-live="polite" className={styles.summary}>
-            {type && count && items ? (
-              <>
-                <p className={styles.count}>{count}</p>
-                {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
-                {items.some((f) => f.name === null) && (
-                  <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
-                )}
-                <CapacitySourceLine type={type} items={items} />
-              </>
+          {/* Told when the types change; the lists below are not read out each time */}
+          <p role="status" aria-live="polite" className="visually-hidden">
+            {selectedCountText(groups, shown, zone) ?? TEXT.none}
+          </p>
+          <div className={styles.summary}>
+            {shown.length ? (
+              shown.map((type) => <TypeSummary key={type} type={type} items={groups[type]} zone={zone} />)
             ) : (
               <p className={styles.muted}>{TEXT.none}</p>
             )}
           </div>
-          {count && items && items.length > 0 && <FacilityList key={type} items={items} count={count} />}
         </>
       )}
     </GlassCard>

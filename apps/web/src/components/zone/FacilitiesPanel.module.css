@@ -87,3 +87,49 @@
 .list li:last-child {
   border-bottom: 0;
 }
+
+/* «Todos» / «Ninguno»: two text buttons under the chips, 44 px targets */
+.all {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.all button {
+  min-height: var(--target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.all button:disabled {
+  color: var(--ink-soft);
+  text-decoration: none;
+  cursor: default;
+}
+
+/* One block per type pressed, with the colour of its dots on the map */
+.typeSummary {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.typeSummary + .typeSummary {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: var(--space-2);
+  border: 2px solid #ffffff;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 0 1px var(--line);
+  vertical-align: -0.05rem;
+}

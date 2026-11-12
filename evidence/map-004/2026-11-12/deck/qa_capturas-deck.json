@@ -2,13 +2,13 @@
  "modo": "capturas-deck",
  "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
  "c1_c2": {
-  "metodo": "fit-0.2",
+  "metodo": "fit-0.6",
   "primera": [
-   "Fuencarral-El Pardo",
-   100
+   "Latina",
+   98
   ],
-  "trabajo": "29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
-  "tarjeta": "DISTRITO DE MADRID Fuencarral-El Pardo 100 % de encaje Esta zona encaja en un 100 % con tu búsqueda La 1.ª que más encaja Lo que tienes aquí Colegio con primaria a 9 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Parada de transporte público a 3 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a 15 min andando desde la mitad de sus calles · Dato fiable Fiabilidad del dato: Dato fiable 29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler medio ≈ 1.107 €/mes por 77 m² (14,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) · Dato aproximado Fiabilidad del dato: Dato aproximado Qué falta aquí Escuelas infantiles A pie: 8 min JUSTO Colegios A pie: 9 min JUSTO Centros de salud A pie: 15 min JUSTO Ver todo lo que falta Ver la zona",
+  "trabajo": "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+  "tarjeta": "DISTRITO DE MADRID Latina 98 % de encaje Esta zona encaja en un 98 % con tu búsqueda La 1.ª que más encaja Lo que tienes aquí Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable Parada de transporte público a unos 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable 39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. Qué falta aquí Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud. Escuelas infantiles A pie: 6 min JUSTO Centros de salud A pie: 10 min JUSTO Colegios A pie: 6 min CUBIERTO Ver todo lo que falta Ver la zona",
   "trabajo_ayuda": 1,
   "muy_pronto": 0,
   "consola": []
@@ -18,32 +18,32 @@
    [
     "Escuelas infantiles",
     "FALTA",
-    "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca"
+    "Aquí hay 57 por cada 100 que hay en municipios parecidos."
    ],
    [
     "Colegios",
     "CUBIERTO",
-    "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca"
+    "Aquí hay 121 por cada 100 que hay en municipios parecidos."
    ],
    [
     "Centros de salud",
     "CUBIERTO",
-    "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca"
+    "Aquí hay 118 por cada 100 que hay en municipios parecidos."
    ],
    [
     "Centros de mayores",
     "CUBIERTO",
-    "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca"
+    "Aquí hay 155 por cada 100 que hay en municipios parecidos."
    ],
    [
     "Farmacias",
     "CUBIERTO",
-    "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca"
+    "Aquí hay 146 por cada 100 que hay en municipios parecidos."
    ],
    [
     "Vivienda para familias",
     "SIN DATOS",
-    "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas"
+    "La fuente oficial no trae este dato."
    ]
   ],
   "escuelas_infantiles": {
@@ -51,7 +51,7 @@
    "etiquetas": [
     "FALTA"
    ],
-   "mide": "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+   "mide": "Aquí hay 57 por cada 100 que hay en municipios parecidos.",
    "a_pie": [
     "A pie hasta la escuela infantil más cercana6 min"
    ],
@@ -61,8 +61,12 @@
   "consola": []
  },
  "c3": {
-  "y_si_cambias": "¿Y si cambias algo? Con tu búsqueda tal cual salen 33 zonas. Mira cuántas salen si cambias una sola cosa: +5 min a pie hasta colegio con primaria saldrían 50 zonas, 17 más Probar así Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
-  "con_el_cambio": "Con este cambio salen 50 zonas.",
+  "y_si_cambias": "¿Y si cambias algo? Con tu búsqueda tal cual salen 27 zonas. Mira cuántas salen si cambias una sola cosa: +5 min a pie hasta colegio con primaria saldrían 44 zonas, 17 más Probar así +150 €/mes saldrían 30 zonas, 3 más Probar así Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
+  "colegio_api": [
+   44,
+   17
+  ],
+  "con_el_cambio": "Con este cambio salen 44 zonas.",
   "consola": []
  },
  "fallos": []

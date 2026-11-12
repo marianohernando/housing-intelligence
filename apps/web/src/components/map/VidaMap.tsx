@@ -17,7 +17,7 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
 import { paintFit } from "@/lib/fit";
-import { facilitiesGeoJSON, facilityCountText } from "@/lib/map/facilities";
+import { facilitiesGeoJSON, selectedCountText, selectedFacilities } from "@/lib/map/facilities";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
 import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
 import { KEY_POINT_CATEGORIES } from "@/lib/map/zonePlaces";
@@ -409,15 +409,13 @@ export default function VidaMap() {
     return result ? paintFit(zones, result.all_zones) : zones;
   }, [zones, overview, row, gapData, result]);
   const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : TEXT.ariaFit;
-  // The zone's facilities of the type picked in «Todos los centros», or none
+  // The zone's facilities of the types pressed in «Todos los centros» (several at once), or none
   const facilityList = useMemo(
-    () => (activeZone && facilities.type && facilities.groups ? facilities.groups[facilities.type] : null),
-    [activeZone, facilities.type, facilities.groups],
+    () => (activeZone && facilities.types.length && facilities.groups ? selectedFacilities(facilities.groups, facilities.types) : null),
+    [activeZone, facilities.types, facilities.groups],
   );
-  const facilityAria =
-    activeZone && facilities.type && facilityList?.length
-      ? TEXT.ariaFacilities(facilityCountText(facilities.type, facilityList.length, activeZone.properties.name))
-      : null;
+  const facilityCount = activeZone && facilities.groups ? selectedCountText(facilities.groups, facilities.types, activeZone.properties.name, { empty: false }) : null;
+  const facilityAria = facilityCount ? TEXT.ariaFacilities(facilityCount) : null;
   const mapAria = [TEXT.aria, paintedAria, facilityAria].filter(Boolean).join(" ");
   const slow = useSlow(status === "loading");
   const router = useRouter();
@@ -548,7 +546,7 @@ export default function VidaMap() {
   }, [ready, facilitiesShown, facilityList]);
 
   // With «Parques» on, the base map's parks light up under their green dots
-  const parksLit = facilitiesShown && facilities.type === "parque";
+  const parksLit = facilitiesShown && facilities.types.includes("parque");
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !map.getLayer(PARKS_VIVID_LAYER)) return;

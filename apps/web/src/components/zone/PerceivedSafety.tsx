@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import GlassCard from "@/components/ui/GlassCard";
 import { createApi, type FeatureValuesResponse } from "@/lib/api";
 import { once } from "@/lib/once";
-import { PERCEIVED_SAFETY_FEATURES, perceivedSafety, perceivedSafetyText, type SafetyRows } from "@/lib/safety";
+import { PERCEIVED_SAFETY_FEATURES, perceivedSafety, perceivedSafetyText, safetyBars, type SafetyRows } from "@/lib/safety";
 
 import styles from "./PerceivedSafety.module.css";
 
@@ -55,6 +55,27 @@ export default function PerceivedSafety({ districtCode }: { districtCode: string
   return (
     <GlassCard as="section" aria-label="Seguridad del barrio según sus vecinos" className={styles.card}>
       <p>{rating}</p>
+      {/* The sentence above says every figure; the bars only draw them, so screen readers skip them */}
+      <div className={styles.bars} aria-hidden="true">
+        {safetyBars(safety).map((bar) => (
+          <div key={bar.label} className={styles.bar}>
+            <span className={styles.label}>{bar.label}</span>
+            <span className={styles.track}>
+              <span className={styles.fill} style={{ width: `${bar.pct}%` }} />
+              {bar.city && (
+                <span className={styles.mark} style={{ left: `${bar.city.pct}%` }}>
+                  <span className={styles.markLabel}>Madrid {bar.city.value}</span>
+                </span>
+              )}
+            </span>
+            <span className={styles.value}>{bar.value}</span>
+          </div>
+        ))}
+        <span className={styles.scale}>
+          <span>0</span>
+          <span>10</span>
+        </span>
+      </div>
       <p className={styles.source}>{source}</p>
     </GlassCard>
   );

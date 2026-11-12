@@ -14,10 +14,13 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string }> = {
   SIN_DATOS: { label: "SIN DATOS", help: "No tenemos este dato para esta zona. No quiere decir que no haya." },
 };
 
-/** fila.zona_pequena: next to the status when the API sends `reliable: false` (never FALTA, D-213). */
+/**
+ * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
+ * instead of its status (D-230: the API's `explanation` starts the same way). B's draft for D.
+ */
 export const SMALL_ZONE = {
-  label: "Zona pequeña para comparar",
-  help: "Aquí vive tan poca gente que no podemos saber con seguridad si falta. Por eso no la marcamos como FALTA.",
+  label: "No comparable",
+  help: "Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos.",
 };
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
@@ -99,7 +102,7 @@ export function rowComparison(row: {
   ratio_to_reference?: number | null;
   comparison_group?: ComparisonGroup | null;
 }): string | null {
-  if (row.status === "SIN_DATOS" || (isSmallZone(row) && inGroup(row) === null)) return null;
+  if (row.status === "SIN_DATOS" || notComparable(row)) return null;
   const group = inGroup(row);
   const ratio = group ? group.ratio_to_reference : row.ratio_to_reference;
   return ratio == null ? null : comparisonText(ratio, group !== null);
@@ -151,11 +154,12 @@ export function pendingRows(warnings: readonly string[] | undefined): GapRowKey[
 
 const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3 };
 
-type Classified = { status: GapStatus; reliable?: boolean };
+type Classified = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
 
 /** What is missing first, a small zone after a comparable one; otherwise the API order. */
 export function sortRows<T extends Classified>(rows: readonly T[]): T[] {
-  const rank = (r: T) => STATUS_ORDER[r.status] * 2 + (isSmallZone(r) ? 1 : 0);
+  // «No comparable» after CUBIERTO and before SIN DATOS, as the small zones went before (D-230)
+  const rank = (r: T) => (notComparable(r) ? 5 : STATUS_ORDER[r.status] * 2);
   return [...rows].sort((a, b) => rank(a) - rank(b));
 }
 
@@ -164,12 +168,18 @@ export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[
   return sortRows(rows).slice(0, limit);
 }
 
-type SummaryRow = Classified & { row: GapRowKey; comparison_group?: ComparisonGroup | null };
+type SummaryRow = Classified & { row: GapRowKey };
 
-/** Too small to compare even with its neighbours: it never counts as short or tight (falta.resumen.pequena). */
-function cannotCompare(row: SummaryRow): boolean {
-  return isSmallZone(row) && inGroup(row) === null;
+/**
+ * Too small to compare even with its neighbours (D-230): shown as «No comparable», never as JUSTO
+ * or CUBIERTO, and it never counts as short or tight (falta.resumen.pequena). A presentation rule:
+ * GapStatus keeps its values.
+ */
+export function notComparable(row: { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null }): boolean {
+  return row.status !== "SIN_DATOS" && isSmallZone(row) && inGroup(row) === null;
 }
+
+const cannotCompare = notComparable;
 
 /** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*). */
 function rowsByStatus(rows: readonly SummaryRow[]) {

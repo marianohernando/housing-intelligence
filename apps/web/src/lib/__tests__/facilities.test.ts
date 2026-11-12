@@ -6,12 +6,16 @@ import type { DatasetRef } from "../../contracts/dataset_list_response";
 import type { PlaceCategory } from "../../contracts/places_response";
 import {
   type Facility,
+  type FacilityKey,
   FACILITY_TYPES,
   facilitiesGeoJSON,
   capacitySources,
   facilityCountText,
   facilityQueries,
   groupFacilities,
+  orderedTypes,
+  selectedCountText,
+  selectedFacilities,
 } from "../map/facilities";
 import type { PlaceFeature } from "../map/places";
 import { searchable } from "../map/zones";
@@ -286,5 +290,36 @@ describe("capacitySources", () => {
 
   it("has nothing to cite when no capacity comes from another dataset", () => {
     expect(capacitySources("farmacia", [bed("c", null)], null)).toEqual([]);
+  });
+});
+
+describe("several types at once («Todos los centros», petición de Mariano)", () => {
+  const f = (id: string, type: FacilityKey): Facility => ({ id, type, label: id, name: null, detail: null, source: null, lon: 0, lat: 0 });
+  const groups = {
+    colegio: [f("c1", "colegio"), f("c2", "colegio")],
+    escuela_infantil: [],
+    centro_salud: [],
+    hospital: [],
+    farmacia: [f("f1", "farmacia")],
+    mayores: [],
+    parque: [f("p1", "parque")],
+  } as Record<FacilityKey, Facility[]>;
+
+  it("keeps the order of the buttons, whatever the order they were pressed", () => {
+    expect(orderedTypes(["parque", "colegio", "parque"])).toEqual(["colegio", "parque"]);
+    expect(selectedFacilities(groups, ["farmacia", "colegio"]).map((x) => x.id)).toEqual(["c1", "c2", "f1"]);
+    expect(selectedFacilities(groups, [])).toEqual([]);
+  });
+
+  it("says how many of each type are pressed, also none; the map leaves out the empty ones", () => {
+    expect(selectedCountText(groups, ["hospital"], "Perales de Tajuña")).toBe("Ningún hospital en Perales de Tajuña");
+    expect(selectedCountText(groups, ["farmacia", "colegio", "hospital"], "Chamartín", { empty: false })).toBe(
+      "2 colegios con primaria en Chamartín y 1 farmacia en Chamartín",
+    );
+    expect(selectedCountText(groups, ["colegio", "farmacia", "parque"], "Chamartín")).toBe(
+      "2 colegios con primaria en Chamartín, 1 farmacia en Chamartín y 1 parque de 1 ha o más en Chamartín",
+    );
+    expect(selectedCountText(groups, ["hospital"], "Chamartín", { empty: false })).toBeNull();
+    expect(selectedCountText(groups, [], "Chamartín")).toBeNull();
   });
 });

@@ -36,7 +36,7 @@ const osm: DatasetRef = {
 describe("counterText (pie.contador)", () => {
   it("counts the CM portal datasets and names the other publishers", () => {
     expect(counterText(23)).toBe(
-      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria",
     );
   });
 });

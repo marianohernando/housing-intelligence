@@ -17,6 +17,7 @@ import {
   inGroup,
   isSmallZone,
   listNames,
+  notComparable,
   referenceLabel,
   SMALL_ZONE,
   gapsHref,
@@ -91,7 +92,7 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
     expect(isSmallZone({ reliable: false })).toBe(true);
     expect(isSmallZone({ reliable: true })).toBe(false);
     expect(isSmallZone({})).toBe(false);
-    expect(SMALL_ZONE.label).toBe("Zona pequeña para comparar");
+    expect(SMALL_ZONE.label).toBe("No comparable");
   });
 });
 
@@ -140,13 +141,14 @@ describe("sortRows and topRows", () => {
     expect(sortRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud", "farmacia", "mayores"]);
   });
 
-  it("puts a small zone after a comparable one with the same status", () => {
+  it("puts a row that is not comparable after the comparable ones and before SIN DATOS (D-230)", () => {
     const mixed = [
+      { row: "vivienda", status: "SIN_DATOS" },
       { row: "farmacia", status: "CUBIERTO" },
       { row: "colegio", status: "JUSTO", reliable: false },
       { row: "mayores", status: "JUSTO" },
     ] as const;
-    expect(sortRows([...mixed]).map((r) => r.row)).toEqual(["mayores", "colegio", "farmacia"]);
+    expect(sortRows([...mixed]).map((r) => r.row)).toEqual(["mayores", "farmacia", "colegio", "vivienda"]);
     const small = [{ row: "colegio", status: "JUSTO", reliable: false }, { row: "mayores", status: "FALTA" }] as const;
     expect(sortRows([...small]).map((r) => r.row)).toEqual(["mayores", "colegio"]);
   });
@@ -375,5 +377,17 @@ describe("the nearest hospital (hospital.distancia)", () => {
     expect(hospitalText({ value: 51.32 })).toBe("a unos 3,4 km");
     expect(hospitalText({ value: 95 })).toBe("a unos 6,3 km");
     expect(hospitalText({ value: null })).toBe("Sin datos");
+  });
+});
+
+describe("rows that are not comparable (D-230)", () => {
+  const group = { codes: ["28004", "28096"] as [string, string], names: ["El Álamo", "Navalcarnero"] as [string, string], ratio_to_reference: 0.6 };
+
+  it("is a presentation rule: reliable false and no group of neighbours, never SIN DATOS", () => {
+    expect(notComparable({ status: "JUSTO", reliable: false })).toBe(true);
+    expect(notComparable({ status: "CUBIERTO", reliable: false, comparison_group: null })).toBe(true);
+    expect(notComparable({ status: "JUSTO", reliable: false, comparison_group: group })).toBe(false);
+    expect(notComparable({ status: "JUSTO", reliable: true })).toBe(false);
+    expect(notComparable({ status: "SIN_DATOS", reliable: false })).toBe(false);
   });
 });

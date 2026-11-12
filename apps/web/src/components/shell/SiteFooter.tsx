@@ -7,7 +7,8 @@ import styles from "./SiteFooter.module.css";
 // source catalogue (attribution_text of /datasets); the base map credit (pie.mapa_base) is drawn
 // by MapLibre on the map itself, so it is not repeated here.
 const TEXT = {
-  independent: "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad.",
+  independent:
+    "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM, del Ministerio de Sanidad ni de la Agencia Tributaria.", // pie.independiente (13 nov)
   project: "Vida Fácil · Proyecto para DATAMAD 2026", // pie.proyecto (13 nov): one visible name
   code: "Código abierto (Apache-2.0)",
   codeHref: "https://github.com/marianohernando/housing-intelligence",
