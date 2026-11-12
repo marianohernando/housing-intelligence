@@ -13,13 +13,13 @@ import { createPortal } from "react-dom";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
-import { createApi } from "@/lib/api";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
 import { paintFit } from "@/lib/fit";
 import { facilitiesGeoJSON, facilityCountText } from "@/lib/map/facilities";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
-import { type KeyPoint, keyPointQueries, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
+import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
+import { KEY_POINT_CATEGORIES } from "@/lib/map/zonePlaces";
 import {
   approachZoom,
   cameraPadding,
@@ -61,6 +61,7 @@ import {
 } from "@/lib/map/zones";
 
 import { useFacilityLayer } from "./FacilityLayerProvider";
+import { fetchZonePlaces } from "./fetchZones";
 import FacilityLabel from "./FacilityLabel";
 import { useGapLayer } from "./GapLayerProvider";
 import KeyPointLabel from "./KeyPointLabel";
@@ -340,17 +341,9 @@ function showZone(map: MapLibreMap, zone: ZoneFeature, barrio: AdminFeature | nu
   };
 }
 
-/** The zone's candidate key points, asked by zone and subcategory (a few KB, not whole layers). */
-function loadPlaces(cache: Map<string, Promise<PlaceFeature[]>>, adminUnitId: string): Promise<PlaceFeature[]> {
-  let request = cache.get(adminUnitId);
-  if (!request) {
-    const api = createApi();
-    const lists = keyPointQueries().map((query) => api.places({ ...query, adminUnitId }));
-    request = Promise.all(lists).then((all) => all.flat());
-    cache.set(adminUnitId, request);
-    request.catch(() => cache.delete(adminUnitId));
-  }
-  return request;
+/** The zone's candidate key points, asked by zone and subcategory with «Todos los centros» (a few KB, not whole layers). */
+function loadPlaces(adminUnitId: string): Promise<PlaceFeature[]> {
+  return fetchZonePlaces(adminUnitId, KEY_POINT_CATEGORIES);
 }
 
 export default function VidaMap() {
@@ -382,7 +375,6 @@ export default function VidaMap() {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const libRef = useRef<MapLibre | null>(null);
-  const placesCache = useRef(new Map<string, Promise<PlaceFeature[]>>());
   const shownOverview = useRef(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
@@ -490,7 +482,7 @@ export default function VidaMap() {
     if (!map || !ready || !zones) return;
     if (activeZone && view) {
       // Ask for the key points during the flight; a failure is handled when they are labelled.
-      loadPlaces(placesCache.current, activeZone.properties.admin_unit_id).catch(() => undefined);
+      loadPlaces(activeZone.properties.admin_unit_id).catch(() => undefined);
       const stop = showZone(map, activeZone, barrio, (end) => setLanded({ key: view, end }));
       return () => {
         // On unmount the map is already removed (its effect cleans up first).
@@ -514,7 +506,7 @@ export default function VidaMap() {
     let cancelled = false;
     const { key, end } = landed;
     // The district's places: in a barrio, those of the district that end in view are labelled.
-    loadPlaces(placesCache.current, activeZone.properties.admin_unit_id)
+    loadPlaces(activeZone.properties.admin_unit_id)
       .then((places) => {
         if (!cancelled) setKeyPoints({ key, points: pickKeyPoints(places, end.center, labelOptions(end)) });
       })

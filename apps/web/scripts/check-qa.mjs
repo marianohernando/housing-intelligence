@@ -8,6 +8,7 @@
 //   node scripts/check-qa.mjs tiles-local [outDir] # phase 5: web built with NEXT_PUBLIC_MAP_TILES_URL=http://localhost:3999/madrid.json
 //   node scripts/check-qa.mjs gap03 [outDir]     # phase 6: gap-0.3 (D-217): neighbours, 2SFCA copy and the hospital
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
+//   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -596,8 +597,48 @@ async function hospitals(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/**
+ * Incident EMAXCONNSESSION (review of PR #16): if /gaps of the zone hangs, the request gives up
+ * after 10 s; the map and the zone still load from the outlines and the card offers «Reintentar».
+ */
+async function hungGaps(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    // Never answered (the preload of the HTML and the page's request), as an API that hangs; once
+    // the card shows the failure, «Reintentar» goes through
+    let hang = true;
+    await ctx.route("**/api/v1/gaps/distrito/2807905", (route) => (hang ? undefined : route.continue()));
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    const started = Date.now();
+    await page.goto(`${BASE}${ZONE.path}`, { waitUntil: "domcontentloaded" });
+    await page.getByRole("heading", { level: 1, name: /Chamartín/ }).waitFor({ timeout: 30000 });
+    const zoneAfter = Date.now() - started;
+    const alert = page.getByRole("alert").filter({ has: page.getByRole("button", { name: "Reintentar" }) }).first();
+    await alert.waitFor({ timeout: 20000 });
+    const entry = (report[`gaps_colgado_${id}`] = { zona_a_los_ms: zoneAfter, aviso: flat(await alert.innerText()) });
+    await page.screenshot({ path: `${out}/peticiones_gaps_colgado_${id}.png` });
+    hang = false;
+    await alert.getByRole("button", { name: "Reintentar" }).click();
+    await page.getByRole("heading", { name: "Qué falta aquí" }).first().locator("xpath=..").getByRole("list").first().waitFor({ timeout: 20000 });
+    entry.tras_reintentar = await page.getByRole("alert").filter({ has: page.getByRole("button", { name: "Reintentar" }) }).count();
+    // The aborted request is the only expected console line, if any
+    entry.consola = errors.filter((e) => !/gaps\/distrito\/2807905|ERR_ABORTED|TimeoutError|signal timed out/.test(e));
+    if (zoneAfter > 15000) failures.push(`${id}: la zona tardó ${zoneAfter} ms`);
+    if (entry.tras_reintentar) failures.push(`${id}: Reintentar no recupera la tarjeta`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    await ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
 else if (mode === "tiles-local") await tilesLocal(browser);

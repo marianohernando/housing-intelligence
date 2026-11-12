@@ -2,9 +2,11 @@
 
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import { ApiError, createApi } from "@/lib/api";
-import { type Facility, type FacilityKey, facilityQueries, groupFacilities } from "@/lib/map/facilities";
+import { ApiError } from "@/lib/api";
+import { type Facility, type FacilityKey, groupFacilities } from "@/lib/map/facilities";
+import { FACILITY_CATEGORIES } from "@/lib/map/zonePlaces";
 
+import { fetchZonePlaces } from "./fetchZones";
 import { useMapZones } from "./MapProvider";
 
 type Groups = Record<FacilityKey, Facility[]>;
@@ -37,9 +39,7 @@ const toApiError = (exc: unknown) => (exc instanceof ApiError ? exc : new ApiErr
 
 /** A zone's facilities: one /places query per category, by zone and subcategory (a few KB each). */
 async function fetchFacilities(adminUnitId: string): Promise<Groups> {
-  const api = createApi();
-  const lists = await Promise.all(facilityQueries().map((query) => api.places({ ...query, adminUnitId })));
-  return groupFacilities(lists.flat());
+  return groupFacilities(await fetchZonePlaces(adminUnitId, FACILITY_CATEGORIES));
 }
 
 /**
