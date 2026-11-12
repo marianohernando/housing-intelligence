@@ -74,3 +74,47 @@ def test_a_broken_official_name_is_never_published() -> None:
     assert not plan.passed
     assert plan.invalid["ES.28.MUN.28121"] == ["Ð"]
     assert plan.invalid["ES.28.DIS.2812101"] == ["Ð"]
+
+
+# D-232: barrio names from the Ayuntamiento panel. The CM barrios table is older than the 2017
+# reform: it calls 28079192 «Ambroz» and leaves 28079183, 28079193 and 28079194 unnamed.
+def _barrios() -> list[Unit]:
+    return [
+        Unit("ES.28.BAR.28079192", "barrio", "28079192", "Ambroz", "ES.28.DIS.2807919"),
+        Unit("ES.28.BAR.28079193", "barrio", "28079193", None, "ES.28.DIS.2807919"),
+        Unit("ES.28.BAR.28079201", "barrio", "28079201", "Simancas", "ES.28.DIS.2807920"),
+    ]
+
+
+BARRIOS = {
+    "ES.28.BAR.28079192": ["Valdebernardo"],
+    "ES.28.BAR.28079193": ["Valderrivas"],
+    "ES.28.BAR.28079201": ["Simancas"],
+}
+
+
+def test_barrios_take_the_name_the_ayuntamiento_publishes() -> None:
+    units = _units() + _barrios()
+    plan = plan_names(units, MUNICIPIOS, DISTRICTS, BARRIOS)
+    assert plan.passed, plan.checks()
+    assert plan.names["ES.28.BAR.28079192"] == "Valdebernardo"
+    assert plan.names["ES.28.BAR.28079193"] == "Valderrivas"
+    assert plan.names["ES.28.BAR.280795"] == "Castellana"  # not in the source: keeps its name
+    changed = {c["admin_unit_id"] for c in plan.changes(units)}
+    assert {"ES.28.BAR.28079192", "ES.28.BAR.28079193"} <= changed
+    assert "ES.28.BAR.28079201" not in changed
+
+
+def test_a_barrio_left_without_any_name_blocks_the_update() -> None:
+    plan = plan_names(_units() + _barrios(), MUNICIPIOS, DISTRICTS, {})
+    assert not plan.passed
+    assert plan.unnamed == ["ES.28.BAR.28079193"]
+    failed = {c["name"] for c in plan.checks() if not c["passed"]}
+    assert failed == {"every_barrio_has_a_name"}
+
+
+def test_two_names_for_one_barrio_is_a_conflict() -> None:
+    barrios = BARRIOS | {"ES.28.BAR.28079192": ["Valdebernardo", "Ambroz"]}
+    plan = plan_names(_units() + _barrios(), MUNICIPIOS, DISTRICTS, barrios)
+    assert not plan.passed
+    assert plan.conflicts == {"ES.28.BAR.28079192": ["Ambroz", "Valdebernardo"]}

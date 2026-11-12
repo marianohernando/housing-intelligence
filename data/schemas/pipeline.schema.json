@@ -542,11 +542,23 @@
     },
     "MadridDistrictPanelPipeline": {
       "additionalProperties": false,
-      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level: barrio rows are outside the scope,\nand so is the city row unless the indicator is in `city_indicators` (then it is the\nmunicipio, the value to compare the districts with). Every reference date is kept once:\nwhen two panel editions carry the same date, the latest edition wins (a revision).",
+      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level. A barrio row is kept, at barrio\nlevel and with the barrio's name, only for the indicators in `barrio_indicators` (D-232:\nthe official barrio names come from here); the city row only for those in\n`city_indicators` (then it is the municipio, the value to compare the districts with).\nEvery reference date is kept once: when two panel editions carry the same date, the latest\nedition wins (a revision).",
       "properties": {
         "barrio_column": {
           "default": "cod_barrio",
           "title": "Barrio Column",
+          "type": "string"
+        },
+        "barrio_indicators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Barrio Indicators",
+          "type": "array"
+        },
+        "barrio_name_column": {
+          "default": "barrio",
+          "title": "Barrio Name Column",
           "type": "string"
         },
         "city_indicators": {
@@ -585,6 +597,19 @@
           "default": "Periodo panel",
           "title": "Edition Column",
           "type": "string"
+        },
+        "expected_barrios": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Barrios"
         },
         "expected_districts": {
           "exclusiveMinimum": 0,

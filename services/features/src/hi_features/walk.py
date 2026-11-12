@@ -24,6 +24,9 @@ from hi_ingestion.pipelines.osm_network.network import NETWORK_FILE, load_networ
 NETWORK_DATASET = "osm_red_peatonal"
 # A census section code is municipio (5) + district (2) + section (3): 28079 01 001.
 CODE_LENGTH = {"municipio": 5, "distrito": 7, "seccion_censal": 10}
+# A Madrid barrio is not a prefix of the code (section 2807905013 lies in barrio 28079051): each
+# section names it as its parent in the geography (D-232).
+PARENT_LEVELS = ("barrio",)
 
 _VERSION = text(
     """
@@ -47,6 +50,14 @@ _DESTINATIONS = text(
     """
 )
 _ZONES = text("SELECT code_official FROM geo_admin_unit WHERE level = :level ORDER BY 1")
+_SECTION_PARENTS = text(
+    """
+    SELECT s.code_official AS section, p.code_official AS zone
+      FROM geo_admin_unit s
+      JOIN geo_admin_unit p ON p.admin_unit_id = s.parent_admin_unit_id
+     WHERE s.level = 'seccion_censal' AND p.level = :level
+    """
+)
 
 
 @dataclass(frozen=True)
@@ -125,12 +136,31 @@ def frozen_attributes(
     return tuple(sorted((k, tuple(v)) for k, v in (attributes or {}).items()))
 
 
-def zone_of_node(section: NDArray[np.str_], level: str) -> NDArray[np.str_]:
-    """Each origin node's zone at `level`, from the code of the section it lies in."""
+def zone_of_node(
+    section: NDArray[np.str_], level: str, parent_of: Mapping[str, str] | None = None
+) -> NDArray[np.str_]:
+    """Each origin node's zone at `level`: a prefix of the code of the section it lies in or,
+    for a barrio, the section's parent (`parent_of`, section -> barrio; '' outside Madrid)."""
+    if level in PARENT_LEVELS:
+        if parent_of is None:
+            msg = f"zones by {level!r} need each section's parent {level}"
+            raise ValueError(msg)
+        return np.array([parent_of.get(s, "") for s in section.tolist()], dtype=section.dtype)
     if level not in CODE_LENGTH:
-        msg = f"walking access is computed by {sorted(CODE_LENGTH)}, not by {level!r}"
+        known = sorted([*CODE_LENGTH, *PARENT_LEVELS])
+        msg = f"walking access is computed by {known}, not by {level!r}"
         raise ValueError(msg)
     return np.array([s[: CODE_LENGTH[level]] for s in section.tolist()], dtype=section.dtype)
+
+
+def section_parents(engine: Engine, level: str) -> dict[str, str] | None:
+    """Section code -> code of its parent zone at `level`, for the levels that are not a
+    prefix of the section code (None for the others)."""
+    if level not in PARENT_LEVELS:
+        return None
+    with engine.connect() as conn:
+        rows = conn.execute(_SECTION_PARENTS, {"level": level}).all()
+    return {str(section): str(zone) for section, zone in rows}
 
 
 def zone_codes(engine: Engine, level: str) -> list[str]:

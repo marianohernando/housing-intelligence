@@ -419,6 +419,10 @@ def postcode_weighted_mean(
     dims: DimFilter,
     confidence: float = 1.0,
     new_contracts: tuple[NewContractFactors, float | None] | None = None,
+    *,
+    zones: Sequence[str] = (),
+    min_places: float = 0.0,
+    few_places_confidence: float = 1.0,
 ) -> pd.DataFrame:
     """A zone's value as the mean of its postcodes' values, each weighted by how many of the
     zone's geocoded places carry that postcode (CORE-006: there is no postcode geometry, so the
@@ -429,13 +433,17 @@ def postcode_weighted_mean(
     `new_contracts` (D-228): each postcode's value times its own factor or the fallback one
     (e.g. its municipio's), before the mean; a postcode with neither counts as unknown.
 
+    D-232 (barrios): a zone with fewer than `min_places` places keeps its value with its
+    confidence capped at `few_places_confidence`, and every code in `zones` gets a row (one
+    with no place at all is SOURCE_NO_COVERAGE, never absent).
+
     `weights` columns: territory_code (the zone), postcode, weight (places)."""
     values, period = _postcode_values(obs, dims)
     if new_contracts is not None and values:
         _same_year(period, new_contracts[0].period)
     out: list[dict[str, Any]] = []
     records: list[dict[str, Any]] = weights.to_dict("records")  # pyright: ignore[reportAssignmentType]
-    by_zone: dict[str, list[tuple[str, float]]] = {}
+    by_zone: dict[str, list[tuple[str, float]]] = {str(code): [] for code in zones}
     for record in records:
         by_zone.setdefault(str(record["territory_code"]), []).append(
             (str(record["postcode"]), float(record["weight"]))
@@ -449,7 +457,10 @@ def postcode_weighted_mean(
             out.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
             continue
         mean = sum(v * w for _, v, w in adjusted) / known_weight
-        row = _ok(code, period, mean, confidence * known_weight / total)
+        zone_confidence = confidence * known_weight / total
+        if total < min_places:
+            zone_confidence = min(zone_confidence, few_places_confidence)
+        row = _ok(code, period, mean, zone_confidence)
         if new_contracts is not None:
             row["adjustment"] = _district_adjustment(adjusted, known, new_contracts[0])
         out.append(row)

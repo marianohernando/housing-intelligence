@@ -48,6 +48,25 @@ def test_every_zone_gets_a_row_for_every_hub_with_its_inputs(
     assert again == n
 
 
+def test_barrios_are_origins_but_never_destinations(
+    fixtures_ingested: None, migrated_engine: Engine
+) -> None:
+    """D-232: each Madrid barrio gets its trip to every hub (the median of its sections, as a
+    district); the places of work stay the stations and the municipios and districts."""
+    matrix = compute_commutes(migrated_engine, load_catalog())
+    with migrated_engine.connect() as conn:
+        barrios = set(
+            conn.execute(text("SELECT admin_unit_id FROM geo_admin_unit WHERE level = 'barrio'"))
+            .scalars()
+            .all()
+        )
+    origins = set(matrix.times["origin_admin_unit_id"])
+    assert barrios and barrios <= origins
+    assert not any(h.admin_unit_id in barrios for h in matrix.hubs)
+    per_hub = matrix.times.groupby("hub_id")["origin_admin_unit_id"].nunique()
+    assert set(per_hub) == {len(origins)}
+
+
 def test_a_zone_reaches_its_own_centre_faster_than_the_median_zone(
     fixtures_ingested: None, migrated_engine: Engine
 ) -> None:

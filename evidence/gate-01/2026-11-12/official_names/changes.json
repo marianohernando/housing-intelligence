@@ -1,0 +1,87 @@
+[
+  {
+    "admin_unit_id": "ES.28.BAR.28079022",
+    "before": "Las Acacias",
+    "after": "Acacias"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079023",
+    "before": "La Chopera",
+    "after": "Chopera"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079026",
+    "before": "Palos de Moguer",
+    "after": "Palos de la Frontera"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079035",
+    "before": "Jerónimos",
+    "after": "Los Jerónimos"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079083",
+    "before": "Peña Grande",
+    "after": "Peñagrande"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079084",
+    "before": "El Pilar",
+    "after": "Pilar"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079102",
+    "before": "Puerta del Angel",
+    "after": "Puerta del Ángel"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079107",
+    "before": "Las Aguilas",
+    "after": "Águilas"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079154",
+    "before": "Concepción",
+    "after": "La Concepción"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079165",
+    "before": "Apostol Santiago",
+    "after": "Apóstol Santiago"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079171",
+    "before": "San Andrés",
+    "after": "Villaverde Alto - Casco Histórico de Villaverde"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079172",
+    "before": "San Cristobal",
+    "after": "San Cristóbal"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079175",
+    "before": "Los Angeles",
+    "after": "Ángeles"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079183",
+    "before": null,
+    "after": "Ensanche de Vallecas"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079192",
+    "before": "Ambroz",
+    "after": "Valdebernardo"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079193",
+    "before": null,
+    "after": "Valderrivas"
+  },
+  {
+    "admin_unit_id": "ES.28.BAR.28079194",
+    "before": null,
+    "after": "El Cañaveral"
+  }
+]

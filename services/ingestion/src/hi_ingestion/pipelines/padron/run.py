@@ -40,9 +40,17 @@ _LATEST_MUNICIPIO_VALUE = text(
 
 
 def known_districts(engine: Engine, municipio_ine: str) -> set[str]:
+    return _known(engine, "distrito", municipio_ine)
+
+
+def known_barrios(engine: Engine, municipio_ine: str) -> set[str]:
+    return _known(engine, "barrio", municipio_ine)
+
+
+def _known(engine: Engine, level: str, municipio_ine: str) -> set[str]:
     with Session(engine) as session:
         codes = session.scalars(
-            select(GeoAdminUnit.code_official).where(GeoAdminUnit.level == "distrito")
+            select(GeoAdminUnit.code_official).where(GeoAdminUnit.level == level)
         )
         return {code for code in codes if code.startswith(municipio_ine)}
 

@@ -3,8 +3,10 @@
 Inputs: the last valid version of each CRTM GTFS feed (its reference weekday, as D-196), the
 census sections (origins: their point on surface; sections hold similar populations, so the
 zone value is the median of its sections) and the rail stations of `place_master` plus the
-population centre of each zone (destinations, «hubs»). Walking is in a straight line times a
-detour factor, at the 4 km/h of D-211. Output: `transit_hub` and `commute_time`.
+population centre of each municipio and Madrid district (destinations, «hubs»). The 131 barrios
+of Madrid are origins too (D-232: the search inside a district), never destinations. Walking
+is in a straight line times a detour factor, at the 4 km/h of D-211. Output: `transit_hub`
+and `commute_time`.
 """
 
 import json
@@ -60,8 +62,8 @@ _VERSION = text(
 )
 _SECTIONS = text(
     """
-    SELECT code_official, ST_X(p) AS lon, ST_Y(p) AS lat
-      FROM (SELECT code_official, ST_PointOnSurface(geom_4326) AS p
+    SELECT code_official, parent_admin_unit_id AS parent, ST_X(p) AS lon, ST_Y(p) AS lat
+      FROM (SELECT code_official, parent_admin_unit_id, ST_PointOnSurface(geom_4326) AS p
               FROM geo_admin_unit WHERE level = 'seccion_censal') s
      ORDER BY 1
     """
@@ -69,10 +71,12 @@ _SECTIONS = text(
 _ZONES = text(
     """
     SELECT admin_unit_id, code_official, level, name FROM geo_admin_unit
-     WHERE level = 'municipio' OR (level = 'distrito' AND code_official LIKE :madrid)
+     WHERE level IN ('municipio', 'barrio')
+        OR (level = 'distrito' AND code_official LIKE :madrid)
      ORDER BY admin_unit_id
     """
 )
+ORIGIN_ONLY_LEVELS = ("barrio",)  # zones with a trip from them, never a place of work
 _STATIONS = text(
     """
     SELECT canonical_name, subcategory, ST_X(geom_4326) AS lon, ST_Y(geom_4326) AS lat
@@ -356,6 +360,22 @@ def _zone_of_section(code: str, zones: dict[str, str]) -> str | None:
     return zones.get(code[: CODE_LENGTH["municipio"]])
 
 
+def origin_zones(
+    code: str, parent: str | None, zones: dict[str, str], barrios: set[str]
+) -> list[str]:
+    """The zones a section's trip counts for: its Madrid district or its municipio; Madrid as
+    a whole too; and its barrio, its parent in the geography (D-232)."""
+    out: list[str] = []
+    district = _zone_of_section(code, zones)
+    if district is not None:
+        out.append(district)
+    if code.startswith(MADRID) and MADRID in zones:
+        out.append(zones[MADRID])
+    if parent is not None and parent in barrios:
+        out.append(parent)
+    return out
+
+
 def street_points(engine: Engine, codes: list[str]) -> NDArray[np.float64]:
     """Where each census section lives: the node of its residential streets (D-210) closest to
     their length-weighted centre. A large rural section's point on surface can fall in the
@@ -383,15 +403,14 @@ def load_origins(engine: Engine, timetable: Timetable) -> tuple[Origins, pd.Data
     with engine.connect() as conn:
         sections = pd.DataFrame(conn.execute(_SECTIONS).mappings().all())
         zones = pd.DataFrame(conn.execute(_ZONES, {"madrid": f"{MADRID}%"}).mappings().all())
-    # Madrid is a zone and its 21 districts too: a section counts for both.
-    by_code = dict(zip(zones["code_official"], zones["admin_unit_id"], strict=True))
+    # Madrid is a zone and its 21 districts and 131 barrios too: a section counts for each.
+    plain = zones.loc[~zones["level"].isin(ORIGIN_ONLY_LEVELS)]
+    by_code = dict(zip(plain["code_official"], plain["admin_unit_id"], strict=True))
+    barrios = set(zones.loc[zones["level"] == "barrio", "admin_unit_id"])
     rows: list[tuple[int, str]] = []
-    for i, code in enumerate(sections["code_official"]):
-        district = _zone_of_section(code, by_code)
-        if district is not None:
-            rows.append((i, district))
-        if code.startswith(MADRID) and MADRID in by_code:
-            rows.append((i, by_code[MADRID]))
+    parents = sections["parent"].where(sections["parent"].notna(), None)
+    for i, (code, parent) in enumerate(zip(sections["code_official"], parents, strict=True)):
+        rows.extend((i, zone) for zone in origin_zones(code, parent, by_code, barrios))
     zone_ids = sorted(zones["admin_unit_id"])
     zone_index = {z: k for k, z in enumerate(zone_ids)}
     origin_section = np.array([r[0] for r in rows], dtype=np.int64)
@@ -431,11 +450,15 @@ def station_hubs(engine: Engine) -> list[Hub]:
 
 
 def zone_hubs(origins: Origins, zones: pd.DataFrame) -> list[Hub]:
-    """The population centre of a zone: its section closest to all the others (medoid)."""
+    """The population centre of a zone: its section closest to all the others (medoid). Only
+    municipios and Madrid districts: a barrio is an origin, never a place of work (D-232)."""
     names = dict(zip(zones["admin_unit_id"], zones["name"], strict=True))
+    origin_only = set(zones.loc[zones["level"].isin(ORIGIN_ONLY_LEVELS), "admin_unit_id"])
     to_lonlat = Transformer.from_crs(25830, 4326, always_xy=True)
     hubs: list[Hub] = []
     for k, zone_id in enumerate(origins.zone_ids):
+        if zone_id in origin_only:
+            continue
         xy = origins.xy[origins.zone == k]
         if len(xy) == 0:
             continue

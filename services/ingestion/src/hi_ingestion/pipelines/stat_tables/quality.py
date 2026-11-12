@@ -182,6 +182,35 @@ def district_checks(
     ]
 
 
+def barrio_checks(
+    frame: pd.DataFrame, known_barrios: set[str], expected: int | None
+) -> list[CheckResult]:
+    """Blocking: every barrio row resolves in the geography (D-232) and, when the pipeline
+    declares how many barrios it publishes, none is missing. No barrio rows, no checks."""
+    codes = set(frame.loc[frame["territory_level"] == "barrio", "territory_code"])
+    if not codes and expected is None:
+        return []
+    unknown = sorted(codes - known_barrios)
+    checks = [
+        CheckResult(
+            "barrios_resolve_to_geography",
+            True,
+            not unknown,
+            {"unknown": unknown[:20], "barrios": len(codes)},
+        )
+    ]
+    if expected is not None:
+        checks.append(
+            CheckResult(
+                "barrio_coverage",
+                True,
+                len(codes) == expected,
+                {"covered": len(codes), "expected": expected},
+            )
+        )
+    return checks
+
+
 def row_counts(frame: pd.DataFrame) -> dict[str, int]:
     counts: dict[str, int] = {}
     for metric_id, level in zip(frame["metric_id"], frame["territory_level"], strict=True):

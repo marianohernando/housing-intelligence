@@ -1,4 +1,4 @@
-"""Official spellings for municipios and Madrid districts (DATA-022).
+"""Official spellings for municipios, Madrid districts and Madrid barrios (DATA-022, D-232).
 
 The section CSV of `cm_secciones_censales` writes '/' or the byte 0xD0 where the Ñ goes
 ('REDUE/A', 'GRIÐON') and drops accents ('VICALVARO'). Encoding cannot repair it, so the names
@@ -9,6 +9,9 @@ blocks the update if any published name still carries a character outside Spanis
 (barrios included on purpose: nothing broken is published, even what this step does not fix).
 Runs after the statistical tables (they resolve to the geography first). Re-running the
 geography alone brings the CSV names back: run this step again after the tables.
+Barrios (D-232): the CM barrios table predates the 2017 reform (it calls 28079192 «Ambroz» and
+leaves three barrios unnamed), so a barrio takes the name of the Ayuntamiento panel when it has
+one and keeps its own otherwise; a barrio left with no name at all blocks the update.
 """
 
 import uuid
@@ -57,6 +60,7 @@ class NamePlan:
     missing: list[str] = field(default_factory=list[str])  # no official name in the source
     conflicts: dict[str, list[str]] = field(default_factory=dict[str, list[str]])
     invalid: dict[str, list[str]] = field(default_factory=dict[str, list[str]])
+    unnamed: list[str] = field(default_factory=list[str])  # barrios with no name at all
 
     def changes(self, units: list[Unit]) -> list[dict[str, Any]]:
         return [
@@ -85,6 +89,7 @@ class NamePlan:
 
         return [
             check("every_municipio_and_madrid_district_has_official_name", self.missing),
+            check("every_barrio_has_a_name", self.unnamed),
             check("one_official_name_per_unit", self.conflicts),
             check("names_use_spanish_spelling_only", self.invalid),
         ]
@@ -94,11 +99,13 @@ class NamePlan:
         return all(c["passed"] for c in self.checks())
 
 
-def _single(names: dict[str, list[str]], unit_id: str, plan: NamePlan) -> str | None:
+def _single(
+    names: dict[str, list[str]], unit_id: str, plan: NamePlan, *, required: bool = True
+) -> str | None:
     found = sorted(set(names.get(unit_id, [])))
     if len(found) > 1:
         plan.conflicts[unit_id] = found
-    if not found:
+    if not found and required:
         plan.missing.append(unit_id)
     return found[0] if found else None
 
@@ -107,15 +114,22 @@ def plan_names(
     units: list[Unit],
     municipio_names: dict[str, list[str]],
     madrid_district_names: dict[str, list[str]],
+    madrid_barrio_names: dict[str, list[str]] | None = None,
 ) -> NamePlan:
     """Final name of every unit: official spelling where a source covers it, else unchanged."""
     plan = NamePlan()
+    barrio_names = madrid_barrio_names or {}
     for unit in units:
         if unit.level == AdminLevel.MUNICIPIO:
             _keep(plan, unit, _single(municipio_names, unit.admin_unit_id, plan))
     for unit in units:
         if unit.level == AdminLevel.DISTRITO:
             _keep(plan, unit, _district_name(unit, plan, madrid_district_names))
+        elif unit.level == AdminLevel.BARRIO:
+            official = _single(barrio_names, unit.admin_unit_id, plan, required=False)
+            _keep(plan, unit, official)
+            if unit.admin_unit_id not in plan.names:
+                plan.unnamed.append(unit.admin_unit_id)
         elif unit.level != AdminLevel.MUNICIPIO:
             _keep(plan, unit, None)
     for unit_id, name in plan.names.items():
@@ -183,6 +197,7 @@ def apply_official_names(engine: Engine, *, evidence_root: Path | None) -> RunSu
     sources = {
         AdminLevel.MUNICIPIO: config.MUNICIPIO_NAMES_DATASET,
         AdminLevel.DISTRITO: config.MADRID_DISTRICT_NAMES_DATASET,
+        AdminLevel.BARRIO: config.MADRID_DISTRICT_NAMES_DATASET,  # the same panel (D-232)
     }
     with Session(engine) as session:
         tracker.version_id = _geography_version(session)
@@ -196,6 +211,7 @@ def apply_official_names(engine: Engine, *, evidence_root: Path | None) -> RunSu
             units,
             _source_names(session, sources[AdminLevel.MUNICIPIO], AdminLevel.MUNICIPIO),
             _source_names(session, sources[AdminLevel.DISTRITO], AdminLevel.DISTRITO),
+            _source_names(session, sources[AdminLevel.BARRIO], AdminLevel.BARRIO),
         )
         changes = plan.changes(units)
         metrics |= {"step": STEP, "names_from": names_from, "changes": len(changes)}

@@ -38,6 +38,7 @@ def test_official_names_replace_the_csv_spelling(
     assert names["ES.28.MUN.28001"] == "Acebeda (La)"  # CSV: "ACEBEDA, LA"
     assert names["ES.28.DIS.2800101"] == "Acebeda (La) — distrito censal 01"
     assert names["ES.28.DIS.2807905"] == "Chamartín"
+    assert names["ES.28.BAR.28079055"] == "Nueva España"  # from the Ayuntamiento panel (D-232)
     assert {u: invalid_name_chars(n) for u, n in names.items() if invalid_name_chars(n)} == {}
     assert recorded["step"] == "official_names"
     assert set(recorded["names_from"]) == {
@@ -69,12 +70,20 @@ def test_a_broken_name_blocks_every_change(
                 {"n": name, "u": unit_id},
             )
 
+    def set_source_name(unit_id: str, name: str) -> None:
+        """The barrio's name as the panel writes it (D-232: barrios take it from there)."""
+        with migrated_engine.begin() as conn:
+            conn.execute(
+                text("UPDATE metric_observation SET territory_name = :n WHERE admin_unit_id = :u"),
+                {"n": name, "u": unit_id},
+            )
+
     with migrated_engine.connect() as conn:
         barrio, barrio_name = conn.execute(
             text("SELECT admin_unit_id, name FROM geo_admin_unit WHERE level = 'barrio' LIMIT 1")
         ).one()
     set_name("ES.28.MUN.28001", "ACEBEDA, LA")
-    set_name(barrio, "PE/A GRANDE")
+    set_source_name(barrio, "PE/A GRANDE")
     try:
         failed = apply_official_names(migrated_engine, evidence_root=None)
         assert failed.status == "FAILED"
@@ -82,6 +91,6 @@ def test_a_broken_name_blocks_every_change(
         assert invalid["details"]["sample"] == {barrio: ["/"]}
         assert name_of("ES.28.MUN.28001") == "ACEBEDA, LA"  # nothing was written
     finally:
-        set_name(barrio, barrio_name)
+        set_source_name(barrio, barrio_name)
         assert apply_official_names(migrated_engine, evidence_root=None).status == "SUCCESS"
     assert name_of("ES.28.MUN.28001") == "Acebeda (La)"

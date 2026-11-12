@@ -117,6 +117,7 @@ def published(migrated_engine: Engine, tmp_path_factory: pytest.TempPathFactory)
 
 GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
 MADRID_SAMPLE_DISTRICTS = 3  # Madrid fixtures keep Centro, Chamartín and Tetuán
+MADRID_SAMPLE_BARRIOS = 6  # two of each: Palacio, Sol, Nueva España, Castilla, Castillejos...
 
 
 # The Madrid sections of the admin sample (EPSG:25830), plus a margin; the other municipios of
@@ -263,7 +264,12 @@ def fixtures_ingested(
             )
         elif isinstance(spec, MadridDistrictPanelPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "panel_sample" / f"{dataset_id}.csv")
-            sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
+            sample = spec.model_copy(
+                update={
+                    "expected_districts": MADRID_SAMPLE_DISTRICTS,
+                    "expected_barrios": MADRID_SAMPLE_BARRIOS,
+                }
+            )
             result = run_panel_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )

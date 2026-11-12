@@ -12,3 +12,9 @@ city_indicators:
   - "Percepción de seguridad en el barrio por la noche"
   - "Percepción de seguridad en el barrio por el día"
 expected_districts: 21
+# D-232: barrio rows of these are kept at barrio level; they carry the official barrio names
+# (admin-names) and the households of each barrio.
+barrio_indicators:
+  - "Total hogares"
+  - "Tamaño medio del hogar"
+expected_barrios: 131

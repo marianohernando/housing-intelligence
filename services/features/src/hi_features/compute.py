@@ -114,14 +114,17 @@ def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd
     D-228: each postcode adjusted to the leases signed in the year before the mean."""
     adjust = new_contracts(engine, f)
     fallback = None if adjust is None or adjust[1] is None else adjust[0].factors.get(adjust[1])
+    municipio = str(f["postcode_municipio"])
+    few = f.get("few_places") or {}  # D-232: barrios, with far fewer places than a district
     return methods.postcode_weighted_mean(
         loaders.observations(engine, f["metric"], "codigo_postal"),
-        loaders.place_postcodes(
-            engine, list(f["postcode_attributes"]), str(f["postcode_municipio"]), level
-        ),
+        loaders.place_postcodes(engine, list(f["postcode_attributes"]), municipio, level),
         f.get("dims", {}),
         float(f.get("confidence", 1.0)),
         new_contracts=None if adjust is None else (adjust[0], fallback),
+        zones=[z for z in walk.zone_codes(engine, level) if z.startswith(municipio)],
+        min_places=float(few.get("below", 0)),
+        few_places_confidence=float(few.get("max_confidence", 1.0)),
     )
 
 
@@ -144,7 +147,7 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
         min_street_m=float(f["min_street_m"]),
     )
     return methods.walk_access(
-        walk.zone_of_node(origins.section, level),
+        walk.zone_of_node(origins.section, level, walk.section_parents(engine, level)),
         origins.weight,
         distance[origins.node],
         walk.zone_codes(engine, level),

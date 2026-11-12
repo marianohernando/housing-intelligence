@@ -44,7 +44,7 @@ def test_every_section_gets_a_row_with_explicit_nulls_outside_the_grid(
 def test_levels_and_regional_reference(migrated_engine: Engine, features_computed: None) -> None:
     rows = _rows(migrated_engine, MEDIAN)
     levels = {level for level, _ in rows}
-    assert levels == {"seccion_censal", "municipio", "distrito", "ccaa"}
+    assert levels == {"seccion_censal", "municipio", "distrito", "barrio", "ccaa"}
     assert rows[("municipio", "28079")]["value"] is not None
     assert rows[("municipio", "28001")]["value"] is None
     assert rows[("ccaa", "28")]["value"] is not None
@@ -54,6 +54,28 @@ def test_levels_and_regional_reference(migrated_engine: Engine, features_compute
         "osm_red_peatonal",
         "cm_oficinas_farmacia",
     }
+
+
+def test_every_barrio_gets_the_median_of_its_own_streets(
+    migrated_engine: Engine, features_computed: None
+) -> None:
+    """D-232: the 6 barrios of the sample, each by the streets of its sections (its parent in
+    the geography, not a prefix of the section code); never a district's value copied."""
+    rows = _rows(migrated_engine, MEDIAN)
+    with migrated_engine.connect() as conn:
+        barrios = [
+            str(c)
+            for c in conn.execute(
+                text("SELECT code_official FROM geo_admin_unit WHERE level = 'barrio'")
+            ).scalars()
+        ]
+    assert len(barrios) == 6
+    for code in barrios:
+        row = rows[("barrio", code)]
+        assert row["value"] is not None and row["value"] >= 0, code
+        assert 0 < row["confidence"] <= 1
+    values = {rows[("barrio", c)]["value"] for c in barrios}
+    assert len(values) > 1  # the grid places the pharmacies nearer some barrios than others
 
 
 def test_median_within_the_window_means_half_the_street_or_more(

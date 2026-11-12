@@ -22,7 +22,7 @@ formula:
   speed_kmh: 4.0
   origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
   min_street_m: 300  # less origin street than this -> confidence 0.5 at most
-  levels: {municipio: {}, distrito: {}}
+  levels: {municipio: {}, distrito: {}, barrio: {}}  # barrios of Madrid: the search inside a district (D-232)
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
 confidence: {inputs: [reachable_street_share, min_street_m]}
 public_use: true

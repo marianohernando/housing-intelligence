@@ -162,6 +162,33 @@ def test_district_rent_comes_from_its_postcodes(
             assert row.value > plain
 
 
+def test_barrio_rent_is_a_weaker_proxy_and_every_barrio_has_a_row(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-232: every barrio of the sample gets a row from the postcodes of its own places, with
+    confidence 0.6 at most (0.3 with fewer than 5 places); without places, an explicit null."""
+    with migrated_engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT territory_code, value, null_reason, confidence, inputs FROM feature_value "
+                "WHERE feature_id = 'alquiler_m2_mensual' AND territory_level = 'barrio'"
+            )
+        ).all()
+        barrios = set(
+            conn.execute(
+                text("SELECT code_official FROM geo_admin_unit WHERE level = 'barrio'")
+            ).scalars()
+        )
+    assert {r.territory_code for r in rows} == barrios
+    for row in rows:
+        assert row.confidence <= 0.6
+        assert row.inputs["method"] == "postcode_weighted_mean"
+        assert "cm_alquiler_m2_codigo_postal_madrid" in row.inputs["dataset_versions"]
+        if row.value is None:
+            assert row.null_reason == "SOURCE_NO_COVERAGE"
+            assert row.confidence == 0
+
+
 def test_two_step_rows_keep_facility_equivalents_and_madrid_districts(
     features_computed: None, migrated_engine: Engine
 ) -> None:

@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "observations": 558
+        "observations": 2392
       }
     },
     {
@@ -96,6 +96,24 @@
       "details": {
         "covered": 21,
         "expected": 21
+      }
+    },
+    {
+      "name": "barrios_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "barrios": 131
+      }
+    },
+    {
+      "name": "barrio_coverage",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "covered": 131,
+        "expected": 131
       }
     }
   ]

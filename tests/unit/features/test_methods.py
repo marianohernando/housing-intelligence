@@ -42,6 +42,10 @@ POP = _obs(
 )
 
 
+def _is_missing(value: object) -> bool:
+    return value is None or (isinstance(value, float) and math.isnan(value))
+
+
 def _by_code(frame: pd.DataFrame) -> dict[str, dict[str, object]]:
     return {r["territory_code"]: r for r in frame.to_dict("records")}
 
@@ -319,6 +323,35 @@ def test_postcode_mean_stays_between_its_postcodes(
     weights = _weights([("2807901", "28001", wa), ("2807901", "28002", wb)])
     value = methods.postcode_weighted_mean(obs, weights, {}).iloc[0]["value"]
     assert min(a, b) - 1e-9 <= value <= max(a, b) + 1e-9
+
+
+def test_a_zone_with_few_places_keeps_its_value_with_capped_confidence() -> None:
+    """D-232: a barrio has far fewer places than a district; below `min_places` the mean rests
+    on a handful of addresses, so its confidence is capped (the value is not hidden)."""
+    weights = _weights(
+        [("28079011", "28001", 2.0), ("28079012", "28001", 4.0), ("28079012", "28002", 4.0)]
+    )
+    out = _by_code(
+        methods.postcode_weighted_mean(
+            CP_RENT, weights, {}, confidence=0.6, min_places=5, few_places_confidence=0.3
+        )
+    )
+    assert out["28079011"]["value"] == pytest.approx(20.0)
+    assert out["28079011"]["confidence"] == pytest.approx(0.3)
+    assert out["28079012"]["value"] == pytest.approx(15.0)
+    assert out["28079012"]["confidence"] == pytest.approx(0.6)
+
+
+def test_a_zone_without_any_place_is_an_explicit_null_never_absent() -> None:
+    """Every zone of the level gets a row: one with no place carrying a postcode is
+    SOURCE_NO_COVERAGE (D-232: barrio Sol), never left out and never 0."""
+    weights = _weights([("28079011", "28001", 6.0)])
+    out = _by_code(
+        methods.postcode_weighted_mean(CP_RENT, weights, {}, zones=["28079011", "28079016"])
+    )
+    assert out["28079011"]["value"] == pytest.approx(20.0)
+    assert _is_missing(out["28079016"]["value"])
+    assert out["28079016"]["null_reason"] == "SOURCE_NO_COVERAGE"
 
 
 def test_postcode_mean_uses_the_latest_period_only() -> None:

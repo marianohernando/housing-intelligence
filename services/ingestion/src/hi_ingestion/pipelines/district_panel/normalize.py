@@ -1,8 +1,10 @@
 """Panel rows -> one observation per declared indicator, district and reference date.
 
-Rows of other indicators, of barrios or of the whole city are outside the scope: they are
-counted (`out_of_window`), not quarantined. The city row is the one with neither district code
-nor district name; a row with a name but no code lost its code and goes to quarantine. The
+Rows of other indicators are outside the scope: they are counted (`out_of_window`), not
+quarantined. So are barrio rows, unless the indicator is in `barrio_indicators` (D-232): then
+the row is the barrio (28079 + its three-digit code), named as the Ayuntamiento names it.
+The city row is the one with neither district code nor district name; a row with a name but
+no code lost its code and goes to quarantine. The
 city row of a `city_indicators` indicator is kept as the municipio (D-226). A reference date
 carried by several panel editions is kept once, from the latest edition (a revision); a repeat
 inside one edition is left for the `unique_keys` check to fail. An edition that is not a year
@@ -45,17 +47,39 @@ def _is_city(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> bool:
 
 def _in_scope(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> bool:
     indicator = row.get(spec.indicator_column)
-    if indicator not in spec.indicators or row.get(spec.barrio_column):
+    if indicator not in spec.indicators:
         return False
+    if row.get(spec.barrio_column):
+        return indicator in spec.barrio_indicators
     return not _is_city(row, spec) or indicator in spec.city_indicators
 
 
+BARRIO_DIGITS = 3  # district (2) + barrio (1): '11' is Palacio (01 1), '201' is Simancas
+FIRST_BARRIO = 11
+
+
+def barrio_code(raw: str, municipio_ine: str) -> str:
+    """Ayuntamiento barrio number ('11', '201') -> 8-digit code, e.g. '201' -> '28079201'."""
+    if not raw.isdigit() or len(raw) > BARRIO_DIGITS or int(raw) < FIRST_BARRIO:
+        msg = f"invalid barrio {raw!r}"
+        raise RowError(msg)
+    return f"{municipio_ine}{int(raw):03d}"
+
+
 def _territory(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> tuple[str, str]:
+    if row.get(spec.barrio_column):
+        return TerritoryLevel.BARRIO.value, barrio_code(row[spec.barrio_column], spec.municipio_ine)
     if _is_city(row, spec):
         return TerritoryLevel.MUNICIPIO.value, spec.municipio_ine
     return TerritoryLevel.DISTRITO.value, district_code(
         row[spec.district_column], spec.municipio_ine
     )
+
+
+def _name(row: dict[str, str], spec: MadridDistrictPanelPipeline, level: str) -> str | None:
+    if level == TerritoryLevel.BARRIO.value:
+        return row.get(spec.barrio_name_column) or None
+    return (row[spec.district_name_column] or None) if spec.district_name_column else None
 
 
 def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict[str, Any]:
@@ -67,9 +91,7 @@ def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict
         "metric_id": spec.indicators[row[spec.indicator_column]],
         "territory_level": level,
         "territory_code": code,
-        "territory_name": (row[spec.district_name_column] or None)
-        if spec.district_name_column
-        else None,
+        "territory_name": _name(row, spec, level),
         "admin_unit_id": admin_unit_id(level, code),
         "period_start": day,
         "period_end": day,

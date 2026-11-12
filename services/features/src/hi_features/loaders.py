@@ -40,16 +40,29 @@ _SECTION_SHARE = text(
      GROUP BY municipio_ine
     """
 )
-# Postcodes written in the address of places geocoded to a census section, by district.
-_PLACE_POSTCODES = text(
-    """
-    SELECT left(u.code_official, 7) AS territory_code, p.attributes
-      FROM place_master p
-      JOIN geo_admin_unit u ON u.admin_unit_id = p.seccion_admin_unit_id
-     WHERE p.status = 'ACTIVE' AND p.municipio_ine = :municipio
-       AND jsonb_exists_any(p.attributes, :keys)
-    """
-)
+# Postcodes written in the address of places geocoded to a census section, by district or by
+# the barrio the section belongs to (D-232: a barrio is the section's parent, not a prefix).
+_PLACE_POSTCODES = {
+    "distrito": text(
+        """
+        SELECT left(u.code_official, 7) AS territory_code, p.attributes
+          FROM place_master p
+          JOIN geo_admin_unit u ON u.admin_unit_id = p.seccion_admin_unit_id
+         WHERE p.status = 'ACTIVE' AND p.municipio_ine = :municipio
+           AND jsonb_exists_any(p.attributes, :keys)
+        """
+    ),
+    "barrio": text(
+        """
+        SELECT b.code_official AS territory_code, p.attributes
+          FROM place_master p
+          JOIN geo_admin_unit u ON u.admin_unit_id = p.seccion_admin_unit_id
+          JOIN geo_admin_unit b ON b.admin_unit_id = u.parent_admin_unit_id
+         WHERE p.status = 'ACTIVE' AND p.municipio_ine = :municipio AND b.level = 'barrio'
+           AND jsonb_exists_any(p.attributes, :keys)
+        """
+    ),
+}
 _VERSIONS = text(
     """
     SELECT dataset_id, version_label FROM dataset_version
@@ -104,12 +117,12 @@ def place_postcodes(
 ) -> pd.DataFrame:
     """How many geocoded places of each zone carry each postcode (CORE-006 weights), within
     the municipio the postcode values are published for."""
-    if level != "distrito":
-        msg = f"postcode weights are only built by distrito, not {level!r}"
+    if level not in _PLACE_POSTCODES:
+        msg = f"postcode weights are built by {sorted(_PLACE_POSTCODES)}, not {level!r}"
         raise ValueError(msg)
     with engine.connect() as conn:
         params = {"keys": keys, "municipio": municipio}
-        rows = conn.execute(_PLACE_POSTCODES, params).mappings().all()
+        rows = conn.execute(_PLACE_POSTCODES[level], params).mappings().all()
     counts: dict[tuple[str, str], int] = {}
     for row in rows:
         postcode = postcode_from_address(row["attributes"] or {}, keys)

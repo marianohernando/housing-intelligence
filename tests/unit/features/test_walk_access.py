@@ -89,3 +89,32 @@ def test_a_park_is_reached_at_its_edge_points_any_other_place_at_its_point() -> 
     ]
     empty_x, empty_y = methods.destination_points([])
     assert len(empty_x) == len(empty_y) == 0
+
+
+def test_a_node_takes_the_zone_of_its_section_by_prefix_or_by_barrio() -> None:
+    """Municipio and district are prefixes of the section code; a barrio is not (section
+    2807905013 lies in barrio 28079051), so it comes from the section's parent (D-232)."""
+    from hi_features import walk
+
+    section = np.array(["2807905013", "2807920001", "2800101001", ""])
+    assert walk.zone_of_node(section, "distrito").tolist() == ["2807905", "2807920", "2800101", ""]
+    parents = {"2807905013": "28079051", "2807920001": "28079201"}
+    barrios = walk.zone_of_node(section, "barrio", parents)
+    assert barrios.tolist() == ["28079051", "28079201", "", ""]  # outside Madrid: no barrio
+    with pytest.raises(ValueError, match="barrio"):
+        walk.zone_of_node(section, "barrio")
+
+
+def test_a_barrio_median_is_over_its_streets_not_a_median_of_section_medians() -> None:
+    """Barrio X has two sections: one with 3 nodes at 100 m, one with 1 node at 1,000 m. The
+    street-weighted median is 100 m (1.3 min at 75 m/min); a median of the two section
+    medians would be 550 m."""
+    from hi_features import walk
+
+    section = np.array(["S1", "S1", "S1", "S2"])
+    zones = walk.zone_of_node(section, "barrio", {"S1": "X", "S2": "X"})
+    settings = methods.WalkSettings("median_minutes", SPEED, 10.0, 1.0, 0.0)
+    frame = methods.walk_access(
+        zones, np.full(4, 100.0), np.array([100.0, 100.0, 100.0, 1000.0]), ["X"], Y, settings
+    )
+    assert _rows(frame)["X"]["value"] == pytest.approx(100.0 / SPEED)

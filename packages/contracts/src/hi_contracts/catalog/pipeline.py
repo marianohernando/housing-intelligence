@@ -161,10 +161,12 @@ class MadridPadronPipeline(BaseModel):
 class MadridDistrictPanelPipeline(BaseModel):
     """Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.
 
-    Only the declared indicators are kept, at district level: barrio rows are outside the scope,
-    and so is the city row unless the indicator is in `city_indicators` (then it is the
-    municipio, the value to compare the districts with). Every reference date is kept once:
-    when two panel editions carry the same date, the latest edition wins (a revision).
+    Only the declared indicators are kept, at district level. A barrio row is kept, at barrio
+    level and with the barrio's name, only for the indicators in `barrio_indicators` (D-232:
+    the official barrio names come from here); the city row only for those in
+    `city_indicators` (then it is the municipio, the value to compare the districts with).
+    Every reference date is kept once: when two panel editions carry the same date, the latest
+    edition wins (a revision).
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -176,23 +178,30 @@ class MadridDistrictPanelPipeline(BaseModel):
     municipio_ine: str = Field(pattern=r"^28\d{3}$")
     indicators: dict[str, Annotated[str, Field(pattern=METRIC_ID_PATTERN)]] = Field(min_length=1)
     city_indicators: list[str] = Field(default_factory=list[str])
+    barrio_indicators: list[str] = Field(default_factory=list[str])
     indicator_column: str = "indicador_completo"
     edition_column: str = "Periodo panel"
     district_column: str = "cod_distrito"
     district_name_column: str | None = "distrito"
-    barrio_column: str = "cod_barrio"
+    barrio_column: str = "cod_barrio"  # district + barrio digit: '11' (Palacio), '201' (Simancas)
+    barrio_name_column: str = "barrio"
     period_column: str = "fecha_indicador"  # DD/MM/YYYY
     value_column: str = "valor_indicador"
     unit_column: str | None = "unidad_indicador"
     expected_districts: int = Field(gt=0)
+    expected_barrios: int | None = Field(default=None, gt=0)
     missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
 
     @model_validator(mode="after")
-    def _city_indicators_are_declared(self) -> Self:
-        unknown = sorted(set(self.city_indicators) - set(self.indicators))
-        if unknown:
-            msg = f"city_indicators must be declared indicators: {unknown}"
-            raise ValueError(msg)
+    def _city_and_barrio_indicators_are_declared(self) -> Self:
+        for name, chosen in (
+            ("city_indicators", self.city_indicators),
+            ("barrio_indicators", self.barrio_indicators),
+        ):
+            unknown = sorted(set(chosen) - set(self.indicators))
+            if unknown:
+                msg = f"{name} must be declared indicators: {unknown}"
+                raise ValueError(msg)
         return self
 
     def metric_ids(self) -> list[str]:
