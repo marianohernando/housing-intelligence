@@ -20,6 +20,7 @@
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
+//   node scripts/check-qa.mjs capturas-deck-c1c2 [outDir] # only C1 and C2, the first zone of the demo search as the API says (fit-0.6)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
 //   node scripts/check-qa.mjs impacto [outDir]   # «Dónde invertir primero» (D-229) and «Afecta a N …» in a FALTA row
 //   node scripts/check-qa.mjs claridad [outDir]  # line D's copy for a non-technical jury (summary, «Aquí hay n por cada 100», «Ver la cifra»)
@@ -1338,8 +1339,26 @@ async function texts(browser) {
 /** Captures C1–C4 of line D's deck (pitch/slides.md, «Recaptura tras gap-0.3» and fit-0.2), at 1440 px. */
 async function deckCaptures(browser) {
   const failures = [];
-  // C1 and C2 (fit-0.2): the demo search, the map and the first zone's card, checked against the
-  // /search answer the page receives (first zone and its facts, the commute in transit minutes)
+  await deckSearchCaptures(browser, failures);
+  await deckOtherCaptures(browser, failures);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Only C1 and C2 (fit-0.6 changes the demo's first zone): the rest of the deck stays as it is. */
+async function deckSearchOnly(browser) {
+  const failures = [];
+  await deckSearchCaptures(browser, failures);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * C1 and C2: the demo search, the map and the first zone's card, checked against the /search
+ * answer the page receives (first zone and its facts, the commute in transit minutes). Nothing
+ * about the first zone is fixed here: it is whatever the API answers.
+ */
+async function deckSearchCaptures(browser, failures) {
   const s = await open(browser, DESKTOP);
   const [answer] = await Promise.all([
     s.page.waitForResponse((r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST", { timeout: 30000 }),
@@ -1367,6 +1386,10 @@ async function deckCaptures(browser) {
   report.c1_c2.consola = s.errors;
   if (s.errors.length) failures.push("C1: consola");
   await s.ctx.close();
+}
+
+/** C3 and C4, with what the API answers (no figure of a given day is expected). */
+async function deckOtherCaptures(browser, failures) {
 
   // C4: «Qué falta» of Puente de Vallecas, escuelas infantiles in FALTA
   const q = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
@@ -1383,12 +1406,16 @@ async function deckCaptures(browser) {
 
   // C3: Portada → «Ver un ejemplo…» → «Ver todas las opciones»; then the view with the +5 min change
   const h = await open(browser, DESKTOP);
-  await loadExample(h.page);
+  const [searchAnswer] = await Promise.all([
+    h.page.waitForResponse((r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST", { timeout: 30000 }),
+    loadExample(h.page),
+  ]);
+  const school = (await searchAnswer.json()).data.reality_check?.relaxations?.find((r) => /colegio con primaria/i.test(r.label));
   const rc = h.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
   await rc.getByRole("button", { name: /Ver todas las opciones/ }).click();
   await h.page.waitForTimeout(800);
-  report.c3 = { y_si_cambias: flat(await rc.innerText()) };
-  if (!/50 zonas, 17 más/.test(report.c3.y_si_cambias)) failures.push("C3: no dice «50 zonas, 17 más»");
+  report.c3 = { y_si_cambias: flat(await rc.innerText()), colegio_api: school ? [school.zones_if_relaxed, school.added_zones] : null };
+  if (!school || !report.c3.y_si_cambias.includes(`${school.zones_if_relaxed} zonas, ${school.added_zones} más`)) failures.push("C3: la opción del colegio no dice lo que da la API");
   await rc.screenshot({ path: `${out}/deck_c3_y_si_cambias_1440.png` });
   await h.page.screenshot({ path: `${out}/deck_c3_resultados_con_opciones_1440.png` });
   const option = rc.getByRole("button", { name: /colegio con primaria/i }).first();
@@ -1405,8 +1432,6 @@ async function deckCaptures(browser) {
   }
   report.c3.consola = h.errors;
   await h.ctx.close();
-  report.fallos = failures;
-  if (failures.length) process.exitCode = 1;
 }
 
 /** Review of PR #16: beds keep their source without /datasets, and links say they open a new tab. */
@@ -1727,6 +1752,7 @@ else if (mode === "claridad") await clarity(browser);
 else if (mode === "impacto") await impact(browser);
 else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);
+else if (mode === "capturas-deck-c1c2") await deckSearchOnly(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
