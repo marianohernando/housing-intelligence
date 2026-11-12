@@ -11,6 +11,7 @@
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map cite the Ministry of Health and CartoCiudad
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
+//   node scripts/check-qa.mjs capturas-deck [outDir] # captures C3 and C4 of line D's deck, after gap-0.3
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -744,8 +745,53 @@ async function texts(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** Captures C3 and C4 of line D's deck (pitch/slides.md, «Recaptura tras gap-0.3»), at 1440 px. */
+async function deckCaptures(browser) {
+  const failures = [];
+  // C4: «Qué falta» of Puente de Vallecas, escuelas infantiles in FALTA
+  const q = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
+  await q.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+  const rows = await gapRows(q.page);
+  const nursery = rows.find((r) => r.fila === "Escuelas infantiles");
+  report.c4 = { filas: rows.map((r) => [r.fila, r.etiquetas.join(" "), r.mide]), escuelas_infantiles: nursery ?? null, consola: q.errors };
+  if (!nursery?.etiquetas.some((t) => /FALTA/.test(t ?? ""))) failures.push("C4: escuelas infantiles no sale FALTA");
+  await q.page.screenshot({ path: `${out}/deck_c4_puente_de_vallecas_que_falta_1440.png` });
+  await q.page.screenshot({ path: `${out}/deck_c4_puente_de_vallecas_que_falta_1440_completa.png`, fullPage: true });
+  const row = q.page.locator("main li.glass").filter({ has: q.page.getByRole("heading", { name: "Escuelas infantiles" }) });
+  await row.screenshot({ path: `${out}/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png` });
+  await q.ctx.close();
+
+  // C3: Portada → «Ver un ejemplo…» → «Ver todas las opciones»; then the view with the +5 min change
+  const h = await open(browser, DESKTOP);
+  await loadExample(h.page);
+  const rc = h.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+  await rc.getByRole("button", { name: /Ver todas las opciones/ }).click();
+  await h.page.waitForTimeout(800);
+  report.c3 = { y_si_cambias: flat(await rc.innerText()) };
+  if (!/50 zonas, 17 más/.test(report.c3.y_si_cambias)) failures.push("C3: no dice «50 zonas, 17 más»");
+  await rc.screenshot({ path: `${out}/deck_c3_y_si_cambias_1440.png` });
+  await h.page.screenshot({ path: `${out}/deck_c3_resultados_con_opciones_1440.png` });
+  const option = rc.getByRole("button", { name: /colegio con primaria/i }).first();
+  if (await option.count()) {
+    await option.click();
+    await h.page.getByText(/^Con este cambio salen? \d+ zonas?/).first().waitFor({ timeout: 20000 }).catch(() => undefined);
+    await h.page.waitForTimeout(2500);
+    report.c3.con_el_cambio = flat(await h.page.getByText(/^Con (este cambio|tu búsqueda)/).first().innerText());
+    await h.page.evaluate(() => window.scrollTo(0, 0));
+    await h.page.waitForTimeout(400);
+    await h.page.screenshot({ path: `${out}/deck_c3_vista_50_zonas_1440.png` });
+  } else {
+    failures.push("C3: sin botón para aplicar el cambio de +5 min");
+  }
+  report.c3.consola = h.errors;
+  await h.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "capturas-deck") await deckCaptures(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);

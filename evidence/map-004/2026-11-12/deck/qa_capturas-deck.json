@@ -1,0 +1,57 @@
+{
+ "modo": "capturas-deck",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "c4": {
+  "filas": [
+   [
+    "Escuelas infantiles",
+    "FALTA",
+    "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca"
+   ],
+   [
+    "Colegios",
+    "CUBIERTO",
+    "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca"
+   ],
+   [
+    "Centros de salud",
+    "CUBIERTO",
+    "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca"
+   ],
+   [
+    "Centros de mayores",
+    "CUBIERTO",
+    "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca"
+   ],
+   [
+    "Farmacias",
+    "CUBIERTO",
+    "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca"
+   ],
+   [
+    "Vivienda para familias",
+    "SIN DATOS",
+    "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas"
+   ]
+  ],
+  "escuelas_infantiles": {
+   "fila": "Escuelas infantiles",
+   "etiquetas": [
+    "FALTA"
+   ],
+   "mide": "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
+   "a_pie": [
+    "A pie hasta la escuela infantil más cercana6 min"
+   ],
+   "grupo": null,
+   "hospital": null
+  },
+  "consola": []
+ },
+ "c3": {
+  "y_si_cambias": "¿Y si cambias algo? Con tu búsqueda tal cual salen 33 zonas. Mira cuántas salen si cambias una sola cosa: +5 min a pie hasta colegio con primaria saldrían 50 zonas, 17 más Probar así Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
+  "con_el_cambio": "Con este cambio salen 50 zonas.",
+  "consola": []
+ },
+ "fallos": []
+}
