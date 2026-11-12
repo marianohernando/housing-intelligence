@@ -1,0 +1,17 @@
+{
+ "modo": "gaps-colgado",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "gaps_colgado_desktop": {
+  "zona_a_los_ms": 10526,
+  "aviso": "Algo ha fallado por nuestra parte. Inténtalo de nuevo en unos minutos. Reintentar",
+  "tras_reintentar": 0,
+  "consola": []
+ },
+ "gaps_colgado_mobile": {
+  "zona_a_los_ms": 10481,
+  "aviso": "Algo ha fallado por nuestra parte. Inténtalo de nuevo en unos minutos. Reintentar",
+  "tras_reintentar": 0,
+  "consola": []
+ },
+ "fallos": []
+}

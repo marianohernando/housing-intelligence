@@ -3,7 +3,15 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import type { DatasetList, DatasetRef } from "../../contracts/dataset_list_response";
-import { counterText, datasetLines, MINISTRY_ATTRIBUTION, ministryAttribution, sortDatasets } from "../provenance";
+import {
+  CARTOCIUDAD_ATTRIBUTION,
+  counterText,
+  datasetLines,
+  mapAttribution,
+  MINISTRY_ATTRIBUTION,
+  ministryAttribution,
+  sortDatasets,
+} from "../provenance";
 
 const metro: DatasetRef = {
   dataset_id: "crtm_metro",
@@ -48,6 +56,25 @@ describe("ministryAttribution (pie.sanidad)", () => {
     expect(ministryAttribution([next])).toBe("Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2026 (actualizado a 31/12/2025).");
     expect(ministryAttribution(null)).toBe(MINISTRY_ATTRIBUTION);
     expect(ministryAttribution([metro, osm])).toBe(MINISTRY_ATTRIBUTION);
+  });
+});
+
+describe("mapAttribution (the zone screens have no footer)", () => {
+  const url = new URL("../../../../../data/fixtures/contracts/dataset_list.all.fixture.json", import.meta.url);
+  const { datasets } = JSON.parse(readFileSync(url, "utf8")) as DatasetList;
+
+  it("cites the Ministry with its catalogues and dates from /datasets, CRTM and CartoCiudad as the IGN asks", () => {
+    const html = mapAttribution(datasets);
+    expect(html).toContain(">Powered by CRTM</a>");
+    expect(html).toContain(
+      ">Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)</a>",
+    );
+    expect(html).toContain(`>${CARTOCIUDAD_ATTRIBUTION}</a>`);
+    expect(CARTOCIUDAD_ATTRIBUTION).toBe("© Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es");
+  });
+
+  it("links to «Cómo lo calculamos» while /datasets has not answered, in the same tab", () => {
+    expect(mapAttribution(null)).toContain('<a href="/como-lo-calculamos#datos">Ministerio de Sanidad (fuentes y fechas en «Cómo lo calculamos»)</a>');
   });
 });
 

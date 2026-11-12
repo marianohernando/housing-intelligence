@@ -49,12 +49,15 @@ export function zoneGapsUrl(level: GapLevel, code: string, base: string = API_UR
   return new URL(`/api/v1/gaps/${level}/${encodeURIComponent(code)}`, base).toString();
 }
 
-export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
+/** `timeoutMs`: give up after this long, counted from when the request is sent (TIMEOUT). */
+export type ApiRequestInit = RequestInit & { timeoutMs?: number };
+
+export type FetchLike = (input: string, init?: ApiRequestInit) => Promise<Response>;
 
 /**
  * A failed call. `code` comes from the API (`ErrorCode`), or is NETWORK when the API cannot be
- * reached, ABORTED when the caller cancelled it, TIMEOUT when it took longer than the caller's
- * `AbortSignal.timeout`, VALIDATION for a rejected request and
+ * reached, ABORTED when the caller cancelled it, TIMEOUT when it took longer than its `timeoutMs`,
+ * VALIDATION for a rejected request and
  * HTTP_<status> when the body says nothing.
  */
 export class ApiError extends Error {
@@ -88,17 +91,29 @@ async function toApiError(response: Response): Promise<ApiError> {
  */
 export const MAX_REQUESTS_IN_FLIGHT = 4;
 
-const inTurn = createLimiter(MAX_REQUESTS_IN_FLIGHT);
-const fetchInTurn: FetchLike = (input, init) => inTurn(() => fetch(input, init));
+/**
+ * fetch through a limiter. A request's timeout (`timeoutMs`) starts when it leaves the queue, not
+ * while it waits its turn (review of PR #17).
+ */
+export function fetchThrough(run: ReturnType<typeof createLimiter>, fetchImpl: typeof fetch = fetch): FetchLike {
+  return (input, { timeoutMs, ...init } = {}) =>
+    run(() => {
+      if (!timeoutMs) return fetchImpl(input, init);
+      const timeout = AbortSignal.timeout(timeoutMs);
+      return fetchImpl(input, { ...init, signal: init.signal ? AbortSignal.any([init.signal, timeout]) : timeout });
+    });
+}
+
+const fetchInTurn = fetchThrough(createLimiter(MAX_REQUESTS_IN_FLIGHT));
 
 export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchInTurn) {
-  async function call<T>(path: string, init?: RequestInit): Promise<T> {
+  async function call<T>(path: string, init?: ApiRequestInit): Promise<T> {
     let response: Response;
     try {
       response = await fetchImpl(new URL(path, base).toString(), init);
     } catch (exc) {
-      const reason: unknown = init?.signal?.reason;
-      const timedOut = reason instanceof DOMException && reason.name === "TimeoutError";
+      // AbortSignal.timeout rejects fetch with a TimeoutError; a cancelled request with an AbortError
+      const timedOut = (exc as Error).name === "TimeoutError";
       const aborted = init?.signal?.aborted || (exc as Error).name === "AbortError";
       throw new ApiError(0, timedOut ? "TIMEOUT" : aborted ? "ABORTED" : "NETWORK", (exc as Error).message);
     }
@@ -118,8 +133,8 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
 
   return {
     /** GET /api/v1/gaps/{level}/{code}: what a zone is missing against the region. */
-    zoneGaps(level: GapLevel, code: string, { signal }: { signal?: AbortSignal } = {}) {
-      return call<ZoneGapListResponse>(zoneGapsUrl(level, code, base), { signal });
+    zoneGaps(level: GapLevel, code: string, { timeoutMs }: { timeoutMs?: number } = {}) {
+      return call<ZoneGapListResponse>(zoneGapsUrl(level, code, base), { timeoutMs });
     },
     /** GET /api/v1/gaps?level=&row=: one row of «Qué falta» for every zone of a level (the map). */
     gapRowMap(level: "municipio" | "distrito", row: GapRowKey) {

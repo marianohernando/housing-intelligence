@@ -1,0 +1,28 @@
+{
+ "modo": "revision",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "camas_sin_datasets_desktop": {
+  "fuente": "Camas: Ministerio de Sanidad (fuente y fecha en «Cómo lo calculamos»)",
+  "enlaces": 1,
+  "consola_otros": [],
+  "enlace_interno": "/como-lo-calculamos#datos"
+ },
+ "camas_sin_datasets_mobile": {
+  "fuente": "Camas: Ministerio de Sanidad (fuente y fecha en «Cómo lo calculamos»)",
+  "enlaces": 1,
+  "consola_otros": [],
+  "enlace_interno": "/como-lo-calculamos#datos"
+ },
+ "pie_enlaces": [
+  "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+  "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+  "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+  "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+  "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+  "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+  "Código abierto (Apache-2.0) (se abre en una pestaña nueva)"
+ ],
+ "pie_axe": [],
+ "zona_mal_formada_http": 500,
+ "fallos": []
+}

@@ -1,0 +1,37 @@
+{
+ "modo": "hosp",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "hospitales_desktop": {
+  "frase": "6 hospitales en Fuencarral-El Pardo La fuente oficial no publica el nombre de algunos de estos centros. Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) (se abre en una pestaña nueva)",
+  "lista": [
+   "Hospital · Clínica Cemtro · 100 camas instaladas · gestión privada",
+   "Hospital de media y larga estancia · Hospital Hestia Madrid · 297 camas instaladas · gestión privada",
+   "Hospital de salud mental · Hospital Psiquiátrico Doctor Rodriguez Lafora · 336 camas instaladas · gestión pública",
+   "Hospital · Hospital Ruber Internacional · 143 camas instaladas · gestión privada",
+   "Hospital · Hospital Universitario La Paz · 966 camas instaladas · gestión pública",
+   "Hospital"
+  ],
+  "fuente": "Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) (se abre en una pestaña nueva)",
+  "fuente_enlace": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "hospitales_mobile": {
+  "frase": "6 hospitales en Fuencarral-El Pardo La fuente oficial no publica el nombre de algunos de estos centros. Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) (se abre en una pestaña nueva)",
+  "lista": [
+   "Hospital · Clínica Cemtro · 100 camas instaladas · gestión privada",
+   "Hospital de media y larga estancia · Hospital Hestia Madrid · 297 camas instaladas · gestión privada",
+   "Hospital de salud mental · Hospital Psiquiátrico Doctor Rodriguez Lafora · 336 camas instaladas · gestión pública",
+   "Hospital · Hospital Ruber Internacional · 143 camas instaladas · gestión privada",
+   "Hospital · Hospital Universitario La Paz · 966 camas instaladas · gestión pública",
+   "Hospital"
+  ],
+  "fuente": "Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) (se abre en una pestaña nueva)",
+  "fuente_enlace": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "fallos": []
+}

@@ -98,8 +98,8 @@ function GapMethod() {
       </p>
       <p className={styles.para}>
         ¿Por qué no con toda la región? Porque un pueblo pequeño suele tener su escuela infantil y pocos niños: a pie y por
-        niño, los municipios rurales tienen unas 2,5 veces más escuelas infantiles que los urbanos (12,3 frente a 4,9 por
-        cada 1.000 niños). Con la media de toda la región, a cualquier ciudad le faltaría de todo.
+        niño, los municipios rurales tienen más del doble de escuelas infantiles que los urbanos (unas 12 por cada 1.000
+        niños, frente a menos de 5). Con la media de toda la región, a cualquier ciudad le faltaría de todo.
       </p>
       <table className={styles.table}>
         <thead>
@@ -144,8 +144,9 @@ function GapMethod() {
         <strong>El hospital.</strong> En la fila de centros de salud verás también los minutos a pie hasta el hospital
         general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias:
         ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. No cuenta para el estado de la fila: a un
-        hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre de cada hospital y sus camas
-        instaladas, del Catálogo Nacional de Hospitales del Ministerio de Sanidad.
+        hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre y las camas instaladas de los
+        hospitales que hemos podido identificar en el Catálogo Nacional de Hospitales del Ministerio de Sanidad; de unos
+        pocos solo sabemos el tipo y el municipio.
       </p>
       <p className={styles.para}>
         Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas, no con una norma oficial
@@ -235,8 +236,9 @@ function Limits() {
           Madrid, no en cada portal: la repartimos entre sus calles según su longitud.
         </li>
         <li>
-          <strong>Las camas de hospital no cuentan en la lista.</strong> Las enseñamos en cada hospital, pero no deciden si a
-          una zona le falta algo: para eso haría falta medir el viaje en coche o en transporte público.
+          <strong>Las camas de hospital no cuentan en la lista.</strong> Las enseñamos en los hospitales que hemos podido
+          identificar, pero no deciden si a una zona le falta algo: para eso haría falta medir el viaje en coche o en
+          transporte público.
         </li>
         <li>
           <strong>Vivienda:</strong> comparamos las viviendas grandes con los hogares grandes, no el mercado. No sabemos

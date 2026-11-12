@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import type { ScenarioState } from "../../contracts/scenario_state";
-import { ApiError, createApi, type FetchLike } from "../api";
+import { ApiError, createApi, type FetchLike, fetchThrough } from "../api";
+import { createLimiter } from "../limit";
 
 const BASE = "http://api.test";
 const FIXTURES = new URL("../../../../../data/fixtures/contracts/", import.meta.url);
@@ -81,15 +82,29 @@ describe("api client", () => {
 
   it("tells a request that took too long apart from one the caller cancelled (TIMEOUT)", async () => {
     const calls: Call[] = [];
-    const signal = AbortSignal.timeout(1);
-    await new Promise((resolve) => setTimeout(resolve, 20));
     const timingOut: FetchLike = async (url, init) => {
       calls.push({ url: String(url), init });
       throw new DOMException("The operation timed out.", "TimeoutError");
     };
-    const error = await createApi(BASE, timingOut).zoneGaps("distrito", "2807905", { signal }).catch((e: unknown) => e);
-    expect(calls[0]?.init?.signal).toBe(signal);
+    const error = await createApi(BASE, timingOut).zoneGaps("distrito", "2807905", { timeoutMs: 10 }).catch((e: unknown) => e);
+    expect(calls[0]?.init).toMatchObject({ timeoutMs: 10 });
     expect(error).toMatchObject({ status: 0, code: "TIMEOUT" });
+  });
+
+  it("starts a request's timeout when it leaves the queue, not while it waits its turn", async () => {
+    const run = createLimiter(1);
+    const signals: (AbortSignal | null | undefined)[] = [];
+    // Each request takes 40 ms; the second waits for the first, so 60 ms counted from the call would expire
+    const slow = (async (_url: string, init?: RequestInit) => {
+      signals.push(init?.signal);
+      await new Promise((resolve) => setTimeout(resolve, 40));
+      if (init?.signal?.aborted) throw init.signal.reason;
+      return new Response("{}");
+    }) as typeof fetch;
+    const inTurn = fetchThrough(run, slow);
+    const answers = await Promise.all([inTurn("a", { timeoutMs: 60 }), inTurn("b", { timeoutMs: 60 })]);
+    expect(answers.map((r) => r.status)).toEqual([200, 200]);
+    expect(signals.every((s) => s instanceof AbortSignal)).toBe(true);
   });
 
   it("escapes path segments", async () => {

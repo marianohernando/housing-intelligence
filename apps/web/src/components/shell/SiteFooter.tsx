@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import DataCounter from "@/components/provenance/DataCounter";
 import MinistryAttribution from "@/components/provenance/MinistryAttribution";
+import { CARTOCIUDAD_ATTRIBUTION } from "@/lib/provenance";
 
 import styles from "./SiteFooter.module.css";
 
@@ -17,8 +18,8 @@ const ATTRIBUTIONS: { text: ReactNode; href: string }[] = [
   { text: "© OpenStreetMap contributors, ODbL.", href: "https://www.openstreetmap.org/copyright" },
   // pie.sanidad: the Ministry's notice asks for the source and its update date (D-218)
   { text: <MinistryAttribution />, href: "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" },
-  // pie.cartociudad: places the centres marked «ubicación aproximada» (D-216)
-  { text: "Geocodificación: CartoCiudad (IGN), CC BY 4.0 scne.es.", href: "https://www.cartociudad.es" },
+  // pie.cartociudad: places the centres marked «ubicación aproximada» (D-216), cited as the IGN asks
+  { text: `Geocodificación: ${CARTOCIUDAD_ATTRIBUTION}.`, href: "https://www.cartociudad.es" },
 ];
 const TEXT = {
   independent: "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad.",

@@ -1,6 +1,7 @@
 "use client";
 
 import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill } from "lucide-react";
+import Link from "next/link";
 import { useId } from "react";
 
 import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
@@ -34,7 +35,7 @@ const TEXT = {
   newTab: " (se abre en una pestaña nueva)",
 };
 
-/** «Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025», named by /datasets (a fixed source until it answers). */
+/** «Camas: Ministerio de Sanidad, Catálogo … 2025 (actualizado a 31/12/2024)», from /datasets; until it answers, «Cómo lo calculamos». */
 function CapacitySourceLine({ type, items }: { type: FacilityKey; items: Facility[] }) {
   const { data } = useDatasets();
   const sources = capacitySources(type, items, data?.datasets ?? null);
@@ -45,14 +46,14 @@ function CapacitySourceLine({ type, items }: { type: FacilityKey; items: Facilit
       {sources.map((source, i) => (
         <span key={source.id}>
           {i > 0 && "; "}
-          {source.url ? (
-            <a href={source.url} target="_blank" rel="noopener noreferrer">
+          {source.href && source.external && (
+            <a href={source.href} target="_blank" rel="noopener noreferrer">
               {source.label}
               <span className="visually-hidden">{TEXT.newTab}</span>
             </a>
-          ) : (
-            source.label
           )}
+          {source.href && !source.external && <Link href={source.href}>{source.label}</Link>}
+          {!source.href && source.label}
         </span>
       ))}
     </p>

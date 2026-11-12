@@ -575,6 +575,7 @@ async function hospitals(browser) {
     await panel.scrollIntoViewIfNeeded();
     await (id === "mobile" ? chip.tap() : chip.click());
     await panel.getByText(/^Camas: /).waitFor({ timeout: 20000 });
+    await panel.getByText(/actualizado a 31\/12\/2024/).waitFor({ timeout: 20000 });
     await panel.getByText(/^Ver la lista/).click();
     const list = panel.getByRole("list", { name: /hospital/ });
     const items = (await list.locator("li").allInnerTexts()).map(flat);
@@ -659,7 +660,7 @@ async function licences(browser) {
       const text = entry.pie.join(" | ");
       for (const must of [
         "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025).",
-        "Geocodificación: CartoCiudad (IGN), CC BY 4.0 scne.es.",
+        "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es.",
         "del CRTM ni del Ministerio de Sanidad.",
         "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
       ]) {
@@ -675,7 +676,8 @@ async function licences(browser) {
   const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
   await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
   report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
-  if (!/Ministerio de Sanidad/.test(report.mapa_atribucion) || !/CartoCiudad/.test(report.mapa_atribucion)) failures.push("mapa: atribución");
+  if (!/Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 \(actualizado a 31\/12\/2024\)/.test(report.mapa_atribucion)) failures.push("mapa: Ministerio sin catálogo ni fecha");
+  if (!report.mapa_atribucion.includes("© Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es")) failures.push("mapa: CartoCiudad");
   await z.page.locator(".maplibregl-ctrl-attrib").first().screenshot({ path: `${out}/licencias_mapa_desktop.png` });
   await z.ctx.close();
   report.fallos = failures;
@@ -819,7 +821,9 @@ async function review(browser) {
       consola_otros: errors.filter((e) => !/datasets|ERR_FAILED|Failed to load resource/.test(e)),
     });
     await panel.screenshot({ path: `${out}/revision_camas_sin_datasets_${id}.png` });
-    if (entry.fuente !== "Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales") failures.push(`${id}: fuente fija «${entry.fuente}»`);
+    if (entry.fuente !== "Camas: Ministerio de Sanidad (fuente y fecha en «Cómo lo calculamos»)") failures.push(`${id}: fuente sin /datasets «${entry.fuente}»`);
+    entry.enlace_interno = await source.getByRole("link").first().getAttribute("href");
+    if (entry.enlace_interno !== "/como-lo-calculamos#datos") failures.push(`${id}: sin enlace a «Cómo lo calculamos»`);
     if (entry.consola_otros.length) failures.push(`${id}: consola`);
     await ctx.close();
   }

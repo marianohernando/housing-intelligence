@@ -1,0 +1,102 @@
+{
+ "modo": "licencias",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "pie_que_falta_desktop": {
+  "pie": [
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad.",
+   "Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+   "Código abierto (Apache-2.0) (se abre en una pestaña nueva)"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "pie_como_lo_calculamos_desktop": {
+  "pie": [
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad.",
+   "Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+   "Código abierto (Apache-2.0) (se abre en una pestaña nueva)"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "pie_que_falta_mobile": {
+  "pie": [
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad.",
+   "Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+   "Código abierto (Apache-2.0) (se abre en una pestaña nueva)"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "pie_como_lo_calculamos_mobile": {
+  "pie": [
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "© OpenStreetMap contributors, ODbL. (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Geocodificación: © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es. (se abre en una pestaña nueva)",
+   "Vida Fácil no es un servicio de la Comunidad de Madrid, del Ayuntamiento, del CRTM ni del Ministerio de Sanidad.",
+   "Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+   "Código abierto (Apache-2.0) (se abre en una pestaña nueva)"
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mapa_atribucion": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap | Comunidad de Madrid · Powered by CRTM · Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025) · © Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es",
+ "fallos": []
+}

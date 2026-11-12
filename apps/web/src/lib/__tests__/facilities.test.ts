@@ -208,15 +208,25 @@ describe("capacitySources", () => {
     url: "https://www.sanidad.gob.es/",
   };
 
-  it("names the source of the beds from /datasets, once per dataset", () => {
+  it("names the source of the beds from /datasets with its year and update date, once per dataset", () => {
     expect(capacitySources("hospital", items, [ref])).toEqual([
-      { id: "ms_catalogo_nacional_hospitales", label: "Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025", url: "https://www.sanidad.gob.es/" },
+      {
+        id: "ms_catalogo_nacional_hospitales",
+        label: "Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024)",
+        href: "https://www.sanidad.gob.es/",
+        external: true,
+      },
     ]);
   });
 
-  it("never leaves the beds without their source while /datasets has not answered or failed (review of PR #16)", () => {
+  it("never leaves the beds without their source while /datasets has not answered or failed: «Cómo lo calculamos» lists it", () => {
     expect(capacitySources("hospital", items, null)).toEqual([
-      { id: "ms_catalogo_nacional_hospitales", label: "Ministerio de Sanidad, Catálogo Nacional de Hospitales", url: null },
+      {
+        id: "ms_catalogo_nacional_hospitales",
+        label: "Ministerio de Sanidad (fuente y fecha en «Cómo lo calculamos»)",
+        href: "/como-lo-calculamos#datos",
+        external: false,
+      },
     ]);
     expect(capacitySources("hospital", items, [])).toHaveLength(1);
   });

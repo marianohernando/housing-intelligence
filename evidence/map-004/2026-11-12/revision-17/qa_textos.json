@@ -1,0 +1,74 @@
+{
+ "modo": "textos",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "como_lo_calculamos_desktop": {
+  "hospital": "El hospital. En la fila de centros de salud verás también los minutos a pie hasta el hospital general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. No cuenta para el estado de la fila: a un hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre y las camas instaladas de los hospitales que hemos podido identificar en el Catálogo Nacional de Hospitales del Ministerio de Sanidad; de unos pocos solo sabemos el tipo y el municipio.",
+  "limites": [
+   "Solo usamos la capacidad que se publica.",
+   "Medimos lo que tienes andando.",
+   "Colocamos a la gente por calles.",
+   "Las camas de hospital no cuentan en la lista.",
+   "Vivienda:",
+   "Alquiler:",
+   "Compra:",
+   "No enseñamos pisos en venta ni en alquiler.",
+   "Todavía no sabemos qué echan en falta los vecinos.",
+   "Cada dato tiene su fecha."
+  ],
+  "fiabilidad": "Qué significa la fiabilidad Cada dato lleva una de estas etiquetas: Dato fiable: sale de un registro oficial completo. Dato aproximado: es oficial, pero la zona tiene poca población o la fuente no está completa. Dato poco seguro: faltan bastantes datos en la fuente. Sin datos: no lo tenemos. Usamos estas etiquetas según la fiabilidad del dato, que va de 0 a 1: 0,8 o más: dato fiable. De 0,5 a menos de 0,8: dato aproximado. Más de 0 y menos de 0,5: dato poco seguro. 0: sin datos. El 0,5 cuenta como aproximado porque es la fiabilidad que reciben siempre las zonas con poca población. La fiabilidad baja en estos casos: Zonas con poca población. En un pueblo pequeño, un solo centro más o menos cambia mucho la cuenta, así que el dato cuenta como aproximado. Pasa con menos de 200 niños de 0 a 4 años en escuelas infantiles, menos de 300 niños de 5 a 14 años en colegios, menos de 2.000 habitantes en centros de salud y en farmacias, menos de 300 personas mayores en mayores y menos de 100 hogares de 4 o más personas en vivienda. Aulas repartidas. En colegios el dato es aproximado como mucho, porque las aulas de cada municipio se reparten a partes iguales entre sus colegios. Esto mide cuánto nos fiamos del dato; si la zona es demasiado pequeña para comparar, se ve aparte (en «Cómo decidimos qué falta en una zona»). Fuentes incompletas. Por ejemplo, si de algunas residencias no se publica cuántas plazas tienen, cuanto mayor es esa parte, menos nos fiamos. Cuentas aproximadas. Por ejemplo, la fuente agrupa los hogares de «5 o más personas» y los contamos como de 5.",
+  "datos": "23 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios y sus aulas, salud y camas de hospital de la región, mayores, farmacias y las 6 redes de transporte público del Consorcio Regional de Transportes de Madrid, que también se publican en ese portal. Como apoyo, sin contarlos como datos de la Comunidad: el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito de Madrid capital; el mapa de calles de OpenStreetMap, para las distancias a pie; los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los centros de salud y el nombre y las camas de los hospitales; el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección. Antes de usar un conjunto, pasa un control de calidad: que no haya registros repetidos, que cada municipio exista, que los errores queden apartados y que un dato que falta no se convierta en un cero. Cada resultado dice de qué conjuntos sale, con el enlace a su ficha en el portal, su versión y su licencia.",
+  "a_pie": "Distancias a pie Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano: escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "que_falta_el_alamo_desktop": {
+  "intro": "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.",
+  "grupos": [
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 108 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.",
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 106 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.",
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles. Juntos tienen el 105 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.",
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 2 vecinos más cercanos del mismo tipo: Navalcarnero y Arroyomolinos. Juntos tienen el 111 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado."
+  ],
+  "hospital": "El hospital: Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "como_lo_calculamos_mobile": {
+  "hospital": "El hospital. En la fila de centros de salud verás también los minutos a pie hasta el hospital general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. No cuenta para el estado de la fila: a un hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre y las camas instaladas de los hospitales que hemos podido identificar en el Catálogo Nacional de Hospitales del Ministerio de Sanidad; de unos pocos solo sabemos el tipo y el municipio.",
+  "limites": [
+   "Solo usamos la capacidad que se publica.",
+   "Medimos lo que tienes andando.",
+   "Colocamos a la gente por calles.",
+   "Las camas de hospital no cuentan en la lista.",
+   "Vivienda:",
+   "Alquiler:",
+   "Compra:",
+   "No enseñamos pisos en venta ni en alquiler.",
+   "Todavía no sabemos qué echan en falta los vecinos.",
+   "Cada dato tiene su fecha."
+  ],
+  "fiabilidad": "Qué significa la fiabilidad Cada dato lleva una de estas etiquetas: Dato fiable: sale de un registro oficial completo. Dato aproximado: es oficial, pero la zona tiene poca población o la fuente no está completa. Dato poco seguro: faltan bastantes datos en la fuente. Sin datos: no lo tenemos. Usamos estas etiquetas según la fiabilidad del dato, que va de 0 a 1: 0,8 o más: dato fiable. De 0,5 a menos de 0,8: dato aproximado. Más de 0 y menos de 0,5: dato poco seguro. 0: sin datos. El 0,5 cuenta como aproximado porque es la fiabilidad que reciben siempre las zonas con poca población. La fiabilidad baja en estos casos: Zonas con poca población. En un pueblo pequeño, un solo centro más o menos cambia mucho la cuenta, así que el dato cuenta como aproximado. Pasa con menos de 200 niños de 0 a 4 años en escuelas infantiles, menos de 300 niños de 5 a 14 años en colegios, menos de 2.000 habitantes en centros de salud y en farmacias, menos de 300 personas mayores en mayores y menos de 100 hogares de 4 o más personas en vivienda. Aulas repartidas. En colegios el dato es aproximado como mucho, porque las aulas de cada municipio se reparten a partes iguales entre sus colegios. Esto mide cuánto nos fiamos del dato; si la zona es demasiado pequeña para comparar, se ve aparte (en «Cómo decidimos qué falta en una zona»). Fuentes incompletas. Por ejemplo, si de algunas residencias no se publica cuántas plazas tienen, cuanto mayor es esa parte, menos nos fiamos. Cuentas aproximadas. Por ejemplo, la fuente agrupa los hogares de «5 o más personas» y los contamos como de 5.",
+  "datos": "23 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios y sus aulas, salud y camas de hospital de la región, mayores, farmacias y las 6 redes de transporte público del Consorcio Regional de Transportes de Madrid, que también se publican en ese portal. Como apoyo, sin contarlos como datos de la Comunidad: el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito de Madrid capital; el mapa de calles de OpenStreetMap, para las distancias a pie; los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los centros de salud y el nombre y las camas de los hospitales; el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección. Antes de usar un conjunto, pasa un control de calidad: que no haya registros repetidos, que cada municipio exista, que los errores queden apartados y que un dato que falta no se convierta en un cero. Cada resultado dice de qué conjuntos sale, con el enlace a su ficha en el portal, su versión y su licencia.",
+  "a_pie": "Distancias a pie Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano: escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "que_falta_el_alamo_mobile": {
+  "intro": "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.",
+  "grupos": [
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 108 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.",
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero. Juntos tienen el 106 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.",
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles. Juntos tienen el 105 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.",
+   "Comparado con municipios parecidos de la zona. El Álamo es demasiado pequeño para compararlo solo en este servicio, así que lo juntamos con sus 2 vecinos más cercanos del mismo tipo: Navalcarnero y Arroyomolinos. Juntos tienen el 111 % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado."
+  ],
+  "hospital": "El hospital: Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "centros_salud": "7 centros de salud y consultorios en Chamartín La fuente oficial no publica el nombre de algunos de estos centros.",
+ "fallos": []
+}

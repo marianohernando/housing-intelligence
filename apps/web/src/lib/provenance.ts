@@ -21,7 +21,7 @@ const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", 
 const UPDATED = /actualizado a (\d{1,2}) de ([a-z]+) de (\d{4})/;
 
 /** «Catálogo Nacional de Hospitales 2025 (directorio…, actualizado a 31 de diciembre de 2024)» -> «… 2025 (actualizado a 31/12/2024)». */
-function citedName(name: string): string {
+export function citedName(name: string): string {
   const title = name.split(" (")[0] ?? name;
   const [, day = "", monthName = "", year = ""] = UPDATED.exec(name) ?? [];
   const month = MONTHS.indexOf(monthName) + 1;
@@ -34,13 +34,50 @@ function citedName(name: string): string {
  * both read from the names /datasets gives its catalogues (hospitals first, as D wrote it).
  */
 export function ministryAttribution(refs: readonly DatasetRef[] | null): string {
-  const cited = (refs ?? [])
-    .filter((ref) => ref.publisher === MINISTRY)
-    .sort((a, b) => b.name.localeCompare(a.name, "es"))
-    .map((ref) => citedName(ref.name));
-  if (cited.length === 0) return MINISTRY_ATTRIBUTION;
+  const citation = ministryCitation(refs);
+  return citation ? `Fuente: ${citation}.` : MINISTRY_ATTRIBUTION;
+}
+
+function ministryRefs(refs: readonly DatasetRef[] | null): DatasetRef[] {
+  return (refs ?? []).filter((ref) => ref.publisher === MINISTRY).sort((a, b) => b.name.localeCompare(a.name, "es"));
+}
+
+/** «Ministerio de Sanidad — Catálogo … 2025 (actualizado a 31/12/2024) y …», or null while /datasets has not named them. */
+function ministryCitation(refs: readonly DatasetRef[] | null): string | null {
+  const cited = ministryRefs(refs).map((ref) => citedName(ref.name));
+  if (cited.length === 0) return null;
   const list = cited.length === 1 ? cited[0] : `${cited.slice(0, -1).join(", ")} y ${cited.at(-1)}`;
-  return `Fuente: ${MINISTRY} — ${list}.`;
+  return `${MINISTRY} — ${list}`;
+}
+
+/** Where the method page lists every source with its date: the fallback when /datasets has not answered. */
+export const SOURCES_HREF = "/como-lo-calculamos#datos";
+
+/** pie.cartociudad, as the IGN asks to be cited (CC BY 4.0 scne.es). */
+export const CARTOCIUDAD_ATTRIBUTION = "© Instituto Geográfico Nacional, CartoCiudad, CC BY 4.0 scne.es";
+
+const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function link(href: string, text: string, external = true): string {
+  const target = external ? ' target="_blank" rel="noopener noreferrer"' : "";
+  return `<a href="${escapeHtml(href)}"${target}>${escapeHtml(text)}</a>`;
+}
+
+/**
+ * The map's attribution (HTML for MapLibre): the zone screens have no footer, so the sources whose
+ * licences ask to be cited where their data shows go here. The Ministry with its catalogues and
+ * dates from /datasets, as the footer; until it answers, a link to where they are listed.
+ */
+export function mapAttribution(refs: readonly DatasetRef[] | null): string {
+  const citation = ministryCitation(refs);
+  const ministryUrl = ministryRefs(refs).find((ref) => ref.url)?.url;
+  return [
+    "Comunidad de Madrid",
+    // CRTM asks for «Powered by CRTM» with a link (data/catalog/sources/crtm_open_data.yaml)
+    link("https://www.crtm.es", "Powered by CRTM"),
+    citation && ministryUrl ? link(ministryUrl, citation) : link(SOURCES_HREF, `${MINISTRY} (fuentes y fechas en «Cómo lo calculamos»)`, false),
+    link("https://www.cartociudad.es", CARTOCIUDAD_ATTRIBUTION),
+  ].join(" · ");
 }
 
 export interface DatasetLines {
