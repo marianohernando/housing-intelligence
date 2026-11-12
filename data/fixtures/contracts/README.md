@@ -15,4 +15,4 @@ Se regeneran con `uv run python scripts/build_contract_fixtures.py`, que lee la 
 
 Las respuestas de la API van dentro del sobre común (`data`, `meta`, `warnings`); sus JSON Schema están en `data/schemas/api/`.
 
-12 nov (D-216, D-217): `places.colegios_chamartin` (contrato `places-1`) y `zone_gap_list.el_alamo`, un municipio pequeño comparado con sus vecinos (`comparison_group`, `gap-0.3`). Todos los fixtures se regeneraron con el método 2SFCA salvo `gap_row_map.centro_salud_distrito`, que sigue en `gap-0.2` porque un test de la web fija el estado de Centro; se regenera cuando B lo cambie.
+12 nov (D-216, D-217): `places.colegios_chamartin` (contrato `places-1`) y `zone_gap_list.el_alamo`, un municipio pequeño comparado con sus vecinos (`comparison_group`, `gap-0.3`). Todos los fixtures se regeneraron con el método 2SFCA; los tests de la web leen los estados del fixture, no los fijan.

@@ -454,3 +454,27 @@ def null_row(code: str, period: Any, reason: NullReason) -> dict[str, Any]:
 
 def result_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
     return _result(rows)
+
+
+def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -> pd.DataFrame:
+    """Every zone of `level` gets a row: one the source does not publish is SOURCE_MISSING,
+    never left out (the null contract of Gate 3), dated like the rest of the level."""
+    if result.empty:
+        return result
+    # Rows of a feature's own geo_level may leave territory_level empty (set when persisting).
+    levels = (
+        result["territory_level"].astype(object).where(result["territory_level"].notna(), level)
+    )
+    at_level = result[levels == level]
+    if at_level.empty:
+        return result
+    period = at_level["period_start"].max()
+    present = set(at_level["territory_code"].astype(str))
+    missing = [
+        _null(code, period, NullReason.SOURCE_MISSING) | {"territory_level": level}
+        for code in zones
+        if code not in present
+    ]
+    if not missing:
+        return result
+    return pd.concat([result, _result(missing)], ignore_index=True)

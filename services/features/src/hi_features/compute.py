@@ -163,6 +163,9 @@ def compute(engine: Engine, spec: FeatureSpec) -> pd.DataFrame:
         for level, override in levels.items()
     }
     combined = combine_levels(base, extra)
+    if spec.geo_level.value == "municipio":
+        zones = walk.zone_codes(engine, "municipio")
+        combined = methods.fill_missing_zones(combined, zones, "municipio")
     if "category" not in formula:
         return combined
     shares = loaders.section_share(engine, formula["category"])

@@ -324,3 +324,36 @@ def test_postcode_mean_uses_the_latest_period_only() -> None:
     obs = pd.concat([old, _obs([("28001", {}, 20.0)])])
     weights = _weights([("2807901", "28001", 1.0)])
     assert methods.postcode_weighted_mean(obs, weights, {}).iloc[0]["value"] == 20.0
+
+
+def test_a_zone_the_source_leaves_out_gets_an_explicit_null() -> None:
+    """Gate 3 null contract: Zarzalejo has no tenure row in the census table -> SOURCE_MISSING."""
+    from hi_features.methods import fill_missing_zones, result_frame
+
+    result = result_frame(
+        [
+            {
+                "territory_code": "28001",
+                "period_start": "2021-01-01",
+                "value": 1.0,
+                "null_reason": None,
+                "confidence": 1.0,
+                "territory_level": None,  # a feature's own level is set when persisting
+            },
+            {
+                "territory_code": "28",
+                "period_start": "2021-01-01",
+                "value": 2.0,
+                "null_reason": None,
+                "confidence": 1.0,
+                "territory_level": "ccaa",
+            },
+        ]
+    )
+    filled = fill_missing_zones(result, ["28001", "28183"], "municipio")
+    added = filled[filled["territory_code"] == "28183"].iloc[0]
+    assert added["value"] is None or added["value"] != added["value"]
+    assert added["null_reason"] == "SOURCE_MISSING"
+    assert added["period_start"] == "2021-01-01"
+    assert len(filled) == 3
+    assert fill_missing_zones(filled, ["28001", "28183"], "municipio").shape == filled.shape

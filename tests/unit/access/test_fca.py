@@ -48,10 +48,15 @@ def test_facility_nobody_reaches_is_reported_not_spread() -> None:
     assert result.unreached_capacity == 7.0
 
 
+# People and capacities are counts: no subnormal floats (5e-324 people would turn a share into
+# an overflow, which is float arithmetic, not 2SFCA). CI found that case on 12 Nov.
+COUNTS = st.one_of(st.just(0.0), st.floats(1e-3, 1000))
+
+
 @settings(max_examples=60, deadline=None)
 @given(
-    st.lists(st.floats(0, 50), min_size=1, max_size=6),
-    st.lists(st.floats(0, 1000), min_size=1, max_size=8),
+    st.lists(st.one_of(st.just(0.0), st.floats(1e-3, 50)), min_size=1, max_size=6),
+    st.lists(COUNTS, min_size=1, max_size=8),
     st.data(),
 )
 def test_capacity_is_conserved(
@@ -65,7 +70,7 @@ def test_capacity_is_conserved(
     s, d = np.array(supply), np.array(demand)
     result = two_step(Catchments(fac, node, np.zeros(len(pairs)), len(supply)), s, d)
     reached = float((d * result.access).sum())
-    assert reached == pytest.approx(float(s.sum()) - result.unreached_capacity, abs=1e-6)
+    assert reached == pytest.approx(float(s.sum()) - result.unreached_capacity, rel=1e-9, abs=1e-6)
 
 
 def test_more_capacity_never_lowers_anyone_access() -> None:

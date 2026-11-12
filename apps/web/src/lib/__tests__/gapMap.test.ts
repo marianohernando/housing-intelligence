@@ -10,6 +10,9 @@ import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
 const FIXTURE = new URL("../../../../../data/fixtures/contracts/gap_row_map.centro_salud_distrito.fixture.json", import.meta.url);
 const distritos = JSON.parse(readFileSync(FIXTURE, "utf8")) as GapRowMap;
+// Centro's status is read from the published fixture: it follows the method (gap-0.3, D-217).
+const centro = distritos.zones.find((z) => z.admin_unit_id === "ES.28.DIS.2807901");
+if (!centro) throw new Error("the fixture must carry Centro (ES.28.DIS.2807901)");
 
 function zone(level: ZoneLevel, code: string, adminUnitId: string): ZoneFeature {
   return {
@@ -51,20 +54,23 @@ describe("gapByZone and paintZones", () => {
 
   it("joins both levels by admin_unit_id, Madrid's districts included", () => {
     expect(byZone.get("ES.28.MUN.28092")?.status).toBe("FALTA");
-    expect(byZone.get("ES.28.DIS.2807901")?.status).toBe("JUSTO");
+    expect(byZone.get("ES.28.DIS.2807901")?.status).toBe(centro.status);
     expect(byZone.size).toBe(3 + distritos.zones.length);
   });
 
   it("paints each zone with its status, its own class when too small, and leaves out zones the row does not carry", () => {
     const painted = paintZones(map, byZone);
-    expect(painted.features.map((f) => f.properties.gap)).toEqual(["FALTA", "JUSTO", undefined, "ZONA_PEQUENA"]);
+    expect(centro.reliable).toBe(true);
+    expect(painted.features.map((f) => f.properties.gap)).toEqual(["FALTA", centro.status, undefined, "ZONA_PEQUENA"]);
     // the map's own zones, untouched
     expect(map.features[0]?.properties).not.toHaveProperty("gap");
   });
 
   it("counts the zones of the map by status; a zone not carried is not SIN DATOS", () => {
     const counts = countByStatus(paintZones(map, byZone));
-    expect(counts).toEqual({ FALTA: 1, JUSTO: 1, CUBIERTO: 0, ZONA_PEQUENA: 1, SIN_DATOS: 0, pending: 1 });
+    const expected: Record<string, number> = { FALTA: 1, JUSTO: 0, CUBIERTO: 0, ZONA_PEQUENA: 1, SIN_DATOS: 0, pending: 1 };
+    expected[centro.status] = (expected[centro.status] ?? 0) + 1;
+    expect(counts).toEqual(expected);
   });
 });
 
