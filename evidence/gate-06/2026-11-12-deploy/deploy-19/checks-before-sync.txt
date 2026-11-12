@@ -1,0 +1,11 @@
+search buy 300000: methodology fit-0.5, passing 0 of 199
+  Leganés in all_zones: failed=[] {"match_pct":null,"passes_all":false,"failed_constraints":[]}
+  (no 1st zone: results is empty, 0 zones pass before the sync)
+gaps/impact: HTTP 200, version impact-0.1
+  Escuelas infantiles: 25551 niños de 0 a 4 años in FALTA of 260310 (3 zones)
+  Colegios: 0 niños de 5 a 14 años in FALTA of 683666 (0 zones)
+  Centros de salud: 0 personas in FALTA of 7113886 (0 zones)
+  Centros de mayores: 54581 personas de 65 años o más in FALTA of 1342648 (6 zones)
+  Farmacias: 667172 personas in FALTA of 7113886 (5 zones)
+  Vivienda para familias: 99483 hogares de 4 o más personas in FALTA of 669984 (25 zones)
+datasets: cm_open_data_count 26

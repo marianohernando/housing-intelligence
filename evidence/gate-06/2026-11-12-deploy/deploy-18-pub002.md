@@ -57,7 +57,7 @@ All three are under 2.5 s.
 - **Before this deploy:** the same request gave the fact in 0 of 10 results (fit-0.3).
 
 ## Offline package with 2761696
-- **Row counts:** the 11 tables of the demo profile are **identical to Supabase**, with migration 0007 on both sides.
+- **Row counts:** the 11 tables of the demo profile are **identical to Supabase**, with migration 0007 on both sides. The Supabase counts, read at about 15:14 UTC just before `prepare`, are in [supabase-counts.txt](deploy-18/offline/supabase-counts.txt), line by line equal to the package's manifest.
 
 | Table | Rows |
 |---|---|
@@ -67,6 +67,8 @@ All three are under 2.5 s.
 | `feature_registry` | 42 |
 
 - **Files:** [manifest](deploy-18/offline/package-manifest.txt) · [prepare](deploy-18/offline/prepare-output.txt) · [start](deploy-18/offline/start-output.txt).
+  - `start-output.txt` still ends in «…3012/map».
+  - That run is older than the guide fix below; `make demo-offline` now prints «…3012/».
 - **API against production,** rounded to 1e-9, with `meta` left out: `/search` for the demo case, `/search` with sin_escaleras, the gaps of Madrid, Chamartín and Fuencarral-El Pardo, and `/datasets` are **all identical** ([api-vs-production.txt](deploy-18/offline/api-vs-production.txt)).
 - **Smoke:** `make demo-offline`, 7/7.
 - **Pitch journeys with `--block-external`:** 66/66 and 40/40, with **0 blocked hosts and 0 console errors** ([report](deploy-18/offline/e2e-nonet/e2e-report.json)).

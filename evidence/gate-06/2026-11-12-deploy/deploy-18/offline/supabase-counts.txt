@@ -1,0 +1,18 @@
+Supabase (project of the demo), read-only query via the project MCP on 2026-11-12 at about 15:14 UTC,
+just before `make demo-offline-prepare` of 2761696 (whose manifest has created_at 15:15:00Z):
+count(*) of each table of the demo profile, and alembic_version.
+
+source_registry 12
+dataset_registry 42
+dataset_version 53
+metric_registry 28
+feature_registry 42
+geo_admin_unit 4973
+place_master 24776
+place_source_alias 25259
+feature_value 82334
+transit_hub 579
+commute_time 115800
+alembic_version 0007
+
+The package manifest (offline/package-manifest.txt) has the same 11 counts and alembic_head 0007.
