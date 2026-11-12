@@ -2,6 +2,18 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Revisión del PR #22 de B (12 nov, noche): atribución plegada en móvil.** En la portada y en la vista de zona no hay pie, y en móvil las citas quedan detrás de un botón (i).
+- `mapa.fuentes`, el nombre del (i): B propone «Fuentes y licencias del mapa». Va «Fuentes y licencias de los datos», porque lo que se abre cita las fuentes de toda la pantalla, también las de la hoja, y no solo las del mapa.
+- **El (i) basta para 4 de las 6 fuentes:**
+  - Comunidad de Madrid, Ayuntamiento e IGN (CartoCiudad) usan CC BY 4.0. Esta licencia deja citar de cualquier forma razonable según el medio, también con un enlace a donde está la cita (sección 3(a)(2)).
+  - El Ministerio de Sanidad pide citar la fuente y la fecha de actualización, pero no dice dónde.
+- **Para OpenStreetMap y el CRTM no basta:**
+  - La guía de atribución de la OSMF dice que la cita no debe obligar a tocar el mapa para verla. Se puede plegar después de cerrarla, al mover el mapa o a los 5 segundos, pero no desde el primer momento.
+  - La licencia del CRTM (§2.2) dice: «Debe quedar claramente la indicación "Powered by CRTM" incluyendo enlace a la página oficial del CRTM».
+- **Va `mapa.atribucion.movil`:** «© OpenStreetMap · Powered by CRTM», siempre a la vista junto al (i) y cada uno con su enlace. El (i) sigue abriendo la lista completa.
+- **No hace falta un enlace «Fuentes» aparte:** el (i) cubre las demás licencias, y la pestaña «Cómo lo calculamos», que se ve siempre, lleva al pie con todas las citas.
+- `pie.crtm`: el catálogo dice «Datos en bruto / explotados según el caso», pero la licencia pide decir cuál de los dos es. Pendiente de A: cambiar `attribution_text` en `data/catalog/sources/crtm_open_data.yaml` (texto en la sección 10).
+
 **CORE-009 (12 nov, noche): el trabajo cuenta en minutos de transporte público** (D-220, `fit-0.2`). Llega a producción con el próximo despliegue de C:
 - el hecho de la tarjeta lo escribe la API: «33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00»;
 - cambia `trabajo.ayuda` («Miramos cuánto tardarías en transporte público para llegar a las 9:00.»), se quita `trabajo.transporte_pronto` y `trabajo.max_min` queda listo por si B activa el límite.
@@ -242,7 +254,9 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `mapa.aria.encaje` | Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa. | `aria-label` del mapa tras buscar |
 | `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica. | {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
 | `mapa.aria.centros` | En el mapa salen, agrupados, {recuento en minúscula}; su lista está en «Todos los centros». | `aria-label` del mapa con una capa de centros (sección 5b) |
-| `mapa.atribucion` | Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es | Atribución del mapa (MapLibre añade la del mapa base). «Powered by CRTM», «Ministerio de Sanidad…» y «CartoCiudad…» enlazados como en `pie.*`. Las pantallas con mapa no tienen pie: aquí van la fecha del Ministerio (aviso legal) y el Ayuntamiento (padrón por distrito). Revisión del PR #17 |
+| `mapa.atribucion` | Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es | Atribución del mapa (MapLibre añade la del mapa base). «Powered by CRTM», «Ministerio de Sanidad…» y «CartoCiudad…» enlazados como en `pie.*`. Las pantallas con mapa no tienen pie: aquí van la fecha del Ministerio (aviso legal) y el Ayuntamiento (padrón por distrito). Revisión del PR #17. En escritorio se ve entera. En móvil va plegada tras el (i) (PR #22), con `mapa.atribucion.movil` a la vista |
+| `mapa.fuentes` | Fuentes y licencias de los datos | Nombre accesible del botón (i) de la atribución en móvil (`locale` de MapLibre, `AttributionControl.ToggleAttribution`). Revisión del PR #22: cambia «del mapa» por «de los datos» |
+| `mapa.atribucion.movil` | © OpenStreetMap · Powered by CRTM | Solo en móvil, siempre a la vista junto al (i), con fondo como el (i) para el contraste AA. «© OpenStreetMap» enlaza a https://www.openstreetmap.org/copyright y «Powered by CRTM» a https://www.crtm.es. Son las dos licencias que piden la cita visible sin tocar nada: la guía de atribución de la OSMF y la licencia del CRTM (§2.2). Revisión del PR #22 |
 | `mapa.sin_calles` | Mapa sin fondo de calles. | Aviso suave cuando solo falla el fondo de calles y las zonas sí se ven (paquete sin red) |
 | `mapa.zona.tooltip` | {zona}: {pct} % de encaje | Al pasar por encima |
 | `mapa.zona.tooltip.sin_datos` | {zona}: sin datos suficientes | |
@@ -508,7 +522,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 |---|---|---|---|
 | `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`: 23 en producción el 12 nov. Cambia el 12 nov: los 6 del CRTM ya están dentro de {n}, y el Ministerio de Sanidad se usa desde D-218 |
 | `pie.cm` | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. | https://datos.comunidad.madrid | |
-| `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos explotados: paradas y frecuencias calculadas por Vida Fácil a partir de sus horarios. | https://www.crtm.es | Obligatorio con enlace |
+| `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas y en transporte público, que calcula Vida Fácil con sus paradas y horarios. | https://www.crtm.es | Obligatorio con enlace. La licencia (§2.2) pide decir si los datos son en bruto o explotados. El `attribution_text` del catálogo, que es lo que enseña la web, dice «Datos en bruto / explotados según el caso» y no dice cuál: **pendiente de A** cambiarlo por este texto en `data/catalog/sources/crtm_open_data.yaml`. Cambia el 12 nov (revisión del PR #22) por el trabajo en minutos de transporte público (D-220) |
 | `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. | https://datos.madrid.es | En uso desde DATA-012 (padrón y panel de distritos). Condiciones vigentes: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); no fijan un texto de cita, así que se usa el `attribution_text` del catálogo con la licencia añadida |
 | `pie.osm` | © OpenStreetMap contributors, ODbL. | https://www.openstreetmap.org/copyright | Red peatonal (`osm_red_peatonal`) |
 | `pie.sanidad` | Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). | https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm | **Nuevo, obligatorio:** el aviso legal pide citar la fuente y la fecha de actualización (`data/catalog/sources/ministerio_sanidad.yaml`, D-218 §1). Hoy la web no lo cita |
