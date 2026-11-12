@@ -35,7 +35,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
-| 12 nov | A | DATA-021 · Fase 1b (revisión con `reviewer`) + README | verde | (este commit) | `evidence/gate-04/2026-11-12/data021-f1b-gate.txt` | README (petición de `datamad-10`): 26 datasets CM en la demo y 27 en el código, extras ya desplegados, comprar y seguridad sin promesas, MCP local. Revisión sin bloqueantes. `explicar_zona` cita el valor tasado al comprar y el alquiler si no. Test de integración con un valor tasado sembrado (PASS, FAIL, coste en € y dataset citado), más el redondeo y el tope del Reality Check. Solo código; **el orden no cambia: primero desplegar, después sincronizar**. **Pendiente de B:** quitar «Aún no tenemos precios oficiales de compra por zona» de `SearchCard.tsx` y `FitDetails.tsx` donde haya precio (D-227 §8) |
+| 12 nov | A | DATA-021 · Fase 1b (revisión con `reviewer`) + README | verde | `f29ebec` | `evidence/gate-04/2026-11-12/data021-f1b-gate.txt` | README (petición de `datamad-10`): 26 datasets CM en la demo y 27 en el código, extras ya desplegados, comprar y seguridad sin promesas, MCP local. Revisión sin bloqueantes. `explicar_zona` cita el valor tasado al comprar y el alquiler si no. Test de integración con un valor tasado sembrado (PASS, FAIL, coste en € y dataset citado), más el redondeo y el tope del Reality Check. Solo código; **el orden no cambia: primero desplegar, después sincronizar**. **Pendiente de B:** quitar «Aún no tenemos precios oficiales de compra por zona» de `SearchCard.tsx` y `FitDetails.tsx` donde haya precio (D-227 §8) |
 | 12 nov | A | DATA-021 · Fase 1 (comprar con el valor tasado, D-227) | verde | `d2282aa` | `evidence/gate-01/2026-11-12/cm_valor_tasado_vivienda_municipios/`, `evidence/gate-04/2026-11-12/golden-search-compra.txt`, `data021-f1-gate.txt` | Dataset CM nuevo (id 1004050, CC BY 4.0, Ministerio de Vivienda): valor tasado medio de la vivienda libre en €/m², 28 municipios en 2025. Feature `valor_tasado_vivienda_m2` (`fit: price_m2`); los 21 distritos de Madrid quedan `SOURCE_MISSING`, sin repartir la media de la ciudad. Comprar sale PASS/FAIL con «Comprar ≈ … € por N m² (… €/m², valor tasado…)» y UNKNOWN sin precio; `estimated_cost_eur` en €; Reality Check «+30.000 €». `fit-0.5`. Golden 8/8 (`golden_couple`: 10 resultados con precio). **Primero desplegar y después sincronizar**: `fit-0.4` no entiende `price_m2` |
 | 12 nov | A | DATA-020 · Fase 2b (revisión con `reviewer`) | verde | `3076f3c` | `evidence/gate-03/2026-11-12/seguridad-percibida-revision-gate.txt` | Sin bloqueantes. El panel solo funde fechas repetidas **entre** ediciones: un duplicado dentro de una edición vuelve a hacer fallar `unique_keys` (test); edición no numérica a cuarentena; la fila de la ciudad sin nombre de distrito (parser 1.2.1). Limitaciones públicas sin cifras que caducan ni la frase sobre renta (sin evidencia). Confidence de la ciudad 0,95 (juicio editorial, D-226 §6). Datos: mismos valores; cambian confidence de Madrid, `territory_name` y versión del panel → **sync menor** |
 | 12 nov | A | DATA-020 · Fase 2 (seguridad percibida como contexto, D-226 §6) | verde | `70f0b7c` (sincronizado por `datamad-10`) | `evidence/gate-03/2026-11-12/seguridad-percibida.md`, `seguridad-percibida-gate.txt`, `evidence/gate-01/2026-11-12/ayto_panel_indicadores_distritos_barrios/` | Features `seguridad_percibida_noche` y `_dia` (0–10, encuesta municipal 2025): 21 distritos (de noche, de 4,9 en Villaverde a 7,7 en Chamberí y Barajas) y Madrid como referencia (6,4); los otros 178 municipios con `SOURCE_MISSING`. Dominio `safety` sin `fit` ni `gap_row` (test). El panel guarda la fila de la ciudad de esos indicadores (`city_indicators`) y una sola observación por fecha (parser 1.2.0). **Se sirven ya por `GET /features/{id}/values` (código desplegado)**. El hecho de la prioridad «Seguridad» pasa a «no la puntuamos…» (código; va con el próximo despliegue). Policía Municipal mensual: pendiente |
@@ -136,6 +136,45 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 12 nov (noche, línea A v13)
+- **Done (A v13):**
+  - **MCP-001 F1–F1b** (`3ab2f92`, `4befe22`, **D-225**): servidor MCP local por stdio con el SDK oficial `mcp` 2.3.0 (`make mcp`).
+    - 5 herramientas de solo lectura sobre `hi_api.services`, sin SQL y en transacción `READ ONLY`: `buscar_zonas`, `que_falta`, `explicar_zona`, `encontrar_zona` y `fuentes_de_datos`.
+    - Los tests comprueban que cada herramienta devuelve lo mismo que su ruta.
+    - Docs en `docs/04_technical_architecture/32_mcp_server.md`. No se despliega.
+    - Arreglo que también afecta a la API: la caché de mapas de la búsqueda era insegura entre hilos.
+  - **DATA-020 F1–F2b** (`5f45517`, `70f0b7c`, `3076f3c`, **D-226**):
+    - fuentes de seguridad de Madrid capital evaluadas;
+    - la percepción vecinal de su barrio (de día y de noche) entra como contexto en los 21 distritos y Madrid, sin puntuar;
+    - la copia del panel de la Policía Municipal tiene errores;
+    - los atropellos no puntúan;
+    - hecho nuevo de la prioridad «Seguridad: no la puntuamos…» (texto provisional b, a la espera de Mariano).
+  - **DATA-021 F1–F1b** (`d2282aa`, `f29ebec`, **D-227**, `fit-0.5`): comprar puntúa con el valor tasado de la vivienda libre por municipio.
+    - Es un dataset CM: el nº 27 en el código y el 26 en la demo hasta el despliegue.
+    - Hay 28 municipios con valor. Los distritos de Madrid quedan SIN DATOS.
+  - README de la raíz actualizado para el jurado. Fixture `search_result.familia_presupuesto` regenerado (atribución del CRTM y `fit-0.5`).
+- **Pendiente de otros:**
+  - **C, en este orden:**
+    1. desplegar `f29ebec`, con `fit-0.5`, el hecho de seguridad, la caché segura y el `COPY services/mcp` del Dockerfile;
+    2. después, el sync de `d2282aa` y `3076f3c`.
+
+    Si se sincroniza antes, `/search` da 500, porque `fit-0.4` no conoce `price_m2`.
+  - **B:**
+    - Comprar: quitar «Aún no tenemos precios oficiales de compra por zona» donde haya precio (`SearchCard.tsx`, `FitDetails.tsx`; D-227 §8);
+    - pintar la seguridad percibida desde `GET /features/seguridad_percibida_{noche,dia}/values` (`31_public_api_routes.md`);
+    - cambiar el «Muy pronto» de seguridad.
+  - **Mariano:** el texto definitivo de la seguridad.
+- **Next (línea A), en orden:**
+  1. Actuaciones de la Policía Municipal desde la fuente mensual (D-226 §2): pipeline nuevo para los 12 XLSX de cada año; solo personas y patrimonio, por 1.000 habitantes y con aviso. Solo si Mariano lo sigue queriendo después de ver la percepción vecinal.
+  2. Comprar en los distritos de Madrid: buscar una fuente oficial por distrito o código postal que sea un precio. El valor de referencia del Catastro por código postal está evaluado y descartado (D-227 §6).
+  3. Deuda:
+     - `drop_off_type` del GTFS (M-3 de CORE-009);
+     - Gate 3 completo;
+     - script de comparación de parques sin versionar;
+     - `make help` muestra «Makefile» como nombre de cada objetivo cuando existe `.env` (el `grep` recibe dos ficheros).
+- **Gate status:** `make lint typecheck test` en verde en `f29ebec`: 623 unit, 286 web y 119 integración. Golden de búsqueda 8/8. Smoke del MCP por stdio en `evidence/gate-11/2026-11-12/mcp-smoke.txt`.
+- **Relevo:** A v13 cierra aquí tras 3 cards. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (tarde-noche, línea A v12)
 - **Done (A v12):**
