@@ -10,6 +10,7 @@
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map show every attribution_text of /datasets
+//   node scripts/check-qa.mjs atribucion [outDir] # mobile map attribution folded behind its (i), never the LCP
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -711,6 +712,110 @@ async function licences(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** Candidates for the largest paint on a phone over slow 4G (the profile of infra/deploy/e2e/perf_prod.mjs). */
+async function lcpOnSlow4g(browser, path) {
+  const ctx = await browser.newContext({ ...MOBILE, locale: "es-ES" });
+  const page = await ctx.newPage();
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
+  await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 });
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  await page.addInitScript(() => {
+    window.__lcp = [];
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) {
+        window.__lcp.push({ ms: Math.round(e.startTime), en_atribucion: Boolean(e.element?.closest(".maplibregl-ctrl-attrib")), texto: (e.element?.textContent ?? "").trim().slice(0, 50) });
+      }
+    }).observe({ type: "largest-contentful-paint", buffered: true });
+  });
+  await page.goto(`${BASE}${path}`, { waitUntil: "networkidle", timeout: 180_000 });
+  const entries = await page.evaluate(() => window.__lcp);
+  await ctx.close();
+  return entries;
+}
+
+/**
+ * Attribution of the map on mobile (LCP of C on slow 4G): folded behind its (i) under the header,
+ * one tap opens every citation the API gives, clear of the sheet, the legend and the buttons; it is
+ * never the largest paint. On desktop it stays spelled out at the bottom right.
+ */
+async function attribution(browser) {
+  const failures = [];
+  const { datasets } = (await (await fetch(`${API}/api/v1/datasets`)).json()).data;
+  for (const [name, path] of [["portada", "/"], ["zona", ZONE.path]]) {
+    const p = await open(browser, MOBILE, path);
+    const control = p.page.locator(".maplibregl-ctrl-attrib").first();
+    const button = p.page.locator(".maplibregl-ctrl-attrib-button").first();
+    await control.waitFor({ timeout: 20000 });
+    const state = () => control.evaluate((el) => ({ abierta: el.classList.contains("maplibregl-compact-show") && el.hasAttribute("open"), clases: el.className }));
+    // What the attribution must stay clear of: the header, the sheet, the legend and every button or link outside the map
+    const around = () => p.page.evaluate(() => {
+      const rect = (el) => { const r = el.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) }; };
+      const sheet = document.querySelector("[data-sheet]");
+      const sheetTop = sheet ? sheet.getBoundingClientRect().top : innerHeight;
+      const controls = [...document.querySelectorAll("a, button, select, .glass")]
+        .filter((el) => !el.closest(".maplibregl-map") && el.getClientRects().length > 0)
+        .map((el) => ({ el: `${el.tagName.toLowerCase()} «${(el.getAttribute("aria-label") ?? el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 40)}»`, ...rect(el) }))
+        .filter((r) => r.top < sheetTop && r.bottom > 0);
+      return { cabecera: rect(document.querySelector("header")), hoja: sheet ? rect(sheet) : null, controles: controls };
+    });
+    const hits = (b, ctx) => ctx.controles.filter((r) => b.left < r.right - 1 && r.left < b.right - 1 && b.top < r.bottom - 1 && r.top < b.bottom - 1).map((r) => r.el);
+    const entry = (report[`movil_${name}`] = {});
+    entry.al_cargar = await state();
+    entry.boton = { nombre: await button.getAttribute("aria-label"), caja: await box(button) };
+    const ctx = await around();
+    entry.alrededor = { cabecera: ctx.cabecera, hoja: ctx.hoja };
+    entry.boton_pisa = hits(entry.boton.caja, ctx);
+    await p.page.screenshot({ path: `${out}/atribucion_${name}_plegada_mobile.png` });
+    await button.tap();
+    await p.page.waitForTimeout(300);
+    entry.tras_un_toque = await state();
+    entry.abierta = { caja: await box(control), texto: flat(await p.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()) };
+    entry.abierta_pisa = hits(entry.abierta.caja, ctx);
+    await p.page.screenshot({ path: `${out}/atribucion_${name}_abierta_mobile.png` });
+    entry.axe_abierta = await axe(p.page);
+    await button.tap();
+    await p.page.waitForTimeout(300);
+    entry.tras_otro_toque = await state();
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    entry.lcp_slow4g = await lcpOnSlow4g(browser, path);
+    const last = entry.lcp_slow4g.at(-1);
+    if (entry.al_cargar.abierta) failures.push(`${name}: abierta al cargar`);
+    if (!entry.tras_un_toque.abierta || entry.tras_otro_toque.abierta) failures.push(`${name}: el (i) no abre y cierra`);
+    if (entry.boton.nombre !== "Fuentes y licencias del mapa") failures.push(`${name}: nombre del (i) «${entry.boton.nombre}»`);
+    if (entry.boton.caja.top < ctx.cabecera.bottom || (ctx.hoja && entry.abierta.caja.bottom > ctx.hoja.top)) failures.push(`${name}: pisa la cabecera o la hoja`);
+    if (entry.boton_pisa.length || entry.abierta_pisa.length) failures.push(`${name}: pisa ${[...entry.boton_pisa, ...entry.abierta_pisa].join(", ")}`);
+    for (const m of citedAll(entry.abierta.texto.split(/ · | \| /), datasets)) failures.push(`${name}: falta ${m}`);
+    if (entry.axe.length || entry.axe_abierta.length) failures.push(`${name}: axe ${[...entry.axe, ...entry.axe_abierta].map((a) => a.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${name}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${name}: desborde`);
+    if (!last || last.en_atribucion) failures.push(`${name}: la atribución es el LCP`);
+    await p.ctx.close();
+  }
+  // Desktop: as before, every citation spelled out at the bottom right
+  const d = await open(browser, DESKTOP, ZONE.path);
+  const control = d.page.locator(".maplibregl-ctrl-attrib").first();
+  await control.waitFor({ timeout: 20000 });
+  report.escritorio_zona = {
+    abierta: await control.evaluate((el) => el.hasAttribute("open") && !el.classList.contains("maplibregl-compact")),
+    caja: await box(control),
+    texto: flat(await d.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()),
+    axe: await axe(d.page),
+    consola: d.errors,
+  };
+  await d.page.screenshot({ path: `${out}/atribucion_zona_desktop.png` });
+  const e = report.escritorio_zona;
+  if (!e.abierta) failures.push("escritorio: plegada");
+  for (const m of citedAll(e.texto.split(/ · | \| /), datasets)) failures.push(`escritorio: falta ${m}`);
+  if (e.axe.length || e.consola.length) failures.push("escritorio: axe o consola");
+  await d.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 /** Copy of line D after gap-0.3 and D-218 (pitch/textos_web.md, «Novedades del 12 nov»; metodologia §1.4–1.8). */
 async function texts(browser) {
   const failures = [];
@@ -912,6 +1017,7 @@ else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
+else if (mode === "atribucion") await attribution(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
