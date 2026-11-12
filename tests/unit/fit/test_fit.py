@@ -461,8 +461,12 @@ def test_without_an_accessible_station_at_a_walk_step_free_says_buses_are_not_me
     assert fact.text == "Sin escaleras: sin datos de distancia a pie en esta zona"
 
 
-def test_only_security_is_still_without_data() -> None:
+def test_security_never_scores_and_says_so() -> None:
+    """D-224, D-226: no official measure of safety for whoever lives in each zone; the fact
+    no longer promises data and the priority never counts as 0."""
     outcome = evaluate(ScenarioState(priorities=[PriorityKey.SEGURIDAD]), zone("1"))
     assert [f.text for f in outcome.facts if f.kind is FactKind.UNKNOWN] == [
-        "Seguridad: aún sin datos oficiales"
+        "Seguridad: no la puntuamos (no hay un dato oficial que la mida para quien vive en "
+        "cada zona)"
     ]
+    assert outcome.match_pct is None

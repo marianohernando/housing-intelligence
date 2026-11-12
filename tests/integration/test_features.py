@@ -14,6 +14,7 @@ GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
 INVARIANTS = {
     "range_0_100": (0.0, 100.0),
     "range_1_5": (1.0, 5.0),
+    "range_0_10": (0.0, 10.0),
     "non_negative": (0.0, float("inf")),
     "positive": (1e-12, float("inf")),
 }
@@ -188,3 +189,29 @@ def test_two_step_rows_keep_facility_equivalents_and_madrid_districts(
             if v["value"] and v["counts"] and v["counts"]["numerator"]
         }
         assert len(scales) <= 1, (feature_id, scales)
+
+
+def test_perceived_safety_is_madrid_context_and_unknown_elsewhere(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-226: the districts and the city carry the survey value; every other municipio is
+    SIN DATOS (SOURCE_MISSING), never 0."""
+    with migrated_engine.connect() as conn:
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT DISTINCT ON (territory_level, territory_code) territory_level, "
+                    "territory_code, value, null_reason FROM feature_value "
+                    "WHERE feature_id = 'seguridad_percibida_noche' "
+                    "ORDER BY territory_level, territory_code, period_start DESC"
+                )
+            )
+            .mappings()
+            .all()
+        )
+    by_zone = {(r["territory_level"], r["territory_code"]): r for r in rows}
+    assert float(by_zone[("distrito", "2807906")]["value"]) == 6.1
+    assert float(by_zone[("municipio", "28079")]["value"]) == 6.4
+    others = [r for (level, code), r in by_zone.items() if level == "municipio" and code != "28079"]
+    assert others
+    assert all(r["value"] is None and r["null_reason"] == "SOURCE_MISSING" for r in others)

@@ -1,0 +1,29 @@
+feature_id: seguridad_percibida_noche
+version: 1
+human_name: Seguridad de su barrio de noche según sus vecinos
+domain: safety
+type: raw
+unit: puntos (0-10)
+direction: higher_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_panel_indicadores_distritos_barrios, role: primary, levels: [municipio, distrito]}
+formula:
+  method: metric_value
+  metric: percepcion_seguridad_barrio_noche
+  dims: {}
+  confidence: 1.0  # the city value: 8.893 residents
+  levels:
+    distrito:
+      confidence: 0.9  # about 400 residents per district (±4,9 % for a proportion, D-226)
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [survey_sample_size]}
+public_use: true
+pro_use: true
+models: []
+tests: [range_0_10, unknown_never_zero, context_only]
+limitations:
+  - "Es la opinión de los vecinos sobre su propio barrio o zona (de noche), de 0 a 10: no mide delitos ni riesgo. Encuesta de calidad de vida y satisfacción con los servicios públicos del Ayuntamiento de Madrid, residentes de 16 años o más, unas 400 personas por distrito (D-226)."
+  - "Solo Madrid capital: sus 21 distritos y la ciudad (6,4 en 2025). El resto de la región queda sin datos, nunca 0."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta». En 2025, de 4,9 (Villaverde) a 7,7 (Chamberí y Barajas). Los valores más bajos coinciden con los distritos de menos renta: se muestra sin colores de alarma ni etiquetas."

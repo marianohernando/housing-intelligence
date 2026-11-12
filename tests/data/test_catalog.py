@@ -330,3 +330,26 @@ def test_crtm_attribution_says_what_is_raw_and_what_is_derived(catalog: Catalog)
     assert text.startswith("Powered by CRTM") and "www.crtm.es" in text
     assert "En bruto:" in text and "Explotados:" in text
     assert "según el caso" not in text
+
+
+def test_safety_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-224, D-226: no safety feature scores in the search or enters «Qué falta»."""
+    safety = [f for f in catalog.features.values() if f.domain == "safety"]
+    assert {f.feature_id for f in safety} >= {
+        "seguridad_percibida_noche",
+        "seguridad_percibida_dia",
+    }
+    for spec in safety:
+        assert spec.fit is None, spec.feature_id
+        assert spec.gap_row is None, spec.feature_id
+
+
+def test_perceived_safety_is_the_residents_view_of_madrid_only(catalog: Catalog) -> None:
+    """D-226: the panel's survey rows for the 21 districts and the city; elsewhere SIN DATOS."""
+    for part in ("noche", "dia"):
+        spec = catalog.features[f"seguridad_percibida_{part}"]
+        assert {s.dataset_id for s in spec.sources} == {"ayto_panel_indicadores_distritos_barrios"}
+        formula = spec.formula.model_extra or {}
+        assert formula["metric"] == f"percepcion_seguridad_barrio_{part}"
+        assert "distrito" in formula["levels"]
+        assert spec.null_policy.no_coverage == "unknown"

@@ -22,7 +22,7 @@ from hi_ingestion.pipelines.stat_tables.quality import (
 )
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
-PARSER_VERSION = "madrid_district_panel-1.1.0"
+PARSER_VERSION = "madrid_district_panel-1.2.0"  # 1.2: city indicators, one row per date
 
 
 def run_panel_quality(
@@ -32,7 +32,8 @@ def run_panel_quality(
     known: set[str],
 ) -> QualityReport:
     own = {m: metrics[m] for m in spec.metric_ids()}
-    base = run_quality(obs, own, known_municipios=set())
+    city = {spec.municipio_ine} if spec.city_indicators else set()
+    base = run_quality(obs, own, known_municipios=city)
     return QualityReport(
         [*base.checks, *district_checks(obs.frame, known, spec.expected_districts)]
     )

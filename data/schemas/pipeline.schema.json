@@ -457,12 +457,19 @@
     },
     "MadridDistrictPanelPipeline": {
       "additionalProperties": false,
-      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level: barrio rows and the city row are\noutside the scope; every panel year is kept (each one carries its own reference date).",
+      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level: barrio rows are outside the scope,\nand so is the city row unless the indicator is in `city_indicators` (then it is the\nmunicipio, the value to compare the districts with). Every reference date is kept once:\nwhen two panel editions carry the same date, the latest edition wins (a revision).",
       "properties": {
         "barrio_column": {
           "default": "cod_barrio",
           "title": "Barrio Column",
           "type": "string"
+        },
+        "city_indicators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "City Indicators",
+          "type": "array"
         },
         "csv": {
           "$ref": "#/$defs/CsvFormat"
@@ -488,6 +495,11 @@
           ],
           "default": "distrito",
           "title": "District Name Column"
+        },
+        "edition_column": {
+          "default": "Periodo panel",
+          "title": "Edition Column",
+          "type": "string"
         },
         "expected_districts": {
           "exclusiveMinimum": 0,

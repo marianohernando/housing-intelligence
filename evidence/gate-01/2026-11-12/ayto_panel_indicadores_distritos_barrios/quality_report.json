@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_observations",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "observations": 558
+      }
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "unique_keys",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "municipios_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "municipios": 1
+      }
+    },
+    {
+      "name": "non_negative_counts",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "negatives": 0
+      }
+    },
+    {
+      "name": "parse_error_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "parse_errors": 0
+      }
+    },
+    {
+      "name": "missing_is_explicit_not_zero",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "source_missing": 0,
+        "ratio": 0.0
+      }
+    },
+    {
+      "name": "municipio_coverage",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "covered": 1,
+        "expected": 1
+      }
+    },
+    {
+      "name": "totals_are_additive",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "groups_checked": 0,
+        "failures": 0,
+        "failures_sample": [],
+        "share_ok": 1.0
+      }
+    },
+    {
+      "name": "districts_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "districts": 21
+      }
+    },
+    {
+      "name": "district_coverage",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "covered": 21,
+        "expected": 21
+      }
+    }
+  ]
+}

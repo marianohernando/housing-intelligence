@@ -4,4 +4,11 @@ municipio_ine: "28079"
 indicators:
   "Total hogares": hogares_padron
   "Tamaño medio del hogar": tamano_medio_hogar_padron
+  # D-226: residents' view of their own barrio (Encuesta de calidad de vida); context only.
+  "Percepción de seguridad en el barrio por la noche": percepcion_seguridad_barrio_noche
+  "Percepción de seguridad en el barrio por el día": percepcion_seguridad_barrio_dia
+# The city row of these is kept as the municipio: the Madrid value the districts compare with.
+city_indicators:
+  - "Percepción de seguridad en el barrio por la noche"
+  - "Percepción de seguridad en el barrio por el día"
 expected_districts: 21

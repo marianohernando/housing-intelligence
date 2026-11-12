@@ -1131,4 +1131,11 @@ DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con 
    - Una prioridad «calles más seguras para ir andando» ordenaría con un dato que no mide eso, así que no se crea.
    - La DGT: no se ha verificado una descarga abierta por municipio; no se usa.
 4. **Fuera de la capital,** sin cambios respecto a D-224: el Balance de Criminalidad no puntúa.
-5. **En el buscador,** la prioridad «Seguridad» sigue sin puntuar: no hay un dato que la mida para quien vive allí en toda la región. Su hecho deja de prometer datos, porque D-224 y esta decisión cierran que no se puntúa con lo que hay, y pasa a decir qué se puede ver y dónde.
+5. **En el buscador,** la prioridad «Seguridad» sigue sin puntuar: no hay un dato que la mida para quien vive allí en toda la región. Su hecho deja de prometer datos, porque D-224 y esta decisión cierran que no se puntúa con lo que hay: «Seguridad: no la puntuamos (no hay un dato oficial que la mida para quien vive en cada zona)».
+6. **Hecho en F2:**
+   - features `seguridad_percibida_noche` y `seguridad_percibida_dia`, de dominio `safety`, sin `fit` ni `gap_row` (un test lo exige para todo el dominio);
+   - el panel conserva la fila de la ciudad de estos dos indicadores como el municipio 28079 (`city_indicators`), que da la referencia;
+   - cuando dos ediciones del panel repiten una fecha (2019 sale en las de 2020 y 2021), se queda una observación, la de la edición más reciente (parser `madrid_district_panel-1.2.0`);
+   - confidence 0,9 por distrito (unas 400 personas) y 1,0 para la ciudad;
+   - la API ya los sirve en `GET /features/{id}/values` sin cambiar código;
+   - la Policía Municipal desde la fuente mensual queda pendiente.

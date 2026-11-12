@@ -2,7 +2,9 @@
 
 Rows of other indicators, of barrios or of the whole city are outside the scope: they are
 counted (`out_of_window`), not quarantined. The city row is the one with neither district code
-nor district name; a row with a name but no code lost its code and goes to quarantine.
+nor district name; a row with a name but no code lost its code and goes to quarantine. The
+city row of a `city_indicators` indicator is kept as the municipio (D-226). A reference date
+carried by several panel editions is kept once, from the latest edition (a revision).
 `source_rows` counts the rows in scope, so the quarantine ratio measures what the pipeline
 actually reads; `source_row` in the quarantine is the position in the source file.
 """
@@ -22,6 +24,7 @@ from hi_ingestion.pipelines.stat_tables.normalize import (
     RowError,
     parse_value,
 )
+from hi_ingestion.pipelines.stat_tables.quality import KEY
 
 
 def _period(raw: str) -> date:
@@ -32,26 +35,38 @@ def _period(raw: str) -> date:
         raise RowError(msg) from exc
 
 
-def _in_scope(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> bool:
-    if row.get(spec.indicator_column) not in spec.indicators or row.get(spec.barrio_column):
-        return False
-    city = not row.get(spec.district_column) and not (
+def _is_city(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> bool:
+    return not row.get(spec.district_column) and not (
         spec.district_name_column and row.get(spec.district_name_column)
     )
-    return not city
+
+
+def _in_scope(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> bool:
+    indicator = row.get(spec.indicator_column)
+    if indicator not in spec.indicators or row.get(spec.barrio_column):
+        return False
+    return not _is_city(row, spec) or indicator in spec.city_indicators
+
+
+def _territory(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> tuple[str, str]:
+    if _is_city(row, spec):
+        return TerritoryLevel.MUNICIPIO.value, spec.municipio_ine
+    return TerritoryLevel.DISTRITO.value, district_code(
+        row[spec.district_column], spec.municipio_ine
+    )
 
 
 def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict[str, Any]:
-    code = district_code(row[spec.district_column], spec.municipio_ine)
+    level, code = _territory(row, spec)
     day = _period(row[spec.period_column])
     raw = row[spec.value_column]
     value, null_reason = parse_value(raw, spec.missing_markers, spec.csv.decimal)
     return {
         "metric_id": spec.indicators[row[spec.indicator_column]],
-        "territory_level": TerritoryLevel.DISTRITO.value,
+        "territory_level": level,
         "territory_code": code,
         "territory_name": row[spec.district_name_column] if spec.district_name_column else None,
-        "admin_unit_id": admin_unit_id(TerritoryLevel.DISTRITO.value, code),
+        "admin_unit_id": admin_unit_id(level, code),
         "period_start": day,
         "period_end": day,
         "dims": {},
@@ -63,18 +78,31 @@ def _observation(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> dict
     }
 
 
+def _edition(row: dict[str, str], spec: MadridDistrictPanelPipeline) -> str:
+    return str(row.get(spec.edition_column) or "")
+
+
+def latest_edition(rows: list[tuple[str, dict[str, Any]]]) -> list[dict[str, Any]]:
+    """One observation per key: the one from the latest panel edition (stable otherwise)."""
+    ordered = sorted(enumerate(rows), key=lambda item: (item[1][0], item[0]))
+    kept: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for _, (_, observation) in ordered:
+        kept[tuple(observation[k] for k in KEY)] = observation
+    return list(kept.values())
+
+
 def normalize(frame: pd.DataFrame, spec: MadridDistrictPanelPipeline) -> Observations:
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
     in_scope = [(index, row) for index, row in enumerate(records) if _in_scope(row, spec)]
-    rows: list[dict[str, Any]] = []
+    rows: list[tuple[str, dict[str, Any]]] = []
     bad: list[dict[str, Any]] = []
     for index, row in in_scope:
         try:
-            rows.append(_observation(row, spec))
+            rows.append((_edition(row, spec), _observation(row, spec)))
         except (RowError, KeyError) as exc:
             bad.append({"source_row": index, "reason": str(exc), "raw": str(row)[:300]})
     return Observations(
-        pd.DataFrame(rows, columns=OBS_COLUMNS),
+        pd.DataFrame(latest_edition(rows), columns=OBS_COLUMNS),
         pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
         len(in_scope),
         len(records) - len(in_scope),

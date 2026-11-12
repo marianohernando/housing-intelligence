@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.49 — Seguridad percibida como contexto (2026-11-12)
+- D-226: features `seguridad_percibida_noche` y `seguridad_percibida_dia` (21 distritos y Madrid; el resto sin datos), servidas por `GET /features/{id}/values`; el hecho de la prioridad «Seguridad» dice que no se puntúa.
+- `04_technical_architecture/31_public_api_routes.md`: cómo leer el contexto de seguridad.
+
 ## v0.5.48 — Seguridad en Madrid capital evaluada (2026-11-12)
 - D-226: percepción vecinal de la encuesta municipal como contexto en los 21 distritos; actuaciones de la Policía Municipal solo desde la fuente mensual (la copia del panel tiene errores); los atropellos no puntúan (sin exposición peatonal).
 

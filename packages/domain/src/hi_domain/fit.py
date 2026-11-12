@@ -113,9 +113,14 @@ PRIORITY_WALK: dict[PriorityKey, PriorityWalk] = {
         ),
     ),
 }
-# Priorities without data in Vida Fácil yet (D-205, extras from 19 Nov): never scored as 0.
+# Priorities the search does not score, never as 0. Safety: no official measure of it for
+# whoever lives in each zone (D-224, D-226); Madrid districts show the residents' view as context.
 NO_DATA_PRIORITY: dict[PriorityKey, tuple[FactTopic, str]] = {
-    PriorityKey.SEGURIDAD: (FactTopic.SEGURIDAD, "Seguridad: aún sin datos oficiales"),
+    PriorityKey.SEGURIDAD: (
+        FactTopic.SEGURIDAD,
+        "Seguridad: no la puntuamos (no hay un dato oficial que la mida para quien vive en "
+        "cada zona)",
+    ),
 }
 CONTEXT_NEEDS = (NeedKey.TRANSPORTE, NeedKey.CENTRO_SALUD, NeedKey.COLEGIO, NeedKey.FARMACIA)
 MIN_FACTS, MAX_FACTS = 3, 5
