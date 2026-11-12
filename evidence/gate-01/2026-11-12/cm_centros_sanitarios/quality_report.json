@@ -257,10 +257,10 @@
           "register_places": 423,
           "matched": 399,
           "by_method": {
-            "direccion": 289,
+            "direccion": 288,
             "calle": 57,
             "direccion_municipio": 25,
-            "codigo_postal": 27,
+            "codigo_postal": 28,
             "municipio": 1
           },
           "names_rejected": [],

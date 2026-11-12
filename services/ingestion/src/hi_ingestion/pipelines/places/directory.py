@@ -7,8 +7,8 @@ are matched by postal address with five declared rules, strongest first, one to 
 1. `direccion` (1.0): same postal code, same street and the register's house number appears in
    the directory's address.
 2. `calle` (0.9): same postal code and street, and it is the only entry on that street.
-3. `direccion_municipio` (0.85): same municipality, street and house number in another postal
-   code (the two sources disagree on it at district borders).
+3. `direccion_municipio` (0.85): same municipality, street and house number; the postal code may
+   differ (the two sources disagree on it at district borders).
 4. `codigo_postal` (0.7): the only entry of the same kind in that postal code.
 5. `municipio` (0.6): the only entry of the same kind in that municipality (a village that
    shares its postal code with others).
@@ -25,6 +25,7 @@ import math
 import re
 from collections import defaultdict
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 
 import pandas as pd
@@ -49,7 +50,7 @@ _NOT_A_NAME = frozenset(
         "calle", "cl", "avenida", "avda", "av", "plaza", "pza", "pl", "paseo", "po", "pso",
         "glorieta", "gta", "carretera", "ctra", "camino", "ronda", "travesia", "urbanizacion",
         "urb", "poligono", "sector", "plazuela", "pasaje", "km", "sn", "no", "num", "numero",
-        "bis", "bajo", "local", "bulevar", "bulev", "blvr", "callejon", "carrera", "cra",
+        "bis", "bajo", "local", "bulevar", "bulev", "blvr", "callejon", "carrera", "cra", "con",
     }
 )  # fmt: skip
 # «Mª Ángeles», «Ntra. Sra. de Fátima»: the words they stand for.
@@ -122,8 +123,9 @@ def _plain(text: str | None) -> str:
 
 
 def _singular(word: str) -> str:
-    """«Américas» and «América», «Eras» and «Era»: both sources, the same way."""
-    return word[:-1] if len(word) > 3 and word.endswith("s") else word
+    """«Américas» and «América»: a plural in -as or -os, both sources the same way. Short words
+    keep their «s» («Ríos» is not «Río»)."""
+    return word[:-1] if len(word) > 4 and word[-2:] in ("as", "os") else word
 
 
 def _words(plain: str) -> frozenset[str]:
@@ -156,21 +158,22 @@ def _spellings(text: str) -> set[frozenset[str]]:
     return {_words(plain), _words(expanded), _words(_GLUED_TYPE.sub("", plain))}
 
 
-def _street_forms(text: str | None) -> set[frozenset[str]]:
+@cache
+def _street_forms(text: str | None, corners: bool = False) -> frozenset[frozenset[str]]:
     """The street's words, with and without what goes in brackets: «de la Paloma (El Vellón)»
-    names the village, «M-515 (POZUELO)» is part of the road's name. A corner gives one form
-    per street."""
+    names the village, «M-515 (POZUELO)» is part of the road's name. With `corners`, a corner
+    («Zeus esq. Joaquín Blume») also gives one form per street."""
     forms: set[frozenset[str]] = set()
     for variant in (text or "", _PARENTHESES.sub(" ", text or "")):
-        for part in _CORNER.split(variant):
+        for part in _CORNER.split(variant) if corners else [variant]:
             forms |= _spellings(part)
-    return {f for f in forms if f}
+    return frozenset(f for f in forms if f)
 
 
-def _same_street(place: RegisterPlace, entry: Entry) -> bool:
+def _same_street(place: RegisterPlace, entry: Entry, corners: bool = False) -> bool:
     """Same words once street types, fillers and numbers are left out: «de Arturo Soria» and
     «Calle De Arturo Soria 17». Equal sets, so «Real» is not «Real de Pozuelo»."""
-    return bool(_street_forms(place.street) & _street_forms(entry.address))
+    return bool(_street_forms(place.street) & _street_forms(entry.address, corners))
 
 
 def _municipality_key(name: str | None) -> str:
@@ -198,7 +201,10 @@ def _candidates(place: RegisterPlace, entries: list[Entry], method: str, kind: s
         entries = [e for e in entries if e.kind == kind]
     if method in (POSTCODE, ONLY_IN_MUNICIPALITY):
         return entries
-    on_street = [e for e in entries if _same_street(place, e)]
+    # A corner entry is on both streets, but only a place without a house number (S/N, «esquina»)
+    # can be the corner: «Blume 5» is not «Zeus esq. Blume», and its numbers belong to either.
+    corners = method == STREET and place.number is None
+    on_street = [e for e in entries if _same_street(place, e, corners)]
     if method == STREET:
         return on_street
     if place.number is None:

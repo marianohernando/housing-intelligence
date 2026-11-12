@@ -1,6 +1,6 @@
 # Nombres de centros de salud, consultorios y hospitales: segunda pasada (HOSP-001 Fase 3, D-218 §9)
 
-Generado el 12 nov con la base local tras `hi-ingest run ms_catalogo_nacional_hospitales`, `hi-ingest run ms_catalogo_centros_atencion_primaria` (parser `directory-1.1.0`, que guarda el municipio de cada entrada) y `hi-ingest run cm_centros_sanitarios` (parser `places-1.5.3`). Motivo: notas de C desde producción (un hospital de Fuencarral-El Pardo sin nombre ni camas, un «Hospital especializado · 50 camas» sin nombre en Chamartín y 44 «Centro de salud (Municipio)» genéricos).
+Generado el 12 nov con la base local tras `hi-ingest run ms_catalogo_nacional_hospitales`, `hi-ingest run ms_catalogo_centros_atencion_primaria` (parser `directory-1.1.0`, que guarda el municipio de cada entrada) y `hi-ingest run cm_centros_sanitarios` (parser `places-1.5.4`). Motivo: notas de C desde producción (un hospital de Fuencarral-El Pardo sin nombre ni camas, un «Hospital especializado · 50 camas» sin nombre en Chamartín y 44 «Centro de salud (Municipio)» genéricos).
 
 El portal de la CM publicó hoy una versión nueva del registro de centros sanitarios (`ec0b4644…`, 3 centros menos en total). En centros de salud, consultorios, centros de salud mental y hospitales no cambia nada (tipo, dependencia, dirección y coordenadas, comparado registro a registro), así que las features no se recalculan.
 
@@ -15,17 +15,25 @@ El portal de la CM publicó hoy una versión nueva del registro de centros sanit
 | Hospital de media y larga estancia | 8 | 8 | 0 | 0 |
 | Hospital de salud mental y tratamiento de toxicomanías | 10 | 10 | 0 | 0 |
 
-- Atención primaria: 399 de 423 cruzados, por método: {'direccion': 289, 'calle': 57, 'direccion_municipio': 25, 'codigo_postal': 27, 'municipio': 1}.
+- Atención primaria: 399 de 423 cruzados, por método: {'direccion': 288, 'calle': 57, 'direccion_municipio': 25, 'codigo_postal': 28, 'municipio': 1}.
 - Hospitales: 79 de 85 (sin cambios), por método: {'direccion': 64, 'calle': 13, 'direccion_municipio': 0, 'codigo_postal': 2, 'municipio': 0}.
-- Ningún cruce anterior cambia de pareja (0). Se pierden 3: CS13070, CS21751, CS6706 (ver abajo). 5 cruces anteriores suben a una regla más fuerte con la misma pareja.
+- Ningún cruce anterior cambia de pareja (0). Se pierden 3: CS13070, CS21751, CS6706 (ver abajo). 4 cruces anteriores suben a una regla más fuerte con la misma pareja.
 
-## Reglas nuevas (parser places-1.5.3)
+## Reglas nuevas (parser places-1.5.4)
 
 1. **`direccion_municipio` (0,85):** mismo municipio, calle y número, en otro código postal. Las dos fuentes discrepan en el código postal en los bordes de los distritos (Cabo Machichaco 62: 28053 en el registro, 28018 en el catálogo). Único entre todas las entradas del municipio.
 2. **`municipio` (0,6):** la única entrada del mismo tipo en el municipio. Sirve a los pueblos que comparten código postal con otros (28737, 28749, 28755).
 3. **Veto de municipio:** por debajo de la dirección completa, un lugar y una entrada de municipios distintos nunca se cruzan (Madarcos y Robregordo comparten 28755 y los dos tienen «calle de las Eras»). La dirección completa (código postal, calle y número) basta aunque el catálogo archive el centro en el municipio de su área de salud: Aravaca (Madrid) figura en Pozuelo de Alarcón.
 4. **El tipo tiene que coincidir por debajo de la dirección completa:** un consultorio en la misma calle que un centro de salud del catálogo no es ese centro.
 5. **Grafías:** abreviaturas («Mª», «Ntra. Sra.»), singular y plural («América» y «Américas»), «bulevar», «callejón» y «carrera» como tipo de vía, el número pegado a «Nº» («Nº12»), esquinas («Zeus esq. Joaquín Blume» está en las dos calles) y la sustitución del catálogo de atención primaria, que escribe «CALLE» por cada «CL» y «AVENIDA» por cada «AV», también dentro de las palabras: «SAN CALLEAUDIO» (San Claudio), «VALLE INCALLEÁN», «ISLA DE JAVENIDAA», «AVENIDAILÉS», «CALLEFUENTESPINA». La calle del registro se compara también con esa misma sustitución; nunca se corrige el nombre publicado.
+
+## Revisión (reviewer) y riesgos que se aceptan
+
+- **Esquinas:** una entrada en esquina («Zeus esq. Joaquín Blume S/N») solo vale para un lugar sin número (S/N o «esquina»); «Blume 5» no es esa esquina.
+- **Singular:** solo plurales en -as/-os de más de 4 letras («Américas»); «Ríos» no es «Río». Príncipes de España vuelve a cruzar por código postal (misma pareja).
+- **Tipo en la dirección completa:** con código postal, calle y número iguales el tipo puede discrepar. Pasa en 5 lugares (el registro y el catálogo clasifican distinto el mismo edificio: Camarma de Esteruelas, Cubas de la Sagra, Velilla de San Antonio, Infante Luis de Borbón y Primero de Mayo). El nombre lleva el tipo del registro (§8) y no se hereda capacidad: el catálogo de atención primaria no la publica. En hospitales, los 64 cruces por dirección coinciden en tipo.
+- **`calle` sin número:** 21 cruces por calle tienen números distintos en las dos fuentes (portales vecinos en pueblos: Eras 16 y 19, Arturo Soria 12 y 10). Se mantienen: la entrada es la única de su tipo en esa calle, código postal y municipio, y dos lugares que la reclamen la dejan sin dueño.
+- **`direccion_municipio` y `municipio`:** dependen de que el nombre de una calle sea único en su municipio y de que un pueblo tenga un solo consultorio. Si el registro tiene dos lugares del tipo o el catálogo dos entradas, no hay cruce (tests). `municipio` solo se usa una vez (Algete, misma avenida de Guadalix, 37 frente a 27).
 
 ## Cruces nuevos
 

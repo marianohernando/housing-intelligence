@@ -537,3 +537,33 @@ def test_carrera_is_a_street_type() -> None:
     ]
     place = ap_place("P1", "de San Jerónimo", 32, "28014", "Madrid")
     assert ap_matched([place], entries) == {"P1": f"E1:{MUNICIPALITY}"}
+
+
+def test_a_corner_is_only_for_a_place_without_a_number() -> None:
+    entries = [
+        ap_entry("E1", "CALLE ZEUS, esq JOAQUÍN BLUME S/N", "28850", "Torrejón de Ardoz"),
+        ap_entry("E2", "CALLE TURÍN, Nº 37", "28850", "Torrejón de Ardoz"),  # not the only one
+    ]
+    numbered = ap_place("P1", "Joaquín Blume", 5, "28850", "Torrejón de Ardoz")
+    assert ap_matched([numbered], entries) == {}
+    corner = ap_place("P1", "Joaquín Blume", None, "28850", "Torrejón de Ardoz")
+    assert ap_matched([corner], entries) == {"P1": f"E1:{STREET}"}
+
+
+def test_short_words_keep_their_plural() -> None:
+    entries = [
+        ap_entry("E1", "CALLE RÍOS, Nº 3", "28001", "Madrid"),
+        ap_entry("E2", "CALLE IBIZA, Nº 7", "28001", "Madrid"),
+    ]
+    assert ap_matched([ap_place("P1", "del Río", 3, "28001", "Madrid")], entries) == {}
+
+
+def test_two_register_places_never_share_the_only_entry_of_a_municipality() -> None:
+    entries = [village_entry("E1", "CALLE DE LA IGLESIA, Nº 1", "Madarcos")]
+    places = [
+        consultorio("P1", "Real", 5, "Madarcos"),
+        consultorio("P2", "Mayor", 2, "Madarcos"),
+    ]
+    resolution = resolve_places(places, entries, AP_KINDS)
+    assert resolution.matches == []
+    assert all(r.startswith("ambiguous") for r in resolution.unmatched.values())
