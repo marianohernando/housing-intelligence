@@ -1,0 +1,14 @@
+created_at 2026-11-12T12:35:42Z
+git_commit 91aeea1
+alembic_head 0007 (source 0007)
+source_registry 12
+dataset_registry 39
+dataset_version 47
+metric_registry 28
+feature_registry 41
+geo_admin_unit 4973
+place_master 24776
+place_source_alias 25259
+feature_value 77491
+transit_hub 579
+commute_time 115800

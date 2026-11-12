@@ -228,13 +228,14 @@ Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.**
 Si algo falla, el paquete anterior sigue intacto y `make demo-offline` funciona con él.
 
 El resultado se guarda en `data/offline/`, que git ignora:
-- `demo-data.sql.gz`: 43 MB el 12 nov;
+- `demo-data.sql.gz`: 44 MB el 12 nov a las 13:35, con fit-0.2;
 - `manifest.txt`: fecha, commit, migración y conteos;
 - `web/`: el servidor web listo para arrancar.
 
 - Si la base de origen va por delante del checkout con una migración que no toca las tablas de la demo (por ejemplo, un rol), se puede forzar con `DEMO_OFFLINE_ALLOW_HEAD_MISMATCH=1`.
 - El volcado sale de la base local de desarrollo, que es la que A sincroniza con Supabase. Si se quiere exactamente lo publicado, hay que regenerar justo después de `make supabase-sync PROFILE=demo`.
   - Si no, las cifras pueden no coincidir con producción. El 12 nov, la base local ya tenía la auditoría de D-216 y Supabase todavía no. El caso de ejemplo daba 33 zonas en el paquete y 32 en producción.
+  - Para saber si la diferencia importa, compara los conteos de `manifest.txt` con Supabase y las respuestas de la API (`/search` con el caso del guion, `/gaps`, `/datasets`) del paquete con las de producción. El 12 nov a las 13:35 la base local tenía 9.686 filas de parques de más en `feature_value` (DATA-018). La API no las leía y las respuestas eran iguales (`offline-fit02.md`).
   - El guion siempre lee las cifras de la pantalla. Aun así, el 23 hay que regenerar después del último sync.
 
 ### Arrancarlo (26 nov, en 1 minuto, sin red)
@@ -248,9 +249,9 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 - `start` no construye ni descarga nada (`--no-build`).
 - **Sin red, el mapa sale sin fondo.** La web nueva pide el mapa base a `tiles.openfreemap.org` (`apps/web/src/lib/map/style.ts`), y sin Internet ese fondo no llega.
   - Sí funcionan las zonas coloreadas, el buscador, «¿Y si cambias algo?», «Qué falta» y la lista.
-  - La web enseña arriba el aviso «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.», y la consola registra los fallos de esas teselas.
+  - La web enseña arriba el aviso «Mapa sin fondo de calles.», y la consola registra los fallos de esas teselas. Si fallara el mapa entero, el aviso sería «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.».
   - Comprobado el 12 nov con `--block-external` (ver «Ensayo»).
-  - Para tener fondo sin red, B tendría que hacer configurable el TileJSON y el paquete tendría que servir un extracto local de Madrid. Está propuesto, no hecho.
+  - Para tener fondo sin red, la web ya acepta otro origen de teselas al compilar (`NEXT_PUBLIC_MAP_TILES_URL`, un TileJSON o una plantilla `{z}/{x}/{y}`). Falta que el paquete sirva un extracto local de Madrid, que espera el permiso para usar tilemaker.
 - **`start` comprueba el volumen**, no solo el volcado. Si la base no coincide con `manifest.txt` (por ejemplo, porque se borró el volumen de Docker), la restaura desde `demo-data.sql.gz` en unos 11 s. Para eso necesita `uv`, que ya está instalado.
 - **`stop` solo mata su propio servidor web.** Antes comprueba que el pid de `web.pid` sigue siendo el de Next.js. Si algo falla a medias, el script lo dice: «Clean up with: make demo-offline-stop».
 - No hace falta calentarlo. Los procesos quedan arrancados y el propio `make demo-offline` pasa el smoke al terminar, así que la API ya ha respondido una vez.
@@ -269,7 +270,6 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 - **Versión del CLI:** usa `npx vercel@65.12.1`. El CLI global 54.x no entiende `services` en `vercel.json`.
 - **`vercel link`:** añade `.env*` a `.gitignore`, con lo que vuelve a ignorar `.env.example`. Hay que revertir esa línea. Además escribe un token OIDC en `.env.local`, que está ignorado por git y por `.vercelignore`.
 - **Docker Desktop (macOS):** si `docker build` se queda en `resolve image config`, el helper de credenciales `desktop` no responde. Solución: `DOCKER_CONFIG` temporal con `{}` y un enlace a `~/.docker/cli-plugins`.
-- **Build de la web con fuentes de Google:** la web descarga Plus Jakarta Sans e Inter de Google Fonts al compilar (`next/font/google`).
-  - El 11 nov, el primer build en Vercel falló con `Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'` («next/font/google queries have exactly one entry»). El mismo commit compiló en local, y en Vercel al segundo intento.
-  - Si pasa: `deploy.sh` sale con 1 y producción no cambia. Repite `make deploy-demo`.
-  - Para quitar esa dependencia de la red, B puede servir las fuentes desde el repo con `next/font/local`. Es un cambio en `apps/web`, de B.
+- **Build de la web con fuentes de Google (resuelto):** el 11 nov, el primer build en Vercel falló con `Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'`, y pasó al segundo intento.
+  - B sirve ahora Plus Jakarta Sans e Inter desde el repo con `next/font/local` (`apps/web/src/app/fonts.ts`), así que ni el build ni el paquete offline dependen de Google Fonts.
+  - Si un build falla por cualquier otra causa: `deploy.sh` sale con 1 y producción no cambia.
