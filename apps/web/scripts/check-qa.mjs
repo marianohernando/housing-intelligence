@@ -317,8 +317,26 @@ async function projector(browser) {
     entry.tarjeta = await overlaps(home.page);
     entry.axe = await axe(home.page);
     entry.overflow_px = await overflow(home.page);
+    // The map by a row of «Qué falta»: the longest legend (2SFCA label and the neighbours, gap-0.3)
+    await home.page.getByRole("button", { name: "Cerrar" }).first().click().catch(() => undefined);
+    await home.page.getByLabel("¿Qué quieres ver?").selectOption("colegio");
+    await home.page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
+    await home.page.waitForTimeout(1500);
+    entry.mapa_fila = await overlaps(home.page);
+    entry.mapa_fila_axe = await axe(home.page);
+    await home.page.screenshot({ path: `${out}/p3_mapa_fila_${id}.png` });
     entry.consola = home.errors;
     await home.ctx.close();
+
+    // «Qué falta» of a small municipio compared with its neighbours (gap-0.3)
+    const gaps = await open(browser, profile, "/que-falta?zona=municipio/28004");
+    await gaps.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+    entry.que_falta = await overlaps(gaps.page);
+    entry.que_falta_axe = await axe(gaps.page);
+    entry.que_falta_overflow_px = await overflow(gaps.page);
+    entry.que_falta_consola = gaps.errors;
+    await gaps.page.screenshot({ path: `${out}/p3_que_falta_${id}.png` });
+    await gaps.ctx.close();
 
     const zone = await open(browser, profile, ZONE.path);
     await zone.page.getByRole("region", { name: "Todos los centros", exact: true }).waitFor({ timeout: 20000 });
@@ -333,7 +351,7 @@ async function projector(browser) {
   report.movil = { portada: await overlaps(mob.page), consola: mob.errors };
   await mob.page.screenshot({ path: `${out}/p3_portada_390x844.png` });
   await mob.ctx.close();
-  report.sin_solapes = Object.values(result).every((e) => ["portada", "resultados", "tarjeta", "zona"].every((k) => e[k].solapes.length === 0));
+  report.sin_solapes = Object.values(result).every((e) => ["portada", "resultados", "tarjeta", "mapa_fila", "zona", "que_falta"].every((k) => e[k].solapes.length === 0));
 }
 
 const TILES = "https://tiles.openfreemap.org/**";

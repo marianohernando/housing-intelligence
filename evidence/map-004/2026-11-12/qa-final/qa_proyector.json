@@ -1,0 +1,381 @@
+{
+ "modo": "proyector",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "tamanos": {
+  "1024x768": {
+   "portada": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      497,
+      990,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "resultados": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      493,
+      990,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "tarjeta": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      493,
+      990,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "axe": [],
+   "overflow_px": 0,
+   "mapa_fila": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      375,
+      990,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "mapa_fila_axe": [],
+   "consola": [],
+   "que_falta": {
+    "fijos": [],
+    "solapes": []
+   },
+   "que_falta_axe": [],
+   "que_falta_overflow_px": 0,
+   "que_falta_consola": [],
+   "zona": {
+    "fijos": [],
+    "solapes": []
+   },
+   "zona_axe": [],
+   "zona_consola": []
+  },
+  "1024x576": {
+   "portada": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      305,
+      990,
+      542
+     ]
+    ],
+    "solapes": []
+   },
+   "resultados": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      301,
+      990,
+      542
+     ]
+    ],
+    "solapes": []
+   },
+   "tarjeta": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      301,
+      990,
+      542
+     ]
+    ],
+    "solapes": []
+   },
+   "axe": [],
+   "overflow_px": 0,
+   "mapa_fila": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      582,
+      183,
+      990,
+      542
+     ]
+    ],
+    "solapes": []
+   },
+   "mapa_fila_axe": [],
+   "consola": [],
+   "que_falta": {
+    "fijos": [],
+    "solapes": []
+   },
+   "que_falta_axe": [],
+   "que_falta_overflow_px": 0,
+   "que_falta_consola": [],
+   "zona": {
+    "fijos": [],
+    "solapes": []
+   },
+   "zona_axe": [],
+   "zona_consola": []
+  },
+  "1280x720": {
+   "portada": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      534,
+      429,
+      815,
+      686
+     ]
+    ],
+    "solapes": []
+   },
+   "resultados": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      534,
+      429,
+      815,
+      686
+     ]
+    ],
+    "solapes": []
+   },
+   "tarjeta": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      534,
+      429,
+      815,
+      686
+     ]
+    ],
+    "solapes": []
+   },
+   "axe": [],
+   "overflow_px": 0,
+   "mapa_fila": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      534,
+      246,
+      815,
+      686
+     ]
+    ],
+    "solapes": []
+   },
+   "mapa_fila_axe": [],
+   "consola": [],
+   "que_falta": {
+    "fijos": [],
+    "solapes": []
+   },
+   "que_falta_axe": [],
+   "que_falta_overflow_px": 0,
+   "que_falta_consola": [],
+   "zona": {
+    "fijos": [
+     [
+      "Ir a un barrio",
+      551,
+      580,
+      815,
+      695
+     ]
+    ],
+    "solapes": []
+   },
+   "zona_axe": [],
+   "zona_consola": []
+  },
+  "1366x768": {
+   "portada": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      536,
+      477,
+      898,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "resultados": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      536,
+      477,
+      898,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "tarjeta": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      536,
+      477,
+      898,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "axe": [],
+   "overflow_px": 0,
+   "mapa_fila": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      536,
+      335,
+      898,
+      734
+     ]
+    ],
+    "solapes": []
+   },
+   "mapa_fila_axe": [],
+   "consola": [],
+   "que_falta": {
+    "fijos": [],
+    "solapes": []
+   },
+   "que_falta_axe": [],
+   "que_falta_overflow_px": 0,
+   "que_falta_consola": [],
+   "zona": {
+    "fijos": [
+     [
+      "Ir a un barrio",
+      553,
+      668,
+      898,
+      743
+     ]
+    ],
+    "solapes": []
+   },
+   "zona_axe": [],
+   "zona_consola": []
+  },
+  "1440x900": {
+   "portada": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      550,
+      629,
+      958,
+      866
+     ]
+    ],
+    "solapes": []
+   },
+   "resultados": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      550,
+      625,
+      958,
+      866
+     ]
+    ],
+    "solapes": []
+   },
+   "tarjeta": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      550,
+      625,
+      958,
+      866
+     ]
+    ],
+    "solapes": []
+   },
+   "axe": [],
+   "overflow_px": 0,
+   "mapa_fila": {
+    "fijos": [
+     [
+      "Leyenda del mapa",
+      550,
+      507,
+      958,
+      866
+     ]
+    ],
+    "solapes": []
+   },
+   "mapa_fila_axe": [],
+   "consola": [],
+   "que_falta": {
+    "fijos": [],
+    "solapes": []
+   },
+   "que_falta_axe": [],
+   "que_falta_overflow_px": 0,
+   "que_falta_consola": [],
+   "zona": {
+    "fijos": [
+     [
+      "Ir a un barrio",
+      555,
+      800,
+      971,
+      875
+     ]
+    ],
+    "solapes": []
+   },
+   "zona_axe": [],
+   "zona_consola": []
+  }
+ },
+ "movil": {
+  "portada": {
+   "fijos": [
+    [
+     "Leyenda del mapa",
+     17,
+     345,
+     373,
+     456
+    ]
+   ],
+   "solapes": []
+  },
+  "consola": []
+ },
+ "sin_solapes": true
+}
