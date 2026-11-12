@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.48 — Seguridad en Madrid capital evaluada (2026-11-12)
+- D-226: percepción vecinal de la encuesta municipal como contexto en los 21 distritos; actuaciones de la Policía Municipal solo desde la fuente mensual (la copia del panel tiene errores); los atropellos no puntúan (sin exposición peatonal).
+
 ## v0.5.47 — Servidor MCP local (2026-11-12)
 - D-225: `services/mcp` con 5 herramientas de solo lectura sobre los servicios de la API (`buscar_zonas`, `que_falta`, `explicar_zona`, `encontrar_zona` y `fuentes_de_datos`), SDK oficial `mcp` 2.3.0 por stdio y `make mcp`.
 - `04_technical_architecture/32_mcp_server.md`: uso, configuración de clientes, tamaños y pruebas. Contratos `ZoneExplanation` y `ZoneLookup` en `data/schemas/mcp/`.

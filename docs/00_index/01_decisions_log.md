@@ -1112,3 +1112,23 @@ MCP-001. El producto DATA (API + MCP, CLAUDE.md §16) tenía `services/mcp/` vac
    - una herramienta de consultas genéricas sobre features o tablas (sería SQL libre con otro nombre);
    - el control del mapa (`MapState`, CLAUDE.md §9): la web no escucha a un agente;
    - rutas nuevas en la API para `explicar_zona` y `encontrar_zona`: no las pide la web y se desplegarían.
+
+## D-226 — Seguridad en Madrid capital: lo que dicen los vecinos como contexto, la actividad policial sin el panel y sin atropellos en el buscador (2026-11-12)
+DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con las reglas de CLAUDE.md §11 y D-075: datos oficiales y agregados, sin inferencias demográficas y sin etiquetas. Evidencia: `evidence/gate-01/2026-11-12/seguridad-fuentes.md`. Las cuatro fuentes son del Ayuntamiento de Madrid (datos.madrid.es, CC BY 4.0, comprobado en CKAN el 12 nov) y solo cubren la capital: el resto de la región queda SIN DATOS, declarado.
+1. **Percepción vecinal: entra como contexto en los 21 distritos.** Es el ítem «Percepción de seguridad en el barrio o la zona donde vive», de noche y de día, de 0 a 10, de la Encuesta de calidad de vida y satisfacción con los servicios públicos de 2025: 8.893 residentes de 16 años o más, unas 400 por distrito.
+   - Es la medida más cercana a «seguridad para quien vive allí»: los vecinos valoran su propio barrio, así que no tiene el problema de denominador de D-224.
+   - Se lee del panel de indicadores que ya se carga: sus valores coinciden con la encuesta en los 21 distritos. Va con la media de Madrid (6,4 de noche y 7,8 de día en 2025).
+   - No puntúa, no ordena zonas y no entra en «Qué falta».
+   - Se enseña con lo que es: «así valoran sus vecinos la seguridad de su barrio», con el año y el tamaño de la muestra. Sin colores de alarma ni palabras como «peligroso»: los valores bajos coinciden con los distritos de menos renta.
+2. **Actuaciones de la Policía Municipal: la fuente existe y es abierta, pero no se lee del panel.**
+   - La copia del panel repite valores entre distritos distintos y no coincide con los ficheros mensuales. Por ejemplo, Salamanca tiene 57 actuaciones de patrimonio en el panel y 349 en la fuente.
+   - Si entra, será desde la fuente mensual (12 XLSX por año, un pipeline nuevo). Solo las actuaciones relacionadas con las personas y con el patrimonio, por 1.000 habitantes del padrón (D-209) en 12 meses, con la media de la ciudad.
+   - Las de drogas y armas quedan fuera: miden dónde se hacen operativos, no lo que le pasa a quien vive allí (Centro tiene 1.878 de tenencia de drogas en 2025).
+   - Aviso obligatorio: «mide la actividad registrada por la Policía Municipal, no el riesgo de vivir allí». Solo contexto.
+3. **Atropellos: no puntúan.** En 2025 hubo 1.375 atropellos con expediente en Madrid, 434 de ellos con un peatón ingresado o fallecido; por distrito, de 0,22 a 0,78 por 1.000 habitantes.
+   - Sin un dato de cuánta gente camina por cada calle, la tasa señala los barrios con más vida (Centro, Salamanca) y premia los que dependen del coche.
+   - Por sección censal hay de media uno cada dos años, así que el ruido pesaría más que la diferencia entre calles.
+   - Una prioridad «calles más seguras para ir andando» ordenaría con un dato que no mide eso, así que no se crea.
+   - La DGT: no se ha verificado una descarga abierta por municipio; no se usa.
+4. **Fuera de la capital,** sin cambios respecto a D-224: el Balance de Criminalidad no puntúa.
+5. **En el buscador,** la prioridad «Seguridad» sigue sin puntuar: no hay un dato que la mida para quien vive allí en toda la región. Su hecho deja de prometer datos, porque D-224 y esta decisión cierran que no se puntúa con lo que hay, y pasa a decir qué se puede ver y dónde.
