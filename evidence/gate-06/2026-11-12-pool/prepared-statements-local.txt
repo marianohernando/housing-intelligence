@@ -1,0 +1,5 @@
+# D-219: prepared statements on the local DB (same query 8 times on one connection, then pg_prepared_statements)
+DB_PREPARED_STATEMENTS=true: server-side prepared statements after 8 runs = 1
+DB_PREPARED_STATEMENTS=false: server-side prepared statements after 8 runs = 0
+# Supabase (MCP, read-only): pg_db_role_setting for vf_api_ro
+vf_api_ro: default_transaction_read_only=on, statement_timeout=15s, search_path=public, extensions

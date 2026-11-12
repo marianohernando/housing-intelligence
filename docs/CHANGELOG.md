@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.29 — Conexiones de la API (2026-11-12)
+- D-219: pool de cada proceso por entorno (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`) y paso de la API al pooler de Supabase en modo transacción (puerto 6543) con `DB_PREPARED_STATEMENTS=false`.
+- `11_engineering/03_configuration_and_secrets.md`: las tres variables nuevas.
+
 ## v0.5.24 — Lista de lo que falta: las 6 filas (2026-11-11)
 - `04_technical_architecture/31_public_api_routes.md`: fila de vivienda (GAP-001 F3b), `SIN_DATOS` explícito por distrito y extras de escuela infantil (aulas y nacimientos) y de vivienda (% en alquiler y tamaño medio del hogar).
 
