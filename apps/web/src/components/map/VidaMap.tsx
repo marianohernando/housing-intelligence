@@ -74,8 +74,14 @@ const WORKER_URL = "/maplibre/maplibre-gl-worker.mjs"; // copied by scripts/copy
 const MAP_TILES_URL = process.env.NEXT_PUBLIC_MAP_TILES_URL;
 const MOBILE = MOBILE_QUERY;
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-const ATTRIBUTION =
-  'Comunidad de Madrid · <a href="https://www.crtm.es" target="_blank" rel="noopener noreferrer">Powered by CRTM</a>';
+// The zone screens show the Ministry's hospitals and centres (D-218) and places located with
+// CartoCiudad (D-216), and have no footer: both licences ask to be cited where their data shows
+const ATTRIBUTION = [
+  "Comunidad de Madrid",
+  '<a href="https://www.crtm.es" target="_blank" rel="noopener noreferrer">Powered by CRTM</a>',
+  '<a href="https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" target="_blank" rel="noopener noreferrer">Ministerio de Sanidad</a>',
+  '<a href="https://www.cartociudad.es" target="_blank" rel="noopener noreferrer">CartoCiudad (IGN), CC BY 4.0 scne.es</a>',
+].join(" · ");
 const FLIGHT_MS = 2800;
 /** The island stays still a moment before the camera comes closer to the buildings. */
 const ISLAND_HOLD_MS = 700;

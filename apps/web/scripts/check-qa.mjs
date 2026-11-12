@@ -9,6 +9,7 @@
 //   node scripts/check-qa.mjs gap03 [outDir]     # phase 6: gap-0.3 (D-217): neighbours, 2SFCA copy and the hospital
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
+//   node scripts/check-qa.mjs licencias [outDir] # footer and map cite the Ministry of Health and CartoCiudad
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -636,8 +637,51 @@ async function hungGaps(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** Licences (D, 12 nov): the footer and the map cite the Ministry of Health with its update dates, and CartoCiudad. */
+async function licences(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    for (const [name, path] of [["que_falta", "/que-falta?zona=distrito/2807913"], ["como_lo_calculamos", "/como-lo-calculamos"]]) {
+      const p = await open(browser, profile, path);
+      const footer = p.page.locator("footer").last();
+      await footer.getByText(/^Datos: \d+ conjuntos/).waitFor({ timeout: 20000 });
+      await footer.scrollIntoViewIfNeeded();
+      const entry = (report[`pie_${name}_${id}`] = {
+        pie: (await footer.locator("li, p, a").allInnerTexts()).map(flat).filter(Boolean),
+        axe: await axe(p.page),
+        overflow_px: await overflow(p.page),
+        consola: p.errors,
+      });
+      await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
+      const text = entry.pie.join(" | ");
+      for (const must of [
+        "Fuente: Ministerio de Sanidad — Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025).",
+        "Geocodificación: CartoCiudad (IGN), CC BY 4.0 scne.es.",
+        "del CRTM ni del Ministerio de Sanidad.",
+        "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+      ]) {
+        if (!text.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
+      }
+      if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
+      if (entry.consola.length) failures.push(`${name} ${id}: consola`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      await p.ctx.close();
+    }
+  }
+  // The zone screen has no footer: the map's attribution cites them
+  const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
+  await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
+  report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
+  if (!/Ministerio de Sanidad/.test(report.mapa_atribucion) || !/CartoCiudad/.test(report.mapa_atribucion)) failures.push("mapa: atribución");
+  await z.page.locator(".maplibregl-ctrl-attrib").first().screenshot({ path: `${out}/licencias_mapa_desktop.png` });
+  await z.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "licencias") await licences(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
