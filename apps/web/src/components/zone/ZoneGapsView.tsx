@@ -23,7 +23,7 @@ import { useZoneGaps } from "./useZoneGaps";
 const TEXT = {
   title: "Qué falta",
   titleIn: (zona: string) => `Qué falta en ${zona}`,
-  intro: "Comparamos cada servicio con los demás municipios de su tipo, urbanos o rurales, según cuánta gente vive aquí.",
+  intro: "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.",
   pick: "Elige una zona en el mapa o escríbela aquí para ver qué le falta.",
   placeholder: "Escribe un municipio o un distrito de Madrid",
   loading: "Calculando qué falta en esta zona…",

@@ -33,7 +33,7 @@ const TEXT = {
   regional: "En toda la Comunidad de Madrid:", // falta.fila.region (gap-0.2 context)
   walk: "A pie hasta",
   note: "Ojo:",
-  hospital: "El hospital:", // provisional (gap-0.3, D-217), listed for line D
+  hospital: "El hospital:", // gap-0.3 (D-217), pitch/textos_web.md
   sources: "De dónde sale:", // falta.fila.fuente, with the number of datasets
   confidence: "Fiabilidad del dato: ",
 };

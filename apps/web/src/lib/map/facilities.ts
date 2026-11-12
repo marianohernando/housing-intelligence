@@ -70,9 +70,10 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     category: "health",
     row: "centro_salud",
     chip: "Centros de salud",
-    one: "centro de salud",
-    many: "centros de salud",
-    none: "Ningún centro de salud",
+    // The list has the consultorios too, which the row does not count as capacity (D, 12 nov)
+    one: "centro de salud o consultorio",
+    many: "centros de salud y consultorios",
+    none: "Ningún centro de salud ni consultorio",
     classes: [
       { subcategory: "Centro de salud", label: "Centro de salud" },
       { subcategory: "Consultorio de atención primaria", label: "Consultorio" },

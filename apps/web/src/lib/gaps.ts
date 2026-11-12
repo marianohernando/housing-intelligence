@@ -26,7 +26,7 @@ export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
 
 /**
  * A municipio too small alone, compared together with its nearest neighbours of the same type
- * (gap-0.3, D-217): its status is the group's. Provisional copy of line B, listed for line D.
+ * (gap-0.3, D-217): its status is the group's. Copy of pitch/textos_web.md (grupo.*).
  */
 export const GROUP = {
   label: "Junto con sus vecinos",
@@ -55,7 +55,7 @@ export function groupText(zoneName: string, group: ComparisonGroup): string {
   return (
     `Comparado con municipios parecidos de la zona. ${zoneName} es demasiado pequeño para compararlo solo en este servicio, ` +
     `así que lo juntamos con ${who} más ${others.length === 1 ? "cercano" : "cercanos"} del mismo tipo: ${listNames(others)}. ` +
-    `Juntos tienen el ${formatNumber(share, 0)} % de lo que tendrían con la media de los municipios de su tipo, y de ahí sale el estado.`
+    `Juntos tienen el ${formatNumber(share, 0)} % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.`
   );
 }
 
@@ -71,7 +71,7 @@ export const ROW_NAME: Record<GapRowKey, string> = {
 
 /**
  * What each row measures (gap-0.3, D-217): what people have within 15 min on foot, shared among
- * everyone who has it that close. Provisional copy of line B, in plain words, listed for line D.
+ * everyone who has it that close. Copy of pitch/textos_web.md (fila.mide.*).
  */
 export const ROW_MEASURE: Record<GapRowKey, string> = {
   escuela_infantil: "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
@@ -157,11 +157,12 @@ export function hospitalWalking(extras: readonly IndicatorValue[] | undefined): 
 
 /**
  * The hospital extra in plain words, declared as a proxy (D-217: no open source says which hospital
- * has a 24 h emergency department). Provisional copy of line B, listed for line D.
+ * has a 24 h emergency department), and it does not count for the row's status (D-217 §5).
+ * Copy of pitch/textos_web.md (falta.fila.a_pie.hospital, hospital.nota).
  */
 export const HOSPITAL_WALK = {
   to: "el hospital general más cercano",
-  note: "Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia.",
+  note: "Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila.",
 };
 
 /** a_pie.min */

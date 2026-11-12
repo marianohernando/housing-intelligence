@@ -97,15 +97,15 @@ const TEXT = {
   aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
   noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
-  // Only the street background failed: the zones are there (provisional, listed for line D)
+  // Only the street background failed: the zones are there (mapa.sin_calles)
   noStreets: "Mapa sin fondo de calles.",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
-  // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3 (provisional, listed for line D)
+  // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3
   ariaRow: (label: string) =>
     `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
-  // Provisional (T3), listed for line D in the PR
+  // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
 const FACILITY_LAYERS: string[] = ["facilities-point", "facilities-cluster"];

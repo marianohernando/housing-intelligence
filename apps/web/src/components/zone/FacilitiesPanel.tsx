@@ -15,7 +15,8 @@ import { type Facility, type FacilityKey, facilityCountText, FACILITY_TYPES } fr
 
 import styles from "./FacilitiesPanel.module.css";
 
-// Provisional copy (T3), written with the rules of pitch/textos_web.md; listed for line D in the PR.
+// Copy of pitch/textos_web.md, section 5b (T3). «Camas:» and «algunos de estos centros» (HOSP-001)
+// are provisional, listed for line D in the PR.
 const TEXT = {
   title: "Todos los centros",
   show: "Ver en el mapa",

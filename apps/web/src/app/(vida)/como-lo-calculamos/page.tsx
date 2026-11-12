@@ -11,9 +11,9 @@ import styles from "../section.module.css";
 export const metadata: Metadata = { title: "Cómo lo calculamos" };
 
 /*
- * Copy from pitch/metodologia.md, part 1 (line D). Paragraphs marked «pendiente de A» are left
- * out until line A has them (D's rule), and so are the row definitions that no longer match the
- * rows of /gaps after GAP-001; both are listed for D in PR #2.
+ * Copy from pitch/metodologia.md, part 1 (line D; §1.4–1.8 of 12 nov, gap-0.3 and D-218). Paragraphs
+ * marked «pendiente de A» (security, green areas, step-free access) are left out until line A has
+ * them, as D's rule says.
  */
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
@@ -25,52 +25,81 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-// gap-0.3 (D-217), with estado.* and fila.zona_pequena of pitch/textos_web.md. The 2SFCA copy is
-// provisional (line B, from D-217 and the public README) until pitch/metodologia.md has it; listed for D.
+// pitch/metodologia.md §1.4 (line D, gap-0.3 and D-218): estado.* and fila.zona_pequena of pitch/textos_web.md
 const STATUS_ROWS: [string, string][] = [
-  ["claramente menos que los municipios de su tipo, y no es por el tamaño de la zona", "FALTA"],
-  ["menos que los municipios de su tipo, pero no tanto como para decir que falta", "JUSTO"],
-  ["lo mismo o más que los municipios de su tipo", "CUBIERTO"],
-  ["tan poca gente que, ni junto con sus vecinos, podemos saber con seguridad si falta (nunca sale FALTA)", "Zona pequeña para comparar"],
-  ["un dato que no tenemos", "SIN DATOS"],
+  ["menos del 80 % de lo que tienen los municipios de su tipo, y la diferencia no se explica por el tamaño de la zona", "FALTA"],
+  ["menos de lo que tienen los municipios de su tipo, pero sin llegar a FALTA", "JUSTO"],
+  ["lo mismo o más", "CUBIERTO"],
+  ["tan poca gente que, ni junto con sus vecinos, podemos saber con seguridad si falta", "Zona pequeña para comparar (nunca sale FALTA)"],
+  ["no tenemos el dato", "SIN DATOS"],
 ];
 
-// What each row counts as capacity (D-217 §3): only what is published, never estimated per centre
-const ROW_CAPACITY: [string, string][] = [
+// What each row counts as capacity and for whom (D-217 §3): only what is published, never estimated per centre
+const ROW_CAPACITY: [string, string, string][] = [
+  ["Escuelas infantiles", "Cada escuela, pública o privada, cuenta como una: nadie publica sus plazas", "Niños de 0 a 4 años"],
   [
     "Colegios",
-    "aulas de primaria públicas y concertadas, para los niños de 5 a 14 años. La Comunidad publica cuántas aulas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios.",
+    "Aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios",
+    "Niños de 5 a 14 años",
   ],
-  ["Escuelas infantiles", "cada escuela cuenta como una, para los niños de 0 a 4 años: nadie publica sus plazas."],
   [
     "Centros de salud",
-    "los centros de salud del SERMAS. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad.",
+    "Cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad",
+    "Todos los vecinos",
   ],
-  ["Mayores", "plazas autorizadas en hogares, clubes y centros de día, para las personas de 65 años o más. Las residencias van aparte."],
-  ["Farmacias", "cada farmacia cuenta como una."],
-  ["Vivienda", "no va a pie: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas."],
+  ["Mayores", "Plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte", "Personas de 65 años o más"],
+  ["Farmacias", "Cada farmacia cuenta como una", "Todos los vecinos"],
+  ["Vivienda", "No va a pie: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", "Hogares de 4 o más personas"],
 ];
 
 function GapMethod() {
   return (
     <Section id="que-falta" title="Cómo decidimos qué falta en una zona">
       <p className={styles.para}>
-        Para cada servicio miramos <strong>cuánto tiene la gente de la zona a 15 minutos andando</strong>: un kilómetro por
-        la calle, a paso tranquilo (4 km/h). Lo que hay a esa distancia se reparte entre todos los vecinos que también lo tienen
-        cerca, vivan en la zona o en la de al lado, porque lo comparten. Así un colegio en el límite de dos distritos sirve
-        a los dos, y un centro con mucha gente alrededor cuenta menos para cada uno.
+        <strong>Lo que tienes a 15 minutos andando, repartido entre quienes lo comparten.</strong> Para cada servicio miramos
+        qué tiene la gente de la zona a 15 minutos andando: un kilómetro por la calle, a paso tranquilo (4 km/h). No basta
+        con que esté cerca: si mucha gente vive alrededor de un colegio, sus aulas se reparten entre más niños. Por eso
+        hacemos dos pasos:
       </p>
-      <p className={styles.para}>Qué cuenta en cada servicio:</p>
-      <ul className={styles.text}>
-        {ROW_CAPACITY.map(([row, what]) => (
-          <li key={row}>
-            <strong>{row}:</strong> {what}
-          </li>
-        ))}
-      </ul>
+      <ol className={styles.text}>
+        <li>Para cada centro, repartimos lo que ofrece entre todas las personas que viven a 15 minutos andando o menos de él.</li>
+        <li>Para cada calle, sumamos lo que le toca de cada centro que tiene a 15 minutos.</li>
+      </ol>
       <p className={styles.para}>
-        Después hacemos la misma cuenta para los demás municipios de su tipo en la Comunidad de Madrid (rurales o urbanos)
-        y comparamos:
+        La zona tiene la media de sus calles, según cuánta gente vive en cada una. Así, un colegio en el límite de dos
+        distritos sirve a los dos, y quien vive a más de 15 minutos de todos no suma nada en esa fila.
+      </p>
+      <p className={styles.para}>
+        <strong>Qué cuenta en cada servicio.</strong> Solo lo que se publica; nunca nos lo inventamos centro a centro.
+      </p>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th scope="col">Servicio</th>
+            <th scope="col">Qué cuenta</th>
+            <th scope="col">Para quién</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ROW_CAPACITY.map(([row, what, who]) => (
+            <tr key={row}>
+              <th scope="row">{row}</th>
+              <td>{what}</td>
+              <td>{who}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className={styles.para}>
+        <strong>Con qué comparamos.</strong> Hacemos la misma cuenta en <strong>los demás municipios de su mismo tipo</strong>{" "}
+        en la Comunidad de Madrid: los rurales con los rurales y los urbanos con los urbanos. Rural es lo que dice la ley de
+        medio rural: menos de 30.000 habitantes y menos de 100 por km². Los distritos de Madrid son urbanos. Una zona nunca se
+        compara consigo misma: un distrito de Madrid se compara con los demás municipios urbanos, sin contar Madrid.
+      </p>
+      <p className={styles.para}>
+        ¿Por qué no con toda la región? Porque un pueblo pequeño suele tener su escuela infantil y pocos niños: a pie y por
+        niño, los municipios rurales tienen unas 2,5 veces más escuelas infantiles que los urbanos (12,3 frente a 4,9 por
+        cada 1.000 niños). Con la media de toda la región, a cualquier ciudad le faltaría de todo.
       </p>
       <table className={styles.table}>
         <thead>
@@ -91,20 +120,54 @@ function GapMethod() {
         </tbody>
       </table>
       <p className={styles.para}>
+        <strong>¿Por qué el tamaño importa?</strong> En una zona con poca gente, un centro más o menos cambia mucho la
+        cuenta. Por eso, para decir FALTA pedimos además que la diferencia sea demasiado grande para ser casualidad. Es la
+        misma prueba que usan los indicadores de salud pública de Inglaterra.
+      </p>
+      <p className={styles.para}>
         <strong>Los pueblos pequeños, junto con sus vecinos.</strong> Si en un municipio vive tan poca gente que no se puede
-        comparar solo, lo juntamos con sus vecinos más cercanos del mismo tipo, a 15 km como mucho en línea recta, hasta tener un grupo
-        con el que sí se puede. Su estado es entonces el del grupo, y la fila lo dice: «comparado con municipios parecidos
-        de la zona». Si ni así se llega, sale «Zona pequeña para comparar».
+        comparar solo, lo juntamos con sus vecinos más cercanos del mismo tipo, a 15 km como mucho en línea recta, hasta
+        tener un grupo con el que sí se puede. Es más o menos el tamaño de las zonas de salud rurales de la Comunidad, con
+        las que esos pueblos ya se organizan. Su estado es entonces el del grupo, y la fila lo dice: «Comparado con
+        municipios parecidos de la zona», con los nombres de esos vecinos. Si ni así se llega, sale{" "}
+        <strong>zona pequeña para comparar</strong>. Por ejemplo, La Acebeda, con 70 habitantes, no tiene ninguna farmacia a
+        15 minutos andando, pero ni junto con sus vecinos hay gente suficiente para decir que le falta. Los distritos de
+        Madrid no se juntan: tienen gente de sobra para compararlos solos.
       </p>
       <p className={styles.para}>
-        <strong>El hospital.</strong> En centros de salud verás también los minutos a pie hasta el hospital general más
-        cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente
-        abierta dice qué hospitales las tienen abiertas las 24 horas. Las camas de cada
-        hospital tampoco las tenemos todavía: la Comunidad solo publica el total de la región.
+        <strong>Ejemplo real.</strong> En Puente de Vallecas la escuela infantil más cercana está a unos 6 minutos andando,
+        pero son pocas para tantos niños: 2,8 al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los demás
+        municipios urbanos. Con tantos niños, no es casualidad: sale <strong>FALTA</strong>. En Centro la cifra es parecida,
+        pero con menos niños la diferencia podría ser casualidad: sale <strong>JUSTO</strong>.
       </p>
       <p className={styles.para}>
-        Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas de la región, no con una
-        norma oficial que diga cuánto debería haber.
+        <strong>El hospital.</strong> En la fila de centros de salud verás también los minutos a pie hasta el hospital
+        general más cercano, público o privado. Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias:
+        ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. No cuenta para el estado de la fila: a un
+        hospital no se va andando a elegir. En «Todos los centros» de cada zona verás el nombre de cada hospital y sus camas
+        instaladas, del Catálogo Nacional de Hospitales del Ministerio de Sanidad.
+      </p>
+      <p className={styles.para}>
+        Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas, no con una norma oficial
+        que diga cuánto debería haber.
+      </p>
+    </Section>
+  );
+}
+
+// pitch/metodologia.md §1.5
+function WalkingTimes() {
+  return (
+    <Section id="a-pie" title="Distancias a pie">
+      <p className={styles.para}>
+        Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el
+        mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano:
+        escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de
+        mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en
+        los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que
+        queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay
+        calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos»
+        del Ayuntamiento.
       </p>
     </Section>
   );
@@ -132,8 +195,14 @@ function Reliability() {
       <ul className={styles.text}>
         <li>
           <strong>Zonas con poca población.</strong> En un pueblo pequeño, un solo centro más o menos cambia mucho la cuenta,
-          así que el dato cuenta como aproximado. Pasa con menos de 500 menores de 15 años en colegios, menos de 2.000
-          habitantes en centros de salud y menos de 500 personas mayores en residencias.
+          así que el dato cuenta como aproximado. Pasa con menos de 200 niños de 0 a 4 años en escuelas infantiles, menos
+          de 300 niños de 5 a 14 años en colegios, menos de 2.000 habitantes en centros de salud y en farmacias, menos de
+          300 personas mayores en mayores y menos de 100 hogares de 4 o más personas en vivienda.
+        </li>
+        <li>
+          <strong>Aulas repartidas.</strong> En colegios el dato es aproximado como mucho, porque las aulas de cada municipio
+          se reparten a partes iguales entre sus colegios. Esto mide cuánto nos fiamos del dato; si la zona es demasiado
+          pequeña para comparar, se ve aparte (en «Cómo decidimos qué falta en una zona»).
         </li>
         <li>
           <strong>Fuentes incompletas.</strong> Por ejemplo, si de algunas residencias no se publica cuántas plazas tienen,
@@ -162,8 +231,28 @@ function Limits() {
           cuenta. Y quien vive a más de 15 minutos de cualquier centro no suma nada en esa fila.
         </li>
         <li>
-          <strong>Alquiler:</strong> la Comunidad solo publica el precio medio de los municipios de más de 20.000 habitantes.
-          En los demás no tenemos el dato y lo decimos.
+          <strong>Colocamos a la gente por calles.</strong> Sabemos cuánta gente vive en cada municipio y en cada distrito de
+          Madrid, no en cada portal: la repartimos entre sus calles según su longitud.
+        </li>
+        <li>
+          <strong>Las camas de hospital no cuentan en la lista.</strong> Las enseñamos en cada hospital, pero no deciden si a
+          una zona le falta algo: para eso haría falta medir el viaje en coche o en transporte público.
+        </li>
+        <li>
+          <strong>Vivienda:</strong> comparamos las viviendas grandes con los hogares grandes, no el mercado. No sabemos
+          cuántas están libres ni a qué precio.
+        </li>
+        <li>
+          <strong>Alquiler:</strong> la Comunidad publica el precio medio de 37 municipios (los de más de 20.000 habitantes
+          con contratos suficientes) y el de los códigos postales de Madrid capital. En el resto no tenemos el dato y lo
+          decimos. Para cada distrito de Madrid hacemos la media de sus códigos postales, y cada código pesa según cuántos
+          colegios, centros de salud y centros sociales del distrito están en él, porque eso aproxima dónde vive la gente. Es
+          una aproximación, así que cuenta con menos fiabilidad. Cuadra con la cifra oficial: con los distritos sale 14,5 € el
+          metro cuadrado, y la Comunidad publica 15,1 para todo Madrid.
+        </li>
+        <li>
+          <strong>Compra:</strong> todavía no tenemos precios oficiales de compra por zona, así que no podemos comprobar si
+          una zona entra en tu presupuesto: sale «sin datos» y no inventamos un precio.
         </li>
         <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde
@@ -226,6 +315,7 @@ export default function ComoLoCalculamosPage() {
         </p>
       </Section>
       <GapMethod />
+      <WalkingTimes />
       <Reliability />
       <Section id="datos" title="Qué datos usamos">
         <ul className={styles.text}>
@@ -233,12 +323,27 @@ export default function ComoLoCalculamosPage() {
             <strong>
               <CmCount /> conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid:
             </strong>{" "}
-            población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias y las 6 redes de transporte
-            público del Consorcio Regional de Transportes de Madrid, que también se publican en ese portal.
+            población, hogares, vivienda, renta, alquiler, colegios y sus aulas, salud y camas de hospital de la región,
+            mayores, farmacias y las 6 redes de transporte público del Consorcio Regional de Transportes de Madrid, que
+            también se publican en ese portal.
           </li>
           <li>
-            <strong>Como apoyo,</strong> el padrón y el panel de distritos del Ayuntamiento de Madrid para la población y los
-            hogares de cada distrito de Madrid capital, y el mapa de calles de OpenStreetMap para las distancias a pie.
+            <strong>Como apoyo,</strong> sin contarlos como datos de la Comunidad:
+            <ul>
+              <li>
+                el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito
+                de Madrid capital;
+              </li>
+              <li>el mapa de calles de OpenStreetMap, para las distancias a pie;</li>
+              <li>
+                los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los
+                centros de salud y el nombre y las camas de los hospitales;
+              </li>
+              <li>
+                el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin
+                coordenadas o con coordenadas que contradicen su dirección.
+              </li>
+            </ul>
           </li>
           <li>
             <strong>Antes de usar un conjunto,</strong> pasa un control de calidad: que no haya registros repetidos, que cada

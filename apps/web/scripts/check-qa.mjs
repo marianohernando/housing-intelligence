@@ -10,6 +10,7 @@
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map cite the Ministry of Health and CartoCiudad
+//   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -679,8 +680,73 @@ async function licences(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** Copy of line D after gap-0.3 and D-218 (pitch/textos_web.md, «Novedades del 12 nov»; metodologia §1.4–1.8). */
+async function texts(browser) {
+  const failures = [];
+  const expect = (key, text, must, mustNot = []) => {
+    for (const m of must) if (!text.includes(m)) failures.push(`${key}: falta «${m}»`);
+    for (const m of mustNot) if (text.includes(m)) failures.push(`${key}: sigue «${m}»`);
+  };
+  const clean = (key, entry) => {
+    if (entry.axe.length) failures.push(`${key}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${key}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${key}: desborde ${entry.overflow_px}px`);
+  };
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    // «Cómo lo calculamos»
+    const m = await open(browser, profile, "/como-lo-calculamos");
+    const section = (sid) => m.page.locator(`#${sid}`).locator("..");
+    const entry = (report[`como_lo_calculamos_${id}`] = {
+      hospital: flat(await section("que-falta").getByText(/^El hospital\./).locator("..").innerText()),
+      limites: (await section("limites").locator("li strong").allInnerTexts()).map(flat),
+      fiabilidad: flat(await section("fiabilidad").innerText()),
+      datos: flat(await section("datos").locator("ul").first().innerText()),
+      a_pie: flat(await section("a-pie").innerText()),
+      axe: await axe(m.page),
+      overflow_px: await overflow(m.page),
+      consola: m.errors,
+    });
+    expect(`como ${id} hospital`, entry.hospital, ["No cuenta para el estado de la fila", "camas instaladas", "Catálogo Nacional de Hospitales"], ["tampoco las tenemos"]);
+    expect(`como ${id} límites`, entry.limites.join(" | "), ["Colocamos a la gente por calles.", "Las camas de hospital no cuentan en la lista."]);
+    expect(`como ${id} fiabilidad`, entry.fiabilidad, ["300 niños de 5 a 14 años", "Aulas repartidas."], ["500 menores de 15 años"]);
+    expect(`como ${id} datos`, entry.datos, ["Ministerio de Sanidad", "CartoCiudad del IGN"]);
+    clean(`como ${id}`, entry);
+    await section("que-falta").screenshot({ path: `${out}/textos_como_lo_calculamos_metodo_${id}.png` });
+    await m.ctx.close();
+
+    // «Qué falta» of a small municipio with its neighbours (group sentence) and the hospital note
+    const q = await open(browser, profile, "/que-falta?zona=municipio/28004");
+    await q.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+    const rows = await gapRows(q.page);
+    const qEntry = (report[`que_falta_el_alamo_${id}`] = {
+      intro: flat(await q.page.getByText(/^Miramos lo que tiene la gente/).first().innerText()),
+      grupos: rows.map((r) => r.grupo).filter(Boolean),
+      hospital: rows.find((r) => r.hospital)?.hospital ?? null,
+      axe: await axe(q.page),
+      overflow_px: await overflow(q.page),
+      consola: q.errors,
+    });
+    expect(`qué falta ${id} intro`, qEntry.intro, ["a 15 minutos andando, repartido entre todos los que lo comparten"]);
+    expect(`qué falta ${id} grupo`, qEntry.grupos.join(" | "), ["de lo que tienen de media los municipios de su tipo"], ["tendrían"]);
+    expect(`qué falta ${id} hospital`, qEntry.hospital ?? "", ["y no cuenta para el estado de la fila."]);
+    clean(`qué falta ${id}`, qEntry);
+    await q.page.screenshot({ path: `${out}/textos_que_falta_el_alamo_${id}.png` });
+    await q.ctx.close();
+  }
+  // «Todos los centros»: centros de salud y consultorios
+  const z = await open(browser, DESKTOP, ZONE.path);
+  const panel = z.page.getByRole("region", { name: "Todos los centros", exact: true });
+  await panel.getByRole("button", { name: /^Centros de salud/ }).click();
+  report.centros_salud = flat(await panel.locator("[aria-live='polite']").innerText());
+  expect("centros de salud", report.centros_salud, ["centros de salud y consultorios en Chamartín"]);
+  await z.ctx.close();
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);

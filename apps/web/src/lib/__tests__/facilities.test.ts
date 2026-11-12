@@ -175,6 +175,10 @@ describe("facilityCountText", () => {
     expect(facilityCountText("farmacia", 0, "La Acebeda")).toBe("Ninguna farmacia en La Acebeda");
     expect(facilityCountText("escuela_infantil", 1234, "Madrid")).toBe("1.234 escuelas infantiles en Madrid");
     expect(facilityCountText("mayores", 2, "Tres Cantos")).toBe("2 centros de mayores en Tres Cantos");
+    // The list has the consultorios too (pitch/textos_web.md, 12 nov)
+    expect(facilityCountText("centro_salud", 7, "Chamartín")).toBe("7 centros de salud y consultorios en Chamartín");
+    expect(facilityCountText("centro_salud", 1, "La Acebeda")).toBe("1 centro de salud o consultorio en La Acebeda");
+    expect(facilityCountText("centro_salud", 0, "X")).toBe("Ningún centro de salud ni consultorio en X");
   });
 });
 
