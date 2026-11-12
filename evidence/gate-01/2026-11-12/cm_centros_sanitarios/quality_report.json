@@ -124,8 +124,8 @@
           "register_places": 85,
           "matched": 79,
           "by_method": {
-            "direccion": 69,
-            "calle": 8,
+            "direccion": 64,
+            "calle": 13,
             "codigo_postal": 2
           },
           "names_rejected": [

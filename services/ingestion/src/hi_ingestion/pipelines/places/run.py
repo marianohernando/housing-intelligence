@@ -27,8 +27,9 @@ from hi_ingestion.pipelines.places.publish import replace_places
 from hi_ingestion.pipelines.places.quality import run_quality
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-# 1.1: coordinate repair (D-216); 1.2: the street must match; 1.3: directories (D-218)
-PARSER_VERSION = "places-1.3.0"
+# 1.1: coordinate repair (D-216); 1.2: the street must match; 1.3: directories (D-218);
+# 1.3.1: stricter directory rules (equal street words, public/private veto)
+PARSER_VERSION = "places-1.3.1"
 GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
 _UNITS = text(
     """
@@ -100,6 +101,20 @@ _DIRECTORY_VERSION = text(
 )
 
 
+def directory_input(manifest: dict[str, Any]) -> FetchedFile:
+    """The directory's Bronze file as an input of the register's run. The role carries the
+    directory's parser, so a new parser on the same file also reprocesses the register."""
+    bronze = dict(manifest["inputs"][0])
+    path = Path(str(bronze.pop("path")))
+    return FetchedFile(
+        **bronze
+        | {
+            "role": f"directory@{manifest['parser_version']}",
+            "path": path if path.is_absolute() else REPO_ROOT / path,
+        }
+    )
+
+
 def load_directories(
     engine: Engine, catalog: Catalog, spec: PointsPipeline
 ) -> tuple[list[LoadedDirectory], list[FetchedFile]]:
@@ -123,17 +138,7 @@ def load_directories(
         if not manifest_path.is_absolute():
             manifest_path = REPO_ROOT / manifest_path
         manifest = json.loads(manifest_path.read_text())
-        bronze = dict(manifest["inputs"][0])
-        bronze_path = Path(str(bronze.pop("path")))
-        inputs.append(
-            FetchedFile(
-                **bronze
-                | {
-                    "role": "directory",
-                    "path": bronze_path if bronze_path.is_absolute() else REPO_ROOT / bronze_path,
-                }
-            )
-        )
+        inputs.append(directory_input(manifest))
         loaded.append(
             LoadedDirectory(
                 dataset_id=link.dataset_id,

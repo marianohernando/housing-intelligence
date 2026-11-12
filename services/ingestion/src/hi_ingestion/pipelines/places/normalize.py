@@ -238,6 +238,7 @@ def _register_place(
         postal_code=postal_code.zfill(5) if postal_code.isdigit() else None,
         street=column(spec.address_street_column) or None,
         number=house_number(column(spec.address_number_column)),
+        dependency=dependency(column(spec.dependency_column)) if spec.dependency_column else None,
     )
 
 

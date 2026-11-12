@@ -9,8 +9,9 @@ are matched by postal address with three declared rules, strongest first, one to
 2. `calle` (0.9): same postal code and street, and it is the only entry on that street.
 3. `codigo_postal` (0.7): the only entry of the same kind in that postal code.
 
-An entry two places claim at the same rule goes to neither (ambiguous) and no weaker rule can
-take it; an entry already taken by a stronger rule is never offered again. Pure logic.
+"Only" is judged among every entry of the postal code. Public and private never match. An entry
+two places claim at the same rule goes to neither (ambiguous) and no weaker rule can take it; an
+entry already taken by a stronger rule is never offered again. Pure logic.
 """
 
 import math
@@ -21,6 +22,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from hi_domain.facilities import dependency
 from hi_ingestion.pipelines.places.coordinates import fold_name
 
 ADDRESS, STREET, POSTCODE = "direccion", "calle", "codigo_postal"
@@ -64,6 +66,7 @@ class RegisterPlace:
     postal_code: str | None
     street: str | None
     number: int | None
+    dependency: str | None = None  # publica | privada, as the register says (hi_domain.facilities)
 
 
 @dataclass(frozen=True)
@@ -88,16 +91,30 @@ def address_words(text: str | None) -> frozenset[str]:
     return frozenset(w for w in words if w not in _NOT_A_NAME and not w.isdigit() and len(w) > 1)
 
 
+# «KM.17,900» is a road position and a 5-digit number a postal code: neither is a house number.
+_KILOMETRE = re.compile(r"\bkm\.?\s*[\d.,]+", re.IGNORECASE)
+
+
 def address_numbers(text: str) -> frozenset[int]:
-    return frozenset(int(n) for n in re.findall(r"\d+", text))
+    numbers = re.findall(r"\d+", _KILOMETRE.sub(" ", text))
+    return frozenset(int(n) for n in numbers if len(n) < 5)
 
 
 def _same_street(place: RegisterPlace, entry: Entry) -> bool:
+    """Same words once street types, fillers and numbers are left out: «de Arturo Soria» and
+    «Calle De Arturo Soria 17». Equal sets, so «Real» is not «Real de Pozuelo»."""
     words = address_words(place.street)
-    return bool(words) and words <= address_words(entry.address)
+    return bool(words) and words == address_words(entry.address)
+
+
+def _compatible(place: RegisterPlace, entry: Entry) -> bool:
+    """Public and private never match each other (when both sources say which it is)."""
+    other = dependency(entry.dependency)
+    return place.dependency is None or other is None or place.dependency == other
 
 
 def _candidates(place: RegisterPlace, entries: list[Entry], method: str, kind: str) -> list[Entry]:
+    entries = [e for e in entries if _compatible(place, e)]
     if method == POSTCODE:
         return [e for e in entries if e.kind == kind]
     on_street = [e for e in entries if _same_street(place, e)]
@@ -108,6 +125,25 @@ def _candidates(place: RegisterPlace, entries: list[Entry], method: str, kind: s
     return [e for e in on_street if place.number in address_numbers(e.address)]
 
 
+def _claims(
+    pending: dict[str, RegisterPlace],
+    by_postcode: dict[str, list[Entry]],
+    taken: set[str],
+    method: str,
+    kinds: dict[str, str],
+) -> dict[str, list[str]]:
+    """entry id -> the places for which it is the only candidate of this rule. Uniqueness is
+    judged among every entry of the postal code, taken or not: a place the directory lacks never
+    inherits a leftover entry of its postal code."""
+    claims: dict[str, list[str]] = defaultdict(list)
+    for place_id, place in pending.items():
+        local = by_postcode.get(place.postal_code or "", [])
+        found = _candidates(place, local, method, kinds[place.subcategory])
+        if len(found) == 1 and found[0].external_id not in taken:
+            claims[found[0].external_id].append(place_id)
+    return claims
+
+
 def resolve_places(
     places: list[RegisterPlace], entries: list[Entry], kinds: dict[str, str]
 ) -> Resolution:
@@ -115,23 +151,17 @@ def resolve_places(
     by_postcode: dict[str, list[Entry]] = defaultdict(list)
     for entry in entries:
         by_postcode[entry.postal_code].append(entry)
-    pending = {p.external_id: p for p in places if p.subcategory in kinds}
+    entry_by_id = {e.external_id: e for e in entries}
+    pending = {p.external_id: p for p in places if p.subcategory in kinds and p.postal_code}
+    unmatched = {
+        p.external_id: "no postal code in the register"
+        for p in places
+        if p.subcategory in kinds and not p.postal_code
+    }
     taken: set[str] = set()  # entries matched or contested: never offered to a weaker rule
     matches: list[Match] = []
-    unmatched: dict[str, str] = {}
     for method in (ADDRESS, STREET, POSTCODE):
-        claims: dict[str, list[str]] = defaultdict(list)
-        for place_id, place in pending.items():
-            local = [
-                e
-                for e in by_postcode.get(place.postal_code or "", [])
-                if e.external_id not in taken
-            ]
-            found = _candidates(place, local, method, kinds[place.subcategory])
-            if len(found) == 1:
-                claims[found[0].external_id].append(place_id)
-        entry_by_id = {e.external_id: e for e in entries}
-        for entry_id, claimants in claims.items():
+        for entry_id, claimants in _claims(pending, by_postcode, taken, method, kinds).items():
             taken.add(entry_id)
             if len(claimants) == 1:
                 matches.append(Match(claimants[0], entry_by_id[entry_id], method))

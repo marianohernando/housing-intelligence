@@ -1,9 +1,9 @@
 # Hospitales: nombre y camas desde el Catálogo Nacional de Hospitales (D-218)
 
-Generado el 12 nov con la base local tras `hi-ingest run ms_catalogo_nacional_hospitales` y `hi-ingest run cm_centros_sanitarios` (parser places-1.3.0).
+Generado el 12 nov con la base local tras `hi-ingest run ms_catalogo_nacional_hospitales` y `hi-ingest run cm_centros_sanitarios` (parser places-1.3.1, reglas endurecidas tras la revisión: mismas palabras de calle, veto público/privado, unicidad entre todo el código postal; los mismos 79 pares que con 1.3.0).
 
 - Versión del catálogo: `2026-11-12-e5148a11b523` · hospitales de la provincia en el catálogo: 91
-- Hospitales del registro de la CM: 85 · cruzados: **79** · por método: {'direccion': 69, 'calle': 8, 'codigo_postal': 2}
+- Hospitales del registro de la CM: 85 · cruzados: **79** · por método: {'direccion': 64, 'calle': 13, 'codigo_postal': 2}
 - Uno a uno: True ({'reused': 0})
 - Público/privado, registro CM frente a catálogo: {'compared': 79, 'disagree': 0}
 
@@ -58,7 +58,7 @@ Los 9 «Otros centros con internamiento» no son hospitales en el registro de la
 | Hospital Universitario Clínico San Carlos | 28079 | 861 | publica | calle |
 | Hospital Universitario Fundacion Jimenez Diaz | 28079 | 651 | privada | direccion |
 | Hospital Universitario Puerta de Hierro Majadahonda | 28080 | 613 | publica | direccion |
-| Hospital Universitario de Getafe | 28065 | 543 | publica | direccion |
+| Hospital Universitario de Getafe | 28065 | 543 | publica | calle |
 | Hospital Universitario de La Princesa | 28079 | 524 | publica | direccion |
 | Hospital Universitario Príncipe de Asturias | 28005 | 507 | publica | calle |
 | Hospital Universitario de Fuenlabrada | 28058 | 413 | publica | direccion |

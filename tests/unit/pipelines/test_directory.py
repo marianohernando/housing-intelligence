@@ -250,3 +250,68 @@ def test_directory_quality_fails_when_the_region_is_cut() -> None:
     frame = _sheet([("280029", "Hospital A", "Calle De Ayala 38", "28001", "Generales", "886")])
     report = run_directory_quality(normalize_directory(frame, SPEC), SPEC)
     assert not report.passed
+
+
+def test_a_contested_entry_is_not_offered_to_a_weaker_rule() -> None:
+    entries = [entry("E1", "Calle De Juan Bravo 49")]
+    places = [
+        place("P1", "de Juan Bravo", 49),
+        place("P2", "Juan Bravo", 49),
+        place("P3", "de Juan Bravo", None),  # its only candidate on the street is E1
+    ]
+    resolution = resolve_places(places, entries, KINDS)
+    assert resolution.matches == []
+    assert set(resolution.unmatched) == {"P1", "P2", "P3"}
+
+
+def test_a_place_the_directory_lacks_never_inherits_a_leftover_entry() -> None:
+    """Uniqueness counts every entry of the postal code, also those already taken."""
+    entries = [entry("E1", "Calle De La Maso 38", "28034"), entry("E2", "Calle Otra 1", "28034")]
+    places = [place("P1", "de la Masó", 38, "28034"), place("P2", "de Colmenar Viejo", 9, "28034")]
+    resolution = resolve_places(places, entries, KINDS)
+    assert [m.place_id for m in resolution.matches] == ["P1"]
+    assert "P2" in resolution.unmatched
+
+
+def test_public_and_private_never_match() -> None:
+    entries = [entry("E1", "Calle De Arturo Soria 17")]  # «Privados»
+    public = RegisterPlace("P1", "Hospital general", "28001", "de Arturo Soria", 17, "publica")
+    assert matched([public], entries) == {}
+    private = RegisterPlace("P1", "Hospital general", "28001", "de Arturo Soria", 17, "privada")
+    assert matched([private], entries) == {"P1": f"E1:{ADDRESS}"}
+
+
+def test_a_place_without_postal_code_is_declared_unmatched() -> None:
+    resolution = resolve_places([place("P1", "de Meco", 1, None)], [entry("E1", "Meco 1")], KINDS)
+    assert resolution.unmatched == {"P1": "no postal code in the register"}
+
+
+def test_street_words_must_be_equal_and_road_positions_are_not_numbers() -> None:
+    entries = [entry("E1", "Calle Real de Pozuelo 5"), entry("E2", "Carretera De M-501 KM.17,900")]
+    assert matched([place("P1", "Real", 5)], entries) == {}
+    assert matched([place("P2", "de M-501", 17)], entries) == {}  # km 17 is not portal 17
+
+
+def test_a_new_directory_parser_changes_the_register_checksum() -> None:
+    from hi_ingestion.pipelines.places.run import directory_input
+    from hi_ingestion.pipelines.versions import combined_checksum
+
+    bronze = {
+        "dataset_id": "ms_catalogo_nacional_hospitales",
+        "role": "primary",
+        "path": "data/bronze/datasets/x/CNH_2025.xlsx",
+        "sha256": "a" * 64,
+        "bytes": 1,
+        "url": "https://example.org/CNH_2025.xlsx",
+        "retrieved_at": "2026-11-12T00:00:00+00:00",
+    }
+    old = directory_input({"inputs": [bronze], "parser_version": "directory-1.0.0"})
+    new = directory_input({"inputs": [bronze], "parser_version": "directory-1.1.0"})
+    assert combined_checksum([old]) != combined_checksum([new])
+
+
+def test_address_numbers_skip_road_positions_and_postal_codes() -> None:
+    from hi_ingestion.pipelines.places.directory import address_numbers
+
+    assert address_numbers("Carretera De M-501 (De Alcorcón A Plasencia) KM.17,900") == {501}
+    assert address_numbers("AVENIDA DE ABRANTES, Nº 55 - 57, 28025") == {55, 57}

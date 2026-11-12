@@ -73,7 +73,7 @@ def test_hospitals_take_the_directory_name_and_keep_the_register_as_source(
     path = Path(manifest_path)
     manifest = json.loads((path if path.is_absolute() else REPO_ROOT / path).read_text())
     roles = sorted((i["dataset_id"], i["role"]) for i in manifest["inputs"])
-    assert roles == [(REGISTER, "primary"), (HOSPITALS, "directory")]  # lineage of the names
+    assert roles == [(REGISTER, "primary"), (HOSPITALS, "directory@directory-1.0.0")]
 
 
 def test_a_new_directory_version_reprocesses_the_register(
