@@ -1,0 +1,36 @@
+{
+ "api_puente_vallecas_escuela_infantil": {
+  "status": "FALTA",
+  "reliable": true,
+  "ratio": 0.571,
+  "label": "Escuelas infantiles"
+ },
+ "results": {
+  "desktop": {
+   "puente_vallecas_escuela_infantil": "Escuelas infantiles FALTA Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca Puente de Vallecas 2,8 Otros municipios urbanos de la Comunidad de Madrid 4,9 En toda la Comunidad de Madrid: 4,7",
+   "badge_matches_api": true,
+   "fuencarral_hospitales": [
+    "Hospital · Clínica Cemtro · 100 camas instaladas · gestión privada",
+    "Hospital de media y larga estancia · Hospital Hestia Madrid · 297 camas instaladas · gestión privada",
+    "Hospital de salud mental · Hospital Psiquiátrico Doctor Rodriguez Lafora · 336 camas instaladas · gestión pública",
+    "Hospital · Hospital Ruber Internacional · 143 camas instaladas · gestión privada",
+    "Hospital · Hospital Universitario La Paz · 966 camas instaladas · gestión pública",
+    "Hospital"
+   ],
+   "console_errors": []
+  },
+  "mobile": {
+   "puente_vallecas_escuela_infantil": "Escuelas infantiles FALTA Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca Puente de Vallecas 2,8 Otros municipios urbanos de la Comunidad de Madrid 4,9 En toda la Comunidad de Madrid: 4,7",
+   "badge_matches_api": true,
+   "fuencarral_hospitales": [
+    "Hospital · Clínica Cemtro · 100 camas instaladas · gestión privada",
+    "Hospital de media y larga estancia · Hospital Hestia Madrid · 297 camas instaladas · gestión privada",
+    "Hospital de salud mental · Hospital Psiquiátrico Doctor Rodriguez Lafora · 336 camas instaladas · gestión pública",
+    "Hospital · Hospital Ruber Internacional · 143 camas instaladas · gestión privada",
+    "Hospital · Hospital Universitario La Paz · 966 camas instaladas · gestión pública",
+    "Hospital"
+   ],
+   "console_errors": []
+  }
+ }
+}
