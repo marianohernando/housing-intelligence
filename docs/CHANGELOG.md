@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.43 — Zonas verdes en el buscador (2026-11-12)
+- D-222 §7: `POST /search` pasa a `fit-0.3`; la prioridad «Zonas verdes» puntúa los minutos a pie hasta un parque urbano y, sin parque a un paseo, sale UNKNOWN («el campo no cuenta»).
+
 ## v0.5.42 — Minutos a pie hasta un parque (2026-11-12)
 - D-222 §5–§6: Casa de Campo y Quinta de Torre Arias con fuente oficial del Ayuntamiento; features `min_a_pie_parque` y `pct_calle_parque_5min` hasta el borde de los parques.
 

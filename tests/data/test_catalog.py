@@ -264,13 +264,25 @@ def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Cat
 
 def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
     """CORE-003: the search finds its features through `fit`: one rent per m² and one walking
-    feature per NeedKey, computed at the municipio and distrito levels it ranks."""
+    feature per NeedKey (plus the priorities measured on foot, D-222), computed at the
+    municipio and distrito levels it ranks."""
     bound = [s for s in catalog.features.values() if s.fit is not None]
     rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
-    walks = {s.fit.need: s for s in bound if s.fit is not None and s.fit.role == "walk_minutes"}
+    to_needs = [s for s in bound if s.fit is not None and s.fit.need is not None]
+    walks = {s.fit.need: s for s in to_needs if s.fit is not None}
     assert len(rents) == 1
-    assert len(walks) == len([s for s in bound if s.fit and s.fit.role == "walk_minutes"])
+    assert len(walks) == len(to_needs)
     assert set(walks) == {n.value for n in NeedKey}
     for spec in bound:
         levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
         assert {"municipio", "distrito"} <= levels, spec.feature_id
+
+
+def test_green_areas_are_the_walk_to_a_park(catalog: Catalog) -> None:
+    """D-222: the search reads the «Zonas verdes» priority from the minutes to a park."""
+    bound = [
+        f.feature_id
+        for f in catalog.features.values()
+        if f.fit is not None and f.fit.priority == "zonas_verdes"
+    ]
+    assert bound == ["min_a_pie_parque"]

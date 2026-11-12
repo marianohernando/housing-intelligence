@@ -39,7 +39,7 @@ from hi_domain.affordability import (
 )
 from hi_domain.gaps import es_number
 
-FIT_VERSION = "fit-0.2"
+FIT_VERSION = "fit-0.3"  # 0.3: «Zonas verdes» scored by the walk to a park (D-222)
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -78,9 +78,32 @@ PRIORITY_NEED: dict[PriorityKey, NeedKey] = {
     PriorityKey.SALUD: NeedKey.CENTRO_SALUD,
     PriorityKey.COLEGIOS: NeedKey.COLEGIO,
 }
+
+
+@dataclass(frozen=True)
+class PriorityWalk:
+    """A priority measured by walking to a kind of place (D-222): what the fact calls it, the
+    window that scores 1 and, beyond the walking range (WALK_ZERO_AT x window), what to say:
+    the indicator then tells nothing about the zone, so it is UNKNOWN, never a missing."""
+
+    name: str  # the priority, as the web says it
+    label: str  # the place
+    topic: FactTopic
+    target_minutes: int
+    out_of_range: str
+
+
+PRIORITY_WALK: dict[PriorityKey, PriorityWalk] = {
+    PriorityKey.ZONAS_VERDES: PriorityWalk(
+        name="Zonas verdes",
+        label="Parque urbano",
+        topic=FactTopic.ZONAS_VERDES,
+        target_minutes=10,
+        out_of_range="Sin parque urbano de 1 ha o más a un paseo (el campo no cuenta)",
+    ),
+}
 # Priorities without data in Vida Fácil yet (D-205, extras from 19 Nov): never scored as 0.
 NO_DATA_PRIORITY: dict[PriorityKey, tuple[FactTopic, str]] = {
-    PriorityKey.ZONAS_VERDES: (FactTopic.ZONAS_VERDES, "Zonas verdes: aún sin datos"),
     PriorityKey.SEGURIDAD: (FactTopic.SEGURIDAD, "Seguridad: aún sin datos oficiales"),
     PriorityKey.SIN_ESCALERAS: (FactTopic.ACCESIBILIDAD, "Sin escaleras: aún sin datos"),
 }
@@ -107,6 +130,10 @@ class ZoneData:
     rent: IndicatorValue | None = None
     walk: Mapping[NeedKey, IndicatorValue] = field(default_factory=dict[NeedKey, IndicatorValue])
     gaps: Sequence[GapHighlight] = ()
+    # Walking minutes behind a «me importa» priority (PRIORITY_WALK): the park, for green areas.
+    priority_walk: Mapping[PriorityKey, IndicatorValue] = field(
+        default_factory=dict[PriorityKey, IndicatorValue]
+    )
     commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
 
 
@@ -322,6 +349,28 @@ def walk_fact(need: NeedKey, walk: IndicatorValue | None, target: int) -> Score:
     return Score(walk_utility(walk.value, target), walk.confidence, fact)
 
 
+def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> Score:
+    """Walking minutes to the place a priority measures; beyond the walking range, UNKNOWN."""
+    unknown = None
+    if walk is None or walk.value is None:
+        unknown = f"{measured.name}: sin datos de distancia a pie en esta zona"
+    elif walk.value > WALK_ZERO_AT * measured.target_minutes:
+        unknown = measured.out_of_range
+    if unknown is not None:
+        fact = Fact(kind=FactKind.UNKNOWN, topic=measured.topic, text=unknown, confidence=0.0)
+        return Score(None, 0.0, fact)
+    assert walk is not None and walk.value is not None  # noqa: S101 - narrowed above
+    kind = FactKind.STRENGTH if walk.value <= measured.target_minutes else FactKind.WEAKNESS
+    fact = Fact(
+        kind=kind,
+        topic=measured.topic,
+        text=f"{measured.label} a {minutes_text(walk.value)} andando desde la mitad de sus calles",
+        confidence=walk.confidence,
+        indicator=walk,
+    )
+    return Score(walk_utility(walk.value, measured.target_minutes), walk.confidence, fact)
+
+
 def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:
     """Minutes by public transport when computed (D-220); otherwise the straight line (D-215)."""
     if trip is not None:
@@ -388,6 +437,9 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
         trip = None if criterion.anchor_index is None else data.commute.get(criterion.anchor_index)
         return work_fact(criterion.anchor, data, trip)
     if criterion.priority is not None:
+        measured = PRIORITY_WALK.get(criterion.priority)
+        if measured is not None:
+            return priority_walk_fact(measured, data.priority_walk.get(criterion.priority))
         topic, text = NO_DATA_PRIORITY[criterion.priority]
         return Score(None, 0.0, Fact(kind=FactKind.UNKNOWN, topic=topic, text=text, confidence=0))
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)

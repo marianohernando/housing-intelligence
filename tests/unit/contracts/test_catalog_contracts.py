@@ -117,3 +117,14 @@ def test_fit_binding_needs_a_need_only_for_walking() -> None:
         FitBinding(role="walk_minutes")
     with pytest.raises(ValidationError):
         FitBinding(role="rent_m2", need="colegio")
+
+
+def test_fit_binding_walks_to_a_need_or_to_a_priority_never_both() -> None:
+    """D-222: «Zonas verdes» is a priority measured by walking to a park, not a NeedKey."""
+    green = FitBinding(role="walk_minutes", priority="zonas_verdes")
+    assert green.priority == "zonas_verdes"
+    assert green.need is None
+    with pytest.raises(ValidationError):
+        FitBinding(role="walk_minutes", need="colegio", priority="zonas_verdes")
+    with pytest.raises(ValidationError):
+        FitBinding(role="rent_m2", priority="zonas_verdes")

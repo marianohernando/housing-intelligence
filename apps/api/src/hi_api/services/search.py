@@ -20,6 +20,7 @@ from hi_contracts.public import (
     GapRowMap,
     IndicatorValue,
     NeedKey,
+    PriorityKey,
     ScenarioState,
     SearchResult,
     ZoneRef,
@@ -98,18 +99,23 @@ def _indicator(row: dict[str, Any]) -> IndicatorValue:
 class Indicators(NamedTuple):
     rent: dict[tuple[str, str], IndicatorValue]
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]]
+    priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
 
 
 def _indicators(rows: Iterable[dict[str, Any]]) -> Indicators:
     rent: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
+    priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
     for row in rows:
         key = (row["territory_level"], row["territory_code"])
-        if row["fit"]["role"] == "rent_m2":
+        fit = row["fit"]
+        if fit["role"] == "rent_m2":
             rent[key] = _indicator(row)
-        else:
-            walk.setdefault(key, {})[NeedKey(row["fit"]["need"])] = _indicator(row)
-    return Indicators(rent, walk)
+        elif fit.get("need"):
+            walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
+        else:  # a priority measured on foot: the park for «Zonas verdes» (D-222)
+            priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
+    return Indicators(rent, walk, priority_walk)
 
 
 GapMapEntry = tuple[GapRowMap | None, list[str]]
@@ -170,6 +176,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
                 zone=_zone_ref(row),
                 rent=indicators.rent.get(key),
                 walk=indicators.walk.get(key, {}),
+                priority_walk=indicators.priority_walk.get(key, {}),
                 gaps=highlights.get(key, []),
                 commute={i: by[zone_id] for i, by in trips.by_zone.items() if zone_id in by},
             )

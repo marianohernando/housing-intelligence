@@ -18,6 +18,7 @@ from hi_contracts.public import (
     ConstraintCheck,
     ConstraintStatus,
     FactKind,
+    FactTopic,
     Household,
     IndicatorValue,
     NearbyNeed,
@@ -359,3 +360,37 @@ def test_the_ranking_never_depends_on_the_order_zones_arrive_in(
     first = [r.zone.code for r in run_search(family(), zones).results]
     again = [r.zone.code for r in run_search(family(), shuffled).results]
     assert first == again
+
+
+def _park_zone(minutes: float | None) -> ZoneData:
+    base = zone("1")
+    park = {PriorityKey.ZONAS_VERDES: _value("min_a_pie_parque", minutes)}
+    return ZoneData(zone=base.zone, rent=base.rent, walk=base.walk, priority_walk=park)
+
+
+GREEN = ScenarioState(priorities=[PriorityKey.ZONAS_VERDES])
+
+
+def test_green_areas_score_the_walk_to_an_urban_park() -> None:
+    """D-222: utility 1 up to 10 minutes to the edge of a park of 1 ha, 0 at 30."""
+    near = evaluate(GREEN, _park_zone(4.0))
+    assert near.match_pct == 100
+    assert near.facts[0].kind is FactKind.STRENGTH
+    assert near.facts[0].text == "Parque urbano a 4 min andando desde la mitad de sus calles"
+    middle = evaluate(GREEN, _park_zone(20.0))
+    assert middle.match_pct == 50
+    assert middle.facts[0].kind is FactKind.WEAKNESS
+
+
+def test_without_an_urban_park_at_a_walk_green_areas_are_unknown_never_zero() -> None:
+    """Beyond 30 minutes the indicator says nothing about the zone's green: the countryside
+    around a village is not measured (D-222 §7). UNKNOWN, never a missing green."""
+    far = evaluate(GREEN, _park_zone(45.0))
+    assert far.match_pct is None
+    green = next(f for f in far.facts if f.topic is FactTopic.ZONAS_VERDES)
+    assert green.kind is FactKind.UNKNOWN
+    assert green.text == "Sin parque urbano de 1 ha o más a un paseo (el campo no cuenta)"
+    missing = evaluate(GREEN, _park_zone(None))
+    assert missing.match_pct is None
+    green = next(f for f in missing.facts if f.topic is FactTopic.ZONAS_VERDES)
+    assert green.text == "Zonas verdes: sin datos de distancia a pie en esta zona"

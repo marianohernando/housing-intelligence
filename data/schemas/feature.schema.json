@@ -92,7 +92,7 @@
     },
     "FitBinding": {
       "additionalProperties": false,
-      "description": "Where the people search (CORE-003) reads the feature: the rent per m² of the budget\ncondition, or the walking minutes to the nearest service of a kind (a ScenarioState\nNeedKey). The search has no feature id written in its code.",
+      "description": "Where the people search (CORE-003) reads the feature: the rent per m² of the budget\ncondition, or the walking minutes to the nearest place of a kind, either a service (a\nScenarioState NeedKey) or what a «me importa» priority measures (a PriorityKey: the park\nfor «Zonas verdes», D-222). The search has no feature id written in its code.",
       "properties": {
         "need": {
           "anyOf": [
@@ -107,6 +107,20 @@
           "default": null,
           "description": "NeedKey, only for walk_minutes",
           "title": "Need"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PriorityKey, only for walk_minutes",
+          "title": "Priority"
         },
         "role": {
           "enum": [
