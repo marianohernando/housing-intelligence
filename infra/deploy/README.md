@@ -110,6 +110,10 @@ Cómo se detecta:
 - **Después de un rollback:** Vercel desactiva la asignación automática del dominio. El siguiente despliegue no queda publicado hasta que lo promueves con `npx vercel@65.12.1 promote <url-del-despliegue>`.
 - **Variables de entorno:** el rollback no las cambia. Si el fallo era una variable, corrígela y vuelve a desplegar.
 - **Si el fallo está en los datos y no en el código:** no se arregla con un rollback. A vuelve a ejecutar `make supabase-sync PROFILE=demo` con la versión buena de la base local.
+- **Si el fallo es el límite de conexiones de la base, tampoco.** En los logs sale `EMAXCONNSESSION max clients reached in session mode`.
+  - El pooler en modo sesión admite 15 clientes en total. Las instancias vivas del despliegue que falla siguen ocupándolos, y las del despliegue anterior no consiguen ninguno.
+  - El 12 nov el rollback dejó el smoke en 2/8. Volver a promover el despliegue nuevo lo arregló en el acto (`deploy-13-auditoria-gap03.md`).
+  - El arreglo de fondo es menos conexiones por instancia o el pooler en modo transacción (puerto 6543).
 
 ## Límites del plan gratuito (Hobby)
 
@@ -182,6 +186,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - `health` falla: la caída es de la plataforma o de la API.
    - `health` funciona pero `ready` falla con `SOURCE_DEGRADED`: la base de datos no responde (Supabase pausada o caída, o la credencial está mal).
    - `ready` falla con `INSUFFICIENT_DATA`: el rol no ve filas (falta una política o un `GRANT`) o los datos no están cargados.
+   - Hay 500 sueltos, sobre todo en la vista de zona, y en `npx vercel@65.12.1 logs --environment production --since 15m` sale `EMAXCONNSESSION`: está lleno el pooler de Supabase. No hagas rollback (ver «Volver atrás»). Espera a que bajen las instancias, unos 5 min sin tráfico, o reduce las conexiones por instancia.
 2. **Si el fallo vino con el último despliegue:** Instant Rollback (ver arriba).
 3. **Si Supabase está pausada:** reanúdala desde el panel de Supabase con la cuenta dedicada a DATAMAD y vuelve a pasar el smoke.
 4. **Sin Internet o con Vercel caído durante la presentación:** `make demo-offline`, el paquete offline de la sección siguiente. Arranca en unos 7 s en el portátil, con los mismos datos. Lleva también capturas y un vídeo corto del recorrido, grabados con la versión desplegada.
