@@ -120,6 +120,7 @@ La fiabilidad baja en estos casos:
   - el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito de Madrid capital;
   - el mapa de calles y los parques de OpenStreetMap, para las distancias a pie;
   - los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los centros de salud y el nombre y las camas de los hospitales;
+  - la estadística de alquileres declarados en el IRPF de la Agencia Tributaria, para corregir el alquiler con lo que cuestan los contratos firmados en 2024;
   - el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección.
 - **Antes de usar un conjunto,** pasa un control de calidad: que no haya registros repetidos, que cada municipio exista, que los errores queden apartados y que un dato que falta no se convierta en un cero.
 - **Cada resultado** dice de qué conjuntos sale, con el enlace a su ficha en el portal, su versión y su licencia.
@@ -189,7 +190,7 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 | 1.6 | Fuente incompleta: confianza = parte de residencias con plazas conocidas | `methods.py` (suma de atributos: «Places lacking it lower confidence») | Hecho |
 | 1.6 | «5 o más» contado como 5 (confianza 0,9) | `data/catalog/features/tamano_medio_hogar.yaml` | Hecho |
 | 1.7 | 27 conjuntos CM (el 27.º, el valor tasado de la vivienda, D-227), 9 del CRTM con ficha en el portal (6 redes y 3 topologías con el grado de accesibilidad de las estaciones); los 2 de camas solo dan el total de la región | `pitch/datasets_cm.md` (12 nov) · D-196 · D-217 §4 · D-223 §2 · producción: `GET /api/v1/datasets?cm_only=true` da 27 (13 nov, tras el despliegue de `fit-0.5`) | Hecho. El uso en pantalla de los 2 de camas, **pendiente de A** |
-| 1.7 | Apoyo: Ministerio de Sanidad (nombres y camas), CartoCiudad (coordenadas de unos pocos centros) y parques de OpenStreetMap | D-218 · D-216 §3 · D-222 (`osm_parques`) · `pitch/datasets_cm.md` §3 · `README.md` («Qué datos usamos») | Hecho |
+| 1.7 | Apoyo: Ministerio de Sanidad (nombres y camas), CartoCiudad (coordenadas de unos pocos centros), parques de OpenStreetMap y la Agencia Tributaria (factor de contratos nuevos: `aeat_alquiler_nuevos_contratos_municipios` y `_codigo_postal`) | D-218 · D-216 §3 · D-222 (`osm_parques`) · D-228 · `pitch/datasets_cm.md` §3 · `README.md` («Qué datos usamos») | Hecho |
 | 1.7 | Control de calidad | `evidence/gate-01/*/<dataset>/quality_report.json` | Hecho |
 | 1.8 | Solo la capacidad publicada; a pie, no en coche; gente colocada por longitud de calle; camas fuera de la lista; vivienda: parque, no mercado | D-217 §3 y §9 (límites declarados) · D-218 §7 · `limitations` de los YAML de `gap-0.3` · `viviendas_grandes_por_100_hogares_grandes.yaml` (`limitations`) | Hecho. Mejora declarada: captación con decaimiento (E2SFCA) y tiempo en coche o transporte (CORE-009) |
 | 1.8 | Transporte: horarios programados de un día laborable; líneas interurbanas sin horario completo (720 a 726 sin expediciones; 35 con la misma hora en todas sus paradas); 45–50 zonas sin llegada al centro a las 9:00 | D-220 §5–6 | Hecho (límite declarado) |

@@ -72,7 +72,8 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 - **Línea pequeña bajo la tabla:**
   - «Complementan, sin contar como datos CM: red peatonal de OpenStreetMap (ODbL)» (`pitch/datasets_cm.md` §3). Si el 24 nov la web ya enseña las zonas verdes, va «red peatonal y parques de OpenStreetMap» (D-222);
   - «+ Ayuntamiento de Madrid (población y hogares por distrito)»: en uso desde DATA-012 (D-209; `pitch/datasets_cm.md` §3);
-  - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3).
+  - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3);
+  - «+ Agencia Tributaria (alquiler de los contratos nuevos)»: «Estadística de viviendas declaradas en IRPF», ejercicio 2024, con 2 conjuntos de apoyo que no cuentan como CM (D-228; `pitch/datasets_cm.md` §3).
 - **Pie:** «Lista completa, con licencias y control de calidad: github.com/marianohernando/housing-intelligence → `pitch/datasets_cm.md`».
 
 **Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («27») va grande en violeta; el build la calcula del catálogo.

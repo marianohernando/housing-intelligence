@@ -76,6 +76,7 @@ SHORT_NAMES = {
     "cm_viviendas_tenencia_censo_2021": "Viviendas por tenencia",
     "cm_alquiler_m2_municipios": "Alquiler €/m² por municipio",
     "cm_alquiler_m2_codigo_postal_madrid": "Alquiler €/m² por código postal",
+    "cm_valor_tasado_vivienda_municipios": "Valor tasado de la vivienda",
     "cm_renta_disponible_municipal": "Renta disponible",
     "cm_centros_educativos": "Centros educativos",
     "cm_unidades_escolares": "Unidades escolares",
