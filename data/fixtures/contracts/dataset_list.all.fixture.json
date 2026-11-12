@@ -1,5 +1,5 @@
 {
-  "total": 27,
+  "total": 28,
   "cm_open_data_count": 23,
   "datasets": [
     {
@@ -44,7 +44,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-12-f1c723613c71",
+      "version": "2026-11-12-4b8afbb7a441",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {
@@ -226,6 +226,15 @@
       "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
       "version": "2026-11-11-4726abc60a15",
       "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+    },
+    {
+      "dataset_id": "ms_catalogo_centros_atencion_primaria",
+      "name": "Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31 de diciembre de 2025)",
+      "publisher": "Ministerio de Sanidad",
+      "is_cm_open_data": false,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/centrosSalud/home.htm",
+      "version": "2026-11-12-260312fa3bc8",
+      "license": "Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)"
     },
     {
       "dataset_id": "ms_catalogo_nacional_hospitales",

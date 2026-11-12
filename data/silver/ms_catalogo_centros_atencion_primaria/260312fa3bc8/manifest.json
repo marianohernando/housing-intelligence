@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ms_catalogo_centros_atencion_primaria",
+      "role": "primary",
+      "path": "data/bronze/datasets/ms_catalogo_centros_atencion_primaria/8f417625348c/2026_C_Catal_Centros_AP.xlsx",
+      "sha256": "8f417625348cc698bfa42c154231febd36f80aa171dc09c9b4977188d94487fd",
+      "bytes": 2067063,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx",
+      "retrieved_at": "2026-11-12T01:39:10.066185+00:00"
+    }
+  ],
+  "checksum": "260312fa3bc88fa534599cb5bae1785acb088a8916751f6b1f40aaa102b50f17",
+  "parser_version": "directory-1.0.0"
+}

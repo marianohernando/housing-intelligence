@@ -34,7 +34,8 @@ _NOT_A_NAME = frozenset(
         "de", "del", "la", "las", "los", "el", "y", "a", "al",
         "calle", "cl", "avenida", "avda", "av", "plaza", "pza", "pl", "paseo", "po", "pso",
         "glorieta", "gta", "carretera", "ctra", "camino", "ronda", "travesia", "urbanizacion",
-        "urb", "poligono", "sector", "km", "sn", "no", "num", "numero", "bis",
+        "urb", "poligono", "sector", "plazuela", "pasaje", "km", "sn", "no", "num", "numero",
+        "bis", "bajo", "local",
     }
 )  # fmt: skip
 # «Clínica La Luz, S.L.», «Clínica Isadora S.A.», «… Móstoles Sa»: the company, not the place.
@@ -100,11 +101,20 @@ def address_numbers(text: str) -> frozenset[int]:
     return frozenset(int(n) for n in numbers if len(n) < 5)
 
 
+_PARENTHESES = re.compile(r"\([^)]*\)")
+
+
+def _street_forms(text: str | None) -> set[frozenset[str]]:
+    """The street's words, with and without what goes in brackets: «de la Paloma (El Vellón)»
+    names the village, «M-515 (POZUELO)» is part of the road's name."""
+    forms = {address_words(text), address_words(_PARENTHESES.sub(" ", text or ""))}
+    return {f for f in forms if f}
+
+
 def _same_street(place: RegisterPlace, entry: Entry) -> bool:
     """Same words once street types, fillers and numbers are left out: «de Arturo Soria» and
     «Calle De Arturo Soria 17». Equal sets, so «Real» is not «Real de Pozuelo»."""
-    words = address_words(place.street)
-    return bool(words) and words == address_words(entry.address)
+    return bool(_street_forms(place.street) & _street_forms(entry.address))
 
 
 def _compatible(place: RegisterPlace, entry: Entry) -> bool:

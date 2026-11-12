@@ -106,7 +106,7 @@ def normalize_directory(frame: pd.DataFrame, spec: FacilityDirectoryPipeline) ->
 
 def published_capacities(directory: Directory) -> list[float]:
     """Capacities the directory publishes (an empty cell is «not published», never 0)."""
-    values: list[float] = [float(v) for v in directory.frame["capacity"].tolist()]
+    values: list[float] = [float(v) for v in directory.frame["capacity"].tolist() if v is not None]
     return [v for v in values if not math.isnan(v)]
 
 

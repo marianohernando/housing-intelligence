@@ -19,6 +19,11 @@ from tests.integration.conftest import GOLDEN, ingest_directories
 pytestmark = pytest.mark.db
 REGISTER = "cm_centros_sanitarios"
 HOSPITALS = "ms_catalogo_nacional_hospitales"
+PRIMARY_CARE = "ms_catalogo_centros_atencion_primaria"
+PRIMARY_CARE_SQL = text(
+    "SELECT canonical_name FROM place_master WHERE official_dataset_id = :ds "
+    "AND official_entity_id = :id"
+)
 NAMES_SQL = text(
     """
     SELECT official_entity_id AS id, canonical_name AS name,
@@ -73,7 +78,28 @@ def test_hospitals_take_the_directory_name_and_keep_the_register_as_source(
     path = Path(manifest_path)
     manifest = json.loads((path if path.is_absolute() else REPO_ROOT / path).read_text())
     roles = sorted((i["dataset_id"], i["role"]) for i in manifest["inputs"])
-    assert roles == [(REGISTER, "primary"), (HOSPITALS, "directory@directory-1.0.0")]
+    assert roles == [
+        (REGISTER, "primary"),
+        (PRIMARY_CARE, "directory@directory-1.0.0"),
+        (HOSPITALS, "directory@directory-1.0.0"),
+    ]
+
+
+def test_primary_care_takes_its_name_from_the_ministry_catalogue(
+    published: RunSummary, migrated_engine: Engine, tmp_path: Path
+) -> None:
+    """The register publishes no names for centros de salud: «Centro de salud Las Calesas»."""
+    assert published.status == "SUCCESS"
+    ingest_directories(migrated_engine, tmp_path)
+    assert _register(migrated_engine, tmp_path).status in {"SUCCESS", "SKIPPED"}
+    with migrated_engine.connect() as conn:
+
+        def name(place_id: str) -> str:
+            return conn.execute(PRIMARY_CARE_SQL, {"ds": REGISTER, "id": place_id}).scalar_one()
+
+        assert name("CS0037") == "Centro de salud Las Calesas"
+        assert name("CS0174") == "Centro de salud Juan de la Cierva"
+        assert name("CS12674") == "Consultorio local La Acebeda"
 
 
 def test_a_new_directory_version_reprocesses_the_register(

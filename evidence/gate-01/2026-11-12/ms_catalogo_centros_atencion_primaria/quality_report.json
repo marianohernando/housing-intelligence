@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "rows_in_scope",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "entries": 419,
+        "min": 380,
+        "max": 480
+      }
+    },
+    {
+      "name": "unique_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 1,
+        "ratio": 0.0024,
+        "rows": [
+          {
+            "external_id": "",
+            "reason": "no id"
+          }
+        ]
+      }
+    },
+    {
+      "name": "no_contact_columns",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_columns": []
+      }
+    },
+    {
+      "name": "scope_filter",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "source_rows": 13054,
+        "out_of_scope": 12634
+      }
+    }
+  ]
+}

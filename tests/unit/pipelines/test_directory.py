@@ -315,3 +315,24 @@ def test_address_numbers_skip_road_positions_and_postal_codes() -> None:
 
     assert address_numbers("Carretera De M-501 (De Alcorcón A Plasencia) KM.17,900") == {501}
     assert address_numbers("AVENIDA DE ABRANTES, Nº 55 - 57, 28025") == {55, 57}
+
+
+def test_a_directory_without_capacity_counts_none() -> None:
+    from hi_ingestion.pipelines.directory.normalize import published_capacities
+
+    spec = SPEC.model_copy(update={"capacity_column": None, "capacity_unit": None})
+    frame = _sheet([("280029", "Hospital A", "Calle De Ayala 38", "28001", "Generales", "886")])
+    directory = normalize_directory(frame.drop(columns=["CAMAS"]), spec)
+    assert published_capacities(directory) == []
+    assert directory.frame["capacity"].tolist() == [None]
+
+
+def test_bracketed_locality_hints_do_not_break_the_street() -> None:
+    entries = [
+        entry("E1", "CALLE LA PALOMA, Nº 14", "28722"),
+        entry("E2", "Carretera M-515 (Pozuelo) 61"),
+    ]
+    assert matched([place("P1", "de la Paloma (El Vellón)", 14, "28722")], entries) == {
+        "P1": f"E1:{ADDRESS}"
+    }
+    assert matched([place("P2", "M-515 (POZUELO)", 61)], entries) == {"P2": f"E2:{ADDRESS}"}

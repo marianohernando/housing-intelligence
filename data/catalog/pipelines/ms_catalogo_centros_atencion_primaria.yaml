@@ -1,0 +1,14 @@
+kind: facility_directory
+dataset_id: ms_catalogo_centros_atencion_primaria
+sheet: Catálogo - 2026
+id_column: CODIGO_CCN
+name_column: SIAP_CENTROS.NOMBRE
+address_column: DIRECCION
+postal_code_column: CP
+kind_column: TIPOCENTRO
+dependency_column: T_NOMBRE  # modalidad de gestión: «Pública Directa»
+# TELEFONO is never read (D-186).
+scope_column: SIAP_PROVINCIAS.NOMBRE
+scope_values: ["MADRID"]
+min_rows: 380
+max_rows: 480

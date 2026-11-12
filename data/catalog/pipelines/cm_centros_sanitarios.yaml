@@ -37,3 +37,11 @@ directories:
       Hospital especializado: Hospitales especializados
       Hospital de media y larga estancia: Hospitales de media y larga estancia
       Hospital de salud mental y tratamiento de toxicomanías: Hospitales de salud mental y tratamiento de toxicomanías
+  # Primary care: the register has no names; the Ministry's catalogue gives a bare place name
+  - dataset_id: ms_catalogo_centros_atencion_primaria
+    kinds:
+      Centro de salud: CENTRO SALUD
+      Consultorio de atención primaria: CONSULTORIO LOCAL
+    name_prefix:
+      Centro de salud: Centro de salud
+      Consultorio de atención primaria: Consultorio local
