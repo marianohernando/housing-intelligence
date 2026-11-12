@@ -12,6 +12,8 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov) y la 46 y la 47 (cifras de impacto, 13 nov).
+
 ---
 
 ## Alberto Abella · Gaia-X España (APIs, interoperabilidad, espacios de datos)
@@ -21,9 +23,9 @@ Con una API pública versionada (`/api/v1`) cuyos contratos están publicados co
 - Evidencia: `docs/04_technical_architecture/31_public_api_routes.md` · `data/schemas/api/*.schema.json` (4 esquemas) · `GET /api/v1/gaps/municipio/28092`.
 
 **2. ¿Tenéis MCP para agentes de IA?**
-Está diseñado como herramientas que llaman a los mismos servicios de la API, nunca a SQL libre, para que un agente no pueda inventar ni modificar datos.
-- Evidencia: `CLAUDE.md` §3 (Arquitectura) · board MCP-001.
-- Estado: **pendiente de A** (MCP-001, 19–22 nov). Si no llega, responder: «Hoy está la API; el MCP es el siguiente paso y va sobre esos mismos servicios».
+Sí: un servidor MCP con cinco herramientas de solo lectura (buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos). Llaman a los mismos servicios que la API, nunca a SQL libre, así que un agente no puede inventar ni cambiar datos, y los tests comprueban que cada herramienta responde lo mismo que su ruta de la API. Hoy funciona en local (`make mcp`); el siguiente paso es servirlo en remoto.
+- Evidencia: D-225 · `services/mcp/` · `make mcp` · `CLAUDE.md` §3 (Arquitectura).
+- Si quieren verlo: un clip de 20 s con un agente preguntando «¿qué le falta a Parla?» (**pendiente de A**).
 
 **3. ¿Vuestro catálogo de datos es reutilizable?**
 Sí. Cada fuente, dataset, métrica y feature está descrito en YAML legible por máquina, con licencia, propietario y enlace, y ese catálogo se publica en CC BY 4.0. De ahí sale, por ejemplo, la lista de datasets que habéis visto, generada con un script.
@@ -44,9 +46,13 @@ Cada ingesta compara la huella (sha256) del fichero. Si no cambia, se salta; si 
 **6. ¿Quién paga?**
 Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, residencias, comercios) pagan por análisis agregados y por la API. Las personas lo usan gratis y los ayuntamientos lo usan para planificar.
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
+- Si piden concretar (decisión de Mariano, 13 nov; `pitch/modelo_negocio.md`):
+  - un ayuntamiento paga 990–1.500 € por el informe de lo que falta en su municipio, que cabe en un contrato menor;
+  - las promotoras y consultoras pagan estudios de zona de 490 a 1.500 €, y son los primeros ingresos;
+  - para las personas es gratis, y la API y el MCP también, sin uso comercial.
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
-Por el trabajo que hay encima: cruzar 26 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
+Por el trabajo que hay encima: cruzar 27 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
 - Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md` · `evidence/gate-01/2026-11-10/idempotent-rerun.txt`.
 
 **8. ¿La licencia de los datos permite un uso comercial?**
@@ -61,6 +67,7 @@ Los portales enseñan la oferta de pisos; nosotros enseñamos la necesidad y el 
 Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base en el de Supabase, y los datos se recargan copiando tablas ya validadas. Para un uso comercial habría que pasar a planes de pago, porque el gratuito de Vercel no lo admite.
 - Evidencia: `evidence/gate-06/2026-11-11/supabase-sync-demo.txt` (base de la demo: 100 MB de los 500 del plan gratuito) · D-188.
 - Alojamiento: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (plan Hobby: «solo personal y no comercial»).
+- Si preguntan cuánto para cobrar: unos 45 $/mes como mínimo, con Vercel Pro (20 $) y Supabase Pro (desde 25 $). La base ocupa 100 MB de los 8 GB incluidos, así que lo que crece con el uso es el cómputo de la API (`pitch/modelo_negocio.md`, precios del 12 nov).
 
 ---
 
@@ -134,9 +141,9 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
 **23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
-26 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
-- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (26 en producción, 12 nov).
-- Si insiste en cuáles se ven: 24 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
+27 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
+- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (27 en producción desde el 13 nov; el formulario se envió el 12 nov con 26).
+- Si insiste en cuáles se ven: 25 alimentan la lista o el buscador (el 27.º, el valor tasado de la vivienda, da el precio de compra en 28 municipios, D-227); los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
 
 **24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
@@ -219,3 +226,61 @@ Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px 
 **40. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
 - Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.
+
+---
+
+## Las cinco preguntas difíciles (jurado simulado del 12 nov)
+
+**41. Sale 1.107 € al mes por 77 m² en Fuencarral-El Pardo, y Salamanca entra con 1.500 €. ¿Eso es real?**
+Era la media de todos los contratos declarados a Hacienda, también los antiguos, y se quedaba corta. Ahora multiplicamos el precio por metro de la Comunidad por cuánto más cuestan, en cada zona, los contratos firmados en 2024 según la Agencia Tributaria. Fuencarral-El Pardo pasa a unos **[1.270 €: cifra final pendiente de A]** y Salamanca a unos **[1.880 €: pendiente de A]**, así que con 1.500 € ya no entra.
+- Evidencia: D-214 (puntos 2 y 3) · D-228, opción A, que eligió Mariano el 13 nov · Agencia Tributaria, «Estadística de viviendas declaradas en IRPF», ejercicio 2024, «contratos de arrendamiento formalizados en el ejercicio» · `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/`. Factor por zona: entre 1,05 y 1,26 (Madrid, 1,20).
+- Si preguntan por comprar: el precio es el valor tasado medio de la vivienda libre de cada municipio, que publica la Comunidad. No es el de un anuncio, y en los distritos de Madrid sale sin datos (D-227). Con el caso de ejemplo y 300.000 € para comprar, encajan 15 de 199 zonas: la 1.ª es Leganés, con un 95 % y «Comprar ≈ 221.000 € por 77 m²» (producción, 13 nov, `fit-0.5`).
+- Si preguntan por el índice de la Comunidad (1934428): solo dice cuánto varían los precios, no cuánto más cuesta un contrato nuevo, y es un único valor para toda la región (D-228 §2).
+- Estado: decidido. En producción cuando A lo despliegue (**pendiente de A**). Hasta entonces, la demo enseña la cifra antigua con su aviso: «la media de los contratos vigentes; uno nuevo suele costar más».
+
+**42. Fuencarral-El Pardo sale con un 100 % de encaje, pero en «Qué falta» tiene tres filas en JUSTO. ¿Cómo puede ser?**
+Porque son dos preguntas distintas. El 100 % dice que la zona cumple todo lo que pidió esta familia: colegio a 9 minutos, parada a 3, centro de salud a 15 y 29 minutos hasta el trabajo. «Qué falta» compara la zona con los demás municipios urbanos repartiendo cada servicio entre toda la gente que lo usa: ahí va justa en escuelas infantiles, colegios y centros de salud, sin llegar a faltar, y la tarjeta lo dice en una línea (`encaje.aviso_justo` en `pitch/textos_web.md`).
+- Evidencia: producción, 12 nov: `POST /api/v1/search` con el caso de ejemplo y `GET /api/v1/gaps/distrito/2807908`. Ratios: escuela infantil 0,98, colegio 0,76 y centro de salud 0,76, todas JUSTO; mayores y farmacia, CUBIERTO; vivienda, SIN DATOS.
+- Si insiste en el colegio a 0,76: está por debajo del 80 %, pero la diferencia puede ser casual con esa población, y FALTA exige que no lo sea (pregunta 11).
+
+**43. ¿Quién lo ha usado?**
+**[Pendiente de Mariano: la prueba con 3–5 personas y un técnico municipal. Va así: «Lo probaron [N] personas que buscan casa y [un técnico municipal]; [cifra, por ejemplo cuántas encontraron una zona en menos de 2 minutos]. Una dijo: "[cita]".»]** Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
+- Evidencia: `pitch/pruebas_usuarios/` (kit y plantilla de resultados) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
+- Si la prueba no se ha hecho: «Todavía no con usuarios reales: lo hemos validado contra las fuentes oficiales, y es lo siguiente».
+
+**44. ¿Qué es original? El Ayuntamiento ya hizo «El Madrid de los 15 minutos», y el 2SFCA es de 2003.**
+El método de repartir la capacidad entre quienes la comparten no es nuestro, y lo citamos: lo nuevo es lo que hacemos con él. El estudio del Ayuntamiento de 2022 da a cada portal de Madrid capital un índice según haya o no cada servicio a 15 minutos. Nosotros cubrimos los 179 municipios, contamos cuánta gente comparte cada servicio, comparamos cada zona con las de su tipo con una prueba estadística y sumamos el tiempo en transporte público con los horarios del Consorcio, que ese estudio dejaba para el futuro; y lo juntamos con un buscador para personas, abierto y con la fuente de cada cifra.
+- Evidencia: el estudio, Jornadas de Geodatos 2022 (https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf):
+  - «Objetivo del proyecto»: «desde cada portal»;
+  - «Creación de un índice normalizado»: «Existencia o no del equipamiento/servicio»;
+  - «Mejora del modelo y posibilidades futuras»: «Población por portal» e «Incorporar los datos General Transit Feed Specification».
+- Más evidencia: D-217 (Luo y Wang, 2003; Talbot et al., 2000) · D-213 (comparación por tipo y prueba de Poisson) · D-220 (transporte).
+- Si insiste: del estudio tomamos la velocidad de 4 km/h, para que los minutos se puedan comparar (D-211).
+
+**45. ¿Quién lo mantiene cuando acabe el concurso?**
+Mariano, y está pensado para que baste una persona. Los datos se recargan con un comando, cada conjunto pasa un control de calidad antes de entrar y una prueba revisa la web pública cada mañana. Al año son unos 2–3 días para la estadística anual y medio día por trimestre para los horarios del transporte; el código es abierto y cada decisión está escrita, así que otra persona puede retomarlo.
+- Evidencia: `pitch/modelo_negocio.md` («Mantenimiento con una sola persona», estimación de D) · `.github/workflows/smoke-demo.yml` · `evidence/gate-01/` · `docs/00_index/01_decisions_log.md` · `LICENSE` (Apache-2.0).
+
+## Dos más, con las cifras de impacto (13 nov)
+
+**46. ¿Cómo sabéis que en una zona «falta» y no es casualidad?**
+Porque FALTA exige dos cosas: tener menos del 80 % de lo que tienen los municipios parecidos, y que esa diferencia no se explique por azar con una prueba exacta de Poisson. En Puente de Vallecas, con 9.433 niños de 0 a 4 años, una diferencia así saldría por azar menos de 1 vez de cada 100. Por eso Centro, con una proporción parecida pero menos niños, sale JUSTO y no FALTA (pregunta 15).
+- Evidencia: D-213 (punto 2: regla de los cuatro quintos e intervalo exacto de Poisson de Garwood, bilateral al 95 %, que equivale a unilateral al 2,5 %) · D-217 · D-229 §3 (`p_value` de cada zona en `GET /api/v1/gaps/impact`) · `evidence/gate-04/2026-11-12/impact-cifras.txt`: p = 0,001 en Puente de Vallecas, 0,016 en Carabanchel y 0,011 en Villaverde.
+- Si insiste en los pueblos pequeños: un pueblo con muy pocos casos esperados se compara junto con sus vecinos parecidos (D-217 §6). Si ni así llega, sale «zona pequeña para comparar», nunca FALTA (pregunta 14).
+- Si insiste en las comparaciones múltiples: no corregimos por ellas. Con 199 zonas por fila, alguna FALTA podría salir por azar, así que damos la probabilidad de cada una para que se pueda juzgar. Todas las de la lista de impacto están por debajo de 0,02.
+
+**47. ¿A cuánta gente afecta lo que falta?**
+En toda la región:
+- escuelas infantiles: 25.551 niños de 0 a 4 años, el 9,8 %;
+- farmacias: 667.172 personas, el 9,4 %;
+- centros de mayores: 54.581 personas de 65 años o más, el 4,1 %;
+- vivienda grande: 99.483 hogares de 4 o más personas, el 14,8 %.
+
+En colegios y centros de salud no hay ninguna zona con una falta clara. Las zonas salen ordenadas por la gente afectada, y esa es la lista de dónde invertir primero.
+- Evidencia: D-229 (`impact-0.1`) · `GET /api/v1/gaps/impact` · `evidence/gate-04/2026-11-12/impact-cifras.txt` (datos del 12 nov). La gente afectada es la población que ya usa cada fila: el censo de la Comunidad y, en los distritos, el padrón. No se estima nada.
+- Detalle, si lo piden:
+  - escuelas infantiles: Puente de Vallecas (9.433), Carabanchel (9.150) y Villaverde (6.968);
+  - farmacias: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro;
+  - mayores: 6 municipios, con Torrejón de Ardoz y Pozuelo de Alarcón a la cabeza;
+  - vivienda: 25 municipios, con Fuenlabrada, Leganés y Alcorcón a la cabeza.
+- Estado: en producción desde el 13 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). El ranking «dónde invertir primero» aún no se ve en la web (**pendiente de B**): si lo piden, se enseña la ruta.

@@ -28,7 +28,9 @@ GATE1_DIR = ROOT / "evidence" / "gate-01"
 OUTPUT = ROOT / "pitch" / "datasets_cm.md"
 SNAPSHOT = ROOT / "pitch" / "portal_cm_snapshot.json"
 CKAN_PACKAGE_SHOW = "https://datos.comunidad.madrid/api/3/action/package_show"
-PENDING_A = "Uso en la lista o en el buscador: **pendiente de A**"
+NOT_IN_LIST = (
+    "No entra en la lista de lo que falta ni en el buscador: es dato de apoyo o total de la región"
+)
 
 ROLE_ES = {
     "primary": "fuente principal",
@@ -122,7 +124,7 @@ def where_shown(feature: Any, row_labels: dict[str, str]) -> str:
         return f"«Qué falta», fila «{gap_row.label}»"
     if gap_row.row in row_labels:
         return f"«Qué falta», fila «{row_labels[gap_row.row]}» (dato extra)"
-    return f"«Qué falta», fila `{gap_row.row}` (dato extra; la fila, **pendiente de A** en GAP-001)"
+    return f"«Qué falta», fila `{gap_row.row}` (dato extra)"
 
 
 def uses(catalog: Catalog, dataset: DatasetSpec) -> list[str]:
@@ -159,7 +161,7 @@ def uses(catalog: Catalog, dataset: DatasetSpec) -> list[str]:
     if dataset.domain == "geography":
         lines.insert(0, "Geografía de todas las zonas del mapa y de la lista de lo que falta")
     if not in_features:
-        lines.append(PENDING_A)
+        lines.append(NOT_IN_LIST)
     return lines
 
 
@@ -193,7 +195,8 @@ def dataset_block(
         lines.append("- **Nombre:** el del catálogo; falta verificarlo en el portal")
     if dataset.source_id != CM_SOURCE_ID and is_cm_open_data(dataset):
         download = next((r.url for r in dataset.resources if r.role == "primary"), None)
-        lines.append(f"- **Descarga:** {download} (fuente original; ficha en el portal CM, D-196)")
+        note = "fuente original; también tiene ficha en el portal CM"
+        lines.append(f"- **Descarga:** {download} ({note})")
     lines.append(f"- **Licencia:** {licence(catalog, dataset, portal)}")
     lines.append("- **Qué alimenta:**")
     lines.extend(f"  - {line}" for line in uses(catalog, dataset))
@@ -259,7 +262,7 @@ def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
         f"**{len(cm_rows)} datasets del Portal de Datos Abiertos de la Comunidad de Madrid, "
         f"{cm_pass} con Quality Gate 1 en PASS:** {len(cm_own)} publicados por la Comunidad y "
         f"su Instituto de Estadística, y {len(cm_partner)} del Consorcio Regional de Transportes "
-        "que también tienen ficha en el portal (D-196).",
+        "que también tienen ficha en el portal.",
         "",
         "Solo cuenta como «dataset CM» lo que tiene ficha en el portal "
         "(`hi_ingestion.catalog.provenance.is_cm_open_data`). El resto es complementario.",
@@ -287,8 +290,8 @@ def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
     out += [
         f"## 4. En el catálogo, todavía sin ingerir ({len(not_ingested)})",
         "",
-        "Revisados y con licencia clara, pero sin Quality Gate: no se citan como usados. "
-        "**Pendiente de A.**",
+        "Revisados y con licencia clara, pero todavía sin control de calidad: no se citan como "
+        "usados.",
         "",
         "| Dataset | Publica | ¿Portal CM? | Ficha |",
         "|---|---|---|---|",

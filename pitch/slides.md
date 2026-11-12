@@ -20,7 +20,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - ninguna de sus cifras de ejemplo: zonas del Reality Check, 4.000–4.500 €/mes ni «10 conjuntos de datos»;
 - el barrio de ejemplo con coworking, gimnasio y «lo que la gente dice que necesita». La necesidad declarada es un siguiente paso y nunca se simula (D-194);
 - su estilo visual;
-- el nombre «Housing Intelligence», que solo puede ir en el pie como plataforma o equipo (D-199).
+- el nombre «Housing Intelligence»: en todo lo que se ve, un solo nombre, «Vida Fácil» (jurado simulado del 12 nov). «Housing Intelligence» queda solo como nombre del repositorio.
 
 ---
 
@@ -30,7 +30,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
 - *Encuentra tu sitio en Madrid* (lema, en violeta).
 - Descripción, una frase: «El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.»
 - Integrantes: equipo de una persona. En el PDF va el nombre completo, que el build toma de `DECK_INTEGRANTES` (`pitch/deck/README.md`). Decisión de Mariano (11 nov): en el repo público solo «Mariano»; el nombre completo va solo en el PDF del deck y en el formulario.
-- Pie: «DATAMAD 2026 · Datos abiertos de la Comunidad de Madrid · Código abierto (Apache-2.0) · Plataforma Housing Intelligence».
+- Pie: «Código abierto (Apache-2.0) · Datos abiertos de la Comunidad de Madrid». El «DATAMAD 2026» ya va arriba, en la línea pequeña sobre el nombre.
 
 **Composición:**
 - Mitad izquierda: título, lema y descripción sobre `--bg`.
@@ -54,8 +54,8 @@ Título: **«Nadie te dice qué le falta a cada zona»**.
 Cierre de la columna: «Otros te enseñan lo que hay. Nosotros, lo que falta.»
 
 ### Columna derecha: los datos
-Titular: **«26 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 12 nov, con 26 en Gate 1 PASS. Los cinco nuevos son del 12 nov: los dos de camas (`evidence/gate-01/2026-11-12/cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`) y las tres topologías del CRTM con la accesibilidad de las estaciones (`crtm_topologia_metro/`, `crtm_topologia_metro_ligero/` y `crtm_topologia_cercanias/`, D-223). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 26` (12 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
-- **Matiz, si preguntan:** 24 alimentan la lista de lo que falta o el buscador. Las 3 topologías se usan con «sin escaleras», en producción desde el 12 nov. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Su uso en pantalla está **pendiente de A** (`pitch/datasets_cm.md`).
+Titular: **«27 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 13 nov, con 27 en Gate 1 PASS. Los seis últimos, en `evidence/gate-01/2026-11-12/`: los dos de camas (`cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`), las tres topologías del CRTM con la accesibilidad de las estaciones (`crtm_topologia_metro/`, `crtm_topologia_metro_ligero/` y `crtm_topologia_cercanias/`, D-223) y el valor tasado de la vivienda (`cm_valor_tasado_vivienda_municipios/`, D-227). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 27` (13 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
+- **Matiz, si preguntan:** 25 alimentan la lista de lo que falta o el buscador (el 27.º, del 13 nov, es el valor tasado de la vivienda, que da el precio de compra en 28 municipios, D-227). Las 3 topologías se usan con «sin escaleras», en producción desde el 12 nov. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Su uso en pantalla está **pendiente de A** (`pitch/datasets_cm.md`).
 
 Cada nombre lleva el hipervínculo a su ficha en el PDF:
 
@@ -75,7 +75,7 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
   - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3).
 - **Pie:** «Lista completa, con licencias y control de calidad: github.com/marianohernando/housing-intelligence → `pitch/datasets_cm.md`».
 
-**Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («26») va grande en violeta; el build la calcula del catálogo.
+**Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («27») va grande en violeta; el build la calcula del catálogo.
 
 ---
 
@@ -93,7 +93,7 @@ Versión con buscador (la que vale):
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, y lo que no tiene datos nunca cuenta como 0 (D-215; `pitch/metodologia.md` §1.3).
 - **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 12 nov, tras el despliegue de `28a0f2f` (`POST /api/v1/search` con ese fixture, `fit-0.3`, con el trabajo en minutos de transporte público de D-220). Es igual que en la base local de A (`evidence/gate-04/2026-11-12/golden-search-commute.txt`, `golden_family`):
   - encajan **33 de las 199 zonas**, y en 15 falta algún dato;
-  - 1.ª **Fuencarral-El Pardo, 100 %**, con «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00», colegio a 9 min y ≈ 1.107 €/mes por 77 m². Después, Ciudad Lineal (33 min) y Hortaleza (32 min), **empatadas al 99 %**: no se presenta un orden entre ellas. Puente de Vallecas, 7.ª (98 %);
+  - 1.ª **Fuencarral-El Pardo, 100 %**, con «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00», colegio a 9 min y ≈ 1.107 €/mes por 77 m² (con el alquiler de contratos nuevos de D-228, unos **[1.270 €: pendiente de A]**; las cifras de este caso se vuelven a comprobar cuando A lo despliegue). Después, Ciudad Lineal (33 min) y Hortaleza (32 min), **empatadas al 99 %**: no se presenta un orden entre ellas. Puente de Vallecas, 7.ª (98 %);
   - antes, con la distancia en línea recta (`fit-0.1`), salía 1.ª Ciudad Lineal (99 %).
   - Cambia respecto al 11 nov (32 zonas y Ciudad Lineal ≈ 1.075 €/mes): D-216 sacó del registro los 1.001 «centros polivalentes» (clínicas privadas), que también ponderaban el alquiler por distrito. Con eso, Salamanca cabe en 1.500 €/mes y encaja (94 %): es la zona 33.
 - **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo lo que más limita es el colegio a 10 min: «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir 150 €/mes ya no añade ninguna (`added_zones: 0`), y la web no enseña las opciones que no suman (`relaxOptions` en `apps/web/src/lib/fit.ts`). Casi encajan San Sebastián de los Reyes, Tres Cantos y Moncloa-Aravaca, que solo fallan por el colegio (producción, 12 nov). Captura **C3**: la de B (PR #17).
@@ -104,6 +104,15 @@ Versión con buscador (la que vale):
 - **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas: C1 y C2, las de B con `fit-0.2` (PR #19); C3, la de B del 12 nov (PR #17).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
+**Huecos de la fase de mejora (13 nov)**, marcados como pendientes en `deck.html`; `--final` falla hasta que se llenen:
+- **Cifra de impacto (A, D-229, `impact-0.1`):** «**25.551** niños de 0 a 4 años viven donde faltan escuelas infantiles», en grande, y debajo «Dónde invertir primero: Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde». Sustituye al ejemplo largo y a «179 municipios y 21 distritos de Madrid».
+  - Fuente: `GET /api/v1/gaps/impact` y `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov. Son el 9,8 % de los niños de esa edad: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968, del padrón de cada distrito. Puente de Vallecas tiene ratio 0,571, con p = 0,001.
+  - En el pie: «Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid».
+  - En producción desde el 13 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310, 3 zonas). Si cambian los datos, se cambia la cifra. El ranking aún no se ve en la web (**pendiente de B**); en la slide sale de la API.
+  - Las demás filas (farmacias, mayores y vivienda) van en la pregunta 47, no en la slide.
+- **Cita 2 (Mariano):** el técnico municipal de la prueba con personas, 12 palabras como mucho. Ocupa el sitio de la captura C4, que repetía las cifras del ejemplo.
+- **Cita 1 (Mariano), en la tarjeta de utilidad:** alguien que busca casa. Ocupa el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.
+
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
   - escuela infantil: escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (cada escuela cuenta como una: nadie publica sus plazas);
   - colegio: aulas de primaria, públicas y concertadas, al alcance a pie por cada 1.000 niños de 5 a 14 años;
@@ -122,20 +131,21 @@ Versión con buscador (la que vale):
   - **Otros distritos con FALTA en esa fila:** Villaverde (2,984; ratio 0,613) y Carabanchel (3,322; 0,682) (`GET /api/v1/gaps?level=distrito&row=escuela_infantil`, 12 nov). Centro (0,661) y Vicálvaro (0,647) tienen un ratio parecido y salen JUSTO: con menos niños, la diferencia podría ser casualidad. Sirve para responder a Escot.
   - **Si preguntan por un municipio:** Parla, farmacias, FALTA: 2,029 frente a 4,175 (ratio 0,486). La estadística oficial de farmacias por habitante también da 2,04 (`GET /api/v1/gaps/municipio/28106`, 12 nov).
   - **Ya no vale «Madrid tiene un tercio menos de centros de atención primaria»** (D-217 §7): con gap-0.3, Madrid capital sale JUSTO en centros de salud (0,3603 frente a 0,3799; ratio 0,9484, `evidence/gate-04/2026-11-12/gap-status-gap03.md`).
-  - Captura **C4**: la de B (PR #17), `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, con las mismas cifras que producción.
+  - Captura **C4**: desde el 13 nov no va en la slide 3; su sitio es para la cita del técnico municipal. Queda de reserva (`deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, de B, con las mismas cifras que producción).
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
   - 3.866 centros educativos, 553 centros sanitarios (276 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216; con los 4 centros de salud corregidos por D-218 §10), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
 ### Viabilidad: se sostiene
-- **Quién paga:** las empresas, por análisis agregados y API. Para las personas es gratis (modelo del documento de la idea, sin cifras).
+- **Quién paga** (decisión de Mariano, 13 nov; `pitch/modelo_negocio.md`): en la slide, «Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.». Las cifras no van en la slide: un informe para un ayuntamiento cuesta 990–1.500 € (contrato menor) y un estudio, 490–1.500 €. Si preguntan, pregunta 6 de `pitch/preguntas.md`.
 - **Privacidad:**
   - solo agregados por zona y nunca datos personales;
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);
   - la base de la demo está cerrada a accesos directos (D-197);
   - los fixtures no llevan datos de contacto (D-198).
 - **Coste:** la base de la demo cabe en el plan gratuito de Supabase: 100 MB de 500 (`evidence/gate-06/2026-11-11/supabase-sync-demo.txt`, D-188). La web y la API van en el plan gratuito Hobby de Vercel: 0 €/mes y sin dominio propio (`infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md`). Límite: Hobby solo admite uso no comercial; para cobrar a empresas habría que pasar a un plan de pago.
+- **En la slide, el coste:** «0 € hoy; unos 45 $/mes para uso comercial» (Vercel Pro 20 $ y Supabase Pro desde 25 $, precios del 12 nov en `pitch/modelo_negocio.md`). El plan gratuito de Vercel no admite uso comercial.
 - **Reproducible y abierto:**
   - Apache-2.0 (`LICENSE`, D-191);
   - `make` como entrada única;

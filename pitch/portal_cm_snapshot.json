@@ -43,6 +43,12 @@
       "slug": "distritos_municipio_madrid",
       "title": "Distritos del Municipio de Madrid"
     },
+    "cm_dotacion_camas": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "1912720",
+      "title": "Dotación de camas por dependencia"
+    },
     "cm_farmacias_municipios": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -54,6 +60,12 @@
       "license_title": "Creative Commons Attribution",
       "slug": "censo_2021_hogares_por_tamanyo",
       "title": "Hogares por tamaño del hogar. Censo 2021. Municipios"
+    },
+    "cm_hospitales_datos_asistenciales": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "1912744",
+      "title": "Hospitales y datos asistenciales"
     },
     "cm_municipios_distritos_2020": {
       "license_id": "cc-by",
@@ -121,6 +133,12 @@
       "slug": "unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
       "title": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios"
     },
+    "cm_valor_tasado_vivienda_municipios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "1004050",
+      "title": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios"
+    },
     "cm_viviendas_superficie": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -168,7 +186,25 @@
       "license_title": "CRTM Licencia de datos abiertos (LDA)",
       "slug": "red_de_metro_ligero_oferta_planificada_horarios_topologia",
       "title": "Oferta planificada de la Red de Metro Ligero"
+    },
+    "crtm_topologia_cercanias": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes",
+      "title": "Topología de la Red de Cercanías Madrid"
+    },
+    "crtm_topologia_metro": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_metro_lineas_estaciones_accesos_vestibulos_andenes",
+      "title": "Topología de la Red de Metro"
+    },
+    "crtm_topologia_metro_ligero": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes",
+      "title": "Topología de la Red de Metro Ligero / Tranvía"
     }
   },
-  "fetched_at": "2026-11-11"
+  "fetched_at": "2026-11-12"
 }
