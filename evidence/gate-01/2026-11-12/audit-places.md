@@ -5,7 +5,7 @@ Línea A. Decisión: D-216. Script: `uv run python scripts/audit_places.py` (bas
 ## Resumen
 - **«Centro Polivalente» (1.001) no eran servicios para mayores**, sino clínicas privadas de varias especialidades (RD 1277/2003, C.2.90; 971 «Privado No Benéfico», sin nombre en el registro). Ninguna feature los usaba, pero eran el 65 % de los puntos de la capa de salud. Fuera del registro de lugares (test `test_private_polyclinics_are_not_health_places`). La coincidencia de cifras con los 1.001 servicios para mayores de DATA-009 es casual.
 - **Farmacias:** categoría propia `pharmacy` (migración 0006; test `test_pharmacies_are_their_own_category_and_never_health`). La capa `health` queda en 550 lugares: atención primaria, salud mental y hospitales.
-- **Coordenadas:** 40 lugares geocodificados con CartoCiudad (37 sin coordenadas y 3 reubicados), siempre a nivel de portal, en la calle y el municipio declarados (tests en `tests/unit/pipelines/test_place_coordinates.py`).
+- **Coordenadas:** 40 lugares geocodificados con CartoCiudad (36 sin coordenadas y 4 reubicados), siempre a nivel de portal, en la calle y el municipio declarados (tests en `tests/unit/pipelines/test_place_coordinates.py`).
 - **Cuarentena:** educación 55 → 40; sanidad 11 → 6; mayores 47 → 34; farmacias 4 → 0. Lo que queda no tiene número de portal («S/N», carreteras por kilómetro) o el geocodificador no lo encuentra en su municipio.
 - **Duplicados:** ninguno con el mismo identificador. Hay 13 pares del mismo tipo a menos de 10 m; 12 tienen nombre o dirección distintos (centros distintos en el mismo edificio o parcela) y se mantienen. Un caso es sospechoso y queda anotado (§3).
 

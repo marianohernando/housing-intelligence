@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-11 (noche, A v7: CORE-006 y CORE-003 hechas; `POST /api/v1/search` con datos reales (D-214, D-215); falta el sync y conectar la web).
+Última actualización: 2026-11-12 (madrugada, A v8: fase de prueba T1–T4 hecha; auditoría de equipamientos (D-216), 2SFCA y agrupación de municipios pequeños (D-217, `gap-0.3`), README público; Gate 3 PASS; falta migración 0006 + sync de Mariano y redespliegue).
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,11 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 12 nov | A | DATA-AUDIT · Fase 5 (CI y Gate 3) | verde · G3 PASS | `927af98` | `evidence/gate-03/2026-11-12/summary.md`, `phase-5-gate.txt`, `golden-search.txt` | CI de nuevo en verde: el test de propiedades del 2SFCA ya no genera floats subnormales y `gapMap.test.ts` (web, cambio mínimo pedido por `datamad-10`) lee Centro del fixture regenerado. El Gate 3 cuenta lo que dice el catálogo (38 features, 13 a pie, 17 por distrito) y toda feature municipal tiene fila en los 179 municipios (nulo explícito si la fuente no lo publica: Zarzalejo en tenencia) |
+| 12 nov | A | PUBLIC · Fase 4 (README) | verde | `6c4dd4b` | `README.md` | README de la raíz desde el borrador de D: Vida Fácil, 23 datasets CM, capacidad a pie, licencias (CartoCiudad incluido), sin apellidos ni rutas locales; el tag `pre-datamad` con enlace relativo |
+| 12 nov | A | DATA-AUDIT · Fase 3 (revisión) | verde | `e7864bd` | `evidence/gate-04/2026-11-12/phase-t2-review-gate.txt` | Ajustes del `reviewer`: la calle geocodificada tiene que coincidir (40 lugares geocodificados, no 42), aulas públicas también para «público-titularidad privada», caché atómica, filtros de `/places` más robustos |
+| 12 nov | A | DATA-AUDIT · Fase 2 (T2a + T2b, D-217) | verde | `b88c4fb` | `evidence/gate-04/2026-11-12/gap-status-gap03.md`, `evidence/gate-03/2026-11-12/fca-sensitivity.md` | **`gap-0.3`:** las 5 filas de servicios miden capacidad al alcance a pie (2SFCA, 15 min a 4 km/h): aulas de primaria, escuelas infantiles, centros de salud del SERMAS, plazas de mayores y farmacias. Municipios pequeños comparados con vecinos del mismo tipo a ≤ 15 km (`comparison_group`): «poco fiable» en colegios de 140 a 65. Madrid salud FALTA → JUSTO (0,95). Hospitales y camas de la CM solo regionales (cargados); `min_a_pie_hospital` como extra. **Cambia el contrato** |
+| 12 nov | A | DATA-AUDIT · Fase 1 (T1, D-216) | verde | `1913393` | `evidence/gate-01/2026-11-12/audit-places.md` | Auditoría frente a totales oficiales. Los 1.001 «Centro Polivalente» eran clínicas privadas (no mayores): fuera. Farmacias en categoría `pharmacy` (migración 0006). Coordenadas reparadas con CartoCiudad (IGN). `/places` con contrato `places-1` (titularidad, `gap_rows`, `capacity`) |
 | 11 nov | A | CORE-003 · Fase 2 (`POST /api/v1/search`) | verde | `915be3c`, `5f373b6` | `evidence/gate-04/2026-11-11/phase-core003-f2.txt` | **El buscador funciona con datos reales** (método `fit-0.1`, D-215): 199 zonas (178 municipios y 21 distritos), los rasgos `fit` del Feature Dictionary (sin ids en el código), `gap_highlights` iguales que `/gaps`, Reality Check con `relaxed_scenario` y procedencia (16 datasets, 14 CM). 6 tests de integración y 6 escenarios dorados en datos reales (`scripts/golden_search.py`). Caso demo: Ciudad Lineal 99 %, Tetuán, Hortaleza y Moratalaz 97 %; el colegio a 10 min es la condición que más quita (+17 zonas con 5 min más). Fixture de búsqueda real (ya no ilustrativo). **B puede conectar el buscador; encender `NEXT_PUBLIC_FEATURE_SEARCH` tras el sync** |
 | 11 nov | A | CORE-003 · Fase 1 (dominio del encaje) | verde | `1507deb` | `evidence/gate-04/2026-11-11/phase-core003-f1.txt` | `hi_domain/fit.py`, `reality_check.py` y `search.py`: condiciones PASS/FAIL/UNKNOWN, pesos por rango, utilidades con saturación y Reality Check; tests de propiedades (UNKNOWN nunca PASS, relajar nunca quita zonas) |
 | 11 nov | A | CORE-006 · Fase 2 (m² por hogar y presupuesto, D-214) | verde | `92eab6b`, `7311370` | `evidence/gate-04/2026-11-11/phase-core006-f2.txt` | `hi_domain/affordability.py`: condición de presupuesto PASS/FAIL/UNKNOWN (UNKNOWN sin alquiler publicado; compra siempre UNKNOWN con «Sin datos», D-203). m² supuestos = vivienda mediana de los hogares de ese tamaño en la CM (Censo 2021, INE tabla 59524): 61, 68, 71, 77 y 77 m² para 1, 2, 3, 4 y 5+ personas. El coste es una cota baja (contratos vigentes; m² catastrales), declarado en D-214. **CORE-006 DONE** a falta del sync |
@@ -105,6 +110,29 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 12 nov (madrugada, relevo de la línea A v8)
+- **Done (A v8), fase de prueba (`prompts/FASE_PRUEBAS.md`, sección A):**
+  - **T1** (`1913393`, `e7864bd`, **D-216**): auditoría de equipamientos frente a totales oficiales (`scripts/audit_places.py`). Farmacias como `pharmacy`; fuera los 1.001 «Centro Polivalente» (clínicas privadas); 40 lugares geocodificados con CartoCiudad (portal, calle y municipio declarados). Los 55 colegios en cuarentena: la fuente no publica coordenadas; 15 recuperados y los 40 restantes sin portal utilizable. Revisión de 10 zonas de D (D1–D7) respondida en el informe.
+  - **T2a + T2b** (`b88c4fb`, `e7864bd`, **D-217**): 2SFCA en las 5 filas de servicios y agrupación de municipios pequeños con vecinos (≤ 15 km, mínimo de 3,69 casos esperados). Tablas CM de hospitales y camas (solo totales regionales). Sensibilidad 10/20 min: Spearman ≥ 0,995.
+  - **T4** (`6c4dd4b`): README público.
+  - **T5** (`927af98`): CI verde y **Gate 3 PASS** (`evidence/gate-03/2026-11-12/summary.md`); golden de búsqueda 6/6 y golden a pie OK.
+- **Blocked / a la espera de Mariano:**
+  1. `make supabase-migrate` (**0006**: categoría `pharmacy`; sin ella el sync falla por la restricción de `place_master`).
+  2. `make supabase-sync PROFILE=demo` (lugares, features 2SFCA y `min_a_pie_hospital`, registros). Comprobación por MCP: `select count(*) from place_master where category = 'pharmacy'` → 2.957; `select count(*) from feature_value where feature_id like '%\_a\_pie\_por\_%'` → 1.005.
+  3. Después, C redespliega la API (código nuevo: `/places` `places-1`, `gap-0.3`, agrupación). B adapta la web a `comparison_group` y a los textos del 2SFCA (su PR #13).
+- **Next (línea A), en orden:**
+  1. Camas por hospital: Catálogo Nacional de Hospitales 2025 (Ministerio de Sanidad, XLSX, reutilizable con cita) como fuente complementaria, con resolución de entidades frente al registro CM (dirección + CP), para `capacity` en `/places` («Hospital La Paz · N camas») y nombres de hospitales.
+  2. Los 4 centros de salud «S/N» (Alcalá 2, Madrid 2), el consultorio de Villar del Olmo y el CEIP de Navalafuente: sin coordenadas utilizables. Opciones: pedir la corrección al portal CM o un fichero de correcciones versionado con fuente oficial por registro (decisión de Mariano).
+  3. Bug del runner: si una ingesta falla tras registrar la versión, la siguiente se la salta («same checksum and parser»); arreglar en `versions.register_version`.
+  4. E2SFCA (decaimiento con la distancia) y tope a vecinos muy grandes en la agrupación (anotado por `reviewer`), si hay tiempo.
+  5. Lo que seguía de A v7: CORE-009, extras DATA-018 a DATA-021, MCP 3–5 tools.
+- **Gate status:** `make lint typecheck test` verde en `927af98` (426 unit, 226 web, 90 integración); CI verde; **G3 PASS** 12 nov (38 features, 13 a pie × 4.843 zonas, 17 por distrito); G1 PASS para los 4 registros reingeridos y las 2 tablas de hospitales.
+- **Notas:**
+  - Las features de recuento (centros por habitante) siguen como extras de cada fila; la primaria es la 2SFCA.
+  - `inputs.counts` de las features 2SFCA está en centros equivalentes (capacidad / capacidad media por centro de la región): el ratio no cambia y la prueba de Poisson cuenta centros.
+  - Radio de agrupación configurable con `GAP_POOL_RADIUS_M` (15000 por defecto, D-217 §6).
+  - Para repetir la evidencia: `scripts/gap_status_summary.py`, `scripts/fca_sensitivity.py`, `scripts/audit_places.py`.
 
 ### Estado de la sesión del 11 nov (noche, relevo de la línea A v7)
 - **Done (A v7):**

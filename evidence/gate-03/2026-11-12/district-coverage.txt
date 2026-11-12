@@ -1,0 +1,10 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select count(*) from (
+  select feature_id from feature_value where territory_level = 'distrito'
+   group by 1 having count(*) = 21
+) d
+
+# exit 0
+
+17
+

@@ -1,0 +1,13 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select count(distinct feature_id)
+    || '|' || count(*) filter (where (value is null) = (null_reason is null))
+    || '|' || count(*) filter (where not (inputs ? 'dataset_versions'))
+    || '|' || min(n)
+  from feature_value v
+  join (select feature_id as fid, count(*) as n from feature_value group by 1) c
+    on c.fid = v.feature_id
+
+# exit 0
+
+38|0|0|179
+
