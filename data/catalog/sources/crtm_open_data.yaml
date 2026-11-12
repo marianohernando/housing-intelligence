@@ -8,7 +8,8 @@ catalog_url: https://datos.crtm.es/api/search/v1/collections/dataset/items
 license_name: CRTM Licencia de datos abiertos (LDA)
 license_url: https://www.crtm.es/licencia-de-uso
 license_status: CLEAR
-attribution_text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). Datos en bruto / explotados según el caso."
+# Licence §2: say which data are raw and which derived (line D review, PR #22; D-220, D-223)
+attribution_text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
 commercial_use: true
 redistribution_allowed: true
 trust_tier: A_OFFICIAL

@@ -322,3 +322,11 @@ def test_every_priority_binding_is_a_priority_the_search_measures(catalog: Catal
     for spec in catalog.features.values():
         if spec.fit is not None and spec.fit.priority is not None:
             assert PriorityKey(spec.fit.priority) in PRIORITY_WALK, spec.feature_id
+
+
+def test_crtm_attribution_says_what_is_raw_and_what_is_derived(catalog: Catalog) -> None:
+    """CRTM licence §2: «Powered by CRTM» with its link, and which data are raw or derived."""
+    text = catalog.sources["crtm_open_data"].attribution_text or ""
+    assert text.startswith("Powered by CRTM") and "www.crtm.es" in text
+    assert "En bruto:" in text and "Explotados:" in text
+    assert "según el caso" not in text
