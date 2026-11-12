@@ -12,6 +12,7 @@
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map cite the Ministry of Health and CartoCiudad
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C3 and C4 of line D's deck, after gap-0.3
+//   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -789,8 +790,61 @@ async function deckCaptures(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** Review of PR #16: beds keep their source without /datasets, and links say they open a new tab. */
+async function review(browser) {
+  const failures = [];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    // /datasets down: the beds still cite their source
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    await ctx.route("**/api/v1/datasets*", (route) => route.abort("failed"));
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`${BASE}${FUENCARRAL.path}`, { waitUntil: "networkidle" });
+    const panel = page.getByRole("region", { name: "Todos los centros", exact: true });
+    const chip = panel.getByRole("button", { name: /^Hospitales/ });
+    await chip.waitFor({ timeout: 20000 });
+    if (id === "mobile") {
+      await page.getByRole("button", { name: /Desliza hacia arriba/ }).tap();
+      await page.waitForTimeout(600);
+    }
+    await chip.scrollIntoViewIfNeeded();
+    await (id === "mobile" ? chip.tap() : chip.click());
+    const source = panel.getByText(/^Camas: /);
+    await source.waitFor({ timeout: 20000 });
+    const entry = (report[`camas_sin_datasets_${id}`] = {
+      fuente: flat(await source.innerText()),
+      enlaces: await source.getByRole("link").count(),
+      consola_otros: errors.filter((e) => !/datasets|ERR_FAILED|Failed to load resource/.test(e)),
+    });
+    await panel.screenshot({ path: `${out}/revision_camas_sin_datasets_${id}.png` });
+    if (entry.fuente !== "Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales") failures.push(`${id}: fuente fija «${entry.fuente}»`);
+    if (entry.consola_otros.length) failures.push(`${id}: consola`);
+    await ctx.close();
+  }
+  // Every link of the footer and the beds' source says it opens in a new tab, for screen readers only
+  const f = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
+  const footer = f.page.locator("footer").last();
+  await footer.getByText(/^Datos: \d+ conjuntos/).waitFor({ timeout: 20000 });
+  const names = await footer.getByRole("link").evaluateAll((links) =>
+    links.filter((a) => a.target === "_blank").map((a) => a.textContent?.replace(/\s+/g, " ").trim()),
+  );
+  report.pie_enlaces = names;
+  if (!names.length || names.some((n) => !n?.endsWith("(se abre en una pestaña nueva)"))) failures.push("pie: enlaces sin aviso de pestaña nueva");
+  report.pie_axe = await axe(f.page);
+  if (report.pie_axe.length) failures.push(`pie: axe ${report.pie_axe.map((a) => a.id).join(", ")}`);
+  await f.ctx.close();
+  // A malformed zone code: Next answers it before the page (it cannot decode the path), so the
+  // page's own guard (MapProvider) only covers client navigation. Recorded, not a failure.
+  report.zona_mal_formada_http = (await fetch(`${BASE}/zona/distrito/%E0%A4%A`)).status;
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);

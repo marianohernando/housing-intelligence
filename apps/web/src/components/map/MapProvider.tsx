@@ -46,6 +46,16 @@ export function useMapZones(): MapContextValue {
   return value;
 }
 
+/** The zone code of the route; a malformed one («%E0%A4%A») is no zone, as the page treats it, never a crash. */
+function decodedCode(code: string | undefined): string | undefined {
+  if (!code) return undefined;
+  try {
+    return decodeURIComponent(code);
+  } catch {
+    return undefined;
+  }
+}
+
 export default function MapProvider({ children }: { children: ReactNode }) {
   const params = useParams<{ level?: string; code?: string }>();
   const [zones, setZones] = useState<ZoneCollection | null>(null);
@@ -56,7 +66,7 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
 
-  const code = params.code ? decodeURIComponent(params.code) : undefined;
+  const code = decodedCode(params.code);
   const level = params.level;
   const routeKey = level && code ? `${level}/${code}` : null;
   const activeZone = useMemo(

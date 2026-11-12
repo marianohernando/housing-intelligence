@@ -7,6 +7,7 @@ import {
   type Facility,
   FACILITY_TYPES,
   facilitiesGeoJSON,
+  capacitySources,
   facilityCountText,
   facilityQueries,
   groupFacilities,
@@ -193,5 +194,34 @@ describe("facilitiesGeoJSON", () => {
       geometry: { type: "Point", coordinates: [-3.67, 40.46] },
       properties: { id: "1", type: "colegio" },
     });
+  });
+});
+
+describe("capacitySources", () => {
+  const bed = (id: string, source: string | null) => ({ id, type: "hospital" as const, label: "Hospital", name: id, detail: null, source, lon: 0, lat: 0 });
+  const items = [bed("a", "ms_catalogo_nacional_hospitales"), bed("b", "ms_catalogo_nacional_hospitales"), bed("c", null)];
+  const ref = {
+    dataset_id: "ms_catalogo_nacional_hospitales",
+    name: "Catálogo Nacional de Hospitales 2025 (directorio de hospitales, actualizado a 31 de diciembre de 2024)",
+    publisher: "Ministerio de Sanidad",
+    is_cm_open_data: false,
+    url: "https://www.sanidad.gob.es/",
+  };
+
+  it("names the source of the beds from /datasets, once per dataset", () => {
+    expect(capacitySources("hospital", items, [ref])).toEqual([
+      { id: "ms_catalogo_nacional_hospitales", label: "Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025", url: "https://www.sanidad.gob.es/" },
+    ]);
+  });
+
+  it("never leaves the beds without their source while /datasets has not answered or failed (review of PR #16)", () => {
+    expect(capacitySources("hospital", items, null)).toEqual([
+      { id: "ms_catalogo_nacional_hospitales", label: "Ministerio de Sanidad, Catálogo Nacional de Hospitales", url: null },
+    ]);
+    expect(capacitySources("hospital", items, [])).toHaveLength(1);
+  });
+
+  it("has nothing to cite when no capacity comes from another dataset", () => {
+    expect(capacitySources("farmacia", [bed("c", null)], null)).toEqual([]);
   });
 });

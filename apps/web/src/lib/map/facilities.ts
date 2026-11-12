@@ -4,6 +4,7 @@
  * looks for and named in plain words. A type with a row of «Qué falta» counts the places the API
  * says that row counts (`gap_rows`), so the figures agree; hospitals have no row yet.
  */
+import type { DatasetRef } from "@/contracts/dataset_list_response";
 import type { GapRowKey } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
@@ -157,6 +158,32 @@ export interface Facility {
   source: string | null;
   lon: number;
   lat: number;
+}
+
+/** The source of some capacities, as the panel cites it: «Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025». */
+export interface CapacitySource {
+  id: string;
+  label: string;
+  url: string | null;
+}
+
+/**
+ * Who publishes the hospital beds (D-218), cited while /datasets has not answered or failed: the
+ * beds never show without their source (review of PR #16). Named from /datasets otherwise.
+ */
+const CAPACITY_SOURCE: Partial<Record<FacilityKey, string>> = {
+  hospital: "Ministerio de Sanidad, Catálogo Nacional de Hospitales",
+};
+
+/** Where the capacities of a type's list come from, when not from the register (Facility.source). */
+export function capacitySources(type: FacilityKey, items: readonly Facility[], datasets: readonly DatasetRef[] | null): CapacitySource[] {
+  const ids = [...new Set(items.flatMap((f) => (f.source ? [f.source] : [])))];
+  return ids.flatMap((id) => {
+    const ref = datasets?.find((d) => d.dataset_id === id);
+    if (ref) return [{ id, label: `${ref.publisher}, ${ref.name.split(" (")[0]}`, url: ref.url ?? null }];
+    const fixed = CAPACITY_SOURCE[type];
+    return fixed ? [{ id, label: fixed, url: null }] : [];
+  });
 }
 
 /** Street types of the pharmacy addresses in the source («AVDA de Alberto Alcocer 22»). */

@@ -11,7 +11,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { formatNumber } from "@/lib/format";
-import { type Facility, type FacilityKey, facilityCountText, FACILITY_TYPES } from "@/lib/map/facilities";
+import { capacitySources, type Facility, type FacilityKey, facilityCountText, FACILITY_TYPES } from "@/lib/map/facilities";
 
 import styles from "./FacilitiesPanel.module.css";
 
@@ -31,26 +31,27 @@ const TEXT = {
   someNoName: "La fuente oficial no publica el nombre de algunos de estos centros.",
   // HOSP-001 (D-218): where the beds come from, named by /datasets (publisher, then the dataset)
   source: "Camas: ",
+  newTab: " (se abre en una pestaña nueva)",
 };
 
-/** «Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025», from the dataset list of the API. */
-function CapacitySource({ items }: { items: Facility[] }) {
+/** «Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025», named by /datasets (a fixed source until it answers). */
+function CapacitySourceLine({ type, items }: { type: FacilityKey; items: Facility[] }) {
   const { data } = useDatasets();
-  const ids = [...new Set(items.map((f) => f.source).filter((id): id is string => id !== null))];
-  const sources = ids.flatMap((id) => data?.datasets.find((d) => d.dataset_id === id) ?? []);
+  const sources = capacitySources(type, items, data?.datasets ?? null);
   if (sources.length === 0) return null;
   return (
     <p className={styles.muted}>
       {TEXT.source}
-      {sources.map((d, i) => (
-        <span key={d.dataset_id}>
+      {sources.map((source, i) => (
+        <span key={source.id}>
           {i > 0 && "; "}
-          {d.url ? (
-            <a href={d.url} target="_blank" rel="noopener noreferrer">
-              {d.publisher}, {d.name.split(" (")[0]}
+          {source.url ? (
+            <a href={source.url} target="_blank" rel="noopener noreferrer">
+              {source.label}
+              <span className="visually-hidden">{TEXT.newTab}</span>
             </a>
           ) : (
-            `${d.publisher}, ${d.name.split(" (")[0]}`
+            source.label
           )}
         </span>
       ))}
@@ -145,14 +146,14 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
             </ul>
           </div>
           <div aria-live="polite" className={styles.summary}>
-            {count && items ? (
+            {type && count && items ? (
               <>
                 <p className={styles.count}>{count}</p>
                 {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
                 {items.some((f) => f.name === null) && (
                   <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
                 )}
-                <CapacitySource items={items} />
+                <CapacitySourceLine type={type} items={items} />
               </>
             ) : (
               <p className={styles.muted}>{TEXT.none}</p>

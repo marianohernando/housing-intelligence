@@ -25,6 +25,8 @@ const TEXT = {
   project: "Vida Fácil · Plataforma Housing Intelligence · Proyecto para DATAMAD 2026",
   code: "Código abierto (Apache-2.0)",
   codeHref: "https://github.com/marianohernando/housing-intelligence",
+  // For screen readers only: the links open in a new tab (review of PR #16)
+  newTab: " (se abre en una pestaña nueva)",
 };
 
 /** Footer of the pages without a map: data counter, attributions each licence asks for, and who we are. */
@@ -37,6 +39,7 @@ export default function SiteFooter() {
           <li key={href}>
             <a href={href} target="_blank" rel="noopener noreferrer">
               {text}
+              <span className="visually-hidden">{TEXT.newTab}</span>
             </a>
           </li>
         ))}
@@ -46,6 +49,7 @@ export default function SiteFooter() {
         {TEXT.project} ·{" "}
         <a href={TEXT.codeHref} target="_blank" rel="noopener noreferrer">
           {TEXT.code}
+          <span className="visually-hidden">{TEXT.newTab}</span>
         </a>
       </p>
     </footer>
