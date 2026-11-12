@@ -461,9 +461,15 @@ def statuses(scenario: ScenarioState, data: ZoneData) -> list[ConstraintStatus]:
     return [c.status for c in constraint_checks(scenario, data, area)]
 
 
-def ranking_key(fit: ZoneFit) -> tuple[float, float, str]:
+def ranking_key(fit: ZoneFit) -> tuple[float, float, float, str]:
+    """Best unrounded fit first; ties: more confidence, fewer minutes by public transport to the
+    first place of work, then the zone id. Never depends on the order the zones arrive in."""
+    trip = fit.data.commute.get(0)
+    minutes = trip.minutes if trip is not None and trip.minutes is not None else math.inf
+    zone = fit.data.zone
     return (
         -(fit.utility if fit.utility is not None else -1.0),
         -fit.confidence,
-        fit.data.zone.name,
+        minutes,
+        zone.admin_unit_id or f"{zone.level.value}:{zone.code}",
     )

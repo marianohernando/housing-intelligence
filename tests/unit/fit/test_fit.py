@@ -4,6 +4,7 @@ Fixtures here are synthetic (FIXTURE): made-up zones and values, never shown in 
 """
 
 from itertools import pairwise
+from random import Random
 
 import pytest
 from hypothesis import given, settings
@@ -332,3 +333,29 @@ def test_a_zone_that_cannot_arrive_by_9_scores_the_worst_on_work_but_its_limit_i
     limit = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
     check = next(c for c in evaluate(limit, stranded).constraints if c.constraint_id == "commute:0")
     assert check.status is ConstraintStatus.UNKNOWN
+
+
+def test_ties_go_to_fewer_minutes_then_to_the_zone_id() -> None:
+    """Same % and confidence: the shorter trip first, then a fixed id (the demo never reorders)."""
+    a = with_commute(zone("2807915"), 33.0)
+    b = with_commute(zone("2807916"), 32.0)
+    c = with_commute(zone("2807901"), 32.0)
+    plain = [zone("2807915"), zone("2807916"), zone("2807901")]
+    outcome = run_search(family(anchors=[]), plain)  # everything equal: the zone id decides
+    assert [r.zone.code for r in outcome.results] == ["2807901", "2807915", "2807916"]
+    tied = run_search(family(), [a, b, c])
+    assert [r.zone.code for r in tied.results][:2] == ["2807901", "2807916"]
+
+
+@settings(max_examples=40)
+@given(
+    st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code), st.randoms()
+)
+def test_the_ranking_never_depends_on_the_order_zones_arrive_in(
+    zones: list[ZoneData], rng: Random
+) -> None:
+    shuffled = list(zones)
+    rng.shuffle(shuffled)
+    first = [r.zone.code for r in run_search(family(), zones).results]
+    again = [r.zone.code for r in run_search(family(), shuffled).results]
+    assert first == again

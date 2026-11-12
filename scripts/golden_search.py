@@ -13,9 +13,10 @@ from typing import Any
 import yaml
 from sqlalchemy import create_engine
 
-from hi_api.services.search import search
+from hi_api.services.search import load, search
 from hi_contracts.public import FactTopic, RankedZone, ScenarioState, SearchResult
 from hi_domain.fit import anchor_km
+from hi_domain.search import run_search
 
 GOLDEN = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "golden"
 DATABASE_URL = os.environ.get(
@@ -79,6 +80,11 @@ def main() -> int:
             scenario = ScenarioState.model_validate(item["scenario"])
             result, _, _ = search(conn, scenario)
             failed = failures(result, item["expect"])
+            # Same order whatever order the zones come in (ties never depend on the database).
+            reversed_zones = load(conn, scenario).zones[::-1]
+            again = [r.zone.code for r in run_search(scenario, reversed_zones).results]
+            if again != [r.zone.code for r in result.results]:
+                failed.append("stable_order")
             failed_any |= bool(failed)
             report(item["profile_id"], result, failed)
     print(f"\n{len(scenarios)} escenarios dorados · {'FALLA' if failed_any else 'todos OK'}")
