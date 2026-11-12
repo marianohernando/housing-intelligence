@@ -54,8 +54,12 @@ typecheck: ## Pyright + tsc
 
 test: test-unit test-db ## All tests
 
+# The CI python job has no database: unit tests run against an address where none answers, so
+# a route that opens a connection before validating its input fails here too (12 Nov, /places).
+UNIT_DATABASE_URL := postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests
+
 test-unit: ## Unit + data contract tests (no DB, no network)
-	uv run pytest tests/unit tests/data -q
+	DATABASE_URL=$(UNIT_DATABASE_URL) uv run pytest tests/unit tests/data -q
 	@if [ -d node_modules ]; then npm run -w apps/web test -- --run; else echo "skip web tests (run npm ci)"; fi
 
 test-db: ## Integration tests against TEST_DATABASE_URL

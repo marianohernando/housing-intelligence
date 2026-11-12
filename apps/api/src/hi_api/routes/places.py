@@ -53,11 +53,10 @@ def get_places(
     ] = None,
     page: Annotated[int, Query(ge=1, description=f"{places.PAGE_SIZE} places per page")] = 1,
 ) -> PlacesResponse:
+    categories = _categories(category)  # a bad category is 422 without touching the database
     with engine.connect() as conn:
         try:
-            result = places.places_geojson(
-                conn, _categories(category), admin_unit_id, subcategory, page
-            )
+            result = places.places_geojson(conn, categories, admin_unit_id, subcategory, page)
         except places.ZoneNotFoundError as exc:
             raise HTTPException(
                 status_code=404, detail={"code": ErrorCode.NOT_FOUND.value, "message": str(exc)}
