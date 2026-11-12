@@ -12,6 +12,8 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
+**Las cinco más probables** las sacó el jurado simulado del 12 nov y están al final: de la 41 a la 45. Hay que prepararlas primero.
+
 ---
 
 ## Alberto Abella · Gaia-X España (APIs, interoperabilidad, espacios de datos)
@@ -21,9 +23,9 @@ Con una API pública versionada (`/api/v1`) cuyos contratos están publicados co
 - Evidencia: `docs/04_technical_architecture/31_public_api_routes.md` · `data/schemas/api/*.schema.json` (4 esquemas) · `GET /api/v1/gaps/municipio/28092`.
 
 **2. ¿Tenéis MCP para agentes de IA?**
-Está diseñado como herramientas que llaman a los mismos servicios de la API, nunca a SQL libre, para que un agente no pueda inventar ni modificar datos.
-- Evidencia: `CLAUDE.md` §3 (Arquitectura) · board MCP-001.
-- Estado: **pendiente de A** (MCP-001, 19–22 nov). Si no llega, responder: «Hoy está la API; el MCP es el siguiente paso y va sobre esos mismos servicios».
+Sí: un servidor MCP con cinco herramientas de solo lectura (buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos). Llaman a los mismos servicios que la API, nunca a SQL libre, así que un agente no puede inventar ni cambiar datos, y los tests comprueban que cada herramienta responde lo mismo que su ruta de la API. Hoy funciona en local (`make mcp`); el siguiente paso es servirlo en remoto.
+- Evidencia: D-225 · `services/mcp/` · `make mcp` · `CLAUDE.md` §3 (Arquitectura).
+- Si quieren verlo: un clip de 20 s con un agente preguntando «¿qué le falta a Parla?» (**pendiente de A**).
 
 **3. ¿Vuestro catálogo de datos es reutilizable?**
 Sí. Cada fuente, dataset, métrica y feature está descrito en YAML legible por máquina, con licencia, propietario y enlace, y ese catálogo se publica en CC BY 4.0. De ahí sale, por ejemplo, la lista de datasets que habéis visto, generada con un script.
@@ -44,6 +46,7 @@ Cada ingesta compara la huella (sha256) del fichero. Si no cambia, se salta; si 
 **6. ¿Quién paga?**
 Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, residencias, comercios) pagan por análisis agregados y por la API. Las personas lo usan gratis y los ayuntamientos lo usan para planificar.
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
+- Si piden concretar: las tres opciones, con precio, cliente y coste, están en `pitch/modelo_negocio.md`. Cuál se dice en la final, **pendiente de Mariano**.
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
 Por el trabajo que hay encima: cruzar 26 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
@@ -61,6 +64,7 @@ Los portales enseñan la oferta de pisos; nosotros enseñamos la necesidad y el 
 Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base en el de Supabase, y los datos se recargan copiando tablas ya validadas. Para un uso comercial habría que pasar a planes de pago, porque el gratuito de Vercel no lo admite.
 - Evidencia: `evidence/gate-06/2026-11-11/supabase-sync-demo.txt` (base de la demo: 100 MB de los 500 del plan gratuito) · D-188.
 - Alojamiento: `infra/deploy/README.md` y `evidence/gate-06/2026-11-11-deploy/deploy-1-production.md` (plan Hobby: «solo personal y no comercial»).
+- Si preguntan cuánto para cobrar: unos 45 $/mes como mínimo, con Vercel Pro (20 $) y Supabase Pro (desde 25 $). La base ocupa 100 MB de los 8 GB incluidos, así que lo que crece con el uso es el cómputo de la API (`pitch/modelo_negocio.md`, precios del 12 nov).
 
 ---
 
@@ -219,3 +223,35 @@ Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px 
 **40. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
 - Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.
+
+---
+
+## Las cinco preguntas difíciles (jurado simulado del 12 nov)
+
+**41. Sale 1.107 € al mes por 77 m² en Fuencarral-El Pardo, y Salamanca entra con 1.500 €. ¿Eso es real?**
+No es el precio de un piso que se alquile hoy. Es la media de los contratos ya firmados que se declaran a Hacienda, que publica la Comunidad, multiplicada por los metros de un hogar de 4 personas: por eso tira a la baja, y la web lo avisa en cada zona. Lo estamos ajustando con el índice de la Comunidad que separa contratos nuevos y existentes: **[cifra nueva de Fuencarral-El Pardo y de Salamanca: pendiente de A]**.
+- Evidencia: D-214 (puntos 2 y 3) · ficha 1934259 del portal CM (campo «Fuente»: la Agencia Tributaria) · índice CM 1934428 (**pendiente de A**) · producción, 12 nov: Fuencarral-El Pardo «≈ 1.107 €/mes por 77 m²» y Salamanca encaja con un 94 %.
+- Si insiste: lo que sí es fiable es el «no». Si una zona no entra en el presupuesto con el precio de los contratos ya firmados, con uno nuevo tampoco.
+
+**42. Fuencarral-El Pardo sale con un 100 % de encaje, pero en «Qué falta» tiene tres filas en JUSTO. ¿Cómo puede ser?**
+Porque son dos preguntas distintas. El 100 % dice que la zona cumple todo lo que pidió esta familia: colegio a 9 minutos, parada a 3, centro de salud a 15 y 29 minutos hasta el trabajo. «Qué falta» compara la zona con los demás municipios urbanos repartiendo cada servicio entre toda la gente que lo usa: ahí va justa en escuelas infantiles, colegios y centros de salud, sin llegar a faltar, y la tarjeta lo dice en una línea (`encaje.aviso_justo` en `pitch/textos_web.md`).
+- Evidencia: producción, 12 nov: `POST /api/v1/search` con el caso de ejemplo y `GET /api/v1/gaps/distrito/2807908`. Ratios: escuela infantil 0,98, colegio 0,76 y centro de salud 0,76, todas JUSTO; mayores y farmacia, CUBIERTO; vivienda, SIN DATOS.
+- Si insiste en el colegio a 0,76: está por debajo del 80 %, pero la diferencia puede ser casual con esa población, y FALTA exige que no lo sea (pregunta 11).
+
+**43. ¿Quién lo ha usado?**
+**[Pendiente de Mariano: la prueba con 3–5 personas y un técnico municipal. Va así: «Lo probaron [N] personas que buscan casa y [un técnico municipal]; [cifra, por ejemplo cuántas encontraron una zona en menos de 2 minutos]. Una dijo: "[cita]".»]** Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
+- Evidencia: `pitch/pruebas_usuarios/` (kit y plantilla de resultados) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
+- Si la prueba no se ha hecho: «Todavía no con usuarios reales: lo hemos validado contra las fuentes oficiales, y es lo siguiente».
+
+**44. ¿Qué es original? El Ayuntamiento ya hizo «El Madrid de los 15 minutos», y el 2SFCA es de 2003.**
+El método de repartir la capacidad entre quienes la comparten no es nuestro, y lo citamos: lo nuevo es lo que hacemos con él. El estudio del Ayuntamiento de 2022 da a cada portal de Madrid capital un índice según haya o no cada servicio a 15 minutos. Nosotros cubrimos los 179 municipios, contamos cuánta gente comparte cada servicio, comparamos cada zona con las de su tipo con una prueba estadística y sumamos el tiempo en transporte público con los horarios del Consorcio, que ese estudio dejaba para el futuro; y lo juntamos con un buscador para personas, abierto y con la fuente de cada cifra.
+- Evidencia: el estudio, Jornadas de Geodatos 2022 (https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf):
+  - «Objetivo del proyecto»: «desde cada portal»;
+  - «Creación de un índice normalizado»: «Existencia o no del equipamiento/servicio»;
+  - «Mejora del modelo y posibilidades futuras»: «Población por portal» e «Incorporar los datos General Transit Feed Specification».
+- Más evidencia: D-217 (Luo y Wang, 2003; Talbot et al., 2000) · D-213 (comparación por tipo y prueba de Poisson) · D-220 (transporte).
+- Si insiste: del estudio tomamos la velocidad de 4 km/h, para que los minutos se puedan comparar (D-211).
+
+**45. ¿Quién lo mantiene cuando acabe el concurso?**
+Mariano, y está pensado para que baste una persona. Los datos se recargan con un comando, cada conjunto pasa un control de calidad antes de entrar y una prueba revisa la web pública cada mañana. Al año son unos 2–3 días para la estadística anual y medio día por trimestre para los horarios del transporte; el código es abierto y cada decisión está escrita, así que otra persona puede retomarlo.
+- Evidencia: `pitch/modelo_negocio.md` («Mantenimiento con una sola persona», estimación de D) · `.github/workflows/smoke-demo.yml` · `evidence/gate-01/` · `docs/00_index/01_decisions_log.md` · `LICENSE` (Apache-2.0).
