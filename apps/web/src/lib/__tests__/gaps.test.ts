@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import type { IndicatorValue, ZoneGapList } from "@/contracts/zone_gap_list_response";
 
 import {
+  comparisonText,
   fitsButShortText,
   GAP_STATUS,
   gapFigures,
@@ -18,8 +19,11 @@ import {
   NULL_REASON,
   parseZoneParam,
   pendingRows,
+  peopleAffectedText,
+  ROW_IN_LIST,
   ROW_MEASURE,
   ROW_NAME,
+  rowComparison,
   sortRows,
   topRows,
   walking,
@@ -258,5 +262,51 @@ describe("zone links of «Qué falta»", () => {
     expect(parseZoneParam("distrito")).toBeNull();
     expect(parseZoneParam("distrito/28 07")).toBeNull();
     expect(parseZoneParam(["distrito/2807905", "municipio/28092"])).toBeNull();
+  });
+});
+
+describe("each row in plain words (D-229 §6, falta.fila.comparacion)", () => {
+  // Test fixtures published by line A with the contract (data/fixtures/contracts), not demo data.
+  const load = (name: string) =>
+    JSON.parse(readFileSync(new URL(`../../../../../data/fixtures/contracts/${name}`, import.meta.url), "utf8")) as ZoneGapList;
+  const centro = load("zone_gap_list.centro.fixture.json");
+  const alamo = load("zone_gap_list.el_alamo.fixture.json");
+  const row = (list: ZoneGapList, key: string) => {
+    const found = list.rows.find((r) => r.row === key);
+    if (!found) throw new Error(`no row ${key}`);
+    return found;
+  };
+
+  it("gives n = round(100 × ratio), also above 100 and with Spanish thousands", () => {
+    expect(comparisonText(0.571, false)).toBe("Aquí hay 57 por cada 100 que hay en municipios parecidos.");
+    expect(comparisonText(2.498, false)).toBe("Aquí hay 250 por cada 100 que hay en municipios parecidos.");
+    expect(comparisonText(60.2, false)).toBe("Aquí hay 6.020 por cada 100 que hay en municipios parecidos.");
+  });
+
+  it("uses the zone's own ratio, or its group's when it is compared with its neighbours", () => {
+    const nursery = row(centro, "escuela_infantil");
+    expect(rowComparison(nursery)).toBe(`Aquí hay ${Math.round(100 * (nursery.ratio_to_reference ?? NaN))} por cada 100 que hay en municipios parecidos.`);
+    // El Álamo has no health centre within 15 min (ratio 0), but its group has 104 per 100: CUBIERTO
+    const health = row(alamo, "centro_salud");
+    expect(health.ratio_to_reference).toBe(0);
+    expect(rowComparison(health)).toBe(
+      `Junto con sus vecinos, hay ${Math.round(100 * (health.comparison_group?.ratio_to_reference ?? NaN))} por cada 100 que hay en municipios parecidos.`,
+    );
+  });
+
+  it("says nothing when there is no ratio (SIN DATOS)", () => {
+    expect(rowComparison(row(centro, "vivienda"))).toBeNull();
+    expect(rowComparison({ status: "JUSTO" })).toBeNull();
+  });
+
+  it("names the people a FALTA row leaves short, and only for FALTA", () => {
+    expect(peopleAffectedText({ status: "FALTA", people: { count: 9433, label: "niños de 0 a 4 años" } })).toBe("Afecta a 9.433 niños de 0 a 4 años.");
+    expect(peopleAffectedText(row(centro, "escuela_infantil"))).toBeNull(); // JUSTO
+    expect(peopleAffectedText({ status: "FALTA", people: null })).toBeNull();
+  });
+
+  it("has a name inside a sentence for every row (fila.lista.*)", () => {
+    expect(Object.keys(ROW_IN_LIST).sort()).toEqual(ROW_KEYS);
+    expect(ROW_IN_LIST.vivienda).toBe("viviendas grandes para familias");
   });
 });

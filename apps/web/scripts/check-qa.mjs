@@ -21,6 +21,7 @@
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
+//   node scripts/check-qa.mjs impacto [outDir]   # «Dónde invertir primero» (D-229) and «Afecta a N …» in a FALTA row
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -1457,8 +1458,106 @@ async function review(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+const esInt = (n) => new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0, useGrouping: "always" }).format(n);
+
+/**
+ * «Dónde invertir primero» (D-229): on «Qué falta» without a zone, every row with people in FALTA
+ * has its figure and its zones in the API order, from one single request to /gaps/impact; the first
+ * zone opens its list, whose FALTA row says how many people it leaves short. No other screen asks
+ * for /gaps/impact.
+ */
+async function impact(browser) {
+  const failures = [];
+  const isImpact = (r) => r.url().includes("/api/v1/gaps/impact");
+  const api = await (await fetch(`${API}/api/v1/gaps/impact`)).json();
+  const affected = api.data.rows.filter((r) => r.people_in_falta > 0);
+  report.api = { data_version: api.meta.data_version, filas: affected.map((r) => `${r.label}: ${r.people_in_falta} en ${r.zones_in_falta} zonas`) };
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    const page = await ctx.newPage();
+    const errors = [];
+    const impactRequests = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    page.on("request", (r) => isImpact(r) && impactRequests.push(r.url()));
+    await page.goto(`${BASE}/que-falta`, { waitUntil: "networkidle" });
+    const section = page.locator("section[aria-labelledby='invertir']");
+    await section.locator("li.glass").first().waitFor({ timeout: 30000 });
+    await page.waitForTimeout(800);
+    const cards = await section.locator("li.glass").evaluateAll((items) =>
+      items.map((li) => ({
+        fila: li.querySelector("h3")?.textContent?.trim(),
+        cifra: li.querySelector("strong")?.textContent?.trim(),
+        frase: li.querySelector("p")?.textContent?.replace(/\s+/g, " ").trim(),
+        contexto: li.querySelectorAll("p")[1]?.textContent?.trim(),
+        zonas: [...li.querySelectorAll("ol > li")].map((z) => z.querySelector("a, span + span > span")?.textContent?.trim()),
+        enlaces: [...li.querySelectorAll("ol > li a")].map((a) => a.getAttribute("href")),
+        visibles: [...li.querySelectorAll(":scope > ol > li")].length,
+      })),
+    );
+    const entry = (report[id] = { tarjetas: cards, sin_falta: await section.locator("ul").last().innerText() });
+    if (cards.length !== affected.length) failures.push(`${id}: ${cards.length} tarjetas / ${affected.length} filas con gente en FALTA`);
+    affected.forEach((row, i) => {
+      const card = cards[i] ?? {};
+      if (card.fila !== row.label) failures.push(`${id}: tarjeta ${i} «${card.fila}» / «${row.label}»`);
+      if (card.cifra !== esInt(row.people_in_falta)) failures.push(`${id}: ${row.label} cifra ${card.cifra} / ${esInt(row.people_in_falta)}`);
+      const names = row.ranking.map((z) => z.name);
+      if (JSON.stringify(card.zonas) !== JSON.stringify(names)) failures.push(`${id}: ${row.label} zonas ${card.zonas} / ${names}`);
+      if (card.visibles !== Math.min(3, names.length)) failures.push(`${id}: ${row.label} ${card.visibles} zonas a la vista`);
+      if (card.enlaces.length !== names.length) failures.push(`${id}: ${row.label} zonas sin enlace`);
+    });
+    entry.axe = await axe(page);
+    entry.overflow_px = await overflow(page);
+    await page.screenshot({ path: `${out}/impacto_que_falta_arriba_${id}.png` });
+    await section.screenshot({ path: `${out}/impacto_invertir_${id}.png` });
+    // «Ver N zonas más» opens the rest of the ranking
+    const more = section.getByText(/^Ver \d+ zonas? más$/).first();
+    await (touch ? more.tap() : more.click());
+    await page.waitForTimeout(300);
+    entry.axe_desplegado = await axe(page);
+    // The first zone of the first row opens its list
+    const firstRow = affected[0];
+    const top = firstRow.ranking[0];
+    const link = section.locator("li.glass").first().getByRole("link", { name: top.name });
+    await (touch ? link.tap() : link.click());
+    await page.waitForURL(`**/que-falta?zona=${top.level}/${top.code}`, { timeout: 20000 });
+    await page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+    await page.waitForTimeout(500);
+    const zoneApi = await (await fetch(`${API}/api/v1/gaps/${top.level}/${top.code}`)).json();
+    const falta = zoneApi.data.rows.filter((r) => r.status === "FALTA" && r.people);
+    entry.zona = top.name;
+    entry.afecta = (await page.getByText(/^Afecta a /).allInnerTexts()).map(flat);
+    entry.afecta_esperado = falta.map((r) => `Afecta a ${esInt(r.people.count)} ${r.people.label}.`);
+    if (JSON.stringify(entry.afecta) !== JSON.stringify(entry.afecta_esperado)) failures.push(`${id}: «Afecta a» ${entry.afecta} / ${entry.afecta_esperado}`);
+    entry.axe_zona = await axe(page);
+    entry.overflow_zona_px = await overflow(page);
+    await page.locator("main li.glass").first().screenshot({ path: `${out}/impacto_fila_afecta_${id}.png` });
+    entry.peticiones_impact = impactRequests.length;
+    entry.consola = errors;
+    if (impactRequests.length !== 1) failures.push(`${id}: ${impactRequests.length} peticiones a /gaps/impact`);
+    for (const k of ["axe", "axe_desplegado", "axe_zona"]) if (entry[k].length) failures.push(`${id}: ${k} ${entry[k].map((v) => v.id).join(", ")}`);
+    if (entry.overflow_px > 0 || entry.overflow_zona_px > 0) failures.push(`${id}: desborde`);
+    if (errors.length) failures.push(`${id}: consola`);
+    await ctx.close();
+  }
+  // Only «Qué falta» without a zone asks for it
+  for (const path of ["/", "/que-falta?zona=distrito/2807913", ZONE.path, "/como-lo-calculamos"]) {
+    const p = await open(browser, DESKTOP, path);
+    const asked = [];
+    p.page.on("request", (r) => isImpact(r) && asked.push(r.url()));
+    await p.page.reload({ waitUntil: "networkidle" });
+    await p.page.waitForTimeout(1000);
+    (report.otras_pantallas ??= {})[path] = asked.length;
+    if (asked.length) failures.push(`${path}: pide /gaps/impact`);
+    await p.ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "impacto") await impact(browser);
 else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);
 else if (mode === "textos") await texts(browser);

@@ -12,6 +12,7 @@ import { isWholeCity, type ZoneLevel, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
 import GapRowItem from "./GapRowItem";
+import InvestFirst from "./InvestFirst";
 import PendingRows from "./PendingRows";
 import SmallZoneTag from "./SmallZoneTag";
 import ZoneDirectory from "./ZoneDirectory";
@@ -38,9 +39,11 @@ const TEXT = {
     "Los minutos a pie son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Desde la mitad de las calles de la zona se llega en ese tiempo o menos.",
 };
 
+const PICK_ID = "elige-zona";
+
 function ZonePicker() {
   return (
-    <GlassCard as="section" aria-label={TEXT.pick} className={styles.picker}>
+    <GlassCard as="section" id={PICK_ID} aria-label={TEXT.pick} className={styles.picker}>
       <p>{TEXT.pick}</p>
       <ZoneDirectory hrefFor={(zone) => gapsHref(zone.level, zone.code)} placeholder={TEXT.placeholder} wholeCities />
     </GlassCard>
@@ -146,7 +149,7 @@ interface Props {
   invalid?: boolean;
 }
 
-/** The «Qué falta» tab: one zone's full list (?zona=distrito/2807905), or a zone picker. */
+/** The «Qué falta» tab: one zone's full list (?zona=distrito/2807905), or where to invest first and a zone picker. */
 export default function ZoneGapsView({ zone, invalid = false }: Props) {
   if (!zone) {
     return (
@@ -157,6 +160,7 @@ export default function ZoneGapsView({ zone, invalid = false }: Props) {
             {TEXT.notFound}
           </p>
         )}
+        <InvestFirst pickId={PICK_ID} />
         <ZonePicker />
       </>
     );

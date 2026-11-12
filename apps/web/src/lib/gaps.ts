@@ -69,6 +69,39 @@ export const ROW_NAME: Record<GapRowKey, string> = {
   vivienda: "Vivienda para familias",
 };
 
+/** Row names inside a sentence (fila.lista.*): «Aquí falta: escuelas infantiles». */
+export const ROW_IN_LIST: Record<GapRowKey, string> = {
+  escuela_infantil: "escuelas infantiles",
+  colegio: "colegios",
+  centro_salud: "centros de salud",
+  mayores: "centros de mayores",
+  farmacia: "farmacias",
+  vivienda: "viviendas grandes para familias",
+};
+
+/**
+ * falta.fila.comparacion (D-229 §6): n = round(100 × ratio to the zones of its type), or the
+ * group's ratio when the zone is compared together with its neighbours. It can pass 100.
+ */
+export function comparisonText(ratio: number, grouped: boolean): string {
+  const n = formatNumber(Math.round(100 * ratio), 0);
+  return `${grouped ? "Junto con sus vecinos, hay" : "Aquí hay"} ${n} por cada 100 que hay en municipios parecidos.`;
+}
+
+/** The comparison of one row of /gaps, or null when it has no ratio (SIN DATOS). */
+export function rowComparison(row: { status: GapStatus; ratio_to_reference?: number | null; comparison_group?: ComparisonGroup | null }): string | null {
+  if (row.status === "SIN_DATOS") return null;
+  const group = inGroup(row);
+  const ratio = group ? group.ratio_to_reference : row.ratio_to_reference;
+  return ratio == null ? null : comparisonText(ratio, group !== null);
+}
+
+/** «Afecta a 9.433 niños de 0 a 4 años.»: the people a FALTA row leaves short (D-229, `people` of /gaps). */
+export function peopleAffectedText(row: { status: GapStatus; people?: { count: number; label: string } | null }): string | null {
+  if (row.status !== "FALTA" || !row.people) return null;
+  return `Afecta a ${formatNumber(row.people.count, 0)} ${row.people.label}.`;
+}
+
 /**
  * What each row measures (gap-0.3, D-217): what people have within 15 min on foot, shared among
  * everyone who has it that close. Copy of pitch/textos_web.md (fila.mide.*).

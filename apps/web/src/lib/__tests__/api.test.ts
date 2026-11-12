@@ -48,6 +48,14 @@ describe("api client", () => {
     expect(body.data.row).toBe("centro_salud");
   });
 
+  it("asks for the people affected and where to invest first (D-229)", async () => {
+    const calls: Call[] = [];
+    const api = createApi(BASE, fakeFetch(200, envelope(fixture("gap_impact.comunidad.fixture.json")), calls));
+    const body = await api.gapImpact();
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/gaps/impact`);
+    expect(body.data.rows.length).toBe(6);
+  });
+
   it("asks for one feature's values for every zone of a level, with a timeout (perceived safety, D-226)", async () => {
     const calls: Call[] = [];
     const api = createApi(BASE, fakeFetch(200, envelope({ feature_id: "seguridad_percibida_noche", level: "distrito", values: [], lineage: {} }), calls));

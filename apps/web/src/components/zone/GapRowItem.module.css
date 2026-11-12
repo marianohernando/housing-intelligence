@@ -30,6 +30,12 @@
   font-size: var(--text-sm);
 }
 
+/* D-229: the people a FALTA row leaves short */
+.affected {
+  color: var(--falta-ink);
+  font-weight: 600;
+}
+
 /* Zone and region side by side; the walking minutes on their own line below */
 .figures {
   display: grid;

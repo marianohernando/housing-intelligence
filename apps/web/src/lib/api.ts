@@ -3,6 +3,7 @@
  * Response types are generated from the JSON Schemas (src/contracts), never written by hand.
  */
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
+import type { GapImpactResponse } from "@/contracts/gap_impact_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
 import type { PlaceCategory as ContractPlaceCategory, PlacesResponse } from "@/contracts/places_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
@@ -163,6 +164,10 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
     /** GET /api/v1/gaps?level=&row=: one row of «Qué falta» for every zone of a level (the map). */
     gapRowMap(level: "municipio" | "distrito", row: GapRowKey) {
       return call<GapRowMapResponse>(`/api/v1/gaps?${new URLSearchParams({ level, row }).toString()}`);
+    },
+    /** GET /api/v1/gaps/impact: people living where each row is missing, and where to invest first (D-229). */
+    gapImpact() {
+      return call<GapImpactResponse>("/api/v1/gaps/impact");
     },
     /** GET /api/v1/datasets: every dataset behind the product (footer counter and provenance). */
     datasets({ cmOnly = false }: { cmOnly?: boolean } = {}) {

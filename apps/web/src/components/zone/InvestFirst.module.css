@@ -1,0 +1,176 @@
+.section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.header {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.header h2 {
+  font-size: var(--text-xl);
+}
+
+.intro {
+  max-width: 44rem;
+  color: var(--ink-soft);
+}
+
+.pick {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--violet-strong);
+}
+
+.state {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  color: var(--ink-soft);
+}
+
+/* Two cards side by side on desktop, one under another on a phone (like the rows of a zone) */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+}
+
+.card h3 {
+  color: var(--ink-soft);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+/* The figure a councillor reads first */
+.headline {
+  font-family: var(--font-title);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+}
+
+.figure {
+  display: block;
+  color: var(--falta-ink);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+}
+
+.context {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.ranking {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zone {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  background: var(--falta-bg);
+}
+
+.rank {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin-top: 0.35rem;
+  border: 1px solid var(--falta);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--falta-ink);
+  font-weight: 700;
+}
+
+.zoneText {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 var(--space-3);
+}
+
+/* 44 px target: the name is the link to the zone's list */
+.zoneName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+a.zoneName {
+  color: var(--violet-strong);
+}
+
+.people {
+  font-weight: 600;
+  text-align: right;
+}
+
+.comparison {
+  grid-column: 1 / -1;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.more {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.more summary {
+  padding-block: calc((var(--target) - 1.5em) / 2);
+  color: var(--violet-strong);
+  cursor: pointer;
+}
+
+.clear {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-soft);
+}
+
+.note {
+  max-width: 52rem;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 520px) {
+  .zoneText {
+    grid-template-columns: 1fr;
+  }
+
+  .people {
+    text-align: left;
+  }
+}

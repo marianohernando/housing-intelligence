@@ -14,6 +14,7 @@ import {
   inGroup,
   isSmallZone,
   NULL_REASON,
+  peopleAffectedText,
   ROW_MEASURE,
   SMALL_ZONE,
   walking,
@@ -81,6 +82,7 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
   const confidence = confidenceText(row.indicator.confidence);
   const group = inGroup(row);
   const hospital = hospitalWalking(row.extra_indicators);
+  const affected = peopleAffectedText(row);
   // Fixed once, so a resize never closes what the person opened
   const [sourcesOpen] = useState(wideScreen);
 
@@ -94,6 +96,7 @@ export default function GapRowItem({ row, zoneName }: { row: GapRow; zoneName: s
           {group && <GroupTag described={false} />}
         </span>
       </div>
+      {affected && <p className={styles.affected}>{affected}</p>}
       <p className={styles.measure}>{ROW_MEASURE[row.row]}</p>
 
       <dl className={styles.figures}>
