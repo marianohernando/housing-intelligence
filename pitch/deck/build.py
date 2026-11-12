@@ -34,8 +34,8 @@ CAPTURES = PITCH / "capturas"
 PDF_NAME = "VidaFacil_DATAMAD2026.pdf"
 # A pitch/capturas/<id>.png with the same id wins. C5–C7: B's production captures of 11 Nov.
 B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"  # line B: zone, «Qué falta», method page
-# C1–C4 retaken by B with real data at 1440 px: C3 and C4 after gap-0.3 (PR #17), C1 and C2 with
-# fit-0.2, Fuencarral-El Pardo first and the commute in transit minutes (PR #19)
+# C1–C4 retaken by B with real data at 1440 px: C1–C3 with fit-0.6, Latina first (PR #32); C4
+# after gap-0.3 (PR #17), kept in reserve. deck.html carries the same paths, relative to itself
 B_DECK = ROOT / "evidence" / "map-004" / "2026-11-12" / "deck"
 EVIDENCE_CAPTURES = {
     "C1": B_DECK / "deck_c1_busqueda_1440.png",
