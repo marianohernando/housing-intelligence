@@ -271,7 +271,7 @@ start() {
   echo $! >"$WEB_PID"
   wait_for "$WEB_URL" 60
   SMOKE_API_ONLY=1 scripts/smoke_demo.sh "$API_URL"
-  echo "offline demo up: $WEB_URL/map  (data: $(head -1 "$MANIFEST"))"
+  echo "offline demo up: $WEB_URL/  (data: $(head -1 "$MANIFEST"))"
 }
 
 stop_web() { # only kills the pid if it is still our Next.js server
