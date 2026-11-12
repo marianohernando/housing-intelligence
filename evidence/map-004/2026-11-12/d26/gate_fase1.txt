@@ -1,0 +1,59 @@
+$ make lint typecheck test-unit
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+373 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+278 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests uv run pytest tests/unit tests/data -q
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+........................................................................ [ 47%]
+........................................................................ [ 59%]
+........................................................................ [ 71%]
+........................................................................ [ 83%]
+........................................................................ [ 95%]
+.........................                                                [100%]
+601 passed in 12.12s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  28 passed (28)
+      Tests  286 passed (286)
+   Start at  16:28:06
+   Duration  536ms (tests 46%, import 27%, transform 19%, worker 7%)
+
+$ npm run -w apps/web test -- --run
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  28 passed (28)
+      Tests  286 passed (286)
+   Start at  16:28:07
+   Duration  750ms (tests 41%, import 31%, transform 24%, worker 5%)
+
+    Isolate  28 workers spawned · ~121ms startup each (spawn + environment, per file)
+             at least ~255ms faster with isolate: false — reuses workers across files instead of one per file
+

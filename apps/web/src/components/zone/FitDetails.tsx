@@ -1,5 +1,4 @@
 import {
-  Accessibility,
   Briefcase,
   Bus,
   CircleQuestionMark,
@@ -10,6 +9,7 @@ import {
   Info,
   type LucideIcon,
   Shield,
+  TrainFront,
   Trees,
 } from "lucide-react";
 import { useId } from "react";
@@ -39,7 +39,8 @@ const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
   colegios: GraduationCap,
   zonas_verdes: Trees,
   seguridad: Shield,
-  accesibilidad: Accessibility,
+  // The station the fact measures, not a wheelchair (D-204): the same icon as the chip
+  accesibilidad: TrainFront,
   trayecto: Briefcase,
   otro: Info,
 };

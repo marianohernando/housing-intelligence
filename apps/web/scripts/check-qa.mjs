@@ -13,6 +13,7 @@
 //   node scripts/check-qa.mjs atribucion [outDir] # map attribution folded behind its (i) on every screen, never the LCP
 //   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
 //   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
+//   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -874,11 +875,32 @@ async function attribution(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** The two chips that left «Muy pronto»: what each one says, sends and finds in the card. */
+const PRIORITY_CHIPS = {
+  // fit-0.4, DATA-019, D-223: opt-in, its icon is the station it measures (D-204, PR #26 of D)
+  escaleras: {
+    label: "Sin escaleras",
+    key: "sin_escaleras",
+    topic: "accesibilidad",
+    icon: "lucide-train-front",
+    help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.",
+  },
+  // fit-0.3, D-222: importa.zonas_verdes of line D
+  verdes: {
+    label: "Zonas verdes",
+    key: "zonas_verdes",
+    topic: "zonas_verdes",
+    icon: "lucide-trees",
+    help: "Parques de una hectárea o más, cerca de casa.",
+  },
+};
+
 /**
- * «Sin escaleras» (fit-0.4, DATA-019, D-223): an opt-in chip, never marked for the person (D-204);
- * after a search with it, the first zone's card shows the API's accessibility facts as they come.
+ * A «Me importa» chip with data (PRIORITY_CHIPS): optional and not marked for the person (D-204),
+ * with its icon and help, no «Muy pronto» line left under the chips, no wheelchair anywhere, and
+ * after a search with it the first zone's card shows the API's facts of its topic as they come.
  */
-async function stairs(browser) {
+async function priorityChip(browser, spec) {
   const failures = [];
   const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
   const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -888,38 +910,47 @@ async function stairs(browser) {
     const entry = (report[id] = {});
     // The demo case (which does not mark it), then the chip and the search
     const [base] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
-    const baseFacts = (await base.json()).data.results.flatMap((r) => r.facts).filter((f) => f.topic === "accesibilidad");
-    entry.hechos_accesibilidad_sin_chip = baseFacts.length;
+    const baseFacts = (await base.json()).data.results.flatMap((r) => r.facts).filter((f) => f.topic === spec.topic);
+    entry.hechos_sin_chip = baseFacts.length;
     await p.page.waitForTimeout(1500);
-    const chip = p.page.getByRole("button", { name: /^Sin escaleras/ });
-    entry.chip = { pulsado_antes: await chip.getAttribute("aria-pressed"), ayuda: await chip.getAttribute("title") };
+    const chip = p.page.getByRole("button", { name: new RegExp(`^${spec.label}`) });
+    entry.chip = {
+      pulsado_antes: await chip.getAttribute("aria-pressed"),
+      ayuda: await chip.getAttribute("title"),
+      icono: await chip.locator("svg").first().getAttribute("class"),
+    };
     await press(chip);
     entry.chip.pulsado_despues = await chip.getAttribute("aria-pressed");
-    entry.muy_pronto = flat(await p.page.getByText(/^Muy pronto:/).first().innerText());
+    entry.muy_pronto_lineas = await p.page.getByText(/^Muy pronto:/).count();
+    entry.sillas_de_ruedas = await p.page.locator("svg.lucide-accessibility").count();
+    await p.page.locator("fieldset").filter({ hasText: "Me importa" }).first().screenshot({ path: `${out}/${mode}_chips_${id}.png` });
     const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
     entry.prioridades_enviadas = JSON.parse(response.request().postData() ?? "{}").priorities;
     const { data } = await response.json();
     await p.page.waitForTimeout(2000);
     const top = data.results[0];
-    const facts = top.facts.filter((f) => f.topic === "accesibilidad").map((f) => f.text);
-    entry.api = { metodo: data.methodology_version, primera: top.zone.name, hechos_accesibilidad: facts };
+    const facts = top.facts.filter((f) => f.topic === spec.topic).map((f) => f.text);
+    entry.api = { metodo: data.methodology_version, primera: top.zone.name, hechos: facts };
     await press(p.page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first());
     const card = p.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
     await card.waitFor({ timeout: 20000 });
     await p.page.waitForTimeout(1200);
     const text = flat(await card.innerText());
     entry.tarjeta_muestra = facts.map((f) => text.includes(flat(f)));
-    await card.screenshot({ path: `${out}/escaleras_tarjeta_${id}.png` });
+    entry.tarjeta_sillas_de_ruedas = await card.locator("svg.lucide-accessibility").count();
+    await card.screenshot({ path: `${out}/${mode}_tarjeta_${id}.png` });
     entry.axe = await axe(p.page);
     entry.overflow_px = await overflow(p.page);
     entry.consola = p.errors;
     if (entry.chip.pulsado_antes !== "false" || entry.chip.pulsado_despues !== "true") failures.push(`${id}: el chip no es opcional (${entry.chip.pulsado_antes} → ${entry.chip.pulsado_despues})`);
-    if (entry.chip.ayuda !== "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.") failures.push(`${id}: ayuda del chip «${entry.chip.ayuda}»`);
+    if (entry.chip.ayuda !== spec.help) failures.push(`${id}: ayuda del chip «${entry.chip.ayuda}»`);
+    if (!entry.chip.icono?.split(" ").includes(spec.icon)) failures.push(`${id}: icono del chip «${entry.chip.icono}»`);
     // The fact comes with the chip: the demo case, without it, has none
-    if (entry.hechos_accesibilidad_sin_chip > 0) failures.push(`${id}: hay hechos de accesibilidad sin marcar el chip`);
-    if (/escaleras/i.test(entry.muy_pronto)) failures.push(`${id}: sigue en «Muy pronto»`);
-    if (!entry.prioridades_enviadas?.includes("sin_escaleras")) failures.push(`${id}: la búsqueda no lleva sin_escaleras`);
-    if (!facts.length) failures.push(`${id}: la API no da hecho de accesibilidad en ${top.zone.name}`);
+    if (entry.hechos_sin_chip > 0) failures.push(`${id}: hay hechos de ${spec.topic} sin marcar el chip`);
+    if (entry.muy_pronto_lineas > 0) failures.push(`${id}: sigue la línea «Muy pronto:» bajo los chips`);
+    if (entry.sillas_de_ruedas + entry.tarjeta_sillas_de_ruedas > 0) failures.push(`${id}: queda una silla de ruedas`);
+    if (!entry.prioridades_enviadas?.includes(spec.key)) failures.push(`${id}: la búsqueda no lleva ${spec.key}`);
+    if (!facts.length) failures.push(`${id}: la API no da hecho de ${spec.topic} en ${top.zone.name}`);
     if (entry.tarjeta_muestra.includes(false)) failures.push(`${id}: la tarjeta no muestra tal cual el hecho de la API`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
     if (entry.consola.length) failures.push(`${id}: consola`);
@@ -1183,7 +1214,7 @@ else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
 else if (mode === "iconos") await icons(browser);
-else if (mode === "escaleras") await stairs(browser);
+else if (mode in PRIORITY_CHIPS) await priorityChip(browser, PRIORITY_CHIPS[mode]);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);
