@@ -18,7 +18,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 | [`api/Dockerfile`](api/Dockerfile) | Imagen de la API con solo las dependencias de `hi-api` (`uv sync --package hi-api`). Usuario no root y puerto `$PORT`. |
 | [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción, pasa el smoke y comprueba en `vercel logs` que todas sus peticiones las sirvió el despliegue nuevo. |
 | [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
-| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación) y la página 1 de la capa más grande (transporte). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
+| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación), la página 1 de la capa más grande (transporte) y una búsqueda (`POST /api/v1/search` con el caso demo del guion: al menos una zona y menos de 1 MB). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
 | [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql) | Rol `vf_api_ro`: solo lectura, con una política RLS por cada tabla que lee la API. Es idempotente. |
 
 ## Variables de entorno (proyecto Vercel, entorno Production)
@@ -161,17 +161,17 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
 ## Día de la final (26 nov): lista
 
 1. **Por la mañana:**
-   - `make smoke-demo` tiene que dar 7/7. Si falla, sigue la sección «Si la demo se cae».
+   - `make smoke-demo` tiene que dar 8/8. Si falla, sigue la sección «Si la demo se cae».
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/map` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
 2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
    - El sync vacía con `TRUNCATE` las 9 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
-   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 7/7.
+   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 8/8.
    - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
 3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/map. Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/map`.
-4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`.
-   - Sus 7 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía y dos capas.
-   - Así el contenedor de la API ya está arrancado y no te comes los 3–4 s del arranque en frío delante del jurado.
+4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`, que ya incluye `/search`.
+   - Sus 8 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía, dos capas y una búsqueda con el caso del guion.
+   - Así el contenedor de la API ya está arrancado y la búsqueda tiene su caché lista, y no te comes delante del jurado los unos 6 s de un `/search` en frío (medido el 12 nov: 3,5 s de arranque más 2,5 s de la primera búsqueda).
    - Deja después la pestaña de la demo abierta y recárgala una vez.
    - El contenedor se apaga tras 5 min sin tráfico. Si entre el calentamiento y tu turno pasan más de 5 min, repítelo.
 5. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
@@ -230,7 +230,7 @@ El resultado se guarda en `data/offline/`, que git ignora:
 ### Arrancarlo (26 nov, en 1 minuto, sin red)
 
 ```bash
-make demo-offline        # ~7 s: base, API, web y smoke 6/6
+make demo-offline        # ~8 s: base, API, web y smoke 7/7 (sin la web, con /search)
 # abre http://localhost:3012/map
 make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
