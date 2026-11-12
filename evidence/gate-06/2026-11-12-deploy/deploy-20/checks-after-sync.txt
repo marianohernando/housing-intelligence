@@ -1,0 +1,9 @@
+search demo: methodology fit-0.6, passing 27 of 199
+  Fuencarral 97 %: Alquiler hasta 1.500 €/mes para 77 m² | Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) | Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) | aeat_alquiler_nuevos_contratos_codigo_postal | aeat_alquiler_nuevos_contratos_municipios | alquiler_m2_mensual | cm_alquiler_m2_codigo_postal_madrid | €/mes
+  results whose rent text says «contratos firmados en 2024»: 10 of 10
+reality check relaxations:
+  near:colegio «+5 min a pie hasta colegio con primaria»: +17 zones → 44
+  budget «+150 €/mes»: +3 zones → 30
+datasets: cm_open_data_count 27, total 35
+  aeat_alquiler_nuevos_contratos_codigo_postal: Agencia Tributaria, is_cm_open_data=false
+  aeat_alquiler_nuevos_contratos_municipios: Agencia Tributaria, is_cm_open_data=false
