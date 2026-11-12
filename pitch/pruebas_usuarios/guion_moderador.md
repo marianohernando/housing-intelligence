@@ -72,6 +72,7 @@ Cuando conteste, pregunta: «Y ese número en %, ¿qué crees que quiere decir?�
 - Después pregunta:
   - «¿Qué crees que quiere decir "JUSTO"?» (o el estado que tenga delante);
   - «¿Te cuadra con lo que conoces de esa zona?». **Si no le cuadra, apunta qué fila y por qué:** puede ser un error de datos y se revisa.
+  - Si es un pueblo pequeño y en alguna fila sale «Junto con sus vecinos», pregunta: «¿Qué crees que quiere decir eso?». Es un texto nuevo del 12 nov.
 
 ### Tarea 5 · ¿De dónde sale el dato? (1 min, solo si va bien de tiempo)
 «Elige un dato de esa lista que te llame la atención. ¿Sabrías decirme de dónde sale?»

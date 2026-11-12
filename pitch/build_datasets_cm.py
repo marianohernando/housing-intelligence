@@ -30,7 +30,11 @@ SNAPSHOT = ROOT / "pitch" / "portal_cm_snapshot.json"
 CKAN_PACKAGE_SHOW = "https://datos.comunidad.madrid/api/3/action/package_show"
 PENDING_A = "Uso en la lista o en el buscador: **pendiente de A**"
 
-ROLE_ES = {"primary": "dato principal", "denominator": "denominador", "secondary": "dato de apoyo"}
+ROLE_ES = {
+    "primary": "fuente principal",
+    "denominator": "denominador",
+    "secondary": "fuente de apoyo",
+}
 CATEGORY_ES = {
     "education": "educación",
     "health": "salud",

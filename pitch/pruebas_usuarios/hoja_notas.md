@@ -94,6 +94,8 @@ ______________________________________________________________________
 
 **¿Le cuadra con lo que conoce?** ☐ Sí ☐ En parte ☐ No
 
+**Si salió «Junto con sus vecinos», ¿qué entendió?** ☐ No salió ☐ Que se compara con los pueblos de al lado ☐ Otra cosa: ____________
+
 **Si no le cuadra: qué fila y por qué** (se revisa como posible error de datos):
 
 ______________________________________________________________________

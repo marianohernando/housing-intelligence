@@ -1,4 +1,8 @@
 <!--
+INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b) y lo puso al día con 23 conjuntos CM,
+la capacidad a 15 minutos andando (D-217) y los catálogos del Ministerio de Sanidad (D-218). Este borrador ya no se
+mantiene y sus cifras son del 11 nov: el texto vigente es README.md, y los cambios se le piden a A.
+
 Borrador de la línea D para el README.md de la raíz (lo integra la línea A, que es su dueña).
 - Los enlaces son relativos a la raíz del repo, como quedarán en README.md; desde pitch/ no funcionan.
 - Las notas entre comentarios como este no se ven en GitHub: dicen de dónde sale cada cifra y qué está pendiente.

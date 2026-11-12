@@ -54,7 +54,8 @@ Título: **«Nadie te dice qué le falta a cada zona»**.
 Cierre de la columna: «Otros te enseñan lo que hay. Nosotros, lo que falta.»
 
 ### Columna derecha: los datos
-Titular: **«21 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md` y `evidence/gate-01/2026-11-10/real-run-quality.txt`. Se revisa el 23 nov regenerando `datasets_cm.md`.
+Titular: **«23 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 12 nov (23 con Gate 1 en PASS; los dos nuevos, del 12 nov, en `evidence/gate-01/2026-11-12/cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 23` (12 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
+- **Matiz, si preguntan:** 21 alimentan la lista de lo que falta o el buscador. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Su uso en pantalla está **pendiente de A** (`pitch/datasets_cm.md`).
 
 Cada nombre lleva el hipervínculo a su ficha en el PDF:
 
@@ -64,16 +65,17 @@ Cada nombre lleva el hipervínculo a su ficha en el PDF:
 | Población y hogares (3) | [Población por edad](https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo) · [Hogares por tamaño (Censo 2021)](https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo) · [Nacidos vivos](https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo) |
 | Vivienda (4) | [Viviendas por superficie](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada) · [Viviendas por régimen de tenencia (Censo 2021)](https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia) · [Alquiler €/m² por municipio](https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000) · [Alquiler €/m² por código postal (Madrid)](https://datos.comunidad.madrid/dataset/1934259) |
 | Renta (1) | [Renta disponible bruta municipal](https://datos.comunidad.madrid/dataset/irpf_indicador_renta) |
-| Servicios (6) | [Centros educativos](https://datos.comunidad.madrid/dataset/centros_educativos) · [Unidades escolares](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) · [Centros sanitarios](https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios) · [Centros de atención social](https://datos.comunidad.madrid/dataset/atencion_social_registro_centros) · [Oficinas de farmacia](https://datos.comunidad.madrid/dataset/oficinas_farmacia) · [Farmacias por municipio](https://datos.comunidad.madrid/dataset/farmacias) |
+| Servicios (8) | [Centros educativos](https://datos.comunidad.madrid/dataset/centros_educativos) · [Unidades escolares](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) · [Centros sanitarios](https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios) · [Camas por dependencia](https://datos.comunidad.madrid/dataset/1912720) · [Hospitales y datos asistenciales](https://datos.comunidad.madrid/dataset/1912744) · [Centros de atención social](https://datos.comunidad.madrid/dataset/atencion_social_registro_centros) · [Oficinas de farmacia](https://datos.comunidad.madrid/dataset/oficinas_farmacia) · [Farmacias por municipio](https://datos.comunidad.madrid/dataset/farmacias) |
 | Transporte (6, del CRTM con ficha en el portal) | [Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) · [Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) · [Cercanías](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) · [EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) · [Autobuses urbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) · [Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) |
 
 - **Grupos:** salen del campo `domain` del catálogo. Los enlaces salen de `portal_url` (`services/ingestion/src/hi_ingestion/catalog/provenance.py`), igual que en `datasets_cm.md`.
 - **Línea pequeña bajo la tabla:**
   - «Complementan, sin contar como datos CM: red peatonal de OpenStreetMap (ODbL)» (`pitch/datasets_cm.md` §3);
-  - «+ Ayuntamiento de Madrid (población y hogares por distrito)»: en uso desde DATA-012 (D-209; `pitch/datasets_cm.md` §3).
+  - «+ Ayuntamiento de Madrid (población y hogares por distrito)»: en uso desde DATA-012 (D-209; `pitch/datasets_cm.md` §3);
+  - «+ Ministerio de Sanidad (nombre y camas de cada hospital, nombre de cada centro de salud)»: Catálogo Nacional de Hospitales 2025 y Catálogo de Centros de Atención Primaria del SNS 2026, reutilizables con cita y fecha (D-218; `pitch/datasets_cm.md` §3).
 - **Pie:** «Lista completa, con licencias y control de calidad: github.com/marianohernando/housing-intelligence → `pitch/datasets_cm.md`».
 
-**Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. El «21» va grande en violeta.
+**Composición:** dos tarjetas de cristal, la del problema al 40 % del ancho y la de los datos al 60 %. Cada tema de la tabla lleva su icono de línea. La cifra («23») va grande en violeta; el build la calcula del catálogo.
 
 ---
 
@@ -89,35 +91,39 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 Versión con buscador (la que vale):
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, y lo que no tiene datos nunca cuenta como 0 (D-215; `pitch/metodologia.md` §1.3).
-- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 11 nov (`evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11), igual que en la base local (D-215, punto 9 · `evidence/gate-04/2026-11-11/phase-core003-f2.txt`):
-  - encajan **32 de las 199 zonas**, y en 15 falta algún dato;
-  - 1.ª **Ciudad Lineal, 99 %**: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 11 min, a 3,2 km en línea recta de Azca y «Alquiler medio ≈ 1.075 €/mes por 77 m²»;
-  - después, Tetuán, Hortaleza y Moratalaz, **empatadas al 97 %**: no se presenta un orden entre ellas. Chamartín sale 8.ª (95 %), porque sus 1.384 €/mes dejan poco margen (base local).
-- **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo lo que más limita es el colegio a 10 min: «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más»; «+150 €/mes: saldrían 33 zonas, 1 más». Casi encaja Salamanca, que solo falla por presupuesto (≈ 1.526 €/mes; base local). Captura **C3**.
+- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 12 nov tras gap-0.3 y D-216 (`POST /api/v1/search` con ese fixture, `fit-0.1`), igual que en la base local de A (`evidence/gate-04/2026-11-12/golden-search.txt`, `golden_family`):
+  - encajan **33 de las 199 zonas**, y en 15 falta algún dato;
+  - 1.ª **Ciudad Lineal, 99 %**: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 10 min, a 3,2 km en línea recta de Azca y «Alquiler medio ≈ 1.070 €/mes por 77 m²»;
+  - 2.ª Tetuán (98 %); después, Hortaleza y Moratalaz, **empatadas al 97 %**: no se presenta un orden entre ellas. Puente de Vallecas sale 7.ª (96 %) y Chamartín 8.ª (95 %), porque sus ≈ 1.380 €/mes dejan poco margen.
+  - Cambia respecto al 11 nov (32 zonas y Ciudad Lineal ≈ 1.075 €/mes): D-216 sacó del registro los 1.001 «centros polivalentes» (clínicas privadas), que también ponderaban el alquiler por distrito. Con eso, Salamanca cabe en 1.500 €/mes y encaja (94 %): es la zona 33.
+- **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo lo que más limita es el colegio a 10 min: «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir 150 €/mes ya no añade ninguna (`added_zones: 0`), y la web no enseña las opciones que no suman (`relaxOptions` en `apps/web/src/lib/fit.ts`). Casi encajan Moncloa-Aravaca, Ciempozuelos y San Sebastián de los Reyes, que solo fallan por el colegio. Captura **C3**, **pendiente de recaptura** (ver «Capturas necesarias»).
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Límite que se dice si preguntan:** el trabajo cuenta por distancia en línea recta, como preferencia. El tiempo en transporte público llega con CORE-009 (**pendiente de A**).
-- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas **C1–C3**: las de producción de C (PR #11).
+- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas **C1–C3**: las de producción de C (PR #11), del 11 nov; C3 ya no cuadra y se rehace.
 
 ### Impacto: ayuntamientos que deciden dónde invertir
-- Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b):
-  - escuela infantil: escuelas infantiles por cada 1.000 niños de 0 a 4 años;
-  - colegio: colegios con primaria, públicos o concertados, por cada 1.000 menores de 15;
-  - centro de salud: centros de atención primaria por cada 10.000 habitantes;
-  - mayores: hogares, clubes y centros de día por cada 1.000 personas de 65 o más (centros, no plazas);
-  - farmacia: farmacias por cada 10.000 habitantes;
-  - vivienda: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; por distrito, SIN DATOS, porque la CM no lo publica a ese nivel.
+- Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
+  - escuela infantil: escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (cada escuela cuenta como una: nadie publica sus plazas);
+  - colegio: aulas de primaria, públicas y concertadas, al alcance a pie por cada 1.000 niños de 5 a 14 años;
+  - centro de salud: centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes (los consultorios cuentan para los minutos, no como capacidad);
+  - mayores: plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 o más;
+  - farmacia: farmacias al alcance a pie por cada 10.000 habitantes;
+  - vivienda (no va a pie): viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; por distrito, SIN DATOS, porque la CM no lo publica a ese nivel.
 
-  Fuente: `gap_row` de los YAML en `data/catalog/features/` y `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt` y `-f3b.txt`. Cada fila lleva su fuente, su fiabilidad y los minutos a pie.
-- **Con qué se compara (D-213, `gap-0.2`):** con los demás municipios de su tipo, urbanos o rurales (Ley 45/2007), sin contarse a sí misma. FALTA exige menos del 80 % de esa referencia y que la diferencia no se explique por el tamaño de la zona. Las zonas demasiado pequeñas nunca salen FALTA. Detalle y fuentes en `pitch/metodologia.md` §1.4.
-- **Ejemplo de la slide: Madrid capital, centros de salud.** Fuentes: D-213 («Efecto»), `data/fixtures/contracts/zone_gap_list.madrid.fixture.json` (= `GET /api/v1/gaps/municipio/28079` con `gap-0.2`) y `evidence/gate-04/2026-11-11/phase-gap001-f5-review.txt`.
-  - **FALTA:** 0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos, 0,56. Ratio 0,67 (0,6681): un tercio menos, y con tanta población la diferencia es significativa.
-  - **Matiz, si preguntan:** ningún distrito por sí solo basta para afirmarlo. Los 21 salen JUSTO en centros de salud; por ejemplo, Chamartín tiene 0,47 (ratio 0,84).
-  - **A pie:** la mitad de las calles de Madrid está a 11,6 min o menos de un centro de salud; la web lo redondea a «12 min» (`min_a_pie_centro_salud`, municipio 28079, versión 2, `feature_value` leído el 11 nov).
-  - **Comprobado en producción el 11 nov:** `GET /api/v1/gaps/municipio/28079` da `gap-0.2`, con 0,371 frente a 0,5553 (ratio 0,6681). La captura **C4** de B es de Madrid capital en producción (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`).
-  - **Ya no vale «Chamartín: faltan centros de salud»:** con D-213, Chamartín pasa a JUSTO.
+  Fuente: `gap_row` de los YAML en `data/catalog/features/` (D-217 §3) y `evidence/gate-04/2026-11-12/gap-status-gap03.md`. Cada fila lleva su fuente, su fiabilidad y los minutos a pie.
+- **Con qué se compara (D-213, refinada por D-217):** con los demás municipios de su tipo, urbanos o rurales (Ley 45/2007), sin contarse a sí misma. FALTA exige menos del 80 % de esa referencia y que la diferencia no se explique por el tamaño de la zona (prueba exacta de Poisson). Un pueblo demasiado pequeño se compara junto con sus vecinos parecidos; si ni así se puede, nunca sale FALTA. Detalle y fuentes en `pitch/metodologia.md` §1.4.
+- **Ejemplo de la slide: Puente de Vallecas (distrito 2807913), escuelas infantiles.** Comprobado en producción el 12 nov: `GET /api/v1/gaps/distrito/2807913` (`method.version: gap-0.3`, `data_version: 2026-11-12`), fila `escuela_infantil`:
+  - **FALTA:** valor 2,781 (`escuelas_infantiles_a_pie_por_1000_ninos`); referencia 4,87, «Otros municipios urbanos de la Comunidad de Madrid»; ratio 0,571; `reliable: true`; `comparison_group: null` (los distritos no se agrupan). En toda la Comunidad, 4,721.
+  - **Texto de la API (`explanation`):** «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)».
+  - **Por qué se entiende en una frase:** la escuela infantil más cercana está cerca (desde la mitad de las calles, a 6 min o menos: `min_a_pie_escuela_infantil` = 6,258), pero son pocas para tantos niños. Contar centros por habitante da casi lo mismo (2,708, `escuelas_infantiles_por_1000_ninos`): no es un efecto del método.
+  - **Las demás filas de la zona:** colegio, centro de salud, mayores y farmacia, CUBIERTO (farmacia: 4,5 frente a 3,1); vivienda, SIN DATOS.
+  - **Otros distritos con FALTA en esa fila:** Villaverde (2,984; ratio 0,613) y Carabanchel (3,322; 0,682) (`GET /api/v1/gaps?level=distrito&row=escuela_infantil`, 12 nov). Centro (0,661) y Vicálvaro (0,647) tienen un ratio parecido y salen JUSTO: con menos niños, la diferencia podría ser casualidad. Sirve para responder a Escot.
+  - **Si preguntan por un municipio:** Parla, farmacias, FALTA: 2,029 frente a 4,175 (ratio 0,486). La estadística oficial de farmacias por habitante también da 2,04 (`GET /api/v1/gaps/municipio/28106`, 12 nov).
+  - **Ya no vale «Madrid tiene un tercio menos de centros de atención primaria»** (D-217 §7): con gap-0.3, Madrid capital sale JUSTO en centros de salud (0,3603 frente a 0,3799; ratio 0,9484, `evidence/gate-04/2026-11-12/gap-status-gap03.md`).
+  - Captura **C4**: **pendiente de B**, «Qué falta» de Puente de Vallecas en producción (ver «Capturas necesarias»).
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
-  - 3.851 centros educativos, 1.543 centros sanitarios, 1.001 servicios para mayores y 2.953 farmacias (`evidence/gate-01/*/cm_*/row_counts.json`, campo `places`);
+  - 3.866 centros educativos, 549 centros sanitarios (272 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
 ### Viabilidad: se sostiene
@@ -183,16 +189,26 @@ Fuente única: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`. Los valores de 
 ## Capturas necesarias
 Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440 × 900 (escritorio) y 390 × 844 (móvil) y con densidad 2×. Se guardan en `pitch/capturas/` con estos nombres. B puede adelantarlas en `evidence/map-004/<fecha>/`.
 
-El deck ya usa las capturas de producción del 11 nov. `pitch/deck/build.py` las toma de la evidencia si no hay una con el mismo id en `pitch/capturas/`:
+El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las toma de la evidencia si no hay una con el mismo id en `pitch/capturas/`:
 - C4–C7 son de B (`evidence/map-004/2026-11-11/prod_*`), con `gap-0.2`. Se hicieron antes de desplegar el PR #9, así que algunos textos son anteriores. Los recortes los dejan fuera; ver cada fila.
 - C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11, fusionado el 12 nov).
+
+**Recaptura tras gap-0.3 (12 nov), pendiente de B o C.** Todas son anteriores a gap-0.3 y D-216. El deck ya no usa C3 ni C4, que enseñaban cifras que han cambiado: sale su hueco, y `build.py --final` falla hasta que existan. Las demás valen como borrador, pero se rehacen antes del 24 nov:
+
+| Id | Qué cambia | Dónde |
+|---|---|---|
+| C3 | Ahora «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más», y la opción «+150 €/mes» ya no sale (suma 0) | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
+| C4 | La zona del ejemplo es **Puente de Vallecas**: fila de escuelas infantiles en FALTA (2,8 frente a 4,9) con «A pie: 6 min», y farmacias CUBIERTO | `/que-falta?zona=distrito/2807913` |
+| C1 | La leyenda dice 32 zonas; ahora son 33 | Portada → «Ver un ejemplo…» |
+| C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
+| C7 | «Cómo lo calculamos» ya explica el 2SFCA; el hueco puede volver a enseñar las reglas | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
 | C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Hecha por C en producción (`prod-buscador-c1_busqueda_desktop.png`, PR #11): caso de la Castellana y tarjeta de Ciudad Lineal |
 | C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | Hecha por C en producción (`prod-buscador-c2_tarjeta_zona_desktop.png`, PR #11). El hueco de la slide 3 enseña la cabecera: «99 % de encaje» y «La 1.ª que más encaja» |
-| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | Hecha por C en producción (`prod-buscador-c3_y_si_cambias_desktop.png`, PR #11): el bloque desplegado. El hueco enseña la primera opción, «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más» |
-| C4 | Pestaña «Qué falta» de la zona del ejemplo (Madrid capital): 6 filas con valor, referencia, confianza y datasets enlazados | 1440 | 3 | Hecha por B en producción con `gap-0.2` (`prod_c4_madrid_que_falta_desktop.png`). El hueco enseña los valores de centros de salud: Madrid 0,37 y otros municipios urbanos 0,56. La entrada y la leyenda de esa captura aún comparan con «el conjunto de la Comunidad»: son de antes del PR #9, y el recorte las deja fuera |
+| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | **Pendiente de B o C (recaptura).** La del 11 nov (`prod-buscador-c3_y_si_cambias_desktop.png`, PR #11) dice «49 zonas, 17 más» y «+150 €/mes: 33 zonas, 1 más»: ya no vale. El hueco enseña la primera opción |
+| C4 | Pestaña «Qué falta» de la zona del ejemplo (**Puente de Vallecas**): 6 filas con valor, referencia, confianza, minutos a pie y datasets enlazados | 1440 | 3 | **Pendiente de B (recaptura).** El hueco enseña la fila de escuelas infantiles: 2,8 frente a 4,9 y «A pie: 6 min». La del 11 nov era de Madrid capital con `gap-0.2` (`prod_c4_madrid_que_falta_desktop.png`) |
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B en producción con `gap-0.2` (`prod_c5_chamartin_3d_desktop.png`, Chamartín). El recorte deja fuera el título de la barra, «Barrios de la zona», que hoy se llama «Ir a un barrio»; se ven solo los barrios |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B en producción (`prod_c5_chamartin_3d_mobile.png`). No enseña estados |
 | C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 3 (Viabilidad) | Hecha por B en producción (`prod_c7_como_lo_calculamos_desktop.png`). El hueco enseña «Cómo sale el % de encaje»: la primera de las «Tres reglas» aún compara con toda la Comunidad, también en producción. Cuando B la cambie (`pitch/metodologia.md` 1.1), se puede rehacer y volver a enseñar las reglas |

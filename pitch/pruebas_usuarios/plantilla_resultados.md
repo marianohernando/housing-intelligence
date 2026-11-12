@@ -32,6 +32,7 @@ En cada casilla: ✓ (sola/o), A (con ayuda) o ✗ (no), y el tiempo. Por ejempl
 - Empezaron por el ejemplo de la portada: _ de _.
 - Creen que el % es una nota de la zona: _ de _.
 - En la tarea 3 usaron el bloque de cambiar una cosa: _ de _; cambiaron ellos el presupuesto o los minutos: _ de _.
+- Les salió «Junto con sus vecinos» en la tarea 4: _ de _; lo entendieron: _ de _.
 
 ## 3. Preguntas finales
 | | P1 | P2 | P3 | P4 | P5 | Resumen |

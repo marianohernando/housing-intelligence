@@ -35,11 +35,11 @@ PDF_NAME = "VidaFacil_DATAMAD2026.pdf"
 # Production captures of 11 Nov. A pitch/capturas/<id>.png with the same id wins.
 B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"  # line B: zone, «Qué falta», method page
 C_CAPTURES = ROOT / "evidence" / "gate-06" / "2026-11-11-deploy"  # line C: search (PR #11)
+# C3 and C4 of 11 Nov show figures that gap-0.3 changed (pitch/slides.md, «Recaptura tras gap-0.3»):
+# the deck shows their placeholder until the new ones exist, and --final fails without them.
 EVIDENCE_CAPTURES = {
     "C1": C_CAPTURES / "prod-buscador-c1_busqueda_desktop.png",
     "C2": C_CAPTURES / "prod-buscador-c2_tarjeta_zona_desktop.png",
-    "C3": C_CAPTURES / "prod-buscador-c3_y_si_cambias_desktop.png",
-    "C4": B_CAPTURES / "prod_c4_madrid_que_falta_desktop.png",
     "C5": B_CAPTURES / "prod_c5_chamartin_3d_desktop.png",
     "C6": B_CAPTURES / "prod_c5_chamartin_3d_mobile.png",
     "C7": B_CAPTURES / "prod_c7_como_lo_calculamos_desktop.png",
@@ -78,6 +78,8 @@ SHORT_NAMES = {
     "cm_centros_educativos": "Centros educativos",
     "cm_unidades_escolares": "Unidades escolares",
     "cm_centros_sanitarios": "Centros sanitarios",
+    "cm_dotacion_camas": "Camas por dependencia",
+    "cm_hospitales_datos_asistenciales": "Hospitales (datos asistenciales)",
     "cm_centros_atencion_social": "Centros de atención social",
     "cm_oficinas_farmacia": "Oficinas de farmacia",
     "cm_farmacias_municipios": "Farmacias por municipio",

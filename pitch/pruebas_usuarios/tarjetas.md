@@ -30,7 +30,7 @@ Se enseña una sola tarjeta a cada persona. Están pensadas para que la búsqued
 
 <!--
 Nota para el moderador (no se enseña):
-- Comprobado con POST /api/v1/search en producción el 12 nov.
+- Comprobado con POST /api/v1/search en producción el 12 nov, antes y después de desplegar gap-0.3 (mismas cifras).
   - Tarjeta A (2 adultos, 1 menor de 6 años, 1.300 €/mes, trabajo en Atocha, sin servicios obligatorios): pasan 54 zonas.
   - Tarjeta B (1 adulto, 900 €/mes, centro de salud a 15 min y farmacia a 10 min, imprescindibles): pasan 15 zonas.
   - En las dos, en muchas zonas falta el precio del alquiler, porque la Comunidad solo lo publica en municipios grandes. La web lo dice: es un buen momento para ver si se entiende.

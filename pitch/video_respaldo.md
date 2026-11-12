@@ -37,9 +37,9 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 | 4 | 0:38–0:55 | 17 s | 28 (≤ 37) | 13 s |
 | 5 | 0:55–1:07 | 12 s | 24 (≤ 26) | 11 s |
 | 6 | 1:07–1:22 | 15 s | 21 (≤ 32) | 10 s |
-| 7 | 1:22–1:44 | 22 s | 34 (≤ 47) | 16 s |
+| 7 | 1:22–1:44 | 22 s | 35 (≤ 47) | 16 s |
 | 8 | 1:44–1:58 | 14 s | 24 (≤ 30) | 11 s |
-| **Total** | | **118 s** | **201** | **93 s de voz + pausas para mirar** |
+| **Total** | | **118 s** | **202** | **93 s de voz + pausas para mirar** |
 
 **Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
@@ -79,7 +79,7 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 - **Acción:** señalar el mapa ya coloreado y la lista «Zonas que encajan». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio.
 - **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje», «La 1.ª que más encaja» y 5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** hecho en producción. El 11 nov la 1.ª era Ciudad Lineal, con un 99 % (`evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11).
+- **Estado:** hecho en producción. El 12 nov, tras gap-0.3, la 1.ª sigue siendo Ciudad Lineal, con un 99 % (`POST /api/v1/search` con el fixture; antes, `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11).
 
 <!-- voz:p3:inicio -->
 La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
@@ -89,7 +89,7 @@ La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con e
 - **Acción:** cerrar la tarjeta (×) y bajar hasta «¿Y si cambias algo?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Probar así» en la primera. El mapa se recalcula y sale «Ahora ves las zonas con: [opción]».
 - **Se ve:** «Con tu búsqueda tal cual salen [N] zonas» y las opciones con sus cifras de la API.
 - **Rótulo:** «Con tu búsqueda: [N] zonas · [opción]: [N] zonas».
-- **Estado:** hecho en producción. El 11 nov: «+5 min a pie hasta colegio con primaria: saldrían 49 zonas, 17 más» y «+150 €/mes: saldrían 33 zonas, 1 más» (`prod-buscador-check.json`, PR #11).
+- **Estado:** hecho en producción. El 12 nov: «Con tu búsqueda tal cual salen 33 zonas» y una sola opción, «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir el presupuesto ya no añade zonas y la web no lo enseña (`POST /api/v1/search` con el fixture, `added_zones: 0`).
 
 <!-- voz:p4:inicio -->
 ¿Y si quieren más opciones? Con su búsqueda tal cual salen [N] zonas. Si cambian una sola cosa, por ejemplo [opción], salen [N]. Un toque y se aplica.
@@ -99,7 +99,7 @@ La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con e
 - **Acción:** «Volver a mi búsqueda», abrir otra vez la tarjeta de la 1.ª zona y pulsar «Ver todo lo que falta». En una fila, «De dónde sale: [N] conjuntos de datos» y clic en uno. Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve. En el montaje se corta entre clics: en 12 s no cabe el recorrido entero.
 - **Se ve:** los nombres de los conjuntos de datos de la fila, cada uno enlazado, y luego la ficha del portal CM con su licencia.
 - **Rótulo:** «Cada dato enlaza a su fuente oficial».
-- **Estado:** hecho en producción: la lista de «Qué falta» enlaza cada conjunto a su ficha (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`). La tarjeta del buscador no tiene enlace a la fuente: por eso se pasa por «Qué falta».
+- **Estado:** hecho en producción: la lista de «Qué falta» enlaza cada conjunto a su ficha (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`, de Madrid capital y anterior a gap-0.3; el enlace a la ficha no cambia). La tarjeta del buscador no tiene enlace a la fuente: por eso se pasa por «Qué falta».
 
 <!-- voz:p5:inicio -->
 Cada dato dice de dónde sale. Aquí, la ficha oficial en el Portal de Datos Abiertos de la Comunidad de Madrid, con su licencia.
@@ -116,14 +116,14 @@ Entramos en la zona en tres dimensiones: sus colegios, sus centros de salud y su
 <!-- voz:p6:fin -->
 
 ### Plano 7 · 1:22–1:44 · Qué falta
-- **Acción:** pestaña «Qué falta» y elegir «Madrid (toda la ciudad)» en la lista de zonas, o abrir `/que-falta?zona=municipio/28079`. Recorrer las filas con el cursor de arriba abajo, despacio.
+- **Acción:** pestaña «Qué falta» y elegir «Puente de Vallecas» en la lista de zonas, o abrir `/que-falta?zona=distrito/2807913`. Recorrer las filas con el cursor de arriba abajo, despacio.
 - **Se ve:** las 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS, cada una con su valor, la referencia de los municipios de su tipo, la fiabilidad, los minutos a pie y de dónde sale.
-- **Rótulo:** «Comparado con los municipios de su tipo, urbanos o rurales».
-- **Zona:** la misma que en el bloque 3 del guion: Madrid capital (`/que-falta?zona=municipio/28079`). Con `gap-0.2` (D-213), centros de salud sale FALTA y farmacias CUBIERTO (`data/fixtures/contracts/zone_gap_list.madrid.fixture.json`). Comprobado en producción el 11 nov (`GET /api/v1/gaps/municipio/28079` y captura `prod_c4_madrid_que_falta_desktop.png`).
+- **Rótulo:** «Lo que tienes a 15 min andando, comparado con los municipios de su tipo».
+- **Zona:** la misma que en el bloque 3 del guion: Puente de Vallecas (`/que-falta?zona=distrito/2807913`). Con `gap-0.3` (D-217), escuelas infantiles sale FALTA (2,8 frente a 4,9) y farmacias CUBIERTO (4,5 frente a 3,1). Comprobado en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913`. Madrid capital ya no vale: con gap-0.3 no tiene ninguna fila de servicios en FALTA.
   - Tiene que tener al menos una fila FALTA y otra CUBIERTO.
 
 <!-- voz:p7:inicio -->
-Y lo que le falta. Cada servicio se compara con municipios parecidos, urbanos o rurales, según cuánta gente vive aquí. [Fila]: falta. [Fila]: cubierto. Y cuando no tenemos un dato, lo decimos: sin datos.
+Y lo que le falta. Medimos lo que la gente tiene a quince minutos andando y lo comparamos con municipios parecidos. [Fila]: falta. [Fila]: cubierto. Y cuando no tenemos un dato, lo decimos: sin datos.
 <!-- voz:p7:fin -->
 
 ### Plano 8 · 1:44–1:58 · Cierre
@@ -133,7 +133,7 @@ Y lo que le falta. Cada servicio se compara con municipios parecidos, urbanos o 
   - vidafacil-madrid.vercel.app
   - github.com/marianohernando/housing-intelligence · Código abierto (Apache-2.0)
   - [N] conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid
-- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; hoy 21, según `pitch/datasets_cm.md`).
+- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; 23 en producción el 12 nov, igual que `pitch/datasets_cm.md`).
 
 <!-- voz:p8:inicio -->
 [N] conjuntos de datos abiertos de la Comunidad de Madrid, con control de calidad y código abierto. Vida Fácil: encuentra tu sitio en Madrid.

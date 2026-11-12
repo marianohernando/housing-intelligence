@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de producción del 11 nov (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C4–C7 son de B (`evidence/map-004/2026-11-11/prod_*`). C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`) y llegan con el PR #11. Si no hay ninguna, el hueco sale con borde discontinuo |
+| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de producción del 11 nov (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C5–C7 son de B (`evidence/map-004/2026-11-11/prod_*`); C1 y C2, de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11). C3 y C4 ya no se toman de ahí: sus cifras cambiaron con gap-0.3 (12 nov). Si no hay ninguna, el hueco sale con borde discontinuo |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -32,10 +32,10 @@ Lo que rellena el build:
 ## Qué comprueba
 | Comprobación | Umbral | Resultado del 11 nov |
 |---|---|---|
-| Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra «21», números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
+| Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | Hoy solo falla por el nombre, que se pasa con `DECK_INTEGRANTES` (12 nov, con el PR #11 ya fusionado) |
+| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | Hoy (12 nov, tras gap-0.3) falla por el nombre, que se pasa con `DECK_INTEGRANTES`, y por las capturas C3 y C4, que hay que rehacer |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,13 +43,18 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
+| Slide 3 | Captura C3, «¿Y si cambias algo?» con las cifras de gap-0.3 («+5 min…: saldrían 50 zonas, 17 más») | B o C |
+| Slide 3 | Captura C4, «Qué falta» de Puente de Vallecas (`/que-falta?zona=distrito/2807913`) | B |
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
-- las cifras de Madrid capital se comprobaron en producción con `gap-0.2` (0,371 frente a 0,5553);
 - C1–C3 son capturas de producción de C (PR #11, fusionado el 12 nov) y C4–C7, de B.
 
-Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias»).
+Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
+- el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
+- la slide 2 cuenta 23 datasets CM (los dos de camas son del 12 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+
+Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias», con la lista de lo que se rehace tras gap-0.3).
 
 
 Para cerrar una marca, se quita `class="pending"` y su `data-pending` en `deck.html`. Si lo marcado no llega, se borra el elemento entero: nunca se deja un hueco ni un «próximamente».
