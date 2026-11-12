@@ -198,12 +198,16 @@ a {
   object-position: center;
 }
 
+/* C3 (12 nov, B): «Con tu búsqueda tal cual salen 33 zonas» y la opción «+5 min…: saldrían 50 zonas, 17 más» */
 .shot[data-shot="C3"] img {
-  object-view-box: inset(11% 5.1% 57.2% 5.1%);
+  object-view-box: inset(12.8% 4.6% 50.6% 4.6%);
 }
 
+/* C4 (12 nov, B): la fila de escuelas infantiles de Puente de Vallecas, las dos cifras (2,8 frente a 4,9) */
 .shot[data-shot="C4"] img {
-  object-view-box: inset(14.5% 54.2% 81.3% 4.6%);
+  object-view-box: inset(16.8% 1.6% 68.3% 1.6%);
+  object-fit: contain;
+  object-position: center;
 }
 
 .shot[data-shot="C5"] img {

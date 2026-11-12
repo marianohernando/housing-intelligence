@@ -2,6 +2,12 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Revisión del PR #17 de B (12 nov, tarde).** B aplicó las diferencias de abajo y dejó tres textos provisionales y una duda de maquetación:
+- `centros.camas`: hoy dice «Camas: Ministerio de Sanidad, Catálogo Nacional de Hospitales 2025». Va «Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025 del Ministerio de Sanidad.», con el enlace en el nombre del catálogo. Es una frase, no una etiqueta. Además, dice la fecha que pide el aviso legal donde se ven las camas, y la vista de zona no tiene pie. Sin `/datasets`, el mismo texto fijo.
+- `centros.sin_nombre_algunos`: hoy dice «La fuente oficial no publica el nombre de algunos de estos centros.». Va «Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.». En hospitales y centros de salud el nombre sale del catálogo del Ministerio, y si falta es porque no se pudo cruzar (por ejemplo, el Ramón y Cajal, D-218 §4), no porque nadie lo publique.
+- `mapa.atribucion`: hoy dice «Comunidad de Madrid · Powered by CRTM · Ministerio de Sanidad · CartoCiudad (IGN), CC BY 4.0 scne.es». Va «Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · CartoCiudad (IGN), CC BY 4.0 scne.es». Las pantallas con mapa no tienen pie: ahí tiene que estar la fecha del Ministerio, y también el Ayuntamiento, cuyo padrón da la población de los distritos que se ven.
+- **«Qué cuenta en cada servicio»** (`metodologia.md` §1.4) va como lista y no como tabla: en el móvil, con tres columnas, quedaban dos o tres palabras por línea. Cada punto es «**{servicio},** para {quién, en minúscula}: {qué cuenta}.».
+
 **Novedades del 12 nov, con gap-0.3 (D-217) y los hospitales (D-218) en producción.** Son para los textos que B dejó provisionales en el PR #13 («listed for line D» en `apps/web/src`). Las claves están en las secciones 3, 5, 5b y 10.
 - **Definitivos tal cual** (B puede quitar la marca):
   - `grupo.etiqueta` («Junto con sus vecinos») y `grupo.ayuda`;
@@ -227,6 +233,7 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `mapa.aria.encaje` | Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa. | `aria-label` del mapa tras buscar |
 | `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica. | {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
 | `mapa.aria.centros` | En el mapa salen, agrupados, {recuento en minúscula}; su lista está en «Todos los centros». | `aria-label` del mapa con una capa de centros (sección 5b) |
+| `mapa.atribucion` | Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · CartoCiudad (IGN), CC BY 4.0 scne.es | Atribución del mapa (MapLibre añade la del mapa base). «Powered by CRTM», «Ministerio de Sanidad…» y «CartoCiudad…» enlazados como en `pie.*`. Las pantallas con mapa no tienen pie: aquí van la fecha del Ministerio (aviso legal) y el Ayuntamiento (padrón por distrito). Revisión del PR #17 |
 | `mapa.sin_calles` | Mapa sin fondo de calles. | Aviso suave cuando solo falla el fondo de calles y las zonas sí se ven (paquete sin red) |
 | `mapa.zona.tooltip` | {zona}: {pct} % de encaje | Al pasar por encima |
 | `mapa.zona.tooltip.sin_datos` | {zona}: sin datos suficientes | |
@@ -388,7 +395,9 @@ Panel de la vista de zona con cada tipo de centro, su recuento, su capa en el ma
 | `centros.cargando` | Buscando los centros de {zona}… | |
 | `centros.lista` | Ver la lista ({n}) | |
 | `centros.colegios_fila` | Públicos y concertados: los mismos que cuenta «Qué falta». | Bajo el recuento de colegios |
-| `centros.sin_nombre` | La fuente oficial no publica el nombre de cada centro de este tipo. | |
+| `centros.sin_nombre` | La fuente oficial no publica el nombre de cada centro de este tipo. | Si no sale el nombre de ninguno |
+| `centros.sin_nombre_algunos` | Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales. | Si falta el de algunos. Revisión del PR #17 |
+| `centros.camas` | Camas instaladas a 31 de diciembre de 2024, según el [Catálogo Nacional de Hospitales 2025] del Ministerio de Sanidad. | Bajo el recuento de hospitales. Enlace al catálogo (`url` de `/datasets`), con «(se abre en una pestaña nueva)» oculto. La fecha sale del nombre del catálogo en `/datasets` («actualizado a 31 de diciembre de 2024»); sin `/datasets`, este texto fijo. Revisión del PR #17 |
 | `centros.recuento.colegio` | {n} colegios con primaria en {zona} · 1 colegio con primaria en {zona} · Ningún colegio con primaria en {zona} | |
 | `centros.recuento.escuela_infantil` | {n} escuelas infantiles en {zona} · 1 escuela infantil en {zona} · Ninguna escuela infantil en {zona} | |
 | `centros.recuento.centro_salud` | {n} centros de salud y consultorios en {zona} · 1 centro de salud o consultorio en {zona} · Ningún centro de salud ni consultorio en {zona} | Cambia el 12 nov: la lista incluye los consultorios |

@@ -55,15 +55,12 @@ Así se pone cada nota:
 La zona tiene la media de sus calles, según cuánta gente vive en cada una. Así, un colegio en el límite de dos distritos sirve a los dos, y quien vive a más de 15 minutos de todos no suma nada en esa fila.
 
 **Qué cuenta en cada servicio.** Solo lo que se publica; nunca nos lo inventamos centro a centro.
-
-| Servicio | Qué cuenta | Para quién |
-|---|---|---|
-| Escuelas infantiles | Cada escuela, pública o privada, cuenta como una: nadie publica sus plazas | Niños de 0 a 4 años |
-| Colegios | Aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios | Niños de 5 a 14 años |
-| Centros de salud | Cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad | Todos los vecinos |
-| Mayores | Plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte | Personas de 65 años o más |
-| Farmacias | Cada farmacia cuenta como una | Todos los vecinos |
-| Vivienda | No va a pie: viviendas de más de 90 m² por cada 100 hogares de 4 o más personas | Hogares de 4 o más personas |
+- **Escuelas infantiles,** para niños de 0 a 4 años: cada escuela, pública o privada, cuenta como una, porque nadie publica sus plazas.
+- **Colegios,** para niños de 5 a 14 años: aulas de primaria públicas y concertadas. La Comunidad publica cuántas tiene cada municipio, no cada colegio, así que las repartimos a partes iguales entre sus colegios.
+- **Centros de salud,** para todos los vecinos: cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad.
+- **Mayores,** para personas de 65 años o más: plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte.
+- **Farmacias,** para todos los vecinos: cada farmacia cuenta como una.
+- **Vivienda,** para hogares de 4 o más personas: no va a pie. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares.
 
 **Con qué comparamos.** Hacemos la misma cuenta en **los demás municipios de su mismo tipo** en la Comunidad de Madrid: los rurales con los rurales y los urbanos con los urbanos. Rural es lo que dice la ley de medio rural: menos de 30.000 habitantes y menos de 100 por km². Los distritos de Madrid son urbanos. Una zona nunca se compara consigo misma: un distrito de Madrid se compara con los demás municipios urbanos, sin contar Madrid.
 
@@ -166,7 +163,7 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 | 1.4 | FALTA = ratio < 0,8 y significativa (intervalo exacto de Poisson al 95 %); CUBIERTO = ratio ≥ 1; JUSTO, el resto | D-213 (punto 2: regla de los cuatro quintos, Garwood, Fingertips, Spiegelhalter 2005) | Hecho |
 | 1.4 | Zona pequeña para comparar (casos esperados < 3,69, también con los vecinos): nunca FALTA; La Acebeda, sin farmacia a pie y con 70 habitantes | D-213 (punto 3) · D-217 §6 · en producción, `GET /api/v1/gaps?level=municipio&row=farmacia` (12 nov): La Acebeda, JUSTO, valor 0, `reliable: false`, `comparison_group: null` | Hecho |
 | 1.4 | Ejemplo: Puente de Vallecas, escuelas infantiles, FALTA: 2,781 frente a 4,87 (ratio 0,571); la más cercana, a 6,258 min (mediana de las calles); Centro, ratio 0,661, JUSTO | Producción, 12 nov: `GET /api/v1/gaps/distrito/2807913` (`gap-0.3`, `data_version: 2026-11-12`) y `GET /api/v1/gaps?level=distrito&row=escuela_infantil` | Hecho. Sustituye al de Madrid capital, que con `gap-0.3` sale JUSTO en centros de salud (0,3603 frente a 0,3799; D-217 §7) |
-| 1.4 | Las 6 filas, qué cuenta como capacidad y para quién | D-217 §3 (tabla) · `gap_row` y `formula` de `data/catalog/features/`: `escuelas_infantiles_a_pie_por_1000_ninos.yaml`, `aulas_primaria_a_pie_por_1000_ninos.yaml`, `centros_salud_a_pie_por_10000_hab.yaml`, `plazas_mayores_a_pie_por_100_mayores.yaml`, `farmacias_a_pie_por_10000_hab.yaml` y `viviendas_grandes_por_100_hogares_grandes.yaml` | Hecho (DATA-AUDIT T2a+T2b, `b88c4fb`). Las features de `gap-0.2` (centros por habitante) siguen como datos extra de cada fila |
+| 1.4 | Las 6 filas, qué cuenta como capacidad y para quién | D-217 §3 (tabla) · `gap_row` y `formula` de `data/catalog/features/`: `escuelas_infantiles_a_pie_por_1000_ninos.yaml`, `aulas_primaria_a_pie_por_1000_ninos.yaml`, `centros_salud_a_pie_por_10000_hab.yaml`, `plazas_mayores_a_pie_por_100_mayores.yaml`, `farmacias_a_pie_por_10000_hab.yaml` y `viviendas_grandes_por_100_hogares_grandes.yaml` | Hecho (DATA-AUDIT T2a+T2b, `b88c4fb`). Las features de `gap-0.2` (centros por habitante) siguen como datos extra de cada fila. En la pestaña va como lista, no como tabla: con tres columnas, en el móvil quedaban dos o tres palabras por línea (revisión del PR #17, 12 nov) |
 | 1.4 | 2SFCA: capacidad de cada centro entre la gente a 15 min o menos; cada calle suma sus cuotas; la zona, media ponderada por población; cruza fronteras; quien está a más de 15 min suma 0 | D-217 §2 (Luo y Wang, 2003) · `packages/domain/src/hi_domain/access/fca.py` · `services/features/src/hi_features/fca.py` (`two_step_fca`) · test de propiedades de capacidad conservada | Hecho |
 | 1.4 | Pueblos pequeños con sus vecinos del mismo tipo a 15 km o menos en línea recta, hasta 3,69 casos esperados; el estado es el del grupo; distritos sin agrupar | D-217 §6 (Talbot et al., 2000; zonas básicas de salud rurales: radio equivalente mediano 7,7 km y extensión mediana 22,9 km) · `hi_domain/gaps.py` (`pool_with_neighbours`) · `comparison_group` en la API (Redueña, farmacia: 7 municipios, ratio del grupo 1,508; producción, 12 nov) | Hecho |
 | 1.4 | Vivienda: SIN DATOS en los distritos de Madrid; no va a pie | `viviendas_grandes_por_100_hogares_grandes.yaml` (`levels.distrito: not_published`, `limitations`) · `phase-gap001-f3b.txt` (Chamartín: `SOURCE_MISSING`) · D-217 («vivienda no cambia») | Hecho |

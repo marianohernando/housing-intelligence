@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de producción del 11 nov (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C5–C7 son de B (`evidence/map-004/2026-11-11/prod_*`); C1 y C2, de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11). C3 y C4 ya no se toman de ahí: sus cifras cambiaron con gap-0.3 (12 nov). Si no hay ninguna, el hueco sale con borde discontinuo |
+| `../capturas/C1.png`… | Capturas reales (C1–C7 de `pitch/slides.md`). Si no hay una aquí, el build usa la de la evidencia (`EVIDENCE_CAPTURES` en `build.py`), recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`); C1 y C2, de C en producción (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11); C3 y C4, de B tras gap-0.3 (`evidence/map-004/2026-11-12/deck/`, PR #17). Si no hay ninguna, el hueco sale con borde discontinuo |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -35,7 +35,7 @@ Lo que rellena el build:
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
 | Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | Hoy (12 nov, tras gap-0.3) falla por el nombre, que se pasa con `DECK_INTEGRANTES`, y por las capturas C3 y C4, que hay que rehacer |
+| `--final` | Ninguna marca «pendiente» y las 7 capturas presentes | 12 nov: con `DECK_INTEGRANTES` y las C3 y C4 de B (PR #17) genera sin fallos. Hasta que se fusione el #17, falta su hueco |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,8 +43,7 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slide 3 | Captura C3, «¿Y si cambias algo?» con las cifras de gap-0.3 («+5 min…: saldrían 50 zonas, 17 más») | B o C |
-| Slide 3 | Captura C4, «Qué falta» de Puente de Vallecas (`/que-falta?zona=distrito/2807913`) | B |
+| Slide 3 | Capturas C3 y C4: hechas por B (PR #17, `evidence/map-004/2026-11-12/deck/`); llegan al fusionar el #17. Con ellas, `--final` genera (probado el 12 nov con copias locales) | Fusión del #17 |
 
 Cerradas el 11 nov:
 - el buscador está encendido en producción (`deploy-12-buscador.md`, PR #11);
