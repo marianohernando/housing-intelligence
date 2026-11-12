@@ -70,3 +70,18 @@ scenarios:
       anchors: [{kind: other, label: Hospital La Paz, lon: -3.6873, lat: 40.4813, days_per_week: 1, max_minutes: null}]
       priorities: [sin_escaleras, salud, transporte]
     expect: {min_results: 10, top5_step_free_within_minutes: 15}
+# D-232 (fit-0.7): the search inside one district of Madrid ranks its barrios with the same engine
+# (POST /api/v1/search/barrios). Mariano's example: San Blas-Canillejas, with Simancas. `barrios`
+# is how many are evaluated; `ranked` and `near_miss` name barrios that must be among the results
+# or the near misses; `distinct_pct_min` asks the barrios to differ (the point of going below the
+# district); `own_trips` checks every trip is the barrio's own, not the district's fallback.
+barrio_scenarios:
+  - profile_id: golden_family  # the demo family, in San Blas-Canillejas
+    distrito: "2807920"
+    scenario:
+      budget: {kind: rent, amount_eur: 1500}
+      household: {adults: 2, minors: 2, minor_ages: [4, 8]}
+      anchors: [{kind: work, label: Paseo de la Castellana (Azca), lon: -3.6930, lat: 40.4500, days_per_week: 4, max_minutes: null}]
+      nearby: [{need: colegio, max_walk_minutes: 10, required: true}]
+      priorities: [colegios, transporte, salud]
+    expect: {barrios: 8, min_results: 6, ranked: [Simancas], near_miss: [Rejas], binding: "near:colegio", distinct_pct_min: 3, own_trips: true, top_within_minutes: 45}

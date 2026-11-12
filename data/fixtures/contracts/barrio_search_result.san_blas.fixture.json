@@ -1,0 +1,1552 @@
+{
+  "scenario": {
+    "schema_version": 2,
+    "budget": {
+      "kind": "rent",
+      "amount_eur": 1500
+    },
+    "min_floor_area_m2": null,
+    "household": {
+      "adults": 2,
+      "minors": 2,
+      "minor_ages": [
+        4,
+        8
+      ],
+      "seniors_in_care": 0
+    },
+    "anchors": [
+      {
+        "kind": "work",
+        "label": "Paseo de la Castellana (Azca)",
+        "lon": -3.693,
+        "lat": 40.45,
+        "days_per_week": 4,
+        "max_minutes": null
+      }
+    ],
+    "nearby": [
+      {
+        "need": "colegio",
+        "max_walk_minutes": 10,
+        "required": true
+      }
+    ],
+    "priorities": [
+      "colegios",
+      "transporte",
+      "salud"
+    ]
+  },
+  "results": [
+    {
+      "rank": 1,
+      "zone": {
+        "level": "barrio",
+        "code": "28079207",
+        "admin_unit_id": "ES.28.BAR.28079207",
+        "name": "Canillejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.60956,
+        "center_lat": 40.44229
+      },
+      "match_pct": 97,
+      "confidence": 0.933,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 7 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 6.566,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.596,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 10 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 10.17,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "42 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.156 €/mes por 77 m² (15,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.6,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.01,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.6,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1156.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.6,
+          "explanation": "Alquiler ≈ 1.156 €/mes por 77 m² (15,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 6.6,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 7 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1156.0,
+      "gap_highlights": []
+    },
+    {
+      "rank": 2,
+      "zone": {
+        "level": "barrio",
+        "code": "28079204",
+        "admin_unit_id": "ES.28.BAR.28079204",
+        "name": "Arcos",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.61852,
+        "center_lat": 40.42105
+      },
+      "match_pct": 97,
+      "confidence": 0.933,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 5 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 4.991,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.269,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 11 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 11.11,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "43 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.6,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.94,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.6,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1150.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.6,
+          "explanation": "Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.0,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 5 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1150.0,
+      "gap_highlights": []
+    },
+    {
+      "rank": 3,
+      "zone": {
+        "level": "barrio",
+        "code": "28079201",
+        "admin_unit_id": "ES.28.BAR.28079201",
+        "name": "Simancas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.62488,
+        "center_lat": 40.43405
+      },
+      "match_pct": 97,
+      "confidence": 0.933,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 7 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 6.879,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.168,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 13 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 12.61,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "37 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.228 €/mes por 77 m² (15,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.6,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.95,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.6,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1228.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.6,
+          "explanation": "Alquiler ≈ 1.228 €/mes por 77 m² (15,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 6.9,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 7 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1228.0,
+      "gap_highlights": []
+    },
+    {
+      "rank": 4,
+      "zone": {
+        "level": "barrio",
+        "code": "28079205",
+        "admin_unit_id": "ES.28.BAR.28079205",
+        "name": "Rosas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.59371,
+        "center_lat": 40.42911
+      },
+      "match_pct": 96,
+      "confidence": 0.933,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 5 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.249,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.999,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 12 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 11.78,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.6,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.93,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.6,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1150.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.6,
+          "explanation": "Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.2,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 5 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1150.0,
+      "gap_highlights": []
+    },
+    {
+      "rank": 5,
+      "zone": {
+        "level": "barrio",
+        "code": "28079203",
+        "admin_unit_id": "ES.28.BAR.28079203",
+        "name": "Amposta",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.62243,
+        "center_lat": 40.42585
+      },
+      "match_pct": 96,
+      "confidence": 0.913,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 7 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 7.475,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.646,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 12 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 12.33,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "38 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.224 €/mes por 77 m² (15,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.3,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.9,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.3,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1224.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.3,
+          "explanation": "Alquiler ≈ 1.224 €/mes por 77 m² (15,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 7.5,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 7 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1224.0,
+      "gap_highlights": []
+    },
+    {
+      "rank": 6,
+      "zone": {
+        "level": "barrio",
+        "code": "28079208",
+        "admin_unit_id": "ES.28.BAR.28079208",
+        "name": "El Salvador",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.62794,
+        "center_lat": 40.44415
+      },
+      "match_pct": 95,
+      "confidence": 0.933,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 10 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 10.0,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.638,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "salud",
+          "text": "Centro de salud a unos 16 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 16.17,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "40 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.230 €/mes por 77 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.6,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.97,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.6,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1230.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.6,
+          "explanation": "Alquiler ≈ 1.230 €/mes por 77 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 10.0,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 10 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1230.0,
+      "gap_highlights": []
+    },
+    {
+      "rank": 7,
+      "zone": {
+        "level": "barrio",
+        "code": "28079202",
+        "admin_unit_id": "ES.28.BAR.28079202",
+        "name": "Hellín",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.61675,
+        "center_lat": 40.43009
+      },
+      "match_pct": 93,
+      "confidence": 0.913,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 4 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 4.377,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.267,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "salud",
+          "text": "Centro de salud a unos 19 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 19.46,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.206 €/mes por 77 m² (15,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.3,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.66,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.3,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1206.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.3,
+          "explanation": "Alquiler ≈ 1.206 €/mes por 77 m² (15,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 4.4,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 4 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1206.0,
+      "gap_highlights": []
+    }
+  ],
+  "near_misses": [
+    {
+      "rank": 1,
+      "zone": {
+        "level": "barrio",
+        "code": "28079206",
+        "admin_unit_id": "ES.28.BAR.28079206",
+        "name": "Rejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.56904,
+        "center_lat": 40.44387
+      },
+      "match_pct": 55,
+      "confidence": 0.933,
+      "facts": [
+        {
+          "kind": "weakness",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 35 min andando",
+          "confidence": 0.999,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 35.45,
+            "unit": "min",
+            "confidence": 0.999,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 0.999,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 3.035,
+            "unit": "min",
+            "confidence": 0.999,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "salud",
+          "text": "Centro de salud a unos 27 min andando",
+          "confidence": 0.999,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 26.96,
+            "unit": "min",
+            "confidence": 0.999,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "43 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.6,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.93,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.6,
+            "null_reason": null,
+            "level": "barrio",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1150.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.6,
+          "explanation": "Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "FAIL",
+          "value": 35.5,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.999,
+          "explanation": "La mitad de sus calles está a 35 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [
+        "near:colegio"
+      ],
+      "estimated_cost_eur": 1150.0,
+      "gap_highlights": []
+    }
+  ],
+  "all_zones": [
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079201",
+        "admin_unit_id": "ES.28.BAR.28079201",
+        "name": "Simancas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.62488,
+        "center_lat": 40.43405
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079202",
+        "admin_unit_id": "ES.28.BAR.28079202",
+        "name": "Hellín",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.61675,
+        "center_lat": 40.43009
+      },
+      "match_pct": 93,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079203",
+        "admin_unit_id": "ES.28.BAR.28079203",
+        "name": "Amposta",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.62243,
+        "center_lat": 40.42585
+      },
+      "match_pct": 96,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079204",
+        "admin_unit_id": "ES.28.BAR.28079204",
+        "name": "Arcos",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.61852,
+        "center_lat": 40.42105
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079205",
+        "admin_unit_id": "ES.28.BAR.28079205",
+        "name": "Rosas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.59371,
+        "center_lat": 40.42911
+      },
+      "match_pct": 96,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079206",
+        "admin_unit_id": "ES.28.BAR.28079206",
+        "name": "Rejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.56904,
+        "center_lat": 40.44387
+      },
+      "match_pct": 55,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079207",
+        "admin_unit_id": "ES.28.BAR.28079207",
+        "name": "Canillejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.60956,
+        "center_lat": 40.44229
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "barrio",
+        "code": "28079208",
+        "admin_unit_id": "ES.28.BAR.28079208",
+        "name": "El Salvador",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.62794,
+        "center_lat": 40.44415
+      },
+      "match_pct": 95,
+      "passes_all": true,
+      "failed_constraints": []
+    }
+  ],
+  "reality_check": {
+    "zones_evaluated": 8,
+    "zones_passing": 7,
+    "zones_unknown": 0,
+    "binding_constraint": "near:colegio",
+    "relaxations": [
+      {
+        "constraint_id": "budget",
+        "label": "+150 €/mes",
+        "zones_if_relaxed": 7,
+        "added_zones": 0,
+        "relaxed_scenario": {
+          "schema_version": 2,
+          "budget": {
+            "kind": "rent",
+            "amount_eur": 1650
+          },
+          "min_floor_area_m2": null,
+          "household": {
+            "adults": 2,
+            "minors": 2,
+            "minor_ages": [
+              4,
+              8
+            ],
+            "seniors_in_care": 0
+          },
+          "anchors": [
+            {
+              "kind": "work",
+              "label": "Paseo de la Castellana (Azca)",
+              "lon": -3.693,
+              "lat": 40.45,
+              "days_per_week": 4,
+              "max_minutes": null
+            }
+          ],
+          "nearby": [
+            {
+              "need": "colegio",
+              "max_walk_minutes": 10,
+              "required": true
+            }
+          ],
+          "priorities": [
+            "colegios",
+            "transporte",
+            "salud"
+          ]
+        }
+      },
+      {
+        "constraint_id": "near:colegio",
+        "label": "+5 min a pie hasta colegio con primaria",
+        "zones_if_relaxed": 7,
+        "added_zones": 0,
+        "relaxed_scenario": {
+          "schema_version": 2,
+          "budget": {
+            "kind": "rent",
+            "amount_eur": 1500
+          },
+          "min_floor_area_m2": null,
+          "household": {
+            "adults": 2,
+            "minors": 2,
+            "minor_ages": [
+              4,
+              8
+            ],
+            "seniors_in_care": 0
+          },
+          "anchors": [
+            {
+              "kind": "work",
+              "label": "Paseo de la Castellana (Azca)",
+              "lon": -3.693,
+              "lat": 40.45,
+              "days_per_week": 4,
+              "max_minutes": null
+            }
+          ],
+          "nearby": [
+            {
+              "need": "colegio",
+              "max_walk_minutes": 15,
+              "required": true
+            }
+          ],
+          "priorities": [
+            "colegios",
+            "transporte",
+            "salud"
+          ]
+        }
+      }
+    ]
+  },
+  "datasets": [
+    {
+      "dataset_id": "aeat_alquiler_nuevos_contratos_codigo_postal",
+      "name": "Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos por códigos postales para municipios de más de 20.000 viviendas habituales arrendadas (ejercicio 2024)",
+      "publisher": "Agencia Tributaria",
+      "is_cm_open_data": false,
+      "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+      "source_name": "Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
+      "version": "2026-11-12-9a1c2ed26a07",
+      "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
+      "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
+    },
+    {
+      "dataset_id": "aeat_alquiler_nuevos_contratos_municipios",
+      "name": "Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos para municipios de más de 20.000 habitantes (ejercicio 2024)",
+      "publisher": "Agencia Tributaria",
+      "is_cm_open_data": false,
+      "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+      "source_name": "Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
+      "version": "2026-11-12-f7bc11db960a",
+      "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
+      "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
+    },
+    {
+      "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
+      "name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1934259",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-7a83b45c1f51",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "name": "Registro de centros de atención social",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-1332ab0048a6",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "name": "Centros, servicios y establecimientos sanitarios",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-adef54b3fabc",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "name": "Oficinas de farmacia",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-de61d48d7b4a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "crtm_gtfs_autobuses_urbanos",
+      "name": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-41f7f9c15b61",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_cercanias",
+      "name": "Oferta planificada de la Red de Cercanías Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-72e73ca7b487",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_emt",
+      "name": "Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-8478ae5c9262",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_interurbanos",
+      "name": "Oferta planificada de la Red de Autobuses Interurbanos",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-5bbf3c95047c",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_metro",
+      "name": "Oferta planificada de la Red de Metro",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-840132dbc546",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_metro_ligero",
+      "name": "Oferta planificada de la Red de Metro Ligero",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-e6a5daaf76ec",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_topologia_cercanias",
+      "name": "Topología de la Red de Cercanías Madrid: estaciones y su grado de accesibilidad",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-cbd6ab397c04",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_topologia_metro",
+      "name": "Topología de la Red de Metro: estaciones y su grado de accesibilidad",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-c788fd9285b8",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_topologia_metro_ligero",
+      "name": "Topología de la Red de Metro Ligero / Tranvía: estaciones y su grado de accesibilidad",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-9e34e07839c7",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "osm_parques",
+      "name": "Parques de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-12-199d4d500a72",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
+    }
+  ],
+  "methodology_version": "fit-0.7",
+  "distrito": {
+    "level": "distrito",
+    "code": "2807920",
+    "admin_unit_id": "ES.28.DIS.2807920",
+    "name": "San Blas-Canillejas",
+    "municipio_ine": "28079",
+    "municipio_name": "Madrid",
+    "center_lon": -3.60407,
+    "center_lat": 40.42918
+  }
+}

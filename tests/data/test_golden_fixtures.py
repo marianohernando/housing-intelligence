@@ -89,3 +89,21 @@ def test_golden_search_scenarios_are_valid_and_cover_the_demo_case() -> None:
         assert all(a.max_minutes is None for a in scenario.anchors)  # no travel times yet
         for anchor in scenario.anchors:
             assert is_within_madrid(anchor.lon, anchor.lat), anchor.label
+
+
+def test_golden_barrio_searches_are_valid_and_cover_simancas() -> None:
+    """D-232: every golden search inside a district is a valid request, from a golden profile,
+    and Mariano's example (San Blas-Canillejas, with Simancas) is there."""
+    from hi_contracts.public import BarrioSearchRequest
+
+    data = yaml.safe_load((GOLDEN / "search_scenarios.yaml").read_text())
+    items = data["barrio_scenarios"]
+    assert {i["profile_id"] for i in items} <= {p["profile_id"] for p in _profiles()}
+    for item in items:
+        request = BarrioSearchRequest(
+            scenario=ScenarioState.model_validate(item["scenario"]), distrito=item["distrito"]
+        )
+        assert all(a.max_minutes is None for a in request.scenario.anchors)
+    assert any(
+        i["distrito"] == "2807920" and "Simancas" in i["expect"].get("ranked", []) for i in items
+    )

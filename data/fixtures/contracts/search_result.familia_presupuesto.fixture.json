@@ -5863,7 +5863,7 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
-      "version": "2026-11-10-1b018a22325c",
+      "version": "2026-11-12-72e73ca7b487",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
@@ -5896,7 +5896,7 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
-      "version": "2026-11-10-cccabfd6f025",
+      "version": "2026-11-12-840132dbc546",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
@@ -5907,7 +5907,7 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
-      "version": "2026-11-10-599f9acfa270",
+      "version": "2026-11-12-e6a5daaf76ec",
       "license": "CRTM Licencia de datos abiertos (LDA)",
       "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
@@ -5967,5 +5967,5 @@
       "attribution_text": "© OpenStreetMap contributors, ODbL."
     }
   ],
-  "methodology_version": "fit-0.6"
+  "methodology_version": "fit-0.7"
 }

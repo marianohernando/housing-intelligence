@@ -3,7 +3,8 @@
 Each zone gets a % of fit with 3-5 tangible facts underneath, each with its confidence; never
 a grade over 100. Hard constraints are PASS / FAIL / UNKNOWN and UNKNOWN never counts as PASS
 (CLAUDE.md §14); zones failing one constraint are only shown as explicit near misses. Zones
-are municipios, with Madrid capital split into its 21 districts.
+are municipios, with Madrid capital split into its 21 districts; inside a district, its
+barrios (D-232).
 """
 
 from enum import StrEnum
@@ -11,7 +12,7 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from hi_contracts.catalog.enums import GapRowKey
+from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public.common import DatasetRef, IndicatorValue, ZoneRef
 from hi_contracts.public.gaps import GapStatus
 from hi_contracts.public.scenario import ScenarioState
@@ -167,3 +168,40 @@ class SearchResult(BaseModel):
     reality_check: RealityCheck
     datasets: list[DatasetRef] = Field(description="Every dataset behind this result")
     methodology_version: str
+
+
+MADRID_DISTRICT_PATTERN = r"^28079\d{2}$"
+
+
+class BarrioSearchRequest(BaseModel):
+    """POST /api/v1/search/barrios (D-232): the same scenario as POST /search, inside one
+    district of Madrid capital. A relaxed scenario of its Reality Check goes back here with
+    the same `distrito`."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    scenario: ScenarioState
+    distrito: str = Field(
+        pattern=MADRID_DISTRICT_PATTERN,
+        description="INE code of a district of Madrid capital (28079 + its two digits)",
+        examples=["2807920"],
+    )
+
+
+class BarrioSearchResult(SearchResult):
+    """The barrios of one Madrid district ranked by the same engine as POST /search (D-232):
+    the same conditions, % of fit, facts, near misses and Reality Check, with barrios as zones.
+    `gap_highlights` stay empty: «Qué falta» is by district (GET /gaps/distrito/{code})."""
+
+    distrito: ZoneRef
+
+    @model_validator(mode="after")
+    def _only_barrios_of_the_district(self) -> Self:
+        zones = [z.zone for z in [*self.results, *self.near_misses]] + [
+            z.zone for z in self.all_zones
+        ]
+        for zone in zones:
+            if zone.level != TerritoryLevel.BARRIO or not zone.code.startswith(self.distrito.code):
+                msg = f"only barrios of {self.distrito.code}: got {zone.level} {zone.code}"
+                raise ValueError(msg)
+        return self

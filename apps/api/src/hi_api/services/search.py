@@ -44,7 +44,7 @@ _ZONES = text(
     """
 )
 # One row per feature and zone: the latest period of the newest version.
-_FIT_VALUES = text(
+FIT_VALUES = text(
     """
     SELECT DISTINCT ON (v.feature_id, v.territory_level, v.territory_code)
            v.feature_id, v.territory_level, v.territory_code, v.value, v.null_reason,
@@ -69,7 +69,7 @@ class Loaded(NamedTuple):
     commute_versions: dict[str, str]  # the GTFS feeds behind the trips to the places of work
 
 
-def _zone_ref(row: dict[str, Any]) -> ZoneRef:
+def zone_ref(row: dict[str, Any]) -> ZoneRef:
     return ZoneRef(
         level=TerritoryLevel(row["level"]),
         code=row["code"],
@@ -103,7 +103,7 @@ class Indicators(NamedTuple):
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
 
 
-def _indicators(rows: Iterable[dict[str, Any]]) -> Indicators:
+def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     rent: dict[tuple[str, str], IndicatorValue] = {}
     price: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
@@ -149,8 +149,8 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     split = list(SPLIT_BY_DISTRICT)
     zone_rows = [dict(r) for r in conn.execute(_ZONES, {"split": split}).mappings()]
     levels = [level.value for level in LEVELS]
-    value_rows = [dict(r) for r in conn.execute(_FIT_VALUES, {"levels": levels}).mappings()]
-    indicators = _indicators(value_rows)
+    value_rows = [dict(r) for r in conn.execute(FIT_VALUES, {"levels": levels}).mappings()]
+    indicators = indicators_by_zone(value_rows)
     highlights, gap_datasets, warnings = _highlights(conn, highlight_rows(scenario))
     trips = commutes(conn, scenario.anchors)
     zones = []
@@ -159,7 +159,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
         zone_id = str(row["admin_unit_id"])
         zones.append(
             ZoneData(
-                zone=_zone_ref(row),
+                zone=zone_ref(row),
                 rent=indicators.rent.get(key),
                 rent_note=indicators.rent_note,
                 price=indicators.price.get(key),
@@ -178,7 +178,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     )
 
 
-def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
+def union_datasets(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
     unique = {r.dataset_id: r for r in refs}
     return [unique[k] for k in sorted(unique)]
 
@@ -213,7 +213,7 @@ def search(conn: Connection, scenario: ScenarioState) -> tuple[SearchResult, lis
         near_misses=outcome.near_misses,
         all_zones=outcome.all_zones,
         reality_check=outcome.reality_check,
-        datasets=_union([*dataset_refs(conn, loaded.versions), *loaded.gap_datasets]),
+        datasets=union_datasets([*dataset_refs(conn, loaded.versions), *loaded.gap_datasets]),
         methodology_version=FIT_VERSION,
     )
     data_version = max(loaded.computed).date().isoformat() if loaded.computed else None

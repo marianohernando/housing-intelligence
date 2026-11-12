@@ -124,7 +124,10 @@ def budget_check(
     area: FloorArea,
     price: IndicatorValue | None = None,
     rent_note: str | None = None,
+    rent_missing: str | None = None,
 ) -> ConstraintCheck:
+    """`rent_missing`: why this zone has no rent, when the data says (D-232: a barrio with no
+    place carrying a postcode); else the generic reason."""
     if budget.kind is BudgetKind.BUY:
         return _purchase_check(budget, price, area)
     if rent is None or rent.value is None:
@@ -135,7 +138,8 @@ def budget_check(
             threshold=float(budget.amount_eur),
             unit="€/mes",
             confidence=0.0,
-            explanation=(
+            explanation=rent_missing
+            or (
                 "Sin datos de alquiler para esta zona: la fuente solo publica las zonas con "
                 "contratos suficientes"
             ),

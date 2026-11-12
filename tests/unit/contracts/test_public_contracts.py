@@ -8,6 +8,8 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from hi_contracts.public import (
+    BarrioSearchRequest,
+    BarrioSearchResult,
     DatasetList,
     GapImpact,
     GapImpactRow,
@@ -30,6 +32,8 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "gap_row_map": GapRowMap,
     "gap_impact": GapImpact,
     "search_result": SearchResult,
+    "barrio_search_request": BarrioSearchRequest,  # D-232
+    "barrio_search_result": BarrioSearchResult,
     "dataset_list": DatasetList,
     "places": PlaceCollection,
 }
@@ -232,3 +236,28 @@ def test_impact_row_rejects_an_unsorted_or_inconsistent_ranking() -> None:
         GapImpactRow.model_validate(row | {"people_in_falta": 31})
     with pytest.raises(ValidationError, match="one ranked zone"):
         GapImpactRow.model_validate(row | {"zones_in_falta": 3})
+
+
+@pytest.mark.parametrize("distrito", ["2800101", "28079201", "2807", "Madrid"])
+def test_barrio_search_asks_for_a_district_of_madrid(distrito: str) -> None:
+    """D-232: the barrios are those of one Madrid district (7-digit INE code, 28079 + DD)."""
+    BarrioSearchRequest.model_validate({"scenario": {}, "distrito": "2807920"})
+    with pytest.raises(ValidationError):
+        BarrioSearchRequest.model_validate({"scenario": {}, "distrito": distrito})
+
+
+def test_barrio_result_holds_only_barrios_of_its_district() -> None:
+    path = FIXTURES / "barrio_search_result.san_blas.fixture.json"
+    data: dict[str, Any] = json.loads(path.read_text())
+    result = BarrioSearchResult.model_validate(data)
+    assert result.distrito.level == "distrito"
+    assert {z.zone.level for z in result.all_zones} == {"barrio"}
+    assert result.reality_check.zones_evaluated == len(result.all_zones)
+    stray = json.loads(json.dumps(data))
+    stray["all_zones"][0]["zone"]["code"] = "28079011"  # Palacio, in Centro
+    with pytest.raises(ValidationError, match="barrios of"):
+        BarrioSearchResult.model_validate(stray)
+    district = json.loads(json.dumps(data))
+    district["all_zones"][0]["zone"]["level"] = "distrito"
+    with pytest.raises(ValidationError, match="barrios of"):
+        BarrioSearchResult.model_validate(district)

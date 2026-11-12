@@ -543,3 +543,40 @@ def test_rent_fact_says_what_the_figure_is_from_the_data() -> None:
     old = cost_fact(rent, area, 1500.0)
     assert old.fact.text.startswith("Alquiler medio ≈ 1.270 €/mes")
     assert old.fact.text.endswith("media de los contratos vigentes; uno nuevo suele costar más)")
+
+
+# D-232 (fit-0.7): the search inside a district ranks its barrios with the same engine.
+def test_a_trip_measured_for_the_whole_district_says_so() -> None:
+    """A barrio without its own trip takes its district's: the fact and the condition say it
+    in plain words, and the lower confidence travels with them."""
+    scenario = family(anchors=[CASTELLANA.model_copy(update={"max_minutes": 40})])
+    note = "trayecto medido para todo el distrito"
+    trip = Commute(minutes=35.0, confidence=0.56, note=note)
+    barrio = ZoneData(zone("b").zone, zone("b").rent, zone("b").walk, commute={0: trip})
+    fit = evaluate(scenario, barrio)
+    check = next(c for c in fit.constraints if c.constraint_id == "commute:0")
+    assert check.status is ConstraintStatus.PASS
+    assert check.explanation.endswith(f"({note})")
+    assert check.confidence == pytest.approx(0.56)
+    work = next(f for f in fit.facts if f.topic is FactTopic.TRAYECTO)
+    assert work.text.startswith("35 min en transporte público")
+    assert work.text.endswith(f"({note})")
+    own = evaluate(scenario, with_commute(zone("o"), 35.0))
+    assert not any(note in f.text for f in own.facts if f.topic is FactTopic.TRAYECTO)
+
+
+def test_an_unknown_rent_gives_the_reason_the_data_has_for_it() -> None:
+    """Without rent the budget is UNKNOWN; a barrio with no place carrying a postcode says
+    why in plain words instead of the generic «the source only publishes…»."""
+    why = "Sin datos de alquiler para este barrio: ningún lugar del barrio lleva código postal"
+    base = zone("s", rent=None)
+    barrio = ZoneData(base.zone, base.rent, base.walk, rent_missing=why)
+    fit = evaluate(family(), barrio)
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.UNKNOWN
+    assert budget.explanation == why
+    cost = next(f for f in fit.facts if f.topic is FactTopic.COSTE)
+    assert cost.kind is FactKind.UNKNOWN and cost.text == why
+    plain = evaluate(family(), zone("m", rent=None))
+    generic = next(c for c in plain.constraints if c.constraint_id == "budget")
+    assert generic.explanation.startswith("Sin datos de alquiler para esta zona")

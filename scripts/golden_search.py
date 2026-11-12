@@ -1,5 +1,6 @@
 """Run the golden search scenarios (data/fixtures/golden/search_scenarios.yaml) through the
-real search service on the local database (read-only) and check what each one expects.
+real search service on the local database (read-only) and check what each one expects; the
+`barrio_scenarios` go through the search inside a district (D-232).
 
 Usage: uv run python scripts/golden_search.py   (exit 1 if any expectation fails)
 """
@@ -11,8 +12,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from sqlalchemy import create_engine
+from sqlalchemy import Connection, create_engine
 
+from hi_api.services.barrios import DISTRICT_TRIP_NOTE, district, load_barrios, search_barrios
 from hi_api.services.search import load, search
 from hi_contracts.public import FactKind, FactTopic, RankedZone, ScenarioState, SearchResult
 from hi_domain.fit import anchor_km
@@ -90,6 +92,19 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
         "budget_step_adds_zones": lambda v: any(
             r.constraint_id == "budget" and r.added_zones >= v for r in check.relaxations
         ),
+        # D-232: the barrios of one district
+        "barrios": lambda v: check.zones_evaluated == v,
+        "ranked": lambda v: set(v) <= {r.zone.name for r in result.results},
+        "near_miss": lambda v: set(v) <= {r.zone.name for r in result.near_misses},
+        "distinct_pct_min": lambda v: len({z.match_pct for z in result.all_zones}) >= v,
+        "own_trips": lambda v: (
+            all(
+                DISTRICT_TRIP_NOTE not in f.text
+                for r in [*result.results, *result.near_misses]
+                for f in r.facts
+            )
+            is v
+        ),
     }
     return [f"{key}={value}" for key, value in expect.items() if not rules[key](value)]
 
@@ -103,7 +118,7 @@ def report(profile: str, result: SearchResult, failed: list[str]) -> None:
     )
     for option in check.relaxations:
         print(f"  Reality Check: {option.label} → +{option.added_zones} zonas")
-    for ranked in result.results[:5]:
+    for ranked in result.results[: 10 if result.reality_check.zones_evaluated <= 10 else 5]:
         per = "" if result.scenario.budget and result.scenario.budget.kind == "buy" else "/mes"
         cost = f" · ≈ {ranked.estimated_cost_eur:.0f} €{per}" if ranked.estimated_cost_eur else ""
         print(f"  {ranked.rank}. {ranked.zone.name} · {ranked.match_pct} %{cost}")
@@ -114,7 +129,8 @@ def report(profile: str, result: SearchResult, failed: list[str]) -> None:
 
 
 def main() -> int:
-    scenarios = yaml.safe_load((GOLDEN / "search_scenarios.yaml").read_text())["scenarios"]
+    golden = yaml.safe_load((GOLDEN / "search_scenarios.yaml").read_text())
+    scenarios, barrio_items = golden["scenarios"], golden.get("barrio_scenarios", [])
     failed_any = False
     with create_engine(DATABASE_URL).connect() as conn:
         for item in scenarios:
@@ -128,8 +144,27 @@ def main() -> int:
                 failed.append("stable_order")
             failed_any |= bool(failed)
             report(item["profile_id"], result, failed)
-    print(f"\n{len(scenarios)} escenarios dorados · {'FALLA' if failed_any else 'todos OK'}")
+        failed_any |= barrio_goldens(conn, barrio_items)
+    total = len(scenarios) + len(barrio_items)
+    print(f"\n{total} escenarios dorados · {'FALLA' if failed_any else 'todos OK'}")
     return 1 if failed_any else 0
+
+
+def barrio_goldens(conn: Connection, items: list[dict[str, Any]]) -> bool:
+    """D-232: the same checks inside one district, by barrio; True if any fails."""
+    failed_any = False
+    for item in items:
+        scenario = ScenarioState.model_validate(item["scenario"])
+        result, _, _ = search_barrios(conn, scenario, item["distrito"])
+        failed = failures(result, item["expect"])
+        zones = load_barrios(conn, scenario, district(conn, item["distrito"])).zones[::-1]
+        again = [r.zone.code for r in run_search(scenario, zones).results]
+        if again != [r.zone.code for r in result.results]:
+            failed.append("stable_order")
+        failed_any |= bool(failed)
+        report(f"{item['profile_id']} en {result.distrito.name} (barrios)", result, failed)
+        print(f"  todos: {', '.join(f'{z.zone.name} {z.match_pct} %' for z in result.all_zones)}")
+    return failed_any
 
 
 if __name__ == "__main__":

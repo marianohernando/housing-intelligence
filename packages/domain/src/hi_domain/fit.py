@@ -42,8 +42,9 @@ from hi_domain.affordability import (
 from hi_domain.gaps import es_number
 
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
-# leases and walking minutes read as approximate (D-228)
-FIT_VERSION = "fit-0.6"
+# leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
+# trip measured for the whole district and the reason for an unknown rent said (D-232)
+FIT_VERSION = "fit-0.7"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -134,10 +135,13 @@ MIN_FACTS, MAX_FACTS = 3, 5
 class Commute:
     """Minutes by public transport to one place of work, arriving by 9:00 (D-220). None: with
     the published timetables most of the zone cannot make it; as a preference that is the worst
-    score, as a hard limit it stays UNKNOWN (the timetables have declared gaps)."""
+    score, as a hard limit it stays UNKNOWN (the timetables have declared gaps). `note`: where
+    the trip was measured when it is not the zone itself (D-232: a barrio without its own trip
+    takes its district's), said after the minutes."""
 
     minutes: float | None
     confidence: float
+    note: str | None = None
 
 
 @dataclass(frozen=True)
@@ -157,6 +161,7 @@ class ZoneData:
     commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
     price: IndicatorValue | None = None  # appraised value per m² to buy (D-227)
     rent_note: str | None = None  # what the rent figure is, from its feature (D-228)
+    rent_missing: str | None = None  # why there is no rent here, in plain words (D-232)
 
 
 @dataclass(frozen=True)
@@ -311,9 +316,13 @@ def near_check(nearby: NearbyNeed, walk: IndicatorValue | None) -> ConstraintChe
 MAX_COMMUTE_SHOWN = 120
 
 
-def commute_text(minutes: float, label: str) -> str:
+def commute_text(minutes: float, label: str, note: str | None = None) -> str:
     shown = "más de 2 h" if minutes > MAX_COMMUTE_SHOWN else f"{es_number(minutes, 0)} min"
-    return f"{shown} en transporte público hasta {label}, llegando a las 9:00"
+    return with_note(f"{shown} en transporte público hasta {label}, llegando a las 9:00", note)
+
+
+def with_note(text: str, note: str | None) -> str:
+    return text if note is None else f"{text} ({note})"
 
 
 def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
@@ -333,8 +342,9 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
             if trip is None
             else f"Con los horarios publicados no se llega a {anchor.label} a las 9:00"
         )
+        explanation = with_note(f"{why}{where}", None if trip is None else trip.note)
         return ConstraintCheck(
-            **base, status=ConstraintStatus.UNKNOWN, confidence=0.0, explanation=f"{why}{where}"
+            **base, status=ConstraintStatus.UNKNOWN, confidence=0.0, explanation=explanation
         )
     passed = anchor.max_minutes is not None and trip.minutes <= anchor.max_minutes
     return ConstraintCheck(
@@ -342,7 +352,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
         status=ConstraintStatus.PASS if passed else ConstraintStatus.FAIL,
         value=round(trip.minutes, 1),
         confidence=trip.confidence,
-        explanation=commute_text(trip.minutes, anchor.label),
+        explanation=commute_text(trip.minutes, anchor.label, trip.note),
     )
 
 
@@ -351,7 +361,11 @@ def constraint_checks(
 ) -> list[ConstraintCheck]:
     checks: list[ConstraintCheck] = []
     if scenario.budget is not None:
-        checks.append(budget_check(scenario.budget, data.rent, area, data.price, data.rent_note))
+        checks.append(
+            budget_check(
+                scenario.budget, data.rent, area, data.price, data.rent_note, data.rent_missing
+            )
+        )
     for nearby in scenario.nearby:
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
@@ -432,9 +446,10 @@ def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:
 
 def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     if trip.minutes is None:
-        text = (
+        text = with_note(
             f"Con los horarios publicados no se llega a {anchor.label} a las 9:00 "
-            "en transporte público"
+            "en transporte público",
+            trip.note,
         )
         fact = Fact(
             kind=FactKind.WEAKNESS, topic=FactTopic.TRAYECTO, text=text, confidence=trip.confidence
@@ -444,17 +459,21 @@ def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     fact = Fact(
         kind=FactKind.STRENGTH if trip.minutes <= target else FactKind.WEAKNESS,
         topic=FactTopic.TRAYECTO,
-        text=commute_text(trip.minutes, anchor.label),
+        text=commute_text(trip.minutes, anchor.label, trip.note),
         confidence=trip.confidence,
     )
     return Score(walk_utility(trip.minutes, target), trip.confidence, fact)
 
 
 def cost_fact(
-    rent: IndicatorValue | None, area: FloorArea, budget: float | None, note: str | None = None
+    rent: IndicatorValue | None,
+    area: FloorArea,
+    budget: float | None,
+    note: str | None = None,
+    missing: str | None = None,
 ) -> Score:
     if rent is None or rent.value is None:
-        text = "Alquiler: sin datos publicados para esta zona"
+        text = missing or "Alquiler: sin datos publicados para esta zona"
         fact = Fact(kind=FactKind.UNKNOWN, topic=FactTopic.COSTE, text=text, confidence=0.0)
         return Score(None, 0.0, fact)
     cost = round(monthly_rent(rent.value, area.m2))
@@ -503,7 +522,7 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
     if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
         return purchase_fact(data.price, area, float(scenario.budget.amount_eur))
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)
-    return cost_fact(data.rent, area, budget, data.rent_note)
+    return cost_fact(data.rent, area, budget, data.rent_note, data.rent_missing)
 
 
 def match_and_confidence(

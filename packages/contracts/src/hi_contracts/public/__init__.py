@@ -34,6 +34,8 @@ from hi_contracts.public.scenario import (
     ScenarioState,
 )
 from hi_contracts.public.search import (
+    BarrioSearchRequest,
+    BarrioSearchResult,
     ConstraintCheck,
     ConstraintStatus,
     Fact,
@@ -50,6 +52,8 @@ from hi_contracts.public.search import (
 __all__ = [
     "Anchor",
     "AnchorKind",
+    "BarrioSearchRequest",
+    "BarrioSearchResult",
     "Budget",
     "BudgetKind",
     "ComparisonGroup",

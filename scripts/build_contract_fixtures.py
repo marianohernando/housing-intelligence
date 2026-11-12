@@ -3,7 +3,8 @@
 These are FIXTURES, not product output: they let the web type and test its screens against real
 zones and real indicator values. Each one is exactly what the API service returns today on the
 local database (read-only): the per-zone lists, the row maps, the people search (CORE-003,
-`fit-0.2` with CORE-009) and the dataset list (see data/fixtures/contracts/README.md).
+with CORE-009), the search inside a district by barrio (D-232) and the dataset list (see
+data/fixtures/contracts/README.md).
 
 Usage: uv run python scripts/build_contract_fixtures.py
 """
@@ -15,6 +16,7 @@ from typing import Any
 
 from sqlalchemy import Connection, create_engine
 
+from hi_api.services.barrios import search_barrios
 from hi_api.services.datasets import dataset_list
 from hi_api.services.gap_impact import gap_impact
 from hi_api.services.gap_map import gap_row_map
@@ -22,7 +24,15 @@ from hi_api.services.gaps import missing_row_warnings, zone_gap_list
 from hi_api.services.places import places_geojson
 from hi_api.services.search import search
 from hi_contracts.catalog.enums import GapRowKey, PlaceCategory, TerritoryLevel
-from hi_contracts.public import GapImpact, GapRowMap, ScenarioState, SearchResult, ZoneGapList
+from hi_contracts.public import (
+    BarrioSearchRequest,
+    BarrioSearchResult,
+    GapImpact,
+    GapRowMap,
+    ScenarioState,
+    SearchResult,
+    ZoneGapList,
+)
 from hi_contracts.public.places import PlaceCollection
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "contracts"
@@ -85,6 +95,21 @@ def search_result(conn: Connection) -> SearchResult:
     return result
 
 
+SAN_BLAS = "2807920"  # San Blas-Canillejas, with Simancas: Mariano's example (D-232)
+
+
+def barrio_request() -> BarrioSearchRequest:
+    return BarrioSearchRequest(scenario=demo_scenario(), distrito=SAN_BLAS)
+
+
+def barrio_result(conn: Connection) -> BarrioSearchResult:
+    """Exactly what POST /api/v1/search/barrios returns today for the demo case in San Blas."""
+    request = barrio_request()
+    result, warnings, _ = search_barrios(conn, request.scenario, request.distrito)
+    assert not warnings, warnings  # noqa: S101 - every barrio with its own data and trip
+    return result
+
+
 def colegios_chamartin(conn: Connection) -> PlaceCollection:
     """places-1 (D-216): the colegios of a district, with ownership and the rows that count them."""
     result = places_geojson(
@@ -138,6 +163,8 @@ def main() -> None:
         )
         write("gap_impact.comunidad", impact(conn))
         write("search_result.familia_presupuesto", search_result(conn))
+        write("barrio_search_request.san_blas", barrio_request())
+        write("barrio_search_result.san_blas", barrio_result(conn))
         write("dataset_list.all", dataset_list(conn, cm_only=False))
 
 

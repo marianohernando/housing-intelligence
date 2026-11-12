@@ -5,7 +5,7 @@ from hi_contracts.public.common import DatasetList
 from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
 from hi_contracts.public.gaps import GapImpact, GapRowMap, ZoneGapList
 from hi_contracts.public.places import PlaceCollection
-from hi_contracts.public.search import SearchResult
+from hi_contracts.public.search import BarrioSearchResult, SearchResult
 
 
 class ZoneGapListResponse(Envelope[ZoneGapList]):
@@ -22,6 +22,10 @@ class GapImpactResponse(Envelope[GapImpact]):
 
 class SearchResponse(Envelope[SearchResult]):
     """POST /api/v1/search"""
+
+
+class BarrioSearchResponse(Envelope[BarrioSearchResult]):
+    """POST /api/v1/search/barrios (D-232)"""
 
 
 class DatasetListResponse(Envelope[DatasetList]):
