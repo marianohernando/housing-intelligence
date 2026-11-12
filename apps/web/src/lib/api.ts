@@ -4,6 +4,7 @@
  */
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
+import type { PlaceCategory as ContractPlaceCategory, PlacesResponse } from "@/contracts/places_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
@@ -17,20 +18,12 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
 /** Levels with a «Qué falta» list: municipios, Madrid's 21 districts and census sections. */
 export type GapLevel = "municipio" | "distrito" | "seccion_censal";
 
-/** Place categories the map uses for a zone's key points (PlaceCategory in the API). */
-export type PlaceCategory = "transport" | "health" | "pharmacy" | "education" | "social";
+/** Place categories of /api/v1/places (places-1). */
+export type PlaceCategory = ContractPlaceCategory;
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
-export type PlacesResponse = Envelope<{
-  type: "FeatureCollection";
-  /** "places-1" once /places is a contract (line A, D-216); absent before */
-  contract_version?: string;
-  features: PlaceFeature[];
-  total: number;
-  page: number;
-  pages: number;
-}>;
+
 
 /**
  * Places of one category. The map always asks by zone, never for a whole layer; without a zone,
@@ -93,13 +86,14 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     return (await response.json()) as T;
   }
 
-  /** GET /api/v1/places: a zone's facilities of one category as points, following every page, and the contract that answered. */
-  async function placesCollection(query: PlacesQuery): Promise<{ features: PlaceFeature[]; contractVersion: string | null }> {
+  /** GET /api/v1/places: a zone's facilities of one category as points, following every page. */
+  async function places(query: PlacesQuery): Promise<PlaceFeature[]> {
     const first = await call<PlacesResponse>(placesPath(query, 1));
     const rest = await Promise.all(
       Array.from({ length: first.data.pages - 1 }, (_, i) => call<PlacesResponse>(placesPath(query, i + 2))),
     );
-    return { features: [first, ...rest].flatMap((body) => body.data.features), contractVersion: first.data.contract_version ?? null };
+    // The schema types the point as a tuple of unknowns (tuple[float, float] in Pydantic): it is GeoJSON [lon, lat]
+    return [first, ...rest].flatMap((body) => body.data.features) as unknown as PlaceFeature[];
   }
 
   return {
@@ -119,11 +113,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetch) 
     adminUnits(level: AdminLevel, simplifyM: number, parent?: string) {
       return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent));
     },
-    placesCollection,
-    /** GET /api/v1/places, the points only. */
-    async places(query: PlacesQuery): Promise<PlaceFeature[]> {
-      return (await placesCollection(query)).features;
-    },
+    places,
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
     search(scenario: ScenarioState, { signal }: { signal?: AbortSignal } = {}) {
       return call<SearchResponse>("/api/v1/search", {

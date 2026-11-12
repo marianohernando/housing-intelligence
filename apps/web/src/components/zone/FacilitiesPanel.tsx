@@ -22,8 +22,8 @@ const TEXT = {
   retry: "Reintentar",
   none: "Toca un tipo de centro para verlo en el mapa.",
   list: (n: number) => `Ver la lista (${formatNumber(n, 0)})`,
-  // The row «Colegios» counts public and concertado schools only (titularidad, not in /places yet)
-  privateSchools: "Aquí salen también los colegios privados. En «Qué falta» solo contamos los públicos y los concertados.",
+  // The same schools as the row «Colegios» (gap_rows of places-1): public and concertado
+  rowSchools: "Públicos y concertados: los mismos que cuenta «Qué falta».",
   noName: "La fuente oficial no publica el nombre de cada centro de este tipo.",
 };
 
@@ -117,7 +117,7 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
             {count && items ? (
               <>
                 <p className={styles.count}>{count}</p>
-                {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.privateSchools}</p>}
+                {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
                 {items.some((f) => f.name === null) && <p className={styles.muted}>{TEXT.noName}</p>}
               </>
             ) : (

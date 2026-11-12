@@ -8,7 +8,7 @@ function station(name: string, subcategory: string, lon = -3.69, lat = 40.45): P
   return {
     type: "Feature",
     geometry: { type: "Point", coordinates: [lon, lat] },
-    properties: { name, category: "transport", subcategory, municipio: "28079", seccion: null },
+    properties: { name, category: "transport", subcategory, municipio: "28079", seccion: null, confidence: 1 },
   };
 }
 

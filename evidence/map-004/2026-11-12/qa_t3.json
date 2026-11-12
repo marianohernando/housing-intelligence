@@ -3,30 +3,28 @@
  "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
  "escritorio": {
   "botones": [
-   "Colegios 30",
+   "Colegios 25",
    "Escuelas infantiles 33",
    "Centros de salud 7",
    "Hospitales 5",
-   "Farmacias 0",
-   "Mayores 23"
+   "Farmacias 114",
+   "Mayores 9"
   ],
-  "pulsado": "Colegios 30",
-  "frase": "30 colegios con primaria en Chamartín Aquí salen también los colegios privados. En «Qué falta» solo contamos los públicos y los concertados.",
-  "api_colegios": 30,
+  "pulsado": "Colegios 25",
+  "frase": "25 colegios con primaria en Chamartín Públicos y concertados: los mismos que cuenta «Qué falta».",
+  "api_colegios": 25,
   "api_hospitales": 5,
-  "api_farmacias": {
-   "pharmacy": "HTTP 422",
-   "health": 0
-  },
-  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 30 colegios con primaria en Chamartín; su lista está en «Todos los centros».",
+  "api_farmacias": 114,
+  "api_mayores": 9,
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 25 colegios con primaria en Chamartín; su lista está en «Todos los centros».",
   "lista": {
-   "elementos": 30,
+   "elementos": 25,
    "primeros": [
-    "Colegio privado o concertado · Altair, Colegio Internacional",
     "Colegio público · Arquitecto Gaudi",
-    "Colegio privado o concertado · Cardenal Spinola",
-    "Colegio privado o concertado · Claret",
-    "Colegio privado o concertado · Corazon Inmaculado"
+    "Colegio concertado · Cardenal Spinola",
+    "Colegio concertado · Claret",
+    "Colegio concertado · Corazon Inmaculado",
+    "Colegio concertado · Fundacion Santamarca"
    ]
   },
   "axe_lista": [],
@@ -46,8 +44,8 @@
    "barra": {
     "top": 800,
     "bottom": 875,
-    "left": 113,
-    "right": 1328
+    "left": 555,
+    "right": 971
    },
    "libre": true
   },

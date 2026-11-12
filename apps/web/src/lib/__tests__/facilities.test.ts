@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import type { PlaceCategory } from "../../contracts/places_response";
 import {
-  CONTRACT_QUERIES,
   type Facility,
   FACILITY_TYPES,
   facilitiesGeoJSON,
@@ -13,7 +13,7 @@ import type { PlaceFeature } from "../map/places";
 
 function place(
   id: string,
-  category: string,
+  category: PlaceCategory,
   subcategory: string,
   name: string,
   lon = -3.68,
@@ -24,7 +24,7 @@ function place(
     type: "Feature",
     id,
     geometry: { type: "Point", coordinates: [lon, lat] },
-    properties: { name, category, subcategory, municipio: "28079", seccion: "ES.28.SEC.2807905001", ...extra },
+    properties: { name, category, subcategory, municipio: "28079", seccion: "ES.28.SEC.2807905001", confidence: 1, ...extra },
   };
 }
 
@@ -45,16 +45,17 @@ describe("facility types", () => {
     expect(sub("escuela_infantil")).toEqual(["ESCUELA INFANTIL", "ESCUELA  INFANTIL-CASA DE NIÑOS", "ESCUELA INFANTIL PRIVADA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL"]);
     expect(sub("centro_salud")).toEqual(["Centro de salud", "Consultorio de atención primaria"]);
     expect(sub("farmacia")).toEqual(["Farmacia"]);
+    expect(sub("mayores")).toEqual(["CENTROS DE DÍA: OTROS", "HOGARES Y CLUBES"]);
   });
 
   it("ask /places once per category, by zone and subcategory, never a whole layer", () => {
     const queries = facilityQueries();
-    expect(queries.map((q) => q.category)).toEqual(["education", "health", "social"]);
+    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social"]);
     const health = queries.find((q) => q.category === "health");
     expect(health?.subcategories).toContain("Hospital general");
-    // Pharmacies: in health before places-1; their own category after it (D-216), asked only then
-    expect(health?.subcategories).toContain("Farmacia");
-    expect(CONTRACT_QUERIES["places-1"]).toEqual([{ category: "pharmacy", subcategories: ["Farmacia"] }]);
+    // Pharmacies have their own category since D-216
+    expect(health?.subcategories).not.toContain("Farmacia");
+    expect(queries.find((q) => q.category === "pharmacy")?.subcategories).toEqual(["Farmacia"]);
     // The «Centro Polivalente» of health are the social records repeated (FASE_PRUEBAS, T1): left out
     expect(health?.subcategories).not.toContain("Centro Polivalente");
     for (const q of queries) expect(q.subcategories.length).toBeGreaterThan(0);
@@ -68,7 +69,7 @@ describe("groupFacilities", () => {
     place("3", "education", "INSTITUTO DE EDUCACIÓN SECUNDARIA", "RAMIRO DE MAEZTU"),
     place("4", "health", "Hospital general", "Hospital general (Madrid)"),
     place("5", "health", "Hospital especializado", "Hospital especializado (Madrid)"),
-    place("6", "health", "Farmacia", "Farmacia · AVDA de Alberto Alcocer 22"),
+    place("6", "pharmacy", "Farmacia", "Farmacia · AVDA de Alberto Alcocer 22"),
     place("7", "health", "Centro Polivalente", "Centro Polivalente (Madrid)"),
     place("8", "social", "RESIDENCIAS DE PERSONAS MAYORES MIXTA", "SANITAS RESIDENCIAL EL VISO, RESIDENCIA DE PERSONAS MAYORES"),
     place("9", "social", "CENTROS DE DÍA: OTROS", "JUAN PABLO II AYUNTAMIENTO DE MADRID, CENTRO DE DIA"),
@@ -80,7 +81,8 @@ describe("groupFacilities", () => {
     expect(groups.colegio.map((f) => f.id)).toEqual(["2", "1"]);
     expect(groups.hospital).toHaveLength(2);
     expect(groups.farmacia).toHaveLength(1);
-    expect(groups.mayores).toHaveLength(2);
+    // Residences are not in the row of «Centros de mayores» (hogares, clubes y centros de día)
+    expect(groups.mayores.map((f) => f.id)).toEqual(["9"]);
     expect(groups.centro_salud).toHaveLength(1);
     expect(groups.escuela_infantil).toHaveLength(0);
     const all = Object.values(groups).flat();
@@ -95,13 +97,32 @@ describe("groupFacilities", () => {
     expect(one(groups.hospital, "4")).toMatchObject({ label: "Hospital", name: null });
     expect(one(groups.hospital, "5")).toMatchObject({ label: "Hospital especializado", name: null });
     expect(one(groups.farmacia, "6")).toMatchObject({ label: "Farmacia", name: "Avenida de Alberto Alcocer 22" });
-    expect(one(groups.mayores, "8")).toMatchObject({ label: "Residencia", name: "Sanitas Residencial el Viso" });
     expect(one(groups.mayores, "9")).toMatchObject({ label: "Centro de día", name: "Juan Pablo II Ayuntamiento de Madrid" });
     expect(one(groups.centro_salud, "10")).toMatchObject({ label: "Consultorio", name: null });
   });
 
   it("leaves the capacity empty until the API gives it: no figure is made up", () => {
     for (const f of Object.values(groups).flat()) expect(f.detail).toBeNull();
+  });
+
+  it("counts what the row of «Qué falta» counts (gap_rows), not every school of the subcategory", () => {
+    const rows = groupFacilities([
+      place("in", "education", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL Y PRIMARIA", "CONCERTADO", -3.68, 40.45, { gap_rows: ["colegio"], ownership: "concertada" }),
+      place("out", "education", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL Y PRIMARIA", "PRIVADO", -3.68, 40.45, { gap_rows: [], ownership: "privada" }),
+    ]);
+    expect(rows.colegio.map((f) => f.id)).toEqual(["in"]);
+  });
+
+  it("says when a place was placed by its address (places-1, D-216)", () => {
+    const geo = groupFacilities([
+      place("g", "health", "Centro de salud", "Centro de salud (Madrid)", -3.68, 40.45, { coordinates: "geocoded", confidence: 0.7 }),
+      place("m", "social", "HOGARES Y CLUBES", "ZURBANO", -3.68, 40.45, {
+        coordinates: "geocoded",
+        capacity: { value: 120, unit: "plazas autorizadas", dataset_id: "cm_centros_atencion_social" },
+      }),
+    ]);
+    expect(geo.centro_salud[0]?.detail).toBe("ubicación aproximada");
+    expect(geo.mayores[0]?.detail).toBe("120 plazas autorizadas · ubicación aproximada");
   });
 
   it("shows the capacity and the ownership when the API gives them (places-1, line A)", () => {
@@ -136,7 +157,7 @@ describe("facilityCountText", () => {
     expect(facilityCountText("hospital", 0, "La Acebeda")).toBe("Ningún hospital en La Acebeda");
     expect(facilityCountText("farmacia", 0, "La Acebeda")).toBe("Ninguna farmacia en La Acebeda");
     expect(facilityCountText("escuela_infantil", 1234, "Madrid")).toBe("1.234 escuelas infantiles en Madrid");
-    expect(facilityCountText("mayores", 2, "Tres Cantos")).toBe("2 residencias y centros de mayores en Tres Cantos");
+    expect(facilityCountText("mayores", 2, "Tres Cantos")).toBe("2 centros de mayores en Tres Cantos");
   });
 });
 

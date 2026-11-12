@@ -1,0 +1,67 @@
+$ node apps/web/scripts/gen-contracts.mjs --check
+contracts up to date (7 files)
+$ npm run -w apps/web lint
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+$ npm run -w apps/web typecheck
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+$ npm run -w apps/web test -- --run
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  25 passed (25)
+      Tests  251 passed (251)
+   Start at  01:41:21
+   Duration  389ms (tests 38%, import 30%, transform 24%, worker 7%)
+
+$ NEXT_PUBLIC_FEATURE_SEARCH=true NEXT_PUBLIC_API_URL=http://localhost:8011 npm run -w apps/web build
+(hecha antes de check-qa t3: ✓ Compiled successfully)
+$ make lint typecheck test-unit
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+285 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 18%]
+........................................................................ [ 36%]
+........................................................................ [ 54%]
+........................................................................ [ 72%]
+........................................................................ [ 90%]
+....................................                                     [100%]
+396 passed in 6.53s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  25 passed (25)
+      Tests  251 passed (251)
+   Start at  01:41:38
+   Duration  406ms (tests 49%, import 32%, transform 12%, worker 7%)
+

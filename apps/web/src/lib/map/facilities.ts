@@ -1,9 +1,10 @@
 /**
  * Every facility of a zone (pure, unit tested), not only its key points (FASE_PRUEBAS, T3): the
- * places of /api/v1/places asked by zone and subcategory, grouped in the types a person looks for
- * and named in plain words. Each type counts the same subcategories as its row of «Qué falta»
- * (data/catalog/features), so the figures agree; hospitals have no row yet.
+ * places of /api/v1/places (places-1) asked by zone and subcategory, grouped in the types a person
+ * looks for and named in plain words. A type with a row of «Qué falta» counts the places the API
+ * says that row counts (`gap_rows`), so the figures agree; hospitals have no row yet.
  */
+import type { GapRowKey } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { titleCase } from "@/lib/names";
@@ -15,8 +16,8 @@ export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hos
 export interface FacilityType {
   key: FacilityKey;
   category: PlaceCategory;
-  /** Where an API older than the category still has these places (pharmacies were health until D-216) */
-  fallback?: PlaceCategory;
+  /** Row of «Qué falta» whose places this type shows (`gap_rows` of places-1) */
+  row?: GapRowKey;
   /** Name of the type on its button */
   chip: string;
   /** How many there are: «{n} {many}», «1 {one}», «{none}» */
@@ -29,12 +30,12 @@ export interface FacilityType {
 
 const PUBLIC_SCHOOL = "Colegio público";
 const PRIVATE_SCHOOL = "Colegio privado o concertado";
-const HOME = "Residencia";
 
 export const FACILITY_TYPES: readonly FacilityType[] = [
   {
     key: "colegio",
     category: "education",
+    row: "colegio",
     chip: "Colegios",
     one: "colegio con primaria",
     many: "colegios con primaria",
@@ -52,6 +53,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
   {
     key: "escuela_infantil",
     category: "education",
+    row: "escuela_infantil",
     chip: "Escuelas infantiles",
     one: "escuela infantil",
     many: "escuelas infantiles",
@@ -66,6 +68,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
   {
     key: "centro_salud",
     category: "health",
+    row: "centro_salud",
     chip: "Centros de salud",
     one: "centro de salud",
     many: "centros de salud",
@@ -92,7 +95,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
   {
     key: "farmacia",
     category: "pharmacy",
-    fallback: "health",
+    row: "farmacia",
     chip: "Farmacias",
     one: "farmacia",
     many: "farmacias",
@@ -102,14 +105,12 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
   {
     key: "mayores",
     category: "social",
+    row: "mayores",
     chip: "Mayores",
-    one: "residencia o centro de mayores",
-    many: "residencias y centros de mayores",
-    none: "Ninguna residencia ni centro de mayores",
+    one: "centro de mayores",
+    many: "centros de mayores",
+    none: "Ningún centro de mayores",
     classes: [
-      { subcategory: "RESIDENCIAS DE PERSONAS MAYORES MIXTA", label: HOME },
-      { subcategory: "RESIDENCIAS DE PERSONAS MAYORES DEPENDIENTES", label: HOME },
-      { subcategory: "RESIDENCIAS DE PERSONAS MAYORES AUTONOMAS", label: HOME },
       { subcategory: "CENTROS DE DÍA: OTROS", label: "Centro de día" },
       { subcategory: "HOGARES Y CLUBES", label: "Hogar o club de mayores" },
     ],
@@ -129,32 +130,21 @@ export interface FacilityQuery {
   subcategories: string[];
 }
 
-/**
- * What to ask /api/v1/places for a zone: one query per category with the subcategories that count.
- * A type whose category is newer than the API (pharmacy, D-216) is asked where the API had it.
- */
+/** What to ask /api/v1/places for a zone: one query per category with the subcategories that count. */
 export function facilityQueries(): FacilityQuery[] {
   const byCategory = new Map<PlaceCategory, FacilityQuery>();
   for (const type of FACILITY_TYPES) {
-    const category = type.fallback ?? type.category;
-    const query = byCategory.get(category) ?? { category, subcategories: [] };
+    const query = byCategory.get(type.category) ?? { category: type.category, subcategories: [] };
     query.subcategories.push(...type.classes.map((c) => c.subcategory));
-    byCategory.set(category, query);
+    byCategory.set(type.category, query);
   }
   return [...byCategory.values()];
 }
 
 /**
- * Queries to add when /places answers with a contract version: places-1 brings the pharmacy
- * category (D-216), so pharmacies are no longer in health. Asking an older API for it would fail.
- */
-export const CONTRACT_QUERIES: Readonly<Record<string, readonly FacilityQuery[]>> = {
-  "places-1": [{ category: "pharmacy", subcategories: ["Farmacia"] }],
-};
-
-/**
- * One facility on the map and in the list. `detail` is its capacity («1.300 camas») when /places
- * carries it (places-1, line A); until then it is null and nothing is shown.
+ * One facility on the map and in the list. `detail` is what the register says beyond its name:
+ * its capacity («120 plazas autorizadas», later «1.300 camas») and whether it was placed by its
+ * address; null when there is nothing to add.
  */
 export interface Facility {
   id: string;
@@ -205,19 +195,29 @@ function placeName(place: PlaceFeature, type: FacilityKey): string | null {
 /** Schools by the ownership of the register, when the API gives it (places-1). */
 const SCHOOL_BY_OWNERSHIP = { publica: PUBLIC_SCHOOL, concertada: "Colegio concertado", privada: "Colegio privado" } as const;
 
-/** «1.300 camas», «120 plazas autorizadas»: only what the register publishes. */
-function capacityText(place: PlaceFeature): string | null {
-  const capacity = place.properties.capacity;
-  return capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null;
+/** Coordinates the register lacked or had wrong, found again from the address (D-216). */
+const GEOCODED = "ubicación aproximada";
+
+/** «120 plazas autorizadas · ubicación aproximada»: only what the register and the API say. */
+function detailText(place: PlaceFeature): string | null {
+  const { capacity, coordinates } = place.properties;
+  const parts = [capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null, coordinates === "geocoded" ? GEOCODED : null];
+  return parts.filter(Boolean).join(" · ") || null;
+}
+
+/** A type with a row shows what the row counts (`gap_rows`); without that field, its subcategories. */
+function counts(place: PlaceFeature, type: FacilityType): boolean {
+  const rows = place.properties.gap_rows;
+  return !type.row || rows === undefined || rows.includes(type.row);
 }
 
 function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   const cls = type.classes.find((c) => c.subcategory === place.properties.subcategory);
-  if (!cls) return null;
+  if (!cls || !counts(place, type)) return null;
   const [lon = 0, lat = 0] = place.geometry.coordinates;
   const { ownership } = place.properties;
   const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : cls.label;
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: capacityText(place), lon, lat };
+  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), lon, lat };
 }
 
 function byName(a: Facility, b: Facility): number {
@@ -230,8 +230,7 @@ export function groupFacilities(places: readonly PlaceFeature[]): Record<Facilit
   const groups = Object.fromEntries(FACILITY_TYPES.map((t) => [t.key, [] as Facility[]])) as Record<FacilityKey, Facility[]>;
   for (const place of places) {
     for (const type of FACILITY_TYPES) {
-      const category = place.properties.category;
-      if (category !== type.category && category !== type.fallback) continue;
+      if (place.properties.category !== type.category) continue;
       const item = facility(place, type);
       if (item) groups[type.key].push(item);
     }

@@ -3,7 +3,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { ApiError, createApi } from "@/lib/api";
-import { CONTRACT_QUERIES, type Facility, type FacilityKey, facilityQueries, groupFacilities } from "@/lib/map/facilities";
+import { type Facility, type FacilityKey, facilityQueries, groupFacilities } from "@/lib/map/facilities";
 
 import { useMapZones } from "./MapProvider";
 
@@ -35,17 +35,11 @@ export function useFacilityLayer(): FacilityLayerValue {
 
 const toApiError = (exc: unknown) => (exc instanceof ApiError ? exc : new ApiError(0, "NETWORK", String(exc)));
 
-/**
- * A zone's facilities: one /places query per category, by zone and subcategory (a few KB each),
- * plus the categories the answering contract adds (never asked to an API that would reject them).
- */
+/** A zone's facilities: one /places query per category, by zone and subcategory (a few KB each). */
 async function fetchFacilities(adminUnitId: string): Promise<Groups> {
   const api = createApi();
-  const answers = await Promise.all(facilityQueries().map((query) => api.placesCollection({ ...query, adminUnitId })));
-  const version = answers.find((a) => a.contractVersion)?.contractVersion;
-  const extra = version ? (CONTRACT_QUERIES[version] ?? []) : [];
-  const more = await Promise.all(extra.map((query) => api.places({ ...query, adminUnitId })));
-  return groupFacilities([...answers.flatMap((a) => a.features), ...more.flat()]);
+  const lists = await Promise.all(facilityQueries().map((query) => api.places({ ...query, adminUnitId })));
+  return groupFacilities(lists.flat());
 }
 
 /**

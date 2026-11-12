@@ -160,12 +160,17 @@ const box = (locator) => locator.evaluate((el) => {
   return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) };
 });
 
-/** How many places of each subcategory the API has in the zone (the panel must show the same); asked from Node, not the page. */
-async function apiCount(_page, category, subcategories) {
+/**
+ * How many places the API has in the zone for a type (the panel must show the same): those of its
+ * subcategories that its row of «Qué falta» counts (gap_rows, places-1). Asked from Node, not the page.
+ */
+async function apiCount(category, subcategories, row = null) {
   const q = new URLSearchParams({ category, admin_unit_id: ZONE.id });
   for (const s of subcategories) q.append("subcategory", s);
   const r = await fetch(`${API}/api/v1/places?${q}`);
-  return r.ok ? (await r.json()).data.total : `HTTP ${r.status}`;
+  if (!r.ok) return `HTTP ${r.status}`;
+  const { data } = await r.json();
+  return data.features.filter((f) => !row || f.properties.gap_rows.includes(row)).length;
 }
 
 /** Phase 2 (T3): «Todos los centros» of a zone, its clustered layer, counts and accessible list. */
@@ -178,13 +183,14 @@ async function facilities(browser) {
   d.botones = (await panel.getByRole("group", { name: "Ver en el mapa" }).getByRole("button").allInnerTexts()).map(flat);
   d.pulsado = flat(await panel.locator("button[aria-pressed='true']").innerText());
   d.frase = flat(await panel.locator("[aria-live='polite']").innerText());
-  d.api_colegios = await apiCount(page, "education", [
+  d.api_colegios = await apiCount("education", [
     "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", "COLEGIO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA", "COLEGIO DE EDUCACIÓN PRIMARIA",
     "CENTRO PRIVADO DE EDUCACIÓN INFANTIL Y PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
     "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA Y SECUNDARIA",
-  ]);
-  d.api_hospitales = await apiCount(page, "health", ["Hospital general", "Hospital especializado", "Hospital de media y larga estancia", "Hospital de salud mental y tratamiento de toxicomanías"]);
-  d.api_farmacias = { pharmacy: await apiCount(page, "pharmacy", ["Farmacia"]), health: await apiCount(page, "health", ["Farmacia"]) };
+  ], "colegio");
+  d.api_hospitales = await apiCount("health", ["Hospital general", "Hospital especializado", "Hospital de media y larga estancia", "Hospital de salud mental y tratamiento de toxicomanías"]);
+  d.api_farmacias = await apiCount("pharmacy", ["Farmacia"], "farmacia");
+  d.api_mayores = await apiCount("social", ["CENTROS DE DÍA: OTROS", "HOGARES Y CLUBES"], "mayores");
   d.mapa_aria = await page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label");
   await page.screenshot({ path: `${out}/t3_zona_colegios_desktop.png` });
 
