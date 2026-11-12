@@ -26,6 +26,11 @@ TILES="$OUT/tiles"                 # basemap extract, OpenMapTiles schema; the w
 TILES_SRC="$OUT/tiles-src"         # the OSM extract it is made from (Geofabrik, ODbL)
 PBF_BASE="https://download.geofabrik.de/europe/spain"
 PBF_REGION="madrid"
+# The extract, pinned by name and md5 (taken from Geofabrik on 12 Nov). The md5 lives here and not on
+# the download host, so it catches a tampered file and not only a corrupt one. Another extract:
+# PBF_FILE=madrid-YYMMDD.osm.pbf PBF_MD5=<md5>, then pin both here.
+PBF_PINNED="madrid-261111.osm.pbf"
+PBF_PINNED_MD5="1f5fc60a7a14235518265dd1bbfaf613"
 # tilemaker 3.2.0, the official image of github.com/systemed/tilemaker (commit 2789651), by digest
 TILEMAKER_IMAGE="ghcr.io/systemed/tilemaker@sha256:9cd8728a37a31c8a5205e091cedd3ff2c2c450c57e1ce3e5b58916185540ebba"
 # Source of the dump, seen from inside the offline db container: the development database.
@@ -132,26 +137,36 @@ build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this sh
 
 md5_of() { if command -v md5sum >/dev/null; then md5sum "$1" | cut -d' ' -f1; else md5 -q "$1"; fi; }
 
-fetch_pbf() { # sets PBF_NAME: the dated OSM extract in $TILES_SRC, checked against its md5
-  local pbf
+fetch_pbf() { # sets PBF_NAME and PBF_MD5_OK: the pinned OSM extract in $TILES_SRC, md5 checked
+  local name="${PBF_FILE:-$PBF_PINNED}" md5="${PBF_MD5:-}" pbf
+  if [[ -z "$md5" ]]; then
+    [[ "$name" == "$PBF_PINNED" ]] ||
+      { echo "PBF_FILE=$name needs its md5 as well: PBF_MD5=<md5> (from $PBF_BASE/$name.md5)" >&2; exit 2; }
+    md5="$PBF_PINNED_MD5"
+  fi
+  [[ "$name" =~ ^$PBF_REGION-[0-9]{6}\.osm\.pbf$ ]] ||
+    { echo "unexpected extract name '$name' (expected $PBF_REGION-YYMMDD.osm.pbf)" >&2; exit 2; }
+  pbf="$TILES_SRC/$name"
   mkdir -p "$TILES_SRC"
-  # «-latest» redirects to the dated file (madrid-YYMMDD.osm.pbf); that name pins the data.
-  PBF_NAME="${PBF_FILE:-$(curl -fsSI "$PBF_BASE/$PBF_REGION-latest.osm.pbf" |
-    awk 'tolower($1) == "location:" { sub(/\r$/, "", $2); n = split($2, p, "/"); print p[n] }')}"
-  [[ "$PBF_NAME" =~ ^$PBF_REGION-[0-9]{6}\.osm\.pbf$ ]] ||
-    { echo "unexpected Geofabrik file name '$PBF_NAME' (set PBF_FILE=$PBF_REGION-YYMMDD.osm.pbf)" >&2; exit 2; }
-  pbf="$TILES_SRC/$PBF_NAME"
-  echo "-> OSM extract $PBF_NAME (Geofabrik, ODbL)"
-  curl -fsS -o "$pbf.md5" "$PBF_BASE/$PBF_NAME.md5"
-  if [[ ! -f "$pbf" || "$(md5_of "$pbf")" != "$(cut -d' ' -f1 "$pbf.md5")" ]]; then
-    curl -fsS -o "$pbf.tmp" "$PBF_BASE/$PBF_NAME"
+  echo "-> OSM extract $name (Geofabrik, ODbL)"
+  if [[ ! -f "$pbf" || "$(md5_of "$pbf")" != "$md5" ]]; then
+    curl -fsS -o "$pbf.tmp" "$PBF_BASE/$name" || {
+      echo "cannot download $name: Geofabrik may no longer keep it. Pick a newer one in $PBF_BASE" >&2
+      echo "and set PBF_FILE and PBF_MD5" >&2
+      exit 1
+    }
     mv -f "$pbf.tmp" "$pbf"
   fi
-  [[ "$(md5_of "$pbf")" == "$(cut -d' ' -f1 "$pbf.md5")" ]] || { echo "md5 mismatch for $PBF_NAME" >&2; exit 1; }
+  [[ "$(md5_of "$pbf")" == "$md5" ]] || { echo "md5 mismatch for $name: expected $md5" >&2; exit 1; }
+  PBF_NAME="$name"
+  PBF_MD5_OK="$md5"
 }
 
 tiles() { # online, once: the basemap extract, tiles at z0–14 in $TILES with a TileJSON
   local name
+  command -v jq >/dev/null || { echo "jq is required to adapt tilemaker's config: brew install jq" >&2; exit 2; }
+  command -v md5sum >/dev/null || command -v md5 >/dev/null ||
+    { echo "md5sum or md5 is required to check the extract" >&2; exit 2; }
   fetch_pbf
   name="$PBF_NAME"
 
@@ -171,7 +186,7 @@ tiles() { # online, once: the basemap extract, tiles at z0–14 in $TILES with a
   uv run --frozen python -I infra/deploy/offline/tiles_meta.py "$TILES.tmp" "$WEB_URL/tiles" >"$TILES.tmp/summary"
   {
     echo "created_at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-    echo "pbf $name md5 $(cut -d' ' -f1 "$TILES_SRC/$name.md5") from $PBF_BASE"
+    echo "pbf $name md5 $PBF_MD5_OK from $PBF_BASE"
     echo "tilemaker $TILEMAKER_IMAGE"
     cat "$TILES.tmp/summary"
     echo "size $(du -sh "$TILES.tmp" | awk '{print $1}')"
