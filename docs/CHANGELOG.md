@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.30 — Nombres de centros de salud y consultorios (2026-11-12)
+- D-218 §9: segunda pasada del cruce con los catálogos del Ministerio (cinco reglas, municipio y tipo por debajo de la dirección completa, grafías del catálogo de atención primaria). Centros de salud genéricos de 44 a 17; el Ramón y Cajal sigue pendiente del fichero de correcciones.
+
 ## v0.5.29 — Conexiones de la API (2026-11-12)
 - D-219: pool de cada proceso por entorno (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`) y paso de la API al pooler de Supabase en modo transacción (puerto 6543) con `DB_PREPARED_STATEMENTS=false`.
 - `11_engineering/03_configuration_and_secrets.md`: las tres variables nuevas.

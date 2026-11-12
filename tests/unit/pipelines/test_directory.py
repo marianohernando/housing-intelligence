@@ -11,6 +11,8 @@ from hi_ingestion.pipelines.directory.normalize import normalize_directory
 from hi_ingestion.pipelines.directory.quality import run_directory_quality
 from hi_ingestion.pipelines.places.directory import (
     ADDRESS,
+    MUNICIPALITY,
+    ONLY_IN_MUNICIPALITY,
     POSTCODE,
     STREET,
     Entry,
@@ -336,3 +338,202 @@ def test_bracketed_locality_hints_do_not_break_the_street() -> None:
         "P1": f"E1:{ADDRESS}"
     }
     assert matched([place("P2", "M-515 (POZUELO)", 61)], entries) == {"P2": f"E2:{ADDRESS}"}
+
+
+# Primary care names, second pass (D-218 §9): the cases the first pass left generic.
+
+
+def ap_entry(external_id: str, address: str, postal_code: str, municipality: str) -> Entry:
+    return Entry(external_id, "X", address, postal_code, "CENTRO SALUD", None, None, municipality)
+
+
+def ap_place(
+    external_id: str, street: str, number: int | None, postal_code: str, municipality: str
+) -> RegisterPlace:
+    return RegisterPlace(
+        external_id, "Centro de salud", postal_code, street, number, "publica", municipality
+    )
+
+
+AP_KINDS = {"Centro de salud": "CENTRO SALUD", "Consultorio de atención primaria": "CONSULTORIO"}
+
+
+def ap_matched(places: list[RegisterPlace], entries: list[Entry]) -> dict[str, str]:
+    resolution = resolve_places(places, entries, AP_KINDS)
+    return {m.place_id: f"{m.entry.external_id}:{m.method}" for m in resolution.matches}
+
+
+def test_another_postcode_of_the_same_municipality_needs_street_and_number() -> None:
+    entries = [
+        ap_entry("E1", "CALLE CABO MACHICHACO, Nº 62", "28018", "Madrid"),
+        ap_entry("E2", "CALLE IBIZA, Nº 7", "28009", "Madrid"),
+    ]
+    same = ap_place("P1", "del Cabo Machichaco", 62, "28053", "Madrid")
+    assert ap_matched([same], entries) == {"P1": f"E1:{MUNICIPALITY}"}
+    other_number = ap_place("P1", "del Cabo Machichaco", 60, "28053", "Madrid")
+    assert ap_matched([other_number], entries) == {}
+    other_municipality = ap_place("P1", "del Cabo Machichaco", 62, "28053", "Getafe")
+    assert ap_matched([other_municipality], entries) == {}
+
+
+def test_the_municipality_rule_needs_a_single_entry_at_that_address() -> None:
+    entries = [
+        ap_entry("E1", "AVENIDA DE MADRID, Nº 9 - 11", "28822", "Coslada"),
+        ap_entry("E2", "AVENIDA DE MADRID, Nº 11", "28823", "Coslada"),
+    ]
+    assert ap_matched([ap_place("P1", "de Madrid", 11, "28820", "Coslada")], entries) == {}
+    assert ap_matched([ap_place("P1", "de Madrid", 11, "28820", "Coslada")], entries[:1]) == {
+        "P1": f"E1:{MUNICIPALITY}"
+    }
+
+
+def test_the_municipality_rule_comes_before_the_postcode_rule() -> None:
+    """Leganés: «Mª» is María, so P1 takes E1 by address and P2 is not left claiming it."""
+    entries = [
+        ap_entry("E1", "CALLE Mª ÁNGELES LÓPEZ GÓMEZ, Nº 2", "28915", "Leganés"),
+        ap_entry("E2", "AVENIDA DE EUROPA, Nº 1", "28916", "Leganés"),
+    ]
+    places = [
+        ap_place("P1", "María Ángeles López Gómez", 2, "28915", "Leganés"),
+        ap_place("P2", "Europa", 1, "28915", "Leganés"),
+    ]
+    assert ap_matched(places, entries) == {"P1": f"E1:{ADDRESS}", "P2": f"E2:{MUNICIPALITY}"}
+
+
+@pytest.mark.parametrize(
+    ("published", "street", "number", "method"),
+    [
+        # The catalogue writes «CALLE» for every «CL» and «AVENIDA» for every «AV», also inside
+        # a word: San Claudio, Valle Inclán, Isla de Java, a glued «CL» before the street.
+        ("CALLE SAN CALLEAUDIO, Nº 154", "de San Claudio", 154, ADDRESS),
+        ("CALLE VALLE INCALLEÁN, Nº 97", "de Valle Inclán", 97, ADDRESS),
+        ("CALLE ISLA DE JAVENIDAA, S/N", "de la Isla de Java", None, STREET),
+        ("CALLEFUENTESPINA, Nº 2", "de Fuentespina", 2, ADDRESS),
+        # Abbreviations and street types
+        ("AVENIDA DE NTRA SRA DE FÁTIMA, Nº 93", "de Nuestra Señora de Fátima", 93, ADDRESS),
+        ("BULEVAR INDALECIO PRIETO, Nº 26", "de Indalecio Prieto", 26, ADDRESS),
+        # A corner is on both streets
+        ("CALLE ZEUS, esq JOAQUÍN BLUME S/N", "Joaquín Blume", None, STREET),
+    ],
+)
+def test_the_catalogue_spelling_of_a_street_is_the_register_street(
+    published: str, street: str, number: int | None, method: str
+) -> None:
+    entries = [ap_entry("E1", published, "28001", "Madrid")]
+    assert ap_matched([ap_place("P1", street, number, "28001", "Madrid")], entries) == {
+        "P1": f"E1:{method}"
+    }
+
+
+def test_spelling_variants_never_join_different_streets() -> None:
+    entries = [
+        ap_entry("E1", "CALLE CLARA CAMPOAMOR, Nº 3", "28001", "Madrid"),
+        ap_entry("E2", "CALLE SANTA ENGRACIA, Nº 3", "28001", "Madrid"),
+    ]
+    assert ap_matched([ap_place("P1", "de Campoamor", 3, "28001", "Madrid")], entries) == {}
+    assert ap_matched([ap_place("P2", "de Engracia", 3, "28001", "Madrid")], entries) == {}
+
+
+def test_the_directory_keeps_the_municipality_of_each_entry() -> None:
+    spec = SPEC.model_copy(update={"municipality_column": "Municipio"})
+    frame = _sheet([("280029", "Hospital A", "Calle De Ayala 38", "28001", "Generales", "886")])
+    frame["Municipio"] = ["Madrid"]
+    directory = normalize_directory(frame, spec)
+    assert directory.frame["municipality"].tolist() == ["Madrid"]
+    assert "Municipio" in spec.kept_columns()
+
+
+def consultorio(
+    external_id: str, street: str, number: int | None, municipality: str
+) -> RegisterPlace:
+    return RegisterPlace(
+        external_id, "Consultorio de atención primaria", "28755", street, number, "publica",
+        municipality,
+    )  # fmt: skip
+
+
+def village_entry(external_id: str, address: str, municipality: str) -> Entry:
+    return Entry(external_id, "X", address, "28755", "CONSULTORIO", None, None, municipality)
+
+
+def test_a_postcode_shared_by_villages_never_joins_two_municipalities() -> None:
+    """Robregordo and Madarcos share 28755 and both have a «calle de las Eras»."""
+    entries = [
+        village_entry("E1", "CALLE DE LAS ERAS, Nº 19", "Robregordo"),
+        village_entry("E2", "CALLE DE LA IGLESIA, Nº 1", "Madarcos"),
+    ]
+    entries[1] = Entry("E2", "X", "CALLE DE LA IGLESIA, Nº 1", "28756", "CONSULTORIO", None, None,
+                       "Madarcos")  # fmt: skip
+    places = [
+        consultorio("P1", "de las Eras", 16, "Robregordo"),
+        consultorio("P2", "de las Eras", 23, "Madarcos"),
+    ]
+    assert ap_matched(places, entries) == {
+        "P1": f"E1:{STREET}",
+        "P2": f"E2:{ONLY_IN_MUNICIPALITY}",
+    }
+
+
+def test_the_only_entry_of_its_kind_in_the_municipality_needs_to_be_alone() -> None:
+    two = [
+        village_entry("E1", "PLAZA PEDRO UCEDA, Nº 1", "Horcajo de la Sierra-Aoslos"),
+        village_entry("E2", "CALLE REAL, Nº 5", "Horcajo de la Sierra-Aoslos"),
+        village_entry("E3", "PLAZA MAYOR, Nº 2", "Madarcos"),
+    ]
+    place = consultorio("P1", "Mayor", 9, "Horcajo de la Sierra-Aoslos")
+    assert ap_matched([place], two) == {}
+    taken = [village_entry("E1", "CALLE DE LA IGLESIA, Nº 1", "Madarcos")]
+    places = [
+        consultorio("P1", "de la Iglesia", 1, "Madarcos"),
+        consultorio("P2", "Real", 5, "Madarcos"),
+    ]
+    assert ap_matched(places, taken) == {"P1": f"E1:{ADDRESS}"}  # P2 never inherits it
+
+
+def test_singular_and_plural_are_the_same_street() -> None:
+    """Parla: «Avda de América 6» is the catalogue's «Avenida de las Américas 6», in another
+    postal code; the address beats a centre that only shares the postal code."""
+    entries = [ap_entry("E1", "AVENIDA DE LAS AMÉRICAS, Nº 6", "28983", "Parla")]
+    places = [
+        ap_place("P1", "de América", 6, "28981", "Parla"),
+        ap_place("P2", "Planeta Venus", 24, "28983", "Parla"),
+    ]
+    assert ap_matched(places, entries) == {"P1": f"E1:{MUNICIPALITY}"}
+
+
+def test_a_full_address_holds_even_if_the_catalogue_files_another_municipality() -> None:
+    """The catalogue files Aravaca (Madrid) under Pozuelo de Alarcón, its health area."""
+    entries = [ap_entry("E1", "CALLE RIAZA, Nº 5", "28023", "Pozuelo de Alarcón")]
+    assert ap_matched([ap_place("P1", "de Riaza", 5, "28023", "Madrid")], entries) == {
+        "P1": f"E1:{ADDRESS}"
+    }
+    assert ap_matched([ap_place("P1", "de Riaza", None, "28023", "Madrid")], entries) == {}
+
+
+def test_below_a_full_address_the_kind_must_agree() -> None:
+    """Madrid: a consultorio at Palma 54 (28015) is not the centro de salud at Palma 51."""
+    entries = [ap_entry("E1", "CALLE DE LA PALMA, Nº 51", "28015", "Madrid")]
+    consultorio_54 = RegisterPlace(
+        "P1", "Consultorio de atención primaria", "28015", "de la Palma", 54, "publica", "Madrid"
+    )
+    centro_51 = ap_place("P2", "de la Palma", 51, "28004", "Madrid")
+    assert ap_matched([consultorio_54, centro_51], entries) == {"P2": f"E1:{MUNICIPALITY}"}
+    consultorio_51 = RegisterPlace(
+        "P3", "Consultorio de atención primaria", "28015", "de la Palma", 51, "publica", "Madrid"
+    )
+    assert ap_matched([consultorio_51], entries) == {"P3": f"E1:{ADDRESS}"}
+
+
+def test_a_number_glued_to_its_marker_is_still_a_number() -> None:
+    entries = [ap_entry("E1", "CALLE SECTOR OFICIOS, Nº12", "28760", "Tres Cantos")]
+    place = ap_place("P1", "Oficios", 12, "28760", "Tres Cantos")
+    assert ap_matched([place], entries) == {"P1": f"E1:{ADDRESS}"}
+
+
+def test_carrera_is_a_street_type() -> None:
+    entries = [
+        ap_entry("E1", "CALLE CARRERA SAN JERÓNIMO, Nº 32", "28013", "Madrid"),
+        ap_entry("E2", "CALLE IBIZA, Nº 7", "28009", "Madrid"),
+    ]
+    place = ap_place("P1", "de San Jerónimo", 32, "28014", "Madrid")
+    assert ap_matched([place], entries) == {"P1": f"E1:{MUNICIPALITY}"}

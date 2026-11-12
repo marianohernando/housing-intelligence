@@ -196,6 +196,8 @@ class FacilityDirectoryPipeline(BaseModel):
     dependency_column: str | None = None
     capacity_column: str | None = None
     capacity_unit: str | None = None
+    # Lets a register match an entry whose postal code differs from its own (D-218 §9)
+    municipality_column: str | None = None
     # Only rows of the region: e.g. «Cód. Provincia» in ["28"]
     scope_column: str
     scope_values: list[str] = Field(min_length=1)
@@ -213,7 +215,7 @@ class FacilityDirectoryPipeline(BaseModel):
         return self
 
     def kept_columns(self) -> list[str]:
-        optional = [self.dependency_column, self.capacity_column]
+        optional = [self.dependency_column, self.capacity_column, self.municipality_column]
         return [
             self.id_column,
             self.name_column,

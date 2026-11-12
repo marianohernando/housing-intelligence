@@ -18,6 +18,7 @@ DIRECTORY_COLUMNS = [
     "kind",
     "dependency",
     "capacity",
+    "municipality",
 ]
 
 
@@ -68,6 +69,7 @@ def _entry(row: dict[str, Any], spec: FacilityDirectoryPipeline) -> dict[str, An
         "kind": _text(row[spec.kind_column]),
         "dependency": _text(row[spec.dependency_column]) if spec.dependency_column else "",
         "capacity": capacity,
+        "municipality": _text(row[spec.municipality_column]) if spec.municipality_column else "",
     }
 
 

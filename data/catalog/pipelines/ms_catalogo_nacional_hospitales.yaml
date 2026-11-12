@@ -7,6 +7,7 @@ address_column: Dirección
 postal_code_column: Código Postal
 kind_column: Clase de Centro
 dependency_column: Dependencia Funcional
+municipality_column: Municipio
 capacity_column: CAMAS
 capacity_unit: camas instaladas
 # Teléfono and Email are never read (D-186).

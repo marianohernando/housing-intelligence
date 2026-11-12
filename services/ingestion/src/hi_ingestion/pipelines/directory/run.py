@@ -19,7 +19,7 @@ from hi_ingestion.pipelines.directory.quality import run_directory_quality
 from hi_ingestion.pipelines.fetch import FetchedFile
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "directory-1.0.0"
+PARSER_VERSION = "directory-1.1.0"
 
 
 def _counts(directory: Directory) -> dict[str, Any]:

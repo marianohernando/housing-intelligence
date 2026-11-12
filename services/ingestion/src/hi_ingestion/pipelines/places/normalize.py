@@ -239,6 +239,7 @@ def _register_place(
         street=column(spec.address_street_column) or None,
         number=house_number(column(spec.address_number_column)),
         dependency=dependency(column(spec.dependency_column)) if spec.dependency_column else None,
+        municipality=column(spec.municipio_name_column) or None,
     )
 
 

@@ -11,6 +11,7 @@ from hi_contracts.catalog.pipeline import FacilityDirectoryPipeline, PointsPipel
 from hi_ingestion.bronze import REPO_ROOT
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.common import RunSummary
+from hi_ingestion.pipelines.directory.run import PARSER_VERSION as DIRECTORY_PARSER
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.places.run import run_places_pipeline
@@ -80,8 +81,8 @@ def test_hospitals_take_the_directory_name_and_keep_the_register_as_source(
     roles = sorted((i["dataset_id"], i["role"]) for i in manifest["inputs"])
     assert roles == [
         (REGISTER, "primary"),
-        (PRIMARY_CARE, "directory@directory-1.0.0"),
-        (HOSPITALS, "directory@directory-1.0.0"),
+        (PRIMARY_CARE, f"directory@{DIRECTORY_PARSER}"),
+        (HOSPITALS, f"directory@{DIRECTORY_PARSER}"),
     ]
 
 

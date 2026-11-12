@@ -44,9 +44,9 @@
       "passed": true,
       "details": {
         "filtered_out": {
-          "centro_tipo_not_allowed": 38596
+          "centro_tipo_not_allowed": 38590
         },
-        "source_rows": 46154
+        "source_rows": 46148
       }
     },
     {
@@ -109,7 +109,7 @@
       "critical": false,
       "passed": true,
       "details": {
-        "compared": 435,
+        "compared": 478,
         "disagree": 0
       }
     },
@@ -126,7 +126,9 @@
           "by_method": {
             "direccion": 64,
             "calle": 13,
-            "codigo_postal": 2
+            "direccion_municipio": 0,
+            "codigo_postal": 2,
+            "municipio": 0
           },
           "names_rejected": [
             {
@@ -253,11 +255,13 @@
           "version": "2026-11-12-260312fa3bc8",
           "entries": 419,
           "register_places": 423,
-          "matched": 356,
+          "matched": 399,
           "by_method": {
-            "direccion": 278,
-            "calle": 55,
-            "codigo_postal": 23
+            "direccion": 289,
+            "calle": 57,
+            "direccion_municipio": 25,
+            "codigo_postal": 27,
+            "municipio": 1
           },
           "names_rejected": [],
           "unmatched_places": [
@@ -267,49 +271,14 @@
               "reason": "no entry in postal code 28230"
             },
             {
-              "external_id": "CS0287",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28053"
-            },
-            {
               "external_id": "CS0293",
               "subcategory": "Centro de salud",
               "reason": "no entry in postal code 28053"
             },
             {
-              "external_id": "CS0403",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 6 in postal code 28038"
-            },
-            {
               "external_id": "CS0597",
               "subcategory": "Centro de salud",
               "reason": "no unique entry among 3 in postal code 28044"
-            },
-            {
-              "external_id": "CS0662",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28053"
-            },
-            {
-              "external_id": "CS0821",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 2 in postal code 28025"
-            },
-            {
-              "external_id": "CS1013",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 6 in postal code 28018"
-            },
-            {
-              "external_id": "CS10284",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 6 in postal code 28850"
-            },
-            {
-              "external_id": "CS10477",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 2 in postal code 28818"
             },
             {
               "external_id": "CS1140",
@@ -322,64 +291,19 @@
               "reason": "no unique entry among 1 in postal code 28701"
             },
             {
-              "external_id": "CS12471",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 4 in postal code 28729"
-            },
-            {
-              "external_id": "CS12644",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 1 in postal code 28752"
-            },
-            {
-              "external_id": "CS12649",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no entry in postal code 28120"
-            },
-            {
               "external_id": "CS12726",
               "subcategory": "Consultorio de atención primaria",
               "reason": "no unique entry among 5 in postal code 28737"
             },
             {
-              "external_id": "CS12763",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 2 in postal code 28190"
-            },
-            {
-              "external_id": "CS13045",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 1 in postal code 28979"
-            },
-            {
-              "external_id": "CS13222",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 5 in postal code 28737"
-            },
-            {
-              "external_id": "CS13295",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 5 in postal code 28749"
+              "external_id": "CS13070",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28514"
             },
             {
               "external_id": "CS13396",
               "subcategory": "Consultorio de atención primaria",
               "reason": "no unique entry among 5 in postal code 28739"
-            },
-            {
-              "external_id": "CS13403",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no entry in postal code 28738"
-            },
-            {
-              "external_id": "CS13707",
-              "subcategory": "Centro de salud",
-              "reason": "ambiguous: 2 places claim 1328018171"
-            },
-            {
-              "external_id": "CS13991",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28053"
             },
             {
               "external_id": "CS17064",
@@ -392,14 +316,14 @@
               "reason": "no unique entry among 3 in postal code 28044"
             },
             {
-              "external_id": "CS18571",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 5 in postal code 28749"
-            },
-            {
               "external_id": "CS20540",
               "subcategory": "Consultorio de atención primaria",
               "reason": "no unique entry among 3 in postal code 28400"
+            },
+            {
+              "external_id": "CS21751",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28983"
             },
             {
               "external_id": "CS21829",
@@ -410,16 +334,6 @@
               "external_id": "CS21856",
               "subcategory": "Centro de salud",
               "reason": "ambiguous: 2 places claim 1328001985"
-            },
-            {
-              "external_id": "CS22170",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "ambiguous: 2 places claim 1328008948"
-            },
-            {
-              "external_id": "CS22316",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 2 in postal code 28816"
             },
             {
               "external_id": "CS22326",
@@ -437,64 +351,14 @@
               "reason": "no unique entry among 4 in postal code 28002"
             },
             {
-              "external_id": "CS2260",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 2 in postal code 28031"
-            },
-            {
-              "external_id": "CS4381",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 4 in postal code 28032"
-            },
-            {
-              "external_id": "CS5245",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28820"
-            },
-            {
-              "external_id": "CS6082",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 3 in postal code 28044"
-            },
-            {
-              "external_id": "CS6876",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28340"
-            },
-            {
-              "external_id": "CS6878",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 3 in postal code 28034"
-            },
-            {
-              "external_id": "CS7256",
+              "external_id": "CS6706",
               "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 1 in postal code 28691"
-            },
-            {
-              "external_id": "CS7343",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28981"
+              "reason": "no unique entry among 3 in postal code 28015"
             },
             {
               "external_id": "CS7366",
               "subcategory": "Consultorio de atención primaria",
               "reason": "no unique entry among 3 in postal code 28296"
-            },
-            {
-              "external_id": "CS7368",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28004"
-            },
-            {
-              "external_id": "CS7380",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28700"
-            },
-            {
-              "external_id": "CS7528",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28806"
             },
             {
               "external_id": "CS8138",
@@ -507,44 +371,9 @@
               "reason": "no unique entry among 4 in postal code 28100"
             },
             {
-              "external_id": "CS8428",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28222"
-            },
-            {
-              "external_id": "CS8736",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28700"
-            },
-            {
               "external_id": "CS8737",
               "subcategory": "Centro de salud",
               "reason": "no unique entry among 2 in postal code 28770"
-            },
-            {
-              "external_id": "CS8886",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 3 in postal code 28189"
-            },
-            {
-              "external_id": "CS9007",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 2 in postal code 28760"
-            },
-            {
-              "external_id": "CS9013",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28933"
-            },
-            {
-              "external_id": "CS9043",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "ambiguous: 2 places claim 1328008948"
-            },
-            {
-              "external_id": "CS9144",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28914"
             },
             {
               "external_id": "CS9145",
@@ -552,49 +381,9 @@
               "reason": "no unique entry among 1 in postal code 28914"
             },
             {
-              "external_id": "CS9166",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no entry in postal code 28728"
-            },
-            {
               "external_id": "CS9208",
               "subcategory": "Consultorio de atención primaria",
               "reason": "no unique entry among 2 in postal code 28130"
-            },
-            {
-              "external_id": "CS9240",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28914"
-            },
-            {
-              "external_id": "CS9336",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 3 in postal code 28942"
-            },
-            {
-              "external_id": "CS9361",
-              "subcategory": "Centro de salud",
-              "reason": "ambiguous: 2 places claim 1328018171"
-            },
-            {
-              "external_id": "CS9558",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 2 in postal code 28922"
-            },
-            {
-              "external_id": "CS9655",
-              "subcategory": "Centro de salud",
-              "reason": "no unique entry among 1 in postal code 28014"
-            },
-            {
-              "external_id": "CS9656",
-              "subcategory": "Centro de salud",
-              "reason": "no entry in postal code 28941"
-            },
-            {
-              "external_id": "CS9855",
-              "subcategory": "Consultorio de atención primaria",
-              "reason": "no unique entry among 2 in postal code 28812"
             }
           ],
           "unmatched_entries": [
@@ -634,53 +423,13 @@
               "kind": "CENTRO SALUD"
             },
             {
-              "external_id": "1328006153",
-              "name": "VALLE INCLÁN",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328000589",
-              "name": "NTRA. SRA.DE FÁTIMA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328001011",
-              "name": "LOS FRESNOS",
-              "kind": "CENTRO SALUD"
-            },
-            {
               "external_id": "1328007478",
               "name": "MARÍA DE GUZMÁN",
               "kind": "CENTRO SALUD"
             },
             {
-              "external_id": "1328009813",
-              "name": "VALDEAVERO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
               "external_id": "1328001013",
               "name": "MIGUEL DE CERVANTES",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328007477",
-              "name": "REYES MAGOS",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328001214",
-              "name": "ANCHUELO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328009742",
-              "name": "PEZUELA DE LAS TORRES",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328009545",
-              "name": "CORTES",
               "kind": "CENTRO SALUD"
             },
             {
@@ -694,48 +443,13 @@
               "kind": "CONSULTORIO LOCAL"
             },
             {
-              "external_id": "1328008343",
-              "name": "VALLE DE LA OLIVA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328007220",
-              "name": "VILLAFRANCA DEL CASTILLO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328017196",
-              "name": "SANTO DOMINGO (URBANIZACIÓN)",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
               "external_id": "1328009108",
               "name": "ALALPARDO",
               "kind": "CONSULTORIO LOCAL"
             },
             {
-              "external_id": "1328017694",
-              "name": "GASCONES",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328017082",
-              "name": "MADARCOS",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328017081",
-              "name": "MONTEJO DE LA SIERRA",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
               "external_id": "1328017866",
               "name": "NAVARREDONDA",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328017873",
-              "name": "GANDULLAS",
               "kind": "CONSULTORIO LOCAL"
             },
             {
@@ -749,83 +463,8 @@
               "kind": "CONSULTORIO LOCAL"
             },
             {
-              "external_id": "1328008948",
-              "name": "ROBREGORDO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
               "external_id": "1328008647",
               "name": "COLMENAR VIEJO SUR",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328006875",
-              "name": "FUENCARRAL",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328017236",
-              "name": "LAS NAVAS DE BUITRAGO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328016796",
-              "name": "VALDEMANCO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328009067",
-              "name": "VENTURADA",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328017086",
-              "name": "PINILLA DEL VALLE",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328017767",
-              "name": "OTERUELO",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328008646",
-              "name": "ROSA DE LUXEMBURGO",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328008913",
-              "name": "TRES CANTOS I - SECTOR OFICIOS",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328008794",
-              "name": "PATONES",
-              "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328007338",
-              "name": "V CENTENARIO",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328009546",
-              "name": "CASTILLA LA NUEVA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328009234",
-              "name": "EL NARANJO",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328008919",
-              "name": "EL SOTO",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328009451",
-              "name": "LA RIVOTA",
               "kind": "CENTRO SALUD"
             },
             {
@@ -834,39 +473,9 @@
               "kind": "CENTRO SALUD"
             },
             {
-              "external_id": "1328006873",
-              "name": "EL RESTÓN",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328009257",
-              "name": "JAIME VERA - LEGANÉS",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328017432",
-              "name": "BATRES",
+              "external_id": "1328017546",
+              "name": "NUEVO BAZTÁN",
               "kind": "CONSULTORIO LOCAL"
-            },
-            {
-              "external_id": "1328018171",
-              "name": "MARÍA ÁNGELES LÓPEZ",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328009045",
-              "name": "MARÍA JESÚS HEREZA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328009140",
-              "name": "SANTA ISABEL",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328000847",
-              "name": "CAMPO DE LA PALOMA",
-              "kind": "CENTRO SALUD"
             },
             {
               "external_id": "1328012647",
@@ -874,43 +483,8 @@
               "kind": "CONSULTORIO LOCAL"
             },
             {
-              "external_id": "1328005391",
-              "name": "CIUDAD SAN PABLO",
-              "kind": "CENTRO SALUD"
-            },
-            {
               "external_id": "1328000259",
               "name": "ENTREVÍAS",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328000496",
-              "name": "MARTÍNEZ DE LA RIVA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328000256",
-              "name": "JOSÉ MARÍA LLANOS",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328000328",
-              "name": "RAFAEL ALBERTI",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328018818",
-              "name": "VICENTE SOLDEVILLA",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328002822",
-              "name": "CERRO ALMODÓVAR",
-              "kind": "CENTRO SALUD"
-            },
-            {
-              "external_id": "1328004642",
-              "name": "VALDEBERNARDO",
               "kind": "CENTRO SALUD"
             }
           ]

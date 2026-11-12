@@ -319,6 +319,18 @@
           "title": "Min Rows",
           "type": "integer"
         },
+        "municipality_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipality Column"
+        },
         "name_column": {
           "title": "Name Column",
           "type": "string"
