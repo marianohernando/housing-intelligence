@@ -17,6 +17,7 @@ from hi_contracts.public import (
     SearchResult,
     ZoneGapList,
 )
+from hi_contracts.public.places import PlaceCollection
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.catalog.provenance import dataset_ref, is_cm_open_data
 
@@ -27,6 +28,7 @@ CONTRACTS: dict[str, type[BaseModel]] = {
     "gap_row_map": GapRowMap,
     "search_result": SearchResult,
     "dataset_list": DatasetList,
+    "places": PlaceCollection,
 }
 
 
@@ -159,3 +161,29 @@ def test_row_map_counts_match_its_zones_and_sin_datos_needs_no_value() -> None:
         GapRowMap.model_validate(payload | {"zones": [zone | {"status": "SIN_DATOS"}]})
     with pytest.raises(ValidationError):
         GapRowMap.model_validate(payload | {"zones": [zone, zone]})
+
+
+def test_small_village_is_compared_with_its_neighbours() -> None:
+    """gap-0.3 (D-217): a zone too small alone gets its group's status, never «poco fiable»."""
+    path = FIXTURES / "zone_gap_list.el_alamo.fixture.json"
+    rows = ZoneGapList.model_validate(json.loads(path.read_text())).rows
+    grouped = [r for r in rows if r.comparison_group is not None]
+    assert grouped
+    for row in grouped:
+        group = row.comparison_group
+        assert group is not None
+        assert group.codes[0] == "28004"
+        assert len(group.codes) == len(group.names) >= 2
+        assert row.reliable
+        assert "junto con" in row.explanation
+
+
+def test_places_fixture_carries_ownership_and_the_rows_that_count_them() -> None:
+    path = FIXTURES / "places.colegios_chamartin.fixture.json"
+    places = PlaceCollection.model_validate(json.loads(path.read_text()))
+    assert places.contract_version == "places-1"
+    owned = {f.properties.ownership for f in places.features}
+    assert owned <= {"publica", "concertada", "privada"}
+    counted = [f for f in places.features if "colegio" in f.properties.gap_rows]
+    assert counted
+    assert all(f.properties.ownership in {"publica", "concertada"} for f in counted)

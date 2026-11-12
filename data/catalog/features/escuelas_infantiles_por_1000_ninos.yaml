@@ -32,4 +32,4 @@ limitations:
   - "Cuenta escuelas infantiles públicas y privadas (incluidas las casas de niños), no plazas: una escuela grande y una pequeña pesan igual. Los colegios con aulas de 3 a 5 años no cuentan aquí."
   - "La población de 0 a 4 años es el tramo más fino que publican el censo de la CM y el padrón; el primer ciclo de infantil es de 0 a 3 años."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
-gap_row: {row: escuela_infantil, role: primary, label: "Escuelas infantiles", phrase: "escuelas infantiles por cada 1.000 niños de 0 a 4 años", proxy_note: "Cuenta escuelas infantiles públicas y privadas, no plazas: una grande y una pequeña pesan igual."}
+gap_row: {row: escuela_infantil, role: extra, phrase: "escuelas infantiles por cada 1.000 niños de 0 a 4 años"}

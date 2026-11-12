@@ -8,20 +8,28 @@ type of its municipio and leaves the whole municipio out. Without counts, or wit
 in the type, the zone is compared with the whole region. Parameterised SQL only.
 """
 
+import math
+import os
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
+from hi_contracts.public import ComparisonGroup, GapStatus
 from hi_domain.gaps import (
     REGION_TEXT,
     TYPE_TEXT,
+    Pool,
     TerritoryType,
+    classify,
     min_expected,
+    pool_with_neighbours,
+    pooled_status,
     significant_shortfall,
     territory_type,
 )
+from hi_domain.geo.names import display_name
 
 # Population that sets the type of a municipio (with its area from the canonical geography).
 TYPE_POPULATION_FEATURE = "poblacion_total"
@@ -43,6 +51,19 @@ _COUNTS = text(
       FROM feature_value
      WHERE feature_id = ANY(:features) AND territory_level = 'municipio'
        AND inputs ? 'counts'
+    """
+)
+
+
+# How far a small municipio looks for same-type neighbours to be compared with (D-217).
+POOL_RADIUS_M = float(os.environ.get("GAP_POOL_RADIUS_M", "15000"))
+# Where each municipio is, to find its nearest same-type neighbours (gap-0.3, D-217).
+_MUNICIPIOS = text(
+    """
+    SELECT code_official, name,
+           ST_X(ST_PointOnSurface(geom_25830)) AS x, ST_Y(ST_PointOnSurface(geom_25830)) AS y
+      FROM geo_admin_unit
+     WHERE level = 'municipio'
     """
 )
 
@@ -69,6 +90,40 @@ class References:
     )  # feature -> municipio -> its own counts, left out of its reference
     versions: dict[str, str] = field(default_factory=dict[str, str])
     used: bool = False  # some zone was compared with its type: cite population and geography
+    places: dict[str, tuple[str, float, float]] = field(
+        default_factory=dict[str, tuple[str, float, float]]
+    )  # municipio -> (display name, x, y)
+
+    def neighbours(self, code: str) -> list[str]:
+        """Same-type municipios within POOL_RADIUS_M, nearest first (between interior points)."""
+        kind, here = self.types.get(code), self.places.get(code)
+        if kind is None or here is None:
+            return []
+        others = [
+            (math.dist(here[1:], where[1:]), other)
+            for other, where in self.places.items()
+            if other != code and self.types.get(other) is kind
+        ]
+        return [other for metres, other in sorted(others) if metres <= POOL_RADIUS_M]
+
+    def pool(self, feature_id: str, code: str) -> Pool | None:
+        """A small municipio with its nearest same-type neighbours (D-217); None elsewhere."""
+        kind, floor = self.types.get(code), min_expected()
+        own = self.own.get(feature_id, {})
+        typed = self.sums.get(feature_id, {}).get(kind) if kind else None
+        if len(code) != 5 or code not in own or not typed or floor is None:
+            return None
+
+        def rate_without(members: set[str]) -> float | None:
+            num = typed[0] - sum(own[m][0] for m in members)
+            den = typed[1] - sum(own[m][1] for m in members)
+            return num / den if num > 0 and den > 0 else None
+
+        return pool_with_neighbours(code, own, self.neighbours(code), rate_without, floor)
+
+    def group(self, pool: Pool) -> ComparisonGroup:
+        names = [self.places[c][0] if c in self.places else c for c in pool.codes]
+        return ComparisonGroup(codes=pool.codes, names=names, ratio_to_reference=pool.ratio)
 
     def zone_type(self, code: str) -> TerritoryType | None:
         return self.types.get(code[:5])
@@ -128,6 +183,12 @@ def load_references(conn: Connection, features: list[str]) -> References:
         total[1] += den
         refs.own.setdefault(row["feature_id"], {})[row["territory_code"]] = (num, den)
     refs.sums = dict(sums)
+    for row in conn.execute(_MUNICIPIOS).mappings():
+        refs.places[str(row["code_official"])] = (
+            display_name(str(row["name"])),
+            float(row["x"]),
+            float(row["y"]),
+        )
     return refs
 
 
@@ -145,3 +206,38 @@ def assess(row: dict[str, Any], reference: Reference, direction: str) -> Assessm
     floor = min_expected()
     reliable = floor is None or expected >= floor
     return Assessment(significant_shortfall(counts["numerator"], expected), reliable)
+
+
+class Verdict(NamedTuple):
+    status: GapStatus
+    reliable: bool
+    group: ComparisonGroup | None
+
+
+def judge(
+    ratio: float | None,
+    judged: Assessment,
+    references: References,
+    feature_id: str,
+    code: str,
+) -> Verdict:
+    """The zone's status; a municipio too small alone takes its group's (gap-0.3, D-217)."""
+    if ratio is None or judged.reliable:
+        return Verdict(classify(ratio, significant=judged.significant), judged.reliable, None)
+    pool = references.pool(feature_id, code)
+    if pool is None or len(pool.codes) < 2:
+        return Verdict(classify(ratio, significant=judged.significant), False, None)
+    return Verdict(pooled_status(pool), True, references.group(pool))
+
+
+def group_sentence(group: ComparisonGroup) -> str:
+    """«demasiado pequeño para compararlo solo: junto con 4 municipios vecinos (A, B, C y D),
+    tiene el 112 % de lo esperado»"""
+    others = group.names[1:]
+    listed = others[0] if len(others) == 1 else ", ".join(others[:-1]) + " y " + others[-1]
+    plural = "municipio vecino" if len(others) == 1 else "municipios vecinos"
+    share = round(100 * group.ratio_to_reference)
+    return (
+        f"demasiado pequeño para compararlo solo: junto con {len(others)} {plural} del mismo "
+        f"tipo ({listed}), tiene el {share} % de lo esperado"
+    )

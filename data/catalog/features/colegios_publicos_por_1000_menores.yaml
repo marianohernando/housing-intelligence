@@ -35,4 +35,4 @@ limitations:
   - "Los menores de 15 años aproximan la población en edad escolar: son los tramos quinquenales que publican el censo y el padrón (0-4, 5-9 y 10-14). Afecta igual a todas las zonas, así que la comparación con la región se mantiene."
   - "Solo colegios con primaria, públicos o concertados (sostenidos con fondos públicos): ni escuelas infantiles, ni institutos, ni privados sin concierto. Son los mismos centros que los minutos a pie hasta el colegio (versión 2, GAP-001 F2)."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
-gap_row: {row: colegio, role: primary, label: "Colegios", phrase: "colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años", proxy_note: "Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual. No dice cuál te corresponde por zona."}
+gap_row: {row: colegio, role: extra, phrase: "colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años"}

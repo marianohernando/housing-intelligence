@@ -8,6 +8,7 @@ the four-fifths cut-off) that is also statistically significant for the size of 
 (exact Poisson interval of its count). An unknown value is never classified.
 """
 
+from collections.abc import Callable, Mapping, Sequence
 from enum import StrEnum
 from typing import Literal, NamedTuple
 
@@ -16,10 +17,12 @@ from scipy.stats import chi2
 from hi_contracts.public import GapMethod, GapStatus
 
 GAP_METHOD = GapMethod(
-    version="gap-0.2",
+    version="gap-0.3",
     reference=(
         "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): "
-        "su total dividido por su población"
+        "la oferta al alcance a pie de su población (2SFCA, 15 min) dividida por su población. "
+        "Un municipio demasiado pequeño se compara junto con sus vecinos más cercanos del mismo "
+        "tipo (D-217)"
     ),
     falta_below=0.8,
     cubierto_from=1.0,
@@ -138,3 +141,49 @@ def explanation(
     if regional is not None:
         text += f" (en toda la Comunidad, {es_number(regional, decimals)})"
     return text
+
+
+class Pool(NamedTuple):
+    """A small zone compared together with its nearest neighbours of the same type (D-217)."""
+
+    codes: list[str]  # the zone first, then the neighbours in the order they were added
+    observed: float
+    expected: float
+
+    @property
+    def ratio(self) -> float:
+        return self.observed / self.expected
+
+
+def pool_with_neighbours(
+    code: str,
+    counts: Mapping[str, tuple[float, float]],
+    neighbours: Sequence[str],
+    rate_without: Callable[[set[str]], float | None],
+    floor: float,
+) -> Pool | None:
+    """Add the nearest same-type zones until the group expects `floor` cases (D-217).
+
+    Adaptive spatial filtering with a minimum expected count (Talbot et al., 2000): the group
+    is the smallest one around the zone whose count can show a shortfall, with the same 3,69
+    floor that marks a zone as too small (D-213). The reference rate always leaves out every
+    member of the group (no self-inclusion). None when even all neighbours are not enough.
+    """
+    members = [code]
+    while True:
+        rate = rate_without(set(members))
+        if rate is None:
+            return None
+        observed = sum(counts[m][0] for m in members)
+        expected = sum(counts[m][1] for m in members) * rate
+        if expected >= floor:
+            return Pool(members, observed, expected)
+        nxt = next((n for n in neighbours if n not in members and n in counts), None)
+        if nxt is None:
+            return None
+        members.append(nxt)
+
+
+def pooled_status(pool: Pool, method: GapMethod = GAP_METHOD) -> GapStatus:
+    """The group's status: same cut-offs and the same Poisson test as a single zone."""
+    return classify(pool.ratio, method, significant_shortfall(pool.observed, pool.expected, method))

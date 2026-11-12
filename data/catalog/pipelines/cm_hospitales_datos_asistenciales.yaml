@@ -1,0 +1,7 @@
+kind: cm_stat_table
+dataset_id: cm_hospitales_datos_asistenciales
+metric_id: hospitales_actividad
+# Regional totals only: the source writes them as «Otros» with no territory code.
+period_min: 2015
+territory_types: {"Otros": ccaa}
+dimension_columns: {"Concepto": concepto}

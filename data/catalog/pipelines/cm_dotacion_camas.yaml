@@ -1,0 +1,19 @@
+kind: cm_stat_table
+dataset_id: cm_dotacion_camas
+# Regional totals only: the source writes them as «Otros» with no territory code.
+# One metric per concept: the concepts differ only after 60 characters.
+period_min: 2015
+territory_types: {"Otros": ccaa}
+metric_split:
+  column: Concepto
+  metrics:
+    "Camas en funcionamiento en el resto de establecimientos sanitarios con régimen de internado": camas_funcionamiento_resto
+    "Camas en funcionamiento en establecimientos sanitarios con régimen de internado": camas_funcionamiento
+    "Camas en funcionamiento en establecimientos sanitarios con régimen de internado públicos-SNS": camas_funcionamiento_sns
+    "Camas en funcionamiento por 1.000 habitantes en establecimientos sanitarios con régimen de internado": camas_funcionamiento_por_1000
+    "Camas en funcionamiento por 1.000 habitantes en establecimientos sanitarios con régimen de internado públicos-SNS": camas_funcionamiento_por_1000_sns
+    "Camas instaladas en el resto de establecimientos sanitarios con régimen de internado": camas_instaladas_resto
+    "Camas instaladas en establecimientos sanitarios con régimen de internado": camas_instaladas
+    "Camas instaladas en establecimientos sanitarios con régimen de internado públicos-SNS": camas_instaladas_sns
+    "Camas instaladas por 1.000 habitantes en establecimientos sanitarios con régimen de internado": camas_instaladas_por_1000
+    "Camas instaladas por 1.000 habitantes en establecimientos sanitarios con régimen de internado públicos-SNS": camas_instaladas_por_1000_sns

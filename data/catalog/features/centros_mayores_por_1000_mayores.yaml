@@ -31,4 +31,4 @@ limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "Cuenta hogares, clubes y centros de día del registro de servicios sociales de la CM, no sus plazas ni sus actividades. Las residencias son otra medida (plazas_residencia_por_100_mayores)."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
-gap_row: {row: mayores, role: primary, label: "Centros de mayores", phrase: "centros de mayores por cada 1.000 personas de 65 años o más", proxy_note: "Cuenta hogares, clubes y centros de día, no plazas ni actividades; las residencias van aparte."}
+gap_row: {row: mayores, role: extra, phrase: "centros de mayores por cada 1.000 personas de 65 años o más"}

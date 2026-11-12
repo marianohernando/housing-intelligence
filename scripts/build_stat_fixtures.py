@@ -43,7 +43,7 @@ def _sample_stat(frame: pd.DataFrame, spec: CmStatTablePipeline) -> pd.DataFrame
         period == latest
         and (
             (kind == "Municipios" and code in CM_CODES)
-            or kind == "Comunidad de Madrid"
+            or kind in ("Comunidad de Madrid", "Otros")  # «Otros»: regional-only tables
             or (kind == "Zonas Estadísticas" and code == first_zone)
         )
         for period, kind, code in zip(periods, types, codes, strict=True)

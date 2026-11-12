@@ -75,6 +75,20 @@ export type Unit = string;
  */
 export type AdminUnitId = string;
 export type Code = string;
+/**
+ * The zone first, then its neighbours
+ *
+ * @minItems 2
+ */
+export type Codes = [string, string, ...string[]];
+/**
+ * @minItems 2
+ */
+export type Names = [string, string, ...string[]];
+/**
+ * Group total over its expected total
+ */
+export type RatioToReference = number;
 export type Confidence = number;
 export type Name1 = string;
 export type NullReason =
@@ -90,7 +104,7 @@ export type NullReason =
 /**
  * Oriented so that above 1 is better than the reference
  */
-export type RatioToReference = number | null;
+export type RatioToReference1 = number | null;
 /**
  * What the zone is compared with: municipios of its type
  */
@@ -173,15 +187,30 @@ export interface GapMethod {
 export interface ZoneGapStatus {
   admin_unit_id: AdminUnitId;
   code: Code;
+  /**
+   * Set when the zone is compared together with its nearest neighbours of the same type because it is too small alone (gap-0.3, D-217); `status` is the group's
+   */
+  comparison_group?: ComparisonGroup | null;
   confidence: Confidence;
   name: Name1;
   null_reason?: NullReason | null;
-  ratio_to_reference?: RatioToReference;
+  ratio_to_reference?: RatioToReference1;
   reference?: Reference2;
   reference_label?: ReferenceLabel1;
   reliable?: Reliable;
   status: GapStatus;
   value: Value;
+}
+/**
+ * A zone too small to compare alone, compared with its nearest same-type neighbours.
+ *
+ * gap-0.3 (D-217): the nearest municipios of the same type are added until the group expects
+ * 3,69 cases at the reference rate (the floor of D-213). `status` is then the group's.
+ */
+export interface ComparisonGroup {
+  codes: Codes;
+  names: Names;
+  ratio_to_reference: RatioToReference;
 }
 export interface Meta {
   api_version?: ApiVersion;

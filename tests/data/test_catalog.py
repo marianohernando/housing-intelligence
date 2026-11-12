@@ -157,28 +157,48 @@ def _destinations(formula: dict[str, Any]) -> tuple[Any, ...]:
     )
 
 
+# D-217: the health row counts SERMAS health-centre teams as capacity, while its walking minutes
+# reach any point of care (local consultorios included). Every counted place is still a
+# destination of the walk, never the other way round.
+COUNTED_SUBSET_OF_WALK = {"centro_salud"}
+# Walking minutes to another service shown next to a row on purpose (D-217: the nearest general
+# hospital next to primary care); they are not the row's own destinations.
+OTHER_SERVICE_WALKS = {"min_a_pie_hospital"}
+
+
 def test_gap_row_counts_the_same_places_as_its_walking_minutes(catalog: Catalog) -> None:
-    """GAP-001: a row's main indicator (places per population) and its walking minutes describe
-    the same kind of place, e.g. colegios with primaria, public or concertado, in both."""
+    """GAP-001: a row's main indicator and its walking minutes describe the same kind of place,
+    e.g. colegios with primaria, public or concertado, in both (D-217 exception above)."""
     features = catalog.features.values()
     counted = {
         f.gap_row.row: f
         for f in features
-        if f.gap_row and f.gap_row.role == "primary" and f.formula.method == "places_per_population"
+        if f.gap_row
+        and f.gap_row.role == "primary"
+        and f.formula.method in {"places_per_population", "two_step_fca"}
     }
     checked = 0
     for walk in features:
         if not (walk.gap_row and walk.formula.method == "network_walk_time"):
             continue
+        if walk.feature_id in OTHER_SERVICE_WALKS:
+            continue
         primary = counted.get(walk.gap_row.row)
         if primary is None:
             continue
-        counted_places = _destinations(primary.formula.model_extra or {})
-        assert counted_places[0] is not None, primary.feature_id  # never compares empty filters
-        assert counted_places[1] or counted_places[2], primary.feature_id
-        assert counted_places == _destinations(walk.formula.model_extra or {}), (
-            f"{primary.feature_id} vs {walk.feature_id}"
+        category, subcategories, attributes = _destinations(primary.formula.model_extra or {})
+        assert category is not None, primary.feature_id  # never compares empty filters
+        assert subcategories or attributes, primary.feature_id
+        walk_category, walk_subcategories, walk_attributes = _destinations(
+            walk.formula.model_extra or {}
         )
+        assert category == walk_category, f"{primary.feature_id} vs {walk.feature_id}"
+        if walk.gap_row.row in COUNTED_SUBSET_OF_WALK:
+            assert set(subcategories) < set(walk_subcategories), primary.feature_id
+        else:
+            assert (subcategories, attributes) == (walk_subcategories, walk_attributes), (
+                f"{primary.feature_id} vs {walk.feature_id}"
+            )
         checked += 1
     assert checked >= 5  # escuela infantil, colegio, centro de salud, mayores, farmacia
 

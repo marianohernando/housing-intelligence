@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_dotacion_camas",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_dotacion_camas/38c84c45737c/dotacion-de-camas-por-dependencia.csv",
+      "sha256": "38c84c45737c312195f317a4e4497c37975e716bdbbe5afbd23cd0bd214cc1d6",
+      "bytes": 32990,
+      "url": "https://datos.comunidad.madrid/dataset/1324a4c3-aa6c-4209-83c8-9f291adba4e2/resource/884673f6-ce91-4006-8d1b-a357bf7b31a9/download/dotacion-de-camas-por-dependencia.csv",
+      "retrieved_at": "2026-11-12T00:04:30.882911+00:00"
+    }
+  ]
+}

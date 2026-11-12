@@ -38,6 +38,20 @@ export type CubiertoFrom = number;
 export type FaltaBelow = number;
 export type Reference = string;
 export type Version1 = string;
+/**
+ * The zone first, then its neighbours
+ *
+ * @minItems 2
+ */
+export type Codes = [string, string, ...string[]];
+/**
+ * @minItems 2
+ */
+export type Names = [string, string, ...string[]];
+/**
+ * Group total over its expected total
+ */
+export type RatioToReference = number;
 export type Datasets1 = DatasetRef[];
 export type Direction = "higher_is_better" | "lower_is_better";
 export type Explanation = string;
@@ -85,7 +99,7 @@ export type ProxyNote = string | null;
 /**
  * Oriented so that above 1 is better than the reference
  */
-export type RatioToReference = number | null;
+export type RatioToReference1 = number | null;
 /**
  * Same indicator for the zones the row is compared with (D-213: the municipios of its type in the region)
  */
@@ -173,6 +187,10 @@ export interface GapMethod {
   version: Version1;
 }
 export interface GapRow {
+  /**
+   * Set when the zone is compared together with its nearest neighbours of the same type because it is too small alone (gap-0.3, D-217); `status` is the group's
+   */
+  comparison_group?: ComparisonGroup | null;
   datasets: Datasets1;
   direction: Direction;
   explanation: Explanation;
@@ -180,13 +198,24 @@ export interface GapRow {
   indicator: IndicatorValue;
   label: Label1;
   proxy_note?: ProxyNote;
-  ratio_to_reference?: RatioToReference;
+  ratio_to_reference?: RatioToReference1;
   reference: Reference1;
   reference_label: ReferenceLabel;
   regional_reference?: RegionalReference;
   reliable?: Reliable;
   row: GapRowKey;
   status: GapStatus;
+}
+/**
+ * A zone too small to compare alone, compared with its nearest same-type neighbours.
+ *
+ * gap-0.3 (D-217): the nearest municipios of the same type are added until the group expects
+ * 3,69 cases at the reference rate (the floor of D-213). `status` is then the group's.
+ */
+export interface ComparisonGroup {
+  codes: Codes;
+  names: Names;
+  ratio_to_reference: RatioToReference;
 }
 /**
  * One measured value with its unit, confidence and the reason when it is missing.

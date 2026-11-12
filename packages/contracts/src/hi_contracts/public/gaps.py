@@ -57,6 +57,20 @@ class GapMethod(BaseModel):
         return self
 
 
+class ComparisonGroup(BaseModel):
+    """A zone too small to compare alone, compared with its nearest same-type neighbours.
+
+    gap-0.3 (D-217): the nearest municipios of the same type are added until the group expects
+    3,69 cases at the reference rate (the floor of D-213). `status` is then the group's.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    codes: list[str] = Field(min_length=2, description="The zone first, then its neighbours")
+    names: list[str] = Field(min_length=2, examples=[["La Acebeda", "Robregordo"]])
+    ratio_to_reference: float = Field(ge=0, description="Group total over its expected total")
+
+
 class GapRow(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -92,6 +106,11 @@ class GapRow(BaseModel):
         "reference rate is under the 95 % bound of a zero count (3,7), so not even having none "
         "would be a significant shortfall. The status is then never FALTA; show it as "
         "«poco fiable» (D-213). True also when the test does not apply (no counts)",
+    )
+    comparison_group: ComparisonGroup | None = Field(
+        default=None,
+        description="Set when the zone is compared together with its nearest neighbours of "
+        "the same type because it is too small alone (gap-0.3, D-217); `status` is the group's",
     )
     extra_indicators: list[IndicatorValue] = Field(
         default_factory=list[IndicatorValue], description="e.g. walking minutes (CORE-005)"
@@ -156,6 +175,11 @@ class ZoneGapStatus(BaseModel):
         "reference rate is under the 95 % bound of a zero count (3,7), so not even having none "
         "would be a significant shortfall. The status is then never FALTA; show it as "
         "«poco fiable» (D-213). True also when the test does not apply (no counts)",
+    )
+    comparison_group: ComparisonGroup | None = Field(
+        default=None,
+        description="Set when the zone is compared together with its nearest neighbours of "
+        "the same type because it is too small alone (gap-0.3, D-217); `status` is the group's",
     )
 
     @model_validator(mode="after")

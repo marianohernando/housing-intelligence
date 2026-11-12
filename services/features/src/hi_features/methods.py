@@ -439,3 +439,18 @@ def place_attribute_per_population(
     return _per_population(
         sums, _population(population, population_dims), per, confidence, small_population
     )
+
+
+# Shared with the 2SFCA features (hi_features.fca, D-217).
+def population_by_code(
+    obs: pd.DataFrame, dims: DimFilter
+) -> dict[str, tuple[Any, float | None, str | None]]:
+    return _population(obs, dims)
+
+
+def null_row(code: str, period: Any, reason: NullReason) -> dict[str, Any]:
+    return _null(code, period, reason)
+
+
+def result_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
+    return _result(rows)

@@ -930,3 +930,55 @@ Fase de prueba, T1 (decisión de Mariano del 12 nov: antes de los extras, compro
    - El CEIP Nuria Espert queda en Barajas: la dirección no contradice las coordenadas y la cartografía oficial (secciones del INE) lo pone en Barajas, aunque el registro diga Hortaleza.
 4. **`/places` pasa a tener contrato** (`places-1`, `PlacesResponse`): titularidad pública, concertada o privada en los centros educativos, `gap_rows` (las filas de la lista de lo que falta que cuentan ese lugar, con los mismos filtros del Feature Dictionary), `capacity` cuando la fuente la publica por centro (hoy, las plazas autorizadas de mayores) y el origen y la confidence de las coordenadas. Lo pidió B para su T3.
 5. **Base de población de Madrid (D6 de la revisión de D):** se mantiene lo declarado en D-209: el municipio con el censo de la CM y los distritos con el padrón (+1,7 %). En los cálculos que mezclan distritos y municipios (D-217) los distritos se escalan al total del censo para no contar dos veces esa diferencia.
+
+## D-217 — La oferta se mide por capacidad y accesibilidad (2SFCA) y los municipios pequeños se comparan con sus vecinos (2026-11-12)
+Fase de prueba, T2a y T2b. **Decisión de Mariano (12 nov):** la oferta de servicios se mide por capacidad y accesibilidad, no por número de centros. Método `gap-0.3`, que sustituye a `gap-0.2` en las cinco filas de servicios; vivienda no cambia. Código: `hi_domain/access/fca.py`, `hi_features/fca.py` (método `two_step_fca`), `hi_domain/gaps.py` (`pool_with_neighbours`) y `hi_api/services/gap_reference.py`. Evidencias: `evidence/gate-04/2026-11-12/gap-status-gap03.md` y `evidence/gate-03/2026-11-12/fca-sensitivity.md`. Refina D-213: la referencia sigue siendo la de los municipios del mismo tipo, con los mismos cortes y la misma prueba.
+
+1. **Qué cambia.** Antes cada fila contaba centros por habitante del propio municipio o distrito: una clínica pesaba como La Paz, un consultorio de aldea como un centro de salud grande, y lo que había al otro lado de la frontera de un distrito no contaba. Ahora cada fila mide **la capacidad que la gente tiene al alcance a pie, compartida con quienes compiten por ella**.
+2. **Método: 2SFCA** (Luo y Wang, 2003, «Measures of spatial accessibility to health care in a GIS environment», *Environment and Planning B* 30: 865–884).
+   - Paso 1, por centro: su capacidad dividida por la gente que vive a 15 minutos a pie o menos.
+   - Paso 2, por calle: la suma de esas cuotas de los centros a 15 minutos o menos.
+   - Por zona: la media ponderada por población de sus calles, que es igual a la capacidad que le llega dividida por su población. La capacidad se conserva: en la región, el total es la capacidad alcanzable entre la población (test de propiedades).
+   - **Captación: 15 minutos a 4 km/h (1 km por la red de calles),** la de «El Madrid de los 15 minutos» del Ayuntamiento, la misma fuente de D-211. Es binaria (dentro o fuera), la versión más fácil de explicar.
+   - **Sensibilidad:** con 10 o 20 minutos, el orden de los municipios casi no cambia (Spearman 0,995–0,997; entre el 1 % y el 2 % se mueve más de 20 puestos).
+   - **Red y personas:** la red peatonal y las calles de origen de D-210. La población de cada municipio (censo de la CM), y en Madrid la de cada distrito (padrón escalado al total del censo de Madrid, D-216 §5), se reparte entre sus calles en proporción a su longitud. Quien vive a más de 15 minutos de cualquier centro no suma oferta: la fila mide lo que se tiene cerca.
+   - Cruza fronteras: un colegio en el límite de dos distritos sirve a los dos.
+3. **Capacidad por fila: solo la publicada, nunca estimada por centro.**
+
+   | Fila | Capacidad (S) | Demanda | Feature |
+   |---|---|---|---|
+   | Colegio | Aulas de primaria públicas y concertadas del municipio (`cm_unidades_escolares`, curso más reciente), repartidas a partes iguales entre sus colegios de esa titularidad: la estadística no las da por centro (confidence 0,8) | 5 a 14 años | `aulas_primaria_a_pie_por_1000_ninos` |
+   | Escuela infantil | 1 por escuela: nadie publica plazas por centro | 0 a 4 años | `escuelas_infantiles_a_pie_por_1000_ninos` |
+   | Centro de salud | 1 por centro de salud del SERMAS (equipo de atención primaria, 268). Los consultorios locales son puntos de consulta del mismo equipo: cuentan en los minutos a pie, no como capacidad | Total | `centros_salud_a_pie_por_10000_hab` |
+   | Mayores | Plazas autorizadas de hogares, clubes y centros de día (registro de la CM) | 65 o más | `plazas_mayores_a_pie_por_100_mayores` |
+   | Farmacia | 1 por farmacia (la ley de la CM las planifica por habitantes) | Total | `farmacias_a_pie_por_10000_hab` |
+
+   - Las features anteriores (centros por habitante) siguen como indicadores extra de cada fila.
+   - La fila de centro de salud cuenta un subconjunto de los destinos de sus minutos a pie; el invariante del catálogo lo admite solo en esa fila, declarado en el test.
+   - Para la prueba de D-213 las features guardan la capacidad en **centros equivalentes** (capacidad entre la capacidad media por centro de la región). El ratio no cambia, y la prueba de Poisson cuenta centros, no aulas ni plazas, que van en bloques.
+4. **Lo que no existe en abierto (T2a, comprobado el 12 nov):**
+   - población asignada por tarjeta sanitaria y cupos de médicos por centro o por zona básica de salud;
+   - camas por hospital en el portal de la CM. «Hospitales y datos asistenciales» y «Dotación de camas» solo traen el total regional: 85 hospitales y 20.776 camas instaladas en 2023, 3,00 por 1.000 habitantes. Se cargan como referencia (`cm_hospitales_datos_asistenciales` y `cm_dotacion_camas`, 11 métricas).
+   - El Catálogo Nacional de Hospitales 2025 (Ministerio de Sanidad) sí publica camas por hospital (XLSX, reutilizable con cita), pero no si tiene urgencias. Queda propuesto como fuente complementaria para enseñar «Hospital La Paz · N camas» (siguiente paso, con resolución de entidades frente al registro de la CM).
+   - La geometría de las zonas básicas de salud es abierta, pero de 2019 y con el padrón de 2019: no se usa para la capacidad. Solo sirve aquí para fijar el radio de §6.
+5. **Hospitales:** no hay 2SFCA a pie, porque un hospital no se elige a 15 minutos andando. La fila de centro de salud gana como extra `min_a_pie_hospital`: los minutos a pie por la red hasta el hospital general más cercano, público o privado (60). Es un proxy de las urgencias 24 h, que ninguna fuente abierta marca, y se declara.
+6. **Escala: los municipios pequeños se comparan con sus vecinos.**
+   - El 2SFCA no crea información: en centros equivalentes, un pueblo pequeño sigue esperando menos de 3,69 casos y su estado sigue siendo poco fiable (D-213). Eso le pasaba a 140 de 179 municipios en colegios.
+   - **Regla:** un municipio poco fiable se compara junto con sus vecinos más cercanos del mismo tipo (rural o urbano), que se añaden por orden de distancia hasta que el grupo espera 3,69 casos. Es el mismo umbral de D-213 y la referencia deja fuera a todo el grupo.
+   - **Radio:** solo vecinos a 15 km o menos (entre los puntos interiores de los municipios). Las zonas básicas de salud rurales de la CM tienen un radio equivalente mediano de 7,7 km y una extensión mediana de 22,9 km (capa oficial de 2019, 15 zonas de menos de 100 hab./km²). Así el grupo es el entorno con el que ya se organizan los servicios de esos pueblos, no una comarca entera. Si con ese radio no se llega, el municipio sigue «poco fiable».
+   - **Base:** filtros espaciales adaptativos con un mínimo de casos esperados (Talbot et al., 2000, *Statistics in Medicine* 19: 2399–2408).
+   - El estado del grupo es el de la zona, con los mismos cortes y la misma prueba. La API lo marca en `comparison_group` (códigos, nombres y ratio del grupo) y lo explica en el texto de la fila. Los distritos de Madrid no se agrupan: casi nunca son pequeños.
+7. **Efecto con los datos del 12 nov** (municipios, 179):
+   - **Poco fiables:** escuela infantil de 138 a 37, colegio de 140 a 65, centro de salud de 167 a 96, mayores de 160 a 93 y farmacia de 116 a 18.
+   - **FALTA:** escuela infantil 0, colegio 0, centro de salud 0, mayores 6 y farmacia 5 (antes 0, 0, 5, 2 y 5).
+   - **Casos de la revisión de D:** M1, San Martín de Valdeiglesias, centro de salud: FALTA → CUBIERTO (1,59; poco fiable, sin vecinos suficientes a 15 km). M2: los consultorios ya no cuentan como capacidad. M3, La Acebeda: 0 a pie, poco fiable.
+   - **Madrid capital, centro de salud:** FALTA (0,67) → **JUSTO (0,95)**. Al medir lo que se alcanza a pie, y no centros por habitante del propio municipio, Madrid queda cerca de los demás municipios urbanos. **La frase del pitch «Madrid tiene un tercio menos de centros de atención primaria por habitante» deja de valer.**
+   - **Chamartín:** centro de salud CUBIERTO (1,17), colegio CUBIERTO (1,12) y mayores JUSTO (0,59).
+8. **Contrato:** `GapMethod.version = gap-0.3`, `ComparisonGroup` y `comparison_group` en `GapRow` y `ZoneGapStatus` (opcional, compatible). Los distritos de las features 2SFCA son solo los 21 de Madrid (D-200). Fixtures regenerados con datos reales, con un ejemplo agrupado (`zone_gap_list.el_alamo`) y `places.colegios_chamartin` (`places-1`, D-216). Excepción: `gap_row_map.centro_salud_distrito` se queda en `gap-0.2` hasta que B deje de fijar en `apps/web/src/lib/__tests__/gapMap.test.ts` el estado real de Centro (con `gap-0.3` pasa de JUSTO a CUBIERTO); entonces se regenera.
+9. **Límites declarados:**
+   - captación binaria, sin decaimiento con la distancia (E2SFCA, Luo y Qi 2009, queda como mejora);
+   - la población se coloca por longitud de calle, no por portal;
+   - las aulas se reparten a partes iguales dentro de cada municipio y titularidad;
+   - en un hogar o club las plazas autorizadas son aforo y en un centro de día, plazas de atención;
+   - la distancia de los vecinos se mide en línea recta;
+   - la proximidad a pie no es la única forma de acceso: en los pueblos, el coche y el autobús cuentan (CORE-009).

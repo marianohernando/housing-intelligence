@@ -18,9 +18,11 @@ from sqlalchemy import Connection, create_engine
 from hi_api.services.datasets import dataset_list
 from hi_api.services.gap_map import gap_row_map
 from hi_api.services.gaps import missing_row_warnings, zone_gap_list
+from hi_api.services.places import places_geojson
 from hi_api.services.search import search
-from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
+from hi_contracts.catalog.enums import GapRowKey, PlaceCategory, TerritoryLevel
 from hi_contracts.public import GapRowMap, ScenarioState, SearchResult, ZoneGapList
+from hi_contracts.public.places import PlaceCollection
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "fixtures" / "contracts"
 DATABASE_URL = os.environ.get(
@@ -75,6 +77,22 @@ def search_result(conn: Connection) -> SearchResult:
     return result
 
 
+def colegios_chamartin(conn: Connection) -> PlaceCollection:
+    """places-1 (D-216): the colegios of a district, with ownership and the rows that count them."""
+    result = places_geojson(
+        conn,
+        PlaceCategory.EDUCATION,
+        "ES.28.DIS.2807905",
+        [
+            "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+            "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        ],
+    )
+    return PlaceCollection.model_validate(
+        {**result.collection, "total": result.total, "page": result.page, "pages": result.pages}
+    )
+
+
 def write(name: str, payload: Any) -> None:
     path = OUT / f"{name}.fixture.json"
     path.write_text(
@@ -90,6 +108,9 @@ def main() -> None:
         write("zone_gap_list.madrid", gap_list(conn, "28079"))
         write("zone_gap_list.mostoles", gap_list(conn, "28092"))
         write("zone_gap_list.centro", gap_list(conn, "2807901", TerritoryLevel.DISTRITO))
+        # gap-0.3 (D-217): a municipio too small alone, compared with its nearest neighbours
+        write("zone_gap_list.el_alamo", gap_list(conn, "28004"))
+        write("places.colegios_chamartin", colegios_chamartin(conn))
         write(
             "gap_row_map.colegio_municipio",
             row_map(conn, TerritoryLevel.MUNICIPIO, GapRowKey.COLEGIO),

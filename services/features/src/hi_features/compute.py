@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import loaders, methods, walk
+from hi_features import fca, loaders, methods, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
@@ -120,6 +120,11 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
     )
 
 
+def _two_step_fca(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-217: capacity reachable on foot per person (2SFCA), by zone."""
+    return fca.fca_feature(engine, f, level, walk.network_version(engine).observed)
+
+
 METHODS: dict[str, Method] = {
     "metric_value": _metric_value,
     "metric_share": _metric_share,
@@ -130,6 +135,7 @@ METHODS: dict[str, Method] = {
     "metric_ratio": _metric_ratio,
     "not_published": _not_published,
     "postcode_weighted_mean": _postcode_weighted_mean,
+    "two_step_fca": _two_step_fca,
 }
 
 

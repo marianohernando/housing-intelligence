@@ -1,0 +1,10 @@
+metric_id: hospitales_actividad
+human_name: "Hospitales y datos asistenciales"
+description: "Hospitales de la Comunidad de Madrid (públicos del SNS y privados) y su actividad: altas, ingresos, estancias, consultas, intervenciones y urgencias. Solo el total regional."
+domain: health
+unit: unidades
+aggregation_method: none
+geo_resolution_min: ccaa
+temporal_resolution: annual
+dataset_id: cm_hospitales_datos_asistenciales
+dimensions: [concepto]

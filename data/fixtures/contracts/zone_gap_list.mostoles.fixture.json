@@ -10,8 +10,8 @@
     "center_lat": 40.31991
   },
   "method": {
-    "version": "gap-0.2",
-    "reference": "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): su total dividido por su población",
+    "version": "gap-0.3",
+    "reference": "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): la oferta al alcance a pie de su población (2SFCA, 15 min) dividida por su población. Un municipio demasiado pequeño se compara junto con sus vecinos más cercanos del mismo tipo (D-217)",
     "falta_below": 0.8,
     "cubierto_from": 1.0,
     "confidence_level": 0.95
@@ -22,27 +22,42 @@
       "label": "Escuelas infantiles",
       "status": "JUSTO",
       "indicator": {
-        "feature_id": "escuelas_infantiles_por_1000_ninos",
-        "label": "Escuelas infantiles por cada 1.000 niños de 0 a 4 años",
-        "value": 3.881,
+        "feature_id": "escuelas_infantiles_a_pie_por_1000_ninos",
+        "label": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años",
+        "value": 3.896,
         "unit": "escuelas/1000 niños",
         "confidence": 1.0,
         "null_reason": null,
         "level": "municipio",
         "datasets": [
           "cm_centros_educativos",
-          "cm_poblacion_edad_nacionalidad_sexo"
+          "cm_poblacion_edad_nacionalidad_sexo",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 4.579,
+      "reference": 4.587,
       "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
-      "regional_reference": 4.714,
+      "regional_reference": 4.721,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.8475,
-      "explanation": "3,9 escuelas infantiles por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,6 (en toda la Comunidad, 4,7)",
-      "proxy_note": "Cuenta escuelas infantiles públicas y privadas, no plazas: una grande y una pequeña pesan igual.",
+      "ratio_to_reference": 0.8494,
+      "explanation": "3,9 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,6 (en toda la Comunidad, 4,7)",
+      "proxy_note": "Nadie publica las plazas por escuela infantil: cada escuela cuenta como una, compartida entre los niños que la tienen a 15 minutos.",
       "reliable": true,
+      "comparison_group": null,
       "extra_indicators": [
+        {
+          "feature_id": "escuelas_infantiles_por_1000_ninos",
+          "label": "Escuelas infantiles por cada 1.000 niños de 0 a 4 años",
+          "value": 3.881,
+          "unit": "escuelas/1000 niños",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_educativos",
+            "cm_poblacion_edad_nacionalidad_sexo"
+          ]
+        },
         {
           "feature_id": "min_a_pie_escuela_infantil",
           "label": "Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona)",
@@ -145,27 +160,43 @@
       "label": "Colegios",
       "status": "CUBIERTO",
       "indicator": {
-        "feature_id": "colegios_publicos_por_1000_menores",
-        "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
-        "value": 1.443,
-        "unit": "centros/1000 menores",
-        "confidence": 1.0,
+        "feature_id": "aulas_primaria_a_pie_por_1000_ninos",
+        "label": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años",
+        "value": 24.17,
+        "unit": "aulas/1000 niños",
+        "confidence": 0.8,
         "null_reason": null,
         "level": "municipio",
         "datasets": [
           "cm_centros_educativos",
-          "cm_poblacion_edad_nacionalidad_sexo"
+          "cm_poblacion_edad_nacionalidad_sexo",
+          "cm_unidades_escolares",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 1.288,
+      "reference": 22.83,
       "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
-      "regional_reference": 1.315,
+      "regional_reference": 22.97,
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.12,
-      "explanation": "1,4 colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años; en los demás municipios urbanos de la Comunidad de Madrid, 1,3 (en toda la Comunidad, 1,3)",
-      "proxy_note": "Cuenta colegios con primaria, públicos o concertados, no plazas: un colegio grande y uno pequeño pesan igual. No dice cuál te corresponde por zona.",
+      "ratio_to_reference": 1.059,
+      "explanation": "24,2 aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años; en los demás municipios urbanos de la Comunidad de Madrid, 22,8 (en toda la Comunidad, 23,0)",
+      "proxy_note": "Las aulas de primaria de cada municipio (estadística de la CM) se reparten a partes iguales entre sus colegios públicos o concertados: no son las de cada colegio. No dice si hay plaza ni cuál te corresponde.",
       "reliable": true,
+      "comparison_group": null,
       "extra_indicators": [
+        {
+          "feature_id": "colegios_publicos_por_1000_menores",
+          "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
+          "value": 1.443,
+          "unit": "centros/1000 menores",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_educativos",
+            "cm_poblacion_edad_nacionalidad_sexo"
+          ]
+        },
         {
           "feature_id": "min_a_pie_colegio",
           "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
@@ -209,6 +240,15 @@
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
+          "dataset_id": "cm_unidades_escolares",
+          "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+          "version": "2026-11-10-bdf7c1ff864a",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+        },
+        {
           "dataset_id": "osm_red_peatonal",
           "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
           "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
@@ -224,31 +264,59 @@
       "label": "Centros de salud",
       "status": "CUBIERTO",
       "indicator": {
-        "feature_id": "centros_salud_por_10000_hab",
-        "label": "Centros de atención primaria por cada 10.000 habitantes",
-        "value": 0.4667,
+        "feature_id": "centros_salud_a_pie_por_10000_hab",
+        "label": "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes",
+        "value": 0.4639,
         "unit": "centros/10000 hab",
         "confidence": 1.0,
         "null_reason": null,
         "level": "municipio",
         "datasets": [
           "cm_centros_sanitarios",
-          "cm_poblacion_edad_nacionalidad_sexo"
+          "cm_poblacion_edad_nacionalidad_sexo",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 0.4632,
+      "reference": 0.3671,
       "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
-      "regional_reference": 0.5918,
+      "regional_reference": 0.3767,
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.007,
-      "explanation": "0,47 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)",
-      "proxy_note": "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande.",
+      "ratio_to_reference": 1.264,
+      "explanation": "0,46 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,37 (en toda la Comunidad, 0,38)",
+      "proxy_note": "Cuenta equipos de atención primaria (un centro de salud del SERMAS por equipo), no médicos ni población asignada, que no se publican en abierto. Los consultorios locales son puntos de consulta del mismo equipo: cuentan en los minutos a pie, no como capacidad.",
       "reliable": true,
+      "comparison_group": null,
       "extra_indicators": [
+        {
+          "feature_id": "centros_salud_por_10000_hab",
+          "label": "Centros de atención primaria por cada 10.000 habitantes",
+          "value": 0.4667,
+          "unit": "centros/10000 hab",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_sanitarios",
+            "cm_poblacion_edad_nacionalidad_sexo"
+          ]
+        },
         {
           "feature_id": "min_a_pie_centro_salud",
           "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
           "value": 11.48,
+          "unit": "min",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_sanitarios",
+            "osm_red_peatonal"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_hospital",
+          "label": "Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona)",
+          "value": 21.93,
           "unit": "min",
           "confidence": 1.0,
           "null_reason": null,
@@ -266,7 +334,7 @@
           "publisher": "Comunidad de Madrid",
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-          "version": "2026-11-10-d6ac8db8f003",
+          "version": "2026-11-11-ba0e65311c5b",
           "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
         },
         {
@@ -303,27 +371,42 @@
       "label": "Centros de mayores",
       "status": "JUSTO",
       "indicator": {
-        "feature_id": "centros_mayores_por_1000_mayores",
-        "label": "Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más",
-        "value": 0.2809,
-        "unit": "centros/1000 mayores",
+        "feature_id": "plazas_mayores_a_pie_por_100_mayores",
+        "label": "Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más",
+        "value": 3.508,
+        "unit": "plazas/100 mayores",
         "confidence": 1.0,
         "null_reason": null,
         "level": "municipio",
         "datasets": [
           "cm_centros_atencion_social",
-          "cm_poblacion_edad_nacionalidad_sexo"
+          "cm_poblacion_edad_nacionalidad_sexo",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 0.3792,
+      "reference": 5.213,
       "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
-      "regional_reference": 0.3895,
+      "regional_reference": 5.134,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.7408,
-      "explanation": "0,28 centros de mayores por cada 1.000 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 0,38 (en toda la Comunidad, 0,39)",
-      "proxy_note": "Cuenta hogares, clubes y centros de día, no plazas ni actividades; las residencias van aparte.",
+      "ratio_to_reference": 0.673,
+      "explanation": "3,5 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 5,2 (en toda la Comunidad, 5,1)",
+      "proxy_note": "Plazas autorizadas del registro de la CM: en un hogar o club es el aforo, en un centro de día son plazas de atención diurna. Las residencias van aparte. No incluye los centros municipales de mayores del Ayuntamiento de Madrid, que no están en ese registro.",
       "reliable": true,
+      "comparison_group": null,
       "extra_indicators": [
+        {
+          "feature_id": "centros_mayores_por_1000_mayores",
+          "label": "Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más",
+          "value": 0.2809,
+          "unit": "centros/1000 mayores",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_centros_atencion_social",
+            "cm_poblacion_edad_nacionalidad_sexo"
+          ]
+        },
         {
           "feature_id": "min_a_pie_mayores",
           "label": "Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona)",
@@ -395,26 +478,28 @@
       "label": "Farmacias",
       "status": "JUSTO",
       "indicator": {
-        "feature_id": "oficinas_farmacia_por_10000_hab",
-        "label": "Farmacias por cada 10.000 habitantes",
-        "value": 3.407,
+        "feature_id": "farmacias_a_pie_por_10000_hab",
+        "label": "Farmacias al alcance a pie por cada 10.000 habitantes",
+        "value": 3.433,
         "unit": "farmacias/10000 hab",
         "confidence": 1.0,
         "null_reason": null,
         "level": "municipio",
         "datasets": [
           "cm_oficinas_farmacia",
-          "cm_poblacion_edad_nacionalidad_sexo"
+          "cm_poblacion_edad_nacionalidad_sexo",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 4.151,
+      "reference": 4.155,
       "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
-      "regional_reference": 4.151,
+      "regional_reference": 4.154,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.8207,
-      "explanation": "3,4 farmacias por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 4,2 (en toda la Comunidad, 4,2)",
-      "proxy_note": "Cuenta farmacias, no horarios ni guardias.",
+      "ratio_to_reference": 0.8262,
+      "explanation": "3,4 farmacias al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 4,2 (en toda la Comunidad, 4,2)",
+      "proxy_note": "Cada farmacia cuenta como una (la ley de la CM las planifica por habitantes, no por tamaño); no mira horarios ni guardias.",
       "reliable": true,
+      "comparison_group": null,
       "extra_indicators": [
         {
           "feature_id": "farmacias_por_10000_hab_oficial",
@@ -439,6 +524,19 @@
           "datasets": [
             "cm_oficinas_farmacia",
             "osm_red_peatonal"
+          ]
+        },
+        {
+          "feature_id": "oficinas_farmacia_por_10000_hab",
+          "label": "Farmacias por cada 10.000 habitantes",
+          "value": 3.407,
+          "unit": "farmacias/10000 hab",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "municipio",
+          "datasets": [
+            "cm_oficinas_farmacia",
+            "cm_poblacion_edad_nacionalidad_sexo"
           ]
         }
       ],
@@ -515,6 +613,7 @@
       "explanation": "152,1 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios urbanos de la Comunidad de Madrid, 173,1 (en toda la Comunidad, 177,6)",
       "proxy_note": "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio.",
       "reliable": true,
+      "comparison_group": null,
       "extra_indicators": [
         {
           "feature_id": "tamano_medio_hogar",
@@ -615,7 +714,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-10-d6ac8db8f003",
+      "version": "2026-11-11-ba0e65311c5b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {

@@ -65,3 +65,5 @@ Contratos v2 del 11 nov 2026 (D-207, línea A), del producto «Vida Fácil». Lo
 - **Procedencia.** Todo resultado lleva `datasets` (`DatasetRef`) con el enlace al portal y `is_cm_open_data`. Este campo marca lo que cuenta como dataset de la Comunidad de Madrid (D-196).
 - **Confidence** va de 0 a 1. En zonas pequeñas baja a 0,5 como máximo, y una confidence de 0 significa desconocido.
 - **Errores.** Hoy la API los devuelve como `{"detail": {"code", "message"}}`, con los códigos de `ErrorCode`. `ErrorEnvelope` es el formato objetivo.
+
+**gap-0.3 (12 nov, D-217):** las cinco filas de servicios miden la capacidad al alcance a pie (2SFCA, 15 min a 4 km/h): aulas de primaria, escuelas infantiles, centros de salud del SERMAS, plazas de mayores y farmacias, con las features de recuento como extras. Un municipio demasiado pequeño se compara junto con sus vecinos del mismo tipo a 15 km o menos: `comparison_group` (`codes`, `names`, `ratio_to_reference`) en `GapRow` y en cada zona de `GapRowMap`, y el estado es el del grupo. La fila de centro de salud trae además `min_a_pie_hospital` (hospital general más cercano, proxy de urgencias).

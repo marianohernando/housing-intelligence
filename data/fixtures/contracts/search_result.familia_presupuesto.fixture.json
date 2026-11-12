@@ -100,12 +100,12 @@
         {
           "kind": "strength",
           "topic": "salud",
-          "text": "Centro de salud a 11 min andando desde la mitad de sus calles",
+          "text": "Centro de salud a 10 min andando desde la mitad de sus calles",
           "confidence": 0.998,
           "indicator": {
             "feature_id": "min_a_pie_centro_salud",
             "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 10.9,
+            "value": 10.41,
             "unit": "min",
             "confidence": 0.998,
             "null_reason": null,
@@ -126,12 +126,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.075 €/mes por 77 m² (14,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.96,
+            "value": 13.9,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -150,11 +150,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1075.0,
+          "value": 1070.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.075 €/mes por 77 m² (14,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -168,7 +168,7 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1075.0,
+      "estimated_cost_eur": 1070.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -199,7 +199,7 @@
         "center_lon": -3.69962,
         "center_lat": 40.4606
       },
-      "match_pct": 97,
+      "match_pct": 98,
       "confidence": 0.918,
       "facts": [
         {
@@ -210,7 +210,7 @@
           "indicator": {
             "feature_id": "min_a_pie_colegio",
             "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 5.212,
+            "value": 5.483,
             "unit": "min",
             "confidence": 0.998,
             "null_reason": null,
@@ -274,12 +274,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.277 €/mes por 77 m² (16,6 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 1.253 €/mes por 77 m² (16,3 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 16.58,
+            "value": 16.27,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -298,17 +298,17 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1277.0,
+          "value": 1253.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.277 €/mes por 77 m² (16,6 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 1.253 €/mes por 77 m² (16,3 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
           "label": "Colegio con primaria a 10 min andando como mucho",
           "status": "PASS",
-          "value": 5.2,
+          "value": 5.5,
           "threshold": 10.0,
           "unit": "min",
           "confidence": 0.998,
@@ -316,7 +316,7 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1277.0,
+      "estimated_cost_eur": 1253.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -326,7 +326,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "farmacia",
@@ -396,12 +396,12 @@
         {
           "kind": "weakness",
           "topic": "salud",
-          "text": "Centro de salud a 16 min andando desde la mitad de sus calles",
+          "text": "Centro de salud a 15 min andando desde la mitad de sus calles",
           "confidence": 0.999,
           "indicator": {
             "feature_id": "min_a_pie_centro_salud",
             "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 15.68,
+            "value": 15.46,
             "unit": "min",
             "confidence": 0.999,
             "null_reason": null,
@@ -422,12 +422,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.130 €/mes por 77 m² (14,7 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 1.127 €/mes por 77 m² (14,6 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 14.67,
+            "value": 14.64,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -446,11 +446,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1130.0,
+          "value": 1127.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.130 €/mes por 77 m² (14,7 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 1.127 €/mes por 77 m² (14,6 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -464,12 +464,12 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1130.0,
+      "estimated_cost_eur": 1127.0,
       "gap_highlights": [
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "FALTA"
+          "status": "JUSTO"
         },
         {
           "row": "centro_salud",
@@ -718,12 +718,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.015 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 1.016 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.18,
+            "value": 13.19,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -742,11 +742,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1015.0,
+          "value": 1016.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.015 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 1.016 €/mes por 77 m² (13,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -760,12 +760,12 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1015.0,
+      "estimated_cost_eur": 1016.0,
       "gap_highlights": [
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "CUBIERTO"
+          "status": "JUSTO"
         },
         {
           "row": "centro_salud",
@@ -866,12 +866,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 878 €/mes por 77 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 875 €/mes por 77 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 11.4,
+            "value": 11.36,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -890,11 +890,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 878.0,
+          "value": 875.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 878 €/mes por 77 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 875 €/mes por 77 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -908,7 +908,7 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 878.0,
+      "estimated_cost_eur": 875.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -1014,12 +1014,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 943 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 942 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 12.25,
+            "value": 12.24,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -1038,11 +1038,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 943.0,
+          "value": 942.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 943 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 942 €/mes por 77 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -1056,7 +1056,7 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 943.0,
+      "estimated_cost_eur": 942.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -1066,7 +1066,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "farmacia",
@@ -1141,7 +1141,7 @@
           "indicator": {
             "feature_id": "min_a_pie_centro_salud",
             "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 9.466,
+            "value": 9.462,
             "unit": "min",
             "confidence": 1.0,
             "null_reason": null,
@@ -1162,14 +1162,14 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.384 €/mes por 77 m² (18,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
-          "confidence": 0.796,
+          "text": "Alquiler medio ≈ 1.380 €/mes por 77 m² (17,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 17.98,
+            "value": 17.92,
             "unit": "EUR/m2/mes",
-            "confidence": 0.796,
+            "confidence": 0.8,
             "null_reason": null,
             "level": "distrito",
             "datasets": [
@@ -1186,11 +1186,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1384.0,
+          "value": 1380.0,
           "threshold": 1500.0,
           "unit": "€/mes",
-          "confidence": 0.796,
-          "explanation": "Alquiler medio ≈ 1.384 €/mes por 77 m² (18,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "confidence": 0.8,
+          "explanation": "Alquiler medio ≈ 1.380 €/mes por 77 m² (17,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -1204,7 +1204,7 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1384.0,
+      "estimated_cost_eur": 1380.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -1214,7 +1214,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "farmacia",
@@ -1246,7 +1246,7 @@
           "indicator": {
             "feature_id": "min_a_pie_colegio",
             "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 5.631,
+            "value": 5.611,
             "unit": "min",
             "confidence": 1.0,
             "null_reason": null,
@@ -1310,12 +1310,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 952 €/mes por 77 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 953 €/mes por 77 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 12.37,
+            "value": 12.38,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -1334,11 +1334,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 952.0,
+          "value": 953.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 952 €/mes por 77 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 953 €/mes por 77 m² (12,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -1352,12 +1352,12 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 952.0,
+      "estimated_cost_eur": 953.0,
       "gap_highlights": [
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "centro_salud",
@@ -1458,12 +1458,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.311 €/mes por 77 m² (17,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 1.300 €/mes por 77 m² (16,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 17.03,
+            "value": 16.88,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -1482,11 +1482,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1311.0,
+          "value": 1300.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.311 €/mes por 77 m² (17,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 1.300 €/mes por 77 m² (16,9 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -1500,7 +1500,7 @@
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 1311.0,
+      "estimated_cost_eur": 1300.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -1523,156 +1523,6 @@
   "near_misses": [
     {
       "rank": 1,
-      "zone": {
-        "level": "distrito",
-        "code": "2807904",
-        "admin_unit_id": "ES.28.DIS.2807904",
-        "name": "Salamanca",
-        "municipio_ine": "28079",
-        "municipio_name": "Madrid",
-        "center_lon": -3.67478,
-        "center_lat": 40.43155
-      },
-      "match_pct": 93,
-      "confidence": 0.92,
-      "facts": [
-        {
-          "kind": "strength",
-          "topic": "colegios",
-          "text": "Colegio con primaria a 6 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "min_a_pie_colegio",
-            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
-            "value": 5.5,
-            "unit": "min",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_educativos",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "transporte",
-          "text": "Parada de transporte público a 2 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "min_a_pie_transporte",
-            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
-            "value": 2.141,
-            "unit": "min",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "crtm_gtfs_autobuses_urbanos",
-              "crtm_gtfs_cercanias",
-              "crtm_gtfs_emt",
-              "crtm_gtfs_interurbanos",
-              "crtm_gtfs_metro",
-              "crtm_gtfs_metro_ligero",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "salud",
-          "text": "Centro de salud a 10 min andando desde la mitad de sus calles",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "min_a_pie_centro_salud",
-            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
-            "value": 10.41,
-            "unit": "min",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_centros_sanitarios",
-              "osm_red_peatonal"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "trayecto",
-          "text": "A 2,6 km en línea recta de Paseo de la Castellana (Azca)",
-          "confidence": 0.5,
-          "indicator": null
-        },
-        {
-          "kind": "weakness",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 1.526 €/mes por 77 m² (19,8 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
-          "confidence": 0.8,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 19.82,
-            "unit": "EUR/m2/mes",
-            "confidence": 0.8,
-            "null_reason": null,
-            "level": "distrito",
-            "datasets": [
-              "cm_alquiler_m2_codigo_postal_madrid",
-              "cm_centros_atencion_social",
-              "cm_centros_educativos",
-              "cm_centros_sanitarios"
-            ]
-          }
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
-          "status": "FAIL",
-          "value": 1526.0,
-          "threshold": 1500.0,
-          "unit": "€/mes",
-          "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.526 €/mes por 77 m² (19,8 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
-        },
-        {
-          "constraint_id": "near:colegio",
-          "label": "Colegio con primaria a 10 min andando como mucho",
-          "status": "PASS",
-          "value": 5.5,
-          "threshold": 10.0,
-          "unit": "min",
-          "confidence": 1.0,
-          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
-        }
-      ],
-      "failed_constraints": [
-        "budget"
-      ],
-      "estimated_cost_eur": 1526.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "JUSTO"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "JUSTO"
-        },
-        {
-          "row": "farmacia",
-          "label": "Farmacias",
-          "status": "CUBIERTO"
-        }
-      ]
-    },
-    {
-      "rank": 2,
       "zone": {
         "level": "distrito",
         "code": "2807909",
@@ -1758,12 +1608,12 @@
         {
           "kind": "strength",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.266 €/mes por 77 m² (16,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "text": "Alquiler medio ≈ 1.267 €/mes por 77 m² (16,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
           "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
             "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 16.44,
+            "value": 16.45,
             "unit": "EUR/m2/mes",
             "confidence": 0.8,
             "null_reason": null,
@@ -1782,11 +1632,11 @@
           "constraint_id": "budget",
           "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 1266.0,
+          "value": 1267.0,
           "threshold": 1500.0,
           "unit": "€/mes",
           "confidence": 0.8,
-          "explanation": "Alquiler medio ≈ 1.266 €/mes por 77 m² (16,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+          "explanation": "Alquiler medio ≈ 1.267 €/mes por 77 m² (16,4 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
         },
         {
           "constraint_id": "near:colegio",
@@ -1802,12 +1652,12 @@
       "failed_constraints": [
         "near:colegio"
       ],
-      "estimated_cost_eur": 1266.0,
+      "estimated_cost_eur": 1267.0,
       "gap_highlights": [
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "CUBIERTO"
+          "status": "JUSTO"
         },
         {
           "row": "centro_salud",
@@ -1822,7 +1672,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 2,
       "zone": {
         "level": "municipio",
         "code": "28040",
@@ -1969,7 +1819,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 3,
       "zone": {
         "level": "municipio",
         "code": "28134",
@@ -2106,7 +1956,7 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "JUSTO"
+          "status": "CUBIERTO"
         },
         {
           "row": "farmacia",
@@ -2116,7 +1966,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 4,
       "zone": {
         "level": "municipio",
         "code": "28903",
@@ -2244,6 +2094,153 @@
         "near:colegio"
       ],
       "estimated_cost_eur": 916.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "JUSTO"
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "zone": {
+        "level": "municipio",
+        "code": "28132",
+        "admin_unit_id": "ES.28.MUN.28132",
+        "name": "San Martín de la Vega",
+        "municipio_ine": "28132",
+        "municipio_name": "San Martín de la Vega",
+        "center_lon": -3.56972,
+        "center_lat": 40.24299
+      },
+      "match_pct": 83,
+      "confidence": 0.925,
+      "facts": [
+        {
+          "kind": "weakness",
+          "topic": "colegios",
+          "text": "Colegio con primaria a 11 min andando desde la mitad de sus calles",
+          "confidence": 0.989,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 11.06,
+            "unit": "min",
+            "confidence": 0.989,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "transporte",
+          "text": "Parada de transporte público a 5 min andando desde la mitad de sus calles",
+          "confidence": 0.989,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 5.323,
+            "unit": "min",
+            "confidence": 0.989,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "salud",
+          "text": "Centro de salud a 16 min andando desde la mitad de sus calles",
+          "confidence": 0.989,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 16.46,
+            "unit": "min",
+            "confidence": 0.989,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "A 25,3 km en línea recta de Paseo de la Castellana (Azca)",
+          "confidence": 0.5,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler medio ≈ 547 €/mes por 77 m² (7,1 €/m², media de los contratos vigentes; uno nuevo suele costar más)",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
+            "value": 7.1,
+            "unit": "EUR/m2/mes",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "municipio",
+            "datasets": [
+              "cm_alquiler_m2_municipios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 547.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 1.0,
+          "explanation": "Alquiler medio ≈ 547 €/mes por 77 m² (7,1 €/m², media de los contratos vigentes; uno nuevo suele costar más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "FAIL",
+          "value": 11.1,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.989,
+          "explanation": "La mitad de sus calles está a 11 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [
+        "near:colegio"
+      ],
+      "estimated_cost_eur": 547.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -3307,7 +3304,7 @@
         "center_lon": -3.70879,
         "center_lat": 40.96519
       },
-      "match_pct": 25,
+      "match_pct": 47,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5207,7 +5204,7 @@
         "center_lon": -3.59418,
         "center_lat": 40.9688
       },
-      "match_pct": 26,
+      "match_pct": 15,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5286,11 +5283,9 @@
         "center_lon": -3.67478,
         "center_lat": 40.43155
       },
-      "match_pct": 93,
-      "passes_all": false,
-      "failed_constraints": [
-        "budget"
-      ]
+      "match_pct": 94,
+      "passes_all": true,
+      "failed_constraints": []
     },
     {
       "zone": {
@@ -5318,7 +5313,7 @@
         "center_lon": -3.69962,
         "center_lat": 40.4606
       },
-      "match_pct": 97,
+      "match_pct": 98,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -5515,7 +5510,7 @@
         "center_lon": -3.58338,
         "center_lat": 40.39115
       },
-      "match_pct": 77,
+      "match_pct": 80,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5556,14 +5551,14 @@
   ],
   "reality_check": {
     "zones_evaluated": 199,
-    "zones_passing": 32,
+    "zones_passing": 33,
     "zones_unknown": 15,
     "binding_constraint": "near:colegio",
     "relaxations": [
       {
         "constraint_id": "near:colegio",
         "label": "+5 min a pie hasta colegio con primaria",
-        "zones_if_relaxed": 49,
+        "zones_if_relaxed": 50,
         "added_zones": 17,
         "relaxed_scenario": {
           "schema_version": 2,
@@ -5609,7 +5604,7 @@
         "constraint_id": "budget",
         "label": "+150 €/mes",
         "zones_if_relaxed": 33,
-        "added_zones": 1,
+        "added_zones": 0,
         "relaxed_scenario": {
           "schema_version": 2,
           "budget": {
@@ -5704,7 +5699,7 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-10-d6ac8db8f003",
+      "version": "2026-11-11-ba0e65311c5b",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {
@@ -5732,6 +5727,15 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
       "version": "2026-10-20-37703ffcdfd0",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "version": "2026-11-10-bdf7c1ff864a",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {

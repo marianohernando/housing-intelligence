@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_hospitales_datos_asistenciales",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_hospitales_datos_asistenciales/c9b45e53e111/hospitales-y-datos-asistenciales.csv",
+      "sha256": "c9b45e53e111f4b413d140c8c13f65df0d99b01a29ee4f34c603b1823443272c",
+      "bytes": 21094,
+      "url": "https://datos.comunidad.madrid/dataset/ab7c4a85-8e40-4f3b-acd0-effd4711759d/resource/2d0910bc-ad3e-4de3-abd3-88aa14d949d7/download/hospitales-y-datos-asistenciales.csv",
+      "retrieved_at": "2026-11-12T00:03:36.562528+00:00"
+    }
+  ]
+}

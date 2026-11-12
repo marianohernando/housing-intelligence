@@ -35,7 +35,8 @@ def test_municipio_list_has_real_rows_against_the_region(
     with migrated_engine.connect() as conn:
         region = conn.execute(
             text(
-                "SELECT value FROM feature_value WHERE feature_id = 'centros_salud_por_10000_hab' "
+                "SELECT value FROM feature_value "
+                "WHERE feature_id = 'centros_salud_a_pie_por_10000_hab' "
                 "AND territory_level = 'ccaa' AND territory_code = '28'"
             )
         ).scalar_one()
@@ -271,26 +272,32 @@ def test_rows_compare_with_municipios_of_the_same_type(
     client: TestClient, migrated_engine: Engine
 ) -> None:
     """D-213: the reference is the rate of the municipios of the zone's type (Ley 45/2007), from
-    the counts each feature row keeps; the region stays as context."""
+    the counts each feature row keeps; the region stays as context. The value per count comes
+    from the region (2SFCA rows keep facility-equivalents, D-217). The housing row is used
+    because the sample's walking network only covers Madrid: the 2SFCA rows of Ajalvir have
+    no streets to place people on and are SIN DATOS there."""
+    feature = "viviendas_grandes_por_100_hogares_grandes"
     with migrated_engine.connect() as conn:
-        counts = dict(
-            conn.execute(
-                text(
-                    "SELECT territory_code, inputs->'counts' FROM feature_value "
-                    "WHERE feature_id = 'colegios_publicos_por_1000_menores' "
-                    "AND territory_level = 'municipio'"
-                )
-            ).all()
-        )
+        rows = conn.execute(
+            text(
+                "SELECT territory_level, territory_code, value, inputs->'counts' AS counts "
+                "FROM feature_value WHERE feature_id = :f "
+                "AND territory_level IN ('municipio', 'ccaa')"
+            ),
+            {"f": feature},
+        ).mappings()
+        by_code = {(r["territory_level"], r["territory_code"]): r for r in rows}
+    region = by_code[("ccaa", "28")]
+    per_rate = region["value"] / (region["counts"]["numerator"] / region["counts"]["denominator"])
     # In the sample La Acebeda is rural (70 inhabitants); Ajalvir and Madrid are urban, and each
     # is compared with the other one (its own counts are left out).
-    other = counts["28079"]
+    other = by_code[("municipio", "28079")]["counts"]
     rate = other["numerator"] / other["denominator"]
     body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28002").json())
-    school = next(r for r in body.data.rows if r.row.value == "colegio")
-    assert school.reference_label == "Otros municipios urbanos de la Comunidad de Madrid"
-    assert school.reference == pytest.approx(1000 * rate, rel=1e-3)
-    assert school.regional_reference is not None
-    assert "en toda la Comunidad" in school.explanation
-    assert body.data.method.version == "gap-0.2"
+    housing = next(r for r in body.data.rows if r.row.value == "vivienda")
+    assert housing.reference_label == "Otros municipios urbanos de la Comunidad de Madrid"
+    assert housing.reference == pytest.approx(per_rate * rate, rel=1e-3)
+    assert housing.regional_reference is not None
+    assert "en toda la Comunidad" in housing.explanation
+    assert body.data.method.version == "gap-0.3"
     assert body.data.method.confidence_level == 0.95

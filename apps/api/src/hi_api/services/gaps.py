@@ -10,7 +10,14 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
-from hi_api.services.gap_reference import Assessment, References, assess, load_references
+from hi_api.services.gap_reference import (
+    Assessment,
+    References,
+    assess,
+    group_sentence,
+    judge,
+    load_references,
+)
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
@@ -24,7 +31,6 @@ from hi_domain.gaps import (
     GAP_METHOD,
     REGION_TEXT,
     UnclassifiableError,
-    classify,
     explanation,
     oriented_ratio,
 )
@@ -178,10 +184,13 @@ def _gap_row(
     versions = merged_versions(row, reference_row, [e.value for e in extras])
     if ref is not None and ref.regional is not None:  # the type comes from population and area
         versions = zone.references.versions | versions
+    verdict = judge(ratio, judged, zone.references, feature["feature_id"], zone.code)
+    if verdict.group is not None:
+        text_ += "; " + group_sentence(verdict.group)
     return GapRow(
         row=binding["row"],
         label=binding["label"],
-        status=classify(ratio, significant=judged.significant),
+        status=verdict.status,
         indicator=indicator,
         reference=None if ref is None else significant(ref.value),
         reference_label=REGION_TEXT.label if ref is None else ref.label,
@@ -192,7 +201,8 @@ def _gap_row(
         ratio_to_reference=None if ratio is None else significant(ratio),
         explanation=text_,
         proxy_note=binding.get("proxy_note"),
-        reliable=judged.reliable,
+        reliable=verdict.reliable,
+        comparison_group=verdict.group,
         extra_indicators=[_indicator(e.feature, e.value, zone.level) for e in extras],
         datasets=dataset_refs(conn, versions),
     )

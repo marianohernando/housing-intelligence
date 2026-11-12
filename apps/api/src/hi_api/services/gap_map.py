@@ -8,7 +8,7 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
-from hi_api.services.gap_reference import Assessment, References, assess, load_references
+from hi_api.services.gap_reference import Assessment, References, assess, judge, load_references
 from hi_api.services.gaps import (
     REGION_CODE,
     REGION_LEVEL,
@@ -24,7 +24,6 @@ from hi_domain.gaps import (
     REGION_TEXT,
     Direction,
     UnclassifiableError,
-    classify,
     oriented_ratio,
 )
 from hi_domain.geo.names import display_name
@@ -76,18 +75,20 @@ def _zone(row: dict[str, Any], context: RowContext) -> ZoneGapStatus:
             raise UnclassifiableError(msg)
         ratio = oriented_ratio(value, ref.value, context.direction)
         judged = assess(row, ref, context.direction)
+    verdict = judge(ratio, judged, context.references, context.feature_id, row["territory_code"])
     return ZoneGapStatus(
         admin_unit_id=row["admin_unit_id"] or row["territory_code"],
         code=row["territory_code"],
         name=display_name(row["name"]) if row["name"] else row["territory_code"],
-        status=classify(ratio, significant=judged.significant),
+        status=verdict.status,
         value=value,
         reference=None if ref is None else significant(ref.value),
         reference_label=REGION_TEXT.label if ref is None else ref.label,
         ratio_to_reference=None if ratio is None else significant(ratio),
         confidence=float(row["confidence"]),
         null_reason=row["null_reason"],
-        reliable=judged.reliable,
+        reliable=verdict.reliable,
+        comparison_group=verdict.group,
     )
 
 

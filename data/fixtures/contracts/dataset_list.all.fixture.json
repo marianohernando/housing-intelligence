@@ -1,6 +1,6 @@
 {
-  "total": 24,
-  "cm_open_data_count": 21,
+  "total": 26,
+  "cm_open_data_count": 23,
   "datasets": [
     {
       "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
@@ -44,7 +44,16 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-10-d6ac8db8f003",
+      "version": "2026-11-11-ba0e65311c5b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_dotacion_camas",
+      "name": "Dotación de camas por dependencia",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1912720",
+      "version": "2026-11-12-db9e8751577e",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {
@@ -63,6 +72,15 @@
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
       "version": "2026-11-10-acfd552e1c9c",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+    },
+    {
+      "dataset_id": "cm_hospitales_datos_asistenciales",
+      "name": "Hospitales y datos asistenciales",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1912744",
+      "version": "2026-11-12-254596b46ee3",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
     },
     {

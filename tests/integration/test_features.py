@@ -1,6 +1,7 @@
 """Gate 3: every computed feature satisfies the invariants its dictionary entry declares."""
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 from sqlalchemy import Engine, RowMapping, text
@@ -156,3 +157,34 @@ def test_district_rent_comes_from_its_postcodes(
             assert row.null_reason == "SOURCE_NO_COVERAGE"
         else:
             assert published[0] <= row.value <= published[1]
+
+
+def test_two_step_rows_keep_facility_equivalents_and_madrid_districts(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-217: 2SFCA rows by municipio and by Madrid district only; their counts are capacity in
+    facility-equivalents over people, so value / (numerator / denominator) is one constant."""
+    with migrated_engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT v.feature_id, v.territory_level, v.territory_code, v.value, "
+                "v.inputs->'counts' AS counts FROM feature_value v "
+                "JOIN feature_registry r ON r.feature_id = v.feature_id "
+                "WHERE r.spec->'formula'->>'method' = 'two_step_fca'"
+            )
+        ).mappings()
+        by_feature: dict[str, list[dict[str, Any]]] = {}
+        for r in rows:
+            by_feature.setdefault(r["feature_id"], []).append(dict(r))
+    assert len(by_feature) == 5
+    for feature_id, values in by_feature.items():
+        levels = {v["territory_level"] for v in values}
+        assert levels == {"municipio", "distrito", "ccaa"}, feature_id
+        districts = [v["territory_code"] for v in values if v["territory_level"] == "distrito"]
+        assert districts and all(code.startswith("28079") for code in districts), feature_id
+        scales = {
+            round(v["value"] / (v["counts"]["numerator"] / v["counts"]["denominator"]), 6)
+            for v in values
+            if v["value"] and v["counts"] and v["counts"]["numerator"]
+        }
+        assert len(scales) <= 1, (feature_id, scales)

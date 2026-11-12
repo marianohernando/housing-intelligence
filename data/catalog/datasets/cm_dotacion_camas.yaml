@@ -1,0 +1,34 @@
+dataset_id: cm_dotacion_camas
+source_id: comunidad_madrid_ckan
+name: "Dotación de camas por dependencia"
+domain: health
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: ccaa
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/1912720
+resources:
+- name: Dotación de camas por dependencia.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/1324a4c3-aa6c-4209-83c8-9f291adba4e2/resource/884673f6-ce91-4006-8d1b-a357bf7b31a9/download/dotacion-de-camas-por-dependencia.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 3
+  geographic_granularity: 1
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: 'T2a (D-217): capacidad hospitalaria. Solo total regional (Tipo territorio «Otros»), sin camas por hospital.'
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T00:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1912720'
+  harvested_at: '2026-11-12T00:00:00+00:00'
+notes: 'T2a capacity (D-217): regional reference for hospital capacity. license_id=cc-by'

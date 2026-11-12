@@ -1,0 +1,34 @@
+dataset_id: cm_hospitales_datos_asistenciales
+source_id: comunidad_madrid_ckan
+name: "Hospitales y datos asistenciales"
+domain: health
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: ccaa
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/1912744
+resources:
+- name: Hospitales y datos asistenciales.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/ab7c4a85-8e40-4f3b-acd0-effd4711759d/resource/2d0910bc-ad3e-4de3-abd3-88aa14d949d7/download/hospitales-y-datos-asistenciales.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 3
+  geographic_granularity: 1
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: 'T2a (D-217): capacidad hospitalaria. Solo total regional (Tipo territorio «Otros»), sin camas por hospital.'
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T00:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1912744'
+  harvested_at: '2026-11-12T00:00:00+00:00'
+notes: 'T2a capacity (D-217): regional reference for hospital capacity. license_id=cc-by'

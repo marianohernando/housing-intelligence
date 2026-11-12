@@ -32,4 +32,4 @@ limitations:
   - "Cuenta oficinas de farmacia del registro de la CM, no horarios ni guardias."
   - "Se calcula con el censo anual de la CM. La ratio oficial de la CM (farmacias_por_10000_hab_oficial) usa otra población y otra fecha del registro: en Madrid difieren menos del 1 %, pero en un municipio con pocas farmacias una farmacia de diferencia entre registros mueve la ratio mucho (Soto del Real: 3 frente a 2)."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
-gap_row: {row: farmacia, role: primary, label: "Farmacias", phrase: "farmacias por cada 10.000 habitantes", proxy_note: "Cuenta farmacias, no horarios ni guardias."}
+gap_row: {row: farmacia, role: extra, phrase: "farmacias por cada 10.000 habitantes del municipio o distrito"}

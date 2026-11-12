@@ -1,5 +1,47 @@
 {
   "$defs": {
+    "ComparisonGroup": {
+      "additionalProperties": false,
+      "description": "A zone too small to compare alone, compared with its nearest same-type neighbours.\n\ngap-0.3 (D-217): the nearest municipios of the same type are added until the group expects\n3,69 cases at the reference rate (the floor of D-213). `status` is then the group's.",
+      "properties": {
+        "codes": {
+          "description": "The zone first, then its neighbours",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Codes",
+          "type": "array"
+        },
+        "names": {
+          "examples": [
+            [
+              "La Acebeda",
+              "Robregordo"
+            ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Names",
+          "type": "array"
+        },
+        "ratio_to_reference": {
+          "description": "Group total over its expected total",
+          "minimum": 0,
+          "title": "Ratio To Reference",
+          "type": "number"
+        }
+      },
+      "required": [
+        "codes",
+        "names",
+        "ratio_to_reference"
+      ],
+      "title": "ComparisonGroup",
+      "type": "object"
+    },
     "DatasetRef": {
       "additionalProperties": false,
       "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
@@ -381,6 +423,18 @@
           "minLength": 1,
           "title": "Code",
           "type": "string"
+        },
+        "comparison_group": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComparisonGroup"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set when the zone is compared together with its nearest neighbours of the same type because it is too small alone (gap-0.3, D-217); `status` is the group's"
         },
         "confidence": {
           "maximum": 1,

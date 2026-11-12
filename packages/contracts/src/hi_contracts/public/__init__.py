@@ -7,6 +7,7 @@ Version 2 (11 Nov): rent or purchase budget, household with older people in care
 
 from hi_contracts.public.common import DatasetList, DatasetRef, IndicatorValue, ZoneRef
 from hi_contracts.public.gaps import (
+    ComparisonGroup,
     GapMethod,
     GapRow,
     GapRowKey,
@@ -46,6 +47,7 @@ __all__ = [
     "AnchorKind",
     "Budget",
     "BudgetKind",
+    "ComparisonGroup",
     "ConstraintCheck",
     "ConstraintStatus",
     "DatasetList",

@@ -1,0 +1,33 @@
+feature_id: min_a_pie_hospital
+version: 1
+human_name: "Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona)"
+domain: health
+type: derived
+unit: min
+direction: lower_is_better
+geo_level: seccion_censal
+time_semantics: current
+sources:
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: cm_centros_sanitarios, role: primary}
+formula:
+  method: network_walk_time
+  destination_category: health
+  subcategories: ["Hospital general"]  # proxy of a 24 h emergency department (D-217)
+  statistic: median_minutes
+  speed_kmh: 4.0
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  min_street_m: 300  # less origin street than this -> confidence 0.5 at most
+  levels: {municipio: {}, distrito: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [reachable_street_share, min_street_m]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative, explicit_null_without_streets, unknown_never_near]
+limitations:
+  - "Hospital general, público o privado (60 en el registro de la CM): casi todos tienen urgencias 24 h, pero ni el registro de la CM ni el Catálogo Nacional de Hospitales lo publican, así que es un proxy declarado (D-217)."
+  - "Son minutos a pie por la red de calles a 4 km/h: miden la distancia real por la calle, no el tiempo en coche, en ambulancia ni en transporte público."
+  - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
+  - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."
+gap_row: {row: centro_salud, role: extra, phrase: "minutos a pie hasta el hospital general más cercano"}

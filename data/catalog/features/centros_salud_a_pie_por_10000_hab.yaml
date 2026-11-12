@@ -1,0 +1,43 @@
+feature_id: centros_salud_a_pie_por_10000_hab
+version: 1
+human_name: "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes"
+domain: health
+type: derived
+unit: centros/10000 hab
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_centros_sanitarios, role: primary}
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
+formula:
+  method: two_step_fca
+  category: health
+  subcategories: ["Centro de salud"]
+  attributes: {"dependecia_funcional": ["Servicios o Institutos de Salud de las CC.AA"]}
+  supply: {kind: count}
+  catchment_minutes: 15  # «El Madrid de los 15 minutos» (Ayuntamiento), the source of D-211
+  speed_kmh: 4.0
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  population_metric: poblacion_censada
+  population_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  district_population: {metric: poblacion_padron, dims: {edad: [total]}}
+  small_population_threshold: 2000  # people below this -> confidence 0.5
+  per: 10000
+  confidence: 1.0
+  levels: {distrito: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, small_population]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative, capacity_conserved]
+limitations:
+  - "2SFCA (Luo y Wang, 2003): la capacidad de cada centro se reparte entre quienes viven a 15 minutos a pie o menos (4 km/h por la red de calles, «El Madrid de los 15 minutos»); la zona suma lo que le llega a cada calle. Cruza los límites de municipio y distrito."
+  - "La gente se coloca en las calles donde vive (D-210), en proporción a su longitud dentro de su municipio o, en Madrid, de su distrito (padrón escalado al total del censo): no es la población de cada portal."
+  - "Quien vive a más de 15 minutos a pie de cualquier centro no suma oferta: la fila mide lo que se tiene cerca, no lo que hay en coche o en autobús."
+  - "La población asignada por tarjeta sanitaria y los cupos por centro no son datos abiertos (comprobado el 12 nov). La capa de zonas básicas de salud abierta es de 2019 y no se usa para la capacidad."
+  - "Solo centros de salud del SERMAS (268 en el registro frente a 265 publicados): los consultorios inflaban la oferta de los pueblos (D-217, M1 y M2 de la revisión de D)."
+gap_row: {row: centro_salud, role: primary, label: "Centros de salud", phrase: "centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes", proxy_note: "Cuenta equipos de atención primaria (un centro de salud del SERMAS por equipo), no médicos ni población asignada, que no se publican en abierto. Los consultorios locales son puntos de consulta del mismo equipo: cuentan en los minutos a pie, no como capacidad."}
