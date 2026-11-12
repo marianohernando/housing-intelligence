@@ -559,11 +559,25 @@ async function gap03(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
-const FUENCARRAL = { path: "/zona/distrito/2807908", name: "Fuencarral-El Pardo" };
+const FUENCARRAL = { path: "/zona/distrito/2807908", id: "ES.28.DIS.2807908", name: "Fuencarral-El Pardo" };
+const HOSPITALS = ["Hospital general", "Hospital especializado", "Hospital de media y larga estancia", "Hospital de salud mental y tratamiento de toxicomanías"];
+const NO_NAME_NOTICE = "Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.";
+
+/** Hospitals of Fuencarral-El Pardo without a proper name in the API: only the type, «Hospital general (Madrid)» (lib/map/places.ts). */
+async function unnamedHospitals() {
+  const q = new URLSearchParams({ category: "health", admin_unit_id: FUENCARRAL.id });
+  for (const s of HOSPITALS) q.append("subcategory", s);
+  const response = await fetch(`${API}/api/v1/places?${q}`);
+  if (!response.ok) throw new Error(`GET /places ${response.status}`);
+  const { data } = await response.json();
+  return data.features.filter((f) => (f.properties.name ?? "").startsWith(`${f.properties.subcategory} (`)).length;
+}
 
 /** HOSP-001 (D-218): hospitals with their name, beds and who runs them, and the source of the beds. */
 async function hospitals(browser) {
   const failures = [];
+  // The notice shows when some hospital has no name, as the API says: since D-221 all may have one
+  report.hospitales_sin_nombre_api = await unnamedHospitals();
   for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
     const { ctx, page, errors } = await open(browser, profile, FUENCARRAL.path);
     const panel = page.getByRole("region", { name: "Todos los centros", exact: true });
@@ -594,7 +608,7 @@ async function hospitals(browser) {
     await panel.screenshot({ path: `${out}/hosp_hospitales_fuencarral_${id}.png` });
     if (!items.some((t) => t.includes("Hospital Universitario La Paz · 966 camas instaladas · gestión pública"))) failures.push(`${id}: sin La Paz`);
     if (items.some((t) => /privado|(^|· )privada/.test(t))) failures.push(`${id}: «privado» a secas`);
-    if (!entry.frase.includes("Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.")) failures.push(`${id}: aviso de nombres`);
+    if (entry.frase.includes(NO_NAME_NOTICE) !== report.hospitales_sin_nombre_api > 0) failures.push(`${id}: aviso de nombres distinto de la API`);
     if (!entry.fuente.startsWith("Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025")) failures.push(`${id}: frase de las camas`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
     if (entry.consola.length) failures.push(`${id}: consola`);

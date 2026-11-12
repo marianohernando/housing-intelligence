@@ -205,14 +205,22 @@ if (mode === "off") {
     await page.getByRole("button", { name: "Cerrar" }).click();
   }
 
-  // Buying: «Sin datos» with its explanation; what the API answers is what shows
+  // Buying: «Sin datos» with its explanation; what the API answers is what shows (if it says no
+  // zone, the screen says none), checked like the demo case, with no figure fixed here (M3)
   await page.getByRole("radio", { name: "Comprar" }).check();
   d.compra = { nota: squash(await page.getByText(/Aún no tenemos precios oficiales de compra/).first().innerText()) };
   const buy = await searchAnswer(page, () => page.getByRole("button", { name: "Ver zonas que encajan" }).click());
-  await page.getByText(passingText(buy.reality_check.zones_passing)).first().waitFor({ timeout: WAIT });
+  const buyPassing = buy.reality_check.zones_passing;
+  // A screen that disagrees is reported by the checks below, not by a timeout here
+  await page.getByText(passingText(buyPassing)).first().waitFor({ timeout: WAIT }).catch(() => undefined);
   await page.waitForTimeout(1500);
-  d.compra.api = { zones_passing: buy.reality_check.zones_passing, zones_unknown: buy.reality_check.zones_unknown };
-  d.compra.resultados = squash(await page.getByRole("region", { name: "Zonas que encajan", exact: true }).innerText());
+  d.compra.api = { zones_passing: buyPassing, zones_unknown: buy.reality_check.zones_unknown };
+  const buyRegion = page.getByRole("region", { name: "Zonas que encajan", exact: true });
+  d.compra.resumen = squash(await buyRegion.locator("p strong").first().innerText());
+  check("compra: resumen = zones_passing de la API", d.compra.resumen === passingText(buyPassing), `${d.compra.resumen} / ${buyPassing}`);
+  const buyLegend = Number((await legend.locator("li").first().innerText()).match(/(\d+) zonas?/)?.[1]);
+  check("compra: leyenda «Cumple todo» = zones_passing", buyLegend === buyPassing, `${buyLegend} / ${buyPassing}`);
+  d.compra.resultados = squash(await buyRegion.innerText());
   d.compra.y_si_cambias = squash(await page.getByRole("region", { name: "¿Y si cambias algo?", exact: true }).innerText());
   d.compra.axe = await axe(page);
   await page.screenshot({ path: `${out}/f9_compra_desktop.png` });

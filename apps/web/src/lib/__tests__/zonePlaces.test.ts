@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { PlaceCategory } from "../../contracts/places_response";
 import { facilityQueries, groupFacilities } from "../map/facilities";
 import { keyPointQueries, type PlaceFeature, pickKeyPoints } from "../map/places";
-import { FACILITY_CATEGORIES, KEY_POINT_CATEGORIES, zonePlaceQueries } from "../map/zonePlaces";
+import { askedFor, FACILITY_CATEGORIES, KEY_POINT_CATEGORIES, zonePlaceQueries } from "../map/zonePlaces";
 
 function place(id: string, category: PlaceCategory, subcategory: string, lon: number, lat: number): PlaceFeature {
   return {
@@ -47,6 +47,18 @@ describe("zonePlaceQueries", () => {
     ];
     expect(pickKeyPoints(shared, [-3.68, 40.46])).toEqual(pickKeyPoints(keyOnly, [-3.68, 40.46]));
     expect(groupFacilities(shared).centro_salud).toEqual(groupFacilities(keyOnly).centro_salud);
+  });
+
+  it("keeps from the combined answer only the category and subcategory pairs asked for (M2)", () => {
+    const queries = zonePlaceQueries();
+    expect(askedFor(queries, place("c1", "health", "Centro de salud", -3.68, 40.46))).toBe(true);
+    expect(askedFor(queries, place("f1", "pharmacy", "Farmacia", -3.67, 40.45))).toBe(true);
+    // A subcategory asked for health, in a place of another category the request also asked for
+    expect(askedFor(queries, place("x1", "social", "Centro de salud", -3.68, 40.46))).toBe(false);
+    expect(askedFor(queries, place("x2", "pharmacy", "Hospital general", -3.68, 40.46))).toBe(false);
+    // A subcategory nobody asked for, and a category outside the request
+    expect(askedFor(queries, place("x3", "health", "Clínica dental", -3.68, 40.46))).toBe(false);
+    expect(askedFor(queries, place("x4", "culture", "Biblioteca", -3.68, 40.46))).toBe(false);
   });
 
   it("key points never take a place of another category with the same subcategory", () => {

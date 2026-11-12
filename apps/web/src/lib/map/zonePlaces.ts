@@ -8,7 +8,7 @@
 import type { PlaceCategory } from "@/lib/api";
 
 import { facilityQueries } from "./facilities";
-import { keyPointQueries } from "./places";
+import { keyPointQueries, type PlaceFeature } from "./places";
 
 /** The subcategories asked for each category: those of «Todos los centros», then the key points'. */
 export function zonePlaceQueries(): ReadonlyMap<PlaceCategory, readonly string[]> {
@@ -19,6 +19,16 @@ export function zonePlaceQueries(): ReadonlyMap<PlaceCategory, readonly string[]
     merged.set(category, list);
   }
   return merged;
+}
+
+/**
+ * A place one of the queries asked for: its category with one of that category's subcategories.
+ * The combined request filters categories and subcategories apart, so a subcategory asked for one
+ * category also brings the places of another category that share its name (review of PR #19, M2).
+ */
+export function askedFor(queries: ReadonlyMap<PlaceCategory, readonly string[]>, place: PlaceFeature): boolean {
+  const { category, subcategory } = place.properties;
+  return queries.get(category)?.includes(subcategory) ?? false;
 }
 
 const categories = (queries: { category: PlaceCategory }[]) => [...new Set(queries.map((q) => q.category))];
