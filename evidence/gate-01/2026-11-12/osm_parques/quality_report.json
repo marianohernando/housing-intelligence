@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "parks": 1402,
+        "parks": 1404,
         "min": 700,
         "max": 4000
       }

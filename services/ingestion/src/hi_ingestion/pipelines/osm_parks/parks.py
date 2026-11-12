@@ -5,6 +5,7 @@ points, every `edge_step_m` metres along the outer rings in EPSG:25830, are what
 features use as destinations (hi_features.walk); the place's own point is for the map.
 """
 
+from collections.abc import Mapping
 from typing import Any
 
 import h3
@@ -14,9 +15,11 @@ import shapely
 from numpy.typing import NDArray
 from pyproj import Transformer
 
+from hi_contracts.catalog.corrections import ParkInclusion
 from hi_contracts.catalog.enums import PlaceCategory, PlaceStatus
 from hi_contracts.catalog.pipeline import OsmParksPipeline
 from hi_domain.geo.bounds import is_within_madrid
+from hi_ingestion.pipelines.osm_parks.inclusions import inclusion_attribute
 from hi_ingestion.pipelines.places.normalize import (
     H3_RESOLUTION,
     PLACE_COLUMNS,
@@ -77,7 +80,12 @@ def _geometry(wkb: str) -> shapely.Geometry | None:
     return park if park.is_valid and not park.is_empty else shapely.make_valid(park)
 
 
-def normalize_parks(frame: pd.DataFrame, spec: OsmParksPipeline) -> Places:
+def normalize_parks(
+    frame: pd.DataFrame,
+    spec: OsmParksPipeline,
+    inclusions: Mapping[str, ParkInclusion] | None = None,
+) -> Places:
+    """Parks open to the public and of the minimum size; an included area (D-222 §5) says so."""
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, str]] = []
     removed = {"access_denied": 0, "smaller_than_min_area": 0}
@@ -94,6 +102,9 @@ def normalize_parks(frame: pd.DataFrame, spec: OsmParksPipeline) -> Places:
             removed["smaller_than_min_area"] += 1
             continue
         place = _place(row, park, spec)
+        inclusion = (inclusions or {}).get(place["external_id"])
+        if inclusion is not None:
+            place["attributes"]["inclusion"] = inclusion_attribute(inclusion)
         if not is_within_madrid(place["lon"], place["lat"]):
             bad.append({"external_id": place["external_id"], "reason": "outside Madrid bounds"})
             continue

@@ -103,3 +103,27 @@ class PlaceCorrections(BaseModel):
 
     def for_dataset(self, dataset_id: str) -> list[PlaceCorrection]:
         return [c for c in self.corrections if c.dataset_id == dataset_id]
+
+
+class ParkInclusion(BaseModel):
+    """An OSM area that OSM does not tag as a park but an official source lists as a public park
+    (D-222 §5): the Casa de Campo is `landuse=forest`. Never from memory."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    osm_id: str = Field(pattern=r"^(way|relation)/\d+$")
+    reason: str = Field(min_length=10)
+    source: OfficialSource
+
+
+class ParkInclusions(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    parks: list[ParkInclusion]
+
+    @model_validator(mode="after")
+    def _unique(self) -> Self:
+        ids = [p.osm_id for p in self.parks]
+        if len(ids) != len(set(ids)):
+            raise ValueError("one inclusion per OSM area")
+        return self

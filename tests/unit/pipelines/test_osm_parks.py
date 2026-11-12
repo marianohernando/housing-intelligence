@@ -5,9 +5,12 @@ from pathlib import Path
 
 import pytest
 import shapely
+from pydantic import ValidationError
 
+from hi_contracts.catalog.corrections import ParkInclusion
 from hi_contracts.catalog.pipeline import OsmParksPipeline
 from hi_ingestion.catalog.loader import load_catalog
+from hi_ingestion.pipelines.osm_parks.inclusions import load_inclusions
 from hi_ingestion.pipelines.osm_parks.parks import EDGE_POINTS, normalize_parks
 from hi_ingestion.pipelines.osm_parks.parse import parse_parks
 from hi_ingestion.pipelines.osm_parks.quality import run_parks_quality
@@ -106,3 +109,35 @@ def test_the_catalogue_declares_the_parks_pipeline() -> None:
     spec = load_catalog().pipelines["osm_parques"]
     assert isinstance(spec, OsmParksPipeline)
     assert spec.min_area_ha == 1.0  # the WHO indicator's minimum size (D-222)
+
+
+GARDEN = ParkInclusion.model_validate(
+    {
+        "osm_id": "way/103",
+        "reason": "una fuente oficial lo lista como parque público",
+        "source": {
+            "publisher": "Ayuntamiento",
+            "url": "https://datos.madrid.es/x.csv",
+            "consulted": "2026-11-12",
+            "says": "Huerto · parque histórico",
+        },
+    }
+)
+
+
+def test_an_area_an_official_source_lists_as_a_park_is_included(extract: Path) -> None:
+    frame = parse_parks(extract, SPEC, [GARDEN.osm_id])
+    places = normalize_parks(frame, SPEC, {GARDEN.osm_id: GARDEN}).frame.set_index("external_id")
+    assert "way/103" in places.index  # leisure=garden: only by its inclusion
+    inclusion = places.loc["way/103", "attributes"]["inclusion"]
+    assert inclusion["url"] == "https://datos.madrid.es/x.csv"
+    assert "inclusion" not in places.loc["way/100", "attributes"]
+
+
+def test_the_casa_de_campo_is_included_with_an_official_source() -> None:
+    inclusions = {p.osm_id: p for p in load_inclusions().parks}
+    assert "relation/1946885" in inclusions  # landuse=forest in OSM (D-222 §5)
+    for inclusion in inclusions.values():
+        assert str(inclusion.source.url).startswith("https://")
+    with pytest.raises(ValidationError):
+        ParkInclusion.model_validate(GARDEN.model_dump() | {"osm_id": "node/1"})

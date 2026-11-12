@@ -17,6 +17,7 @@ from hi_contracts.catalog.pipeline import (
     GtfsFeedPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    OsmParksPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
 )
@@ -32,6 +33,7 @@ from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
+from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
@@ -143,6 +145,35 @@ def walk_grid_extract(path: Path) -> Path:
     return path
 
 
+# Two 150 m x 150 m parks (2.25 ha) inside the walking grid (D-222).
+PARK_CORNERS_25830 = ((440_000.0, 4_474_500.0), (441_500.0, 4_477_000.0))
+PARK_SIDE_M = 150.0
+
+
+def parks_extract(path: Path) -> Path:
+    """A synthetic OSM extract with two leisure=park squares over the Madrid sample."""
+    lines = ["<?xml version='1.0' encoding='UTF-8'?>", '<osm version="0.6" generator="test">']
+    ways: list[str] = []
+    for k, (x, y) in enumerate(PARK_CORNERS_25830):
+        corners = [
+            (x, y),
+            (x + PARK_SIDE_M, y),
+            (x + PARK_SIDE_M, y + PARK_SIDE_M),
+            (x, y + PARK_SIDE_M),
+        ]
+        ids = [100 * (k + 1) + i for i in range(4)]
+        for node_id, (cx, cy) in zip(ids, corners, strict=True):
+            lon, lat = TO_WGS84.transform(cx, cy)
+            lines.append(f'  <node id="{node_id}" lat="{lat:.7f}" lon="{lon:.7f}"/>')
+        refs = "".join(f'<nd ref="{i}"/>' for i in [*ids, ids[0]])
+        ways.append(
+            f'  <way id="{k + 1}">{refs}<tag k="leisure" v="park"/>'
+            f'<tag k="name" v="Parque {k + 1}"/></way>'
+        )
+    path.write_text("\n".join([*lines, *ways, "</osm>"]) + "\n")
+    return path
+
+
 def ingest_directories(engine: Engine, data_dir: Path) -> None:
     catalog = load_catalog()
     for dataset_id, spec in sorted(catalog.pipelines.items()):
@@ -192,6 +223,16 @@ def fixtures_ingested(
                 migrated_engine,
                 catalog,
                 spec.model_copy(update={"min_total_km": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+            )
+        elif isinstance(spec, OsmParksPipeline):
+            src = local_file(dataset_id, "primary", parks_extract(tmp / "parks.osm"))
+            result = run_osm_parks_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_parks": 1}),
                 src,
                 evidence_root=None,
                 data_dir=tmp,

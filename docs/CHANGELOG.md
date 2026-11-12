@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.42 — Minutos a pie hasta un parque (2026-11-12)
+- D-222 §5–§6: Casa de Campo y Quinta de Torre Arias con fuente oficial del Ayuntamiento; features `min_a_pie_parque` y `pct_calle_parque_5min` hasta el borde de los parques.
+
 ## v0.5.41 — Parques (2026-11-12)
 - D-222: parques de OSM de 1 ha o más como lugares (`green`), con los puntos de su borde para medir a pie.
 

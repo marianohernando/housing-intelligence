@@ -17,7 +17,7 @@ from sqlalchemy import Engine, text
 
 from hi_domain.access.graph import FloatArray, IntArray
 from hi_domain.access.walk import RoutableNetwork, origin_weights
-from hi_features.methods import place_filter
+from hi_features.methods import destination_points, place_filter
 from hi_ingestion.bronze import REPO_ROOT
 from hi_ingestion.pipelines.osm_network.network import NETWORK_FILE, load_network
 
@@ -115,8 +115,7 @@ def distances(
     kept = (
         place_filter(frame, subcategories or None, dict(attributes) or None) if len(frame) else []
     )
-    x = np.array([float(r["x"]) for r in kept])
-    y = np.array([float(r["y"]) for r in kept])
+    x, y = destination_points(kept)
     return routable(path).distance_to_nearest(x, y)
 
 

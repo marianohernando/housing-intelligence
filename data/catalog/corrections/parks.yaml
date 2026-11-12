@@ -1,0 +1,24 @@
+# Public parks that OSM does not tag leisure=park (D-222 §5). Only with an official source that
+# lists the area as a public park, cited with URL, date consulted and its exact text. Found by
+# comparing the Ayuntamiento's list of its main parks and gardens with the OSM parks: the other
+# entries of that list missing from OSM are gardens under 1 ha (evidence/gate-01/2026-11-12/
+# parques.md). The parks pipeline reads this file as an input of its run.
+parks:
+  - osm_id: relation/1946885
+    reason: >-
+      La Casa de Campo está en OSM como bosque (landuse=forest), no como parque, y es el mayor
+      parque público de Madrid: el Ayuntamiento la lista entre sus parques históricos.
+    source:
+      publisher: Ayuntamiento de Madrid · Principales parques y jardines municipales (datos.madrid.es)
+      url: https://datos.madrid.es/egob/catalogo/200761-0-parques-jardines.csv
+      consulted: 2026-11-12
+      says: "Parque de la Casa de Campo · PASEO PUERTA DEL ANGEL 1 · MONCLOA-ARAVACA · ParquesHistoricos · Superficie: 1.535,52 hectáreas"
+  - osm_id: way/22755919
+    reason: >-
+      La Quinta de Torre Arias está en OSM como jardín (leisure=garden), no como parque; el
+      Ayuntamiento la lista entre sus parques históricos y es de acceso público.
+    source:
+      publisher: Ayuntamiento de Madrid · Principales parques y jardines municipales (datos.madrid.es)
+      url: https://datos.madrid.es/egob/catalogo/200761-0-parques-jardines.csv
+      consulted: 2026-11-12
+      says: "Quinta de Torre Arias · CALLE ALCALA 551 · SAN BLAS-CANILLEJAS · ParquesHistoricos"

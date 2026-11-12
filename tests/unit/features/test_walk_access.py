@@ -71,3 +71,21 @@ def test_regional_reference_pools_every_node_inside_a_zone() -> None:
 def test_unknown_statistic_is_rejected() -> None:
     with pytest.raises(ValueError, match="mean_minutes"):
         methods.WalkSettings("mean_minutes", SPEED, 10.0, 1.0, 250.0)
+
+
+def test_a_park_is_reached_at_its_edge_points_any_other_place_at_its_point() -> None:
+    """D-222: a destination that keeps the points of its edge is reached at any of them."""
+    rows = [
+        {"x": 0.0, "y": 0.0, "attributes": {"edge_points_25830": [[10.0, 0.0], [0.0, 10.0]]}},
+        {"x": 5.0, "y": 5.0, "attributes": {}},
+        {"x": 7.0, "y": 7.0, "attributes": None},
+    ]
+    x, y = methods.destination_points(rows)
+    assert list(zip(x.tolist(), y.tolist(), strict=True)) == [
+        (10.0, 0.0),
+        (0.0, 10.0),
+        (5.0, 5.0),
+        (7.0, 7.0),
+    ]
+    empty_x, empty_y = methods.destination_points([])
+    assert len(empty_x) == len(empty_y) == 0

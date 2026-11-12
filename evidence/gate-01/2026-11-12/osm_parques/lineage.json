@@ -7,12 +7,21 @@
       "sha256": "d335ef0e0362fbbb66409dcfd47bb6e556c69016a1bc65ff7a7fc2dd6c603df9",
       "bytes": 85630548,
       "url": "https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf",
-      "retrieved_at": "2026-11-12T12:24:30.708003+00:00"
+      "retrieved_at": "2026-11-12T12:32:10.643831+00:00"
+    },
+    {
+      "dataset_id": "osm_parques",
+      "role": "corrections",
+      "path": "data/catalog/corrections/parks.yaml",
+      "sha256": "b11e19b11b4e79b3c4a594acdf8a3231c724a12912abcbf6beca53be53043791",
+      "bytes": 1598,
+      "url": "data/catalog/corrections/parks.yaml",
+      "retrieved_at": "2026-11-12T12:31:20.147331+00:00"
     }
   ],
-  "checksum": "b8d92f0485d95e1e649942d9cb380a19205391fd2729cbc0cd08d197cc0d6ee6",
-  "parser_version": "osm-parks-1.0.0",
-  "dataset_version": "2026-11-12-b8d92f0485d9",
-  "correlation_id": "b0774bcb42d743d299c0b031c91cda30",
-  "silver": "data/silver/osm_parques/b8d92f0485d9/places.csv.gz"
+  "checksum": "199d4d500a727635473e89ef760b4980e222fb3facb38d2151b13c0610cc0dcd",
+  "parser_version": "osm-parks-1.1.0",
+  "dataset_version": "2026-11-12-199d4d500a72",
+  "correlation_id": "ddd5309b16a14f5fa3827a98218f25e1",
+  "silver": "data/silver/osm_parques/199d4d500a72/places.csv.gz"
 }

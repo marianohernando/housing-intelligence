@@ -191,6 +191,26 @@ def place_filter(
     return kept
 
 
+# A destination reached at any point of its edge (a park, D-222) keeps them in its attributes.
+EDGE_POINTS = "edge_points_25830"
+
+
+def destination_points(
+    rows: Sequence[Mapping[str, Any]],
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """x and y (EPSG:25830) where a walk reaches each destination: every point of its edge when
+    it keeps one, otherwise its own point."""
+    points: list[tuple[float, float]] = []
+    for row in rows:
+        edge = (row.get("attributes") or {}).get(EDGE_POINTS)
+        if edge:
+            points.extend((float(x), float(y)) for x, y in edge)
+        else:
+            points.append((float(row["x"]), float(row["y"])))
+    xy = np.array(points, dtype=float).reshape(-1, 2)
+    return xy[:, 0], xy[:, 1]
+
+
 SMALL_POPULATION_CONFIDENCE = 0.5
 
 
