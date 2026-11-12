@@ -22,9 +22,9 @@
 | 2 | 0:40–2:20 | 100 s | Demo: una familia busca dónde vivir → zonas, el porqué y «¿Y si cambias algo?» | 149 | 69 s + unos 25 s de clics |
 | 2 sin buscador (reserva) | 0:40–2:20 | 100 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + unos 15 s de clics |
 | 3 | 2:20–3:40 | 80 s | Puente de Vallecas y su lista de lo que falta | 124 | 57 s + unos 15 s de clics |
-| 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 92 | 42 s |
+| 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 44 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
-| **Total** | | **300 s** | | **494 con buscador; 481 sin él** | **Con buscador: 228 s + unos 40 s de clics = unos 32 s de margen. Sin buscador: 222 s + unos 30 s de clics = unos 48 s de margen** |
+| **Total** | | **300 s** | | **497 con buscador; 484 sin él** | **Con buscador: 229 s + unos 40 s de clics = unos 31 s de margen. Sin buscador: 223 s + unos 30 s de clics = unos 47 s de margen** |
 
 ---
 
@@ -62,7 +62,8 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 
 **Resultado en producción** (12 nov, `fit-0.3`, con el trabajo en minutos de transporte público de D-220): `POST /api/v1/search` con el fixture da lo mismo que `evidence/gate-04/2026-11-12/golden-search-commute.txt` (`golden_family`). Se lee en pantalla, nunca de memoria. El 25 nov se vuelve a comprobar en producción:
 - encajan 33 de las 199 zonas (178 municipios y los 21 distritos de Madrid), y en 15 falta algún dato;
-- 1.ª, Fuencarral-El Pardo, 100 %: «Colegio con primaria a 9 min andando», parada a 3 min, centro de salud a 15 min, «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler medio ≈ 1.107 €/mes por 77 m²»;
+- 1.ª, Fuencarral-El Pardo, 100 %: «Colegio con primaria a 9 min andando», parada a 3 min, centro de salud a 15 min, «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler medio ≈ 1.107 €/mes por 77 m²». Con el alquiler de contratos nuevos (D-228), unos **[1.270 €: pendiente de A]**;
+- **todo este bloque se vuelve a comprobar cuando A despliegue D-228**. Con un alquiler más alto, Salamanca deja de entrar en 1.500 € (unos **[1.880 €: pendiente de A]**), y pueden cambiar las 33 zonas, las «17 más» y lo que más limita. Por eso van entre corchetes en lo que se dice;
 - después, Ciudad Lineal (33 min) y Hortaleza (32 min), empatadas al 99 %: no se dice un orden entre ellas. Latina y Moratalaz, 98 %;
 - Puente de Vallecas cumple todo: sale 7.ª, con un 98 %;
 - antes, con la distancia en línea recta (`fit-0.1`), Ciudad Lineal salía 1.ª (99 %, «a 3,2 km en línea recta de Azca»). Con el tiempo real en transporte, Fuencarral-El Pardo pasa delante: está a 29 min y Ciudad Lineal a 33;
@@ -125,10 +126,10 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 ## Bloque 4 · 3:40–4:30 · Datos, código abierto y quién paga
 **Pantalla:** la slide 2 en «Veintiséis conjuntos…» y la slide 3 en «¿Quién paga?».
 
-**«¿Quién paga?» es provisional:** cambia cuando Mariano elija el modelo de negocio (`pitch/modelo_negocio.md`). Si la frase crece, hay que recortar en otro sitio para no bajar de 30 s de margen.
+**«¿Quién paga?»:** el modelo que eligió Mariano el 13 nov (`pitch/modelo_negocio.md`). Ayuntamientos: informe de 990–1.500 € por contrato menor. Promotoras y consultoras: estudios de 490 a 1.500 €. Las cifras no se dicen en voz alta; si preguntan, pregunta 6 de `pitch/preguntas.md`.
 
 <!-- habla:b4:inicio -->
-¿Con qué datos? Veintiséis conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias, las seis redes de transporte del Consorcio y la accesibilidad de sus estaciones. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Quien quiere saber qué falta en cada zona: empresas y ayuntamientos, por análisis agregados. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
+¿Con qué datos? Veintiséis conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias, las seis redes de transporte del Consorcio y la accesibilidad de sus estaciones. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Los ayuntamientos, por el informe de lo que les falta, y las promotoras, por estudios de zona. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
 <!-- habla:b4:fin -->
 
 **Fuentes de lo que se dice:**

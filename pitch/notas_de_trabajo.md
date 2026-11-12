@@ -4,6 +4,22 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 ---
 
+## Condiciones de publicación de `metodologia.md`
+
+Párrafos de la parte 1 que B solo publica si la web ya enseña lo que cuentan. Si el 16 nov no se cumple, B quita el párrafo entero.
+
+| Sección | Párrafo | Se publica si | Pendiente de |
+|---|---|---|---|
+| 1.3 | «**Zonas verdes** (solo si lo marcas)…» | La web enseña el chip de zonas verdes (la API ya puntúa con `fit-0.3`, D-222) | B |
+| 1.8 | «**En los 21 distritos de Madrid** te contamos, solo como contexto, cómo valoran los vecinos la seguridad…» | La vista de zona enseña `zona.seguridad_vecinos` (D-226) | B |
+| 1.8 | «**Zonas verdes:** contamos los parques de 1 hectárea o más…» | Igual que en 1.3 | B |
+
+**Cuando A despliegue el alquiler de contratos nuevos (D-228, opción A):**
+- en 1.3, «El alquiler estimado» y «Ojo: el alquiler estimado es orientativo y tira a la baja» cambian. Texto listo para entonces: «El alquiler estimado es el alquiler medio por metro cuadrado de la zona, corregido con lo que cuestan de más los contratos firmados en el último año según la Agencia Tributaria, multiplicado por los metros de tu hogar.» y «Ojo: sigue siendo una estimación. Sale de contratos declarados a Hacienda, no de los pisos que se anuncian hoy, y los metros son construidos, no útiles.»;
+- el ejemplo de 1.3 («unos 1.107 € al mes por 77 m²») pasa a la cifra que dé A, y se vuelven a comprobar las 33 zonas y las «17 zonas» más.
+
+---
+
 ## Formulario: campos, variante B y checklist (antes en `formulario.md`)
 
 > Las decisiones del 11 nov están registradas como D-199 a D-207 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo.

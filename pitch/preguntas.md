@@ -46,7 +46,10 @@ Cada ingesta compara la huella (sha256) del fichero. Si no cambia, se salta; si 
 **6. ¿Quién paga?**
 Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, residencias, comercios) pagan por análisis agregados y por la API. Las personas lo usan gratis y los ayuntamientos lo usan para planificar.
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
-- Si piden concretar: las tres opciones, con precio, cliente y coste, están en `pitch/modelo_negocio.md`. Cuál se dice en la final, **pendiente de Mariano**.
+- Si piden concretar (decisión de Mariano, 13 nov; `pitch/modelo_negocio.md`):
+  - un ayuntamiento paga 990–1.500 € por el informe de lo que falta en su municipio, que cabe en un contrato menor;
+  - las promotoras y consultoras pagan estudios de zona de 490 a 1.500 €, y son los primeros ingresos;
+  - para las personas es gratis, y la API y el MCP también, sin uso comercial.
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
 Por el trabajo que hay encima: cruzar 26 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
@@ -229,9 +232,10 @@ Porque es corto, en español y fácil de recordar para cualquiera, también para
 ## Las cinco preguntas difíciles (jurado simulado del 12 nov)
 
 **41. Sale 1.107 € al mes por 77 m² en Fuencarral-El Pardo, y Salamanca entra con 1.500 €. ¿Eso es real?**
-No es el precio de un piso que se alquile hoy. Es la media de los contratos ya firmados que se declaran a Hacienda, que publica la Comunidad, multiplicada por los metros de un hogar de 4 personas: por eso tira a la baja, y la web lo avisa en cada zona. Lo estamos ajustando con el índice de la Comunidad que separa contratos nuevos y existentes: **[cifra nueva de Fuencarral-El Pardo y de Salamanca: pendiente de A]**.
-- Evidencia: D-214 (puntos 2 y 3) · ficha 1934259 del portal CM (campo «Fuente»: la Agencia Tributaria) · índice CM 1934428 (**pendiente de A**) · producción, 12 nov: Fuencarral-El Pardo «≈ 1.107 €/mes por 77 m²» y Salamanca encaja con un 94 %.
-- Si insiste: lo que sí es fiable es el «no». Si una zona no entra en el presupuesto con el precio de los contratos ya firmados, con uno nuevo tampoco.
+Era la media de todos los contratos declarados a Hacienda, también los antiguos, y se quedaba corta. Ahora multiplicamos el precio por metro de la Comunidad por cuánto más cuestan, en cada zona, los contratos firmados en 2024 según la Agencia Tributaria. Fuencarral-El Pardo pasa a unos **[1.270 €: cifra final pendiente de A]** y Salamanca a unos **[1.880 €: pendiente de A]**, así que con 1.500 € ya no entra.
+- Evidencia: D-214 (puntos 2 y 3) · D-228, opción A, que eligió Mariano el 13 nov · Agencia Tributaria, «Estadística de viviendas declaradas en IRPF», ejercicio 2024, «contratos de arrendamiento formalizados en el ejercicio» · `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/`. Factor por zona: entre 1,05 y 1,26 (Madrid, 1,20).
+- Si preguntan por el índice de la Comunidad (1934428): solo dice cuánto varían los precios, no cuánto más cuesta un contrato nuevo, y es un único valor para toda la región (D-228 §2).
+- Estado: decidido. En producción cuando A lo despliegue (**pendiente de A**). Hasta entonces, la demo enseña la cifra antigua con su aviso: «la media de los contratos vigentes; uno nuevo suele costar más».
 
 **42. Fuencarral-El Pardo sale con un 100 % de encaje, pero en «Qué falta» tiene tres filas en JUSTO. ¿Cómo puede ser?**
 Porque son dos preguntas distintas. El 100 % dice que la zona cumple todo lo que pidió esta familia: colegio a 9 minutos, parada a 3, centro de salud a 15 y 29 minutos hasta el trabajo. «Qué falta» compara la zona con los demás municipios urbanos repartiendo cada servicio entre toda la gente que lo usa: ahí va justa en escuelas infantiles, colegios y centros de salud, sin llegar a faltar, y la tarjeta lo dice en una línea (`encaje.aviso_justo` en `pitch/textos_web.md`).

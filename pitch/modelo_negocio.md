@@ -1,6 +1,12 @@
 # Modelo de negocio: 3 opciones para elegir
 
-Fichero de trabajo para que Mariano elija. No va todavía en las slides ni en el guion.
+Fichero de trabajo para que Mariano eligiera.
+
+**Decisión de Mariano (13 nov):**
+- **En el pitch:** la opción A, ayuntamientos (informe «Qué falta» por municipio, 990–1.500 €, por contrato menor).
+- **Primeros ingresos:** la opción B, promotoras y consultoras (estudios de 490 a 1.500 €).
+- **Siempre gratis:** la ciudadanía. La API y el MCP (opción C) también, sin uso comercial.
+- **Coste en la slide 3:** «0 € hoy; unos 45 $/mes para uso comercial».
 
 **Lo que no cambia en ninguna opción:**
 - Para las personas, Vida Fácil es gratis y completa. La versión gratuita no se recorta para empujar a pagar (`CLAUDE.md` §3 y §16).
