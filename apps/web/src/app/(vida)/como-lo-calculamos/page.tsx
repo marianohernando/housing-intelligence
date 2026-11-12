@@ -143,8 +143,8 @@ function GapMethod() {
         <strong>Dónde invertir primero.</strong> En «Qué falta» sumamos la gente que vive en las zonas en FALTA de cada
         servicio: los niños de 0 a 4 años para las escuelas infantiles, los de 5 a 14 para los colegios, las personas de 65
         años o más para los mayores, todos los vecinos para los centros de salud y las farmacias, y los hogares de 4 o más
-        personas para la vivienda. Es la misma gente con la que hacemos la cuenta, del censo y, en los distritos de Madrid, del
-        padrón: no estimamos nada. Las zonas van de más a menos gente afectada. Contamos a toda la gente de la zona, aunque
+        personas para la vivienda. Es la misma gente con la que hacemos la cuenta: el censo y, en los distritos de Madrid, el
+        padrón. Las zonas van de más a menos gente afectada. Contamos a toda la gente de la zona, aunque
         dentro de ella unas calles estén mejor servidas que otras.
       </p>
       <p className={styles.para}>

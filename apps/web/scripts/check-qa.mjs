@@ -1716,7 +1716,7 @@ async function clarity(browser) {
 /** «Cómo lo calculamos» in five steps (fase de mejora): readable on a phone, in order, accessible. */
 async function methodSteps(browser) {
   const failures = [];
-  const TITLES = ["Datos abiertos", "Lo que hay a 15 min andando", "Repartido entre quien lo comparte", "Comparado con municipios parecidos", "FALTA, JUSTO o CUBIERTO"];
+  const TITLES = ["Datos abiertos", "Lo que hay a 15 min andando", "Repartido entre quienes lo comparten", "Comparado con municipios parecidos", "FALTA, JUSTO o CUBIERTO"];
   for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
     const p = await open(browser, profile, "/como-lo-calculamos");
     const list = p.page.getByRole("list", { name: "Cómo decidimos qué falta, en cinco pasos" });
