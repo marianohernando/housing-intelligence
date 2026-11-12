@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.41 — Parques (2026-11-12)
+- D-222: parques de OSM de 1 ha o más como lugares (`green`), con los puntos de su borde para medir a pie.
+
 ## v0.5.40 — Revisión de los nombres con tilde (2026-11-12)
 - D-221 §1, §3 y §5: comparación por palabras completas y en NFC, el nombre de la fuente entero (no solo sus tildes) y la excepción declarada del Beata María Ana.
 

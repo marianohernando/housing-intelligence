@@ -1,0 +1,38 @@
+dataset_id: osm_parques
+source_id: openstreetmap
+name: Parques de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
+domain: environment
+owner: OpenStreetMap contributors (extracto de Geofabrik)
+format: PBF
+geography: polygon
+geo:
+  resolution: point
+  crs_expected: EPSG:4326
+  geometry_type: MultiPolygon
+temporal_resolution: null
+refresh_policy: daily
+landing_url: https://download.geofabrik.de/europe/spain/madrid.html
+resources:
+- name: madrid-latest.osm.pbf
+  format: PBF
+  url: https://download.geofabrik.de/europe/spain/madrid-latest.osm.pbf
+  file_name: madrid-latest.osm.pbf
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 2
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 4
+  ingestion_ease: 4
+  notes: >-
+    DATA-018 (D-205, D-222). Fuente complementaria, no es dataset CM: el portal de la Comunidad
+    no publica parques urbanos (solo espacios naturales protegidos, que no son parques de
+    barrio). ODbL: los indicadores derivados citan "© OpenStreetMap contributors".
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T18:00:00+00:00'
+notes: >-
+  Mismo extracto que osm_red_peatonal. Solo áreas leisure=park de 1 ha o más y abiertas al
+  público; cada parque guarda los puntos de su borde (cada 50 m) para medir a pie hasta él.

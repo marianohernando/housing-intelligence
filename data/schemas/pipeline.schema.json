@@ -673,6 +673,78 @@
       "title": "MetricSplit",
       "type": "object"
     },
+    "OsmParksPipeline": {
+      "additionalProperties": false,
+      "description": "OpenStreetMap extract -> public parks as places (DATA-018, D-222).\n\nA park is an area tagged with one of `leisure` that is not closed to the public and has at\nleast `min_area_ha`. Each becomes a place (a point inside it) that also keeps the points of\nits edge every `edge_step_m` metres: walking access is measured to the edge, not the centre.",
+      "properties": {
+        "access_denied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Access Denied",
+          "type": "array"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "edge_step_m": {
+          "default": 50.0,
+          "exclusiveMinimum": 0,
+          "title": "Edge Step M",
+          "type": "number"
+        },
+        "kind": {
+          "const": "osm_parks",
+          "title": "Kind",
+          "type": "string"
+        },
+        "leisure": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Leisure",
+          "type": "array"
+        },
+        "max_parks": {
+          "exclusiveMinimum": 0,
+          "title": "Max Parks",
+          "type": "integer"
+        },
+        "min_area_ha": {
+          "exclusiveMinimum": 0,
+          "title": "Min Area Ha",
+          "type": "number"
+        },
+        "min_parks": {
+          "description": "below this the extract is truncated",
+          "exclusiveMinimum": 0,
+          "title": "Min Parks",
+          "type": "integer"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "subcategory": {
+          "default": "Parque",
+          "title": "Subcategory",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "min_area_ha",
+        "min_parks",
+        "max_parks"
+      ],
+      "title": "OsmParksPipeline",
+      "type": "object"
+    },
     "OsmWalkNetworkPipeline": {
       "additionalProperties": false,
       "description": "OpenStreetMap extract -> undirected walkable street graph, kept in Silver only.\n\nA way is walkable when its `highway` value is listed or it explicitly allows people on foot;\n`foot=no`, or `access=no/private` without a foot permission, removes it. One-way rules apply\nto vehicles, so the graph is undirected. Only indicators computed on it reach the database.",
@@ -1035,6 +1107,7 @@
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
+      "osm_parks": "#/$defs/OsmParksPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
       "points_csv": "#/$defs/PointsPipeline"
     },
@@ -1061,6 +1134,9 @@
     },
     {
       "$ref": "#/$defs/OsmWalkNetworkPipeline"
+    },
+    {
+      "$ref": "#/$defs/OsmParksPipeline"
     },
     {
       "$ref": "#/$defs/FacilityDirectoryPipeline"

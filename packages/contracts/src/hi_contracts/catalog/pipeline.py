@@ -371,6 +371,31 @@ class OsmWalkNetworkPipeline(BaseModel):
         return []
 
 
+class OsmParksPipeline(BaseModel):
+    """OpenStreetMap extract -> public parks as places (DATA-018, D-222).
+
+    A park is an area tagged with one of `leisure` that is not closed to the public and has at
+    least `min_area_ha`. Each becomes a place (a point inside it) that also keeps the points of
+    its edge every `edge_step_m` metres: walking access is measured to the edge, not the centre.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["osm_parks"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    leisure: list[str] = Field(default_factory=lambda: ["park"], min_length=1)
+    access_denied: list[str] = Field(default_factory=lambda: ["no", "private", "customers"])
+    min_area_ha: float = Field(gt=0)
+    edge_step_m: float = Field(default=50.0, gt=0)
+    subcategory: str = "Parque"
+    min_parks: int = Field(gt=0, description="below this the extract is truncated")
+    max_parks: int = Field(gt=0)
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
@@ -379,6 +404,7 @@ PipelineSpec = Annotated[
     | PointsPipeline
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline
+    | OsmParksPipeline
     | FacilityDirectoryPipeline,
     Field(discriminator="kind"),
 ]

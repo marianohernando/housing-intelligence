@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "park_count_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "parks": 1402,
+        "min": 700,
+        "max": 4000
+      }
+    },
+    {
+      "name": "ids_unique",
+      "critical": true,
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "every_park_has_its_edge",
+      "critical": true,
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "minimum_size",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "min_area_ha": 1.0
+      }
+    },
+    {
+      "name": "open_to_the_public",
+      "critical": true,
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "max_ratio": 0.02
+      }
+    }
+  ]
+}

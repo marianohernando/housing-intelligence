@@ -66,6 +66,8 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert catalog.datasets[dataset_id].domain.value == "transport", dataset_id
         elif pipeline.kind == "osm_walk_network":
             assert pipeline.walkable_highways, dataset_id
+        elif pipeline.kind == "osm_parks":
+            assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
         elif pipeline.kind == "facility_directory":
             assert pipeline.scope_values, dataset_id
         else:

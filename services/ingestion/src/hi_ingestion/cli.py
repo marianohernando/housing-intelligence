@@ -16,6 +16,7 @@ from hi_contracts.catalog.pipeline import (
     GtfsFeedPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    OsmParksPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
 )
@@ -45,6 +46,7 @@ from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
+from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
@@ -169,6 +171,9 @@ def _run_one(
     if isinstance(spec, OsmWalkNetworkPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_osm_network_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, OsmParksPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_osm_parks_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, FacilityDirectoryPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_directory_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
