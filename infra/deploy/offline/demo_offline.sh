@@ -3,6 +3,7 @@
 # in an isolated Postgres (compose project vida-facil-offline, ports 5441/8012/3012). It only
 # reads the development database (to dump it), never uses its ports (5440/8010/3010) and never
 # touches apps/web/.next (the web is built from a private copy).
+#   make demo-offline-tiles     # online, once: basemap extract of the Comunidad de Madrid (OSM, ODbL)
 #   make demo-offline-prepare   # online, e.g. 23 Nov: images, dump, validated database, web build
 #   make demo-offline           # 26 Nov: start in seconds, no network needed
 #   make demo-offline-stop
@@ -21,6 +22,12 @@ WEB_BUILD="$OUT/web-build"         # private copy of apps/web, built for the off
 WEB_RUN="$OUT/web"                 # standalone server assembled from that build
 WEB_PID="$OUT/web.pid"
 WEB_LOG="$OUT/web.log"
+TILES="$OUT/tiles"                 # basemap extract, OpenMapTiles schema; the web serves it at /tiles
+TILES_SRC="$OUT/tiles-src"         # the OSM extract it is made from (Geofabrik, ODbL)
+PBF_BASE="https://download.geofabrik.de/europe/spain"
+PBF_REGION="madrid"
+# tilemaker 3.2.0, the official image of github.com/systemed/tilemaker (commit 2789651), by digest
+TILEMAKER_IMAGE="ghcr.io/systemed/tilemaker@sha256:9cd8728a37a31c8a5205e091cedd3ff2c2c450c57e1ce3e5b58916185540ebba"
 # Source of the dump, seen from inside the offline db container: the development database.
 SOURCE_URL="${SOURCE_DATABASE_URL:-postgresql://housing:housing@host.docker.internal:5440/housing}"
 DB=vidafacil
@@ -97,7 +104,14 @@ promote_staging() { # the validated staging database becomes the one the API rea
 
 build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this shell stay out
   # Search on, as in production (NEXT_PUBLIC_FEATURE_SEARCH=true there): the pitch's block 2 needs it.
-  local server app unset_public=()
+  # Basemap from the local extract when there is one (make demo-offline-tiles); else OpenFreeMap,
+  # which needs the network.
+  local server app unset_public=() tiles_env=()
+  if [[ -f "$TILES/tiles.json" ]]; then
+    tiles_env=(NEXT_PUBLIC_MAP_TILES_URL=/tiles/tiles.json)
+  else
+    echo "warning: no basemap extract in $TILES: without network the map has no streets (make demo-offline-tiles)" >&2
+  fi
   rm -rf "$WEB_BUILD" "$WEB_RUN.new"
   mkdir -p "$WEB_BUILD"
   rsync -a --exclude node_modules --exclude .next --exclude 'public/maplibre' --exclude '.env*' \
@@ -105,14 +119,68 @@ build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this sh
   while read -r name; do unset_public+=(-u "$name"); done < <(compgen -e | grep '^NEXT_PUBLIC_' || true)
   (cd "$WEB_BUILD" && node scripts/copy-maplibre-worker.mjs >/dev/null &&
     env ${unset_public[@]+"${unset_public[@]}"} NEXT_PUBLIC_API_URL="$API_URL" NEXT_PUBLIC_FEATURE_SEARCH=true \
-      "$ROOT/node_modules/.bin/next" build >/dev/null)
+      ${tiles_env[@]+"${tiles_env[@]}"} "$ROOT/node_modules/.bin/next" build >/dev/null)
   server="$(find "$WEB_BUILD/.next/standalone" -name server.js -not -path '*/node_modules/*' | head -1)"
   [[ -n "$server" ]] || { echo "the web build produced no standalone server.js" >&2; return 1; }
   app="$(dirname "${server#"$WEB_BUILD/.next/standalone/"}")"
   cp -R "$WEB_BUILD/.next/standalone" "$WEB_RUN.new"
   cp -R "$WEB_BUILD/.next/static" "$WEB_RUN.new/$app/.next/static"
   cp -R "$WEB_BUILD/public" "$WEB_RUN.new/$app/public"
+  [[ ${#tiles_env[@]} -eq 0 ]] || cp -R "$TILES" "$WEB_RUN.new/$app/public/tiles"
   echo "$app" >"$WEB_RUN.new/.app"
+}
+
+md5_of() { if command -v md5sum >/dev/null; then md5sum "$1" | cut -d' ' -f1; else md5 -q "$1"; fi; }
+
+fetch_pbf() { # sets PBF_NAME: the dated OSM extract in $TILES_SRC, checked against its md5
+  local pbf
+  mkdir -p "$TILES_SRC"
+  # «-latest» redirects to the dated file (madrid-YYMMDD.osm.pbf); that name pins the data.
+  PBF_NAME="${PBF_FILE:-$(curl -fsSI "$PBF_BASE/$PBF_REGION-latest.osm.pbf" |
+    awk 'tolower($1) == "location:" { sub(/\r$/, "", $2); n = split($2, p, "/"); print p[n] }')}"
+  [[ "$PBF_NAME" =~ ^$PBF_REGION-[0-9]{6}\.osm\.pbf$ ]] ||
+    { echo "unexpected Geofabrik file name '$PBF_NAME' (set PBF_FILE=$PBF_REGION-YYMMDD.osm.pbf)" >&2; exit 2; }
+  pbf="$TILES_SRC/$PBF_NAME"
+  echo "-> OSM extract $PBF_NAME (Geofabrik, ODbL)"
+  curl -fsS -o "$pbf.md5" "$PBF_BASE/$PBF_NAME.md5"
+  if [[ ! -f "$pbf" || "$(md5_of "$pbf")" != "$(cut -d' ' -f1 "$pbf.md5")" ]]; then
+    curl -fsS -o "$pbf.tmp" "$PBF_BASE/$PBF_NAME"
+    mv -f "$pbf.tmp" "$pbf"
+  fi
+  [[ "$(md5_of "$pbf")" == "$(cut -d' ' -f1 "$pbf.md5")" ]] || { echo "md5 mismatch for $PBF_NAME" >&2; exit 1; }
+}
+
+tiles() { # online, once: the basemap extract, tiles at z0–14 in $TILES with a TileJSON
+  local name
+  fetch_pbf
+  name="$PBF_NAME"
+
+  echo "-> tiles with tilemaker 3.2.0 (no network inside the container)"
+  docker pull -q "$TILEMAKER_IMAGE" >/dev/null
+  rm -rf "$TILES.tmp" "$OUT/tiles-cfg"
+  mkdir -p "$TILES.tmp" "$OUT/tiles-cfg"
+  # Its OpenMapTiles config without the shapefile layers (sea, glaciers, Natural Earth urban areas):
+  # none in Madrid. Uncompressed tiles, so the web can serve them as static files.
+  docker run --rm --network none --entrypoint cat "$TILEMAKER_IMAGE" resources/config-openmaptiles.json |
+    jq '.layers |= with_entries(select(.value.source == null)) | .settings.compress = "none"' \
+      >"$OUT/tiles-cfg/config.json"
+  docker run --rm --network none -v "$ROOT/$TILES_SRC:/in:ro" -v "$ROOT/$OUT/tiles-cfg:/cfg:ro" \
+    -v "$ROOT/$TILES.tmp:/out" --entrypoint /usr/src/app/tilemaker "$TILEMAKER_IMAGE" \
+    --input "/in/$name" --output /out --config /cfg/config.json \
+    --process /usr/src/app/resources/process-openmaptiles.lua --quiet >/dev/null
+  uv run --frozen python -I infra/deploy/offline/tiles_meta.py "$TILES.tmp" "$WEB_URL/tiles" >"$TILES.tmp/summary"
+  {
+    echo "created_at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "pbf $name md5 $(cut -d' ' -f1 "$TILES_SRC/$name.md5") from $PBF_BASE"
+    echo "tilemaker $TILEMAKER_IMAGE"
+    cat "$TILES.tmp/summary"
+    echo "size $(du -sh "$TILES.tmp" | awk '{print $1}')"
+  } >"$TILES.tmp/manifest.txt"
+  rm -f "$TILES.tmp/summary"
+  rm -rf "$TILES" "$OUT/tiles-cfg"
+  mv "$TILES.tmp" "$TILES"
+  cat "$TILES/manifest.txt"
+  echo "ready: $TILES. Rebuild the web with it: make demo-offline-prepare"
 }
 
 prepare() {
@@ -132,6 +200,11 @@ prepare() {
     echo "created_at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "git_commit $(git rev-parse --short HEAD)"
     echo "alembic_head $HEAD (source $SOURCE_HEAD)"
+    if [[ -f "$TILES/manifest.txt" ]]; then
+      echo "basemap local, $(grep '^pbf ' "$TILES/manifest.txt" | cut -d' ' -f2)"
+    else
+      echo "basemap tiles.openfreemap.org (needs the network)"
+    fi
     counts source_psql
   } >"$MANIFEST.tmp"
 
@@ -204,8 +277,9 @@ stop() {
 }
 
 case "${1:-}" in
+  tiles) tiles ;;
   prepare) prepare ;;
   start) start ;;
   stop) stop ;;
-  *) echo "usage: $0 prepare|start|stop" >&2; exit 2 ;;
+  *) echo "usage: $0 tiles|prepare|start|stop" >&2; exit 2 ;;
 esac
