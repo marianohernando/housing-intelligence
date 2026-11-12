@@ -339,8 +339,10 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 - **Ficha:** https://datos.madrid.es/dataset/300087-0-indicadores-distritos · id `ayto_panel_indicadores_distritos_barrios` · publica: Ayuntamiento de Madrid
 - **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
 - **Qué alimenta:**
+  - Indicador por zona: Seguridad de su barrio de día según sus vecinos (`seguridad_percibida_dia`, fuente principal)
+  - Indicador por zona: Seguridad de su barrio de noche según sus vecinos (`seguridad_percibida_noche`, fuente principal)
   - «Qué falta», fila «Vivienda para familias» (dato extra): Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, fuente principal)
-- **Quality Gate 1:** PASS · 2026-11-11 · 8/8 checks críticos · versión `2026-11-11-4726abc60a15` · 294 observaciones · [quality_report.json](../evidence/gate-01/2026-11-11/ayto_panel_indicadores_distritos_barrios/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 8/8 checks críticos · versión `2026-11-11-4726abc60a15` · 558 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/ayto_panel_indicadores_distritos_barrios/quality_report.json)
 
 ### Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31 de diciembre de 2025)
 - **Ficha:** https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/centrosSalud/home.htm · id `ms_catalogo_centros_atencion_primaria` · publica: Ministerio de Sanidad

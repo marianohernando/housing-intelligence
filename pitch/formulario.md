@@ -1,5 +1,7 @@
 # Formulario de preselección DATAMAD 2026 — listo para copiar
 
+**Enviado el 12 nov por Mariano, resumen principal (98 palabras).** Lo que sigue queda como registro de lo enviado y de su evidencia.
+
 - **Formulario:** https://forms.gle/NyatKHN95aPxvQro8 («DATAMAD 2026 | Presentación de propuestas»). Plazo: antes del 20 nov; objetivo 18 nov y límite real 19 (`docs/09_datamad/25_plan_competicion.md` §5, D-193).
 - **Quién lo envía:** Mariano. Este fichero no guarda datos personales porque el repo es público.
 - **Campos:** son los del formulario real, leídos el 11 nov.
