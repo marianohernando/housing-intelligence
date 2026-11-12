@@ -1,42 +1,91 @@
-# Housing Intelligence
+# Vida Fácil · Encuentra tu sitio en Madrid
 
-Plataforma de inteligencia residencial para la Comunidad de Madrid (PUBLIC · PRO · DATA/API/MCP), preparada para DATAMAD 2026.
+Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el transporte en otra, y nadie le dice qué zona va con su vida. Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid para enseñarte qué zonas encajan contigo y qué le falta a cada una.**
 
-> Idealista sabe qué vivienda hay. Nosotros queremos saber qué vivienda hace falta.
+**Pruébalo:** [vidafacil-madrid.vercel.app](https://vidafacil-madrid.vercel.app)
 
-## Estado (2026-11-11)
-Fase de competición: Sprint 1 (PUBLIC core) en curso según D-192. Gate 0, Gate 1 y Gate 2 PASS; Gate 3 iniciado.
-- Geografía canónica: 179 municipios, 246 distritos censales, 131 barrios, 4.417 secciones, 86.361 celdas H3.
-- 21 datasets del Portal de Datos Abiertos de la Comunidad de Madrid con Quality Gate: geografía, población, hogares, vivienda, renta, alquiler, nacimientos, equipamientos (educación, centros sanitarios, mayores, farmacias) y los 6 GTFS del CRTM (14.982 paradas y estaciones con frecuencias).
-- 12 features municipales con lineage y confidence (7 de ellas también para los 21 distritos de Madrid); mapa con coropletas y capas de equipamientos en `/map`.
-- Madrid capital por distritos: población por edad del padrón municipal y hogares del panel de distritos del Ayuntamiento (datos complementarios, no CM; D-209).
-- API de la lista de lo que falta por zona (`GET /api/v1/gaps/{level}/{code}`): FALTA / JUSTO / CUBIERTO frente a la referencia regional, con confidence, proxy declarado y datasets de origen. Hoy tiene las filas de colegio y centro de salud por municipio y por distrito de Madrid.
-- Contratos PUBLIC del buscador y de la lista, con sus JSON Schema en `data/schemas/api/` y sus rutas en `docs/04_technical_architecture/31_public_api_routes.md`.
-- Red peatonal de OpenStreetMap (57.659 km) para medir la distancia a pie a los equipamientos: en curso (CORE-005).
-- Base de datos de la demo en Supabase con RLS en todas las tablas (D-197); la API pública lee con un rol de solo lectura (D-208).
-- Progreso fase a fase: `board/BOARD.md` («Registro de progreso»). Evidencias en `evidence/`.
+![Vida Fácil: mapa de la Comunidad de Madrid con la búsqueda de una pareja con 2 hijos, las zonas coloreadas según cuánto encajan y la tarjeta de la zona que más encaja](evidence/gate-06/2026-11-11-deploy/prod-buscador-c1_busqueda_desktop.png)
 
-## Quickstart
+---
+
+## Qué datos usamos
+
+**23 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
+- población, hogares, vivienda, renta y alquiler;
+- colegios y sus aulas, centros de salud, servicios para mayores y farmacias, y los hospitales y camas de la región;
+- las 6 redes de transporte público del Consorcio Regional de Transportes, que también publica ese portal.
+
+→ **[Ficha de cada conjunto, con su enlace, su licencia y para qué lo usamos](data/catalog/datasets/)** (también en la API: `GET /api/v1/datasets?cm_only=true`).
+
+**Los cubrimos todos:** los 179 municipios de la región, y Madrid capital dividida en sus 21 distritos para que no sea un solo bloque.
+
+Como apoyo, sin contarlos como datos de la Comunidad, usamos:
+- el padrón y el panel de distritos del Ayuntamiento de Madrid (población y hogares por distrito);
+- el mapa de calles de OpenStreetMap (distancias a pie);
+- el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección.
+
+## Cómo funciona
+
+1. **Cuéntanos cómo es tu hogar:** quién vive contigo, cuánto puedes pagar de alquiler, dónde trabajas y qué te importa (transporte, salud, colegios…).
+2. **Mira las zonas que encajan contigo,** con su % de encaje y, debajo, hechos que puedes comprobar, como «colegio con primaria a 5 min andando». Cada uno dice cuánto nos fiamos del dato.
+3. **¿Salen pocas?** Te enseñamos cuántas zonas aparecen si cambias una sola cosa, por ejemplo 150 € más al mes o el colegio a 5 minutos más.
+4. **Entra en una zona y mira qué le falta:** escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda.
+   - No contamos centros: medimos **cuánta capacidad tienes a 15 minutos andando** (aulas, plazas, centros de salud, farmacias), repartida entre todos los vecinos que también la tienen cerca.
+   - Cada zona se compara con los demás municipios de su tipo, urbanos o rurales.
+   - Los pueblos demasiado pequeños para compararlos solos se comparan junto con sus vecinos más cercanos.
+   - Cada fila dice de qué datos sale y a cuántos minutos andando está lo más cercano.
+
+Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»** de la demo y decisiones D-213 a D-217 en [`docs/00_index/01_decisions_log.md`](docs/00_index/01_decisions_log.md).
+
+## Arráncalo en tu ordenador
+
+Necesitas Docker, [uv](https://docs.astral.sh/uv/) (Python 3.12) y Node 24.
+
 ```bash
-cp .env.example .env          # rellenar POSTGRES_PASSWORD
-make dev                      # db + redis + migraciones + seed
-make lint typecheck test      # Gate 0
-make catalog-harvest          # catálogo de fuentes candidatas
-make catalog-curate           # aplica data/catalog/curation/*.yaml
-make ingest-all               # geografía + todos los pipelines declarados
-uv run hi-features compute    # Feature Store
+cp .env.example .env                 # pon una contraseña en POSTGRES_PASSWORD
+make dev                             # base de datos + migraciones + catálogo
+make ingest-all                      # descarga y valida los datos abiertos, y calcula los indicadores
+uv run uvicorn hi_api.main:app --port 8010           # API en http://localhost:8010
+npm ci && NEXT_PUBLIC_API_URL=http://localhost:8010 npm run web:dev   # web en http://localhost:3010
 ```
 
-## Estructura
-`apps/` entrypoints (api FastAPI, web Next.js) · `packages/` contratos, dominio, db · `services/` ingestion y futuros workers · `data/catalog` registro de fuentes, datasets y features · `infra/` Docker y migraciones · `docs/` documentación completa · `evidence/` evidencias de Quality Gates.
+`make help` lista todos los comandos. `make lint typecheck test` pasa las comprobaciones de calidad.
 
-## Fuentes
-Datos abiertos de la Comunidad de Madrid como fuente estructural, complementados con Ayuntamiento de Madrid, CRTM, Catastro (INSPIRE), INE y datos.gob.es. Cada fuente tiene licencia y atribución en `data/catalog/sources/`.
+**Para desarrolladores:**
+- `apps/`: la API (FastAPI) y la web (Next.js).
+- `packages/`: contratos, dominio y base de datos.
+- `services/`: ingesta y cálculo de indicadores.
+- `data/catalog/`: fuentes, conjuntos de datos, métricas e indicadores.
+- `infra/`: Docker, migraciones y despliegue.
+- `docs/`: documentación y decisiones.
+- `evidence/`: las pruebas de cada control de calidad.
 
-## Trabajo previo a DATAMAD
-Según §6 de las bases, este repositorio identifica el trabajo realizado antes del 7 de noviembre de 2026 mediante el tag `pre-datamad` (commit `cf39459`, 22 oct 2026: Sprints P0 y P1). Todo lo posterior a ese tag se ha desarrollado durante la competición.
+El progreso, fase a fase, está en [`board/BOARD.md`](board/BOARD.md).
 
-El repositorio se publicó el 11 nov con el historial reescrito para quitar datos de contacto de unos fixtures (D-198); las fechas de los commits no cambian. El repositorio original, archivado y privado, conserva los commits, PR y ejecuciones de CI de octubre con sus SHAs originales como prueba de fechas (antes el tag apuntaba a `08cc526`). La correspondencia entre SHAs antiguos y nuevos está en `evidence/gate-00/2026-11-11/commit-map.txt`.
+## Licencias
 
-## Licencia
-Código bajo [Apache License 2.0](LICENSE). Documentación y metadatos del catálogo bajo [CC BY 4.0](docs/LICENSE). Los datos de terceros conservan su licencia original, registrada en `data/catalog/sources/`.
+- **Código:** [Apache 2.0](LICENSE).
+- **Documentación y catálogo de datos:** [CC BY 4.0](docs/LICENSE).
+- **Datos de terceros:** cada uno conserva su licencia, recogida en [`data/catalog/sources/`](data/catalog/sources/):
+  - Comunidad de Madrid, CC BY 4.0;
+  - Consorcio Regional de Transportes de Madrid, licencia de datos abiertos del CRTM («Powered by CRTM»);
+  - Ayuntamiento de Madrid, CC BY 4.0;
+  - OpenStreetMap, ODbL;
+  - CartoCiudad (IGN), CC BY 4.0 scne.es.
+
+## Qué había antes del concurso
+
+Las bases de DATAMAD 2026 permiten partir de trabajo previo si se identifica (§6, «Proyectos preexistentes»). El nuestro está marcado con el tag [`pre-datamad`](../../tree/pre-datamad): commit `cf39459`, del 22 oct de 2026. Incluía la geografía común de la región, los primeros 10 conjuntos de datos y un mapa base.
+
+Todo lo posterior se ha hecho durante el concurso (desde el 7 nov):
+- el transporte público (6 redes) y otros 7 conjuntos de datos;
+- la lista de lo que falta por zona, con la capacidad al alcance a pie;
+- el buscador;
+- las distancias a pie;
+- la web y el despliegue.
+
+Al publicar el repositorio, el 11 nov, reescribimos el historial solo para quitar datos de contacto de unos ficheros de prueba. Las fechas de los commits no cambian, y el repositorio original se conserva privado como prueba de fechas ([detalle](evidence/gate-00/2026-11-11/public-repo.md)).
+
+## Equipo
+
+Equipo de una persona: **Mariano**.
