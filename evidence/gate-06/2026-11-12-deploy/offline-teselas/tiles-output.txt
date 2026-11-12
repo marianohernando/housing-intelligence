@@ -1,0 +1,12 @@
+infra/deploy/offline/demo_offline.sh tiles
+-> OSM extract madrid-261111.osm.pbf (Geofabrik, ODbL)
+-> tiles with tilemaker 3.2.0 (no network inside the container)
+created_at 2026-11-12T14:00:34Z
+pbf madrid-261111.osm.pbf md5 1f5fc60a7a14235518265dd1bbfaf613 from https://download.geofabrik.de/europe/spain
+tilemaker ghcr.io/systemed/tilemaker@sha256:9cd8728a37a31c8a5205e091cedd3ff2c2c450c57e1ce3e5b58916185540ebba
+tiles_written 4750
+tiles_filled_empty 3365
+bounds -4.592284 39.876020 -2.900392 41.178653
+layers place boundary poi housenumber waterway transportation transportation_name building water water_name aeroway aerodrome_label park landuse landcover mountain_peak
+size  89M
+ready: data/offline/tiles. Rebuild the web with it: make demo-offline-prepare

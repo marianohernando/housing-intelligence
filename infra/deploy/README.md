@@ -17,7 +17,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 | [`.vercelignore`](../../.vercelignore) | Lista de lo que se sube. Solo sale el código: nunca `.env*`, `*.pem`, `*.key`, `*.db`, `*.sqlite`, `node_modules`, `data/` ni `docs/`. |
 | [`api/Dockerfile`](api/Dockerfile) | Imagen de la API con solo las dependencias de `hi-api` (`uv sync --package hi-api`). Usuario no root y puerto `$PORT`. |
 | [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción, pasa el smoke y comprueba en `vercel logs` que todas sus peticiones las sirvió el despliegue nuevo. |
-| [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
+| [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-tiles` (mapa base), `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
 | [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación), la página 1 de la capa más grande (transporte) y una búsqueda (`POST /api/v1/search` con el caso demo del guion: al menos una zona y menos de 1 MB). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
 | [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql) | Rol `vf_api_ro`: solo lectura, con una política RLS por cada tabla que lee la API. Es idempotente. |
 
@@ -210,9 +210,29 @@ Qué no toca nunca:
 - **El proyecto de compose de desarrollo.** El script fija `-p vida-facil-offline`, así que un `COMPOSE_PROJECT_NAME` del entorno, por ejemplo exportado desde `.env` por `make`, no puede hacer que sus comandos actúen sobre `housing-intelligence`.
 - **`apps/web/.next`.** La web se compila en una copia privada (`data/offline/web-build`). Así no pisa el `next dev` de A o de B, y no hereda ninguna `NEXT_PUBLIC_*` del entorno ni de un `.env`.
 
+### Mapa base sin red (`make demo-offline-tiles`, una vez, con Internet)
+
+Genera las teselas del mapa base de la Comunidad de Madrid para que, sin red, el mapa salga con calles, parques y edificios en 3D. Va antes de `make demo-offline-prepare`, que compila la web apuntando a ellas. Tarda alrededor de 1 minuto.
+1. **Descarga el extracto de OpenStreetMap de Geofabrik** (licencia ODbL) a `data/offline/tiles-src/`.
+   - `madrid-latest` redirige al fichero con fecha (`madrid-261111.osm.pbf`, 86 MB, datos del 11 nov), y ese es el que se usa.
+   - Lo comprueba con su `.md5`. Si ya está descargado y la suma cuadra, no lo vuelve a bajar.
+   - Para repetir exactamente el mismo: `PBF_FILE=madrid-261111.osm.pbf make demo-offline-tiles`, mientras Geofabrik lo conserve.
+2. **Genera las teselas con tilemaker 3.2.0:**
+   - Usa la imagen oficial del repositorio (`ghcr.io/systemed/tilemaker`), fijada por digest en `demo_offline.sh` y sin red dentro del contenedor.
+   - El esquema es OpenMapTiles, el mismo que el estilo de la web. De la configuración de tilemaker se quitan las capas que salen de shapefiles (mar, glaciares, zonas urbanas de Natural Earth), porque Madrid no tiene ninguna.
+   - Salen de z0 a z14 sin comprimir, para que la web las sirva como ficheros estáticos.
+3. **[`offline/tiles_meta.py`](offline/tiles_meta.py) escribe `tiles.json`, un TileJSON con la atribución «© OpenStreetMap contributors (ODbL) · © OpenMapTiles».**
+   - **Límites:** los calcula con las teselas de z14, porque los de tilemaker salen mal.
+   - **Huecos:** rellena con teselas vacías los que hay dentro de esos límites. Si no, MapLibre los pediría, y cada 404 sería un error de consola.
+4. **Resultado** en `data/offline/tiles/`, que git ignora: 4.750 teselas con contenido y 3.365 vacías, 89 MB.
+   - `manifest.txt` guarda el fichero, su md5, la imagen y los límites.
+   - El 12 nov: 0 hosts cortados y 0 errores de consola sin red (`offline-teselas.md`).
+
+Sin `data/offline/tiles/`, `prepare` avisa y compila la web con OpenFreeMap, que necesita red. El `manifest.txt` del paquete dice cuál de los dos lleva (`basemap`).
+
 ### Regenerarlo (23 nov, con Internet, tras el freeze)
 
-En el checkout que se vaya a usar el 26, con la base de desarrollo arrancada y en la misma migración que el checkout:
+En el checkout que se vaya a usar el 26, con la base de desarrollo arrancada y en la misma migración que el checkout. Si aún no existe `data/offline/tiles/`, primero `make demo-offline-tiles`:
 
 ```bash
 make demo-offline-prepare
@@ -224,7 +244,7 @@ Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.**
 3. Comprueba que la migración de la base de origen es la misma que la del checkout.
 4. Vuelca, en modo solo lectura, las 11 tablas del perfil demo (con `transit_hub` y `commute_time` desde CORE-009, D-220) (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
 5. Crea el esquema con Alembic en una base **staging**, carga el volcado y **compara los conteos de filas** con la base de origen.
-6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada, con el buscador encendido (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción; desde el 12 nov).
+6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada, con el buscador encendido (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción; desde el 12 nov). Si hay mapa base local, la compila con `NEXT_PUBLIC_MAP_TILES_URL=/tiles/tiles.json` y copia las teselas a su `public/tiles`. Con las teselas, tarda unos 4–5 minutos.
 7. Solo si todo lo anterior sale bien: la base staging pasa a ser la base de la demo y los ficheros `.tmp` sustituyen a los anteriores.
 
 Si algo falla, el paquete anterior sigue intacto y `make demo-offline` funciona con él.
@@ -249,11 +269,9 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
 
 - `start` no construye ni descarga nada (`--no-build`).
-- **Sin red, el mapa sale sin fondo.** La web nueva pide el mapa base a `tiles.openfreemap.org` (`apps/web/src/lib/map/style.ts`), y sin Internet ese fondo no llega.
-  - Sí funcionan las zonas coloreadas, el buscador, «¿Y si cambias algo?», «Qué falta» y la lista.
-  - La web enseña arriba el aviso «Mapa sin fondo de calles.», y la consola registra los fallos de esas teselas. Si fallara el mapa entero, el aviso sería «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.».
-  - Comprobado el 12 nov con `--block-external` (ver «Ensayo»).
-  - Para tener fondo sin red, la web ya acepta otro origen de teselas al compilar (`NEXT_PUBLIC_MAP_TILES_URL`, un TileJSON o una plantilla `{z}/{x}/{y}`). Falta que el paquete sirva un extracto local de Madrid, que espera el permiso para usar tilemaker.
+- **Sin red, el mapa sale con calles** si el paquete se preparó con el mapa base local (`make demo-offline-tiles`): la web sirve las teselas desde `http://localhost:3012/tiles`.
+  - **Sin ese mapa base:** la web pide el fondo a `tiles.openfreemap.org` y, sin Internet, no llega. Siguen funcionando las zonas coloreadas, el buscador, «¿Y si cambias algo?», «Qué falta» y la lista.
+  - **El aviso en ese caso:** la web enseña arriba «Mapa sin fondo de calles.», y la consola registra los fallos de esas teselas. Si fallara el mapa entero, el aviso sería «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.».
 - **`start` comprueba el volumen**, no solo el volcado. Si la base no coincide con `manifest.txt` (por ejemplo, porque se borró el volumen de Docker), la restaura desde `demo-data.sql.gz` en unos 11 s. Para eso necesita `uv`, que ya está instalado.
 - **`stop` solo mata su propio servidor web.** Antes comprueba que el pid de `web.pid` sigue siendo el de Next.js. Si algo falla a medias, el script lo dice: «Clean up with: make demo-offline-stop».
 - No hace falta calentarlo. Los procesos quedan arrancados y el propio `make demo-offline` pasa el smoke al terminar, así que la API ya ha respondido una vez.
@@ -265,7 +283,8 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 - **Ensayo:** hazlo el 24–25 con el wifi apagado. Si la web nueva de B usa teselas, fuentes o imágenes externas, lo verás ahí: tienen que venir incluidas en la build.
   - Con el paquete arrancado, los recorridos del pitch se comprueban solos: `node infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3012 --block-external`.
   - `--block-external` corta toda petición que no vaya a localhost, como si no hubiera red. El informe lista los hosts cortados.
-  - El 12 nov el único host cortado fue `tiles.openfreemap.org`, y todas las comprobaciones de datos pasaron. Solo falló la de «consola sin errores», por esas teselas.
+  - **El 12 nov, con el mapa base local:** 66/66 y 40/40, sin ningún host cortado y sin errores de consola (`offline-teselas.md`).
+  - **Antes, con OpenFreeMap:** el único host cortado era `tiles.openfreemap.org`, y solo fallaba la comprobación de «consola sin errores».
 
 ## Problemas conocidos
 
