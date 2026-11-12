@@ -54,8 +54,8 @@ Título: **«Nadie te dice qué le falta a cada zona»**.
 Cierre de la columna: «Otros te enseñan lo que hay. Nosotros, lo que falta.»
 
 ### Columna derecha: los datos
-Titular: **«27 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 13 nov, con 27 en Gate 1 PASS. Los seis últimos, en `evidence/gate-01/2026-11-12/`: los dos de camas (`cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`), las tres topologías del CRTM con la accesibilidad de las estaciones (`crtm_topologia_metro/`, `crtm_topologia_metro_ligero/` y `crtm_topologia_cercanias/`, D-223) y el valor tasado de la vivienda (`cm_valor_tasado_vivienda_municipios/`, D-227). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 27` (13 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
-- **Matiz, si preguntan:** 25 alimentan la lista de lo que falta o el buscador (el 27.º, del 13 nov, es el valor tasado de la vivienda, que da el precio de compra en 28 municipios, D-227). Las 3 topologías se usan con «sin escaleras», en producción desde el 12 nov. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Su uso en pantalla está **pendiente de A** (`pitch/datasets_cm.md`).
+Titular: **«27 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 12 nov, con 27 en Gate 1 PASS. Los seis últimos, en `evidence/gate-01/2026-11-12/`: los dos de camas (`cm_dotacion_camas/` y `cm_hospitales_datos_asistenciales/`), las tres topologías del CRTM con la accesibilidad de las estaciones (`crtm_topologia_metro/`, `crtm_topologia_metro_ligero/` y `crtm_topologia_cercanias/`, D-223) y el valor tasado de la vivienda (`cm_valor_tasado_vivienda_municipios/`, D-227). La web en producción dice lo mismo: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 27` (12 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
+- **Matiz, si preguntan:** 25 alimentan la lista de lo que falta o el buscador (el 27.º, del 12 nov, es el valor tasado de la vivienda, que da el precio de compra en 28 municipios, D-227). Las 3 topologías se usan con «sin escaleras», en producción desde el 12 nov. Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región y demuestran que el portal no publica camas por hospital: por eso las camas de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). Los 2 de camas: ya los sirve la API (85 hospitales y 3,0 camas por 1.000 habitantes, sincronizado y verificado por A); B los enseña en la nota del hospital en su próximo PR (**pendiente de B**). Si no llega al freeze del 23 nov, se cuentan 25 y no 27 (decisión de datamad-10) (`pitch/datasets_cm.md`).
 
 Cada nombre lleva el hipervínculo a su ficha en el PDF:
 
@@ -92,17 +92,17 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 
 Versión con buscador (la que vale):
 - Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, y lo que no tiene datos nunca cuenta como 0 (D-215; `pitch/metodologia.md` §1.3).
-- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 13 nov (`POST /api/v1/search` con ese fixture, `fit-0.6`: trabajo en minutos de transporte público, D-220, y alquiler de contratos nuevos, D-228):
+- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 12 nov (`POST /api/v1/search` con ese fixture, `fit-0.6`: trabajo en minutos de transporte público, D-220, y alquiler de contratos nuevos, D-228):
   - encajan **27 de las 199 zonas**, y en 15 falta algún dato;
-  - **cuatro empatan al 98 %:** Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas. No se presenta un orden entre ellas. La web abre Latina: colegio a unos 6 min, «39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)»;
-  - **cambia respecto al 12 nov** (33 zonas, Fuencarral-El Pardo al 100 %): el alquiler ya cuenta los contratos nuevos. Fuencarral-El Pardo pasa de ≈ 1.107 a ≈ 1.276 €/mes y queda 5.ª (97 %); Salamanca, a ≈ 1.797 €/mes, ya no entra en 1.500 €.
+  - **cuatro empatan al 98 %:** Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas, con `rank` 1 a 4 en la respuesta (Puente de Vallecas, 4, código 2807913; comprobado en producción el 12 nov a las 23:25). Con el empate no se presenta un orden entre ellas. La web abre Latina: colegio a unos 6 min, «39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)»;
+  - **cambia respecto a la tarde del 12 nov** (33 zonas, Fuencarral-El Pardo al 100 %): el alquiler ya cuenta los contratos nuevos. Fuencarral-El Pardo pasa de ≈ 1.107 a ≈ 1.276 €/mes y queda 5.ª (97 %); Salamanca, a ≈ 1.797 €/mes, ya no entra en 1.500 €.
 - **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo:
   - «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más»;
   - «+150 €/mes: saldrían 30 zonas, 3 más»;
   - lo que más limita sigue siendo el colegio a 10 min;
   - casi encajan, por el presupuesto, Chamartín, Salamanca, Centro, Chamberí y Retiro (93 %).
 
-  Captura **C3**: hay que rehacerla (**pendiente de B**), porque la de B (PR #17) dice 33 y 50 zonas.
+  Captura **C3**: la de B con `fit-0.6` (PR #32).
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Trabajo:** cuenta los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las 6 redes del CRTM (CORE-009, D-220). En producción desde el 12 nov. **Límite que se dice si preguntan:** son horarios programados de un martes, no tiempos reales, y en 45–50 zonas de la Sierra Norte y del sureste no se llega a las 9:00 (D-220 §6).
 - **«Sin escaleras»** (opcional, D-223): quien lo marca ve los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el CRTM da como totalmente accesible. Nunca se deduce de nada ni se etiqueta a nadie, y la tarjeta dice lo que no mide (autobuses, aceras y portales). En producción desde el 12 nov (despliegue de `2761696`). En la slide va una línea, solo si cabe.
@@ -110,11 +110,11 @@ Versión con buscador (la que vale):
 - **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas: C1 y C2, las de B con `fit-0.2` (PR #19); C3, la de B del 12 nov (PR #17).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
-**Huecos de la fase de mejora (13 nov)**, marcados como pendientes en `deck.html`; `--final` falla hasta que se llenen:
+**Huecos de la fase de mejora (12 nov)**, marcados como pendientes en `deck.html`; `--final` falla hasta que se llenen:
 - **Cifra de impacto (A, D-229, `impact-0.1`):** «**25.551** niños de 0 a 4 años viven donde faltan escuelas infantiles», en grande, y debajo «Dónde invertir primero: Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde». Sustituye al ejemplo largo y a «179 municipios y 21 distritos de Madrid».
   - Fuente: `GET /api/v1/gaps/impact` y `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov. Son el 9,8 % de los niños de esa edad: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968, del padrón de cada distrito. Puente de Vallecas tiene ratio 0,571, con p = 0,001.
   - En el pie: «Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid».
-  - En producción desde el 13 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310, 3 zonas). Si cambian los datos, se cambia la cifra. El ranking aún no se ve en la web (**pendiente de B**); en la slide sale de la API.
+  - En producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310, 3 zonas). Si cambian los datos, se cambia la cifra. El ranking aún no se ve en la web (**pendiente de B**); en la slide sale de la API.
   - Las demás filas (farmacias, mayores y vivienda) van en la pregunta 47, no en la slide.
 - **Cita 2 (Mariano):** el técnico municipal de la prueba con personas, 12 palabras como mucho. Ocupa el sitio de la captura C4, que repetía las cifras del ejemplo.
 - **Cita 1 (Mariano), en la tarjeta de utilidad:** alguien que busca casa. Ocupa el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.
@@ -132,19 +132,19 @@ Versión con buscador (la que vale):
 - **Ejemplo de la slide: Puente de Vallecas (distrito 2807913), escuelas infantiles.** Comprobado en producción el 12 nov: `GET /api/v1/gaps/distrito/2807913` (`method.version: gap-0.3`, `data_version: 2026-11-12`), fila `escuela_infantil`:
   - **FALTA:** valor 2,781 (`escuelas_infantiles_a_pie_por_1000_ninos`); referencia 4,87, «Otros municipios urbanos de la Comunidad de Madrid»; ratio 0,571; `reliable: true`; `comparison_group: null` (los distritos no se agrupan). En toda la Comunidad, 4,721.
   - **Texto de la API (`explanation`):** «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)».
-  - **Por qué se entiende en una frase:** la escuela infantil más cercana está cerca (desde la mitad de las calles, a 6 min o menos: `min_a_pie_escuela_infantil` = 6,258), pero son pocas para tantos niños. Contar centros por habitante da casi lo mismo (2,708, `escuelas_infantiles_por_1000_ninos`): no es un efecto del método.
+  - **Por qué se entiende en una frase:** la escuela infantil más cercana está cerca (la mitad de la zona la tiene a 6 min o menos: `min_a_pie_escuela_infantil` = 6,258), pero son pocas para tantos niños. Contar centros por habitante da casi lo mismo (2,708, `escuelas_infantiles_por_1000_ninos`): no es un efecto del método.
   - **Las demás filas de la zona:** colegio, centro de salud, mayores y farmacia, CUBIERTO (farmacia: 4,5 frente a 3,1); vivienda, SIN DATOS.
   - **Otros distritos con FALTA en esa fila:** Villaverde (2,984; ratio 0,613) y Carabanchel (3,322; 0,682) (`GET /api/v1/gaps?level=distrito&row=escuela_infantil`, 12 nov). Centro (0,661) y Vicálvaro (0,647) tienen un ratio parecido y salen JUSTO: con menos niños, la diferencia podría ser casualidad. Sirve para responder a Escot.
   - **Si preguntan por un municipio:** Parla, farmacias, FALTA: 2,029 frente a 4,175 (ratio 0,486). La estadística oficial de farmacias por habitante también da 2,04 (`GET /api/v1/gaps/municipio/28106`, 12 nov).
   - **Ya no vale «Madrid tiene un tercio menos de centros de atención primaria»** (D-217 §7): con gap-0.3, Madrid capital sale JUSTO en centros de salud (0,3603 frente a 0,3799; ratio 0,9484, `evidence/gate-04/2026-11-12/gap-status-gap03.md`).
-  - Captura **C4**: desde el 13 nov no va en la slide 3; su sitio es para la cita del técnico municipal. Queda de reserva (`deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, de B, con las mismas cifras que producción).
+  - Captura **C4**: desde el 12 nov no va en la slide 3; su sitio es para la cita del técnico municipal. Queda de reserva (`deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, de B, con las mismas cifras que producción).
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
   - 3.866 centros educativos, 553 centros sanitarios (276 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216; con los 4 centros de salud corregidos por D-218 §10), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
 ### Viabilidad: se sostiene
-- **Quién paga** (decisión de Mariano, 13 nov; `pitch/modelo_negocio.md`): en la slide, «Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.». Las cifras no van en la slide: un informe para un ayuntamiento cuesta 990–1.500 € (contrato menor) y un estudio, 490–1.500 €. Si preguntan, pregunta 6 de `pitch/preguntas.md`.
+- **Quién paga** (decisión de Mariano, 12 nov; `pitch/modelo_negocio.md`): en la slide, «Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.». Las cifras no van en la slide: un informe para un ayuntamiento cuesta 990–1.500 € (contrato menor) y un estudio, 490–1.500 €. Si preguntan, pregunta 6 de `pitch/preguntas.md`.
 - **Privacidad:**
   - solo agregados por zona y nunca datos personales;
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);
@@ -215,17 +215,17 @@ El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las to
 
 | Id | Qué cambia | Dónde |
 |---|---|---|
-| C3 | **Rehacer con `fit-0.6` (pendiente de B):** «Con tu búsqueda tal cual salen 27 zonas», «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más». La de B (`deck_c3_y_si_cambias_1440.png`, PR #17) tenía 33 y 50 zonas | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
+| C3 | Rehecha por B con `fit-0.6` (PR #32): `deck_c3_y_si_cambias_1440.png`, con «Con tu búsqueda tal cual salen 27 zonas», «+5 min a pie hasta colegio con primaria: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más» | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
 | C4 | Hecha por B: `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, la fila de escuelas infantiles de **Puente de Vallecas** en FALTA (2,8 frente a 4,9) con «A pie: 6 min». El hueco enseña las dos cifras | `/que-falta?zona=distrito/2807913` |
 | C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
-| C1, C2 | **Rehacer con `fit-0.6` (pendiente de B):** la búsqueda del caso con 27 zonas y la tarjeta de la 1.ª (hoy, Latina al 98 %, con la línea «Encaja con lo que pides; aun así…»). Las de B (PR #19) enseñan Fuencarral-El Pardo al 100 %, que ya no es así | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
+| C1, C2 | Rehechas por B con `fit-0.6` (PR #32): `deck_c1_busqueda_1440.png` (27 zonas, tarjeta de Latina) y `deck_c2_tarjeta_zona_1440.png` (Latina, 98 %, con la línea «Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud.») | Portada → «Ver un ejemplo…» y tarjeta de la 1.ª |
 | C7 | «Cómo lo calculamos» ya explica el 2SFCA; el hueco puede volver a enseñar las reglas | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
-| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | **Rehacer (pendiente de B):** la actual (PR #19) es del 12 nov, con Fuencarral-El Pardo 1.ª al 100 %; con `fit-0.6` son 27 zonas y la 1.ª es Latina (98 %) |
-| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | **Rehacer (pendiente de B):** la actual (PR #19) enseña «100 % de encaje» en Fuencarral-El Pardo. La nueva, la tarjeta de la 1.ª con `fit-0.6` y la línea bajo el % |
-| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | **Rehacer (pendiente de B):** la actual (PR #17) dice 33 y 50 zonas; con `fit-0.6`, 27, 44 y la opción de +150 €/mes |
+| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Hecha por B con `fit-0.6` (PR #32, `evidence/map-004/2026-11-12/deck/deck_c1_busqueda_1440.png`): 27 zonas y la tarjeta de Latina (98 %). El marcador 3 de la slide 4 baja a «Qué falta aquí» (`deck.css`, `.s4 .m3`) |
+| C2 | Recorte de la tarjeta de zona: % de encaje + 3–5 hechos con confianza + mini «Qué falta aquí» | 1440 | 3 | Hecha por B con `fit-0.6` (PR #32, `deck_c2_tarjeta_zona_1440.png`). El hueco de la slide 3 enseña la cabecera: «Latina», «98 % de encaje» y «La 1.ª que más encaja» |
+| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | Hecha por B con `fit-0.6` (PR #32, `deck_c3_y_si_cambias_1440.png`): 27 zonas, «+5 min…: saldrían 44 zonas, 17 más» y «+150 €/mes: saldrían 30 zonas, 3 más» |
 | C4 | Pestaña «Qué falta» de la zona del ejemplo (**Puente de Vallecas**): 6 filas con valor, referencia, confianza, minutos a pie y datasets enlazados | 1440 | 3 | Hecha por B el 12 nov (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, PR #17; la página entera, en `deck_c4_puente_de_vallecas_que_falta_1440.png`). El hueco enseña las dos cifras de la fila de escuelas infantiles: 2,8 en Puente de Vallecas y 4,9 en los otros municipios urbanos |
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B en producción con `gap-0.2` (`prod_c5_chamartin_3d_desktop.png`, Chamartín). El recorte deja fuera el título de la barra, «Barrios de la zona», que hoy se llama «Ir a un barrio»; se ven solo los barrios |
 | C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B en producción (`prod_c5_chamartin_3d_mobile.png`). No enseña estados |

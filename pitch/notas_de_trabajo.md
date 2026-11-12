@@ -4,17 +4,25 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 ---
 
+## Cifras que dependen de otra línea antes del freeze (23 nov)
+
+| Cifra | Hoy | Si no llega | De quién |
+|---|---|---|---|
+| 27 conjuntos CM | Los 2 de camas los sirve la API (85 hospitales, 3,0 camas por 1.000 habitantes) | Si la web no enseña la línea de camas en la nota del hospital antes del 23 nov, se cuentan 25: guion (bloque 4), slides, preguntas 7 y 23, metodología §1.7 y tabla del formulario. El resumen enviado no se toca | B |
+
+---
+
 ## Condiciones de publicación de `metodologia.md`
 
 Párrafos de la parte 1 que B solo publica si la web ya enseña lo que cuentan. Si el 16 nov no se cumple, B quita el párrafo entero.
 
 | Sección | Párrafo | Se publica si | Pendiente de |
 |---|---|---|---|
-| 1.3 | «**Zonas verdes** (solo si lo marcas)…» | La web enseña el chip de zonas verdes (la API ya puntúa con `fit-0.3`, D-222) | B |
-| 1.8 | «**En los 21 distritos de Madrid** te contamos, solo como contexto, cómo valoran los vecinos la seguridad…» | La vista de zona enseña `zona.seguridad_vecinos` (D-226) | B |
-| 1.8 | «**Zonas verdes:** contamos los parques de 1 hectárea o más…» | Igual que en 1.3 | B |
+| 1.3 | «**Zonas verdes** (solo si lo marcas)…» | La web enseña el chip de zonas verdes (la API ya puntúa con `fit-0.3`, D-222) | **Cumplida** el 12 nov: el chip está en la web |
+| 1.8 | «**En los 21 distritos de Madrid** te contamos, solo como contexto, cómo valoran los vecinos la seguridad…» | La vista de zona enseña `zona.seguridad_vecinos` (D-226) | **Cumplida** el 12 nov: dos barras de 0 a 10 (`PerceivedSafety.tsx`) |
+| 1.8 | «**Zonas verdes:** contamos los parques de 1 hectárea o más…» | Igual que en 1.3 | **Cumplida** el 12 nov |
 
-**Alquiler de contratos nuevos (D-228):** aplicado el 13 nov en `metodologia.md` §1.3, con el caso de ejemplo de `fit-0.6` (27 zonas, Latina 1.ª).
+**Alquiler de contratos nuevos (D-228):** aplicado el 12 nov en `metodologia.md` §1.3, con el caso de ejemplo de `fit-0.6` (27 zonas, Latina 1.ª).
 
 ---
 
