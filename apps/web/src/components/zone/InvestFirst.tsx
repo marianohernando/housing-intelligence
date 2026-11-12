@@ -19,6 +19,7 @@ const TEXT = {
   loading: "Calculando dónde falta en toda la Comunidad…",
   retry: "Reintentar",
   ranking: (label: string) => `Zonas donde faltan ${label}, de más a menos gente afectada`,
+  rest: (label: string) => `Resto de zonas donde faltan ${label}`,
   note:
     "Solo cuentan las zonas en FALTA. Contamos a toda la gente de la zona a la que sirve cada servicio (por ejemplo, los niños de 0 a 4 años para las escuelas infantiles), según el censo y, en los distritos de Madrid, el padrón: no estimamos nada. Dentro de una zona, unas calles están mejor servidas que otras.",
   pick: "Ver lo que falta en otra zona",
@@ -27,9 +28,7 @@ const TEXT = {
 function ZoneItem({ zone, rank }: { zone: RankedZone; rank: number }) {
   return (
     <li className={styles.zone}>
-      <span className={styles.rank} aria-hidden="true">
-        {rank}
-      </span>
+      <span className={styles.rank}>{rank}</span>
       <span className={styles.zoneText}>
         {zone.href ? (
           <Link href={zone.href} className={styles.zoneName}>
@@ -57,7 +56,8 @@ function ImpactCard({ row }: { row: GapImpactRow }) {
         <strong className={styles.figure}>{impactFigure(row)}</strong> {impactSentence(row)}
       </p>
       <p className={styles.context}>{impactContext(row)}</p>
-      <ol className={styles.ranking} aria-label={TEXT.ranking(label)}>
+      {/* role="list": Safari drops the list semantics of a list without markers */}
+      <ol className={styles.ranking} role="list" aria-label={TEXT.ranking(label)}>
         {first.map((zone, i) => (
           <ZoneItem key={zone.key} zone={zone} rank={i + 1} />
         ))}
@@ -65,7 +65,7 @@ function ImpactCard({ row }: { row: GapImpactRow }) {
       {rest.length > 0 && (
         <details className={styles.more}>
           <summary>{moreZonesText(rest.length)}</summary>
-          <ol className={styles.ranking} start={SHOWN_FIRST + 1}>
+          <ol className={styles.ranking} role="list" aria-label={TEXT.rest(label)} start={SHOWN_FIRST + 1}>
             {rest.map((zone, i) => (
               <ZoneItem key={zone.key} zone={zone} rank={SHOWN_FIRST + i + 1} />
             ))}
@@ -118,7 +118,7 @@ export default function InvestFirst({ pickId }: { pickId: string }) {
           {clear.length > 0 && (
             <ul className={styles.clear}>
               {clear.map((row) => (
-                <li key={row.row}>{row.summary}.</li>
+                <li key={row.row}>{row.summary.replace(/\.?$/, ".")}</li>
               ))}
             </ul>
           )}

@@ -89,9 +89,17 @@ export function comparisonText(ratio: number, grouped: boolean): string {
   return `${grouped ? "Junto con sus vecinos, hay" : "Aquí hay"} ${n} por cada 100 que hay en municipios parecidos.`;
 }
 
-/** The comparison of one row of /gaps, or null when it has no ratio (SIN DATOS). */
-export function rowComparison(row: { status: GapStatus; ratio_to_reference?: number | null; comparison_group?: ComparisonGroup | null }): string | null {
-  if (row.status === "SIN_DATOS") return null;
+/**
+ * The comparison of one row of /gaps, or null when it has no ratio (SIN DATOS) or the zone is too
+ * small to compare even with its neighbours: that ratio is noise, the figure stays behind «Ver la cifra».
+ */
+export function rowComparison(row: {
+  status: GapStatus;
+  reliable?: boolean;
+  ratio_to_reference?: number | null;
+  comparison_group?: ComparisonGroup | null;
+}): string | null {
+  if (row.status === "SIN_DATOS" || (isSmallZone(row) && inGroup(row) === null)) return null;
   const group = inGroup(row);
   const ratio = group ? group.ratio_to_reference : row.ratio_to_reference;
   return ratio == null ? null : comparisonText(ratio, group !== null);
@@ -177,19 +185,21 @@ function rowsByStatus(rows: readonly SummaryRow[]) {
 }
 
 /**
- * The first lines of «Qué falta» (falta.resumen.*): «Aquí falta: escuelas infantiles.», then what
- * is tight, too small to compare or without data. The first line goes in bold.
+ * The first lines of «Qué falta» (falta.resumen.*): the verdict in bold («Aquí falta: escuelas
+ * infantiles.»; null when no row can be compared), then what is tight, too small to compare or
+ * without data.
  */
-export function gapSummary(rows: readonly SummaryRow[]): string[] {
+export function gapSummary(rows: readonly SummaryRow[]): { lead: string | null; rest: string[] } {
   const { falta, justo, cubierto, small, none } = rowsByStatus(rows);
-  const lines: string[] = [];
-  if (falta.length) lines.push(`Aquí falta: ${listNames(falta)}.`);
-  else if (justo.length) lines.push("Aquí no falta nada claro.");
-  else if (cubierto.length) lines.push("Aquí no falta nada frente a municipios parecidos.");
-  if (justo.length) lines.push(`Van justos: ${listNames(justo)}.`);
-  if (small.length) lines.push(`Zona muy pequeña para comparar: ${listNames(small)}.`);
-  if (none.length) lines.push(`Sin datos: ${listNames(none)}.`);
-  return lines;
+  let lead: string | null = null;
+  if (falta.length) lead = `Aquí falta: ${listNames(falta)}.`;
+  else if (justo.length) lead = "Aquí no falta nada claro.";
+  else if (cubierto.length) lead = "Aquí no falta nada frente a municipios parecidos.";
+  const rest: string[] = [];
+  if (justo.length) rest.push(`Van justos: ${listNames(justo)}.`);
+  if (small.length) rest.push(`Zona muy pequeña para comparar: ${listNames(small)}.`);
+  if (none.length) rest.push(`Sin datos: ${listNames(none)}.`);
+  return { lead, rest };
 }
 
 /**

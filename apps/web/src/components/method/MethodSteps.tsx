@@ -42,7 +42,7 @@ const STEPS: { icon: LucideIcon; title: string; text: ReactNode }[] = [
 const TEXT = {
   label: "Cómo decidimos qué falta, en cinco pasos",
   example:
-    "Ejemplo: en Puente de Vallecas hay 2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los municipios parecidos. Es decir, aquí hay 57 por cada 100: FALTA.",
+    "Ejemplo, con los datos del 12 de noviembre de 2026: en Puente de Vallecas hay 2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los municipios parecidos. Es decir, aquí hay 57 por cada 100: FALTA.",
 };
 
 /** «Cómo lo calculamos» as a picture: open data → 15 min on foot → shared → compared → status. HTML, so it reads on a phone. */

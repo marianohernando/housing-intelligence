@@ -16,7 +16,7 @@ import { useId } from "react";
 
 import type { FactKind, FactTopic, SearchResult } from "@/contracts/search_response";
 import { confidenceText } from "@/lib/confidence";
-import { constraintLabels, factText, failedLabels, hasWalkingFact, rankText, WALK_MEDIAN, zoneFit } from "@/lib/fit";
+import { constraintLabels, failedLabels, hasWalkingFact, rankText, WALK_MEDIAN, zoneFit } from "@/lib/fit";
 
 import styles from "./ZoneCard.module.css";
 
@@ -90,7 +90,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
                 <li key={`${i}-${fact.topic}`} className={KIND_CLASS[fact.kind]}>
                   <Icon size={18} aria-hidden="true" />
                   <span>
-                    {factText(fact.text)}{" "}
+                    {fact.text}{" "}
                     <small title={confidence.help}>
                       <span aria-hidden="true">· {confidence.label}</span>
                       <span className="visually-hidden">{TEXT.confidence(confidence.label)}</span>

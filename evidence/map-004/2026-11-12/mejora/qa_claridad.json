@@ -104,17 +104,17 @@
   "consola": []
  },
  "tarjeta_desktop": {
-  "zona": "Fuencarral-El Pardo",
+  "zona": "Latina",
   "hechos": [
-   "Colegio con primaria a 9 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
-   "Parada de transporte público a 3 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
-   "Centro de salud a 15 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
-   "29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
-   "Alquiler medio ≈ 1.107 €/mes por 77 m² (14,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) · Dato aproximado Fiabilidad del dato: Dato aproximado"
+   "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Parada de transporte público a unos 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+   "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable"
   ],
   "mediana": 1,
   "aviso": [
-   "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud."
+   "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud."
   ],
   "axe": [],
   "overflow_px": 0,
@@ -225,11 +225,11 @@
  "tarjeta_mobile": {
   "zona": "Latina",
   "hechos": [
-   "Colegio con primaria a 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
-   "Parada de transporte público a 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
-   "Centro de salud a 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Parada de transporte público a unos 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
    "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
-   "Alquiler medio ≈ 1.101 €/mes por 77 m² (14,3 €/m², media de los contratos vigentes; uno nuevo suele costar más) · Dato fiable Fiabilidad del dato: Dato fiable"
+   "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable"
   ],
   "mediana": 1,
   "aviso": [
@@ -241,12 +241,12 @@
  },
  "lcp_zona_slow4g": [
   {
-   "ms": 880,
+   "ms": 892,
    "en_atribucion": false,
    "texto": "Desliza hacia arriba para ver más"
   },
   {
-   "ms": 2096,
+   "ms": 2072,
    "en_atribucion": false,
    "texto": "Explora Puente de Vallecas"
   }

@@ -249,7 +249,9 @@ function Limits() {
           decimos. Para cada distrito de Madrid hacemos la media de sus códigos postales, y cada código pesa según cuántos
           colegios, centros de salud y centros sociales del distrito están en él, porque eso aproxima dónde vive la gente. Es
           una aproximación, así que cuenta con menos fiabilidad. Cuadra con la cifra oficial: con los distritos sale 14,5 € el
-          metro cuadrado, y la Comunidad publica 15,1 para todo Madrid.
+          metro cuadrado, y la Comunidad publica 15,1 para todo Madrid. Esa media es de todos los contratos en vigor, así que
+          la ajustamos a lo que se pagó en los contratos firmados en 2024 en la misma zona, según la Agencia Tributaria: entre
+          un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más.
         </li>
         <li>
           <strong>Compra:</strong> usamos el valor tasado medio de la vivienda libre por metro cuadrado (Ministerio de
@@ -344,6 +346,10 @@ export default function ComoLoCalculamosPage() {
                 de Madrid capital;
               </li>
               <li>el mapa de calles de OpenStreetMap, para las distancias a pie;</li>
+              <li>
+                la estadística de viviendas declaradas en el IRPF de la Agencia Tributaria (ejercicio 2024), para acercar el
+                alquiler al de los contratos firmados ese año;
+              </li>
               <li>
                 los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los
                 centros de salud y el nombre y las camas de los hospitales;

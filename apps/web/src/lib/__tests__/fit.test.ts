@@ -7,7 +7,6 @@ import type { RankedZone, RealityCheck, SearchResult, ZoneMatch } from "@/contra
 import {
   constraintLabels,
   countFit,
-  factText,
   failedLabels,
   fewZones,
   fitClass,
@@ -176,14 +175,11 @@ describe("«¿Y si cambias algo?»", () => {
 });
 
 describe("facts in plain words (a_pie.mediana)", () => {
-  it("leaves «desde la mitad de sus calles» out of the API's facts and says it once", () => {
+  it("says the walking median once, when a fact is a walk, and the facts no longer say it (D-229 follow-up of A)", () => {
     const facts = fixture.results.flatMap((r) => r.facts);
-    const walks = facts.filter((f) => f.text.includes("desde la mitad de sus calles"));
+    const walks = facts.filter((f) => f.text.includes("andando"));
     expect(walks.length).toBeGreaterThan(0);
-    for (const f of walks) expect(factText(f.text)).not.toMatch(/mitad/);
-    expect(factText("Colegio con primaria a 9 min andando desde la mitad de sus calles")).toBe("Colegio con primaria a 9 min andando");
-    // Already without it (once line A changes the text), nothing changes
-    expect(factText("Colegio con primaria a unos 9 min andando")).toBe("Colegio con primaria a unos 9 min andando");
+    for (const f of walks) expect(f.text).not.toMatch(/mitad de sus calles/);
     expect(hasWalkingFact(walks)).toBe(true);
     expect(hasWalkingFact([{ text: "≈ 1.107 €/mes por 77 m²" }])).toBe(false);
   });

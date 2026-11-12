@@ -126,16 +126,9 @@ export function rankText(rank: number): string {
 }
 
 /**
- * The API's facts still end «… a 9 min andando desde la mitad de sus calles» (pitch/textos_web.md,
- * a_pie.mediana, pendiente de A): the web leaves that out of each fact and says it once, in words.
+ * a_pie.mediana: the walking minutes of the facts («Colegio con primaria a unos 9 min andando»)
+ * are the median of the zone, said once under them, when one of them is a walk.
  */
-const HALF_STREETS = / desde la mitad de sus calles/g;
-
-export function factText(text: string): string {
-  return text.replace(HALF_STREETS, "");
-}
-
-/** a_pie.mediana: once under the facts, when one of them is a walk */
 export const WALK_MEDIAN = "Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.";
 
 export function hasWalkingFact(facts: readonly { text: string }[]): boolean {

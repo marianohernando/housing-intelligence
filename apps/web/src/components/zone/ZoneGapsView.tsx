@@ -112,15 +112,15 @@ function ZoneGaps({ level, code }: { level: ZoneLevel; code: string }) {
   }
 
   const { zone, rows } = gaps.data.data;
-  const [lead, ...summary] = gapSummary(rows);
+  const summary = gapSummary(rows);
   return (
     <>
       <header className={styles.header}>
         <p className={styles.eyebrow}>{zone.level === "distrito" ? `Distrito de ${zone.municipio_name}` : TEXT.municipio}</p>
         <h1 className={styles.title}>{TEXT.titleIn(zone.name)}</h1>
-        {lead && (
+        {(summary.lead || summary.rest.length > 0) && (
           <p className={styles.summary}>
-            <strong>{lead}</strong> {summary.join(" ")}
+            {summary.lead && <strong>{summary.lead}</strong>} {summary.rest.join(" ")}
           </p>
         )}
         <p className={styles.intro}>{TEXT.intro}</p>

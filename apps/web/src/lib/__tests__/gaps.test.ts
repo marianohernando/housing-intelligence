@@ -302,9 +302,12 @@ describe("each row in plain words (D-229 §6, falta.fila.comparacion)", () => {
     );
   });
 
-  it("says nothing when there is no ratio (SIN DATOS)", () => {
+  it("says nothing when there is no ratio (SIN DATOS) or the zone is too small to compare even with its neighbours", () => {
     expect(rowComparison(row(centro, "vivienda"))).toBeNull();
     expect(rowComparison({ status: "JUSTO" })).toBeNull();
+    expect(rowComparison({ status: "JUSTO", reliable: false, ratio_to_reference: 0 })).toBeNull();
+    const group = { codes: ["28004", "28096"] as [string, string], names: ["El Álamo", "Navalcarnero"] as [string, string], ratio_to_reference: 0.6 };
+    expect(rowComparison({ status: "JUSTO", reliable: false, ratio_to_reference: 0, comparison_group: group })).toMatch(/^Junto con sus vecinos, hay 60 /);
   });
 
   it("names the people a FALTA row leaves short, and only for FALTA", () => {
@@ -326,26 +329,27 @@ describe("the summary over the rows (falta.resumen.*)", () => {
 
   it("starts with what is missing, then what is tight and what has no data (Puente de Vallecas)", () => {
     const rows = [row("escuela_infantil", "FALTA"), row("colegio", "CUBIERTO"), row("centro_salud", "CUBIERTO"), row("vivienda", "SIN_DATOS")];
-    expect(gapSummary(rows)).toEqual(["Aquí falta: escuelas infantiles.", "Sin datos: viviendas grandes para familias."]);
+    expect(gapSummary(rows)).toEqual({ lead: "Aquí falta: escuelas infantiles.", rest: ["Sin datos: viviendas grandes para familias."] });
   });
 
   it("says nothing is clearly missing when only some are tight (Fuencarral-El Pardo)", () => {
     const rows = [row("escuela_infantil", "JUSTO"), row("colegio", "JUSTO"), row("centro_salud", "JUSTO"), row("farmacia", "CUBIERTO")];
-    expect(gapSummary(rows)).toEqual(["Aquí no falta nada claro.", "Van justos: escuelas infantiles, colegios y centros de salud."]);
+    expect(gapSummary(rows)).toEqual({ lead: "Aquí no falta nada claro.", rest: ["Van justos: escuelas infantiles, colegios y centros de salud."] });
   });
 
   it("says nothing is missing when every comparable row is CUBIERTO", () => {
-    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual(["Aquí no falta nada frente a municipios parecidos."]);
+    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada frente a municipios parecidos.", rest: [] });
   });
 
   it("keeps rows too small to compare apart, but not those compared with their neighbours", () => {
     const rows = [row("farmacia", "JUSTO", { reliable: false }), row("colegio", "FALTA", { comparison_group: group }), row("mayores", "CUBIERTO")];
-    expect(gapSummary(rows)).toEqual(["Aquí falta: colegios.", "Zona muy pequeña para comparar: farmacias."]);
+    expect(gapSummary(rows)).toEqual({ lead: "Aquí falta: colegios.", rest: ["Zona muy pequeña para comparar: farmacias."] });
   });
 
-  it("says the zone has no data when no row has a value", () => {
-    expect(gapSummary([row("vivienda", "SIN_DATOS")])).toEqual(["Sin datos: viviendas grandes para familias."]);
-    expect(gapSummary([])).toEqual([]);
+  it("has no verdict in bold when no row can be compared", () => {
+    expect(gapSummary([row("vivienda", "SIN_DATOS")])).toEqual({ lead: null, rest: ["Sin datos: viviendas grandes para familias."] });
+    expect(gapSummary([row("farmacia", "JUSTO", { reliable: false })])).toEqual({ lead: null, rest: ["Zona muy pequeña para comparar: farmacias."] });
+    expect(gapSummary([])).toEqual({ lead: null, rest: [] });
   });
 
   it("joins names with commas and «y»", () => {

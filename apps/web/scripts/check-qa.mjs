@@ -1578,7 +1578,7 @@ function expectedGapCopy(rows) {
   const comparison = Object.fromEntries(
     rows.map((r) => {
       const ratio = r.comparison_group ? r.comparison_group.ratio_to_reference : r.ratio_to_reference;
-      if (r.status === "SIN_DATOS" || ratio == null) return [r.label, null];
+      if (r.status === "SIN_DATOS" || small(r) || ratio == null) return [r.label, null];
       return [r.label, `${r.comparison_group ? "Junto con sus vecinos, hay" : "Aquí hay"} ${esInt(Math.round(100 * ratio))} por cada 100 que hay en municipios parecidos.`];
     }),
   );
