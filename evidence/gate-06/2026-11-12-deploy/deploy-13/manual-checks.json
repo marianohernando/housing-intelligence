@@ -1,0 +1,102 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "checked_at": "2026-11-12T09:22:53.318Z",
+ "results": {
+  "desktop": {
+   "fuencarral_hospitales": {
+    "chip": "Hospitales 6",
+    "list": "Ver la lista (6)",
+    "items": [
+     "Hospital · Clínica Cemtro · 100 camas instaladas",
+     "Hospital de media y larga estancia · Hospital Hestia Madrid · 297 camas instaladas",
+     "Hospital de salud mental · Hospital Psiquiátrico Doctor Rodriguez Lafora · 336 camas instaladas",
+     "Hospital · Hospital Ruber Internacional · 143 camas instaladas",
+     "Hospital · Hospital Universitario La Paz · 966 camas instaladas",
+     "Hospital"
+    ],
+    "la_paz": "Hospital · Hospital Universitario La Paz · 966 camas instaladas"
+   },
+   "chamartin_hospitales": {
+    "chip": "Hospitales 5",
+    "list": "Ver la lista (5)",
+    "items": [
+     "Hospital · Hospital Quironsalud San José · 84 camas instaladas",
+     "Hospital · Hospital San Francisco de Asís · 168 camas instaladas",
+     "Hospital · Hospital San Rafael · 184 camas instaladas",
+     "Hospital · Hospital Virgen del Mar · 73 camas instaladas",
+     "Hospital especializado · 50 camas instaladas"
+    ]
+   },
+   "chamartin_farmacias": {
+    "chip": "Farmacias 114",
+    "list": "Ver la lista (114)",
+    "first": [
+     "Farmacia · Avenida de Alberto Alcocer 22",
+     "Farmacia · Avenida de Alberto Alcocer 47",
+     "Farmacia · Avenida de Alfonso XIII 106"
+    ]
+   },
+   "reduena": {
+    "grouped_text": [
+     "Comparado con municipios parecidos de la zona.",
+     "Comparado con municipios parecidos de la zona."
+    ]
+   },
+   "como_lo_calculamos": {
+    "quince_minutos": true,
+    "capacidad": true,
+    "frase": " Cómo decidimos qué falta en una zona Para cada servicio miramos cuánto tiene la gente de la zona a 15 minutos andando: un kilómetro por la calle, a paso tranquilo (4 km/h)."
+   },
+   "console_errors": [],
+   "retries": []
+  },
+  "mobile": {
+   "fuencarral_hospitales": {
+    "chip": "Hospitales 6",
+    "list": "Ver la lista (6)",
+    "items": [
+     "Hospital · Clínica Cemtro · 100 camas instaladas",
+     "Hospital de media y larga estancia · Hospital Hestia Madrid · 297 camas instaladas",
+     "Hospital de salud mental · Hospital Psiquiátrico Doctor Rodriguez Lafora · 336 camas instaladas",
+     "Hospital · Hospital Ruber Internacional · 143 camas instaladas",
+     "Hospital · Hospital Universitario La Paz · 966 camas instaladas",
+     "Hospital"
+    ],
+    "la_paz": "Hospital · Hospital Universitario La Paz · 966 camas instaladas"
+   },
+   "chamartin_hospitales": {
+    "chip": "Hospitales 5",
+    "list": "Ver la lista (5)",
+    "items": [
+     "Hospital · Hospital Quironsalud San José · 84 camas instaladas",
+     "Hospital · Hospital San Francisco de Asís · 168 camas instaladas",
+     "Hospital · Hospital San Rafael · 184 camas instaladas",
+     "Hospital · Hospital Virgen del Mar · 73 camas instaladas",
+     "Hospital especializado · 50 camas instaladas"
+    ]
+   },
+   "chamartin_farmacias": {
+    "chip": "Farmacias 114",
+    "list": "Ver la lista (114)",
+    "first": [
+     "Farmacia · Avenida de Alberto Alcocer 22",
+     "Farmacia · Avenida de Alberto Alcocer 47",
+     "Farmacia · Avenida de Alfonso XIII 106"
+    ]
+   },
+   "reduena": {
+    "grouped_text": [
+     "Comparado con municipios parecidos de la zona.",
+     "Comparado con municipios parecidos de la zona."
+    ]
+   },
+   "como_lo_calculamos": {
+    "quince_minutos": true,
+    "capacidad": true,
+    "frase": " Cómo decidimos qué falta en una zona Para cada servicio miramos cuánto tiene la gente de la zona a 15 minutos andando: un kilómetro por la calle, a paso tranquilo (4 km/h)."
+   },
+   "console_errors": [],
+   "retries": []
+  }
+ }
+}
