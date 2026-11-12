@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.32 — Tiempo en transporte público al trabajo (2026-11-12)
+- D-220: minutos para llegar a las 9:00 en transporte público desde cada zona a cada estación y centro de zona, con los 6 GTFS del CRTM (migración 0007, `transit_hub` y `commute_time`).
+
 ## v0.5.30 — Nombres de centros de salud y consultorios (2026-11-12)
 - D-218 §9: segunda pasada del cruce con los catálogos del Ministerio (cinco reglas, municipio y tipo por debajo de la dirección completa, grafías del catálogo de atención primaria). Centros de salud genéricos de 44 a 17; el Ramón y Cajal sigue pendiente del fichero de correcciones.
 

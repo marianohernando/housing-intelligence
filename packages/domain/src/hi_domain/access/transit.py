@@ -105,7 +105,10 @@ class ArriveByNetwork:
         events = _ordered(stop_times)
         n = len(events.stop)
         idx = np.arange(n, dtype=np.int64)
-        same_trip = np.flatnonzero(events.trip[1:] == events.trip[:-1])
+        # A ride never goes back in time, even if the timetable says so (bad data).
+        same_trip = np.flatnonzero(
+            (events.trip[1:] == events.trip[:-1]) & (events.time[1:] >= events.time[:-1])
+        )
         boardable = np.flatnonzero(events.boardable)
         boarding = boardable[np.lexsort((events.time[boardable], events.stop[boardable]))]
         waits = np.flatnonzero(events.stop[boarding[1:]] == events.stop[boarding[:-1]])
@@ -142,3 +145,18 @@ def latest_leave(by_stop: FloatArray, access: Access) -> FloatArray:
     leave = np.full(access.n_origins, -np.inf)
     np.maximum.at(leave, access.origin, by_stop[access.stop] - access.seconds)
     return leave
+
+
+def zone_medians(
+    values: FloatArray, zone: IntArray, n_zones: int
+) -> tuple[FloatArray, IntArray, IntArray]:
+    """Per zone: the median of its origins (inf = unreachable, counted as the slowest, so a zone
+    where most origins cannot make it has no value), how many origins and how many reached."""
+    medians = np.full(n_zones, np.inf)
+    counts = np.bincount(zone, minlength=n_zones).astype(np.int64)
+    reached = np.bincount(zone, weights=np.isfinite(values), minlength=n_zones).astype(np.int64)
+    order = np.argsort(zone, kind="stable")
+    starts = np.cumsum(counts) - counts
+    for k in np.flatnonzero(counts):
+        medians[k] = float(np.median(values[order[starts[k] : starts[k] + counts[k]]]))
+    return medians, counts, reached

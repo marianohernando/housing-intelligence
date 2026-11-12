@@ -29,7 +29,7 @@ API_URL="http://localhost:8012"
 WEB_PORT=3012
 WEB_URL="http://localhost:${WEB_PORT}"
 # The demo profile of scripts/supabase_sync.sh (tests/unit/test_deploy_offline.py checks it).
-TABLES=(source_registry dataset_registry dataset_version metric_registry feature_registry geo_admin_unit place_master place_source_alias feature_value)
+TABLES=(source_registry dataset_registry dataset_version metric_registry feature_registry geo_admin_unit place_master place_source_alias feature_value transit_hub commute_time)
 
 trap 'echo "demo-offline: failed at line $LINENO. Clean up with: make demo-offline-stop" >&2' ERR
 

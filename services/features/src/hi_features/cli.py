@@ -39,6 +39,17 @@ def compute_features(
         typer.echo(f"{feature_id}: {n} rows, {known} with value, {n - known} explicit unknown")
 
 
+@app.command("commute")
+def commute(database_url: DatabaseUrl = None) -> None:
+    """Public transport minutes from every zone to every station and zone centre (CORE-009)."""
+    from hi_features.commute import compute_commutes, persist
+
+    matrix = compute_commutes(make_engine(database_url), load_catalog())
+    n = persist(make_engine(database_url), matrix)
+    known = sum(1 for m in matrix.times["minutes"].tolist() if m == m)  # NaN != NaN
+    typer.echo(f"commute: {len(matrix.hubs)} hubs, {n} rows, {known} with minutes")
+
+
 @app.command("version")
 def version() -> None:
     typer.echo("0.0.1")

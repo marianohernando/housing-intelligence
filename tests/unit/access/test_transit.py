@@ -10,6 +10,7 @@ from hi_domain.access.transit import (
     Footpaths,
     StopTimes,
     latest_leave,
+    zone_medians,
 )
 
 H = 3600
@@ -162,3 +163,24 @@ def test_an_extra_trip_never_makes_a_departure_earlier(
     )
     after = np.array(latest(more, hub, arrive_by))
     assert np.all(after >= before)
+
+
+def test_a_zone_is_the_median_of_its_origins_and_unreachable_ones_are_the_slowest() -> None:
+    values = np.array([10.0, 30.0, np.inf, 20.0, np.inf, np.inf, 5.0])
+    zone = np.array([0, 0, 0, 1, 1, 1, 3], dtype=np.int64)
+    medians, counts, reached = zone_medians(values, zone, 4)
+    assert medians[0] == 30.0  # 10, 30, inf
+    assert medians[1] == np.inf  # most of it cannot make it
+    assert medians[2] == np.inf and counts[2] == 0  # no origins
+    assert medians[3] == 5.0
+    assert counts.tolist() == [3, 3, 0, 1]
+    assert reached.tolist() == [2, 1, 0, 1]
+
+
+def test_a_trip_that_goes_back_in_time_is_never_a_shortcut() -> None:
+    """Bad data: a bus «arriving» before it left must not let anyone leave later."""
+    back = [(0, 8 * H + 50 * M), (1, 7 * H + 30 * M)]
+    train = [(1, 7 * H + 35 * M), (2, 8 * H + 10 * M)]
+    got = latest(timetable([back, train], 3), [(2, 0)], arrive_by=9 * H)
+    assert got[0] == -np.inf
+    assert got[1] == 7 * H + 35 * M
