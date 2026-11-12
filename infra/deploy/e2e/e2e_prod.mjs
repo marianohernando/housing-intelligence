@@ -8,6 +8,7 @@
 //
 //   node infra/deploy/e2e/e2e_prod.mjs [--base URL] [--browsers chromium,webkit,firefox]
 //        [--devices desktop-1440,desktop-1920,mobile-390,projector-125] [--out DIR] [--shots]
+//        [--block-external]   (the offline package: every request off localhost fails, as without network)
 //   make e2e-prod                       (Chromium at 1440 px and 390 px, no screenshots)
 // Needs the repo's Playwright (npm ci) and its browsers (npx playwright install chromium ...).
 // Exit 0 only if every check of every combination passes.
@@ -35,6 +36,7 @@ const { values: opts } = parseArgs({
     devices: { type: "string", default: "desktop-1440,mobile-390" },
     out: { type: "string", default: join(tmpdir(), "vida-facil-e2e") },
     shots: { type: "boolean", default: false },
+    "block-external": { type: "boolean", default: false },
   },
 });
 const BASE = opts.base.replace(/\/$/, "");
@@ -51,7 +53,7 @@ const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method
 /** One run: a browser and a device, the four journeys, every check with its detail. */
 class Run {
   constructor(browserName, device) {
-    Object.assign(this, { browserName, device, checks: [], shots: [], consoleErrors: [] });
+    Object.assign(this, { browserName, device, checks: [], shots: [], consoleErrors: [], blocked: new Set() });
   }
   check(journey, name, ok, detail = "") {
     this.checks.push({ journey, name, ok: Boolean(ok), detail: String(detail) });
@@ -256,6 +258,14 @@ async function runCombination(browserName, device) {
     for (const [name, journey] of [["J1 search", journeySearch], ["J2 Qué falta Madrid", journeyMadrid],
       ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList]]) {
       const context = await browser.newContext(options);
+      if (opts["block-external"]) {
+        await context.route("**/*", (route) => {
+          const { hostname } = new URL(route.request().url());
+          if (["localhost", "127.0.0.1"].includes(hostname) || route.request().url().startsWith("data:")) return route.continue();
+          run.blocked.add(hostname);
+          return route.abort("internetdisconnected");
+        });
+      }
       const page = await context.newPage();
       page.on("console", (m) => m.type() === "error" && run.consoleErrors.push(`${name}: ${m.text()}`));
       page.on("pageerror", (e) => run.consoleErrors.push(`${name}: ${e.message}`));
@@ -272,6 +282,7 @@ async function runCombination(browserName, device) {
   }
   run.check("all", "no browser console errors", run.consoleErrors.length === 0, run.consoleErrors.slice(0, 3).join(" | "));
   run.seconds = Math.round((Date.now() - started) / 1000);
+  run.blocked = [...run.blocked];
   return run;
 }
 

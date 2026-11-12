@@ -212,18 +212,20 @@ Unos 25–45 s. **No se pierde nada hasta que el paquete nuevo está validado.**
 3. Comprueba que la migración de la base de origen es la misma que la del checkout.
 4. Vuelca, en modo solo lectura, las 9 tablas del perfil demo (las mismas que `make supabase-sync PROFILE=demo`) a `demo-data.sql.gz.tmp`.
 5. Crea el esquema con Alembic en una base **staging**, carga el volcado y **compara los conteos de filas** con la base de origen.
-6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada.
+6. Compila la web (Next.js standalone) contra `http://localhost:8012`, en la copia privada, con el buscador encendido (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción; desde el 12 nov).
 7. Solo si todo lo anterior sale bien: la base staging pasa a ser la base de la demo y los ficheros `.tmp` sustituyen a los anteriores.
 
 Si algo falla, el paquete anterior sigue intacto y `make demo-offline` funciona con él.
 
 El resultado se guarda en `data/offline/`, que git ignora:
-- `demo-data.sql.gz`: 41 MB el 11 nov;
+- `demo-data.sql.gz`: 43 MB el 12 nov;
 - `manifest.txt`: fecha, commit, migración y conteos;
 - `web/`: el servidor web listo para arrancar.
 
 - Si la base de origen va por delante del checkout con una migración que no toca las tablas de la demo (por ejemplo, un rol), se puede forzar con `DEMO_OFFLINE_ALLOW_HEAD_MISMATCH=1`.
 - El volcado sale de la base local de desarrollo, que es la que A sincroniza con Supabase. Si se quiere exactamente lo publicado, hay que regenerar justo después de `make supabase-sync PROFILE=demo`.
+  - Si no, las cifras pueden no coincidir con producción. El 12 nov, la base local ya tenía la auditoría de D-216 y Supabase todavía no. El caso de ejemplo daba 33 zonas en el paquete y 32 en producción.
+  - El guion siempre lee las cifras de la pantalla. Aun así, el 23 hay que regenerar después del último sync.
 
 ### Arrancarlo (26 nov, en 1 minuto, sin red)
 
@@ -233,7 +235,12 @@ make demo-offline        # ~7 s: base, API, web y smoke 6/6
 make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
 
-- `start` no construye ni descarga nada (`--no-build`). Comprobado con un navegador headless: 0 peticiones a hosts externos y la consola sin errores.
+- `start` no construye ni descarga nada (`--no-build`).
+- **Sin red, el mapa sale sin fondo.** La web nueva pide el mapa base a `tiles.openfreemap.org` (`apps/web/src/lib/map/style.ts`), y sin Internet ese fondo no llega.
+  - Sí funcionan las zonas coloreadas, el buscador, «¿Y si cambias algo?», «Qué falta» y la lista.
+  - La web enseña arriba el aviso «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.», y la consola registra los fallos de esas teselas.
+  - Comprobado el 12 nov con `--block-external` (ver «Ensayo»).
+  - Para tener fondo sin red, B tendría que hacer configurable el TileJSON y el paquete tendría que servir un extracto local de Madrid. Está propuesto, no hecho.
 - **`start` comprueba el volumen**, no solo el volcado. Si la base no coincide con `manifest.txt` (por ejemplo, porque se borró el volumen de Docker), la restaura desde `demo-data.sql.gz` en unos 11 s. Para eso necesita `uv`, que ya está instalado.
 - **`stop` solo mata su propio servidor web.** Antes comprueba que el pid de `web.pid` sigue siendo el de Next.js. Si algo falla a medias, el script lo dice: «Clean up with: make demo-offline-stop».
 - No hace falta calentarlo. Los procesos quedan arrancados y el propio `make demo-offline` pasa el smoke al terminar, así que la API ya ha respondido una vez.
@@ -243,6 +250,9 @@ make demo-offline-stop   # al terminar; los datos se quedan en el volumen
   - no hace falta Internet.
 - **Si un puerto está ocupado:** `make demo-offline-stop`, o cierra lo que use el 3012, el 8012 o el 5441.
 - **Ensayo:** hazlo el 24–25 con el wifi apagado. Si la web nueva de B usa teselas, fuentes o imágenes externas, lo verás ahí: tienen que venir incluidas en la build.
+  - Con el paquete arrancado, los recorridos del pitch se comprueban solos: `node infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3012 --block-external`.
+  - `--block-external` corta toda petición que no vaya a localhost, como si no hubiera red. El informe lista los hosts cortados.
+  - El 12 nov el único host cortado fue `tiles.openfreemap.org`, y todas las comprobaciones de datos pasaron. Solo falló la de «consola sin errores», por esas teselas.
 
 ## Problemas conocidos
 
