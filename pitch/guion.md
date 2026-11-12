@@ -11,7 +11,7 @@
 - **Textos de los botones:** son los de producción, comprobados en las capturas del 11 nov:
   - buscador: `evidence/gate-06/2026-11-11-deploy/prod-buscador-*.png` y `prod-buscador-check.json` (PR #11);
   - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`. La captura de Puente de Vallecas con gap-0.3 está **pendiente de B**.
-- **Cifras:** las del bloque 2 y del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado.
+- **Cifras:** las del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado. Las del bloque 2 son las del encaje nuevo `fit-0.2` (CORE-009, D-220: el trabajo cuenta en minutos de transporte público), comprobadas en la base local de A; llegan a producción con el próximo despliegue de C (**pendiente de C**). Hasta entonces producción sigue con `fit-0.1` y Ciudad Lineal sale 1.ª.
 - **Buscador:** encendido en producción desde el 11 nov y verificado por C: smoke 7/7, axe AA sin fallos y la consola limpia (`deploy-12-buscador.md`, misma rama y PR). El bloque 2 va con buscador.
 - **El bloque 2 sin buscador queda de reserva.** Sirve solo si la demo vuelve a enseñar «Muy pronto», por ejemplo porque C ha vuelto a una versión sin buscador.
 - **Paquete sin red (`make demo-offline`):** desde el 12 nov compila la web con el buscador encendido, comprobado con y sin red (`infra/deploy/offline/demo_offline.sh`, `evidence/gate-06/2026-11-12-deploy/offline-buscador.md`, `4cc3f84`). Pero sus datos son de `1913393`, de antes de gap-0.3: **pendiente de C** regenerarlo después de gap-0.3, para que Puente de Vallecas salga igual que en producción.
@@ -19,12 +19,12 @@
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
 | 1 | 0:00–0:40 | 40 s | Problema: personas y ayuntamientos deciden a ciegas | 79 | 36 s |
-| 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y «¿Y si cambias algo?» | 186 | 86 s + clics |
+| 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y «¿Y si cambias algo?» | 183 | 84 s + clics |
 | 2 sin buscador (reserva) | 0:40–2:40 | 120 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + clics |
 | 3 | 2:40–3:40 | 60 s | Puente de Vallecas y su lista de lo que falta | 114 | 53 s + clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 43 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
-| **Total** | | **300 s** | | **524 con buscador; 474 sin él** | **Con buscador: 242 s + unos 40 s de clics = unos 18 s de margen. Sin buscador: 219 s + unos 30 s de clics = unos 51 s de margen** |
+| **Total** | | **300 s** | | **521 con buscador; 474 sin él** | **Con buscador: 240 s + unos 40 s de clics = unos 20 s de margen. Sin buscador: 219 s + unos 30 s de clics = unos 51 s de margen** |
 
 ---
 
@@ -60,22 +60,24 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 - colegio a 10 min andando como mucho, obligatorio;
 - le importan, por este orden, los colegios, el transporte y la salud.
 
-**Resultado en producción** (12 nov, tras gap-0.3 y D-216: `POST /api/v1/search` con el fixture; las mismas cifras que la base local de A en `evidence/gate-04/2026-11-12/golden-search.txt`, `golden_family`). Se lee en pantalla, nunca de memoria; el 25 nov se vuelve a comprobar:
+**Resultado con `fit-0.2`** (CORE-009 F3, D-220 §8; base local de A, `evidence/gate-04/2026-11-12/golden-search-commute.txt`, `golden_family`). Llega a producción con el próximo despliegue de C. Se lee en pantalla, nunca de memoria; el 25 nov se vuelve a comprobar en producción:
 - encajan 33 de las 199 zonas (178 municipios y los 21 distritos de Madrid), y en 15 falta algún dato;
-- 1.ª, Ciudad Lineal, 99 %: «Colegio con primaria a 5 min andando», parada a 2 min, centro de salud a 10 min, a 3,2 km en línea recta de Azca y «Alquiler medio ≈ 1.070 €/mes por 77 m²»;
-- 2.ª, Tetuán (98 %); después, Hortaleza y Moratalaz, empatadas al 97 %: no se dice un orden entre ellas. Puente de Vallecas sale 7.ª (96 %) y Chamartín 8.ª (95 %);
+- 1.ª, Fuencarral-El Pardo, 100 %: «Colegio con primaria a 9 min andando», parada a 3 min, centro de salud a 15 min, «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler medio ≈ 1.107 €/mes por 77 m²»;
+- después, Ciudad Lineal (33 min) y Hortaleza (32 min), empatadas al 99 %: no se dice un orden entre ellas. Latina y Moratalaz, 98 %;
+- Puente de Vallecas cumple todo, así que encaja (su puesto con `fit-0.2` se mira tras el despliegue; con `fit-0.1` era 7.ª);
+- antes, con `fit-0.1` (producción del 12 nov): Ciudad Lineal 1.ª (99 %, «a 3,2 km en línea recta de Azca»). Con el tiempo real en transporte, Fuencarral-El Pardo pasa delante: está a 29 min y Ciudad Lineal a 33;
 - «¿Y si cambias algo?»: «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir 150 €/mes no añade ninguna, y la web no enseña las opciones que no suman. Lo que más limita es el colegio a 10 min;
-- casi encajan Moncloa-Aravaca, Ciempozuelos y San Sebastián de los Reyes, que solo fallan por el colegio. Salamanca ya encaja (94 %): D-216 sacó las clínicas privadas del alquiler por distrito.
+- casi encajan San Sebastián de los Reyes, Tres Cantos y Moncloa-Aravaca, que solo fallan por el colegio (`evidence/gate-04/2026-11-12/golden-search-commute.txt`). Salamanca ya encaja: D-216 sacó las clínicas privadas del alquiler por distrito.
 
 <!-- habla:b2:inicio -->
-Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro y ocho años. Trabajan en la Castellana, pueden pagar hasta mil quinientos euros de alquiler y quieren un colegio a diez minutos andando como mucho. No rellenan un formulario: marcan su hogar, lo que les importa y dónde trabajan. La búsqueda sale sola y el mapa se colorea: cuanto más violeta, mejor encaja la zona con esta familia. Encajan [treinta y tres] de [ciento noventa y nueve] zonas. Abro la primera, [Ciudad Lineal]. No le damos una nota sobre cien. Le damos un porcentaje de encaje y, debajo, hechos que cualquiera entiende: [colegio con primaria a cinco minutos andando], [parada a dos minutos]. Y cada hecho dice cuánto nos fiamos del dato. ¿Y si quieren más opciones? Este bloque se llama «¿Y si cambias algo?». Con [cinco minutos más] hasta el colegio salen [diecisiete] zonas más. Y la web les dice qué es lo que más les limita: [el colegio], no el dinero. No le decimos a nadie «gastad más»: le enseñamos sus alternativas y lo que cuesta cada una.
+Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro y ocho años. Trabajan en la Castellana, pueden pagar hasta mil quinientos euros de alquiler y quieren un colegio a diez minutos andando como mucho. No rellenan un formulario: marcan su hogar, lo que les importa y dónde trabajan. La búsqueda sale sola y el mapa se colorea: cuanto más violeta, mejor encaja la zona con esta familia. Encajan [treinta y tres] de [ciento noventa y nueve] zonas. Abro la primera, [Fuencarral-El Pardo]. No le damos una nota sobre cien. Le damos un porcentaje de encaje y, debajo, hechos que cualquiera entiende: [colegio con primaria a nueve minutos andando] y [veintinueve minutos en transporte público hasta su trabajo, llegando a las nueve], con los horarios del Consorcio. Y cada hecho dice cuánto nos fiamos del dato. ¿Y si quieren más opciones? Este bloque se llama «¿Y si cambias algo?». Con [cinco minutos más] hasta el colegio salen [diecisiete] zonas más. Y la web les dice qué es lo que más les limita: [el colegio], no el dinero.
 <!-- habla:b2:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
 |---|---|---|---|
 | 2.1 | Clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (portada) | Se rellena «Tu búsqueda» y la búsqueda sale sola: el mapa en violetas y, a la derecha, «Zonas que encajan» con «Con tu búsqueda tal cual salen 33 zonas.» | Si tarda más de 3 s, seguir hablando del mapa; si no llega, pasar al vídeo (plan B) |
 | 2.2 | Señalar el mapa y su leyenda | «Cumple todo: 33 zonas · No cumple todo: 151 zonas · Sin datos: 15 zonas» | — |
-| 2.3 | Clic en la 1.ª de «Zonas que encajan» y leer dos hechos | Tarjeta de Ciudad Lineal: «99 % de encaje», «La 1.ª que más encaja» y, en «Lo que tienes aquí», «Colegio con primaria a 5 min andando…» y «Parada de transporte público a 2 min andando…», cada uno con «Dato fiable». Si preguntan por el trabajo: «A 3,2 km en línea recta de Paseo de la Castellana (Azca)», con «Dato aproximado»; el tiempo en transporte público llega con CORE-009 | Leer solo el % de encaje y la fiabilidad |
+| 2.3 | Clic en la 1.ª de «Zonas que encajan» y leer dos hechos | Con `fit-0.2`: tarjeta de Fuencarral-El Pardo, «100 % de encaje», «La 1.ª que más encaja» y, en «Lo que tienes aquí», «Colegio con primaria a 9 min andando…» («Dato fiable») y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» («Dato aproximado»: confianza 0,7, horarios programados de un martes). Si producción sigue con `fit-0.1`: Ciudad Lineal, 99 %, y el trabajo «A 3,2 km en línea recta…»; se leen los corchetes tal como salgan y se dice «hasta su trabajo» sin minutos | Leer solo el % de encaje y la fiabilidad |
 | 2.4 | Cerrar la tarjeta (×), bajar hasta «¿Y si cambias algo?» y pulsar «Ver todas las opciones» | «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más» (la única opción: el presupuesto no suma), «Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho» y «En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas.» | Leer solo la opción, que se ve aunque el bloque esté plegado |
 | 2.5 | (Opcional, si va sobrado de tiempo) «Probar así» en la opción del colegio y después «Volver a mi búsqueda» | 50 zonas y el selector a 15 min; al volver, 33 zonas y 10 min | Solo señalar la opción, sin pulsar |
 
@@ -100,7 +102,7 @@ Esta es Vida Fácil: el mapa de toda la Comunidad de Madrid, con sus ciento sete
 ---
 
 ## Bloque 3 · 2:40–3:40 · Qué le falta a una zona real
-**Zona: Puente de Vallecas** (distrito 2807913). Desde el 12 nov la lista mide lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten (D-217, `gap-0.3`; en llano, `pitch/metodologia.md` §1.4). Con ese método, Madrid capital ya no sale FALTA en centros de salud: sale JUSTO (0,95). Puente de Vallecas tiene una FALTA clara que se entiende en una frase, y además sale 7.ª para la familia del bloque 2. Datos reales, comprobados en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913` (`gap-0.3`, `data_version: 2026-11-12`):
+**Zona: Puente de Vallecas** (distrito 2807913). Desde el 12 nov la lista mide lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten (D-217, `gap-0.3`; en llano, `pitch/metodologia.md` §1.4). Con ese método, Madrid capital ya no sale FALTA en centros de salud: sale JUSTO (0,95). Puente de Vallecas tiene una FALTA clara que se entiende en una frase, y además encaja con la familia del bloque 2: cumple todo (con `fit-0.1` salía 7.ª). Datos reales, comprobados en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913` (`gap-0.3`, `data_version: 2026-11-12`):
 - Escuelas infantiles **FALTA**: 2,781 escuelas al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,87 en los «Otros municipios urbanos de la Comunidad de Madrid» (ratio 0,571; `reliable: true`; sin `comparison_group`). En pantalla: «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)».
 - La escuela infantil más cercana está a 6 min o menos desde la mitad de las calles (`min_a_pie_escuela_infantil` = 6,258). Contando escuelas por habitante sale casi lo mismo (2,708): no es un efecto del método.
 - Farmacias **CUBIERTO**: 4,5 frente a 3,1. Colegio, centro de salud y mayores, también CUBIERTO; vivienda, SIN DATOS (la CM no lo publica por distrito).

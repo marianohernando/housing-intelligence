@@ -104,10 +104,10 @@ Sí, por eso Madrid se divide en sus 21 distritos, y lo que se tiene a pie se ca
 - Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211); 2SFCA en la API y en la web desde el 12 nov.
 
 **18. ¿Cómo calculáis el % de encaje?**
-Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.1`).
+Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.2`).
 - Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
 - Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
-- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). El caso de la Castellana da lo mismo que en local: Ciudad Lineal, 99 % (12 nov, `POST /api/v1/search` y `evidence/gate-04/2026-11-12/golden-search.txt`).
+- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.2` (trabajo en minutos de transporte, D-220) el caso de la Castellana da Fuencarral-El Pardo 1.ª, 100 % (`evidence/gate-04/2026-11-12/golden-search-commute.txt`); en producción llega con el próximo despliegue, y hoy da Ciudad Lineal, 99 %.
 
 **19. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
 Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
@@ -119,9 +119,10 @@ Es orientativo y tira a la baja, y lo decimos en cada resultado: la Comunidad pu
 - Si preguntan por qué no usamos anuncios: no hay una fuente oficial y abierta de precios de oferta, y no hacemos scraping (pregunta 35).
 
 **21. ¿Tenéis en cuenta lo que se tarda en llegar al trabajo?**
-Todavía no en tiempo: hoy cuenta la distancia en línea recta desde la zona al trabajo, como preferencia y con confianza 0,5, nunca como condición. Vale 1 hasta 2 km y 0 desde 20 km, y la explicación de cada zona da los kilómetros. El tiempo en transporte público, con los horarios del CRTM que ya tenemos, es el siguiente paso (CORE-009).
-- Evidencia: D-215 (puntos 2 y 5) · `fit.py` (`NEAR_KM, FAR_KM = 2.0, 20.0`).
-- Estado: **pendiente de A** (CORE-009, 19–22 nov). Si llega, cambiar esta respuesta.
+Sí: los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las seis redes del Consorcio, desde cada sección censal hasta las 379 estaciones y el centro de cada zona. En el caso de ejemplo, Fuencarral-El Pardo queda a 29 minutos de la Castellana y Ciudad Lineal a 33. Son horarios programados de un día laborable, no tiempos reales, y donde el horario publicado tiene huecos lo decimos.
+- Evidencia: D-220 · `packages/domain/src/hi_domain/access/transit.py` · `services/features/src/hi_features/commute.py` · `evidence/gate-03/2026-11-12/commute-matrix.md` · `evidence/gate-04/2026-11-12/golden-search-commute.txt`.
+- Límite, si insiste: el GTFS interurbano no trae expediciones de las líneas 720 a 726, y desde 45–50 zonas (Sierra Norte, sureste) no se llega al centro a las 9:00; ahí no hay dato, nunca 0. El paseo hasta la parada va en línea recta con un 30 % de rodeo (D-220 §3 y §6).
+- Estado: hecho en la API (CORE-009 F3, `fit-0.2`). En producción, con el próximo despliegue de C (**pendiente de C**). Si el 25 nov sigue sin desplegar: «Está calculado y llega en el siguiente despliegue; hoy la web aún usa la distancia en línea recta».
 
 **22. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
 Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. En cada fila damos los minutos en los que llega la mitad de las calles de la zona; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.

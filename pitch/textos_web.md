@@ -2,6 +2,10 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**CORE-009 (12 nov, noche): el trabajo cuenta en minutos de transporte público** (D-220, `fit-0.2`). Llega a producción con el próximo despliegue de C:
+- el hecho de la tarjeta lo escribe la API: «33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00»;
+- cambia `trabajo.ayuda` («Miramos cuánto tardarías en transporte público para llegar a las 9:00.»), se quita `trabajo.transporte_pronto` y `trabajo.max_min` queda listo por si B activa el límite.
+
 **PR #18 de B (12 nov, noche).** Aplicados los 4 cambios de la revisión del #17. Además:
 - **CartoCiudad** se cita «© Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es», como pide el IGN. Cambia en `pie.cartociudad` y en `mapa.atribucion`.
 - **Hospitales**, definitivos tal cual: «los hospitales que hemos podido identificar en el Catálogo Nacional de Hospitales del Ministerio de Sanidad; de unos pocos solo sabemos el tipo y el municipio», en «El hospital» y en el límite de las camas (`metodologia.md` §1.4 y §1.8).
@@ -153,10 +157,10 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 |---|---|---|
 | `trabajo.titulo` | Trabajo en | |
 | `trabajo.placeholder` | Escribe una estación, un distrito o un municipio | Sin calles: no hay búsqueda de calles sin un geocodificador externo. Los lugares son las estaciones del CRTM (`/places`) y las zonas del mapa |
-| `trabajo.ayuda` | Así miramos lo lejos que te queda cada zona. | |
+| `trabajo.ayuda` | Miramos cuánto tardarías en transporte público para llegar a las 9:00. | Cambia con `fit-0.2` (CORE-009, D-220), cuando llegue a producción. Hasta entonces, «Así miramos lo lejos que te queda cada zona.» |
 | `trabajo.dias` | ¿Cuántos días vas a la semana? | Opcional (`days_per_week`). Hoy no se muestra: lo rellena el caso de ejemplo (4 días) y la web no deja cambiarlo |
-| `trabajo.max_min` | Tardar como mucho {n} min | **Pendiente de A** (CORE-009, tiempo en transporte público, 19–22 nov). Hasta entonces no se muestra y la web envía el trabajo sin límite (`max_minutes: null`): con límite, ninguna zona pasaría (D-215, punto 2) |
-| `trabajo.transporte_pronto` | Tiempo en transporte: muy pronto | Etiqueta pequeña bajo el campo, en lugar de `trabajo.max_min` |
+| `trabajo.max_min` | Tardar como mucho {n} min en transporte público | CORE-009 hecho en la API (D-220 §8): con límite, cada zona sale cumple, no cumple o sin dato. Hoy la web envía el trabajo sin límite (`max_minutes: null`) y no enseña este campo; si B lo activa tras el despliegue de `fit-0.2`, va este texto |
+| `trabajo.transporte_pronto` | Tiempo en transporte: muy pronto | Etiqueta pequeña bajo el campo. **Se quita** cuando `fit-0.2` llegue a producción: el tiempo en transporte ya está calculado (D-220) |
 | `trabajo.sin_resultados` | No encontramos ese lugar. Prueba con una estación o con el nombre del municipio. | |
 | `trabajo.encontrados` | {n} lugares encontrados. Usa las flechas para elegir uno. | Región viva del combobox. Con 1: «1 lugar encontrado. Usa las flechas para elegirlo.» |
 | `trabajo.lugar.estacion` | {estación} ({tipo}) | {tipo}: «metro», «Cercanías» o «Metro Ligero». Por ejemplo, «Nuevos Ministerios (metro)» |

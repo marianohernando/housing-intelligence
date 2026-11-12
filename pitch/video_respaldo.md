@@ -79,7 +79,7 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 - **Acción:** señalar el mapa ya coloreado y la lista «Zonas que encajan». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio.
 - **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje», «La 1.ª que más encaja» y 5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** hecho en producción. El 12 nov, tras gap-0.3, la 1.ª sigue siendo Ciudad Lineal, con un 99 % (`POST /api/v1/search` con el fixture; antes, `evidence/gate-06/2026-11-11-deploy/prod-buscador-check.json`, PR #11).
+- **Estado:** hecho en producción. El 12 nov la 1.ª es Ciudad Lineal, con un 99 % (`POST /api/v1/search` con el fixture). Con `fit-0.2` (CORE-009, D-220), que llega con el próximo despliegue de C, la 1.ª pasa a ser Fuencarral-El Pardo, con un 100 % y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» (`evidence/gate-04/2026-11-12/golden-search-commute.txt`). Se graba el 23 nov con lo que salga en pantalla.
 
 <!-- voz:p3:inicio -->
 La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
