@@ -79,7 +79,7 @@ Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar
 - **Acción:** señalar el mapa ya coloreado y la lista «Zonas que encajan». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio.
 - **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», y la tarjeta de la zona con «[pct] % de encaje», «La 1.ª que más encaja» y 5 hechos con su fiabilidad.
 - **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** hecho en producción. El 12 nov la 1.ª es Ciudad Lineal, con un 99 % (`POST /api/v1/search` con el fixture). Con `fit-0.2` (CORE-009, D-220), que llega con el próximo despliegue de C, la 1.ª pasa a ser Fuencarral-El Pardo, con un 100 % y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» (`evidence/gate-04/2026-11-12/golden-search-commute.txt`). Se graba el 23 nov con lo que salga en pantalla.
+- **Estado:** hecho en producción. Desde el despliegue del 12 nov (`28a0f2f`, `fit-0.3`, con el trabajo en minutos de transporte público de D-220), la 1.ª es Fuencarral-El Pardo, con un 100 % y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» (`POST /api/v1/search` con el fixture; `evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`). Se graba el 23 nov con lo que salga en pantalla.
 
 <!-- voz:p3:inicio -->
 La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
@@ -133,7 +133,7 @@ Y lo que le falta. Medimos lo que la gente tiene a quince minutos andando y lo c
   - vidafacil-madrid.vercel.app
   - github.com/marianohernando/housing-intelligence · Código abierto (Apache-2.0)
   - [N] conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid
-- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; 23 en producción el 12 nov, igual que `pitch/datasets_cm.md`).
+- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; 26 en producción el 12 nov, igual que `pitch/datasets_cm.md`).
 
 <!-- voz:p8:inicio -->
 [N] conjuntos de datos abiertos de la Comunidad de Madrid, con control de calidad y código abierto. Vida Fácil: encuentra tu sitio en Madrid.

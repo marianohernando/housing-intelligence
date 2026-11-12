@@ -52,7 +52,7 @@ Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes n
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
-- la slide 2 cuenta 23 datasets CM (los dos de camas son del 12 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- la slide 2 cuenta 26 datasets CM (los dos de camas y las tres topologías del CRTM con la accesibilidad de las estaciones son del 12 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
 
 Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias», con la lista de lo que se rehace tras gap-0.3).
 

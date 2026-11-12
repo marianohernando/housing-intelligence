@@ -1,6 +1,6 @@
 # Revisión de 10 zonas: la demo frente a la fuente oficial
 
-Comprobación a mano del 12 nov (fase de prueba y calidad, `~/Desktop/DATAMAD/prompts/FASE_PRUEBAS.md`, línea D, tarea 2). Para cada zona se compara lo que dice la demo en producción con la fuente oficial: colegios, centros de salud, farmacias, población y alquiler. Las discrepancias van numeradas (D1…) para la auditoría de datos de A (T1). Las notas de método (M1…) van para el trabajo de capacidad (T2).
+Comprobación a mano del 12 nov (fase de prueba y calidad, `FASE_PRUEBAS.md`, línea D, tarea 2). Para cada zona se compara lo que dice la demo en producción con la fuente oficial: colegios, centros de salud, farmacias, población y alquiler. Las discrepancias van numeradas (D1…) para la auditoría de datos de A (T1). Las notas de método (M1…) van para el trabajo de capacidad (T2).
 
 **Resultado en una línea:** en las 10 zonas, la demo cuenta lo mismo que la fuente salvo en un caso. Al recontar la fuente oficial con los mismos filtros, cuadran todas las cifras de 9 de las 10 zonas. La excepción es Madrid capital: le faltan 4 centros de salud, 1 colegio y 3 farmacias, porque la fuente no trae sus coordenadas o las trae mal. El mismo fallo aparece fuera de la muestra, y ahí sí cambia lo que ve una persona: Alcalá de Henares saldría CUBIERTO y no JUSTO en centros de salud, y Navalafuente y Villar del Olmo aparecen sin colegio o sin centro de salud cuando sí los tienen.
 

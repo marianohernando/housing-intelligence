@@ -8,7 +8,7 @@
 
 **Perfiles:** salen de `docs/09_datamad/25_plan_competicion.md` §4. Lo que valora cada miembro del jurado es una inferencia a partir de su trayectoria pública.
 
-> Las decisiones del 11 y el 12 nov están registradas como D-199 a D-218 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
+> Las decisiones del 11 y el 12 nov están registradas como D-199 a D-224 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
@@ -46,7 +46,7 @@ Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, re
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
-Por el trabajo que hay encima: cruzar 23 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
+Por el trabajo que hay encima: cruzar 26 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
 - Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md` · `evidence/gate-01/2026-11-10/idempotent-rerun.txt`.
 
 **8. ¿La licencia de los datos permite un uso comercial?**
@@ -104,10 +104,10 @@ Sí, por eso Madrid se divide en sus 21 distritos, y lo que se tiene a pie se ca
 - Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211); 2SFCA en la API y en la web desde el 12 nov.
 
 **18. ¿Cómo calculáis el % de encaje?**
-Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.2`).
+Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.3` en producción).
 - Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
 - Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
-- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.2` (trabajo en minutos de transporte, D-220) el caso de la Castellana da Fuencarral-El Pardo 1.ª, 100 % (`evidence/gate-04/2026-11-12/golden-search-commute.txt`); en producción llega con el próximo despliegue, y hoy da Ciudad Lineal, 99 %.
+- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Desde el despliegue del 12 nov (`28a0f2f`, `fit-0.3`, con el trabajo en minutos de transporte de D-220), `POST /api/v1/search` con el caso de la Castellana da Fuencarral-El Pardo 1.ª, 100 %, y Ciudad Lineal y Hortaleza, 99 % (`evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`).
 
 **19. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
 Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
@@ -122,7 +122,7 @@ Es orientativo y tira a la baja, y lo decimos en cada resultado: la Comunidad pu
 Sí: los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las seis redes del Consorcio, desde cada sección censal hasta las 379 estaciones y el centro de cada zona. En el caso de ejemplo, Fuencarral-El Pardo queda a 29 minutos de la Castellana y Ciudad Lineal a 33. Son horarios programados de un día laborable, no tiempos reales, y donde el horario publicado tiene huecos lo decimos.
 - Evidencia: D-220 · `packages/domain/src/hi_domain/access/transit.py` · `services/features/src/hi_features/commute.py` · `evidence/gate-03/2026-11-12/commute-matrix.md` · `evidence/gate-04/2026-11-12/golden-search-commute.txt`.
 - Límite, si insiste: el GTFS interurbano no trae expediciones de las líneas 720 a 726, y desde 45–50 zonas (Sierra Norte, sureste) no se llega al centro a las 9:00; ahí no hay dato, nunca 0. El paseo hasta la parada va en línea recta con un 30 % de rodeo (D-220 §3 y §6).
-- Estado: hecho en la API (CORE-009 F3, `fit-0.2`). En producción, con el próximo despliegue de C (**pendiente de C**). Si el 25 nov sigue sin desplegar: «Está calculado y llega en el siguiente despliegue; hoy la web aún usa la distancia en línea recta».
+- Estado: hecho y en producción desde el 12 nov (despliegue de `28a0f2f`, `evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`): el caso de ejemplo da «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» en Fuencarral-El Pardo.
 
 **22. ¿Cómo medís «a 10 minutos andando»? ¿A qué velocidad?**
 Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el estudio «El Madrid de los 15 minutos» del Ayuntamiento. En cada fila damos los minutos en los que llega la mitad de las calles de la zona; si una zona no tiene calles en el mapa, sale «sin datos», nunca cero. Lo comprobamos con 15 casos de lugares conocidos: por ejemplo, La Acebeda no tiene farmacia y la más cercana queda a más de hora y media andando.
@@ -134,9 +134,9 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
 **23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
-23 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
-- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (23 en producción, 12 nov).
-- Si insiste en cuáles se ven: 21 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**.
+26 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
+- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (26 en producción, 12 nov).
+- Si insiste en cuáles se ven: 24 alimentan la lista o el buscador; los 2 de camas (12 nov) dan el total de la región, y su uso en pantalla está **pendiente de A**. De esos 24, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», que llega a producción con el próximo despliegue (**pendiente de C**).
 
 **24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
@@ -196,19 +196,26 @@ Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen re
 - Evidencia: `CLAUDE.md` §15 · D-175 y D-185 (Google Maps y Gosom descartados) · bases §6.
 
 **36. ¿Incluís seguridad? Es delicado.**
-Solo si la persona la marca como prioridad y solo con datos oficiales agregados: actuaciones de la Policía Municipal por cada 1.000 habitantes y por distrito. Nunca nacionalidad ni etiquetas como «peligroso»; fuera de Madrid capital, SIN DATOS.
-- Evidencia: D-204 y D-205.
-- Estado: extra **pendiente de A** (DATA-020, 19–22 nov). Si no está, decir «no lo incluimos todavía, y así es como lo haríamos».
+No la puntuamos, y es una decisión. El dato oficial que evaluamos, los hechos conocidos de infracciones penales por cada 1.000 habitantes, cuenta dónde se denuncia o dónde actúa la policía, no dónde se vive: en 2024, Humanes de Madrid daba 116,2 y Madrid 58,6, frente a 47,9 de referencia, y ordenar zonas así señalaría municipios por la actividad que reciben. Además, solo cubre 36 de las 199 zonas y ninguno de los distritos de Madrid.
+- Evidencia: D-224 · `evidence/gate-01/2026-11-12/seguridad-evaluacion.md` · D-204 y D-205 (nunca nacionalidad ni etiquetas como «peligroso»).
+- Si insiste: como mucho, la tasa se enseñaría como contexto en esos 36 municipios, con su cifra, su referencia, el año y el aviso del denominador, sin puntuar ni ordenar. Esa opción está abierta (D-224 §3). A está mirando también los datos de la Policía Municipal por distrito y los de seguridad vial, solo como contexto (**pendiente de A**).
+- Estado: decidido (D-224). La prioridad «Seguridad» no puntúa.
 
-**37. ¿Funciona fuera de la Comunidad de Madrid?**
+**37. ¿Sirve para alguien que no puede subir escaleras?**
+Sí, si lo marca: «Sin escaleras» puntúa los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el Consorcio da como totalmente accesible, y nunca se deduce ni se etiqueta a nadie. Es una aproximación declarada: no mide autobuses, aceras, portales ni ascensores, y la tarjeta lo dice cuando no hay ninguna estación así a un paseo. En Madrid capital va de 6,8 minutos en Chamberí a 25,5 en Usera.
+- Evidencia: D-223 · `evidence/gate-01/2026-11-12/estaciones-accesibles.md` · las 3 topologías del CRTM en el portal CM (`pitch/datasets_cm.md`, 24 a 26) · `evidence/gate-04/2026-11-12/golden-search-sin-escaleras.txt`.
+- Si insiste en el grado: el CRTM no publica qué significa cada grado. Leemos T como accesibilidad total porque las 57 estaciones de Metro Ligero son T y la Comunidad dice que toda esa red es accesible; P y N no cuentan (D-223 §3). El `wheelchair_boarding` del GTFS no se usa porque no sigue el estándar (D-223 §4).
+- Estado: hecho en la API (`fit-0.4`) y en la web (PR #26 de B). En producción, con el próximo despliegue (**pendiente de C**).
+
+**38. ¿Funciona fuera de la Comunidad de Madrid?**
 La arquitectura sí: añadir un dataset es añadir un YAML de pipeline, y la geografía se basa en códigos INE. Lo que haría falta en otra región es su portal de datos con equivalentes.
 - Evidencia: `data/catalog/pipelines/` · `README.md` (Quickstart).
 
-**38. ¿Es accesible para personas mayores?**
+**39. ¿Es accesible para personas mayores?**
 Está pensada para ellas: español llano, texto base de 17 px, botones de 44 px y contraste AA verificado también sobre el cristal. El estado de cada fila nunca depende solo del color: siempre va con texto e icono.
-- Evidencia: `~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` · axe WCAG 2.2 AA en producción sin fallos (`prod-buscador-check.json`, PR #11).
+- Evidencia: `DISENO_VIDA_FACIL.md` · `apps/web/src/lib/__tests__/tokens.test.ts` · axe WCAG 2.2 AA en producción sin fallos (`prod-buscador-check.json`, PR #11).
 - Estado: hecho. axe AA da 0 fallos en producción (11 nov): en escritorio, en la portada, los resultados, la tarjeta de zona y la compra; en el móvil, en los resultados y la tarjeta.
 
-**39. ¿Por qué «Vida Fácil»?**
+**40. ¿Por qué «Vida Fácil»?**
 Porque es corto, en español y fácil de recordar para cualquiera, también para personas mayores. Comprobamos que no choca con ninguna marca del sector de la vivienda.
 - Evidencia: D-199 · consulta de TMview (OEPM + EUIPO) del 11 nov en el PR #3.

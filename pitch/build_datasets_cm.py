@@ -272,7 +272,8 @@ def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
     ]
     for dataset, gate, portal in cm_own:
         out += dataset_block(catalog, dataset, gate, portal)
-    out += [f"## 2. Portal CM: GTFS del CRTM con ficha en el portal ({len(cm_partner)})", ""]
+    partner_title = "## 2. Portal CM: horarios y estaciones del CRTM con ficha en el portal"
+    out += [f"{partner_title} ({len(cm_partner)})", ""]
     for dataset, gate, portal in cm_partner:
         out += dataset_block(catalog, dataset, gate, portal)
     out += [

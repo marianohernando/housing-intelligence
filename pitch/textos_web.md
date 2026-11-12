@@ -2,6 +2,15 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Revisión del PR #26 de B (12 nov, noche): chip «Sin escaleras» (D-223) y seguridad (D-224).**
+- `importa.sin_escaleras`: queda **definitiva tal cual** la ayuda de B, «Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.». Usa las mismas palabras que el hecho de la API y nombra la fuente.
+- **Icono:** propongo `TrainFront` (lucide) en vez de `Accessibility`.
+  - El símbolo de la silla de ruedas convierte una preferencia en una etiqueta de discapacidad (D-204 y la regla de arriba).
+  - Además, deja fuera a quien también busca una estación sin escaleras, como quien va con carrito, una persona mayor o alguien con maletas.
+  - El tren dice lo que se mide: la estación. El texto del chip ya dice «sin escaleras».
+- `importa.pronto_lista`: hoy dice «Muy pronto: zonas verdes y seguridad.». Va **«Muy pronto: zonas verdes.»**, porque la seguridad no va a puntuar (D-224) y no se promete. Cuando la web enseñe el chip de zonas verdes, la línea se quita.
+- **Texto del CRTM de A** (`555c2b4`): bien. Añade «hasta las estaciones accesibles» y «grados de accesibilidad», que son las 3 topologías del CRTM (D-223). Sigue diciendo qué va en bruto (los nombres de las estaciones) y qué va explotado (los minutos), como pide la licencia. En la web, `ATTRIBUTIONS_FALLBACK` y el fixture ya lo tienen igual.
+
 **Revisión del PR #22 de B (12 nov, noche): atribución plegada en móvil.** En la portada y en la vista de zona no hay pie, y en móvil las citas quedan detrás de un botón (i).
 - `mapa.fuentes`, el nombre del (i): B propone «Fuentes y licencias del mapa». Va «Fuentes y licencias de los datos», porque lo que se abre cita las fuentes de toda la pantalla, también las de la hoja, y no solo las del mapa.
 - **El (i) basta para 4 de las 6 fuentes:**
@@ -158,10 +167,11 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `importa.transporte` | Transporte | Paradas cerca de casa y con autobuses o trenes a menudo. | |
 | `importa.salud` | Salud | Centro de salud cerca de casa. | |
 | `importa.colegios` | Colegios | Colegios con primaria, públicos o concertados, cerca de casa. | Los mismos que cuenta la fila de colegios (GAP-001 F2) |
-| `importa.zonas_verdes` | Zonas verdes | Parques y jardines cerca de casa. | **Pendiente de A** (DATA-018, 19–22 nov). Mientras no exista, el chip va desactivado con `importa.pronto` |
-| `importa.seguridad` | Seguridad | Actuaciones policiales registradas por cada 1.000 habitantes. Solo hay datos de Madrid capital. | Texto neutro del brief. **Pendiente de A** (DATA-020) |
-| `importa.sin_escaleras` | Sin escaleras | Estaciones de metro y Cercanías con acceso sin escaleras y edificios públicos accesibles. | Opcional (D-204). **Pendiente de A** (DATA-019) |
+| `importa.zonas_verdes` | Zonas verdes | Parques de una hectárea o más, cerca de casa. | Cambia el 12 nov: los jardines pequeños no cuentan (D-222 §2). En la API desde `fit-0.3`, desplegado el 12 nov, con el hecho «Parque urbano a N min andando desde la mitad de sus calles». La web aún no enseña el chip: **pendiente de B** |
+| `importa.seguridad` | — | — | **No hay chip** (D-224): la tasa oficial de hechos conocidos cuenta dónde se denuncia, no dónde se vive, y solo cubre 36 de las 199 zonas. No se promete en `importa.pronto_lista`. La explicación va en «Cómo lo calculamos» (`metodologia.md` §1.8). Si Mariano abre la opción de D-224 §3, iría como contexto en la vista de zona, nunca como chip |
+| `importa.sin_escaleras` | Sin escaleras | Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa. | Opcional y sin marcar (D-204, D-223). Definitiva el 12 nov (PR #26 de B). Icono: `TrainFront`, no la silla de ruedas. Hechos de la API: «Estación de metro o tren accesible (sin escaleras) a N min andando desde la mitad de sus calles» y «Sin estación de metro o tren accesible a un paseo (no mide autobuses, aceras ni portales)». En producción con el próximo despliegue (**pendiente de C**) |
 | `importa.pronto` | Muy pronto | Etiqueta pequeña del chip desactivado. Ayuda: «Estamos añadiendo estos datos.» | |
+| `importa.pronto_lista` | Muy pronto: zonas verdes. | Línea bajo los chips | La seguridad no entra (D-224). Se quita cuando la web enseñe el chip de zonas verdes. Revisión del PR #26 |
 | `importa.orden` | Lo más importante para ti: {lista} | Resumen con la tarjeta plegada |
 
 ### «Trabajo en»
@@ -520,7 +530,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 
 | Clave | Texto | Enlace | Notas |
 |---|---|---|---|
-| `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`: 23 en producción el 12 nov. Cambia el 12 nov: los 6 del CRTM ya están dentro de {n}, y el Ministerio de Sanidad se usa desde D-218 |
+| `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`: 26 en producción el 12 nov (con las 3 topologías del CRTM, D-223). Cambia el 12 nov: los 6 del CRTM ya están dentro de {n}, y el Ministerio de Sanidad se usa desde D-218 |
 | `pie.cm` | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. | https://datos.comunidad.madrid | |
 | `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas y en transporte público, que calcula Vida Fácil con sus paradas y horarios. | https://www.crtm.es | Obligatorio con enlace. La licencia (§2.2) pide decir si los datos son en bruto o explotados. El `attribution_text` del catálogo, que es lo que enseña la web, dice «Datos en bruto / explotados según el caso» y no dice cuál: **pendiente de A** cambiarlo por este texto en `data/catalog/sources/crtm_open_data.yaml`. Cambia el 12 nov (revisión del PR #22) por el trabajo en minutos de transporte público (D-220) |
 | `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. | https://datos.madrid.es | En uso desde DATA-012 (padrón y panel de distritos). Condiciones vigentes: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); no fijan un texto de cita, así que se usa el `attribution_text` del catálogo con la licencia añadida |

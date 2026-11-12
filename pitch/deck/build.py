@@ -91,6 +91,9 @@ SHORT_NAMES = {
     "crtm_gtfs_emt": "EMT",
     "crtm_gtfs_autobuses_urbanos": "Autobuses urbanos",
     "crtm_gtfs_interurbanos": "Interurbanos",
+    "crtm_topologia_metro": "Accesibilidad del metro",
+    "crtm_topologia_metro_ligero": "Accesibilidad del Metro Ligero",
+    "crtm_topologia_cercanias": "Accesibilidad de Cercanías",
 }
 # (text token, background, minimum ratio, where it is used). "glass@X" = glass blended over X.
 CONTRAST_CHECKS = [

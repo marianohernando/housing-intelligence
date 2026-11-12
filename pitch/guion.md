@@ -10,11 +10,11 @@
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
 - **Textos de los botones:** son los de producción, comprobados en las capturas del 11 nov:
   - buscador: `evidence/gate-06/2026-11-11-deploy/prod-buscador-*.png` y `prod-buscador-check.json` (PR #11);
-  - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`. La captura de Puente de Vallecas con gap-0.3 está **pendiente de B**.
-- **Cifras:** las del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado. Las del bloque 2 son las del encaje nuevo `fit-0.2` (CORE-009, D-220: el trabajo cuenta en minutos de transporte público), comprobadas en la base local de A; llegan a producción con el próximo despliegue de C (**pendiente de C**). Hasta entonces producción sigue con `fit-0.1` y Ciudad Lineal sale 1.ª.
+  - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`. La de Puente de Vallecas con gap-0.3 la hizo B en el PR #17 (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`).
+- **Cifras:** las del bloque 3 se comprobaron en producción el 12 nov, con gap-0.3 (D-217) ya desplegado. Las del bloque 2 se comprobaron en producción el 12 nov, tras el despliegue de `28a0f2f` (`fit-0.3`, con el trabajo en minutos de transporte público de D-220): `POST /api/v1/search` con el caso de ejemplo da lo mismo que la base local de A (`evidence/gate-04/2026-11-12/golden-search-commute.txt`).
 - **Buscador:** encendido en producción desde el 11 nov y verificado por C: smoke 7/7, axe AA sin fallos y la consola limpia (`deploy-12-buscador.md`, misma rama y PR). El bloque 2 va con buscador.
 - **El bloque 2 sin buscador queda de reserva.** Sirve solo si la demo vuelve a enseñar «Muy pronto», por ejemplo porque C ha vuelto a una versión sin buscador.
-- **Paquete sin red (`make demo-offline`):** desde el 12 nov compila la web con el buscador encendido, comprobado con y sin red (`infra/deploy/offline/demo_offline.sh`, `evidence/gate-06/2026-11-12-deploy/offline-buscador.md`, `4cc3f84`). Pero sus datos son de `1913393`, de antes de gap-0.3: **pendiente de C** regenerarlo después de gap-0.3, para que Puente de Vallecas salga igual que en producción.
+- **Paquete sin red (`make demo-offline`):** desde el 12 nov compila la web con el buscador encendido, comprobado con y sin red (`infra/deploy/offline/demo_offline.sh`, `evidence/gate-06/2026-11-12-deploy/offline-buscador.md`, `4cc3f84`). C lo regeneró el 12 nov con `28a0f2f` y el fondo de calles sin red. Los recorridos del pitch pasan 66/66 y 40/40 sin red. La búsqueda del caso de ejemplo y «Qué falta» de Madrid, Chamartín y Fuencarral-El Pardo dan lo mismo que producción (`evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`).
 
 | Bloque | Tiempo | Duración | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|
@@ -22,13 +22,13 @@
 | 2 | 0:40–2:40 | 120 s | Demo: una familia busca dónde vivir → zonas, el porqué y «¿Y si cambias algo?» | 183 | 84 s + clics |
 | 2 sin buscador (reserva) | 0:40–2:40 | 120 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + clics |
 | 3 | 2:40–3:40 | 60 s | Puente de Vallecas y su lista de lo que falta | 114 | 53 s + clics |
-| 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 43 s |
+| 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 100 | 46 s |
 | 5 | 4:30–5:00 | 30 s | Impacto y cierre | 50 | 23 s |
-| **Total** | | **300 s** | | **521 con buscador; 474 sin él** | **Con buscador: 240 s + unos 40 s de clics = unos 20 s de margen. Sin buscador: 219 s + unos 30 s de clics = unos 51 s de margen** |
+| **Total** | | **300 s** | | **526 con buscador; 479 sin él** | **Con buscador: 243 s + unos 40 s de clics = unos 17 s de margen. Sin buscador: 221 s + unos 30 s de clics = unos 49 s de margen** |
 
 ---
 
-> Las decisiones del 11 nov están registradas como D-199 a D-207 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`~/Desktop/DATAMAD/prompts/DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
+> Las decisiones del 11 nov están registradas como D-199 a D-207 (`docs/00_index/01_decisions_log.md`). El brief de diseño (`DISENO_VIDA_FACIL.md`, adoptado por D-201) sigue fuera del repo: se cita como documento interno, no como evidencia pública.
 
 ## Antes de empezar (en la sala, 13:30–17:00)
 1. Portátil con cargador, wifi del evento probada, HDMI probado y resolución 1920 × 1080 (`docs/09_datamad/25_plan_competicion.md` §9).
@@ -60,12 +60,12 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 - colegio a 10 min andando como mucho, obligatorio;
 - le importan, por este orden, los colegios, el transporte y la salud.
 
-**Resultado con `fit-0.2`** (CORE-009 F3, D-220 §8; base local de A, `evidence/gate-04/2026-11-12/golden-search-commute.txt`, `golden_family`). Llega a producción con el próximo despliegue de C. Se lee en pantalla, nunca de memoria; el 25 nov se vuelve a comprobar en producción:
+**Resultado en producción** (12 nov, `fit-0.3`, con el trabajo en minutos de transporte público de D-220): `POST /api/v1/search` con el fixture da lo mismo que `evidence/gate-04/2026-11-12/golden-search-commute.txt` (`golden_family`). Se lee en pantalla, nunca de memoria. El 25 nov se vuelve a comprobar en producción:
 - encajan 33 de las 199 zonas (178 municipios y los 21 distritos de Madrid), y en 15 falta algún dato;
 - 1.ª, Fuencarral-El Pardo, 100 %: «Colegio con primaria a 9 min andando», parada a 3 min, centro de salud a 15 min, «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «Alquiler medio ≈ 1.107 €/mes por 77 m²»;
 - después, Ciudad Lineal (33 min) y Hortaleza (32 min), empatadas al 99 %: no se dice un orden entre ellas. Latina y Moratalaz, 98 %;
-- Puente de Vallecas cumple todo, así que encaja (su puesto con `fit-0.2` se mira tras el despliegue; con `fit-0.1` era 7.ª);
-- antes, con `fit-0.1` (producción del 12 nov): Ciudad Lineal 1.ª (99 %, «a 3,2 km en línea recta de Azca»). Con el tiempo real en transporte, Fuencarral-El Pardo pasa delante: está a 29 min y Ciudad Lineal a 33;
+- Puente de Vallecas cumple todo: sale 7.ª, con un 98 %;
+- antes, con la distancia en línea recta (`fit-0.1`), Ciudad Lineal salía 1.ª (99 %, «a 3,2 km en línea recta de Azca»). Con el tiempo real en transporte, Fuencarral-El Pardo pasa delante: está a 29 min y Ciudad Lineal a 33;
 - «¿Y si cambias algo?»: «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más». Subir 150 €/mes no añade ninguna, y la web no enseña las opciones que no suman. Lo que más limita es el colegio a 10 min;
 - casi encajan San Sebastián de los Reyes, Tres Cantos y Moncloa-Aravaca, que solo fallan por el colegio (`evidence/gate-04/2026-11-12/golden-search-commute.txt`). Salamanca ya encaja: D-216 sacó las clínicas privadas del alquiler por distrito.
 
@@ -77,7 +77,7 @@ Esta es Vida Fácil. Abro el caso de ejemplo: una pareja con dos hijos de cuatro
 |---|---|---|---|
 | 2.1 | Clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (portada) | Se rellena «Tu búsqueda» y la búsqueda sale sola: el mapa en violetas y, a la derecha, «Zonas que encajan» con «Con tu búsqueda tal cual salen 33 zonas.» | Si tarda más de 3 s, seguir hablando del mapa; si no llega, pasar al vídeo (plan B) |
 | 2.2 | Señalar el mapa y su leyenda | «Cumple todo: 33 zonas · No cumple todo: 151 zonas · Sin datos: 15 zonas» | — |
-| 2.3 | Clic en la 1.ª de «Zonas que encajan» y leer dos hechos | Con `fit-0.2`: tarjeta de Fuencarral-El Pardo, «100 % de encaje», «La 1.ª que más encaja» y, en «Lo que tienes aquí», «Colegio con primaria a 9 min andando…» («Dato fiable») y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» («Dato aproximado»: confianza 0,7, horarios programados de un martes). Si producción sigue con `fit-0.1`: Ciudad Lineal, 99 %, y el trabajo «A 3,2 km en línea recta…»; se leen los corchetes tal como salgan y se dice «hasta su trabajo» sin minutos | Leer solo el % de encaje y la fiabilidad |
+| 2.3 | Clic en la 1.ª de «Zonas que encajan» y leer dos hechos | Tarjeta de Fuencarral-El Pardo, «100 % de encaje», «La 1.ª que más encaja» y, en «Lo que tienes aquí», «Colegio con primaria a 9 min andando…» («Dato fiable») y «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» («Dato aproximado»: confianza 0,7, horarios programados de un martes). Si sale otra zona, se leen los corchetes tal como salgan | Leer solo el % de encaje y la fiabilidad |
 | 2.4 | Cerrar la tarjeta (×), bajar hasta «¿Y si cambias algo?» y pulsar «Ver todas las opciones» | «+5 min a pie hasta colegio con primaria: saldrían 50 zonas, 17 más» (la única opción: el presupuesto no suma), «Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho» y «En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas.» | Leer solo la opción, que se ve aunque el bloque esté plegado |
 | 2.5 | (Opcional, si va sobrado de tiempo) «Probar así» en la opción del colegio y después «Volver a mi búsqueda» | 50 zonas y el selector a 15 min; al volver, 33 zonas y 10 min | Solo señalar la opción, sin pulsar |
 
@@ -95,14 +95,14 @@ Esta es Vida Fácil: el mapa de toda la Comunidad de Madrid, con sus ciento sete
 | 2s.1 | Señalar el mapa de la región | Los 179 municipios y los 21 distritos | — |
 | 2s.2 | Clic en un distrito (propuesta: Chamartín, el de la captura C5) | Vuelo de cámara y zona en 3D con etiquetas de cristal; tarjeta «Qué falta aquí» con «A pie: N min» | Sin 3D: seguir en 2D y quitar «en tres dimensiones» |
 | 2s.3 | Leer los minutos a pie del centro de salud en la tarjeta | «A pie: [N] min» (`zona.falta.a_pie`; mediana de las calles a 4 km/h, D-211) | Saltar la frase de los minutos |
-| 2s.4 | Clic en «Cómo lo calculamos» o en la fuente de una fila | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: 23 conjuntos de la Comunidad de Madrid…» |
+| 2s.4 | Clic en «Cómo lo calculamos» o en la fuente de una fila | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: 26 conjuntos de la Comunidad de Madrid…» |
 
 **Fuentes:** 179 municipios y 21 distritos: D-200 · D-209. Paso de 4 km/h, el del estudio «El Madrid de los 15 minutos» del Ayuntamiento: D-211. Captura de referencia: `evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png` (producción, MAP-004).
 
 ---
 
 ## Bloque 3 · 2:40–3:40 · Qué le falta a una zona real
-**Zona: Puente de Vallecas** (distrito 2807913). Desde el 12 nov la lista mide lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten (D-217, `gap-0.3`; en llano, `pitch/metodologia.md` §1.4). Con ese método, Madrid capital ya no sale FALTA en centros de salud: sale JUSTO (0,95). Puente de Vallecas tiene una FALTA clara que se entiende en una frase, y además encaja con la familia del bloque 2: cumple todo (con `fit-0.1` salía 7.ª). Datos reales, comprobados en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913` (`gap-0.3`, `data_version: 2026-11-12`):
+**Zona: Puente de Vallecas** (distrito 2807913). Desde el 12 nov la lista mide lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten (D-217, `gap-0.3`; en llano, `pitch/metodologia.md` §1.4). Con ese método, Madrid capital ya no sale FALTA en centros de salud: sale JUSTO (0,95). Puente de Vallecas tiene una FALTA clara que se entiende en una frase, y además encaja con la familia del bloque 2: cumple todo y sale 7.ª en el bloque 2. Datos reales, comprobados en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913` (`gap-0.3`, `data_version: 2026-11-12`):
 - Escuelas infantiles **FALTA**: 2,781 escuelas al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,87 en los «Otros municipios urbanos de la Comunidad de Madrid» (ratio 0,571; `reliable: true`; sin `comparison_group`). En pantalla: «2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)».
 - La escuela infantil más cercana está a 6 min o menos desde la mitad de las calles (`min_a_pie_escuela_infantil` = 6,258). Contando escuelas por habitante sale casi lo mismo (2,708): no es un efecto del método.
 - Farmacias **CUBIERTO**: 4,5 frente a 3,1. Colegio, centro de salud y mayores, también CUBIERTO; vivienda, SIN DATOS (la CM no lo publica por distrito).
@@ -125,10 +125,10 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 ---
 
 ## Bloque 4 · 3:40–4:30 · Datos, código abierto y quién paga
-**Pantalla:** la slide 2 en «Veintitrés conjuntos…» y la slide 3 en «¿Quién paga?».
+**Pantalla:** la slide 2 en «Veintiséis conjuntos…» y la slide 3 en «¿Quién paga?».
 
 <!-- habla:b4:inicio -->
-¿Con qué datos? Veintitrés conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias y las seis redes de transporte del Consorcio. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Las empresas: promotoras, comercios o residencias quieren saber qué falta en cada zona y pagan por análisis agregados y por la API. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
+¿Con qué datos? Veintiséis conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias, las seis redes de transporte del Consorcio y la accesibilidad de sus estaciones. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Las empresas: promotoras, comercios o residencias quieren saber qué falta en cada zona y pagan por análisis agregados y por la API. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
 <!-- habla:b4:fin -->
 
 **Fuentes de lo que se dice:**

@@ -3,7 +3,7 @@
 > Fichero generado: no se edita a mano. Se regenera con `uv run python pitch/build_datasets_cm.py`.
 > Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-11).
 
-**23 datasets del Portal de Datos Abiertos de la Comunidad de Madrid, 23 con Quality Gate 1 en PASS:** 17 publicados por la Comunidad y su Instituto de Estadística, y 6 del Consorcio Regional de Transportes que también tienen ficha en el portal (D-196).
+**26 datasets del Portal de Datos Abiertos de la Comunidad de Madrid, 26 con Quality Gate 1 en PASS:** 17 publicados por la Comunidad y su Instituto de Estadística, y 9 del Consorcio Regional de Transportes que también tienen ficha en el portal (D-196).
 
 Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.catalog.provenance.is_cm_open_data`). El resto es complementario.
 
@@ -28,12 +28,15 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 | 15 | [Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) | Instituto de Estadística | PASS 2026-11-10 |
 | 16 | [Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada) | Instituto de Estadística | PASS 2026-10-22 |
 | 17 | [Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia) | Instituto de Estadística | PASS 2026-11-10 |
-| 18 | [Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-10 |
-| 19 | [Oferta planificada de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-10 |
-| 20 | [Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-10 |
-| 21 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-10 |
-| 22 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-10 |
-| 23 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-10 |
+| 18 | [Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 19 | [Oferta planificada de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 20 | [Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 21 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 22 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 23 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 24 | [Topología de la Red de Cercanías Madrid: estaciones y su grado de accesibilidad](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 25 | [Topología de la Red de Metro: estaciones y su grado de accesibilidad](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 26 | [Topología de la Red de Metro Ligero / Tranvía: estaciones y su grado de accesibilidad](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
 
 ## 1. Portal CM: publicados por la Comunidad de Madrid (17)
 
@@ -91,7 +94,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona) (`min_a_pie_hospital`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, fuente principal)
   - Puntos del mapa (salud): `GET /api/v1/places?category=health`
-- **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-296653c30a0b` · 553 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_sanitarios/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-adef54b3fabc` · 553 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_sanitarios/quality_report.json)
 
 ### Dotación de camas por dependencia
 - **Ficha:** https://datos.comunidad.madrid/dataset/1912720 · id `cm_dotacion_camas` · publica: Instituto de Estadística
@@ -215,7 +218,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Vivienda para familias» (dato extra): Viviendas principales en alquiler (%) (`viviendas_alquiler_pct`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-048892fa99bc` · 567 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_viviendas_tenencia_censo_2021/quality_report.json)
 
-## 2. Portal CM: GTFS del CRTM con ficha en el portal (6)
+## 2. Portal CM: horarios y estaciones del CRTM con ficha en el portal (9)
 
 ### Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia · id `crtm_gtfs_autobuses_urbanos` · publica: Consorcio Regional de Transportes de Madrid
@@ -225,17 +228,18 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de autobuses urbanos del resto de municipios con su frecuencia de paso
-- **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-41f7f9c15b61` · 3.023 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_autobuses_urbanos/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 9/9 checks críticos · versión `2026-11-10-41f7f9c15b61` · 3.023 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_autobuses_urbanos/quality_report.json)
 
 ### Oferta planificada de la Red de Cercanías Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia · id `crtm_gtfs_cercanias` · publica: Consorcio Regional de Transportes de Madrid
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/1a25440bf66f499bae2657ec7fb40144/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de Cercanías con su frecuencia de paso
-- **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-1b018a22325c` · 93 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_cercanias/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-72e73ca7b487` · 93 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_cercanias/quality_report.json)
 
 ### Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia · id `crtm_gtfs_emt` · publica: Consorcio Regional de Transportes de Madrid
@@ -245,7 +249,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de autobuses EMT de Madrid con su frecuencia de paso
-- **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-8478ae5c9262` · 4.935 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_emt/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 9/9 checks críticos · versión `2026-11-10-8478ae5c9262` · 4.935 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_emt/quality_report.json)
 
 ### Oferta planificada de la Red de Autobuses Interurbanos
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia · id `crtm_gtfs_interurbanos` · publica: Consorcio Regional de Transportes de Madrid
@@ -255,29 +259,58 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de autobuses interurbanos con su frecuencia de paso
-- **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-5bbf3c95047c` · 6.645 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_interurbanos/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 9/9 checks críticos · versión `2026-11-10-5bbf3c95047c` · 6.645 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_interurbanos/quality_report.json)
 
 ### Oferta planificada de la Red de Metro
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia · id `crtm_gtfs_metro` · publica: Consorcio Regional de Transportes de Madrid
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/5c7f2951962540d69ffe8f640d94c246/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de metro con su frecuencia de paso
-- **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-cccabfd6f025` · 230 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-840132dbc546` · 230 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_metro/quality_report.json)
 
 ### Oferta planificada de la Red de Metro Ligero
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia · id `crtm_gtfs_metro_ligero` · publica: Consorcio Regional de Transportes de Madrid
 - **Descarga:** https://www.arcgis.com/sharing/rest/content/items/aaed26cc0ff64b0c947ac0bc3e033196/data (fuente original; ficha en el portal CM, D-196)
 - **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de metro ligero con su frecuencia de paso
-- **Quality Gate 1:** PASS · 2026-11-10 · 9/9 checks críticos · versión `2026-11-10-599f9acfa270` · 56 puntos · [quality_report.json](../evidence/gate-01/2026-11-10/crtm_gtfs_metro_ligero/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-e6a5daaf76ec` · 56 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_metro_ligero/quality_report.json)
 
-## 3. Fuentes complementarias en uso (5)
+### Topología de la Red de Cercanías Madrid: estaciones y su grado de accesibilidad
+- **Ficha:** https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_cercanias` · publica: Consorcio Regional de Transportes de Madrid
+- **Nombre:** el del catálogo; falta verificarlo en el portal
+- **Descarga:** https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M5_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json (fuente original; ficha en el portal CM, D-196)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-cbd6ab397c04` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_cercanias/quality_report.json)
+
+### Topología de la Red de Metro: estaciones y su grado de accesibilidad
+- **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_metro` · publica: Consorcio Regional de Transportes de Madrid
+- **Nombre:** el del catálogo; falta verificarlo en el portal
+- **Descarga:** https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M4_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json (fuente original; ficha en el portal CM, D-196)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-c788fd9285b8` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro/quality_report.json)
+
+### Topología de la Red de Metro Ligero / Tranvía: estaciones y su grado de accesibilidad
+- **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_metro_ligero` · publica: Consorcio Regional de Transportes de Madrid
+- **Nombre:** el del catálogo; falta verificarlo en el portal
+- **Descarga:** https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M10_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json (fuente original; ficha en el portal CM, D-196)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-9e34e07839c7` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro_ligero/quality_report.json)
+
+## 3. Fuentes complementarias en uso (6)
 
 No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regional.
 
@@ -323,6 +356,14 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - Uso en la lista o en el buscador: **pendiente de A**
 - **Quality Gate 1:** PASS · 2026-11-12 · 5/5 checks críticos · versión `2026-11-12-e5148a11b523` · [quality_report.json](../evidence/gate-01/2026-11-12/ms_catalogo_nacional_hospitales/quality_report.json)
 
+### Parques de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
+- **Ficha:** https://download.geofabrik.de/europe/spain/madrid.html · id `osm_parques` · publica: OpenStreetMap contributors (extracto de Geofabrik)
+- **Licencia:** [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta el borde del parque urbano de 1 ha o más más cercano (mediana de las calles de la zona) (`min_a_pie_parque`, fuente principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos del borde de un parque urbano de 1 ha o más (`pct_calle_parque_5min`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-12 · 7/7 checks críticos · versión `2026-11-12-199d4d500a72` · 1.404 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/osm_parques/quality_report.json)
+
 ### Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
 - **Ficha:** https://download.geofabrik.de/europe/spain/madrid.html · id `osm_red_peatonal` · publica: OpenStreetMap contributors (extracto de Geofabrik)
 - **Licencia:** [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (según el registro de fuentes)
@@ -334,15 +375,18 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, fuente principal)
   - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, fuente principal)
   - «Qué falta», fila «Escuelas infantiles» (dato extra): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
   - «Qué falta», fila «Farmacias» (dato extra): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, fuente principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona) (`min_a_pie_hospital`, fuente principal)
   - «Qué falta», fila «Centros de mayores» (dato extra): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el borde del parque urbano de 1 ha o más más cercano (mediana de las calles de la zona) (`min_a_pie_parque`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil (`pct_calle_escuela_infantil_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una farmacia (`pct_calle_farmacia_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, fuente principal)
+  - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos del borde de un parque urbano de 1 ha o más (`pct_calle_parque_5min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - «Qué falta», fila «Centros de mayores»: Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más (`plazas_mayores_a_pie_por_100_mayores`, fuente principal)
   - Red peatonal para medir la distancia a pie a cada servicio
