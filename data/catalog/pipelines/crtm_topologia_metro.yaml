@@ -1,0 +1,12 @@
+kind: station_topology
+dataset_id: crtm_topologia_metro
+id_field: IDESTACION
+operator_code_field: CODIGOEMPRESA
+name_field: DENOMINACION
+grade_field: GRADOACCESIBILIDAD
+# D-223: T is read as fully accessible because the Comunidad de Madrid and the CRTM declare the
+# whole Metro Ligero network accessible and this layer grades its 57 stations T. P (partial) and
+# N are never step-free.
+step_free: {T: "yes", P: partial, N: "no"}
+min_rows: 240
+max_rows: 330

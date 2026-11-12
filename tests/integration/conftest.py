@@ -20,6 +20,7 @@ from hi_contracts.catalog.pipeline import (
     OsmParksPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
+    StationTopologyPipeline,
 )
 from hi_db.session import make_engine
 from hi_ingestion.catalog.loader import load_catalog
@@ -37,6 +38,7 @@ from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
+from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
 
 ALEMBIC_INI = Path(__file__).resolve().parents[2] / "infra" / "migrations" / "alembic.ini"
 
@@ -185,6 +187,15 @@ def ingest_directories(engine: Engine, data_dir: Path) -> None:
                 engine, catalog, spec, src, evidence_root=None, data_dir=data_dir
             )
             assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
+        elif isinstance(spec, StationTopologyPipeline):  # before the GTFS feeds (D-223)
+            src = local_file(
+                dataset_id, "primary", GOLDEN / "topology_sample" / f"{dataset_id}.json"
+            )
+            sample = spec.model_copy(update={"min_rows": 1})
+            result = run_topology_pipeline(
+                engine, catalog, sample, src, evidence_root=None, data_dir=data_dir
+            )
+            assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
 
 
 @pytest.fixture(scope="session")
@@ -194,7 +205,7 @@ def fixtures_ingested(
     assert published.status == "SUCCESS"
     catalog = load_catalog()
     tmp = tmp_path_factory.mktemp("features")
-    ingest_directories(migrated_engine, tmp)  # before the registers they name (D-218)
+    ingest_directories(migrated_engine, tmp)  # before the registers they name (D-218, D-223)
     for dataset_id, spec in sorted(catalog.pipelines.items()):
         if isinstance(spec, PointsPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "places_sample" / f"{dataset_id}.csv")

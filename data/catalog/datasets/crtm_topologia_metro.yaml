@@ -1,0 +1,40 @@
+dataset_id: crtm_topologia_metro
+source_id: crtm_open_data
+name: "Topología de la Red de Metro: estaciones y su grado de accesibilidad"
+domain: transport
+owner: Consorcio Regional de Transportes de Madrid
+format: JSON
+geography: point
+geo:
+  resolution: point
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.crtm.es/datasets/0a6c45e7bdd94679b67a2ae662c8838b
+resources:
+- name: M4_Estaciones (consulta ArcGIS de la capa 0 del servicio M4_Red)
+  format: JSON
+  url: https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M4_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json
+  file_name: M4_Estaciones.json
+- name: Ficha en el Portal de Datos Abiertos de la Comunidad de Madrid
+  format: HTML
+  url: https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes
+  role: cm_portal
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: "DATA-019 (D-223): GRADOACCESIBILIDAD de cada estación (T, P, N). Licencia CRTM-LDA (cita al CRTM)."
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T15:00:00+00:00'
+discovery:
+  harvested_from: crtm_open_data
+  external_id: 0a6c45e7bdd94679b67a2ae662c8838b
+  harvested_at: '2026-10-20T11:16:21.697678+00:00'
+notes: "DATA-019 | Topología de la Red de Metro en el portal CM (CRTM). Solo la capa de estaciones y cuatro campos: id, código de operador, nombre y grado de accesibilidad (D-223)."

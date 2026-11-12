@@ -421,3 +421,48 @@ def test_a_farther_park_never_raises_the_match(a: float, b: float, transporte: f
     near_u, far_u = utility(near), utility(far)
     assert near_u is not None and far_u is not None
     assert near_u >= far_u
+
+
+def _step_free_zone(minutes: float | None) -> ZoneData:
+    base = zone("1")
+    station = {PriorityKey.SIN_ESCALERAS: _value("min_a_pie_estacion_sin_escaleras", minutes)}
+    return ZoneData(zone=base.zone, rent=base.rent, walk=base.walk, priority_walk=station)
+
+
+STEP_FREE = ScenarioState(priorities=[PriorityKey.SIN_ESCALERAS])
+
+
+def test_step_free_scores_the_walk_to_an_accessible_station() -> None:
+    """D-223: «sin escaleras» (opt-in) reads the minutes to a metro, Metro Ligero or Cercanías
+    station that the CRTM grades as fully accessible: 1 up to 10 minutes, 0 at 30."""
+    near = evaluate(STEP_FREE, _step_free_zone(6.0))
+    assert near.match_pct == 100
+    assert near.facts[0].kind is FactKind.STRENGTH
+    assert near.facts[0].topic is FactTopic.ACCESIBILIDAD
+    assert near.facts[0].text == (
+        "Estación de metro o tren accesible (sin escaleras) a 6 min andando "
+        "desde la mitad de sus calles"
+    )
+    assert evaluate(STEP_FREE, _step_free_zone(20.0)).match_pct == 50
+
+
+def test_without_an_accessible_station_at_a_walk_step_free_says_buses_are_not_measured() -> None:
+    far = evaluate(STEP_FREE, _step_free_zone(45.0))
+    assert far.match_pct == 0
+    fact = next(f for f in far.facts if f.topic is FactTopic.ACCESIBILIDAD)
+    assert fact.kind is FactKind.WEAKNESS
+    assert fact.text == (
+        "Sin estación de metro o tren accesible a un paseo (no mide autobuses, aceras ni portales)"
+    )
+    assert fact.confidence <= 0.5
+    missing = evaluate(STEP_FREE, _step_free_zone(None))
+    fact = next(f for f in missing.facts if f.topic is FactTopic.ACCESIBILIDAD)
+    assert fact.kind is FactKind.UNKNOWN
+    assert fact.text == "Sin escaleras: sin datos de distancia a pie en esta zona"
+
+
+def test_only_security_is_still_without_data() -> None:
+    outcome = evaluate(ScenarioState(priorities=[PriorityKey.SEGURIDAD]), zone("1"))
+    assert [f.text for f in outcome.facts if f.kind is FactKind.UNKNOWN] == [
+        "Seguridad: aún sin datos oficiales"
+    ]

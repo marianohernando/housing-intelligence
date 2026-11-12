@@ -4,3 +4,9 @@ mode: metro
 reference_weekday: tuesday
 peak_start: "07:00"
 peak_end: "09:00"
+# D-223: each station reads its accessibility from the CRTM topology (IDESTACION = «4_<code>»;
+# an interchange «est_90_*» takes the least accessible of its line stations).
+station_accessibility:
+  dataset_id: crtm_topologia_metro
+  match: station_id
+  stop_id_pattern: '^(?:par|est)_(4_\d+)$'

@@ -1,0 +1,1381 @@
+{
+ "objectIdFieldName": "OBJECTID",
+ "uniqueIdField": {
+  "name": "OBJECTID",
+  "isSystemMaintained": true
+ },
+ "globalIdFieldName": "",
+ "geometryType": "esriGeometryPoint",
+ "spatialReference": {
+  "wkid": 25830,
+  "latestWkid": 25830
+ },
+ "fields": [
+  {
+   "name": "IDESTACION",
+   "type": "esriFieldTypeString",
+   "alias": "IDESTACION",
+   "sqlType": "sqlTypeOther",
+   "length": 50,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "CODIGOEMPRESA",
+   "type": "esriFieldTypeString",
+   "alias": "CODIGOEMPRESA",
+   "sqlType": "sqlTypeOther",
+   "length": 7,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "DENOMINACION",
+   "type": "esriFieldTypeString",
+   "alias": "DENOMINACION",
+   "sqlType": "sqlTypeOther",
+   "length": 240,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "GRADOACCESIBILIDAD",
+   "type": "esriFieldTypeString",
+   "alias": "GRADOACCESIBILIDAD",
+   "sqlType": "sqlTypeOther",
+   "length": 1,
+   "domain": null,
+   "defaultValue": null
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "IDESTACION": "4_1",
+    "CODIGOEMPRESA": "0101",
+    "DENOMINACION": "PLAZA DE CASTILLA",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_10",
+    "CODIGOEMPRESA": "0110",
+    "DENOMINACION": "TRIBUNAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_100",
+    "CODIGOEMPRESA": "0527",
+    "DENOMINACION": "ALUCHE",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_101",
+    "CODIGOEMPRESA": "0528",
+    "DENOMINACION": "EMPALME",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_102",
+    "CODIGOEMPRESA": "0529",
+    "DENOMINACION": "CAMPAMENTO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_103",
+    "CODIGOEMPRESA": "0530",
+    "DENOMINACION": "CASA DE CAMPO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_11",
+    "CODIGOEMPRESA": "0111",
+    "DENOMINACION": "GRAN VIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_114",
+    "CODIGOEMPRESA": "0612",
+    "DENOMINACION": "SAINZ DE BARANDA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_12",
+    "CODIGOEMPRESA": "0112",
+    "DENOMINACION": "SOL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_13",
+    "CODIGOEMPRESA": "0113",
+    "DENOMINACION": "TIRSO DE MOLINA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_14",
+    "CODIGOEMPRESA": "0114",
+    "DENOMINACION": "ANTON MARTIN",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_142",
+    "CODIGOEMPRESA": "0711",
+    "DENOMINACION": "GREGORIO MARAÑON",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_15",
+    "CODIGOEMPRESA": "0115",
+    "DENOMINACION": "ESTACION DEL ARTE",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_155",
+    "CODIGOEMPRESA": "0801",
+    "DENOMINACION": "NUEVOS MINISTERIOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_156",
+    "CODIGOEMPRESA": "0802",
+    "DENOMINACION": "COLOMBIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_157",
+    "CODIGOEMPRESA": "0804",
+    "DENOMINACION": "MAR DE CRISTAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_158",
+    "CODIGOEMPRESA": "0805",
+    "DENOMINACION": "FERIA DE MADRID",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_159",
+    "CODIGOEMPRESA": "0806",
+    "DENOMINACION": "AEROPUERTO T1-T2-T3",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_16",
+    "CODIGOEMPRESA": "0116",
+    "DENOMINACION": "ATOCHA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_160",
+    "CODIGOEMPRESA": "0807",
+    "DENOMINACION": "BARAJAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_161",
+    "CODIGOEMPRESA": "0901",
+    "DENOMINACION": "HERRERA ORIA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_162",
+    "CODIGOEMPRESA": "0902",
+    "DENOMINACION": "BARRIO DEL PILAR",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_163",
+    "CODIGOEMPRESA": "0903",
+    "DENOMINACION": "VENTILLA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_164",
+    "CODIGOEMPRESA": "0904",
+    "DENOMINACION": "PLAZA DE CASTILLA",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_165",
+    "CODIGOEMPRESA": "0905",
+    "DENOMINACION": "DUQUE DE PASTRANA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_166",
+    "CODIGOEMPRESA": "0906",
+    "DENOMINACION": "PIO XII",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_167",
+    "CODIGOEMPRESA": "0907",
+    "DENOMINACION": "COLOMBIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_168",
+    "CODIGOEMPRESA": "0908",
+    "DENOMINACION": "CONCHA ESPINA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_169",
+    "CODIGOEMPRESA": "0909",
+    "DENOMINACION": "CRUZ DEL RAYO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_17",
+    "CODIGOEMPRESA": "0117",
+    "DENOMINACION": "MENENDEZ PELAYO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_170",
+    "CODIGOEMPRESA": "0910",
+    "DENOMINACION": "AVENIDA DE AMERICA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_171",
+    "CODIGOEMPRESA": "0911",
+    "DENOMINACION": "NUÑEZ DE BALBOA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_172",
+    "CODIGOEMPRESA": "0912",
+    "DENOMINACION": "PRINCIPE DE VERGARA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_173",
+    "CODIGOEMPRESA": "0913",
+    "DENOMINACION": "IBIZA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_174",
+    "CODIGOEMPRESA": "0914",
+    "DENOMINACION": "SAINZ DE BARANDA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_175",
+    "CODIGOEMPRESA": "0915",
+    "DENOMINACION": "ESTRELLA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_176",
+    "CODIGOEMPRESA": "0916",
+    "DENOMINACION": "VINATEROS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_177",
+    "CODIGOEMPRESA": "0917",
+    "DENOMINACION": "ARTILLEROS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_178",
+    "CODIGOEMPRESA": "0918",
+    "DENOMINACION": "PAVONES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_179",
+    "CODIGOEMPRESA": "0919",
+    "DENOMINACION": "VALDEBERNARDO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_18",
+    "CODIGOEMPRESA": "0118",
+    "DENOMINACION": "PACIFICO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_180",
+    "CODIGOEMPRESA": "0920",
+    "DENOMINACION": "VICALVARO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_181",
+    "CODIGOEMPRESA": "0921",
+    "DENOMINACION": "SAN CIPRIANO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_182",
+    "CODIGOEMPRESA": "0922",
+    "DENOMINACION": "PUERTA DE ARGANDA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_187",
+    "CODIGOEMPRESA": "1001",
+    "DENOMINACION": "FUENCARRAL",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_188",
+    "CODIGOEMPRESA": "1002",
+    "DENOMINACION": "BEGOÑA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_189",
+    "CODIGOEMPRESA": "1003",
+    "DENOMINACION": "CHAMARTIN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_19",
+    "CODIGOEMPRESA": "0119",
+    "DENOMINACION": "PUENTE DE VALLECAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_190",
+    "CODIGOEMPRESA": "1004",
+    "DENOMINACION": "PLAZA DE CASTILLA",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_191",
+    "CODIGOEMPRESA": "1005",
+    "DENOMINACION": "CUZCO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_192",
+    "CODIGOEMPRESA": "1006",
+    "DENOMINACION": "SANTIAGO BERNABEU",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_193",
+    "CODIGOEMPRESA": "1007",
+    "DENOMINACION": "NUEVOS MINISTERIOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_194",
+    "CODIGOEMPRESA": "1008",
+    "DENOMINACION": "GREGORIO MARAÑON",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_195",
+    "CODIGOEMPRESA": "1009",
+    "DENOMINACION": "ALONSO MARTINEZ",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_196",
+    "CODIGOEMPRESA": "1010",
+    "DENOMINACION": "TRIBUNAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_197",
+    "CODIGOEMPRESA": "1011",
+    "DENOMINACION": "PLAZA DE ESPAÑA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_198",
+    "CODIGOEMPRESA": "1012",
+    "DENOMINACION": "PRINCIPE PIO",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_199",
+    "CODIGOEMPRESA": "1013",
+    "DENOMINACION": "LAGO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_2",
+    "CODIGOEMPRESA": "0102",
+    "DENOMINACION": "VALDEACEDERAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_20",
+    "CODIGOEMPRESA": "0120",
+    "DENOMINACION": "NUEVA NUMANCIA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_200",
+    "CODIGOEMPRESA": "1014",
+    "DENOMINACION": "BATAN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_201",
+    "CODIGOEMPRESA": "1015",
+    "DENOMINACION": "CASA DE CAMPO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_202",
+    "CODIGOEMPRESA": "1016",
+    "DENOMINACION": "COLONIA JARDIN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_203",
+    "CODIGOEMPRESA": "1019",
+    "DENOMINACION": "CUATRO VIENTOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_204",
+    "CODIGOEMPRESA": "1020",
+    "DENOMINACION": "JOAQUIN VILUMBRALES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_205",
+    "CODIGOEMPRESA": "1021",
+    "DENOMINACION": "PUERTA DEL SUR",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_21",
+    "CODIGOEMPRESA": "0121",
+    "DENOMINACION": "PORTAZGO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_22",
+    "CODIGOEMPRESA": "0122",
+    "DENOMINACION": "BUENOS AIRES",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_23",
+    "CODIGOEMPRESA": "0123",
+    "DENOMINACION": "ALTO DEL ARENAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_24",
+    "CODIGOEMPRESA": "0124",
+    "DENOMINACION": "MIGUEL HERNANDEZ",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_25",
+    "CODIGOEMPRESA": "0125",
+    "DENOMINACION": "SIERRA DE GUADALUPE",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_252",
+    "CODIGOEMPRESA": "0552",
+    "DENOMINACION": "ALAMEDA DE OSUNA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_253",
+    "CODIGOEMPRESA": "0551",
+    "DENOMINACION": "EL CAPRICHO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_257",
+    "CODIGOEMPRESA": "1018",
+    "DENOMINACION": "AVIACION ESPAÑOLA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_258",
+    "CODIGOEMPRESA": "0803",
+    "DENOMINACION": "PINAR DEL REY",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_26",
+    "CODIGOEMPRESA": "0126",
+    "DENOMINACION": "VILLA DE VALLECAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_260",
+    "CODIGOEMPRESA": "0251",
+    "DENOMINACION": "LA ELIPA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_261",
+    "CODIGOEMPRESA": "0151",
+    "DENOMINACION": "CHAMARTIN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_262",
+    "CODIGOEMPRESA": "0152",
+    "DENOMINACION": "BAMBU",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_263",
+    "CODIGOEMPRESA": "0153",
+    "DENOMINACION": "PINAR DE CHAMARTIN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_264",
+    "CODIGOEMPRESA": "0421",
+    "DENOMINACION": "HORTALEZA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_265",
+    "CODIGOEMPRESA": "0422",
+    "DENOMINACION": "MANOTERAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_266",
+    "CODIGOEMPRESA": "0423",
+    "DENOMINACION": "PINAR DE CHAMARTIN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_27",
+    "CODIGOEMPRESA": "0127",
+    "DENOMINACION": "CONGOSTO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_274",
+    "CODIGOEMPRESA": "1051",
+    "DENOMINACION": "TRES OLIVOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_28",
+    "CODIGOEMPRESA": "0201",
+    "DENOMINACION": "VENTAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_285",
+    "CODIGOEMPRESA": "0808",
+    "DENOMINACION": "AEROPUERTO T-4",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_29",
+    "CODIGOEMPRESA": "0202",
+    "DENOMINACION": "MANUEL BECERRA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_293",
+    "CODIGOEMPRESA": "0128",
+    "DENOMINACION": "LA GAVIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_294",
+    "CODIGOEMPRESA": "0129",
+    "DENOMINACION": "LAS SUERTES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_295",
+    "CODIGOEMPRESA": "0130",
+    "DENOMINACION": "VALDECARROS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_3",
+    "CODIGOEMPRESA": "0103",
+    "DENOMINACION": "TETUAN",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_30",
+    "CODIGOEMPRESA": "0203",
+    "DENOMINACION": "GOYA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_31",
+    "CODIGOEMPRESA": "0204",
+    "DENOMINACION": "PRINCIPE DE VERGARA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_32",
+    "CODIGOEMPRESA": "0205",
+    "DENOMINACION": "RETIRO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_322",
+    "CODIGOEMPRESA": "0252",
+    "DENOMINACION": "LA ALMUDENA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_323",
+    "CODIGOEMPRESA": "0253",
+    "DENOMINACION": "ALSACIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_324",
+    "CODIGOEMPRESA": "0254",
+    "DENOMINACION": "AVENIDA DE GUADALAJARA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_325",
+    "CODIGOEMPRESA": "0255",
+    "DENOMINACION": "LAS ROSAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_326",
+    "CODIGOEMPRESA": "0951",
+    "DENOMINACION": "MIRASIERRA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_33",
+    "CODIGOEMPRESA": "0206",
+    "DENOMINACION": "BANCO DE ESPAÑA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_34",
+    "CODIGOEMPRESA": "0207",
+    "DENOMINACION": "SEVILLA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_345",
+    "CODIGOEMPRESA": "0952",
+    "DENOMINACION": "PACO DE LUCIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_35",
+    "CODIGOEMPRESA": "0208",
+    "DENOMINACION": "SOL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_36",
+    "CODIGOEMPRESA": "0209",
+    "DENOMINACION": "OPERA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_37",
+    "CODIGOEMPRESA": "0210",
+    "DENOMINACION": "SANTO DOMINGO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_38",
+    "CODIGOEMPRESA": "0211",
+    "DENOMINACION": "NOVICIADO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_39",
+    "CODIGOEMPRESA": "0212",
+    "DENOMINACION": "SAN BERNARDO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_4",
+    "CODIGOEMPRESA": "0104",
+    "DENOMINACION": "ESTRECHO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_40",
+    "CODIGOEMPRESA": "0213",
+    "DENOMINACION": "QUEVEDO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_41",
+    "CODIGOEMPRESA": "0214",
+    "DENOMINACION": "CANAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_42",
+    "CODIGOEMPRESA": "0215",
+    "DENOMINACION": "CUATRO CAMINOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_49",
+    "CODIGOEMPRESA": "0307",
+    "DENOMINACION": "CALLAO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_5",
+    "CODIGOEMPRESA": "0105",
+    "DENOMINACION": "ALVARADO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_50",
+    "CODIGOEMPRESA": "0308",
+    "DENOMINACION": "PLAZA DE ESPAÑA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_52",
+    "CODIGOEMPRESA": "0310",
+    "DENOMINACION": "ARGÜELLES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_54",
+    "CODIGOEMPRESA": "0401",
+    "DENOMINACION": "ARGÜELLES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_55",
+    "CODIGOEMPRESA": "0402",
+    "DENOMINACION": "SAN BERNARDO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_56",
+    "CODIGOEMPRESA": "0403",
+    "DENOMINACION": "BILBAO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_57",
+    "CODIGOEMPRESA": "0404",
+    "DENOMINACION": "ALONSO MARTINEZ",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_58",
+    "CODIGOEMPRESA": "0405",
+    "DENOMINACION": "COLON",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_59",
+    "CODIGOEMPRESA": "0406",
+    "DENOMINACION": "SERRANO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_6",
+    "CODIGOEMPRESA": "0106",
+    "DENOMINACION": "CUATRO CAMINOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_60",
+    "CODIGOEMPRESA": "0407",
+    "DENOMINACION": "VELAZQUEZ",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_61",
+    "CODIGOEMPRESA": "0408",
+    "DENOMINACION": "GOYA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_62",
+    "CODIGOEMPRESA": "0409",
+    "DENOMINACION": "LISTA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_63",
+    "CODIGOEMPRESA": "0410",
+    "DENOMINACION": "DIEGO DE LEON",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_64",
+    "CODIGOEMPRESA": "0411",
+    "DENOMINACION": "AVENIDA DE AMERICA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_65",
+    "CODIGOEMPRESA": "0412",
+    "DENOMINACION": "PROSPERIDAD",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_66",
+    "CODIGOEMPRESA": "0413",
+    "DENOMINACION": "ALFONSO XIII",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_67",
+    "CODIGOEMPRESA": "0414",
+    "DENOMINACION": "AVENIDA DE LA PAZ",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_68",
+    "CODIGOEMPRESA": "0415",
+    "DENOMINACION": "ARTURO SORIA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_69",
+    "CODIGOEMPRESA": "0416",
+    "DENOMINACION": "ESPERANZA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_7",
+    "CODIGOEMPRESA": "0107",
+    "DENOMINACION": "RIOS ROSAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_70",
+    "CODIGOEMPRESA": "0417",
+    "DENOMINACION": "CANILLAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_71",
+    "CODIGOEMPRESA": "0418",
+    "DENOMINACION": "MAR DE CRISTAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_72",
+    "CODIGOEMPRESA": "0419",
+    "DENOMINACION": "SAN LORENZO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_73",
+    "CODIGOEMPRESA": "0420",
+    "DENOMINACION": "PARQUE DE SANTA MARIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_74",
+    "CODIGOEMPRESA": "0501",
+    "DENOMINACION": "CANILLEJAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_75",
+    "CODIGOEMPRESA": "0502",
+    "DENOMINACION": "TORRE ARIAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_76",
+    "CODIGOEMPRESA": "0503",
+    "DENOMINACION": "SUANZES",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_77",
+    "CODIGOEMPRESA": "0504",
+    "DENOMINACION": "CIUDAD LINEAL",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_78",
+    "CODIGOEMPRESA": "0505",
+    "DENOMINACION": "PUEBLO NUEVO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_79",
+    "CODIGOEMPRESA": "0506",
+    "DENOMINACION": "QUINTANA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_8",
+    "CODIGOEMPRESA": "0108",
+    "DENOMINACION": "IGLESIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_80",
+    "CODIGOEMPRESA": "0507",
+    "DENOMINACION": "EL CARMEN",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_81",
+    "CODIGOEMPRESA": "0508",
+    "DENOMINACION": "VENTAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_82",
+    "CODIGOEMPRESA": "0509",
+    "DENOMINACION": "DIEGO DE LEON",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_83",
+    "CODIGOEMPRESA": "0510",
+    "DENOMINACION": "NUÑEZ DE BALBOA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_84",
+    "CODIGOEMPRESA": "0511",
+    "DENOMINACION": "RUBEN DARIO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_85",
+    "CODIGOEMPRESA": "0512",
+    "DENOMINACION": "ALONSO MARTINEZ",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_86",
+    "CODIGOEMPRESA": "0513",
+    "DENOMINACION": "CHUECA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_87",
+    "CODIGOEMPRESA": "0514",
+    "DENOMINACION": "GRAN VIA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_88",
+    "CODIGOEMPRESA": "0515",
+    "DENOMINACION": "CALLAO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_89",
+    "CODIGOEMPRESA": "0516",
+    "DENOMINACION": "OPERA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_9",
+    "CODIGOEMPRESA": "0109",
+    "DENOMINACION": "BILBAO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_90",
+    "CODIGOEMPRESA": "0517",
+    "DENOMINACION": "LA LATINA",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_91",
+    "CODIGOEMPRESA": "0518",
+    "DENOMINACION": "PUERTA DE TOLEDO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_92",
+    "CODIGOEMPRESA": "0519",
+    "DENOMINACION": "ACACIAS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_93",
+    "CODIGOEMPRESA": "0520",
+    "DENOMINACION": "PIRAMIDES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_94",
+    "CODIGOEMPRESA": "0521",
+    "DENOMINACION": "MARQUES DE VADILLO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_95",
+    "CODIGOEMPRESA": "0522",
+    "DENOMINACION": "URGEL",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_96",
+    "CODIGOEMPRESA": "0523",
+    "DENOMINACION": "OPORTO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_97",
+    "CODIGOEMPRESA": "0524",
+    "DENOMINACION": "VISTA ALEGRE",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_98",
+    "CODIGOEMPRESA": "0525",
+    "DENOMINACION": "CARABANCHEL",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "4_99",
+    "CODIGOEMPRESA": "0526",
+    "DENOMINACION": "EUGENIA DE MONTIJO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  }
+ ]
+}

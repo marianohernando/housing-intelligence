@@ -36,6 +36,9 @@ def transit_minutes(ranked: RankedZone) -> float | None:
     return None
 
 
+TOP = 5
+
+
 def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
     check = result.reality_check
     anchor = result.scenario.anchors[0] if result.scenario.anchors else None
@@ -58,6 +61,20 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
                     for f in r.facts
                 )
                 for r in result.results[:v]
+            )
+        ),
+        # D-223: the first 5 zones have a step-free station at most v minutes away on foot
+        "top5_step_free_within_minutes": lambda v: (
+            len(result.results) >= TOP
+            and all(
+                any(
+                    f.topic is FactTopic.ACCESIBILIDAD
+                    and f.indicator is not None
+                    and f.indicator.value is not None
+                    and f.indicator.value <= v
+                    for f in r.facts
+                )
+                for r in result.results[:TOP]
             )
         ),
         "binding": lambda v: check.binding_constraint == v,

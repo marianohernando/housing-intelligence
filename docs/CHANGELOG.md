@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.45 — «Sin escaleras» en el buscador (2026-11-12)
+- D-223: topología del CRTM (grado de accesibilidad de cada estación) como dato CM; el GTFS guarda `wheelchair_boarding` sin interpretarlo; feature `min_a_pie_estacion_sin_escaleras`; `POST /search` pasa a `fit-0.4` y la prioridad «sin escaleras» puntúa los minutos a pie hasta una estación con accesibilidad total.
+
 ## v0.5.44 — Revisión de las zonas verdes (2026-11-12)
 - D-222 §4–§7: sin parque urbano a un paseo puntúa 0 con confidence baja (UNKNOWN rompía el orden); Quality Gate de inclusiones; recuentos que pueden repetir parques; 78 de los 101 municipios lejos de un parque son rurales.
 

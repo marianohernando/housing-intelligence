@@ -4,6 +4,7 @@ Pipelines live in data/catalog/pipelines/<dataset_id>.yaml. Code implements each
 datasets only declare columns and mappings, so no dataset id or formula is hardcoded.
 """
 
+import re
 from string import Formatter
 from typing import Annotated, Literal, Self
 
@@ -315,6 +316,62 @@ Weekday = Literal["monday", "tuesday", "wednesday", "thursday", "friday", "satur
 CLOCK_PATTERN = r"^([01]\d|2[0-3]):[0-5]\d$"
 
 
+class StationTopologyPipeline(BaseModel):
+    """A network topology layer of the CRTM (one station per row, ArcGIS JSON) kept in Silver
+    only (DATA-019, D-223). It never creates places: a GTFS feed that declares it takes from it
+    how accessible each of its stations is, matched by an official code.
+
+    `step_free` reads the published accessibility grade: every grade the layer may carry is
+    declared with its reading (yes, partial or no); a grade that is not declared is quarantined.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["station_topology"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    id_field: str
+    operator_code_field: str
+    name_field: str
+    grade_field: str
+    step_free: dict[str, Literal["yes", "partial", "no"]] = Field(min_length=1)
+    min_rows: int = Field(gt=0, description="fewer stations -> the layer changed or is cut")
+    max_rows: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _rows_are_a_range(self) -> Self:
+        if self.max_rows < self.min_rows:
+            msg = f"{self.dataset_id}: max_rows must be >= min_rows"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
+class StationAccessibilityLink(BaseModel):
+    """A GTFS feed's stations take their accessibility from a station topology (D-223). The key
+    of a stop is group 1 of `stop_id_pattern`, compared with the topology's `match` column."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    match: Literal["station_id", "operator_code"]
+    stop_id_pattern: str
+
+    @model_validator(mode="after")
+    def _pattern_has_one_group(self) -> Self:
+        try:
+            groups = re.compile(self.stop_id_pattern).groups
+        except re.error as exc:
+            msg = f"{self.dataset_id}: invalid stop_id_pattern: {exc}"
+            raise ValueError(msg) from exc
+        if groups != 1:
+            msg = f"{self.dataset_id}: stop_id_pattern needs exactly one group, it has {groups}"
+            raise ValueError(msg)
+        return self
+
+
 class GtfsFeedPipeline(BaseModel):
     """Static GTFS feed -> one transport place per stop or parent station, with service levels.
 
@@ -336,6 +393,7 @@ class GtfsFeedPipeline(BaseModel):
         default=True,
         description="False when frequencies.txt only annotates trips already listed one by one",
     )
+    station_accessibility: StationAccessibilityLink | None = None
 
     @model_validator(mode="after")
     def _peak_is_a_window(self) -> Self:
@@ -405,6 +463,7 @@ PipelineSpec = Annotated[
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline
     | OsmParksPipeline
-    | FacilityDirectoryPipeline,
+    | FacilityDirectoryPipeline
+    | StationTopologyPipeline,
     Field(discriminator="kind"),
 ]

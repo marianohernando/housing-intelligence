@@ -39,7 +39,7 @@ from hi_domain.affordability import (
 )
 from hi_domain.gaps import es_number
 
-FIT_VERSION = "fit-0.3"  # 0.3: «Zonas verdes» scored by the walk to a park (D-222)
+FIT_VERSION = "fit-0.4"  # 0.3: walk to a park (D-222); 0.4: to a step-free station (D-223)
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -101,11 +101,21 @@ PRIORITY_WALK: dict[PriorityKey, PriorityWalk] = {
         target_minutes=10,
         out_of_range="Sin parque urbano de 1 ha o más a un paseo (el campo no cuenta)",
     ),
+    # Opt-in functional need (CLAUDE.md §13): a station the CRTM grades as fully accessible.
+    PriorityKey.SIN_ESCALERAS: PriorityWalk(
+        name="Sin escaleras",
+        label="Estación de metro o tren accesible (sin escaleras)",
+        topic=FactTopic.ACCESIBILIDAD,
+        target_minutes=10,
+        out_of_range=(
+            "Sin estación de metro o tren accesible a un paseo "
+            "(no mide autobuses, aceras ni portales)"
+        ),
+    ),
 }
 # Priorities without data in Vida Fácil yet (D-205, extras from 19 Nov): never scored as 0.
 NO_DATA_PRIORITY: dict[PriorityKey, tuple[FactTopic, str]] = {
     PriorityKey.SEGURIDAD: (FactTopic.SEGURIDAD, "Seguridad: aún sin datos oficiales"),
-    PriorityKey.SIN_ESCALERAS: (FactTopic.ACCESIBILIDAD, "Sin escaleras: aún sin datos"),
 }
 CONTEXT_NEEDS = (NeedKey.TRANSPORTE, NeedKey.CENTRO_SALUD, NeedKey.COLEGIO, NeedKey.FARMACIA)
 MIN_FACTS, MAX_FACTS = 3, 5

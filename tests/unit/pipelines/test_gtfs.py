@@ -146,7 +146,10 @@ def test_station_aggregates_platforms_and_expands_frequencies(feed: Path) -> Non
     assert station["last_departure"] == "24:30"  # 00:30 is the previous night's service
     assert station["routes"] == ["1", "R2"]
     assert station["n_routes"] == 2
-    assert station["wheelchair_boarding"] == "yes"
+    # D-223: the CRTM does not follow the GTFS meaning of wheelchair_boarding; the raw code
+    # is kept and never read as accessible or not. The members link the station to topology.
+    assert station["gtfs_wheelchair_boarding"] == "1"
+    assert station["member_stop_ids"] == ["P1", "P2", "STA"]
     assert station["service_date"] == "2026-11-17"
 
 
@@ -173,7 +176,9 @@ def test_last_stop_and_no_pickup_are_not_departures(feed: Path) -> None:
     rows = _rows(feed)
     # S3: T2 07:30 plus T3 at 07:05, 07:25, 07:45; T1 and T4 end there.
     assert rows["S3"]["departures_day"] == 4
-    assert rows["S3"]["wheelchair_boarding"] == "no"
+    assert rows["S3"]["gtfs_wheelchair_boarding"] == "2"
+    assert rows["S3"]["member_stop_ids"] == ["S3"]
+    assert rows["S4"]["gtfs_wheelchair_boarding"] is None
     assert rows["S4"]["has_service"] == "no"
     assert rows["S4"]["departures_day"] == 0
     assert rows["S4"]["headway_peak_min"] is None

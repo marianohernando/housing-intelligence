@@ -1,0 +1,144 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 93
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "ratio": 0.0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {
+          "has_service_not_allowed": 2
+        },
+        "source_rows": 95
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "transport"
+      }
+    },
+    {
+      "name": "coordinate_repairs",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "geocoded": 0,
+        "kept_with_note": 0,
+        "rows": []
+      }
+    },
+    {
+      "name": "reference_service_day",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "service_date": "2026-11-24",
+        "reference_trips": 1287,
+        "candidate_days": 4
+      }
+    },
+    {
+      "name": "stop_times_parsed",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "stop_times": 20201,
+        "invalid_stop_times": 0
+      }
+    },
+    {
+      "name": "peak_departures_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "max_departures_peak_per_hour": 75.0,
+        "limit": 1200
+      }
+    },
+    {
+      "name": "headway_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "min_headway_peak_min": 2.4,
+        "with_peak_service": 93
+      }
+    },
+    {
+      "name": "feed_current",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "feed_end_date": "2026-11-28",
+        "note": "expired feeds stay the latest official schedule"
+      }
+    },
+    {
+      "name": "step_free_read",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "share": 0.9785,
+        "by_reading": {
+          "yes": 26,
+          "partial": 26,
+          "no": 39
+        },
+        "unknown": [
+          {
+            "external_id": "18003",
+            "name": "Méndez Álvaro P.V.",
+            "keys": [
+              "18003"
+            ]
+          },
+          {
+            "external_id": "70001",
+            "name": "Vallecas",
+            "keys": [
+              "70001"
+            ]
+          }
+        ],
+        "source": "crtm_topologia_cercanias 2026-11-12-cbd6ab397c04"
+      }
+    }
+  ]
+}

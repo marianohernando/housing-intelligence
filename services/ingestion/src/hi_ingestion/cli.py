@@ -19,6 +19,7 @@ from hi_contracts.catalog.pipeline import (
     OsmParksPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
+    StationTopologyPipeline,
 )
 from hi_db.session import make_engine
 from hi_domain.catalog.scoring import score_candidate
@@ -50,6 +51,7 @@ from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
+from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
 catalog_app = typer.Typer(help="Source catalog commands", no_args_is_help=True)
@@ -177,6 +179,9 @@ def _run_one(
     if isinstance(spec, FacilityDirectoryPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_directory_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, StationTopologyPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_topology_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     typer.echo(f"No pipeline registered for {dataset_id}", err=True)
     raise typer.Exit(2)
 
@@ -216,11 +221,15 @@ def admin_names(
         raise typer.Exit(1)
 
 
+SIDE_INPUTS = (FacilityDirectoryPipeline, StationTopologyPipeline)
+
+
 def pipeline_order(catalog: Catalog) -> list[str]:
-    """Directories first: the registers they name read their last valid version (D-218)."""
+    """Directories and station topologies first: the registers and feeds that name them read
+    their last valid version (D-218, D-223)."""
     return sorted(
         catalog.pipelines,
-        key=lambda d: (not isinstance(catalog.pipelines[d], FacilityDirectoryPipeline), d),
+        key=lambda d: (not isinstance(catalog.pipelines[d], SIDE_INPUTS), d),
     )
 
 

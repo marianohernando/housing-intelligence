@@ -59,3 +59,10 @@ scenarios:
       anchors: [{kind: study, label: Colegio en Chamberí, lon: -3.7037, lat: 40.4340, days_per_week: 5, max_minutes: null}]
       priorities: [zonas_verdes, transporte]
     expect: {min_results: 10, top_green_strength: 5}
+  - profile_id: golden_reduced_mobility  # D-223: «sin escaleras» first (opt-in, a functional need)
+    scenario:
+      budget: {kind: rent, amount_eur: 1100}
+      household: {adults: 2}
+      anchors: [{kind: other, label: Hospital La Paz, lon: -3.6873, lat: 40.4813, days_per_week: 1, max_minutes: null}]
+      priorities: [sin_escaleras, salud, transporte]
+    expect: {min_results: 10, top5_step_free_within_minutes: 15}

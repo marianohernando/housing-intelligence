@@ -104,15 +104,16 @@ _DIRECTORY_VERSION = text(
 )
 
 
-def directory_input(manifest: dict[str, Any]) -> FetchedFile:
+def directory_input(manifest: dict[str, Any], kind: str = "directory") -> FetchedFile:
     """The directory's Bronze file as an input of the register's run. The role carries the
-    directory's parser, so a new parser on the same file also reprocesses the register."""
+    directory's parser, so a new parser on the same file also reprocesses the register. A
+    station topology (D-223) enters a GTFS feed's run the same way (`kind` = topology)."""
     bronze = dict(manifest["inputs"][0])
     path = Path(str(bronze.pop("path")))
     return FetchedFile(
         **bronze
         | {
-            "role": f"directory@{manifest['parser_version']}",
+            "role": f"{kind}@{manifest['parser_version']}",
             "path": path if path.is_absolute() else REPO_ROOT / path,
         }
     )

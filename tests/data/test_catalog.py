@@ -70,6 +70,13 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
         elif pipeline.kind == "facility_directory":
             assert pipeline.scope_values, dataset_id
+        elif pipeline.kind == "station_topology":  # D-223: read by a GTFS feed that names it
+            linked = [
+                p.station_accessibility.dataset_id
+                for p in catalog.pipelines.values()
+                if p.kind == "gtfs_feed" and p.station_accessibility is not None
+            ]
+            assert dataset_id in linked, dataset_id
         else:
             assert pipeline.metric_ids(), dataset_id
 
@@ -286,6 +293,26 @@ def test_green_areas_are_the_walk_to_a_park(catalog: Catalog) -> None:
         if f.fit is not None and f.fit.priority == "zonas_verdes"
     ]
     assert bound == ["min_a_pie_parque"]
+
+
+def test_step_free_is_the_walk_to_an_accessible_rail_station(catalog: Catalog) -> None:
+    """D-223: «sin escaleras» reads the minutes to a station the CRTM topology grades as fully
+    accessible (step_free = yes); the topology datasets are inputs of the feature."""
+    bound = [
+        f
+        for f in catalog.features.values()
+        if f.fit is not None and f.fit.priority == "sin_escaleras"
+    ]
+    assert [f.feature_id for f in bound] == ["min_a_pie_estacion_sin_escaleras"]
+    formula = bound[0].formula.model_extra or {}
+    assert formula["attributes"] == {"step_free": ["yes"]}
+    assert sorted(formula["subcategories"]) == ["cercanias", "metro", "metro_ligero"]
+    sources = {s.dataset_id for s in bound[0].sources}
+    for mode in ("metro", "metro_ligero", "cercanias"):
+        gtfs = catalog.pipelines[f"crtm_gtfs_{mode}"]
+        link = getattr(gtfs, "station_accessibility", None)
+        assert link is not None, mode
+        assert {f"crtm_gtfs_{mode}", link.dataset_id} <= sources
 
 
 def test_every_priority_binding_is_a_priority_the_search_measures(catalog: Catalog) -> None:

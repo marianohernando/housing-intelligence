@@ -434,6 +434,17 @@
           "default": "primary",
           "title": "Resource Role",
           "type": "string"
+        },
+        "station_accessibility": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StationAccessibilityLink"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1080,6 +1091,110 @@
       "title": "PointsPipeline",
       "type": "object"
     },
+    "StationAccessibilityLink": {
+      "additionalProperties": false,
+      "description": "A GTFS feed's stations take their accessibility from a station topology (D-223). The key\nof a stop is group 1 of `stop_id_pattern`, compared with the topology's `match` column.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "match": {
+          "enum": [
+            "station_id",
+            "operator_code"
+          ],
+          "title": "Match",
+          "type": "string"
+        },
+        "stop_id_pattern": {
+          "title": "Stop Id Pattern",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "match",
+        "stop_id_pattern"
+      ],
+      "title": "StationAccessibilityLink",
+      "type": "object"
+    },
+    "StationTopologyPipeline": {
+      "additionalProperties": false,
+      "description": "A network topology layer of the CRTM (one station per row, ArcGIS JSON) kept in Silver\nonly (DATA-019, D-223). It never creates places: a GTFS feed that declares it takes from it\nhow accessible each of its stations is, matched by an official code.\n\n`step_free` reads the published accessibility grade: every grade the layer may carry is\ndeclared with its reading (yes, partial or no); a grade that is not declared is quarantined.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "grade_field": {
+          "title": "Grade Field",
+          "type": "string"
+        },
+        "id_field": {
+          "title": "Id Field",
+          "type": "string"
+        },
+        "kind": {
+          "const": "station_topology",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer stations -> the layer changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "name_field": {
+          "title": "Name Field",
+          "type": "string"
+        },
+        "operator_code_field": {
+          "title": "Operator Code Field",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "step_free": {
+          "additionalProperties": {
+            "enum": [
+              "yes",
+              "partial",
+              "no"
+            ],
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Step Free",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "id_field",
+        "operator_code_field",
+        "name_field",
+        "grade_field",
+        "step_free",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "StationTopologyPipeline",
+      "type": "object"
+    },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",
       "enum": [
@@ -1109,7 +1224,8 @@
       "madrid_padron": "#/$defs/MadridPadronPipeline",
       "osm_parks": "#/$defs/OsmParksPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
-      "points_csv": "#/$defs/PointsPipeline"
+      "points_csv": "#/$defs/PointsPipeline",
+      "station_topology": "#/$defs/StationTopologyPipeline"
     },
     "propertyName": "kind"
   },
@@ -1140,6 +1256,9 @@
     },
     {
       "$ref": "#/$defs/FacilityDirectoryPipeline"
+    },
+    {
+      "$ref": "#/$defs/StationTopologyPipeline"
     }
   ]
 }

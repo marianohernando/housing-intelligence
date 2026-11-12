@@ -1,0 +1,9 @@
+{
+  "stations": 111,
+  "quarantined": 0,
+  "by_reading": {
+    "yes": 42,
+    "no": 41,
+    "partial": 28
+  }
+}
