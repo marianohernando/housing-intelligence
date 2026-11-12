@@ -2,7 +2,7 @@
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
 Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
-Última actualización: 2026-11-12 (A v14: D-228 alquiler de contratos nuevos `fit-0.6`, D-229 impacto, D-230 zonas pequeñas, D-231 fuentes; siguiente: barrios `fit-0.7`). **Formulario enviado (12 nov).**
+Última actualización: 2026-11-13 (A v15: D-232 barrios dentro de un distrito, `fit-0.7`, `POST /api/v1/search/barrios`; pendiente: sync y despliegue, y decidir con Mariano la fase 2 de barrios). **Formulario enviado (12 nov).**
 
 ## Líneas paralelas (LINEAS.md)
 | Línea | Rama | Alcance | Estado (11 nov, tarde) |
@@ -35,6 +35,10 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 13 nov | A | BARRIO-001 · Fase 2b (revisión con `reviewer`) | verde | `01fbf1e` | `evidence/gate-04/2026-11-12/barrios-gate.txt` | Sin bloqueantes. Un trayecto prestado del distrito nunca decide un límite (`UNKNOWN`); el texto del alquiler que falta sigue al motivo real (`SOURCE_NO_COVERAGE` sin lugares, `SOURCE_MISSING` sin alquiler publicado); tope 0,3 por lugares con valor; distrito sin barrios con aviso. Sin cambio de datos. |
+| 12 nov | A | BARRIO-001 · Fase 2 (ruta, `fit-0.7`, D-232) | verde | `788f938` | `evidence/gate-04/2026-11-12/golden-search-barrios.txt` | `POST /api/v1/search/barrios {scenario, distrito}` → `BarrioSearchResult` (= `SearchResult` + `distrito`). Familia demo en San Blas-Canillejas: 7 de 8 barrios cumplen, Simancas 97 %, Rejas «casi» (colegio a 35 min). Golden 9/9; la búsqueda regional no cambia. Tipos TS generados para B |
+| 12 nov | A | BARRIO-001 · Fase 1 (datos de barrio, D-232) | verde | `19bf8bd` | `evidence/gate-03/2026-11-12/barrios-datos.md`, `evidence/gate-01/2026-11-12/official_names/` | 131 barrios: nombres oficiales del panel del Ayuntamiento (17 cambios, Ambroz → Valdebernardo y los 3 sin nombre), minutos a pie (15 features, 131/131), alquiler por sus códigos postales (130/131, Sol sin dato) y trayectos (+75.849 filas). Base local recalculada |
+| 12 nov | A | MEJORA-10 · Fase 4b (fixture de datasets con la AEAT) | verde | `983d225` | — | Petición de `datamad-10` para el `pie.aeat` de B (ya fusionado en `e7d4fa3`) |
 | 12 nov | A | MEJORA-10 · Fase 4 (fuentes, D-231) | verde | (este commit) | `evidence/gate-04/2026-11-12/fuentes-gate.txt` | `source_name` en cada `DatasetRef` (padrón y panel: «Portal de Datos Abiertos del Ayuntamiento de Madrid»; OSM: «OpenStreetMap (extracto Geofabrik Madrid)»; CM y CRTM vía portal CM). Las 2 tablas de camas (solo total regional) pasan a features de región `camas_instaladas_por_1000_hab` (3,0) y `hospitales_total` (85). **B:** «en {source_name}» en vez de «en el portal de datos» y la línea de camas en la nota del hospital. Sync en cualquier orden (2 features nuevas). |
 | 12 nov | A | MEJORA-7 · Fase 3 (zonas pequeñas, D-230) | verde | (este commit) | `evidence/gate-04/2026-11-12/zonas-pequenas.md`, `zonas-pequenas-gate.txt` | «No comparable: aquí viven muy pocos … para saber si falta» en zonas poco fiables sin grupo (La Acebeda, colegio: 0,0 frente a 28,0). Vivienda: el denominador (hogares de 4+) también necesita 3,69 → La Acebeda y otro municipio pasan a poco fiables; ninguna FALTA cambia. 0 niños → `NOT_APPLICABLE` con «No viven niños de 0 a 4 años…». Recalculadas las 5 features 2SFCA (mismos valores). **B:** pintar «No comparable» con `reliable: false` sin grupo y la `explanation` de `NOT_APPLICABLE`. Sync en cualquier orden. |
 | 12 nov | A | MEJORA-8 · Fase 2b (revisión con `reviewer`) | verde | (este commit) | `evidence/gate-04/2026-11-12/alquiler-nuevo-review-gate.txt` | Sin bloqueantes. Valor y factor del mismo año (si no, el cálculo se para) y test de que la nota dice el año de la AEAT; página con un solo «Ejercicio» y fila de la Comunidad obligatoria; golden familia a 41 min. Sin cambio de datos. |
@@ -143,6 +147,29 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 - **GAP-001** Fases 2–3b `21939dd` `4523d69` `98b842a` `ea8ee74`: las 6 filas (escuela infantil, colegio, centro de salud, mayores, farmacia, vivienda) por municipio y por los 21 distritos; cada fila cuenta los mismos lugares que sus minutos a pie (invariante de catálogo). Evidencias `evidence/gate-04/2026-11-11/phase-gap001-f2.txt`, `-f3a.txt`, `-f3b.txt`.
 - **GAP-001** Fase 1 `2d05d78`: los minutos a pie (CORE-005) salen en `extra_indicators` de colegio y centro de salud, en municipio y distrito. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f1.txt`.
 - **GAP-001** Fase 0 `2da5d4d`, esqueleto andante (y por distrito desde DATA-012 F2, `83c74dd`). `GET /api/v1/gaps/{level}/{code}` responde con datos reales: filas de colegio y centro de salud por municipio, frente a la referencia regional (fila `ccaa` del Feature Store: total de la región / población). Las filas se declaran en el Feature Dictionary (`gap_row`). La migración 0004 guarda el enlace al portal CM e `is_cm_open_data`. Evidencia: `evidence/gate-04/2026-11-11/phase-gap001-f0.txt`. **Checkpoint del 13 nov adelantado para 2 filas: B ya puede integrar contra la API real.**
+
+### Estado de la sesión del 13 nov (madrugada, línea A v15)
+- **Done (A v15), BARRIO-001 = fase 1 del diseño de barrios (D-232, `fit-0.7`):**
+  - `983d225`: fixture de datasets con la AEAT, para el `pie.aeat` de B.
+  - `19bf8bd` (datos), `788f938` (ruta) y `01fbf1e` (revisión con `reviewer`, sin bloqueantes).
+  - **Ruta:** `POST /api/v1/search/barrios {scenario, distrito}` devuelve los barrios del distrito con el mismo motor que `/search`.
+  - **Contrato:** `BarrioSearchRequest`/`BarrioSearchResult`, schemas en `data/schemas/api/barrio_search_*` y tipos TS generados en `apps/web/src/contracts/`. Fixture real: `barrio_search_result.san_blas`.
+  - **Datos:** nombres oficiales de barrio (panel del Ayuntamiento), minutos a pie, alquiler por sus códigos postales (confidence 0,6/0,3; Sol sin dato) y trayectos propios (mediana de sus secciones). Si falta el trayecto propio, usa el del distrito con aviso y nunca decide un límite.
+  - **Desviación del diseño, declarada en D-232 §5:** el trayecto se mide desde las secciones del barrio, no desde un único «centro», igual que los distritos.
+- **Sync y despliegue (pedido a `datamad-10`):**
+  - Los datos nuevos son compatibles con el código desplegado (`fit-0.6`): todas sus lecturas filtran por nivel.
+  - Orden recomendado: primero `make supabase-sync PROFILE=demo` (sin migración nueva) y después desplegar `01fbf1e` o posterior. Así la ruta sale con nombres y datos desde el primer momento.
+  - Si se despliega antes del sync, la ruta responde, pero con todo `UNKNOWN`, trayectos prestados y 3 barrios con su código en vez de nombre.
+- **Pendiente de otros:**
+  - **B:**
+    - selector de barrios dentro de un distrito: llamar a `/search/barrios` con el distrito elegido y pintar sus barrios con `GET /api/v1/geo/admin-units?level=barrio&parent=ES.28.DIS.<código>`;
+    - mismos componentes de tarjeta, % y «casi»; `gap_highlights` viene vacío;
+    - el `relaxed_scenario` se reenvía a `/search/barrios` con el mismo `distrito`;
+    - la nota «(trayecto medido para todo el distrito…)» ya va en el texto.
+  - **Mariano y `datamad-10`:** decidir la fase 2 del diseño (los 131 barrios en el ranking regional) antes del 18 nov. «Qué falta» por barrio, después del freeze.
+- **Next (línea A):** nada de barrios sin decisión. Lo que mande `datamad-10`.
+- **Gate status:** `make lint typecheck test` en verde en `01fbf1e`: 704 unit, 354 web y 133 integración. Golden de búsqueda 9/9 (8 regionales sin cambios + San Blas).
+- **Relevo:** A v15 cierra tras BARRIO-001. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (madrugada, línea A v14)
 - **Done (A v14), las 4 fases de `FASE_MEJORA.md` para A:**
