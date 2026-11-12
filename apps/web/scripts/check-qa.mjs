@@ -10,8 +10,9 @@
 //   node scripts/check-qa.mjs hosp [outDir]      # HOSP-001 (D-218): hospital names, beds, management and source
 //   node scripts/check-qa.mjs gaps-colgado [outDir] # /gaps that hangs: the zone and its map still load
 //   node scripts/check-qa.mjs licencias [outDir] # footer and map show every attribution_text of /datasets
-//   node scripts/check-qa.mjs atribucion [outDir] # mobile map attribution folded behind its (i), never the LCP
+//   node scripts/check-qa.mjs atribucion [outDir] # map attribution folded behind its (i) on every screen, never the LCP
 //   node scripts/check-qa.mjs iconos [outDir]    # favicon, icon and apple-touch-icon linked and served, no 404
+//   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
@@ -563,14 +564,22 @@ const FUENCARRAL = { path: "/zona/distrito/2807908", id: "ES.28.DIS.2807908", na
 const HOSPITALS = ["Hospital general", "Hospital especializado", "Hospital de media y larga estancia", "Hospital de salud mental y tratamiento de toxicomanías"];
 const NO_NAME_NOTICE = "Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.";
 
-/** Hospitals of Fuencarral-El Pardo without a proper name in the API: only the type, «Hospital general (Madrid)» (lib/map/places.ts). */
+/**
+ * Hospitals of Fuencarral-El Pardo without a proper name in the API, on every page of /places: an
+ * empty name, or only the type, «Hospital general (Madrid)» (lib/map/places.ts).
+ */
 async function unnamedHospitals() {
-  const q = new URLSearchParams({ category: "health", admin_unit_id: FUENCARRAL.id });
-  for (const s of HOSPITALS) q.append("subcategory", s);
-  const response = await fetch(`${API}/api/v1/places?${q}`);
-  if (!response.ok) throw new Error(`GET /places ${response.status}`);
-  const { data } = await response.json();
-  return data.features.filter((f) => (f.properties.name ?? "").startsWith(`${f.properties.subcategory} (`)).length;
+  const features = [];
+  for (let page = 1, pages = 1; page <= pages; page++) {
+    const q = new URLSearchParams({ category: "health", admin_unit_id: FUENCARRAL.id, page: String(page) });
+    for (const s of HOSPITALS) q.append("subcategory", s);
+    const response = await fetch(`${API}/api/v1/places?${q}`);
+    if (!response.ok) throw new Error(`GET /places ${response.status}`);
+    const { data } = await response.json();
+    features.push(...data.features);
+    pages = data.pages;
+  }
+  return features.filter(({ properties: { name, subcategory } }) => !name?.trim() || name.startsWith(`${subcategory} (`)).length;
 }
 
 /** HOSP-001 (D-218): hospitals with their name, beds and who runs them, and the source of the beds. */
@@ -715,9 +724,11 @@ async function licences(browser) {
       await p.ctx.close();
     }
   }
-  // The zone screen has no footer: the map's attribution carries the same citations
+  // The zone screen has no footer: the map's attribution carries the same citations, behind its (i)
   const z = await open(browser, DESKTOP, "/zona/distrito/2807908");
   await z.page.locator(".maplibregl-ctrl-attrib").first().waitFor({ timeout: 20000 });
+  await z.page.locator(".maplibregl-ctrl-attrib-button").first().click();
+  await z.page.locator(".maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner").first().waitFor({ timeout: 10000 });
   report.mapa_atribucion = flat(await z.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText());
   const mapLines = report.mapa_atribucion.split(/ · | \| /);
   for (const m of citedAll(mapLines, datasets)) failures.push(`mapa: falta ${m}`);
@@ -750,83 +761,171 @@ async function lcpOnSlow4g(browser, path) {
   return entries;
 }
 
+/** What the map's attribution must stay clear of: the header, the sheet and every card, button or link outside the map. */
+function aroundAttribution(page) {
+  return page.evaluate(() => {
+    const rect = (el) => { const r = el.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) }; };
+    const sheet = document.querySelector("[data-sheet='folded']");
+    const sheetTop = sheet && getComputedStyle(sheet).position === "fixed" ? sheet.getBoundingClientRect().top : innerHeight;
+    const controls = [...document.querySelectorAll("a, button, select, .glass")]
+      .filter((el) => !el.closest(".maplibregl-map") && el.getClientRects().length > 0)
+      .map((el) => ({ el: `${el.tagName.toLowerCase()} «${(el.getAttribute("aria-label") ?? el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 40)}»`, ...rect(el) }))
+      .filter((r) => r.top < sheetTop && r.bottom > 0 && r.right > 0 && r.left < innerWidth);
+    return { cabecera: rect(document.querySelector("header")), hoja_arriba: Math.round(sheetTop), controles: controls };
+  });
+}
+
 /**
- * Attribution of the map on mobile (LCP of C on slow 4G): folded behind its (i) under the header,
- * one tap opens every citation the API gives, clear of the sheet, the legend and the buttons; it is
- * never the largest paint. On desktop it stays spelled out at the bottom right.
+ * One screen of the attribution: folded at load behind its (i), one tap or click opens every
+ * citation the API gives and another folds it, clear of the header, the sheet, the cards and the
+ * buttons, with axe and the console clean. `label` names the captures; failures go to `failures`.
+ */
+async function attributionScreen(p, label, datasets, failures, touch) {
+  const control = p.page.locator(".maplibregl-ctrl-attrib").first();
+  const button = p.page.locator(".maplibregl-ctrl-attrib-button").first();
+  await control.waitFor({ timeout: 20000 });
+  const state = () => control.evaluate((el) => el.classList.contains("maplibregl-compact-show") && el.hasAttribute("open"));
+  const press = () => (touch ? button.tap() : button.click());
+  const hits = (b, ctx) => ctx.controles.filter((r) => b.left < r.right - 1 && r.left < b.right - 1 && b.top < r.bottom - 1 && r.top < b.bottom - 1).map((r) => r.el);
+  const ctx = await aroundAttribution(p.page);
+  const entry = { abierta_al_cargar: await state(), boton: { nombre: await button.getAttribute("aria-label"), caja: await box(button) } };
+  entry.boton_pisa = hits(entry.boton.caja, ctx);
+  // mapa.atribucion.movil: OSM and the CRTM always in view beside the (i), each with its link
+  const credits = control.locator("xpath=following-sibling::p[1]");
+  const visibleCredits = async () => (await credits.count()) > 0 && credits.isVisible();
+  entry.creditos = {
+    texto: (await credits.count()) ? flat(await credits.evaluate((el) => { const c = el.cloneNode(true); c.querySelectorAll(".visually-hidden").forEach((h) => h.remove()); return c.textContent ?? ""; })) : null,
+    enlaces: await credits.locator("a").evaluateAll((links) => links.map((a) => a.getAttribute("href"))),
+    visible_plegada: await visibleCredits(),
+    caja: (await credits.count()) ? await box(credits) : null,
+  };
+  entry.creditos.pisa = entry.creditos.caja ? hits(entry.creditos.caja, ctx) : [];
+  await p.page.screenshot({ path: `${out}/atribucion_${label}_plegada.png` });
+  await press();
+  await p.page.waitForTimeout(300);
+  entry.abierta_tras_un_toque = await state();
+  entry.abierta = { caja: await box(control), texto: flat(await p.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()) };
+  entry.abierta_pisa = hits(entry.abierta.caja, ctx);
+  entry.creditos.visible_abierta = await visibleCredits();
+  await p.page.screenshot({ path: `${out}/atribucion_${label}_abierta.png` });
+  entry.axe_abierta = await axe(p.page);
+  await press();
+  await p.page.waitForTimeout(300);
+  entry.abierta_tras_otro_toque = await state();
+  entry.axe = await axe(p.page);
+  entry.overflow_px = await overflow(p.page);
+  entry.consola = p.errors;
+  if (entry.abierta_al_cargar) failures.push(`${label}: abierta al cargar`);
+  if (!entry.abierta_tras_un_toque || entry.abierta_tras_otro_toque) failures.push(`${label}: el (i) no abre y cierra`);
+  if (entry.boton.nombre !== "Fuentes y licencias de los datos") failures.push(`${label}: nombre del (i) «${entry.boton.nombre}»`);
+  const c = entry.creditos;
+  if (c.texto !== "© OpenStreetMap · Powered by CRTM" || c.enlaces.join(" ") !== "https://www.openstreetmap.org/copyright https://www.crtm.es") failures.push(`${label}: créditos «${c.texto}» ${c.enlaces}`);
+  if (!c.visible_plegada || c.visible_abierta) failures.push(`${label}: créditos no visibles con el (i) plegado, o repetidos con la lista abierta`);
+  const lowest = Math.max(entry.abierta.caja.bottom, c.caja?.bottom ?? 0);
+  if (entry.boton.caja.top < ctx.cabecera.bottom || lowest > ctx.hoja_arriba) failures.push(`${label}: pisa la cabecera o la hoja`);
+  const overlapping = [...entry.boton_pisa, ...c.pisa, ...entry.abierta_pisa];
+  if (overlapping.length) failures.push(`${label}: pisa ${overlapping.join(", ")}`);
+  for (const m of citedAll(entry.abierta.texto.split(/ · | \| /), datasets)) failures.push(`${label}: falta ${m}`);
+  if (entry.axe.length || entry.axe_abierta.length) failures.push(`${label}: axe ${[...entry.axe, ...entry.axe_abierta].map((a) => a.id).join(", ")}`);
+  if (entry.consola.length) failures.push(`${label}: consola`);
+  if (entry.overflow_px > 0) failures.push(`${label}: desborde`);
+  return entry;
+}
+
+/**
+ * Attribution of the map (LCP of C on slow 4G, cards over it on desktop): on every screen folded
+ * behind its (i) in the map's free area with OSM and the CRTM in view beside it (line D, review of
+ * PR #22), opened with one tap or click, clear of the cards, the legend, the sheet and the buttons,
+ * also after turning the phone; never the largest paint.
  */
 async function attribution(browser) {
   const failures = [];
   const { datasets } = (await (await fetch(`${API}/api/v1/datasets`)).json()).data;
-  for (const [name, path] of [["portada", "/"], ["zona", ZONE.path]]) {
-    const p = await open(browser, MOBILE, path);
-    const control = p.page.locator(".maplibregl-ctrl-attrib").first();
-    const button = p.page.locator(".maplibregl-ctrl-attrib-button").first();
-    await control.waitFor({ timeout: 20000 });
-    const state = () => control.evaluate((el) => ({ abierta: el.classList.contains("maplibregl-compact-show") && el.hasAttribute("open"), clases: el.className }));
-    // What the attribution must stay clear of: the header, the sheet, the legend and every button or link outside the map
-    const around = () => p.page.evaluate(() => {
-      const rect = (el) => { const r = el.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) }; };
-      const sheet = document.querySelector("[data-sheet]");
-      const sheetTop = sheet ? sheet.getBoundingClientRect().top : innerHeight;
-      const controls = [...document.querySelectorAll("a, button, select, .glass")]
-        .filter((el) => !el.closest(".maplibregl-map") && el.getClientRects().length > 0)
-        .map((el) => ({ el: `${el.tagName.toLowerCase()} «${(el.getAttribute("aria-label") ?? el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 40)}»`, ...rect(el) }))
-        .filter((r) => r.top < sheetTop && r.bottom > 0);
-      return { cabecera: rect(document.querySelector("header")), hoja: sheet ? rect(sheet) : null, controles: controls };
-    });
-    const hits = (b, ctx) => ctx.controles.filter((r) => b.left < r.right - 1 && r.left < b.right - 1 && b.top < r.bottom - 1 && r.top < b.bottom - 1).map((r) => r.el);
-    const entry = (report[`movil_${name}`] = {});
-    entry.al_cargar = await state();
-    entry.boton = { nombre: await button.getAttribute("aria-label"), caja: await box(button) };
-    const ctx = await around();
-    entry.alrededor = { cabecera: ctx.cabecera, hoja: ctx.hoja };
-    entry.boton_pisa = hits(entry.boton.caja, ctx);
-    await p.page.screenshot({ path: `${out}/atribucion_${name}_plegada_mobile.png` });
-    await button.tap();
-    await p.page.waitForTimeout(300);
-    entry.tras_un_toque = await state();
-    entry.abierta = { caja: await box(control), texto: flat(await p.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()) };
-    entry.abierta_pisa = hits(entry.abierta.caja, ctx);
-    await p.page.screenshot({ path: `${out}/atribucion_${name}_abierta_mobile.png` });
-    entry.axe_abierta = await axe(p.page);
-    await button.tap();
-    await p.page.waitForTimeout(300);
-    entry.tras_otro_toque = await state();
+  const screens = [
+    ["mobile", MOBILE, true, [["portada", "/"], ["zona", ZONE.path]]],
+    ["desktop", DESKTOP, false, [["portada", "/"], ["zona", ZONE.path]]],
+    ["1280x720", { viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 }, false, [["zona", ZONE.path]]],
+    ["1024x768", { viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1 }, false, [["portada", "/"]]],
+  ];
+  for (const [id, profile, touch, pages] of screens) {
+    for (const [name, path] of pages) {
+      const p = await open(browser, profile, path);
+      const entry = (report[`${name}_${id}`] = await attributionScreen(p, `${name}_${id}`, datasets, failures, touch));
+      // Turned to landscape (wider than the mobile layout) and back: still folded, in its place. On
+      // the zone screen: at 390 px of height the overview's legend covers almost all the map (before
+      // this change too, over the attribution spelled out at the bottom right)
+      if (id === "mobile" && name === "zona") {
+        await p.page.setViewportSize({ width: 844, height: 390 });
+        await p.page.waitForTimeout(1200);
+        entry.girado = await attributionScreen(p, `${name}_mobile_girado`, datasets, failures, true);
+        await p.page.setViewportSize({ width: 390, height: 844 });
+        await p.page.waitForTimeout(1200);
+        entry.vuelta = await attributionScreen(p, `${name}_mobile_vuelta`, datasets, failures, true);
+      }
+      if (id === "mobile") {
+        entry.lcp_slow4g = await lcpOnSlow4g(browser, path);
+        const last = entry.lcp_slow4g.at(-1);
+        if (!last || last.en_atribucion) failures.push(`${name} mobile: la atribución es el LCP`);
+      }
+      await p.ctx.close();
+    }
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * «Sin escaleras» (fit-0.4, DATA-019, D-223): an opt-in chip, never marked for the person (D-204);
+ * after a search with it, the first zone's card shows the API's accessibility facts as they come.
+ */
+async function stairs(browser) {
+  const failures = [];
+  const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+  const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const p = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const entry = (report[id] = {});
+    // The demo case (which does not mark it), then the chip and the search
+    const [base] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const baseFacts = (await base.json()).data.results.flatMap((r) => r.facts).filter((f) => f.topic === "accesibilidad");
+    entry.hechos_accesibilidad_sin_chip = baseFacts.length;
+    await p.page.waitForTimeout(1500);
+    const chip = p.page.getByRole("button", { name: /^Sin escaleras/ });
+    entry.chip = { pulsado_antes: await chip.getAttribute("aria-pressed"), ayuda: await chip.getAttribute("title") };
+    await press(chip);
+    entry.chip.pulsado_despues = await chip.getAttribute("aria-pressed");
+    entry.muy_pronto = flat(await p.page.getByText(/^Muy pronto:/).first().innerText());
+    const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
+    entry.prioridades_enviadas = JSON.parse(response.request().postData() ?? "{}").priorities;
+    const { data } = await response.json();
+    await p.page.waitForTimeout(2000);
+    const top = data.results[0];
+    const facts = top.facts.filter((f) => f.topic === "accesibilidad").map((f) => f.text);
+    entry.api = { metodo: data.methodology_version, primera: top.zone.name, hechos_accesibilidad: facts };
+    await press(p.page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first());
+    const card = p.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+    await card.waitFor({ timeout: 20000 });
+    await p.page.waitForTimeout(1200);
+    const text = flat(await card.innerText());
+    entry.tarjeta_muestra = facts.map((f) => text.includes(flat(f)));
+    await card.screenshot({ path: `${out}/escaleras_tarjeta_${id}.png` });
     entry.axe = await axe(p.page);
     entry.overflow_px = await overflow(p.page);
     entry.consola = p.errors;
-    entry.lcp_slow4g = await lcpOnSlow4g(browser, path);
-    const last = entry.lcp_slow4g.at(-1);
-    if (entry.al_cargar.abierta) failures.push(`${name}: abierta al cargar`);
-    if (!entry.tras_un_toque.abierta || entry.tras_otro_toque.abierta) failures.push(`${name}: el (i) no abre y cierra`);
-    if (entry.boton.nombre !== "Fuentes y licencias del mapa") failures.push(`${name}: nombre del (i) «${entry.boton.nombre}»`);
-    if (entry.boton.caja.top < ctx.cabecera.bottom || (ctx.hoja && entry.abierta.caja.bottom > ctx.hoja.top)) failures.push(`${name}: pisa la cabecera o la hoja`);
-    if (entry.boton_pisa.length || entry.abierta_pisa.length) failures.push(`${name}: pisa ${[...entry.boton_pisa, ...entry.abierta_pisa].join(", ")}`);
-    for (const m of citedAll(entry.abierta.texto.split(/ · | \| /), datasets)) failures.push(`${name}: falta ${m}`);
-    if (entry.axe.length || entry.axe_abierta.length) failures.push(`${name}: axe ${[...entry.axe, ...entry.axe_abierta].map((a) => a.id).join(", ")}`);
-    if (entry.consola.length) failures.push(`${name}: consola`);
-    if (entry.overflow_px > 0) failures.push(`${name}: desborde`);
-    if (!last || last.en_atribucion) failures.push(`${name}: la atribución es el LCP`);
+    if (entry.chip.pulsado_antes !== "false" || entry.chip.pulsado_despues !== "true") failures.push(`${id}: el chip no es opcional (${entry.chip.pulsado_antes} → ${entry.chip.pulsado_despues})`);
+    if (entry.chip.ayuda !== "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.") failures.push(`${id}: ayuda del chip «${entry.chip.ayuda}»`);
+    // The fact comes with the chip: the demo case, without it, has none
+    if (entry.hechos_accesibilidad_sin_chip > 0) failures.push(`${id}: hay hechos de accesibilidad sin marcar el chip`);
+    if (/escaleras/i.test(entry.muy_pronto)) failures.push(`${id}: sigue en «Muy pronto»`);
+    if (!entry.prioridades_enviadas?.includes("sin_escaleras")) failures.push(`${id}: la búsqueda no lleva sin_escaleras`);
+    if (!facts.length) failures.push(`${id}: la API no da hecho de accesibilidad en ${top.zone.name}`);
+    if (entry.tarjeta_muestra.includes(false)) failures.push(`${id}: la tarjeta no muestra tal cual el hecho de la API`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
     await p.ctx.close();
   }
-  // Desktop: as before, every citation spelled out at the bottom right
-  const d = await open(browser, DESKTOP, ZONE.path);
-  const control = d.page.locator(".maplibregl-ctrl-attrib").first();
-  await control.waitFor({ timeout: 20000 });
-  report.escritorio_zona = {
-    abierta: await control.evaluate((el) => el.hasAttribute("open") && !el.classList.contains("maplibregl-compact")),
-    caja: await box(control),
-    texto: flat(await d.page.locator(".maplibregl-ctrl-attrib-inner").first().innerText()),
-    axe: await axe(d.page),
-    consola: d.errors,
-  };
-  await d.page.screenshot({ path: `${out}/atribucion_zona_desktop.png` });
-  const e = report.escritorio_zona;
-  if (!e.abierta) failures.push("escritorio: plegada");
-  for (const m of citedAll(e.texto.split(/ · | \| /), datasets)) failures.push(`escritorio: falta ${m}`);
-  if (e.axe.length || e.consola.length) failures.push("escritorio: axe o consola");
-  await d.ctx.close();
   report.fallos = failures;
   if (failures.length) process.exitCode = 1;
 }
@@ -1084,6 +1183,7 @@ else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);
 else if (mode === "iconos") await icons(browser);
+else if (mode === "escaleras") await stairs(browser);
 else if (mode === "gaps-colgado") await hungGaps(browser);
 else if (mode === "hosp") await hospitals(browser);
 else if (mode === "offline") await offline(browser);

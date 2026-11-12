@@ -1,0 +1,9 @@
+mobile-slow4g  portada           LCP 676 ms · FCP 676 ms · load 1829 ms · 1752 KB ({"web":729,"api":0,"map tiles":644,"other":378}) · tiles ≈ 3.1 s
+mobile-slow4g  zona Chamartín    LCP 2060 ms · FCP 824 ms · load 1965 ms · 1599 KB ({"web":731,"api":0,"map tiles":372,"other":496}) · tiles ≈ 1.8 s
+mobile-slow4g  qué falta Madrid  LCP 564 ms · FCP 564 ms · load 1614 ms · 371 KB ({"web":321,"api":0,"map tiles":0,"other":50})
+mobile-slow4g  ejemplo → resultados: 924 ms (respuesta 905 ms, 113 KB)
+desktop        portada           LCP 48 ms · FCP 48 ms · load 60 ms · 3017 KB ({"web":727,"api":0,"map tiles":1911,"other":378})
+desktop        zona Chamartín    LCP 188 ms · FCP 32 ms · load 53 ms · 5472 KB ({"web":728,"api":0,"map tiles":4247,"other":496})
+desktop        qué falta Madrid  LCP 216 ms · FCP 28 ms · load 49 ms · 370 KB ({"web":320,"api":0,"map tiles":0,"other":50})
+desktop        ejemplo → resultados: 461 ms (respuesta 456 ms, 113 KB)
+report: <scratchpad>/c43cb919-1113-451d-b70d-cafcaa4dba06/scratchpad/perf/cleanup/perf-report.json
