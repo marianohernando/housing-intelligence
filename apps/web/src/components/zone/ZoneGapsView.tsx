@@ -7,11 +7,12 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { GAP_STATUS, gapsHref, SMALL_ZONE, sortRows } from "@/lib/gaps";
+import { GAP_STATUS, gapsHref, gapSummary, SMALL_ZONE, sortRows } from "@/lib/gaps";
 import { isWholeCity, type ZoneLevel, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
 import GapRowItem from "./GapRowItem";
+import InvestFirst from "./InvestFirst";
 import PendingRows from "./PendingRows";
 import SmallZoneTag from "./SmallZoneTag";
 import ZoneDirectory from "./ZoneDirectory";
@@ -34,13 +35,16 @@ const TEXT = {
   municipio: "Municipio",
   notFound: "No encontramos esa zona. Elige otra en el mapa.",
   legend: "Cómo leer esta lista",
+  // falta.leyenda.a_pie (13 nov)
   walking:
-    "Los minutos a pie son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Desde la mitad de las calles de la zona se llega en ese tiempo o menos.",
+    "Los minutos son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Es lo que tarda la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.",
 };
+
+const PICK_ID = "elige-zona";
 
 function ZonePicker() {
   return (
-    <GlassCard as="section" aria-label={TEXT.pick} className={styles.picker}>
+    <GlassCard as="section" id={PICK_ID} aria-label={TEXT.pick} className={styles.picker}>
       <p>{TEXT.pick}</p>
       <ZoneDirectory hrefFor={(zone) => gapsHref(zone.level, zone.code)} placeholder={TEXT.placeholder} wholeCities />
     </GlassCard>
@@ -108,11 +112,17 @@ function ZoneGaps({ level, code }: { level: ZoneLevel; code: string }) {
   }
 
   const { zone, rows } = gaps.data.data;
+  const summary = gapSummary(rows);
   return (
     <>
       <header className={styles.header}>
         <p className={styles.eyebrow}>{zone.level === "distrito" ? `Distrito de ${zone.municipio_name}` : TEXT.municipio}</p>
         <h1 className={styles.title}>{TEXT.titleIn(zone.name)}</h1>
+        {(summary.lead || summary.rest.length > 0) && (
+          <p className={styles.summary}>
+            {summary.lead && <strong>{summary.lead}</strong>} {summary.rest.join(" ")}
+          </p>
+        )}
         <p className={styles.intro}>{TEXT.intro}</p>
         <div className={styles.actions}>
           {/* Madrid capital is on the map by its districts: its whole list has no zone screen */}
@@ -130,7 +140,7 @@ function ZoneGaps({ level, code }: { level: ZoneLevel; code: string }) {
       {rows.length > 0 && (
         <ul className={styles.rows}>
           {sortRows(rows).map((row) => (
-            <GapRowItem key={row.row} row={row} zoneName={zone.name} />
+            <GapRowItem key={row.row} row={row} zoneName={zone.name} zoneLevel={zone.level} />
           ))}
         </ul>
       )}
@@ -146,7 +156,7 @@ interface Props {
   invalid?: boolean;
 }
 
-/** The «Qué falta» tab: one zone's full list (?zona=distrito/2807905), or a zone picker. */
+/** The «Qué falta» tab: one zone's full list (?zona=distrito/2807905), or where to invest first and a zone picker. */
 export default function ZoneGapsView({ zone, invalid = false }: Props) {
   if (!zone) {
     return (
@@ -157,6 +167,7 @@ export default function ZoneGapsView({ zone, invalid = false }: Props) {
             {TEXT.notFound}
           </p>
         )}
+        <InvestFirst pickId={PICK_ID} />
         <ZonePicker />
       </>
     );

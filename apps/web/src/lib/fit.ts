@@ -124,3 +124,13 @@ export function optionText(r: Pick<Relaxation, "label" | "zones_if_relaxed" | "a
 export function rankText(rank: number): string {
   return `La ${rank}.ª que más encaja`;
 }
+
+/**
+ * a_pie.mediana: the walking minutes of the facts («Colegio con primaria a unos 9 min andando»)
+ * are the median of the zone, said once under them, when one of them is a walk.
+ */
+export const WALK_MEDIAN = "Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.";
+
+export function hasWalkingFact(facts: readonly { text: string }[]): boolean {
+  return facts.some((fact) => fact.text.includes("andando"));
+}

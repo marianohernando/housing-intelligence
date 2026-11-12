@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { FeatureValueRow } from "../features";
-import { perceivedSafety, perceivedSafetyText, type SafetyRows } from "../safety";
+import { perceivedSafety, perceivedSafetyText, safetyBars, type SafetyRows } from "../safety";
 
 // Test fixture: rows shaped as GET /features/{id}/values gives them (D-226 §1), values from 12 nov
 function row(code: string, value: number | null, period = "2025-01-01"): FeatureValueRow {
@@ -45,5 +45,19 @@ describe("perceivedSafetyText (zona.seguridad_vecinos)", () => {
     expect(perceivedSafetyText({ night: 4.9, day: 7.1, city: null, year: "2025" }).rating).toBe(
       "Así valoran sus vecinos la seguridad de su barrio: 4,9 de noche y 7,1 de día, de 0 a 10.",
     );
+  });
+});
+
+describe("safetyBars (night and day on 0–10, with Madrid's mark)", () => {
+  it("draws the same figures the sentence says, with the city's mark", () => {
+    expect(safetyBars({ night: 4.9, day: 7.1, city: { night: 6.4, day: 7.8 }, year: "2025" })).toEqual([
+      { label: "De noche", value: "4,9", pct: 49, city: { pct: 64, value: "6,4" } },
+      { label: "De día", value: "7,1", pct: 71, city: { pct: 78, value: "7,8" } },
+    ]);
+  });
+
+  it("has no mark without the city's, and stays inside the scale", () => {
+    const [night] = safetyBars({ night: 10.4, day: 0, city: null, year: "2025" });
+    expect(night).toEqual({ label: "De noche", value: "10,4", pct: 100, city: null });
   });
 });

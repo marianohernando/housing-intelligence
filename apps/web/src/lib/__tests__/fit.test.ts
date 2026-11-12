@@ -10,6 +10,7 @@ import {
   failedLabels,
   fewZones,
   fitClass,
+  hasWalkingFact,
   optionText,
   paintFit,
   passingText,
@@ -170,5 +171,16 @@ describe("«¿Y si cambias algo?»", () => {
 
   it("writes the place in the ranking (zona.puesto)", () => {
     expect(rankText(8)).toBe("La 8.ª que más encaja");
+  });
+});
+
+describe("facts in plain words (a_pie.mediana)", () => {
+  it("says the walking median once, when a fact is a walk, and the facts no longer say it (D-229 follow-up of A)", () => {
+    const facts = fixture.results.flatMap((r) => r.facts);
+    const walks = facts.filter((f) => f.text.includes("andando"));
+    expect(walks.length).toBeGreaterThan(0);
+    for (const f of walks) expect(f.text).not.toMatch(/mitad de sus calles/);
+    expect(hasWalkingFact(walks)).toBe(true);
+    expect(hasWalkingFact([{ text: "≈ 1.107 €/mes por 77 m²" }])).toBe(false);
   });
 });

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import MethodSteps from "@/components/method/MethodSteps";
 import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
@@ -139,6 +140,14 @@ function GapMethod() {
         pocos solo sabemos el tipo y el municipio.
       </p>
       <p className={styles.para}>
+        <strong>Dónde invertir primero.</strong> En «Qué falta» sumamos la gente que vive en las zonas en FALTA de cada
+        servicio: los niños de 0 a 4 años para las escuelas infantiles, los de 5 a 14 para los colegios, las personas de 65
+        años o más para los mayores, todos los vecinos para los centros de salud y las farmacias, y los hogares de 4 o más
+        personas para la vivienda. Es la misma gente con la que hacemos la cuenta, del censo y, en los distritos de Madrid, del
+        padrón: no estimamos nada. Las zonas van de más a menos gente afectada. Contamos a toda la gente de la zona, aunque
+        dentro de ella unas calles estén mejor servidas que otras.
+      </p>
+      <p className={styles.para}>
         Es una señal para saber dónde mirar primero, no un veredicto: comparamos con zonas parecidas, no con una norma oficial
         que diga cuánto debería haber.
       </p>
@@ -154,8 +163,8 @@ function WalkingTimes() {
         Medimos lo que tardarías andando por las calles de verdad, no en línea recta, a un paso tranquilo de 4 km/h, con el
         mapa de calles de OpenStreetMap. Desde cada calle donde vive gente calculamos cuánto se tarda hasta lo más cercano:
         escuela infantil, colegio con primaria (público o concertado), centro de salud o consultorio, farmacia, centro de
-        mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás los minutos en
-        los que se llega desde la mitad de las calles de la zona. Son los mismos 15 minutos de la sección anterior: lo que
+        mayores, hospital general y parada de autobús, metro o Cercanías. En cada fila de «Qué falta» verás lo que tarda la
+        mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. Son los mismos 15 minutos de la sección anterior: lo que
         queda más lejos no cuenta como «al alcance a pie». A ese paso, 10 minutos son unos 670 metros. Si en una zona no hay
         calles en el mapa, sale «sin datos», nunca cero. Usamos el mismo paso que el estudio «El Madrid de los 15 minutos»
         del Ayuntamiento.
@@ -240,7 +249,9 @@ function Limits() {
           decimos. Para cada distrito de Madrid hacemos la media de sus códigos postales, y cada código pesa según cuántos
           colegios, centros de salud y centros sociales del distrito están en él, porque eso aproxima dónde vive la gente. Es
           una aproximación, así que cuenta con menos fiabilidad. Cuadra con la cifra oficial: con los distritos sale 14,5 € el
-          metro cuadrado, y la Comunidad publica 15,1 para todo Madrid.
+          metro cuadrado, y la Comunidad publica 15,1 para todo Madrid. Esa media es de todos los contratos en vigor, así que
+          la ajustamos a lo que se pagó en los contratos firmados en 2024 en la misma zona, según la Agencia Tributaria: entre
+          un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más.
         </li>
         <li>
           <strong>Compra:</strong> usamos el valor tasado medio de la vivienda libre por metro cuadrado (Ministerio de
@@ -269,6 +280,12 @@ export default function ComoLoCalculamosPage() {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Cómo lo calculamos</h1>
+      <Section id="en-cinco-pasos" title="Cómo decidimos qué falta, en cinco pasos">
+        <MethodSteps />
+        <a href="#que-falta" className={styles.more}>
+          Ver el detalle
+        </a>
+      </Section>
       <Section id="principios" title="Tres reglas que seguimos siempre">
         <ul className={styles.text}>
           <li>
@@ -329,6 +346,10 @@ export default function ComoLoCalculamosPage() {
                 de Madrid capital;
               </li>
               <li>el mapa de calles de OpenStreetMap, para las distancias a pie;</li>
+              <li>
+                la estadística de viviendas declaradas en el IRPF de la Agencia Tributaria (ejercicio 2024), para acercar el
+                alquiler al de los contratos firmados ese año;
+              </li>
               <li>
                 los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los
                 centros de salud y el nombre y las camas de los hospitales;

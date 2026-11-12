@@ -6,8 +6,8 @@
  */
 import type { GapRowMap, ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
-import type { GapStatus } from "@/contracts/zone_gap_list_response";
-import { isSmallZone, ROW_NAME } from "@/lib/gaps";
+import type { ComparisonGroup, GapStatus } from "@/contracts/zone_gap_list_response";
+import { notComparable, ROW_NAME } from "@/lib/gaps";
 
 import type { ZoneCollection, ZoneProperties } from "./zones";
 
@@ -59,8 +59,8 @@ export function gapByZone(maps: readonly Pick<GapRowMap, "zones">[]): Map<string
  */
 export type MapCategory = GapStatus | "ZONA_PEQUENA";
 
-export function mapCategory(zone: { status: GapStatus; reliable?: boolean }): MapCategory {
-  return isSmallZone(zone) ? "ZONA_PEQUENA" : zone.status;
+export function mapCategory(zone: { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null }): MapCategory {
+  return notComparable(zone) ? "ZONA_PEQUENA" : zone.status;
 }
 
 export type PaintedProperties = ZoneProperties & { gap?: MapCategory };

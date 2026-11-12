@@ -14,10 +14,13 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string }> = {
   SIN_DATOS: { label: "SIN DATOS", help: "No tenemos este dato para esta zona. No quiere decir que no haya." },
 };
 
-/** fila.zona_pequena: next to the status when the API sends `reliable: false` (never FALTA, D-213). */
+/**
+ * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
+ * instead of its status (D-230: the API's `explanation` starts the same way). B's draft for D.
+ */
 export const SMALL_ZONE = {
-  label: "Zona pequeña para comparar",
-  help: "Aquí vive tan poca gente que no podemos saber con seguridad si falta. Por eso no la marcamos como FALTA.",
+  label: "No comparable",
+  help: "Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos.",
 };
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
@@ -38,7 +41,8 @@ export function inGroup(zone: { comparison_group?: ComparisonGroup | null }): Co
   return group && group.names.length >= 2 ? group : null;
 }
 
-function listNames(names: readonly string[]): string {
+/** «a», «a y b», «a, b y c» (fila.lista.*). */
+export function listNames(names: readonly string[]): string {
   if (names.length <= 1) return names[0] ?? "";
   return `${names.slice(0, -1).join(", ")} y ${names[names.length - 1]}`;
 }
@@ -68,6 +72,47 @@ export const ROW_NAME: Record<GapRowKey, string> = {
   farmacia: "Farmacias",
   vivienda: "Vivienda para familias",
 };
+
+/** Row names inside a sentence (fila.lista.*): «Aquí falta: escuelas infantiles». */
+export const ROW_IN_LIST: Record<GapRowKey, string> = {
+  escuela_infantil: "escuelas infantiles",
+  colegio: "colegios",
+  centro_salud: "centros de salud",
+  mayores: "centros de mayores",
+  farmacia: "farmacias",
+  vivienda: "viviendas grandes para familias",
+};
+
+/**
+ * falta.fila.comparacion (D-229 §6): n = round(100 × ratio to the zones of its type), or the
+ * group's ratio when the zone is compared together with its neighbours. It can pass 100.
+ */
+export function comparisonText(ratio: number, grouped: boolean): string {
+  const n = formatNumber(Math.round(100 * ratio), 0);
+  return `${grouped ? "Junto con sus vecinos, hay" : "Aquí hay"} ${n} por cada 100 que hay en municipios parecidos.`;
+}
+
+/**
+ * The comparison of one row of /gaps, or null when it has no ratio (SIN DATOS) or the zone is too
+ * small to compare even with its neighbours: that ratio is noise, the figure stays behind «Ver la cifra».
+ */
+export function rowComparison(row: {
+  status: GapStatus;
+  reliable?: boolean;
+  ratio_to_reference?: number | null;
+  comparison_group?: ComparisonGroup | null;
+}): string | null {
+  if (row.status === "SIN_DATOS" || notComparable(row)) return null;
+  const group = inGroup(row);
+  const ratio = group ? group.ratio_to_reference : row.ratio_to_reference;
+  return ratio == null ? null : comparisonText(ratio, group !== null);
+}
+
+/** «Afecta a 9.433 niños de 0 a 4 años.»: the people a FALTA row leaves short (D-229, `people` of /gaps). */
+export function peopleAffectedText(row: { status: GapStatus; people?: { count: number; label: string } | null }): string | null {
+  if (row.status !== "FALTA" || !row.people) return null;
+  return `Afecta a ${formatNumber(row.people.count, 0)} ${row.people.label}.`;
+}
 
 /**
  * What each row measures (gap-0.3, D-217): what people have within 15 min on foot, shared among
@@ -109,11 +154,12 @@ export function pendingRows(warnings: readonly string[] | undefined): GapRowKey[
 
 const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3 };
 
-type Classified = { status: GapStatus; reliable?: boolean };
+type Classified = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
 
 /** What is missing first, a small zone after a comparable one; otherwise the API order. */
 export function sortRows<T extends Classified>(rows: readonly T[]): T[] {
-  const rank = (r: T) => STATUS_ORDER[r.status] * 2 + (isSmallZone(r) ? 1 : 0);
+  // «No comparable» after CUBIERTO and before SIN DATOS, as the small zones went before (D-230)
+  const rank = (r: T) => (notComparable(r) ? 5 : STATUS_ORDER[r.status] * 2);
   return [...rows].sort((a, b) => rank(a) - rank(b));
 }
 
@@ -122,18 +168,60 @@ export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[
   return sortRows(rows).slice(0, limit);
 }
 
+type SummaryRow = Classified & { row: GapRowKey };
+
 /**
- * A zone that fits everything asked can still be short of something (jurado simulado):
- * «Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios.»
- * From every row of the zone's «Qué falta» (not only the three the card shows), FALTA first; null
- * when none is FALTA or JUSTO. Draft text until line D writes it in textos_web.md.
+ * Too small to compare even with its neighbours (D-230): shown as «No comparable», never as JUSTO
+ * or CUBIERTO, and it never counts as short or tight (falta.resumen.pequena). A presentation rule:
+ * GapStatus keeps its values.
  */
-export function fitsButShortText(rows: readonly { label: string; status: GapStatus }[]): string | null {
-  const names = (status: GapStatus) => rows.filter((r) => r.status === status).map((r) => r.label.charAt(0).toLowerCase() + r.label.slice(1));
-  const [missing, tight] = [names("FALTA"), names("JUSTO")];
-  if (!missing.length && !tight.length) return null;
-  const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null];
-  return `Encaja con lo que pides; aun así, en la zona ${parts.filter(Boolean).join("; y ")}.`;
+export function notComparable(row: { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null }): boolean {
+  return row.status !== "SIN_DATOS" && isSmallZone(row) && inGroup(row) === null;
+}
+
+const cannotCompare = notComparable;
+
+/** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*). */
+function rowsByStatus(rows: readonly SummaryRow[]) {
+  const names = (pick: (r: SummaryRow) => boolean) => rows.filter(pick).map((r) => ROW_IN_LIST[r.row]);
+  const comparable = (status: GapStatus) => (r: SummaryRow) => r.status === status && !cannotCompare(r);
+  return {
+    falta: names(comparable("FALTA")),
+    justo: names(comparable("JUSTO")),
+    cubierto: names(comparable("CUBIERTO")),
+    small: names((r) => r.status !== "SIN_DATOS" && cannotCompare(r)),
+    none: names((r) => r.status === "SIN_DATOS"),
+  };
+}
+
+/**
+ * The first lines of «Qué falta» (falta.resumen.*): the verdict in bold («Aquí falta: escuelas
+ * infantiles.»; null when no row can be compared), then what is tight, too small to compare or
+ * without data.
+ */
+export function gapSummary(rows: readonly SummaryRow[]): { lead: string | null; rest: string[] } {
+  const { falta, justo, cubierto, small, none } = rowsByStatus(rows);
+  let lead: string | null = null;
+  if (falta.length) lead = `Aquí falta: ${listNames(falta)}.`;
+  else if (justo.length) lead = "Aquí no falta nada claro.";
+  else if (cubierto.length) lead = "Aquí no falta nada frente a municipios parecidos.";
+  const rest: string[] = [];
+  if (justo.length) rest.push(`Van justos: ${listNames(justo)}.`);
+  if (small.length) rest.push(`Zona muy pequeña para comparar: ${listNames(small)}.`);
+  if (none.length) rest.push(`Sin datos: ${listNames(none)}.`);
+  return { lead, rest };
+}
+
+/**
+ * A zone that fits everything asked can still be short of something (encaje.aviso_*): from every
+ * row of its «Qué falta», not only the three the card shows. Rows too small to compare do not
+ * count; null when no row is FALTA or JUSTO.
+ */
+export function fitsButShortText(rows: readonly SummaryRow[]): string | null {
+  const { falta, justo } = rowsByStatus(rows);
+  const parts = [falta.length ? `faltan ${listNames(falta)}` : null, justo.length ? `van justos de ${listNames(justo)}` : null].filter(Boolean);
+  if (!parts.length) return null;
+  return `Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí ${parts.join(" y ")}.`;
 }
 
 /**
@@ -164,6 +252,13 @@ export function walking(extras: readonly IndicatorValue[] | undefined, row?: Gap
   return own ?? extras?.find((e) => e.feature_id.startsWith(WALKING_PREFIX) && e.feature_id !== HOSPITAL);
 }
 
+/** Who a district is compared with (falta.fila.referencia.distrito): the API leaves Madrid out of its reference. */
+export const DISTRICT_REFERENCE = "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)";
+
+export function referenceLabel(apiLabel: string, level: string): string {
+  return level === "distrito" ? DISTRICT_REFERENCE : apiLabel;
+}
+
 /** Walking minutes to the nearest general hospital, an extra of the health row (D-217). */
 export function hospitalWalking(extras: readonly IndicatorValue[] | undefined): IndicatorValue | undefined {
   return extras?.find((e) => e.feature_id === HOSPITAL);
@@ -175,7 +270,7 @@ export function hospitalWalking(extras: readonly IndicatorValue[] | undefined): 
  * Copy of pitch/textos_web.md (falta.fila.a_pie.hospital, hospital.nota).
  */
 export const HOSPITAL_WALK = {
-  to: "el hospital general más cercano",
+  label: "Hospital más cercano",
   note: "Es una pista de dónde pueden quedar las urgencias, no un dato de urgencias: ninguna fuente abierta dice qué hospitales las tienen abiertas las 24 horas. Andando, no en coche ni en ambulancia, y no cuenta para el estado de la fila.",
 };
 
@@ -185,6 +280,18 @@ export function walkingText({ value }: Pick<IndicatorValue, "value">): string {
   if (value > WALKING_CAP_MIN) return `más de ${WALKING_CAP_MIN} min`;
   if (value < 1) return "menos de 1 min";
   return `${Math.round(value)} min`;
+}
+
+const HOSPITAL_KM_FROM_MIN = 30;
+
+/**
+ * hospital.distancia: up to 30 min, «a 12 min andando»; further, the distance at 4 km/h, «a unos
+ * 3,4 km» (walking 51 minutes to a hospital is not useful, the distance is).
+ */
+export function hospitalText({ value }: Pick<IndicatorValue, "value">): string {
+  if (value === null) return "Sin datos";
+  if (value > HOSPITAL_KM_FROM_MIN) return `a unos ${formatNumber((value * 4) / 60, 1)} km`;
+  return `a ${walkingText({ value })} andando`;
 }
 
 /** Where the walking minutes go to, by row (falta.fila.a_pie); vivienda has none. */

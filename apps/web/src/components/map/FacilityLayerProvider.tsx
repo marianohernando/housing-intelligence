@@ -3,7 +3,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { ApiError } from "@/lib/api";
-import { type Facility, type FacilityKey, groupFacilities } from "@/lib/map/facilities";
+import { type Facility, type FacilityKey, FACILITY_TYPES, groupFacilities } from "@/lib/map/facilities";
 import { FACILITY_CATEGORIES } from "@/lib/map/zonePlaces";
 
 import { fetchZonePlaces } from "./fetchZones";
@@ -19,9 +19,12 @@ interface FacilityLayerValue {
   groups: Groups | null;
   error: ApiError | null;
   retry: () => void;
-  /** Type shown on the map (null: none) */
-  type: FacilityKey | null;
-  setType: (type: FacilityKey | null) => void;
+  /** Types shown on the map, several at once (petición de Mariano, 13 nov); none is allowed */
+  types: readonly FacilityKey[];
+  /** Press or release one type */
+  toggle: (type: FacilityKey) => void;
+  /** «Todos» / «Ninguno» */
+  setAll: (on: boolean) => void;
   /** The facility whose label is open on the map */
   picked: Facility | null;
   pick: (facility: Facility | null) => void;
@@ -52,7 +55,7 @@ export default function FacilityLayerProvider({ children }: { children: ReactNod
   const zoneId = routeZone?.admin_unit_id ?? null;
   const [results, setResults] = useState<ReadonlyMap<string, Result>>(new Map());
   const [attempt, setAttempt] = useState(0);
-  const [type, setTypeState] = useState<FacilityKey | null>("colegio");
+  const [types, setTypes] = useState<readonly FacilityKey[]>(["colegio"]);
   const [picked, setPicked] = useState<{ zoneId: string; facility: Facility } | null>(null);
   // A zone already loaded is not asked again; a failure is asked again on «Reintentar» or on coming back
   const cached = zoneId ? results.get(zoneId) : undefined;
@@ -82,8 +85,13 @@ export default function FacilityLayerProvider({ children }: { children: ReactNod
     setAttempt((n) => n + 1);
   }, [zoneId]);
 
-  const setType = useCallback((next: FacilityKey | null) => {
-    setTypeState(next);
+  // Filtered on the client: /places already brought every type of the zone in one request
+  const toggle = useCallback((key: FacilityKey) => {
+    setTypes((current) => (current.includes(key) ? current.filter((k) => k !== key) : [...current, key]));
+    setPicked(null);
+  }, []);
+  const setAll = useCallback((on: boolean) => {
+    setTypes(on ? FACILITY_TYPES.map((t) => t.key) : []);
     setPicked(null);
   }, []);
   const pick = useCallback((facility: Facility | null) => setPicked(facility && zoneId ? { zoneId, facility } : null), [zoneId]);
@@ -96,11 +104,12 @@ export default function FacilityLayerProvider({ children }: { children: ReactNod
       groups: result && "groups" in result ? result.groups : null,
       error: result && "error" in result ? result.error : null,
       retry,
-      type,
-      setType,
-      picked: picked && picked.zoneId === zoneId && picked.facility.type === type ? picked.facility : null,
+      types,
+      toggle,
+      setAll,
+      picked: picked && picked.zoneId === zoneId && types.includes(picked.facility.type) ? picked.facility : null,
       pick,
     };
-  }, [zoneId, results, retry, type, setType, picked, pick]);
+  }, [zoneId, results, retry, types, toggle, setAll, picked, pick]);
   return <FacilityLayerContext.Provider value={value}>{children}</FacilityLayerContext.Provider>;
 }

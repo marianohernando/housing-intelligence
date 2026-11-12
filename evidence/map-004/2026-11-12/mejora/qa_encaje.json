@@ -1,0 +1,108 @@
+{
+ "modo": "encaje",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "desktop": {
+  "zona": [
+   "Latina",
+   98
+  ],
+  "filas": [
+   {
+    "row": "escuela_infantil",
+    "status": "JUSTO",
+    "small": false
+   },
+   {
+    "row": "colegio",
+    "status": "CUBIERTO",
+    "small": false
+   },
+   {
+    "row": "centro_salud",
+    "status": "JUSTO",
+    "small": false
+   },
+   {
+    "row": "mayores",
+    "status": "CUBIERTO",
+    "small": false
+   },
+   {
+    "row": "farmacia",
+    "status": "CUBIERTO",
+    "small": false
+   },
+   {
+    "row": "vivienda",
+    "status": "SIN_DATOS",
+    "small": false
+   }
+  ],
+  "esperado": "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud.",
+  "linea": "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud.",
+  "pastilla": {
+   "card_right": 1396,
+   "pill_right": 1369,
+   "dentro": true
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mobile": {
+  "zona": [
+   "Latina",
+   98
+  ],
+  "filas": [
+   {
+    "row": "escuela_infantil",
+    "status": "JUSTO",
+    "small": false
+   },
+   {
+    "row": "colegio",
+    "status": "CUBIERTO",
+    "small": false
+   },
+   {
+    "row": "centro_salud",
+    "status": "JUSTO",
+    "small": false
+   },
+   {
+    "row": "mayores",
+    "status": "CUBIERTO",
+    "small": false
+   },
+   {
+    "row": "farmacia",
+    "status": "CUBIERTO",
+    "small": false
+   },
+   {
+    "row": "vivienda",
+    "status": "SIN_DATOS",
+    "small": false
+   }
+  ],
+  "esperado": "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud.",
+  "linea": "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud.",
+  "pastilla": {
+   "card_right": 373,
+   "pill_right": 347,
+   "dentro": true
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_portada_slow4g": [
+  {
+   "ms": 816,
+   "en_atribucion": false,
+   "texto": "Te decimos qué zonas encajan con tu vida y qué le "
+  }
+ ],
+ "fallos": []
+}

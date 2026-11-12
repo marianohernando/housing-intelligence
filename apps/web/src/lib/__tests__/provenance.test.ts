@@ -36,7 +36,7 @@ const osm: DatasetRef = {
 describe("counterText (pie.contador)", () => {
   it("counts the CM portal datasets and names the other publishers", () => {
     expect(counterText(23)).toBe(
-      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad",
+      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria",
     );
   });
 });
@@ -57,6 +57,16 @@ describe("attributions (attribution_text of /datasets, from the source catalogue
     expect(cited.some((c) => c.includes("Ministerio de Sanidad") && c.includes("actualizado a 31/12/2024"))).toBe(true);
     expect(cited.filter((c) => c.includes("CartoCiudad"))).toHaveLength(1);
     expect(cited.filter((c) => c.includes("Comunidad de Madrid"))).toHaveLength(1);
+  });
+
+  it("cites the Agencia Tributaria with its date and links it (fit-0.6, D-228; the text is the catalogue's)", () => {
+    const text =
+      "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024.";
+    const aeat = (dataset_id: string): DatasetRef => ({ ...osm, dataset_id, name: dataset_id, publisher: "Agencia Tributaria", attribution_text: text });
+    const cited = attributions([...datasets, aeat("aeat_alquiler_nuevos_contratos_municipios"), aeat("aeat_alquiler_nuevos_contratos_codigo_postal")]);
+    expect(cited.filter((c) => c.text === text)).toEqual([
+      { text, href: "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html" },
+    ]);
   });
 
   it("keeps the fallback faithful: what the API's fixture gives today", () => {

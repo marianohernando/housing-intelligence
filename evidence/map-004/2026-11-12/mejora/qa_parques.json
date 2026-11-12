@@ -1,0 +1,163 @@
+{
+ "modo": "parques",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "retiro_desktop": {
+  "api_total": 6,
+  "chip": "Parques 6",
+  "pulsado": "true",
+  "frase": "6 parques de 1 ha o más en Retiro",
+  "icono": "lucide lucide-trees jkx1Ca_icon",
+  "lista": {
+   "elementos": 6,
+   "primeras": [
+    "Jardines de John Lennon",
+    "Parque de Roma",
+    "Parque del Retiro",
+    "Parque Martin Luther King",
+    "Parque Martin Luther King",
+    "Real Observatorio de Madrid"
+   ],
+   "sin_nombre": 0
+  },
+  "lista_tiene": {
+   "Parque del Retiro": true
+  },
+  "axe": [],
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 6 parques de 1 ha o más en Retiro; su lista está en «Todos los centros».",
+  "peticiones_places": [
+   "education,health,pharmacy,social,green,transport"
+  ],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "retiro_mobile": {
+  "api_total": 6,
+  "chip": "Parques 6",
+  "pulsado": "true",
+  "frase": "6 parques de 1 ha o más en Retiro",
+  "icono": "lucide lucide-trees jkx1Ca_icon",
+  "lista": {
+   "elementos": 6,
+   "primeras": [
+    "Jardines de John Lennon",
+    "Parque de Roma",
+    "Parque del Retiro",
+    "Parque Martin Luther King",
+    "Parque Martin Luther King",
+    "Real Observatorio de Madrid"
+   ],
+   "sin_nombre": 0
+  },
+  "lista_tiene": {
+   "Parque del Retiro": true
+  },
+  "axe": [],
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 6 parques de 1 ha o más en Retiro; su lista está en «Todos los centros».",
+  "peticiones_places": [
+   "education,health,pharmacy,social,green,transport"
+  ],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "moncloa_desktop": {
+  "api_total": 38,
+  "chip": "Parques 38",
+  "pulsado": "true",
+  "frase": "38 parques de 1 ha o más en Moncloa-Aravaca",
+  "icono": "lucide lucide-trees jkx1Ca_icon",
+  "lista": {
+   "elementos": 38,
+   "primeras": [
+    "Bosque Metropolitano - Avenida Talgo",
+    "Casa de Campo",
+    "Dehesa de la Villa",
+    "Explanada de Puente del Rey",
+    "Huerta de la Partida",
+    "Jardines Aniceto Marinas"
+   ],
+   "sin_nombre": 14
+  },
+  "lista_tiene": {
+   "Casa de Campo": true,
+   "Parque sin nombre": true
+  },
+  "axe": [],
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 38 parques de 1 ha o más en Moncloa-Aravaca; su lista está en «Todos los centros».",
+  "peticiones_places": [
+   "education,health,pharmacy,social,green,transport"
+  ],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "moncloa_mobile": {
+  "api_total": 38,
+  "chip": "Parques 38",
+  "pulsado": "true",
+  "frase": "38 parques de 1 ha o más en Moncloa-Aravaca",
+  "icono": "lucide lucide-trees jkx1Ca_icon",
+  "lista": {
+   "elementos": 38,
+   "primeras": [
+    "Bosque Metropolitano - Avenida Talgo",
+    "Casa de Campo",
+    "Dehesa de la Villa",
+    "Explanada de Puente del Rey",
+    "Huerta de la Partida",
+    "Jardines Aniceto Marinas"
+   ],
+   "sin_nombre": 14
+  },
+  "lista_tiene": {
+   "Casa de Campo": true,
+   "Parque sin nombre": true
+  },
+  "axe": [],
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 38 parques de 1 ha o más en Moncloa-Aravaca; su lista está en «Todos los centros».",
+  "peticiones_places": [
+   "education,health,pharmacy,social,green,transport"
+  ],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "perales_desktop": {
+  "api_total": 0,
+  "chip": "Parques 0",
+  "pulsado": "true",
+  "frase": "Ningún parque de 1 ha o más en Perales de Tajuña",
+  "icono": "lucide lucide-trees jkx1Ca_icon",
+  "axe": [],
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
+  "peticiones_places": [
+   "education,health,pharmacy,social,green,transport"
+  ],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "perales_mobile": {
+  "api_total": 0,
+  "chip": "Parques 0",
+  "pulsado": "true",
+  "frase": "Ningún parque de 1 ha o más en Perales de Tajuña",
+  "icono": "lucide lucide-trees jkx1Ca_icon",
+  "axe": [],
+  "mapa_aria": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
+  "peticiones_places": [
+   "education,health,pharmacy,social,green,transport"
+  ],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_retiro_slow4g": [
+  {
+   "ms": 888,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2108,
+   "en_atribucion": false,
+   "texto": "Mira sus servicios y puntos clave, con datos ofici"
+  }
+ ],
+ "fallos": []
+}

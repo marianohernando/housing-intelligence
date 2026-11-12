@@ -20,7 +20,13 @@
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
 //   node scripts/check-qa.mjs capturas-deck [outDir] # captures C1–C4 of line D's deck (gap-0.3, fit-0.2)
+//   node scripts/check-qa.mjs capturas-deck-c1c2 [outDir] # only C1 and C2, the first zone of the demo search as the API says (fit-0.6)
 //   node scripts/check-qa.mjs revision [outDir]  # review of PR #16: beds without /datasets and new-tab links
+//   node scripts/check-qa.mjs impacto [outDir]   # «Dónde invertir primero» (D-229) and «Afecta a N …» in a FALTA row
+//   node scripts/check-qa.mjs claridad [outDir]  # line D's copy for a non-technical jury (summary, «Aquí hay n por cada 100», «Ver la cifra»)
+//   node scripts/check-qa.mjs esquema [outDir]   # «Cómo lo calculamos» in five steps: a row on desktop, a column on a phone
+//   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
+//   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -720,7 +726,7 @@ async function licences(browser) {
       await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
       for (const m of citedAll(lines, datasets)) failures.push(`${name} ${id}: falta ${m}`);
       const rest = entry.resto.join(" | ");
-      for (const must of ["del CRTM ni del Ministerio de Sanidad.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad"]) {
+      for (const must of ["del Ministerio de Sanidad ni de la Agencia Tributaria.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria"]) {
         if (!rest.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
       }
       if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
@@ -997,10 +1003,12 @@ async function parks(browser) {
         await chip.scrollIntoViewIfNeeded();
       }
       entry.chip = flat(await chip.innerText());
+      // Several types at once since 13 nov: «Ninguno» first, so only the parks are on
+      await press(panel.getByRole("button", { name: "Ninguno", exact: true }));
       await press(chip);
       await p.page.waitForTimeout(1500);
       entry.pulsado = await chip.getAttribute("aria-pressed");
-      entry.frase = flat(await panel.locator("[aria-live='polite']").innerText());
+      entry.frase = flat(await panel.getByRole("status").last().innerText());
       entry.icono = await chip.locator("svg").first().getAttribute("class");
       const summary = panel.getByText(/^Ver la lista/);
       if (await summary.count()) {
@@ -1184,15 +1192,17 @@ async function fitButShort(browser) {
     await p.page.waitForTimeout(800);
     // Every row of the zone's «Qué falta» in the API, not only the three the card shows
     const gapsAnswer = await fetch(`${API}/api/v1/gaps/${top.zone.level}/${top.zone.code}`);
-    const rows = (await gapsAnswer.json()).data.rows.map((r) => ({ label: r.label, status: r.status }));
-    const lower = (t) => t.charAt(0).toLowerCase() + t.slice(1);
-    const missing = rows.filter((r) => r.status === "FALTA").map((r) => lower(r.label));
-    const tight = rows.filter((r) => r.status === "JUSTO").map((r) => lower(r.label));
-    const parts = [missing.length ? `faltan: ${missing.join(", ")}` : null, tight.length ? `van justos de: ${tight.join(", ")}` : null].filter(Boolean);
+    const rows = (await gapsAnswer.json()).data.rows.map((r) => ({ row: r.row, status: r.status, small: r.reliable === false && !r.comparison_group }));
+    // encaje.aviso_* (pitch/textos_web.md, 13 nov): fila.lista.* names, rows too small to compare left out
+    const LIST = { escuela_infantil: "escuelas infantiles", colegio: "colegios", centro_salud: "centros de salud", mayores: "centros de mayores", farmacia: "farmacias", vivienda: "viviendas grandes para familias" };
+    const join = (n) => (n.length <= 1 ? n.join("") : `${n.slice(0, -1).join(", ")} y ${n[n.length - 1]}`);
+    const names = (status) => rows.filter((r) => r.status === status && !r.small).map((r) => LIST[r.row]);
+    const [missing, tight] = [names("FALTA"), names("JUSTO")];
+    const parts = [missing.length ? `faltan ${join(missing)}` : null, tight.length ? `van justos de ${join(tight)}` : null].filter(Boolean);
     entry.zona = [top.zone.name, top.match_pct];
     entry.filas = rows;
-    entry.esperado = parts.length ? `Encaja con lo que pides; aun así, en la zona ${parts.join("; y ")}.` : null;
-    const line = card.getByText(/^Encaja con lo que pides; aun así/);
+    entry.esperado = parts.length ? `Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí ${parts.join(" y ")}.` : null;
+    const line = card.getByText(/^Encaja con lo que pides\. Aun así/);
     entry.linea = (await line.count()) ? flat(await line.first().innerText()) : null;
     const [cardBox, pillBox] = [await box(card), await box(card.locator("span[title^='Cuánto se parece']").first())];
     entry.pastilla = { card_right: cardBox.right, pill_right: pillBox.right, dentro: pillBox.right <= cardBox.right };
@@ -1333,8 +1343,26 @@ async function texts(browser) {
 /** Captures C1–C4 of line D's deck (pitch/slides.md, «Recaptura tras gap-0.3» and fit-0.2), at 1440 px. */
 async function deckCaptures(browser) {
   const failures = [];
-  // C1 and C2 (fit-0.2): the demo search, the map and the first zone's card, checked against the
-  // /search answer the page receives (first zone and its facts, the commute in transit minutes)
+  await deckSearchCaptures(browser, failures);
+  await deckOtherCaptures(browser, failures);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** Only C1 and C2 (fit-0.6 changes the demo's first zone): the rest of the deck stays as it is. */
+async function deckSearchOnly(browser) {
+  const failures = [];
+  await deckSearchCaptures(browser, failures);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * C1 and C2: the demo search, the map and the first zone's card, checked against the /search
+ * answer the page receives (first zone and its facts, the commute in transit minutes). Nothing
+ * about the first zone is fixed here: it is whatever the API answers.
+ */
+async function deckSearchCaptures(browser, failures) {
   const s = await open(browser, DESKTOP);
   const [answer] = await Promise.all([
     s.page.waitForResponse((r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST", { timeout: 30000 }),
@@ -1362,6 +1390,10 @@ async function deckCaptures(browser) {
   report.c1_c2.consola = s.errors;
   if (s.errors.length) failures.push("C1: consola");
   await s.ctx.close();
+}
+
+/** C3 and C4, with what the API answers (no figure of a given day is expected). */
+async function deckOtherCaptures(browser, failures) {
 
   // C4: «Qué falta» of Puente de Vallecas, escuelas infantiles in FALTA
   const q = await open(browser, DESKTOP, "/que-falta?zona=distrito/2807913");
@@ -1378,12 +1410,16 @@ async function deckCaptures(browser) {
 
   // C3: Portada → «Ver un ejemplo…» → «Ver todas las opciones»; then the view with the +5 min change
   const h = await open(browser, DESKTOP);
-  await loadExample(h.page);
+  const [searchAnswer] = await Promise.all([
+    h.page.waitForResponse((r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST", { timeout: 30000 }),
+    loadExample(h.page),
+  ]);
+  const school = (await searchAnswer.json()).data.reality_check?.relaxations?.find((r) => /colegio con primaria/i.test(r.label));
   const rc = h.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
   await rc.getByRole("button", { name: /Ver todas las opciones/ }).click();
   await h.page.waitForTimeout(800);
-  report.c3 = { y_si_cambias: flat(await rc.innerText()) };
-  if (!/50 zonas, 17 más/.test(report.c3.y_si_cambias)) failures.push("C3: no dice «50 zonas, 17 más»");
+  report.c3 = { y_si_cambias: flat(await rc.innerText()), colegio_api: school ? [school.zones_if_relaxed, school.added_zones] : null };
+  if (!school || !report.c3.y_si_cambias.includes(`${school.zones_if_relaxed} zonas, ${school.added_zones} más`)) failures.push("C3: la opción del colegio no dice lo que da la API");
   await rc.screenshot({ path: `${out}/deck_c3_y_si_cambias_1440.png` });
   await h.page.screenshot({ path: `${out}/deck_c3_resultados_con_opciones_1440.png` });
   const option = rc.getByRole("button", { name: /colegio con primaria/i }).first();
@@ -1400,8 +1436,6 @@ async function deckCaptures(browser) {
   }
   report.c3.consola = h.errors;
   await h.ctx.close();
-  report.fallos = failures;
-  if (failures.length) process.exitCode = 1;
 }
 
 /** Review of PR #16: beds keep their source without /datasets, and links say they open a new tab. */
@@ -1457,10 +1491,442 @@ async function review(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+const esInt = (n) => new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0, useGrouping: "always" }).format(n);
+
+/**
+ * «Dónde invertir primero» (D-229): on «Qué falta» without a zone, every row with people in FALTA
+ * has its figure and its zones in the API order, from one single request to /gaps/impact; the first
+ * zone opens its list, whose FALTA row says how many people it leaves short. No other screen asks
+ * for /gaps/impact.
+ */
+async function impact(browser) {
+  const failures = [];
+  const isImpact = (r) => r.url().includes("/api/v1/gaps/impact");
+  const api = await (await fetch(`${API}/api/v1/gaps/impact`)).json();
+  const affected = api.data.rows.filter((r) => r.people_in_falta > 0);
+  report.api = { data_version: api.meta.data_version, filas: affected.map((r) => `${r.label}: ${r.people_in_falta} en ${r.zones_in_falta} zonas`) };
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    const page = await ctx.newPage();
+    const errors = [];
+    const impactRequests = [];
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("pageerror", (e) => errors.push(e.message));
+    page.on("request", (r) => isImpact(r) && impactRequests.push(r.url()));
+    await page.goto(`${BASE}/que-falta`, { waitUntil: "networkidle" });
+    const section = page.locator("section[aria-labelledby='invertir']");
+    await section.locator("li.glass").first().waitFor({ timeout: 30000 });
+    await page.waitForTimeout(800);
+    const cards = await section.locator("li.glass").evaluateAll((items) =>
+      items.map((li) => ({
+        fila: li.querySelector("h3")?.textContent?.trim(),
+        cifra: li.querySelector("strong")?.textContent?.trim(),
+        frase: li.querySelector("p")?.textContent?.replace(/\s+/g, " ").trim(),
+        contexto: li.querySelectorAll("p")[1]?.textContent?.trim(),
+        zonas: [...li.querySelectorAll("ol > li")].map((z) => z.querySelector("a, span + span > span")?.textContent?.trim()),
+        enlaces: [...li.querySelectorAll("ol > li a")].map((a) => a.getAttribute("href")),
+        visibles: [...li.querySelectorAll(":scope > ol > li")].length,
+      })),
+    );
+    const entry = (report[id] = { tarjetas: cards, sin_falta: await section.locator("ul").last().innerText() });
+    if (cards.length !== affected.length) failures.push(`${id}: ${cards.length} tarjetas / ${affected.length} filas con gente en FALTA`);
+    affected.forEach((row, i) => {
+      const card = cards[i] ?? {};
+      if (card.fila !== row.label) failures.push(`${id}: tarjeta ${i} «${card.fila}» / «${row.label}»`);
+      if (card.cifra !== esInt(row.people_in_falta)) failures.push(`${id}: ${row.label} cifra ${card.cifra} / ${esInt(row.people_in_falta)}`);
+      const names = row.ranking.map((z) => z.name);
+      if (JSON.stringify(card.zonas) !== JSON.stringify(names)) failures.push(`${id}: ${row.label} zonas ${card.zonas} / ${names}`);
+      if (card.visibles !== Math.min(3, names.length)) failures.push(`${id}: ${row.label} ${card.visibles} zonas a la vista`);
+      if (card.enlaces.length !== names.length) failures.push(`${id}: ${row.label} zonas sin enlace`);
+    });
+    entry.axe = await axe(page);
+    entry.overflow_px = await overflow(page);
+    await page.screenshot({ path: `${out}/impacto_que_falta_arriba_${id}.png` });
+    await section.screenshot({ path: `${out}/impacto_invertir_${id}.png` });
+    // «Ver N zonas más» opens the rest of the ranking
+    const more = section.getByText(/^Ver \d+ zonas? más$/).first();
+    await (touch ? more.tap() : more.click());
+    await page.waitForTimeout(300);
+    entry.axe_desplegado = await axe(page);
+    // The first zone of the first row opens its list
+    const firstRow = affected[0];
+    const top = firstRow.ranking[0];
+    const link = section.locator("li.glass").first().getByRole("link", { name: top.name });
+    await (touch ? link.tap() : link.click());
+    await page.waitForURL(`**/que-falta?zona=${top.level}/${top.code}`, { timeout: 20000 });
+    await page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+    await page.waitForTimeout(500);
+    const zoneApi = await (await fetch(`${API}/api/v1/gaps/${top.level}/${top.code}`)).json();
+    const falta = zoneApi.data.rows.filter((r) => r.status === "FALTA" && r.people);
+    entry.zona = top.name;
+    entry.afecta = (await page.getByText(/^Afecta a /).allInnerTexts()).map(flat);
+    entry.afecta_esperado = falta.map((r) => `Afecta a ${esInt(r.people.count)} ${r.people.label}.`);
+    if (JSON.stringify(entry.afecta) !== JSON.stringify(entry.afecta_esperado)) failures.push(`${id}: «Afecta a» ${entry.afecta} / ${entry.afecta_esperado}`);
+    entry.axe_zona = await axe(page);
+    entry.overflow_zona_px = await overflow(page);
+    await page.locator("main li.glass").first().screenshot({ path: `${out}/impacto_fila_afecta_${id}.png` });
+    entry.peticiones_impact = impactRequests.length;
+    entry.consola = errors;
+    if (impactRequests.length !== 1) failures.push(`${id}: ${impactRequests.length} peticiones a /gaps/impact`);
+    for (const k of ["axe", "axe_desplegado", "axe_zona"]) if (entry[k].length) failures.push(`${id}: ${k} ${entry[k].map((v) => v.id).join(", ")}`);
+    if (entry.overflow_px > 0 || entry.overflow_zona_px > 0) failures.push(`${id}: desborde`);
+    if (errors.length) failures.push(`${id}: consola`);
+    await ctx.close();
+  }
+  // Only «Qué falta» without a zone asks for it
+  for (const path of ["/", "/que-falta?zona=distrito/2807913", ZONE.path, "/como-lo-calculamos"]) {
+    const p = await open(browser, DESKTOP, path);
+    const asked = [];
+    p.page.on("request", (r) => isImpact(r) && asked.push(r.url()));
+    await p.page.reload({ waitUntil: "networkidle" });
+    await p.page.waitForTimeout(1000);
+    (report.otras_pantallas ??= {})[path] = asked.length;
+    if (asked.length) failures.push(`${path}: pide /gaps/impact`);
+    await p.ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** What «Qué falta» should say for a zone, from its /gaps answer (pitch/textos_web.md, falta.resumen.* and falta.fila.comparacion). */
+function expectedGapCopy(rows) {
+  const LIST = { escuela_infantil: "escuelas infantiles", colegio: "colegios", centro_salud: "centros de salud", mayores: "centros de mayores", farmacia: "farmacias", vivienda: "viviendas grandes para familias" };
+  const join = (n) => (n.length <= 1 ? n.join("") : `${n.slice(0, -1).join(", ")} y ${n[n.length - 1]}`);
+  const small = (r) => r.reliable === false && !r.comparison_group;
+  const names = (pick) => rows.filter(pick).map((r) => LIST[r.row]);
+  const [falta, justo, cubierto] = ["FALTA", "JUSTO", "CUBIERTO"].map((st) => names((r) => r.status === st && !small(r)));
+  const lines = [];
+  if (falta.length) lines.push(`Aquí falta: ${join(falta)}.`);
+  else if (justo.length) lines.push("Aquí no falta nada claro.");
+  else if (cubierto.length) lines.push("Aquí no falta nada frente a municipios parecidos.");
+  if (justo.length) lines.push(`Van justos: ${join(justo)}.`);
+  const tiny = names((r) => r.status !== "SIN_DATOS" && small(r));
+  if (tiny.length) lines.push(`Zona muy pequeña para comparar: ${join(tiny)}.`);
+  const none = names((r) => r.status === "SIN_DATOS");
+  if (none.length) lines.push(`Sin datos: ${join(none)}.`);
+  const comparison = Object.fromEntries(
+    rows.map((r) => {
+      const ratio = r.comparison_group ? r.comparison_group.ratio_to_reference : r.ratio_to_reference;
+      if (r.status === "SIN_DATOS" || small(r) || ratio == null) return [r.label, null];
+      return [r.label, `${r.comparison_group ? "Junto con sus vecinos, hay" : "Aquí hay"} ${esInt(Math.round(100 * ratio))} por cada 100 que hay en municipios parecidos.`];
+    }),
+  );
+  return { summary: lines.join(" "), comparison };
+}
+
+/**
+ * Line D's copy for a non-technical jury (fase de mejora, 13 nov): the summary over the rows, the
+ * main line of each row with the technical figure behind «Ver la cifra», who a district is compared
+ * with, the hospital as a distance, no «desde la mitad de sus calles» on any screen (also in the
+ * card's facts) and one visible name in the footer.
+ */
+async function clarity(browser) {
+  const failures = [];
+  const ZONES = [
+    ["puente_de_vallecas", "distrito", "2807913"],
+    ["el_alamo", "municipio", "28004"],
+  ];
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    for (const [name, level, code] of ZONES) {
+      const p = await open(browser, profile, `/que-falta?zona=${level}/${code}`);
+      await p.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+      const api = (await (await fetch(`${API}/api/v1/gaps/${level}/${code}`)).json()).data;
+      const want = expectedGapCopy(api.rows);
+      const header = p.page.locator("main header").first();
+      const summary = flat(await header.locator("p").nth(1).innerText());
+      const lead = flat(await header.locator("p strong").first().innerText());
+      const rows = await p.page.locator("main li.glass").evaluateAll((items) =>
+        items.map((li) => ({
+          fila: li.querySelector("h2")?.textContent?.trim(),
+          frase: li.querySelector("h2")?.parentElement?.nextElementSibling?.textContent?.trim() ?? null,
+          cifra_abierta: li.querySelector("details")?.open ?? null,
+          hospital: [...li.querySelectorAll("dl > div")].map((d) => [...d.children].map((c) => c.textContent?.replace(/\s+/g, " ").trim()).join(" ")).find((t) => t.startsWith("Hospital más cercano")) ?? null,
+        })),
+      );
+      const entry = (report[`${name}_${id}`] = { resumen: summary, negrita: lead, resumen_esperado: want.summary, filas: rows });
+      if (summary !== want.summary) failures.push(`${name} ${id}: resumen «${summary}» / «${want.summary}»`);
+      if (!want.summary.startsWith(lead)) failures.push(`${name} ${id}: negrita «${lead}»`);
+      for (const r of rows) {
+        const expected = want.comparison[r.fila];
+        if (expected && r.frase !== expected) failures.push(`${name} ${id} ${r.fila}: «${r.frase}» / «${expected}»`);
+        if (r.cifra_abierta !== false) failures.push(`${name} ${id} ${r.fila}: «Ver la cifra» no empieza cerrada`);
+      }
+      const health = rows.find((r) => r.hospital);
+      if (health && !/^Hospital más cercano (a \d+ min andando|a unos \d+,\d km|Sin datos)$/.test(health.hospital)) failures.push(`${name} ${id}: hospital «${health.hospital}»`);
+      entry.axe = await axe(p.page);
+      await p.page.screenshot({ path: `${out}/claridad_${name}_arriba_${id}.png` });
+      // «Ver la cifra» of the first row: the figure and who the zone is compared with
+      const first = p.page.locator("main li.glass").first();
+      const figure = first.getByText("Ver la cifra");
+      await (touch ? figure.tap() : figure.click());
+      await p.page.waitForTimeout(300);
+      entry.referencia = flat(await first.locator("details dl > div").nth(1).locator("dt").innerText());
+      const wantRef = level === "distrito" ? "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)" : api.rows[0].reference_label;
+      if (entry.referencia !== wantRef) failures.push(`${name} ${id}: referencia «${entry.referencia}» / «${wantRef}»`);
+      entry.axe_cifra = await axe(p.page);
+      await first.screenshot({ path: `${out}/claridad_${name}_fila_cifra_${id}.png` });
+      const body = await p.page.locator("body").innerText();
+      entry.mitad_de_las_calles = /mitad de (sus|las) calles/.test(body);
+      entry.pie = flat(await p.page.locator("footer").last().getByText(/^Vida Fácil · /).innerText());
+      entry.housing_intelligence = body.includes("Housing Intelligence");
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      if (entry.mitad_de_las_calles) failures.push(`${name} ${id}: sigue «mitad de las calles»`);
+      if (!entry.pie.startsWith("Vida Fácil · Proyecto para DATAMAD 2026") || entry.housing_intelligence) failures.push(`${name} ${id}: pie «${entry.pie}»`);
+      for (const k of ["axe", "axe_cifra"]) if (entry[k].length) failures.push(`${name} ${id}: ${k} ${entry[k].map((v) => v.id).join(", ")}`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      if (entry.consola.length) failures.push(`${name} ${id}: consola`);
+      await p.ctx.close();
+    }
+    // The card of the first zone of the example: facts without «desde la mitad de sus calles», said once below
+    const c = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+    const [response] = await Promise.all([c.page.waitForResponse(isSearch, { timeout: 30000 }), press(c.page.getByRole("button", { name: /Ver un ejemplo/ }))]);
+    const top = (await response.json()).data.results[0];
+    await c.page.waitForTimeout(2000);
+    await press(c.page.getByRole("button", { name: new RegExp(`^1 ${top.zone.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`) }).first());
+    const card = c.page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+    await card.getByRole("heading", { name: "Qué falta aquí" }).waitFor({ timeout: 20000 });
+    await c.page.waitForTimeout(800);
+    const facts = card.locator("section").filter({ has: c.page.getByRole("heading", { name: "Lo que tienes aquí" }) });
+    const entry = (report[`tarjeta_${id}`] = {
+      zona: top.zone.name,
+      hechos: (await facts.locator("li").allInnerTexts()).map(flat),
+      mediana: await facts.getByText(/^Los minutos andando son los de la mitad de la zona/).count(),
+      aviso: (await card.getByText(/^Encaja con lo que pides\. Aun así/).allInnerTexts()).map(flat),
+      axe: await axe(c.page),
+      overflow_px: await overflow(c.page),
+      consola: c.errors,
+    });
+    if (entry.hechos.some((h) => /mitad de sus calles/.test(h))) failures.push(`tarjeta ${id}: hechos con «mitad de sus calles»`);
+    if (entry.mediana !== 1) failures.push(`tarjeta ${id}: ${entry.mediana} líneas de la mediana`);
+    if (entry.axe.length) failures.push(`tarjeta ${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`tarjeta ${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`tarjeta ${id}: desborde`);
+    await card.screenshot({ path: `${out}/claridad_tarjeta_${id}.png` });
+    await c.ctx.close();
+  }
+  // The zone screen on a phone over slow 4G (its card shows encaje.aviso_*): largest paint candidates
+  report.lcp_zona_slow4g = await lcpOnSlow4g(browser, "/zona/distrito/2807913");
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/** «Cómo lo calculamos» in five steps (fase de mejora): readable on a phone, in order, accessible. */
+async function methodSteps(browser) {
+  const failures = [];
+  const TITLES = ["Datos abiertos", "Lo que hay a 15 min andando", "Repartido entre quien lo comparte", "Comparado con municipios parecidos", "FALTA, JUSTO o CUBIERTO"];
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const p = await open(browser, profile, "/como-lo-calculamos");
+    const list = p.page.getByRole("list", { name: "Cómo decidimos qué falta, en cinco pasos" });
+    const steps = await list.locator(":scope > li").evaluateAll((items) =>
+      items.map((li) => {
+        const r = li.getBoundingClientRect();
+        return { titulo: li.querySelector("strong")?.textContent?.trim(), top: Math.round(r.top), left: Math.round(r.left), right: Math.round(r.right), fuente_px: parseFloat(getComputedStyle(li.querySelector("span:nth-of-type(2)")).fontSize) };
+      }),
+    );
+    const entry = (report[id] = { pasos: steps });
+    if (JSON.stringify(steps.map((s) => s.titulo)) !== JSON.stringify(TITLES)) failures.push(`${id}: pasos ${steps.map((s) => s.titulo)}`);
+    const inRow = steps.every((s, i) => i === 0 || (Math.abs(s.top - steps[0].top) <= 2 && s.left > steps[i - 1].right));
+    const inColumn = steps.every((s, i) => i === 0 || s.top > steps[i - 1].top);
+    entry.disposicion = inRow ? "fila" : inColumn ? "columna" : "otra";
+    if (entry.disposicion !== (id === "desktop" ? "fila" : "columna")) failures.push(`${id}: disposición ${entry.disposicion}`);
+    if (steps.some((s) => s.fuente_px < 14)) failures.push(`${id}: texto de menos de 14 px`);
+    entry.ejemplo = flat(await p.page.locator("figure figcaption").first().innerText());
+    entry.mitad_de_las_calles = /mitad de (sus|las) calles/.test(await p.page.locator("body").innerText());
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    if (entry.mitad_de_las_calles) failures.push(`${id}: sigue «mitad de las calles»`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    await p.page.locator("#en-cinco-pasos").locator("..").screenshot({ path: `${out}/esquema_como_lo_calculamos_${id}.png` });
+    await p.ctx.close();
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * Mariano's notes after trying production (13 nov): the perceived safety of a district as two bars
+ * on 0–10 with Madrid's mark, in the brand's colours; and «Todos los centros» with several types at
+ * once, filtered on the client (no new request to /places), with «Todos» and «Ninguno».
+ */
+async function marianoNotes(browser) {
+  const failures = [];
+  const latest = async (id, level, code) => {
+    const r = await fetch(`${API}/api/v1/features/${id}/values?level=${level}`);
+    const rows = (await r.json()).data.values.filter((v) => v.territory_code === code && v.value !== null);
+    return rows.sort((a, b) => b.period_start.localeCompare(a.period_start))[0]?.value ?? null;
+  };
+  const score = (v) => v.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const VIOLET = "rgb(106, 90, 224)";
+  const district = { name: "villaverde", path: "/zona/distrito/2807917", code: "2807917" };
+  const want = {
+    De_noche: [await latest("seguridad_percibida_noche", "distrito", district.code), await latest("seguridad_percibida_noche", "municipio", "28079")],
+    De_día: [await latest("seguridad_percibida_dia", "distrito", district.code), await latest("seguridad_percibida_dia", "municipio", "28079")],
+  };
+  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+    // 1. Safety: two bars, the figure beside each, Madrid's mark, violet and navy only
+    const p = await open(browser, profile, district.path);
+    const block = p.page.getByRole("region", { name: "Seguridad del barrio según sus vecinos" });
+    await block.waitFor({ timeout: 20000 });
+    await p.page.waitForTimeout(1500);
+    const bars = await block.locator("div[aria-hidden='true'] > div").evaluateAll((rows) =>
+      rows.map((row) => {
+        const [label, track, value] = [...row.children];
+        const fill = track?.children[0];
+        const mark = track?.children[1];
+        return {
+          etiqueta: label?.textContent?.trim(),
+          cifra: value?.textContent?.trim(),
+          ancho: fill?.style.width,
+          color: fill ? getComputedStyle(fill).backgroundColor : null,
+          marca: mark ? mark.style.left : null,
+          marca_texto: mark?.textContent?.trim() ?? null,
+        };
+      }),
+    );
+    const entry = (report[`seguridad_${district.name}_${id}`] = { barras: bars, texto: flat(await block.innerText()) });
+    for (const bar of bars) {
+      const [value, city] = want[bar.etiqueta.replace(" ", "_")] ?? [];
+      if (value == null) {
+        failures.push(`${id}: barra «${bar.etiqueta}»`);
+        continue;
+      }
+      if (bar.cifra !== score(value) || bar.ancho !== `${Math.round(value * 1000) / 100}%`) failures.push(`${id} ${bar.etiqueta}: ${bar.cifra} ${bar.ancho} / ${score(value)}`);
+      if (bar.marca_texto !== `Madrid ${score(city)}` || bar.marca !== `${Math.round(city * 1000) / 100}%`) failures.push(`${id} ${bar.etiqueta}: marca ${bar.marca_texto} ${bar.marca}`);
+      if (bar.color !== VIOLET) failures.push(`${id} ${bar.etiqueta}: color ${bar.color}`);
+    }
+    if (bars.length !== 2) failures.push(`${id}: ${bars.length} barras`);
+    if (/peligros|insegur/i.test(entry.texto)) failures.push(`${id}: palabra de alarma`);
+    if (!entry.texto.includes("unas 400 personas por distrito")) failures.push(`${id}: sin la fuente`);
+    await block.screenshot({ path: `${out}/mariano_seguridad_${district.name}_${id}.png` });
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    if (entry.axe.length) failures.push(`${id}: axe seguridad ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    await p.ctx.close();
+
+    // 2. «Todos los centros» with several types at once, without new requests
+    const c = await open(browser, profile, ZONE.path);
+    const places = [];
+    c.page.on("request", (r) => r.url().includes("/api/v1/places") && places.push(r.url()));
+    const panel = c.page.getByRole("region", { name: "Todos los centros", exact: true });
+    await panel.getByRole("button", { name: /^Colegios/ }).waitFor({ timeout: 20000 });
+    await c.page.waitForTimeout(3000);
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const pressed = () => panel.locator("button[aria-pressed='true']").evaluateAll((b) => b.map((x) => x.querySelector("span")?.textContent?.trim()));
+    const status = () => panel.getByRole("status").last().innerText().then(flat);
+    const centres = (report[`centros_${id}`] = {
+      al_abrir: await pressed(),
+      // Asked when the zone opens: the facilities (every category in one request) and the key points
+      peticiones_places_al_abrir: await c.page.evaluate(() => performance.getEntriesByType("resource").filter((e) => e.name.includes("/api/v1/places")).length),
+    });
+    await press(panel.getByRole("button", { name: /^Farmacias/ }));
+    await press(panel.getByRole("button", { name: /^Parques/ }));
+    await c.page.waitForTimeout(1500);
+    centres.tres = await pressed();
+    centres.tres_estado = await status();
+    centres.tres_mapa = await c.page.locator(".maplibregl-map, [aria-label^='Mapa']").first().getAttribute("aria-label").catch(() => null);
+    await c.page.screenshot({ path: `${out}/mariano_centros_tres_tipos_${id}.png` });
+    await press(panel.getByRole("button", { name: "Todos", exact: true }));
+    await c.page.waitForTimeout(2500);
+    centres.todos = await pressed();
+    centres.listas = await panel.getByText(/^Ver la lista \(/).count();
+    centres.axe_todos = await axe(c.page);
+    await c.page.screenshot({ path: `${out}/mariano_centros_todos_${id}.png` });
+    await panel.screenshot({ path: `${out}/mariano_centros_panel_todos_${id}.png` });
+    await press(panel.getByRole("button", { name: "Ninguno", exact: true }));
+    await c.page.waitForTimeout(800);
+    centres.ninguno = await pressed();
+    centres.ninguno_estado = await status();
+    centres.peticiones_places_al_pulsar = places.length;
+    centres.overflow_px = await overflow(c.page);
+    centres.consola = c.errors;
+    if (JSON.stringify(centres.al_abrir) !== JSON.stringify(["Colegios"])) failures.push(`${id}: al abrir ${centres.al_abrir}`);
+    if (JSON.stringify(centres.tres) !== JSON.stringify(["Colegios", "Farmacias", "Parques"])) failures.push(`${id}: tres tipos ${centres.tres}`);
+    if (!/colegios con primaria en .* farmacias? en .* y \d+ parques? de 1 ha o más/.test(centres.tres_estado)) failures.push(`${id}: estado «${centres.tres_estado}»`);
+    if (centres.todos.length !== 7 || centres.listas < 6) failures.push(`${id}: todos ${centres.todos.length} tipos, ${centres.listas} listas`);
+    if (centres.ninguno.length !== 0 || !centres.ninguno_estado.startsWith("Toca uno o varios")) failures.push(`${id}: ninguno`);
+    if (centres.peticiones_places_al_pulsar !== 0) failures.push(`${id}: ${centres.peticiones_places_al_pulsar} peticiones nuevas a /places al pulsar`);
+    if (centres.axe_todos.length) failures.push(`${id}: axe centros ${centres.axe_todos.map((v) => v.id).join(", ")}`);
+    if (centres.overflow_px > 0) failures.push(`${id}: desborde centros`);
+    if (centres.consola.length) failures.push(`${id}: consola centros`);
+    await c.ctx.close();
+  }
+  report.lcp_zona_slow4g = await lcpOnSlow4g(browser, ZONE.path);
+  report.lcp_villaverde_slow4g = await lcpOnSlow4g(browser, district.path);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
+/**
+ * D-230 in the web: a row with `reliable: false` and no group of neighbours shows «No comparable»
+ * (never JUSTO or CUBIERTO) with the API's explanation; a NOT_APPLICABLE row says the API's reason.
+ * La Acebeda (70 inhabitants) and El Álamo (compared with its neighbours).
+ */
+async function smallZones(browser) {
+  const failures = [];
+  for (const [name, code] of [["la_acebeda", "28001"], ["el_alamo", "28004"]]) {
+    const api = (await (await fetch(`${API}/api/v1/gaps/municipio/${code}`)).json()).data;
+    const want = api.rows.map((r) => ({
+      fila: r.label,
+      no_comparable: r.status !== "SIN_DATOS" && r.reliable === false && !r.comparison_group,
+      no_aplica: r.indicator.null_reason === "NOT_APPLICABLE" ? r.explanation : null,
+      explicacion: r.explanation,
+    }));
+    report[`${name}_api`] = want;
+    for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+      const p = await open(browser, profile, `/que-falta?zona=municipio/${code}`);
+      await p.page.getByText(/De dónde sale/).first().waitFor({ timeout: 20000 });
+      const rows = await p.page.locator("main li.glass").evaluateAll((items) =>
+        items.map((li) => ({
+          fila: li.querySelector("h2")?.textContent?.trim(),
+          etiquetas: [...(li.querySelector("h2")?.nextElementSibling?.children ?? [])].map((b) => b.childNodes[1]?.textContent?.trim() ?? b.textContent?.trim()),
+          texto: li.textContent?.replace(/\s+/g, " ") ?? "",
+        })),
+      );
+      const entry = (report[`${name}_${id}`] = { filas: rows.map(({ fila, etiquetas }) => ({ fila, etiquetas })) });
+      for (const w of want) {
+        const row = rows.find((r) => r.fila === w.fila);
+        if (!row) continue;
+        const tags = row.etiquetas.join(" ");
+        if (w.no_comparable && (!tags.includes("No comparable") || /JUSTO|CUBIERTO|FALTA/.test(tags))) failures.push(`${name} ${id} ${w.fila}: etiquetas «${tags}»`);
+        if (w.no_comparable && w.explicacion.startsWith("No comparable") && !row.texto.includes(w.explicacion)) failures.push(`${name} ${id} ${w.fila}: sin la explicación de la API`);
+        if (!w.no_comparable && /No comparable/.test(tags)) failures.push(`${name} ${id} ${w.fila}: «No comparable» de más`);
+        if (w.no_aplica && !row.texto.includes(w.no_aplica)) failures.push(`${name} ${id} ${w.fila}: sin el motivo de NOT_APPLICABLE`);
+        if (w.no_aplica && row.texto.includes("Este dato no tiene sentido en esta zona.")) failures.push(`${name} ${id} ${w.fila}: texto genérico de NOT_APPLICABLE`);
+      }
+      entry.resumen = flat(await p.page.locator("main header p").nth(1).innerText());
+      entry.axe = await axe(p.page);
+      entry.overflow_px = await overflow(p.page);
+      entry.consola = p.errors;
+      if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      if (entry.consola.length) failures.push(`${name} ${id}: consola`);
+      await p.page.screenshot({ path: `${out}/pequenas_${name}_${id}.png`, fullPage: id === "desktop" });
+      await p.ctx.close();
+    }
+  }
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "pequenas") await smallZones(browser);
+else if (mode === "mariano") await marianoNotes(browser);
+else if (mode === "esquema") await methodSteps(browser);
+else if (mode === "claridad") await clarity(browser);
+else if (mode === "impacto") await impact(browser);
 else if (mode === "revision") await review(browser);
 else if (mode === "capturas-deck") await deckCaptures(browser);
+else if (mode === "capturas-deck-c1c2") await deckSearchOnly(browser);
 else if (mode === "textos") await texts(browser);
 else if (mode === "licencias") await licences(browser);
 else if (mode === "atribucion") await attribution(browser);

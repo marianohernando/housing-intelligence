@@ -1,0 +1,95 @@
+{
+ "modo": "esquema",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "desktop": {
+  "pasos": [
+   {
+    "titulo": "Datos abiertos",
+    "top": 229,
+    "left": 71,
+    "right": 190,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "Lo que hay a 15 min andando",
+    "top": 229,
+    "left": 215,
+    "right": 334,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "Repartido entre quien lo comparte",
+    "top": 229,
+    "left": 359,
+    "right": 478,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "Comparado con municipios parecidos",
+    "top": 229,
+    "left": 503,
+    "right": 622,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "FALTA, JUSTO o CUBIERTO",
+    "top": 229,
+    "left": 647,
+    "right": 766,
+    "fuente_px": 14.875
+   }
+  ],
+  "disposicion": "fila",
+  "ejemplo": "Ejemplo, con los datos del 12 de noviembre de 2026: en Puente de Vallecas hay 2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los municipios parecidos. Es decir, aquí hay 57 por cada 100: FALTA.",
+  "mitad_de_las_calles": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mobile": {
+  "pasos": [
+   {
+    "titulo": "Datos abiertos",
+    "top": 320,
+    "left": 45,
+    "right": 345,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "Lo que hay a 15 min andando",
+    "top": 462,
+    "left": 45,
+    "right": 345,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "Repartido entre quien lo comparte",
+    "top": 559,
+    "left": 45,
+    "right": 345,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "Comparado con municipios parecidos",
+    "top": 698,
+    "left": 45,
+    "right": 345,
+    "fuente_px": 14.875
+   },
+   {
+    "titulo": "FALTA, JUSTO o CUBIERTO",
+    "top": 836,
+    "left": 45,
+    "right": 345,
+    "fuente_px": 14.875
+   }
+  ],
+  "disposicion": "columna",
+  "ejemplo": "Ejemplo, con los datos del 12 de noviembre de 2026: en Puente de Vallecas hay 2,8 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los municipios parecidos. Es decir, aquí hay 57 por cada 100: FALTA.",
+  "mitad_de_las_calles": false,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "fallos": []
+}

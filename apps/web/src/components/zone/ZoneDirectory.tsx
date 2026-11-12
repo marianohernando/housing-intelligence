@@ -11,7 +11,7 @@ import type { ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, inGroup, isSmallZone } from "@/lib/gaps";
+import { gapsHref, inGroup, notComparable } from "@/lib/gaps";
 import { searchable, wholeCities, zoneDirectory, type ZoneCollection, zoneHref, type ZoneProperties } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
@@ -57,8 +57,7 @@ function ZoneLinks({ title, zones, hrefFor, statuses }: LinksProps) {
           return (
             <li key={zone.zone_key}>
               <Link href={hrefFor(zone)}>{zone.name}</Link>
-              {gap && <GapBadge status={gap.status} />}
-              {gap && isSmallZone(gap) && <SmallZoneTag />}
+              {gap && (notComparable(gap) ? <SmallZoneTag /> : <GapBadge status={gap.status} />)}
               {gap && inGroup(gap) && <GroupTag />}
             </li>
           );
@@ -147,8 +146,7 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
             return (
               <li key={city.admin_unit_id}>
                 <Link href={gapsHref("municipio", city.code)}>{TEXT.wholeCity(city.name)}</Link>
-                {gap && <GapBadge status={gap.status} />}
-                {gap && isSmallZone(gap) && <SmallZoneTag />}
+                {gap && (notComparable(gap) ? <SmallZoneTag /> : <GapBadge status={gap.status} />)}
                 {gap && inGroup(gap) && <GroupTag />}
               </li>
             );

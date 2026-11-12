@@ -16,7 +16,7 @@ import { useId } from "react";
 
 import type { FactKind, FactTopic, SearchResult } from "@/contracts/search_response";
 import { confidenceText } from "@/lib/confidence";
-import { constraintLabels, failedLabels, rankText, zoneFit } from "@/lib/fit";
+import { constraintLabels, failedLabels, hasWalkingFact, rankText, WALK_MEDIAN, zoneFit } from "@/lib/fit";
 
 import styles from "./ZoneCard.module.css";
 
@@ -100,6 +100,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
               );
             })}
           </ul>
+          {hasWalkingFact(ranked.facts) && <p className={styles.hint}>{WALK_MEDIAN}</p>}
         </section>
       )}
     </>

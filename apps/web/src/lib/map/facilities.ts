@@ -327,3 +327,43 @@ export function facilitiesGeoJSON(list: readonly Facility[]): GeoJSON.FeatureCol
     })),
   };
 }
+
+/** The types pressed in «Todos los centros», in the order of the buttons, without repeats. */
+export function orderedTypes(types: Iterable<FacilityKey>): FacilityKey[] {
+  const pressed = new Set(types);
+  return FACILITY_TYPES.map((t) => t.key).filter((key) => pressed.has(key));
+}
+
+/** «Todos los centros» with several types at once (petición de Mariano): their places, in the order of the buttons. */
+export function selectedFacilities(groups: Readonly<Record<FacilityKey, readonly Facility[]>>, types: Iterable<FacilityKey>): Facility[] {
+  return orderedTypes(types).flatMap((key) => groups[key]);
+}
+
+/**
+ * «23 colegios con primaria en Chamartín y 12 farmacias en Chamartín»: the types pressed, for the
+ * panel's status (with «Ningún parque…» too) or, with `empty: false`, for the map's description;
+ * null when nothing is left.
+ */
+export function selectedCountText(
+  groups: Readonly<Record<FacilityKey, readonly Facility[]>>,
+  types: Iterable<FacilityKey>,
+  zone: string,
+  { empty = true }: { empty?: boolean } = {},
+): string | null {
+  const parts = orderedTypes(types)
+    .filter((key) => empty || groups[key].length > 0)
+    .map((key) => facilityCountText(key, groups[key].length, zone));
+  if (!parts.length) return null;
+  return parts.length === 1 ? (parts[0] ?? null) : `${parts.slice(0, -1).join(", ")} y ${parts[parts.length - 1]}`;
+}
+
+/** Each type's colour on the map and on its button (tokens.css, --fac-*): never a state colour. */
+export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
+  colegio: "fac-colegio",
+  escuela_infantil: "fac-escuela-infantil",
+  centro_salud: "fac-centro-salud",
+  hospital: "fac-hospital",
+  farmacia: "fac-farmacia",
+  mayores: "fac-mayores",
+  parque: "park",
+};

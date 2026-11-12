@@ -54,6 +54,12 @@ export const MAP_PALETTE_TOKENS = {
   gapFaltaInk: "falta-ink",
   gapJustoInk: "justo-ink",
   sinDatos: "sin-datos",
+  facColegio: "fac-colegio",
+  facEscuelaInfantil: "fac-escuela-infantil",
+  facCentroSalud: "fac-centro-salud",
+  facHospital: "fac-hospital",
+  facFarmacia: "fac-farmacia",
+  facMayores: "fac-mayores",
 } as const;
 
 export type MapPalette = Record<keyof typeof MAP_PALETTE_TOKENS, string>;
@@ -354,7 +360,26 @@ export function facilityLayers(p: MapPalette): LayerSpecification[] {
       filter: ["!", ["has", "point_count"]],
       paint: {
         "circle-radius": 7,
-        "circle-color": ["match", ["get", "type"], "parque", p.parkStrong, p.violetStrong],
+        // One colour per type, so several types can be on at once (petición de Mariano, 13 nov)
+        "circle-color": [
+          "match",
+          ["get", "type"],
+          "parque",
+          p.parkStrong,
+          "colegio",
+          p.facColegio,
+          "escuela_infantil",
+          p.facEscuelaInfantil,
+          "centro_salud",
+          p.facCentroSalud,
+          "hospital",
+          p.facHospital,
+          "farmacia",
+          p.facFarmacia,
+          "mayores",
+          p.facMayores,
+          p.violetStrong,
+        ],
         "circle-stroke-color": "#ffffff",
         "circle-stroke-width": 2.5,
       },

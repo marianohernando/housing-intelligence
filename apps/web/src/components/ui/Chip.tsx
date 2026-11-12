@@ -14,10 +14,12 @@ interface Props {
   /** Disabled with a short note («Muy pronto») */
   soon?: string;
   title?: string;
+  /** Colour of the icon, when the chip also stands for a colour on the map («Todos los centros») */
+  color?: string;
 }
 
 /** Toggle chip, at least 44 px high; its state is told by aria-pressed, colour and border. */
-export default function Chip({ label, pressed, onToggle, icon: Icon, badge, count, soon, title }: Props) {
+export default function Chip({ label, pressed, onToggle, icon: Icon, badge, count, soon, title, color }: Props) {
   return (
     <button
       type="button"
@@ -27,7 +29,7 @@ export default function Chip({ label, pressed, onToggle, icon: Icon, badge, coun
       onClick={onToggle}
       title={title}
     >
-      {Icon && <Icon size={18} aria-hidden="true" className={styles.icon} />}
+      {Icon && <Icon size={18} aria-hidden="true" className={styles.icon} style={color ? { color } : undefined} />}
       <span className={styles.label}>{label}</span>
       {count !== undefined && <span className={styles.count}>{count}</span>}
       {pressed && badge !== undefined && (

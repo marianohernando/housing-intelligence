@@ -7,9 +7,9 @@ import type { DatasetRef } from "@/contracts/dataset_list_response";
 
 export const PORTAL_CM = "Portal de Datos Abiertos de la Comunidad de Madrid";
 
-/** `n` is cm_open_data_count, the CRTM's included (D-196): the other publishers are named, not counted. */
+/** `n` is cm_open_data_count, the CRTM's included (D-196): the other publishers are named, not counted (pie.contador, 13 nov). */
 export function counterText(n: number): string {
-  return `Datos: ${n.toLocaleString("es-ES")} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad`;
+  return `Datos: ${n.toLocaleString("es-ES")} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria`;
 }
 
 const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -31,6 +31,8 @@ export interface Attribution {
 const ATTRIBUTION_LINKS: [RegExp, string][] = [
   [/CartoCiudad/, "https://www.cartociudad.es"],
   [/Ministerio de Sanidad/, "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm"],
+  // fit-0.6 (D-228): rent of the leases signed in 2024; the licence asks to cite the source and its date
+  [/Agencia Tributaria/, "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html"],
   [/CRTM/, "https://www.crtm.es"],
   [/Ayuntamiento de Madrid/, "https://datos.madrid.es"],
   [/Comunidad de Madrid/, "https://datos.comunidad.madrid"],

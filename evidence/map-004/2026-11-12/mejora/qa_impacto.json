@@ -1,0 +1,302 @@
+{
+ "modo": "impacto",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "api": {
+  "data_version": "2026-11-12",
+  "filas": [
+   "Escuelas infantiles: 25551 en 3 zonas",
+   "Centros de mayores: 54581 en 6 zonas",
+   "Farmacias: 667172 en 5 zonas",
+   "Vivienda para familias: 99483 en 25 zonas"
+  ]
+ },
+ "desktop": {
+  "tarjetas": [
+   {
+    "fila": "Escuelas infantiles",
+    "cifra": "25.551",
+    "frase": "25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles",
+    "contexto": "El 9,8 % de toda la Comunidad, en 3 zonas.",
+    "zonas": [
+     "Puente de Vallecas",
+     "Carabanchel",
+     "Villaverde"
+    ],
+    "enlaces": [
+     "/que-falta?zona=distrito/2807913",
+     "/que-falta?zona=distrito/2807911",
+     "/que-falta?zona=distrito/2807917"
+    ],
+    "visibles": 3
+   },
+   {
+    "fila": "Centros de mayores",
+    "cifra": "54.581",
+    "frase": "54.581 personas de 65 años o más viven donde faltan centros de mayores",
+    "contexto": "El 4,1 % de toda la Comunidad, en 6 zonas.",
+    "zonas": [
+     "Torrejón de Ardoz",
+     "Pozuelo de Alarcón",
+     "Boadilla del Monte",
+     "Paracuellos de Jarama",
+     "Velilla de San Antonio",
+     "Ajalvir"
+    ],
+    "enlaces": [
+     "/que-falta?zona=municipio/28148",
+     "/que-falta?zona=municipio/28115",
+     "/que-falta?zona=municipio/28022",
+     "/que-falta?zona=municipio/28104",
+     "/que-falta?zona=municipio/28167",
+     "/que-falta?zona=municipio/28002"
+    ],
+    "visibles": 3
+   },
+   {
+    "fila": "Farmacias",
+    "cifra": "667.172",
+    "frase": "667.172 personas viven donde faltan farmacias",
+    "contexto": "El 9,4 % de toda la Comunidad, en 5 zonas.",
+    "zonas": [
+     "Getafe",
+     "Torrejón de Ardoz",
+     "Parla",
+     "Rivas-Vaciamadrid",
+     "Valdemoro"
+    ],
+    "enlaces": [
+     "/que-falta?zona=municipio/28065",
+     "/que-falta?zona=municipio/28148",
+     "/que-falta?zona=municipio/28106",
+     "/que-falta?zona=municipio/28123",
+     "/que-falta?zona=municipio/28161"
+    ],
+    "visibles": 3
+   },
+   {
+    "fila": "Vivienda para familias",
+    "cifra": "99.483",
+    "frase": "99.483 hogares de 4 o más personas viven donde faltan viviendas grandes para familias",
+    "contexto": "El 14,8 % de toda la Comunidad, en 25 zonas.",
+    "zonas": [
+     "Fuenlabrada",
+     "Leganés",
+     "Alcorcón",
+     "Parla",
+     "Alcobendas",
+     "San Fernando de Henares",
+     "Mejorada del Campo",
+     "Humanes de Madrid",
+     "Manzanares el Real",
+     "San Martín de Valdeiglesias",
+     "Villarejo de Salvanés",
+     "Torrejón de Velasco",
+     "Los Santos de la Humosa",
+     "Valdilecha",
+     "Perales de Tajuña",
+     "Aldea del Fresno",
+     "Navas del Rey",
+     "Fresno de Torote",
+     "Navalagamella",
+     "Villamanta",
+     "Buitrago del Lozoya",
+     "Villanueva de Perales",
+     "Fresnedillas de la Oliva",
+     "Villamantilla",
+     "Anchuelo"
+    ],
+    "enlaces": [
+     "/que-falta?zona=municipio/28058",
+     "/que-falta?zona=municipio/28074",
+     "/que-falta?zona=municipio/28007",
+     "/que-falta?zona=municipio/28106",
+     "/que-falta?zona=municipio/28006",
+     "/que-falta?zona=municipio/28130",
+     "/que-falta?zona=municipio/28084",
+     "/que-falta?zona=municipio/28073",
+     "/que-falta?zona=municipio/28082",
+     "/que-falta?zona=municipio/28133",
+     "/que-falta?zona=municipio/28180",
+     "/que-falta?zona=municipio/28150",
+     "/que-falta?zona=municipio/28137",
+     "/que-falta?zona=municipio/28165",
+     "/que-falta?zona=municipio/28110",
+     "/que-falta?zona=municipio/28008",
+     "/que-falta?zona=municipio/28099",
+     "/que-falta?zona=municipio/28057",
+     "/que-falta?zona=municipio/28095",
+     "/que-falta?zona=municipio/28174",
+     "/que-falta?zona=municipio/28027",
+     "/que-falta?zona=municipio/28178",
+     "/que-falta?zona=municipio/28056",
+     "/que-falta?zona=municipio/28175",
+     "/que-falta?zona=municipio/28012"
+    ],
+    "visibles": 3
+   }
+  ],
+  "sin_falta": "Ninguna zona de la Comunidad de Madrid tiene una falta clara de colegios.\nNinguna zona de la Comunidad de Madrid tiene una falta clara de centros de salud.",
+  "axe": [],
+  "overflow_px": 0,
+  "axe_desplegado": [],
+  "zona": "Puente de Vallecas",
+  "afecta": [
+   "Afecta a 9.433 niños de 0 a 4 años."
+  ],
+  "afecta_esperado": [
+   "Afecta a 9.433 niños de 0 a 4 años."
+  ],
+  "axe_zona": [],
+  "overflow_zona_px": 0,
+  "peticiones_impact": 1,
+  "consola": []
+ },
+ "mobile": {
+  "tarjetas": [
+   {
+    "fila": "Escuelas infantiles",
+    "cifra": "25.551",
+    "frase": "25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles",
+    "contexto": "El 9,8 % de toda la Comunidad, en 3 zonas.",
+    "zonas": [
+     "Puente de Vallecas",
+     "Carabanchel",
+     "Villaverde"
+    ],
+    "enlaces": [
+     "/que-falta?zona=distrito/2807913",
+     "/que-falta?zona=distrito/2807911",
+     "/que-falta?zona=distrito/2807917"
+    ],
+    "visibles": 3
+   },
+   {
+    "fila": "Centros de mayores",
+    "cifra": "54.581",
+    "frase": "54.581 personas de 65 años o más viven donde faltan centros de mayores",
+    "contexto": "El 4,1 % de toda la Comunidad, en 6 zonas.",
+    "zonas": [
+     "Torrejón de Ardoz",
+     "Pozuelo de Alarcón",
+     "Boadilla del Monte",
+     "Paracuellos de Jarama",
+     "Velilla de San Antonio",
+     "Ajalvir"
+    ],
+    "enlaces": [
+     "/que-falta?zona=municipio/28148",
+     "/que-falta?zona=municipio/28115",
+     "/que-falta?zona=municipio/28022",
+     "/que-falta?zona=municipio/28104",
+     "/que-falta?zona=municipio/28167",
+     "/que-falta?zona=municipio/28002"
+    ],
+    "visibles": 3
+   },
+   {
+    "fila": "Farmacias",
+    "cifra": "667.172",
+    "frase": "667.172 personas viven donde faltan farmacias",
+    "contexto": "El 9,4 % de toda la Comunidad, en 5 zonas.",
+    "zonas": [
+     "Getafe",
+     "Torrejón de Ardoz",
+     "Parla",
+     "Rivas-Vaciamadrid",
+     "Valdemoro"
+    ],
+    "enlaces": [
+     "/que-falta?zona=municipio/28065",
+     "/que-falta?zona=municipio/28148",
+     "/que-falta?zona=municipio/28106",
+     "/que-falta?zona=municipio/28123",
+     "/que-falta?zona=municipio/28161"
+    ],
+    "visibles": 3
+   },
+   {
+    "fila": "Vivienda para familias",
+    "cifra": "99.483",
+    "frase": "99.483 hogares de 4 o más personas viven donde faltan viviendas grandes para familias",
+    "contexto": "El 14,8 % de toda la Comunidad, en 25 zonas.",
+    "zonas": [
+     "Fuenlabrada",
+     "Leganés",
+     "Alcorcón",
+     "Parla",
+     "Alcobendas",
+     "San Fernando de Henares",
+     "Mejorada del Campo",
+     "Humanes de Madrid",
+     "Manzanares el Real",
+     "San Martín de Valdeiglesias",
+     "Villarejo de Salvanés",
+     "Torrejón de Velasco",
+     "Los Santos de la Humosa",
+     "Valdilecha",
+     "Perales de Tajuña",
+     "Aldea del Fresno",
+     "Navas del Rey",
+     "Fresno de Torote",
+     "Navalagamella",
+     "Villamanta",
+     "Buitrago del Lozoya",
+     "Villanueva de Perales",
+     "Fresnedillas de la Oliva",
+     "Villamantilla",
+     "Anchuelo"
+    ],
+    "enlaces": [
+     "/que-falta?zona=municipio/28058",
+     "/que-falta?zona=municipio/28074",
+     "/que-falta?zona=municipio/28007",
+     "/que-falta?zona=municipio/28106",
+     "/que-falta?zona=municipio/28006",
+     "/que-falta?zona=municipio/28130",
+     "/que-falta?zona=municipio/28084",
+     "/que-falta?zona=municipio/28073",
+     "/que-falta?zona=municipio/28082",
+     "/que-falta?zona=municipio/28133",
+     "/que-falta?zona=municipio/28180",
+     "/que-falta?zona=municipio/28150",
+     "/que-falta?zona=municipio/28137",
+     "/que-falta?zona=municipio/28165",
+     "/que-falta?zona=municipio/28110",
+     "/que-falta?zona=municipio/28008",
+     "/que-falta?zona=municipio/28099",
+     "/que-falta?zona=municipio/28057",
+     "/que-falta?zona=municipio/28095",
+     "/que-falta?zona=municipio/28174",
+     "/que-falta?zona=municipio/28027",
+     "/que-falta?zona=municipio/28178",
+     "/que-falta?zona=municipio/28056",
+     "/que-falta?zona=municipio/28175",
+     "/que-falta?zona=municipio/28012"
+    ],
+    "visibles": 3
+   }
+  ],
+  "sin_falta": "Ninguna zona de la Comunidad de Madrid tiene una falta clara de colegios.\nNinguna zona de la Comunidad de Madrid tiene una falta clara de centros de salud.",
+  "axe": [],
+  "overflow_px": 0,
+  "axe_desplegado": [],
+  "zona": "Puente de Vallecas",
+  "afecta": [
+   "Afecta a 9.433 niños de 0 a 4 años."
+  ],
+  "afecta_esperado": [
+   "Afecta a 9.433 niños de 0 a 4 años."
+  ],
+  "axe_zona": [],
+  "overflow_zona_px": 0,
+  "peticiones_impact": 1,
+  "consola": []
+ },
+ "otras_pantallas": {
+  "/": 0,
+  "/que-falta?zona=distrito/2807913": 0,
+  "/zona/distrito/2807905": 0,
+  "/como-lo-calculamos": 0
+ },
+ "fallos": []
+}
