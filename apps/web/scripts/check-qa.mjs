@@ -1163,7 +1163,7 @@ async function buying(browser) {
 
 /**
  * The «100 % de encaje» with JUSTO rows below (jurado simulado): a zone that passes everything says
- * in one line what it is short of, from the rows the card shows; and the % pill fits at 390 px.
+ * in one line what it is short of, from every row of /gaps; and the % pill fits at 390 px.
  */
 async function fitButShort(browser) {
   const failures = [];
@@ -1182,10 +1182,9 @@ async function fitButShort(browser) {
     await card.getByRole("heading", { name: "Qué falta aquí" }).waitFor({ timeout: 20000 });
     await card.locator("ul li").first().waitFor({ timeout: 20000 });
     await p.page.waitForTimeout(800);
-    const missingSection = card.locator("section").filter({ has: p.page.getByRole("heading", { name: "Qué falta aquí" }) });
-    const rows = await missingSection.locator("ul li").evaluateAll((lis) =>
-      lis.map((li) => ({ label: li.querySelector("span")?.childNodes[0]?.textContent?.trim() ?? "", status: (li.textContent ?? "").match(/(FALTA|JUSTO|CUBIERTO|SIN DATOS)\s*$/)?.[1] ?? "" })),
-    );
+    // Every row of the zone's «Qué falta» in the API, not only the three the card shows
+    const gapsAnswer = await fetch(`${API}/api/v1/gaps/${top.zone.level}/${top.zone.code}`);
+    const rows = (await gapsAnswer.json()).data.rows.map((r) => ({ label: r.label, status: r.status }));
     const lower = (t) => t.charAt(0).toLowerCase() + t.slice(1);
     const missing = rows.filter((r) => r.status === "FALTA").map((r) => lower(r.label));
     const tight = rows.filter((r) => r.status === "JUSTO").map((r) => lower(r.label));

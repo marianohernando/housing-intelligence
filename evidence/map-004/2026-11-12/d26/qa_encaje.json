@@ -18,6 +18,18 @@
    {
     "label": "Centros de salud",
     "status": "JUSTO"
+   },
+   {
+    "label": "Centros de mayores",
+    "status": "CUBIERTO"
+   },
+   {
+    "label": "Farmacias",
+    "status": "CUBIERTO"
+   },
+   {
+    "label": "Vivienda para familias",
+    "status": "SIN_DATOS"
    }
   ],
   "esperado": "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
@@ -48,6 +60,18 @@
    {
     "label": "Centros de salud",
     "status": "JUSTO"
+   },
+   {
+    "label": "Centros de mayores",
+    "status": "CUBIERTO"
+   },
+   {
+    "label": "Farmacias",
+    "status": "CUBIERTO"
+   },
+   {
+    "label": "Vivienda para familias",
+    "status": "SIN_DATOS"
    }
   ],
   "esperado": "Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios, centros de salud.",
@@ -63,7 +87,7 @@
  },
  "lcp_portada_slow4g": [
   {
-   "ms": 620,
+   "ms": 672,
    "en_atribucion": false,
    "texto": "Te decimos qué zonas encajan con tu vida y qué le "
   }

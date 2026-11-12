@@ -164,6 +164,21 @@ describe("fitsButShortText (a zone that fits, short of something)", () => {
     expect(fitsButShortText([row("Escuelas infantiles", "FALTA")])).toBe("Encaja con lo que pides; aun así, en la zona faltan: escuelas infantiles.");
   });
 
+  it("names every FALTA and JUSTO row of the API, also beyond the three the card shows", () => {
+    const rows = [
+      row("Escuelas infantiles", "JUSTO"),
+      row("Colegios", "JUSTO"),
+      row("Centros de salud", "FALTA"),
+      row("Farmacias", "JUSTO"),
+      row("Centros de mayores", "CUBIERTO"),
+      row("Vivienda", "JUSTO"),
+    ];
+    expect(topRows(rows)).toHaveLength(3);
+    expect(fitsButShortText(rows)).toBe(
+      "Encaja con lo que pides; aun así, en la zona faltan: centros de salud; y van justos de: escuelas infantiles, colegios, farmacias, vivienda.",
+    );
+  });
+
   it("says nothing when no row is FALTA or JUSTO: SIN DATOS is not short", () => {
     expect(fitsButShortText([row("Colegios", "CUBIERTO"), row("Farmacias", "SIN_DATOS")])).toBeNull();
     expect(fitsButShortText([])).toBeNull();

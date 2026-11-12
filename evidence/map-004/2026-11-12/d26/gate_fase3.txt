@@ -32,7 +32,7 @@ DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_test
 > vitest --run
 
 
- RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+ RUN  v5.0.5 apps/web
 
 
  Test Files  28 passed (28)

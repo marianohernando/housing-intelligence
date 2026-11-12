@@ -123,10 +123,10 @@ export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[
 }
 
 /**
- * A zone that fits everything asked can still be short of something (Mariano, jurado simulado):
+ * A zone that fits everything asked can still be short of something (jurado simulado):
  * «Encaja con lo que pides; aun así, en la zona van justos de: escuelas infantiles, colegios.»
- * From the rows the card shows, FALTA first; null when none is FALTA or JUSTO. Draft text until
- * line D writes it in textos_web.md.
+ * From every row of the zone's «Qué falta» (not only the three the card shows), FALTA first; null
+ * when none is FALTA or JUSTO. Draft text until line D writes it in textos_web.md.
  */
 export function fitsButShortText(rows: readonly { label: string; status: GapStatus }[]): string | null {
   const names = (status: GapStatus) => rows.filter((r) => r.status === status).map((r) => r.label.charAt(0).toLowerCase() + r.label.slice(1));

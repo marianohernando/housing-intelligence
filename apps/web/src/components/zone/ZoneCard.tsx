@@ -50,9 +50,10 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
   const pct = match?.match_pct;
-  const shown = gaps.data ? topRows(gaps.data.data.rows) : [];
-  // A zone that fits everything asked, with FALTA or JUSTO below: one line says both are true
-  const fitsButShort = pct != null && match?.passes_all ? fitsButShortText(shown) : null;
+  const rows = gaps.data?.data.rows ?? [];
+  // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
+  // every such row of the API, also those beyond the three the card shows
+  const fitsButShort = pct != null && match?.passes_all ? fitsButShortText(rows) : null;
 
   return (
     <GlassCard as="aside" aria-labelledby={titleId} className={styles.card}>
@@ -98,7 +99,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && (
           <ul className={styles.rows}>
-            {shown.map((row) => {
+            {topRows(rows).map((row) => {
               const walk = walking(row.extra_indicators, row.row);
               return (
                 <li key={row.row}>

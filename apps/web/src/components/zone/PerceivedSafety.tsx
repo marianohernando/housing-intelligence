@@ -42,8 +42,8 @@ export default function PerceivedSafety({ districtCode }: { districtCode: string
       .then((loaded) => {
         if (!cancelled) setRows(loaded);
       })
-      // A boundary failure only hides this context line; the rest of the zone does not depend on it
-      .catch(() => undefined);
+      // A boundary failure only hides this context block; the rest of the zone does not depend on it
+      .catch((exc: unknown) => console.warn("Seguridad percibida no disponible:", exc));
     return () => {
       cancelled = true;
     };
