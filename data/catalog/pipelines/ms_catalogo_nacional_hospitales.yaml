@@ -1,0 +1,16 @@
+kind: facility_directory
+dataset_id: ms_catalogo_nacional_hospitales
+sheet: DIRECTORIO DE HOSPITALES
+id_column: CODCNH
+name_column: Nombre Centro
+address_column: Dirección
+postal_code_column: Código Postal
+kind_column: Clase de Centro
+dependency_column: Dependencia Funcional
+capacity_column: CAMAS
+capacity_unit: camas instaladas
+# Teléfono and Email are never read (D-186).
+scope_column: Cód. Provincia
+scope_values: ["28"]
+min_rows: 80
+max_rows: 120

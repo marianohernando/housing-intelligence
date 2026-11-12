@@ -14,6 +14,7 @@ dependencies = [
     "typer>=0.17",
     "structlog>=25.1",
     "osmium>=4.0",
+    "openpyxl>=3.1",
 ]
 
 [build-system]

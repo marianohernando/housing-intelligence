@@ -95,11 +95,15 @@ def run_pipeline[T](
     *,
     evidence_root: Path | None,
     data_dir: Path = DATA_DIR,
+    extra_inputs: list[FetchedFile] | None = None,
 ) -> RunSummary:
+    """`extra_inputs` are other datasets' files the result depends on (e.g. a directory that
+    names the places, D-218): they enter the checksum and the lineage, so a new one reprocesses."""
     sync_catalog(engine, catalog)
     source = source or fetch_role(catalog.datasets[dataset_id], steps.resource_role)
+    inputs = [source, *(extra_inputs or [])]
     tracker = StageTracker(engine, dataset_id)
-    summary = RunSummary("RUNNING", dataset_id, combined_checksum([source]), tracker.correlation_id)
+    summary = RunSummary("RUNNING", dataset_id, combined_checksum(inputs), tracker.correlation_id)
     if _skip_if_current(engine, tracker, summary, steps.parser_version):
         return summary
 
@@ -108,7 +112,7 @@ def run_pipeline[T](
         metrics |= {"rows": len(frame), "columns": list(frame.columns)}
     silver_dir = data_dir / "silver" / dataset_id / summary.checksum[:12]
     manifest = {
-        "inputs": [source.manifest_entry()],
+        "inputs": [f.manifest_entry() for f in inputs],
         "checksum": summary.checksum,
         "parser_version": steps.parser_version,
     }

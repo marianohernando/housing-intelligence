@@ -1,5 +1,6 @@
 """Point facility pipelines (points_csv) on the generic runner."""
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -7,11 +8,14 @@ from shapely import STRtree, from_wkb
 from shapely.geometry import Point
 from sqlalchemy import Engine, text
 
-from hi_contracts.catalog.pipeline import PointsPipeline
+from hi_contracts.catalog.pipeline import FacilityDirectoryPipeline, PointsPipeline
+from hi_ingestion.bronze import REPO_ROOT
 from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
+from hi_ingestion.pipelines.directory.normalize import DIRECTORY_FILE
 from hi_ingestion.pipelines.fetch import FetchedFile
 from hi_ingestion.pipelines.places.coordinates import Located, fold_name
+from hi_ingestion.pipelines.places.directory import LoadedDirectory, read_entries
 from hi_ingestion.pipelines.places.geocoder import CachedGeocoder
 from hi_ingestion.pipelines.places.normalize import (
     MADRID_MUNICIPIO,
@@ -23,7 +27,8 @@ from hi_ingestion.pipelines.places.publish import replace_places
 from hi_ingestion.pipelines.places.quality import run_quality
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "places-1.2.0"  # 1.1: coordinate repair (D-216); 1.2: the street must match
+# 1.1: coordinate repair (D-216); 1.2: the street must match; 1.3: directories (D-218)
+PARSER_VERSION = "places-1.3.0"
 GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
 _UNITS = text(
     """
@@ -86,6 +91,63 @@ def build_repair(engine: Engine, spec: PointsPipeline, data_dir: Path) -> Repair
     return Repair(GeographyLocator(rows), CachedGeocoder(data_dir / GEOCODER_CACHE), names)
 
 
+_DIRECTORY_VERSION = text(
+    """
+    SELECT bronze_manifest_path, version_label
+      FROM dataset_version
+     WHERE dataset_id = :dataset_id AND is_last_valid
+    """
+)
+
+
+def load_directories(
+    engine: Engine, catalog: Catalog, spec: PointsPipeline
+) -> tuple[list[LoadedDirectory], list[FetchedFile]]:
+    """The last valid Silver of each directory the register declares, and its Bronze input.
+
+    A directory that was never ingested is left out: its places keep the register's name and
+    the quality report says which directory is missing.
+    """
+    loaded: list[LoadedDirectory] = []
+    inputs: list[FetchedFile] = []
+    for link in spec.directories:
+        directory_spec = catalog.pipelines.get(link.dataset_id)
+        if not isinstance(directory_spec, FacilityDirectoryPipeline):
+            msg = f"{spec.dataset_id}: {link.dataset_id} is not a facility_directory pipeline"
+            raise TypeError(msg)
+        with engine.connect() as conn:
+            row = conn.execute(_DIRECTORY_VERSION, {"dataset_id": link.dataset_id}).first()
+        if row is None:
+            continue
+        manifest_path = Path(str(row.bronze_manifest_path))
+        if not manifest_path.is_absolute():
+            manifest_path = REPO_ROOT / manifest_path
+        manifest = json.loads(manifest_path.read_text())
+        bronze = dict(manifest["inputs"][0])
+        bronze_path = Path(str(bronze.pop("path")))
+        inputs.append(
+            FetchedFile(
+                **bronze
+                | {
+                    "role": "directory",
+                    "path": bronze_path if bronze_path.is_absolute() else REPO_ROOT / bronze_path,
+                }
+            )
+        )
+        loaded.append(
+            LoadedDirectory(
+                dataset_id=link.dataset_id,
+                source_id=catalog.datasets[link.dataset_id].source_id,
+                version_label=str(row.version_label),
+                capacity_unit=directory_spec.capacity_unit,
+                kinds=link.kinds,
+                name_prefix=link.name_prefix,
+                entries=read_entries(manifest_path.parent / DIRECTORY_FILE),
+            )
+        )
+    return loaded, inputs
+
+
 def run_places_pipeline(
     engine: Engine,
     catalog: Catalog,
@@ -97,11 +159,12 @@ def run_places_pipeline(
 ) -> RunSummary:
     source_id = catalog.datasets[spec.dataset_id].source_id
     repair = build_repair(engine, spec, data_dir)
+    directories, directory_inputs = load_directories(engine, catalog, spec)
     steps: PipelineSteps[Places] = PipelineSteps(
         parser_version=PARSER_VERSION,
         csv=spec.csv,
         resource_role=spec.resource_role,
-        normalize=lambda frame: normalize_places(frame, spec, repair),
+        normalize=lambda frame: normalize_places(frame, spec, repair, directories),
         quarantine=lambda places: places.quarantine,
         quality=lambda places: run_quality(places, spec).to_dict(),
         counts=_counts,
@@ -118,4 +181,5 @@ def run_places_pipeline(
         source,
         evidence_root=evidence_root,
         data_dir=data_dir,
+        extra_inputs=directory_inputs,
     )

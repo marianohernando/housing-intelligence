@@ -26,3 +26,14 @@ municipio_name_column: municipio_nombre
 address_template: "{direccion_vial_tipo} {direccion_vial_nombre} {direccion_vial_nro}, {municipio_nombre}"
 address_number_column: direccion_vial_nro
 address_street_column: direccion_vial_nombre
+postal_code_column: direccion_codigo_postal
+dependency_column: dependecia_funcional
+# D-218: hospitals take their name and installed beds from the Catálogo Nacional de Hospitales
+# (Ministerio de Sanidad), matched by postal address; the register stays the source of the place.
+directories:
+  - dataset_id: ms_catalogo_nacional_hospitales
+    kinds:
+      Hospital general: Hospitales Generales
+      Hospital especializado: Hospitales especializados
+      Hospital de media y larga estancia: Hospitales de media y larga estancia
+      Hospital de salud mental y tratamiento de toxicomanías: Hospitales de salud mental y tratamiento de toxicomanías

@@ -15,6 +15,14 @@ export type Coordinates = [unknown, unknown, ...unknown[]];
 export type Type = "Point";
 export type Id = string;
 export type DatasetId = string;
+/**
+ * Hospitals (D-218): who runs it, from the CM register; mutuas count as private
+ */
+export type Dependency = ("publica" | "privada") | null;
+/**
+ * Hospitals (D-218): the register's type (general, especializado, ...)
+ */
+export type Kind = string | null;
 export type Unit = string;
 export type Value = number;
 export type PlaceCategory =
@@ -47,6 +55,9 @@ export type GapRowKey =
  */
 export type GapRows = GapRowKey[];
 export type Municipio = string | null;
+/**
+ * Institutional name; '<type> (<municipio>)' when no official one is known
+ */
 export type Name = string;
 /**
  * Educational centres only: titularidad of the register (None elsewhere)
@@ -110,6 +121,8 @@ export interface PlaceProperties {
  */
 export interface PlaceCapacity {
   dataset_id: DatasetId;
+  dependency?: Dependency;
+  kind?: Kind;
   unit: Unit;
   value: Value;
 }

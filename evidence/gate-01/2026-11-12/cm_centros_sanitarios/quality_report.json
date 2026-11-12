@@ -87,6 +87,169 @@
           }
         ]
       }
+    },
+    {
+      "name": "directory_one_to_one",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "reused": 0
+      }
+    },
+    {
+      "name": "directory_loaded",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "missing_directories": []
+      }
+    },
+    {
+      "name": "directory_dependency_agreement",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "compared": 79,
+        "disagree": 0
+      }
+    },
+    {
+      "name": "directory_matches",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "ms_catalogo_nacional_hospitales": {
+          "version": "2026-11-12-e5148a11b523",
+          "entries": 91,
+          "register_places": 85,
+          "matched": 79,
+          "by_method": {
+            "direccion": 69,
+            "calle": 8,
+            "codigo_postal": 2
+          },
+          "names_rejected": [
+            {
+              "external_id": "CH0103",
+              "published": "Casta Guadarrama"
+            },
+            {
+              "external_id": "CH0105",
+              "published": "ID Dalud Móstoles Sa"
+            },
+            {
+              "external_id": "CH0113",
+              "published": "Fraternidad Muprespa, Mutua Colaboradora Con La Seguridad Social Nº 275"
+            },
+            {
+              "external_id": "CH0117",
+              "published": "HM Hospitales 1.989, S.A."
+            },
+            {
+              "external_id": "CH0118",
+              "published": "Alm Univass S.L."
+            },
+            {
+              "external_id": "CH0119",
+              "published": "HM Hospitales 1989, S.A."
+            }
+          ],
+          "unmatched_places": [
+            {
+              "external_id": "CH0049",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28034"
+            },
+            {
+              "external_id": "CH0068",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 3 in postal code 28006"
+            },
+            {
+              "external_id": "CH0120",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28055"
+            },
+            {
+              "external_id": "CH0121",
+              "subcategory": "Hospital general",
+              "reason": "no entry in postal code 28760"
+            },
+            {
+              "external_id": "CH0122",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28223"
+            },
+            {
+              "external_id": "CH0123",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28660"
+            }
+          ],
+          "unmatched_entries": [
+            {
+              "external_id": "281371",
+              "name": "Hospital HM Valles",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280783",
+              "name": "Centro San Juan de Dios Ciempozuelos",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "281034",
+              "name": "Clínica Isadora S.A.",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280376",
+              "name": "Hospital Viamed Santa Elena, S.L",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280344",
+              "name": "Hospital de La V.O.T. de San Francisco de Asís",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280323",
+              "name": "Sanatorio Nuestra Señora del Rosario",
+              "kind": "Hospitales Generales"
+            },
+            {
+              "external_id": "280724",
+              "name": "Hospital Central de La Defensa Gómez Ulla",
+              "kind": "Hospitales Generales"
+            },
+            {
+              "external_id": "280029",
+              "name": "Hospital Universitario Ramon y Cajal",
+              "kind": "Hospitales Generales"
+            },
+            {
+              "external_id": "280210",
+              "name": "Hospital de Cantoblanco",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280164",
+              "name": "Hospital Carlos III",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "281445",
+              "name": "Servicio Madrileño de Salud",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280148",
+              "name": "Hospital Central de La Cruz Roja, San José y Santa Adela",
+              "kind": "Otros Centros con Internamiento"
+            }
+          ]
+        }
+      }
     }
   ]
 }

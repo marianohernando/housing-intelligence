@@ -93,10 +93,14 @@ def replace_places(
     for start in range(0, len(masters), INSERT_CHUNK):
         session.execute(insert(PlaceMaster), masters[start : start + INSERT_CHUNK])
         session.execute(insert(PlaceSourceAlias), aliases[start : start + INSERT_CHUNK])
+    links: list[dict[str, Any]] = places.links.to_dict("records")  # pyright: ignore[reportAssignmentType]
+    if links:  # entries of official directories matched to these places (D-218)
+        session.execute(insert(PlaceSourceAlias), links)
     session.execute(_ASSIGN_SECTIONS, {"dataset_id": dataset_id})
     stats = session.execute(_ASSIGNMENT_STATS, {"dataset_id": dataset_id}).mappings().one()
     return {
         "places": int(stats["total"]),
         "assigned_to_section": int(stats["assigned"]),
         "municipio_mismatch": int(stats["municipio_mismatch"]),
+        "directory_aliases": len(links),
     }

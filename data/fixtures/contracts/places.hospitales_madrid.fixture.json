@@ -1,0 +1,919 @@
+{
+  "type": "FeatureCollection",
+  "contract_version": "places-1",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "05cedda8-7bde-5e1f-8065-f649a426776f",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.625368,
+          40.447932
+        ]
+      },
+      "properties": {
+        "name": "Clínica Universidad de Navarra",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807920095",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 72.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "068d1ca9-c02e-5ccf-bf83-86bc62a57a01",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.618228,
+          40.385466
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario Infanta Leonor",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807918027",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 269.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "112c649f-dada-5579-92fd-6cc505b569ca",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.713772,
+          40.444168
+        ]
+      },
+      "properties": {
+        "name": "Clínica La Luz",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807907133",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 152.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "18fe9e12-a191-580d-9f20-08a3995479fd",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.652351,
+          40.450531
+        ]
+      },
+      "properties": {
+        "name": "Hospital Nuestra Señora de América",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807915150",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 100.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "3dea6df2-c86c-5d2a-8aab-5cc9714a3f9c",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.606385,
+          40.492835
+        ]
+      },
+      "properties": {
+        "name": "Hospital general (Madrid)",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807916124",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "3f62099e-5ad8-5141-a3da-3f17a51e17d5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.696128,
+          40.436996
+        ]
+      },
+      "properties": {
+        "name": "Hospital La Milagrosa",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807907092",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 142.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "40d45585-a40a-52f3-93a7-dbae97f8bd71",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.715325,
+          40.489428
+        ]
+      },
+      "properties": {
+        "name": "Hospital Ruber Internacional",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807908137",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 143.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "4da8533b-b9ba-5cda-9e1d-a4f4e8500040",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.720006,
+          40.437228
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario Fundacion Jimenez Diaz",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807909033",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 651.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "5eef56a1-140a-50d5-9ba9-702e167ae316",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.666296,
+          40.489325
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario HM Sanchinarro",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807916119",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 198.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "63c532f0-4d20-55dc-8cef-c35f0abb6ad3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.669928,
+          40.418989
+        ]
+      },
+      "properties": {
+        "name": "Hospital General Universitario Gregorio Marañón",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807903048",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 1140.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "848a0e9d-40b7-5570-a441-25b7bb8f77a6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.683512,
+          40.442783
+        ]
+      },
+      "properties": {
+        "name": "Hospital San Francisco de Asís",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905001",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 168.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "89eef7ba-04c9-5b99-b257-d464488ecb63",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.696169,
+          40.375806
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario 12 de Octubre",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807912108",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 1161.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "8d9f8b77-9173-50a3-a1ad-fee885372db4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.719458,
+          40.439961
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario Clínico San Carlos",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807909033",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 861.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "8ea4b277-39c1-5e5e-b679-6034754f9aba",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.679925,
+          40.432048
+        ]
+      },
+      "properties": {
+        "name": "Hospital general (Madrid)",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807904115",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "9b03087d-d1bb-57d9-982a-3054d364136c",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.681486,
+          40.452309
+        ]
+      },
+      "properties": {
+        "name": "Hospital San Rafael",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905064",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 184.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "a6cbf0ca-a4a5-5e22-b22c-2bddef3dae07",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.676347,
+          40.432663
+        ]
+      },
+      "properties": {
+        "name": "Hospital Ruber Juan Bravo",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807904100",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 146.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ad35cf20-afea-5600-89bf-f4e6df79f1d7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.706786,
+          40.431337
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario HM Madrid",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807907049",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 99.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b4332fb4-7442-5a89-a34a-68caf7d0facb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.675704,
+          40.43437
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario de La Princesa",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807904099",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 524.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b5707b14-19f0-5f36-bcc3-f9659a2c9ead",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.662525,
+          40.492239
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario La Moraleja",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807916119",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 121.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "d51c346c-b09c-5284-837b-0384eacde0fa",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.668445,
+          40.418024
+        ]
+      },
+      "properties": {
+        "name": "Hospital Beata Maria Ana",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807903047",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 163.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "da067904-b45e-5e81-903f-2008d59a3a02",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.733898,
+          40.433132
+        ]
+      },
+      "properties": {
+        "name": "Hospital Ha Universitario Moncloa",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807909008",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 235.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e0ebbbd9-09b0-56cb-9a0a-b64d1dc3a6f0",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.640106,
+          40.440131
+        ]
+      },
+      "properties": {
+        "name": "Hospital Fuensanta",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807915094",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 20.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e3464dcc-e80a-558d-b05c-8285d05149f9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.716917,
+          40.493806
+        ]
+      },
+      "properties": {
+        "name": "Clínica Cemtro",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807908136",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 100.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e3d242e6-8f21-59f0-b149-25d5b8355e7b",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.784233,
+          40.4629
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario La Zarzuela",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807909075",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 116.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e4e89a32-35f5-5f60-bd3d-95e2783b85e0",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.674716,
+          40.44052
+        ]
+      },
+      "properties": {
+        "name": "Hospital Quironsalud San José",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905032",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 84.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e92d51aa-ec43-597a-b38b-9b14cc4dc157",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.678574,
+          40.459497
+        ]
+      },
+      "properties": {
+        "name": "Hospital Virgen del Mar",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905079",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 73.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "eabc176f-fa1c-5d35-83eb-0adb2a28dd0b",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.783082,
+          40.466395
+        ]
+      },
+      "properties": {
+        "name": "Hospital Pardo de Aravaca",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807909086",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 88.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "eb9803a2-0569-51bf-a0dd-4fdab8b66de7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.719531,
+          40.407024
+        ]
+      },
+      "properties": {
+        "name": "Hospital general (Madrid)",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807902009",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 90.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "edbf8291-0512-52dd-aa70-a5c579a41dc1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.686346,
+          40.480253
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario La Paz",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807908103",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 966.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ef871145-3bdb-558e-a6c7-36df4a36691e",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.696886,
+          40.487496
+        ]
+      },
+      "properties": {
+        "name": "Hospital general (Madrid)",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807908111",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f650c5cb-42fd-589b-9b9a-94dafafd2ea3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.676347,
+          40.432663
+        ]
+      },
+      "properties": {
+        "name": "Hospital San Camilo",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807904100",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 81.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "privada",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f8382016-6e94-5a41-86a5-cff979944a04",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.671311,
+          40.421738
+        ]
+      },
+      "properties": {
+        "name": "Hospital Universitario Santa Cristina",
+        "category": "health",
+        "subcategory": "Hospital general",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807904042",
+        "ownership": null,
+        "gap_rows": [],
+        "capacity": {
+          "value": 156.0,
+          "unit": "camas instaladas",
+          "dataset_id": "ms_catalogo_nacional_hospitales",
+          "dependency": "publica",
+          "kind": "Hospital general"
+        },
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    }
+  ],
+  "total": 32,
+  "page": 1,
+  "pages": 1
+}

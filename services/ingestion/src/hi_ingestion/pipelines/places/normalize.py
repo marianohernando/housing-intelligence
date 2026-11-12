@@ -10,6 +10,7 @@ import pandas as pd
 
 from hi_contracts.catalog.enums import PlaceStatus
 from hi_contracts.catalog.pipeline import PointsPipeline
+from hi_domain.facilities import dependency
 from hi_domain.geo.bounds import is_within_madrid
 from hi_domain.geo.codes import MADRID_PROVINCE_CODE
 from hi_ingestion.pipelines.places.coordinates import (
@@ -22,6 +23,12 @@ from hi_ingestion.pipelines.places.coordinates import (
     fold_name,
     house_number,
     resolve,
+)
+from hi_ingestion.pipelines.places.directory import (
+    LINK_COLUMNS,
+    LoadedDirectory,
+    RegisterPlace,
+    attach_directories,
 )
 
 PLACE_NAMESPACE = uuid.UUID("6f1c2f3e-6a43-4f0b-9a53-2b2f7a1d5c10")
@@ -62,6 +69,11 @@ class Places:
     source_rows: int
     filtered_out: dict[str, int]
     repairs: pd.DataFrame = field(default_factory=lambda: pd.DataFrame(columns=REPAIR_COLUMNS))
+    # Official directories (D-218): aliases of the matched entries and what was left unmatched
+    links: pd.DataFrame = field(default_factory=lambda: pd.DataFrame(columns=LINK_COLUMNS))
+    directory_report: dict[str, dict[str, object]] = field(
+        default_factory=dict[str, dict[str, object]]
+    )
 
 
 def canonical_place_id(dataset_id: str, external_id: str) -> uuid.UUID:
@@ -151,6 +163,8 @@ def _place(
     attributes = {
         c.lower(): row.get(c) for c in [*spec.attribute_columns, *spec.grouped_list_columns]
     }
+    if spec.dependency_column:
+        attributes["dependency"] = dependency(str(row.get(spec.dependency_column) or ""))
     return {
         "canonical_place_id": canonical_place_id(spec.dataset_id, external_id),
         "external_id": external_id,
@@ -211,8 +225,27 @@ def _resolve(
     return resolution
 
 
+def _register_place(
+    record: dict[str, Any], spec: PointsPipeline, subcategory: str
+) -> RegisterPlace:
+    def column(name: str | None) -> str:
+        return str(record.get(name) or "").strip() if name else ""
+
+    postal_code = column(spec.postal_code_column)
+    return RegisterPlace(
+        external_id=str(record[spec.id_column]),
+        subcategory=subcategory,
+        postal_code=postal_code.zfill(5) if postal_code.isdigit() else None,
+        street=column(spec.address_street_column) or None,
+        number=house_number(column(spec.address_number_column)),
+    )
+
+
 def normalize_places(
-    frame: pd.DataFrame, spec: PointsPipeline, repair: Repair | None = None
+    frame: pd.DataFrame,
+    spec: PointsPipeline,
+    repair: Repair | None = None,
+    directories: list[LoadedDirectory] | None = None,
 ) -> Places:
     source_rows = len(frame)
     filtered, removed = apply_filters(frame, spec)
@@ -222,6 +255,7 @@ def normalize_places(
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, Any]] = []
     repairs: list[dict[str, Any]] = []
+    register: dict[str, RegisterPlace] = {}
     for i, record in enumerate(records):
         external_id = record[spec.id_column]
         resolution = _resolve(record, spec, source.get(i), repair)
@@ -250,10 +284,14 @@ def normalize_places(
                 {"external_id": external_id, "origin": resolution.origin, "note": resolution.note}
             )
         rows.append(place)
+        register[place["external_id"]] = _register_place(record, spec, place["subcategory"])
+    attached = attach_directories(rows, register, directories or [])
     return Places(
         pd.DataFrame(rows, columns=PLACE_COLUMNS),
         pd.DataFrame(bad, columns=["external_id", "reason"]),
         source_rows,
         removed,
         pd.DataFrame(repairs, columns=REPAIR_COLUMNS),
+        attached.links,
+        attached.report,
     )

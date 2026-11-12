@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ms_catalogo_nacional_hospitales",
+      "role": "primary",
+      "path": "data/bronze/datasets/ms_catalogo_nacional_hospitales/052e3baa9300/CNH_2025.xlsx",
+      "sha256": "052e3baa930011d59779a7b2b6f6d5fced3991c73b86c085271f09464cd1d146",
+      "bytes": 493631,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/docs/CNH_2025.xlsx",
+      "retrieved_at": "2026-11-12T01:14:17.421466+00:00"
+    }
+  ],
+  "checksum": "e5148a11b52351db0b07eb5c5b90eb34894d00a23b261222a3a72ed0f7997a03",
+  "parser_version": "directory-1.0.0"
+}

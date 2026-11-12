@@ -22,7 +22,8 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 Como apoyo, sin contarlos como datos de la Comunidad, usamos:
 - el padrón y el panel de distritos del Ayuntamiento de Madrid (población y hogares por distrito);
 - el mapa de calles de OpenStreetMap (distancias a pie);
-- el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección.
+- el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección;
+- el Catálogo Nacional de Hospitales del Ministerio de Sanidad (2025, actualizado a 31/12/2024), solo para poner nombre y camas instaladas a los hospitales del registro de la Comunidad.
 
 ## Cómo funciona
 
@@ -71,7 +72,8 @@ El progreso, fase a fase, está en [`board/BOARD.md`](board/BOARD.md).
   - Consorcio Regional de Transportes de Madrid, licencia de datos abiertos del CRTM («Powered by CRTM»);
   - Ayuntamiento de Madrid, CC BY 4.0;
   - OpenStreetMap, ODbL;
-  - CartoCiudad (IGN), CC BY 4.0 scne.es.
+  - CartoCiudad (IGN), CC BY 4.0 scne.es;
+  - Ministerio de Sanidad, reutilización autorizada citando la fuente y la fecha de actualización («Catálogo Nacional de Hospitales 2025, actualizado a 31/12/2024. Ministerio de Sanidad»).
 
 ## Qué había antes del concurso
 

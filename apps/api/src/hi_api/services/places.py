@@ -123,7 +123,25 @@ def row_filters(conn: Connection) -> list[RowFilter]:
     return sorted(filters, key=lambda f: f.row)
 
 
-def _capacity(attributes: dict[str, Any], dataset_id: str) -> dict[str, Any] | None:
+def _directory_capacity(attributes: dict[str, Any], subcategory: str) -> dict[str, Any] | None:
+    """Capacity an official directory publishes for the place it was matched to (D-218)."""
+    directory = attributes.get("directory")
+    if not isinstance(directory, dict) or directory.get("capacity") is None:
+        return None
+    return {
+        "value": float(directory["capacity"]),
+        "unit": str(directory.get("capacity_unit") or "camas"),
+        "dataset_id": str(directory["dataset_id"]),
+        "dependency": attributes.get("dependency"),
+        "kind": subcategory,
+    }
+
+
+def _capacity(
+    attributes: dict[str, Any], dataset_id: str, subcategory: str
+) -> dict[str, Any] | None:
+    if (from_directory := _directory_capacity(attributes, subcategory)) is not None:
+        return from_directory
     for key, unit in _CAPACITY_ATTRIBUTES.items():
         raw = attributes.get(key)
         try:
@@ -152,7 +170,7 @@ def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
             "gap_rows": [
                 f.row for f in filters if f.counts(r["category"], r["subcategory"], attributes)
             ],
-            "capacity": _capacity(attributes, r["official_dataset_id"]),
+            "capacity": _capacity(attributes, r["official_dataset_id"], r["subcategory"]),
             "coordinates": origin,
             "confidence": float(r["confidence"]),
         },

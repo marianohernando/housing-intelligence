@@ -152,6 +152,82 @@ def _template_columns(template: str | None) -> list[str]:
     return [field for _, field, _, _ in Formatter().parse(template) if field]
 
 
+class DirectoryLink(BaseModel):
+    """A register's places are matched against an official directory to take its name and
+    capacity (D-218). Only the declared subcategories are matched."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    # register subcategory -> the directory's kind for it; the postcode-only rule needs it
+    kinds: dict[str, str] = Field(min_length=1)
+    # register subcategory -> words before the directory name when it is a bare place name
+    # (primary care: «ABRANTES» -> «Centro de salud Abrantes»); absent -> the name as published
+    name_prefix: dict[str, str] = Field(default_factory=dict[str, str])
+
+    @model_validator(mode="after")
+    def _prefixes_name_matched_subcategories(self) -> Self:
+        unknown = sorted(set(self.name_prefix) - set(self.kinds))
+        if unknown:
+            msg = f"{self.dataset_id}: name_prefix for subcategories it does not match: {unknown}"
+            raise ValueError(msg)
+        return self
+
+
+class FacilityDirectoryPipeline(BaseModel):
+    """An official directory of facilities (one XLSX sheet) kept in Silver only (D-218).
+
+    It never creates places: the register's own pipeline matches its places against the
+    directory (entity resolution with a declared method) to take the institutional name and the
+    published capacity. Contact columns (phone, email) are never read.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["facility_directory"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    sheet: str
+    id_column: str
+    name_column: str
+    address_column: str
+    postal_code_column: str
+    kind_column: str
+    dependency_column: str | None = None
+    capacity_column: str | None = None
+    capacity_unit: str | None = None
+    # Only rows of the region: e.g. «Cód. Provincia» in ["28"]
+    scope_column: str
+    scope_values: list[str] = Field(min_length=1)
+    min_rows: int = Field(gt=0, description="fewer rows in scope -> the sheet changed or is cut")
+    max_rows: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _capacity_has_a_unit(self) -> Self:
+        if (self.capacity_column is None) != (self.capacity_unit is None):
+            msg = f"{self.dataset_id}: declare capacity_column and capacity_unit together"
+            raise ValueError(msg)
+        if self.max_rows < self.min_rows:
+            msg = f"{self.dataset_id}: max_rows must be >= min_rows"
+            raise ValueError(msg)
+        return self
+
+    def kept_columns(self) -> list[str]:
+        optional = [self.dependency_column, self.capacity_column]
+        return [
+            self.id_column,
+            self.name_column,
+            self.address_column,
+            self.postal_code_column,
+            self.kind_column,
+            self.scope_column,
+            *[c for c in optional if c],
+        ]
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 class PointsPipeline(BaseModel):
     """Point facilities with projected coordinates -> place_master."""
 
@@ -187,6 +263,26 @@ class PointsPipeline(BaseModel):
     group_by_id: bool = False
     grouped_list_columns: list[str] = Field(default_factory=list[str])
     attribute_columns: list[str] = Field(default_factory=list[str])  # explicit allowlist (no PII)
+    # Postal code of the address: the directories match on it (D-218)
+    postal_code_column: str | None = None
+    # Who runs the place, as the register words it -> attributes.dependency publica|privada
+    dependency_column: str | None = None
+    directories: list[DirectoryLink] = Field(default_factory=list[DirectoryLink])
+
+    @model_validator(mode="after")
+    def _directories_need_an_address(self) -> Self:
+        if not self.directories:
+            return self
+        if not (self.postal_code_column and self.address_street_column):
+            msg = (
+                f"{self.dataset_id}: directories need postal_code_column and address_street_column"
+            )
+            raise ValueError(msg)
+        matched = [s for link in self.directories for s in link.kinds]
+        if len(matched) != len(set(matched)):
+            msg = f"{self.dataset_id}: a subcategory is matched against two directories"
+            raise ValueError(msg)
+        return self
 
     @model_validator(mode="after")
     def _status_needs_values(self) -> Self:
@@ -280,6 +376,7 @@ PipelineSpec = Annotated[
     | MadridDistrictPanelPipeline
     | PointsPipeline
     | GtfsFeedPipeline
-    | OsmWalkNetworkPipeline,
+    | OsmWalkNetworkPipeline
+    | FacilityDirectoryPipeline,
     Field(discriminator="kind"),
 ]

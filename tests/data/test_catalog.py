@@ -66,6 +66,8 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert catalog.datasets[dataset_id].domain.value == "transport", dataset_id
         elif pipeline.kind == "osm_walk_network":
             assert pipeline.walkable_highways, dataset_id
+        elif pipeline.kind == "facility_directory":
+            assert pipeline.scope_values, dataset_id
         else:
             assert pipeline.metric_ids(), dataset_id
 
@@ -87,6 +89,38 @@ def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None
                 pipeline.dataset_id,
                 column,
             )
+
+
+def test_directories_never_read_contact_columns(catalog: Catalog) -> None:
+    """D-186 / D-218: a directory keeps names, addresses and capacity; never phones or emails."""
+    directories = [p for p in catalog.pipelines.values() if p.kind == "facility_directory"]
+    assert directories
+    for pipeline in directories:
+        for column in pipeline.kept_columns():
+            folded = column.casefold().replace("é", "e").replace("ó", "o")
+            assert not any(term in folded for term in PII_COLUMNS), (pipeline.dataset_id, column)
+
+
+def test_directories_complement_cm_registers(catalog: Catalog) -> None:
+    """D-218: a directory only names and sizes places of a CM register; it never creates them."""
+    linked = {
+        link.dataset_id: dataset_id
+        for dataset_id, p in catalog.pipelines.items()
+        if p.kind == "points_csv"
+        for link in p.directories
+    }
+    directories = {d for d, p in catalog.pipelines.items() if p.kind == "facility_directory"}
+    assert directories == set(linked)
+    for directory, register in linked.items():
+        assert catalog.datasets[register].source_id == CM_SOURCE, directory
+        assert catalog.datasets[directory].source_id != CM_SOURCE, directory
+        register_spec = catalog.pipelines[register]
+        assert register_spec.kind == "points_csv"
+        allowed = set(register_spec.row_filters.get(register_spec.subcategory_column or "", []))
+        kinds = next(
+            link.kinds for link in register_spec.directories if link.dataset_id == directory
+        )
+        assert set(kinds) <= allowed, (directory, set(kinds) - allowed)
 
 
 # Statistics the CM does not publish at the level the product needs (D-209: population and

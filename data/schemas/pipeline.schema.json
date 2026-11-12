@@ -214,6 +214,158 @@
       "title": "CsvFormat",
       "type": "object"
     },
+    "DirectoryLink": {
+      "additionalProperties": false,
+      "description": "A register's places are matched against an official directory to take its name and\ncapacity (D-218). Only the declared subcategories are matched.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kinds": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Kinds",
+          "type": "object"
+        },
+        "name_prefix": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Name Prefix",
+          "type": "object"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "kinds"
+      ],
+      "title": "DirectoryLink",
+      "type": "object"
+    },
+    "FacilityDirectoryPipeline": {
+      "additionalProperties": false,
+      "description": "An official directory of facilities (one XLSX sheet) kept in Silver only (D-218).\n\nIt never creates places: the register's own pipeline matches its places against the\ndirectory (entity resolution with a declared method) to take the institutional name and the\npublished capacity. Contact columns (phone, email) are never read.",
+      "properties": {
+        "address_column": {
+          "title": "Address Column",
+          "type": "string"
+        },
+        "capacity_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity Column"
+        },
+        "capacity_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity Unit"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dependency_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dependency Column"
+        },
+        "id_column": {
+          "title": "Id Column",
+          "type": "string"
+        },
+        "kind": {
+          "const": "facility_directory",
+          "title": "Kind",
+          "type": "string"
+        },
+        "kind_column": {
+          "title": "Kind Column",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer rows in scope -> the sheet changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "name_column": {
+          "title": "Name Column",
+          "type": "string"
+        },
+        "postal_code_column": {
+          "title": "Postal Code Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "scope_column": {
+          "title": "Scope Column",
+          "type": "string"
+        },
+        "scope_values": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Scope Values",
+          "type": "array"
+        },
+        "sheet": {
+          "title": "Sheet",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "sheet",
+        "id_column",
+        "name_column",
+        "address_column",
+        "postal_code_column",
+        "kind_column",
+        "scope_column",
+        "scope_values",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "FacilityDirectoryPipeline",
+      "type": "object"
+    },
     "GtfsFeedPipeline": {
       "additionalProperties": false,
       "description": "Static GTFS feed -> one transport place per stop or parent station, with service levels.\n\nService is measured on one reference day: the median (by active trips) of the feed's\n`reference_weekday` dates inside its own validity window, so the result never depends on\nthe day the pipeline runs.",
@@ -661,6 +813,25 @@
           "title": "Dataset Id",
           "type": "string"
         },
+        "dependency_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dependency Column"
+        },
+        "directories": {
+          "items": {
+            "$ref": "#/$defs/DirectoryLink"
+          },
+          "title": "Directories",
+          "type": "array"
+        },
         "district_code_column": {
           "anyOf": [
             {
@@ -741,6 +912,18 @@
           ],
           "default": null,
           "title": "Name Template"
+        },
+        "postal_code_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code Column"
         },
         "resource_role": {
           "default": "primary",
@@ -836,6 +1019,7 @@
     "mapping": {
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
+      "facility_directory": "#/$defs/FacilityDirectoryPipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
@@ -865,6 +1049,9 @@
     },
     {
       "$ref": "#/$defs/OsmWalkNetworkPipeline"
+    },
+    {
+      "$ref": "#/$defs/FacilityDirectoryPipeline"
     }
   ]
 }

@@ -13,6 +13,7 @@ from sqlalchemy import Engine, create_engine, make_url, text
 from hi_contracts.catalog.pipeline import (
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    FacilityDirectoryPipeline,
     GtfsFeedPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
@@ -26,6 +27,7 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     run_admin_boundaries,
 )
 from hi_ingestion.pipelines.common import RunSummary
+from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
@@ -141,6 +143,19 @@ def walk_grid_extract(path: Path) -> Path:
     return path
 
 
+def ingest_directories(engine: Engine, data_dir: Path) -> None:
+    catalog = load_catalog()
+    for dataset_id, spec in sorted(catalog.pipelines.items()):
+        if isinstance(spec, FacilityDirectoryPipeline):
+            src = local_file(
+                dataset_id, "primary", GOLDEN / "directory_sample" / f"{dataset_id}.xlsx"
+            )
+            result = run_directory_pipeline(
+                engine, catalog, spec, src, evidence_root=None, data_dir=data_dir
+            )
+            assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
+
+
 @pytest.fixture(scope="session")
 def fixtures_ingested(
     published: RunSummary, migrated_engine: Engine, tmp_path_factory: pytest.TempPathFactory
@@ -148,6 +163,7 @@ def fixtures_ingested(
     assert published.status == "SUCCESS"
     catalog = load_catalog()
     tmp = tmp_path_factory.mktemp("features")
+    ingest_directories(migrated_engine, tmp)  # before the registers they name (D-218)
     for dataset_id, spec in sorted(catalog.pipelines.items()):
         if isinstance(spec, PointsPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "places_sample" / f"{dataset_id}.csv")

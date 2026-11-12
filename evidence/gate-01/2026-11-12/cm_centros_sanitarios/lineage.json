@@ -7,12 +7,21 @@
       "sha256": "93415cdfa2e5ab4df722bc87f3da94b7cd654bcccdb9b02d8d30955155f7f979",
       "bytes": 7915549,
       "url": "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv",
-      "retrieved_at": "2026-11-12T00:44:03.995918+00:00"
+      "retrieved_at": "2026-11-12T01:14:24.331358+00:00"
+    },
+    {
+      "dataset_id": "ms_catalogo_nacional_hospitales",
+      "role": "directory",
+      "path": "data/bronze/datasets/ms_catalogo_nacional_hospitales/052e3baa9300/CNH_2025.xlsx",
+      "sha256": "052e3baa930011d59779a7b2b6f6d5fced3991c73b86c085271f09464cd1d146",
+      "bytes": 493631,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/docs/CNH_2025.xlsx",
+      "retrieved_at": "2026-11-12T01:14:17.421466+00:00"
     }
   ],
-  "checksum": "ba0e65311c5bded59b759ad56d0c37775b6bdfb9efc717358f5da0bfe56ac282",
-  "parser_version": "places-1.2.0",
-  "dataset_version": "2026-11-11-ba0e65311c5b",
-  "correlation_id": "24d452efbcd04c81bcbec796ddc18f9a",
-  "silver": "data/silver/cm_centros_sanitarios/ba0e65311c5b/places.csv.gz"
+  "checksum": "fcef761ab5d60114e438c0099021d569eea7c326be1ef630d5904bfb103d6e91",
+  "parser_version": "places-1.3.0",
+  "dataset_version": "2026-11-12-fcef761ab5d6",
+  "correlation_id": "b206f9efcff14ed38b2211c52504aeb8",
+  "silver": "data/silver/cm_centros_sanitarios/fcef761ab5d6/places.csv.gz"
 }

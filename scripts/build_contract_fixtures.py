@@ -93,6 +93,14 @@ def colegios_chamartin(conn: Connection) -> PlaceCollection:
     )
 
 
+def hospitales_madrid(conn: Connection) -> PlaceCollection:
+    """places-1 + D-218: general hospitals of Madrid with their name and installed beds."""
+    result = places_geojson(conn, PlaceCategory.HEALTH, "ES.28.MUN.28079", ["Hospital general"])
+    return PlaceCollection.model_validate(
+        {**result.collection, "total": result.total, "page": result.page, "pages": result.pages}
+    )
+
+
 def write(name: str, payload: Any) -> None:
     path = OUT / f"{name}.fixture.json"
     path.write_text(
@@ -111,6 +119,7 @@ def main() -> None:
         # gap-0.3 (D-217): a municipio too small alone, compared with its nearest neighbours
         write("zone_gap_list.el_alamo", gap_list(conn, "28004"))
         write("places.colegios_chamartin", colegios_chamartin(conn))
+        write("places.hospitales_madrid", hospitales_madrid(conn))
         write(
             "gap_row_map.colegio_municipio",
             row_map(conn, TerritoryLevel.MUNICIPIO, GapRowKey.COLEGIO),

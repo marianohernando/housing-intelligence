@@ -66,9 +66,42 @@
           "title": "Dataset Id",
           "type": "string"
         },
+        "dependency": {
+          "anyOf": [
+            {
+              "enum": [
+                "publica",
+                "privada"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hospitals (D-218): who runs it, from the CM register; mutuas count as private",
+          "title": "Dependency"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hospitals (D-218): the register's type (general, especializado, ...)",
+          "examples": [
+            "Hospital general"
+          ],
+          "title": "Kind"
+        },
         "unit": {
           "examples": [
-            "camas",
+            "camas instaladas",
             "plazas autorizadas"
           ],
           "title": "Unit",
@@ -238,8 +271,10 @@
           "title": "Municipio"
         },
         "name": {
+          "description": "Institutional name; '<type> (<municipio>)' when no official one is known",
           "examples": [
-            "Centro de salud (Madrid)",
+            "Hospital Universitario La Paz",
+            "Centro de salud Abrantes",
             "AMOROS"
           ],
           "title": "Name",

@@ -100,3 +100,25 @@ def test_large_layers_come_in_pages_that_say_how_to_ask_for_the_rest(
     past = client.get("/api/v1/places", params={"category": "education", "page": total})
     assert past.status_code == 422
     assert "last page" in past.json()["detail"]["message"]
+
+
+def test_hospitals_carry_their_name_and_installed_beds(client: TestClient) -> None:
+    """D-218: name and beds from the Catálogo Nacional de Hospitales, matched by address;
+    public or private and the type from the CM register (additive inside `capacity`)."""
+    response = client.get(
+        "/api/v1/places", params={"category": "health", "subcategory": "Hospital general"}
+    )
+    assert response.status_code == 200, response.text
+    by_name = {
+        f["properties"]["name"]: f["properties"] for f in response.json()["data"]["features"]
+    }
+    fuensanta = by_name["Hospital Fuensanta"]
+    assert fuensanta["capacity"] == {
+        "value": 20.0,
+        "unit": "camas instaladas",
+        "dataset_id": "ms_catalogo_nacional_hospitales",
+        "dependency": "privada",
+        "kind": "Hospital general",
+    }
+    assert by_name["Clínica La Luz"]["capacity"]["value"] == 152.0  # «, S.L.» is not the name
+    assert not any(name.startswith("Hospital general (") for name in by_name)

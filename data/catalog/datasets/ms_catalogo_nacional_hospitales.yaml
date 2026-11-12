@@ -1,0 +1,37 @@
+dataset_id: ms_catalogo_nacional_hospitales
+source_id: ministerio_sanidad
+name: Catálogo Nacional de Hospitales 2025 (directorio de hospitales, actualizado a 31 de diciembre de 2024)
+domain: health
+owner: Ministerio de Sanidad
+format: XLSX
+geography: none
+geo:
+  resolution: point
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm
+resources:
+- name: CNH_2025.xlsx
+  format: XLSX
+  url: https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/docs/CNH_2025.xlsx
+  file_name: CNH_2025.xlsx
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 4
+  license_clarity: 4
+  ingestion_ease: 4
+  notes: >-
+    D-218. Fuente complementaria, no es dataset CM. El portal de la CM no publica camas por
+    hospital (solo el total regional, D-217 §4). Del directorio se toman el nombre del centro,
+    las camas instaladas y la clase y dependencia (para contrastar el cruce); nunca el
+    teléfono ni el correo.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T00:00:00+00:00'
+notes: >-
+  Hoja «DIRECTORIO DE HOSPITALES», solo la provincia de Madrid (91 hospitales). Vive en
+  Silver: a la base solo llega lo que se cruza con los 85 hospitales del registro de la CM.

@@ -3,6 +3,10 @@
 Until 12 Nov the properties were free-form. They are now a contract so the web can show every
 facility of a zone, filter it with the same criterion as the list of what is missing
 (`gap_rows`) and show its capacity when the source publishes it.
+
+D-218 (additive, still places-1): hospitals carry their installed beds from the Catálogo
+Nacional de Hospitales in `capacity`, with `dependency` and `kind`; hospitals and primary care
+centres carry their institutional name when the official directory gives one.
 """
 
 from typing import Literal
@@ -16,6 +20,7 @@ from hi_contracts.public.gaps import GapRowKey
 PLACES_CONTRACT_VERSION = "places-1"
 
 Ownership = Literal["publica", "concertada", "privada"]
+Dependency = Literal["publica", "privada"]
 CoordinatesOrigin = Literal["source", "geocoded"]
 
 
@@ -25,14 +30,26 @@ class PlaceCapacity(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     value: float = Field(ge=0, examples=[1300])
-    unit: str = Field(examples=["camas", "plazas autorizadas"])
+    unit: str = Field(examples=["camas instaladas", "plazas autorizadas"])
     dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    dependency: Dependency | None = Field(
+        default=None,
+        description="Hospitals (D-218): who runs it, from the CM register; mutuas count as private",
+    )
+    kind: str | None = Field(
+        default=None,
+        examples=["Hospital general"],
+        description="Hospitals (D-218): the register's type (general, especializado, ...)",
+    )
 
 
 class PlaceProperties(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    name: str = Field(examples=["Centro de salud (Madrid)", "AMOROS"])
+    name: str = Field(
+        examples=["Hospital Universitario La Paz", "Centro de salud Abrantes", "AMOROS"],
+        description="Institutional name; '<type> (<municipio>)' when no official one is known",
+    )
     category: PlaceCategory
     subcategory: str = Field(examples=["COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA"])
     municipio: str | None = Field(default=None, pattern=r"^28\d{3}$")
