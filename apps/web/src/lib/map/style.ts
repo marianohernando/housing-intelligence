@@ -407,7 +407,7 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; withLa
         paint: {
           "fill-color": [
             "case",
-            ["has", "gap"],
+            ["!=", ["get", "gap"], null],
             [
               "match",
               ["get", "gap"],

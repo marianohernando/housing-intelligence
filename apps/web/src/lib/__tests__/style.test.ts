@@ -241,6 +241,13 @@ describe("map style", () => {
     expect(opacityOf({ fit: null })).toBe(PLAIN_ZONE_OPACITY);
   });
 
+  it("colours by a row only when gap is not null, so a zone with gap: null is not painted as no data (MAP-004)", () => {
+    const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
+    const color = JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-color"]);
+    expect(color.startsWith('["case",["!=",["get","gap"],null],["match"')).toBe(true);
+    expect(color).not.toContain('["has","gap"]');
+  });
+
   it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {
     const pattern = zoneLayers(palette).below.find((l) => l.id === "zones-pattern");
     const json = JSON.stringify(pattern?.type === "fill" && { filter: pattern.filter, paint: pattern.paint });
