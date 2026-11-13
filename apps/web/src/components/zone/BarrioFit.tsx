@@ -11,7 +11,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { type BarrioRow, barrioRows, barriosText, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
-import { hasWalkingFact, unknownText, WALK_MEDIAN } from "@/lib/fit";
+import { unknownText, WALK_MEDIAN } from "@/lib/fit";
 import type { ZoneProperties } from "@/lib/map/zones";
 
 import styles from "./BarrioFit.module.css";
@@ -90,7 +90,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   const slow = useSlow(loading);
   const rows = data ? barrioRows(data) : null;
   const shown = rows ? (all ? rows.fits : rows.fits.slice(0, FIRST_BARRIOS)) : [];
-  const walking = rows ? hasWalkingFact([...shown, ...rows.near].flatMap((row) => row.facts.map((text) => ({ text })))) : false;
+  const walking = rows ? [...shown, ...rows.near].some((row) => row.walking) : false;
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>

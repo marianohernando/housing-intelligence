@@ -17,6 +17,7 @@ import {
   rankText,
   relaxOptions,
   unknownText,
+  WALK_MINUTES_FEATURE_PREFIX,
   zoneFit,
   zoneKeyOf,
 } from "../fit";
@@ -177,10 +178,15 @@ describe("«¿Y si cambias algo?»", () => {
 describe("facts in plain words (a_pie.mediana)", () => {
   it("says the walking median once, when a fact is a walk, and the facts no longer say it (D-229 follow-up of A)", () => {
     const facts = fixture.results.flatMap((r) => r.facts);
-    const walks = facts.filter((f) => f.text.includes("andando"));
+    const walks = facts.filter((f) => f.indicator?.feature_id.startsWith(WALK_MINUTES_FEATURE_PREFIX));
     expect(walks.length).toBeGreaterThan(0);
-    for (const f of walks) expect(f.text).not.toMatch(/mitad de sus calles/);
+    for (const f of walks) {
+      expect(f.text).toContain("andando");
+      expect(f.text).not.toMatch(/mitad de sus calles/);
+    }
     expect(hasWalkingFact(walks)).toBe(true);
-    expect(hasWalkingFact([{ text: "≈ 1.107 €/mes por 77 m²" }])).toBe(false);
+    // The contract: the walks are told by the indicator, not by the words of the text
+    expect(hasWalkingFact([{ indicator: { feature_id: "alquiler_m2_mensual" } }, { indicator: null }])).toBe(false);
+    expect(hasWalkingFact([{ indicator: { feature_id: "centros_salud_a_pie_por_10000_hab" } }])).toBe(false);
   });
 });

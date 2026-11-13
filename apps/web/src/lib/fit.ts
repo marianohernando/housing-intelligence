@@ -134,6 +134,9 @@ export function rankText(rank: number): string {
  */
 export const WALK_MEDIAN = "Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.";
 
-export function hasWalkingFact(facts: readonly { text: string }[]): boolean {
-  return facts.some((fact) => fact.text.includes("andando"));
+/** feature_id prefix of the indicators that are minutes on foot (min_a_pie_colegio, min_a_pie_transporte…) */
+export const WALK_MINUTES_FEATURE_PREFIX = "min_a_pie_";
+
+export function hasWalkingFact(facts: readonly { indicator?: { feature_id: string } | null }[]): boolean {
+  return facts.some((fact) => fact.indicator?.feature_id.startsWith(WALK_MINUTES_FEATURE_PREFIX) === true);
 }
