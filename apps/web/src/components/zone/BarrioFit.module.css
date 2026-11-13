@@ -1,0 +1,172 @@
+/* «Los barrios que mejor encajan»: under the zone card, after a search (D-232) */
+.card {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.summary {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.summary strong {
+  display: block;
+  color: var(--ink);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One row per barrio: its name and % (a button when it has its outline), then why it is a near miss and its first facts */
+.row {
+  position: relative;
+  display: grid;
+  gap: 0.15rem;
+  padding: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+}
+
+/* The button covers the whole row, so a tap anywhere on it counts (and the target is the row) */
+.pickable:hover {
+  border-color: var(--violet);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* The barrio outlined on the map, also under the pointer */
+.pressed,
+.pressed:hover {
+  border-color: var(--violet-strong);
+  background: var(--violet-soft);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+}
+
+button.head {
+  cursor: pointer;
+}
+
+button.head::after {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  content: "";
+}
+
+button.head:focus-visible {
+  outline: none;
+}
+
+button.head:focus-visible::after {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.name {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.pct {
+  flex: none;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+.pressed .pct {
+  background: var(--surface);
+}
+
+.details {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.fails {
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.fact {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.35;
+}
+
+.toggle {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  padding: 0 var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+.near {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.near h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+}

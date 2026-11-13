@@ -15,11 +15,18 @@ import {
   FACILITY_CLUSTER_PROPERTIES,
   FACILITY_SOURCE,
   facilityLayers,
+  FIRST_LABEL_LAYER,
+  LABEL_AREA,
+  labelLayers,
+  MAP_FONTS,
+  mapGlyphsUrl,
   mapTilesSource,
   MAP_PALETTE_TOKENS,
   type MapPalette,
+  OPENFREEMAP_GLYPHS,
   OPENFREEMAP_TILEJSON,
   PARKS_VIVID_LAYER,
+  PLAIN_ZONE_OPACITY,
   zoneLayers,
 } from "../map/style";
 
@@ -38,7 +45,7 @@ const palette = Object.fromEntries(
 
 function withZone(style: StyleSpecification): StyleSpecification {
   const empty: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
-  const { below, above } = zoneLayers(palette);
+  const { below, withLabels, above } = zoneLayers(palette);
   return {
     ...style,
     sources: {
@@ -50,7 +57,7 @@ function withZone(style: StyleSpecification): StyleSpecification {
       "zone-barrio": { type: "geojson", data: empty },
       [FACILITY_SOURCE]: { type: "geojson", data: empty, cluster: true, clusterProperties: FACILITY_CLUSTER_PROPERTIES },
     },
-    layers: [...style.layers, ...below, ...above, ...facilityLayers(palette)],
+    layers: [...style.layers, ...below, ...withLabels, ...above, ...facilityLayers(palette)],
   };
 }
 
@@ -67,12 +74,93 @@ describe("map style", () => {
     expect(validateStyleMin(withZone(baseStyle(palette)))).toEqual([]);
   });
 
-  it("uses open tiles without a key and has no text layers (no glyph server needed)", () => {
+  it("uses open tiles and glyphs without a key", () => {
     const style = baseStyle(palette);
     expect(style.sources.openmaptiles).toEqual({ type: "vector", url: OPENFREEMAP_TILEJSON });
-    expect(OPENFREEMAP_TILEJSON).not.toMatch(/key=|token=/i);
-    expect(style.layers.some((l) => l.type === "symbol")).toBe(false);
-    expect(style.glyphs).toBeUndefined();
+    expect(style.glyphs).toBe(OPENFREEMAP_GLYPHS);
+    for (const url of [OPENFREEMAP_TILEJSON, OPENFREEMAP_GLYPHS]) expect(url).not.toMatch(/key=|token=/i);
+  });
+
+  it("takes its fonts from NEXT_PUBLIC_MAP_GLYPHS_URL when set (offline package), OpenFreeMap otherwise", () => {
+    expect(mapGlyphsUrl(undefined)).toBe(OPENFREEMAP_GLYPHS);
+    expect(mapGlyphsUrl("")).toBe(OPENFREEMAP_GLYPHS);
+    // A path on the same site, made absolute with the page's origin: MapLibre wants an absolute URL
+    expect(mapGlyphsUrl("/tiles/fonts/{fontstack}/{range}.pbf", "http://localhost:3012")).toBe(
+      "http://localhost:3012/tiles/fonts/{fontstack}/{range}.pbf",
+    );
+    expect(mapGlyphsUrl("http://localhost:8080/fonts/{fontstack}/{range}.pbf")).toBe("http://localhost:8080/fonts/{fontstack}/{range}.pbf");
+    // Not a glyph template (no tokens, a path without origin, another scheme): the default stays
+    expect(mapGlyphsUrl("http://localhost:8080/fonts/Noto Sans Regular/0-255.pbf")).toBe(OPENFREEMAP_GLYPHS);
+    expect(mapGlyphsUrl("/tiles/fonts/{fontstack}/{range}.pbf")).toBe(OPENFREEMAP_GLYPHS);
+    expect(mapGlyphsUrl("ftp://fonts/{fontstack}/{range}.pbf")).toBe(OPENFREEMAP_GLYPHS);
+    const local = baseStyle(palette, mapTilesSource(undefined), mapGlyphsUrl("/tiles/fonts/{fontstack}/{range}.pbf", "http://localhost:3012"));
+    expect(local.glyphs).toBe("http://localhost:3012/tiles/fonts/{fontstack}/{range}.pbf");
+    expect(validateStyleMin(local)).toEqual([]);
+  });
+
+  it("writes every label in one font the glyph servers have, alone (a stack of two is a 404)", () => {
+    const fonts = [...labelLayers(palette), ...zoneLayers(palette).withLabels].flatMap((l) => (l.type === "symbol" && l.layout?.["text-font"] ? [l.layout["text-font"]] : []));
+    expect(fonts.length).toBeGreaterThan(0);
+    for (const font of fonts) {
+      expect(Array.isArray(font) && font.length).toBe(1);
+      expect(["Noto Sans Regular", "Noto Sans Bold", "Noto Sans Italic"]).toContain((font as string[])[0]);
+    }
+    expect(Object.values(MAP_FONTS).every((stack) => stack.length === 1)).toBe(true);
+  });
+
+  it("labels places by zoom, the big roads by their ref, stations and water, from the tiles alone", () => {
+    const layers = labelLayers(palette);
+    const bySourceLayer = (name: string) => layers.filter((l) => "source-layer" in l && l["source-layer"] === name);
+    expect(layers.every((l) => "source" in l && l.source === "openmaptiles")).toBe(true);
+    // Municipios from the overview, barrios at zone zoom; Madrid's districts after the zones' names
+    const place = Object.fromEntries(bySourceLayer("place").map((l) => [l.id, l.minzoom ?? 0]));
+    expect(place["label-city"]).toBe(0);
+    expect(place["label-barrio"]).toBeGreaterThan(place["label-town"] ?? 0);
+    const zoneNames = zoneLayers(palette).withLabels.find((l) => l.id === "zone-names");
+    expect(zoneNames).toMatchObject({ type: "symbol", source: "zones", filter: ["==", ["get", "level"], "distrito"] });
+    expect(place["label-district"]).toBe(zoneNames?.maxzoom);
+    // The ref of motorways and trunk roads, only on their lines (exits are points in the same layer)
+    const road = JSON.stringify(bySourceLayer("transportation_name")[0]);
+    for (const part of ['"motorway","trunk"', '["geometry-type"],"LineString"', '"text-field":["get","ref"]']) expect(road).toContain(part);
+    // Stations, not their entrances; the name of the offline extract (tilemaker) when there is no `name`
+    const stations = JSON.stringify(bySourceLayer("poi"));
+    expect(stations).toContain('"railway"');
+    expect(stations).not.toContain("subway_entrance");
+    expect(JSON.stringify(layers)).toContain('["coalesce",["get","name"],["get","name:latin"]]');
+    expect(bySourceLayer("water_name")).toHaveLength(1);
+    // Municipios on top: MapLibre places the top layers first, so they win a clash
+    expect(layers.at(-1)?.id).toBe("label-city");
+    // Only around the region: far tiles on a tilted view would ask for glyphs of other scripts
+    for (const layer of layers) expect(JSON.stringify("filter" in layer && layer.filter)).toContain('["within",');
+    const [west, south, east, north] = LABEL_AREA;
+    expect(west < -4.58 && east > -3.06 && south < 39.88 && north > 41.16).toBe(true); // the Comunidad's box
+  });
+
+  it("draws the labels above the buildings and the zones' fill and edges, and below the mask, the outline and the centres", () => {
+    // As VidaMap adds them: the fill under the buildings, the edges under the labels, the rest on top
+    const ids = baseStyle(palette).layers.map((l) => l.id);
+    const { below, withLabels, above } = zoneLayers(palette);
+    ids.splice(ids.indexOf(BUILDING_LAYER), 0, ...below.map((l) => l.id));
+    ids.splice(ids.indexOf(FIRST_LABEL_LAYER), 0, ...withLabels.map((l) => l.id));
+    ids.push(...above.map((l) => l.id), ...facilityLayers(palette).map((l) => l.id));
+    const first = ids.indexOf(FIRST_LABEL_LAYER);
+    const last = ids.indexOf("label-city");
+    expect(labelLayers(palette)[0]?.id).toBe(FIRST_LABEL_LAYER);
+    expect(first).toBeGreaterThan(ids.indexOf(BUILDING_LAYER));
+    // No white edge crosses a name, and the districts' names are the first to give way
+    for (const under of ["zones-fill", "zones-pattern", "zones-line", "zones-nodata", "zone-names"]) expect(ids.indexOf(under)).toBeLessThan(first);
+    for (const over of ["zone-mask", "zone-outline", "zones-hover", "facilities-point", "facilities-cluster"]) expect(ids.indexOf(over)).toBeGreaterThan(last);
+  });
+
+  it("keeps the labels quiet: soft ink with a white halo, never a status or centre colour", () => {
+    const quiet = [palette.label, palette.labelStrong, palette.labelWater];
+    const loud = [palette.gapFalta, palette.gapJusto, palette.gapCubierto, palette.violet, palette.facColegio, palette.facHospital];
+    for (const layer of [...labelLayers(palette), ...zoneLayers(palette).withLabels]) {
+      if (layer.type !== "symbol") continue;
+      expect(quiet).toContain(layer.paint?.["text-color"]);
+      expect(loud).not.toContain(layer.paint?.["text-color"]);
+      expect(layer.paint?.["text-halo-color"]).toBe("#ffffff");
+    }
   });
 
   it("takes its base map from NEXT_PUBLIC_MAP_TILES_URL when set (offline package), OpenFreeMap otherwise", () => {
@@ -121,8 +209,17 @@ describe("map style", () => {
   it("paints the fit after a search: a ramp for the zones that fit, apart those that fail or are unknown", () => {
     const fill = JSON.stringify(zoneLayers(palette).below.find((l) => l.id === "zones-fill")?.paint);
     for (const c of ["ENCAJA", "NO_CUMPLE", "SIN_DATOS", "fit_pct", palette.fitLow, palette.violet, palette.fitNoCumple]) expect(fill).toContain(c);
-    const noData = zoneLayers(palette).above.find((l) => l.id === "zones-nodata");
+    const noData = zoneLayers(palette).withLabels.find((l) => l.id === "zones-nodata");
     expect(JSON.stringify(noData?.type === "line" && noData.filter)).toContain('"fit"');
+  });
+
+  it("lets the streets show under the zones not painted yet, and keeps the painted ones solid (MAP-004)", () => {
+    const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
+    const opacity = JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-opacity"]);
+    expect(opacity).toContain(`["case",["any",["has","gap"],["has","fit"]],0.9,${PLAIN_ZONE_OPACITY}]`);
+    expect(PLAIN_ZONE_OPACITY).toBeLessThanOrEqual(0.6);
+    // Camera expressions go outermost: every zone still fades out at zone zoom
+    expect(opacity.startsWith('["interpolate",["linear"],["zoom"]')).toBe(true);
   });
 
   it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {

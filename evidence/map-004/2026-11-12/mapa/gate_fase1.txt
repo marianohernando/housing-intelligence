@@ -1,0 +1,45 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+410 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+278 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests uv run pytest tests/unit tests/data -q
+........................................................................ [ 10%]
+........................................................................ [ 21%]
+........................................................................ [ 32%]
+........................................................................ [ 42%]
+........................................................................ [ 53%]
+........................................................................ [ 64%]
+........................................................................ [ 75%]
+........................................................................ [ 85%]
+........................................................................ [ 96%]
+......................                                                   [100%]
+670 passed in 14.41s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 apps/web
+
+
+ Test Files  30 passed (30)
+      Tests  354 passed (354)
+   Start at  23:46:46
+   Duration  652ms (tests 48%, import 29%, transform 17%, worker 6%)
+
+    Isolate  30 workers spawned · ~109ms startup each (spawn + environment, per file)
+             at least ~255ms faster with isolate: false — reuses workers across files instead of one per file
+

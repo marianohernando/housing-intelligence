@@ -12,7 +12,7 @@ import { impactContext, impactFigure, impactSentence, moreZonesText, type Ranked
 import styles from "./InvestFirst.module.css";
 import { useGapImpact } from "./useGapImpact";
 
-// B's draft for line D (D-229: «dónde invertir primero»); the figures and the zones come from the API.
+// Line D's copy (pitch/textos_web.md §5c, D-229: «dónde invertir primero»); the figures and the zones come from the API.
 const TEXT = {
   title: "Dónde invertir primero",
   intro: "Cuánta gente vive en zonas donde falta cada servicio, y qué zonas van primero porque tienen más gente afectada.",
@@ -21,7 +21,7 @@ const TEXT = {
   ranking: (label: string) => `Zonas donde faltan ${label}, de más a menos gente afectada`,
   rest: (label: string) => `Resto de zonas donde faltan ${label}`,
   note:
-    "Solo cuentan las zonas en FALTA. Contamos a toda la gente de la zona a la que sirve cada servicio (por ejemplo, los niños de 0 a 4 años para las escuelas infantiles), según el censo y, en los distritos de Madrid, el padrón: no estimamos nada. Dentro de una zona, unas calles están mejor servidas que otras.",
+    "Solo cuentan las zonas en FALTA. Contamos a toda la gente de la zona que usa ese servicio (por ejemplo, los niños de 0 a 4 años para las escuelas infantiles), con el censo y, en los distritos de Madrid, el padrón. Dentro de una zona, unas calles están mejor servidas que otras.",
   pick: "Ver lo que falta en otra zona",
 };
 

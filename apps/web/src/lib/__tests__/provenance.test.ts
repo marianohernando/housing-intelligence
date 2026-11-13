@@ -11,6 +11,7 @@ import {
   datasetLines,
   MAP_CREDITS,
   mapAttribution,
+  publishedIn,
   sortDatasets,
 } from "../provenance";
 
@@ -138,6 +139,23 @@ describe("datasetLines (fuente.*)", () => {
       url: "https://datos.comunidad.madrid/dataset/red_de_metro",
       openHint: "en el portal de datos (se abre en una pestaña nueva)",
     });
+  });
+
+  it("says where the link opens, after the API's source_name (D-231)", () => {
+    expect(datasetLines({ ...metro, source_name: "Portal de Datos Abiertos de la Comunidad de Madrid" }).openHint).toBe(
+      "en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+    );
+    expect(publishedIn("Portal de Datos Abiertos del Ayuntamiento de Madrid")).toBe("en el Portal de Datos Abiertos del Ayuntamiento de Madrid");
+    expect(publishedIn("Ministerio de Sanidad · Portal Estadístico del SNS (catálogos de centros)")).toBe(
+      "en el Ministerio de Sanidad · Portal Estadístico del SNS (catálogos de centros)",
+    );
+    expect(publishedIn("Agencia Tributaria · Estadística de viviendas declaradas en IRPF")).toBe(
+      "en la Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
+    );
+    expect(publishedIn("OpenStreetMap (extracto Geofabrik Madrid)")).toBe("en OpenStreetMap (extracto Geofabrik Madrid)");
+    // Without it (an older API), as before
+    expect(publishedIn(null)).toBe("en el portal de datos");
+    expect(publishedIn("  ")).toBe("en el portal de datos");
   });
 
   it("leaves out what the API does not give, instead of inventing it", () => {

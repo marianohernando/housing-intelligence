@@ -67,8 +67,11 @@ export function zoneFit(result: SearchResult, zoneKey: string): ZoneFit {
   };
 }
 
-/** Plain-language name of each condition of the search («Colegio con primaria a 10 min andando como mucho»). */
-export function constraintLabels(result: SearchResult): Map<string, string> {
+/**
+ * Plain-language name of each condition of the search («Colegio con primaria a 10 min andando como
+ * mucho»), from POST /search or POST /search/barrios.
+ */
+export function constraintLabels(result: Pick<SearchResult, "results" | "near_misses">): Map<string, string> {
   const ranked = [...result.results, ...(result.near_misses ?? [])];
   return new Map(ranked.flatMap((z) => z.constraints.map((c) => [c.constraint_id, c.label] as const)));
 }

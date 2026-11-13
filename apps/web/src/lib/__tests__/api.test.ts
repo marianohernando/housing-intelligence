@@ -82,6 +82,18 @@ describe("api client", () => {
     expect(JSON.parse(String(calls[0]?.init?.body))).toEqual(scenario);
   });
 
+  it("posts the scenario and the district to /search/barrios (D-232)", async () => {
+    const calls: Call[] = [];
+    const request = fixture("barrio_search_request.san_blas.fixture.json") as { distrito: string; scenario: ScenarioState };
+    const api = createApi(BASE, fakeFetch(200, envelope(fixture("barrio_search_result.san_blas.fixture.json")), calls));
+    const body = await api.searchBarrios(request.distrito, request.scenario, { timeoutMs: 1000 });
+    expect(calls[0]?.url).toBe(`${BASE}/api/v1/search/barrios`);
+    expect(calls[0]?.init?.method).toBe("POST");
+    expect(new Headers(calls[0]?.init?.headers).get("Content-Type")).toBe("application/json");
+    expect(JSON.parse(String(calls[0]?.init?.body))).toEqual(request);
+    expect(body.data.distrito.code).toBe("2807920");
+  });
+
   it("passes the abort signal of a search to fetch, and tells an aborted search apart", async () => {
     const calls: Call[] = [];
     const controller = new AbortController();

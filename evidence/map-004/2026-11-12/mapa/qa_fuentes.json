@@ -1,0 +1,110 @@
+{
+ "modo": "fuentes",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "esperado": {
+  "linea": "En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023).",
+  "enlaces": [
+   "https://datos.comunidad.madrid/dataset/1912744",
+   "https://datos.comunidad.madrid/dataset/1912720"
+  ]
+ },
+ "chamartin_desktop": {
+  "linea": "En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023).",
+  "enlaces": [
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912744",
+    "oculto": ", Hospitales y datos asistenciales, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   },
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912720",
+    "oculto": ", Dotación de camas por dependencia, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   }
+  ],
+  "hospital": "A pie hasta el centro de salud más cercano 9 min Hospital más cercano a 12 min andando",
+  "fuentes_oculto": [
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos del Ayuntamiento de Madrid (se abre en una pestaña nueva)",
+   ", en OpenStreetMap (extracto Geofabrik Madrid) (se abre en una pestaña nueva)"
+  ],
+  "peticiones_ccaa": 2,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "chamartin_mobile": {
+  "linea": "En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023).",
+  "enlaces": [
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912744",
+    "oculto": ", Hospitales y datos asistenciales, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   },
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912720",
+    "oculto": ", Dotación de camas por dependencia, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   }
+  ],
+  "hospital": "A pie hasta el centro de salud más cercano 9 min Hospital más cercano a 12 min andando",
+  "fuentes_oculto": [
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos del Ayuntamiento de Madrid (se abre en una pestaña nueva)",
+   ", en OpenStreetMap (extracto Geofabrik Madrid) (se abre en una pestaña nueva)"
+  ],
+  "peticiones_ccaa": 2,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "el_alamo_desktop": {
+  "linea": "En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023).",
+  "enlaces": [
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912744",
+    "oculto": ", Hospitales y datos asistenciales, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   },
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912720",
+    "oculto": ", Dotación de camas por dependencia, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   }
+  ],
+  "hospital": "A pie hasta el centro de salud más cercano 13 min Hospital más cercano a unos 15,6 km",
+  "fuentes_oculto": [
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en OpenStreetMap (extracto Geofabrik Madrid) (se abre en una pestaña nueva)"
+  ],
+  "peticiones_ccaa": 2,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "el_alamo_mobile": {
+  "linea": "En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023).",
+  "enlaces": [
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912744",
+    "oculto": ", Hospitales y datos asistenciales, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   },
+   {
+    "href": "https://datos.comunidad.madrid/dataset/1912720",
+    "oculto": ", Dotación de camas por dependencia, en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)"
+   }
+  ],
+  "hospital": "A pie hasta el centro de salud más cercano 13 min Hospital más cercano a unos 15,6 km",
+  "fuentes_oculto": [
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en el Portal de Datos Abiertos de la Comunidad de Madrid (se abre en una pestaña nueva)",
+   ", en OpenStreetMap (extracto Geofabrik Madrid) (se abre en una pestaña nueva)"
+  ],
+  "peticiones_ccaa": 2,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "fallos": []
+}
