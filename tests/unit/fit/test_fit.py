@@ -447,6 +447,11 @@ def test_without_an_urban_park_at_a_walk_green_areas_say_the_countryside_is_not_
     assert green.kind is FactKind.WEAKNESS
     assert green.text == "Sin parque urbano de 1 ha o más a un paseo (el campo no cuenta)"
     assert green.confidence <= 0.5
+    assert green.indicator is None  # no minutes in the text, so no walk indicator (hasWalkingFact)
+    near = next(
+        f for f in evaluate(GREEN, _park_zone(20.0)).facts if f.topic is FactTopic.ZONAS_VERDES
+    )
+    assert near.indicator is not None and near.indicator.feature_id == "min_a_pie_parque"
     missing = evaluate(GREEN, _park_zone(None))
     assert missing.match_pct is None
     green = next(f for f in missing.facts if f.topic is FactTopic.ZONAS_VERDES)

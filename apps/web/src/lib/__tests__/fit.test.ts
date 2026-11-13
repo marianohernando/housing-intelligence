@@ -187,6 +187,8 @@ describe("facts in plain words (a_pie.mediana)", () => {
     expect(hasWalkingFact(walks)).toBe(true);
     // The contract: the walks are told by the indicator, not by the words of the text
     expect(hasWalkingFact([{ indicator: { feature_id: "alquiler_m2_mensual" } }, { indicator: null }])).toBe(false);
+    // A park out of range says «sin parque… a un paseo»: no minutes, no indicator, no median note
+    expect(hasWalkingFact([{ indicator: null }])).toBe(false);
     expect(hasWalkingFact([{ indicator: { feature_id: "centros_salud_a_pie_por_10000_hab" } }])).toBe(false);
   });
 });

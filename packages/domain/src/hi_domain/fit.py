@@ -417,9 +417,11 @@ def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> S
         fact = Fact(kind=FactKind.UNKNOWN, topic=measured.topic, text=text, confidence=0.0)
         return Score(None, 0.0, fact)
     utility = walk_utility(walk.value, measured.target_minutes)
+    shown_indicator: IndicatorValue | None = walk
     if walk.value > WALK_ZERO_AT * measured.target_minutes:
         confidence = min(walk.confidence, OUT_OF_RANGE_CONFIDENCE)
         text = measured.out_of_range
+        shown_indicator = None  # the text has no minutes: the web tells walks by the indicator
     else:
         confidence = walk.confidence
         text = f"{measured.label} a {about_minutes(walk.value)} andando"
@@ -429,7 +431,7 @@ def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> S
         topic=measured.topic,
         text=text,
         confidence=confidence,
-        indicator=walk,
+        indicator=shown_indicator,
     )
     return Score(utility, confidence, fact)
 
