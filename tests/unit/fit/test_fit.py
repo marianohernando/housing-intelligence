@@ -96,6 +96,14 @@ def family(budget: int | Budget = 1500, **update: object) -> ScenarioState:
     return base.model_copy(update=update)
 
 
+def test_the_walk_condition_says_the_zone_median_without_streets_jargon() -> None:
+    evaluation = evaluate(family(), zone("1", colegio=6.4))
+    check = next(c for c in evaluation.constraints if c.constraint_id == "near:colegio")
+    assert check.explanation == (
+        "A unos 6 min andando de un colegio con primaria (lo que tarda la mitad de la zona)"
+    )
+
+
 def test_rank_weights_follow_the_order_and_add_up_to_one() -> None:
     for n in range(1, 8):
         weights = rank_weights(n)

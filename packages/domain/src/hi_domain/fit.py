@@ -308,8 +308,8 @@ def near_check(nearby: NearbyNeed, walk: IndicatorValue | None) -> ConstraintChe
         status=ConstraintStatus.PASS if passed else ConstraintStatus.FAIL,
         value=round(walk.value, 1),
         confidence=walk.confidence,
-        explanation=f"La mitad de sus calles está a {minutes_text(walk.value)} andando o menos "
-        f"de {of}",
+        explanation=f"A {about_minutes(walk.value)} andando de {of} "
+        "(lo que tarda la mitad de la zona)",
     )
 
 
