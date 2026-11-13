@@ -181,9 +181,11 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
    - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 9/9.
    - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
 3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/ (`/map` redirige ahí desde el 12 nov). Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/`.
-4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`, que ya incluye `/search`.
+4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`, que ya incluye `/search` y `/search/barrios`.
    - Sus 9 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía, dos capas, una búsqueda con el caso del guion y la de barrios.
    - Así el contenedor de la API ya está arrancado y la búsqueda tiene su caché lista, y no te comes delante del jurado los unos 6 s de un `/search` en frío (medido el 12 nov: 3,5 s de arranque más 2,5 s de la primera búsqueda).
+   - **Barrios:** B midió 7,1 s en la primera llamada en frío a `/search/barrios` en producción. En caliente tarda 0,19–0,44 s (13 nov).
+   - **Basta con cualquier distrito:** lo que cuesta en frío es arrancar la instancia y cargar sus cachés, no el distrito en sí. Con el contenedor caliente por el smoke, que usa San Blas-Canillejas, los barrios de Latina salieron en 0,23 s.
    - Deja después la pestaña de la demo abierta y recárgala una vez.
    - El contenedor se apaga tras 5 min sin tráfico. Si entre el calentamiento y tu turno pasan más de 5 min, repítelo.
 5. **Durante la presentación:** si una petición se queda colgada más de 10 s, cambia al paquete offline (`make demo-offline`, unos 7 s) en vez de esperar.
