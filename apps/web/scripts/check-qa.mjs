@@ -28,6 +28,7 @@
 //   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
 //   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
 //   node scripts/check-qa.mjs mapa [outDir] [antes|despues] # MAP-004: map labels (glyphs) and the first view, before and after
+//                                                    (MAP_OFFLINE=1: web built with local tiles and fonts, OpenFreeMap blocked)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
 // LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
@@ -1942,6 +1943,14 @@ async function mapView(browser) {
   const failures = [];
   for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
     const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+    // A web built with the offline package's tiles and fonts (MAP_OFFLINE=1): nothing may reach OpenFreeMap
+    const toOpenFreeMap = [];
+    if (process.env.MAP_OFFLINE === "1") {
+      await ctx.route(TILES, (route) => {
+        toOpenFreeMap.push(route.request().url());
+        return route.abort("blockedbyclient");
+      });
+    }
     const page = await ctx.newPage();
     const errors = [];
     page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
@@ -1974,6 +1983,10 @@ async function mapView(browser) {
     entry.zona = { axe: await axe(page), overflow_px: await overflow(page) };
     entry.glifos = glyphs;
     entry.consola = errors;
+    if (process.env.MAP_OFFLINE === "1") {
+      entry.peticiones_a_openfreemap = toOpenFreeMap.length;
+      if (toOpenFreeMap.length) failures.push(`${id}: ${toOpenFreeMap.length} peticiones a OpenFreeMap sin red`);
+    }
     for (const [where, check] of Object.entries({ portada: entry.portada, ejemplo: entry.ejemplo, zona: entry.zona })) {
       if (check.axe.length) failures.push(`${id} ${where}: axe ${check.axe.map((v) => v.id).join(", ")}`);
       if (check.overflow_px > 0) failures.push(`${id} ${where}: desborde`);

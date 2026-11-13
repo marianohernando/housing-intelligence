@@ -105,6 +105,12 @@ export const BUILDINGS_3D_ZOOM = 14;
  */
 export const HEIGHT_SCALE = 2;
 
+/**
+ * Zones not painted by a row or a search (the first view): light enough for the roads, parks and
+ * water under them to show, so the map reads as a map and not as a lilac stain (MAP-004).
+ */
+export const PLAIN_ZONE_OPACITY = 0.5;
+
 /** Edge of the zone as a raised model (mockup 2): a thin wall just outside the outline. */
 export const ZONE_BASE = { widthM: 14, heightM: 80 } as const;
 
@@ -391,7 +397,7 @@ export function baseStyle(
  * the surroundings, buildings and labels included.
  */
 export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; withLabels: LayerSpecification[]; above: LayerSpecification[] } {
-  const fadeOut = (from: number): ExpressionSpecification => ["interpolate", ["linear"], ["zoom"], 11.5, from, 13, 0];
+  const fadeOut = (from: number | ExpressionSpecification): ExpressionSpecification => ["interpolate", ["linear"], ["zoom"], 11.5, from, 13, 0];
   return {
     below: [
       {
@@ -423,7 +429,8 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; withLa
             p.gapSinDatos,
             p.zone,
           ],
-          "fill-opacity": fadeOut(0.9),
+          // A zone painted by a row or by the search hides the streets; a plain one lets them show
+          "fill-opacity": fadeOut(["case", ["any", ["has", "gap"], ["has", "fit"]], 0.9, PLAIN_ZONE_OPACITY]),
         },
       },
       {

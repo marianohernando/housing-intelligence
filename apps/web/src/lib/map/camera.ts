@@ -102,6 +102,25 @@ export function extentKm([west, south, east, north]: [number, number, number, nu
   return Math.hypot((east - west) * kx, (north - south) * 111.32);
 }
 
+type Bounds = [west: number, south: number, east: number, north: number];
+
+/**
+ * What the map shows first (petición de Mariano tras probar producción: «la primera vista se lee
+ * como una mancha»). The whole region in lilac, without names, says nothing in a few seconds; where
+ * most people live does: Madrid capital, with its districts named, and its first ring (Alcobendas,
+ * Pozuelo, Alcorcón, Leganés, Getafe, Rivas, Coslada). On a phone the map shows between the header
+ * and the legend (about 220 px high): there, Madrid inside the M-40, or it would be a dot again.
+ * The rest of the region is a zoom out away, and the search and «Qué falta» lists keep every zone.
+ */
+export const FIRST_VIEW: { wide: Bounds; phone: Bounds } = {
+  wide: [-3.89, 40.3, -3.52, 40.56],
+  phone: [-3.78, 40.36, -3.61, 40.5],
+};
+
+export function firstViewBounds(mobile: boolean): Bounds {
+  return mobile ? FIRST_VIEW.phone : FIRST_VIEW.wide;
+}
+
 /** Mobile layout (bottom sheet, compact labels); the same breakpoint as the CSS. */
 export const MOBILE_QUERY = "(max-width: 760px)";
 

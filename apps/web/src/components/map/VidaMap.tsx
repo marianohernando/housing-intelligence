@@ -25,6 +25,7 @@ import {
   approachZoom,
   cameraPadding,
   extentKm,
+  firstViewBounds,
   islandZoom,
   MOBILE_QUERY,
   projectAt,
@@ -55,11 +56,9 @@ import {
 import {
   type AdminFeature,
   boundsOf,
-  boundsOfAll,
   edgeWall,
   maskAround,
   outlinePoints,
-  type ZoneCollection,
   type ZoneFeature,
   type ZoneGeometry,
   zoneHref,
@@ -314,7 +313,7 @@ function addFacilityLayers(map: MapLibreMap, palette: MapPalette, handlers: Faci
   });
 }
 
-function showOverview(map: MapLibreMap, zones: ZoneCollection, animate: boolean): void {
+function showOverview(map: MapLibreMap, animate: boolean): void {
   source(map, "zone-selected").setData(EMPTY);
   source(map, "zone-base").setData(EMPTY);
   source(map, "zone-barrio").setData(EMPTY);
@@ -322,7 +321,8 @@ function showOverview(map: MapLibreMap, zones: ZoneCollection, animate: boolean)
   // overlap a little) MapLibre filled white wedges across the region, over the names too. The
   // lilac zones already tell the region apart; a zone's own mask has one hole and stays.
   source(map, "zone-mask").setData(EMPTY);
-  map.fitBounds(boundsOfAll(zones) as LngLatBoundsLike, {
+  // Madrid and its first ring (lib/map/camera.ts, FIRST_VIEW), not the whole region in lilac
+  map.fitBounds(firstViewBounds(matches(MOBILE)) as LngLatBoundsLike, {
     padding: padding("overview"),
     pitch: 0,
     bearing: 0,
@@ -488,8 +488,9 @@ export default function VidaMap() {
             mapTilesSource(MAP_TILES_URL, window.location.origin),
             mapGlyphsUrl(MAP_GLYPHS_URL, window.location.origin),
           ),
-          center: [-3.7, 40.42],
-          zoom: 8.3,
+          // Where the overview starts (showOverview), so the first tiles are those of that view
+          bounds: firstViewBounds(matches(MOBILE)) as LngLatBoundsLike,
+          fitBoundsOptions: { padding: padding("overview") },
           maxPitch: 70,
           // Added below, where it fits each screen (addAttribution)
           attributionControl: false,
@@ -577,7 +578,7 @@ export default function VidaMap() {
         setLanded(null);
       };
     }
-    showOverview(map, zones, shownOverview.current);
+    showOverview(map, shownOverview.current);
     shownOverview.current = true;
   }, [ready, zones, activeZone, barrio, view]);
 

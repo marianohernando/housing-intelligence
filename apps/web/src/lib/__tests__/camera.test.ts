@@ -5,6 +5,8 @@ import {
   approachZoom,
   cameraPadding,
   extentKm,
+  FIRST_VIEW,
+  firstViewBounds,
   ISLAND_MARGIN,
   islandZoom,
   type Padding,
@@ -177,5 +179,28 @@ describe("cameraPadding", () => {
   it("the sheet takes a bit under half the screen", () => {
     expect(SHEET_PEEK).toBeGreaterThan(0.35);
     expect(SHEET_PEEK).toBeLessThan(0.5);
+  });
+});
+
+describe("first view of the map (MAP-004)", () => {
+  const SOL: [number, number] = [-3.7038, 40.4168];
+  const inside = ([lon, lat]: [number, number], [w, s, e, n]: [number, number, number, number]) => lon > w && lon < e && lat > s && lat < n;
+
+  it("opens on Madrid and its first ring, not on the whole region", () => {
+    const [west, south, east, north] = firstViewBounds(false);
+    expect(inside(SOL, firstViewBounds(false))).toBe(true);
+    // First ring: Pozuelo, Alcorcón, Getafe, Rivas and Alcobendas fit; the whole region (about 1.5° by 1.3°) does not
+    for (const town of [[-3.81, 40.43], [-3.83, 40.35], [-3.73, 40.31], [-3.53, 40.36], [-3.64, 40.54]] as [number, number][]) {
+      expect(inside(town, firstViewBounds(false))).toBe(true);
+    }
+    expect(east - west).toBeLessThan(0.5);
+    expect(north - south).toBeLessThan(0.4);
+  });
+
+  it("on a phone, Madrid inside the M-40: the map shows between the header and the legend", () => {
+    const [west, south, east, north] = firstViewBounds(true);
+    const [ww, ws, we, wn] = FIRST_VIEW.wide;
+    expect(inside(SOL, firstViewBounds(true))).toBe(true);
+    expect(west > ww && south > ws && east < we && north < wn).toBe(true);
   });
 });

@@ -26,6 +26,7 @@ import {
   OPENFREEMAP_GLYPHS,
   OPENFREEMAP_TILEJSON,
   PARKS_VIVID_LAYER,
+  PLAIN_ZONE_OPACITY,
   zoneLayers,
 } from "../map/style";
 
@@ -210,6 +211,15 @@ describe("map style", () => {
     for (const c of ["ENCAJA", "NO_CUMPLE", "SIN_DATOS", "fit_pct", palette.fitLow, palette.violet, palette.fitNoCumple]) expect(fill).toContain(c);
     const noData = zoneLayers(palette).withLabels.find((l) => l.id === "zones-nodata");
     expect(JSON.stringify(noData?.type === "line" && noData.filter)).toContain('"fit"');
+  });
+
+  it("lets the streets show under the zones not painted yet, and keeps the painted ones solid (MAP-004)", () => {
+    const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
+    const opacity = JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-opacity"]);
+    expect(opacity).toContain(`["case",["any",["has","gap"],["has","fit"]],0.9,${PLAIN_ZONE_OPACITY}]`);
+    expect(PLAIN_ZONE_OPACITY).toBeLessThanOrEqual(0.6);
+    // Camera expressions go outermost: every zone still fades out at zone zoom
+    expect(opacity.startsWith('["interpolate",["linear"],["zoom"]')).toBe(true);
   });
 
   it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {
