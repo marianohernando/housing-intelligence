@@ -1,0 +1,145 @@
+infra/deploy/offline/demo_offline.sh prepare
+-> images (vida-facil-offline) and the offline database on 5441
+ Image vida-facil-offline-db:17 Building 
+ Image vida-facil-api:offline Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.11kB done
+#1 DONE 0.0s
+
+#2 [db internal] load build definition from Dockerfile
+#2 transferring dockerfile: 849B 0.0s done
+#2 DONE 0.0s
+
+#3 [api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 1.72kB 0.0s done
+#3 DONE 0.0s
+
+#4 [db internal] load metadata for docker.io/pgvector/pgvector:pg17
+#4 DONE 0.1s
+
+#5 [api internal] load metadata for docker.io/library/python:3.12-slim
+#5 ...
+
+#6 [db internal] load .dockerignore
+#6 transferring context: 2B done
+#6 DONE 0.0s
+
+#7 [db 1/2] FROM docker.io/pgvector/pgvector:pg17@sha256:7d0a41464797aeb9862dfdc0bbf1526b82cfd324cdd8036df19e3545f4a9ccb8
+#7 resolve docker.io/pgvector/pgvector:pg17@sha256:7d0a41464797aeb9862dfdc0bbf1526b82cfd324cdd8036df19e3545f4a9ccb8 done
+#7 DONE 0.0s
+
+#8 [db 2/2] RUN apt-get update     && apt-get install -y --no-install-recommends         "postgresql-17-postgis-3=3.6.4+dfsg-2.pgdg12+1" "postgresql-17-postgis-3-scripts=3.6.4+dfsg-2.pgdg12+1"     && rm -rf /var/lib/apt/lists/*
+#8 CACHED
+
+#9 [db] exporting to image
+#9 exporting layers done
+#9 exporting manifest sha256:908079b78d922b3644a3db29134e10b0ff4aa3de8a900cf4059f847543ec064d done
+#9 exporting config sha256:dcd854a26a1be2cc483066508d5b64c4086949b93b5c9fc17b6a5bd4eb7a5cdb done
+#9 exporting attestation manifest sha256:260a1c2a03931eb0d38bc5dc2754383a78b4c105464b5572c8b8bdc75caa795a done
+#9 exporting manifest list sha256:0bc180e747ba7439e125fb60e1426965d4b7399f17a3719c62ddc9a98d1bb113 done
+#9 naming to docker.io/library/vida-facil-offline-db:17 done
+#9 unpacking to docker.io/library/vida-facil-offline-db:17 done
+#9 DONE 0.1s
+
+#10 [api internal] load metadata for ghcr.io/astral-sh/uv:0.11.4
+#10 ...
+
+#11 [db] resolving provenance for metadata file
+#11 DONE 0.0s
+
+#10 [api internal] load metadata for ghcr.io/astral-sh/uv:0.11.4
+#10 ...
+
+#5 [api internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.7s
+
+#10 [api internal] load metadata for ghcr.io/astral-sh/uv:0.11.4
+#10 DONE 0.7s
+
+#12 [api build  1/12] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#12 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b 0.0s done
+#12 DONE 0.0s
+
+#13 [api] FROM ghcr.io/astral-sh/uv:0.11.4@sha256:5164bf84e7b4e2e08ce0b4c66b4a8c996a286e6959f72ac5c6e0a3c80e8cb04a
+#13 resolve ghcr.io/astral-sh/uv:0.11.4@sha256:5164bf84e7b4e2e08ce0b4c66b4a8c996a286e6959f72ac5c6e0a3c80e8cb04a 0.0s done
+#13 DONE 0.0s
+
+#14 [api internal] load build context
+#14 transferring context: 15.71kB 0.0s done
+#14 DONE 0.0s
+
+#15 [api build  8/12] COPY packages/domain packages/domain
+#15 CACHED
+
+#16 [api build  6/12] COPY packages/contracts packages/contracts
+#16 CACHED
+
+#17 [api build  3/12] WORKDIR /src
+#17 CACHED
+
+#18 [api build 10/12] COPY services/ingestion services/ingestion
+#18 CACHED
+
+#19 [api build  4/12] COPY pyproject.toml uv.lock ./
+#19 CACHED
+
+#20 [api build 12/12] RUN uv sync --frozen --no-dev --package hi-api --no-editable
+#20 CACHED
+
+#21 [api build 11/12] COPY services/mcp services/mcp
+#21 CACHED
+
+#22 [api build  5/12] COPY apps/api apps/api
+#22 CACHED
+
+#23 [api build  7/12] COPY packages/db packages/db
+#23 CACHED
+
+#24 [api build  9/12] COPY services/features services/features
+#24 CACHED
+
+#25 [api stage-1 2/3] RUN useradd --system --uid 10001 --no-create-home api
+#25 CACHED
+
+#26 [api build  2/12] COPY --from=ghcr.io/astral-sh/uv:0.11.4 /uv /bin/uv
+#26 CACHED
+
+#27 [api stage-1 3/3] COPY --from=build /opt/venv /opt/venv
+#27 CACHED
+
+#28 [api] exporting to image
+#28 exporting layers done
+#28 exporting manifest sha256:6a63c5e60b1847251747324eb581e9f25d5a1bd2b0c0907208dfe5d1a8b108b7 done
+#28 exporting config sha256:4cf8a0965f321ddb5735b8be8ae9126ea87e20bb6f63d2e7578a02050d4aa424 done
+#28 exporting attestation manifest sha256:40381cdc66a795ff23bd4455152c3ee9ace2ea1d2ea1ec4ff74c27de44e7193c done
+#28 exporting manifest list sha256:148f96100e5ebf3b03cbd905b526dc2fa5aa78782c951a485bdcf304e050e567 done
+#28 naming to docker.io/library/vida-facil-api:offline done
+#28 unpacking to docker.io/library/vida-facil-api:offline done
+#28 DONE 0.0s
+
+#29 [api] resolving provenance for metadata file
+#29 DONE 0.0s
+ Image vida-facil-offline-db:17 Built 
+ Image vida-facil-api:offline Built 
+ Container vida-facil-offline-db-1 Recreate 
+ Container vida-facil-offline-db-1 Recreated 
+ Container vida-facil-offline-db-1 Starting 
+ Container vida-facil-offline-db-1 Started 
+ Container vida-facil-offline-db-1 Waiting 
+ Container vida-facil-offline-db-1 Healthy 
+-> dumping the demo profile from postgresql://housing:***@host.docker.internal:5440/housing (read only)
+-> loading into a staging database (the current package stays until this one validates)
+NOTICE:  database "vidafacil_staging" does not exist, skipping
+-> web build from a private copy of apps/web, API at http://localhost:8012
+-> switching to the new package
+ Container vida-facil-offline-api-1 Stopping 
+ Container vida-facil-offline-api-1 Stopped 
+ Container vida-facil-offline-api-1 Removing 
+ Container vida-facil-offline-api-1 Removed 
+ Container vida-facil-offline-db-1 Stopping 
+ Container vida-facil-offline-db-1 Stopped 
+ Container vida-facil-offline-db-1 Removing 
+ Container vida-facil-offline-db-1 Removed 
+ Network vida-facil-offline_default Removing 
+ Network vida-facil-offline_default Removed 
+ready:  44M dump, manifest data/offline/manifest.txt. Start with: make demo-offline

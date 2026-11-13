@@ -1,0 +1,3 @@
+barrios warm 200 0.278267s
+barrios warm 200 0.195331s
+barrios warm 200 0.217170s
