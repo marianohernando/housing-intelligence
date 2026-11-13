@@ -113,11 +113,16 @@ promote_staging() { # the validated staging database becomes the one the API rea
 
 build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this shell stay out
   # Search on, as in production (NEXT_PUBLIC_FEATURE_SEARCH=true there): the pitch's block 2 needs it.
-  # Basemap from the local extract when there is one (make demo-offline-tiles); else OpenFreeMap,
-  # which needs the network.
+  # Basemap and the labels' fonts from the local extract when there is one (make demo-offline-tiles);
+  # else OpenFreeMap, which needs the network. The web makes both paths absolute with its origin.
   local server app unset_public=() tiles_env=()
   if [[ -f "$TILES/tiles.json" ]]; then
     tiles_env=(NEXT_PUBLIC_MAP_TILES_URL=/tiles/tiles.json)
+    if [[ -d "$TILES/fonts" ]]; then
+      tiles_env+=("NEXT_PUBLIC_MAP_GLYPHS_URL=/tiles/fonts/{fontstack}/{range}.pbf")
+    else
+      echo "warning: no fonts in $TILES: without network the map has no labels (make demo-offline-tiles)" >&2
+    fi
   else
     echo "warning: no basemap extract in $TILES: without network the map has no streets (make demo-offline-tiles)" >&2
   fi
@@ -237,7 +242,7 @@ prepare() {
     echo "git_commit $(git rev-parse --short HEAD)"
     echo "alembic_head $HEAD (source $SOURCE_HEAD)"
     if [[ -f "$TILES/manifest.txt" ]]; then
-      echo "basemap local, $(grep '^pbf ' "$TILES/manifest.txt" | cut -d' ' -f2)"
+      echo "basemap local, $(grep '^pbf ' "$TILES/manifest.txt" | cut -d' ' -f2)$([[ -d "$TILES/fonts" ]] && echo ", label fonts local")"
     else
       echo "basemap tiles.openfreemap.org (needs the network)"
     fi

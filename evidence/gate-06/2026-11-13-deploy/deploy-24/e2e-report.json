@@ -1,0 +1,669 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "checked_at": "2026-11-13T11:37:42.940Z",
+ "runs": [
+  {
+   "browserName": "chromium",
+   "device": "desktop-1440",
+   "checks": [
+    {
+     "journey": "J1 search",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary = API zones_passing",
+     "ok": true,
+     "detail": "Con tu búsqueda tal cual salen 27 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "«De N zonas» = API all_zones",
+     "ok": true,
+     "detail": "199"
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Cumple todo» = 27 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «No cumple todo» = 157 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Sin datos» = 15 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "card name = API 1st zone",
+     "ok": true,
+     "detail": "Latina"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card % = API match_pct",
+     "ok": true,
+     "detail": "98 %"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card facts = API facts",
+     "ok": true,
+     "detail": "5 on screen, 5 in the API"
+    },
+    {
+     "journey": "J1 search",
+     "name": "1st option = API relaxation",
+     "ok": true,
+     "detail": "+5 min a pie hasta colegio con primaria: 44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: API zones = the option's zones_if_relaxed",
+     "ok": true,
+     "detail": "44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: summary on screen",
+     "ok": true,
+     "detail": "Con este cambio salen 44 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "undone: back to the original zones",
+     "ok": true,
+     "detail": "27"
+    },
+    {
+     "journey": "J1 search",
+     "name": "every /search sends max_minutes: null",
+     "ok": true,
+     "detail": "3 requests"
+    },
+    {
+     "journey": "J1 search",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "rows on screen = API rows",
+     "ok": true,
+     "detail": "6"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Escuelas infantiles» JUSTO",
+     "ok": true,
+     "detail": "Escuelas infantiles JUSTO Aquí hay 87 por cada 100 que hay en municipios parecidos. A pie hasta la escuela infantil más "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Colegios» CUBIERTO",
+     "ok": true,
+     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Fi"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de salud» JUSTO",
+     "ok": true,
+     "detail": "Centros de salud JUSTO Aquí hay 95 por cada 100 que hay en municipios parecidos. A pie hasta el centro de salud más cerc"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de mayores» CUBIERTO",
+     "ok": true,
+     "detail": "Centros de mayores CUBIERTO Aquí hay 130 por cada 100 que hay en municipios parecidos. A pie hasta el centro de mayores "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Farmacias» CUBIERTO",
+     "ok": true,
+     "detail": "Farmacias CUBIERTO Aquí hay 171 por cada 100 que hay en municipios parecidos. A pie hasta la farmacia más cercana 3 min "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Vivienda para familias» JUSTO",
+     "ok": true,
+     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Fiabilidad del dato: Dato fiable "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "selector lists the gap rows",
+     "ok": true,
+     "detail": "escuela_infantil, colegio, centro_salud, mayores, farmacia, vivienda"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«escuela_infantil» legend caption = API indicator",
+     "ok": true,
+     "detail": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 3 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 65 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 93 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 37 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 1 zona",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«colegio» legend caption = API indicator",
+     "ok": true,
+     "detail": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 75 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 59 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 65 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«centro_salud» legend caption = API indicator",
+     "ok": true,
+     "detail": "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 57 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 44 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 98 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«mayores» legend caption = API indicator",
+     "ok": true,
+     "detail": "Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 6 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 59 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 40 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 94 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«farmacia» legend caption = API indicator",
+     "ok": true,
+     "detail": "Farmacias al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 5 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 114 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 62 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 18 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«vivienda» legend caption = API indicator",
+     "ok": true,
+     "detail": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 25 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 19 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 132 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 2 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 21 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Distritos de Madrid» = API distritos",
+     "ok": true,
+     "detail": "21 in the title, 21 links, 21 in the API"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Municipios» = API municipios",
+     "ok": true,
+     "detail": "178 in the title, 178 links, 178 in the API (1 split into districts)"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Madrid (toda la ciudad)» listed",
+     "ok": true,
+     "detail": "28079"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "all",
+     "name": "no browser console errors",
+     "ok": true,
+     "detail": ""
+    }
+   ],
+   "shots": [],
+   "consoleErrors": [],
+   "blocked": [],
+   "seconds": 14
+  },
+  {
+   "browserName": "chromium",
+   "device": "mobile-390",
+   "checks": [
+    {
+     "journey": "J1 search",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary = API zones_passing",
+     "ok": true,
+     "detail": "Con tu búsqueda tal cual salen 27 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "«De N zonas» = API all_zones",
+     "ok": true,
+     "detail": "199"
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card name = API 1st zone",
+     "ok": true,
+     "detail": "Latina"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card % = API match_pct",
+     "ok": true,
+     "detail": "98 %"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card facts = API facts",
+     "ok": true,
+     "detail": "5 on screen, 5 in the API"
+    },
+    {
+     "journey": "J1 search",
+     "name": "1st option = API relaxation",
+     "ok": true,
+     "detail": "+5 min a pie hasta colegio con primaria: 44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: API zones = the option's zones_if_relaxed",
+     "ok": true,
+     "detail": "44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: summary on screen",
+     "ok": true,
+     "detail": "Con este cambio salen 44 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "undone: back to the original zones",
+     "ok": true,
+     "detail": "27"
+    },
+    {
+     "journey": "J1 search",
+     "name": "every /search sends max_minutes: null",
+     "ok": true,
+     "detail": "3 requests"
+    },
+    {
+     "journey": "J1 search",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "rows on screen = API rows",
+     "ok": true,
+     "detail": "6"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Escuelas infantiles» JUSTO",
+     "ok": true,
+     "detail": "Escuelas infantiles JUSTO Aquí hay 87 por cada 100 que hay en municipios parecidos. A pie hasta la escuela infantil más "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Colegios» CUBIERTO",
+     "ok": true,
+     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Fi"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de salud» JUSTO",
+     "ok": true,
+     "detail": "Centros de salud JUSTO Aquí hay 95 por cada 100 que hay en municipios parecidos. A pie hasta el centro de salud más cerc"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de mayores» CUBIERTO",
+     "ok": true,
+     "detail": "Centros de mayores CUBIERTO Aquí hay 130 por cada 100 que hay en municipios parecidos. A pie hasta el centro de mayores "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Farmacias» CUBIERTO",
+     "ok": true,
+     "detail": "Farmacias CUBIERTO Aquí hay 171 por cada 100 que hay en municipios parecidos. A pie hasta la farmacia más cercana 3 min "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Vivienda para familias» JUSTO",
+     "ok": true,
+     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Fiabilidad del dato: Dato fiable "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "selector lists the gap rows",
+     "ok": true,
+     "detail": "escuela_infantil, colegio, centro_salud, mayores, farmacia, vivienda"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«escuela_infantil» legend caption = API indicator",
+     "ok": true,
+     "detail": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«colegio» legend caption = API indicator",
+     "ok": true,
+     "detail": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«centro_salud» legend caption = API indicator",
+     "ok": true,
+     "detail": "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«mayores» legend caption = API indicator",
+     "ok": true,
+     "detail": "Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«farmacia» legend caption = API indicator",
+     "ok": true,
+     "detail": "Farmacias al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«vivienda» legend caption = API indicator",
+     "ok": true,
+     "detail": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Distritos de Madrid» = API distritos",
+     "ok": true,
+     "detail": "21 in the title, 21 links, 21 in the API"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Municipios» = API municipios",
+     "ok": true,
+     "detail": "178 in the title, 178 links, 178 in the API (1 split into districts)"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Madrid (toda la ciudad)» listed",
+     "ok": true,
+     "detail": "28079"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "all",
+     "name": "no browser console errors",
+     "ok": true,
+     "detail": ""
+    }
+   ],
+   "shots": [],
+   "consoleErrors": [],
+   "blocked": [],
+   "seconds": 13
+  }
+ ]
+}
