@@ -364,13 +364,26 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.encaje.pronto` | Muy pronto verás cuánto encaja esta zona contigo. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
 
 ### Barra de barrios (solo distritos de Madrid)
-La barra **solo mueve el mapa**: la demo no tiene cifras por barrio y no las va a tener antes de la final. Por eso el título dice lo que hace y no promete datos del barrio.
+La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), después de una búsqueda la vista de un distrito sí tiene cifras por barrio, en «Los barrios que mejor encajan» (abajo). «Qué falta» sigue siendo del distrito entero. Al pulsar un barrio de esa sección se marca también su chip de la barra.
 
 | Clave | Texto | Notas |
 |---|---|---|
 | `barrios.titulo` | Ir a un barrio | Título de la barra inferior (MAP-004). Sustituye a «Barrios de la zona», que hacía esperar cifras de cada barrio |
 | `barrios.todo` | Todo {distrito} | Primer chip: vuelve a encuadrar el distrito entero, por ejemplo «Todo Chamartín». Marcado al entrar en la zona |
-| `barrios.ayuda` | Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. | `aria-description` de la barra, o línea pequeña si cabe |
+| `barrios.ayuda` | Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. | `aria-description` de la barra, o línea pequeña si cabe. Sigue siendo cierto: el encaje por barrio va en su sección, no en «Qué falta» |
+
+### «Los barrios que mejor encajan» (vista de un distrito, tras buscar; D-232, PR #37 de B)
+Revisión de los borradores de B (13 nov). Ejemplo real con el caso de ejemplo, comprobado en producción con `POST /api/v1/search/barrios` (`fit-0.7`, distrito 2807920): San Blas-Canillejas, 7 de 8 barrios; Canillejas, Arcos y Simancas al 97 %; Rejas «casi» (colegio).
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `barrios.encajan.titulo` | Los barrios que mejor encajan | De Mariano. Aprobado |
+| `barrios.encajan.resumen` | {n} de sus {total} barrios encajan con tu búsqueda. | Con 1: «1 de sus {total} barrios encaja con tu búsqueda.». Todos: «Sus {total} barrios encajan con tu búsqueda.». Ninguno: «Ninguno de sus {total} barrios cumple todo lo que pides.». Aprobado |
+| `barrios.encajan.pulsa` | Toca uno para verlo en el mapa. | **Cambia** «Pulsa» por «Toca», como el resto de la web («Toca un tipo de centro…», «toca una zona del mapa») |
+| `barrios.encajan.carga` | Buscando los barrios de {distrito} que encajan contigo… | Aprobado |
+| `barrios.encajan.todos` | Ver los {n} barrios | Aprobado |
+| `barrios.encajan.ayuda` | Cuánto se parece este barrio a lo que buscas. No es una nota del barrio. | Igual que `zona.encaje.ayuda`. Aprobado |
+| `barrios.encajan.casi` | Casi encajan | Con «No cumple: {condición}» y, si la API no la nombra, «No cumple todo lo que pides.». Aprobado |
 
 ---
 
