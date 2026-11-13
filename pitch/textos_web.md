@@ -372,7 +372,7 @@ La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), desp
 | `barrios.todo` | Todo {distrito} | Primer chip: vuelve a encuadrar el distrito entero, por ejemplo «Todo Chamartín». Marcado al entrar en la zona |
 | `barrios.ayuda` | Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. | `aria-description` de la barra, o línea pequeña si cabe. Sigue siendo cierto: el encaje por barrio va en su sección, no en «Qué falta» |
 
-### «Los barrios que mejor encajan» (vista de un distrito, tras buscar; D-232, PR #37 de B)
+### «Los barrios que mejor encajan» (vista de un distrito, tras buscar; D-232, PR #37 de B, en producción desde `e7025fb`)
 Revisión de los borradores de B (13 nov). Ejemplo real con el caso de ejemplo, comprobado en producción con `POST /api/v1/search/barrios` (`fit-0.7`, distrito 2807920): San Blas-Canillejas, 7 de 8 barrios; Canillejas, Arcos y Simancas al 97 %; Rejas «casi» (colegio).
 
 | Clave | Texto | Notas |
