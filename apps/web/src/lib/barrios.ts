@@ -4,7 +4,7 @@
  * the fit: it picks what the district screen shows, with the copy of pitch/textos_web.md.
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
-import { constraintLabels, failedLabels } from "@/lib/fit";
+import { constraintLabels, failedLabels, hasWalkingFact } from "@/lib/fit";
 
 /** Facts under each barrio: the API orders them, most important to the person first. */
 export const FACTS_PER_BARRIO = 2;
@@ -19,17 +19,21 @@ export interface BarrioRow {
   name: string;
   pct: number;
   facts: string[];
+  /** Whether one of the facts is a walk (minutes on foot), to say once what those minutes are */
+  walking: boolean;
   /** Near misses only: the conditions it fails, by name (zona.cerca_de_encajar.motivo) */
   fails: string[] | null;
 }
 
 function barrioRow(zone: RankedZone, fails: string[] | null): BarrioRow {
+  const facts = zone.facts.slice(0, FACTS_PER_BARRIO);
   return {
     id: zone.zone.admin_unit_id ?? null,
     code: zone.zone.code,
     name: zone.zone.name,
     pct: zone.match_pct,
-    facts: zone.facts.slice(0, FACTS_PER_BARRIO).map((fact) => fact.text),
+    facts: facts.map((fact) => fact.text),
+    walking: hasWalkingFact(facts),
     fails,
   };
 }

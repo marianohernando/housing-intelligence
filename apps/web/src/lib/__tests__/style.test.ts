@@ -216,7 +216,7 @@ describe("map style", () => {
   it("lets the streets show under the zones not painted yet, and keeps the painted ones solid (MAP-004)", () => {
     const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
     const opacity = JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-opacity"]);
-    expect(opacity).toContain(`["case",["any",["!=",["get","gap"],null],["has","fit"]],0.9,${PLAIN_ZONE_OPACITY}]`);
+    expect(opacity).toContain(`["case",["any",["!=",["get","gap"],null],["!=",["get","fit"],null]],0.9,${PLAIN_ZONE_OPACITY}]`);
     expect(PLAIN_ZONE_OPACITY).toBeLessThanOrEqual(0.6);
     // Camera expressions go outermost: every zone still fades out at zone zoom
     expect(opacity.startsWith('["interpolate",["linear"],["zoom"]')).toBe(true);
@@ -237,6 +237,15 @@ describe("map style", () => {
     expect(opacityOf({ gap: "FALTA" })).toBe(0.9);
     expect(opacityOf({ gap: null })).toBe(PLAIN_ZONE_OPACITY);
     expect(opacityOf({})).toBe(PLAIN_ZONE_OPACITY);
+    expect(opacityOf({ fit: "ENCAJA" })).toBe(0.9);
+    expect(opacityOf({ fit: null })).toBe(PLAIN_ZONE_OPACITY);
+  });
+
+  it("colours by a row only when gap is not null, so a zone with gap: null is not painted as no data (MAP-004)", () => {
+    const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
+    const color = JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-color"]);
+    expect(color.startsWith('["case",["!=",["get","gap"],null],["match"')).toBe(true);
+    expect(color).not.toContain('["has","gap"]');
   });
 
   it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {
