@@ -1,0 +1,3 @@
+POST https://vidafacil-madrid.vercel.app/api/v1/search/barrios
+body: {"scenario": <data/fixtures/contracts/scenario_state.familia_castellana.fixture.json>, "distrito": "2807920"}
+response: search-barrios-2807920-response.json (HTTP 200)
