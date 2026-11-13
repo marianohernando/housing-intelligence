@@ -115,6 +115,20 @@ export interface DatasetLines {
   openHint: string;
 }
 
+/**
+ * «en el Portal de Datos Abiertos de la Comunidad de Madrid», «en la Agencia Tributaria · …», «en
+ * OpenStreetMap (…)»: where a dataset's link opens, from its `source_name` (D-231), with the article
+ * its first word asks for. Without `source_name`, «en el portal de datos», as before.
+ */
+export function publishedIn(sourceName: string | null | undefined): string {
+  const name = sourceName?.trim();
+  if (!name) return "en el portal de datos";
+  const first = name.split(/\s/)[0] ?? "";
+  if (/^(Agencia|Comunidad|Consejería|Dirección)$/.test(first)) return `en la ${name}`;
+  if (/^(Portal|Ministerio|Ayuntamiento|Instituto|Consorcio|Catálogo|Servicio)$/.test(first)) return `en el ${name}`;
+  return `en ${name}`;
+}
+
 export function datasetLines(ref: DatasetRef): DatasetLines {
   return {
     title: `${ref.name} — ${ref.publisher}`,
@@ -122,7 +136,7 @@ export function datasetLines(ref: DatasetRef): DatasetLines {
     version: ref.version ? `Versión de los datos: ${ref.version}` : null,
     license: ref.license ? `Licencia: ${ref.license}` : null,
     url: ref.url ?? null,
-    openHint: "en el portal de datos (se abre en una pestaña nueva)",
+    openHint: `${publishedIn(ref.source_name)} (se abre en una pestaña nueva)`,
   };
 }
 

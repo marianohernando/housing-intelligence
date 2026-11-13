@@ -27,6 +27,7 @@
 //   node scripts/check-qa.mjs esquema [outDir]   # «Cómo lo calculamos» in five steps: a row on desktop, a column on a phone
 //   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
 //   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
+//   node scripts/check-qa.mjs fuentes [outDir]   # D-231: «en {source_name}» in each source link, and the region's beds under the hospital note
 //   node scripts/check-qa.mjs mapa [outDir] [antes|despues] # MAP-004: map labels (glyphs) and the first view, before and after
 //                                                    (MAP_OFFLINE=1: web built with local tiles and fonts, OpenFreeMap blocked)
 //
@@ -2004,8 +2005,69 @@ async function mapView(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/**
+ * D-231 in the web: each source link says where it opens («en {source_name}»), and the hospital
+ * note carries the region's hospitals and beds (/features/…/values?level=ccaa) with their two links,
+ * asked once per visit. Chamartín (hospital close by) and El Álamo (far: in km), at 1440 and 390 px.
+ */
+async function sources(browser) {
+  const failures = [];
+  const datasets = (await (await fetch(`${API}/api/v1/datasets`)).json()).data.datasets;
+  const region = async (id) => {
+    const body = (await (await fetch(`${API}/api/v1/features/${id}/values?level=ccaa`)).json()).data;
+    return { value: body.values[0].value, year: body.values[0].period_start.slice(0, 4), dataset: datasets.find((d) => d.dataset_id === Object.keys(body.lineage.dataset_versions)[0]) };
+  };
+  const [hospitals, beds] = [await region("hospitales_total"), await region("camas_instaladas_por_1000_hab")];
+  const expected = `En toda la Comunidad hay ${hospitals.value} hospitales y ${beds.value.toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} camas instaladas por cada 1.000 habitantes (${beds.year}).`;
+  report.esperado = { linea: expected, enlaces: [hospitals.dataset.url, beds.dataset.url] };
+  for (const [name, path] of [["chamartin", "/que-falta?zona=distrito/2807905"], ["el_alamo", "/que-falta?zona=municipio/28004"]]) {
+    for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+      const ctx = await browser.newContext({ ...profile, locale: "es-ES" });
+      const page = await ctx.newPage();
+      const errors = [];
+      const asked = [];
+      page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+      page.on("pageerror", (e) => errors.push(e.message));
+      page.on("request", (r) => /\/features\/[^/]+\/values\?level=ccaa/.test(r.url()) && asked.push(r.url()));
+      await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(1500);
+      const health = page.locator("main li.glass").filter({ hasText: "El hospital:" }).first();
+      const line = health.locator("p").filter({ hasText: "En toda la Comunidad hay" });
+      const entry = (report[`${name}_${id}`] = {});
+      // What is seen: the links' hidden «where it opens» is checked apart
+      const seen = (el) => {
+        const copy = el.cloneNode(true);
+        copy.querySelectorAll(".visually-hidden").forEach((h) => h.remove());
+        return copy.textContent;
+      };
+      entry.linea = (await line.count()) ? flat(await line.evaluate(seen)) : null;
+      entry.enlaces = (await line.count()) ? await line.locator("a").evaluateAll((as) => as.map((a) => ({ href: a.href, oculto: a.querySelector(".visually-hidden")?.textContent?.trim() }))) : [];
+      entry.hospital = flat(await health.locator("dl").first().innerText());
+      entry.fuentes_oculto = await health.locator("details li a .visually-hidden").allTextContents();
+      entry.peticiones_ccaa = asked.length;
+      entry.axe = await axe(page);
+      entry.overflow_px = await overflow(page);
+      entry.consola = errors;
+      if (entry.linea !== expected) failures.push(`${name} ${id}: línea «${entry.linea}»`);
+      if (entry.enlaces.map((e) => e.href).join() !== report.esperado.enlaces.join()) failures.push(`${name} ${id}: enlaces`);
+      if (asked.length !== 2) failures.push(`${name} ${id}: ${asked.length} peticiones a level=ccaa`);
+      if (entry.fuentes_oculto.some((t) => t.includes("en el portal de datos"))) failures.push(`${name} ${id}: «en el portal de datos» con source_name`);
+      if (!entry.fuentes_oculto.some((t) => t.includes("en el Portal de Datos Abiertos de la Comunidad de Madrid"))) failures.push(`${name} ${id}: sin source_name`);
+      if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+      if (entry.overflow_px > 0) failures.push(`${name} ${id}: desborde`);
+      if (errors.length) failures.push(`${name} ${id}: consola`);
+      await health.screenshot({ path: `${out}/fuentes_${name}_${id}.png` });
+      await ctx.close();
+    }
+  }
+  if (!/a unos [\d,]+ km/.test(report.el_alamo_desktop?.hospital ?? "")) failures.push("El Álamo: el hospital no sale en km");
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
+else if (mode === "fuentes") await sources(browser);
 else if (mode === "mapa") await mapView(browser);
 else if (mode === "pequenas") await smallZones(browser);
 else if (mode === "mariano") await marianoNotes(browser);

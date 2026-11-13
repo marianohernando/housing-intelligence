@@ -26,7 +26,13 @@ export type PlaceCategory = ContractPlaceCategory;
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
-export type FeatureValuesResponse = Envelope<{ feature_id: string; level: string; values: FeatureValueRow[]; lineage: Lineage }>;
+export type FeatureValuesResponse = Envelope<{
+  feature_id: string;
+  level: string;
+  values: FeatureValueRow[];
+  /** The datasets (and versions) the values come from, to link them */
+  lineage: Lineage & { dataset_versions?: Record<string, string> };
+}>;
 
 
 /**
@@ -178,8 +184,8 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
       return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent), { timeoutMs });
     },
     places,
-    /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level. */
-    featureValues(featureId: string, level: "municipio" | "distrito", { timeoutMs }: GetOptions = {}) {
+    /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level, or the region's (ccaa). */
+    featureValues(featureId: string, level: "municipio" | "distrito" | "ccaa", { timeoutMs }: GetOptions = {}) {
       return call<FeatureValuesResponse>(`/api/v1/features/${encodeURIComponent(featureId)}/values?level=${level}`, { timeoutMs });
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */

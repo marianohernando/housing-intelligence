@@ -28,6 +28,7 @@ import { datasetLines, sortDatasets } from "@/lib/provenance";
 
 import GapBadge from "./GapBadge";
 import GroupTag from "./GroupTag";
+import RegionBeds from "./RegionBeds";
 import SmallZoneTag from "./SmallZoneTag";
 import styles from "./GapRowItem.module.css";
 
@@ -177,6 +178,7 @@ export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
           <strong>{TEXT.hospital}</strong> {HOSPITAL_WALK.note}
         </p>
       )}
+      {hospital && <RegionBeds className={styles.note} />}
 
       <TechnicalFigure row={row} zoneName={zoneName} zoneLevel={zoneLevel} />
 
