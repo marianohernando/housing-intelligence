@@ -1,0 +1,16 @@
+{
+  "desktop": {
+    "url": "/zona/distrito/2807920",
+    "muestra_haz_tu_busqueda": false,
+    "muestra_barrios_que_encajan": true,
+    "pulsa_o_toca": "Toca uno para verlo en el mapa.",
+    "errores_consola": []
+  },
+  "mobile": {
+    "url": "/zona/distrito/2807920",
+    "muestra_haz_tu_busqueda": false,
+    "muestra_barrios_que_encajan": true,
+    "pulsa_o_toca": "Toca uno para verlo en el mapa.",
+    "errores_consola": []
+  }
+}

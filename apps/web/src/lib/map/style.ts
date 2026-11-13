@@ -429,8 +429,8 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; withLa
             p.gapSinDatos,
             p.zone,
           ],
-          // A zone painted by a row or by the search hides the streets; a plain one lets them show
-          "fill-opacity": fadeOut(["case", ["any", ["has", "gap"], ["has", "fit"]], 0.9, PLAIN_ZONE_OPACITY]),
+          // A zone painted by a row or by the search hides the streets; a plain one lets them show (gap: null is plain)
+          "fill-opacity": fadeOut(["case", ["any", ["!=", ["get", "gap"], null], ["has", "fit"]], 0.9, PLAIN_ZONE_OPACITY]),
         },
       },
       {

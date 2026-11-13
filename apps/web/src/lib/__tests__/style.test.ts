@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-import { validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
+import { createExpression, validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
 import type { StyleSpecification } from "maplibre-gl";
 import { describe, expect, it } from "vitest";
 
@@ -216,10 +216,27 @@ describe("map style", () => {
   it("lets the streets show under the zones not painted yet, and keeps the painted ones solid (MAP-004)", () => {
     const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
     const opacity = JSON.stringify(fill?.type === "fill" && fill.paint?.["fill-opacity"]);
-    expect(opacity).toContain(`["case",["any",["has","gap"],["has","fit"]],0.9,${PLAIN_ZONE_OPACITY}]`);
+    expect(opacity).toContain(`["case",["any",["!=",["get","gap"],null],["has","fit"]],0.9,${PLAIN_ZONE_OPACITY}]`);
     expect(PLAIN_ZONE_OPACITY).toBeLessThanOrEqual(0.6);
     // Camera expressions go outermost: every zone still fades out at zone zoom
     expect(opacity.startsWith('["interpolate",["linear"],["zoom"]')).toBe(true);
+  });
+
+  it("treats a zone with gap: null as plain, not as painted (MAP-004)", () => {
+    const fill = zoneLayers(palette).below.find((l) => l.id === "zones-fill");
+    const opacity = fill?.type === "fill" ? fill.paint?.["fill-opacity"] : undefined;
+    const caseExpr = JSON.stringify(opacity).match(/\["case".*?,0\.9,[\d.]+\]/)?.[0];
+    const compiled = createExpression(JSON.parse(caseExpr ?? "null"), "fill-opacity", {
+      type: "number",
+      "property-type": "data-driven",
+      expression: { interpolated: false, parameters: ["feature"] },
+    } as never);
+    if (compiled.result !== "success") throw new Error("the opacity expression does not compile");
+    const opacityOf = (properties: Record<string, unknown>) =>
+      compiled.value.evaluate({ zoom: 5 }, { type: 3, properties } as never);
+    expect(opacityOf({ gap: "FALTA" })).toBe(0.9);
+    expect(opacityOf({ gap: null })).toBe(PLAIN_ZONE_OPACITY);
+    expect(opacityOf({})).toBe(PLAIN_ZONE_OPACITY);
   });
 
   it("crosses out the zones that fail a condition with a pattern, not only a lighter tone (R-06)", () => {

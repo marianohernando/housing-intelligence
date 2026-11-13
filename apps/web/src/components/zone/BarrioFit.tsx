@@ -23,7 +23,7 @@ import { useBarrioFit } from "./useBarrioFit";
 const TEXT = {
   title: "Los barrios que mejor encajan",
   loading: (district: string) => `Buscando los barrios de ${district} que encajan contigo…`,
-  pick: "Pulsa uno para verlo en el mapa.",
+  pick: "Toca uno para verlo en el mapa.",
   fitHelp: "Cuánto se parece este barrio a lo que buscas. No es una nota del barrio.",
   fit: "de encaje",
   all: (n: number) => `Ver los ${n} barrios`,
