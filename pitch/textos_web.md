@@ -379,7 +379,7 @@ Revisión de los borradores de B (13 nov). Ejemplo real con el caso de ejemplo, 
 |---|---|---|
 | `barrios.encajan.titulo` | Los barrios que mejor encajan | De Mariano. Aprobado |
 | `barrios.encajan.resumen` | {n} de sus {total} barrios encajan con tu búsqueda. | Con 1: «1 de sus {total} barrios encaja con tu búsqueda.». Todos: «Sus {total} barrios encajan con tu búsqueda.». Ninguno: «Ninguno de sus {total} barrios cumple todo lo que pides.». Aprobado |
-| `barrios.encajan.pulsa` | Toca uno para verlo en el mapa. | **Cambia** «Pulsa» por «Toca», como el resto de la web («Toca un tipo de centro…», «toca una zona del mapa») |
+| `barrios.encajan.pulsa` | Toca uno para verlo en el mapa. | **Cambia** «Pulsa» por «Toca», como el resto de la web («Toca un tipo de centro…», «toca una zona del mapa»). Aplicado por B y en producción desde `5101c93` |
 | `barrios.encajan.carga` | Buscando los barrios de {distrito} que encajan contigo… | Aprobado |
 | `barrios.encajan.todos` | Ver los {n} barrios | Aprobado |
 | `barrios.encajan.ayuda` | Cuánto se parece este barrio a lo que buscas. No es una nota del barrio. | Igual que `zona.encaje.ayuda`. Aprobado |
