@@ -28,6 +28,7 @@
 //   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
 //   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
 //   node scripts/check-qa.mjs fuentes [outDir]   # D-231: «en {source_name}» in each source link, and the region's beds under the hospital note
+//   node scripts/check-qa.mjs barrios [outDir]   # D-232: «Los barrios que mejor encajan» in San Blas after the demo search, Simancas outlined
 //   node scripts/check-qa.mjs mapa [outDir] [antes|despues] # MAP-004: map labels (glyphs) and the first view, before and after
 //                                                    (MAP_OFFLINE=1: web built with local tiles and fonts, OpenFreeMap blocked)
 //
@@ -2065,9 +2066,114 @@ async function sources(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/**
+ * D-232 in the web: after the demo search, San Blas-Canillejas opened from the results shows «Los
+ * barrios que mejor encajan» (one POST /search/barrios, only there) as the API ranks them, with the
+ * near misses and their reason; pressing Simancas outlines it on the map. At 1440 and 390 px, axe,
+ * console and overflow, and the zone's LCP on slow 4G.
+ */
+async function barrioFit(browser) {
+  const failures = [];
+  const DISTRICT = { name: "San Blas-Canillejas", code: "2807920", barrio: "Simancas" };
+  const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+    const touch = id === "mobile";
+    const p = await open(browser, profile, "/");
+    const press = (locator) => (touch ? locator.tap() : locator.click());
+    const asked = [];
+    p.page.on("request", (r) => r.url().includes("/api/v1/search/barrios") && asked.push({ url: r.url(), body: r.postDataJSON() }));
+    const isBarrios = (r) => r.url().endsWith("/api/v1/search/barrios") && r.request().method() === "POST";
+    await loadExample(p.page, touch);
+    const beforeDistrict = asked.length;
+    await press(p.page.getByRole("button", { name: /^Ver las \d+ primeras/ }).first());
+    const row = p.page.getByRole("button", { name: new RegExp(`^\\d+ ${escape(DISTRICT.name)}\\b`) }).first();
+    await row.scrollIntoViewIfNeeded();
+    await press(row);
+    const open_ = p.page.getByRole("link", { name: "Ver la zona" }).first();
+    await open_.waitFor({ timeout: 20000 });
+    await open_.scrollIntoViewIfNeeded();
+    const started = Date.now();
+    const [response] = await Promise.all([p.page.waitForResponse(isBarrios, { timeout: 30000 }), press(open_)]);
+    const api = (await response.json()).data;
+    const section = p.page.locator("section").filter({ has: p.page.getByRole("heading", { name: "Los barrios que mejor encajan" }) }).first();
+    await section.getByText(/barrios? (encaja|encajan) con tu búsqueda|cumple todo lo que pides/).first().waitFor({ timeout: 20000 });
+    const entry = (report[id] = { ms_hasta_los_barrios: Date.now() - started });
+    await p.page.waitForTimeout(6000);
+    const rows = (list) =>
+      list.locator(":scope > li > div").evaluateAll((items) =>
+        items.map((row) => ({
+          nombre: row.firstElementChild?.firstElementChild?.textContent?.trim(),
+          pct: row.firstElementChild?.lastElementChild?.textContent?.replace(/\s*de encaje$/, "").trim(),
+          boton: row.firstElementChild?.tagName === "BUTTON",
+          lineas: [...(row.lastElementChild?.children ?? [])].map((s) => s.textContent.trim()),
+        })),
+      );
+    entry.resumen = flat(await section.locator("p").first().innerText());
+    entry.primeros = await rows(section.locator("ol").first());
+    // Simancas: pressed, outlined on the map and the same chip pressed in «Ir a un barrio»
+    const simancas = section.getByRole("button", { name: new RegExp(`^${DISTRICT.barrio}\\b`) });
+    await simancas.scrollIntoViewIfNeeded();
+    await press(simancas);
+    await p.page.waitForTimeout(5000);
+    entry.simancas_pulsado = await simancas.getAttribute("aria-pressed");
+    entry.chip_simancas = await p.page.getByRole("button", { name: DISTRICT.barrio, exact: true }).getAttribute("aria-pressed");
+    await p.page.screenshot({ path: `${out}/barrios_san_blas_simancas_${id}.png` });
+    if (touch) {
+      // In the open sheet (an element capture inside its scroll comes out cut): the title, then «Casi encajan»
+      await press(p.page.getByRole("button", { name: "Desliza hacia arriba para ver más" }));
+      await p.page.waitForTimeout(800);
+      for (const [name, file] of [["Los barrios que mejor encajan", "seccion"], ["Casi encajan", "casi"]]) {
+        await section.getByRole("heading", { name }).evaluate((h) => h.scrollIntoView({ block: "start" }));
+        await p.page.waitForTimeout(400);
+        await p.page.screenshot({ path: `${out}/barrios_${file}_${id}.png` });
+      }
+    } else {
+      await section.screenshot({ path: `${out}/barrios_seccion_${id}.png` });
+    }
+    // Every barrio that fits, not only the first three
+    const more = section.getByRole("button", { name: /^Ver los \d+ barrios/ });
+    if (await more.count()) await press(more);
+    entry.encajan = await rows(section.locator("ol").first());
+    entry.casi = await rows(section.locator("section ul").first());
+    entry.api = {
+      encajan: api.results.map((z) => [z.zone.name, `${z.match_pct} %`]),
+      casi: api.near_misses.map((z) => [z.zone.name, `${z.match_pct} %`, z.failed_constraints]),
+      zonas: `${api.reality_check.zones_passing} de ${api.reality_check.zones_evaluated}`,
+    };
+    entry.texto_visible = flat(await section.innerText());
+    entry.mitad_de_sus_calles = /mitad de sus calles/i.test(entry.texto_visible);
+    entry.peticiones_barrios = asked.length;
+    entry.peticiones_antes_del_distrito = beforeDistrict;
+    entry.peticion = asked[0] ? { url: new URL(asked[0].url).pathname, distrito: asked[0].body?.distrito } : null;
+    entry.axe = await axe(p.page);
+    entry.overflow_px = await overflow(p.page);
+    entry.consola = p.errors;
+    const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
+    if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
+    if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !r.lineas[0]?.startsWith("No cumple:"))) failures.push(`${id}: «casi» sin su motivo`);
+    if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);
+    if ([...entry.encajan, ...entry.casi].some((r) => !r.boton)) failures.push(`${id}: algún barrio sin botón`);
+    if (asked.length !== 1 || beforeDistrict !== 0) failures.push(`${id}: ${asked.length} peticiones a /search/barrios (${beforeDistrict} antes del distrito)`);
+    if (entry.peticion?.distrito !== DISTRICT.code) failures.push(`${id}: distrito ${entry.peticion?.distrito}`);
+    if (entry.simancas_pulsado !== "true" || entry.chip_simancas !== "true") failures.push(`${id}: Simancas no queda marcado`);
+    if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
+    if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
+    if (entry.consola.length) failures.push(`${id}: consola`);
+    await p.ctx.close();
+  }
+  // The zone opened from its link, before any search (so without the barrios section): its LCP
+  report.lcp_san_blas_slow4g = await lcpOnSlow4g(browser, `/zona/distrito/${DISTRICT.code}`);
+  const lcp = report.lcp_san_blas_slow4g.at(-1);
+  if (!lcp || lcp.ms > 2500) failures.push(`LCP de la zona en el móvil: ${lcp?.ms} ms`);
+  report.fallos = failures;
+  if (failures.length) process.exitCode = 1;
+}
+
 const browser = await chromium.launch();
 if (mode === "fixes") await fixes(browser);
 else if (mode === "fuentes") await sources(browser);
+else if (mode === "barrios") await barrioFit(browser);
 else if (mode === "mapa") await mapView(browser);
 else if (mode === "pequenas") await smallZones(browser);
 else if (mode === "mariano") await marianoNotes(browser);

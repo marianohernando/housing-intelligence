@@ -1,0 +1,347 @@
+{
+ "modo": "barrios",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "desktop": {
+  "ms_hasta_los_barrios": 570,
+  "resumen": "7 de sus 8 barrios encajan con tu búsqueda. Pulsa uno para verlo en el mapa.",
+  "primeros": [
+   {
+    "nombre": "Canillejas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Arcos",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   },
+   {
+    "nombre": "Simancas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   }
+  ],
+  "simancas_pulsado": "true",
+  "chip_simancas": "true",
+  "encajan": [
+   {
+    "nombre": "Canillejas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Arcos",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   },
+   {
+    "nombre": "Simancas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   },
+   {
+    "nombre": "Rosas",
+    "pct": "96 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Amposta",
+    "pct": "96 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "El Salvador",
+    "pct": "95 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 10 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Hellín",
+    "pct": "93 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   }
+  ],
+  "casi": [
+   {
+    "nombre": "Rejas",
+    "pct": "55 %",
+    "boton": true,
+    "lineas": [
+     "No cumple: Colegio con primaria a 10 min andando como mucho",
+     "Colegio con primaria a unos 35 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   }
+  ],
+  "api": {
+   "encajan": [
+    [
+     "Canillejas",
+     "97 %"
+    ],
+    [
+     "Arcos",
+     "97 %"
+    ],
+    [
+     "Simancas",
+     "97 %"
+    ],
+    [
+     "Rosas",
+     "96 %"
+    ],
+    [
+     "Amposta",
+     "96 %"
+    ],
+    [
+     "El Salvador",
+     "95 %"
+    ],
+    [
+     "Hellín",
+     "93 %"
+    ]
+   ],
+   "casi": [
+    [
+     "Rejas",
+     "55 %",
+     [
+      "near:colegio"
+     ]
+    ]
+   ],
+   "zonas": "7 de 8"
+  },
+  "texto_visible": "Los barrios que mejor encajan 7 de sus 8 barrios encajan con tu búsqueda. Pulsa uno para verlo en el mapa. Canillejas 97 % de encaje Colegio con primaria a unos 7 min andando Parada de transporte público a unos 3 min andando Arcos 97 % de encaje Colegio con primaria a unos 5 min andando Parada de transporte público a unos 2 min andando Simancas 97 % de encaje Colegio con primaria a unos 7 min andando Parada de transporte público a unos 2 min andando Rosas 96 % de encaje Colegio con primaria a unos 5 min andando Parada de transporte público a unos 3 min andando Amposta 96 % de encaje Colegio con primaria a unos 7 min andando Parada de transporte público a unos 3 min andando El Salvador 95 % de encaje Colegio con primaria a unos 10 min andando Parada de transporte público a unos 3 min andando Hellín 93 % de encaje Colegio con primaria a unos 4 min andando Parada de transporte público a unos 2 min andando Ver menos Casi encajan Cumplen todo menos una cosa. Rejas 55 % de encaje No cumple: Colegio con primaria a 10 min andando como mucho Colegio con primaria a unos 35 min andando Parada de transporte público a unos 3 min andando Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.",
+  "mitad_de_sus_calles": false,
+  "peticiones_barrios": 1,
+  "peticiones_antes_del_distrito": 0,
+  "peticion": {
+   "url": "/api/v1/search/barrios",
+   "distrito": "2807920"
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mobile": {
+  "ms_hasta_los_barrios": 437,
+  "resumen": "7 de sus 8 barrios encajan con tu búsqueda. Pulsa uno para verlo en el mapa.",
+  "primeros": [
+   {
+    "nombre": "Canillejas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Arcos",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   },
+   {
+    "nombre": "Simancas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   }
+  ],
+  "simancas_pulsado": "true",
+  "chip_simancas": "true",
+  "encajan": [
+   {
+    "nombre": "Canillejas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Arcos",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   },
+   {
+    "nombre": "Simancas",
+    "pct": "97 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   },
+   {
+    "nombre": "Rosas",
+    "pct": "96 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Amposta",
+    "pct": "96 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 7 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "El Salvador",
+    "pct": "95 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 10 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   },
+   {
+    "nombre": "Hellín",
+    "pct": "93 %",
+    "boton": true,
+    "lineas": [
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de transporte público a unos 2 min andando"
+    ]
+   }
+  ],
+  "casi": [
+   {
+    "nombre": "Rejas",
+    "pct": "55 %",
+    "boton": true,
+    "lineas": [
+     "No cumple: Colegio con primaria a 10 min andando como mucho",
+     "Colegio con primaria a unos 35 min andando",
+     "Parada de transporte público a unos 3 min andando"
+    ]
+   }
+  ],
+  "api": {
+   "encajan": [
+    [
+     "Canillejas",
+     "97 %"
+    ],
+    [
+     "Arcos",
+     "97 %"
+    ],
+    [
+     "Simancas",
+     "97 %"
+    ],
+    [
+     "Rosas",
+     "96 %"
+    ],
+    [
+     "Amposta",
+     "96 %"
+    ],
+    [
+     "El Salvador",
+     "95 %"
+    ],
+    [
+     "Hellín",
+     "93 %"
+    ]
+   ],
+   "casi": [
+    [
+     "Rejas",
+     "55 %",
+     [
+      "near:colegio"
+     ]
+    ]
+   ],
+   "zonas": "7 de 8"
+  },
+  "texto_visible": "Los barrios que mejor encajan 7 de sus 8 barrios encajan con tu búsqueda. Pulsa uno para verlo en el mapa. Canillejas 97 % de encaje Colegio con primaria a unos 7 min andando Parada de transporte público a unos 3 min andando Arcos 97 % de encaje Colegio con primaria a unos 5 min andando Parada de transporte público a unos 2 min andando Simancas 97 % de encaje Colegio con primaria a unos 7 min andando Parada de transporte público a unos 2 min andando Rosas 96 % de encaje Colegio con primaria a unos 5 min andando Parada de transporte público a unos 3 min andando Amposta 96 % de encaje Colegio con primaria a unos 7 min andando Parada de transporte público a unos 3 min andando El Salvador 95 % de encaje Colegio con primaria a unos 10 min andando Parada de transporte público a unos 3 min andando Hellín 93 % de encaje Colegio con primaria a unos 4 min andando Parada de transporte público a unos 2 min andando Ver menos Casi encajan Cumplen todo menos una cosa. Rejas 55 % de encaje No cumple: Colegio con primaria a 10 min andando como mucho Colegio con primaria a unos 35 min andando Parada de transporte público a unos 3 min andando Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.",
+  "mitad_de_sus_calles": false,
+  "peticiones_barrios": 1,
+  "peticiones_antes_del_distrito": 0,
+  "peticion": {
+   "url": "/api/v1/search/barrios",
+   "distrito": "2807920"
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_san_blas_slow4g": [
+  {
+   "ms": 884,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2136,
+   "en_atribucion": false,
+   "texto": "Explora San Blas-Canillejas"
+  }
+ ],
+ "fallos": []
+}

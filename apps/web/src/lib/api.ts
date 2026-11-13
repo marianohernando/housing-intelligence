@@ -2,6 +2,8 @@
  * Typed client of the PUBLIC API (docs/04_technical_architecture/31_public_api_routes.md).
  * Response types are generated from the JSON Schemas (src/contracts), never written by hand.
  */
+import type { BarrioSearchRequest } from "@/contracts/barrio_search_request";
+import type { BarrioSearchResponse } from "@/contracts/barrio_search_response";
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { GapImpactResponse } from "@/contracts/gap_impact_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
@@ -195,6 +197,16 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scenario),
         signal,
+      });
+    },
+    /** POST /api/v1/search/barrios (D-232): the same scenario inside one district of Madrid, by its barrios. */
+    searchBarrios(distrito: string, scenario: ScenarioState, { timeoutMs }: GetOptions = {}) {
+      const request: BarrioSearchRequest = { distrito, scenario };
+      return call<BarrioSearchResponse>("/api/v1/search/barrios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+        timeoutMs,
       });
     },
   };
