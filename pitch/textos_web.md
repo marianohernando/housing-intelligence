@@ -372,14 +372,14 @@ La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), desp
 | `barrios.todo` | Todo {distrito} | Primer chip: vuelve a encuadrar el distrito entero, por ejemplo «Todo Chamartín». Marcado al entrar en la zona |
 | `barrios.ayuda` | Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. | `aria-description` de la barra, o línea pequeña si cabe. Sigue siendo cierto: el encaje por barrio va en su sección, no en «Qué falta» |
 
-### «Los barrios que mejor encajan» (vista de un distrito, tras buscar; D-232, PR #37 de B)
+### «Los barrios que mejor encajan» (vista de un distrito, tras buscar; D-232, PR #37 de B, en producción desde `e7025fb`)
 Revisión de los borradores de B (13 nov). Ejemplo real con el caso de ejemplo, comprobado en producción con `POST /api/v1/search/barrios` (`fit-0.7`, distrito 2807920): San Blas-Canillejas, 7 de 8 barrios; Canillejas, Arcos y Simancas al 97 %; Rejas «casi» (colegio).
 
 | Clave | Texto | Notas |
 |---|---|---|
 | `barrios.encajan.titulo` | Los barrios que mejor encajan | De Mariano. Aprobado |
 | `barrios.encajan.resumen` | {n} de sus {total} barrios encajan con tu búsqueda. | Con 1: «1 de sus {total} barrios encaja con tu búsqueda.». Todos: «Sus {total} barrios encajan con tu búsqueda.». Ninguno: «Ninguno de sus {total} barrios cumple todo lo que pides.». Aprobado |
-| `barrios.encajan.pulsa` | Toca uno para verlo en el mapa. | **Cambia** «Pulsa» por «Toca», como el resto de la web («Toca un tipo de centro…», «toca una zona del mapa») |
+| `barrios.encajan.pulsa` | Toca uno para verlo en el mapa. | **Cambia** «Pulsa» por «Toca», como el resto de la web («Toca un tipo de centro…», «toca una zona del mapa»). Aplicado por B y en producción desde `5101c93` |
 | `barrios.encajan.carga` | Buscando los barrios de {distrito} que encajan contigo… | Aprobado |
 | `barrios.encajan.todos` | Ver los {n} barrios | Aprobado |
 | `barrios.encajan.ayuda` | Cuánto se parece este barrio a lo que buscas. No es una nota del barrio. | Igual que `zona.encaje.ayuda`. Aprobado |
