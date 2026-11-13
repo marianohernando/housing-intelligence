@@ -126,6 +126,8 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 | 3.3 | Señalar la fila de farmacias (CUBIERTO) | «4,5 farmacias al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos…, 3,1» | Si no está CUBIERTO, saltar «[Leer una fila cubierta]» |
 | 3.4 | Antes de «En toda la región…», volver a la pestaña de las slides, en la slide 3, y leer la cifra grande. El orden de «dónde invertir primero» está en la slide y en la web («Qué falta» sin zona, en producción desde el 12 nov) | «25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles» y «Dónde invertir primero: Puente de Vallecas…, Carabanchel y Villaverde» | Si la slide no está, decir la frase sin la cifra: «En toda la región hay miles de niños pequeños donde faltan escuelas infantiles» |
 
+**Barrios (D-232):** «y dentro del distrito, te dice qué barrio» no entra en el guion: unas 15 palabras más bajan el margen de 34 a unos 27 s. Va en la pregunta 48 (San Blas-Canillejas: 7 de 8 barrios; Simancas al 97 %).
+
 **Cifra de impacto** (D-229, `impact-0.1`; `GET /api/v1/gaps/impact`; `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov):
 - 25.551 niños de 0 a 4 años (el 9,8 % de la región) viven en los 3 distritos con FALTA de escuelas infantiles: Puente de Vallecas 9.433 («Aquí hay 57 por cada 100»), Carabanchel 9.150 (68) y Villaverde 6.968 (61). Es el padrón de cada distrito.
 - En la web, «Qué falta» sin zona enseña lo mismo en «Dónde invertir primero» (producción, 12 nov, comprobado por C).
