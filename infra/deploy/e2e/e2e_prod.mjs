@@ -108,6 +108,7 @@ const COUNTS_HIDDEN_UP_TO_PX = 760;
  * D-230, as the web shows it (apps/web/src/lib/gaps.ts, notComparable): a small zone (`reliable: false`)
  * with no group of 2 or more neighbours to compare with is «No comparable», unless it is SIN DATOS.
  * A small zone with such a group keeps its status.
+ * Copied, not imported: this plain Node suite cannot load the web's TypeScript; keep it in step with gaps.ts.
  */
 const NOT_COMPARABLE = "No comparable";
 function notComparable(z) {
