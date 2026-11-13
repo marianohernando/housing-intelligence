@@ -3,6 +3,7 @@
 # in an isolated Postgres (compose project vida-facil-offline, ports 5441/8012/3012). It only
 # reads the development database (to dump it), never uses its ports (5440/8010/3010) and never
 # touches apps/web/.next (the web is built from a private copy).
+#   make demo-offline-tiles     # online, once: basemap extract of the Comunidad de Madrid (OSM, ODbL)
 #   make demo-offline-prepare   # online, e.g. 23 Nov: images, dump, validated database, web build
 #   make demo-offline           # 26 Nov: start in seconds, no network needed
 #   make demo-offline-stop
@@ -21,6 +22,21 @@ WEB_BUILD="$OUT/web-build"         # private copy of apps/web, built for the off
 WEB_RUN="$OUT/web"                 # standalone server assembled from that build
 WEB_PID="$OUT/web.pid"
 WEB_LOG="$OUT/web.log"
+TILES="$OUT/tiles"                 # basemap extract, OpenMapTiles schema; the web serves it at /tiles
+TILES_SRC="$OUT/tiles-src"         # the OSM extract it is made from (Geofabrik, ODbL)
+PBF_BASE="https://download.geofabrik.de/europe/spain"
+PBF_REGION="madrid"
+# The extract, pinned by name and md5 (taken from Geofabrik on 12 Nov). The md5 lives here and not on
+# the download host, so it catches a tampered file and not only a corrupt one. Another extract:
+# PBF_FILE=madrid-YYMMDD.osm.pbf PBF_MD5=<md5>, then pin both here.
+PBF_PINNED="madrid-261111.osm.pbf"
+PBF_PINNED_MD5="1f5fc60a7a14235518265dd1bbfaf613"
+# tilemaker 3.2.0, the official image of github.com/systemed/tilemaker (commit 2789651), by digest
+TILEMAKER_IMAGE="ghcr.io/systemed/tilemaker@sha256:9cd8728a37a31c8a5205e091cedd3ff2c2c450c57e1ce3e5b58916185540ebba"
+# Glyphs for the map's labels: OpenFreeMap's font bundle (Noto Sans Regular, Bold and Italic, SIL OFL
+# 1.1), the same PBFs that tiles.openfreemap.org/fonts serves online. Pinned by sha256 (12 Nov).
+FONTS_URL="https://assets.openfreemap.com/fonts/ofm.tar.gz"
+FONTS_SHA256="56b1a521aba187779194f8f983f3e103a9f7f14581227eed1297ce0e102cb4b0"
 # Source of the dump, seen from inside the offline db container: the development database.
 SOURCE_URL="${SOURCE_DATABASE_URL:-postgresql://housing:housing@host.docker.internal:5440/housing}"
 DB=vidafacil
@@ -29,7 +45,7 @@ API_URL="http://localhost:8012"
 WEB_PORT=3012
 WEB_URL="http://localhost:${WEB_PORT}"
 # The demo profile of scripts/supabase_sync.sh (tests/unit/test_deploy_offline.py checks it).
-TABLES=(source_registry dataset_registry dataset_version metric_registry feature_registry geo_admin_unit place_master place_source_alias feature_value)
+TABLES=(source_registry dataset_registry dataset_version metric_registry feature_registry geo_admin_unit place_master place_source_alias feature_value transit_hub commute_time)
 
 trap 'echo "demo-offline: failed at line $LINENO. Clean up with: make demo-offline-stop" >&2' ERR
 
@@ -96,22 +112,111 @@ promote_staging() { # the validated staging database becomes the one the API rea
 }
 
 build_web() { # into $WEB_RUN.new; apps/web/.next and NEXT_PUBLIC_* from this shell stay out
-  local server app unset_public=()
+  # Search on, as in production (NEXT_PUBLIC_FEATURE_SEARCH=true there): the pitch's block 2 needs it.
+  # Basemap from the local extract when there is one (make demo-offline-tiles); else OpenFreeMap,
+  # which needs the network.
+  local server app unset_public=() tiles_env=()
+  if [[ -f "$TILES/tiles.json" ]]; then
+    tiles_env=(NEXT_PUBLIC_MAP_TILES_URL=/tiles/tiles.json)
+  else
+    echo "warning: no basemap extract in $TILES: without network the map has no streets (make demo-offline-tiles)" >&2
+  fi
   rm -rf "$WEB_BUILD" "$WEB_RUN.new"
   mkdir -p "$WEB_BUILD"
   rsync -a --exclude node_modules --exclude .next --exclude 'public/maplibre' --exclude '.env*' \
     apps/web/ "$WEB_BUILD/"
   while read -r name; do unset_public+=(-u "$name"); done < <(compgen -e | grep '^NEXT_PUBLIC_' || true)
   (cd "$WEB_BUILD" && node scripts/copy-maplibre-worker.mjs >/dev/null &&
-    env ${unset_public[@]+"${unset_public[@]}"} NEXT_PUBLIC_API_URL="$API_URL" \
-      "$ROOT/node_modules/.bin/next" build >/dev/null)
+    env ${unset_public[@]+"${unset_public[@]}"} NEXT_PUBLIC_API_URL="$API_URL" NEXT_PUBLIC_FEATURE_SEARCH=true \
+      ${tiles_env[@]+"${tiles_env[@]}"} "$ROOT/node_modules/.bin/next" build >/dev/null)
   server="$(find "$WEB_BUILD/.next/standalone" -name server.js -not -path '*/node_modules/*' | head -1)"
   [[ -n "$server" ]] || { echo "the web build produced no standalone server.js" >&2; return 1; }
   app="$(dirname "${server#"$WEB_BUILD/.next/standalone/"}")"
   cp -R "$WEB_BUILD/.next/standalone" "$WEB_RUN.new"
   cp -R "$WEB_BUILD/.next/static" "$WEB_RUN.new/$app/.next/static"
   cp -R "$WEB_BUILD/public" "$WEB_RUN.new/$app/public"
+  [[ ${#tiles_env[@]} -eq 0 ]] || cp -R "$TILES" "$WEB_RUN.new/$app/public/tiles"
   echo "$app" >"$WEB_RUN.new/.app"
+}
+
+md5_of() { if command -v md5sum >/dev/null; then md5sum "$1" | cut -d' ' -f1; else md5 -q "$1"; fi; }
+sha256_of() { if command -v sha256sum >/dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -d' ' -f1; }
+
+fetch_fonts() { # DIR: the pinned glyph bundle as DIR/fonts/<fontstack>/<range>.pbf, sha256 checked
+  local bundle="$TILES_SRC/ofm-fonts.tar.gz"
+  echo "-> map fonts (OpenFreeMap: Noto Sans, SIL OFL 1.1)"
+  if [[ ! -f "$bundle" || "$(sha256_of "$bundle")" != "$FONTS_SHA256" ]]; then
+    curl -fsS -o "$bundle.tmp" "$FONTS_URL"
+    mv -f "$bundle.tmp" "$bundle"
+  fi
+  [[ "$(sha256_of "$bundle")" == "$FONTS_SHA256" ]] || { echo "sha256 mismatch for $FONTS_URL" >&2; exit 1; }
+  mkdir -p "$1/fonts"
+  tar -xzf "$bundle" -C "$1/fonts" --strip-components 1   # ofm/<fontstack>/... -> fonts/<fontstack>/...
+}
+
+fetch_pbf() { # sets PBF_NAME and PBF_MD5_OK: the pinned OSM extract in $TILES_SRC, md5 checked
+  local name="${PBF_FILE:-$PBF_PINNED}" md5="${PBF_MD5:-}" pbf
+  if [[ -z "$md5" ]]; then
+    [[ "$name" == "$PBF_PINNED" ]] ||
+      { echo "PBF_FILE=$name needs its md5 as well: PBF_MD5=<md5> (from $PBF_BASE/$name.md5)" >&2; exit 2; }
+    md5="$PBF_PINNED_MD5"
+  fi
+  [[ "$name" =~ ^$PBF_REGION-[0-9]{6}\.osm\.pbf$ ]] ||
+    { echo "unexpected extract name '$name' (expected $PBF_REGION-YYMMDD.osm.pbf)" >&2; exit 2; }
+  pbf="$TILES_SRC/$name"
+  mkdir -p "$TILES_SRC"
+  echo "-> OSM extract $name (Geofabrik, ODbL)"
+  if [[ ! -f "$pbf" || "$(md5_of "$pbf")" != "$md5" ]]; then
+    curl -fsS -o "$pbf.tmp" "$PBF_BASE/$name" || {
+      echo "cannot download $name: Geofabrik may no longer keep it. Pick a newer one in $PBF_BASE" >&2
+      echo "and set PBF_FILE and PBF_MD5" >&2
+      exit 1
+    }
+    mv -f "$pbf.tmp" "$pbf"
+  fi
+  [[ "$(md5_of "$pbf")" == "$md5" ]] || { echo "md5 mismatch for $name: expected $md5" >&2; exit 1; }
+  PBF_NAME="$name"
+  PBF_MD5_OK="$md5"
+}
+
+tiles() { # online, once: the basemap extract, tiles at z0–14 in $TILES with a TileJSON
+  local name
+  command -v jq >/dev/null || { echo "jq is required to adapt tilemaker's config: brew install jq" >&2; exit 2; }
+  command -v md5sum >/dev/null || command -v md5 >/dev/null ||
+    { echo "md5sum or md5 is required to check the extract" >&2; exit 2; }
+  command -v sha256sum >/dev/null || command -v shasum >/dev/null ||
+    { echo "sha256sum or shasum is required to check the fonts" >&2; exit 2; }
+  fetch_pbf
+  name="$PBF_NAME"
+
+  echo "-> tiles with tilemaker 3.2.0 (no network inside the container)"
+  docker pull -q "$TILEMAKER_IMAGE" >/dev/null
+  rm -rf "$TILES.tmp" "$OUT/tiles-cfg"
+  mkdir -p "$TILES.tmp" "$OUT/tiles-cfg"
+  # Its OpenMapTiles config without the shapefile layers (sea, glaciers, Natural Earth urban areas):
+  # none in Madrid. Uncompressed tiles, so the web can serve them as static files.
+  docker run --rm --network none --entrypoint cat "$TILEMAKER_IMAGE" resources/config-openmaptiles.json |
+    jq '.layers |= with_entries(select(.value.source == null)) | .settings.compress = "none"' \
+      >"$OUT/tiles-cfg/config.json"
+  docker run --rm --network none -v "$ROOT/$TILES_SRC:/in:ro" -v "$ROOT/$OUT/tiles-cfg:/cfg:ro" \
+    -v "$ROOT/$TILES.tmp:/out" --entrypoint /usr/src/app/tilemaker "$TILEMAKER_IMAGE" \
+    --input "/in/$name" --output /out --config /cfg/config.json \
+    --process /usr/src/app/resources/process-openmaptiles.lua --quiet >/dev/null
+  uv run --frozen python -I infra/deploy/offline/tiles_meta.py "$TILES.tmp" "$WEB_URL/tiles" >"$TILES.tmp/summary"
+  fetch_fonts "$TILES.tmp"   # served at /tiles/fonts/{fontstack}/{range}.pbf
+  {
+    echo "created_at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "pbf $name md5 $PBF_MD5_OK from $PBF_BASE"
+    echo "tilemaker $TILEMAKER_IMAGE"
+    cat "$TILES.tmp/summary"
+    echo "fonts $FONTS_URL sha256 $FONTS_SHA256: $(ls "$TILES.tmp/fonts" | paste -sd ',' -)"
+    echo "size $(du -sh "$TILES.tmp" | awk '{print $1}')"
+  } >"$TILES.tmp/manifest.txt"
+  rm -f "$TILES.tmp/summary"
+  rm -rf "$TILES" "$OUT/tiles-cfg"
+  mv "$TILES.tmp" "$TILES"
+  cat "$TILES/manifest.txt"
+  echo "ready: $TILES. Rebuild the web with it: make demo-offline-prepare"
 }
 
 prepare() {
@@ -131,6 +236,11 @@ prepare() {
     echo "created_at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "git_commit $(git rev-parse --short HEAD)"
     echo "alembic_head $HEAD (source $SOURCE_HEAD)"
+    if [[ -f "$TILES/manifest.txt" ]]; then
+      echo "basemap local, $(grep '^pbf ' "$TILES/manifest.txt" | cut -d' ' -f2)"
+    else
+      echo "basemap tiles.openfreemap.org (needs the network)"
+    fi
     counts source_psql
   } >"$MANIFEST.tmp"
 
@@ -182,7 +292,7 @@ start() {
   echo $! >"$WEB_PID"
   wait_for "$WEB_URL" 60
   SMOKE_API_ONLY=1 scripts/smoke_demo.sh "$API_URL"
-  echo "offline demo up: $WEB_URL/map  (data: $(head -1 "$MANIFEST"))"
+  echo "offline demo up: $WEB_URL/  (data: $(head -1 "$MANIFEST"))"
 }
 
 stop_web() { # only kills the pid if it is still our Next.js server
@@ -203,8 +313,9 @@ stop() {
 }
 
 case "${1:-}" in
+  tiles) tiles ;;
   prepare) prepare ;;
   start) start ;;
   stop) stop ;;
-  *) echo "usage: $0 prepare|start|stop" >&2; exit 2 ;;
+  *) echo "usage: $0 tiles|prepare|start|stop" >&2; exit 2 ;;
 esac

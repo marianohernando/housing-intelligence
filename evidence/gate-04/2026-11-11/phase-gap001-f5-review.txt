@@ -1,0 +1,77 @@
+# GAP-001 Fase 5 (review): cada zona frente a los demás municipios de su tipo (sin el suyo), tests de la referencia y D-213 con los efectos reales
+$ estadística con los datos reales (base local)
+Tipos (Ley 45/2007): Counter({<TerritoryType.URBANO: 'urbano'>: 95, <TerritoryType.RURAL: 'rural'>: 84})
+
+## Tasa por tipo de territorio y prueba de homogeneidad (chi-cuadrado, gl=1)
+escuela_infantil  rural        64/     5199  urbano      1163/    255111  tasa rural/urbana   2.70  X2       64.9  p 7.7e-16
+colegio           rural        46/    19675  urbano      1195/    924301  tasa rural/urbana   1.81  X2       16.0  p 6.3e-05
+centro_salud      rural        98/   142735  urbano       323/   6971151  tasa rural/urbana  14.82  X2      968.8  p 1.1e-212
+mayores           rural        29/    26973  urbano       494/   1315675  tasa rural/urbana   2.86  X2       33.2  p 8.2e-09
+farmacia          rural        75/   142735  urbano      2878/   6971151  tasa rural/urbana   1.27  X2        4.3  p 0.039
+vivienda          rural     56913/    13114  urbano   1132814/    656870  tasa rural/urbana   2.52  X2    49523.5  p 0
+
+## Estados por fila y nivel: gap-0.1 (región, solo ratio) frente a gap-0.2
+municipio escuela_infantil  0.1: FAL  44 JUS  17 CUB 117 SIN   1 | 0.2: FAL   0 JUS  79 CUB  99 SIN   1 | poco fiables 138
+municipio colegio           0.1: FAL  65 JUS  27 CUB  87 SIN   0 | 0.2: FAL   0 JUS 101 CUB  78 SIN   0 | poco fiables 140
+municipio centro_salud      0.1: FAL  27 JUS   8 CUB 144 SIN   0 | 0.2: FAL   5 JUS  50 CUB 124 SIN   0 | poco fiables 158
+municipio mayores           0.1: FAL  90 JUS  12 CUB  77 SIN   0 | 0.2: FAL   2 JUS 100 CUB  77 SIN   0 | poco fiables 161
+municipio farmacia          0.1: FAL  94 JUS  30 CUB  55 SIN   0 | 0.2: FAL   5 JUS 128 CUB  46 SIN   0 | poco fiables 116
+municipio vivienda          0.1: FAL   8 JUS  11 CUB 160 SIN   0 | 0.2: FAL  25 JUS  20 CUB 134 SIN   0 | poco fiables 0
+distrito  escuela_infantil  0.1: FAL   8 JUS   2 CUB  11 SIN   0 | 0.2: FAL   4 JUS   7 CUB  10 SIN   0 | poco fiables 0
+distrito  colegio           0.1: FAL   4 JUS   5 CUB  12 SIN   0 | 0.2: FAL   1 JUS   8 CUB  12 SIN   0 | poco fiables 0
+distrito  centro_salud      0.1: FAL  18 JUS   3 CUB   0 SIN   0 | 0.2: FAL   0 JUS  21 CUB   0 SIN   0 | poco fiables 1
+distrito  mayores           0.1: FAL   7 JUS   8 CUB   6 SIN   0 | 0.2: FAL   0 JUS   9 CUB  12 SIN   0 | poco fiables 0
+distrito  farmacia          0.1: FAL   0 JUS   5 CUB  16 SIN   0 | 0.2: FAL   0 JUS   0 CUB  21 SIN   0 | poco fiables 0
+distrito  vivienda          0.1: FAL   0 JUS   0 CUB   0 SIN  21 | 0.2: FAL   0 JUS   0 CUB   0 SIN  21 | poco fiables 0
+
+## Casos
+Chamartín centro_salud JUSTO ratio 0.8446 fiable True | 0,47 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)
+Madrid colegio JUSTO ratio 0.9644 fiable True | 1,3 colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años; en los demás municipios urbanos de la Comunidad de Madrid, 1,3 (en toda la Comunidad, 1,3)
+Madrid centro_salud FALTA ratio 0.6681 fiable True | 0,37 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)
+La Acebeda vivienda CUBIERTO ratio 24.7 fiable True | 10.700,0 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios rurales de la Comunidad de Madrid, 433,2 (en toda la Comunidad, 177,6)
+La Acebeda farmacia JUSTO ratio 0.0 fiable False | 0,0 farmacias por cada 10.000 habitantes; en los demás municipios rurales de la Comunidad de Madrid, 5,3 (en toda la Comunidad, 4,2)
+Móstoles centro_salud CUBIERTO ratio 1.007 fiable True | 0,47 centros de atención primaria por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)
+$ npm run -w apps/web contracts (tipos TS generados desde data/schemas/api: campos nuevos de gap-0.2)
+$ make lint typecheck test (tras rebase sobre bd5b006, web de B incluida)
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+260 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 22%]
+........................................................................ [ 44%]
+........................................................................ [ 66%]
+........................................................................ [ 88%]
+.......................................                                  [100%]
+327 passed in 6.46s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  20 passed (20)
+      Tests  172 passed (172)
+   Start at  20:14:12
+   Duration  374ms (tests 44%, import 29%, transform 21%, worker 5%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 88%]
+.........                                                                [100%]
+81 passed in 35.10s
+exit=0

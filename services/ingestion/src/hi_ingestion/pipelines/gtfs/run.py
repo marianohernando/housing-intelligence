@@ -13,6 +13,12 @@ from hi_contracts.catalog.pipeline import CsvFormat, GtfsFeedPipeline, PointsPip
 from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
 from hi_ingestion.pipelines.fetch import FetchedFile
+from hi_ingestion.pipelines.gtfs.accessibility import (
+    ACCESSIBILITY_ATTRIBUTES,
+    StationGrades,
+    attach_step_free,
+    load_station_grades,
+)
 from hi_ingestion.pipelines.gtfs.parse import parse_feed
 from hi_ingestion.pipelines.places.normalize import Places, normalize_places
 from hi_ingestion.pipelines.places.publish import replace_places
@@ -20,7 +26,7 @@ from hi_ingestion.pipelines.places.quality import CheckResult, QualityReport, ru
 from hi_ingestion.pipelines.places.run import write_places_silver
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "gtfs-1.1.0"
+PARSER_VERSION = "gtfs-1.2.0"  # 1.2: raw wheelchair code, step-free stations (D-223)
 SERVICE_ATTRIBUTES = [
     "departures_day",
     "departures_peak_per_hour",
@@ -30,12 +36,13 @@ SERVICE_ATTRIBUTES = [
     "last_departure",
     "routes",
     "n_routes",
-    "wheelchair_boarding",
+    "gtfs_wheelchair_boarding",
     "service_date",
     "feed_end_date",
 ]
 MAX_PEAK_DEPARTURES_PER_HOUR = 1200  # 20 a minute at one stop or station: beyond is a parse bug
 MIN_HEADWAY_MIN = 0.5
+MIN_STEP_FREE_READ_SHARE = 0.9  # a declared topology reads almost every served station
 MAX_INVALID_STOP_TIMES_RATIO = 0.001
 
 
@@ -59,7 +66,10 @@ def points_spec(spec: GtfsFeedPipeline) -> PointsPipeline:
         x_column="stop_lon",
         y_column="stop_lat",
         crs="EPSG:4326",
-        attribute_columns=SERVICE_ATTRIBUTES,
+        attribute_columns=[
+            *SERVICE_ATTRIBUTES,
+            *(ACCESSIBILITY_ATTRIBUTES if spec.station_accessibility else []),
+        ],
     )
 
 
@@ -75,7 +85,11 @@ def _feed_facts(frame: pd.DataFrame) -> dict[str, Any]:
     }
 
 
-def _normalize(frame: pd.DataFrame, spec: GtfsFeedPipeline) -> TransportPlaces:
+def _normalize(
+    frame: pd.DataFrame, spec: GtfsFeedPipeline, grades: StationGrades | None = None
+) -> TransportPlaces:
+    if spec.station_accessibility is not None:
+        frame = attach_step_free(frame, spec.station_accessibility, grades)
     return TransportPlaces(normalize_places(frame, points_spec(spec)), _feed_facts(frame))
 
 
@@ -123,9 +137,37 @@ def _service_checks(result: TransportPlaces) -> list[CheckResult]:
     ]
 
 
+def step_free_check(result: TransportPlaces) -> CheckResult:
+    """D-223: how many served stations got a reading from the declared topology. Blocking once
+    the topology is loaded; a topology never ingested only shows up here (as directories do)."""
+    frame = result.places.frame
+    attrs: list[dict[str, Any]] = frame["attributes"].tolist()
+    source = next((a["step_free_source"] for a in attrs if a.get("step_free_source")), None)
+    readings = [a.get("step_free") for a in attrs]
+    read = sum(r is not None for r in readings)
+    share = read / len(readings) if readings else 0.0
+    unread = [
+        {"external_id": eid, "name": name, "keys": a.get("topology_station_ids")}
+        for eid, name, a in zip(frame["external_id"], frame["canonical_name"], attrs, strict=True)
+        if a.get("step_free") is None
+    ]
+    return CheckResult(
+        "step_free_read",
+        source is not None,
+        share >= MIN_STEP_FREE_READ_SHARE,
+        {
+            "share": round(share, 4),
+            "by_reading": {k: readings.count(k) for k in ("yes", "partial", "no")},
+            "unknown": unread,
+            "source": source or "topology not ingested",
+        },
+    )
+
+
 def run_transport_quality(result: TransportPlaces, spec: GtfsFeedPipeline) -> QualityReport:
     report = run_quality(result.places, points_spec(spec))
-    return QualityReport([*report.checks, *_service_checks(result)])
+    extra = [step_free_check(result)] if spec.station_accessibility else []
+    return QualityReport([*report.checks, *_service_checks(result), *extra])
 
 
 def _counts(result: TransportPlaces) -> dict[str, Any]:
@@ -149,11 +191,12 @@ def run_gtfs_pipeline(
     data_dir: Path = DATA_DIR,
 ) -> RunSummary:
     source_id = catalog.datasets[spec.dataset_id].source_id
+    grades, topology_inputs = load_station_grades(engine, catalog, spec)
     steps: PipelineSteps[TransportPlaces] = PipelineSteps(
         parser_version=PARSER_VERSION,
         csv=CsvFormat(),
         resource_role=spec.resource_role,
-        normalize=lambda frame: _normalize(frame, spec),
+        normalize=lambda frame: _normalize(frame, spec, grades),
         quarantine=lambda result: result.places.quarantine,
         quality=lambda result: run_transport_quality(result, spec).to_dict(),
         counts=_counts,
@@ -171,4 +214,5 @@ def run_gtfs_pipeline(
         source,
         evidence_root=evidence_root,
         data_dir=data_dir,
+        extra_inputs=topology_inputs,
     )

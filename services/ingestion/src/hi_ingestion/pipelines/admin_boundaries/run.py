@@ -30,6 +30,7 @@ from hi_ingestion.pipelines.admin_boundaries.quality import row_counts, run_qual
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.fetch import FetchedFile, fetch_role, local_file
 from hi_ingestion.pipelines.tracking import StageTracker
+from hi_ingestion.pipelines.versions import is_published
 
 DATA_DIR = REPO_ROOT / "data"
 GOLDEN_ZONES = DATA_DIR / "fixtures" / "golden" / "madrid_zones.json"
@@ -93,11 +94,7 @@ def _rel(path: Path) -> str:
 def _already_published(engine: Engine, tracker: StageTracker, checksum: str) -> str | None:
     with Session(engine) as session:
         existing = find_version(session, config.SECTIONS_DATASET, checksum)
-        if (
-            existing is None
-            or not existing.is_last_valid
-            or existing.parser_version != config.PARSER_VERSION
-        ):
+        if existing is None or not is_published(existing, config.PARSER_VERSION):
             return None
         tracker.version_id = existing.id
         label = existing.version_label

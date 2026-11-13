@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "crtm_topologia_metro_ligero",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_topologia_metro_ligero/acb638c99b2c/M10_Estaciones.json",
+      "sha256": "acb638c99b2c9e6cb0bf047276cb5274338833a3afbb965ecfd8c6316d7120d7",
+      "bytes": 7528,
+      "url": "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M10_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json",
+      "retrieved_at": "2026-11-12T14:05:42.356850+00:00"
+    }
+  ],
+  "checksum": "9e34e07839c7b3deb8f6d54edc1bfeef3ef304ae990e073139869b151df75f05",
+  "parser_version": "topology-1.0.0",
+  "dataset_version": "2026-11-12-9e34e07839c7",
+  "correlation_id": "79d83ac836634d70bbafc1997b2b5d46",
+  "silver": "data/silver/crtm_topologia_metro_ligero/9e34e07839c7/stations.csv"
+}

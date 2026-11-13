@@ -1,0 +1,35 @@
+feature_id: oficinas_farmacia_por_10000_hab
+version: 1
+human_name: Farmacias por cada 10.000 habitantes
+domain: health
+type: derived
+unit: farmacias/10000 hab
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_oficinas_farmacia, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
+formula:
+  method: places_per_population
+  category: pharmacy
+  subcategories: ["Farmacia"]  # the same destinations as min_a_pie_farmacia
+  population_metric: poblacion_censada
+  population_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  small_population_threshold: 2000  # denominator below this -> confidence 0.5
+  per: 10000
+  levels:
+    distrito: {population_metric: poblacion_padron, population_dims: {edad: [total]}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, geocoding_quarantine]}
+public_use: true
+pro_use: true
+models: [residential_fit, senior_fit]
+tests: [non_negative, monotonic_in_places]
+limitations:
+  - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
+  - "Cuenta oficinas de farmacia del registro de la CM, no horarios ni guardias."
+  - "Se calcula con el censo anual de la CM. La ratio oficial de la CM (farmacias_por_10000_hab_oficial) usa otra población y otra fecha del registro: en Madrid difieren menos del 1 %, pero en un municipio con pocas farmacias una farmacia de diferencia entre registros mueve la ratio mucho (Soto del Real: 3 frente a 2)."
+  - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
+gap_row: {row: farmacia, role: extra, phrase: "farmacias por cada 10.000 habitantes del municipio o distrito"}

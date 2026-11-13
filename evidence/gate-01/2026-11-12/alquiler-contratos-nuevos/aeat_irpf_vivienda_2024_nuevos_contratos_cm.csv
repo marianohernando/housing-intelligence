@@ -1,0 +1,92 @@
+level,code,name,rent_all,rent_new,m2_all,m2_new,factor
+municipio,28005,Alcalá de Henares,735.0,840.0,77,77,1.143
+municipio,28006,Alcobendas,1115.0,1415.0,86,89,1.226
+municipio,28007,Alcorcón,760.0,866.0,74,73,1.155
+municipio,28009,Algete,866.0,1042.0,104,99,1.264
+municipio,28013,Aranjuez,601.0,687.0,80,79,1.158
+municipio,28014,Arganda del Rey,658.0,752.0,83,84,1.129
+municipio,28015,Arroyomolinos,903.0,998.0,103,104,1.095
+municipio,28022,Boadilla del Monte,1463.0,1707.0,119,121,1.147
+municipio,28040,Ciempozuelos,574.0,626.0,77,75,1.12
+municipio,28045,Colmenar Viejo,776.0,896.0,95,98,1.119
+municipio,28047,Collado Villalba,713.0,803.0,77,73,1.188
+municipio,28049,Coslada,759.0,845.0,77,74,1.158
+municipio,28058,Fuenlabrada,700.0,792.0,77,75,1.162
+municipio,28061,Galapagar,726.0,839.0,88,89,1.143
+municipio,28065,Getafe,752.0,871.0,74,72,1.19
+municipio,28073,Humanes de Madrid,644.0,711.0,79,77,1.133
+municipio,28074,Leganés,715.0,804.0,73,72,1.14
+municipio,28079,Madrid,1012.0,1167.0,71,68,1.204
+municipio,28080,Majadahonda,1261.0,1428.0,97,95,1.156
+municipio,28084,Mejorada del Campo,702.0,767.0,85,87,1.067
+municipio,28092,Móstoles,741.0,849.0,80,78,1.175
+municipio,28096,Navalcarnero,692.0,829.0,92,96,1.148
+municipio,28104,Paracuellos de Jarama,949.0,1093.0,102,105,1.119
+municipio,28106,Parla,670.0,769.0,81,79,1.177
+municipio,28113,Pinto,721.0,799.0,77,75,1.138
+municipio,28115,Pozuelo de Alarcón,1494.0,1785.0,113,115,1.174
+municipio,28123,Rivas-Vaciamadrid,939.0,1053.0,102,103,1.111
+municipio,28127,"Rozas de Madrid, Las",1113.0,1235.0,88,84,1.162
+municipio,28130,San Fernando de Henares,714.0,783.0,74,77,1.054
+municipio,28132,San Martín de la Vega,670.0,800.0,101,102,1.182
+municipio,28134,San Sebastián de los Reyes,928.0,1085.0,80,80,1.169
+municipio,28148,Torrejón de Ardoz,736.0,855.0,80,79,1.176
+municipio,28152,Torrelodones,1147.0,1268.0,112,108,1.146
+municipio,28161,Valdemoro,716.0,766.0,82,75,1.17
+municipio,28176,Villanueva de la Cañada,1028.0,1198.0,99,92,1.254
+municipio,28181,Villaviciosa de Odón,1092.0,1217.0,95,92,1.151
+municipio,28903,Tres Cantos,1040.0,1155.0,92,89,1.148
+cp,28001,Salamanca- Goya,1702.0,1940.0,86,78,1.257
+cp,28002,Chamartín,1159.0,1290.0,70,68,1.146
+cp,28003,Chamberí-Ríos Rosas,1364.0,1508.0,77,73,1.166
+cp,28004,Justicia,1206.0,1371.0,68,65,1.189
+cp,28005,Arganzuela,1034.0,1197.0,64,61,1.215
+cp,28006,Castellana,1558.0,1759.0,81,74,1.236
+cp,28007,Adelfas,1124.0,1238.0,74,71,1.148
+cp,28008,Moncloa,1286.0,1430.0,77,73,1.173
+cp,28009,Ibiza-Niño Jesús,1395.0,1588.0,80,74,1.231
+cp,28010,Almagro,1365.0,1503.0,74,68,1.198
+cp,28011,Latina,835.0,981.0,66,64,1.212
+cp,28012,Embajadores,978.0,1134.0,60,59,1.179
+cp,28013,Centro,1278.0,1515.0,77,74,1.234
+cp,28014,Retiro,1371.0,1519.0,80,73,1.214
+cp,28015,Universidad,1221.0,1389.0,69,68,1.154
+cp,28016,Hispanoamérica-Costillares,1413.0,1537.0,83,79,1.143
+cp,28017,Ventas-Ciudad Lineal-La Elipa,812.0,944.0,64,63,1.181
+cp,28018,Palomeras,717.0,830.0,64,61,1.215
+cp,28019,Opañel-Comillas-San Isidro,792.0,929.0,65,64,1.191
+cp,28020,Tetuán-Castillejos-Cuatro Caminos,1097.0,1258.0,66,65,1.164
+cp,28021,Villaverde-S. Cristóbal de Los Ángeles,694.0,813.0,67,64,1.226
+cp,28022,San Blas,913.0,1022.0,74,71,1.167
+cp,28023,Aravaca,1684.0,1910.0,110,113,1.104
+cp,28024,Campamento,779.0,884.0,67,66,1.152
+cp,28025,Carabanchel-Abrantes,731.0,858.0,64,63,1.192
+cp,28026,Usera,747.0,870.0,65,65,1.165
+cp,28027,San Juan Bautista,903.0,1005.0,66,64,1.148
+cp,28028,Guindalera-Fuente El Berro,1096.0,1254.0,68,64,1.216
+cp,28029,Tetuán-Valdeacederas-Barrio Del Pilar,882.0,1019.0,63,61,1.193
+cp,28030,Moratalaz,847.0,943.0,72,69,1.162
+cp,28031,Villa Vallecas-Santa Eugenia,778.0,849.0,67,61,1.199
+cp,28032,Vicálvaro- Valdebernardo,828.0,947.0,74,72,1.175
+cp,28033,Hortaleza-Pinar Del Rey,1033.0,1112.0,77,73,1.135
+cp,28034,Tres Olivos,1117.0,1223.0,85,80,1.163
+cp,28035,Fuencarral,1135.0,1261.0,85,83,1.138
+cp,28036,Nueva España,1515.0,1560.0,88,79,1.147
+cp,28037,San Blas,786.0,882.0,60,58,1.161
+cp,28038,Pavones,735.0,848.0,63,61,1.192
+cp,28039,Bellas Vistas-Valdeacederas,880.0,1025.0,59,57,1.206
+cp,28040,Ciudad Universitaria,1211.0,1314.0,74,69,1.164
+cp,28041,Orcasitas-San Fermín,766.0,905.0,74,75,1.166
+cp,28042,Barajas-La Alameda de Osuna,1054.0,1145.0,81,79,1.114
+cp,28043,Hortaleza-Canillas,1183.0,1263.0,82,79,1.108
+cp,28044,Cuatrovientos,733.0,828.0,67,65,1.164
+cp,28045,Delicias,1006.0,1128.0,64,63,1.139
+cp,28046,Castilla -Chamartín,1396.0,1568.0,88,83,1.191
+cp,28047,Aluche-Vista Alegre,764.0,889.0,68,67,1.181
+cp,28049,El Goloso,1321.0,1344.0,90,82,1.117
+cp,28050,Las Tablas,1226.0,1315.0,84,79,1.14
+cp,28051,Villa de Vallecas,851.0,915.0,67,63,1.143
+cp,28052,El Cañaveral,1102.0,1219.0,92,89,1.143
+cp,28053,Entrevías-Puente de Vallecas,706.0,812.0,61,59,1.189
+cp,28054,Buenavista-La Fortuna,877.0,910.0,65,59,1.143
+cp,28055,Valdebebas-Valdefuentes,1535.0,1683.0,103,99,1.141

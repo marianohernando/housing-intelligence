@@ -18,6 +18,7 @@ COPY packages/db packages/db
 COPY packages/domain packages/domain
 COPY services/features services/features
 COPY services/ingestion services/ingestion
+COPY services/mcp services/mcp
 RUN uv sync --frozen --no-dev --package hi-api --no-editable
 
 FROM python:3.12-slim

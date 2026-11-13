@@ -1,0 +1,254 @@
+{
+ "fase": "PUB-001 F3 (F8)",
+ "como": "Playwright contra web 3011 y API 8011 (datos reales de /gaps); filas pendientes simuladas con page.route sobre la respuesta real",
+ "chamartin_escritorio": {
+  "filas": [
+   {
+    "fila": "Centros de salud",
+    "estado": "FALTA",
+    "cifras": [
+     "Chamartín: 0,47",
+     "Comunidad de Madrid: 0,59",
+     " A pie hasta el centro de salud más cercano: 9 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato fiable",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   },
+   {
+    "fila": "Centros de mayores",
+    "estado": "FALTA",
+    "cifras": [
+     "Chamartín: 0,25",
+     "Comunidad de Madrid: 0,39",
+     " A pie hasta el centro de mayores más cercano: 10 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato fiable",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "estado": "CUBIERTO",
+    "cifras": [
+     "Chamartín: 5,0",
+     "Comunidad de Madrid: 4,7",
+     " A pie hasta la escuela infantil más cercana: 5 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato fiable",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   },
+   {
+    "fila": "Colegios",
+    "estado": "CUBIERTO",
+    "cifras": [
+     "Chamartín: 1,4",
+     "Comunidad de Madrid: 1,3",
+     " A pie hasta el colegio más cercano: 6 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato fiable",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   },
+   {
+    "fila": "Farmacias",
+    "estado": "CUBIERTO",
+    "cifras": [
+     "Chamartín: 7,6",
+     "Comunidad de Madrid: 4,2",
+     " A pie hasta la farmacia más cercana: 3 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato fiable",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   },
+   {
+    "fila": "Vivienda para familias",
+    "estado": "SIN DATOS",
+    "cifras": [
+     "Chamartín: Sin datos",
+     "Comunidad de Madrid: 177,6"
+    ],
+    "fiabilidad": null,
+    "motivo": "La fuente oficial no trae este dato.",
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   }
+  ],
+  "axe": [],
+  "errores": []
+ },
+ "chamartin_movil": {
+  "filas": [
+   {
+    "fila": "Centros de salud",
+    "fuentes_abiertas": false
+   },
+   {
+    "fila": "Centros de mayores",
+    "fuentes_abiertas": false
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "fuentes_abiertas": false
+   },
+   {
+    "fila": "Colegios",
+    "fuentes_abiertas": false
+   },
+   {
+    "fila": "Farmacias",
+    "fuentes_abiertas": false
+   },
+   {
+    "fila": "Vivienda para familias",
+    "fuentes_abiertas": false
+   }
+  ],
+  "fuentes_al_tocar": true,
+  "desborde_horizontal_px": 0,
+  "axe": [],
+  "errores": []
+ },
+ "acebeda": {
+  "titulo": "Qué falta en La Acebeda",
+  "filas": [
+   {
+    "fila": "Colegios",
+    "estado": "FALTA",
+    "cifras": [
+     "La Acebeda: 0,0",
+     "Comunidad de Madrid: 1,3",
+     " A pie hasta el colegio más cercano: más de 60 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato aproximado",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 3
+   },
+   {
+    "fila": "Centros de mayores",
+    "estado": "FALTA",
+    "cifras": [
+     "La Acebeda: 0,00",
+     "Comunidad de Madrid: 0,39",
+     " A pie hasta el centro de mayores más cercano: más de 60 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato aproximado",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 3
+   },
+   {
+    "fila": "Farmacias",
+    "estado": "FALTA",
+    "cifras": [
+     "La Acebeda: 0,0",
+     "Comunidad de Madrid: 4,2",
+     " A pie hasta la farmacia más cercana: más de 60 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato aproximado",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 4
+   },
+   {
+    "fila": "Centros de salud",
+    "estado": "CUBIERTO",
+    "cifras": [
+     "La Acebeda: 142,9",
+     "Comunidad de Madrid: 0,6",
+     " A pie hasta el centro de salud más cercano: 14 min"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato aproximado",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 3
+   },
+   {
+    "fila": "Vivienda para familias",
+    "estado": "CUBIERTO",
+    "cifras": [
+     "La Acebeda: 10.700,0",
+     "Comunidad de Madrid: 177,6"
+    ],
+    "fiabilidad": "Fiabilidad del dato: Dato aproximado",
+    "motivo": null,
+    "fuentes_abiertas": true,
+    "enlaces": 3
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "estado": "SIN DATOS",
+    "cifras": [
+     "La Acebeda: Sin datos",
+     "Comunidad de Madrid: 4,7",
+     " A pie hasta la escuela infantil más cercana: más de 60 min"
+    ],
+    "fiabilidad": null,
+    "motivo": "Este dato no tiene sentido en esta zona.",
+    "fuentes_abiertas": true,
+    "enlaces": 5
+   }
+  ],
+  "errores": []
+ },
+ "filas_pendientes_pestana": {
+  "filas": [
+   "Centros de salud",
+   "Centros de mayores",
+   "Escuelas infantiles",
+   "Colegios"
+  ],
+  "linea": " Próximamente: farmacias y vivienda. Estamos calculando el resto de servicios para esta zona.",
+  "sin_datos_pintados": [],
+  "errores": []
+ },
+ "filas_pendientes_tarjeta": {
+  "linea": " Próximamente: farmacias y vivienda. Estamos calculando el resto de servicios para esta zona.",
+  "errores": []
+ },
+ "zona_desktop": {
+  "mini_lista": [
+   "Centros de saludA pie: 9 minFALTA",
+   "Centros de mayoresA pie: 10 minFALTA",
+   "Escuelas infantilesA pie: 5 minCUBIERTO"
+  ],
+  "pestana_que_falta": "/que-falta?zona=distrito/2807905",
+  "errores": [],
+  "ver_todo_lleva_a": "/que-falta?zona=distrito/2807905"
+ },
+ "zona_mobile": {
+  "mini_lista": [
+   "Centros de saludA pie: 9 minFALTA",
+   "Centros de mayoresA pie: 10 minFALTA",
+   "Escuelas infantilesA pie: 5 minCUBIERTO"
+  ],
+  "pestana_que_falta": "/que-falta?zona=distrito/2807905",
+  "errores": []
+ },
+ "sin_zona": {
+  "placeholder": "Escribe un municipio o un distrito de Madrid",
+  "foco_tras_tab": [
+   "Chamartín",
+   "/que-falta?zona=distrito/2807905"
+  ],
+  "enter_lleva_a": "?zona=distrito/2807905",
+  "errores": []
+ },
+ "zona_no_valida": {
+  "aviso": "No encontramos esa zona. Elige otra en el mapa.",
+  "errores": []
+ },
+ "zona_inexistente": {
+  "aviso": "No encontramos esa zona. Elige otra en el mapa.Elegir otra zona",
+  "errores": [],
+  "esperados": 1
+ }
+}

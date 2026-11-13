@@ -1,0 +1,49 @@
+{
+  "base": "http://localhost:3011",
+  "generated_at": "2026-11-11T11:24:50.420Z",
+  "shots": [
+    {
+      "route": "/",
+      "viewport": "desktop",
+      "file": "f1_inicio_desktop.png",
+      "problems": [],
+      "warnings": [],
+      "comparison": "f1_inicio_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/",
+      "viewport": "mobile",
+      "file": "f1_inicio_mobile.png",
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/que-falta",
+      "viewport": "desktop",
+      "file": "f1_que-falta_desktop.png",
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/que-falta",
+      "viewport": "mobile",
+      "file": "f1_que-falta_mobile.png",
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/como-lo-calculamos",
+      "viewport": "desktop",
+      "file": "f1_como-lo-calculamos_desktop.png",
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/como-lo-calculamos",
+      "viewport": "mobile",
+      "file": "f1_como-lo-calculamos_mobile.png",
+      "problems": [],
+      "warnings": []
+    }
+  ]
+}

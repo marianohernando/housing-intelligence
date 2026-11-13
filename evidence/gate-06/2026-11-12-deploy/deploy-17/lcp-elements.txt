@@ -1,0 +1,4 @@
+/ [{"t":1116,"size":24566,"tag":"P","cls":"t6W1IW_lead","text":"Te decimos qué zonas encajan con tu vida y qué le falta a cada una, co"}]
+  api: 1992→2207 ms /api/v1/datasets | 1999→3372 ms /api/v1/geo/admin-units?level=municipio&simplify_m=50 | 2000→2571 ms /api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES.
+/zona/distrito/2807905 [{"t":1040,"size":4320,"tag":"SPAN","cls":"WNX7rG_handleText","text":"Desliza hacia arriba para ver más"},{"t":1996,"size":16376,"tag":"P","cls":"Eyml5G_lead","text":"Mira sus servicios y puntos clave, con datos oficiales."}]
+  api: 234→554 ms /api/v1/gaps/distrito/2807905 | 1953→2142 ms /api/v1/datasets | 1996→2378 ms /api/v1/places?category=education%2Chealth%2Cpharmacy% | 1997→3424 ms /api/v1/geo/admin-units?level=municipio&simplify_m=50 | 1998→2450 ms /api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES. | 2115→2279 ms /api/v1/geo/admin-units?level=barrio&simplify_m=10&parent=ES.28

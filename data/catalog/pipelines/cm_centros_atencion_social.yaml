@@ -20,3 +20,6 @@ x_column: direccion_coor_x
 y_column: direccion_coor_y
 municipio_code_column: municipio_codigo
 attribute_columns: [tipo, plazas_autorizadas_numero, tipo_gestion, entidad_naturaleza, direccion_codigo_postal]
+address_template: "{direccion_via_tipo} {direccion_via_nombre} {direccion_portal}, {municipio_nombre}"
+address_number_column: direccion_portal
+address_street_column: direccion_via_nombre

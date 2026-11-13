@@ -6,7 +6,7 @@ $ npm run -w apps/web test -- --run
 > vitest --run
 
 
- RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
 
 
  Test Files  1 passed (1)

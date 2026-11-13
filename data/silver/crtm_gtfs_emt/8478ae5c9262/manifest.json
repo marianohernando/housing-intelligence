@@ -7,9 +7,9 @@
       "sha256": "1a18668179adf9ed1fd5e950fcc1100cf88591cb2fc8ddd352ef55ba902c5aa3",
       "bytes": 21052114,
       "url": "https://www.arcgis.com/sharing/rest/content/items/868df0e58fca47e79b942902dffd7da0/data",
-      "retrieved_at": "2026-11-10T18:37:27.399303+00:00"
+      "retrieved_at": "2026-11-10T19:39:54.651622+00:00"
     }
   ],
   "checksum": "8478ae5c926256641eaf04754e0b917f5b94366bde8bec5c36be09317065e38e",
-  "parser_version": "gtfs-1.1.0"
+  "parser_version": "gtfs-1.2.0"
 }

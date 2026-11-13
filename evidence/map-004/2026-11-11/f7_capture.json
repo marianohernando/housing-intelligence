@@ -1,0 +1,72 @@
+{
+  "base": "http://localhost:3011",
+  "generated_at": "2026-11-11T17:08:19.686Z",
+  "shots": [
+    {
+      "route": "/",
+      "viewport": "desktop",
+      "file": "f7_inicio_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "comparison": "f7_inicio_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/",
+      "viewport": "mobile",
+      "file": "f7_inicio_mobile.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "desktop",
+      "file": "f7_chamartin_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "comparison": "f7_chamartin_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "mobile",
+      "file": "f7_chamartin_mobile.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/2oh5o3nyvfadq.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/zonas",
+      "viewport": "desktop",
+      "file": "f7_zonas_desktop.png",
+      "overflow_px": 9158,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/0eh3hg0a099nx.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    },
+    {
+      "route": "/zonas",
+      "viewport": "mobile",
+      "file": "f7_zonas_mobile.png",
+      "overflow_px": 9522,
+      "problems": [],
+      "warnings": [
+        "The resource http://localhost:3011/_next/static/chunks/0eh3hg0a099nx.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ]
+    }
+  ]
+}

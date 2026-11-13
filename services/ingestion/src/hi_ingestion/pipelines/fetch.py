@@ -95,14 +95,29 @@ def fetch_role(spec: DatasetSpec, role: str, root: Path = DEFAULT_BRONZE_ROOT) -
     return _store(spec.dataset_id, role, tmp, url, resource_filename(resource), root)
 
 
+def _bronze_origin(path: Path, digest: str) -> tuple[str, str] | None:
+    """URL and retrieval time of a file already in Bronze, from its folder's manifest."""
+    manifest = path.parent / "manifest.json"
+    if not manifest.is_file():
+        return None
+    entries: list[dict[str, str]] = json.loads(manifest.read_text()).get("files", [])
+    match = next((e for e in entries if e.get("sha256") == digest), None)
+    return None if match is None else (match["url"], match["retrieved_at"])
+
+
 def local_file(dataset_id: str, role: str, path: Path) -> FetchedFile:
-    """Wrap a local file (fixtures, offline demo snapshot) with the same metadata."""
+    """Wrap a local file (fixtures, offline demo snapshot) with the same metadata. A file that
+    is already in Bronze keeps the official URL and retrieval time its manifest recorded, so
+    reprocessing it with a new parser does not lose where it came from (D-223)."""
+    digest = sha256_file(path)
+    origin = _bronze_origin(path, digest)
+    url, retrieved_at = origin or (path.resolve().as_uri(), datetime.now(UTC).isoformat())
     return FetchedFile(
         dataset_id=dataset_id,
         role=role,
         path=path,
-        sha256=sha256_file(path),
+        sha256=digest,
         bytes=path.stat().st_size,
-        url=path.resolve().as_uri(),
-        retrieved_at=datetime.now(UTC).isoformat(),
+        url=url,
+        retrieved_at=retrieved_at,
     )

@@ -10,8 +10,8 @@ ALEMBIC := uv run alembic -c infra/migrations/alembic.ini
 GATE ?= 00
 
 .PHONY: help dev up down logs migrate migrate-down seed lint format typecheck test test-unit test-db \
-        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all features supabase-migrate supabase-sync secret-scan evidence ci web-install \
-        deploy-demo smoke-demo demo-offline-prepare demo-offline demo-offline-stop
+        schemas catalog-validate catalog-harvest catalog-draft catalog-curate ingest ingest-all admin-names features supabase-migrate supabase-sync secret-scan evidence ci web-install \
+        deploy-demo smoke-demo e2e-prod demo-offline-tiles demo-offline-prepare demo-offline demo-offline-stop mcp
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -37,9 +37,11 @@ migrate-down: ## Revert last migration
 seed: ## Sync catalog YAML into registry tables
 	uv run hi-ingest catalog sync
 
-lint: ## Ruff + ESLint
+lint: ## Ruff + ESLint + generated files in sync (JSON Schemas, docs manifest), as in CI
 	uv run ruff check .
 	uv run ruff format --check .
+	uv run python scripts/export_schemas.py --check
+	uv run python scripts/check_docs_manifest.py docs
 	@if [ -d node_modules ]; then npm run -w apps/web lint; else echo "skip web lint (run npm ci)"; fi
 
 format: ## Auto-format Python
@@ -52,8 +54,12 @@ typecheck: ## Pyright + tsc
 
 test: test-unit test-db ## All tests
 
+# The CI python job has no database: unit tests run against an address where none answers, so
+# a route that opens a connection before validating its input fails here too (12 Nov, /places).
+UNIT_DATABASE_URL := postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests
+
 test-unit: ## Unit + data contract tests (no DB, no network)
-	uv run pytest tests/unit tests/data -q
+	DATABASE_URL=$(UNIT_DATABASE_URL) uv run pytest tests/unit tests/data -q
 	@if [ -d node_modules ]; then npm run -w apps/web test -- --run; else echo "skip web tests (run npm ci)"; fi
 
 test-db: ## Integration tests against TEST_DATABASE_URL
@@ -82,8 +88,15 @@ ingest-all: ## Geography + every declared pipeline, then features
 	uv run hi-ingest run-all
 	uv run hi-features compute
 
+admin-names: ## Official spellings of municipios and Madrid districts (after the stat tables)
+	uv run hi-ingest admin-names
+
 features: ## Recompute every feature (Gold)
 	uv run hi-features compute
+
+# stdout is the MCP protocol: the recipe is not echoed and uv stays quiet (logs go to stderr).
+mcp: ## MCP server over stdio for local agents (MCP-001): read-only tools over the domain services
+	@uv run --quiet hi-mcp
 
 supabase-migrate: ## Apply migrations to SUPABASE_DATABASE_URL
 	@test -n "$(SUPABASE_DATABASE_URL)" || (echo "SUPABASE_DATABASE_URL is required (.env)" && exit 2)
@@ -98,6 +111,12 @@ deploy-demo: ## Deploy web + API to Vercel production, then smoke test (infra/de
 
 smoke-demo: ## Smoke test the public demo: make smoke-demo [DEMO_URL=https://...]
 	scripts/smoke_demo.sh $(DEMO_URL)
+
+e2e-prod: ## End-to-end journeys of the pitch against the demo (Chromium 1440 + 390 px): make e2e-prod [E2E_ARGS=...]
+	node infra/deploy/e2e/e2e_prod.mjs $(if $(DEMO_URL),--base $(DEMO_URL)) $(E2E_ARGS)
+
+demo-offline-tiles: ## Basemap extract for the offline demo (online, once): Madrid OSM (ODbL) to tiles with tilemaker
+	infra/deploy/offline/demo_offline.sh tiles
 
 demo-offline-prepare: ## Offline demo package (online, ~23 Nov): dump, images, isolated DB :5441, web build
 	infra/deploy/offline/demo_offline.sh prepare

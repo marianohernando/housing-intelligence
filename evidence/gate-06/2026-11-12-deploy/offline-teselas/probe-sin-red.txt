@@ -1,0 +1,15 @@
+Offline package on http://localhost:3012, every host other than localhost blocked (Playwright route abort
+«internetdisconnected»), 2026-11-12 ~14:05 UTC. Per page: blocked hosts, console errors and HTTP >= 400,
+vector tiles under /tiles (ok = 200 with content, empty = 200 with 0 bytes, bad = not 200), the map notices
+shown, and the start of the map attribution.
+
+desktop /map {"blocked":[],"consoleErrors":[],"tiles":{"ok":6,"empty":2,"bad":0},"notices":{"Mapa sin fondo de calles.":false,"No se ha podido cargar el mapa":false},"attribution":"© OpenStreetMap contributors (ODbL) · © OpenMapTiles | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.com"}
+desktop /zona/distrito/2807905 {"blocked":[],"consoleErrors":[],"tiles":{"ok":71,"empty":2,"bad":0},"notices":{"Mapa sin fondo de calles.":false,"No se ha podido cargar el mapa":false},"attribution":"© OpenStreetMap contributors (ODbL) · © OpenMapTiles | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.com"}
+mobile /map {"blocked":[],"consoleErrors":[],"tiles":{"ok":5,"empty":0,"bad":0},"notices":{"Mapa sin fondo de calles.":false,"No se ha podido cargar el mapa":false},"attribution":"© OpenStreetMap contributors (ODbL) · © OpenMapTiles | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.com"}
+mobile /zona/distrito/2807905 {"blocked":[],"consoleErrors":[],"tiles":{"ok":21,"empty":0,"bad":0},"notices":{"Mapa sin fondo de calles.":false,"No se ha podido cargar el mapa":false},"attribution":"© OpenStreetMap contributors (ODbL) · © OpenMapTiles | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.com"}
+
+Serving checks with curl:
+tiles.json 200 application/json; charset=UTF-8 3133B
+z14 200 application/octet-stream 7012B   (/tiles/14/7990/6178.pbf)
+empty /14/8033/6207.pbf 200 0B
+missing 404                              (/tiles/14/1/1.pbf, outside the bounds: MapLibre never asks for it)

@@ -1,0 +1,678 @@
+{
+  "type": "FeatureCollection",
+  "contract_version": "places-1",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "0438146d-3ee5-51a1-a880-baa30d1c65fc",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.681534,
+          40.439606
+        ]
+      },
+      "properties": {
+        "name": "PATRIARCA OBISPO EIJO GARAY",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905001",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0f7fae15-7903-53a9-a1c6-75857e87f920",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.67678,
+          40.461715
+        ]
+      },
+      "properties": {
+        "name": "WILLOUGHBY COLLEGE",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905078",
+        "ownership": "privada",
+        "gap_rows": [],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "11765752-7e74-550e-aae3-4499789173e8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.686874,
+          40.454493
+        ]
+      },
+      "properties": {
+        "name": "SAN AGUSTIN",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905067",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "216c45a9-a1b7-5537-820d-052080dd9de1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.6842,
+          40.446716
+        ]
+      },
+      "properties": {
+        "name": "NERVION",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905002",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2a6fc2e0-a696-526b-8516-888477cb8a28",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.669013,
+          40.464607
+        ]
+      },
+      "properties": {
+        "name": "ISAAC ALBENIZ",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905084",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2b8eb304-ab68-5e8c-8deb-0cd92666b49f",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.678486,
+          40.468308
+        ]
+      },
+      "properties": {
+        "name": "NUESTRA SEÑORA DEL RECUERDO",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905100",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "45155fb3-eec3-56a8-9269-fc8b6b4c8628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.677012,
+          40.442461
+        ]
+      },
+      "properties": {
+        "name": "CORAZON INMACULADO",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905043",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "46c4664e-c52d-5441-b71c-b9a7b093ece8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.684413,
+          40.463048
+        ]
+      },
+      "properties": {
+        "name": "NUESTRA SEÑORA DE LA CONSOLACIÓN",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905074",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "47fc9549-fadd-5086-b7be-cd99c17767b5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.685498,
+          40.457258
+        ]
+      },
+      "properties": {
+        "name": "PARAISO SAGRADOS CORAZONES",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905067",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "4879a1d0-044d-5d91-b2ff-1a0dda2c3033",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.687265,
+          40.446635
+        ]
+      },
+      "properties": {
+        "name": "NUESTRA SEÑORA DE LAS MARAVILLAS",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905002",
+        "ownership": "privada",
+        "gap_rows": [],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "4c7685d8-6165-5fd1-b075-d4fa859f008e",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.676217,
+          40.469051
+        ]
+      },
+      "properties": {
+        "name": "SAGRADO CORAZON",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905085",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "578f0bf8-ca9f-5564-abd3-96589c475e84",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.679289,
+          40.461331
+        ]
+      },
+      "properties": {
+        "name": "WISDOM SCHOOL MADRID",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905078",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "631ec7e4-1b01-50f7-8fa4-184fdbe2de2d",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.679624,
+          40.459473
+        ]
+      },
+      "properties": {
+        "name": "SAN JUAN DE LA CRUZ",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905079",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "6df191ac-c5a4-5721-bb44-5c8ebe719007",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.680729,
+          40.450998
+        ]
+      },
+      "properties": {
+        "name": "SAN FRANCISCO DE ASIS",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905007",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "78cc8232-1666-58bf-9e1f-a442e2e8d115",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.686416,
+          40.454685
+        ]
+      },
+      "properties": {
+        "name": "MARIA VIRGEN",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905067",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "7e8641c4-1253-5afe-a09e-be845cede9c9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.678882,
+          40.450207
+        ]
+      },
+      "properties": {
+        "name": "SAN RAMON Y SAN ANTONIO",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905007",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "aa556a85-89a6-5dc9-8a3f-f54bc9559e98",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.673475,
+          40.443689
+        ]
+      },
+      "properties": {
+        "name": "LUIS BELLO",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905019",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b20440e6-20b9-56ae-894a-8f570a15dc45",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.667783,
+          40.451172
+        ]
+      },
+      "properties": {
+        "name": "PADRE POVEDA",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905038",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bebef11c-b30d-51a9-af8e-71209084e107",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.686071,
+          40.463723
+        ]
+      },
+      "properties": {
+        "name": "ALTAIR, COLEGIO INTERNACIONAL",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905076",
+        "ownership": "privada",
+        "gap_rows": [],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bf68d37e-257d-5cec-b1d1-5028a03610d6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.670972,
+          40.460001
+        ]
+      },
+      "properties": {
+        "name": "SAGRADO CORAZON",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905081",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "c17205a6-0de6-5180-b9e3-d2b62322380c",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.679452,
+          40.459933
+        ]
+      },
+      "properties": {
+        "name": "NUESTRA SEÑORA DE LA MERCED",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905079",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "d54c6c8a-cf7b-5b57-b454-fd5592c2f762",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.672157,
+          40.440444
+        ]
+      },
+      "properties": {
+        "name": "CLARET",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905033",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "d81e030c-ceb2-53af-af2c-e66f69d362aa",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.686172,
+          40.442326
+        ]
+      },
+      "properties": {
+        "name": "RAMIRO DE MAEZTU",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905002",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e220d2f3-0c05-5e31-b2fb-35eae825b236",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.6739,
+          40.449659
+        ]
+      },
+      "properties": {
+        "name": "FUNDACION SANTAMARCA",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905038",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f02bd502-6cf5-5f55-8b9f-274f9054c17b",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.672946,
+          40.460476
+        ]
+      },
+      "properties": {
+        "name": "SANTA CATALINA DE SENA",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905083",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f22a3d72-e95c-56d3-b97d-a3132b2d6c94",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.678707,
+          40.444514
+        ]
+      },
+      "properties": {
+        "name": "PINTOR ROSALES",
+        "category": "education",
+        "subcategory": "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905009",
+        "ownership": "publica",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f7322ee1-42bf-54e0-8768-eaeee5b9bced",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.671425,
+          40.467584
+        ]
+      },
+      "properties": {
+        "name": "CARDENAL SPINOLA",
+        "category": "education",
+        "subcategory": "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA",
+        "municipio": "28079",
+        "seccion": "ES.28.SEC.2807905085",
+        "ownership": "concertada",
+        "gap_rows": [
+          "colegio"
+        ],
+        "capacity": null,
+        "coordinates": "source",
+        "confidence": 1.0
+      }
+    }
+  ],
+  "total": 27,
+  "page": 1,
+  "pages": 1
+}

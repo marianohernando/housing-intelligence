@@ -18,7 +18,13 @@ REPO = Path(__file__).resolve().parents[1]
 BRONZE = REPO / "data" / "bronze" / "datasets"
 OUT = REPO / "data" / "fixtures" / "golden" / "stat_sample"
 CM_CODES = {"0014", "0029", "0796"}  # La Acebeda, Ajalvir, Madrid (municipio + check digit)
-POSTCODES = ("28013", "28026", "28046")
+POSTCODES = (
+    "28013",
+    "28026",
+    "28029",
+    "28036",
+    "28046",
+)  # 28029 and 28036 hold sample health centres
 
 
 def _latest_bronze(dataset_id: str) -> Path:
@@ -37,7 +43,7 @@ def _sample_stat(frame: pd.DataFrame, spec: CmStatTablePipeline) -> pd.DataFrame
         period == latest
         and (
             (kind == "Municipios" and code in CM_CODES)
-            or kind == "Comunidad de Madrid"
+            or kind in ("Comunidad de Madrid", "Otros")  # «Otros»: regional-only tables
             or (kind == "Zonas Estadísticas" and code == first_zone)
         )
         for period, kind, code in zip(periods, types, codes, strict=True)

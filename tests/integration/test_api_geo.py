@@ -38,3 +38,21 @@ def test_municipalities_geojson_with_lineage(published: RunSummary, client: Test
     assert body["meta"]["data_version"] == published.version_label
     assert "CC BY" in body["data"]["lineage"]["attribution_text"]
     assert body["warnings"] == []
+
+
+def test_readable_names_and_children_of_a_parent(published: RunSummary, client: TestClient) -> None:
+    assert published.status == "SUCCESS"
+    url = "/api/v1/geo/admin-units"
+    municipios = client.get(url, params={"level": "municipio"}).json()["data"]["features"]
+    assert {f["properties"]["name"] for f in municipios} == {"Madrid", "La Acebeda", "Ajalvir"}
+    every = client.get(url, params={"level": "distrito"}).json()["data"]["features"]
+    madrid = client.get(url, params={"level": "distrito", "parent": "ES.28.MUN.28079"}).json()
+    children = madrid["data"]["features"]
+    expected = {f["id"] for f in every if f["properties"]["parent"] == "ES.28.MUN.28079"}
+    assert children
+    assert {f["id"] for f in children} == expected
+    assert len(children) < len(every)
+    assert madrid["warnings"] == []
+    nobody = client.get(url, params={"level": "distrito", "parent": "ES.28.MUN.00000"}).json()
+    assert nobody["data"]["features"] == []
+    assert nobody["warnings"]

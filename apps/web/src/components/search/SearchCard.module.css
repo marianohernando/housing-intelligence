@@ -1,0 +1,367 @@
+.card {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 27rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.head h2 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+.summary {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.body[hidden] {
+  display: none;
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.group > legend,
+.legend {
+  margin-bottom: var(--space-1);
+  padding: 0;
+  font-family: var(--font-title);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.help,
+.legendHelp {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Help inside a legend: on its own line, like .help, except on short desktop screens */
+.legendHelp {
+  display: block;
+  margin-top: var(--space-1);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.input {
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.input::placeholder {
+  color: var(--ink-soft);
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-weight: 500;
+}
+
+.tag {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--justo-bg);
+  color: var(--justo-ink);
+  font-size: 0.78rem;
+}
+
+.range {
+  width: 100%;
+  min-height: var(--target);
+  accent-color: var(--violet);
+  cursor: pointer;
+}
+
+.submit {
+  width: 100%;
+}
+
+.error {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--falta-bg);
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+}
+
+.budgetRow {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Short desktop screens (1440×900): tighter rhythm so the button is in view without scrolling */
+@media (min-width: 1101px) and (max-height: 960px) {
+  .card {
+    gap: var(--space-2);
+    padding: var(--space-4) 1.25rem;
+  }
+
+  .body {
+    gap: var(--space-2);
+  }
+
+  .group {
+    gap: 0.375rem;
+  }
+
+  .legendHelp {
+    display: inline;
+    margin: 0 0 0 var(--space-2);
+  }
+
+  /* «Trabajo en»: its help goes next to the label, the field below (same DOM order) */
+  .work {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.375rem;
+  }
+
+  .work > .input {
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  .budgetRow {
+    grid-template-columns: minmax(12rem, auto) 1fr;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .amount {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    text-align: right;
+  }
+}
+
+/* busqueda.pronto, in place of the button while POST /search is not published */
+.soonNote {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+/* Native selects and checkboxes of the card: 44 px targets */
+.select {
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.check input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--violet-strong);
+}
+
+.remove {
+  display: grid;
+  flex: none;
+  width: var(--target);
+  height: var(--target);
+  place-items: center;
+  margin-left: auto;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: var(--falta-ink);
+}
+
+/* «Lo quiero a un paseo»: one line per service, wrapping on narrow cards */
+.nearList {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* «Colegio a [10] min andando como mucho» on top; «Imprescindible» and «Quitar» below */
+.nearItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 var(--space-2);
+}
+
+.nearSentence {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.nearName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 500;
+}
+
+.nearName svg {
+  color: var(--violet-strong);
+}
+
+/* «a [10] min andando como mucho»: the selector inside the sentence */
+.nearMinutes {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}
+
+
+
+/* «Trabajo en»: the place picked, or the field with its list of places */
+.place {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  padding-left: var(--space-3);
+  border: 1px solid var(--violet);
+  border-radius: var(--radius);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-weight: 500;
+}
+
+.placeName {
+  min-width: 0;
+}
+
+.combo {
+  position: relative;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.options {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  z-index: 3;
+  max-height: 22rem;
+  margin: 0;
+  padding: var(--space-1);
+  overflow-y: auto;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--glass-shadow);
+  list-style: none;
+}
+
+.options[hidden] {
+  display: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.option small {
+  flex: none;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.option[aria-selected="true"],
+.option:hover {
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+}

@@ -3,9 +3,9 @@
     "schema_version": 2,
     "budget": {
       "kind": "rent",
-      "amount_eur": 1200
+      "amount_eur": 1500
     },
-    "min_floor_area_m2": 90,
+    "min_floor_area_m2": null,
     "household": {
       "adults": 2,
       "minors": 2,
@@ -29,7 +29,7 @@
       {
         "need": "colegio",
         "max_walk_minutes": 10,
-        "required": false
+        "required": true
       }
     ],
     "priorities": [
@@ -42,164 +42,135 @@
     {
       "rank": 1,
       "zone": {
-        "level": "municipio",
-        "code": "28009",
-        "admin_unit_id": "ES.28.MUN.28009",
-        "name": "Algete",
-        "municipio_ine": "28009",
-        "municipio_name": "Algete",
-        "center_lon": -3.49867,
-        "center_lat": 40.61846
+        "level": "distrito",
+        "code": "2807910",
+        "admin_unit_id": "ES.28.DIS.2807910",
+        "name": "Latina",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.78686,
+        "center_lat": 40.3879
       },
-      "match_pct": 100,
-      "confidence": 1.0,
+      "match_pct": 98,
+      "confidence": 0.94,
       "facts": [
         {
           "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 774 €/mes por 90 m² (8,6 €/m²)",
-          "confidence": 1.0,
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 0.992,
           "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 8.6,
-            "unit": "EUR/m2/mes",
-            "confidence": 1.0,
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.554,
+            "unit": "min",
+            "confidence": 0.992,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_alquiler_m2_municipios"
+              "cm_centros_educativos",
+              "osm_red_peatonal"
             ]
           }
         },
         {
           "kind": "strength",
-          "topic": "colegios",
-          "text": "4,1 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 0.992,
           "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 4.077,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.036,
+            "unit": "min",
+            "confidence": 0.992,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
             ]
           }
         },
         {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 10 min andando",
+          "confidence": 0.992,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 10.23,
+            "unit": "min",
+            "confidence": 0.992,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
           "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.3,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
         }
       ],
       "constraints": [
         {
           "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 774.0,
-          "threshold": 1200.0,
+          "value": 1101.0,
+          "threshold": 1500.0,
           "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 774 €/mes por 90 m² (8,6 €/m²)"
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.6,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.992,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 774.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "CUBIERTO"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "CUBIERTO"
-        }
-      ]
-    },
-    {
-      "rank": 2,
-      "zone": {
-        "level": "municipio",
-        "code": "28132",
-        "admin_unit_id": "ES.28.MUN.28132",
-        "name": "San Martin de la Vega",
-        "municipio_ine": "28132",
-        "municipio_name": "San Martin de la Vega",
-        "center_lon": -3.56972,
-        "center_lat": 40.24299
-      },
-      "match_pct": 99,
-      "confidence": 1.0,
-      "facts": [
-        {
-          "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 639 €/mes por 90 m² (7,1 €/m²)",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 7.1,
-            "unit": "EUR/m2/mes",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "municipio",
-            "datasets": [
-              "cm_alquiler_m2_municipios"
-            ]
-          }
-        },
-        {
-          "kind": "strength",
-          "topic": "colegios",
-          "text": "3,2 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 3.155,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "municipio",
-            "datasets": [
-              "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
-            ]
-          }
-        },
-        {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
-          "indicator": null
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "PASS",
-          "value": 639.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 639 €/mes por 90 m² (7,1 €/m²)"
-        }
-      ],
-      "failed_constraints": [],
-      "estimated_cost_eur": 639.0,
+      "estimated_cost_eur": 1101.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -210,83 +181,296 @@
           "row": "centro_salud",
           "label": "Centros de salud",
           "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "zone": {
+        "level": "distrito",
+        "code": "2807914",
+        "admin_unit_id": "ES.28.DIS.2807914",
+        "name": "Moratalaz",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.64052,
+        "center_lat": 40.40558
+      },
+      "match_pct": 98,
+      "confidence": 0.94,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 0.992,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.991,
+            "unit": "min",
+            "confidence": 0.992,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 0.992,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.052,
+            "unit": "min",
+            "confidence": 0.992,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 11 min andando",
+          "confidence": 0.992,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 11.07,
+            "unit": "min",
+            "confidence": 0.992,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "40 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.083 €/mes por 77 m² (14,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.06,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1083.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.083 €/mes por 77 m² (14,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 6.0,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.992,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1083.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
         }
       ]
     },
     {
       "rank": 3,
       "zone": {
-        "level": "municipio",
-        "code": "28058",
-        "admin_unit_id": "ES.28.MUN.28058",
-        "name": "Fuenlabrada",
-        "municipio_ine": "28058",
-        "municipio_name": "Fuenlabrada",
-        "center_lon": -3.80102,
-        "center_lat": 40.28867
+        "level": "distrito",
+        "code": "2807915",
+        "admin_unit_id": "ES.28.DIS.2807915",
+        "name": "Ciudad Lineal",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.65477,
+        "center_lat": 40.44849
       },
-      "match_pct": 97,
-      "confidence": 1.0,
+      "match_pct": 98,
+      "confidence": 0.945,
       "facts": [
         {
           "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 846 €/mes por 90 m² (9,4 €/m²)",
-          "confidence": 1.0,
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 5 min andando",
+          "confidence": 0.998,
           "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 9.4,
-            "unit": "EUR/m2/mes",
-            "confidence": 1.0,
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.098,
+            "unit": "min",
+            "confidence": 0.998,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_alquiler_m2_municipios"
+              "cm_centros_educativos",
+              "osm_red_peatonal"
             ]
           }
         },
         {
           "kind": "strength",
-          "topic": "colegios",
-          "text": "3,1 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 0.998,
           "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 3.103,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.236,
+            "unit": "min",
+            "confidence": 0.998,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
             ]
           }
         },
         {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 10 min andando",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 10.41,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
           "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.230 €/mes por 77 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.98,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
         }
       ],
       "constraints": [
         {
           "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 846.0,
-          "threshold": 1200.0,
+          "value": 1230.0,
+          "threshold": 1500.0,
           "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 846 €/mes por 90 m² (9,4 €/m²)"
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.230 €/mes por 77 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.1,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.998,
+          "explanation": "La mitad de sus calles está a 5 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 846.0,
+      "estimated_cost_eur": 1230.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -296,84 +480,147 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
         }
       ]
     },
     {
       "rank": 4,
       "zone": {
-        "level": "municipio",
-        "code": "28073",
-        "admin_unit_id": "ES.28.MUN.28073",
-        "name": "Humanes de Madrid",
-        "municipio_ine": "28073",
-        "municipio_name": "Humanes de Madrid",
-        "center_lon": -3.82697,
-        "center_lat": 40.25235
+        "level": "distrito",
+        "code": "2807913",
+        "admin_unit_id": "ES.28.DIS.2807913",
+        "name": "Puente de Vallecas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.65518,
+        "center_lat": 40.3837
       },
-      "match_pct": 95,
-      "confidence": 1.0,
+      "match_pct": 98,
+      "confidence": 0.947,
       "facts": [
         {
           "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 783 €/mes por 90 m² (8,7 €/m²)",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 4 min andando",
           "confidence": 1.0,
           "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 8.7,
-            "unit": "EUR/m2/mes",
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 4.247,
+            "unit": "min",
             "confidence": 1.0,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_alquiler_m2_municipios"
+              "cm_centros_educativos",
+              "osm_red_peatonal"
             ]
           }
         },
         {
           "kind": "strength",
-          "topic": "colegios",
-          "text": "2,9 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
           "confidence": 1.0,
           "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 2.859,
-            "unit": "centros/1000 menores",
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.089,
+            "unit": "min",
             "confidence": 1.0,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
             ]
           }
         },
         {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 8 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 7.578,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
           "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.66,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
         }
       ],
       "constraints": [
         {
           "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 783.0,
-          "threshold": 1200.0,
+          "value": 1129.0,
+          "threshold": 1500.0,
           "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 4.2,
+          "threshold": 10.0,
+          "unit": "min",
           "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 783 €/mes por 90 m² (8,7 €/m²)"
+          "explanation": "La mitad de sus calles está a 4 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 783.0,
+      "estimated_cost_eur": 1129.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -383,6 +630,11 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
           "status": "CUBIERTO"
         }
       ]
@@ -390,77 +642,285 @@
     {
       "rank": 5,
       "zone": {
-        "level": "municipio",
-        "code": "28084",
-        "admin_unit_id": "ES.28.MUN.28084",
-        "name": "Mejorada del Campo",
-        "municipio_ine": "28084",
-        "municipio_name": "Mejorada del Campo",
-        "center_lon": -3.47676,
-        "center_lat": 40.39987
+        "level": "distrito",
+        "code": "2807908",
+        "admin_unit_id": "ES.28.DIS.2807908",
+        "name": "Fuencarral-El Pardo",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.77842,
+        "center_lat": 40.55591
       },
-      "match_pct": 94,
-      "confidence": 1.0,
+      "match_pct": 97,
+      "confidence": 0.941,
       "facts": [
         {
           "kind": "strength",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 819 €/mes por 90 m² (9,1 €/m²)",
-          "confidence": 1.0,
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 9 min andando",
+          "confidence": 0.996,
           "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 9.1,
-            "unit": "EUR/m2/mes",
-            "confidence": 1.0,
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 8.989,
+            "unit": "min",
+            "confidence": 0.996,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_alquiler_m2_municipios"
+              "cm_centros_educativos",
+              "osm_red_peatonal"
             ]
           }
         },
         {
           "kind": "strength",
-          "topic": "colegios",
-          "text": "2,8 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 0.996,
           "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 2.772,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.519,
+            "unit": "min",
+            "confidence": 0.996,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
             ]
           }
         },
         {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
+          "kind": "weakness",
+          "topic": "salud",
+          "text": "Centro de salud a unos 15 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 15.06,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "trayecto",
+          "text": "29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
           "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.756,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 16.57,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.756,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
         }
       ],
       "constraints": [
         {
           "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "PASS",
-          "value": 819.0,
-          "threshold": 1200.0,
+          "value": 1276.0,
+          "threshold": 1500.0,
           "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 819 €/mes por 90 m² (9,1 €/m²)"
+          "confidence": 0.756,
+          "explanation": "Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 9.0,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.996,
+          "explanation": "La mitad de sus calles está a 9 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [],
-      "estimated_cost_eur": 819.0,
+      "estimated_cost_eur": 1276.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "JUSTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "zone": {
+        "level": "distrito",
+        "code": "2807912",
+        "admin_unit_id": "ES.28.DIS.2807912",
+        "name": "Usera",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.70367,
+        "center_lat": 40.37837
+      },
+      "match_pct": 97,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 5 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 4.926,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.333,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 8 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 8.217,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.019 €/mes por 77 m² (13,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 13.23,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1019.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.019 €/mes por 77 m² (13,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 4.9,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 5 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1019.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -470,7 +930,612 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "zone": {
+        "level": "distrito",
+        "code": "2807911",
+        "admin_unit_id": "ES.28.DIS.2807911",
+        "name": "Carabanchel",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.73811,
+        "center_lat": 40.38134
+      },
+      "match_pct": 97,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.611,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.292,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 10 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 10.01,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.127 €/mes por 77 m² (14,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 14.63,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1127.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.127 €/mes por 77 m² (14,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.6,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1127.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "zone": {
+        "level": "distrito",
+        "code": "2807916",
+        "admin_unit_id": "ES.28.DIS.2807916",
+        "name": "Hortaleza",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.63995,
+        "center_lat": 40.48079
+      },
+      "match_pct": 97,
+      "confidence": 0.946,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 8 min andando",
+          "confidence": 0.999,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 8.269,
+            "unit": "min",
+            "confidence": 0.999,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 0.999,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.577,
+            "unit": "min",
+            "confidence": 0.999,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "salud",
+          "text": "Centro de salud a unos 15 min andando",
+          "confidence": 0.999,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 15.46,
+            "unit": "min",
+            "confidence": 0.999,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "32 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.267 €/mes por 77 m² (16,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 16.46,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1267.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.267 €/mes por 77 m² (16,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 8.3,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.999,
+          "explanation": "La mitad de sus calles está a 8 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1267.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "JUSTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 9,
+      "zone": {
+        "level": "distrito",
+        "code": "2807920",
+        "admin_unit_id": "ES.28.DIS.2807920",
+        "name": "San Blas-Canillejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.60407,
+        "center_lat": 40.42918
+      },
+      "match_pct": 97,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 8 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 8.058,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.595,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 14 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 14.11,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.181 €/mes por 77 m² (15,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 15.34,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1181.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.181 €/mes por 77 m² (15,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 8.1,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 8 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1181.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "JUSTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 10,
+      "zone": {
+        "level": "distrito",
+        "code": "2807917",
+        "admin_unit_id": "ES.28.DIS.2807917",
+        "name": "Villaverde",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.69391,
+        "center_lat": 40.34248
+      },
+      "match_pct": 97,
+      "confidence": 0.943,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 6.319,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.42,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 10 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 9.796,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "strength",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.007 €/mes por 77 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 13.08,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "PASS",
+          "value": 1007.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.007 €/mes por 77 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 6.3,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.996,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [],
+      "estimated_cost_eur": 1007.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
         }
       ]
     }
@@ -479,79 +1544,289 @@
     {
       "rank": 1,
       "zone": {
-        "level": "municipio",
-        "code": "28080",
-        "admin_unit_id": "ES.28.MUN.28080",
-        "name": "Majadahonda",
-        "municipio_ine": "28080",
-        "municipio_name": "Majadahonda",
-        "center_lon": -3.88787,
-        "center_lat": 40.47175
+        "level": "distrito",
+        "code": "2807905",
+        "admin_unit_id": "ES.28.DIS.2807905",
+        "name": "Chamartín",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.67764,
+        "center_lat": 40.46066
       },
-      "match_pct": 24,
-      "confidence": 1.0,
+      "match_pct": 93,
+      "confidence": 0.947,
       "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.815,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.141,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 9 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 9.462,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "trayecto",
+          "text": "22 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
         {
           "kind": "weakness",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)",
-          "confidence": 1.0,
+          "text": "Alquiler ≈ 1.590 €/mes por 77 m² (20,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.6,
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 20.65,
             "unit": "EUR/m2/mes",
-            "confidence": 1.0,
+            "confidence": 0.8,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_alquiler_m2_municipios"
-            ]
-          }
-        },
-        {
-          "kind": "weakness",
-          "topic": "colegios",
-          "text": "1,9 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 1.934,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "municipio",
-            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
               "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
+              "cm_centros_sanitarios"
             ]
           }
-        },
-        {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
-          "indicator": null
         }
       ],
       "constraints": [
         {
           "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "FAIL",
-          "value": 1224.0,
-          "threshold": 1200.0,
+          "value": 1590.0,
+          "threshold": 1500.0,
           "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.590 €/mes por 77 m² (20,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.8,
+          "threshold": 10.0,
+          "unit": "min",
           "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)"
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [
         "budget"
       ],
-      "estimated_cost_eur": 1224.0,
+      "estimated_cost_eur": 1590.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "zone": {
+        "level": "distrito",
+        "code": "2807904",
+        "admin_unit_id": "ES.28.DIS.2807904",
+        "name": "Salamanca",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.67478,
+        "center_lat": 40.43155
+      },
+      "match_pct": 93,
+      "confidence": 0.947,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.5,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.141,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 9 min andando",
+          "confidence": 1.0,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 8.851,
+            "unit": "min",
+            "confidence": 1.0,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "trayecto",
+          "text": "26 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "weakness",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.797 €/mes por 77 m² (23,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 23.34,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "FAIL",
+          "value": 1797.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.797 €/mes por 77 m² (23,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.5,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 1.0,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [
+        "budget"
+      ],
+      "estimated_cost_eur": 1797.0,
       "gap_highlights": [
         {
           "row": "colegio",
@@ -561,185 +1836,468 @@
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
-        }
-      ]
-    },
-    {
-      "rank": 2,
-      "zone": {
-        "level": "municipio",
-        "code": "28127",
-        "admin_unit_id": "ES.28.MUN.28127",
-        "name": "Las Rozas de Madrid",
-        "municipio_ine": "28127",
-        "municipio_name": "Las Rozas de Madrid",
-        "center_lon": -3.89666,
-        "center_lat": 40.52482
-      },
-      "match_pct": 19,
-      "confidence": 1.0,
-      "facts": [
-        {
-          "kind": "weakness",
-          "topic": "coste",
-          "text": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.6,
-            "unit": "EUR/m2/mes",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "municipio",
-            "datasets": [
-              "cm_alquiler_m2_municipios"
-            ]
-          }
+          "status": "CUBIERTO"
         },
         {
-          "kind": "weakness",
-          "topic": "colegios",
-          "text": "1,5 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 1.513,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "municipio",
-            "datasets": [
-              "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
-            ]
-          }
-        },
-        {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
-          "indicator": null
-        }
-      ],
-      "constraints": [
-        {
-          "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
-          "status": "FAIL",
-          "value": 1224.0,
-          "threshold": 1200.0,
-          "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 1.224 €/mes por 90 m² (13,6 €/m²)"
-        }
-      ],
-      "failed_constraints": [
-        "budget"
-      ],
-      "estimated_cost_eur": 1224.0,
-      "gap_highlights": [
-        {
-          "row": "colegio",
-          "label": "Colegios",
-          "status": "FALTA"
-        },
-        {
-          "row": "centro_salud",
-          "label": "Centros de salud",
-          "status": "FALTA"
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
         }
       ]
     },
     {
       "rank": 3,
       "zone": {
-        "level": "municipio",
-        "code": "28115",
-        "admin_unit_id": "ES.28.MUN.28115",
-        "name": "Pozuelo de Alarcon",
-        "municipio_ine": "28115",
-        "municipio_name": "Pozuelo de Alarcon",
-        "center_lon": -3.81188,
-        "center_lat": 40.42921
+        "level": "distrito",
+        "code": "2807901",
+        "admin_unit_id": "ES.28.DIS.2807901",
+        "name": "Centro",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.70775,
+        "center_lat": 40.4178
       },
-      "match_pct": 18,
-      "confidence": 1.0,
+      "match_pct": 93,
+      "confidence": 0.945,
       "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.578,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 1.975,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 7 min andando",
+          "confidence": 0.998,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 6.915,
+            "unit": "min",
+            "confidence": 0.998,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "trayecto",
+          "text": "25 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
         {
           "kind": "weakness",
           "topic": "coste",
-          "text": "Alquiler medio ≈ 1.242 €/mes por 90 m² (13,8 €/m²)",
-          "confidence": 1.0,
+          "text": "Alquiler ≈ 1.692 €/mes por 77 m² (22,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
           "indicator": {
             "feature_id": "alquiler_m2_mensual",
-            "label": "Alquiler medio por metro cuadrado (viviendas habituales)",
-            "value": 13.8,
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 21.98,
             "unit": "EUR/m2/mes",
-            "confidence": 1.0,
+            "confidence": 0.8,
             "null_reason": null,
-            "level": "municipio",
+            "level": "distrito",
             "datasets": [
-              "cm_alquiler_m2_municipios"
-            ]
-          }
-        },
-        {
-          "kind": "weakness",
-          "topic": "colegios",
-          "text": "1,4 colegios públicos por cada 1.000 menores (la región tiene 2,2)",
-          "confidence": 1.0,
-          "indicator": {
-            "feature_id": "colegios_publicos_por_1000_menores",
-            "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-            "value": 1.434,
-            "unit": "centros/1000 menores",
-            "confidence": 1.0,
-            "null_reason": null,
-            "level": "municipio",
-            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
               "cm_centros_educativos",
-              "cm_poblacion_edad_nacionalidad_sexo"
+              "cm_centros_sanitarios"
             ]
           }
-        },
-        {
-          "kind": "unknown",
-          "topic": "colegios",
-          "text": "Distancia a pie al colegio: aún sin calcular",
-          "confidence": 0.0,
-          "indicator": null
         }
       ],
       "constraints": [
         {
           "constraint_id": "budget",
-          "label": "Alquiler hasta 1.200 €/mes para 90 m²",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
           "status": "FAIL",
-          "value": 1242.0,
-          "threshold": 1200.0,
+          "value": 1692.0,
+          "threshold": 1500.0,
           "unit": "€/mes",
-          "confidence": 1.0,
-          "explanation": "Alquiler medio ≈ 1.242 €/mes por 90 m² (13,8 €/m²)"
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.692 €/mes por 77 m² (22,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.6,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.998,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
         }
       ],
       "failed_constraints": [
         "budget"
       ],
-      "estimated_cost_eur": 1242.0,
+      "estimated_cost_eur": 1692.0,
       "gap_highlights": [
         {
           "row": "colegio",
           "label": "Colegios",
-          "status": "FALTA"
+          "status": "CUBIERTO"
         },
         {
           "row": "centro_salud",
           "label": "Centros de salud",
-          "status": "FALTA"
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "zone": {
+        "level": "distrito",
+        "code": "2807907",
+        "admin_unit_id": "ES.28.DIS.2807907",
+        "name": "Chamberí",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.7038,
+        "center_lat": 40.43619
+      },
+      "match_pct": 93,
+      "confidence": 0.943,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 5.53,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 2 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 1.92,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 8 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 7.869,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "trayecto",
+          "text": "22 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "weakness",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.733 €/mes por 77 m² (22,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 22.51,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "FAIL",
+          "value": 1733.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.733 €/mes por 77 m² (22,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 5.5,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.996,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [
+        "budget"
+      ],
+      "estimated_cost_eur": 1733.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "zone": {
+        "level": "distrito",
+        "code": "2807903",
+        "admin_unit_id": "ES.28.DIS.2807903",
+        "name": "Retiro",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.67772,
+        "center_lat": 40.40813
+      },
+      "match_pct": 93,
+      "confidence": 0.943,
+      "facts": [
+        {
+          "kind": "strength",
+          "topic": "colegios",
+          "text": "Colegio con primaria a unos 6 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_colegio",
+            "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+            "value": 6.077,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_educativos",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "transporte",
+          "text": "Parada de transporte público a unos 3 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_transporte",
+            "label": "Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona)",
+            "value": 2.522,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "crtm_gtfs_autobuses_urbanos",
+              "crtm_gtfs_cercanias",
+              "crtm_gtfs_emt",
+              "crtm_gtfs_interurbanos",
+              "crtm_gtfs_metro",
+              "crtm_gtfs_metro_ligero",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "strength",
+          "topic": "salud",
+          "text": "Centro de salud a unos 9 min andando",
+          "confidence": 0.996,
+          "indicator": {
+            "feature_id": "min_a_pie_centro_salud",
+            "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+            "value": 8.999,
+            "unit": "min",
+            "confidence": 0.996,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "cm_centros_sanitarios",
+              "osm_red_peatonal"
+            ]
+          }
+        },
+        {
+          "kind": "weakness",
+          "topic": "trayecto",
+          "text": "31 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+          "confidence": 0.7,
+          "indicator": null
+        },
+        {
+          "kind": "weakness",
+          "topic": "coste",
+          "text": "Alquiler ≈ 1.525 €/mes por 77 m² (19,8 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+          "confidence": 0.8,
+          "indicator": {
+            "feature_id": "alquiler_m2_mensual",
+            "label": "Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)",
+            "value": 19.81,
+            "unit": "EUR/m2/mes",
+            "confidence": 0.8,
+            "null_reason": null,
+            "level": "distrito",
+            "datasets": [
+              "aeat_alquiler_nuevos_contratos_codigo_postal",
+              "aeat_alquiler_nuevos_contratos_municipios",
+              "cm_alquiler_m2_codigo_postal_madrid",
+              "cm_centros_atencion_social",
+              "cm_centros_educativos",
+              "cm_centros_sanitarios"
+            ]
+          }
+        }
+      ],
+      "constraints": [
+        {
+          "constraint_id": "budget",
+          "label": "Alquiler hasta 1.500 €/mes para 77 m²",
+          "status": "FAIL",
+          "value": 1525.0,
+          "threshold": 1500.0,
+          "unit": "€/mes",
+          "confidence": 0.8,
+          "explanation": "Alquiler ≈ 1.525 €/mes por 77 m² (19,8 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+        },
+        {
+          "constraint_id": "near:colegio",
+          "label": "Colegio con primaria a 10 min andando como mucho",
+          "status": "PASS",
+          "value": 6.1,
+          "threshold": 10.0,
+          "unit": "min",
+          "confidence": 0.996,
+          "explanation": "La mitad de sus calles está a 6 min andando o menos de un colegio con primaria"
+        }
+      ],
+      "failed_constraints": [
+        "budget"
+      ],
+      "estimated_cost_eur": 1525.0,
+      "gap_highlights": [
+        {
+          "row": "colegio",
+          "label": "Colegios",
+          "status": "CUBIERTO"
+        },
+        {
+          "row": "centro_salud",
+          "label": "Centros de salud",
+          "status": "JUSTO"
+        },
+        {
+          "row": "farmacia",
+          "label": "Farmacias",
+          "status": "CUBIERTO"
         }
       ]
     }
@@ -756,9 +2314,11 @@
         "center_lon": -3.63444,
         "center_lat": 41.09507
       },
-      "match_pct": null,
+      "match_pct": 41,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -771,9 +2331,11 @@
         "center_lon": -3.48394,
         "center_lat": 40.52764
       },
-      "match_pct": null,
+      "match_pct": 70,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -786,18 +2348,20 @@
         "center_lon": -3.83933,
         "center_lat": 40.91561
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28004",
         "admin_unit_id": "ES.28.MUN.28004",
-        "name": "El Alamo",
+        "name": "El Álamo",
         "municipio_ine": "28004",
-        "municipio_name": "El Alamo",
+        "municipio_name": "El Álamo",
         "center_lon": -3.99292,
         "center_lat": 40.23265
       },
@@ -810,13 +2374,13 @@
         "level": "municipio",
         "code": "28005",
         "admin_unit_id": "ES.28.MUN.28005",
-        "name": "Alcala de Henares",
+        "name": "Alcalá de Henares",
         "municipio_ine": "28005",
-        "municipio_name": "Alcala de Henares",
+        "municipio_name": "Alcalá de Henares",
         "center_lon": -3.36464,
         "center_lat": 40.49562
       },
-      "match_pct": 84,
+      "match_pct": 90,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -831,22 +2395,24 @@
         "center_lon": -3.65558,
         "center_lat": 40.54503
       },
-      "match_pct": 30,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 77,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28007",
         "admin_unit_id": "ES.28.MUN.28007",
-        "name": "Alcorcon",
+        "name": "Alcorcón",
         "municipio_ine": "28007",
-        "municipio_name": "Alcorcon",
+        "municipio_name": "Alcorcón",
         "center_lon": -3.83886,
         "center_lat": 40.36347
       },
-      "match_pct": 72,
+      "match_pct": 95,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -861,9 +2427,11 @@
         "center_lon": -4.22362,
         "center_lat": 40.30947
       },
-      "match_pct": null,
+      "match_pct": 41,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -876,9 +2444,11 @@
         "center_lon": -3.49867,
         "center_lat": 40.61846
       },
-      "match_pct": 100,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 80,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -891,9 +2461,11 @@
         "center_lon": -4.02776,
         "center_lat": 40.65818
       },
-      "match_pct": null,
+      "match_pct": 82,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -906,9 +2478,11 @@
         "center_lon": -3.1789,
         "center_lat": 40.34148
       },
-      "match_pct": null,
+      "match_pct": 26,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -936,7 +2510,7 @@
         "center_lon": -3.65302,
         "center_lat": 40.00748
       },
-      "match_pct": 87,
+      "match_pct": 82,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -951,9 +2525,11 @@
         "center_lon": -3.45072,
         "center_lat": 40.30031
       },
-      "match_pct": 91,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 83,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -966,9 +2542,11 @@
         "center_lon": -3.91461,
         "center_lat": 40.28047
       },
-      "match_pct": 77,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 79,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -981,9 +2559,11 @@
         "center_lon": -3.46621,
         "center_lat": 40.93795
       },
-      "match_pct": null,
+      "match_pct": 43,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -996,9 +2576,11 @@
         "center_lon": -3.92442,
         "center_lat": 40.22377
       },
-      "match_pct": null,
+      "match_pct": 29,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1011,9 +2593,11 @@
         "center_lon": -3.97463,
         "center_lat": 40.72893
       },
-      "match_pct": null,
+      "match_pct": 67,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1041,9 +2625,11 @@
         "center_lon": -3.53302,
         "center_lat": 40.97204
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1056,9 +2642,11 @@
         "center_lon": -3.55901,
         "center_lat": 40.87838
       },
-      "match_pct": null,
+      "match_pct": 27,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1071,9 +2659,11 @@
         "center_lon": -3.89703,
         "center_lat": 40.41704
       },
-      "match_pct": 23,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 53,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1086,9 +2676,11 @@
         "center_lon": -3.91623,
         "center_lat": 40.72286
       },
-      "match_pct": null,
+      "match_pct": 71,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1101,9 +2693,11 @@
         "center_lon": -3.65678,
         "center_lat": 41.05929
       },
-      "match_pct": null,
+      "match_pct": 44,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1116,9 +2710,11 @@
         "center_lon": -3.12917,
         "center_lat": 40.24301
       },
-      "match_pct": null,
+      "match_pct": 42,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1131,9 +2727,11 @@
         "center_lon": -3.99473,
         "center_lat": 40.39766
       },
-      "match_pct": null,
+      "match_pct": 81,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1146,9 +2744,11 @@
         "center_lon": -3.62362,
         "center_lat": 40.98917
       },
-      "match_pct": null,
+      "match_pct": 79,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1161,9 +2761,11 @@
         "center_lon": -3.72997,
         "center_lat": 40.83762
       },
-      "match_pct": null,
+      "match_pct": 35,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1176,9 +2778,11 @@
         "center_lon": -3.63173,
         "center_lat": 40.82635
       },
-      "match_pct": null,
+      "match_pct": 69,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1191,9 +2795,11 @@
         "center_lon": -3.61383,
         "center_lat": 40.8643
       },
-      "match_pct": null,
+      "match_pct": 63,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1206,9 +2812,11 @@
         "center_lon": -4.4352,
         "center_lat": 40.29533
       },
-      "match_pct": null,
+      "match_pct": 23,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1221,9 +2829,11 @@
         "center_lon": -3.38059,
         "center_lat": 40.56606
       },
-      "match_pct": null,
+      "match_pct": 39,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1236,9 +2846,11 @@
         "center_lon": -3.37867,
         "center_lat": 40.3145
       },
-      "match_pct": null,
+      "match_pct": 77,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1251,24 +2863,28 @@
         "center_lon": -3.75691,
         "center_lat": 40.89428
       },
-      "match_pct": null,
+      "match_pct": 19,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28035",
         "admin_unit_id": "ES.28.MUN.28035",
-        "name": "Caraba/a",
+        "name": "Carabaña",
         "municipio_ine": "28035",
-        "municipio_name": "Caraba/a",
+        "municipio_name": "Carabaña",
         "center_lon": -3.24085,
         "center_lat": 40.25825
       },
-      "match_pct": null,
+      "match_pct": 77,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1296,9 +2912,11 @@
         "center_lon": -4.50137,
         "center_lat": 40.24088
       },
-      "match_pct": null,
+      "match_pct": 10,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1311,9 +2929,11 @@
         "center_lon": -4.05531,
         "center_lat": 40.75384
       },
-      "match_pct": null,
+      "match_pct": 61,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1326,9 +2946,11 @@
         "center_lon": -3.52058,
         "center_lat": 40.91671
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1342,23 +2964,27 @@
         "center_lat": 40.15248
       },
       "match_pct": 86,
-      "passes_all": true,
-      "failed_constraints": []
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28041",
         "admin_unit_id": "ES.28.MUN.28041",
-        "name": "Cobe/a",
+        "name": "Cobeña",
         "municipio_ine": "28041",
-        "municipio_name": "Cobe/a",
+        "municipio_name": "Cobeña",
         "center_lon": -3.51156,
         "center_lat": 40.56705
       },
-      "match_pct": null,
+      "match_pct": 89,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1371,9 +2997,11 @@
         "center_lon": -4.23578,
         "center_lat": 40.40147
       },
-      "match_pct": null,
+      "match_pct": 82,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1386,9 +3014,11 @@
         "center_lon": -3.42487,
         "center_lat": 40.08498
       },
-      "match_pct": null,
+      "match_pct": 4,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1401,9 +3031,11 @@
         "center_lon": -4.01663,
         "center_lat": 40.53489
       },
-      "match_pct": null,
+      "match_pct": 80,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1416,7 +3048,7 @@
         "center_lon": -3.74921,
         "center_lat": 40.66175
       },
-      "match_pct": 88,
+      "match_pct": 66,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1431,9 +3063,11 @@
         "center_lon": -4.02802,
         "center_lat": 40.69057
       },
-      "match_pct": null,
+      "match_pct": 63,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1446,7 +3080,7 @@
         "center_lon": -3.98192,
         "center_lat": 40.64857
       },
-      "match_pct": 86,
+      "match_pct": 90,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1461,9 +3095,11 @@
         "center_lon": -3.24997,
         "center_lat": 40.41895
       },
-      "match_pct": null,
+      "match_pct": 37,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1476,7 +3112,7 @@
         "center_lon": -3.55714,
         "center_lat": 40.42849
       },
-      "match_pct": 84,
+      "match_pct": 94,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1491,39 +3127,45 @@
         "center_lon": -3.84223,
         "center_lat": 40.19133
       },
-      "match_pct": null,
+      "match_pct": 76,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28051",
         "admin_unit_id": "ES.28.MUN.28051",
-        "name": "Chapineria",
+        "name": "Chapinería",
         "municipio_ine": "28051",
-        "municipio_name": "Chapineria",
+        "municipio_name": "Chapinería",
         "center_lon": -4.2159,
         "center_lat": 40.36898
       },
-      "match_pct": null,
+      "match_pct": 52,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28052",
         "admin_unit_id": "ES.28.MUN.28052",
-        "name": "Chinchon",
+        "name": "Chinchón",
         "municipio_ine": "28052",
-        "municipio_name": "Chinchon",
+        "municipio_name": "Chinchón",
         "center_lon": -3.47031,
         "center_lat": 40.1581
       },
-      "match_pct": null,
+      "match_pct": 65,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1536,9 +3178,11 @@
         "center_lon": -3.4417,
         "center_lat": 40.56311
       },
-      "match_pct": null,
+      "match_pct": 84,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1551,9 +3195,11 @@
         "center_lon": -4.09437,
         "center_lat": 40.57809
       },
-      "match_pct": null,
+      "match_pct": 33,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1566,9 +3212,11 @@
         "center_lon": -3.11668,
         "center_lat": 40.14213
       },
-      "match_pct": null,
+      "match_pct": 17,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1581,9 +3229,11 @@
         "center_lon": -4.1872,
         "center_lat": 40.47346
       },
-      "match_pct": null,
+      "match_pct": 76,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1596,9 +3246,11 @@
         "center_lon": -3.41153,
         "center_lat": 40.60898
       },
-      "match_pct": null,
+      "match_pct": 47,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1611,7 +3263,7 @@
         "center_lon": -3.80102,
         "center_lat": 40.28867
       },
-      "match_pct": 97,
+      "match_pct": 92,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1626,24 +3278,28 @@
         "center_lon": -3.52302,
         "center_lat": 40.64138
       },
-      "match_pct": null,
+      "match_pct": 76,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28060",
         "admin_unit_id": "ES.28.MUN.28060",
-        "name": "Fuentidueða de Tajo",
+        "name": "Fuentidueña de Tajo",
         "municipio_ine": "28060",
-        "municipio_name": "Fuentidueða de Tajo",
+        "municipio_name": "Fuentidueña de Tajo",
         "center_lon": -3.16522,
         "center_lat": 40.11161
       },
-      "match_pct": null,
+      "match_pct": 0,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1656,9 +3312,11 @@
         "center_lon": -3.988,
         "center_lat": 40.57005
       },
-      "match_pct": 84,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 54,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1671,9 +3329,11 @@
         "center_lon": -3.6892,
         "center_lat": 40.92898
       },
-      "match_pct": null,
+      "match_pct": 43,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1686,9 +3346,11 @@
         "center_lon": -3.70879,
         "center_lat": 40.96519
       },
-      "match_pct": null,
+      "match_pct": 47,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1701,9 +3363,11 @@
         "center_lon": -3.67988,
         "center_lat": 41.0383
       },
-      "match_pct": null,
+      "match_pct": 34,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1716,7 +3380,7 @@
         "center_lon": -3.66802,
         "center_lat": 40.30045
       },
-      "match_pct": 69,
+      "match_pct": 94,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1725,15 +3389,17 @@
         "level": "municipio",
         "code": "28066",
         "admin_unit_id": "ES.28.MUN.28066",
-        "name": "Griðon",
+        "name": "Griñón",
         "municipio_ine": "28066",
-        "municipio_name": "Griðon",
+        "municipio_name": "Griñón",
         "center_lon": -3.83882,
         "center_lat": 40.21878
       },
-      "match_pct": null,
+      "match_pct": 78,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1746,9 +3412,11 @@
         "center_lon": -3.68674,
         "center_lat": 40.76465
       },
-      "match_pct": null,
+      "match_pct": 63,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1761,9 +3429,11 @@
         "center_lon": -4.11457,
         "center_lat": 40.67716
       },
-      "match_pct": null,
+      "match_pct": 41,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1776,9 +3446,11 @@
         "center_lon": -3.45625,
         "center_lat": 41.06898
       },
-      "match_pct": null,
+      "match_pct": 21,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1791,9 +3463,11 @@
         "center_lon": -3.58352,
         "center_lat": 41.07889
       },
-      "match_pct": null,
+      "match_pct": 32,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1806,9 +3480,11 @@
         "center_lon": -3.54035,
         "center_lat": 41.08713
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1821,9 +3497,11 @@
         "center_lon": -3.8969,
         "center_lat": 40.61953
       },
-      "match_pct": null,
+      "match_pct": 47,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1836,22 +3514,24 @@
         "center_lon": -3.82697,
         "center_lat": 40.25235
       },
-      "match_pct": 95,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 81,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28074",
         "admin_unit_id": "ES.28.MUN.28074",
-        "name": "Leganes",
+        "name": "Leganés",
         "municipio_ine": "28074",
-        "municipio_name": "Leganes",
+        "municipio_name": "Leganés",
         "center_lon": -3.77683,
         "center_lat": 40.32907
       },
-      "match_pct": 86,
+      "match_pct": 95,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1866,9 +3546,11 @@
         "center_lon": -3.42312,
         "center_lat": 40.3878
       },
-      "match_pct": null,
+      "match_pct": 80,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1896,25 +3578,10 @@
         "center_lon": -3.57193,
         "center_lat": 41.04028
       },
-      "match_pct": null,
-      "passes_all": false,
-      "failed_constraints": []
-    },
-    {
-      "zone": {
-        "level": "municipio",
-        "code": "28079",
-        "admin_unit_id": "ES.28.MUN.28079",
-        "name": "Madrid",
-        "municipio_ine": "28079",
-        "municipio_name": "Madrid",
-        "center_lon": -3.68585,
-        "center_lat": 40.47761
-      },
       "match_pct": 19,
       "passes_all": false,
       "failed_constraints": [
-        "budget"
+        "near:colegio"
       ]
     },
     {
@@ -1928,10 +3595,10 @@
         "center_lon": -3.88787,
         "center_lat": 40.47175
       },
-      "match_pct": 24,
+      "match_pct": 83,
       "passes_all": false,
       "failed_constraints": [
-        "budget"
+        "near:colegio"
       ]
     },
     {
@@ -1945,9 +3612,11 @@
         "center_lon": -3.87221,
         "center_lat": 40.74608
       },
-      "match_pct": null,
+      "match_pct": 38,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1960,9 +3629,11 @@
         "center_lon": -3.3238,
         "center_lat": 40.561
       },
-      "match_pct": null,
+      "match_pct": 69,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1975,9 +3646,11 @@
         "center_lon": -3.47676,
         "center_lat": 40.39987
       },
-      "match_pct": 94,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 84,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -1990,9 +3663,11 @@
         "center_lon": -3.77326,
         "center_lat": 40.78863
       },
-      "match_pct": null,
+      "match_pct": 40,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2005,9 +3680,11 @@
         "center_lon": -3.57276,
         "center_lat": 40.69694
       },
-      "match_pct": null,
+      "match_pct": 62,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2020,9 +3697,11 @@
         "center_lon": -4.09603,
         "center_lat": 40.72335
       },
-      "match_pct": null,
+      "match_pct": 70,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2035,9 +3714,11 @@
         "center_lon": -3.50715,
         "center_lat": 41.09942
       },
-      "match_pct": null,
+      "match_pct": 10,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2050,9 +3731,11 @@
         "center_lon": -3.87987,
         "center_lat": 40.25755
       },
-      "match_pct": null,
+      "match_pct": 82,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2065,37 +3748,41 @@
         "center_lon": -3.88956,
         "center_lat": 40.65761
       },
-      "match_pct": null,
+      "match_pct": 68,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28091",
         "admin_unit_id": "ES.28.MUN.28091",
-        "name": "Morata de Tajuða",
+        "name": "Morata de Tajuña",
         "municipio_ine": "28091",
-        "municipio_name": "Morata de Tajuða",
+        "municipio_name": "Morata de Tajuña",
         "center_lon": -3.4485,
         "center_lat": 40.22733
       },
-      "match_pct": null,
+      "match_pct": 84,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28092",
         "admin_unit_id": "ES.28.MUN.28092",
-        "name": "Mostoles",
+        "name": "Móstoles",
         "municipio_ine": "28092",
-        "municipio_name": "Mostoles",
+        "municipio_name": "Móstoles",
         "center_lon": -3.89355,
         "center_lat": 40.31991
       },
-      "match_pct": 89,
+      "match_pct": 93,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -2110,9 +3797,11 @@
         "center_lon": -4.00724,
         "center_lat": 40.74959
       },
-      "match_pct": null,
+      "match_pct": 67,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2125,9 +3814,11 @@
         "center_lon": -3.67803,
         "center_lat": 40.81645
       },
-      "match_pct": null,
+      "match_pct": 32,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2155,7 +3846,7 @@
         "center_lon": -4.01501,
         "center_lat": 40.28227
       },
-      "match_pct": 90,
+      "match_pct": 84,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -2164,15 +3855,17 @@
         "level": "municipio",
         "code": "28097",
         "admin_unit_id": "ES.28.MUN.28097",
-        "name": "Navarredonda y San Mames",
+        "name": "Navarredonda y San Mamés",
         "municipio_ine": "28097",
-        "municipio_name": "Navarredonda y San Mames",
+        "municipio_name": "Navarredonda y San Mamés",
         "center_lon": -3.72739,
         "center_lat": 41.00553
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2185,24 +3878,28 @@
         "center_lon": -4.26522,
         "center_lat": 40.37733
       },
-      "match_pct": null,
+      "match_pct": 65,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28100",
         "admin_unit_id": "ES.28.MUN.28100",
-        "name": "Nuevo Baztan",
+        "name": "Nuevo Baztán",
         "municipio_ine": "28100",
-        "municipio_name": "Nuevo Baztan",
+        "municipio_name": "Nuevo Baztán",
         "center_lon": -3.25502,
         "center_lat": 40.37462
       },
-      "match_pct": null,
+      "match_pct": 49,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2215,18 +3912,20 @@
         "center_lon": -3.2033,
         "center_lat": 40.36765
       },
-      "match_pct": null,
+      "match_pct": 26,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28102",
         "admin_unit_id": "ES.28.MUN.28102",
-        "name": "Orusco de Taju/a",
+        "name": "Orusco de Tajuña",
         "municipio_ine": "28102",
-        "municipio_name": "Orusco de Taju/a",
+        "municipio_name": "Orusco de Tajuña",
         "center_lon": -3.2066,
         "center_lat": 40.28597
       },
@@ -2246,8 +3945,10 @@
         "center_lat": 40.52211
       },
       "match_pct": 75,
-      "passes_all": true,
-      "failed_constraints": []
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2260,7 +3961,7 @@
         "center_lon": -3.77305,
         "center_lat": 40.22839
       },
-      "match_pct": 85,
+      "match_pct": 92,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -2275,9 +3976,11 @@
         "center_lon": -3.48101,
         "center_lat": 40.88244
       },
-      "match_pct": null,
+      "match_pct": 0,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2290,9 +3993,11 @@
         "center_lon": -3.62492,
         "center_lat": 40.74322
       },
-      "match_pct": null,
+      "match_pct": 33,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2305,24 +4010,28 @@
         "center_lon": -4.32863,
         "center_lat": 40.35995
       },
-      "match_pct": null,
+      "match_pct": 59,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28110",
         "admin_unit_id": "ES.28.MUN.28110",
-        "name": "Perales de Taju/a",
+        "name": "Perales de Tajuña",
         "municipio_ine": "28110",
-        "municipio_name": "Perales de Taju/a",
+        "municipio_name": "Perales de Tajuña",
         "center_lon": -3.35817,
         "center_lat": 40.22578
       },
-      "match_pct": null,
+      "match_pct": 3,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2335,9 +4044,11 @@
         "center_lon": -3.17578,
         "center_lat": 40.40726
       },
-      "match_pct": null,
+      "match_pct": 24,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2350,9 +4061,11 @@
         "center_lon": -3.8293,
         "center_lat": 40.93535
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2365,40 +4078,44 @@
         "center_lon": -3.68656,
         "center_lat": 40.24585
       },
-      "match_pct": 77,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 87,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28114",
         "admin_unit_id": "ES.28.MUN.28114",
-        "name": "Pi/uecar-Gandullas",
+        "name": "Piñuécar-Gandullas",
         "municipio_ine": "28114",
-        "municipio_name": "Pi/uecar-Gandullas",
+        "municipio_name": "Piñuécar-Gandullas",
         "center_lon": -3.59934,
         "center_lat": 41.03499
       },
-      "match_pct": null,
+      "match_pct": 22,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28115",
         "admin_unit_id": "ES.28.MUN.28115",
-        "name": "Pozuelo de Alarcon",
+        "name": "Pozuelo de Alarcón",
         "municipio_ine": "28115",
-        "municipio_name": "Pozuelo de Alarcon",
+        "municipio_name": "Pozuelo de Alarcón",
         "center_lon": -3.81188,
         "center_lat": 40.42921
       },
-      "match_pct": 18,
+      "match_pct": 81,
       "passes_all": false,
       "failed_constraints": [
-        "budget"
+        "near:colegio"
       ]
     },
     {
@@ -2412,24 +4129,28 @@
         "center_lon": -3.31374,
         "center_lat": 40.36488
       },
-      "match_pct": null,
+      "match_pct": 46,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28117",
         "admin_unit_id": "ES.28.MUN.28117",
-        "name": "Pradena del Rincon",
+        "name": "Prádena del Rincón",
         "municipio_ine": "28117",
-        "municipio_name": "Pradena del Rincon",
+        "municipio_name": "Prádena del Rincón",
         "center_lon": -3.51602,
         "center_lat": 41.03923
       },
-      "match_pct": null,
+      "match_pct": 1,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2442,9 +4163,11 @@
         "center_lon": -3.44548,
         "center_lat": 41.00637
       },
-      "match_pct": null,
+      "match_pct": 0,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2457,39 +4180,45 @@
         "center_lon": -4.05875,
         "center_lat": 40.41843
       },
-      "match_pct": null,
+      "match_pct": 76,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28120",
         "admin_unit_id": "ES.28.MUN.28120",
-        "name": "Rascafria",
+        "name": "Rascafría",
         "municipio_ine": "28120",
-        "municipio_name": "Rascafria",
+        "municipio_name": "Rascafría",
         "center_lon": -3.89,
         "center_lat": 40.87318
       },
-      "match_pct": null,
+      "match_pct": 81,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28121",
         "admin_unit_id": "ES.28.MUN.28121",
-        "name": "Redue/a",
+        "name": "Redueña",
         "municipio_ine": "28121",
-        "municipio_name": "Redue/a",
+        "municipio_name": "Redueña",
         "center_lon": -3.59416,
         "center_lat": 40.81635
       },
-      "match_pct": null,
+      "match_pct": 17,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2502,9 +4231,11 @@
         "center_lon": -3.41174,
         "center_lat": 40.66136
       },
-      "match_pct": null,
+      "match_pct": 36,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2517,7 +4248,7 @@
         "center_lon": -3.51885,
         "center_lat": 40.34912
       },
-      "match_pct": 81,
+      "match_pct": 88,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -2532,9 +4263,11 @@
         "center_lon": -3.5276,
         "center_lat": 40.94987
       },
-      "match_pct": null,
+      "match_pct": 18,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2547,9 +4280,11 @@
         "center_lon": -4.25024,
         "center_lat": 40.48218
       },
-      "match_pct": null,
+      "match_pct": 33,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2562,9 +4297,11 @@
         "center_lon": -3.61452,
         "center_lat": 41.12372
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2577,10 +4314,10 @@
         "center_lon": -3.89666,
         "center_lat": 40.52482
       },
-      "match_pct": 19,
+      "match_pct": 77,
       "passes_all": false,
       "failed_constraints": [
-        "budget"
+        "near:colegio"
       ]
     },
     {
@@ -2594,24 +4331,28 @@
         "center_lon": -4.50445,
         "center_lat": 40.3055
       },
-      "match_pct": null,
+      "match_pct": 36,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28129",
         "admin_unit_id": "ES.28.MUN.28129",
-        "name": "San Agustin del Guadalix",
+        "name": "San Agustín del Guadalix",
         "municipio_ine": "28129",
-        "municipio_name": "San Agustin del Guadalix",
+        "municipio_name": "San Agustín del Guadalix",
         "center_lon": -3.6265,
         "center_lat": 40.68273
       },
-      "match_pct": null,
+      "match_pct": 80,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2624,84 +4365,96 @@
         "center_lon": -3.50967,
         "center_lat": 40.43973
       },
-      "match_pct": 89,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 78,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28131",
         "admin_unit_id": "ES.28.MUN.28131",
-        "name": "San Lorenzo de el Escorial",
+        "name": "San Lorenzo de El Escorial",
         "municipio_ine": "28131",
-        "municipio_name": "San Lorenzo de el Escorial",
+        "municipio_name": "San Lorenzo de El Escorial",
         "center_lon": -4.14273,
         "center_lat": 40.6088
       },
-      "match_pct": null,
+      "match_pct": 72,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28132",
         "admin_unit_id": "ES.28.MUN.28132",
-        "name": "San Martin de la Vega",
+        "name": "San Martín de la Vega",
         "municipio_ine": "28132",
-        "municipio_name": "San Martin de la Vega",
+        "municipio_name": "San Martín de la Vega",
         "center_lon": -3.56972,
         "center_lat": 40.24299
       },
-      "match_pct": 99,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 83,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28133",
         "admin_unit_id": "ES.28.MUN.28133",
-        "name": "San Martin de Valdeiglesias",
+        "name": "San Martín de Valdeiglesias",
         "municipio_ine": "28133",
-        "municipio_name": "San Martin de Valdeiglesias",
+        "municipio_name": "San Martín de Valdeiglesias",
         "center_lon": -4.39313,
         "center_lat": 40.36024
       },
-      "match_pct": null,
+      "match_pct": 19,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28134",
         "admin_unit_id": "ES.28.MUN.28134",
-        "name": "San Sebastian de los Reyes",
+        "name": "San Sebastián de los Reyes",
         "municipio_ine": "28134",
-        "municipio_name": "San Sebastian de los Reyes",
+        "municipio_name": "San Sebastián de los Reyes",
         "center_lon": -3.57622,
         "center_lat": 40.58161
       },
-      "match_pct": 47,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 92,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28135",
         "admin_unit_id": "ES.28.MUN.28135",
-        "name": "Santa Maria de la Alameda",
+        "name": "Santa María de la Alameda",
         "municipio_ine": "28135",
-        "municipio_name": "Santa Maria de la Alameda",
+        "municipio_name": "Santa María de la Alameda",
         "center_lon": -4.23976,
         "center_lat": 40.58043
       },
-      "match_pct": null,
+      "match_pct": 32,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2729,9 +4482,11 @@
         "center_lon": -3.24929,
         "center_lat": 40.51413
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2744,9 +4499,11 @@
         "center_lon": -3.62244,
         "center_lat": 41.04186
       },
-      "match_pct": null,
+      "match_pct": 38,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2759,9 +4516,11 @@
         "center_lon": -3.8821,
         "center_lat": 40.21172
       },
-      "match_pct": null,
+      "match_pct": 85,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2774,9 +4533,11 @@
         "center_lon": -4.03984,
         "center_lat": 40.35671
       },
-      "match_pct": null,
+      "match_pct": 84,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2789,9 +4550,11 @@
         "center_lon": -3.5696,
         "center_lat": 41.13996
       },
-      "match_pct": null,
+      "match_pct": 6,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2804,9 +4567,11 @@
         "center_lon": -3.79047,
         "center_lat": 40.75935
       },
-      "match_pct": null,
+      "match_pct": 46,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2819,9 +4584,11 @@
         "center_lon": -3.49474,
         "center_lat": 40.73962
       },
-      "match_pct": null,
+      "match_pct": 73,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2834,9 +4601,11 @@
         "center_lon": -3.29865,
         "center_lat": 40.22737
       },
-      "match_pct": null,
+      "match_pct": 82,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2858,13 +4627,13 @@
         "level": "municipio",
         "code": "28148",
         "admin_unit_id": "ES.28.MUN.28148",
-        "name": "Torrejon de Ardoz",
+        "name": "Torrejón de Ardoz",
         "municipio_ine": "28148",
-        "municipio_name": "Torrejon de Ardoz",
+        "municipio_name": "Torrejón de Ardoz",
         "center_lon": -3.46298,
         "center_lat": 40.47063
       },
-      "match_pct": 79,
+      "match_pct": 95,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -2873,9 +4642,9 @@
         "level": "municipio",
         "code": "28149",
         "admin_unit_id": "ES.28.MUN.28149",
-        "name": "Torrejon de la Calzada",
+        "name": "Torrejón de la Calzada",
         "municipio_ine": "28149",
-        "municipio_name": "Torrejon de la Calzada",
+        "municipio_name": "Torrejón de la Calzada",
         "center_lon": -3.79834,
         "center_lat": 40.19915
       },
@@ -2888,9 +4657,9 @@
         "level": "municipio",
         "code": "28150",
         "admin_unit_id": "ES.28.MUN.28150",
-        "name": "Torrejon de Velasco",
+        "name": "Torrejón de Velasco",
         "municipio_ine": "28150",
-        "municipio_name": "Torrejon de Velasco",
+        "municipio_name": "Torrejón de Velasco",
         "center_lon": -3.75068,
         "center_lat": 40.17199
       },
@@ -2909,9 +4678,11 @@
         "center_lon": -3.54504,
         "center_lat": 40.82624
       },
-      "match_pct": null,
+      "match_pct": 78,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2924,9 +4695,11 @@
         "center_lon": -3.92398,
         "center_lat": 40.5727
       },
-      "match_pct": 55,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 69,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2939,9 +4712,11 @@
         "center_lon": -3.49596,
         "center_lat": 40.8364
       },
-      "match_pct": null,
+      "match_pct": 48,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2954,9 +4729,11 @@
         "center_lon": -3.36481,
         "center_lat": 40.41141
       },
-      "match_pct": null,
+      "match_pct": 59,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2969,9 +4746,11 @@
         "center_lon": -3.21428,
         "center_lat": 40.2018
       },
-      "match_pct": null,
+      "match_pct": 72,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2984,9 +4763,11 @@
         "center_lon": -3.35511,
         "center_lat": 40.62588
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -2999,9 +4780,11 @@
         "center_lon": -3.36207,
         "center_lat": 40.17696
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3014,9 +4797,11 @@
         "center_lon": -3.66387,
         "center_lat": 40.86247
       },
-      "match_pct": null,
+      "match_pct": 16,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3029,9 +4814,11 @@
         "center_lon": -4.30409,
         "center_lat": 40.49856
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3044,9 +4831,11 @@
         "center_lon": -4.07182,
         "center_lat": 40.50673
       },
-      "match_pct": null,
+      "match_pct": 22,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3059,7 +4848,7 @@
         "center_lon": -3.65225,
         "center_lat": 40.18098
       },
-      "match_pct": 81,
+      "match_pct": 87,
       "passes_all": true,
       "failed_constraints": []
     },
@@ -3074,24 +4863,28 @@
         "center_lon": -3.45788,
         "center_lat": 40.63784
       },
-      "match_pct": null,
+      "match_pct": 72,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28163",
         "admin_unit_id": "ES.28.MUN.28163",
-        "name": "Valdepielagos",
+        "name": "Valdepiélagos",
         "municipio_ine": "28163",
-        "municipio_name": "Valdepielagos",
+        "municipio_name": "Valdepiélagos",
         "center_lon": -3.46682,
         "center_lat": 40.76347
       },
-      "match_pct": null,
+      "match_pct": 19,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3104,9 +4897,11 @@
         "center_lon": -3.50892,
         "center_lat": 40.69637
       },
-      "match_pct": null,
+      "match_pct": 40,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3119,24 +4914,28 @@
         "center_lon": -3.30128,
         "center_lat": 40.29729
       },
-      "match_pct": null,
+      "match_pct": 46,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28166",
         "admin_unit_id": "ES.28.MUN.28166",
-        "name": "Valverde de Alcala",
+        "name": "Valverde de Alcalá",
         "municipio_ine": "28166",
-        "municipio_name": "Valverde de Alcala",
+        "municipio_name": "Valverde de Alcalá",
         "center_lon": -3.29736,
         "center_lat": 40.40246
       },
-      "match_pct": null,
+      "match_pct": 45,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3158,15 +4957,17 @@
         "level": "municipio",
         "code": "28168",
         "admin_unit_id": "ES.28.MUN.28168",
-        "name": "El Vellon",
+        "name": "El Vellón",
         "municipio_ine": "28168",
-        "municipio_name": "El Vellon",
+        "municipio_name": "El Vellón",
         "center_lon": -3.56236,
         "center_lat": 40.76336
       },
-      "match_pct": null,
+      "match_pct": 46,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3179,9 +4980,11 @@
         "center_lon": -3.62126,
         "center_lat": 40.79757
       },
-      "match_pct": null,
+      "match_pct": 29,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3194,9 +4997,11 @@
         "center_lon": -3.49995,
         "center_lat": 40.11253
       },
-      "match_pct": null,
+      "match_pct": 82,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3209,9 +5014,11 @@
         "center_lon": -4.3034,
         "center_lat": 40.27249
       },
-      "match_pct": null,
+      "match_pct": 71,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3224,9 +5031,11 @@
         "center_lon": -3.32817,
         "center_lat": 40.44508
       },
-      "match_pct": null,
+      "match_pct": 75,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3239,9 +5048,11 @@
         "center_lon": -3.25248,
         "center_lat": 40.07933
       },
-      "match_pct": null,
+      "match_pct": 50,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3278,15 +5089,17 @@
         "level": "municipio",
         "code": "28176",
         "admin_unit_id": "ES.28.MUN.28176",
-        "name": "Villanueva de la Ca/ada",
+        "name": "Villanueva de la Cañada",
         "municipio_ine": "28176",
-        "municipio_name": "Villanueva de la Ca/ada",
+        "municipio_name": "Villanueva de la Cañada",
         "center_lon": -3.99469,
         "center_lat": 40.44623
       },
-      "match_pct": 50,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 81,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3314,9 +5127,11 @@
         "center_lon": -4.09903,
         "center_lat": 40.36913
       },
-      "match_pct": null,
+      "match_pct": 83,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3329,39 +5144,45 @@
         "center_lon": -3.2421,
         "center_lat": 40.33106
       },
-      "match_pct": null,
+      "match_pct": 11,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28180",
         "admin_unit_id": "ES.28.MUN.28180",
-        "name": "Villarejo de Salvanes",
+        "name": "Villarejo de Salvanés",
         "municipio_ine": "28180",
-        "municipio_name": "Villarejo de Salvanes",
+        "municipio_name": "Villarejo de Salvanés",
         "center_lon": -3.25012,
         "center_lat": 40.134
       },
-      "match_pct": null,
+      "match_pct": 78,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
         "level": "municipio",
         "code": "28181",
         "admin_unit_id": "ES.28.MUN.28181",
-        "name": "Villaviciosa de Odon",
+        "name": "Villaviciosa de Odón",
         "municipio_ine": "28181",
-        "municipio_name": "Villaviciosa de Odon",
+        "municipio_name": "Villaviciosa de Odón",
         "center_lon": -3.93685,
         "center_lat": 40.35765
       },
-      "match_pct": 40,
-      "passes_all": true,
-      "failed_constraints": []
+      "match_pct": 47,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3374,9 +5195,11 @@
         "center_lon": -3.69938,
         "center_lat": 41.02768
       },
-      "match_pct": null,
+      "match_pct": 15,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3389,9 +5212,11 @@
         "center_lon": -4.17696,
         "center_lat": 40.54131
       },
-      "match_pct": null,
+      "match_pct": 65,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3404,9 +5229,11 @@
         "center_lon": -3.61936,
         "center_lat": 40.92016
       },
-      "match_pct": null,
+      "match_pct": 34,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3419,9 +5246,11 @@
         "center_lon": -3.59418,
         "center_lat": 40.9688
       },
-      "match_pct": null,
+      "match_pct": 15,
       "passes_all": false,
-      "failed_constraints": []
+      "failed_constraints": [
+        "near:colegio"
+      ]
     },
     {
       "zone": {
@@ -3434,29 +5263,364 @@
         "center_lon": -3.70833,
         "center_lat": 40.61376
       },
-      "match_pct": 49,
+      "match_pct": 91,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807901",
+        "admin_unit_id": "ES.28.DIS.2807901",
+        "name": "Centro",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.70775,
+        "center_lat": 40.4178
+      },
+      "match_pct": 93,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807902",
+        "admin_unit_id": "ES.28.DIS.2807902",
+        "name": "Arganzuela",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.69447,
+        "center_lat": 40.39861
+      },
+      "match_pct": 92,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807903",
+        "admin_unit_id": "ES.28.DIS.2807903",
+        "name": "Retiro",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.67772,
+        "center_lat": 40.40813
+      },
+      "match_pct": 93,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807904",
+        "admin_unit_id": "ES.28.DIS.2807904",
+        "name": "Salamanca",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.67478,
+        "center_lat": 40.43155
+      },
+      "match_pct": 93,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807905",
+        "admin_unit_id": "ES.28.DIS.2807905",
+        "name": "Chamartín",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.67764,
+        "center_lat": 40.46066
+      },
+      "match_pct": 93,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807906",
+        "admin_unit_id": "ES.28.DIS.2807906",
+        "name": "Tetuán",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.69962,
+        "center_lat": 40.4606
+      },
+      "match_pct": 94,
       "passes_all": true,
       "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807907",
+        "admin_unit_id": "ES.28.DIS.2807907",
+        "name": "Chamberí",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.7038,
+        "center_lat": 40.43619
+      },
+      "match_pct": 93,
+      "passes_all": false,
+      "failed_constraints": [
+        "budget"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807908",
+        "admin_unit_id": "ES.28.DIS.2807908",
+        "name": "Fuencarral-El Pardo",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.77842,
+        "center_lat": 40.55591
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807909",
+        "admin_unit_id": "ES.28.DIS.2807909",
+        "name": "Moncloa-Aravaca",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.7442,
+        "center_lat": 40.43932
+      },
+      "match_pct": 86,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807910",
+        "admin_unit_id": "ES.28.DIS.2807910",
+        "name": "Latina",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.78686,
+        "center_lat": 40.3879
+      },
+      "match_pct": 98,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807911",
+        "admin_unit_id": "ES.28.DIS.2807911",
+        "name": "Carabanchel",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.73811,
+        "center_lat": 40.38134
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807912",
+        "admin_unit_id": "ES.28.DIS.2807912",
+        "name": "Usera",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.70367,
+        "center_lat": 40.37837
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807913",
+        "admin_unit_id": "ES.28.DIS.2807913",
+        "name": "Puente de Vallecas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.65518,
+        "center_lat": 40.3837
+      },
+      "match_pct": 98,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807914",
+        "admin_unit_id": "ES.28.DIS.2807914",
+        "name": "Moratalaz",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.64052,
+        "center_lat": 40.40558
+      },
+      "match_pct": 98,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807915",
+        "admin_unit_id": "ES.28.DIS.2807915",
+        "name": "Ciudad Lineal",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.65477,
+        "center_lat": 40.44849
+      },
+      "match_pct": 98,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807916",
+        "admin_unit_id": "ES.28.DIS.2807916",
+        "name": "Hortaleza",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.63995,
+        "center_lat": 40.48079
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807917",
+        "admin_unit_id": "ES.28.DIS.2807917",
+        "name": "Villaverde",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.69391,
+        "center_lat": 40.34248
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807918",
+        "admin_unit_id": "ES.28.DIS.2807918",
+        "name": "Villa de Vallecas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.61591,
+        "center_lat": 40.35129
+      },
+      "match_pct": 90,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807919",
+        "admin_unit_id": "ES.28.DIS.2807919",
+        "name": "Vicálvaro",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.58338,
+        "center_lat": 40.39115
+      },
+      "match_pct": 83,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807920",
+        "admin_unit_id": "ES.28.DIS.2807920",
+        "name": "San Blas-Canillejas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.60407,
+        "center_lat": 40.42918
+      },
+      "match_pct": 97,
+      "passes_all": true,
+      "failed_constraints": []
+    },
+    {
+      "zone": {
+        "level": "distrito",
+        "code": "2807921",
+        "admin_unit_id": "ES.28.DIS.2807921",
+        "name": "Barajas",
+        "municipio_ine": "28079",
+        "municipio_name": "Madrid",
+        "center_lon": -3.57723,
+        "center_lat": 40.47932
+      },
+      "match_pct": 85,
+      "passes_all": false,
+      "failed_constraints": [
+        "near:colegio"
+      ]
     }
   ],
   "reality_check": {
-    "zones_evaluated": 179,
-    "zones_passing": 33,
-    "zones_unknown": 142,
-    "binding_constraint": "budget",
+    "zones_evaluated": 199,
+    "zones_passing": 27,
+    "zones_unknown": 15,
+    "binding_constraint": "near:colegio",
     "relaxations": [
       {
-        "constraint_id": "budget",
-        "label": "+200 €/mes",
-        "zones_if_relaxed": 37,
-        "added_zones": 4,
+        "constraint_id": "near:colegio",
+        "label": "+5 min a pie hasta colegio con primaria",
+        "zones_if_relaxed": 44,
+        "added_zones": 17,
         "relaxed_scenario": {
           "schema_version": 2,
           "budget": {
             "kind": "rent",
-            "amount_eur": 1400
+            "amount_eur": 1500
           },
-          "min_floor_area_m2": 90,
+          "min_floor_area_m2": null,
           "household": {
             "adults": 2,
             "minors": 2,
@@ -3479,8 +5643,8 @@
           "nearby": [
             {
               "need": "colegio",
-              "max_walk_minutes": 10,
-              "required": false
+              "max_walk_minutes": 15,
+              "required": true
             }
           ],
           "priorities": [
@@ -3492,13 +5656,16 @@
       },
       {
         "constraint_id": "budget",
-        "label": "Sin límite de presupuesto",
-        "zones_if_relaxed": 37,
-        "added_zones": 4,
+        "label": "+150 €/mes",
+        "zones_if_relaxed": 30,
+        "added_zones": 3,
         "relaxed_scenario": {
           "schema_version": 2,
-          "budget": null,
-          "min_floor_area_m2": 90,
+          "budget": {
+            "kind": "rent",
+            "amount_eur": 1650
+          },
+          "min_floor_area_m2": null,
           "household": {
             "adults": 2,
             "minors": 2,
@@ -3522,7 +5689,7 @@
             {
               "need": "colegio",
               "max_walk_minutes": 10,
-              "required": false
+              "required": true
             }
           ],
           "priorities": [
@@ -3536,13 +5703,70 @@
   },
   "datasets": [
     {
+      "dataset_id": "aeat_alquiler_nuevos_contratos_codigo_postal",
+      "name": "Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos por códigos postales para municipios de más de 20.000 viviendas habituales arrendadas (ejercicio 2024)",
+      "publisher": "Agencia Tributaria",
+      "is_cm_open_data": false,
+      "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+      "source_name": "Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
+      "version": "2026-11-12-9a1c2ed26a07",
+      "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
+      "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
+    },
+    {
+      "dataset_id": "aeat_alquiler_nuevos_contratos_municipios",
+      "name": "Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos para municipios de más de 20.000 habitantes (ejercicio 2024)",
+      "publisher": "Agencia Tributaria",
+      "is_cm_open_data": false,
+      "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
+      "source_name": "Agencia Tributaria · Estadística de viviendas declaradas en IRPF",
+      "version": "2026-11-12-f7bc11db960a",
+      "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
+      "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
+    },
+    {
+      "dataset_id": "ayto_padron_municipal",
+      "name": "Padrón municipal",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/200076-0-padron",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-11-f052edc26159",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
+      "name": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1934259",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-7a83b45c1f51",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
       "dataset_id": "cm_alquiler_m2_municipios",
       "name": "Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios",
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-19b2da9645e3",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "name": "Registro de centros de atención social",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-1332ab0048a6",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_educativos",
@@ -3550,8 +5774,32 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-10-21-27483ff8498b",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "name": "Centros, servicios y establecimientos sanitarios",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-adef54b3fabc",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "name": "Oficinas de farmacia",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-de61d48d7b4a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -3559,9 +5807,165 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-de171e22295d",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "name": "Secciones censales",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-20-37703ffcdfd0",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_valor_tasado_vivienda_municipios",
+      "name": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/1004050",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-60a2ddbf2260",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "crtm_gtfs_autobuses_urbanos",
+      "name": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-41f7f9c15b61",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_cercanias",
+      "name": "Oferta planificada de la Red de Cercanías Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-72e73ca7b487",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_emt",
+      "name": "Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-8478ae5c9262",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_interurbanos",
+      "name": "Oferta planificada de la Red de Autobuses Interurbanos",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-5bbf3c95047c",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_metro",
+      "name": "Oferta planificada de la Red de Metro",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-840132dbc546",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_gtfs_metro_ligero",
+      "name": "Oferta planificada de la Red de Metro Ligero",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-e6a5daaf76ec",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_topologia_cercanias",
+      "name": "Topología de la Red de Cercanías Madrid: estaciones y su grado de accesibilidad",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-cbd6ab397c04",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_topologia_metro",
+      "name": "Topología de la Red de Metro: estaciones y su grado de accesibilidad",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-c788fd9285b8",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "crtm_topologia_metro_ligero",
+      "name": "Topología de la Red de Metro Ligero / Tranvía: estaciones y su grado de accesibilidad",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-9e34e07839c7",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
+      "dataset_id": "osm_parques",
+      "name": "Parques de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-12-199d4d500a72",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
     }
   ],
-  "methodology_version": "search-fixture-illustrative"
+  "methodology_version": "fit-0.7"
 }

@@ -1,0 +1,26 @@
+source_id: ign_cartociudad
+name: CartoCiudad (servicio REST de geocodificación)
+provider: Instituto Geográfico Nacional (IGN) / Sistema Cartográfico Nacional
+source_type: official_service
+api_type: none
+base_url: https://www.cartociudad.es/geocoder/api/geocoder/find
+catalog_url: https://datos.gob.es/es/catalogo/e0dat0002-servicio-rest-de-geocodificacion-de-espana-cartociudad
+license_name: Creative Commons Attribution 4.0 (CC BY 4.0 scne.es)
+license_url: https://inspire-geoportal.ec.europa.eu/srv/api/records/spaignrest_cartociudad_address
+license_status: CLEAR
+attribution_text: "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 0.8
+update_frequency: continuous
+geographic_scope: España
+terms_reviewed_at: 2026-11-12T00:00:00Z
+robots_status: api
+active: true
+notes: >-
+  D-216. Solo se pregunta por la dirección de los registros de equipamientos de la CM cuyas
+  coordenadas faltan o contradicen su municipio o distrito declarado, y solo se acepta un
+  resultado a nivel de portal dentro del municipio declarado. Las respuestas se guardan en
+  caché (data/bronze/geocoding), así que una recarga no repite peticiones. No es un
+  geocodificador comercial ni se usa para direcciones de personas.

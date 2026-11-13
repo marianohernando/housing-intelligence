@@ -1,0 +1,43 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+268 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 20%]
+........................................................................ [ 40%]
+........................................................................ [ 60%]
+........................................................................ [ 80%]
+........................................................................ [100%]
+360 passed in 5.98s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  20 passed (20)
+      Tests  172 passed (172)
+   Start at  21:41:45
+   Duration  335ms (tests 49%, import 27%, transform 16%, worker 9%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 86%]
+...........                                                              [100%]
+83 passed in 27.63s
+
+== exit=0 (make lint typecheck test) · CORE-003 F1: dominio puro del encaje (hi_domain/fit.py, reality_check.py, search.py), 25 tests en tests/unit/fit (propiedades: UNKNOWN nunca PASS, relajar nunca quita zonas, utilidades con saturación) ==

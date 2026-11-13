@@ -1,0 +1,104 @@
+# GET /api/v1/gaps/impact sobre la base local (D-229, impact-0.1). Salida de hi_api.services.gap_impact.gap_impact.
+data_version=2026-11-12 warnings=[] seconds=1.06
+
+## Escuelas infantiles · Madrid por distrito · 199 zonas
+En la Comunidad de Madrid, 25.551 niños de 0 a 4 años (el 9,8 %) viven en 3 zonas donde faltan escuelas infantiles
+people_in_falta=25551 people_total=260310 share=0.0982
+      9433 | Puente de Vallecas (2807913) | ratio 0.571 | p 0.00115
+           Viven aquí 9.433 niños de 0 a 4 años. Tienen 57 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces
+      9150 | Carabanchel (2807911) | ratio 0.6821 | p 0.0161
+           Viven aquí 9.150 niños de 0 a 4 años. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+      6968 | Villaverde (2807917) | ratio 0.6127 | p 0.0107
+           Viven aquí 6.968 niños de 0 a 4 años. Tienen 61 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+
+## Colegios · Madrid por distrito · 199 zonas
+Ninguna zona de la Comunidad de Madrid tiene una falta clara de colegios
+people_in_falta=0 people_total=683666 share=0.0000
+
+## Centros de salud · Madrid por distrito · 199 zonas
+Ninguna zona de la Comunidad de Madrid tiene una falta clara de centros de salud
+people_in_falta=0 people_total=7113886 share=0.0000
+
+## Centros de mayores · Madrid por distrito · 199 zonas
+En la Comunidad de Madrid, 54.581 personas de 65 años o más (el 4,1 %) viven en 6 zonas donde faltan centros de mayores
+people_in_falta=54581 people_total=1342648 share=0.0407
+     23698 | Torrejón de Ardoz (28148) | ratio 0.3179 | p 0.0151
+           Viven aquí 23.698 personas de 65 años o más. Tienen 32 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+     17700 | Pozuelo de Alarcón (28115) | ratio 0.2091 | p 0.0141
+           Viven aquí 17.700 personas de 65 años o más. Tienen 21 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+      8339 | Boadilla del Monte (28022) | ratio 0.2694 | p 0.0105 · grupo Boadilla del Monte, Majadahonda
+           Viven aquí 8.339 personas de 65 años o más. Junto con sus vecinos tienen 27 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+      2614 | Paracuellos de Jarama (28104) | ratio 0.3109 | p 0.00756 · grupo Paracuellos de Jarama, Ajalvir, Cobeña, Torrejón de Ardoz
+           Viven aquí 2.614 personas de 65 años o más. Junto con sus vecinos tienen 31 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces
+      1641 | Velilla de San Antonio (28167) | ratio 0.2412 | p 0.0196 · grupo Velilla de San Antonio, Mejorada del Campo, Rivas-Vaciamadrid
+           Viven aquí 1.641 personas de 65 años o más. Junto con sus vecinos tienen 24 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+       589 | Ajalvir (28002) | ratio 0.3654 | p 0.0128 · grupo Ajalvir, Paracuellos de Jarama, Cobeña, Daganzo de Arriba, Torrejón de Ardoz
+           Viven aquí 589 personas de 65 años o más. Junto con sus vecinos tienen 37 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+
+## Farmacias · Madrid por distrito · 199 zonas
+En la Comunidad de Madrid, 667.172 personas (el 9,4 %) viven en 5 zonas donde faltan farmacias
+people_in_falta=667172 people_total=7113886 share=0.0938
+    195628 | Getafe (28065) | ratio 0.7379 | p 0.00817
+           Viven aquí 195.628 personas. Tienen 74 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces
+    144211 | Torrejón de Ardoz (28148) | ratio 0.5647 | p 0.000172
+           Viven aquí 144.211 personas. Tienen 56 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+    138012 | Parla (28106) | ratio 0.486 | p 1.16e-05
+           Viven aquí 138.012 personas. Tienen 49 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+    103243 | Rivas-Vaciamadrid (28123) | ratio 0.6687 | p 0.0141
+           Viven aquí 103.243 personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces
+     86078 | Valdemoro (28161) | ratio 0.559 | p 0.00301
+           Viven aquí 86.078 personas. Tienen 56 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces
+
+## Vivienda para familias · Madrid por municipio · 179 zonas
+En la Comunidad de Madrid, 99.483 hogares de 4 o más personas (el 14,8 %) viven en 25 zonas donde falta vivienda para familias
+people_in_falta=99483 people_total=669984 share=0.1485
+     21109 | Fuenlabrada (28058) | ratio 0.4443 | p 0.0
+           Viven aquí 21.109 hogares de 4 o más personas. Tienen 44 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+     18058 | Leganés (28074) | ratio 0.6717 | p 0.0
+           Viven aquí 18.058 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+     16660 | Alcorcón (28007) | ratio 0.7367 | p 0.0
+           Viven aquí 16.660 hogares de 4 o más personas. Tienen 74 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+     14887 | Parla (28106) | ratio 0.6057 | p 0.0
+           Viven aquí 14.887 hogares de 4 o más personas. Tienen 61 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+     13227 | Alcobendas (28006) | ratio 0.7828 | p 4.66e-256
+           Viven aquí 13.227 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+      4027 | San Fernando de Henares (28130) | ratio 0.4699 | p 0.0
+           Viven aquí 4.027 hogares de 4 o más personas. Tienen 47 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+      2658 | Mejorada del Campo (28084) | ratio 0.7804 | p 3.42e-54
+           Viven aquí 2.658 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+      2387 | Humanes de Madrid (28073) | ratio 0.6742 | p 1.02e-109
+           Viven aquí 2.387 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       951 | Manzanares el Real (28082) | ratio 0.7035 | p 2.65e-92
+           Viven aquí 951 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       882 | San Martín de Valdeiglesias (28133) | ratio 0.7678 | p 1.05e-51
+           Viven aquí 882 hogares de 4 o más personas. Tienen 77 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       854 | Villarejo de Salvanés (28180) | ratio 0.668 | p 3.1e-105
+           Viven aquí 854 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       549 | Torrejón de Velasco (28150) | ratio 0.6395 | p 1.18e-80
+           Viven aquí 549 hogares de 4 o más personas. Tienen 64 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       320 | Los Santos de la Humosa (28137) | ratio 0.6583 | p 1.49e-42
+           Viven aquí 320 hogares de 4 o más personas. Tienen 66 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       317 | Valdilecha (28165) | ratio 0.5981 | p 3.6e-59
+           Viven aquí 317 hogares de 4 o más personas. Tienen 60 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       307 | Perales de Tajuña (28110) | ratio 0.6929 | p 6.62e-33
+           Viven aquí 307 hogares de 4 o más personas. Tienen 69 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       302 | Aldea del Fresno (28008) | ratio 0.7032 | p 2.82e-30
+           Viven aquí 302 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       302 | Navas del Rey (28099) | ratio 0.7844 | p 2.31e-16
+           Viven aquí 302 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       282 | Fresno de Torote (28057) | ratio 0.7485 | p 1.52e-20
+           Viven aquí 282 hogares de 4 o más personas. Tienen 75 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       281 | Navalagamella (28095) | ratio 0.7504 | p 3.49e-20
+           Viven aquí 281 hogares de 4 o más personas. Tienen 75 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       281 | Villamanta (28174) | ratio 0.7024 | p 1.88e-28
+           Viven aquí 281 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       188 | Buitrago del Lozoya (28027) | ratio 0.7647 | p 1.26e-12
+           Viven aquí 188 hogares de 4 o más personas. Tienen 76 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       185 | Villanueva de Perales (28178) | ratio 0.7246 | p 1.18e-16
+           Viven aquí 185 hogares de 4 o más personas. Tienen 72 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       180 | Fresnedillas de la Oliva (28056) | ratio 0.6985 | p 2.71e-19
+           Viven aquí 180 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       163 | Villamantilla (28175) | ratio 0.6828 | p 1.93e-19
+           Viven aquí 163 hogares de 4 o más personas. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces
+       126 | Anchuelo (28012) | ratio 0.6781 | p 7.57e-16
+           Viven aquí 126 hogares de 4 o más personas. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces

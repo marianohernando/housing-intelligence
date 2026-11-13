@@ -1,6 +1,7 @@
 """Write JSON Schemas from the Pydantic contracts: catalog YAML files and API payloads.
 
-API schemas (data/schemas/api/) are what the web generates its TypeScript types from.
+API schemas (data/schemas/api/) are what the web generates its TypeScript types from; MCP
+schemas (data/schemas/mcp/) are the outputs of the MCP tools that have no API route.
 Usage: uv run python scripts/export_schemas.py [--check]
 """
 
@@ -12,11 +13,17 @@ from pydantic import BaseModel, TypeAdapter
 
 from hi_contracts.api.envelope import ErrorEnvelope
 from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineSpec, SourceSpec
-from hi_contracts.public import ScenarioState
+from hi_contracts.public import BarrioSearchRequest, ScenarioState
 from hi_contracts.public.responses import (
+    BarrioSearchResponse,
     DatasetListResponse,
+    GapImpactResponse,
+    GapRowMapResponse,
+    PlacesResponse,
     SearchResponse,
+    ZoneExplanationResponse,
     ZoneGapListResponse,
+    ZoneLookupResponse,
 )
 
 OUT_DIR = Path(__file__).resolve().parents[1] / "data" / "schemas"
@@ -28,9 +35,16 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "pipeline": TypeAdapter(PipelineSpec),
     "api/scenario_state": ScenarioState,
     "api/search_response": SearchResponse,
+    "api/barrio_search_request": BarrioSearchRequest,  # D-232
+    "api/barrio_search_response": BarrioSearchResponse,
     "api/zone_gap_list_response": ZoneGapListResponse,
+    "api/gap_row_map_response": GapRowMapResponse,
+    "api/gap_impact_response": GapImpactResponse,
     "api/dataset_list_response": DatasetListResponse,
+    "api/places_response": PlacesResponse,
     "api/error_response": ErrorEnvelope,
+    "mcp/zone_explanation_response": ZoneExplanationResponse,
+    "mcp/zone_lookup_response": ZoneLookupResponse,
 }
 
 

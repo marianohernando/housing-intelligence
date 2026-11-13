@@ -1,0 +1,16 @@
+# Before the fix (versions.is_current without quality_status), same tests:
+E       AssertionError: the failed run was skipped as if it had published
+E       assert 'SKIPPED' == 'SUCCESS'
+E         
+E         - SUCCESS
+E         + SKIPPED
+E       AssertionError: assert 'SKIPPED' == 'SUCCESS'
+E         
+E         - SUCCESS
+E         + SKIPPED
+FAILED tests/integration/test_runner_versions.py::test_a_crash_after_registering_is_reprocessed_next_time
+FAILED tests/integration/test_runner_versions.py::test_a_quality_failure_is_reprocessed_next_time
+2 failed, 1 passed in 8.02s
+
+# After the fix:
+3 passed in 8.49s

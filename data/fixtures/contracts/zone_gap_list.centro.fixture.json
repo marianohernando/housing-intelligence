@@ -10,36 +10,72 @@
     "center_lat": 40.4178
   },
   "method": {
-    "version": "gap-0.1",
-    "reference": "Comunidad de Madrid: total de la región dividido por su población",
+    "version": "gap-0.3",
+    "reference": "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): la oferta al alcance a pie de su población (2SFCA, 15 min) dividida por su población. Un municipio demasiado pequeño se compara junto con sus vecinos más cercanos del mismo tipo (D-217)",
     "falta_below": 0.8,
-    "cubierto_from": 1.0
+    "cubierto_from": 1.0,
+    "confidence_level": 0.95
   },
   "rows": [
     {
-      "row": "colegio",
-      "label": "Colegios",
-      "status": "CUBIERTO",
+      "row": "escuela_infantil",
+      "label": "Escuelas infantiles",
+      "status": "JUSTO",
       "indicator": {
-        "feature_id": "colegios_publicos_por_1000_menores",
-        "label": "Centros educativos públicos por cada 1.000 menores de 15 años",
-        "value": 3.512,
-        "unit": "centros/1000 menores",
+        "feature_id": "escuelas_infantiles_a_pie_por_1000_ninos",
+        "label": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años",
+        "value": 3.218,
+        "unit": "escuelas/1000 niños",
         "confidence": 1.0,
         "null_reason": null,
         "level": "distrito",
         "datasets": [
           "ayto_padron_municipal",
-          "cm_centros_educativos"
+          "cm_centros_educativos",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 2.178,
-      "reference_label": "Comunidad de Madrid",
+      "reference": 4.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "regional_reference": 4.721,
       "direction": "higher_is_better",
-      "ratio_to_reference": 1.612,
-      "explanation": "3,5 centros educativos públicos por cada 1.000 menores de 15 años; en el conjunto de la Comunidad de Madrid, 2,2",
-      "proxy_note": "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos.",
-      "extra_indicators": [],
+      "ratio_to_reference": 0.6608,
+      "explanation": "3,2 escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; en los demás municipios urbanos de la Comunidad de Madrid, 4,9 (en toda la Comunidad, 4,7)",
+      "proxy_note": "Nadie publica las plazas por escuela infantil: cada escuela cuenta como una, compartida entre los niños que la tienen a 15 minutos.",
+      "reliable": true,
+      "comparison_group": null,
+      "extra_indicators": [
+        {
+          "feature_id": "escuelas_infantiles_por_1000_ninos",
+          "label": "Escuelas infantiles por cada 1.000 niños de 0 a 4 años",
+          "value": 3.906,
+          "unit": "escuelas/1000 niños",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_padron_municipal",
+            "cm_centros_educativos"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_escuela_infantil",
+          "label": "Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona)",
+          "value": 6.497,
+          "unit": "min",
+          "confidence": 0.998459338767453,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "cm_centros_educativos",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
+      "people": {
+        "count": 3138,
+        "label": "niños de 0 a 4 años"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -47,8 +83,10 @@
           "publisher": "Ayuntamiento de Madrid",
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
           "dataset_id": "cm_centros_educativos",
@@ -56,8 +94,10 @@
           "publisher": "Comunidad de Madrid",
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
           "version": "2026-10-21-27483ff8498b",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -65,35 +105,95 @@
           "publisher": "Instituto de Estadística",
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
         }
       ]
     },
     {
-      "row": "centro_salud",
-      "label": "Centros de salud",
-      "status": "JUSTO",
+      "row": "colegio",
+      "label": "Colegios",
+      "status": "CUBIERTO",
       "indicator": {
-        "feature_id": "centros_salud_por_10000_hab",
-        "label": "Centros de atención primaria por cada 10.000 habitantes",
-        "value": 0.4889,
-        "unit": "centros/10000 hab",
-        "confidence": 1.0,
+        "feature_id": "aulas_primaria_a_pie_por_1000_ninos",
+        "label": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años",
+        "value": 30.91,
+        "unit": "aulas/1000 niños",
+        "confidence": 0.8,
         "null_reason": null,
         "level": "distrito",
         "datasets": [
           "ayto_padron_municipal",
-          "cm_centros_sanitarios"
+          "cm_centros_educativos",
+          "cm_unidades_escolares",
+          "osm_red_peatonal"
         ]
       },
-      "reference": 0.5918,
-      "reference_label": "Comunidad de Madrid",
+      "reference": 22.72,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "regional_reference": 22.97,
       "direction": "higher_is_better",
-      "ratio_to_reference": 0.8261,
-      "explanation": "0,49 centros de atención primaria por cada 10.000 habitantes; en el conjunto de la Comunidad de Madrid, 0,59",
-      "proxy_note": "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande.",
-      "extra_indicators": [],
+      "ratio_to_reference": 1.36,
+      "explanation": "30,9 aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años; en los demás municipios urbanos de la Comunidad de Madrid, 22,7 (en toda la Comunidad, 23,0)",
+      "proxy_note": "Las aulas de primaria de cada municipio (estadística de la CM) se reparten a partes iguales entre sus colegios públicos o concertados: no son las de cada colegio. No dice si hay plaza ni cuál te corresponde.",
+      "reliable": true,
+      "comparison_group": null,
+      "extra_indicators": [
+        {
+          "feature_id": "colegios_publicos_por_1000_menores",
+          "label": "Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años",
+          "value": 2.039,
+          "unit": "centros/1000 menores",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_padron_municipal",
+            "cm_centros_educativos"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_colegio",
+          "label": "Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona)",
+          "value": 5.578,
+          "unit": "min",
+          "confidence": 0.998459338767453,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "cm_centros_educativos",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
+      "people": {
+        "count": 5961,
+        "label": "niños de 5 a 14 años"
+      },
       "datasets": [
         {
           "dataset_id": "ayto_padron_municipal",
@@ -101,17 +201,21 @@
           "publisher": "Ayuntamiento de Madrid",
           "is_cm_open_data": false,
           "url": "https://datos.madrid.es/dataset/200076-0-padron",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
           "version": "2026-11-11-f052edc26159",
-          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
         },
         {
-          "dataset_id": "cm_centros_sanitarios",
-          "name": "Centros, servicios y establecimientos sanitarios",
+          "dataset_id": "cm_centros_educativos",
+          "name": "Centros educativos de la comunidad de Madrid",
           "publisher": "Comunidad de Madrid",
           "is_cm_open_data": true,
-          "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-          "version": "2026-11-10-d6ac8db8f003",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-21-27483ff8498b",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
         },
         {
           "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -119,8 +223,529 @@
           "publisher": "Instituto de Estadística",
           "is_cm_open_data": true,
           "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
           "version": "2026-11-10-de171e22295d",
-          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_unidades_escolares",
+          "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-bdf7c1ff864a",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
+        }
+      ]
+    },
+    {
+      "row": "centro_salud",
+      "label": "Centros de salud",
+      "status": "CUBIERTO",
+      "indicator": {
+        "feature_id": "centros_salud_a_pie_por_10000_hab",
+        "label": "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes",
+        "value": 0.4665,
+        "unit": "centros/10000 hab",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "distrito",
+        "datasets": [
+          "ayto_padron_municipal",
+          "cm_centros_sanitarios",
+          "osm_red_peatonal"
+        ]
+      },
+      "reference": 0.3858,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "regional_reference": 0.3824,
+      "direction": "higher_is_better",
+      "ratio_to_reference": 1.209,
+      "explanation": "0,47 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,39 (en toda la Comunidad, 0,38)",
+      "proxy_note": "Cuenta equipos de atención primaria (un centro de salud del SERMAS por equipo), no médicos ni población asignada, que no se publican en abierto. Los consultorios locales son puntos de consulta del mismo equipo: cuentan en los minutos a pie, no como capacidad.",
+      "reliable": true,
+      "comparison_group": null,
+      "extra_indicators": [
+        {
+          "feature_id": "centros_salud_por_10000_hab",
+          "label": "Centros de atención primaria por cada 10.000 habitantes",
+          "value": 0.4889,
+          "unit": "centros/10000 hab",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_padron_municipal",
+            "cm_centros_sanitarios"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_centro_salud",
+          "label": "Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona)",
+          "value": 6.915,
+          "unit": "min",
+          "confidence": 0.998459338767453,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "cm_centros_sanitarios",
+            "osm_red_peatonal"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_hospital",
+          "label": "Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona)",
+          "value": 24.25,
+          "unit": "min",
+          "confidence": 0.998459338767453,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "cm_centros_sanitarios",
+            "osm_red_peatonal"
+          ]
+        }
+      ],
+      "people": {
+        "count": 140810,
+        "label": "personas"
+      },
+      "datasets": [
+        {
+          "dataset_id": "ayto_padron_municipal",
+          "name": "Padrón municipal",
+          "publisher": "Ayuntamiento de Madrid",
+          "is_cm_open_data": false,
+          "url": "https://datos.madrid.es/dataset/200076-0-padron",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+          "version": "2026-11-11-f052edc26159",
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+        },
+        {
+          "dataset_id": "cm_centros_sanitarios",
+          "name": "Centros, servicios y establecimientos sanitarios",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-12-adef54b3fabc",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
+        }
+      ]
+    },
+    {
+      "row": "mayores",
+      "label": "Centros de mayores",
+      "status": "CUBIERTO",
+      "indicator": {
+        "feature_id": "plazas_mayores_a_pie_por_100_mayores",
+        "label": "Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más",
+        "value": 7.114,
+        "unit": "plazas/100 mayores",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "distrito",
+        "datasets": [
+          "ayto_padron_municipal",
+          "cm_centros_atencion_social",
+          "osm_red_peatonal"
+        ]
+      },
+      "reference": 4.447,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "regional_reference": 5.134,
+      "direction": "higher_is_better",
+      "ratio_to_reference": 1.6,
+      "explanation": "7,1 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 4,4 (en toda la Comunidad, 5,1)",
+      "proxy_note": "Plazas autorizadas del registro de la CM: en un hogar o club es el aforo, en un centro de día son plazas de atención diurna. Las residencias van aparte. No incluye los centros municipales de mayores del Ayuntamiento de Madrid, que no están en ese registro.",
+      "reliable": true,
+      "comparison_group": null,
+      "extra_indicators": [
+        {
+          "feature_id": "centros_mayores_por_1000_mayores",
+          "label": "Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más",
+          "value": 0.3754,
+          "unit": "centros/1000 mayores",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_padron_municipal",
+            "cm_centros_atencion_social"
+          ]
+        },
+        {
+          "feature_id": "min_a_pie_mayores",
+          "label": "Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona)",
+          "value": 7.156,
+          "unit": "min",
+          "confidence": 0.998459338767453,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "cm_centros_atencion_social",
+            "osm_red_peatonal"
+          ]
+        },
+        {
+          "feature_id": "plazas_residencia_por_100_mayores",
+          "label": "Plazas en residencias de mayores por cada 100 personas de 65 años o más",
+          "value": 0.9177,
+          "unit": "plazas/100 mayores",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_padron_municipal",
+            "cm_centros_atencion_social"
+          ]
+        }
+      ],
+      "people": {
+        "count": 23074,
+        "label": "personas de 65 años o más"
+      },
+      "datasets": [
+        {
+          "dataset_id": "ayto_padron_municipal",
+          "name": "Padrón municipal",
+          "publisher": "Ayuntamiento de Madrid",
+          "is_cm_open_data": false,
+          "url": "https://datos.madrid.es/dataset/200076-0-padron",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+          "version": "2026-11-11-f052edc26159",
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+        },
+        {
+          "dataset_id": "cm_centros_atencion_social",
+          "name": "Registro de centros de atención social",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-1332ab0048a6",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
+        }
+      ]
+    },
+    {
+      "row": "farmacia",
+      "label": "Farmacias",
+      "status": "CUBIERTO",
+      "indicator": {
+        "feature_id": "farmacias_a_pie_por_10000_hab",
+        "label": "Farmacias al alcance a pie por cada 10.000 habitantes",
+        "value": 7.629,
+        "unit": "farmacias/10000 hab",
+        "confidence": 1.0,
+        "null_reason": null,
+        "level": "distrito",
+        "datasets": [
+          "ayto_padron_municipal",
+          "cm_oficinas_farmacia",
+          "osm_red_peatonal"
+        ]
+      },
+      "reference": 3.054,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "regional_reference": 4.154,
+      "direction": "higher_is_better",
+      "ratio_to_reference": 2.498,
+      "explanation": "7,6 farmacias al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 3,1 (en toda la Comunidad, 4,2)",
+      "proxy_note": "Cada farmacia cuenta como una (la ley de la CM las planifica por habitantes, no por tamaño); no mira horarios ni guardias.",
+      "reliable": true,
+      "comparison_group": null,
+      "extra_indicators": [
+        {
+          "feature_id": "min_a_pie_farmacia",
+          "label": "Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona)",
+          "value": 2.051,
+          "unit": "min",
+          "confidence": 0.998459338767453,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "cm_oficinas_farmacia",
+            "osm_red_peatonal"
+          ]
+        },
+        {
+          "feature_id": "oficinas_farmacia_por_10000_hab",
+          "label": "Farmacias por cada 10.000 habitantes",
+          "value": 7.264,
+          "unit": "farmacias/10000 hab",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_padron_municipal",
+            "cm_oficinas_farmacia"
+          ]
+        }
+      ],
+      "people": {
+        "count": 140810,
+        "label": "personas"
+      },
+      "datasets": [
+        {
+          "dataset_id": "ayto_padron_municipal",
+          "name": "Padrón municipal",
+          "publisher": "Ayuntamiento de Madrid",
+          "is_cm_open_data": false,
+          "url": "https://datos.madrid.es/dataset/200076-0-padron",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+          "version": "2026-11-11-f052edc26159",
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+        },
+        {
+          "dataset_id": "cm_oficinas_farmacia",
+          "name": "Oficinas de farmacia",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-de61d48d7b4a",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "osm_red_peatonal",
+          "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+          "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+          "is_cm_open_data": false,
+          "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+          "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+          "version": "2026-11-11-a3206c2d1d5f",
+          "license": "Open Database License (ODbL) 1.0",
+          "attribution_text": "© OpenStreetMap contributors, ODbL."
+        }
+      ]
+    },
+    {
+      "row": "vivienda",
+      "label": "Vivienda para familias",
+      "status": "SIN_DATOS",
+      "indicator": {
+        "feature_id": "viviendas_grandes_por_100_hogares_grandes",
+        "label": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
+        "value": null,
+        "unit": "viviendas/100 hogares",
+        "confidence": 0.0,
+        "null_reason": "SOURCE_MISSING",
+        "level": "distrito",
+        "datasets": [
+          "ayto_padron_municipal"
+        ]
+      },
+      "reference": 179.9,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "regional_reference": 177.6,
+      "direction": "higher_is_better",
+      "ratio_to_reference": null,
+      "explanation": "Sin datos para esta zona",
+      "proxy_note": "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio.",
+      "reliable": true,
+      "comparison_group": null,
+      "extra_indicators": [
+        {
+          "feature_id": "tamano_medio_hogar",
+          "label": "Tamaño medio del hogar (aproximado)",
+          "value": 1.95,
+          "unit": "personas/hogar",
+          "confidence": 1.0,
+          "null_reason": null,
+          "level": "distrito",
+          "datasets": [
+            "ayto_panel_indicadores_distritos_barrios"
+          ]
+        }
+      ],
+      "people": null,
+      "datasets": [
+        {
+          "dataset_id": "ayto_padron_municipal",
+          "name": "Padrón municipal",
+          "publisher": "Ayuntamiento de Madrid",
+          "is_cm_open_data": false,
+          "url": "https://datos.madrid.es/dataset/200076-0-padron",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+          "version": "2026-11-11-f052edc26159",
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+        },
+        {
+          "dataset_id": "ayto_panel_indicadores_distritos_barrios",
+          "name": "Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico",
+          "publisher": "Ayuntamiento de Madrid",
+          "is_cm_open_data": false,
+          "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
+          "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+          "version": "2026-11-11-4726abc60a15",
+          "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+          "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+        },
+        {
+          "dataset_id": "cm_hogares_tamano_censo_2021",
+          "name": "Hogares por tamaño del hogar. Censo 2021. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-acfd552e1c9c",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+          "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-de171e22295d",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_secciones_censales",
+          "name": "Secciones censales",
+          "publisher": "Comunidad de Madrid",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-10-20-37703ffcdfd0",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+        },
+        {
+          "dataset_id": "cm_viviendas_superficie",
+          "name": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios",
+          "publisher": "Instituto de Estadística",
+          "is_cm_open_data": true,
+          "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
+          "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+          "version": "2026-11-10-382a7f2ff74a",
+          "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+          "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
         }
       ]
     }
@@ -132,8 +757,32 @@
       "publisher": "Ayuntamiento de Madrid",
       "is_cm_open_data": false,
       "url": "https://datos.madrid.es/dataset/200076-0-padron",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
       "version": "2026-11-11-f052edc26159",
-      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "ayto_panel_indicadores_distritos_barrios",
+      "name": "Panel de indicadores de distritos y barrios de Madrid. Estudio sociodemográfico",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-11-4726abc60a15",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "name": "Registro de centros de atención social",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-1332ab0048a6",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_educativos",
@@ -141,8 +790,10 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-10-21-27483ff8498b",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_centros_sanitarios",
@@ -150,8 +801,32 @@
       "publisher": "Comunidad de Madrid",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
-      "version": "2026-11-10-d6ac8db8f003",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-adef54b3fabc",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_hogares_tamano_censo_2021",
+      "name": "Hogares por tamaño del hogar. Censo 2021. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-acfd552e1c9c",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "name": "Oficinas de farmacia",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-de61d48d7b4a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
     },
     {
       "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
@@ -159,8 +834,54 @@
       "publisher": "Instituto de Estadística",
       "is_cm_open_data": true,
       "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-de171e22295d",
-      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)"
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "name": "Secciones censales",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-20-37703ffcdfd0",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_viviendas_superficie",
+      "name": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-382a7f2ff74a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
     }
   ]
 }

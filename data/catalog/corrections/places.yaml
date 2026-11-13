@@ -1,0 +1,201 @@
+# Versioned corrections to registered places (D-218 §10). Decision of Mariano (delegated to
+# datamad-10, 12 Nov): only with an official source per record, cited with URL, date consulted
+# and its exact text; never from memory or private sources. The places pipeline applies them
+# with lineage (this file is an input of the register's run) and each corrected place says so
+# in attributes.correction. Records without an official source stay declared in the evidence.
+# A `name` is the source's own text (D-221): the contract rejects one its `says` does not contain
+# (only case and quotation marks may differ), so a tilde is never added from memory.
+corrections:
+  # Hospital Universitario Ramón y Cajal: the Catálogo Nacional de Hospitales 2025 publishes
+  # «Calle De Ayala 38, 28001» for CODCNH 280029; the CM register (CH0049) and the hospital's
+  # own page put it on the Colmenar Viejo road, so no address rule can pair them.
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0049
+    reason: >-
+      El Catálogo Nacional de Hospitales sitúa el Hospital Universitario Ramón y Cajal (CODCNH
+      280029, 886 camas) en la calle de Ayala 38 (28001), no en su dirección asistencial; el
+      registro de la CM y la web del hospital lo ponen en la carretera de Colmenar Viejo, km 9,1
+      (28034). Mismo hospital general público del SERMAS: se empareja a mano.
+    source:
+      publisher: Comunidad de Madrid · Hospital Universitario Ramón y Cajal (SERMAS)
+      url: https://www.comunidad.madrid/hospital/ramonycajal/
+      consulted: 2026-11-12
+      says: "Hospital Universitario Ramón y Cajal · Ctra. de Colmenar Viejo km. 9,100 28034 Madrid"
+    directory:
+      dataset_id: ms_catalogo_nacional_hospitales
+      entry_id: "280029"
+    # The catalogue writes «Ramon»; the same source gives the name with its tilde (D-221).
+    name: Hospital Universitario Ramón y Cajal
+  # Centros de salud whose register address is «S/N» (D-216: no portal to geocode). The
+  # Ministry's primary care catalogue publishes the portal number of the same centre (same
+  # street and municipality); the coordinates then come from CartoCiudad as in D-216.
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS1184
+    reason: >-
+      El registro de la CM da «calle de Arenas del Rey S/N» (28041) sin coordenadas; el catálogo
+      del Ministerio publica el centro de salud Orcasur en el número 1 de esa calle.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328002018 · CENTRO SALUD · ORCASUR · CALLE ARENAS DEL REY, Nº 1 · 28041 · Madrid"
+    address: {street: "de Arenas del Rey", number: "1"}
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS6158
+    reason: >-
+      El registro de la CM da «calle de Mirueña S/N» (28024) sin coordenadas; el catálogo del
+      Ministerio publica el centro de salud Campamento en el número 5 de esa calle.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328006222 · CENTRO SALUD · CAMPAMENTO · CALLE MIRUEÑA, Nº 5 · 28024 · Madrid"
+    address: {street: "de Mirueña", number: "5"}
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS10286
+    reason: >-
+      El registro de la CM da «calle Ramón María del Valle Inclán S/N, c/v G. A. Bécquer»
+      (Alcalá de Henares) sin coordenadas; el catálogo del Ministerio publica el centro de salud
+      Miguel de Cervantes en la calle Gustavo Adolfo Bécquer 23, la calle de la esquina.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328001013 · CENTRO SALUD · MIGUEL DE CERVANTES · CALLE GUSTAVO ADOLFO BECQUER,Nº 23 · 28805 · Alcalá de Henares"
+    address: {street: "Gustavo Adolfo Bécquer", number: "23"}
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS7529
+    reason: >-
+      El registro de la CM da «calle Juan de Borgoña s/n» (Alcalá de Henares) sin coordenadas;
+      el catálogo del Ministerio publica el centro de salud María de Guzmán en el número 1.
+    source:
+      publisher: Ministerio de Sanidad · Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025)
+      url: https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx
+      consulted: 2026-11-12
+      says: "1328007478 · CENTRO SALUD · MARÍA DE GUZMÁN · CALLE JUAN DE BORGOÑA, Nº 1 · 28805 · Alcalá de Henares"
+    address: {street: "Juan de Borgoña", number: "1"}
+  # Names the catalogues publish without their tildes (D-221). The name is the one an official
+  # source of the Comunidad de Madrid gives the same record: the BOCM by its register number
+  # when it lists it, otherwise the centre's page on comunidad.madrid or a BOCM text with the
+  # same address. Every one of these places was already paired with its catalogue entry by its
+  # full address; only the name changes.
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0080
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Hospital Universitario Fundacion Alcorcón» (CODCNH
+      281071, calle Budapest 1); la orden que renueva su autorización sanitaria lo nombra con tilde.
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 308 (27/12/2022), Orden 1903/2022 de la Consejería de Sanidad
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2022/12/27/BOCM-20221227-29.PDF
+      consulted: 2026-11-12
+      says: "CH0080. Hospital Universitario Fundación Alcorcón. Renovación de la autorización sanitaria de funcionamiento para un C.1.1 Hospital general […] ubicado en la calle Budapest, n.º 1, 28922 Alcorcón."
+    name: Hospital Universitario Fundación Alcorcón
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0028
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Hospital de La Fuenfria» (CODCNH 280761,
+      carretera de Dehesas s/n, Cercedilla); la orden que renueva su autorización sanitaria lo
+      nombra «Hospital La Fuenfría».
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 266 (08/11/2023), Orden 1574/2023 de la Consejería de Sanidad
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/08/BOCM-20231108-27.PDF
+      consulted: 2026-11-12
+      says: "CH0028. Hospital La Fuenfría. Renovación de la autorización sanitaria de funcionamiento para un C.1.3 Hospital de media y larga estancia […] ubicado en carretera de Las Dehesas s/n, 28470 Cercedilla."
+    name: Hospital La Fuenfría
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0046
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Hospital Psiquiátrico Doctor Rodriguez Lafora»
+      (CODCNH 280262, carretera de Colmenar Viejo km 13,8); la orden que renueva su autorización
+      sanitaria lo nombra con tilde.
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 266 (08/11/2023), Orden 1574/2023 de la Consejería de Sanidad
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/08/BOCM-20231108-27.PDF
+      consulted: 2026-11-12
+      says: "CH0046. Hospital Psiquiátrico Doctor Rodríguez Lafora. Renovación de la autorización sanitaria de funcionamiento para un C.1.4 Hospital de salud mental y tratamiento de toxicomanías […] ubicado en carretera de Colmenar Viejo km 13,8, 28049 Madrid."
+    name: Hospital Psiquiátrico Doctor Rodríguez Lafora
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0011
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Hospital Universitario Fundacion Jimenez Diaz»
+      (CODCNH 280421, avenida de los Reyes Católicos 2, 28040); la página del hospital en la red
+      del Servicio Madrileño de Salud lo nombra con tildes y en la misma dirección.
+    source:
+      publisher: Comunidad de Madrid · Hospitales de la red del Servicio Madrileño de Salud
+      url: https://www.comunidad.madrid/centros/hospital-universitario-fundacion-jimenez-diaz
+      consulted: 2026-11-12
+      says: "Hospital Universitario Fundación Jiménez Díaz · Avda. Reyes Católicos, 2. · 28040"
+    name: Hospital Universitario Fundación Jiménez Díaz
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0097
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Hospital Universitario Infanta Sofia» (CODCNH
+      281258, paseo de Europa 34, 28702); la página del hospital en la red del Servicio Madrileño
+      de Salud lo nombra con tilde y en la misma dirección.
+    source:
+      publisher: Comunidad de Madrid · Hospitales de la red del Servicio Madrileño de Salud
+      url: https://www.comunidad.madrid/centros/hospital-universitario-infanta-sofia
+      consulted: 2026-11-12
+      says: "Hospital Universitario Infanta Sofía · Paseo de Europa, 34 · 28702"
+    name: Hospital Universitario Infanta Sofía
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0024
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Hospital Beata Maria Ana» (CODCNH 280360, calle
+      del Doctor Esquerdo 83, Madrid; privado benéfico de la Iglesia). El decreto de la Comunidad
+      que le concede la Placa de Oro lo nombra con tilde, sin dirección: se empareja por el nombre,
+      único en la región, y por la titularidad (las Hermanas Hospitalarias, en Madrid), no por el
+      domicilio (D-221 §3).
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 106 (06/05/2014), Decreto 53/2014 del Consejo de Gobierno
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2014/05/06/BOCM-20140506-22.PDF
+      consulted: 2026-11-12
+      says: "Conceder la Placa de Oro al Hospital “Beata María Ana”, que las Hermanas Hospitalarias gestionan con fidelidad a sus principios […] a los pacientes de Madrid."
+    name: Hospital Beata María Ana
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0038
+    reason: >-
+      El Catálogo Nacional de Hospitales escribe «Fundacion Instituto San José» (CODCNH 280416,
+      calle del Pinar de San José 98, 28054); un convenio del Servicio Madrileño de Salud con la
+      fundación la nombra con tilde y con el mismo domicilio.
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 139 (13/06/2022), adenda de 19 de mayo de 2022 al convenio del Servicio Madrileño de Salud
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2022/06/13/BOCM-20220613-25.PDF
+      consulted: 2026-11-12
+      says: "convenio entre el Servicio Madrileño de Salud y la Fundación Instituto San José […] domiciliada en Madrid, calle Pinar de San José, número 98, 28054 Madrid"
+    name: Fundación Instituto San José
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS8694
+    reason: >-
+      El Catálogo de Centros de Atención Primaria del Ministerio escribe «LAVAPIES» (calle
+      Embajadores 41, 28012); la orden que renueva su autorización sanitaria lo nombra con tilde.
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 39 (16/02/2026), Orden 123/2026 de la Consejería de Sanidad
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2026/02/16/BOCM-20260216-29.PDF
+      consulted: 2026-11-12
+      says: "CS8694.- Centro de Salud Lavapiés, sito en la Calle Embajadores, nº41, 28012 Madrid."
+    name: Centro de salud Lavapiés
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS9335
+    reason: >-
+      El Catálogo de Centros de Atención Primaria del Ministerio escribe «PEDRO LAIN ENTRALGO»
+      (Libertad 2, 28924); la orden que renueva su autorización sanitaria lo nombra con tilde.
+    source:
+      publisher: Comunidad de Madrid · BOCM núm. 293 (09/12/2025), Orden 1777/2025 de la Consejería de Sanidad
+      url: https://www.bocm.es/boletin/CM_Orden_BOCM/2025/12/09/BOCM-20251209-20.PDF
+      consulted: 2026-11-12
+      says: "CS9335.- Centro de Salud Dr. Pedro Laín Entralgo, sito en la Avenida de la Libertad, nº 2 28924 Alcorcón."
+    name: Centro de salud Dr. Pedro Laín Entralgo
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CS12162
+    reason: >-
+      El Catálogo de Centros de Atención Primaria del Ministerio escribe «INFANTE LUIS DE BORBON»
+      (consultorio local, calle Secundino Zuazo 6, 28660); la página del centro en comunidad.madrid
+      lo nombra con tilde y en la misma dirección. Se toma su nombre entero, que dice «Consultorio»
+      (D-221 §5); el registro lo inscribe como centro de salud y ese tipo no cambia (D-218 §9).
+    source:
+      publisher: Comunidad de Madrid · centros sanitarios del Servicio Madrileño de Salud
+      url: https://www.comunidad.madrid/centros/consultorio-infante-don-luis-borbon
+      consulted: 2026-11-12
+      says: "Consultorio Infante Don Luis de Borbón · C/ Secundino Zuazo, 6. · 28660"
+    name: Consultorio Infante Don Luis de Borbón

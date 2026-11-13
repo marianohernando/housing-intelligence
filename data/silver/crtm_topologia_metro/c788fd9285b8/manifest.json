@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "crtm_topologia_metro",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_topologia_metro/22031e9310c2/M4_Estaciones.json",
+      "sha256": "22031e9310c25994a64eac05822d8a8f4362961a12111270a213220471f12e1a",
+      "bytes": 34742,
+      "url": "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M4_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json",
+      "retrieved_at": "2026-11-12T14:05:40.265253+00:00"
+    }
+  ],
+  "checksum": "c788fd9285b84fb98250379921b231d5674a545fdefd3fcfba8bbf9f9cd4bbf3",
+  "parser_version": "topology-1.0.0"
+}

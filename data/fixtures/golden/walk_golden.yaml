@@ -1,0 +1,24 @@
+_note: >
+  Golden walking-access cases (Gate 3, CORE-005). The bounds say what anyone who knows the place
+  can tell (Sol has pharmacies and the metro at the door; La Acebeda, a Sierra Norte village of
+  about 70 people, has a consultorio but no pharmacy in the CM register), not what the method
+  happened to compute. Zones are the census sections of the golden Madrid zones
+  (madrid_zones.json), two districts, two municipios and the region. Every case also needs a
+  value and a confidence of at least 0.5. Checked against the OSM network and the CM registers
+  loaded on 2026-11-11, at 4 km/h since D-211 (the bounds did not change).
+cases:
+  - {id: sol_farmacia, feature: min_a_pie_farmacia, level: seccion_censal, code: "2807901124", max: 5}
+  - {id: sol_transporte, feature: min_a_pie_transporte, level: seccion_censal, code: "2807901124", max: 4}
+  - {id: sol_transporte_5min, feature: pct_calle_transporte_5min, level: seccion_censal, code: "2807901124", min: 90}
+  - {id: plaza_castilla_transporte, feature: min_a_pie_transporte, level: seccion_censal, code: "2807906076", max: 3}
+  - {id: centro_farmacia, feature: min_a_pie_farmacia, level: distrito, code: "2807901", max: 4}
+  - {id: centro_centro_salud, feature: min_a_pie_centro_salud, level: distrito, code: "2807901", max: 10}
+  - {id: madrid_colegio, feature: min_a_pie_colegio, level: municipio, code: "28079", max: 10}
+  - {id: madrid_farmacia, feature: min_a_pie_farmacia, level: municipio, code: "28079", max: 6}
+  - {id: getafe_centro_farmacia, feature: min_a_pie_farmacia, level: seccion_censal, code: "2806501011", max: 6}
+  - {id: getafe_centro_transporte, feature: min_a_pie_transporte, level: seccion_censal, code: "2806501011", max: 4}
+  - {id: alcala_centro_farmacia, feature: min_a_pie_farmacia, level: seccion_censal, code: "2800501001", max: 6}
+  - {id: alcala_centro_colegio, feature: min_a_pie_colegio, level: seccion_censal, code: "2800501001", max: 8}
+  - {id: acebeda_sin_farmacia, feature: min_a_pie_farmacia, level: municipio, code: "28001", min: 30}
+  - {id: acebeda_consultorio, feature: min_a_pie_centro_salud, level: municipio, code: "28001", max: 20}
+  - {id: region_transporte, feature: min_a_pie_transporte, level: ccaa, code: "28", max: 10}

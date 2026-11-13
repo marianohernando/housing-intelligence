@@ -1,0 +1,26 @@
+{
+ "modo": "offline",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "sin_calles_desktop": {
+  "nota": 1,
+  "aviso_fuerte": 0,
+  "resultados": "Con tu búsqueda tal cual salen 33 zonas.",
+  "solapes": [],
+  "axe": [],
+  "consola_esperada": 1,
+  "consola_otros": []
+ },
+ "sin_calles_mobile": {
+  "nota": 1,
+  "aviso_fuerte": 0,
+  "resultados": "Con tu búsqueda tal cual salen 33 zonas.",
+  "solapes": [],
+  "axe": [],
+  "consola_esperada": 1,
+  "consola_otros": []
+ },
+ "sin_calles_ni_zonas": {
+  "aviso_fuerte": "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas. Ver las zonas en una lista",
+  "nota": 0
+ }
+}

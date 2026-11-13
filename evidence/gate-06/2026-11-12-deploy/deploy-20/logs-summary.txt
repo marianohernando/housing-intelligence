@@ -1,0 +1,15 @@
+vercel logs, deployment dpl_4P9B8j15b8pzTHugitgyeFxAaq94, from 2026-11-12T22:02:00Z to 2026-11-12T22:12:35.385Z (UTC)
+runtime log lines: 425, more pages: false, levels:  425 info 
+  "EMAXCONNSESSION"        0
+  "prepared statement"     0
+  "password authentication" 0
+  "OperationalError"       0
+  "Traceback"              0
+  "ValueError"             0
+  "KeyError"               0
+  "connection"             0
+  "timeout"                0
+instances started ("Started server process"): 6
+API access lines by status:  387 200 
+CDN request records: 1369, by status: 1363 200  6 304 
+CDN 4xx/5xx:

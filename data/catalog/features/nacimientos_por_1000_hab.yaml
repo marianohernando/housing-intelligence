@@ -1,0 +1,31 @@
+feature_id: nacimientos_por_1000_hab
+version: 1
+human_name: Nacimientos por cada 1.000 habitantes (último año publicado)
+domain: population
+type: derived
+unit: nacimientos/1000 hab
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_nacidos_vivos_municipios, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+formula:
+  method: metric_ratio
+  numerator_metric: nacidos_vivos
+  numerator_dims: {sexo: [total]}
+  denominator_metric: poblacion_censada
+  denominator_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  per: 1000
+  small_population_threshold: 2000  # denominator below this -> confidence 0.5
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative]
+limitations:
+  - "Nacidos vivos del último año publicado frente a la población del último censo anual: los dos años pueden no coincidir."
+  - "Indica la demanda futura de escuela infantil; no es una medida de oferta."
+  - "Solo por municipio; en los distritos de Madrid no hay dato."
+gap_row: {row: escuela_infantil, role: extra, phrase: "nacimientos por cada 1.000 habitantes"}

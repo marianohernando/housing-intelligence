@@ -1,0 +1,163 @@
+
+## golden_family: OK
+zonas 199 · cumplen 33 · desconocidas 15 · condición que más quita: near:colegio
+  Reality Check: +5 min a pie hasta colegio con primaria → +17 zonas
+  Reality Check: +150 €/mes → +0 zonas
+  1. Fuencarral-El Pardo · 100 % · ≈ 1107 €/mes
+       - Colegio con primaria a 9 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - Centro de salud a 15 min andando desde la mitad de sus calles (confianza 1.00)
+       - 29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 1.107 €/mes por 77 m² (14,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.76)
+  2. Ciudad Lineal · 99 % · ≈ 1070 €/mes
+       - Colegio con primaria a 5 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - Centro de salud a 10 min andando desde la mitad de sus calles (confianza 1.00)
+       - 33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 1.070 €/mes por 77 m² (13,9 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  3. Hortaleza · 99 % · ≈ 1127 €/mes
+       - Colegio con primaria a 8 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - Centro de salud a 15 min andando desde la mitad de sus calles (confianza 1.00)
+       - 32 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 1.127 €/mes por 77 m² (14,6 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  4. Latina · 98 % · ≈ 935 €/mes
+       - Colegio con primaria a 6 min andando desde la mitad de sus calles (confianza 0.99)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - Centro de salud a 10 min andando desde la mitad de sus calles (confianza 0.99)
+       - 39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 935 €/mes por 77 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  5. Moratalaz · 98 % · ≈ 932 €/mes
+       - Colegio con primaria a 6 min andando desde la mitad de sus calles (confianza 0.99)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - Centro de salud a 11 min andando desde la mitad de sus calles (confianza 0.99)
+       - 40 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 932 €/mes por 77 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  casi: San Sebastián de los Reyes (falla near:colegio)
+  casi: Tres Cantos (falla near:colegio)
+  casi: Moncloa-Aravaca (falla near:colegio)
+
+## golden_single: OK
+zonas 199 · cumplen 49 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +100 €/mes → +1 zonas
+  1. Villaverde · 97 % · ≈ 661 €/mes
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 35 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 661 €/mes por 61 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  2. Usera · 96 % · ≈ 693 €/mes
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 35 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 693 €/mes por 61 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  3. Moratalaz · 94 % · ≈ 738 €/mes
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - 33 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 738 €/mes por 61 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  4. Puente de Vallecas · 93 % · ≈ 747 €/mes
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 32 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 747 €/mes por 61 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  5. Leganés · 93 % · ≈ 622 €/mes
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - 43 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 622 €/mes por 61 m² (10,2 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+  casi: Chamartín (falla budget)
+  casi: Salamanca (falla budget)
+  casi: Moncloa-Aravaca (falla budget)
+
+## golden_couple: OK
+zonas 199 · cumplen 0 · desconocidas 199 · condición que más quita: budget
+  Reality Check: Sin límite de precio de compra → +199 zonas
+
+## golden_single_parent_no_car: OK
+zonas 199 · cumplen 28 · desconocidas 6 · condición que más quita: near:colegio
+  Reality Check: +5 min a pie hasta colegio con primaria → +15 zonas
+  Reality Check: +150 €/mes → +3 zonas
+  Reality Check: +5 min a pie hasta parada de transporte público → +0 zonas
+  1. Puente de Vallecas · 100 % · ≈ 869 €/mes
+       - Colegio con primaria a 4 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 22 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 869 €/mes por 71 m² (12,2 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  2. Usera · 100 % · ≈ 807 €/mes
+       - Colegio con primaria a 5 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 26 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 807 €/mes por 71 m² (11,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  3. Villaverde · 100 % · ≈ 770 €/mes
+       - Colegio con primaria a 6 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 29 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 770 €/mes por 71 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  4. Moratalaz · 100 % · ≈ 859 €/mes
+       - Colegio con primaria a 6 min andando desde la mitad de sus calles (confianza 0.99)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - 29 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 859 €/mes por 71 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  5. Latina · 100 % · ≈ 862 €/mes
+       - Colegio con primaria a 6 min andando desde la mitad de sus calles (confianza 0.99)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 0.99)
+       - 30 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 862 €/mes por 71 m² (12,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+  casi: Pinto (falla near:colegio)
+  casi: Vicálvaro (falla near:colegio)
+  casi: Salamanca (falla budget)
+
+## golden_senior: OK
+zonas 199 · cumplen 13 · desconocidas 28 · condición que más quita: budget
+  Reality Check: +5 min a pie hasta centro de salud → +6 zonas
+  Reality Check: +100 €/mes → +3 zonas
+  Reality Check: +5 min a pie hasta farmacia → +0 zonas
+  1. Parla · 99 % · ≈ 525 €/mes
+       - Centro de salud a 13 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - 34 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 525 €/mes por 61 m² (8,6 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+       - Sin escaleras: aún sin datos (confianza 0.00)
+  2. Fuenlabrada · 98 % · ≈ 573 €/mes
+       - Centro de salud a 14 min andando desde la mitad de sus calles (confianza 0.96)
+       - Parada de transporte público a 4 min andando desde la mitad de sus calles (confianza 0.96)
+       - 35 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 573 €/mes por 61 m² (9,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+       - Sin escaleras: aún sin datos (confianza 0.00)
+  3. Leganés · 96 % · ≈ 622 €/mes
+       - Centro de salud a 15 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - 35 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 622 €/mes por 61 m² (10,2 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+       - Sin escaleras: aún sin datos (confianza 0.00)
+  4. Villaverde · 95 % · ≈ 661 €/mes
+       - Centro de salud a 10 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 2 min andando desde la mitad de sus calles (confianza 1.00)
+       - 33 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 661 €/mes por 61 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 0.80)
+       - Sin escaleras: aún sin datos (confianza 0.00)
+  5. Móstoles · 94 % · ≈ 586 €/mes
+       - Centro de salud a 11 min andando desde la mitad de sus calles (confianza 1.00)
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 1.00)
+       - 47 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 586 €/mes por 61 m² (9,6 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+       - Sin escaleras: aún sin datos (confianza 0.00)
+  casi: Getafe (falla near:centro_salud)
+  casi: Retiro (falla budget)
+  casi: Centro (falla budget)
+
+## golden_student: OK
+zonas 199 · cumplen 3 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +50 €/mes → +7 zonas
+  1. San Martín de la Vega · 57 % · ≈ 433 €/mes
+       - Parada de transporte público a 5 min andando desde la mitad de sus calles (confianza 0.99)
+       - 95 min en transporte público hasta URJC Vicálvaro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 433 €/mes por 61 m² (7,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+  2. Navalcarnero · 51 % · ≈ 494 €/mes
+       - Parada de transporte público a 4 min andando desde la mitad de sus calles (confianza 1.00)
+       - 95 min en transporte público hasta URJC Vicálvaro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 494 €/mes por 61 m² (8,1 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+  3. Ciempozuelos · 50 % · ≈ 500 €/mes
+       - Parada de transporte público a 3 min andando desde la mitad de sus calles (confianza 0.99)
+       - 93 min en transporte público hasta URJC Vicálvaro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler medio ≈ 500 €/mes por 61 m² (8,2 €/m², media de los contratos vigentes; uno nuevo suele costar más) (confianza 1.00)
+  casi: Coslada (falla budget)
+  casi: Puente de Vallecas (falla budget)
+  casi: Villa de Vallecas (falla budget)
+
+6 escenarios dorados · todos OK

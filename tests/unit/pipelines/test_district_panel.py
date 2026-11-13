@@ -1,4 +1,6 @@
-"""District panel (Ayuntamiento de Madrid) -> households by district (DATA-012 Fase 3)."""
+"""District panel (Ayuntamiento de Madrid) -> households by district (DATA-012 Fase 3), the
+residents' perception of safety in their barrio, with the city value (DATA-020, D-226), and the
+barrio rows of the household indicators with the official barrio names (D-232)."""
 
 from datetime import date
 from pathlib import Path
@@ -17,6 +19,10 @@ GOLDEN = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "golden"
 DATASET = "ayto_panel_indicadores_distritos_barrios"
 FIXTURE = GOLDEN / "panel_sample" / f"{DATASET}.csv"
 SAMPLE_DISTRICTS = {"2807901", "2807905", "2807906"}
+# The barrios of the admin sample (Palacio, Sol, Nueva España, Castilla, Castillejos, Almenara).
+SAMPLE_BARRIOS = {"28079011", "28079016", "28079055", "28079056", "28079063", "28079064"}
+PERCEPTION = {"percepcion_seguridad_barrio_noche", "percepcion_seguridad_barrio_dia"}
+MADRID = "28079"
 
 
 @pytest.fixture(scope="module")
@@ -48,12 +54,127 @@ def test_only_declared_indicators_at_district_level(
     obs = normalize(source, spec)
     frame = obs.frame
     assert obs.quarantine.empty
-    assert set(frame["metric_id"]) == {"hogares_padron", "tamano_medio_hogar_padron"}
-    assert set(frame["territory_level"]) == {"distrito"}
-    assert set(frame["territory_code"]) == SAMPLE_DISTRICTS
-    assert set(frame["admin_unit_id"]) == {f"ES.28.DIS.{c}" for c in SAMPLE_DISTRICTS}
-    assert obs.out_of_window > 0  # city, barrio and other indicators are left out, not lost
-    assert not frame.duplicated(["metric_id", "territory_code", "period_start"]).any()
+    assert set(frame["metric_id"]) == {"hogares_padron", "tamano_medio_hogar_padron", *PERCEPTION}
+    districts = frame.loc[frame["territory_level"] == "distrito"]
+    assert set(districts["territory_code"]) == SAMPLE_DISTRICTS
+    assert set(districts["admin_unit_id"]) == {f"ES.28.DIS.{c}" for c in SAMPLE_DISTRICTS}
+    assert obs.out_of_window > 0  # other indicators are left out, not lost
+    key = ["metric_id", "territory_level", "territory_code", "period_start"]
+    assert not frame.duplicated(key).any()
+
+
+def test_barrio_rows_of_the_barrio_indicators_carry_the_barrio_name(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """D-232: the barrio rows keep the household indicators, coded as 28079 + DD + B, with the
+    name the Ayuntamiento publishes; the perception of safety stays by district."""
+    frame = normalize(source, spec).frame
+    barrios = frame.loc[frame["territory_level"] == "barrio"]
+    assert set(barrios["territory_code"]) == SAMPLE_BARRIOS
+    assert set(barrios["admin_unit_id"]) == {f"ES.28.BAR.{c}" for c in SAMPLE_BARRIOS}
+    assert set(barrios["metric_id"]) == {"hogares_padron", "tamano_medio_hogar_padron"}
+    names = dict(zip(barrios["territory_code"], barrios["territory_name"], strict=True))
+    assert names["28079011"] == "Palacio"
+    assert names["28079055"] == "Nueva España"
+    assert _value(barrios, "hogares_padron", "28079016", date(2025, 1, 1)) > 0
+
+
+@pytest.mark.parametrize(
+    ("district", "barrio", "code"),
+    [("1", "11", "28079011"), ("20", "201", "28079201"), ("19", "194", "28079194")],
+)
+def test_barrio_code_is_municipio_plus_the_three_digit_barrio(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame, district: str, barrio: str, code: str
+) -> None:
+    row = source.loc[
+        (source["cod_barrio"] == "11") & (source["indicador_completo"] == "Total hogares")
+    ].head(1)
+    row = row.assign(cod_distrito=district, cod_barrio=barrio)
+    frame = normalize(row.reset_index(drop=True), spec).frame
+    assert frame["territory_code"].tolist() == [code]
+    assert frame["territory_level"].tolist() == ["barrio"]
+
+
+def test_a_barrio_code_that_is_not_a_number_goes_to_quarantine(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    row = source.loc[
+        (source["cod_barrio"] == "11") & (source["indicador_completo"] == "Total hogares")
+    ].head(1)
+    obs = normalize(row.assign(cod_barrio="1a").reset_index(drop=True), spec)
+    assert len(obs.quarantine) == 1
+    assert "barrio" in obs.quarantine["reason"].iloc[0]
+
+
+def test_barrio_rows_must_resolve_to_the_geography(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    obs = normalize(source, spec)
+    metrics = load_catalog().metrics
+    sample = spec.model_copy(update={"expected_districts": 3, "expected_barrios": 6})
+    assert run_panel_quality(obs, sample, metrics, SAMPLE_DISTRICTS, SAMPLE_BARRIOS).passed
+    missing = SAMPLE_BARRIOS - {"28079011"}
+    report = run_panel_quality(obs, sample, metrics, SAMPLE_DISTRICTS, missing)
+    failed = {c.name for c in report.checks if c.critical and not c.passed}
+    assert failed == {"barrios_resolve_to_geography"}
+    fewer = spec.model_copy(update={"expected_districts": 3, "expected_barrios": 131})
+    report = run_panel_quality(obs, fewer, metrics, SAMPLE_DISTRICTS, SAMPLE_BARRIOS)
+    assert {c.name for c in report.checks if c.critical and not c.passed} == {"barrio_coverage"}
+
+
+def test_barrio_indicators_must_be_declared_indicators(spec: MadridDistrictPanelPipeline) -> None:
+    data = spec.model_dump() | {"barrio_indicators": ["Indicador que no se lee"]}
+    with pytest.raises(ValueError, match="barrio_indicators"):
+        MadridDistrictPanelPipeline.model_validate(data)
+    unbounded = spec.model_dump() | {"expected_barrios": None}
+    with pytest.raises(ValueError, match="expected_barrios"):
+        MadridDistrictPanelPipeline.model_validate(unbounded)
+
+
+def test_the_city_row_is_kept_only_for_the_city_indicators(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """D-226: the residents' perception comes with the Madrid value to compare with."""
+    frame = normalize(source, spec).frame
+    city = frame.loc[frame["territory_level"] == "municipio"]
+    assert set(city["metric_id"]) == PERCEPTION
+    assert set(city["territory_code"]) == {MADRID}
+    assert set(city["admin_unit_id"]) == {f"ES.28.MUN.{MADRID}"}
+    assert _value(city, "percepcion_seguridad_barrio_noche", MADRID, date(2025, 1, 1)) == 6.4
+    assert _value(city, "percepcion_seguridad_barrio_dia", MADRID, date(2025, 1, 1)) == 7.8
+    night = frame.loc[frame["territory_level"] == "distrito"]
+    assert _value(night, "percepcion_seguridad_barrio_noche", "2807906", date(2025, 1, 1)) == 6.1
+
+
+def test_a_date_repeated_in_two_panel_editions_is_one_observation(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """The 2020 and 2021 panels both carry the 2019 survey: one observation, never two."""
+    frame = normalize(source, spec).frame
+    centro = frame.loc[frame["territory_level"] == "distrito"]
+    assert _value(centro, "percepcion_seguridad_barrio_noche", "2807901", date(2019, 1, 1)) == 6.98
+
+
+def test_a_revised_value_takes_the_latest_panel_edition(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    revised = source.copy()
+    later = (
+        (revised["Periodo panel"] == "2021")
+        & (revised["cod_distrito"] == "1")
+        & (revised["indicador_completo"] == "Percepción de seguridad en el barrio por la noche")
+    )
+    assert int(later.sum()) == 1
+    revised.loc[later, "valor_indicador"] = "7,1"
+    frame = normalize(revised.iloc[::-1].reset_index(drop=True), spec).frame
+    centro = frame.loc[frame["territory_level"] == "distrito"]
+    assert _value(centro, "percepcion_seguridad_barrio_noche", "2807901", date(2019, 1, 1)) == 7.1
+
+
+def test_city_indicators_must_be_declared_indicators(spec: MadridDistrictPanelPipeline) -> None:
+    data = spec.model_dump() | {"city_indicators": ["Indicador que no se lee"]}
+    with pytest.raises(ValueError, match="city_indicators"):
+        MadridDistrictPanelPipeline.model_validate(data)
 
 
 def test_values_dates_and_decimal_comma(
@@ -87,9 +208,10 @@ def test_quality_requires_every_district(
 ) -> None:
     obs = normalize(source, spec)
     metrics = load_catalog().metrics
-    sample = spec.model_copy(update={"expected_districts": 3})
-    assert run_panel_quality(obs, sample, metrics, SAMPLE_DISTRICTS).passed
-    assert not run_panel_quality(obs, spec, metrics, SAMPLE_DISTRICTS).passed
+    sample = spec.model_copy(update={"expected_districts": 3, "expected_barrios": 6})
+    assert run_panel_quality(obs, sample, metrics, SAMPLE_DISTRICTS, SAMPLE_BARRIOS).passed
+    every = spec.model_copy(update={"expected_barrios": 6})
+    assert not run_panel_quality(obs, every, metrics, SAMPLE_DISTRICTS, SAMPLE_BARRIOS).passed
 
 
 def test_quarantine_points_at_the_source_row_and_lost_district_codes_are_not_hidden(
@@ -105,3 +227,59 @@ def test_quarantine_points_at_the_source_row_and_lost_district_codes_are_not_hid
     assert obs.quarantine["source_row"].tolist() == [position]
     city = int((rows["cod_distrito"] == "").sum()) - 1
     assert obs.out_of_window == city  # only the real city rows are outside the scope
+
+
+def test_a_duplicate_inside_one_edition_is_not_hidden(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """Only repeats across editions collapse: a repeat inside one edition fails unique_keys."""
+    row = source.loc[
+        (source["Periodo panel"] == "2026")
+        & (source["cod_distrito"] == "1")
+        & (source["cod_barrio"] == "")
+        & (source["indicador_completo"] == "Total hogares")
+    ]
+    assert len(row) == 1
+    doubled = pd.concat([source, row], ignore_index=True)
+    obs = normalize(doubled, spec)
+    sample = spec.model_copy(update={"expected_districts": 3, "expected_barrios": 6})
+    report = run_panel_quality(
+        obs, sample, load_catalog().metrics, SAMPLE_DISTRICTS, SAMPLE_BARRIOS
+    )
+    assert not report.passed
+    failed = {c.name for c in report.checks if c.critical and not c.passed}
+    assert failed == {"unique_keys"}
+
+
+def test_an_edition_that_is_not_a_year_goes_to_quarantine(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    rows = source.loc[
+        (source["indicador_completo"] == "Total hogares")
+        & (source["cod_distrito"] == "1")
+        & (source["cod_barrio"] == "")
+    ].copy()
+    rows.loc[rows.index[0], "Periodo panel"] = ""
+    obs = normalize(rows.reset_index(drop=True), spec)
+    assert len(obs.quarantine) == 1
+    assert "edition" in obs.quarantine["reason"].iloc[0]
+
+
+def test_the_city_row_has_no_district_name(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    city = normalize(source, spec).frame
+    assert city.loc[city["territory_level"] == "municipio", "territory_name"].isna().all()
+
+
+def test_a_city_row_without_city_indicators_fails_quality(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """With no city indicators no municipio is expected: one that slips in is unknown."""
+    obs = normalize(source, spec)
+    plain = spec.model_copy(
+        update={"expected_districts": 3, "expected_barrios": 6, "city_indicators": []}
+    )
+    report = run_panel_quality(obs, plain, load_catalog().metrics, SAMPLE_DISTRICTS, SAMPLE_BARRIOS)
+    failed = {c.name for c in report.checks if c.critical and not c.passed}
+    assert failed == {"municipios_resolve_to_geography"}

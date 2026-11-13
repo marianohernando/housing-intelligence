@@ -1,0 +1,9 @@
+metric_id: camas_instaladas_por_1000
+human_name: "Camas instaladas por 1.000 habitantes en establecimientos sanitarios con régimen de internado"
+description: "Camas instaladas por 1.000 habitantes en establecimientos sanitarios con régimen de internado. Total regional de la Comunidad de Madrid (Instituto de Estadística, Dotación de camas por dependencia)."
+domain: health
+unit: camas por 1.000 habitantes
+aggregation_method: none
+geo_resolution_min: ccaa
+temporal_resolution: annual
+dataset_id: cm_dotacion_camas

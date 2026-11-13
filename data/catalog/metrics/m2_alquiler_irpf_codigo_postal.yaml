@@ -1,0 +1,14 @@
+metric_id: m2_alquiler_irpf_codigo_postal
+human_name: Metros cuadrados medios de la vivienda habitual alquilada, todos los contratos y los nuevos (códigos postales de Madrid capital)
+description: >-
+  Superficie media del Catastro de las viviendas habituales alquiladas, de todos los contratos
+  (contratos=todos) y de los formalizados en el año (contratos=nuevos). Agencia Tributaria,
+  Estadística de viviendas declaradas en IRPF.
+domain: housing
+unit: m2
+direction: higher_is_better
+aggregation_method: none
+geo_resolution_min: codigo_postal
+temporal_resolution: annual
+dataset_id: aeat_alquiler_nuevos_contratos_codigo_postal
+dimensions: [contratos]

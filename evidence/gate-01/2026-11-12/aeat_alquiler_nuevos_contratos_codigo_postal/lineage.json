@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "aeat_alquiler_nuevos_contratos_codigo_postal",
+      "role": "primary",
+      "path": "data/bronze/datasets/aeat_alquiler_nuevos_contratos_codigo_postal/380c48e95787/aeat_alquiler_nuevos_contratos_codigo_postal.html",
+      "sha256": "380c48e957878cdc590e5f4b739f9d14dcdf706076be1985ba7b1eaae933401c",
+      "bytes": 272920,
+      "url": "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/jrubik582b4eeccd4e39730277d218cc788357e33967da.html",
+      "retrieved_at": "2026-11-12T21:01:44.706903+00:00"
+    }
+  ],
+  "checksum": "9a1c2ed26a07194f354462f0e5e10a49fc1ec089ae5b6d67d21f817b2cf96482",
+  "parser_version": "aeat_rent-1.0.0",
+  "dataset_version": "2026-11-12-9a1c2ed26a07",
+  "correlation_id": "4009d8a871d344b38daf8eabb42cfc37",
+  "silver": "data/silver/aeat_alquiler_nuevos_contratos_codigo_postal/9a1c2ed26a07/observations.csv.gz"
+}

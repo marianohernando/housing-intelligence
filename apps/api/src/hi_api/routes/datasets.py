@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
-from hi_api.services.datasets import dataset_list
+from hi_api.services.datasets import METHODOLOGY_VERSION, dataset_list
 from hi_contracts.api.envelope import Meta
 from hi_contracts.public.responses import DatasetListResponse
 
@@ -19,4 +19,4 @@ def get_datasets(
 ) -> DatasetListResponse:
     with engine.connect() as conn:
         datasets = dataset_list(conn, cm_only=cm_only)
-    return DatasetListResponse(data=datasets, meta=Meta(methodology_version="datasets-v1"))
+    return DatasetListResponse(data=datasets, meta=Meta(methodology_version=METHODOLOGY_VERSION))

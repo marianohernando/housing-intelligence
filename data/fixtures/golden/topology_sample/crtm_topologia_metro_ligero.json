@@ -1,0 +1,157 @@
+{
+ "objectIdFieldName": "OBJECTID",
+ "uniqueIdField": {
+  "name": "OBJECTID",
+  "isSystemMaintained": true
+ },
+ "globalIdFieldName": "",
+ "geometryType": "esriGeometryPoint",
+ "spatialReference": {
+  "wkid": 25830,
+  "latestWkid": 25830
+ },
+ "fields": [
+  {
+   "name": "IDESTACION",
+   "type": "esriFieldTypeString",
+   "alias": "IDESTACION",
+   "sqlType": "sqlTypeOther",
+   "length": 50,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "CODIGOEMPRESA",
+   "type": "esriFieldTypeString",
+   "alias": "CODIGOEMPRESA",
+   "sqlType": "sqlTypeOther",
+   "length": 7,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "DENOMINACION",
+   "type": "esriFieldTypeString",
+   "alias": "DENOMINACION",
+   "sqlType": "sqlTypeOther",
+   "length": 240,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "GRADOACCESIBILIDAD",
+   "type": "esriFieldTypeString",
+   "alias": "GRADOACCESIBILIDAD",
+   "sqlType": "sqlTypeOther",
+   "length": 1,
+   "domain": null,
+   "defaultValue": null
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "IDESTACION": "10_10",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "COLONIA JARDIN",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_11",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "PRADO DE LA VEGA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_12",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "COLONIA DE LOS ANGELES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_13",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "PRADO DEL REY",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_14",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "SOMOSAGUAS SUR",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_15",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "SOMOSAGUAS CENTRO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_16",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "POZUELO OESTE",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_18",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "BELGICA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_19",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "DOS CASTILLAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_20",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "CAMPUS DE SOMOSAGUAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_21",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "AVENIDA DE EUROPA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_22",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "BERNA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "10_23",
+    "CODIGOEMPRESA": null,
+    "DENOMINACION": "ESTACION DE ARAVACA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  }
+ ]
+}

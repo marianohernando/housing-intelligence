@@ -1,0 +1,122 @@
+/* Mockup 2: intro and search on the left, the 3D zone in the middle, its card on the right */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 28rem) 1fr minmax(0, 23rem);
+  gap: var(--space-4) var(--space-6);
+  align-items: start;
+}
+
+.side {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  margin-top: var(--space-6);
+}
+
+.centres,
+.search {
+  grid-column: 1;
+  max-width: 28rem;
+}
+
+.page {
+  display: grid;
+  grid-column: 1;
+  gap: var(--space-4);
+  justify-items: start;
+  max-width: 28rem;
+  padding-top: var(--space-4);
+}
+
+.crumbs {
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+}
+
+.crumbs ol {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.crumbs a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  text-decoration: underline;
+}
+
+.crumbs [aria-current="page"] {
+  color: var(--violet-strong);
+  font-weight: 500;
+}
+
+.separator {
+  display: inline-flex;
+  color: var(--ink-soft);
+}
+
+.title {
+  font-size: var(--text-hero);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.accent {
+  color: var(--violet-strong);
+}
+
+.lead {
+  color: var(--ink-soft);
+  font-size: var(--text-lg);
+}
+
+.back {
+  margin-top: var(--space-2);
+}
+
+.state {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+  max-width: 28rem;
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding-top: 0;
+    gap: var(--space-3);
+  }
+
+  .title {
+    font-size: var(--text-2xl);
+  }
+
+  .lead {
+    font-size: var(--text-base);
+  }
+}
+
+/* Three columns: the barrios bar is fixed at the bottom of the middle one; the columns can scroll */
+@media (min-width: 1260px) {
+  .layout {
+    padding-bottom: calc(var(--target) + 4rem);
+  }
+}
+
+/* One column of cards, the map on the right: up to THREE_COLUMNS_MIN (lib/map/camera.ts) */
+@media (max-width: 1259px) {
+  .layout {
+    grid-template-columns: minmax(0, 28rem);
+  }
+
+  .side {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 0;
+  }
+}

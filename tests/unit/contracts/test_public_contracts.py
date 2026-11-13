@@ -8,14 +8,20 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from hi_contracts.public import (
+    BarrioSearchRequest,
+    BarrioSearchResult,
     DatasetList,
+    GapImpact,
+    GapImpactRow,
     GapMethod,
     GapRow,
+    GapRowMap,
     RealityCheck,
     ScenarioState,
     SearchResult,
     ZoneGapList,
 )
+from hi_contracts.public.places import PlaceCollection
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.catalog.provenance import dataset_ref, is_cm_open_data
 
@@ -23,8 +29,13 @@ FIXTURES = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "contract
 CONTRACTS: dict[str, type[BaseModel]] = {
     "scenario_state": ScenarioState,
     "zone_gap_list": ZoneGapList,
+    "gap_row_map": GapRowMap,
+    "gap_impact": GapImpact,
     "search_result": SearchResult,
+    "barrio_search_request": BarrioSearchRequest,  # D-232
+    "barrio_search_result": BarrioSearchResult,
     "dataset_list": DatasetList,
+    "places": PlaceCollection,
 }
 
 
@@ -125,8 +136,9 @@ def test_search_fixture_never_shows_a_grade_and_maps_every_zone() -> None:
     )
     assert all(0 <= z.match_pct <= 100 and 1 <= len(z.facts) <= 5 for z in result.results)
     assert len(result.all_zones) == result.reality_check.zones_evaluated
-    unknown = [z for z in result.all_zones if z.match_pct is None]
-    assert len(unknown) == result.reality_check.zones_unknown  # unknown is never painted as a fit
+    unknown = [z for z in result.all_zones if not z.passes_all and not z.failed_constraints]
+    assert len(unknown) == result.reality_check.zones_unknown
+    assert all(z.match_pct is None for z in unknown)  # unknown is never painted as a fit
 
 
 def test_gap_method_cut_offs_are_ordered() -> None:
@@ -142,3 +154,114 @@ def test_provenance_counts_cm_portal_datasets() -> None:
     ref = dataset_ref(catalog, "crtm_gtfs_metro", "v1")
     assert ref.url is not None
     assert ref.url.host == "datos.comunidad.madrid"
+
+
+def test_row_map_counts_match_its_zones_and_sin_datos_needs_no_value() -> None:
+    path = FIXTURES / "gap_row_map.colegio_municipio.fixture.json"
+    payload: dict[str, Any] = json.loads(path.read_text())
+    GapRowMap.model_validate(payload)
+    wrong = payload | {"counts": payload["counts"] | {"falta": payload["counts"]["falta"] + 1}}
+    with pytest.raises(ValidationError):
+        GapRowMap.model_validate(wrong)
+    zone = payload["zones"][0]
+    with pytest.raises(ValidationError):
+        GapRowMap.model_validate(payload | {"zones": [zone | {"status": "SIN_DATOS"}]})
+    with pytest.raises(ValidationError):
+        GapRowMap.model_validate(payload | {"zones": [zone, zone]})
+
+
+def test_small_village_is_compared_with_its_neighbours() -> None:
+    """gap-0.3 (D-217): a zone too small alone gets its group's status, never «poco fiable»."""
+    path = FIXTURES / "zone_gap_list.el_alamo.fixture.json"
+    rows = ZoneGapList.model_validate(json.loads(path.read_text())).rows
+    grouped = [r for r in rows if r.comparison_group is not None]
+    assert grouped
+    for row in grouped:
+        group = row.comparison_group
+        assert group is not None
+        assert group.codes[0] == "28004"
+        assert len(group.codes) == len(group.names) >= 2
+        assert row.reliable
+        assert "junto con" in row.explanation
+
+
+def test_places_fixture_carries_ownership_and_the_rows_that_count_them() -> None:
+    path = FIXTURES / "places.colegios_chamartin.fixture.json"
+    places = PlaceCollection.model_validate(json.loads(path.read_text()))
+    assert places.contract_version == "places-1"
+    owned = {f.properties.ownership for f in places.features}
+    assert owned <= {"publica", "concertada", "privada"}
+    counted = [f for f in places.features if "colegio" in f.properties.gap_rows]
+    assert counted
+    assert all(f.properties.ownership in {"publica", "concertada"} for f in counted)
+
+
+def test_impact_fixture_adds_up_and_ranks_by_people() -> None:
+    """D-229: the people in FALTA add up the ranked zones, most people first."""
+    impact = GapImpact.model_validate(
+        json.loads((FIXTURES / "gap_impact.comunidad.fixture.json").read_text())
+    )
+    assert impact.rows
+    for row in impact.rows:
+        assert row.people_in_falta <= row.people_total
+        assert all(z.p_value is None or z.p_value < 0.025 for z in row.ranking)
+
+
+def test_impact_row_rejects_an_unsorted_or_inconsistent_ranking() -> None:
+    zone = {
+        "admin_unit_id": "ES.28.MUN.28092",
+        "code": "28092",
+        "name": "Móstoles",
+        "level": "municipio",
+        "ratio_to_reference": 0.5,
+        "p_value": 0.001,
+        "explanation": "…",
+    }
+    row = {
+        "row": "farmacia",
+        "label": "Farmacias",
+        "people_label": "personas",
+        "madrid_level": "distrito",
+        "zones": 199,
+        "zones_in_falta": 2,
+        "people_in_falta": 30,
+        "people_total": 100,
+        "share_in_falta": 0.3,
+        "summary": "…",
+        "ranking": [zone | {"people": 10, "code": "1"}, zone | {"people": 20, "code": "2"}],
+    }
+    with pytest.raises(ValidationError, match="most to fewest"):
+        GapImpactRow.model_validate(row)
+    with pytest.raises(ValidationError, match="add up"):
+        GapImpactRow.model_validate(row | {"people_in_falta": 31})
+    with pytest.raises(ValidationError, match="one ranked zone"):
+        GapImpactRow.model_validate(row | {"zones_in_falta": 3})
+
+
+@pytest.mark.parametrize("distrito", ["2800101", "28079201", "2807", "Madrid"])
+def test_barrio_search_asks_for_a_district_of_madrid(distrito: str) -> None:
+    """D-232: the barrios are those of one Madrid district (7-digit INE code, 28079 + DD)."""
+    BarrioSearchRequest.model_validate({"scenario": {}, "distrito": "2807920"})
+    with pytest.raises(ValidationError):
+        BarrioSearchRequest.model_validate({"scenario": {}, "distrito": distrito})
+
+
+def test_barrio_result_holds_only_barrios_of_its_district() -> None:
+    path = FIXTURES / "barrio_search_result.san_blas.fixture.json"
+    data: dict[str, Any] = json.loads(path.read_text())
+    result = BarrioSearchResult.model_validate(data)
+    assert result.distrito.level == "distrito"
+    assert {z.zone.level for z in result.all_zones} == {"barrio"}
+    assert result.reality_check.zones_evaluated == len(result.all_zones)
+    stray = json.loads(json.dumps(data))
+    stray["all_zones"][0]["zone"]["code"] = "28079011"  # Palacio, in Centro
+    with pytest.raises(ValidationError, match="barrios of"):
+        BarrioSearchResult.model_validate(stray)
+    district = json.loads(json.dumps(data))
+    district["all_zones"][0]["zone"]["level"] = "distrito"
+    with pytest.raises(ValidationError, match="barrios of"):
+        BarrioSearchResult.model_validate(district)
+    not_a_district = json.loads(json.dumps(data))
+    not_a_district["distrito"]["level"] = "municipio"
+    with pytest.raises(ValidationError, match="must be a district"):
+        BarrioSearchResult.model_validate(not_a_district)

@@ -1,0 +1,9 @@
+metric_id: camas_instaladas_sns
+human_name: "Camas instaladas en establecimientos sanitarios con régimen de internado públicos-SNS"
+description: "Camas instaladas en establecimientos sanitarios con régimen de internado públicos-SNS. Total regional de la Comunidad de Madrid (Instituto de Estadística, Dotación de camas por dependencia)."
+domain: health
+unit: camas
+aggregation_method: none
+geo_resolution_min: ccaa
+temporal_resolution: annual
+dataset_id: cm_dotacion_camas

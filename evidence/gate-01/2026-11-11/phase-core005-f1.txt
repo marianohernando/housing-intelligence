@@ -28,7 +28,7 @@ uv run pytest tests/unit tests/data -q
 > vitest --run
 
 
- RUN  v5.0.5 /Users/marianohernandomarcos/Desktop/DATAMAD/housing-intelligence/apps/web
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
 
 
  Test Files  3 passed (3)

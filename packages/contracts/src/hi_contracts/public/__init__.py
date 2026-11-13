@@ -6,7 +6,22 @@ Version 2 (11 Nov): rent or purchase budget, household with older people in care
 """
 
 from hi_contracts.public.common import DatasetList, DatasetRef, IndicatorValue, ZoneRef
-from hi_contracts.public.gaps import GapMethod, GapRow, GapRowKey, GapStatus, ZoneGapList
+from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
+from hi_contracts.public.gaps import (
+    ComparisonGroup,
+    GapImpact,
+    GapImpactRow,
+    GapImpactZone,
+    GapMethod,
+    GapRow,
+    GapRowKey,
+    GapRowMap,
+    GapStatus,
+    GapStatusCounts,
+    PeopleCount,
+    ZoneGapList,
+    ZoneGapStatus,
+)
 from hi_contracts.public.scenario import (
     Anchor,
     AnchorKind,
@@ -19,6 +34,8 @@ from hi_contracts.public.scenario import (
     ScenarioState,
 )
 from hi_contracts.public.search import (
+    BarrioSearchRequest,
+    BarrioSearchResult,
     ConstraintCheck,
     ConstraintStatus,
     Fact,
@@ -35,8 +52,11 @@ from hi_contracts.public.search import (
 __all__ = [
     "Anchor",
     "AnchorKind",
+    "BarrioSearchRequest",
+    "BarrioSearchResult",
     "Budget",
     "BudgetKind",
+    "ComparisonGroup",
     "ConstraintCheck",
     "ConstraintStatus",
     "DatasetList",
@@ -45,21 +65,30 @@ __all__ = [
     "FactKind",
     "FactTopic",
     "GapHighlight",
+    "GapImpact",
+    "GapImpactRow",
+    "GapImpactZone",
     "GapMethod",
     "GapRow",
     "GapRowKey",
+    "GapRowMap",
     "GapStatus",
+    "GapStatusCounts",
     "Household",
     "IndicatorValue",
     "NearbyNeed",
     "NeedKey",
+    "PeopleCount",
     "PriorityKey",
     "RankedZone",
     "RealityCheck",
     "Relaxation",
     "ScenarioState",
     "SearchResult",
+    "ZoneExplanation",
     "ZoneGapList",
+    "ZoneGapStatus",
+    "ZoneLookup",
     "ZoneMatch",
     "ZoneRef",
 ]

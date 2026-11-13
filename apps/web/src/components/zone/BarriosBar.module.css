@@ -1,0 +1,60 @@
+/* Mockup 2: a bar along the bottom of the zone screen, under the 3D district */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+}
+
+.title {
+  flex: none;
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+/* Room for the focus ring (3 px + 2 px offset), which a scrolling list would otherwise clip */
+.list {
+  display: flex;
+  gap: var(--space-2);
+  margin: -6px;
+  padding: 6px;
+  overflow-x: auto;
+  list-style: none;
+}
+
+.list li {
+  flex: none;
+}
+
+/*
+ * Three columns: fixed at the bottom of the middle one, between the intro and the zone card, so
+ * it never covers a card whatever the height (camera bottom padding: 200 px). The chips scroll
+ * sideways; when the column is narrow (1280 px) the title goes above them.
+ */
+@media (min-width: 1260px) {
+  .bar {
+    position: fixed;
+    right: calc(var(--page-gutter) + 23rem + var(--space-6));
+    bottom: var(--space-5);
+    left: calc(var(--page-gutter) + 28rem + var(--space-6));
+    flex-wrap: wrap;
+  }
+
+  .list {
+    flex: 1 1 10rem;
+    min-width: 0;
+  }
+}
+
+/* One column (and the mobile sheet): in the flow, the chips wrap under the title */
+@media (max-width: 1259px) {
+  .bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .list {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}

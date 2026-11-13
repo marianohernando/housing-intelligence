@@ -23,14 +23,27 @@ def find_version(session: Session, dataset_id: str, checksum: str) -> DatasetVer
     )
 
 
+def is_published(existing: DatasetVersion | None, parser_version: str) -> bool:
+    """This content, published by this parser and still the last valid version.
+
+    A rerun registers the same row in place (new parser, PENDING) before it parses; if that run
+    crashes or fails quality, the row keeps `is_last_valid` from the previous publication but
+    is no longer PASSED, so the next run must process it again instead of skipping it.
+    """
+    return (
+        existing is not None
+        and existing.is_last_valid
+        and existing.parser_version == parser_version
+        and existing.quality_status == "PASSED"
+    )
+
+
 def is_current(
     session: Session, dataset_id: str, checksum: str, parser_version: str
 ) -> DatasetVersion | None:
     """Return the version if this exact content was already published by this parser."""
     existing = find_version(session, dataset_id, checksum)
-    if existing and existing.is_last_valid and existing.parser_version == parser_version:
-        return existing
-    return None
+    return existing if is_published(existing, parser_version) else None
 
 
 def register_version(

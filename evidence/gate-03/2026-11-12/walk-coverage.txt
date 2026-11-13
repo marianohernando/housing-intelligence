@@ -1,0 +1,12 @@
+$ docker compose exec -T db psql -U housing -d housing -Atc 
+select count(*) || '|' || min(n) || '|' || max(n) from (
+  select v.feature_id, count(*) as n from feature_value v
+    join feature_registry r using (feature_id)
+   where r.spec->'formula'->>'method' = 'network_walk_time'
+   group by 1
+) w
+
+# exit 0
+
+13|4843|4843
+

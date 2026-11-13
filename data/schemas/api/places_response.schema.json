@@ -1,0 +1,388 @@
+{
+  "$defs": {
+    "GapRowKey": {
+      "description": "Rows of the per-zone list of what is missing (GAP-001, D-194).",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "mayores",
+        "farmacia",
+        "vivienda"
+      ],
+      "title": "GapRowKey",
+      "type": "string"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "PlaceCapacity": {
+      "additionalProperties": false,
+      "description": "How much the place can serve, as its source publishes it (never estimated).",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dependency": {
+          "anyOf": [
+            {
+              "enum": [
+                "publica",
+                "privada"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hospitals (D-218): who runs it, from the CM register; mutuas count as private",
+          "title": "Dependency"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hospitals (D-218): the register's type (general, especializado, ...)",
+          "examples": [
+            "Hospital general"
+          ],
+          "title": "Kind"
+        },
+        "unit": {
+          "examples": [
+            "camas instaladas",
+            "plazas autorizadas"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "examples": [
+            1300
+          ],
+          "minimum": 0,
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "dataset_id"
+      ],
+      "title": "PlaceCapacity",
+      "type": "object"
+    },
+    "PlaceCategory": {
+      "enum": [
+        "education",
+        "health",
+        "pharmacy",
+        "social",
+        "transport",
+        "commerce",
+        "culture",
+        "sport",
+        "administration",
+        "green",
+        "other"
+      ],
+      "title": "PlaceCategory",
+      "type": "string"
+    },
+    "PlaceCollection": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "default": "places-1",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "features": {
+          "items": {
+            "$ref": "#/$defs/PlaceFeature"
+          },
+          "title": "Features",
+          "type": "array"
+        },
+        "page": {
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pages": {
+          "minimum": 1,
+          "title": "Pages",
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "type": {
+          "const": "FeatureCollection",
+          "default": "FeatureCollection",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "features",
+        "total",
+        "page",
+        "pages"
+      ],
+      "title": "PlaceCollection",
+      "type": "object"
+    },
+    "PlaceFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "geometry": {
+          "$ref": "#/$defs/PointGeometry"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/$defs/PlaceProperties"
+        },
+        "type": {
+          "const": "Feature",
+          "default": "Feature",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "geometry",
+        "properties"
+      ],
+      "title": "PlaceFeature",
+      "type": "object"
+    },
+    "PlaceProperties": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlaceCapacity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "category": {
+          "$ref": "#/$defs/PlaceCategory"
+        },
+        "confidence": {
+          "description": "1 for the register's own coordinates",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "coordinates": {
+          "default": "source",
+          "description": "'geocoded' when the register's coordinates were missing or wrong (D-216)",
+          "enum": [
+            "source",
+            "geocoded"
+          ],
+          "title": "Coordinates",
+          "type": "string"
+        },
+        "gap_rows": {
+          "description": "Rows of the list of what is missing that count this place (same filters)",
+          "items": {
+            "$ref": "#/$defs/GapRowKey"
+          },
+          "title": "Gap Rows",
+          "type": "array"
+        },
+        "municipio": {
+          "anyOf": [
+            {
+              "pattern": "^28\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio"
+        },
+        "name": {
+          "description": "Institutional name; '<type> (<municipio>)' when no official one is known",
+          "examples": [
+            "Hospital Universitario La Paz",
+            "Centro de salud Abrantes",
+            "AMOROS"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "ownership": {
+          "anyOf": [
+            {
+              "enum": [
+                "publica",
+                "concertada",
+                "privada"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Educational centres only: titularidad of the register (None elsewhere)",
+          "title": "Ownership"
+        },
+        "seccion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "ES.28.SEC.2807905001"
+          ],
+          "title": "Seccion"
+        },
+        "subcategory": {
+          "examples": [
+            "COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA"
+          ],
+          "title": "Subcategory",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "category",
+        "subcategory",
+        "confidence"
+      ],
+      "title": "PlaceProperties",
+      "type": "object"
+    },
+    "PointGeometry": {
+      "additionalProperties": false,
+      "properties": {
+        "coordinates": {
+          "description": "[lon, lat], WGS84",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "Point",
+          "default": "Point",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "PointGeometry",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/places_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GET /api/v1/places",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/PlaceCollection"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "PlacesResponse",
+  "type": "object"
+}

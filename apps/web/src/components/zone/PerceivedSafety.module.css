@@ -1,0 +1,78 @@
+/* Context, not a status: the brand's navy and violet, never state or alarm colours (D-226 §1) */
+.card {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.source {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+/* Night and day on the 0–10 scale; Madrid's figure as a navy mark on each bar */
+.bars {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr 2.25rem;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: 1.1rem; /* room for Madrid's label under the bar */
+  font-size: var(--text-sm);
+}
+
+.label {
+  color: var(--ink-soft);
+}
+
+.track {
+  position: relative;
+  height: 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--violet-soft);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-pill);
+  background: var(--violet);
+}
+
+.mark {
+  position: absolute;
+  top: -0.25rem;
+  bottom: -0.25rem;
+  width: 0;
+  border-left: 2px dashed var(--ink);
+}
+
+/* Centred under the mark */
+.markLabel {
+  position: absolute;
+  top: calc(100% + 0.1rem);
+  left: 0;
+  color: var(--ink);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.value {
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-align: right;
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  margin-left: calc(4.5rem + var(--space-2));
+  margin-right: calc(2.25rem + var(--space-2));
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+}

@@ -1,0 +1,293 @@
+{
+ "objectIdFieldName": "OBJECTID",
+ "uniqueIdField": {
+  "name": "OBJECTID",
+  "isSystemMaintained": true
+ },
+ "globalIdFieldName": "",
+ "geometryType": "esriGeometryPoint",
+ "spatialReference": {
+  "wkid": 25830,
+  "latestWkid": 25830
+ },
+ "fields": [
+  {
+   "name": "IDESTACION",
+   "type": "esriFieldTypeString",
+   "alias": "IDESTACION",
+   "sqlType": "sqlTypeOther",
+   "length": 50,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "CODIGOEMPRESA",
+   "type": "esriFieldTypeString",
+   "alias": "CODIGOEMPRESA",
+   "sqlType": "sqlTypeOther",
+   "length": 7,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "DENOMINACION",
+   "type": "esriFieldTypeString",
+   "alias": "DENOMINACION",
+   "sqlType": "sqlTypeOther",
+   "length": 240,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "GRADOACCESIBILIDAD",
+   "type": "esriFieldTypeString",
+   "alias": "GRADOACCESIBILIDAD",
+   "sqlType": "sqlTypeOther",
+   "length": 1,
+   "domain": null,
+   "defaultValue": null
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "IDESTACION": "5_103",
+    "CODIGOEMPRESA": "60109",
+    "DENOMINACION": "CASAR, EL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_11",
+    "CODIGOEMPRESA": "18000",
+    "DENOMINACION": "MADRID ATOCHA CERCANÍAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_122",
+    "CODIGOEMPRESA": "18101",
+    "DENOMINACION": "SOL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_15",
+    "CODIGOEMPRESA": "17009",
+    "DENOMINACION": "CANTOBLANCO UNIVERSIDAD",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_18",
+    "CODIGOEMPRESA": "17000",
+    "DENOMINACION": "MADRID CHAMARTÍN-CLARA CAMPOAMOR",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_19",
+    "CODIGOEMPRESA": "60105",
+    "DENOMINACION": "CIEMPOZUELOS",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_21",
+    "CODIGOEMPRESA": "17005",
+    "DENOMINACION": "COLMENAR VIEJO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_29",
+    "CODIGOEMPRESA": "10203",
+    "DENOMINACION": "ESCORIAL, EL",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_31",
+    "CODIGOEMPRESA": "17001",
+    "DENOMINACION": "FUENCARRAL",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_34",
+    "CODIGOEMPRESA": "37002",
+    "DENOMINACION": "GETAFE CENTRO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_35",
+    "CODIGOEMPRESA": "60102",
+    "DENOMINACION": "GETAFE INDUSTRIAL",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_36",
+    "CODIGOEMPRESA": "37011",
+    "DENOMINACION": "GETAFE SECTOR 3",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_37",
+    "CODIGOEMPRESA": "17003",
+    "DENOMINACION": "GOLOSO, EL",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_4",
+    "CODIGOEMPRESA": "19003",
+    "DENOMINACION": "ALCOBENDAS-S.S. DE LOS REYES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_43",
+    "CODIGOEMPRESA": "37010",
+    "DENOMINACION": "MARGARITAS-UNIVERSIDAD, LAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_51",
+    "CODIGOEMPRESA": "18002",
+    "DENOMINACION": "NUEVOS MINISTERIOS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_53",
+    "CODIGOEMPRESA": "37012",
+    "DENOMINACION": "PARLA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_56",
+    "CODIGOEMPRESA": "60103",
+    "DENOMINACION": "PINTO",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_67",
+    "CODIGOEMPRESA": "10205",
+    "DENOMINACION": "ROBLEDO DE CHAVELA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_69",
+    "CODIGOEMPRESA": "60107",
+    "DENOMINACION": "SAN CRISTÓBAL DE LOS ANGELES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_70",
+    "CODIGOEMPRESA": "60101",
+    "DENOMINACION": "SAN CRISTÓBAL INDUSTRIAL",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_76",
+    "CODIGOEMPRESA": "10206",
+    "DENOMINACION": "SANTA MARÍA DE LA ALAMEDA",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_8",
+    "CODIGOEMPRESA": "60200",
+    "DENOMINACION": "ARANJUEZ",
+    "GRADOACCESIBILIDAD": "N"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_83",
+    "CODIGOEMPRESA": "17004",
+    "DENOMINACION": "TRES CANTOS",
+    "GRADOACCESIBILIDAD": "P"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_84",
+    "CODIGOEMPRESA": "19001",
+    "DENOMINACION": "UNIVERSIDAD P. COMILLAS",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_85",
+    "CODIGOEMPRESA": "19002",
+    "DENOMINACION": "VALDELASFUENTES",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_86",
+    "CODIGOEMPRESA": "60104",
+    "DENOMINACION": "VALDEMORO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_92",
+    "CODIGOEMPRESA": "37001",
+    "DENOMINACION": "VILLAVERDE ALTO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_93",
+    "CODIGOEMPRESA": "60100",
+    "DENOMINACION": "VILLAVERDE BAJO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  },
+  {
+   "attributes": {
+    "IDESTACION": "5_94",
+    "CODIGOEMPRESA": "10204",
+    "DENOMINACION": "ZARZALEJO",
+    "GRADOACCESIBILIDAD": "T"
+   }
+  }
+ ]
+}

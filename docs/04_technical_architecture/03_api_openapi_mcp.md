@@ -13,6 +13,8 @@ Versionada `/api/v1`.
 - `/support`.
 
 ## MCP PUBLIC
+Implementado en local desde MCP-001 (D-225): `buscar_zonas`, `que_falta`, `explicar_zona`, `encontrar_zona` y `fuentes_de_datos`. Ver `32_mcp_server.md`. La lista de abajo es el objetivo.
+
 - find_best_areas;
 - compare_areas;
 - calculate_affordability;

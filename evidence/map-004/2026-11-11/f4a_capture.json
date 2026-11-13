@@ -1,0 +1,41 @@
+{
+  "base": "http://localhost:3011",
+  "generated_at": "2026-11-11T14:23:25.789Z",
+  "shots": [
+    {
+      "route": "/",
+      "viewport": "desktop",
+      "file": "f4a_inicio_desktop.png",
+      "problems": [],
+      "warnings": [
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x13c00436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ],
+      "comparison": "f4a_inicio_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/",
+      "viewport": "mobile",
+      "file": "f4a_inicio_mobile.png",
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "desktop",
+      "file": "f4a_chamartin_desktop.png",
+      "problems": [],
+      "warnings": [],
+      "comparison": "f4a_chamartin_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "mobile",
+      "file": "f4a_chamartin_mobile.png",
+      "problems": [],
+      "warnings": []
+    }
+  ]
+}

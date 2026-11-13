@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "rows_in_range",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "stations": 57,
+        "min": 45,
+        "max": 70
+      }
+    },
+    {
+      "name": "unique_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "grades_read",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "ratio": 0.0,
+        "rows": []
+      }
+    },
+    {
+      "name": "step_free_counts",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "by_reading": {
+          "yes": 57
+        }
+      }
+    }
+  ]
+}

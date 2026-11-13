@@ -1,0 +1,45 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_centros_sanitarios/ec0b4644b3a8/centros_servicios_establecimientos_sanitarios.csv",
+      "sha256": "ec0b4644b3a83d9d4f0305f2f3475441774cdfb7882571198d1a1e6c99019c0b",
+      "bytes": 7914365,
+      "url": "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv",
+      "retrieved_at": "2026-11-12T12:10:34.103354+00:00"
+    },
+    {
+      "dataset_id": "ms_catalogo_nacional_hospitales",
+      "role": "directory@directory-1.1.0",
+      "path": "data/bronze/datasets/ms_catalogo_nacional_hospitales/052e3baa9300/CNH_2025.xlsx",
+      "sha256": "052e3baa930011d59779a7b2b6f6d5fced3991c73b86c085271f09464cd1d146",
+      "bytes": 493631,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/docs/CNH_2025.xlsx",
+      "retrieved_at": "2026-11-12T09:45:25.537724+00:00"
+    },
+    {
+      "dataset_id": "ms_catalogo_centros_atencion_primaria",
+      "role": "directory@directory-1.1.0",
+      "path": "data/bronze/datasets/ms_catalogo_centros_atencion_primaria/8f417625348c/2026_C_Catal_Centros_AP.xlsx",
+      "sha256": "8f417625348cc698bfa42c154231febd36f80aa171dc09c9b4977188d94487fd",
+      "bytes": 2067063,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx",
+      "retrieved_at": "2026-11-12T09:45:27.427378+00:00"
+    },
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "role": "corrections",
+      "path": "data/catalog/corrections/places.yaml",
+      "sha256": "144c132131d07abf60f4e77d9e22b4b00350d72902512a413173dda5d5cffb88",
+      "bytes": 13339,
+      "url": "data/catalog/corrections/places.yaml",
+      "retrieved_at": "2026-11-12T12:10:17.080493+00:00"
+    }
+  ],
+  "checksum": "adef54b3fabc8e908af7135612970f2fa67f1825408025a5beb218d583844bdd",
+  "parser_version": "places-1.7.1",
+  "dataset_version": "2026-11-12-adef54b3fabc",
+  "correlation_id": "dd86f35ca7ac4b9bb82ce6aa6db5903d",
+  "silver": "data/silver/cm_centros_sanitarios/adef54b3fabc/places.csv.gz"
+}

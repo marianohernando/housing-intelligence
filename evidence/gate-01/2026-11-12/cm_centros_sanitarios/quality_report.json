@@ -1,0 +1,487 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 553
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 2,
+        "ratio": 0.0036,
+        "reasons": {
+          "missing or unparseable coordinates; missing coordinates; address not found at portal level": 1,
+          "coordinates in municipio 28902, register says 28027; address not found at portal level": 1
+        }
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {
+          "centro_tipo_not_allowed": 38590
+        },
+        "source_rows": 46148
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "health"
+      }
+    },
+    {
+      "name": "coordinate_repairs",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "geocoded": 8,
+        "kept_with_note": 0,
+        "rows": [
+          {
+            "external_id": "CS10286",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 21 for number 23)"
+          },
+          {
+            "external_id": "CS1135",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS1184",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS15364",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 1 for number 2)"
+          },
+          {
+            "external_id": "CS19950",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS6158",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS7529",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "CS9495",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          }
+        ]
+      }
+    },
+    {
+      "name": "directory_one_to_one",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "reused": 0
+      }
+    },
+    {
+      "name": "directory_loaded",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "missing_directories": []
+      }
+    },
+    {
+      "name": "directory_dependency_agreement",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "compared": 483,
+        "disagree": 0
+      }
+    },
+    {
+      "name": "directory_matches",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "ms_catalogo_nacional_hospitales": {
+          "version": "2026-11-12-e5148a11b523",
+          "entries": 91,
+          "register_places": 85,
+          "matched": 80,
+          "by_method": {
+            "correccion": 1,
+            "direccion": 64,
+            "calle": 13,
+            "direccion_municipio": 0,
+            "codigo_postal": 2,
+            "municipio": 0
+          },
+          "names_rejected": [
+            {
+              "external_id": "CH0103",
+              "published": "Casta Guadarrama"
+            },
+            {
+              "external_id": "CH0105",
+              "published": "ID Dalud Móstoles Sa"
+            },
+            {
+              "external_id": "CH0113",
+              "published": "Fraternidad Muprespa, Mutua Colaboradora Con La Seguridad Social Nº 275"
+            },
+            {
+              "external_id": "CH0117",
+              "published": "HM Hospitales 1.989, S.A."
+            },
+            {
+              "external_id": "CH0118",
+              "published": "Alm Univass S.L."
+            },
+            {
+              "external_id": "CH0119",
+              "published": "HM Hospitales 1989, S.A."
+            }
+          ],
+          "unmatched_places": [
+            {
+              "external_id": "CH0068",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 3 in postal code 28006"
+            },
+            {
+              "external_id": "CH0120",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28055"
+            },
+            {
+              "external_id": "CH0121",
+              "subcategory": "Hospital general",
+              "reason": "no entry in postal code 28760"
+            },
+            {
+              "external_id": "CH0122",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28223"
+            },
+            {
+              "external_id": "CH0123",
+              "subcategory": "Hospital general",
+              "reason": "no unique entry among 1 in postal code 28660"
+            }
+          ],
+          "unmatched_entries": [
+            {
+              "external_id": "281371",
+              "name": "Hospital HM Valles",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280783",
+              "name": "Centro San Juan de Dios Ciempozuelos",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "281034",
+              "name": "Clínica Isadora S.A.",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280376",
+              "name": "Hospital Viamed Santa Elena, S.L",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280344",
+              "name": "Hospital de La V.O.T. de San Francisco de Asís",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280323",
+              "name": "Sanatorio Nuestra Señora del Rosario",
+              "kind": "Hospitales Generales"
+            },
+            {
+              "external_id": "280724",
+              "name": "Hospital Central de La Defensa Gómez Ulla",
+              "kind": "Hospitales Generales"
+            },
+            {
+              "external_id": "280210",
+              "name": "Hospital de Cantoblanco",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280164",
+              "name": "Hospital Carlos III",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "281445",
+              "name": "Servicio Madrileño de Salud",
+              "kind": "Otros Centros con Internamiento"
+            },
+            {
+              "external_id": "280148",
+              "name": "Hospital Central de La Cruz Roja, San José y Santa Adela",
+              "kind": "Otros Centros con Internamiento"
+            }
+          ]
+        },
+        "ms_catalogo_centros_atencion_primaria": {
+          "version": "2026-11-12-260312fa3bc8",
+          "entries": 419,
+          "register_places": 427,
+          "matched": 403,
+          "by_method": {
+            "correccion": 0,
+            "direccion": 291,
+            "calle": 57,
+            "direccion_municipio": 26,
+            "codigo_postal": 28,
+            "municipio": 1
+          },
+          "names_rejected": [],
+          "unmatched_places": [
+            {
+              "external_id": "CS0177",
+              "subcategory": "Centro de salud",
+              "reason": "no entry in postal code 28230"
+            },
+            {
+              "external_id": "CS0293",
+              "subcategory": "Centro de salud",
+              "reason": "no entry in postal code 28053"
+            },
+            {
+              "external_id": "CS0597",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 3 in postal code 28044"
+            },
+            {
+              "external_id": "CS1140",
+              "subcategory": "Centro de salud",
+              "reason": "ambiguous: 2 places claim 1328001985"
+            },
+            {
+              "external_id": "CS1178",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28701"
+            },
+            {
+              "external_id": "CS12726",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 5 in postal code 28737"
+            },
+            {
+              "external_id": "CS13070",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28514"
+            },
+            {
+              "external_id": "CS13396",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 5 in postal code 28739"
+            },
+            {
+              "external_id": "CS17064",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 3 in postal code 28015"
+            },
+            {
+              "external_id": "CS1832",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 3 in postal code 28044"
+            },
+            {
+              "external_id": "CS20540",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 3 in postal code 28400"
+            },
+            {
+              "external_id": "CS21751",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28983"
+            },
+            {
+              "external_id": "CS21829",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28006"
+            },
+            {
+              "external_id": "CS21856",
+              "subcategory": "Centro de salud",
+              "reason": "ambiguous: 2 places claim 1328001985"
+            },
+            {
+              "external_id": "CS22326",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28938"
+            },
+            {
+              "external_id": "CS22404",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 4 in postal code 28021"
+            },
+            {
+              "external_id": "CS22480",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 4 in postal code 28002"
+            },
+            {
+              "external_id": "CS6706",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 3 in postal code 28015"
+            },
+            {
+              "external_id": "CS7366",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 3 in postal code 28296"
+            },
+            {
+              "external_id": "CS8138",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 2 in postal code 28039"
+            },
+            {
+              "external_id": "CS8139",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 4 in postal code 28100"
+            },
+            {
+              "external_id": "CS8737",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 2 in postal code 28770"
+            },
+            {
+              "external_id": "CS9145",
+              "subcategory": "Centro de salud",
+              "reason": "no unique entry among 1 in postal code 28914"
+            },
+            {
+              "external_id": "CS9208",
+              "subcategory": "Consultorio de atención primaria",
+              "reason": "no unique entry among 2 in postal code 28130"
+            }
+          ],
+          "unmatched_entries": [
+            {
+              "external_id": "1328023097",
+              "name": "ANDRÉS MELLADO",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328020934",
+              "name": "CASTELLÓ",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328002480",
+              "name": "GENERAL FANJÚL",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328001985",
+              "name": "GOYA",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328000454",
+              "name": "GUAYABA",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328000183",
+              "name": "LAS ROZAS / EL ABAJÓN",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328007324",
+              "name": "SANTA Mª DE LA ALAMEDA - ESTACIÓN",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328009108",
+              "name": "ALALPARDO",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328017866",
+              "name": "NAVARREDONDA",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328017197",
+              "name": "PIÑUÉCAR",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328017088",
+              "name": "PAREDES DE BUITRAGO",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328008647",
+              "name": "COLMENAR VIEJO SUR",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328009046",
+              "name": "DR. MENDIGUCHÍA CARRICHE",
+              "kind": "CENTRO SALUD"
+            },
+            {
+              "external_id": "1328017546",
+              "name": "NUEVO BAZTÁN",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328012647",
+              "name": "VILLAR DEL OLMO",
+              "kind": "CONSULTORIO LOCAL"
+            },
+            {
+              "external_id": "1328000259",
+              "name": "ENTREVÍAS",
+              "kind": "CENTRO SALUD"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

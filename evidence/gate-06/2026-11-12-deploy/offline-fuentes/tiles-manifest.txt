@@ -1,0 +1,10 @@
+created_at 2026-11-12T22:23:18Z
+pbf madrid-261111.osm.pbf md5 1f5fc60a7a14235518265dd1bbfaf613 from https://download.geofabrik.de/europe/spain
+tilemaker ghcr.io/systemed/tilemaker@sha256:9cd8728a37a31c8a5205e091cedd3ff2c2c450c57e1ce3e5b58916185540ebba
+tiles_written 4750
+tiles_with_content 4490
+tiles_filled_empty 3365
+bounds -4.592284 39.876020 -2.900392 41.178653
+layers place boundary poi housenumber waterway transportation transportation_name building water water_name aeroway aerodrome_label park landuse landcover mountain_peak
+fonts https://assets.openfreemap.com/fonts/ofm.tar.gz sha256 56b1a521aba187779194f8f983f3e103a9f7f14581227eed1297ce0e102cb4b0: Noto Sans Bold,Noto Sans Italic,Noto Sans Regular
+size 191M

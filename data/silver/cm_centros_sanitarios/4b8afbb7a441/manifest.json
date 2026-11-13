@@ -1,0 +1,33 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_centros_sanitarios/93415cdfa2e5/centros_servicios_establecimientos_sanitarios.csv",
+      "sha256": "93415cdfa2e5ab4df722bc87f3da94b7cd654bcccdb9b02d8d30955155f7f979",
+      "bytes": 7915549,
+      "url": "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv",
+      "retrieved_at": "2026-11-12T01:39:12.681715+00:00"
+    },
+    {
+      "dataset_id": "ms_catalogo_nacional_hospitales",
+      "role": "directory@directory-1.0.0",
+      "path": "data/bronze/datasets/ms_catalogo_nacional_hospitales/052e3baa9300/CNH_2025.xlsx",
+      "sha256": "052e3baa930011d59779a7b2b6f6d5fced3991c73b86c085271f09464cd1d146",
+      "bytes": 493631,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/docs/CNH_2025.xlsx",
+      "retrieved_at": "2026-11-12T01:14:17.421466+00:00"
+    },
+    {
+      "dataset_id": "ms_catalogo_centros_atencion_primaria",
+      "role": "directory@directory-1.0.0",
+      "path": "data/bronze/datasets/ms_catalogo_centros_atencion_primaria/8f417625348c/2026_C_Catal_Centros_AP.xlsx",
+      "sha256": "8f417625348cc698bfa42c154231febd36f80aa171dc09c9b4977188d94487fd",
+      "bytes": 2067063,
+      "url": "https://www.sanidad.gob.es/estadEstudios/estadisticas/docs/siap/2026_C_Catal_Centros_AP.xlsx",
+      "retrieved_at": "2026-11-12T01:39:10.066185+00:00"
+    }
+  ],
+  "checksum": "4b8afbb7a441ebb93cace3f52ba620e83300057b20ac6082b527f6adb1288f1b",
+  "parser_version": "places-1.4.0"
+}

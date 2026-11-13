@@ -1,8 +1,11 @@
 """Every catalog YAML is valid, consistent and respects DATAMAD source rules."""
 
+from typing import Any
+
 import pytest
 
 from hi_contracts.catalog.enums import LicenseStatus, Priority, TrustTier
+from hi_contracts.public import NeedKey
 from hi_ingestion.catalog.loader import Catalog, load_catalog
 
 CM_SOURCE = "comunidad_madrid_ckan"
@@ -63,6 +66,17 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert catalog.datasets[dataset_id].domain.value == "transport", dataset_id
         elif pipeline.kind == "osm_walk_network":
             assert pipeline.walkable_highways, dataset_id
+        elif pipeline.kind == "osm_parks":
+            assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
+        elif pipeline.kind == "facility_directory":
+            assert pipeline.scope_values, dataset_id
+        elif pipeline.kind == "station_topology":  # D-223: read by a GTFS feed that names it
+            linked = [
+                p.station_accessibility.dataset_id
+                for p in catalog.pipelines.values()
+                if p.kind == "gtfs_feed" and p.station_accessibility is not None
+            ]
+            assert dataset_id in linked, dataset_id
         else:
             assert pipeline.metric_ids(), dataset_id
 
@@ -86,9 +100,47 @@ def test_point_pipelines_never_keep_contact_or_tax_ids(catalog: Catalog) -> None
             )
 
 
+def test_directories_never_read_contact_columns(catalog: Catalog) -> None:
+    """D-186 / D-218: a directory keeps names, addresses and capacity; never phones or emails."""
+    directories = [p for p in catalog.pipelines.values() if p.kind == "facility_directory"]
+    assert directories
+    for pipeline in directories:
+        for column in pipeline.kept_columns():
+            folded = column.casefold().replace("é", "e").replace("ó", "o")
+            assert not any(term in folded for term in PII_COLUMNS), (pipeline.dataset_id, column)
+
+
+def test_directories_complement_cm_registers(catalog: Catalog) -> None:
+    """D-218: a directory only names and sizes places of a CM register; it never creates them."""
+    linked = {
+        link.dataset_id: dataset_id
+        for dataset_id, p in catalog.pipelines.items()
+        if p.kind == "points_csv"
+        for link in p.directories
+    }
+    directories = {d for d, p in catalog.pipelines.items() if p.kind == "facility_directory"}
+    assert directories == set(linked)
+    for directory, register in linked.items():
+        assert catalog.datasets[register].source_id == CM_SOURCE, directory
+        assert catalog.datasets[directory].source_id != CM_SOURCE, directory
+        register_spec = catalog.pipelines[register]
+        assert register_spec.kind == "points_csv"
+        allowed = set(register_spec.row_filters.get(register_spec.subcategory_column or "", []))
+        kinds = next(
+            link.kinds for link in register_spec.directories if link.dataset_id == directory
+        )
+        assert set(kinds) <= allowed, (directory, set(kinds) - allowed)
+
+
 # Statistics the CM does not publish at the level the product needs (D-209: population and
-# households by district of Madrid). They complement CM data, never replace it.
-COMPLEMENTARY_STATISTICS = {"ayto_padron_municipal", "ayto_panel_indicadores_distritos_barrios"}
+# households by district of Madrid; D-228: the rent of the leases signed in the year, which only
+# adjusts the CM rent). They complement CM data, never replace it.
+COMPLEMENTARY_STATISTICS = {
+    "ayto_padron_municipal",
+    "ayto_panel_indicadores_distritos_barrios",
+    "aeat_alquiler_nuevos_contratos_municipios",
+    "aeat_alquiler_nuevos_contratos_codigo_postal",
+}
 
 
 def test_core_cm_statistics_have_pipelines(catalog: Catalog) -> None:
@@ -142,7 +194,62 @@ def test_gap_rows_have_one_primary_indicator_at_most(catalog: Catalog) -> None:
         if f.gap_row and f.gap_row.role == "primary"
     ]
     assert len(primaries) == len(set(primaries))
-    assert {"colegio", "centro_salud"} <= set(primaries)
+    assert {"escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia"} <= set(primaries)
+
+
+def _destinations(formula: dict[str, Any]) -> tuple[Any, ...]:
+    attributes = formula.get("attributes") or {}
+    return (
+        formula.get("category") or formula.get("destination_category"),
+        sorted(formula.get("subcategories") or []),
+        sorted((k, sorted(v)) for k, v in attributes.items()),
+    )
+
+
+# D-217: the health row counts SERMAS health-centre teams as capacity, while its walking minutes
+# reach any point of care (local consultorios included). Every counted place is still a
+# destination of the walk, never the other way round.
+COUNTED_SUBSET_OF_WALK = {"centro_salud"}
+# Walking minutes to another service shown next to a row on purpose (D-217: the nearest general
+# hospital next to primary care); they are not the row's own destinations.
+OTHER_SERVICE_WALKS = {"min_a_pie_hospital"}
+
+
+def test_gap_row_counts_the_same_places_as_its_walking_minutes(catalog: Catalog) -> None:
+    """GAP-001: a row's main indicator and its walking minutes describe the same kind of place,
+    e.g. colegios with primaria, public or concertado, in both (D-217 exception above)."""
+    features = catalog.features.values()
+    counted = {
+        f.gap_row.row: f
+        for f in features
+        if f.gap_row
+        and f.gap_row.role == "primary"
+        and f.formula.method in {"places_per_population", "two_step_fca"}
+    }
+    checked = 0
+    for walk in features:
+        if not (walk.gap_row and walk.formula.method == "network_walk_time"):
+            continue
+        if walk.feature_id in OTHER_SERVICE_WALKS:
+            continue
+        primary = counted.get(walk.gap_row.row)
+        if primary is None:
+            continue
+        category, subcategories, attributes = _destinations(primary.formula.model_extra or {})
+        assert category is not None, primary.feature_id  # never compares empty filters
+        assert subcategories or attributes, primary.feature_id
+        walk_category, walk_subcategories, walk_attributes = _destinations(
+            walk.formula.model_extra or {}
+        )
+        assert category == walk_category, f"{primary.feature_id} vs {walk.feature_id}"
+        if walk.gap_row.row in COUNTED_SUBSET_OF_WALK:
+            assert set(subcategories) < set(walk_subcategories), primary.feature_id
+        else:
+            assert (subcategories, attributes) == (walk_subcategories, walk_attributes), (
+                f"{primary.feature_id} vs {walk.feature_id}"
+            )
+        checked += 1
+    assert checked >= 5  # escuela infantil, colegio, centro de salud, mayores, farmacia
 
 
 def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Catalog) -> None:
@@ -154,9 +261,132 @@ def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Cat
             assert source.levels is None or set(source.levels) <= passes, spec.feature_id
         for level, override in levels.items():
             used = {s.dataset_id for s in spec.sources if s.levels is None or level in s.levels}
-            for key in ("metric", "population_metric"):
+            for key in (
+                "metric",
+                "population_metric",
+                "numerator_metric",
+                "denominator_metric",
+                "territories_metric",
+            ):
                 metric_id = override.get(key)
                 if metric_id is None:
                     continue
                 assert metric_id in catalog.metrics, (spec.feature_id, level, metric_id)
                 assert catalog.metrics[str(metric_id)].dataset_id in used, (spec.feature_id, level)
+
+
+def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
+    """CORE-003: the search finds its features through `fit`: one rent per m² and one walking
+    feature per NeedKey (plus the priorities measured on foot, D-222), computed at the
+    municipio and distrito levels it ranks."""
+    bound = [s for s in catalog.features.values() if s.fit is not None]
+    rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
+    prices = [s for s in bound if s.fit is not None and s.fit.role == "price_m2"]
+    to_needs = [s for s in bound if s.fit is not None and s.fit.need is not None]
+    walks = {s.fit.need: s for s in to_needs if s.fit is not None}
+    assert len(rents) == 1
+    assert len(prices) == 1
+    assert len(walks) == len(to_needs)
+    assert set(walks) == {n.value for n in NeedKey}
+    for spec in bound:
+        levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
+        assert {"municipio", "distrito"} <= levels, spec.feature_id
+
+
+def test_green_areas_are_the_walk_to_a_park(catalog: Catalog) -> None:
+    """D-222: the search reads the «Zonas verdes» priority from the minutes to a park."""
+    bound = [
+        f.feature_id
+        for f in catalog.features.values()
+        if f.fit is not None and f.fit.priority == "zonas_verdes"
+    ]
+    assert bound == ["min_a_pie_parque"]
+
+
+def test_step_free_is_the_walk_to_an_accessible_rail_station(catalog: Catalog) -> None:
+    """D-223: «sin escaleras» reads the minutes to a station the CRTM topology grades as fully
+    accessible (step_free = yes); the topology datasets are inputs of the feature."""
+    bound = [
+        f
+        for f in catalog.features.values()
+        if f.fit is not None and f.fit.priority == "sin_escaleras"
+    ]
+    assert [f.feature_id for f in bound] == ["min_a_pie_estacion_sin_escaleras"]
+    formula = bound[0].formula.model_extra or {}
+    assert formula["attributes"] == {"step_free": ["yes"]}
+    assert sorted(formula["subcategories"]) == ["cercanias", "metro", "metro_ligero"]
+    sources = {s.dataset_id for s in bound[0].sources}
+    for mode in ("metro", "metro_ligero", "cercanias"):
+        gtfs = catalog.pipelines[f"crtm_gtfs_{mode}"]
+        link = getattr(gtfs, "station_accessibility", None)
+        assert link is not None, mode
+        assert {f"crtm_gtfs_{mode}", link.dataset_id} <= sources
+
+
+def test_every_priority_binding_is_a_priority_the_search_measures(catalog: Catalog) -> None:
+    from hi_contracts.public import PriorityKey
+    from hi_domain.fit import PRIORITY_WALK
+
+    for spec in catalog.features.values():
+        if spec.fit is not None and spec.fit.priority is not None:
+            assert PriorityKey(spec.fit.priority) in PRIORITY_WALK, spec.feature_id
+
+
+def test_crtm_attribution_says_what_is_raw_and_what_is_derived(catalog: Catalog) -> None:
+    """CRTM licence §2: «Powered by CRTM» with its link, and which data are raw or derived."""
+    text = catalog.sources["crtm_open_data"].attribution_text or ""
+    assert text.startswith("Powered by CRTM") and "www.crtm.es" in text
+    assert "En bruto:" in text and "Explotados:" in text
+    assert "según el caso" not in text
+
+
+def test_safety_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-224, D-226: no safety feature scores in the search or enters «Qué falta»."""
+    safety = [f for f in catalog.features.values() if f.domain == "safety"]
+    assert {f.feature_id for f in safety} >= {
+        "seguridad_percibida_noche",
+        "seguridad_percibida_dia",
+    }
+    for spec in safety:
+        assert spec.fit is None, spec.feature_id
+        assert spec.gap_row is None, spec.feature_id
+
+
+def test_perceived_safety_is_the_residents_view_of_madrid_only(catalog: Catalog) -> None:
+    """D-226: the panel's survey rows for the 21 districts and the city; elsewhere SIN DATOS."""
+    for part in ("noche", "dia"):
+        spec = catalog.features[f"seguridad_percibida_{part}"]
+        assert {s.dataset_id for s in spec.sources} == {"ayto_panel_indicadores_distritos_barrios"}
+        formula = spec.formula.model_extra or {}
+        assert formula["metric"] == f"percepcion_seguridad_barrio_{part}"
+        assert "distrito" in formula["levels"]
+        assert spec.null_policy.no_coverage == "unknown"
+
+
+def test_purchase_price_is_the_official_appraised_value_from_the_cm_portal(
+    catalog: Catalog,
+) -> None:
+    """DATA-021 (D-227): buying reads the Ministerio de Vivienda appraised value that the CM
+    portal publishes by municipio; Madrid districts are SIN DATOS, never the city's mean."""
+    bound = [f for f in catalog.features.values() if f.fit is not None and f.fit.role == "price_m2"]
+    assert [f.feature_id for f in bound] == ["valor_tasado_vivienda_m2"]
+    spec = bound[0]
+    primary = {s.dataset_id for s in spec.sources if s.role == "primary"}
+    assert primary == {"cm_valor_tasado_vivienda_municipios"}
+    dataset = catalog.datasets["cm_valor_tasado_vivienda_municipios"]
+    assert dataset.source_id == "comunidad_madrid_ckan"
+    assert dataset.license_status == "CLEAR"
+    levels = (spec.formula.model_extra or {})["levels"]
+    assert levels["distrito"]["method"] == "not_published"
+
+
+def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> None:
+    """D-228: «contratos firmados en <año>» must be the year of the Agencia Tributaria tables."""
+    fit = catalog.features["alquiler_m2_mensual"].fit
+    assert fit is not None and fit.note is not None
+    for dataset_id in (
+        "aeat_alquiler_nuevos_contratos_municipios",
+        "aeat_alquiler_nuevos_contratos_codigo_postal",
+    ):
+        year = catalog.datasets[dataset_id].name.rsplit("ejercicio ", 1)[1][:4]
+        assert f"contratos firmados en {year}" in fit.note

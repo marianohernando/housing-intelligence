@@ -1,0 +1,12 @@
+# Public parks from OSM (DATA-018, D-222): leisure=park areas of at least 1 ha, the minimum size
+# of the WHO urban green space indicator (Annerstedt van den Bosch et al., 2016), not closed to
+# the public. Each park keeps the points of its edge: walking access is measured to the edge.
+kind: osm_parks
+dataset_id: osm_parques
+leisure: [park]
+access_denied: ["no", private, customers]
+min_area_ha: 1.0
+edge_step_m: 50
+subcategory: Parque
+min_parks: 700  # ~half of the 1,408 seen on 2026-11-12: catches truncated downloads
+max_parks: 4000

@@ -1,6 +1,6 @@
 feature_id: colegios_publicos_por_1000_menores
-version: 1
-human_name: Centros educativos públicos por cada 1.000 menores de 15 años
+version: 2
+human_name: Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años
 domain: education
 type: derived
 unit: centros/1000 menores
@@ -14,7 +14,9 @@ sources:
 formula:
   method: places_per_population
   category: education
-  attributes: {titularidad: [PÚBLICO]}
+  # The same destinations as min_a_pie_colegio (GAP-001 F2): schools with primaria, public or concertado
+  subcategories: ["COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA", "COLEGIO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA", "COLEGIO DE EDUCACIÓN PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL Y PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL, PRIMARIA Y SECUNDARIA", "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA", "CENTRO PRIVADO DE EDUCACIÓN PRIMARIA Y SECUNDARIA"]
+  attributes: {"titularidad": ["PÚBLICO", "PRIVADO CONCERTADO", "PÚBLICO-TITULARIDAD PRIVADA"]}
   population_metric: poblacion_censada
   population_dims: {edad: [de_0_4_anos, de_5_9_anos, de_10_14_anos], nacionalidad: [total], sexo: [total]}
   small_population_threshold: 500  # denominator below this -> confidence 0.5
@@ -30,5 +32,7 @@ tests: [non_negative, monotonic_in_places]
 limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "Cuenta centros, no plazas ni etapas; un centro grande y uno pequeño pesan igual. Medida de cobertura, no de acceso a pie."
+  - "Los menores de 15 años aproximan la población en edad escolar: son los tramos quinquenales que publican el censo y el padrón (0-4, 5-9 y 10-14). Afecta igual a todas las zonas, así que la comparación con la región se mantiene."
+  - "Solo colegios con primaria, públicos o concertados (sostenidos con fondos públicos): ni escuelas infantiles, ni institutos, ni privados sin concierto. Son los mismos centros que los minutos a pie hasta el colegio (versión 2, GAP-001 F2)."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
-gap_row: {row: colegio, role: primary, label: "Colegios", phrase: "centros educativos públicos por cada 1.000 menores de 15 años", proxy_note: "Cuenta centros, no plazas ni etapas: un centro grande y uno pequeño pesan igual. Hoy incluye también escuelas infantiles e institutos públicos."}
+gap_row: {row: colegio, role: extra, phrase: "colegios con primaria, públicos o concertados, por cada 1.000 menores de 15 años"}

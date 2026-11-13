@@ -10,3 +10,8 @@ municipio_code_column: CDMUNI
 status_column: SITUACIÓN
 active_values: [ALTA]
 attribute_columns: [TITULARIDAD, TIPO_ABRV, COD_TIPO, CDPOSTAL, DAT]
+district_code_column: CDDISTRITO
+# No postal code: CartoCiudad answers nothing when the query carries one (12 Nov tests).
+address_template: "{CDTPVIA} {DOMICILIO} {NMVIAL}, {MUNICIPIO}"
+address_number_column: NMVIAL
+address_street_column: DOMICILIO

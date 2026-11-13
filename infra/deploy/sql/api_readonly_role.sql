@@ -35,7 +35,9 @@ BEGIN
         'feature_value',
         'geo_admin_unit',
         'place_master',
-        'source_registry'
+        'source_registry',
+        'transit_hub',
+        'commute_time'
     ]
     LOOP
         EXECUTE format('GRANT SELECT ON public.%I TO vf_api_ro', api_table);

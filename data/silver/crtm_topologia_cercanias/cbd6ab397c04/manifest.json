@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "crtm_topologia_cercanias",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_topologia_cercanias/80ca7a710ea0/M5_Estaciones.json",
+      "sha256": "80ca7a710ea0551524fa28e0cd1e0f71589db440505bd016a7db7a640bcf2d6e",
+      "bytes": 13907,
+      "url": "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M5_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json",
+      "retrieved_at": "2026-11-12T14:05:44.703440+00:00"
+    }
+  ],
+  "checksum": "cbd6ab397c04c5ea3463546a9490be2f196c305b0abe95ea1209d39cce36655a",
+  "parser_version": "topology-1.0.0"
+}

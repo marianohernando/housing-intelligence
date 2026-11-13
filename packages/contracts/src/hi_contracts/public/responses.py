@@ -2,17 +2,43 @@
 
 from hi_contracts.api.envelope import Envelope
 from hi_contracts.public.common import DatasetList
-from hi_contracts.public.gaps import ZoneGapList
-from hi_contracts.public.search import SearchResult
+from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
+from hi_contracts.public.gaps import GapImpact, GapRowMap, ZoneGapList
+from hi_contracts.public.places import PlaceCollection
+from hi_contracts.public.search import BarrioSearchResult, SearchResult
 
 
 class ZoneGapListResponse(Envelope[ZoneGapList]):
     """GET /api/v1/gaps/{level}/{code}"""
 
 
+class GapRowMapResponse(Envelope[GapRowMap]):
+    """GET /api/v1/gaps?level=&row="""
+
+
+class GapImpactResponse(Envelope[GapImpact]):
+    """GET /api/v1/gaps/impact"""
+
+
 class SearchResponse(Envelope[SearchResult]):
     """POST /api/v1/search"""
 
 
+class BarrioSearchResponse(Envelope[BarrioSearchResult]):
+    """POST /api/v1/search/barrios (D-232)"""
+
+
 class DatasetListResponse(Envelope[DatasetList]):
     """GET /api/v1/datasets"""
+
+
+class PlacesResponse(Envelope[PlaceCollection]):
+    """GET /api/v1/places"""
+
+
+class ZoneExplanationResponse(Envelope[ZoneExplanation]):
+    """MCP tool explicar_zona (MCP-001)"""
+
+
+class ZoneLookupResponse(Envelope[ZoneLookup]):
+    """MCP tool encontrar_zona (MCP-001)"""

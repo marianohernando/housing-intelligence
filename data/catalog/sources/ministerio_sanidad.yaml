@@ -1,0 +1,25 @@
+source_id: ministerio_sanidad
+name: Ministerio de Sanidad · Portal Estadístico del SNS (catálogos de centros)
+provider: Ministerio de Sanidad (Subdirección General de Información Sanitaria)
+source_type: official_statistics
+api_type: download
+base_url: https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm
+license_name: Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)
+license_url: https://www.sanidad.gob.es/avisoLegal/home.htm
+license_status: CLEAR
+attribution_text: "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 0.9
+update_frequency: annual
+geographic_scope: España
+terms_reviewed_at: 2026-11-12T00:00:00Z
+robots_status: download
+active: true
+notes: >-
+  D-218. Fuente complementaria, no es dataset CM: solo pone nombre institucional a los
+  hospitales y centros de salud del registro de centros sanitarios de la Comunidad de Madrid, y
+  camas instaladas a los hospitales; el registro sigue siendo la fuente de cada lugar. El aviso legal del Ministerio autoriza la reutilización,
+  también comercial, con tres condiciones: no desnaturalizar la información, citar la fuente y
+  mencionar la fecha de la última actualización. Nunca se leen teléfonos ni correos.

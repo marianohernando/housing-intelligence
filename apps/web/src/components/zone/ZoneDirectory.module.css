@@ -1,0 +1,61 @@
+.directory {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.label {
+  font-weight: 500;
+}
+
+.input {
+  min-height: var(--target);
+  max-width: 24rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.count {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+/* Several columns of links on wide screens; each link is a 44 px target */
+.list {
+  columns: 14rem auto;
+  column-gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A zone and, when the list shows a row of «Qué falta», its status */
+.list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  break-inside: avoid;
+}
+
+.list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--violet-strong);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}

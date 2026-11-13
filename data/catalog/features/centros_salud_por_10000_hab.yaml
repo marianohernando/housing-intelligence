@@ -31,4 +31,4 @@ limitations:
   - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
   - "No mide capacidad ni horarios; los consultorios rurales cuentan igual que un centro de salud."
   - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
-gap_row: {row: centro_salud, role: primary, label: "Centros de salud", phrase: "centros de atención primaria por cada 10.000 habitantes", proxy_note: "Cuenta centros, no capacidad ni horarios: un consultorio rural pesa igual que un centro de salud grande."}
+gap_row: {row: centro_salud, role: extra, phrase: "centros de atención primaria (centros de salud y consultorios) por cada 10.000 habitantes del municipio o distrito"}

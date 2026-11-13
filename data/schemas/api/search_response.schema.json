@@ -196,6 +196,19 @@
       "additionalProperties": false,
       "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
       "properties": {
+        "attribution_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the licence asks to show next to the data (source, date, geocoder)",
+          "title": "Attribution Text"
+        },
         "dataset_id": {
           "pattern": "^[a-z][a-z0-9_]{2,95}$",
           "title": "Dataset Id",
@@ -225,6 +238,22 @@
         "publisher": {
           "title": "Publisher",
           "type": "string"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where it is published, to name where `url` opens (the CM portal, the Ayuntamiento's, OpenStreetMap, the Ministerio de Sanidad, the Agencia Tributaria…)",
+          "examples": [
+            "Portal de Datos Abiertos del Ayuntamiento de Madrid"
+          ],
+          "title": "Source Name"
         },
         "url": {
           "anyOf": [
@@ -291,7 +320,7 @@
         },
         "text": {
           "examples": [
-            "Colegio público a 6 min andando desde la mitad de sus calles"
+            "Colegio con primaria a unos 6 min andando"
           ],
           "title": "Text",
           "type": "string"
@@ -631,7 +660,7 @@
           "title": "Estimated Cost Eur"
         },
         "facts": {
-          "description": "3-5 tangible facts, strongest first",
+          "description": "Up to 5 tangible facts, most important to the person first; unknown last",
           "items": {
             "$ref": "#/$defs/Fact"
           },

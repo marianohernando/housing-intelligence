@@ -1,0 +1,82 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import GlassCard from "@/components/ui/GlassCard";
+import { createApi, type FeatureValuesResponse } from "@/lib/api";
+import { once } from "@/lib/once";
+import { PERCEIVED_SAFETY_FEATURES, perceivedSafety, perceivedSafetyText, safetyBars, type SafetyRows } from "@/lib/safety";
+
+import styles from "./PerceivedSafety.module.css";
+
+const TIMEOUT_MS = 15_000;
+// Four small answers for the whole visit (every district is in them): never asked outside Madrid
+const cache = new Map<string, Promise<SafetyRows>>();
+
+function loadRows(): Promise<SafetyRows> {
+  return once(cache, "rows", async () => {
+    const api = createApi();
+    const values = (body: FeatureValuesResponse) => body.data.values;
+    const ask = (id: string, level: "distrito" | "municipio") => api.featureValues(id, level, { timeoutMs: TIMEOUT_MS }).then(values);
+    const { night, day } = PERCEIVED_SAFETY_FEATURES;
+    const [nightRows, dayRows, nightCity, dayCity] = await Promise.all([
+      ask(night, "distrito"),
+      ask(day, "distrito"),
+      ask(night, "municipio"),
+      ask(day, "municipio"),
+    ]);
+    return { night: nightRows, day: dayRows, nightCity, dayCity };
+  });
+}
+
+/**
+ * zona.seguridad_vecinos (DATA-020, D-226 §1): in a Madrid district, how its neighbours rate the
+ * safety of their barrio, with the city's and the survey. Context only, in neutral colours; while it
+ * loads, or if it fails or the district has no rating, nothing is shown: it is not part of the fit.
+ */
+export default function PerceivedSafety({ districtCode }: { districtCode: string }) {
+  const [rows, setRows] = useState<SafetyRows | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    loadRows()
+      .then((loaded) => {
+        if (!cancelled) setRows(loaded);
+      })
+      // A boundary failure only hides this context block; the rest of the zone does not depend on it
+      .catch((exc: unknown) => console.warn("Seguridad percibida no disponible:", exc));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const safety = rows ? perceivedSafety(districtCode, rows) : null;
+  if (!safety) return null;
+  const { rating, source } = perceivedSafetyText(safety);
+  return (
+    <GlassCard as="section" aria-label="Seguridad del barrio según sus vecinos" className={styles.card}>
+      <p>{rating}</p>
+      {/* The sentence above says every figure; the bars only draw them, so screen readers skip them */}
+      <div className={styles.bars} aria-hidden="true">
+        {safetyBars(safety).map((bar) => (
+          <div key={bar.label} className={styles.bar}>
+            <span className={styles.label}>{bar.label}</span>
+            <span className={styles.track}>
+              <span className={styles.fill} style={{ width: `${bar.pct}%` }} />
+              {bar.city && (
+                <span className={styles.mark} style={{ left: `${bar.city.pct}%` }}>
+                  <span className={styles.markLabel}>Madrid {bar.city.value}</span>
+                </span>
+              )}
+            </span>
+            <span className={styles.value}>{bar.value}</span>
+          </div>
+        ))}
+        <span className={styles.scale}>
+          <span>0</span>
+          <span>10</span>
+        </span>
+      </div>
+      <p className={styles.source}>{source}</p>
+    </GlassCard>
+  );
+}

@@ -1,0 +1,83 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+259 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+........................................................................ [ 69%]
+........................................................................ [ 92%]
+.........................                                                [100%]
+313 passed in 5.33s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/hi-web/apps/web
+
+
+ Test Files  20 passed (20)
+      Tests  172 passed (172)
+   Start at  18:55:25
+   Duration  398ms (tests 45%, import 29%, worker 13%, transform 12%)
+
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+
+> @hi/web@0.0.1 prebuild
+> node scripts/copy-maplibre-worker.mjs
+
+maplibre worker copied to ~/Desktop/DATAMAD/hi-web/apps/web/public/maplibre
+
+> @hi/web@0.0.1 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+✓ Running next.config.ts took 53ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 489ms
+  Running TypeScript ...
+  Finished TypeScript in 1097ms ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/8) ...
+  Generating static pages using 9 workers (2/8) 
+  Generating static pages using 9 workers (4/8) 
+  Generating static pages using 9 workers (6/8) 
+✓ Generating static pages using 9 workers (8/8) in 199ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/health
+├ ○ /como-lo-calculamos
+├ ○ /map
+├ ƒ /que-falta
+├ ƒ /zona/[level]/[code]
+└ ○ /zonas
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

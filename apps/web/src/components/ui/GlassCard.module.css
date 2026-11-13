@@ -1,0 +1,8 @@
+.card {
+  padding: var(--space-5);
+}
+
+.card > h2 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}

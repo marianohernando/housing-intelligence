@@ -1,0 +1,85 @@
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--duration) var(--ease),
+    border-color var(--duration) var(--ease);
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--violet);
+}
+
+.chip[aria-pressed="true"] {
+  border-color: var(--violet);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+}
+
+.chip:disabled {
+  cursor: not-allowed;
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.icon {
+  flex: none;
+}
+
+.badge {
+  display: inline-grid;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--violet-strong);
+  color: var(--on-violet);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* In a grid the label wraps instead of pushing the count out of the button */
+.label {
+  min-width: 0;
+  overflow-wrap: break-word;
+  text-align: start;
+}
+
+.count {
+  flex: none;
+  margin-inline-start: auto;
+  min-width: 1.6rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--sin-datos-bg);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.chip[aria-pressed="true"] .count {
+  background: var(--violet-strong);
+  color: var(--on-violet);
+}
+
+.soon {
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--sin-datos-bg);
+  color: var(--sin-datos-ink);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}

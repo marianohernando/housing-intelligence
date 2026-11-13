@@ -1,0 +1,6 @@
+$ uv run pytest tests/unit/features -q
+# exit 0
+
+......................                                                   [100%]
+22 passed in 1.03s
+

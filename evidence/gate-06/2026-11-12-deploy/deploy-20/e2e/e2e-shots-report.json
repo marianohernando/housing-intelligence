@@ -1,0 +1,438 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "checked_at": "2026-11-12T22:11:05.813Z",
+ "runs": [
+  {
+   "browserName": "chromium",
+   "device": "desktop-1440",
+   "checks": [
+    {
+     "journey": "J1 search",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary = API zones_passing",
+     "ok": true,
+     "detail": "Con tu búsqueda tal cual salen 27 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "«De N zonas» = API all_zones",
+     "ok": true,
+     "detail": "199"
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Cumple todo» = 27 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «No cumple todo» = 157 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Sin datos» = 15 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "card name = API 1st zone",
+     "ok": true,
+     "detail": "Latina"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card % = API match_pct",
+     "ok": true,
+     "detail": "98 %"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card facts = API facts",
+     "ok": true,
+     "detail": "5 on screen, 5 in the API"
+    },
+    {
+     "journey": "J1 search",
+     "name": "1st option = API relaxation",
+     "ok": true,
+     "detail": "+5 min a pie hasta colegio con primaria: 44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: API zones = the option's zones_if_relaxed",
+     "ok": true,
+     "detail": "44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: summary on screen",
+     "ok": true,
+     "detail": "Con este cambio salen 44 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "undone: back to the original zones",
+     "ok": true,
+     "detail": "27"
+    },
+    {
+     "journey": "J1 search",
+     "name": "every /search sends max_minutes: null",
+     "ok": true,
+     "detail": "3 requests"
+    },
+    {
+     "journey": "J1 search",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "rows on screen = API rows",
+     "ok": true,
+     "detail": "6"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Escuelas infantiles» JUSTO",
+     "ok": true,
+     "detail": "Escuelas infantiles JUSTO Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todo"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Colegios» CUBIERTO",
+     "ok": true,
+     "detail": "Colegios CUBIERTO Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repar"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de salud» JUSTO",
+     "ok": true,
+     "detail": "Centros de salud JUSTO Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos l"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de mayores» CUBIERTO",
+     "ok": true,
+     "detail": "Centros de mayores CUBIERTO Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Farmacias» CUBIERTO",
+     "ok": true,
+     "detail": "Farmacias CUBIERTO Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerc"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Vivienda para familias» JUSTO",
+     "ok": true,
+     "detail": "Vivienda para familias JUSTO Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas Madrid 163,2 Otros munic"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "selector lists the gap rows",
+     "ok": true,
+     "detail": "escuela_infantil, colegio, centro_salud, mayores, farmacia, vivienda"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«escuela_infantil» legend caption = API indicator",
+     "ok": true,
+     "detail": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 3 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 65 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 93 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «Zona pequeña para comparar» = 37 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 1 zona",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Distritos de Madrid» = API distritos",
+     "ok": true,
+     "detail": "21 in the title, 21 links, 21 in the API"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Municipios» = API municipios",
+     "ok": true,
+     "detail": "178 in the title, 178 links, 178 in the API (1 split into districts)"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Madrid (toda la ciudad)» listed",
+     "ok": true,
+     "detail": "28079"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "all",
+     "name": "no browser console errors",
+     "ok": true,
+     "detail": ""
+    }
+   ],
+   "shots": [
+    "chromium-desktop-1440-j1-results.jpg",
+    "chromium-desktop-1440-j1-card.jpg",
+    "chromium-desktop-1440-j1-applied.jpg",
+    "chromium-desktop-1440-j2-madrid.jpg",
+    "chromium-desktop-1440-j3-row-map.jpg",
+    "chromium-desktop-1440-j4-zone-list.jpg"
+   ],
+   "consoleErrors": [],
+   "blocked": [],
+   "seconds": 25
+  },
+  {
+   "browserName": "chromium",
+   "device": "mobile-390",
+   "checks": [
+    {
+     "journey": "J1 search",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary = API zones_passing",
+     "ok": true,
+     "detail": "Con tu búsqueda tal cual salen 27 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "«De N zonas» = API all_zones",
+     "ok": true,
+     "detail": "199"
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card name = API 1st zone",
+     "ok": true,
+     "detail": "Latina"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card % = API match_pct",
+     "ok": true,
+     "detail": "98 %"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card facts = API facts",
+     "ok": true,
+     "detail": "5 on screen, 5 in the API"
+    },
+    {
+     "journey": "J1 search",
+     "name": "1st option = API relaxation",
+     "ok": true,
+     "detail": "+5 min a pie hasta colegio con primaria: 44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: API zones = the option's zones_if_relaxed",
+     "ok": true,
+     "detail": "44"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: summary on screen",
+     "ok": true,
+     "detail": "Con este cambio salen 44 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "undone: back to the original zones",
+     "ok": true,
+     "detail": "27"
+    },
+    {
+     "journey": "J1 search",
+     "name": "every /search sends max_minutes: null",
+     "ok": true,
+     "detail": "3 requests"
+    },
+    {
+     "journey": "J1 search",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "rows on screen = API rows",
+     "ok": true,
+     "detail": "6"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Escuelas infantiles» JUSTO",
+     "ok": true,
+     "detail": "Escuelas infantiles JUSTO Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todo"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Colegios» CUBIERTO",
+     "ok": true,
+     "detail": "Colegios CUBIERTO Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repar"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de salud» JUSTO",
+     "ok": true,
+     "detail": "Centros de salud JUSTO Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos l"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de mayores» CUBIERTO",
+     "ok": true,
+     "detail": "Centros de mayores CUBIERTO Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Farmacias» CUBIERTO",
+     "ok": true,
+     "detail": "Farmacias CUBIERTO Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerc"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Vivienda para familias» JUSTO",
+     "ok": true,
+     "detail": "Vivienda para familias JUSTO Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas Madrid 163,2 Otros munic"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "selector lists the gap rows",
+     "ok": true,
+     "detail": "escuela_infantil, colegio, centro_salud, mayores, farmacia, vivienda"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«escuela_infantil» legend caption = API indicator",
+     "ok": true,
+     "detail": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Distritos de Madrid» = API distritos",
+     "ok": true,
+     "detail": "21 in the title, 21 links, 21 in the API"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Municipios» = API municipios",
+     "ok": true,
+     "detail": "178 in the title, 178 links, 178 in the API (1 split into districts)"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Madrid (toda la ciudad)» listed",
+     "ok": true,
+     "detail": "28079"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "all",
+     "name": "no browser console errors",
+     "ok": true,
+     "detail": ""
+    }
+   ],
+   "shots": [
+    "chromium-mobile-390-j1-results.jpg",
+    "chromium-mobile-390-j1-card.jpg",
+    "chromium-mobile-390-j1-applied.jpg",
+    "chromium-mobile-390-j2-madrid.jpg",
+    "chromium-mobile-390-j3-row-map.jpg",
+    "chromium-mobile-390-j4-zone-list.jpg"
+   ],
+   "consoleErrors": [],
+   "blocked": [],
+   "seconds": 19
+  }
+ ]
+}

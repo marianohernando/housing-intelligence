@@ -160,6 +160,7 @@ class AggregationMethod(StrEnum):
 class PlaceCategory(StrEnum):
     EDUCATION = "education"
     HEALTH = "health"
+    PHARMACY = "pharmacy"  # its own service: never in the health-care layer (D-216)
     SOCIAL = "social"
     TRANSPORT = "transport"
     COMMERCE = "commerce"

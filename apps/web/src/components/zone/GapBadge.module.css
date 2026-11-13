@@ -1,0 +1,52 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.FALTA {
+  border-color: var(--falta);
+  background: var(--falta-bg);
+  color: var(--falta-ink);
+}
+
+.JUSTO {
+  border-color: var(--justo);
+  background: var(--justo-bg);
+  color: var(--justo-ink);
+}
+
+.CUBIERTO {
+  border-color: var(--cubierto);
+  background: var(--cubierto-bg);
+  color: var(--cubierto-ink);
+}
+
+.SIN_DATOS {
+  border: 1px dashed var(--sin-datos);
+  background: var(--sin-datos-bg);
+  color: var(--sin-datos-ink);
+}
+
+/* fila.zona_pequena, next to the status (SmallZoneTag) */
+.small {
+  border: 1px dashed var(--zona-pequena);
+  background: var(--zona-pequena-bg);
+  color: var(--zona-pequena-ink);
+  letter-spacing: 0;
+}
+
+/* Compared with its neighbours (GroupTag, gap-0.3): a fact about the comparison, not a status */
+.group {
+  border-color: var(--line);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  letter-spacing: 0;
+}

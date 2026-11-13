@@ -1,5 +1,98 @@
 # Changelog
 
+## v0.5.55 — Fuentes con su nombre y camas como contexto (2026-11-12)
+- D-231: `source_name` en cada `DatasetRef`; features de región `camas_instaladas_por_1000_hab` y `hospitales_total` para la nota del hospital.
+
+## v0.5.54 — Zonas pequeñas (2026-11-12)
+- D-230: «No comparable» en la explicación de las zonas poco fiables sin grupo, suelo de 3,69 para el denominador de la vivienda (un recuento de hogares) y `NOT_APPLICABLE` con su motivo cuando no vive nadie de la edad de la fila.
+- `04_technical_architecture/31_public_api_routes.md`: cómo pintarlo.
+
+## v0.5.53 — Alquiler de contratos nuevos (2026-11-12)
+- D-228 §6 (opción A, elegida por Mariano): el alquiler de la búsqueda es el de un contrato firmado en 2024, con el factor de la Agencia Tributaria (fuente complementaria, no CM) por municipio y código postal; `fit-0.6`. Los hechos de minutos a pie dicen «a unos N min andando».
+- `04_technical_architecture/31_public_api_routes.md`: texto del alquiler y nota que viaja con el dato.
+
+## v0.5.52 — Cifras de impacto (2026-11-12)
+- D-229: `GET /api/v1/gaps/impact` (`impact-0.1`) con la gente que vive donde falta cada fila y el ranking «dónde invertir primero», y `people` en cada fila de `/gaps/{level}/{code}`.
+- `04_technical_architecture/31_public_api_routes.md`: ruta, contrato `GapImpact` y cómo calcular «{n} por cada 100».
+
+## v0.5.51 — Alquiler de contratos nuevos evaluado (2026-11-12)
+- D-228: el índice CM 1934428 (IPVA del INE por antigüedad de contrato) no permite ajustar el nivel del alquiler; propuesta pendiente de Mariano con la tabla de nuevos contratos de la Agencia Tributaria (IRPF 2024, municipios y códigos postales de Madrid).
+
+## v0.5.50 — Comprar con el valor tasado (2026-11-12)
+- D-227: el presupuesto de compra usa el valor tasado medio de la vivienda libre por municipio (dataset CM, Ministerio de Vivienda); los distritos de Madrid quedan sin datos. `POST /search` pasa a `fit-0.5`.
+- `04_technical_architecture/31_public_api_routes.md`: compra y `estimated_cost_eur` en €.
+- D-227 §8: revisión (indicador de coste de `explicar_zona` según el presupuesto, test por la API con precio y texto pendiente en la web).
+
+## v0.5.49 — Seguridad percibida como contexto (2026-11-12)
+- D-226: features `seguridad_percibida_noche` y `seguridad_percibida_dia` (21 distritos y Madrid; el resto sin datos), servidas por `GET /features/{id}/values`; el hecho de la prioridad «Seguridad» dice que no se puntúa.
+- `04_technical_architecture/31_public_api_routes.md`: cómo leer el contexto de seguridad.
+- D-226 §6–§7: revisión (duplicados dentro de una edición del panel visibles para el Quality Gate, confidence 0,95 de la ciudad como juicio editorial y limitaciones sin cifras que caducan).
+
+## v0.5.48 — Seguridad en Madrid capital evaluada (2026-11-12)
+- D-226: percepción vecinal de la encuesta municipal como contexto en los 21 distritos; actuaciones de la Policía Municipal solo desde la fuente mensual (la copia del panel tiene errores); los atropellos no puntúan (sin exposición peatonal).
+
+## v0.5.47 — Servidor MCP local (2026-11-12)
+- D-225: `services/mcp` con 5 herramientas de solo lectura sobre los servicios de la API (`buscar_zonas`, `que_falta`, `explicar_zona`, `encontrar_zona` y `fuentes_de_datos`), SDK oficial `mcp` 2.3.0 por stdio y `make mcp`.
+- `04_technical_architecture/32_mcp_server.md`: uso, configuración de clientes, tamaños y pruebas. Contratos `ZoneExplanation` y `ZoneLookup` en `data/schemas/mcp/`.
+- D-225 §6: ajustes de la revisión (avisos de `explicar_zona`, caché de la búsqueda entre hilos, `total` en `encontrar_zona`, registros INFO a stderr).
+
+## v0.5.46 — Seguridad evaluada (2026-11-12)
+- D-224: la tasa oficial de hechos conocidos por municipio no entra en el buscador (denominador, cobertura y modelo); queda una opción de contexto para Mariano.
+
+## v0.5.45 — «Sin escaleras» en el buscador (2026-11-12)
+- D-223: topología del CRTM (grado de accesibilidad de cada estación) como dato CM; el GTFS guarda `wheelchair_boarding` sin interpretarlo; feature `min_a_pie_estacion_sin_escaleras`; `POST /search` pasa a `fit-0.4` y la prioridad «sin escaleras» puntúa los minutos a pie hasta una estación con accesibilidad total.
+
+## v0.5.44 — Revisión de las zonas verdes (2026-11-12)
+- D-222 §4–§7: sin parque urbano a un paseo puntúa 0 con confidence baja (UNKNOWN rompía el orden); Quality Gate de inclusiones; recuentos que pueden repetir parques; 78 de los 101 municipios lejos de un parque son rurales.
+
+## v0.5.43 — Zonas verdes en el buscador (2026-11-12)
+- D-222 §7: `POST /search` pasa a `fit-0.3`; la prioridad «Zonas verdes» puntúa los minutos a pie hasta un parque urbano y, sin parque a un paseo, sale UNKNOWN («el campo no cuenta»).
+
+## v0.5.42 — Minutos a pie hasta un parque (2026-11-12)
+- D-222 §5–§6: Casa de Campo y Quinta de Torre Arias con fuente oficial del Ayuntamiento; features `min_a_pie_parque` y `pct_calle_parque_5min` hasta el borde de los parques.
+
+## v0.5.41 — Parques (2026-11-12)
+- D-222: parques de OSM de 1 ha o más como lugares (`green`), con los puntos de su borde para medir a pie.
+
+## v0.5.40 — Revisión de los nombres con tilde (2026-11-12)
+- D-221 §1, §3 y §5: comparación por palabras completas y en NFC, el nombre de la fuente entero (no solo sus tildes) y la excepción declarada del Beata María Ana.
+
+## v0.5.39 — Nombres con tilde con fuente oficial (2026-11-12)
+- D-221: `name` en las correcciones de lugares, tomado del texto de su fuente; 11 nombres de hospitales y centros de atención primaria recuperan sus tildes.
+
+## v0.5.38 — Correcciones con fuente oficial (2026-11-12)
+- D-218 §10: fichero versionado de correcciones de lugares, aplicado con linaje; Ramón y Cajal con nombre y camas y 4 centros de salud con ubicación.
+
+## v0.5.35 — Atribución por dataset y varias capas en /places (2026-11-12)
+- `04_technical_architecture/31_public_api_routes.md`: `DatasetRef.attribution_text` (petición de B), desde el catálogo de fuentes y con CartoCiudad en los datasets geocodificados.
+- `GET /places?category=a,b,…`: varias categorías en una llamada (petición de B).
+
+## v0.5.34 — Revisión del transporte público (2026-11-12)
+- D-220 §8: ajustes de la revisión (tiempo mínimo de transbordo a pie, zonas fuera de la matriz, texto del Reality Check) y caso demo con Fuencarral-El Pardo primera.
+
+## v0.5.33 — La búsqueda usa el transporte público (2026-11-12)
+- D-220 §8: `POST /search` pasa a `fit-0.2`. Los límites de trayecto salen PASS/FAIL con los minutos en transporte público y el hecho del trabajo dice esos minutos; solo un sitio fuera de toda zona sigue en línea recta.
+- `04_technical_architecture/31_public_api_routes.md`: rutas y hechos de la búsqueda con CORE-009.
+
+## v0.5.32 — Tiempo en transporte público al trabajo (2026-11-12)
+- D-220: minutos para llegar a las 9:00 en transporte público desde cada zona a cada estación y centro de zona, con los 6 GTFS del CRTM (migración 0007, `transit_hub` y `commute_time`).
+
+## v0.5.30 — Nombres de centros de salud y consultorios (2026-11-12)
+- D-218 §9: segunda pasada del cruce con los catálogos del Ministerio (cinco reglas, municipio y tipo por debajo de la dirección completa, grafías del catálogo de atención primaria). Centros de salud genéricos de 44 a 17; el Ramón y Cajal sigue pendiente del fichero de correcciones.
+
+## v0.5.29 — Conexiones de la API (2026-11-12)
+- D-219: pool de cada proceso por entorno (`DB_POOL_SIZE`, `DB_MAX_OVERFLOW`) y paso de la API al pooler de Supabase en modo transacción (puerto 6543) con `DB_PREPARED_STATEMENTS=false`.
+- `11_engineering/03_configuration_and_secrets.md`: las tres variables nuevas.
+
+## v0.5.24 — Lista de lo que falta: las 6 filas (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: fila de vivienda (GAP-001 F3b), `SIN_DATOS` explícito por distrito y extras de escuela infantil (aulas y nacimientos) y de vivienda (% en alquiler y tamaño medio del hogar).
+
+## v0.5.23 — Lista de lo que falta: cinco filas (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: `/gaps` trae escuela infantil, mayores y farmacia por municipio y por los 21 distritos (GAP-001 F3a), además de colegio y centro de salud. La fila de colegios cuenta colegios con primaria, públicos o concertados (F2). Extras: la ratio oficial de farmacias de la CM y las plazas de residencia.
+
+## v0.5.22 — Lista de lo que falta: minutos a pie (2026-11-11)
+- `04_technical_architecture/31_public_api_routes.md`: `GET /api/v1/gaps/{level}/{code}` trae en `extra_indicators` los minutos a pie hasta el colegio y el centro de salud más cercanos (GAP-001 F1). Son indicadores que acompañan a la fila, sin estado propio, y sus datasets se suman a la procedencia de la fila.
+
 ## v0.5.14 — Vida Fácil y contratos v2 (2026-11-11)
 - D-199 a D-207: nombre «Vida Fácil», escala (municipios + 21 distritos de Madrid), mapa 2D/3D y estilo, % de encaje con hechos, presupuesto de alquiler o compra, prioridades, extras con sus reglas de seguridad y accesibilidad, orden núcleo/extras y contratos PUBLIC v2.
 - `09_datamad/25_plan_competicion.md` §1, §6 y §8 con el nombre y el estilo nuevos.

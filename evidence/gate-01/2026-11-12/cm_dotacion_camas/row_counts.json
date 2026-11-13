@@ -1,0 +1,14 @@
+{
+  "camas_funcionamiento_por_1000_sns|ccaa": 9,
+  "camas_funcionamiento_por_1000|ccaa": 9,
+  "camas_funcionamiento_resto|ccaa": 9,
+  "camas_funcionamiento_sns|ccaa": 9,
+  "camas_funcionamiento|ccaa": 9,
+  "camas_instaladas_por_1000_sns|ccaa": 9,
+  "camas_instaladas_por_1000|ccaa": 9,
+  "camas_instaladas_resto|ccaa": 9,
+  "camas_instaladas_sns|ccaa": 9,
+  "camas_instaladas|ccaa": 9,
+  "out_of_window": 180,
+  "observations": 90
+}

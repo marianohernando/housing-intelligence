@@ -16,8 +16,20 @@ def _set_search_path(dbapi_connection: Any, _record: Any) -> None:
     dbapi_connection.commit()
 
 
+def _connect_args(settings: DatabaseSettings) -> dict[str, Any]:
+    # psycopg disables prepared statements on a connection with prepare_threshold=None.
+    return {} if settings.db_prepared_statements else {"prepare_threshold": None}
+
+
 def make_engine(url: str | None = None) -> Engine:
-    engine = create_engine(url or DatabaseSettings().database_url, pool_pre_ping=True)
+    settings = DatabaseSettings()
+    engine = create_engine(
+        url or settings.database_url,
+        pool_pre_ping=True,
+        pool_size=settings.db_pool_size,
+        max_overflow=settings.db_max_overflow,
+        connect_args=_connect_args(settings),
+    )
     event.listen(engine, "connect", _set_search_path)
     return engine
 

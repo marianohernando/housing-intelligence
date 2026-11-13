@@ -1,0 +1,97 @@
+# CORE-005 Fase 5: distancia a pie a 4 km/h (D-211)
+# 2026-11-11T16:14:18Z · base ec126b0 + cambios de la fase
+
+## make features
+uv run hi-features compute
+admin_unit_area_km2: method planar_area_epsg_25830 computed by its pipeline, skipped
+alquiler_m2_mensual: 179 rows, 37 with value, 142 explicit unknown
+centros_salud_por_10000_hab: 201 rows, 201 with value, 0 explicit unknown
+colegios_publicos_por_1000_menores: 201 rows, 201 with value, 0 explicit unknown
+hogares_5_mas_pct: 179 rows, 179 with value, 0 explicit unknown
+hogares_unipersonales_pct: 179 rows, 179 with value, 0 explicit unknown
+min_a_pie_centro_salud: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_colegio: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_escuela_infantil: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_farmacia: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_mayores: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_transporte: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_centro_salud_15min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_colegio_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_escuela_infantil_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_farmacia_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_mayores_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_transporte_5min: 4843 rows, 4819 with value, 24 explicit unknown
+plazas_residencia_por_100_mayores: 201 rows, 201 with value, 0 explicit unknown
+poblacion_0_14_pct: 200 rows, 200 with value, 0 explicit unknown
+poblacion_65_mas_pct: 200 rows, 200 with value, 0 explicit unknown
+poblacion_total: 200 rows, 200 with value, 0 explicit unknown
+renta_per_capita: 179 rows, 179 with value, 0 explicit unknown
+tamano_medio_hogar: 200 rows, 200 with value, 0 explicit unknown
+viviendas_menos_60m2_pct: 179 rows, 179 with value, 0 explicit unknown
+make features  21.79s user 1.86s system 83% cpu 28.187 total
+
+## uv run python scripts/check_walk_golden.py
+PASS sol_farmacia: ok
+PASS sol_transporte: ok
+PASS sol_transporte_5min: ok
+PASS plaza_castilla_transporte: ok
+PASS centro_farmacia: ok
+PASS centro_centro_salud: ok
+PASS madrid_colegio: ok
+PASS madrid_farmacia: ok
+PASS getafe_centro_farmacia: ok
+PASS getafe_centro_transporte: ok
+PASS alcala_centro_farmacia: ok
+PASS alcala_centro_colegio: ok
+PASS acebeda_sin_farmacia: ok
+PASS acebeda_consultorio: ok
+PASS region_transporte: ok
+PASS min_a_pie_centro_salud <= 15 min <=> pct_calle_centro_salud_15min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_colegio <= 10 min <=> pct_calle_colegio_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_escuela_infantil <= 10 min <=> pct_calle_escuela_infantil_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_farmacia <= 10 min <=> pct_calle_farmacia_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_mayores <= 10 min <=> pct_calle_mayores_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_transporte <= 5 min <=> pct_calle_transporte_5min >= 50 %: 4819 zones, 0 disagree
+0 failed
+
+## make lint typecheck test
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+250 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 26%]
+........................................................................ [ 52%]
+........................................................................ [ 78%]
+...........................................................              [100%]
+275 passed in 4.91s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  17:14:32
+   Duration  87ms (tests 48%, import 25%, transform 16%, worker 11%)
+
+uv run pytest -m db tests/integration -q
+....................................................................     [100%]
+68 passed in 30.40s
+exit=0

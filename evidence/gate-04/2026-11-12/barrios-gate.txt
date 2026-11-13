@@ -1,0 +1,34 @@
+# BARRIO-001 (D-232, fit-0.7): gate on the work tree before the Fase 1 and Fase 2 commits, 2026-11-12
+
+## make lint typecheck
+All checks passed!
+414 files already formatted
+278 files OK, 0 changed, 0 missing
+0 errors, 0 warnings, 0 informations
+lint+typecheck exit=0
+
+## make test-unit (python)
+697 passed in 15.42s
+
+## web tests (after npm run -w apps/web contracts: the 2 new generated contract types)
+Test Files  1 failed | 28 passed (29); Tests  2 failed | 306 passed (308)
+The 2 failures are provenance.test.ts, tied to dataset_list.all.fixture.json regenerated in 983d225 with the AEAT
+attribution (D-228): they pass when line B adds pie.aeat to ATTRIBUTIONS_FALLBACK. Not caused by this card.
+
+## make test-db
+133 passed in 61.17s (0:01:01)
+make test-db exit=0
+
+## golden searches
+9 escenarios dorados · todos OK
+
+# Fase 2b (review fixes), 2026-11-13: make lint typecheck test on the work tree
+All checks passed!
+278 files OK, 0 changed, 0 missing
+0 errors, 0 warnings, 0 informations
+704 passed in 15.80s
+ Test Files  30 passed (30)
+      Tests  354 passed (354)
+133 passed in 70.23s (0:01:10)
+make lint typecheck test exit=0
+golden: 9 escenarios dorados · todos OK

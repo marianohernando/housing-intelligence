@@ -1,0 +1,709 @@
+/*
+ * Vida Fácil · slides DATAMAD 2026 (bases §8). 16:9 a 1920 × 1080 px.
+ * Tokens: los de la web (apps/web/src/styles/tokens.css en claude/s1-web, validados en AA).
+ * Proyector: una slide estándar de 13,33 in mide 960 pt; aquí 1920 px, así que 2 px ≈ 1 pt.
+ * Mínimos que build.py comprueba: ningún texto por debajo de 22 px (≈ 11 pt), solo para
+ * fuentes y pies; el texto de lectura va a 28 px o más y los títulos a 64 px o más.
+ */
+:root {
+  --bg: #f6f5fc;
+  --bg-deep: #e7e4fb; /* the darkest point of the background gradient */
+  --ink: #141b3d;
+  --ink-soft: #5a6080;
+  --violet: #6a5ae0;
+  --violet-strong: #4b3bbf;
+  --violet-soft: #ece9fd;
+  --on-violet: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px rgba(20, 27, 61, 0.08);
+  --falta: #c93a52;
+  --falta-ink: #a61e33;
+  --falta-bg: #fce8ec;
+  --justo: #a86a00;
+  --justo-ink: #7e4c00;
+  --justo-bg: #fdf1dc;
+  --cubierto: #23805f;
+  --cubierto-ink: #17634a;
+  --cubierto-bg: #e3f4ec;
+  --sin-datos: #6e7389;
+  --sin-datos-ink: #4f546a;
+  --sin-datos-bg: #eeeff3;
+  --pending: #a61e33;
+  --font-title: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --radius-lg: 28px;
+  --radius: 18px;
+  --pad: 88px;
+}
+
+@page {
+  size: 1920px 1080px;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  padding: var(--pad);
+  overflow: hidden;
+  background:
+    radial-gradient(900px 700px at 105% -10%, var(--violet-soft), transparent 70%),
+    radial-gradient(800px 600px at -10% 110%, var(--bg-deep), transparent 70%),
+    var(--bg);
+  page-break-after: always;
+  break-after: page;
+}
+
+.slide:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--violet-strong);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.glass {
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Cabecera y pie comunes */
+.brand {
+  position: absolute;
+  top: 44px;
+  left: var(--pad);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--ink);
+}
+
+.brand span {
+  color: var(--violet-strong);
+}
+
+.pageno {
+  position: absolute;
+  right: var(--pad);
+  bottom: 36px;
+  font-size: 22px;
+  color: var(--ink-soft);
+}
+
+.sources {
+  position: absolute;
+  left: var(--pad);
+  right: 240px;
+  bottom: 36px;
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+
+.kicker {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--violet-strong);
+}
+
+.title {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Huecos de captura: la imagen tapa el texto del hueco cuando existe */
+.shot {
+  position: relative;
+  margin: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--violet-soft);
+  border: 3px dashed var(--violet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.shot.has-img {
+  border: 2px solid var(--glass-border);
+  background: #ffffff;
+}
+
+.shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.shot .ph {
+  padding: 24px;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--violet-strong);
+}
+
+.shot.has-img .ph {
+  display: none;
+}
+
+/* Recortes de las capturas de producción (build.py, EVIDENCE_CAPTURES). Cada hueco enseña la parte
+   que cuenta, con la proporción del hueco, y deja fuera los textos anteriores al despliegue del PR #9
+   (pitch/slides.md, «Capturas necesarias») */
+/* C2: la cabecera de la tarjeta, entera; el fondo blanco del hueco rellena lo que sobra */
+.shot[data-shot="C2"] img {
+  object-view-box: inset(4% 5.1% 78% 5.1%);
+  object-fit: contain;
+  object-position: center;
+}
+
+/* C3 (12 nov, B, fit-0.6): «Con tu búsqueda tal cual salen 27 zonas» y la opción «+5 min…: saldrían 44 zonas, 17 más» */
+.shot[data-shot="C3"] img {
+  object-view-box: inset(12.8% 4.6% 50.6% 4.6%);
+}
+
+/* C4 (12 nov, B): la fila de escuelas infantiles de Puente de Vallecas, las dos cifras (2,8 frente a 4,9) */
+.shot[data-shot="C4"] img {
+  object-view-box: inset(16.8% 1.6% 68.3% 1.6%);
+  object-fit: contain;
+  object-position: center;
+}
+
+.shot[data-shot="C5"] img {
+  object-view-box: inset(8% 0 0 37%);
+}
+
+.shot[data-shot="C7"] img {
+  object-view-box: inset(67.2% 44.9% 16.7% 3.1%);
+}
+
+/* Marca de pendiente: se ve en los borradores y build.py --final la rechaza */
+.pending {
+  outline: 4px dashed var(--pending);
+  outline-offset: 6px;
+  position: relative;
+}
+
+.pending::after {
+  content: "PENDIENTE: " attr(data-pending);
+  position: absolute;
+  left: 0;
+  top: -46px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--pending);
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Slide 1 ---------- */
+.s1 .grid {
+  display: grid;
+  grid-template-columns: 780px 1fr;
+  gap: 72px;
+  height: 100%;
+  align-items: center;
+}
+
+.s1 .name {
+  font-size: 150px;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 28px;
+}
+
+.s1 .lema {
+  font-family: var(--font-title);
+  font-size: 56px;
+  font-weight: 600;
+  color: var(--violet-strong);
+  margin-top: 20px;
+}
+
+.s1 .desc {
+  font-size: 36px;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-top: 44px;
+}
+
+.s1 .team {
+  margin-top: 56px;
+  font-size: 30px;
+  color: var(--ink-soft);
+}
+
+.s1 .team strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.s1 .visual {
+  height: 820px;
+  padding: 24px;
+}
+
+.s1 .visual .shot {
+  height: 100%;
+}
+
+/* ---------- Slide 2 ---------- */
+.s2 {
+  padding-top: 72px;
+}
+
+.s2 .title {
+  margin-top: 28px;
+}
+
+.s2 .grid {
+  display: grid;
+  grid-template-columns: 620px 1fr;
+  grid-template-rows: 100%;
+  gap: 36px;
+  margin-top: 28px;
+  height: 760px;
+}
+
+.s2 .problem {
+  padding: 40px 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.s2 .who {
+  font-family: var(--font-title);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--violet-strong);
+}
+
+.s2 .what {
+  font-size: 28px;
+  line-height: 1.35;
+  margin-top: 6px;
+}
+
+.s2 .punch {
+  margin-top: auto;
+  font-family: var(--font-title);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.s2 .punch span {
+  color: var(--violet-strong);
+}
+
+.s2 .data {
+  padding: 36px 44px;
+}
+
+.s2 .headline {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.s2 .headline .big {
+  font-family: var(--font-title);
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--violet);
+}
+
+.s2 .headline p {
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+.s2 table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.s2 th,
+.s2 td {
+  text-align: left;
+  vertical-align: top;
+  padding: 7px 0;
+  border-top: 2px solid rgba(20, 27, 61, 0.1);
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.s2 th {
+  width: 230px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.s2 .complement {
+  margin-top: 14px;
+  font-size: 24px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Slide 3 ---------- */
+.s3 {
+  padding-top: 72px;
+}
+
+.s3 .title {
+  margin-top: 28px;
+}
+
+.s3 .cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+  margin-top: 28px;
+  height: 590px;
+}
+
+.s3 .col {
+  padding: 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.s3 h3 {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-top: 10px;
+}
+
+.s3 ul {
+  margin: 20px 0 0;
+  padding-left: 30px;
+}
+
+.s3 li {
+  font-size: 28px;
+  line-height: 1.35;
+  margin-bottom: 12px;
+}
+
+.s3 .shots {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  height: 120px;
+}
+
+.s3 .shots.one {
+  grid-template-columns: 1fr;
+  height: 100px;
+}
+
+.s3 .shots .ph {
+  font-size: 22px;
+  padding: 12px;
+}
+
+.s3 .states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 700;
+  border: 2px solid transparent;
+}
+
+.state .icon {
+  font-size: 24px;
+}
+
+.state.falta {
+  color: var(--falta-ink);
+  background: var(--falta-bg);
+  border-color: var(--falta);
+}
+
+.state.justo {
+  color: var(--justo-ink);
+  background: var(--justo-bg);
+  border-color: var(--justo);
+}
+
+.state.cubierto {
+  color: var(--cubierto-ink);
+  background: var(--cubierto-bg);
+  border-color: var(--cubierto);
+}
+
+.state.sin-datos {
+  color: var(--sin-datos-ink);
+  background: var(--sin-datos-bg);
+  border: 2px dashed var(--sin-datos);
+}
+
+.s3 .example {
+  margin-top: 16px;
+  font-size: 26px;
+  line-height: 1.35;
+}
+
+/* Huecos de la fase de mejora: cifra de impacto (A) y citas de la prueba con personas (Mariano) */
+.s3 .impact {
+  margin-top: 10px;
+  font-size: 26px;
+  line-height: 1.3;
+}
+
+.s3 .impact strong {
+  display: block;
+  font-size: 44px;
+  line-height: 1.1;
+  color: var(--violet-strong);
+}
+
+.s3 .quote {
+  margin: 12px 0 0;
+  padding: 4px 0 4px 18px;
+  border-left: 6px solid var(--violet);
+}
+
+.s3 .quote p {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.3;
+  font-style: italic;
+}
+
+.s3 .quote footer {
+  margin-top: 6px;
+  font-size: 22px;
+  color: var(--ink-soft);
+}
+
+.s3 .band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  margin-top: 24px;
+  height: 140px;
+}
+
+.s3 .link {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 16px 28px;
+}
+
+.qr {
+  width: 112px;
+  height: 112px;
+  flex: none;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.qr svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.s3 .link .label {
+  font-size: 24px;
+  color: var(--ink-soft);
+}
+
+.s3 .link .url {
+  font-family: var(--font-title);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--violet-strong);
+  margin-top: 4px;
+}
+
+/* ---------- Slide 4 ---------- */
+.s4 .title {
+  margin-top: 40px;
+  font-size: 56px;
+}
+
+.num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: var(--violet);
+  color: var(--on-violet);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 26px;
+  flex: none;
+}
+
+.s4 .stage {
+  position: relative;
+  margin-top: 36px;
+  height: 690px;
+}
+
+/* Escritorio con la proporción de la captura (1440 × 900 = 1,6) */
+.s4 .desktop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1088px;
+  height: 680px;
+  padding: 16px;
+}
+
+.s4 .desktop .shot {
+  height: 100%;
+}
+
+.s4 .marker {
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+}
+
+.s4 .marker .num {
+  width: 64px;
+  height: 64px;
+  font-size: 34px;
+}
+
+/* Sobre la captura C1 de producción: 1 junto a «Tu búsqueda», 2 en la cabecera de la tarjeta de
+   zona (% de encaje y hechos) y 3 en su «Qué falta aquí». Se revisan si cambia la captura. */
+.s4 .m1 {
+  left: 328px;
+  top: 260px;
+}
+
+.s4 .m2 {
+  left: 692px;
+  top: 142px;
+}
+
+.s4 .m3 {
+  left: 692px;
+  top: 514px;
+}
+
+/* Móvil 390 × 844 superpuesto al escritorio */
+.s4 .phone {
+  position: absolute;
+  left: 1030px;
+  top: 40px;
+  width: 316px;
+  height: 650px;
+  padding: 12px;
+  border-radius: 44px;
+  background: var(--ink);
+  box-shadow: 0 24px 60px rgba(20, 27, 61, 0.25);
+}
+
+.s4 .phone .shot {
+  height: 100%;
+  border-radius: 34px;
+}
+
+.s4 .steps {
+  position: absolute;
+  left: 1390px;
+  top: 40px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.s4 .steps li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+.s4 .live {
+  position: absolute;
+  left: var(--pad);
+  bottom: 30px;
+  font-family: var(--font-title);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.s4 .live a {
+  color: var(--violet-strong);
+}

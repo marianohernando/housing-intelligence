@@ -1,0 +1,6 @@
+200 image/vnd.microsoft.icon 3686B /favicon.ico
+200 image/png 8813B /apple-touch-icon.png
+200 image/png 8813B /apple-touch-icon-precomposed.png
+200 image/svg+xml 487B /icon.svg
+404 /manifest.webmanifest (not linked by the page; asked only by this check)
+linked: /favicon.ico (48x48), /icon.svg, /apple-icon.png (180x180)

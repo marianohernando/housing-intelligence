@@ -1,0 +1,35 @@
+# MAP-004 Fase 5b · peticiones de la web a la API (2026-11-11)
+# API de B en 8011 (rama rebasada sobre ec126b0), web de B en 3011 (build). Bytes del cuerpo JSON.
+
+## Antes: lo que pedía la web (capas enteras), medido con curl
+places?category=transport (página 1 de 3)   1407222 B · 5000 de 14982 paradas: el resto se perdía
+places?category=health                      1296926 B
+places?category=education                   1156882 B
+geo/admin-units?level=distrito              537540 B · 246 distritos para usar 21
+total por zona antes de los puntos clave: ~4,4 MB
+
+## Después: lo que pide la web, registrado con Playwright (1440x900, 7 s tras cargar)
+## /
+200    31867 B  /api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES.28.MUN.28079
+200   336682 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50
+total API: 368549 B en 2 peticiones
+
+## /zona/distrito/2807905
+200    31867 B  /api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES.28.MUN.28079
+200   336682 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50
+200     5880 B  /api/v1/gaps/distrito/2807905
+200     4201 B  /api/v1/places?category=transport&admin_unit_id=ES.28.DIS.2807905&subcategory=cercanias&subcategory=metro&subcategory=metro_ligero
+200     3357 B  /api/v1/places?category=health&admin_unit_id=ES.28.DIS.2807905&subcategory=Centro de salud&subcategory=Hospital general&subcategory=Consultorio de atención primaria
+200     2374 B  /api/v1/places?category=education&admin_unit_id=ES.28.DIS.2807905&subcategory=COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA
+total API: 384361 B en 6 peticiones
+
+## /zona/municipio/28092
+200    31867 B  /api/v1/geo/admin-units?level=distrito&simplify_m=25&parent=ES.28.MUN.28079
+200   336682 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50
+200     5042 B  /api/v1/gaps/municipio/28092
+200     2122 B  /api/v1/places?category=transport&admin_unit_id=ES.28.MUN.28092&subcategory=cercanias&subcategory=metro&subcategory=metro_ligero
+200    11089 B  /api/v1/places?category=education&admin_unit_id=ES.28.MUN.28092&subcategory=COLEGIO DE EDUCACIÓN INFANTIL Y PRIMARIA
+200     3951 B  /api/v1/places?category=health&admin_unit_id=ES.28.MUN.28092&subcategory=Centro de salud&subcategory=Hospital general&subcategory=Consultorio de atención primaria
+total API: 390753 B en 6 peticiones
+
+peticiones sin filtro: 0

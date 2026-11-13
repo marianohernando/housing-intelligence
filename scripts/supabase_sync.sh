@@ -8,7 +8,7 @@ PROFILE="${1:-demo}"
 REMOTE="${SUPABASE_DATABASE_URL:?SUPABASE_DATABASE_URL is required}"
 REMOTE="${REMOTE/postgresql+psycopg:/postgresql:}"   # libpq URL for pg_dump/psql
 
-BASE=(source_registry dataset_registry dataset_version metric_registry feature_registry geo_admin_unit place_master place_source_alias feature_value)
+BASE=(source_registry dataset_registry dataset_version metric_registry feature_registry geo_admin_unit place_master place_source_alias feature_value transit_hub commute_time)
 FULL_EXTRA=(h3_cell h3_cell_admin_unit metric_observation)
 case "$PROFILE" in
   demo) TABLES=("${BASE[@]}") ;;

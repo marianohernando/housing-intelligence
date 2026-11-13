@@ -1,0 +1,35 @@
+dataset_id: aeat_alquiler_nuevos_contratos_codigo_postal
+source_id: agencia_tributaria
+name: Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos por códigos postales para municipios de más de 20.000 viviendas habituales arrendadas (ejercicio 2024)
+domain: housing
+owner: Agencia Tributaria
+format: HTML
+geography: table
+geo:
+  resolution: codigo_postal
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html
+resources:
+- name: Comparativa de rentabilidad y precios de alquiler como vivienda habitual con los nuevos contratos por códigos postales para municipios de más de 20.000 viviendas habituales arrendadas (ejercicio 2024)
+  format: HTML
+  url: https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/jrubik582b4eeccd4e39730277d218cc788357e33967da.html
+  file_name: aeat_alquiler_nuevos_contratos_codigo_postal.html
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 5
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 4
+  ingestion_ease: 3
+  notes: >-
+    D-228. Fuente complementaria, no es dataset CM. Alquiler medio mensual y m² medios de todos
+    los contratos de vivienda habitual y de los «contratos de arrendamiento formalizados en el
+    ejercicio de referencia» (metodología de la AEAT). Página HTML: no hay CSV ni XLSX.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T22:00:00+00:00'
+notes: >-
+  Los 54 códigos postales de Madrid capital (el único municipio de la Comunidad con la tabla por código postal). Se usa solo el cociente contratos nuevos / todos del €/m² (D-228).

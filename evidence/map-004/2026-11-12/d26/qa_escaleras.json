@@ -1,0 +1,67 @@
+{
+ "modo": "escaleras",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "desktop": {
+  "hechos_sin_chip": 0,
+  "chip": {
+   "pulsado_antes": "false",
+   "ayuda": "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.",
+   "icono": "lucide lucide-train-front jkx1Ca_icon",
+   "pulsado_despues": "true"
+  },
+  "muy_pronto_lineas": 0,
+  "sillas_de_ruedas": 0,
+  "prioridades_enviadas": [
+   "colegios",
+   "transporte",
+   "salud",
+   "sin_escaleras"
+  ],
+  "api": {
+   "metodo": "fit-0.5",
+   "primera": "Ciudad Lineal",
+   "hechos": [
+    "Estación de metro o tren accesible (sin escaleras) a 10 min andando desde la mitad de sus calles"
+   ]
+  },
+  "tarjeta_muestra": [
+   true
+  ],
+  "tarjeta_sillas_de_ruedas": 0,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mobile": {
+  "hechos_sin_chip": 0,
+  "chip": {
+   "pulsado_antes": "false",
+   "ayuda": "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa.",
+   "icono": "lucide lucide-train-front jkx1Ca_icon",
+   "pulsado_despues": "true"
+  },
+  "muy_pronto_lineas": 0,
+  "sillas_de_ruedas": 0,
+  "prioridades_enviadas": [
+   "colegios",
+   "transporte",
+   "salud",
+   "sin_escaleras"
+  ],
+  "api": {
+   "metodo": "fit-0.5",
+   "primera": "Ciudad Lineal",
+   "hechos": [
+    "Estación de metro o tren accesible (sin escaleras) a 10 min andando desde la mitad de sus calles"
+   ]
+  },
+  "tarjeta_muestra": [
+   true
+  ],
+  "tarjeta_sillas_de_ruedas": 0,
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "fallos": []
+}

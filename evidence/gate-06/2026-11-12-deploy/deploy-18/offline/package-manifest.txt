@@ -1,0 +1,15 @@
+created_at 2026-11-12T15:15:00Z
+git_commit 2761696
+alembic_head 0007 (source 0007)
+basemap local, madrid-261111.osm.pbf
+source_registry 12
+dataset_registry 42
+dataset_version 53
+metric_registry 28
+feature_registry 42
+geo_admin_unit 4973
+place_master 24776
+place_source_alias 25259
+feature_value 82334
+transit_hub 579
+commute_time 115800

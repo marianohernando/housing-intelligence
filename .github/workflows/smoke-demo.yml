@@ -33,3 +33,29 @@ jobs:
           BASE_URL: ${{ inputs.base_url }}
           SMOKE_TIMEOUT: "60"
         run: scripts/smoke_demo.sh ${BASE_URL:+"$BASE_URL"}
+
+  # The pitch journeys in a real browser (infra/deploy/e2e/e2e_prod.mjs): every figure on screen
+  # against the API response the page received. Chromium at 1440 and 390 px, about 3 min a day.
+  e2e:
+    name: e2e (pitch journeys)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: End-to-end journeys
+        env:
+          E2E_BASE_URL: ${{ inputs.base_url || 'https://vidafacil-madrid.vercel.app' }}
+        run: node infra/deploy/e2e/e2e_prod.mjs --out "$RUNNER_TEMP/e2e"
+      - name: Keep the report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-report
+          path: ${{ runner.temp }}/e2e/e2e-report.json
+          retention-days: 14

@@ -1,0 +1,10 @@
+$ uv run python scripts/mcp_smoke.py   # base local, 12 nov
+Servidor vida-facil por stdio
+Herramientas: buscar_zonas, que_falta, explicar_zona, encontrar_zona, fuentes_de_datos
+Todas de solo lectura: True
+- encontrar_zona: 0.15 s, 0.4 KB, 0 avisos, método zones-v1: Chamartín (distrito 2807905)
+- que_falta: 0.24 s, 30.4 KB, 0 avisos, método gap-0.3: escuela_infantil JUSTO, colegio CUBIERTO, centro_salud CUBIERTO, mayores JUSTO, farmacia CUBIERTO, vivienda SIN_DATOS
+- explicar_zona: 0.39 s, 17.5 KB, 0 avisos, método fit-0.4: Chamartín: encaje 100 %, 9 indicadores, 22 datasets (18 CM). Hechos: Parada de transporte público a 2 min andando desde la mitad de sus calles | Centro de salud a 9 min andando desde la mitad de sus calles | Colegio con primaria a 6 min andando desde la mitad de sus calles
+- buscar_zonas: 0.22 s, 60.1 KB, 0 avisos, método fit-0.4: 33 de 199 zonas cumplen todo; primeras: Fuencarral-El Pardo 100 %, Ciudad Lineal 99 %, Hortaleza 99 %; 21 datasets
+- fuentes_de_datos: 0.01 s, 18.0 KB, 0 avisos, método datasets-v1: 32 datasets, 26 del portal de la CM
+- explicar_zona: error legible (0.00 s): Error executing tool explicar_zona: Municipio 28079 is ranked by district: explain one of its districts

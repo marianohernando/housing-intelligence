@@ -27,10 +27,12 @@ export const LEVEL_LABEL: Record<AdminLevel, string> = {
   seccion_censal: "Sección censal",
 };
 
-export function adminUnitsUrl(base: string, level: AdminLevel, simplifyMeters: number): string {
+/** `parent` keeps only the direct children of that admin_unit_id (e.g. Madrid's 21 districts). */
+export function adminUnitsUrl(base: string, level: AdminLevel, simplifyMeters: number, parent?: string): string {
   const url = new URL("/api/v1/geo/admin-units", base);
   url.searchParams.set("level", level);
   url.searchParams.set("simplify_m", String(simplifyMeters));
+  if (parent) url.searchParams.set("parent", parent);
   return url.toString();
 }
 

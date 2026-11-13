@@ -716,3 +716,618 @@ DATA-012; aplica D-200. La CM no publica la población por distrito de Madrid: `
   - Son hogares del padrón (personas inscritas en una misma vivienda), no el hogar del censo 2021 de la CM.
   - En los distritos, `tamano_medio_hogar` toma la media publicada, sin recalcularla. En los municipios sigue la del censo.
   - La fila de vivienda de GAP-001 queda SIN DATOS por distrito mientras no haya superficie de las viviendas por distrito.
+
+## D-210 — Distancia a pie: velocidad, ventanas, destinos y calles de origen (2026-11-11)
+CORE-005, Fases 3 y 4. Doce features por sección censal, municipio y distrito, más la referencia regional. Son 6 destinos con dos medidas cada uno:
+- la mediana de minutos hasta el más cercano;
+- el % de calle a N minutos o menos.
+
+Datos: la red peatonal de OSM (`osm_red_peatonal`, ODbL, complementaria) y los registros de la CM para los destinos.
+- **Velocidad: 4,5 km/h (1,25 m/s) para todo el mundo.** Sustituida por D-211: 4 km/h.
+  - La guía de la FHWA de EE. UU. recomienda 1,2 m/s para la mayoría de los casos y 1,0 m/s donde más del 20 % son mayores de 65 (https://www.fhwa.dot.gov/publications/research/safety/pedbike/98107/section2.cfm).
+  - El estudio «El Madrid de los 15 minutos» del Ayuntamiento usa 4 km/h (https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf).
+  - 4,5 km/h es un paso adulto tranquilo y la parte alta para personas mayores, y se declara en cada feature. A 4 km/h los minutos salen un 12,5 % más altos y a 3,6 km/h, un 25 % más.
+  - Una velocidad para movilidad reducida entra con la accesibilidad física, opcional (D-205, del 19 al 22 nov), sin cambiar este cálculo.
+- **Ventanas del %:** transporte 5 min (unos 375 m), centro de salud 15 min y el resto 10 min.
+- **Destinos** (por subcategoría del registro, en el YAML de cada feature):
+  - escuela infantil: pública y privada, de 0 a 3 años;
+  - colegio con primaria: público o concertado;
+  - centro de salud o consultorio de atención primaria;
+  - farmacia;
+  - centro de mayores: hogares, clubes y centros de día (las residencias no son destino a pie);
+  - cualquier parada de autobús, metro, metro ligero o cercanías, sin mirar la frecuencia, que llega con CORE-009.
+- **Origen: las calles donde vive la gente,** aproximadas por el tipo de vía de OSM: residencial, de convivencia, sin clasificar, peatonal y terciaria.
+  - Cada nodo pesa la mitad de la longitud de sus tramos y cae en la sección censal que lo contiene. El municipio y el distrito salen del código de la sección.
+  - Es un proxy de dónde vive la gente, no la población. Pesa más donde hay más calle, como las urbanizaciones de baja densidad, y por eso la mediana regional (por ejemplo, 3,4 min a una parada) es más alta que la de la sección típica (2,1 min).
+- **Cálculo:**
+  - Un Dijkstra multiorigen por tipo de destino sobre la componente principal de la red. Cada destino se une a ella por su nodo más cercano, en línea recta.
+  - Por zona se calculan la mediana de minutos ponderada por la longitud de calle y el % de esa calle a N minutos o menos. Las dos medidas son coherentes por construcción: la mediana está dentro de la ventana si y solo si lo está la mitad de la calle o más.
+- **Sin datos y desconocido, nunca 0:**
+  - una zona sin calles de origen en OSM es `SOURCE_NO_COVERAGE`. Pasa en 24 secciones urbanas pequeñas (0,01–0,13 km²), 15 de ellas en Moratalaz y Villa de Vallecas. Ahí las viviendas dan seguramente a vías que OSM no marca como calle de origen (peatonales o de servicio). Una mejora posible: usar en esas secciones cualquier vía transitable como origen, declarándolo;
+  - una zona cuyas calles no llegan a ningún destino es `UNKNOWN`.
+- **Confianza:** la parte de la calle de la zona que conecta con la red. Si la zona tiene menos de 300 m de calle de origen, 0,5 como máximo.
+- **Niveles:** el H3 r9 queda para cuando lo pida la vista 3D de la zona (CORE-005b). Serían unas 300.000 filas más en `feature_value`, que se copia entera a Supabase.
+- **Comprobación (Gate 3):**
+  - 15 casos golden con límites razonados, por ejemplo: Sol tiene farmacia a 5 min o menos, y La Acebeda no tiene ninguna farmacia en el registro (97,5 min a la más cercana) pero sí consultorio (12,7 min);
+  - la coherencia entre mediana y % en las 4.819 zonas con valor de cada destino;
+  - la cobertura de las 4.843 zonas.
+  - El cálculo completo de las 24 features tarda 29 s y ocupa 0,9 GB de memoria.
+
+## D-211 — Distancia a pie a 4 km/h (2026-11-11)
+CORE-005, Fase 5. Sustituye la velocidad de D-210; el resto de D-210 (ventanas, destinos, calles de origen, cálculo, nulos y confianza) no cambia.
+- **Velocidad: 4 km/h (1,11 m/s) para todo el mundo**, en lugar de 4,5 km/h. Decisión de Mariano: la demo también se dirige a personas mayores.
+  - Fuente: el estudio «El Madrid de los 15 minutos» del Ayuntamiento («Velocidad de desplazamiento estimada en 4 Km/h»), https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/GEOPORTAL/Jornada/2022/SALA5_1130_PROXIMIDAD_POR_CALCULODEREDES.pdf. Así las cifras se pueden comparar con las del Ayuntamiento.
+  - Referencia: 1,11 m/s queda entre los 1,2 m/s que la FHWA de EE. UU. recomienda para la mayoría de los casos y los 1,0 m/s que recomienda donde más del 20 % son mayores de 65 (https://www.fhwa.dot.gov/publications/research/safety/pedbike/98107/section2.cfm). No se afirma que sea la velocidad de las personas mayores: con movilidad reducida los minutos son más, y la feature lo declara.
+- **Efecto:** los minutos suben un 12,5 % (×1,125) y las ventanas del % cubren menos calle: 5 min son unos 333 m (antes 375), 10 min unos 667 m y 15 min unos 1.000 m.
+- **Versión:** las 12 features a pie pasan a la versión 2 (`feature_version` en cada fila).
+- **Comprobación (Gate 3), con el recálculo real:**
+  - los 15 casos golden de D-210 cumplen sus límites sin tocarlos. Los más justos: Sol a una parada, 3,1 min (límite 4), y el centro de Madrid a un centro de salud, 6,9 min (límite 10). La Acebeda: farmacia a 109,7 min y consultorio a 14,3 min (límite 20);
+  - la coherencia entre mediana y % sigue sin desacuerdos en las 4.819 zonas con valor de cada destino;
+  - por ejemplo, Chamartín (distrito 2807905): centro de salud 9,5 min (antes 8,4) y farmacia 2,6 min (antes 2,3). La mediana regional a una parada pasa de 3,4 a 3,8 min y la de la sección típica, de 2,1 a 2,4 min.
+
+## D-212 — Nombres oficiales de municipios y distritos (2026-11-11)
+DATA-022 y los nombres con la Ñ rota que pidió B. El CSV de nombres de `cm_secciones_censales` escribe «/» o el byte 0xD0 donde va la Ñ («REDUE/A», «GRIÐON», «PI/UECAR-GANDULLAS») y no lleva tildes («VICALVARO»). No es un problema de encoding: el carácter se perdió en la fuente.
+- **Fuente de los nombres publicados:**
+  - los 179 municipios, de la tabla estadística de la CM `cm_poblacion_edad_nacionalidad_sexo` (columna `Territorio`, última versión válida): «Griñón», «Redueña», «Álamo (El)»;
+  - los 21 distritos de Madrid, del panel de indicadores del Ayuntamiento (`ayto_panel_indicadores_distritos_barrios`): «Vicálvaro». La CM no publica tablas por distrito de Madrid (D-209);
+  - los distritos censales del resto de municipios se llaman «<municipio> — distrito censal NN», con el nombre oficial del municipio;
+  - los barrios de Madrid siguen con el nombre de `cm_barrios_madrid`, que ya trae la Ñ (a algunos les faltan tildes, como «Las Aguilas»; queda anotado).
+- **Cómo:** un paso aparte, `hi-ingest admin-names` (`make admin-names`, y al final de `run-all`), porque la geografía se publica antes que las tablas que traen los nombres. Solo cambia `geo_admin_unit.name`: la geometría y los códigos no se tocan. La ejecución queda en `ingestion_run` con las versiones usadas, y la evidencia guarda cada cambio.
+- **Calidad bloqueante:** cada municipio y cada distrito de Madrid tiene un nombre oficial y solo uno, y ningún nombre publicado lleva caracteres fuera de la ortografía española (falla con «/», «Ð» o un byte sin decodificar). Si falla, no se cambia ningún nombre.
+- **Presentación:** `display_name` pone delante el artículo que las tablas de la CM escriben detrás: «Álamo (El)» se muestra «El Álamo». La API lo aplica en `/gaps`, `/geo/admin-units` y `/features`.
+
+## D-213 — Lista de lo que falta: referencia por tipo de territorio y cortes con prueba estadística (2026-11-11)
+GAP-001, Fase 5. Sustituye los cortes provisionales de `gap-0.1` (ratio frente a la región: FALTA < 0,8 ≤ JUSTO < 1,0 ≤ CUBIERTO). Método `gap-0.2`, en `hi_domain/gaps.py` y `hi_api/services/gap_reference.py`; la API lo publica en `method`. **Aprobada por Mariano el 11 nov** (a través de `datamad-10`): referencia por tipo de municipio, FALTA solo si la diferencia es clara y no se explica por el tamaño, y «poco fiable» en zonas pequeñas. Refina la decisión cerrada «frente a la referencia regional por población»: sigue siendo una tasa de la región por población, pero de las zonas comparables.
+
+**Problemas de `gap-0.1`, medidos con los datos reales del 11 nov:**
+- La tasa de casi todas las filas depende del tipo de territorio. Ejemplo: cada pueblo tiene su consultorio, así que los municipios rurales tienen 14,8 veces más centros de atención primaria por habitante que los urbanos. La media regional (0,59 por 10.000) quedaba por encima de cualquier zona urbana: los 21 distritos de Madrid salían FALTA o JUSTO y ninguno CUBIERTO.
+- Una zona pequeña salía FALTA por no tener un servicio que, por su tamaño, ni siquiera se espera que tenga. Ejemplo: un pueblo de 500 habitantes sin farmacia, cuando la región tiene 4,2 por cada 10.000.
+- Una zona pequeña podía dar cifras extremas. B señaló La Acebeda, con 10.700 viviendas grandes por cada 100 hogares grandes. Faltaba una regla común para los denominadores pequeños.
+
+**Decisión** (igual para las 6 filas, sin ajustar a ninguna zona concreta):
+1. **Referencia: los demás municipios del mismo tipo de la Comunidad de Madrid.**
+   - **Tipo:** la definición legal de medio rural de la Ley 45/2007, de desarrollo sostenible del medio rural (art. 3.a): menos de 30.000 habitantes y menos de 100 habitantes por km². Con la población del censo de la CM y la superficie de la geografía canónica salen 84 municipios rurales (143.000 habitantes) y 95 urbanos.
+   - **Herencia:** un distrito o una sección toma el tipo de su municipio. Los distritos de Madrid son urbanos.
+   - **Cálculo:** la tasa de referencia es la suma de los recuentos de los municipios del tipo dividida por la suma de sus poblaciones, **sin el municipio de la propia zona**. Un distrito o una sección dejan fuera su municipio entero. Madrid es la mitad de la población urbana y no puede compararse consigo mismo. Equivale a la estandarización indirecta: los casos esperados de una zona son su población por esa tasa.
+   - **Contexto:** la región entera sigue apareciendo en `regional_reference` y en la explicación («… en los demás municipios urbanos de la Comunidad de Madrid, 0,56 (en toda la Comunidad, 0,59)»).
+   - **Procedencia:** las filas citan también la población del censo y la geografía, que fijan el tipo.
+   - **Justificación:** una prueba de homogeneidad (χ², 1 gl) de la tasa entre rural y urbano, fila por fila. Todas las filas la rechazan al 5 %:
+
+     | Fila | Tasa rural / urbana | χ² | p |
+     |---|---|---|---|
+     | Escuela infantil | 2,70 | 64,9 | 8·10⁻¹⁶ |
+     | Colegio | 1,81 | 16,0 | 6·10⁻⁵ |
+     | Centro de salud | 14,82 | 968,8 | 10⁻²¹² |
+     | Mayores | 2,86 | 33,2 | 8·10⁻⁹ |
+     | Farmacia | 1,27 | 4,3 | 0,039 |
+     | Vivienda | 2,52 | 49.523 | < 10⁻³⁰⁰ |
+
+2. **Cortes:**
+   - **CUBIERTO:** ratio ≥ 1, es decir, igual o por encima de la referencia.
+   - **FALTA:** la falta tiene que ser grande y no deberse al azar del tamaño de la zona. Hacen falta dos condiciones:
+     - **material:** ratio < 0,8. Es la regla de los cuatro quintos, que se usa para decidir cuándo una tasa es sustancialmente menor que la de referencia (29 CFR 1607.4(D)). El corte no cambia respecto a `gap-0.1`;
+     - **significativa:** el límite superior del intervalo de confianza exacto de Poisson de la zona (Garwood, bilateral al 95 %; equivale a una prueba unilateral al 2,5 %) queda por debajo de los casos esperados. Es el criterio de «peor que la referencia» de los indicadores de salud pública inglesa (Fingertips) y de los gráficos en embudo (Spiegelhalter, 2005).
+   - **JUSTO:** el resto de valores conocidos. **SIN DATOS** sigue siendo solo un valor desconocido.
+3. **Zonas demasiado pequeñas (respuesta a B):**
+   - **Regla:** una zona es «poco fiable» en una fila (`reliable: false`) cuando sus casos esperados son menos de 3,69. Es el límite superior al 95 % de un recuento de cero: por debajo, ni siquiera no tener ninguno sería una falta significativa.
+   - El umbral sale de la propia prueba, no de un tope arbitrario, y es el mismo en todas las filas.
+   - Una zona poco fiable nunca sale FALTA y conserva su valor. La API la marca; **la web aún no la muestra** (pendiente de B: «poco fiable»).
+   - `reliable` es `true` también cuando la prueba no se aplica (fila sin recuentos o de «menos es mejor»).
+   - **La Acebeda en vivienda:** espera 4,3 viviendas grandes y tiene unas 107 por cada hogar grande. El dato es fiable y sale CUBIERTO. La cifra de 10.700 es real: la produce un denominador de un hogar. Mejor mostrarla como «más de 10 veces la referencia».
+   - La confidence de los features (umbrales de población pequeña) no cambia: mide la calidad del dato, no la prueba.
+4. **Recuentos:** las features por población guardan en `inputs.counts` el numerador y el denominador de cada fila (`places_per_population`, `metric_ratio` y `place_attribute_per_population`; la clasificación solo usa los de las filas principales). Los valores no cambian, así que la versión de las features tampoco, pero los recuentos solo existen tras recalcular las features (`make features`) y sincronizar Supabase.
+   - **Comparación con la región entera:** si la región no tiene recuentos o el tipo se queda sin casos. Entonces la comparación es con la región entera y decide solo el ratio. Una zona concreta sin recuentos se compara con su tipo, también solo por el ratio.
+5. **Límites declarados:**
+   - **Modelo de Poisson:** encaja con recuentos de centros sobre una población.
+   - **Vivienda** (viviendas grandes sobre hogares grandes) es un cociente de dos recuentos grandes. La prueba casi siempre sale significativa, así que en esa fila decide en la práctica el corte de 0,8. No se modela la sobredispersión.
+   - Contar centros no es contar plazas (`proxy_note`).
+   - El tipo se asigna por municipio y la superficie sale de la geometría de 2019.
+   - Los casos esperados de un distrito usan el padrón (D-209) con una tasa calculada con el censo de la CM.
+   - En `metric_ratio`, la región suma también el numerador de los municipios con denominador 0, y las sumas por tipo no lo hacen. El efecto es despreciable.
+
+**Efecto con los datos del 11 nov** (`evidence/gate-04/2026-11-11/phase-gap001-f5.txt`):
+- **Por municipio (179):** FALTA pasa de 44, 65, 27, 90 y 94 a 0, 0, 5, 2 y 5 (escuela infantil, colegio, centro de salud, mayores y farmacia). Entre 116 y 161 municipios quedan poco fiables en esas filas. En vivienda, con recuentos grandes, FALTA sube de 8 a 25.
+- **Por distrito de Madrid (21):** centro de salud pasa de 18 FALTA y 3 JUSTO a 21 JUSTO; ningún distrito por sí solo tiene una falta significativa. Escuela infantil: 4 FALTA (antes 8). Colegio: 1 FALTA (antes 4).
+- **Casos de la demo:**
+  - Chamartín (2807905), centro de salud: antes FALTA (0,79 frente a la región); ahora JUSTO (0,47 frente a 0,56 de los demás municipios urbanos, ratio 0,84);
+  - Madrid capital: centro de salud FALTA (0,37 frente a 0,56, ratio 0,67, significativa) y colegio JUSTO (0,96);
+  - La Acebeda: farmacia JUSTO y poco fiable (0 farmacias para 70 habitantes).
+- **Lectura para el pitch:** FALTA pasa a ser una afirmación fuerte y rara: menos del 80 % de lo que tienen las zonas comparables, con datos suficientes para afirmarlo. Por ejemplo, Madrid capital tiene un tercio menos de centros de atención primaria por habitante que el resto de municipios urbanos, aunque ningún distrito por sí solo baste para afirmarlo.
+
+## D-214 — Asequibilidad: m² supuestos por tamaño del hogar, alquiler por distrito y compra sin datos (2026-11-11)
+CORE-006. Código en `hi_domain/affordability.py` y en el método `postcode_weighted_mean` de `hi_features`. Responde a la línea D, que pidió qué m² se suponen según el tamaño del hogar. Es una decisión reversible: cambiar la tabla no toca ningún contrato.
+
+1. **Coste estimado.** El alquiler de una zona es su alquiler medio por m² (feature `alquiler_m2_mensual`) multiplicado por los m² que necesita el hogar. La condición de presupuesto es:
+   - **PASS** si ese coste es igual o menor que el presupuesto;
+   - **FAIL** si lo supera;
+   - **UNKNOWN** si la zona no tiene alquiler publicado. Nunca cuenta como PASS.
+2. **m² supuestos por tamaño del hogar.** Si la persona no los fija (`min_floor_area_m2`), se toman los de la vivienda mediana de los hogares de su tamaño en la Comunidad de Madrid:
+   - **Fuente:** Censo de Población y Viviendas 2021 del INE, tabla 59524 («Viviendas familiares principales convencionales según tamaño del hogar por superficie»), fila de la Comunidad de Madrid. Son 2.532.510 hogares con superficie conocida.
+   - **Cálculo:** mediana interpolada dentro de los tramos de superficie del INE. Las personas del hogar son adultos, menores y mayores a cargo.
+
+     | Personas | 1 | 2 | 3 | 4 | 5 o más |
+     |---|---|---|---|---|---|
+     | m² supuestos | 61 | 68 | 71 | 77 | 77 |
+
+   - **Por qué la mediana del censo:** es lo que ocupa de verdad la mitad de los hogares de ese tamaño en la región, con una fuente oficial. Una norma de habitabilidad daría mínimos legales, no lo habitual. Con 5 o más personas sale 76,7 m², casi lo mismo que con 4: las familias grandes no viven en pisos mucho mayores. Se fija en 77 para que los m² nunca bajen al crecer el hogar (lo comprueba un test).
+3. **Límites declarados (el coste es orientativo y tiende a quedarse corto):**
+   - **Contratos vigentes:** el alquiler por m² de la CM sale de la Estadística de viviendas declaradas en el IRPF de la Agencia Tributaria. Es la media de los contratos vigentes, no de los anuncios, y un contrato nuevo suele costar más.
+   - **m² de distinta base:** los m² de esa estadística son los del Catastro, que solo tiene superficie construida. El INE estima la superficie útil del censo a partir de esa misma superficie construida, con una recta por el origen. Por eso el coste estimado corresponde a un piso algo menor que el mediano. El INE no publica el coeficiente, así que no se corrige.
+   - **Qué FAIL es fiable:** como el coste es una cota baja, FAIL es una afirmación fiable. PASS conserva la confidence del dato y la explicación lo dice («media de los contratos vigentes; uno nuevo suele costar más»).
+   - **Cobertura:** la fuente municipal solo publica los municipios de más de 20.000 habitantes con contratos suficientes (37 de 179). El resto queda UNKNOWN, nunca 0 ni estimado.
+4. **Alquiler por distrito de Madrid** (versión 2 de `alquiler_m2_mensual`). Conecta `cm_alquiler_m2_codigo_postal_madrid`, el dataset CM número 21:
+   - **Problema:** la tabla de la CM publica el alquiler por código postal (54 códigos de Madrid capital, 2024), y no hay geometría de códigos postales (DATA-013 está en el backlog).
+   - **Proxy:** el alquiler de cada distrito es la media de sus códigos postales, ponderada por cuántos lugares geocodificados del distrito llevan ese código en su dirección: colegios, centros de salud y centros sociales de la CM (2.885 lugares de Madrid). Los lugares aproximan dónde vive la gente; se declara como proxy.
+   - **Confidence:** 0,8 como máximo, multiplicada por la parte de ese peso cuyo código tiene alquiler publicado en el último periodo (2024). Los lugares sin código en la dirección no cuentan: la confidence no mide cuántos lugares sostienen la media. En Madrid son entre 51 y 242 por distrito, así que no hace falta un mínimo; si se extiende a otros municipios, habrá que fijarlo.
+   - **Restricción:** solo cuentan los lugares del municipio de Madrid, porque la fuente solo publica sus códigos.
+   - **Comprobación:** la media de los 21 distritos ponderada por población da 14,46 €/m², frente a los 15,10 publicados para Madrid. La cifra municipal pondera por viviendas alquiladas, que se concentran en el centro.
+   - **Ejemplos:** Salamanca 19,8 €/m², Chamartín 18,0, Fuencarral-El Pardo 14,4 y Villaverde 10,8.
+   - **Por qué la media y no la mediana ponderada** (como proponía el board): la fuente publica medias, y con 1 a 5 códigos por distrito una mediana saltaría de un código a otro.
+5. **Compra** (sustituido por D-227, que usa el valor tasado por municipio). Aún no hay una fuente oficial abierta y fiable de precio de compra por zona: DATA-021 entra del 19 al 22 nov (D-206). Mientras tanto, con `budget.kind = buy` la condición sale UNKNOWN en todas las zonas, con la explicación «Sin datos: aún no hay una fuente oficial abierta y fiable de precios de compra por zona». El buscador no inventa un precio.
+   - **Candidatas para DATA-021:**
+     - el valor tasado de vivienda libre del Ministerio de Vivienda (municipios de más de 25.000 habitantes);
+     - el valor de referencia del Catastro que publica la CM para las viviendas arrendadas (municipios de más de 20.000 habitantes y códigos postales de Madrid).
+
+## D-215 — Encaje residencial: condiciones, % de encaje y Reality Check (2026-11-11)
+CORE-003. Método `fit-0.1`, en `hi_domain/fit.py`, `hi_domain/reality_check.py` y `hi_domain/search.py`, sobre los contratos v2 (D-202, D-207). Responde a la línea D, que pidió cómo se reparten los pesos y cómo se pasa a %. Es reversible: cambiar un peso o una curva solo cambia `methodology_version`.
+
+1. **Zonas.** Los 178 municipios distintos de Madrid y los 21 distritos de Madrid capital (D-200): 199 zonas.
+2. **Condiciones** (PASS, FAIL o UNKNOWN; UNKNOWN nunca cuenta como PASS):
+   - **Presupuesto (`budget`):** según D-214.
+   - **Servicio cerca obligatorio (`near:<servicio>`):** la mediana de los minutos a pie de las calles de la zona (CORE-005, 4 km/h) frente al máximo que pide la persona. Sin dato, UNKNOWN.
+   - **Trayecto con límite (`commute:<i>`):** UNKNOWN en todas las zonas hasta que exista el tiempo en transporte público (CORE-009). La explicación da la distancia en línea recta. Si la persona pone un límite de minutos, ninguna zona pasa y el Reality Check propone quitarlo. Por eso, mientras tanto, la web debería enviar el trabajo sin límite (`max_minutes: null`), como preferencia.
+3. **Criterios del % de encaje.** Van en este orden:
+   1. las prioridades «Me importa», en el orden en que las marca la persona;
+   2. cada lugar de trabajo o estudio;
+   3. los servicios cerca que marca como deseables y que no están ya entre sus prioridades;
+   4. el margen de presupuesto, si es de alquiler.
+4. **Pesos por rango (rank sum):** con n criterios, el primero pesa n, el segundo n − 1 y el último 1, y se normalizan para sumar 1. Ejemplo con 5 criterios: 33 %, 27 %, 20 %, 13 % y 7 %. Es el método de pesos por orden más fácil de explicar: lo que marcas primero cuenta más.
+5. **Utilidad de cada criterio** (de 0 a 1, curvas lineales con saturación, CLAUDE.md §14):
+   - **Servicio a pie** (transporte → parada; salud → centro de salud; colegios → colegio con primaria): vale 1 hasta la ventana de D-210 y baja a 0 en el triple de esa ventana.
+     - Ventanas: transporte 5 min, centro de salud 15 y los demás 10. Si la persona fija sus minutos, se usan los suyos.
+     - Ejemplo: un colegio a 10 min vale 1, a 20 min vale 0,5 y a 30 min o más vale 0.
+   - **Trabajo:** distancia en línea recta desde el centro de la zona. Vale 1 hasta 2 km (unos 30 min a pie) y 0 desde 20 km, que es más o menos el radio del municipio de Madrid más la primera corona. Es un proxy declarado, porque la distancia no es tiempo de trayecto, y lleva confidence 0,5. Es un parámetro de diseño: se sustituye por el tiempo real con CORE-009.
+   - **Margen de presupuesto:** vale 1 si el coste es el 75 % del presupuesto o menos, y 0 si lo iguala.
+   - **Zonas verdes, seguridad y «sin escaleras»:** aún sin datos (D-205, del 19 al 22 nov). Nunca puntúan como 0: salen como hecho «sin datos» y bajan la confidence.
+6. **Paso a %:** media ponderada de las utilidades de los criterios con dato, por 100 y redondeada a la unidad (0,5 hacia arriba). El orden usa el valor sin redondear.
+   - La confidence de la zona es la suma de peso × confidence de los criterios con dato, sobre el peso total. Así un criterio sin dato la baja.
+   - Sin ningún criterio, una zona que cumple todo encaja al 100 %. Con criterios pero ninguno con dato, el % es desconocido (`null`), nunca 0.
+7. **Resultado:**
+   - **`results`:** las 10 mejores zonas con todas las condiciones en PASS, ordenadas por % de encaje, confidence y nombre.
+   - **`near_misses`:** hasta 5 zonas que fallan exactamente una condición y cumplen las demás.
+   - **`all_zones`:** las 199 zonas, para la coropleta.
+   - **`facts`:** hasta 5 hechos tangibles por zona (3 o más cuando hay datos). Primero los criterios con dato, por orden de importancia para la persona, sean fortaleza o debilidad; si hay menos de 3, se completan con minutos a pie de contexto; los «sin datos» van al final.
+   - **`gap_highlights`:** 3 filas de GAP-001 elegidas por el hogar: escuela infantil si hay menores de 3 años, colegio si hay menores, mayores si hay mayores a cargo, y después centro de salud, farmacia y vivienda.
+8. **Reality Check:** para cada condición, cuántas zonas pasarían si solo esa se relajara, con las demás fijas:
+   - **presupuesto de alquiler:** +10 %, redondeado hacia arriba a 50 €;
+   - **presupuesto de compra:** quitarlo;
+   - **servicio cerca:** +5 min, hasta 60; a partir de ahí pasa a ser preferencia;
+   - **trayecto:** sin límite.
+
+   `binding_constraint` es la condición que no se cumple (FAIL o UNKNOWN) en más zonas, digan lo que digan las demás. Con un límite de trayecto, que siempre es UNKNOWN, esa es la que gana. Relajar nunca quita zonas (test de propiedades).
+9. **Caso demo con los datos del 11 nov** (`scripts/golden_search.py`, `evidence/gate-04/2026-11-11/phase-core003-f2.txt`): pareja con 2 hijos (4 y 8 años), 1.500 €/mes, colegio a 10 min como requisito, prioridades colegios, transporte y salud, y trabajo en la Castellana como preferencia.
+   - **Recuento:** 32 de las 199 zonas cumplen todo y 15 quedan desconocidas (sin alquiler publicado o sin minutos a pie).
+   - **Primera:** Ciudad Lineal, con un 99 %: colegio a 5 min, parada a 2 min, centro de salud a 11 min, a 3,2 km de Azca y unos 1.075 €/mes por 77 m².
+   - **Siguientes:** Tetuán, Hortaleza y Moratalaz (97 %). Chamartín sale octava (95 %), porque sus 1.384 €/mes dejan poco margen.
+   - **Reality Check:** la condición que más zonas quita es el colegio a 10 min. Con 5 min más aparecen 17 zonas, y con 150 € más, 1.
+   - **Casi:** Salamanca, que falla solo por presupuesto (≈ 1.526 €/mes).
+10. **Pendiente:**
+   - diversificación y soluciones Pareto (§14): hoy el orden es solo por % de encaje;
+   - tiempo de trayecto real (CORE-009);
+   - ML/JEV.
+
+## D-216 — Auditoría de equipamientos: clasificación, coordenadas y contrato de `/places` (2026-11-12)
+Fase de prueba, T1 (decisión de Mariano del 12 nov: antes de los extras, comprobar que lo que enseña la demo es cierto y completo). Informe: `evidence/gate-01/2026-11-12/audit-places.md` (`scripts/audit_places.py`). Reversible: son filtros del catálogo y una categoría nueva.
+1. **«Centro Polivalente» no son servicios para mayores.** Son los 1.001 «centros polivalentes» del registro de centros sanitarios (RD 1277/2003, tipo C.2.90): clínicas privadas de varias especialidades (97 % «Privado No Benéfico»; estética, fisioterapia, odontología…), sin nombre en el registro. Ni son atención primaria ni hospitales, y ninguna feature los usaba, pero llenaban la capa de salud (el 65 % de sus puntos). **Salen del registro de lugares**, con la misma regla de minimización que ya dejaba fuera las consultas privadas. Que fueran 1.001, como los servicios para mayores de DATA-009, era una coincidencia.
+   - Efecto colateral: el alquiler por distrito (D-214) ponderaba los códigos postales también con esas clínicas, que se concentran en zonas comerciales. Sin ellas, el proxy se acerca más a donde vive la gente. Salamanca pasa de 19,8 a 19,0 €/m² y Chamartín de 18,0 a 17,9; Villaverde y Fuencarral-El Pardo apenas cambian. En el caso demo (D-215), Salamanca ya cabe en 1.500 €/mes y deja de ser «casi».
+2. **Las farmacias son una categoría propia (`pharmacy`).** Eran `health` y salían en cualquier capa de salud. Migración 0006 (la comprobación de categorías admite `pharmacy`; al bajar, vuelven a `health`). Las features de farmacia cambian de categoría, no de valor ni de versión.
+3. **Coordenadas que faltan o contradicen la dirección** (propuesta de D, revisión de 10 zonas):
+   - **Cuándo:** solo en los registros sin coordenadas, fuera de los límites de Madrid o cuyas coordenadas caen en otro municipio que el declarado (o, en Madrid, en otro distrito que el declarado por el registro de centros educativos).
+   - **Cómo:** la dirección del propio registro va al geocodificador oficial CartoCiudad (IGN, CC BY 4.0 scne.es), sin código postal (con él no responde). Solo se acepta un **portal** en el municipio declarado: el número exacto (confidence 0,8) o el portal conocido más cercano a 10 números o menos (0,6; unos 50–100 m). Sin número («S/N»), solo calle o en otro municipio → cuarentena.
+   - Coordenadas en otro municipio sin dirección válida → cuarentena (nunca se publican en el sitio equivocado). Un distrito distinto es una prueba más débil: solo se mueve si la dirección cae en el distrito declarado; si no, se conserva y se anota.
+   - Las respuestas se guardan en caché (`data/bronze/geocoding/`) y cada lugar lleva `attributes.coordinates` con el origen. Fuente registrada como `ign_cartociudad`.
+   - **La calle también tiene que coincidir** (palabras del nombre sin artículos ni tildes): CartoCiudad puede devolver un portal de otra calle del mismo municipio (revisión con `reviewer`).
+   - **Resultado:** 40 lugares geocodificados (educación 18, sanidad 4, mayores 13, farmacias 5): 36 que no tenían coordenadas y 4 reubicados. Entre ellos el colegio Humanitas El Cañaveral, dos centros de salud de Madrid, el consultorio de Gargantilla, la farmacia 763 (estaba en Valdemoro) y el CEIP Amorós (estaba en Tetuán). El consultorio CS12766 de Buitrago, con coordenadas en otro municipio, pasa a cuarentena: el geocodificador devuelve otra calle. Siguen en cuarentena 40 de educación, 6 de sanidad y 34 de mayores: «S/N», carreteras por kilómetro o direcciones que el geocodificador no encuentra. De los casos de D quedan sin resolver los centros de salud de Alcalá (2) y Madrid (2), con «S/N»; el consultorio de Villar del Olmo («calle Real 42» lleva a un pueblo de Jaén y se rechaza) y el CEIP de Navalafuente (el portal conocido más cercano es el 16 para el 56).
+   - El CEIP Nuria Espert queda en Barajas: la dirección no contradice las coordenadas y la cartografía oficial (secciones del INE) lo pone en Barajas, aunque el registro diga Hortaleza.
+4. **`/places` pasa a tener contrato** (`places-1`, `PlacesResponse`): titularidad pública, concertada o privada en los centros educativos, `gap_rows` (las filas de la lista de lo que falta que cuentan ese lugar, con los mismos filtros del Feature Dictionary), `capacity` cuando la fuente la publica por centro (hoy, las plazas autorizadas de mayores) y el origen y la confidence de las coordenadas. Lo pidió B para su T3.
+5. **Base de población de Madrid (D6 de la revisión de D):** se mantiene lo declarado en D-209: el municipio con el censo de la CM y los distritos con el padrón (+1,7 %). En los cálculos que mezclan distritos y municipios (D-217) los distritos se escalan al total del censo para no contar dos veces esa diferencia.
+
+## D-217 — La oferta se mide por capacidad y accesibilidad (2SFCA) y los municipios pequeños se comparan con sus vecinos (2026-11-12)
+Fase de prueba, T2a y T2b. **Decisión de Mariano (12 nov):** la oferta de servicios se mide por capacidad y accesibilidad, no por número de centros. Método `gap-0.3`, que sustituye a `gap-0.2` en las cinco filas de servicios; vivienda no cambia. Código: `hi_domain/access/fca.py`, `hi_features/fca.py` (método `two_step_fca`), `hi_domain/gaps.py` (`pool_with_neighbours`) y `hi_api/services/gap_reference.py`. Evidencias: `evidence/gate-04/2026-11-12/gap-status-gap03.md` y `evidence/gate-03/2026-11-12/fca-sensitivity.md`. Refina D-213: la referencia sigue siendo la de los municipios del mismo tipo, con los mismos cortes y la misma prueba.
+
+1. **Qué cambia.** Antes cada fila contaba centros por habitante del propio municipio o distrito: una clínica pesaba como La Paz, un consultorio de aldea como un centro de salud grande, y lo que había al otro lado de la frontera de un distrito no contaba. Ahora cada fila mide **la capacidad que la gente tiene al alcance a pie, compartida con quienes compiten por ella**.
+2. **Método: 2SFCA** (Luo y Wang, 2003, «Measures of spatial accessibility to health care in a GIS environment», *Environment and Planning B* 30: 865–884).
+   - Paso 1, por centro: su capacidad dividida por la gente que vive a 15 minutos a pie o menos.
+   - Paso 2, por calle: la suma de esas cuotas de los centros a 15 minutos o menos.
+   - Por zona: la media ponderada por población de sus calles, que es igual a la capacidad que le llega dividida por su población. La capacidad se conserva: en la región, el total es la capacidad alcanzable entre la población (test de propiedades).
+   - **Captación: 15 minutos a 4 km/h (1 km por la red de calles),** la de «El Madrid de los 15 minutos» del Ayuntamiento, la misma fuente de D-211. Es binaria (dentro o fuera), la versión más fácil de explicar.
+   - **Sensibilidad:** con 10 o 20 minutos, el orden de los municipios casi no cambia (Spearman 0,995–0,997; entre el 1 % y el 2 % se mueve más de 20 puestos).
+   - **Red y personas:** la red peatonal y las calles de origen de D-210. La población de cada municipio (censo de la CM), y en Madrid la de cada distrito (padrón escalado al total del censo de Madrid, D-216 §5), se reparte entre sus calles en proporción a su longitud. Quien vive a más de 15 minutos de cualquier centro no suma oferta: la fila mide lo que se tiene cerca.
+   - Cruza fronteras: un colegio en el límite de dos distritos sirve a los dos.
+3. **Capacidad por fila: solo la publicada, nunca estimada por centro.**
+
+   | Fila | Capacidad (S) | Demanda | Feature |
+   |---|---|---|---|
+   | Colegio | Aulas de primaria públicas y concertadas del municipio (`cm_unidades_escolares`, curso más reciente), repartidas a partes iguales entre sus colegios de esa titularidad: la estadística no las da por centro (confidence 0,8) | 5 a 14 años | `aulas_primaria_a_pie_por_1000_ninos` |
+   | Escuela infantil | 1 por escuela: nadie publica plazas por centro | 0 a 4 años | `escuelas_infantiles_a_pie_por_1000_ninos` |
+   | Centro de salud | 1 por centro de salud del SERMAS (equipo de atención primaria, 268). Los consultorios locales son puntos de consulta del mismo equipo: cuentan en los minutos a pie, no como capacidad | Total | `centros_salud_a_pie_por_10000_hab` |
+   | Mayores | Plazas autorizadas de hogares, clubes y centros de día (registro de la CM) | 65 o más | `plazas_mayores_a_pie_por_100_mayores` |
+   | Farmacia | 1 por farmacia (la ley de la CM las planifica por habitantes) | Total | `farmacias_a_pie_por_10000_hab` |
+
+   - Las features anteriores (centros por habitante) siguen como indicadores extra de cada fila.
+   - La fila de centro de salud cuenta un subconjunto de los destinos de sus minutos a pie; el invariante del catálogo lo admite solo en esa fila, declarado en el test.
+   - Para la prueba de D-213 las features guardan la capacidad en **centros equivalentes** (capacidad entre la capacidad media por centro de la región). El ratio no cambia, y la prueba de Poisson cuenta centros, no aulas ni plazas, que van en bloques.
+4. **Lo que no existe en abierto (T2a, comprobado el 12 nov):**
+   - población asignada por tarjeta sanitaria y cupos de médicos por centro o por zona básica de salud;
+   - camas por hospital en el portal de la CM. «Hospitales y datos asistenciales» y «Dotación de camas» solo traen el total regional: 85 hospitales y 20.776 camas instaladas en 2023, 3,00 por 1.000 habitantes. Se cargan como referencia (`cm_hospitales_datos_asistenciales` y `cm_dotacion_camas`, 11 métricas).
+   - El Catálogo Nacional de Hospitales 2025 (Ministerio de Sanidad) sí publica camas por hospital (XLSX, reutilizable con cita), pero no si tiene urgencias. Queda propuesto como fuente complementaria para enseñar «Hospital La Paz · N camas» (siguiente paso, con resolución de entidades frente al registro de la CM).
+   - La geometría de las zonas básicas de salud es abierta, pero de 2019 y con el padrón de 2019: no se usa para la capacidad. Solo sirve aquí para fijar el radio de §6.
+5. **Hospitales:** no hay 2SFCA a pie, porque un hospital no se elige a 15 minutos andando. La fila de centro de salud gana como extra `min_a_pie_hospital`: los minutos a pie por la red hasta el hospital general más cercano, público o privado (60). Es un proxy de las urgencias 24 h, que ninguna fuente abierta marca, y se declara.
+6. **Escala: los municipios pequeños se comparan con sus vecinos.**
+   - El 2SFCA no crea información: en centros equivalentes, un pueblo pequeño sigue esperando menos de 3,69 casos y su estado sigue siendo poco fiable (D-213). Eso le pasaba a 140 de 179 municipios en colegios.
+   - **Regla:** un municipio poco fiable se compara junto con sus vecinos más cercanos del mismo tipo (rural o urbano), que se añaden por orden de distancia hasta que el grupo espera 3,69 casos. Es el mismo umbral de D-213 y la referencia deja fuera a todo el grupo.
+   - **Radio:** solo vecinos a 15 km o menos (entre los puntos interiores de los municipios). Las zonas básicas de salud rurales de la CM tienen un radio equivalente mediano de 7,7 km y una extensión mediana de 22,9 km (capa oficial de 2019, 15 zonas de menos de 100 hab./km²). Así el grupo es el entorno con el que ya se organizan los servicios de esos pueblos, no una comarca entera. Si con ese radio no se llega, el municipio sigue «poco fiable».
+   - **Base:** filtros espaciales adaptativos con un mínimo de casos esperados (Talbot et al., 2000, *Statistics in Medicine* 19: 2399–2408).
+   - El estado del grupo es el de la zona, con los mismos cortes y la misma prueba. La API lo marca en `comparison_group` (códigos, nombres y ratio del grupo) y lo explica en el texto de la fila. Los distritos de Madrid no se agrupan: casi nunca son pequeños.
+7. **Efecto con los datos del 12 nov** (municipios, 179):
+   - **Poco fiables:** escuela infantil de 138 a 37, colegio de 140 a 65, centro de salud de 167 a 96, mayores de 160 a 93 y farmacia de 116 a 18.
+   - **FALTA:** escuela infantil 0, colegio 0, centro de salud 0, mayores 6 y farmacia 5 (antes 0, 0, 5, 2 y 5).
+   - **Casos de la revisión de D:** M1, San Martín de Valdeiglesias, centro de salud: FALTA → CUBIERTO (1,59; poco fiable, sin vecinos suficientes a 15 km). M2: los consultorios ya no cuentan como capacidad. M3, La Acebeda: 0 a pie, poco fiable.
+   - **Madrid capital, centro de salud:** FALTA (0,67) → **JUSTO (0,95)**. Al medir lo que se alcanza a pie, y no centros por habitante del propio municipio, Madrid queda cerca de los demás municipios urbanos. **La frase del pitch «Madrid tiene un tercio menos de centros de atención primaria por habitante» deja de valer.**
+   - **Chamartín:** centro de salud CUBIERTO (1,17), colegio CUBIERTO (1,12) y mayores JUSTO (0,59).
+8. **Contrato:** `GapMethod.version = gap-0.3`, `ComparisonGroup` y `comparison_group` en `GapRow` y `ZoneGapStatus` (opcional, compatible). Los distritos de las features 2SFCA son solo los 21 de Madrid (D-200). Fixtures regenerados con datos reales, con un ejemplo agrupado (`zone_gap_list.el_alamo`) y `places.colegios_chamartin` (`places-1`, D-216). El test de la web `gapMap.test.ts` lee ahora el estado de Centro del fixture en vez de fijarlo (cambio mínimo en `apps/web`, pedido por `datamad-10`).
+9. **Límites declarados:**
+   - captación binaria, sin decaimiento con la distancia (E2SFCA, Luo y Qi 2009, queda como mejora);
+   - la población se coloca por longitud de calle, no por portal;
+   - las aulas se reparten a partes iguales dentro de cada municipio y titularidad;
+   - en un hogar o club las plazas autorizadas son aforo y en un centro de día, plazas de atención;
+   - la distancia de los vecinos se mide en línea recta;
+   - la proximidad a pie no es la única forma de acceso: en los pueblos, el coche y el autobús cuentan (CORE-009).
+
+## D-218 — Nombre y camas de los hospitales desde el Catálogo Nacional de Hospitales (2026-11-12)
+Petición de Mariano (12 nov): que se vea el tamaño de cada hospital, porque no es lo mismo una clínica que La Paz, y que los hospitales tengan su nombre en vez de «Hospital general (Madrid)». Reversible: es un directorio complementario y campos opcionales en `/places`. Código: `hi_ingestion/pipelines/directory/` (tipo de pipeline `facility_directory`), `hi_ingestion/pipelines/places/directory.py` (cruce) y `hi_domain/facilities.py`. Evidencia: `evidence/gate-01/2026-11-12/hospitales-cnh.md`.
+1. **Fuente:** Catálogo Nacional de Hospitales 2025 del Ministerio de Sanidad (actualizado a 31 de diciembre de 2024), hoja «DIRECTORIO DE HOSPITALES», solo la provincia de Madrid (91 hospitales). El aviso legal del Ministerio autoriza la reutilización, también comercial, si no se desnaturaliza la información, se cita la fuente y se menciona la fecha de actualización. Se leen solo nombre, dirección, código postal, clase, dependencia y camas; nunca teléfono ni correo (D-186). Es fuente complementaria: el portal de la CM no publica camas por hospital (D-217 §4) y el registro de centros sanitarios de la CM sigue siendo la fuente de cada lugar, su tipo y su ubicación.
+2. **Solo Silver.** El directorio no crea lugares. Tiene su propio Quality Gate (entre 80 y 120 filas en la región, códigos únicos, camas numéricas en al menos el 90 %, sin columnas de contacto) y el pipeline del registro de la CM lo lee en su última versión válida. Ese fichero entra en la suma de comprobación y en el linaje de la carga del registro: una edición nueva del catálogo vuelve a procesar el registro (test).
+3. **Cruce (resolución de entidades).** No hay un código común (el registro de la CM usa su número, `CH0001`; el catálogo, `CODCNH`), así que se cruza por dirección postal con tres reglas, de la más fuerte a la más débil, siempre uno a uno:
+   - `direccion` (1,0): mismo código postal, misma calle y el número del registro aparece en la dirección del catálogo;
+   - `calle` (0,9): mismo código postal y calle, y es el único hospital de esa calle;
+   - `codigo_postal` (0,7): el único hospital de la misma clase en ese código postal.
+
+   «Único» se juzga entre todos los hospitales del código postal, también los ya cruzados: un lugar que el catálogo no tiene nunca hereda el que sobra en su código postal. La calle tiene que tener las mismas palabras (sin tipo de vía ni artículos: «Real» no es «Real de Pozuelo»), los puntos kilométricos y los códigos postales no cuentan como número de portal, y un hospital público nunca se cruza con uno privado (veto cuando las dos fuentes lo dicen). Un hospital del catálogo que reclaman dos lugares no va a ninguno, y lo que ya ha tomado una regla fuerte no se ofrece a una débil. Cada cruce se guarda como alias en `place_source_alias` (método y puntuación) y en `attributes.directory` del lugar. Reglas endurecidas tras la revisión con `reviewer` (parser `places-1.3.1`).
+4. **Resultado con los datos del 12 nov:** 79 de los 85 hospitales del registro (64 por dirección, 13 por calle y 2 por código postal). Contraste independiente: antes de añadir el veto, los 79 cruces ya coincidían en público o privado (0 discrepancias), y con las reglas endurecidas salen los mismos 79 pares. Los 6 sin cruzar se declaran en el informe: CH0049 (el catálogo pone el Ramón y Cajal en la calle de Ayala, no en la carretera de Colmenar), CH0068, CH0120, CH0121 (Tres Cantos, sin hospital del catálogo en su código postal), CH0122 y CH0123 (el hospital de su código postal ya lo tomó otro registro por dirección). Conservan «Hospital general (Municipio)» y no muestran camas. Corregirlos a mano necesitaría un fichero de correcciones con fuente oficial por registro: es la misma decisión pendiente de Mariano que la de las coordenadas (board).
+5. **Nombre:** el del catálogo tal como lo publica (sin corregir tildes: no se desnaturaliza). Se quita la forma jurídica («Clínica La Luz, S.L.» → «Clínica La Luz») y no se usa cuando el catálogo da una empresa o un operador en lugar del centro: un nombre válido dice qué es («hospital», «clínica», «sanatorio», «centro», «complejo», «instituto», «fundación»). Así quedan fuera «Servicio Madrileño de Salud», «HM Hospitales 1989, S.A.», «ID Dalud Móstoles Sa», «Alm Univass S.L.», «Casta Guadarrama» y «Fraternidad Muprespa, Mutua…» (6 lugares, que conservan el nombre genérico pero sí muestran camas). Son nombres de establecimientos, no de personas: ninguna consulta privada ni titular particular entra en el producto (D-186).
+6. **Contrato `/places` (aditivo, sigue `places-1`):** en los hospitales cruzados, `capacity` = camas instaladas (`unit: "camas instaladas"`, `dataset_id: ms_catalogo_nacional_hospitales`) con dos campos opcionales nuevos: `dependency` (`publica` o `privada`, del registro de la CM; las mutuas colaboradoras cuentan como privadas porque solo atienden accidentes de trabajo de sus afiliados) y `kind` (el tipo del registro, p. ej. «Hospital general»). Ningún campo existente cambia ni desaparece. Hasta hoy ningún lugar de salud traía `capacity`; en los hospitales la unidad es «camas instaladas» (las del catálogo a 31/12/2024, no las de funcionamiento de un día concreto). Ejemplo: `data/fixtures/contracts/places.hospitales_madrid.fixture.json`.
+7. **Lo que no se hace:** las camas no entran en la lista de lo que falta ni en un 2SFCA. Un hospital no se elige a 15 minutos andando (D-217 §5), y medir «camas alcanzables» exigiría una captación en coche o en transporte público que hoy no tenemos (CORE-009). Queda como posible extra con su propio ADR.
+8. **Centros de salud y consultorios (fase 2, mismo método):** el registro de la CM no publica su nombre. Se cruzan con el Catálogo de Centros de Atención Primaria del SNS 2026 del Ministerio de Sanidad (actualizado a 31 de diciembre de 2025; 266 centros de salud y 154 consultorios locales del SERMAS en Madrid, todos de gestión pública directa), con las mismas reglas y el veto público/privado. El catálogo da un nombre de lugar («ABRANTES»), que se presenta con el tipo del registro y en mayúsculas normales: «Centro de salud Abrantes», «Consultorio local La Acebeda». Son nombres de centros públicos, nunca de personas (D-186). Lo que va entre paréntesis en la calle del registro («de la Paloma (El Vellón)») vale con y sin paréntesis. **Resultado:** 356 de los 423 centros de salud y consultorios del registro (278 por dirección, 55 por calle y 23 por código postal; 0 discrepancias público/privado). Los 67 sin cruzar (sobre todo, código postal distinto en las dos fuentes o dos registros de la CM en la misma dirección) conservan «Centro de salud (Municipio)». No hay capacidad: el catálogo no publica profesionales ni población asignada por centro (D-217 §4).
+9. **Segunda pasada (HOSP-001 F3, notas de C desde producción):** cinco reglas en vez de tres, con el mismo principio (uno a uno, «único» entre todas las entradas, también las ya tomadas). Nuevas: `direccion_municipio` (0,85; mismo municipio, calle y número en otro código postal, porque las dos fuentes discrepan en los bordes de los distritos) y `municipio` (0,6; la única entrada del mismo tipo en el municipio, para pueblos que comparten código postal). Por debajo de la dirección completa (código postal, calle y número) el municipio y el tipo tienen que coincidir: Madarcos y Robregordo comparten código postal y «calle de las Eras», y un consultorio en Palma 54 no es el centro de salud de Palma 51. La dirección completa basta aunque el catálogo archive el centro en el municipio de su área de salud (Aravaca, en Madrid, figura en Pozuelo de Alarcón). Las calles se comparan con abreviaturas («Mª», «Ntra. Sra.»), singular y plural, esquinas, «bulevar», «callejón» y «carrera» como tipo de vía, el número pegado a «Nº» y la sustitución del catálogo de atención primaria, que escribe «CALLE» por cada «CL» y «AVENIDA» por cada «AV» también dentro de las palabras («SAN CALLEAUDIO», «ISLA DE JAVENIDAA»); el nombre publicado nunca se corrige. **Resultado:** centros de salud con nombre de 228 a 255 (genéricos de 44 a 17) y consultorios de 128 a 144 (de 23 a 7); ningún cruce anterior cambia de pareja y se pierden 3, explicados en la evidencia (Las Américas pasa del centro que solo compartía código postal al que tiene su dirección). Hospitales sin cambios: el Ramón y Cajal (CH0049, Fuencarral-El Pardo) sigue sin nombre ni camas porque el catálogo lo sitúa en la calle de Ayala 38 (28001) y el registro en la carretera de Colmenar Viejo, km 9,1; solo lo resolvería el fichero de correcciones con fuente oficial que sigue pendiente de Mariano (§4). El «Hospital especializado · 50 camas» de Chamartín (CH0113) es el de una mutua: el catálogo publica el nombre de la mutua, no el del centro, y por §5 no se usa. Tras la revisión con `reviewer`: una esquina solo vale para un lugar sin número, el singular solo quita la «s» de plurales en -as/-os de más de 4 letras, y se aceptan y declaran dos riesgos medidos (5 cruces por dirección completa en los que el registro y el catálogo clasifican distinto el mismo edificio, y 21 cruces por calle con portales distintos en las dos fuentes). Evidencia: `evidence/gate-01/2026-11-12/nombres-segunda-pasada.md` (parser `places-1.5.4`; los directorios guardan el municipio de cada entrada con `directory-1.1.0`).
+
+10. **Correcciones con fuente oficial (decisión de Mariano, delegada en `datamad-10`, 12 nov):** un fichero versionado, `data/catalog/corrections/places.yaml` (contrato `PlaceCorrections`), con una corrección por registro: qué registro, qué se usa en su lugar (una dirección para el geocodificador o la entrada del directorio que es ese lugar), por qué y dónde lo publica una fuente oficial (URL, fecha de consulta y el texto exacto). Nunca de memoria ni de fuentes privadas. La carga lo aplica con linaje: el fichero es un input (`corrections`) de la carga del registro, así que un cambio la vuelve a procesar, y cada lugar corregido lo dice en `attributes.correction`. Un emparejamiento a mano va antes que las reglas (`match_method: correccion`) y su entrada ya no se ofrece a otro lugar; una dirección corregida pasa por el geocodificador con las reglas de D-216. **Aplicadas:** el Ramón y Cajal (CH0049, con la web del hospital en comunidad.madrid: 886 camas) y los 4 centros de salud «S/N» (Orcasur, Campamento, Miguel de Cervantes y María de Guzmán, con el número de portal del catálogo de atención primaria del Ministerio). **Sin fuente utilizable, declarados:** el consultorio de Villar del Olmo, el CEIP de Navalafuente y el consultorio CS12766 de Buitrago. Evidencia: `evidence/gate-01/2026-11-12/correcciones.md`.
+## D-219 — Conexiones de la API: pool por entorno y pooler de Supabase en modo transacción (2026-11-12)
+Incidente del 12 nov (05:00): la vista de zona daba 500 intermitentes con «EMAXCONNSESSION max clients reached in session mode» (`pool_size: 15`). Cada instancia de Vercel abría el pool por defecto de SQLAlchemy (5 + 10) contra el pooler de Supabase en modo sesión (puerto 5432), que admite 15 clientes en total para todo el proyecto: con tres instancias ya no quedaban. Código: `packages/db/src/hi_db/session.py` y `settings.py`. Reversible: tres variables de entorno, con los valores por defecto de siempre.
+1. **Pool por entorno (mitigación, `4645326`):** `DB_POOL_SIZE` y `DB_MAX_OVERFLOW` fijan el pool de cada proceso. Por defecto 5 y 10 (los de SQLAlchemy; validados ≥ 1 y ≥ 0). Producción usa 2 y 1.
+2. **Modo transacción (arreglo de fondo):** la API pasa al pooler en modo transacción (puerto 6543), el que Supabase recomienda para funciones serverless que abren muchas conexiones cortas. En ese modo una conexión del servidor se presta solo durante una transacción, así que el límite deja de ser de 15 clientes.
+3. **Sin prepared statements en ese modo:** el pooler compartido de Supabase no los admite en modo transacción («turn them off», guía de conexión de Supabase). psycopg 3 prepara solo una consulta cuando la ha ejecutado `prepare_threshold` veces en la misma conexión (5 por defecto) y los desactiva con `prepare_threshold=None` (documentación de psycopg 3.1+, «Prepared statements» y `Connection.connect`). `DB_PREPARED_STATEMENTS=false` pasa ese valor a `psycopg.connect()` por `connect_args`, que SQLAlchemy entrega tal cual al `connect()` del driver. Sin la variable, o con `true`, no se pasa nada y psycopg conserva su valor. Un valor que no sea booleano hace fallar el arranque. Comprobado en la base local: 1 prepared statement tras 8 ejecuciones de la misma consulta con el valor por defecto y 0 con `false` (test unitario `tests/unit/test_db_engine_prepared_statements.py`).
+4. **Estado de sesión:** en modo transacción un `SET` de sesión no está garantizado entre transacciones. La API no lo necesita: el rol `vf_api_ro` (D-208, migración 0005) ya trae `search_path = public, extensions`, `default_transaction_read_only` y `statement_timeout` a nivel de rol, y cada conexión del servidor los toma al abrirse (comprobado por MCP en `pg_db_role_setting`). El `SET search_path` de `make_engine` queda como redundante y es inofensivo (pone el mismo valor). La API no usa tablas temporales, `LISTEN`, bloqueos consultivos ni cursores de servidor.
+5. **Orden del cambio en producción:** primero `DB_PREPARED_STATEMENTS=false` en Vercel y redespliegue (funciona también en el puerto 5432); después Mariano cambia el puerto de `DATABASE_URL` a 6543, se redespliega y se pasa el smoke. Al revés, las consultas repetidas fallarían con «prepared statement … already exists» o «does not exist». El pool se queda en 2 + 1 hasta medirlo en modo transacción.
+6. **Solo la API.** Las migraciones y el sync (`SUPABASE_DATABASE_URL`) siguen en el modo sesión: Alembic necesita estado de sesión (`.env.example`).
+7. **Alternativas descartadas:**
+   - `NullPool` (una conexión nueva por petición): resuelve el límite, pero suma a cada petición la apertura de TLS y el arranque de sesión con el pooler;
+   - conexión directa a Postgres: solo IPv6, y Vercel sale por IPv4;
+   - pooler dedicado (PgBouncer ≥ 1.21, que sí admite prepared statements): es de pago;
+   - activar `prepare_threshold=None` al detectar el puerto 6543 en la URL: comportamiento oculto; se prefiere una variable explícita;
+   - dejar solo el pool pequeño en modo sesión: con 2 + 1 caben 5 instancias, y un pico de tráfico (la demo ante el jurado) puede abrir más.
+
+## D-220 — Tiempo en transporte público al trabajo: horarios GTFS del CRTM, llegando a las 9:00 (2026-11-12)
+CORE-009. Hasta hoy el trabajo puntuaba en línea recta (D-215: `fit-0.1`, confidence 0,5) y un límite de trayecto salía siempre UNKNOWN. Reversible: método `commute-0.1`, dos tablas Gold (migración 0007) y el encaje `fit-0.2`. Código: `hi_domain/access/transit.py` (búsqueda), `hi_features/commute.py` (`hi-features commute`). Evidencia: `evidence/gate-03/2026-11-12/commute-matrix.md` (`scripts/commute_summary.py`).
+1. **Qué se mide:** los minutos de puerta a puerta para **llegar a las 9:00** a un sitio de trabajo, con los horarios publicados de los 6 GTFS del CRTM (metro, Metro Ligero, Cercanías, EMT, autobuses urbanos e interurbanos), cada uno en su martes de referencia (D-196). Es la mediana de tres horas de llegada (8:30, 8:45 y 9:00), para no depender de que un tren llegue a las 8:59 o a las 9:01. Incluye la espera en destino si el último servicio que llega a tiempo llega antes.
+2. **Método:** red expandida en el tiempo (cada parada de cada expedición es un evento: llegada, salida a bordo y andén). Transbordos en la misma parada con 2 minutos y a pie entre paradas a 250 m o menos. Una búsqueda hacia atrás desde las llegadas a tiempo da, en cada parada, la última salida que todavía llega: es la búsqueda «llegar a las…» de cualquier planificador de viajes, y como los tiempos son absolutos basta con la alcanzabilidad. Tests de propiedades: una hora de llegada más tardía o una expedición más nunca adelantan una salida.
+3. **Orígenes:** las 4.417 secciones censales, que tienen poblaciones parecidas; cada una en el nodo de sus calles residenciales (las de D-210) más cercano a su centro ponderado por longitud, porque el punto interior de una sección rural grande puede caer en el campo. Valor de la zona = mediana de sus secciones (las que no llegan cuentan como las más lentas, así que si no llega más de la mitad, la zona queda sin dato). A pie hasta la parada (y desde la parada al destino) en línea recta × 1,3 de rodeo a 4 km/h (D-211), hasta 1 km.
+4. **Destinos («hubs»):** las 379 estaciones de metro, Cercanías y Metro Ligero de `place_master` y el centro de población de cada zona (la sección más cercana a todas las demás de la zona). Son los sitios que la web ofrece en «Trabajo en». 200 zonas (179 municipios y los 21 distritos de Madrid) × 579 destinos = 115.800 filas.
+5. **Datos del CRTM que hay que limpiar (nunca se inventa un horario):**
+   - expediciones cuyas horas retroceden: fuera (514 de autobuses urbanos y 98 de interurbanos);
+   - paradas seguidas con la misma hora (solo la primera es punto de horario): se interpolan por distancia hasta el siguiente punto de horario, como hace GTFS con las paradas sin hora;
+   - después del último punto de horario (hay expediciones con la misma hora en todas sus paradas): se estima por distancia con la **velocidad mediana de las expediciones de la misma línea que sí publican horario**, o de todo el GTFS si ninguna lo hace. Afecta a 5.730 expediciones interurbanas y 1.250 urbanas; se declara;
+   - expediciones a más de 120 km/h de media en línea recta: fuera (584 interurbanas).
+6. **Límites declarados:**
+   - el GTFS interurbano publicado no trae expediciones de las líneas 720 a 726 (Colmenar Viejo, Soto del Real, Manzanares el Real, Miraflores…), y 35 líneas interurbanas tienen la misma hora en todas sus paradas en todas sus expediciones (p. ej. 01:00); en esas zonas el tiempo sale alto o sin dato (Colmenar Viejo a Sol, 107 min);
+   - 45–50 zonas, sobre todo de la Sierra Norte y del sureste, no llegan al centro de Madrid a las 9:00 saliendo desde las 5:30: sin dato, nunca 0;
+   - la red a pie es en línea recta con rodeo, no por calles (la red peatonal se usa para colocar los orígenes);
+   - horarios programados, no tiempos reales; un día laborable de referencia.
+8. **En la búsqueda (`fit-0.2`, F3):**
+   - **Sitio de trabajo → destino:** la estación de metro, Cercanías o Metro Ligero a 600 m o menos (más el paseo desde ella), si no el centro del distrito de Madrid o municipio que lo contiene. La web solo ofrece estaciones y zonas. Fuera de toda zona, línea recta como antes (con aviso).
+   - **Condición** (`max_minutes`): PASS o FAIL con los minutos; UNKNOWN donde no se llega con los horarios publicados (hay huecos declarados en §6, así que nunca es FAIL seguro).
+   - **Preferencia:** utilidad 1 hasta 30 minutos (o el límite si lo hay) y 0 al triple, como los minutos a pie. «No se llega a las 9:00» puntúa lo peor con confidence 0,5: es una medida con los horarios publicados, no un dato que falte, pero puede ser un hueco del GTFS.
+   - **Confidence:** 0,7 hasta una estación y 0,6 hasta el centro de una zona (representa toda la zona); horarios programados de un martes de referencia.
+   - **Golden de búsqueda:** las expectativas del trabajo pasan a minutos (`top_within_minutes`): la persona sola que trabaja en Nuevos Ministerios tiene primero Villaverde, a 35 min en transporte público y 11 km en línea recta, así que su «primera zona a 10 km o menos» ya no describe el método; tampoco la «primera a 5 km» del caso demo, porque el centro de Fuencarral-El Pardo cae en el monte de El Pardo. Se mantienen las de km que siguen valiendo. **Caso demo:** Fuencarral-El Pardo pasa a primera (100 %, 29 min hasta la Castellana) y Ciudad Lineal a segunda (99 %, 33 min); con `fit-0.1` era al revés por la línea recta.
+   - **Orden estable (petición de D):** las zonas se ordenan por el encaje sin redondear; si empatan, por más confidence, después por menos minutos en transporte público hasta el primer sitio de trabajo y al final por el id de la zona. Nunca depende del orden en que llegan las zonas (test de propiedad, y el golden de búsqueda lo comprueba en los 6 escenarios con las zonas al revés). En el caso demo, Ciudad Lineal (99 %, 33 min) va delante de Hortaleza (99 %, 32 min) porque su encaje sin redondear es mayor (0,9943 frente a 0,9918).
+   - **Revisión (`reviewer`):** un cambio andando a otra parada nunca cuesta menos que los 2 minutos de la misma parada (había parejas de paradas a 0 m); una zona que falta en la matriz cae a la línea recta en vez de puntuar como «no se llega»; el Reality Check ya no dice «aún sin calcular». Matriz recalculada: 73.783 filas con minutos.
+7. **Alternativas descartadas:** polos de empleo fijos (la web deja elegir cualquier estación o zona); un motor externo (r5, OpenTripPlanner: Java y otro servicio que desplegar); RAPTOR (misma respuesta, más código para la alcanzabilidad que aquí basta); calcular en cada petición (cargar 400.000 eventos por instancia de Vercel).
+
+## D-221 — Nombres con tilde solo con fuente oficial por registro (2026-11-12)
+Petición de `datamad-10`: el Ramón y Cajal salía «Ramon». Los dos catálogos del Ministerio que dan nombre a hospitales y centros de atención primaria (D-218) pierden a veces tildes o eñes («Fundacion», «Infanta Sofia», «LAVAPIES»). Matiza D-218 §5 («sin corregir tildes»): el nombre publicado sigue siendo el del catálogo, salvo que una corrección versionada con fuente oficial dé otro. Reversible: un campo opcional en el fichero de correcciones. Código: `hi_contracts/catalog/corrections.py`, `hi_ingestion/pipelines/places/normalize.py` (parser `places-1.7.1`). Evidencia: `evidence/gate-01/2026-11-12/nombres-tildes.md`.
+1. **Cómo:** `name` en la corrección de un registro de `data/catalog/corrections/places.yaml` (D-218 §10). El contrato exige que el nombre sea el texto que cita la fuente (`says`), con palabras completas y acentos en forma compuesta (NFC); solo pueden cambiar las mayúsculas, las comillas y los espacios («Centro de Salud Lavapiés» → «Centro de salud Lavapiés», como los demás nombres). Una tilde que la fuente no escribe hace fallar la carga: nunca se corrige de memoria (D-212). Puede ir sola o con la corrección de dirección o de directorio del mismo registro.
+2. **Orden y linaje:** el nombre corregido va el último, encima del del registro y del directorio. `attributes.correction` dice `kind` (`name`, o `directory+name` en el Ramón y Cajal), la fuente y `previous_name`; `attributes.directory.name` conserva el nombre tal como lo publica el catálogo.
+3. **Fuentes, de más a menos fuerte:** el BOCM cuando lista el registro por su número (órdenes de la Consejería de Sanidad que renuevan autorizaciones: «CH0080. Hospital Universitario Fundación Alcorcón», «CS8694.- Centro de Salud Lavapiés»); la página del centro en comunidad.madrid con la misma dirección; un texto del BOCM que nombra el mismo centro con el mismo domicilio. Todas son de la Comunidad de Madrid. Una excepción declarada: el Hospital Beata María Ana (CH0024) solo tiene un decreto que lo nombra sin dirección (Placa de Oro, 2014); el emparejamiento es por el nombre, que es único en la región, y por la titularidad (Iglesia, Hermanas Hospitalarias, Madrid), no por el domicilio.
+4. **Revisión sistemática** (`scripts/audit_name_accents.py`): un nombre es candidato si los datos oficiales ya cargados (municipios, distritos, barrios, registros de la CM, paradas del CRTM) escriben la misma palabra con tilde o eñe, o si termina en «-cion»/«-sion». Se leyeron además a mano los 313 nombres de atención primaria sin ninguna tilde (así salió «Lain»). **Corregidos: 11** (8 hospitales y 3 centros de atención primaria). **Sin corregir, declarados:** HM Nuevo Belén y HM Montepríncipe (ninguna fuente pública oficial los nombra), las tres «Quironsalud» (marca comercial; ninguna fuente oficial), Belvis del Jarama (la CM también escribe «Belvis de Jarama»), «Cortes» (el barrio de Cortes no lleva tilde) y «Canal de Panamá» (falso positivo de «cañal»).
+5. **El nombre es el de la fuente entero, no solo sus tildes:** al corregir una tilde se toma el nombre completo como lo escribe la fuente, aunque cambie algo más: «Dr.» (Pedro Laín Entralgo), «Don» (Infante Don Luis de Borbón) o sin «de» (La Fuenfría). En CS12162 el nombre oficial dice «Consultorio» (también el catálogo del Ministerio) y el registro lo inscribe como centro de salud: el tipo (`subcategory`) no cambia y la diferencia queda visible y declarada (D-218 §9). No se buscan fuentes para cambiar nombres que no han perdido tildes («Hospital General de Villalba» frente a «Hospital Universitario General de Villalba»).
+
+## D-222 — Zonas verdes: parques de OSM de 1 ha o más, medidos a pie hasta su borde (2026-11-12)
+DATA-018 (extra elegido por Mariano, D-205). Hasta hoy la prioridad «Zonas verdes» del buscador salía «aún sin datos». Reversible: un dataset complementario (`osm_parques`), un tipo de pipeline (`osm_parks`) y features nuevas. Código: `hi_ingestion/pipelines/osm_parks/`, `hi_features/methods.py` (`destination_points`). Evidencia: `evidence/gate-01/2026-11-12/parques.md`, `evidence/gate-03/2026-11-12/parques-features.md`.
+1. **Fuente:** el mismo extracto de OpenStreetMap (Geofabrik, ODbL) que la red peatonal (D-210). El portal de la Comunidad de Madrid no publica parques urbanos: solo espacios naturales protegidos, que no son el parque del barrio. El inventario del Ayuntamiento de Madrid (D-205) solo cubre la capital; OSM cubre toda la región con un mismo criterio. Fuente complementaria: no cuenta como dato CM.
+2. **Qué es un parque:** un área OSM con `leisure=park` (vía cerrada o multipolígono) que no esté cerrada al público (`access` = `no`, `private` o `customers`) y que tenga **1 ha o más**, el tamaño mínimo por defecto del indicador de zonas verdes urbanas de la OMS (Annerstedt van den Bosch et al., *Scandinavian Journal of Public Health*, 2016: 300 m en línea recta hasta el borde de una zona verde de al menos 1 ha). Resultado del 12 nov: 1.402 parques (8.423 ha) en 80 municipios; 4.911 áreas más pequeñas y 54 cerradas al público quedan fuera. 711 no tienen nombre en OSM («Parque sin nombre»).
+3. **Lugar y borde:** cada parque es un lugar de `place_master` (categoría `green`, subcategoría «Parque», con un punto dentro del parque para el mapa) que guarda su superficie (`area_ha`) y los puntos de su borde exterior cada 50 m en EPSG:25830 (`edge_points_25830`, 70.573 puntos). A un parque se llega por su borde, no por su centro: El Retiro mide 1,4 km de lado. Quality Gate: entre 700 y 4.000 parques, ids únicos, borde con al menos 3 puntos, 1 ha o más, ninguno cerrado al público y menos del 2 % en cuarentena.
+4. **Límites declarados:** no cuentan los bosques y el campo de los pueblos, que no son parques urbanos, ni las plazas y jardines de menos de 1 ha (el umbral de la OMS). La calidad del etiquetado de OSM varía por municipio. Los recuentos de parques y hectáreas pueden contar dos veces un parque dibujado a la vez como vía y como relación, o un parque dentro de otro (no cambia ninguna distancia). El Monte de El Pardo no es un parque público (Patrimonio Nacional, acceso restringido) y no se incluye.
+5. **Parques que OSM etiqueta de otra forma (petición de `datamad-10`):** se comparó la lista oficial del Ayuntamiento de los principales parques y jardines municipales (datos.madrid.es, 203 con coordenadas) con los parques de OSM. 34 no caen dentro ni a menos de 150 m de un parque de OSM de 1 ha o más: casi todos son jardines de menos de 1 ha. Dos son grandes y OSM los etiqueta de otra forma: la **Casa de Campo** (`landuse=forest`, 1.373 ha en OSM; el Ayuntamiento publica 1.535,52 ha) y la **Quinta de Torre Arias** (`leisure=garden`, 18 ha). Entran por un fichero versionado, `data/catalog/corrections/parks.yaml` (contrato `ParkInclusions`), con la fuente oficial de cada uno (URL, fecha y texto), como las correcciones de D-218 §10; el fichero es un input de la carga y cada parque incluido lo dice en `attributes.inclusion`. Parser `osm-parks-1.1.1`: 1.404 parques. El Quality Gate falla si un parque del fichero no llega a publicarse (`every_inclusion_published`), y de un contorno inválido solo se quedan sus polígonos (si no queda ninguno, cuarentena).
+6. **Features (`min_a_pie_parque`, `pct_calle_parque_5min`):** el mismo método a pie que D-210 (red de calles de OSM, 4 km/h, mediana de las calles donde vive la gente y % de calle dentro de la ventana) con destino en **cualquier punto del borde** del parque: un destino que guarda `edge_points_25830` se alcanza por todos ellos. La ventana es de 5 minutos (unos 330 m por la calle, frente a los 300 m en línea recta de la OMS). Por sección, municipio y distrito. Madrid capital: de 1,8 min (Moratalaz, 87 % de calle a 5 min) a 8,4 min (Chamberí, 20 %). 101 de los 179 municipios tienen la mitad de sus calles a más de 30 minutos andando de un parque urbano de 1 ha: 78 son rurales según la Ley 45/2007 (de los 84 rurales de la región; criterio de D-213) y 23 urbanos. En los rurales el indicador no dice nada del campo que los rodea; los minutos de más de 30 (Chinchón 192, Patones 363) se leen como «no hay parque urbano a un paseo», no como una distancia útil.
+7. **En el buscador (`fit-0.3`, petición de `datamad-10`, revisado con `reviewer`):** la prioridad «Zonas verdes» (que ya ofrecía la web y salía «aún sin datos») lee `min_a_pie_parque` por su enlace `fit: {role: walk_minutes, priority: zonas_verdes}` (el contrato `FitBinding` admite una prioridad además de un servicio). Utilidad 1 hasta 10 minutos y 0 a los 30, como los demás minutos a pie; hecho «Parque urbano a N min andando desde la mitad de sus calles». **Sin parque urbano a un paseo (más de 30 min) puntúa 0, con confidence ≤ 0,5 y el hecho «Sin parque urbano de 1 ha o más a un paseo (el campo no cuenta)».** No es FAIL porque es una prioridad, no una condición (no hay «parque a N min como mucho» en `ScenarioState`). Tampoco UNKNOWN: se probó y la revisión mostró que rompía el orden, porque un criterio sin dato sale de la media y un pueblo sin parque quedaba por delante de una ciudad con el parque a 25 minutos (y podía llegar al 100 % solo con el transporte). Con 0 el orden es monótono (test de propiedad: un parque más lejos nunca sube una zona) y el texto dice qué se mide y qué no. Sin dato de la feature, UNKNOWN como siempre. **No entra en «Qué falta»:** no hay fila de zonas verdes en GAP-001 sin un criterio estadístico como el de D-217 y una referencia que distinga parque urbano y campo. Golden de búsqueda: 7/7, con un escenario nuevo del perfil `golden_sensory_preferences` (zonas verdes primero: las 5 primeras zonas tienen un parque urbano a 10 minutos o menos).
+
+## D-223 — «Sin escaleras»: estaciones con accesibilidad total según la topología del CRTM (2026-11-12)
+DATA-019 (extra elegido por Mariano, D-205). Hasta hoy la prioridad «sin escaleras» del buscador salía «aún sin datos». Reversible: tres datasets de la topología del CRTM, un tipo de pipeline (`station_topology`), un enlace opcional en el GTFS (`station_accessibility`), una feature y el encaje `fit-0.4`. Código: `hi_ingestion/pipelines/station_topology/`, `hi_ingestion/pipelines/gtfs/accessibility.py`, `hi_domain/fit.py` (`PRIORITY_WALK`). Evidencia: `evidence/gate-01/2026-11-12/estaciones-accesibles.md` (`scripts/audit_step_free.py`), `evidence/gate-04/2026-11-12/golden-search-sin-escaleras.txt`.
+1. **Qué se mide (necesidad funcional, opt-in, CLAUDE.md §13):** los minutos a pie hasta la estación de metro, Metro Ligero o Cercanías **con accesibilidad total** más cercana. Solo cuenta si la persona marca «sin escaleras»; nunca se infiere ni se etiqueta a nadie ni a ningún barrio. Es un proxy declarado: no mide autobuses, aceras, portales ni ascensores de los edificios.
+2. **Fuente (dato CM):** «Topología de la Red de Metro», «… de Metro Ligero / Tranvía» y «… de Cercanías Madrid» del portal de datos abiertos de la Comunidad de Madrid (publica el CRTM, licencia CRTM-LDA con cita). Solo la capa de estaciones y cuatro campos: `IDESTACION`, `CODIGOEMPRESA`, `DENOMINACION` y `GRADOACCESIBILIDAD` (T, P o N). 12 nov: metro 293 estaciones (195 T, 6 P, 92 N), Metro Ligero 57 (57 T), Cercanías 111 (42 T, 28 P, 41 N).
+3. **Cómo se lee el grado (aviso de A v11):** ni el CRTM ni el portal publican un diccionario de `GRADOACCESIBILIDAD`. Se lee T como «accesibilidad total» porque la Comunidad de Madrid declara de Metro Ligero «El 100% de la red es accesible» (comunidad.madrid, «Accesibilidad en el transporte público») y el CRTM que «los Metros Ligeros y los intercambiadores cuentan ya con un 100% de accesibilidad» (crtm.es, «Accesibilidad en el transporte»), y la capa da T a las 57 estaciones de Metro Ligero; en metro, el CRTM dice que «el 70% de las estaciones están actualmente adaptadas» y la capa da T al 66,6 % (T o P, 68,6 %). P (parcial) y N nunca cuentan como sin escaleras. Un grado que no esté declarado en el pipeline va a cuarentena.
+4. **El `wheelchair_boarding` del GTFS del CRTM no se usa:** no sigue el estándar GTFS (2 = no se puede subir). En metro, las 282 paradas con 2 son de estaciones T en la topología, y Metro Ligero, accesible al 100 %, publica 2 en sus 71 andenes; en Cercanías mezcla grados. Hasta hoy el pipeline lo guardaba como «yes/no» con el sentido estándar (al revés en metro y Metro Ligero); no lo leía nada. Desde `gtfs-1.2.0` se guarda el código tal cual (`gtfs_wheelchair_boarding`) y nunca se interpreta.
+5. **Enlace con las estaciones (resolución por código oficial):** cada estación del GTFS de metro, Metro Ligero y Cercanías toma el grado de la estación de la topología con su mismo código (metro y Metro Ligero: el `IDESTACION` que lleva su id, «par_4_12» → «4_12»; Cercanías: el id de parada es el `CODIGOEMPRESA`). Un intercambiador (Sol, Nuevos Ministerios…) es un lugar en el GTFS y una estación por línea en la topología: es sin escaleras solo si lo son todas. Una estación con un código que no está en la topología queda sin dato y no cuenta (Cercanías: Méndez Álvaro P.V. y Vallecas). Atributos: `step_free` (yes, partial, no), `topology_station_ids` y `step_free_source` (dataset y versión). Quality Gate del GTFS: al menos el 90 % de las estaciones con lectura (metro 100 %, Metro Ligero 100 %, Cercanías 97,8 %). Resultado: metro 148 sí, 2 parcial, 80 no; Metro Ligero 56 sí; Cercanías 26 sí, 26 parcial, 39 no. Si la topología no se ha cargado nunca, el GTFS carga igual con todas las estaciones sin dato y el informe de calidad lo dice (como los directorios de D-218); `run-all` carga antes las topologías. Si dos estaciones de la topología comparten código, cuenta la menos accesible (revisión).
+6. **Feature `min_a_pie_estacion_sin_escaleras`:** el método a pie de D-210 (red de calles de OSM, 4 km/h, mediana de las calles donde vive la gente) con destino en las estaciones `step_free = yes`. De las 199 zonas del buscador, 5 tienen una a 10 minutos o menos, 29 entre 10 y 30 y 165 a más de 30. Madrid capital: de 6,8 min (Chamberí) a 25,5 (Usera). 4 km/h es la velocidad de todo el método: con movilidad reducida los minutos son más (declarado).
+7. **En el buscador (`fit-0.4`):** la prioridad lee la feature por `fit: {role: walk_minutes, priority: sin_escaleras}`, con la misma regla que las zonas verdes (D-222 §7): utilidad 1 hasta 10 minutos y 0 a los 30; hecho «Estación de metro o tren accesible (sin escaleras) a N min andando desde la mitad de sus calles». A más de 30 minutos puntúa 0 con confidence ≤ 0,5 y el hecho «Sin estación de metro o tren accesible a un paseo (no mide autobuses, aceras ni portales)»: es una prioridad, no una condición, y un UNKNOWN pondría un pueblo sin estación por delante de una ciudad con la estación a 25 minutos. Sin dato de la feature, UNKNOWN como siempre. No entra en «Qué falta». Golden de búsqueda: 8/8, con un escenario nuevo del perfil `golden_reduced_mobility` («sin escaleras» primero: las 5 primeras zonas tienen una estación accesible a 15 minutos o menos).
+8. **Recarga desde Bronze (revisión):** los 6 GTFS se recargaron con `--local` desde el mismo Bronze (sin horarios nuevos). Desde hoy un fichero que ya está en Bronze conserva la URL oficial y la fecha de descarga de su manifest (`local_file`), en vez de una ruta local.
+9. **Descartado:** los autobuses (el CRTM declara accesibles el 100 % de los urbanos e interurbanos, así que una parada de autobús no distingue zonas); las «Instalaciones accesibles» del Ayuntamiento (solo Madrid capital, y son edificios, no el camino); el estado de los ascensores en tiempo real (no hay dato abierto).
+
+## D-224 — Seguridad: la tasa oficial de hechos conocidos no entra en el buscador (2026-11-12)
+DATA-020. Evaluada la fuente que proponía A v11: «Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio» (portal CM, CC BY 4.0, Ministerio del Interior). Es oficial y agregada, y no trae características de personas, así que no le aplica el descarte de D-205. Evidencia: `evidence/gate-01/2026-11-12/seguridad-evaluacion.md`.
+1. **Decisión:** no se carga ni puntúa. La prioridad «Seguridad» sigue saliendo «aún sin datos oficiales»: nunca 0, nunca etiquetas.
+2. **Por qué:**
+   - **Denominador:** la tasa se calcula por vecino empadronado, pero los hechos se cuentan donde se denuncian o actúa la policía. En 2024, criminalidad convencional por 1.000 habitantes: Humanes de Madrid 116,2 y Madrid 58,6, frente a una referencia de 47,9 para los 37 municipios. Ordenar zonas con esa tasa señalaría municipios por la actividad que reciben, no por la seguridad de quien vive allí.
+   - **Cobertura:** solo 36 de las 199 zonas del buscador. Los 21 distritos de Madrid quedan fuera porque la fuente da la ciudad entera, y repartirla supondría barrios homogéneos (§11).
+   - **Modelo:** la curva que convierte la tasa en encaje es una decisión de modelo y de producto sobre un dato sensible (CLAUDE.md §4).
+3. **Opción abierta para Mariano (no se hace sin su decisión):** enseñar la tasa como dato de contexto en la vista de zona de esos 36 municipios. Iría con la cifra absoluta, la referencia, el año y el aviso del denominador. No puntuaría ni ordenaría zonas. Se descartaría la cibercriminalidad, porque no ocurre en un sitio. Faltaría resolver los nombres de municipio a código INE, porque la fuente no trae código.
+
+## D-225 — Servidor MCP local: cinco herramientas de solo lectura sobre los servicios de la API (2026-11-12)
+MCP-001. El producto DATA (API + MCP, CLAUDE.md §16) tenía `services/mcp/` vacío. Es reversible: un paquete nuevo del workspace (`hi-mcp`), dos servicios sin ruta en la API (`explanation.py` y `zones.py`) y dos contratos (`ZoneExplanation`, `ZoneLookup`). No cambia ninguna ruta ni ningún dato. Código: `services/mcp/src/hi_mcp/`. Uso: `docs/04_technical_architecture/32_mcp_server.md`. Evidencia: `evidence/gate-11/2026-11-12/`.
+1. **SDK:** el oficial de Python, `mcp` 2.3.0 (PyPI, 2 oct 2026; documentación en py.sdk.modelcontextprotocol.io). No estaba en `uv.lock`. Se usan `MCPServer` (en la v2 sustituye a `FastMCP`), herramientas con tipos de Pydantic y transporte stdio. Las firmas se comprobaron en el código instalado: `MCPServer.tool`, `Annotated[CallToolResult, Modelo]` para dar el esquema de salida, `ToolError` y el `Client` en memoria de los tests. La restricción es `>=2.3,<3`. La imagen de la API no lo instala: `uv sync --frozen --package hi-api` solo instala el cierre de `hi-api` (comprobado con uv 0.11.4). El Dockerfile copia `services/mcp` como los demás miembros del workspace, sin instalarlo (revisión).
+2. **Herramientas:**
+   - `buscar_zonas`: `ScenarioState` → `SearchResponse`, igual que `POST /search`. Sin `include_map`, deja vacío `all_zones`, que es la mitad de la respuesta y solo sirve para pintar un mapa.
+   - `que_falta`: igual que `GET /gaps/{level}/{code}`.
+   - `explicar_zona`: la tarjeta de la zona en `/search` para un escenario, con sus indicadores y sus datasets (`attribution_text` y cuántos son CM).
+   - `encontrar_zona`: los municipios y distritos de Madrid por su nombre. Los agentes no saben códigos INE.
+   - `fuentes_de_datos`: igual que `GET /datasets`.
+
+   Las herramientas devuelven el mismo sobre que sus rutas, y los tests de integración comparan las dos respuestas.
+3. **Sin SQL en el servidor ni para el LLM (CLAUDE.md §3):** las herramientas llaman a las funciones de `hi_api.services`. Las entradas tienen tipo:
+   - nivel como enumeración;
+   - código INE con patrón `^28…`;
+   - `ScenarioState`;
+   - el nombre se compara en Python (`hi_domain.geo.names.match_rank`: sin mayúsculas, tildes ni signos).
+
+   Cada llamada va en una transacción `READ ONLY` de Postgres. Un test lo comprueba con una escritura.
+4. **Texto para el modelo:** el mismo JSON que `structuredContent`, compacto y en UTF-8. Con la serialización por defecto del SDK (JSON sangrado) y el mapa, una búsqueda ocupa unos 130 KB, por encima del corte de 25.000 tokens de Claude Code. El caso demo, compacto y sin `all_zones`, ocupa 60 KB.
+5. **Local, sin desplegar:** stdio para una persona en su ordenador, contra la base local o la del paquete offline. Sin autenticación, límites de uso ni HTTP. Si algún día se publica, aplica `29_api_mcp_security_rate_limits.md`. `make mcp` no repite la receta, porque stdout es el protocolo.
+6. **Revisión (`reviewer`):**
+   - `explicar_zona` repite el aviso de un sitio de trabajo fuera de toda zona, como `/search` (`load_warnings`, compartido);
+   - la caché de mapas de «Qué falta» de la búsqueda devuelve su valor desde una variable local, porque un `clear()` de otro hilo podía dar un `KeyError` (también en la API);
+   - `encontrar_zona` dice cuántas coincidencias deja fuera (`total` y un aviso);
+   - los registros van a stderr en nivel INFO (duración de cada herramienta);
+   - un test lee el stdout del proceso y exige que sea solo JSON-RPC.
+7. **Descartado:**
+   - una herramienta de consultas genéricas sobre features o tablas (sería SQL libre con otro nombre);
+   - el control del mapa (`MapState`, CLAUDE.md §9): la web no escucha a un agente;
+   - rutas nuevas en la API para `explicar_zona` y `encontrar_zona`: no las pide la web y se desplegarían.
+
+## D-226 — Seguridad en Madrid capital: lo que dicen los vecinos como contexto, la actividad policial sin el panel y sin atropellos en el buscador (2026-11-12)
+DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con las reglas de CLAUDE.md §11 y D-075: datos oficiales y agregados, sin inferencias demográficas y sin etiquetas. Evidencia: `evidence/gate-01/2026-11-12/seguridad-fuentes.md`. Las cuatro fuentes son del Ayuntamiento de Madrid (datos.madrid.es, CC BY 4.0, comprobado en CKAN el 12 nov) y solo cubren la capital: el resto de la región queda SIN DATOS, declarado.
+1. **Percepción vecinal: entra como contexto en los 21 distritos.** Es el ítem «Percepción de seguridad en el barrio o la zona donde vive», de noche y de día, de 0 a 10, de la Encuesta de calidad de vida y satisfacción con los servicios públicos de 2025: 8.893 residentes de 16 años o más, unas 400 por distrito.
+   - Es la medida más cercana a «seguridad para quien vive allí»: los vecinos valoran su propio barrio, así que no tiene el problema de denominador de D-224.
+   - Se lee del panel de indicadores que ya se carga: sus valores coinciden con la encuesta en los 21 distritos. Va con la media de Madrid (6,4 de noche y 7,8 de día en 2025).
+   - No puntúa, no ordena zonas y no entra en «Qué falta».
+   - Se enseña con lo que es: «así valoran sus vecinos la seguridad de su barrio», con el año y el tamaño de la muestra. Sin colores de alarma ni palabras como «peligroso»: una cifra baja no puede convertirse en una etiqueta del barrio.
+2. **Actuaciones de la Policía Municipal: la fuente existe y es abierta, pero no se lee del panel.**
+   - La copia del panel repite valores entre distritos distintos y no coincide con los ficheros mensuales. Por ejemplo, Salamanca tiene 57 actuaciones de patrimonio en el panel y 349 en la fuente.
+   - Si entra, será desde la fuente mensual (12 XLSX por año, un pipeline nuevo). Solo las actuaciones relacionadas con las personas y con el patrimonio, por 1.000 habitantes del padrón (D-209) en 12 meses, con la media de la ciudad.
+   - Las de drogas y armas quedan fuera: miden dónde se hacen operativos, no lo que le pasa a quien vive allí (Centro tiene 1.878 de tenencia de drogas en 2025).
+   - Aviso obligatorio: «mide la actividad registrada por la Policía Municipal, no el riesgo de vivir allí». Solo contexto.
+3. **Atropellos: no puntúan.** En 2025 hubo 1.375 atropellos con expediente en Madrid, 434 de ellos con un peatón ingresado o fallecido; por distrito, de 0,22 a 0,78 por 1.000 habitantes.
+   - Sin un dato de cuánta gente camina por cada calle, la tasa señala los barrios con más vida (Centro, Salamanca) y premia los que dependen del coche.
+   - Por sección censal hay de media uno cada dos años, así que el ruido pesaría más que la diferencia entre calles.
+   - Una prioridad «calles más seguras para ir andando» ordenaría con un dato que no mide eso, así que no se crea.
+   - La DGT: no se ha verificado una descarga abierta por municipio; no se usa.
+4. **Fuera de la capital,** sin cambios respecto a D-224: el Balance de Criminalidad no puntúa.
+5. **En el buscador,** la prioridad «Seguridad» sigue sin puntuar: no hay un dato que la mida para quien vive allí en toda la región. Su hecho deja de prometer datos, porque D-224 y esta decisión cierran que no se puntúa con lo que hay: «Seguridad: no la puntuamos (no hay un dato oficial que la mida para quien vive en cada zona)».
+6. **Hecho en F2:**
+   - features `seguridad_percibida_noche` y `seguridad_percibida_dia`, de dominio `safety`, sin `fit` ni `gap_row` (un test lo exige para todo el dominio);
+   - el panel conserva la fila de la ciudad de estos dos indicadores como el municipio 28079 (`city_indicators`), que da la referencia;
+   - cuando dos ediciones del panel repiten una fecha (2019 sale en las de 2020 y 2021), se queda una observación, la de la edición más reciente (parser `madrid_district_panel-1.2.0`);
+   - confidence 0,9 por distrito (unas 400 personas) y 0,95 para la ciudad (8.893). Es un juicio editorial: el Ayuntamiento no publica el error de estas medias. No cambia ningún orden, porque no puntúan;
+   - la API ya los sirve en `GET /features/{id}/values` sin cambiar código;
+   - la Policía Municipal desde la fuente mensual queda pendiente.
+7. **Revisión (`reviewer`, F2b):**
+   - solo se funden las fechas repetidas entre ediciones distintas del panel; un duplicado dentro de una misma edición llega al check crítico `unique_keys` y lo hace fallar;
+   - una edición que no es un año va a cuarentena;
+   - la fila de la ciudad no lleva nombre de distrito;
+   - las limitaciones públicas de las features no llevan cifras que caducan ni afirmaciones sin evidencia.
+
+## D-227 — Comprar: el valor tasado de la vivienda libre por municipio, y los distritos de Madrid sin datos (2026-11-12)
+DATA-021. Sustituye D-214 §5, donde comprar salía UNKNOWN en todas las zonas. Es reversible: un dataset CM, una feature con enlace `fit: {role: price_m2}` y el encaje `fit-0.5`. Código: `hi_domain/affordability.py` (`purchase_cost`, `_purchase_check`), `hi_domain/fit.py` (`purchase_fact`, `estimated_cost`) y `hi_domain/reality_check.py`. Evidencia: `evidence/gate-01/2026-11-12/cm_valor_tasado_vivienda_municipios/`, `evidence/gate-04/2026-11-12/golden-search-compra.txt`.
+1. **Fuente (dato CM):** «Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios», del portal de datos abiertos de la Comunidad de Madrid (id 1004050, CC BY 4.0, actualizado el 2 jun 2026). Es la Estadística de Valor Tasado de la Vivienda del Ministerio de Vivienda y Agenda Urbana.
+   - Media anual en €/m², de 2005 a 2025, con código de municipio.
+   - En 2025 tienen valor 28 municipios: los de más de 25.000 habitantes con tasaciones suficientes. Van de Aranjuez (1.931 €/m²) a Madrid (4.993 €/m²).
+   - Se cargan los años desde 2021 y la búsqueda lee el último.
+2. **Qué es y qué no es:** es lo que tasan las sociedades de tasación, sobre todo para conceder hipotecas. No es el precio de un anuncio ni el de una venta concreta. Es la media de todo el municipio y de toda la vivienda libre, nueva y usada. Confidence 0,8.
+3. **Distritos de Madrid: SIN DATOS.** Un distrito no toma la media de la ciudad: entre Salamanca y Villaverde el precio cambia demasiado (CLAUDE.md §11). La feature les da una fila `SOURCE_MISSING` y la condición sale UNKNOWN con su explicación.
+4. **Coste y condición:** valor tasado por m² × los m² que se suponen para el hogar (D-214), redondeado a miles de euros. El estado, el valor y el texto usan ese mismo número.
+   - PASS o FAIL con la confidence del dato. Sin valor publicado, UNKNOWN y nunca PASS: «Sin precio de compra publicado para esta zona…».
+   - Si la tasación se expresa por m² construido, el coste se queda algo corto, porque los m² supuestos son útiles. Por eso un FAIL es más fiable que un PASS, como con el alquiler.
+   - `estimated_cost_eur` es el precio de compra cuando se busca comprar.
+5. **Encaje (`fit-0.5`):** el presupuesto de compra puntúa como el de alquiler: utilidad 1 si el coste es el 75 % del presupuesto o menos y 0 en el presupuesto. El hecho es «Comprar ≈ 221.000 € por 77 m² (2.869 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)».
+   - El Reality Check sube el presupuesto un 10 %, redondeado al alza a 10.000 €, hasta el máximo de 5 millones. Ya no quita el límite: a una zona sin precio no la mete ningún presupuesto.
+   - Golden `golden_couple` (320.000 € para dos adultos): 10 resultados con precio publicado; la condición que más zonas deja fuera es el presupuesto, porque 172 zonas no tienen precio.
+6. **Descartado:**
+   - El valor de referencia del Catastro por código postal que publica la CM (id 1934262): es por vivienda, solo de las arrendadas, de 2023, y es un valor administrativo, no un precio.
+   - El valor tasado trimestral por antigüedad (`valor_tasado_vivienda_municipio_antiguedad`): no trae código de municipio; queda para cuando haga falta el trimestre.
+   - Repartir el valor de Madrid entre sus distritos.
+7. **Orden del cambio en producción:** primero se despliega el código y después se sincroniza. El código desplegado (`fit-0.4`) no conoce el rol `price_m2`: con la feature en la base, `/search` fallaría.
+8. **Revisión (`reviewer`, F1b):**
+   - `explicar_zona` (MCP) cita como indicador de coste el que evalúa: el valor tasado para comprar y el alquiler para alquilar o sin presupuesto;
+   - un test de integración siembra un valor tasado en un municipio de los fixtures y comprueba por la API PASS, FAIL, el coste en € y el dataset citado;
+   - quedan fijados en tests el redondeo del Reality Check (305.000 € → +40.000 €) y el tope de 5 millones;
+   - pendiente de la web (línea B): las tarjetas aún dicen «Aún no tenemos precios oficiales de compra por zona» (`SearchCard.tsx`, `FitDetails.tsx`). Deberían decirlo solo donde la condición sale UNKNOWN, por ejemplo: «Solo hay precio en los municipios de más de 25.000 habitantes; los distritos de Madrid no lo tienen».
+
+## D-228 — Alquiler de contratos nuevos: el índice CM 1934428 no permite ajustar el nivel; propuesta con la tabla de nuevos contratos de la Agencia Tributaria (2026-11-12)
+Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano decidió «Ajustar con el índice CM».** Este ADR registra por qué ese índice no sirve y la alternativa. **Mariano eligió la opción A el 12 nov** (a través de `datamad-10`), y se implanta en `fit-0.6` (§6). Evidencia: `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/evaluacion.md`.
+1. **Qué publica el dataset 1934428** (comprobado el 12 nov; CC BY; actualizado el 02-06-2026):
+   - dos índices anuales del IPVA del INE (2015 = 100), contrato nuevo y contrato existente, de 2021 a 2024, sin código de territorio;
+   - los valores coinciden con los de la Comunidad de Madrid en la tabla 59004 del INE, aunque los metadatos digan «Toda España»;
+   - en 2024 los contratos nuevos subieron un 9,2 % y los existentes un 2,7 %.
+2. **Por qué no sirve:**
+   - cada serie vale 100 en su propio 2015, así que el cociente de los dos índices no dice cuánto más cuesta un contrato nuevo;
+   - el INE avisa de que su variación «solo recoge una parte del efecto del cambio de contrato»;
+   - hay un único valor para toda la región, y sacar de ahí un factor de nivel sería un ajuste a ojo.
+3. **Alternativa con fuente oficial:**
+   - **Fuente:** «Estadística de viviendas declaradas en IRPF» de la Agencia Tributaria, ejercicio 2024. Es la misma estadística que la CM republica y que ya usamos.
+   - **Qué publica:** el alquiler medio mensual y los m² medios del total y de los «contratos de arrendamiento formalizados en el ejercicio», para 37 municipios de la CM y los 54 códigos postales de Madrid.
+   - **Reutilización:** permitida, citando la fuente y la fecha.
+   - **Factor (contratos nuevos / total, en €/m²):** municipios entre 1,05 y 1,26 (Madrid 1,20); códigos postales entre 1,10 y 1,26.
+   - No está en el portal de la CM.
+4. **Propuesta:**
+   - **A, recomendada:** el €/m² de la CM por el factor de la AEAT de la misma zona; en los distritos, el de sus códigos postales, ponderado como en D-214.
+     - Efecto: Fuencarral pasa de ~1.107 a ~1.270 € y Salamanca de ~1.526 a ~1.880 €, con 77 m².
+     - Hecho: «contratos firmados en 2024».
+   - **B:** solo un aviso más fuerte con esas cifras, sin cambiar el coste.
+   - En los dos casos el índice 1934428 no entra en el cálculo.
+5. **Si se elige A:**
+   - versión 3 de `alquiler_m2_mensual` y `fit-0.6`, con tests antes del código y el golden actualizado;
+   - el texto `RENT_NOTE` está en el código, así que primero se despliega y después se sincroniza.
+6. **Implantación de la opción A** (`fit-0.6`, versión 3 de `alquiler_m2_mensual`; elegida por Mariano el 12 nov):
+   - **Fuente complementaria, no CM:** `agencia_tributaria`, con los datasets `aeat_alquiler_nuevos_contratos_municipios` y `aeat_alquiler_nuevos_contratos_codigo_postal`.
+     - Son las páginas HTML de la AEAT (no publica CSV ni XLSX), con la URL, la fecha de la metodología (01/07/2026) y la licencia en el catálogo.
+     - Pipeline nuevo `aeat_rent_comparison`. Comprueba la cabecera y el año, y no deja publicar la tabla si está cortada.
+     - Métricas `alquiler_mensual_irpf_*` y `m2_alquiler_irpf_*`, con la dimensión `contratos: todos | nuevos`.
+   - **Cálculo:** factor = (alquiler / m² de los nuevos) / (alquiler / m² de todos), de la misma zona y del último año.
+     - **Municipios:** su factor y, sin tabla propia, el de la fila de la Comunidad («Madrid, Comunidad de», suma de los municipios de la tabla). Hoy los 37 municipios con alquiler tienen el suyo.
+     - **Distritos:** cada código postal por su factor antes de la media ponderada de D-214, y sin tabla propia, el de Madrid. Hoy los 54 tienen el suyo.
+     - **Sin factor propio ni de reserva:** el valor queda desconocido, nunca la cifra antigua con la etiqueta nueva.
+     - **Trazabilidad:** `inputs.new_contracts` guarda el factor, de dónde sale y el valor de todos los contratos.
+   - **Texto:** «Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)».
+     - La nota va en el catálogo (`fit.note`) y no en el código, así que el código desplegado y los datos nunca se contradicen.
+     - Sin nota, se mantiene «media de los contratos vigentes».
+   - **Efecto con 77 m² (datos del 12 nov):** Fuencarral-El Pardo pasa de 1.107 a 1.276 €, Salamanca de 1.465 a 1.797 € y Madrid de 1.163 a 1.400 €.
+     - Caso de la familia (1.500 €): la condición que más zonas quita sigue siendo el colegio a 10 min, y ahora +150 €/mes añade 3 zonas (antes, ninguna). Salamanca, Chamartín y Centro quedan como «casi», porque fallan solo en el presupuesto.
+   - **Golden** (`evidence/gate-04/2026-11-12/golden-search-alquiler-nuevo.txt`): 8/8.
+     - En familia y persona sola la primera zona pasa a estar a 39 y 43 min en transporte público (Latina y Leganés, más baratas). El límite de esas dos expectativas sube de 35/40 a 45 min.
+     - A cambio se añaden dos comprobaciones: que +150 €/mes añade zonas (familia) y que el presupuesto es la condición que más quita (persona sola).
+   - **Textos de D (a la vez):** los hechos de minutos a pie dicen «a unos 9 min andando», sin «desde la mitad de sus calles».
+     - El hospital a más de 30 min como distancia («a unos 3,4 km») no es un texto de la API: lo pinta la web con el extra `min_a_pie_hospital` (línea B).
+   - **Orden en producción:** primero se despliega `fit-0.6` y después se sincroniza. El código desplegado (`fit-0.5`) no conoce la nota, así que con los datos nuevos diría «media de los contratos vigentes» junto a la cifra de los contratos nuevos.
+7. **Revisión (`reviewer`, Fase 2b):**
+   - sin bloqueantes;
+   - el valor y el factor tienen que ser del mismo año: si una edición nueva de cualquiera de los dos llega sola, el cálculo se para con un mensaje que pide cargar ambas y actualizar `fit.note`. Un test comprueba que el año de la nota es el de las tablas de la AEAT;
+   - una página con más de un «Ejercicio» se rechaza, y la tabla de municipios exige la fila de la Comunidad (el factor de reserva);
+   - el golden de la familia baja a 41 min (con 39 observados) para no tapar una regresión;
+   - queda declarado que un factor de reserva no baja la confidence: hoy no se usa en ninguna zona.
+
+
+## D-229 — Cifras de impacto: gente que vive donde falta y «dónde invertir primero» (2026-11-12)
+Fase de mejora, punto 3 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`): es lo que más puntos da según el jurado simulado. Método `impact-0.1`. Código:
+- `hi_domain/gap_impact.py`;
+- `hi_api/services/gap_impact.py`;
+- ruta `GET /api/v1/gaps/impact`;
+- campo `people` en cada fila de `/gaps/{level}/{code}`.
+
+Evidencia: `evidence/gate-04/2026-11-12/impact-cifras.txt`. Es reversible: ruta y campo nuevos, opcionales y sin cambios en lo que ya existía.
+
+1. **Gente afectada:**
+   - **Qué es:** la población objetivo de la fila que vive en una zona en FALTA.
+     - Escuela infantil: niños de 0 a 4 años.
+     - Colegio: niños de 5 a 14 años.
+     - Centro de salud y farmacia: habitantes.
+     - Mayores: personas de 65 años o más.
+     - Vivienda: hogares de 4 o más personas.
+   - **De dónde sale:** es el mismo denominador que guarda el indicador de la fila (D-213 §4). Viene del censo de la CM y, en los distritos, del padrón escalado (D-209, D-216). No se estima nada.
+   - **Unidades:** los 2SFCA guardan el denominador por cada `per` personas y los demás métodos, en personas. La conversión está en una sola función (`people_scale`).
+   - **Coherencia con el catálogo:** un test comprueba que la etiqueta («niños de 0 a 4 años») coincide con las dimensiones de población de la feature principal de cada fila.
+2. **Zonas:** las del buscador (D-215): los municipios, con Madrid capital por sus 21 distritos cuando la fila tiene valores por distrito y entera cuando no (vivienda). `madrid_level` dice cuál se usa. Los estados salen de los mismos mapas en caché que `/gaps?level=&row=` (la caché pasa de `search.py` a `gap_map.py`), así que una zona contada aquí sale FALTA en el mapa y en su lista; lo comprueba un test.
+3. **«Dónde invertir primero»:**
+   - **Orden:** las zonas en FALTA, de más a menos gente afectada.
+   - **Significación (D-213, D-217):** cada zona trae su ratio frente a los municipios parecidos (el de su grupo si se compara con sus vecinos) y `p_value`. Es la probabilidad exacta de Poisson, unilateral, de que una zona con la tasa de referencia tenga tan poco. Es la misma prueba que decide FALTA: p < 0,025 equivale a que la cota de Garwood al 95 % quede por debajo de lo esperado (test).
+   - **Frase:** «Viven aquí 9.433 niños de 0 a 4 años. Tienen 57 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces».
+4. **Cifras con los datos del 12 nov:**
+   - **Escuelas infantiles:** 25.551 niños de 0 a 4 años (el 9,8 %) en 3 distritos (Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968).
+   - **Centros de mayores:** 54.581 personas de 65 años o más (el 4,1 %) en 6 municipios, encabezados por Torrejón de Ardoz y Pozuelo de Alarcón.
+   - **Farmacias:** 667.172 personas (el 9,4 %) en 5 municipios: Getafe, Torrejón de Ardoz, Parla, Rivas-Vaciamadrid y Valdemoro.
+   - **Vivienda para familias:** 99.483 hogares de 4 o más personas (el 14,8 %) en 25 municipios, encabezados por Fuenlabrada, Leganés y Alcorcón.
+   - **Colegios y centros de salud:** ninguna zona tiene una falta clara.
+5. **Límites declarados:**
+   - **Contar a toda la población objetivo:** se cuenta a toda la de la zona, aunque dentro de ella unas calles estén mejor servidas que otras.
+   - **Zona comparada con sus vecinos:** cuenta su propia gente, no la del grupo.
+   - **Lo que no se calcula:**
+     - cuántos centros harían falta: la oferta del 2SFCA es compartida entre zonas y ese número se leería mal;
+     - un ranking de zonas en JUSTO.
+6. **Frase de la web «Aquí hay {n} por cada 100 que hay en municipios parecidos» (pregunta de D):** la calcula la web con lo que ya da la API, `n = round(100 × ratio_to_reference)`. Si la zona se compara con sus vecinos, se usa el `ratio_to_reference` de `comparison_group`. El `explanation` de `/gaps` no cambia.
+7. **Revisión (`reviewer`, Fase 2b):**
+   - sin bloqueantes;
+   - el porcentaje del resumen sale de la misma cuota acotada que `share_in_falta` y se omite si el total es desconocido;
+   - `p_value` se redondea hacia abajo, a 3 cifras: una zona en FALTA nunca muestra 0,025;
+   - `zones` cuenta también las zonas SIN DATOS.
+   - Queda declarado que las consultas de recuentos no filtran por versión, igual que los mapas de `/gaps`: hoy hay una fila por zona y feature.
+
+## D-230 — Zonas pequeñas: «No comparable», suelo del denominador cuando es un recuento y el motivo real cuando no vive nadie (2026-11-12)
+Fase de mejora, punto 7. Refina D-213 y D-217 con el mismo umbral, sin ajustar ninguna zona a mano. Código:
+- `hi_api/services/gap_reference.py` (`assess`);
+- `hi_api/services/gaps.py` y `gap_map.py`;
+- `hi_domain/gap_impact.py` (textos);
+- `hi_features/fca.py` (`rows_for`, `census_by_zone`).
+
+Evidencia: `evidence/gate-04/2026-11-12/zonas-pequenas.md`.
+1. **«0,0 frente a 28,0 = JUSTO» (La Acebeda, colegio).** Una zona poco fiable (`reliable: false`) y sin grupo de vecinos no puede decir si le falta algo. Su explicación empieza por «No comparable: aquí viven muy pocos niños de 5 a 14 años (3) para saber si falta.» y sigue con las cifras.
+   - El estado no cambia de valor: `GapStatus` no gana un valor nuevo, porque la web lo trata como un conjunto cerrado.
+   - **Pendiente de B:** pintar «No comparable» en vez del estado cuando `reliable` es `false` y `comparison_group` es `null`.
+2. **Vivienda en pueblos pequeños (La Acebeda: 10.700 viviendas por 100 hogares, CUBIERTO).**
+   - **Regla:** cuando el denominador de la fila es un recuento (hogares de 4 o más personas, `metric_ratio`), y no una población por cada `per` (2SFCA), también tiene que llegar al suelo de 3,69 de D-213. Por debajo, el recuento es compatible con cero hogares al 95 % y la comparación no dice nada: la zona queda poco fiable y «No comparable».
+   - **Efecto:** pasa a 2 municipios de 179, entre ellos La Acebeda, con 1 hogar grande. Ninguna FALTA cambia.
+   - **Grupos de vecinos:** este suelo no entra en ellos; un grupo se forma solo por los casos esperados (D-217).
+3. **0 niños de 0 a 4 años.**
+   - **Qué cambia en los datos:** las filas 2SFCA de una zona donde el censo no tiene a nadie de la edad de la fila salen `NOT_APPLICABLE`, no `SOURCE_NO_COVERAGE`.
+   - **Texto:** la API explica «No viven niños de 0 a 4 años en esta zona según el censo, así que no hay nada que comparar».
+   - **Lo que no cambia:** una zona con gente pero sin calles donde colocarla sigue `SOURCE_NO_COVERAGE`.
+   - **Para B:** hoy la web dice para `NOT_APPLICABLE` «Este dato no tiene sentido en esta zona.». Debería enseñar la `explanation` de la fila o el mismo texto.
+4. **Datos:** se recalculan las 5 features 2SFCA. Los valores no cambian; solo el motivo de un nulo (La Acebeda, escuela infantil) y la versión del registro de centros en el linaje. Es compatible con el código desplegado: se puede sincronizar en cualquier orden.
+
+## D-231 — Fuentes: cada dataset dice dónde se publica, y las dos tablas de camas se sirven como contexto (2026-11-12)
+Fase de mejora, punto 10 (parte de A). Es aditivo y reversible.
+1. **`source_name` en cada `DatasetRef`** (`/datasets`, `/gaps`, `/search` y MCP): es el nombre del registro de fuentes.
+   - Ejemplos: «Portal de Datos Abiertos de la Comunidad de Madrid», «Portal de Datos Abiertos del Ayuntamiento de Madrid» (el padrón y el panel de distritos), «OpenStreetMap (extracto Geofabrik Madrid)», el Ministerio de Sanidad y la Agencia Tributaria.
+   - **Para B:** la web dice «en el portal de datos» en todos los enlaces (`openHint` en `provenance.ts`). Debería decir «en {source_name}».
+2. **Camas (los 2 datasets CM que contamos y no se veían).**
+   - **Qué eran:** «Dotación de camas por dependencia» y «Hospitales y datos asistenciales» solo publican el total de la región (D-217 §4). Estaban cargados como métricas, pero ninguna ruta los servía.
+   - **Qué se hace:** pasan a dos features de nivel región, `camas_instaladas_por_1000_hab` (3,0 en 2023) y `hospitales_total` (85), en `GET /api/v1/features/{id}/values?level=ccaa`.
+   - **Para B:** pintarlas en la nota del hospital («En toda la Comunidad hay 85 hospitales y 3,0 camas instaladas por cada 1.000 habitantes (2023)») con sus dos enlaces.
+   - Mientras la web no las enseñe, la cifra pública de datasets CM debería contar 2 menos (decisión de D y Mariano).
+   - No entran en «Qué falta» (D-218 §7).
+
+## D-232 — Barrios de Madrid dentro de un distrito: `POST /api/v1/search/barrios` (`fit-0.7`) (2026-11-12)
+Petición de Mariano («poca diferenciación… datos por barrios dentro de distritos, como ver solo Simancas»), con el diseño aprobado por `datamad-10`. Es la fase 1 del diseño: los barrios de un distrito, ordenados con el mismo motor que `/search` (card BARRIO-001: sus commits «Fase 1» son los datos, «Fase 2» la ruta y «Fase 2b» la revisión). La fase 2 del diseño (los 131 barrios en el ranking de toda la región) y «Qué falta» por barrio quedan fuera y se deciden con Mariano. Reversible: un nivel más en features que ya existían, una ruta nueva y campos opcionales en el dominio. Código: `hi_api/services/barrios.py`, `hi_features/walk.py` (`zone_of_node`, `section_parents`), `hi_features/methods.py` (`postcode_weighted_mean`), `hi_features/commute.py` (`origin_zones`), `hi_ingestion/pipelines/district_panel/`, `admin_boundaries/official_names.py` y `hi_domain/fit.py`. Evidencia: `evidence/gate-03/2026-11-12/barrios-datos.md` (`scripts/barrio_summary.py`), `evidence/gate-04/2026-11-12/golden-search-barrios.txt` y `evidence/gate-01/2026-11-12/official_names/`.
+1. **Secciones a barrios.** La geografía ya asigna cada sección a su barrio: el fichero de secciones de la CM trae el barrio de cada una (`CDTBARRIO`) y el barrio es la unión de sus secciones. Comprobado: las 2.443 secciones de Madrid están en uno de los 131 barrios y ninguna tiene su punto interior fuera de él. El código de barrio no es un prefijo del de la sección (la 2807905013 está en el barrio 28079051), así que el cálculo usa el padre de la sección en `geo_admin_unit`.
+2. **Nombres oficiales.** La tabla de barrios de la CM es anterior a la reforma de 2017: deja sin nombre Ensanche de Vallecas, Valderrivas y El Cañaveral y llama «Ambroz» a Valdebernardo. Los nombres salen ahora del panel de indicadores del Ayuntamiento, la misma fuente que los distritos (D-212). El pipeline del panel guarda las filas de barrio de «Total hogares» y «Tamaño medio del hogar» (parser 1.3.0, 917 observaciones de cada una), con su nombre. `admin-names` cambia 17 nombres, entre ellos «Palos de la Frontera» y «Villaverde Alto - Casco Histórico de Villaverde». Un barrio sin nombre en ninguna fuente bloquea el cambio (comprobación crítica). Los hogares por barrio quedan cargados para la fase 2.
+3. **Minutos a pie.** Es el mismo `network_walk_time` en el nivel barrio: la mediana de las calles del barrio, nunca la mediana de las medianas de sus secciones (test). Se calcula en las 8 features del buscador y en los 7 «% de calle» que las acompañan, para que la coherencia mediana/% de Gate 3 siga valiendo en todas las zonas. Resultado: 131 de 131 con valor. Ejemplo: en San Blas-Canillejas el colegio está a 8,1 min de mediana del distrito, pero en Rejas a 35,4 (CLAUDE.md §11).
+4. **Alquiler.** Es el proxy de D-214 con el factor de contratos nuevos de D-228, con los códigos postales de los lugares del barrio.
+   - Un barrio tiene muchos menos lugares que un distrito (entre 0 y 56, mediana 16, frente a 51–242). La confidence es 0,6 como máximo y 0,3 si la media descansa en menos de 5 lugares con alquiler publicado (11 barrios).
+   - Sin ningún lugar con código postal (Sol), la fila es `SOURCE_NO_COVERAGE` y la condición sale `UNKNOWN` con el motivo en llano: «Sin datos de alquiler para este barrio: el alquiler se publica por código postal y ningún colegio, centro de salud o centro social del barrio lo lleva en su dirección». Con lugares pero sin alquiler publicado para sus códigos, la fila es `SOURCE_MISSING` y el texto dice «la fuente no publica el alquiler de los códigos postales de sus colegios, centros de salud y centros sociales» (hoy ningún barrio; vale también para los distritos). Nunca toma el alquiler del distrito.
+   - Límite declarado: un código postal cubre varios barrios, así que dentro de un distrito el alquiler cambia poco (San Blas-Canillejas: de 14,9 a 16,0 €/m²).
+5. **Trayecto al trabajo.** Se aparta en una cosa del diseño, que decía «desde el centro del barrio». El motor de CORE-009 ya mide desde cada sección, y el valor de una zona es la mediana de sus secciones (D-220 §3), así que el barrio se mide igual que el distrito. Es más fiel que un único punto.
+   - Los barrios son orígenes, nunca destinos: los 579 destinos no cambian. Son 75.849 filas más (131 × 579), 67.518 con minutos. Las de municipios y distritos no cambian (73.783 con minutos, como en D-220).
+   - **Reserva:** si un barrio no está en la matriz (por ejemplo, el código desplegado antes que los datos), usa el trayecto de su distrito con la confidence × 0,8 como preferencia. El hecho lo dice: «… (trayecto medido para todo el distrito, no solo para este barrio)», y `warnings` cuenta cuántos barrios lo usan. No dice «desde el centro del distrito» porque el del distrito también es la mediana de sus secciones.
+   - **Un trayecto prestado nunca decide un límite:** con `max_minutes`, la condición de ese barrio sale `UNKNOWN` con los minutos del distrito y la nota en la explicación. Lo que dice el distrito no basta para afirmar PASS o FAIL en uno de sus barrios.
+6. **Ruta y contrato.** `POST /api/v1/search/barrios` recibe `{scenario, distrito}` (`BarrioSearchRequest`; un distrito que no es de Madrid da 422 y uno que no existe, 404) y devuelve `BarrioSearchResult`: el contrato de `/search` con `distrito`. Un validador exige que todas sus zonas sean barrios de ese distrito.
+   - Mismas condiciones, % de encaje, hechos, casi y Reality Check, que se reenvía a la misma ruta con el mismo `distrito`.
+   - `gap_highlights` va vacío: «Qué falta» sigue por distrito.
+   - Comprar sale `UNKNOWN`, como en los distritos (D-227); el texto nombra ya «los distritos y barrios de Madrid».
+   - Un distrito sin barrios en la geografía (hoy ninguno) responde vacío con un aviso `INSUFFICIENT_DATA`, nunca en silencio.
+7. **`fit-0.7` en el dominio.** `Commute.note` (dónde se midió el trayecto si no es en la zona) y `ZoneData.rent_missing` (por qué no hay alquiler). La búsqueda de toda la región no cambia: los 8 golden dan lo mismo y su fixture solo cambia la versión.
+8. **Golden** (`barrio_scenarios` en `search_scenarios.yaml`; 9/9 OK). La familia del caso demo en San Blas-Canillejas evalúa 8 barrios: 7 cumplen todo, entre ellos Simancas (97 %, colegio a 7 min, 37 min hasta la Castellana y unos 1.228 €/mes). Rejas sale como «casi» porque falla el colegio a 10 min. Hay 5 % distintos, del 55 % al 97 %, y todos los trayectos son del propio barrio.
+9. **Orden en producción.** Los datos nuevos (filas de barrio en `feature_value` y `commute_time` y los 17 nombres) son compatibles con el código desplegado: todas sus lecturas filtran por nivel o buscan por zona. Se pueden sincronizar en cualquier orden, pero la ruta necesita el despliegue. En Supabase son unas 76.000 filas más en `commute_time` y unas 2.000 en `feature_value`.
+10. **Revisión (`reviewer`, Fase 2b):**
+   - sin bloqueantes;
+   - un trayecto prestado del distrito ya no decide un límite (§5) y el texto del alquiler que falta sigue al motivo real de la fila (§4);
+   - el tope de 0,3 cuenta los lugares con alquiler publicado, no todos;
+   - el test de nombres solo toca las filas del panel y restaura su nombre; un barrio fuera del panel con un nombre roto sigue bloqueando;
+   - el contrato del panel exige `expected_barrios` si guarda barrios, y `BarrioSearchResult` exige que `distrito` sea un distrito;
+   - quedan como están, declarados: la ruta lee las features de los 131 barrios y filtra en Python (unas 1.300 filas, menos que `/search`), y un barrio con dos nombres en ediciones distintas del panel bloquea `admin-names` (fallo seguro y visible; hoy no pasa).

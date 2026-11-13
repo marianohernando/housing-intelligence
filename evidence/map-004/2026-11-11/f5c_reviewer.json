@@ -1,0 +1,7 @@
+{
+  "fase": "MAP-004 F5c, correcciones del reviewer",
+  "como": "Playwright 1440x900 contra web 3011 y API 8011: Chamartin, migas a Madrid, atras; luego barrio, migas, atras",
+  "etiquetas": {"primera_visita_final": 4, "al_volver_durante_el_vuelo": 0, "al_volver_al_final": 4},
+  "barrio": {"Hispanoamerica_pulsado": "true", "al_volver_al_distrito": {"Todo Chamartin": "true", "Hispanoamerica": "false"}},
+  "errores_consola": 0
+}

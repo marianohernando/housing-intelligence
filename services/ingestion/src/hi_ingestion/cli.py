@@ -10,13 +10,17 @@ from sqlalchemy import Engine
 
 from hi_contracts.catalog.enums import Priority
 from hi_contracts.catalog.pipeline import (
+    AeatRentComparisonPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    FacilityDirectoryPipeline,
     GtfsFeedPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    OsmParksPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
+    StationTopologyPipeline,
 )
 from hi_db.session import make_engine
 from hi_domain.catalog.scoring import score_candidate
@@ -32,19 +36,24 @@ from hi_ingestion.catalog_harvester.drafts import (
 )
 from hi_ingestion.catalog_harvester.runner import HARVESTABLE, harvest_sources, read_candidates
 from hi_ingestion.pipelines.admin_boundaries import config as admin_config
+from hi_ingestion.pipelines.admin_boundaries.official_names import STEP, apply_official_names
 from hi_ingestion.pipelines.admin_boundaries.run import (
     fetch_inputs,
     local_inputs,
     run_admin_boundaries,
 )
+from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
 from hi_ingestion.pipelines.common import EVIDENCE_GATE_01, RunSummary
+from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
+from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
+from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
 catalog_app = typer.Typer(help="Source catalog commands", no_args_is_help=True)
@@ -151,6 +160,9 @@ def _run_one(
     if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, AeatRentComparisonPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_aeat_rent_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, MadridPadronPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_padron_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
@@ -166,6 +178,15 @@ def _run_one(
     if isinstance(spec, OsmWalkNetworkPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_osm_network_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, OsmParksPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_osm_parks_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, FacilityDirectoryPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_directory_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, StationTopologyPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_topology_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     typer.echo(f"No pipeline registered for {dataset_id}", err=True)
     raise typer.Exit(2)
 
@@ -182,8 +203,39 @@ def run_dataset(
     """Run one dataset pipeline (Bronze -> Silver -> PostGIS)."""
     summary = _run_one(dataset_id, load_catalog(), make_engine(database_url), local, evidence)
     _print_summary(summary)
+    if dataset_id == admin_config.SECTIONS_DATASET and summary.status == "SUCCESS":
+        typer.echo(
+            "Geography republished with the CSV names: reload the statistical tables, then run "
+            "`make admin-names` (D-212).",
+            err=True,
+        )
     if summary.status == "FAILED":
         raise typer.Exit(1)
+
+
+@app.command("admin-names")
+def admin_names(
+    evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
+    database_url: DatabaseUrl = None,
+) -> None:
+    """Official spellings for municipios and Madrid districts (after the statistical tables)."""
+    engine = make_engine(database_url)
+    summary = apply_official_names(engine, evidence_root=EVIDENCE_GATE_01 if evidence else None)
+    _print_summary(summary)
+    if summary.status == "FAILED":
+        raise typer.Exit(1)
+
+
+SIDE_INPUTS = (FacilityDirectoryPipeline, StationTopologyPipeline)
+
+
+def pipeline_order(catalog: Catalog) -> list[str]:
+    """Directories and station topologies first: the registers and feeds that name them read
+    their last valid version (D-218, D-223)."""
+    return sorted(
+        catalog.pipelines,
+        key=lambda d: (not isinstance(catalog.pipelines[d], SIDE_INPUTS), d),
+    )
 
 
 @app.command("run-all")
@@ -191,16 +243,20 @@ def run_all(
     evidence: Annotated[bool, typer.Option(help="Write evidence/gate-01 artifacts")] = True,
     database_url: DatabaseUrl = None,
 ) -> None:
-    """Geography first, then every declared pipeline. Exit 1 if any run fails quality."""
+    """Geography, every declared pipeline, then official names. Exit 1 if any fails quality."""
     catalog = load_catalog()
     engine = make_engine(database_url)
-    order = [admin_config.SECTIONS_DATASET, *sorted(catalog.pipelines)]
+    order = [admin_config.SECTIONS_DATASET, *pipeline_order(catalog)]
     failed: list[str] = []
     for dataset_id in order:
         summary = _run_one(dataset_id, catalog, engine, None, evidence)
         typer.echo(f"{dataset_id}: {summary.status} {summary.version_label or ''}")
         if summary.status == "FAILED":
             failed.append(dataset_id)
+    names = apply_official_names(engine, evidence_root=EVIDENCE_GATE_01 if evidence else None)
+    typer.echo(f"admin names: {names.status} {names.version_label or ''}")
+    if names.status == "FAILED":
+        failed.append(STEP)
     if failed:
         typer.echo(f"FAILED: {failed}", err=True)
         raise typer.Exit(1)

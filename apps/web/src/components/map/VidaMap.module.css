@@ -1,0 +1,228 @@
+.map {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--map-land);
+}
+
+/* Notices over the map: at the top, between the columns, under the attribution's (i) and clear of the legend */
+.failure {
+  position: fixed;
+  left: 50%;
+  top: 7.5rem;
+  z-index: 3;
+  width: max-content;
+  max-width: min(27rem, calc(100% - 2rem));
+  padding: var(--space-4) var(--space-5);
+  transform: translateX(-50%);
+  color: var(--ink);
+}
+
+/* Attribution links read as links without relying on colour (WCAG 1.4.1, axe link-in-text-block) */
+.map :global(.maplibregl-ctrl-attrib a) {
+  text-decoration: underline;
+}
+
+/*
+ * The attribution's (i) (VidaMap addAttribution) at the top left of the map's free area: under the
+ * header, right of the text column and its veil (layout.module.css, 31rem). Opened, its citations
+ * stay in the free map, scrolling if they need more room: left of the right column (three
+ * columns), above the legend and the barrios bar, and on mobile above the sheet and its legend
+ * (MOBILE_LEGEND of camera.ts). Its margin and padding take 3.5rem of the width.
+ */
+.map :global(.maplibregl-ctrl-top-left) {
+  top: 5rem;
+  left: calc(var(--page-gutter) + 31rem + var(--space-2));
+}
+
+.map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show) {
+  max-width: calc(100vw - 2 * var(--page-gutter) - 31rem - var(--space-2) - 3.5rem);
+}
+
+/*
+ * «© OpenStreetMap · Powered by CRTM» beside the folded (i), on the same white (VidaMap
+ * creditsControl): one line as tall as the (i), or two where the free map is narrow. Hidden while
+ * the full list, which cites both, is open.
+ */
+.map :global(.maplibregl-ctrl-top-left) .credits {
+  clear: none;
+  max-width: calc(100vw - 2 * var(--page-gutter) - 31rem - var(--space-2) - 48px);
+  margin: 10px 0 0 6px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* Where the free map is narrow, the line breaks between the two citations, never inside one */
+.credits a {
+  color: inherit;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.map :global(.maplibregl-compact-show) + .credits {
+  display: none;
+}
+
+.map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner) {
+  max-height: max(6rem, calc(100vh - 5rem - 20rem));
+  overflow-y: auto;
+}
+
+@media (min-width: 1260px) {
+  .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show) {
+    max-width: calc(100vw - 2 * var(--page-gutter) - 54rem - var(--space-2) - var(--space-6) - 3.5rem);
+  }
+
+  .map :global(.maplibregl-ctrl-top-left) .credits {
+    max-width: calc(100vw - 2 * var(--page-gutter) - 54rem - var(--space-2) - var(--space-6) - 48px);
+  }
+}
+
+@media (max-width: 760px) {
+  .map :global(.maplibregl-ctrl-top-left) {
+    top: 7.25rem;
+    left: 0;
+  }
+
+  .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show),
+  .map :global(.maplibregl-ctrl-top-left) .credits {
+    max-width: none;
+  }
+
+  .map :global(.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner) {
+    max-height: calc(100dvh - var(--sheet-peek) - 7.25rem - 9rem);
+  }
+}
+
+/*
+ * Quiet note when only the street background failed (offline): at the top of the map, between
+ * the cards as the legend is (three columns), at the top right of the map (one column of cards).
+ */
+.note {
+  position: fixed;
+  top: 7.5rem;
+  right: calc(var(--page-gutter) + 23rem + var(--space-6));
+  left: calc(var(--page-gutter) + 28rem + var(--space-6));
+  z-index: 2;
+  width: fit-content;
+  max-width: 20rem;
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 761px) and (max-width: 1259px) {
+  .note {
+    right: var(--page-gutter);
+    left: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .note {
+    top: 10rem;
+    right: 1rem;
+    left: 1rem;
+  }
+}
+
+/* Key point label (glass) with its pin on the exact spot */
+.label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 15rem;
+  margin-bottom: 18px;
+  padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  box-shadow: 0 6px 20px rgba(20, 27, 61, 0.14);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  color: var(--ink);
+  pointer-events: none;
+}
+
+/* Recognisable icon (train, cross, mortarboard) straight on the glass, as in mockup 2 */
+.labelIcon {
+  display: grid;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: var(--violet-strong);
+}
+
+.labelText {
+  display: grid;
+  line-height: 1.2;
+}
+
+.labelKind {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.labelName {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.labelPin {
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--violet);
+  box-shadow: 0 2px 6px rgba(20, 27, 61, 0.3);
+  transform: translate(-50%, 50%);
+}
+
+/* A park's label (DATA-018): its icon and pin in the green of its dots on the map */
+.park .labelIcon {
+  color: var(--park);
+}
+
+.park .labelPin {
+  background: var(--park);
+}
+
+/* Mobile: compact labels (type only) so they do not cover the small map */
+@media (max-width: 760px) {
+  .label {
+    padding-right: 0.6rem;
+  }
+
+  .labelName {
+    display: none;
+  }
+}
+
+/* Notices with a link or a button (map failure, zones not loaded) */
+div.failure {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.failure a {
+  color: var(--violet-strong);
+}
+
+/* Mobile: under the header (brand and tabs) and the attribution's (i), above the bottom sheet */
+@media (max-width: 760px) {
+  .failure {
+    top: 10rem;
+  }
+}

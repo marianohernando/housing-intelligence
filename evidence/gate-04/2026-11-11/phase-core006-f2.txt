@@ -1,0 +1,53 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+263 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 21%]
+........................................................................ [ 42%]
+........................................................................ [ 63%]
+........................................................................ [ 84%]
+....................................................                     [100%]
+340 passed in 6.00s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  20 passed (20)
+      Tests  172 passed (172)
+   Start at  21:33:06
+   Duration  405ms (tests 51%, import 25%, transform 16%, worker 8%)
+
+uv run pytest -m db tests/integration -q
+........................................................................ [ 86%]
+...........                                                              [100%]
+83 passed in 28.45s
+
+== exit=0 (make lint typecheck test) ==
+
+== CORE-006 F2: m² supuestos (D-214) y coste para el caso demo (2 adultos + 2 menores, 1.500 €/mes) con los valores de la base local ==
+m2 por personas: {1: 61, 2: 68, 3: 71, 4: 77, 5: 77}
+Acebeda (La) (municipio): UNKNOWN · Alquiler hasta 1.500 €/mes para 77 m² · Sin datos de alquiler para esta zona: la fuente solo publica las zonas con contratos suficientes · confidence 0.00
+Alcobendas (municipio): PASS · Alquiler hasta 1.500 €/mes para 77 m² · Alquiler medio ≈ 978 €/mes por 77 m² (12,7 €/m², media de los contratos vigentes; uno nuevo suele costar más) · confidence 1.00
+Getafe (municipio): PASS · Alquiler hasta 1.500 €/mes para 77 m² · Alquiler medio ≈ 816 €/mes por 77 m² (10,6 €/m², media de los contratos vigentes; uno nuevo suele costar más) · confidence 1.00
+Chamartín (distrito): PASS · Alquiler hasta 1.500 €/mes para 77 m² · Alquiler medio ≈ 1.385 €/mes por 77 m² (18,0 €/m², media de los contratos vigentes; uno nuevo suele costar más) · confidence 0.80
+Fuencarral-El Pardo (distrito): PASS · Alquiler hasta 1.500 €/mes para 77 m² · Alquiler medio ≈ 1.109 €/mes por 77 m² (14,4 €/m², media de los contratos vigentes; uno nuevo suele costar más) · confidence 0.76
+Villaverde (distrito): PASS · Alquiler hasta 1.500 €/mes para 77 m² · Alquiler medio ≈ 834 €/mes por 77 m² (10,8 €/m², media de los contratos vigentes; uno nuevo suele costar más) · confidence 0.80
+Móstoles (municipio): PASS · Alquiler hasta 1.500 €/mes para 77 m² · Alquiler medio ≈ 739 €/mes por 77 m² (9,6 €/m², media de los contratos vigentes; uno nuevo suele costar más) · confidence 1.00

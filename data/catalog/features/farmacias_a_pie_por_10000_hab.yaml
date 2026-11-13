@@ -1,0 +1,40 @@
+feature_id: farmacias_a_pie_por_10000_hab
+version: 1
+human_name: "Farmacias al alcance a pie por cada 10.000 habitantes"
+domain: health
+type: derived
+unit: farmacias/10000 hab
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_oficinas_farmacia, role: primary}
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
+formula:
+  method: two_step_fca
+  category: pharmacy
+  subcategories: ["Farmacia"]
+  supply: {kind: count}
+  catchment_minutes: 15  # «El Madrid de los 15 minutos» (Ayuntamiento), the source of D-211
+  speed_kmh: 4.0
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  population_metric: poblacion_censada
+  population_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  district_population: {metric: poblacion_padron, dims: {edad: [total]}}
+  small_population_threshold: 2000  # people below this -> confidence 0.5
+  per: 10000
+  confidence: 1.0
+  levels: {distrito: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, small_population]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative, capacity_conserved]
+limitations:
+  - "2SFCA (Luo y Wang, 2003): la capacidad de cada centro se reparte entre quienes viven a 15 minutos a pie o menos (4 km/h por la red de calles, «El Madrid de los 15 minutos»); la zona suma lo que le llega a cada calle. Cruza los límites de municipio y distrito."
+  - "La gente se coloca en las calles donde vive (D-210), en proporción a su longitud dentro de su municipio o, en Madrid, de su distrito (padrón escalado al total del censo): no es la población de cada portal."
+  - "Quien vive a más de 15 minutos a pie de cualquier centro no suma oferta: la fila mide lo que se tiene cerca, no lo que hay en coche o en autobús."
+gap_row: {row: farmacia, role: primary, label: "Farmacias", phrase: "farmacias al alcance a pie por cada 10.000 habitantes", proxy_note: "Cada farmacia cuenta como una (la ley de la CM las planifica por habitantes, no por tamaño); no mira horarios ni guardias."}

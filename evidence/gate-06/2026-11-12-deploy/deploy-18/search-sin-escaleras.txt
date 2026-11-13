@@ -1,0 +1,5 @@
+status zones_passing=33 of 199
+Ciudad Lineal 99 %: Estación de metro o tren accesible (sin escaleras) a 10 min andando desde la mitad de sus calles
+Retiro 97 %: Estación de metro o tren accesible (sin escaleras) a 9 min andando desde la mitad de sus calles
+Centro 95 %: Estación de metro o tren accesible (sin escaleras) a 7 min andando desde la mitad de sus calles
+results with the fact: 10 of 10

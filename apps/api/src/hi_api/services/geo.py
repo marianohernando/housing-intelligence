@@ -7,6 +7,7 @@ from typing import Any
 from sqlalchemy import Connection, text
 
 from hi_contracts.catalog.enums import AdminLevel
+from hi_domain.geo.names import display_name
 
 MAX_SIMPLIFY_METERS = 500
 GEOJSON_DECIMALS = 6
@@ -20,6 +21,7 @@ _UNITS_SQL = text(
            ) AS geometry
     FROM geo_admin_unit u
     WHERE u.level = :level
+      AND (CAST(:parent AS text) IS NULL OR u.parent_admin_unit_id = :parent)
     ORDER BY u.admin_unit_id
     """
 )
@@ -42,9 +44,17 @@ class AdminUnitsResult:
     lineage: dict[str, Any]
 
 
-def admin_units_geojson(conn: Connection, level: AdminLevel, simplify_m: float) -> AdminUnitsResult:
+def admin_units_geojson(
+    conn: Connection, level: AdminLevel, simplify_m: float, parent: str | None = None
+) -> AdminUnitsResult:
+    """Units of a level, optionally only the direct children of `parent` (an admin_unit_id)."""
     tolerance = min(max(simplify_m, 0.0), MAX_SIMPLIFY_METERS)
-    params = {"level": level.value, "tolerance": tolerance, "decimals": GEOJSON_DECIMALS}
+    params = {
+        "level": level.value,
+        "parent": parent,
+        "tolerance": tolerance,
+        "decimals": GEOJSON_DECIMALS,
+    }
     rows = conn.execute(_UNITS_SQL, params).mappings().all()
     features = [
         {
@@ -55,7 +65,7 @@ def admin_units_geojson(conn: Connection, level: AdminLevel, simplify_m: float) 
                 "admin_unit_id": row["admin_unit_id"],
                 "level": row["level"],
                 "code": row["code_official"],
-                "name": row["name"],
+                "name": display_name(row["name"]) if row["name"] else None,
                 "parent": row["parent_admin_unit_id"],
                 "area_km2": float(row["area_km2"]),
             },

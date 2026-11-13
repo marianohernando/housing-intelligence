@@ -8,5 +8,6 @@
 !packages/domain/**
 !services/features/**
 !services/ingestion/**
+!services/mcp/**
 **/__pycache__
 **/*.pyc

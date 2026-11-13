@@ -1,0 +1,44 @@
+dataset_id: cm_valor_tasado_vivienda_municipios
+source_id: comunidad_madrid_ckan
+name: Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base
+  2005). Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/1004050
+resources:
+- name: Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total
+    (Base 2005).csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/8cb70b8c-c1e2-43f7-826a-1a22c573a743/resource/ef4a2c7a-4273-4116-9ff2-d5f77020ca04/download/valor-tasado-de-la-vivienda-libre-por-municipios-de-mas-de-25.000-habitantes.-total-base-2005.-m.csv
+- name: Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total
+    (Base 2005). Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/8cb70b8c-c1e2-43f7-826a-1a22c573a743/resource/a6e14d32-9771-4331-abb4-3f2ac763ee51/download/valor-tasado-de-la-vivienda-libre-por-municipios-de-mas-de-25.000-habitantes.-total-base-2005.-.json
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 5
+  geographic_granularity: 2
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    DATA-021 (D-227). CM portal (CC BY 4.0, «Fecha Actualización 02-06-2026»; fuente:
+    Estadística de Valor Tasado de la Vivienda, Ministerio de Vivienda y Agenda Urbana). Media
+    anual en €/m² de las tasaciones de vivienda libre; 28 municipios con valor en 2025 (los de
+    más de 25.000 habitantes con tasaciones suficientes). Sin distritos de Madrid.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-12T17:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1004050'
+  harvested_at: '2026-11-12T17:00:00+00:00'
+notes: DATA-021 purchase price by municipio (D-227)

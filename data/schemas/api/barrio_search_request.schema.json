@@ -1,0 +1,286 @@
+{
+  "$defs": {
+    "Anchor": {
+      "additionalProperties": false,
+      "description": "A place the household travels to often («Trabajo en»).",
+      "properties": {
+        "days_per_week": {
+          "default": 5,
+          "maximum": 7,
+          "minimum": 1,
+          "title": "Days Per Week",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/AnchorKind",
+          "default": "work"
+        },
+        "label": {
+          "examples": [
+            "Paseo de la Castellana (Azca)"
+          ],
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 41.17,
+          "minimum": 39.88,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": -3.05,
+          "minimum": -4.58,
+          "title": "Lon",
+          "type": "number"
+        },
+        "max_minutes": {
+          "anyOf": [
+            {
+              "maximum": 120,
+              "minimum": 5,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hard limit for the trip; None = preference only",
+          "title": "Max Minutes"
+        }
+      },
+      "required": [
+        "label",
+        "lon",
+        "lat"
+      ],
+      "title": "Anchor",
+      "type": "object"
+    },
+    "AnchorKind": {
+      "enum": [
+        "work",
+        "study",
+        "family",
+        "other"
+      ],
+      "title": "AnchorKind",
+      "type": "string"
+    },
+    "Budget": {
+      "additionalProperties": false,
+      "description": "Rent in €/month or purchase price in €; the purchase result is always «orientativo».",
+      "properties": {
+        "amount_eur": {
+          "description": "€/month when kind=rent, € when kind=buy",
+          "exclusiveMinimum": 0,
+          "title": "Amount Eur",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/BudgetKind"
+        }
+      },
+      "required": [
+        "kind",
+        "amount_eur"
+      ],
+      "title": "Budget",
+      "type": "object"
+    },
+    "BudgetKind": {
+      "enum": [
+        "rent",
+        "buy"
+      ],
+      "title": "BudgetKind",
+      "type": "string"
+    },
+    "Household": {
+      "additionalProperties": false,
+      "description": "«Tu hogar»: adults, children and older people they look after (all live together).",
+      "properties": {
+        "adults": {
+          "default": 1,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Adults",
+          "type": "integer"
+        },
+        "minor_ages": {
+          "description": "0-17, optional",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Minor Ages",
+          "type": "array"
+        },
+        "minors": {
+          "default": 0,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Minors",
+          "type": "integer"
+        },
+        "seniors_in_care": {
+          "default": 0,
+          "description": "People aged 65+ cared for",
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Seniors In Care",
+          "type": "integer"
+        }
+      },
+      "title": "Household",
+      "type": "object"
+    },
+    "NearbyNeed": {
+      "additionalProperties": false,
+      "description": "A service the household wants within walking distance (e.g. «colegio cerca»).",
+      "properties": {
+        "max_walk_minutes": {
+          "default": 10,
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Max Walk Minutes",
+          "type": "integer"
+        },
+        "need": {
+          "$ref": "#/$defs/NeedKey"
+        },
+        "required": {
+          "default": true,
+          "description": "True = hard constraint (PASS/FAIL/UNKNOWN)",
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "need"
+      ],
+      "title": "NearbyNeed",
+      "type": "object"
+    },
+    "NeedKey": {
+      "description": "Everyday services the search and the per-zone list both talk about.",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "farmacia",
+        "mayores",
+        "transporte"
+      ],
+      "title": "NeedKey",
+      "type": "string"
+    },
+    "PriorityKey": {
+      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.",
+      "enum": [
+        "transporte",
+        "salud",
+        "colegios",
+        "zonas_verdes",
+        "seguridad",
+        "sin_escaleras"
+      ],
+      "title": "PriorityKey",
+      "type": "string"
+    },
+    "ScenarioState": {
+      "additionalProperties": false,
+      "properties": {
+        "anchors": {
+          "items": {
+            "$ref": "#/$defs/Anchor"
+          },
+          "maxItems": 3,
+          "title": "Anchors",
+          "type": "array"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Budget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = no budget limit"
+        },
+        "household": {
+          "$ref": "#/$defs/Household"
+        },
+        "min_floor_area_m2": {
+          "anyOf": [
+            {
+              "maximum": 400,
+              "minimum": 15,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = derived from the household size",
+          "title": "Min Floor Area M2"
+        },
+        "nearby": {
+          "items": {
+            "$ref": "#/$defs/NearbyNeed"
+          },
+          "maxItems": 6,
+          "title": "Nearby",
+          "type": "array"
+        },
+        "priorities": {
+          "description": "Most important first",
+          "items": {
+            "$ref": "#/$defs/PriorityKey"
+          },
+          "maxItems": 6,
+          "title": "Priorities",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": 2,
+          "default": 2,
+          "title": "Schema Version",
+          "type": "integer"
+        }
+      },
+      "title": "ScenarioState",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/barrio_search_request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "POST /api/v1/search/barrios (D-232): the same scenario as POST /search, inside one\ndistrict of Madrid capital. A relaxed scenario of its Reality Check goes back here with\nthe same `distrito`.",
+  "properties": {
+    "distrito": {
+      "description": "INE code of a district of Madrid capital (28079 + its two digits)",
+      "examples": [
+        "2807920"
+      ],
+      "pattern": "^28079\\d{2}$",
+      "title": "Distrito",
+      "type": "string"
+    },
+    "scenario": {
+      "$ref": "#/$defs/ScenarioState"
+    }
+  },
+  "required": [
+    "scenario",
+    "distrito"
+  ],
+  "title": "BarrioSearchRequest",
+  "type": "object"
+}

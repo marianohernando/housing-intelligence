@@ -1,0 +1,135 @@
+{
+ "modo": "mariano",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "seguridad_villaverde_desktop": {
+  "barras": [
+   {
+    "etiqueta": "De noche",
+    "cifra": "4,9",
+    "ancho": "49%",
+    "color": "rgb(106, 90, 224)",
+    "marca": "64%",
+    "marca_texto": "Madrid 6,4"
+   },
+   {
+    "etiqueta": "De día",
+    "cifra": "6,8",
+    "ancho": "68%",
+    "color": "rgb(106, 90, 224)",
+    "marca": "78%",
+    "marca_texto": "Madrid 7,8"
+   }
+  ],
+  "texto": "Así valoran sus vecinos la seguridad de su barrio: 4,9 de noche y 6,8 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8). De noche Madrid 6,4 4,9 De día Madrid 7,8 6,8 0 10 Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "centros_desktop": {
+  "al_abrir": [
+   "Colegios"
+  ],
+  "peticiones_places_al_abrir": 1,
+  "tres": [
+   "Colegios",
+   "Farmacias",
+   "Parques"
+  ],
+  "tres_estado": "25 colegios con primaria en Chamartín, 114 farmacias en Chamartín y 10 parques de 1 ha o más en Chamartín",
+  "tres_mapa": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 25 colegios con primaria en Chamartín, 114 farmacias en Chamartín y 10 parques de 1 ha o más en Chamartín; su lista está en «Todos los centros».",
+  "todos": [
+   "Colegios",
+   "Escuelas infantiles",
+   "Centros de salud",
+   "Hospitales",
+   "Farmacias",
+   "Mayores",
+   "Parques"
+  ],
+  "listas": 7,
+  "axe_todos": [],
+  "ninguno": [],
+  "ninguno_estado": "Toca uno o varios tipos de centro para verlos en el mapa.",
+  "peticiones_places_al_pulsar": 0,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "seguridad_villaverde_mobile": {
+  "barras": [
+   {
+    "etiqueta": "De noche",
+    "cifra": "4,9",
+    "ancho": "49%",
+    "color": "rgb(106, 90, 224)",
+    "marca": "64%",
+    "marca_texto": "Madrid 6,4"
+   },
+   {
+    "etiqueta": "De día",
+    "cifra": "6,8",
+    "ancho": "68%",
+    "color": "rgb(106, 90, 224)",
+    "marca": "78%",
+    "marca_texto": "Madrid 7,8"
+   }
+  ],
+  "texto": "Así valoran sus vecinos la seguridad de su barrio: 4,9 de noche y 6,8 de día, de 0 a 10 (en todo Madrid, 6,4 y 7,8). De noche Madrid 6,4 4,9 De día Madrid 7,8 6,8 0 10 Encuesta de calidad de vida del Ayuntamiento de Madrid, 2025, unas 400 personas por distrito.",
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "centros_mobile": {
+  "al_abrir": [
+   "Colegios"
+  ],
+  "peticiones_places_al_abrir": 1,
+  "tres": [
+   "Colegios",
+   "Farmacias",
+   "Parques"
+  ],
+  "tres_estado": "25 colegios con primaria en Chamartín, 114 farmacias en Chamartín y 10 parques de 1 ha o más en Chamartín",
+  "tres_mapa": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. En el mapa salen, agrupados, 25 colegios con primaria en Chamartín, 114 farmacias en Chamartín y 10 parques de 1 ha o más en Chamartín; su lista está en «Todos los centros».",
+  "todos": [
+   "Colegios",
+   "Escuelas infantiles",
+   "Centros de salud",
+   "Hospitales",
+   "Farmacias",
+   "Mayores",
+   "Parques"
+  ],
+  "listas": 7,
+  "axe_todos": [],
+  "ninguno": [],
+  "ninguno_estado": "Toca uno o varios tipos de centro para verlos en el mapa.",
+  "peticiones_places_al_pulsar": 0,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_zona_slow4g": [
+  {
+   "ms": 868,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2104,
+   "en_atribucion": false,
+   "texto": "Mira sus servicios y puntos clave, con datos ofici"
+  }
+ ],
+ "lcp_villaverde_slow4g": [
+  {
+   "ms": 900,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2108,
+   "en_atribucion": false,
+   "texto": "Mira sus servicios y puntos clave, con datos ofici"
+  }
+ ],
+ "fallos": []
+}

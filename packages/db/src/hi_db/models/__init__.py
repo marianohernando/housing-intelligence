@@ -5,8 +5,10 @@ from hi_db.models.geo import GeoAdminUnit, H3Cell, H3CellAdminUnit
 from hi_db.models.metrics import MetricObservation, MetricRegistry
 from hi_db.models.places import PlaceMaster, PlaceSourceAlias
 from hi_db.models.registry import DatasetRegistry, DatasetVersion, IngestionRun, SourceRegistry
+from hi_db.models.transit import CommuteTime, TransitHub
 
 __all__ = [
+    "CommuteTime",
     "DatasetRegistry",
     "DatasetVersion",
     "FeatureRegistry",
@@ -20,4 +22,5 @@ __all__ = [
     "PlaceMaster",
     "PlaceSourceAlias",
     "SourceRegistry",
+    "TransitHub",
 ]

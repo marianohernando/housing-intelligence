@@ -1,0 +1,47 @@
+# GAP-001 F1 gate after reviewer fixes: make lint typecheck test (2026-11-11T16:35:47Z)
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+253 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 77%]
+................................................................         [100%]
+280 passed in 6.52s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  17:36:04
+   Duration  113ms (tests 42%, import 25%, transform 24%, worker 9%)
+
+uv run pytest -m db tests/integration -q
+......................................................................   [100%]
+70 passed in 33.48s
+exit=0
+
+# Real data (local db housing): GET /api/v1/gaps/distrito/2807905 (Chamartín) via the service
+colegio: FALTA ratio=0.4037 | extras: min_a_pie_colegio=5.815 min
+centro_salud: FALTA ratio=0.7925 | extras: min_a_pie_centro_salud=9.466 min
+datasets: ['ayto_padron_municipal', 'cm_centros_educativos', 'cm_centros_sanitarios', 'cm_poblacion_edad_nacionalidad_sexo', 'osm_red_peatonal']
+data_version: 2026-11-11 | warnings: 4

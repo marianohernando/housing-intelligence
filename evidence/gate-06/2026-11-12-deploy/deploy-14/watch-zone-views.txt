@@ -1,0 +1,15 @@
+09:41:39 round 1 zone 2807908: 12 API requests, 0 with 5xx
+09:41:43 round 1 zone 2807905: 12 API requests, 0 with 5xx
+09:43:17 round 2 zone 2807908: 12 API requests, 0 with 5xx
+09:43:21 round 2 zone 2807905: 12 API requests, 0 with 5xx
+09:44:56 round 3 zone 2807908: 12 API requests, 0 with 5xx
+09:45:00 round 3 zone 2807905: 12 API requests, 3 with 5xx, ERROR STATE
+09:46:34 round 4 zone 2807908: 12 API requests, 0 with 5xx
+09:46:38 round 4 zone 2807905: 12 API requests, 0 with 5xx
+09:48:12 round 5 zone 2807908: 12 API requests, 0 with 5xx
+09:48:17 round 5 zone 2807905: 12 API requests, 1 with 5xx
+09:49:49 round 6 zone 2807908: 2 API requests, 1 with 5xx, ERROR STATE
+09:49:52 round 6 zone 2807905: 2 API requests, 1 with 5xx, ERROR STATE
+09:51:25 round 7 zone 2807908: 2 API requests, 2 with 5xx, ERROR STATE
+09:51:28 round 7 zone 2807905: 2 API requests, 1 with 5xx, ERROR STATE
+TOTAL {"loads":14,"api":128,"errors5xx":9,"errorStates":5}

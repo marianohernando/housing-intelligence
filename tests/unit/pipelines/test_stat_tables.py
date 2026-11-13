@@ -84,7 +84,7 @@ def test_income_split_into_three_metrics(catalog: Catalog) -> None:
 def test_postcode_is_extracted_from_concept(catalog: Catalog) -> None:
     _, obs = _obs(catalog, "cm_alquiler_m2_codigo_postal_madrid")
     assert set(obs.frame["territory_level"]) == {"codigo_postal"}
-    assert set(obs.frame["territory_code"]) <= {"28013", "28026", "28046"}
+    assert set(obs.frame["territory_code"]) == {"28013", "28026", "28029", "28036", "28046"}
     assert bool(obs.frame["territory_name"].notna().all())
 
 

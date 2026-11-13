@@ -1,5 +1,90 @@
 {
   "$defs": {
+    "AeatRentComparisonPipeline": {
+      "additionalProperties": false,
+      "description": "Agencia Tributaria, «Estadística de viviendas declaradas en IRPF»: the HTML table that\ncompares the mean monthly rent and the mean m² of all leases with those of the leases\nsigned in the year («nuevos contratos»), by municipio or by postcode (D-228).\n\nRows look like «Alcalá de Henares-28005» (municipio) or «28001-Salamanca- Goya» (postcode);\nthe first two numeric columns are the rents (all, new) and the next two the m² (all, new).\nOnly the rows of the province in `province_prefix` are kept; the region's own row\n(«Madrid, Comunidad de») becomes the ccaa observation.",
+      "properties": {
+        "area_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Area Metric Id",
+          "type": "string"
+        },
+        "contract_dim": {
+          "default": "contratos",
+          "title": "Contract Dim",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "aeat_rent_comparison",
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "municipio",
+            "codigo_postal"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer rows in scope -> the table changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "province_prefix": {
+          "pattern": "^\\d{2}$",
+          "title": "Province Prefix",
+          "type": "string"
+        },
+        "region_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Row of the region, e.g. «Madrid, Comunidad de» (municipio table only: in the postcode table it only adds up the municipios that have postcodes)",
+          "title": "Region Label"
+        },
+        "rent_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Rent Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "level",
+        "rent_metric_id",
+        "area_metric_id",
+        "province_prefix",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "AeatRentComparisonPipeline",
+      "type": "object"
+    },
     "CmPostcodeConceptPipeline": {
       "additionalProperties": false,
       "description": "Tables where the postcode is embedded in a free-text 'Concepto' column.",
@@ -214,6 +299,170 @@
       "title": "CsvFormat",
       "type": "object"
     },
+    "DirectoryLink": {
+      "additionalProperties": false,
+      "description": "A register's places are matched against an official directory to take its name and\ncapacity (D-218). Only the declared subcategories are matched.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kinds": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Kinds",
+          "type": "object"
+        },
+        "name_prefix": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Name Prefix",
+          "type": "object"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "kinds"
+      ],
+      "title": "DirectoryLink",
+      "type": "object"
+    },
+    "FacilityDirectoryPipeline": {
+      "additionalProperties": false,
+      "description": "An official directory of facilities (one XLSX sheet) kept in Silver only (D-218).\n\nIt never creates places: the register's own pipeline matches its places against the\ndirectory (entity resolution with a declared method) to take the institutional name and the\npublished capacity. Contact columns (phone, email) are never read.",
+      "properties": {
+        "address_column": {
+          "title": "Address Column",
+          "type": "string"
+        },
+        "capacity_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity Column"
+        },
+        "capacity_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity Unit"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dependency_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dependency Column"
+        },
+        "id_column": {
+          "title": "Id Column",
+          "type": "string"
+        },
+        "kind": {
+          "const": "facility_directory",
+          "title": "Kind",
+          "type": "string"
+        },
+        "kind_column": {
+          "title": "Kind Column",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer rows in scope -> the sheet changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "municipality_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipality Column"
+        },
+        "name_column": {
+          "title": "Name Column",
+          "type": "string"
+        },
+        "postal_code_column": {
+          "title": "Postal Code Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "scope_column": {
+          "title": "Scope Column",
+          "type": "string"
+        },
+        "scope_values": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Scope Values",
+          "type": "array"
+        },
+        "sheet": {
+          "title": "Sheet",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "sheet",
+        "id_column",
+        "name_column",
+        "address_column",
+        "postal_code_column",
+        "kind_column",
+        "scope_column",
+        "scope_values",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "FacilityDirectoryPipeline",
+      "type": "object"
+    },
     "GtfsFeedPipeline": {
       "additionalProperties": false,
       "description": "Static GTFS feed -> one transport place per stop or parent station, with service levels.\n\nService is measured on one reference day: the median (by active trips) of the feed's\n`reference_weekday` dates inside its own validity window, so the result never depends on\nthe day the pipeline runs.",
@@ -270,6 +519,17 @@
           "default": "primary",
           "title": "Resource Role",
           "type": "string"
+        },
+        "station_accessibility": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StationAccessibilityLink"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -282,12 +542,31 @@
     },
     "MadridDistrictPanelPipeline": {
       "additionalProperties": false,
-      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level: barrio rows and the city row are\noutside the scope; every panel year is kept (each one carries its own reference date).",
+      "description": "Ayuntamiento de Madrid district panel: one row per indicator, territory and panel year.\n\nOnly the declared indicators are kept, at district level. A barrio row is kept, at barrio\nlevel and with the barrio's name, only for the indicators in `barrio_indicators` (D-232:\nthe official barrio names come from here); the city row only for those in\n`city_indicators` (then it is the municipio, the value to compare the districts with).\nEvery reference date is kept once: when two panel editions carry the same date, the latest\nedition wins (a revision).",
       "properties": {
         "barrio_column": {
           "default": "cod_barrio",
           "title": "Barrio Column",
           "type": "string"
+        },
+        "barrio_indicators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Barrio Indicators",
+          "type": "array"
+        },
+        "barrio_name_column": {
+          "default": "barrio",
+          "title": "Barrio Name Column",
+          "type": "string"
+        },
+        "city_indicators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "City Indicators",
+          "type": "array"
         },
         "csv": {
           "$ref": "#/$defs/CsvFormat"
@@ -313,6 +592,24 @@
           ],
           "default": "distrito",
           "title": "District Name Column"
+        },
+        "edition_column": {
+          "default": "Periodo panel",
+          "title": "Edition Column",
+          "type": "string"
+        },
+        "expected_barrios": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Barrios"
         },
         "expected_districts": {
           "exclusiveMinimum": 0,
@@ -509,6 +806,78 @@
       "title": "MetricSplit",
       "type": "object"
     },
+    "OsmParksPipeline": {
+      "additionalProperties": false,
+      "description": "OpenStreetMap extract -> public parks as places (DATA-018, D-222).\n\nA park is an area tagged with one of `leisure` that is not closed to the public and has at\nleast `min_area_ha`. Each becomes a place (a point inside it) that also keeps the points of\nits edge every `edge_step_m` metres: walking access is measured to the edge, not the centre.",
+      "properties": {
+        "access_denied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Access Denied",
+          "type": "array"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "edge_step_m": {
+          "default": 50.0,
+          "exclusiveMinimum": 0,
+          "title": "Edge Step M",
+          "type": "number"
+        },
+        "kind": {
+          "const": "osm_parks",
+          "title": "Kind",
+          "type": "string"
+        },
+        "leisure": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Leisure",
+          "type": "array"
+        },
+        "max_parks": {
+          "exclusiveMinimum": 0,
+          "title": "Max Parks",
+          "type": "integer"
+        },
+        "min_area_ha": {
+          "exclusiveMinimum": 0,
+          "title": "Min Area Ha",
+          "type": "number"
+        },
+        "min_parks": {
+          "description": "below this the extract is truncated",
+          "exclusiveMinimum": 0,
+          "title": "Min Parks",
+          "type": "integer"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "subcategory": {
+          "default": "Parque",
+          "title": "Subcategory",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "min_area_ha",
+        "min_parks",
+        "max_parks"
+      ],
+      "title": "OsmParksPipeline",
+      "type": "object"
+    },
     "OsmWalkNetworkPipeline": {
       "additionalProperties": false,
       "description": "OpenStreetMap extract -> undirected walkable street graph, kept in Silver only.\n\nA way is walkable when its `highway` value is listed or it explicitly allows people on foot;\n`foot=no`, or `access=no/private` without a foot permission, removes it. One-way rules apply\nto vehicles, so the graph is undirected. Only indicators computed on it reach the database.",
@@ -577,6 +946,7 @@
       "enum": [
         "education",
         "health",
+        "pharmacy",
         "social",
         "transport",
         "commerce",
@@ -599,6 +969,42 @@
           },
           "title": "Active Values",
           "type": "array"
+        },
+        "address_number_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Number Column"
+        },
+        "address_street_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Street Column"
+        },
+        "address_template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Template"
         },
         "attribute_columns": {
           "items": {
@@ -623,6 +1029,37 @@
           "pattern": "^[a-z][a-z0-9_]{2,95}$",
           "title": "Dataset Id",
           "type": "string"
+        },
+        "dependency_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dependency Column"
+        },
+        "directories": {
+          "items": {
+            "$ref": "#/$defs/DirectoryLink"
+          },
+          "title": "Directories",
+          "type": "array"
+        },
+        "district_code_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "District Code Column"
         },
         "group_by_id": {
           "default": false,
@@ -657,6 +1094,18 @@
           "default": null,
           "title": "Municipio Code Column"
         },
+        "municipio_name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Name Column"
+        },
         "name_column": {
           "anyOf": [
             {
@@ -680,6 +1129,18 @@
           ],
           "default": null,
           "title": "Name Template"
+        },
+        "postal_code_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code Column"
         },
         "resource_role": {
           "default": "primary",
@@ -752,6 +1213,110 @@
       "title": "PointsPipeline",
       "type": "object"
     },
+    "StationAccessibilityLink": {
+      "additionalProperties": false,
+      "description": "A GTFS feed's stations take their accessibility from a station topology (D-223). The key\nof a stop is group 1 of `stop_id_pattern`, compared with the topology's `match` column.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "match": {
+          "enum": [
+            "station_id",
+            "operator_code"
+          ],
+          "title": "Match",
+          "type": "string"
+        },
+        "stop_id_pattern": {
+          "title": "Stop Id Pattern",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "match",
+        "stop_id_pattern"
+      ],
+      "title": "StationAccessibilityLink",
+      "type": "object"
+    },
+    "StationTopologyPipeline": {
+      "additionalProperties": false,
+      "description": "A network topology layer of the CRTM (one station per row, ArcGIS JSON) kept in Silver\nonly (DATA-019, D-223). It never creates places: a GTFS feed that declares it takes from it\nhow accessible each of its stations is, matched by an official code.\n\n`step_free` reads the published accessibility grade: every grade the layer may carry is\ndeclared with its reading (yes, partial or no); a grade that is not declared is quarantined.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "grade_field": {
+          "title": "Grade Field",
+          "type": "string"
+        },
+        "id_field": {
+          "title": "Id Field",
+          "type": "string"
+        },
+        "kind": {
+          "const": "station_topology",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer stations -> the layer changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "name_field": {
+          "title": "Name Field",
+          "type": "string"
+        },
+        "operator_code_field": {
+          "title": "Operator Code Field",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "step_free": {
+          "additionalProperties": {
+            "enum": [
+              "yes",
+              "partial",
+              "no"
+            ],
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Step Free",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "id_field",
+        "operator_code_field",
+        "name_field",
+        "grade_field",
+        "step_free",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "StationTopologyPipeline",
+      "type": "object"
+    },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",
       "enum": [
@@ -773,13 +1338,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "discriminator": {
     "mapping": {
+      "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
+      "facility_directory": "#/$defs/FacilityDirectoryPipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
+      "osm_parks": "#/$defs/OsmParksPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
-      "points_csv": "#/$defs/PointsPipeline"
+      "points_csv": "#/$defs/PointsPipeline",
+      "station_topology": "#/$defs/StationTopologyPipeline"
     },
     "propertyName": "kind"
   },
@@ -789,6 +1358,9 @@
     },
     {
       "$ref": "#/$defs/CmPostcodeConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/AeatRentComparisonPipeline"
     },
     {
       "$ref": "#/$defs/MadridPadronPipeline"
@@ -804,6 +1376,15 @@
     },
     {
       "$ref": "#/$defs/OsmWalkNetworkPipeline"
+    },
+    {
+      "$ref": "#/$defs/OsmParksPipeline"
+    },
+    {
+      "$ref": "#/$defs/FacilityDirectoryPipeline"
+    },
+    {
+      "$ref": "#/$defs/StationTopologyPipeline"
     }
   ]
 }

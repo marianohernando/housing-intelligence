@@ -1,0 +1,12 @@
+{
+  "entries": 91,
+  "quarantined": 0,
+  "with_capacity": 91,
+  "kinds": {
+    "Hospitales Generales": 57,
+    "Hospitales de salud mental y tratamiento de toxicomanías": 10,
+    "Otros Centros con Internamiento": 9,
+    "Hospitales de media y larga estancia": 8,
+    "Hospitales especializados": 7
+  }
+}

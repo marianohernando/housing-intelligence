@@ -1,0 +1,7 @@
+GET /api/v1/datasets?cm_only=true -> total=21 cm_open_data_count=21 datasets=21 data_version=-
+GET /api/v1/gaps/municipio/28079 -> zone="Madrid" rows=[colegio=FALTA(1.558 vs 2.178), centro_salud=FALTA(0.371 vs 0.5918)] warnings=[]
+GET /api/v1/gaps/municipio/28092 -> zone="Mostoles" rows=[colegio=CUBIERTO(2.67 vs 2.178), centro_salud=FALTA(0.4667 vs 0.5918)] warnings=[]
+GET /api/v1/gaps/distrito/2807905 -> zone="Chamartín" rows=[] warnings=["No indicators computed at this level yet"]
+GET /api/v1/gaps/municipio/99999 -> ApiError status=404 code=NOT_FOUND
+POST /api/v1/search -> ApiError status=404 code=HTTP_404 (ruta prevista para el 15 nov)
+API caída (puerto 8999) -> ApiError status=0 code=NETWORK

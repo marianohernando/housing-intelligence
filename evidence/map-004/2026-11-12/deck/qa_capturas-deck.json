@@ -1,0 +1,73 @@
+{
+ "modo": "capturas-deck",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "c1_c2": {
+  "metodo": "fit-0.6",
+  "primera": [
+   "Latina",
+   98
+  ],
+  "trabajo": "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+  "tarjeta": "DISTRITO DE MADRID Latina 98 % de encaje Esta zona encaja en un 98 % con tu búsqueda La 1.ª que más encaja Lo que tienes aquí Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable Parada de transporte público a unos 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable 39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. Qué falta aquí Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud. Escuelas infantiles A pie: 6 min JUSTO Centros de salud A pie: 10 min JUSTO Colegios A pie: 6 min CUBIERTO Ver todo lo que falta Ver la zona",
+  "trabajo_ayuda": 1,
+  "muy_pronto": 0,
+  "consola": []
+ },
+ "c4": {
+  "filas": [
+   [
+    "Escuelas infantiles",
+    "FALTA",
+    "Aquí hay 57 por cada 100 que hay en municipios parecidos."
+   ],
+   [
+    "Colegios",
+    "CUBIERTO",
+    "Aquí hay 121 por cada 100 que hay en municipios parecidos."
+   ],
+   [
+    "Centros de salud",
+    "CUBIERTO",
+    "Aquí hay 118 por cada 100 que hay en municipios parecidos."
+   ],
+   [
+    "Centros de mayores",
+    "CUBIERTO",
+    "Aquí hay 155 por cada 100 que hay en municipios parecidos."
+   ],
+   [
+    "Farmacias",
+    "CUBIERTO",
+    "Aquí hay 146 por cada 100 que hay en municipios parecidos."
+   ],
+   [
+    "Vivienda para familias",
+    "SIN DATOS",
+    "La fuente oficial no trae este dato."
+   ]
+  ],
+  "escuelas_infantiles": {
+   "fila": "Escuelas infantiles",
+   "etiquetas": [
+    "FALTA"
+   ],
+   "mide": "Aquí hay 57 por cada 100 que hay en municipios parecidos.",
+   "a_pie": [
+    "A pie hasta la escuela infantil más cercana6 min"
+   ],
+   "grupo": null,
+   "hospital": null
+  },
+  "consola": []
+ },
+ "c3": {
+  "y_si_cambias": "¿Y si cambias algo? Con tu búsqueda tal cual salen 27 zonas. Mira cuántas salen si cambias una sola cosa: +5 min a pie hasta colegio con primaria saldrían 44 zonas, 17 más Probar así +150 €/mes saldrían 30 zonas, 3 más Probar así Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho En 15 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. Ver menos",
+  "colegio_api": [
+   44,
+   17
+  ],
+  "con_el_cambio": "Con este cambio salen 44 zonas.",
+  "consola": []
+ },
+ "fallos": []
+}

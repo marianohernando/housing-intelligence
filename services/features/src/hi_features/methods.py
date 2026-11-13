@@ -7,11 +7,15 @@ not at the feature's own level (the regional reference), territory_level.
 """
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from typing import Any
 
+import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
 
 from hi_contracts.catalog.enums import NullReason
+from hi_domain.access.walk import access_confidence, summarise_zones
 
 RESULT_COLUMNS = [
     "territory_code",
@@ -20,6 +24,9 @@ RESULT_COLUMNS = [
     "null_reason",
     "confidence",
     "territory_level",
+    "numerator",  # counts behind a per-population ratio (GAP-001 significance, D-213)
+    "denominator",
+    "adjustment",  # how a published value was adjusted (D-228: rent of new leases)
 ]
 REGION_LEVEL = "ccaa"
 REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
@@ -169,7 +176,7 @@ def _population(
     return pop
 
 
-def _place_filter(
+def place_filter(
     places: pd.DataFrame,
     subcategories: Sequence[str] | None,
     attributes: Mapping[str, Sequence[str]] | None,
@@ -183,6 +190,26 @@ def _place_filter(
             continue
         kept.append(record)
     return kept
+
+
+# A destination reached at any point of its edge (a park, D-222) keeps them in its attributes.
+EDGE_POINTS = "edge_points_25830"
+
+
+def destination_points(
+    rows: Sequence[Mapping[str, Any]],
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """x and y (EPSG:25830) where a walk reaches each destination: every point of its edge when
+    it keeps one, otherwise its own point."""
+    points: list[tuple[float, float]] = []
+    for row in rows:
+        edge = (row.get("attributes") or {}).get(EDGE_POINTS)
+        if edge:
+            points.extend((float(x), float(y)) for x, y in edge)
+        else:
+            points.append((float(row["x"]), float(row["y"])))
+    xy = np.array(points, dtype=float).reshape(-1, 2)
+    return xy[:, 0], xy[:, 1]
 
 
 SMALL_POPULATION_CONFIDENCE = 0.5
@@ -206,7 +233,9 @@ def _per_population(
             conf = confidence.get(code, 1.0)
             if population < small_population:
                 conf = min(conf, SMALL_POPULATION_CONFIDENCE)
-            out.append(_ok(code, period, per * totals.get(code, 0.0) / population, conf))
+            count = totals.get(code, 0.0)
+            row = _ok(code, period, per * count / population, conf)
+            out.append(row | {"numerator": count, "denominator": population})
     region = _regional_reference(totals, pop, per, confidence)
     return _result([*out, region] if region else out)
 
@@ -224,13 +253,14 @@ def _regional_reference(
     if not known or population <= 0:
         return None
     weighted = sum(confidence.get(code, 1.0) * p for code, p in known.items()) / population
+    count = sum(totals.get(code, 0.0) for code in known)
     row = _ok(
         REGION_CODE,
         max(period for period, _, _ in pop.values()),
-        per * sum(totals.get(code, 0.0) for code in known) / population,
+        per * count / population,
         len(known) / len(pop) * weighted,
     )
-    return row | {"territory_level": REGION_LEVEL}
+    return row | {"territory_level": REGION_LEVEL, "numerator": count, "denominator": population}
 
 
 def places_per_population(
@@ -243,13 +273,297 @@ def places_per_population(
     small_population: float = 0.0,
 ) -> pd.DataFrame:
     counts: dict[str, float] = {}
-    for record in _place_filter(places, subcategories, attributes):
+    for record in place_filter(places, subcategories, attributes):
         code = record["territory_code"]
         if code:
             counts[code] = counts.get(code, 0.0) + 1.0
     return _per_population(
         counts, _population(population, population_dims), per, {}, small_population
     )
+
+
+def metric_ratio(
+    numerator: pd.DataFrame,
+    numerator_dims: DimFilter,
+    denominator: pd.DataFrame,
+    denominator_dims: DimFilter,
+    per: float,
+    small_population: float = 0.0,
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """per x numerator / denominator for two metrics of the same zones (e.g. dwellings over
+    90 m2 per 100 households of 4 or more). Each metric uses its own latest period and the row
+    carries the denominator's. A zone whose numerator is unknown or absent is unknown, never 0.
+    The regional reference adds up the zones where both are known; as in places per
+    population, a zone with a 0 denominator is NOT_APPLICABLE but its numerator still counts
+    for the region."""
+    numerators = _population(numerator, numerator_dims)
+    denominators = _population(denominator, denominator_dims)
+    totals: dict[str, float] = {}
+    for code, (period, den, den_reason) in list(denominators.items()):
+        _, num, num_reason = numerators.get(code, (None, None, NullReason.SOURCE_MISSING.value))
+        if num is None:
+            denominators[code] = (period, None, den_reason if den is None else num_reason)
+        else:
+            totals[code] = num
+    shared = dict.fromkeys(denominators, confidence)
+    return _per_population(totals, denominators, per, shared, small_population)
+
+
+def not_published(territories: pd.DataFrame) -> pd.DataFrame:
+    """One explicit SOURCE_MISSING row per zone of the level, for an indicator its sources do
+    not publish there (e.g. the CM housing tables have no district rows): never 0, never an
+    absent row."""
+    return _result(
+        [
+            _null(code, period, NullReason.SOURCE_MISSING)
+            for code, period in sorted(_by_territory(territories))
+        ]
+    )
+
+
+def _postcode_values(obs: pd.DataFrame, dims: DimFilter) -> tuple[dict[str, float], Any]:
+    """Latest published value of each postcode (exactly one matching row), and its period."""
+    values: dict[str, float] = {}
+    periods: list[Any] = []
+    for (code, period), records in _by_territory(obs).items():
+        value, reason, matched = _sum_selected(records, dims)
+        periods.append(period)
+        if matched == 1 and reason is None:
+            values[str(code)] = value
+    return values, max(periods) if periods else None
+
+
+@dataclass(frozen=True)
+class NewContractFactors:
+    """Per territory: how much more a m² costs in the leases signed in the year than in all
+    leases (D-228), from the Agencia Tributaria's mean rent and mean m² of each kind."""
+
+    factors: dict[str, float]
+    period: Any
+
+
+CONTRACT_DIM, ALL_LEASES, NEW_LEASES = "contratos", "todos", "nuevos"
+
+
+def _by_contract(obs: pd.DataFrame) -> tuple[dict[str, dict[str, float]], Any]:
+    values: dict[str, dict[str, float]] = {}
+    periods: list[Any] = []
+    for (code, period), records in _by_territory(obs).items():
+        periods.append(period)
+        for record in records:
+            kind = record["dims"].get(CONTRACT_DIM)
+            if record["value"] is not None and not pd.isna(record["value"]):
+                values.setdefault(str(code), {})[str(kind)] = float(record["value"])
+    return values, max(periods) if periods else None
+
+
+def new_contract_factors(rent: pd.DataFrame, area: pd.DataFrame) -> NewContractFactors:
+    """(rent of new leases / their m²) / (rent of all leases / their m²), latest period. A
+    zone without both kinds in both metrics has no factor (never a guessed 1)."""
+    rents, period = _by_contract(rent)
+    areas, _ = _by_contract(area)
+    factors: dict[str, float] = {}
+    for code in sorted(rents.keys() & areas.keys()):
+        r, a = rents[code], areas[code]
+        kinds = (ALL_LEASES, NEW_LEASES)
+        if all(r.get(k, 0) > 0 and a.get(k, 0) > 0 for k in kinds):
+            factors[code] = (r[NEW_LEASES] / a[NEW_LEASES]) / (r[ALL_LEASES] / a[ALL_LEASES])
+    return NewContractFactors(factors, period)
+
+
+def _same_year(value_period: Any, factor_period: Any) -> None:
+    """The factor and the value it adjusts must be of the same year: the text says «contratos
+    firmados en <año>» (`fit.note`). A new edition of either stops the computation until both
+    agree and the note is updated (D-228)."""
+    if pd.Timestamp(value_period).year != pd.Timestamp(factor_period).year:
+        msg = (
+            f"rent of new leases: value of {value_period} with a factor of {factor_period}; "
+            "load the same year of both and update fit.note"
+        )
+        raise ValueError(msg)
+
+
+def apply_new_contract_factors(
+    result: pd.DataFrame, factors: NewContractFactors, fallback: str | None
+) -> pd.DataFrame:
+    """Each known value times its zone's factor or, without one, the `fallback` territory's
+    (declared in `adjustment`). With neither the value is unknown: the old figure must not
+    pass for the rent of a new lease."""
+    out: list[dict[str, Any]] = []
+    for row in _rows(result):
+        value = row["value"]
+        if value is None or pd.isna(value):
+            out.append(row | {"value": None})
+            continue
+        code = str(row["territory_code"])
+        source = code if code in factors.factors else fallback
+        if source is None or source not in factors.factors:
+            out.append(_null(code, row["period_start"], NullReason.SOURCE_MISSING))
+            continue
+        _same_year(row["period_start"], factors.period)
+        factor = factors.factors[source]
+        adjustment = {
+            "factor": round(factor, 4),
+            "factor_from": source,
+            "all_contracts_value": float(value),
+            "period": str(factors.period),
+        }
+        out.append(row | {"value": float(value) * factor, "adjustment": adjustment})
+    return _result(out)
+
+
+def postcode_weighted_mean(
+    obs: pd.DataFrame,
+    weights: pd.DataFrame,
+    dims: DimFilter,
+    confidence: float = 1.0,
+    new_contracts: tuple[NewContractFactors, float | None] | None = None,
+    *,
+    zones: Sequence[str] = (),
+    min_places: float = 0.0,
+    few_places_confidence: float = 1.0,
+) -> pd.DataFrame:
+    """A zone's value as the mean of its postcodes' values, each weighted by how many of the
+    zone's geocoded places carry that postcode (CORE-006: there is no postcode geometry, so the
+    places locate the postcodes; a declared proxy of where people live). The confidence is the
+    base confidence times the share of that weight whose postcode publishes a value. A zone
+    without any such place is SOURCE_NO_COVERAGE (the proxy cannot locate a postcode there); one
+    whose places' postcodes have no published value is SOURCE_MISSING. Never 0.
+
+    `new_contracts` (D-228): each postcode's value times its own factor or the fallback one
+    (e.g. its municipio's), before the mean; a postcode with neither counts as unknown.
+
+    D-232 (barrios): a zone whose mean rests on fewer than `min_places` places (with a
+    published value) keeps it with its confidence capped at `few_places_confidence`, and every
+    code in `zones` gets a row (one with no place at all is SOURCE_NO_COVERAGE, never absent).
+
+    `weights` columns: territory_code (the zone), postcode, weight (places)."""
+    values, period = _postcode_values(obs, dims)
+    if new_contracts is not None and values:
+        _same_year(period, new_contracts[0].period)
+    out: list[dict[str, Any]] = []
+    records: list[dict[str, Any]] = weights.to_dict("records")  # pyright: ignore[reportAssignmentType]
+    by_zone: dict[str, list[tuple[str, float]]] = {str(code): [] for code in zones}
+    for record in records:
+        by_zone.setdefault(str(record["territory_code"]), []).append(
+            (str(record["postcode"]), float(record["weight"]))
+        )
+    for code, members in sorted(by_zone.items()):
+        total = sum(w for _, w in members)
+        known = [(cp, values[cp], w) for cp, w in members if cp in values]
+        adjusted = known if new_contracts is None else _adjusted(known, *new_contracts)
+        known_weight = sum(w for _, _, w in adjusted)
+        if total <= 0:  # no place locates any postcode here: the proxy has no coverage
+            out.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        if not adjusted or known_weight <= 0:  # places, but no value published for their codes
+            out.append(_null(code, period, NullReason.SOURCE_MISSING))
+            continue
+        mean = sum(v * w for _, v, w in adjusted) / known_weight
+        zone_confidence = confidence * known_weight / total
+        if known_weight < min_places:  # the mean rests on a handful of addresses
+            zone_confidence = min(zone_confidence, few_places_confidence)
+        row = _ok(code, period, mean, zone_confidence)
+        if new_contracts is not None:
+            row["adjustment"] = _district_adjustment(adjusted, known, new_contracts[0])
+        out.append(row)
+    return _result(out)
+
+
+def _adjusted(
+    known: list[tuple[str, float, float]], factors: NewContractFactors, fallback: float | None
+) -> list[tuple[str, float, float]]:
+    out: list[tuple[str, float, float]] = []
+    for cp, value, weight in known:
+        factor = factors.factors.get(cp, fallback)
+        if factor is not None:
+            out.append((cp, value * factor, weight))
+    return out
+
+
+def _district_adjustment(
+    adjusted: list[tuple[str, float, float]],
+    known: list[tuple[str, float, float]],
+    factors: NewContractFactors,
+) -> dict[str, Any]:
+    used = {cp for cp, _, _ in adjusted}
+    plain = [(v, w) for cp, v, w in known if cp in used]
+    weight = sum(w for _, w in plain)
+    own = sum(cp in factors.factors for cp in used)
+    return {
+        "all_contracts_value": sum(v * w for v, w in plain) / weight,
+        "postcodes_with_own_factor": own,
+        "postcodes_with_fallback": len(used) - own,
+        "period": str(factors.period),
+    }
+
+
+WALK_STATISTICS = ("median_minutes", "share_within")
+
+
+@dataclass(frozen=True)
+class WalkSettings:
+    statistic: str  # one of WALK_STATISTICS
+    speed_m_per_min: float
+    within_min: float
+    base_confidence: float
+    min_street_m: float  # zones with less origin street keep confidence 0.5 at most
+
+    def __post_init__(self) -> None:
+        if self.statistic not in WALK_STATISTICS:
+            msg = f"unknown walking statistic {self.statistic!r} (known: {WALK_STATISTICS})"
+            raise ValueError(msg)
+
+
+def _walk_rows(
+    codes: Sequence[str],
+    zone: NDArray[np.int64],
+    weight: NDArray[np.float64],
+    distance_m: NDArray[np.float64],
+    period: Any,
+    settings: WalkSettings,
+) -> list[dict[str, Any]]:
+    within_m = settings.within_min * settings.speed_m_per_min
+    summary = summarise_zones(zone, weight, distance_m, len(codes), within_m)
+    confidence = access_confidence(
+        summary.reachable_share(),
+        summary.street_m,
+        settings.base_confidence,
+        settings.min_street_m,
+    )
+    if settings.statistic == "median_minutes":
+        values = summary.median_m / settings.speed_m_per_min
+    else:
+        values = 100.0 * summary.within_share
+    rows: list[dict[str, Any]] = []
+    for i, code in enumerate(codes):
+        if summary.street_m[i] <= 0:  # no origin street mapped in the zone
+            rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+        elif summary.reachable_m[i] <= 0:  # its streets are cut off from every destination
+            rows.append(_null(code, period, NullReason.UNKNOWN))
+        else:
+            rows.append(_ok(code, period, float(values[i]), float(confidence[i])))
+    return rows
+
+
+def walk_access(
+    zone_of_node: NDArray[np.str_],
+    weight: NDArray[np.float64],
+    distance_m: NDArray[np.float64],
+    zones: Sequence[str],
+    period: Any,
+    settings: WalkSettings,
+) -> pd.DataFrame:
+    """Per zone: street-weighted median minutes to the nearest destination, or % of street
+    within `within_min`. Every zone gets a row (null when it has no reachable origin street),
+    plus the regional reference pooling every node that lies in some zone."""
+    index = {code: i for i, code in enumerate(zones)}
+    zone = np.array([index.get(str(c), -1) for c in zone_of_node], dtype=np.int64)
+    in_region = np.where(zone >= 0, 0, -1)
+    rows = _walk_rows(zones, zone, weight, distance_m, period, settings)
+    region = _walk_rows([REGION_CODE], in_region, weight, distance_m, period, settings)
+    return _result([*rows, *(r | {"territory_level": REGION_LEVEL} for r in region)])
 
 
 def place_attribute_per_population(
@@ -265,7 +579,7 @@ def place_attribute_per_population(
     sums: dict[str, float] = {}
     seen: dict[str, int] = {}
     known: dict[str, int] = {}
-    for record in _place_filter(places, subcategories, None):
+    for record in place_filter(places, subcategories, None):
         code = record["territory_code"]
         if not code:
             continue
@@ -281,3 +595,42 @@ def place_attribute_per_population(
     return _per_population(
         sums, _population(population, population_dims), per, confidence, small_population
     )
+
+
+# Shared with the 2SFCA features (hi_features.fca, D-217).
+def population_by_code(
+    obs: pd.DataFrame, dims: DimFilter
+) -> dict[str, tuple[Any, float | None, str | None]]:
+    return _population(obs, dims)
+
+
+def null_row(code: str, period: Any, reason: NullReason) -> dict[str, Any]:
+    return _null(code, period, reason)
+
+
+def result_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
+    return _result(rows)
+
+
+def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -> pd.DataFrame:
+    """Every zone of `level` gets a row: one the source does not publish is SOURCE_MISSING,
+    never left out (the null contract of Gate 3), dated like the rest of the level."""
+    if result.empty:
+        return result
+    # Rows of a feature's own geo_level may leave territory_level empty (set when persisting).
+    levels = (
+        result["territory_level"].astype(object).where(result["territory_level"].notna(), level)
+    )
+    at_level = result[levels == level]
+    if at_level.empty:
+        return result
+    period = at_level["period_start"].max()
+    present = set(at_level["territory_code"].astype(str))
+    missing = [
+        _null(code, period, NullReason.SOURCE_MISSING) | {"territory_level": level}
+        for code in zones
+        if code not in present
+    ]
+    if not missing:
+        return result
+    return pd.concat([result, _result(missing)], ignore_index=True)

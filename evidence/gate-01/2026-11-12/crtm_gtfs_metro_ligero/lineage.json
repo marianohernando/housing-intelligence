@@ -1,0 +1,27 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "crtm_gtfs_metro_ligero",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_gtfs_metro_ligero/e23e0ba93b91/google_transit_M10.zip",
+      "sha256": "e23e0ba93b91e64027ac784612a5d4327076ff6e6b7adcd63b323bef415e3255",
+      "bytes": 395268,
+      "url": "https://www.arcgis.com/sharing/rest/content/items/aaed26cc0ff64b0c947ac0bc3e033196/data",
+      "retrieved_at": "2026-11-10T19:39:58.777112+00:00"
+    },
+    {
+      "dataset_id": "crtm_topologia_metro_ligero",
+      "role": "topology@topology-1.0.0",
+      "path": "data/bronze/datasets/crtm_topologia_metro_ligero/acb638c99b2c/M10_Estaciones.json",
+      "sha256": "acb638c99b2c9e6cb0bf047276cb5274338833a3afbb965ecfd8c6316d7120d7",
+      "bytes": 7528,
+      "url": "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M10_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json",
+      "retrieved_at": "2026-11-12T14:05:42.356850+00:00"
+    }
+  ],
+  "checksum": "e6a5daaf76eca7d15f8e104d60c888d3cce4e407d5ff37a97a14577f7fd18af9",
+  "parser_version": "gtfs-1.2.0",
+  "dataset_version": "2026-11-12-e6a5daaf76ec",
+  "correlation_id": "0434a456d1d94041b7c5732104216f2f",
+  "silver": "data/silver/crtm_gtfs_metro_ligero/e6a5daaf76ec/places.csv.gz"
+}

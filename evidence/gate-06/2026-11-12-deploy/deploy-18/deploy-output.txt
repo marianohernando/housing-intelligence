@@ -1,0 +1,26 @@
+infra/deploy/deploy.sh
+warning: deploying branch '' (ALLOW_BRANCH=1)
+warning: HEAD is not the pushed upstream; the demo will not match the remote branch
+note: these local files match .vercelignore and are NOT uploaded:
+  ./.env
+  ./.env.local
+-> deploying 2761696 () to production
+<claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
+  Inspect         <panel de Vercel>
+  Production      <despliegue>
+▲ Aliased         <alias>
+-> deployment dpl_5QyHVrcXXn8KLrkucgGtQBikcykg is ready
+-> smoke test against https://vidafacil-madrid.vercel.app
+smoke: https://vidafacil-madrid.vercel.app (2026-11-12T15:10:29Z) tag dpl_5QyHVrcXXn8KLrkucgGtQBikcykg-0
+OK   web         1.53s     32251 B  /  
+OK   health      3.70s       225 B  /api/v1/health  process up
+OK   ready       0.84s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone        0.89s     32603 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography   0.50s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer       0.58s   1552325 B  /api/v1/places?category=education  3866 places
+OK   largest     1.61s   1842252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search      1.07s    116187 B  /api/v1/search  33 of 199 zones, 1st Fuencarral-El Pardo
+smoke: 8/8 OK
+-> which deployment served the smoke (vercel logs requests, tag dpl_5QyHVrcXXn8KLrkucgGtQBikcykg-0)
+   8 from dpl_5QyHVrcXXn8KLrkucgGtQBikcykg (this deploy)
+-> verified: https://vidafacil-madrid.vercel.app serves dpl_5QyHVrcXXn8KLrkucgGtQBikcykg, and the smoke passed against it

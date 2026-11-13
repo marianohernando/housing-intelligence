@@ -90,6 +90,68 @@
       "title": "FeatureSource",
       "type": "object"
     },
+    "FitBinding": {
+      "additionalProperties": false,
+      "description": "Where the people search (CORE-003) reads the feature: the rent or the appraised purchase\nvalue per m² of the budget condition (D-227), or the walking minutes to the nearest place\nof a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority\nmeasures (a PriorityKey: the park for «Zonas verdes», D-222). The search has no feature id\nwritten in its code.",
+      "properties": {
+        "need": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NeedKey, only for walk_minutes",
+          "title": "Need"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the cost figure is, in the fact the search writes («contratos firmados en 2024; …», D-228); only for rent_m2. It travels with the data, so code and data never disagree on what the number means",
+          "title": "Note"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PriorityKey, only for walk_minutes",
+          "title": "Priority"
+        },
+        "role": {
+          "enum": [
+            "rent_m2",
+            "price_m2",
+            "walk_minutes"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role"
+      ],
+      "title": "FitBinding",
+      "type": "object"
+    },
     "GapRowBinding": {
       "additionalProperties": false,
       "description": "Where the feature shows up in the per-zone list (GAP-001): the row's main indicator,\nor an extra one next to it (e.g. walking minutes).",
@@ -237,6 +299,17 @@
       "pattern": "^[a-z][a-z0-9_]{2,95}$",
       "title": "Feature Id",
       "type": "string"
+    },
+    "fit": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FitBinding"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "formula": {
       "$ref": "#/$defs/FeatureFormula"

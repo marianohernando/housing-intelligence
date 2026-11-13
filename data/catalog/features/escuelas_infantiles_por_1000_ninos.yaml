@@ -1,0 +1,35 @@
+feature_id: escuelas_infantiles_por_1000_ninos
+version: 1
+human_name: Escuelas infantiles por cada 1.000 niños de 0 a 4 años
+domain: education
+type: derived
+unit: escuelas/1000 niños
+direction: higher_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: cm_centros_educativos, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
+formula:
+  method: places_per_population
+  category: education
+  subcategories: ["ESCUELA INFANTIL", "ESCUELA  INFANTIL-CASA DE NIÑOS", "ESCUELA INFANTIL PRIVADA", "CENTRO PRIVADO DE EDUCACIÓN INFANTIL"]  # the same destinations as min_a_pie_escuela_infantil
+  population_metric: poblacion_censada
+  population_dims: {edad: [de_0_4_anos], nacionalidad: [total], sexo: [total]}
+  small_population_threshold: 200  # denominator below this -> confidence 0.5
+  per: 1000
+  levels:
+    distrito: {population_metric: poblacion_padron, population_dims: {edad: [de_0_4_anos]}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness, geocoding_quarantine]}
+public_use: true
+pro_use: true
+models: [family_fit]
+tests: [non_negative, monotonic_in_places]
+limitations:
+  - "Ratios sobre poblaciones pequeñas son inestables; por debajo del umbral se publican con confidence 0,5."
+  - "Cuenta escuelas infantiles públicas y privadas (incluidas las casas de niños), no plazas: una escuela grande y una pequeña pesan igual. Los colegios con aulas de 3 a 5 años no cuentan aquí."
+  - "La población de 0 a 4 años es el tramo más fino que publican el censo de la CM y el padrón; el primer ciclo de infantil es de 0 a 3 años."
+  - "En los distritos de Madrid la población es la del padrón municipal (último mes publicado), un 1,7 % mayor que el censo anual de la CM en el conjunto de Madrid; se declara y no se calibra (D-209)."
+gap_row: {row: escuela_infantil, role: extra, phrase: "escuelas infantiles por cada 1.000 niños de 0 a 4 años"}

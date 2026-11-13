@@ -1,0 +1,135 @@
+/* «Todos los centros»: the zone's facilities by type, with how many there are and their list */
+.card {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.types {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Two columns of buttons, each wide enough for «Escuelas infantiles 33» */
+.chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+/* Phones: one button per row, so no name is cut */
+@media (max-width: 480px) {
+  .chips {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.chips li > button {
+  width: 100%;
+  height: 100%;
+  padding-inline: var(--space-3);
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.count {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.details summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--violet-strong);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Room for the focus ring (3 px + 2 px offset), which the scrolling list would otherwise clip */
+.list {
+  display: grid;
+  gap: var(--space-2);
+  max-height: 16rem;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-1) 5px;
+  overflow-y: auto;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  list-style: none;
+}
+
+.list li {
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.list li:last-child {
+  border-bottom: 0;
+}
+
+/* «Todos» / «Ninguno»: two text buttons under the chips, 44 px targets */
+.all {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.all button {
+  min-height: var(--target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.all button:disabled {
+  color: var(--ink-soft);
+  text-decoration: none;
+  cursor: default;
+}
+
+/* One block per type pressed, with the colour of its dots on the map */
+.typeSummary {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.typeSummary + .typeSummary {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+}
+
+.dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: var(--space-2);
+  border: 2px solid #ffffff;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 0 1px var(--line);
+  vertical-align: -0.05rem;
+}

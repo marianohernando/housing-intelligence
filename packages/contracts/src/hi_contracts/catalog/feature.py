@@ -61,6 +61,44 @@ class GapRowBinding(BaseModel):
         return self
 
 
+class FitBinding(BaseModel):
+    """Where the people search (CORE-003) reads the feature: the rent or the appraised purchase
+    value per m² of the budget condition (D-227), or the walking minutes to the nearest place
+    of a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority
+    measures (a PriorityKey: the park for «Zonas verdes», D-222). The search has no feature id
+    written in its code."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    role: Literal["rent_m2", "price_m2", "walk_minutes"]
+    need: str | None = Field(
+        default=None, pattern=r"^[a-z_]+$", description="NeedKey, only for walk_minutes"
+    )
+    priority: str | None = Field(
+        default=None, pattern=r"^[a-z_]+$", description="PriorityKey, only for walk_minutes"
+    )
+    note: str | None = Field(
+        default=None,
+        min_length=1,
+        description="What the cost figure is, in the fact the search writes («contratos "
+        "firmados en 2024; …», D-228); only for rent_m2. It travels with the data, so code and "
+        "data never disagree on what the number means",
+    )
+
+    @model_validator(mode="after")
+    def _one_target_only_for_walking(self) -> Self:
+        targets = (self.need is not None) + (self.priority is not None)
+        if (self.role == "walk_minutes") != (targets == 1) or (
+            self.role != "walk_minutes" and targets
+        ):
+            msg = "walk_minutes needs one of `need` or `priority`; rent_m2 and price_m2 take none"
+            raise ValueError(msg)
+        if self.note is not None and self.role != "rent_m2":
+            msg = "only rent_m2 takes a `note`"
+            raise ValueError(msg)
+        return self
+
+
 class FeatureSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -84,6 +122,7 @@ class FeatureSpec(BaseModel):
     tests: list[str] = Field(default_factory=list[str])
     limitations: list[str] = Field(default_factory=list[str])
     gap_row: GapRowBinding | None = None
+    fit: FitBinding | None = None
 
     @model_validator(mode="after")
     def _productive_features_are_tested(self) -> Self:

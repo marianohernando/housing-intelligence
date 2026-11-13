@@ -1,0 +1,699 @@
+{
+  "version": "impact-0.1",
+  "method": {
+    "version": "gap-0.3",
+    "reference": "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): la oferta al alcance a pie de su población (2SFCA, 15 min) dividida por su población. Un municipio demasiado pequeño se compara junto con sus vecinos más cercanos del mismo tipo (D-217)",
+    "falta_below": 0.8,
+    "cubierto_from": 1.0,
+    "confidence_level": 0.95
+  },
+  "zones_note": "Los municipios de la Comunidad de Madrid; Madrid capital, por sus 21 distritos cuando la fila tiene datos por distrito y, si no, entera",
+  "rows": [
+    {
+      "row": "escuela_infantil",
+      "label": "Escuelas infantiles",
+      "people_label": "niños de 0 a 4 años",
+      "madrid_level": "distrito",
+      "zones": 199,
+      "zones_in_falta": 3,
+      "people_in_falta": 25551,
+      "people_total": 260310,
+      "share_in_falta": 0.09815604471591564,
+      "summary": "En la Comunidad de Madrid, 25.551 niños de 0 a 4 años (el 9,8 %) viven en 3 zonas donde faltan escuelas infantiles",
+      "ranking": [
+        {
+          "admin_unit_id": "ES.28.DIS.2807913",
+          "code": "2807913",
+          "name": "Puente de Vallecas",
+          "level": "distrito",
+          "people": 9433,
+          "ratio_to_reference": 0.571,
+          "p_value": 0.00114,
+          "comparison_group": null,
+          "explanation": "Viven aquí 9.433 niños de 0 a 4 años. Tienen 57 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.DIS.2807911",
+          "code": "2807911",
+          "name": "Carabanchel",
+          "level": "distrito",
+          "people": 9150,
+          "ratio_to_reference": 0.6821,
+          "p_value": 0.0161,
+          "comparison_group": null,
+          "explanation": "Viven aquí 9.150 niños de 0 a 4 años. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.DIS.2807917",
+          "code": "2807917",
+          "name": "Villaverde",
+          "level": "distrito",
+          "people": 6968,
+          "ratio_to_reference": 0.6127,
+          "p_value": 0.0107,
+          "comparison_group": null,
+          "explanation": "Viven aquí 6.968 niños de 0 a 4 años. Tienen 61 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        }
+      ]
+    },
+    {
+      "row": "colegio",
+      "label": "Colegios",
+      "people_label": "niños de 5 a 14 años",
+      "madrid_level": "distrito",
+      "zones": 199,
+      "zones_in_falta": 0,
+      "people_in_falta": 0,
+      "people_total": 683666,
+      "share_in_falta": 0.0,
+      "summary": "Ninguna zona de la Comunidad de Madrid tiene una falta clara de colegios",
+      "ranking": []
+    },
+    {
+      "row": "centro_salud",
+      "label": "Centros de salud",
+      "people_label": "personas",
+      "madrid_level": "distrito",
+      "zones": 199,
+      "zones_in_falta": 0,
+      "people_in_falta": 0,
+      "people_total": 7113886,
+      "share_in_falta": 0.0,
+      "summary": "Ninguna zona de la Comunidad de Madrid tiene una falta clara de centros de salud",
+      "ranking": []
+    },
+    {
+      "row": "mayores",
+      "label": "Centros de mayores",
+      "people_label": "personas de 65 años o más",
+      "madrid_level": "distrito",
+      "zones": 199,
+      "zones_in_falta": 6,
+      "people_in_falta": 54581,
+      "people_total": 1342648,
+      "share_in_falta": 0.04065175682680792,
+      "summary": "En la Comunidad de Madrid, 54.581 personas de 65 años o más (el 4,1 %) viven en 6 zonas donde faltan centros de mayores",
+      "ranking": [
+        {
+          "admin_unit_id": "ES.28.MUN.28148",
+          "code": "28148",
+          "name": "Torrejón de Ardoz",
+          "level": "municipio",
+          "people": 23698,
+          "ratio_to_reference": 0.3179,
+          "p_value": 0.0151,
+          "comparison_group": null,
+          "explanation": "Viven aquí 23.698 personas de 65 años o más. Tienen 32 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28115",
+          "code": "28115",
+          "name": "Pozuelo de Alarcón",
+          "level": "municipio",
+          "people": 17700,
+          "ratio_to_reference": 0.2091,
+          "p_value": 0.0141,
+          "comparison_group": null,
+          "explanation": "Viven aquí 17.700 personas de 65 años o más. Tienen 21 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28022",
+          "code": "28022",
+          "name": "Boadilla del Monte",
+          "level": "municipio",
+          "people": 8339,
+          "ratio_to_reference": 0.2694,
+          "p_value": 0.0104,
+          "comparison_group": {
+            "codes": [
+              "28022",
+              "28080"
+            ],
+            "names": [
+              "Boadilla del Monte",
+              "Majadahonda"
+            ],
+            "ratio_to_reference": 0.2694163561965209
+          },
+          "explanation": "Viven aquí 8.339 personas de 65 años o más. Junto con sus vecinos tienen 27 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28104",
+          "code": "28104",
+          "name": "Paracuellos de Jarama",
+          "level": "municipio",
+          "people": 2614,
+          "ratio_to_reference": 0.3109,
+          "p_value": 0.00756,
+          "comparison_group": {
+            "codes": [
+              "28104",
+              "28002",
+              "28041",
+              "28148"
+            ],
+            "names": [
+              "Paracuellos de Jarama",
+              "Ajalvir",
+              "Cobeña",
+              "Torrejón de Ardoz"
+            ],
+            "ratio_to_reference": 0.310904030119525
+          },
+          "explanation": "Viven aquí 2.614 personas de 65 años o más. Junto con sus vecinos tienen 31 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28167",
+          "code": "28167",
+          "name": "Velilla de San Antonio",
+          "level": "municipio",
+          "people": 1641,
+          "ratio_to_reference": 0.2412,
+          "p_value": 0.0195,
+          "comparison_group": {
+            "codes": [
+              "28167",
+              "28084",
+              "28123"
+            ],
+            "names": [
+              "Velilla de San Antonio",
+              "Mejorada del Campo",
+              "Rivas-Vaciamadrid"
+            ],
+            "ratio_to_reference": 0.24119785628645096
+          },
+          "explanation": "Viven aquí 1.641 personas de 65 años o más. Junto con sus vecinos tienen 24 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28002",
+          "code": "28002",
+          "name": "Ajalvir",
+          "level": "municipio",
+          "people": 589,
+          "ratio_to_reference": 0.3654,
+          "p_value": 0.0127,
+          "comparison_group": {
+            "codes": [
+              "28002",
+              "28104",
+              "28041",
+              "28053",
+              "28148"
+            ],
+            "names": [
+              "Ajalvir",
+              "Paracuellos de Jarama",
+              "Cobeña",
+              "Daganzo de Arriba",
+              "Torrejón de Ardoz"
+            ],
+            "ratio_to_reference": 0.36537289175348725
+          },
+          "explanation": "Viven aquí 589 personas de 65 años o más. Junto con sus vecinos tienen 37 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        }
+      ]
+    },
+    {
+      "row": "farmacia",
+      "label": "Farmacias",
+      "people_label": "personas",
+      "madrid_level": "distrito",
+      "zones": 199,
+      "zones_in_falta": 5,
+      "people_in_falta": 667172,
+      "people_total": 7113886,
+      "share_in_falta": 0.09378446604289133,
+      "summary": "En la Comunidad de Madrid, 667.172 personas (el 9,4 %) viven en 5 zonas donde faltan farmacias",
+      "ranking": [
+        {
+          "admin_unit_id": "ES.28.MUN.28065",
+          "code": "28065",
+          "name": "Getafe",
+          "level": "municipio",
+          "people": 195628,
+          "ratio_to_reference": 0.7379,
+          "p_value": 0.00816,
+          "comparison_group": null,
+          "explanation": "Viven aquí 195.628 personas. Tienen 74 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28148",
+          "code": "28148",
+          "name": "Torrejón de Ardoz",
+          "level": "municipio",
+          "people": 144211,
+          "ratio_to_reference": 0.5647,
+          "p_value": 0.000172,
+          "comparison_group": null,
+          "explanation": "Viven aquí 144.211 personas. Tienen 56 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28106",
+          "code": "28106",
+          "name": "Parla",
+          "level": "municipio",
+          "people": 138012,
+          "ratio_to_reference": 0.486,
+          "p_value": 1.15e-05,
+          "comparison_group": null,
+          "explanation": "Viven aquí 138.012 personas. Tienen 49 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28123",
+          "code": "28123",
+          "name": "Rivas-Vaciamadrid",
+          "level": "municipio",
+          "people": 103243,
+          "ratio_to_reference": 0.6687,
+          "p_value": 0.014,
+          "comparison_group": null,
+          "explanation": "Viven aquí 103.243 personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 40 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28161",
+          "code": "28161",
+          "name": "Valdemoro",
+          "level": "municipio",
+          "people": 86078,
+          "ratio_to_reference": 0.559,
+          "p_value": 0.003,
+          "comparison_group": null,
+          "explanation": "Viven aquí 86.078 personas. Tienen 56 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 100 veces"
+        }
+      ]
+    },
+    {
+      "row": "vivienda",
+      "label": "Vivienda para familias",
+      "people_label": "hogares de 4 o más personas",
+      "madrid_level": "municipio",
+      "zones": 179,
+      "zones_in_falta": 25,
+      "people_in_falta": 99483,
+      "people_total": 669984,
+      "share_in_falta": 0.14848563547786217,
+      "summary": "En la Comunidad de Madrid, 99.483 hogares de 4 o más personas (el 14,8 %) viven en 25 zonas donde falta vivienda para familias",
+      "ranking": [
+        {
+          "admin_unit_id": "ES.28.MUN.28058",
+          "code": "28058",
+          "name": "Fuenlabrada",
+          "level": "municipio",
+          "people": 21109,
+          "ratio_to_reference": 0.4443,
+          "p_value": 0.0,
+          "comparison_group": null,
+          "explanation": "Viven aquí 21.109 hogares de 4 o más personas. Tienen 44 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28074",
+          "code": "28074",
+          "name": "Leganés",
+          "level": "municipio",
+          "people": 18058,
+          "ratio_to_reference": 0.6717,
+          "p_value": 0.0,
+          "comparison_group": null,
+          "explanation": "Viven aquí 18.058 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28007",
+          "code": "28007",
+          "name": "Alcorcón",
+          "level": "municipio",
+          "people": 16660,
+          "ratio_to_reference": 0.7367,
+          "p_value": 0.0,
+          "comparison_group": null,
+          "explanation": "Viven aquí 16.660 hogares de 4 o más personas. Tienen 74 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28106",
+          "code": "28106",
+          "name": "Parla",
+          "level": "municipio",
+          "people": 14887,
+          "ratio_to_reference": 0.6057,
+          "p_value": 0.0,
+          "comparison_group": null,
+          "explanation": "Viven aquí 14.887 hogares de 4 o más personas. Tienen 61 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28006",
+          "code": "28006",
+          "name": "Alcobendas",
+          "level": "municipio",
+          "people": 13227,
+          "ratio_to_reference": 0.7828,
+          "p_value": 4.65e-256,
+          "comparison_group": null,
+          "explanation": "Viven aquí 13.227 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28130",
+          "code": "28130",
+          "name": "San Fernando de Henares",
+          "level": "municipio",
+          "people": 4027,
+          "ratio_to_reference": 0.4699,
+          "p_value": 0.0,
+          "comparison_group": null,
+          "explanation": "Viven aquí 4.027 hogares de 4 o más personas. Tienen 47 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28084",
+          "code": "28084",
+          "name": "Mejorada del Campo",
+          "level": "municipio",
+          "people": 2658,
+          "ratio_to_reference": 0.7804,
+          "p_value": 3.41e-54,
+          "comparison_group": null,
+          "explanation": "Viven aquí 2.658 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28073",
+          "code": "28073",
+          "name": "Humanes de Madrid",
+          "level": "municipio",
+          "people": 2387,
+          "ratio_to_reference": 0.6742,
+          "p_value": 1.02e-109,
+          "comparison_group": null,
+          "explanation": "Viven aquí 2.387 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28082",
+          "code": "28082",
+          "name": "Manzanares el Real",
+          "level": "municipio",
+          "people": 951,
+          "ratio_to_reference": 0.7035,
+          "p_value": 2.65e-92,
+          "comparison_group": null,
+          "explanation": "Viven aquí 951 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28133",
+          "code": "28133",
+          "name": "San Martín de Valdeiglesias",
+          "level": "municipio",
+          "people": 882,
+          "ratio_to_reference": 0.7678,
+          "p_value": 1.04e-51,
+          "comparison_group": null,
+          "explanation": "Viven aquí 882 hogares de 4 o más personas. Tienen 77 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28180",
+          "code": "28180",
+          "name": "Villarejo de Salvanés",
+          "level": "municipio",
+          "people": 854,
+          "ratio_to_reference": 0.668,
+          "p_value": 3.09e-105,
+          "comparison_group": null,
+          "explanation": "Viven aquí 854 hogares de 4 o más personas. Tienen 67 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28150",
+          "code": "28150",
+          "name": "Torrejón de Velasco",
+          "level": "municipio",
+          "people": 549,
+          "ratio_to_reference": 0.6395,
+          "p_value": 1.17e-80,
+          "comparison_group": null,
+          "explanation": "Viven aquí 549 hogares de 4 o más personas. Tienen 64 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28137",
+          "code": "28137",
+          "name": "Los Santos de la Humosa",
+          "level": "municipio",
+          "people": 320,
+          "ratio_to_reference": 0.6583,
+          "p_value": 1.49e-42,
+          "comparison_group": null,
+          "explanation": "Viven aquí 320 hogares de 4 o más personas. Tienen 66 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28165",
+          "code": "28165",
+          "name": "Valdilecha",
+          "level": "municipio",
+          "people": 317,
+          "ratio_to_reference": 0.5981,
+          "p_value": 3.59e-59,
+          "comparison_group": null,
+          "explanation": "Viven aquí 317 hogares de 4 o más personas. Tienen 60 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28110",
+          "code": "28110",
+          "name": "Perales de Tajuña",
+          "level": "municipio",
+          "people": 307,
+          "ratio_to_reference": 0.6929,
+          "p_value": 6.61e-33,
+          "comparison_group": null,
+          "explanation": "Viven aquí 307 hogares de 4 o más personas. Tienen 69 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28008",
+          "code": "28008",
+          "name": "Aldea del Fresno",
+          "level": "municipio",
+          "people": 302,
+          "ratio_to_reference": 0.7032,
+          "p_value": 2.82e-30,
+          "comparison_group": null,
+          "explanation": "Viven aquí 302 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28099",
+          "code": "28099",
+          "name": "Navas del Rey",
+          "level": "municipio",
+          "people": 302,
+          "ratio_to_reference": 0.7844,
+          "p_value": 2.31e-16,
+          "comparison_group": null,
+          "explanation": "Viven aquí 302 hogares de 4 o más personas. Tienen 78 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28057",
+          "code": "28057",
+          "name": "Fresno de Torote",
+          "level": "municipio",
+          "people": 282,
+          "ratio_to_reference": 0.7485,
+          "p_value": 1.52e-20,
+          "comparison_group": null,
+          "explanation": "Viven aquí 282 hogares de 4 o más personas. Tienen 75 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28095",
+          "code": "28095",
+          "name": "Navalagamella",
+          "level": "municipio",
+          "people": 281,
+          "ratio_to_reference": 0.7504,
+          "p_value": 3.49e-20,
+          "comparison_group": null,
+          "explanation": "Viven aquí 281 hogares de 4 o más personas. Tienen 75 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28174",
+          "code": "28174",
+          "name": "Villamanta",
+          "level": "municipio",
+          "people": 281,
+          "ratio_to_reference": 0.7024,
+          "p_value": 1.87e-28,
+          "comparison_group": null,
+          "explanation": "Viven aquí 281 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28027",
+          "code": "28027",
+          "name": "Buitrago del Lozoya",
+          "level": "municipio",
+          "people": 188,
+          "ratio_to_reference": 0.7647,
+          "p_value": 1.26e-12,
+          "comparison_group": null,
+          "explanation": "Viven aquí 188 hogares de 4 o más personas. Tienen 76 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28178",
+          "code": "28178",
+          "name": "Villanueva de Perales",
+          "level": "municipio",
+          "people": 185,
+          "ratio_to_reference": 0.7246,
+          "p_value": 1.18e-16,
+          "comparison_group": null,
+          "explanation": "Viven aquí 185 hogares de 4 o más personas. Tienen 72 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28056",
+          "code": "28056",
+          "name": "Fresnedillas de la Oliva",
+          "level": "municipio",
+          "people": 180,
+          "ratio_to_reference": 0.6985,
+          "p_value": 2.71e-19,
+          "comparison_group": null,
+          "explanation": "Viven aquí 180 hogares de 4 o más personas. Tienen 70 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28175",
+          "code": "28175",
+          "name": "Villamantilla",
+          "level": "municipio",
+          "people": 163,
+          "ratio_to_reference": 0.6828,
+          "p_value": 1.92e-19,
+          "comparison_group": null,
+          "explanation": "Viven aquí 163 hogares de 4 o más personas. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        },
+        {
+          "admin_unit_id": "ES.28.MUN.28012",
+          "code": "28012",
+          "name": "Anchuelo",
+          "level": "municipio",
+          "people": 126,
+          "ratio_to_reference": 0.6781,
+          "p_value": 7.56e-16,
+          "comparison_group": null,
+          "explanation": "Viven aquí 126 hogares de 4 o más personas. Tienen 68 por cada 100 que tienen los municipios parecidos, y una diferencia así sale por azar menos de 1 entre 1.000 veces"
+        }
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "dataset_id": "ayto_padron_municipal",
+      "name": "Padrón municipal",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/200076-0-padron",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-11-f052edc26159",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "cm_centros_atencion_social",
+      "name": "Registro de centros de atención social",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-1332ab0048a6",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_centros_sanitarios",
+      "name": "Centros, servicios y establecimientos sanitarios",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-12-adef54b3fabc",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_hogares_tamano_censo_2021",
+      "name": "Hogares por tamaño del hogar. Censo 2021. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-acfd552e1c9c",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_oficinas_farmacia",
+      "name": "Oficinas de farmacia",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-de61d48d7b4a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "name": "Secciones censales",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-20-37703ffcdfd0",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_viviendas_superficie",
+      "name": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-382a7f2ff74a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
+    }
+  ]
+}

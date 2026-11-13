@@ -10,19 +10,21 @@ from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
 from hi_ingestion.pipelines.district_panel.normalize import normalize
 from hi_ingestion.pipelines.fetch import FetchedFile
-from hi_ingestion.pipelines.padron.run import known_districts
+from hi_ingestion.pipelines.padron.run import known_barrios, known_districts
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 from hi_ingestion.pipelines.stat_tables.normalize import Observations
 from hi_ingestion.pipelines.stat_tables.publish import replace_observations
 from hi_ingestion.pipelines.stat_tables.quality import (
     QualityReport,
+    barrio_checks,
     district_checks,
     row_counts,
     run_quality,
 )
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
-PARSER_VERSION = "madrid_district_panel-1.1.0"
+# 1.2: city indicators, one row per date; 1.3: barrio rows of the barrio indicators (D-232)
+PARSER_VERSION = "madrid_district_panel-1.3.0"
 
 
 def run_panel_quality(
@@ -30,11 +32,17 @@ def run_panel_quality(
     spec: MadridDistrictPanelPipeline,
     metrics: dict[str, MetricSpec],
     known: set[str],
+    barrios: set[str],
 ) -> QualityReport:
     own = {m: metrics[m] for m in spec.metric_ids()}
-    base = run_quality(obs, own, known_municipios=set())
+    city = {spec.municipio_ine} if spec.city_indicators else set()
+    base = run_quality(obs, own, known_municipios=city)
     return QualityReport(
-        [*base.checks, *district_checks(obs.frame, known, spec.expected_districts)]
+        [
+            *base.checks,
+            *district_checks(obs.frame, known, spec.expected_districts),
+            *barrio_checks(obs.frame, barrios, spec.expected_barrios),
+        ]
     )
 
 
@@ -48,7 +56,11 @@ def panel_steps(
         normalize=lambda frame: normalize(frame, spec),
         quarantine=lambda obs: obs.quarantine,
         quality=lambda obs: run_panel_quality(
-            obs, spec, catalog.metrics, known_districts(engine, spec.municipio_ine)
+            obs,
+            spec,
+            catalog.metrics,
+            known_districts(engine, spec.municipio_ine),
+            known_barrios(engine, spec.municipio_ine),
         ).to_dict(),
         counts=lambda obs: row_counts(obs.frame) | {"out_of_scope": obs.out_of_window},
         write_silver=write_silver,

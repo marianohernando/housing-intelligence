@@ -1,0 +1,26 @@
+$ uv run python scripts/check_walk_golden.py
+# exit 0
+
+PASS sol_farmacia: ok
+PASS sol_transporte: ok
+PASS sol_transporte_5min: ok
+PASS plaza_castilla_transporte: ok
+PASS centro_farmacia: ok
+PASS centro_centro_salud: ok
+PASS madrid_colegio: ok
+PASS madrid_farmacia: ok
+PASS getafe_centro_farmacia: ok
+PASS getafe_centro_transporte: ok
+PASS alcala_centro_farmacia: ok
+PASS alcala_centro_colegio: ok
+PASS acebeda_sin_farmacia: ok
+PASS acebeda_consultorio: ok
+PASS region_transporte: ok
+PASS min_a_pie_centro_salud <= 15 min <=> pct_calle_centro_salud_15min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_colegio <= 10 min <=> pct_calle_colegio_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_escuela_infantil <= 10 min <=> pct_calle_escuela_infantil_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_farmacia <= 10 min <=> pct_calle_farmacia_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_mayores <= 10 min <=> pct_calle_mayores_10min >= 50 %: 4819 zones, 0 disagree
+PASS min_a_pie_transporte <= 5 min <=> pct_calle_transporte_5min >= 50 %: 4819 zones, 0 disagree
+0 failed
+

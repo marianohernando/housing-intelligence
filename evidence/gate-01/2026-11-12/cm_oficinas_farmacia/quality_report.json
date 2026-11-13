@@ -1,0 +1,92 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 2957
+      }
+    },
+    {
+      "name": "unique_official_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "coordinate_quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "ratio": 0.0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "no_contact_or_tax_ids",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "leaked_attributes": []
+      }
+    },
+    {
+      "name": "filters_applied",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "filtered_out": {},
+        "source_rows": 2957
+      }
+    },
+    {
+      "name": "category_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "category": "pharmacy"
+      }
+    },
+    {
+      "name": "coordinate_repairs",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "geocoded": 5,
+        "kept_with_note": 0,
+        "rows": [
+          {
+            "external_id": "178",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "763",
+            "origin": "geocoded",
+            "note": "source coordinates fell in municipio 28161 (-3.691458692194622, 40.19466769417958)"
+          },
+          {
+            "external_id": "1899",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "2683",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source"
+          },
+          {
+            "external_id": "2976",
+            "origin": "geocoded",
+            "note": "coordinates missing in the source (nearest portal 85 for number 83)"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -14,7 +14,6 @@ STATION = "1"
 SERVICE_DAY_START = 4 * 3600
 BOARDABLE_LOCATION_TYPES = ("", "0")
 NO_PICKUP = "1"
-WHEELCHAIR = {"1": "yes", "2": "no"}
 SERVICE_KEYS = (
     "has_service",
     "departures_day",
@@ -215,8 +214,11 @@ def stop_service_table(
     tables: GtfsTables, events: pd.DataFrame, peak: PeakWindow, day: ServiceDay, mode: str
 ) -> pd.DataFrame:
     """Every stop or parent station of the feed, served or not, with its service attributes."""
-    groups = list(set(station_groups(tables.stops).values()))
-    places = tables.stops.loc[tables.stops["stop_id"].isin(groups)]
+    grouping = station_groups(tables.stops)
+    members: dict[str, set[str]] = {}
+    for stop_id, group in grouping.items():
+        members.setdefault(group, {group}).add(stop_id)
+    places = tables.stops.loc[tables.stops["stop_id"].isin(members)]
     levels, basis = service_levels(events, tables, peak) if len(events) else (pd.DataFrame(), "")
     by_group: dict[str, dict[str, Any]] = levels.to_dict("index") if len(levels) else {}  # pyright: ignore[reportAssignmentType]
     rows: list[dict[str, Any]] = []
@@ -229,7 +231,9 @@ def stop_service_table(
                 "stop_lon": stop["stop_lon"],
                 "mode": mode,
                 **_level_attributes(by_group.get(stop["stop_id"]), peak, basis),
-                "wheelchair_boarding": WHEELCHAIR.get(str(stop["wheelchair_boarding"]).strip()),
+                # raw: the CRTM does not use the GTFS meaning of the code (D-223)
+                "gtfs_wheelchair_boarding": str(stop["wheelchair_boarding"]).strip() or None,
+                "member_stop_ids": sorted(members[stop["stop_id"]]),
                 "service_date": day.service_date.isoformat(),
                 "feed_end_date": day.feed_end.isoformat(),
             }

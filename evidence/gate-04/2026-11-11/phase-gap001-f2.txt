@@ -1,0 +1,55 @@
+# GAP-001 F2: colegios_publicos_por_1000_menores v2 (same destinations as min_a_pie_colegio)
+## Before (v1: every public education centre) | after (v2: colegios with primaria, public or concertado), local db housing
+level|code|value v1|ver|level|code|value v2|ver
+ccaa|28|2.178|1|ccaa|28|1.315|2
+distrito|2807901|3.512|1|distrito|2807901|2.039|2
+distrito|2807905|0.879|1|distrito|2807905|1.374|2
+distrito|2807908|1.486|1|distrito|2807908|1.027|2
+municipio|28005|2.682|1|municipio|28005|1.516|2
+municipio|28079|1.558|1|municipio|28079|1.267|2
+municipio|28092|2.670|1|municipio|28092|1.443|2
+
+## Places counted in the region and in Madrid (v2 filter)
+1241|523
+
+## Gate: make lint typecheck test (2026-11-11T16:39:13Z)
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+253 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 76%]
+.................................................................        [100%]
+281 passed in 5.12s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  17:39:27
+   Duration  83ms (tests 50%, import 24%, transform 15%, worker 10%)
+
+uv run pytest -m db tests/integration -q
+......................................................................   [100%]
+70 passed in 30.17s
+exit=0

@@ -1,0 +1,70 @@
+# GAP-001 F3a: rows escuela_infantil, mayores and farmacia by municipio and district (local db housing)
+## Pharmacy golden: our ratio (cm_oficinas_farmacia / census) vs the official CM ratio (cm_farmacias_municipios), 179 municipios
+municipios=179 official>0=160 median_rel_diff=0.0033 p90=0.0157 max=0.489 both_zero=19 only_one_zero=0
+## Values: region, Madrid, Chamartín
+centros_mayores_por_1000_mayores|ccaa|28|0.390|
+centros_mayores_por_1000_mayores|distrito|2807905|0.248|
+centros_mayores_por_1000_mayores|municipio|28079|0.379|
+colegios_publicos_por_1000_menores|ccaa|28|1.315|
+colegios_publicos_por_1000_menores|distrito|2807905|1.374|
+colegios_publicos_por_1000_menores|municipio|28079|1.267|
+escuelas_infantiles_por_1000_ninos|ccaa|28|4.714|
+escuelas_infantiles_por_1000_ninos|distrito|2807905|5.011|
+escuelas_infantiles_por_1000_ninos|municipio|28001||NOT_APPLICABLE
+escuelas_infantiles_por_1000_ninos|municipio|28079|4.202|
+farmacias_por_10000_hab_oficial|municipio|28079|5.170|
+oficinas_farmacia_por_10000_hab|ccaa|28|4.151|
+oficinas_farmacia_por_10000_hab|distrito|2807905|7.638|
+oficinas_farmacia_por_10000_hab|municipio|28079|5.208|
+## Coverage: rows with value by level
+centros_mayores_por_1000_mayores|ccaa|1|1
+centros_mayores_por_1000_mayores|distrito|21|21
+centros_mayores_por_1000_mayores|municipio|179|179
+escuelas_infantiles_por_1000_ninos|ccaa|1|1
+escuelas_infantiles_por_1000_ninos|distrito|21|21
+escuelas_infantiles_por_1000_ninos|municipio|179|178
+oficinas_farmacia_por_10000_hab|ccaa|1|1
+oficinas_farmacia_por_10000_hab|distrito|21|21
+oficinas_farmacia_por_10000_hab|municipio|179|179
+
+## Gate: make lint typecheck test (2026-11-11T16:43:33Z)
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+253 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/check_docs_manifest.py docs
+277 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+uv run pytest tests/unit tests/data -q
+........................................................................ [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 76%]
+.................................................................        [100%]
+281 passed in 6.04s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 ~/Desktop/DATAMAD/housing-intelligence/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  17:43:50
+   Duration  86ms (tests 47%, import 27%, transform 16%, worker 10%)
+
+uv run pytest -m db tests/integration -q
+.......................................................................  [100%]
+71 passed in 30.03s
+exit=0

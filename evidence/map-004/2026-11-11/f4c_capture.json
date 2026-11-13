@@ -1,0 +1,61 @@
+{
+  "base": "http://localhost:3011",
+  "generated_at": "2026-11-11T14:55:24.598Z",
+  "shots": [
+    {
+      "route": "/",
+      "viewport": "desktop",
+      "file": "f4c_inicio_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [
+        "[.WebGL-0x12400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x12400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x12400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "[.WebGL-0x12400436600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+      ],
+      "comparison": "f4c_inicio_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/",
+      "viewport": "mobile",
+      "file": "f4c_inicio_mobile.png",
+      "overflow_px": 834,
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "desktop",
+      "file": "f4c_chamartin_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": [],
+      "comparison": "f4c_chamartin_desktop_vs_mockup.jpg"
+    },
+    {
+      "route": "/zona/distrito/2807905",
+      "viewport": "mobile",
+      "file": "f4c_chamartin_mobile.png",
+      "overflow_px": 161,
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/zona/municipio/28092",
+      "viewport": "desktop",
+      "file": "f4c_mostoles_desktop.png",
+      "overflow_px": 0,
+      "problems": [],
+      "warnings": []
+    },
+    {
+      "route": "/zona/municipio/28092",
+      "viewport": "mobile",
+      "file": "f4c_mostoles_mobile.png",
+      "overflow_px": 161,
+      "problems": [],
+      "warnings": []
+    }
+  ]
+}

@@ -4,6 +4,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any
 
 from hi_contracts.catalog.pipeline import PointsPipeline
+from hi_domain.facilities import dependency
 from hi_ingestion.pipelines.places.normalize import Places
 
 MAX_QUARANTINE_RATIO = 0.12
@@ -28,6 +29,38 @@ class QualityReport:
 
     def to_dict(self) -> dict[str, Any]:
         return {"passed": self.passed, "checks": [asdict(c) for c in self.checks]}
+
+
+def _directory_checks(places: Places, spec: PointsPipeline) -> list[CheckResult]:
+    """D-218: one entry per place and one place per entry; how many matched, and whether the
+    directory and the register agree on public or private (a wrong match would disagree)."""
+    if not spec.directories:
+        return []
+    links = places.links
+    reused = int(links.duplicated(["dataset_id", "external_id"]).sum()) + int(
+        links.duplicated(["dataset_id", "canonical_place_id"]).sum()
+    )
+    attrs: list[dict[str, Any]] = places.frame["attributes"].tolist() if len(places.frame) else []
+    pairs = [
+        (a.get("dependency"), dependency(str(a["directory"].get("dependency") or "")))
+        for a in attrs
+        if isinstance(a.get("directory"), dict)
+    ]
+    compared = [(r, d) for r, d in pairs if r and d]
+    disagree = sum(r != d for r, d in compared)
+    loaded = set(places.directory_report)
+    missing = sorted(link.dataset_id for link in spec.directories if link.dataset_id not in loaded)
+    return [
+        CheckResult("directory_one_to_one", True, reused == 0, {"reused": reused}),
+        CheckResult("directory_loaded", False, not missing, {"missing_directories": missing}),
+        CheckResult(
+            "directory_dependency_agreement",
+            False,
+            disagree == 0,
+            {"compared": len(compared), "disagree": disagree},
+        ),
+        CheckResult("directory_matches", False, True, places.directory_report),
+    ]
 
 
 def run_quality(places: Places, spec: PointsPipeline) -> QualityReport:
@@ -66,5 +99,16 @@ def run_quality(places: Places, spec: PointsPipeline) -> QualityReport:
         CheckResult(
             "category_declared", True, bool(spec.category), {"category": spec.category.value}
         ),
+        CheckResult(
+            "coordinate_repairs",
+            False,
+            True,
+            {
+                "geocoded": int((places.repairs["origin"] == "geocoded").sum()),
+                "kept_with_note": int((places.repairs["origin"] == "source").sum()),
+                "rows": places.repairs.to_dict("records"),  # pyright: ignore[reportUnknownMemberType]
+            },
+        ),
+        *_directory_checks(places, spec),
     ]
     return QualityReport(checks)

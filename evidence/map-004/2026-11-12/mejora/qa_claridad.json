@@ -1,0 +1,255 @@
+{
+ "modo": "claridad",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "puente_de_vallecas_desktop": {
+  "resumen": "Aquí falta: escuelas infantiles. Sin datos: viviendas grandes para familias.",
+  "negrita": "Aquí falta: escuelas infantiles.",
+  "resumen_esperado": "Aquí falta: escuelas infantiles. Sin datos: viviendas grandes para familias.",
+  "filas": [
+   {
+    "fila": "Escuelas infantiles",
+    "frase": "Aquí hay 57 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "frase": "Aquí hay 121 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "frase": "Aquí hay 118 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": "Hospital más cercano a unos 3,4 km"
+   },
+   {
+    "fila": "Centros de mayores",
+    "frase": "Aquí hay 155 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Farmacias",
+    "frase": "Aquí hay 146 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "frase": "La fuente oficial no trae este dato.",
+    "cifra_abierta": false,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "referencia": "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)",
+  "axe_cifra": [],
+  "mitad_de_las_calles": false,
+  "pie": "Vida Fácil · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+  "housing_intelligence": false,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "el_alamo_desktop": {
+  "resumen": "Aquí no falta nada claro. Van justos: farmacias.",
+  "negrita": "Aquí no falta nada claro.",
+  "resumen_esperado": "Aquí no falta nada claro. Van justos: farmacias.",
+  "filas": [
+   {
+    "fila": "Farmacias",
+    "frase": "Aquí hay 46 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "frase": "Junto con sus vecinos, hay 108 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "frase": "Junto con sus vecinos, hay 106 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "frase": "Junto con sus vecinos, hay 104 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": "Hospital más cercano a unos 15,6 km"
+   },
+   {
+    "fila": "Centros de mayores",
+    "frase": "Junto con sus vecinos, hay 111 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "frase": "Aquí hay 137 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "referencia": "Otros municipios urbanos de la Comunidad de Madrid",
+  "axe_cifra": [],
+  "mitad_de_las_calles": false,
+  "pie": "Vida Fácil · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+  "housing_intelligence": false,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "tarjeta_desktop": {
+  "zona": "Latina",
+  "hechos": [
+   "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Parada de transporte público a unos 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+   "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable"
+  ],
+  "mediana": 1,
+  "aviso": [
+   "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud."
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "puente_de_vallecas_mobile": {
+  "resumen": "Aquí falta: escuelas infantiles. Sin datos: viviendas grandes para familias.",
+  "negrita": "Aquí falta: escuelas infantiles.",
+  "resumen_esperado": "Aquí falta: escuelas infantiles. Sin datos: viviendas grandes para familias.",
+  "filas": [
+   {
+    "fila": "Escuelas infantiles",
+    "frase": "Aquí hay 57 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "frase": "Aquí hay 121 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "frase": "Aquí hay 118 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": "Hospital más cercano a unos 3,4 km"
+   },
+   {
+    "fila": "Centros de mayores",
+    "frase": "Aquí hay 155 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Farmacias",
+    "frase": "Aquí hay 146 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "frase": "La fuente oficial no trae este dato.",
+    "cifra_abierta": false,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "referencia": "Municipios urbanos de la Comunidad, sin contar Madrid (como Getafe o Alcalá de Henares)",
+  "axe_cifra": [],
+  "mitad_de_las_calles": false,
+  "pie": "Vida Fácil · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+  "housing_intelligence": false,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "el_alamo_mobile": {
+  "resumen": "Aquí no falta nada claro. Van justos: farmacias.",
+  "negrita": "Aquí no falta nada claro.",
+  "resumen_esperado": "Aquí no falta nada claro. Van justos: farmacias.",
+  "filas": [
+   {
+    "fila": "Farmacias",
+    "frase": "Aquí hay 46 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Escuelas infantiles",
+    "frase": "Junto con sus vecinos, hay 108 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Colegios",
+    "frase": "Junto con sus vecinos, hay 106 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Centros de salud",
+    "frase": "Junto con sus vecinos, hay 104 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": "Hospital más cercano a unos 15,6 km"
+   },
+   {
+    "fila": "Centros de mayores",
+    "frase": "Junto con sus vecinos, hay 111 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   },
+   {
+    "fila": "Vivienda para familias",
+    "frase": "Aquí hay 137 por cada 100 que hay en municipios parecidos.",
+    "cifra_abierta": false,
+    "hospital": null
+   }
+  ],
+  "axe": [],
+  "referencia": "Otros municipios urbanos de la Comunidad de Madrid",
+  "axe_cifra": [],
+  "mitad_de_las_calles": false,
+  "pie": "Vida Fácil · Proyecto para DATAMAD 2026 · Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+  "housing_intelligence": false,
+  "overflow_px": 0,
+  "consola": []
+ },
+ "tarjeta_mobile": {
+  "zona": "Latina",
+  "hechos": [
+   "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Parada de transporte público a unos 2 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+   "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable"
+  ],
+  "mediana": 1,
+  "aviso": [
+   "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles y centros de salud."
+  ],
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_zona_slow4g": [
+  {
+   "ms": 884,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2136,
+   "en_atribucion": false,
+   "texto": "Explora Puente de Vallecas"
+  }
+ ],
+ "fallos": []
+}

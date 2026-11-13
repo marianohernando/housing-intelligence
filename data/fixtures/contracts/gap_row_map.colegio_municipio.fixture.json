@@ -1,0 +1,3677 @@
+{
+  "row": "colegio",
+  "label": "Colegios",
+  "level": "municipio",
+  "indicator_label": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años",
+  "unit": "aulas/1000 niños",
+  "direction": "higher_is_better",
+  "reference": 22.97,
+  "reference_label": "Comunidad de Madrid",
+  "proxy_note": "Las aulas de primaria de cada municipio (estadística de la CM) se reparten a partes iguales entre sus colegios públicos o concertados: no son las de cada colegio. No dice si hay plaza ni cuál te corresponde.",
+  "method": {
+    "version": "gap-0.3",
+    "reference": "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): la oferta al alcance a pie de su población (2SFCA, 15 min) dividida por su población. Un municipio demasiado pequeño se compara junto con sus vecinos más cercanos del mismo tipo (D-217)",
+    "falta_below": 0.8,
+    "cubierto_from": 1.0,
+    "confidence_level": 0.95
+  },
+  "counts": {
+    "falta": 0,
+    "justo": 112,
+    "cubierto": 67,
+    "sin_datos": 0
+  },
+  "zones": [
+    {
+      "admin_unit_id": "ES.28.MUN.28001",
+      "code": "28001",
+      "name": "La Acebeda",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28002",
+      "code": "28002",
+      "name": "Ajalvir",
+      "status": "JUSTO",
+      "value": 26.65,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.166,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28002",
+          "28104"
+        ],
+        "names": [
+          "Ajalvir",
+          "Paracuellos de Jarama"
+        ],
+        "ratio_to_reference": 0.953596476564095
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28003",
+      "code": "28003",
+      "name": "Alameda del Valle",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.03,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28004",
+      "code": "28004",
+      "name": "El Álamo",
+      "status": "CUBIERTO",
+      "value": 25.91,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.133,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28004",
+          "28096"
+        ],
+        "names": [
+          "El Álamo",
+          "Navalcarnero"
+        ],
+        "ratio_to_reference": 1.0554756748201575
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28005",
+      "code": "28005",
+      "name": "Alcalá de Henares",
+      "status": "CUBIERTO",
+      "value": 26.73,
+      "reference": 22.76,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.175,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28006",
+      "code": "28006",
+      "name": "Alcobendas",
+      "status": "JUSTO",
+      "value": 17.36,
+      "reference": 22.98,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7554,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28007",
+      "code": "28007",
+      "name": "Alcorcón",
+      "status": "CUBIERTO",
+      "value": 26.23,
+      "reference": 22.78,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.151,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28008",
+      "code": "28008",
+      "name": "Aldea del Fresno",
+      "status": "JUSTO",
+      "value": 26.74,
+      "reference": 28.01,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9548,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28009",
+      "code": "28009",
+      "name": "Algete",
+      "status": "JUSTO",
+      "value": 20.35,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8896,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28010",
+      "code": "28010",
+      "name": "Alpedrete",
+      "status": "CUBIERTO",
+      "value": 27.99,
+      "reference": 22.85,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.225,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28010",
+          "28046"
+        ],
+        "names": [
+          "Alpedrete",
+          "Collado Mediano"
+        ],
+        "ratio_to_reference": 1.0471234404445522
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28011",
+      "code": "28011",
+      "name": "Ambite",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.09,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28011",
+          "28101",
+          "28179",
+          "28102",
+          "28111",
+          "28048",
+          "28035",
+          "28165",
+          "28025",
+          "28116",
+          "28166",
+          "28136"
+        ],
+        "names": [
+          "Ambite",
+          "Olmeda de las Fuentes",
+          "Villar del Olmo",
+          "Orusco de Tajuña",
+          "Pezuela de las Torres",
+          "Corpa",
+          "Carabaña",
+          "Valdilecha",
+          "Brea de Tajo",
+          "Pozuelo del Rey",
+          "Valverde de Alcalá",
+          "Santorcaz"
+        ],
+        "ratio_to_reference": 0.8839108705325008
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28012",
+      "code": "28012",
+      "name": "Anchuelo",
+      "status": "CUBIERTO",
+      "value": 31.75,
+      "reference": 27.92,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.137,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28013",
+      "code": "28013",
+      "name": "Aranjuez",
+      "status": "CUBIERTO",
+      "value": 25.53,
+      "reference": 22.84,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.118,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28014",
+      "code": "28014",
+      "name": "Arganda del Rey",
+      "status": "CUBIERTO",
+      "value": 24.36,
+      "reference": 22.85,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.066,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28015",
+      "code": "28015",
+      "name": "Arroyomolinos",
+      "status": "JUSTO",
+      "value": 22.1,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9662,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28016",
+      "code": "28016",
+      "name": "El Atazar",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.99,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28017",
+      "code": "28017",
+      "name": "Batres",
+      "status": "JUSTO",
+      "value": 15.52,
+      "reference": 28.14,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5516,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28018",
+      "code": "28018",
+      "name": "Becerril de la Sierra",
+      "status": "CUBIERTO",
+      "value": 19.88,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8693,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28018",
+          "28093",
+          "28023"
+        ],
+        "names": [
+          "Becerril de la Sierra",
+          "Navacerrada",
+          "El Boalo"
+        ],
+        "ratio_to_reference": 1.3518888751748661
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28019",
+      "code": "28019",
+      "name": "Belmonte de Tajo",
+      "status": "JUSTO",
+      "value": 30.3,
+      "reference": 27.94,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.084,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28019",
+          "28157",
+          "28180",
+          "28173",
+          "28110",
+          "28052"
+        ],
+        "names": [
+          "Belmonte de Tajo",
+          "Valdelaguna",
+          "Villarejo de Salvanés",
+          "Villamanrique de Tajo",
+          "Perales de Tajuña",
+          "Chinchón"
+        ],
+        "ratio_to_reference": 0.7975135144226451
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28020",
+      "code": "28020",
+      "name": "Berzosa del Lozoya",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.01,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28021",
+      "code": "28021",
+      "name": "El Berrueco",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.15,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28022",
+      "code": "28022",
+      "name": "Boadilla del Monte",
+      "status": "JUSTO",
+      "value": 14.96,
+      "reference": 22.98,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6511,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28023",
+      "code": "28023",
+      "name": "El Boalo",
+      "status": "CUBIERTO",
+      "value": 34.48,
+      "reference": 22.85,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.509,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28023",
+          "28018",
+          "28090"
+        ],
+        "names": [
+          "El Boalo",
+          "Becerril de la Sierra",
+          "Moralzarzal"
+        ],
+        "ratio_to_reference": 1.1580811349320297
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28024",
+      "code": "28024",
+      "name": "Braojos",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.0,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28025",
+      "code": "28025",
+      "name": "Brea de Tajo",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.03,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28026",
+      "code": "28026",
+      "name": "Brunete",
+      "status": "CUBIERTO",
+      "value": 23.77,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.04,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28026",
+          "28176"
+        ],
+        "names": [
+          "Brunete",
+          "Villanueva de la Cañada"
+        ],
+        "ratio_to_reference": 1.0925787786363674
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28027",
+      "code": "28027",
+      "name": "Buitrago del Lozoya",
+      "status": "CUBIERTO",
+      "value": 80.72,
+      "reference": 27.15,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 2.973,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28028",
+      "code": "28028",
+      "name": "Bustarviejo",
+      "status": "CUBIERTO",
+      "value": 31.55,
+      "reference": 27.89,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.131,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28029",
+      "code": "28029",
+      "name": "Cabanillas de la Sierra",
+      "status": "CUBIERTO",
+      "value": 73.68,
+      "reference": 27.67,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 2.663,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28030",
+      "code": "28030",
+      "name": "La Cabrera",
+      "status": "JUSTO",
+      "value": 24.82,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.085,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28030",
+          "28151",
+          "28169",
+          "28094",
+          "28067",
+          "28108"
+        ],
+        "names": [
+          "La Cabrera",
+          "Torrelaguna",
+          "Venturada",
+          "Navalafuente",
+          "Guadalix de la Sierra",
+          "Pedrezuela"
+        ],
+        "ratio_to_reference": 0.9038880436398817
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28031",
+      "code": "28031",
+      "name": "Cadalso de los Vidrios",
+      "status": "CUBIERTO",
+      "value": 29.5,
+      "reference": 27.94,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.056,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28032",
+      "code": "28032",
+      "name": "Camarma de Esteruelas",
+      "status": "JUSTO",
+      "value": 17.09,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7471,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28032",
+          "28083"
+        ],
+        "names": [
+          "Camarma de Esteruelas",
+          "Meco"
+        ],
+        "ratio_to_reference": 0.8879374071015936
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28033",
+      "code": "28033",
+      "name": "Campo Real",
+      "status": "CUBIERTO",
+      "value": 19.58,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8561,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28033",
+          "28014"
+        ],
+        "names": [
+          "Campo Real",
+          "Arganda del Rey"
+        ],
+        "ratio_to_reference": 1.0442937047704817
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28034",
+      "code": "28034",
+      "name": "Canencia",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.02,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28035",
+      "code": "28035",
+      "name": "Carabaña",
+      "status": "CUBIERTO",
+      "value": 25.42,
+      "reference": 28.01,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9074,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28035",
+          "28102",
+          "28155",
+          "28165",
+          "28179",
+          "28025",
+          "28110",
+          "28011",
+          "28101",
+          "28116"
+        ],
+        "names": [
+          "Carabaña",
+          "Orusco de Tajuña",
+          "Valdaracete",
+          "Valdilecha",
+          "Villar del Olmo",
+          "Brea de Tajo",
+          "Perales de Tajuña",
+          "Ambite",
+          "Olmeda de las Fuentes",
+          "Pozuelo del Rey"
+        ],
+        "ratio_to_reference": 1.056592935572424
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28036",
+      "code": "28036",
+      "name": "Casarrubuelos",
+      "status": "JUSTO",
+      "value": 20.91,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9144,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28036",
+          "28050",
+          "28149"
+        ],
+        "names": [
+          "Casarrubuelos",
+          "Cubas de la Sagra",
+          "Torrejón de la Calzada"
+        ],
+        "ratio_to_reference": 0.996188693781171
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28037",
+      "code": "28037",
+      "name": "Cenicientos",
+      "status": "CUBIERTO",
+      "value": 35.93,
+      "reference": 27.88,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.289,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28038",
+      "code": "28038",
+      "name": "Cercedilla",
+      "status": "JUSTO",
+      "value": 22.35,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9774,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28038",
+          "28093",
+          "28087",
+          "28018",
+          "28046"
+        ],
+        "names": [
+          "Cercedilla",
+          "Navacerrada",
+          "Los Molinos",
+          "Becerril de la Sierra",
+          "Collado Mediano"
+        ],
+        "ratio_to_reference": 0.9321860036705063
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28039",
+      "code": "28039",
+      "name": "Cervera de Buitrago",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28040",
+      "code": "28040",
+      "name": "Ciempozuelos",
+      "status": "JUSTO",
+      "value": 21.59,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.944,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28041",
+      "code": "28041",
+      "name": "Cobeña",
+      "status": "CUBIERTO",
+      "value": 28.63,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.253,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28041",
+          "28002",
+          "28104"
+        ],
+        "names": [
+          "Cobeña",
+          "Ajalvir",
+          "Paracuellos de Jarama"
+        ],
+        "ratio_to_reference": 1.0040868933183127
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28042",
+      "code": "28042",
+      "name": "Colmenar del Arroyo",
+      "status": "JUSTO",
+      "value": 30.77,
+      "reference": 27.93,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.102,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28042",
+          "28099",
+          "28056",
+          "28125",
+          "28175",
+          "28008"
+        ],
+        "names": [
+          "Colmenar del Arroyo",
+          "Navas del Rey",
+          "Fresnedillas de la Oliva",
+          "Robledo de Chavela",
+          "Villamantilla",
+          "Aldea del Fresno"
+        ],
+        "ratio_to_reference": 0.9432219130245825
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28043",
+      "code": "28043",
+      "name": "Colmenar de Oreja",
+      "status": "JUSTO",
+      "value": 19.41,
+      "reference": 28.52,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6805,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28043",
+          "28052",
+          "28019"
+        ],
+        "names": [
+          "Colmenar de Oreja",
+          "Chinchón",
+          "Belmonte de Tajo"
+        ],
+        "ratio_to_reference": 0.7319460864391066
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28044",
+      "code": "28044",
+      "name": "Colmenarejo",
+      "status": "JUSTO",
+      "value": 28.77,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.259,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28044",
+          "28061"
+        ],
+        "names": [
+          "Colmenarejo",
+          "Galapagar"
+        ],
+        "ratio_to_reference": 0.8506845807480413
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28045",
+      "code": "28045",
+      "name": "Colmenar Viejo",
+      "status": "JUSTO",
+      "value": 22.19,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9701,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28046",
+      "code": "28046",
+      "name": "Collado Mediano",
+      "status": "CUBIERTO",
+      "value": 15.42,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6741,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28046",
+          "28010"
+        ],
+        "names": [
+          "Collado Mediano",
+          "Alpedrete"
+        ],
+        "ratio_to_reference": 1.0471234404445522
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28047",
+      "code": "28047",
+      "name": "Collado Villalba",
+      "status": "CUBIERTO",
+      "value": 24.17,
+      "reference": 22.85,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.058,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28048",
+      "code": "28048",
+      "name": "Corpa",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.2,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28048",
+          "28166",
+          "28012",
+          "28136",
+          "28111",
+          "28101",
+          "28116",
+          "28179",
+          "28011",
+          "28137",
+          "28165"
+        ],
+        "names": [
+          "Corpa",
+          "Valverde de Alcalá",
+          "Anchuelo",
+          "Santorcaz",
+          "Pezuela de las Torres",
+          "Olmeda de las Fuentes",
+          "Pozuelo del Rey",
+          "Villar del Olmo",
+          "Ambite",
+          "Los Santos de la Humosa",
+          "Valdilecha"
+        ],
+        "ratio_to_reference": 0.7078388982523289
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28049",
+      "code": "28049",
+      "name": "Coslada",
+      "status": "CUBIERTO",
+      "value": 26.6,
+      "reference": 22.83,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.165,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28050",
+      "code": "28050",
+      "name": "Cubas de la Sagra",
+      "status": "JUSTO",
+      "value": 18.9,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8263,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28050",
+          "28036",
+          "28066"
+        ],
+        "names": [
+          "Cubas de la Sagra",
+          "Casarrubuelos",
+          "Griñón"
+        ],
+        "ratio_to_reference": 0.93753909860743
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28051",
+      "code": "28051",
+      "name": "Chapinería",
+      "status": "CUBIERTO",
+      "value": 27.32,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.195,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28052",
+      "code": "28052",
+      "name": "Chinchón",
+      "status": "JUSTO",
+      "value": 20.58,
+      "reference": 28.28,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7277,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28052",
+          "28043",
+          "28157",
+          "28019"
+        ],
+        "names": [
+          "Chinchón",
+          "Colmenar de Oreja",
+          "Valdelaguna",
+          "Belmonte de Tajo"
+        ],
+        "ratio_to_reference": 0.6889158746162841
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28053",
+      "code": "28053",
+      "name": "Daganzo de Arriba",
+      "status": "JUSTO",
+      "value": 17.02,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7439,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28053",
+          "28032"
+        ],
+        "names": [
+          "Daganzo de Arriba",
+          "Camarma de Esteruelas"
+        ],
+        "ratio_to_reference": 0.7449707816816458
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28054",
+      "code": "28054",
+      "name": "El Escorial",
+      "status": "CUBIERTO",
+      "value": 21.69,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9484,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28054",
+          "28131"
+        ],
+        "names": [
+          "El Escorial",
+          "San Lorenzo de El Escorial"
+        ],
+        "ratio_to_reference": 1.2107337556722306
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28055",
+      "code": "28055",
+      "name": "Estremera",
+      "status": "CUBIERTO",
+      "value": 46.88,
+      "reference": 27.8,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.686,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28056",
+      "code": "28056",
+      "name": "Fresnedillas de la Oliva",
+      "status": "CUBIERTO",
+      "value": 26.09,
+      "reference": 28.0,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9317,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28056",
+          "28125",
+          "28095",
+          "28183",
+          "28042",
+          "28159",
+          "28099"
+        ],
+        "names": [
+          "Fresnedillas de la Oliva",
+          "Robledo de Chavela",
+          "Navalagamella",
+          "Zarzalejo",
+          "Colmenar del Arroyo",
+          "Valdemaqueda",
+          "Navas del Rey"
+        ],
+        "ratio_to_reference": 1.0303871249197505
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28057",
+      "code": "28057",
+      "name": "Fresno de Torote",
+      "status": "JUSTO",
+      "value": 24.92,
+      "reference": 28.04,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8887,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28058",
+      "code": "28058",
+      "name": "Fuenlabrada",
+      "status": "CUBIERTO",
+      "value": 25.89,
+      "reference": 22.78,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.136,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28059",
+      "code": "28059",
+      "name": "Fuente el Saz de Jarama",
+      "status": "JUSTO",
+      "value": 18.03,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7883,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28059",
+          "28009"
+        ],
+        "names": [
+          "Fuente el Saz de Jarama",
+          "Algete"
+        ],
+        "ratio_to_reference": 0.8642803586817209
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28060",
+      "code": "28060",
+      "name": "Fuentidueña de Tajo",
+      "status": "JUSTO",
+      "value": 27.65,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9883,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28061",
+      "code": "28061",
+      "name": "Galapagar",
+      "status": "JUSTO",
+      "value": 17.0,
+      "reference": 22.9,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7423,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28062",
+      "code": "28062",
+      "name": "Garganta de los Montes",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.03,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28063",
+      "code": "28063",
+      "name": "Gargantilla del Lozoya y Pinilla de Buitrago",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.01,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28064",
+      "code": "28064",
+      "name": "Gascones",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.02,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28065",
+      "code": "28065",
+      "name": "Getafe",
+      "status": "CUBIERTO",
+      "value": 24.0,
+      "reference": 22.83,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.051,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28066",
+      "code": "28066",
+      "name": "Griñón",
+      "status": "JUSTO",
+      "value": 23.89,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.045,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28066",
+          "28050"
+        ],
+        "names": [
+          "Griñón",
+          "Cubas de la Sagra"
+        ],
+        "ratio_to_reference": 0.942981025277511
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28067",
+      "code": "28067",
+      "name": "Guadalix de la Sierra",
+      "status": "JUSTO",
+      "value": 18.6,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8133,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28067",
+          "28108",
+          "28094",
+          "28169"
+        ],
+        "names": [
+          "Guadalix de la Sierra",
+          "Pedrezuela",
+          "Navalafuente",
+          "Venturada"
+        ],
+        "ratio_to_reference": 0.7933976361414369
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28068",
+      "code": "28068",
+      "name": "Guadarrama",
+      "status": "CUBIERTO",
+      "value": 30.97,
+      "reference": 22.84,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.356,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28068",
+          "28087"
+        ],
+        "names": [
+          "Guadarrama",
+          "Los Molinos"
+        ],
+        "ratio_to_reference": 1.2639742570987393
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28069",
+      "code": "28069",
+      "name": "La Hiruela",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28070",
+      "code": "28070",
+      "name": "Horcajo de la Sierra-Aoslos",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.01,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28071",
+      "code": "28071",
+      "name": "Horcajuelo de la Sierra",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.99,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28072",
+      "code": "28072",
+      "name": "Hoyo de Manzanares",
+      "status": "JUSTO",
+      "value": 15.27,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6675,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28072",
+          "28090"
+        ],
+        "names": [
+          "Hoyo de Manzanares",
+          "Moralzarzal"
+        ],
+        "ratio_to_reference": 0.8978166625282411
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28073",
+      "code": "28073",
+      "name": "Humanes de Madrid",
+      "status": "CUBIERTO",
+      "value": 25.11,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.099,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28074",
+      "code": "28074",
+      "name": "Leganés",
+      "status": "CUBIERTO",
+      "value": 24.07,
+      "reference": 22.83,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.054,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28075",
+      "code": "28075",
+      "name": "Loeches",
+      "status": "JUSTO",
+      "value": 21.51,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9406,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28075",
+          "28084"
+        ],
+        "names": [
+          "Loeches",
+          "Mejorada del Campo"
+        ],
+        "ratio_to_reference": 0.981494788267343
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28076",
+      "code": "28076",
+      "name": "Lozoya",
+      "status": "CUBIERTO",
+      "value": 121.2,
+      "reference": 27.76,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 4.366,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28078",
+      "code": "28078",
+      "name": "Madarcos",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28079",
+      "code": "28079",
+      "name": "Madrid",
+      "status": "CUBIERTO",
+      "value": 23.06,
+      "reference": 22.72,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.015,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28080",
+      "code": "28080",
+      "name": "Majadahonda",
+      "status": "JUSTO",
+      "value": 18.21,
+      "reference": 22.92,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7944,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28082",
+      "code": "28082",
+      "name": "Manzanares el Real",
+      "status": "JUSTO",
+      "value": 20.61,
+      "reference": 28.59,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7209,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28083",
+      "code": "28083",
+      "name": "Meco",
+      "status": "JUSTO",
+      "value": 21.93,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9589,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28083",
+          "28032"
+        ],
+        "names": [
+          "Meco",
+          "Camarma de Esteruelas"
+        ],
+        "ratio_to_reference": 0.8879374071015936
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28084",
+      "code": "28084",
+      "name": "Mejorada del Campo",
+      "status": "JUSTO",
+      "value": 22.84,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9988,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28085",
+      "code": "28085",
+      "name": "Miraflores de la Sierra",
+      "status": "CUBIERTO",
+      "value": 22.88,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.001,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28085",
+          "28144",
+          "28067"
+        ],
+        "names": [
+          "Miraflores de la Sierra",
+          "Soto del Real",
+          "Guadalix de la Sierra"
+        ],
+        "ratio_to_reference": 1.0894913852342354
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28086",
+      "code": "28086",
+      "name": "El Molar",
+      "status": "JUSTO",
+      "value": 21.44,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9375,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28086",
+          "28129"
+        ],
+        "names": [
+          "El Molar",
+          "San Agustín del Guadalix"
+        ],
+        "ratio_to_reference": 0.8359001954930264
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28087",
+      "code": "28087",
+      "name": "Los Molinos",
+      "status": "CUBIERTO",
+      "value": 18.67,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8164,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28087",
+          "28038",
+          "28068"
+        ],
+        "names": [
+          "Los Molinos",
+          "Cercedilla",
+          "Guadarrama"
+        ],
+        "ratio_to_reference": 1.1939447180632443
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28088",
+      "code": "28088",
+      "name": "Montejo de la Sierra",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.03,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28089",
+      "code": "28089",
+      "name": "Moraleja de Enmedio",
+      "status": "JUSTO",
+      "value": 17.21,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7524,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28089",
+          "28015"
+        ],
+        "names": [
+          "Moraleja de Enmedio",
+          "Arroyomolinos"
+        ],
+        "ratio_to_reference": 0.9461585742599511
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28090",
+      "code": "28090",
+      "name": "Moralzarzal",
+      "status": "JUSTO",
+      "value": 23.45,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.026,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28090",
+          "28072"
+        ],
+        "names": [
+          "Moralzarzal",
+          "Hoyo de Manzanares"
+        ],
+        "ratio_to_reference": 0.8978166625282411
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28091",
+      "code": "28091",
+      "name": "Morata de Tajuña",
+      "status": "CUBIERTO",
+      "value": 22.43,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9809,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28091",
+          "28014"
+        ],
+        "names": [
+          "Morata de Tajuña",
+          "Arganda del Rey"
+        ],
+        "ratio_to_reference": 1.0570944547774057
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28092",
+      "code": "28092",
+      "name": "Móstoles",
+      "status": "CUBIERTO",
+      "value": 24.17,
+      "reference": 22.83,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.059,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28093",
+      "code": "28093",
+      "name": "Navacerrada",
+      "status": "JUSTO",
+      "value": 41.24,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.804,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28093",
+          "28018",
+          "28038",
+          "28046"
+        ],
+        "names": [
+          "Navacerrada",
+          "Becerril de la Sierra",
+          "Cercedilla",
+          "Collado Mediano"
+        ],
+        "ratio_to_reference": 0.9501330216513456
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28094",
+      "code": "28094",
+      "name": "Navalafuente",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28094",
+          "28169",
+          "28067",
+          "28030",
+          "28085"
+        ],
+        "names": [
+          "Navalafuente",
+          "Venturada",
+          "Guadalix de la Sierra",
+          "La Cabrera",
+          "Miraflores de la Sierra"
+        ],
+        "ratio_to_reference": 0.8420632449399188
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28095",
+      "code": "28095",
+      "name": "Navalagamella",
+      "status": "CUBIERTO",
+      "value": 16.9,
+      "reference": 28.25,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5982,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28095",
+          "28056",
+          "28178",
+          "28042",
+          "28175",
+          "28125",
+          "28183"
+        ],
+        "names": [
+          "Navalagamella",
+          "Fresnedillas de la Oliva",
+          "Villanueva de Perales",
+          "Colmenar del Arroyo",
+          "Villamantilla",
+          "Robledo de Chavela",
+          "Zarzalejo"
+        ],
+        "ratio_to_reference": 1.0545172605310285
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28096",
+      "code": "28096",
+      "name": "Navalcarnero",
+      "status": "CUBIERTO",
+      "value": 23.68,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.036,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28097",
+      "code": "28097",
+      "name": "Navarredonda y San Mamés",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.99,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28099",
+      "code": "28099",
+      "name": "Navas del Rey",
+      "status": "CUBIERTO",
+      "value": 32.16,
+      "reference": 27.87,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.154,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28099",
+          "28042",
+          "28008",
+          "28175",
+          "28133"
+        ],
+        "names": [
+          "Navas del Rey",
+          "Colmenar del Arroyo",
+          "Aldea del Fresno",
+          "Villamantilla",
+          "San Martín de Valdeiglesias"
+        ],
+        "ratio_to_reference": 1.0262759774899555
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28100",
+      "code": "28100",
+      "name": "Nuevo Baztán",
+      "status": "CUBIERTO",
+      "value": 31.13,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.362,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28100",
+          "28172"
+        ],
+        "names": [
+          "Nuevo Baztán",
+          "Villalbilla"
+        ],
+        "ratio_to_reference": 1.0404463072660306
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28101",
+      "code": "28101",
+      "name": "Olmeda de las Fuentes",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.08,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28101",
+          "28011",
+          "28111",
+          "28179",
+          "28048",
+          "28166",
+          "28102",
+          "28116",
+          "28165",
+          "28136",
+          "28035",
+          "28012"
+        ],
+        "names": [
+          "Olmeda de las Fuentes",
+          "Ambite",
+          "Pezuela de las Torres",
+          "Villar del Olmo",
+          "Corpa",
+          "Valverde de Alcalá",
+          "Orusco de Tajuña",
+          "Pozuelo del Rey",
+          "Valdilecha",
+          "Santorcaz",
+          "Carabaña",
+          "Anchuelo"
+        ],
+        "ratio_to_reference": 0.9276330185254505
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28102",
+      "code": "28102",
+      "name": "Orusco de Tajuña",
+      "status": "JUSTO",
+      "value": 92.2,
+      "reference": 27.34,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 3.372,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28102",
+          "28035",
+          "28179",
+          "28011",
+          "28025",
+          "28165",
+          "28101",
+          "28155",
+          "28116",
+          "28111",
+          "28110"
+        ],
+        "names": [
+          "Orusco de Tajuña",
+          "Carabaña",
+          "Villar del Olmo",
+          "Ambite",
+          "Brea de Tajo",
+          "Valdilecha",
+          "Olmeda de las Fuentes",
+          "Valdaracete",
+          "Pozuelo del Rey",
+          "Pezuela de las Torres",
+          "Perales de Tajuña"
+        ],
+        "ratio_to_reference": 0.9852151731564405
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28104",
+      "code": "28104",
+      "name": "Paracuellos de Jarama",
+      "status": "JUSTO",
+      "value": 21.31,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9315,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28106",
+      "code": "28106",
+      "name": "Parla",
+      "status": "JUSTO",
+      "value": 22.68,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9916,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28107",
+      "code": "28107",
+      "name": "Patones",
+      "status": "CUBIERTO",
+      "value": 160.0,
+      "reference": 27.51,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 5.815,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28108",
+      "code": "28108",
+      "name": "Pedrezuela",
+      "status": "JUSTO",
+      "value": 21.49,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9397,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28108",
+          "28067",
+          "28169",
+          "28129"
+        ],
+        "names": [
+          "Pedrezuela",
+          "Guadalix de la Sierra",
+          "Venturada",
+          "San Agustín del Guadalix"
+        ],
+        "ratio_to_reference": 0.830585617638258
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28109",
+      "code": "28109",
+      "name": "Pelayos de la Presa",
+      "status": "JUSTO",
+      "value": 22.51,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9844,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28110",
+      "code": "28110",
+      "name": "Perales de Tajuña",
+      "status": "JUSTO",
+      "value": 24.39,
+      "reference": 28.06,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8693,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28110",
+          "28157",
+          "28165",
+          "28019",
+          "28035",
+          "28052"
+        ],
+        "names": [
+          "Perales de Tajuña",
+          "Valdelaguna",
+          "Valdilecha",
+          "Belmonte de Tajo",
+          "Carabaña",
+          "Chinchón"
+        ],
+        "ratio_to_reference": 0.8568648728175784
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28111",
+      "code": "28111",
+      "name": "Pezuela de las Torres",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.18,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28112",
+      "code": "28112",
+      "name": "Pinilla del Valle",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.99,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28113",
+      "code": "28113",
+      "name": "Pinto",
+      "status": "JUSTO",
+      "value": 22.1,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9662,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28114",
+      "code": "28114",
+      "name": "Piñuécar-Gandullas",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.0,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28115",
+      "code": "28115",
+      "name": "Pozuelo de Alarcón",
+      "status": "JUSTO",
+      "value": 15.52,
+      "reference": 22.98,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.6755,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28116",
+      "code": "28116",
+      "name": "Pozuelo del Rey",
+      "status": "JUSTO",
+      "value": 0.156,
+      "reference": 28.34,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.005504,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28116",
+          "28166",
+          "28179",
+          "28165",
+          "28048",
+          "28101",
+          "28012",
+          "28011",
+          "28111",
+          "28102",
+          "28035"
+        ],
+        "names": [
+          "Pozuelo del Rey",
+          "Valverde de Alcalá",
+          "Villar del Olmo",
+          "Valdilecha",
+          "Corpa",
+          "Olmeda de las Fuentes",
+          "Anchuelo",
+          "Ambite",
+          "Pezuela de las Torres",
+          "Orusco de Tajuña",
+          "Carabaña"
+        ],
+        "ratio_to_reference": 0.7319310716408075
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28117",
+      "code": "28117",
+      "name": "Prádena del Rincón",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.99,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28118",
+      "code": "28118",
+      "name": "Puebla de la Sierra",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28119",
+      "code": "28119",
+      "name": "Quijorna",
+      "status": "CUBIERTO",
+      "value": 12.99,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5679,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28119",
+          "28026",
+          "28176"
+        ],
+        "names": [
+          "Quijorna",
+          "Brunete",
+          "Villanueva de la Cañada"
+        ],
+        "ratio_to_reference": 1.0389942373248067
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28120",
+      "code": "28120",
+      "name": "Rascafría",
+      "status": "CUBIERTO",
+      "value": 55.05,
+      "reference": 27.77,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.983,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28121",
+      "code": "28121",
+      "name": "Redueña",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.01,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28122",
+      "code": "28122",
+      "name": "Ribatejada",
+      "status": "CUBIERTO",
+      "value": 44.12,
+      "reference": 27.9,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.582,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28123",
+      "code": "28123",
+      "name": "Rivas-Vaciamadrid",
+      "status": "JUSTO",
+      "value": 20.83,
+      "reference": 22.91,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9093,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28124",
+      "code": "28124",
+      "name": "Robledillo de la Jara",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28125",
+      "code": "28125",
+      "name": "Robledo de Chavela",
+      "status": "JUSTO",
+      "value": 19.85,
+      "reference": 28.21,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7038,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28125",
+          "28159",
+          "28056",
+          "28183",
+          "28042",
+          "28135",
+          "28095",
+          "28099"
+        ],
+        "names": [
+          "Robledo de Chavela",
+          "Valdemaqueda",
+          "Fresnedillas de la Oliva",
+          "Zarzalejo",
+          "Colmenar del Arroyo",
+          "Santa María de la Alameda",
+          "Navalagamella",
+          "Navas del Rey"
+        ],
+        "ratio_to_reference": 0.9425241641583915
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28126",
+      "code": "28126",
+      "name": "Robregordo",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28127",
+      "code": "28127",
+      "name": "Las Rozas de Madrid",
+      "status": "JUSTO",
+      "value": 18.43,
+      "reference": 22.95,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8032,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28128",
+      "code": "28128",
+      "name": "Rozas de Puerto Real",
+      "status": "CUBIERTO",
+      "value": 100.0,
+      "reference": 27.82,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 3.594,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28129",
+      "code": "28129",
+      "name": "San Agustín del Guadalix",
+      "status": "JUSTO",
+      "value": 17.64,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.771,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28129",
+          "28086"
+        ],
+        "names": [
+          "San Agustín del Guadalix",
+          "El Molar"
+        ],
+        "ratio_to_reference": 0.8359001954930264
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28130",
+      "code": "28130",
+      "name": "San Fernando de Henares",
+      "status": "JUSTO",
+      "value": 22.85,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9993,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28131",
+      "code": "28131",
+      "name": "San Lorenzo de El Escorial",
+      "status": "CUBIERTO",
+      "value": 32.88,
+      "reference": 22.84,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.44,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28131",
+          "28054"
+        ],
+        "names": [
+          "San Lorenzo de El Escorial",
+          "El Escorial"
+        ],
+        "ratio_to_reference": 1.2107337556722306
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28132",
+      "code": "28132",
+      "name": "San Martín de la Vega",
+      "status": "JUSTO",
+      "value": 21.0,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9181,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28133",
+      "code": "28133",
+      "name": "San Martín de Valdeiglesias",
+      "status": "CUBIERTO",
+      "value": 28.07,
+      "reference": 27.97,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.004,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28133",
+          "28031",
+          "28128",
+          "28099",
+          "28042"
+        ],
+        "names": [
+          "San Martín de Valdeiglesias",
+          "Cadalso de los Vidrios",
+          "Rozas de Puerto Real",
+          "Navas del Rey",
+          "Colmenar del Arroyo"
+        ],
+        "ratio_to_reference": 1.1057353734325976
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28134",
+      "code": "28134",
+      "name": "San Sebastián de los Reyes",
+      "status": "JUSTO",
+      "value": 19.77,
+      "reference": 22.92,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8625,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28135",
+      "code": "28135",
+      "name": "Santa María de la Alameda",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.26,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28136",
+      "code": "28136",
+      "name": "Santorcaz",
+      "status": "CUBIERTO",
+      "value": 131.0,
+      "reference": 27.37,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 4.786,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28137",
+      "code": "28137",
+      "name": "Los Santos de la Humosa",
+      "status": "JUSTO",
+      "value": 22.96,
+      "reference": 28.11,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8167,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28138",
+      "code": "28138",
+      "name": "La Serna del Monte",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28140",
+      "code": "28140",
+      "name": "Serranillos del Valle",
+      "status": "JUSTO",
+      "value": 21.3,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9314,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28140",
+          "28066",
+          "28050"
+        ],
+        "names": [
+          "Serranillos del Valle",
+          "Griñón",
+          "Cubas de la Sagra"
+        ],
+        "ratio_to_reference": 0.9405951808941705
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28141",
+      "code": "28141",
+      "name": "Sevilla la Nueva",
+      "status": "CUBIERTO",
+      "value": 25.97,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.136,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28141",
+          "28026"
+        ],
+        "names": [
+          "Sevilla la Nueva",
+          "Brunete"
+        ],
+        "ratio_to_reference": 1.087242245963513
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28143",
+      "code": "28143",
+      "name": "Somosierra",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 27.98,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28144",
+      "code": "28144",
+      "name": "Soto del Real",
+      "status": "CUBIERTO",
+      "value": 31.28,
+      "reference": 22.85,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.369,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28144",
+          "28085",
+          "28067"
+        ],
+        "names": [
+          "Soto del Real",
+          "Miraflores de la Sierra",
+          "Guadalix de la Sierra"
+        ],
+        "ratio_to_reference": 1.0894913852342354
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28145",
+      "code": "28145",
+      "name": "Talamanca de Jarama",
+      "status": "CUBIERTO",
+      "value": 28.32,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.239,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28145",
+          "28164",
+          "28086"
+        ],
+        "names": [
+          "Talamanca de Jarama",
+          "Valdetorres de Jarama",
+          "El Molar"
+        ],
+        "ratio_to_reference": 1.0182545430820729
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28146",
+      "code": "28146",
+      "name": "Tielmes",
+      "status": "CUBIERTO",
+      "value": 27.69,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.211,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28147",
+      "code": "28147",
+      "name": "Titulcia",
+      "status": "JUSTO",
+      "value": 46.01,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 2.013,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28147",
+          "28040"
+        ],
+        "names": [
+          "Titulcia",
+          "Ciempozuelos"
+        ],
+        "ratio_to_reference": 0.9962945551996123
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28148",
+      "code": "28148",
+      "name": "Torrejón de Ardoz",
+      "status": "CUBIERTO",
+      "value": 24.25,
+      "reference": 22.83,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.062,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28149",
+      "code": "28149",
+      "name": "Torrejón de la Calzada",
+      "status": "CUBIERTO",
+      "value": 26.3,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.151,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28149",
+          "28050"
+        ],
+        "names": [
+          "Torrejón de la Calzada",
+          "Cubas de la Sagra"
+        ],
+        "ratio_to_reference": 1.0134170845375647
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28150",
+      "code": "28150",
+      "name": "Torrejón de Velasco",
+      "status": "CUBIERTO",
+      "value": 40.28,
+      "reference": 27.47,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.466,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28151",
+      "code": "28151",
+      "name": "Torrelaguna",
+      "status": "JUSTO",
+      "value": 28.41,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.243,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28151",
+          "28169",
+          "28030",
+          "28145",
+          "28094",
+          "28108"
+        ],
+        "names": [
+          "Torrelaguna",
+          "Venturada",
+          "La Cabrera",
+          "Talamanca de Jarama",
+          "Navalafuente",
+          "Pedrezuela"
+        ],
+        "ratio_to_reference": 0.995783131681105
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28152",
+      "code": "28152",
+      "name": "Torrelodones",
+      "status": "CUBIERTO",
+      "value": 22.99,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.005,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28153",
+      "code": "28153",
+      "name": "Torremocha de Jarama",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.18,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28154",
+      "code": "28154",
+      "name": "Torres de la Alameda",
+      "status": "JUSTO",
+      "value": 23.0,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.006,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28154",
+          "28172"
+        ],
+        "names": [
+          "Torres de la Alameda",
+          "Villalbilla"
+        ],
+        "ratio_to_reference": 0.9593971241813032
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28155",
+      "code": "28155",
+      "name": "Valdaracete",
+      "status": "CUBIERTO",
+      "value": 215.7,
+      "reference": 27.31,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 7.899,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28155",
+          "28035",
+          "28180",
+          "28025",
+          "28102",
+          "28055",
+          "28060",
+          "28019"
+        ],
+        "names": [
+          "Valdaracete",
+          "Carabaña",
+          "Villarejo de Salvanés",
+          "Brea de Tajo",
+          "Orusco de Tajuña",
+          "Estremera",
+          "Fuentidueña de Tajo",
+          "Belmonte de Tajo"
+        ],
+        "ratio_to_reference": 1.4341818195644416
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28156",
+      "code": "28156",
+      "name": "Valdeavero",
+      "status": "JUSTO",
+      "value": 22.32,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9761,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28156",
+          "28032",
+          "28083"
+        ],
+        "names": [
+          "Valdeavero",
+          "Camarma de Esteruelas",
+          "Meco"
+        ],
+        "ratio_to_reference": 0.8944182992888634
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28157",
+      "code": "28157",
+      "name": "Valdelaguna",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.15,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28157",
+          "28019",
+          "28110",
+          "28052",
+          "28180"
+        ],
+        "names": [
+          "Valdelaguna",
+          "Belmonte de Tajo",
+          "Perales de Tajuña",
+          "Chinchón",
+          "Villarejo de Salvanés"
+        ],
+        "ratio_to_reference": 0.8269359466288889
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28158",
+      "code": "28158",
+      "name": "Valdemanco",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.18,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28159",
+      "code": "28159",
+      "name": "Valdemaqueda",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.11,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28160",
+      "code": "28160",
+      "name": "Valdemorillo",
+      "status": "JUSTO",
+      "value": 11.71,
+      "reference": 22.89,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.5115,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28160",
+          "28044"
+        ],
+        "names": [
+          "Valdemorillo",
+          "Colmenarejo"
+        ],
+        "ratio_to_reference": 0.8115365099590595
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28161",
+      "code": "28161",
+      "name": "Valdemoro",
+      "status": "JUSTO",
+      "value": 22.21,
+      "reference": 22.88,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9708,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28162",
+      "code": "28162",
+      "name": "Valdeolmos-Alalpardo",
+      "status": "CUBIERTO",
+      "value": 52.8,
+      "reference": 22.84,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 2.312,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28162",
+          "28009"
+        ],
+        "names": [
+          "Valdeolmos-Alalpardo",
+          "Algete"
+        ],
+        "ratio_to_reference": 1.1854314958897427
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28163",
+      "code": "28163",
+      "name": "Valdepiélagos",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.08,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28164",
+      "code": "28164",
+      "name": "Valdetorres de Jarama",
+      "status": "CUBIERTO",
+      "value": 21.78,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9524,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28164",
+          "28145",
+          "28086"
+        ],
+        "names": [
+          "Valdetorres de Jarama",
+          "Talamanca de Jarama",
+          "El Molar"
+        ],
+        "ratio_to_reference": 1.0182545430820729
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28165",
+      "code": "28165",
+      "name": "Valdilecha",
+      "status": "JUSTO",
+      "value": 32.7,
+      "reference": 27.85,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.174,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28165",
+          "28179",
+          "28035",
+          "28116",
+          "28102",
+          "28110",
+          "28101",
+          "28011",
+          "28166"
+        ],
+        "names": [
+          "Valdilecha",
+          "Villar del Olmo",
+          "Carabaña",
+          "Pozuelo del Rey",
+          "Orusco de Tajuña",
+          "Perales de Tajuña",
+          "Olmeda de las Fuentes",
+          "Ambite",
+          "Valverde de Alcalá"
+        ],
+        "ratio_to_reference": 0.820168264658846
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28166",
+      "code": "28166",
+      "name": "Valverde de Alcalá",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.06,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28166",
+          "28116",
+          "28048",
+          "28012",
+          "28101",
+          "28179",
+          "28136",
+          "28111",
+          "28165",
+          "28011",
+          "28137"
+        ],
+        "names": [
+          "Valverde de Alcalá",
+          "Pozuelo del Rey",
+          "Corpa",
+          "Anchuelo",
+          "Olmeda de las Fuentes",
+          "Villar del Olmo",
+          "Santorcaz",
+          "Pezuela de las Torres",
+          "Valdilecha",
+          "Ambite",
+          "Los Santos de la Humosa"
+        ],
+        "ratio_to_reference": 0.7078388982523289
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28167",
+      "code": "28167",
+      "name": "Velilla de San Antonio",
+      "status": "JUSTO",
+      "value": 21.12,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9235,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28167",
+          "28084"
+        ],
+        "names": [
+          "Velilla de San Antonio",
+          "Mejorada del Campo"
+        ],
+        "ratio_to_reference": 0.9711858189267987
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28168",
+      "code": "28168",
+      "name": "El Vellón",
+      "status": "JUSTO",
+      "value": 25.1,
+      "reference": 28.02,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.8958,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28169",
+      "code": "28169",
+      "name": "Venturada",
+      "status": "JUSTO",
+      "value": 20.83,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9109,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28169",
+          "28094",
+          "28108",
+          "28067"
+        ],
+        "names": [
+          "Venturada",
+          "Navalafuente",
+          "Pedrezuela",
+          "Guadalix de la Sierra"
+        ],
+        "ratio_to_reference": 0.7933976361414369
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28170",
+      "code": "28170",
+      "name": "Villaconejos",
+      "status": "CUBIERTO",
+      "value": 32.17,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.407,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28170",
+          "28147",
+          "28040"
+        ],
+        "names": [
+          "Villaconejos",
+          "Titulcia",
+          "Ciempozuelos"
+        ],
+        "ratio_to_reference": 1.0433695587115317
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28171",
+      "code": "28171",
+      "name": "Villa del Prado",
+      "status": "CUBIERTO",
+      "value": 24.15,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.056,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28172",
+      "code": "28172",
+      "name": "Villalbilla",
+      "status": "JUSTO",
+      "value": 21.6,
+      "reference": 22.87,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9444,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28173",
+      "code": "28173",
+      "name": "Villamanrique de Tajo",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.1,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28174",
+      "code": "28174",
+      "name": "Villamanta",
+      "status": "JUSTO",
+      "value": 20.13,
+      "reference": 28.14,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7154,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28175",
+      "code": "28175",
+      "name": "Villamantilla",
+      "status": "JUSTO",
+      "value": 26.67,
+      "reference": 27.99,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9527,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28175",
+          "28178",
+          "28174",
+          "28008",
+          "28042",
+          "28099",
+          "28095"
+        ],
+        "names": [
+          "Villamantilla",
+          "Villanueva de Perales",
+          "Villamanta",
+          "Aldea del Fresno",
+          "Colmenar del Arroyo",
+          "Navas del Rey",
+          "Navalagamella"
+        ],
+        "ratio_to_reference": 0.9110040629715744
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28176",
+      "code": "28176",
+      "name": "Villanueva de la Cañada",
+      "status": "CUBIERTO",
+      "value": 25.46,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.114,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28177",
+      "code": "28177",
+      "name": "Villanueva del Pardillo",
+      "status": "CUBIERTO",
+      "value": 26.59,
+      "reference": 22.85,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.163,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28178",
+      "code": "28178",
+      "name": "Villanueva de Perales",
+      "status": "JUSTO",
+      "value": 31.91,
+      "reference": 27.92,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 1.143,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28178",
+          "28175",
+          "28095",
+          "28174",
+          "28042",
+          "28008",
+          "28056"
+        ],
+        "names": [
+          "Villanueva de Perales",
+          "Villamantilla",
+          "Navalagamella",
+          "Villamanta",
+          "Colmenar del Arroyo",
+          "Aldea del Fresno",
+          "Fresnedillas de la Oliva"
+        ],
+        "ratio_to_reference": 0.8665980201958008
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28179",
+      "code": "28179",
+      "name": "Villar del Olmo",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.45,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28180",
+      "code": "28180",
+      "name": "Villarejo de Salvanés",
+      "status": "CUBIERTO",
+      "value": 26.56,
+      "reference": 28.06,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.9465,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": {
+        "codes": [
+          "28180",
+          "28173",
+          "28019",
+          "28060",
+          "28155",
+          "28157",
+          "28055",
+          "28110"
+        ],
+        "names": [
+          "Villarejo de Salvanés",
+          "Villamanrique de Tajo",
+          "Belmonte de Tajo",
+          "Fuentidueña de Tajo",
+          "Valdaracete",
+          "Valdelaguna",
+          "Estremera",
+          "Perales de Tajuña"
+        ],
+        "ratio_to_reference": 1.121355440361253
+      }
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28181",
+      "code": "28181",
+      "name": "Villaviciosa de Odón",
+      "status": "JUSTO",
+      "value": 16.74,
+      "reference": 22.89,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 0.7312,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28182",
+      "code": "28182",
+      "name": "Villavieja del Lozoya",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.03,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28183",
+      "code": "28183",
+      "name": "Zarzalejo",
+      "status": "CUBIERTO",
+      "value": 70.42,
+      "reference": 27.34,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 2.576,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28901",
+      "code": "28901",
+      "name": "Lozoyuela-Navas-Sieteiglesias",
+      "status": "CUBIERTO",
+      "value": 90.91,
+      "reference": 27.3,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 3.331,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28902",
+      "code": "28902",
+      "name": "Puentes Viejas",
+      "status": "JUSTO",
+      "value": 0.0,
+      "reference": 28.11,
+      "reference_label": "Otros municipios rurales de la Comunidad de Madrid",
+      "ratio_to_reference": 0.0,
+      "confidence": 0.5,
+      "null_reason": null,
+      "reliable": false,
+      "comparison_group": null
+    },
+    {
+      "admin_unit_id": "ES.28.MUN.28903",
+      "code": "28903",
+      "name": "Tres Cantos",
+      "status": "CUBIERTO",
+      "value": 23.04,
+      "reference": 22.86,
+      "reference_label": "Otros municipios urbanos de la Comunidad de Madrid",
+      "ratio_to_reference": 1.008,
+      "confidence": 0.8,
+      "null_reason": null,
+      "reliable": true,
+      "comparison_group": null
+    }
+  ],
+  "datasets": [
+    {
+      "dataset_id": "cm_centros_educativos",
+      "name": "Centros educativos de la comunidad de Madrid",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/centros_educativos",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-21-27483ff8498b",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es."
+    },
+    {
+      "dataset_id": "cm_poblacion_edad_nacionalidad_sexo",
+      "name": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-de171e22295d",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_secciones_censales",
+      "name": "Secciones censales",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/secciones_censales",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-10-20-37703ffcdfd0",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_unidades_escolares",
+      "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "osm_red_peatonal",
+      "name": "Red peatonal de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-11-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
+    }
+  ]
+}

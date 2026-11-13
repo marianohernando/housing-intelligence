@@ -1,0 +1,14 @@
+{
+  "fase": "MAP-004 F5c",
+  "como": "Playwright contra web 3011 y API 8011 (build de produccion); fotogramas a 3,6 s (isla) y 9,8 s (final) desde la carga del DOM",
+  "rutas": [
+    {"viewport": "desktop", "zona": "Chamartin (2807905)", "etiquetas_final": 4, "errores_consola": 0, "acercamiento": "isla -> zoom 14"},
+    {"viewport": "desktop", "zona": "Centro (2807901)", "etiquetas_final": 4, "errores_consola": 0, "acercamiento": "isla -> zoom 14"},
+    {"viewport": "desktop", "zona": "Fuencarral-El Pardo (2807908)", "etiquetas_final": 2, "errores_consola": 0, "acercamiento": "no (31 km de diagonal): se queda en la isla"},
+    {"viewport": "mobile", "zona": "Chamartin (2807905)", "etiquetas_final": 3, "errores_consola": 0, "acercamiento": "isla -> zoom 14 (antes en movil se quedaba en 2D)"},
+    {"viewport": "mobile", "zona": "Centro (2807901)", "etiquetas_final": 3, "errores_consola": 0, "acercamiento": "isla -> zoom 14"},
+    {"viewport": "mobile", "zona": "Fuencarral-El Pardo (2807908)", "etiquetas_final": 2, "errores_consola": 0, "acercamiento": "no"}
+  ],
+  "barrio": {"accion": "Tab hasta el chip Hispanoamerica + Intro", "aria_pressed": "true", "etiquetas": 3, "errores_consola": 0},
+  "reduced_motion": {"a_los_2_5_s": "camara ya en el final, sin vuelo", "etiquetas": 4, "errores_consola": 0}
+}

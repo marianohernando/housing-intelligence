@@ -1,0 +1,186 @@
+<!doctype html>
+<!--
+  Plantilla de las 4 slides de DATAMAD 2026 (bases §8). No se abre directamente: build.py la rellena
+  ({{…}}) y escribe pitch/deck/build/index.html y el PDF. Contenido: pitch/slides.md.
+  Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero en evidence/, relativa a
+  esta plantilla. build.py la vuelve a resolver al construir: gana pitch/capturas/Cn.png si existe
+  (no se versiona) y, si no, la de EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Vida Fácil · DATAMAD 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="../deck.css">
+</head>
+<body>
+
+<!-- 1 · Título, integrantes y descripción breve -->
+<section class="slide s1">
+  <div class="grid">
+    <div>
+      <p class="kicker">DATAMAD 2026 · Datos abiertos</p>
+      <h1 class="name">Vida Fácil</h1>
+      <p class="lema">Encuentra tu sitio en Madrid</p>
+      <p class="desc">El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.</p>
+      <p class="team">Equipo<strong{{INTEGRANTES_PENDING}}>{{INTEGRANTES}}</strong></p>
+    </div>
+    <div class="glass visual">
+      <figure class="shot" data-shot="C5">
+        <img src="../../evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png" alt="Chamartín en 3D con su contorno violeta, etiquetas de estación, metro, centro de salud y colegio, y la tarjeta «Qué falta aquí»">
+        <figcaption class="ph">C5 · Zona en 3D (1440 px)</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="sources">Código abierto (Apache-2.0) · Datos abiertos de la Comunidad de Madrid</p>
+  <p class="pageno">1 / 4</p>
+</section>
+
+<!-- 2 · Problema y datasets con enlaces -->
+<section class="slide s2">
+  <p class="brand">Vida Fácil<span>.</span></p>
+  <h2 class="title">Nadie te dice qué le falta a cada zona</h2>
+  <div class="grid">
+    <div class="glass problem">
+      <div>
+        <p class="who">Personas</p>
+        <p class="what">El precio en una web, los colegios en otra y el transporte en otra. Nadie les dice qué zona va con su vida.</p>
+      </div>
+      <div>
+        <p class="who">Ayuntamientos</p>
+        <p class="what">Datos sueltos: ¿dónde falta una escuela infantil o un centro de salud frente al resto de la región?</p>
+      </div>
+      <div>
+        <p class="who">Empresas</p>
+        <p class="what">Abren por intuición, sin saber qué hace falta en la zona.</p>
+      </div>
+      <p class="punch">Otros te enseñan lo que hay. Nosotros, <span>lo que falta</span>.</p>
+    </div>
+    <div class="glass data">
+      <div class="headline">
+        <p class="big">{{CM_COUNT}}</p>
+        <p>conjuntos de datos del <a href="https://datos.comunidad.madrid">Portal de Datos Abiertos de la Comunidad de Madrid</a>, con su control de calidad superado</p>
+      </div>
+      <table>
+        {{DATASET_ROWS}}
+      </table>
+      <p class="complement">Apoyo (no CM): OpenStreetMap, Ayuntamiento de Madrid, Ministerio de Sanidad y Agencia Tributaria.</p>
+    </div>
+  </div>
+  <p class="sources">Lista completa con enlaces, licencias y control de calidad: <a href="https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md">github.com/marianohernando/housing-intelligence → pitch/datasets_cm.md</a></p>
+  <p class="pageno">2 / 4</p>
+</section>
+
+<!-- 3 · Resultados: utilidad, impacto y viabilidad -->
+<section class="slide s3">
+  <p class="brand">Vida Fácil<span>.</span></p>
+  <h2 class="title">Resultados</h2>
+  <div class="cols">
+    <div class="glass col">
+      <p class="kicker">Utilidad · personas</p>
+      <h3>Encuentra la zona que encaja contigo</h3>
+      <ul>
+        <li>% de encaje con hechos que se pueden comprobar, cada uno con su fiabilidad.</li>
+      </ul>
+      <blockquote class="quote pending" data-pending="cita 1 de la prueba con personas (Mariano)">
+        <p>«[Cita de una persona que busca casa]»</p>
+        <footer>[Quién es, sin nombre: por ejemplo, «madre de dos hijos que busca piso»]</footer>
+      </blockquote>
+      <div class="shots">
+        <figure class="shot" data-shot="C2">
+          <img src="../../evidence/map-004/2026-11-12/deck/deck_c2_tarjeta_zona_1440.png" alt="Tarjeta de Latina: 98 % de encaje, la 1.ª que más encaja">
+          <figcaption class="ph">C2 · Tarjeta de zona</figcaption>
+        </figure>
+        <figure class="shot" data-shot="C3">
+          <img src="../../evidence/map-004/2026-11-12/deck/deck_c3_y_si_cambias_1440.png" alt="«¿Y si cambias algo?»: con 5 minutos más a pie hasta el colegio saldrían 44 zonas, 17 más; con 150 € más al mes, 30 zonas, 3 más">
+          <figcaption class="ph">C3 · ¿Y si cambias algo?</figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="glass col">
+      <p class="kicker">Impacto · ayuntamientos</p>
+      <h3>Qué falta en cada zona</h3>
+      <div class="states">
+        <span class="state falta"><span class="icon" aria-hidden="true">!</span>FALTA</span>
+        <span class="state justo"><span class="icon" aria-hidden="true">–</span>JUSTO</span>
+        <span class="state cubierto"><span class="icon" aria-hidden="true">✓</span>CUBIERTO</span>
+        <span class="state sin-datos"><span class="icon" aria-hidden="true">?</span>SIN DATOS</span>
+      </div>
+      <p class="impact"><strong>25.551</strong> niños de 0 a 4 años viven donde faltan escuelas infantiles.</p>
+      <p class="example"><strong>Dónde invertir primero:</strong> Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde.</p>
+      <blockquote class="quote pending" data-pending="cita 2: técnico municipal (Mariano)">
+        <p>«[Cita del técnico municipal]»</p>
+        <footer>[Cargo y tipo de municipio, sin nombre]</footer>
+      </blockquote>
+    </div>
+    <div class="glass col">
+      <p class="kicker">Viabilidad</p>
+      <h3>Se sostiene</h3>
+      <ul>
+        <li>Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.</li>
+        <li>Solo zonas, nunca datos de personas.</li>
+        <li>0 € hoy; unos 45 $/mes para uso comercial.</li>
+        <li>Código abierto: cualquiera puede repetir los cálculos.</li>
+      </ul>
+      <div class="shots one">
+        <figure class="shot" data-shot="C7">
+          <img src="../../evidence/map-004/2026-11-11/prod_c7_como_lo_calculamos_desktop.png" alt="«Cómo lo calculamos»: cómo sale el % de encaje">
+          <figcaption class="ph">C7 · Cómo lo calculamos</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+  <div class="band">
+    <div class="glass link">
+      <div class="qr">{{QR_DEMO}}</div>
+      <div>
+        <p class="label">Pruébalo</p>
+        <p class="url"><a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
+      </div>
+    </div>
+    <div class="glass link">
+      <div class="qr">{{QR_REPO}}</div>
+      <div>
+        <p class="label">Código abierto</p>
+        <p class="url"><a href="{{REPO_URL}}">github.com/marianohernando/<wbr>housing-intelligence</a></p>
+      </div>
+    </div>
+  </div>
+  <p class="sources">Demo pública con datos reales (12 nov). Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid.</p>
+  <p class="pageno">3 / 4</p>
+</section>
+
+<!-- 4 · Pantallazo del sistema -->
+<section class="slide s4">
+  <p class="brand">Vida Fácil<span>.</span></p>
+  <h2 class="title">Así se ve Vida Fácil</h2>
+  <div class="stage">
+    <div class="glass desktop">
+      <figure class="shot" data-shot="C1">
+        <img src="../../evidence/map-004/2026-11-12/deck/deck_c1_busqueda_1440.png" alt="Mapa con la búsqueda de ejemplo, las zonas coloreadas según su encaje y la tarjeta de Latina, la que más encaja (98 %), a 39 minutos en transporte público de la Castellana">
+        <figcaption class="ph">C1 · Mapa con la búsqueda de ejemplo (1440 × 900)</figcaption>
+      </figure>
+    </div>
+    <span class="marker m1"><span class="num">1</span></span>
+    <span class="marker m2"><span class="num">2</span></span>
+    <span class="marker m3"><span class="num">3</span></span>
+    <div class="phone">
+      <figure class="shot" data-shot="C6">
+        <img src="../../evidence/map-004/2026-11-11/prod_c5_chamartin_3d_mobile.png" alt="Vida Fácil en el móvil: Chamartín en 3D, con la zona en una hoja inferior">
+        <figcaption class="ph">C6 · Móvil (390 × 844)</figcaption>
+      </figure>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span>Cuéntanos tu hogar, tu presupuesto y dónde trabajas</li>
+      <li><span class="num">2</span>Mira las zonas que encajan contigo y por qué</li>
+      <li><span class="num">3</span>Entra en una zona y mira qué le falta, con su fuente</li>
+    </ol>
+  </div>
+  <p class="live">Demo en vivo: <a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
+  <p class="pageno">4 / 4</p>
+</section>
+
+</body>
+</html>

@@ -1,7 +1,8 @@
 """Generate a Quality Gate evidence folder (docs/11_engineering/23_evidence_artifact_standard.md).
 
 Usage: uv run python scripts/evidence.py --gate 00 [--date YYYY-MM-DD]
-Every check runs a real command; its output is stored next to summary.md.
+Every check runs a real command; its output is stored next to summary.md, with local home and
+scratchpad paths replaced (scripts/redact_paths.py).
 """
 
 import argparse
@@ -13,6 +14,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
+
+from redact_paths import redact
 
 REPO = Path(__file__).resolve().parents[1]
 CURRENT_BRANCH = subprocess.run(
@@ -330,13 +333,43 @@ select count(distinct feature_id)
   join (select feature_id as fid, count(*) as n from feature_value group by 1) c
     on c.fid = v.feature_id
 """
-# Features with rows for the 21 districts of Madrid (D-200/D-209): 7 expected today.
+# Features with rows for the 21 districts of Madrid (D-200/D-209), as many as the catalog says.
 DISTRICT_COVERAGE_SQL = """
 select count(*) from (
   select feature_id from feature_value where territory_level = 'distrito'
    group by 1 having count(*) = 21
 ) d
 """
+# CORE-005: every walking feature covers every section, municipio and district plus the region.
+WALK_COVERAGE_SQL = """
+select count(*) || '|' || min(n) || '|' || max(n) from (
+  select v.feature_id, count(*) as n from feature_value v
+    join feature_registry r using (feature_id)
+   where r.spec->'formula'->>'method' = 'network_walk_time'
+   group by 1
+) w
+"""
+WALK_ZONES = 4417 + 179 + 246 + 1
+
+
+def _feature_counts() -> tuple[int, int, int]:
+    """Computed features, walking ones and Madrid-district ones, from the Feature Dictionary,
+    so the gate follows the catalog instead of a number typed by hand (12 Nov: 38, 13, 17)."""
+    from hi_features.compute import METHODS
+    from hi_ingestion.catalog.loader import load_catalog
+
+    computed = [f for f in load_catalog().features.values() if f.formula.method in METHODS]
+    walking = [f for f in computed if f.formula.method == "network_walk_time"]
+    by_district = [
+        f
+        for f in computed
+        if f.formula.method != "network_walk_time"
+        and "distrito" in ((f.formula.model_extra or {}).get("levels") or {})
+    ]
+    return len(computed), len(walking), len(by_district)
+
+
+N_FEATURES, N_WALKING, N_DISTRICT = _feature_counts()
 GATE_03 = [
     Check(
         "dictionary",
@@ -364,15 +397,30 @@ GATE_03 = [
     ),
     Check(
         "coverage",
-        "12 features with at least the 179 municipios, null contract and lineage in the dev DB",
+        f"{N_FEATURES} features with at least the 179 municipios, null contract and lineage "
+        "in the dev DB",
         [*PSQL, FEATURE_COVERAGE_SQL],
-        lambda r: r.returncode == 0 and r.stdout.strip() == "12|0|0|179",
+        lambda r: r.returncode == 0 and r.stdout.strip() == f"{N_FEATURES}|0|0|179",
+    ),
+    Check(
+        "walk-coverage",
+        f"{N_WALKING} walking features x {WALK_ZONES} zones (4,417 sections, 179 municipios, "
+        "246 districts and the region), never 0 for a zone without streets (CORE-005)",
+        [*PSQL, WALK_COVERAGE_SQL],
+        lambda r: (
+            r.returncode == 0 and r.stdout.strip() == f"{N_WALKING}|{WALK_ZONES}|{WALK_ZONES}"
+        ),
+    ),
+    Check(
+        "walk-golden",
+        "golden zones within known bounds; median within the window <=> half the street or more",
+        ["uv", "run", "python", "scripts/check_walk_golden.py"],
     ),
     Check(
         "district-coverage",
-        "7 features with the 21 districts of Madrid (D-200, D-209)",
+        f"{N_DISTRICT} features with the 21 districts of Madrid (D-200, D-209, D-217)",
         [*PSQL, DISTRICT_COVERAGE_SQL],
-        lambda r: r.returncode == 0 and r.stdout.strip() == "7",
+        lambda r: r.returncode == 0 and r.stdout.strip() == str(N_DISTRICT),
     ),
     GATE_00[-1],
 ]
@@ -387,7 +435,9 @@ SCOPES = {
     "complementary datasets of the Ayuntamiento de Madrid (padrón and households by district).",
     "02": "Geospatial QA — transport stops and stations from the CRTM GTFS feeds "
     "(the 2026-10-20 geography QA lives in gate-01/2026-10-20).",
-    "03": "Metrics / Feature Store — started: 12 municipal features (target 75–125 for Sprint P1).",
+    "03": f"Metrics / Feature Store — {N_FEATURES} computed features: {N_WALKING} walking-access "
+    f"features by census section, municipio and district (CORE-005), {N_DISTRICT} also by "
+    "district of Madrid, and the 2SFCA capacity rows (D-217).",
 }
 
 
@@ -420,14 +470,14 @@ def main() -> int:
     out_dir = REPO / "evidence" / f"gate-{args.gate}" / args.date
     out_dir.mkdir(parents=True, exist_ok=True)
     env = environment()
-    (out_dir / "environment.json").write_text(json.dumps(env, indent=2) + "\n")
+    (out_dir / "environment.json").write_text(redact(json.dumps(env, indent=2)) + "\n")
 
     rows: list[tuple[str, str, bool]] = []
     for check in GATES[args.gate]:
         result = _run(check.command)
         passed = check.validate(result)
         header = f"$ {' '.join(check.command)}\n# exit {result.returncode}\n\n"
-        log = header + f"{result.stdout}\n{result.stderr}"
+        log = redact(header + f"{result.stdout}\n{result.stderr}")
         (out_dir / f"{check.check_id}.txt").write_text(log)
         rows.append((check.check_id, check.criterion, passed))
         print(f"{'PASS' if passed else 'FAIL'}  {check.criterion}")

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "crtm_gtfs_autobuses_urbanos",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_gtfs_autobuses_urbanos/9cbd0b5af3b8/google_transit_M9.zip",
+      "sha256": "9cbd0b5af3b8b9c10b0c23c4fe0ef4cf1914a78712b897136dd8ea526257dba4",
+      "bytes": 9799323,
+      "url": "https://www.arcgis.com/sharing/rest/content/items/357e63c2904f43aeb5d8a267a64346d8/data",
+      "retrieved_at": "2026-11-10T19:39:51.807057+00:00"
+    }
+  ],
+  "checksum": "41f7f9c15b616aa68aff8d4882e9b5d83657544c678652d45204a2d114eda9d3",
+  "parser_version": "gtfs-1.2.0",
+  "dataset_version": "2026-11-10-41f7f9c15b61",
+  "correlation_id": "ca75719c7c0c42fab45d1c7d4bb7f64f",
+  "silver": "data/silver/crtm_gtfs_autobuses_urbanos/41f7f9c15b61/places.csv.gz"
+}

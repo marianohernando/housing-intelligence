@@ -1,0 +1,47 @@
+# CORE-005 Fase 4: ejecución real de las features (make features) sobre la base local housing
+# 2026-11-11T15:32:47Z · base bc60e1f
+uv run hi-features compute
+admin_unit_area_km2: method planar_area_epsg_25830 computed by its pipeline, skipped
+alquiler_m2_mensual: 179 rows, 37 with value, 142 explicit unknown
+centros_salud_por_10000_hab: 201 rows, 201 with value, 0 explicit unknown
+colegios_publicos_por_1000_menores: 201 rows, 201 with value, 0 explicit unknown
+hogares_5_mas_pct: 179 rows, 179 with value, 0 explicit unknown
+hogares_unipersonales_pct: 179 rows, 179 with value, 0 explicit unknown
+min_a_pie_centro_salud: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_colegio: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_escuela_infantil: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_farmacia: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_mayores: 4843 rows, 4819 with value, 24 explicit unknown
+min_a_pie_transporte: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_centro_salud_15min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_colegio_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_escuela_infantil_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_farmacia_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_mayores_10min: 4843 rows, 4819 with value, 24 explicit unknown
+pct_calle_transporte_5min: 4843 rows, 4819 with value, 24 explicit unknown
+plazas_residencia_por_100_mayores: 201 rows, 201 with value, 0 explicit unknown
+poblacion_0_14_pct: 200 rows, 200 with value, 0 explicit unknown
+poblacion_65_mas_pct: 200 rows, 200 with value, 0 explicit unknown
+poblacion_total: 200 rows, 200 with value, 0 explicit unknown
+renta_per_capita: 179 rows, 179 with value, 0 explicit unknown
+tamano_medio_hogar: 200 rows, 200 with value, 0 explicit unknown
+viviendas_menos_60m2_pct: 179 rows, 179 with value, 0 explicit unknown
+       28.59 real        21.76 user         1.87 sys
+           913424384  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              449603  page reclaims
+                2032  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+               61822  messages sent
+               16270  messages received
+                   2  signals received
+                2795  voluntary context switches
+               42567  involuntary context switches
+            51789387  instructions retired
+            22869007  cycles elapsed
+             1032408  peak memory footprint
+exit=0

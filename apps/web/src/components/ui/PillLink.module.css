@@ -1,0 +1,19 @@
+/* A short line over the map with one link, on a glass pill (footer counter, list of zones) */
+.line {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.line a {
+  display: inline-block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.line a:hover {
+  color: var(--violet-strong);
+  text-decoration: underline;
+}

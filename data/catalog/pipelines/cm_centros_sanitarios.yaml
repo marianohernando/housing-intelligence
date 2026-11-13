@@ -5,6 +5,9 @@ id_column: centro_nro_registro
 subcategory_column: centro_tipo
 # Only care facilities relevant for residential access. Individual private practices
 # ("Consulta médica", "Clínica dental", ...) are excluded: data minimisation (CLAUDE.md §3).
+# "Centro Polivalente" (RD 1277/2003, C.2.90: private multi-specialty clinics, 97 % private,
+# no name in the register, not primary care nor hospitals) is out since D-216: it filled the
+# health layer with 1,001 unnamed clinics and no feature uses it.
 row_filters:
   centro_tipo:
     - Centro de salud
@@ -14,9 +17,31 @@ row_filters:
     - Hospital de media y larga estancia
     - Hospital de salud mental y tratamiento de toxicomanías
     - Centro de salud mental
-    - Centro Polivalente
 x_column: localizacion_coordenada_x
 y_column: localizacion_coordenada_y
 group_by_id: true
 grouped_list_columns: [oferta_asistecial]
 attribute_columns: [dependecia_funcional, dependecia_patrimonial, municipio_nombre, direccion_codigo_postal]
+municipio_name_column: municipio_nombre
+address_template: "{direccion_vial_tipo} {direccion_vial_nombre} {direccion_vial_nro}, {municipio_nombre}"
+address_number_column: direccion_vial_nro
+address_street_column: direccion_vial_nombre
+postal_code_column: direccion_codigo_postal
+dependency_column: dependecia_funcional
+# D-218: hospitals take their name and installed beds from the Catálogo Nacional de Hospitales
+# (Ministerio de Sanidad), matched by postal address; the register stays the source of the place.
+directories:
+  - dataset_id: ms_catalogo_nacional_hospitales
+    kinds:
+      Hospital general: Hospitales Generales
+      Hospital especializado: Hospitales especializados
+      Hospital de media y larga estancia: Hospitales de media y larga estancia
+      Hospital de salud mental y tratamiento de toxicomanías: Hospitales de salud mental y tratamiento de toxicomanías
+  # Primary care: the register has no names; the Ministry's catalogue gives a bare place name
+  - dataset_id: ms_catalogo_centros_atencion_primaria
+    kinds:
+      Centro de salud: CENTRO SALUD
+      Consultorio de atención primaria: CONSULTORIO LOCAL
+    name_prefix:
+      Centro de salud: Centro de salud
+      Consultorio de atención primaria: Consultorio local

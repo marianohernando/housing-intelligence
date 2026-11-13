@@ -1,0 +1,296 @@
+/*
+ * Three columns: at the bottom of the middle one, between the search and the right card, so it
+ * never covers them (1280 px leaves it about 16rem). One column of cards (up to 1259 px, a
+ * projector at 125 %): at the bottom right, over the map, clear of the column.
+ */
+.legend {
+  position: fixed;
+  right: calc(var(--page-gutter) + 23rem + var(--space-6));
+  bottom: var(--space-6);
+  left: calc(var(--page-gutter) + 27rem + var(--space-6));
+  z-index: 1;
+  display: grid;
+  gap: var(--space-2);
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+@media (min-width: 761px) and (max-width: 1259px) {
+  .legend {
+    right: var(--page-gutter);
+    left: auto;
+    width: min(24rem, calc(100vw - 27rem - 3 * var(--page-gutter) - var(--space-6)));
+  }
+}
+
+/* «¿Qué quieres ver?» and the select on one line, so the legend stays low over the map */
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+}
+
+.pickerLabel {
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.select {
+  flex: 1 1 11rem;
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.figure {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.ramp {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--map-fit-low), var(--violet));
+}
+
+.ends,
+.noData {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.noData {
+  justify-content: flex-start;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 18px;
+  height: 12px;
+  border: 1px dashed var(--sin-datos);
+  border-radius: 3px;
+  background: var(--sin-datos-bg);
+}
+
+.before {
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+
+/* A row of «Qué falta»: what it counts, then each status with the map's colour and pattern */
+.rowTitle {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.rowTitle strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Never wider than the card: long content wraps instead of stretching it */
+.legend > *,
+.statuses li {
+  min-width: 0;
+}
+
+.statuses {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The count goes under the status when both do not fit, never the status itself */
+.statuses li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+}
+
+.patch {
+  flex: none;
+  width: 22px;
+  height: 16px;
+  border: 1px solid rgba(20, 27, 61, 0.18);
+  border-radius: 4px;
+}
+
+/* The same stripes and dots the map draws (lib/map/gapMap.ts, GAP_PATTERN) */
+.FALTA {
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--falta-ink) 67%, transparent) 0 1.5px, transparent 1.5px 4.25px),
+    var(--map-falta);
+}
+
+.JUSTO {
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--justo-ink) 78%, transparent) 1px, transparent 1.4px) 0 0 / 6px 6px,
+    var(--map-justo);
+}
+
+.CUBIERTO {
+  background: var(--map-cubierto);
+}
+
+.ZONA_PEQUENA {
+  background:
+    repeating-linear-gradient(180deg, color-mix(in srgb, var(--zona-pequena-ink) 47%, transparent) 0 1.5px, transparent 1.5px 6px),
+    var(--map-zona-pequena);
+}
+
+.SIN_DATOS {
+  border: 1px dashed var(--sin-datos);
+  background: var(--map-sin-datos);
+}
+
+/* «Encaje con tu búsqueda» after a search: the same fills as the map (lib/map/style.ts) */
+.fit_ENCAJA {
+  background: linear-gradient(90deg, var(--map-fit-low), var(--violet));
+}
+
+/* Crossed out, as on the map (R-06): it reads apart from «Cumple todo» by more than its tone */
+.fit_NO_CUMPLE {
+  background:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink-soft) 34%, transparent) 0 1.5px, transparent 1.5px 4.25px),
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink-soft) 34%, transparent) 0 1.5px, transparent 1.5px 4.25px),
+    var(--map-no-cumple);
+}
+
+/* The three classes side by side, each count under its name */
+.fitClasses {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fitClasses li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.fitClasses .count {
+  grid-column: 2;
+}
+
+.fit_SIN_DATOS {
+  border: 1px dashed var(--sin-datos);
+  background: var(--map-sin-datos);
+}
+
+.status {
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* «Zona pequeña para comparar» is a phrase, not a status word: it may wrap */
+.small {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.count {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.list {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+}
+
+/* Mobile: compact, just above the folded bottom sheet; hidden while the sheet is open */
+@media (max-width: 760px) {
+  .legend {
+    right: 1rem;
+    left: 1rem;
+    bottom: calc(var(--sheet-peek) + var(--space-2));
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .pickerLabel,
+  .title,
+  .rowTitle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Before the first search the ramp means nothing yet: on the small map, only the hint */
+  .waiting :is(.ramp, .ends, .noData) {
+    display: none;
+  }
+
+  /* The four statuses in one line, without the counts (they are in the list of zones) */
+  .statuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  .count {
+    display: none;
+  }
+
+  .status {
+    font-size: 0.75rem;
+  }
+
+  /* After a search the ramp keeps its meaning without its ends; the classes go in one line */
+  .fitEnds {
+    display: none;
+  }
+
+  .fitClasses li {
+    display: flex;
+  }
+
+  /* «Ver las zonas en una lista» in the sheet already leads to this row's list */
+  .list {
+    display: none;
+  }
+
+  :global([data-sheet="open"]) .legend {
+    display: none;
+  }
+}

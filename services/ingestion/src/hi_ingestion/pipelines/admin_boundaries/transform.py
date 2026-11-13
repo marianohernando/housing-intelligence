@@ -10,6 +10,7 @@ import pandas as pd
 from hi_contracts.catalog.enums import AdminLevel
 from hi_domain.geo.codes import admin_unit_id, barrio_from_cm_csv, barrio_from_shp, parse_gseccion
 from hi_domain.geo.geometry import to_multipolygon
+from hi_ingestion.pipelines.admin_boundaries import config
 from hi_ingestion.pipelines.admin_boundaries.config import SOURCE_CRS, WGS84
 
 CSV_ENCODINGS = ("utf-8", "latin-1")
@@ -139,7 +140,8 @@ def build_admin_units(
 
     def dist_name(code: str) -> str:
         muni = municipio_names.get(code[:5], code[:5])
-        return district_names.get(code, f"{muni} — distrito censal {code[5:]}")
+        fallback = config.CENSAL_DISTRICT_NAME.format(municipio=muni, number=code[5:])
+        return district_names.get(code, fallback)
 
     frames = [
         _units(

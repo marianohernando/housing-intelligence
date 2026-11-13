@@ -16,17 +16,46 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import loaders, methods
+from hi_features import fca, loaders, methods, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
 
+def _factors(engine: Engine, spec: Mapping[str, Any]) -> methods.NewContractFactors:
+    return methods.new_contract_factors(
+        loaders.observations(engine, spec["rent_metric"], spec["level"]),
+        loaders.observations(engine, spec["area_metric"], spec["level"]),
+    )
+
+
+def new_contracts(
+    engine: Engine, f: Mapping[str, Any]
+) -> tuple[methods.NewContractFactors, str | None] | None:
+    """D-228: the factors of the leases signed in the year, plus the fallback territory's under
+    its own code (e.g. the region «28» for a municipio without a table of its own)."""
+    spec = f.get("new_contracts")
+    if not spec:
+        return None
+    factors = _factors(engine, spec)
+    fallback = spec.get("fallback")
+    if not fallback:
+        return factors, None
+    other = _factors(engine, {**spec, **fallback})
+    code = str(fallback["code"])
+    merged = dict(factors.factors)
+    if code in other.factors:
+        merged[code] = other.factors[code]
+    return methods.NewContractFactors(merged, factors.period), code
+
+
 def _metric_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    return methods.metric_value(
+    result = methods.metric_value(
         loaders.observations(engine, f["metric"], level),
         f.get("dims", {}),
         f.get("confidence", 1.0),
     )
+    adjust = new_contracts(engine, f)
+    return result if adjust is None else methods.apply_new_contract_factors(result, *adjust)
 
 
 def _metric_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -63,12 +92,86 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
     )
 
 
+def _metric_ratio(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    return methods.metric_ratio(
+        loaders.observations(engine, f["numerator_metric"], level),
+        f["numerator_dims"],
+        loaders.observations(engine, f["denominator_metric"], level),
+        f["denominator_dims"],
+        float(f["per"]),
+        small_population=float(f.get("small_population_threshold", 0)),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
+def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """The zones of the level are those of `territories_metric` (e.g. the padrón districts)."""
+    return methods.not_published(loaders.observations(engine, f["territories_metric"], level))
+
+
+def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """CORE-006: districts from postcode values, weighted by the places that carry each code;
+    D-228: each postcode adjusted to the leases signed in the year before the mean."""
+    adjust = new_contracts(engine, f)
+    fallback = None if adjust is None or adjust[1] is None else adjust[0].factors.get(adjust[1])
+    municipio = str(f["postcode_municipio"])
+    few = f.get("few_places") or {}  # D-232: barrios, with far fewer places than a district
+    return methods.postcode_weighted_mean(
+        loaders.observations(engine, f["metric"], "codigo_postal"),
+        loaders.place_postcodes(engine, list(f["postcode_attributes"]), municipio, level),
+        f.get("dims", {}),
+        float(f.get("confidence", 1.0)),
+        new_contracts=None if adjust is None else (adjust[0], fallback),
+        zones=[z for z in walk.zone_codes(engine, level) if z.startswith(municipio)],
+        min_places=float(few.get("below", 0)),
+        few_places_confidence=float(few.get("max_confidence", 1.0)),
+    )
+
+
+def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """CORE-005: walking access to the nearest destination of a kind, by zone."""
+    version = walk.network_version(engine)
+    origins = walk.origins(engine, version.path, tuple(f["origin_highways"]))
+    distance = walk.distances(
+        engine,
+        version.path,
+        f["destination_category"],
+        tuple(f.get("subcategories") or ()),
+        walk.frozen_attributes(f.get("attributes")),
+    )
+    settings = methods.WalkSettings(
+        statistic=f["statistic"],
+        speed_m_per_min=float(f["speed_kmh"]) * 1000 / 60,
+        within_min=float(f.get("within_minutes", 0)),
+        base_confidence=float(f.get("confidence", 1.0)),
+        min_street_m=float(f["min_street_m"]),
+    )
+    return methods.walk_access(
+        walk.zone_of_node(origins.section, level, walk.section_parents(engine, level)),
+        origins.weight,
+        distance[origins.node],
+        walk.zone_codes(engine, level),
+        version.observed,
+        settings,
+    )
+
+
+def _two_step_fca(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-217: capacity reachable on foot per person (2SFCA), by zone."""
+    return fca.fca_feature(engine, f, level, walk.network_version(engine).observed)
+
+
 METHODS: dict[str, Method] = {
     "metric_value": _metric_value,
     "metric_share": _metric_share,
     "metric_weighted_mean": _metric_weighted_mean,
     "places_per_population": _places_per_population,
     "place_attribute_per_population": _place_attribute_per_population,
+    "network_walk_time": _network_walk_time,
+    "metric_ratio": _metric_ratio,
+    "not_published": _not_published,
+    "postcode_weighted_mean": _postcode_weighted_mean,
+    "two_step_fca": _two_step_fca,
 }
 
 
@@ -96,6 +199,9 @@ def compute(engine: Engine, spec: FeatureSpec) -> pd.DataFrame:
         for level, override in levels.items()
     }
     combined = combine_levels(base, extra)
+    if spec.geo_level.value == "municipio":
+        zones = walk.zone_codes(engine, "municipio")
+        combined = methods.fill_missing_zones(combined, zones, "municipio")
     if "category" not in formula:
         return combined
     shares = loaders.section_share(engine, formula["category"])
@@ -142,6 +248,12 @@ def pass_level(spec: FeatureSpec, row_level: str) -> str:
     return row_level if row_level in extra_levels(spec) else spec.geo_level.value
 
 
+def effective_method(spec: FeatureSpec, row_level: str) -> str:
+    """The method a row was computed with: a level override may change it (e.g. not_published)."""
+    override = extra_levels(spec).get(pass_level(spec, row_level), {})
+    return str(override.get("method", spec.formula.method))
+
+
 def versions_by_pass(spec: FeatureSpec, versions: dict[str, str]) -> dict[str, dict[str, str]]:
     passes = [spec.geo_level.value, *extra_levels(spec)]
     return {
@@ -156,6 +268,20 @@ def versions_by_pass(spec: FeatureSpec, versions: dict[str, str]) -> dict[str, d
 
 def _admin_unit(level: str, code: str) -> str | None:
     return admin_unit_id(level, code) if level in ADMIN_LEVELS else None
+
+
+def _counts(record: dict[str, Any]) -> dict[str, Any]:
+    """The counts behind a per-population ratio, when the method gives them (D-213)."""
+    numerator, denominator = record.get("numerator"), record.get("denominator")
+    if numerator is None or denominator is None or pd.isna(numerator) or pd.isna(denominator):
+        return {}
+    return {"counts": {"numerator": float(numerator), "denominator": float(denominator)}}
+
+
+def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
+    """How the published value was adjusted (D-228), kept next to the counts."""
+    adjustment = record.get("adjustment")
+    return {"new_contracts": adjustment} if isinstance(adjustment, dict) else {}
 
 
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
@@ -176,8 +302,10 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
             "confidence": float(r["confidence"]),
             "inputs": {
                 "dataset_versions": versions[pass_level(spec, _level(spec, r))],
-                "method": spec.formula.method,
-            },
+                "method": effective_method(spec, _level(spec, r)),
+            }
+            | _counts(r)
+            | _adjustment(r),
         }
         for r in records
     ]

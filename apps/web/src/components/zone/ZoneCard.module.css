@@ -1,0 +1,246 @@
+.card {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--target);
+  margin-bottom: calc(-1 * var(--space-3));
+}
+
+.eyebrow {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.close {
+  display: grid;
+  width: var(--target);
+  height: var(--target);
+  place-items: center;
+  margin-right: calc(-1 * var(--space-2));
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.name {
+  min-width: 0;
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.pct {
+  flex: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius);
+  background: var(--violet-soft);
+  color: var(--violet-strong);
+  font-family: var(--font-title);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+/* Phones: a long name («Fuencarral-El Pardo») breaks at its hyphen beside the % pill */
+@media (max-width: 420px) {
+  .name {
+    font-size: 1.6rem;
+  }
+}
+
+/* «de encaje» under the figure: beside it, the pill did not fit at 390 px and was cut («de enca…») */
+.pct small {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.fitsButShort {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.hint {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.missing {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.missing h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.rows {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.rows li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 2.25rem;
+}
+
+.rowName {
+  display: grid;
+}
+
+.rowName small {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.pending {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.pending svg {
+  vertical-align: -3px;
+}
+
+.all {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+}
+
+.error {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  color: var(--falta-ink);
+  font-size: var(--text-sm);
+}
+
+.action {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+/* After a search: place in the ranking, what it fails or cannot check, and its facts */
+.rank {
+  margin-top: calc(-1 * var(--space-2));
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.fails,
+.unknown {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.fails svg,
+.unknown svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.fails {
+  background: var(--falta-bg);
+  color: var(--falta-ink);
+}
+
+.unknown {
+  border: 1px dashed var(--sin-datos);
+  background: var(--sin-datos-bg);
+  color: var(--sin-datos-ink);
+}
+
+/* Why there is no purchase price (D-227): the source, said after «No lo sabemos» */
+.unknownWhy {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.facts {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.facts h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.facts ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.facts li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.facts li > svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+
+.facts small {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.strength > svg {
+  color: var(--violet-strong);
+}
+
+.weakness > svg {
+  color: var(--falta-ink);
+}
+
+.unknownFact > svg {
+  color: var(--sin-datos-ink);
+}

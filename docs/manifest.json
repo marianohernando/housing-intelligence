@@ -1,15 +1,15 @@
 {
-  "version": "0.5.18",
-  "updated": "2026-11-11T14:21:52.176332+00:00",
-  "markdown_files": 277,
+  "version": "0.5.57",
+  "updated": "2026-11-12T23:04:53.315074+00:00",
+  "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
       "sha256": "1f57f07bded9a4082c4b339b44429c65ca27a8500be60d72a580d1223325ae52",
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "08919c316c0d36388ed6821e53bd6ad250f2a7c7643cee034812d7a0945fc38a",
-      "bytes": 48742
+      "sha256": "680851b2abf74708489f3cc6962d54f0e2cbd0f177372327e78c39efde20d4ce",
+      "bytes": 165371
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -232,8 +232,8 @@
       "bytes": 758
     },
     "02_data/32_transport_ingestion_spec.md": {
-      "sha256": "ee100c2d7222d235ac329116cdf8612fd4d2e7f30cec49c18509d459af43c707",
-      "bytes": 1688
+      "sha256": "5dd15341c31c994b0af0e9f342ecce5a69a376be0bddaaf4892d81dd41ae9074",
+      "bytes": 1899
     },
     "02_data/33_commercial_activity_ingestion.md": {
       "sha256": "2a4a344e093bc52797a2c474ecc9ede86f60993778d2b7f9369123587c83fadc",
@@ -528,8 +528,8 @@
       "bytes": 372
     },
     "04_technical_architecture/03_api_openapi_mcp.md": {
-      "sha256": "dfab6f8f848a52e86f518ed2f5939949da16eb47aad7c5718544947e62d32042",
-      "bytes": 719
+      "sha256": "ba0fab11ec7151dcd97b37a8f9fa308034c5939b9ff9d87086176f8c4e4fd5c1",
+      "bytes": 908
     },
     "04_technical_architecture/04_infra_devops_security.md": {
       "sha256": "ee6853e444cd818f6ed82772417206e360c53ef752ad0e81c06117cdce638780",
@@ -640,8 +640,12 @@
       "bytes": 498
     },
     "04_technical_architecture/31_public_api_routes.md": {
-      "sha256": "331106815c05650738d1ee9df6438fb254ff1f592462c0ebce86c7a21520f2a9",
-      "bytes": 5655
+      "sha256": "0efc46a41ed9b66c95d55f6c40cf5309dbbbe5428342b95eb0ec01b16b9899e0",
+      "bytes": 21487
+    },
+    "04_technical_architecture/32_mcp_server.md": {
+      "sha256": "9efe8c1f8465b8ad93ddfc30d3e17e526570f6174ceffa1850082ed056657e36",
+      "bytes": 8891
     },
     "05_map_ux/01_map_3d_digital_twin.md": {
       "sha256": "9bb353ceabb6802e8a05e2deec172d62a9996498dcecbcd70e5b463294eac0a3",
@@ -948,8 +952,8 @@
       "bytes": 557
     },
     "11_engineering/03_configuration_and_secrets.md": {
-      "sha256": "99df5737f3fad019239a8ee71f16c406925361f1bfffc8618ec203ffda7ef7eb",
-      "bytes": 357
+      "sha256": "318f3348708b48e0f683efb5cd8f5427f5c3bd0ac8b5cecae390643fe135dc6f",
+      "bytes": 533
     },
     "11_engineering/04_adr_process.md": {
       "sha256": "a13f07460c1167ed3e364ef940469df0a401ab23e6d8e50159dc9f29465a57cb",
@@ -1096,8 +1100,8 @@
       "bytes": 1838
     },
     "CHANGELOG.md": {
-      "sha256": "650a43fbfc84c58540d82774828c7e4c2885760e2975cfd3d363c6435fb28b37",
-      "bytes": 13994
+      "sha256": "dfc5506b0ce8068750d8a7b07dc7006594b7dcb1921597cf49f0bafe108c710d",
+      "bytes": 22861
     },
     "CLAUDE.md": {
       "sha256": "cb9b95b379aaa00fc3064ab11c286d2d13426aa44e1ffeb4bc7995f0ac2bede3",

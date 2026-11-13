@@ -10,7 +10,7 @@ from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
-from tests.integration.conftest import GOLDEN, MADRID_SAMPLE_DISTRICTS
+from tests.integration.conftest import GOLDEN, MADRID_SAMPLE_BARRIOS, MADRID_SAMPLE_DISTRICTS
 
 pytestmark = pytest.mark.db
 DATASET = "ayto_panel_indicadores_distritos_barrios"
@@ -21,7 +21,12 @@ def _run(engine: Engine, tmp: Path, path: Path = FIXTURE) -> RunSummary:
     catalog = load_catalog()
     spec = catalog.pipelines[DATASET]
     assert isinstance(spec, MadridDistrictPanelPipeline)
-    sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
+    sample = spec.model_copy(
+        update={
+            "expected_districts": MADRID_SAMPLE_DISTRICTS,
+            "expected_barrios": MADRID_SAMPLE_BARRIOS,
+        }
+    )
     return run_panel_pipeline(
         engine,
         catalog,

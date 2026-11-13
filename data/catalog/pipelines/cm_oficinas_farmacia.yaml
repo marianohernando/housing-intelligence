@@ -1,6 +1,6 @@
 kind: points_csv
 dataset_id: cm_oficinas_farmacia
-category: health
+category: pharmacy  # not the health-care layer (D-216)
 id_column: FARMACIA_NRO_SOE
 subcategory_value: Farmacia
 # The register has no name column and names the pharmacy holders (people): never kept.
@@ -9,3 +9,7 @@ x_column: LOCALIZACION_COORDENADA_X
 y_column: LOCALIZACION_COORDENADA_Y
 csv: {decimal: ","}
 attribute_columns: [DIRECCION_VIAL_TIPO, DIRECCION_VIAL_NOMBRE, DIRECCION_VIAL_NRO, MUNICIPIO_NOMBRE]
+municipio_name_column: MUNICIPIO_NOMBRE
+address_template: "{DIRECCION_VIAL_TIPO} {DIRECCION_VIAL_NOMBRE} {DIRECCION_VIAL_NRO}, {MUNICIPIO_NOMBRE}"
+address_number_column: DIRECCION_VIAL_NRO
+address_street_column: DIRECCION_VIAL_NOMBRE
