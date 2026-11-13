@@ -1,0 +1,7 @@
+API of the offline package (5940ca7) against production (dpl_7SDGdC8Wtr5GAVHRTcyG871BFDLN), numbers rounded to 1e-9, meta left out, 2026-11-13 ~14:30 UTC
+  GET  /api/v1/gaps/municipio/28079       identical
+  GET  /api/v1/gaps/distrito/2807920      identical
+  GET  /api/v1/datasets                   identical
+  GET  /api/v1/gaps/impact                 identical
+  POST /api/v1/search (demo case)         identical, 15 times «… (lo que tarda la mitad de la zona)»
+  POST /api/v1/search/barrios (2807920)   identical, 8 times «… (lo que tarda la mitad de la zona)»

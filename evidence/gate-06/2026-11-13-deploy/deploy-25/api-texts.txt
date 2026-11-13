@@ -1,0 +1,18 @@
+API after the deploy of 5940ca7 (dpl_7SDGdC8Wtr5GAVHRTcyG871BFDLN), demo case (scenario_state.familia_castellana)
+
+POST /api/v1/search: walking constraint explanations, minutes as N
+  15 A unos N min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+
+POST /api/v1/search: facts with a walk indicator (feature_id min_a_pie_*): 30
+POST /api/v1/search: facts with no indicator, by kind of text:
+  10 N min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00
+
+POST /api/v1/search/barrios, distrito 2807920 (San Blas-Canillejas): barrio, match, the walking constraint
+  Canillejas 97 % · PASS: A unos 7 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  Arcos 97 % · PASS: A unos 5 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  Simancas 97 % · PASS: A unos 7 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  Rosas 96 % · PASS: A unos 5 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  Amposta 96 % · PASS: A unos 7 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  El Salvador 95 % · PASS: A unos 10 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  Hellín 93 % · PASS: A unos 4 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
+  Rejas 55 % · FAIL: A unos 35 min andando de un colegio con primaria (lo que tarda la mitad de la zona)
