@@ -95,6 +95,8 @@ const LABEL_SIZE = { desktop: { width: 260, height: 64 }, mobile: { width: 150, 
 
 const TEXT = {
   aria: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
+  // mapa.aria.barrios (D-238): the map after a search over Madrid capital, once its barrios' outlines are in
+  ariaBarrios: "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus barrios.",
   noWebgl: "Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista.",
   noTiles: "No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.",
   // Only the street background failed: the zones are there (mapa.sin_calles)
@@ -105,9 +107,9 @@ const TEXT = {
   ariaRow: (label: string) =>
     `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
-  // mapa.aria.encaje.barrios (D-238)
+  // mapa.aria.encaje.barrios (D-238), after mapa.aria.barrios: it no longer says the capital is by barrios
   ariaFitBarrios:
-    "Madrid capital sale por barrios: cada barrio tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.",
+    "Cada barrio tiene el color de su encaje con tu búsqueda y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.",
   // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
@@ -419,8 +421,12 @@ export default function VidaMap() {
     if (row) return gapData ? paintZones(zones, gapData.byZone) : zones;
     return result ? paintFit(resultZones ?? zones, result.all_zones) : zones;
   }, [zones, resultZones, overview, row, gapData, result]);
-  const fitAria = byBarrio(result) ? TEXT.ariaFitBarrios : TEXT.ariaFit;
+  // The capital is drawn by barrios only on the overview with the fit, once their outlines are in;
+  // until then (or if they fail) it keeps its districts, unpainted, and the label says nothing of barrios
+  const barriosShown = byBarrio(result) && resultZones !== null && resultZones !== zones;
+  const fitAria = byBarrio(result) ? (barriosShown ? TEXT.ariaFitBarrios : null) : TEXT.ariaFit;
   const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : fitAria;
+  const baseAria = overview && !row && barriosShown ? TEXT.ariaBarrios : TEXT.aria;
   // The zone's facilities of the types pressed in «Todos los centros» (several at once), or none
   const facilityList = useMemo(
     () => (activeZone && facilities.types.length && facilities.groups ? selectedFacilities(facilities.groups, facilities.types) : null),
@@ -428,7 +434,7 @@ export default function VidaMap() {
   );
   const facilityCount = activeZone && facilities.groups ? selectedCountText(facilities.groups, facilities.types, activeZone.properties.name, { empty: false }) : null;
   const facilityAria = facilityCount ? TEXT.ariaFacilities(facilityCount) : null;
-  const mapAria = [TEXT.aria, paintedAria, facilityAria].filter(Boolean).join(" ");
+  const mapAria = [baseAria, paintedAria, facilityAria].filter(Boolean).join(" ");
   const slow = useSlow(status === "loading");
   const router = useRouter();
   const container = useRef<HTMLDivElement>(null);
