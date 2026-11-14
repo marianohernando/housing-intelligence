@@ -85,6 +85,7 @@ export const MAP_PALETTE_TOKENS = {
   facHospital: "fac-hospital",
   facFarmacia: "fac-farmacia",
   facMayores: "fac-mayores",
+  facOcio: "fac-ocio",
 } as const;
 
 export type MapPalette = Record<keyof typeof MAP_PALETTE_TOKENS, string>;
@@ -601,6 +602,9 @@ export function facilityLayers(p: MapPalette): LayerSpecification[] {
           p.facFarmacia,
           "mayores",
           p.facMayores,
+          // Leisure (D-236): one colour for its four groups
+          ["bares", "restaurantes", "gimnasios", "cines_teatros"],
+          p.facOcio,
           p.violetStrong,
         ],
         "circle-stroke-color": "#ffffff",

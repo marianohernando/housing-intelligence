@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
+import { Baby, Clapperboard, Cross, Dumbbell, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees, Utensils, Wine } from "lucide-react";
 import { useId } from "react";
 
 import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
@@ -18,7 +18,7 @@ import {
   type FacilityKey,
   facilityCountText,
   facilityType,
-  FACILITY_TYPES,
+  offeredTypes,
   orderedTypes,
   selectedCountText,
 } from "@/lib/map/facilities";
@@ -41,6 +41,8 @@ const TEXT = {
   // centros.sin_nombre_algunos: the name comes from the Ministry's catalogues; a few could not be matched
   someNoName: "Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.",
   // centros.camas (HOSP-001, D-218): the date and the catalogue from /datasets
+  // centros.ocio.fuente (D-236): leisure comes from OpenStreetMap, never an official register
+  leisure: "Según OpenStreetMap, un mapa hecho por voluntarios: puede faltar algún local o salir sin nombre.",
   bedsBefore: (updated: string | null) => `Camas instaladas${updated ? ` a ${updated}` : ""}, según el `,
   bedsAfter: (publisher: string) => ` del ${publisher}.`,
   newTab: " (se abre en una pestaña nueva)",
@@ -73,6 +75,10 @@ export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
   farmacia: Pill,
   mayores: HeartHandshake,
   parque: Trees,
+  bares: Wine,
+  restaurantes: Utensils,
+  gimnasios: Dumbbell,
+  cines_teatros: Clapperboard,
 };
 
 /** «Hospital La Paz · 1.300 camas» when the API gives the name and the capacity; the label alone otherwise. */
@@ -116,8 +122,12 @@ function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility
         {count}
       </p>
       {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
-      {items.some((f) => f.name === null) && (
-        <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
+      {facilityType(type).leisure ? (
+        <p className={styles.muted}>{TEXT.leisure}</p>
+      ) : (
+        items.some((f) => f.name === null) && (
+          <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
+        )
       )}
       <CapacitySourceLine type={type} items={items} />
       {items.length > 0 && <FacilityList items={items} count={count} />}
@@ -135,7 +145,9 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
   const { status, groups, error, retry, types, toggle, setAll } = useFacilityLayer();
   const titleId = useId();
   const slow = useSlow(status === "loading");
-  const shown = orderedTypes(types);
+  // Leisure is only offered where the zone has some (D-236): a type not offered is never listed
+  const offered = groups ? offeredTypes(groups) : [];
+  const shown = orderedTypes(types).filter((key) => offered.some((t) => t.key === key));
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
@@ -163,7 +175,7 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
               {TEXT.show}
             </p>
             <ul className={styles.chips}>
-              {FACILITY_TYPES.map((t) => (
+              {offered.map((t) => (
                 <li key={t.key}>
                   <Chip
                     label={t.chip}
@@ -177,7 +189,7 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
               ))}
             </ul>
             <div className={styles.all}>
-              <button type="button" onClick={() => setAll(true)} disabled={shown.length === FACILITY_TYPES.length}>
+              <button type="button" onClick={() => setAll(true)} disabled={shown.length === offered.length}>
                 {TEXT.all}
               </button>
               <button type="button" onClick={() => setAll(false)} disabled={shown.length === 0}>

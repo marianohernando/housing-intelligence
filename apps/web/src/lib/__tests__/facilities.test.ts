@@ -13,6 +13,8 @@ import {
   facilityCountText,
   facilityQueries,
   groupFacilities,
+  leisureAvailable,
+  offeredTypes,
   orderedTypes,
   selectedCountText,
   selectedFacilities,
@@ -59,7 +61,7 @@ describe("facility types", () => {
 
   it("ask /places once per category, by zone and subcategory, never a whole layer", () => {
     const queries = facilityQueries();
-    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green"]);
+    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green", "commerce", "sport", "culture"]);
     const health = queries.find((q) => q.category === "health");
     expect(health?.subcategories).toContain("Hospital general");
     // Pharmacies have their own category since D-216
@@ -303,6 +305,10 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     farmacia: [f("f1", "farmacia")],
     mayores: [],
     parque: [f("p1", "parque")],
+    bares: [],
+    restaurantes: [],
+    gimnasios: [],
+    cines_teatros: [],
   } as Record<FacilityKey, Facility[]>;
 
   it("keeps the order of the buttons, whatever the order they were pressed", () => {
@@ -321,5 +327,52 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     );
     expect(selectedCountText(groups, ["hospital"], "Chamartín", { empty: false })).toBeNull();
     expect(selectedCountText(groups, [], "Chamartín")).toBeNull();
+  });
+});
+
+describe("leisure from OpenStreetMap (D-236)", () => {
+  const places = [
+    place("b1", "commerce", "Bar", "Casa Paco"),
+    place("b2", "commerce", "Pub", "Pub sin nombre"),
+    place("b3", "commerce", "Cafetería", "LA TAPE"),
+    place("r1", "commerce", "Restaurante", "Restaurante sin nombre"),
+    place("g1", "sport", "Centro deportivo", "Polideportivo Municipal"),
+    place("t1", "culture", "Teatro", "Teatro Real"),
+    place("x1", "commerce", "Comida rápida", "Burger"), // not a class of any type: left out
+  ];
+  const groups = groupFacilities(places);
+
+  it("groups the places in the four groups of «Ocio», each with what it is", () => {
+    expect(groups.bares.map((f) => [f.label, f.name])).toEqual([
+      ["Bar", "Casa Paco"],
+      ["Cafetería", "LA TAPE"], // as OpenStreetMap writes it: never recased
+      ["Pub", null], // «Pub sin nombre»: no name, only what it is
+    ]);
+    expect(groups.restaurantes.map((f) => [f.label, f.name])).toEqual([["Restaurante", null]]);
+    expect(groups.gimnasios.map((f) => f.label)).toEqual(["Centro deportivo"]);
+    expect(groups.cines_teatros.map((f) => f.name)).toEqual(["Teatro Real"]);
+    expect(Object.values(groups).flat()).toHaveLength(6);
+  });
+
+  it("counts them in plain words", () => {
+    expect(facilityCountText("bares", 3, "Centro")).toBe("3 bares y cafeterías en Centro");
+    expect(facilityCountText("restaurantes", 1, "Centro")).toBe("1 restaurante en Centro");
+    expect(facilityCountText("gimnasios", 0, "Patones")).toBe("Ningún gimnasio ni centro deportivo en Patones");
+    expect(facilityCountText("cines_teatros", 2, "Centro")).toBe("2 cines, teatros y centros culturales en Centro");
+  });
+
+  it("offers the leisure types only where the zone has some leisure place: never «Ningún bar» before the data", () => {
+    const keys = (g: typeof groups) => offeredTypes(g).map((t) => t.key);
+    expect(keys(groups).slice(-4)).toEqual(["bares", "restaurantes", "gimnasios", "cines_teatros"]);
+    const before = groupFacilities([place("c", "pharmacy", "Farmacia", "Farmacia · CALLE Mayor 1")]);
+    expect(keys(before)).toEqual(["colegio", "escuela_infantil", "centro_salud", "hospital", "farmacia", "mayores", "parque"]);
+    // One group is enough to offer the four: the others say «Ningún…», which OSM can tell there
+    expect(keys(groupFacilities([place("b", "commerce", "Bar", "Bar")]))).toHaveLength(FACILITY_TYPES.length);
+  });
+
+  it("offers «Ocio» in the search once its dataset is published", () => {
+    expect(leisureAvailable(null)).toBe(false);
+    expect(leisureAvailable([{ dataset_id: "osm_parques" }])).toBe(false);
+    expect(leisureAvailable([{ dataset_id: "osm_parques" }, { dataset_id: "osm_ocio" }])).toBe(true);
   });
 });

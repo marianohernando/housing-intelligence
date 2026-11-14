@@ -266,6 +266,11 @@ describe("map style", () => {
     expect(point).toMatchObject({ type: "circle", filter: ["!", ["has", "point_count"]] });
   });
 
+  it("paints the four leisure groups in one colour, so the map does not fill with colours (D-236)", () => {
+    const point = facilityLayers(palette).find((l) => l.id === "facilities-point");
+    expect(JSON.stringify(point?.type === "circle" && point.paint)).toContain(`["bares","restaurantes","gimnasios","cines_teatros"],"${palette.facOcio}"`);
+  });
+
   it("names each group image by its count and colour, and sizes it by how many it holds", () => {
     expect(clusterImageId(23)).toBe("facility-cluster-23");
     expect(clusterImageOf("facility-cluster-23")).toEqual({ count: 23, tone: "violet" });

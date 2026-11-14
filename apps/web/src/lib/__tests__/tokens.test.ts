@@ -53,7 +53,7 @@ const PAIRS: [fg: string, bg: string, min: number][] = [
   ]),
   // «Todos los centros» with several types (petición de Mariano, 13 nov): each type's dot on the map
   // and its icon on a pressed button
-  ...["colegio", "escuela-infantil", "centro-salud", "hospital", "farmacia", "mayores"].flatMap((t): [string, string, number][] => [
+  ...["colegio", "escuela-infantil", "centro-salud", "hospital", "farmacia", "mayores", "ocio"].flatMap((t): [string, string, number][] => [
     [`fac-${t}`, "map-land", UI],
     [`fac-${t}`, "violet-soft", UI],
     [`fac-${t}`, "surface", UI],
