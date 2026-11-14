@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_plan_vive_promociones",
+      "role": "primary",
+      "path": "data/catalog/manual/plan_vive.yaml",
+      "sha256": "06d0f90dc40e1bb768afbbc66509ab3e6398468222ab58b57509506fa59f342f",
+      "bytes": 9678,
+      "url": "https://www.comunidad.madrid/plan-vive",
+      "retrieved_at": "2026-11-14T00:00:00+00:00"
+    }
+  ],
+  "checksum": "d39c01964a06ab4023ea455f76b6462c9320f0000e6a099893c64dfec8a70e0a",
+  "parser_version": "zone_context-1.0.0",
+  "dataset_version": "2026-11-14-d39c01964a06",
+  "correlation_id": "5be9c1626b994e39870ec44045fabdfd",
+  "silver": "data/silver/cm_plan_vive_promociones/d39c01964a06/observations.csv.gz"
+}

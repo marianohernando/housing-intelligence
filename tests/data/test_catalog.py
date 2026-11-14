@@ -134,12 +134,15 @@ def test_directories_complement_cm_registers(catalog: Catalog) -> None:
 
 # Statistics the CM does not publish at the level the product needs (D-209: population and
 # households by district of Madrid; D-228: the rent of the leases signed in the year, which only
-# adjusts the CM rent). They complement CM data, never replace it.
+# adjusts the CM rent; D-241: what is coming, the planning areas of Madrid and the Plan Vive page,
+# which publishes no file). They complement CM data, never replace it.
 COMPLEMENTARY_STATISTICS = {
     "ayto_padron_municipal",
     "ayto_panel_indicadores_distritos_barrios",
     "aeat_alquiler_nuevos_contratos_municipios",
     "aeat_alquiler_nuevos_contratos_codigo_postal",
+    "ayto_pgoum_desarrollo_ambitos",
+    "cm_plan_vive_promociones",
 }
 
 
@@ -419,3 +422,33 @@ def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> N
     ):
         year = catalog.datasets[dataset_id].name.rsplit("ejercicio ", 1)[1][:4]
         assert f"contratos firmados en {year}" in fit.note
+
+
+NEW_HOUSING_CONTEXT = {
+    "compraventas_obra_nueva_pct",
+    "valor_tasado_vivienda_nueva_m2",
+    "valor_tasado_vivienda_usada_m2",
+    "plan_vive_viviendas",
+    "ambitos_residenciales_en_desarrollo",
+}
+
+
+def test_new_housing_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-241: new housing and what is coming never score, rank or enter «Qué falta», and the
+    purchase price stays the total appraised value (D-227)."""
+    for feature_id in NEW_HOUSING_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None, feature_id
+        assert spec.gap_row is None, feature_id
+        assert "context_only" in spec.tests, feature_id
+    price = [f.feature_id for f in catalog.features.values() if f.fit and f.fit.role == "price_m2"]
+    assert price == ["valor_tasado_vivienda_m2"]
+
+
+def test_new_housing_figures_come_from_the_cm_portal(catalog: Catalog) -> None:
+    """The two figures about new homes are CM open data; what is coming complements them."""
+    for dataset_id in ("cm_transacciones_nueva_usada", "cm_valor_tasado_vivienda_antiguedad"):
+        assert catalog.datasets[dataset_id].source_id == CM_SOURCE, dataset_id
+    plan_vive = catalog.datasets["cm_plan_vive_promociones"]
+    assert plan_vive.source_id == "comunidad_madrid_web"  # a web page, not the open data portal
+    assert catalog.sources["comunidad_madrid_web"].attribution_text

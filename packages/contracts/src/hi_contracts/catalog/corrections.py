@@ -52,7 +52,7 @@ def _as_said(text: str) -> str:
     return " ".join(unicodedata.normalize("NFC", text).translate(_QUOTES).split()).casefold()
 
 
-def _says(name: str, says: str) -> bool:
+def is_quoted(name: str, says: str) -> bool:
     """The name is whole words of the source's text, in the same order."""
     return re.search(rf"(?<!\w){re.escape(_as_said(name))}(?!\w)", _as_said(says)) is not None
 
@@ -84,7 +84,7 @@ class PlaceCorrection(BaseModel):
             raise ValueError(f"{key}: give an address or a directory entry, not both")
         if self.address is None and self.directory is None and self.name is None:
             raise ValueError(f"{key}: nothing to correct")
-        if self.name is not None and not _says(self.name, self.source.says):
+        if self.name is not None and not is_quoted(self.name, self.source.says):
             raise ValueError(f"{key}: the name must be the text the source says")
         return self
 

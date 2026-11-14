@@ -1,0 +1,29 @@
+feature_id: ambitos_residenciales_en_desarrollo
+version: 1
+human_name: Ámbitos urbanísticos residenciales sin terminar
+domain: urbanism
+type: aggregate
+unit: ámbitos
+direction: neutral
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_pgoum_desarrollo_ambitos, role: primary}
+formula:
+  method: metric_items
+  metric: ambitos_desarrollo_residencial
+  value: count
+  scope: "28079"
+  stage_order: [obras, tramitacion, sin_empezar]
+  confidence: 1.0
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Ámbitos de ordenación del Plan General de uso residencial con alguna fase sin terminar (planeamiento, gestión, proyecto u obras de urbanización), según el Ayuntamiento de Madrid (VEDA). Dice dónde se prepara suelo para vivienda, no cuántas viviendas habrá ni cuándo."
+  - "Tres etapas: «urbanización en obras» (las obras de urbanización están en marcha), «en tramitación» (otra fase está en marcha) y «sin empezar» (nada en marcha). Algunos ámbitos llevan años sin empezar."
+  - "Solo los 21 distritos de Madrid capital; un distrito sin ámbitos residenciales pendientes tiene 0. El resto de la región queda sin datos."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-241)."

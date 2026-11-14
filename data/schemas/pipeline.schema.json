@@ -85,6 +85,145 @@
       "title": "AeatRentComparisonPipeline",
       "type": "object"
     },
+    "CmMunicipioNameTablePipeline": {
+      "additionalProperties": false,
+      "description": "Instituto de Estadística tables whose only territory column is the municipio's name, as\n«Acebeda (La)», without a code or a territory type (D-241).\n\nEach name resolves to the municipio of the geography with the same name (`geo_admin_unit`,\nwhich comes from the CM's own municipio table), compared without case, accents or signs\n(`hi_domain.geo.names.name_key`). A name that resolves to none goes to quarantine and blocks\nthe run, never dropped in silence. Quarterly tables give the quarter in `quarter_column`\n(«T1»…«T4»). Rows outside `row_filters` are out of scope and counted. The status the source\ngives a value («Provisional») is kept as the `status_dimension` of its observation, so a\nfeature can say it; a value without a status carries no such dimension.",
+      "properties": {
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dimension_columns": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "title": "Dimension Columns",
+          "type": "object"
+        },
+        "kind": {
+          "const": "cm_municipio_name_table",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "period_column": {
+          "default": "Año",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "period_min": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period Min"
+        },
+        "quarter_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quarter Column"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "row_filters": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Row Filters",
+          "type": "object"
+        },
+        "status_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Estado dato",
+          "title": "Status Column"
+        },
+        "status_dimension": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Dimension"
+        },
+        "territory_name_column": {
+          "default": "Territorio",
+          "title": "Territory Name Column",
+          "type": "string"
+        },
+        "unit_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Unidad",
+          "title": "Unit Column"
+        },
+        "value_column": {
+          "default": "Valor",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id"
+      ],
+      "title": "CmMunicipioNameTablePipeline",
+      "type": "object"
+    },
     "CmPostcodeConceptPipeline": {
       "additionalProperties": false,
       "description": "Tables where the postcode is embedded in a free-text 'Concepto' column.",
@@ -297,6 +436,46 @@
         }
       },
       "title": "CsvFormat",
+      "type": "object"
+    },
+    "CuratedZoneItemsPipeline": {
+      "additionalProperties": false,
+      "description": "A table typed by hand from an official page that publishes no file (D-241: Plan Vive),\nversioned in data/catalog/manual/<table>. Every entry quotes its source (the exact text), so\nnothing is typed from memory. Each entry becomes one observation of `metric_id` in its\nmunicipio and, when it names them, in the Madrid districts where it is. The run reads the\nversioned file, never the page; its lineage keeps the page's URL and the date consulted.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "curated_zone_items",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "table": {
+          "description": "file in data/catalog/manual",
+          "pattern": "^[a-z0-9_]+\\.yaml$",
+          "title": "Table",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "table"
+      ],
+      "title": "CuratedZoneItemsPipeline",
       "type": "object"
     },
     "DirectoryLink": {
@@ -538,6 +717,139 @@
         "mode"
       ],
       "title": "GtfsFeedPipeline",
+      "type": "object"
+    },
+    "MadridDevelopmentAreasPipeline": {
+      "additionalProperties": false,
+      "description": "Ayuntamiento de Madrid, «PGOUM 97. Estado de desarrollo de los ámbitos» (VEDA): one row\nper planning area with its district and the state of its four phases, in order (D-241).\n\nOnly the areas whose characteristic use is in `uses` and that are not finished are kept:\nsome phase is still `in_progress` or `not_started`. A state the pipeline does not declare\nsends its row to quarantine and blocks the run (a new wording must be read by a person).\nEach kept area becomes one observation of `metric_id` in its district, its surface in m²,\nwith its code, its name and its stage as dimensions. Names come in capitals: they are shown\nin title case, with the words of `keep_upper` (acronyms such as «PMM») as written.",
+      "properties": {
+        "area_column": {
+          "default": "Superficie (m²)",
+          "title": "Area Column",
+          "type": "string"
+        },
+        "code_column": {
+          "default": "Ámbito",
+          "title": "Code Column",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "date_column": {
+          "default": "Estado del desarrollo a fecha",
+          "title": "Date Column",
+          "type": "string"
+        },
+        "district_column": {
+          "default": "Codigo_Distrito",
+          "title": "District Column",
+          "type": "string"
+        },
+        "district_name_column": {
+          "default": "Distrito",
+          "title": "District Name Column",
+          "type": "string"
+        },
+        "expected_districts": {
+          "exclusiveMinimum": 0,
+          "title": "Expected Districts",
+          "type": "integer"
+        },
+        "keep_upper": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keep Upper",
+          "type": "array"
+        },
+        "kind": {
+          "const": "madrid_development_areas",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "min_rows": {
+          "description": "fewer areas -> the table changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "municipio_ine": {
+          "pattern": "^28\\d{3}$",
+          "title": "Municipio Ine",
+          "type": "string"
+        },
+        "name_column": {
+          "default": "Nombre",
+          "title": "Name Column",
+          "type": "string"
+        },
+        "phase_columns": {
+          "description": "the phases, in their order",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Phase Columns",
+          "type": "array"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "states": {
+          "additionalProperties": {
+            "enum": [
+              "done",
+              "in_progress",
+              "not_started"
+            ],
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "States",
+          "type": "object"
+        },
+        "use_column": {
+          "default": "Uso Característico",
+          "title": "Use Column",
+          "type": "string"
+        },
+        "uses": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Uses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "municipio_ine",
+        "phase_columns",
+        "uses",
+        "states",
+        "expected_districts",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "MadridDevelopmentAreasPipeline",
       "type": "object"
     },
     "MadridDistrictPanelPipeline": {
@@ -1339,10 +1651,13 @@
   "discriminator": {
     "mapping": {
       "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
+      "cm_municipio_name_table": "#/$defs/CmMunicipioNameTablePipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
+      "curated_zone_items": "#/$defs/CuratedZoneItemsPipeline",
       "facility_directory": "#/$defs/FacilityDirectoryPipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
+      "madrid_development_areas": "#/$defs/MadridDevelopmentAreasPipeline",
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
       "osm_parks": "#/$defs/OsmParksPipeline",
@@ -1385,6 +1700,15 @@
     },
     {
       "$ref": "#/$defs/StationTopologyPipeline"
+    },
+    {
+      "$ref": "#/$defs/CmMunicipioNameTablePipeline"
+    },
+    {
+      "$ref": "#/$defs/MadridDevelopmentAreasPipeline"
+    },
+    {
+      "$ref": "#/$defs/CuratedZoneItemsPipeline"
     }
   ]
 }

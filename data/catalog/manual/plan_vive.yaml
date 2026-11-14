@@ -1,0 +1,207 @@
+# Plan Vive de la Comunidad de Madrid: viviendas de alquiler a precio asequible, por municipio
+# (D-241). The page publishes no file, so its «Promociones» list is typed here by hand. Each
+# entry quotes the page (`says`: the entry's fields as the page writes them, joined by « · »)
+# and the contract rejects an entry whose municipio, location, homes or stage the quote does not
+# contain. Never from memory: an entry the page does not complete goes to `excluded`, with why.
+# Reuse: the page's legal notice allows it citing the source and the date of extraction.
+# To refresh: read the page again, change only what it says, and update `consulted`.
+title: Plan Vive — promociones de alquiler asequible por municipio
+publisher: Comunidad de Madrid
+url: https://www.comunidad.madrid/plan-vive
+consulted: 2026-11-14
+unit: viviendas
+items:
+  - municipio_ine: "28005"
+    municipio: "Alcalá de Henares"
+    item: alcala_de_henares
+    name: "Espartales Norte"
+    value: 736
+    stage: "Entrega"
+    says: "Alcalá de Henares · Nº viviendas: 736 · En fase de: Entrega · Promociones: 5 · Ubicación: Espartales Norte"
+  - municipio_ine: "28007"
+    municipio: "Alcorcón"
+    item: alcorcon
+    name: "Ensanche Sur"
+    value: 822
+    stage: "Entrega"
+    says: "Alcorcón · Nº viviendas: 822 · En fase de: Entrega · Promociones: 6 · Ubicación: Ensanche Sur"
+  - municipio_ine: "28022"
+    municipio: "Boadilla del Monte"
+    item: boadilla_del_monte
+    name: "c/ Fray Junípero Sierra"
+    value: 524
+    stage: "Entrega"
+    says: "Boadilla del Monte · Nº viviendas: 524 · En fase de: Entrega · Promociones: 1 · Ubicación: c/ Fray Junípero Sierra"
+  - municipio_ine: "28045"
+    municipio: "Colmenar Viejo"
+    item: colmenar_viejo
+    name: "avda. Cristóbal Colón; c/ Estación de Chamartín; avda. de la Tejera; c/ Francisco Revellés; c/ Américo Vespucio"
+    value: 915
+    stage: "Entrega, comercialización y construcción"
+    says: "Colmenar Viejo · Nº viviendas: 915 (110 de estas viviendas cuentan con financiación del PRTR) · En fase de: Entrega, comercialización y construcción · Promociones: 9 · Ubicación: avda. Cristóbal Colón; c/ Estación de Chamartín; avda. de la Tejera; c/ Francisco Revellés; c/ Américo Vespucio."
+  - municipio_ine: "28065"
+    municipio: "Getafe"
+    item: getafe
+    name: "Buenavista y Los Molinos"
+    value: 864
+    stage: "Entrega"
+    says: "Getafe · Nº viviendas: 864 · En fase de: Entrega · Promociones: 10 · Ubicación: Buenavista y Los Molinos"
+  - municipio_ine: "28073"
+    municipio: "Humanes de Madrid"
+    item: humanes_de_madrid
+    name: "c/ Don Fausto Ruiza"
+    value: 50
+    stage: "Comercialización"
+    says: "Humanes de Madrid · Nº viviendas: 50 · En fase de: Comercialización · Promociones: 1 · Ubicación: c/ Don Fausto Ruiza"
+  - municipio_ine: "28079"
+    municipio: "Madrid"
+    item: madrid
+    name: "Valdebebas y Los Ahijones"
+    value: 1616
+    stage: "Entrega y construcción"
+    says: "Madrid · Nº viviendas: 1.616 · En fase de: Entrega y construcción · Promociones: 5 · Ubicación: Valdebebas y Los Ahijones"
+    # The page names the two places, not their districts: the Ayuntamiento's register of
+    # planning areas (VEDA) puts each one in its district.
+    districts:
+      - code: "2807916"
+        says: "16 · HORTALEZA · APE.16.11-RP · CIUDAD AEROPORTUARIA Y PARQUE DE VALDEBEBAS"
+      - code: "2807919"
+        says: "19 · VICÁLVARO · UZPp.02.03-RP · DESARROLLO DEL ESTE - LOS AHIJONES"
+    district_source:
+      publisher: Ayuntamiento de Madrid · PGOUM 97. Estado de desarrollo de los ámbitos (julio 2026)
+      url: https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos
+      consulted: 2026-11-14
+    note: "La Comunidad no publica cuántas de estas viviendas hay en cada uno de los dos sitios."
+  - municipio_ine: "28092"
+    municipio: "Móstoles"
+    item: mostoles
+    name: "Móstoles Sur"
+    value: 738
+    stage: "Entrega y construcción"
+    says: "Móstoles · Nº viviendas: 738 · En fase de: Entrega y construcción · Promociones: 6 · Ubicación: Móstoles Sur"
+  - municipio_ine: "28096"
+    municipio: "Navalcarnero"
+    item: navalcarnero
+    name: "avda. Mari-Martín y c/ de los Bueyes"
+    value: 425
+    stage: "Entrega y construcción"
+    says: "Navalcarnero · Nº viviendas: 425 · En fase de: Entrega y construcción · Promociones: 3 · Ubicación: avda. Mari-Martín y c/ de los Bueyes"
+  - municipio_ine: "28113"
+    municipio: "Pinto"
+    item: pinto
+    name: "c/ Isaac Albéniz"
+    value: 422
+    stage: "Entrega"
+    says: "Pinto · Nº viviendas: 422 · En fase de: Entrega · Promociones: 1 · Ubicación: c/ Isaac Albéniz"
+  - municipio_ine: "28134"
+    municipio: "San Sebastián de los Reyes"
+    item: san_sebastian_de_los_reyes
+    name: "c/ Hoces del Duratón y avda. Arribes del Duero"
+    value: 568
+    stage: "Entrega"
+    says: "San Sebastián de los Reyes · Nº viviendas: 568 · En fase de: Entrega · Promociones: 2 · Ubicación: c/ Hoces del Duratón y avda. Arribes del Duero"
+  - municipio_ine: "28148"
+    municipio: "Torrejón de Ardoz"
+    item: torrejon_de_ardoz
+    name: "c/ Desmond Tutu"
+    value: 137
+    stage: "Entrega"
+    says: "Torrejón de Ardoz · Nº viviendas: 137 · En fase de: Entrega · Promociones: 1 · Ubicación: c/ Desmond Tutu"
+  - municipio_ine: "28903"
+    municipio: "Tres Cantos"
+    item: tres_cantos
+    name: "avda. de Juan Pablo II y c/ Letonia"
+    value: 866
+    stage: "Entrega y construcción"
+    says: "Tres Cantos · Nº viviendas: 866 · En fase de: Entrega y construcción · Promociones: 4 · Ubicación: avda. de Juan Pablo II y c/ Letonia"
+  - municipio_ine: "28006"
+    municipio: "Alcobendas"
+    item: alcobendas
+    name: "avda. Olímpica y avda. Camilo José Cela"
+    value: 756
+    stage: "Construcción"
+    says: "Alcobendas · Nº viviendas: 756 · En fase de: Construcción · Promociones: 2 · Ubicación: avda. Olímpica y avda. Camilo José Cela"
+  - municipio_ine: "28013"
+    municipio: "Aranjuez"
+    item: aranjuez
+    name: "avda. Memorial Paz de Hiroshima"
+    value: 400
+    stage: "Construcción"
+    says: "Aranjuez · Nº viviendas: 400 · En fase de: Construcción · Promociones: 1 · Ubicación: avda. Memorial Paz de Hiroshima"
+  - municipio_ine: "28014"
+    municipio: "Arganda del Rey"
+    item: arganda_del_rey
+    name: "avda. Lisboa"
+    value: 210
+    stage: "Comercialización"
+    says: "Arganda del Rey · Nº viviendas: 210 · En fase de: Comercialización · Promociones: 1 · Ubicación: avda. Lisboa"
+  - municipio_ine: "28015"
+    municipio: "Arroyomolinos"
+    item: arroyomolinos
+    name: "El Rellano y La Rinconada"
+    value: 365
+    stage: "Construcción"
+    says: "Arroyomolinos · Nº viviendas: 365 · En fase de: Construcción · Promociones: 2 · Ubicación: El Rellano y La Rinconada"
+  - municipio_ine: "28053"
+    municipio: "Daganzo de Arriba"
+    item: daganzo_de_arriba
+    name: "c/ Carmen Amaya"
+    value: 174
+    stage: "Comercialización"
+    says: "Daganzo de Arriba · Nº viviendas: 174 · En fase de: Comercialización · Promociones: 1 · Ubicación: c/ Carmen Amaya"
+  - municipio_ine: "28075"
+    municipio: "Loeches"
+    item: loeches
+    name: "c/ Almendro"
+    value: 295
+    stage: "Construcción"
+    says: "Loeches · Nº viviendas: 295 · En fase de: Construcción · Promociones: 2 · Ubicación: c/ Almendro"
+  - municipio_ine: "28090"
+    municipio: "Moralzarzal"
+    item: moralzarzal
+    name: "c/ Hachazuelas y camino de Alpedrete"
+    value: 80
+    stage: "Construcción"
+    says: "Moralzarzal · Nº viviendas: 80 · En fase de: Construcción · Promociones: 2 · Ubicación: c/ Hachazuelas y camino de Alpedrete"
+  - municipio_ine: "28149"
+    municipio: "Torrejón de la Calzada"
+    item: torrejon_de_la_calzada
+    name: "c/ Manuel Fraga Iribarne c/ Río Guadiana"
+    value: 143
+    stage: "Comercialización y construcción"
+    says: "Torrejón de la Calzada · Nº viviendas: 143 (61 de estas viviendas cuentan con financiación del PRTR) · En fase de: Comercialización y construcción · Promociones: 2 · Ubicación: c/ Manuel Fraga Iribarne c/ Río Guadiana"
+  - municipio_ine: "28150"
+    municipio: "Torrejón de Velasco"
+    item: torrejon_de_velasco
+    name: "c/ Carmen Tagle"
+    value: 41
+    stage: "Construcción"
+    says: "Torrejón de Velasco · Nº viviendas: 41 · En fase de: Construcción · Promociones: 1 · Ubicación: c/ Carmen Tagle"
+  - municipio_ine: "28152"
+    municipio: "Torrelodones"
+    item: torrelodones
+    name: "c/ Prado de la Virgen"
+    value: 170
+    stage: "Construcción"
+    says: "Torrelodones · Nº viviendas: 170 · En fase de: Construcción · Promociones: 1 · Ubicación: c/ Prado de la Virgen"
+  - municipio_ine: "28161"
+    municipio: "Valdemoro"
+    item: valdemoro
+    name: "c/ Agustina de Aragón"
+    value: 150
+    stage: "Construcción"
+    says: "Valdemoro · Nº viviendas: 150 · En fase de: Construcción · Promociones: 1 · Ubicación: c/ Agustina de Aragón"
+  - municipio_ine: "28167"
+    municipio: "Velilla de San Antonio"
+    item: velilla_de_san_antonio
+    name: "c/ Nicosia"
+    value: 152
+    stage: "Construcción"
+    says: "Velilla de San Antonio · Nº viviendas: 152 · En fase de: Construcción · Promociones: 1 · Ubicación: c/ Nicosia"
+  - municipio_ine: "28172"
+    municipio: "Villalbilla"
+    item: villalbilla
+    name: "c/Infante Don Juan Manuel"
+    value: 226
+    stage: "Construcción"
+    says: "Villalbilla · Nº viviendas: 226 · En fase de: Construcción · Promociones: 1 · Ubicación: c/Infante Don Juan Manuel"

@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_transacciones_nueva_usada",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_transacciones_nueva_usada/52908ce6c760/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comun.csv",
+      "sha256": "52908ce6c760bdfe95764bc0940440e1a6224489b1b81f7c9aa0f926cefadfaa",
+      "bytes": 6906813,
+      "url": "https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/55469ce8-f90d-4cf7-b113-12c3449f89e8/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comun.csv",
+      "retrieved_at": "2026-11-14T18:49:21.883998+00:00"
+    }
+  ]
+}

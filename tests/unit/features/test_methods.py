@@ -487,3 +487,132 @@ def test_a_factor_of_another_year_stops_the_computation() -> None:
     weights = _weights([("2807901", "28001", 1.0)])
     with pytest.raises(ValueError, match="same year"):
         methods.postcode_weighted_mean(CP_RENT, weights, {}, new_contracts=(old, 1.2))
+
+
+# D-241: share of the last periods and a zone's items -----------------------------------------
+Q = [date(2025, 7, 1), date(2025, 10, 1), date(2026, 1, 1), date(2026, 4, 1)]
+QUARTER_END = {
+    date(2025, 4, 1): date(2025, 6, 30),
+    Q[0]: date(2025, 9, 30),
+    Q[1]: date(2025, 12, 31),
+    Q[2]: date(2026, 3, 31),
+    Q[3]: date(2026, 6, 30),
+}
+
+
+def _sales(
+    code: str, quarter: date, new: float | None, used: float, status: str = ""
+) -> list[dict[str, Any]]:
+    extra = {"estado": status} if status else {}
+    return [
+        {
+            "territory_code": code,
+            "period_start": quarter,
+            "period_end": QUARTER_END[quarter],
+            "dims": {"tipo": tipo} | extra,
+            "value": value,
+            "null_reason": None if value is not None else "SOURCE_MISSING",
+        }
+        for tipo, value in (("vivienda_nueva", new), ("segunda_mano", used))
+    ]
+
+
+def _share(rows: list[dict[str, Any]]) -> pd.DataFrame:
+    return methods.metric_window_share(
+        pd.DataFrame(rows),
+        4,
+        {"tipo": "vivienda_nueva"},
+        {"tipo": ["vivienda_nueva", "segunda_mano"]},
+        status_dim="estado",
+    ).set_index("territory_code")
+
+
+def test_window_share_adds_up_the_last_four_quarters_and_keeps_the_counts() -> None:
+    """Getafe in the CM table: 650 of the 2.311 sales of the year were new homes (28 %)."""
+    rows = [
+        r
+        for q, n, u in zip(Q, [555, 22, 50, 23], [436, 420, 401, 404], strict=True)
+        for r in _sales("28065", q, n, u)
+    ]
+    rows += _sales("28065", date(2025, 4, 1), 67, 489)  # older than the window: left out
+    out = _share(rows)
+    row = out.loc["28065"]
+    assert round(row["value"], 1) == 28.1
+    assert row["period_start"] == Q[0]
+    assert row["detail"] == {
+        "numerator": 650.0,
+        "denominator": 2311.0,
+        "period_end": "2026-06-30",
+        "provisional": False,
+    }
+
+
+def test_window_share_says_when_a_quarter_is_provisional() -> None:
+    rows = [r for q in Q[:3] for r in _sales("28079", q, 300, 9000)]
+    rows += _sales("28079", Q[3], 621, 9722, status="provisional")
+    assert _share(rows).loc["28079", "detail"]["provisional"] is True
+
+
+def test_window_share_without_a_quarter_is_unknown_and_without_sales_not_applicable() -> None:
+    rows = [r for q in Q for r in _sales("28001", q, 0, 0)]
+    rows += [r for q in Q for r in _sales("28079", q, 300, 9000)]
+    rows += [r for q in Q[1:] for r in _sales("28002", q, 1, 3)]  # no first quarter
+    out = _share(rows)
+    assert out.loc["28001", "null_reason"] == "NOT_APPLICABLE"
+    assert out.loc["28001", "detail"]["denominator"] == 0.0
+    assert out.loc["28002", "null_reason"] == "SOURCE_MISSING"
+    assert math.isnan(out.loc["28002", "value"]) or out.loc["28002", "value"] is None
+
+
+def test_window_share_needs_the_whole_window() -> None:
+    rows = [r for q in Q[:3] for r in _sales("28079", q, 300, 9000)]
+    assert _share(rows).empty
+
+
+def _areas(rows: list[tuple[str, str, str, float]]) -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {
+                "territory_code": code,
+                "period_start": date(2026, 7, 1),
+                "dims": {"item": item, "name": item.title(), "stage": stage},
+                "value": value,
+                "null_reason": None,
+            }
+            for code, item, stage, value in rows
+        ]
+    )
+
+
+def test_items_count_each_zone_in_stage_order_and_a_zone_without_any_is_zero() -> None:
+    obs = _areas(
+        [
+            ("2807919", "camino", "obras", 38_474.0),
+            ("2807919", "berrocales", "obras", 7_810_077.0),
+            ("2807919", "sin", "sin_empezar", 99_999_999.0),
+            ("2807919", "tram", "tramitacion", 1.0),
+        ]
+    )
+    out = methods.metric_items(
+        obs,
+        ["2807913", "2807919"],
+        value="count",
+        stage_order=["obras", "tramitacion", "sin_empezar"],
+    ).set_index("territory_code")
+    assert out.loc["2807919", "value"] == 4
+    items = out.loc["2807919", "detail"]["items"]
+    assert [i["code"] for i in items] == ["berrocales", "camino", "tram", "sin"]
+    assert out.loc["2807913", "value"] == 0
+    assert out.loc["2807913", "detail"] == {"items": []}
+    assert out.loc["2807913", "null_reason"] is None
+
+
+def test_items_can_add_up_their_values_and_keep_a_note() -> None:
+    obs = _areas([("28079", "madrid", "Entrega y construcción", 1616.0)])
+    obs.loc[0, "dims"]["note"] = "Sin reparto entre los dos sitios."
+    out = methods.metric_items(obs, ["28079", "28006"], value="sum")
+    first = out.set_index("territory_code").loc["28079"]
+    assert first["value"] == 1616.0
+    assert first["detail"]["items"][0]["note"] == "Sin reparto entre los dos sitios."
+    with pytest.raises(ValueError, match="count or sum"):
+        methods.metric_items(obs, [], value="max")
