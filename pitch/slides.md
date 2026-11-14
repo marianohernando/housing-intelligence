@@ -110,14 +110,17 @@ Versión con buscador (la que vale):
 - **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas: C1 y C2, las de B con `fit-0.2` (PR #19); C3, la de B del 12 nov (PR #17).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
-**Huecos de la fase de mejora (12 nov)**, marcados como pendientes en `deck.html`; `--final` falla hasta que se llenen:
+**Fase de mejora (12–14 nov)**, ya en `deck.html`:
 - **Cifra de impacto (A, D-229, `impact-0.1`):** «**25.551** niños de 0 a 4 años viven donde faltan escuelas infantiles», en grande, y debajo «Dónde invertir primero: Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde». Sustituye al ejemplo largo y a «179 municipios y 21 distritos de Madrid».
   - Fuente: `GET /api/v1/gaps/impact` y `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov. Son el 9,8 % de los niños de esa edad: Puente de Vallecas 9.433, Carabanchel 9.150 y Villaverde 6.968, del padrón de cada distrito. Puente de Vallecas tiene ratio 0,571, con p = 0,001.
   - En el pie: «Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid».
   - En producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310, 3 zonas). Si cambian los datos, se cambia la cifra. El ranking también se ve en la web, en «Dónde invertir primero» («Qué falta» sin zona): Puente de Vallecas 9.433 (57 por cada 100), Carabanchel 9.150 (68) y Villaverde 6.968 (61).
   - Las demás filas (farmacias, mayores y vivienda) van en la pregunta 47, no en la slide.
-- **Cita 2 (Mariano):** el técnico municipal de la prueba con personas, 12 palabras como mucho. Ocupa el sitio de la captura C4, que repetía las cifras del ejemplo.
-- **Cita 1 (Mariano), en la tarjeta de utilidad:** alguien que busca casa. Ocupa el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.
+- **Citas de la prueba con usuarios (14 nov), aprobadas por Mariano:** «Se valora mucho la cercanía al puesto de trabajo.» y «Muy chula la web, funciona bien.».
+  - Van firmadas «Prueba con usuarios, 14 nov» y sin nombre, como se prometió a los usuarios.
+  - Las dos son de usuarios, así que van juntas en la tarjeta de utilidad, en el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.
+  - No hubo cita de un técnico municipal: la tarjeta de impacto se queda sin cita.
+  - Si llegan citas mejores, se cambian.
 
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
   - escuela infantil: escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (cada escuela cuenta como una: nadie publica sus plazas);
@@ -137,7 +140,7 @@ Versión con buscador (la que vale):
   - **Otros distritos con FALTA en esa fila:** Villaverde (2,984; ratio 0,613) y Carabanchel (3,322; 0,682) (`GET /api/v1/gaps?level=distrito&row=escuela_infantil`, 12 nov). Centro (0,661) y Vicálvaro (0,647) tienen un ratio parecido y salen JUSTO: con menos niños, la diferencia podría ser casualidad. Sirve para responder a Escot.
   - **Si preguntan por un municipio:** Parla, farmacias, FALTA: 2,029 frente a 4,175 (ratio 0,486). La estadística oficial de farmacias por habitante también da 2,04 (`GET /api/v1/gaps/municipio/28106`, 12 nov).
   - **Ya no vale «Madrid tiene un tercio menos de centros de atención primaria»** (D-217 §7): con gap-0.3, Madrid capital sale JUSTO en centros de salud (0,3603 frente a 0,3799; ratio 0,9484, `evidence/gate-04/2026-11-12/gap-status-gap03.md`).
-  - Captura **C4**: desde el 12 nov no va en la slide 3; su sitio es para la cita del técnico municipal. Queda de reserva (`deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, de B, con las mismas cifras que producción).
+  - Captura **C4**: desde el 12 nov no va en la slide 3. Queda de reserva (`deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, de B, con las mismas cifras que producción).
 - **Escala:**
   - 179 municipios (`evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`) + 21 distritos de Madrid capital (D-200, D-209; DATA-012 hecha);
   - 3.866 centros educativos, 553 centros sanitarios (276 centros de salud, 151 consultorios, 85 hospitales y 41 centros de salud mental; sin las clínicas privadas, D-216; con los 4 centros de salud corregidos por D-218 §10), 1.014 servicios para mayores y 2.957 farmacias (`evidence/gate-01/2026-11-12/cm_*/row_counts.json`, campo `places`);

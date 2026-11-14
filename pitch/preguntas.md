@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov) y la 48 (barrios, 13 nov).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov) y la 49 y la 50 (prueba con usuarios, 14 nov).
 
 ---
 
@@ -244,9 +244,11 @@ Porque son dos preguntas distintas. El % dice cuánto se parece la zona a lo que
 - Si insiste en el colegio a 0,76: está por debajo del 80 %, pero la diferencia puede ser casual con esa población, y FALTA exige que no lo sea (pregunta 11).
 
 **43. ¿Quién lo ha usado?**
-**[Pendiente de Mariano: la prueba con 3–5 personas y un técnico municipal. Va así: «Lo probaron [N] personas que buscan casa y [un técnico municipal]; [cifra, por ejemplo cuántas encontraron una zona en menos de 2 minutos]. Una dijo: "[cita]".»]** Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
-- Evidencia: `pitch/pruebas_usuarios/` (kit y plantilla de resultados) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
-- Si la prueba no se ha hecho: «Todavía no con usuarios reales: lo hemos validado contra las fuentes oficiales, y es lo siguiente».
+Usuarios reales, en una prueba del 14 nov: «Se valora mucho la cercanía al puesto de trabajo» y «Muy chula la web, funciona bien». Lo que pidieron ya está entrando: un límite de tiempo hasta el trabajo y las paradas de autobús separadas del metro y de Cercanías. Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
+- Evidencia: las 2 citas de la slide 3, aprobadas por Mariano y sin nombre, como se prometió a los usuarios · `pitch/pruebas_usuarios/` (kit de la prueba) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
+- Si preguntan cuántos: **pendiente de Mariano** (el número de personas de la prueba). Nunca se dice uno de memoria.
+- Lo que pidieron y no entra antes del freeze: preguntas 49 y 50.
+- Estado: el límite de tiempo hasta el trabajo, **pendiente de B**; las paradas de autobús aparte, **pendiente de A y de B** (`pitch/textos_web.md`, sección 2 y tarjeta de zona). Si el 23 nov alguno no está en producción, se quita de la respuesta.
 
 **44. ¿Qué es original? El Ayuntamiento ya hizo «El Madrid de los 15 minutos», y el 2SFCA es de 2003.**
 El método de repartir la capacidad entre quienes la comparten no es nuestro, y lo citamos: lo nuevo es lo que hacemos con él. El estudio del Ayuntamiento de 2022 da a cada portal de Madrid capital un índice según haya o no cada servicio a 15 minutos. Nosotros cubrimos los 179 municipios, contamos cuánta gente comparte cada servicio, comparamos cada zona con las de su tipo con una prueba estadística y sumamos el tiempo en transporte público con los horarios del Consorcio, que ese estudio dejaba para el futuro; y lo juntamos con un buscador para personas, abierto y con la fuente de cada cifra.
@@ -293,3 +295,25 @@ Entre distritos se parecen porque esta familia pide cosas que Madrid cumple casi
   - el alquiler por barrio: D-232 §4 (San Blas-Canillejas, de 14,9 a 16,0 €/m²).
 - Límite, si insiste: dentro de un distrito el alquiler cambia poco, porque se publica por código postal y un código cubre varios barrios (en San Blas-Canillejas, de 14,9 a 16,0 €/m², D-232 §4).
 - Estado: en producción, en la API y en la web: la vista de un distrito enseña «Los barrios que mejor encajan» tras buscar (PR #37, desplegado en `e7025fb`).
+
+## Dos más, de la prueba con usuarios (14 nov)
+No entran antes del freeze del 23 nov: se responden con la hoja de ruta.
+
+**49. ¿Y los proyectos futuros de Madrid, como el metro nuevo o los nuevos desarrollos?**
+Hoy medimos lo que ya existe: una línea o una estación nueva entra en cuanto el Consorcio la publica en sus horarios, que recargamos cada trimestre. Lo que aún está en obras o en proyecto iría como un escenario aparte («si abre esta estación…»), nunca mezclado con el dato de hoy. Para los desarrollos, el portal de la Comunidad publica las ventas de vivienda nueva por municipio; el planeamiento urbanístico no está en el portal, así que habría que pedirlo a cada ayuntamiento.
+- Evidencia:
+  - horarios: los 6 GTFS del CRTM (D-196) y los minutos al trabajo calculados con ellos (D-220); recarga trimestral en `pitch/modelo_negocio.md` («Mantenimiento con una sola persona»);
+  - escenario frente a dato: `docs/03_intelligence/21_temporal_and_forecasting_strategy.md` («Forecast» y «Scenario»; «nuevas estaciones» y «obra/promoción» entre las señales de zona emergente) y `CLAUDE.md` §11 (observado, estimado, forecast y escenario, siempre separados);
+  - vivienda nueva: «Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid» (`transacciones_vivienda_nueva_usada_municipio`, portal CM, CC BY 4.0; ya listado en `docs/02_data/08_initial_madrid_dataset_map.md`, P1-04);
+  - planeamiento: en el portal CM no sale ningún conjunto al buscar «planeamiento» (14 nov); sigue abierto en `docs/00_index/02_open_questions.md`.
+- Estado: hoja de ruta.
+
+**50. ¿Puedo filtrar por vivienda nueva o por metros?**
+Hoy no filtramos pisos concretos, porque no usamos anuncios: Vida Fácil elige zonas. Lo que sí damos es contexto de la zona: los metros del alquiler medio (77 m² en Latina), cuántas viviendas de más de 90 m² hay por cada 100 hogares de 4 o más personas («Vivienda para familias») y, desde esta semana, cuántas viviendas son posteriores al año 2000. Filtrar pisos por metros o por obra nueva queda en la hoja de ruta, con datos que se puedan reutilizar legalmente.
+- Evidencia:
+  - sin anuncios: pregunta 35 · `CLAUDE.md` §15;
+  - metros: el hecho del alquiler («Alquiler ≈ 1.101 €/mes por 77 m²», Latina, `evidence/gate-06/2026-11-12-deploy/caso-demo-fit06.md`) y la fila de vivienda (`data/catalog/features/viviendas_grandes_por_100_hogares_grandes.yaml`; en los distritos de Madrid, SIN DATOS);
+  - antigüedad: «Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios» (`censo_anual_vivienda_por_antiguedad`, portal CM, CC BY 4.0, años 2022 y 2023; no trae los distritos de Madrid). Cálculo de D con 2023, consultado el 14 nov: el 24,6 % de las viviendas de la Comunidad son posteriores a 2000; en Madrid capital, el 16,5 %;
+  - hoja de ruta: D-069 (superficie, antigüedad y obra nueva o usada «cuando exista información fiable y legalmente reutilizable»).
+- Si insiste en la obra nueva: las ventas de vivienda nueva por municipio (pregunta 49) dicen dónde se construye, no qué piso comprar.
+- Estado: los metros, en producción; la antigüedad, **pendiente de A y de B** (si el 23 nov no está, se quita «y, desde esta semana, …» de la respuesta); el filtro por vivienda, hoja de ruta.
