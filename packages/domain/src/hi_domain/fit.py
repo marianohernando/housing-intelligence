@@ -669,9 +669,11 @@ def statuses(scenario: ScenarioState, data: ZoneData) -> list[ConstraintStatus]:
     return [c.status for c in constraint_checks(scenario, data, area)]
 
 
-def ranking_key(fit: ZoneFit) -> tuple[float, float, float, str]:
+def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, str]:
     """Best unrounded fit first; ties: more confidence, fewer minutes by public transport to the
-    first place of work, then the zone id. Never depends on the order the zones arrive in."""
+    first place of work, the lower cost (D-234: of the zones over a budget to buy, all at 0 %,
+    the closest to it comes first), then the zone id. Never depends on the order the zones
+    arrive in."""
     trip = fit.data.commute.get(0)
     minutes = trip.minutes if trip is not None and trip.minutes is not None else math.inf
     zone = fit.data.zone
@@ -679,5 +681,6 @@ def ranking_key(fit: ZoneFit) -> tuple[float, float, float, str]:
         -(fit.utility if fit.utility is not None else -1.0),
         -fit.confidence,
         minutes,
+        fit.cost_eur if fit.cost_eur is not None else math.inf,
         zone.admin_unit_id or f"{zone.level.value}:{zone.code}",
     )

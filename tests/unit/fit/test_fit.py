@@ -749,3 +749,12 @@ def test_an_unknown_trip_limit_is_still_offered_because_dropping_it_adds_zones()
     assert check.binding_constraint is None
     assert check.unknown_by_constraint == {"commute:0": 2}
     assert [(r.constraint_id, r.added_zones) for r in check.relaxations] == [("commute:0", 2)]
+
+
+def test_zones_over_a_purchase_budget_come_closest_to_it_first() -> None:
+    """D-234: every zone over the budget scores 0 % on it; the near misses then go from the
+    cheapest up, not by zone code."""
+    scenario = ScenarioState(budget=BUY_300K, household=Household(adults=2))
+    zones = [zone("1", price=7700.0), zone("2", price=4500.0), zone("3", price=6000.0)]
+    outcome = run_search(scenario, zones)
+    assert [r.zone.code for r in outcome.near_misses] == ["2", "3", "1"]
