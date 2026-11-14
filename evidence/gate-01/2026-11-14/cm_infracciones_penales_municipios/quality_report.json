@@ -144,6 +144,23 @@
         "covered": 37,
         "expected": 37
       }
+    },
+    {
+      "name": "quarantine_empty",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0
+      }
+    },
+    {
+      "name": "latest_year_complete",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "year": "2024-01-01",
+        "missing": {}
+      }
     }
   ]
 }

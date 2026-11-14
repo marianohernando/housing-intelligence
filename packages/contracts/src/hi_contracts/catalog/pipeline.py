@@ -97,9 +97,12 @@ class CmMunicipioConceptPipeline(BaseModel):
     Only the rows whose concept starts with one of the `concepts` are read, each with its value
     of `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave
     the second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),
-    so `municipios` maps each spelling to its INE code after collapsing the whitespace; a name
-    that is not there goes to quarantine and fails the run, never dropped in silence. Rows
-    whose status is in `excluded_statuses` (e.g. «Provisional») are left out and counted.
+    so `municipios` maps each spelling to its INE code after collapsing the whitespace. Two
+    blocking checks keep a figure from being lost in silence: the quarantine must be empty (a
+    name that is not there fails the run, even for a single row), and in the latest year read
+    each of the `municipios` must have a row of every concept (a row renamed or dropped by the
+    source fails it too). Rows whose status is in `excluded_statuses` (e.g. «Provisional») are
+    left out and counted.
     """
 
     model_config = ConfigDict(extra="forbid")

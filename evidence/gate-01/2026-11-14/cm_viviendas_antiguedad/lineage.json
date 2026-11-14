@@ -11,8 +11,8 @@
     }
   ],
   "checksum": "cf76bf4eb9f8ab92b3155cc388b1019d73dd6acea00c4c7e162a9d7ccbbc4ad2",
-  "parser_version": "stat_tables-1.0.0",
+  "parser_version": "stat_tables-1.1.0",
   "dataset_version": "2026-11-14-cf76bf4eb9f8",
-  "correlation_id": "06cd63e5b9f14e42a5d7846f173def54",
+  "correlation_id": "3669110f3d494170ade4d459385397da",
   "silver": "data/silver/cm_viviendas_antiguedad/cf76bf4eb9f8/observations.csv.gz"
 }

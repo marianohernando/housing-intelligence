@@ -11,8 +11,8 @@
     }
   ],
   "checksum": "d717bfe7732e09f91276154ac1e3df99a584670cc8f73566ecafa3c2e87e80ef",
-  "parser_version": "stat_tables-1.0.0",
+  "parser_version": "stat_tables-1.1.0",
   "dataset_version": "2026-11-14-d717bfe7732e",
-  "correlation_id": "bd476ea1f34646bcb4d9597549197baa",
+  "correlation_id": "e1acee05d4274a5194403bd45ca5a085",
   "silver": "data/silver/cm_infracciones_penales_municipios/d717bfe7732e/observations.csv.gz"
 }

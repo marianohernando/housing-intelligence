@@ -85,8 +85,11 @@ def test_only_the_total_and_the_cybercrime_of_the_definitive_years_are_read(
     assert max(frame["period_start"]) == date(2024, 1, 1)  # 2025 is provisional
     provisional = 2 * MUNICIPIOS  # the total and the cybercrime of each municipio
     assert obs.excluded_status == provisional
-    assert obs.out_of_window == len(source) - len(frame) - provisional  # rows of other concepts
-    assert metric_counts(obs)["excluded_status"] == provisional
+    assert obs.out_of_scope == len(source) - len(frame) - provisional  # rows of other concepts
+    counts = metric_counts(obs)
+    assert counts["excluded_status"] == provisional
+    assert counts["out_of_scope"] == obs.out_of_scope
+    assert "out_of_window" not in counts  # no period window here, as in the panel
     madrid = frame[
         (frame["territory_code"] == "28079") & (frame["period_start"] == date(2024, 1, 1))
     ]
@@ -111,7 +114,45 @@ def test_a_name_that_is_not_mapped_fails_the_run_never_dropped(
     }
     report = run_metric_quality(obs, spec, catalog.metrics, _known(spec))
     failed = {c.name for c in report.checks if c.critical and not c.passed}
-    assert failed == {"quarantine_ratio", "expected_municipios"}
+    assert failed == {
+        "quarantine_ratio",
+        "expected_municipios",
+        "quarantine_empty",
+        "latest_year_complete",
+    }
+
+
+def _getafe_total_2024(source: pd.DataFrame, spec: CmMunicipioConceptPipeline) -> pd.Series:
+    rows = (
+        (source[spec.municipio_column] == "Getafe")
+        & (source[spec.period_column].astype(str) == "2024")
+        & source[spec.concept_column].str.startswith("Total hechos conocidos")
+    )
+    assert int(rows.sum()) == 1
+    return rows
+
+
+@pytest.mark.parametrize("renamed", ["municipio", "concept"])
+def test_a_single_total_row_lost_in_the_year_shown_fails_the_run(
+    spec: CmMunicipioConceptPipeline, source: pd.DataFrame, catalog: Catalog, renamed: str
+) -> None:
+    """Review R-01: one row of 2024 renamed by the source (Getafe's total) is a figure lost
+    in the year the zone view shows. Its name goes to quarantine, below the quarantine ratio
+    that the other tables tolerate; its concept takes it out of the rows read. Both fail."""
+    changed = source.copy()
+    rows = _getafe_total_2024(changed, spec)
+    if renamed == "municipio":
+        changed.loc[rows, spec.municipio_column] = "Xetafe"
+    else:
+        changed.loc[rows, spec.concept_column] = "Totales de hechos conocidos en Getafe"
+    obs = normalize(changed, spec)
+    report = run_metric_quality(obs, spec, catalog.metrics, _known(spec))
+    assert not report.passed
+    failed = {c.name for c in report.checks if c.critical and not c.passed}
+    lost = {"latest_year_complete"} | ({"quarantine_empty"} if renamed == "municipio" else set())
+    assert failed == lost  # the ratio and the 37 municipios of other years let it through
+    complete = next(c for c in report.checks if c.name == "latest_year_complete")
+    assert complete.details["missing"] == {"total": ["28065"]}
 
 
 def test_names_are_compared_with_their_whitespace_collapsed(

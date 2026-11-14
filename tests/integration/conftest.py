@@ -225,7 +225,13 @@ def fixtures_ingested(
             # D-235: the sample has Madrid only, and the population fixture only its latest
             # year, so the provisional year is read here (the unit tests cover leaving it out).
             src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
-            sample = spec.model_copy(update={"expected_municipios": 1, "excluded_statuses": []})
+            sample = spec.model_copy(
+                update={
+                    "expected_municipios": 1,
+                    "municipios": {"Madrid": "28079"},
+                    "excluded_statuses": [],
+                }
+            )
             result = run_metric_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )

@@ -22,28 +22,45 @@ from hi_ingestion.pipelines.stat_tables.publish import replace_observations
 from hi_ingestion.pipelines.stat_tables.quality import (
     QualityReport,
     expected_municipios_check,
+    latest_year_complete_check,
+    quarantine_empty_check,
     row_counts,
     run_quality,
 )
 
-PARSER_VERSION = "stat_tables-1.0.0"
+# 1.1: cm_municipio_concept reads several concepts as a dimension and blocks on a lost row (D-235)
+PARSER_VERSION = "stat_tables-1.1.0"
 MetricPipeline = CmStatTablePipeline | CmPostcodeConceptPipeline | CmMunicipioConceptPipeline
 
 
 def run_metric_quality(
     obs: Observations, spec: MetricPipeline, metrics: dict[str, MetricSpec], known: set[str]
 ) -> QualityReport:
-    """A table that names its municipios by hand must publish all it declares (D-235)."""
+    """A table that names its municipios by hand must publish all it declares, place every
+    row it reads, and give each of them every concept in the year that is shown (D-235)."""
     base = run_quality(obs, metrics, known)
     if not isinstance(spec, CmMunicipioConceptPipeline):
         return base
+    expected = set(spec.municipios.values())
     return QualityReport(
-        [*base.checks, expected_municipios_check(obs.frame, spec.expected_municipios)]
+        [
+            *base.checks,
+            expected_municipios_check(obs.frame, spec.expected_municipios),
+            quarantine_empty_check(obs.quarantine),
+            latest_year_complete_check(obs.frame, spec.dimension, spec.concepts.values(), expected),
+        ]
     )
 
 
 def metric_counts(obs: Observations) -> dict[str, int]:
-    counts = row_counts(obs.frame) | {"out_of_window": obs.out_of_window}
+    """Rows left aside: out of the period window (stat tables) or of the concepts read (tables
+    that name their municipios by hand, like the panel's `out_of_scope`)."""
+    left_out = (
+        {"out_of_scope": obs.out_of_scope}
+        if obs.out_of_scope is not None
+        else {"out_of_window": obs.out_of_window}
+    )
+    counts = row_counts(obs.frame) | left_out
     return counts | ({"excluded_status": obs.excluded_status} if obs.excluded_status else {})
 
 

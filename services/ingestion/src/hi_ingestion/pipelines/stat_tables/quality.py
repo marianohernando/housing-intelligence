@@ -1,5 +1,6 @@
 """QA for observations: keys, territories, value semantics and additivity of totals."""
 
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -168,6 +169,36 @@ def expected_municipios_check(frame: pd.DataFrame, expected: int) -> CheckResult
         True,
         len(codes) == expected,
         {"covered": len(codes), "expected": expected},
+    )
+
+
+def quarantine_empty_check(quarantine: pd.DataFrame) -> CheckResult:
+    """Blocking for a table that names its municipios by hand: one row it cannot place is a
+    figure lost, however small the ratio (D-235)."""
+    return CheckResult("quarantine_empty", True, quarantine.empty, {"quarantined": len(quarantine)})
+
+
+def latest_year_complete_check(
+    frame: pd.DataFrame, dimension: str, values: Iterable[str], expected: set[str]
+) -> CheckResult:
+    """Blocking: in the latest year read, every expected municipio has a row of each value of
+    `dimension` (e.g. its total and its cybercrime). A row renamed or dropped by the source
+    in the year that is shown fails the run instead of leaving that zone without a figure."""
+    if frame.empty:
+        return CheckResult("latest_year_complete", True, False, {"year": None})
+    newest = frame["period_start"].max()
+    latest = frame.loc[[p == newest for p in frame["period_start"].tolist()]]
+    missing: dict[str, list[str]] = {}
+    for value in sorted(set(values)):
+        has = {
+            code
+            for code, dims in zip(latest["territory_code"], latest["dims"], strict=True)
+            if dims.get(dimension) == value
+        }
+        if expected - has:
+            missing[value] = sorted(expected - has)
+    return CheckResult(
+        "latest_year_complete", True, not missing, {"year": str(newest), "missing": missing}
     )
 
 

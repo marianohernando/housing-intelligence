@@ -45,6 +45,7 @@ class Observations:
     source_rows: int
     out_of_window: int = 0
     excluded_status: int = 0  # rows left out by their status (e.g. provisional), counted
+    out_of_scope: int | None = None  # rows of concepts not read (cm_municipio_concept only)
 
 
 def parse_period(raw: str) -> tuple[date, date]:
@@ -221,8 +222,8 @@ def normalize_municipio_concept(
         pd.DataFrame(rows, columns=OBS_COLUMNS),
         pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
         len(kept),
-        len(records) - len(in_scope),
-        len(in_scope) - len(kept),
+        excluded_status=len(in_scope) - len(kept),
+        out_of_scope=len(records) - len(in_scope),
     )
 
 
