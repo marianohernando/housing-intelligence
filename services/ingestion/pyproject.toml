@@ -16,6 +16,7 @@ dependencies = [
     "osmium>=4.0",
     "openpyxl>=3.1",
     "pillow>=11.0",
+    "python-calamine>=0.4",
 ]
 
 [build-system]

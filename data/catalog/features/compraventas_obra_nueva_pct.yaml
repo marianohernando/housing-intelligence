@@ -1,0 +1,30 @@
+feature_id: compraventas_obra_nueva_pct
+version: 1
+human_name: Compraventas de vivienda de obra nueva en el último año
+domain: housing
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: period
+sources:
+  - {dataset_id: cm_transacciones_nueva_usada, role: primary}
+formula:
+  method: metric_window_share
+  metric: compraventas_vivienda
+  periods: 4  # the last four quarters published: a whole year, whatever quarter it ends in
+  numerator: {tipo: vivienda_nueva}
+  denominator: {tipo: [vivienda_nueva, segunda_mano]}
+  status_dim: estado  # the zone view says when a quarter added up is provisional (D-241)
+  confidence: 1.0
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [range_0_100, unknown_never_zero, context_only]
+limitations:
+  - "Cuenta compraventas de vivienda ante notario (Estadística de Transacciones Inmobiliarias del Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de la CM): dice cuánta vivienda nueva se vende, no cuánta se construye ni cuánta queda por vender."
+  - "Suma los cuatro últimos trimestres publicados; el último suele ser provisional y la zona lo dice. Una sola promoción entregada mueve mucho la cifra de un municipio pequeño."
+  - "Solo municipios: Madrid sale entero, sin distritos; en un distrito se enseña la cifra de toda la ciudad, con esa etiqueta."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-241)."

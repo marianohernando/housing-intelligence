@@ -216,6 +216,31 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
     )
 
 
+def _metric_window_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-241: a share over the last periods of a metric (new homes among the sales of a year)."""
+    return methods.metric_window_share(
+        loaders.observations(engine, f["metric"], level),
+        int(f["periods"]),
+        f["numerator"],
+        f["denominator"],
+        status_dim=f.get("status_dim"),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
+def _metric_items(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-241: the items of each zone (planning areas, Plan Vive promotions) and their count or
+    sum. The zones are those of the level inside `scope` (a code prefix: Madrid's districts)."""
+    scope = str(f.get("scope", ""))
+    return methods.metric_items(
+        loaders.observations(engine, f["metric"], level),
+        [z for z in walk.zone_codes(engine, level) if z.startswith(scope)],
+        value=str(f["value"]),
+        stage_order=list(f.get("stage_order") or []),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
 def _street_share_above(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """D-237: % of the street where people live above a noise level, by zone, read every
     `sample_step_m` along each segment (R-03). Only the zones under `coverage_prefix` (the
@@ -286,6 +311,8 @@ METHODS: dict[str, Method] = {
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
     "anchored_relative_value": _anchored_relative_value,
+    "metric_window_share": _metric_window_share,
+    "metric_items": _metric_items,
     "street_share_above": _street_share_above,
     "nearest_station_mean": _nearest_station_mean,
 }
@@ -401,7 +428,8 @@ def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
 
 
 def _detail(record: dict[str, Any]) -> dict[str, Any]:
-    """What the value cites (D-237: the station it comes from), served with it by the API."""
+    """What a context figure says besides its value (D-241) or what it cites (D-237: the air
+    quality station), served with it by the API."""
     detail = record.get("detail")
     return {"detail": detail} if isinstance(detail, dict) else {}
 

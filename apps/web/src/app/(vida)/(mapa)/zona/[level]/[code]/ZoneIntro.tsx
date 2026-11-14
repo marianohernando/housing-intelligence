@@ -13,6 +13,7 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import BarrioFit from "@/components/zone/BarrioFit";
 import BarriosBar from "@/components/zone/BarriosBar";
 import FacilitiesPanel from "@/components/zone/FacilitiesPanel";
+import NewHousing from "@/components/zone/NewHousing";
 import PerceivedSafety from "@/components/zone/PerceivedSafety";
 import ZoneCard from "@/components/zone/ZoneCard";
 import ZoneContext from "@/components/zone/ZoneContext";
@@ -98,6 +99,8 @@ export default function ZoneIntro() {
         {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
         {/* Context that never scores (D-235): offences, age of the dwellings and income, next to the neighbours' view */}
         <ZoneContext zone={routeZone} />
+        {/* New housing and what is coming, context that never scores (D-241); last, so arriving later moves nothing */}
+        {(level === "municipio" || level === "distrito") && <NewHousing zone={{ level, code: routeZone.code }} />}
         {/* Noise, air and car parks (D-237): context, last too */}
         <ZoneEnvironment level={level} code={routeZone.code} zone={name} />
       </div>

@@ -59,3 +59,43 @@ def match_rank(query: str, name: str) -> int | None:
     if key.startswith(typed):
         return 1
     return 2 if f" {typed}" in f" {key}" else 3
+
+
+_SEPARATORS = frozenset({"-", "--", "/"})
+
+
+def _title_word(word: str, keep_upper: frozenset[str]) -> str:
+    """One word of a capitalised name: as written when it is a kept acronym, otherwise lower
+    case with its first letter (and the first after each hyphen) in capitals."""
+    core = word.strip("\"'()«»,;:")
+    if core in keep_upper:
+        return word
+    return "-".join(_capital_first(part) for part in word.lower().split("-"))
+
+
+def _capital_first(part: str) -> str:
+    for i, char in enumerate(part):
+        if char.isalpha():
+            return part[:i] + char.upper() + part[i + 1 :]
+    return part
+
+
+def title_case(name: str, keep_upper: frozenset[str] = frozenset()) -> str:
+    """A name a register writes in capitals, readable: «DESARROLLO DEL ESTE - LOS AHIJONES» ->
+    «Desarrollo del Este - Los Ahijones», «C/ VILLANUEVA, 16» -> «C/ Villanueva, 16».
+
+    Particles go in lower case except at the start and after a separator («-», «/»); the words of
+    `keep_upper` (acronyms such as «PMM») stay as written. Accents are the source's: none is
+    added. Mixed-case names are returned as they are.
+    """
+    words = name.split()
+    if not name.isupper():
+        return " ".join(words)
+    out: list[str] = []
+    for i, word in enumerate(words):
+        after_separator = i == 0 or words[i - 1] in _SEPARATORS
+        if not after_separator and word.lower() in LOWER_PARTICLES:
+            out.append(word.lower())
+        else:
+            out.append(_title_word(word, keep_upper))
+    return " ".join(out)

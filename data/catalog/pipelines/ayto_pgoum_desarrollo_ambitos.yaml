@@ -1,0 +1,28 @@
+kind: madrid_development_areas
+dataset_id: ayto_pgoum_desarrollo_ambitos
+metric_id: ambitos_desarrollo_residencial
+municipio_ine: "28079"
+phase_columns:
+  - "Estado de desarrollo. Planeamiento"
+  - "Estado de desarrollo. Gestión"
+  - "Estado de desarrollo.Urbanización. Proyecto"
+  - "Estado de desarrollo. Urbanización. Obras"
+# Areas with homes; the six without a characteristic use (land not yet zoned) are left out.
+uses: ["Residencial", "Residencial / Terciario"]
+# Every state the table may carry (its structure document lists all but «En Ejecución», which
+# the data uses). «PGOUM-85» and «PGOUM-97»: the phase was done under the previous plans.
+states:
+  "Finalizado": done
+  "No Necesita": done
+  "PGOUM-85": done
+  "PGOUM-97": done
+  "En tramitación": in_progress
+  "En Ejecución": in_progress
+  "Sin Iniciar": not_started
+# Names come in capitals; these words stay as written (acronyms and abbreviations).
+keep_upper: ["PMM", "ONCE", "UVA", "RENFE", "EMT", "S.A.", "M-30", "II", "III", "IV"]
+# The four areas of the Estrategia del Este are told apart by what follows this prefix.
+drop_name_prefixes: ["DESARROLLO DEL ESTE - "]
+expected_districts: 21
+min_rows: 600
+max_rows: 800

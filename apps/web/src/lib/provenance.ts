@@ -37,6 +37,8 @@ const ATTRIBUTION_LINKS: [RegExp, string][] = [
   // D-237: the noise map is on the Ayuntamiento's Geoportal, not on datos.madrid.es
   [/Geoportal/, "https://geoportal.madrid.es"],
   [/Ayuntamiento de Madrid/, "https://datos.madrid.es"],
+  // D-241: the Plan Vive page, typed by hand (no file); its notice asks for the source and the date of extraction
+  [/Plan Vive/, "https://www.comunidad.madrid/plan-vive"],
   [/Comunidad de Madrid/, "https://datos.comunidad.madrid"],
   [/OpenStreetMap/, "https://www.openstreetmap.org/copyright"],
 ];
@@ -81,6 +83,7 @@ export const ATTRIBUTIONS_FALLBACK: readonly Attribution[] = [
     href: "https://geoportal.madrid.es",
   },
   { text: "© OpenStreetMap contributors, ODbL.", href: "https://www.openstreetmap.org/copyright" },
+  { text: "Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026.", href: "https://www.comunidad.madrid/plan-vive" },
 ];
 
 /** The citations to show: the API's, or the fallback while it has not answered. */

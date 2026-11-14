@@ -10,6 +10,31 @@ export interface FeatureInfo {
   limitations: string[];
 }
 
+/** One thing a context figure lists (D-241): a planning area, a Plan Vive promotion. */
+export interface ContextItem {
+  code?: string | null;
+  name?: string | null;
+  stage?: string | null;
+  value?: number | null;
+  note?: string | null;
+}
+
+/** What a context figure says besides its value (D-241); only the features that keep one send it. */
+export interface FeatureValueDetail {
+  numerator?: number | null;
+  denominator?: number | null;
+  /** Last day of the period the value adds up («2026-06-30») */
+  period_end?: string | null;
+  provisional?: boolean | null;
+  items?: ContextItem[] | null;
+  /** D-237: the air quality station a value comes from, whether it lies in the zone, how far and if it is a traffic one */
+  station?: string | null;
+  station_code?: string | null;
+  own?: boolean | null;
+  distance_km?: number | null;
+  traffic?: boolean | null;
+}
+
 export interface FeatureValueRow {
   territory_code: string;
   admin_unit_id: string | null;
@@ -18,8 +43,7 @@ export interface FeatureValueRow {
   value: number | null;
   null_reason: string | null;
   confidence: number;
-  /** What the value cites, when its method names it (D-237: the air quality station, `own`, `distance_km`) */
-  detail?: Record<string, string | number | boolean> | null;
+  detail?: FeatureValueDetail | null;
 }
 
 export const PALETTE = ["#fde7c8", "#f8c38a", "#ef9551", "#d4622a", "#9c3b16"] as const;
