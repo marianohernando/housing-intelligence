@@ -296,6 +296,12 @@
   font-size: var(--text-sm);
 }
 
+/* «Tardar como mucho [n] en transporte público»: on a phone the sentence wraps by pieces, not by words */
+.commuteLimit {
+  flex-wrap: wrap;
+  white-space: nowrap;
+}
+
 
 
 /* «Trabajo en»: the place picked, or the field with its list of places */

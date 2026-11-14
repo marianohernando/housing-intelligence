@@ -6,6 +6,8 @@ import type { ScenarioState } from "../../contracts/scenario_state";
 import {
   addNearby,
   BUDGET_RANGE,
+  COMMUTE_MINUTES,
+  commuteMinutesOptions,
   decodeScenario,
   defaultScenario,
   encodeScenario,
@@ -20,6 +22,7 @@ import {
   setNearbyRequired,
   setNoBudgetLimit,
   setSeniors,
+  setWorkMaxMinutes,
   setWorkPlace,
   togglePriority,
   walkMinutesOptions,
@@ -162,8 +165,39 @@ describe("«Trabajo en» (work place)", () => {
   });
 });
 
+describe("«Tardar como mucho» (work commute limit)", () => {
+  const withWork = () => setWorkPlace(defaultScenario(), { label: "Nuevos Ministerios (metro)", lat: 40.446, lon: -3.692 });
+
+  it("offers Sin límite first (null) and 30, 45, 60 and 90 min", () => {
+    expect(COMMUTE_MINUTES).toEqual([30, 45, 60, 90]);
+    expect(withWork().anchors?.[0]?.max_minutes).toBeNull();
+  });
+
+  it("sends the chosen minutes as max_minutes of the work anchor, and Sin límite sends null again", () => {
+    const limited = setWorkMaxMinutes(withWork(), 45);
+    expect(limited.anchors).toEqual([{ kind: "work", label: "Nuevos Ministerios (metro)", lat: 40.446, lon: -3.692, max_minutes: 45 }]);
+    expect(setWorkMaxMinutes(limited, null).anchors?.[0]?.max_minutes).toBeNull();
+  });
+
+  it("changes the scenario, so the search is stale until it runs again", () => {
+    expect(encodeScenario(setWorkMaxMinutes(withWork(), 60))).not.toBe(encodeScenario(withWork()));
+  });
+
+  it("leaves other places alone and does nothing without a work place", () => {
+    const study: ScenarioState = { ...defaultScenario(), anchors: [{ kind: "study", label: "Universidad", lat: 40.4, lon: -3.7 }] };
+    expect(setWorkMaxMinutes(study, 30)).toEqual(study);
+    expect(setWorkMaxMinutes(defaultScenario(), 30).anchors).toEqual([]);
+  });
+
+  it("offers a limit that came in a shared link even when it is not in the usual list", () => {
+    expect(commuteMinutesOptions(null)).toEqual([30, 45, 60, 90]);
+    expect(commuteMinutesOptions(45)).toEqual([30, 45, 60, 90]);
+    expect(commuteMinutesOptions(75)).toEqual([30, 45, 60, 75, 90]);
+  });
+});
+
 describe("demo case (portada.ejemplo.boton)", () => {
-  it("is line A's golden profile, with the work place as a reference until CORE-009", () => {
+  it("is line A's golden profile, with the work place without a limit (the pitch's figures)", () => {
     const golden = JSON.parse(readFileSync(GOLDEN, "utf8")) as ScenarioState;
     const asReference = { ...golden, anchors: golden.anchors?.map((a) => ({ ...a, max_minutes: null })) };
     expect(exampleScenario()).toEqual(asReference);

@@ -124,8 +124,8 @@ export function workPlace(s: ScenarioState): Anchor | null {
 
 /**
  * Sets (or with null, removes) the work place. It goes without a minutes limit (`max_minutes:
- * null`): the API cannot check travel times until CORE-009, and with a limit no zone would pass
- * (D-215). It is a reference: the zone card says how far each zone is.
+ * null`, «Sin límite») until the person picks one in «Tardar como mucho»: the zone card says how
+ * far each zone is either way.
  */
 export function setWorkPlace(s: ScenarioState, place: Place | null): ScenarioState {
   const others = (s.anchors ?? []).filter((a) => !isWork(a));
@@ -134,10 +134,24 @@ export function setWorkPlace(s: ScenarioState, place: Place | null): ScenarioSta
   return { ...s, anchors: [anchor, ...others] };
 }
 
+/** Minutes offered in «Tardar como mucho» (trabajo.max_min); a value from a shared link outside them is offered too. */
+export const COMMUTE_MINUTES: readonly number[] = [30, 45, 60, 90];
+
+export function commuteMinutesOptions(current: number | null | undefined): number[] {
+  const all = new Set([...COMMUTE_MINUTES, ...(current == null ? [] : [current])]);
+  return [...all].sort((a, b) => a - b);
+}
+
+/** The commute limit of the work place; null is «Sin límite». Without a work place there is nothing to limit. */
+export function setWorkMaxMinutes(s: ScenarioState, minutes: number | null): ScenarioState {
+  const max_minutes = minutes === null ? null : Math.max(1, Math.round(minutes));
+  return { ...s, anchors: (s.anchors ?? []).map((a) => (isWork(a) ? { ...a, max_minutes } : a)) };
+}
+
 /**
  * The demo case (portada.ejemplo.boton): a couple with 2 children who work on the Castellana.
  * Same as line A's golden profile (data/fixtures/contracts/scenario_state.familia_castellana.fixture.json),
- * checked by a test, with the work place as a reference (`max_minutes: null`, D-215).
+ * checked by a test, with the work place without a limit (`max_minutes: null`): its figures are the pitch's.
  */
 export function exampleScenario(): ScenarioState {
   return {
