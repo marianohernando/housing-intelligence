@@ -27,7 +27,7 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**27 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
+**29 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
 - población, hogares, vivienda, renta y alquiler;
 - colegios, centros de salud, servicios para mayores y farmacias;
 - las 6 redes de transporte público del Consorcio Regional de Transportes y la accesibilidad de sus estaciones de metro, Metro Ligero y Cercanías, que también publica ese portal.
@@ -40,7 +40,7 @@ Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón y el pan
 
 <!--
 Fuentes:
-- 27 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
+- 29 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov y 29 el 14 nov, con D-235). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
 - Los 6 GTFS del CRTM cuentan como datos CM porque el portal los publica: D-196.
 - 179 municipios: evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json.
 - 21 distritos: D-200 y D-209 (población por distrito del padrón municipal del Ayuntamiento). DATA-012 hecha (be40c2f); GET /api/v1/gaps/distrito/2807905 (Chamartín) responde con datos reales.

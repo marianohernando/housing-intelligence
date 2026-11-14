@@ -22,6 +22,8 @@ SAMPLE_DISTRICTS = {"2807901", "2807905", "2807906"}
 # The barrios of the admin sample (Palacio, Sol, Nueva España, Castilla, Castillejos, Almenara).
 SAMPLE_BARRIOS = {"28079011", "28079016", "28079055", "28079056", "28079063", "28079064"}
 PERCEPTION = {"percepcion_seguridad_barrio_noche", "percepcion_seguridad_barrio_dia"}
+# D-235: context of the zone view, by district and barrio.
+CONTEXT = {"ano_medio_construccion_residencial", "renta_neta_media_hogar"}
 MADRID = "28079"
 
 
@@ -62,7 +64,7 @@ def test_only_declared_indicators_at_district_level(
     obs = normalize(source, spec)
     frame = obs.frame
     assert obs.quarantine.empty
-    assert set(frame["metric_id"]) == {*HOUSEHOLDS, *CADASTRE, *PERCEPTION}
+    assert set(frame["metric_id"]) == {*HOUSEHOLDS, *CADASTRE, *PERCEPTION, *CONTEXT}
     districts = frame.loc[frame["territory_level"] == "distrito"]
     assert set(districts["territory_code"]) == SAMPLE_DISTRICTS
     assert set(districts["admin_unit_id"]) == {f"ES.28.DIS.{c}" for c in SAMPLE_DISTRICTS}
@@ -80,7 +82,7 @@ def test_barrio_rows_of_the_barrio_indicators_carry_the_barrio_name(
     barrios = frame.loc[frame["territory_level"] == "barrio"]
     assert set(barrios["territory_code"]) == SAMPLE_BARRIOS
     assert set(barrios["admin_unit_id"]) == {f"ES.28.BAR.{c}" for c in SAMPLE_BARRIOS}
-    assert set(barrios["metric_id"]) == {*HOUSEHOLDS, *CADASTRE}
+    assert set(barrios["metric_id"]) == {*HOUSEHOLDS, *CADASTRE, *CONTEXT}
     # D-234: Tetuán's cadastral value per m² and its residential units, as published
     assert _value(barrios, "valor_catastral_medio_residencial", "28079063", date(2025, 1, 1)) > 0
     assert _value(barrios, "inmuebles_residenciales", "28079063", date(2025, 1, 1)) > 1000
@@ -155,6 +157,27 @@ def test_the_city_row_is_kept_only_for_the_city_indicators(
     assert _value(city, "percepcion_seguridad_barrio_dia", MADRID, date(2025, 1, 1)) == 7.8
     night = frame.loc[frame["territory_level"] == "distrito"]
     assert _value(night, "percepcion_seguridad_barrio_noche", "2807906", date(2025, 1, 1)) == 6.1
+
+
+def test_building_year_and_household_income_by_district_and_barrio_never_the_city(
+    spec: MadridDistrictPanelPipeline, source: pd.DataFrame
+) -> None:
+    """D-235: the Catastro mean building year and the Urban Audit household income, as the
+    panel publishes them; the latest date of each is the one the zone view shows."""
+    frame = normalize(source, spec).frame
+    context = frame.loc[frame["metric_id"].isin(sorted(CONTEXT))]
+    assert set(context["territory_level"]) == {"distrito", "barrio"}
+    assert set(context.loc[context["territory_level"] == "barrio", "territory_code"]) == (
+        SAMPLE_BARRIOS
+    )
+    year = "ano_medio_construccion_residencial"
+    assert round(_value(context, year, "2807901", date(2024, 1, 1))) == 1926  # Centro
+    assert _value(context, year, "28079011", date(2025, 1, 1)) == 1928  # Palacio
+    income = "renta_neta_media_hogar"
+    assert _value(context, income, "2807901", date(2023, 1, 1)) == 44958
+    assert _value(context, income, "28079011", date(2023, 1, 1)) == 48025
+    latest = {m: max(context.loc[context["metric_id"] == m, "period_start"]) for m in CONTEXT}
+    assert latest == {year: date(2025, 1, 1), income: date(2023, 1, 1)}
 
 
 def test_a_date_repeated_in_two_panel_editions_is_one_observation(

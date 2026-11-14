@@ -1,0 +1,46 @@
+dataset_id: cm_infracciones_penales_municipios
+source_id: comunidad_madrid_ckan
+name: Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000
+  habitantes por municipio
+domain: safety
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio
+resources:
+- name: Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000
+    habitantes por municipio.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/2c852cf6-2c61-41f3-8d94-c87edad8b18b/resource/1fb7f93a-d9f1-4269-8487-a2a7acb5dd25/download/hechos-conocidos-de-infracciones-penales-por-tipologia-en-municipios-mayores-de-20.000-habitante.csv
+- name: Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000
+    habitantes por municipio.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/2c852cf6-2c61-41f3-8d94-c87edad8b18b/resource/f33381ac-953f-48e1-9615-f0f8e2d65b22/download/hechos-conocidos-de-infracciones-penales-por-tipologia-en-municipios-mayores-de-20.000-habitant.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 3
+  geographic_granularity: 2
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 3
+  notes: >-
+    D-235. CM portal (CC BY, «Fecha Actualización 05-10-2026»; fuente: Estadísticas de
+    Criminalidad, Ministerio del Interior). Formato largo, 2016-2025 con 2025 provisional; 36
+    municipios de más de 20.000 habitantes y Madrid. Sin código de territorio: el municipio va
+    por nombre, con erratas en el concepto, y se resuelve a mano en el pipeline. Solo
+    contexto: no puntúa ni ordena zonas (D-224).
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T13:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio
+  harvested_at: '2026-11-14T13:00:00+00:00'
+notes: D-235 context in the zone view (known criminal offences per 1,000 inhabitants); never
+  a score (D-224)

@@ -13,7 +13,8 @@ import { titleCase } from "@/lib/names";
 
 import type { PlaceFeature } from "./places";
 
-export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | "aparcamiento";
+export type LeisureFacilityKey = "bares" | "restaurantes" | "gimnasios" | "cultura";
+export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | LeisureFacilityKey | "aparcamiento";
 
 export interface FacilityType {
   key: FacilityKey;
@@ -30,6 +31,10 @@ export interface FacilityType {
   classes: { subcategory: string; label: string }[];
   /** The list leads with the place's own name, which already says what it is («Parque del Retiro») */
   nameFirst?: boolean;
+  /** Leisure from OpenStreetMap (D-236): a map made by volunteers, said under its count */
+  leisure?: boolean;
+  /** Context of the zone (D-237): offered once its datasets are published, never turned on by «Todos» */
+  context?: boolean;
 }
 
 const PUBLIC_SCHOOL = "Colegio público";
@@ -132,6 +137,61 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     classes: [{ subcategory: "Parque", label: "Parque" }],
     nameFirst: true,
   },
+  // D-236: leisure from OSM, the four groups of «Ocio» in the search. Fast food is not a restaurant here.
+  {
+    key: "bares",
+    category: "commerce",
+    chip: "Bares y cafeterías",
+    one: "bar o cafetería",
+    many: "bares y cafeterías",
+    none: "OpenStreetMap no tiene ningún bar ni cafetería",
+    classes: [
+      { subcategory: "Bar", label: "Bar" },
+      { subcategory: "Pub", label: "Pub" },
+      { subcategory: "Cafetería", label: "Cafetería" },
+    ],
+    leisure: true,
+  },
+  {
+    key: "restaurantes",
+    category: "commerce",
+    chip: "Restaurantes",
+    one: "restaurante",
+    many: "restaurantes",
+    none: "OpenStreetMap no tiene ningún restaurante",
+    classes: [{ subcategory: "Restaurante", label: "Restaurante" }],
+    leisure: true,
+  },
+  {
+    key: "gimnasios",
+    category: "sport",
+    chip: "Gimnasios y deporte",
+    one: "gimnasio o centro deportivo",
+    many: "gimnasios y centros deportivos",
+    none: "OpenStreetMap no tiene ningún gimnasio ni centro deportivo",
+    classes: [
+      { subcategory: "Gimnasio", label: "Gimnasio" },
+      { subcategory: "Centro deportivo", label: "Centro deportivo" },
+    ],
+    leisure: true,
+  },
+  // «Cultura»: museums and libraries joined cinemas and theatres after test users asked for them
+  {
+    key: "cultura",
+    category: "culture",
+    chip: "Cultura",
+    one: "espacio cultural",
+    many: "espacios culturales",
+    none: "OpenStreetMap no tiene ningún espacio cultural",
+    classes: [
+      { subcategory: "Museo", label: "Museo" },
+      { subcategory: "Biblioteca", label: "Biblioteca" },
+      { subcategory: "Teatro", label: "Teatro" },
+      { subcategory: "Cine", label: "Cine" },
+      { subcategory: "Centro cultural", label: "Centro cultural" },
+    ],
+    leisure: true,
+  },
   {
     // D-237: context only (it never scores). The CRTM's park-and-ride car parks next to stations
     // (with their spaces and whether they are free) and the Ayuntamiento de Madrid's public, mixed
@@ -149,6 +209,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
       { subcategory: "Aparcamiento para residentes", label: "Aparcamiento para residentes" },
     ],
     nameFirst: true,
+    context: true,
   },
 ];
 
@@ -165,10 +226,13 @@ export interface FacilityQuery {
   subcategories: string[];
 }
 
-/** What to ask /api/v1/places for a zone: one query per category with the subcategories that count. */
+/**
+ * What to ask /api/v1/places for a zone: one query per category with the subcategories that count.
+ * Leisure is left out (D-236): it goes apart, only when one of its types is pressed (leisureQuery).
+ */
 export function facilityQueries(): FacilityQuery[] {
   const byCategory = new Map<PlaceCategory, FacilityQuery>();
-  for (const type of FACILITY_TYPES) {
+  for (const type of FACILITY_TYPES.filter((t) => !t.leisure)) {
     const query = byCategory.get(type.category) ?? { category: type.category, subcategories: [] };
     query.subcategories.push(...type.classes.map((c) => c.subcategory));
     byCategory.set(type.category, query);
@@ -259,11 +323,13 @@ function pharmacyAddress(name: string): string {
 /** «SANITAS RESIDENCIAL EL VISO, RESIDENCIA DE PERSONAS MAYORES»: the tail repeats the type. */
 const TYPE_TAIL = /^(RESIDENCIA|CENTRO DE D[IÍ]A|HOGAR|CLUB)/;
 
-function placeName(place: PlaceFeature, type: FacilityKey): string | null {
+function placeName(place: PlaceFeature, type: FacilityType): string | null {
   const { name, subcategory } = place.properties;
   // «Hospital general (Madrid)», «Centro de salud (Pinto)»: the source has no proper name for it
   if (!name || (subcategory && name.startsWith(`${subcategory} (`))) return null;
-  if (type === "farmacia") return pharmacyAddress(name);
+  // Leisure (D-236): the name as OpenStreetMap writes it («VIPS»); «Bar sin nombre» when it has none
+  if (type.leisure) return name === `${subcategory} sin nombre` ? null : name;
+  if (type.key === "farmacia") return pharmacyAddress(name);
   const comma = name.lastIndexOf(", ");
   const own = comma > 0 && TYPE_TAIL.test(name.slice(comma + 2)) ? name.slice(0, comma) : name;
   return titleCase(own);
@@ -348,7 +414,7 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   // carry their own register's «plazas autorizadas», which are not beds
   const source = CAPACITY_SOURCE[type.key] ? (place.properties.capacity?.dataset_id ?? null) : null;
   const parking = type.key === "aparcamiento" ? { fee: place.properties.access_fee ?? null, spaces: place.properties.capacity?.value ?? null } : {};
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, dependency, lon, lat, ...parking };
+  return { id: String(place.id), type: type.key, label, name: placeName(place, type), detail: detailText(place), source, dependency, lon, lat, ...parking };
 }
 
 const DEPENDENCY_ORDER = { publica: 0, privada: 1 } as const;
@@ -441,5 +507,56 @@ export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
   farmacia: "fac-farmacia",
   mayores: "fac-mayores",
   parque: "park",
+  // One colour for the four leisure groups (D-236): their icons tell them apart, the map stays calm
+  bares: "fac-ocio",
+  restaurantes: "fac-ocio",
+  gimnasios: "fac-ocio",
+  cultura: "fac-ocio",
   aparcamiento: "fac-aparcamiento",
 };
+
+/** The types of «Ocio» (D-236), in the order of their buttons. */
+export const LEISURE_FACILITY_KEYS: readonly LeisureFacilityKey[] = ["bares", "restaurantes", "gimnasios", "cultura"];
+
+export function isLeisureFacility(key: FacilityKey): key is LeisureFacilityKey {
+  return (LEISURE_FACILITY_KEYS as readonly FacilityKey[]).includes(key);
+}
+
+/**
+ * The services «Todos» turns on: every type but leisure and context. A bar is not a service of the
+ * zone, and in Centro the four leisure types alone are 2.683 places (review of PR #62, R-07); car
+ * parks are context, shown when asked for (review of PR #65, R-06).
+ */
+export const SERVICE_FACILITY_KEYS: readonly FacilityKey[] = FACILITY_TYPES.filter((t) => !t.leisure && !t.context).map((t) => t.key);
+
+/** What to ask /api/v1/places for one leisure type of a zone, apart and only when its button is pressed. */
+export function leisureQuery(key: LeisureFacilityKey): FacilityQuery {
+  const type = facilityType(key);
+  return { category: type.category, subcategories: type.classes.map((c) => c.subcategory) };
+}
+
+/**
+ * The types «Todos los centros» offers: the services always; leisure once its dataset is published
+ * (GET /datasets, D-236). Its count comes when its button is pressed, and with no place the count
+ * says that OpenStreetMap has none, never that the zone has none.
+ */
+export function offeredTypes(leisure: boolean, parking = false): FacilityType[] {
+  return FACILITY_TYPES.filter((t) => (!t.leisure || leisure) && (!t.context || parking));
+}
+
+/**
+ * «Aparcamientos» is offered once one of its datasets is published (GET /datasets, D-237): before
+ * the data are synced its button would say a false 0 (review of PR #65, R-05).
+ */
+export const PARKING_DATASETS = ["crtm_aparcamientos_disuasion", "ayto_aparcamientos_publicos", "ayto_aparcamientos_residentes"] as const;
+
+export function parkingAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => (PARKING_DATASETS as readonly string[]).includes(d.dataset_id)) ?? false;
+}
+
+/** «Ocio» is offered in the search once its dataset is published (GET /datasets), never before (D-236). */
+export const LEISURE_DATASET = "osm_ocio";
+
+export function leisureAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => d.dataset_id === LEISURE_DATASET) ?? false;
+}

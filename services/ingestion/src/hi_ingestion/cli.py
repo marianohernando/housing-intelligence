@@ -13,6 +13,7 @@ from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
     AirQualityHourlyPipeline,
     AirQualityZonesPipeline,
+    CmMunicipioConceptPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
     FacilityDirectoryPipeline,
@@ -21,6 +22,7 @@ from hi_contracts.catalog.pipeline import (
     MadridPadronPipeline,
     NoiseRasterPipeline,
     OsmParksPipeline,
+    OsmPoisPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
     StationTopologyPipeline,
@@ -58,6 +60,7 @@ from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
 from hi_ingestion.pipelines.noise_raster.run import run_noise_raster_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
+from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
@@ -165,7 +168,9 @@ def _run_one(
         inputs = local_inputs(local) if local else fetch_inputs(catalog)
         return run_admin_boundaries(engine, catalog, inputs, evidence_root=evidence_root)
     spec = catalog.pipelines.get(dataset_id)
-    if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
+    if isinstance(
+        spec, CmStatTablePipeline | CmPostcodeConceptPipeline | CmMunicipioConceptPipeline
+    ):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, AeatRentComparisonPipeline):
@@ -189,6 +194,9 @@ def _run_one(
     if isinstance(spec, OsmParksPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_osm_parks_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, OsmPoisPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_osm_pois_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, FacilityDirectoryPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_directory_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)

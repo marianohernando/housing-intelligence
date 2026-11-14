@@ -90,6 +90,71 @@ class CmPostcodeConceptPipeline(BaseModel):
         return [self.metric_id]
 
 
+class CmMunicipioConceptPipeline(BaseModel):
+    """Instituto de Estadística tables without a territory code (D-235): the municipio comes
+    by name and what the row counts is in a free-text 'Concepto' column.
+
+    Only the rows whose concept starts with one of the `concepts` are read, each with its value
+    of `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave
+    the second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),
+    so `municipios` maps each spelling to its INE code after collapsing the whitespace. Two
+    blocking checks keep a figure from being lost in silence: the quarantine must be empty (a
+    name that is not there fails the run, even for a single row), and in the latest year read
+    each of the `municipios` must have a row of every concept (a row renamed or dropped by the
+    source fails it too). Rows whose status is in `excluded_statuses` (e.g. «Provisional») are
+    left out and counted.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["cm_municipio_concept"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    period_column: str = "Año"
+    value_column: str = "Valor"
+    unit_column: str | None = "Unidad"
+    concept_column: str = "Concepto"
+    dimension: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    concepts: dict[str, Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]*$")]] = Field(
+        min_length=1, description="concept prefix -> value of `dimension` for its rows"
+    )
+    municipio_column: str = "Municipio"
+    municipios: dict[str, Annotated[str, Field(pattern=r"^28\d{3}$")]] = Field(min_length=1)
+    status_column: str | None = "Estado dato"
+    excluded_statuses: list[str] = Field(default_factory=list[str])
+    expected_municipios: int = Field(gt=0, description="municipios the table publishes")
+    missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
+
+    @model_validator(mode="after")
+    def _names_cover_the_expected_municipios(self) -> Self:
+        codes = set(self.municipios.values())
+        if len(codes) != self.expected_municipios:
+            msg = (
+                f"{self.dataset_id}: `municipios` names {len(codes)} municipios, "
+                f"expected_municipios says {self.expected_municipios}"
+            )
+            raise ValueError(msg)
+        if self.excluded_statuses and self.status_column is None:
+            msg = f"{self.dataset_id}: excluded_statuses need a status_column"
+            raise ValueError(msg)
+        nested = [
+            (a, b) for a in self.concepts for b in self.concepts if a != b and b.startswith(a)
+        ]
+        if nested:
+            msg = f"{self.dataset_id}: a concept prefix starts another one: {nested[0]}"
+            raise ValueError(msg)
+        return self
+
+    def concept_value(self, concept: str) -> str | None:
+        """The `dimension` value of a row by its concept, or None when it is not read."""
+        return next((v for prefix, v in self.concepts.items() if concept.startswith(prefix)), None)
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
 class AeatRentComparisonPipeline(BaseModel):
     """Agencia Tributaria, «Estadística de viviendas declaradas en IRPF»: the HTML table that
     compares the mean monthly rent and the mean m² of all leases with those of the leases
@@ -542,12 +607,52 @@ class OsmParksPipeline(BaseModel):
         return []
 
 
+class OsmPoiClass(BaseModel):
+    """One OSM tag (`key=value`) and the kind of place it becomes."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: str = Field(pattern=r"^[a-z_]+$", examples=["amenity"])
+    value: str = Field(pattern=r"^[a-z_]+$", examples=["bar"])
+    category: PlaceCategory
+    subcategory: str = Field(min_length=1, examples=["Bar"])
+
+
+class OsmPoisPipeline(BaseModel):
+    """OpenStreetMap extract -> points of interest as places (D-236: leisure).
+
+    A place is a node, or the area of a closed way or multipolygon (a point inside it), tagged
+    with one of `classes` and not closed to the public. Only its name and its tag are kept.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["osm_pois"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    classes: list[OsmPoiClass] = Field(min_length=1)
+    access_denied: list[str] = Field(default_factory=lambda: ["no", "private"])
+    min_places: int = Field(gt=0, description="below this the extract is truncated")
+    max_places: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _one_class_per_tag(self) -> Self:
+        tags = [(c.key, c.value) for c in self.classes]
+        if len(tags) != len(set(tags)):
+            msg = "each OSM tag can be declared once"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 class NoiseRasterPipeline(BaseModel):
     """A strategic noise map published as one GeoTIFF per index inside a ZIP -> a compact grid
     in Silver only (D-237). Nothing reaches the database but the indicators computed on it: the
     share of the streets where people live above a level, by zone.
 
-    `layers` names the file of each index kept (e.g. day: Madrid_Ld_2021.tif). Every layer must
+    `layers` names the file of each index kept (e.g. ld: Madrid_Ld_2021.tif). Every layer must
     share the declared CRS, pixel size and grid; `nodata` marks the cells without a level.
     """
 
@@ -616,6 +721,7 @@ class AirQualityZonesPipeline(BaseModel):
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
+    | CmMunicipioConceptPipeline
     | AeatRentComparisonPipeline
     | MadridPadronPipeline
     | MadridDistrictPanelPipeline
@@ -623,6 +729,7 @@ PipelineSpec = Annotated[
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline
     | OsmParksPipeline
+    | OsmPoisPipeline
     | FacilityDirectoryPipeline
     | StationTopologyPipeline
     | NoiseRasterPipeline

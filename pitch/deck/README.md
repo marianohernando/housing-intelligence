@@ -44,6 +44,10 @@ Lo que rellena el build:
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
 
+Sin marca en `deck.html`, pero hay que rehacerla: **C1 (slide 4) está desfasada desde el 14 nov.** Su tarjeta dice «Parada de transporte público a unos 2 min andando», que hoy es «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min» (D-233), y «Tu búsqueda» no enseña «¿Dónde?» (D-238). Las cifras del caso no cambian. B la rehace con las demás capturas tras revisar la fórmula, el 17 y el 18 nov (`pitch/slides.md`, slide 4).
+
+Añadido el 14 nov (noche): en la slide 4, bajo los tres pasos, el recuadro «Probada con 7 personas» con lo que pidieron y ya está en la web (relato en `pitch/slides.md`, slide 3). Para que quepa, los pasos van con 24 px de separación en lugar de 40.
+
 Cerradas el 14 nov:
 - **las 2 citas de la slide 3**, de la prueba con usuarios del 14 nov y aprobadas por Mariano: «Se valora mucho la cercanía al puesto de trabajo.» y «Muy chula la web, funciona bien.». Van sin nombre, porque se prometió a los usuarios. Las dos son de usuarios, así que van juntas en la columna de utilidad; el hueco del técnico municipal se quita. Si llegan citas mejores, se cambian;
 - **la maqueta de la slide 3:** la banda de los enlaces tapaba el pie de las tres columnas, también las capturas. Las columnas pasan a 636 px, las viñetas a 26 px (como el resto del texto de la slide) y las capturas C2 y C3 a 104 px de alto.
@@ -60,7 +64,7 @@ Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes n
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
-- la slide 2 cuenta 27 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- la slide 2 cuenta 29 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov; las infracciones penales y la antigüedad de las viviendas, del 14 nov, D-235) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
 
 Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias», con la lista de lo que se rehace tras gap-0.3).
 

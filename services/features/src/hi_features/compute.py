@@ -61,8 +61,16 @@ def _metric_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame
 
 
 def _metric_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """`denominator_total` (and `denominator_rest`): the denominator must add up to the total."""
     obs = loaders.observations(engine, f["metric"], level)
-    return methods.metric_share(obs, f["numerator"], f["denominator"], f.get("confidence", 1.0))
+    return methods.metric_share(
+        obs,
+        f["numerator"],
+        f["denominator"],
+        f.get("confidence", 1.0),
+        total=f.get("denominator_total"),
+        rest=f.get("denominator_rest"),
+    )
 
 
 def _metric_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -95,15 +103,26 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
 
 
 def _metric_ratio(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    return methods.metric_ratio(
-        loaders.observations(engine, f["numerator_metric"], level),
+    """`same_period`: the denominator of the numerator's year, not its own latest;
+    `regional_reference: false`: no region row, for a source that covers only some zones;
+    `numerator_minus_dims`: a part of the numerator left out (cybercrime, D-224 §3)."""
+    numerator = loaders.observations(engine, f["numerator_metric"], level)
+    denominator = loaders.observations(engine, f["denominator_metric"], level)
+    if f.get("same_period"):
+        denominator = methods.at_latest_period_of(denominator, numerator)
+    result = methods.metric_ratio(
+        numerator,
         f["numerator_dims"],
-        loaders.observations(engine, f["denominator_metric"], level),
+        denominator,
         f["denominator_dims"],
         float(f["per"]),
         small_population=float(f.get("small_population_threshold", 0)),
         confidence=float(f.get("confidence", 1.0)),
+        numerator_minus=f.get("numerator_minus_dims"),
     )
+    if f.get("regional_reference", True):
+        return result
+    return methods.without_regional_reference(result)
 
 
 def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:

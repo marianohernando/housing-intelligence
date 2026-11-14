@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_infracciones_penales_municipios",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_infracciones_penales_municipios/1fb863d75fd3/hechos-conocidos-de-infracciones-penales-por-tipologia-en-municipios-mayores-de-20.000-habitante.csv",
+      "sha256": "1fb863d75fd31bb99c20e9be21d1ff66d5f89d86a5cb330ceaaf24cfae53fd7c",
+      "bytes": 710722,
+      "url": "https://datos.comunidad.madrid/dataset/2c852cf6-2c61-41f3-8d94-c87edad8b18b/resource/1fb7f93a-d9f1-4269-8487-a2a7acb5dd25/download/hechos-conocidos-de-infracciones-penales-por-tipologia-en-municipios-mayores-de-20.000-habitante.csv",
+      "retrieved_at": "2026-11-14T18:04:58.576892+00:00"
+    }
+  ]
+}

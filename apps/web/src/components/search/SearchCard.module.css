@@ -371,3 +371,34 @@
   background: var(--violet-soft);
   color: var(--violet-strong);
 }
+
+/* «Ocio» (D-236): its boxes open under the chips of «Me importa», set apart as one block */
+.leisure {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+}
+
+.leisure legend {
+  padding: 0 var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.leisureBoxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--space-2);
+}
+
+.leisureRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-3);
+}

@@ -1,0 +1,47 @@
+Checks on https://vidafacil-madrid.vercel.app (dpl_G5sos…, d5fe735), 2026-11-14, Playwright Chromium, 1440x900 and 390x844 (mobile, touch).
+Example: «Ver un ejemplo». Buy: a fresh page, «En pareja», «Comprar», slider to 400.000 €, «Ver zonas que encajan», «Ver todas las opciones»,
+then a click on the map on a Madrid district (Moratalaz at 1440 and Tetuán at 390 before the sync; Tetuán at both after), and «Ver la zona».
+
+===== BEFORE THE SYNC =====
+== 1440 ==
+example: 200 fit-0.8, 27 of 199, 1st Latina 98 · row «1 Latina Distrito de Madrid 98 % de encaje ≈ 1.101 €/mes Alquiler: unos 1.101 € al mes»
+buy: sent {'budget': {'kind': 'buy', 'amount_eur': 400000}, 'adults': 2, 'anchors': 0, 'priorities': 0}, 200 fit-0.8, 27 of 199 · unknown 172 · binding null
+  headline «Con tu búsqueda tal cual salen 27 zonas.» · Madrid districts without a price: 21 of 21
+  rows: 1 Coslada Municipio 100 % de encaje ≈ 196.000 € Comprar: unos 196.000 € | 2 Parla Municipio 100 % de encaje ≈ 143.000 € Comprar: unos 143.000 € | 3 Móstoles Municipio 100 % de encaje ≈ 183.000 € Comprar: unos 183.000 €
+  «¿Y si cambias algo?»: «¿Y si cambias algo? Con tu búsqueda tal cual salen 27 zonas. Cambiar una sola cosa no añade zonas. En 172 zonas no podemos comprobarlo todo: sin precio de compra en 172 zonas (el valor tasado de la vivienda solo se publica por municipio, y solo en los de más de 25.000 habitantes). No las contamos como buenas. Ver menos…»
+  district card: «DISTRITO DE MADRID Moratalaz» (name read on the screenshot) · no price in its header
+    why: «Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda se publica para Madrid entero, no por distrito ni por barrio.»
+console errors and HTTP >= 400: 0
+
+== 390 ==
+example: 200 fit-0.8, 27 of 199, 1st Latina 98 · row «1 Latina Distrito de Madrid 98 % de encaje ≈ 1.101 €/mes Alquiler: unos 1.101 € al mes»
+buy: sent {'budget': {'kind': 'buy', 'amount_eur': 400000}, 'adults': 2, 'anchors': 0, 'priorities': 0}, 200 fit-0.8, 27 of 199 · unknown 172 · binding null
+  headline «Con tu búsqueda tal cual salen 27 zonas.» · Madrid districts without a price: 21 of 21
+  rows: 1 Coslada Municipio 100 % de encaje ≈ 196.000 € Comprar: unos 196.000 € | 2 Parla Municipio 100 % de encaje ≈ 143.000 € Comprar: unos 143.000 € | 3 Móstoles Municipio 100 % de encaje ≈ 183.000 € Comprar: unos 183.000 €
+  «¿Y si cambias algo?»: «¿Y si cambias algo? Con tu búsqueda tal cual salen 27 zonas. Cambiar una sola cosa no añade zonas. En 172 zonas no podemos comprobarlo todo: sin precio de compra en 172 zonas (el valor tasado de la vivienda solo se publica por municipio, y solo en los de más de 25.000 habitantes). No las contamos como buenas. Ver menos…»
+  district card: «DISTRITO DE MADRID Tetuán» (name read on the screenshot) · no price in its header
+    why: «Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda se publica para Madrid entero, no por distrito ni por barrio.»
+console errors and HTTP >= 400: 0
+
+===== AFTER THE SYNC =====
+== 1440 ==
+example: 200 fit-0.8, 27 of 199, 1st Latina 98 · row «1 Latina Distrito de Madrid 98 % de encaje ≈ 1.101 €/mes Alquiler: unos 1.101 € al mes»
+buy: sent {'budget': {'kind': 'buy', 'amount_eur': 400000}, 'adults': 2, 'anchors': 0, 'priorities': 0}, 200 fit-0.8, 41 of 199 · unknown 151 · binding budget
+  headline «Con tu búsqueda tal cual salen 41 zonas.» · Madrid districts without a price: 0 of 21
+  rows: 1 Puente de Vallecas Distrito de Madrid 100 % de encaje ≈ 202.000 € Comprar: unos 202.000 € Dato aproximado | 2 Usera Distrito de Madrid 100 % de encaje ≈ 207.000 € Comprar: unos 207.000 € Dato aproximado | 3 Carabanchel Distrito de Madrid 100 % de encaje ≈ 247.000 € Comprar: unos 247.000 € Dato aproximado
+  «¿Y si cambias algo?»: «¿Y si cambias algo? Con tu búsqueda tal cual salen 41 zonas. Mira cuántas salen si cambias una sola cosa: +40.000 € saldrían 44 zonas, 3 más Probar así En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas. No te de…»
+  district card: «DISTRITO DE MADRID Tetuán 0 % de encaje Esta zona encaja en» · price «Comprar ≈ 411.000 €» · «Dato aproximado» True
+    fact: «Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) · Dato aproximado»
+  /zona/distrito/2807906: /search/barrios 200 · «Los barrios que mejor encajan 4 de sus 6 barrios encajan con tu búsqueda. Toca uno para verlo en el mapa. Valdeacederas 52 % de encaje ≈ 348.000 € Comprar: unos 348.000 € Dato aproximado Comprar ≈ 348.000 € por 68 m² (5.111 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del barrio; Ministerio de…»
+console errors and HTTP >= 400: 0
+
+== 390 ==
+example: 200 fit-0.8, 27 of 199, 1st Latina 98 · row «1 Latina Distrito de Madrid 98 % de encaje ≈ 1.101 €/mes Alquiler: unos 1.101 € al mes»
+buy: sent {'budget': {'kind': 'buy', 'amount_eur': 400000}, 'adults': 2, 'anchors': 0, 'priorities': 0}, 200 fit-0.8, 41 of 199 · unknown 151 · binding budget
+  headline «Con tu búsqueda tal cual salen 41 zonas.» · Madrid districts without a price: 0 of 21
+  rows: 1 Puente de Vallecas Distrito de Madrid 100 % de encaje ≈ 202.000 € Comprar: unos 202.000 € Dato aproximado | 2 Usera Distrito de Madrid 100 % de encaje ≈ 207.000 € Comprar: unos 207.000 € Dato aproximado | 3 Carabanchel Distrito de Madrid 100 % de encaje ≈ 247.000 € Comprar: unos 247.000 € Dato aproximado
+  «¿Y si cambias algo?»: «¿Y si cambias algo? Con tu búsqueda tal cual salen 41 zonas. Mira cuántas salen si cambias una sola cosa: +40.000 € saldrían 44 zonas, 3 más Probar así En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas. No te de…»
+  district card: «DISTRITO DE MADRID Tetuán 0 % de encaje Esta zona encaja en» · price «Comprar ≈ 411.000 €» · «Dato aproximado» True
+    fact: «Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) · Dato aproximado»
+  /zona/distrito/2807906: /search/barrios 200 · «Los barrios que mejor encajan 4 de sus 6 barrios encajan con tu búsqueda. Toca uno para verlo en el mapa. Valdeacederas 52 % de encaje ≈ 348.000 € Comprar: unos 348.000 € Dato aproximado Comprar ≈ 348.000 € por 68 m² (5.111 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del barrio; Ministerio de…»
+console errors and HTTP >= 400: 0
