@@ -32,7 +32,7 @@ scenarios:
       anchors: [{kind: work, label: Nuevos Ministerios, lon: -3.6912, lat: 40.4460, days_per_week: 4, max_minutes: null}]
       priorities: [transporte]
     expect: {min_results: 10, top_within_minutes: 45, binding: budget}
-  - profile_id: golden_couple  # purchase: the appraised value by municipio (DATA-021, D-227); districts stay UNKNOWN
+  - profile_id: golden_couple  # purchase: the appraised value by municipio (DATA-021, D-227); districts and barrios of Madrid with the estimate (D-234)
     scenario:
       budget: {kind: buy, amount_eur: 320000}
       household: {adults: 2}
