@@ -8,7 +8,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { GAP_STATUS, gapsHref, gapSummary, SMALL_ZONE, sortRows } from "@/lib/gaps";
-import { isWholeCity, type ZoneLevel, zoneHref } from "@/lib/map/zones";
+import { isWholeCity, screenZone, type ZoneLevel, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
 import GapRowItem from "./GapRowItem";
@@ -46,7 +46,14 @@ function ZonePicker() {
   return (
     <GlassCard as="section" id={PICK_ID} aria-label={TEXT.pick} className={styles.picker}>
       <p>{TEXT.pick}</p>
-      <ZoneDirectory hrefFor={(zone) => gapsHref(zone.level, zone.code)} placeholder={TEXT.placeholder} wholeCities />
+      <ZoneDirectory
+        hrefFor={(zone) => {
+          const own = screenZone(zone);
+          return gapsHref(own.level, own.code);
+        }}
+        placeholder={TEXT.placeholder}
+        wholeCities
+      />
     </GlassCard>
   );
 }

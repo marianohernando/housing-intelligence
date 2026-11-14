@@ -3,7 +3,7 @@
  * fit-0.1, D-215). The web never recomputes the fit: it joins the API's figures to the map, the
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
-import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 
 import type { ZoneCollection, ZoneGeometry, ZoneProperties } from "./map/zones";
 
@@ -133,6 +133,24 @@ export function passingText(n: number, changed = false): string {
   if (n === 0) return `${start} no sale ninguna zona.`;
   if (n === 1) return `${start} sale 1 zona.`;
   return `${start} salen ${n} zonas.`;
+}
+
+/** resultados.de: how many zones the search compared, and where («¿Dónde?», D-238). */
+const EVALUATED: Record<SearchScope, (n: number) => string> = {
+  all: (n) => `De ${n} zonas de la Comunidad de Madrid.`,
+  madrid: (n) => `De ${n} barrios de Madrid capital.`,
+  alrededores: (n) => `De ${n} municipios de los alrededores de Madrid.`,
+  pueblos: (n) => `De ${n} pueblos de la Comunidad de Madrid.`,
+};
+
+/** The result's own scope: an answer without one (an API before D-238) is the whole region. */
+export function evaluatedText(result: { scenario: { scope?: SearchScope }; reality_check: Pick<RealityCheck, "zones_evaluated"> }): string {
+  return EVALUATED[result.scenario.scope ?? "all"](result.reality_check.zones_evaluated);
+}
+
+/** A search over Madrid capital ranks its barrios (D-238), not its districts. */
+export function byBarrio(result: { scenario: { scope?: SearchScope } } | null): boolean {
+  return result?.scenario.scope === "madrid";
 }
 
 /** rc.sin_dato: zones with some condition that could not be checked are never counted as good. */

@@ -6,8 +6,10 @@ import type { ZoneGapList } from "@/contracts/zone_gap_list_response";
 
 import {
   type AdminFeature,
+  barrioZones,
   boundsOf,
   buildZoneCollection,
+  districtOf,
   edgeWall,
   findZone,
   isWholeCity,
@@ -15,12 +17,15 @@ import {
   outlinePoints,
   regionOf,
   ringArea,
+  screenZone,
   wholeCities,
+  withBarrios,
   type ZoneCollection,
   zoneDirectory,
   type ZoneFeature,
   zoneHref,
   zonePropertiesOf,
+  zoneTitle,
 } from "../map/zones";
 
 function square(x: number, y: number, size = 1): GeoJSON.Polygon {
@@ -39,7 +44,7 @@ function square(x: number, y: number, size = 1): GeoJSON.Polygon {
 }
 
 function unit(level: string, code: string, name: string, parent: string | null, geometry: GeoJSON.Geometry): AdminFeature {
-  const id = `ES.28.${level === "municipio" ? "MUN" : "DIS"}.${code}`;
+  const id = `ES.28.${level === "municipio" ? "MUN" : level === "barrio" ? "BAR" : "DIS"}.${code}`;
   return {
     type: "Feature",
     id,
@@ -89,6 +94,45 @@ describe("buildZoneCollection", () => {
 
   it("returns undefined for an unknown zone", () => {
     expect(findZone(zones, "distrito", "2807999")).toBeUndefined();
+  });
+});
+
+describe("Madrid capital by barrio (D-238)", () => {
+  const zones = buildZoneCollection(municipios, distritos);
+  const barrios = barrioZones(
+    [
+      unit("barrio", "28079011", "Palacio", "ES.28.DIS.2807901", square(0, 0, 0.5)),
+      unit("barrio", "28079056", "Castilla", "ES.28.DIS.2807905", square(1, 1, 0.5)),
+      unit("barrio", "28099991", "Sin distrito en el mapa", null, square(5, 5)),
+    ],
+    zones,
+  );
+
+  it("names each barrio's district by the start of its code", () => {
+    expect(districtOf(zones, "28079056")?.name).toBe("Chamartín");
+    expect(districtOf(zones, "28092011")).toBeUndefined();
+    expect(barrios.features.map((f) => f.properties.zone_key)).toEqual(["barrio/28079011", "barrio/28079056"]);
+    const districts = barrios.features.map(({ properties: p }) => [p.level, p.municipio_name, p.district_code, p.district_name]);
+    expect(districts).toEqual([
+      ["barrio", "Madrid", "2807901", "Centro"],
+      ["barrio", "Madrid", "2807905", "Chamartín"],
+    ]);
+  });
+
+  it("titles a barrio «Barrio · Distrito» and any other zone by its name", () => {
+    expect(zoneTitle(barrios.features[1]!.properties)).toBe("Castilla · Chamartín");
+    expect(zoneTitle({ name: "Getafe" })).toBe("Getafe");
+  });
+
+  it("paints the barrios instead of the districts and keeps the other municipios", () => {
+    const keys = withBarrios(zones, barrios).features.map((f) => f.properties.zone_key);
+    expect(keys).toEqual(["municipio/28092", "municipio/28127", "barrio/28079011", "barrio/28079056"]);
+  });
+
+  it("sends a barrio to its district's screen and «Qué falta»", () => {
+    expect(screenZone(barrios.features[1]!.properties)).toEqual({ level: "distrito", code: "2807905" });
+    expect(screenZone({ level: "barrio", code: "28079061" })).toEqual({ level: "distrito", code: "2807906" });
+    expect(screenZone({ level: "municipio", code: "28092" })).toEqual({ level: "municipio", code: "28092" });
   });
 });
 

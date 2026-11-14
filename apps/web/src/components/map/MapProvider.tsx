@@ -3,11 +3,23 @@
 import { useParams } from "next/navigation";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
+import { useScenario } from "@/components/search/ScenarioProvider";
 import { fetchZoneGaps } from "@/components/zone/useZoneGaps";
 import { ApiError } from "@/lib/api";
-import { type AdminFeature, findZone, type ZoneCollection, type ZoneFeature, type ZoneProperties, zonePropertiesOf } from "@/lib/map/zones";
+import { byBarrio } from "@/lib/fit";
+import {
+  type AdminFeature,
+  barrioZones,
+  findZone,
+  withBarrios,
+  type ZoneCollection,
+  type ZoneFeature,
+  type ZoneProperties,
+  zonePropertiesOf,
+} from "@/lib/map/zones";
+import { scopeOf } from "@/lib/scenario";
 
-import { fetchBarrios, fetchZones } from "./fetchZones";
+import { fetchBarrios, fetchCapitalBarrios, fetchZones } from "./fetchZones";
 
 export type ZonesStatus = "loading" | "ready" | "error";
 
@@ -28,7 +40,12 @@ interface MapContextValue {
    * map's script (the heaviest downloads) start right after it, so they do not slow it down.
    */
   mapMayLoad: boolean;
-  /** Zone picked on the overview map (its card shows on the right). */
+  /**
+   * The zones the overview paints with the search: those of the map, or with a search over Madrid
+   * capital its barrios instead of its districts (D-238), once their outlines are in.
+   */
+  resultZones: ZoneCollection | null;
+  /** Zone picked on the overview map or in the list (its card shows on the right); also a barrio. */
   selectedZone: ZoneFeature | null;
   select: (zoneKey: string | null) => void;
   /** Barrios of the active district, for the «Barrios de la zona» bar: navigation only, no figures. */
@@ -65,6 +82,10 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   // The list remembers its district, so another zone never shows the wrong barrios.
   const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
+  // Madrid capital's barrios, asked as soon as the search is set to «Madrid capital» (D-238)
+  const { scenario, result } = useScenario();
+  const wantsBarrios = scopeOf(scenario) === "madrid" || byBarrio(result);
+  const [capital, setCapital] = useState<AdminFeature[] | null>(null);
 
   const code = decodedCode(params.code);
   const level = params.level;
@@ -138,6 +159,23 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     };
   }, [districtId, barrioList?.parent]);
 
+  useEffect(() => {
+    if (!wantsBarrios || capital) return;
+    let cancelled = false;
+    fetchCapitalBarrios()
+      .then((features) => {
+        if (!cancelled) setCapital(features);
+      })
+      // Without them the list of barrios still works and the map keeps its districts unpainted;
+      // the next search over the capital asks again.
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [wantsBarrios, capital]);
+  const barrios = useMemo(() => (zones && capital ? barrioZones(capital, zones) : null), [zones, capital]);
+  const resultZones = useMemo(() => (zones && barrios && byBarrio(result) ? withBarrios(zones, barrios) : zones), [zones, barrios, result]);
+
   const retry = useCallback(() => {
     setError(null);
     setAttempt((n) => n + 1);
@@ -148,11 +186,26 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const value = useMemo<MapContextValue>(() => {
     const status: ZonesStatus = error ? "error" : zones ? "ready" : "loading";
     const [level = "", selectedCode = ""] = selectedKey?.split("/") ?? [];
-    const selectedZone = zones && selectedKey ? (findZone(zones, level, selectedCode) ?? null) : null;
-    const barrios = districtId && barrioList?.parent === districtId ? barrioList.features : null;
-    const barrio = focus ? (barrios?.find((b) => b.properties.admin_unit_id === focus) ?? null) : null;
-    return { zones, status, error, retry, activeZone, routeZone, mapMayLoad, selectedZone, select: setSelectedKey, barrios, barrio, focusBarrio };
-  }, [zones, error, retry, activeZone, routeZone, mapMayLoad, selectedKey, districtId, barrioList, focus, focusBarrio]);
+    const pickedIn = (from: ZoneCollection | null) => (from && selectedKey ? findZone(from, level, selectedCode) : undefined);
+    const selectedZone = pickedIn(zones) ?? pickedIn(barrios) ?? null;
+    const districtBarrios = districtId && barrioList?.parent === districtId ? barrioList.features : null;
+    const barrio = focus ? (districtBarrios?.find((b) => b.properties.admin_unit_id === focus) ?? null) : null;
+    return {
+      zones,
+      status,
+      error,
+      retry,
+      activeZone,
+      routeZone,
+      mapMayLoad,
+      resultZones,
+      selectedZone,
+      select: setSelectedKey,
+      barrios: districtBarrios,
+      barrio,
+      focusBarrio,
+    };
+  }, [zones, error, retry, activeZone, routeZone, mapMayLoad, resultZones, selectedKey, barrios, districtId, barrioList, focus, focusBarrio]);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }

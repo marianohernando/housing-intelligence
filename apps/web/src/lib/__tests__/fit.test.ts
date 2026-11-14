@@ -5,9 +5,11 @@ import { describe, expect, it } from "vitest";
 import type { RankedZone, RealityCheck, SearchResult, ZoneMatch } from "@/contracts/search_response";
 
 import {
+  byBarrio,
   constraintLabels,
   countFit,
   commuteTakes,
+  evaluatedText,
   failedLabels,
   fewZones,
   fitClass,
@@ -155,6 +157,25 @@ describe("zoneFit and the names of the conditions", () => {
 
   it("keys zones like the map does", () => {
     expect(zoneKeyOf({ level: "distrito", code: "2807905" })).toBe("distrito/2807905");
+  });
+});
+
+describe("where the search looked («¿Dónde?», D-238)", () => {
+  const compared = (scope: SearchResult["scenario"]["scope"], n: number) => ({ scenario: { scope }, reality_check: { zones_evaluated: n } });
+
+  it("says how many zones it compared, and where (resultados.de)", () => {
+    expect(evaluatedText(compared(undefined, 199))).toBe("De 199 zonas de la Comunidad de Madrid.");
+    expect(evaluatedText(compared("all", 199))).toBe("De 199 zonas de la Comunidad de Madrid.");
+    expect(evaluatedText(compared("madrid", 131))).toBe("De 131 barrios de Madrid capital.");
+    expect(evaluatedText(compared("alrededores", 40))).toBe("De 40 municipios de los alrededores de Madrid.");
+    expect(evaluatedText(compared("pueblos", 138))).toBe("De 138 pueblos de la Comunidad de Madrid.");
+  });
+
+  it("ranks Madrid capital by barrio only when the search was over the capital", () => {
+    expect(byBarrio({ scenario: { scope: "madrid" } })).toBe(true);
+    expect(byBarrio({ scenario: { scope: "alrededores" } })).toBe(false);
+    expect(byBarrio({ scenario: {} })).toBe(false);
+    expect(byBarrio(null)).toBe(false);
   });
 });
 

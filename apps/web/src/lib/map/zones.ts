@@ -12,6 +12,16 @@ export const MUNICIPIOS_BY_DISTRITO: readonly string[] = ["ES.28.MUN.28079"];
 
 export type ZoneLevel = "municipio" | "distrito";
 
+/**
+ * Levels a zone of the map can have: a search over Madrid capital (`scope: madrid`, D-238) paints
+ * its barrios instead of its districts. A barrio has no screen nor «Qué falta» of its own: both
+ * are its district's (D-232).
+ */
+export type MapLevel = ZoneLevel | "barrio";
+
+/** A barrio's code starts with its district's (2807906, Tetuán; 28079061, Bellas Vistas). */
+export const DISTRICT_CODE_LENGTH = 7;
+
 /** A municipio the map shows by its districts (Madrid capital): it has a «Qué falta» list, not a zone screen. */
 export function isWholeCity(adminUnitId: string | null | undefined): boolean {
   return adminUnitId != null && MUNICIPIOS_BY_DISTRITO.includes(adminUnitId);
@@ -35,18 +45,21 @@ export type AdminFeature = GeoJSON.Feature<ZoneGeometry, Omit<AdminUnitPropertie
 
 export interface ZoneProperties {
   admin_unit_id: string;
-  level: ZoneLevel;
+  level: MapLevel;
   code: string;
   name: string;
   /** Readable municipio name for the breadcrumbs («Madrid › Chamartín»). */
   municipio_name: string;
   zone_key: string;
+  /** Barrios only: their district, by the start of their code (flat, as map features need). */
+  district_code?: string;
+  district_name?: string;
 }
 
 export type ZoneFeature = GeoJSON.Feature<ZoneGeometry, ZoneProperties>;
 export type ZoneCollection = GeoJSON.FeatureCollection<ZoneGeometry, ZoneProperties>;
 
-function toZone(feature: AdminFeature, level: ZoneLevel, municipioName: string): ZoneFeature {
+function toZone(feature: AdminFeature, level: MapLevel, municipioName: string): ZoneFeature {
   const { admin_unit_id, code, name } = feature.properties;
   return {
     type: "Feature",
@@ -77,6 +90,43 @@ export function buildZoneCollection(
     return municipioName === undefined ? [] : [toZone(d, "distrito", municipioName)];
   });
   return { type: "FeatureCollection", features: [...whole, ...districts] };
+}
+
+/** The district of a barrio of the map, by the start of the barrio's code. */
+export function districtOf(zones: ZoneCollection, barrioCode: string): ZoneProperties | undefined {
+  const code = barrioCode.slice(0, DISTRICT_CODE_LENGTH);
+  return zones.features.find((f) => f.properties.level === "distrito" && f.properties.code === code)?.properties;
+}
+
+/** «Berruguete · Tetuán»: a barrio with its district, when known; any other zone by its name. */
+export function zoneTitle(zone: Pick<ZoneProperties, "name" | "district_name">): string {
+  return zone.district_name ? `${zone.name} · ${zone.district_name}` : zone.name;
+}
+
+/** The zone whose screen and «Qué falta» a zone of the map has: itself, or a barrio's district (D-232). */
+export function screenZone(zone: Pick<ZoneProperties, "level" | "code" | "district_code">): { level: ZoneLevel; code: string } {
+  if (zone.level === "barrio") return { level: "distrito", code: zone.district_code ?? zone.code.slice(0, DISTRICT_CODE_LENGTH) };
+  return { level: zone.level, code: zone.code };
+}
+
+/**
+ * The barrios of the districts of the map, as zones (D-238): each with its district's name and
+ * municipio. A barrio whose district is not on the map is left out.
+ */
+export function barrioZones(barrios: AdminFeature[], zones: ZoneCollection): ZoneCollection {
+  const features = barrios.flatMap((b) => {
+    const district = districtOf(zones, b.properties.code);
+    if (!district) return [];
+    const zone = toZone(b, "barrio", district.municipio_name);
+    return [{ ...zone, properties: { ...zone.properties, district_code: district.code, district_name: district.name } }];
+  });
+  return { type: "FeatureCollection", features };
+}
+
+/** The map of a search over Madrid capital (D-238): the other municipios and, instead of its districts, its barrios. */
+export function withBarrios(zones: ZoneCollection, barrios: ZoneCollection): ZoneCollection {
+  const others = zones.features.filter((f) => f.properties.level !== "distrito");
+  return { type: "FeatureCollection", features: [...others, ...barrios.features] };
 }
 
 /**

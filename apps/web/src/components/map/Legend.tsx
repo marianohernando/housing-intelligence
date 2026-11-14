@@ -45,9 +45,9 @@ const categoryLabel = (c: MapCategory) => (c === "ZONA_PEQUENA" ? SMALL_ZONE.lab
 
 function FitLegend({ id }: { id: string }) {
   const { result, available } = useScenario();
-  const { zones } = useMapZones();
-  if (result && zones) {
-    const counts = countFit(paintFit(zones, result.all_zones));
+  const { resultZones } = useMapZones();
+  if (result && resultZones) {
+    const counts = countFit(paintFit(resultZones, result.all_zones));
     return (
       <figure className={styles.figure} aria-labelledby={id}>
         <figcaption id={id} className={styles.title}>

@@ -9,8 +9,9 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { constraintLabels, failedLabels, passingText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
+import { constraintLabels, evaluatedText, failedLabels, passingText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
+import { districtOf, zoneTitle } from "@/lib/map/zones";
 
 import RealityCheck from "./RealityCheck";
 import styles from "./Results.module.css";
@@ -22,7 +23,6 @@ const TEXT = {
   title: "Zonas que encajan",
   loading: "Buscando zonas que encajan…",
   none: "Ninguna zona cumple todo lo que pides. Mira abajo qué pasa si cambias algo.",
-  of: (n: number) => `De ${n} zonas de la Comunidad de Madrid.`,
   applied: "Ahora ves las zonas con:",
   undo: "Volver a mi búsqueda",
   stale: "Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día.",
@@ -34,6 +34,8 @@ const TEXT = {
   fails: "No cumple:",
   retry: "Reintentar",
   district: (city: string | null | undefined) => `Distrito de ${city ?? "Madrid"}`,
+  // zona.barrio.antetitulo (D-238)
+  barrio: (city: string | null | undefined) => `Barrio de ${city ?? "Madrid"}`,
   municipio: "Municipio",
   fit: "de encaje",
 };
@@ -41,15 +43,22 @@ const TEXT = {
 /** Rows of the ranking in view before «Ver las 10 primeras». */
 const FIRST_ROWS = 5;
 
+function levelText({ level, municipio_name }: RankedZone["zone"]): string {
+  if (level === "barrio") return TEXT.barrio(municipio_name);
+  return level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio;
+}
+
 function ZoneRow({ zone, fails }: { zone: RankedZone; fails?: string[] }) {
-  const { select } = useMapZones();
-  const { name, level, municipio_name } = zone.zone;
+  const { select, zones } = useMapZones();
+  const { name, level, code } = zone.zone;
+  // «Berruguete · Tetuán»: a barrio's district comes from the start of its code (D-238)
+  const district = level === "barrio" && zones ? districtOf(zones, code) : undefined;
   return (
     <button type="button" className={styles.row} onClick={() => select(zoneKeyOf(zone.zone))}>
       {!fails && <span className={styles.rank}>{zone.rank}</span>}
       <span className={styles.rowName}>
-        {name}
-        <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio}</small>
+        {zoneTitle({ name, district_name: district?.name })}
+        <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : levelText(zone.zone)}</small>
       </span>
       <span className={styles.pct}>
         {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
@@ -210,7 +219,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
         )}
         {stale && status !== "loading" && <p className={styles.stale}>{TEXT.stale}</p>}
         <p className={styles.summary}>
-          <strong>{passingText(rc.zones_passing, applied !== null)}</strong> {TEXT.of(rc.zones_evaluated)}
+          <strong>{passingText(rc.zones_passing, applied !== null)}</strong> {evaluatedText(result)}
         </p>
         {rc.zones_passing === 0 && <p>{TEXT.none}</p>}
         {rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown)}</p>}
