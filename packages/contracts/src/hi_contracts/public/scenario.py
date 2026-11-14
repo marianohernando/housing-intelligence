@@ -21,7 +21,8 @@ class BudgetKind(StrEnum):
 
 
 class NeedKey(StrEnum):
-    """Everyday services the search and the per-zone list both talk about."""
+    """Everyday services the search and the per-zone list both talk about, and the leisure
+    groups of «Ocio» (D-236), which only the search knows: they are never rows of the list."""
 
     ESCUELA_INFANTIL = "escuela_infantil"
     COLEGIO = "colegio"
@@ -29,10 +30,24 @@ class NeedKey(StrEnum):
     FARMACIA = "farmacia"
     MAYORES = "mayores"
     TRANSPORTE = "transporte"
+    BARES = "bares"
+    RESTAURANTES = "restaurantes"
+    GIMNASIOS = "gimnasios"
+    CINES_TEATROS = "cines_teatros"
+
+
+# «Ocio» (D-236): the groups its configurator offers, in its order.
+LEISURE_NEEDS: tuple[NeedKey, ...] = (
+    NeedKey.BARES,
+    NeedKey.RESTAURANTES,
+    NeedKey.GIMNASIOS,
+    NeedKey.CINES_TEATROS,
+)
 
 
 class PriorityKey(StrEnum):
-    """«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional."""
+    """«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio
+    (D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing."""
 
     TRANSPORTE = "transporte"
     SALUD = "salud"
@@ -40,6 +55,7 @@ class PriorityKey(StrEnum):
     ZONAS_VERDES = "zonas_verdes"
     SEGURIDAD = "seguridad"
     SIN_ESCALERAS = "sin_escaleras"
+    OCIO = "ocio"
 
 
 class AnchorKind(StrEnum):
@@ -126,9 +142,11 @@ class ScenarioState(BaseModel):
     )
     household: Household = Field(default_factory=Household)
     anchors: list[Anchor] = Field(default_factory=list[Anchor], max_length=3)
-    nearby: list[NearbyNeed] = Field(default_factory=list[NearbyNeed], max_length=6)
+    nearby: list[NearbyNeed] = Field(default_factory=list[NearbyNeed], max_length=len(NeedKey))
     priorities: list[PriorityKey] = Field(
-        default_factory=list[PriorityKey], max_length=6, description="Most important first"
+        default_factory=list[PriorityKey],
+        max_length=len(PriorityKey),
+        description="Most important first",
     )
 
     @model_validator(mode="after")

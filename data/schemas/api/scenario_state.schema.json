@@ -165,27 +165,32 @@
       "type": "object"
     },
     "NeedKey": {
-      "description": "Everyday services the search and the per-zone list both talk about.",
+      "description": "Everyday services the search and the per-zone list both talk about, and the leisure\ngroups of «Ocio» (D-236), which only the search knows: they are never rows of the list.",
       "enum": [
         "escuela_infantil",
         "colegio",
         "centro_salud",
         "farmacia",
         "mayores",
-        "transporte"
+        "transporte",
+        "bares",
+        "restaurantes",
+        "gimnasios",
+        "cines_teatros"
       ],
       "title": "NeedKey",
       "type": "string"
     },
     "PriorityKey": {
-      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.",
+      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio\n(D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing.",
       "enum": [
         "transporte",
         "salud",
         "colegios",
         "zonas_verdes",
         "seguridad",
-        "sin_escaleras"
+        "sin_escaleras",
+        "ocio"
       ],
       "title": "PriorityKey",
       "type": "string"
@@ -237,7 +242,7 @@
       "items": {
         "$ref": "#/$defs/NearbyNeed"
       },
-      "maxItems": 6,
+      "maxItems": 10,
       "title": "Nearby",
       "type": "array"
     },
@@ -246,7 +251,7 @@
       "items": {
         "$ref": "#/$defs/PriorityKey"
       },
-      "maxItems": 6,
+      "maxItems": 7,
       "title": "Priorities",
       "type": "array"
     },
