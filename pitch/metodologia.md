@@ -45,6 +45,8 @@ Así se pone cada nota:
 - **Si a una zona le falta un dato,** nunca cuenta como 0: sale «sin datos» y baja la fiabilidad del %.
 - **La seguridad no la puntuamos.** Te contamos por qué en la sección 1.8.
 
+**Si dos zonas empatan del todo** (pasa con mucho presupuesto y nada marcado: llegan todas al 100 %), va primero la que tiene más servicios del día a día a un paseo (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte) y, si también empatan, la que los tiene más cerca. Si más de 10 zonas encajan igual de bien, la lista te avisa para que marques qué te importa o dónde trabajas.
+
 **Debajo del %** van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min andando», y cada uno dice cuánto nos fiamos del dato.
 
 **Ejemplo real.** Una pareja con 2 hijos de 4 y 8 años trabaja en la Castellana, puede pagar 1.500 € al mes y quiere un colegio a 10 min andando como mucho. Le importan, por este orden, los colegios, el transporte y la salud. Encajan 27 de las 199 zonas. Cuatro empatan arriba con un 98 %: Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas. En Latina hay colegio a unos 6 min, parada a unos 2 y centro de salud a unos 10, se tarda 39 min en transporte público hasta la Castellana llegando a las 9:00, y el alquiler sale a unos 1.101 € al mes por 77 m². Lo que más zonas le quita es el colegio a 10 min: con 5 min más aparecen 17 zonas, y con 150 € más al mes, 3.
