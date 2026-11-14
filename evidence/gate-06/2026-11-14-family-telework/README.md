@@ -1,6 +1,6 @@
 # Días de oficina, teletrabajo, familia o amigos y «Qué falta» plegada (D-240)
 
-Feedback de usuarios de prueba del 14 nov e ideas de Mariano. Rama `claude/s1-family-telework` (PR #60), con la base `15393cb` (#53, #54 y #56) y los ajustes de la revisión del PR.
+Feedback de usuarios de prueba del 14 nov e ideas de Mariano. Rama `claude/s1-family-telework` (PR #60), con los ajustes de la revisión del PR y la base `1a052b1` integrada por merge (D-238, «¿Dónde?»). Todo lo de abajo se comprobó sobre el árbol ya fusionado.
 
 Cómo se comprobó:
 - API de esta rama (`fit-0.8`) sobre la base local `housing`, en solo lectura (`default_transaction_read_only=on`), frente a la API de producción.
@@ -13,8 +13,7 @@ El caso del ejemplo (4 días, sin límite y sin familia) da lo mismo que producc
 - 27 zonas que encajan y 15 sin dato;
 - top 10: Latina, Moratalaz, Ciudad Lineal, Puente de Vallecas, Fuencarral-El Pardo, Usera, Carabanchel, Hortaleza, San Blas-Canillejas y Villaverde;
 - «Casi encajan»: Chamartín, Salamanca, Centro, Chamberí y Retiro;
-- `data` igual salvo `methodology_version` (`fit-0.8` frente a `fit-0.7`) y `/search/barrios` igual en los 21 distritos.
-  - Tras la revisión, producción ya lleva el PR #58 y devuelve `scope: "all"` en el escenario, que esta rama aún no tiene: quitando ese campo y la versión, todo es igual;
+- `data` igual salvo `methodology_version` (`fit-0.8` frente a `fit-0.7`), y `/search/barrios` igual en los 21 distritos (producción ya lleva el PR #58, que esta rama integra);
 - `scripts/golden_search.py`: 9 de 9 (incluye `ranked_order` y `near_miss_order` de D-239).
 
 ## Casos (`casos-dias-familia.txt`, API local)
@@ -50,4 +49,4 @@ El caso del ejemplo (4 días, sin límite y sin familia) da lo mismo que producc
   - al escribir «Getafe», sale aunque la lista esté plegada y el botón desaparece;
   - en el móvil, la página mide 5.090 px plegada frente a 14.524 abierta.
 - **axe:** 0 incidencias en el formulario, en los resultados, en la tarjeta y en «Qué falta» (plegada y abierta), a 1440 y a 390 px. Ningún desborde horizontal y ningún error en la consola.
-- **Smoke de la API** (`scripts/smoke_demo.sh`, solo API): 9 de 9, con el nuevo `telework` (`days_per_week: 0` → 200 y `fit-0.8`). Producción, antes del despliegue, responde 422 a esa petición.
+- **Smoke de la API** (`scripts/smoke_demo.sh`, solo API): 12 de 12, con el nuevo `telework` (`days_per_week: 0` → 200 y `fit-0.8`) y los tres de «¿Dónde?» (D-238). Producción, antes del despliegue, responde 422 a `telework`.
