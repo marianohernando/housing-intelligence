@@ -12,6 +12,9 @@ D-239 (additive, still places-1): `dependency` on the place itself, for every he
 the CM register, so a hospital the catalogue could not be matched to (no beds) says it too.
 «publica» is the network of the Servicio Madrileño de Salud, also its hospitals run by a private
 company, which say so in `management` («Hospital público · gestión privada»).
+
+D-237 (additive, still places-1): car parks (category `other`) carry whether parking is free in
+`access_fee`, and the park-and-ride ones of the CRTM their spaces in `capacity` («plazas»).
 """
 
 from typing import Literal
@@ -28,6 +31,7 @@ Ownership = Literal["publica", "concertada", "privada"]
 Dependency = Literal["publica", "privada"]
 Management = Literal["publica", "privada"]
 CoordinatesOrigin = Literal["source", "geocoded"]
+AccessFee = Literal["free", "paid", "mixed"]
 
 
 class PlaceCapacity(BaseModel):
@@ -78,6 +82,11 @@ class PlaceProperties(BaseModel):
         "hospital of the public network run by a private company by concession or concierto "
         "singular (a versioned list with its official source), 'publica' for the rest of the "
         "public ones (None elsewhere)",
+    )
+    access_fee: AccessFee | None = Field(
+        default=None,
+        description="Car parks (D-237): 'free', 'paid' or 'mixed' (some spaces free), as the "
+        "CRTM publishes it for its park-and-ride car parks (None elsewhere)",
     )
     gap_rows: list[GapRowKey] = Field(
         default_factory=list[GapRowKey],

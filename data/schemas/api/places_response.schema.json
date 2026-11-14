@@ -218,6 +218,24 @@
     "PlaceProperties": {
       "additionalProperties": false,
       "properties": {
+        "access_fee": {
+          "anyOf": [
+            {
+              "enum": [
+                "free",
+                "paid",
+                "mixed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Car parks (D-237): 'free', 'paid' or 'mixed' (some spaces free), as the CRTM publishes it for its park-and-ride car parks (None elsewhere)",
+          "title": "Access Fee"
+        },
         "capacity": {
           "anyOf": [
             {

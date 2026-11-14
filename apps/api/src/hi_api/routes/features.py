@@ -4,7 +4,7 @@ from datetime import date
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
@@ -36,6 +36,12 @@ class FeatureValueRow(BaseModel):
     value: float | None
     null_reason: str | None
     confidence: float
+    detail: dict[str, str | float | bool] | None = Field(
+        default=None,
+        description="What the value cites, when its method names it (D-237: the air quality "
+        "station, whether it lies in the zone and how far it is)",
+        examples=[{"station": "Getafe", "station_code": "28065014", "own": True}],
+    )
 
 
 class FeatureValues(BaseModel):
