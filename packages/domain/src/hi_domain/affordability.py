@@ -41,6 +41,17 @@ PURCHASE_ESTIMATE_NOTE = (
     "precio estimado: valor tasado de {city} repartido según el valor catastral {zone}; "
     "Ministerio de Vivienda y Catastro vía Ayuntamiento"
 )
+# Why a zone has no purchase price: a municipio without a published appraised value, or (D-234) a
+# district or barrio of a city that has one, without the estimate (not synced yet); {city} is
+# «Madrid». Never says that the city lacks it: Madrid has more than 25.000 inhabitants.
+PURCHASE_MISSING = (
+    "Sin precio de compra publicado para esta zona: el valor tasado del Ministerio de Vivienda "
+    "solo llega a los municipios de más de 25.000 habitantes con tasaciones suficientes"
+)
+PURCHASE_MISSING_IN_CITY = (
+    "Sin precio de compra para esta zona: el valor tasado del Ministerio de Vivienda se publica "
+    "para {city} entero, no por distrito ni por barrio"
+)
 PURCHASE_ROUND_EUR = 1000  # an appraised mean is no more precise than this
 BUDGET_ID = "budget"
 
@@ -98,7 +109,11 @@ def purchase_explanation(price_m2: float, area: FloorArea, note: str | None = No
 
 
 def _purchase_check(
-    budget: Budget, price: IndicatorValue | None, area: FloorArea, note: str | None = None
+    budget: Budget,
+    price: IndicatorValue | None,
+    area: FloorArea,
+    note: str | None = None,
+    missing: str | None = None,
 ) -> ConstraintCheck:
     base = {
         "constraint_id": BUDGET_ID,
@@ -111,11 +126,7 @@ def _purchase_check(
             **base,
             status=ConstraintStatus.UNKNOWN,
             confidence=0.0,
-            explanation=(
-                "Sin precio de compra publicado para esta zona: el valor tasado del Ministerio de "
-                "Vivienda solo llega a los municipios de más de 25.000 habitantes con tasaciones "
-                "suficientes"
-            ),
+            explanation=missing or PURCHASE_MISSING,
         )
     cost = purchase_cost(price.value, area.m2)
     return ConstraintCheck(
@@ -135,12 +146,14 @@ def budget_check(
     rent_note: str | None = None,
     rent_missing: str | None = None,
     price_note: str | None = None,
+    price_missing: str | None = None,
 ) -> ConstraintCheck:
     """`rent_missing`: why this zone has no rent, when the data says (D-232: a barrio with no
     place carrying a postcode); else the generic reason. `price_note`: what the purchase price
-    is when it is an estimate (D-234)."""
+    is when it is an estimate (D-234); `price_missing`, why there is none when the reason is not
+    the usual one of a municipio (D-234: a district or barrio of Madrid)."""
     if budget.kind is BudgetKind.BUY:
-        return _purchase_check(budget, price, area, price_note)
+        return _purchase_check(budget, price, area, price_note, price_missing)
     if rent is None or rent.value is None:
         return ConstraintCheck(
             constraint_id=BUDGET_ID,

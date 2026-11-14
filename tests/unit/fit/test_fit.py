@@ -889,3 +889,31 @@ def test_the_cost_never_orders_the_zones_that_fit() -> None:
     outcome = run_search(scenario, zones)
     assert [r.match_pct for r in outcome.results] == [100, 100]
     assert [r.zone.code for r in outcome.results] == ["1", "2"]
+
+
+def test_a_district_without_a_price_says_why_without_blaming_the_city_size() -> None:
+    """D-234: with the code deployed before the estimate is synced a district of Madrid has no
+    price; its UNKNOWN says the appraised value is published for the whole city, never that only
+    municipios of more than 25.000 inhabitants have one (Madrid has)."""
+    tetuan = replace(
+        zone("2807906", price=None),
+        zone=ZoneRef(
+            level=TerritoryLevel.DISTRITO,
+            code="2807906",
+            name="Tetuán",
+            municipio_name="Madrid",
+            center_lon=-3.70,
+            center_lat=40.46,
+        ),
+    )
+    scenario = family(budget=BUY_300K, anchors=[])
+    district = next(
+        c for c in evaluate(scenario, tetuan).constraints if c.constraint_id == "budget"
+    )
+    assert district.status is ConstraintStatus.UNKNOWN
+    assert "se publica para Madrid entero, no por distrito ni por barrio" in district.explanation
+    assert "25.000" not in district.explanation
+    municipio = evaluate(scenario, zone("28001", price=None)).constraints
+    assert (
+        "25.000 habitantes" in next(c for c in municipio if c.constraint_id == "budget").explanation
+    )

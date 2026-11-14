@@ -55,7 +55,7 @@ const TEXT = {
   // presupuesto.compra.fuente (D-227, D-234): where the purchase price is published, where it is
   // an estimate and where there is none
   buySource:
-    "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica para los municipios de más de 25.000 habitantes. En los distritos y barrios de Madrid es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. En los municipios pequeños no podemos comprobar tu presupuesto.",
+    "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica por municipio y en los de más de 25.000 habitantes. En los distritos y barrios de Madrid, el precio que veas es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. Donde no hay precio, no podemos comprobar tu presupuesto.",
   budget: "Presupuesto",
   rent: "Alquilar",
   buy: "Comprar",

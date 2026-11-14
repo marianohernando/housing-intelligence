@@ -32,6 +32,7 @@ from hi_contracts.public import (
 )
 from hi_domain.affordability import (
     PURCHASE_ESTIMATE_NOTE,
+    PURCHASE_MISSING_IN_CITY,
     FloorArea,
     assumed_floor_area,
     budget_check,
@@ -389,6 +390,7 @@ def constraint_checks(
                 data.rent_note,
                 data.rent_missing,
                 purchase_note(data),
+                purchase_missing(data),
             )
         )
     for nearby in scenario.nearby:
@@ -554,6 +556,15 @@ def purchase_note(data: ZoneData) -> str | None:
         return None
     zone = "del barrio" if data.zone.level.value == "barrio" else "del distrito"
     return PURCHASE_ESTIMATE_NOTE.format(city=data.zone.municipio_name or "la ciudad", zone=zone)
+
+
+def purchase_missing(data: ZoneData) -> str | None:
+    """Why a district or barrio has no purchase price (D-234): the city's appraised value is not
+    published by district, and the estimate is missing (not synced yet, or no cadastral data).
+    None for a municipio, which keeps the usual reason."""
+    if data.zone.level.value not in {"distrito", "barrio"}:
+        return None
+    return PURCHASE_MISSING_IN_CITY.format(city=data.zone.municipio_name or "la ciudad")
 
 
 def purchase_fact(
