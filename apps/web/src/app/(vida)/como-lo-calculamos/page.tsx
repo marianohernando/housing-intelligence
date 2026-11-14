@@ -393,6 +393,10 @@ export default function ComoLoCalculamosPage() {
       <Limits />
       <Section id="privacidad" title="Tu privacidad">
         <p className={styles.para}>No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de personas.</p>
+        <p className={styles.para}>
+          Contamos las visitas de forma agregada y sin cookies (Vercel Web Analytics), solo para saber cuánta gente usa la
+          web. No sabemos quién eres ni guardamos lo que buscas.
+        </p>
       </Section>
       <SiteFooter />
     </div>

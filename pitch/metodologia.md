@@ -171,7 +171,7 @@ La fiabilidad baja en estos casos:
 - **Cada dato tiene su fecha.** Algunos horarios de transporte son los últimos publicados aunque ya estén caducados (el del metro venció en mayo de 2026). Lo avisamos.
 
 ### 1.9 Tu privacidad
-No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de personas.
+No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de personas. Contamos las visitas de forma agregada y sin cookies (Vercel Web Analytics), solo para saber cuánta gente usa la web; no sabemos quién eres ni guardamos lo que buscas.
 
 ### 1.10 Versiones
 - Método de «Qué falta»: `{method.version}` (hoy, `gap-0.3`).
