@@ -8,6 +8,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
 - **El barrio que más encaja de cada distrito de Madrid, en la lista de zonas:** `resultados.barrio` (sección 4).
 - **Delitos por cada 1.000 habitantes, como contexto:** `zona.delitos*` (sección 4, «Contexto de la zona»). No puntúa ni ordena, sin colores ni etiquetas, y siempre con el aviso de que se cuentan donde se denuncian (D-224 §3, D-226).
 - **Antigüedad de las viviendas** (% posteriores a 2000): `zona.antiguedad*` (sección 4, «Contexto de la zona»).
+- **«Entorno» de la zona: ruido de la calle, aire y aparcamientos** (D-237): `zona.entorno.*` (sección 4, «Contexto de la zona») y `centros.recuento.aparcamiento` (sección 5b). Hecho por A+B.
 - **«¿Dónde?»: toda la Comunidad, Madrid capital, alrededores o pueblos** (D-238), con Madrid capital por barrios: `donde.*` (sección 2), `resultados.de.*`, `zona.barrio.*` (sección 4) y `mapa.aria.encaje.barrios` (sección 3). Hecho por A+B.
 
 Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos por metros u obra nueva) va en las preguntas 49 y 50 de `pitch/preguntas.md`.
@@ -423,6 +424,26 @@ Datos que se enseñan en la vista de zona para conocerla mejor. No cambian el % 
 | `zona.antiguedad.ayuda` | Es la edad de todas las viviendas de la zona, no solo de las que se venden o se alquilan. | Al tocar «?». Evita leerlo como un filtro de pisos nuevos (pregunta 50). **Pendiente de B** |
 | `zona.antiguedad.madrid` | Dato de toda la ciudad de Madrid: la fuente no lo da por distritos. | En los 21 distritos, si se enseña la cifra de la ciudad; si no, SIN DATOS, como la fila de vivienda. **Pendiente de A** (decide si se enseña) |
 
+#### Entorno (D-237)
+Bloque «Entorno» en la vista de un municipio, de un distrito de Madrid o de un barrio, debajo de la seguridad de los distritos. Lo pidieron en la prueba con usuarios: «pensando en comprar una casa, el ruido también importa», «facilidad de aparcar». Contexto: no puntúa, no ordena zonas y no entra en «Qué falta». Sin colores de estado ni de alarma, y nunca «peligroso», «tóxico» ni «insalubre». Hecho por A+B (`apps/web/src/lib/environment.ts`).
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `zona.entorno.titulo` | Entorno | |
+| `zona.entorno.ruido` | Calles con ruido alto: {dia} % de día, {noche} % de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid) | Porcentaje de las calles donde vive la gente (las mismas que los minutos a pie) por encima de 65 dB Lden y de 55 dB Ln. Lden es el índice europeo de 24 horas: se lee «de día». Sin decimales, con espacio fino irrompible antes de «%». Solo Madrid capital: la ciudad, los 21 distritos y los 131 barrios. Valores de `pct_calle_ruido_dia` y `pct_calle_ruido_noche`. Usera: «29 % de día, 36 % de noche» |
+| `zona.entorno.ruido.sin_dato` | Calles con ruido alto: sin dato publicado | Fuera de Madrid capital, donde no hay mapa de ruido en abierto. Nunca 0 |
+| `zona.entorno.ruido.ayuda` | Ruido del tráfico medido en la propia calle: más de 65 dB de día o de 55 dB de noche, los objetivos de calidad acústica de las zonas residenciales. | Bajo la cifra, solo cuando la hay. Los umbrales son los del Real Decreto 1367/2007; la OMS recomienda menos (D-237 §2) |
+| `zona.entorno.aire` | Aire: NO₂ medio {año}, {valor} µg/m³ en la estación de {estación} (límite UE 2030: 20) | Media de las horas válidas de 2025 de la estación de la zona (`no2_media_anual`, `detail.own`). Una cifra decimal: «25,6». Getafe: «Aire: NO₂ medio 2025, 25,6 µg/m³ en la estación de Getafe (límite UE 2030: 20)». Siempre con la estación: sin ella no sale la cifra |
+| `zona.entorno.aire.cercana` | Aire: NO₂ medio {año}, {valor} µg/m³ en la estación de {estación}, la más cercana de su zona de calidad del aire, a {km} km (límite UE 2030: 20) | Si la zona no tiene estación propia (`detail.own` falso): la más cercana del centro de sus calles dentro de su zona de calidad del aire de la Comunidad. Boadilla del Monte: «… 14,6 µg/m³ en la estación de Majadahonda, la más cercana de su zona de calidad del aire, a 3,5 km …» |
+| `zona.entorno.aire.sin_dato` | Aire: sin dato publicado | Si la API no da cifra o no dice la estación |
+| `zona.entorno.aire.fuente` | Redes de calidad del aire de la Comunidad de Madrid y del Ayuntamiento de Madrid, horas válidas del año. | Bajo la cifra |
+| `zona.entorno.aparcamiento` | Aparcamiento público a unos {n} min andando | Mediana de las calles de la zona hasta el aparcamiento público, mixto o disuasorio más cercano de los publicados en abierto (`min_a_pie_aparcamiento_publico`, 4 km/h). Los de residentes no cuentan |
+| `zona.entorno.aparcamiento.lejos` | Ningún aparcamiento público de los publicados en abierto a menos de 30 min andando | Si la mediana pasa de 30 min. No dice que no haya dónde aparcar |
+| `zona.entorno.disuasorio` | Aparcamiento disuasorio {gratuito} ({n} plazas) en {zona}: {nombre} | Si la zona tiene uno (de «Todos los centros», tipo «Aparcamientos»). {gratuito}: «gratuito», «de pago» o «gratuito y de pago», según el CRTM. Usera tendría «Aparcamiento disuasorio gratuito (210 plazas) en Usera: Doce de Octubre» si solo tuviera ese |
+| `zona.entorno.disuasorios` | {n} aparcamientos disuasorios en {zona}, con {plazas} plazas (todos gratuitos) | Con varios. «(2 gratuitos)» si no lo son todos. Sin las plazas si alguno no las publica (los del Ayuntamiento). Getafe: «6 aparcamientos disuasorios en Getafe, con 2.446 plazas (todos gratuitos)» |
+| `zona.entorno.aparcamiento.fuente` | Aparcamientos publicados en abierto: los de disuasión del Consorcio Regional de Transportes y los del Ayuntamiento de Madrid. Lo fácil que es aparcar en la calle no tiene dato abierto. | Bajo las líneas de aparcamiento. No se inventa la facilidad de aparcar en la calle |
+| `zona.entorno.contexto` | Datos de contexto: no cuentan en el encaje ni en «Qué falta». | Al pie del bloque |
+
 ### Barra de barrios (solo distritos de Madrid)
 La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), después de una búsqueda la vista de un distrito sí tiene cifras por barrio, en «Los barrios que mejor encajan» (abajo). «Qué falta» sigue siendo del distrito entero. Al pulsar un barrio de esa sección se marca también su chip de la barra.
 
@@ -576,6 +597,7 @@ Panel de la vista de zona con cada tipo de centro, su recuento, su capa en el ma
 | `centros.hospital.gestion_privada` | gestión privada | Detrás de «Hospital público ·» en los cinco hospitales de la red del Servicio Madrileño de Salud que gestiona una empresa por concesión o concierto singular: Fundación Jiménez Díaz, Rey Juan Carlos, Infanta Elena, Villalba y Torrejón (D-239, `management` de `/places`). En el recuento cuentan como públicos. Nunca con un privado |
 | `centros.recuento.farmacia` | {n} farmacias en {zona} · 1 farmacia en {zona} · Ninguna farmacia en {zona} | |
 | `centros.recuento.mayores` | {n} centros de mayores en {zona} · 1 centro de mayores en {zona} · Ningún centro de mayores en {zona} | Hogares, clubes y centros de día; las residencias no salen (la fila es la misma) |
+| `centros.recuento.aparcamiento` | {n} aparcamientos en {zona} · 1 aparcamiento en {zona} · Ningún aparcamiento de los publicados en abierto en {zona} | Botón «Aparcamientos» (D-237): los disuasorios del CRTM junto a estaciones y los públicos, mixtos y para residentes del Ayuntamiento de Madrid. En la lista va su nombre, que ya dice el tipo («Aparcamiento público. Plaza de España»), y del CRTM las plazas y si es gratuito («210 plazas · gratuito»). Contexto: no lo cuenta ninguna fila de «Qué falta» |
 | `centro.detalle` | {nombre} · {capacidad} · ubicación aproximada | Cada parte solo si la API la manda. {capacidad} = `capacity.value` y `capacity.unit` («966 camas instaladas», «120 plazas autorizadas»). «ubicación aproximada» si `coordinates` es `geocoded` (D-216 §3) |
 
 ---
