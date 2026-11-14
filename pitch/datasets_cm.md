@@ -135,7 +135,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Infracciones penales conocidas (sin cibercriminalidad) por cada 1.000 habitantes (`infracciones_penales_por_1000_hab`, fuente principal)
-- **Quality Gate 1:** PASS · 2026-11-14 · 7/7 checks críticos · versión `2026-11-14-d717bfe7732e` · 586 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_infracciones_penales_municipios/quality_report.json)
+- **Quality Gate 1:** PASS · 2026-11-14 · 9/9 checks críticos · versión `2026-11-14-d717bfe7732e` · 586 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_infracciones_penales_municipios/quality_report.json)
 
 ### Nacidos vivos por lugar de residencia de la madre y sexo. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo · id `cm_nacidos_vivos_municipios` · publica: Instituto de Estadística

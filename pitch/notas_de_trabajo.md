@@ -8,7 +8,7 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 | Cifra | Hoy | Si no llega | De quién |
 |---|---|---|---|
-| 27 conjuntos CM | Los 2 de camas los sirve la API (85 hospitales, 3,0 camas por 1.000 habitantes) | Si la web no enseña la línea de camas en la nota del hospital antes del 23 nov, se cuentan 25: guion (bloque 4), slides, preguntas 7 y 23, metodología §1.7 y tabla del formulario. El resumen enviado no se toca | B |
+| 29 conjuntos CM (27 hasta el sync de D-235) | Los 2 de camas los sirve la API (85 hospitales, 3,0 camas por 1.000 habitantes) | Si la web no enseña la línea de camas en la nota del hospital antes del 23 nov, se cuentan 25: guion (bloque 4), slides, preguntas 7 y 23, metodología §1.7 y tabla del formulario. El resumen enviado no se toca | B |
 
 ---
 
