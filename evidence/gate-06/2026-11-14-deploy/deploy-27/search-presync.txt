@@ -1,0 +1,7 @@
+Before the sync of D-233 (code ad4a8f2 in production, dpl_HDY4ezEb35YLdtw5TXZCwXiKPnKq; min_a_pie_bus/metro not yet in Supabase), 2026-11-14T12:48:43Z
+POST /api/v1/search, demo case: 27 of 199 zones, model ?, warnings 0
+Transport facts (minutes as N), by text:
+  10 Parada de transporte público a unos N min andando
+Indicators of those facts: min_a_pie_transporte 10
+Latina (1st): Latina 98 % · Parada de transporte público a unos 2 min andando
+POST /api/v1/search/barrios 2807920: 7 of 8 barrios, 1st Canillejas; Simancas: Parada de transporte público a unos 2 min andando
