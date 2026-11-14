@@ -1,0 +1,47 @@
+dataset_id: crtm_aparcamientos_disuasion
+source_id: crtm_open_data
+name: Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid
+domain: transport
+owner: Consorcio Regional de Transportes de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  crs_expected: EPSG:4326
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.crtm.es/datasets/aparcamientos-disuasi%C3%B3n
+resources:
+- name: Aparcamientos Disuasión (descarga CSV de la capa 0 del servicio AparcamientosCM)
+  format: CSV
+  url: https://opendata.arcgis.com/api/v3/datasets/2a2b8fcbd4fc4115a57519ef1587b011_0/downloads/data?format=csv&spatialRefId=4326
+  file_name: aparcamientos_disuasion.csv
+- name: Ficha en el Portal de Datos Abiertos de la Comunidad de Madrid
+  format: HTML
+  url: https://datos.comunidad.madrid/dataset/aparcamientos_disuasion
+  role: cm_portal
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 3
+  geographic_granularity: 5
+  freshness: 3
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-237. Publicado en el portal de la Comunidad de Madrid (aparcamientos_disuasion). Licencia
+    CRTM-LDA (cita al CRTM). Trae las plazas y si es de pago de cada aparcamiento.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T13:00:00+00:00'
+discovery:
+  harvested_from: crtm_open_data
+  external_id: 2a2b8fcbd4fc4115a57519ef1587b011
+  harvested_at: '2026-10-20T11:17:01.436194+00:00'
+notes: >-
+  71 aparcamientos junto a estaciones en 30 municipios (14 nov 2026). Dos de Madrid los publica
+  también el Ayuntamiento como disuasorios municipales y se dejan fuera para no contarlos dos
+  veces. El código de municipio de la capa (CMUN3) no es el del INE: el municipio sale de la
+  geografía.

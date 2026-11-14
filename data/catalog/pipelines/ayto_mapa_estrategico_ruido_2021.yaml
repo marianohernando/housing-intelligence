@@ -1,0 +1,13 @@
+# Strategic noise map of Madrid 2021 (D-237): one GeoTIFF per index inside the published ZIP.
+# Only Lden (the 24 h level with evening and night penalties, the EU's main index) and Ln (night,
+# 23-7 h) are kept, as a compact grid in Silver.
+kind: noise_raster
+dataset_id: ayto_mapa_estrategico_ruido_2021
+layers:
+  lden: Madrid_Lden_2021.tif
+  ln: Madrid_Ln_2021.tif
+crs: EPSG:25830
+pixel_m: 5.0
+nodata: 0.0
+reference_year: 2021
+min_cells_with_level: 6000000  # about half of the 13.2 million seen on 2026-11-14

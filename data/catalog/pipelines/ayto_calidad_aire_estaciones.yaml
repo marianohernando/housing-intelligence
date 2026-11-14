@@ -1,0 +1,12 @@
+# Stations of the Ayuntamiento de Madrid's air quality network (D-237), for the air feature of
+# the districts. Never shown in «Todos los centros».
+kind: points_csv
+dataset_id: ayto_calidad_aire_estaciones
+category: other
+id_column: CODIGO
+name_column: ESTACION
+subcategory_value: Estación de calidad del aire
+csv: {decimal: ","}
+x_column: COORDENADA_X_ETRS89
+y_column: COORDENADA_Y_ETRS89
+attribute_columns: [NOM_TIPO]

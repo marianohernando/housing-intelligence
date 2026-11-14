@@ -1,0 +1,7 @@
+# The 7 air quality zones of the region with their municipios by name (D-237). Silver only: the
+# air feature reads it to choose the station of a municipio without one.
+kind: air_quality_zones
+dataset_id: cm_calidad_aire_zonas
+zone_code_column: zona_calidad_aire_codigo
+zone_name_column: zona_calidad_aire_descripcion
+municipio_name_column: zona_calidad_aire_municipio

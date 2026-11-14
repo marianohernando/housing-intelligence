@@ -1,0 +1,19 @@
+# Park-and-ride car parks next to stations (CRTM, on the CM open data portal; D-237): context
+# only. Longitude/latitude; the municipio comes from the geography, not from CMUN3.
+kind: points_csv
+dataset_id: crtm_aparcamientos_disuasion
+category: other
+csv: {separator: ","}
+# IDFEMPLAZAMIENTO repeats in 17 pairs of different car parks (Alcalá de Henares and
+# Vicálvaro share 28_005_8): the layer's FID is the only unique key
+id_column: FID
+name_template: "Aparcamiento disuasorio {EMPLAZAMIENTO}"
+subcategory_value: Aparcamiento disuasorio
+# Published by the Ayuntamiento de Madrid too (ayto_aparcamientos_publicos): Aviación Española
+# and Estadio Metropolitano, at 12 m and 126 m of the municipal ones.
+exclude_patterns:
+  EMPLAZAMIENTO: ['^Aviación Española$', '^Estadio Metropolitano$']
+x_column: X
+y_column: Y
+crs: EPSG:4326
+attribute_columns: [PLAZAS, PAGO, MUNICIPIO]

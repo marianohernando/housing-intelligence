@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "ayto_calidad_aire_horario",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_calidad_aire_horario/7b6b5ab45bee/calidad_aire_horario.csv",
+      "sha256": "7b6b5ab45beec348eb2a32c765d91e50351c5af5849c247e304306b6ca6f40d1",
+      "bytes": 22194930,
+      "url": "https://datos.madrid.es/dataset/201200-0-calidad-aire-horario/resource/201200-1-calidad-aire-horario-csv/download/calidad_aire_horario.csv",
+      "retrieved_at": "2026-11-14T18:40:32.276614+00:00"
+    }
+  ]
+}

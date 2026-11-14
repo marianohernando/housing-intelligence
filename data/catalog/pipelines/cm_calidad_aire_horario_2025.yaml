@@ -1,0 +1,9 @@
+# Annual mean of NO2 per station of the CM network in 2025 (D-237), from the hourly values
+# flagged valid. Silver only: the air feature reads it.
+kind: air_quality_hourly
+dataset_id: cm_calidad_aire_horario_2025
+csv: {decimal: ","}
+magnitude: 8  # NO2 in the network's code list
+year: 2025
+min_stations: 20  # 28 measured NO2 in 2025
+max_mean: 100.0  # µg/m³: the highest annual mean in the region is about 30

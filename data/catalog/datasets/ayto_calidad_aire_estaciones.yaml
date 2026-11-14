@@ -1,0 +1,36 @@
+dataset_id: ayto_calidad_aire_estaciones
+source_id: ayuntamiento_madrid_ckan
+name: Calidad del aire. Estaciones de control
+domain: environment
+owner: Ayuntamiento de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  crs_expected: EPSG:25830
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.madrid.es/dataset/212629-0-estaciones-control-aire
+resources:
+- name: Calidad del aire. Estaciones de control (CSV)
+  format: CSV
+  url: https://datos.madrid.es/dataset/212629-0-estaciones-control-aire/resource/212629-0-estaciones-control-aire-csv/download/212629-0-estaciones-control-aire-csv.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 2
+  product_impact: 3
+  geographic_granularity: 5
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-237. Fuente complementaria, no es dataset CM: la red del Ayuntamiento, 24 estaciones en
+    Madrid capital, que la red de la Comunidad no cubre.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T18:00:00+00:00'
+notes: >-
+  Se leen las coordenadas proyectadas (COORDENADA_X/Y_ETRS89, con coma decimal), el nombre y
+  el tipo de estación.

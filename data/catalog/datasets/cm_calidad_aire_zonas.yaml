@@ -1,0 +1,35 @@
+dataset_id: cm_calidad_aire_zonas
+source_id: comunidad_madrid_ckan
+name: Red de Calidad del Aire. Municipios por zonas
+domain: environment
+owner: Comunidad de Madrid
+format: CSV
+geography: municipio
+geo:
+  resolution: municipio
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/calidad_aire_zonas
+resources:
+- name: Red de Calidad del Aire. Municipios por zonas (CSV)
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/fe4acdb6-84e2-4977-b431-29bdce73ff55/resource/face3eca-6ca9-46f9-ae77-aef9015cb529/download/calidad_aire_zonas.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 2
+  geographic_granularity: 3
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-237. Dato CM (CC BY 4.0 en el portal). Las 7 zonas en que la Comunidad divide la región
+    para evaluar la calidad del aire (Madrid, tres aglomeraciones y tres zonas rurales), con los
+    179 municipios por nombre.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T18:00:00+00:00'
+notes: >-
+  Decide qué estación da el dato a un municipio sin estación propia: la más cercana de su misma
+  zona, para no dar a un pueblo de la sierra el dato de una estación de tráfico urbana.

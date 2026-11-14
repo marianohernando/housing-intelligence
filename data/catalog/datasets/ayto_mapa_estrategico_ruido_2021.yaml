@@ -1,0 +1,42 @@
+dataset_id: ayto_mapa_estrategico_ruido_2021
+source_id: ayuntamiento_madrid_geoportal
+name: Mapa Estratégico del Ruido 2021 (niveles de ruido del tráfico rodado)
+domain: environment
+owner: Ayuntamiento de Madrid
+format: GeoTIFF
+geography: none
+geo:
+  resolution: none
+  crs_expected: EPSG:25830
+temporal_resolution: every 5 years (Directive 2002/49/EC)
+refresh_policy: quinquenal
+landing_url: https://servpub.madrid.es/IDEAM_WBGEOPORTAL/dataset.iam?id=470b89af-5d64-41d3-8bdb-2fe6badd0364
+resources:
+- name: MER2021.zip (un GeoTIFF por índice, Ld, Le, Ln y Lden)
+  format: ZIP
+  url: https://geoportal.madrid.es/fsdescargas/IDEAM_WBGEOPORTAL/MEDIO_AMBIENTE/INFORMACION_ACUSTICA/Mapa_Estrategico_Ruido_2021/MER2021.zip
+- name: Memoria del Mapa Estratégico de Ruido de Madrid 2021
+  format: PDF
+  url: https://transparencia.madrid.es/UnidadesDescentralizadas/Sostenibilidad/Ruido/MapaRuido/MapaRuido2021/Ficheros/MemoriaMER2021.pdf
+  role: docs
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 2
+  product_impact: 3
+  geographic_granularity: 5
+  freshness: 3
+  license_clarity: 5
+  ingestion_ease: 3
+  notes: >-
+    D-237. Fuente complementaria, no es dataset CM: solo Madrid capital. Ráster de 5 m
+    (EPSG:25830) con el nivel calculado a 4 m de altura (CNOSSOS-EU), solo ruido del tráfico
+    rodado. El portal de datos abiertos (datos.madrid.es) no lo publica: está en el Geoportal,
+    con CC BY 4.0 en su ficha.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T13:00:00+00:00'
+notes: >-
+  Se guardan dos índices: Ld (día, de 7 a 19 h) y Ln (noche, de 23 a 7 h). La población
+  expuesta por distrito solo está en la memoria en PDF (tabla 7) y no por barrio: se usa para
+  contrastar, no como dato. El ráster no entra en la base: solo los indicadores calculados.

@@ -1,0 +1,41 @@
+dataset_id: ayto_calidad_aire_horario
+source_id: ayuntamiento_madrid_ckan
+name: Calidad del aire. Datos horarios desde 2001 (desde 2025)
+domain: environment
+owner: Ayuntamiento de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+temporal_resolution: hourly
+refresh_policy: daily
+landing_url: https://datos.madrid.es/dataset/201200-0-calidad-aire-horario
+resources:
+- name: Datos horarios desde 2025 (CSV)
+  format: CSV
+  # The file name changes with every daily update; the resource answers to any name
+  url: https://datos.madrid.es/dataset/201200-0-calidad-aire-horario/resource/201200-1-calidad-aire-horario-csv/download/calidad_aire_horario.csv
+  file_name: calidad_aire_horario.csv
+- name: Intérprete de ficheros de calidad del aire
+  format: PDF
+  url: https://datos.madrid.es/dataset/201200-0-calidad-aire-horario/resource/201200-17-calidad-aire-horario/download/interprete_ficheros_20calidad_20del_20aire_global.pdf
+  role: docs
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 2
+  product_impact: 3
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-237. Fuente complementaria, no es dataset CM. El fichero «desde 2025» trae 2025 completo
+    y lo que va de 2026: se lee solo 2025. Mismo formato que el de la Comunidad.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T18:00:00+00:00'
+notes: >-
+  Se guarda la media anual de NO₂ (magnitud 8) de cada estación de 2025 y cuántas horas válidas
+  tiene. Comprobado el 14 nov 2026: 23 de las 24 estaciones miden NO₂ (Urb. Embajada no), entre 9,4 µg/m³ (El Pardo) y 31,7 (Plaza
+  Elíptica), con un 98-99 % de horas válidas.
