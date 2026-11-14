@@ -180,6 +180,25 @@ export function passingText(n: number, changed = false): string {
   return `${start} salen ${n} zonas.`;
 }
 
+/** More zones than this with the best % of the ranking and the web says so (resultados.empate, D-239). */
+export const MANY_TIED = 10;
+
+/** Zones that meet everything with the same shown % as the first of the ranking. */
+export function tiedAtTop(result: Pick<SearchResult, "results" | "all_zones">): number {
+  const best = result.results[0]?.match_pct;
+  if (best === undefined) return 0;
+  return result.all_zones.filter((z) => z.passes_all && z.match_pct === best).length;
+}
+
+/**
+ * resultados.empate: with many zones tied at the top the order says little (the API breaks the
+ * tie by the services at a walk, D-239), so the person is told how to tell them apart; null otherwise.
+ */
+export function tiedText(result: Pick<SearchResult, "results" | "all_zones">): string | null {
+  const n = tiedAtTop(result);
+  return n > MANY_TIED ? `Encajan ${n} zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.` : null;
+}
+
 /**
  * Zones left unchecked because they have no purchase price (D-234): with a budget to buy, how many
  * of the `zones_unknown` have the budget condition UNKNOWN. 0 when renting or with an older API.

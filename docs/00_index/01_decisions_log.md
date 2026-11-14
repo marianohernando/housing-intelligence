@@ -1382,9 +1382,10 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
    - **Las dos features en la búsqueda:** las dos se enlazan como `fit: {role: price_m2}`; la estimada lleva además `estimate: true` (solo `price_m2` lo admite, validado en el contrato).
    - **Lectura explícita:** `indicators_by_zone` tiene una rama propia para `price_m2` con `estimate`, que va a `price_estimate` y nunca pisa la publicada, lleguen en el orden que lleguen (test).
    - **Qué precio usa una zona:** `zone_price` toma el valor tasado publicado si lo hay, después la estimación, y si no hay ninguno, la fila que dice por qué. `ZoneData.price_estimated` lleva la nota al texto.
-   - **Desempate:** con el mismo % sin redondear, después de la confidence y de los minutos al trabajo, va el coste más bajo; después, el código de zona. Así los «casi» por presupuesto empiezan por la zona más cercana al tope (Arganzuela, 406.000 €, antes que Tetuán, 411.000 €).
-     - **Vale para cualquier empate exacto, también de alquiler:** con 10.000 € al mes sin prioridades, las 57 zonas al 100 % van de la más barata a la más cara, ya no por orden alfabético.
-     - **El invariante del pitch no cambia:** 27 zonas, Latina 1.ª al 98 %.
+   - **Desempate por coste, solo en «Casi encajan» (`near_miss_key`).** Va después de la confidence y de los minutos al trabajo, y antes del código de zona.
+     - **Por qué ahí:** las zonas que se pasan del presupuesto para comprar sacan todas un 0 % en él y empatan en lo demás (misma confidence 0,5 y sin trabajo). Sin el coste decidía el código de zona, y Tetuán (≈ 411.000 €) quedaba fuera de los cinco «casi» con 400.000 €. Con él, los «casi» empiezan por la zona más cercana al tope: Arganzuela (406.000 €), Tetuán, Centro, Retiro y Chamberí.
+     - **«Zonas que encajan» sigue la clave de D-239** (servicios cotidianos a pie y sus minutos, después confidence, trabajo e id), sin coste. Si el coste fuera delante, con mucho presupuesto volverían primero los pueblos baratos, que es lo que corrige D-239. Detrás tampoco aporta nada: tras los servicios a pie no queda ningún empate exacto entre las zonas que encajan (comprobado con 400.000 € y 1.000.000 € para comprar, 10.000 €/mes de alquiler y el ejemplo).
+     - **El invariante del pitch no cambia:** 27 zonas, Latina 1.ª al 98 %. El golden fija su orden (`ranked_order` y `near_miss_order`, 9/9).
 6. **Reality Check.** Una condición limita donde FALLA. Donde es UNKNOWN falta el dato, y ningún cambio de la persona lo arregla.
    - **`binding_constraint`:** solo cuenta los FAIL. Puede ser `null` aunque no cumpla nada, si solo hay zonas sin datos.
    - **`unknown_by_constraint`** (nuevo, opcional): cuántas de las `zones_unknown` tienen cada condición UNKNOWN.
@@ -1397,9 +1398,9 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
    - **Sin precio:** no va nada.
    - **El orden y los % no cambian:** el ejemplo del pitch sigue en 27 zonas con Latina 1.ª al 98 %.
 7. **Casos reales** (pareja, API local).
-   - **400.000 €:** cumplen 41 zonas: 27 municipios y 14 distritos. Tetuán no cumple por poco (≈ 411.000 €) y sale 2.º en «casi».
+   - **400.000 €:** cumplen 41 zonas: 27 municipios y 14 distritos. Con la clave de D-239, el top 10 son 6 distritos y 4 municipios: Puente de Vallecas, Usera, Carabanchel, Latina, Villaverde, Coslada, Parla, Móstoles, San Blas-Canillejas y Leganés. Tetuán no cumple por poco (≈ 411.000 €) y sale 2.º en «casi».
    - **400.000 € dentro de Tetuán:** cumplen 4 de 6 barrios: Valdeacederas (≈ 348.000 €), Berruguete (≈ 378.000 €), Almenara y Bellas Vistas.
-   - **1.000.000 € con trabajo en Cuatro Torres:** cumplen 48 y los 10 primeros son distritos (Tetuán, Chamartín, Fuencarral-El Pardo y Chamberí al 100 %). Con 45 minutos como máximo cumplen 13.
+   - **1.000.000 € con trabajo en Cuatro Torres:** cumplen 48 y los 10 primeros son distritos (Chamberí, Tetuán, Chamartín y Fuencarral-El Pardo al 100 %). Con 45 minutos como máximo cumplen 13 y los 10 primeros también son distritos, de Chamberí a Fuencarral-El Pardo.
 8. **Despliegue: desplegar → sincronizar → smoke.** Tras el sync no hay vuelta atrás a un despliegue anterior sin retirar estas filas.
    - **Por qué:** el código anterior a este PR lee la estimación como un `price_m2` más, igual que un valor tasado publicado. Hoy solo le salva el orden alfabético de la consulta: `precio_…` llega antes que `valor_…`, y la fila SIN DATOS del valor tasado la pisa. Nada garantiza ese orden, así que no se confía en él.
    - **Rollback tras el sync:** borrar antes la fila `precio_compra_estimado_m2` de `feature_registry`; sus 152 filas de `feature_value` caen por CASCADE. Las 131 filas SIN DATOS de barrio del valor tasado y las tres métricas no molestan al código anterior.
@@ -1410,4 +1411,86 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
      - `dataset_version`: la versión del panel cambia a parser 1.4.0.
      - Las 3.192 observaciones nuevas de `metric_observation` solo van con `PROFILE=full`; la API no las lee.
    - **Recalcular en `housing`:** los comandos están en el PR (catálogo, panel y las dos features).
-9. **Pendiente, para decidir con Mariano.** Sin trabajo ni prioridades, comprando con 400.000 €, los 10 primeros son municipios al 100 %. Los 8 distritos que también están al 100 % quedan detrás porque el precio publicado (confidence 0,8) desempata antes que el estimado (0,5). El mapa sí los pinta como «Cumple todo». Encaja con W5 (el mejor barrio de cada distrito en el ranking).
+9. **Resuelto por D-239.** Antes de D-239, sin trabajo ni prioridades y comprando con 400.000 €, los 10 primeros eran municipios al 100 %: el precio publicado (confidence 0,8) desempataba antes que el estimado (0,5). Con los servicios a pie por delante de la confidence, suben los distritos (6 de 10, ver §7).
+
+## D-239 — Desempate del ranking por servicios a pie y hospitales públicos o privados (2026-11-14)
+Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador recomienda «siempre pueblos y en el mismo orden», y no se distinguen los hospitales públicos de los privados. Dos cambios pequeños y reversibles, sin tocar la puntuación (`fit-0.7` no cambia de versión). Evidencia: `evidence/gate-06/2026-11-14-tiebreak-hospitals/`.
+
+**A. Desempate en «Zonas que encajan» (`hi_domain.fit.ranking_key`, `everyday_walk`).**
+1. **Causa.** El orden ya usaba el encaje sin redondear, no el %. El empate es real: cada utilidad satura en 1,0 (el coste por debajo del 75 % del presupuesto, cada servicio dentro de su ventana), así que con 10.000 €/mes y nada marcado las 57 zonas que encajan tienen exactamente 1,0. Entre empatadas decidían la confianza (la del alquiler: 1,0 en los municipios y 0,8 en los distritos de Madrid), de ahí «siempre pueblos», y después el id de la zona. Ese id lleva el código INE, y los códigos INE de los municipios siguen el orden alfabético: de ahí «Alcalá de Henares, Alcobendas, Alcorcón, Algete, Aranjuez…».
+2. **Regla nueva, solo para empates exactos del encaje sin redondear y solo en «Zonas que encajan».** A igualdad, primero la zona con más servicios cotidianos a un paseo: la media de las utilidades a pie de los seis servicios que mide el buscador (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte), cada uno con su ventana por defecto (D-210), los haya marcado la persona o no. Si también empatan (todo dentro de su ventana), la que los tiene más cerca: menos minutos de media, con el tope de 60 por servicio. Después, como antes: más confianza, menos minutos al primer sitio de trabajo y el id.
+   - Es neutral: no añade ningún criterio que la persona no haya pedido al %; solo ordena lo que el % deja igual. Y se explica en una frase: «a igualdad, primero donde hay más cosas a un paseo».
+   - Solo cuentan los servicios con dato en la zona; una zona sin ninguno va detrás de las empatadas que sí lo tienen. No es un 0 en la puntuación: es solo el orden del empate.
+   - Va delante de la confianza: entre zonas al 100 % la confianza difería (1,0 frente a 0,8, o en milésimas) y decidía el orden sin decir nada a la persona.
+   - **«Casi encajan» conserva su orden (`near_miss_key`):** todas fallan algo y, si empatan, manda la confianza del dato, como hasta ahora (D-220). Los servicios a pie no las reordenan.
+   - Vale igual para los barrios de un distrito (`/search/barrios` usa las mismas dos claves).
+3. **Alternativas descartadas:**
+   - ordenar las empatadas por población o por alquiler: introduce una preferencia que nadie pidió («más grande» o «más barato» no es «mejor»);
+   - bajar la saturación para que no haya empates: cambia la puntuación y el pitch;
+   - orden aleatorio: el mismo caso daría listas distintas;
+   - aplicar el desempate también a «Casi encajan»: cambiaba el orden de las cinco del ejemplo al 93 % (Chamberí primera en vez de Chamartín), que cita el guion, y el de los barrios que casi encajan en 5 distritos;
+   - poner los servicios a pie detrás de la confianza, o justo antes del id: conserva el ejemplo, pero con mucho presupuesto siguen saliendo primero los municipios, por la confianza del alquiler.
+4. **Web (`resultados.empate`).** Si más de 10 zonas que cumplen todo tienen el mismo % que la primera, la lista avisa: «Encajan N zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.». Se calcula en la web con `all_zones`: no cambia el contrato.
+5. **Invariante del pitch, comprobado el 14 nov.** API de esta rama sobre la base local (solo lectura) frente a la respuesta de producción con el caso del ejemplo:
+   - 27 zonas que encajan y 15 sin dato;
+   - top 10 idéntico: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97 y Villaverde 97;
+   - «Casi encajan» idéntico: Chamartín, Salamanca, Centro, Chamberí y Retiro, al 93 %;
+   - la respuesta entera (`data`) es igual byte a byte, y `/search/barrios` también, en los 21 distritos.
+
+   Tests: sin empates exactos el orden es el del encaje (propiedad); un encaje mayor nunca cede ante una zona mejor servida aunque las dos se lean con el mismo %; y en «Casi encajan» un empate sigue yendo a la confianza. El golden de búsqueda fija el orden exacto del ejemplo: el top 10 (`ranked_order`) y las cinco de «Casi encajan» (`near_miss_order`). Así un sync futuro no puede reordenar el caso del pitch sin que se note.
+6. **Los dos casos del feedback** (pareja, alquiler hasta 10.000 €/mes; antes es producción, después es esta rama):
+   - **Sin prioridades** (57 zonas, todas al 100 %; aviso con 57):
+     - antes: Alcalá de Henares, Alcobendas, Alcorcón, Algete, Aranjuez, Arganda del Rey, Arroyomolinos, Boadilla del Monte, Ciempozuelos y Colmenar Viejo;
+     - después: Chamberí, Tetuán, Puente de Vallecas, Salamanca, Centro, Usera, Arganzuela, Ciudad Lineal, Carabanchel y Retiro, con los seis servicios dentro de su ventana y a unos 5–6 min de media.
+   - **Con transporte y salud** (57 zonas, 24 al 100 %; aviso con 24):
+     - antes: Móstoles, Parla, Torrejón de Ardoz, Alcalá de Henares, Alcorcón, Leganés, Coslada, Fuenlabrada, Arganzuela y Salamanca;
+     - después: el mismo top 10 que sin prioridades.
+
+**B. Hospitales públicos y privados.**
+1. **Fuente: el dato ya estaba.** El registro de centros sanitarios de la Comunidad de Madrid (`cm_centros_sanitarios`, datos abiertos de la CM) publica la «dependencia funcional» de cada centro, y la carga la guarda desde D-218 como `dependency` en cada lugar. De los 85 hospitales, 34 son del Servicio Madrileño de Salud y 51 privados: 40 «Privado No Benéfico», 8 «Privado Benéfico (Iglesia)» y 3 mutuas.
+2. **Criterio: «público» es la red del Servicio Madrileño de Salud (SERMAS) y «privado», el resto.** Quien busca sanidad pública quiere saber a qué hospital le manda su tarjeta sanitaria.
+   - Cinco hospitales de la red pública los gestiona una empresa: «Hospital público · gestión privada».
+   - Sustituye la regla de D-218. «Privado» es todo lo que no está en la red, aunque tenga un convenio o concierto ordinario con el SERMAS (p. ej. la Fundación Instituto San José, `data/catalog/corrections/places.yaml`): puede recibir pacientes derivados, pero no es hospital de referencia de la tarjeta sanitaria. «Gestión privada» solo va con «público».
+   - En el registro, cuatro ya figuran como del SERMAS (concesiones). La Fundación Jiménez Díaz figura como «Privado No Benéfico», pero está en la red por concierto singular: pasa a público.
+   - **Lista estática** (`hi_domain.facilities.PRIVATE_MANAGEMENT`), por el código del Catálogo Nacional de Hospitales con el que se cruzó cada lugar (D-218), el único código oficial que lleva:
+
+     | CODCNH | Hospital | Fórmula |
+     |---|---|---|
+     | 280421 | Fundación Jiménez Díaz | Concierto singular |
+     | 281348 | Rey Juan Carlos (Móstoles) | Concesión |
+     | 281236 | Infanta Elena (Valdemoro) | Concesión |
+     | 281359 | General de Villalba | Concesión |
+     | 281337 | Torrejón | Concesión |
+   - **Fuentes** (comunidad.madrid, consultadas el 14 nov):
+     - «Hospitales de la red del Servicio Madrileño de Salud» (actualizada el 26 may 2026): los cinco están en la red;
+     - «Control y seguimiento de centros y servicios de gestión indirecta» (actualizada el 27 oct 2026): los cinco están en «Hospitales con concesión de gestión de servicio público, convenio o concierto singular».
+   - **Fuera, a propósito:**
+     - el Hospital Central de la Defensa Gómez Ulla: está en ese mismo grupo, pero por convenio con otra Administración (Defensa), así que es gestión pública; además no está en el registro;
+     - los 7 hospitales PFI (Henares, Infanta Cristina, Infanta Leonor, Infanta Sofía, Sureste, Tajo y Puerta de Hierro): solo están en concesión la obra y los servicios no sanitarios; la asistencia la presta el SERMAS.
+   - La lista va en código porque el despliegue de la API no lleva `data/` (`.vercelignore`). Cambiarla es desplegar. Si una edición nueva del catálogo cambiara un código, ese hospital vuelve a lo que diga el registro: nunca se adivina (test).
+3. **Contrato `/places` (aditivo, sigue `places-1`):**
+   - `dependency` (`publica` o `privada`) en las propiedades del lugar, para todo centro sanitario del registro. Antes solo iba dentro de `capacity`, es decir, solo en los hospitales cruzados con el catálogo. La Fundación Jiménez Díaz pasa a `publica` en el lugar.
+   - `capacity.dependency` no cambia: sigue siendo el valor del registro (D-218), así que el contrato es aditivo de verdad, y una web anterior no dice «gestión pública» de la Fundación Jiménez Díaz.
+   - `management` (`publica` o `privada`), solo en hospitales: quién lo gestiona. Privada en los privados y en los cinco de la lista; pública en el resto de los públicos.
+   - Un valor que el contrato no conoce se omite: nunca rompe la respuesta (test).
+   - Resultado con los datos locales: 35 hospitales públicos (30 los gestiona el SERMAS y 5 una empresa) y 50 privados.
+4. **Web («Todos los centros» y etiqueta del mapa).**
+   - Cada hospital dice «Hospital público», «Hospital público · gestión privada» u «Hospital privado» (también en los especializados, de media y larga estancia y de salud mental).
+   - Los públicos van primero en la lista, y el recuento los reparte («5 hospitales en Chamartín: 2 públicos y 3 privados»). Los de gestión privada cuentan como públicos.
+   - Bajo el recuento, `centros.hospital.dependencia` explica las tres palabras.
+   - Sustituye a «gestión pública» y «gestión privada» detrás de las camas, que casi nadie veía.
+   - Con una API anterior a este cambio, la web lee el dato de `capacity`: funciona antes y después del despliegue, aunque hasta entonces la Fundación Jiménez Díaz sale como privada.
+5. **Nombre del Rey Juan Carlos.** El registro no lo nombra («Hospital general (Móstoles)», CH0105). El catálogo da el nombre de la concesionaria («ID Dalud Móstoles Sa»), que no se usa (D-218 §5).
+   - Corrección versionada en `data/catalog/corrections/places.yaml` (D-221), con la página del hospital en la red del SERMAS: «Hospital Universitario Rey Juan Carlos · C/ Gladiolo s/n. · 28933 · Móstoles», la misma calle y el mismo código postal del cruce.
+   - Se aplica en la próxima carga del registro: hasta entonces sale como «Hospital general (Móstoles)», ya con «Hospital público · gestión privada».
+6. **Lo que no se hace, y por qué.**
+   - **Dos tipos de centro separables** («Hospitales públicos» y «Hospitales privados» como botones distintos): pide un color nuevo en el mapa y un sitio para el hospital sin clasificar. No es barato a una semana de la congelación; la etiqueta, el orden y el reparto del recuento ya los distinguen.
+   - **«El hospital más cercano es público»:** `min_a_pie_hospital` es la mediana de las calles de la zona hasta el hospital general más cercano a cada calle, así que no hay un único hospital del que decir si es público. Hacerlo bien es una feature nueva (`min_a_pie_hospital_publico`, misma fórmula con `attributes: {dependency: [publica]}`, fila extra de centros de salud): cálculo, sync y texto. Queda propuesta, sin hacer.
+7. **La puntuación no cambia.** La necesidad de salud sigue midiendo el centro de salud, y los minutos al hospital siguen siendo un dato de contexto con todos los hospitales generales (D-217 §5).
+8. **Orden en producción.**
+   - Desempate y etiquetas: basta desplegar, sin sync.
+   - Nombre del Rey Juan Carlos, después del despliegue (primero el código y después el sync):
+     1. Carga del registro con `make ingest DATASET=cm_centros_sanitarios`.
+     2. Comprobar en el resumen de la ejecución que solo cambia CH0105. Si cambia algo más, recalcular las features antes del sync, o aplazar el sync.
+     3. `make supabase-sync` y smoke de `/places` y `/search`, incluido el golden de búsqueda (`scripts/golden_search.py`, que ya comprueba el orden exacto del ejemplo).
+   - Fixture regenerado en solo lectura: `places.hospitales_madrid`, con `dependency` y `management` y los nombres con tilde de D-221.

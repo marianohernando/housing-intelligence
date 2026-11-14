@@ -1,19 +1,19 @@
-$ python cases.py http://127.0.0.1:8044   # API local contra housing_compra, 14 nov (fit-0.8, D-234)
+$ python cases.py http://127.0.0.1:8044   # API local contra housing_compra, 14 nov (fit-0.8, D-234 + D-239)
 
 == Comprar 400.000 €, pareja (/search)
   evaluated=199 passing=41 unknown=151 binding=budget unknown_by={'budget': 151}
   relax: budget «+40.000 €» -> 44 (+3)
-  results by level: {'municipio': 10}
-   1. Aranjuez (municipio) 100% cost=131000.0 conf=0.8
-   2. Parla (municipio) 100% cost=143000.0 conf=0.8
-   3. Navalcarnero (municipio) 100% cost=146000.0 conf=0.8
-   4. Arganda del Rey (municipio) 100% cost=155000.0 conf=0.8
-   5. Valdemoro (municipio) 100% cost=160000.0 conf=0.8
-   6. Galapagar (municipio) 100% cost=170000.0 conf=0.8
-   7. Alcalá de Henares (municipio) 100% cost=171000.0 conf=0.8
-   8. Fuenlabrada (municipio) 100% cost=174000.0 conf=0.8
-   9. San Fernando de Henares (municipio) 100% cost=176000.0 conf=0.8
-  10. Pinto (municipio) 100% cost=177000.0 conf=0.8
+  results by level: {'distrito': 6, 'municipio': 4}
+   1. Puente de Vallecas (distrito) 100% cost=202000.0 conf=0.5
+   2. Usera (distrito) 100% cost=207000.0 conf=0.5
+   3. Carabanchel (distrito) 100% cost=247000.0 conf=0.5
+   4. Latina (distrito) 100% cost=260000.0 conf=0.5
+   5. Villaverde (distrito) 100% cost=234000.0 conf=0.5
+   6. Coslada (municipio) 100% cost=196000.0 conf=0.8
+   7. Parla (municipio) 100% cost=143000.0 conf=0.8
+   8. Móstoles (municipio) 100% cost=183000.0 conf=0.8
+   9. San Blas-Canillejas (distrito) 100% cost=289000.0 conf=0.5
+  10. Leganés (municipio) 100% cost=195000.0 conf=0.8
   Tetuán: no sale; match=0 failed=['budget']
 == Comprar 400.000 €, pareja (/search/barrios, Tetuán 2807906)
   evaluated=6 passing=4 unknown=0 binding=budget unknown_by={}
@@ -28,10 +28,10 @@ $ python cases.py http://127.0.0.1:8044   # API local contra housing_compra, 14 
 == Comprar 1.000.000 €, pareja, trabajo Cuatro Torres, max_minutes=None
   evaluated=199 passing=48 unknown=151 binding=None unknown_by={'budget': 151}
   results by level: {'distrito': 10}
-   1. Tetuán (distrito) 100% cost=411000.0 conf=0.5
-   2. Chamartín (distrito) 100% cost=506000.0 conf=0.5
-   3. Fuencarral-El Pardo (distrito) 100% cost=318000.0 conf=0.5
-   4. Chamberí (distrito) 100% cost=477000.0 conf=0.5
+   1. Chamberí (distrito) 100% cost=477000.0 conf=0.5
+   2. Tetuán (distrito) 100% cost=411000.0 conf=0.5
+   3. Chamartín (distrito) 100% cost=506000.0 conf=0.5
+   4. Fuencarral-El Pardo (distrito) 100% cost=318000.0 conf=0.5
    5. Salamanca (distrito) 96% cost=528000.0 conf=0.5
    6. Centro (distrito) 96% cost=428000.0 conf=0.5
    7. Hortaleza (distrito) 94% cost=347000.0 conf=0.5
@@ -41,17 +41,17 @@ $ python cases.py http://127.0.0.1:8044   # API local contra housing_compra, 14 
 == Comprar 1.000.000 €, pareja, trabajo Cuatro Torres, max_minutes=45
   evaluated=199 passing=13 unknown=46 binding=commute:0 unknown_by={'budget': 46, 'commute:0': 46}
   relax: commute:0 «Sin límite de tiempo hasta Cuatro Torres» -> 48 (+35)
-  results by level: {'municipio': 2, 'distrito': 8}
-   1. Alcobendas (municipio) 100% cost=294000.0 conf=0.8
-   2. San Sebastián de los Reyes (municipio) 100% cost=238000.0 conf=0.8
-   3. Tetuán (distrito) 100% cost=411000.0 conf=0.5
-   4. Chamartín (distrito) 100% cost=506000.0 conf=0.5
-   5. Fuencarral-El Pardo (distrito) 100% cost=318000.0 conf=0.5
-   6. Chamberí (distrito) 100% cost=477000.0 conf=0.5
-   7. Salamanca (distrito) 100% cost=528000.0 conf=0.5
-   8. Centro (distrito) 100% cost=428000.0 conf=0.5
+  results by level: {'distrito': 10}
+   1. Chamberí (distrito) 100% cost=477000.0 conf=0.5
+   2. Tetuán (distrito) 100% cost=411000.0 conf=0.5
+   3. Salamanca (distrito) 100% cost=528000.0 conf=0.5
+   4. Centro (distrito) 100% cost=428000.0 conf=0.5
+   5. Arganzuela (distrito) 100% cost=406000.0 conf=0.5
+   6. Ciudad Lineal (distrito) 100% cost=324000.0 conf=0.5
+   7. Retiro (distrito) 100% cost=462000.0 conf=0.5
+   8. Chamartín (distrito) 100% cost=506000.0 conf=0.5
    9. Hortaleza (distrito) 100% cost=347000.0 conf=0.5
-  10. Moncloa-Aravaca (distrito) 100% cost=328000.0 conf=0.5
+  10. Fuencarral-El Pardo (distrito) 100% cost=318000.0 conf=0.5
 == Ejemplo del pitch (alquiler 1.500 €, familia, Castellana)
   evaluated=199 passing=27 unknown=15 binding=near:colegio unknown_by={'budget': 15}
   relax: near:colegio «+5 min a pie hasta colegio con primaria» -> 44 (+17)
@@ -61,3 +61,30 @@ $ python cases.py http://127.0.0.1:8044   # API local contra housing_compra, 14 
    2. Moratalaz (distrito) 98% cost=1083.0 conf=0.8
    3. Ciudad Lineal (distrito) 98% cost=1230.0 conf=0.8
   methodology=fit-0.8
+
+$ python top10.py http://127.0.0.1:8044   # pareja, sin trabajo ni prioridades
+
+== buy 400000: passing=41 unknown=151 methodology=fit-0.8
+   1. Puente de Vallecas (distrito) 100% cost=202000.0 conf=0.5
+   2. Usera (distrito) 100% cost=207000.0 conf=0.5
+   3. Carabanchel (distrito) 100% cost=247000.0 conf=0.5
+   4. Latina (distrito) 100% cost=260000.0 conf=0.5
+   5. Villaverde (distrito) 100% cost=234000.0 conf=0.5
+   6. Coslada (municipio) 100% cost=196000.0 conf=0.8
+   7. Parla (municipio) 100% cost=143000.0 conf=0.8
+   8. Móstoles (municipio) 100% cost=183000.0 conf=0.8
+   9. San Blas-Canillejas (distrito) 100% cost=289000.0 conf=0.5
+  10. Leganés (municipio) 100% cost=195000.0 conf=0.8
+  casi: [('Arganzuela', 406000.0), ('Tetuán', 411000.0), ('Centro', 428000.0), ('Retiro', 462000.0), ('Chamberí', 477000.0)]
+== rent 10000: passing=57 unknown=142 methodology=fit-0.8
+   1. Chamberí (distrito) 100% cost=1531.0 conf=0.8
+   2. Tetuán (distrito) 100% cost=1314.0 conf=0.8
+   3. Puente de Vallecas (distrito) 100% cost=997.0 conf=0.8
+   4. Salamanca (distrito) 100% cost=1587.0 conf=0.8
+   5. Centro (distrito) 100% cost=1495.0 conf=0.8
+   6. Usera (distrito) 100% cost=900.0 conf=0.8
+   7. Arganzuela (distrito) 100% cost=1340.0 conf=0.8
+   8. Ciudad Lineal (distrito) 100% cost=1087.0 conf=0.8
+   9. Carabanchel (distrito) 100% cost=995.0 conf=0.8
+  10. Retiro (distrito) 100% cost=1347.0 conf=0.8
+  casi: []

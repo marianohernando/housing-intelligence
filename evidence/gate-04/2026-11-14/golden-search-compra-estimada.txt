@@ -1,4 +1,4 @@
-$ DATABASE_URL=…/housing_compra uv run python scripts/golden_search.py   # base local de la línea, 14 nov (fit-0.8, D-234)
+$ DATABASE_URL=…/housing_compra uv run python scripts/golden_search.py   # base local de la línea, 14 nov (fit-0.8, D-234 + D-239)
 
 
 ## golden_family: OK

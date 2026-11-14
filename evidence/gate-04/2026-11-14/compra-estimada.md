@@ -40,11 +40,11 @@ Pareja (2 adultos), sin «Me importa» ni servicios a pie.
 
 1. **Comprar 400.000 € (`POST /search`).** Cumplen 41 de 199 zonas: 27 municipios con valor tasado y 14 distritos. Hay 151 zonas sin datos, todas municipios sin precio publicado (`unknown_by_constraint = {budget: 151}`). La condición que más limita es el presupuesto, porque 7 distritos la incumplen. Reality Check: «+40.000 €» → 44 zonas (+3: Arganzuela, Tetuán y Centro).
    - **Tetuán no sale:** ≈ 411.000 €, sale el 2.º en «Casi encajan» (tras Arganzuela, 406.000 €).
-   - **Los 10 primeros son municipios al 100 %:** sin trabajo ni prioridades, los 8 distritos que también están al 100 % quedan detrás porque el precio publicado (confianza 0,8) desempata antes que el estimado (0,5). Ver «Dudas» en el PR.
+   - **Top 10, con la clave de D-239** (tras fusionar #56): Puente de Vallecas, Usera, Carabanchel, Latina, Villaverde, Coslada, Parla, Móstoles, San Blas-Canillejas y Leganés, todos al 100 %. Son 6 distritos y 4 municipios. Antes de D-239 eran 10 municipios, porque la confianza 0,8 del precio publicado desempataba antes que la 0,5 de la estimación.
 2. **Comprar 400.000 € en Tetuán (`POST /search/barrios`, distrito 2807906).** Cumplen 4 de 6: **Valdeacederas** (1.º, 52 %, ≈ 348.000 €, 5.111 €/m²), **Berruguete** (2.º, 22 %, ≈ 378.000 €, 5.555 €/m²), Almenara (≈ 390.000 €) y Bellas Vistas (≈ 395.000 €). No cumplen Castillejos ni Cuatro Caminos. El % es bajo porque se acercan al tope (margen del presupuesto).
 3. **Comprar 1.000.000 €, trabajo en Cuatro Torres (40,4776, −3,6880).**
-   - **Sin límite de tiempo:** cumplen 48 de 199 (las 48 zonas con precio) y los 10 primeros son distritos: Tetuán, Chamartín, Fuencarral-El Pardo y Chamberí al 100 %, y Salamanca y Centro al 96 %. Ninguna zona incumple nada, así que no hay condición que limite y el Reality Check no ofrece «+100.000 €».
-   - **Con `max_minutes: 45`:** cumplen 13. Primero Alcobendas y San Sebastián de los Reyes, y después Tetuán, Chamartín, Fuencarral-El Pardo, Chamberí, Salamanca, Centro, Hortaleza y Moncloa-Aravaca, todos al 100 %. Lo que más limita es el tiempo hasta el trabajo; «Sin límite de tiempo» → 48 (+35). Las 46 zonas sin datos son municipios sin precio y sin trayecto calculado.
+   - **Sin límite de tiempo:** cumplen 48 de 199 (las 48 zonas con precio) y los 10 primeros son distritos: Chamberí, Tetuán, Chamartín y Fuencarral-El Pardo al 100 %, y Salamanca y Centro al 96 %. Ninguna zona incumple nada, así que no hay condición que limite y el Reality Check no ofrece «+100.000 €».
+   - **Con `max_minutes: 45`:** cumplen 13 y los 10 primeros son distritos: Chamberí, Tetuán, Salamanca, Centro, Arganzuela, Ciudad Lineal, Retiro, Chamartín, Hortaleza y Fuencarral-El Pardo, todos al 100 %. Lo que más limita es el tiempo hasta el trabajo; «Sin límite de tiempo» → 48 (+35). Las 46 zonas sin datos son municipios sin precio y sin trayecto calculado.
 4. **Invariante del pitch** (`exampleScenario`, alquiler 1.500 €, familia, Castellana): **27 zonas, Latina 1.ª al 98 %**, igual que antes. Le siguen Moratalaz y Ciudad Lineal, también al 98 %.
 
 ## Validación frente a precios de mercado
@@ -69,3 +69,10 @@ Lo pidió el coordinador tras la prueba con usuarios: «si tuviera un precio apr
   - sin precio, nada.
 - **Capturas:** `evidence/gate-06/2026-11-14-buy-estimate/`, de la 1 a la 6, a 1440 y 390 px.
 - **Invariante, comprobado otra vez** con el código final, en la API y en pantalla (`6-ejemplo-alquiler`): 27 zonas. Latina 1.ª al 98 % (≈ 1.101 €/mes); Moratalaz (≈ 1.083 €/mes) y Ciudad Lineal (≈ 1.230 €/mes), también al 98 %. Los casos reales dan lo mismo que antes de añadir el precio (salida idéntica).
+
+## Tras fusionar #56 (D-239)
+
+- «Zonas que encajan» sigue la clave de D-239 sin coste: tras los servicios a pie no queda ningún empate exacto entre las zonas que encajan, ni comprando con 400.000 € o 1.000.000 €, ni con 10.000 €/mes de alquiler, ni en el ejemplo. El coste solo desempata «Casi encajan» (Arganzuela, Tetuán, Centro, Retiro y Chamberí con 400.000 €).
+- Golden 9/9, con `ranked_order` y `near_miss_order` del ejemplo.
+- Alquiler de 10.000 €/mes, pareja, sin prioridades: Chamberí, Tetuán, Puente de Vallecas, Salamanca, Centro, Usera, Arganzuela, Ciudad Lineal, Carabanchel y Retiro, el mismo top 10 que D-239.
+- Las capturas de `evidence/gate-06/2026-11-14-buy-estimate/` son de antes de fusionar #56. Lo que cambia es el orden de las filas 1 y 5, no los precios ni los textos.

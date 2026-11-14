@@ -199,3 +199,16 @@ corrections:
       consulted: 2026-11-12
       says: "Consultorio Infante Don Luis de Borbón · C/ Secundino Zuazo, 6. · 28660"
     name: Consultorio Infante Don Luis de Borbón
+  - dataset_id: cm_centros_sanitarios
+    entity_id: CH0105
+    reason: >-
+      El registro de la CM no nombra su hospital general de la calle Gladiolo (28933, Móstoles) y
+      el Catálogo Nacional de Hospitales (CODCNH 281348, calle Gladiolo s/n) da el nombre de la
+      empresa concesionaria, «ID Dalud Móstoles Sa», que no se usa (D-218 §5). La página del
+      hospital en la red del Servicio Madrileño de Salud lo nombra, en la misma dirección (D-239).
+    source:
+      publisher: Comunidad de Madrid · Hospitales de la red del Servicio Madrileño de Salud
+      url: https://www.comunidad.madrid/centros/hospital-universitario-rey-juan-carlos
+      consulted: 2026-11-14
+      says: "Hospital Universitario Rey Juan Carlos · C/ Gladiolo s/n. · 28933 · Móstoles"
+    name: Hospital Universitario Rey Juan Carlos

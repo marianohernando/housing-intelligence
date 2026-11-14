@@ -37,7 +37,9 @@ from hi_domain.fit import (
     cost_fact,
     criteria,
     evaluate,
+    everyday_walk,
     rank_weights,
+    ranking_key,
     walk_utility,
 )
 from hi_domain.reality_check import budget_step, relaxed
@@ -460,6 +462,98 @@ def test_ties_go_to_fewer_minutes_then_to_the_zone_id() -> None:
     assert [r.zone.code for r in tied.results][:2] == ["2807901", "2807916"]
 
 
+WALKS = {
+    NeedKey.ESCUELA_INFANTIL: 6.0,
+    NeedKey.COLEGIO: 5.0,
+    NeedKey.CENTRO_SALUD: 9.0,
+    NeedKey.FARMACIA: 4.0,
+    NeedKey.MAYORES: 8.0,
+    NeedKey.TRANSPORTE: 3.0,
+}
+# D-239, the case of the user test: so much budget that every zone scores 100 %, nothing marked.
+PLENTY = ScenarioState(
+    budget=Budget(kind=BudgetKind.RENT, amount_eur=10_000), household=Household(adults=2)
+)
+
+
+def served(code: str, **minutes: float | None) -> ZoneData:
+    """A zone with every everyday service inside its window, except what `minutes` says."""
+    base = zone(code)
+    walks = WALKS | {NeedKey(need): value for need, value in minutes.items()}
+    walk = {n: _value(f"min_a_pie_{n.value}", m) for n, m in walks.items() if m is not None}
+    return ZoneData(zone=base.zone, rent=base.rent, walk=walk)
+
+
+def _codes(scenario: ScenarioState, zones: list[ZoneData]) -> list[str]:
+    return [r.zone.code for r in run_search(scenario, zones).results]
+
+
+def test_an_exact_tie_goes_to_the_zone_with_more_everyday_services_at_a_walk() -> None:
+    """Nobody marked the pharmacy or the day centre, and they still tell the zones apart: the
+    order of a tie is no longer the INE code (alphabetical), D-239."""
+    village = served("28001", farmacia=28.0, mayores=45.0)
+    town = served("28002", mayores=20.0)
+    city = served("28003")
+    fits = [evaluate(PLENTY, z) for z in (village, town, city)]
+    assert {f.utility for f in fits} == {1.0}  # an exact tie, before any rounding
+    assert _codes(PLENTY, [village, town, city]) == ["28003", "28002", "28001"]
+
+
+def test_zones_equally_served_go_by_fewer_walking_minutes_then_as_before() -> None:
+    close = served("28003", farmacia=2.0)
+    closer = served("28004", farmacia=1.0, colegio=2.0)
+    assert everyday_walk(close) == (1.0, pytest.approx(5.5))
+    assert _codes(PLENTY, [served("28002"), close, closer, served("28001")]) == [
+        "28004",
+        "28003",
+        "28001",  # same services at the same minutes: the fixed id, as before D-239
+        "28002",
+    ]
+
+
+def test_a_zone_without_walking_data_goes_after_the_ties_that_have_it() -> None:
+    unknown = ZoneData(zone=zone("28001").zone, rent=zone("28001").rent)
+    assert everyday_walk(unknown) is None
+    assert _codes(PLENTY, [unknown, served("28002", farmacia=40.0)]) == ["28002", "28001"]
+
+
+def test_the_tie_break_never_outranks_a_better_fit_however_small() -> None:
+    """Only exact ties of the unrounded fit: 97.6 % and 98.4 % both read 98 %, and the worse
+    served zone still goes first."""
+    scenario = PLENTY.model_copy(update={"priorities": [PriorityKey.TRANSPORTE]})
+    worse_served = served("28001", farmacia=30.0, mayores=30.0, transporte=5.1)
+    better_served = served("28002", transporte=5.2)
+    first, second = (evaluate(scenario, z) for z in (worse_served, better_served))
+    assert first.match_pct == second.match_pct and (first.utility or 0) > (second.utility or 0)
+    assert _codes(scenario, [better_served, worse_served]) == ["28001", "28002"]
+
+
+def test_near_misses_keep_breaking_ties_by_confidence_not_by_walks() -> None:
+    """«Casi encajan» (D-239): every near miss fails something, so an exact tie there still
+    goes to the surer figure, as before; the services at a walk only order «Zonas que encajan».
+    The demo's near misses (five at 93 %) keep the order the pitch reads."""
+    poor = PLENTY.model_copy(update={"budget": Budget(kind=BudgetKind.RENT, amount_eur=300)})
+    unsure_rent = _value("alquiler_m2_mensual", 12.0, confidence=0.8)
+    better_served = replace(served("28001"), rent=unsure_rent)
+    surer = served("28002", farmacia=28.0, mayores=45.0)
+    fits = [evaluate(poor, z) for z in (better_served, surer)]
+    assert all(f.failed == ["budget"] for f in fits)
+    assert fits[0].utility == fits[1].utility and fits[0].confidence < fits[1].confidence
+    outcome = run_search(poor, [better_served, surer])
+    assert [r.zone.code for r in outcome.near_misses] == ["28002", "28001"]
+    assert sorted(fits, key=ranking_key)[0].data.zone.code == "28001"  # «Zonas que encajan»
+
+
+@settings(max_examples=60)
+@given(st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code))
+def test_without_exact_ties_the_order_is_the_fit_alone(zones: list[ZoneData]) -> None:
+    """The demo case has no exact tie in its top 10, so D-239 cannot move it: with different
+    unrounded fits the order is the one of the fit, whatever the walks say."""
+    fits = [f for z in zones if (f := evaluate(family(), z)).utility is not None]
+    ordered = sorted(fits, key=ranking_key)
+    assert all(a.utility >= b.utility for a, b in pairwise(ordered))  # type: ignore[operator]
+
+
 @settings(max_examples=40)
 @given(
     st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code), st.randoms()
@@ -785,3 +879,13 @@ def test_every_zone_carries_its_cost_and_how_sure_it_is() -> None:
     assert outcome.results[0].estimated_cost_confidence == 0.8
     rent = run_search(family(anchors=[]), [zone("1")]).results[0]
     assert (rent.estimated_cost_eur, rent.estimated_cost_confidence) == (924, 1.0)
+
+
+def test_the_cost_never_orders_the_zones_that_fit() -> None:
+    """D-234 after D-239: in «Zonas que encajan» the cheaper zone does not go first (with plenty
+    of budget that would put the cheap towns back on top); an exact tie goes on as D-239 says."""
+    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=1_000_000), anchors=[])
+    zones = [zone("1", price=4500.0), zone("2", price=3000.0)]
+    outcome = run_search(scenario, zones)
+    assert [r.match_pct for r in outcome.results] == [100, 100]
+    assert [r.zone.code for r in outcome.results] == ["1", "2"]
