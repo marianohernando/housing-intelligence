@@ -8,6 +8,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
 - **El barrio que más encaja de cada distrito de Madrid, en la lista de zonas:** `resultados.barrio` (sección 4).
 - **Delitos por cada 1.000 habitantes, como contexto:** `zona.delitos*` (sección 4, «Contexto de la zona»). No puntúa ni ordena, sin colores ni etiquetas, y siempre con el aviso de que se cuentan donde se denuncian (D-224 §3, D-226).
 - **Antigüedad de las viviendas** (% posteriores a 2000): `zona.antiguedad*` (sección 4, «Contexto de la zona»).
+- **«¿Dónde?»: toda la Comunidad, Madrid capital, alrededores o pueblos** (D-238), con Madrid capital por barrios: `donde.*` (sección 2), `resultados.de.*`, `zona.barrio.*` (sección 4) y `mapa.aria.encaje.barrios` (sección 3). Hecho por A+B.
 
 Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos por metros u obra nueva) va en las preguntas 49 y 50 de `pitch/preguntas.md`.
 
@@ -167,6 +168,22 @@ Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos p
 | `busqueda.desplegar` | Ver mi búsqueda | |
 | `busqueda.reiniciar` | Empezar de nuevo | |
 
+### «¿Dónde?» (D-238)
+Primer bloque de la tarjeta. Cuatro opciones excluyentes (radios nativos en 2 × 2, `ScenarioState.scope`). Las partes son las zonas estadísticas del Instituto de Estadística de la Comunidad de Madrid: la capital, las 4 metropolitanas y el resto. Prueba con usuarios (14 nov).
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `donde.titulo` | ¿Dónde? | |
+| `donde.toda` | Toda la Comunidad | Por defecto. La web **no envía** `scope`, así que la búsqueda es la de siempre (el ejemplo y los enlaces compartidos no cambian) |
+| `donde.madrid` | Madrid capital | Envía `scope: madrid`: compara los 131 barrios en lugar de los 21 distritos |
+| `donde.alrededores` | Alrededores de Madrid | `scope: alrededores` |
+| `donde.pueblos` | Pueblos | `scope: pueblos` |
+| `donde.ayuda.toda` | Madrid capital por distritos y el resto de la Comunidad por municipios. | Línea bajo el selector, según la opción marcada |
+| `donde.ayuda.madrid` | Comparamos sus 131 barrios. | |
+| `donde.ayuda.alrededores` | Los 40 municipios del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. | Aranjuez, Valdemoro o Ciempozuelos están aquí: son del Sur Metropolitano del Instituto |
+| `donde.ayuda.pueblos` | Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Casi ninguno publica su alquiler: si buscas alquiler, la mayoría saldrán «Sin datos». | **Cambia** en la revisión del PR #58: sin el aviso, «Pueblos» con alquiler parecía un fallo. La Comunidad solo publica el alquiler de los municipios de más de 20.000 habitantes (37 de 179; 2 de los 138 pueblos) |
+| `donde.resumen` | · {opción} | Tras `hogar.resumen` y el presupuesto con la tarjeta plegada, salvo con «Toda la Comunidad» |
+
 ### «Tu hogar»
 | Clave | Texto | Notas |
 |---|---|---|
@@ -288,8 +305,10 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `leyenda.fila.frente` | frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos. | Tras la definición de la fila elegida. Con los vecinos de gap-0.3 (D-217 §6): definitivo el 12 nov |
 | `leyenda.sin_calcular` | {n} zonas sin calcular todavía. | Con 1: «1 zona sin calcular todavía.» |
 | `leyenda.nivel_caido` | No hemos podido cargar {los municipios \| los distritos de Madrid}: salen sin calcular. | Con «Reintentar» |
+| `leyenda.barrios_caidos` | No hemos podido cargar los barrios de Madrid: la capital sale sin pintar. | Con «Reintentar», tras buscar con «Madrid capital» si fallan los contornos de los barrios (D-238). La siguiente búsqueda por barrios los vuelve a pedir |
 | `leyenda.lista` | Ver estas zonas en una lista | Abre `/zonas?fila=…` |
 | `mapa.aria.encaje` | Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa. | `aria-label` del mapa tras buscar |
+| `mapa.aria.encaje.barrios` | Madrid capital sale por barrios: cada barrio tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de barrios que encajan está junto al mapa. | `aria-label` del mapa tras buscar con «Madrid capital» (D-238). Las zonas fuera de «¿Dónde?» quedan sin pintar |
 | `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica. | {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
 | `mapa.aria.centros` | En el mapa salen, agrupados, {recuento en minúscula}; su lista está en «Todos los centros». | `aria-label` del mapa con una capa de centros (sección 5b) |
 | `mapa.atribucion` | Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es | Atribución del mapa (MapLibre añade la del mapa base). «Powered by CRTM», «Ministerio de Sanidad…» y «CartoCiudad…» enlazados como en `pie.*`. Las pantallas con mapa no tienen pie: aquí van la fecha del Ministerio (aviso legal) y el Ayuntamiento (padrón por distrito). Revisión del PR #17. En escritorio se ve entera. En móvil va plegada tras el (i) (PR #22), con `mapa.atribucion.movil` a la vista |
@@ -331,14 +350,19 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | Clave | Texto | Notas |
 |---|---|---|
 | `resultados.titulo` | Zonas que encajan | |
-| `resultados.de` | De {n} zonas de la Comunidad de Madrid. | Bajo `rc.varias` («Con tu búsqueda tal cual salen 32 zonas.»). {n} = `zones_evaluated` (hoy 199) |
+| `resultados.de` | De {n} zonas de la Comunidad de Madrid. | Bajo `rc.varias` («Con tu búsqueda tal cual salen 32 zonas.»). {n} = `zones_evaluated` (hoy 199). Con «Toda la Comunidad» |
+| `resultados.de.madrid` | De {n} barrios de Madrid capital. | Con «Madrid capital» (D-238): {n} = 131 |
+| `resultados.de.alrededores` | De {n} municipios de los alrededores de Madrid. | {n} = 40 |
+| `resultados.de.pueblos` | De {n} pueblos de la Comunidad de Madrid. | {n} = 138 |
+| `resultados.barrio_fila` | {barrio} · {distrito} | Con «Madrid capital», cada fila de la lista; debajo, «Barrio de Madrid» (`zona.barrio.antetitulo`) en lugar de «Distrito de Madrid». El distrito sale del código del barrio |
+| `resultados.pueblos_sin_alquiler` | {n} de los {total} pueblos salen «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto. | Bajo `resultados.de` con «Pueblos», presupuesto de alquiler y alguna zona sin datos (`zones_unknown`). Con 1: «1 de los 138 pueblos sale…». Sustituye a `rc.sin_dato` en ese bloque. Revisión del PR #58 |
 | `resultados.primeras` | Ver las {n} primeras | Se ven 5 y el botón abre hasta 10 |
 | `resultados.menos` | Ver menos | |
-| `resultados.resto` | Y {n} zonas más en el mapa. | Con 1: «Y 1 zona más en el mapa.» |
+| `resultados.resto` | Y {n} zonas más en el mapa. | Con 1: «Y 1 zona más en el mapa.» Con «¿Dónde?» va la palabra del ámbito: «Y 3 barrios más en el mapa.» (D-238) |
 | `resultados.barrio` | Barrio que más encaja: {barrio} ({pct} %) | Segunda línea de cada distrito de Madrid en la lista, bajo su nombre. Sale del mismo cálculo que «Los barrios que mejor encajan» (D-232, `fit-0.7`). Con empate: «Barrios que más encajan: {a}, {b} y {c} ({pct} %)»; por ejemplo, San Blas-Canillejas con el caso de ejemplo, «Barrios que más encajan: Canillejas, Arcos y Simancas (97 %)» (`evidence/gate-06/2026-11-13-deploy/deploy-22-barrio.md`). Si ningún barrio cumple todo, no va la línea. Los municipios no la llevan. En pantalla nunca «ranking» ni «el mejor barrio»: es el que más se parece a lo que buscas, no una nota del barrio. Prueba con usuarios (14 nov). **Pendiente de A** (que `/search` lo devuelva, o una llamada por distrito) **y de B** |
 | `resultados.casi.ayuda` | Cumplen todo menos una cosa. | Bajo `zona.cerca_de_encajar.titulo` («Casi encajan»). Antes, «Fallan en una sola cosa.» |
 | `resultados.cambiada` | Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día. | Los resultados son de la búsqueda anterior |
-| `resultados.empate` | Encajan {n} zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden. | Sobre la lista, solo si más de 10 zonas que cumplen todo tienen el mismo % que la primera (D-239). {n} = esas zonas. Con mucho presupuesto y nada marcado todas llegan al 100 %; el orden entre ellas ya no es alfabético: primero las que tienen más servicios a un paseo |
+| `resultados.empate` | Encajan {n} zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden. | Sobre la lista, solo si más de 10 zonas que cumplen todo tienen el mismo % que la primera (D-239). {n} = esas zonas. Con mucho presupuesto y nada marcado todas llegan al 100 %; el orden entre ellas ya no es alfabético: primero las que tienen más servicios a un paseo. Con «Madrid capital», «Encajan 106 barrios igual de bien…» (D-238) |
 
 ### Tarjeta de zona
 
@@ -356,7 +380,7 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `fila.lista.mayores` | centros de mayores | |
 | `fila.lista.farmacia` | farmacias | |
 | `fila.lista.vivienda` | viviendas grandes para familias | |
-| `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`) |
+| `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`). Con «Madrid capital», «Alrededores» o «Pueblos» la zona es un barrio, municipio o pueblo: «El {n}.º que más encaja» (D-238) |
 | `zona.hechos.titulo` | Lo que tienes aquí | Encima de los 3–5 hechos (`facts`) |
 | `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6 |
 | `hecho.paradas` | Parada de autobús a unos {n} min andando · Metro o Cercanías a unos {m} min | Texto para el hecho de la API. Sustituye a «Parada de transporte público a unos {n} min andando» (`NEED_TEXT` en `fit.py`). Prueba con usuarios (14 nov): una parada de autobús y una estación no valen lo mismo para quien busca casa. «Metro» incluye Metro Ligero. Los minutos, con el método de siempre: lo que tarda la mitad de la zona a 4 km/h. Fuente: los GTFS del CRTM, ya cargados. Si la web lo parte en dos líneas, va sin «·». **Pendiente de A** (hecho) **y de B** |
@@ -376,6 +400,13 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.condicion.no_cumple` | No cumple | `FAIL` |
 | `zona.condicion.sin_dato` | No lo sabemos | `UNKNOWN`. Ayuda: «Nos falta el dato para comprobarlo. No lo damos por bueno.» |
 | `zona.falta.a_pie` | A pie: {minutos} | Bajo el nombre de cada fila de la mini lista. {minutos} con `a_pie.min` (sección 5) |
+| `zona.barrio.antetitulo` | Barrio de Madrid | Tarjeta de un barrio tras buscar con «Madrid capital» (D-238), donde los distritos dicen «Distrito de Madrid» |
+| `zona.barrio.nombre` | {barrio} · {distrito} | Título de la tarjeta, por ejemplo «Berruguete · Tetuán» o «Lucero · Latina» |
+| `zona.barrio.falta.titulo` | Qué falta en {distrito} | En lugar de `zona.falta.titulo`: el barrio no tiene «Qué falta» propio (D-232). Sin la línea `encaje.aviso_*`, que diría «aquí» de todo el distrito |
+| `zona.barrio.falta.ayuda` | Las cifras de «Qué falta» son del distrito entero. | Bajo el título. La misma frase que `barrios.ayuda` |
+| `zona.barrio.boton` | Ver el distrito | En lugar de `zona.boton`: lleva a la vista del distrito, con «Los barrios que mejor encajan» |
+| `zona.fuera` | Fuera de tu búsqueda ({ámbito}). | Tarjeta de una zona del mapa que no está en «¿Dónde?», por ejemplo Getafe tras buscar en «Madrid capital». {ámbito} es la opción elegida. Revisión del PR #58 |
+| `zona.sin_alquiler` | Con «Alquilar», puede faltar el alquiler: la Comunidad de Madrid solo lo publica para los municipios de más de 20.000 habitantes, y casi ningún pueblo los tiene. | Tarjeta de un municipio con encaje «No lo sabemos» y presupuesto de alquiler, como la nota de compra (D-227 §3). Dicho como posibilidad: puede faltar otra condición. Los barrios ya traen su motivo de la API (D-232 §4) |
 | `zona.encaje.pronto` | Muy pronto verás cuánto encaja esta zona contigo. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
 
 ### Contexto de la zona (no puntúa)
@@ -575,7 +606,7 @@ Siempre visible bajo «Zonas que encajan». Va plegado a la opción que más zon
 | `rc.titulo` | ¿Y si cambias algo? | |
 | `rc.ninguna` | Con tu búsqueda tal cual no sale ninguna zona. | `zones_passing = 0` |
 | `rc.una` | Con tu búsqueda tal cual sale 1 zona. | |
-| `rc.varias` | Con tu búsqueda tal cual salen {n} zonas. | |
+| `rc.varias` | Con tu búsqueda tal cual salen {n} zonas. | Con «¿Dónde?», el nombre del ámbito: «salen 78 barrios», «salen 34 municipios», «salen 2 pueblos»; con 0, «no sale ningún barrio» (D-238). Igual en `rc.ninguna`, `rc.una`, `rc.cambio`, `rc.opcion.cuenta`, `rc.sin_dato` («No los contamos como buenos») y `vacio.sin_resultados` («Ningún pueblo cumple…») |
 | `rc.cambio` | Con este cambio salen {n} zonas. | En lugar de `rc.varias` tras aplicar una opción. Con 1: «Con este cambio sale 1 zona.»; con 0: «Con este cambio no sale ninguna zona.» |
 | `rc.intro` | Mira cuántas salen si cambias una sola cosa: | |
 | `rc.opcion` | {label} | Primera línea de cada opción |
@@ -585,7 +616,7 @@ Siempre visible bajo «Zonas que encajan». Va plegado a la opción que más zon
 | `rc.menos` | Ver menos | |
 | `rc.sin_opciones` | Cambiar una sola cosa no añade zonas. | Ninguna opción añade zonas |
 | `rc.sin_dato` | En {n} zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. | `zones_unknown` > 0 |
-| `rc.limite` | Lo que más limita tu búsqueda es: {condición} | `binding_constraint` |
+| `rc.limite` | Lo que más limita tu búsqueda es: {condición} | `binding_constraint`, solo si sus FAIL son al menos tantos como las zonas sin datos (`zones_unknown`). La API también cuenta como excluida una zona donde la condición es UNKNOWN: con alquiler en «Pueblos» decía «Alquiler» sin que ningún pueblo lo superase. Revisión del PR #58 (D-238 §10) |
 | `rc.nota` | No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. | Frase del mensaje de la idea (sin cifras) |
 | `rc.deshacer` | Volver a mi búsqueda | Tras aplicar una opción |
 | `rc.aplicado` | Ahora ves las zonas con: {label} | Aviso tras aplicar una opción |

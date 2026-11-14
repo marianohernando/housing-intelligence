@@ -6,7 +6,7 @@ import { useId } from "react";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { errorMessage } from "@/lib/errors";
-import { countFit, type FitClass, paintFit } from "@/lib/fit";
+import { byBarrio, countFit, type FitClass, paintFit } from "@/lib/fit";
 import { GAP_STATUS, ROW_NAME, SMALL_ZONE } from "@/lib/gaps";
 import { countByStatus, isGapRow, type MapCategory, MAP_ROWS, paintZones } from "@/lib/map/gapMap";
 
@@ -33,6 +33,8 @@ const TEXT = {
   pending: (n: number) => `${n === 1 ? "1 zona" : `${n} zonas`} sin calcular todavía.`,
   failedLevel: { municipio: "los municipios", distrito: "los distritos de Madrid" } as const,
   failed: (what: string) => `No hemos podido cargar ${what}: salen sin calcular.`,
+  // leyenda.barrios_caidos (D-238): a search over the capital without its barrios' outlines
+  barriosFailed: "No hemos podido cargar los barrios de Madrid: la capital sale sin pintar.",
   list: "Ver estas zonas en una lista",
   // After a search: leyenda.cumple, leyenda.no_cumple and leyenda.sin_datos
   fit: { ENCAJA: "Cumple todo", NO_CUMPLE: "No cumple todo", SIN_DATOS: "Sin datos" } satisfies Record<FitClass, string>,
@@ -45,9 +47,10 @@ const categoryLabel = (c: MapCategory) => (c === "ZONA_PEQUENA" ? SMALL_ZONE.lab
 
 function FitLegend({ id }: { id: string }) {
   const { result, available } = useScenario();
-  const { zones } = useMapZones();
-  if (result && zones) {
-    const counts = countFit(paintFit(zones, result.all_zones));
+  const { resultZones, barriosError, retryBarrios } = useMapZones();
+  if (result && resultZones) {
+    const counts = countFit(paintFit(resultZones, result.all_zones));
+    const barriosFailed = byBarrio(result) && barriosError !== null;
     return (
       <figure className={styles.figure} aria-labelledby={id}>
         <figcaption id={id} className={styles.title}>
@@ -67,6 +70,14 @@ function FitLegend({ id }: { id: string }) {
             </li>
           ))}
         </ul>
+        {barriosFailed && (
+          <div role="alert" className={styles.error}>
+            <p>{TEXT.barriosFailed}</p>
+            <Button variant="secondary" onClick={retryBarrios}>
+              {TEXT.retry}
+            </Button>
+          </div>
+        )}
       </figure>
     );
   }
