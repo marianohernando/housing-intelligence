@@ -122,13 +122,37 @@ def metric_value(obs: pd.DataFrame, dims: DimFilter, confidence: float = 1.0) ->
     return _result(out)
 
 
+def _adds_up(
+    records: list[dict[str, Any]], part: float, total: DimFilter, rest: DimFilter | None
+) -> bool:
+    """`part` plus the `rest` rows equals the `total` row: no category of the source is
+    missing from the denominator, nor a new one added (D-235)."""
+    whole, whole_reason, whole_n = _sum_selected(records, total)
+    left, left_reason, _ = _sum_selected(records, rest) if rest else (0.0, None, 0)
+    if whole_reason or left_reason or not whole_n:
+        return False
+    return abs(part + left - whole) < 0.5
+
+
 def metric_share(
-    obs: pd.DataFrame, numerator: DimFilter, denominator: DimFilter, confidence: float = 1.0
+    obs: pd.DataFrame,
+    numerator: DimFilter,
+    denominator: DimFilter,
+    confidence: float = 1.0,
+    total: DimFilter | None = None,
+    rest: DimFilter | None = None,
 ) -> pd.DataFrame:
+    """100 x numerator / denominator. With `total`, the denominator plus the `rest` rows must
+    add up to the source's total row, or the share is unknown (ESTIMATION_NOT_ALLOWED): a
+    share over an incomplete denominator would look exact and be wrong."""
     out: list[dict[str, Any]] = []
     for (code, period), records in _by_territory(obs).items():
         num, num_reason, num_n = _sum_selected(records, numerator)
         den, den_reason, den_n = _sum_selected(records, denominator)
+        incomplete = total is not None and not _adds_up(records, den, total, rest)
+        if incomplete and not den_reason and den_n:
+            out.append(_null(code, period, NullReason.ESTIMATION_NOT_ALLOWED))
+            continue
         if num_reason or den_reason or not num_n or not den_n:
             out.append(
                 _null(

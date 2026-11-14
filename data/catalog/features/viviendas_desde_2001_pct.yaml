@@ -35,6 +35,10 @@ formula:
       - entre_2011_y_2015
       - entre_2016_y_2020
       - entre_2021_y_2025
+  # The 14 intervals plus «No consta» must add up to the total, or the share is unknown: a
+  # missing or new interval would make it look exact and be wrong (review R-10).
+  denominator_rest: {antiguedad: [no_consta]}
+  denominator_total: {antiguedad: [total]}
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
 confidence: {inputs: [source_freshness]}
 public_use: true

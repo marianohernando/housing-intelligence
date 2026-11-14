@@ -583,3 +583,35 @@ def test_share_built_since_2001_leaves_no_consta_out_of_the_total() -> None:
     assert out["28001"]["value"] == 40.0  # 40 of 100: neither the total row nor «No consta»
     assert out["28002"]["null_reason"] == "SOURCE_MISSING"  # a suppressed interval, never 0
     assert out["28003"]["null_reason"] == "SOURCE_MISSING"  # no interval with a known year
+
+
+def test_share_built_since_2001_is_unknown_when_its_intervals_do_not_add_up() -> None:
+    """Review R-10: the known intervals plus «No consta» must make the total; an interval the
+    source drops (or a new one) leaves the share unknown, not a share of the rest."""
+    known = {"antiguedad": ["entre_1991_y_2000", "entre_2001_y_2005"]}
+    since = {"antiguedad": ["entre_2001_y_2005"]}
+    dwellings = _obs(
+        [
+            ("28001", {"antiguedad": "total"}, 110.0),
+            ("28001", {"antiguedad": "entre_1991_y_2000"}, 60.0),
+            ("28001", {"antiguedad": "entre_2001_y_2005"}, 40.0),
+            ("28001", {"antiguedad": "no_consta"}, 10.0),
+            ("28002", {"antiguedad": "total"}, 110.0),  # «entre_1991_y_2000» is not published
+            ("28002", {"antiguedad": "entre_2001_y_2005"}, 40.0),
+            ("28002", {"antiguedad": "no_consta"}, 10.0),
+            ("28003", {"antiguedad": "entre_1991_y_2000"}, 60.0),  # no total row
+            ("28003", {"antiguedad": "entre_2001_y_2005"}, 40.0),
+        ]
+    )
+    out = _by_code(
+        methods.metric_share(
+            dwellings,
+            since,
+            known,
+            total={"antiguedad": ["total"]},
+            rest={"antiguedad": ["no_consta"]},
+        )
+    )
+    assert out["28001"]["value"] == 40.0  # 60 + 40 + 10 = 110
+    assert out["28002"]["null_reason"] == "ESTIMATION_NOT_ALLOWED"  # 40 + 10 is not 110
+    assert out["28003"]["null_reason"] == "ESTIMATION_NOT_ALLOWED"

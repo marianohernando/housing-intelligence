@@ -59,8 +59,16 @@ def _metric_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame
 
 
 def _metric_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """`denominator_total` (and `denominator_rest`): the denominator must add up to the total."""
     obs = loaders.observations(engine, f["metric"], level)
-    return methods.metric_share(obs, f["numerator"], f["denominator"], f.get("confidence", 1.0))
+    return methods.metric_share(
+        obs,
+        f["numerator"],
+        f["denominator"],
+        f.get("confidence", 1.0),
+        total=f.get("denominator_total"),
+        rest=f.get("denominator_rest"),
+    )
 
 
 def _metric_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
