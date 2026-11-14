@@ -487,3 +487,78 @@ def test_a_factor_of_another_year_stops_the_computation() -> None:
     weights = _weights([("2807901", "28001", 1.0)])
     with pytest.raises(ValueError, match="same year"):
         methods.postcode_weighted_mean(CP_RENT, weights, {}, new_contracts=(old, 1.2))
+
+
+# D-234: a city's appraised value shared out among its districts by cadastral value per m²
+RATIO = {"2807904": 1600.0, "2807906": 1200.0, "2807913": 600.0}
+UNITS = {"2807904": 80_000.0, "2807906": 80_000.0, "2807913": 100_000.0}
+CITY = {"28079": 5000.0}
+
+
+def _shared(
+    ratio: dict[str, float] = RATIO,
+    weight: dict[str, float] = UNITS,
+    anchor: dict[str, float] = CITY,
+    zones: list[str] | None = None,
+    digits: int = 5,
+) -> dict[str, dict[str, Any]]:
+    frame = methods.anchored_relative_value(
+        ratio, weight, anchor, zones or sorted(weight), digits, Y, 0.5
+    )
+    return {r["territory_code"]: r for r in cast(list[dict[str, Any]], frame.to_dict("records"))}
+
+
+def test_shared_out_values_average_back_to_the_parent_value() -> None:
+    rows = _shared()
+    mean = sum(rows[c]["value"] * UNITS[c] for c in rows) / sum(UNITS.values())
+    assert mean == pytest.approx(5000.0)
+    assert all(r["confidence"] == 0.5 and r["null_reason"] is None for r in rows.values())
+
+
+def test_a_zone_with_more_cadastral_value_gets_a_higher_price_in_proportion() -> None:
+    rows = _shared()
+    assert rows["2807904"]["value"] > rows["2807906"]["value"] > rows["2807913"]["value"]
+    assert rows["2807904"]["value"] / rows["2807913"]["value"] == pytest.approx(1600 / 600)
+
+
+def test_a_zone_without_cadastral_value_is_unknown_and_the_rest_still_anchor() -> None:
+    ratio = {c: v for c, v in RATIO.items() if c != "2807906"}
+    rows = _shared(ratio=ratio)
+    missing = rows["2807906"]
+    assert missing["value"] is None or math.isnan(missing["value"])
+    assert missing["null_reason"] == "SOURCE_MISSING" and missing["confidence"] == 0.0
+    known = [c for c in rows if c != "2807906"]
+    mean = sum(rows[c]["value"] * UNITS[c] for c in known) / sum(UNITS[c] for c in known)
+    assert mean == pytest.approx(5000.0)
+
+
+def test_without_the_parent_value_every_zone_is_unknown_never_a_guess() -> None:
+    rows = _shared(anchor={})
+    assert all(r["null_reason"] == "SOURCE_MISSING" for r in rows.values())
+    no_weight = _shared(weight={"2807904": 0.0}, zones=["2807904"])
+    assert no_weight["2807904"]["null_reason"] == "SOURCE_MISSING"
+
+
+def test_barrios_anchor_to_their_own_district() -> None:
+    ratio = {"28079061": 1000.0, "28079062": 2000.0, "28079041": 3000.0}
+    weight = dict.fromkeys(ratio, 10.0)
+    rows = _shared(ratio, weight, {"2807906": 6000.0, "2807904": 8000.0}, digits=7)
+    assert (rows["28079061"]["value"] + rows["28079062"]["value"]) / 2 == pytest.approx(6000.0)
+    assert rows["28079041"]["value"] == pytest.approx(8000.0)  # alone in its district
+
+
+@given(
+    st.lists(
+        st.tuples(st.floats(min_value=100, max_value=5000), st.floats(min_value=1, max_value=1e5)),
+        min_size=1,
+        max_size=21,
+    ),
+    st.floats(min_value=500, max_value=12000),
+)
+def test_the_anchor_holds_for_any_districts(pairs: list[tuple[float, float]], city: float) -> None:
+    ratio = {f"28079{i:02d}": r for i, (r, _) in enumerate(pairs, start=1)}
+    weight = {f"28079{i:02d}": w for i, (_, w) in enumerate(pairs, start=1)}
+    rows = _shared(ratio, weight, {"28079": city})
+    mean = sum(rows[c]["value"] * weight[c] for c in rows) / sum(weight.values())
+    assert mean == pytest.approx(city)
+    assert all(r["value"] > 0 for r in rows.values())

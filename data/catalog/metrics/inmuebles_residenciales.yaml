@@ -1,0 +1,12 @@
+metric_id: inmuebles_residenciales
+human_name: Inmuebles de uso residencial
+description: >-
+  Número de inmuebles de uso residencial de cada distrito y barrio de Madrid según el Catastro,
+  a 1 de enero. Publicado por el Ayuntamiento en el panel de indicadores de distritos y barrios.
+  Es el peso de cada zona al repartir el valor tasado de la ciudad (D-234).
+domain: housing
+unit: inmuebles
+aggregation_method: sum
+geo_resolution_min: barrio
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios

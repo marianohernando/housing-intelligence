@@ -28,11 +28,11 @@ import {
 } from "@/lib/scenario";
 
 import NearbyField from "./NearbyField";
+import PlaceField, { useStations } from "./PlaceField";
 import { useScenario } from "./ScenarioProvider";
 import styles from "./SearchCard.module.css";
-import WorkField from "./WorkField";
 
-// Copy from pitch/textos_web.md (busqueda.*, donde.*, hogar.*, importa.*, trabajo.*, presupuesto.*)
+// Copy from pitch/textos_web.md (busqueda.*, donde.*, hogar.*, importa.*, trabajo.*, familia.*, presupuesto.*)
 const TEXT = {
   title: "Tu búsqueda",
   where: "¿Dónde?",
@@ -52,9 +52,10 @@ const TEXT = {
   workHelp: "Así miraremos lo lejos que te queda cada zona.",
   soon: "Muy pronto",
   noLimit: "Sin límite de presupuesto",
-  // B's draft for D after fit-0.5 (D-227): where buying has an official price and where it does not
+  // presupuesto.compra.fuente (D-227, D-234): where the purchase price is published, where it is
+  // an estimate and where there is none
   buySource:
-    "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda). Solo se publica para los municipios de más de 25.000 habitantes; en los distritos de Madrid y en los pueblos no podemos comprobar tu presupuesto.",
+    "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica por municipio y en los de más de 25.000 habitantes. En los distritos y barrios de Madrid, el precio que veas es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. Donde no hay precio, no podemos comprobar tu presupuesto.",
   budget: "Presupuesto",
   rent: "Alquilar",
   buy: "Comprar",
@@ -107,6 +108,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   const { scenario, update, search, available, status, error } = useScenario();
   const [open, setOpen] = useState(!collapsible);
   const bodyId = useId();
+  const stationList = useStations();
   const household = scenario.household ?? { adults: 1, minors: 0, seniors_in_care: 0 };
   const minors = household.minors ?? 0;
   const seniors = household.seniors_in_care ?? 0;
@@ -187,7 +189,8 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
         {available ? (
           <>
             <NearbyField />
-            <WorkField />
+            <PlaceField kind="work" stationList={stationList} />
+            <PlaceField kind="family" stationList={stationList} />
           </>
         ) : (
           // Off, the search cannot use the work place yet: «Muy pronto», as before the search existed

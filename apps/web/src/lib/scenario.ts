@@ -137,31 +137,42 @@ export function setNearbyRequired(s: ScenarioState, need: NeedKey, required: boo
   return changeNearby(s, need, (n) => ({ ...n, required }));
 }
 
-/** A place picked for «Trabajo en»: a name and a point. */
+/** A place picked for «Trabajo en» or «Cerca de mi familia o amigos»: a name and a point. */
 export interface Place {
   label: string;
   lat: number;
   lon: number;
 }
 
-const isWork = (a: Anchor) => (a.kind ?? "work") === "work";
+/** The places the search asks for: where the person works and, optionally, where family or friends live. */
+export type PlaceKind = "work" | "family";
+
+/** Their order in `anchors`: the earlier a place, the more its trip weighs in the fit (the work place first). */
+const PLACE_KINDS: readonly PlaceKind[] = ["work", "family"];
+const kindOf = (a: Anchor) => a.kind ?? "work";
+/** Position of a place in `anchors`; kinds the web does not edit (from a shared link) go last. */
+const placeOrder = (a: Anchor) => (PLACE_KINDS as readonly string[]).indexOf(kindOf(a)) + 1 || PLACE_KINDS.length + 1;
 const LABEL_MAX = 80;
 
-/** «Trabajo en», if the search has one. */
-export function workPlace(s: ScenarioState): Anchor | null {
-  return (s.anchors ?? []).find(isWork) ?? null;
+/** The place of a kind, if the search has one. */
+export function placeOf(s: ScenarioState, kind: PlaceKind): Anchor | null {
+  return (s.anchors ?? []).find((a) => kindOf(a) === kind) ?? null;
+}
+
+function changePlace(s: ScenarioState, kind: PlaceKind, change: (a: Anchor) => Anchor): ScenarioState {
+  return { ...s, anchors: (s.anchors ?? []).map((a) => (kindOf(a) === kind ? change(a) : a)) };
 }
 
 /**
- * Sets (or with null, removes) the work place. It goes without a minutes limit (`max_minutes:
- * null`, «Sin límite») until the person picks one in «Tardar como mucho»: the zone card says how
- * far each zone is either way.
+ * Sets (or with null, removes) the place of a kind. It goes without a minutes limit (`max_minutes:
+ * null`, «Sin límite») until the person picks one in «Tardar como mucho». The zone card says how far
+ * each zone is either way, except for a work place with «Teletrabajo total» and no limit: that trip
+ * neither scores nor limits, so it is not shown (D-240).
  */
-export function setWorkPlace(s: ScenarioState, place: Place | null): ScenarioState {
-  const others = (s.anchors ?? []).filter((a) => !isWork(a));
-  if (!place) return { ...s, anchors: others };
-  const anchor: Anchor = { kind: "work", label: place.label.slice(0, LABEL_MAX), lat: place.lat, lon: place.lon, max_minutes: null };
-  return { ...s, anchors: [anchor, ...others] };
+export function setPlace(s: ScenarioState, kind: PlaceKind, place: Place | null): ScenarioState {
+  const kept = (s.anchors ?? []).filter((a) => kindOf(a) !== kind);
+  const picked: Anchor[] = place ? [{ kind, label: place.label.slice(0, LABEL_MAX), lat: place.lat, lon: place.lon, max_minutes: null }] : [];
+  return { ...s, anchors: [...picked, ...kept].sort((a, b) => placeOrder(a) - placeOrder(b)) };
 }
 
 /** Minutes offered in «Tardar como mucho» (trabajo.max_min); a value from a shared link outside them is offered too. */
@@ -172,10 +183,40 @@ export function commuteMinutesOptions(current: number | null | undefined): numbe
   return [...all].sort((a, b) => a - b);
 }
 
-/** The commute limit of the work place; null is «Sin límite». Without a work place there is nothing to limit. */
-export function setWorkMaxMinutes(s: ScenarioState, minutes: number | null): ScenarioState {
+/** The trip limit of a place; null is «Sin límite». Without the place there is nothing to limit. */
+export function setPlaceMaxMinutes(s: ScenarioState, kind: PlaceKind, minutes: number | null): ScenarioState {
   const max_minutes = minutes === null ? null : clamp(Math.round(minutes), COMMUTE_LIMITS.min, COMMUTE_LIMITS.max);
-  return { ...s, anchors: (s.anchors ?? []).map((a) => (isWork(a) ? { ...a, max_minutes } : a)) };
+  return changePlace(s, kind, (a) => ({ ...a, max_minutes }));
+}
+
+/** «Trabajo en», if the search has one. */
+export const workPlace = (s: ScenarioState) => placeOf(s, "work");
+export const setWorkPlace = (s: ScenarioState, place: Place | null) => setPlace(s, "work", place);
+export const setWorkMaxMinutes = (s: ScenarioState, minutes: number | null) => setPlaceMaxMinutes(s, "work", minutes);
+
+/** Days offered in «¿Cuántos días vas a la oficina?» (trabajo.dias); 0 is «Teletrabajo total». */
+export const OFFICE_DAYS: readonly number[] = [5, 4, 3, 2, 1, 0];
+/** Up to this many days a week the trip to work weighs half in the fit (FEW_DAYS_PER_WEEK of hi_domain/fit.py, D-240). */
+export const FEW_OFFICE_DAYS = 2;
+const DAYS_LIMITS = { min: 0, max: 7, usual: 5 } as const;
+
+/** Days a week the person goes to the work place; the contract default (5) until they say otherwise. */
+export function officeDays(anchor: Anchor): number {
+  return anchor.days_per_week ?? DAYS_LIMITS.usual;
+}
+
+/** The days offered, most first; a value from a shared link outside them (6 or 7) is offered too. */
+export function officeDaysOptions(current: number): number[] {
+  return [...new Set([...OFFICE_DAYS, current])].sort((a, b) => b - a);
+}
+
+/**
+ * Days a week at the work place (`days_per_week`, D-240). The limit stays as it was: with 0
+ * («Teletrabajo total») the trip is not scored, but a limit the person set still applies.
+ */
+export function setWorkDays(s: ScenarioState, days: number): ScenarioState {
+  const days_per_week = clamp(Math.round(days), DAYS_LIMITS.min, DAYS_LIMITS.max);
+  return changePlace(s, "work", (a) => ({ ...a, days_per_week }));
 }
 
 /**

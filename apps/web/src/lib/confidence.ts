@@ -10,7 +10,7 @@ export interface ConfidenceText {
 const HIGH: ConfidenceText = { label: "Dato fiable", help: "Sale de un registro oficial completo." };
 const MEDIUM: ConfidenceText = {
   label: "Dato aproximado",
-  help: "El dato es oficial, pero la zona tiene poca población o la fuente no está completa: tómalo como una aproximación.",
+  help: "Es una aproximación: la zona tiene poca población, la fuente no está completa o el dato es una estimación. Tómalo como orientativo.",
 };
 const LOW: ConfidenceText = { label: "Dato poco seguro", help: "Faltan bastantes datos en la fuente. Úsalo con cuidado." };
 const NONE: ConfidenceText = { label: "Sin datos", help: "No tenemos este dato." };

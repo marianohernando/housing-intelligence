@@ -1,0 +1,18 @@
+{
+  "hogares_padron|barrio": 917,
+  "hogares_padron|distrito": 147,
+  "inmuebles_residenciales|barrio": 917,
+  "inmuebles_residenciales|distrito": 147,
+  "percepcion_seguridad_barrio_dia|distrito": 126,
+  "percepcion_seguridad_barrio_dia|municipio": 6,
+  "percepcion_seguridad_barrio_noche|distrito": 126,
+  "percepcion_seguridad_barrio_noche|municipio": 6,
+  "superficie_construida_media_residencial|barrio": 917,
+  "superficie_construida_media_residencial|distrito": 147,
+  "tamano_medio_hogar_padron|barrio": 917,
+  "tamano_medio_hogar_padron|distrito": 147,
+  "valor_catastral_medio_residencial|barrio": 917,
+  "valor_catastral_medio_residencial|distrito": 147,
+  "out_of_scope": 129029,
+  "observations": 5584
+}

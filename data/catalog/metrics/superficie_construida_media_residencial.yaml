@@ -1,0 +1,13 @@
+metric_id: superficie_construida_media_residencial
+human_name: Superficie construida media de los inmuebles de uso residencial
+description: >-
+  Superficie construida media, en m², de los inmuebles de uso residencial de cada distrito y
+  barrio de Madrid, a 1 de enero. Catastro, publicado por el Ayuntamiento en el panel de
+  indicadores de distritos y barrios. Divide el valor catastral medio para obtener un valor
+  catastral por m² (D-234).
+domain: housing
+unit: m2
+aggregation_method: weighted_mean
+geo_resolution_min: barrio
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios
