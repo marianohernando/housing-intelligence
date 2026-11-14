@@ -1247,16 +1247,19 @@ async function icons(browser) {
       );
       const entry = (report[`${name}_${id}`] = { links, errores_http: notFound, axe: await axe(page), consola: errors });
       const rels = links.map((l) => `${l.rel} ${l.type}`);
-      for (const must of ["icon image/x-icon", "icon image/svg+xml", "apple-touch-icon image/png"]) {
+      for (const must of ["icon image/x-icon", "icon image/png", "apple-touch-icon image/png"]) {
         if (!rels.includes(must)) failures.push(`${name} ${id}: falta <link> ${must}`);
       }
+      // The logo is the brand: the header link to «/» is named by its image alt
+      const brand = page.locator("header").getByRole("link", { name: "Vida Fácil", exact: true });
+      if ((await brand.count()) !== 1 || (await brand.getAttribute("href")) !== "/") failures.push(`${name} ${id}: enlace de marca «Vida Fácil» a /`);
       if (notFound.length) failures.push(`${name} ${id}: ${notFound.join(", ")}`);
       if (entry.axe.length || errors.length) failures.push(`${name} ${id}: axe o consola`);
       await ctx.close();
     }
   }
   report.rutas = {};
-  for (const path of ["/favicon.ico", "/icon.svg", "/apple-icon.png", "/apple-touch-icon.png", "/apple-touch-icon-precomposed.png"]) {
+  for (const path of ["/favicon.ico", "/icon.png", "/apple-icon.png", "/apple-touch-icon.png", "/apple-touch-icon-precomposed.png"]) {
     const r = await fetch(`${BASE}${path}`);
     const body = Buffer.from(await r.arrayBuffer());
     report.rutas[path] = { status: r.status, tipo: r.headers.get("content-type"), bytes: body.length };
@@ -1266,7 +1269,7 @@ async function icons(browser) {
   const page = await browser.newPage({ viewport: { width: 520, height: 230 }, deviceScaleFactor: 2 });
   await page.setContent(`<body style="margin:0;padding:24px;display:flex;gap:28px;align-items:end;font:14px sans-serif;color:#141b3d;background:#f6f5fc">
     ${[16, 32, 48].map((s) => `<figure style="margin:0;text-align:center"><img src="${BASE}/favicon.ico" width="${s}" height="${s}" alt=""><figcaption>${s} px (.ico)</figcaption></figure>`).join("")}
-    <figure style="margin:0;text-align:center"><img src="${BASE}/icon.svg" width="64" height="64" alt=""><figcaption>SVG</figcaption></figure>
+    <figure style="margin:0;text-align:center"><img src="${BASE}/icon.png" width="64" height="64" alt=""><figcaption>PNG (512 px)</figcaption></figure>
     <figure style="margin:0;text-align:center"><img src="${BASE}/apple-icon.png" width="120" height="120" style="border-radius:27px" alt=""><figcaption>iPhone (180 px)</figcaption></figure>
   </body>`);
   await page.waitForLoadState("networkidle");

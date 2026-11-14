@@ -1,3 +1,5 @@
+<img src="apps/web/public/brand/vida-facil.png" alt="Vida Fácil" width="320">
+
 # Vida Fácil · Encuentra tu sitio en Madrid
 
 Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el transporte en otra, y nadie le dice qué zona va con su vida. Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid para enseñarte qué zonas encajan contigo y qué le falta a cada una.**
