@@ -33,9 +33,9 @@ Lo que rellena el build:
 | Comprobación | Umbral | Resultado del 11 nov |
 |---|---|---|
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
-| Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
+| Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 26 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 12 nov falla a propósito: la slide 3 espera las 2 citas de la prueba con personas (abajo). El borrador genera sin fallos |
+| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 14 nov solo falla por el nombre completo de la slide 1, que llega con `DECK_INTEGRANTES` el 24 nov (abajo). El borrador genera sin fallos |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,8 +43,10 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slide 3, utilidad | Cita 1 de la prueba con personas: alguien que busca casa, de 12 palabras como mucho, con quién es y sin nombre | Mariano (prueba con personas) |
-| Slide 3, impacto | Cita 2: el técnico municipal, de 12 palabras como mucho, con su cargo y el tipo de municipio, sin nombre | Mariano (prueba con personas) |
+
+Cerradas el 14 nov:
+- **las 2 citas de la slide 3**, de la prueba con usuarios del 14 nov y aprobadas por Mariano: «Se valora mucho la cercanía al puesto de trabajo.» y «Muy chula la web, funciona bien.». Van sin nombre, porque se prometió a los usuarios. Las dos son de usuarios, así que van juntas en la columna de utilidad; el hueco del técnico municipal se quita. Si llegan citas mejores, se cambian;
+- **la maqueta de la slide 3:** la banda de los enlaces tapaba el pie de las tres columnas, también las capturas. Las columnas pasan a 636 px, las viñetas a 26 px (como el resto del texto de la slide) y las capturas C2 y C3 a 104 px de alto.
 
 Cerradas el 12 nov por la noche: C1, C2 y C3, rehechas por B con `fit-0.6` (PR #32), con los `alt` nuevos y el marcador 3 de la slide 4 en «Qué falta aquí».
 

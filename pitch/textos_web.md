@@ -2,6 +2,15 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Prueba con usuarios (14 nov): lo que llega esta semana.** Claves nuevas, todas **pendiente de A** (dato o texto de la API) **o de B** (pantalla):
+- **«Tardar como mucho N min» en el trabajo:** `trabajo.max_min` y sus opciones (sección 2). B lo está haciendo.
+- **Paradas de autobús aparte del metro y de Cercanías:** `hecho.paradas*` (sección 4, tarjeta de zona). Sustituye al hecho de «Parada de transporte público».
+- **El barrio que más encaja de cada distrito de Madrid, en la lista de zonas:** `resultados.barrio` (sección 4).
+- **Delitos por cada 1.000 habitantes, como contexto:** `zona.delitos*` (sección 4, «Contexto de la zona»). No puntúa ni ordena, sin colores ni etiquetas, y siempre con el aviso de que se cuentan donde se denuncian (D-224 §3, D-226).
+- **Antigüedad de las viviendas** (% posteriores a 2000): `zona.antiguedad*` (sección 4, «Contexto de la zona»).
+
+Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos por metros u obra nueva) va en las preguntas 49 y 50 de `pitch/preguntas.md`.
+
 **Revisión de los borradores de B en el PR #32 (12 nov, noche).** Aprobados tal cual salvo lo que se indica. Todos van en la sección 5c («Dónde invertir primero», el esquema y lo demás):
 - **«Dónde invertir primero»:** aprobados el título, la intro, el ranking, «Resto de zonas…», «Ver N zonas más», «El 9,8 % de toda la Comunidad, en 3 zonas.» y la frase de la cifra. Cambia la nota (`invertir.nota`): en los distritos la gente sale del padrón escalado al censo (D-209, D-216), así que «no estimamos nada» no es del todo cierto y un estadístico lo puede discutir. La misma frase sale de la página «Cómo lo calculamos».
 - **Esquema de cinco pasos:** aprobado. Un cambio: el título del paso 3 va en plural, «Repartido entre quienes lo comparten».
@@ -198,7 +207,10 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `trabajo.placeholder` | Escribe una estación, un distrito o un municipio | Sin calles: no hay búsqueda de calles sin un geocodificador externo. Los lugares son las estaciones del CRTM (`/places`) y las zonas del mapa |
 | `trabajo.ayuda` | Miramos cuánto tardarías en transporte público para llegar a las 9:00. | Cambia con `fit-0.2` (CORE-009, D-220), cuando llegue a producción. Hasta entonces, «Así miramos lo lejos que te queda cada zona.» |
 | `trabajo.dias` | ¿Cuántos días vas a la semana? | Opcional (`days_per_week`). Hoy no se muestra: lo rellena el caso de ejemplo (4 días) y la web no deja cambiarlo |
-| `trabajo.max_min` | Tardar como mucho {n} min en transporte público | CORE-009 hecho en la API (D-220 §8): con límite, cada zona sale cumple, no cumple o sin dato. Hoy la web envía el trabajo sin límite (`max_minutes: null`) y no enseña este campo; si B lo activa tras el despliegue de `fit-0.2`, va este texto |
+| `trabajo.max_min` | Tardar como mucho [{n}] min en transporte público | Los minutos son un selector dentro de la frase, como en `cerca.item`. Propuesta de opciones: 30, 45, 60 y 90 min, y `trabajo.max_min.sin_limite`, que es la de partida (el caso de ejemplo va sin límite). La API ya lo hace (D-220 §8): con límite, cada zona sale cumple, no cumple o sin dato, con la condición «Trayecto a {lugar} de {n} min como mucho», y «¿Y si cambias algo?» ofrece «Sin límite de tiempo hasta {lugar}» (`reality_check.py`). Hoy la web envía `max_minutes: null` y no enseña el campo. Prueba con usuarios (14 nov): B lo está haciendo. **Pendiente de B** |
+| `trabajo.max_min.sin_limite` | Sin límite de tiempo | Opción del selector (`max_minutes: null`). **Pendiente de B** |
+| `trabajo.max_min.aria` | Minutos como mucho en transporte público hasta tu trabajo | `aria-label` del selector. **Pendiente de B** |
+| `trabajo.max_min.ayuda` | Las zonas desde las que tardes más no cumplirán tu búsqueda. | Una línea bajo el selector, solo con un límite elegido. Donde no se llega con los horarios publicados, la zona sale «No lo sabemos» (`zona.no_sabemos`), no «No cumple». **Pendiente de B** |
 | `trabajo.transporte_pronto` | Tiempo en transporte: muy pronto | Etiqueta pequeña bajo el campo. **Se quita** cuando `fit-0.2` llegue a producción: el tiempo en transporte ya está calculado (D-220) |
 | `trabajo.sin_resultados` | No encontramos ese lugar. Prueba con una estación o con el nombre del municipio. | |
 | `trabajo.encontrados` | {n} lugares encontrados. Usa las flechas para elegir uno. | Región viva del combobox. Con 1: «1 lugar encontrado. Usa las flechas para elegirlo.» |
@@ -324,6 +336,7 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `resultados.primeras` | Ver las {n} primeras | Se ven 5 y el botón abre hasta 10 |
 | `resultados.menos` | Ver menos | |
 | `resultados.resto` | Y {n} zonas más en el mapa. | Con 1: «Y 1 zona más en el mapa.» |
+| `resultados.barrio` | Barrio que más encaja: {barrio} ({pct} %) | Segunda línea de cada distrito de Madrid en la lista, bajo su nombre. Sale del mismo cálculo que «Los barrios que mejor encajan» (D-232, `fit-0.7`). Con empate: «Barrios que más encajan: {a}, {b} y {c} ({pct} %)»; por ejemplo, San Blas-Canillejas con el caso de ejemplo, «Barrios que más encajan: Canillejas, Arcos y Simancas (97 %)» (`evidence/gate-06/2026-11-13-deploy/deploy-22-barrio.md`). Si ningún barrio cumple todo, no va la línea. Los municipios no la llevan. En pantalla nunca «ranking» ni «el mejor barrio»: es el que más se parece a lo que buscas, no una nota del barrio. Prueba con usuarios (14 nov). **Pendiente de A** (que `/search` lo devuelva, o una llamada por distrito) **y de B** |
 | `resultados.casi.ayuda` | Cumplen todo menos una cosa. | Bajo `zona.cerca_de_encajar.titulo` («Casi encajan»). Antes, «Fallan en una sola cosa.» |
 | `resultados.cambiada` | Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día. | Los resultados son de la búsqueda anterior |
 
@@ -346,6 +359,8 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`) |
 | `zona.hechos.titulo` | Lo que tienes aquí | Encima de los 3–5 hechos (`facts`) |
 | `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6 |
+| `hecho.paradas` | Parada de autobús a unos {n} min andando · Metro o Cercanías a unos {m} min | Texto para el hecho de la API. Sustituye a «Parada de transporte público a unos {n} min andando» (`NEED_TEXT` en `fit.py`). Prueba con usuarios (14 nov): una parada de autobús y una estación no valen lo mismo para quien busca casa. «Metro» incluye Metro Ligero. Los minutos, con el método de siempre: lo que tarda la mitad de la zona a 4 km/h. Fuente: los GTFS del CRTM, ya cargados. Si la web lo parte en dos líneas, va sin «·». **Pendiente de A** (hecho) **y de B** |
+| `hecho.paradas.sin_tren` | Parada de autobús a unos {n} min andando · Sin metro ni Cercanías a un paseo | Si no hay estación a un paseo. Igual que el hecho de «Sin escaleras» («Sin estación de metro o tren accesible a un paseo»). Al revés, sin parada de autobús: «Sin parada de autobús a un paseo · Metro o Cercanías a unos {m} min». **Pendiente de A** |
 | `zona.coste.compra` | Precio estimado: unos {importe} € (orientativo) | Sin usar hoy: con compra no hay coste (D-214, punto 5). El alquiler llega como hecho de la API, con la cifra, los m² y el aviso («Alquiler medio ≈ 1.075 €/mes por 77 m² (14,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)»), y no lleva clave aquí |
 | `zona.coste.sin_datos` | Precio: sin datos en esta zona | Sin usar hoy, como `zona.coste.compra` |
 | `zona.no_cumple` | No cumple todo lo que pides. | Si la API no nombra la condición que falla |
@@ -362,6 +377,20 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.condicion.sin_dato` | No lo sabemos | `UNKNOWN`. Ayuda: «Nos falta el dato para comprobarlo. No lo damos por bueno.» |
 | `zona.falta.a_pie` | A pie: {minutos} | Bajo el nombre de cada fila de la mini lista. {minutos} con `a_pie.min` (sección 5) |
 | `zona.encaje.pronto` | Muy pronto verás cuánto encaja esta zona contigo. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
+
+### Contexto de la zona (no puntúa)
+Datos que se enseñan en la vista de zona para conocerla mejor. No cambian el % de encaje, no ordenan zonas y no entran en «Qué falta». Van junto a `zona.seguridad_vecinos` (sección 2), sin colores de estado ni de alarma. Prueba con usuarios (14 nov).
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `zona.delitos` | Delitos conocidos por la policía: {tasa} por cada 1.000 habitantes en {año} (en los municipios de más de 20.000 habitantes, {referencia}). | Es la opción abierta de D-224 §3: la cifra, la referencia, el año y el aviso, y nada más. Criminalidad convencional: sin la cibercriminalidad, que no ocurre en un sitio. Con los datos de 2024, la referencia de los 37 municipios es 47,9 (`evidence/gate-01/2026-11-12/seguridad-evaluacion.md`). Solo en los municipios que publica la fuente (36 zonas del mapa). Nunca «peligroso», «inseguro», «más seguro» ni «menos seguro». **Pendiente de A** (pipeline, y el nombre de cada municipio a código INE, porque la fuente no lo trae) **y de B** |
+| `zona.delitos.aviso` | Se cuentan donde se denuncian, no donde vive quien los sufre: donde hay mucho comercio u ocio salen más. No mide el riesgo de vivir aquí. | Siempre debajo de la cifra y nunca plegado: es el aviso del denominador que pide D-224 §3. **Pendiente de B** |
+| `zona.delitos.fuente` | Ministerio del Interior, Balance de Criminalidad, en el Portal de Datos Abiertos de la Comunidad de Madrid. | Con enlace a la ficha del portal (CC BY 4.0). **Pendiente de B** |
+| `zona.delitos.sin_datos` | La fuente solo publica los municipios de más de 20.000 habitantes. | En los demás municipios. Es SIN DATOS: nunca 0 ni un hueco sin explicar. **Pendiente de B** |
+| `zona.delitos.madrid` | En Madrid, la fuente da la ciudad entera: {tasa} por cada 1.000 habitantes en {año}. No la repartimos por distritos. | Solo si A decide enseñar la cifra de la ciudad en los 21 distritos; si no, en los distritos no va nada de delitos y se queda `zona.seguridad_vecinos`, que sí es por distrito. Repartirla supondría barrios iguales por dentro (D-224 §2). Madrid daba 58,6 en 2024. **Pendiente de A** (decide si se enseña) |
+| `zona.antiguedad` | Viviendas construidas después del año 2000: {pct} % (en toda la Comunidad, {pct_comunidad} %). | Junto a «Vivienda para familias». Fuente candidata, comprobada por D en el portal el 14 nov: «Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios» (`censo_anual_vivienda_por_antiguedad`, CC BY 4.0), años 2022 y 2023, por municipio. Cálculo de D con 2023, sumando los tramos de 2001 a 2025 sobre el total sin «No consta»: Comunidad 24,6 %, Madrid 16,5 %, Getafe 31,8 % y Valdemoro 59,8 %. Si A la carga, es un conjunto CM más. **Pendiente de A y de B** |
+| `zona.antiguedad.ayuda` | Es la edad de todas las viviendas de la zona, no solo de las que se venden o se alquilan. | Al tocar «?». Evita leerlo como un filtro de pisos nuevos (pregunta 50). **Pendiente de B** |
+| `zona.antiguedad.madrid` | Dato de toda la ciudad de Madrid: la fuente no lo da por distritos. | En los 21 distritos, si se enseña la cifra de la ciudad; si no, SIN DATOS, como la fila de vivienda. **Pendiente de A** (decide si se enseña) |
 
 ### Barra de barrios (solo distritos de Madrid)
 La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), después de una búsqueda la vista de un distrito sí tiene cifras por barrio, en «Los barrios que mejor encajan» (abajo). «Qué falta» sigue siendo del distrito entero. Al pulsar un barrio de esa sección se marca también su chip de la barra.
