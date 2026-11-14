@@ -49,6 +49,8 @@ EXTRACT = "\n".join(
         _node(3, LAT, LON + 0.002, amenity="fast_food", name="Burger"),
         _node(4, LAT, LON + 0.003, amenity="bar", access="private", name="Peña privada"),
         _node(5, 43.0, -8.0, amenity="bar", name="Fuera de Madrid"),
+        _node(6, LAT, LON + 0.004, tourism="museum", amenity="cafe", name="Museo del Barrio"),
+        _node(7, LAT, LON + 0.005, amenity="library", name="Biblioteca Municipal"),
         *(_node(10 + i, LAT + 0.01 + n, LON + e) for i, (e, n) in enumerate(SQUARE)),
         '  <way id="100"><nd ref="10"/><nd ref="11"/><nd ref="12"/><nd ref="13"/><nd ref="10"/>'
         '<tag k="leisure" v="sports_centre"/><tag k="name" v="Polideportivo Municipal"/></way>',
@@ -110,14 +112,35 @@ def test_quality_wants_a_plausible_count_every_class_and_few_bad_points(extract:
     assert not report.passed  # a declared class with no place: a tag misspelt or a bad extract
 
 
+def test_museums_and_libraries_are_culture_and_the_first_declared_tag_wins(
+    extract: Path,
+) -> None:
+    """«Cultura» (D-236): a museum is a `tourism` tag, a library an `amenity` one. A museum
+    that also has a café takes the class declared first in the pipeline."""
+    culture = [
+        {"key": "tourism", "value": "museum", "category": "culture", "subcategory": "Museo"},
+        {"key": "amenity", "value": "library", "category": "culture", "subcategory": "Biblioteca"},
+        {"key": "amenity", "value": "cafe", "category": "commerce", "subcategory": "Cafetería"},
+    ]
+    wider = OsmPoisPipeline.model_validate(SPEC.model_dump() | {"classes": [*CLASSES, *culture]})
+    places = normalize_pois(parse_pois(extract, wider), wider).frame.set_index("external_id")
+    museum, library = places.loc["node/6"], places.loc["node/7"]
+    assert (museum["category"], museum["subcategory"]) == ("culture", "Museo")
+    assert museum["attributes"] == {"osm_tag": "tourism=museum"}
+    assert (library["subcategory"], library["canonical_name"]) == (
+        "Biblioteca",
+        "Biblioteca Municipal",
+    )
+
+
 def test_a_tag_cannot_be_declared_twice() -> None:
     with pytest.raises(ValidationError, match="once"):
         OsmPoisPipeline.model_validate(SPEC.model_dump() | {"classes": [*CLASSES, CLASSES[0]]})
 
 
 def test_the_catalogue_declares_the_leisure_pipeline_without_fast_food() -> None:
-    """D-236: bars, pubs and cafés; restaurants; gyms and sports centres; cinemas, theatres
-    and arts centres. Fast food stays out of «Restaurantes»."""
+    """D-236: bars, pubs and cafés; restaurants; gyms and sports centres; culture (museums,
+    libraries, theatres, cinemas and arts centres). Fast food stays out of «Restaurantes»."""
     spec = load_catalog().pipelines["osm_ocio"]
     assert isinstance(spec, OsmPoisPipeline)
     tags = {f"{c.key}={c.value}" for c in spec.classes}
@@ -128,7 +151,11 @@ def test_the_catalogue_declares_the_leisure_pipeline_without_fast_food() -> None
         "amenity=restaurant",
         "leisure=fitness_centre",
         "leisure=sports_centre",
-        "amenity=cinema",
+        "tourism=museum",
+        "amenity=library",
         "amenity=theatre",
+        "amenity=cinema",
         "amenity=arts_centre",
     }
+    culture = {c.subcategory for c in spec.classes if c.category.value == "culture"}
+    assert culture == {"Museo", "Biblioteca", "Teatro", "Cine", "Centro cultural"}

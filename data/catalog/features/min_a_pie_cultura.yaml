@@ -1,6 +1,6 @@
-feature_id: min_a_pie_cine_teatro
+feature_id: min_a_pie_cultura
 version: 1
-human_name: "Minutos a pie hasta el cine, teatro o centro cultural más cercano (mediana de las calles de la zona)"
+human_name: "Minutos a pie hasta el museo, biblioteca, teatro, cine o centro cultural más cercano (mediana de las calles de la zona)"
 domain: other
 type: derived
 unit: min
@@ -13,7 +13,7 @@ sources:
 formula:
   method: network_walk_time
   destination_category: culture
-  subcategories: ["Cine", "Teatro", "Centro cultural"]
+  subcategories: ["Museo", "Biblioteca", "Teatro", "Cine", "Centro cultural"]
   statistic: median_minutes
   speed_kmh: 4.0
   origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
@@ -26,11 +26,11 @@ pro_use: true
 models: [residential_fit]
 tests: [non_negative, explicit_null_without_streets, unknown_never_near]
 limitations:
-  - "Cuenta cines, teatros y centros culturales de OpenStreetMap (amenity=cinema, theatre o arts_centre). No mira la programación."
+  - "Cuenta museos, bibliotecas, teatros, cines y centros culturales de OpenStreetMap (tourism=museum; amenity=library, theatre, cinema o arts_centre); las bibliotecas de acceso privado no cuentan. No mira la programación ni si la biblioteca es pública o de una universidad."
   - "Los locales son los de OpenStreetMap, que mantienen voluntarios: en Madrid y las ciudades grandes el mapa es bastante completo, pero en los pueblos pequeños faltan locales. Un tiempo largo puede querer decir «no está en el mapa», no «no hay» (D-236)."
   - "Solo dice lo lejos que queda el local más cercano: no mide cuántos hay, su calidad, su precio ni su horario, y OSM puede tener un local que ya cerró."
   - "Velocidad de 4 km/h para todo el mundo, la del estudio «El Madrid de los 15 minutos» del Ayuntamiento: con movilidad reducida o con carrito los minutos son más."
   - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
   - "Cada local se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
   - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."
-fit: {role: walk_minutes, need: cines_teatros}
+fit: {role: walk_minutes, need: cultura}

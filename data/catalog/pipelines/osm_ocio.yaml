@@ -1,7 +1,8 @@
 # Leisure from OSM (D-236): what test users asked for before moving somewhere. Nodes and areas
 # with one of these tags, not closed to the public. The four groups of «Ocio» are the
 # subcategories each walking feature lists: bars and cafés, restaurants (fast food stays out),
-# gyms and sports centres (municipal ones too), cinemas and theatres.
+# gyms and sports centres (municipal ones too), and culture: museums, libraries, theatres,
+# cinemas and arts centres. A place with two declared tags takes the first one listed here.
 kind: osm_pois
 dataset_id: osm_ocio
 classes:
@@ -11,8 +12,10 @@ classes:
   - {key: amenity, value: restaurant, category: commerce, subcategory: Restaurante}
   - {key: leisure, value: fitness_centre, category: sport, subcategory: Gimnasio}
   - {key: leisure, value: sports_centre, category: sport, subcategory: Centro deportivo}
-  - {key: amenity, value: cinema, category: culture, subcategory: Cine}
+  - {key: tourism, value: museum, category: culture, subcategory: Museo}
+  - {key: amenity, value: library, category: culture, subcategory: Biblioteca}
   - {key: amenity, value: theatre, category: culture, subcategory: Teatro}
+  - {key: amenity, value: cinema, category: culture, subcategory: Cine}
   - {key: amenity, value: arts_centre, category: culture, subcategory: Centro cultural}
 access_denied: ["no", private]
 min_places: 8000  # set from the run of 2026-11-14 (about half): catches truncated downloads

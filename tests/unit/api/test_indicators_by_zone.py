@@ -49,6 +49,31 @@ def test_every_known_role_lands_in_its_place() -> None:
     assert NeedKey.TRANSPORTE not in result.walk.get(KEY, {})
 
 
+def test_the_leisure_groups_land_as_walking_needs_and_ocio_has_no_feature_of_its_own(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """D-236: each group of «Ocio» is a need measured on foot, read like the colegio; the
+    priority «ocio» scores those needs, so a feature bound to it would be a mistake: ignored
+    with the warning of any unknown binding, never a park-like priority walk."""
+    rows = [
+        _row("min_a_pie_bar", {"role": "walk_minutes", "need": "bares"}),
+        _row("min_a_pie_restaurante", {"role": "walk_minutes", "need": "restaurantes"}),
+        _row("min_a_pie_gimnasio", {"role": "walk_minutes", "need": "gimnasios"}),
+        _row("min_a_pie_cultura", {"role": "walk_minutes", "need": "cultura"}),
+        _row("ocio", {"role": "walk_minutes", "priority": "ocio"}),
+    ]
+    with caplog.at_level(logging.WARNING):
+        result = indicators_by_zone(rows)
+    assert {need: v.feature_id for need, v in result.walk[KEY].items()} == {
+        NeedKey.BARES: "min_a_pie_bar",
+        NeedKey.RESTAURANTES: "min_a_pie_restaurante",
+        NeedKey.GIMNASIOS: "min_a_pie_gimnasio",
+        NeedKey.CULTURA: "min_a_pie_cultura",
+    }
+    assert not result.priority_walk
+    assert "walk_minutes:priority=ocio" in caplog.text
+
+
 def test_an_unknown_role_is_ignored_with_a_warning(caplog: pytest.LogCaptureFixture) -> None:
     rows = [
         _row("min_a_pie_colegio", {"role": "walk_minutes", "need": "colegio"}),

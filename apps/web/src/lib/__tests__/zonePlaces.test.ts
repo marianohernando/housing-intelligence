@@ -58,7 +58,7 @@ describe("zonePlaceQueries", () => {
     expect(askedFor(queries, place("x2", "pharmacy", "Hospital general", -3.68, 40.46))).toBe(false);
     // A subcategory nobody asked for, and a category outside the request
     expect(askedFor(queries, place("x3", "health", "Clínica dental", -3.68, 40.46))).toBe(false);
-    expect(askedFor(queries, place("x4", "culture", "Biblioteca", -3.68, 40.46))).toBe(false);
+    expect(askedFor(queries, place("x4", "administration", "Ayuntamiento", -3.68, 40.46))).toBe(false);
   });
 
   it("key points never take a place of another category with the same subcategory", () => {

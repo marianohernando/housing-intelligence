@@ -603,7 +603,7 @@ export function facilityLayers(p: MapPalette): LayerSpecification[] {
           "mayores",
           p.facMayores,
           // Leisure (D-236): one colour for its four groups
-          ["bares", "restaurantes", "gimnasios", "cines_teatros"],
+          ["bares", "restaurantes", "gimnasios", "cultura"],
           p.facOcio,
           p.violetStrong,
         ],

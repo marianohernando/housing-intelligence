@@ -26,14 +26,16 @@ const TEXT = {
   required: "Imprescindible",
   requiredHelp: "Si lo marcas, solo verás zonas que lo cumplen.",
   none: "Marca al menos una casilla para que el ocio cuente.",
+  // importa.ocio.cultura.ayuda: what «Cultura» counts, asked for by test users
+  culture: "Cultura: museos, bibliotecas, teatros, cines y centros culturales.",
   source: "Según OpenStreetMap, un mapa hecho por voluntarios: en los pueblos pequeños puede faltar algún local.",
 };
 
 export const LEISURE_NAME: Record<LeisureKey, string> = {
   bares: "Bares y cafeterías",
   restaurantes: "Restaurantes",
-  gimnasios: "Gimnasios",
-  cines_teatros: "Cines y teatros",
+  gimnasios: "Gimnasios y deporte",
+  cultura: "Cultura",
 };
 
 /**
@@ -57,6 +59,7 @@ export default function LeisureField() {
           </label>
         ))}
       </div>
+      <p className={styles.help}>{TEXT.culture}</p>
       {groups.length > 0 ? (
         <div className={styles.leisureRow}>
           <span className={styles.nearMinutes}>

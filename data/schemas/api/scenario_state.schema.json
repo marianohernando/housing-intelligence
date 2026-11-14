@@ -177,7 +177,7 @@
         "bares",
         "restaurantes",
         "gimnasios",
-        "cines_teatros"
+        "cultura"
       ],
       "title": "NeedKey",
       "type": "string"
