@@ -32,6 +32,7 @@ from hi_contracts.public import (
 from hi_domain.affordability import FloorArea
 from hi_domain.fit import (
     FEW_DAYS_WEIGHT,
+    MAX_FACTS,
     Commute,
     ZoneData,
     about_minutes,
@@ -40,6 +41,8 @@ from hi_domain.fit import (
     criteria,
     evaluate,
     everyday_walk,
+    lead_trip,
+    near_miss_key,
     rank_weights,
     ranking_key,
     walk_utility,
@@ -836,7 +839,8 @@ def test_the_trip_limit_applies_the_same_whatever_the_days(days: int) -> None:
 
 
 def test_a_place_never_gone_to_is_not_scored_but_keeps_its_limit() -> None:
-    """Full telework (0 days): scored as a search without that place; its limit still applies."""
+    """Full telework (0 days): scored as a search without that place; its limit still applies,
+    and then the card says how far it is, as context without weight."""
     without = family(anchors=[])
     for limit in (None, 30):
         telework = family(anchors=[going(0, max_minutes=limit)])
@@ -844,14 +848,19 @@ def test_a_place_never_gone_to_is_not_scored_but_keeps_its_limit() -> None:
         for minutes in (20.0, 95.0):
             data = with_commute(zone("1"), minutes)
             fit, alone = evaluate(telework, data), evaluate(without, data)
-            assert (fit.utility, fit.confidence, fit.facts) == (
-                alone.utility,
-                alone.confidence,
-                alone.facts,
-            )
+            assert (fit.utility, fit.confidence) == (alone.utility, alone.confidence)
+            trips = [f for f in fit.facts if f.topic is FactTopic.TRAYECTO]
+            assert [f for f in fit.facts if f.topic is not FactTopic.TRAYECTO] == alone.facts
+            assert len(trips) == (0 if limit is None else 1)
     far = evaluate(family(anchors=[going(0, max_minutes=30)]), with_commute(zone("1"), 95.0))
     assert [c.constraint_id for c in far.constraints] == ["budget", "near:colegio", "commute:0"]
     assert far.failed == ["commute:0"]
+    trip = next(f for f in far.facts if f.topic is FactTopic.TRAYECTO)
+    assert trip.kind is FactKind.WEAKNESS
+    assert trip.text.startswith("95 min en transporte público hasta Paseo de la Castellana")
+    # without minutes there is no trip to tell: the condition says why
+    unknown = evaluate(family(anchors=[going(0, max_minutes=30)]), zone("1"))
+    assert not any(f.topic is FactTopic.TRAYECTO for f in unknown.facts)
     # the next place keeps its position in `anchors`: its criterion and condition are still 1
     both = family(anchors=[going(0), FAMILY.model_copy(update={"max_minutes": 45})])
     assert [c.key for c in criteria(both)][-2] == "work:1"
@@ -903,3 +912,63 @@ def test_each_place_has_its_own_limit() -> None:
     label, without_limit = relaxed(scenario, "commute:1") or ("", scenario)
     assert label == "Sin límite de tiempo hasta Getafe Central (Cercanías)"
     assert [a.max_minutes for a in without_limit.anchors] == [40, None]
+
+
+def test_with_a_budget_the_cost_stays_and_the_least_important_fact_goes() -> None:
+    """Three priorities, work and family make six facts with the cost: it no longer falls."""
+    walk = {NeedKey.CENTRO_SALUD: _value("min_a_pie_centro_salud", 8.0)}
+    base = with_trips(zone("1"), 25.0, 48.0)
+    data = replace(base, walk={**base.walk, **walk})
+    both = family(anchors=[CASTELLANA, FAMILY])
+    topics = [f.topic for f in evaluate(both, data).facts]
+    assert topics == [
+        FactTopic.COLEGIOS,
+        FactTopic.TRANSPORTE,
+        FactTopic.SALUD,
+        FactTopic.TRAYECTO,  # the trip to work; the one to the family is the least important
+        FactTopic.COSTE,
+    ]
+    no_budget = evaluate(both.model_copy(update={"budget": None}), data)
+    assert [f.topic for f in no_budget.facts][-2:] == [FactTopic.TRAYECTO, FactTopic.TRAYECTO]
+    # five facts or fewer: as before, in order of importance
+    alone = evaluate(family(), with_commute(data, 25.0))
+    assert [f.topic for f in alone.facts] == [
+        FactTopic.COLEGIOS,
+        FactTopic.TRANSPORTE,
+        FactTopic.SALUD,
+        FactTopic.TRAYECTO,
+        FactTopic.COSTE,
+    ]
+
+
+@settings(max_examples=80, deadline=None)
+@given(
+    priorities=st.lists(st.sampled_from(list(PriorityKey)), unique=True, max_size=6),
+    days=st.lists(st.integers(min_value=0, max_value=7), max_size=3),
+    limit=st.sampled_from([None, 30, 45]),
+    rent=st.sampled_from([None, 12.0]),
+)
+def test_with_a_budget_the_cost_is_always_among_the_facts(
+    priorities: list[PriorityKey], days: list[int], limit: int | None, rent: float | None
+) -> None:
+    anchors = [going(d, max_minutes=limit) for d in days]
+    scenario = family(anchors=anchors, priorities=priorities)
+    fit = evaluate(scenario, with_trips(zone("1", rent=rent), *[50.0] * len(anchors)))
+    assert len(fit.facts) <= MAX_FACTS
+    assert [f.topic for f in fit.facts].count(FactTopic.COSTE) == 1
+
+
+def test_ties_go_to_the_minutes_of_the_first_place_the_person_goes_to() -> None:
+    """With full telework the tie-break (D-220) reads the next place, not the office."""
+    telework_family = family(anchors=[going(0), FAMILY])
+    assert lead_trip(family()) == 0
+    assert lead_trip(telework_family) == 1
+    assert lead_trip(family(anchors=[going(0, max_minutes=45)])) == 0
+    assert lead_trip(family(anchors=[going(0)])) is None
+    # both within the 30 min that score 1 to the family: tied fit; the office does not decide
+    a = with_trips(zone("a"), 10.0, 25.0)
+    b = with_trips(zone("b"), 80.0, 20.0)
+    fits = [evaluate(telework_family, z) for z in (a, b)]
+    assert (fits[0].utility, fits[0].confidence) == (fits[1].utility, fits[1].confidence)
+    assert [f.data.zone.code for f in sorted(fits, key=near_miss_key)] == ["b", "a"]
+    assert [f.data.zone.code for f in sorted(fits, key=ranking_key)] == ["b", "a"]
