@@ -53,9 +53,12 @@ function ZoneRow({ zone, buying, fails }: { zone: RankedZone; buying: boolean; f
         {name}
         <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio}</small>
       </span>
-      {price && <PriceTag price={price} variant="row" />}
-      <span className={styles.pct}>
-        {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+      {/* The price under the %, not beside it: at 390 px the name keeps its width (D-234) */}
+      <span className={styles.end}>
+        <span className={styles.pct}>
+          {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+        </span>
+        {price && <PriceTag price={price} variant="row" />}
       </span>
     </button>
   );

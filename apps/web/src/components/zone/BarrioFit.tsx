@@ -49,9 +49,12 @@ function Barrio({ row }: { row: BarrioRow }) {
   const head = (
     <>
       <span className={styles.name}>{row.name}</span>
-      {row.price && <PriceTag price={row.price} variant="row" />}
-      <span className={styles.pct} title={TEXT.fitHelp}>
-        {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+      {/* The price under the %, so the name keeps its width at 390 px (D-234) */}
+      <span className={styles.end}>
+        <span className={styles.pct} title={TEXT.fitHelp}>
+          {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+        </span>
+        {row.price && <PriceTag price={row.price} variant="row" />}
       </span>
     </>
   );
