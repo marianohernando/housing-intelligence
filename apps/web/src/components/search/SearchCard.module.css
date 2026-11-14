@@ -228,7 +228,9 @@
   cursor: pointer;
 }
 
+/* flex: none, so a box whose label takes two lines («Bares y cafeterías» at 390 px) keeps its size */
 .check input {
+  flex: none;
   width: 1.15rem;
   height: 1.15rem;
   accent-color: var(--violet-strong);
