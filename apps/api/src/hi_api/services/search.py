@@ -3,6 +3,7 @@ the search in the Feature Dictionary (`fit`), and the «Qué falta aquí» highl
 same rows as GET /gaps; hi_domain.search decides. Parameterised SQL only, no feature id here.
 """
 
+import logging
 from collections.abc import Iterable
 from datetime import datetime
 from typing import Any, NamedTuple
@@ -27,6 +28,8 @@ from hi_contracts.public import (
 from hi_domain.fit import FIT_VERSION, ZoneData
 from hi_domain.geo.names import display_name
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
+
+log = logging.getLogger(__name__)
 
 LEVELS = (TerritoryLevel.MUNICIPIO, TerritoryLevel.DISTRITO)
 
@@ -110,6 +113,7 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
     transit: dict[tuple[str, str], dict[str, IndicatorValue]] = {}
+    unknown_roles: set[str] = set()
     rent_note: str | None = None
     for row in rows:
         key = (row["territory_level"], row["territory_code"])
@@ -121,10 +125,15 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             price[key] = _indicator(row)
         elif fit["role"] == "transit_mode":
             transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
-        elif fit.get("need"):
+        elif fit["role"] == "walk_minutes" and fit.get("need"):
             walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
-        else:  # a priority measured on foot: the park for «Zonas verdes» (D-222)
+        elif fit["role"] == "walk_minutes" and fit.get("priority"):
+            # a priority measured on foot: the park for «Zonas verdes» (D-222)
             priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
+        else:  # a role this code does not know (data synced before the deploy): ignored
+            unknown_roles.add(str(fit["role"]))
+    if unknown_roles:
+        log.warning("fit roles ignored by this version: %s", sorted(unknown_roles))
     return Indicators(rent, rent_note, price, walk, priority_walk, transit)
 
 
