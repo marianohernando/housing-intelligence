@@ -8,6 +8,9 @@
  * INE code of a district of Madrid capital (28079 + its two digits)
  */
 export type Distrito = string;
+/**
+ * Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)
+ */
 export type DaysPerWeek = number;
 export type AnchorKind = "work" | "study" | "family" | "other";
 export type Label = string;
@@ -94,7 +97,7 @@ export interface ScenarioState {
   scope?: SearchScope;
 }
 /**
- * A place the household travels to often («Trabajo en»).
+ * A place the household travels to often: where they work, or family and friends.
  */
 export interface Anchor {
   days_per_week?: DaysPerWeek;

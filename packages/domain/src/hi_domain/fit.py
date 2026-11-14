@@ -12,7 +12,7 @@ territorial reference (the gap highlights come from GAP-001).
 
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from hi_contracts.public import (
     Anchor,
@@ -43,8 +43,9 @@ from hi_domain.gaps import es_number
 
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
 # leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
-# trip measured for the whole district and the reason for an unknown rent said (D-232)
-FIT_VERSION = "fit-0.7"
+# trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8: a
+# trip made 1-2 days a week weighs half and one never made is not scored (D-240)
+FIT_VERSION = "fit-0.8"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -59,6 +60,10 @@ NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 
 STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
 # Public transport (CORE-009, D-220): full utility up to 30 min, none from 90 (3x, as walking).
 DEFAULT_COMMUTE_MINUTES = 30
+# Telework (D-240): a trip made 1-2 days a week weighs half in the % of fit; from 3 days it
+# weighs as always. A place never gone to (0 days) is not scored, but its limit still applies.
+FEW_DAYS_PER_WEEK = 2
+FEW_DAYS_WEIGHT = 0.5
 BUDGET_MARGIN_SHARE = 0.25  # full utility when the cost is 75 % of the budget or less
 MAX_WALK_SHOWN = 60
 
@@ -195,6 +200,8 @@ class ZoneFit:
     confidence: float
     facts: list[Fact]
     cost_eur: float | None
+    # Index in `anchors` of the place whose minutes break ties (lead_trip, D-240); None = none
+    lead_trip: int | None = 0
 
     @property
     def match_pct(self) -> int | None:
@@ -259,6 +266,17 @@ def rank_weights(n: int) -> list[float]:
     return [(n - i) / total for i in range(n)]
 
 
+def counts(anchor: Anchor) -> bool:
+    """False for a place the person never goes to (0 days a week: full telework, D-240): its
+    trip is not scored. A limit on it (`max_minutes`) is still a condition."""
+    return anchor.days_per_week > 0
+
+
+def days_weight(anchor: Anchor) -> float:
+    """Share of its rank weight a trip keeps (D-240): half when made 1-2 days a week."""
+    return FEW_DAYS_WEIGHT if anchor.days_per_week <= FEW_DAYS_PER_WEEK else 1.0
+
+
 def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
     """The person's criteria in order of importance, before weighting."""
     keys: list[Criterion] = []
@@ -273,7 +291,8 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
         target = windows.get(need, DEFAULT_WALK_MINUTES[need])
         keys.append(Criterion(f"need:{need.value}", 0.0, need=need, target_minutes=target))
     for i, anchor in enumerate(scenario.anchors):
-        keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
+        if counts(anchor):
+            keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
     for nearby in scenario.nearby:  # a wished service not already among the priorities
         if not nearby.required and nearby.need not in covered:
             target = nearby.max_walk_minutes
@@ -284,10 +303,12 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
 
 
 def criteria(scenario: ScenarioState) -> list[Criterion]:
+    """Rank-sum weights by order; a trip made few days a week keeps a share of its own
+    (D-240). The weights need not add up to 1: the % divides by the weight with data."""
     keys = _criteria_keys(scenario)
     weights = rank_weights(len(keys))
     return [
-        Criterion(c.key, w, c.need, c.target_minutes, c.priority, c.anchor, c.anchor_index)
+        replace(c, weight=w if c.anchor is None else w * days_weight(c.anchor))
         for c, w in zip(keys, weights, strict=True)
     ]
 
@@ -385,7 +406,7 @@ def constraint_checks(
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
     for i, anchor in enumerate(scenario.anchors):
-        if anchor.max_minutes is not None:
+        if anchor.max_minutes is not None:  # whatever the days, even none (D-240)
             checks.append(commute_check(i, anchor, data))
     return checks
 
@@ -595,12 +616,37 @@ def as_pct(utility: float | None) -> int | None:
     return None if utility is None else math.floor(100 * utility + 0.5)
 
 
-def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
-    """3-5 facts: the criteria with data in order of importance, then context (walking
-    minutes) when the person asked for fewer than three things, then the criteria without
-    data («sin datos»). Rent only shows up with a rent budget: without one there is nothing
-    to say whether it is good or bad for this person."""
+def limited_trips(scenario: ScenarioState, data: ZoneData) -> list[Fact]:
+    """The trip to a place never gone to (0 days) that keeps a limit (D-240): its minutes as
+    context, without weight, so the card says how far it is. Without them, the condition says
+    why."""
+    return [
+        transit_fact(anchor, trip).fact
+        for i, anchor in enumerate(scenario.anchors)
+        if not counts(anchor)
+        and anchor.max_minutes is not None
+        and (trip := data.commute.get(i)) is not None
+    ]
+
+
+def capped(ordered: list[Fact]) -> list[Fact]:
+    """At most MAX_FACTS, in order of importance. The cost always stays when there is one (it
+    only exists with a budget): if it would fall, the least important of the others goes
+    instead (D-240: with three priorities, work and family it was the sixth)."""
+    cost = next((i for i, f in enumerate(ordered) if f.topic is FactTopic.COSTE), None)
+    if cost is None or cost < MAX_FACTS:
+        return ordered[:MAX_FACTS]
+    return [*ordered[: MAX_FACTS - 1], ordered[cost]]
+
+
+def facts(scores: Sequence[Score], data: ZoneData, trips: Sequence[Fact] = ()) -> list[Fact]:
+    """3-5 facts: the criteria with data in order of importance, the minutes to a limited
+    place nobody goes to (`trips`, without weight), then context (walking minutes) when the
+    person asked for fewer than three things, then the criteria without data («sin datos»).
+    Rent only shows up with a rent budget: without one there is nothing to say whether it is
+    good or bad for this person."""
     known = [s.fact for s in scores if s.utility is not None]
+    known += trips
     unknown = [s.fact for s in scores if s.utility is None]
     context = [
         walk_fact(n, data.walk.get(n), DEFAULT_WALK_MINUTES[n], data.transit) for n in CONTEXT_NEEDS
@@ -612,7 +658,7 @@ def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
         if extra.fact.kind is not FactKind.UNKNOWN and extra.fact.topic not in shown:
             known.append(extra.fact)
             shown.add(extra.fact.topic)
-    return [*known, *unknown][:MAX_FACTS]
+    return capped([*known, *unknown])
 
 
 def estimated_cost(scenario: ScenarioState, data: ZoneData, area: FloorArea) -> float | None:
@@ -637,8 +683,9 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
         constraints=checks,
         utility=utility,
         confidence=confidence,
-        facts=facts([s for _, s in weighted], data),
+        facts=facts([s for _, s in weighted], data, limited_trips(scenario, data)),
         cost_eur=cost,
+        lead_trip=lead_trip(scenario),
     )
 
 
@@ -664,12 +711,21 @@ def everyday_walk(data: ZoneData) -> tuple[float, float] | None:
     return utility / len(measured), shown / len(measured)
 
 
+def lead_trip(scenario: ScenarioState) -> int | None:
+    """The place whose minutes break ties (D-220): the first the person goes to; with full
+    telework there, the first that keeps a limit (D-240). None if no trip counts at all."""
+    places = list(enumerate(scenario.anchors))
+    going = (i for i, anchor in places if counts(anchor))
+    limited = (i for i, anchor in places if anchor.max_minutes is not None)
+    return next(going, next(limited, None))
+
+
 def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
     """«Casi encajan»: best unrounded fit first; ties: more confidence, fewer minutes by public
-    transport to the first place of work, then the zone id (D-220). Every near miss fails
-    something, so the services at a walk do not reorder them (D-239). Never depends on the
-    order the zones arrive in."""
-    trip = fit.data.commute.get(0)
+    transport to the lead place (`lead_trip`: the first one the person goes to), then the zone
+    id (D-220, D-240). Every near miss fails something, so the services at a walk do not
+    reorder them (D-239). Never depends on the order the zones arrive in."""
+    trip = None if fit.lead_trip is None else fit.data.commute.get(fit.lead_trip)
     minutes = trip.minutes if trip is not None and trip.minutes is not None else math.inf
     zone = fit.data.zone
     return (
@@ -683,7 +739,7 @@ def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
 def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, str]:
     """«Zonas que encajan»: best unrounded fit first. Only exact ties of it go on (D-239): more
     everyday services at a walk, then fewer walking minutes to them and, after them, as
-    near_miss_key (confidence, minutes to work, zone id)."""
+    near_miss_key (confidence, minutes to the lead place, zone id)."""
     utility, confidence, minutes, zone_id = near_miss_key(fit)
     served, walk_minutes = everyday_walk(fit.data) or (-1.0, math.inf)
     return (utility, -served, walk_minutes, confidence, minutes, zone_id)

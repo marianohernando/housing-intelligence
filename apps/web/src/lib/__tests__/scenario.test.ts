@@ -12,7 +12,12 @@ import {
   defaultScenario,
   encodeScenario,
   exampleScenario,
+  FEW_OFFICE_DAYS,
+  OFFICE_DAYS,
+  officeDays,
+  officeDaysOptions,
   peopleAtHome,
+  placeOf,
   removeNearby,
   SCOPES,
   scopeOf,
@@ -23,8 +28,11 @@ import {
   setNearbyMinutes,
   setNearbyRequired,
   setNoBudgetLimit,
+  setPlace,
+  setPlaceMaxMinutes,
   setScope,
   setSeniors,
+  setWorkDays,
   setWorkMaxMinutes,
   setWorkPlace,
   togglePriority,
@@ -235,12 +243,101 @@ describe("«Tardar como mucho» (work commute limit)", () => {
   });
 });
 
+describe("«¿Cuántos días vas a la oficina?» (trabajo.dias, D-240)", () => {
+  const withWork = () => setWorkPlace(defaultScenario(), { label: "Nuevos Ministerios (metro)", lat: 40.446, lon: -3.692 });
+
+  it("offers 5 to 1 days and Teletrabajo total (0), and starts at the contract's 5 without sending them", () => {
+    expect(OFFICE_DAYS).toEqual([5, 4, 3, 2, 1, 0]);
+    const anchor = workPlace(withWork());
+    expect(anchor && "days_per_week" in anchor).toBe(false);
+    expect(anchor && officeDays(anchor)).toBe(5);
+  });
+
+  it("sends the chosen days as days_per_week of the work anchor and keeps its limit", () => {
+    const limited = setWorkMaxMinutes(withWork(), 45);
+    expect(setWorkDays(limited, 2).anchors).toEqual([
+      { kind: "work", label: "Nuevos Ministerios (metro)", lat: 40.446, lon: -3.692, max_minutes: 45, days_per_week: 2 },
+    ]);
+    expect(setWorkDays(setWorkDays(limited, 2), 5).anchors?.[0]).toMatchObject({ days_per_week: 5, max_minutes: 45 });
+  });
+
+  it("sends Teletrabajo total as 0 days and keeps the limit, which still applies", () => {
+    const telework = setWorkDays(setWorkMaxMinutes(withWork(), 45), 0);
+    expect(telework.anchors?.[0]).toMatchObject({ label: "Nuevos Ministerios (metro)", days_per_week: 0, max_minutes: 45 });
+    expect(setWorkMaxMinutes(telework, 30).anchors?.[0]).toMatchObject({ days_per_week: 0, max_minutes: 30 });
+  });
+
+  it("keeps the days inside the contract's 0 to 7 and does nothing without a work place", () => {
+    expect(setWorkDays(withWork(), 9).anchors?.[0]?.days_per_week).toBe(7);
+    expect(setWorkDays(withWork(), -1).anchors?.[0]?.days_per_week).toBe(0);
+    expect(setWorkDays(defaultScenario(), 2).anchors).toEqual([]);
+  });
+
+  it("only touches the work place: family or friends have no days", () => {
+    const both = setPlace(withWork(), "family", { label: "Getafe", lat: 40.31, lon: -3.73 });
+    expect(setWorkDays(both, 1).anchors?.map((a) => [a.kind, a.days_per_week])).toEqual([
+      ["work", 1],
+      ["family", undefined],
+    ]);
+  });
+
+  it("offers the days of a shared link outside the list, and says which ones weigh half", () => {
+    expect(officeDaysOptions(5)).toEqual([5, 4, 3, 2, 1, 0]);
+    expect(officeDaysOptions(7)).toEqual([7, 5, 4, 3, 2, 1, 0]);
+    expect(FEW_OFFICE_DAYS).toBe(2);
+  });
+});
+
+describe("«Cerca de mi familia o amigos» (familia.*, a second place)", () => {
+  const AZCA = { label: "Nuevos Ministerios (metro)", lat: 40.446, lon: -3.692 };
+  const GETAFE = { label: "Getafe Central (Cercanías)", lat: 40.31, lon: -3.73 };
+
+  it("sends a family anchor without a limit, after the work place whatever the order they are picked in", () => {
+    const familyFirst = setWorkPlace(setPlace(defaultScenario(), "family", GETAFE), AZCA);
+    const workFirst = setPlace(setWorkPlace(defaultScenario(), AZCA), "family", GETAFE);
+    expect(familyFirst).toEqual(workFirst);
+    expect(workFirst.anchors).toEqual([
+      { kind: "work", ...AZCA, max_minutes: null },
+      { kind: "family", ...GETAFE, max_minutes: null },
+    ]);
+    expect(placeOf(workFirst, "family")?.label).toBe(GETAFE.label);
+  });
+
+  it("goes alone when there is no work place, and removing it leaves the work place as it was", () => {
+    expect(setPlace(defaultScenario(), "family", GETAFE).anchors).toEqual([{ kind: "family", ...GETAFE, max_minutes: null }]);
+    const work = setWorkDays(setWorkMaxMinutes(setWorkPlace(defaultScenario(), AZCA), 45), 3);
+    expect(setPlace(setPlace(work, "family", GETAFE), "family", null)).toEqual(work);
+  });
+
+  it("sends its own limit as max_minutes of the family anchor, apart from the work one", () => {
+    const both = setPlace(setWorkMaxMinutes(setWorkPlace(defaultScenario(), AZCA), 45), "family", GETAFE);
+    expect(setPlaceMaxMinutes(both, "family", 30).anchors?.map((a) => [a.kind, a.max_minutes])).toEqual([
+      ["work", 45],
+      ["family", 30],
+    ]);
+    expect(setWorkMaxMinutes(setPlaceMaxMinutes(both, "family", 30), null).anchors?.map((a) => a.max_minutes)).toEqual([null, 30]);
+    expect(setPlaceMaxMinutes(both, "family", 500).anchors?.[1]?.max_minutes).toBe(120);
+  });
+
+  it("keeps a place of another kind from a shared link, after the two the web edits", () => {
+    const study: ScenarioState = { ...defaultScenario(), anchors: [{ kind: "study", label: "Universidad", lat: 40.4, lon: -3.7 }] };
+    const all = setWorkPlace(setPlace(study, "family", GETAFE), AZCA);
+    expect(all.anchors?.map((a) => a.kind)).toEqual(["work", "family", "study"]);
+  });
+});
+
 describe("demo case (portada.ejemplo.boton)", () => {
   it("is line A's golden profile, with the work place without a limit (the pitch's figures)", () => {
     const golden = JSON.parse(readFileSync(GOLDEN, "utf8")) as ScenarioState;
     const asReference = { ...golden, anchors: golden.anchors?.map((a) => ({ ...a, max_minutes: null })) };
     expect(exampleScenario()).toEqual(asReference);
     expect(exampleScenario().anchors?.every((a) => a.max_minutes === null)).toBe(true);
+  });
+
+  it("goes to the office 4 days a week: from 3 days the trip weighs as always (D-240)", () => {
+    const work = workPlace(exampleScenario());
+    expect(work && officeDays(work)).toBe(4);
+    expect(work && officeDays(work) > FEW_OFFICE_DAYS).toBe(true);
   });
 
   it("is a new object every time, so editing it never changes the next example", () => {

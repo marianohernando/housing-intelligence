@@ -103,7 +103,7 @@ class Household(BaseModel):
 
 
 class Anchor(BaseModel):
-    """A place the household travels to often («Trabajo en»)."""
+    """A place the household travels to often: where they work, or family and friends."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -111,7 +111,13 @@ class Anchor(BaseModel):
     label: str = Field(min_length=1, max_length=80, examples=["Paseo de la Castellana (Azca)"])
     lon: float = Field(ge=-4.58, le=-3.05)
     lat: float = Field(ge=39.88, le=41.17)
-    days_per_week: int = Field(default=5, ge=1, le=7)
+    days_per_week: int = Field(
+        default=5,
+        ge=0,
+        le=7,
+        description="Days they go there in a week: 1-2 halve the weight of the trip; 0 = never "
+        "(full telework), the trip is not scored but its max_minutes still applies (D-240)",
+    )
     max_minutes: int | None = Field(
         default=None, ge=5, le=120, description="Hard limit for the trip; None = preference only"
     )
