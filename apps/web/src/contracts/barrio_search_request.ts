@@ -47,6 +47,10 @@ export type MaxWalkMinutes = number;
 /**
  * Everyday services the search and the per-zone list both talk about, and the leisure
  * groups of «Ocio» (D-236), which only the search knows: they are never rows of the list.
+ *
+ * A leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the
+ * API or the MCP may, it is ignored with a warning: `required` is True by default, so it would
+ * otherwise filter zones by places OpenStreetMap may not have.
  */
 export type NeedKey =
   | "escuela_infantil"

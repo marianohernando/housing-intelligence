@@ -43,6 +43,7 @@ from hi_domain.fit import (
     criteria,
     evaluate,
     everyday_walk,
+    ignored_leisure,
     lead_trip,
     near_miss_key,
     rank_weights,
@@ -1222,7 +1223,7 @@ def test_leisure_is_one_fact_and_one_criterion_whatever_the_boxes() -> None:
     leisure = [f for f in evaluation.facts if f.topic is FactTopic.OCIO]
     assert [f.text for f in leisure] == [
         "Ocio a pie: bares y cafeterías a unos 2 min, restaurantes a unos 4 min, "
-        "gimnasios a unos 20 min"
+        "gimnasios y deporte a unos 20 min"
     ]
     assert leisure[0].kind is FactKind.WEAKNESS  # the gym is beyond the 10 minutes
     assert leisure[0].indicator is not None
@@ -1250,7 +1251,9 @@ def test_leisure_without_data_is_unknown_and_never_zero() -> None:
     assert half.confidence == pytest.approx(0.5)  # but the zone is half as sure
     fact = next(f for f in half.facts if f.topic is FactTopic.OCIO)
     assert fact.text == "Ocio a pie: bares y cafeterías a unos 4 min, restaurantes: sin datos"
-    assert fact.kind is FactKind.WEAKNESS
+    assert (
+        fact.kind is FactKind.STRENGTH
+    )  # what has data is near: a group without data is no weakness
 
 
 def test_a_leisure_place_beyond_a_walk_scores_zero_with_low_confidence() -> None:
@@ -1281,13 +1284,58 @@ def test_a_scenario_without_leisure_ignores_the_leisure_data() -> None:
     assert run_search(family(), with_leisure) == run_search(family(), without)
 
 
-def test_a_failed_leisure_condition_can_be_relaxed() -> None:
-    scenario = _ocio("restaurantes", required=True)
-    option = relaxed(scenario, "near:restaurantes")
+def test_the_leisure_conditions_relax_together() -> None:
+    """The groups share their minutes and «Imprescindible» in the web (D-236): whichever binds,
+    all of them get the same few more minutes, then all become a wish."""
+    scenario = _ocio("bares", "restaurantes", required=True).model_copy(
+        update={"nearby": [*_ocio("bares", "restaurantes", required=True).nearby, _school()]}
+    )
+    for binding in ("near:bares", "near:restaurantes"):
+        option = relaxed(scenario, binding)
+        assert option is not None
+        label, changed = option
+        assert label == "+5 min a pie hasta el ocio"
+        assert [(n.need.value, n.max_walk_minutes) for n in changed.nearby] == [
+            ("bares", 15),
+            ("restaurantes", 15),
+            ("colegio", 10),  # not leisure: left as it was
+        ]
+    at_most = scenario.model_copy(
+        update={"nearby": [n.model_copy(update={"max_walk_minutes": 60}) for n in scenario.nearby]}
+    )
+    option = relaxed(at_most, "near:bares")
     assert option is not None
-    label, changed = option
-    assert label == "+5 min a pie hasta restaurantes"
-    assert changed.nearby[0].max_walk_minutes == 15
+    assert option[0] == "Ocio cerca como preferencia, no como requisito"
+    assert [n.required for n in option[1].nearby] == [False, False, True]
+    zones = [_leisure_zone("1", bares=12.0, restaurantes=12.0)]
+    check = run_search(scenario, zones).reality_check
+    leisure_options = [r for r in check.relaxations if r.label.endswith("el ocio")]
+    assert len(leisure_options) == 1  # one option for both groups, not one per box
+
+
+def _school() -> NearbyNeed:
+    return NearbyNeed(need=NeedKey.COLEGIO, max_walk_minutes=10, required=True)
+
+
+def test_leisure_in_nearby_without_ocio_is_ignored() -> None:
+    """D-236: the API or the MCP may send a leisure group without the priority «ocio». With
+    `required` True by default it would filter; it is ignored, neither criterion nor condition."""
+    leisure = [
+        NearbyNeed(need=NeedKey.BARES, max_walk_minutes=5),  # required by default
+        NearbyNeed(need=NeedKey.CULTURA, max_walk_minutes=5, required=False),
+    ]
+    plain = ScenarioState(priorities=[PriorityKey.TRANSPORTE], nearby=[_school()])
+    with_leisure = plain.model_copy(update={"nearby": [_school(), *leisure]})
+    assert ignored_leisure(with_leisure) == [NeedKey.BARES, NeedKey.CULTURA]
+    assert ignored_leisure(plain) == []
+    assert [c.key for c in criteria(with_leisure)] == [c.key for c in criteria(plain)]
+    data = _leisure_zone(bares=40.0, cultura=40.0)
+    ignored, kept = evaluate(with_leisure, data), evaluate(plain, data)
+    assert [c.constraint_id for c in ignored.constraints] == ["near:colegio"]
+    assert (ignored.utility, ignored.facts) == (kept.utility, kept.facts)
+    marked = with_leisure.model_copy(update={"priorities": [*plain.priorities, PriorityKey.OCIO]})
+    assert ignored_leisure(marked) == []
+    assert "near:bares" in [c.constraint_id for c in evaluate(marked, data).constraints]
 
 
 @given(a=st.floats(0, 120), b=st.floats(0, 120), other=st.floats(0, 120))

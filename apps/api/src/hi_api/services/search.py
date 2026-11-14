@@ -26,7 +26,7 @@ from hi_contracts.public import (
     SearchResult,
     ZoneRef,
 )
-from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData
+from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData, ignored_leisure
 from hi_domain.geo.names import display_name
 from hi_domain.geo.scope import in_scope
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
@@ -250,13 +250,27 @@ def load_warnings(loaded: Loaded) -> list[str]:
     ]
 
 
+def scenario_warnings(scenario: ScenarioState) -> list[str]:
+    """What the scenario asks that the search leaves out: leisure groups in `nearby` without the
+    priority «ocio» (D-236), as the API or the MCP may send them."""
+    ignored = ignored_leisure(scenario)
+    if not ignored:
+        return []
+    names = ", ".join(need.value for need in ignored)
+    log.warning("leisure needs without the priority ocio ignored: %s", names)
+    return [
+        f"{ErrorCode.INVALID_PROFILE.value}: nearby {names} ignored: the leisure groups only "
+        "count with the priority «ocio» (D-236)"
+    ]
+
+
 def answer(
     conn: Connection, scenario: ScenarioState, loaded: Loaded, zones_word: str = "zones"
 ) -> tuple[SearchResult, list[str], str | None]:
     """The result, warnings and the data version (latest computation of the values used) of
     the search over the loaded zones."""
     outcome = run_search(scenario, loaded.zones)
-    warnings = load_warnings(loaded)
+    warnings = [*load_warnings(loaded), *scenario_warnings(scenario)]
     if outcome.unscored_passing:
         warnings.append(
             f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} {zones_word} pass "

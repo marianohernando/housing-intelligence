@@ -653,7 +653,7 @@
       "type": "object"
     },
     "NeedKey": {
-      "description": "Everyday services the search and the per-zone list both talk about, and the leisure\ngroups of «Ocio» (D-236), which only the search knows: they are never rows of the list.",
+      "description": "Everyday services the search and the per-zone list both talk about, and the leisure\ngroups of «Ocio» (D-236), which only the search knows: they are never rows of the list.\n\nA leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the\nAPI or the MCP may, it is ignored with a warning: `required` is True by default, so it would\notherwise filter zones by places OpenStreetMap may not have.",
       "enum": [
         "escuela_infantil",
         "colegio",

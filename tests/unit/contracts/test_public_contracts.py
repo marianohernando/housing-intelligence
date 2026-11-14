@@ -145,7 +145,7 @@ def test_leisure_is_additive_and_a_scenario_without_it_reads_the_same() -> None:
     scenario = ScenarioState.model_validate(old)
     dumped = scenario.model_dump(mode="json")
     assert {k: dumped[k] for k in old} == old
-    assert set(dumped) == {*old, "min_floor_area_m2", "anchors"}
+    assert set(dumped) == {*old, "min_floor_area_m2", "anchors", "scope"}  # scope: D-238
     everything = ScenarioState.model_validate(
         {
             "nearby": [{"need": need.value} for need in NeedKey],

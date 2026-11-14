@@ -20,7 +20,7 @@ from hi_contracts.public import (
     Relaxation,
     ScenarioState,
 )
-from hi_contracts.public.scenario import BUY_RANGE_EUR, RENT_RANGE_EUR
+from hi_contracts.public.scenario import BUY_RANGE_EUR, LEISURE_NEEDS, RENT_RANGE_EUR
 from hi_domain.affordability import euros
 from hi_domain.fit import NEED_TEXT, ZoneData, ZoneFit, statuses
 
@@ -39,7 +39,10 @@ def relaxed(scenario: ScenarioState, constraint_id: str) -> tuple[str, ScenarioS
     if constraint_id == "budget" and scenario.budget is not None:
         return _relax_budget(scenario)
     if constraint_id.startswith("near:"):
-        return _relax_near(scenario, NeedKey(constraint_id.removeprefix("near:")))
+        need = NeedKey(constraint_id.removeprefix("near:"))
+        if need in LEISURE_NEEDS:
+            return _relax_leisure(scenario)
+        return _relax_near(scenario, need)
     if constraint_id.startswith("commute:"):
         return _relax_commute(scenario, int(constraint_id.removeprefix("commute:")))
     return None
@@ -75,6 +78,29 @@ def _relax_near(scenario: ScenarioState, need: NeedKey) -> tuple[str, ScenarioSt
         text = f"{label} cerca como preferencia, no como requisito"
         changed = item.model_copy(update={"required": False})
     nearby = [*scenario.nearby[:index], changed, *scenario.nearby[index + 1 :]]
+    return text, scenario.model_copy(update={"nearby": nearby})
+
+
+def _relax_leisure(scenario: ScenarioState) -> tuple[str, ScenarioState]:
+    """«Ocio» (D-236): its groups share their minutes and «Imprescindible» in the web, so they are
+    relaxed together, whichever binds: a few more minutes for all, then all as a wish."""
+    required = [n for n in scenario.nearby if n.need in LEISURE_NEEDS and n.required]
+    if any(n.max_walk_minutes < WALK_MAX_MINUTES for n in required):
+        step = {
+            n.need: min(n.max_walk_minutes + WALK_STEP_MINUTES, WALK_MAX_MINUTES) for n in required
+        }
+        added = max(step[n.need] - n.max_walk_minutes for n in required)
+        text = f"+{added} min a pie hasta el ocio"
+        nearby = [
+            n.model_copy(update={"max_walk_minutes": step[n.need]}) if n.need in step else n
+            for n in scenario.nearby
+        ]
+    else:
+        text = "Ocio cerca como preferencia, no como requisito"
+        nearby = [
+            n.model_copy(update={"required": False}) if n.need in LEISURE_NEEDS else n
+            for n in scenario.nearby
+        ]
     return text, scenario.model_copy(update={"nearby": nearby})
 
 
@@ -132,6 +158,8 @@ def reality_check(
         if option is None:
             continue
         label, relaxed_scenario = option
+        if any(o.relaxed_scenario == relaxed_scenario for o in options):
+            continue  # the leisure groups relax together: one option for all of them (D-236)
         count = passing(relaxed_scenario, zones)
         if failing[constraint_id] == 0 and count == passing_now:
             continue  # nothing fails it and relaxing adds nothing: only missing data blocks

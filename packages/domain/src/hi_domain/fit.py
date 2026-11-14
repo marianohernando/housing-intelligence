@@ -85,7 +85,7 @@ NEED_TEXT: dict[NeedKey, tuple[str, str]] = {  # (fact label, «de …» in a se
     NeedKey.TRANSPORTE: ("Parada de transporte público", "una parada de transporte público"),
     NeedKey.BARES: ("Bares y cafeterías", "un bar o una cafetería"),
     NeedKey.RESTAURANTES: ("Restaurantes", "un restaurante"),
-    NeedKey.GIMNASIOS: ("Gimnasios", "un gimnasio o un centro deportivo"),
+    NeedKey.GIMNASIOS: ("Gimnasios y deporte", "un gimnasio o un centro deportivo"),
     NeedKey.CULTURA: (
         "Cultura",
         "un museo, una biblioteca, un teatro, un cine o un centro cultural",
@@ -313,13 +313,29 @@ def leisure_needs(scenario: ScenarioState) -> list[NearbyNeed]:
     return [chosen[need] for need in LEISURE_NEEDS if need in chosen]
 
 
+def ignored_leisure(scenario: ScenarioState) -> list[NeedKey]:
+    """Leisure groups in `nearby` without the priority «ocio», as the API or the MCP may send
+    them (D-236): never a criterion nor a condition (`required` is True by default, so they would
+    filter). The API says so in a warning."""
+    if PriorityKey.OCIO in scenario.priorities:
+        return []
+    return [n.need for n in scenario.nearby if n.need in LEISURE_NEEDS]
+
+
+def counted_nearby(scenario: ScenarioState) -> list[NearbyNeed]:
+    """`nearby` as the search reads it: without the ignored leisure groups."""
+    ignored = set(ignored_leisure(scenario))
+    return [n for n in scenario.nearby if n.need not in ignored]
+
+
 def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
     """The person's criteria in order of importance, before weighting. «Ocio» is one criterion
     for all its groups (D-236), so four boxes never outweigh the other priorities; without a
     group there is nothing to measure and it adds no criterion."""
     keys: list[Criterion] = []
     covered: set[NeedKey] = set()
-    windows = {n.need: n.max_walk_minutes for n in scenario.nearby}
+    nearby_counted = counted_nearby(scenario)
+    windows = {n.need: n.max_walk_minutes for n in nearby_counted}
     for priority in scenario.priorities:
         if priority is PriorityKey.OCIO:
             groups = leisure_needs(scenario)
@@ -337,7 +353,7 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
     for i, anchor in enumerate(scenario.anchors):
         if counts(anchor):
             keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
-    for nearby in scenario.nearby:  # a wished service not already among the priorities
+    for nearby in nearby_counted:  # a wished service not already among the priorities
         if not nearby.required and nearby.need not in covered:
             target = nearby.max_walk_minutes
             keys.append(Criterion(f"need:{nearby.need.value}", 0.0, nearby.need, target))
@@ -453,7 +469,7 @@ def constraint_checks(
                 purchase_missing(data),
             )
         )
-    for nearby in scenario.nearby:
+    for nearby in counted_nearby(scenario):
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
     for i, anchor in enumerate(scenario.anchors):
@@ -577,8 +593,8 @@ def leisure_group(nearby: NearbyNeed, walk: IndicatorValue | None) -> LeisureGro
 def leisure_fact(groups: Sequence[NearbyNeed], walk: Mapping[NeedKey, IndicatorValue]) -> Score:
     """«Ocio» (D-236): the mean utility of the ticked groups that have data, each against its
     own minutes, in one fact («Ocio a pie: bares y cafeterías a unos 3 min, gimnasios a unos
-    12 min»). A group without data lowers the confidence, never the score. A strength only when
-    every group is within its minutes; the indicator shown is the farthest group's."""
+    12 min»). A group without data lowers the confidence, never the score nor the kind: a strength
+    when every group with data is within its minutes; the indicator is the farthest group's."""
     parts = [leisure_group(n, walk.get(n.need)) for n in groups]
     known = [g for g in parts if g.walk is not None]
     if not known:
@@ -588,7 +604,7 @@ def leisure_fact(groups: Sequence[NearbyNeed], walk: Mapping[NeedKey, IndicatorV
     confidence = round(sum(g.confidence for g in known) / len(parts), 3)
     farthest = max(known, key=lambda g: (g.walk and g.walk.value) or 0.0)
     fact = Fact(
-        kind=FactKind.STRENGTH if all(g.near for g in parts) else FactKind.WEAKNESS,
+        kind=FactKind.STRENGTH if all(g.near for g in known) else FactKind.WEAKNESS,
         topic=FactTopic.OCIO,
         text="Ocio a pie: " + ", ".join(g.text for g in parts),
         confidence=confidence,
