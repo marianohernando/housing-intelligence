@@ -1,0 +1,43 @@
+dataset_id: cm_viviendas_antiguedad
+source_id: comunidad_madrid_ckan
+name: Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad
+resources:
+- name: Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/f6e02fad-70c0-40ee-a030-12f77cd59ad7/resource/64da5fc9-41f1-403b-a675-74580018c26e/download/censo-anual-comunidad-de-madrid.-viviendas-por-ano-de-antiguedad.-municipios.csv
+- name: Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/f6e02fad-70c0-40ee-a030-12f77cd59ad7/resource/b3051293-7ae0-4ba8-9e49-79d7c2aadfc0/download/censo-anual-comunidad-de-madrid.-viviendas-por-ano-de-antiguedad.-municipios.json
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 3
+  geographic_granularity: 3
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-235. CM portal (CC BY, «Fecha Actualización 02-06-2026»; fuente: elaboración propia del
+    Instituto de Estadística a partir de los datos del Catastro). Viviendas por intervalo de
+    año de construcción, 2022 y 2023, los 179 municipios sin suprimir ni redondear; es la
+    misma serie del censo anual que `cm_viviendas_superficie`. Preferido al Censo de vivienda
+    y locales 2021 (INE), que suprime 28 municipios y redondea a múltiplos de tres. Sin
+    distritos de Madrid. Solo contexto.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T13:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: censo_anual_vivienda_por_antiguedad
+  harvested_at: '2026-11-14T13:00:00+00:00'
+notes: D-235 context in the zone view (share of dwellings built since 2001)

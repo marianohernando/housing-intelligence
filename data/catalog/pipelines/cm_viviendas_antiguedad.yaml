@@ -1,0 +1,5 @@
+kind: cm_stat_table
+dataset_id: cm_viviendas_antiguedad
+metric_id: viviendas_por_antiguedad
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}
+dimension_columns: {"Año de antigüedad": antiguedad}

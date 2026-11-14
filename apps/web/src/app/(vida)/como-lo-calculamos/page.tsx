@@ -6,6 +6,7 @@ import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
+import { CONTEXT_METHOD } from "@/lib/zoneContext";
 
 import styles from "../section.module.css";
 
@@ -263,6 +264,10 @@ function Limits() {
           Madrid. El valor catastral sale de valoraciones antiguas, así que es un dato aproximado, no un precio real: frente
           a los precios de los anuncios, ordena los distritos casi igual, pero los caros salen algo más baratos y los baratos
           algo más caros.
+        </li>
+        <li>
+          {/* D-235: the same words the card's tests check (no alarm or wealth words) */}
+          <strong>{CONTEXT_METHOD.lead}</strong> {CONTEXT_METHOD.text}
         </li>
         <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde

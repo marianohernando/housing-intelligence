@@ -11,6 +11,7 @@ from sqlalchemy import Engine
 from hi_contracts.catalog.enums import Priority
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
+    CmMunicipioConceptPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
     FacilityDirectoryPipeline,
@@ -157,7 +158,9 @@ def _run_one(
         inputs = local_inputs(local) if local else fetch_inputs(catalog)
         return run_admin_boundaries(engine, catalog, inputs, evidence_root=evidence_root)
     spec = catalog.pipelines.get(dataset_id)
-    if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
+    if isinstance(
+        spec, CmStatTablePipeline | CmPostcodeConceptPipeline | CmMunicipioConceptPipeline
+    ):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, AeatRentComparisonPipeline):
