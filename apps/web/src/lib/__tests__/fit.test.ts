@@ -12,6 +12,7 @@ import {
   evaluatedText,
   failedLabels,
   fewZones,
+  floorAreaOf,
   fitClass,
   hasWalkingFact,
   limitingConstraint,
@@ -327,11 +328,24 @@ describe("the approximate price of a zone (D-234)", () => {
     expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_confidence: 0.8 }, true)).toEqual({
       short: "≈ 385.000 €",
       long: "Comprar ≈ 385.000 €",
+      area: null,
       aria: "Comprar: unos 385.000 €",
       confidence: null,
     });
     const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
     expect([rent?.short, rent?.long, rent?.aria]).toEqual(["≈ 1.101 €/mes", "Alquiler ≈ 1.101 €/mes", "Alquiler: unos 1.101 € al mes"]);
+  });
+
+  it("says the m² the price is for, the person's or the household's usual (zona.precio.m2)", () => {
+    const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false, 68);
+    expect([rent?.short, rent?.long, rent?.area, rent?.aria]).toEqual(["≈ 1.101 €/mes", "Alquiler ≈ 1.101 €/mes", "por 68 m²", "Alquiler: unos 1.101 € al mes por 68 m²"]);
+    expect(zonePrice({ estimated_cost_eur: 385_000 }, true, 90)?.aria).toBe("Comprar: unos 385.000 € por 90 m²");
+    // The example (2 adults and 2 children, min_floor_area_m2 null) is priced for 77 m², as its facts say
+    expect(floorAreaOf(fixture)).toBe(77);
+    expect(fixture.results[0]?.constraints.find((c) => c.constraint_id === "budget")?.label).toContain("77 m²");
+    expect(floorAreaOf({ scenario: { ...fixture.scenario, min_floor_area_m2: 55 } })).toBe(55);
+    expect(floorAreaOf({})).toBeNull();
+    expect(zonePriceOf(fixture, zoneKeyOf(fixture.results[0]!.zone))?.area).toBe("por 77 m²");
   });
 
   it("marks an estimate with the card's words, and shows nothing without a price", () => {

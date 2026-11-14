@@ -13,6 +13,10 @@ import {
   encodeScenario,
   exampleScenario,
   FEW_OFFICE_DAYS,
+  FLOOR_AREA_RANGE,
+  floorArea,
+  floorAreaOptions,
+  HOUSEHOLD_FLOOR_AREA_M2,
   OFFICE_DAYS,
   officeDays,
   officeDaysOptions,
@@ -24,6 +28,7 @@ import {
   setAdults,
   setBudgetAmount,
   setBudgetKind,
+  setFloorArea,
   setMinors,
   setNearbyMinutes,
   setNearbyRequired,
@@ -342,5 +347,42 @@ describe("demo case (portada.ejemplo.boton)", () => {
 
   it("is a new object every time, so editing it never changes the next example", () => {
     expect(exampleScenario()).not.toBe(exampleScenario());
+  });
+});
+
+describe("m² of the home («Para unos 68 m² (cámbialo)»)", () => {
+  it("is the household's usual unless the person picks it: the table the API uses (D-214)", () => {
+    const python = readFileSync(new URL("../../../../../packages/domain/src/hi_domain/affordability.py", import.meta.url), "utf8");
+    const table = /MEDIAN_FLOOR_AREA_M2: dict\[int, int\] = (\{[^}]+\})/.exec(python)?.[1];
+    expect(table && JSON.parse(table.replace(/(\d+):/g, '"$1":'))).toEqual(HOUSEHOLD_FLOOR_AREA_M2);
+    expect(floorArea(defaultScenario())).toEqual({ m2: 61, household: true });
+    expect(floorArea(setAdults(defaultScenario(), 2))).toEqual({ m2: 68, household: true });
+    expect(floorArea(exampleScenario())).toEqual({ m2: 77, household: true });
+    // 5 or more people count as 5
+    expect(floorArea(setSeniors(setMinors(setAdults(defaultScenario(), 2), 8), 4)).m2).toBe(77);
+  });
+
+  it("sends the m² picked, and null again with «Lo normal para tu hogar»", () => {
+    const picked = setFloorArea(defaultScenario(), 82.4);
+    expect(picked.min_floor_area_m2).toBe(82);
+    expect(floorArea(picked)).toEqual({ m2: 82, household: false });
+    const back = setFloorArea(picked, null);
+    expect(back.min_floor_area_m2).toBeNull();
+    // Back to the usual is the same search as before (no «Has cambiado tu búsqueda»)
+    expect(back).toEqual(defaultScenario());
+    // Inside the contract range (15–400 m²)
+    expect(setFloorArea(defaultScenario(), 5).min_floor_area_m2).toBe(15);
+    expect(setFloorArea(defaultScenario(), 900).min_floor_area_m2).toBe(400);
+  });
+
+  it("offers 40 to 150 m² by 5, and a value from a shared link outside them too", () => {
+    const options = floorAreaOptions(null);
+    expect([options[0], options.at(-1), options.length]).toEqual([FLOOR_AREA_RANGE.min, FLOOR_AREA_RANGE.max, 23]);
+    expect(floorAreaOptions(62)).toContain(62);
+    expect(floorAreaOptions(60)).toHaveLength(23);
+  });
+
+  it("leaves the example of the pitch with min_floor_area_m2: null", () => {
+    expect(exampleScenario().min_floor_area_m2).toBeNull();
   });
 });

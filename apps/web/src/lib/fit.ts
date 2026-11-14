@@ -3,10 +3,11 @@
  * fit-0.1, D-215). The web never recomputes the fit: it joins the API's figures to the map, the
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
-import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, ScenarioState, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 
 import { type ConfidenceText, confidenceText } from "./confidence";
 import { formatEuros } from "./format";
+import { floorArea } from "./scenario";
 import type { ZoneCollection, ZoneGeometry, ZoneProperties } from "./map/zones";
 
 /** How a zone is painted after a search: by its % when it meets everything, otherwise apart. */
@@ -75,7 +76,9 @@ export interface ZonePrice {
   short: string;
   /** In the zone card head: «Comprar ≈ 385.000 €» (zona.precio.cabecera.compra) or «Alquiler ≈ 1.101 €/mes» */
   long: string;
-  /** Read aloud instead of «≈»: «Comprar: unos 385.000 €» (zona.precio.aria.*) */
+  /** The m² the API priced (zona.precio.m2): «por 68 m²», under the row's figure and after the card's; null when unknown */
+  area: string | null;
+  /** Read aloud instead of «≈»: «Comprar: unos 385.000 € por 68 m²» (zona.precio.aria.*) */
   aria: string;
   /** The card's words for a figure that is not a reliable one («Dato aproximado» for the D-234 estimate), else null */
   confidence: ConfidenceText | null;
@@ -86,22 +89,35 @@ const RELIABLE = 0.8;
 
 /**
  * The price the API gives a zone (`estimated_cost_eur`: the purchase price when buying, else the
- * monthly rent), or null without one: nothing is shown and the general notice says why.
+ * monthly rent), or null without one: nothing is shown and the general notice says why. `m2` is the
+ * area the API priced it for (`floorAreaOf` the result's scenario), said with it.
  */
 export function zonePrice(
   zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence">,
   buying: boolean,
+  m2: number | null = null,
 ): ZonePrice | null {
   const cost = zone.estimated_cost_eur;
   if (cost == null) return null;
   const amount = formatEuros(cost);
   const confidence = zone.estimated_cost_confidence;
+  const area = m2 === null ? null : `por ${m2} m²`;
+  const aria = buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`;
   return {
     short: buying ? `≈ ${amount}` : `≈ ${amount}/mes`,
     long: buying ? `Comprar ≈ ${amount}` : `Alquiler ≈ ${amount}/mes`,
-    aria: buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`,
+    area,
+    aria: area ? `${aria} ${area}` : aria,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
   };
+}
+
+/**
+ * The m² behind the prices of a result: those the person chose (`min_floor_area_m2`), or the usual
+ * for the household the API assumes with null (D-214); null for an answer without its scenario.
+ */
+export function floorAreaOf(result: { scenario?: Pick<ScenarioState, "household" | "min_floor_area_m2"> }): number | null {
+  return result.scenario ? floorArea(result.scenario).m2 : null;
 }
 
 /** The price of the zone of the card: from `all_zones` (every zone), else its ranked entry (older API). */
@@ -109,7 +125,7 @@ export function zonePriceOf(result: SearchResult, zoneKey: string): ZonePrice | 
   const { match, ranked } = zoneFit(result, zoneKey);
   const buying = result.scenario.budget?.kind === "buy";
   const withCost = match?.estimated_cost_eur != null ? match : ranked;
-  return withCost ? zonePrice(withCost, buying) : null;
+  return withCost ? zonePrice(withCost, buying, floorAreaOf(result)) : null;
 }
 
 /**

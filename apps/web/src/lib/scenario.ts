@@ -45,6 +45,8 @@ export function defaultScenario(): ScenarioState {
   return {
     schema_version: 2,
     budget: { kind: "rent", amount_eur: BUDGET_RANGE.rent.initial },
+    // «Lo normal para tu hogar», said as in the example, so going back to it is the same search
+    min_floor_area_m2: null,
     household: { adults: 1, minors: 0, minor_ages: [], seniors_in_care: 0 },
     anchors: [],
     nearby: [],
@@ -92,6 +94,43 @@ export function setBudgetAmount(s: ScenarioState, amount: number): ScenarioState
   const kind = s.budget?.kind ?? "rent";
   const { min, max, step } = BUDGET_RANGE[kind];
   return { ...s, budget: { kind, amount_eur: clamp(Math.round(amount / step) * step, min, max) } };
+}
+
+/**
+ * What the API assumes with `min_floor_area_m2: null` (D-214): the median useful floor area of the
+ * homes of households of each size in the Comunidad de Madrid (Censo 2021), 5 or more people as
+ * 5. A copy of MEDIAN_FLOOR_AREA_M2 in hi_domain/affordability.py, checked by a test.
+ */
+export const HOUSEHOLD_FLOOR_AREA_M2: Readonly<Record<1 | 2 | 3 | 4 | 5, number>> = { 1: 61, 2: 68, 3: 71, 4: 77, 5: 77 };
+
+/** m² offered in «Para unos 68 m² (cámbialo)»; a value from a shared link outside them is offered too. */
+export const FLOOR_AREA_RANGE = { min: 40, max: 150, step: 5 } as const;
+/** Contract range of `min_floor_area_m2` (hi_contracts ScenarioState). */
+const FLOOR_AREA_LIMITS = { min: 15, max: 400 } as const;
+
+/** The m² the search prices a home at: the person's, or the usual for their household (`household` true). */
+export interface FloorArea {
+  m2: number;
+  household: boolean;
+}
+
+export function floorArea(s: Pick<ScenarioState, "household" | "min_floor_area_m2">): FloorArea {
+  if (s.min_floor_area_m2 != null) return { m2: s.min_floor_area_m2, household: false };
+  const h = s.household ?? {};
+  const people = clamp((h.adults ?? 1) + (h.minors ?? 0) + (h.seniors_in_care ?? 0), 1, 5) as 1 | 2 | 3 | 4 | 5;
+  return { m2: HOUSEHOLD_FLOOR_AREA_M2[people], household: true };
+}
+
+export function floorAreaOptions(current: number | null | undefined): number[] {
+  const { min, max, step } = FLOOR_AREA_RANGE;
+  const steps = Array.from({ length: (max - min) / step + 1 }, (_, i) => min + i * step);
+  return [...new Set([...steps, ...(current == null ? [] : [current])])].sort((a, b) => a - b);
+}
+
+/** The m² of the home; null is «Lo normal para tu hogar», what the API derives from the household. */
+export function setFloorArea(s: ScenarioState, m2: number | null): ScenarioState {
+  const min_floor_area_m2 = m2 === null ? null : clamp(Math.round(m2), FLOOR_AREA_LIMITS.min, FLOOR_AREA_LIMITS.max);
+  return { ...s, min_floor_area_m2 };
 }
 
 /** presupuesto.sin_limite (`budget: null`); turned off, the budget starts again as renting. */

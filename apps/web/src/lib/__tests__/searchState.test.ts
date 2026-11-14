@@ -130,7 +130,7 @@ describe("isStale", () => {
     const s = searched();
     const reordered = Object.fromEntries(Object.entries(mine).reverse()) as ScenarioState;
     expect(isStale({ ...s, scenario: reordered })).toBe(false);
-    const withUndefined: ScenarioState = { ...mine, min_floor_area_m2: undefined };
+    const withUndefined: ScenarioState = { ...mine, scope: undefined };
     expect(isStale({ ...s, scenario: withUndefined })).toBe(false);
     const both = togglePriority(togglePriority(mine, "salud"), "colegios");
     const swapped = togglePriority(togglePriority(mine, "colegios"), "salud");
