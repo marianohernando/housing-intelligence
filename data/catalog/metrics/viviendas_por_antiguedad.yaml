@@ -1,0 +1,13 @@
+metric_id: viviendas_por_antiguedad
+human_name: Viviendas por año de construcción
+description: >-
+  Viviendas por intervalo de año de construcción (censo anual de la Comunidad de Madrid,
+  elaborado por el Instituto de Estadística a partir del Catastro), con su total y las que no
+  tienen año («No consta»).
+domain: housing
+unit: viviendas
+aggregation_method: sum
+geo_resolution_min: zona_estadistica
+temporal_resolution: annual
+dataset_id: cm_viviendas_antiguedad
+dimensions: [antiguedad]

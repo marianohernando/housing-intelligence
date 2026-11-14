@@ -1,0 +1,12 @@
+metric_id: renta_neta_media_hogar
+human_name: Renta neta media anual de los hogares
+description: >-
+  Renta neta media anual de los hogares de Madrid, por distrito y por barrio (Urban Audit,
+  INE), tal como la publica el panel de indicadores de distritos y barrios del Ayuntamiento.
+  Se usa tal cual (D-235).
+domain: income
+unit: EUR/hogar
+aggregation_method: none
+geo_resolution_min: barrio
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios

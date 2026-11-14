@@ -487,3 +487,99 @@ def test_a_factor_of_another_year_stops_the_computation() -> None:
     weights = _weights([("2807901", "28001", 1.0)])
     with pytest.raises(ValueError, match="same year"):
         methods.postcode_weighted_mean(CP_RENT, weights, {}, new_contracts=(old, 1.2))
+
+
+def test_a_rate_uses_the_population_of_its_own_year() -> None:
+    """D-235: offences of the last definitive year over the residents of that same year."""
+    offences = _obs([("28001", {}, 50.0), ("28002", {}, 30.0)]).assign(
+        period_start=date(2024, 1, 1)
+    )
+    residents = pd.concat(
+        [
+            _obs([("28001", {"edad": "total"}, 1000.0), ("28002", {"edad": "total"}, 2000.0)]),
+            _obs(
+                [("28001", {"edad": "total"}, 800.0), ("28002", {"edad": "total"}, 1500.0)]
+            ).assign(period_start=date(2024, 1, 1)),
+            _obs([("28003", {"edad": "total"}, 100.0)]).assign(period_start=date(2024, 1, 1)),
+        ]
+    )
+    same_year = methods.at_latest_period_of(residents, offences)
+    assert set(same_year["period_start"]) == {date(2024, 1, 1)}
+    out = _by_code(methods.metric_ratio(offences, {}, same_year, {"edad": ["total"]}, 1000.0))
+    assert out["28001"]["value"] == 1000.0 * 50.0 / 800.0  # 62.5, not 50 over the 2025 residents
+    assert out["28002"]["value"] == 20.0
+    assert out["28001"]["period_start"] == date(2024, 1, 1)
+    # A municipio the source does not publish: unknown with its reason, never 0
+    assert _is_missing(out["28003"]["value"])
+    assert out["28003"]["null_reason"] == "SOURCE_MISSING"
+
+
+def test_a_rate_without_residents_of_its_year_is_unknown_not_another_year() -> None:
+    offences = _obs([("28001", {}, 50.0)]).assign(period_start=date(2019, 1, 1))
+    residents = _obs([("28001", {"edad": "total"}, 1000.0)])
+    assert methods.at_latest_period_of(residents, offences).empty
+    assert methods.at_latest_period_of(residents, offences.iloc[0:0]).empty
+
+
+def test_a_rate_can_leave_a_part_of_its_numerator_out() -> None:
+    """D-224 §3: conventional crime, the total less the cybercrime; unknown when the part is
+    not published, never the total alone."""
+    offences = _obs(
+        [
+            ("28001", {"tipologia": "total"}, 50.0),
+            ("28001", {"tipologia": "cibercriminalidad"}, 10.0),
+            ("28002", {"tipologia": "total"}, 30.0),
+        ]
+    )
+    residents = _obs([("28001", {"edad": "total"}, 1000.0), ("28002", {"edad": "total"}, 500.0)])
+    out = _by_code(
+        methods.metric_ratio(
+            offences,
+            {"tipologia": ["total"]},
+            residents,
+            {"edad": ["total"]},
+            1000.0,
+            numerator_minus={"tipologia": ["cibercriminalidad"]},
+        )
+    )
+    assert out["28001"]["value"] == 40.0  # (50 - 10) per 1,000 of 1,000 residents
+    assert _is_missing(out["28002"]["value"])
+    assert out["28002"]["null_reason"] == "SOURCE_MISSING"
+
+
+def test_a_source_that_covers_some_zones_gives_no_regional_reference() -> None:
+    """D-235: the 37 municipios of the Ministerio are not the region."""
+    offences = _obs([("28001", {}, 50.0)])
+    residents = _obs([("28001", {"edad": "total"}, 1000.0), ("28002", {"edad": "total"}, 500.0)])
+    result = methods.metric_ratio(offences, {}, residents, {"edad": ["total"]}, 1000.0)
+    assert methods.REGION_CODE in _by_code(result)
+    out = _by_code(methods.without_regional_reference(result))
+    assert sorted(out) == ["28001", "28002"]
+    assert out["28001"]["value"] == 50.0
+
+
+def test_share_built_since_2001_leaves_no_consta_out_of_the_total() -> None:
+    """D-235: dwellings built since 2001 over those with a known year."""
+    dwellings = _obs(
+        [
+            ("28001", {"antiguedad": "total"}, 110.0),
+            ("28001", {"antiguedad": "entre_1991_y_2000"}, 60.0),
+            ("28001", {"antiguedad": "entre_2001_y_2005"}, 25.0),
+            ("28001", {"antiguedad": "entre_2021_y_2025"}, 15.0),
+            ("28001", {"antiguedad": "no_consta"}, 10.0),
+            ("28002", {"antiguedad": "entre_1991_y_2000"}, 5.0),
+            ("28002", {"antiguedad": "entre_2001_y_2005"}, None),
+            ("28003", {"antiguedad": "no_consta"}, 4.0),
+        ]
+    )
+    known = ["entre_1991_y_2000", "entre_2001_y_2005", "entre_2021_y_2025"]
+    out = _by_code(
+        methods.metric_share(
+            dwellings,
+            {"antiguedad": ["entre_2001_y_2005", "entre_2021_y_2025"]},
+            {"antiguedad": known},
+        )
+    )
+    assert out["28001"]["value"] == 40.0  # 40 of 100: neither the total row nor «No consta»
+    assert out["28002"]["null_reason"] == "SOURCE_MISSING"  # a suppressed interval, never 0
+    assert out["28003"]["null_reason"] == "SOURCE_MISSING"  # no interval with a known year

@@ -85,6 +85,134 @@
       "title": "AeatRentComparisonPipeline",
       "type": "object"
     },
+    "CmMunicipioConceptPipeline": {
+      "additionalProperties": false,
+      "description": "Instituto de Estadística tables without a territory code (D-235): the municipio comes\nby name and what the row counts is in a free-text 'Concepto' column.\n\nOnly the rows whose concept starts with one of the `concepts` are read, each with its value\nof `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave\nthe second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),\nso `municipios` maps each spelling to its INE code after collapsing the whitespace; a name\nthat is not there goes to quarantine and fails the run, never dropped in silence. Rows\nwhose status is in `excluded_statuses` (e.g. «Provisional») are left out and counted.",
+      "properties": {
+        "concept_column": {
+          "default": "Concepto",
+          "title": "Concept Column",
+          "type": "string"
+        },
+        "concepts": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "description": "concept prefix -> value of `dimension` for its rows",
+          "minProperties": 1,
+          "title": "Concepts",
+          "type": "object"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dimension": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Dimension",
+          "type": "string"
+        },
+        "excluded_statuses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Statuses",
+          "type": "array"
+        },
+        "expected_municipios": {
+          "description": "municipios the table publishes",
+          "exclusiveMinimum": 0,
+          "title": "Expected Municipios",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "cm_municipio_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "municipio_column": {
+          "default": "Municipio",
+          "title": "Municipio Column",
+          "type": "string"
+        },
+        "municipios": {
+          "additionalProperties": {
+            "pattern": "^28\\d{3}$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Municipios",
+          "type": "object"
+        },
+        "period_column": {
+          "default": "Año",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "status_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Estado dato",
+          "title": "Status Column"
+        },
+        "unit_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Unidad",
+          "title": "Unit Column"
+        },
+        "value_column": {
+          "default": "Valor",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "dimension",
+        "concepts",
+        "municipios",
+        "expected_municipios"
+      ],
+      "title": "CmMunicipioConceptPipeline",
+      "type": "object"
+    },
     "CmPostcodeConceptPipeline": {
       "additionalProperties": false,
       "description": "Tables where the postcode is embedded in a free-text 'Concepto' column.",
@@ -1339,6 +1467,7 @@
   "discriminator": {
     "mapping": {
       "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
+      "cm_municipio_concept": "#/$defs/CmMunicipioConceptPipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
       "facility_directory": "#/$defs/FacilityDirectoryPipeline",
@@ -1358,6 +1487,9 @@
     },
     {
       "$ref": "#/$defs/CmPostcodeConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/CmMunicipioConceptPipeline"
     },
     {
       "$ref": "#/$defs/AeatRentComparisonPipeline"

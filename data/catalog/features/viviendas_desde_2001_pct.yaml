@@ -1,0 +1,48 @@
+feature_id: viviendas_desde_2001_pct
+version: 1
+human_name: Porcentaje de viviendas construidas desde 2001
+domain: housing
+type: derived
+unit: "%"
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources: [{dataset_id: cm_viviendas_antiguedad, role: primary}]
+formula:
+  method: metric_share
+  metric: viviendas_por_antiguedad
+  numerator:
+    antiguedad:
+      - entre_2001_y_2005
+      - entre_2006_y_2010
+      - entre_2011_y_2015
+      - entre_2016_y_2020
+      - entre_2021_y_2025
+  # Every interval with a known year: «No consta» is left out of the total (D-235).
+  denominator:
+    antiguedad:
+      - hasta_1900
+      - entre_1901_y_1920
+      - entre_1921_y_1940
+      - entre_1941_y_1950
+      - entre_1951_y_1960
+      - entre_1961_y_1970
+      - entre_1971_y_1980
+      - entre_1981_y_1990
+      - entre_1991_y_2000
+      - entre_2001_y_2005
+      - entre_2006_y_2010
+      - entre_2011_y_2015
+      - entre_2016_y_2020
+      - entre_2021_y_2025
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [range_0_100, unknown_never_zero, context_only]
+limitations:
+  - "Viviendas construidas desde 2001 sobre las que tienen año de construcción conocido («No consta» no cuenta), según el censo anual de la Comunidad de Madrid, que el Instituto de Estadística elabora a partir del Catastro."
+  - "La fuente no precisa si cuenta solo las viviendas familiares; su total se parece al de las viviendas familiares del Censo de 2021, habitadas o no."
+  - "Solo por municipio. En los distritos y barrios de Madrid se muestra otra medida, el año medio de construcción del Catastro: no son comparables."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-235)."

@@ -187,7 +187,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
     },
     places,
     /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level, or the region's (ccaa). */
-    featureValues(featureId: string, level: "municipio" | "distrito" | "ccaa", { timeoutMs }: GetOptions = {}) {
+    featureValues(featureId: string, level: "municipio" | "distrito" | "barrio" | "ccaa", { timeoutMs }: GetOptions = {}) {
       return call<FeatureValuesResponse>(`/api/v1/features/${encodeURIComponent(featureId)}/values?level=${level}`, { timeoutMs });
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */

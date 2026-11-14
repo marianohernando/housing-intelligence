@@ -1,6 +1,6 @@
 {
-  "total": 35,
-  "cm_open_data_count": 27,
+  "total": 37,
+  "cm_open_data_count": 29,
   "datasets": [
     {
       "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
@@ -102,6 +102,17 @@
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
+      "dataset_id": "cm_infracciones_penales_municipios",
+      "name": "Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-d717bfe7732e",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
       "dataset_id": "cm_nacidos_vivos_municipios",
       "name": "Nacidos vivos por lugar de residencia de la madre y sexo. Municipios",
       "publisher": "Instituto de Estadística",
@@ -175,6 +186,17 @@
       "url": "https://datos.comunidad.madrid/dataset/1004050",
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-60a2ddbf2260",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_viviendas_antiguedad",
+      "name": "Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-cf76bf4eb9f8",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },

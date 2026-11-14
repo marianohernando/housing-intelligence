@@ -160,6 +160,17 @@ def run_quality(
     return QualityReport(checks)
 
 
+def expected_municipios_check(frame: pd.DataFrame, expected: int) -> CheckResult:
+    """Blocking: a table that names its municipios by hand publishes every one it declares."""
+    codes = set(frame.loc[frame["territory_level"] == "municipio", "territory_code"])
+    return CheckResult(
+        "expected_municipios",
+        True,
+        len(codes) == expected,
+        {"covered": len(codes), "expected": expected},
+    )
+
+
 def district_checks(
     frame: pd.DataFrame, known_districts: set[str], expected: int
 ) -> list[CheckResult]:

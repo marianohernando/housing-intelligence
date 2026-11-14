@@ -272,6 +272,49 @@ def test_appraised_value_is_by_municipio_and_districts_are_unknown(
     assert all(r["value"] is None and r["null_reason"] == "SOURCE_MISSING" for r in districts)
 
 
+def _latest_by_zone(engine: Engine, feature_id: str) -> dict[tuple[str, str], RowMapping]:
+    with engine.connect() as conn:
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT DISTINCT ON (territory_level, territory_code) territory_level, "
+                    "territory_code, period_start, value, null_reason FROM feature_value "
+                    "WHERE feature_id = :feature_id "
+                    "ORDER BY territory_level, territory_code, period_start DESC"
+                ),
+                {"feature_id": feature_id},
+            )
+            .mappings()
+            .all()
+        )
+    return {(r["territory_level"], r["territory_code"]): r for r in rows}
+
+
+def test_zone_context_has_its_own_measure_on_each_level(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-235: offences per 1,000 residents of the same year only where the Ministerio publishes
+    them (unknown elsewhere, never 0, and no regional row); the share built since 2001 by
+    municipio; the panel's mean building year and household income by district and barrio."""
+    offences = _latest_by_zone(migrated_engine, "infracciones_penales_por_1000_hab")
+    assert set(offences) == {("municipio", c) for c in ("28001", "28002", "28079")}
+    madrid = offences[("municipio", "28079")]
+    assert madrid["value"] is not None and 30 < float(madrid["value"]) < 120
+    for code in ("28001", "28002"):  # under 20,000 inhabitants
+        assert offences[("municipio", code)]["null_reason"] == "SOURCE_MISSING"
+    built = _latest_by_zone(migrated_engine, "viviendas_desde_2001_pct")
+    assert {level for level, _ in built} == {"municipio"}
+    assert round(float(built[("municipio", "28079")]["value"]), 1) == 16.5
+    year = _latest_by_zone(migrated_engine, "ano_medio_construccion_residencial")
+    income = _latest_by_zone(migrated_engine, "renta_neta_media_hogar")
+    for by_zone in (year, income):
+        assert {level for level, _ in by_zone} == {"distrito", "barrio"}
+    assert round(float(year[("distrito", "2807901")]["value"])) == 1926  # Centro
+    assert float(year[("barrio", "28079011")]["value"]) == 1928  # Palacio
+    assert float(income[("distrito", "2807905")]["value"]) == 79274  # Chamartín
+    assert float(income[("barrio", "28079011")]["value"]) == 48025
+
+
 def test_rent_is_that_of_a_lease_signed_in_the_year(
     features_computed: None, migrated_engine: Engine
 ) -> None:

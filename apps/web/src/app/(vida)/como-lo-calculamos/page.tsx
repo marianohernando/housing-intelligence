@@ -260,6 +260,16 @@ function Limits() {
           distritos de Madrid y en los pueblos sale «sin datos» y no inventamos un precio.
         </li>
         <li>
+          <strong>Otros datos de la zona:</strong> en cada zona enseñamos, solo como contexto, las infracciones penales
+          conocidas por cada 1.000 habitantes, lo antiguas que son las viviendas y la renta. No puntúan, no ordenan zonas y no
+          entran en «Qué falta». Las infracciones se cuentan donde las conoce la policía, no donde vive quien las sufre, así
+          que suben donde hay mucha gente de paso; dejamos fuera los delitos por internet, que no ocurren en un sitio. El
+          Ministerio del Interior solo las publica para los municipios de más de 20.000 habitantes y, en Madrid, para toda
+          la ciudad, no por distrito. La antigüedad y la renta se miden de otra forma en los municipios (viviendas
+          construidas desde 2001 y renta por persona, de la Comunidad de Madrid) que en los distritos y barrios de Madrid
+          (año medio de construcción del Catastro y renta por hogar, del Ayuntamiento): no se pueden comparar entre sí.
+        </li>
+        <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde
           prefieras.
         </li>

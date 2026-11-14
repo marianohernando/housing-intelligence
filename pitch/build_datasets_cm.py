@@ -28,6 +28,8 @@ GATE1_DIR = ROOT / "evidence" / "gate-01"
 OUTPUT = ROOT / "pitch" / "datasets_cm.md"
 SNAPSHOT = ROOT / "pitch" / "portal_cm_snapshot.json"
 CKAN_PACKAGE_SHOW = "https://datos.comunidad.madrid/api/3/action/package_show"
+# D-226, D-235: features the zone view shows as context; they never score
+CONTEXT_LINE = "Dato de contexto en la vista de zona (no puntúa)"
 NOT_IN_LIST = (
     "No entra en la lista de lo que falta ni en el buscador: es dato de apoyo o total de la región"
 )
@@ -118,6 +120,8 @@ def gap_row_labels(catalog: Catalog) -> dict[str, str]:
 
 def where_shown(feature: Any, row_labels: dict[str, str]) -> str:
     gap_row = feature.gap_row
+    if gap_row is None and "context_only" in feature.tests:
+        return CONTEXT_LINE
     if gap_row is None:
         return "Indicador por zona"
     if gap_row.label:

@@ -14,5 +14,8 @@ confidence: {inputs: [source_freshness]}
 public_use: true
 pro_use: true
 models: [affordability, housing_gap]
-tests: [positive]
-limitations: [Media municipal; no refleja la distribución de la renta dentro del municipio. Algunos municipios pequeños no se publican (secreto estadístico).]
+tests: [positive, context_only]
+limitations:
+  - "Media municipal; no refleja la distribución de la renta dentro del municipio. Algunos municipios pequeños no se publican (secreto estadístico)."
+  - "Solo por municipio. En los distritos y barrios de Madrid se muestra otra medida, la renta neta media por hogar del panel del Ayuntamiento: no son comparables."
+  - "En la vista de zona es un dato de contexto: no puntúa en el buscador, no filtra ni ordena zonas y no entra en «Qué falta». Se muestra como una cifra con su fuente y su año, sin etiquetas (D-235)."
