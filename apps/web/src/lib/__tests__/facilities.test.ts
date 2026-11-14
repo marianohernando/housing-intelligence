@@ -204,7 +204,7 @@ describe("groupFacilities", () => {
     expect(hospitalSplitText(hospital.slice(0, 1))).toBe("1 público");
     expect(hospitalSplitText(hospital.slice(4))).toBeNull();
     expect(hospitalSplitText([])).toBeNull();
-    // Only hospitals are told apart: every primary care centre of the register is public
+    // Only hospitals are told apart
     expect(centro_salud[0]).toMatchObject({ label: "Centro de salud", dependency: null });
   });
 

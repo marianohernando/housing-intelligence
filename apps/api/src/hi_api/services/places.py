@@ -136,7 +136,7 @@ def _directory_capacity(attributes: dict[str, Any], subcategory: str) -> dict[st
         "value": float(directory["capacity"]),
         "unit": str(directory.get("capacity_unit") or "camas"),
         "dataset_id": str(directory["dataset_id"]),
-        "dependency": _dependency(attributes),
+        "dependency": _register_dependency(attributes),
         "kind": subcategory,
     }
 
@@ -157,14 +157,20 @@ def _capacity(
     return None
 
 
-def _dependency(attributes: dict[str, Any]) -> str | None:
-    """Public (the network of the Servicio Madrileño de Salud) or private, as the load wrote it
-    from the register; a network hospital a private company runs is public (D-239). A value
-    this contract does not know is left out, never passed on."""
-    if privately_managed(attributes.get("directory")):
-        return "publica"
+def _register_dependency(attributes: dict[str, Any]) -> str | None:
+    """Public or private as the load wrote it from the register (D-218); a value this contract
+    does not know is left out, never passed on. `capacity.dependency` keeps it as before D-239,
+    so an older web never reads the network's value there."""
     value = attributes.get("dependency")
     return value if value in _DEPENDENCIES else None
+
+
+def _dependency(attributes: dict[str, Any]) -> str | None:
+    """Public (the network of the Servicio Madrileño de Salud) or private: the register's, but
+    a network hospital a private company runs is public (D-239)."""
+    if privately_managed(attributes.get("directory")):
+        return "publica"
+    return _register_dependency(attributes)
 
 
 def _management(attributes: dict[str, Any], subcategory: str) -> str | None:

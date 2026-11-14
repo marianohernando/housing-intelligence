@@ -57,11 +57,12 @@ def _matched(code: str, dataset_id: str = PRIVATE_MANAGEMENT_DIRECTORY) -> dict[
 
 def test_a_network_hospital_a_private_company_runs_is_public_with_private_management() -> None:
     """The Fundación Jiménez Díaz: «Privado No Benéfico» in the register, in the network of the
-    Servicio Madrileño de Salud by concierto singular. Public, «gestión privada», beds too."""
+    Servicio Madrileño de Salud by concierto singular. Public, «gestión privada»; its beds keep
+    the register's value, as before D-239, so an older web never calls it «gestión pública»."""
     attributes = {"dependency": "privada", "directory": _matched("280421")}
     properties = PlaceFeature.model_validate(_feature(_row(attributes), [])).properties
     assert (properties.dependency, properties.management) == ("publica", "privada")
-    assert properties.capacity is not None and properties.capacity.dependency == "publica"
+    assert properties.capacity is not None and properties.capacity.dependency == "privada"
 
 
 @pytest.mark.parametrize("code", sorted(PRIVATE_MANAGEMENT))

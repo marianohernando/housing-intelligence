@@ -16,7 +16,7 @@ export type Type = "Point";
 export type Id = string;
 export type DatasetId = string;
 /**
- * Hospitals (D-218, D-239): public network or private, as `dependency` of the place; mutuas count as private
+ * Hospitals (D-218): who runs it, from the CM register; mutuas count as private. Kept as the register says it: the public network is `dependency` of the place (D-239)
  */
 export type Dependency = ("publica" | "privada") | null;
 /**

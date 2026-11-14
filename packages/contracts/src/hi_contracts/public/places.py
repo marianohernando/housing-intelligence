@@ -40,8 +40,9 @@ class PlaceCapacity(BaseModel):
     dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
     dependency: Dependency | None = Field(
         default=None,
-        description="Hospitals (D-218, D-239): public network or private, as `dependency` of the "
-        "place; mutuas count as private",
+        description="Hospitals (D-218): who runs it, from the CM register; mutuas count as "
+        "private. Kept as the register says it: the public network is `dependency` of the place "
+        "(D-239)",
     )
     kind: str | None = Field(
         default=None,

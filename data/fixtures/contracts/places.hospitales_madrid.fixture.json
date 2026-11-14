@@ -237,7 +237,7 @@
           "value": 651.0,
           "unit": "camas instaladas",
           "dataset_id": "ms_catalogo_nacional_hospitales",
-          "dependency": "publica",
+          "dependency": "privada",
           "kind": "Hospital general"
         },
         "coordinates": "source",
