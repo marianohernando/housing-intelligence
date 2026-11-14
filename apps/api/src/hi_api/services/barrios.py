@@ -15,6 +15,7 @@ from hi_api.services.search import (
     indicators_by_zone,
     load_warnings,
     union_datasets,
+    zone_price,
     zone_ref,
 )
 from hi_contracts.api.envelope import ErrorCode
@@ -110,13 +111,15 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
             trips.by_zone, str(row["admin_unit_id"]), str(parent.admin_unit_id)
         )
         borrowed += from_district
+        price, price_estimated = zone_price(indicators, key)
         zones.append(
             ZoneData(
                 zone=zone_ref(row),
                 rent=rent,
                 rent_note=indicators.rent_note,
                 rent_missing=rent_missing(rent),
-                price=indicators.price.get(key),
+                price=price,
+                price_estimated=price_estimated,
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
                 transit=indicators.transit.get(key, {}),

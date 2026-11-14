@@ -179,3 +179,34 @@ def test_state_value_and_text_agree_at_the_edge() -> None:
     assert check.value == 1500
     assert check.status is ConstraintStatus.PASS
     assert "1.500 €/mes" in check.explanation
+
+
+ESTIMATE_NOTE = "precio estimado: valor tasado de Madrid repartido según el valor catastral"
+
+
+def test_an_estimated_purchase_price_decides_with_low_confidence_and_says_so() -> None:
+    """D-234: a district's estimate gives PASS or FAIL like a published value, with its own
+    confidence and the words «precio estimado» instead of the appraised-value note."""
+    area = assumed_floor_area(_scenario(adults=2, minors=0))  # a couple: 68 m²
+    note = f"{ESTIMATE_NOTE} del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento"
+    estimate = _price(6051.0, confidence=0.5)
+    fits = budget_check(_buy(450_000), None, area, estimate, price_note=note)
+    assert fits.status is ConstraintStatus.PASS
+    assert fits.value == 411_000
+    assert fits.confidence == 0.5
+    assert fits.explanation == (
+        "Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid "
+        "repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía "
+        "Ayuntamiento)"
+    )
+    assert "valor tasado medio de la vivienda libre" not in fits.explanation
+    too_low = budget_check(_buy(400_000), None, area, estimate, price_note=note)
+    assert too_low.status is ConstraintStatus.FAIL
+
+
+def test_the_unknown_purchase_text_no_longer_blames_districts_and_barrios() -> None:
+    area = assumed_floor_area(_scenario())
+    check = budget_check(_buy(300_000), None, area, None)
+    assert check.status is ConstraintStatus.UNKNOWN
+    assert "distritos" not in check.explanation
+    assert "25.000 habitantes" in check.explanation

@@ -31,6 +31,7 @@ from hi_contracts.public import (
     ZoneRef,
 )
 from hi_domain.affordability import (
+    PURCHASE_ESTIMATE_NOTE,
     FloorArea,
     assumed_floor_area,
     budget_check,
@@ -43,8 +44,9 @@ from hi_domain.gaps import es_number
 
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
 # leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
-# trip measured for the whole district and the reason for an unknown rent said (D-232)
-FIT_VERSION = "fit-0.7"
+# trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8:
+# buying inside Madrid with an estimated price, said as such (D-234)
+FIT_VERSION = "fit-0.8"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -160,6 +162,7 @@ class ZoneData:
     )
     commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
     price: IndicatorValue | None = None  # appraised value per m² to buy (D-227)
+    price_estimated: bool = False  # `price` is an estimate, not a published value (D-234)
     rent_note: str | None = None  # what the rent figure is, from its feature (D-228)
     rent_missing: str | None = None  # why there is no rent here, in plain words (D-232)
     # Walking minutes to a bus stop and to a Metro/Cercanías station, by mode ("bus", "metro").
@@ -376,7 +379,13 @@ def constraint_checks(
     if scenario.budget is not None:
         checks.append(
             budget_check(
-                scenario.budget, data.rent, area, data.price, data.rent_note, data.rent_missing
+                scenario.budget,
+                data.rent,
+                area,
+                data.price,
+                data.rent_note,
+                data.rent_missing,
+                purchase_note(data),
             )
         )
     for nearby in scenario.nearby:
@@ -535,8 +544,20 @@ def cost_fact(
     return Score(utility, rent.confidence, fact)
 
 
-def purchase_fact(price: IndicatorValue | None, area: FloorArea, budget: float) -> Score:
-    """Buying (D-227): the appraised value for the needed area against the budget."""
+def purchase_note(data: ZoneData) -> str | None:
+    """What the purchase price of the zone is when it is an estimate (D-234); None for a
+    published appraised value."""
+    if not data.price_estimated:
+        return None
+    zone = "del barrio" if data.zone.level.value == "barrio" else "del distrito"
+    return PURCHASE_ESTIMATE_NOTE.format(city=data.zone.municipio_name or "la ciudad", zone=zone)
+
+
+def purchase_fact(
+    price: IndicatorValue | None, area: FloorArea, budget: float, note: str | None = None
+) -> Score:
+    """Buying (D-227): the appraised value for the needed area against the budget; `note` says
+    so when the price is an estimate (D-234)."""
     if price is None or price.value is None:
         text = "Compra: sin precio publicado para esta zona"
         fact = Fact(kind=FactKind.UNKNOWN, topic=FactTopic.COSTE, text=text, confidence=0.0)
@@ -545,7 +566,7 @@ def purchase_fact(price: IndicatorValue | None, area: FloorArea, budget: float) 
     fact = Fact(
         kind=FactKind.STRENGTH if cost <= budget else FactKind.WEAKNESS,
         topic=FactTopic.COSTE,
-        text=purchase_explanation(price.value, area),
+        text=purchase_explanation(price.value, area, note),
         confidence=price.confidence,
         indicator=price,
     )
@@ -566,7 +587,9 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
         topic, text = NO_DATA_PRIORITY[criterion.priority]
         return Score(None, 0.0, Fact(kind=FactKind.UNKNOWN, topic=topic, text=text, confidence=0))
     if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
-        return purchase_fact(data.price, area, float(scenario.budget.amount_eur))
+        return purchase_fact(
+            data.price, area, float(scenario.budget.amount_eur), purchase_note(data)
+        )
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)
     return cost_fact(data.rent, area, budget, data.rent_note, data.rent_missing)
 

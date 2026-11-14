@@ -102,6 +102,8 @@ class Indicators(NamedTuple):
     rent: dict[tuple[str, str], IndicatorValue]
     rent_note: str | None  # what the rent figure is, from its feature's `fit.note` (D-228)
     price: dict[tuple[str, str], IndicatorValue]  # appraised value per m² to buy (D-227)
+    # D-234: an estimated price per m², used only where no published one exists
+    price_estimate: dict[tuple[str, str], IndicatorValue]
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]]
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
     transit: dict[tuple[str, str], dict[str, IndicatorValue]]  # by mode, only words a fact (D-233)
@@ -121,6 +123,7 @@ def _unknown_binding(fit: dict[str, Any]) -> str:
 def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     rent: dict[tuple[str, str], IndicatorValue] = {}
     price: dict[tuple[str, str], IndicatorValue] = {}
+    price_estimate: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
     transit: dict[tuple[str, str], dict[str, IndicatorValue]] = {}
@@ -132,6 +135,8 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
         if fit["role"] == "rent_m2":
             rent[key] = _indicator(row)
             rent_note = fit.get("note") or rent_note
+        elif fit["role"] == "price_m2" and fit.get("estimate"):
+            price_estimate[key] = _indicator(row)
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
         elif fit["role"] == "transit_mode" and fit.get("mode") in TRANSIT_MODES:
@@ -145,7 +150,19 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             unknown.add(_unknown_binding(fit))
     if unknown:
         log.warning("fit bindings ignored by this version: %s", sorted(unknown))
-    return Indicators(rent, rent_note, price, walk, priority_walk, transit)
+    return Indicators(rent, rent_note, price, price_estimate, walk, priority_walk, transit)
+
+
+def zone_price(indicators: Indicators, key: tuple[str, str]) -> tuple[IndicatorValue | None, bool]:
+    """The zone's price per m² to buy and whether it is an estimate (D-234): the published
+    appraised value when there is one, else the estimate; with neither, the row that says why."""
+    published = indicators.price.get(key)
+    if published is not None and published.value is not None:
+        return published, False
+    estimate = indicators.price_estimate.get(key)
+    if estimate is not None and estimate.value is not None:
+        return estimate, True
+    return published or estimate, False
 
 
 def _highlights(
@@ -181,12 +198,14 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     for row in zone_rows:
         key = (row["level"], row["code"])
         zone_id = str(row["admin_unit_id"])
+        price, price_estimated = zone_price(indicators, key)
         zones.append(
             ZoneData(
                 zone=zone_ref(row),
                 rent=indicators.rent.get(key),
                 rent_note=indicators.rent_note,
-                price=indicators.price.get(key),
+                price=price,
+                price_estimated=price_estimated,
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
                 transit=indicators.transit.get(key, {}),
