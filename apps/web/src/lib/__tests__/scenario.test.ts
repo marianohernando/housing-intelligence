@@ -179,6 +179,11 @@ describe("«Tardar como mucho» (work commute limit)", () => {
     expect(setWorkMaxMinutes(limited, null).anchors?.[0]?.max_minutes).toBeNull();
   });
 
+  it("keeps the limit inside the contract's 5 to 120 minutes", () => {
+    expect(setWorkMaxMinutes(withWork(), 1).anchors?.[0]?.max_minutes).toBe(5);
+    expect(setWorkMaxMinutes(withWork(), 500).anchors?.[0]?.max_minutes).toBe(120);
+  });
+
   it("changes the scenario, so the search is stale until it runs again", () => {
     expect(encodeScenario(setWorkMaxMinutes(withWork(), 60))).not.toBe(encodeScenario(withWork()));
   });

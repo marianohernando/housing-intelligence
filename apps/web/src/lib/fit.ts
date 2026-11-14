@@ -76,22 +76,35 @@ export function constraintLabels(result: Pick<SearchResult, "results" | "near_mi
   return new Map(ranked.flatMap((z) => z.constraints.map((c) => [c.constraint_id, c.label] as const)));
 }
 
+/** The API stops giving minutes above this (MAX_COMMUTE_SHOWN of hi_domain/fit.py). */
+const MAX_COMMUTE_SHOWN = 120;
+
+/**
+ * How long a failing commute takes, as the API's own fact says it (rounded to the nearest minute,
+ * «más de 2 h» above 120), except that it never reads as the limit itself: 45,2 against 45 is 46.
+ */
+export function commuteTakes(minutes: number, limit: number | null | undefined): string {
+  if (minutes > MAX_COMMUTE_SHOWN) return "más de 2 h";
+  const rounded = Math.round(minutes);
+  return `${limit == null ? rounded : Math.max(rounded, limit + 1)} min`;
+}
+
 /**
  * The conditions a zone fails, by name; unnamed ones are left out. With the zone's own
  * `constraints`, a commute that is too long says how long it is (trabajo.tarda): «… de 45 min como
- * mucho (tardarías 52 min)». Rounded up, so it never reads as the limit itself.
+ * mucho (tardarías 52 min)».
  */
 export function failedLabels(
   failed: readonly string[] | undefined,
   labels: ReadonlyMap<string, string>,
-  constraints: readonly Pick<ConstraintCheck, "constraint_id" | "status" | "value">[] = [],
+  constraints: readonly Pick<ConstraintCheck, "constraint_id" | "status" | "value" | "threshold">[] = [],
 ): string[] {
   return (failed ?? []).flatMap((id) => {
     const label = labels.get(id);
     if (!label) return [];
     const own = constraints.find((c) => c.constraint_id === id);
     const isCommute = id.startsWith("commute:") && own?.status === "FAIL" && typeof own.value === "number";
-    return [isCommute ? `${label} (tardarías ${Math.ceil(own.value as number)} min)` : label];
+    return [isCommute ? `${label} (tardarías ${commuteTakes(own.value as number, own.threshold)})` : label];
   });
 }
 

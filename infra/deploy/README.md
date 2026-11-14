@@ -160,7 +160,7 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
 
 **Qué comprueba:**
 - Cada cifra de la pantalla, contra la respuesta de la API que recibió la propia página: zonas que encajan, leyenda, % y hechos de la tarjeta, opciones de «¿Y si cambias algo?», estado de cada fila y recuentos de la lista. No hay cifras fijas, así que sigue valiendo tras un sync.
-- Que todas las peticiones a `/search` lleven `max_minutes: null`.
+- Que las peticiones a `/search` del ejemplo lleven `max_minutes: null` (sin límite), y que en un recorrido aparte el límite elegido (45 min) llegue a la petición como `max_minutes: 45`.
 - Que no haya errores de consola ni desbordamiento horizontal.
 
 **Cómo se ejecuta:**

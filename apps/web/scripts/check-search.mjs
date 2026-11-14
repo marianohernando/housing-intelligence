@@ -249,7 +249,7 @@ if (mode === "off") {
   d.todas_sin_max_minutes = searches.every((s) => (s?.anchors ?? []).every((a) => a.max_minutes === null));
   check("todas las búsquedas del ejemplo sin max_minutes (Sin límite)", d.todas_sin_max_minutes);
   // «Tardar como mucho»: the minutes picked reach the request (after the check above, which is about the example)
-  await page.getByLabel("Tiempo máximo hasta el trabajo, en transporte público").selectOption("45");
+  await page.getByLabel("Tardar como mucho, en transporte público").selectOption("45");
   const limited = await searchAnswer(page, () => page.getByRole("button", { name: "Ver zonas que encajan" }).click());
   d.limite_45 = { enviado: searches.at(-1)?.anchors?.map((a) => a.max_minutes), zones_passing: limited.reality_check.zones_passing };
   check("con límite de 45 min, max_minutes: 45 llega a /search", d.limite_45.enviado?.[0] === 45, JSON.stringify(d.limite_45.enviado));

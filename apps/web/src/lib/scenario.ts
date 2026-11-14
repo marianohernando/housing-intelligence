@@ -75,6 +75,8 @@ export function setNoBudgetLimit(s: ScenarioState, noLimit: boolean): ScenarioSt
 /** «Lo quiero a un paseo» (cerca.*): services the household wants within walking minutes. */
 export const NEED_KEYS: readonly NeedKey[] = ["escuela_infantil", "colegio", "centro_salud", "farmacia", "mayores", "transporte"];
 const WALK_LIMITS = { min: 1, max: 60, initial: 10 } as const;
+/** Contract range of a work commute (Anchor.max_minutes). */
+const COMMUTE_LIMITS = { min: 5, max: 120 } as const;
 /** Minutes offered in the selector; a value from the API outside them is offered too. */
 export const WALK_MINUTES: readonly number[] = [5, 10, 15, 20, 30];
 
@@ -144,7 +146,7 @@ export function commuteMinutesOptions(current: number | null | undefined): numbe
 
 /** The commute limit of the work place; null is «Sin límite». Without a work place there is nothing to limit. */
 export function setWorkMaxMinutes(s: ScenarioState, minutes: number | null): ScenarioState {
-  const max_minutes = minutes === null ? null : Math.max(1, Math.round(minutes));
+  const max_minutes = minutes === null ? null : clamp(Math.round(minutes), COMMUTE_LIMITS.min, COMMUTE_LIMITS.max);
   return { ...s, anchors: (s.anchors ?? []).map((a) => (isWork(a) ? { ...a, max_minutes } : a)) };
 }
 

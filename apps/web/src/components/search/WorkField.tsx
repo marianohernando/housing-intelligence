@@ -25,7 +25,7 @@ const TEXT = {
   commuteBefore: "Tardar como mucho",
   commuteAfter: "en transporte público",
   noLimit: "Sin límite",
-  commuteAria: "Tiempo máximo hasta el trabajo, en transporte público",
+  commuteAria: "Tardar como mucho, en transporte público",
 };
 
 type Stations = WorkPlace[] | "loading" | "failed" | null;
