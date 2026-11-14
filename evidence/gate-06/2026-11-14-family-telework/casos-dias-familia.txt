@@ -1,0 +1,104 @@
+
+## ejemplo (4 días)
+  cumplen 27 · casi 5 · binding near:colegio · warnings []
+  top: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+  casi: Chamartín 93 (budget), Salamanca 93 (budget), Centro 93 (budget), Chamberí 93 (budget), Retiro 93 (budget)
+  1.ª trayectos: ['39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1101.0), ('near:colegio', 'PASS', 5.6)]
+  rc: +5 min a pie hasta colegio con primaria -> +17
+  rc: +150 €/mes -> +3
+
+## 3 días
+  cumplen 27 · casi 5 · binding near:colegio · warnings []
+  top: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+  casi: Chamartín 93 (budget), Salamanca 93 (budget), Centro 93 (budget), Chamberí 93 (budget), Retiro 93 (budget)
+  1.ª trayectos: ['39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1101.0), ('near:colegio', 'PASS', 5.6)]
+  rc: +5 min a pie hasta colegio con primaria -> +17
+  rc: +150 €/mes -> +3
+
+## 2 días
+  cumplen 27 · casi 5 · binding near:colegio · warnings []
+  top: Latina 99, Moratalaz 99, Puente de Vallecas 99, Usera 98, Carabanchel 98, Villaverde 98, Ciudad Lineal 98, San Blas-Canillejas 98, Alcorcón 98, Leganés 97
+  casi: San Sebastián de los Reyes 93 (near:colegio), Chamartín 93 (budget), Salamanca 93 (budget), Centro 93 (budget), Chamberí 93 (budget)
+  1.ª trayectos: ['39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1101.0), ('near:colegio', 'PASS', 5.6)]
+  rc: +5 min a pie hasta colegio con primaria -> +17
+  rc: +150 €/mes -> +3
+
+## 1 día
+  cumplen 27 · casi 5 · binding near:colegio · warnings []
+  top: Latina 99, Moratalaz 99, Puente de Vallecas 99, Usera 98, Carabanchel 98, Villaverde 98, Ciudad Lineal 98, San Blas-Canillejas 98, Alcorcón 98, Leganés 97
+  casi: San Sebastián de los Reyes 93 (near:colegio), Chamartín 93 (budget), Salamanca 93 (budget), Centro 93 (budget), Chamberí 93 (budget)
+  1.ª trayectos: ['39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1101.0), ('near:colegio', 'PASS', 5.6)]
+  rc: +5 min a pie hasta colegio con primaria -> +17
+  rc: +150 €/mes -> +3
+
+## 0 días
+  cumplen 27 · casi 5 · binding near:colegio · warnings []
+  top: Usera 100, Latina 100, Moratalaz 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, Leganés 100, Fuenlabrada 100, Alcalá de Henares 100
+  casi: Ciempozuelos 97 (near:colegio), San Martín de la Vega 96 (near:colegio), Tres Cantos 95 (near:colegio), San Sebastián de los Reyes 95 (near:colegio), Mejorada del Campo 93 (near:colegio)
+  1.ª trayectos: []
+  1.ª condiciones: [('budget', 'PASS', 1019.0), ('near:colegio', 'PASS', 4.9)]
+  rc: +5 min a pie hasta colegio con primaria -> +17
+  rc: +150 €/mes -> +3
+
+## teletrabajo total + límite 45
+  cumplen 10 · casi 5 · binding commute:0 · warnings []
+  top: Usera 100, Latina 100, Moratalaz 100, Carabanchel 100, Puente de Vallecas 100, San Blas-Canillejas 99, Ciudad Lineal 97, Fuencarral-El Pardo 96, Hortaleza 96, Tetuán 90
+  casi: Torrejón de Ardoz 100 (commute:0), Móstoles 100 (commute:0), Parla 100 (commute:0), Alcorcón 100 (commute:0), Leganés 100 (commute:0)
+  1.ª trayectos: []
+  1.ª condiciones: [('budget', 'PASS', 1019.0), ('near:colegio', 'PASS', 4.9), ('commute:0', 'PASS', 44.2)]
+  rc: Sin límite de tiempo hasta Paseo de la Castellana (Azca) -> +17
+  rc: +150 €/mes -> +3
+  rc: +5 min a pie hasta colegio con primaria -> +2
+
+## 4 días + límite 45
+  cumplen 10 · casi 5 · binding commute:0 · warnings []
+  top: Usera 100, Latina 100, Moratalaz 100, Carabanchel 100, Puente de Vallecas 100, San Blas-Canillejas 99, Ciudad Lineal 98, Fuencarral-El Pardo 97, Hortaleza 97, Tetuán 94
+  casi: Villaverde 100 (commute:0), Alcorcón 99 (commute:0), Leganés 99 (commute:0), Torrejón de Ardoz 99 (commute:0), Coslada 98 (commute:0)
+  1.ª trayectos: ['44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1019.0), ('near:colegio', 'PASS', 4.9), ('commute:0', 'PASS', 44.2)]
+  rc: Sin límite de tiempo hasta Paseo de la Castellana (Azca) -> +17
+  rc: +150 €/mes -> +3
+  rc: +5 min a pie hasta colegio con primaria -> +2
+
+## familia en Getafe Central
+  cumplen 27 · casi 5 · binding near:colegio · warnings []
+  top: Villaverde 96, Usera 95, Puente de Vallecas 95, Leganés 95, Latina 95, Moratalaz 95, Ciudad Lineal 94, Carabanchel 94, Getafe 93, Fuencarral-El Pardo 93
+  casi: Centro 94 (budget), Retiro 94 (budget), Salamanca 93 (budget), Chamberí 93 (budget), Arganzuela 92 (budget)
+  1.ª trayectos: ['46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00', '28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1007.0), ('near:colegio', 'PASS', 6.3)]
+  rc: +5 min a pie hasta colegio con primaria -> +17
+  rc: +150 €/mes -> +3
+
+## familia en Getafe Central, 30 min
+  cumplen 5 · casi 5 · binding commute:1 · warnings []
+  top: Villaverde 96, Leganés 95, Getafe 93, Fuenlabrada 92, Parla 91
+  casi: Usera 95 (commute:1), Puente de Vallecas 95 (commute:1), Latina 95 (commute:1), Moratalaz 95 (commute:1), Ciudad Lineal 94 (commute:1)
+  1.ª trayectos: ['46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00', '28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1007.0), ('near:colegio', 'PASS', 6.3), ('commute:1', 'PASS', 27.5)]
+  rc: Sin límite de tiempo hasta Getafe Central (Cercanías) -> +22
+  rc: +150 €/mes -> +0
+  rc: +5 min a pie hasta colegio con primaria -> +0
+
+## familia en un punto cualquiera (lon -3.38, lat 40.49), 45 min
+  cumplen 2 · casi 5 · binding commute:1 · warnings []
+  top: Torrejón de Ardoz 95, Alcalá de Henares 89
+  casi: Puente de Vallecas 96 (commute:1), Moratalaz 96 (commute:1), Ciudad Lineal 96 (commute:1), San Blas-Canillejas 95 (commute:1), Fuencarral-El Pardo 95 (commute:1)
+  1.ª trayectos: ['53 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00', '37 min en transporte público hasta Punto cualquiera, llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 869.0), ('near:colegio', 'PASS', 7.3), ('commute:1', 'PASS', 36.8)]
+  rc: Sin límite de tiempo hasta Punto cualquiera -> +25
+  rc: +150 €/mes -> +0
+  rc: +5 min a pie hasta colegio con primaria -> +0
+
+## teletrabajo total + familia en Getafe, 30 min
+  cumplen 5 · casi 5 · binding commute:1 · warnings []
+  top: Villaverde 100, Parla 100, Leganés 100, Fuenlabrada 100, Getafe 99
+  casi: Usera 98 (commute:1), Móstoles 97 (commute:1), Alcorcón 97 (commute:1), Puente de Vallecas 97 (commute:1), Carabanchel 96 (commute:1)
+  1.ª trayectos: ['28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00']
+  1.ª condiciones: [('budget', 'PASS', 1007.0), ('near:colegio', 'PASS', 6.3), ('commute:1', 'PASS', 27.5)]
+  rc: Sin límite de tiempo hasta Getafe Central (Cercanías) -> +22
+  rc: +150 €/mes -> +0
+  rc: +5 min a pie hasta colegio con primaria -> +0

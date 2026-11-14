@@ -1,0 +1,196 @@
+{
+  "formulario_1440": {
+    "dias_ejemplo": "4",
+    "opciones_dias": [
+      "5 días",
+      "4 días",
+      "3 días",
+      "2 días",
+      "1 día",
+      "Teletrabajo total"
+    ],
+    "ayuda_dias": 1,
+    "recorte_familia_dias": {
+      "alto": 441,
+      "cabe": true
+    },
+    "axe_formulario": [],
+    "desborde_px": 0,
+    "anchors_enviados": [
+      {
+        "kind": "work",
+        "label": "Paseo de la Castellana (Azca)",
+        "lon": -3.693,
+        "lat": 40.45,
+        "days_per_week": 2,
+        "max_minutes": null
+      },
+      {
+        "kind": "family",
+        "label": "Getafe Central (metro)",
+        "lat": 40.30993,
+        "lon": -3.73403,
+        "max_minutes": 30
+      }
+    ],
+    "resultado": {
+      "cumplen": 5,
+      "top": [
+        "Villaverde 98",
+        "Leganés 97",
+        "Getafe 96",
+        "Fuenlabrada 96",
+        "Parla 95"
+      ],
+      "casi": [
+        "Usera (commute:1)",
+        "Puente de Vallecas (commute:1)",
+        "Latina (commute:1)",
+        "Moratalaz (commute:1)",
+        "Carabanchel (commute:1)"
+      ]
+    },
+    "axe_resultados": [],
+    "ayuda_teletrabajo": 1,
+    "limite_trabajo_visible": true,
+    "recorte_teletrabajo": {
+      "alto": 462,
+      "cabe": true
+    },
+    "anchors_teletrabajo": [
+      {
+        "kind": "work",
+        "label": "Paseo de la Castellana (Azca)",
+        "lon": -3.693,
+        "lat": 40.45,
+        "days_per_week": 0,
+        "max_minutes": 45
+      },
+      {
+        "kind": "family",
+        "label": "Getafe Central (metro)",
+        "lat": 40.30993,
+        "lon": -3.73403,
+        "max_minutes": 30
+      }
+    ],
+    "resultado_teletrabajo": {
+      "cumplen": 0,
+      "condicion_que_mas_quita": "commute:1"
+    },
+    "consola": []
+  },
+  "que_falta_1440": {
+    "boton": "Ver las 199 zonas",
+    "aria_expanded_plegada": "false",
+    "enlaces_visibles_plegada": 1,
+    "madrid_toda_la_ciudad": 1,
+    "alto_pagina_plegada": 2487,
+    "axe_plegada": [],
+    "aria_expanded_abierta": "true",
+    "enlaces_abierta": 199,
+    "alto_pagina_abierta": 11917,
+    "axe_abierta": [],
+    "al_escribir_getafe": true,
+    "boton_al_escribir": 0,
+    "desborde_px": 0,
+    "consola": []
+  },
+  "formulario_390": {
+    "dias_ejemplo": "4",
+    "opciones_dias": [
+      "5 días",
+      "4 días",
+      "3 días",
+      "2 días",
+      "1 día",
+      "Teletrabajo total"
+    ],
+    "ayuda_dias": 1,
+    "recorte_familia_dias": {
+      "alto": 620,
+      "cabe": true
+    },
+    "axe_formulario": [],
+    "desborde_px": 0,
+    "anchors_enviados": [
+      {
+        "kind": "work",
+        "label": "Paseo de la Castellana (Azca)",
+        "lon": -3.693,
+        "lat": 40.45,
+        "days_per_week": 2,
+        "max_minutes": null
+      },
+      {
+        "kind": "family",
+        "label": "Getafe Central (metro)",
+        "lat": 40.30993,
+        "lon": -3.73403,
+        "max_minutes": 30
+      }
+    ],
+    "resultado": {
+      "cumplen": 5,
+      "top": [
+        "Villaverde 98",
+        "Leganés 97",
+        "Getafe 96",
+        "Fuenlabrada 96",
+        "Parla 95"
+      ],
+      "casi": [
+        "Usera (commute:1)",
+        "Puente de Vallecas (commute:1)",
+        "Latina (commute:1)",
+        "Moratalaz (commute:1)",
+        "Carabanchel (commute:1)"
+      ]
+    },
+    "axe_resultados": [],
+    "ayuda_teletrabajo": 1,
+    "limite_trabajo_visible": true,
+    "recorte_teletrabajo": {
+      "alto": 641,
+      "cabe": true
+    },
+    "anchors_teletrabajo": [
+      {
+        "kind": "work",
+        "label": "Paseo de la Castellana (Azca)",
+        "lon": -3.693,
+        "lat": 40.45,
+        "days_per_week": 0,
+        "max_minutes": 45
+      },
+      {
+        "kind": "family",
+        "label": "Getafe Central (metro)",
+        "lat": 40.30993,
+        "lon": -3.73403,
+        "max_minutes": 30
+      }
+    ],
+    "resultado_teletrabajo": {
+      "cumplen": 0,
+      "condicion_que_mas_quita": "commute:1"
+    },
+    "consola": []
+  },
+  "que_falta_390": {
+    "boton": "Ver las 199 zonas",
+    "aria_expanded_plegada": "false",
+    "enlaces_visibles_plegada": 1,
+    "madrid_toda_la_ciudad": 1,
+    "alto_pagina_plegada": 5090,
+    "axe_plegada": [],
+    "aria_expanded_abierta": "true",
+    "enlaces_abierta": 199,
+    "alto_pagina_abierta": 14524,
+    "axe_abierta": [],
+    "al_escribir_getafe": true,
+    "boton_al_escribir": 0,
+    "desborde_px": 0,
+    "consola": []
+  }
+}

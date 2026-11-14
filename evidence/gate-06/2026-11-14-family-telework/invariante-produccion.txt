@@ -1,0 +1,6 @@
+local: {"passing": 27, "unknown": 15, "top": [["Latina", 98], ["Moratalaz", 98], ["Ciudad Lineal", 98], ["Puente de Vallecas", 98], ["Fuencarral-El Pardo", 97], ["Usera", 97], ["Carabanchel", 97], ["Hortaleza", 97], ["San Blas-Canillejas", 97], ["Villaverde", 97]], "near": [["Chamartín", 93], ["Salamanca", 93], ["Centro", 93], ["Chamberí", 93], ["Retiro", 93]]}
+prod:  {"passing": 27, "unknown": 15, "top": [["Latina", 98], ["Moratalaz", 98], ["Ciudad Lineal", 98], ["Puente de Vallecas", 98], ["Fuencarral-El Pardo", 97], ["Usera", 97], ["Carabanchel", 97], ["Hortaleza", 97], ["San Blas-Canillejas", 97], ["Villaverde", 97]], "near": [["Chamartín", 93], ["Salamanca", 93], ["Centro", 93], ["Chamberí", 93], ["Retiro", 93]]}
+summary equal: True
+methodology: fit-0.8 vs fit-0.7
+data equal except methodology_version: True
+barrios: 21 districts, differing: none

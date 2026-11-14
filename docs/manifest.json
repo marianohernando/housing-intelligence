@@ -1,6 +1,6 @@
 {
-  "version": "0.5.59",
-  "updated": "2026-11-14T18:07:50.073091+00:00",
+  "version": "0.5.60",
+  "updated": "2026-11-14T18:22:27.664094+00:00",
   "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
@@ -8,8 +8,8 @@
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "5e69f6b307b2ec5ff4d9f1652f3469acf3ff30fdde28610e6f24ae2aa668c36c",
-      "bytes": 181653
+      "sha256": "731517bb1a31a3812668b00da13c559d50343d84099d91ad483c1cb58fdd44b0",
+      "bytes": 188595
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
