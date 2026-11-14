@@ -11,12 +11,15 @@ from sqlalchemy import Engine
 from hi_contracts.catalog.enums import Priority
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
+    AirQualityHourlyPipeline,
+    AirQualityZonesPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
     FacilityDirectoryPipeline,
     GtfsFeedPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    NoiseRasterPipeline,
     OsmParksPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
@@ -43,11 +46,16 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     run_admin_boundaries,
 )
 from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
+from hi_ingestion.pipelines.air_quality.run import (
+    run_air_quality_hourly_pipeline,
+    run_air_quality_zones_pipeline,
+)
 from hi_ingestion.pipelines.common import EVIDENCE_GATE_01, RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
+from hi_ingestion.pipelines.noise_raster.run import run_noise_raster_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
@@ -187,6 +195,19 @@ def _run_one(
     if isinstance(spec, StationTopologyPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_topology_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, NoiseRasterPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_noise_raster_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, AirQualityHourlyPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_air_quality_hourly_pipeline(
+            engine, catalog, spec, source, evidence_root=evidence_root
+        )
+    if isinstance(spec, AirQualityZonesPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_air_quality_zones_pipeline(
+            engine, catalog, spec, source, evidence_root=evidence_root
+        )
     typer.echo(f"No pipeline registered for {dataset_id}", err=True)
     raise typer.Exit(2)
 

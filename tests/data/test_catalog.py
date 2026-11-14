@@ -70,6 +70,17 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
         elif pipeline.kind == "facility_directory":
             assert pipeline.scope_values, dataset_id
+        elif pipeline.kind == "noise_raster":  # D-237: read by the street-noise features
+            read_by = [
+                (f.formula.model_extra or {}).get("raster_dataset")
+                for f in catalog.features.values()
+            ]
+            assert dataset_id in read_by and pipeline.layers, dataset_id
+        elif pipeline.kind in ("air_quality_hourly", "air_quality_zones"):  # D-237: air feature
+            formulas = [f.formula.model_extra or {} for f in catalog.features.values()]
+            read_by = [d for f in formulas for d in f.get("means_datasets", [])]
+            read_by += [f.get("zones_dataset") for f in formulas]
+            assert dataset_id in read_by, dataset_id
         elif pipeline.kind == "station_topology":  # D-223: read by a GTFS feed that names it
             linked = [
                 p.station_accessibility.dataset_id
@@ -379,6 +390,44 @@ def test_safety_is_context_never_a_score(catalog: Catalog) -> None:
     for spec in safety:
         assert spec.fit is None, spec.feature_id
         assert spec.gap_row is None, spec.feature_id
+
+
+ENVIRONMENT_CONTEXT = {
+    "pct_calle_ruido_dia",
+    "pct_calle_ruido_noche",
+    "no2_media_anual",
+    "min_a_pie_aparcamiento_publico",
+}
+
+
+def test_the_zone_surroundings_are_context_never_a_score(catalog: Catalog) -> None:
+    """D-237: noise, air and car parks do not score in the search, rank zones or enter «Qué
+    falta»: no `fit` (search.indicators_by_zone never reads them) and no `gap_row`."""
+    for feature_id in ENVIRONMENT_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None and spec.gap_row is None and not spec.models, feature_id
+        assert any("no puntúa" in text for text in spec.limitations), feature_id
+
+
+def test_air_reads_the_cm_network_and_its_zones(catalog: Catalog) -> None:
+    """D-237: NO2 of 2025 from the CM network (with its zones) and the Ayuntamiento's for the
+    capital; a station counts with 85 % of valid hours (Directive 2008/50/EC, annex I)."""
+    spec = catalog.features["no2_media_anual"]
+    formula = spec.formula.model_extra or {}
+    assert formula["means_datasets"] == [
+        "cm_calidad_aire_horario_2025",
+        "ayto_calidad_aire_horario",
+    ]
+    assert formula["zones_dataset"] == "cm_calidad_aire_zonas"
+    assert formula["min_capture"] == 0.85 and set(formula["levels"]) == {"distrito"}
+    for dataset_id in ("cm_calidad_aire_horario_2025", "cm_calidad_aire_estaciones"):
+        assert catalog.datasets[dataset_id].source_id == "comunidad_madrid_ckan"
+    for dataset_id in formula["means_datasets"]:
+        hourly = catalog.pipelines[dataset_id]
+        assert hourly.kind == "air_quality_hourly"
+        assert (hourly.magnitude, hourly.year) == (8, 2025)
+    sources = {s.dataset_id for s in spec.sources}
+    assert {"cm_calidad_aire_estaciones", "ayto_calidad_aire_estaciones"} <= sources
 
 
 def test_perceived_safety_is_the_residents_view_of_madrid_only(catalog: Catalog) -> None:

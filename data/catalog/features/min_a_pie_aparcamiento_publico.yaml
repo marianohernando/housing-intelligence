@@ -1,0 +1,37 @@
+feature_id: min_a_pie_aparcamiento_publico
+version: 1
+human_name: "Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona)"
+domain: transport
+type: derived
+unit: min
+direction: lower_is_better
+geo_level: municipio
+time_semantics: current
+sources:
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: crtm_aparcamientos_disuasion, role: primary}
+  - {dataset_id: ayto_aparcamientos_publicos, role: primary}
+  - {dataset_id: ayto_aparcamientos_residentes, role: primary}
+formula:
+  method: network_walk_time
+  destination_category: other
+  # Car parks anyone can use. Those for residents only are left out: a space is awarded by
+  # waiting list (D-237).
+  subcategories: ["Aparcamiento público", "Aparcamiento mixto", "Aparcamiento disuasorio"]
+  statistic: median_minutes
+  speed_kmh: 4.0
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  min_street_m: 300  # less origin street than this -> confidence 0.5 at most
+  levels: {distrito: {}, barrio: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [reachable_street_share, min_street_m]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, explicit_null_without_streets, unknown_never_near, context_only]
+limitations:
+  - "Solo los aparcamientos que se publican como datos abiertos: los públicos, mixtos y disuasorios del Ayuntamiento de Madrid y los de disuasión del Consorcio Regional de Transportes junto a estaciones. No están los aparcamientos privados ni los municipales de otros ayuntamientos: muchos minutos no significan que no haya dónde aparcar."
+  - "No dice nada de lo fácil que es aparcar en la calle: no hay un dato abierto fiable que lo mida."
+  - "Los aparcamientos solo para residentes no cuentan: una plaza se adjudica por lista de espera."
+  - "Velocidad de 4 km/h para todo el mundo, la del estudio «El Madrid de los 15 minutos» del Ayuntamiento."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta»."

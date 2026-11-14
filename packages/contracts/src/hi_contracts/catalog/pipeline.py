@@ -295,6 +295,17 @@ class FacilityDirectoryPipeline(BaseModel):
         return []
 
 
+class SubcategoryPrefixes(BaseModel):
+    """The kind of place is the start of a text column: «Aparcamiento mixto. Alcántara» is an
+    «Aparcamiento mixto» (D-237). The first prefix that matches wins, ignoring case; a row that
+    starts with none of them is left out and counted."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    column: str
+    prefixes: dict[str, str] = Field(min_length=1, description="prefix -> subcategory")
+
+
 class PointsPipeline(BaseModel):
     """Point facilities with projected coordinates -> place_master."""
 
@@ -311,8 +322,12 @@ class PointsPipeline(BaseModel):
     name_template: str | None = None
     subcategory_column: str | None = None
     subcategory_value: str | None = None  # registers with a single kind of place
+    subcategory_prefixes: SubcategoryPrefixes | None = None
     # Only rows whose column values are in the allowlist enter the product (all filters apply).
     row_filters: dict[str, list[str]] = Field(default_factory=dict[str, list[str]])
+    # column -> regular expressions: a row whose value matches one is left out and counted
+    # (a place the source marks as closed, or one another register already publishes).
+    exclude_patterns: dict[str, list[str]] = Field(default_factory=dict[str, list[str]])
     x_column: str
     y_column: str
     crs: str = Field(default="EPSG:25830", pattern=r"^EPSG:\d{4,5}$")
@@ -356,11 +371,20 @@ class PointsPipeline(BaseModel):
         if self.status_column and not self.active_values:
             msg = f"{self.dataset_id}: status_column requires active_values"
             raise ValueError(msg)
-        if (self.subcategory_column is None) == (self.subcategory_value is None):
+        declared = [self.subcategory_column, self.subcategory_value, self.subcategory_prefixes]
+        if sum(d is not None for d in declared) != 1:
             msg = (
-                f"{self.dataset_id}: declare exactly one of subcategory_column or subcategory_value"
+                f"{self.dataset_id}: declare exactly one of subcategory_column, "
+                "subcategory_value or subcategory_prefixes"
             )
             raise ValueError(msg)
+        for column, patterns in self.exclude_patterns.items():
+            for pattern in patterns:
+                try:
+                    re.compile(pattern)
+                except re.error as exc:
+                    msg = f"{self.dataset_id}: invalid exclude pattern for {column}: {exc}"
+                    raise ValueError(msg) from exc
         if self.name_column and self.name_template:
             msg = f"{self.dataset_id}: declare name_column or name_template, not both"
             raise ValueError(msg)
@@ -518,6 +542,77 @@ class OsmParksPipeline(BaseModel):
         return []
 
 
+class NoiseRasterPipeline(BaseModel):
+    """A strategic noise map published as one GeoTIFF per index inside a ZIP -> a compact grid
+    in Silver only (D-237). Nothing reaches the database but the indicators computed on it: the
+    share of the streets where people live above a level, by zone.
+
+    `layers` names the file of each index kept (e.g. day: Madrid_Ld_2021.tif). Every layer must
+    share the declared CRS, pixel size and grid; `nodata` marks the cells without a level.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["noise_raster"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    layers: dict[Annotated[str, Field(pattern=r"^[a-z_]+$")], str] = Field(min_length=1)
+    crs: str = Field(pattern=r"^EPSG:\d{4,5}$")
+    pixel_m: float = Field(gt=0)
+    nodata: float = 0.0
+    reference_year: int = Field(ge=1990, le=2100)
+    # Plausible levels in dB: outside them the file is not a noise map (critical check)
+    max_db: float = Field(default=110.0, gt=0)
+    min_cells_with_level: int = Field(gt=0, description="fewer -> the raster is cut or empty")
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
+class AirQualityHourlyPipeline(BaseModel):
+    """Hourly levels of an air quality network (one row per station, pollutant and day, with 24
+    values and 24 validation flags) -> the annual mean of one pollutant per station, in Silver
+    only (D-237). The CM and the Ayuntamiento de Madrid publish the same layout.
+
+    Only the hours flagged `valid_flag` count. `capture` is the share of the year's hours with a
+    valid value: Directive 2008/50/EC asks for 90 % minus calibration and maintenance.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["air_quality_hourly"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    magnitude: int = Field(gt=0, description="pollutant code of the network (8 = NO2)")
+    year: int = Field(ge=2000, le=2100)
+    valid_flag: str = "V"
+    min_stations: int = Field(gt=0, description="fewer stations with the pollutant -> cut")
+    max_mean: float = Field(gt=0, description="µg/m³; a higher annual mean is not plausible")
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
+class AirQualityZonesPipeline(BaseModel):
+    """The air quality zones of the region (RD 102/2011): each municipio, by name, in one zone
+    -> a municipio code to zone table in Silver only (D-237). Names are matched to the official
+    geography with the same key a person types (no case, accents or punctuation)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["air_quality_zones"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    zone_code_column: str
+    zone_name_column: str
+    municipio_name_column: str
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
@@ -529,6 +624,9 @@ PipelineSpec = Annotated[
     | OsmWalkNetworkPipeline
     | OsmParksPipeline
     | FacilityDirectoryPipeline
-    | StationTopologyPipeline,
+    | StationTopologyPipeline
+    | NoiseRasterPipeline
+    | AirQualityHourlyPipeline
+    | AirQualityZonesPipeline,
     Field(discriminator="kind"),
 ]

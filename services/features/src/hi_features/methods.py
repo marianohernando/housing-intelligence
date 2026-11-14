@@ -27,6 +27,7 @@ RESULT_COLUMNS = [
     "numerator",  # counts behind a per-population ratio (GAP-001 significance, D-213)
     "denominator",
     "adjustment",  # how a published value was adjusted (D-228: rent of new leases)
+    "detail",  # what a reader needs to cite the value (D-237: the station it comes from)
 ]
 REGION_LEVEL = "ccaa"
 REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
@@ -634,3 +635,97 @@ def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -
     if not missing:
         return result
     return pd.concat([result, _result(missing)], ignore_index=True)
+
+
+@dataclass(frozen=True)
+class StreetShareSettings:
+    above: float  # the level a street must exceed to count
+    min_covered_share: float  # below this share of street with a level the zone is unknown
+    base_confidence: float
+    min_street_m: float  # zones with less origin street keep confidence 0.5 at most
+
+
+def street_share_above(
+    zone_of_node: NDArray[np.str_],
+    weight: NDArray[np.float64],
+    level: NDArray[np.float64],
+    zones: Sequence[str],
+    period: Any,
+    settings: StreetShareSettings,
+) -> pd.DataFrame:
+    """Per zone: % of the street where people live whose level is above `settings.above`
+    (D-237: the noise map read at each street node). `level` is NaN where the map gives none;
+    those metres leave the percentage and lower the confidence. A zone without origin streets,
+    or with too little of them on the map, is SOURCE_NO_COVERAGE: never 0."""
+    index = {code: i for i, code in enumerate(zones)}
+    zone = np.array([index.get(str(c), -1) for c in zone_of_node], dtype=np.int64)
+    placed = zone >= 0
+    known = placed & ~np.isnan(level)
+    above = known & (np.nan_to_num(level, nan=-np.inf) > settings.above)
+    n = len(zones)
+    street_m = np.bincount(zone[placed], weights=weight[placed], minlength=n)
+    covered_m = np.bincount(zone[known], weights=weight[known], minlength=n)
+    above_m = np.bincount(zone[above], weights=weight[above], minlength=n)
+    rows: list[dict[str, Any]] = []
+    for i, code in enumerate(zones):
+        covered = covered_m[i] / street_m[i] if street_m[i] > 0 else 0.0
+        if covered_m[i] <= 0 or covered < settings.min_covered_share:
+            rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        confidence = settings.base_confidence * covered
+        if street_m[i] < settings.min_street_m:
+            confidence = min(confidence, 0.5)
+        rows.append(_ok(code, period, 100.0 * above_m[i] / covered_m[i], float(confidence)))
+    return _result(rows)
+
+
+@dataclass(frozen=True)
+class StationSettings:
+    min_capture: float  # share of the year's hours a station needs for its annual mean to count
+    own_confidence: float  # the zone has the station
+    nearest_confidence: float  # the value is another zone's station
+
+
+STATION_COLUMNS = ["code", "name", "zone", "air_zone", "x", "y", "mean", "capture"]
+
+
+def _nearest(candidates: pd.DataFrame, x: float, y: float) -> tuple[dict[str, Any], float]:
+    distance = np.hypot(candidates["x"].to_numpy() - x, candidates["y"].to_numpy() - y)
+    i = int(np.argmin(distance))
+    return candidates.iloc[i].to_dict(), float(distance[i])
+
+
+def nearest_station_value(
+    stations: pd.DataFrame,
+    centres: Mapping[str, tuple[float, float]],
+    zones: Sequence[str],
+    air_zone_of: Mapping[str, str],
+    period: Any,
+    settings: StationSettings,
+) -> pd.DataFrame:
+    """D-237: each zone takes the annual mean of one monitoring station. Its own station when it
+    has one (the nearest to its centre if several); otherwise the nearest station of the same
+    air quality zone, so a village of the sierra never takes an urban traffic station's value.
+    `stations` has STATION_COLUMNS: `zone` is the zone the station lies in at this level and
+    `air_zone` the air quality zone of its municipio. `centres` are projected metres. A station
+    without enough valid hours does not count; a zone without a centre or a candidate is
+    SOURCE_NO_COVERAGE, never 0. `detail` names the station, as the value must always say."""
+    valid = stations.loc[stations["mean"].notna() & (stations["capture"] >= settings.min_capture)]
+    rows: list[dict[str, Any]] = []
+    for code in zones:
+        centre = centres.get(code)
+        own = valid.loc[valid["zone"] == code]
+        candidates = own if len(own) else valid.loc[valid["air_zone"] == air_zone_of.get(code)]
+        if centre is None or candidates.empty:
+            rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        station, metres = _nearest(candidates, *centre)
+        confidence = settings.own_confidence if len(own) else settings.nearest_confidence
+        detail = {
+            "station": str(station["name"]),
+            "station_code": str(station["code"]),
+            "own": bool(len(own)),
+            "distance_km": round(metres / 1000, 1),
+        }
+        rows.append(_ok(code, period, float(station["mean"]), confidence) | {"detail": detail})
+    return _result(rows)

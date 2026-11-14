@@ -9,6 +9,7 @@ regional reference only comes from the base level.
 from collections.abc import Callable, Mapping
 from typing import Any
 
+import numpy as np
 import pandas as pd
 from sqlalchemy import Engine, delete, insert
 from sqlalchemy.orm import Session
@@ -16,7 +17,7 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import fca, loaders, methods, walk
+from hi_features import air, fca, loaders, methods, noise, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
@@ -156,6 +157,53 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
     )
 
 
+def _street_share_above(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-237: % of the street where people live above a noise level, by zone. Only the zones
+    under `coverage_prefix` (the municipio the map covers) get a value."""
+    version = walk.network_version(engine)
+    origins = walk.origins(engine, version.path, tuple(f["origin_highways"]))
+    network = walk.routable(version.path).network
+    grid = noise.grid(noise.grid_path(engine, f["raster_dataset"]))
+    levels = grid.levels_at(f["layer"], network.node_x[origins.node], network.node_y[origins.node])
+    zone = walk.zone_of_node(origins.section, level, walk.section_parents(engine, level))
+    prefix = str(f["coverage_prefix"])
+    covered = np.array([str(z).startswith(prefix) for z in zone.tolist()])
+    settings = methods.StreetShareSettings(
+        above=float(f["above"]),
+        min_covered_share=float(f["min_covered_share"]),
+        base_confidence=float(f.get("confidence", 1.0)),
+        min_street_m=float(f["min_street_m"]),
+    )
+    return methods.street_share_above(
+        zone,
+        origins.weight,
+        np.where(covered, levels, np.nan),
+        walk.zone_codes(engine, level),
+        noise.reference_period(grid),
+        settings,
+    )
+
+
+def _nearest_station_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-237: the annual mean of the zone's own monitoring station, or of the nearest one in
+    its air quality zone, naming the station."""
+    zones = air.air_zones(engine, f["zones_dataset"])
+    codes = walk.zone_codes(engine, level)
+    settings = methods.StationSettings(
+        min_capture=float(f["min_capture"]),
+        own_confidence=float(f["own_confidence"]),
+        nearest_confidence=float(f["nearest_confidence"]),
+    )
+    return methods.nearest_station_value(
+        air.stations(engine, f, level, zones),
+        air.centres(engine, f["origin_highways"], level),
+        codes,
+        air.air_zone_of(codes, zones),
+        air.reference_period(engine, f["means_datasets"]),
+        settings,
+    )
+
+
 def _two_step_fca(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """D-217: capacity reachable on foot per person (2SFCA), by zone."""
     return fca.fca_feature(engine, f, level, walk.network_version(engine).observed)
@@ -172,6 +220,8 @@ METHODS: dict[str, Method] = {
     "not_published": _not_published,
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
+    "street_share_above": _street_share_above,
+    "nearest_station_mean": _nearest_station_mean,
 }
 
 
@@ -284,6 +334,12 @@ def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
     return {"new_contracts": adjustment} if isinstance(adjustment, dict) else {}
 
 
+def _detail(record: dict[str, Any]) -> dict[str, Any]:
+    """What the value cites (D-237: the station it comes from), served with it by the API."""
+    detail = record.get("detail")
+    return {"detail": detail} if isinstance(detail, dict) else {}
+
+
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
     versions = versions_by_pass(
         spec, loaders.last_valid_versions(engine, [s.dataset_id for s in spec.sources])
@@ -305,7 +361,8 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
                 "method": effective_method(spec, _level(spec, r)),
             }
             | _counts(r)
-            | _adjustment(r),
+            | _adjustment(r)
+            | _detail(r),
         }
         for r in records
     ]
