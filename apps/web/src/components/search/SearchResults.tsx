@@ -99,7 +99,7 @@ function NearMisses({ result }: { result: SearchResult }) {
         <ul className={styles.ranking}>
           {near.map((zone) => (
             <li key={zoneKeyOf(zone.zone)}>
-              <ZoneRow zone={zone} fails={failedLabels(zone.failed_constraints, labels)} />
+              <ZoneRow zone={zone} fails={failedLabels(zone.failed_constraints, labels, zone.constraints)} />
             </li>
           ))}
         </ul>

@@ -3,7 +3,7 @@
  * fit-0.1, D-215). The web never recomputes the fit: it joins the API's figures to the map, the
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
-import type { RankedZone, RealityCheck, Relaxation, SearchResult, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 
 import type { ZoneCollection, ZoneGeometry, ZoneProperties } from "./map/zones";
 
@@ -76,11 +76,22 @@ export function constraintLabels(result: Pick<SearchResult, "results" | "near_mi
   return new Map(ranked.flatMap((z) => z.constraints.map((c) => [c.constraint_id, c.label] as const)));
 }
 
-/** The conditions a zone fails, by name; unnamed ones are left out. */
-export function failedLabels(failed: readonly string[] | undefined, labels: ReadonlyMap<string, string>): string[] {
+/**
+ * The conditions a zone fails, by name; unnamed ones are left out. With the zone's own
+ * `constraints`, a commute that is too long says how long it is (trabajo.tarda): «… de 45 min como
+ * mucho (tardarías 52 min)». Rounded up, so it never reads as the limit itself.
+ */
+export function failedLabels(
+  failed: readonly string[] | undefined,
+  labels: ReadonlyMap<string, string>,
+  constraints: readonly Pick<ConstraintCheck, "constraint_id" | "status" | "value">[] = [],
+): string[] {
   return (failed ?? []).flatMap((id) => {
     const label = labels.get(id);
-    return label ? [label] : [];
+    if (!label) return [];
+    const own = constraints.find((c) => c.constraint_id === id);
+    const isCommute = id.startsWith("commute:") && own?.status === "FAIL" && typeof own.value === "number";
+    return [isCommute ? `${label} (tardarías ${Math.ceil(own.value as number)} min)` : label];
   });
 }
 

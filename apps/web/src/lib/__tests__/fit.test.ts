@@ -133,6 +133,16 @@ describe("zoneFit and the names of the conditions", () => {
     expect(failedLabels(undefined, labels)).toEqual([]);
   });
 
+  it("says how long a commute that is too long takes, rounded up, and only for the commute", () => {
+    const labels = new Map([["commute:0", "Trayecto a Azca de 45 min como mucho"], ["budget", "Alquiler hasta 1.500 €/mes"]]);
+    const own = [
+      { constraint_id: "commute:0", status: "FAIL", value: 45.6 },
+      { constraint_id: "budget", status: "FAIL", value: 1700 },
+    ] as const;
+    expect(failedLabels(["commute:0", "budget"], labels, own)).toEqual(["Trayecto a Azca de 45 min como mucho (tardarías 46 min)", "Alquiler hasta 1.500 €/mes"]);
+    expect(failedLabels(["commute:0"], labels)).toEqual(["Trayecto a Azca de 45 min como mucho"]);
+  });
+
   it("keys zones like the map does", () => {
     expect(zoneKeyOf({ level: "distrito", code: "2807905" })).toBe("distrito/2807905");
   });
