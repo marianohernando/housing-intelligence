@@ -162,7 +162,7 @@ export type Rank = number;
  */
 export type NearMisses = RankedZone[];
 /**
- * constraint_id that removes the most zones
+ * constraint_id that the most zones FAIL; None when no zone fails any. A zone where a condition is UNKNOWN is not counted here (D-234)
  */
 export type BindingConstraint = string | null;
 export type AddedZones = number;
@@ -372,6 +372,7 @@ export interface GapHighlight {
 export interface RealityCheck {
   binding_constraint?: BindingConstraint;
   relaxations: Relaxations;
+  unknown_by_constraint?: UnknownByConstraint;
   zones_evaluated: ZonesEvaluated;
   zones_passing: ZonesPassing;
   zones_unknown: ZonesUnknown;
@@ -435,6 +436,12 @@ export interface NearbyNeed {
   max_walk_minutes?: MaxWalkMinutes;
   need: NeedKey;
   required?: Required;
+}
+/**
+ * Among the `zones_unknown` zones, how many have each condition UNKNOWN (constraint_id -> zones): what is missing is data, so relaxing it is never offered
+ */
+export interface UnknownByConstraint {
+  [k: string]: number | undefined;
 }
 export interface Meta {
   api_version?: ApiVersion;

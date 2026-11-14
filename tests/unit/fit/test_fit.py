@@ -661,3 +661,91 @@ def test_an_unknown_rent_gives_the_reason_the_data_has_for_it() -> None:
     plain = evaluate(family(), zone("m", rent=None))
     generic = next(c for c in plain.constraints if c.constraint_id == "budget")
     assert generic.explanation.startswith("Sin datos de alquiler para esta zona")
+
+
+def _estimated(code: str, price: float | None, level: TerritoryLevel) -> ZoneData:
+    base = zone(code)
+    return replace(
+        base,
+        zone=base.zone.model_copy(update={"level": level, "municipio_name": "Madrid"}),
+        price=_value("precio_compra_estimado_m2", price, 0.5),
+        price_estimated=price is not None,
+    )
+
+
+@pytest.mark.parametrize(
+    ("level", "words"),
+    [(TerritoryLevel.DISTRITO, "del distrito"), (TerritoryLevel.BARRIO, "del barrio")],
+)
+def test_an_estimated_price_says_it_is_an_estimate_in_the_fact_and_the_condition(
+    level: TerritoryLevel, words: str
+) -> None:
+    """D-234: a district or barrio of Madrid buys with an estimate; every text says so."""
+    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=500_000), anchors=[])
+    fit = evaluate(scenario, _estimated("2807906", 6051.0, level))
+    said = f"precio estimado: valor tasado de Madrid repartido según el valor catastral {words}"
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.PASS and budget.confidence == 0.5
+    assert said in budget.explanation
+    cost = next(f for f in fit.facts if f.topic is FactTopic.COSTE)
+    assert said in cost.text and cost.confidence == 0.5
+    assert "Ministerio de Vivienda y Catastro vía Ayuntamiento" in cost.text
+    assert cost.indicator is not None
+    assert cost.indicator.feature_id == "precio_compra_estimado_m2"
+    assert fit.cost_eur == 466_000  # 6.051 €/m² × 77 m², to thousands
+
+
+def test_a_published_price_never_reads_as_an_estimate() -> None:
+    scenario = family(budget=BUY_300K, anchors=[])
+    cost = next(
+        f for f in evaluate(scenario, zone("1", price=3000.0)).facts if f.topic is FactTopic.COSTE
+    )
+    assert "valor tasado medio de la vivienda libre" in cost.text
+    assert "estimado" not in cost.text
+
+
+def test_a_district_without_cadastral_value_stays_unknown() -> None:
+    scenario = family(budget=BUY_300K, anchors=[])
+    fit = evaluate(scenario, _estimated("2807906", None, TerritoryLevel.DISTRITO))
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.UNKNOWN and not fit.passes_all
+
+
+def test_reality_check_never_offers_to_relax_a_condition_that_is_only_unknown() -> None:
+    """D-234: every zone left out by the budget has no price (UNKNOWN), none FAILS it: more
+    budget adds nothing, so it is not offered and the budget is not what limits the search."""
+    scenario = family(budget=BUY_300K, anchors=[], nearby=[])
+    zones = [zone("1", price=3000.0), zone("2", price=None), zone("3", price=None)]
+    check = run_search(scenario, zones).reality_check
+    assert check.zones_passing == 1 and check.zones_unknown == 2
+    assert check.binding_constraint is None
+    assert [r.constraint_id for r in check.relaxations] == []
+    assert check.unknown_by_constraint == {"budget": 2}
+
+
+def test_reality_check_blames_the_condition_that_fails_not_the_one_without_data() -> None:
+    """Two zones without price (UNKNOWN), two whose school is too far and one over budget
+    (FAIL): the school limits, and more budget is offered because a zone fails it."""
+    scenario = family(budget=BUY_300K, anchors=[])
+    zones = [
+        zone("1", price=3000.0, colegio=14.0),
+        zone("2", price=None),
+        zone("3", price=None),
+        zone("4", price=4200.0),
+        zone("5", price=3000.0, colegio=14.0),
+    ]
+    check = run_search(scenario, zones).reality_check
+    assert check.binding_constraint == "near:colegio"
+    assert check.unknown_by_constraint == {"budget": 2}
+    by_id = {r.constraint_id: r for r in check.relaxations}
+    assert by_id["near:colegio"].added_zones == 2
+    assert by_id["budget"].label == "+30.000 €" and by_id["budget"].added_zones == 1
+
+
+def test_an_unknown_trip_limit_is_still_offered_because_dropping_it_adds_zones() -> None:
+    """Removing a time limit takes the condition away, so it does add the zones without a trip."""
+    office = CASTELLANA.model_copy(update={"max_minutes": 30})
+    check = run_search(family(anchors=[office]), [zone("1"), zone("2")]).reality_check
+    assert check.binding_constraint is None
+    assert check.unknown_by_constraint == {"commute:0": 2}
+    assert [(r.constraint_id, r.added_zones) for r in check.relaxations] == [("commute:0", 2)]

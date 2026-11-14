@@ -786,7 +786,7 @@
             }
           ],
           "default": null,
-          "description": "constraint_id that removes the most zones",
+          "description": "constraint_id that the most zones FAIL; None when no zone fails any. A zone where a condition is UNKNOWN is not counted here (D-234)",
           "title": "Binding Constraint"
         },
         "relaxations": {
@@ -796,6 +796,14 @@
           },
           "title": "Relaxations",
           "type": "array"
+        },
+        "unknown_by_constraint": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Among the `zones_unknown` zones, how many have each condition UNKNOWN (constraint_id -> zones): what is missing is data, so relaxing it is never offered",
+          "title": "Unknown By Constraint",
+          "type": "object"
         },
         "zones_evaluated": {
           "minimum": 0,

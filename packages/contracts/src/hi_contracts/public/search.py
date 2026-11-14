@@ -140,7 +140,14 @@ class RealityCheck(BaseModel):
     zones_passing: int = Field(ge=0, description="Every constraint PASS")
     zones_unknown: int = Field(ge=0, description="No FAIL but some UNKNOWN: not counted as passing")
     binding_constraint: str | None = Field(
-        default=None, description="constraint_id that removes the most zones"
+        default=None,
+        description="constraint_id that the most zones FAIL; None when no zone fails any. A "
+        "zone where a condition is UNKNOWN is not counted here (D-234)",
+    )
+    unknown_by_constraint: dict[str, int] = Field(
+        default_factory=dict[str, int],
+        description="Among the `zones_unknown` zones, how many have each condition UNKNOWN "
+        "(constraint_id -> zones): what is missing is data, so relaxing it is never offered",
     )
     relaxations: list[Relaxation] = Field(description="Sorted by added_zones, largest first")
 
