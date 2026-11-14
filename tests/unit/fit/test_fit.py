@@ -29,8 +29,10 @@ from hi_contracts.public import (
     ScenarioState,
     ZoneRef,
 )
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_domain.affordability import FloorArea
 from hi_domain.fit import (
+    EVERYDAY_NEEDS,
     FEW_DAYS_WEIGHT,
     MAX_FACTS,
     Commute,
@@ -520,6 +522,26 @@ def test_a_zone_without_walking_data_goes_after_the_ties_that_have_it() -> None:
     unknown = ZoneData(zone=zone("28001").zone, rent=zone("28001").rent)
     assert everyday_walk(unknown) is None
     assert _codes(PLENTY, [unknown, served("28002", farmacia=40.0)]) == ["28002", "28001"]
+
+
+def test_leisure_minutes_never_break_a_tie() -> None:
+    """D-236 on D-239: two tied zones that only differ in leisure keep the order they have
+    without it. Leisure counts only when the person marks «Ocio», never in the tie-break."""
+    plain = [served("28001"), served("28002")]
+    bars_in_the_second = [plain[0], replace(plain[1], walk={**plain[1].walk, **_bars(1.0)})]
+    bars_in_the_first = [replace(plain[0], walk={**plain[0].walk, **_bars(90.0)}), plain[1]]
+    expected = _codes(PLENTY, plain)
+    assert _codes(PLENTY, bars_in_the_second) == expected
+    assert _codes(PLENTY, bars_in_the_first) == expected
+    assert set(EVERYDAY_NEEDS).isdisjoint(LEISURE_NEEDS)
+    assert set(EVERYDAY_NEEDS) | set(LEISURE_NEEDS) == set(NeedKey)  # every need is classed
+
+
+def _bars(minutes: float) -> dict[NeedKey, IndicatorValue]:
+    return {
+        need: _value(f"min_a_pie_{need.value}", minutes)
+        for need in (NeedKey.BARES, NeedKey.RESTAURANTES, NeedKey.GIMNASIOS, NeedKey.CULTURA)
+    }
 
 
 def test_the_tie_break_never_outranks_a_better_fit_however_small() -> None:

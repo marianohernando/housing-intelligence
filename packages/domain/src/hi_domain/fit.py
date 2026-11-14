@@ -152,8 +152,16 @@ NO_DATA_PRIORITY: dict[PriorityKey, tuple[FactTopic, str]] = {
         "cada zona)",
     ),
 }
-# D-239: what breaks an exact tie of the fit, every service measured on foot (marked or not).
-EVERYDAY_NEEDS = tuple(NeedKey)
+# D-239: what breaks an exact tie of the fit, the six everyday services measured on foot (marked
+# or not). Never the leisure groups (D-236): they only count when the person marks «Ocio».
+EVERYDAY_NEEDS = (
+    NeedKey.ESCUELA_INFANTIL,
+    NeedKey.COLEGIO,
+    NeedKey.CENTRO_SALUD,
+    NeedKey.FARMACIA,
+    NeedKey.MAYORES,
+    NeedKey.TRANSPORTE,
+)
 CONTEXT_NEEDS = (NeedKey.TRANSPORTE, NeedKey.CENTRO_SALUD, NeedKey.COLEGIO, NeedKey.FARMACIA)
 MIN_FACTS, MAX_FACTS = 3, 5
 
