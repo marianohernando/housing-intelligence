@@ -16,12 +16,15 @@ from hi_contracts.public import (
     GapMethod,
     GapRow,
     GapRowMap,
+    NeedKey,
+    PriorityKey,
     RealityCheck,
     ScenarioState,
     SearchResult,
     ZoneGapList,
 )
 from hi_contracts.public.places import PlaceCollection
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.catalog.provenance import dataset_ref, is_cm_open_data
 
@@ -127,6 +130,36 @@ def test_a_place_can_be_one_never_gone_to_and_of_family_or_friends() -> None:
         {"anchors": [place | {"days_per_week": 0}, place | {"kind": "family"}]}
     )
     assert [(a.kind, a.days_per_week) for a in scenario.anchors] == [("work", 0), ("family", 5)]
+
+
+def test_leisure_is_additive_and_a_scenario_without_it_reads_the_same() -> None:
+    """D-236: four leisure needs and the «ocio» priority join the enums; nothing else changes,
+    so a scenario written before them validates to the same state and serialises the same."""
+    old = {
+        "schema_version": 2,
+        "budget": {"kind": "rent", "amount_eur": 1500},
+        "household": {"adults": 2, "minors": 2, "minor_ages": [4, 8], "seniors_in_care": 0},
+        "nearby": [{"need": "colegio", "max_walk_minutes": 10, "required": True}],
+        "priorities": ["colegios", "transporte", "salud"],
+    }
+    scenario = ScenarioState.model_validate(old)
+    dumped = scenario.model_dump(mode="json")
+    assert {k: dumped[k] for k in old} == old
+    assert set(dumped) == {*old, "min_floor_area_m2", "anchors"}
+    everything = ScenarioState.model_validate(
+        {
+            "nearby": [{"need": need.value} for need in NeedKey],
+            "priorities": [priority.value for priority in PriorityKey],
+        }
+    )
+    assert len(everything.nearby) == 10
+    assert everything.priorities[-1] is PriorityKey.OCIO
+    assert LEISURE_NEEDS == (
+        NeedKey.BARES,
+        NeedKey.RESTAURANTES,
+        NeedKey.GIMNASIOS,
+        NeedKey.CINES_TEATROS,
+    )
 
 
 def test_default_scenario_and_household_size() -> None:
