@@ -49,7 +49,9 @@ Pareja (2 adultos), sin «Me importa» ni servicios a pie.
 
 ## Validación frente a precios de mercado
 
-Referencia: precios de oferta por distrito del informe mensual de idealista (artículo `idealista.com/news/node/909039`, consultado el 14 nov 2026; trae 12 de los 21 distritos y 6.458 €/m² para la ciudad). Es un portal privado de anuncios: solo se usa para validar, nunca como dato.
+Referencia: precios de oferta por distrito de septiembre de 2026, del artículo de idealista «Así está el precio de la vivienda en Madrid en septiembre de 2026: cifras y barrios más caros» (https://www.idealista.com/news/node/909039, publicado el 2 oct 2026 y consultado el 14 nov 2026). Trae 12 de los 21 distritos y 6.458 €/m² para la ciudad. Es un portal privado de anuncios: solo se usa para validar, nunca como dato.
+
+**Cómo repetirlo:** la tabla de las 12 referencias, con su fuente, está en `referencias-precio-distritos.csv`. El cálculo es `DATABASE_URL=… uv run python scripts/validate_buy_estimate.py` y su salida está en `validacion-precio-estimado.txt`. El script falla si el Spearman baja de 0,9 o si algún distrito pasa del 30 %.
 
 - **Orden:** Spearman 0,95 en los 12 distritos.
 - **Nivel:** el estimado es de media 0,88 veces el precio de oferta (geométrica), lo esperable de un valor tasado frente a un anuncio.
@@ -75,4 +77,6 @@ Lo pidió el coordinador tras la prueba con usuarios: «si tuviera un precio apr
 - «Zonas que encajan» sigue la clave de D-239 sin coste: tras los servicios a pie no queda ningún empate exacto entre las zonas que encajan, ni comprando con 400.000 € o 1.000.000 €, ni con 10.000 €/mes de alquiler, ni en el ejemplo. El coste solo desempata «Casi encajan» (Arganzuela, Tetuán, Centro, Retiro y Chamberí con 400.000 €).
 - Golden 9/9, con `ranked_order` y `near_miss_order` del ejemplo.
 - Alquiler de 10.000 €/mes, pareja, sin prioridades: Chamberí, Tetuán, Puente de Vallecas, Salamanca, Centro, Usera, Arganzuela, Ciudad Lineal, Carabanchel y Retiro, el mismo top 10 que D-239.
-- Las capturas de `evidence/gate-06/2026-11-14-buy-estimate/` son de antes de fusionar #56. Lo que cambia es el orden de las filas 1 y 5, no los precios ni los textos.
+- **Capturas rehechas** en `evidence/gate-06/2026-11-14-buy-estimate/` con el código ya fusionado con #56 (D-239) y #58 (D-238, selector «¿Dónde?»), las 6 a 1440 y 390 px.
+  - **Captura 1:** con 400.000 € encabezan Puente de Vallecas, Usera, Carabanchel, Latina y Villaverde.
+  - **Captura 5:** con 1.000.000 € y trabajo en Begoña encabezan Chamberí, Tetuán, Salamanca, Centro y Chamartín. El trabajo está en la estación de Begoña, no en las coordenadas de Cuatro Torres de los casos, y por eso el orden no es el mismo.
