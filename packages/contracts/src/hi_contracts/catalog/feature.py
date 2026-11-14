@@ -65,17 +65,21 @@ class FitBinding(BaseModel):
     """Where the people search (CORE-003) reads the feature: the rent or the appraised purchase
     value per m² of the budget condition (D-227), or the walking minutes to the nearest place
     of a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority
-    measures (a PriorityKey: the park for «Zonas verdes», D-222). The search has no feature id
-    written in its code."""
+    measures (a PriorityKey: the park for «Zonas verdes», D-222), or the walk to one kind of
+    public transport (`transit_mode`, D-233): it only informs the transport fact and never
+    scores. The search has no feature id written in its code."""
 
     model_config = ConfigDict(extra="forbid")
 
-    role: Literal["rent_m2", "price_m2", "walk_minutes"]
+    role: Literal["rent_m2", "price_m2", "walk_minutes", "transit_mode"]
     need: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="NeedKey, only for walk_minutes"
     )
     priority: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="PriorityKey, only for walk_minutes"
+    )
+    mode: Literal["bus", "metro"] | None = Field(
+        default=None, description="Kind of stop the walk is to, only for transit_mode (D-233)"
     )
     note: str | None = Field(
         default=None,
@@ -92,6 +96,9 @@ class FitBinding(BaseModel):
             self.role != "walk_minutes" and targets
         ):
             msg = "walk_minutes needs one of `need` or `priority`; rent_m2 and price_m2 take none"
+            raise ValueError(msg)
+        if (self.role == "transit_mode") != (self.mode is not None):
+            msg = "`mode` is for transit_mode and transit_mode needs it"
             raise ValueError(msg)
         if self.note is not None and self.role != "rent_m2":
             msg = "only rent_m2 takes a `note`"

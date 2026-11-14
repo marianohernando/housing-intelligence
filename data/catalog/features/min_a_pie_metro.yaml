@@ -1,0 +1,37 @@
+feature_id: min_a_pie_metro
+version: 1
+human_name: "Minutos a pie hasta la estación de Metro, Metro Ligero o Cercanías más cercana (mediana de las calles de la zona)"
+domain: transport
+type: derived
+unit: min
+direction: lower_is_better
+geo_level: seccion_censal
+time_semantics: current
+sources:
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: crtm_gtfs_metro, role: primary}
+  - {dataset_id: crtm_gtfs_metro_ligero, role: primary}
+  - {dataset_id: crtm_gtfs_cercanias, role: primary}
+formula:
+  method: network_walk_time
+  destination_category: transport
+  subcategories: ["metro", "metro_ligero", "cercanias"]
+  statistic: median_minutes
+  speed_kmh: 4.0
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  min_street_m: 300  # less origin street than this -> confidence 0.5 at most
+  levels: {municipio: {}, distrito: {}, barrio: {}}  # barrios of Madrid: the search inside a district (D-232)
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [reachable_street_share, min_street_m]}
+public_use: true
+pro_use: true
+models: [residential_fit]
+tests: [non_negative, explicit_null_without_streets, unknown_never_near]
+limitations:
+  - "Solo informa en la tarjeta de la zona («Metro o Cercanías a unos X min»): no puntúa. La necesidad «transporte» sigue puntuando con min_a_pie_transporte, que cuenta también los autobuses (D-233)."
+  - "Cuenta cualquier estación de Metro, Metro Ligero o Cercanías, sin mirar la frecuencia ni la accesibilidad."
+  - "Velocidad de 4 km/h para todo el mundo, la del estudio «El Madrid de los 15 minutos» del Ayuntamiento: con movilidad reducida o con carrito los minutos son más."
+  - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
+  - "Cada destino se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
+  - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."
+fit: {role: transit_mode, mode: metro}

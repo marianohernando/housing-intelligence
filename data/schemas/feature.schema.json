@@ -92,8 +92,25 @@
     },
     "FitBinding": {
       "additionalProperties": false,
-      "description": "Where the people search (CORE-003) reads the feature: the rent or the appraised purchase\nvalue per m² of the budget condition (D-227), or the walking minutes to the nearest place\nof a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority\nmeasures (a PriorityKey: the park for «Zonas verdes», D-222). The search has no feature id\nwritten in its code.",
+      "description": "Where the people search (CORE-003) reads the feature: the rent or the appraised purchase\nvalue per m² of the budget condition (D-227), or the walking minutes to the nearest place\nof a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority\nmeasures (a PriorityKey: the park for «Zonas verdes», D-222), or the walk to one kind of\npublic transport (`transit_mode`, D-233): it only informs the transport fact and never\nscores. The search has no feature id written in its code.",
       "properties": {
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "bus",
+                "metro"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kind of stop the walk is to, only for transit_mode (D-233)",
+          "title": "Mode"
+        },
         "need": {
           "anyOf": [
             {
@@ -140,7 +157,8 @@
           "enum": [
             "rent_m2",
             "price_m2",
-            "walk_minutes"
+            "walk_minutes",
+            "transit_mode"
           ],
           "title": "Role",
           "type": "string"
