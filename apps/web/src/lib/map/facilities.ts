@@ -171,6 +171,8 @@ export interface Facility {
   detail: string | null;
   /** Dataset of the capacity when it is not the register's (hospital beds, D-218), named from /datasets. */
   source: string | null;
+  /** Hospitals: public or private by the CM register (D-239); null when the API does not say. */
+  dependency: Dependency | null;
   lon: number;
   lat: number;
 }
@@ -252,20 +254,47 @@ const SCHOOL_BY_OWNERSHIP = { publica: PUBLIC_SCHOOL, concertada: "Colegio conce
 /** Coordinates the register lacked or had wrong, found again from the address (D-216). */
 const GEOCODED = "ubicación aproximada";
 
-/**
- * Who runs a hospital, from the CM register (D-218). «Privada» in the register includes hospitals
- * that also serve the public network, so it reads «gestión privada», never «privado».
- */
-const DEPENDENCY = { publica: "gestión pública", privada: "gestión privada" } as const;
+export type Dependency = "publica" | "privada";
 
-/** «966 camas instaladas · gestión pública · ubicación aproximada»: only what the register and the API say. */
+/**
+ * Who runs a hospital, by the «dependencia funcional» of the CM register (D-218, D-239): on the
+ * place itself, or with its beds from an API older than D-239. A user asked to tell public from
+ * private, so it leads the label («Hospital público»); HOSPITAL_DEPENDENCY_NOTE says what «privado»
+ * does not mean.
+ */
+function dependencyOf(place: PlaceFeature): Dependency | null {
+  return place.properties.dependency ?? place.properties.capacity?.dependency ?? null;
+}
+
+const DEPENDENCY_WORD = { publica: "público", privada: "privado" } as const;
+
+/** «Hospital público», «Hospital especializado privado»; the type alone when the API does not say. */
+function hospitalLabel(label: string, dependency: Dependency | null): string {
+  return dependency ? `${label} ${DEPENDENCY_WORD[dependency]}` : label;
+}
+
+/**
+ * centros.hospital.dependencia: where «público» and «privado» come from and their limit, under the
+ * count of hospitals. The register classes a private hospital with an agreement as private.
+ */
+export const HOSPITAL_DEPENDENCY_NOTE =
+  "Público o privado según quién lo gestiona, en el registro de centros sanitarios de la Comunidad de Madrid. Algunos hospitales privados atienden también a pacientes de la sanidad pública por concierto: el registro no dice cuáles.";
+
+/** centros.hospital.reparto: «2 públicos y 3 privados», «1 público», «2 privados»; null when the API does not say for any. */
+export function hospitalSplitText(items: readonly Pick<Facility, "dependency">[]): string | null {
+  const count = (d: Dependency) => items.filter((f) => f.dependency === d).length;
+  const parts = [
+    [count("publica"), "público", "públicos"],
+    [count("privada"), "privado", "privados"],
+  ] as const;
+  const said = parts.filter(([n]) => n > 0).map(([n, one, many]) => `${formatNumber(n, 0)} ${n === 1 ? one : many}`);
+  return said.length ? said.join(" y ") : null;
+}
+
+/** «966 camas instaladas · ubicación aproximada»: only what the register and the API say. */
 function detailText(place: PlaceFeature): string | null {
   const { capacity, coordinates } = place.properties;
-  const parts = [
-    capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null,
-    capacity?.dependency ? DEPENDENCY[capacity.dependency] : null,
-    coordinates === "geocoded" ? GEOCODED : null,
-  ];
+  const parts = [capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null, coordinates === "geocoded" ? GEOCODED : null];
   return parts.filter(Boolean).join(" · ") || null;
 }
 
@@ -280,11 +309,20 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   if (!cls || !counts(place, type)) return null;
   const [lon = 0, lat = 0] = place.geometry.coordinates;
   const { ownership } = place.properties;
-  const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : cls.label;
+  const dependency = type.key === "hospital" ? dependencyOf(place) : null;
+  const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : hospitalLabel(cls.label, dependency);
   // Only a capacity from another catalogue is cited apart (hospital beds): the places of mayores
   // carry their own register's «plazas autorizadas», which are not beds
   const source = CAPACITY_SOURCE[type.key] ? (place.properties.capacity?.dataset_id ?? null) : null;
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, lon, lat };
+  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, dependency, lon, lat };
+}
+
+const DEPENDENCY_ORDER = { publica: 0, privada: 1 } as const;
+
+/** Public hospitals first, then private, then those the API does not class; other types all tie. */
+function byDependency(a: Facility, b: Facility): number {
+  const order = (f: Facility) => (f.dependency ? DEPENDENCY_ORDER[f.dependency] : 2);
+  return order(a) - order(b);
 }
 
 function byName(a: Facility, b: Facility): number {
@@ -292,7 +330,10 @@ function byName(a: Facility, b: Facility): number {
   return Number(a.name === null) - Number(b.name === null);
 }
 
-/** The zone's places by type, named places first in alphabetical order; the rest are left out. */
+/**
+ * The zone's places by type, named places first in alphabetical order (hospitals: the public ones
+ * first, D-239); the rest are left out.
+ */
 export function groupFacilities(places: readonly PlaceFeature[]): Record<FacilityKey, Facility[]> {
   const groups = Object.fromEntries(FACILITY_TYPES.map((t) => [t.key, [] as Facility[]])) as Record<FacilityKey, Facility[]>;
   for (const place of places) {
@@ -302,7 +343,7 @@ export function groupFacilities(places: readonly PlaceFeature[]): Record<Facilit
       if (item) groups[type.key].push(item);
     }
   }
-  for (const list of Object.values(groups)) list.sort(byName);
+  for (const list of Object.values(groups)) list.sort((a, b) => byDependency(a, b) || byName(a, b));
   return groups;
 }
 

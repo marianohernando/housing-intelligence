@@ -8,6 +8,8 @@ import {
   type Facility,
   type FacilityKey,
   FACILITY_TYPES,
+  HOSPITAL_DEPENDENCY_NOTE,
+  hospitalSplitText,
   facilitiesGeoJSON,
   capacitySources,
   facilityCountText,
@@ -151,22 +153,51 @@ describe("groupFacilities", () => {
     expect(typed.farmacia[0]).toMatchObject({ name: "Calle de Serrano 1" });
   });
 
-  it("names hospitals and their beds from the Catálogo Nacional de Hospitales, «gestión privada» never «privado» (D-218)", () => {
+  it("names hospitals and their beds from the Catálogo Nacional de Hospitales, public or private in the label (D-218, D-239)", () => {
     // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
     const url = new URL("../../../../../data/fixtures/contracts/places.hospitales_madrid.fixture.json", import.meta.url);
     const { features } = JSON.parse(readFileSync(url, "utf8")) as { features: PlaceFeature[] };
     const hospitals = groupFacilities(features).hospital;
     const doce = hospitals.find((f) => f.name === "Hospital Universitario 12 de Octubre");
-    expect(doce).toMatchObject({ detail: "1.161 camas instaladas · gestión pública", source: "ms_catalogo_nacional_hospitales" });
+    expect(doce).toMatchObject({ label: "Hospital público", detail: "1.161 camas instaladas", source: "ms_catalogo_nacional_hospitales" });
     // Found with or without its tildes: the API spells it «Fundación Jiménez Díaz» since D-221, the
-    // fixture will when line A regenerates it; what is checked here is its beds and management
+    // fixture will when line A regenerates it. Private by the register, though it has an agreement
+    // with the public network: the note says so
     const jd = hospitals.find((f) => searchable(f.name ?? "") === "hospital universitario fundacion jimenez diaz");
-    expect(jd).toBeDefined();
-    expect(jd?.detail).toBe("651 camas instaladas · gestión privada");
-    for (const f of hospitals) expect(f.detail ?? "").not.toMatch(/privado|(^|· )privada/);
+    expect(jd).toMatchObject({ label: "Hospital privado", detail: "651 camas instaladas", dependency: "privada" });
+    expect(HOSPITAL_DEPENDENCY_NOTE).toMatch(/registro de centros sanitarios de la Comunidad de Madrid.*concierto/);
+    // The label says it once: the detail no longer repeats who runs it
+    for (const f of hospitals) expect(f.detail ?? "").not.toMatch(/gestión|públic|privad/);
     // Beds only with their source, and never a made-up name: the generic «Hospital general (Madrid)» stays unnamed
     expect(hospitals.some((f) => f.name === null)).toBe(true);
     for (const f of hospitals) expect(f.source !== null).toBe(/camas/.test(f.detail ?? ""));
+  });
+
+  it("labels each hospital as public or private from the place itself or, with an older API, from its beds (D-239)", () => {
+    // Test fixture: made-up hospitals for the test only
+    const beds = (dependency: "publica" | "privada") => ({ value: 100, unit: "camas instaladas", dataset_id: "ms_catalogo_nacional_hospitales", dependency });
+    const { hospital, centro_salud } = groupFacilities([
+      place("z", "health", "Hospital general", "HOSPITAL ZETA", -3.7, 40.4, { dependency: "privada" }),
+      place("m", "health", "Hospital de salud mental y tratamiento de toxicomanías", "HOSPITAL EME", -3.7, 40.4, { capacity: beds("publica") }),
+      place("e", "health", "Hospital especializado", "HOSPITAL E", -3.7, 40.4, { dependency: "privada", capacity: beds("publica") }),
+      place("u", "health", "Hospital general", "HOSPITAL U"),
+      place("a", "health", "Hospital general", "HOSPITAL A", -3.7, 40.4, { dependency: "publica" }),
+      place("c", "health", "Centro de salud", "Centro de salud Uno", -3.7, 40.4, { dependency: "publica" }),
+    ]);
+    // Public first, then private, then the one the API does not class; by name inside each
+    expect(hospital.map((f) => [f.label, f.dependency])).toEqual([
+      ["Hospital público", "publica"],
+      ["Hospital de salud mental público", "publica"],
+      ["Hospital especializado privado", "privada"], // the place's own field wins over the beds'
+      ["Hospital privado", "privada"],
+      ["Hospital", null],
+    ]);
+    expect(hospitalSplitText(hospital)).toBe("2 públicos y 2 privados");
+    expect(hospitalSplitText(hospital.slice(0, 1))).toBe("1 público");
+    expect(hospitalSplitText(hospital.slice(4))).toBeNull();
+    expect(hospitalSplitText([])).toBeNull();
+    // Only hospitals are told apart: every primary care centre of the register is public
+    expect(centro_salud[0]).toMatchObject({ label: "Centro de salud", dependency: null });
   });
 
   it("sorts named places by name, after them the ones without a name", () => {
@@ -245,7 +276,7 @@ describe("facilitiesGeoJSON", () => {
 });
 
 describe("capacitySources", () => {
-  const bed = (id: string, source: string | null) => ({ id, type: "hospital" as const, label: "Hospital", name: id, detail: null, source, lon: 0, lat: 0 });
+  const bed = (id: string, source: string | null) => ({ id, type: "hospital" as const, label: "Hospital", name: id, detail: null, source, dependency: null, lon: 0, lat: 0 });
   const items = [bed("a", "ms_catalogo_nacional_hospitales"), bed("b", "ms_catalogo_nacional_hospitales"), bed("c", null)];
   const ref = {
     dataset_id: "ms_catalogo_nacional_hospitales",
@@ -294,7 +325,7 @@ describe("capacitySources", () => {
 });
 
 describe("several types at once («Todos los centros», petición de Mariano)", () => {
-  const f = (id: string, type: FacilityKey): Facility => ({ id, type, label: id, name: null, detail: null, source: null, lon: 0, lat: 0 });
+  const f = (id: string, type: FacilityKey): Facility => ({ id, type, label: id, name: null, detail: null, source: null, dependency: null, lon: 0, lat: 0 });
   const groups = {
     colegio: [f("c1", "colegio"), f("c2", "colegio")],
     escuela_infantil: [],
