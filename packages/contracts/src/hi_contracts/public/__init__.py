@@ -32,6 +32,7 @@ from hi_contracts.public.scenario import (
     NeedKey,
     PriorityKey,
     ScenarioState,
+    SearchScope,
 )
 from hi_contracts.public.search import (
     BarrioSearchRequest,
@@ -85,6 +86,7 @@ __all__ = [
     "Relaxation",
     "ScenarioState",
     "SearchResult",
+    "SearchScope",
     "ZoneExplanation",
     "ZoneGapList",
     "ZoneGapStatus",

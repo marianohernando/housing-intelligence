@@ -41,6 +41,7 @@ lint: ## Ruff + ESLint + generated files in sync (JSON Schemas, docs manifest), 
 	uv run ruff check .
 	uv run ruff format --check .
 	uv run python scripts/export_schemas.py --check
+	uv run python scripts/export_search_scope.py --check
 	uv run python scripts/check_docs_manifest.py docs
 	@if [ -d node_modules ]; then npm run -w apps/web lint; else echo "skip web lint (run npm ci)"; fi
 
