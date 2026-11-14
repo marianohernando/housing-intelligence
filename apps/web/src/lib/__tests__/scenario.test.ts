@@ -14,6 +14,8 @@ import {
   exampleScenario,
   peopleAtHome,
   removeNearby,
+  SCOPES,
+  scopeOf,
   setAdults,
   setBudgetAmount,
   setBudgetKind,
@@ -21,6 +23,7 @@ import {
   setNearbyMinutes,
   setNearbyRequired,
   setNoBudgetLimit,
+  setScope,
   setSeniors,
   setWorkMaxMinutes,
   setWorkPlace,
@@ -110,6 +113,37 @@ describe("encode / decode (link to share a search)", () => {
     expect(decodeScenario("not-base64!")).toBeNull();
     expect(decodeScenario(encodeScenario({ ...defaultScenario(), schema_version: 1 } as unknown as ScenarioState))).toBeNull();
     expect(decodeScenario(encodeScenario({ ...defaultScenario(), priorities: ["piscina"] } as unknown as ScenarioState))).toBeNull();
+  });
+});
+
+describe("«¿Dónde?» (scope, D-238)", () => {
+  it("offers the whole region first, then Madrid capital, its surroundings and the villages", () => {
+    expect(SCOPES).toEqual(["all", "madrid", "alrededores", "pueblos"]);
+  });
+
+  it("sends a part of the region and leaves `scope` out for «Toda la Comunidad», as before", () => {
+    const madrid = setScope(defaultScenario(), "madrid");
+    expect(madrid.scope).toBe("madrid");
+    expect(scopeOf(madrid)).toBe("madrid");
+    const all = setScope(madrid, "all");
+    expect("scope" in all).toBe(false);
+    expect(scopeOf(all)).toBe("all");
+    expect(all).toEqual(defaultScenario());
+  });
+
+  it("treats the API's explicit `all` like no scope", () => {
+    expect(scopeOf({ scope: "all" })).toBe("all");
+    expect("scope" in setScope({ ...defaultScenario(), scope: "all" }, "all")).toBe(false);
+  });
+
+  it("keeps the example without a scope: its figures are the pitch's", () => {
+    expect("scope" in exampleScenario()).toBe(false);
+  });
+
+  it("round-trips a shared link with a scope and rejects an unknown one", () => {
+    const s = setScope(defaultScenario(), "alrededores");
+    expect(decodeScenario(encodeScenario(s))).toEqual(s);
+    expect(decodeScenario(encodeScenario({ ...defaultScenario(), scope: "sierra" } as unknown as ScenarioState))).toBeNull();
   });
 });
 

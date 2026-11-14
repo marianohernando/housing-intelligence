@@ -16,7 +16,8 @@ import { useId } from "react";
 
 import type { FactKind, FactTopic, SearchResult } from "@/contracts/search_response";
 import { confidenceText } from "@/lib/confidence";
-import { constraintLabels, failedLabels, hasWalkingFact, rankText, WALK_MEDIAN, zoneFit } from "@/lib/fit";
+import { constraintLabels, failedLabels, hasWalkingFact, rankText, resultScope, WALK_MEDIAN, zoneFit, zoneWord } from "@/lib/fit";
+import { SCOPE_LABEL } from "@/lib/scenario";
 
 import styles from "./ZoneCard.module.css";
 
@@ -29,6 +30,10 @@ const TEXT = {
   failsUnnamed: "No cumple todo lo que pides.",
   unknown: "No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno.",
   buySource: "Con «Comprar», puede faltar el precio: el oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes, no para los distritos de Madrid ni para los pueblos.",
+  // zona.sin_alquiler (D-238): the same for renting in a municipio; districts and barrios bring their own reason
+  rentSource: "Con «Alquilar», puede faltar el alquiler: la Comunidad de Madrid solo lo publica para los municipios de más de 20.000 habitantes, y casi ningún pueblo los tiene.",
+  // zona.fuera (D-238): a zone of the map outside «¿Dónde?»
+  outside: (scope: string) => `Fuera de tu búsqueda (${scope}).`,
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
 };
 
@@ -58,13 +63,15 @@ const KIND_CLASS: Record<FactKind, string | undefined> = {
 export default function FitDetails({ result, zoneKey }: { result: SearchResult; zoneKey: string }) {
   const factsId = useId();
   const { match, ranked } = zoneFit(result, zoneKey);
-  if (!match) return null;
+  const scope = resultScope(result);
+  if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope])}</p>;
   const fails = failedLabels(match.failed_constraints, constraintLabels(result), ranked?.constraints);
   const buying = result.scenario.budget?.kind === "buy";
+  const rentingInMunicipio = result.scenario.budget?.kind === "rent" && zoneKey.startsWith("municipio/");
 
   return (
     <>
-      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank)}</p>}
+      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, zoneWord(result))}</p>}
       {match.match_pct != null && !match.passes_all && (
         <p className={styles.fails}>
           <CircleX size={18} aria-hidden="true" />
@@ -79,6 +86,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
       )}
       {/* The usual reason when buying, said as a possibility: another condition may be the unknown one (D-227 §3) */}
       {match.match_pct == null && buying && <p className={styles.unknownWhy}>{TEXT.buySource}</p>}
+      {match.match_pct == null && rentingInMunicipio && <p className={styles.unknownWhy}>{TEXT.rentSource}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>
           <h3 id={factsId}>{TEXT.facts}</h3>

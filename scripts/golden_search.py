@@ -15,7 +15,8 @@ import yaml
 from sqlalchemy import Connection, create_engine
 
 from hi_api.services.barrios import DISTRICT_TRIP_NOTE, district, load_barrios, search_barrios
-from hi_api.services.search import load, search
+from hi_api.services.scope import search
+from hi_api.services.search import load
 from hi_contracts.public import FactKind, FactTopic, RankedZone, ScenarioState, SearchResult
 from hi_domain.fit import anchor_km
 from hi_domain.search import run_search

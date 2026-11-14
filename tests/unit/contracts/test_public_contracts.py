@@ -110,6 +110,7 @@ def test_reality_check_counts_add_up() -> None:
         {"budget_monthly_eur": 1200},  # v1 field
         {"schema_version": 1},
         {"sexo": "mujer"},
+        {"scope": "sierra"},  # not one of the parts of «Dónde buscar» (D-238)
     ],
 )
 def test_scenario_rejects_incoherent_or_unknown_input(change: dict[str, Any]) -> None:
@@ -128,6 +129,18 @@ def test_default_scenario_and_household_size() -> None:
     buy = ScenarioState.model_validate({"budget": {"kind": "buy", "amount_eur": 320_000}})
     assert buy.budget is not None
     assert buy.budget.kind == "buy"
+
+
+def test_a_scenario_without_scope_searches_the_whole_region() -> None:
+    """D-238: a search saved or shared before «Dónde buscar» means what it meant."""
+    assert ScenarioState().scope == "all"
+    assert ScenarioState.model_validate({"scope": "madrid"}).scope == "madrid"
+    assert {s.value for s in type(ScenarioState().scope)} == {
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos",
+    }
 
 
 def test_search_fixture_never_shows_a_grade_and_maps_every_zone() -> None:

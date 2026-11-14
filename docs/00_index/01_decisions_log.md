@@ -1349,6 +1349,50 @@ Feedback de usuarios del 14 nov: quien se mueve en autobús quiere ver las parad
 4. **Sync.** Tablas `feature_registry` (2 filas) y `feature_value` (9.948 filas: 4.974 por feature, 131 de barrio, 246 de distrito, 179 de municipio, 4.417 de sección y 1 de región); `make supabase-sync` copia las tablas enteras. Valores locales: Latina bus 2,1 y Metro 8,3 min; Tetuán 2,1 y 7,0; Centro 2,1 y 4,4; Navacerrada 5,7 y 93,4.
 5. **Texto por modo y veredicto.** El texto sale de la mediana de cada modo y el veredicto de la condición, de la mediana combinada (`min_a_pie_transporte`): pueden diferir en 1 min (barrio 28079016: combinado 2,0, PASS, y «autobús a unos 3 min»). Es esperable, no un error.
 
+## D-238 — «¿Dónde?»: toda la Comunidad, Madrid capital por barrios, alrededores o pueblos (2026-11-14)
+Decisión de Mariano (14 nov) tras la prueba con usuarios: cuatro personas pidieron buscar solo en una parte de la región. Es aditiva y reversible: un campo opcional del escenario, sin datos nuevos ni cambio de método (`fit-0.7` no cambia).
+1. **Criterio y fuente.** Las tres partes agrupan las 11 zonas estadísticas (NUTS 4) del Instituto de Estadística de la Comunidad de Madrid:
+   - «Madrid capital» es la zona 01 (Municipio de Madrid);
+   - «Alrededores de Madrid», las cuatro metropolitanas (02 Norte, 03 Este, 04 Sur y 05 Oeste Metropolitano): 40 municipios;
+   - «Pueblos», las otras seis (Sierra Norte, Nordeste, Sudeste, Sudoeste, Sierra Sur y Sierra Central): 138 municipios.
+   - Fuente: «Nomenclátor imprimible de la Comunidad de Madrid. 2025», §3.4 «Zonificación estadística y relación de municipios» (https://gestiona3.madrid.org/iestadis/fijas/estructu/general/territorio/descarga/nomenme25.pdf), consultado el 14 nov. La tabla de 2010 del mismo Instituto pone los mismos municipios en cada zona.
+   - Por qué esta: es oficial y de la Comunidad, cubre los 179 municipios sin huecos ni solapes y es la que usa el Instituto en sus propias tablas. Se descartan las coronas del Consorcio de Transportes, que son zonas de tarifa, y un radio en kilómetros, que sería un criterio nuestro.
+   - Se declara una consecuencia: Aranjuez, Ciempozuelos y Valdemoro son «alrededores» (Sur Metropolitano), y Meco o Villalbilla, «pueblos». Es la zonificación del Instituto, no la nuestra.
+2. **Mapeo estático versionado.** `data/catalog/zoning/search_scope.yaml` copia la tabla tal como se publica (código de la Comunidad y nombre de los 179 municipios) con su fuente. Está comprobada municipio a municipio contra el PDF: 179 de 179, misma zona y mismo nombre. El código de la Comunidad pasa a INE con `ine_municipality_from_cm`, y los 179 municipios de la base están en el mapeo, sin ninguno de más ni de menos.
+   - La imagen de la API no lleva `data/`, así que `scripts/export_search_scope.py` genera `hi_domain/geo/zoning_data.py`.
+   - `make lint`, la CI y `tests/data` comprueban que el módulo generado está al día.
+3. **Contrato.** `ScenarioState.scope` (`SearchScope`: `all`, `madrid`, `alrededores`, `pueblos`) es opcional y vale `all` por defecto. Esquemas JSON y tipos de la web regenerados (`make schemas`, `npm run -w apps/web contracts`).
+4. **Búsqueda** (`hi_api/services/scope.py`).
+   - `all` es la de siempre: municipios, y Madrid por distritos.
+   - `alrededores` y `pueblos` dejan solo sus municipios.
+   - `madrid` ordena los 131 barrios de la capital en lugar de los 21 distritos, con lo mismo que `/search/barrios` (D-232): `load_barrios` sin distrito, los mismos `FIT_VALUES` e `indicators_by_zone`, y el trayecto del distrito para el barrio que no tiene el suyo (D-232 §5).
+   - El Reality Check conserva el ámbito en `relaxed_scenario`. «Qué falta» sigue por distrito: `gap_highlights` va vacío en los barrios. La explicación del MCP mira toda la región, donde sea que buscó la persona.
+5. **Por qué barrios en la capital.** Con 21 distritos la capital diferencia poco: en el caso del ejemplo, los cuatro primeros empatan al 98 %. Es la fase 2 del diseño de D-232, que quedó fuera («los 131 barrios en el ranking»), acotada a «Madrid capital». Los barrios ya tienen indicadores, trayectos y nombres oficiales. En «Toda la Comunidad», Madrid sigue por distritos, para no comparar barrios con municipios enteros.
+6. **Retrocompatibilidad.** La web omite `scope` con «Toda la Comunidad», así que el ejemplo, los enlaces compartidos y la API desplegada siguen igual.
+   - **Eco del ámbito.** La API devuelve siempre `scope` (con `all` si no se envió) en cada escenario que repite: `SearchResult.scenario`, cada `relaxed_scenario` del Reality Check, `BarrioSearchResult.scenario` y `ZoneExplanation.scenario`. La web lo quita antes de reenviar. Al aplicar una opción de «¿Y si cambias algo?» quita el `all`. En «Los barrios que mejor encajan» no envía el ámbito, porque el distrito ya dice dónde buscar.
+   - **Comprobado contra producción** con el caso del ejemplo: 27 zonas; Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %, y el mismo top 10. También son idénticos los hechos, `all_zones`, los «casi» y las opciones. La única diferencia es ese eco de `scope`. Vuelto a comprobar tras D-239 (PR #56): mismo orden de `results` y de `near_misses`.
+   - No hay datos nuevos que sincronizar: basta el despliegue.
+7. **Web.**
+   - Selector «¿Dónde?» al principio de «Tu búsqueda», con radios nativos en 2 × 2.
+   - Con «Madrid capital», el mapa pide los contornos de los 131 barrios (unos 90 KB, simplificados como los distritos) y los pinta con su encaje en lugar de los distritos. Las zonas fuera del ámbito quedan sin pintar.
+   - La lista y la tarjeta dicen «Lucero · Latina»: el distrito sale de las 7 primeras cifras del código del barrio.
+   - La tarjeta de un barrio enseña el «Qué falta» de su distrito, con el aviso de que es del distrito entero, y lleva a la vista del distrito.
+   - Textos en `pitch/textos_web.md` (`donde.*`, `resultados.de.*`, `zona.barrio.*`, `mapa.aria.encaje.barrios`). Capturas en `evidence/gate-06/2026-11-14-scope-barrios/`.
+8. **Pruebas reales** (base local, solo lectura).
+   - **Ejemplo con «Madrid capital»:** 131 barrios, 78 cumplen todo. Lucero y Campamento (Latina) al 99 %; Media Legua y Vinateros (Moratalaz), Atalaya y Costillares (Ciudad Lineal), Pinar del Rey (Hortaleza), Los Cármenes (Latina), Numancia y San Diego (Puente de Vallecas) al 98 %. Son barrios de los distritos que encabezan la búsqueda por distritos. Sol sale sin datos porque no tiene alquiler (D-232 §4).
+   - **Pareja, alquiler hasta 10.000 €, transporte y salud, «Madrid capital»:** 130 de 131 cumplen y 106 empatan al 100 %, porque el transporte y el centro de salud quedan a un paseo en casi toda la capital. Con el desempate de D-239 (servicios a pie), arriba quedan barrios muy servidos: Almendrales, Embajadores, Gaztambide, Trafalgar, Argüelles, Arapiles, Lista, Prosperidad, Guindalera y Chopera. La lista avisa: «Encajan 106 barrios igual de bien…» (`resultados.empate`).
+   - **La misma pareja en «Alrededores de Madrid»:** 40 municipios, 34 cumplen. Móstoles, Parla, Torrejón de Ardoz, Alcalá de Henares, Alcorcón, Leganés, Coslada y Fuenlabrada al 100 %, Getafe al 99 % y Collado Villalba al 98 %. Los 6 restantes salen sin datos de alquiler.
+   - **En «Pueblos»:** 138 municipios y solo 2 cumplen (Navalcarnero al 94 % y Arroyomolinos al 90 %), porque 136 no tienen alquiler publicado y su presupuesto sale UNKNOWN (D-214). Sin límite de presupuesto entran los 138.
+9. **Comprar en un barrio** sale UNKNOWN, como en los distritos, hasta que llegue el precio de compra estimado de D-234.
+10. **Revisión del PR #58.** No hubo bloqueantes. Se cambió lo siguiente:
+    - **«Pueblos» con alquiler** ya no parece un fallo. La ayuda del selector avisa de que casi ningún pueblo publica su alquiler. Bajo el resultado sale cuántos pueblos dan «Sin datos» y por qué: la Comunidad solo publica el alquiler de los municipios de más de 20.000 habitantes, que son 37 de 179. La tarjeta de un municipio sin alquiler lo dice como posibilidad, igual que con «Comprar».
+    - **«Lo que más limita tu búsqueda».** `binding_constraint` cuenta como excluida toda zona donde la condición no es PASS, también si es UNKNOWN (semántica de la API, sin cambio). La web solo nombra esa condición si sus FAIL son al menos tantos como las zonas sin datos. Así, con un presupuesto de alquiler que no falla en ningún pueblo, ya no dice «Alquiler». En el ejemplo sigue saliendo «Colegio…» (151 FAIL frente a 15 sin datos).
+    - **Las palabras siguen al ámbito:** «salen 78 barrios», «salen 2 pueblos», «Encajan 106 barrios igual de bien», «El 1.º que más encaja».
+    - **Una zona fuera del ámbito** dice en su tarjeta «Fuera de tu búsqueda (Madrid capital).».
+    - **Si fallan los contornos de los barrios**, la leyenda lo dice con «Reintentar», y la siguiente búsqueda por barrios los vuelve a pedir.
+    - **Al pasar el mapa de barrios a distritos**, el barrio elegido se convierte en su distrito. Al pasar de distritos a barrios, el distrito elegido se suelta.
+    - **Otros cambios:** la ayuda del selector va en `aria-describedby`; la herramienta MCP `buscar_zonas` explica `scope` y que `explicar_zona` no explica barrios; y `==` en lugar de `is` con `SearchScope`.
+
 ## D-239 — Desempate del ranking por servicios a pie y hospitales públicos o privados (2026-11-14)
 Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador recomienda «siempre pueblos y en el mismo orden», y no se distinguen los hospitales públicos de los privados. Dos cambios pequeños y reversibles, sin tocar la puntuación (`fit-0.7` no cambia de versión). Evidencia: `evidence/gate-06/2026-11-14-tiebreak-hospitals/`.
 

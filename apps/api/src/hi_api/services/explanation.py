@@ -18,6 +18,7 @@ from hi_contracts.public import (
     DatasetRef,
     IndicatorValue,
     ScenarioState,
+    SearchScope,
     ZoneExplanation,
 )
 from hi_domain.fit import FIT_VERSION, ZoneData, evaluate
@@ -65,7 +66,8 @@ def explain_zone(
 ) -> tuple[ZoneExplanation, list[str], str | None]:
     """The explanation, the search warnings and the data version (latest computation)."""
     _check_searchable(level, code)
-    loaded = load(conn, scenario)
+    # A zone is explained wherever the search looked: its own «Dónde buscar» may leave it out
+    loaded = load(conn, scenario.model_copy(update={"scope": SearchScope.ALL}))
     data = next((z for z in loaded.zones if z.zone.level == level and z.zone.code == code), None)
     if data is None:
         msg = f"No {level.value} with code {code}"

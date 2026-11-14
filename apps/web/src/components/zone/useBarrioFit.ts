@@ -6,6 +6,7 @@ import type { BarrioSearchResponse } from "@/contracts/barrio_search_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import { ApiError, createApi } from "@/lib/api";
 import { once } from "@/lib/once";
+import { setScope } from "@/lib/scenario";
 
 type Result = { key: string; body: BarrioSearchResponse } | { key: string; error: ApiError };
 
@@ -21,13 +22,14 @@ const TIMEOUT_MS = 20_000;
  * (D-232): asked only when a district opens after a search; loading while the answer is for another.
  */
 export function useBarrioFit(distrito: string, scenario: ScenarioState) {
-  const key = `${distrito}#${JSON.stringify(scenario)}`;
+  // The district says where to look: the search's `scope` (D-238), or its echo `all`, is left out
+  const key = `${distrito}#${JSON.stringify(setScope(scenario, "all"))}`;
   const [result, setResult] = useState<Result | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    once(requests, key, () => createApi().searchBarrios(distrito, scenario, { timeoutMs: TIMEOUT_MS }))
+    once(requests, key, () => createApi().searchBarrios(distrito, setScope(scenario, "all"), { timeoutMs: TIMEOUT_MS }))
       .then((body) => {
         if (!cancelled) setResult({ key, body });
       })

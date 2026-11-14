@@ -16,7 +16,7 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
-import { paintFit } from "@/lib/fit";
+import { byBarrio, paintFit } from "@/lib/fit";
 import { facilitiesGeoJSON, selectedCountText, selectedFacilities } from "@/lib/map/facilities";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
 import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
@@ -105,6 +105,9 @@ const TEXT = {
   ariaRow: (label: string) =>
     `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
   ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
+  // mapa.aria.encaje.barrios (D-238)
+  ariaFitBarrios:
+    "Madrid capital sale por barrios: cada barrio tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.",
   // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
@@ -403,19 +406,21 @@ function loadPlaces(adminUnitId: string): Promise<PlaceFeature[]> {
 }
 
 export default function VidaMap() {
-  const { zones, status, error, retry, activeZone, selectedZone, select, barrio, mapMayLoad } = useMapZones();
+  const { zones, status, error, retry, activeZone, resultZones, selectedZone, select, barrio, mapMayLoad } = useMapZones();
   const { row, data: gapData } = useGapLayer();
   const { result } = useScenario();
   const facilities = useFacilityLayer();
   const overview = usePathname() === "/";
   // Overview coloured by a row of «Qué falta» once its statuses arrive, or by the fit with the
-  // search («Encaje con tu búsqueda») once there is one; plain zones otherwise
+  // search («Encaje con tu búsqueda») once there is one, Madrid capital by barrio when the search
+  // ranked its barrios (D-238); plain zones otherwise
   const painted = useMemo(() => {
     if (!zones || !overview) return zones;
     if (row) return gapData ? paintZones(zones, gapData.byZone) : zones;
-    return result ? paintFit(zones, result.all_zones) : zones;
-  }, [zones, overview, row, gapData, result]);
-  const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : TEXT.ariaFit;
+    return result ? paintFit(resultZones ?? zones, result.all_zones) : zones;
+  }, [zones, resultZones, overview, row, gapData, result]);
+  const fitAria = byBarrio(result) ? TEXT.ariaFitBarrios : TEXT.ariaFit;
+  const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : fitAria;
   // The zone's facilities of the types pressed in «Todos los centros» (several at once), or none
   const facilityList = useMemo(
     () => (activeZone && facilities.types.length && facilities.groups ? selectedFacilities(facilities.groups, facilities.types) : null),
