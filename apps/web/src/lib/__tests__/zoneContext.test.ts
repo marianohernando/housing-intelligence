@@ -1,7 +1,17 @@
 import { describe, expect, it } from "vitest";
 
+import { ApiError, type FeatureValuesResponse } from "../api";
 import type { FeatureValueRow } from "../features";
-import { contextLines, contextRequests, type ContextRows, type ContextZone } from "../zoneContext";
+import {
+  CONTEXT_CARD,
+  CONTEXT_METHOD,
+  CONTEXT_TEXT,
+  contextLines,
+  contextRequests,
+  type ContextRows,
+  type ContextZone,
+  valuesOrMissing,
+} from "../zoneContext";
 
 // Test fixture: rows shaped as GET /features/{id}/values gives them; values of 14 nov (D-235)
 function row(code: string, value: number | null, period: string): FeatureValueRow {
@@ -50,7 +60,7 @@ describe("contextRequests (D-235)", () => {
 describe("contextLines (zona.contexto.*)", () => {
   it("gives a municipio one short line per figure, with its source and year", () => {
     expect(texts(getafe, municipio)).toEqual([
-      "Infracciones penales conocidas: 48,0 por cada 1.000 habitantes (Ministerio del Interior, 2024).",
+      "Infracciones penales conocidas: 48,0 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024).",
       "Viviendas construidas desde 2001: 22,4\u00a0% (censo anual de la Comunidad de Madrid, 2023).",
       "Renta disponible bruta por persona: 19.234 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).",
     ]);
@@ -70,16 +80,16 @@ describe("contextLines (zona.contexto.*)", () => {
 
   it("shows the city's latest offences in a district, saying they are the whole city's", () => {
     expect(texts(centro, madrid)).toEqual([
-      "Infracciones penales conocidas: 68,9 por cada 1.000 habitantes (Ministerio del Interior, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito.",
+      "Infracciones penales conocidas: 68,9 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito.",
       "Año medio de construcción de los edificios de viviendas: 1926 (Catastro, 2025).",
-      "Renta media por hogar: 44.958 € al año (INE, 2023).",
+      "Renta neta media por hogar: 44.958 € al año (INE, panel del Ayuntamiento de Madrid, 2023).",
     ]);
   });
 
   it("names the barrio picked inside a district in its own age and income", () => {
     expect(texts(palacio, madrid).slice(1)).toEqual([
       "Año medio de construcción de los edificios de viviendas en Palacio: 1928 (Catastro, 2025).",
-      "Renta media por hogar en Palacio: 48.025 € al año (INE, 2023).",
+      "Renta neta media por hogar en Palacio: 48.025 € al año (INE, panel del Ayuntamiento de Madrid, 2023).",
     ]);
   });
 
@@ -89,7 +99,7 @@ describe("contextLines (zona.contexto.*)", () => {
     expect(municipioAge).toMatch(/^Viviendas construidas desde 2001/);
     expect(districtAge).toMatch(/^Año medio de construcción/);
     expect(municipioIncome).toMatch(/^Renta disponible bruta por persona/);
-    expect(districtIncome).toMatch(/^Renta media por hogar/);
+    expect(districtIncome).toMatch(/^Renta neta media por hogar/);
   });
 
   it("shows no line for a feature the API does not have, and nothing at all without any", () => {
@@ -99,9 +109,34 @@ describe("contextLines (zona.contexto.*)", () => {
     expect(texts(centro, { crime: [], age: [], income: [] })).toEqual([]);
   });
 
-  it("uses no alarm or wealth words (D-205, D-226, D-235)", () => {
-    const all = [...contextLines(getafe, municipio), ...contextLines(centro, madrid), ...contextLines(acebeda, municipio)];
-    const said = all.map((line) => `${line.text} ${line.note ?? ""}`).join(" ");
-    expect(said).not.toMatch(/peligros|insegur|delincuen|ric[ao]s?\b|pobres?\b|humilde|exclusiv/i);
+  it("uses no alarm or wealth words, in the lines, the card or «Cómo lo calculamos» (D-205, D-226, D-235)", () => {
+    const all = [...contextLines(getafe, municipio), ...contextLines(centro, madrid), ...contextLines(acebeda, municipio), ...contextLines(palacio, madrid)];
+    const said = [
+      ...all.map((line) => `${line.text} ${line.note ?? ""}`),
+      ...Object.values(CONTEXT_TEXT),
+      ...Object.values(CONTEXT_CARD),
+      ...Object.values(CONTEXT_METHOD),
+    ].join(" ");
+    expect(said).not.toMatch(/\b(ric[ao]s?|pobres?)\b/i);
+    expect(said).not.toMatch(/peligros|insegur|delincuen|humilde|exclusiv|conflictiv|marginal|degradad|lujo|acomodad|alarma|riesgo/i);
+  });
+});
+
+describe("valuesOrMissing (D-235, review R-05)", () => {
+  const values = [row("28065", 48.02, "2024-01-01")];
+  const answer = { data: { values } } as unknown as FeatureValuesResponse;
+
+  it("gives the rows of an answer", async () => {
+    await expect(valuesOrMissing(Promise.resolve(answer))).resolves.toEqual(values);
+  });
+
+  it("remembers a feature the API does not have (404) as missing", async () => {
+    await expect(valuesOrMissing(Promise.reject(new ApiError(404, "NOT_FOUND", "No values")))).resolves.toBeUndefined();
+  });
+
+  it("throws any other failure, so it is not cached and the next visit asks again", async () => {
+    const down = new ApiError(503, "HTTP_503", "HTTP 503");
+    await expect(valuesOrMissing(Promise.reject(down))).rejects.toBe(down);
+    await expect(valuesOrMissing(Promise.reject(new TypeError("Failed to fetch")))).rejects.toThrow("Failed to fetch");
   });
 });

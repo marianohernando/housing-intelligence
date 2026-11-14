@@ -4,6 +4,7 @@
  * shown with status or alarm colours. Municipios and Madrid's districts and barrios have different
  * measures of age and income: each says what it is, and they are never put on one scale.
  */
+import { ApiError, type FeatureValuesResponse } from "@/lib/api";
 import type { FeatureValueRow } from "@/lib/features";
 import { formatEuros, formatNumber } from "@/lib/format";
 
@@ -54,10 +55,30 @@ export interface ContextLine {
   note: string | null;
 }
 
+/** The card's title and footer (zona.contexto.titulo, zona.contexto.no_puntua). */
+export const CONTEXT_CARD = {
+  title: "Otros datos de la zona",
+  footer: "Son datos informativos: no cambian el encaje ni el orden de las zonas.",
+} as const;
+
+/** What «Cómo lo calculamos» says about the card (pitch/metodologia.md §1.8). */
+export const CONTEXT_METHOD = {
+  lead: "Otros datos de la zona:",
+  text:
+    "en cada zona enseñamos, solo como contexto, las infracciones penales conocidas por cada 1.000 habitantes, lo antiguas que " +
+    "son las viviendas y la renta. No puntúan, no ordenan zonas y no entran en «Qué falta». Las infracciones se cuentan donde " +
+    "las conoce la policía, no donde vive quien las sufre, así que suben donde hay mucha gente de paso; dejamos fuera los " +
+    "delitos por internet, que no ocurren en un sitio. El Ministerio del Interior solo las publica para los municipios de más " +
+    "de 20.000 habitantes y, en Madrid, para toda la ciudad, no por distrito. La antigüedad y la renta se miden de otra forma " +
+    "en los municipios (viviendas construidas desde 2001 y renta por persona, de la Comunidad de Madrid) que en los distritos " +
+    "y barrios de Madrid (año medio de construcción del Catastro y renta neta por hogar, del Ayuntamiento): no se pueden " +
+    "comparar entre sí.",
+} as const;
+
 // Copy from pitch/textos_web.md (zona.contexto.*).
-const TEXT = {
+export const CONTEXT_TEXT = {
   crime: "Infracciones penales conocidas",
-  crimeSource: "Ministerio del Interior",
+  crimeSource: "Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid",
   crimeNote: "Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso.",
   crimeSmall: "El Ministerio solo lo publica para municipios de más de 20.000 habitantes.",
   crimeCity: "Dato de toda la ciudad de Madrid; no se publica por distrito.",
@@ -67,10 +88,11 @@ const TEXT = {
   meanYearSource: "Catastro",
   incomePerson: "Renta disponible bruta por persona",
   incomePersonSource: "Instituto de Estadística de la Comunidad de Madrid",
-  incomeHousehold: "Renta media por hogar",
-  incomeHouseholdSource: "INE",
+  incomeHousehold: "Renta neta media por hogar",
+  incomeHouseholdSource: "INE, panel del Ayuntamiento de Madrid",
   none: "sin dato",
-};
+} as const;
+const TEXT = CONTEXT_TEXT;
 
 // The figure and its unit never part at the end of a line on a phone («32,7 %»)
 const NBSP = "\u00a0";
@@ -141,4 +163,18 @@ export function contextLines(zone: ContextZone, rows: ContextRows): ContextLine[
     rows.income && incomeLine(zone, rows.income),
   ];
   return lines.filter((line): line is ContextLine => Boolean(line));
+}
+
+/**
+ * The rows of one context answer. A feature the API does not have (404: data synced after the
+ * code, or not yet) is `undefined` and its line is not shown for the visit; any other failure is
+ * thrown, so it is not remembered and the next visit asks again.
+ */
+export async function valuesOrMissing(answer: Promise<FeatureValuesResponse>): Promise<readonly FeatureValueRow[] | undefined> {
+  try {
+    return (await answer).data.values;
+  } catch (exc) {
+    if (exc instanceof ApiError && exc.status === 404) return undefined;
+    throw exc;
+  }
 }
