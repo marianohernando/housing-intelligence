@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { constraintLabels, evaluatedText, failedLabels, passingText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
+import { constraintLabels, evaluatedText, failedLabels, passingText, tiedText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
 import { districtOf, zoneTitle } from "@/lib/map/zones";
 
@@ -17,7 +17,7 @@ import RealityCheck from "./RealityCheck";
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (resultados.*, carga.busqueda, vacio.sin_resultados, rc.aplicado,
+// Copy from pitch/textos_web.md (resultados.*, with resultados.empate in lib/fit.ts, carga.busqueda, vacio.sin_resultados, rc.aplicado,
 // rc.deshacer, zona.cerca_de_encajar.*, error.reintentar; 8c49e33).
 const TEXT = {
   title: "Zonas que encajan",
@@ -71,8 +71,10 @@ function Ranking({ result }: { result: SearchResult }) {
   const [all, setAll] = useState(false);
   const shown = all ? result.results : result.results.slice(0, FIRST_ROWS);
   const rest = result.reality_check.zones_passing - result.results.length;
+  const tied = tiedText(result);
   return (
     <>
+      {tied && <p className={styles.muted}>{tied}</p>}
       <ol className={styles.ranking}>
         {shown.map((zone) => (
           <li key={zoneKeyOf(zone.zone)}>

@@ -19,6 +19,8 @@ import {
   passingText,
   rankText,
   relaxOptions,
+  tiedAtTop,
+  tiedText,
   unknownText,
   WALK_MINUTES_FEATURE_PREFIX,
   zoneFit,
@@ -231,5 +233,27 @@ describe("facts in plain words (a_pie.mediana)", () => {
     // A park out of range says «sin parque… a un paseo»: no minutes, no indicator, no median note
     expect(hasWalkingFact([{ indicator: null }])).toBe(false);
     expect(hasWalkingFact([{ indicator: { feature_id: "centros_salud_a_pie_por_10000_hab" } }])).toBe(false);
+  });
+});
+
+describe("many zones tied at the top (resultados.empate, D-239)", () => {
+  const ranked = (pct: number) => ({ match_pct: pct }) as RankedZone;
+  const tied = (n: number, pct = 100) => Array.from({ length: n }, (_, i) => match("municipio", `28${String(i).padStart(3, "0")}`, pct, true));
+
+  it("counts the zones that meet everything with the first one's %, not those that fail or have no %", () => {
+    const all = [...tied(3), match("municipio", "28900", 100, false, ["budget"]), match("municipio", "28901", null, false), match("municipio", "28902", 97, true)];
+    expect(tiedAtTop({ results: [ranked(100)], all_zones: all })).toBe(3);
+    expect(tiedAtTop({ results: [], all_zones: all })).toBe(0);
+  });
+
+  it("says so only with more than 10, with the number of zones", () => {
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(10) })).toBeNull();
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(57) })).toBe(
+      "Encajan 57 zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
+    );
+  });
+
+  it("stays quiet on line A's search fixture, where the top is not a crowd", () => {
+    expect(tiedText(fixture)).toBeNull();
   });
 });

@@ -127,6 +127,8 @@ NO_DATA_PRIORITY: dict[PriorityKey, tuple[FactTopic, str]] = {
         "cada zona)",
     ),
 }
+# D-239: what breaks an exact tie of the fit, every service measured on foot (marked or not).
+EVERYDAY_NEEDS = tuple(NeedKey)
 CONTEXT_NEEDS = (NeedKey.TRANSPORTE, NeedKey.CENTRO_SALUD, NeedKey.COLEGIO, NeedKey.FARMACIA)
 MIN_FACTS, MAX_FACTS = 3, 5
 
@@ -646,9 +648,27 @@ def statuses(scenario: ScenarioState, data: ZoneData) -> list[ConstraintStatus]:
     return [c.status for c in constraint_checks(scenario, data, area)]
 
 
-def ranking_key(fit: ZoneFit) -> tuple[float, float, float, str]:
-    """Best unrounded fit first; ties: more confidence, fewer minutes by public transport to the
-    first place of work, then the zone id. Never depends on the order the zones arrive in."""
+def everyday_walk(data: ZoneData) -> tuple[float, float] | None:
+    """How well the zone is served on foot in general (D-239): over every service the search
+    measures (EVERYDAY_NEEDS, marked by the person or not) with data here, the mean utility
+    with the default windows and the mean walking minutes. None without any of them."""
+    measured = [
+        (walk.value, DEFAULT_WALK_MINUTES[need])
+        for need in EVERYDAY_NEEDS
+        if (walk := data.walk.get(need)) is not None and walk.value is not None
+    ]
+    if not measured:
+        return None
+    utility = sum(walk_utility(minutes, window) for minutes, window in measured)
+    shown = sum(min(minutes, MAX_WALK_SHOWN) for minutes, _ in measured)
+    return utility / len(measured), shown / len(measured)
+
+
+def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
+    """«Casi encajan»: best unrounded fit first; ties: more confidence, fewer minutes by public
+    transport to the first place of work, then the zone id (D-220). Every near miss fails
+    something, so the services at a walk do not reorder them (D-239). Never depends on the
+    order the zones arrive in."""
     trip = fit.data.commute.get(0)
     minutes = trip.minutes if trip is not None and trip.minutes is not None else math.inf
     zone = fit.data.zone
@@ -658,3 +678,12 @@ def ranking_key(fit: ZoneFit) -> tuple[float, float, float, str]:
         minutes,
         zone.admin_unit_id or f"{zone.level.value}:{zone.code}",
     )
+
+
+def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, str]:
+    """«Zonas que encajan»: best unrounded fit first. Only exact ties of it go on (D-239): more
+    everyday services at a walk, then fewer walking minutes to them and, after them, as
+    near_miss_key (confidence, minutes to work, zone id)."""
+    utility, confidence, minutes, zone_id = near_miss_key(fit)
+    served, walk_minutes = everyday_walk(fit.data) or (-1.0, math.inf)
+    return (utility, -served, walk_minutes, confidence, minutes, zone_id)
