@@ -26,8 +26,11 @@ import {
   tiedText,
   unknownText,
   WALK_MINUTES_FEATURE_PREFIX,
+  zonesWithoutPrice,
   zoneFit,
   zoneKeyOf,
+  zonePrice,
+  zonePriceOf,
   zoneWord,
 } from "../fit";
 import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
@@ -250,6 +253,45 @@ describe("«¿Y si cambias algo?»", () => {
     expect(unknownText(1)).toBe("En 1 zona no podemos comprobarlo todo por falta de datos. No la contamos como buena.");
   });
 
+  it("says why when buying: municipios with no published purchase price (rc.sin_dato.compra, D-234)", () => {
+    expect(unknownText(151, "zona", { n: 151, onlyMunicipios: true })).toBe(
+      "En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas.",
+    );
+    expect(unknownText(1, "zona", { n: 1, onlyMunicipios: true })).toBe(
+      "En 1 zona no podemos comprobarlo todo: sin precio de compra publicado en 1 municipio (solo lo tienen los de más de 25.000 habitantes). No la contamos como buena.",
+    );
+    expect(unknownText(40, "pueblo", { n: 40, onlyMunicipios: true })).toContain("sin precio de compra publicado en 40 pueblos");
+    expect(unknownText(3, "zona", { n: 0, onlyMunicipios: true })).toBe(unknownText(3));
+  });
+
+  it("never calls the districts municipios nor promises an estimate before the sync (D-234)", () => {
+    // The code deployed and the estimate not synced yet: 151 municipios and the 21 districts unpriced
+    expect(unknownText(172, "zona", { n: 172, onlyMunicipios: false })).toBe(
+      "En 172 zonas no podemos comprobarlo todo: sin precio de compra en 172 zonas (el valor tasado de la vivienda solo se publica por municipio, y solo en los de más de 25.000 habitantes). No las contamos como buenas.",
+    );
+    expect(unknownText(131, "barrio", { n: 131, onlyMunicipios: false })).toContain("sin precio de compra en 131 barrios");
+  });
+
+  it("counts the zones without a purchase price from all_zones, by level, only with a budget to buy", () => {
+    const priced = (z: ZoneMatch, cost: number | null): ZoneMatch => ({ ...z, estimated_cost_eur: cost });
+    const zones = [
+      priced(match("municipio", "28001", null, false), null),
+      priced(match("municipio", "28002", null, false), null),
+      priced(match("municipio", "28003", 0, false, ["budget"]), 420_000), // fails: not unknown
+      priced(match("municipio", "28004", null, false, ["near:colegio"]), null), // fails something else
+      priced(match("municipio", "28005", 100, true), 200_000),
+    ];
+    const district = priced(match("distrito", "2807906", null, false), null);
+    const check = { ...rc(10), zones_unknown: 2, unknown_by_constraint: { budget: 2 } };
+    const buy = { schema_version: 2, budget: { kind: "buy", amount_eur: 400_000 } } as const;
+    const rent = { schema_version: 2, budget: { kind: "rent", amount_eur: 1_200 } } as const;
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check, all_zones: zones })).toEqual({ n: 2, onlyMunicipios: true });
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check, all_zones: [...zones, district] })).toEqual({ n: 3, onlyMunicipios: false });
+    expect(zonesWithoutPrice({ scenario: rent, reality_check: check, all_zones: zones }).n).toBe(0);
+    // An API from before D-234 has no unknown_by_constraint: the generic text stays
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: rc(10), all_zones: zones }).n).toBe(0);
+  });
+
   it("tells each option with the API's figures, never recomputed", () => {
     const option = { label: "+5 min a pie hasta colegio con primaria", zones_if_relaxed: 49, added_zones: 17 };
     expect(optionText(option)).toEqual({ label: option.label, count: "saldrían 49 zonas, 17 más" });
@@ -277,6 +319,44 @@ describe("facts in plain words (a_pie.mediana)", () => {
     // A park out of range says «sin parque… a un paseo»: no minutes, no indicator, no median note
     expect(hasWalkingFact([{ indicator: null }])).toBe(false);
     expect(hasWalkingFact([{ indicator: { feature_id: "centros_salud_a_pie_por_10000_hab" } }])).toBe(false);
+  });
+});
+
+describe("the approximate price of a zone (D-234)", () => {
+  it("says the purchase price or the monthly rent the API gives, never recomputed", () => {
+    expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_confidence: 0.8 }, true)).toEqual({
+      short: "≈ 385.000 €",
+      long: "Comprar ≈ 385.000 €",
+      aria: "Comprar: unos 385.000 €",
+      confidence: null,
+    });
+    const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
+    expect([rent?.short, rent?.long, rent?.aria]).toEqual(["≈ 1.101 €/mes", "Alquiler ≈ 1.101 €/mes", "Alquiler: unos 1.101 € al mes"]);
+  });
+
+  it("marks an estimate with the card's words, and shows nothing without a price", () => {
+    expect(zonePrice({ estimated_cost_eur: 411_000, estimated_cost_confidence: 0.5 }, true)?.confidence?.label).toBe("Dato aproximado");
+    expect(zonePrice({ estimated_cost_eur: 900, estimated_cost_confidence: 0.3 }, false)?.confidence?.label).toBe("Dato poco seguro");
+    // An API from before D-234 sends no confidence: the figure goes without a mark
+    expect(zonePrice({ estimated_cost_eur: 900 }, false)?.confidence).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: null, estimated_cost_confidence: null }, true)).toBeNull();
+    expect(zonePrice({}, true)).toBeNull();
+  });
+
+  it("gives the card the price of any zone, from all_zones, else from its ranked entry", () => {
+    const first = fixture.results[0]!;
+    const key = zoneKeyOf(first.zone);
+    const withAll: SearchResult = {
+      ...fixture,
+      all_zones: fixture.all_zones.map((z) =>
+        zoneKeyOf(z.zone) === key ? { ...z, estimated_cost_eur: 1_234, estimated_cost_confidence: 0.8 } : z,
+      ),
+    };
+    expect(zonePriceOf(withAll, key)?.long).toBe("Alquiler ≈ 1.234 €/mes");
+    const older: SearchResult = { ...fixture, all_zones: fixture.all_zones.map((z) => ({ ...z, estimated_cost_eur: undefined })) };
+    const cost = first.estimated_cost_eur;
+    expect(zonePriceOf(older, key)?.short).toBe(cost == null ? undefined : zonePrice(first, false)?.short);
+    expect(zonePriceOf(fixture, "municipio/00000")).toBeNull();
   });
 });
 

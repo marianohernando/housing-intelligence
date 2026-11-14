@@ -23,8 +23,9 @@ from hi_ingestion.pipelines.stat_tables.quality import (
 )
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
-# 1.2: city indicators, one row per date; 1.3: barrio rows of the barrio indicators (D-232)
-PARSER_VERSION = "madrid_district_panel-1.3.0"
+# 1.2: city indicators, one row per date; 1.3: barrio rows of the barrio indicators (D-232);
+# 1.4: the Catastro indicators of the residential units (D-234), same parsing
+PARSER_VERSION = "madrid_district_panel-1.4.0"
 
 
 def run_panel_quality(

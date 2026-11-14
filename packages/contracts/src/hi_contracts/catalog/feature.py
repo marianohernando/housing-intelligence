@@ -63,15 +63,17 @@ class GapRowBinding(BaseModel):
 
 class FitBinding(BaseModel):
     """Where the people search (CORE-003) reads the feature: the rent or the appraised purchase
-    value per m² of the budget condition (D-227), or the walking minutes to the nearest place
-    of a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority
-    measures (a PriorityKey: the park for «Zonas verdes», D-222), or the walk to one kind of
-    public transport (`transit_mode`, D-233): it only informs the transport fact and never
-    scores. The search has no feature id written in its code."""
+    value per m² of the budget condition (D-227), or an estimated purchase price per m² used only
+    where none is published (`price_m2_estimate`, D-234: its own role, so a search that does not
+    know it ignores it), or the walking minutes to the nearest place of a kind, either a
+    service (a ScenarioState NeedKey) or what a «me importa» priority measures (a PriorityKey:
+    the park for «Zonas verdes», D-222), or the walk to one kind of public transport
+    (`transit_mode`, D-233): it only informs the transport fact and never scores. The search has
+    no feature id written in its code."""
 
     model_config = ConfigDict(extra="forbid")
 
-    role: Literal["rent_m2", "price_m2", "walk_minutes", "transit_mode"]
+    role: Literal["rent_m2", "price_m2", "price_m2_estimate", "walk_minutes", "transit_mode"]
     need: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="NeedKey, only for walk_minutes"
     )
@@ -95,7 +97,7 @@ class FitBinding(BaseModel):
         if (self.role == "walk_minutes") != (targets == 1) or (
             self.role != "walk_minutes" and targets
         ):
-            msg = "walk_minutes needs one of `need` or `priority`; rent_m2 and price_m2 take none"
+            msg = "walk_minutes needs one of `need` or `priority`; the cost roles take none"
             raise ValueError(msg)
         if (self.role == "transit_mode") != (self.mode is not None):
             msg = "`mode` is for transit_mode and transit_mode needs it"

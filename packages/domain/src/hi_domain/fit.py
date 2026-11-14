@@ -31,6 +31,8 @@ from hi_contracts.public import (
     ZoneRef,
 )
 from hi_domain.affordability import (
+    PURCHASE_ESTIMATE_NOTE,
+    PURCHASE_MISSING_IN_CITY,
     FloorArea,
     assumed_floor_area,
     budget_check,
@@ -43,8 +45,9 @@ from hi_domain.gaps import es_number
 
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
 # leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
-# trip measured for the whole district and the reason for an unknown rent said (D-232)
-FIT_VERSION = "fit-0.7"
+# trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8:
+# buying inside Madrid with an estimated price, said as such (D-234)
+FIT_VERSION = "fit-0.8"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -162,6 +165,7 @@ class ZoneData:
     )
     commute: Mapping[int, Commute] = field(default_factory=dict[int, Commute])
     price: IndicatorValue | None = None  # appraised value per m² to buy (D-227)
+    price_estimated: bool = False  # `price` is an estimate, not a published value (D-234)
     rent_note: str | None = None  # what the rent figure is, from its feature (D-228)
     rent_missing: str | None = None  # why there is no rent here, in plain words (D-232)
     # Walking minutes to a bus stop and to a Metro/Cercanías station, by mode ("bus", "metro").
@@ -195,6 +199,7 @@ class ZoneFit:
     confidence: float
     facts: list[Fact]
     cost_eur: float | None
+    cost_confidence: float | None = None  # how sure `cost_eur` is: its price or rent's
 
     @property
     def match_pct(self) -> int | None:
@@ -378,7 +383,14 @@ def constraint_checks(
     if scenario.budget is not None:
         checks.append(
             budget_check(
-                scenario.budget, data.rent, area, data.price, data.rent_note, data.rent_missing
+                scenario.budget,
+                data.rent,
+                area,
+                data.price,
+                data.rent_note,
+                data.rent_missing,
+                purchase_note(data),
+                purchase_missing(data),
             )
         )
     for nearby in scenario.nearby:
@@ -537,8 +549,29 @@ def cost_fact(
     return Score(utility, rent.confidence, fact)
 
 
-def purchase_fact(price: IndicatorValue | None, area: FloorArea, budget: float) -> Score:
-    """Buying (D-227): the appraised value for the needed area against the budget."""
+def purchase_note(data: ZoneData) -> str | None:
+    """What the purchase price of the zone is when it is an estimate (D-234); None for a
+    published appraised value."""
+    if not data.price_estimated:
+        return None
+    zone = "del barrio" if data.zone.level.value == "barrio" else "del distrito"
+    return PURCHASE_ESTIMATE_NOTE.format(city=data.zone.municipio_name or "la ciudad", zone=zone)
+
+
+def purchase_missing(data: ZoneData) -> str | None:
+    """Why a district or barrio has no purchase price (D-234): the city's appraised value is not
+    published by district, and the estimate is missing (not synced yet, or no cadastral data).
+    None for a municipio, which keeps the usual reason."""
+    if data.zone.level.value not in {"distrito", "barrio"}:
+        return None
+    return PURCHASE_MISSING_IN_CITY.format(city=data.zone.municipio_name or "la ciudad")
+
+
+def purchase_fact(
+    price: IndicatorValue | None, area: FloorArea, budget: float, note: str | None = None
+) -> Score:
+    """Buying (D-227): the appraised value for the needed area against the budget; `note` says
+    so when the price is an estimate (D-234)."""
     if price is None or price.value is None:
         text = "Compra: sin precio publicado para esta zona"
         fact = Fact(kind=FactKind.UNKNOWN, topic=FactTopic.COSTE, text=text, confidence=0.0)
@@ -547,7 +580,7 @@ def purchase_fact(price: IndicatorValue | None, area: FloorArea, budget: float) 
     fact = Fact(
         kind=FactKind.STRENGTH if cost <= budget else FactKind.WEAKNESS,
         topic=FactTopic.COSTE,
-        text=purchase_explanation(price.value, area),
+        text=purchase_explanation(price.value, area, note),
         confidence=price.confidence,
         indicator=price,
     )
@@ -568,7 +601,9 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
         topic, text = NO_DATA_PRIORITY[criterion.priority]
         return Score(None, 0.0, Fact(kind=FactKind.UNKNOWN, topic=topic, text=text, confidence=0))
     if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
-        return purchase_fact(data.price, area, float(scenario.budget.amount_eur))
+        return purchase_fact(
+            data.price, area, float(scenario.budget.amount_eur), purchase_note(data)
+        )
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)
     return cost_fact(data.rent, area, budget, data.rent_note, data.rent_missing)
 
@@ -615,13 +650,21 @@ def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
     return [*known, *unknown][:MAX_FACTS]
 
 
+def cost_indicator(scenario: ScenarioState, data: ZoneData) -> IndicatorValue | None:
+    """What the estimated cost comes from: the price per m² to buy, else the rent."""
+    if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
+        return data.price
+    return data.rent
+
+
 def estimated_cost(scenario: ScenarioState, data: ZoneData, area: FloorArea) -> float | None:
     """The purchase price to buy, else the monthly rent (also without a budget)."""
+    source = cost_indicator(scenario, data)
+    if source is None or source.value is None:
+        return None
     if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
-        price = data.price.value if data.price is not None else None
-        return None if price is None else float(purchase_cost(price, area.m2))
-    rent = data.rent.value if data.rent is not None else None
-    return None if rent is None else float(round(monthly_rent(rent, area.m2)))
+        return float(purchase_cost(source.value, area.m2))
+    return float(round(monthly_rent(source.value, area.m2)))
 
 
 def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
@@ -632,6 +675,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     if not weighted:  # nothing to score: the zone is as sure as its conditions
         confidence = min((c.confidence for c in checks), default=1.0)
     cost = estimated_cost(scenario, data, area)
+    source = cost_indicator(scenario, data)
     return ZoneFit(
         data=data,
         constraints=checks,
@@ -639,6 +683,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
         confidence=confidence,
         facts=facts([s for _, s in weighted], data),
         cost_eur=cost,
+        cost_confidence=None if cost is None or source is None else source.confidence,
     )
 
 
@@ -664,11 +709,12 @@ def everyday_walk(data: ZoneData) -> tuple[float, float] | None:
     return utility / len(measured), shown / len(measured)
 
 
-def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
+def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, float, str]:
     """«Casi encajan»: best unrounded fit first; ties: more confidence, fewer minutes by public
-    transport to the first place of work, then the zone id (D-220). Every near miss fails
-    something, so the services at a walk do not reorder them (D-239). Never depends on the
-    order the zones arrive in."""
+    transport to the first place of work (D-220), the lower cost (D-234: the zones over a
+    budget to buy all score 0 % on it, so the one closest to it comes first), then the zone id.
+    Every near miss fails something, so the services at a walk do not reorder them (D-239).
+    Never depends on the order the zones arrive in."""
     trip = fit.data.commute.get(0)
     minutes = trip.minutes if trip is not None and trip.minutes is not None else math.inf
     zone = fit.data.zone
@@ -676,6 +722,7 @@ def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
         -(fit.utility if fit.utility is not None else -1.0),
         -fit.confidence,
         minutes,
+        fit.cost_eur if fit.cost_eur is not None else math.inf,
         zone.admin_unit_id or f"{zone.level.value}:{zone.code}",
     )
 
@@ -683,7 +730,9 @@ def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
 def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, str]:
     """«Zonas que encajan»: best unrounded fit first. Only exact ties of it go on (D-239): more
     everyday services at a walk, then fewer walking minutes to them and, after them, as
-    near_miss_key (confidence, minutes to work, zone id)."""
-    utility, confidence, minutes, zone_id = near_miss_key(fit)
+    near_miss_key (confidence, minutes to work, zone id) without the cost: with plenty of
+    budget the cheapest zones would be the towns again (D-239), and after the walk no tie is
+    left for it to break (D-234)."""
+    utility, confidence, minutes, _cost, zone_id = near_miss_key(fit)
     served, walk_minutes = everyday_walk(fit.data) or (-1.0, math.inf)
     return (utility, -served, walk_minutes, confidence, minutes, zone_id)

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ayto_panel_indicadores_distritos_barrios",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_panel_indicadores_distritos_barrios/11a758e6249d/panelcsv.csv",
+      "sha256": "11a758e6249d81ede44a6fad9e4456dee8145e459464a3419929c579262ac6fc",
+      "bytes": 36060277,
+      "url": "https://datos.madrid.es/dataset/300087-0-indicadores-distritos/resource/300087-0-indicadores-distritos-csv/download/panelcsv.csv",
+      "retrieved_at": "2026-11-14T12:56:29.226968+00:00"
+    }
+  ],
+  "checksum": "4726abc60a15e411263beefe17506575bb979498132ece33c97c0740369ffc9d",
+  "parser_version": "madrid_district_panel-1.4.0",
+  "dataset_version": "2026-11-11-4726abc60a15",
+  "correlation_id": "4f060196416543369b86cb7fd5471715",
+  "silver": "data/silver/ayto_panel_indicadores_distritos_barrios/4726abc60a15/observations.csv.gz"
+}

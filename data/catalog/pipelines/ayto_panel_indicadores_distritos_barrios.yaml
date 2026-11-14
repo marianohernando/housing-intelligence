@@ -7,6 +7,10 @@ indicators:
   # D-226: residents' view of their own barrio (Encuesta de calidad de vida); context only.
   "Percepción de seguridad en el barrio por la noche": percepcion_seguridad_barrio_noche
   "Percepción de seguridad en el barrio por el día": percepcion_seguridad_barrio_dia
+  # D-234: Catastro figures of the residential units, to share out the city's appraised value
+  "Valor catastral medio por inmueble de uso residencial": valor_catastral_medio_residencial
+  "Superficie media construida (m2) inmuebles de uso residencial": superficie_construida_media_residencial
+  "Número de inmuebles de uso residencial": inmuebles_residenciales
 # The city row of these is kept as the municipio: the Madrid value the districts compare with.
 city_indicators:
   - "Percepción de seguridad en el barrio por la noche"
@@ -17,4 +21,7 @@ expected_districts: 21
 barrio_indicators:
   - "Total hogares"
   - "Tamaño medio del hogar"
+  - "Valor catastral medio por inmueble de uso residencial"
+  - "Superficie media construida (m2) inmuebles de uso residencial"
+  - "Número de inmuebles de uso residencial"
 expected_barrios: 131

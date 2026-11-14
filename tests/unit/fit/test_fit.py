@@ -755,3 +755,165 @@ def test_an_unknown_rent_gives_the_reason_the_data_has_for_it() -> None:
     plain = evaluate(family(), zone("m", rent=None))
     generic = next(c for c in plain.constraints if c.constraint_id == "budget")
     assert generic.explanation.startswith("Sin datos de alquiler para esta zona")
+
+
+def _estimated(code: str, price: float | None, level: TerritoryLevel) -> ZoneData:
+    base = zone(code)
+    return replace(
+        base,
+        zone=base.zone.model_copy(update={"level": level, "municipio_name": "Madrid"}),
+        price=_value("precio_compra_estimado_m2", price, 0.5),
+        price_estimated=price is not None,
+    )
+
+
+@pytest.mark.parametrize(
+    ("level", "words"),
+    [(TerritoryLevel.DISTRITO, "del distrito"), (TerritoryLevel.BARRIO, "del barrio")],
+)
+def test_an_estimated_price_says_it_is_an_estimate_in_the_fact_and_the_condition(
+    level: TerritoryLevel, words: str
+) -> None:
+    """D-234: a district or barrio of Madrid buys with an estimate; every text says so."""
+    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=500_000), anchors=[])
+    fit = evaluate(scenario, _estimated("2807906", 6051.0, level))
+    said = f"precio estimado: valor tasado de Madrid repartido según el valor catastral {words}"
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.PASS and budget.confidence == 0.5
+    assert said in budget.explanation
+    cost = next(f for f in fit.facts if f.topic is FactTopic.COSTE)
+    assert said in cost.text and cost.confidence == 0.5
+    assert "Ministerio de Vivienda y Catastro vía Ayuntamiento" in cost.text
+    assert cost.indicator is not None
+    assert cost.indicator.feature_id == "precio_compra_estimado_m2"
+    assert fit.cost_eur == 466_000  # 6.051 €/m² × 77 m², to thousands
+
+
+def test_a_published_price_never_reads_as_an_estimate() -> None:
+    scenario = family(budget=BUY_300K, anchors=[])
+    cost = next(
+        f for f in evaluate(scenario, zone("1", price=3000.0)).facts if f.topic is FactTopic.COSTE
+    )
+    assert "valor tasado medio de la vivienda libre" in cost.text
+    assert "estimado" not in cost.text
+
+
+def test_a_district_without_cadastral_value_stays_unknown() -> None:
+    scenario = family(budget=BUY_300K, anchors=[])
+    fit = evaluate(scenario, _estimated("2807906", None, TerritoryLevel.DISTRITO))
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.UNKNOWN and not fit.passes_all
+
+
+def test_reality_check_never_offers_to_relax_a_condition_that_is_only_unknown() -> None:
+    """D-234: every zone left out by the budget has no price (UNKNOWN), none FAILS it: more
+    budget adds nothing, so it is not offered and the budget is not what limits the search."""
+    scenario = family(budget=BUY_300K, anchors=[], nearby=[])
+    zones = [zone("1", price=3000.0), zone("2", price=None), zone("3", price=None)]
+    check = run_search(scenario, zones).reality_check
+    assert check.zones_passing == 1 and check.zones_unknown == 2
+    assert check.binding_constraint is None
+    assert [r.constraint_id for r in check.relaxations] == []
+    assert check.unknown_by_constraint == {"budget": 2}
+
+
+def test_reality_check_blames_the_condition_that_fails_not_the_one_without_data() -> None:
+    """Two zones without price (UNKNOWN), two whose school is too far and one over budget
+    (FAIL): the school limits, and more budget is offered because a zone fails it."""
+    scenario = family(budget=BUY_300K, anchors=[])
+    zones = [
+        zone("1", price=3000.0, colegio=14.0),
+        zone("2", price=None),
+        zone("3", price=None),
+        zone("4", price=4200.0),
+        zone("5", price=3000.0, colegio=14.0),
+    ]
+    check = run_search(scenario, zones).reality_check
+    assert check.binding_constraint == "near:colegio"
+    assert check.unknown_by_constraint == {"budget": 2}
+    by_id = {r.constraint_id: r for r in check.relaxations}
+    assert by_id["near:colegio"].added_zones == 2
+    assert by_id["budget"].label == "+30.000 €" and by_id["budget"].added_zones == 1
+
+
+def test_an_unknown_trip_limit_is_still_offered_because_dropping_it_adds_zones() -> None:
+    """Removing a time limit takes the condition away, so it does add the zones without a trip."""
+    office = CASTELLANA.model_copy(update={"max_minutes": 30})
+    check = run_search(family(anchors=[office]), [zone("1"), zone("2")]).reality_check
+    assert check.binding_constraint is None
+    assert check.unknown_by_constraint == {"commute:0": 2}
+    assert [(r.constraint_id, r.added_zones) for r in check.relaxations] == [("commute:0", 2)]
+
+
+def test_zones_over_a_purchase_budget_come_closest_to_it_first() -> None:
+    """D-234: every zone over the budget scores 0 % on it; the near misses then go from the
+    cheapest up, not by zone code."""
+    scenario = ScenarioState(budget=BUY_300K, household=Household(adults=2))
+    zones = [zone("1", price=7700.0), zone("2", price=4500.0), zone("3", price=6000.0)]
+    outcome = run_search(scenario, zones)
+    assert [r.zone.code for r in outcome.near_misses] == ["2", "3", "1"]
+
+
+def test_every_zone_carries_its_cost_and_how_sure_it_is() -> None:
+    """D-234: the price of each zone in the ranking rows and the zone card. It comes with the
+    confidence of its price or rent, for every evaluated zone (also one that fails two
+    conditions); none without a price, never 0."""
+    estimated = zone("2", colegio=40.0)
+    estimated = replace(
+        estimated, price=_value("precio_compra_estimado_m2", 5000.0, 0.5), price_estimated=True
+    )
+    zones = [zone("1", price=3000.0), estimated, zone("3", price=None)]
+    outcome = run_search(family(budget=BUY_300K, anchors=[]), zones)
+    by_code = {z.zone.code: z for z in outcome.all_zones}
+    assert (by_code["1"].estimated_cost_eur, by_code["1"].estimated_cost_confidence) == (
+        231_000,
+        0.8,
+    )
+    assert (by_code["2"].estimated_cost_eur, by_code["2"].estimated_cost_confidence) == (
+        385_000,
+        0.5,
+    )
+    assert by_code["2"].failed_constraints == ["budget", "near:colegio"]  # not ranked, not near
+    unpriced = by_code["3"]
+    assert unpriced.estimated_cost_eur is None and unpriced.estimated_cost_confidence is None
+    assert outcome.results[0].estimated_cost_confidence == 0.8
+    rent = run_search(family(anchors=[]), [zone("1")]).results[0]
+    assert (rent.estimated_cost_eur, rent.estimated_cost_confidence) == (924, 1.0)
+
+
+def test_the_cost_never_orders_the_zones_that_fit() -> None:
+    """D-234 after D-239: in «Zonas que encajan» the cheaper zone does not go first (with plenty
+    of budget that would put the cheap towns back on top); an exact tie goes on as D-239 says."""
+    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=1_000_000), anchors=[])
+    zones = [zone("1", price=4500.0), zone("2", price=3000.0)]
+    outcome = run_search(scenario, zones)
+    assert [r.match_pct for r in outcome.results] == [100, 100]
+    assert [r.zone.code for r in outcome.results] == ["1", "2"]
+
+
+def test_a_district_without_a_price_says_why_without_blaming_the_city_size() -> None:
+    """D-234: with the code deployed before the estimate is synced a district of Madrid has no
+    price; its UNKNOWN says the appraised value is published for the whole city, never that only
+    municipios of more than 25.000 inhabitants have one (Madrid has)."""
+    tetuan = replace(
+        zone("2807906", price=None),
+        zone=ZoneRef(
+            level=TerritoryLevel.DISTRITO,
+            code="2807906",
+            name="Tetuán",
+            municipio_name="Madrid",
+            center_lon=-3.70,
+            center_lat=40.46,
+        ),
+    )
+    scenario = family(budget=BUY_300K, anchors=[])
+    district = next(
+        c for c in evaluate(scenario, tetuan).constraints if c.constraint_id == "budget"
+    )
+    assert district.status is ConstraintStatus.UNKNOWN
+    assert "se publica para Madrid entero, no por distrito ni por barrio" in district.explanation
+    assert "25.000" not in district.explanation
+    municipio = evaluate(scenario, zone("28001", price=None)).constraints
+    assert (
+        "25.000 habitantes" in next(c for c in municipio if c.constraint_id == "budget").explanation
+    )

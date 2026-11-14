@@ -707,6 +707,21 @@
           "title": "Constraints",
           "type": "array"
         },
+        "estimated_cost_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for the estimated purchase price of D-234); None without a cost",
+          "title": "Estimated Cost Confidence"
+        },
         "estimated_cost_eur": {
           "anyOf": [
             {
@@ -786,7 +801,7 @@
             }
           ],
           "default": null,
-          "description": "constraint_id that removes the most zones",
+          "description": "constraint_id that the most zones FAIL; None when no zone fails any. A zone where a condition is UNKNOWN is not counted here (D-234)",
           "title": "Binding Constraint"
         },
         "relaxations": {
@@ -796,6 +811,14 @@
           },
           "title": "Relaxations",
           "type": "array"
+        },
+        "unknown_by_constraint": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Among the `zones_unknown` zones, how many have each condition UNKNOWN (constraint_id -> zones): what is missing is data, so relaxing it is never offered",
+          "title": "Unknown By Constraint",
+          "type": "object"
         },
         "zones_evaluated": {
           "minimum": 0,
@@ -968,6 +991,35 @@
       "additionalProperties": false,
       "description": "Every evaluated zone, for the choropleth («Encaje con tu búsqueda»).",
       "properties": {
+        "estimated_cost_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Confidence of `estimated_cost_eur`",
+          "title": "Estimated Cost Confidence"
+        },
+        "estimated_cost_eur": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monthly rent or purchase price for the needed area, as in RankedZone: the zone card shows it for any zone (D-234); None without a cost",
+          "title": "Estimated Cost Eur"
+        },
         "failed_constraints": {
           "items": {
             "type": "string"

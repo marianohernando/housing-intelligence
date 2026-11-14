@@ -56,18 +56,56 @@ def test_demo_case_ranks_zones_that_pass_every_condition(client: TestClient) -> 
 
 
 def test_unknown_never_counts_as_pass(client: TestClient) -> None:
-    """No zone of the fixtures has a published appraised value (D-227): buying is UNKNOWN
-    everywhere, never PASS, and more budget cannot add a zone without a price."""
-    scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 300000}, "nearby": []}
+    """No municipio of the fixtures that the search ranks has a published appraised value
+    (D-227): buying is UNKNOWN there, never PASS, and it is counted apart, not blamed on the
+    budget (D-234). The districts of Madrid have an estimate, far above this budget: they FAIL."""
+    scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 100000}, "nearby": []}
     data = _search(client, scenario).data
+    check = data.reality_check
     assert data.results == []
-    assert data.reality_check.zones_passing == 0
-    assert data.reality_check.zones_unknown == data.reality_check.zones_evaluated
+    assert check.zones_passing == 0
     assert all(not z.passes_all for z in data.all_zones)
-    option = next(o for o in data.reality_check.relaxations if o.constraint_id == "budget")
+    municipios = [z for z in data.all_zones if z.zone.level == "municipio"]
+    districts = [z for z in data.all_zones if z.zone.level == "distrito"]
+    assert municipios and districts
+    assert all(z.match_pct is None and not z.failed_constraints for z in municipios)
+    assert all(z.failed_constraints == ["budget"] for z in districts)
+    assert check.zones_unknown == len(municipios)
+    assert check.unknown_by_constraint == {"budget": len(municipios)}
+    assert check.binding_constraint == "budget"  # the districts do fail it
+    option = next(o for o in check.relaxations if o.constraint_id == "budget")
     assert option.relaxed_scenario.budget is not None
-    assert option.relaxed_scenario.budget.amount_eur == 330000
+    assert option.relaxed_scenario.budget.amount_eur == 110000
     assert option.added_zones == 0
+
+
+def test_madrid_districts_buy_with_an_estimate_that_says_so(client: TestClient) -> None:
+    """D-234 through the API: a district of Madrid has no published appraised value, so buying
+    uses the estimate (the city's value shared out by cadastral value), with low confidence,
+    its own indicator, both datasets cited and «precio estimado» in every text."""
+    scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 2000000}, "nearby": []}
+    data = _search(client, scenario).data
+    districts = [r for r in data.results if r.zone.level == "distrito"]
+    assert districts
+    for ranked in districts:
+        budget = next(c for c in ranked.constraints if c.constraint_id == "budget")
+        assert budget.status == "PASS" and budget.confidence == 0.5
+        assert budget.value == ranked.estimated_cost_eur
+        assert "precio estimado: valor tasado de Madrid" in budget.explanation
+        assert "valor catastral del distrito" in budget.explanation
+        cost = next(f for f in ranked.facts if f.topic == "coste")
+        assert "precio estimado" in cost.text and cost.confidence == 0.5
+        assert cost.indicator is not None
+        assert cost.indicator.feature_id == "precio_compra_estimado_m2"
+        assert set(cost.indicator.datasets) == {
+            "ayto_panel_indicadores_distritos_barrios",
+            "cm_valor_tasado_vivienda_municipios",
+        }
+    cited = {d.dataset_id for d in data.datasets}
+    assert "ayto_panel_indicadores_distritos_barrios" in cited
+    assert all(z.zone.level == "municipio" for z in data.all_zones if z.match_pct is None)
+    assert data.reality_check.binding_constraint is None  # nothing fails: no data is not a limit
+    assert all(o.constraint_id != "budget" for o in data.reality_check.relaxations)
     assert data.near_misses == []  # an UNKNOWN is never an explicit alternative either
 
 

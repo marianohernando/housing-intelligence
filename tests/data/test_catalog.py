@@ -278,19 +278,24 @@ def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Cat
 def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
     """CORE-003: the search finds its features through `fit`: one rent per m² and one walking
     feature per NeedKey (plus the priorities measured on foot, D-222), computed at the
-    municipio and distrito levels it ranks."""
+    municipio and distrito levels it ranks. The estimated purchase price (D-234) only exists
+    inside Madrid: districts and barrios."""
     bound = [s for s in catalog.features.values() if s.fit is not None]
     rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
     prices = [s for s in bound if s.fit is not None and s.fit.role == "price_m2"]
+    estimates = [s for s in bound if s.fit is not None and s.fit.role == "price_m2_estimate"]
     to_needs = [s for s in bound if s.fit is not None and s.fit.need is not None]
     walks = {s.fit.need: s for s in to_needs if s.fit is not None}
     assert len(rents) == 1
-    assert len(prices) == 1
+    assert len(prices) == 1 and len(estimates) == 1
     assert len(walks) == len(to_needs)
     assert set(walks) == {n.value for n in NeedKey}
     for spec in bound:
         levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
-        assert {"municipio", "distrito"} <= levels, spec.feature_id
+        if spec.fit is not None and spec.fit.role == "price_m2_estimate":
+            assert levels == {"distrito", "barrio"}, spec.feature_id
+        else:
+            assert {"municipio", "distrito"} <= levels, spec.feature_id
 
 
 def test_transit_by_mode_informs_and_never_scores(catalog: Catalog) -> None:
@@ -407,6 +412,31 @@ def test_purchase_price_is_the_official_appraised_value_from_the_cm_portal(
     assert dataset.license_status == "CLEAR"
     levels = (spec.formula.model_extra or {})["levels"]
     assert levels["distrito"]["method"] == "not_published"
+    assert levels["barrio"]["method"] == "not_published"
+
+
+def test_estimated_purchase_price_shares_out_the_city_value_by_cadastral_value(
+    catalog: Catalog,
+) -> None:
+    """D-234: districts and barrios of Madrid get an estimate, declared as such, with its own
+    feature, its own role (a search deployed before ignores it, with a warning) and both datasets
+    behind it."""
+    spec = catalog.features["precio_compra_estimado_m2"]
+    assert spec.fit is not None and spec.fit.role == "price_m2_estimate"
+    assert {s.dataset_id for s in spec.sources} == {
+        "cm_valor_tasado_vivienda_municipios",
+        "ayto_panel_indicadores_distritos_barrios",
+    }
+    formula = spec.formula.model_extra or {}
+    assert spec.formula.method == "anchored_relative_value"
+    assert formula["confidence"] < 0.8  # never «Dato fiable»
+    assert formula["anchor_metric"] == catalog.features["valor_tasado_vivienda_m2"].formula.metric  # type: ignore[attr-defined]
+    for key in ("numerator_metric", "denominator_metric", "weight_metric"):
+        metric = catalog.metrics[formula[key]]
+        assert metric.dataset_id == "ayto_panel_indicadores_distritos_barrios"
+        assert metric.geo_resolution_min.value == "barrio"
+    assert any("estimación" in text for text in spec.limitations)
+    assert any("ponencias" in text for text in spec.limitations)
 
 
 def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> None:

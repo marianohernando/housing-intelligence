@@ -5,6 +5,8 @@
  */
 import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 
+import { type ConfidenceText, confidenceText } from "./confidence";
+import { formatEuros } from "./format";
 import type { ZoneCollection, ZoneGeometry, ZoneProperties } from "./map/zones";
 
 /** How a zone is painted after a search: by its % when it meets everything, otherwise apart. */
@@ -65,6 +67,49 @@ export function zoneFit(result: SearchResult, zoneKey: string): ZoneFit {
     match: result.all_zones.find(same) ?? null,
     ranked: result.results.find(same) ?? result.near_misses?.find(same) ?? null,
   };
+}
+
+/** The approximate price of a zone for the household's m² (D-234), in the rows and the zone card. */
+export interface ZonePrice {
+  /** In a ranking row: «≈ 385.000 €» (zona.precio.compra) or «≈ 1.101 €/mes» (zona.precio.alquiler) */
+  short: string;
+  /** In the zone card head: «Comprar ≈ 385.000 €» (zona.precio.cabecera.compra) or «Alquiler ≈ 1.101 €/mes» */
+  long: string;
+  /** Read aloud instead of «≈»: «Comprar: unos 385.000 €» (zona.precio.aria.*) */
+  aria: string;
+  /** The card's words for a figure that is not a reliable one («Dato aproximado» for the D-234 estimate), else null */
+  confidence: ConfidenceText | null;
+}
+
+/** At or above this confidence the figure is «Dato fiable» and goes without a mark (lib/confidence.ts). */
+const RELIABLE = 0.8;
+
+/**
+ * The price the API gives a zone (`estimated_cost_eur`: the purchase price when buying, else the
+ * monthly rent), or null without one: nothing is shown and the general notice says why.
+ */
+export function zonePrice(
+  zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence">,
+  buying: boolean,
+): ZonePrice | null {
+  const cost = zone.estimated_cost_eur;
+  if (cost == null) return null;
+  const amount = formatEuros(cost);
+  const confidence = zone.estimated_cost_confidence;
+  return {
+    short: buying ? `≈ ${amount}` : `≈ ${amount}/mes`,
+    long: buying ? `Comprar ≈ ${amount}` : `Alquiler ≈ ${amount}/mes`,
+    aria: buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`,
+    confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
+  };
+}
+
+/** The price of the zone of the card: from `all_zones` (every zone), else its ranked entry (older API). */
+export function zonePriceOf(result: SearchResult, zoneKey: string): ZonePrice | null {
+  const { match, ranked } = zoneFit(result, zoneKey);
+  const buying = result.scenario.budget?.kind === "buy";
+  const withCost = match?.estimated_cost_eur != null ? match : ranked;
+  return withCost ? zonePrice(withCost, buying) : null;
 }
 
 /**
@@ -213,10 +258,42 @@ export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "s
   return n > MANY_TIED ? `Encajan ${zonesText(n, word)} igual de bien: marca qué te importa o dónde trabajas para afinar el orden.` : null;
 }
 
-/** rc.sin_dato: zones with some condition that could not be checked are never counted as good. */
-export function unknownText(n: number, word: ZoneWord = "zona"): string {
+/** The zones a search to buy could not check for lack of a purchase price (D-234). */
+export interface WithoutPrice {
+  n: number;
+  /** All of them municipios (no published appraised value); false when districts or barrios of Madrid are among them */
+  onlyMunicipios: boolean;
+}
+
+const NO_GAP: WithoutPrice = { n: 0, onlyMunicipios: true };
+
+/**
+ * Buying, the zones of `all_zones` without a price that fail nothing and do not pass: those the
+ * search could not check for the price. With the code deployed before the estimate is synced the
+ * districts and barrios of Madrid are among them, so they are counted by level, never all called
+ * municipios. Nothing when renting or with an API without `unknown_by_constraint` (before D-234).
+ */
+export function zonesWithoutPrice(result: Pick<SearchResult, "scenario" | "reality_check" | "all_zones">): WithoutPrice {
+  if (result.scenario.budget?.kind !== "buy" || !result.reality_check.unknown_by_constraint?.budget) return NO_GAP;
+  const unpriced = result.all_zones.filter((z) => z.estimated_cost_eur == null && !z.failed_constraints?.length && !z.passes_all);
+  return { n: unpriced.length, onlyMunicipios: unpriced.every((z) => z.zone.level === "municipio") };
+}
+
+/**
+ * rc.sin_dato: zones with some condition that could not be checked are never counted as good.
+ * rc.sin_dato.compra: buying, the reason is said. Only municipios: they have no published appraised
+ * value. Districts or barrios among them (the estimate not synced yet): «zonas», with a reason that
+ * holds for both, never a promise of an estimate.
+ */
+export function unknownText(n: number, word: ZoneWord = "zona", withoutPrice: WithoutPrice = NO_GAP): string {
   const [one, many] = WORDS[word].feminine ? ["la contamos como buena", "las contamos como buenas"] : ["lo contamos como bueno", "los contamos como buenos"];
-  return `En ${zonesText(n, word)} no podemos comprobarlo todo por falta de datos. No ${n === 1 ? one : many}.`;
+  const them = `No ${n === 1 ? one : many}.`;
+  if (withoutPrice.n <= 0) return `En ${zonesText(n, word)} no podemos comprobarlo todo por falta de datos. ${them}`;
+  const m = withoutPrice.n;
+  const reason = withoutPrice.onlyMunicipios
+    ? `sin precio de compra publicado en ${zonesText(m, word === "pueblo" ? "pueblo" : "municipio")} (solo lo tienen los de más de 25.000 habitantes)`
+    : `sin precio de compra en ${zonesText(m, word)} (el valor tasado de la vivienda solo se publica por municipio, y solo en los de más de 25.000 habitantes)`;
+  return `En ${zonesText(n, word)} no podemos comprobarlo todo: ${reason}. ${them}`;
 }
 
 /** One option of «¿Y si cambias algo?» (rc.opcion.cuenta): what it changes, how many zones there would be and how many more. */

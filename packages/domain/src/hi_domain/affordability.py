@@ -6,8 +6,10 @@ the household needs. Unless the person sets it, that area is the median useful f
 the homes of households of the same size in the Comunidad de Madrid (Censo de Población y
 Viviendas 2021, INE table 59524). Purchase (DATA-021, D-227): the zone's mean appraised value
 per m² of free-market housing (feature `valor_tasado_vivienda_m2`, Ministerio de Vivienda via
-the CM portal) times the same area; only municipios of more than 25.000 inhabitants have it,
-so everywhere else the condition is UNKNOWN and says so.
+the CM portal) times the same area; only municipios of more than 25.000 inhabitants have it.
+A zone inside a city may bring an estimate instead (D-234: the city's appraised value shared
+out by cadastral value), said as such in every text; without either the condition is UNKNOWN
+and says so.
 """
 
 from typing import NamedTuple
@@ -34,6 +36,22 @@ FLOOR_AREA_SOURCE = (
 # mean of the leases in force, as in the rent feature before version 3.
 RENT_NOTE = "media de los contratos vigentes; uno nuevo suele costar más"
 PURCHASE_NOTE = "valor tasado medio de la vivienda libre, no el precio de un anuncio"
+# D-234: what an estimated price is, in the fact and the condition; {zone} is «del distrito».
+PURCHASE_ESTIMATE_NOTE = (
+    "precio estimado: valor tasado de {city} repartido según el valor catastral {zone}; "
+    "Ministerio de Vivienda y Catastro vía Ayuntamiento"
+)
+# Why a zone has no purchase price: a municipio without a published appraised value, or (D-234) a
+# district or barrio of a city that has one, without the estimate (not synced yet); {city} is
+# «Madrid». Never says that the city lacks it: Madrid has more than 25.000 inhabitants.
+PURCHASE_MISSING = (
+    "Sin precio de compra publicado para esta zona: el valor tasado del Ministerio de Vivienda "
+    "solo llega a los municipios de más de 25.000 habitantes con tasaciones suficientes"
+)
+PURCHASE_MISSING_IN_CITY = (
+    "Sin precio de compra para esta zona: el valor tasado del Ministerio de Vivienda se publica "
+    "para {city} entero, no por distrito ni por barrio"
+)
 PURCHASE_ROUND_EUR = 1000  # an appraised mean is no more precise than this
 BUDGET_ID = "budget"
 
@@ -81,15 +99,21 @@ def purchase_cost(price_m2: float, area_m2: int) -> int:
     return round(price_m2 * area_m2 / PURCHASE_ROUND_EUR) * PURCHASE_ROUND_EUR
 
 
-def purchase_explanation(price_m2: float, area: FloorArea) -> str:
+def purchase_explanation(price_m2: float, area: FloorArea, note: str | None = None) -> str:
+    """`note`: what the figure is when it is not the published appraised value (an estimate)."""
     cost = purchase_cost(price_m2, area.m2)
     return (
-        f"Comprar ≈ {euros(cost)} por {area.m2} m² ({es_number(price_m2, 0)} €/m², {PURCHASE_NOTE})"
+        f"Comprar ≈ {euros(cost)} por {area.m2} m² "
+        f"({es_number(price_m2, 0)} €/m², {note or PURCHASE_NOTE})"
     )
 
 
 def _purchase_check(
-    budget: Budget, price: IndicatorValue | None, area: FloorArea
+    budget: Budget,
+    price: IndicatorValue | None,
+    area: FloorArea,
+    note: str | None = None,
+    missing: str | None = None,
 ) -> ConstraintCheck:
     base = {
         "constraint_id": BUDGET_ID,
@@ -102,11 +126,7 @@ def _purchase_check(
             **base,
             status=ConstraintStatus.UNKNOWN,
             confidence=0.0,
-            explanation=(
-                "Sin precio de compra publicado para esta zona: el valor tasado del Ministerio de "
-                "Vivienda solo llega a los municipios de más de 25.000 habitantes con tasaciones "
-                "suficientes, no a los distritos y barrios de Madrid ni a los pueblos"
-            ),
+            explanation=missing or PURCHASE_MISSING,
         )
     cost = purchase_cost(price.value, area.m2)
     return ConstraintCheck(
@@ -114,7 +134,7 @@ def _purchase_check(
         status=ConstraintStatus.PASS if cost <= budget.amount_eur else ConstraintStatus.FAIL,
         value=float(cost),
         confidence=price.confidence,
-        explanation=purchase_explanation(price.value, area),
+        explanation=purchase_explanation(price.value, area, note),
     )
 
 
@@ -125,11 +145,15 @@ def budget_check(
     price: IndicatorValue | None = None,
     rent_note: str | None = None,
     rent_missing: str | None = None,
+    price_note: str | None = None,
+    price_missing: str | None = None,
 ) -> ConstraintCheck:
     """`rent_missing`: why this zone has no rent, when the data says (D-232: a barrio with no
-    place carrying a postcode); else the generic reason."""
+    place carrying a postcode); else the generic reason. `price_note`: what the purchase price
+    is when it is an estimate (D-234); `price_missing`, why there is none when the reason is not
+    the usual one of a municipio (D-234: a district or barrio of Madrid)."""
     if budget.kind is BudgetKind.BUY:
-        return _purchase_check(budget, price, area)
+        return _purchase_check(budget, price, area, price_note, price_missing)
     if rent is None or rent.value is None:
         return ConstraintCheck(
             constraint_id=BUDGET_ID,
