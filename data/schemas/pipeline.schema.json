@@ -85,6 +85,123 @@
       "title": "AeatRentComparisonPipeline",
       "type": "object"
     },
+    "CmMunicipioConceptPipeline": {
+      "additionalProperties": false,
+      "description": "Instituto de Estadística tables without a territory code (D-235): the municipio comes\nby name and what the row counts is in a free-text 'Concepto' column.\n\nOnly the rows whose concept starts with `concept_prefix` are read. The source writes the\nnames by hand (double spaces, «Rozas de Madrid»), so `municipios` maps each spelling to its\nINE code after collapsing the whitespace; a name that is not there goes to quarantine and\nfails the run, never dropped in silence. Rows whose status is in `excluded_statuses` (e.g.\n«Provisional») are left out and counted.",
+      "properties": {
+        "concept_column": {
+          "default": "Concepto",
+          "title": "Concept Column",
+          "type": "string"
+        },
+        "concept_prefix": {
+          "minLength": 1,
+          "title": "Concept Prefix",
+          "type": "string"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "excluded_statuses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Statuses",
+          "type": "array"
+        },
+        "expected_municipios": {
+          "description": "municipios the table publishes",
+          "exclusiveMinimum": 0,
+          "title": "Expected Municipios",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "cm_municipio_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "municipio_column": {
+          "default": "Municipio",
+          "title": "Municipio Column",
+          "type": "string"
+        },
+        "municipios": {
+          "additionalProperties": {
+            "pattern": "^28\\d{3}$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Municipios",
+          "type": "object"
+        },
+        "period_column": {
+          "default": "Año",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "status_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Estado dato",
+          "title": "Status Column"
+        },
+        "unit_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Unidad",
+          "title": "Unit Column"
+        },
+        "value_column": {
+          "default": "Valor",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "concept_prefix",
+        "municipios",
+        "expected_municipios"
+      ],
+      "title": "CmMunicipioConceptPipeline",
+      "type": "object"
+    },
     "CmPostcodeConceptPipeline": {
       "additionalProperties": false,
       "description": "Tables where the postcode is embedded in a free-text 'Concepto' column.",
@@ -1339,6 +1456,7 @@
   "discriminator": {
     "mapping": {
       "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
+      "cm_municipio_concept": "#/$defs/CmMunicipioConceptPipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
       "cm_stat_table": "#/$defs/CmStatTablePipeline",
       "facility_directory": "#/$defs/FacilityDirectoryPipeline",
@@ -1358,6 +1476,9 @@
     },
     {
       "$ref": "#/$defs/CmPostcodeConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/CmMunicipioConceptPipeline"
     },
     {
       "$ref": "#/$defs/AeatRentComparisonPipeline"

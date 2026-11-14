@@ -8,7 +8,11 @@ from typing import Any, cast
 import pandas as pd
 
 from hi_contracts.catalog.enums import NullReason, TerritoryLevel
-from hi_contracts.catalog.pipeline import CmPostcodeConceptPipeline, CmStatTablePipeline
+from hi_contracts.catalog.pipeline import (
+    CmMunicipioConceptPipeline,
+    CmPostcodeConceptPipeline,
+    CmStatTablePipeline,
+)
 from hi_domain.geo.codes import MADRID_PROVINCE_CODE, admin_unit_id, ine_municipality_from_cm
 from hi_ingestion.catalog_harvester.common import slugify
 
@@ -40,6 +44,7 @@ class Observations:
     quarantine: pd.DataFrame
     source_rows: int
     out_of_window: int = 0
+    excluded_status: int = 0  # rows left out by their status (e.g. provisional), counted
 
 
 def parse_period(raw: str) -> tuple[date, date]:
@@ -155,6 +160,69 @@ def _postcode_row(row: dict[str, str], spec: CmPostcodeConceptPipeline) -> dict[
     )
 
 
+def clean_name(raw: str) -> str:
+    """A hand-written name with its whitespace collapsed: «Colmenar  Viejo» -> «Colmenar Viejo»."""
+    return " ".join(raw.split())
+
+
+def _municipio_concept_row(row: dict[str, str], spec: CmMunicipioConceptPipeline) -> dict[str, Any]:
+    name = clean_name(row[spec.municipio_column])
+    names = {clean_name(written): code for written, code in spec.municipios.items()}
+    if name not in names:
+        msg = f"municipio {name!r} is not in the pipeline's `municipios`"
+        raise RowError(msg)
+    code = names[name]
+    start, end = parse_period(row[spec.period_column])
+    value, null_reason = parse_value(row[spec.value_column], spec.missing_markers, spec.csv.decimal)
+    return _observation(
+        metric_id=spec.metric_id,
+        territory_level=TerritoryLevel.MUNICIPIO.value,
+        territory_code=code,
+        territory_name=name,
+        admin_unit_id=admin_unit_id("municipio", code),
+        period_start=start,
+        period_end=end,
+        dims={},
+        dims_key="",
+        value=value,
+        null_reason=null_reason,
+        unit=row[spec.unit_column] if spec.unit_column else None,
+        raw_value=row[spec.value_column],
+    )
+
+
+def normalize_municipio_concept(
+    frame: pd.DataFrame, spec: CmMunicipioConceptPipeline
+) -> Observations:
+    """Rows of other concepts are out of scope and rows of an excluded status are left out:
+    both are counted, never quarantined. `source_rows` counts the rows actually read."""
+    records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
+    in_scope = [
+        (index, row)
+        for index, row in enumerate(records)
+        if row.get(spec.concept_column, "").startswith(spec.concept_prefix)
+    ]
+    kept = [
+        (index, row)
+        for index, row in in_scope
+        if not (spec.status_column and row.get(spec.status_column) in spec.excluded_statuses)
+    ]
+    rows: list[dict[str, Any]] = []
+    bad: list[dict[str, Any]] = []
+    for index, row in kept:
+        try:
+            rows.append(_municipio_concept_row(row, spec))
+        except (RowError, KeyError) as exc:
+            bad.append({"source_row": index, "reason": str(exc), "raw": str(row)[:300]})
+    return Observations(
+        pd.DataFrame(rows, columns=OBS_COLUMNS),
+        pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
+        len(kept),
+        len(records) - len(in_scope),
+        len(in_scope) - len(kept),
+    )
+
+
 def within_period_window(frame: pd.DataFrame, spec: CmStatTablePipeline) -> pd.DataFrame:
     """Rows from period_min on; non-year periods stay so they still reach quarantine."""
     if spec.period_min is None:
@@ -165,8 +233,11 @@ def within_period_window(frame: pd.DataFrame, spec: CmStatTablePipeline) -> pd.D
 
 
 def normalize(
-    frame: pd.DataFrame, spec: CmStatTablePipeline | CmPostcodeConceptPipeline
+    frame: pd.DataFrame,
+    spec: CmStatTablePipeline | CmPostcodeConceptPipeline | CmMunicipioConceptPipeline,
 ) -> Observations:
+    if isinstance(spec, CmMunicipioConceptPipeline):
+        return normalize_municipio_concept(frame, spec)
     source_rows = len(frame)
     if isinstance(spec, CmStatTablePipeline):
         frame = within_period_window(frame, spec)

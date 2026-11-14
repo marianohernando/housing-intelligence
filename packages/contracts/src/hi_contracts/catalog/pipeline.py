@@ -90,6 +90,54 @@ class CmPostcodeConceptPipeline(BaseModel):
         return [self.metric_id]
 
 
+class CmMunicipioConceptPipeline(BaseModel):
+    """Instituto de Estadística tables without a territory code (D-235): the municipio comes
+    by name and what the row counts is in a free-text 'Concepto' column.
+
+    Only the rows whose concept starts with `concept_prefix` are read. The source writes the
+    names by hand (double spaces, «Rozas de Madrid»), so `municipios` maps each spelling to its
+    INE code after collapsing the whitespace; a name that is not there goes to quarantine and
+    fails the run, never dropped in silence. Rows whose status is in `excluded_statuses` (e.g.
+    «Provisional») are left out and counted.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["cm_municipio_concept"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    period_column: str = "Año"
+    value_column: str = "Valor"
+    unit_column: str | None = "Unidad"
+    concept_column: str = "Concepto"
+    concept_prefix: str = Field(min_length=1)
+    municipio_column: str = "Municipio"
+    municipios: dict[str, Annotated[str, Field(pattern=r"^28\d{3}$")]] = Field(min_length=1)
+    status_column: str | None = "Estado dato"
+    excluded_statuses: list[str] = Field(default_factory=list[str])
+    expected_municipios: int = Field(gt=0, description="municipios the table publishes")
+    missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
+
+    @model_validator(mode="after")
+    def _names_cover_the_expected_municipios(self) -> Self:
+        codes = set(self.municipios.values())
+        if len(codes) != self.expected_municipios:
+            msg = (
+                f"{self.dataset_id}: `municipios` names {len(codes)} municipios, "
+                f"expected_municipios says {self.expected_municipios}"
+            )
+            raise ValueError(msg)
+        if self.excluded_statuses and self.status_column is None:
+            msg = f"{self.dataset_id}: excluded_statuses need a status_column"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
 class AeatRentComparisonPipeline(BaseModel):
     """Agencia Tributaria, «Estadística de viviendas declaradas en IRPF»: the HTML table that
     compares the mean monthly rent and the mean m² of all leases with those of the leases
@@ -521,6 +569,7 @@ class OsmParksPipeline(BaseModel):
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
+    | CmMunicipioConceptPipeline
     | AeatRentComparisonPipeline
     | MadridPadronPipeline
     | MadridDistrictPanelPipeline
