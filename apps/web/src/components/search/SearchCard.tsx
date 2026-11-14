@@ -24,11 +24,11 @@ import {
 } from "@/lib/scenario";
 
 import NearbyField from "./NearbyField";
+import PlaceField, { useStations } from "./PlaceField";
 import { useScenario } from "./ScenarioProvider";
 import styles from "./SearchCard.module.css";
-import WorkField from "./WorkField";
 
-// Copy from pitch/textos_web.md (busqueda.*, hogar.*, importa.*, trabajo.*, presupuesto.*)
+// Copy from pitch/textos_web.md (busqueda.*, hogar.*, importa.*, trabajo.*, familia.*, presupuesto.*)
 const TEXT = {
   title: "Tu búsqueda",
   show: "Ver mi búsqueda",
@@ -90,6 +90,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   const { scenario, update, search, available, status, error } = useScenario();
   const [open, setOpen] = useState(!collapsible);
   const bodyId = useId();
+  const stationList = useStations();
   const household = scenario.household ?? { adults: 1, minors: 0, seniors_in_care: 0 };
   const minors = household.minors ?? 0;
   const seniors = household.seniors_in_care ?? 0;
@@ -146,7 +147,8 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
         {available ? (
           <>
             <NearbyField />
-            <WorkField />
+            <PlaceField kind="work" stationList={stationList} />
+            <PlaceField kind="family" stationList={stationList} />
           </>
         ) : (
           // Off, the search cannot use the work place yet: «Muy pronto», as before the search existed

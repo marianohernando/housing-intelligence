@@ -46,7 +46,7 @@ function ZonePicker() {
   return (
     <GlassCard as="section" id={PICK_ID} aria-label={TEXT.pick} className={styles.picker}>
       <p>{TEXT.pick}</p>
-      <ZoneDirectory hrefFor={(zone) => gapsHref(zone.level, zone.code)} placeholder={TEXT.placeholder} wholeCities />
+      <ZoneDirectory hrefFor={(zone) => gapsHref(zone.level, zone.code)} placeholder={TEXT.placeholder} wholeCities folded />
     </GlassCard>
   );
 }

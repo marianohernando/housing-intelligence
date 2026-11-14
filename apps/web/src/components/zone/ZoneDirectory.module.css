@@ -59,3 +59,36 @@
   gap: var(--space-3);
   justify-items: start;
 }
+
+/* «Ver las 199 zonas»: the same toggle as «Ver las 10 primeras» of the ranking */
+.toggle {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  padding: 0 var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+/* The groups behind the toggle keep the spacing they had as direct children of the directory */
+.groups {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.groups[hidden] {
+  display: none;
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
@@ -29,6 +30,9 @@ const TEXT = {
   none: "No hay ninguna zona con ese nombre.",
   wholeCity: (name: string) => `${name} (toda la ciudad)`,
   loadingRow: "Cargando el estado de cada zona…",
+  // zonas.ver_todas, zonas.ver_menos: the folded list of «Qué falta»
+  all: (n: number) => `Ver las ${n} zonas`,
+  fewer: "Ver menos",
 };
 
 type Result = { zones: ZoneCollection } | { error: ApiError };
@@ -75,12 +79,19 @@ interface Props {
   row?: GapRowKey | null;
   /** Also list Madrid capital as a whole, whose «Qué falta» list exists although the map splits it. */
   wholeCities?: boolean;
+  /**
+   * Keep the districts and municipios behind «Ver las N zonas» until the person opens them or types
+   * a name («Qué falta» on a phone: the whole list is a very long scroll).
+   */
+  folded?: boolean;
 }
 
 /** The map's alternative: every zone as a link, with a filter by name (keyboard and screen readers). */
-export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = null, wholeCities: withCities = false }: Props) {
+export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = null, wholeCities: withCities = false, folded = false }: Props) {
   const rowMap = useGapRowMap(row);
   const inputId = useId();
+  const listId = useId();
+  const [all, setAll] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState("");
@@ -125,6 +136,8 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
     );
   }
   const { distritos, municipios } = zoneDirectory(result.zones, query);
+  // A name typed in the field shows its zones at once, folded or not
+  const searching = query.trim() !== "";
   // The whole city leads to its «Qué falta» list: on the map it is its districts
   const cities = withCities
     ? wholeCities(result.zones).filter((c) => searchable(TEXT.wholeCity(c.name)).includes(searchable(query)))
@@ -162,8 +175,16 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
           </Button>
         </div>
       )}
-      <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
-      <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
+      {folded && !searching && (
+        <button type="button" className={styles.toggle} aria-expanded={all} aria-controls={listId} onClick={() => setAll((v) => !v)}>
+          {all ? TEXT.fewer : TEXT.all(distritos.length + municipios.length)}
+          <ChevronDown size={18} aria-hidden="true" className={all ? styles.flip : undefined} />
+        </button>
+      )}
+      <div id={listId} className={styles.groups} hidden={folded && !all && !searching}>
+        <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
+        <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
+      </div>
     </div>
   );
 }
