@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 16507,
+        "places": 16493,
         "min": 8000,
         "max": 60000
       }
@@ -22,17 +22,17 @@
       "critical": true,
       "passed": true,
       "details": {
-        "Bar": 2343,
-        "Pub": 1632,
-        "Cafetería": 2226,
-        "Restaurante": 7678,
-        "Gimnasio": 556,
-        "Centro deportivo": 1182,
-        "Museo": 196,
+        "Museo": 195,
         "Biblioteca": 260,
         "Teatro": 259,
-        "Cine": 77,
-        "Centro cultural": 98
+        "Cine": 76,
+        "Centro cultural": 98,
+        "Gimnasio": 556,
+        "Centro deportivo": 1182,
+        "Bar": 2342,
+        "Pub": 1631,
+        "Cafetería": 2224,
+        "Restaurante": 7670
       }
     },
     {

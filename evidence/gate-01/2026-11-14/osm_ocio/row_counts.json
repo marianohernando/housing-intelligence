@@ -1,21 +1,22 @@
 {
-  "places": 16507,
+  "places": 16493,
   "quarantined": 0,
   "access_denied": 28,
+  "node_of_area": 14,
   "by_subcategory": {
-    "Bar": 2343,
+    "Bar": 2342,
     "Biblioteca": 260,
-    "Cafetería": 2226,
+    "Cafetería": 2224,
     "Centro cultural": 98,
     "Centro deportivo": 1182,
-    "Cine": 77,
+    "Cine": 76,
     "Gimnasio": 556,
-    "Museo": 196,
-    "Pub": 1632,
-    "Restaurante": 7678,
+    "Museo": 195,
+    "Pub": 1631,
+    "Restaurante": 7670,
     "Teatro": 259
   },
-  "assigned_to_section": 16490,
+  "assigned_to_section": 16476,
   "municipio_mismatch": 0,
   "directory_aliases": 0
 }

@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from hi_contracts.catalog.pipeline import OsmPoisPipeline
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.osm_pois.parse import parse_pois
-from hi_ingestion.pipelines.osm_pois.places import normalize_pois
+from hi_ingestion.pipelines.osm_pois.places import drop_nodes_of_areas, normalize_pois
 from hi_ingestion.pipelines.osm_pois.quality import run_pois_quality
 
 LAT, LON = 40.4168, -3.7038
@@ -51,6 +51,11 @@ EXTRACT = "\n".join(
         _node(5, 43.0, -8.0, amenity="bar", name="Fuera de Madrid"),
         _node(6, LAT, LON + 0.004, tourism="museum", amenity="cafe", name="Museo del Barrio"),
         _node(7, LAT, LON + 0.005, amenity="library", name="Biblioteca Municipal"),
+        # The sports centre of way 100 drawn again as a node inside it, and a namesake 1 km away
+        _node(
+            8, LAT + 0.0105, LON + 0.0005, leisure="sports_centre", name="Polideportivo Municipal"
+        ),
+        _node(9, LAT + 0.02, LON, leisure="sports_centre", name="Polideportivo Municipal"),
         *(_node(10 + i, LAT + 0.01 + n, LON + e) for i, (e, n) in enumerate(SQUARE)),
         '  <way id="100"><nd ref="10"/><nd ref="11"/><nd ref="12"/><nd ref="13"/><nd ref="10"/>'
         '<tag k="leisure" v="sports_centre"/><tag k="name" v="Polideportivo Municipal"/></way>',
@@ -68,7 +73,15 @@ def extract(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 def test_only_nodes_and_areas_with_a_declared_tag_are_read(extract: Path) -> None:
     frame = parse_pois(extract, SPEC)
-    assert sorted(frame["external_id"]) == ["node/1", "node/2", "node/4", "node/5", "way/100"]
+    assert sorted(frame["external_id"]) == [
+        "node/1",
+        "node/2",
+        "node/4",
+        "node/5",
+        "node/8",
+        "node/9",
+        "way/100",
+    ]
 
 
 def test_an_area_becomes_a_point_inside_it(extract: Path) -> None:
@@ -81,8 +94,8 @@ def test_private_places_stay_out_and_places_outside_the_region_are_quarantined(
     extract: Path,
 ) -> None:
     places = normalize_pois(parse_pois(extract, SPEC), SPEC)
-    assert sorted(places.frame["external_id"]) == ["node/1", "node/2", "way/100"]
-    assert places.filtered_out == {"access_denied": 1}
+    assert sorted(places.frame["external_id"]) == ["node/1", "node/2", "node/9", "way/100"]
+    assert places.filtered_out == {"access_denied": 1, "node_of_area": 1}
     assert places.quarantine["external_id"].tolist() == ["node/5"]
 
 
@@ -112,18 +125,14 @@ def test_quality_wants_a_plausible_count_every_class_and_few_bad_points(extract:
     assert not report.passed  # a declared class with no place: a tag misspelt or a bad extract
 
 
-def test_museums_and_libraries_are_culture_and_the_first_declared_tag_wins(
+def test_museums_and_libraries_are_culture_and_culture_wins_over_a_cafe(
     extract: Path,
 ) -> None:
-    """«Cultura» (D-236): a museum is a `tourism` tag, a library an `amenity` one. A museum
-    that also has a café takes the class declared first in the pipeline."""
-    culture = [
-        {"key": "tourism", "value": "museum", "category": "culture", "subcategory": "Museo"},
-        {"key": "amenity", "value": "library", "category": "culture", "subcategory": "Biblioteca"},
-        {"key": "amenity", "value": "cafe", "category": "commerce", "subcategory": "Cafetería"},
-    ]
-    wider = OsmPoisPipeline.model_validate(SPEC.model_dump() | {"classes": [*CLASSES, *culture]})
-    places = normalize_pois(parse_pois(extract, wider), wider).frame.set_index("external_id")
+    """«Cultura» (D-236): a museum is a `tourism` tag, a library an `amenity` one. With the
+    catalogue's order (culture first), a museum that also has a café is a museum."""
+    spec = load_catalog().pipelines["osm_ocio"]
+    assert isinstance(spec, OsmPoisPipeline)
+    places = normalize_pois(parse_pois(extract, spec), spec).frame.set_index("external_id")
     museum, library = places.loc["node/6"], places.loc["node/7"]
     assert (museum["category"], museum["subcategory"]) == ("culture", "Museo")
     assert museum["attributes"] == {"osm_tag": "tourism=museum"}
@@ -131,6 +140,24 @@ def test_museums_and_libraries_are_culture_and_the_first_declared_tag_wins(
         "Biblioteca",
         "Biblioteca Municipal",
     )
+
+
+def test_a_node_inside_the_area_of_the_same_place_counts_once() -> None:
+    """The building and a node inside it with the same tag and name are one place (the area
+    stays); unnamed places and namesakes farther than 50 m are not merged."""
+    area = {"external_id": "way/1", "named": True, "x": 0.0, "y": 0.0}
+    tag = {"attributes": {"osm_tag": "amenity=bar"}, "canonical_name": "Casa Paco"}
+    rows = [
+        area | tag,
+        {"external_id": "node/2", "named": True, "x": 30.0, "y": 30.0} | tag,
+        {"external_id": "node/3", "named": True, "x": 60.0, "y": 0.0} | tag,
+        {"external_id": "node/4", "named": False, "x": 1.0, "y": 0.0}
+        | tag
+        | {"canonical_name": "Bar sin nombre"},
+    ]
+    kept, dropped = drop_nodes_of_areas(rows)
+    assert [r["external_id"] for r in kept] == ["way/1", "node/3", "node/4"]
+    assert dropped == 1
 
 
 def test_a_tag_cannot_be_declared_twice() -> None:

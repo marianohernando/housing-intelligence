@@ -11,8 +11,8 @@
     }
   ],
   "checksum": "a3206c2d1d5f80a19a2564ccf59037d50aa06aa27639df013d89c4a06da1ad50",
-  "parser_version": "osm-pois-1.1.0",
+  "parser_version": "osm-pois-1.2.0",
   "dataset_version": "2026-11-14-a3206c2d1d5f",
-  "correlation_id": "07ed3bbdee1342cab8a8a3a6da2e2e96",
+  "correlation_id": "b0a0da44a10649e0a52c41a280054ecc",
   "silver": "data/silver/osm_ocio/a3206c2d1d5f/places.csv.gz"
 }
