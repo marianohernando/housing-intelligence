@@ -72,12 +72,12 @@ def test_an_unknown_role_is_ignored_with_a_warning(caplog: pytest.LogCaptureFixt
         assert ignored in caplog.text
 
 
-ESTIMATE = {"role": "price_m2", "estimate": True}
+ESTIMATE = {"role": "price_m2_estimate"}
 
 
 def test_an_estimated_price_is_kept_apart_from_the_published_one() -> None:
-    """D-234: both features bind `price_m2`; the estimate never overwrites the published row,
-    whatever the order the rows arrive in."""
+    """D-234: the estimate has its own role (`price_m2_estimate`) and never overwrites the
+    published row, whatever the order the rows arrive in."""
     published = _row("valor_tasado_vivienda_m2", {"role": "price_m2"})
     estimate = _row("precio_compra_estimado_m2", ESTIMATE)
     for rows in ([estimate, published], [published, estimate]):

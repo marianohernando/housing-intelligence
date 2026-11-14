@@ -36,4 +36,6 @@ limitations:
   - "El valor catastral sale de ponencias de valores antiguas: recoge mal los barrios que han cambiado mucho desde entonces. Frente a referencias de mercado, el error por distrito queda por debajo del 30 % (D-234)."
   - "La superficie es la construida media del Catastro, que incluye zonas comunes; en zonas de viviendas grandes o unifamiliares el €/m² puede quedar bajo."
   - "Solo Madrid capital: sus 21 distritos y 131 barrios. Los municipios usan su valor tasado publicado, sin estimar. Una zona sin valor catastral queda sin datos, nunca 0."
-fit: {role: price_m2, estimate: true}
+# D-234: its own role. A search that knows it uses the estimate only where no appraised value is
+# published, and says so; one that does not (deployed before) ignores it with a warning.
+fit: {role: price_m2_estimate}

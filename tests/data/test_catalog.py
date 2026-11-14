@@ -283,16 +283,16 @@ def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
     bound = [s for s in catalog.features.values() if s.fit is not None]
     rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
     prices = [s for s in bound if s.fit is not None and s.fit.role == "price_m2"]
+    estimates = [s for s in bound if s.fit is not None and s.fit.role == "price_m2_estimate"]
     to_needs = [s for s in bound if s.fit is not None and s.fit.need is not None]
     walks = {s.fit.need: s for s in to_needs if s.fit is not None}
     assert len(rents) == 1
-    assert len(prices) == 2
-    assert sum(s.fit is not None and s.fit.estimate for s in prices) == 1
+    assert len(prices) == 1 and len(estimates) == 1
     assert len(walks) == len(to_needs)
     assert set(walks) == {n.value for n in NeedKey}
     for spec in bound:
         levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
-        if spec.fit is not None and spec.fit.estimate:
+        if spec.fit is not None and spec.fit.role == "price_m2_estimate":
             assert levels == {"distrito", "barrio"}, spec.feature_id
         else:
             assert {"municipio", "distrito"} <= levels, spec.feature_id
@@ -402,11 +402,7 @@ def test_purchase_price_is_the_official_appraised_value_from_the_cm_portal(
 ) -> None:
     """DATA-021 (D-227): buying reads the Ministerio de Vivienda appraised value that the CM
     portal publishes by municipio; Madrid districts are SIN DATOS, never the city's mean."""
-    bound = [
-        f
-        for f in catalog.features.values()
-        if f.fit is not None and f.fit.role == "price_m2" and not f.fit.estimate
-    ]
+    bound = [f for f in catalog.features.values() if f.fit is not None and f.fit.role == "price_m2"]
     assert [f.feature_id for f in bound] == ["valor_tasado_vivienda_m2"]
     spec = bound[0]
     primary = {s.dataset_id for s in spec.sources if s.role == "primary"}
@@ -423,11 +419,10 @@ def test_estimated_purchase_price_shares_out_the_city_value_by_cadastral_value(
     catalog: Catalog,
 ) -> None:
     """D-234: districts and barrios of Madrid get an estimate, declared as such, with its own
-    feature and both datasets behind it; its id sorts before the published one, so a version of
-    the search that does not know `estimate` keeps reading the published row."""
+    feature, its own role (a search deployed before ignores it, with a warning) and both datasets
+    behind it."""
     spec = catalog.features["precio_compra_estimado_m2"]
-    assert spec.fit is not None and spec.fit.role == "price_m2" and spec.fit.estimate
-    assert spec.feature_id < "valor_tasado_vivienda_m2"
+    assert spec.fit is not None and spec.fit.role == "price_m2_estimate"
     assert {s.dataset_id for s in spec.sources} == {
         "cm_valor_tasado_vivienda_municipios",
         "ayto_panel_indicadores_distritos_barrios",

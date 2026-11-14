@@ -137,10 +137,10 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
         if fit["role"] == "rent_m2":
             rent[key] = _indicator(row)
             rent_note = fit.get("note") or rent_note
-        elif fit["role"] == "price_m2" and fit.get("estimate"):
-            price_estimate[key] = _indicator(row)
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
+        elif fit["role"] == "price_m2_estimate":  # D-234: only where no price is published
+            price_estimate[key] = _indicator(row)
         elif fit["role"] == "transit_mode" and fit.get("mode") in TRANSIT_MODES:
             transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
         elif fit["role"] == "walk_minutes" and fit.get("need") in NEED_VALUES:
