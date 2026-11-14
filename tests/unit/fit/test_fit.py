@@ -528,6 +528,22 @@ def test_the_tie_break_never_outranks_a_better_fit_however_small() -> None:
     assert _codes(scenario, [better_served, worse_served]) == ["28001", "28002"]
 
 
+def test_near_misses_keep_breaking_ties_by_confidence_not_by_walks() -> None:
+    """«Casi encajan» (D-239): every near miss fails something, so an exact tie there still
+    goes to the surer figure, as before; the services at a walk only order «Zonas que encajan».
+    The demo's near misses (five at 93 %) keep the order the pitch reads."""
+    poor = PLENTY.model_copy(update={"budget": Budget(kind=BudgetKind.RENT, amount_eur=300)})
+    unsure_rent = _value("alquiler_m2_mensual", 12.0, confidence=0.8)
+    better_served = replace(served("28001"), rent=unsure_rent)
+    surer = served("28002", farmacia=28.0, mayores=45.0)
+    fits = [evaluate(poor, z) for z in (better_served, surer)]
+    assert all(f.failed == ["budget"] for f in fits)
+    assert fits[0].utility == fits[1].utility and fits[0].confidence < fits[1].confidence
+    outcome = run_search(poor, [better_served, surer])
+    assert [r.zone.code for r in outcome.near_misses] == ["28002", "28001"]
+    assert sorted(fits, key=ranking_key)[0].data.zone.code == "28001"  # «Zonas que encajan»
+
+
 @settings(max_examples=60)
 @given(st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code))
 def test_without_exact_ties_the_order_is_the_fit_alone(zones: list[ZoneData]) -> None:

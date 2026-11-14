@@ -664,20 +664,26 @@ def everyday_walk(data: ZoneData) -> tuple[float, float] | None:
     return utility / len(measured), shown / len(measured)
 
 
-def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, str]:
-    """Best unrounded fit first. Only exact ties of it go on (D-239): more everyday services at
-    a walk, then fewer walking minutes to them, more confidence, fewer minutes by public
-    transport to the first place of work and, last, the zone id. Never depends on the order
-    the zones arrive in."""
+def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, str]:
+    """«Casi encajan»: best unrounded fit first; ties: more confidence, fewer minutes by public
+    transport to the first place of work, then the zone id (D-220). Every near miss fails
+    something, so the services at a walk do not reorder them (D-239). Never depends on the
+    order the zones arrive in."""
     trip = fit.data.commute.get(0)
     minutes = trip.minutes if trip is not None and trip.minutes is not None else math.inf
-    served, walk_minutes = everyday_walk(fit.data) or (-1.0, math.inf)
     zone = fit.data.zone
     return (
         -(fit.utility if fit.utility is not None else -1.0),
-        -served,
-        walk_minutes,
         -fit.confidence,
         minutes,
         zone.admin_unit_id or f"{zone.level.value}:{zone.code}",
     )
+
+
+def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, str]:
+    """«Zonas que encajan»: best unrounded fit first. Only exact ties of it go on (D-239): more
+    everyday services at a walk, then fewer walking minutes to them and, after them, as
+    near_miss_key (confidence, minutes to work, zone id)."""
+    utility, confidence, minutes, zone_id = near_miss_key(fit)
+    served, walk_minutes = everyday_walk(fit.data) or (-1.0, math.inf)
+    return (utility, -served, walk_minutes, confidence, minutes, zone_id)

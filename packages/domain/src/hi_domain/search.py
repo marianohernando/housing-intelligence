@@ -3,7 +3,7 @@ apart and recount what each relaxed condition would add (Reality Check). Pure: t
 service loads the zones and their indicators; this module decides.
 """
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from hi_contracts.catalog.enums import GapRowKey
@@ -14,7 +14,7 @@ from hi_contracts.public import (
     ScenarioState,
     ZoneMatch,
 )
-from hi_domain.fit import ZoneData, ZoneFit, evaluate, ranking_key
+from hi_domain.fit import ZoneData, ZoneFit, evaluate, near_miss_key, ranking_key
 from hi_domain.reality_check import reality_check
 
 RESULT_LIMIT, NEAR_MISS_LIMIT = 10, 5
@@ -48,8 +48,10 @@ class SearchOutcome:
     unscored_passing: int  # zones passing every condition with no data to score them
 
 
-def _ranked(fits: Sequence[ZoneFit], limit: int) -> list[RankedZone]:
-    ordered = sorted((f for f in fits if f.match_pct is not None), key=ranking_key)
+def _ranked(
+    fits: Sequence[ZoneFit], limit: int, key: Callable[[ZoneFit], tuple[float | str, ...]]
+) -> list[RankedZone]:
+    ordered = sorted((f for f in fits if f.match_pct is not None), key=key)
     return [
         RankedZone(
             rank=i,
@@ -86,8 +88,8 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
     fits = [evaluate(scenario, zone) for zone in zones]
     passing = [f for f in fits if f.passes_all]
     return SearchOutcome(
-        results=_ranked(passing, RESULT_LIMIT),
-        near_misses=_ranked([f for f in fits if is_near_miss(f)], NEAR_MISS_LIMIT),
+        results=_ranked(passing, RESULT_LIMIT, ranking_key),
+        near_misses=_ranked([f for f in fits if is_near_miss(f)], NEAR_MISS_LIMIT, near_miss_key),
         all_zones=[
             ZoneMatch(
                 zone=f.data.zone,
