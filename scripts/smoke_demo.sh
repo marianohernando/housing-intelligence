@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Smoke test of the public demo: web, API liveness and readiness, one zone, the map layers, one
-# search (POST /api/v1/search with the demo case, which also warms up the search before a pitch) and
-# the same case barrio by barrio in one Madrid district (POST /api/v1/search/barrios).
+# search (POST /api/v1/search with the demo case, which also warms up the search before a pitch),
+# the same case with full telework (fit-0.8, D-240) and barrio by barrio in one Madrid district
+# (POST /api/v1/search/barrios).
 #   scripts/smoke_demo.sh [BASE_URL]                       # default https://vidafacil-madrid.vercel.app
 #   SMOKE_API_ONLY=1 scripts/smoke_demo.sh http://localhost:8012   # API container, no web
 #   SMOKE_TAG=<id> scripts/smoke_demo.sh   # User-Agent vida-facil-smoke/<id>, to find the requests
@@ -82,6 +83,13 @@ check search "/api/v1/search" \
           and (.data.results[0].match_pct | type == "number" and . >= 0 and . <= 100))
    | "\(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) zones, 1st \(.data.results[0].zone.name)"' \
   "$SEARCH_BODY" "$SEARCH_MAX_BYTES"
+# The same case with «Teletrabajo total» (D-240): days_per_week 0 is only valid from fit-0.8 (an
+# older deploy answers 422), so this also says which method answers.
+jq '.anchors[0].days_per_week = 0' "$SEARCH_BODY" >"$TMP/telework-body.json"
+check telework "/api/v1/search" \
+  'select(.meta.methodology_version == "fit-0.8")
+   | "\(.meta.methodology_version), \(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) zones"' \
+  "$TMP/telework-body.json" "$SEARCH_MAX_BYTES"
 # The same case, barrio by barrio inside one Madrid district (BARRIO-001, D-232): at least one passes.
 BARRIO_DISTRICT="${SMOKE_BARRIO_DISTRICT:-2807920}"   # San Blas-Canillejas
 jq --arg d "$BARRIO_DISTRICT" '{scenario: ., distrito: $d}' "$SEARCH_BODY" >"$TMP/barrios-body.json"

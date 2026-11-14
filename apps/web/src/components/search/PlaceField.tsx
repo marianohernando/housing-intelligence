@@ -46,13 +46,14 @@ const KINDS: Record<PlaceKind, { title: string; help: string; commuteAria: strin
     title: "Trabajo en",
     // trabajo.ayuda (14 nov): the commute is measured in public transport minutes (CORE-009, D-220), all the CRTM feeds
     help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero.",
-    commuteAria: "Tardar como mucho, en transporte público",
+    // trabajo.max_min.aria: names the place, as the family one does
+    commuteAria: "Tardar como mucho hasta el trabajo, en transporte público",
     icon: Briefcase,
   },
   family: {
     title: "Cerca de mi familia o amigos",
-    // familia.ayuda: the same trip as the work place (the API measures it arriving by 9:00)
-    help: "Opcional. Miramos cuánto tardarías en llegar en transporte público.",
+    // familia.ayuda: the same trip as the work place, so it says the declared proxy (D-240)
+    help: "Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.",
     commuteAria: "Tardar como mucho hasta mi familia o amigos, en transporte público",
     icon: Heart,
   },
@@ -112,12 +113,20 @@ function TripLimit({ kind, anchor }: { kind: PlaceKind; anchor: Anchor }) {
 /** «¿Cuántos días vas a la oficina?» (D-240): with 1 or 2 the trip weighs half; with none it is not scored. */
 function OfficeDays({ anchor }: { anchor: Anchor }) {
   const { update } = useScenario();
+  const helpId = useId();
   const days = officeDays(anchor);
+  const help = days > FEW_OFFICE_DAYS ? null : days === 0 ? TEXT.telework : TEXT.fewDays;
   return (
     <>
       <span className={`${styles.nearMinutes} ${styles.commuteLimit}`}>
         {TEXT.days}
-        <select className={styles.select} aria-label={TEXT.days} value={days} onChange={(e) => update((s) => setWorkDays(s, Number(e.target.value)))}>
+        <select
+          className={styles.select}
+          aria-label={TEXT.days}
+          aria-describedby={help ? helpId : undefined}
+          value={days}
+          onChange={(e) => update((s) => setWorkDays(s, Number(e.target.value)))}
+        >
           {officeDaysOptions(days).map((n) => (
             <option key={n} value={n}>
               {TEXT.daysOption(n)}
@@ -125,7 +134,11 @@ function OfficeDays({ anchor }: { anchor: Anchor }) {
           ))}
         </select>
       </span>
-      {days <= FEW_OFFICE_DAYS && <p className={styles.help}>{days === 0 ? TEXT.telework : TEXT.fewDays}</p>}
+      {help && (
+        <p id={helpId} className={styles.help}>
+          {help}
+        </p>
+      )}
     </>
   );
 }

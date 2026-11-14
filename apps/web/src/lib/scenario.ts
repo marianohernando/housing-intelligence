@@ -137,8 +137,9 @@ function changePlace(s: ScenarioState, kind: PlaceKind, change: (a: Anchor) => A
 
 /**
  * Sets (or with null, removes) the place of a kind. It goes without a minutes limit (`max_minutes:
- * null`, «Sin límite») until the person picks one in «Tardar como mucho»: the zone card says how
- * far each zone is either way.
+ * null`, «Sin límite») until the person picks one in «Tardar como mucho». The zone card says how far
+ * each zone is either way, except for a work place with «Teletrabajo total» and no limit: that trip
+ * neither scores nor limits, so it is not shown (D-240).
  */
 export function setPlace(s: ScenarioState, kind: PlaceKind, place: Place | null): ScenarioState {
   const kept = (s.anchors ?? []).filter((a) => kindOf(a) !== kind);
