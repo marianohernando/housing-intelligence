@@ -18,7 +18,7 @@ Web (Next.js) y API (FastAPI) en **un solo proyecto de Vercel**, `vida-facil`, l
 | [`api/Dockerfile`](api/Dockerfile) | Imagen de la API con solo las dependencias de `hi-api` (`uv sync --package hi-api`). Usuario no root y puerto `$PORT`. |
 | [`deploy.sh`](deploy.sh) | `make deploy-demo`. Comprueba que el árbol está limpio y que la rama es la de la demo (`claude/sprint-1-public` o `main`; otra solo con `ALLOW_BRANCH=1`). Avisa de los ficheros sensibles locales que no se suben. Después despliega a producción, pasa el smoke y comprueba en `vercel logs` que todas sus peticiones las sirvió el despliegue nuevo. |
 | [`offline/`](offline/) | Paquete offline para la final: `make demo-offline-tiles` (mapa base), `make demo-offline-prepare`, `make demo-offline` y `make demo-offline-stop`. Ver más abajo. |
-| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación), la página 1 de la capa más grande (transporte), una búsqueda (`POST /api/v1/search` con el caso demo del guion: al menos una zona y menos de 1 MB) y la misma búsqueda por barrios de un distrito de Madrid (`POST /api/v1/search/barrios`, San Blas-Canillejas por defecto, `SMOKE_BARRIO_DISTRICT`: al menos un barrio). También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
+| [`../../scripts/smoke_demo.sh`](../../scripts/smoke_demo.sh) | `make smoke-demo`: comprueba web, `health`, `ready`, una zona, la geografía, una capa (educación), la página 1 de la capa más grande (transporte), una búsqueda (`POST /api/v1/search` con el caso demo del guion: al menos una zona y menos de 1 MB) la misma búsqueda por barrios de un distrito de Madrid (`POST /api/v1/search/barrios`, San Blas-Canillejas por defecto, `SMOKE_BARRIO_DISTRICT`: al menos un barrio) y la misma búsqueda en cada parte de «¿Dónde?» (D-238: `scope` `madrid`, `alrededores` y `pueblos`). En estas tres pide que la API devuelva el ámbito y el nivel que toca: barrios en Madrid capital y municipios en las otras dos. No exige que encaje ninguna zona, porque casi ningún pueblo publica su alquiler. También comprueba que ninguna respuesta pase de 4,5 MB. Se identifica con el User-Agent `vida-facil-smoke` (más `/<etiqueta>` si se define `SMOKE_TAG`). |
 | [`sql/api_readonly_role.sql`](sql/api_readonly_role.sql) | Rol `vf_api_ro`: solo lectura, con una política RLS por cada tabla que lee la API. Es idempotente. |
 
 ## Variables de entorno (proyecto Vercel, entorno Production)
@@ -173,16 +173,16 @@ Si falla, GitHub manda un email a la cuenta que cambió por última vez la líne
 ## Día de la final (26 nov): lista
 
 1. **Por la mañana:**
-   - `make smoke-demo` tiene que dar 9/9. Si falla, sigue la sección «Si la demo se cae».
+   - `make smoke-demo` tiene que dar 12/12. Si falla, sigue la sección «Si la demo se cae».
    - Comprueba que el paquete offline arranca (`make demo-offline`, abrir `http://localhost:3012/` y luego `make demo-offline-stop`).
    - Lleva las capturas y el vídeo del recorrido.
 2. **En la hora previa a presentar, nunca `make supabase-sync`**, lo lance quien lo lance.
    - El sync vacía con `TRUNCATE` las 11 tablas del perfil demo y las vuelve a copiar una a una. Mientras dura, la demo enseña zonas SIN DATOS y capas vacías. El 11 nov se vio `feature_value` con 0 filas a mitad de un sync.
-   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 9/9.
+   - Si ese día hay que cargar datos, que sea por la mañana y seguido de `make smoke-demo` con 12/12.
    - Si en esa hora fallan los datos, no se arreglan con un sync: usa el paquete offline.
 3. **En la sala:** conecta el portátil a la red y abre https://vidafacil-madrid.vercel.app/ (`/map` redirige ahí desde el 12 nov). Si no hay red o Vercel no responde, usa `make demo-offline` y abre `http://localhost:3012/`.
-4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`, que ya incluye `/search` y `/search/barrios`.
-   - Sus 9 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía, dos capas, una búsqueda con el caso del guion y la de barrios.
+4. **Calentamiento, 2–3 minutos antes de presentar:** ejecuta `make smoke-demo`, que ya incluye `/search`, `/search/barrios` y las tres partes de «¿Dónde?».
+   - Sus 12 peticiones pasan por la web y por cada ruta que usa la demo: health, ready, zona, geografía, dos capas, una búsqueda con el caso del guion, la de barrios y la misma búsqueda en Madrid capital, alrededores y pueblos.
    - Así el contenedor de la API ya está arrancado y la búsqueda tiene su caché lista, y no te comes delante del jurado los unos 6 s de un `/search` en frío (medido el 12 nov: 3,5 s de arranque más 2,5 s de la primera búsqueda).
    - **Barrios:** B midió 7,1 s en la primera llamada en frío a `/search/barrios` en producción. En caliente tarda 0,19–0,44 s (13 nov).
    - **Basta con cualquier distrito:** lo que cuesta en frío es arrancar la instancia y cargar sus cachés, no el distrito en sí. Con el contenedor caliente por el smoke, que usa San Blas-Canillejas, los barrios de Latina salieron en 0,23 s.
@@ -279,12 +279,13 @@ El resultado se guarda en `data/offline/`, que git ignora:
 ### Arrancarlo (26 nov, en 1 minuto, sin red)
 
 ```bash
-make demo-offline        # ~8 s: base, API, web y smoke 8/8 (sin la web, con /search y /search/barrios)
+make demo-offline        # ~8 s: base, API, web y smoke 11/11 (sin la web, con /search, /search/barrios y los 3 ámbitos)
 # abre http://localhost:3012/
 make demo-offline-stop   # al terminar; los datos se quedan en el volumen
 ```
 
 - `start` no construye ni descarga nada (`--no-build`).
+- **Un paquete preparado antes de f1b6f5a (14 nov) no entiende `scope`:** sus 3 comprobaciones de «¿Dónde?» fallan hasta regenerarlo con `make demo-offline-prepare`.
 - **Sin red, el mapa sale con calles** si el paquete se preparó con el mapa base local (`make demo-offline-tiles`): la web sirve las teselas desde `http://localhost:3012/tiles`.
   - **Sin ese mapa base:** la web pide el fondo a `tiles.openfreemap.org` y, sin Internet, no llega. Siguen funcionando las zonas coloreadas, el buscador, «¿Y si cambias algo?», «Qué falta» y la lista.
   - **El aviso en ese caso:** la web enseña arriba «Mapa sin fondo de calles.», y la consola registra los fallos de esas teselas. Si fallara el mapa entero, el aviso sería «No se ha podido cargar el mapa. Puedes seguir con la lista de zonas.».
