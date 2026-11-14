@@ -661,3 +661,129 @@ def test_an_unknown_rent_gives_the_reason_the_data_has_for_it() -> None:
     plain = evaluate(family(), zone("m", rent=None))
     generic = next(c for c in plain.constraints if c.constraint_id == "budget")
     assert generic.explanation.startswith("Sin datos de alquiler para esta zona")
+
+
+# --- «Ocio» (D-236): leisure groups, scored only when the person ticks them ---
+
+
+def _leisure_zone(code: str = "1", **minutes: float | None) -> ZoneData:
+    base = zone(code)
+    walk = dict(base.walk)
+    for need, value in minutes.items():
+        walk[NeedKey(need)] = _value(f"min_a_pie_{need}", value)
+    return replace(base, walk=walk)
+
+
+def _ocio(*needs: str, minutes: int = 10, required: bool = True) -> ScenarioState:
+    return ScenarioState(
+        nearby=[
+            NearbyNeed(need=NeedKey(n), max_walk_minutes=minutes, required=required) for n in needs
+        ],
+        priorities=[PriorityKey.OCIO],
+    )
+
+
+def test_a_ticked_leisure_group_is_a_walking_condition_like_any_other() -> None:
+    scenario = _ocio("bares", "cines_teatros")
+    evaluation = evaluate(scenario, _leisure_zone(bares=3.2, cines_teatros=14.0))
+    checks = {c.constraint_id: c for c in evaluation.constraints}
+    bar, cinema = checks["near:bares"], checks["near:cines_teatros"]
+    assert bar.status is ConstraintStatus.PASS
+    assert bar.label == "Bares y cafeterías a 10 min andando como mucho"
+    assert bar.explanation == (
+        "A unos 3 min andando de un bar o una cafetería (lo que tarda la mitad de la zona)"
+    )
+    assert cinema.status is ConstraintStatus.FAIL
+    assert cinema.explanation.startswith("A unos 14 min andando de un cine, un teatro")
+    missing = evaluate(scenario, _leisure_zone(bares=3.2))
+    unknown = next(c for c in missing.constraints if c.constraint_id == "near:cines_teatros")
+    assert unknown.status is ConstraintStatus.UNKNOWN  # no data is never a PASS
+    assert not missing.passes_all
+
+
+def test_leisure_is_one_fact_and_one_criterion_whatever_the_boxes() -> None:
+    scenario = _ocio("gimnasios", "bares", "restaurantes", required=False).model_copy(
+        update={"priorities": [PriorityKey.TRANSPORTE, PriorityKey.OCIO]}
+    )
+    assert [c.key for c in criteria(scenario)] == ["need:transporte", "priority:ocio"]
+    data = _leisure_zone(bares=2.0, restaurantes=4.4, gimnasios=20.0)
+    evaluation = evaluate(scenario, data)
+    leisure = [f for f in evaluation.facts if f.topic is FactTopic.OCIO]
+    assert [f.text for f in leisure] == [
+        "Ocio a pie: bares y cafeterías a unos 2 min, restaurantes a unos 4 min, "
+        "gimnasios a unos 20 min"
+    ]
+    assert leisure[0].kind is FactKind.WEAKNESS  # the gym is beyond the 10 minutes
+    assert leisure[0].indicator is not None
+    assert leisure[0].indicator.feature_id == "min_a_pie_gimnasios"  # the farthest group
+    # transporte (3 min, window 5) = 1; ocio = mean(1, 1, 0.5); weights 2/3 and 1/3
+    assert evaluation.utility == pytest.approx((2 * 1.0 + 1 * (2.5 / 3)) / 3)
+
+
+def test_each_leisure_group_scores_against_its_own_minutes() -> None:
+    near = evaluate(_ocio("bares", minutes=5, required=False), _leisure_zone(bares=10.0))
+    far = evaluate(_ocio("bares", minutes=15, required=False), _leisure_zone(bares=10.0))
+    assert near.utility == pytest.approx(0.5)
+    assert far.utility == pytest.approx(1.0)
+
+
+def test_leisure_without_data_is_unknown_and_never_zero() -> None:
+    scenario = _ocio("bares", "restaurantes", required=False)
+    nothing = evaluate(scenario, _leisure_zone())
+    assert nothing.utility is None
+    fact = next(f for f in nothing.facts if f.topic is FactTopic.OCIO)
+    assert fact.kind is FactKind.UNKNOWN
+    assert fact.text == "Ocio: sin datos de distancia a pie en esta zona"
+    half = evaluate(scenario, _leisure_zone(bares=4.0))
+    assert half.utility == pytest.approx(1.0)  # the group without data does not count as 0
+    assert half.confidence == pytest.approx(0.5)  # but the zone is half as sure
+    fact = next(f for f in half.facts if f.topic is FactTopic.OCIO)
+    assert fact.text == "Ocio a pie: bares y cafeterías a unos 4 min, restaurantes: sin datos"
+    assert fact.kind is FactKind.WEAKNESS
+
+
+def test_a_leisure_place_beyond_a_walk_scores_zero_with_low_confidence() -> None:
+    """In a village OpenStreetMap may simply not have the bar: 0, but not a sure 0 (D-236)."""
+    far = evaluate(_ocio("bares", required=False), _leisure_zone(bares=75.0))
+    assert far.utility == 0.0
+    assert far.confidence == pytest.approx(0.5)
+    fact = next(f for f in far.facts if f.topic is FactTopic.OCIO)
+    assert fact.text == "Ocio a pie: bares y cafeterías a más de 60 min"
+
+
+def test_ocio_without_any_group_measures_nothing() -> None:
+    plain = ScenarioState(priorities=[PriorityKey.TRANSPORTE])
+    ticked = ScenarioState(priorities=[PriorityKey.TRANSPORTE, PriorityKey.OCIO])
+    data = _leisure_zone(bares=2.0)
+    assert [c.key for c in criteria(ticked)] == [c.key for c in criteria(plain)]
+    assert evaluate(ticked, data).utility == evaluate(plain, data).utility
+
+
+def test_a_scenario_without_leisure_ignores_the_leisure_data() -> None:
+    """D-236: leisure only scores when the person asks for it. The same zones with and without
+    leisure minutes give the same conditions, % and facts."""
+    without = [zone("1"), zone("2", colegio=14.0), zone("3", rent=30.0)]
+    with_leisure = [
+        replace(z, walk={**z.walk, NeedKey.BARES: _value("min_a_pie_bar", 50.0 * i)})
+        for i, z in enumerate(without)
+    ]
+    assert run_search(family(), with_leisure) == run_search(family(), without)
+
+
+def test_a_failed_leisure_condition_can_be_relaxed() -> None:
+    scenario = _ocio("restaurantes")
+    option = relaxed(scenario, "near:restaurantes")
+    assert option is not None
+    label, changed = option
+    assert label == "+5 min a pie hasta restaurantes"
+    assert changed.nearby[0].max_walk_minutes == 15
+
+
+@given(a=st.floats(0, 120), b=st.floats(0, 120), other=st.floats(0, 120))
+@settings(max_examples=60, deadline=None)
+def test_a_farther_bar_never_raises_the_match(a: float, b: float, other: float) -> None:
+    scenario = _ocio("bares", "restaurantes", required=False)
+    near, far = sorted([a, b])
+    closer = evaluate(scenario, _leisure_zone(bares=near, restaurantes=other))
+    farther = evaluate(scenario, _leisure_zone(bares=far, restaurantes=other))
+    assert (closer.utility or 0.0) >= (farther.utility or 0.0)
