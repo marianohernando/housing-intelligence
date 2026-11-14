@@ -58,7 +58,7 @@ export interface ContextLine {
 const TEXT = {
   crime: "Infracciones penales conocidas",
   crimeSource: "Ministerio del Interior",
-  crimeNote: "Mide hechos conocidos por la policía; sube donde hay mucha gente de paso.",
+  crimeNote: "Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso.",
   crimeSmall: "El Ministerio solo lo publica para municipios de más de 20.000 habitantes.",
   crimeCity: "Dato de toda la ciudad de Madrid; no se publica por distrito.",
   builtSince2001: "Viviendas construidas desde 2001",
@@ -71,6 +71,9 @@ const TEXT = {
   incomeHouseholdSource: "INE",
   none: "sin dato",
 };
+
+// The figure and its unit never part at the end of a line on a phone («32,7 %»)
+const NBSP = "\u00a0";
 
 interface Known {
   value: number;
@@ -107,7 +110,7 @@ function ageLine(zone: ContextZone, rows: readonly FeatureValueRow[]): ContextLi
   const known = latest(rows, zone.code);
   if (zone.level === "municipio") {
     const text = known
-      ? cited(TEXT.builtSince2001, `${formatNumber(known.value, 1)} %`, TEXT.builtSource, known.year)
+      ? cited(TEXT.builtSince2001, `${formatNumber(known.value, 1)}${NBSP}%`, TEXT.builtSource, known.year)
       : `${TEXT.builtSince2001}: ${TEXT.none}.`;
     return { key: "age", text, note: null };
   }

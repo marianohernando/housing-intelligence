@@ -51,13 +51,13 @@ describe("contextLines (zona.contexto.*)", () => {
   it("gives a municipio one short line per figure, with its source and year", () => {
     expect(texts(getafe, municipio)).toEqual([
       "Infracciones penales conocidas: 48,0 por cada 1.000 habitantes (Ministerio del Interior, 2024).",
-      "Viviendas construidas desde 2001: 22,4 % (censo anual de la Comunidad de Madrid, 2023).",
+      "Viviendas construidas desde 2001: 22,4\u00a0% (censo anual de la Comunidad de Madrid, 2023).",
       "Renta disponible bruta por persona: 19.234 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).",
     ]);
   });
 
   it("says what the offences measure, only where there is a figure", () => {
-    expect(contextLines(getafe, municipio)[0]?.note).toBe("Mide hechos conocidos por la policía; sube donde hay mucha gente de paso.");
+    expect(contextLines(getafe, municipio)[0]?.note).toBe("Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso.");
     expect(contextLines(acebeda, municipio)[0]?.note).toBeNull();
   });
 
