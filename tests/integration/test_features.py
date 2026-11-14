@@ -8,6 +8,7 @@ from sqlalchemy import Engine, RowMapping, text
 
 from hi_features.compute import METHODS, compute, persist
 from hi_ingestion.catalog.loader import load_catalog
+from tests.integration.conftest import MADRID_SAMPLE_BARRIOS, MADRID_SAMPLE_DISTRICTS
 
 pytestmark = pytest.mark.db
 GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
@@ -267,9 +268,55 @@ def test_appraised_value_is_by_municipio_and_districts_are_unknown(
     by_zone = {(r["territory_level"], r["territory_code"]): r for r in rows}
     assert float(by_zone[("municipio", "28079")]["value"]) == 4993.3
     assert by_zone[("municipio", "28001")]["null_reason"] == "SOURCE_MISSING"
-    districts = [r for (level, _), r in by_zone.items() if level == "distrito"]
-    assert districts
+    districts = [r for (level, _), r in by_zone.items() if level in {"distrito", "barrio"}]
+    assert {r["territory_level"] for r in districts} == {"distrito", "barrio"}
     assert all(r["value"] is None and r["null_reason"] == "SOURCE_MISSING" for r in districts)
+
+
+def test_estimated_purchase_price_is_anchored_to_the_city_appraised_value(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-234: the districts' estimates, weighted by their residential units, average back to
+    Madrid's appraised value; the barrios of a district average back to its estimate; the
+    dearest cadastral value per m² is the dearest estimate; each row cites both datasets."""
+    with migrated_engine.connect() as conn:
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT v.territory_level AS level, v.territory_code AS code, v.value, "
+                    "v.confidence, v.inputs, w.value AS units FROM feature_value v "
+                    "JOIN metric_observation w ON w.metric_id = 'inmuebles_residenciales' "
+                    "AND w.territory_level = v.territory_level "
+                    "AND w.territory_code = v.territory_code AND w.period_start = "
+                    "(SELECT max(period_start) FROM metric_observation "
+                    "WHERE metric_id = 'inmuebles_residenciales') "
+                    "WHERE v.feature_id = 'precio_compra_estimado_m2'"
+                )
+            )
+            .mappings()
+            .all()
+        )
+    districts = {r["code"]: r for r in rows if r["level"] == "distrito"}
+    barrios = {r["code"]: r for r in rows if r["level"] == "barrio"}
+    assert len(districts) == MADRID_SAMPLE_DISTRICTS and len(barrios) == MADRID_SAMPLE_BARRIOS
+
+    def mean(zones: list[Any]) -> float:
+        return sum(float(z["value"]) * float(z["units"]) for z in zones) / sum(
+            float(z["units"]) for z in zones
+        )
+
+    assert mean(list(districts.values())) == pytest.approx(4993.3)
+    for code, district in districts.items():
+        own = [b for c, b in barrios.items() if c.startswith(code)]
+        assert own and mean(own) == pytest.approx(float(district["value"]))
+    assert max(districts, key=lambda c: float(districts[c]["value"])) == "2807905"  # Chamartín
+    for row in rows:
+        assert float(row["confidence"]) == 0.5
+        assert row["inputs"]["method"] == "anchored_relative_value"
+        assert set(row["inputs"]["dataset_versions"]) == {
+            "ayto_panel_indicadores_distritos_barrios",
+            "cm_valor_tasado_vivienda_municipios",
+        }
 
 
 def test_rent_is_that_of_a_lease_signed_in_the_year(
