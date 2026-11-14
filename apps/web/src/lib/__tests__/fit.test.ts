@@ -22,6 +22,8 @@ import {
   zonesWithoutPrice,
   zoneFit,
   zoneKeyOf,
+  zonePrice,
+  zonePriceOf,
 } from "../fit";
 import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
 
@@ -231,5 +233,43 @@ describe("facts in plain words (a_pie.mediana)", () => {
     // A park out of range says «sin parque… a un paseo»: no minutes, no indicator, no median note
     expect(hasWalkingFact([{ indicator: null }])).toBe(false);
     expect(hasWalkingFact([{ indicator: { feature_id: "centros_salud_a_pie_por_10000_hab" } }])).toBe(false);
+  });
+});
+
+describe("the approximate price of a zone (D-234)", () => {
+  it("says the purchase price or the monthly rent the API gives, never recomputed", () => {
+    expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_confidence: 0.8 }, true)).toEqual({
+      short: "≈ 385.000 €",
+      long: "Comprar ≈ 385.000 €",
+      aria: "Comprar: unos 385.000 €",
+      confidence: null,
+    });
+    const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
+    expect([rent?.short, rent?.long, rent?.aria]).toEqual(["≈ 1.101 €/mes", "Alquiler ≈ 1.101 €/mes", "Alquiler: unos 1.101 € al mes"]);
+  });
+
+  it("marks an estimate with the card's words, and shows nothing without a price", () => {
+    expect(zonePrice({ estimated_cost_eur: 411_000, estimated_cost_confidence: 0.5 }, true)?.confidence?.label).toBe("Dato aproximado");
+    expect(zonePrice({ estimated_cost_eur: 900, estimated_cost_confidence: 0.3 }, false)?.confidence?.label).toBe("Dato poco seguro");
+    // An API from before D-234 sends no confidence: the figure goes without a mark
+    expect(zonePrice({ estimated_cost_eur: 900 }, false)?.confidence).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: null, estimated_cost_confidence: null }, true)).toBeNull();
+    expect(zonePrice({}, true)).toBeNull();
+  });
+
+  it("gives the card the price of any zone, from all_zones, else from its ranked entry", () => {
+    const first = fixture.results[0]!;
+    const key = zoneKeyOf(first.zone);
+    const withAll: SearchResult = {
+      ...fixture,
+      all_zones: fixture.all_zones.map((z) =>
+        zoneKeyOf(z.zone) === key ? { ...z, estimated_cost_eur: 1_234, estimated_cost_confidence: 0.8 } : z,
+      ),
+    };
+    expect(zonePriceOf(withAll, key)?.long).toBe("Alquiler ≈ 1.234 €/mes");
+    const older: SearchResult = { ...fixture, all_zones: fixture.all_zones.map((z) => ({ ...z, estimated_cost_eur: undefined })) };
+    const cost = first.estimated_cost_eur;
+    expect(zonePriceOf(older, key)?.short).toBe(cost == null ? undefined : zonePrice(first, false)?.short);
+    expect(zonePriceOf(fixture, "municipio/00000")).toBeNull();
   });
 });

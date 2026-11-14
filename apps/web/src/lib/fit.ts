@@ -5,6 +5,8 @@
  */
 import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 
+import { type ConfidenceText, confidenceText } from "./confidence";
+import { formatEuros } from "./format";
 import type { ZoneCollection, ZoneGeometry, ZoneProperties } from "./map/zones";
 
 /** How a zone is painted after a search: by its % when it meets everything, otherwise apart. */
@@ -65,6 +67,49 @@ export function zoneFit(result: SearchResult, zoneKey: string): ZoneFit {
     match: result.all_zones.find(same) ?? null,
     ranked: result.results.find(same) ?? result.near_misses?.find(same) ?? null,
   };
+}
+
+/** The approximate price of a zone for the household's m² (D-234), in the rows and the zone card. */
+export interface ZonePrice {
+  /** In a ranking row: «≈ 385.000 €» (zona.precio.compra) or «≈ 1.101 €/mes» (zona.precio.alquiler) */
+  short: string;
+  /** In the zone card head: «Comprar ≈ 385.000 €» (zona.precio.cabecera.compra) or «Alquiler ≈ 1.101 €/mes» */
+  long: string;
+  /** Read aloud instead of «≈»: «Comprar: unos 385.000 €» (zona.precio.aria.*) */
+  aria: string;
+  /** The card's words for a figure that is not a reliable one («Dato aproximado» for the D-234 estimate), else null */
+  confidence: ConfidenceText | null;
+}
+
+/** At or above this confidence the figure is «Dato fiable» and goes without a mark (lib/confidence.ts). */
+const RELIABLE = 0.8;
+
+/**
+ * The price the API gives a zone (`estimated_cost_eur`: the purchase price when buying, else the
+ * monthly rent), or null without one: nothing is shown and the general notice says why.
+ */
+export function zonePrice(
+  zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence">,
+  buying: boolean,
+): ZonePrice | null {
+  const cost = zone.estimated_cost_eur;
+  if (cost == null) return null;
+  const amount = formatEuros(cost);
+  const confidence = zone.estimated_cost_confidence;
+  return {
+    short: buying ? `≈ ${amount}` : `≈ ${amount}/mes`,
+    long: buying ? `Comprar ≈ ${amount}` : `Alquiler ≈ ${amount}/mes`,
+    aria: buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`,
+    confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
+  };
+}
+
+/** The price of the zone of the card: from `all_zones` (every zone), else its ranked entry (older API). */
+export function zonePriceOf(result: SearchResult, zoneKey: string): ZonePrice | null {
+  const { match, ranked } = zoneFit(result, zoneKey);
+  const buying = result.scenario.budget?.kind === "buy";
+  const withCost = match?.estimated_cost_eur != null ? match : ranked;
+  return withCost ? zonePrice(withCost, buying) : null;
 }
 
 /**

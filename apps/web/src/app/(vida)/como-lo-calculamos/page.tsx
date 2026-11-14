@@ -260,7 +260,9 @@ function Limits() {
           municipios pequeños sale «sin datos» y no inventamos un precio. En los distritos y barrios de Madrid el precio es una
           estimación, y lo decimos: repartimos el valor tasado de toda la ciudad según el valor catastral por metro cuadrado
           de cada zona (Catastro, publicado por el Ayuntamiento). La media de los distritos coincide con el valor tasado de
-          Madrid. El valor catastral sale de valoraciones antiguas, así que es un dato aproximado, no un precio real.
+          Madrid. El valor catastral sale de valoraciones antiguas, así que es un dato aproximado, no un precio real: frente
+          a los precios de los anuncios, ordena los distritos casi igual, pero los caros salen algo más baratos y los baratos
+          algo más caros.
         </li>
         <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde

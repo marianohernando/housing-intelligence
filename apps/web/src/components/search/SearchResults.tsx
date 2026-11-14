@@ -7,9 +7,10 @@ import type { RankedZone, SearchResult } from "@/contracts/search_response";
 import { useMapZones } from "@/components/map/MapProvider";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { constraintLabels, failedLabels, passingText, unknownText, zoneKeyOf, zonesText, zonesWithoutPrice } from "@/lib/fit";
+import { constraintLabels, failedLabels, passingText, unknownText, zoneKeyOf, zonePrice, zonesText, zonesWithoutPrice } from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
 
 import RealityCheck from "./RealityCheck";
@@ -41,9 +42,10 @@ const TEXT = {
 /** Rows of the ranking in view before «Ver las 10 primeras». */
 const FIRST_ROWS = 5;
 
-function ZoneRow({ zone, fails }: { zone: RankedZone; fails?: string[] }) {
+function ZoneRow({ zone, buying, fails }: { zone: RankedZone; buying: boolean; fails?: string[] }) {
   const { select } = useMapZones();
   const { name, level, municipio_name } = zone.zone;
+  const price = zonePrice(zone, buying);
   return (
     <button type="button" className={styles.row} onClick={() => select(zoneKeyOf(zone.zone))}>
       {!fails && <span className={styles.rank}>{zone.rank}</span>}
@@ -51,6 +53,7 @@ function ZoneRow({ zone, fails }: { zone: RankedZone; fails?: string[] }) {
         {name}
         <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio}</small>
       </span>
+      {price && <PriceTag price={price} variant="row" />}
       <span className={styles.pct}>
         {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
       </span>
@@ -67,7 +70,7 @@ function Ranking({ result }: { result: SearchResult }) {
       <ol className={styles.ranking}>
         {shown.map((zone) => (
           <li key={zoneKeyOf(zone.zone)}>
-            <ZoneRow zone={zone} />
+            <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} />
           </li>
         ))}
       </ol>
@@ -99,7 +102,11 @@ function NearMisses({ result }: { result: SearchResult }) {
         <ul className={styles.ranking}>
           {near.map((zone) => (
             <li key={zoneKeyOf(zone.zone)}>
-              <ZoneRow zone={zone} fails={failedLabels(zone.failed_constraints, labels, zone.constraints)} />
+              <ZoneRow
+                zone={zone}
+                buying={result.scenario.budget?.kind === "buy"}
+                fails={failedLabels(zone.failed_constraints, labels, zone.constraints)}
+              />
             </li>
           ))}
         </ul>
