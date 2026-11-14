@@ -27,7 +27,7 @@ from hi_contracts.public import (
     ZoneRef,
 )
 from hi_domain.affordability import HOUSES_NOTE
-from hi_domain.fit import FIT_VERSION, ZoneData
+from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData, ignored_leisure
 from hi_domain.geo.names import display_name
 from hi_domain.geo.scope import in_scope
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
@@ -135,12 +135,15 @@ class ZoneRent(NamedTuple):
 
 TRANSIT_MODES = frozenset({"bus", "metro"})
 HOUSES_TYPOLOGY = "unifamiliar"  # the reference rent of single-family homes (D-242)
+# Every need is measured on foot, the leisure groups of «Ocio» too (D-236)
 NEED_VALUES = frozenset(n.value for n in NeedKey)
-PRIORITY_VALUES = frozenset(p.value for p in PriorityKey)
+# Only the priorities measured by walking to a place of their own (D-222, D-223): «ocio» scores
+# its groups' needs and «seguridad» has no measure, so a feature bound to either is unknown
+PRIORITY_WALK_VALUES = frozenset(p.value for p in PRIORITY_WALK)
 
 
 def _unknown_binding(fit: dict[str, Any]) -> str:
-    """«walk_minutes:need=bares», «transit_mode:mode=tram» or just the role."""
+    """«walk_minutes:need=piscinas», «transit_mode:mode=tram» or just the role."""
     detail = next((f"{k}={fit[k]}" for k in ("need", "priority", "mode") if fit.get(k)), None)
     return f"{fit['role']}:{detail}" if detail else str(fit["role"])
 
@@ -185,7 +188,7 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
         elif fit["role"] == "walk_minutes" and fit.get("need") in NEED_VALUES:
             walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
-        elif fit["role"] == "walk_minutes" and fit.get("priority") in PRIORITY_VALUES:
+        elif fit["role"] == "walk_minutes" and fit.get("priority") in PRIORITY_WALK_VALUES:
             # a priority measured on foot: the park for «Zonas verdes» (D-222)
             priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
         else:  # a role, need, priority or mode this code does not know (synced before deploy)
@@ -319,13 +322,27 @@ def load_warnings(loaded: Loaded) -> list[str]:
     ]
 
 
+def scenario_warnings(scenario: ScenarioState) -> list[str]:
+    """What the scenario asks that the search leaves out: leisure groups in `nearby` without the
+    priority «ocio» (D-236), as the API or the MCP may send them."""
+    ignored = ignored_leisure(scenario)
+    if not ignored:
+        return []
+    names = ", ".join(need.value for need in ignored)
+    log.warning("leisure needs without the priority ocio ignored: %s", names)
+    return [
+        f"{ErrorCode.INVALID_PROFILE.value}: nearby {names} ignored: the leisure groups only "
+        "count with the priority «ocio» (D-236)"
+    ]
+
+
 def answer(
     conn: Connection, scenario: ScenarioState, loaded: Loaded, zones_word: str = "zones"
 ) -> tuple[SearchResult, list[str], str | None]:
     """The result, warnings and the data version (latest computation of the values used) of
     the search over the loaded zones."""
     outcome = run_search(scenario, loaded.zones)
-    warnings = load_warnings(loaded)
+    warnings = [*load_warnings(loaded), *scenario_warnings(scenario)]
     if outcome.unscored_passing:
         warnings.append(
             f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} {zones_word} pass "

@@ -8,6 +8,7 @@ not at the feature's own level (the regional reference), territory_level.
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from typing import Any
 
 import numpy as np
@@ -28,6 +29,7 @@ RESULT_COLUMNS = [
     "denominator",
     "adjustment",  # how a published value was adjusted (D-228: rent of new leases)
     "reference",  # the reference rent behind a filled value (D-242: SERPAVI, calibration)
+    "detail",  # what a context figure says besides its value (D-241): counts, period, items
 ]
 REGION_LEVEL = "ccaa"
 REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
@@ -742,3 +744,141 @@ def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -
     if not missing:
         return result
     return pd.concat([result, _result(missing)], ignore_index=True)
+
+
+def _window(obs: pd.DataFrame, periods: int) -> list[Any]:
+    """The last `periods` periods published by the metric, oldest first (the same window for
+    every zone, so a zone that misses one of them is unknown, not a shorter year). A period
+    missing from the whole series breaks the window: with gaps, the last four quarters would
+    span more than a year, so there is no window (every zone unknown) rather than a wrong one."""
+    published = sorted(set(obs["period_start"].tolist()))
+    window = published[-periods:] if len(published) >= periods else []
+    return window if _consecutive(obs, window) else []
+
+
+def _consecutive(obs: pd.DataFrame, window: list[Any]) -> bool:
+    """Each period starts the day after the previous one ends (needs `period_end`)."""
+    if "period_end" not in obs:
+        return True
+    ends: dict[Any, Any] = {}
+    for start, end in zip(obs["period_start"].tolist(), obs["period_end"].tolist(), strict=True):
+        if start in window and end is not None and not pd.isna(end):
+            ends[start] = max(end, ends.get(start, end))
+    return all(prev in ends and (nxt - ends[prev]).days == 1 for prev, nxt in pairwise(window))
+
+
+def _window_detail(records: list[dict[str, Any]], status_dim: str | None, provisional: str) -> bool:
+    return bool(status_dim) and any(r["dims"].get(status_dim) == provisional for r in records)
+
+
+def metric_window_share(
+    obs: pd.DataFrame,
+    periods: int,
+    numerator: DimFilter,
+    denominator: DimFilter,
+    *,
+    status_dim: str | None = None,
+    provisional: str = "provisional",
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """100 x the numerator over the denominator, both added up over the last `periods` periods
+    (D-241: of the sales of the last four quarters, how many were new homes). The row is dated
+    at the first period of the window; `detail` keeps the two counts, the window's last day and
+    whether any value added up is provisional. Every period of the window must be published
+    for the zone, or it is unknown; no sales at all is NOT_APPLICABLE, with its counts."""
+    window = _window(obs, periods) if not obs.empty else []
+    if not window:
+        return _result([])
+    inside = obs.loc[[p in window for p in obs["period_start"].tolist()]]
+    ends = inside["period_end"].dropna().tolist() if "period_end" in inside else []
+    end = str(max(ends)) if ends else None
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for record in _rows(inside):
+        groups.setdefault(str(record["territory_code"]), []).append(record)
+    out: list[dict[str, Any]] = []
+    for code, records in sorted(groups.items()):
+        row = _window_row(code, records, window, numerator, denominator, confidence)
+        counts = {k: row.pop(k) for k in ("numerator", "denominator") if k in row}
+        detail = counts | {
+            "period_end": end,
+            "provisional": _window_detail(records, status_dim, provisional),
+        }
+        out.append(row | counts | {"detail": detail})
+    return _result(out)
+
+
+def _window_row(
+    code: str,
+    records: list[dict[str, Any]],
+    window: list[Any],
+    numerator: DimFilter,
+    denominator: DimFilter,
+    confidence: float,
+) -> dict[str, Any]:
+    by_period: dict[Any, list[dict[str, Any]]] = {}
+    for record in records:
+        by_period.setdefault(record["period_start"], []).append(record)
+    num = den = 0.0
+    for period in window:
+        members = by_period.get(period, [])
+        n, n_reason, n_matched = _sum_selected(members, numerator)
+        d, d_reason, d_matched = _sum_selected(members, denominator)
+        if not n_matched or not d_matched:
+            return _null(code, window[0], NullReason.SOURCE_MISSING)
+        if n_reason or d_reason:
+            return _null(code, window[0], NullReason(n_reason or d_reason))
+        num, den = num + n, den + d
+    counts = {"numerator": num, "denominator": den}
+    if den == 0:
+        return _null(code, window[0], NullReason.NOT_APPLICABLE) | counts
+    return _ok(code, window[0], 100.0 * num / den, confidence) | counts
+
+
+def _item(record: dict[str, Any]) -> dict[str, Any]:
+    dims: Mapping[str, str] = record["dims"]
+    item = {
+        "code": dims.get("item"),
+        "name": dims.get("name"),
+        "stage": dims.get("stage"),
+        "value": None if pd.isna(record["value"]) else float(record["value"]),
+    }
+    return item | ({"note": dims["note"]} if dims.get("note") else {})
+
+
+def metric_items(
+    obs: pd.DataFrame,
+    zones: Sequence[str],
+    *,
+    value: str,
+    stage_order: Sequence[str] = (),
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """D-241: a zone's items of the latest period (planning areas, Plan Vive promotions), each
+    with its code, name, stage and value; the zone's value is their number (`count`) or the sum
+    of their values (`sum`). The source lists every item of its scope, so a zone of `zones`
+    without any is a confirmed 0, with no items. Items go by `stage_order`, then largest first.
+    """
+    if value not in {"count", "sum"}:
+        msg = f"metric_items: value must be count or sum, got {value!r}"
+        raise ValueError(msg)
+    newest = latest(obs) if not obs.empty else obs
+    period = newest["period_start"].max() if not newest.empty else None
+    if period is None:
+        return _result([])
+    groups: dict[str, list[dict[str, Any]]] = {str(code): [] for code in zones}
+    for record in _rows(newest):
+        groups.setdefault(str(record["territory_code"]), []).append(_item(record))
+    rank = {stage: i for i, stage in enumerate(stage_order)}
+    out: list[dict[str, Any]] = []
+    for code, items in sorted(groups.items()):
+        # Stage, then largest first, then code: the same order on every recomputation
+        items.sort(
+            key=lambda i: (rank.get(i["stage"], len(rank)), -(i["value"] or 0), i["code"] or "")
+        )
+        detail = {"detail": {"items": items}}
+        if value == "sum" and any(i["value"] is None for i in items):
+            out.append(_null(code, period, NullReason.UNKNOWN) | detail)  # never a short sum
+            continue
+        total = len(items) if value == "count" else sum(i["value"] for i in items)
+        out.append(_ok(code, period, total, confidence) | detail)
+    return _result(out)

@@ -270,6 +270,19 @@ function Limits() {
           <strong>{CONTEXT_METHOD.lead}</strong> {CONTEXT_METHOD.text}
         </li>
         <li>
+          <strong>Vivienda nueva y lo que viene:</strong> en cada zona contamos cuántas compraventas del último año fueron
+          de obra nueva, cuánto se tasa una vivienda de menos de 5 años frente a una más antigua, las viviendas del Plan Vive
+          y, en Madrid capital, el suelo para vivienda del Plan General que aún no está terminado. Son datos para conocer la
+          zona: no cambian el encaje ni el orden. Dicen dónde se vende o se prepara vivienda nueva, no cuántos pisos quedan
+          libres ni cuándo estarán.
+        </li>
+        <li>
+          <strong>Ocio:</strong> los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de
+          OpenStreetMap, un mapa hecho por voluntarios. En las ciudades está bastante completo; en los pueblos pequeños falta
+          algún local, así que un pueblo puede tener un bar que no vemos. Por eso el ocio solo cuenta si lo marcas y no deja
+          fuera ninguna zona salvo que marques «Imprescindible».
+        </li>
+        <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde
           prefieras.
         </li>
@@ -355,7 +368,10 @@ export default function ComoLoCalculamosPage() {
                 el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito
                 de Madrid capital;
               </li>
-              <li>el mapa de calles de OpenStreetMap, para las distancias a pie;</li>
+              <li>
+                el mapa de OpenStreetMap: sus calles, para las distancias a pie, y sus locales de ocio (bares, restaurantes,
+                gimnasios y cultura), que solo cuentan si marcas «Ocio»;
+              </li>
               <li>
                 la estadística de viviendas declaradas en el IRPF de la Agencia Tributaria (ejercicio 2024), para acercar el
                 alquiler al de los contratos firmados ese año;

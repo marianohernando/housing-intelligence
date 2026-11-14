@@ -1,0 +1,12 @@
+metric_id: plan_vive_viviendas
+human_name: Viviendas del Plan Vive (alquiler a precio asequible)
+description: >-
+  Viviendas de las promociones del Plan Vive de la Comunidad de Madrid en un municipio (y en los
+  distritos de Madrid donde están), con su ubicación y su fase, tal como las publica su página.
+domain: housing
+unit: viviendas
+aggregation_method: sum
+geo_resolution_min: distrito
+temporal_resolution: snapshot
+dataset_id: cm_plan_vive_promociones
+dimensions: [item, name, stage, note]

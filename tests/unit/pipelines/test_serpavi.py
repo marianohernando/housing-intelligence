@@ -88,7 +88,7 @@ def test_a_rent_not_published_is_unknown_never_zero() -> None:
     counts = acebeda[acebeda["metric_id"] == "contratos_alquiler_serpavi"]
     assert sorted(counts["value"].tolist()) == [0.0, 2.0]  # a published 0 stays 0
     rents = acebeda[acebeda["metric_id"] == "alquiler_m2_mensual_serpavi"]
-    assert rents["value"].isna().all()
+    assert all(pd.isna(v) for v in rents["value"].tolist())
     assert set(rents["null_reason"]) == {"SOURCE_MISSING"}
 
 

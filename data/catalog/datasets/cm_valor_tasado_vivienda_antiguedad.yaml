@@ -1,0 +1,42 @@
+dataset_id: cm_valor_tasado_vivienda_antiguedad
+source_id: comunidad_madrid_ckan
+name: Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad
+  (euros/m2). Municipios
+domain: housing
+owner: Instituto de Estadística
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad
+resources:
+- name: Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad
+    (euros/m2). Municipios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/d52ffa6f-b1e7-4511-8b25-23c4b1e193ca/resource/9946f275-020c-41f9-9d3f-c6ada055c315/download/valor-tasado-vivienda-libre-en-municipios-de-mas-de-25.000-habitantes-por-antiguedad-eurosm2.-mu.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P0
+scorecard:
+  datamad_relevance: 5
+  product_impact: 4
+  geographic_granularity: 2
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-241. CM portal (CC BY 4.0, «Fecha Actualización 02-06-2026»; fuente: Estadística de
+    Valor Tasado de la Vivienda, Ministerio de Vivienda y Agenda Urbana). Media anual en €/m²
+    de la vivienda libre de hasta 5 años y de más de 5 años, con código de municipio. En 2025,
+    20 municipios tienen los dos valores y 28 el de más de 5 años. Sin distritos de Madrid.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T18:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: valor_tasado_por_antiguedad
+  harvested_at: '2026-11-14T18:00:00+00:00'
+notes: >-
+  D-241: contexto, no cambia el precio de compra (D-227, D-234), que sigue leyendo el valor
+  tasado total (cm_valor_tasado_vivienda_municipios).

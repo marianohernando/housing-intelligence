@@ -58,6 +58,7 @@ class FactTopic(StrEnum):
     ZONAS_VERDES = "zonas_verdes"
     SEGURIDAD = "seguridad"
     ACCESIBILIDAD = "accesibilidad"
+    OCIO = "ocio"
     TRAYECTO = "trayecto"
     OTRO = "otro"
 

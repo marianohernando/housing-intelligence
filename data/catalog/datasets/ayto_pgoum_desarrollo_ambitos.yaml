@@ -1,0 +1,45 @@
+dataset_id: ayto_pgoum_desarrollo_ambitos
+source_id: ayuntamiento_madrid_ckan
+name: PGOUM 97. Estado de desarrollo de los ámbitos (julio 2026)
+domain: urbanism
+owner: Ayuntamiento de Madrid
+format: XLS
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: semiannual
+refresh_policy: semestral
+landing_url: https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos
+resources:
+- name: Situación de los ámbitos por distritos (versión julio 2026)
+  format: XLS
+  url: https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos/resource/203200-17-desarrollo-ambitos/download/situacionambitos_01_01_2026distritos.xls
+- name: Estructura del conjunto de datos
+  format: PDF
+  url: https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos/resource/203200-13-desarrollo-ambitos/download/estructura_conjuntodatos_pgoum_situacion.pdf
+  role: docs
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 4
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-241. Ayuntamiento de Madrid (datos.madrid.es, CC BY 4.0, comprobado en su CKAN el 14 nov;
+    «Unidad responsable: Departamento de Análisis Urbano»). 666 ámbitos de ordenación del Plan
+    General con su distrito, uso característico, superficie y el estado de sus cuatro fases
+    (planeamiento, gestión, proyecto y obras de urbanización), a 1 de julio de 2026. Solo
+    Madrid capital: el resto de la región queda sin datos.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T18:00:00+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 203200-0-desarrollo-ambitos
+  harvested_at: '2026-11-14T18:00:00+00:00'
+notes: >-
+  Complementario, no es dataset CM (D-205, D-209). El fichero se llama «01_01_2026» pero su
+  columna de fecha y su ficha dicen julio de 2026: se usa la fecha de la columna.

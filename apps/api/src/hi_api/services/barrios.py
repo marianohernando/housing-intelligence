@@ -15,6 +15,7 @@ from hi_api.services.search import (
     Loaded,
     indicators_by_zone,
     load_warnings,
+    scenario_warnings,
     union_datasets,
     zone_price,
     zone_ref,
@@ -181,7 +182,7 @@ def search_barrios(
     parent = district(conn, distrito)
     loaded = load_barrios(conn, scenario, parent)
     outcome = run_search(scenario, loaded.zones)
-    warnings = load_warnings(loaded)
+    warnings = [*load_warnings(loaded), *scenario_warnings(scenario)]
     if outcome.unscored_passing:
         warnings.append(
             f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} barrios pass every "

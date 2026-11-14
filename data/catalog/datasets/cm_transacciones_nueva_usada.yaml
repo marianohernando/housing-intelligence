@@ -8,8 +8,8 @@ format: CSV
 geography: table
 geo:
   resolution: municipio
-temporal_resolution: null
-refresh_policy: unknown
+temporal_resolution: quarterly
+refresh_policy: trimestral
 landing_url: https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio
 resources:
 - name: Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio.
@@ -20,23 +20,30 @@ resources:
     Comunidad de Madrid.json
   format: JSON
   url: https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/4b0d85d3-7c2a-487c-bdde-c8c8c768bd81/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comu.json
+  role: cross_check
 license_status: CLEAR
 status: REVIEWED
-priority: P1
+priority: P0
 scorecard:
   datamad_relevance: 5
-  product_impact: 5
+  product_impact: 4
   geographic_granularity: 3
   freshness: 5
   license_clarity: 5
-  ingestion_ease: 5
-  notes: heuristic-v2; keywords=['vivienda', 'compraventa', 'transacciones inmobiliarias',
-    'inmobiliari']; strong=True
+  ingestion_ease: 4
+  notes: >-
+    D-241. CM portal (CC BY 4.0, «Fecha Actualización 08-09-2026»; fuente: Estadística de
+    Transacciones Inmobiliarias del Ministerio de Transportes, Movilidad y Agenda Urbana).
+    Compraventas de vivienda nueva y de segunda mano por trimestre, de 2004 al 2.º trimestre de
+    2026 (este, provisional), en los 179 municipios; Madrid sale entero, sin distritos. No trae
+    código de municipio: el nombre («Acebeda (La)») se cruza con la geografía (179 de 179).
   reviewed_by: claude-code
-  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+  reviewed_at: '2026-11-14T18:00:00+00:00'
 discovery:
   harvested_from: comunidad_madrid_ckan
   external_id: transacciones_vivienda_nueva_usada_municipio
   harvested_at: '2026-10-20T11:16:21.703749+00:00'
-notes: P1-04 market structure | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
-  composite=4.6; license_id=cc-by
+notes: >-
+  P1-04 market structure | curated from 2026-10-20_sprint_p0.yaml. D-241: contexto «Vivienda
+  nueva y lo que viene»; solo la serie de compraventas (no las tasas de variación ni la media
+  anual, que se recalculan desde la serie).

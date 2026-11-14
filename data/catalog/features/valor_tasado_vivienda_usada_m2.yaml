@@ -1,0 +1,26 @@
+feature_id: valor_tasado_vivienda_usada_m2
+version: 1
+human_name: Valor tasado medio de la vivienda libre de más de 5 años por metro cuadrado
+domain: housing
+type: raw
+unit: EUR/m2
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_valor_tasado_vivienda_antiguedad, role: primary}
+formula:
+  method: metric_value
+  metric: valor_tasado_vivienda_m2_antiguedad
+  dims: {antiguedad: mas_de_cinco_anos}
+  confidence: 0.8  # a municipio-wide mean of appraisals, as the total value (D-227)
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness, municipio_mean]}
+public_use: true
+pro_use: true
+models: []
+tests: [positive, unknown_never_zero, context_only]
+limitations:
+  - "Es el valor de tasación de la vivienda libre de más de 5 años (Estadística de Valor Tasado de la Vivienda del Ministerio de Vivienda y Agenda Urbana, en el portal de la CM), no el precio de un anuncio ni el de una venta concreta."
+  - "Solo municipios de más de 25.000 habitantes con tasaciones suficientes de esa antigüedad; el resto queda sin datos, nunca 0. En un distrito de Madrid se enseña la cifra de toda la ciudad, con esa etiqueta."
+  - "Dato de contexto: no cambia el precio de compra del buscador (D-227, D-234), no puntúa, no ordena zonas y no entra en «Qué falta» (D-241)."

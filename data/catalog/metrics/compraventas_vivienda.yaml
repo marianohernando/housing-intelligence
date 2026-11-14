@@ -1,0 +1,14 @@
+metric_id: compraventas_vivienda
+human_name: Compraventas de vivienda (nueva y de segunda mano)
+description: >-
+  Número de compraventas de vivienda por trimestre y municipio, de vivienda nueva y de segunda
+  mano. Estadística de Transacciones Inmobiliarias del Ministerio de Transportes, Movilidad y
+  Agenda Urbana, publicada en el portal de la CM. `estado` solo aparece cuando la fuente marca
+  el valor como provisional.
+domain: housing
+unit: compraventas
+aggregation_method: sum
+geo_resolution_min: municipio
+temporal_resolution: quarterly
+dataset_id: cm_transacciones_nueva_usada
+dimensions: [tipo, estado]

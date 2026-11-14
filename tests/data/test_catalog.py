@@ -6,6 +6,7 @@ import pytest
 
 from hi_contracts.catalog.enums import LicenseStatus, Priority, TrustTier
 from hi_contracts.public import NeedKey
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_ingestion.catalog.loader import Catalog, load_catalog
 
 CM_SOURCE = "comunidad_madrid_ckan"
@@ -68,6 +69,8 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert pipeline.walkable_highways, dataset_id
         elif pipeline.kind == "osm_parks":
             assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
+        elif pipeline.kind == "osm_pois":
+            assert pipeline.classes and pipeline.min_places > 0, dataset_id
         elif pipeline.kind == "facility_directory":
             assert pipeline.scope_values, dataset_id
         elif pipeline.kind == "station_topology":  # D-223: read by a GTFS feed that names it
@@ -134,13 +137,16 @@ def test_directories_complement_cm_registers(catalog: Catalog) -> None:
 
 # Statistics the CM does not publish at the level the product needs (D-209: population and
 # households by district of Madrid; D-228: the rent of the leases signed in the year, which only
-# adjusts the CM rent; D-242: the Ministry's rent reference, only where the CM publishes none).
+# adjusts the CM rent; D-241: what is coming, the planning areas of Madrid and the Plan Vive page,
+# which publishes no file; D-242: the Ministry's rent reference, only where the CM publishes none).
 # They complement CM data, never replace it.
 COMPLEMENTARY_STATISTICS = {
     "ayto_padron_municipal",
     "ayto_panel_indicadores_distritos_barrios",
     "aeat_alquiler_nuevos_contratos_municipios",
     "aeat_alquiler_nuevos_contratos_codigo_postal",
+    "ayto_pgoum_desarrollo_ambitos",
+    "cm_plan_vive_promociones",
     "mivau_serpavi_alquiler",
 }
 
@@ -298,6 +304,32 @@ def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
             assert levels == {"distrito", "barrio"}, spec.feature_id
         else:
             assert {"municipio", "distrito"} <= levels, spec.feature_id
+
+
+def test_leisure_features_walk_to_the_places_their_pipeline_publishes(catalog: Catalog) -> None:
+    """D-236: each leisure need reads a walking feature over the OSM leisure places, with the
+    parks' method and levels, and only names subcategories its pipeline declares. None is a
+    row of the list of what is missing."""
+    pipeline = catalog.pipelines["osm_ocio"]
+    assert pipeline.kind == "osm_pois"
+    declared = {(c.category.value, c.subcategory) for c in pipeline.classes}
+    park = catalog.features["min_a_pie_parque"].formula.model_dump()
+    used: set[tuple[str, str]] = set()
+    for need in LEISURE_NEEDS:
+        spec = next(
+            f for f in catalog.features.values() if f.fit is not None and f.fit.need == need.value
+        )
+        formula = spec.formula.model_dump()
+        mine = {(formula["destination_category"], s) for s in formula["subcategories"]}
+        assert mine <= declared, spec.feature_id
+        assert not mine & used, spec.feature_id  # a place counts for one group
+        used |= mine
+        same = ("method", "statistic", "speed_kmh", "origin_highways", "min_street_m", "levels")
+        assert {k: formula[k] for k in same} == {k: park[k] for k in same}, spec.feature_id
+        assert spec.null_policy == catalog.features["min_a_pie_parque"].null_policy
+        assert spec.gap_row is None
+        assert "osm_ocio" in {s.dataset_id for s in spec.sources}
+    assert used == declared  # every published class belongs to a group
 
 
 def test_transit_by_mode_informs_and_never_scores(catalog: Catalog) -> None:
@@ -477,3 +509,48 @@ def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> N
     ):
         year = catalog.datasets[dataset_id].name.rsplit("ejercicio ", 1)[1][:4]
         assert f"contratos firmados en {year}" in fit.note
+
+
+NEW_HOUSING_CONTEXT = {
+    "compraventas_obra_nueva_pct",
+    "valor_tasado_vivienda_nueva_m2",
+    "valor_tasado_vivienda_usada_m2",
+    "plan_vive_viviendas",
+    "ambitos_residenciales_en_desarrollo",
+}
+
+
+def test_new_housing_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-241: new housing and what is coming never score, rank or enter «Qué falta», and the
+    purchase price stays the total appraised value (D-227)."""
+    for feature_id in NEW_HOUSING_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None, feature_id
+        assert spec.gap_row is None, feature_id
+        assert "context_only" in spec.tests, feature_id
+    price = [f.feature_id for f in catalog.features.values() if f.fit and f.fit.role == "price_m2"]
+    assert price == ["valor_tasado_vivienda_m2"]
+
+
+def test_new_housing_figures_come_from_the_cm_portal(catalog: Catalog) -> None:
+    """The two figures about new homes are CM open data; what is coming complements them."""
+    for dataset_id in ("cm_transacciones_nueva_usada", "cm_valor_tasado_vivienda_antiguedad"):
+        assert catalog.datasets[dataset_id].source_id == CM_SOURCE, dataset_id
+    plan_vive = catalog.datasets["cm_plan_vive_promociones"]
+    assert plan_vive.source_id == "comunidad_madrid_web"  # a web page, not the open data portal
+    assert catalog.sources["comunidad_madrid_web"].attribution_text
+
+
+def test_plan_vive_citation_carries_the_date_it_was_typed(catalog: Catalog) -> None:
+    """The page's notice asks for the date of extraction: the citation must be the table's own
+    `consulted` date, so refreshing one without the other fails here (D-241)."""
+    import yaml
+
+    from hi_contracts.catalog.manual import ZoneItemsTable
+
+    spec = catalog.pipelines["cm_plan_vive_promociones"]
+    assert spec.kind == "curated_zone_items"
+    path = catalog.paths["cm_plan_vive_promociones"].parents[1] / "manual" / spec.table
+    table = ZoneItemsTable.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+    citation = catalog.sources["comunidad_madrid_web"].attribution_text or ""
+    assert table.consulted.strftime("%d/%m/%Y") in citation

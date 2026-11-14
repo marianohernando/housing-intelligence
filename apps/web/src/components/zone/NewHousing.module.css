@@ -1,0 +1,36 @@
+/* Context, not a status: the brand's ink and soft ink, never state or alarm colours (D-241) */
+.card {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--text-lg);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  display: grid;
+  gap: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.note {
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.source,
+.footer {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}

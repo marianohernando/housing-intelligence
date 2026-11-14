@@ -5,8 +5,8 @@ from typing import Any
 
 import pytest
 
-from hi_api.services.search import indicators_by_zone, zone_price
-from hi_contracts.public import NeedKey, PriorityKey
+from hi_api.services.search import indicators_by_zone, scenario_warnings, zone_price
+from hi_contracts.public import NearbyNeed, NeedKey, PriorityKey, ScenarioState
 
 KEY = ("distrito", "2807910")
 
@@ -49,13 +49,38 @@ def test_every_known_role_lands_in_its_place() -> None:
     assert NeedKey.TRANSPORTE not in result.walk.get(KEY, {})
 
 
+def test_the_leisure_groups_land_as_walking_needs_and_ocio_has_no_feature_of_its_own(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """D-236: each group of «Ocio» is a need measured on foot, read like the colegio; the
+    priority «ocio» scores those needs, so a feature bound to it would be a mistake: ignored
+    with the warning of any unknown binding, never a park-like priority walk."""
+    rows = [
+        _row("min_a_pie_bar", {"role": "walk_minutes", "need": "bares"}),
+        _row("min_a_pie_restaurante", {"role": "walk_minutes", "need": "restaurantes"}),
+        _row("min_a_pie_gimnasio", {"role": "walk_minutes", "need": "gimnasios"}),
+        _row("min_a_pie_cultura", {"role": "walk_minutes", "need": "cultura"}),
+        _row("ocio", {"role": "walk_minutes", "priority": "ocio"}),
+    ]
+    with caplog.at_level(logging.WARNING):
+        result = indicators_by_zone(rows)
+    assert {need: v.feature_id for need, v in result.walk[KEY].items()} == {
+        NeedKey.BARES: "min_a_pie_bar",
+        NeedKey.RESTAURANTES: "min_a_pie_restaurante",
+        NeedKey.GIMNASIOS: "min_a_pie_gimnasio",
+        NeedKey.CULTURA: "min_a_pie_cultura",
+    }
+    assert not result.priority_walk
+    assert "walk_minutes:priority=ocio" in caplog.text
+
+
 def test_an_unknown_role_is_ignored_with_a_warning(caplog: pytest.LogCaptureFixture) -> None:
     rows = [
         _row("min_a_pie_colegio", {"role": "walk_minutes", "need": "colegio"}),
         _row("futuro", {"role": "something_new", "need": None, "priority": None, "mode": None}),
         _row("futuro_2", {"role": "something_new"}),
-        _row("bares", {"role": "walk_minutes", "need": "bares"}),
-        _row("ocio", {"role": "walk_minutes", "priority": "ocio"}),
+        _row("piscinas", {"role": "walk_minutes", "need": "piscinas"}),
+        _row("mascotas", {"role": "walk_minutes", "priority": "mascotas"}),
         _row("tranvia", {"role": "transit_mode", "mode": "tram"}),
     ]
     with caplog.at_level(logging.WARNING):
@@ -65,8 +90,8 @@ def test_an_unknown_role_is_ignored_with_a_warning(caplog: pytest.LogCaptureFixt
     assert not result.transit
     assert "something_new" in caplog.text
     for ignored in (
-        "walk_minutes:need=bares",
-        "walk_minutes:priority=ocio",
+        "walk_minutes:need=piscinas",
+        "walk_minutes:priority=mascotas",
         "transit_mode:mode=tram",
     ):
         assert ignored in caplog.text
@@ -112,3 +137,19 @@ def test_without_the_estimate_in_the_data_a_district_is_unknown_as_before() -> N
     price, estimated = zone_price(indicators_by_zone([missing]), KEY)
     assert price is not None and price.value is None and not estimated
     assert zone_price(indicators_by_zone([]), KEY) == (None, False)
+
+
+def test_leisure_in_nearby_without_ocio_comes_back_as_a_warning(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """D-236: the API or the MCP may send a leisure group without the priority «ocio»; the search
+    ignores it (hi_domain.fit.ignored_leisure) and the answer says so."""
+    plain = ScenarioState(nearby=[NearbyNeed(need=NeedKey.COLEGIO)])
+    loose = ScenarioState(nearby=[NearbyNeed(need=NeedKey.BARES), NearbyNeed(need=NeedKey.CULTURA)])
+    marked = loose.model_copy(update={"priorities": [PriorityKey.OCIO]})
+    assert scenario_warnings(plain) == []
+    assert scenario_warnings(marked) == []
+    with caplog.at_level(logging.WARNING):
+        (warning,) = scenario_warnings(loose)
+    assert warning.startswith("INVALID_PROFILE: nearby bares, cultura ignored")
+    assert "bares, cultura" in caplog.text

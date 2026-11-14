@@ -1,0 +1,14 @@
+metric_id: ambitos_desarrollo_residencial
+human_name: Ámbitos urbanísticos residenciales sin terminar (superficie)
+description: >-
+  Un ámbito de ordenación del Plan General de Madrid de uso residencial con alguna fase
+  (planeamiento, gestión, proyecto u obras de urbanización) sin terminar, en su distrito: su
+  superficie en m², con su código, su nombre y su etapa (obras de urbanización en curso, en
+  tramitación o sin empezar). Ayuntamiento de Madrid, VEDA.
+domain: urbanism
+unit: m2
+aggregation_method: sum
+geo_resolution_min: distrito
+temporal_resolution: semiannual
+dataset_id: ayto_pgoum_desarrollo_ambitos
+dimensions: [item, name, stage]
