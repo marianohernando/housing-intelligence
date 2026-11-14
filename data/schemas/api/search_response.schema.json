@@ -6,7 +6,7 @@
       "properties": {
         "days_per_week": {
           "default": 5,
-          "description": "Days they go there in a week; 0 = never (full telework): the trip does not count (D-240)",
+          "description": "Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)",
           "maximum": 7,
           "minimum": 0,
           "title": "Days Per Week",

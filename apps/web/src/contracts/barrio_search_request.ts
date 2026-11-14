@@ -9,7 +9,7 @@
  */
 export type Distrito = string;
 /**
- * Days they go there in a week; 0 = never (full telework): the trip does not count (D-240)
+ * Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)
  */
 export type DaysPerWeek = number;
 export type AnchorKind = "work" | "study" | "family" | "other";

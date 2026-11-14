@@ -44,7 +44,7 @@ from hi_domain.gaps import es_number
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
 # leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
 # trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8: a
-# trip made 1-2 days a week weighs half and one never made does not count (D-240)
+# trip made 1-2 days a week weighs half and one never made is not scored (D-240)
 FIT_VERSION = "fit-0.8"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
@@ -61,7 +61,7 @@ STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
 # Public transport (CORE-009, D-220): full utility up to 30 min, none from 90 (3x, as walking).
 DEFAULT_COMMUTE_MINUTES = 30
 # Telework (D-240): a trip made 1-2 days a week weighs half in the % of fit; from 3 days it
-# weighs as always. A place never gone to (0 days) is neither scored nor a condition.
+# weighs as always. A place never gone to (0 days) is not scored, but its limit still applies.
 FEW_DAYS_PER_WEEK = 2
 FEW_DAYS_WEIGHT = 0.5
 BUDGET_MARGIN_SHARE = 0.25  # full utility when the cost is 75 % of the budget or less
@@ -265,7 +265,8 @@ def rank_weights(n: int) -> list[float]:
 
 
 def counts(anchor: Anchor) -> bool:
-    """False for a place the person never goes to (0 days a week: full telework, D-240)."""
+    """False for a place the person never goes to (0 days a week: full telework, D-240): its
+    trip is not scored. A limit on it (`max_minutes`) is still a condition."""
     return anchor.days_per_week > 0
 
 
@@ -403,7 +404,7 @@ def constraint_checks(
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
     for i, anchor in enumerate(scenario.anchors):
-        if anchor.max_minutes is not None and counts(anchor):
+        if anchor.max_minutes is not None:  # whatever the days, even none (D-240)
             checks.append(commute_check(i, anchor, data))
     return checks
 

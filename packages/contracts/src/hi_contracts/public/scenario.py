@@ -104,8 +104,8 @@ class Anchor(BaseModel):
         default=5,
         ge=0,
         le=7,
-        description="Days they go there in a week; 0 = never (full telework): the trip does "
-        "not count (D-240)",
+        description="Days they go there in a week: 1-2 halve the weight of the trip; 0 = never "
+        "(full telework), the trip is not scored but its max_minutes still applies (D-240)",
     )
     max_minutes: int | None = Field(
         default=None, ge=5, le=120, description="Hard limit for the trip; None = preference only"

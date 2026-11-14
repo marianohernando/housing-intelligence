@@ -816,8 +816,9 @@ def test_a_far_zone_loses_less_when_the_trip_is_made_few_days() -> None:
     assert gap(few_days) > gap(scenario)
 
 
-@pytest.mark.parametrize("days", [1, 2, 5])
+@pytest.mark.parametrize("days", [0, 1, 2, 5])
 def test_the_trip_limit_applies_the_same_whatever_the_days(days: int) -> None:
+    """Full telework (0 days) included: a limit the person sets is still a condition."""
     scenario = family(anchors=[going(days, max_minutes=40)])
     statuses = {
         minutes: next(
@@ -834,19 +835,24 @@ def test_the_trip_limit_applies_the_same_whatever_the_days(days: int) -> None:
     }
 
 
-def test_a_place_never_gone_to_neither_scores_nor_limits() -> None:
-    """Full telework (0 days): the same as a search without that place, limit included."""
-    telework = family(anchors=[going(0, max_minutes=30)])
-    data = with_commute(zone("1"), 95.0)
-    fit, without = evaluate(telework, data), evaluate(family(anchors=[]), data)
-    assert [c.key for c in criteria(telework)] == [c.key for c in criteria(family(anchors=[]))]
-    assert [c.constraint_id for c in fit.constraints] == ["budget", "near:colegio"]
-    assert (fit.utility, fit.confidence, fit.facts) == (
-        without.utility,
-        without.confidence,
-        without.facts,
-    )
-    # the next place keeps its position in `anchors`: its condition is still commute:1
+def test_a_place_never_gone_to_is_not_scored_but_keeps_its_limit() -> None:
+    """Full telework (0 days): scored as a search without that place; its limit still applies."""
+    without = family(anchors=[])
+    for limit in (None, 30):
+        telework = family(anchors=[going(0, max_minutes=limit)])
+        assert [c.key for c in criteria(telework)] == [c.key for c in criteria(without)]
+        for minutes in (20.0, 95.0):
+            data = with_commute(zone("1"), minutes)
+            fit, alone = evaluate(telework, data), evaluate(without, data)
+            assert (fit.utility, fit.confidence, fit.facts) == (
+                alone.utility,
+                alone.confidence,
+                alone.facts,
+            )
+    far = evaluate(family(anchors=[going(0, max_minutes=30)]), with_commute(zone("1"), 95.0))
+    assert [c.constraint_id for c in far.constraints] == ["budget", "near:colegio", "commute:0"]
+    assert far.failed == ["commute:0"]
+    # the next place keeps its position in `anchors`: its criterion and condition are still 1
     both = family(anchors=[going(0), FAMILY.model_copy(update={"max_minutes": 45})])
     assert [c.key for c in criteria(both)][-2] == "work:1"
     checks = evaluate(both, with_trips(zone("1"), 20.0, 50.0)).constraints
