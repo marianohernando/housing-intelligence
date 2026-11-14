@@ -6,6 +6,7 @@ import pytest
 
 from hi_contracts.catalog.enums import LicenseStatus, Priority, TrustTier
 from hi_contracts.public import NeedKey
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_ingestion.catalog.loader import Catalog, load_catalog
 
 CM_SOURCE = "comunidad_madrid_ckan"
@@ -68,6 +69,8 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert pipeline.walkable_highways, dataset_id
         elif pipeline.kind == "osm_parks":
             assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
+        elif pipeline.kind == "osm_pois":
+            assert pipeline.classes and pipeline.min_places > 0, dataset_id
         elif pipeline.kind == "facility_directory":
             assert pipeline.scope_values, dataset_id
         elif pipeline.kind == "station_topology":  # D-223: read by a GTFS feed that names it
@@ -291,6 +294,32 @@ def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
     for spec in bound:
         levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
         assert {"municipio", "distrito"} <= levels, spec.feature_id
+
+
+def test_leisure_features_walk_to_the_places_their_pipeline_publishes(catalog: Catalog) -> None:
+    """D-236: each leisure need reads a walking feature over the OSM leisure places, with the
+    parks' method and levels, and only names subcategories its pipeline declares. None is a
+    row of the list of what is missing."""
+    pipeline = catalog.pipelines["osm_ocio"]
+    assert pipeline.kind == "osm_pois"
+    declared = {(c.category.value, c.subcategory) for c in pipeline.classes}
+    park = catalog.features["min_a_pie_parque"].formula.model_dump()
+    used: set[tuple[str, str]] = set()
+    for need in LEISURE_NEEDS:
+        spec = next(
+            f for f in catalog.features.values() if f.fit is not None and f.fit.need == need.value
+        )
+        formula = spec.formula.model_dump()
+        mine = {(formula["destination_category"], s) for s in formula["subcategories"]}
+        assert mine <= declared, spec.feature_id
+        assert not mine & used, spec.feature_id  # a place counts for one group
+        used |= mine
+        same = ("method", "statistic", "speed_kmh", "origin_highways", "min_street_m", "levels")
+        assert {k: formula[k] for k in same} == {k: park[k] for k in same}, spec.feature_id
+        assert spec.null_policy == catalog.features["min_a_pie_parque"].null_policy
+        assert spec.gap_row is None
+        assert "osm_ocio" in {s.dataset_id for s in spec.sources}
+    assert used == declared  # every published class belongs to a group
 
 
 def test_transit_by_mode_informs_and_never_scores(catalog: Catalog) -> None:
