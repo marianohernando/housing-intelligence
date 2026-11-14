@@ -1,9 +1,9 @@
 "use client";
 
-import { Baby, BedDouble, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
+import { Baby, BedDouble, Cross, Dumbbell, GraduationCap, HeartHandshake, Hospital, Landmark, type LucideIcon, Pill, Trees, Utensils, Wine } from "lucide-react";
 import { useId } from "react";
 
-import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
+import { type FacilitiesStatus, useFacilityLayer } from "@/components/map/FacilityLayerProvider";
 import { useDatasets } from "@/components/provenance/useDatasets";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
@@ -18,12 +18,15 @@ import {
   type FacilityKey,
   facilityCountText,
   facilityType,
-  FACILITY_TYPES,
   HOSPITAL_DEPENDENCY_NOTE,
   hospitalLine,
   hospitalSplitText,
+  isLeisureFacility,
+  leisureAvailable,
+  offeredTypes,
   orderedTypes,
   selectedCountText,
+  SERVICE_FACILITY_KEYS,
 } from "@/lib/map/facilities";
 
 import DependencyPill from "./DependencyPill";
@@ -34,6 +37,8 @@ const TEXT = {
   title: "Todos los centros",
   show: "Ver en el mapa",
   loading: (zone: string) => `Buscando los centros de ${zone}…`,
+  // centros.ocio.cargando (D-236): each leisure type is asked when its button is pressed
+  leisureLoading: (many: string, zone: string) => `Buscando ${many} en ${zone}…`,
   retry: "Reintentar",
   none: "Toca uno o varios tipos de centro para verlos en el mapa.", // B's draft for D (several at once)
   all: "Todos",
@@ -45,6 +50,8 @@ const TEXT = {
   // centros.sin_nombre_algunos: the name comes from the Ministry's catalogues; a few could not be matched
   someNoName: "Algunos centros salen sin nombre porque no hemos podido comprobarlo en las fuentes oficiales.",
   // centros.camas (HOSP-001, D-218): the date and the catalogue from /datasets
+  // centros.ocio.fuente (D-236): leisure comes from OpenStreetMap, never an official register
+  leisure: "Según OpenStreetMap, un mapa hecho por voluntarios: puede faltar algún local o salir sin nombre.",
   bedsBefore: (updated: string | null) => `Camas instaladas${updated ? ` a ${updated}` : ""}, según el `,
   bedsAfter: (publisher: string) => ` del ${publisher}.`,
   newTab: " (se abre en una pestaña nueva)",
@@ -79,6 +86,10 @@ export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
   farmacia: Pill,
   mayores: HeartHandshake,
   parque: Trees,
+  bares: Wine,
+  restaurantes: Utensils,
+  gimnasios: Dumbbell,
+  cultura: Landmark,
 };
 
 /** «Hospital La Paz · 1.300 camas» when the API gives the name and the capacity; the label alone otherwise. */
@@ -139,6 +150,27 @@ function FacilityList({ items, count }: { items: Facility[]; count: string }) {
   );
 }
 
+/** A leisure type pressed while its own request is on its way, or after it failed (D-236). */
+function LeisurePending({ type, zone, status }: { type: FacilityKey; zone: string; status: FacilitiesStatus | undefined }) {
+  const { leisureErrors, retryLeisure } = useFacilityLayer();
+  const error = isLeisureFacility(type) ? leisureErrors[type] : undefined;
+  if (status === "error" && error && isLeisureFacility(type)) {
+    return (
+      <div role="alert" className={styles.error}>
+        <p>{errorMessage(error)}</p>
+        <Button variant="secondary" onClick={() => retryLeisure(type)}>
+          {TEXT.retry}
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <p role="status" className={styles.muted}>
+      {TEXT.leisureLoading(facilityType(type).many, zone)}
+    </p>
+  );
+}
+
 /** One type pressed: how many there are in the zone, what the source does not say, and its list. */
 function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility[]; zone: string }) {
   const count = facilityCountText(type, items.length, zone);
@@ -158,8 +190,12 @@ function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility
         </details>
       )}
       {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
-      {items.some((f) => f.name === null) && (
-        <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
+      {facilityType(type).leisure ? (
+        <p className={styles.muted}>{TEXT.leisure}</p>
+      ) : (
+        items.some((f) => f.name === null) && (
+          <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
+        )
       )}
       <CapacitySourceLine type={type} items={items} />
       {items.length > 0 && <FacilityList items={items} count={count} />}
@@ -171,13 +207,20 @@ function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility
  * «Todos los centros» (FASE_PRUEBAS, T3): every facility of the zone, not only its key points. A
  * button per type with how many there are; several types can be on at once (petición de Mariano,
  * 13 nov), each with its colour on the map, grouped, and listed here, which is also the way to see
- * them without the map. Filtered on the client: /places brought them all in one request.
+ * them without the map. Filtered on the client: /places brought the services in one request;
+ * each leisure type (D-236) is asked apart when its button is pressed and stays out of «Todos».
  */
 export default function FacilitiesPanel({ zone }: { zone: string }) {
-  const { status, groups, error, retry, types, toggle, setAll } = useFacilityLayer();
+  const { status, groups, error, retry, types, readyTypes, leisure, toggle, setAll } = useFacilityLayer();
   const titleId = useId();
   const slow = useSlow(status === "loading");
-  const shown = orderedTypes(types);
+  // Leisure (D-236) once its dataset is published; each type is asked when pressed, never with «Todos»
+  const { data: datasets } = useDatasets();
+  const offered = offeredTypes(leisureAvailable(datasets?.datasets));
+  const shown = orderedTypes(types).filter((key) => offered.some((t) => t.key === key));
+  const allServices = SERVICE_FACILITY_KEYS.every((key) => types.includes(key));
+  const countOf = (key: FacilityKey) =>
+    groups && (!isLeisureFacility(key) || leisure[key] === "ready") ? formatNumber(groups[key].length, 0) : undefined;
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
@@ -205,13 +248,13 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
               {TEXT.show}
             </p>
             <ul className={styles.chips}>
-              {FACILITY_TYPES.map((t) => (
+              {offered.map((t) => (
                 <li key={t.key}>
                   <Chip
                     label={t.chip}
                     icon={FACILITY_ICON[t.key]}
                     color={`var(--${FACILITY_COLOR_TOKEN[t.key]})`}
-                    count={formatNumber(groups[t.key].length, 0)}
+                    count={countOf(t.key)}
                     pressed={types.includes(t.key)}
                     onToggle={() => toggle(t.key)}
                   />
@@ -219,7 +262,7 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
               ))}
             </ul>
             <div className={styles.all}>
-              <button type="button" onClick={() => setAll(true)} disabled={shown.length === FACILITY_TYPES.length}>
+              <button type="button" onClick={() => setAll(true)} disabled={allServices}>
                 {TEXT.all}
               </button>
               <button type="button" onClick={() => setAll(false)} disabled={shown.length === 0}>
@@ -229,11 +272,17 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
           </div>
           {/* Told when the types change; the lists below are not read out each time */}
           <p role="status" aria-live="polite" className="visually-hidden">
-            {selectedCountText(groups, shown, zone) ?? TEXT.none}
+            {selectedCountText(groups, shown.filter((key) => readyTypes.includes(key)), zone) ?? TEXT.none}
           </p>
           <div className={styles.summary}>
             {shown.length ? (
-              shown.map((type) => <TypeSummary key={type} type={type} items={groups[type]} zone={zone} />)
+              shown.map((type) =>
+                readyTypes.includes(type) ? (
+                  <TypeSummary key={type} type={type} items={groups[type]} zone={zone} />
+                ) : (
+                  <LeisurePending key={type} type={type} zone={zone} status={isLeisureFacility(type) ? leisure[type] : undefined} />
+                ),
+              )
             ) : (
               <p className={styles.muted}>{TEXT.none}</p>
             )}

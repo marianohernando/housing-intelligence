@@ -57,7 +57,9 @@ describe("attributions (attribution_text of /datasets, from the source catalogue
     expect(new Set(cited).size).toBe(cited.length);
     expect(cited.some((c) => c.includes("Ministerio de Sanidad") && c.includes("actualizado a 31/12/2024"))).toBe(true);
     expect(cited.filter((c) => c.includes("CartoCiudad"))).toHaveLength(1);
-    expect(cited.filter((c) => c.includes("Comunidad de Madrid"))).toHaveLength(1);
+    expect(cited.filter((c) => c.includes("datos.comunidad.madrid"))).toHaveLength(1);
+    // D-241: the Plan Vive page is the Comunidad's too, but not its open data portal: its own citation, with the date
+    expect(cited.filter((c) => c.includes("Plan Vive"))).toEqual(["Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026."]);
   });
 
   it("cites the Agencia Tributaria with its date and links it (fit-0.6, D-228; the text is the catalogue's)", () => {

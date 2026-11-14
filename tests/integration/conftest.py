@@ -13,19 +13,23 @@ from sqlalchemy import Engine, create_engine, make_url, text
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
     CmMunicipioConceptPipeline,
+    CmMunicipioNameTablePipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    CuratedZoneItemsPipeline,
     FacilityDirectoryPipeline,
     GtfsFeedPipeline,
+    MadridDevelopmentAreasPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
     OsmParksPipeline,
+    OsmPoisPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
     StationTopologyPipeline,
 )
 from hi_db.session import make_engine
-from hi_ingestion.catalog.loader import load_catalog
+from hi_ingestion.catalog.loader import Catalog, load_catalog
 from hi_ingestion.pipelines.admin_boundaries.run import (
     local_inputs,
     run_admin_boundaries,
@@ -38,10 +42,12 @@ from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
+from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
+from hi_ingestion.pipelines.zone_context.run import run_zone_context_pipeline
 
 ALEMBIC_INI = Path(__file__).resolve().parents[2] / "infra" / "migrations" / "alembic.ini"
 
@@ -180,6 +186,21 @@ def parks_extract(path: Path) -> Path:
     return path
 
 
+def leisure_extract(path: Path, spec: OsmPoisPipeline) -> Path:
+    """A synthetic OSM extract with one place of each leisure class (D-236) inside the walking
+    grid, on a diagonal 150 m east and 300 m north apart."""
+    lines = ["<?xml version='1.0' encoding='UTF-8'?>", '<osm version="0.6" generator="test">']
+    for i, cls in enumerate(spec.classes):
+        lon, lat = TO_WGS84.transform(440_200.0 + 150 * i, 4_475_000.0 + 300 * i)
+        lines.append(
+            f'  <node id="{i + 1}" lat="{lat:.7f}" lon="{lon:.7f}">'
+            f'<tag k="{cls.key}" v="{cls.value}"/><tag k="name" v="{cls.subcategory} {i + 1}"/>'
+            "</node>"
+        )
+    path.write_text("\n".join([*lines, "</osm>"]) + "\n")
+    return path
+
+
 def ingest_directories(engine: Engine, data_dir: Path) -> None:
     catalog = load_catalog()
     for dataset_id, spec in sorted(catalog.pipelines.items()):
@@ -277,6 +298,16 @@ def fixtures_ingested(
                 data_dir=tmp,
                 inclusions_file=tmp / "no_inclusions.yaml",  # the real ones are not in the grid
             )
+        elif isinstance(spec, OsmPoisPipeline):  # leisure (D-236)
+            src = local_file(dataset_id, "primary", leisure_extract(tmp / "leisure.osm", spec))
+            result = run_osm_pois_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_places": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+            )
         elif isinstance(spec, MadridDistrictPanelPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "panel_sample" / f"{dataset_id}.csv")
             sample = spec.model_copy(
@@ -288,9 +319,43 @@ def fixtures_ingested(
             result = run_panel_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )
+        elif isinstance(spec, CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline):
+            result = ingest_zone_context(migrated_engine, catalog, spec, tmp)
+        elif isinstance(spec, CuratedZoneItemsPipeline):  # D-241: a sample of its manual table
+            result = run_zone_context_pipeline(
+                migrated_engine,
+                catalog,
+                spec,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=ZONE_CONTEXT_SAMPLE,
+            )
         else:
             continue
         assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
+
+
+ZONE_CONTEXT_SAMPLE = GOLDEN / "zone_context_sample"
+
+
+def ingest_zone_context(
+    engine: Engine,
+    catalog: Catalog,
+    spec: CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline,
+    tmp: Path,
+) -> RunSummary:
+    """D-241: the sales table by municipio name and the VEDA register of Madrid (3 districts)."""
+    if isinstance(spec, MadridDevelopmentAreasPipeline):
+        name = f"{spec.dataset_id}.xlsx"
+        spec = spec.model_copy(
+            update={"expected_districts": MADRID_SAMPLE_DISTRICTS, "min_rows": 1}
+        )
+    else:
+        name = f"{spec.dataset_id}.csv"
+    source = local_file(spec.dataset_id, "primary", ZONE_CONTEXT_SAMPLE / name)
+    return run_zone_context_pipeline(
+        engine, catalog, spec, source, evidence_root=None, data_dir=tmp
+    )
 
 
 @pytest.fixture(scope="session")

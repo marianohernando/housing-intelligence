@@ -1,0 +1,96 @@
+﻿Año;Periodo;Territorio;Tipo;Indicador;Valor;Unidad;Estado dato
+2026;T2;Acebeda (La);Vivienda nueva;Serie;0.0;Número;Provisional
+2026;T2;Ajalvir;Vivienda nueva;Serie;7.0;Número;Provisional
+2026;T2;Madrid;Vivienda nueva;Serie;621.0;Número;Provisional
+2026;T2;Madrid;Vivienda nueva;Tasa de variación sobre el periodo anterior;85.9;Porcentaje;Provisional
+2026;T2;Madrid;Vivienda nueva;Tasa de variación sobre igual período del año anterior;84.3;Porcentaje;Provisional
+2026;T2;Acebeda (La);Segunda mano;Serie;0.0;Número;Provisional
+2026;T2;Acebeda (La);Segunda mano;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;Provisional
+2026;T2;Ajalvir;Segunda mano;Serie;16.0;Número;Provisional
+2026;T2;Ajalvir;Segunda mano;Tasa de variación sobre el periodo anterior;6.7;Porcentaje;Provisional
+2026;T2;Ajalvir;Segunda mano;Tasa de variación sobre igual período del año anterior;-11.1;Porcentaje;Provisional
+2026;T2;Madrid;Segunda mano;Serie;9722.0;Número;Provisional
+2026;T2;Madrid;Segunda mano;Tasa de variación sobre el periodo anterior;0.2;Porcentaje;Provisional
+2026;T2;Madrid;Segunda mano;Tasa de variación sobre igual período del año anterior;-12.6;Porcentaje;Provisional
+2026;T1;Acebeda (La);Vivienda nueva;Serie;0.0;Número;
+2026;T1;Ajalvir;Vivienda nueva;Serie;0.0;Número;
+2026;T1;Ajalvir;Vivienda nueva;Tasa de variación sobre el periodo anterior;0.0;Porcentaje;Provisional
+2026;T1;Ajalvir;Vivienda nueva;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;Provisional
+2026;T1;Madrid;Vivienda nueva;Serie;334.0;Número;
+2026;T1;Madrid;Vivienda nueva;Tasa de variación sobre el periodo anterior;7.7;Porcentaje;
+2026;T1;Madrid;Vivienda nueva;Tasa de variación sobre igual período del año anterior;-39.2;Porcentaje;
+2026;T1;Acebeda (La);Segunda mano;Serie;0.0;Número;
+2026;T1;Acebeda (La);Segunda mano;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;
+2026;T1;Ajalvir;Segunda mano;Serie;15.0;Número;
+2026;T1;Ajalvir;Segunda mano;Tasa de variación sobre el periodo anterior;25.0;Porcentaje;
+2026;T1;Ajalvir;Segunda mano;Tasa de variación sobre igual período del año anterior;-44.4;Porcentaje;
+2026;T1;Madrid;Segunda mano;Serie;9704.0;Número;
+2026;T1;Madrid;Segunda mano;Tasa de variación sobre el periodo anterior;-6.2;Porcentaje;
+2026;T1;Madrid;Segunda mano;Tasa de variación sobre igual período del año anterior;-10.1;Porcentaje;
+2025;T4;Acebeda (La);Vivienda nueva;Serie;0.0;Número;
+2025;T4;Ajalvir;Vivienda nueva;Serie;3.0;Número;
+2025;T4;Ajalvir;Vivienda nueva;Tasa de variación sobre el periodo anterior;200.0;Porcentaje;
+2025;T4;Ajalvir;Vivienda nueva;Tasa de variación sobre igual período del año anterior;-50.0;Porcentaje;
+2025;T4;Madrid;Vivienda nueva;Serie;310.0;Número;
+2025;T4;Madrid;Vivienda nueva;Tasa de variación sobre el periodo anterior;25.5;Porcentaje;
+2025;T4;Madrid;Vivienda nueva;Tasa de variación sobre igual período del año anterior;-80.4;Porcentaje;
+2025;T4;Acebeda (La);Segunda mano;Serie;0.0;Número;
+2025;T4;Acebeda (La);Segunda mano;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;
+2025;T4;Ajalvir;Segunda mano;Serie;12.0;Número;
+2025;T4;Ajalvir;Segunda mano;Tasa de variación sobre el periodo anterior;20.0;Porcentaje;
+2025;T4;Ajalvir;Segunda mano;Tasa de variación sobre igual período del año anterior;-57.1;Porcentaje;
+2025;T4;Madrid;Segunda mano;Serie;10344.0;Número;
+2025;T4;Madrid;Segunda mano;Tasa de variación sobre el periodo anterior;17.5;Porcentaje;
+2025;T4;Madrid;Segunda mano;Tasa de variación sobre igual período del año anterior;-7.0;Porcentaje;
+2025;T3;Acebeda (La);Vivienda nueva;Serie;0.0;Número;
+2025;T3;Ajalvir;Vivienda nueva;Serie;1.0;Número;
+2025;T3;Ajalvir;Vivienda nueva;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;
+2025;T3;Madrid;Vivienda nueva;Serie;247.0;Número;
+2025;T3;Madrid;Vivienda nueva;Tasa de variación sobre el periodo anterior;-26.7;Porcentaje;
+2025;T3;Madrid;Vivienda nueva;Tasa de variación sobre igual período del año anterior;-55.3;Porcentaje;
+2025;T3;Acebeda (La);Segunda mano;Serie;0.0;Número;
+2025;T3;Acebeda (La);Segunda mano;Tasa de variación sobre el periodo anterior;0.0;Porcentaje;Provisional
+2025;T3;Acebeda (La);Segunda mano;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;
+2025;T3;Ajalvir;Segunda mano;Serie;10.0;Número;
+2025;T3;Ajalvir;Segunda mano;Tasa de variación sobre el periodo anterior;-44.4;Porcentaje;
+2025;T3;Ajalvir;Segunda mano;Tasa de variación sobre igual período del año anterior;-28.6;Porcentaje;
+2025;T3;Madrid;Segunda mano;Serie;8804.0;Número;
+2025;T3;Madrid;Segunda mano;Tasa de variación sobre el periodo anterior;-20.9;Porcentaje;
+2025;T3;Madrid;Segunda mano;Tasa de variación sobre igual período del año anterior;-12.4;Porcentaje;
+2025;T2;Acebeda (La);Vivienda nueva;Serie;0.0;Número;
+2025;T2;Ajalvir;Vivienda nueva;Serie;0.0;Número;
+2025;T2;Ajalvir;Vivienda nueva;Tasa de variación sobre el periodo anterior;0.0;Porcentaje;
+2025;T2;Ajalvir;Vivienda nueva;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;
+2025;T2;Madrid;Vivienda nueva;Serie;337.0;Número;
+2025;T2;Madrid;Vivienda nueva;Tasa de variación sobre el periodo anterior;-38.6;Porcentaje;
+2025;T2;Madrid;Vivienda nueva;Tasa de variación sobre igual período del año anterior;-46.2;Porcentaje;
+2025;T2;Acebeda (La);Segunda mano;Serie;1.0;Número;
+2025;T2;Acebeda (La);Segunda mano;Tasa de variación sobre el periodo anterior;-50.0;Porcentaje;
+2025;T2;Acebeda (La);Segunda mano;Tasa de variación sobre igual período del año anterior;0.0;Porcentaje;
+2025;T2;Ajalvir;Segunda mano;Serie;18.0;Número;
+2025;T2;Ajalvir;Segunda mano;Tasa de variación sobre el periodo anterior;-33.3;Porcentaje;
+2025;T2;Ajalvir;Segunda mano;Tasa de variación sobre igual período del año anterior;-5.3;Porcentaje;
+2025;T2;Madrid;Segunda mano;Serie;11125.0;Número;
+2025;T2;Madrid;Segunda mano;Tasa de variación sobre el periodo anterior;3.1;Porcentaje;
+2025;T2;Madrid;Segunda mano;Tasa de variación sobre igual período del año anterior;-2.8;Porcentaje;
+2025;T1;Acebeda (La);Vivienda nueva;Serie;0.0;Número;
+2025;T1;Ajalvir;Vivienda nueva;Serie;1.0;Número;
+2025;T1;Ajalvir;Vivienda nueva;Tasa de variación sobre el periodo anterior;-83.3;Porcentaje;
+2025;T1;Madrid;Vivienda nueva;Serie;549.0;Número;
+2025;T1;Madrid;Vivienda nueva;Tasa de variación sobre el periodo anterior;-65.2;Porcentaje;
+2025;T1;Madrid;Vivienda nueva;Tasa de variación sobre igual período del año anterior;-42.6;Porcentaje;
+2025;T1;Acebeda (La);Segunda mano;Serie;2.0;Número;
+2025;T1;Acebeda (La);Segunda mano;Tasa de variación sobre el periodo anterior;-50.0;Porcentaje;
+2025;T1;Acebeda (La);Segunda mano;Tasa de variación sobre igual período del año anterior;100.0;Porcentaje;
+2025;T1;Ajalvir;Segunda mano;Serie;27.0;Número;
+2025;T1;Ajalvir;Segunda mano;Tasa de variación sobre el periodo anterior;-3.6;Porcentaje;
+2025;T1;Ajalvir;Segunda mano;Tasa de variación sobre igual período del año anterior;145.5;Porcentaje;
+2025;T1;Madrid;Segunda mano;Serie;10795.0;Número;
+2025;T1;Madrid;Segunda mano;Tasa de variación sobre el periodo anterior;-2.9;Porcentaje;
+2025;T1;Madrid;Segunda mano;Tasa de variación sobre igual período del año anterior;14.6;Porcentaje;
+2025;;Acebeda (La);Vivienda nueva;Media;0.0;Número;Provisional
+2025;;Ajalvir;Vivienda nueva;Media;1.0;Número;Provisional
+2025;;Madrid;Vivienda nueva;Media;361.0;Número;Provisional
+2025;;Acebeda (La);Segunda mano;Media;1.0;Número;Provisional
+2025;;Ajalvir;Segunda mano;Media;17.0;Número;Provisional
+2025;;Madrid;Segunda mano;Media;10267.0;Número;Provisional

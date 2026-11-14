@@ -35,6 +35,8 @@ const ATTRIBUTION_LINKS: [RegExp, string][] = [
   [/Agencia Tributaria/, "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html"],
   [/CRTM/, "https://www.crtm.es"],
   [/Ayuntamiento de Madrid/, "https://datos.madrid.es"],
+  // D-241: the Plan Vive page, typed by hand (no file); its notice asks for the source and the date of extraction
+  [/Plan Vive/, "https://www.comunidad.madrid/plan-vive"],
   [/Comunidad de Madrid/, "https://datos.comunidad.madrid"],
   [/OpenStreetMap/, "https://www.openstreetmap.org/copyright"],
 ];
@@ -72,6 +74,7 @@ export const ATTRIBUTIONS_FALLBACK: readonly Attribution[] = [
   },
   { text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0).", href: "https://datos.madrid.es" },
   { text: "© OpenStreetMap contributors, ODbL.", href: "https://www.openstreetmap.org/copyright" },
+  { text: "Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026.", href: "https://www.comunidad.madrid/plan-vive" },
 ];
 
 /** The citations to show: the API's, or the fallback while it has not answered. */

@@ -1,0 +1,15 @@
+smoke: https://vidafacil-madrid.vercel.app (2026-11-14T22:18:23Z) tag postsync29
+OK   web           0.11s     37727 B  /  
+OK   health        0.12s       225 B  /api/v1/health  process up
+OK   ready         0.22s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone          0.95s     35701 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography     0.82s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer         0.78s   1691501 B  /api/v1/places?category=education  3866 places
+OK   largest       0.76s   2022252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search        0.97s    134152 B  /api/v1/search  27 of 199 zones, 1st Latina
+OK   telework      0.51s    130177 B  /api/v1/search  fit-0.8, 27 of 199 zones
+OK   barrios       0.21s     42617 B  /api/v1/search/barrios  7 of 8 barrios, 1st Canillejas
+OK   madrid        0.26s    103637 B  /api/v1/search  78 of 131 barrios, 1st Lucero
+OK   alrededores   0.40s     78402 B  /api/v1/search  14 of 40 municipios, 1st Alcorcón
+OK   pueblos       0.47s     71176 B  /api/v1/search  1 of 138 municipios, 1st Navalcarnero
+smoke: 13/13 OK

@@ -1,0 +1,4 @@
+kind: curated_zone_items
+dataset_id: cm_plan_vive_promociones
+metric_id: plan_vive_viviendas
+table: plan_vive.yaml

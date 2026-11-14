@@ -78,6 +78,14 @@ scenarios:
       anchors: [{kind: other, label: Hospital La Paz, lon: -3.6873, lat: 40.4813, days_per_week: 1, max_minutes: null}]
       priorities: [sin_escaleras, salud, transporte]
     expect: {min_results: 10, top5_step_free_within_minutes: 15}
+  - profile_id: golden_couple  # D-239 feedback case: plenty of budget, no priorities; 57 zones tie at 100 %
+    scenario:
+      budget: {kind: rent, amount_eur: 10000}
+      household: {adults: 2}
+    expect:
+      min_results: 10
+      # D-239: the everyday services at a walk break the tie; leisure never does (D-236)
+      ranked_order: [Chamberí, Tetuán, Puente de Vallecas, Salamanca, Centro, Usera, Arganzuela, Ciudad Lineal, Carabanchel, Retiro]
 # D-232 (fit-0.7): the search inside one district of Madrid ranks its barrios with the same engine
 # (POST /api/v1/search/barrios). Mariano's example: San Blas-Canillejas, with Simancas. `barrios`
 # is how many are evaluated; `ranked` and `near_miss` name barrios that must be among the results

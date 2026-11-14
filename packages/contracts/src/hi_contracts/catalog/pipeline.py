@@ -583,6 +583,168 @@ class OsmParksPipeline(BaseModel):
         return []
 
 
+class OsmPoiClass(BaseModel):
+    """One OSM tag (`key=value`) and the kind of place it becomes."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: str = Field(pattern=r"^[a-z_]+$", examples=["amenity"])
+    value: str = Field(pattern=r"^[a-z_]+$", examples=["bar"])
+    category: PlaceCategory
+    subcategory: str = Field(min_length=1, examples=["Bar"])
+
+
+class OsmPoisPipeline(BaseModel):
+    """OpenStreetMap extract -> points of interest as places (D-236: leisure).
+
+    A place is a node, or the area of a closed way or multipolygon (a point inside it), tagged
+    with one of `classes` and not closed to the public. Only its name and its tag are kept.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["osm_pois"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    classes: list[OsmPoiClass] = Field(min_length=1)
+    access_denied: list[str] = Field(default_factory=lambda: ["no", "private"])
+    min_places: int = Field(gt=0, description="below this the extract is truncated")
+    max_places: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _one_class_per_tag(self) -> Self:
+        tags = [(c.key, c.value) for c in self.classes]
+        if len(tags) != len(set(tags)):
+            msg = "each OSM tag can be declared once"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
+DIM_PATTERN = r"^[a-z][a-z0-9_]*$"
+
+
+class CmMunicipioNameTablePipeline(BaseModel):
+    """Instituto de Estadística tables whose only territory column is the municipio's name, as
+    «Acebeda (La)», without a code or a territory type (D-241).
+
+    Each name resolves to the municipio of the geography with the same name (`geo_admin_unit`,
+    which comes from the CM's own municipio table), compared without case, accents or signs
+    (`hi_domain.geo.names.name_key`). A name that resolves to none goes to quarantine and blocks
+    the run, never dropped in silence. Quarterly tables give the quarter in `quarter_column`
+    («T1»…«T4»). Rows outside `row_filters` are out of scope and counted. The status the source
+    gives a value («Provisional») is kept as the `status_dimension` of its observation, so a
+    feature can say it; a value without a status carries no such dimension.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["cm_municipio_name_table"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    period_column: str = "Año"
+    quarter_column: str | None = None
+    # Older years are left out to fit the storage budget; counted as out_of_window, never hidden.
+    period_min: int | None = Field(default=None, ge=1900, le=2100)
+    territory_name_column: str = "Territorio"
+    value_column: str = "Valor"
+    unit_column: str | None = "Unidad"
+    row_filters: dict[str, list[str]] = Field(default_factory=dict[str, list[str]])
+    dimension_columns: dict[str, Annotated[str, Field(pattern=DIM_PATTERN)]] = Field(
+        default_factory=dict[str, str]
+    )
+    status_column: str | None = "Estado dato"
+    status_dimension: str | None = Field(default=None, pattern=DIM_PATTERN)
+    missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
+
+    @model_validator(mode="after")
+    def _status_needs_its_column(self) -> Self:
+        if self.status_dimension and not self.status_column:
+            msg = f"{self.dataset_id}: status_dimension needs a status_column"
+            raise ValueError(msg)
+        if self.status_dimension in self.dimension_columns.values():
+            msg = f"{self.dataset_id}: status_dimension repeats a dimension"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
+DevelopmentReading = Literal["done", "in_progress", "not_started"]
+
+
+class MadridDevelopmentAreasPipeline(BaseModel):
+    """Ayuntamiento de Madrid, «PGOUM 97. Estado de desarrollo de los ámbitos» (VEDA): one row
+    per planning area with its district and the state of its four phases, in order (D-241).
+
+    Only the areas whose characteristic use is in `uses` and that are not finished are kept:
+    some phase is still `in_progress` or `not_started`. A state the pipeline does not declare
+    sends its row to quarantine and blocks the run (a new wording must be read by a person).
+    Each kept area becomes one observation of `metric_id` in its district, its surface in m²,
+    with its code, its name and its stage as dimensions. Names come in capitals: they are shown
+    in title case, with the words of `keep_upper` (acronyms such as «PMM») as written, and
+    without a leading `drop_name_prefixes` that several areas share («DESARROLLO DEL ESTE - »).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_development_areas"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    district_column: str = "Codigo_Distrito"
+    district_name_column: str = "Distrito"
+    code_column: str = "Ámbito"
+    name_column: str = "Nombre"
+    use_column: str = "Uso Característico"
+    area_column: str = "Superficie (m²)"
+    date_column: str = "Estado del desarrollo a fecha"
+    phase_columns: list[str] = Field(min_length=1, description="the phases, in their order")
+    uses: list[str] = Field(min_length=1)
+    states: dict[str, DevelopmentReading] = Field(min_length=1)
+    keep_upper: list[str] = Field(default_factory=list[str])
+    drop_name_prefixes: list[str] = Field(default_factory=list[str])
+    expected_districts: int = Field(gt=0)
+    min_rows: int = Field(gt=0, description="fewer areas -> the table changed or is cut")
+    max_rows: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _rows_are_a_range(self) -> Self:
+        if self.max_rows < self.min_rows:
+            msg = f"{self.dataset_id}: max_rows must be >= min_rows"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
+class CuratedZoneItemsPipeline(BaseModel):
+    """A table typed by hand from an official page that publishes no file (D-241: Plan Vive),
+    versioned in data/catalog/manual/<table>. Every entry quotes its source (the exact text), so
+    nothing is typed from memory. Each entry becomes one observation of `metric_id` in its
+    municipio and, when it names them, in the Madrid districts where it is. The run reads the
+    versioned file, never the page; its lineage keeps the page's URL and the date consulted.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["curated_zone_items"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    table: str = Field(pattern=r"^[a-z0-9_]+\.yaml$", description="file in data/catalog/manual")
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
@@ -594,7 +756,11 @@ PipelineSpec = Annotated[
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline
     | OsmParksPipeline
+    | OsmPoisPipeline
     | FacilityDirectoryPipeline
-    | StationTopologyPipeline,
+    | StationTopologyPipeline
+    | CmMunicipioNameTablePipeline
+    | MadridDevelopmentAreasPipeline
+    | CuratedZoneItemsPipeline,
     Field(discriminator="kind"),
 ]
