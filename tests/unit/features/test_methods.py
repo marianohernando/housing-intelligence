@@ -521,6 +521,32 @@ def test_a_rate_without_residents_of_its_year_is_unknown_not_another_year() -> N
     assert methods.at_latest_period_of(residents, offences.iloc[0:0]).empty
 
 
+def test_a_rate_can_leave_a_part_of_its_numerator_out() -> None:
+    """D-224 §3: conventional crime, the total less the cybercrime; unknown when the part is
+    not published, never the total alone."""
+    offences = _obs(
+        [
+            ("28001", {"tipologia": "total"}, 50.0),
+            ("28001", {"tipologia": "cibercriminalidad"}, 10.0),
+            ("28002", {"tipologia": "total"}, 30.0),
+        ]
+    )
+    residents = _obs([("28001", {"edad": "total"}, 1000.0), ("28002", {"edad": "total"}, 500.0)])
+    out = _by_code(
+        methods.metric_ratio(
+            offences,
+            {"tipologia": ["total"]},
+            residents,
+            {"edad": ["total"]},
+            1000.0,
+            numerator_minus={"tipologia": ["cibercriminalidad"]},
+        )
+    )
+    assert out["28001"]["value"] == 40.0  # (50 - 10) per 1,000 of 1,000 residents
+    assert _is_missing(out["28002"]["value"])
+    assert out["28002"]["null_reason"] == "SOURCE_MISSING"
+
+
 def test_a_source_that_covers_some_zones_gives_no_regional_reference() -> None:
     """D-235: the 37 municipios of the Ministerio are not the region."""
     offences = _obs([("28001", {}, 50.0)])

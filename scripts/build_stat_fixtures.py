@@ -78,7 +78,7 @@ def _sample_municipio_concept(
     concepts: list[str] = frame[spec.concept_column].tolist()
     names: list[str] = frame[spec.municipio_column].tolist()
     keep = [
-        concept.startswith(spec.concept_prefix) or not concept.endswith(f" en {name}")
+        spec.concept_value(concept) is not None or not concept.endswith(f" en {name}")
         for concept, name in zip(concepts, names, strict=True)
     ]
     return cast(pd.DataFrame, madrid), cast(pd.DataFrame, frame.loc[keep])

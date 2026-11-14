@@ -94,11 +94,12 @@ class CmMunicipioConceptPipeline(BaseModel):
     """Instituto de Estadística tables without a territory code (D-235): the municipio comes
     by name and what the row counts is in a free-text 'Concepto' column.
 
-    Only the rows whose concept starts with `concept_prefix` are read. The source writes the
-    names by hand (double spaces, «Rozas de Madrid»), so `municipios` maps each spelling to its
-    INE code after collapsing the whitespace; a name that is not there goes to quarantine and
-    fails the run, never dropped in silence. Rows whose status is in `excluded_statuses` (e.g.
-    «Provisional») are left out and counted.
+    Only the rows whose concept starts with one of the `concepts` are read, each with its value
+    of `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave
+    the second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),
+    so `municipios` maps each spelling to its INE code after collapsing the whitespace; a name
+    that is not there goes to quarantine and fails the run, never dropped in silence. Rows
+    whose status is in `excluded_statuses` (e.g. «Provisional») are left out and counted.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -112,7 +113,10 @@ class CmMunicipioConceptPipeline(BaseModel):
     value_column: str = "Valor"
     unit_column: str | None = "Unidad"
     concept_column: str = "Concepto"
-    concept_prefix: str = Field(min_length=1)
+    dimension: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    concepts: dict[str, Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]*$")]] = Field(
+        min_length=1, description="concept prefix -> value of `dimension` for its rows"
+    )
     municipio_column: str = "Municipio"
     municipios: dict[str, Annotated[str, Field(pattern=r"^28\d{3}$")]] = Field(min_length=1)
     status_column: str | None = "Estado dato"
@@ -132,7 +136,17 @@ class CmMunicipioConceptPipeline(BaseModel):
         if self.excluded_statuses and self.status_column is None:
             msg = f"{self.dataset_id}: excluded_statuses need a status_column"
             raise ValueError(msg)
+        nested = [
+            (a, b) for a in self.concepts for b in self.concepts if a != b and b.startswith(a)
+        ]
+        if nested:
+            msg = f"{self.dataset_id}: a concept prefix starts another one: {nested[0]}"
+            raise ValueError(msg)
         return self
+
+    def concept_value(self, concept: str) -> str | None:
+        """The `dimension` value of a row by its concept, or None when it is not read."""
+        return next((v for prefix, v in self.concepts.items() if concept.startswith(prefix)), None)
 
     def metric_ids(self) -> list[str]:
         return [self.metric_id]

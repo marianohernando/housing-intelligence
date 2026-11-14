@@ -165,7 +165,9 @@ def clean_name(raw: str) -> str:
     return " ".join(raw.split())
 
 
-def _municipio_concept_row(row: dict[str, str], spec: CmMunicipioConceptPipeline) -> dict[str, Any]:
+def _municipio_concept_row(
+    row: dict[str, str], spec: CmMunicipioConceptPipeline, concept: str
+) -> dict[str, Any]:
     name = clean_name(row[spec.municipio_column])
     names = {clean_name(written): code for written, code in spec.municipios.items()}
     if name not in names:
@@ -174,6 +176,7 @@ def _municipio_concept_row(row: dict[str, str], spec: CmMunicipioConceptPipeline
     code = names[name]
     start, end = parse_period(row[spec.period_column])
     value, null_reason = parse_value(row[spec.value_column], spec.missing_markers, spec.csv.decimal)
+    dims = {spec.dimension: concept}
     return _observation(
         metric_id=spec.metric_id,
         territory_level=TerritoryLevel.MUNICIPIO.value,
@@ -182,8 +185,8 @@ def _municipio_concept_row(row: dict[str, str], spec: CmMunicipioConceptPipeline
         admin_unit_id=admin_unit_id("municipio", code),
         period_start=start,
         period_end=end,
-        dims={},
-        dims_key="",
+        dims=dims,
+        dims_key=dims_key(dims),
         value=value,
         null_reason=null_reason,
         unit=row[spec.unit_column] if spec.unit_column else None,
@@ -198,20 +201,20 @@ def normalize_municipio_concept(
     both are counted, never quarantined. `source_rows` counts the rows actually read."""
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
     in_scope = [
-        (index, row)
+        (index, row, concept)
         for index, row in enumerate(records)
-        if row.get(spec.concept_column, "").startswith(spec.concept_prefix)
+        if (concept := spec.concept_value(row.get(spec.concept_column, ""))) is not None
     ]
     kept = [
-        (index, row)
-        for index, row in in_scope
+        (index, row, concept)
+        for index, row, concept in in_scope
         if not (spec.status_column and row.get(spec.status_column) in spec.excluded_statuses)
     ]
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, Any]] = []
-    for index, row in kept:
+    for index, row, concept in kept:
         try:
-            rows.append(_municipio_concept_row(row, spec))
+            rows.append(_municipio_concept_row(row, spec, concept))
         except (RowError, KeyError) as exc:
             bad.append({"source_row": index, "reason": str(exc), "raw": str(row)[:300]})
     return Observations(

@@ -1,8 +1,12 @@
 kind: cm_municipio_concept
 dataset_id: cm_infracciones_penales_municipios
 metric_id: infracciones_penales_conocidas
-# Only the total of each municipio; the rows by type stay in Bronze (D-235).
-concept_prefix: "Total hechos conocidos de infracciones penales"
+# The total of each municipio and its cybercrime, which the feature leaves out because it does
+# not happen in a place (D-224 §3, D-235); the other rows by type stay in Bronze.
+dimension: tipologia
+concepts:
+  "Total hechos conocidos de infracciones penales": total
+  "Hechos conocidos de cibercriminalidad": cibercriminalidad
 # 2025 is provisional: the last definitive year is the one shown (D-235).
 excluded_statuses: [Provisional]
 expected_municipios: 37

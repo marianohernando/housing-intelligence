@@ -87,17 +87,22 @@
     },
     "CmMunicipioConceptPipeline": {
       "additionalProperties": false,
-      "description": "Instituto de Estadística tables without a territory code (D-235): the municipio comes\nby name and what the row counts is in a free-text 'Concepto' column.\n\nOnly the rows whose concept starts with `concept_prefix` are read. The source writes the\nnames by hand (double spaces, «Rozas de Madrid»), so `municipios` maps each spelling to its\nINE code after collapsing the whitespace; a name that is not there goes to quarantine and\nfails the run, never dropped in silence. Rows whose status is in `excluded_statuses` (e.g.\n«Provisional») are left out and counted.",
+      "description": "Instituto de Estadística tables without a territory code (D-235): the municipio comes\nby name and what the row counts is in a free-text 'Concepto' column.\n\nOnly the rows whose concept starts with one of the `concepts` are read, each with its value\nof `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave\nthe second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),\nso `municipios` maps each spelling to its INE code after collapsing the whitespace; a name\nthat is not there goes to quarantine and fails the run, never dropped in silence. Rows\nwhose status is in `excluded_statuses` (e.g. «Provisional») are left out and counted.",
       "properties": {
         "concept_column": {
           "default": "Concepto",
           "title": "Concept Column",
           "type": "string"
         },
-        "concept_prefix": {
-          "minLength": 1,
-          "title": "Concept Prefix",
-          "type": "string"
+        "concepts": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "description": "concept prefix -> value of `dimension` for its rows",
+          "minProperties": 1,
+          "title": "Concepts",
+          "type": "object"
         },
         "csv": {
           "$ref": "#/$defs/CsvFormat"
@@ -105,6 +110,11 @@
         "dataset_id": {
           "pattern": "^[a-z][a-z0-9_]{2,95}$",
           "title": "Dataset Id",
+          "type": "string"
+        },
+        "dimension": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Dimension",
           "type": "string"
         },
         "excluded_statuses": {
@@ -195,7 +205,8 @@
         "kind",
         "dataset_id",
         "metric_id",
-        "concept_prefix",
+        "dimension",
+        "concepts",
         "municipios",
         "expected_municipios"
       ],

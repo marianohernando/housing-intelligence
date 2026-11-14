@@ -16,7 +16,8 @@ from hi_ingestion.pipelines.stat_tables.run import metric_counts, run_metric_qua
 
 GOLDEN = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "golden"
 DATASET = "cm_infracciones_penales_municipios"
-# Every row the pipeline reads (the totals, 2016-2025) plus the rows with a misspelt name.
+# Every row the pipeline reads (the totals and the cybercrime, 2016-2025) plus the rows with a
+# misspelt name.
 NAMES = GOLDEN / "municipio_names_sample" / f"{DATASET}.csv"
 MUNICIPIOS = 37
 
@@ -72,22 +73,31 @@ def test_every_spelling_the_source_writes_is_mapped(
     assert mapped["Rozas de Madrid"] == "28127"  # Las Rozas de Madrid, not Rozas de Puerto Real
 
 
-def test_only_the_total_of_the_definitive_years_is_read(
+def test_only_the_total_and_the_cybercrime_of_the_definitive_years_are_read(
     spec: CmMunicipioConceptPipeline, source: pd.DataFrame
 ) -> None:
+    """D-224 §3: the feature leaves the cybercrime out, so it is read beside the total, each
+    row with its `tipologia`; the other rows by type are not read."""
     obs = normalize(source, spec)
     frame = obs.frame
     assert set(frame["metric_id"]) == {"infracciones_penales_conocidas"}
+    assert set(frame["dims_key"]) == {"tipologia=total", "tipologia=cibercriminalidad"}
     assert max(frame["period_start"]) == date(2024, 1, 1)  # 2025 is provisional
-    assert obs.excluded_status == MUNICIPIOS
-    assert obs.out_of_window == len(source) - len(frame) - MUNICIPIOS  # rows of other concepts
-    assert metric_counts(obs)["excluded_status"] == MUNICIPIOS
+    provisional = 2 * MUNICIPIOS  # the total and the cybercrime of each municipio
+    assert obs.excluded_status == provisional
+    assert obs.out_of_window == len(source) - len(frame) - provisional  # rows of other concepts
+    assert metric_counts(obs)["excluded_status"] == provisional
     madrid = frame[
         (frame["territory_code"] == "28079") & (frame["period_start"] == date(2024, 1, 1))
     ]
-    assert madrid["value"].tolist() == [237020.0]
+    assert dict(zip(madrid["dims_key"], madrid["value"], strict=True)) == {
+        "tipologia=total": 237020.0,
+        "tipologia=cibercriminalidad": 36591.0,
+    }
     latest = frame[frame["period_start"] == date(2024, 1, 1)]
-    assert set(latest["territory_code"]) == _known(spec)  # all 37 in the year that is shown
+    for kind in ("total", "cibercriminalidad"):  # all 37 in the year that is shown
+        rows = latest[latest["dims_key"] == f"tipologia={kind}"]
+        assert set(rows["territory_code"]) == _known(spec)
 
 
 def test_a_name_that_is_not_mapped_fails_the_run_never_dropped(
@@ -123,3 +133,6 @@ def test_the_declared_names_must_cover_the_expected_municipios(
         CmMunicipioConceptPipeline.model_validate(spec.model_dump() | {"municipios": fewer})
     with pytest.raises(ValidationError, match="status_column"):
         CmMunicipioConceptPipeline.model_validate(spec.model_dump() | {"status_column": None})
+    nested = spec.concepts | {"Total hechos": "otro"}  # it would also take the totals
+    with pytest.raises(ValidationError, match="starts another"):
+        CmMunicipioConceptPipeline.model_validate(spec.model_dump() | {"concepts": nested})
