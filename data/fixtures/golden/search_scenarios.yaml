@@ -57,13 +57,16 @@ scenarios:
       nearby: [{need: farmacia, max_walk_minutes: 10, required: true}, {need: centro_salud, max_walk_minutes: 15, required: true}]
       priorities: [salud, transporte, sin_escaleras]
     expect: {min_results: 3, top_within_km: 15}
-  - profile_id: golden_student  # 500 €/month for 61 m²: only a few cheap municipios far away; the budget binds
+  # 500 €/month for 61 m²: the budget binds. D-242: with the Ministry's reference rent of the
+  # villages, some 59 cheap ones far away fit (before, a few municipios with the CM rent), so
+  # `max_results: 5` goes; the case still checks that the budget is what limits.
+  - profile_id: golden_student
     scenario:
       budget: {kind: rent, amount_eur: 500}
       household: {adults: 1}
       anchors: [{kind: study, label: URJC Vicálvaro, lon: -3.6090, lat: 40.4050, days_per_week: 5, max_minutes: null}]
       priorities: [transporte]
-    expect: {max_results: 5, binding: budget}
+    expect: {binding: budget, budget_step_adds_zones: 1}
   - profile_id: golden_sensory_preferences  # D-222: green areas first (the profile's «green»)
     scenario:
       budget: {kind: rent, amount_eur: 1000}

@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from hi_api.services.search import indicators_by_zone, scenario_warnings, zone_price
+from hi_api.services.search import indicators_by_zone, scenario_warnings, zone_price, zone_rent
 from hi_contracts.public import NearbyNeed, NeedKey, PriorityKey, ScenarioState
 
 KEY = ("distrito", "2807910")
@@ -153,3 +153,69 @@ def test_leisure_in_nearby_without_ocio_comes_back_as_a_warning(
         (warning,) = scenario_warnings(loose)
     assert warning.startswith("INVALID_PROFILE: nearby bares, cultura ignored")
     assert "bares, cultura" in caplog.text
+
+
+FILL = {
+    "role": "rent_m2_fill",
+    "note": "referencia del Ministerio de Vivienda para contratos firmados en 2024",
+    "source": "Ministerio de Vivienda (SERPAVI), 2024",
+}
+REFERENCE = {"reference_rent": {"typology": "colectiva", "quartiles": {"p25": 7.3, "p75": 10.6}}}
+
+
+def _fill(value: float | None = 9.0, typology: str = "colectiva") -> dict[str, Any]:
+    inputs = {"dataset_versions": {}, "reference_rent": {**REFERENCE["reference_rent"]}}
+    inputs["reference_rent"]["typology"] = typology
+    row = _row("alquiler_m2_mensual_referencia", FILL) | {"value": value, "inputs": inputs}
+    if value is None:
+        row |= {"null_reason": "SOURCE_MISSING", "confidence": 0.0}
+    return row
+
+
+def _cm(value: float | None) -> dict[str, Any]:
+    row = _row("alquiler_m2_mensual", {"role": "rent_m2", "note": "contratos firmados en 2024"})
+    if value is None:
+        return row | {"value": None, "null_reason": "SOURCE_NO_COVERAGE", "confidence": 0.0}
+    return row | {"value": value}
+
+
+def test_the_cm_rent_wins_whatever_the_order() -> None:
+    """D-242: where the CM publishes the rent it stays, as it was: no range, its own note."""
+    for rows in ([_fill(), _cm(14.3)], [_cm(14.3), _fill()]):
+        chosen = zone_rent(indicators_by_zone(rows), KEY)
+        assert chosen.rent is not None and chosen.rent.feature_id == "alquiler_m2_mensual"
+        assert chosen.note == "contratos firmados en 2024"
+        assert chosen.range_m2 is None and chosen.source is None
+
+
+def test_without_the_cm_rent_the_reference_fills_with_its_range_and_source() -> None:
+    chosen = zone_rent(indicators_by_zone([_cm(None), _fill()]), KEY)
+    assert chosen.rent is not None and chosen.rent.feature_id == "alquiler_m2_mensual_referencia"
+    assert chosen.rent.value == 9.0
+    assert chosen.note == FILL["note"]
+    assert chosen.range_m2 == (7.3, 10.6)
+    assert chosen.source == "Ministerio de Vivienda (SERPAVI), 2024"
+
+
+def test_houses_say_so_in_the_note() -> None:
+    chosen = zone_rent(indicators_by_zone([_fill(typology="unifamiliar")]), KEY)
+    assert chosen.note is not None and chosen.note.startswith("precio de casas unifamiliares")
+
+
+def test_with_neither_the_cm_row_says_why() -> None:
+    """The CM row's reason stays (a barrio without postcodes, D-232); no CM row at all: the
+    reference's own null row; nothing: None."""
+    chosen = zone_rent(indicators_by_zone([_cm(None), _fill(None)]), KEY)
+    assert chosen.rent is not None and chosen.rent.feature_id == "alquiler_m2_mensual"
+    assert chosen.rent.null_reason == "SOURCE_NO_COVERAGE" and chosen.range_m2 is None
+    only_fill = zone_rent(indicators_by_zone([_fill(None)]), KEY)
+    assert only_fill.rent is not None and only_fill.rent.value is None
+    assert zone_rent(indicators_by_zone([]), KEY).rent is None
+
+
+def test_the_reference_is_read_apart_and_never_as_the_cm_rent() -> None:
+    """Its own role (rollback-safe, like D-234): code that does not know `rent_m2_fill` leaves
+    it out with a warning; this code keeps it apart from the CM rent."""
+    result = indicators_by_zone([_fill()])
+    assert not result.rent
+    assert result.rent_fill[KEY].feature_id == "alquiler_m2_mensual_referencia"

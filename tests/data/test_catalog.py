@@ -554,3 +554,30 @@ def test_plan_vive_citation_carries_the_date_it_was_typed(catalog: Catalog) -> N
     table = ZoneItemsTable.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
     citation = catalog.sources["comunidad_madrid_web"].attribution_text or ""
     assert table.consulted.strftime("%d/%m/%Y") in citation
+
+
+def test_reference_rent_only_fills_and_says_its_year(catalog: Catalog) -> None:
+    """D-242: one rent fill, with its own role (a search that does not know it ignores it), on
+    every level the search reads; its note and source name the year of the SERPAVI rows it reads
+    and of the Agencia Tributaria tables of the new-lease factor."""
+    fills = [
+        s for s in catalog.features.values() if s.fit is not None and s.fit.role == "rent_m2_fill"
+    ]
+    assert len(fills) == 1
+    spec = fills[0]
+    assert spec.fit is not None and spec.fit.note is not None and spec.fit.source is not None
+    levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
+    assert levels == {"municipio", "distrito", "barrio"}
+    pipeline = catalog.pipelines["mivau_serpavi_alquiler"]
+    assert pipeline.kind == "serpavi_rent"
+    serpavi_year = str(pipeline.period_min)
+    aeat_year = catalog.datasets["aeat_alquiler_nuevos_contratos_municipios"].name.rsplit(
+        "ejercicio ", 1
+    )[1][:4]
+    assert serpavi_year == aeat_year  # the factor and the value are of the same year (D-228)
+    assert f"contratos firmados en {serpavi_year}" in spec.fit.note
+    assert spec.fit.source.endswith(serpavi_year)
+    formula = spec.formula.model_extra or {}
+    assert catalog.metrics[formula["metric"]].dataset_id == "mivau_serpavi_alquiler"
+    calibration = catalog.metrics[formula["calibration"]["metric"]]
+    assert catalog.datasets[calibration.dataset_id].source_id == CM_SOURCE  # scaled to the CM

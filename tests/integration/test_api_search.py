@@ -208,6 +208,39 @@ def test_rent_says_it_is_the_rent_of_a_lease_signed_in_2024(client: TestClient) 
     assert cited["aeat_alquiler_nuevos_contratos_codigo_postal"].is_cm_open_data is False
 
 
+_CM_RENT = text(
+    "SELECT territory_code FROM feature_value WHERE feature_id = 'alquiler_m2_mensual' "
+    "AND territory_level = 'distrito' AND value IS NOT NULL"
+)
+
+
+def test_a_municipio_without_the_cm_rent_takes_the_reference_with_its_range(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """D-242: Ajalvir has no CM rent in the fixtures; the Ministry's reference fills it, says
+    what it is and where half its leases fall. A district with the CM rent keeps it, with no
+    range. La Acebeda publishes no median: still unknown, never PASS."""
+    with migrated_engine.connect() as conn:
+        with_cm_rent = set(conn.execute(_CM_RENT).scalars())
+    scenario = _family() | {"nearby": [], "anchors": []}
+    data = _search(client, scenario).data
+    zones = {z.zone.code: z for z in data.all_zones}
+    ajalvir, acebeda = zones[AJALVIR], zones[LA_ACEBEDA]
+    assert ajalvir.estimated_cost_eur is not None and ajalvir.estimated_cost_confidence == 0.7
+    assert ajalvir.estimated_cost_range is not None
+    assert ajalvir.estimated_cost_range.low_eur <= ajalvir.estimated_cost_eur
+    assert ajalvir.estimated_cost_eur <= ajalvir.estimated_cost_range.high_eur
+    assert ajalvir.estimated_cost_range.source == "Ministerio de Vivienda (SERPAVI), 2024"
+    assert acebeda.estimated_cost_eur is None and acebeda.match_pct is None
+    districts = [z for z in data.all_zones if z.zone.code in with_cm_rent]
+    assert districts and all(z.estimated_cost_range is None for z in districts)
+    ranked = next(r for r in [*data.results, *data.near_misses] if r.zone.code == AJALVIR)
+    budget = next(c for c in ranked.constraints if c.constraint_id == "budget")
+    assert "referencia del Ministerio de Vivienda" in budget.explanation
+    assert "la mitad de los contratos, entre" in budget.explanation
+    assert "mivau_serpavi_alquiler" in {d.dataset_id for d in data.datasets}
+
+
 LA_ACEBEDA = "28001"  # Sierra Norte: a village (D-238)
 
 

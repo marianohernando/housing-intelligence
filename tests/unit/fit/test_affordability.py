@@ -210,3 +210,26 @@ def test_the_unknown_purchase_text_no_longer_blames_districts_and_barrios() -> N
     assert check.status is ConstraintStatus.UNKNOWN
     assert "distritos" not in check.explanation
     assert "25.000 habitantes" in check.explanation
+
+
+def test_a_reference_rent_says_where_half_the_leases_fall() -> None:
+    """D-242: with the quartiles of the Ministry's reference, scaled as the rent, the condition
+    adds «la mitad de los contratos, entre X y Y €», in tens of euros for the household's m²."""
+    area = assumed_floor_area(_scenario())  # 77 m²
+    check = budget_check(
+        Budget(kind=BudgetKind.RENT, amount_eur=1500),
+        _rent(9.0, 0.7),
+        area,
+        rent_note="referencia del Ministerio de Vivienda para contratos firmados en 2024",
+        rent_range=(7.3, 10.6),
+    )
+    assert check.status is ConstraintStatus.PASS and check.value == 693
+    assert check.confidence == 0.7
+    assert check.explanation.startswith("Alquiler ≈ 693 €/mes por 77 m² (9,0 €/m², referencia")
+    assert check.explanation.endswith("; la mitad de los contratos, entre 560 y 820 €")
+
+
+def test_without_quartiles_the_rent_text_is_the_one_of_always() -> None:
+    area = assumed_floor_area(_scenario())
+    check = budget_check(Budget(kind=BudgetKind.RENT, amount_eur=1500), _rent(14.3), area)
+    assert "la mitad de los contratos" not in check.explanation
