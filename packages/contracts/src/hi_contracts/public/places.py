@@ -7,6 +7,9 @@ facility of a zone, filter it with the same criterion as the list of what is mis
 D-218 (additive, still places-1): hospitals carry their installed beds from the Catálogo
 Nacional de Hospitales in `capacity`, with `dependency` and `kind`; hospitals and primary care
 centres carry their institutional name when the official directory gives one.
+
+D-239 (additive, still places-1): `dependency` on the place itself, for every health place of
+the CM register, so a hospital the catalogue could not be matched to (no beds) says it too.
 """
 
 from typing import Literal
@@ -57,6 +60,12 @@ class PlaceProperties(BaseModel):
     ownership: Ownership | None = Field(
         default=None,
         description="Educational centres only: titularidad of the register (None elsewhere)",
+    )
+    dependency: Dependency | None = Field(
+        default=None,
+        description="Health places (D-239): who runs it, from the CM register's dependencia "
+        "funcional; mutuas count as private. A private hospital may also attend public patients "
+        "by agreement: the register does not say which (None elsewhere)",
     )
     gap_rows: list[GapRowKey] = Field(
         default_factory=list[GapRowKey],

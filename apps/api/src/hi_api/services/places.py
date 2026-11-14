@@ -90,6 +90,7 @@ _OWNERSHIP = {
     "PRIVADO CONCERTADO": "concertada",
     "PRIVADO": "privada",
 }
+_DEPENDENCIES = ("publica", "privada")
 # Capacity a register publishes per place: attribute -> (unit). Never estimated.
 _CAPACITY_ATTRIBUTES = {"plazas_autorizadas_numero": "plazas autorizadas", "camas": "camas"}
 
@@ -132,7 +133,7 @@ def _directory_capacity(attributes: dict[str, Any], subcategory: str) -> dict[st
         "value": float(directory["capacity"]),
         "unit": str(directory.get("capacity_unit") or "camas"),
         "dataset_id": str(directory["dataset_id"]),
-        "dependency": attributes.get("dependency"),
+        "dependency": _dependency(attributes),
         "kind": subcategory,
     }
 
@@ -153,6 +154,13 @@ def _capacity(
     return None
 
 
+def _dependency(attributes: dict[str, Any]) -> str | None:
+    """Public or private as the load wrote it from the register (hi_domain.facilities); a value
+    this contract does not know is left out, never passed on."""
+    value = attributes.get("dependency")
+    return value if value in _DEPENDENCIES else None
+
+
 def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
     attributes: dict[str, Any] = r["attributes"] or {}
     origin = (attributes.get("coordinates") or {}).get("origin", "source")
@@ -167,6 +175,7 @@ def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
             "municipio": r["municipio_ine"],
             "seccion": r["seccion_admin_unit_id"],
             "ownership": _OWNERSHIP.get(str(attributes.get("titularidad") or "")),
+            "dependency": _dependency(attributes),
             "gap_rows": [
                 f.row for f in filters if f.counts(r["category"], r["subcategory"], attributes)
             ],

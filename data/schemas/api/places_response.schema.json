@@ -249,6 +249,23 @@
           "title": "Coordinates",
           "type": "string"
         },
+        "dependency": {
+          "anyOf": [
+            {
+              "enum": [
+                "publica",
+                "privada"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Health places (D-239): who runs it, from the CM register's dependencia funcional; mutuas count as private. A private hospital may also attend public patients by agreement: the register does not say which (None elsewhere)",
+          "title": "Dependency"
+        },
         "gap_rows": {
           "description": "Rows of the list of what is missing that count this place (same filters)",
           "items": {

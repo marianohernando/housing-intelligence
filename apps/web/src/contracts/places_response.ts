@@ -46,6 +46,10 @@ export type Confidence = number;
  */
 export type Coordinates1 = "source" | "geocoded";
 /**
+ * Health places (D-239): who runs it, from the CM register's dependencia funcional; mutuas count as private. A private hospital may also attend public patients by agreement: the register does not say which (None elsewhere)
+ */
+export type Dependency1 = ("publica" | "privada") | null;
+/**
  * Rows of the per-zone list of what is missing (GAP-001, D-194).
  */
 export type GapRowKey =
@@ -109,6 +113,7 @@ export interface PlaceProperties {
   category: PlaceCategory;
   confidence: Confidence;
   coordinates?: Coordinates1;
+  dependency?: Dependency1;
   gap_rows?: GapRows;
   municipio?: Municipio;
   name: Name;
