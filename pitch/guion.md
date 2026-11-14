@@ -23,8 +23,8 @@
 | 2 sin buscador (reserva) | 0:40–2:20 | 100 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + unos 15 s de clics |
 | 3 | 2:20–3:40 | 80 s | Puente de Vallecas, su lista de lo que falta y a cuántos niños afecta | 126 | 58 s + unos 15 s de clics |
 | 4 | 3:40–4:30 | 50 s | Datos CM, código abierto y quién paga | 95 | 44 s |
-| 5 | 4:30–5:00 | 30 s | Impacto, prueba con usuarios y cierre | 59 | 27 s |
-| **Total** | | **300 s** | | **499 con buscador; 490 sin él** | **Con buscador: 230 s + unos 40 s de clics = unos 30 s de margen. Sin buscador: 226 s + unos 30 s de clics = unos 44 s de margen** |
+| 5 | 4:30–5:00 | 30 s | Impacto, prueba con usuarios y cierre | 58 | 27 s |
+| **Total** | | **300 s** | | **498 con buscador; 489 sin él** | **Con buscador: 230 s + unos 40 s de clics = unos 30 s de margen. Sin buscador: 226 s + unos 30 s de clics = unos 44 s de margen** |
 
 ---
 
@@ -64,7 +64,7 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 - encajan 27 de las 199 zonas (178 municipios y los 21 distritos de Madrid), y en 15 falta algún dato;
 - **cuatro empatan al 98 %:** Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas. No se dice un orden entre ellas; se abre la que la web pone 1.ª, hoy Latina;
 - **en Latina:**
-  - «Colegio con primaria a unos 6 min andando», parada a unos 2 min y centro de salud a unos 10 min;
+  - «Colegio con primaria a unos 6 min andando», «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min» (D-233, en producción desde el 14 nov: `evidence/gate-06/2026-11-14-deploy/deploy-27-ad4a8f2-d233.md`) y centro de salud a unos 10 min;
   - «39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00»;
   - «Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)»;
 - **Fuencarral-El Pardo**, la 1.ª hasta la noche del 12 nov, queda 5.ª (97 %): con los contratos nuevos, su alquiler pasa de ≈ 1.107 a ≈ 1.276 €/mes;
@@ -126,7 +126,7 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 | 3.3 | Señalar la fila de farmacias (CUBIERTO) | «4,5 farmacias al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos…, 3,1» | Si no está CUBIERTO, saltar «[Leer una fila cubierta]» |
 | 3.4 | Antes de «En toda la región…», volver a la pestaña de las slides, en la slide 3, y leer la cifra grande. El orden de «dónde invertir primero» está en la slide y en la web («Qué falta» sin zona, en producción desde el 12 nov) | «25.551 niños de 0 a 4 años viven donde faltan escuelas infantiles» y «Dónde invertir primero: Puente de Vallecas…, Carabanchel y Villaverde» | Si la slide no está, decir la frase sin la cifra: «En toda la región hay miles de niños pequeños donde faltan escuelas infantiles» |
 
-**Barrios (D-232):** «y dentro del distrito, te dice qué barrio» no entra en el guion: unas 15 palabras más bajan el margen de 30 a unos 23 s. Va en la pregunta 48 (San Blas-Canillejas: 7 de 8 barrios; Simancas al 97 %).
+**Barrios (D-232, D-238):** no se enseñan con un clic en la demo: elegir «Madrid capital» y buscar de nuevo cuesta unos 10 s, y el bloque 2 solo tiene unos 8 s de holgura. Se nombran en el cierre (bloque 5, «buscar por barrios»), con el recuadro de la slide 4. Si preguntan, preguntas 48 y 52: con el caso de ejemplo y «Madrid capital» encajan 78 de 131 barrios, con Lucero y Campamento al 99 %.
 
 **Cifra de impacto** (D-229, `impact-0.1`; `GET /api/v1/gaps/impact`; `evidence/gate-04/2026-11-12/impact-cifras.txt`, con los datos del 12 nov):
 - 25.551 niños de 0 a 4 años (el 9,8 % de la región) viven en los 3 distritos con FALTA de escuelas infantiles: Puente de Vallecas 9.433 («Aquí hay 57 por cada 100»), Carabanchel 9.150 (68) y Villaverde 6.968 (61). Es el padrón de cada distrito.
@@ -159,11 +159,11 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 **Pantalla:** la slide 4 (pantallazo) con la URL y los QR.
 
 <!-- habla:b5:inicio -->
-Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. Ya la han probado usuarios reales, y ya tiene lo que pidieron: límite de tiempo al trabajo y paradas de autobús. Encuentra tu sitio en Madrid. Gracias.
+Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. La probaron siete personas, y ya tiene lo que pidieron: buscar por barrios y un límite de tiempo al trabajo. Encuentra tu sitio en Madrid. Gracias.
 <!-- habla:b5:fin -->
 
-**Prueba con usuarios (14 nov):** la frase «Ya la han probado usuarios reales…» sustituye a «Funciona con datos reales y oficiales de toda la Comunidad de Madrid.», para no bajar de 30 s de margen; los datos oficiales ya se dicen en el bloque 4. Las citas están en la slide 3 y la respuesta larga, en la pregunta 43.
-- **Pendiente de B** (límite de tiempo al trabajo, `trabajo.max_min`) **y de A y B** (paradas de autobús, `hecho.paradas`). El 23 nov, lo que no esté en producción se quita de la frase. Si no está ninguno de los dos, vuelve la frase de antes (unos 34 s de margen).
+**Prueba con usuarios (13 y 14 nov):** la frase «La probaron siete personas…» sustituye a «Funciona con datos reales y oficiales de toda la Comunidad de Madrid.», para no bajar de 30 s de margen; los datos oficiales ya se dicen en el bloque 4. Tiene una palabra menos que la versión del 14 nov, que nombraba las paradas de autobús: «buscar por barrios» va en su lugar porque lo pidieron 4 de las 6 personas (D-238). Las citas están en la slide 3, el recuadro «Probada con 7 personas» en la slide 4, que está en pantalla, y la respuesta larga en la pregunta 43.
+- **Siete personas:** seis de 26 a 55 años y una persona mayor que no supo usarla (de ahí la prueba de accesibilidad del 15 nov, **pendiente de Mariano**). Lo dicho está en producción desde el 14 nov: «¿Dónde?» con Madrid capital por barrios (D-238, despliegue de `f1b6f5a`) y el límite de tiempo al trabajo (PR #53, despliegue de `ad4a8f2`).
 
 **Fuente de la frase de reserva:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. El buscador cubre las 199 zonas: 178 municipios y los 21 distritos de Madrid, que sustituyen al municipio (D-215, punto 1). La lista de lo que falta responde en municipios y distritos.
 

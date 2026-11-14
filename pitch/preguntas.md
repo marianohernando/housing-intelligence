@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov) y la 49 y la 50 (prueba con usuarios, 14 nov).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov) y de la 51 a la 53 (lo que cambió tras la prueba, 14 nov).
 
 ---
 
@@ -108,13 +108,14 @@ La capacidad que se publica: aulas de primaria en colegios y plazas autorizadas 
 Sí, por eso Madrid se divide en sus 21 distritos, y lo que se tiene a pie se calcula calle a calle, mucho más fino que el municipio. Así sale, por ejemplo, que en Puente de Vallecas faltan escuelas infantiles aunque Madrid entera no sale FALTA en ninguna fila de servicios. Y lo que hay al otro lado del límite de un distrito también cuenta, porque se mide andando.
 - Evidencia: D-200 · D-209 · D-210 · D-217 §2 y §7 · `evidence/gate-04/2026-11-12/gap-status-gap03.md` (Madrid, escuela infantil, JUSTO, 0,87) · `GET /api/v1/gaps/distrito/2807913` (producción, 12 nov).
 - Si preguntan por la frase de antes («Madrid tiene un tercio menos de centros de atención primaria»): era con el método de contar centros por habitante. Midiendo lo que se alcanza a pie, Madrid sale JUSTO en centros de salud (0,95), cerca de los demás municipios urbanos (D-217 §7).
-- Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211); 2SFCA en la API y en la web desde el 12 nov.
+- Y si buscas solo en Madrid capital, el buscador compara sus 131 barrios (D-238; pregunta 52).
+- Estado: hecho. Distritos con el padrón municipal (D-209); distancia a pie a 4 km/h (CORE-005, D-211); 2SFCA en la API y en la web desde el 12 nov; barrios en el buscador desde el 14 nov.
 
 **18. ¿Cómo calculáis el % de encaje?**
-Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.3` en producción).
+Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato» nunca cuenta como PASS; solo encajan las zonas que lo cumplen todo. Después, cada criterio puntúa de 0 a 1 con una curva declarada (un colegio vale 1 hasta 10 min y 0 desde 30), y lo que la persona marca primero pesa más: con 5 criterios, 33, 27, 20, 13 y 7 %. El % es la media ponderada; lo que no tiene datos no cuenta como 0, sino que baja la confianza, y el método va versionado (`fit-0.7` en producción).
 - Evidencia: D-215 (puntos 2 a 6) · `packages/domain/src/hi_domain/fit.py` · `CLAUDE.md` §14 · caso real: `evidence/gate-04/2026-11-11/phase-core003-f2.txt` (Ciudad Lineal, 99 %).
-- Límite, si insiste: no hay todavía diversificación ni soluciones Pareto; el orden es solo por % de encaje (D-215, punto 10).
-- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.6` (12 nov: trabajo en minutos de transporte, D-220, y alquiler de contratos nuevos, D-228), `POST /api/v1/search` con el caso de la Castellana da 27 de 199 zonas, con Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas empatadas al 98 %.
+- Límite, si insiste: no hay todavía diversificación ni soluciones Pareto (D-215, punto 10). El orden es el del %; solo si dos zonas empatan del todo va primero la que tiene más servicios a un paseo (D-239; pregunta 51).
+- Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.6` (12 nov: trabajo en minutos de transporte, D-220, y alquiler de contratos nuevos, D-228), `POST /api/v1/search` con el caso de la Castellana da 27 de 199 zonas, con Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas empatadas al 98 %. Con `fit-0.7` (barrios, D-232) y tras el desempate (D-239), sale lo mismo (`evidence/gate-06/2026-11-14-deploy/deploy-28-f1b6f5a.md`).
 
 **19. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
 Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
@@ -128,6 +129,7 @@ Es una estimación y lo decimos en cada resultado: el precio por metro de la Com
 **21. ¿Tenéis en cuenta lo que se tarda en llegar al trabajo?**
 Sí: los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las seis redes del Consorcio, desde cada sección censal hasta las 379 estaciones y el centro de cada zona. En el caso de ejemplo, Fuencarral-El Pardo queda a 29 minutos de la Castellana y Ciudad Lineal a 33. Son horarios programados de un día laborable, no tiempos reales, y donde el horario publicado tiene huecos lo decimos.
 - Evidencia: D-220 · `packages/domain/src/hi_domain/access/transit.py` · `services/features/src/hi_features/commute.py` · `evidence/gate-03/2026-11-12/commute-matrix.md` · `evidence/gate-04/2026-11-12/golden-search-commute.txt`.
+- Desde el 14 nov se puede poner un límite: «Tardar como mucho N min en transporte público» (30, 45, 60 o 90 min). Entonces es una condición: la zona cumple, no cumple o no lo sabemos. Con el caso de ejemplo y 45 min salen 10 zonas. La ayuda dice qué transporte cuenta: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero. Lo pidieron en la prueba con usuarios («me salían sitios muy lejos»). Evidencia: PR #53 · `trabajo.max_min` y `trabajo.ayuda` en `pitch/textos_web.md` · `evidence/gate-06/2026-11-14-deploy/deploy-27-ad4a8f2-d233.md` (e2e: «45 min» llega a `/search` y da 10 zonas, igual que la API).
 - Límite, si insiste: el GTFS interurbano no trae expediciones de las líneas 720 a 726, y desde 45–50 zonas (Sierra Norte, sureste) no se llega al centro a las 9:00; ahí no hay dato, nunca 0. El paseo hasta la parada va en línea recta con un 30 % de rodeo (D-220 §3 y §6).
 - Estado: hecho y en producción desde el 12 nov (despliegue de `28a0f2f`, `evidence/gate-06/2026-11-12-deploy/deploy-17-pub001.md`): el caso de ejemplo da «29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» en Fuencarral-El Pardo.
 
@@ -157,7 +159,7 @@ Porque el portal de la Comunidad solo publica las camas de toda la región (85 h
 **26. ¿Las camas cuentan para decir qué falta?**
 No. A un hospital no se va andando a elegir, y medir las camas alcanzables exigiría el viaje en coche o en transporte público, que aún no calculamos. Lo que sí damos es el nombre y las camas de cada hospital, por ejemplo La Paz, con 966 camas instaladas, en Fuencarral-El Pardo, y en la fila de centros de salud los minutos a pie hasta el hospital general más cercano, como pista de dónde quedan las urgencias.
 - Evidencia: D-217 §5 (`min_a_pie_hospital`; ninguna fuente abierta marca las urgencias 24 h) · D-218 §6–7 · producción, 12 nov: `GET /api/v1/places?category=health&admin_unit_id=ES.28.DIS.2807908&subcategory=Hospital general` («Hospital Universitario La Paz», `capacity` 966 «camas instaladas», `dependency: publica`; en el mismo distrito, «Hospital Universitario Ramon y Cajal», 886, y «Clínica Cemtro», 100).
-- Estado: hecho en la API y en la web («Todos los centros» de cada zona; comprobado a mano por C en producción, PR #15). Las camas son las instaladas a 31 de diciembre de 2024, no las que funcionan un día concreto.
+- Estado: hecho en la API y en la web («Todos los centros» de cada zona; comprobado a mano por C en producción, PR #15). Las camas son las instaladas a 31 de diciembre de 2024, no las que funcionan un día concreto. Desde el 14 nov, cada hospital dice también si es público o privado (pregunta 53).
 
 **27. ¿Qué control de calidad pasa un dataset antes de entrar?**
 Claves únicas, que cada municipio exista en la geografía oficial, errores de lectura, ratio de registros en cuarentena y faltantes marcados como faltantes, no como cero. Los registros dudosos van a cuarentena, no se borran, y cada versión guarda la huella del fichero original.
@@ -244,11 +246,14 @@ Porque son dos preguntas distintas. El % dice cuánto se parece la zona a lo que
 - Si insiste en el colegio a 0,76: está por debajo del 80 %, pero la diferencia puede ser casual con esa población, y FALTA exige que no lo sea (pregunta 11).
 
 **43. ¿Quién lo ha usado?**
-Usuarios reales, en una prueba del 14 nov: «Se valora mucho la cercanía al puesto de trabajo» y «Muy chula la web, funciona bien». Lo que pidieron ya está entrando: un límite de tiempo hasta el trabajo y las paradas de autobús separadas del metro y de Cercanías. Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
-- Evidencia: las 2 citas de la slide 3, aprobadas por Mariano y sin nombre, como se prometió a los usuarios · `pitch/pruebas_usuarios/` (kit de la prueba) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
-- Si preguntan cuántos: **pendiente de Mariano** (el número de personas de la prueba). Nunca se dice uno de memoria.
-- Lo que pidieron y no entra antes del freeze: preguntas 49 y 50.
-- Estado: el límite de tiempo hasta el trabajo, **pendiente de B**; las paradas de autobús aparte, **pendiente de A y de B** (`pitch/textos_web.md`, sección 2 y tarjeta de zona). Si el 23 nov alguno no está en producción, se quita de la respuesta.
+Siete personas, el 13 y el 14 nov: seis de 26 a 55 años y una persona mayor que no supo usarla, y por ella hacemos una prueba de accesibilidad el 15 nov. Lo que más pidieron ya está en la web: buscar solo en una parte de la región, con Madrid capital por barrios (lo pidieron 4 de las 6), un límite de tiempo hasta el trabajo, las paradas de autobús aparte y saber si un hospital es público. Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
+- Si piden una frase: «Se valora mucho la cercanía al puesto de trabajo» y «Muy chula la web, funciona bien» (slide 3, sin nombre, como se prometió a los usuarios).
+- Evidencia:
+  - quién y qué pidieron: las notas de Mariano, que no se versionan porque llevan frases de las personas (`pitch/pruebas_usuarios/plantilla_resultados.md`);
+  - lo que cambió: D-238 («cuatro personas pidieron buscar solo en una parte de la región»), el PR #53 (límite de tiempo y ayuda del transporte; `trabajo.max_min` y `trabajo.ayuda` en `pitch/textos_web.md`), D-233 (paradas por modo) y D-239 (desempate y hospitales);
+  - las 10 zonas: `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
+- Lo que pidieron y no entra antes del freeze: preguntas 49 y 50. «¿Por qué salían siempre pueblos?»: pregunta 51.
+- Estado: en producción desde el 14 nov (despliegues de `ad4a8f2` y `f1b6f5a`: `evidence/gate-06/2026-11-14-deploy/deploy-27-ad4a8f2-d233.md` y `deploy-28-f1b6f5a.md`). La prueba de accesibilidad del 15 nov, **pendiente de Mariano**: si cambia algo, se añade aquí. Si llegan más personas antes del 26 nov, se cambia el número; nunca se dice uno de memoria.
 
 **44. ¿Qué es original? El Ayuntamiento ya hizo «El Madrid de los 15 minutos», y el 2SFCA es de 2003.**
 El método de repartir la capacidad entre quienes la comparten no es nuestro, y lo citamos: lo nuevo es lo que hacemos con él. El estudio del Ayuntamiento de 2022 da a cada portal de Madrid capital un índice según haya o no cada servicio a 15 minutos. Nosotros cubrimos los 179 municipios, contamos cuánta gente comparte cada servicio, comparamos cada zona con las de su tipo con una prueba estadística y sumamos el tiempo en transporte público con los horarios del Consorcio, que ese estudio dejaba para el futuro; y lo juntamos con un buscador para personas, abierto y con la fuente de cada cifra.
@@ -294,7 +299,8 @@ Entre distritos se parecen porque esta familia pide cosas que Madrid cumple casi
   - el caso de ejemplo: `evidence/gate-06/2026-11-12-deploy/caso-demo-fit06.md` (Latina, Moratalaz y Ciudad Lineal al 98 %; Latina, 39 min; Ciudad Lineal, 33). La 4.ª al 98 %, Puente de Vallecas, la comprobó D en la misma respuesta de producción (`rank` 4, 2807913; 12 nov a las 23:25 y otra vez el 13 nov con `fit-0.7`);
   - el alquiler por barrio: D-232 §4 (San Blas-Canillejas, de 14,9 a 16,0 €/m²).
 - Límite, si insiste: dentro de un distrito el alquiler cambia poco, porque se publica por código postal y un código cubre varios barrios (en San Blas-Canillejas, de 14,9 a 16,0 €/m², D-232 §4).
-- Estado: en producción, en la API y en la web: la vista de un distrito enseña «Los barrios que mejor encajan» tras buscar (PR #37, desplegado en `e7025fb`).
+- Y desde el 14 nov, con «¿Dónde?» en «Madrid capital», el buscador compara los 131 barrios: con el caso de ejemplo encajan 78, con Lucero y Campamento al 99 % (pregunta 52).
+- Estado: en producción, en la API y en la web: la vista de un distrito enseña «Los barrios que mejor encajan» tras buscar (PR #37, desplegado en `e7025fb`), y «¿Dónde?» desde el 14 nov (D-238, despliegue de `f1b6f5a`).
 
 ## Dos más, de la prueba con usuarios (14 nov)
 No entran antes del freeze del 23 nov: se responden con la hoja de ruta.
@@ -317,3 +323,29 @@ Hoy no filtramos pisos concretos, porque no usamos anuncios: Vida Fácil elige z
   - hoja de ruta: D-069 (superficie, antigüedad y obra nueva o usada «cuando exista información fiable y legalmente reutilizable»).
 - Si insiste en la obra nueva: las ventas de vivienda nueva por municipio (pregunta 49) dicen dónde se construye, no qué piso comprar.
 - Estado: los metros, en producción; la antigüedad, **pendiente de A y de B** (si el 23 nov no está, se quita «y, desde esta semana, …» de la respuesta); el filtro por vivienda, hoja de ruta.
+
+## Tres más, de lo que cambió tras la prueba con usuarios (14 nov)
+
+**51. ¿Por qué con mucho presupuesto salían siempre pueblos, y en orden alfabético?**
+Porque era un empate real: con mucho presupuesto y nada marcado, las 57 zonas que encajan llegan al 100 %, y entre ellas decidía la fiabilidad del alquiler, más alta en los municipios que en los distritos, y después el código INE, que va por orden alfabético: «Alcalá de Henares, Alcobendas, Alcorcón…». Nos lo dijeron en la prueba con usuarios y lo cambiamos: a igualdad, va primero la zona con más servicios del día a día a un paseo, y la lista avisa de que «Encajan 57 zonas igual de bien» para que marques qué te importa. No cambia ningún %, y el caso del pitch da exactamente lo mismo.
+- Evidencia: D-239 A §1–6 · producción, 14 nov, comprobado por D: `POST /api/v1/search` con una pareja, alquiler hasta 10.000 €/mes y nada marcado (`fit-0.7`): 57 zonas, todas al 100 %; las primeras, Chamberí, Tetuán, Puente de Vallecas, Salamanca y Centro · el caso del pitch, igual que antes del cambio (`evidence/gate-06/2026-11-14-deploy/deploy-28-f1b6f5a.md`: 27 zonas, Latina 98 %) · capturas del aviso en `evidence/gate-06/2026-11-14-tiebreak-hospitals/`.
+- Si insiste en por qué no ordenar por precio o por población: sería una preferencia que nadie ha pedido («más barato» o «más grande» no es «mejor»), y un orden al azar daría listas distintas con la misma búsqueda (D-239 A §3).
+- Estado: en producción desde el 14 nov (despliegue de `f1b6f5a`).
+
+**52. ¿Puedo buscar por barrio?**
+Sí, en Madrid capital: en «¿Dónde?» eliges «Madrid capital» y Vida Fácil compara sus 131 barrios en lugar de los 21 distritos. Con el caso de ejemplo encajan 78, y arriba salen Lucero y Campamento, en Latina, al 99 %. Lo pidieron 4 de las 6 personas de la prueba; también puedes buscar solo en los alrededores de Madrid o solo en los pueblos, según las zonas del Instituto de Estadística de la Comunidad.
+- Evidencia: D-238 (§1, la zonificación; §4 y §5, la búsqueda; §8, las pruebas) · producción, 14 nov: `evidence/gate-06/2026-11-14-deploy/deploy-28-f1b6f5a.md` (`scope: madrid`: 78 de 131; Lucero y Campamento al 99 %, Media Legua al 98 %) · Nomenclátor de la Comunidad de Madrid 2025, §3.4.
+- Límites, si insiste:
+  - «Qué falta» sigue siendo del distrito, y la tarjeta del barrio lo dice;
+  - el alquiler de un barrio es el de sus códigos postales, así que cambia poco dentro de un distrito (D-232 §4), y Sol sale sin datos porque no tiene alquiler publicado (D-238 §8);
+  - con «Toda la Comunidad», Madrid sigue por distritos, para no comparar un barrio con un municipio entero (D-238 §5).
+- Si pregunta por «Pueblos»: la Comunidad solo publica el alquiler de los municipios de más de 20.000 habitantes, así que con alquiler casi todos los pueblos salen «sin datos». La web lo explica en vez de dar una lista vacía (D-238 §10).
+- Estado: en producción desde el 14 nov (despliegue de `f1b6f5a`). El caso del pitch, sin «¿Dónde?», da lo mismo que antes.
+
+**53. ¿Cómo sabéis si un hospital es público?**
+Del registro de centros sanitarios de la Comunidad de Madrid, que publica de quién depende cada centro. Llamamos público a lo que es de la red del Servicio Madrileño de Salud, la que te asigna la tarjeta sanitaria, y privado a todo lo demás; cinco hospitales de la red los gestiona una empresa y salen «Hospital público · gestión privada»: la Fundación Jiménez Díaz, el Rey Juan Carlos, el Infanta Elena, el de Villalba y el de Torrejón. De los 85 hospitales, 35 son públicos y 50 privados.
+- Evidencia: D-239 B · `cm_centros_sanitarios` (dependencia funcional) · dos páginas de la Comunidad de Madrid, consultadas el 14 nov: «Hospitales de la red del Servicio Madrileño de Salud» y «Control y seguimiento de centros y servicios de gestión indirecta» · producción, 14 nov: `evidence/gate-06/2026-11-14-deploy/deploy-28-f1b6f5a.md` (`/places`: 35 públicos, 5 de ellos de gestión privada, y 50 privados).
+- Si insiste en la Fundación Jiménez Díaz: el registro la da como privada, pero está en la red por un concierto singular, así que sale pública (D-239 B §2).
+- Si pregunta por los hospitales de los contratos de obra (Henares, Infanta Cristina, Infanta Leonor…): son públicos de gestión pública. La empresa construyó el edificio y lleva los servicios no sanitarios, pero la asistencia es del Servicio Madrileño de Salud.
+- Si pregunta por un hospital con convenio, como la Fundación Instituto San José: sale privado. Puede recibir pacientes derivados, pero no es el hospital de referencia de la tarjeta sanitaria.
+- Estado: en producción desde el 14 nov (despliegue de `f1b6f5a`). El Rey Juan Carlos sale aún sin nombre, como «Hospital público · gestión privada», hasta la próxima carga del registro (D-239).

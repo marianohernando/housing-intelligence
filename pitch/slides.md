@@ -121,6 +121,17 @@ Versión con buscador (la que vale):
   - Las dos son de usuarios, así que van juntas en la tarjeta de utilidad, en el sitio de la viñeta «¿Salen pocas?…», que ya enseña la captura C3.
   - No hubo cita de un técnico municipal: la tarjeta de impacto se queda sin cita.
   - Si llegan citas mejores, se cambian.
+- **Relato de la prueba con usuarios** (va en la slide 4 y en el cierre del guion; la versión larga, en la pregunta 43):
+  - **Quién:** 7 personas, el 13 y el 14 nov. Seis de 26 a 55 años, y una persona mayor que no supo usarla. Sin nombres, como se les prometió.
+  - **Qué pidieron y qué hicimos** (todo en producción desde el 14 nov):
+    - buscar solo en una parte de la región, que lo pidieron 4 de las 6 → «¿Dónde?», con Madrid capital por sus 131 barrios (D-238);
+    - «me salían sitios muy lejos» → «Tardar como mucho N min» hasta el trabajo, y una ayuda que dice qué transporte cuenta (PR #53);
+    - quien va en autobús quería ver sus paradas → «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min» (D-233);
+    - con mucho presupuesto salían siempre pueblos en orden alfabético → desempate por servicios a pie, con el aviso «Encajan N zonas igual de bien» (D-239);
+    - no se distinguían los hospitales públicos de los privados → cada hospital lo dice (D-239).
+  - **Qué no entra antes del freeze:** los proyectos futuros y filtrar pisos por metros u obra nueva (preguntas 49 y 50).
+  - **De la persona mayor** sale la prueba de accesibilidad del 15 nov (**pendiente de Mariano**). Si cambia algo, se añade aquí y en la pregunta 43.
+  - Fuentes: D-233, D-238 («cuatro personas pidieron buscar solo en una parte de la región»), D-239, `trabajo.max_min` y `trabajo.ayuda` en `pitch/textos_web.md`, y las notas de Mariano, que no se versionan.
 
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
   - escuela infantil: escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (cada escuela cuenta como una: nadie publica sus plazas);
@@ -175,9 +186,12 @@ Versión con buscador (la que vale):
   1. «Cuéntanos tu hogar, tu presupuesto y dónde trabajas»: tarjeta «Tu búsqueda».
   2. «Zonas que encajan, con el porqué»: cabecera de la tarjeta de zona (% de encaje y hechos).
   3. «Qué falta en cada zona, con su fuente»: mini lista «Qué falta aquí» de la tarjeta.
+- Bajo los tres pasos, con un borde violeta como las citas de la slide 3: «**Probada con 7 personas.** Lo que pidieron, ya en la web: buscar por barrios, un límite de tiempo al trabajo y las paradas de autobús.». Se ve durante el cierre del guion (bloque 5), que dice lo mismo en voz alta.
 - Pie: «Demo en vivo: vidafacil-madrid.vercel.app».
 
-**Fuentes en la slide:** ninguna cifra nueva. Si la captura muestra cifras, son las de la API en ese momento.
+**Fuentes en la slide:** ninguna cifra nueva salvo las 7 personas (relato de la slide 3). Si la captura muestra cifras, son las de la API en ese momento.
+
+**C1 está desfasada desde el 14 nov:** su tarjeta dice «Parada de transporte público a unos 2 min andando», que hoy es «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min» (D-233), y «Tu búsqueda» no enseña «¿Dónde?» (D-238). Las cifras del caso no cambian (27 zonas, Latina 98 %). Se rehace con las demás capturas cuando se revise la fórmula, el 17 y el 18 nov (**pendiente de B**).
 
 ---
 
