@@ -1,0 +1,9 @@
+API of the offline package (39644a9) against production (dpl_5gWd6y97ixqWgub8c5m6wpMat1jE), numbers rounded to 1e-9, meta left out, 2026-11-14 ~11:40 UTC
+  GET  /api/v1/gaps/municipio/28079       identical
+  GET  /api/v1/gaps/distrito/2807920      identical
+  GET  /api/v1/datasets                   identical
+  GET  /api/v1/gaps/impact                identical
+  POST /api/v1/search                     identical
+  POST /api/v1/search/barrios             identical
+
+API image of the package (same Dockerfile and uv.lock as production): opentelemetry-api 1.45.2
