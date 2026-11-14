@@ -1,4 +1,4 @@
-uv run python scripts/golden_search.py  # base local housing_ocio (con ocio), solo lectura, 14 nov
+uv run python scripts/golden_search.py  # base local housing_ocio (con ocio), solo lectura, 14 nov, código sobre d5fe735
 
 ## golden_family: OK
 zonas 199 · cumplen 27 · desconocidas 15 · condición que más quita: near:colegio
@@ -135,7 +135,7 @@ zonas 199 · cumplen 25 · desconocidas 6 · condición que más quita: near:col
   casi: Salamanca (falla budget)
 
 ## golden_senior: OK
-zonas 199 · cumplen 8 · desconocidas 28 · condición que más quita: budget
+zonas 199 · cumplen 8 · desconocidas 28 · condición que más quita: near:farmacia
   Reality Check: +5 min a pie hasta centro de salud → +4 zonas
   Reality Check: +100 €/mes → +2 zonas
   Reality Check: +5 min a pie hasta farmacia → +0 zonas
@@ -157,18 +157,18 @@ zonas 199 · cumplen 8 · desconocidas 28 · condición que más quita: budget
        - Estación de metro o tren accesible (sin escaleras) a unos 16 min andando (confianza 1.00)
        - 35 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
        - Alquiler ≈ 709 €/mes por 61 m² (11,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
-  4. Móstoles · 85 % · ≈ 688 €/mes
+  4. Coslada · 86 % · ≈ 735 €/mes
+       - Centro de salud a unos 10 min andando (confianza 0.99)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 0.99)
+       - Estación de metro o tren accesible (sin escaleras) a unos 12 min andando (confianza 0.99)
+       - 73 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 735 €/mes por 61 m² (12,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  5. Móstoles · 86 % · ≈ 688 €/mes
        - Centro de salud a unos 11 min andando (confianza 1.00)
        - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 15 min (confianza 1.00)
        - Estación de metro o tren accesible (sin escaleras) a unos 17 min andando (confianza 1.00)
        - 47 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
        - Alquiler ≈ 688 €/mes por 61 m² (11,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
-  5. Alcorcón · 84 % · ≈ 747 €/mes
-       - Centro de salud a unos 15 min andando (confianza 1.00)
-       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
-       - Estación de metro o tren accesible (sin escaleras) a unos 15 min andando (confianza 1.00)
-       - 51 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
-       - Alquiler ≈ 747 €/mes por 61 m² (12,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
   casi: Retiro (falla budget)
   casi: Centro (falla budget)
   casi: Chamberí (falla budget)
@@ -215,31 +215,31 @@ zonas 199 · cumplen 39 · desconocidas 142 · condición que más quita: budget
 ## golden_reduced_mobility: OK
 zonas 199 · cumplen 46 · desconocidas 142 · condición que más quita: budget
   Reality Check: +150 €/mes → +3 zonas
-  1. Ciudad Lineal · 92 % · ≈ 1087 €/mes
-       - Estación de metro o tren accesible (sin escaleras) a unos 10 min andando (confianza 1.00)
-       - Centro de salud a unos 10 min andando (confianza 1.00)
-       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
-       - 37 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
-       - Alquiler ≈ 1.087 €/mes por 68 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
-  2. Parla · 92 % · ≈ 688 €/mes
+  1. Parla · 96 % · ≈ 688 €/mes
        - Estación de metro o tren accesible (sin escaleras) a unos 8 min andando (confianza 1.00)
        - Centro de salud a unos 13 min andando (confianza 1.00)
        - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
        - 68 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
        - Alquiler ≈ 688 €/mes por 68 m² (10,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
-  3. Coslada · 90 % · ≈ 819 €/mes
+  2. Coslada · 93 % · ≈ 819 €/mes
        - Estación de metro o tren accesible (sin escaleras) a unos 12 min andando (confianza 0.99)
        - Centro de salud a unos 10 min andando (confianza 0.99)
        - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 0.99)
        - 58 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
        - Alquiler ≈ 819 €/mes por 68 m² (12,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
-  4. Latina · 89 % · ≈ 972 €/mes
+  3. Ciudad Lineal · 92 % · ≈ 1087 €/mes
+       - Estación de metro o tren accesible (sin escaleras) a unos 10 min andando (confianza 1.00)
+       - Centro de salud a unos 10 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - 37 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.087 €/mes por 68 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  4. Latina · 90 % · ≈ 972 €/mes
        - Estación de metro o tren accesible (sin escaleras) a unos 13 min andando (confianza 0.99)
        - Centro de salud a unos 10 min andando (confianza 0.99)
        - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 0.99)
        - 43 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
        - Alquiler ≈ 972 €/mes por 68 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
-  5. Carabanchel · 89 % · ≈ 995 €/mes
+  5. Carabanchel · 90 % · ≈ 995 €/mes
        - Estación de metro o tren accesible (sin escaleras) a unos 12 min andando (confianza 1.00)
        - Centro de salud a unos 10 min andando (confianza 1.00)
        - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
@@ -250,8 +250,7 @@ zonas 199 · cumplen 46 · desconocidas 142 · condición que más quita: budget
   casi: Retiro (falla budget)
 
 ## golden_couple: OK
-zonas 199 · cumplen 57 · desconocidas 142 · condición que más quita: budget
-  Reality Check: +1.000 €/mes → +0 zonas
+zonas 199 · cumplen 57 · desconocidas 142 · condición que más quita: None
   1. Chamberí · 100 % · ≈ 1531 €/mes
        - Alquiler ≈ 1.531 €/mes por 68 m² (22,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
        - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 5 min (confianza 1.00)
@@ -275,7 +274,6 @@ zonas 199 · cumplen 57 · desconocidas 142 · condición que más quita: budget
 
 ## golden_family en San Blas-Canillejas (barrios): OK
 zonas 8 · cumplen 7 · desconocidas 0 · condición que más quita: near:colegio
-  Reality Check: +150 €/mes → +0 zonas
   Reality Check: +5 min a pie hasta colegio con primaria → +0 zonas
   1. Canillejas · 97 % · ≈ 1156 €/mes
        - Colegio con primaria a unos 7 min andando (confianza 1.00)
