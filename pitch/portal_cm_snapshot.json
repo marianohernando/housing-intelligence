@@ -67,6 +67,12 @@
       "slug": "1912744",
       "title": "Hospitales y datos asistenciales"
     },
+    "cm_infracciones_penales_municipios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio",
+      "title": "Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio"
+    },
     "cm_municipios_distritos_2020": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -139,6 +145,12 @@
       "slug": "1004050",
       "title": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios"
     },
+    "cm_viviendas_antiguedad": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "censo_anual_vivienda_por_antiguedad",
+      "title": "Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios"
+    },
     "cm_viviendas_superficie": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -206,5 +218,5 @@
       "title": "Topología de la Red de Metro Ligero / Tranvía"
     }
   },
-  "fetched_at": "2026-11-12"
+  "fetched_at": "2026-11-14"
 }
