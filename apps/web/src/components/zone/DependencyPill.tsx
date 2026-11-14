@@ -1,4 +1,4 @@
-import { Building2, Landmark } from "lucide-react";
+import { Building2, ShieldPlus } from "lucide-react";
 
 import { type Dependency, DEPENDENCY_PILL } from "@/lib/map/facilities";
 
@@ -9,7 +9,8 @@ import styles from "./DependencyPill.module.css";
  * its map label (centros.hospital.pastilla, D-239). The word says it; the icon and the fill only help.
  */
 export default function DependencyPill({ dependency }: { dependency: Dependency }) {
-  const Icon = dependency === "publica" ? Landmark : Building2;
+  // Not Landmark: «Cultura» uses it in the same panel (D-236)
+  const Icon = dependency === "publica" ? ShieldPlus : Building2;
   return (
     <span className={dependency === "publica" ? styles.public : styles.private}>
       <Icon size={13} strokeWidth={2.25} aria-hidden="true" />
