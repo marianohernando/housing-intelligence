@@ -1,0 +1,29 @@
+source_id: comunidad_madrid_web
+name: Comunidad de Madrid · comunidad.madrid
+provider: Comunidad de Madrid
+source_type: official_web_page
+api_type: none
+base_url: https://www.comunidad.madrid
+license_name: Reutilización permitida citando la fuente y la fecha de extracción, sin alterar ni desnaturalizar la información y sin dar a entender patrocinio (aviso legal de comunidad.madrid)
+license_url: https://www.comunidad.madrid/atencion-ciudadano/aviso-legal-privacidad
+license_status: CLEAR
+attribution_text: "Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 0.9
+update_frequency: irregular
+geographic_scope: Comunidad de Madrid
+terms_reviewed_at: 2026-11-14T00:00:00Z
+robots_status: manual_transcription
+active: true
+notes: >-
+  D-241. Páginas web de la Comunidad de Madrid que no publican fichero; no son datasets del
+  portal de datos abiertos y no cuentan como tales. El aviso legal (consultado el 14 nov) dice:
+  «La Comunidad de Madrid permitirá la reutilización de todos los contenidos y datos difundidos
+  por medio de este sitio, siempre que no se indique lo contrario, a condición de que no se
+  altere el contenido de la información, no se modifique o desnaturalice el sentido de la
+  información, se mencione la fuente, se indique la fecha de extracción o uso de la
+  información, y no se pueda deducir que la Comunidad de Madrid patrocina o apoya la actividad
+  en la que se reutiliza la información». Se transcribe a mano, con la cita exacta, en
+  data/catalog/manual/ (nunca scraping).

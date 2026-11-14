@@ -7,7 +7,7 @@ from sqlalchemy import Engine, text
 
 _OBS = text(
     """
-    SELECT territory_code, period_start, dims, value, null_reason
+    SELECT territory_code, period_start, period_end, dims, value, null_reason
       FROM metric_observation
      WHERE metric_id = :metric_id AND territory_level = :level
     """
@@ -76,7 +76,7 @@ def observations(engine: Engine, metric_id: str, level: str = "municipio") -> pd
         rows = conn.execute(_OBS, {"metric_id": metric_id, "level": level}).mappings().all()
     return pd.DataFrame(
         [dict(r) for r in rows],
-        columns=["territory_code", "period_start", "dims", "value", "null_reason"],
+        columns=["territory_code", "period_start", "period_end", "dims", "value", "null_reason"],
     )
 
 

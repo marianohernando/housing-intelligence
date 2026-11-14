@@ -215,6 +215,31 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
     )
 
 
+def _metric_window_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-241: a share over the last periods of a metric (new homes among the sales of a year)."""
+    return methods.metric_window_share(
+        loaders.observations(engine, f["metric"], level),
+        int(f["periods"]),
+        f["numerator"],
+        f["denominator"],
+        status_dim=f.get("status_dim"),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
+def _metric_items(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-241: the items of each zone (planning areas, Plan Vive promotions) and their count or
+    sum. The zones are those of the level inside `scope` (a code prefix: Madrid's districts)."""
+    scope = str(f.get("scope", ""))
+    return methods.metric_items(
+        loaders.observations(engine, f["metric"], level),
+        [z for z in walk.zone_codes(engine, level) if z.startswith(scope)],
+        value=str(f["value"]),
+        stage_order=list(f.get("stage_order") or []),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
 def _two_step_fca(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """D-217: capacity reachable on foot per person (2SFCA), by zone."""
     return fca.fca_feature(engine, f, level, walk.network_version(engine).observed)
@@ -232,6 +257,8 @@ METHODS: dict[str, Method] = {
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
     "anchored_relative_value": _anchored_relative_value,
+    "metric_window_share": _metric_window_share,
+    "metric_items": _metric_items,
 }
 
 
@@ -344,6 +371,12 @@ def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
     return {"new_contracts": adjustment} if isinstance(adjustment, dict) else {}
 
 
+def _detail(record: dict[str, Any]) -> dict[str, Any]:
+    """What a context figure says besides its value (D-241), served with it by the API."""
+    detail = record.get("detail")
+    return {"detail": detail} if isinstance(detail, dict) else {}
+
+
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
     versions = versions_by_pass(
         spec, loaders.last_valid_versions(engine, [s.dataset_id for s in spec.sources])
@@ -365,7 +398,8 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
                 "method": effective_method(spec, _level(spec, r)),
             }
             | _counts(r)
-            | _adjustment(r),
+            | _adjustment(r)
+            | _detail(r),
         }
         for r in records
     ]

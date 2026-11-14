@@ -19,7 +19,7 @@ _LIST = text(
 _VALUES = text(
     """
     SELECT v.territory_code, v.admin_unit_id, v.period_start, v.value, v.null_reason,
-           v.confidence, u.name
+           v.confidence, u.name, v.inputs->'detail' AS detail
       FROM feature_value v
       LEFT JOIN geo_admin_unit u ON u.admin_unit_id = v.admin_unit_id
      WHERE v.feature_id = :feature_id AND v.territory_level = :level

@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "ayto_pgoum_desarrollo_ambitos",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_pgoum_desarrollo_ambitos/1fb51343af3e/situacionambitos_01_01_2026distritos.xls",
+      "sha256": "1fb51343af3e244aab4fc8f484c21d895f4d776e25b7feeeca452697e2a3a9da",
+      "bytes": 184832,
+      "url": "https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos/resource/203200-17-desarrollo-ambitos/download/situacionambitos_01_01_2026distritos.xls",
+      "retrieved_at": "2026-11-14T22:02:56.302120+00:00"
+    }
+  ]
+}

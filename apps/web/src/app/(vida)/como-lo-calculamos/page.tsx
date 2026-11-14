@@ -270,6 +270,13 @@ function Limits() {
           <strong>{CONTEXT_METHOD.lead}</strong> {CONTEXT_METHOD.text}
         </li>
         <li>
+          <strong>Vivienda nueva y lo que viene:</strong> en cada zona contamos cuántas compraventas del último año fueron
+          de obra nueva, cuánto se tasa una vivienda de menos de 5 años frente a una más antigua, las viviendas del Plan Vive
+          y, en Madrid capital, el suelo para vivienda del Plan General que aún no está terminado. Son datos para conocer la
+          zona: no cambian el encaje ni el orden. Dicen dónde se vende o se prepara vivienda nueva, no cuántos pisos quedan
+          libres ni cuándo estarán.
+        </li>
+        <li>
           <strong>Ocio:</strong> los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de
           OpenStreetMap, un mapa hecho por voluntarios. En las ciudades está bastante completo; en los pueblos pequeños falta
           algún local, así que un pueblo puede tener un bar que no vemos. Por eso el ocio solo cuenta si lo marcas y no deja

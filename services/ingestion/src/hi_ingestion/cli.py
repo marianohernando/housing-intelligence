@@ -12,10 +12,13 @@ from hi_contracts.catalog.enums import Priority
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
     CmMunicipioConceptPipeline,
+    CmMunicipioNameTablePipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    CuratedZoneItemsPipeline,
     FacilityDirectoryPipeline,
     GtfsFeedPipeline,
+    MadridDevelopmentAreasPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
     OsmParksPipeline,
@@ -57,6 +60,7 @@ from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
+from hi_ingestion.pipelines.zone_context.run import run_zone_context_pipeline
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
 catalog_app = typer.Typer(help="Source catalog commands", no_args_is_help=True)
@@ -195,6 +199,11 @@ def _run_one(
     if isinstance(spec, StationTopologyPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_topology_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, CuratedZoneItemsPipeline):  # D-241: always its versioned table
+        return run_zone_context_pipeline(engine, catalog, spec, evidence_root=evidence_root)
+    if isinstance(spec, CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_zone_context_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     typer.echo(f"No pipeline registered for {dataset_id}", err=True)
     raise typer.Exit(2)
 
