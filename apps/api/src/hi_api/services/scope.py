@@ -11,6 +11,6 @@ from hi_contracts.public import ScenarioState, SearchResult, SearchScope
 
 def search(conn: Connection, scenario: ScenarioState) -> tuple[SearchResult, list[str], str | None]:
     """The result, warnings and the data version of the search in its scope."""
-    if scenario.scope is SearchScope.MADRID:
+    if scenario.scope == SearchScope.MADRID:
         return answer(conn, scenario, load_barrios(conn, scenario, None), "barrios")
     return answer(conn, scenario, load(conn, scenario))

@@ -16,4 +16,4 @@ def scope_of(code: str) -> SearchScope | None:
 
 def in_scope(code: str, scope: SearchScope) -> bool:
     """Whether a zone is searched. The whole region keeps every zone, listed or not."""
-    return scope is SearchScope.ALL or scope_of(code) is scope
+    return scope == SearchScope.ALL or scope_of(code) == scope
