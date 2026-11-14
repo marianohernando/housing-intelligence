@@ -1,0 +1,29 @@
+POST /api/v1/search with the demo case (data/fixtures/contracts/scenario_state.familia_castellana.fixture.json), without scope and with each scope, against https://vidafacil-madrid.vercel.app after the deploy (2026-11-14, ~18:42 UTC)
+none: HTTP 200 · 121318 B · 0.535488 s
+  echo scope=all · 27 of 199 pass · levels distrito,municipio (199 zones)
+  top: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+  near: Chamartín 93, Salamanca 93, Centro 93, Chamberí 93, Retiro 93
+  binding: near:colegio · relaxed scopes: all
+madrid: HTTP 200 · 94137 B · 0.381818 s
+  echo scope=madrid · 78 of 131 pass · levels barrio (131 zones)
+  top: Lucero 99, Campamento 99, Media Legua 98, Atalaya 98, Costillares 98, Vinateros 98, Pinar del Rey 98, Los Cármenes 98, Numancia 98, San Diego 98
+  near: Mirasierra 96, Casco Histórico de Barajas 95, Castillejos 93, Almagro 93, El Viso 93
+  binding: budget · relaxed scopes: madrid
+alrededores: HTTP 200 · 75513 B · 0.359892 s
+  echo scope=alrededores · 14 of 40 pass · levels municipio (40 zones)
+  top: Alcorcón 95, Leganés 95, Torrejón de Ardoz 95, Coslada 94, Getafe 94, Móstoles 93, Fuenlabrada 92, Parla 92, Collado Villalba 90, Alcalá de Henares 90
+  near: San Sebastián de los Reyes 92, Tres Cantos 91, Pinto 87, Ciempozuelos 86, Mejorada del Campo 84
+  binding: near:colegio · relaxed scopes: alrededores
+pueblos: HTTP 200 · 62919 B · 0.461090 s
+  echo scope=pueblos · 1 of 138 pass · levels municipio (138 zones)
+  top: Navalcarnero 84
+  near: Arroyomolinos 79
+  binding: budget · relaxed scopes: pueblos
+
+Before vs after the deploy, the same case (production ad4a8f2 at ~18:36 UTC vs f1b6f5a), meta left out:
+  /search: identical once the echoed "scope" is removed. The only differences are 3 added "scope": "all" (scenario and the 2 relaxed_scenario):
+    + "scope": "all"
+    + "scope": "all"
+    + "scope": "all"
+  /search/barrios distrito 2807920: identical once "scope" is removed
+  /search/barrios distrito 2807910: identical once "scope" is removed
