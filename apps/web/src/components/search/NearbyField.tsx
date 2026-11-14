@@ -3,12 +3,13 @@
 import { Footprints, X } from "lucide-react";
 import { useId, useRef } from "react";
 
-import type { NeedKey } from "@/contracts/scenario_state";
 import {
   addNearby,
+  nearbyServices,
   NEED_KEYS,
   removeNearby,
   setNearbyMinutes,
+  type ServiceKey,
   setNearbyRequired,
   walkMinutesOptions,
 } from "@/lib/scenario";
@@ -30,7 +31,7 @@ const TEXT = {
   minutesAria: (name: string) => `Minutos andando hasta ${name.toLowerCase()}`,
 };
 
-export const NEED_NAME: Record<NeedKey, string> = {
+export const NEED_NAME: Record<ServiceKey, string> = {
   escuela_infantil: "Escuela infantil",
   colegio: "Colegio",
   centro_salud: "Centro de salud",
@@ -43,7 +44,8 @@ export const NEED_NAME: Record<NeedKey, string> = {
 export default function NearbyField() {
   const { scenario, update } = useScenario();
   const id = useId();
-  const nearby = scenario.nearby ?? [];
+  // The groups of «Ocio» are also in `nearby`, but they are set in their own boxes under «Me importa»
+  const nearby = nearbyServices(scenario);
   const left = NEED_KEYS.filter((key) => !nearby.some((n) => n.need === key));
   // After «Quitar», the focus goes to «Añadir un servicio» instead of being lost with the row
   const addRef = useRef<HTMLSelectElement>(null);

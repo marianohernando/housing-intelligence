@@ -12,11 +12,16 @@ import {
   defaultScenario,
   encodeScenario,
   exampleScenario,
+  LEISURE_KEYS,
+  leisureConfig,
+  nearbyServices,
   peopleAtHome,
   removeNearby,
   setAdults,
   setBudgetAmount,
   setBudgetKind,
+  setLeisureMinutes,
+  setLeisureRequired,
   setMinors,
   setNearbyMinutes,
   setNearbyRequired,
@@ -24,6 +29,7 @@ import {
   setSeniors,
   setWorkMaxMinutes,
   setWorkPlace,
+  toggleLeisureGroup,
   togglePriority,
   walkMinutesOptions,
   workPlace,
@@ -143,6 +149,72 @@ describe("«Lo quiero a un paseo» (nearby)", () => {
   it("offers the minutes a relaxed search brings even when they are not in the usual list", () => {
     expect(walkMinutesOptions(15)).toEqual([5, 10, 15, 20, 30]);
     expect(walkMinutesOptions(12)).toEqual([5, 10, 12, 15, 20, 30]);
+  });
+});
+
+describe("«Ocio» (importa.ocio.*, D-236): what the configurator sends", () => {
+  const ocio = () => togglePriority(defaultScenario(), "ocio");
+
+  it("marked, it is a priority with bars and restaurants at 10 min as a must", () => {
+    const s = ocio();
+    expect(s.priorities).toEqual(["ocio"]);
+    expect(s.nearby).toEqual([
+      { need: "bares", max_walk_minutes: 10, required: true },
+      { need: "restaurantes", max_walk_minutes: 10, required: true },
+    ]);
+    expect(leisureConfig(s)).toEqual({ groups: ["bares", "restaurantes"], minutes: 10, required: true });
+  });
+
+  it("sends each ticked group as a nearby need, in the order of the boxes", () => {
+    let s = toggleLeisureGroup(ocio(), "cines_teatros");
+    s = toggleLeisureGroup(s, "gimnasios");
+    s = toggleLeisureGroup(s, "restaurantes");
+    expect(s.nearby?.map((n) => n.need)).toEqual(["bares", "gimnasios", "cines_teatros"]);
+    expect(LEISURE_KEYS).toEqual(["bares", "restaurantes", "gimnasios", "cines_teatros"]);
+  });
+
+  it("the minutes (5, 10 or 15) and «Imprescindible» are one choice for every group, new ones too", () => {
+    let s = setLeisureRequired(setLeisureMinutes(ocio(), 15), false);
+    s = toggleLeisureGroup(s, "gimnasios");
+    expect(s.nearby).toEqual([
+      { need: "bares", max_walk_minutes: 15, required: false },
+      { need: "restaurantes", max_walk_minutes: 15, required: false },
+      { need: "gimnasios", max_walk_minutes: 15, required: false },
+    ]);
+    expect(walkMinutesOptions(leisureConfig(s).minutes, [5, 10, 15])).toEqual([5, 10, 15]);
+  });
+
+  it("keeps the other services and priorities as they were, and leaves with all its groups", () => {
+    let s = togglePriority(addNearby(defaultScenario(), "colegio"), "colegios");
+    s = toggleLeisureGroup(togglePriority(s, "ocio"), "gimnasios");
+    s = addNearby(s, "farmacia");
+    expect(s.priorities).toEqual(["colegios", "ocio"]);
+    expect(nearbyServices(s).map((n) => n.need)).toEqual(["colegio", "farmacia"]);
+    const off = togglePriority(s, "ocio");
+    expect(off.priorities).toEqual(["colegios"]);
+    expect(off.nearby).toEqual([
+      { need: "colegio", max_walk_minutes: 10, required: true },
+      { need: "farmacia", max_walk_minutes: 10, required: true },
+    ]);
+  });
+
+  it("with every box unticked sends the priority alone, which the API does not score", () => {
+    const s = toggleLeisureGroup(toggleLeisureGroup(ocio(), "bares"), "restaurantes");
+    expect(s.priorities).toEqual(["ocio"]);
+    expect(s.nearby).toEqual([]);
+    expect(leisureConfig(s)).toEqual({ groups: [], minutes: 10, required: true });
+  });
+
+  it("travels in a shared link", () => {
+    const s = toggleLeisureGroup(ocio(), "cines_teatros");
+    expect(decodeScenario(encodeScenario(s))).toEqual(s);
+  });
+
+  it("is not part of a search that never marked it: the example of the pitch has no leisure", () => {
+    const example = exampleScenario();
+    expect(example.priorities).not.toContain("ocio");
+    expect(example.nearby?.map((n) => n.need)).toEqual(["colegio"]);
+    expect(leisureConfig(example).groups).toEqual([]);
   });
 });
 

@@ -11,7 +11,8 @@ export const BUDGET_RANGE: Record<BudgetKind, { min: number; max: number; step: 
 };
 
 const LIMITS = { minors: 8, seniors: 4 } as const;
-const PRIORITY_KEYS: readonly PriorityKey[] = ["transporte", "salud", "colegios", "zonas_verdes", "seguridad", "sin_escaleras"];
+const WALK_LIMITS = { min: 1, max: 60, initial: 10 } as const;
+const PRIORITY_KEYS: readonly PriorityKey[] = ["transporte", "salud", "colegios", "zonas_verdes", "seguridad", "sin_escaleras", "ocio"];
 
 export function defaultScenario(): ScenarioState {
   return {
@@ -48,11 +49,81 @@ export function setSeniors(s: ScenarioState, seniors: number): ScenarioState {
   return { ...s, household: { ...household(s), seniors_in_care: clamp(Math.round(seniors), 0, LIMITS.seniors) } };
 }
 
-/** Marks or unmarks a priority; the order of marking is the order of importance. */
+/**
+ * Marks or unmarks a priority; the order of marking is the order of importance. «Ocio» (D-236)
+ * comes with its groups: marked, it starts with LEISURE_INITIAL; unmarked, it takes them all away.
+ */
 export function togglePriority(s: ScenarioState, key: PriorityKey): ScenarioState {
   const current = s.priorities ?? [];
-  const priorities = current.includes(key) ? current.filter((p) => p !== key) : [...current, key];
-  return { ...s, priorities };
+  const on = !current.includes(key);
+  const priorities = on ? [...current, key] : current.filter((p) => p !== key);
+  if (key !== "ocio") return { ...s, priorities };
+  const others = (s.nearby ?? []).filter((n) => !isLeisure(n.need));
+  const groups = on ? LEISURE_INITIAL.map((need) => leisureNeed(need, LEISURE_DEFAULT)) : [];
+  return { ...s, priorities, nearby: [...others, ...groups] };
+}
+
+/** The groups of «Ocio» (importa.ocio.*), in the order of its boxes: the leisure NeedKeys of the contract. */
+export const LEISURE_KEYS = ["bares", "restaurantes", "gimnasios", "cines_teatros"] as const satisfies readonly NeedKey[];
+export type LeisureKey = (typeof LEISURE_KEYS)[number];
+/** What most people asked for, ticked when «Ocio» is marked; the person can change it. */
+const LEISURE_INITIAL: readonly LeisureKey[] = ["bares", "restaurantes"];
+/** Minutes offered for «Ocio»; one value for all its groups. */
+export const LEISURE_MINUTES: readonly number[] = [5, 10, 15];
+
+export interface LeisureConfig {
+  groups: LeisureKey[];
+  minutes: number;
+  required: boolean;
+}
+const LEISURE_DEFAULT: Omit<LeisureConfig, "groups"> = { minutes: 10, required: true };
+
+function isLeisure(need: NeedKey): need is LeisureKey {
+  return (LEISURE_KEYS as readonly NeedKey[]).includes(need);
+}
+
+function leisureNeed(need: LeisureKey, { minutes, required }: Omit<LeisureConfig, "groups">): NearbyNeed {
+  return { need, max_walk_minutes: minutes, required };
+}
+
+/** What the «Ocio» configurator shows: the ticked groups and the minutes and «Imprescindible» they share. */
+export function leisureConfig(s: ScenarioState): LeisureConfig {
+  const chosen = (s.nearby ?? []).filter((n) => isLeisure(n.need));
+  const [first] = chosen;
+  return {
+    groups: LEISURE_KEYS.filter((key) => chosen.some((n) => n.need === key)),
+    minutes: first?.max_walk_minutes ?? LEISURE_DEFAULT.minutes,
+    required: first?.required ?? LEISURE_DEFAULT.required,
+  };
+}
+
+/** The scenario with this «Ocio»: its groups go to `nearby`, after the other services and in the order of the boxes. */
+function withLeisure(s: ScenarioState, config: LeisureConfig): ScenarioState {
+  const others = (s.nearby ?? []).filter((n) => !isLeisure(n.need));
+  const groups = LEISURE_KEYS.filter((key) => config.groups.includes(key)).map((key) => leisureNeed(key, config));
+  return { ...s, nearby: [...others, ...groups] };
+}
+
+export function toggleLeisureGroup(s: ScenarioState, key: LeisureKey): ScenarioState {
+  const config = leisureConfig(s);
+  const groups = config.groups.includes(key) ? config.groups.filter((g) => g !== key) : [...config.groups, key];
+  return withLeisure(s, { ...config, groups });
+}
+
+export function setLeisureMinutes(s: ScenarioState, minutes: number): ScenarioState {
+  return withLeisure(s, { ...leisureConfig(s), minutes: clamp(Math.round(minutes), WALK_LIMITS.min, WALK_LIMITS.max) });
+}
+
+export function setLeisureRequired(s: ScenarioState, required: boolean): ScenarioState {
+  return withLeisure(s, { ...leisureConfig(s), required });
+}
+
+/** The services of «Lo quiero a un paseo»: every NeedKey but the groups of «Ocio», which have their own boxes. */
+export type ServiceKey = Exclude<NeedKey, LeisureKey>;
+export type NearbyService = NearbyNeed & { need: ServiceKey };
+
+export function nearbyServices(s: ScenarioState): NearbyService[] {
+  return (s.nearby ?? []).filter((n): n is NearbyService => !isLeisure(n.need));
 }
 
 export function setBudgetKind(s: ScenarioState, kind: BudgetKind): ScenarioState {
@@ -73,15 +144,14 @@ export function setNoBudgetLimit(s: ScenarioState, noLimit: boolean): ScenarioSt
 }
 
 /** «Lo quiero a un paseo» (cerca.*): services the household wants within walking minutes. */
-export const NEED_KEYS: readonly NeedKey[] = ["escuela_infantil", "colegio", "centro_salud", "farmacia", "mayores", "transporte"];
-const WALK_LIMITS = { min: 1, max: 60, initial: 10 } as const;
+export const NEED_KEYS: readonly ServiceKey[] = ["escuela_infantil", "colegio", "centro_salud", "farmacia", "mayores", "transporte"];
 /** Contract range of a work commute (Anchor.max_minutes). */
 const COMMUTE_LIMITS = { min: 5, max: 120 } as const;
 /** Minutes offered in the selector; a value from the API outside them is offered too. */
 export const WALK_MINUTES: readonly number[] = [5, 10, 15, 20, 30];
 
-export function walkMinutesOptions(current: number | undefined): number[] {
-  const all = new Set([...WALK_MINUTES, ...(current === undefined ? [] : [current])]);
+export function walkMinutesOptions(current: number | undefined, offered: readonly number[] = WALK_MINUTES): number[] {
+  const all = new Set([...offered, ...(current === undefined ? [] : [current])]);
   return [...all].sort((a, b) => a - b);
 }
 

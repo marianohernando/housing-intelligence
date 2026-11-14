@@ -11,6 +11,7 @@ import {
   Shield,
   TrainFront,
   Trees,
+  Wine,
 } from "lucide-react";
 import { useId } from "react";
 
@@ -41,6 +42,7 @@ const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
   seguridad: Shield,
   // The station the fact measures, not a wheelchair (D-204): the same icon as the chip
   accesibilidad: TrainFront,
+  ocio: Wine, // the same icon as the chip «Ocio» (D-236)
   trayecto: Briefcase,
   otro: Info,
 };

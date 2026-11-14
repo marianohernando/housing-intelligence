@@ -1,9 +1,10 @@
 "use client";
 
-import { Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, TrainFront, Trees, User, Users } from "lucide-react";
+import { Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, TrainFront, Trees, User, Users, Wine } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { BudgetKind, PriorityKey } from "@/contracts/scenario_state";
+import { useDatasets } from "@/components/provenance/useDatasets";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import Counter from "@/components/ui/Counter";
@@ -11,6 +12,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import Segmented from "@/components/ui/Segmented";
 import { errorMessage } from "@/lib/errors";
 import { formatEuros } from "@/lib/format";
+import { leisureAvailable } from "@/lib/map/facilities";
 import {
   BUDGET_RANGE,
   peopleAtHome,
@@ -23,6 +25,7 @@ import {
   togglePriority,
 } from "@/lib/scenario";
 
+import LeisureField from "./LeisureField";
 import NearbyField from "./NearbyField";
 import { useScenario } from "./ScenarioProvider";
 import styles from "./SearchCard.module.css";
@@ -66,7 +69,7 @@ const TEXT = {
  * park of 1 ha or more. Sin escaleras (fit-0.4, DATA-019, D-223) is a preference the person marks,
  * never a label about them (D-204, CLAUDE.md §13): its icon is the station it measures, not a
  * wheelchair, and its help names the CRTM because it is a proxy. Seguridad has no chip and is not
- * announced (D-224).
+ * announced (D-224). Ocio (fit-0.8, D-236) opens its own boxes: it only counts for what is ticked.
  */
 const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: string }[] = [
   { key: "transporte", label: "Transporte", icon: Bus, help: "Paradas cerca de casa y con autobuses o trenes a menudo." },
@@ -74,6 +77,7 @@ const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: str
   { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios con primaria, públicos o concertados, cerca de casa." },
   { key: "zonas_verdes", label: "Zonas verdes", icon: Trees, help: "Parques de una hectárea o más, cerca de casa." },
   { key: "sin_escaleras", label: "Sin escaleras", icon: TrainFront, help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa." },
+  { key: "ocio", label: "Ocio", icon: Wine, help: "Bares, restaurantes, gimnasios, cines y teatros cerca de casa: tú eliges cuáles." },
 ];
 
 function peopleText(n: number): string {
@@ -94,6 +98,9 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   const minors = household.minors ?? 0;
   const seniors = household.seniors_in_care ?? 0;
   const priorities = scenario.priorities ?? [];
+  // «Ocio» is offered once its data is published; a search that already carries it keeps its chip
+  const { data: datasets } = useDatasets();
+  const leisure = leisureAvailable(datasets?.datasets) || priorities.includes("ocio");
   const budget = scenario.budget ?? null;
   const range = BUDGET_RANGE[budget?.kind ?? "rent"];
 
@@ -129,7 +136,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           <legend>{TEXT.matters}</legend>
           <p className={styles.help}>{TEXT.mattersHelp}</p>
           <div className={styles.chips}>
-            {PRIORITIES.map((p) => (
+            {PRIORITIES.filter((p) => p.key !== "ocio" || leisure).map((p) => (
               <Chip
                 key={p.key}
                 label={p.label}
@@ -141,6 +148,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               />
             ))}
           </div>
+          {priorities.includes("ocio") && <LeisureField />}
         </fieldset>
 
         {available ? (
