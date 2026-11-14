@@ -1372,8 +1372,8 @@ Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador rec
    - top 10 idéntico: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97 y Villaverde 97;
    - «Casi encajan» idéntico: Chamartín, Salamanca, Centro, Chamberí y Retiro, al 93 %;
    - la respuesta entera (`data`) es igual byte a byte, y `/search/barrios` también, en los 21 distritos.
-   
-   Tests: sin empates exactos el orden es el del encaje (propiedad); un encaje mayor nunca cede ante una zona mejor servida aunque las dos se lean con el mismo %; y en «Casi encajan» un empate sigue yendo a la confianza.
+
+   Tests: sin empates exactos el orden es el del encaje (propiedad); un encaje mayor nunca cede ante una zona mejor servida aunque las dos se lean con el mismo %; y en «Casi encajan» un empate sigue yendo a la confianza. El golden de búsqueda fija el orden exacto del ejemplo: el top 10 (`ranked_order`) y las cinco de «Casi encajan» (`near_miss_order`). Así un sync futuro no puede reordenar el caso del pitch sin que se note.
 6. **Los dos casos del feedback** (pareja, alquiler hasta 10.000 €/mes; antes es producción, después es esta rama):
    - **Sin prioridades** (57 zonas, todas al 100 %; aviso con 57):
      - antes: Alcalá de Henares, Alcobendas, Alcorcón, Algete, Aranjuez, Arganda del Rey, Arroyomolinos, Boadilla del Monte, Ciempozuelos y Colmenar Viejo;
@@ -1385,7 +1385,8 @@ Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador rec
 **B. Hospitales públicos y privados.**
 1. **Fuente: el dato ya estaba.** El registro de centros sanitarios de la Comunidad de Madrid (`cm_centros_sanitarios`, datos abiertos de la CM) publica la «dependencia funcional» de cada centro, y la carga la guarda desde D-218 como `dependency` en cada lugar. De los 85 hospitales, 34 son del Servicio Madrileño de Salud y 51 privados: 40 «Privado No Benéfico», 8 «Privado Benéfico (Iglesia)» y 3 mutuas.
 2. **Criterio: «público» es la red del Servicio Madrileño de Salud (SERMAS) y «privado», el resto.** Quien busca sanidad pública quiere saber a qué hospital le manda su tarjeta sanitaria.
-   - Cinco hospitales de la red pública los gestiona una empresa: «Hospital público · gestión privada». Mantiene la regla de D-218 («gestión privada», nunca «privado»).
+   - Cinco hospitales de la red pública los gestiona una empresa: «Hospital público · gestión privada».
+   - Sustituye la regla de D-218. «Privado» es todo lo que no está en la red, aunque tenga un convenio o concierto ordinario con el SERMAS (p. ej. la Fundación Instituto San José, `data/catalog/corrections/places.yaml`): puede recibir pacientes derivados, pero no es hospital de referencia de la tarjeta sanitaria. «Gestión privada» solo va con «público».
    - En el registro, cuatro ya figuran como del SERMAS (concesiones). La Fundación Jiménez Díaz figura como «Privado No Benéfico», pero está en la red por concierto singular: pasa a público.
    - **Lista estática** (`hi_domain.facilities.PRIVATE_MANAGEMENT`), por el código del Catálogo Nacional de Hospitales con el que se cruzó cada lugar (D-218), el único código oficial que lleva:
 
@@ -1404,7 +1405,8 @@ Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador rec
      - los 7 hospitales PFI (Henares, Infanta Cristina, Infanta Leonor, Infanta Sofía, Sureste, Tajo y Puerta de Hierro): solo están en concesión la obra y los servicios no sanitarios; la asistencia la presta el SERMAS.
    - La lista va en código porque el despliegue de la API no lleva `data/` (`.vercelignore`). Cambiarla es desplegar. Si una edición nueva del catálogo cambiara un código, ese hospital vuelve a lo que diga el registro: nunca se adivina (test).
 3. **Contrato `/places` (aditivo, sigue `places-1`):**
-   - `dependency` (`publica` o `privada`) en las propiedades del lugar, para todo centro sanitario del registro. Antes solo iba dentro de `capacity`, es decir, solo en los hospitales cruzados con el catálogo; ahora `capacity.dependency` sigue al lugar, y la Fundación Jiménez Díaz pasa a `publica`.
+   - `dependency` (`publica` o `privada`) en las propiedades del lugar, para todo centro sanitario del registro. Antes solo iba dentro de `capacity`, es decir, solo en los hospitales cruzados con el catálogo. La Fundación Jiménez Díaz pasa a `publica` en el lugar.
+   - `capacity.dependency` no cambia: sigue siendo el valor del registro (D-218), así que el contrato es aditivo de verdad, y una web anterior no dice «gestión pública» de la Fundación Jiménez Díaz.
    - `management` (`publica` o `privada`), solo en hospitales: quién lo gestiona. Privada en los privados y en los cinco de la lista; pública en el resto de los públicos.
    - Un valor que el contrato no conoce se omite: nunca rompe la respuesta (test).
    - Resultado con los datos locales: 35 hospitales públicos (30 los gestiona el SERMAS y 5 una empresa) y 50 privados.
@@ -1423,5 +1425,8 @@ Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador rec
 7. **La puntuación no cambia.** La necesidad de salud sigue midiendo el centro de salud, y los minutos al hospital siguen siendo un dato de contexto con todos los hospitales generales (D-217 §5).
 8. **Orden en producción.**
    - Desempate y etiquetas: basta desplegar, sin sync.
-   - Nombre del Rey Juan Carlos: después del despliegue, carga del registro (`make ingest DATASET=cm_centros_sanitarios`) y `make supabase-sync`, con smoke de `/places` y `/search`. Primero el código y después el sync.
+   - Nombre del Rey Juan Carlos, después del despliegue (primero el código y después el sync):
+     1. Carga del registro con `make ingest DATASET=cm_centros_sanitarios`.
+     2. Comprobar en el resumen de la ejecución que solo cambia CH0105. Si cambia algo más, recalcular las features antes del sync, o aplazar el sync.
+     3. `make supabase-sync` y smoke de `/places` y `/search`, incluido el golden de búsqueda (`scripts/golden_search.py`, que ya comprueba el orden exacto del ejemplo).
    - Fixture regenerado en solo lectura: `places.hospitales_madrid`, con `dependency` y `management` y los nombres con tilde de D-221.
