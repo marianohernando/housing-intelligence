@@ -381,6 +381,28 @@ def test_safety_is_context_never_a_score(catalog: Catalog) -> None:
         assert spec.gap_row is None, spec.feature_id
 
 
+ZONE_CONTEXT = {  # D-235: what the zone view shows as context, by level
+    "infracciones_penales_por_1000_hab": {"municipio"},
+    "viviendas_desde_2001_pct": {"municipio"},
+    "renta_per_capita": {"municipio"},
+    "ano_medio_construccion_residencial": {"distrito", "barrio"},
+    "renta_neta_media_hogar": {"distrito", "barrio"},
+}
+
+
+def test_zone_context_never_scores_filters_or_enters_the_gaps(catalog: Catalog) -> None:
+    """D-235: offences, the age of the dwellings and income are context. No fit binding (the
+    search never reads them), no «Qué falta» row, and each measure on the levels it is shown."""
+    tagged = {f.feature_id for f in catalog.features.values() if "context_only" in f.tests}
+    assert tagged >= set(ZONE_CONTEXT)
+    for feature_id, levels in ZONE_CONTEXT.items():
+        spec = catalog.features[feature_id]
+        assert spec.fit is None, feature_id
+        assert spec.gap_row is None, feature_id
+        formula = spec.formula.model_extra or {}
+        assert {spec.geo_level, *formula.get("levels", {})} == levels, feature_id
+
+
 def test_perceived_safety_is_the_residents_view_of_madrid_only(catalog: Catalog) -> None:
     """D-226: the panel's survey rows for the 21 districts and the city; elsewhere SIN DATOS."""
     for part in ("noche", "dia"):
