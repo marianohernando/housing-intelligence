@@ -13,16 +13,16 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
   min-height: var(--target);
   justify-self: start;
-  color: var(--ink);
-  font-family: var(--font-title);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: -0.01em;
   text-decoration: none;
   border-radius: var(--radius-sm);
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: 34px;
 }
 
 .nav {
@@ -69,6 +69,10 @@
     gap: var(--space-2);
     padding-top: var(--space-3);
     padding-bottom: var(--space-2);
+  }
+
+  .logo {
+    height: 28px;
   }
 
   .nav {
