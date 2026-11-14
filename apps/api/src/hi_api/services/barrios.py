@@ -1,5 +1,6 @@
 """The search inside one district of Madrid (D-232, POST /api/v1/search/barrios): its barrios
-ranked by the same engine as POST /search (hi_domain.search). Each barrio brings its own
+ranked by the same engine as POST /search (hi_domain.search), and the same over every barrio
+of Madrid capital for POST /search with `scope: madrid` (D-238). Each barrio brings its own
 walking minutes and rent of its postcodes; its trip by public transport is that of its own
 sections, or its district's when the barrio is missing from the matrix (said in the fact, with
 lower confidence). Parameterised SQL only, no feature id here.
@@ -21,7 +22,7 @@ from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import NullReason, TerritoryLevel
 from hi_contracts.public import BarrioSearchResult, IndicatorValue, ScenarioState, ZoneRef
 from hi_domain.fit import FIT_VERSION, Commute, ZoneData
-from hi_domain.search import run_search
+from hi_domain.search import SPLIT_BY_DISTRICT, run_search
 
 # A barrio without a trip of its own takes its district's, which stands for the whole district:
 # its confidence is the district's times this factor, and it never decides a trip limit.
@@ -42,7 +43,7 @@ RENT_UNKNOWN = "Sin datos de alquiler para este barrio"
 RENT_NOT_COMPUTED = "Sin datos de alquiler para este barrio todavía"
 
 _UNITS = """
-    SELECT u.level, u.code_official AS code, u.admin_unit_id, u.name,
+    SELECT u.level, u.code_official AS code, u.admin_unit_id, u.name, u.parent_admin_unit_id,
            m.code_official AS municipio_ine, m.name AS municipio_name,
            ST_X(u.c) AS lon, ST_Y(u.c) AS lat
       FROM (SELECT *, ST_PointOnSurface(geom_4326) AS c FROM geo_admin_unit
@@ -53,6 +54,9 @@ _UNITS = """
 """
 _DISTRICT = text(_UNITS.format(where="level = 'distrito' AND code_official = :code"))
 _BARRIOS = text(_UNITS.format(where="level = 'barrio' AND parent_admin_unit_id = :district"))
+_CAPITAL_BARRIOS = text(
+    _UNITS.format(where="level = 'barrio' AND left(code_official, 5) = ANY(:split)")
+)
 
 
 def rent_missing(rent: IndicatorValue | None) -> str | None:
@@ -90,8 +94,13 @@ def district(conn: Connection, code: str) -> ZoneRef:
     return zone_ref(dict(row))
 
 
-def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> Loaded:
-    rows = [dict(r) for r in conn.execute(_BARRIOS, {"district": parent.admin_unit_id}).mappings()]
+def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef | None) -> Loaded:
+    """The barrios of one district, or with no `parent` those of the whole capital (D-238)."""
+    if parent is None:
+        found = conn.execute(_CAPITAL_BARRIOS, {"split": list(SPLIT_BY_DISTRICT)})
+    else:
+        found = conn.execute(_BARRIOS, {"district": parent.admin_unit_id})
+    rows = [dict(r) for r in found.mappings()]
     codes = {str(r["code"]) for r in rows}
     level = TerritoryLevel.BARRIO.value
     value_rows = [
@@ -107,7 +116,7 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
         key = (level, str(row["code"]))
         rent = indicators.rent.get(key)
         commute, from_district = borrowed_trips(
-            trips.by_zone, str(row["admin_unit_id"]), str(parent.admin_unit_id)
+            trips.by_zone, str(row["admin_unit_id"]), str(row["parent_admin_unit_id"])
         )
         borrowed += from_district
         zones.append(
@@ -131,17 +140,20 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
         versions,
         [row["computed_at"] for row in value_rows],
         [],
-        barrio_warnings(len(rows), bool(value_rows), borrowed),
+        barrio_warnings(len(rows), bool(value_rows), borrowed, whole_capital=parent is None),
         trips.unresolved,
         dict(trips.versions),
     )
 
 
-def barrio_warnings(barrios: int, indicators: bool, borrowed: int) -> list[str]:
+def barrio_warnings(
+    barrios: int, indicators: bool, borrowed: int, *, whole_capital: bool = False
+) -> list[str]:
     insufficient = ErrorCode.INSUFFICIENT_DATA.value
     warnings: list[str] = []
     if not barrios:  # never an empty answer that looks complete
-        warnings.append(f"{insufficient}: no barrio of this district is in the geography")
+        where = "Madrid capital" if whole_capital else "this district"
+        warnings.append(f"{insufficient}: no barrio of {where} is in the geography")
     elif not indicators:
         warnings.append(
             f"{insufficient}: no indicator by barrio has been computed yet, so every condition "

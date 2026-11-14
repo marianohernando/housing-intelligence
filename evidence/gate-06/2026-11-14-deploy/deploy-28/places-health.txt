@@ -1,0 +1,11 @@
+GET /api/v1/places?category=health, production before (ad4a8f2) and after (f1b6f5a) the deploy, 2026-11-14
+before: 553 places, fields capacity,category,confidence,coordinates,gap_rows,municipio,name,ownership,seccion,subcategory
+after:  553 places, fields capacity,category,confidence,coordinates,dependency,gap_rows,management,municipio,name,ownership,seccion,subcategory
+every other field identical for the 553 places: dependency and management are additive
+hospitals: 85 · dependency privada 50, publica 35 · public with management privada: 5
+public network hospitals run by a company (dependency publica, management privada):
+  Hospital Universitario Fundación Jiménez Díaz · municipio 28079 · 651 camas instaladas
+  Hospital Universitario de Torrejón · municipio 28148 · 250 camas instaladas
+  Hospital general (Móstoles) · municipio 28092 · 362 camas instaladas
+  Hospital General de Villalba · municipio 28047 · 217 camas instaladas
+  Hospital Universitario Infanta Elena · municipio 28161 · 186 camas instaladas

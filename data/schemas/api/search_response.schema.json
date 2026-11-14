@@ -2,12 +2,13 @@
   "$defs": {
     "Anchor": {
       "additionalProperties": false,
-      "description": "A place the household travels to often («Trabajo en»).",
+      "description": "A place the household travels to often: where they work, or family and friends.",
       "properties": {
         "days_per_week": {
           "default": 5,
+          "description": "Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)",
           "maximum": 7,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Days Per Week",
           "type": "integer"
         },
@@ -865,6 +866,11 @@
           "default": 2,
           "title": "Schema Version",
           "type": "integer"
+        },
+        "scope": {
+          "$ref": "#/$defs/SearchScope",
+          "default": "all",
+          "description": "Where to search; Madrid capital is ranked by barrio instead of by district"
         }
       },
       "title": "ScenarioState",
@@ -926,6 +932,17 @@
       ],
       "title": "SearchResult",
       "type": "object"
+    },
+    "SearchScope": {
+      "description": "«Dónde buscar» (D-238): the whole region, or one of its three parts by the statistical\nzoning of the Comunidad de Madrid (data/catalog/zoning/search_scope.yaml).",
+      "enum": [
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos"
+      ],
+      "title": "SearchScope",
+      "type": "string"
     },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",

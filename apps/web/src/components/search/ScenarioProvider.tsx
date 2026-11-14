@@ -6,7 +6,7 @@ import type { ScenarioState } from "@/contracts/scenario_state";
 import type { Relaxation, SearchResult } from "@/contracts/search_response";
 import { ApiError, createApi } from "@/lib/api";
 import { runSearch, SEARCH_ENABLED } from "@/lib/capabilities";
-import { defaultScenario, exampleScenario } from "@/lib/scenario";
+import { defaultScenario, exampleScenario, scopeOf, setScope } from "@/lib/scenario";
 import {
   type Attempt,
   initialSearchState,
@@ -93,7 +93,8 @@ export default function ScenarioProvider({ children }: { children: ReactNode }) 
   const search = useCallback(() => void send((s, id) => plainAttempt(s, id)), [send]);
   const retry = useCallback(() => void send(retryAttempt), [send]);
   const applyRelaxation = useCallback(
-    (r: Relaxation) => void send((s, id) => relaxAttempt(s, id, r.label, r.relaxed_scenario)),
+    // The API echoes `scope: "all"`; the web leaves it out, as «Toda la Comunidad» does (D-238)
+    (r: Relaxation) => void send((s, id) => relaxAttempt(s, id, r.label, setScope(r.relaxed_scenario, scopeOf(r.relaxed_scenario)))),
     [send],
   );
   const undoRelaxation = useCallback(() => void send(undoAttempt), [send]);

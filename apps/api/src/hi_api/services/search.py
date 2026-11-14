@@ -1,6 +1,7 @@
 """People search (CORE-003, POST /api/v1/search): loads the zones and the indicators bound to
 the search in the Feature Dictionary (`fit`), and the «Qué falta aquí» highlights from the
 same rows as GET /gaps; hi_domain.search decides. Parameterised SQL only, no feature id here.
+The entry point is hi_api.services.scope.search, which also ranks Madrid capital by barrio.
 """
 
 import logging
@@ -27,6 +28,7 @@ from hi_contracts.public import (
 )
 from hi_domain.fit import FIT_VERSION, ZoneData
 from hi_domain.geo.names import display_name
+from hi_domain.geo.scope import in_scope
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
 
 log = logging.getLogger(__name__)
@@ -171,7 +173,11 @@ def _highlights(
 
 def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     split = list(SPLIT_BY_DISTRICT)
-    zone_rows = [dict(r) for r in conn.execute(_ZONES, {"split": split}).mappings()]
+    zone_rows = [
+        dict(r)
+        for r in conn.execute(_ZONES, {"split": split}).mappings()
+        if in_scope(r["code"], scenario.scope)
+    ]
     levels = [level.value for level in LEVELS]
     value_rows = [dict(r) for r in conn.execute(FIT_VALUES, {"levels": levels}).mappings()]
     indicators = indicators_by_zone(value_rows)
@@ -222,15 +228,17 @@ def load_warnings(loaded: Loaded) -> list[str]:
     ]
 
 
-def search(conn: Connection, scenario: ScenarioState) -> tuple[SearchResult, list[str], str | None]:
-    """The result, warnings and the data version (latest computation of the values used)."""
-    loaded = load(conn, scenario)
+def answer(
+    conn: Connection, scenario: ScenarioState, loaded: Loaded, zones_word: str = "zones"
+) -> tuple[SearchResult, list[str], str | None]:
+    """The result, warnings and the data version (latest computation of the values used) of
+    the search over the loaded zones."""
     outcome = run_search(scenario, loaded.zones)
     warnings = load_warnings(loaded)
     if outcome.unscored_passing:
         warnings.append(
-            f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} zones pass every "
-            "condition but have no data for any chosen priority; they are only in all_zones"
+            f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} {zones_word} pass "
+            "every condition but have no data for any chosen priority; they are only in all_zones"
         )
     result = SearchResult(
         scenario=scenario,

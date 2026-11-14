@@ -10,7 +10,7 @@ from hi_api.services.datasets import METHODOLOGY_VERSION as DATASETS_VERSION
 from hi_api.services.datasets import dataset_list
 from hi_api.services.explanation import explain_zone
 from hi_api.services.gaps import zone_gap_list
-from hi_api.services.search import search
+from hi_api.services.scope import search
 from hi_api.services.zones import LOOKUP_VERSION, find_zones
 from hi_contracts.api.envelope import ErrorCode, Meta
 from hi_contracts.catalog.enums import TerritoryLevel

@@ -10,7 +10,7 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import { errorMessage } from "@/lib/errors";
 import { fitsButShortText, gapsHref, GROUP, inGroup, notComparable, topRows, walking, walkingText } from "@/lib/gaps";
-import { type ZoneProperties, zoneHref } from "@/lib/map/zones";
+import { screenZone, type ZoneProperties, zoneHref, zoneTitle } from "@/lib/map/zones";
 
 import FitDetails from "./FitDetails";
 import GapBadge from "./GapBadge";
@@ -33,6 +33,11 @@ const TEXT = {
   retry: "Reintentar",
   open: "Ver la zona",
   all: "Ver todo lo que falta",
+  // A barrio of a search over Madrid capital (D-238): its «Qué falta» and screen are its district's
+  barrio: (city: string) => `Barrio de ${city}`, // zona.barrio.antetitulo
+  barrioMissing: (district: string) => `Qué falta en ${district}`, // zona.barrio.falta.titulo
+  barrioMissingHelp: "Las cifras de «Qué falta» son del distrito entero.", // zona.barrio.falta.ayuda
+  openDistrict: "Ver el distrito", // zona.barrio.boton
 };
 
 interface Props {
@@ -47,19 +52,24 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   const { level, code, name, municipio_name, zone_key } = zone;
   const titleId = useId();
   const { result, available, stale } = useScenario();
-  const gaps = useZoneGaps(level, code);
+  const isBarrio = level === "barrio";
+  const gapsOf = screenZone(zone);
+  const gaps = useZoneGaps(gapsOf.level, gapsOf.code);
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
   const pct = match?.match_pct;
   const rows = gaps.data?.data.rows ?? [];
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
-  // every such row of the API, also those beyond the three the card shows
-  const fitsButShort = pct != null && match?.passes_all ? fitsButShortText(rows) : null;
+  // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
+  // rows are the whole district's, and the line says «aquí»
+  const fitsButShort = pct != null && match?.passes_all && !isBarrio ? fitsButShortText(rows) : null;
+  const eyebrow = isBarrio ? TEXT.barrio(municipio_name) : level === "distrito" ? `Distrito de ${municipio_name}` : TEXT.municipio;
+  const missingTitle = isBarrio ? TEXT.barrioMissing(zone.district_name ?? municipio_name) : TEXT.missing;
 
   return (
     <GlassCard as="aside" aria-labelledby={titleId} className={styles.card}>
       <div className={styles.head}>
-        <p className={styles.eyebrow}>{level === "distrito" ? `Distrito de ${municipio_name}` : TEXT.municipio}</p>
+        <p className={styles.eyebrow}>{eyebrow}</p>
         {onClose && (
           <button type="button" className={styles.close} aria-label={TEXT.close} onClick={onClose}>
             <X size={20} aria-hidden="true" />
@@ -68,7 +78,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
       </div>
       <div className={styles.titleRow}>
         <h2 id={titleId} className={styles.name}>
-          {name}
+          {zoneTitle(zone)}
         </h2>
         {pct != null && (
           <span className={styles.pct} title={TEXT.fitHelp}>
@@ -83,11 +93,12 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
       {result ? <FitDetails result={result} zoneKey={zone_key} /> : <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
-        <h3 id={`${titleId}-missing`}>{TEXT.missing}</h3>
+        <h3 id={`${titleId}-missing`}>{missingTitle}</h3>
+        {isBarrio && <p className={styles.hint}>{TEXT.barrioMissingHelp}</p>}
         {fitsButShort && <p className={styles.fitsButShort}>{fitsButShort}</p>}
         {gaps.loading && (
           <p role="status" className={styles.hint}>
-            Calculando qué falta en {name}…{slow && ` ${SLOW_TEXT}`}
+            Calculando qué falta en {isBarrio ? (zone.district_name ?? name) : name}…{slow && ` ${SLOW_TEXT}`}
           </p>
         )}
         {gaps.error && (
@@ -121,19 +132,19 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && <PendingRows warnings={gaps.data.warnings} className={styles.pending} />}
         {gaps.data && mode === "overview" && (
-          <Link href={gapsHref(level, code)} className={styles.all}>
+          <Link href={gapsHref(gapsOf.level, gapsOf.code)} className={styles.all}>
             {TEXT.all}
           </Link>
         )}
       </section>
 
       {mode === "overview" ? (
-        <Button href={zoneHref(zone)} className={styles.action}>
-          {TEXT.open}
+        <Button href={zoneHref(gapsOf)} className={styles.action}>
+          {isBarrio ? TEXT.openDistrict : TEXT.open}
           <ArrowRight size={20} aria-hidden="true" />
         </Button>
       ) : (
-        <Button href={gapsHref(level, code)} variant="secondary" className={styles.action}>
+        <Button href={gapsHref(gapsOf.level, gapsOf.code)} variant="secondary" className={styles.action}>
           {TEXT.all}
           <ArrowRight size={20} aria-hidden="true" />
         </Button>
