@@ -422,11 +422,12 @@ export default function VidaMap() {
   const fitAria = byBarrio(result) ? TEXT.ariaFitBarrios : TEXT.ariaFit;
   const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : fitAria;
   // The zone's facilities of the types pressed in «Todos los centros» (several at once), or none
+  // A leisure type counts once its own request answers (D-236): before, it is not «none»
   const facilityList = useMemo(
-    () => (activeZone && facilities.types.length && facilities.groups ? selectedFacilities(facilities.groups, facilities.types) : null),
-    [activeZone, facilities.types, facilities.groups],
+    () => (activeZone && facilities.readyTypes.length && facilities.groups ? selectedFacilities(facilities.groups, facilities.readyTypes) : null),
+    [activeZone, facilities.readyTypes, facilities.groups],
   );
-  const facilityCount = activeZone && facilities.groups ? selectedCountText(facilities.groups, facilities.types, activeZone.properties.name, { empty: false }) : null;
+  const facilityCount = activeZone && facilities.groups ? selectedCountText(facilities.groups, facilities.readyTypes, activeZone.properties.name, { empty: false }) : null;
   const facilityAria = facilityCount ? TEXT.ariaFacilities(facilityCount) : null;
   const mapAria = [TEXT.aria, paintedAria, facilityAria].filter(Boolean).join(" ");
   const slow = useSlow(status === "loading");

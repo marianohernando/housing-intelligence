@@ -30,6 +30,7 @@ from hi_contracts.public import (
     ScenarioState,
     ZoneRef,
 )
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_domain.affordability import (
     PURCHASE_ESTIMATE_NOTE,
     PURCHASE_MISSING_IN_CITY,
@@ -46,8 +47,9 @@ from hi_domain.gaps import es_number
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
 # leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
 # trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8: a
-# trip made 1-2 days a week weighs half and one never made is not scored (D-240), and buying
-# inside Madrid with an estimated price, said as such (D-234): one version for the whole batch
+# trip made 1-2 days a week weighs half and one never made is not scored (D-240), buying
+# inside Madrid with an estimated price, said as such (D-234), and leisure, scored only when
+# «Ocio» is chosen (D-236): one version for the whole batch
 FIT_VERSION = "fit-0.8"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
@@ -57,6 +59,10 @@ DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.FARMACIA: 10,
     NeedKey.MAYORES: 10,
     NeedKey.TRANSPORTE: 5,
+    NeedKey.BARES: 10,
+    NeedKey.RESTAURANTES: 10,
+    NeedKey.GIMNASIOS: 10,
+    NeedKey.CULTURA: 10,
 }
 WALK_ZERO_AT = 3.0  # utility falls linearly to 0 at three times the window
 NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 0 from 20 km
@@ -77,6 +83,13 @@ NEED_TEXT: dict[NeedKey, tuple[str, str]] = {  # (fact label, «de …» in a se
     NeedKey.FARMACIA: ("Farmacia", "una farmacia"),
     NeedKey.MAYORES: ("Centro de mayores", "un centro de mayores"),
     NeedKey.TRANSPORTE: ("Parada de transporte público", "una parada de transporte público"),
+    NeedKey.BARES: ("Bares y cafeterías", "un bar o una cafetería"),
+    NeedKey.RESTAURANTES: ("Restaurantes", "un restaurante"),
+    NeedKey.GIMNASIOS: ("Gimnasios y deporte", "un gimnasio o un centro deportivo"),
+    NeedKey.CULTURA: (
+        "Cultura",
+        "un museo, una biblioteca, un teatro, un cine o un centro cultural",
+    ),
 }
 NEED_TOPIC: dict[NeedKey, FactTopic] = {
     NeedKey.ESCUELA_INFANTIL: FactTopic.COLEGIOS,
@@ -85,6 +98,10 @@ NEED_TOPIC: dict[NeedKey, FactTopic] = {
     NeedKey.FARMACIA: FactTopic.SALUD,
     NeedKey.MAYORES: FactTopic.OTRO,
     NeedKey.TRANSPORTE: FactTopic.TRANSPORTE,
+    NeedKey.BARES: FactTopic.OCIO,
+    NeedKey.RESTAURANTES: FactTopic.OCIO,
+    NeedKey.GIMNASIOS: FactTopic.OCIO,
+    NeedKey.CULTURA: FactTopic.OCIO,
 }
 PRIORITY_NEED: dict[PriorityKey, NeedKey] = {
     PriorityKey.TRANSPORTE: NeedKey.TRANSPORTE,
@@ -135,8 +152,16 @@ NO_DATA_PRIORITY: dict[PriorityKey, tuple[FactTopic, str]] = {
         "cada zona)",
     ),
 }
-# D-239: what breaks an exact tie of the fit, every service measured on foot (marked or not).
-EVERYDAY_NEEDS = tuple(NeedKey)
+# D-239: what breaks an exact tie of the fit, the six everyday services measured on foot (marked
+# or not). Never the leisure groups (D-236): they only count when the person marks «Ocio».
+EVERYDAY_NEEDS = (
+    NeedKey.ESCUELA_INFANTIL,
+    NeedKey.COLEGIO,
+    NeedKey.CENTRO_SALUD,
+    NeedKey.FARMACIA,
+    NeedKey.MAYORES,
+    NeedKey.TRANSPORTE,
+)
 CONTEXT_NEEDS = (NeedKey.TRANSPORTE, NeedKey.CENTRO_SALUD, NeedKey.COLEGIO, NeedKey.FARMACIA)
 MIN_FACTS, MAX_FACTS = 3, 5
 
@@ -282,12 +307,42 @@ def days_weight(anchor: Anchor) -> float:
     return FEW_DAYS_WEIGHT if anchor.days_per_week <= FEW_DAYS_PER_WEEK else 1.0
 
 
+def leisure_needs(scenario: ScenarioState) -> list[NearbyNeed]:
+    """The leisure groups the person ticked under «Ocio», in the order of its configurator."""
+    chosen = {n.need: n for n in scenario.nearby}
+    return [chosen[need] for need in LEISURE_NEEDS if need in chosen]
+
+
+def ignored_leisure(scenario: ScenarioState) -> list[NeedKey]:
+    """Leisure groups in `nearby` without the priority «ocio», as the API or the MCP may send
+    them (D-236): never a criterion nor a condition (`required` is True by default, so they would
+    filter). The API says so in a warning."""
+    if PriorityKey.OCIO in scenario.priorities:
+        return []
+    return [n.need for n in scenario.nearby if n.need in LEISURE_NEEDS]
+
+
+def counted_nearby(scenario: ScenarioState) -> list[NearbyNeed]:
+    """`nearby` as the search reads it: without the ignored leisure groups."""
+    ignored = set(ignored_leisure(scenario))
+    return [n for n in scenario.nearby if n.need not in ignored]
+
+
 def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
-    """The person's criteria in order of importance, before weighting."""
+    """The person's criteria in order of importance, before weighting. «Ocio» is one criterion
+    for all its groups (D-236), so four boxes never outweigh the other priorities; without a
+    group there is nothing to measure and it adds no criterion."""
     keys: list[Criterion] = []
     covered: set[NeedKey] = set()
-    windows = {n.need: n.max_walk_minutes for n in scenario.nearby}
+    nearby_counted = counted_nearby(scenario)
+    windows = {n.need: n.max_walk_minutes for n in nearby_counted}
     for priority in scenario.priorities:
+        if priority is PriorityKey.OCIO:
+            groups = leisure_needs(scenario)
+            covered.update(n.need for n in groups)
+            if groups:
+                keys.append(Criterion(f"priority:{priority.value}", 0.0, priority=priority))
+            continue
         need = PRIORITY_NEED.get(priority)
         if need is None:
             keys.append(Criterion(f"priority:{priority.value}", 0.0, priority=priority))
@@ -298,7 +353,7 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
     for i, anchor in enumerate(scenario.anchors):
         if counts(anchor):
             keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
-    for nearby in scenario.nearby:  # a wished service not already among the priorities
+    for nearby in nearby_counted:  # a wished service not already among the priorities
         if not nearby.required and nearby.need not in covered:
             target = nearby.max_walk_minutes
             keys.append(Criterion(f"need:{nearby.need.value}", 0.0, nearby.need, target))
@@ -414,7 +469,7 @@ def constraint_checks(
                 purchase_missing(data),
             )
         )
-    for nearby in scenario.nearby:
+    for nearby in counted_nearby(scenario):
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
     for i, anchor in enumerate(scenario.anchors):
@@ -503,6 +558,59 @@ def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> S
         indicator=shown_indicator,
     )
     return Score(utility, confidence, fact)
+
+
+@dataclass(frozen=True)
+class LeisureGroup:
+    """One group of «Ocio» in a zone: how the fact says it and, with data, its score."""
+
+    text: str
+    walk: IndicatorValue | None = None  # None: no data
+    utility: float = 0.0
+    confidence: float = 0.0
+    near: bool = False  # within the minutes the person asked for
+
+
+def leisure_group(nearby: NearbyNeed, walk: IndicatorValue | None) -> LeisureGroup:
+    """Beyond the walking range a group scores 0 with low confidence: in OpenStreetMap the
+    place may exist and not be mapped (D-236)."""
+    name = NEED_TEXT[nearby.need][0].lower()
+    if walk is None or walk.value is None:
+        return LeisureGroup(f"{name}: sin datos")
+    target = nearby.max_walk_minutes
+    out_of_range = walk.value > WALK_ZERO_AT * target
+    return LeisureGroup(
+        text=f"{name} a {about_minutes(walk.value)}",
+        walk=walk,
+        utility=walk_utility(walk.value, target),
+        confidence=min(walk.confidence, OUT_OF_RANGE_CONFIDENCE)
+        if out_of_range
+        else walk.confidence,
+        near=walk.value <= target,
+    )
+
+
+def leisure_fact(groups: Sequence[NearbyNeed], walk: Mapping[NeedKey, IndicatorValue]) -> Score:
+    """«Ocio» (D-236): the mean utility of the ticked groups that have data, each against its
+    own minutes, in one fact («Ocio a pie: bares y cafeterías a unos 3 min, gimnasios a unos
+    12 min»). A group without data lowers the confidence, never the score nor the kind: a strength
+    when every group with data is within its minutes; the indicator is the farthest group's."""
+    parts = [leisure_group(n, walk.get(n.need)) for n in groups]
+    known = [g for g in parts if g.walk is not None]
+    if not known:
+        text = "Ocio: sin datos de distancia a pie en esta zona"
+        fact = Fact(kind=FactKind.UNKNOWN, topic=FactTopic.OCIO, text=text, confidence=0.0)
+        return Score(None, 0.0, fact)
+    confidence = round(sum(g.confidence for g in known) / len(parts), 3)
+    farthest = max(known, key=lambda g: (g.walk and g.walk.value) or 0.0)
+    fact = Fact(
+        kind=FactKind.STRENGTH if all(g.near for g in known) else FactKind.WEAKNESS,
+        topic=FactTopic.OCIO,
+        text="Ocio a pie: " + ", ".join(g.text for g in parts),
+        confidence=confidence,
+        indicator=farthest.walk,
+    )
+    return Score(sum(g.utility for g in known) / len(known), confidence, fact)
 
 
 def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:
@@ -615,6 +723,8 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
     if criterion.anchor is not None:
         trip = None if criterion.anchor_index is None else data.commute.get(criterion.anchor_index)
         return work_fact(criterion.anchor, data, trip)
+    if criterion.priority is PriorityKey.OCIO:
+        return leisure_fact(leisure_needs(scenario), data.walk)
     if criterion.priority is not None:
         measured = PRIORITY_WALK.get(criterion.priority)
         if measured is not None:
