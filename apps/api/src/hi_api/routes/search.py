@@ -9,7 +9,7 @@ from sqlalchemy import Engine
 from hi_api.deps import get_engine
 from hi_api.services.barrios import search_barrios
 from hi_api.services.gaps import ZoneNotFoundError
-from hi_api.services.search import search
+from hi_api.services.scope import search
 from hi_contracts.api.envelope import ErrorCode, Meta
 from hi_contracts.public import BarrioSearchRequest, ScenarioState
 from hi_contracts.public.responses import BarrioSearchResponse, SearchResponse
