@@ -1,0 +1,5 @@
+Supabase before the sync (supabase-datamad MCP, read only), 2026-11-14T12:48:54Z
+  feature_registry rows                  47
+  feature_registry min_a_pie_bus/metro   0
+  feature_value rows                     85032
+  feature_value min_a_pie_bus/metro      0
