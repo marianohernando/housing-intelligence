@@ -23,7 +23,7 @@
       "passed": true,
       "details": {
         "max_db": {
-          "lden": 88.8,
+          "ld": 86.84,
           "ln": 81.1
         },
         "limit": 110.0
@@ -35,7 +35,7 @@
       "passed": true,
       "details": {
         "cells_with_level": {
-          "lden": 13209982,
+          "ld": 13209994,
           "ln": 13206258
         },
         "min": 6000000

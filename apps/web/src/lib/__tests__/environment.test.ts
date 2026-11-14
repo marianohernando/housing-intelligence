@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { airText, ENVIRONMENT_FEATURES, environmentFacts, noiseText, parkAndRideText, parkingText } from "../environment";
+import { airText, ENVIRONMENT_FEATURES, ENVIRONMENT_METHOD, ENVIRONMENT_TEXT, environmentFacts, noiseText, parkAndRideText, parkingText } from "../environment";
 import type { FeatureValueRow } from "../features";
 import type { Facility } from "../map/facilities";
 
@@ -13,12 +13,12 @@ function park(id: string, name: string, spaces: number | null, fee: Facility["fe
   return { id, type: "aparcamiento", label: "Aparcamiento disuasorio", name, detail: null, source: null, dependency: null, lon: 0, lat: 0, spaces, fee };
 }
 
-const ALARM = /peligr|alarm|grave|malo|tóxic|nociv|insalubre/i;
+const ALARM = /peligr|alarm|grave|malo|tóxic|nociv|insalubre|medid/i;
 
 describe("noiseText (zona.entorno.ruido)", () => {
   it("says the share of street above the limits by day and by night, with the map", () => {
     expect(noiseText(row("2807901", 38.14), row("2807901", 48.1))).toBe(
-      "Calles con ruido alto: 38\u00a0% de día, 48\u00a0% de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)",
+      "Calles con ruido alto: 38\u00a0% de las calles de día, 48\u00a0% de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)",
     );
   });
 
@@ -30,15 +30,17 @@ describe("noiseText (zona.entorno.ruido)", () => {
 });
 
 describe("airText (zona.entorno.aire)", () => {
-  it("names the zone's own station and the EU limit for 2030", () => {
-    const getafe = row("28065", 25.6, { station: "Getafe", station_code: "28065014", own: true, distance_km: 1 });
-    expect(airText(getafe)).toBe("Aire: NO₂ medio 2025, 25,6 µg/m³ en la estación de Getafe (límite UE 2030: 20)");
+  it("names the zone's own station, says when it is a traffic one, and the EU limits (R-08)", () => {
+    const getafe = row("28065", 25.6, { station: "Getafe", station_code: "28065014", own: true, distance_km: 1, traffic: true });
+    expect(airText(getafe)).toBe("Aire: NO₂ medio 2025, 25,6 µg/m³ en la estación de tráfico de Getafe (límite UE: 40; 20 desde 2030)");
+    const centro = row("2807901", 23.5, { station: "Plaza del Carmen", own: true, distance_km: 0.2, traffic: false });
+    expect(airText(centro)).toBe("Aire: NO₂ medio 2025, 23,5 µg/m³ en la estación de Plaza del Carmen (límite UE: 40; 20 desde 2030)");
   });
 
   it("says when the station is another zone's, and how far", () => {
     const boadilla = row("28022", 14.63, { station: "Majadahonda", station_code: "28080003", own: false, distance_km: 3.5 });
     expect(airText(boadilla)).toBe(
-      "Aire: NO₂ medio 2025, 14,6 µg/m³ en la estación de Majadahonda, la más cercana de su zona de calidad del aire, a 3,5 km (límite UE 2030: 20)",
+      "Aire: NO₂ medio 2025, 14,6 µg/m³ en la estación de Majadahonda, la más cercana de su zona de calidad del aire, a 3,5 km (límite UE: 40; 20 desde 2030)",
     );
   });
 
@@ -88,5 +90,16 @@ describe("environmentFacts", () => {
     expect(environmentFacts("28999", rows, [], "Ninguno")).toBeNull();
     const facts = environmentFacts("2807901", rows, [], "Centro");
     expect(Object.values(facts ?? {}).join(" ")).not.toMatch(ALARM);
+  });
+});
+
+describe("how the noise is explained (R-07 of PR #65)", () => {
+  it("says it is calculated in the street, not at the façade, and not the share of neighbours", () => {
+    for (const text of [ENVIRONMENT_TEXT.noiseHint, ENVIRONMENT_METHOD.text]) {
+      expect(text).toContain("calcula");
+      expect(text).toContain("no en la fachada");
+      expect(text).toContain("porcentaje de vecinos expuestos");
+      expect(text).not.toMatch(/medid/i);
+    }
   });
 });

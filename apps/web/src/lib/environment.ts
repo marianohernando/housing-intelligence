@@ -19,7 +19,8 @@ export const ENVIRONMENT_FEATURES = {
 export type EnvironmentFeature = (typeof ENVIRONMENT_FEATURES)[keyof typeof ENVIRONMENT_FEATURES];
 export type EnvironmentRows = Partial<Record<EnvironmentFeature, readonly FeatureValueRow[]>>;
 
-/** Annual NO₂ limit of the EU from 2030 (Directive (EU) 2024/2881), µg/m³. */
+/** Annual NO₂ limits of the EU, µg/m³: today's (Directive 2008/50/EC) and from 2030 (Directive (EU) 2024/2881). */
+export const EU_NO2_LIMIT = 40;
 export const EU_NO2_LIMIT_2030 = 20;
 /** Further than this on foot, a car park is not «near» and the minutes are not said. */
 export const PARKING_MAX_MINUTES = 30;
@@ -28,7 +29,8 @@ export const ENVIRONMENT_TEXT = {
   title: "Entorno",
   context: "Datos de contexto: no cuentan en el encaje ni en «Qué falta».",
   noiseSource: "Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid",
-  noiseHint: "Ruido del tráfico medido en la propia calle: más de 65 dB de día o de 55 dB de noche, los objetivos de calidad acústica de las zonas residenciales.",
+  noiseHint:
+    "Ruido del tráfico calculado por el Ayuntamiento en la propia calle, no en la fachada de las casas: no es el porcentaje de vecinos expuestos. Cuenta la calle por encima de 65 dB de día o de 55 dB de noche, los objetivos de calidad acústica de las zonas residenciales.",
   noData: "sin dato publicado",
   airSource: "Redes de calidad del aire de la Comunidad de Madrid y del Ayuntamiento de Madrid, horas válidas del año.",
   parkingSource:
@@ -43,16 +45,17 @@ export function latestValue(rows: readonly FeatureValueRow[] | undefined, code: 
 
 const pct = (value: number) => formatNumber(Math.round(value), 0);
 
-/** «Calles con ruido alto: 38 % de día, 48 % de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)». */
+/** «Calles con ruido alto: 20 % de las calles de día, 39 % de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)». */
 export function noiseText(day: FeatureValueRow | null, night: FeatureValueRow | null): string {
   if (day?.value == null || night?.value == null) return `Calles con ruido alto: ${ENVIRONMENT_TEXT.noData}`;
   // A no-break space keeps «29 %» on one line
-  return `Calles con ruido alto: ${pct(day.value)}\u00a0% de día, ${pct(night.value)}\u00a0% de noche (${ENVIRONMENT_TEXT.noiseSource})`;
+  return `Calles con ruido alto: ${pct(day.value)}\u00a0% de las calles de día, ${pct(night.value)}\u00a0% de noche (${ENVIRONMENT_TEXT.noiseSource})`;
 }
 
 interface StationDetail {
   station: string;
   own: boolean;
+  traffic: boolean;
   distanceKm: number | null;
 }
 
@@ -60,22 +63,22 @@ function stationOf(row: FeatureValueRow): StationDetail | null {
   const detail = row.detail;
   if (!detail || typeof detail.station !== "string") return null;
   const distance = typeof detail.distance_km === "number" ? detail.distance_km : null;
-  return { station: detail.station, own: detail.own === true, distanceKm: distance };
+  return { station: detail.station, own: detail.own === true, traffic: detail.traffic === true, distanceKm: distance };
 }
 
 /**
- * «Aire: NO₂ medio 2025, 25,6 µg/m³ en la estación de Getafe (límite UE 2030: 20)». A zone
- * without a station of its own says which one it takes and how far it is; the value never goes
- * without its station.
+ * «Aire: NO₂ medio 2025, 21,2 µg/m³ en la estación de Méndez Álvaro, … (límite UE: 40; 20 desde
+ * 2030)». A traffic station says so («la estación de tráfico de Getafe»); a zone without a station
+ * of its own says which one it takes and how far it is; the value never goes without its station.
  */
 export function airText(row: FeatureValueRow | null): string {
   const station = row ? stationOf(row) : null;
   if (!row || row.value === null || !station) return `Aire: ${ENVIRONMENT_TEXT.noData}`;
   const year = row.period_start.slice(0, 4);
-  const where = station.own
-    ? `en la estación de ${station.station}`
-    : `en la estación de ${station.station}, la más cercana de su zona de calidad del aire${station.distanceKm === null ? "" : `, a ${formatNumber(station.distanceKm, 1)} km`}`;
-  return `Aire: NO₂ medio ${year}, ${formatNumber(row.value, 1)} µg/m³ ${where} (límite UE 2030: ${EU_NO2_LIMIT_2030})`;
+  const kind = station.traffic ? "la estación de tráfico de" : "la estación de";
+  const far = station.distanceKm === null ? "" : `, a ${formatNumber(station.distanceKm, 1)} km`;
+  const where = station.own ? `en ${kind} ${station.station}` : `en ${kind} ${station.station}, la más cercana de su zona de calidad del aire${far}`;
+  return `Aire: NO₂ medio ${year}, ${formatNumber(row.value, 1)} µg/m³ ${where} (límite UE: ${EU_NO2_LIMIT}; ${EU_NO2_LIMIT_2030} desde 2030)`;
 }
 
 /** «Aparcamiento público a unos 12 min andando»; past 30 min, that none of the published ones is near. */
@@ -137,3 +140,10 @@ export function environmentFacts(code: string, rows: EnvironmentRows, parks: rea
     parkAndRide,
   };
 }
+
+/** «Cómo lo calculamos» (R-07 of PR #65): what «Entorno» is, in the same words as the block. */
+export const ENVIRONMENT_METHOD = {
+  lead: "Entorno (ruido, aire y aparcamientos), solo como contexto:",
+  text:
+    "el ruido es el del tráfico que calcula el Ayuntamiento de Madrid en su Mapa Estratégico de Ruido de 2021, leído cada 10 metros a lo largo de las calles donde vive la gente; contamos la calle por encima de 65 dB de día y de 55 dB de noche, los objetivos de calidad acústica de las zonas residenciales. Es el nivel en la calle, no en la fachada de las casas, así que no es el porcentaje de vecinos expuestos: ese lo calcula el Ayuntamiento en las fachadas y es mucho menor. Solo existe para Madrid capital. El aire es la media de dióxido de nitrógeno de 2025 en una estación de las redes de la Comunidad y del Ayuntamiento: la de la zona o, si no tiene, la más cercana de su zona de calidad del aire, una de fondo antes que una de tráfico; decimos siempre cuál es. Los aparcamientos son solo los que se publican en abierto, y lo fácil que es aparcar en la calle no tiene dato abierto. Nada de esto cuenta en el encaje ni en «Qué falta».",
+} as const;

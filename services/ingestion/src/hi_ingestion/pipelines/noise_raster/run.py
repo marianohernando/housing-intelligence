@@ -15,7 +15,8 @@ from hi_ingestion.pipelines.noise_raster.parse import parse_rasters
 from hi_ingestion.pipelines.noise_raster.quality import run_noise_quality
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "noise-raster-1.0.0"
+# 1.1: the layers are read from the pipeline spec again (Ld instead of Lden, R-02 of PR #65)
+PARSER_VERSION = "noise-raster-1.1.0"
 
 
 def _counts(result: NoiseResult) -> dict[str, Any]:

@@ -7,12 +7,12 @@
       "sha256": "de513ea3e91e22268dac20c10d255ce062600ceca416f2e51822c7918c7eaa41",
       "bytes": 8000,
       "url": "https://opendata.arcgis.com/api/v3/datasets/2a2b8fcbd4fc4115a57519ef1587b011_0/downloads/data?format=csv&spatialRefId=4326",
-      "retrieved_at": "2026-11-14T18:36:46.485281+00:00"
+      "retrieved_at": "2026-11-14T22:47:24.092383+00:00"
     }
   ],
   "checksum": "dd011ca20087d17ca58872406b5ac24625cd3943759daef539a48ece26387a3a",
-  "parser_version": "places-1.8.0",
+  "parser_version": "places-1.8.1",
   "dataset_version": "2026-11-14-dd011ca20087",
-  "correlation_id": "467493fd229c45fdac8a462a5cfc3669",
+  "correlation_id": "43a255ff86254baf9100a3ffffae5ad4",
   "silver": "data/silver/crtm_aparcamientos_disuasion/dd011ca20087/places.csv.gz"
 }

@@ -143,11 +143,11 @@ def test_levels_that_are_not_decibels_or_an_empty_map_fail(archive: Path) -> Non
         assert not run_noise_quality(result, spec).passed
 
 
-def test_the_madrid_map_keeps_lden_and_night() -> None:
+def test_the_madrid_map_keeps_day_and_night() -> None:
     catalog = load_catalog()
     spec = catalog.pipelines["ayto_mapa_estrategico_ruido_2021"]
     assert isinstance(spec, NoiseRasterPipeline)
-    assert spec.layers == {"lden": "Madrid_Lden_2021.tif", "ln": "Madrid_Ln_2021.tif"}
+    assert spec.layers == {"ld": "Madrid_Ld_2021.tif", "ln": "Madrid_Ln_2021.tif"}  # R-02
     assert (spec.crs, spec.pixel_m, spec.reference_year) == ("EPSG:25830", 5.0, 2021)
     dataset = catalog.datasets[spec.dataset_id]
     assert catalog.sources[dataset.source_id].license_status.value == "CLEAR"

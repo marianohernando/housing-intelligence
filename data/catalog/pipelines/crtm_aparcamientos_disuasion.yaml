@@ -9,10 +9,8 @@ csv: {separator: ","}
 id_column: FID
 name_template: "Aparcamiento disuasorio {EMPLAZAMIENTO}"
 subcategory_value: Aparcamiento disuasorio
-# Published by the Ayuntamiento de Madrid too (ayto_aparcamientos_publicos): Aviación Española
-# and Estadio Metropolitano, at 12 m and 126 m of the municipal ones.
-exclude_patterns:
-  EMPLAZAMIENTO: ['^Aviación Española$', '^Estadio Metropolitano$']
+# Aviación Española and Estadio Metropolitano are published by the Ayuntamiento de Madrid too:
+# these rows are kept, with their spaces and fee, and the municipal ones left out (R-10).
 x_column: X
 y_column: Y
 crs: EPSG:4326

@@ -5,8 +5,10 @@ from datetime import date
 
 import numpy as np
 import pandas as pd
+import pytest
 
-from hi_features import methods
+from hi_domain.access.graph import WalkNetwork
+from hi_features import methods, noise
 from hi_ingestion.catalog.loader import load_catalog
 
 Y = date(2021, 1, 1)
@@ -77,21 +79,51 @@ def test_more_noise_never_lowers_the_share() -> None:
 
 
 def test_street_noise_is_context_for_madrid_only() -> None:
-    """D-237: above 65 dB Lden and 55 dB Ln (RD 1367/2007's objectives for residential areas), on
-    the same streets as the walking features, only inside the municipio of Madrid; never scores."""
+    """D-237: above 65 dB Ld and 55 dB Ln (RD 1367/2007's day and night objectives for residential
+    areas, R-02), read every 10 m along the same streets as the walking features (R-03), only
+    inside the municipio of Madrid; never scores."""
     catalog = load_catalog()
     walk = catalog.features["min_a_pie_parque"].formula.model_extra or {}
     for feature_id, layer, above in (
-        ("pct_calle_ruido_dia", "lden", 65),
+        ("pct_calle_ruido_dia", "ld", 65),
         ("pct_calle_ruido_noche", "ln", 55),
     ):
         spec = catalog.features[feature_id]
         formula = spec.formula.model_extra or {}
         assert spec.fit is None and spec.gap_row is None and not spec.models
         assert (formula["layer"], formula["above"]) == (layer, above)
-        assert formula["coverage_prefix"] == "28079"
+        assert formula["coverage_prefix"] == "28079" and formula["sample_step_m"] == 10
         assert formula["origin_highways"] == walk["origin_highways"]
         assert set(formula["levels"]) == {"distrito", "barrio"}
         assert spec.null_policy.no_coverage == "unknown"
         pipeline = catalog.pipelines[formula["raster_dataset"]]
         assert pipeline.kind == "noise_raster" and layer in pipeline.layers
+
+
+def _network() -> WalkNetwork:
+    """FIXTURE: a residential street of 25 m (A-B), a footway of 30 m (B-C, not an origin) and a
+    residential street of 4 m (C-D) whose end D lies in another section."""
+    return WalkNetwork(
+        node_id=np.arange(4, dtype=np.int64),
+        node_x=np.array([0.0, 25.0, 55.0, 59.0]),
+        node_y=np.zeros(4),
+        edge_u=np.array([0, 1, 2], dtype=np.int64),
+        edge_v=np.array([1, 2, 3], dtype=np.int64),
+        edge_length_m=np.array([25.0, 30.0, 4.0]),
+        edge_highway=np.array([0, 1, 0], dtype=np.int64),
+        highways=("residential", "footway"),
+    )
+
+
+def test_streets_are_read_along_each_segment_not_at_the_crossings() -> None:
+    """R-03 of PR #65: every 10 m at most, each piece weighing its share of `edge_length_m`."""
+    sections = np.array(["S1", "S1", "S1", "S2"])
+    samples = noise.street_samples(_network(), ["residential"], sections, 10.0)
+    # 3 pieces of A-B, 1 of C-D
+    assert samples.x.tolist() == pytest.approx([25 / 6, 12.5, 125 / 6, 57.0])
+    assert samples.weight.tolist() == pytest.approx([25 / 3, 25 / 3, 25 / 3, 4.0])
+    assert samples.weight.sum() == pytest.approx(29.0)  # a footway is not a street people live in
+    # A piece takes the section of the nearer end; a middle exactly halfway takes the far end
+    assert samples.section.tolist() == ["S1", "S1", "S1", "S2"]
+    only = noise.street_samples(_network(), ["residential"], sections, 10.0, prefix="S2")
+    assert only.weight.tolist() == [4.0]  # with a prefix, only segments with an end under it

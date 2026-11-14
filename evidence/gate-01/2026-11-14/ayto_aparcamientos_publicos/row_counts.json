@@ -1,12 +1,12 @@
 {
-  "places_normalized": 23,
+  "places_normalized": 21,
   "quarantined": 0,
   "top_subcategories": {
     "Aparcamiento público": 18,
-    "Aparcamiento disuasorio": 5
+    "Aparcamiento disuasorio": 3
   },
-  "places": 23,
-  "assigned_to_section": 23,
+  "places": 21,
+  "assigned_to_section": 21,
   "municipio_mismatch": 0,
   "directory_aliases": 0
 }

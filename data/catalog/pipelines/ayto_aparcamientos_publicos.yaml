@@ -13,8 +13,14 @@ subcategory_prefixes:
 row_filters:
   TIPO:
     - /contenido/entidadesYorganismos/AparcamientosPublicos
+# Closed ones, and the two park-and-ride car parks the CRTM publishes too with their spaces and
+# fee, at 12 m and 126 m (crtm_aparcamientos_disuasion keeps them; review of PR #65, R-10)
 exclude_patterns:
-  NOMBRE: ['\(cerrado\)']
+  NOMBRE:
+    - '\(cerrado\)'
+    - '^Aparcamiento disuasorio Aviación Española$'
+    - '^Aparcamiento disuasorio Estadio Metropolitano Sur'
+
 x_column: COORDENADA-X
 y_column: COORDENADA-Y
 attribute_columns: [DISTRITO, BARRIO]

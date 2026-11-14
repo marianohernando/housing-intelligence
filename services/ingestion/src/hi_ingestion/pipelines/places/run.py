@@ -32,8 +32,9 @@ from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 # 1.3.1: stricter directory rules (equal street words, public/private veto); 1.4: primary care
 # 1.6: corrections with an official source (D-218 §10); 1.7: corrected names (D-221);
 # 1.7.1: a corrected name is whole words of its source; 1.8: the kind from the start of a column
-# and rows left out by a pattern (car parks, D-237)
-PARSER_VERSION = "places-1.8.0"
+# and rows left out by a pattern (car parks, D-237); 1.8.1: same parser, the car parks deduplicated
+# anew (review of PR #65, R-10), so a database that has them loads them again
+PARSER_VERSION = "places-1.8.1"
 GEOCODER_CACHE = Path("bronze") / "geocoding" / "cartociudad.json"
 _UNITS = text(
     """

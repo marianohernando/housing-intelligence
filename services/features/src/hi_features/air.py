@@ -15,7 +15,7 @@ from hi_ingestion.pipelines.air_quality.run import MEANS_FILE, ZONES_FILE
 
 _STATIONS = text(
     """
-    SELECT p.official_entity_id AS code, p.canonical_name AS name, p.municipio_ine,
+    SELECT p.official_entity_id AS code, p.canonical_name AS name, p.municipio_ine, p.attributes,
            coalesce(s.code_official, '') AS section,
            ST_X(p.geom_25830) AS x, ST_Y(p.geom_25830) AS y
       FROM place_master p
@@ -56,7 +56,17 @@ def stations(
     places["air_zone"] = [zones.get(m) if m else None for m in municipios]
     places["mean"] = [mean.get(c) for c in codes]
     places["capture"] = [capture.get(c, 0.0) for c in codes]
+    places["traffic"] = [is_traffic(a, f["type_attributes"]) for a in places["attributes"].tolist()]
     return pd.DataFrame(places, columns=STATION_COLUMNS)
+
+
+TRAFFIC = "tráfico"
+
+
+def is_traffic(attributes: Mapping[str, Any] | None, keys: Sequence[str]) -> bool:
+    """A traffic station by the type its network publishes: «Tráfico» (CM) or «Urbana tráfico»
+    (Ayuntamiento); background, suburban and industrial ones are not."""
+    return any(TRAFFIC in str((attributes or {}).get(k) or "").casefold() for k in keys)
 
 
 def reference_period(engine: Engine, dataset_ids: Sequence[str]) -> date:

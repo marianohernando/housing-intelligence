@@ -789,7 +789,7 @@ class StationSettings:
     nearest_confidence: float  # the value is another zone's station
 
 
-STATION_COLUMNS = ["code", "name", "zone", "air_zone", "x", "y", "mean", "capture"]
+STATION_COLUMNS = ["code", "name", "zone", "air_zone", "x", "y", "mean", "capture", "traffic"]
 
 
 def _nearest(candidates: pd.DataFrame, x: float, y: float) -> tuple[dict[str, Any], float]:
@@ -808,10 +808,12 @@ def nearest_station_value(
 ) -> pd.DataFrame:
     """D-237: each zone takes the annual mean of one monitoring station. Its own station when it
     has one (the nearest to its centre if several); otherwise the nearest station of the same
-    air quality zone, so a village of the sierra never takes an urban traffic station's value.
-    `stations` has STATION_COLUMNS: `zone` is the zone the station lies in at this level and
-    `air_zone` the air quality zone of its municipio. `centres` are projected metres. A station
-    without enough valid hours does not count; a zone without a centre or a candidate is
+    air quality zone, so a village of the sierra never takes an urban traffic station's value,
+    and a background one before a traffic one (review of PR #65, R-08): a borrowed traffic
+    station measures an avenue of another zone. `stations` has STATION_COLUMNS: `zone` is the
+    zone the station lies in at this level, `air_zone` the air quality zone of its municipio and
+    `traffic` whether it is a traffic station. `centres` are projected metres. A station without
+    enough valid hours does not count; a zone without a centre or a candidate is
     SOURCE_NO_COVERAGE, never 0. `detail` names the station, as the value must always say."""
     valid = stations.loc[stations["mean"].notna() & (stations["capture"] >= settings.min_capture)]
     rows: list[dict[str, Any]] = []
@@ -819,6 +821,9 @@ def nearest_station_value(
         centre = centres.get(code)
         own = valid.loc[valid["zone"] == code]
         candidates = own if len(own) else valid.loc[valid["air_zone"] == air_zone_of.get(code)]
+        background = candidates.loc[~candidates["traffic"].astype(bool)]
+        if len(own) == 0 and len(background):
+            candidates = background
         if centre is None or candidates.empty:
             rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
             continue
@@ -829,6 +834,7 @@ def nearest_station_value(
             "station_code": str(station["code"]),
             "own": bool(len(own)),
             "distance_km": round(metres / 1000, 1),
+            "traffic": bool(station["traffic"]),
         }
         rows.append(_ok(code, period, float(station["mean"]), confidence) | {"detail": detail})
     return _result(rows)

@@ -217,16 +217,22 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
 
 
 def _street_share_above(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    """D-237: % of the street where people live above a noise level, by zone. Only the zones
-    under `coverage_prefix` (the municipio the map covers) get a value."""
+    """D-237: % of the street where people live above a noise level, by zone, read every
+    `sample_step_m` along each segment (R-03). Only the zones under `coverage_prefix` (the
+    municipio the map covers) get a value."""
     version = walk.network_version(engine)
     origins = walk.origins(engine, version.path, tuple(f["origin_highways"]))
     network = walk.routable(version.path).network
-    grid = noise.grid(noise.grid_path(engine, f["raster_dataset"]))
-    levels = grid.levels_at(f["layer"], network.node_x[origins.node], network.node_y[origins.node])
-    zone = walk.zone_of_node(origins.section, level, walk.section_parents(engine, level))
+    section_of_node = np.full(network.n_nodes, "", dtype=origins.section.dtype)
+    section_of_node[origins.node] = origins.section
     prefix = str(f["coverage_prefix"])
-    covered = np.array([str(z).startswith(prefix) for z in zone.tolist()])
+    samples = noise.street_samples(
+        network, f["origin_highways"], section_of_node, float(f["sample_step_m"]), prefix
+    )
+    grid = noise.grid(noise.grid_path(engine, f["raster_dataset"]))
+    levels = grid.levels_at(f["layer"], samples.x, samples.y)
+    zone = walk.zone_of_node(samples.section, level, walk.section_parents(engine, level))
+    covered = np.char.startswith(zone.astype(str), prefix)
     settings = methods.StreetShareSettings(
         above=float(f["above"]),
         min_covered_share=float(f["min_covered_share"]),
@@ -235,7 +241,7 @@ def _street_share_above(engine: Engine, f: dict[str, Any], level: str) -> pd.Dat
     )
     return methods.street_share_above(
         zone,
-        origins.weight,
+        samples.weight,
         np.where(covered, levels, np.nan),
         walk.zone_codes(engine, level),
         noise.reference_period(grid),

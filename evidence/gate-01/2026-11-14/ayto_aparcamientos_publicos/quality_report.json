@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 23
+        "places": 21
       }
     },
     {
@@ -42,7 +42,7 @@
       "details": {
         "filtered_out": {
           "TIPO_not_allowed": 40,
-          "NOMBRE_excluded": 0,
+          "NOMBRE_excluded": 2,
           "NOMBRE_without_subcategory": 0
         },
         "source_rows": 63

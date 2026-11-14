@@ -6,6 +6,7 @@ import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
+import { ENVIRONMENT_METHOD } from "@/lib/environment";
 import { CONTEXT_METHOD } from "@/lib/zoneContext";
 
 import styles from "../section.module.css";
@@ -268,6 +269,10 @@ function Limits() {
         <li>
           {/* D-235: the same words the card's tests check (no alarm or wealth words) */}
           <strong>{CONTEXT_METHOD.lead}</strong> {CONTEXT_METHOD.text}
+        </li>
+        <li>
+          {/* D-237, R-07 of PR #65: street level, not the façade, and not the share of neighbours */}
+          <strong>{ENVIRONMENT_METHOD.lead}</strong> {ENVIRONMENT_METHOD.text}
         </li>
         <li>
           <strong>Ocio:</strong> los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de

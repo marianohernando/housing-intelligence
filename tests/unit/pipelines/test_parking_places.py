@@ -82,11 +82,22 @@ def test_coordinates_come_from_the_projected_columns(catalog: Catalog) -> None:
     assert public.frame["lat"].between(40.3, 40.6).all()
 
 
-def test_park_and_ride_keeps_its_spaces_and_skips_the_municipal_ones(catalog: Catalog) -> None:
+def test_a_car_park_both_publish_keeps_the_crtm_row_with_its_spaces(catalog: Catalog) -> None:
+    """R-10 of PR #65: Aviación Española and Estadio Metropolitano come once, from the CRTM,
+    which says their spaces and fee; the Ayuntamiento's rows of them are left out."""
+    _, crtm = _run(catalog, "crtm_aparcamientos_disuasion")
+    _, public = _run(catalog, "ayto_aparcamientos_publicos")
+    names = _by_name(crtm)
+    assert names["Aparcamiento disuasorio Aviación Española"]["attributes"]["plazas"] == "380"
+    assert "Aparcamiento disuasorio Estadio Metropolitano" in names
+    assert public.filtered_out["NOMBRE_excluded"] == 2
+    municipal = _by_name(public)
+    assert not any("Aviación Española" in n or "Estadio Metropolitano" in n for n in municipal)
+
+
+def test_park_and_ride_keeps_its_spaces(catalog: Catalog) -> None:
     _, crtm = _run(catalog, "crtm_aparcamientos_disuasion")
     names = _by_name(crtm)
-    assert crtm.filtered_out["EMPLAZAMIENTO_excluded"] == 2
-    assert "Aparcamiento disuasorio Aviación Española" not in names
     alcala = names["Aparcamiento disuasorio Alcalá de Henares"]
     assert alcala["subcategory"] == "Aparcamiento disuasorio"
     assert alcala["attributes"]["plazas"] == "495"

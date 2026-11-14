@@ -7,12 +7,12 @@
       "sha256": "fa2a387387d4cb5a1f521f2ce22b186ef0d8898bfe7ea53e4cab3fee813cbcd4",
       "bytes": 39991,
       "url": "https://datos.madrid.es/dataset/202625-0-aparcamientos-publicos/resource/202625-3-aparcamientos-publicos-csv/download/202625-0-aparcamientos-publicos.csv",
-      "retrieved_at": "2026-11-14T18:36:47.903272+00:00"
+      "retrieved_at": "2026-11-14T22:47:26.151849+00:00"
     }
   ],
   "checksum": "e89f9e8e3c8a9e842e0346b417bea4c3d010d3f2e7c0ce94b8a1cb7597c1dd1b",
-  "parser_version": "places-1.8.0",
+  "parser_version": "places-1.8.1",
   "dataset_version": "2026-11-14-e89f9e8e3c8a",
-  "correlation_id": "95034794eb644ada83259b05b4ee765c",
+  "correlation_id": "23d7e909fd6e4c22a02332f18401cab6",
   "silver": "data/silver/ayto_aparcamientos_publicos/e89f9e8e3c8a/places.csv.gz"
 }

@@ -196,7 +196,7 @@ def parks_extract(path: Path) -> Path:
 
 
 # D-237: a synthetic noise map over the walking grid, 50 m cells: the western half loud (70 dB
-# Lden, 60 Ln, above both limits) and the eastern half quiet (50 and 40).
+# Ld, 60 Ln, above both limits) and the eastern half quiet (50 and 40).
 NOISE_PIXEL_M = 50.0
 NOISE_SPLIT_X = 441_000.0
 
@@ -216,9 +216,9 @@ def noise_extract(path: Path, spec: NoiseRasterPipeline) -> Path:
     columns, rows = int((x1 - x0) // NOISE_PIXEL_M) + 2, int((y1 - y0) // NOISE_PIXEL_M) + 2
     centre_x = (x0 - NOISE_PIXEL_M) + (np.arange(columns) + 0.5) * NOISE_PIXEL_M
     loud = np.broadcast_to(centre_x < NOISE_SPLIT_X, (rows, columns))
-    lden = np.where(loud, 70.0, 50.0)
+    ld = np.where(loud, 70.0, 50.0)
     with zipfile.ZipFile(path, "w") as archive:
-        for layer, levels in (("lden", lden), ("ln", lden - 10.0)):
+        for layer, levels in (("ld", ld), ("ln", ld - 10.0)):
             raw = _tiff(levels, x0 - NOISE_PIXEL_M, y1 + NOISE_PIXEL_M)
             archive.writestr(f"MER/{spec.layers[layer]}", raw)
     return path

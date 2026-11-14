@@ -6,7 +6,7 @@
       "critical": true,
       "passed": true,
       "details": {
-        "places": 69
+        "places": 71
       }
     },
     {
@@ -40,9 +40,7 @@
       "critical": false,
       "passed": true,
       "details": {
-        "filtered_out": {
-          "EMPLAZAMIENTO_excluded": 2
-        },
+        "filtered_out": {},
         "source_rows": 71
       }
     },
