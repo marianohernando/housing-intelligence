@@ -5,7 +5,7 @@ import { type KeyboardEvent, useCallback, useEffect, useId, useMemo, useRef, use
 
 import { useMapZones } from "@/components/map/MapProvider";
 import { createApi } from "@/lib/api";
-import { setWorkPlace, workPlace } from "@/lib/scenario";
+import { commuteMinutesOptions, setWorkMaxMinutes, setWorkPlace, workPlace } from "@/lib/scenario";
 import { findPlaces, STATION_KINDS, stationPlaces, stepActive, type WorkPlace, zonePlaces } from "@/lib/workPlaces";
 
 import styles from "./SearchCard.module.css";
@@ -15,13 +15,17 @@ import { useScenario } from "./ScenarioProvider";
 // of streets: there is no street search without an external geocoder.
 const TEXT = {
   title: "Trabajo en",
-  // trabajo.ayuda with fit-0.2 (CORE-009, D-220): the commute is measured in public transport minutes
-  help: "Miramos cuánto tardarías en transporte público para llegar a las 9:00.",
+  // trabajo.ayuda (14 nov): the commute is measured in public transport minutes (CORE-009, D-220), all the CRTM feeds
+  help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero.",
   placeholder: "Escribe una estación, un distrito o un municipio",
   noMatch: "No encontramos ese lugar. Prueba con una estación o con el nombre del municipio.",
   found: (n: number) => (n === 1 ? "1 lugar encontrado. Usa las flechas para elegirlo." : `${n} lugares encontrados. Usa las flechas para elegir uno.`),
   remove: "Quitar este lugar",
-  // trabajo.max_min is not shown: the search sends the work place without a limit (max_minutes: null)
+  // trabajo.max_min, «Tardar como mucho {n} min en transporte público», with the minutes as a selector
+  commuteBefore: "Tardar como mucho",
+  commuteAfter: "en transporte público",
+  noLimit: "Sin límite",
+  commuteAria: "Tardar como mucho, en transporte público",
 };
 
 type Stations = WorkPlace[] | "loading" | "failed" | null;
@@ -44,8 +48,8 @@ function useStations(): { stations: WorkPlace[]; load: () => void } {
 }
 
 /**
- * «Trabajo en»: a combobox (ARIA 1.2) over stations and zones. The place goes to the search as a
- * reference without a minutes limit: the zone card says how far each zone is.
+ * «Trabajo en»: a combobox (ARIA 1.2) over stations and zones. The place goes to the search without
+ * a minutes limit until «Tardar como mucho» sets one.
  */
 export default function WorkField() {
   const { scenario, update } = useScenario();
@@ -110,22 +114,41 @@ export default function WorkField() {
         </label>
       )}
       {anchor ? (
-        <p className={styles.place}>
-          <Briefcase size={18} aria-hidden="true" />
-          <span className={styles.placeName}>{anchor.label}</span>
-          <button
-            ref={remove}
-            type="button"
-            className={styles.remove}
-            aria-label={`${TEXT.remove}: ${anchor.label}`}
-            onClick={() => {
-              focusNext.current = "input";
-              update((s) => setWorkPlace(s, null));
-            }}
-          >
-            <X size={18} aria-hidden="true" />
-          </button>
-        </p>
+        <>
+          <p className={styles.place}>
+            <Briefcase size={18} aria-hidden="true" />
+            <span className={styles.placeName}>{anchor.label}</span>
+            <button
+              ref={remove}
+              type="button"
+              className={styles.remove}
+              aria-label={`${TEXT.remove}: ${anchor.label}`}
+              onClick={() => {
+                focusNext.current = "input";
+                update((s) => setWorkPlace(s, null));
+              }}
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+          </p>
+          <span className={`${styles.nearMinutes} ${styles.commuteLimit}`}>
+            {TEXT.commuteBefore}
+            <select
+              className={styles.select}
+              aria-label={TEXT.commuteAria}
+              value={anchor.max_minutes ?? ""}
+              onChange={(e) => update((s) => setWorkMaxMinutes(s, e.target.value === "" ? null : Number(e.target.value)))}
+            >
+              <option value="">{TEXT.noLimit}</option>
+              {commuteMinutesOptions(anchor.max_minutes).map((m) => (
+                <option key={m} value={m}>
+                  {m} min
+                </option>
+              ))}
+            </select>
+            {TEXT.commuteAfter}
+          </span>
+        </>
       ) : (
         <div className={styles.combo}>
           <input

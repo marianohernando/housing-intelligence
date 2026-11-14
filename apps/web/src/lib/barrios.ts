@@ -43,7 +43,7 @@ export function barrioRows(result: Pick<BarrioSearchResult, "results" | "near_mi
   const labels = constraintLabels(result);
   return {
     fits: result.results.map((zone) => barrioRow(zone, null)),
-    near: (result.near_misses ?? []).map((zone) => barrioRow(zone, failedLabels(zone.failed_constraints, labels))),
+    near: (result.near_misses ?? []).map((zone) => barrioRow(zone, failedLabels(zone.failed_constraints, labels, zone.constraints))),
   };
 }
 

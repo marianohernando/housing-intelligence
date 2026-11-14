@@ -95,10 +95,31 @@ async function journeySearch(run, page) {
   await run.shot(page, "j1-results");
   await checkFirstZone(run, page, result.results[0]);
   await checkRealityCheck(run, page, rc);
-  run.check(J, "every /search sends max_minutes: null", searches.length > 0 && searches.every((s) =>
+  // The example goes without a limit («Sin límite»): its figures are the pitch's
+  run.check(J, "the example's /search sends max_minutes: null", searches.length > 0 && searches.every((s) =>
     Array.isArray(s?.anchors) && s.anchors.length > 0 && s.anchors.every((a) => a.max_minutes === null)),
   `${searches.length} requests`);
   await run.overflow(page, J);
+  await checkCommuteLimit(run, page, result.reality_check.zones_passing);
+}
+
+const COMMUTE_LIMIT_MIN = 45;
+
+/** «Tardar como mucho»: the minutes picked reach the request, and the search says no more zones than without a limit. */
+async function checkCommuteLimit(run, page, unlimitedPassing) {
+  const J = "J1 search";
+  await page.getByLabel("Tardar como mucho, en transporte público").selectOption(String(COMMUTE_LIMIT_MIN));
+  const [response] = await Promise.all([
+    page.waitForResponse(isSearch, { timeout: WAIT }),
+    page.getByRole("button", { name: "Ver zonas que encajan" }).click(),
+  ]);
+  const sent = response.request().postDataJSON();
+  run.check(J, `a limit of ${COMMUTE_LIMIT_MIN} min reaches /search as max_minutes`, sent?.anchors?.[0]?.max_minutes === COMMUTE_LIMIT_MIN,
+    JSON.stringify(sent?.anchors?.map((a) => a.max_minutes)));
+  const limited = (await response.json()).data.reality_check;
+  await page.getByText(passingText(limited.zones_passing)).first().waitFor({ timeout: WAIT });
+  run.check(J, "summary with a limit = API zones_passing", true, `${passingText(limited.zones_passing)} (without limit: ${unlimitedPassing})`);
+  run.check(J, "a limit never adds zones", limited.zones_passing <= unlimitedPassing, `${limited.zones_passing} <= ${unlimitedPassing}`);
 }
 
 /** Legend counts against the API. Up to 760 px the legend hides them on purpose (Legend.module.css,

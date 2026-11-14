@@ -1391,7 +1391,7 @@ async function deckSearchCaptures(browser, failures) {
   await s.page.screenshot({ path: `${out}/deck_c1_busqueda_1440.png` });
   await card.screenshot({ path: `${out}/deck_c2_tarjeta_zona_1440.png` });
   // trabajo.ayuda of fit-0.2, and no «Tiempo en transporte: muy pronto» any more (D, 0186ae9)
-  report.c1_c2.trabajo_ayuda = await s.page.getByText("Miramos cuánto tardarías en transporte público para llegar a las 9:00.").count();
+  report.c1_c2.trabajo_ayuda = await s.page.getByText("Miramos cuánto tardarías en llegar a las 9:00 en transporte público", { exact: false }).count();
   report.c1_c2.muy_pronto = await s.page.getByText("Tiempo en transporte: muy pronto").count();
   if (!report.c1_c2.trabajo_ayuda || report.c1_c2.muy_pronto) failures.push("C1: textos de «Trabajo en»");
   report.c1_c2.consola = s.errors;

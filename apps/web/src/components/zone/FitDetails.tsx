@@ -59,7 +59,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
   const factsId = useId();
   const { match, ranked } = zoneFit(result, zoneKey);
   if (!match) return null;
-  const fails = failedLabels(match.failed_constraints, constraintLabels(result));
+  const fails = failedLabels(match.failed_constraints, constraintLabels(result), ranked?.constraints);
   const buying = result.scenario.budget?.kind === "buy";
 
   return (
