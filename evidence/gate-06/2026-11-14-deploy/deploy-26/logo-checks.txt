@@ -1,0 +1,6 @@
+Header logo in production, Chromium, 1440x900 and 390x844 (DSF 2), 2026-11-14 ~11:34 UTC
+desktop {"/":{"src":"/brand/vida-facil.png","loaded":true,"natural":"437x96","shown":"155x34","at":"45,15","link":"/ «»"},"/que-falta":{"src":"/brand/vida-facil.png","loaded":true,"natural":"437x96","shown":"155x34","at":"45,15","link":"/ «»"},"/zona/distrito/2807920":{"src":"/brand/vida-facil.png","loaded":true,"natural":"437x96","shown":"155x34","at":"45,15","link":"/ «»"},"blocked":[],"errors":[]}
+mobile {"/":{"src":"/brand/vida-facil.png","loaded":true,"natural":"437x96","shown":"127x28","at":"18,22","link":"/ «»"},"/que-falta":{"src":"/brand/vida-facil.png","loaded":true,"natural":"437x96","shown":"127x28","at":"18,22","link":"/ «»"},"/zona/distrito/2807920":{"src":"/brand/vida-facil.png","loaded":true,"natural":"437x96","shown":"127x28","at":"18,22","link":"/ «»"},"blocked":[],"errors":[]}
+
+The link's text is empty: its accessible name comes from the image's alt. Aria snapshot of the header:
+  - banner: - link "Vida Fácil" (/url: /) - img "Vida Fácil"   (1 link named «Vida Fácil», href /)

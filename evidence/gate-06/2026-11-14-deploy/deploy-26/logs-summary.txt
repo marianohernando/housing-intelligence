@@ -1,0 +1,18 @@
+vercel logs, deployment dpl_5gWd6y97ixqWgub8c5m6wpMat1jE, from 2026-11-14T11:28:00Z to 2026-11-14T11:37:19.687Z (UTC)
+runtime log lines: 343, more pages: false, levels:  343 info 
+  "EMAXCONNSESSION"        0
+  "prepared statement"     0
+  "password authentication" 0
+  "OperationalError"       0
+  "Traceback"              0
+  "ValueError"             0
+  "KeyError"               0
+  "ImportError"            0
+  "opentelemetry"          0
+  "connection"             0
+  "timeout"                0
+instances started ("Started server process"): 7
+API access lines by status:  299 200 
+CDN request records: 1746, by status: 1737 200  8 304  1 404 
+CDN 4xx/5xx:
+   1   404 HEAD /icon.svg vida-facil-smoke/share26

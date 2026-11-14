@@ -1,0 +1,203 @@
+infra/deploy/offline/demo_offline.sh prepare
+-> images (vida-facil-offline) and the offline database on 5441
+ Image vida-facil-api:offline Building 
+ Image vida-facil-offline-db:17 Building 
+#1 reading from stdin 1.11kB done
+#1 DONE 0.0s
+
+#2 [api internal] load build definition from Dockerfile
+#2 DONE 0.0s
+
+#3 [db internal] load build definition from Dockerfile
+#3 DONE 0.0s
+
+#4 [db internal] load metadata for docker.io/pgvector/pgvector:pg17
+#4 DONE 0.0s
+
+#5 [db internal] load .dockerignore
+#5 DONE 0.0s
+
+#6 [db 1/2] FROM docker.io/pgvector/pgvector:pg17@sha256:7d0a41464797aeb9862dfdc0bbf1526b82cfd324cdd8036df19e3545f4a9ccb8
+#6 resolve docker.io/pgvector/pgvector:pg17@sha256:7d0a41464797aeb9862dfdc0bbf1526b82cfd324cdd8036df19e3545f4a9ccb8 done
+#6 DONE 0.0s
+
+#7 [db 2/2] RUN apt-get update     && apt-get install -y --no-install-recommends         "postgresql-17-postgis-3=3.6.4+dfsg-2.pgdg12+1" "postgresql-17-postgis-3-scripts=3.6.4+dfsg-2.pgdg12+1"     && rm -rf /var/lib/apt/lists/*
+#7 CACHED
+
+#8 [db] exporting to image
+#8 exporting layers
+#8 exporting layers done
+#8 exporting manifest sha256:908079b78d922b3644a3db29134e10b0ff4aa3de8a900cf4059f847543ec064d done
+#8 exporting config sha256:dcd854a26a1be2cc483066508d5b64c4086949b93b5c9fc17b6a5bd4eb7a5cdb done
+#8 exporting attestation manifest sha256:4964254c7f10f05cafe798a6d16bad40153dbbe8e258c8334a4a67a2bd2af8f5 0.0s done
+#8 exporting manifest list sha256:b37aab8e1932377734f3344a200e3a7821a56ed17e63c3e7eccf53f68c3c07b0 done
+#8 naming to docker.io/library/vida-facil-offline-db:17 done
+#8 unpacking to docker.io/library/vida-facil-offline-db:17 done
+#8 DONE 0.1s
+
+#9 [db] resolving provenance for metadata file
+#9 DONE 0.0s
+
+#10 [api internal] load metadata for docker.io/library/python:3.12-slim
+#10 ...
+
+#11 [api internal] load metadata for ghcr.io/astral-sh/uv:0.11.4
+#11 DONE 0.7s
+
+#10 [api internal] load metadata for docker.io/library/python:3.12-slim
+#10 DONE 0.7s
+
+#12 [api build  1/12] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#12 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b done
+#12 DONE 0.0s
+
+#13 [api] FROM ghcr.io/astral-sh/uv:0.11.4@sha256:5164bf84e7b4e2e08ce0b4c66b4a8c996a286e6959f72ac5c6e0a3c80e8cb04a
+#13 resolve ghcr.io/astral-sh/uv:0.11.4@sha256:5164bf84e7b4e2e08ce0b4c66b4a8c996a286e6959f72ac5c6e0a3c80e8cb04a done
+#13 DONE 0.0s
+
+#14 [api internal] load build context
+#14 DONE 0.0s
+
+#15 [api build  2/12] COPY --from=ghcr.io/astral-sh/uv:0.11.4 /uv /bin/uv
+#15 CACHED
+
+#16 [api build  3/12] WORKDIR /src
+#16 CACHED
+
+#17 [api build  4/12] COPY pyproject.toml uv.lock ./
+#17 DONE 0.0s
+
+#18 [api build  5/12] COPY apps/api apps/api
+#18 DONE 0.0s
+
+#19 [api build  6/12] COPY packages/contracts packages/contracts
+#19 DONE 0.0s
+
+#20 [api build  7/12] COPY packages/db packages/db
+#20 DONE 0.0s
+
+#21 [api build  8/12] COPY packages/domain packages/domain
+#21 DONE 0.0s
+
+#22 [api build  9/12] COPY services/features services/features
+#22 DONE 0.0s
+
+#23 [api build 10/12] COPY services/ingestion services/ingestion
+#23 DONE 0.0s
+
+#24 [api build 11/12] COPY services/mcp services/mcp
+#24 DONE 0.1s
+
+#25 [api build 12/12] RUN uv sync --frozen --no-dev --package hi-api --no-editable
+#25 0.732 Using CPython 3.12.16 interpreter at: /usr/local/bin/python3
+#25 0.734 Creating virtual environment at: /opt/venv
+#25 0.818    Building hi-contracts @ file:///src/packages/contracts
+#25 0.821    Building hi-db @ file:///src/packages/db
+#25 0.822    Building hi-domain @ file:///src/packages/domain
+#25 0.822    Building hi-api @ file:///src/apps/api
+#25 0.996 Downloading numpy (15.0MiB)
+#25 0.996 Downloading pydantic-core (2.0MiB)
+#25 0.997 Downloading shapely (2.1MiB)
+#25 0.998 Downloading scipy (32.4MiB)
+#25 0.999 Downloading psycopg-binary (6.5MiB)
+#25 0.999 Downloading pyproj (9.7MiB)
+#25 0.999 Downloading uvloop (4.2MiB)
+#25 1.096 Downloading sqlalchemy (4.5MiB)
+#25 1.597  Downloaded pydantic-core
+#25 1.895  Downloaded shapely
+#25 2.485  Downloaded uvloop
+#25 2.487  Downloaded sqlalchemy
+#25 2.531  Downloaded psycopg-binary
+#25 2.703  Downloaded pyproj
+#25 3.588  Downloaded numpy
+#25 3.787       Built hi-db @ file:///src/packages/db
+#25 3.799       Built hi-domain @ file:///src/packages/domain
+#25 3.855       Built hi-api @ file:///src/apps/api
+#25 3.937       Built hi-contracts @ file:///src/packages/contracts
+#25 4.777  Downloaded scipy
+#25 4.778 Prepared 39 packages in 3.98s
+#25 6.218 Installed 39 packages in 1.43s
+#25 7.804 Bytecode compiled 2627 files in 1.58s
+#25 7.805  + alembic==1.20.0
+#25 7.805  + annotated-doc==0.0.5
+#25 7.805  + annotated-types==0.8.0
+#25 7.805  + anyio==4.15.1
+#25 7.805  + certifi==2026.10.19
+#25 7.805  + click==8.5.0
+#25 7.805  + fastapi==0.151.0
+#25 7.805  + geoalchemy2==0.20.0
+#25 7.805  + h11==0.16.0
+#25 7.805  + h3==4.5.0
+#25 7.805  + hi-api==0.0.1 (from file:///src/apps/api)
+#25 7.805  + hi-contracts==0.0.1 (from file:///src/packages/contracts)
+#25 7.805  + hi-db==0.0.1 (from file:///src/packages/db)
+#25 7.805  + hi-domain==0.0.1 (from file:///src/packages/domain)
+#25 7.805  + httptools==0.9.0
+#25 7.805  + idna==3.20
+#25 7.805  + mako==1.4.3
+#25 7.805  + markupsafe==3.0.4
+#25 7.805  + numpy==2.5.4
+#25 7.805  + opentelemetry-api==1.45.2
+#25 7.805  + packaging==26.3
+#25 7.805  + psycopg==3.3.6
+#25 7.805  + psycopg-binary==3.3.6
+#25 7.805  + pydantic==2.14.1
+#25 7.805  + pydantic-core==2.50.1
+#25 7.805  + pydantic-settings==2.16.0
+#25 7.805  + pyproj==3.8.0
+#25 7.805  + python-dotenv==1.2.4
+#25 7.805  + pyyaml==6.0.3
+#25 7.805  + scipy==1.18.1
+#25 7.805  + shapely==2.2.0
+#25 7.805  + sqlalchemy==2.1.5
+#25 7.805  + starlette==1.9.0
+#25 7.805  + typing-extensions==4.16.0
+#25 7.805  + typing-inspection==0.4.4
+#25 7.805  + uvicorn==0.54.0
+#25 7.805  + uvloop==0.23.0
+#25 7.805  + watchfiles==1.3.0
+#25 7.805  + websockets==17.3
+#25 DONE 8.8s
+
+#26 [api stage-1 2/3] RUN useradd --system --uid 10001 --no-create-home api
+#26 CACHED
+
+#27 [api stage-1 3/3] COPY --from=build /opt/venv /opt/venv
+#27 DONE 2.5s
+
+#28 [api] exporting to image
+#28 exporting layers
+#28 exporting layers 6.8s done
+#28 exporting manifest sha256:1e252c3362efa3e24b105bcba934f3e28984f8a050ea92517c335e7eda5f8585 done
+#28 exporting config sha256:0d5fad50efc8fe9a430920333b264d6efbda865518208362d2142441a82ab0f1 0.0s done
+#28 exporting attestation manifest sha256:7d85671ec15324dcf87065d5dc7ae3296ad7739f259c1dc05b690287ddcf0524 0.0s done
+#28 exporting manifest list sha256:f02ede8c7da614d798abd431c44e8e189f013059b80fbd2f374802bd486845e7 done
+#28 naming to docker.io/library/vida-facil-api:offline done
+#28 unpacking to docker.io/library/vida-facil-api:offline
+#28 unpacking to docker.io/library/vida-facil-api:offline 5.6s done
+#28 DONE 12.4s
+
+#29 [api] resolving provenance for metadata file
+#29 DONE 0.0s
+ Image vida-facil-api:offline Built 
+ Image vida-facil-offline-db:17 Built 
+ Network vida-facil-offline_default Creating 
+ Network vida-facil-offline_default Created 
+ Container vida-facil-offline-db-1 Creating 
+ Container vida-facil-offline-db-1 Created 
+ Container vida-facil-offline-db-1 Starting 
+ Container vida-facil-offline-db-1 Started 
+ Container vida-facil-offline-db-1 Waiting 
+ Container vida-facil-offline-db-1 Healthy 
+-> dumping the demo profile from postgresql://housing:***@host.docker.internal:5440/housing (read only)
+-> loading into a staging database (the current package stays until this one validates)
+NOTICE:  database "vidafacil_staging" does not exist, skipping
+-> web build from a private copy of apps/web, API at http://localhost:8012
+-> switching to the new package
+ Container vida-facil-offline-db-1 Stopping 
+ Container vida-facil-offline-db-1 Stopped 
+ Container vida-facil-offline-db-1 Removing 
+ Container vida-facil-offline-db-1 Removed 
+ Network vida-facil-offline_default Removing 
+ Network vida-facil-offline_default Removed 
+ready:  44M dump, manifest data/offline/manifest.txt. Start with: make demo-offline
