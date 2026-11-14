@@ -119,6 +119,7 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
                 price=indicators.price.get(key),
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
+                transit=indicators.transit.get(key, {}),
                 commute=commute,
             )
         )

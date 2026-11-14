@@ -3,6 +3,7 @@
 Fixtures here are synthetic (FIXTURE): made-up zones and values, never shown in the demo.
 """
 
+from dataclasses import replace
 from itertools import pairwise
 from random import Random
 
@@ -331,6 +332,62 @@ def test_facts_never_exceed_five_with_many_criteria() -> None:
     fit = evaluate(scenario, zone("1"))
     assert len(fit.facts) == 5
     assert fit.facts[0].text.startswith("Parada")  # transporte is the first priority
+
+
+def _with_transit(base: ZoneData, bus: float | None = None, metro: float | None = None) -> ZoneData:
+    transit = {
+        mode: _value(f"min_a_pie_{mode}", minutes)
+        for mode, minutes in (("bus", bus), ("metro", metro))
+        if minutes is not None
+    }
+    return replace(base, transit=transit)
+
+
+def _transport_text(zone_data: ZoneData) -> str:
+    fit = evaluate(family(), zone_data)
+    return next(f.text for f in fit.facts if f.topic is FactTopic.TRANSPORTE)
+
+
+def test_transport_fact_says_the_bus_and_the_metro_apart() -> None:
+    """D-233: both features, two parts; one of them, only that one; none, the text of always."""
+    base = zone("1", transporte=2.0)
+    assert _transport_text(_with_transit(base, bus=2.2, metro=8.4)) == (
+        "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min"
+    )
+    assert _transport_text(_with_transit(base, bus=2.2)) == "Parada de autobús a unos 2 min andando"
+    assert _transport_text(_with_transit(base, metro=8.4)) == (
+        "Metro o Cercanías a unos 8 min andando"
+    )
+    assert _transport_text(base) == "Parada de transporte público a unos 2 min andando"
+
+
+def test_transport_fact_leaves_out_a_metro_that_is_not_a_walk() -> None:
+    """A village's nearest Metro is in another town: beyond what is shown it is not a walk."""
+    base = zone("1", transporte=5.7)
+    assert _transport_text(_with_transit(base, bus=5.7, metro=93.4)) == (
+        "Parada de autobús a unos 6 min andando"
+    )
+    unknown = replace(base, transit={"bus": _value("min_a_pie_bus", None)})
+    assert _transport_text(unknown) == "Parada de transporte público a unos 6 min andando"
+
+
+def test_transport_fact_keeps_the_walking_indicator_the_web_looks_for() -> None:
+    fit = evaluate(family(), _with_transit(zone("1"), bus=2.0, metro=8.0))
+    fact = next(f for f in fit.facts if f.topic is FactTopic.TRANSPORTE)
+    assert fact.indicator is not None
+    assert fact.indicator.feature_id == "min_a_pie_transporte"
+
+
+def test_the_transit_by_mode_never_moves_the_score() -> None:
+    """D-233: the transport need scores with min_a_pie_transporte; the modes only word the fact."""
+    plain = zone("1", transporte=11.0)
+    modes = _with_transit(plain, bus=30.0, metro=1.0)
+    before, after = evaluate(family(), plain), evaluate(family(), modes)
+    assert after.utility == before.utility
+    assert after.match_pct == before.match_pct
+    assert after.confidence == before.confidence
+    assert after.constraints == before.constraints
+    assert [f.kind for f in after.facts] == [f.kind for f in before.facts]
 
 
 def test_match_rounds_half_up() -> None:
