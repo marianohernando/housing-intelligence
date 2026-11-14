@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
+import { Baby, CircleParking, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
 import { useId } from "react";
 
 import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
@@ -75,6 +75,7 @@ export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
   farmacia: Pill,
   mayores: HeartHandshake,
   parque: Trees,
+  aparcamiento: CircleParking,
 };
 
 /** «Hospital La Paz · 1.300 camas» when the API gives the name and the capacity; the label alone otherwise. */

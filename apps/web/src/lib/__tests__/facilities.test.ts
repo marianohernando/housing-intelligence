@@ -14,6 +14,7 @@ import {
   capacitySources,
   facilityCountText,
   facilityQueries,
+  facilityType,
   groupFacilities,
   orderedTypes,
   selectedCountText,
@@ -60,7 +61,9 @@ describe("facility types", () => {
 
   it("ask /places once per category, by zone and subcategory, never a whole layer", () => {
     const queries = facilityQueries();
-    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green"]);
+    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green", "other"]);
+    // Car parks (D-237): never the air quality stations, which are places of the same category
+    expect(queries.find((q) => q.category === "other")?.subcategories).not.toContain("Estación de calidad del aire");
     const health = queries.find((q) => q.category === "health");
     expect(health?.subcategories).toContain("Hospital general");
     // Pharmacies have their own category since D-216
@@ -342,6 +345,7 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     farmacia: [f("f1", "farmacia")],
     mayores: [],
     parque: [f("p1", "parque")],
+    aparcamiento: [],
   } as Record<FacilityKey, Facility[]>;
 
   it("keeps the order of the buttons, whatever the order they were pressed", () => {
@@ -360,5 +364,33 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     );
     expect(selectedCountText(groups, ["hospital"], "Chamartín", { empty: false })).toBeNull();
     expect(selectedCountText(groups, [], "Chamartín")).toBeNull();
+  });
+});
+
+describe("car parks (D-237)", () => {
+  // Test fixture: places shaped as /places gives them (places-1), names and figures from 14 nov
+  const parks = groupFacilities([
+    place("a", "other", "Aparcamiento disuasorio", "Aparcamiento disuasorio Doce de Octubre", -3.69, 40.37, {
+      capacity: { value: 210, unit: "plazas", dataset_id: "crtm_aparcamientos_disuasion" },
+      access_fee: "free",
+    }),
+    place("b", "other", "Aparcamiento público", "Aparcamiento público. Plaza de España"),
+    place("c", "other", "Aparcamiento para residentes", "Aparcamiento para residentes Barceló"),
+    place("d", "other", "Estación de calidad del aire", "Getafe"),
+  ]).aparcamiento;
+
+  it("lists the public, park-and-ride and residents' ones, never the air stations", () => {
+    expect(parks.map((f) => f.id).sort()).toEqual(["a", "b", "c"]);
+  });
+
+  it("leads with the name and says the spaces and whether it is free, from the CRTM", () => {
+    const doce = parks.find((f) => f.id === "a");
+    expect(doce).toMatchObject({ label: "Aparcamiento disuasorio", detail: "210 plazas · gratuito", fee: "free", spaces: 210 });
+    expect(parks.find((f) => f.id === "b")).toMatchObject({ detail: null, fee: null, spaces: null });
+    expect(facilityType("aparcamiento").nameFirst).toBe(true);
+  });
+
+  it("is never counted by a row of «Qué falta»", () => {
+    expect(facilityType("aparcamiento").row).toBeUndefined();
   });
 });

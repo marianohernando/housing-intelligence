@@ -15,6 +15,7 @@ import BarriosBar from "@/components/zone/BarriosBar";
 import FacilitiesPanel from "@/components/zone/FacilitiesPanel";
 import PerceivedSafety from "@/components/zone/PerceivedSafety";
 import ZoneCard from "@/components/zone/ZoneCard";
+import ZoneEnvironment from "@/components/zone/ZoneEnvironment";
 import { errorMessage } from "@/lib/errors";
 
 import styles from "./zone.module.css";
@@ -94,6 +95,8 @@ export default function ZoneIntro() {
         <ZoneListLink />
         {/* Context only for Madrid's districts, the survey's coverage (D-226 §1); last, so arriving later moves nothing */}
         {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
+        {/* Noise, air and car parks (D-237): context, last too */}
+        <ZoneEnvironment level={level} code={routeZone.code} zone={name} />
       </div>
       {/* Every facility of the zone, not only its key points: left column on desktop */}
       <div className={styles.centres}>

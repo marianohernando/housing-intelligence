@@ -18,6 +18,8 @@ export interface FeatureValueRow {
   value: number | null;
   null_reason: string | null;
   confidence: number;
+  /** What the value cites, when its method names it (D-237: the air quality station, `own`, `distance_km`) */
+  detail?: Record<string, string | number | boolean> | null;
 }
 
 export const PALETTE = ["#fde7c8", "#f8c38a", "#ef9551", "#d4622a", "#9c3b16"] as const;

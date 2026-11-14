@@ -5,7 +5,7 @@
  * says that row counts (`gap_rows`), so the figures agree; hospitals and parks have no row.
  */
 import type { DatasetRef } from "@/contracts/dataset_list_response";
-import type { GapRowKey } from "@/contracts/places_response";
+import type { AccessFee, GapRowKey } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { updatedInWords } from "@/lib/provenance";
@@ -13,7 +13,7 @@ import { titleCase } from "@/lib/names";
 
 import type { PlaceFeature } from "./places";
 
-export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque";
+export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | "aparcamiento";
 
 export interface FacilityType {
   key: FacilityKey;
@@ -132,6 +132,24 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     classes: [{ subcategory: "Parque", label: "Parque" }],
     nameFirst: true,
   },
+  {
+    // D-237: context only (it never scores). The CRTM's park-and-ride car parks next to stations
+    // (with their spaces and whether they are free) and the Ayuntamiento de Madrid's public, mixed
+    // and residents' ones. Their names already say what they are («Aparcamiento público. Usera»).
+    key: "aparcamiento",
+    category: "other",
+    chip: "Aparcamientos",
+    one: "aparcamiento",
+    many: "aparcamientos",
+    none: "Ningún aparcamiento de los publicados en abierto",
+    classes: [
+      { subcategory: "Aparcamiento disuasorio", label: "Aparcamiento disuasorio" },
+      { subcategory: "Aparcamiento público", label: "Aparcamiento público" },
+      { subcategory: "Aparcamiento mixto", label: "Aparcamiento mixto" },
+      { subcategory: "Aparcamiento para residentes", label: "Aparcamiento para residentes" },
+    ],
+    nameFirst: true,
+  },
 ];
 
 const BY_KEY = new Map(FACILITY_TYPES.map((t) => [t.key, t]));
@@ -173,6 +191,9 @@ export interface Facility {
   source: string | null;
   /** Hospitals: public (network of the Servicio Madrileño de Salud) or private (D-239); null when the API does not say. */
   dependency: Dependency | null;
+  /** Car parks (D-237): whether parking is free and how many spaces, when the CRTM publishes them */
+  fee?: AccessFee;
+  spaces?: number | null;
   lon: number;
   lat: number;
 }
@@ -295,10 +316,17 @@ export function hospitalSplitText(items: readonly Pick<Facility, "dependency">[]
   return said.length ? said.join(" y ") : null;
 }
 
-/** «966 camas instaladas · ubicación aproximada»: only what the register and the API say. */
+/** Whether a car park is free (D-237), as the CRTM publishes it. */
+const ACCESS_FEE_TEXT = { free: "gratuito", paid: "de pago", mixed: "gratuito y de pago" } as const;
+
+/** «966 camas instaladas · ubicación aproximada», «210 plazas · gratuito»: only what the register and the API say. */
 function detailText(place: PlaceFeature): string | null {
-  const { capacity, coordinates } = place.properties;
-  const parts = [capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null, coordinates === "geocoded" ? GEOCODED : null];
+  const { capacity, coordinates, access_fee: fee } = place.properties;
+  const parts = [
+    capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null,
+    fee ? ACCESS_FEE_TEXT[fee] : null,
+    coordinates === "geocoded" ? GEOCODED : null,
+  ];
   return parts.filter(Boolean).join(" · ") || null;
 }
 
@@ -319,7 +347,8 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   // Only a capacity from another catalogue is cited apart (hospital beds): the places of mayores
   // carry their own register's «plazas autorizadas», which are not beds
   const source = CAPACITY_SOURCE[type.key] ? (place.properties.capacity?.dataset_id ?? null) : null;
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, dependency, lon, lat };
+  const parking = type.key === "aparcamiento" ? { fee: place.properties.access_fee ?? null, spaces: place.properties.capacity?.value ?? null } : {};
+  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, dependency, lon, lat, ...parking };
 }
 
 const DEPENDENCY_ORDER = { publica: 0, privada: 1 } as const;
@@ -412,4 +441,5 @@ export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
   farmacia: "fac-farmacia",
   mayores: "fac-mayores",
   parque: "park",
+  aparcamiento: "fac-aparcamiento",
 };
