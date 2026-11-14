@@ -1,0 +1,300 @@
+
+## golden_family: OK
+zonas 199 · cumplen 27 · desconocidas 15 · condición que más quita: near:colegio
+  Reality Check: +5 min a pie hasta colegio con primaria → +17 zonas
+  Reality Check: +150 €/mes → +3 zonas
+  1. Latina · 98 % · ≈ 1101 €/mes
+       - Colegio con primaria a unos 6 min andando (confianza 0.99)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 0.99)
+       - Centro de salud a unos 10 min andando (confianza 0.99)
+       - 39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  2. Moratalaz · 98 % · ≈ 1083 €/mes
+       - Colegio con primaria a unos 6 min andando (confianza 0.99)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min (confianza 0.99)
+       - Centro de salud a unos 11 min andando (confianza 0.99)
+       - 40 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.083 €/mes por 77 m² (14,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  3. Ciudad Lineal · 98 % · ≈ 1230 €/mes
+       - Colegio con primaria a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - Centro de salud a unos 10 min andando (confianza 1.00)
+       - 33 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.230 €/mes por 77 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  4. Puente de Vallecas · 98 % · ≈ 1129 €/mes
+       - Colegio con primaria a unos 4 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+       - 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  5. Fuencarral-El Pardo · 97 % · ≈ 1276 €/mes
+       - Colegio con primaria a unos 9 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 1.00)
+       - Centro de salud a unos 15 min andando (confianza 1.00)
+       - 29 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.276 €/mes por 77 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.76)
+  casi: Chamartín (falla budget)
+  casi: Salamanca (falla budget)
+  casi: Centro (falla budget)
+
+## golden_single: OK
+zonas 199 · cumplen 39 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +100 €/mes → +8 zonas
+  1. Leganés · 90 % · ≈ 709 €/mes
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
+       - 43 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 709 €/mes por 61 m² (11,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  2. Paracuellos de Jarama · 89 % · ≈ 676 €/mes
+       - Parada de autobús a unos 3 min andando (confianza 1.00)
+       - 50 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 676 €/mes por 61 m² (11,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  3. Villaverde · 88 % · ≈ 798 €/mes
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min (confianza 1.00)
+       - 35 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 798 €/mes por 61 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  4. Torrejón de Ardoz · 88 % · ≈ 689 €/mes
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 22 min (confianza 1.00)
+       - 50 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 689 €/mes por 61 m² (11,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  5. San Fernando de Henares · 88 % · ≈ 649 €/mes
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 24 min (confianza 0.99)
+       - 52 min en transporte público hasta Nuevos Ministerios, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 649 €/mes por 61 m² (10,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  casi: Chamartín (falla budget)
+  casi: Salamanca (falla budget)
+  casi: Moncloa-Aravaca (falla budget)
+
+## golden_couple: OK
+zonas 199 · cumplen 26 · desconocidas 172 · condición que más quita: budget
+  Reality Check: +40.000 € → +1 zonas
+  1. San Sebastián de los Reyes · 90 % · ≈ 238000 €
+       - Parque urbano a unos 7 min andando (confianza 0.99)
+       - Parada de autobús a unos 4 min andando · Metro o Cercanías a unos 21 min (confianza 0.99)
+       - 59 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 24 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 238.000 € por 68 m² (3.496 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
+  2. Leganés · 89 % · ≈ 195000 €
+       - Parque urbano a unos 4 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
+       - 33 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 77 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 195.000 € por 68 m² (2.869 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
+  3. Alcobendas · 87 % · ≈ 294000 €
+       - Parque urbano a unos 6 min andando (confianza 0.99)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 17 min (confianza 0.99)
+       - 56 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 23 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 294.000 € por 68 m² (4.327 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
+  4. Getafe · 85 % · ≈ 191000 €
+       - Parque urbano a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 15 min (confianza 1.00)
+       - 42 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 80 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 191.000 € por 68 m² (2.812 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
+  5. Coslada · 85 % · ≈ 196000 €
+       - Parque urbano a unos 5 min andando (confianza 0.99)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 0.99)
+       - 45 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 77 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 196.000 € por 68 m² (2.875 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
+  casi: Pozuelo de Alarcón (falla budget)
+
+## golden_single_parent_no_car: OK
+zonas 199 · cumplen 25 · desconocidas 6 · condición que más quita: near:colegio
+  Reality Check: +5 min a pie hasta colegio con primaria → +14 zonas
+  Reality Check: +150 €/mes → +0 zonas
+  Reality Check: +5 min a pie hasta parada de transporte público → +0 zonas
+  1. Villaverde · 99 % · ≈ 929 €/mes
+       - Colegio con primaria a unos 6 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min (confianza 1.00)
+       - 29 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 929 €/mes por 71 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  2. Leganés · 99 % · ≈ 826 €/mes
+       - Colegio con primaria a unos 8 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
+       - 34 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 826 €/mes por 71 m² (11,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  3. Usera · 99 % · ≈ 939 €/mes
+       - Colegio con primaria a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 11 min (confianza 1.00)
+       - 26 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 939 €/mes por 71 m² (13,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  4. Getafe · 97 % · ≈ 896 €/mes
+       - Colegio con primaria a unos 9 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 15 min (confianza 1.00)
+       - 38 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 896 €/mes por 71 m² (12,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  5. Moratalaz · 97 % · ≈ 998 €/mes
+       - Colegio con primaria a unos 6 min andando (confianza 0.99)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min (confianza 0.99)
+       - 29 min en transporte público hasta Atocha, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 998 €/mes por 71 m² (14,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  casi: Pinto (falla near:colegio)
+  casi: Arganzuela (falla budget)
+  casi: Salamanca (falla budget)
+
+## golden_senior: OK
+zonas 199 · cumplen 8 · desconocidas 28 · condición que más quita: budget
+  Reality Check: +5 min a pie hasta centro de salud → +4 zonas
+  Reality Check: +100 €/mes → +2 zonas
+  Reality Check: +5 min a pie hasta farmacia → +0 zonas
+  1. Parla · 97 % · ≈ 617 €/mes
+       - Centro de salud a unos 13 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
+       - Estación de metro o tren accesible (sin escaleras) a unos 8 min andando (confianza 1.00)
+       - 34 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 617 €/mes por 61 m² (10,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  2. Fuenlabrada · 88 % · ≈ 666 €/mes
+       - Centro de salud a unos 14 min andando (confianza 0.96)
+       - Parada de autobús a unos 4 min andando · Metro o Cercanías a unos 16 min (confianza 0.96)
+       - Estación de metro o tren accesible (sin escaleras) a unos 17 min andando (confianza 0.96)
+       - 35 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 666 €/mes por 61 m² (10,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  3. Leganés · 88 % · ≈ 709 €/mes
+       - Centro de salud a unos 15 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
+       - Estación de metro o tren accesible (sin escaleras) a unos 16 min andando (confianza 1.00)
+       - 35 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 709 €/mes por 61 m² (11,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  4. Coslada · 86 % · ≈ 735 €/mes
+       - Centro de salud a unos 10 min andando (confianza 0.99)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 0.99)
+       - Estación de metro o tren accesible (sin escaleras) a unos 12 min andando (confianza 0.99)
+       - 73 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 735 €/mes por 61 m² (12,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  5. Móstoles · 86 % · ≈ 688 €/mes
+       - Centro de salud a unos 11 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 15 min (confianza 1.00)
+       - Estación de metro o tren accesible (sin escaleras) a unos 17 min andando (confianza 1.00)
+       - 47 min en transporte público hasta Hijo en Getafe centro, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 688 €/mes por 61 m² (11,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  casi: Retiro (falla budget)
+  casi: Centro (falla budget)
+  casi: Chamberí (falla budget)
+
+## golden_student: OK
+zonas 199 · cumplen 0 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +50 €/mes → +1 zonas
+  casi: Coslada (falla budget)
+  casi: Puente de Vallecas (falla budget)
+  casi: Villa de Vallecas (falla budget)
+
+## golden_sensory_preferences: OK
+zonas 199 · cumplen 39 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +100 €/mes → +7 zonas
+  1. Torrejón de Ardoz · 93 % · ≈ 768 €/mes
+       - Parque urbano a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 22 min (confianza 1.00)
+       - 49 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 768 €/mes por 68 m² (11,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  2. Leganés · 93 % · ≈ 791 €/mes
+       - Parque urbano a unos 4 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
+       - 48 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 791 €/mes por 68 m² (11,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  3. Pinto · 91 % · ≈ 758 €/mes
+       - Parque urbano a unos 6 min andando (confianza 1.00)
+       - Parada de autobús a unos 4 min andando · Metro o Cercanías a unos 27 min (confianza 1.00)
+       - 56 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 758 €/mes por 68 m² (11,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  4. Alcorcón · 91 % · ≈ 832 €/mes
+       - Parque urbano a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
+       - 47 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 832 €/mes por 68 m² (12,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  5. Usera · 91 % · ≈ 900 €/mes
+       - Parque urbano a unos 3 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 11 min (confianza 1.00)
+       - 39 min en transporte público hasta Colegio en Chamberí, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 900 €/mes por 68 m² (13,2 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  casi: Salamanca (falla budget)
+  casi: Chamartín (falla budget)
+  casi: Moncloa-Aravaca (falla budget)
+
+## golden_reduced_mobility: OK
+zonas 199 · cumplen 46 · desconocidas 142 · condición que más quita: budget
+  Reality Check: +150 €/mes → +3 zonas
+  1. Parla · 96 % · ≈ 688 €/mes
+       - Estación de metro o tren accesible (sin escaleras) a unos 8 min andando (confianza 1.00)
+       - Centro de salud a unos 13 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
+       - 68 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 688 €/mes por 68 m² (10,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  2. Coslada · 93 % · ≈ 819 €/mes
+       - Estación de metro o tren accesible (sin escaleras) a unos 12 min andando (confianza 0.99)
+       - Centro de salud a unos 10 min andando (confianza 0.99)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 0.99)
+       - 58 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 819 €/mes por 68 m² (12,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 1.00)
+  3. Ciudad Lineal · 92 % · ≈ 1087 €/mes
+       - Estación de metro o tren accesible (sin escaleras) a unos 10 min andando (confianza 1.00)
+       - Centro de salud a unos 10 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - 37 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.087 €/mes por 68 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  4. Latina · 90 % · ≈ 972 €/mes
+       - Estación de metro o tren accesible (sin escaleras) a unos 13 min andando (confianza 0.99)
+       - Centro de salud a unos 10 min andando (confianza 0.99)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 0.99)
+       - 43 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 972 €/mes por 68 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  5. Carabanchel · 90 % · ≈ 995 €/mes
+       - Estación de metro o tren accesible (sin escaleras) a unos 12 min andando (confianza 1.00)
+       - Centro de salud a unos 10 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
+       - 50 min en transporte público hasta Hospital La Paz, llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 995 €/mes por 68 m² (14,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+  casi: Centro (falla budget)
+  casi: Chamberí (falla budget)
+  casi: Retiro (falla budget)
+
+## golden_family en San Blas-Canillejas (barrios): OK
+zonas 8 · cumplen 7 · desconocidas 0 · condición que más quita: near:colegio
+  Reality Check: +150 €/mes → +0 zonas
+  Reality Check: +5 min a pie hasta colegio con primaria → +0 zonas
+  1. Canillejas · 97 % · ≈ 1156 €/mes
+       - Colegio con primaria a unos 7 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 9 min (confianza 1.00)
+       - Centro de salud a unos 10 min andando (confianza 1.00)
+       - 42 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.156 €/mes por 77 m² (15,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.60)
+  2. Arcos · 97 % · ≈ 1150 €/mes
+       - Colegio con primaria a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
+       - Centro de salud a unos 11 min andando (confianza 1.00)
+       - 43 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.60)
+  3. Simancas · 97 % · ≈ 1228 €/mes
+       - Colegio con primaria a unos 7 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - Centro de salud a unos 13 min andando (confianza 1.00)
+       - 37 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.228 €/mes por 77 m² (15,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.60)
+  4. Rosas · 96 % · ≈ 1150 €/mes
+       - Colegio con primaria a unos 5 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - Centro de salud a unos 12 min andando (confianza 1.00)
+       - 44 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.150 €/mes por 77 m² (14,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.60)
+  5. Amposta · 96 % · ≈ 1224 €/mes
+       - Colegio con primaria a unos 7 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 9 min (confianza 1.00)
+       - Centro de salud a unos 12 min andando (confianza 1.00)
+       - 38 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.224 €/mes por 77 m² (15,9 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.30)
+  6. El Salvador · 95 % · ≈ 1230 €/mes
+       - Colegio con primaria a unos 10 min andando (confianza 1.00)
+       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 14 min (confianza 1.00)
+       - Centro de salud a unos 16 min andando (confianza 1.00)
+       - 40 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.230 €/mes por 77 m² (16,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.60)
+  7. Hellín · 93 % · ≈ 1206 €/mes
+       - Colegio con primaria a unos 4 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
+       - Centro de salud a unos 19 min andando (confianza 1.00)
+       - 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 (confianza 0.70)
+       - Alquiler ≈ 1.206 €/mes por 77 m² (15,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.30)
+  casi: Rejas (falla near:colegio)
+  todos: Simancas 97 %, Hellín 93 %, Amposta 96 %, Arcos 97 %, Rosas 96 %, Rejas 55 %, Canillejas 97 %, El Salvador 95 %
+
+9 escenarios dorados · todos OK

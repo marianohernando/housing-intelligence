@@ -108,7 +108,7 @@ const COMMUTE_LIMIT_MIN = 45;
 /** «Tardar como mucho»: the minutes picked reach the request, and the search says no more zones than without a limit. */
 async function checkCommuteLimit(run, page, unlimitedPassing) {
   const J = "J1 search";
-  await page.getByLabel("Tardar como mucho, en transporte público").selectOption(String(COMMUTE_LIMIT_MIN));
+  await page.getByLabel("Tardar como mucho hasta el trabajo, en transporte público").selectOption(String(COMMUTE_LIMIT_MIN));
   const [response] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),
     page.getByRole("button", { name: "Ver zonas que encajan" }).click(),

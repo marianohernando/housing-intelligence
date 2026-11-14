@@ -1,0 +1,14 @@
+smoke: <API local de la rama> (2026-11-14T21:52:08Z)
+OK   health        0.00s       225 B  /api/v1/health  process up
+OK   ready         0.01s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone          0.20s     35707 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography     0.15s    336717 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer         0.11s   1691501 B  /api/v1/places?category=education  3866 places
+OK   largest       0.91s   2022252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search        0.24s    121318 B  /api/v1/search  27 of 199 zones, 1st Latina
+OK   telework      0.13s    117345 B  /api/v1/search  fit-0.8, 27 of 199 zones
+OK   barrios       0.03s     41257 B  /api/v1/search/barrios  7 of 8 barrios, 1st Canillejas
+OK   madrid        0.04s     94137 B  /api/v1/search  78 of 131 barrios, 1st Lucero
+OK   alrededores   0.15s     75513 B  /api/v1/search  14 of 40 municipios, 1st Alcorcón
+OK   pueblos       0.13s     62919 B  /api/v1/search  1 of 138 municipios, 1st Navalcarnero
+smoke: 12/12 OK
