@@ -42,6 +42,7 @@ Así se pone cada nota:
 - **El margen de presupuesto:** vale 1 si la zona te cuesta el 75 % de tu presupuesto o menos, y 0 si te lo come entero.
 - **«Sin escaleras»** (solo si lo marcas): los minutos andando hasta la estación de metro, Metro Ligero o Cercanías accesible más cercana. Vale 1 hasta 10 min y baja hasta 0 a los 30. Si no hay ninguna a un paseo, vale 0, con poca fiabilidad, y la tarjeta lo dice.
 - **Zonas verdes** (solo si lo marcas): igual, con el parque urbano más cercano.
+- **Ocio** (solo si lo marcas, D-236): eliges qué quieres cerca (bares y cafeterías, restaurantes, gimnasios y deporte, cultura) y a cuántos minutos. Cuenta como una sola cosa, con la media de lo que marcas, cada una contra tus minutos. Si algo no está a un paseo, vale 0 con poca fiabilidad, porque en los pueblos el mapa puede no tenerlo. Solo deja fuera zonas si marcas «Imprescindible».
 - **Si a una zona le falta un dato,** nunca cuenta como 0: sale «sin datos» y baja la fiabilidad del %.
 - **La seguridad no la puntuamos.** Te contamos por qué en la sección 1.8.
 
@@ -129,7 +130,7 @@ La fiabilidad baja en estos casos:
 - **27 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid:** población, hogares, vivienda, renta, alquiler, valor tasado de la vivienda, colegios y sus aulas, salud y camas de hospital de la región, mayores y farmacias. También los del Consorcio Regional de Transportes de Madrid, que se publican en ese mismo portal: las 6 redes de transporte público y la accesibilidad de las estaciones de metro, Metro Ligero y Cercanías.
 - **Como apoyo,** sin contarlos como datos de la Comunidad:
   - el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito de Madrid capital;
-  - el mapa de calles y los parques de OpenStreetMap, para las distancias a pie;
+  - el mapa de calles, los parques y los locales de ocio de OpenStreetMap (bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines), para las distancias a pie;
   - los catálogos de hospitales y de centros de atención primaria del Ministerio de Sanidad, para el nombre de los centros de salud y el nombre y las camas de los hospitales;
   - la estadística de alquileres declarados en el IRPF de la Agencia Tributaria, para corregir el alquiler con lo que cuestan los contratos firmados en 2024;
   - el geocodificador oficial CartoCiudad del IGN, solo para colocar los pocos centros que el registro publica sin coordenadas o con coordenadas que contradicen su dirección.
@@ -149,6 +150,7 @@ La fiabilidad baja en estos casos:
   - **En los 21 distritos de Madrid** te contamos, solo como contexto, cómo valoran los vecinos la seguridad de su barrio, de día y de noche, de 0 a 10. Sale de la Encuesta de calidad de vida del Ayuntamiento de 2025, con unas 400 personas por distrito. No puntúa, no ordena zonas y no entra en «Qué falta».
 - **«Sin escaleras»:** solo miramos las estaciones de metro, Metro Ligero y Cercanías que el Consorcio da como totalmente accesibles. Las que lo son solo en parte no cuentan. No medimos los autobuses: según el Consorcio todos son accesibles, así que no distinguen una zona de otra. Tampoco medimos las aceras, los portales ni los ascensores de los edificios. Los minutos son a 4 km/h, como todo lo demás: si vas más despacio, tardarás más. Y solo cuenta si lo marcas: nunca lo deducimos de nada.
 - **Zonas verdes:** contamos los parques de 1 hectárea o más de OpenStreetMap, medidos andando hasta su borde. No cuentan el campo ni los bosques de los pueblos, ni las plazas y jardines pequeños.
+- **Ocio:** los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de OpenStreetMap, un mapa hecho por voluntarios. En las ciudades está bastante completo; en los pueblos pequeños falta algún local (de los pueblos de 1.000 a 5.000 habitantes con biblioteca pública según la Comunidad, solo un tercio la tiene en el mapa). Por eso el ocio solo cuenta si lo marcas y no deja fuera ninguna zona salvo que marques «Imprescindible».
 - **No enseñamos pisos en venta ni en alquiler.** Te ayudamos a elegir zona; el piso lo buscas donde prefieras.
 - **Todavía no sabemos qué echan en falta los vecinos.** Hoy todo sale de datos oficiales. Más adelante queremos sumar lo que la gente diga que necesita, siempre de forma anónima y por zonas.
 - **Transporte público:** usamos los horarios que publica el Consorcio para un día laborable, no los tiempos reales de cada día. Algunas líneas interurbanas no publican sus horarios completos, y desde algunas zonas de la Sierra Norte y del sureste no se llega al centro de Madrid a las 9:00 con esos horarios. Lo decimos, y nunca cuenta como 0.

@@ -260,6 +260,12 @@ function Limits() {
           distritos de Madrid y en los pueblos sale «sin datos» y no inventamos un precio.
         </li>
         <li>
+          <strong>Ocio:</strong> los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de
+          OpenStreetMap, un mapa hecho por voluntarios. En las ciudades está bastante completo; en los pueblos pequeños falta
+          algún local, así que un pueblo puede tener un bar que no vemos. Por eso el ocio solo cuenta si lo marcas y no deja
+          fuera ninguna zona salvo que marques «Imprescindible».
+        </li>
+        <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde
           prefieras.
         </li>
@@ -345,7 +351,10 @@ export default function ComoLoCalculamosPage() {
                 el padrón y el panel de distritos del Ayuntamiento de Madrid, para la población y los hogares de cada distrito
                 de Madrid capital;
               </li>
-              <li>el mapa de calles de OpenStreetMap, para las distancias a pie;</li>
+              <li>
+                el mapa de OpenStreetMap: sus calles, para las distancias a pie, y sus locales de ocio (bares, restaurantes,
+                gimnasios y cultura), que solo cuentan si marcas «Ocio»;
+              </li>
               <li>
                 la estadística de viviendas declaradas en el IRPF de la Agencia Tributaria (ejercicio 2024), para acercar el
                 alquiler al de los contratos firmados ese año;
