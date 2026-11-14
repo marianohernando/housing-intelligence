@@ -95,7 +95,7 @@ const WHERE_HELP: Record<SearchScope, string> = {
   madrid: "Comparamos sus 131 barrios.",
   alrededores: "Los 40 municipios del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid.",
   pueblos:
-    "Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Casi ninguno publica su alquiler: si buscas alquiler, la mayoría saldrán «Sin datos».",
+    "Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Su alquiler es la referencia del Ministerio de Vivienda, un dato aproximado; los que tienen muy pocas viviendas alquiladas salen «Sin datos».",
 };
 
 function peopleText(n: number): string {

@@ -252,7 +252,12 @@ function Limits() {
           una aproximación, así que cuenta con menos fiabilidad. Cuadra con la cifra oficial: con los distritos sale 14,5 € el
           metro cuadrado, y la Comunidad publica 15,1 para todo Madrid. Esa media es de todos los contratos en vigor, así que
           la ajustamos a lo que se pagó en los contratos firmados en 2024 en la misma zona, según la Agencia Tributaria: entre
-          un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más.
+          un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más. Donde la Comunidad no publica el alquiler (los
+          pueblos), usamos la referencia del Ministerio de Vivienda (SERPAVI, 2024): la mediana por metro cuadrado de los
+          contratos de vivienda habitual, que sale de las mismas declaraciones a Hacienda y del Catastro. La subimos un 4 %, lo
+          que se separan las dos cifras donde existen ambas, y la ajustamos a un contrato firmado en 2024 igual que la de la
+          Comunidad. Es un dato aproximado, y en la tarjeta te decimos entre qué precios está la mitad de los contratos. Si en
+          un pueblo se alquilan muy pocas viviendas, no se publica y sale «sin datos».
         </li>
         <li>
           <strong>Compra:</strong> usamos el valor tasado medio de la vivienda libre por metro cuadrado (Ministerio de

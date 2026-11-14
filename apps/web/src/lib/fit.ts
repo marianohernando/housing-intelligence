@@ -3,7 +3,7 @@
  * fit-0.1, D-215). The web never recomputes the fit: it joins the API's figures to the map, the
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
-import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type { ConstraintCheck, CostRange, RankedZone, RealityCheck, Relaxation, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 
 import { type ConfidenceText, confidenceText } from "./confidence";
 import { formatEuros } from "./format";
@@ -79,6 +79,16 @@ export interface ZonePrice {
   aria: string;
   /** The card's words for a figure that is not a reliable one («Dato aproximado» for the D-234 estimate), else null */
   confidence: ConfidenceText | null;
+  /** D-242: where half the leases fall and who says so, in the zone card head (zona.precio.rango); null without it */
+  range: PriceRange | null;
+}
+
+/** «La mitad de los contratos, entre 510 y 820 €/mes» and «Ministerio de Vivienda (SERPAVI), 2024» (zona.precio.rango) */
+export interface PriceRange {
+  text: string;
+  source: string;
+  /** Read aloud: «La mitad de los contratos están entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024» */
+  aria: string;
 }
 
 /** At or above this confidence the figure is «Dato fiable» and goes without a mark (lib/confidence.ts). */
@@ -89,7 +99,7 @@ const RELIABLE = 0.8;
  * monthly rent), or null without one: nothing is shown and the general notice says why.
  */
 export function zonePrice(
-  zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence">,
+  zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence" | "estimated_cost_range">,
   buying: boolean,
 ): ZonePrice | null {
   const cost = zone.estimated_cost_eur;
@@ -101,6 +111,19 @@ export function zonePrice(
     long: buying ? `Comprar ≈ ${amount}` : `Alquiler ≈ ${amount}/mes`,
     aria: buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
+    range: buying ? null : priceRange(zone.estimated_cost_range),
+  };
+}
+
+/** D-242: the quartiles of the Ministry's reference rent for the household's m², as the API gives them. */
+export function priceRange(range: CostRange | null | undefined): PriceRange | null {
+  if (!range) return null;
+  const low = formatEuros(range.low_eur).replace(" €", "");
+  const high = formatEuros(range.high_eur);
+  return {
+    text: `La mitad de los contratos, entre ${low} y ${high}/mes`,
+    source: range.source,
+    aria: `La mitad de los contratos están entre ${low} y ${high} al mes, según ${range.source}`,
   };
 }
 
@@ -221,8 +244,8 @@ export function evaluatedText(result: { scenario: { scope?: SearchScope }; reali
 }
 
 /**
- * resultados.pueblos_sin_alquiler (D-238): renting, the villages come out «Sin datos» because the
- * rent is only published for municipios of more than 20.000 people; null in any other search.
+ * resultados.pueblos_sin_alquiler (D-238, D-242): renting, the villages that come out «Sin datos»
+ * have so few rented homes that no rent is published for them; null in any other search.
  */
 export function rentUnknownText(
   result: { scenario: { scope?: SearchScope; budget?: { kind: string } | null }; reality_check: Pick<RealityCheck, "zones_unknown" | "zones_evaluated"> },
@@ -230,7 +253,7 @@ export function rentUnknownText(
   const { zones_unknown: n, zones_evaluated: total } = result.reality_check;
   if (resultScope(result) !== "pueblos" || result.scenario.budget?.kind !== "rent" || n === 0) return null;
   const come = n === 1 ? "sale" : "salen";
-  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.`;
+  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar tu presupuesto.`;
 }
 
 /** A search over Madrid capital ranks its barrios (D-238), not its districts. */

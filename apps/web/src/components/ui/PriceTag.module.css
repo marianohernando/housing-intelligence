@@ -43,3 +43,15 @@
 .card .mark::before {
   content: "· ";
 }
+
+/* D-242: where half the leases fall and who publishes it, on its own line under the figure */
+.range {
+  flex-basis: 100%;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.source {
+  white-space: nowrap;
+}

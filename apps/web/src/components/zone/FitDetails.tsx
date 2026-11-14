@@ -37,8 +37,8 @@ const TEXT = {
       "Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda solo se publica para los municipios de más de 25.000 habitantes.",
     madrid: "Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda se publica para Madrid entero, no por distrito ni por barrio.",
   },
-  // zona.sin_alquiler (D-238): the same for renting in a municipio; districts and barrios bring their own reason
-  rentSource: "Con «Alquilar», puede faltar el alquiler: la Comunidad de Madrid solo lo publica para los municipios de más de 20.000 habitantes, y casi ningún pueblo los tiene.",
+  // zona.sin_alquiler (D-238, D-242): the same for renting in a municipio; districts and barrios bring their own reason
+  rentSource: "Con «Alquilar», puede faltar el alquiler: en los municipios con muy pocas viviendas alquiladas no se publica su precio.",
   // zona.fuera (D-238): a zone of the map outside «¿Dónde?»
   outside: (scope: string) => `Fuera de tu búsqueda (${scope}).`,
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,

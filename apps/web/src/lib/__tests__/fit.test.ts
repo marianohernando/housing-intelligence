@@ -209,7 +209,7 @@ describe("where the search looked («¿Dónde?», D-238)", () => {
       reality_check: { zones_unknown: unknown, zones_evaluated: 138 },
     });
     expect(rentUnknownText(search("pueblos", "rent", 136))).toBe(
-      "136 de los 138 pueblos salen «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.",
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar tu presupuesto.",
     );
     expect(rentUnknownText(search("pueblos", "rent", 0))).toBeNull();
     expect(rentUnknownText(search("pueblos", "buy", 136))).toBeNull();
@@ -329,6 +329,7 @@ describe("the approximate price of a zone (D-234)", () => {
       long: "Comprar ≈ 385.000 €",
       aria: "Comprar: unos 385.000 €",
       confidence: null,
+      range: null,
     });
     const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
     expect([rent?.short, rent?.long, rent?.aria]).toEqual(["≈ 1.101 €/mes", "Alquiler ≈ 1.101 €/mes", "Alquiler: unos 1.101 € al mes"]);
@@ -341,6 +342,25 @@ describe("the approximate price of a zone (D-234)", () => {
     expect(zonePrice({ estimated_cost_eur: 900 }, false)?.confidence).toBeNull();
     expect(zonePrice({ estimated_cost_eur: null, estimated_cost_confidence: null }, true)).toBeNull();
     expect(zonePrice({}, true)).toBeNull();
+  });
+
+  it("says where half the leases fall and who publishes it, renting with the Ministry's reference (D-242)", () => {
+    const range = { low_eur: 510, high_eur: 820, source: "Ministerio de Vivienda (SERPAVI), 2024" };
+    const rent = zonePrice({ estimated_cost_eur: 571, estimated_cost_confidence: 0.7, estimated_cost_range: range }, false);
+    expect(rent?.long).toBe("Alquiler ≈ 571 €/mes");
+    expect(rent?.confidence?.label).toBe("Dato aproximado");
+    expect(rent?.range).toEqual({
+      text: "La mitad de los contratos, entre 510 y 820 €/mes",
+      source: "Ministerio de Vivienda (SERPAVI), 2024",
+      aria: "La mitad de los contratos están entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024",
+    });
+    expect(zonePrice({ estimated_cost_eur: 1_010, estimated_cost_range: { ...range, low_eur: 1_010, high_eur: 1_500 } }, false)?.range?.text).toBe(
+      "La mitad de los contratos, entre 1.010 y 1.500 €/mes",
+    );
+    // Buying, or a rent from the CM (no spread published), or an API from before D-242: no range
+    expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_range: range }, true)?.range).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: 1_101, estimated_cost_range: null }, false)?.range).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: 1_101 }, false)?.range).toBeNull();
   });
 
   it("gives the card the price of any zone, from all_zones, else from its ranked entry", () => {

@@ -33,6 +33,8 @@ const ATTRIBUTION_LINKS: [RegExp, string][] = [
   [/Ministerio de Sanidad/, "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm"],
   // fit-0.6 (D-228): rent of the leases signed in 2024; the licence asks to cite the source and its date
   [/Agencia Tributaria/, "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html"],
+  // D-242: the Ministry's rent reference; its notice asks to cite the source and the date of its update
+  [/SERPAVI/, "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi"],
   [/CRTM/, "https://www.crtm.es"],
   [/Ayuntamiento de Madrid/, "https://datos.madrid.es"],
   // D-241: the Plan Vive page, typed by hand (no file); its notice asks for the source and the date of extraction
