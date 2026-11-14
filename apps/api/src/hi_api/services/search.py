@@ -25,7 +25,7 @@ from hi_contracts.public import (
     SearchResult,
     ZoneRef,
 )
-from hi_domain.fit import FIT_VERSION, ZoneData
+from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData
 from hi_domain.geo.names import display_name
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
 
@@ -108,12 +108,15 @@ class Indicators(NamedTuple):
 
 
 TRANSIT_MODES = frozenset({"bus", "metro"})
+# Every need is measured on foot, the leisure groups of «Ocio» too (D-236)
 NEED_VALUES = frozenset(n.value for n in NeedKey)
-PRIORITY_VALUES = frozenset(p.value for p in PriorityKey)
+# Only the priorities measured by walking to a place of their own (D-222, D-223): «ocio» scores
+# its groups' needs and «seguridad» has no measure, so a feature bound to either is unknown
+PRIORITY_WALK_VALUES = frozenset(p.value for p in PRIORITY_WALK)
 
 
 def _unknown_binding(fit: dict[str, Any]) -> str:
-    """«walk_minutes:need=bares», «transit_mode:mode=tram» or just the role."""
+    """«walk_minutes:need=piscinas», «transit_mode:mode=tram» or just the role."""
     detail = next((f"{k}={fit[k]}" for k in ("need", "priority", "mode") if fit.get(k)), None)
     return f"{fit['role']}:{detail}" if detail else str(fit["role"])
 
@@ -138,7 +141,7 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
         elif fit["role"] == "walk_minutes" and fit.get("need") in NEED_VALUES:
             walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
-        elif fit["role"] == "walk_minutes" and fit.get("priority") in PRIORITY_VALUES:
+        elif fit["role"] == "walk_minutes" and fit.get("priority") in PRIORITY_WALK_VALUES:
             # a priority measured on foot: the park for «Zonas verdes» (D-222)
             priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
         else:  # a role, need, priority or mode this code does not know (synced before deploy)

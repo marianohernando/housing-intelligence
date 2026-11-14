@@ -1,6 +1,6 @@
 dataset_id: osm_ocio
 source_id: openstreetmap
-name: Ocio de OpenStreetMap (bares, restaurantes, gimnasios, cines y teatros; extracto Geofabrik de la Comunidad de Madrid)
+name: Ocio de OpenStreetMap (bares, restaurantes, gimnasios y cultura; extracto Geofabrik de la Comunidad de Madrid)
 domain: other
 owner: OpenStreetMap contributors (extracto de Geofabrik)
 format: PBF
@@ -29,11 +29,13 @@ scorecard:
   ingestion_ease: 4
   notes: >-
     D-236. Fuente complementaria, no es dataset CM: el portal de la Comunidad no publica un
-    censo abierto de bares, restaurantes, gimnasios ni cines de toda la región. ODbL: los
-    indicadores derivados citan "© OpenStreetMap contributors". OSM lo mantienen voluntarios:
-    en los pueblos pequeños faltan locales (cobertura en evidence/gate-01/2026-11-14/ocio.md).
+    censo abierto con coordenadas de bares, restaurantes, gimnasios, cines ni museos de toda la
+    región. Su directorio de bibliotecas (sin coordenadas) y su tabla de museos por municipio
+    sirven para validar la cobertura de cultura. ODbL: los indicadores derivados citan
+    "© OpenStreetMap contributors". OSM lo mantienen voluntarios: en los pueblos pequeños
+    faltan locales (cobertura en evidence/gate-01/2026-11-14/ocio.md).
   reviewed_by: claude-code
   reviewed_at: '2026-11-14T12:00:00+00:00'
 notes: >-
   Mismo extracto que osm_red_peatonal y osm_parques. Solo el nombre, el punto y la etiqueta de
-  cada local (amenity o leisure); nunca dirección, teléfono ni horario.
+  cada local (amenity, leisure o tourism); nunca dirección, teléfono ni horario.

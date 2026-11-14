@@ -268,7 +268,7 @@ describe("map style", () => {
 
   it("paints the four leisure groups in one colour, so the map does not fill with colours (D-236)", () => {
     const point = facilityLayers(palette).find((l) => l.id === "facilities-point");
-    expect(JSON.stringify(point?.type === "circle" && point.paint)).toContain(`["bares","restaurantes","gimnasios","cines_teatros"],"${palette.facOcio}"`);
+    expect(JSON.stringify(point?.type === "circle" && point.paint)).toContain(`["bares","restaurantes","gimnasios","cultura"],"${palette.facOcio}"`);
   });
 
   it("names each group image by its count and colour, and sizes it by how many it holds", () => {

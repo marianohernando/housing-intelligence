@@ -674,7 +674,7 @@ def _leisure_zone(code: str = "1", **minutes: float | None) -> ZoneData:
     return replace(base, walk=walk)
 
 
-def _ocio(*needs: str, minutes: int = 10, required: bool = True) -> ScenarioState:
+def _ocio(*needs: str, minutes: int = 10, required: bool = False) -> ScenarioState:
     return ScenarioState(
         nearby=[
             NearbyNeed(need=NeedKey(n), max_walk_minutes=minutes, required=required) for n in needs
@@ -683,26 +683,27 @@ def _ocio(*needs: str, minutes: int = 10, required: bool = True) -> ScenarioStat
     )
 
 
-def test_a_ticked_leisure_group_is_a_walking_condition_like_any_other() -> None:
-    scenario = _ocio("bares", "cines_teatros")
-    evaluation = evaluate(scenario, _leisure_zone(bares=3.2, cines_teatros=14.0))
+def test_a_required_leisure_group_is_a_walking_condition_like_any_other() -> None:
+    scenario = _ocio("bares", "cultura", required=True)
+    evaluation = evaluate(scenario, _leisure_zone(bares=3.2, cultura=14.0))
     checks = {c.constraint_id: c for c in evaluation.constraints}
-    bar, cinema = checks["near:bares"], checks["near:cines_teatros"]
+    bar, culture = checks["near:bares"], checks["near:cultura"]
     assert bar.status is ConstraintStatus.PASS
     assert bar.label == "Bares y cafeterías a 10 min andando como mucho"
     assert bar.explanation == (
         "A unos 3 min andando de un bar o una cafetería (lo que tarda la mitad de la zona)"
     )
-    assert cinema.status is ConstraintStatus.FAIL
-    assert cinema.explanation.startswith("A unos 14 min andando de un cine, un teatro")
+    assert culture.status is ConstraintStatus.FAIL
+    assert culture.label == "Cultura a 10 min andando como mucho"
+    assert culture.explanation.startswith("A unos 14 min andando de un museo, una biblioteca")
     missing = evaluate(scenario, _leisure_zone(bares=3.2))
-    unknown = next(c for c in missing.constraints if c.constraint_id == "near:cines_teatros")
+    unknown = next(c for c in missing.constraints if c.constraint_id == "near:cultura")
     assert unknown.status is ConstraintStatus.UNKNOWN  # no data is never a PASS
     assert not missing.passes_all
 
 
 def test_leisure_is_one_fact_and_one_criterion_whatever_the_boxes() -> None:
-    scenario = _ocio("gimnasios", "bares", "restaurantes", required=False).model_copy(
+    scenario = _ocio("gimnasios", "bares", "restaurantes").model_copy(
         update={"priorities": [PriorityKey.TRANSPORTE, PriorityKey.OCIO]}
     )
     assert [c.key for c in criteria(scenario)] == ["need:transporte", "priority:ocio"]
@@ -721,14 +722,14 @@ def test_leisure_is_one_fact_and_one_criterion_whatever_the_boxes() -> None:
 
 
 def test_each_leisure_group_scores_against_its_own_minutes() -> None:
-    near = evaluate(_ocio("bares", minutes=5, required=False), _leisure_zone(bares=10.0))
-    far = evaluate(_ocio("bares", minutes=15, required=False), _leisure_zone(bares=10.0))
+    near = evaluate(_ocio("bares", minutes=5), _leisure_zone(bares=10.0))
+    far = evaluate(_ocio("bares", minutes=15), _leisure_zone(bares=10.0))
     assert near.utility == pytest.approx(0.5)
     assert far.utility == pytest.approx(1.0)
 
 
 def test_leisure_without_data_is_unknown_and_never_zero() -> None:
-    scenario = _ocio("bares", "restaurantes", required=False)
+    scenario = _ocio("bares", "restaurantes")
     nothing = evaluate(scenario, _leisure_zone())
     assert nothing.utility is None
     fact = next(f for f in nothing.facts if f.topic is FactTopic.OCIO)
@@ -744,7 +745,7 @@ def test_leisure_without_data_is_unknown_and_never_zero() -> None:
 
 def test_a_leisure_place_beyond_a_walk_scores_zero_with_low_confidence() -> None:
     """In a village OpenStreetMap may simply not have the bar: 0, but not a sure 0 (D-236)."""
-    far = evaluate(_ocio("bares", required=False), _leisure_zone(bares=75.0))
+    far = evaluate(_ocio("bares"), _leisure_zone(bares=75.0))
     assert far.utility == 0.0
     assert far.confidence == pytest.approx(0.5)
     fact = next(f for f in far.facts if f.topic is FactTopic.OCIO)
@@ -771,7 +772,7 @@ def test_a_scenario_without_leisure_ignores_the_leisure_data() -> None:
 
 
 def test_a_failed_leisure_condition_can_be_relaxed() -> None:
-    scenario = _ocio("restaurantes")
+    scenario = _ocio("restaurantes", required=True)
     option = relaxed(scenario, "near:restaurantes")
     assert option is not None
     label, changed = option
@@ -782,7 +783,7 @@ def test_a_failed_leisure_condition_can_be_relaxed() -> None:
 @given(a=st.floats(0, 120), b=st.floats(0, 120), other=st.floats(0, 120))
 @settings(max_examples=60, deadline=None)
 def test_a_farther_bar_never_raises_the_match(a: float, b: float, other: float) -> None:
-    scenario = _ocio("bares", "restaurantes", required=False)
+    scenario = _ocio("bares", "restaurantes")
     near, far = sorted([a, b])
     closer = evaluate(scenario, _leisure_zone(bares=near, restaurantes=other))
     farther = evaluate(scenario, _leisure_zone(bares=far, restaurantes=other))

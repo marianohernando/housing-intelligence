@@ -17,7 +17,7 @@ from hi_ingestion.pipelines.places.publish import replace_places
 from hi_ingestion.pipelines.places.run import write_places_silver
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 
-PARSER_VERSION = "osm-pois-1.0.0"
+PARSER_VERSION = "osm-pois-1.1.0"  # 1.1: museums and libraries join «Cultura» (D-236)
 
 
 def _counts(places: Places) -> dict[str, Any]:

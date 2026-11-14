@@ -58,7 +58,7 @@ DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.BARES: 10,
     NeedKey.RESTAURANTES: 10,
     NeedKey.GIMNASIOS: 10,
-    NeedKey.CINES_TEATROS: 10,
+    NeedKey.CULTURA: 10,
 }
 WALK_ZERO_AT = 3.0  # utility falls linearly to 0 at three times the window
 NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 0 from 20 km
@@ -78,7 +78,10 @@ NEED_TEXT: dict[NeedKey, tuple[str, str]] = {  # (fact label, «de …» in a se
     NeedKey.BARES: ("Bares y cafeterías", "un bar o una cafetería"),
     NeedKey.RESTAURANTES: ("Restaurantes", "un restaurante"),
     NeedKey.GIMNASIOS: ("Gimnasios", "un gimnasio o un centro deportivo"),
-    NeedKey.CINES_TEATROS: ("Cines y teatros", "un cine, un teatro o un centro cultural"),
+    NeedKey.CULTURA: (
+        "Cultura",
+        "un museo, una biblioteca, un teatro, un cine o un centro cultural",
+    ),
 }
 NEED_TOPIC: dict[NeedKey, FactTopic] = {
     NeedKey.ESCUELA_INFANTIL: FactTopic.COLEGIOS,
@@ -90,7 +93,7 @@ NEED_TOPIC: dict[NeedKey, FactTopic] = {
     NeedKey.BARES: FactTopic.OCIO,
     NeedKey.RESTAURANTES: FactTopic.OCIO,
     NeedKey.GIMNASIOS: FactTopic.OCIO,
-    NeedKey.CINES_TEATROS: FactTopic.OCIO,
+    NeedKey.CULTURA: FactTopic.OCIO,
 }
 PRIORITY_NEED: dict[PriorityKey, NeedKey] = {
     PriorityKey.TRANSPORTE: NeedKey.TRANSPORTE,

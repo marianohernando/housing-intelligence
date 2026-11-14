@@ -58,7 +58,7 @@
   --fac-hospital: #141b3d;
   --fac-farmacia: #0b6f7c;
   --fac-mayores: #6d4c41;
-  /* Leisure from OSM (D-236): bars, restaurants, gyms and cinemas share one colour */
+  /* Leisure from OSM (D-236): bars, restaurants, gyms and culture share one colour */
   --fac-ocio: #5f6f0a;
 
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */

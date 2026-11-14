@@ -13,7 +13,7 @@ import { titleCase } from "@/lib/names";
 
 import type { PlaceFeature } from "./places";
 
-export type LeisureFacilityKey = "bares" | "restaurantes" | "gimnasios" | "cines_teatros";
+export type LeisureFacilityKey = "bares" | "restaurantes" | "gimnasios" | "cultura";
 export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | LeisureFacilityKey;
 
 export interface FacilityType {
@@ -163,7 +163,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
   {
     key: "gimnasios",
     category: "sport",
-    chip: "Gimnasios",
+    chip: "Gimnasios y deporte",
     one: "gimnasio o centro deportivo",
     many: "gimnasios y centros deportivos",
     none: "Ningún gimnasio ni centro deportivo",
@@ -173,16 +173,19 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     ],
     leisure: true,
   },
+  // «Cultura»: museums and libraries joined cinemas and theatres after test users asked for them
   {
-    key: "cines_teatros",
+    key: "cultura",
     category: "culture",
-    chip: "Cines y teatros",
-    one: "cine, teatro o centro cultural",
-    many: "cines, teatros y centros culturales",
-    none: "Ningún cine, teatro ni centro cultural",
+    chip: "Cultura",
+    one: "espacio cultural",
+    many: "espacios culturales",
+    none: "Ningún espacio cultural",
     classes: [
-      { subcategory: "Cine", label: "Cine" },
+      { subcategory: "Museo", label: "Museo" },
+      { subcategory: "Biblioteca", label: "Biblioteca" },
       { subcategory: "Teatro", label: "Teatro" },
+      { subcategory: "Cine", label: "Cine" },
       { subcategory: "Centro cultural", label: "Centro cultural" },
     ],
     leisure: true,
@@ -427,7 +430,7 @@ export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
   bares: "fac-ocio",
   restaurantes: "fac-ocio",
   gimnasios: "fac-ocio",
-  cines_teatros: "fac-ocio",
+  cultura: "fac-ocio",
 };
 
 /**

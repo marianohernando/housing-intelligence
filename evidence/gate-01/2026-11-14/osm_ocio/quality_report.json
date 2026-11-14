@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "place_count_plausible",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "places": 16507,
+        "min": 8000,
+        "max": 60000
+      }
+    },
+    {
+      "name": "ids_unique",
+      "critical": true,
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "every_class_has_places",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "Bar": 2343,
+        "Pub": 1632,
+        "Cafetería": 2226,
+        "Restaurante": 7678,
+        "Gimnasio": 556,
+        "Centro deportivo": 1182,
+        "Museo": 196,
+        "Biblioteca": 260,
+        "Teatro": 259,
+        "Cine": 77,
+        "Centro cultural": 98
+      }
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "max_ratio": 0.02
+      }
+    }
+  ]
+}

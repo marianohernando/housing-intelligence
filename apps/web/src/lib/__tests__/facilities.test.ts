@@ -308,7 +308,7 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     bares: [],
     restaurantes: [],
     gimnasios: [],
-    cines_teatros: [],
+    cultura: [],
   } as Record<FacilityKey, Facility[]>;
 
   it("keeps the order of the buttons, whatever the order they were pressed", () => {
@@ -338,6 +338,8 @@ describe("leisure from OpenStreetMap (D-236)", () => {
     place("r1", "commerce", "Restaurante", "Restaurante sin nombre"),
     place("g1", "sport", "Centro deportivo", "Polideportivo Municipal"),
     place("t1", "culture", "Teatro", "Teatro Real"),
+    place("m1", "culture", "Museo", "Museo del Prado"),
+    place("l1", "culture", "Biblioteca", "Biblioteca Eugenio Trías"),
     place("x1", "commerce", "Comida rápida", "Burger"), // not a class of any type: left out
   ];
   const groups = groupFacilities(places);
@@ -350,20 +352,27 @@ describe("leisure from OpenStreetMap (D-236)", () => {
     ]);
     expect(groups.restaurantes.map((f) => [f.label, f.name])).toEqual([["Restaurante", null]]);
     expect(groups.gimnasios.map((f) => f.label)).toEqual(["Centro deportivo"]);
-    expect(groups.cines_teatros.map((f) => f.name)).toEqual(["Teatro Real"]);
-    expect(Object.values(groups).flat()).toHaveLength(6);
+    // «Cultura»: museums and libraries too, each with what it is (D-236)
+    expect(groups.cultura.map((f) => [f.label, f.name])).toEqual([
+      ["Biblioteca", "Biblioteca Eugenio Trías"],
+      ["Museo", "Museo del Prado"],
+      ["Teatro", "Teatro Real"],
+    ]);
+    expect(Object.values(groups).flat()).toHaveLength(8);
   });
 
   it("counts them in plain words", () => {
     expect(facilityCountText("bares", 3, "Centro")).toBe("3 bares y cafeterías en Centro");
     expect(facilityCountText("restaurantes", 1, "Centro")).toBe("1 restaurante en Centro");
     expect(facilityCountText("gimnasios", 0, "Patones")).toBe("Ningún gimnasio ni centro deportivo en Patones");
-    expect(facilityCountText("cines_teatros", 2, "Centro")).toBe("2 cines, teatros y centros culturales en Centro");
+    expect(facilityCountText("cultura", 2, "Centro")).toBe("2 espacios culturales en Centro");
+    expect(facilityCountText("cultura", 1, "Patones")).toBe("1 espacio cultural en Patones");
+    expect(facilityCountText("cultura", 0, "Patones")).toBe("Ningún espacio cultural en Patones");
   });
 
   it("offers the leisure types only where the zone has some leisure place: never «Ningún bar» before the data", () => {
     const keys = (g: typeof groups) => offeredTypes(g).map((t) => t.key);
-    expect(keys(groups).slice(-4)).toEqual(["bares", "restaurantes", "gimnasios", "cines_teatros"]);
+    expect(keys(groups).slice(-4)).toEqual(["bares", "restaurantes", "gimnasios", "cultura"]);
     const before = groupFacilities([place("c", "pharmacy", "Farmacia", "Farmacia · CALLE Mayor 1")]);
     expect(keys(before)).toEqual(["colegio", "escuela_infantil", "centro_salud", "hospital", "farmacia", "mayores", "parque"]);
     // One group is enough to offer the four: the others say «Ningún…», which OSM can tell there

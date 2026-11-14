@@ -146,7 +146,7 @@ def test_leisure_is_additive_and_a_scenario_without_it_reads_the_same() -> None:
         NeedKey.BARES,
         NeedKey.RESTAURANTES,
         NeedKey.GIMNASIOS,
-        NeedKey.CINES_TEATROS,
+        NeedKey.CULTURA,
     )
 
 

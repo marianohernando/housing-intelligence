@@ -33,7 +33,7 @@ class NeedKey(StrEnum):
     BARES = "bares"
     RESTAURANTES = "restaurantes"
     GIMNASIOS = "gimnasios"
-    CINES_TEATROS = "cines_teatros"
+    CULTURA = "cultura"
 
 
 # «Ocio» (D-236): the groups its configurator offers, in its order.
@@ -41,7 +41,7 @@ LEISURE_NEEDS: tuple[NeedKey, ...] = (
     NeedKey.BARES,
     NeedKey.RESTAURANTES,
     NeedKey.GIMNASIOS,
-    NeedKey.CINES_TEATROS,
+    NeedKey.CULTURA,
 )
 
 

@@ -64,7 +64,7 @@ export function togglePriority(s: ScenarioState, key: PriorityKey): ScenarioStat
 }
 
 /** The groups of «Ocio» (importa.ocio.*), in the order of its boxes: the leisure NeedKeys of the contract. */
-export const LEISURE_KEYS = ["bares", "restaurantes", "gimnasios", "cines_teatros"] as const satisfies readonly NeedKey[];
+export const LEISURE_KEYS = ["bares", "restaurantes", "gimnasios", "cultura"] as const satisfies readonly NeedKey[];
 export type LeisureKey = (typeof LEISURE_KEYS)[number];
 /** What most people asked for, ticked when «Ocio» is marked; the person can change it. */
 const LEISURE_INITIAL: readonly LeisureKey[] = ["bares", "restaurantes"];
@@ -76,7 +76,8 @@ export interface LeisureConfig {
   minutes: number;
   required: boolean;
 }
-const LEISURE_DEFAULT: Omit<LeisureConfig, "groups"> = { minutes: 10, required: true };
+/** «Me importa» ranks and never filters: «Imprescindible» is opt-in, since OSM misses places in small villages (D-236). */
+const LEISURE_DEFAULT: Omit<LeisureConfig, "groups"> = { minutes: 10, required: false };
 
 function isLeisure(need: NeedKey): need is LeisureKey {
   return (LEISURE_KEYS as readonly NeedKey[]).includes(need);

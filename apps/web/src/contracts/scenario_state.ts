@@ -51,7 +51,7 @@ export type NeedKey =
   | "bares"
   | "restaurantes"
   | "gimnasios"
-  | "cines_teatros";
+  | "cultura";
 /**
  * True = hard constraint (PASS/FAIL/UNKNOWN)
  */

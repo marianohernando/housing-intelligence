@@ -77,7 +77,7 @@ const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: str
   { key: "colegios", label: "Colegios", icon: GraduationCap, help: "Colegios con primaria, públicos o concertados, cerca de casa." },
   { key: "zonas_verdes", label: "Zonas verdes", icon: Trees, help: "Parques de una hectárea o más, cerca de casa." },
   { key: "sin_escaleras", label: "Sin escaleras", icon: TrainFront, help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa." },
-  { key: "ocio", label: "Ocio", icon: Wine, help: "Bares, restaurantes, gimnasios, cines y teatros cerca de casa: tú eliges cuáles." },
+  { key: "ocio", label: "Ocio", icon: Wine, help: "Bares, restaurantes, gimnasios y cultura (museos, bibliotecas, teatros y cines) cerca de casa: tú eliges cuáles." },
 ];
 
 function peopleText(n: number): string {
