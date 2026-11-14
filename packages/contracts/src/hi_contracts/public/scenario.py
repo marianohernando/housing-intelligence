@@ -2,8 +2,9 @@
 
 Budget to rent (€/month) or to buy (€), the household, where they work, what matters to them
 and services wanted within walking distance. The search ranks the region by municipio with
-Madrid capital split into its 21 districts. Sensitive needs are not part of this version;
-«sin escaleras» is a functional preference, never a disability label (CLAUDE.md §13).
+Madrid capital split into its 21 districts, or only one part of it (`scope`, D-238). Sensitive
+needs are not part of this version; «sin escaleras» is a functional preference, never a
+disability label (CLAUDE.md §13).
 """
 
 from enum import StrEnum
@@ -40,6 +41,16 @@ class PriorityKey(StrEnum):
     ZONAS_VERDES = "zonas_verdes"
     SEGURIDAD = "seguridad"
     SIN_ESCALERAS = "sin_escaleras"
+
+
+class SearchScope(StrEnum):
+    """«Dónde buscar» (D-238): the whole region, or one of its three parts by the statistical
+    zoning of the Comunidad de Madrid (data/catalog/zoning/search_scope.yaml)."""
+
+    ALL = "all"  # every municipio, with Madrid capital by its 21 districts (D-200)
+    MADRID = "madrid"  # Madrid capital, by its 131 barrios
+    ALREDEDORES = "alrededores"  # the municipios of the four metropolitan zones
+    PUEBLOS = "pueblos"  # every other municipio
 
 
 class AnchorKind(StrEnum):
@@ -92,7 +103,7 @@ class Household(BaseModel):
 
 
 class Anchor(BaseModel):
-    """A place the household travels to often («Trabajo en»)."""
+    """A place the household travels to often: where they work, or family and friends."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -100,7 +111,13 @@ class Anchor(BaseModel):
     label: str = Field(min_length=1, max_length=80, examples=["Paseo de la Castellana (Azca)"])
     lon: float = Field(ge=-4.58, le=-3.05)
     lat: float = Field(ge=39.88, le=41.17)
-    days_per_week: int = Field(default=5, ge=1, le=7)
+    days_per_week: int = Field(
+        default=5,
+        ge=0,
+        le=7,
+        description="Days they go there in a week: 1-2 halve the weight of the trip; 0 = never "
+        "(full telework), the trip is not scored but its max_minutes still applies (D-240)",
+    )
     max_minutes: int | None = Field(
         default=None, ge=5, le=120, description="Hard limit for the trip; None = preference only"
     )
@@ -129,6 +146,10 @@ class ScenarioState(BaseModel):
     nearby: list[NearbyNeed] = Field(default_factory=list[NearbyNeed], max_length=6)
     priorities: list[PriorityKey] = Field(
         default_factory=list[PriorityKey], max_length=6, description="Most important first"
+    )
+    scope: SearchScope = Field(
+        default=SearchScope.ALL,
+        description="Where to search; Madrid capital is ranked by barrio instead of by district",
     )
 
     @model_validator(mode="after")

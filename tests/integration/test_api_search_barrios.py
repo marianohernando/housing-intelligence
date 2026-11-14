@@ -108,3 +108,19 @@ def test_a_barrio_without_its_own_trip_takes_the_district_s_and_says_so(
         with migrated_engine.begin() as conn:
             conn.execute(text("DELETE FROM commute_time"))
             conn.execute(text("DELETE FROM transit_hub"))
+
+
+def test_barrios_buy_with_an_estimate_anchored_to_their_district(client: TestClient) -> None:
+    """D-234: buying works by barrio too: each barrio has its estimated price, said as an
+    estimate «del barrio», and a tight budget fails instead of staying unknown."""
+    buy = _family() | {"budget": {"kind": "buy", "amount_eur": 5000000}, "nearby": []}
+    data = _barrios(client, buy).data
+    assert {r.zone.code for r in data.results} == {"28079011", "28079016"}
+    for ranked in data.results:
+        budget = next(c for c in ranked.constraints if c.constraint_id == "budget")
+        assert budget.status == "PASS" and budget.confidence == 0.5
+        assert "precio estimado: valor tasado de Madrid" in budget.explanation
+        assert "valor catastral del barrio" in budget.explanation
+    tight = buy | {"budget": {"kind": "buy", "amount_eur": 100000}}
+    zones = _barrios(client, tight).data.all_zones
+    assert all(z.failed_constraints == ["budget"] for z in zones)

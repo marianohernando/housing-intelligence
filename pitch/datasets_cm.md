@@ -205,6 +205,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Ficha:** https://datos.comunidad.madrid/dataset/1004050 · id `cm_valor_tasado_vivienda_municipios` · publica: Instituto de Estadística
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
+  - Indicador por zona: Precio de compra estimado por metro cuadrado (valor tasado de la ciudad repartido según el valor catastral) (`precio_compra_estimado_m2`, fuente principal)
   - Indicador por zona: Valor tasado medio de la vivienda libre por metro cuadrado (`valor_tasado_vivienda_m2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-60a2ddbf2260` · 895 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/cm_valor_tasado_vivienda_municipios/quality_report.json)
 
@@ -370,11 +371,13 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 - **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Año medio de construcción de los edificios de viviendas (`ano_medio_construccion_residencial`, fuente principal)
+  - Indicador por zona: Precio de compra estimado por metro cuadrado (valor tasado de la ciudad repartido según el valor catastral) (`precio_compra_estimado_m2`, fuente principal)
   - Dato de contexto en la vista de zona (no puntúa): Renta neta media anual por hogar (`renta_neta_media_hogar`, fuente principal)
   - Dato de contexto en la vista de zona (no puntúa): Seguridad de su barrio de día según sus vecinos (`seguridad_percibida_dia`, fuente principal)
   - Dato de contexto en la vista de zona (no puntúa): Seguridad de su barrio de noche según sus vecinos (`seguridad_percibida_noche`, fuente principal)
   - «Qué falta», fila «Vivienda para familias» (dato extra): Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, fuente principal)
-- **Quality Gate 1:** PASS · 2026-11-14 · 10/10 checks críticos · versión `2026-11-11-4726abc60a15` · 4.368 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_panel_indicadores_distritos_barrios/quality_report.json)
+  - Indicador por zona: Valor tasado medio de la vivienda libre por metro cuadrado (`valor_tasado_vivienda_m2`, fuente de apoyo)
+- **Quality Gate 1:** PASS · 2026-11-14 · 10/10 checks críticos · versión `2026-11-11-4726abc60a15` · 7.560 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_panel_indicadores_distritos_barrios/quality_report.json)
 
 ### Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31 de diciembre de 2025)
 - **Ficha:** https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/centrosSalud/home.htm · id `ms_catalogo_centros_atencion_primaria` · publica: Ministerio de Sanidad

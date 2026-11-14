@@ -65,3 +65,10 @@ La respuesta completa (`results`, `near_misses`, `all_zones`, `reality_check`, `
 - `make test-db` contra una base de tests vacía (`housing_contexto_test`, migrada a `0007`): 134 passed.
 - `npm run build` (apps/web): verde.
 - Gate 1 de los tres datasets: `evidence/gate-01/2026-11-14/` (PASS con `stat_tables-1.1.0`; las infracciones pasan los checks críticos `quarantine_empty` y `latest_year_complete`, con `excluded_status: 74`; los avisos no críticos son la cobertura de 37 municipios y `totals_are_additive`, porque la cibercriminalidad es una parte del total, no un reparto).
+
+## Tras fusionar la base con #59 (D-234) y #60 (D-240)
+
+- Panel con el parser `madrid_district_panel-1.6.0` (1.4 D-234 · 1.5 D-235 · 1.6 unión), releído con evidencia sobre el mismo Bronze (`11a758e6249d`): SUCCESS, 7.560 observaciones de 9 métricas (18 combinaciones de métrica y nivel). Las 7 métricas que ya leía D-234 coinciden fila a fila con `housing` (parser 1.4.0), y `precio_compra_estimado_m2` y `valor_tasado_vivienda_m2` recalculadas también coinciden.
+- `scripts/golden_search.py` contra `housing_contexto`: 9 escenarios dorados, todos OK; la salida es idéntica a la de `housing` (`golden-search.txt`). El caso de ejemplo sigue con 27 zonas y Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %.
+- `housing_contexto` y `housing_contexto_test` llevan ahora `search_path = public, extensions` a nivel de base, como las demás copias: el script abre su propia conexión sin `hi_db`.
+

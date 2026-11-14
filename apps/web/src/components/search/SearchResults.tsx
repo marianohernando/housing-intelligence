@@ -7,10 +7,27 @@ import type { RankedZone, SearchResult } from "@/contracts/search_response";
 import { useMapZones } from "@/components/map/MapProvider";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { constraintLabels, failedLabels, passingText, tiedText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
+import {
+  constraintLabels,
+  evaluatedText,
+  failedLabels,
+  noneText,
+  passingText,
+  rentUnknownText,
+  tiedText,
+  unknownText,
+  zoneKeyOf,
+  zonePrice,
+  zonesText,
+  zonesWithoutPrice,
+  type ZoneWord,
+  zoneWord,
+} from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
+import { districtOf, zoneTitle } from "@/lib/map/zones";
 
 import RealityCheck from "./RealityCheck";
 import styles from "./Results.module.css";
@@ -21,19 +38,19 @@ import { useScenario } from "./ScenarioProvider";
 const TEXT = {
   title: "Zonas que encajan",
   loading: "Buscando zonas que encajan…",
-  none: "Ninguna zona cumple todo lo que pides. Mira abajo qué pasa si cambias algo.",
-  of: (n: number) => `De ${n} zonas de la Comunidad de Madrid.`,
   applied: "Ahora ves las zonas con:",
   undo: "Volver a mi búsqueda",
   stale: "Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día.",
   first: (n: number) => `Ver las ${n} primeras`,
   fewer: "Ver menos",
-  rest: (n: number) => `Y ${zonesText(n)} más en el mapa.`,
+  rest: (n: number, word: ZoneWord) => `Y ${zonesText(n, word)} más en el mapa.`,
   near: "Casi encajan",
   nearHelp: "Cumplen todo menos una cosa.",
   fails: "No cumple:",
   retry: "Reintentar",
   district: (city: string | null | undefined) => `Distrito de ${city ?? "Madrid"}`,
+  // zona.barrio.antetitulo (D-238)
+  barrio: (city: string | null | undefined) => `Barrio de ${city ?? "Madrid"}`,
   municipio: "Municipio",
   fit: "de encaje",
 };
@@ -41,18 +58,30 @@ const TEXT = {
 /** Rows of the ranking in view before «Ver las 10 primeras». */
 const FIRST_ROWS = 5;
 
-function ZoneRow({ zone, fails }: { zone: RankedZone; fails?: string[] }) {
-  const { select } = useMapZones();
-  const { name, level, municipio_name } = zone.zone;
+function levelText({ level, municipio_name }: RankedZone["zone"]): string {
+  if (level === "barrio") return TEXT.barrio(municipio_name);
+  return level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio;
+}
+
+function ZoneRow({ zone, buying, fails }: { zone: RankedZone; buying: boolean; fails?: string[] }) {
+  const { select, zones } = useMapZones();
+  const { name, level, code } = zone.zone;
+  // «Berruguete · Tetuán»: a barrio's district comes from the start of its code (D-238)
+  const district = level === "barrio" && zones ? districtOf(zones, code) : undefined;
+  const price = zonePrice(zone, buying);
   return (
     <button type="button" className={styles.row} onClick={() => select(zoneKeyOf(zone.zone))}>
       {!fails && <span className={styles.rank}>{zone.rank}</span>}
       <span className={styles.rowName}>
-        {name}
-        <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio}</small>
+        {zoneTitle({ name, district_name: district?.name })}
+        <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : levelText(zone.zone)}</small>
       </span>
-      <span className={styles.pct}>
-        {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+      {/* The price under the %, not beside it: at 390 px the name keeps its width (D-234) */}
+      <span className={styles.end}>
+        <span className={styles.pct}>
+          {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+        </span>
+        {price && <PriceTag price={price} variant="row" />}
       </span>
     </button>
   );
@@ -69,7 +98,7 @@ function Ranking({ result }: { result: SearchResult }) {
       <ol className={styles.ranking}>
         {shown.map((zone) => (
           <li key={zoneKeyOf(zone.zone)}>
-            <ZoneRow zone={zone} />
+            <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} />
           </li>
         ))}
       </ol>
@@ -79,7 +108,7 @@ function Ranking({ result }: { result: SearchResult }) {
           <ChevronDown size={18} aria-hidden="true" className={all ? styles.flip : undefined} />
         </button>
       )}
-      {all && rest > 0 && <p className={styles.muted}>{TEXT.rest(rest)}</p>}
+      {all && rest > 0 && <p className={styles.muted}>{TEXT.rest(rest, zoneWord(result))}</p>}
     </>
   );
 }
@@ -101,7 +130,11 @@ function NearMisses({ result }: { result: SearchResult }) {
         <ul className={styles.ranking}>
           {near.map((zone) => (
             <li key={zoneKeyOf(zone.zone)}>
-              <ZoneRow zone={zone} fails={failedLabels(zone.failed_constraints, labels, zone.constraints)} />
+              <ZoneRow
+                zone={zone}
+                buying={result.scenario.budget?.kind === "buy"}
+                fails={failedLabels(zone.failed_constraints, labels, zone.constraints)}
+              />
             </li>
           ))}
         </ul>
@@ -136,7 +169,11 @@ export default function SearchResults({ children }: { children: ReactNode }) {
 
   // One live region, always there, so screen readers hear each change of the search.
   const announce =
-    status === "loading" ? TEXT.loading : status === "done" && result ? passingText(result.reality_check.zones_passing, applied !== null) : "";
+    status === "loading"
+      ? TEXT.loading
+      : status === "done" && result
+        ? passingText(result.reality_check.zones_passing, applied !== null, zoneWord(result))
+        : "";
   const live = (
     <p role="status" className="visually-hidden">
       {announce}
@@ -186,6 +223,8 @@ export default function SearchResults({ children }: { children: ReactNode }) {
   }
 
   const rc = result.reality_check;
+  const word = zoneWord(result);
+  const rentUnknown = rentUnknownText(result);
   return (
     <div ref={ref} className={styles.stack}>
       {live}
@@ -212,10 +251,12 @@ export default function SearchResults({ children }: { children: ReactNode }) {
         )}
         {stale && status !== "loading" && <p className={styles.stale}>{TEXT.stale}</p>}
         <p className={styles.summary}>
-          <strong>{passingText(rc.zones_passing, applied !== null)}</strong> {TEXT.of(rc.zones_evaluated)}
+          <strong>{passingText(rc.zones_passing, applied !== null, word)}</strong> {evaluatedText(result)}
         </p>
-        {rc.zones_passing === 0 && <p>{TEXT.none}</p>}
-        {rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown)}</p>}
+        {rc.zones_passing === 0 && <p>{noneText(word)}</p>}
+        {/* Renting in «Pueblos» most villages have no rent: why they come out «Sin datos» (D-238) */}
+        {rentUnknown && <p className={styles.muted}>{rentUnknown}</p>}
+        {!rentUnknown && rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
         {rc.zones_passing > 0 && <Ranking result={result} />}
         <NearMisses result={result} />
       </GlassCard>

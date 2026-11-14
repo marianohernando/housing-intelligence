@@ -105,16 +105,28 @@ def test_reality_check_counts_add_up() -> None:
         {"household": {"adults": 1, "minors": 1, "minor_ages": [19]}},
         {"household": {"adults": 0}},
         {"anchors": [{"label": "Lisboa", "lon": -9.14, "lat": 38.72}]},
+        {"anchors": [{"label": "Azca", "lon": -3.69, "lat": 40.45, "days_per_week": 8}]},
+        {"anchors": [{"label": "Azca", "lon": -3.69, "lat": 40.45, "days_per_week": -1}]},
         {"budget": {"kind": "rent", "amount_eur": 300_000}},  # a purchase price as rent
         {"budget": {"kind": "buy", "amount_eur": 1200}},  # a rent as purchase price
         {"budget_monthly_eur": 1200},  # v1 field
         {"schema_version": 1},
         {"sexo": "mujer"},
+        {"scope": "sierra"},  # not one of the parts of «Dónde buscar» (D-238)
     ],
 )
 def test_scenario_rejects_incoherent_or_unknown_input(change: dict[str, Any]) -> None:
     with pytest.raises(ValidationError):
         ScenarioState.model_validate(change)
+
+
+def test_a_place_can_be_one_never_gone_to_and_of_family_or_friends() -> None:
+    """D-240: 0 days a week is full telework; `family` is the second place of the search."""
+    place = {"label": "Azca", "lon": -3.69, "lat": 40.45}
+    scenario = ScenarioState.model_validate(
+        {"anchors": [place | {"days_per_week": 0}, place | {"kind": "family"}]}
+    )
+    assert [(a.kind, a.days_per_week) for a in scenario.anchors] == [("work", 0), ("family", 5)]
 
 
 def test_default_scenario_and_household_size() -> None:
@@ -128,6 +140,18 @@ def test_default_scenario_and_household_size() -> None:
     buy = ScenarioState.model_validate({"budget": {"kind": "buy", "amount_eur": 320_000}})
     assert buy.budget is not None
     assert buy.budget.kind == "buy"
+
+
+def test_a_scenario_without_scope_searches_the_whole_region() -> None:
+    """D-238: a search saved or shared before «Dónde buscar» means what it meant."""
+    assert ScenarioState().scope == "all"
+    assert ScenarioState.model_validate({"scope": "madrid"}).scope == "madrid"
+    assert {s.value for s in type(ScenarioState().scope)} == {
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos",
+    }
 
 
 def test_search_fixture_never_shows_a_grade_and_maps_every_zone() -> None:

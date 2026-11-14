@@ -22,7 +22,7 @@ from hi_api.services.gap_impact import gap_impact
 from hi_api.services.gap_map import gap_row_map
 from hi_api.services.gaps import missing_row_warnings, zone_gap_list
 from hi_api.services.places import places_geojson
-from hi_api.services.search import search
+from hi_api.services.scope import search
 from hi_contracts.catalog.enums import GapRowKey, PlaceCategory, TerritoryLevel
 from hi_contracts.public import (
     BarrioSearchRequest,

@@ -47,6 +47,17 @@ export function fetchBarrios(districtId: string): Promise<AdminFeature[]> {
 }
 
 /**
+ * Every barrio of Madrid capital (about 90 KB), for a search over the capital (D-238): the overview
+ * paints them instead of its districts. Seen from as far as the districts, so simplified as much.
+ */
+export function fetchCapitalBarrios(): Promise<AdminFeature[]> {
+  return once(barrios, "capital", async () => {
+    const body = await createApi().adminUnits("barrio", SIMPLIFY_M.distrito, undefined, { timeoutMs: TIMEOUT_MS.outlines });
+    return body.data.features;
+  });
+}
+
+/**
  * A zone's places of some categories, for «Todos los centros» and the key points: one request per
  * zone with every category and subcategory both need (/places takes several categories since
  * 12 nov), shared by both. Only the pairs of category and subcategory asked for are kept (askedFor),

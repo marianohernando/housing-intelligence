@@ -11,6 +11,8 @@ sources:
   - {dataset_id: cm_valor_tasado_vivienda_municipios, role: primary, levels: [municipio]}
   # The districts of the padrón get an explicit SIN DATOS row each (never left out)
   - {dataset_id: ayto_padron_municipal, role: secondary, levels: [distrito]}
+  # ...and so do the barrios of the panel (D-234: their price is the estimate, another feature)
+  - {dataset_id: ayto_panel_indicadores_distritos_barrios, role: secondary, levels: [barrio]}
 formula:
   method: metric_value
   metric: valor_tasado_vivienda_m2_municipio
@@ -19,6 +21,7 @@ formula:
   levels:
     # Only municipios: a district never takes Madrid's city mean (CLAUDE.md §11). SIN DATOS.
     distrito: {method: not_published, territories_metric: poblacion_padron}
+    barrio: {method: not_published, territories_metric: hogares_padron}
 null_policy: {no_coverage: unknown, confirmed_zero: unknown}
 confidence: {inputs: [source_freshness, municipio_mean]}
 public_use: true
@@ -27,7 +30,7 @@ models: [affordability, reality_check]
 tests: [positive, unknown_never_zero]
 limitations:
   - "Es el valor de tasación (lo que tasan las sociedades de tasación, sobre todo para hipotecas), no el precio de un anuncio ni el de una venta concreta."
-  - "Solo municipios de más de 25.000 habitantes con tasaciones suficientes; el resto y los distritos de Madrid quedan sin datos, nunca 0. Un distrito no toma la media de la ciudad: Madrid no es homogéneo."
+  - "Solo municipios de más de 25.000 habitantes con tasaciones suficientes; el resto y los distritos y barrios de Madrid quedan sin datos en este indicador, nunca 0. Un distrito no toma la media de la ciudad: Madrid no es homogéneo; su precio de compra es una estimación aparte (`precio_compra_estimado_m2`, D-234)."
   - "Es la media de todo el municipio y de toda la vivienda libre (nueva y usada); dentro de un municipio grande el precio cambia mucho."
   - "El coste estimado multiplica este valor por los m² útiles que se suponen para el hogar (D-214); si la tasación se expresa por m² construido, el coste queda algo corto, así que un FAIL es más fiable que un PASS."
 fit: {role: price_m2}

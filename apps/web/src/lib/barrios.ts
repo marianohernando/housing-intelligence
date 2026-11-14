@@ -4,7 +4,7 @@
  * the fit: it picks what the district screen shows, with the copy of pitch/textos_web.md.
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
-import { constraintLabels, failedLabels, hasWalkingFact } from "@/lib/fit";
+import { constraintLabels, failedLabels, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
 
 /** Facts under each barrio: the API orders them, most important to the person first. */
 export const FACTS_PER_BARRIO = 2;
@@ -18,6 +18,8 @@ export interface BarrioRow {
   code: string;
   name: string;
   pct: number;
+  /** Its approximate price for the household (D-234), or null without one */
+  price: ZonePrice | null;
   facts: string[];
   /** Whether one of the facts is a walk (minutes on foot), to say once what those minutes are */
   walking: boolean;
@@ -25,13 +27,14 @@ export interface BarrioRow {
   fails: string[] | null;
 }
 
-function barrioRow(zone: RankedZone, fails: string[] | null): BarrioRow {
+function barrioRow(zone: RankedZone, fails: string[] | null, buying: boolean): BarrioRow {
   const facts = zone.facts.slice(0, FACTS_PER_BARRIO);
   return {
     id: zone.zone.admin_unit_id ?? null,
     code: zone.zone.code,
     name: zone.zone.name,
     pct: zone.match_pct,
+    price: zonePrice(zone, buying),
     facts: facts.map((fact) => fact.text),
     walking: hasWalkingFact(facts),
     fails,
@@ -39,11 +42,16 @@ function barrioRow(zone: RankedZone, fails: string[] | null): BarrioRow {
 }
 
 /** The barrios that fit, best first, and those that fail one condition, with it by name. */
-export function barrioRows(result: Pick<BarrioSearchResult, "results" | "near_misses">): { fits: BarrioRow[]; near: BarrioRow[] } {
+export function barrioRows(
+  result: Pick<BarrioSearchResult, "results" | "near_misses"> & Partial<Pick<BarrioSearchResult, "scenario">>,
+): { fits: BarrioRow[]; near: BarrioRow[] } {
   const labels = constraintLabels(result);
+  const buying = result.scenario?.budget?.kind === "buy";
   return {
-    fits: result.results.map((zone) => barrioRow(zone, null)),
-    near: (result.near_misses ?? []).map((zone) => barrioRow(zone, failedLabels(zone.failed_constraints, labels, zone.constraints))),
+    fits: result.results.map((zone) => barrioRow(zone, null, buying)),
+    near: (result.near_misses ?? []).map((zone) =>
+      barrioRow(zone, failedLabels(zone.failed_constraints, labels, zone.constraints), buying),
+    ),
   };
 }
 

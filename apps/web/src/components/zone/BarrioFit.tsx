@@ -8,6 +8,7 @@ import { useMapZones } from "@/components/map/MapProvider";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { type BarrioRow, barrioRows, barriosText, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
@@ -48,8 +49,12 @@ function Barrio({ row }: { row: BarrioRow }) {
   const head = (
     <>
       <span className={styles.name}>{row.name}</span>
-      <span className={styles.pct} title={TEXT.fitHelp}>
-        {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+      {/* The price under the %, so the name keeps its width at 390 px (D-234) */}
+      <span className={styles.end}>
+        <span className={styles.pct} title={TEXT.fitHelp}>
+          {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+        </span>
+        {row.price && <PriceTag price={row.price} variant="row" />}
       </span>
     </>
   );
@@ -117,7 +122,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
             <strong>{barriosText(data.reality_check)}</strong>
             {barrios && (rows.fits.length > 0 || rows.near.length > 0) && ` ${TEXT.pick}`}
           </p>
-          {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown)}</p>}
+          {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown, "barrio")}</p>}
           {shown.length > 0 && (
             <ol className={styles.list}>
               {shown.map((row) => (

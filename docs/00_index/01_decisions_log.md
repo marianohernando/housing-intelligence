@@ -1349,6 +1349,125 @@ Feedback de usuarios del 14 nov: quien se mueve en autobús quiere ver las parad
 4. **Sync.** Tablas `feature_registry` (2 filas) y `feature_value` (9.948 filas: 4.974 por feature, 131 de barrio, 246 de distrito, 179 de municipio, 4.417 de sección y 1 de región); `make supabase-sync` copia las tablas enteras. Valores locales: Latina bus 2,1 y Metro 8,3 min; Tetuán 2,1 y 7,0; Centro 2,1 y 4,4; Navacerrada 5,7 y 93,4.
 5. **Texto por modo y veredicto.** El texto sale de la mediana de cada modo y el veredicto de la condición, de la mediana combinada (`min_a_pie_transporte`): pueden diferir en 1 min (barrio 28079016: combinado 2,0, PASS, y «autobús a unos 3 min»). Es esperable, no un error.
 
+## D-234 — Comprar en Madrid capital: precio estimado por distrito y barrio, y un Reality Check que no culpa al presupuesto de lo que es falta de datos (`fit-0.8`) (2026-11-14)
+Feedback de usuarios de prueba del 14 nov (W1), con la solución aprobada por Mariano. Al buscar «Comprar», ningún distrito ni barrio de Madrid tenía precio: el valor tasado del Ministerio solo cubre municipios de más de 25.000 habitantes (D-227 §3). Salían «sin datos» y el aviso proponía «+40.000 €», que no añadía ninguna zona. Es reversible: una feature nueva, tres métricas nuevas y campos opcionales. Código:
+- `hi_features/methods.py` y `compute.py` (`anchored_relative_value`);
+- `hi_contracts/catalog/feature.py` (`FitBinding`, rol `price_m2_estimate`);
+- `hi_api/services/search.py` (`zone_price`) y `barrios.py`;
+- `hi_domain/affordability.py`, `fit.py` y `reality_check.py`;
+- la web (`lib/fit.ts`, `RealityCheck.tsx`, `SearchResults.tsx`, `SearchCard.tsx`, `FitDetails.tsx` y «Cómo lo calculamos»).
+
+Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-compra-estimada.txt` (9/9), `casos-compra-estimada.txt`, `evidence/gate-01/2026-11-14/ayto_panel_indicadores_distritos_barrios/` y las capturas de `evidence/gate-06/2026-11-14-buy-estimate/`.
+1. **Método** (feature `precio_compra_estimado_m2`, método `anchored_relative_value`).
+   - **Fórmula:** €/m² de un distrito = valor tasado de Madrid (4.993,3 €/m², `cm_valor_tasado_vivienda_municipios`) × su valor catastral por m² / la media de los 21 ponderada por sus inmuebles residenciales.
+   - **Valor catastral por m²:** el valor catastral medio por inmueble residencial entre su superficie construida media.
+   - **Barrios:** se reparten igual a partir de la estimación de su distrito. La media ponderada de los distritos vuelve al valor de la ciudad, y la de los barrios a la de su distrito (test de integración).
+   - **Sin datos:** una zona sin valor catastral, sin superficie o sin inmuebles queda `SOURCE_MISSING`, nunca con la media ni con 0.
+   - **Resultado:** 21 de 21 distritos (de 2.971 €/m² en Puente de Vallecas a 7.771 en Salamanca) y 131 de 131 barrios (de 2.033 a 9.945).
+2. **Fuentes.** El nivel de precio sale del dataset CM del valor tasado; el reparto, del panel de indicadores del Ayuntamiento (complementario, no CM), que ya se cargaba (D-212, D-232).
+   - **Indicadores:** el pipeline guarda tres indicadores más del Catastro, en distrito y barrio: valor catastral medio, superficie construida media y número de inmuebles de uso residencial (métricas `valor_catastral_medio_residencial`, `superficie_construida_media_residencial` y `inmuebles_residenciales`).
+   - **Gate 1:** parser 1.4.0, mismo fichero (sha `11a758e6`), 5.584 observaciones, 0 en cuarentena y calidad superada.
+   - **Cifra de datasets CM:** no cambia.
+3. **Siempre dicho como estimación.**
+   - **Confidence:** 0,5, que la web enseña como «Dato aproximado».
+   - **Texto de la API:** la condición y el hecho dicen «Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento)», o «del barrio» en un barrio. El indicador cita los dos datasets.
+   - **El valor tasado sigue siendo solo de municipios:** `valor_tasado_vivienda_m2` no se reparte. Ahora también da una fila SIN DATOS a cada barrio, como ya hacía con los distritos.
+4. **Validación** frente a los precios de oferta de idealista en 12 distritos. Es un portal privado y solo se usa para validar, nunca como dato. Se puede repetir: la tabla de referencias, con su URL y fechas, está en `evidence/gate-04/2026-11-14/referencias-precio-distritos.csv`, y el cálculo en `scripts/validate_buy_estimate.py`, que falla si el Spearman baja de 0,9 o si un distrito pasa del 30 %.
+   - **Orden:** Spearman 0,95.
+   - **Nivel:** el estimado es de media 0,88 veces el precio de oferta, lo esperable de una tasación frente a un anuncio.
+   - **Error por distrito,** quitada esa diferencia común: entre −19 y +19 %, ninguno por encima del 30 %. El agente anterior informó 0,96 en 13 distritos, pero no dejó la fuente.
+   - **Sesgo declarado:** el valor catastral comprime el rango. Los distritos caros quedan algo bajos y los baratos algo altos (Villa de Vallecas, San Blas-Canillejas y Villaverde).
+   - **Límites en la feature:** el catastro sale de ponencias antiguas y la superficie construida incluye zonas comunes.
+5. **Búsqueda (`fit-0.8`).**
+   - **Una sola versión para el lote:** `fit-0.8` es la misma versión de D-240 (días de oficina, teletrabajo y familia) y de D-236; los PR #59, #60 y #62 se despliegan juntos (D-240 §3). Con D-240 juntas:
+     - el desempate de «Casi encajan» lee los minutos hasta el primer lugar al que se va (`lead_trip`); después va el coste (D-234) y por último el id;
+     - el hueco que D-240 reserva al coste en los hechos (`capped`) lo ocupa el precio estimado al comprar (test).
+   - **Rol propio para la estimación:** el valor tasado se enlaza como `fit: {role: price_m2}` y la estimación como `fit: {role: price_m2_estimate}` (revisión del PR #59). Un código que no conoce el rol lo ignora con un aviso en el log, en vez de leerlo como un precio publicado.
+   - **Lectura explícita:** `indicators_by_zone` tiene una rama propia para `price_m2_estimate`, que va a `price_estimate` y nunca pisa la publicada, lleguen en el orden que lleguen (test).
+   - **Qué precio usa una zona:** `zone_price` toma el valor tasado publicado si lo hay, después la estimación, y si no hay ninguno, la fila que dice por qué. `ZoneData.price_estimated` lleva la nota al texto.
+   - **Desempate por coste, solo en «Casi encajan» (`near_miss_key`).** Va después de la confidence y de los minutos al trabajo, y antes del código de zona.
+     - **Por qué ahí:** las zonas que se pasan del presupuesto para comprar sacan todas un 0 % en él y empatan en lo demás (misma confidence 0,5 y sin trabajo). Sin el coste decidía el código de zona, y Tetuán (≈ 411.000 €) quedaba fuera de los cinco «casi» con 400.000 €. Con él, los «casi» empiezan por la zona más cercana al tope: Arganzuela (406.000 €), Tetuán, Centro, Retiro y Chamberí.
+     - **«Zonas que encajan» sigue la clave de D-239** (servicios cotidianos a pie y sus minutos, después confidence, trabajo e id), sin coste. Si el coste fuera delante, con mucho presupuesto volverían primero los pueblos baratos, que es lo que corrige D-239. Detrás tampoco aporta nada: tras los servicios a pie no queda ningún empate exacto entre las zonas que encajan (comprobado con 400.000 € y 1.000.000 € para comprar, 10.000 €/mes de alquiler y el ejemplo).
+     - **El invariante del pitch no cambia:** 27 zonas, Latina 1.ª al 98 %. El golden fija su orden (`ranked_order` y `near_miss_order`, 9/9).
+6. **Reality Check.** Una condición limita donde FALLA. Donde es UNKNOWN falta el dato, y ningún cambio de la persona lo arregla.
+   - **`binding_constraint`:** solo cuenta los FAIL. Puede ser `null` aunque no cumpla nada, si solo hay zonas sin datos.
+   - **`unknown_by_constraint`** (nuevo, opcional): cuántas de las `zones_unknown` tienen cada condición UNKNOWN.
+   - **Relajaciones:** no se ofrece relajar una condición que ninguna zona incumple si no añade zonas. Una que sí añade zonas, como quitar el límite de un trayecto sin calcular, se sigue ofreciendo (test).
+   - **Web:** con «Comprar» dice el motivo (`rc.sin_dato.compra`: «En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes)…»). Bajo el presupuesto va `presupuesto.compra.fuente`, y la tarjeta de una zona sin datos lleva `zona.compra.sin_precio`.
+   - **Revisión del PR #59 (R-01 y R-03):**
+     - La web cuenta como «municipios» solo las zonas de `all_zones` que son municipios, no tienen precio, no fallan nada y no cumplen todo. Si entre ellas hay distritos o barrios, dice «zonas».
+     - La tarjeta da el motivo por nivel y solo si la zona no trae precio.
+     - La ayuda de «Dato aproximado» ya no dice «El dato es oficial»: «Es una aproximación: la zona tiene poca población, la fuente no está completa o el dato es una estimación. Tómalo como orientativo.»
+6b. **El precio de cada zona, a la vista** (ampliación pedida por el coordinador, por la prueba con usuarios del 14 nov: «si tuviera un precio aproximado por zona, se entendería mejor»).
+   - **Contrato (aditivo y retrocompatible):** `RankedZone.estimated_cost_confidence` y, en `all_zones` (`ZoneMatch`), `estimated_cost_eur` y `estimated_cost_confidence`. La confidence es la de su precio o su alquiler: 0,5 en la estimación. Sin coste, las dos van a `null`, nunca a 0.
+   - **Web:** junto al % de cada fila («Zonas que encajan», «Casi encajan» y los barrios) sale «≈ 385.000 €» o «≈ 1.101 €/mes». Bajo el nombre de la tarjeta de zona sale «Comprar ≈ 385.000 €», para cualquier zona evaluada.
+   - **Fiabilidad:** si el precio no es un dato fiable, lleva las mismas palabras que la tarjeta («Dato aproximado»).
+   - **Sin precio:** no va nada.
+   - **El orden y los % no cambian:** el ejemplo del pitch sigue en 27 zonas con Latina 1.ª al 98 %.
+7. **Casos reales** (pareja, API local).
+   - **400.000 €:** cumplen 41 zonas: 27 municipios y 14 distritos. Con la clave de D-239, el top 10 son 6 distritos y 4 municipios: Puente de Vallecas, Usera, Carabanchel, Latina, Villaverde, Coslada, Parla, Móstoles, San Blas-Canillejas y Leganés. Tetuán no cumple por poco (≈ 411.000 €) y sale 2.º en «casi».
+   - **400.000 € dentro de Tetuán:** cumplen 4 de 6 barrios: Valdeacederas (≈ 348.000 €), Berruguete (≈ 378.000 €), Almenara y Bellas Vistas.
+   - **1.000.000 € con trabajo en Cuatro Torres:** cumplen 48 y los 10 primeros son distritos (Chamberí, Tetuán, Chamartín y Fuencarral-El Pardo al 100 %). Con 45 minutos como máximo cumplen 13 y los 10 primeros también son distritos, de Chamberí a Fuencarral-El Pardo.
+8. **Despliegue: desplegar → sincronizar → smoke.** Con el rol propio, volver a un despliegue anterior también es seguro tras el sync, sin borrar filas.
+   - **Código nuevo con los datos de antes** (desplegado y sin sincronizar): los distritos y barrios salen sin precio. Los textos no los llaman municipios ni prometen una estimación:
+     - `rc.sin_dato.compra` cuenta por nivel y dice «zonas»;
+     - la tarjeta dice que el valor tasado se publica para Madrid entero, no por distrito;
+     - la condición dice lo mismo (`PURCHASE_MISSING_IN_CITY`), nunca «solo municipios de más de 25.000 habitantes».
+   - **Código anterior con los datos nuevos** (sync antes de desplegar, o rollback a un despliegue desde `ad4a8f2`): `indicators_by_zone` no conoce `price_m2_estimate` y lo ignora con el aviso «fit bindings ignored by this version». Los distritos siguen UNKNOWN como hoy, y no hace falta borrar filas. Las 131 filas SIN DATOS de barrio del valor tasado y las tres métricas tampoco le molestan.
+   - **Corrección de una versión anterior de este texto (R-04):** decía que «nada garantiza ese orden», pero sí lo garantiza: la consulta de la búsqueda ordena por `feature_id`. Con el rol propio, ese orden ya no importa.
+   - **Tablas del sync** (`make supabase-sync PROFILE=demo` copia las tablas enteras):
+     - `metric_registry`: 3 filas nuevas;
+     - `feature_registry`: 1 fila nueva y 1 cambiada (fuentes y nivel barrio del valor tasado);
+     - `feature_value`: 283 filas más (152 de la estimación y 131 SIN DATOS de barrio del valor tasado);
+     - `dataset_version`: la versión del panel cambia a parser 1.4.0.
+     - Las 3.192 observaciones nuevas de `metric_observation` solo van con `PROFILE=full`; la API no las lee.
+   - **Recalcular en `housing`:** los comandos están en el PR (catálogo, panel y las dos features).
+9. **Resuelto por D-239.** Antes de D-239, sin trabajo ni prioridades y comprando con 400.000 €, los 10 primeros eran municipios al 100 %: el precio publicado (confidence 0,8) desempataba antes que el estimado (0,5). Con los servicios a pie por delante de la confidence, suben los distritos (6 de 10, ver §7).
+
+## D-238 — «¿Dónde?»: toda la Comunidad, Madrid capital por barrios, alrededores o pueblos (2026-11-14)
+Decisión de Mariano (14 nov) tras la prueba con usuarios: cuatro personas pidieron buscar solo en una parte de la región. Es aditiva y reversible: un campo opcional del escenario, sin datos nuevos ni cambio de método (`fit-0.7` no cambia).
+1. **Criterio y fuente.** Las tres partes agrupan las 11 zonas estadísticas (NUTS 4) del Instituto de Estadística de la Comunidad de Madrid:
+   - «Madrid capital» es la zona 01 (Municipio de Madrid);
+   - «Alrededores de Madrid», las cuatro metropolitanas (02 Norte, 03 Este, 04 Sur y 05 Oeste Metropolitano): 40 municipios;
+   - «Pueblos», las otras seis (Sierra Norte, Nordeste, Sudeste, Sudoeste, Sierra Sur y Sierra Central): 138 municipios.
+   - Fuente: «Nomenclátor imprimible de la Comunidad de Madrid. 2025», §3.4 «Zonificación estadística y relación de municipios» (https://gestiona3.madrid.org/iestadis/fijas/estructu/general/territorio/descarga/nomenme25.pdf), consultado el 14 nov. La tabla de 2010 del mismo Instituto pone los mismos municipios en cada zona.
+   - Por qué esta: es oficial y de la Comunidad, cubre los 179 municipios sin huecos ni solapes y es la que usa el Instituto en sus propias tablas. Se descartan las coronas del Consorcio de Transportes, que son zonas de tarifa, y un radio en kilómetros, que sería un criterio nuestro.
+   - Se declara una consecuencia: Aranjuez, Ciempozuelos y Valdemoro son «alrededores» (Sur Metropolitano), y Meco o Villalbilla, «pueblos». Es la zonificación del Instituto, no la nuestra.
+2. **Mapeo estático versionado.** `data/catalog/zoning/search_scope.yaml` copia la tabla tal como se publica (código de la Comunidad y nombre de los 179 municipios) con su fuente. Está comprobada municipio a municipio contra el PDF: 179 de 179, misma zona y mismo nombre. El código de la Comunidad pasa a INE con `ine_municipality_from_cm`, y los 179 municipios de la base están en el mapeo, sin ninguno de más ni de menos.
+   - La imagen de la API no lleva `data/`, así que `scripts/export_search_scope.py` genera `hi_domain/geo/zoning_data.py`.
+   - `make lint`, la CI y `tests/data` comprueban que el módulo generado está al día.
+3. **Contrato.** `ScenarioState.scope` (`SearchScope`: `all`, `madrid`, `alrededores`, `pueblos`) es opcional y vale `all` por defecto. Esquemas JSON y tipos de la web regenerados (`make schemas`, `npm run -w apps/web contracts`).
+4. **Búsqueda** (`hi_api/services/scope.py`).
+   - `all` es la de siempre: municipios, y Madrid por distritos.
+   - `alrededores` y `pueblos` dejan solo sus municipios.
+   - `madrid` ordena los 131 barrios de la capital en lugar de los 21 distritos, con lo mismo que `/search/barrios` (D-232): `load_barrios` sin distrito, los mismos `FIT_VALUES` e `indicators_by_zone`, y el trayecto del distrito para el barrio que no tiene el suyo (D-232 §5).
+   - El Reality Check conserva el ámbito en `relaxed_scenario`. «Qué falta» sigue por distrito: `gap_highlights` va vacío en los barrios. La explicación del MCP mira toda la región, donde sea que buscó la persona.
+5. **Por qué barrios en la capital.** Con 21 distritos la capital diferencia poco: en el caso del ejemplo, los cuatro primeros empatan al 98 %. Es la fase 2 del diseño de D-232, que quedó fuera («los 131 barrios en el ranking»), acotada a «Madrid capital». Los barrios ya tienen indicadores, trayectos y nombres oficiales. En «Toda la Comunidad», Madrid sigue por distritos, para no comparar barrios con municipios enteros.
+6. **Retrocompatibilidad.** La web omite `scope` con «Toda la Comunidad», así que el ejemplo, los enlaces compartidos y la API desplegada siguen igual.
+   - **Eco del ámbito.** La API devuelve siempre `scope` (con `all` si no se envió) en cada escenario que repite: `SearchResult.scenario`, cada `relaxed_scenario` del Reality Check, `BarrioSearchResult.scenario` y `ZoneExplanation.scenario`. La web lo quita antes de reenviar. Al aplicar una opción de «¿Y si cambias algo?» quita el `all`. En «Los barrios que mejor encajan» no envía el ámbito, porque el distrito ya dice dónde buscar.
+   - **Comprobado contra producción** con el caso del ejemplo: 27 zonas; Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %, y el mismo top 10. También son idénticos los hechos, `all_zones`, los «casi» y las opciones. La única diferencia es ese eco de `scope`. Vuelto a comprobar tras D-239 (PR #56): mismo orden de `results` y de `near_misses`.
+   - No hay datos nuevos que sincronizar: basta el despliegue.
+7. **Web.**
+   - Selector «¿Dónde?» al principio de «Tu búsqueda», con radios nativos en 2 × 2.
+   - Con «Madrid capital», el mapa pide los contornos de los 131 barrios (unos 90 KB, simplificados como los distritos) y los pinta con su encaje en lugar de los distritos. Las zonas fuera del ámbito quedan sin pintar.
+   - La lista y la tarjeta dicen «Lucero · Latina»: el distrito sale de las 7 primeras cifras del código del barrio.
+   - La tarjeta de un barrio enseña el «Qué falta» de su distrito, con el aviso de que es del distrito entero, y lleva a la vista del distrito.
+   - Textos en `pitch/textos_web.md` (`donde.*`, `resultados.de.*`, `zona.barrio.*`, `mapa.aria.encaje.barrios`). Capturas en `evidence/gate-06/2026-11-14-scope-barrios/`.
+8. **Pruebas reales** (base local, solo lectura).
+   - **Ejemplo con «Madrid capital»:** 131 barrios, 78 cumplen todo. Lucero y Campamento (Latina) al 99 %; Media Legua y Vinateros (Moratalaz), Atalaya y Costillares (Ciudad Lineal), Pinar del Rey (Hortaleza), Los Cármenes (Latina), Numancia y San Diego (Puente de Vallecas) al 98 %. Son barrios de los distritos que encabezan la búsqueda por distritos. Sol sale sin datos porque no tiene alquiler (D-232 §4).
+   - **Pareja, alquiler hasta 10.000 €, transporte y salud, «Madrid capital»:** 130 de 131 cumplen y 106 empatan al 100 %, porque el transporte y el centro de salud quedan a un paseo en casi toda la capital. Con el desempate de D-239 (servicios a pie), arriba quedan barrios muy servidos: Almendrales, Embajadores, Gaztambide, Trafalgar, Argüelles, Arapiles, Lista, Prosperidad, Guindalera y Chopera. La lista avisa: «Encajan 106 barrios igual de bien…» (`resultados.empate`).
+   - **La misma pareja en «Alrededores de Madrid»:** 40 municipios, 34 cumplen. Móstoles, Parla, Torrejón de Ardoz, Alcalá de Henares, Alcorcón, Leganés, Coslada y Fuenlabrada al 100 %, Getafe al 99 % y Collado Villalba al 98 %. Los 6 restantes salen sin datos de alquiler.
+   - **En «Pueblos»:** 138 municipios y solo 2 cumplen (Navalcarnero al 94 % y Arroyomolinos al 90 %), porque 136 no tienen alquiler publicado y su presupuesto sale UNKNOWN (D-214). Sin límite de presupuesto entran los 138.
+9. **Comprar en un barrio** sale UNKNOWN, como en los distritos, hasta que llegue el precio de compra estimado de D-234.
+10. **Revisión del PR #58.** No hubo bloqueantes. Se cambió lo siguiente:
+    - **«Pueblos» con alquiler** ya no parece un fallo. La ayuda del selector avisa de que casi ningún pueblo publica su alquiler. Bajo el resultado sale cuántos pueblos dan «Sin datos» y por qué: la Comunidad solo publica el alquiler de los municipios de más de 20.000 habitantes, que son 37 de 179. La tarjeta de un municipio sin alquiler lo dice como posibilidad, igual que con «Comprar».
+    - **«Lo que más limita tu búsqueda».** `binding_constraint` cuenta como excluida toda zona donde la condición no es PASS, también si es UNKNOWN (semántica de la API, sin cambio). La web solo nombra esa condición si sus FAIL son al menos tantos como las zonas sin datos. Así, con un presupuesto de alquiler que no falla en ningún pueblo, ya no dice «Alquiler». En el ejemplo sigue saliendo «Colegio…» (151 FAIL frente a 15 sin datos).
+    - **Las palabras siguen al ámbito:** «salen 78 barrios», «salen 2 pueblos», «Encajan 106 barrios igual de bien», «El 1.º que más encaja».
+    - **Una zona fuera del ámbito** dice en su tarjeta «Fuera de tu búsqueda (Madrid capital).».
+    - **Si fallan los contornos de los barrios**, la leyenda lo dice con «Reintentar», y la siguiente búsqueda por barrios los vuelve a pedir.
+    - **Al pasar el mapa de barrios a distritos**, el barrio elegido se convierte en su distrito. Al pasar de distritos a barrios, el distrito elegido se suelta.
+    - **Otros cambios:** la ayuda del selector va en `aria-describedby`; la herramienta MCP `buscar_zonas` explica `scope` y que `explicar_zona` no explica barrios; y `==` en lugar de `is` con `SearchScope`.
+
 ## D-239 — Desempate del ranking por servicios a pie y hospitales públicos o privados (2026-11-14)
 Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador recomienda «siempre pueblos y en el mismo orden», y no se distinguen los hospitales públicos de los privados. Dos cambios pequeños y reversibles, sin tocar la puntuación (`fit-0.7` no cambia de versión). Evidencia: `evidence/gate-06/2026-11-14-tiebreak-hospitals/`.
 
@@ -1463,4 +1582,55 @@ Feedback de los usuarios de prueba del 13 y 14 nov, aprobado por Mariano: en la 
    - **Rollback:** la regla «tras el sync no hay vuelta atrás sin retirar estas filas» (D-233 §3) **no aplica**: ninguna feature tiene `fit` y el código anterior las ignora. Se puede volver a cualquier despliegue anterior sin tocar los datos.
    - **Tablas** (`make supabase-sync PROFILE=demo` copia las tablas enteras): `dataset_registry` +2, `dataset_version` +2, `metric_registry` +4, `feature_registry` +4 (y la `spec` de `renta_per_capita` cambia: `context_only` y dos limitaciones), `feature_value` +662 (179 + 179 + 152 + 152). `metric_observation` (+8.674) solo va en el perfil `full`.
    - **Efecto visible del sync:** `GET /datasets?cm_only=true` pasa de 27 a 29 conjuntos CM, y con él el contador del pie. Las frases del pitch con «27 conjuntos» (`guion.md`, `formulario.md`) cambian cuando se sincronice; `datasets_cm.md` ya dice 29.
-9. **Panel del Ayuntamiento:** parser `madrid_district_panel-1.5.0`, con el mismo análisis y dos indicadores más, para que el mismo Bronze (`11a758e6249d`) se vuelva a leer. El 1.4 es de D-234, hecho en paralelo: quien fusione el segundo deja el número más alto y las dos listas de indicadores. Si no, el panel no se relee y faltan los indicadores del otro. Las cifras que ya se leían no cambian (comparado fila a fila).
+9. **Panel del Ayuntamiento:** parser `madrid_district_panel-1.6.0` («1.4 D-234 · 1.5 D-235 · 1.6 unión»), con el mismo análisis y la unión de los indicadores de D-234 (valor catastral, superficie e inmuebles residenciales) y los dos de D-235, sobre el mismo Bronze (`11a758e6249d`). En `housing_contexto`: SUCCESS, 7.560 observaciones de 9 métricas. Las 7 que ya leía D-234 coinciden fila a fila con `housing` (parser 1.4.0), y el precio estimado de D-234 recalculado también. `housing` está en 1.4.0: al fusionar hay que releer el panel con 1.6.0 (comandos en la PR #61); con 1.4.0 no se relee y faltan el año medio y la renta.
+
+## D-240 — Días de oficina, teletrabajo y un segundo lugar: la familia o los amigos (`fit-0.8`) (2026-11-14)
+Feedback de usuarios de prueba del 14 nov e ideas de Mariano. Quien va pocos días a la oficina no quiere que el trayecto pese como si fuera cada día, y quien teletrabaja del todo, que no puntúe. Varios querían además vivir cerca de su familia o de sus amigos. Es reversible: un peso por días en el dominio, `days_per_week` admite 0 y la web pregunta los días y un segundo lugar. Código: `hi_domain/fit.py` (`counts`, `days_weight`, `criteria` y `constraint_checks`), `hi_contracts/public/scenario.py`, `apps/web/src/lib/scenario.ts` y `apps/web/src/components/search/PlaceField.tsx` (antes `WorkField.tsx`). Evidencia: `evidence/gate-06/2026-11-14-family-telework/`.
+
+1. **Regla de días (`days_per_week`, «¿Cuántos días vas a la oficina?»).**
+   - **3 o más días:** el trayecto pesa como siempre, con su peso por orden (D-215). El caso de ejemplo va 4 días, así que sus cifras no cambian.
+   - **1 o 2 días:** el trayecto pesa la mitad de su peso por orden y los demás criterios no cambian. Como el % divide por el peso de los criterios con dato, el trayecto cuenta menos frente a lo demás. Ejemplo del test: con un colegio a un paseo (utilidad 1) y un trayecto de 90 min (utilidad 0), la zona sale al 67 % yendo cada día y al 80 % yendo 1 o 2 días.
+   - **0 días («Teletrabajo total»):** es nuevo en el contrato (`days_per_week` va ahora de 0 a 7). El trayecto no puntúa: la zona se puntúa como si no hubiera lugar de trabajo, y el peso por orden se reparte entre los demás criterios.
+   - **El límite (`max_minutes`) se aplica igual con cualquier número de días, también con 0.** Es una condición que la persona pone a propósito, por ejemplo para poder llegar en 45 min el día que la llamen. La web mantiene «Tardar como mucho» con teletrabajo total y no borra el límite al cambiar los días.
+   - **Con 0 días y límite, la tarjeta enseña los minutos** como un hecho más, sin peso (`limited_trips`), detrás de los que puntúan. Así la persona ve cuánto tarda cada zona con el límite que ha puesto. Sin límite no sale nada: ese trayecto ni puntúa ni limita.
+   - **La regla vale para cualquier lugar**, no solo para el trabajo: la web solo pregunta los días del trabajo, pero el contrato los admite en todos. Por eso dos perfiles dorados cambian de peso con `fit-0.8`: `golden_senior` (su hijo en Getafe, 2 días) y `golden_reduced_mobility` (el hospital La Paz, 1 día) pesan ahora su trayecto a la mitad. Sus expectativas se siguen cumpliendo (9 de 9).
+   - Constantes: `FEW_DAYS_PER_WEEK = 2` y `FEW_DAYS_WEIGHT = 0.5`. La web repite el 2 (`FEW_OFFICE_DAYS`) solo para decidir qué ayuda enseña.
+   - **Descartado:**
+     - un peso proporcional a los días (días/5): es más difícil de decir en una frase y cambiaba el % del ejemplo, que va 4 días;
+     - quitar también el límite con teletrabajo total: si la persona lo pone, se respeta.
+2. **Un segundo lugar, «Cerca de mi familia o amigos».**
+   - **No hizo falta tocar la API ni el contrato del lugar.** `anchors` ya era una lista (hasta 3) con `kind: "family"`, y el dominio y la API ya calculaban un trayecto por lugar, con su condición `commute:<i>` (D-220). Cada lugar busca su destino en la matriz: la estación a 600 m o menos o, si no, el centro de la zona que lo contiene. Por eso vale desde cualquier punto de la Comunidad.
+   - **Comprobado** con tests del dominio (dos trayectos, cada uno con sus minutos y su límite, y el segundo lugar conserva su índice aunque el primero no puntúe) y con la API local sobre la base (solo lectura), partiendo del caso de ejemplo:
+     - la familia en Getafe Central con 30 min como mucho deja 5 zonas: Villaverde, Leganés, Getafe, Fuenlabrada y Parla;
+     - un punto cualquiera (lon −3,38, lat 40,49) con 45 min deja 2: Torrejón de Ardoz y Alcalá de Henares;
+     - ningún aviso de destino sin calcular, y cada zona trae los dos trayectos. Con tres prioridades y presupuesto, el de la familia cede su hecho al alquiler (punto 8), pero su condición sigue saliendo cuando falla.
+   - **Orden.** La web pone siempre el trabajo primero y la familia después, sea cual sea el orden en que se elijan. Así el trabajo conserva el índice 0 (`commute:0`) y más peso por orden. Los criterios quedan así: prioridades, trabajo, familia, servicios deseados y presupuesto. Si solo hay familia, va en el índice 0.
+   - Los días solo se preguntan para el trabajo. La familia va con el valor del contrato (5) y pesa como siempre.
+   - **Proxy declarado:** el trayecto a la familia se mide con la misma matriz que el del trabajo, llegando a las 9:00 de un día laborable. A la familia se suele ir a otras horas y en fin de semana, con menos frecuencia de paso. Lo dicen la ayuda del campo («Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.») y el hecho de la tarjeta («28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00»).
+   - **Desempate.** Los minutos que desempatan (D-220, D-239) son los del primer lugar al que la persona va (`lead_trip`). Con teletrabajo total en el trabajo son los del siguiente lugar al que va o, si no hay ninguno, los del primero con límite. Sin ninguno, el empate pasa directo al id de la zona. Con el trabajo primero y al menos 1 día es `commute:0`, como antes.
+3. **`fit-0.8`.** La puntuación cambia con 0, 1 o 2 días, así que sube la versión. Con 3 o más días el % es igual que en `fit-0.7`, con o sin un lugar de familia; solo puede cambiar qué hechos salen (punto 8). Los PR #59, #60 y #62 se fusionan como una sola versión `fit-0.8` (D-234, D-236 y D-240). `pitch/metodologia.md` y los fixtures se actualizan después del despliegue.
+4. **Invariante del pitch, comprobado el 14 nov.** API de esta rama sobre la base local (solo lectura) frente a producción, con el caso del ejemplo (4 días, sin límite y sin familia):
+   - 27 zonas que encajan y 15 sin dato;
+   - top 10 idéntico: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97 y Villaverde 97;
+   - «Casi encajan» idéntico: Chamartín, Salamanca, Centro, Chamberí y Retiro, al 93 %;
+   - la respuesta entera (`data`) es igual salvo `methodology_version` (`fit-0.8` frente a `fit-0.7`), y `/search/barrios` también, en los 21 distritos;
+   - golden de búsqueda (`scripts/golden_search.py`): 9 de 9.
+5. **Qué cambia con los días en el caso de ejemplo** (misma API local):
+   - **3 días:** igual que con 4.
+   - **1 o 2 días:** siguen 27 zonas. Alcorcón y Leganés entran en el top 10 en lugar de Fuencarral-El Pardo y Hortaleza, y Latina, Moratalaz y Puente de Vallecas suben al 99 %.
+   - **Teletrabajo total:** siguen 27 zonas y las 10 primeras están al 100 %, así que el orden lo deciden los servicios a pie (D-239). Empieza por Usera, Latina, Moratalaz y Villaverde.
+   - **Teletrabajo total con 45 min como mucho:** 10 zonas. El límite es la condición que más quita (`commute:0`), como yendo 4 días con el mismo límite.
+6. **Web.**
+   - **«¿Cuántos días vas a la oficina?»** va bajo el lugar de trabajo: de 5 a 1 días o «Teletrabajo total». Con 1 o 2 días, y con teletrabajo total, una línea explica qué pasa (`trabajo.dias.*`). Hasta que la persona lo cambia no se envía, y el contrato pone 5.
+   - **«Cerca de mi familia o amigos»** es el mismo campo que «Trabajo en» (estaciones y zonas, combobox ARIA 1.2), con su propio «Tardar como mucho». `WorkField.tsx` pasa a ser `PlaceField.tsx`, con `kind` (`work` o `family`), y las estaciones se piden una sola vez para los dos campos.
+   - **«Qué falta» sin zona:** la lista de distritos y municipios va plegada tras «Ver las 199 zonas» (`aria-expanded` y `aria-controls`), como «Ver las 10 primeras». «Madrid (toda la ciudad)» sigue a la vista y, al escribir un nombre, sus zonas salen aunque esté plegada. La lista de `/zonas` no se pliega.
+7. **Orden en producción.** Basta desplegar: no hay datos nuevos ni sync. La API anterior rechaza `days_per_week: 0` (422), así que la web y la API van en el mismo despliegue, como siempre.
+   - `scripts/smoke_demo.sh` tiene una comprobación nueva, `telework`: el caso de ejemplo con `days_per_week: 0` debe dar 200 y `fit-0.8`. Antes del despliegue, producción da 422. Con las tres de «¿Dónde?» (D-238), el smoke tiene 13 comprobaciones (12 con `SMOKE_API_ONLY`).
+8. **Revisión del PR #60.**
+   - **Hechos de la tarjeta.** Son 5 como mucho, en orden de importancia. Con tres prioridades, trabajo y familia, el alquiler era el sexto y desaparecía de la tarjeta. Ahora, si hay presupuesto, el coste siempre se queda y sale el menos importante de los demás: en ese caso, el trayecto a la familia (`capped`).
+     - Con 5 hechos o menos no cambia nada: el caso del pitch es igual.
+     - Un test de propiedad lo comprueba: con presupuesto, el coste siempre está entre los hechos, con cualquier combinación de prioridades, lugares, días y límites.
+     - Descartado: juntar los dos trayectos en un hecho, porque cada uno tiene su tipo (punto fuerte o débil) y su fiabilidad.
+     - La condición del límite a la familia sigue saliendo cuando falla, con sus minutos (`trabajo.tarda`).
+   - **Accesibilidad.** El selector de días está unido a su ayuda con `aria-describedby`. El límite del trabajo se llama «Tardar como mucho hasta el trabajo, en transporte público», como el de la familia; el e2e (`infra/deploy/e2e/e2e_prod.mjs`) y `apps/web/scripts/check-search.mjs` lo buscan con ese texto.
+   - **Sin escenarios dorados nuevos.** Teletrabajo con 45 min y familia con 30 min (opcional en la revisión) no se añaden ahora: el test de los perfiles dorados exige que no lleven límite y que cada uno sea un perfil de `user_profiles.yaml`. Los cubren los tests del dominio y la evidencia de casos.

@@ -1,6 +1,7 @@
 """People search (CORE-003, POST /api/v1/search): loads the zones and the indicators bound to
 the search in the Feature Dictionary (`fit`), and the «Qué falta aquí» highlights from the
 same rows as GET /gaps; hi_domain.search decides. Parameterised SQL only, no feature id here.
+The entry point is hi_api.services.scope.search, which also ranks Madrid capital by barrio.
 """
 
 import logging
@@ -27,6 +28,7 @@ from hi_contracts.public import (
 )
 from hi_domain.fit import FIT_VERSION, ZoneData
 from hi_domain.geo.names import display_name
+from hi_domain.geo.scope import in_scope
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
 
 log = logging.getLogger(__name__)
@@ -102,6 +104,8 @@ class Indicators(NamedTuple):
     rent: dict[tuple[str, str], IndicatorValue]
     rent_note: str | None  # what the rent figure is, from its feature's `fit.note` (D-228)
     price: dict[tuple[str, str], IndicatorValue]  # appraised value per m² to buy (D-227)
+    # D-234: an estimated price per m², used only where no published one exists
+    price_estimate: dict[tuple[str, str], IndicatorValue]
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]]
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
     transit: dict[tuple[str, str], dict[str, IndicatorValue]]  # by mode, only words a fact (D-233)
@@ -121,6 +125,7 @@ def _unknown_binding(fit: dict[str, Any]) -> str:
 def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     rent: dict[tuple[str, str], IndicatorValue] = {}
     price: dict[tuple[str, str], IndicatorValue] = {}
+    price_estimate: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
     transit: dict[tuple[str, str], dict[str, IndicatorValue]] = {}
@@ -134,6 +139,8 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             rent_note = fit.get("note") or rent_note
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
+        elif fit["role"] == "price_m2_estimate":  # D-234: only where no price is published
+            price_estimate[key] = _indicator(row)
         elif fit["role"] == "transit_mode" and fit.get("mode") in TRANSIT_MODES:
             transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
         elif fit["role"] == "walk_minutes" and fit.get("need") in NEED_VALUES:
@@ -145,7 +152,19 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             unknown.add(_unknown_binding(fit))
     if unknown:
         log.warning("fit bindings ignored by this version: %s", sorted(unknown))
-    return Indicators(rent, rent_note, price, walk, priority_walk, transit)
+    return Indicators(rent, rent_note, price, price_estimate, walk, priority_walk, transit)
+
+
+def zone_price(indicators: Indicators, key: tuple[str, str]) -> tuple[IndicatorValue | None, bool]:
+    """The zone's price per m² to buy and whether it is an estimate (D-234): the published
+    appraised value when there is one, else the estimate; with neither, the row that says why."""
+    published = indicators.price.get(key)
+    if published is not None and published.value is not None:
+        return published, False
+    estimate = indicators.price_estimate.get(key)
+    if estimate is not None and estimate.value is not None:
+        return estimate, True
+    return published or estimate, False
 
 
 def _highlights(
@@ -171,7 +190,11 @@ def _highlights(
 
 def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     split = list(SPLIT_BY_DISTRICT)
-    zone_rows = [dict(r) for r in conn.execute(_ZONES, {"split": split}).mappings()]
+    zone_rows = [
+        dict(r)
+        for r in conn.execute(_ZONES, {"split": split}).mappings()
+        if in_scope(r["code"], scenario.scope)
+    ]
     levels = [level.value for level in LEVELS]
     value_rows = [dict(r) for r in conn.execute(FIT_VALUES, {"levels": levels}).mappings()]
     indicators = indicators_by_zone(value_rows)
@@ -181,12 +204,14 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     for row in zone_rows:
         key = (row["level"], row["code"])
         zone_id = str(row["admin_unit_id"])
+        price, price_estimated = zone_price(indicators, key)
         zones.append(
             ZoneData(
                 zone=zone_ref(row),
                 rent=indicators.rent.get(key),
                 rent_note=indicators.rent_note,
-                price=indicators.price.get(key),
+                price=price,
+                price_estimated=price_estimated,
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
                 transit=indicators.transit.get(key, {}),
@@ -222,15 +247,17 @@ def load_warnings(loaded: Loaded) -> list[str]:
     ]
 
 
-def search(conn: Connection, scenario: ScenarioState) -> tuple[SearchResult, list[str], str | None]:
-    """The result, warnings and the data version (latest computation of the values used)."""
-    loaded = load(conn, scenario)
+def answer(
+    conn: Connection, scenario: ScenarioState, loaded: Loaded, zones_word: str = "zones"
+) -> tuple[SearchResult, list[str], str | None]:
+    """The result, warnings and the data version (latest computation of the values used) of
+    the search over the loaded zones."""
     outcome = run_search(scenario, loaded.zones)
     warnings = load_warnings(loaded)
     if outcome.unscored_passing:
         warnings.append(
-            f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} zones pass every "
-            "condition but have no data for any chosen priority; they are only in all_zones"
+            f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} {zones_word} pass "
+            "every condition but have no data for any chosen priority; they are only in all_zones"
         )
     result = SearchResult(
         scenario=scenario,
