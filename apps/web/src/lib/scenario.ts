@@ -2,7 +2,35 @@
  * The single ScenarioState of the search (CLAUDE.md §13: chips, filters and map share one
  * state). Pure helpers, unit tested; the shape is the generated contract type.
  */
-import type { Anchor, BudgetKind, NearbyNeed, NeedKey, PriorityKey, ScenarioState } from "@/contracts/scenario_state";
+import type { Anchor, BudgetKind, NearbyNeed, NeedKey, PriorityKey, ScenarioState, SearchScope } from "@/contracts/scenario_state";
+
+/**
+ * «¿Dónde?» (D-238): the whole region, or one of its three parts by the statistical zoning of the
+ * Comunidad de Madrid (Madrid capital, its four metropolitan zones, the rest).
+ */
+export const SCOPES: readonly SearchScope[] = ["all", "madrid", "alrededores", "pueblos"];
+
+/** donde.toda, donde.madrid, donde.alrededores, donde.pueblos */
+export const SCOPE_LABEL: Record<SearchScope, string> = {
+  all: "Toda la Comunidad",
+  madrid: "Madrid capital",
+  alrededores: "Alrededores de Madrid",
+  pueblos: "Pueblos",
+};
+
+export function scopeOf(s: Pick<ScenarioState, "scope">): SearchScope {
+  return s.scope ?? "all";
+}
+
+/**
+ * «Toda la Comunidad» leaves `scope` out: a search without it means the whole region, so the
+ * example, a shared link and an API that does not know the field all keep working.
+ */
+export function setScope(s: ScenarioState, scope: SearchScope): ScenarioState {
+  const next: ScenarioState = { ...s, scope };
+  if (scope === "all") delete next.scope;
+  return next;
+}
 
 /** Slider ranges, inside the contract ranges (RENT_RANGE_EUR, BUY_RANGE_EUR). */
 export const BUDGET_RANGE: Record<BudgetKind, { min: number; max: number; step: number; initial: number }> = {
@@ -231,6 +259,7 @@ function isScenario(value: unknown): value is ScenarioState {
     s.schema_version === 2 &&
     (h === undefined || (Number.isInteger(h.adults) && Number.isInteger(h.minors ?? 0))) &&
     (s.priorities ?? []).every((p) => PRIORITY_KEYS.includes(p)) &&
+    (s.scope === undefined || SCOPES.includes(s.scope)) &&
     (s.budget == null || ((s.budget.kind === "rent" || s.budget.kind === "buy") && Number.isFinite(s.budget.amount_eur)))
   );
 }

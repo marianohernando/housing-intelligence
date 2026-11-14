@@ -117,7 +117,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
             <strong>{barriosText(data.reality_check)}</strong>
             {barrios && (rows.fits.length > 0 || rows.near.length > 0) && ` ${TEXT.pick}`}
           </p>
-          {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown)}</p>}
+          {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown, "barrio")}</p>}
           {shown.length > 0 && (
             <ol className={styles.list}>
               {shown.map((row) => (

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Smoke test of the public demo: web, API liveness and readiness, one zone, the map layers, one
 # search (POST /api/v1/search with the demo case, which also warms up the search before a pitch),
-# the same case with full telework (fit-0.8, D-240) and barrio by barrio in one Madrid district
-# (POST /api/v1/search/barrios).
+# the same case with full telework (fit-0.8, D-240), barrio by barrio in one Madrid district
+# (POST /api/v1/search/barrios) and in each part of the region of «¿Dónde?» (`scope`: madrid,
+# alrededores, pueblos).
 #   scripts/smoke_demo.sh [BASE_URL]                       # default https://vidafacil-madrid.vercel.app
 #   SMOKE_API_ONLY=1 scripts/smoke_demo.sh http://localhost:8012   # API container, no web
 #   SMOKE_TAG=<id> scripts/smoke_demo.sh   # User-Agent vida-facil-smoke/<id>, to find the requests
@@ -55,7 +56,7 @@ check() {
   fi
   total=$((total + 1))
   ((ok)) || failures=$((failures + 1))
-  printf '%-4s %-9s %6.2fs %9s B  %s  %s\n' \
+  printf '%-4s %-11s %6.2fs %9s B  %s  %s\n' \
     "$( ((ok)) && echo OK || echo FAIL)" "$name" "$secs" "$bytes" "$path" "$detail"
 }
 
@@ -98,6 +99,19 @@ check barrios "/api/v1/search/barrios" \
           and (.data.results[0].match_pct | type == "number" and . >= 0 and . <= 100))
    | "\(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) barrios, 1st \(.data.results[0].zone.name)"' \
   "$TMP/barrios-body.json" "$SEARCH_MAX_BYTES"
+# «¿Dónde?» (D-238): the same case in each part of the region. The API echoes the scope, Madrid
+# capital is ranked by barrio and the other two by municipio. No zone has to pass: most «pueblos»
+# publish no rent, so a rent case may leave none.
+for scope in madrid alrededores pueblos; do
+  level=municipio
+  [[ "$scope" == madrid ]] && level=barrio
+  jq --arg s "$scope" '. + {scope: $s}' "$SEARCH_BODY" >"$TMP/scope-$scope.json"
+  check "$scope" "/api/v1/search" \
+    "select(.data.scenario.scope == \"$scope\" and .data.reality_check.zones_evaluated >= 1
+            and ([.data.all_zones[].zone.level] | unique) == [\"$level\"])
+     | \"\(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) ${level}s, 1st \(.data.results[0].zone.name // \"none\")\"" \
+    "$TMP/scope-$scope.json" "$SEARCH_MAX_BYTES"
+done
 
 echo "smoke: $((total - failures))/$total OK"
 ((failures == 0))

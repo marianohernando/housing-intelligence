@@ -69,6 +69,10 @@ export type PriorityKey =
  */
 export type Priorities = PriorityKey[];
 export type SchemaVersion = 2;
+/**
+ * Where to search; Madrid capital is ranked by barrio instead of by district
+ */
+export type SearchScope = "all" | "madrid" | "alrededores" | "pueblos";
 
 /**
  * POST /api/v1/search/barrios (D-232): the same scenario as POST /search, inside one
@@ -90,6 +94,7 @@ export interface ScenarioState {
   nearby?: Nearby;
   priorities?: Priorities;
   schema_version?: SchemaVersion;
+  scope?: SearchScope;
 }
 /**
  * A place the household travels to often: where they work, or family and friends.

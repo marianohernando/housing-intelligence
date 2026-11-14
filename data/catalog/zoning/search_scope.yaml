@@ -1,0 +1,238 @@
+# «Dónde buscar» (D-238): which part of the Comunidad de Madrid each municipio belongs to.
+#
+# The parts are not ours: they group the 11 zones of the statistical zoning (NUTS 4) that the
+# Instituto de Estadística de la Comunidad de Madrid uses in its own tables. «Madrid capital» is
+# zone 01, «Alrededores» the four metropolitan zones (02-05) and «Pueblos» the other six.
+# The list of municipios is copied as published (code of the Comunidad de Madrid and name).
+#
+# The API cannot read this file at run time (its image only carries the Python packages), so
+# packages/domain/src/hi_domain/geo/zoning_data.py is generated from it:
+#   uv run python scripts/export_search_scope.py   (make lint and tests/data check it)
+zoning_id: search_scope
+source:
+  publisher: Instituto de Estadística de la Comunidad de Madrid
+  title: "Nomenclátor imprimible de la Comunidad de Madrid. 2025"
+  section: "3.4. Zonificación estadística y relación de municipios"
+  url: https://gestiona3.madrid.org/iestadis/fijas/estructu/general/territorio/descarga/nomenme25.pdf
+  retrieved_at: "2026-11-14"
+  notes: >-
+    179 municipios in 11 zones. The same municipios are in each zone in the Institute's table of
+    2010 («Zonificación estadística NUTS 4 de la Comunidad de Madrid»,
+    https://web.comunidad.madrid/iestadis/fijas/estructu/general/territorio/descarga/indimuni10d03.pdf).
+scopes:
+  madrid: ["01"]
+  alrededores: ["02", "03", "04", "05"]
+  pueblos: ["06", "07", "08", "09", "10", "11"]
+zones:
+  - code: "01"
+    name: Municipio de Madrid
+    municipios:
+      - {cm_code: "0796", name: "Madrid"}
+  - code: "02"
+    name: Norte Metropolitano
+    municipios:
+      - {cm_code: "0066", name: "Alcobendas"}
+      - {cm_code: "0091", name: "Algete"}
+      - {cm_code: "0416", name: "Cobeña"}
+      - {cm_code: "0455", name: "Colmenar Viejo"}
+      - {cm_code: "1296", name: "San Agustín del Guadalix"}
+      - {cm_code: "1343", name: "San Sebastián de los Reyes"}
+      - {cm_code: "9036", name: "Tres Cantos"}
+  - code: "03"
+    name: Este Metropolitano
+    municipios:
+      - {cm_code: "0029", name: "Ajalvir"}
+      - {cm_code: "0053", name: "Alcalá de Henares"}
+      - {cm_code: "0148", name: "Arganda del Rey"}
+      - {cm_code: "0493", name: "Coslada"}
+      - {cm_code: "0843", name: "Mejorada del Campo"}
+      - {cm_code: "1049", name: "Paracuellos de Jarama"}
+      - {cm_code: "1230", name: "Rivas-vaciamadrid"}
+      - {cm_code: "1300", name: "San Fernando de Henares"}
+      - {cm_code: "1489", name: "Torrejón de Ardoz"}
+      - {cm_code: "1678", name: "Velilla de San Antonio"}
+  - code: "04"
+    name: Sur Metropolitano
+    municipios:
+      - {cm_code: "0072", name: "Alcorcón"}
+      - {cm_code: "0133", name: "Aranjuez"}
+      - {cm_code: "0409", name: "Ciempozuelos"}
+      - {cm_code: "0587", name: "Fuenlabrada"}
+      - {cm_code: "0650", name: "Getafe"}
+      - {cm_code: "0730", name: "Humanes de Madrid"}
+      - {cm_code: "0745", name: "Leganés"}
+      - {cm_code: "0920", name: "Móstoles"}
+      - {cm_code: "1065", name: "Parla"}
+      - {cm_code: "1132", name: "Pinto"}
+      - {cm_code: "1322", name: "San Martín de la Vega"}
+      - {cm_code: "1610", name: "Valdemoro"}
+  - code: "05"
+    name: Oeste Metropolitano
+    municipios:
+      - {cm_code: "0225", name: "Boadilla del Monte"}
+      - {cm_code: "0262", name: "Brunete"}
+      - {cm_code: "0474", name: "Collado Villalba"}
+      - {cm_code: "0611", name: "Galapagar"}
+      - {cm_code: "0724", name: "Hoyo de Manzanares"}
+      - {cm_code: "0800", name: "Majadahonda"}
+      - {cm_code: "1150", name: "Pozuelo de Alarcón"}
+      - {cm_code: "1277", name: "Rozas de Madrid (Las)"}
+      - {cm_code: "1527", name: "Torrelodones"}
+      - {cm_code: "1760", name: "Villanueva de la Cañada"}
+      - {cm_code: "1816", name: "Villaviciosa de Odón"}
+  - code: "06"
+    name: Sierra Norte
+    municipios:
+      - {cm_code: "0014", name: "Acebeda (La)"}
+      - {cm_code: "0035", name: "Alameda del Valle"}
+      - {cm_code: "0164", name: "Atazar (El)"}
+      - {cm_code: "0203", name: "Berzosa del Lozoya"}
+      - {cm_code: "0210", name: "Berrueco (El)"}
+      - {cm_code: "0246", name: "Braojos"}
+      - {cm_code: "0278", name: "Buitrago del Lozoya"}
+      - {cm_code: "0284", name: "Bustarviejo"}
+      - {cm_code: "0297", name: "Cabanillas de la Sierra"}
+      - {cm_code: "0301", name: "Cabrera (La)"}
+      - {cm_code: "0344", name: "Canencia"}
+      - {cm_code: "0395", name: "Cervera de Buitrago"}
+      - {cm_code: "0626", name: "Garganta de los Montes"}
+      - {cm_code: "0632", name: "Gargantilla del Lozoya y Pinilla de Buitrago"}
+      - {cm_code: "0647", name: "Gascones"}
+      - {cm_code: "0679", name: "Guadalix de la Sierra"}
+      - {cm_code: "0698", name: "Hiruela (La)"}
+      - {cm_code: "0702", name: "Horcajo de la Sierra-Aoslos"}
+      - {cm_code: "0719", name: "Horcajuelo de la Sierra"}
+      - {cm_code: "0761", name: "Lozoya"}
+      - {cm_code: "9015", name: "Lozoyuela-Navas-Sieteiglesias"}
+      - {cm_code: "0783", name: "Madarcos"}
+      - {cm_code: "0881", name: "Montejo de la Sierra"}
+      - {cm_code: "0941", name: "Navalafuente"}
+      - {cm_code: "0973", name: "Navarredonda y San Mamés"}
+      - {cm_code: "1071", name: "Patones"}
+      - {cm_code: "1087", name: "Pedrezuela"}
+      - {cm_code: "1126", name: "Pinilla del Valle"}
+      - {cm_code: "1147", name: "Piñuecar-Gandullas"}
+      - {cm_code: "1179", name: "Prádena del Rincón"}
+      - {cm_code: "1185", name: "Puebla de la Sierra"}
+      - {cm_code: "9020", name: "Puentes Viejas"}
+      - {cm_code: "1202", name: "Rascafría"}
+      - {cm_code: "1219", name: "Redueña"}
+      - {cm_code: "1245", name: "Robledillo de la Jara"}
+      - {cm_code: "1261", name: "Robregordo"}
+      - {cm_code: "1381", name: "Serna del Monte (La)"}
+      - {cm_code: "1436", name: "Somosierra"}
+      - {cm_code: "1512", name: "Torrelaguna"}
+      - {cm_code: "1533", name: "Torremocha de Jarama"}
+      - {cm_code: "1586", name: "Valdemanco"}
+      - {cm_code: "1684", name: "Vellón (El)"}
+      - {cm_code: "1697", name: "Venturada"}
+      - {cm_code: "1821", name: "Villavieja del Lozoya"}
+  - code: "07"
+    name: Nordeste Comunidad
+    municipios:
+      - {cm_code: "0323", name: "Camarma de Esteruelas"}
+      - {cm_code: "0534", name: "Daganzo de Arriba"}
+      - {cm_code: "0571", name: "Fresno de Torote"}
+      - {cm_code: "0590", name: "Fuente el Saz de Jarama"}
+      - {cm_code: "0838", name: "Meco"}
+      - {cm_code: "0869", name: "Molar (El)"}
+      - {cm_code: "1224", name: "Ribatejada"}
+      - {cm_code: "1454", name: "Talamanca de Jarama"}
+      - {cm_code: "1564", name: "Valdeavero"}
+      - {cm_code: "1625", name: "Valdeolmos-Alalpardo"}
+      - {cm_code: "1631", name: "Valdepiélagos"}
+      - {cm_code: "1646", name: "Valdetorres de Jarama"}
+  - code: "08"
+    name: Sudeste Comunidad
+    municipios:
+      - {cm_code: "0112", name: "Ambite"}
+      - {cm_code: "0127", name: "Anchuelo"}
+      - {cm_code: "0199", name: "Belmonte de Tajo"}
+      - {cm_code: "0259", name: "Brea de Tajo"}
+      - {cm_code: "0339", name: "Campo Real"}
+      - {cm_code: "0357", name: "Carabaña"}
+      - {cm_code: "0437", name: "Colmenar de Oreja"}
+      - {cm_code: "0480", name: "Corpa"}
+      - {cm_code: "0528", name: "Chinchón"}
+      - {cm_code: "0552", name: "Estremera"}
+      - {cm_code: "0604", name: "Fuentidueña de Tajo"}
+      - {cm_code: "0758", name: "Loeches"}
+      - {cm_code: "0915", name: "Morata de Tajuña"}
+      - {cm_code: "1006", name: "Nuevo Baztán"}
+      - {cm_code: "1013", name: "Olmeda de las Fuentes"}
+      - {cm_code: "1028", name: "Orusco de Tajuña"}
+      - {cm_code: "1104", name: "Perales de Tajuña"}
+      - {cm_code: "1111", name: "Pezuela de las Torres"}
+      - {cm_code: "1163", name: "Pozuelo del Rey"}
+      - {cm_code: "1369", name: "Santorcaz"}
+      - {cm_code: "1375", name: "Santos de la Humosa (Los)"}
+      - {cm_code: "1467", name: "Tielmes"}
+      - {cm_code: "1473", name: "Titulcia"}
+      - {cm_code: "1548", name: "Torres de la Alameda"}
+      - {cm_code: "1551", name: "Valdaracete"}
+      - {cm_code: "1570", name: "Valdelaguna"}
+      - {cm_code: "1659", name: "Valdilecha"}
+      - {cm_code: "1662", name: "Valverde de Alcalá"}
+      - {cm_code: "1701", name: "Villaconejos"}
+      - {cm_code: "1723", name: "Villalbilla"}
+      - {cm_code: "1739", name: "Villamanrique de Tajo"}
+      - {cm_code: "1795", name: "Villar del Olmo"}
+      - {cm_code: "1809", name: "Villarejo de Salvanés"}
+  - code: "09"
+    name: Sudoeste Comunidad
+    municipios:
+      - {cm_code: "0040", name: "Alamo (El)"}
+      - {cm_code: "0088", name: "Aldea del Fresno"}
+      - {cm_code: "0151", name: "Arroyomolinos"}
+      - {cm_code: "0170", name: "Batres"}
+      - {cm_code: "0360", name: "Casarrubuelos"}
+      - {cm_code: "0506", name: "Cubas de la Sagra"}
+      - {cm_code: "0663", name: "Griñón"}
+      - {cm_code: "0894", name: "Moraleja de Enmedio"}
+      - {cm_code: "0967", name: "Navalcarnero"}
+      - {cm_code: "1198", name: "Quijorna"}
+      - {cm_code: "1408", name: "Serranillos del Valle"}
+      - {cm_code: "1415", name: "Sevilla la Nueva"}
+      - {cm_code: "1492", name: "Torrejón de la Calzada"}
+      - {cm_code: "1505", name: "Torrejón de Velasco"}
+      - {cm_code: "1718", name: "Villa del Prado"}
+      - {cm_code: "1744", name: "Villamanta"}
+      - {cm_code: "1757", name: "Villamantilla"}
+      - {cm_code: "1782", name: "Villanueva de Perales"}
+  - code: "10"
+    name: Sierra Sur
+    municipios:
+      - {cm_code: "0318", name: "Cadalso de los Vidrios"}
+      - {cm_code: "0376", name: "Cenicientos"}
+      - {cm_code: "0421", name: "Colmenar del Arroyo"}
+      - {cm_code: "0513", name: "Chapinería"}
+      - {cm_code: "0565", name: "Fresnedillas de la Oliva"}
+      - {cm_code: "0954", name: "Navalagamella"}
+      - {cm_code: "0992", name: "Navas del Rey"}
+      - {cm_code: "1090", name: "Pelayos de la Presa"}
+      - {cm_code: "1258", name: "Robledo de Chavela"}
+      - {cm_code: "1283", name: "Rozas de Puerto Real"}
+      - {cm_code: "1338", name: "San Martín de Valdeiglesias"}
+      - {cm_code: "1356", name: "Santa María de la Alameda"}
+      - {cm_code: "1599", name: "Valdemaqueda"}
+      - {cm_code: "1837", name: "Zarzalejo"}
+  - code: "11"
+    name: Sierra Central
+    municipios:
+      - {cm_code: "0105", name: "Alpedrete"}
+      - {cm_code: "0186", name: "Becerril de la Sierra"}
+      - {cm_code: "0231", name: "Boalo (El)"}
+      - {cm_code: "0382", name: "Cercedilla"}
+      - {cm_code: "0442", name: "Colmenarejo"}
+      - {cm_code: "0468", name: "Collado Mediano"}
+      - {cm_code: "0549", name: "Escorial (El)"}
+      - {cm_code: "0685", name: "Guadarrama"}
+      - {cm_code: "0822", name: "Manzanares El Real"}
+      - {cm_code: "0856", name: "Miraflores de la Sierra"}
+      - {cm_code: "0875", name: "Molinos (Los)"}
+      - {cm_code: "0908", name: "Moralzarzal"}
+      - {cm_code: "0936", name: "Navacerrada"}
+      - {cm_code: "1317", name: "San Lorenzo de El Escorial"}
+      - {cm_code: "1441", name: "Soto del Real"}
+      - {cm_code: "1603", name: "Valdemorillo"}
+      - {cm_code: "1776", name: "Villanueva del Pardillo"}

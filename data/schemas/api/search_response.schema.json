@@ -866,6 +866,11 @@
           "default": 2,
           "title": "Schema Version",
           "type": "integer"
+        },
+        "scope": {
+          "$ref": "#/$defs/SearchScope",
+          "default": "all",
+          "description": "Where to search; Madrid capital is ranked by barrio instead of by district"
         }
       },
       "title": "ScenarioState",
@@ -927,6 +932,17 @@
       ],
       "title": "SearchResult",
       "type": "object"
+    },
+    "SearchScope": {
+      "description": "«Dónde buscar» (D-238): the whole region, or one of its three parts by the statistical\nzoning of the Comunidad de Madrid (data/catalog/zoning/search_scope.yaml).",
+      "enum": [
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos"
+      ],
+      "title": "SearchScope",
+      "type": "string"
     },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",

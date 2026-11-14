@@ -1,0 +1,47 @@
+Manual checks on https://vidafacil-madrid.vercel.app (dpl_59jvN…, f1b6f5a), 2026-11-14 ~18:44 UTC, Playwright Chromium,
+1440x900 and 390x844 (mobile, touch). Flow: «Ver un ejemplo» → «¿Dónde?» → Madrid capital → Alrededores → Pueblos → /zona/distrito/2807909.
+
+== 1440 ==
+example: POST /search 200, scope sent: (omitted), 1st Latina
+selector «¿Dónde?»: Toda la Comunidad ✓ | Madrid capital | Alrededores de Madrid | Pueblos
+  help with «Toda»: Madrid capital por distritos y el resto de la Comunidad por municipios.
+madrid: POST /search 200, scope sent: madrid, API 78 of 131, 1st Lucero 99 (barrio)
+  list: «De 131 barrios de Madrid capital.» · 1st row «Lucero · Latina»
+  barrio outlines: GET /geo/admin-units 200 ?level=barrio&simplify_m=25
+  map aria-label: «Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. Madrid capital sale por barrios: cada barrio tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.»
+  legend: «¿Qué quieres ver? Encaje con tu búsqueda Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Encaje con tu búsqueda Encaja menos Encaja más Cumple todo 78 zonas No cumple tod…»
+  legend counts on the screenshot: Cumple todo 78 zonas · No cumple todo 52 zonas · Sin datos 1 zona (78 + 52 + 1 = 131 barrios; Sol has no rent, D-232 §4)
+alrededores: POST /search 200, scope sent: alrededores, API 14 of 40, 1st Alcorcón 95 (municipio)
+  list: «De 40 municipios de los alrededores de Madrid.»
+pueblos: POST /search 200, scope sent: pueblos, API 1 of 138, 1st Navalcarnero 84 (municipio)
+  list: «De 138 pueblos de la Comunidad de Madrid.»
+Moncloa-Aravaca: /places 200, chip «Hospitales» pressed=true, «Ver la lista (6)» opened=True
+  Hospital público · Hospital Universitario Clínico San Carlos · 861 camas instaladas
+  Hospital público · gestión privada · Hospital Universitario Fundación Jiménez Díaz · 651 camas instaladas
+  Hospital de salud mental privado · Clínica López Ibor · 67 camas instaladas
+  Hospital privado · Hospital Ha Universitario Moncloa · 235 camas instaladas
+  Hospital privado · Hospital Pardo de Aravaca · 88 camas instaladas
+  Hospital privado · Hospital Universitario La Zarzuela · 116 camas instaladas
+console errors and HTTP >= 400: 0
+
+== 390 ==
+example: POST /search 200, scope sent: (omitted), 1st Latina
+selector «¿Dónde?»: Toda la Comunidad ✓ | Madrid capital | Alrededores de Madrid | Pueblos
+  help with «Toda»: Madrid capital por distritos y el resto de la Comunidad por municipios.
+madrid: POST /search 200, scope sent: madrid, API 78 of 131, 1st Lucero 99 (barrio)
+  list: «De 131 barrios de Madrid capital.» · 1st row «Lucero · Latina»
+  barrio outlines: GET /geo/admin-units 200 ?level=barrio&simplify_m=25
+  map aria-label: «Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. Madrid capital sale por barrios: cada barrio tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.»
+  legend: «¿Qué quieres ver? Encaje con tu búsqueda Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Encaje con tu búsqueda Cumple todo No cumple todo Sin datos…»
+alrededores: POST /search 200, scope sent: alrededores, API 14 of 40, 1st Alcorcón 95 (municipio)
+  list: «De 40 municipios de los alrededores de Madrid.»
+pueblos: POST /search 200, scope sent: pueblos, API 1 of 138, 1st Navalcarnero 84 (municipio)
+  list: «De 138 pueblos de la Comunidad de Madrid.»
+Moncloa-Aravaca: /places 200, chip «Hospitales» pressed=true, «Ver la lista (6)» opened=True
+  Hospital público · Hospital Universitario Clínico San Carlos · 861 camas instaladas
+  Hospital público · gestión privada · Hospital Universitario Fundación Jiménez Díaz · 651 camas instaladas
+  Hospital de salud mental privado · Clínica López Ibor · 67 camas instaladas
+  Hospital privado · Hospital Ha Universitario Moncloa · 235 camas instaladas
+  Hospital privado · Hospital Pardo de Aravaca · 88 camas instaladas
+  Hospital privado · Hospital Universitario La Zarzuela · 116 camas instaladas
+console errors and HTTP >= 400: 0
