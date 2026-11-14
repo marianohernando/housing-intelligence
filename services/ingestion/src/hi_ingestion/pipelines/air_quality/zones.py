@@ -12,7 +12,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from hi_contracts.catalog.pipeline import AirQualityZonesPipeline
-from hi_domain.geo.names import display_name, name_key
+from hi_domain.geo.names import ARTICLES, display_name, name_key
 from hi_ingestion.pipelines.places.quality import CheckResult, QualityReport
 
 ZONE_COLUMNS = ["municipio_ine", "zone_code", "zone_name"]
@@ -27,9 +27,12 @@ class ZoneTable:
 
 
 def _alias_keys(official: str) -> set[str]:
-    """«Acebeda (La)» -> «acebeda»; «Horcajo de la Sierra-Aoslos» -> «horcajo de la sierra»."""
-    base = official.split(" (")[0]
-    return {name_key(base), name_key(base.split("-")[0])} - {name_key(display_name(official))}
+    """«Acebeda (La)» or «ACEBEDA, LA» -> «acebeda»; «Horcajo de la Sierra-Aoslos» ->
+    «horcajo de la sierra»."""
+    readable = display_name(official)
+    article, _, rest = readable.partition(" ")
+    base = rest if article in ARTICLES and rest else readable
+    return {name_key(base), name_key(base.split("-")[0])} - {name_key(readable)}
 
 
 def _index(municipios: dict[str, str]) -> tuple[dict[str, list[str]], dict[str, list[str]]]:

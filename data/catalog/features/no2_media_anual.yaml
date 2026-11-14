@@ -26,7 +26,7 @@ formula:
   nearest_confidence: 0.6  # another zone's station
   # The zone's centre is the centre of its residential streets, as in the walking features
   origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
-  levels: {distrito: {}}
+  levels: {distrito: {}, barrio: {}}  # barrios of Madrid since D-238's zone view
 null_policy: {no_coverage: unknown, confirmed_zero: 0}
 confidence: {inputs: [own_station, min_capture]}
 public_use: true

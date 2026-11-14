@@ -28,7 +28,7 @@ export const ENVIRONMENT_TEXT = {
   title: "Entorno",
   context: "Datos de contexto: no cuentan en el encaje ni en «Qué falta».",
   noiseSource: "Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid",
-  noiseHint: "Ruido del tráfico medido en la propia calle: más de 65 dB de día o de 55 dB de noche, los límites para zonas residenciales.",
+  noiseHint: "Ruido del tráfico medido en la propia calle: más de 65 dB de día o de 55 dB de noche, los objetivos de calidad acústica de las zonas residenciales.",
   noData: "sin dato publicado",
   airSource: "Redes de calidad del aire de la Comunidad de Madrid y del Ayuntamiento de Madrid, horas válidas del año.",
   parkingSource:
@@ -46,7 +46,8 @@ const pct = (value: number) => formatNumber(Math.round(value), 0);
 /** «Calles con ruido alto: 38 % de día, 48 % de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)». */
 export function noiseText(day: FeatureValueRow | null, night: FeatureValueRow | null): string {
   if (day?.value == null || night?.value == null) return `Calles con ruido alto: ${ENVIRONMENT_TEXT.noData}`;
-  return `Calles con ruido alto: ${pct(day.value)} % de día, ${pct(night.value)} % de noche (${ENVIRONMENT_TEXT.noiseSource})`;
+  // A no-break space keeps «29 %» on one line
+  return `Calles con ruido alto: ${pct(day.value)}\u00a0% de día, ${pct(night.value)}\u00a0% de noche (${ENVIRONMENT_TEXT.noiseSource})`;
 }
 
 interface StationDetail {

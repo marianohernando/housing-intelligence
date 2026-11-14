@@ -419,7 +419,7 @@ def test_air_reads_the_cm_network_and_its_zones(catalog: Catalog) -> None:
         "ayto_calidad_aire_horario",
     ]
     assert formula["zones_dataset"] == "cm_calidad_aire_zonas"
-    assert formula["min_capture"] == 0.85 and set(formula["levels"]) == {"distrito"}
+    assert formula["min_capture"] == 0.85 and set(formula["levels"]) == {"distrito", "barrio"}
     for dataset_id in ("cm_calidad_aire_horario_2025", "cm_calidad_aire_estaciones"):
         assert catalog.datasets[dataset_id].source_id == "comunidad_madrid_ckan"
     for dataset_id in formula["means_datasets"]:

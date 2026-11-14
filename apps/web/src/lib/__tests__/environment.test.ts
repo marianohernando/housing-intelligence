@@ -18,7 +18,7 @@ const ALARM = /peligr|alarm|grave|malo|tóxic|nociv|insalubre/i;
 describe("noiseText (zona.entorno.ruido)", () => {
   it("says the share of street above the limits by day and by night, with the map", () => {
     expect(noiseText(row("2807901", 38.14), row("2807901", 48.1))).toBe(
-      "Calles con ruido alto: 38 % de día, 48 % de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)",
+      "Calles con ruido alto: 38\u00a0% de día, 48\u00a0% de noche (Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid)",
     );
   });
 

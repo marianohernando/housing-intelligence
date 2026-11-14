@@ -16,7 +16,8 @@ const TIMEOUT_MS = 15_000;
 // One small answer per feature and level for the whole visit (every zone of the level is in it)
 const cache = new Map<string, Promise<readonly FeatureValueRow[]>>();
 
-type Level = "municipio" | "distrito";
+/** The zone view's levels: municipios, Madrid's districts and, since D-238, its barrios */
+type Level = "municipio" | "distrito" | "barrio";
 
 function loadValues(feature: EnvironmentFeature, level: Level): Promise<readonly FeatureValueRow[]> {
   return once(cache, `${feature}/${level}`, () =>
@@ -52,7 +53,7 @@ function Fact({ icon: Icon, text, note }: { icon: LucideIcon; text: string; note
 }
 
 /**
- * zona.entorno (D-237): street noise, air and car parks of a municipio or a Madrid district, with
+ * zona.entorno (D-237): street noise, air and car parks of a municipio, a Madrid district or barrio, with
  * where each figure comes from. Context only, in neutral colours; while it loads, or if nothing
  * comes for the zone, nothing is shown: it is not part of the fit.
  */

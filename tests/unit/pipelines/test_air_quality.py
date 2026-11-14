@@ -100,7 +100,7 @@ ZONES = AirQualityZonesPipeline.model_validate(
 )
 MUNICIPIOS = {  # FIXTURE: official names as the geography writes them
     "28004": "Álamo (El)",
-    "28001": "Acebeda (La)",
+    "28001": "ACEBEDA, LA",  # as the CSV of the sections writes it, before the official names
     "28070": "Horcajo de la Sierra-Aoslos",
     "28079": "Madrid",
 }
