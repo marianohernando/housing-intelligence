@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, Footprints, X } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
 
@@ -10,8 +10,19 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import PriceTag from "@/components/ui/PriceTag";
 import { errorMessage } from "@/lib/errors";
-import { zonePriceOf } from "@/lib/fit";
-import { fitsButShortText, gapsHref, GROUP, inGroup, notComparable, topRows, walking, walkingText } from "@/lib/gaps";
+import { nearbyWalks, zoneFit, zonePriceOf } from "@/lib/fit";
+import {
+  fitsButShortText,
+  GAPS_HELP,
+  gapsHref,
+  GROUP,
+  inGroup,
+  nearButShortTexts,
+  notComparable,
+  topRows,
+  walking,
+  walkingText,
+} from "@/lib/gaps";
 import { screenZone, type ZoneProperties, zoneHref, zoneTitle } from "@/lib/map/zones";
 
 import FitDetails from "./FitDetails";
@@ -21,7 +32,8 @@ import SmallZoneTag from "./SmallZoneTag";
 import styles from "./ZoneCard.module.css";
 import { useZoneGaps } from "./useZoneGaps";
 
-// Copy from pitch/textos_web.md (zona.*, falta.*, carga.falta, error.reintentar, leyenda.antes_de_buscar)
+// Copy from pitch/textos_web.md (zona.*, falta.*, carga.falta, error.reintentar, leyenda.antes_de_buscar);
+// zona.falta.ayuda and zona.cerca_pocas in lib/gaps.ts
 // «A pie» with the minutes is falta.fila.a_pie, shortened for the card.
 const TEXT = {
   municipio: "Municipio",
@@ -67,6 +79,9 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
   // rows are the whole district's, and the line says «aquí»
   const fitsButShort = pct != null && match?.passes_all && !isBarrio ? fitsButShortText(rows) : null;
+  // A service the search found close that «Qué falta» marks FALTA or JUSTO: both are true, and one
+  // line says why (zona.cerca_pocas). For a barrio, its walks against its district's rows
+  const nearButShort = result ? nearButShortTexts(rows, nearbyWalks(zoneFit(result, zone_key).ranked), isBarrio ? (zone.district_name ?? null) : null) : [];
   const eyebrow = isBarrio ? TEXT.barrio(municipio_name) : level === "distrito" ? `Distrito de ${municipio_name}` : TEXT.municipio;
   const missingTitle = isBarrio ? TEXT.barrioMissing(zone.district_name ?? municipio_name) : TEXT.missing;
 
@@ -99,8 +114,15 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
 
       <section className={styles.missing} aria-labelledby={`${titleId}-missing`}>
         <h3 id={`${titleId}-missing`}>{missingTitle}</h3>
+        <p className={styles.hint}>{GAPS_HELP}</p>
         {isBarrio && <p className={styles.hint}>{TEXT.barrioMissingHelp}</p>}
         {fitsButShort && <p className={styles.fitsButShort}>{fitsButShort}</p>}
+        {nearButShort.map((line) => (
+          <p key={line} className={styles.nearButShort}>
+            <Footprints size={18} aria-hidden="true" />
+            <span>{line}</span>
+          </p>
+        ))}
         {gaps.loading && (
           <p role="status" className={styles.hint}>
             Calculando qué falta en {isBarrio ? (zone.district_name ?? name) : name}…{slow && ` ${SLOW_TEXT}`}

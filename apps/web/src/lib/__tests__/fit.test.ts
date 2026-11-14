@@ -16,6 +16,7 @@ import {
   fitClass,
   hasWalkingFact,
   limitingConstraint,
+  nearbyWalks,
   noneText,
   optionText,
   paintFit,
@@ -399,5 +400,22 @@ describe("many zones tied at the top (resultados.empate, D-239)", () => {
 
   it("stays quiet on line A's search fixture, where the top is not a crowd", () => {
     expect(tiedText(fixture)).toBeNull();
+  });
+});
+
+describe("services the search found a short walk away (zona.cerca_pocas)", () => {
+  it("takes the minutes of a service asked for and met, else of a walking fact that is a strength", () => {
+    // The example: «Colegio a 10 min como mucho» met at 5,6 min; the health centre from its fact
+    const walks = nearbyWalks(fixture.results[0]!);
+    expect(walks.colegio).toBe(5.6);
+    expect(walks.centro_salud).toBeGreaterThan(0);
+    expect(walks.escuela_infantil).toBeUndefined();
+    // Not met, or a weakness, is not close
+    const far = {
+      constraints: [{ constraint_id: "near:escuela_infantil", status: "FAIL", value: 14, label: "", explanation: "", confidence: 1 }],
+      facts: [{ kind: "weakness", topic: "salud", text: "", confidence: 1, indicator: { feature_id: "min_a_pie_centro_salud", value: 25 } }],
+    } as unknown as RankedZone;
+    expect(nearbyWalks(far)).toEqual({});
+    expect(nearbyWalks(null)).toEqual({});
   });
 });

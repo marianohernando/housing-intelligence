@@ -4,6 +4,7 @@
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
 import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, ScenarioState, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 
 import { type ConfidenceText, confidenceText } from "./confidence";
 import { formatEuros } from "./format";
@@ -347,4 +348,23 @@ export const WALK_MINUTES_FEATURE_PREFIX = "min_a_pie_";
 
 export function hasWalkingFact(facts: readonly { indicator?: { feature_id: string } | null }[]): boolean {
   return facts.some((fact) => fact.indicator?.feature_id.startsWith(WALK_MINUTES_FEATURE_PREFIX) === true);
+}
+
+/** Rows of «Qué falta» a walk can reach: the services of «Lo quiero a un paseo» and of the walking facts. */
+const WALK_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia"];
+
+/**
+ * The services the search found a short walk away in a zone, in minutes by row of «Qué falta»: a
+ * service of «Lo quiero a un paseo» it meets (`near:<row>` PASS), else a walking fact the API
+ * counts as a strength («Centro de salud a unos 8 min andando»). For zona.cerca_pocas (gaps.ts).
+ */
+export function nearbyWalks(ranked: Pick<RankedZone, "constraints" | "facts"> | null): Partial<Record<GapRowKey, number>> {
+  const walks: Partial<Record<GapRowKey, number>> = {};
+  for (const row of WALK_ROWS) {
+    const near = ranked?.constraints.find((c) => c.constraint_id === `near:${row}` && c.status === "PASS" && typeof c.value === "number");
+    const fact = ranked?.facts.find((f) => f.kind === "strength" && f.indicator?.feature_id === `${WALK_MINUTES_FEATURE_PREFIX}${row}`);
+    const minutes = typeof near?.value === "number" ? near.value : fact?.indicator?.value;
+    if (typeof minutes === "number") walks[row] = minutes;
+  }
+  return walks;
 }
