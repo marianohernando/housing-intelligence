@@ -13,6 +13,7 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import BarrioFit from "@/components/zone/BarrioFit";
 import BarriosBar from "@/components/zone/BarriosBar";
 import FacilitiesPanel from "@/components/zone/FacilitiesPanel";
+import NewHousing from "@/components/zone/NewHousing";
 import PerceivedSafety from "@/components/zone/PerceivedSafety";
 import ZoneCard from "@/components/zone/ZoneCard";
 import { errorMessage } from "@/lib/errors";
@@ -94,6 +95,8 @@ export default function ZoneIntro() {
         <ZoneListLink />
         {/* Context only for Madrid's districts, the survey's coverage (D-226 §1); last, so arriving later moves nothing */}
         {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
+        {/* New housing and what is coming, context that never scores (D-241); last, so arriving later moves nothing */}
+        {(level === "municipio" || level === "distrito") && <NewHousing zone={{ level, code: routeZone.code }} />}
       </div>
       {/* Every facility of the zone, not only its key points: left column on desktop */}
       <div className={styles.centres}>

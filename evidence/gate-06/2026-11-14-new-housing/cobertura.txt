@@ -1,0 +1,106 @@
+# Cobertura y ejemplos (base local housing_vivienda, 14 nov 2026; consultas de solo lectura)
+
+             feature_id              |   nivel   | filas | con_valor | mayor_que_0 
+-------------------------------------+-----------+-------+-----------+-------------
+ ambitos_residenciales_en_desarrollo | distrito  |    21 |        21 |          19
+ compraventas_obra_nueva_pct         | municipio |   179 |       177 |         115
+ plan_vive_viviendas                 | distrito  |    21 |        21 |           2
+ plan_vive_viviendas                 | municipio |   179 |       179 |          26
+ valor_tasado_vivienda_nueva_m2      | municipio |   179 |        20 |          20
+ valor_tasado_vivienda_usada_m2      | municipio |   179 |        28 |          28
+(6 rows)
+
+         municipio          | hasta_5 | mas_de_5 | dif_pct 
+----------------------------+---------+----------+---------
+ Alcobendas                 |    4914 |     4325 |      14
+ Pozuelo de Alarcón         |    5432 |     4788 |      13
+ Madrid                     |    5458 |     4988 |       9
+ Alcalá de Henares          |    2716 |     2513 |       8
+ Móstoles                   |    2900 |     2691 |       8
+ Rozas de Madrid (Las)      |    4324 |     3994 |       8
+ Tres Cantos                |    4175 |     3849 |       8
+ Arganda del Rey            |    2447 |     2278 |       7
+ Rivas-Vaciamadrid          |    3241 |     3065 |       6
+ San Sebastián de los Reyes |    3665 |     3501 |       5
+ Aranjuez                   |    2025 |     1930 |       5
+ Torrejón de Ardoz          |    2774 |     2645 |       5
+ Valdemoro                  |    2464 |     2354 |       5
+ Colmenar Viejo             |    2848 |     2757 |       3
+ Leganés                    |    2938 |     2868 |       2
+ Majadahonda                |    4506 |     4434 |       2
+ Getafe                     |    2826 |     2809 |       1
+ Fuenlabrada                |    2569 |     2565 |       0
+ Boadilla del Monte         |    3925 |     3918 |       0
+ Alcorcón                   |    2860 |     3077 |      -7
+(20 rows)
+
+      distrito       | ambitos |                                                                                              items                                                                                              
+---------------------+---------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Centro              |       2 | Muralla [sin_empezar]; Manzana C/ Segovia [sin_empezar]
+ Arganzuela          |       4 | RENFE - Avda. Ciudad de Barcelona [sin_empezar]; Méndez Álvaro Norte II [sin_empezar]; Cárcel de Yeserías [sin_empezar]; Cuartel de Batalla del Salado [sin_empezar]
+ Retiro              |       1 | Cavanilles [sin_empezar]
+ Salamanca           |       4 | C/ Peyre [tramitacion]; Cocheras Metro Pte. de Ventas [sin_empezar]; C/ Villanueva, 16 [sin_empezar]; Pasaje Príncipe de Vergara [sin_empezar]
+ Chamartín           |       3 | Laboratorio Alter-Norte [tramitacion]; Ciudad de Servicios de la ONCE - Calle de Maria Gilhou [tramitacion]; Edificio Arriba [sin_empezar]
+ Tetuán              |       3 | Paseo de la Dirección [obras]; Castillo Piñeiro [tramitacion]; C/ Salamanca [tramitacion]
+ Chamberí            |       5 | Parque Metro Cuatro Caminos [sin_empezar]; PMM [sin_empezar]; Meléndez Valdés - Hilarión Eslava [sin_empezar]; Zeltia, S.A. [sin_empezar]; Callejón de Robledillo [sin_empezar]
+ Fuencarral-El Pardo |       3 | Malmea - Tres Olivos - San Roque [tramitacion]; Marqués de Villabrágima [tramitacion]; Colonia Mingorrubio [sin_empezar]
+ Moncloa-Aravaca     |       2 | C/ Bermeo [tramitacion]; La Horca - Ctra. de Húmera [tramitacion]
+ Latina              |       5 | Deportivo Colonia Pedro Vives [obras]; Instalaciones Militares de Campamento [tramitacion]; Meaques [tramitacion]; Paseo de la Ermita del Santo [tramitacion]; C/ Ocaña [sin_empezar]
+ Carabanchel         |       5 | Cárcel de Carabanchel [tramitacion]; Antiguo Estadio San Miguel [tramitacion]; Cuartel Arteaga [sin_empezar]; Remodelación Barrio de Comillas Norte [sin_empezar]; Plaza Cantoría [sin_empezar]
+ Usera               |       1 | C/ Mercedes Manjón [sin_empezar]
+ Puente de Vallecas  |       0 | 
+ Moratalaz           |       0 | 
+ Ciudad Lineal       |       1 | Vicente Muzas [sin_empezar]
+ Hortaleza           |       3 | Solana de Valdebebas [obras]; UVA de Hortaleza [obras]; Avenida de San Luis -- Las Torrecillas [obras]
+ Villaverde          |       3 | Arroyo Butarque [tramitacion]; Vía Sur de San Cristóbal [sin_empezar]; Barrio de "Experimentales" [sin_empezar]
+ Villa de Vallecas   |       3 | Valdecarros [obras]; Estación de Vallecas [sin_empezar]; Puerto Pozazal [sin_empezar]
+ Vicálvaro           |       4 | Los Berrocales [obras]; Los Ahijones [obras]; Los Cerros [obras]; Camino Viejo de Vicálvaro [obras]
+ San Blas-Canillejas |       3 | Subestación Canillejas [tramitacion]; Cuartel de San Cristóbal [sin_empezar]; Parador de Santa Lucía [sin_empezar]
+ Barajas             |       2 | C/ Júpiter [tramitacion]; Barrio del Aeropuerto [sin_empezar]
+(21 rows)
+
+
+        municipio        | nuevas | todas | pct  | provisional |  null_reason   
+-------------------------+--------+-------+------+-------------+----------------
+ Getafe                  |    650 |  2311 | 28.1 | true        | 
+ Valdemoro               |    168 |  1126 | 14.9 | true        | 
+ Pozuelo de Alarcón      |    101 |   820 | 12.3 | true        | 
+ Madrid                  |   1512 | 40086 |  3.8 | true        | 
+ Móstoles                |     62 |  1787 |  3.5 | true        | 
+ Alcobendas              |     28 |  1067 |  2.6 | true        | 
+ Acebeda (La)            |      0 |     0 |      | true        | NOT_APPLICABLE
+ Horcajuelo de la Sierra |      0 |     0 |      | true        | NOT_APPLICABLE
+(8 rows)
+
+         municipio          | viviendas |                                                    ubicacion                                                    |                   fase                   
+----------------------------+-----------+-----------------------------------------------------------------------------------------------------------------+------------------------------------------
+ Madrid                     |      1616 | Valdebebas y Los Ahijones                                                                                       | Entrega y construcción
+ Colmenar Viejo             |       915 | avda. Cristóbal Colón; c/ Estación de Chamartín; avda. de la Tejera; c/ Francisco Revellés; c/ Américo Vespucio | Entrega, comercialización y construcción
+ Tres Cantos                |       866 | avda. de Juan Pablo II y c/ Letonia                                                                             | Entrega y construcción
+ Getafe                     |       864 | Buenavista y Los Molinos                                                                                        | Entrega
+ Alcorcón                   |       822 | Ensanche Sur                                                                                                    | Entrega
+ Alcobendas                 |       756 | avda. Olímpica y avda. Camilo José Cela                                                                         | Construcción
+ Móstoles                   |       738 | Móstoles Sur                                                                                                    | Entrega y construcción
+ Alcalá de Henares          |       736 | Espartales Norte                                                                                                | Entrega
+ San Sebastián de los Reyes |       568 | c/ Hoces del Duratón y avda. Arribes del Duero                                                                  | Entrega
+ Boadilla del Monte         |       524 | c/ Fray Junípero Sierra                                                                                         | Entrega
+ Navalcarnero               |       425 | avda. Mari-Martín y c/ de los Bueyes                                                                            | Entrega y construcción
+ Pinto                      |       422 | c/ Isaac Albéniz                                                                                                | Entrega
+ Aranjuez                   |       400 | avda. Memorial Paz de Hiroshima                                                                                 | Construcción
+ Arroyomolinos              |       365 | El Rellano y La Rinconada                                                                                       | Construcción
+ Loeches                    |       295 | c/ Almendro                                                                                                     | Construcción
+ Villalbilla                |       226 | c/Infante Don Juan Manuel                                                                                       | Construcción
+ Arganda del Rey            |       210 | avda. Lisboa                                                                                                    | Comercialización
+ Daganzo de Arriba          |       174 | c/ Carmen Amaya                                                                                                 | Comercialización
+ Torrelodones               |       170 | c/ Prado de la Virgen                                                                                           | Construcción
+ Velilla de San Antonio     |       152 | c/ Nicosia                                                                                                      | Construcción
+ Valdemoro                  |       150 | c/ Agustina de Aragón                                                                                           | Construcción
+ Torrejón de la Calzada     |       143 | c/ Manuel Fraga Iribarne c/ Río Guadiana                                                                        | Comercialización y construcción
+ Torrejón de Ardoz          |       137 | c/ Desmond Tutu                                                                                                 | Entrega
+ Moralzarzal                |        80 | c/ Hachazuelas y camino de Alpedrete                                                                            | Construcción
+ Humanes de Madrid          |        50 | c/ Don Fausto Ruiza                                                                                             | Comercialización
+ Torrejón de Velasco        |        41 | c/ Carmen Tagle                                                                                                 | Construcción
+ Vicálvaro                  |      1616 | Valdebebas y Los Ahijones                                                                                       | Entrega y construcción
+ Hortaleza                  |      1616 | Valdebebas y Los Ahijones                                                                                       | Entrega y construcción
+(28 rows)
+

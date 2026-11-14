@@ -10,6 +10,7 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
 - **Antigüedad de las viviendas** (% posteriores a 2000): `zona.antiguedad*` (sección 4, «Contexto de la zona»).
 - **«¿Dónde?»: toda la Comunidad, Madrid capital, alrededores o pueblos** (D-238), con Madrid capital por barrios: `donde.*` (sección 2), `resultados.de.*`, `zona.barrio.*` (sección 4) y `mapa.aria.encaje.barrios` (sección 3). Hecho por A+B.
 - **Días de oficina y teletrabajo:** `trabajo.dias*` (sección 2, D-240). Hecho por B.
+- **¿Las casas son nuevas o viejas? ¿Qué se va a construir?:** `zona.vivienda_nueva.*` (sección 4, «Vivienda nueva y lo que viene», D-241). Hecho por A+B.
 - **Cerca de la familia o de amigos, como segundo lugar:** `familia.*` (sección 2, D-240). Hecho por B.
 - **La lista de zonas de «Qué falta», plegada en el móvil:** `zonas.ver_todas` y `zonas.ver_menos` (sección 3). Hecho por B.
 
@@ -441,6 +442,29 @@ Datos que se enseñan en la vista de zona para conocerla mejor. No cambian el % 
 | `zona.antiguedad` | Viviendas construidas después del año 2000: {pct} % (en toda la Comunidad, {pct_comunidad} %). | Junto a «Vivienda para familias». Fuente candidata, comprobada por D en el portal el 14 nov: «Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios» (`censo_anual_vivienda_por_antiguedad`, CC BY 4.0), años 2022 y 2023, por municipio. Cálculo de D con 2023, sumando los tramos de 2001 a 2025 sobre el total sin «No consta»: Comunidad 24,6 %, Madrid 16,5 %, Getafe 31,8 % y Valdemoro 59,8 %. Si A la carga, es un conjunto CM más. **Pendiente de A y de B** |
 | `zona.antiguedad.ayuda` | Es la edad de todas las viviendas de la zona, no solo de las que se venden o se alquilan. | Al tocar «?». Evita leerlo como un filtro de pisos nuevos (pregunta 50). **Pendiente de B** |
 | `zona.antiguedad.madrid` | Dato de toda la ciudad de Madrid: la fuente no lo da por distritos. | En los 21 distritos, si se enseña la cifra de la ciudad; si no, SIN DATOS, como la fila de vivienda. **Pendiente de A** (decide si se enseña) |
+
+### Vivienda nueva y lo que viene (no puntúa, D-241)
+Una tarjeta en la vista de zona, debajo de la de los vecinos, para la pregunta de la prueba con usuarios «¿las casas son nuevas o viejas?» y «¿qué se va a construir?». Cada línea dice su fuente y su fecha. No cambia el % de encaje, no ordena zonas y no entra en «Qué falta». Sin colores de estado ni de alarma. Si la API no tiene una feature, su línea no sale; si la fuente no publica el dato de una zona, tampoco: nunca un 0.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `zona.vivienda_nueva.titulo` | Vivienda nueva y lo que viene | Título de la tarjeta |
+| `zona.vivienda_nueva.compraventas` | {nuevas} de las {total} compraventas de vivienda del último año fueron de obra nueva ({pct} %). | `compraventas_obra_nueva_pct` con `detail` (los 4 últimos trimestres). Getafe: «650 de las 2.311 … (28 %)». Con menos de un 10 %, un decimal («3,8 %»). Variantes: «Ninguna de las {total} compraventas de vivienda del último año fue de obra nueva.», «No hubo compraventas de vivienda en el último año.» y «La única compraventa de vivienda del último año fue de obra nueva / de segunda mano.». Se quita el «Aquí se construye:» del encargo: donde la obra nueva es el 3 % (Madrid) o el 1 %, diría lo contrario de la cifra |
+| `zona.vivienda_nueva.provisional` | El último trimestre aún es provisional. | Detrás de la frase, si algún trimestre sumado viene marcado «Provisional» en la fuente |
+| `zona.vivienda_nueva.compraventas.fuente` | Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de datos abiertos de la Comunidad de Madrid, del {trimestre} al {trimestre}. | «del 3.er trimestre de 2025 al 2.º trimestre de 2026» |
+| `zona.vivienda_nueva.tasacion` | Una vivienda de menos de 5 años se tasa a {valor} €/m², un {pct} % más que la usada. | `valor_tasado_vivienda_nueva_m2` y `…_usada_m2`, del mismo año. Pozuelo: «5.432 €/m², un 13 % más». Si es más barata: «un {pct} % menos que la usada» (Alcorcón, 7 %); si redondea a 0: «casi lo mismo que la usada». Solo en los 20 municipios con los dos valores. No es el precio de compra del buscador (D-227) |
+| `zona.vivienda_nueva.tasacion.fuente` | Valor tasado medio de {año} del Ministerio de Vivienda y Agenda Urbana, en el portal de datos abiertos de la Comunidad de Madrid; «usada» es la de más de 5 años. | |
+| `zona.vivienda_nueva.ciudad` | En toda la ciudad de Madrid, {frase en minúscula} | En los 21 distritos, las compraventas y la tasación son de la ciudad entera |
+| `zona.vivienda_nueva.ciudad.nota` | La fuente no lo da por distritos. | Debajo, en los distritos |
+| `zona.vivienda_nueva.plan_vive` | Lo que viene: Plan Vive, {viviendas} viviendas de alquiler asequible {fase} ({ubicación}). | `plan_vive_viviendas` con sus `items`. {fase}: «Construcción» → «en obras», «Entrega» → «en entrega», «Comercialización» → «en comercialización», unidas con «y». Alcobendas: «756 viviendas de alquiler asequible en obras (avda. Olímpica y avda. Camilo José Cela)». En Hortaleza y Vicálvaro sale la entrada de Madrid (Valdebebas y Los Ahijones), con la nota de la fila |
+| `zona.vivienda_nueva.plan_vive.nota` | La Comunidad no publica cuántas de estas viviendas hay en cada uno de los dos sitios. | Viene en el dato (`note` de la entrada de Madrid), no en el código |
+| `zona.vivienda_nueva.plan_vive.fuente` | Página del Plan Vive de la Comunidad de Madrid, consultada el {fecha}. | Su aviso legal pide citar la fuente y la fecha de extracción |
+| `zona.vivienda_nueva.ambitos.obras` | En desarrollo: {ámbitos} (urbanización en obras). | Solo distritos: `ambitos_residenciales_en_desarrollo`. Hasta 4 nombres y «y N más». Vicálvaro: «Los Berrocales, Los Ahijones, Los Cerros y Camino Viejo de Vicálvaro» |
+| `zona.vivienda_nueva.ambitos.tramitacion` | En tramitación: {ámbitos} (planeamiento, gestión o proyecto en marcha). | |
+| `zona.vivienda_nueva.ambitos.sin_empezar` | Previstos: {ámbitos} (aún sin empezar). | Algunos llevan años así: no se dice «lo que viene» de ellos |
+| `zona.vivienda_nueva.ambitos.ninguno` | En este distrito no queda ningún ámbito de vivienda del Plan General por terminar. | Hoy, Puente de Vallecas y Moratalaz: la fuente no tiene ninguno, así que es un 0 confirmado |
+| `zona.vivienda_nueva.ambitos.fuente` | Ayuntamiento de Madrid, estado de desarrollo de los ámbitos del Plan General a {fecha}. Dice dónde se prepara suelo para vivienda, no cuántas viviendas habrá ni cuándo. | «a 1 de julio de 2026» |
+| `zona.vivienda_nueva.no_puntua` | Son datos informativos: no cambian el encaje ni el orden de las zonas. | Pie de la tarjeta, como `zona.contexto.no_puntua` |
 
 ### Barra de barrios (solo distritos de Madrid)
 La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), después de una búsqueda la vista de un distrito sí tiene cifras por barrio, en «Los barrios que mejor encajan» (abajo). «Qué falta» sigue siendo del distrito entero. Al pulsar un barrio de esa sección se marca también su chip de la barra.

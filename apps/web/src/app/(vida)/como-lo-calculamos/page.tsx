@@ -260,6 +260,13 @@ function Limits() {
           distritos de Madrid y en los pueblos sale «sin datos» y no inventamos un precio.
         </li>
         <li>
+          <strong>Vivienda nueva y lo que viene:</strong> en cada zona contamos cuántas compraventas del último año fueron
+          de obra nueva, cuánto se tasa una vivienda de menos de 5 años frente a una más antigua, las viviendas del Plan Vive
+          y, en Madrid capital, el suelo para vivienda del Plan General que aún no está terminado. Son datos para conocer la
+          zona: no cambian el encaje ni el orden. Dicen dónde se vende o se prepara vivienda nueva, no cuántos pisos quedan
+          libres ni cuándo estarán.
+        </li>
+        <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde
           prefieras.
         </li>
