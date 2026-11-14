@@ -1,0 +1,12 @@
+metric_id: ano_medio_construccion_residencial
+human_name: Año medio de construcción de los inmuebles de uso residencial
+description: >-
+  Año medio de construcción de los inmuebles de uso residencial de Madrid, por distrito y por
+  barrio, a 1 de enero (Catastro), tal como lo publica el panel de indicadores de distritos y
+  barrios del Ayuntamiento. Se usa tal cual (D-235).
+domain: housing
+unit: año
+aggregation_method: none
+geo_resolution_min: barrio
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios

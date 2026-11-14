@@ -7,6 +7,9 @@ indicators:
   # D-226: residents' view of their own barrio (Encuesta de calidad de vida); context only.
   "Percepción de seguridad en el barrio por la noche": percepcion_seguridad_barrio_noche
   "Percepción de seguridad en el barrio por el día": percepcion_seguridad_barrio_dia
+  # D-235: context in the zone view, by district and barrio; never a score.
+  "Año medio de construcción de inmuebles de uso residencial": ano_medio_construccion_residencial
+  "Renta neta media anual de los hogares (Urban Audit)": renta_neta_media_hogar
 # The city row of these is kept as the municipio: the Madrid value the districts compare with.
 city_indicators:
   - "Percepción de seguridad en el barrio por la noche"
@@ -17,4 +20,6 @@ expected_districts: 21
 barrio_indicators:
   - "Total hogares"
   - "Tamaño medio del hogar"
+  - "Año medio de construcción de inmuebles de uso residencial"
+  - "Renta neta media anual de los hogares (Urban Audit)"
 expected_barrios: 131

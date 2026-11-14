@@ -2,9 +2,10 @@
 
 Keeps the indicators the pipeline reads for the districts in the admin_sample fixture (01 Centro,
 05 Chamartín, 06 Tetuán) and for the city row: households at district level and for the barrios
-of admin_sample (D-232: the barrio rows carry the official barrio names), and the residents'
-perception of safety (D-226). Plus one other indicator of Centro, so the tests see what the
-pipeline must leave out. Source lines are copied unchanged.
+of admin_sample (D-232: the barrio rows carry the official barrio names), the residents'
+perception of safety (D-226), and the mean building year and the household income of those
+districts and barrios (D-235, context). Plus one other indicator of Centro, so the tests see
+what the pipeline must leave out. Source lines are copied unchanged.
 Usage: uv run python scripts/build_panel_fixture.py [path/to/panelcsv.csv]
 """
 
@@ -24,6 +25,11 @@ PERCEPTION = {
     "Percepción de seguridad en el barrio por el día",
     "Percepción de seguridad en el barrio por la noche",
 }
+# D-235: by district and barrio, never the city row.
+CONTEXT = {
+    "Año medio de construcción de inmuebles de uso residencial",
+    "Renta neta media anual de los hogares (Urban Audit)",
+}
 LEFT_OUT = "Número habitantes"
 
 
@@ -41,6 +47,8 @@ def _keep(row: dict[str, str]) -> bool:
         return not barrio or barrio in BARRIOS
     if indicator in PERCEPTION:
         return not barrio
+    if indicator in CONTEXT:
+        return district != "" and (not barrio or barrio in BARRIOS)
     return indicator == LEFT_OUT and district == "1" and not barrio
 
 

@@ -1,0 +1,27 @@
+feature_id: ano_medio_construccion_residencial
+version: 1
+human_name: Año medio de construcción de los edificios de viviendas
+domain: housing
+type: raw
+unit: año
+direction: neutral
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_panel_indicadores_distritos_barrios, role: primary}
+formula:
+  method: metric_value
+  metric: ano_medio_construccion_residencial
+  dims: {}
+  levels:
+    barrio: {}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [positive, unknown_never_zero, context_only]
+limitations:
+  - "Año medio de construcción de los inmuebles de uso residencial según el Catastro, a 1 de enero, tal como lo publica el panel de indicadores del Ayuntamiento de Madrid. Una media: en un mismo barrio conviven edificios de épocas distintas."
+  - "Solo los distritos y barrios de Madrid. En los municipios se muestra otra medida, el porcentaje de viviendas construidas desde 2001 del censo anual de la Comunidad de Madrid: no son comparables."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-235)."
