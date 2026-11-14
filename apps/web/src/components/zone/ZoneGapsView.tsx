@@ -53,6 +53,7 @@ function ZonePicker() {
         }}
         placeholder={TEXT.placeholder}
         wholeCities
+        folded
       />
     </GlassCard>
   );

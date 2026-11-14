@@ -1474,3 +1474,54 @@ Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador rec
      2. Comprobar en el resumen de la ejecución que solo cambia CH0105. Si cambia algo más, recalcular las features antes del sync, o aplazar el sync.
      3. `make supabase-sync` y smoke de `/places` y `/search`, incluido el golden de búsqueda (`scripts/golden_search.py`, que ya comprueba el orden exacto del ejemplo).
    - Fixture regenerado en solo lectura: `places.hospitales_madrid`, con `dependency` y `management` y los nombres con tilde de D-221.
+
+## D-240 — Días de oficina, teletrabajo y un segundo lugar: la familia o los amigos (`fit-0.8`) (2026-11-14)
+Feedback de usuarios de prueba del 14 nov e ideas de Mariano. Quien va pocos días a la oficina no quiere que el trayecto pese como si fuera cada día, y quien teletrabaja del todo, que no puntúe. Varios querían además vivir cerca de su familia o de sus amigos. Es reversible: un peso por días en el dominio, `days_per_week` admite 0 y la web pregunta los días y un segundo lugar. Código: `hi_domain/fit.py` (`counts`, `days_weight`, `criteria` y `constraint_checks`), `hi_contracts/public/scenario.py`, `apps/web/src/lib/scenario.ts` y `apps/web/src/components/search/PlaceField.tsx` (antes `WorkField.tsx`). Evidencia: `evidence/gate-06/2026-11-14-family-telework/`.
+
+1. **Regla de días (`days_per_week`, «¿Cuántos días vas a la oficina?»).**
+   - **3 o más días:** el trayecto pesa como siempre, con su peso por orden (D-215). El caso de ejemplo va 4 días, así que sus cifras no cambian.
+   - **1 o 2 días:** el trayecto pesa la mitad de su peso por orden y los demás criterios no cambian. Como el % divide por el peso de los criterios con dato, el trayecto cuenta menos frente a lo demás. Ejemplo del test: con un colegio a un paseo (utilidad 1) y un trayecto de 90 min (utilidad 0), la zona sale al 67 % yendo cada día y al 80 % yendo 1 o 2 días.
+   - **0 días («Teletrabajo total»):** es nuevo en el contrato (`days_per_week` va ahora de 0 a 7). El trayecto no puntúa: la zona se puntúa como si no hubiera lugar de trabajo, y el peso por orden se reparte entre los demás criterios.
+   - **El límite (`max_minutes`) se aplica igual con cualquier número de días, también con 0.** Es una condición que la persona pone a propósito, por ejemplo para poder llegar en 45 min el día que la llamen. La web mantiene «Tardar como mucho» con teletrabajo total y no borra el límite al cambiar los días.
+   - **Con 0 días y límite, la tarjeta enseña los minutos** como un hecho más, sin peso (`limited_trips`), detrás de los que puntúan. Así la persona ve cuánto tarda cada zona con el límite que ha puesto. Sin límite no sale nada: ese trayecto ni puntúa ni limita.
+   - **La regla vale para cualquier lugar**, no solo para el trabajo: la web solo pregunta los días del trabajo, pero el contrato los admite en todos. Por eso dos perfiles dorados cambian de peso con `fit-0.8`: `golden_senior` (su hijo en Getafe, 2 días) y `golden_reduced_mobility` (el hospital La Paz, 1 día) pesan ahora su trayecto a la mitad. Sus expectativas se siguen cumpliendo (9 de 9).
+   - Constantes: `FEW_DAYS_PER_WEEK = 2` y `FEW_DAYS_WEIGHT = 0.5`. La web repite el 2 (`FEW_OFFICE_DAYS`) solo para decidir qué ayuda enseña.
+   - **Descartado:**
+     - un peso proporcional a los días (días/5): es más difícil de decir en una frase y cambiaba el % del ejemplo, que va 4 días;
+     - quitar también el límite con teletrabajo total: si la persona lo pone, se respeta.
+2. **Un segundo lugar, «Cerca de mi familia o amigos».**
+   - **No hizo falta tocar la API ni el contrato del lugar.** `anchors` ya era una lista (hasta 3) con `kind: "family"`, y el dominio y la API ya calculaban un trayecto por lugar, con su condición `commute:<i>` (D-220). Cada lugar busca su destino en la matriz: la estación a 600 m o menos o, si no, el centro de la zona que lo contiene. Por eso vale desde cualquier punto de la Comunidad.
+   - **Comprobado** con tests del dominio (dos trayectos, cada uno con sus minutos y su límite, y el segundo lugar conserva su índice aunque el primero no puntúe) y con la API local sobre la base (solo lectura), partiendo del caso de ejemplo:
+     - la familia en Getafe Central con 30 min como mucho deja 5 zonas: Villaverde, Leganés, Getafe, Fuenlabrada y Parla;
+     - un punto cualquiera (lon −3,38, lat 40,49) con 45 min deja 2: Torrejón de Ardoz y Alcalá de Henares;
+     - ningún aviso de destino sin calcular, y cada zona trae los dos trayectos. Con tres prioridades y presupuesto, el de la familia cede su hecho al alquiler (punto 8), pero su condición sigue saliendo cuando falla.
+   - **Orden.** La web pone siempre el trabajo primero y la familia después, sea cual sea el orden en que se elijan. Así el trabajo conserva el índice 0 (`commute:0`) y más peso por orden. Los criterios quedan así: prioridades, trabajo, familia, servicios deseados y presupuesto. Si solo hay familia, va en el índice 0.
+   - Los días solo se preguntan para el trabajo. La familia va con el valor del contrato (5) y pesa como siempre.
+   - **Proxy declarado:** el trayecto a la familia se mide con la misma matriz que el del trabajo, llegando a las 9:00 de un día laborable. A la familia se suele ir a otras horas y en fin de semana, con menos frecuencia de paso. Lo dicen la ayuda del campo («Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.») y el hecho de la tarjeta («28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00»).
+   - **Desempate.** Los minutos que desempatan (D-220, D-239) son los del primer lugar al que la persona va (`lead_trip`). Con teletrabajo total en el trabajo son los del siguiente lugar al que va o, si no hay ninguno, los del primero con límite. Sin ninguno, el empate pasa directo al id de la zona. Con el trabajo primero y al menos 1 día es `commute:0`, como antes.
+3. **`fit-0.8`.** La puntuación cambia con 0, 1 o 2 días, así que sube la versión. Con 3 o más días el % es igual que en `fit-0.7`, con o sin un lugar de familia; solo puede cambiar qué hechos salen (punto 8). Los PR #59, #60 y #62 se fusionan como una sola versión `fit-0.8` (D-234, D-236 y D-240). `pitch/metodologia.md` y los fixtures se actualizan después del despliegue.
+4. **Invariante del pitch, comprobado el 14 nov.** API de esta rama sobre la base local (solo lectura) frente a producción, con el caso del ejemplo (4 días, sin límite y sin familia):
+   - 27 zonas que encajan y 15 sin dato;
+   - top 10 idéntico: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97 y Villaverde 97;
+   - «Casi encajan» idéntico: Chamartín, Salamanca, Centro, Chamberí y Retiro, al 93 %;
+   - la respuesta entera (`data`) es igual salvo `methodology_version` (`fit-0.8` frente a `fit-0.7`), y `/search/barrios` también, en los 21 distritos;
+   - golden de búsqueda (`scripts/golden_search.py`): 9 de 9.
+5. **Qué cambia con los días en el caso de ejemplo** (misma API local):
+   - **3 días:** igual que con 4.
+   - **1 o 2 días:** siguen 27 zonas. Alcorcón y Leganés entran en el top 10 en lugar de Fuencarral-El Pardo y Hortaleza, y Latina, Moratalaz y Puente de Vallecas suben al 99 %.
+   - **Teletrabajo total:** siguen 27 zonas y las 10 primeras están al 100 %, así que el orden lo deciden los servicios a pie (D-239). Empieza por Usera, Latina, Moratalaz y Villaverde.
+   - **Teletrabajo total con 45 min como mucho:** 10 zonas. El límite es la condición que más quita (`commute:0`), como yendo 4 días con el mismo límite.
+6. **Web.**
+   - **«¿Cuántos días vas a la oficina?»** va bajo el lugar de trabajo: de 5 a 1 días o «Teletrabajo total». Con 1 o 2 días, y con teletrabajo total, una línea explica qué pasa (`trabajo.dias.*`). Hasta que la persona lo cambia no se envía, y el contrato pone 5.
+   - **«Cerca de mi familia o amigos»** es el mismo campo que «Trabajo en» (estaciones y zonas, combobox ARIA 1.2), con su propio «Tardar como mucho». `WorkField.tsx` pasa a ser `PlaceField.tsx`, con `kind` (`work` o `family`), y las estaciones se piden una sola vez para los dos campos.
+   - **«Qué falta» sin zona:** la lista de distritos y municipios va plegada tras «Ver las 199 zonas» (`aria-expanded` y `aria-controls`), como «Ver las 10 primeras». «Madrid (toda la ciudad)» sigue a la vista y, al escribir un nombre, sus zonas salen aunque esté plegada. La lista de `/zonas` no se pliega.
+7. **Orden en producción.** Basta desplegar: no hay datos nuevos ni sync. La API anterior rechaza `days_per_week: 0` (422), así que la web y la API van en el mismo despliegue, como siempre.
+   - `scripts/smoke_demo.sh` tiene una comprobación nueva, `telework`: el caso de ejemplo con `days_per_week: 0` debe dar 200 y `fit-0.8`. Antes del despliegue, producción da 422. Con las tres de «¿Dónde?» (D-238), el smoke tiene 13 comprobaciones (12 con `SMOKE_API_ONLY`).
+8. **Revisión del PR #60.**
+   - **Hechos de la tarjeta.** Son 5 como mucho, en orden de importancia. Con tres prioridades, trabajo y familia, el alquiler era el sexto y desaparecía de la tarjeta. Ahora, si hay presupuesto, el coste siempre se queda y sale el menos importante de los demás: en ese caso, el trayecto a la familia (`capped`).
+     - Con 5 hechos o menos no cambia nada: el caso del pitch es igual.
+     - Un test de propiedad lo comprueba: con presupuesto, el coste siempre está entre los hechos, con cualquier combinación de prioridades, lugares, días y límites.
+     - Descartado: juntar los dos trayectos en un hecho, porque cada uno tiene su tipo (punto fuerte o débil) y su fiabilidad.
+     - La condición del límite a la familia sigue saliendo cuando falla, con sus minutos (`trabajo.tarda`).
+   - **Accesibilidad.** El selector de días está unido a su ayuda con `aria-describedby`. El límite del trabajo se llama «Tardar como mucho hasta el trabajo, en transporte público», como el de la familia; el e2e (`infra/deploy/e2e/e2e_prod.mjs`) y `apps/web/scripts/check-search.mjs` lo buscan con ese texto.
+   - **Sin escenarios dorados nuevos.** Teletrabajo con 45 min y familia con 30 min (opcional en la revisión) no se añaden ahora: el test de los perfiles dorados exige que no lleven límite y que cada uno sea un perfil de `user_profiles.yaml`. Los cubren los tests del dominio y la evidencia de casos.

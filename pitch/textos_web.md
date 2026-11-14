@@ -9,6 +9,9 @@ Para la línea B: estos son los textos de la web, listos para usar tal cual. Si 
 - **Delitos por cada 1.000 habitantes, como contexto:** `zona.delitos*` (sección 4, «Contexto de la zona»). No puntúa ni ordena, sin colores ni etiquetas, y siempre con el aviso de que se cuentan donde se denuncian (D-224 §3, D-226).
 - **Antigüedad de las viviendas** (% posteriores a 2000): `zona.antiguedad*` (sección 4, «Contexto de la zona»).
 - **«¿Dónde?»: toda la Comunidad, Madrid capital, alrededores o pueblos** (D-238), con Madrid capital por barrios: `donde.*` (sección 2), `resultados.de.*`, `zona.barrio.*` (sección 4) y `mapa.aria.encaje.barrios` (sección 3). Hecho por A+B.
+- **Días de oficina y teletrabajo:** `trabajo.dias*` (sección 2, D-240). Hecho por B.
+- **Cerca de la familia o de amigos, como segundo lugar:** `familia.*` (sección 2, D-240). Hecho por B.
+- **La lista de zonas de «Qué falta», plegada en el móvil:** `zonas.ver_todas` y `zonas.ver_menos` (sección 3). Hecho por B.
 
 Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos por metros u obra nueva) va en las preguntas 49 y 50 de `pitch/preguntas.md`.
 
@@ -223,8 +226,12 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `trabajo.titulo` | Trabajo en | |
 | `trabajo.placeholder` | Escribe una estación, un distrito o un municipio | Sin calles: no hay búsqueda de calles sin un geocodificador externo. Los lugares son las estaciones del CRTM (`/places`) y las zonas del mapa |
 | `trabajo.ayuda` | Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero. | **Cambia el 14 nov** (feedback de usuarios de prueba: uno se mueve en autobús y no sabía que el trayecto lo cuenta). Antes: «Miramos cuánto tardarías en transporte público para llegar a las 9:00.» La lista sale del cálculo (`services/features/src/hi_features/commute.py`): usa los seis GTFS del CRTM (metro, Cercanías, Metro Ligero, EMT, interurbanos y urbanos de otros municipios), más el paseo hasta la parada |
-| `trabajo.dias` | ¿Cuántos días vas a la semana? | Opcional (`days_per_week`). Hoy no se muestra: lo rellena el caso de ejemplo (4 días) y la web no deja cambiarlo |
-| `trabajo.max_min` | Tardar como mucho [{n}] min en transporte público | **Activo el 14 nov** (feedback de usuarios de prueba: «me salían sitios muy lejos»). Los minutos son un selector dentro de la frase, como en `cerca.item`: «Sin límite» (por defecto, envía `max_minutes: null`), «30 min», «45 min», «60 min» y «90 min». Solo sale cuando hay un lugar de trabajo. Con límite, cada zona sale cumple, no cumple o sin dato (CORE-009, D-220 §8). El ejemplo de la portada va siempre sin límite: sus cifras son las del pitch |
+| `trabajo.dias` | ¿Cuántos días vas a la oficina? | **Activo el 14 nov** (D-240, feedback de usuarios de prueba). Selector bajo el lugar de trabajo, con las opciones de `trabajo.dias.opcion`. Envía `days_per_week`; hasta que la persona lo cambia no se envía y vale 5. El caso de ejemplo va 4 días y sus cifras no cambian: desde 3 días el trayecto pesa como siempre. Antes: «¿Cuántos días vas a la semana?», sin mostrarse |
+| `trabajo.dias.opcion` | 5 días · 4 días · 3 días · 2 días · 1 día · Teletrabajo total | «Teletrabajo total» envía `days_per_week: 0`. Un enlace compartido con 6 o 7 días también los ofrece |
+| `trabajo.dias.pocos` | Como vas pocos días, el trayecto cuenta la mitad. | Bajo el selector, con 1 o 2 días: el trayecto pesa la mitad en el % (D-240) |
+| `trabajo.dias.teletrabajo` | Con teletrabajo total, el trayecto no cuenta en el encaje. Si pones un límite, lo respetamos. | Bajo el selector, con «Teletrabajo total»: el trayecto no puntúa, pero `trabajo.max_min` se sigue aplicando (D-240). Con límite, la tarjeta enseña los minutos como dato, sin peso. Las dos ayudas de los días van unidas al selector con `aria-describedby` |
+| `trabajo.max_min` | Tardar como mucho [{n}] min en transporte público | **Activo el 14 nov** (feedback de usuarios de prueba: «me salían sitios muy lejos»). Los minutos son un selector dentro de la frase, como en `cerca.item`: «Sin límite» (por defecto, envía `max_minutes: null`), «30 min», «45 min», «60 min» y «90 min». Solo sale cuando hay un lugar de trabajo, también con «Teletrabajo total» (D-240). Con límite, cada zona sale cumple, no cumple o sin dato (CORE-009, D-220 §8). El ejemplo de la portada va siempre sin límite: sus cifras son las del pitch |
+| `trabajo.max_min.aria` | Tardar como mucho hasta el trabajo, en transporte público | `aria-label` del selector. **Cambia el 14 nov** (revisión del PR #60): nombra el lugar, como `familia.max_min.aria`. Antes: «Tardar como mucho, en transporte público». El e2e y `check-search` buscan este texto |
 | `trabajo.sin_limite` | Sin límite | **Nueva, 14 nov** (feedback de usuarios de prueba). Primera opción del selector de `trabajo.max_min` |
 | `trabajo.tarda` | {condición} (tardarías {n} min) | **Nueva, 14 nov** (feedback de usuarios de prueba). Va en «Casi encajan» y en «No cumple:» de la tarjeta de zona cuando falla el trayecto: «Trayecto a Paseo de la Castellana (Azca) de 45 min como mucho (tardarías 46 min)». Los minutos son los del hecho de la API (al minuto más cercano), salvo que nunca se leen como el propio límite (45,2 contra 45 sale «46 min»); por encima de 120, «más de 2 h» |
 | `trabajo.transporte_pronto` | Tiempo en transporte: muy pronto | Etiqueta pequeña bajo el campo. **Se quita** cuando `fit-0.2` llegue a producción: el tiempo en transporte ya está calculado (D-220) |
@@ -233,6 +240,16 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `trabajo.lugar.estacion` | {estación} ({tipo}) | {tipo}: «metro», «Cercanías» o «Metro Ligero». Por ejemplo, «Nuevos Ministerios (metro)» |
 | `trabajo.lugar.distrito` | {distrito} (Madrid) | Por ejemplo, «Chamartín (Madrid)». Los municipios van solo con su nombre |
 | `trabajo.quitar` | Quitar este lugar | |
+
+### «Cerca de mi familia o amigos» (D-240)
+Segundo lugar, opcional, debajo de «Trabajo en». Es el mismo campo: estaciones y zonas, con `trabajo.placeholder`, `trabajo.sin_resultados`, `trabajo.encontrados`, `trabajo.lugar.*` y `trabajo.quitar`. Sin días: cuenta como un lugar al que se va a menudo.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `familia.titulo` | Cerca de mi familia o amigos | **Nueva, 14 nov** (idea de Mariano y feedback de usuarios de prueba). Envía un lugar `kind: "family"`, siempre detrás del trabajo |
+| `familia.ayuda` | Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable. | Se mide como el trabajo, y el texto lo declara porque a la familia se suele ir a otras horas (revisión del PR #60). El hecho de la tarjeta lo dice también: «28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00». Antes: «Opcional. Miramos cuánto tardarías en llegar en transporte público.» |
+| `familia.max_min` | Tardar como mucho [{n}] min en transporte público | Como `trabajo.max_min`, con su propio límite y «Sin límite» por defecto. Si falla, va con `trabajo.tarda`: «Trayecto a Getafe Central (Cercanías) de 30 min como mucho (tardarías {n} min)» |
+| `familia.max_min.aria` | Tardar como mucho hasta mi familia o amigos, en transporte público | `aria-label` del selector, distinto del del trabajo |
 
 ### «Lo quiero a un paseo»
 `ScenarioState.nearby`: servicios a un paseo. El caso de ejemplo pide colegio a 10 min andando como mucho, imprescindible.
@@ -335,6 +352,8 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `zonas.distritos` | Distritos de Madrid | Grupo de la lista |
 | `zonas.municipios` | Municipios | Grupo de la lista |
 | `zonas.ninguna` | No hay ninguna zona con ese nombre. | Búsqueda sin resultados |
+| `zonas.ver_todas` | Ver las {n} zonas | **Nueva, 14 nov** (feedback de usuarios de prueba: en el móvil, la lista de «Qué falta» era larguísima). Solo en «Qué falta» sin zona: los distritos y municipios van plegados tras este botón, como `resultados.primeras`. {n} = distritos + municipios (199). «Madrid (toda la ciudad)» sigue a la vista y, al escribir un nombre, sus zonas salen aunque la lista esté plegada. `/zonas` no se pliega |
+| `zonas.ver_menos` | Ver menos | El mismo botón con la lista abierta |
 | `zonas.ciudad_entera` | {ciudad} (toda la ciudad) | «Madrid (toda la ciudad)»: lleva a su lista de «Qué falta». En el mapa, Madrid capital son sus distritos |
 | `zonas.titulo` | Todas las zonas | Página `/zonas` |
 | `zonas.fila.intro` | Con su estado en {fila} frente a los municipios de su tipo: FALTA, JUSTO, CUBIERTO o SIN DATOS. Los pueblos muy pequeños se comparan junto con sus vecinos. | `/zonas?fila=…`, con {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
