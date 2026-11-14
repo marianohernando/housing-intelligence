@@ -1,0 +1,23 @@
+Map painting after the deploy of 5940ca7 (style.ts: `!= null` instead of `has` for fit and gap), Chromium,
+1440x900 and 390x844 (DSF 2, touch), User-Agent vida-facil-smoke/paint25, 2026-11-13 ~14:25 UTC.
+
+Part 1: home, no search -> «Ver un ejemplo» -> results -> San Blas-Canillejas -> «Ver la zona»
+desktop {"search":200,"apiClasses":{"fail":157,"null_pct":15,"ok":27},"legendSearch":"... Encaje con tu búsqueda Encaja menos Encaja más Cumple todo 27 zonas No cumple tod...","barrios":200,"blocked":[],"errors":[]}
+mobile  {"search":200,"apiClasses":{"fail":157,"null_pct":15,"ok":27},"legendSearch":"... Encaje con tu búsqueda Cumple todo No cumple todo Sin datos","barrios":200,"blocked":[],"errors":[]}
+  apiClasses is the API's all_zones: 27 with no failed condition, 157 failing one, 15 with no match_pct.
+  The desktop legend reads «Cumple todo 27 zonas · No cumple todo 157 zonas · Sin datos 15 zonas» (desktop-1-busqueda-region.jpg).
+  At 390 px the legend hides its counts on purpose (Legend.module.css, max-width 760px).
+
+Part 2: after the search, «¿Qué quieres ver?» -> «Colegios» (map by row) -> back to «Encaje con tu búsqueda» -> San Blas barrios -> Simancas
+desktop {"search":200,"rowGaps":200,"legendRow":"... Aulas de primaria (públicas y concertadas) al alcance a pie p...","legendBack":"... Encaje con tu búsqueda Encaja menos Encaja más Cumple todo 27","barrios":200,"barriosWalkNote":true,"simancasPressed":"true","blocked":[],"errors":[]}
+mobile  {"search":200,"rowGaps":200,"legendRow":"... Aulas de primaria (públicas y concertadas) al alcance a pie p...","legendBack":"... Encaje con tu búsqueda Cumple todo No cumple todo Sin datos","barrios":200,"barriosWalkNote":true,"simancasPressed":"true","blocked":[],"errors":[]}
+  Row «Colegios» on desktop: FALTA 0 · CUBIERTO 59 · JUSTO 75 · No comparable 65 · SIN DATOS 0 zonas (199 in all) (desktop-4-busqueda-fila-colegios.jpg).
+  barriosWalkNote: «Los minutos andando son los de la mitad de la zona…» is under the barrios list. hasWalkingFact now goes by the
+  indicator (min_a_pie_*), not by the word «andando».
+
+What the screenshots show:
+  desktop-0-sin-buscar        no search: every zone plain and light, the streets show through
+  desktop/mobile-1-busqueda   after the search: zones that fit in the violet ramp, those failing a condition hatched, no data dashed
+  desktop/mobile-4-fila       a row over the search: CUBIERTO green, JUSTO dotted, No comparable striped
+  desktop/mobile-7-simancas   San Blas after the search: Simancas pressed, its dashed outline on the map, «Casi encajan: Rejas 55 %»
+No console errors and no HTTP >= 400 in any step, at either width.

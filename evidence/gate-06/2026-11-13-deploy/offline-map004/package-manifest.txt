@@ -1,0 +1,15 @@
+created_at 2026-11-13T11:38:06Z
+git_commit fc80718
+alembic_head 0007 (source 0007)
+basemap local, madrid-261111.osm.pbf, label fonts local
+source_registry 13
+dataset_registry 45
+dataset_version 56
+metric_registry 35
+feature_registry 47
+geo_admin_unit 4973
+place_master 24776
+place_source_alias 25259
+feature_value 85032
+transit_hub 579
+commute_time 191649

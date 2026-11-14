@@ -1,7 +1,8 @@
 /**
  * Vida Fácil base map (pure, unit tested): OpenFreeMap vector tiles (OpenMapTiles schema, no key)
- * with our own quiet style: lavender land, white roads, soft parks and water, no labels, and 3D
- * buildings from zone zoom. Colours come from tokens.css (--map-*), read at runtime by the map.
+ * with our own quiet style: lavender land, white roads, soft parks and water, a few quiet labels to
+ * find your way (places, big roads, stations and water) and 3D buildings from zone zoom. Colours
+ * come from tokens.css (--map-*), read at runtime by the map.
  */
 import type { ExpressionSpecification, LayerSpecification, StyleSpecification, VectorSourceSpecification } from "maplibre-gl";
 
@@ -28,6 +29,27 @@ export function mapTilesSource(setting: string | undefined, origin?: string): Ve
   return { type: "vector", url };
 }
 
+/** OpenFreeMap's glyphs (signed-distance-field fonts in PBF) for the labels. */
+export const OPENFREEMAP_GLYPHS = "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf";
+
+/**
+ * Where the labels' fonts come from: NEXT_PUBLIC_MAP_GLYPHS_URL at build time, like the tiles. The
+ * offline package serves «/tiles/fonts/{fontstack}/{range}.pbf», made absolute with `origin`
+ * (MapLibre wants an absolute glyphs URL). Unset, not http(s) or without both tokens: OpenFreeMap.
+ */
+export function mapGlyphsUrl(setting: string | undefined, origin?: string): string {
+  const url = setting?.startsWith("/") && origin ? `${origin}${setting}` : setting;
+  const usable = url && /^https?:\/\//.test(url) && url.includes("{fontstack}") && url.includes("{range}");
+  return usable ? url : OPENFREEMAP_GLYPHS;
+}
+
+/**
+ * The fonts of the labels. MapLibre joins a `text-font` list into one font stack name and asks the
+ * server for it, and both glyph servers (OpenFreeMap and the offline package) only have «Noto Sans
+ * Regular», «Bold» and «Italic», each alone: a list of two would be a 404.
+ */
+export const MAP_FONTS = { regular: ["Noto Sans Regular"], italic: ["Noto Sans Italic"] };
+
 export const MAP_PALETTE_TOKENS = {
   land: "map-land",
   water: "map-water",
@@ -39,6 +61,9 @@ export const MAP_PALETTE_TOKENS = {
   zone: "map-zone",
   building: "map-building",
   buildingTall: "map-building-tall",
+  label: "map-label",
+  labelStrong: "map-label-strong",
+  labelWater: "map-label-water",
   violet: "violet",
   violetStrong: "violet-strong",
   violetSoft: "violet-soft",
@@ -79,6 +104,12 @@ export const BUILDINGS_3D_ZOOM = 14;
  * reads as 3D at zone zoom. Building heights are scenery, never shown as data.
  */
 export const HEIGHT_SCALE = 2;
+
+/**
+ * Zones not painted by a row or a search (the first view): light enough for the roads, parks and
+ * water under them to show, so the map reads as a map and not as a lilac stain (MAP-004).
+ */
+export const PLAIN_ZONE_OPACITY = 0.5;
 
 /** Edge of the zone as a raised model (mockup 2): a thin wall just outside the outline. */
 export const ZONE_BASE = { widthM: 14, heightM: 80 } as const;
@@ -128,9 +159,175 @@ function buildingsLayer(p: MapPalette): LayerSpecification {
   };
 }
 
-export function baseStyle(p: MapPalette, tiles: VectorSourceSpecification = mapTilesSource(undefined)): StyleSpecification {
+/** A place's name: OpenFreeMap carries `name`; the offline extract (tilemaker) only `name:latin`. */
+const NAME: ExpressionSpecification = ["coalesce", ["get", "name"], ["get", "name:latin"]];
+/** Railway stations of OSM in the `poi` layer: Metro, Cercanías and Metro Ligero (not their entrances). */
+const STATIONS: ExpressionSpecification = [
+  "all",
+  ["==", ["get", "class"], "railway"],
+  ["match", ["get", "subclass"], ["station", "subway", "halt", "tram_stop"], true, false],
+];
+export const STATION_MINZOOM = 13;
+
+/**
+ * Labels only in and around the Comunidad de Madrid (the box of the offline extract, line C): in a
+ * tilted zone view the horizon brings low-zoom tiles of half of Europe and Africa, whose names in
+ * other scripts would make MapLibre download their glyph ranges (about 240 KB) for nothing.
+ */
+export const LABEL_AREA: [number, number, number, number] = [-4.6, 39.85, -2.9, 41.2];
+const [W, S, E, N] = LABEL_AREA;
+const IN_AREA: ExpressionSpecification = [
+  "within",
+  { type: "Polygon", coordinates: [[[W, S], [E, S], [E, N], [W, N], [W, S]]] },
+];
+
+/** Every label layer keeps only its features in LABEL_AREA. */
+function inArea(filter: ExpressionSpecification): ExpressionSpecification {
+  return ["all", IN_AREA, filter];
+}
+/** The bottom label layer: the zones' edges and the districts' names go just under it (zoneLayers). */
+export const FIRST_LABEL_LAYER = "label-river";
+/**
+ * The zones fade out from 11.5 to 13 (zoneLayers): up to there Madrid's districts are named after
+ * the zones themselves (OpenMapTiles has no districts below zoom 11), and from there after the tiles.
+ */
+const ZONE_NAMES_MAXZOOM = 13;
+
+function grow(from: number, to: number, zooms: [number, number] = [8, 14]): ExpressionSpecification {
+  return ["interpolate", ["linear"], ["zoom"], zooms[0], from, zooms[1], to];
+}
+
+/** Quiet ink with a white halo, so a label reads over any zone colour without competing with it. */
+function labelPaint(color: string) {
+  return { "text-color": color, "text-halo-color": "#ffffff", "text-halo-width": 1.5, "text-halo-blur": 0.5 };
+}
+
+function placeLabel(
+  id: string,
+  classes: string[],
+  minzoom: number,
+  size: ExpressionSpecification | number,
+  color: string,
+  upper = false,
+): LayerSpecification {
+  return {
+    id,
+    type: "symbol",
+    source: SRC,
+    "source-layer": "place",
+    minzoom,
+    filter: inArea(["match", ["get", "class"], classes, true, false]),
+    layout: {
+      "text-field": NAME,
+      "text-font": MAP_FONTS.regular,
+      "text-size": size,
+      "text-max-width": 8,
+      // OSM ranks the places of a tile (lower is more important); the offline extract has no rank
+      "symbol-sort-key": ["coalesce", ["get", "rank"], 99],
+      ...(upper ? { "text-transform": "uppercase", "text-letter-spacing": 0.08 } : {}),
+    },
+    paint: labelPaint(color),
+  };
+}
+
+/**
+ * Labels to find your way (petición de Mariano tras probar producción, MAP-004), from the same
+ * tiles, without new requests: rivers and reservoirs, the ref of motorways and trunk roads (M-30,
+ * A-6), railway stations from zone zoom, barrios, districts and municipios by zoom. Listed bottom to
+ * top: MapLibre places the top layers first, so municipios win a clash and stations give way.
+ */
+export function labelLayers(p: MapPalette): LayerSpecification[] {
+  return [
+    {
+      id: FIRST_LABEL_LAYER,
+      type: "symbol",
+      source: SRC,
+      "source-layer": "waterway",
+      minzoom: 12,
+      filter: inArea(["==", ["get", "class"], "river"]),
+      layout: { "symbol-placement": "line", "text-field": NAME, "text-font": MAP_FONTS.italic, "text-size": 12, "text-letter-spacing": 0.05 },
+      paint: labelPaint(p.labelWater),
+    },
+    {
+      id: "label-water",
+      type: "symbol",
+      source: SRC,
+      "source-layer": "water_name",
+      filter: inArea(["==", ["geometry-type"], "Point"]),
+      layout: { "text-field": NAME, "text-font": MAP_FONTS.italic, "text-size": grow(11, 13), "text-max-width": 8 },
+      paint: labelPaint(p.labelWater),
+    },
+    {
+      id: "label-road",
+      type: "symbol",
+      source: SRC,
+      "source-layer": "transportation_name",
+      minzoom: 9,
+      // Lines with a ref (OpenMapTiles also puts motorway exits here, as points); no bus lanes
+      filter: inArea([
+        "all",
+        ["==", ["geometry-type"], "LineString"],
+        ["match", ["get", "class"], ["motorway", "trunk"], true, false],
+        ["has", "ref"],
+        ["!", ["in", "BUS", ["get", "ref"]]],
+      ]),
+      layout: {
+        "symbol-placement": "line",
+        "symbol-spacing": 400,
+        "text-field": ["get", "ref"],
+        "text-font": MAP_FONTS.regular,
+        "text-size": grow(10.5, 12, [9, 14]),
+        "text-letter-spacing": 0.04,
+      },
+      paint: labelPaint(p.label),
+    },
+    {
+      // A small ring under each station's name, so it reads apart from a barrio's name and from the
+      // centres (bigger filled dots)
+      id: "station-ring",
+      type: "circle",
+      source: SRC,
+      "source-layer": "poi",
+      minzoom: STATION_MINZOOM,
+      filter: inArea(STATIONS),
+      paint: { "circle-radius": 3.5, "circle-color": "#ffffff", "circle-stroke-color": p.label, "circle-stroke-width": 1.5 },
+    },
+    {
+      id: "label-station",
+      type: "symbol",
+      source: SRC,
+      "source-layer": "poi",
+      minzoom: STATION_MINZOOM,
+      filter: inArea(STATIONS),
+      layout: {
+        "text-field": NAME,
+        "text-font": MAP_FONTS.regular,
+        "text-size": 11.5,
+        "text-max-width": 8,
+        "text-variable-anchor": ["left", "right", "top", "bottom"],
+        "text-radial-offset": 0.6,
+        "text-justify": "auto",
+        "symbol-sort-key": ["coalesce", ["get", "rank"], 99],
+      },
+      paint: labelPaint(p.label),
+    },
+    placeLabel("label-barrio", ["quarter", "neighbourhood"], 13, grow(11.5, 13, [13, 16]), p.label),
+    // Madrid's districts, and the suburbs of other towns, once the zones and their names have faded
+    placeLabel("label-district", ["suburb"], ZONE_NAMES_MAXZOOM, 12.5, p.label, true),
+    placeLabel("label-village", ["village"], 10, grow(11, 13, [10, 14]), p.label),
+    placeLabel("label-town", ["town"], 0, grow(11.5, 15), p.labelStrong),
+    placeLabel("label-city", ["city"], 0, grow(13, 18), p.labelStrong),
+  ];
+}
+
+export function baseStyle(
+  p: MapPalette,
+  tiles: VectorSourceSpecification = mapTilesSource(undefined),
+  glyphs: string = OPENFREEMAP_GLYPHS,
+): StyleSpecification {
   return {
     version: 8,
+    glyphs,
     sources: { [SRC]: tiles },
     // Soft lavender-tinted light: shaded walls stay lavender instead of turning grey.
     light: { anchor: "viewport", color: "#f6f4ff", intensity: 0.35, position: [1.2, 210, 35] },
@@ -180,6 +377,8 @@ export function baseStyle(p: MapPalette, tiles: VectorSourceSpecification = mapT
       lineLayer("roads-minor", ["minor", "service"], p.road, 1.1, 12),
       lineLayer("roads-major", ["motorway", "trunk", "primary", "secondary", "tertiary"], p.road, 2, 7),
       buildingsLayer(p),
+      // Above the buildings and the zones' fill; the zone overlays (mask, edges) and the centres go on top
+      ...labelLayers(p),
     ],
   };
 }
@@ -192,11 +391,13 @@ export function baseStyle(p: MapPalette, tiles: VectorSourceSpecification = mapT
  * fits, almost white and crossed out when it fails a condition and grey with a dashed edge when
  * unknown. The
  * zone under the pointer gets a violet edge of its own layer, whatever its fill.
- * `below` goes under the buildings; `above` on top of them: MapLibre composites the extrusions
- * first, so the white mask drawn above fades the surroundings, buildings included.
+ * `below` goes under the buildings; `withLabels` just under the labels (FIRST_LABEL_LAYER): the
+ * edges, so no white edge crosses a name, and the districts' names, the first to give way; `above`
+ * on top of them all: MapLibre composites the extrusions first, so the white mask drawn above fades
+ * the surroundings, buildings and labels included.
  */
-export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above: LayerSpecification[] } {
-  const fadeOut = (from: number): ExpressionSpecification => ["interpolate", ["linear"], ["zoom"], 11.5, from, 13, 0];
+export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; withLabels: LayerSpecification[]; above: LayerSpecification[] } {
+  const fadeOut = (from: number | ExpressionSpecification): ExpressionSpecification => ["interpolate", ["linear"], ["zoom"], 11.5, from, 13, 0];
   return {
     below: [
       {
@@ -206,7 +407,7 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         paint: {
           "fill-color": [
             "case",
-            ["has", "gap"],
+            ["!=", ["get", "gap"], null],
             [
               "match",
               ["get", "gap"],
@@ -228,7 +429,8 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
             p.gapSinDatos,
             p.zone,
           ],
-          "fill-opacity": fadeOut(0.9),
+          // A zone painted by a row or by the search hides the streets; a plain one lets them show (gap: null is plain)
+          "fill-opacity": fadeOut(["case", ["any", ["!=", ["get", "gap"], null], ["!=", ["get", "fit"], null]], 0.9, PLAIN_ZONE_OPACITY]),
         },
       },
       {
@@ -249,6 +451,40 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
         },
       },
     ],
+    withLabels: [
+      {
+        id: "zones-line",
+        type: "line",
+        source: "zones",
+        paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.8, 12, 1.6], "line-opacity": fadeOut(1) },
+      },
+      {
+        id: "zones-nodata",
+        type: "line",
+        source: "zones",
+        filter: ["any", ["==", ["get", "gap"], "SIN_DATOS"], ["==", ["get", "fit"], "SIN_DATOS"]],
+        paint: { "line-color": p.sinDatos, "line-width": 1.5, "line-dasharray": [2, 2], "line-opacity": fadeOut(1) },
+      },
+      {
+        // Madrid's districts by their official names (the API's), at the zone's pole of inaccessibility
+        id: "zone-names",
+        type: "symbol",
+        source: "zones",
+        // From where Madrid is big enough for its districts to be told apart
+        minzoom: 9,
+        maxzoom: ZONE_NAMES_MAXZOOM,
+        filter: ["==", ["get", "level"], "distrito"],
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": MAP_FONTS.regular,
+          "text-size": grow(10.5, 12.5, [10, 13]),
+          "text-transform": "uppercase",
+          "text-letter-spacing": 0.08,
+          "text-max-width": 7,
+        },
+        paint: labelPaint(p.label),
+      },
+    ],
     above: [
       {
         id: "zone-mask",
@@ -266,19 +502,6 @@ export function zoneLayers(p: MapPalette): { below: LayerSpecification[]; above:
           "fill-extrusion-opacity": 0.85,
           "fill-extrusion-vertical-gradient": true,
         },
-      },
-      {
-        id: "zones-line",
-        type: "line",
-        source: "zones",
-        paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.8, 12, 1.6], "line-opacity": fadeOut(1) },
-      },
-      {
-        id: "zones-nodata",
-        type: "line",
-        source: "zones",
-        filter: ["any", ["==", ["get", "gap"], "SIN_DATOS"], ["==", ["get", "fit"], "SIN_DATOS"]],
-        paint: { "line-color": p.sinDatos, "line-width": 1.5, "line-dasharray": [2, 2], "line-opacity": fadeOut(1) },
       },
       {
         id: "zones-hover",
@@ -327,7 +550,7 @@ const PARK_TONE = "park-";
 
 export type ClusterTone = "violet" | "park";
 
-/** Each group is drawn as an image with its count (the map has no glyph server): its id says the count and colour. */
+/** Each group is drawn as an image with its count, in the page's font: its id says the count and colour. */
 export function clusterImageId(count: number, tone: ClusterTone = "violet"): string {
   return `${CLUSTER_IMAGE}${tone === "park" ? PARK_TONE : ""}${count}`;
 }

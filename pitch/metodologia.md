@@ -22,7 +22,7 @@ Para la línea B. La **parte 1** es el texto de la pestaña, en español llano. 
 - Cada dato dice de dónde sale y cuánto podemos fiarnos de él.
 
 ### 1.2 Qué zonas comparamos
-Los 179 municipios de la Comunidad de Madrid. Madrid capital no va como un solo bloque: la dividimos en sus 21 distritos, porque no es lo mismo vivir en un distrito que en otro. En el buscador son 199 zonas: los otros 178 municipios y los 21 distritos. En «Qué falta» también puedes ver Madrid entera.
+Los 179 municipios de la Comunidad de Madrid. Madrid capital no va como un solo bloque: la dividimos en sus 21 distritos, porque no es lo mismo vivir en un distrito que en otro. En el buscador son 199 zonas: los otros 178 municipios y los 21 distritos. En «Qué falta» también puedes ver Madrid entera. Y cuando buscas, dentro de cada distrito de Madrid te decimos qué barrios encajan mejor, con el mismo método: los minutos a pie se miden desde las calles de cada barrio. El alquiler se publica por código postal, que suele cubrir varios barrios, así que dentro de un distrito cambia poco.
 
 ### 1.3 Cómo sale el % de encaje
 El % de encaje dice **cuánto se parece una zona a lo que tú buscas**. No es una nota de la zona: la misma zona puede encajar mucho con una familia con niños y poco con una persona mayor que vive sola.
@@ -159,7 +159,7 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 
 ### 1.10 Versiones
 - Método de «Qué falta»: `{method.version}` (hoy, `gap-0.3`).
-- Método del encaje: `{methodology_version}` (hoy, en producción, `fit-0.6`).
+- Método del encaje: `{methodology_version}` (hoy, en producción, `fit-0.7`).
 
 ---
 
@@ -215,4 +215,4 @@ No te pedimos nombre ni cuenta. Solo trabajamos con datos de zonas, nunca de per
 | 1.8 | Necesidad declarada: siguiente paso, nunca simulada | D-194 | Hecho (no está en la demo) |
 | 1.8 | GTFS de metro vencido el 27-05-2026 | `evidence/gate-01/2026-11-10/crtm_gtfs_metro/quality_report.json` (`feed_current`) · D-196 | Hecho |
 | 1.9 | Sin cuenta; solo datos de zonas | Brief de diseño (sin login) · D-186 · D-197 | Hecho. No se afirma nada sobre registros del servidor: C no lo ha documentado |
-| 1.10 | Versiones de método | `GapMethod.version` · `SearchResult.methodology_version` | `gap-0.3` (D-217), en producción; `fit-0.6` (D-220, D-222, D-223, D-227 y D-228), en producción desde el 12 nov (`eca4a30`) |
+| 1.10 | Versiones de método | `GapMethod.version` · `SearchResult.methodology_version` | `gap-0.3` (D-217), en producción; `fit-0.7` (D-220, D-222, D-223, D-227, D-228 y D-232: los barrios), en producción. El caso de ejemplo da lo mismo que con `fit-0.6` (comprobado el 13 nov) |

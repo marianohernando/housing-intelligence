@@ -2,6 +2,8 @@
  * Typed client of the PUBLIC API (docs/04_technical_architecture/31_public_api_routes.md).
  * Response types are generated from the JSON Schemas (src/contracts), never written by hand.
  */
+import type { BarrioSearchRequest } from "@/contracts/barrio_search_request";
+import type { BarrioSearchResponse } from "@/contracts/barrio_search_response";
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { GapImpactResponse } from "@/contracts/gap_impact_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
@@ -26,7 +28,13 @@ export type PlaceCategory = ContractPlaceCategory;
 
 /** Routes that predate the PUBLIC contracts: their shapes live in lib/geo.ts and lib/map. */
 export type AdminUnitsResponse = Envelope<{ type: "FeatureCollection"; features: AdminFeature[]; lineage: Lineage }>;
-export type FeatureValuesResponse = Envelope<{ feature_id: string; level: string; values: FeatureValueRow[]; lineage: Lineage }>;
+export type FeatureValuesResponse = Envelope<{
+  feature_id: string;
+  level: string;
+  values: FeatureValueRow[];
+  /** The datasets (and versions) the values come from, to link them */
+  lineage: Lineage & { dataset_versions?: Record<string, string> };
+}>;
 
 
 /**
@@ -178,8 +186,8 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
       return call<AdminUnitsResponse>(adminUnitsUrl(base, level, simplifyM, parent), { timeoutMs });
     },
     places,
-    /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level. */
-    featureValues(featureId: string, level: "municipio" | "distrito", { timeoutMs }: GetOptions = {}) {
+    /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level, or the region's (ccaa). */
+    featureValues(featureId: string, level: "municipio" | "distrito" | "ccaa", { timeoutMs }: GetOptions = {}) {
       return call<FeatureValuesResponse>(`/api/v1/features/${encodeURIComponent(featureId)}/values?level=${level}`, { timeoutMs });
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
@@ -189,6 +197,16 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scenario),
         signal,
+      });
+    },
+    /** POST /api/v1/search/barrios (D-232): the same scenario inside one district of Madrid, by its barrios. */
+    searchBarrios(distrito: string, scenario: ScenarioState, { timeoutMs }: GetOptions = {}) {
+      const request: BarrioSearchRequest = { distrito, scenario };
+      return call<BarrioSearchResponse>("/api/v1/search/barrios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+        timeoutMs,
       });
     },
   };

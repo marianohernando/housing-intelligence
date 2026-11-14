@@ -1,0 +1,34 @@
+infra/deploy/offline/demo_offline.sh start
+-> database (no network needed)
+ Network vida-facil-offline_default Creating 
+ Network vida-facil-offline_default Created 
+ Container vida-facil-offline-db-1 Creating 
+ Container vida-facil-offline-db-1 Created 
+ Container vida-facil-offline-db-1 Starting 
+ Container vida-facil-offline-db-1 Started 
+ Container vida-facil-offline-db-1 Waiting 
+ Container vida-facil-offline-db-1 Healthy 
+-> API
+ Container vida-facil-offline-db-1 Running 
+ Container vida-facil-offline-api-1 Creating 
+ Container vida-facil-offline-api-1 Created 
+ Container vida-facil-offline-db-1 Waiting 
+ Container vida-facil-offline-db-1 Healthy 
+ Container vida-facil-offline-api-1 Starting 
+ Container vida-facil-offline-api-1 Started 
+ Container vida-facil-offline-db-1 Waiting 
+ Container vida-facil-offline-api-1 Waiting 
+ Container vida-facil-offline-db-1 Healthy 
+ Container vida-facil-offline-api-1 Healthy 
+-> web on http://localhost:3012
+smoke: http://localhost:8012 (2026-11-13T14:29:01Z)
+OK   health      0.01s       225 B  /api/v1/health  process up
+OK   ready       0.00s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone        0.16s     35707 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography   0.20s    336717 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer       0.12s   1552325 B  /api/v1/places?category=education  3866 places
+OK   largest     0.17s   1842252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search      0.56s    120909 B  /api/v1/search  27 of 199 zones, 1st Latina
+OK   barrios     0.03s     41021 B  /api/v1/search/barrios  7 of 8 barrios, 1st Canillejas
+smoke: 8/8 OK
+offline demo up: http://localhost:3012/  (data: created_at 2026-11-13T14:28:05Z)

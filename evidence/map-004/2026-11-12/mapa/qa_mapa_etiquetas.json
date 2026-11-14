@@ -1,0 +1,100 @@
+{
+ "modo": "mapa",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "etiquetas_desktop": {
+  "portada": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "ejemplo": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "zona": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "glifos": [
+   {
+    "fuente": "Noto Sans Regular",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   },
+   {
+    "fuente": "Noto Sans Regular",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   },
+   {
+    "fuente": "Noto Sans Regular",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   },
+   {
+    "fuente": "Noto Sans Italic",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   }
+  ],
+  "consola": []
+ },
+ "etiquetas_mobile": {
+  "portada": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "ejemplo": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "zona": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "glifos": [
+   {
+    "fuente": "Noto Sans Regular",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   },
+   {
+    "fuente": "Noto Sans Regular",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   },
+   {
+    "fuente": "Noto Sans Italic",
+    "rango": "0-255",
+    "estado": 200,
+    "origen": "https://tiles.openfreemap.org"
+   }
+  ],
+  "consola": []
+ },
+ "etiquetas_lcp_portada_slow4g": [
+  {
+   "ms": 816,
+   "en_atribucion": false,
+   "texto": "Te decimos qué zonas encajan con tu vida y qué le "
+  }
+ ],
+ "etiquetas_lcp_zona_slow4g": [
+  {
+   "ms": 892,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2124,
+   "en_atribucion": false,
+   "texto": "Mira sus servicios y puntos clave, con datos ofici"
+  }
+ ],
+ "fallos": []
+}

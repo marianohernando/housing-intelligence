@@ -10,7 +10,6 @@ export default function SiteHeader() {
     <header className={styles.header}>
       <Link href="/" className={styles.brand}>
         <Logo />
-        <span>Vida Fácil</span>
       </Link>
       <NavTabs />
     </header>

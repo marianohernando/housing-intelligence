@@ -67,8 +67,11 @@ export function zoneFit(result: SearchResult, zoneKey: string): ZoneFit {
   };
 }
 
-/** Plain-language name of each condition of the search («Colegio con primaria a 10 min andando como mucho»). */
-export function constraintLabels(result: SearchResult): Map<string, string> {
+/**
+ * Plain-language name of each condition of the search («Colegio con primaria a 10 min andando como
+ * mucho»), from POST /search or POST /search/barrios.
+ */
+export function constraintLabels(result: Pick<SearchResult, "results" | "near_misses">): Map<string, string> {
   const ranked = [...result.results, ...(result.near_misses ?? [])];
   return new Map(ranked.flatMap((z) => z.constraints.map((c) => [c.constraint_id, c.label] as const)));
 }
@@ -131,6 +134,9 @@ export function rankText(rank: number): string {
  */
 export const WALK_MEDIAN = "Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.";
 
-export function hasWalkingFact(facts: readonly { text: string }[]): boolean {
-  return facts.some((fact) => fact.text.includes("andando"));
+/** feature_id prefix of the indicators that are minutes on foot (min_a_pie_colegio, min_a_pie_transporte…) */
+export const WALK_MINUTES_FEATURE_PREFIX = "min_a_pie_";
+
+export function hasWalkingFact(facts: readonly { indicator?: { feature_id: string } | null }[]): boolean {
+  return facts.some((fact) => fact.indicator?.feature_id.startsWith(WALK_MINUTES_FEATURE_PREFIX) === true);
 }

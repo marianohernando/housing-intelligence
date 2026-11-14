@@ -5,7 +5,7 @@ import GapBadge from "@/components/zone/GapBadge";
 
 import styles from "./MethodSteps.module.css";
 
-// B's draft for line D: pitch/metodologia.md §1.4 in five steps (fase de mejora: «un gráfico, no solo texto»).
+// Line D's copy (pitch/textos_web.md §5c, metodo.paso*): pitch/metodologia.md §1.4 in five steps (fase de mejora: «un gráfico, no solo texto»).
 const STEPS: { icon: LucideIcon; title: string; text: ReactNode }[] = [
   {
     icon: Database,
@@ -15,7 +15,7 @@ const STEPS: { icon: LucideIcon; title: string; text: ReactNode }[] = [
   { icon: Footprints, title: "Lo que hay a 15 min andando", text: "Por las calles de verdad, a paso tranquilo: un kilómetro." },
   {
     icon: Users,
-    title: "Repartido entre quien lo comparte",
+    title: "Repartido entre quienes lo comparten",
     text: "Si mucha gente vive alrededor de un centro, lo que ofrece toca a menos.",
   },
   {

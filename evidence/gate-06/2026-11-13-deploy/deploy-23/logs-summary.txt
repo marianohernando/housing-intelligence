@@ -1,0 +1,16 @@
+vercel logs, deployment dpl_3ccokRv4tfFNoq4u6V9cfuE9UUSe, from 2026-11-13T10:50:00Z to 2026-11-13T11:14:17.827Z (UTC)
+runtime log lines: 397, more pages: false, levels:  397 info 
+  "EMAXCONNSESSION"        0
+  "prepared statement"     0
+  "password authentication" 0
+  "OperationalError"       0
+  "Traceback"              0
+  "ValueError"             0
+  "KeyError"               0
+  "connection"             0
+  "timeout"                0
+instances started ("Started server process"): 7
+API access lines by status:  337 200 
+POST /api/v1/search/barrios access lines: 9
+CDN request records: 953, by status:  926 200  27 304 
+CDN 4xx/5xx:

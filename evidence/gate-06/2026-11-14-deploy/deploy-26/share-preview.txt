@@ -1,0 +1,38 @@
+Share preview and icons, https://vidafacil-madrid.vercel.app, 2026-11-14T11:32:51Z, deployment dpl_5gWd6y97ixqWgub8c5m6wpMat1jE (39644a9)
+
+== HEAD of each image
+/opengraph-image.png   HTTP/2 200  · image/png · 39493 B
+/icon.png              HTTP/2 200  · image/png · 38430 B
+/apple-icon.png        HTTP/2 200  · image/png · 5705 B
+/favicon.ico           HTTP/2 200  · image/vnd.microsoft.icon · 15342 B
+/brand/vida-facil.png  HTTP/2 200  · image/png · 14731 B
+/icon.svg              HTTP/2 404  · text/html; charset=utf-8 · 13711 B
+opengraph-image.png: PNG image data, 1200 x 630, 8-bit/color RGB, non-interlaced
+
+== <head> of / (meta og:*, twitter:*, icons)
+<meta property="og:title" content="Vida Fácil · Encuentra tu sitio en Madrid"/>
+<meta property="og:description" content="Qué zonas de la Comunidad de Madrid encajan con tu hogar y qué le falta a cada barrio, con datos abiertos."/>
+<meta property="og:site_name" content="Vida Fácil"/>
+<meta property="og:locale" content="es_ES"/>
+<meta property="og:image" content="https://vidafacil-madrid.vercel.app/opengraph-image.png?opengraph-image.3a7ai75-ao3n8.png?dpl=dpl_5gWd6y97ixqWgub8c5m6wpMat1jE"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Vida Fácil · Encuentra tu sitio en Madrid"/>
+<meta name="twitter:description" content="Qué zonas de la Comunidad de Madrid encajan con tu hogar y qué le falta a cada barrio, con datos abiertos."/>
+<meta name="twitter:image" content="https://vidafacil-madrid.vercel.app/opengraph-image.png?opengraph-image.3a7ai75-ao3n8.png?dpl=dpl_5gWd6y97ixqWgub8c5m6wpMat1jE"/>
+<meta name="twitter:image:type" content="image/png"/>
+<meta name="twitter:image:width" content="1200"/>
+<meta name="twitter:image:height" content="630"/>
+<link rel="icon" href="/favicon.ico?favicon.05a7ikfttog5d.ico?dpl=dpl_5gWd6y97ixqWgub8c5m6wpMat1jE" sizes="48x48" type="image/x-icon"/>
+<link rel="icon" href="/icon.png?icon.1fh_jusok_mti.png?dpl=dpl_5gWd6y97ixqWgub8c5m6wpMat1jE" sizes="512x512" type="image/png"/>
+<link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.3yrtzj2ezn6fo.png?dpl=dpl_5gWd6y97ixqWgub8c5m6wpMat1jE" sizes="180x180" type="image/png"/>
+
+== the exact og:image URL of the HTML, and / itself, as the link-preview crawlers ask for them
+  WhatsApp/2.24.20.80          og:image 200 image/png 39493 B · / 200 with og:image=1
+  facebookexternalhit/1.1      og:image 200 image/png 39493 B · / 200 with og:image=1
+  Twitterbot/1.0               og:image 200 image/png 39493 B · / 200 with og:image=1
+  TelegramBot                  og:image 200 image/png 39493 B · / 200 with og:image=1
+  the og:image URL returns the same bytes as /opengraph-image.png

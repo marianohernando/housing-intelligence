@@ -1,0 +1,56 @@
+{
+ "modo": "mapa",
+ "como": "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)",
+ "antes_desktop": {
+  "portada": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "ejemplo": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "zona": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "glifos": [],
+  "consola": []
+ },
+ "antes_mobile": {
+  "portada": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "ejemplo": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "zona": {
+   "axe": [],
+   "overflow_px": 0
+  },
+  "glifos": [],
+  "consola": []
+ },
+ "antes_lcp_portada_slow4g": [
+  {
+   "ms": 668,
+   "en_atribucion": false,
+   "texto": "Te decimos qué zonas encajan con tu vida y qué le "
+  }
+ ],
+ "antes_lcp_zona_slow4g": [
+  {
+   "ms": 892,
+   "en_atribucion": false,
+   "texto": "Desliza hacia arriba para ver más"
+  },
+  {
+   "ms": 2128,
+   "en_atribucion": false,
+   "texto": "Mira sus servicios y puntos clave, con datos ofici"
+  }
+ ],
+ "fallos": []
+}

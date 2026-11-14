@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov) y la 46 y la 47 (cifras de impacto, 12 nov).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov) y la 48 (barrios, 13 nov).
 
 ---
 
@@ -284,3 +284,12 @@ En colegios y centros de salud no hay ninguna zona con una falta clara. Las zona
   - mayores: 6 municipios, con Torrejón de Ardoz y Pozuelo de Alarcón a la cabeza;
   - vivienda: 25 municipios, con Fuenlabrada, Leganés y Alcorcón a la cabeza.
 - Estado: en producción desde el 12 nov (`GET /api/v1/gaps/impact`, comprobado: 25.551 de 260.310 niños de 0 a 4 años, en 3 zonas). La web lo enseña en «Dónde invertir primero», en «Qué falta» sin zona (producción, 12 nov).
+
+**48. Las primeras zonas salen todas al 98 %. ¿No diferencia poco?**
+Entre distritos se parecen porque esta familia pide cosas que Madrid cumple casi en todas partes. Lo que las separa está en los hechos de debajo, por ejemplo 33 minutos al trabajo en Ciudad Lineal frente a 39 en Latina. Y dentro de un distrito, Vida Fácil baja a los barrios: en San Blas-Canillejas encajan 7 de sus 8, con Canillejas, Arcos y Simancas al 97 %, y Rejas se queda fuera por el colegio.
+- Evidencia:
+  - barrios: D-232 (`fit-0.7`) y `evidence/gate-06/2026-11-13-deploy/deploy-22-barrio.md` (`POST /api/v1/search/barrios` con el caso de ejemplo y el distrito 2807920: Canillejas, Arcos y Simancas al 97 %; Rejas, 55 %, por el colegio);
+  - el caso de ejemplo: `evidence/gate-06/2026-11-12-deploy/caso-demo-fit06.md` (Latina, Moratalaz y Ciudad Lineal al 98 %; Latina, 39 min; Ciudad Lineal, 33). La 4.ª al 98 %, Puente de Vallecas, la comprobó D en la misma respuesta de producción (`rank` 4, 2807913; 12 nov a las 23:25 y otra vez el 13 nov con `fit-0.7`);
+  - el alquiler por barrio: D-232 §4 (San Blas-Canillejas, de 14,9 a 16,0 €/m²).
+- Límite, si insiste: dentro de un distrito el alquiler cambia poco, porque se publica por código postal y un código cubre varios barrios (en San Blas-Canillejas, de 14,9 a 16,0 €/m², D-232 §4).
+- Estado: en producción, en la API y en la web: la vista de un distrito enseña «Los barrios que mejor encajan» tras buscar (PR #37, desplegado en `e7025fb`).

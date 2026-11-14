@@ -10,6 +10,7 @@ import SearchCard from "@/components/search/SearchCard";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
+import BarrioFit from "@/components/zone/BarrioFit";
 import BarriosBar from "@/components/zone/BarriosBar";
 import FacilitiesPanel from "@/components/zone/FacilitiesPanel";
 import PerceivedSafety from "@/components/zone/PerceivedSafety";
@@ -87,6 +88,8 @@ export default function ZoneIntro() {
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
         <ZoneCard zone={routeZone} mode="zone" />
+        {/* After a search, the district's barrios that fit it (D-232): under the card, so arriving later moves nothing above */}
+        <BarrioFit zone={routeZone} />
         <DataCounter />
         <ZoneListLink />
         {/* Context only for Madrid's districts, the survey's coverage (D-226 §1); last, so arriving later moves nothing */}

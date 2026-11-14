@@ -104,6 +104,17 @@ async function journeySearch(run, page) {
 /** Legend counts against the API. Up to 760 px the legend hides them on purpose (Legend.module.css,
  * `@media (max-width: 760px)`): only there is a legend without counts skipped, anywhere else it fails. */
 const COUNTS_HIDDEN_UP_TO_PX = 760;
+/**
+ * D-230, as the web shows it (apps/web/src/lib/gaps.ts, notComparable): a small zone (`reliable: false`)
+ * with no group of 2 or more neighbours to compare with is «No comparable», unless it is SIN DATOS.
+ * A small zone with such a group keeps its status.
+ * Copied, not imported: this plain Node suite cannot load the web's TypeScript; keep it in step with gaps.ts.
+ */
+const NOT_COMPARABLE = "No comparable";
+function notComparable(z) {
+  return z.status !== "SIN_DATOS" && z.reliable === false && !((z.comparison_group?.names?.length ?? 0) >= 2);
+}
+
 async function checkLegendCounts(run, journey, page, expected) {
   const legend = squash(await page.locator("section[aria-label='Leyenda del mapa']").first().innerText());
   if (!/\d+ zonas?\b/.test(legend)) {
@@ -185,9 +196,9 @@ async function journeyMadrid(run, page) {
     const found = (await item.count()) > 0;
     const text = found ? squash(await item.innerText()) : "";
     const status = row.status === "SIN_DATOS" ? "SIN DATOS" : row.status;
-    const small = text.includes("Zona pequeña para comparar");
-    run.check(J, `«${row.label}» ${status}${row.reliable === false ? " · zona pequeña" : ""}`,
-      found && text.includes(status) && small === (row.reliable === false), found ? text.slice(0, 120) : "row not on screen");
+    const shown = notComparable(row) ? NOT_COMPARABLE : status;
+    run.check(J, `«${row.label}» ${shown}`,
+      found && text.includes(shown) && text.includes(NOT_COMPARABLE) === notComparable(row), found ? text.slice(0, 120) : "row not on screen");
   }
   await run.shot(page, "j2-madrid");
   await run.overflow(page, J);
@@ -195,11 +206,11 @@ async function journeyMadrid(run, page) {
 
 /** The map's categories from the two /gaps responses of a row (Madrid counts as its districts). */
 function expectedRowCounts(responses) {
-  const counts = { FALTA: 0, JUSTO: 0, CUBIERTO: 0, "Zona pequeña para comparar": 0, "SIN DATOS": 0 };
+  const counts = { FALTA: 0, JUSTO: 0, CUBIERTO: 0, [NOT_COMPARABLE]: 0, "SIN DATOS": 0 };
   for (const data of responses) {
     for (const z of data.zones) {
       if (data.level === "municipio" && z.code === "28079") continue;
-      counts[z.reliable === false ? "Zona pequeña para comparar" : z.status === "SIN_DATOS" ? "SIN DATOS" : z.status] += 1;
+      counts[notComparable(z) ? NOT_COMPARABLE : z.status === "SIN_DATOS" ? "SIN DATOS" : z.status] += 1;
     }
   }
   return counts;
