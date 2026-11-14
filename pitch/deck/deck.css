@@ -409,7 +409,7 @@ a {
   grid-template-columns: repeat(3, 1fr);
   gap: 36px;
   margin-top: 28px;
-  height: 590px;
+  height: 636px;
 }
 
 .s3 .col {
@@ -431,7 +431,7 @@ a {
 }
 
 .s3 li {
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1.35;
   margin-bottom: 12px;
 }
@@ -441,7 +441,7 @@ a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  height: 120px;
+  height: 104px;
 }
 
 .s3 .shots.one {
@@ -507,7 +507,7 @@ a {
   line-height: 1.35;
 }
 
-/* Huecos de la fase de mejora: cifra de impacto (A) y citas de la prueba con personas (Mariano) */
+/* Fase de mejora: cifra de impacto (D-229) y citas de la prueba con usuarios (14 nov) */
 .s3 .impact {
   margin-top: 10px;
   font-size: 26px;
