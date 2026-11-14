@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { constraintLabels, failedLabels, passingText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
+import { constraintLabels, failedLabels, passingText, unknownText, zoneKeyOf, zonesText, zonesWithoutPrice } from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
 
 import RealityCheck from "./RealityCheck";
@@ -213,7 +213,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
           <strong>{passingText(rc.zones_passing, applied !== null)}</strong> {TEXT.of(rc.zones_evaluated)}
         </p>
         {rc.zones_passing === 0 && <p>{TEXT.none}</p>}
-        {rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown)}</p>}
+        {rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, zonesWithoutPrice(result))}</p>}
         {rc.zones_passing > 0 && <Ranking result={result} />}
         <NearMisses result={result} />
       </GlassCard>

@@ -22,13 +22,13 @@ import styles from "./ZoneCard.module.css";
 
 // Copy from pitch/textos_web.md (zona.puesto, zona.hechos.titulo, zona.cerca_de_encajar.motivo,
 // zona.condicion.sin_dato, confianza.aria). «No cumple todo lo que pides» is zona.no_cumple. buySource
-// is B's draft for D after fit-0.5 (D-227): why a zone may have no purchase price.
+// (zona.compra.sin_precio) says why a zone may have no purchase price (D-227, D-234).
 const TEXT = {
   facts: "Lo que tienes aquí",
   fails: "No cumple:",
   failsUnnamed: "No cumple todo lo que pides.",
   unknown: "No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno.",
-  buySource: "Con «Comprar», puede faltar el precio: el oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes, no para los distritos de Madrid ni para los pueblos.",
+  buySource: "Con «Comprar», puede faltar el precio: el oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes. En los distritos y barrios de Madrid lo estimamos con el valor catastral.",
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
 };
 

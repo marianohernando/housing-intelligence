@@ -135,10 +135,25 @@ export function passingText(n: number, changed = false): string {
   return `${start} salen ${n} zonas.`;
 }
 
-/** rc.sin_dato: zones with some condition that could not be checked are never counted as good. */
-export function unknownText(n: number): string {
+/**
+ * Zones left unchecked because they have no purchase price (D-234): with a budget to buy, how many
+ * of the `zones_unknown` have the budget condition UNKNOWN. 0 when renting or with an older API.
+ */
+export function zonesWithoutPrice(result: Pick<SearchResult, "scenario" | "reality_check">): number {
+  if (result.scenario.budget?.kind !== "buy") return 0;
+  return result.reality_check.unknown_by_constraint?.budget ?? 0;
+}
+
+/**
+ * rc.sin_dato: zones with some condition that could not be checked are never counted as good.
+ * rc.sin_dato.compra: when buying, the reason is said: `withoutPrice` of them are municipios with
+ * no published purchase price (more budget does not bring them in).
+ */
+export function unknownText(n: number, withoutPrice = 0): string {
   const them = n === 1 ? "No la contamos como buena." : "No las contamos como buenas.";
-  return `En ${zonesText(n)} no podemos comprobarlo todo por falta de datos. ${them}`;
+  if (withoutPrice <= 0) return `En ${zonesText(n)} no podemos comprobarlo todo por falta de datos. ${them}`;
+  const places = withoutPrice === 1 ? "1 municipio" : `${withoutPrice} municipios`;
+  return `En ${zonesText(n)} no podemos comprobarlo todo: sin precio de compra publicado en ${places} (solo lo tienen los de más de 25.000 habitantes). ${them}`;
 }
 
 /** One option of «¿Y si cambias algo?» (rc.opcion.cuenta): what it changes, how many zones there would be and how many more. */

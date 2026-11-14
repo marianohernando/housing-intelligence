@@ -19,6 +19,7 @@ import {
   relaxOptions,
   unknownText,
   WALK_MINUTES_FEATURE_PREFIX,
+  zonesWithoutPrice,
   zoneFit,
   zoneKeyOf,
 } from "../fit";
@@ -181,6 +182,26 @@ describe("«¿Y si cambias algo?»", () => {
   it("says in how many zones something could not be checked, in singular with one (rc.sin_dato)", () => {
     expect(unknownText(3)).toBe("En 3 zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas.");
     expect(unknownText(1)).toBe("En 1 zona no podemos comprobarlo todo por falta de datos. No la contamos como buena.");
+  });
+
+  it("says why when buying: municipios with no published purchase price (rc.sin_dato.compra, D-234)", () => {
+    expect(unknownText(151, 151)).toBe(
+      "En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas.",
+    );
+    expect(unknownText(1, 1)).toBe(
+      "En 1 zona no podemos comprobarlo todo: sin precio de compra publicado en 1 municipio (solo lo tienen los de más de 25.000 habitantes). No la contamos como buena.",
+    );
+    expect(unknownText(3, 0)).toBe(unknownText(3));
+  });
+
+  it("counts the zones without a purchase price only with a budget to buy", () => {
+    const check = { ...rc(10), zones_unknown: 151, unknown_by_constraint: { budget: 151, "commute:0": 4 } };
+    const buy = { schema_version: 2, budget: { kind: "buy", amount_eur: 400_000 } } as const;
+    const rent = { schema_version: 2, budget: { kind: "rent", amount_eur: 1_200 } } as const;
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check })).toBe(151);
+    expect(zonesWithoutPrice({ scenario: rent, reality_check: check })).toBe(0);
+    // An API from before D-234 has no unknown_by_constraint: the generic text stays
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: rc(10) })).toBe(0);
   });
 
   it("tells each option with the API's figures, never recomputed", () => {

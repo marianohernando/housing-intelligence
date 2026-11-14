@@ -5,7 +5,7 @@ import { useId, useState } from "react";
 
 import type { SearchResult } from "@/contracts/search_response";
 import GlassCard from "@/components/ui/GlassCard";
-import { constraintLabels, fewZones, optionText, passingText, relaxOptions, unknownText } from "@/lib/fit";
+import { constraintLabels, fewZones, optionText, passingText, relaxOptions, unknownText, zonesWithoutPrice } from "@/lib/fit";
 
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
@@ -83,7 +83,7 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
           {TEXT.limit} <strong>{limit}</strong>
         </p>
       )}
-      {open && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown)}</p>}
+      {open && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, zonesWithoutPrice(result))}</p>}
       {open && options.length > 0 && <p className={styles.note}>{TEXT.note}</p>}
       {hasMore && (
         <button type="button" className={styles.toggle} aria-expanded={open} onClick={() => setChoice({ for: result, open: !open })}>
