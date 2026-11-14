@@ -7,6 +7,11 @@ facility of a zone, filter it with the same criterion as the list of what is mis
 D-218 (additive, still places-1): hospitals carry their installed beds from the Catálogo
 Nacional de Hospitales in `capacity`, with `dependency` and `kind`; hospitals and primary care
 centres carry their institutional name when the official directory gives one.
+
+D-239 (additive, still places-1): `dependency` on the place itself, for every health place of
+the CM register, so a hospital the catalogue could not be matched to (no beds) says it too.
+«publica» is the network of the Servicio Madrileño de Salud, also its hospitals run by a private
+company, which say so in `management` («Hospital público · gestión privada»).
 """
 
 from typing import Literal
@@ -21,6 +26,7 @@ PLACES_CONTRACT_VERSION = "places-1"
 
 Ownership = Literal["publica", "concertada", "privada"]
 Dependency = Literal["publica", "privada"]
+Management = Literal["publica", "privada"]
 CoordinatesOrigin = Literal["source", "geocoded"]
 
 
@@ -34,7 +40,9 @@ class PlaceCapacity(BaseModel):
     dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
     dependency: Dependency | None = Field(
         default=None,
-        description="Hospitals (D-218): who runs it, from the CM register; mutuas count as private",
+        description="Hospitals (D-218): who runs it, from the CM register; mutuas count as "
+        "private. Kept as the register says it: the public network is `dependency` of the place "
+        "(D-239)",
     )
     kind: str | None = Field(
         default=None,
@@ -57,6 +65,19 @@ class PlaceProperties(BaseModel):
     ownership: Ownership | None = Field(
         default=None,
         description="Educational centres only: titularidad of the register (None elsewhere)",
+    )
+    dependency: Dependency | None = Field(
+        default=None,
+        description="Health places (D-239): 'publica' for the network of the Servicio Madrileño "
+        "de Salud (the CM register's dependencia funcional, or a network hospital a private "
+        "company runs), 'privada' for the rest; mutuas count as private (None elsewhere)",
+    )
+    management: Management | None = Field(
+        default=None,
+        description="Hospitals (D-239): who runs it. 'privada' for a private hospital and for a "
+        "hospital of the public network run by a private company by concession or concierto "
+        "singular (a versioned list with its official source), 'publica' for the rest of the "
+        "public ones (None elsewhere)",
     )
     gap_rows: list[GapRowKey] = Field(
         default_factory=list[GapRowKey],

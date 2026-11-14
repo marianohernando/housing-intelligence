@@ -19,6 +19,8 @@ import {
   facilityCountText,
   facilityType,
   FACILITY_TYPES,
+  HOSPITAL_DEPENDENCY_NOTE,
+  hospitalSplitText,
   orderedTypes,
   selectedCountText,
 } from "@/lib/map/facilities";
@@ -109,12 +111,16 @@ function FacilityList({ items, count }: { items: Facility[]; count: string }) {
 /** One type pressed: how many there are in the zone, what the source does not say, and its list. */
 function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility[]; zone: string }) {
   const count = facilityCountText(type, items.length, zone);
+  // centros.hospital.reparto and centros.hospital.dependencia (D-239)
+  const split = type === "hospital" ? hospitalSplitText(items) : null;
   return (
     <div className={styles.typeSummary}>
       <p className={styles.count}>
         <span className={styles.dot} style={{ background: `var(--${FACILITY_COLOR_TOKEN[type]})` }} aria-hidden="true" />
         {count}
+        {split && `: ${split}`}
       </p>
+      {split && <p className={styles.muted}>{HOSPITAL_DEPENDENCY_NOTE}</p>}
       {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
       {items.some((f) => f.name === null) && (
         <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>

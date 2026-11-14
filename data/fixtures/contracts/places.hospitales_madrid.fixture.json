@@ -19,6 +19,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807920095",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 72.0,
@@ -48,6 +50,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807918027",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 269.0,
@@ -77,6 +81,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807907133",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 152.0,
@@ -106,6 +112,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807915150",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 100.0,
@@ -135,6 +143,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807916124",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": null,
         "coordinates": "source",
@@ -158,6 +168,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807907092",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 142.0,
@@ -187,6 +199,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807908137",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 143.0,
@@ -210,12 +224,14 @@
         ]
       },
       "properties": {
-        "name": "Hospital Universitario Fundacion Jimenez Diaz",
+        "name": "Hospital Universitario Fundación Jiménez Díaz",
         "category": "health",
         "subcategory": "Hospital general",
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807909033",
         "ownership": null,
+        "dependency": "publica",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 651.0,
@@ -245,6 +261,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807916119",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 198.0,
@@ -274,6 +292,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807903048",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 1140.0,
@@ -303,6 +323,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807905001",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 168.0,
@@ -332,6 +354,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807912108",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 1161.0,
@@ -361,6 +385,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807909033",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 861.0,
@@ -390,6 +416,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807904115",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": null,
         "coordinates": "source",
@@ -413,6 +441,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807905064",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 184.0,
@@ -442,6 +472,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807904100",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 146.0,
@@ -471,6 +503,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807907049",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 99.0,
@@ -500,6 +534,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807904099",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 524.0,
@@ -529,6 +565,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807916119",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 121.0,
@@ -552,12 +590,14 @@
         ]
       },
       "properties": {
-        "name": "Hospital Beata Maria Ana",
+        "name": "Hospital Beata María Ana",
         "category": "health",
         "subcategory": "Hospital general",
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807903047",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 163.0,
@@ -587,6 +627,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807909008",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 235.0,
@@ -616,6 +658,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807915094",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 20.0,
@@ -645,6 +689,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807908136",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 100.0,
@@ -674,6 +720,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807909075",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 116.0,
@@ -703,6 +751,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807905032",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 84.0,
@@ -732,6 +782,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807905079",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 73.0,
@@ -761,6 +813,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807909086",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 88.0,
@@ -790,6 +844,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807902009",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 90.0,
@@ -819,6 +875,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807908103",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 966.0,
@@ -842,12 +900,14 @@
         ]
       },
       "properties": {
-        "name": "Hospital Universitario Ramon y Cajal",
+        "name": "Hospital Universitario Ramón y Cajal",
         "category": "health",
         "subcategory": "Hospital general",
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807908111",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 886.0,
@@ -877,6 +937,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807904100",
         "ownership": null,
+        "dependency": "privada",
+        "management": "privada",
         "gap_rows": [],
         "capacity": {
           "value": 81.0,
@@ -906,6 +968,8 @@
         "municipio": "28079",
         "seccion": "ES.28.SEC.2807904042",
         "ownership": null,
+        "dependency": "publica",
+        "management": "publica",
         "gap_rows": [],
         "capacity": {
           "value": 156.0,

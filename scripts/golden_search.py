@@ -96,6 +96,9 @@ def failures(result: SearchResult, expect: dict[str, Any]) -> list[str]:
         "barrios": lambda v: check.zones_evaluated == v,
         "ranked": lambda v: set(v) <= {r.zone.name for r in result.results},
         "near_miss": lambda v: set(v) <= {r.zone.name for r in result.near_misses},
+        # D-239: the pitch's order, exactly, so a sync cannot reorder the demo case unnoticed
+        "ranked_order": lambda v: [r.zone.name for r in result.results] == v,
+        "near_miss_order": lambda v: [r.zone.name for r in result.near_misses] == v,
         "distinct_pct_min": lambda v: len({z.match_pct for z in result.all_zones}) >= v,
         "own_trips": lambda v: (
             all(
