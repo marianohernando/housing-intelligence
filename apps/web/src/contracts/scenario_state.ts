@@ -4,6 +4,9 @@
  * `npm run -w apps/web contracts`.
  */
 
+/**
+ * Days they go there in a week; 0 = never (full telework): the trip does not count (D-240)
+ */
 export type DaysPerWeek = number;
 export type AnchorKind = "work" | "study" | "family" | "other";
 export type Label = string;
@@ -76,7 +79,7 @@ export interface ScenarioState {
   schema_version?: SchemaVersion;
 }
 /**
- * A place the household travels to often («Trabajo en»).
+ * A place the household travels to often: where they work, or family and friends.
  */
 export interface Anchor {
   days_per_week?: DaysPerWeek;

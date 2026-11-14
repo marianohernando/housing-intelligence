@@ -2,12 +2,13 @@
   "$defs": {
     "Anchor": {
       "additionalProperties": false,
-      "description": "A place the household travels to often («Trabajo en»).",
+      "description": "A place the household travels to often: where they work, or family and friends.",
       "properties": {
         "days_per_week": {
           "default": 5,
+          "description": "Days they go there in a week; 0 = never (full telework): the trip does not count (D-240)",
           "maximum": 7,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Days Per Week",
           "type": "integer"
         },

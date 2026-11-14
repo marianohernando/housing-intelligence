@@ -12,7 +12,7 @@ territorial reference (the gap highlights come from GAP-001).
 
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from hi_contracts.public import (
     Anchor,
@@ -43,8 +43,9 @@ from hi_domain.gaps import es_number
 
 # 0.3: park (D-222); 0.4: step-free station (D-223); 0.5: buying (D-227); 0.6: rent of new
 # leases and walking minutes read as approximate (D-228); 0.7: barrios inside a district, with a
-# trip measured for the whole district and the reason for an unknown rent said (D-232)
-FIT_VERSION = "fit-0.7"
+# trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8: a
+# trip made 1-2 days a week weighs half and one never made does not count (D-240)
+FIT_VERSION = "fit-0.8"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -59,6 +60,10 @@ NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 
 STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
 # Public transport (CORE-009, D-220): full utility up to 30 min, none from 90 (3x, as walking).
 DEFAULT_COMMUTE_MINUTES = 30
+# Telework (D-240): a trip made 1-2 days a week weighs half in the % of fit; from 3 days it
+# weighs as always. A place never gone to (0 days) is neither scored nor a condition.
+FEW_DAYS_PER_WEEK = 2
+FEW_DAYS_WEIGHT = 0.5
 BUDGET_MARGIN_SHARE = 0.25  # full utility when the cost is 75 % of the budget or less
 MAX_WALK_SHOWN = 60
 
@@ -257,6 +262,16 @@ def rank_weights(n: int) -> list[float]:
     return [(n - i) / total for i in range(n)]
 
 
+def counts(anchor: Anchor) -> bool:
+    """False for a place the person never goes to (0 days a week: full telework, D-240)."""
+    return anchor.days_per_week > 0
+
+
+def days_weight(anchor: Anchor) -> float:
+    """Share of its rank weight a trip keeps (D-240): half when made 1-2 days a week."""
+    return FEW_DAYS_WEIGHT if anchor.days_per_week <= FEW_DAYS_PER_WEEK else 1.0
+
+
 def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
     """The person's criteria in order of importance, before weighting."""
     keys: list[Criterion] = []
@@ -271,7 +286,8 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
         target = windows.get(need, DEFAULT_WALK_MINUTES[need])
         keys.append(Criterion(f"need:{need.value}", 0.0, need=need, target_minutes=target))
     for i, anchor in enumerate(scenario.anchors):
-        keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
+        if counts(anchor):
+            keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
     for nearby in scenario.nearby:  # a wished service not already among the priorities
         if not nearby.required and nearby.need not in covered:
             target = nearby.max_walk_minutes
@@ -282,10 +298,12 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
 
 
 def criteria(scenario: ScenarioState) -> list[Criterion]:
+    """Rank-sum weights by order; a trip made few days a week keeps a share of its own
+    (D-240). The weights need not add up to 1: the % divides by the weight with data."""
     keys = _criteria_keys(scenario)
     weights = rank_weights(len(keys))
     return [
-        Criterion(c.key, w, c.need, c.target_minutes, c.priority, c.anchor, c.anchor_index)
+        replace(c, weight=w if c.anchor is None else w * days_weight(c.anchor))
         for c, w in zip(keys, weights, strict=True)
     ]
 
@@ -383,7 +401,7 @@ def constraint_checks(
         if nearby.required:
             checks.append(near_check(nearby, data.walk.get(nearby.need)))
     for i, anchor in enumerate(scenario.anchors):
-        if anchor.max_minutes is not None:
+        if anchor.max_minutes is not None and counts(anchor):
             checks.append(commute_check(i, anchor, data))
     return checks
 

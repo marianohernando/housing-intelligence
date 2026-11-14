@@ -105,6 +105,8 @@ def test_reality_check_counts_add_up() -> None:
         {"household": {"adults": 1, "minors": 1, "minor_ages": [19]}},
         {"household": {"adults": 0}},
         {"anchors": [{"label": "Lisboa", "lon": -9.14, "lat": 38.72}]},
+        {"anchors": [{"label": "Azca", "lon": -3.69, "lat": 40.45, "days_per_week": 8}]},
+        {"anchors": [{"label": "Azca", "lon": -3.69, "lat": 40.45, "days_per_week": -1}]},
         {"budget": {"kind": "rent", "amount_eur": 300_000}},  # a purchase price as rent
         {"budget": {"kind": "buy", "amount_eur": 1200}},  # a rent as purchase price
         {"budget_monthly_eur": 1200},  # v1 field
@@ -115,6 +117,15 @@ def test_reality_check_counts_add_up() -> None:
 def test_scenario_rejects_incoherent_or_unknown_input(change: dict[str, Any]) -> None:
     with pytest.raises(ValidationError):
         ScenarioState.model_validate(change)
+
+
+def test_a_place_can_be_one_never_gone_to_and_of_family_or_friends() -> None:
+    """D-240: 0 days a week is full telework; `family` is the second place of the search."""
+    place = {"label": "Azca", "lon": -3.69, "lat": 40.45}
+    scenario = ScenarioState.model_validate(
+        {"anchors": [place | {"days_per_week": 0}, place | {"kind": "family"}]}
+    )
+    assert [(a.kind, a.days_per_week) for a in scenario.anchors] == [("work", 0), ("family", 5)]
 
 
 def test_default_scenario_and_household_size() -> None:
