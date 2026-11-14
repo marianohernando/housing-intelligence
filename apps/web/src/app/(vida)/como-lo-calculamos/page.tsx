@@ -6,6 +6,7 @@ import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
+import { CONTEXT_METHOD } from "@/lib/zoneContext";
 
 import styles from "../section.module.css";
 
@@ -257,7 +258,16 @@ function Limits() {
           <strong>Compra:</strong> usamos el valor tasado medio de la vivienda libre por metro cuadrado (Ministerio de
           Vivienda, en el portal de la Comunidad), por los metros que suponemos para tu hogar. Es lo que tasan las sociedades
           de tasación, no el precio de un anuncio. Solo se publica para los municipios de más de 25.000 habitantes: en los
-          distritos de Madrid y en los pueblos sale «sin datos» y no inventamos un precio.
+          municipios pequeños sale «sin datos» y no inventamos un precio. En los distritos y barrios de Madrid el precio es una
+          estimación, y lo decimos: repartimos el valor tasado de toda la ciudad según el valor catastral por metro cuadrado
+          de cada zona (Catastro, publicado por el Ayuntamiento). La media de los distritos coincide con el valor tasado de
+          Madrid. El valor catastral sale de valoraciones antiguas, así que es un dato aproximado, no un precio real: frente
+          a los precios de los anuncios, ordena los distritos casi igual, pero los caros salen algo más baratos y los baratos
+          algo más caros.
+        </li>
+        <li>
+          {/* D-235: the same words the card's tests check (no alarm or wealth words) */}
+          <strong>{CONTEXT_METHOD.lead}</strong> {CONTEXT_METHOD.text}
         </li>
         <li>
           <strong>Vivienda nueva y lo que viene:</strong> en cada zona contamos cuántas compraventas del último año fueron

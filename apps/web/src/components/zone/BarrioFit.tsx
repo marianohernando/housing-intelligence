@@ -8,6 +8,7 @@ import { useMapZones } from "@/components/map/MapProvider";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { type BarrioRow, barrioRows, barriosText, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
@@ -48,8 +49,12 @@ function Barrio({ row }: { row: BarrioRow }) {
   const head = (
     <>
       <span className={styles.name}>{row.name}</span>
-      <span className={styles.pct} title={TEXT.fitHelp}>
-        {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+      {/* The price under the %, so the name keeps its width at 390 px (D-234) */}
+      <span className={styles.end}>
+        <span className={styles.pct} title={TEXT.fitHelp}>
+          {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
+        </span>
+        {row.price && <PriceTag price={row.price} variant="row" />}
       </span>
     </>
   );

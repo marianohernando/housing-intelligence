@@ -1,0 +1,45 @@
+/* Beside the % of a ranking row: the figure, and under it the confidence words when needed */
+.row {
+  display: grid;
+  flex: none;
+  justify-items: end;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.row .amount {
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Under the name of the zone card */
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.card .amount {
+  color: var(--ink);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.mark {
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.card .mark {
+  font-size: 0.85rem;
+}
+
+.card .mark::before {
+  content: "· ";
+}

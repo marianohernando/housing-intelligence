@@ -1,0 +1,55 @@
+kind: cm_municipio_concept
+dataset_id: cm_infracciones_penales_municipios
+metric_id: infracciones_penales_conocidas
+# The total of each municipio and its cybercrime, which the feature leaves out because it does
+# not happen in a place (D-224 §3, D-235); the other rows by type stay in Bronze.
+dimension: tipologia
+concepts:
+  "Total hechos conocidos de infracciones penales": total
+  "Hechos conocidos de cibercriminalidad": cibercriminalidad
+# 2025 is provisional: the last definitive year is the one shown (D-235).
+excluded_statuses: [Provisional]
+expected_municipios: 37
+# The table has no territory code. Every name it writes, by hand, to its INE code; the last
+# three are spellings the source uses in other rows of the same table.
+municipios:
+  "Alcalá de Henares": "28005"
+  "Alcobendas": "28006"
+  "Alcorcón": "28007"
+  "Algete": "28009"
+  "Aranjuez": "28013"
+  "Arganda del Rey": "28014"
+  "Arroyomolinos": "28015"
+  "Boadilla del Monte": "28022"
+  "Ciempozuelos": "28040"
+  "Collado Villalba": "28047"
+  "Colmenar Viejo": "28045"
+  "Coslada": "28049"
+  "Fuenlabrada": "28058"
+  "Galapagar": "28061"
+  "Getafe": "28065"
+  "Humanes de Madrid": "28073"
+  "Leganés": "28074"
+  "Madrid": "28079"
+  "Majadahonda": "28080"
+  "Mejorada del Campo": "28084"
+  "Móstoles": "28092"
+  "Navalcarnero": "28096"
+  "Paracuellos de Jarama": "28104"
+  "Parla": "28106"
+  "Pinto": "28113"
+  "Pozuelo de Alarcón": "28115"
+  "Rivas-Vaciamadrid": "28123"
+  "Rozas de Madrid": "28127"  # Las Rozas de Madrid
+  "San Fernando de Henares": "28130"
+  "San Martín de la Vega": "28132"
+  "San Sebastián de los Reyes": "28134"
+  "Torrejón de Ardoz": "28148"
+  "Torrelodones": "28152"
+  "Tres Cantos": "28903"
+  "Valdemoro": "28161"
+  "Villanueva de la Cañada": "28176"
+  "Villaviciosa de Odón": "28181"
+  "Las Rozas de Madrid": "28127"
+  "San Fernado de Henares": "28130"
+  "Mejorada": "28084"

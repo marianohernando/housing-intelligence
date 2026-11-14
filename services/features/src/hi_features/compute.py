@@ -7,6 +7,7 @@ regional reference only comes from the base level.
 """
 
 from collections.abc import Callable, Mapping
+from itertools import pairwise
 from typing import Any
 
 import pandas as pd
@@ -59,8 +60,16 @@ def _metric_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame
 
 
 def _metric_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """`denominator_total` (and `denominator_rest`): the denominator must add up to the total."""
     obs = loaders.observations(engine, f["metric"], level)
-    return methods.metric_share(obs, f["numerator"], f["denominator"], f.get("confidence", 1.0))
+    return methods.metric_share(
+        obs,
+        f["numerator"],
+        f["denominator"],
+        f.get("confidence", 1.0),
+        total=f.get("denominator_total"),
+        rest=f.get("denominator_rest"),
+    )
 
 
 def _metric_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -93,15 +102,26 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
 
 
 def _metric_ratio(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    return methods.metric_ratio(
-        loaders.observations(engine, f["numerator_metric"], level),
+    """`same_period`: the denominator of the numerator's year, not its own latest;
+    `regional_reference: false`: no region row, for a source that covers only some zones;
+    `numerator_minus_dims`: a part of the numerator left out (cybercrime, D-224 §3)."""
+    numerator = loaders.observations(engine, f["numerator_metric"], level)
+    denominator = loaders.observations(engine, f["denominator_metric"], level)
+    if f.get("same_period"):
+        denominator = methods.at_latest_period_of(denominator, numerator)
+    result = methods.metric_ratio(
+        numerator,
         f["numerator_dims"],
-        loaders.observations(engine, f["denominator_metric"], level),
+        denominator,
         f["denominator_dims"],
         float(f["per"]),
         small_population=float(f.get("small_population_threshold", 0)),
         confidence=float(f.get("confidence", 1.0)),
+        numerator_minus=f.get("numerator_minus_dims"),
     )
+    if f.get("regional_reference", True):
+        return result
+    return methods.without_regional_reference(result)
 
 
 def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -126,6 +146,45 @@ def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd
         min_places=float(few.get("below", 0)),
         few_places_confidence=float(few.get("max_confidence", 1.0)),
     )
+
+
+# D-234: the zones a published value is shared out to, each level anchored to the one above;
+# a zone's parent is a prefix of its code (28079 -> 2807906 -> 28079065).
+SHARE_OUT_CHAIN = ("municipio", "distrito", "barrio")
+CODE_DIGITS = {"municipio": 5, "distrito": 7}
+
+
+def _anchored_relative_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """The anchor metric's value (a city's appraised value) shared out level by level down to
+    `level`: districts anchored to their municipio, barrios to their district's estimate."""
+    chain = SHARE_OUT_CHAIN[SHARE_OUT_CHAIN.index(f["anchor_level"]) :]
+    if level not in chain[1:]:
+        msg = f"a {f['anchor_level']} value is shared out to {list(chain[1:])}, not to {level!r}"
+        raise ValueError(msg)
+    anchor, period = methods.latest_values(
+        loaders.observations(engine, f["anchor_metric"], f["anchor_level"])
+    )
+    result = methods.result_frame([])
+    for parent, step in pairwise(chain):
+        value, _ = methods.latest_values(loaders.observations(engine, f["numerator_metric"], step))
+        area, _ = methods.latest_values(loaders.observations(engine, f["denominator_metric"], step))
+        weight, _ = methods.latest_values(loaders.observations(engine, f["weight_metric"], step))
+        ratio = {c: value[c] / area[c] for c in value.keys() & area.keys() if area[c] > 0}
+        zones = sorted(value.keys() | area.keys() | weight.keys())
+        result = methods.anchored_relative_value(
+            ratio,
+            weight,
+            anchor,
+            zones,
+            CODE_DIGITS[parent],
+            period,
+            float(f.get("confidence", 1.0)),
+        )
+        if step == level:
+            break
+        known = result.loc[result["value"].notna()]
+        anchor = dict(zip(known["territory_code"], known["value"].astype(float), strict=True))
+    return result
 
 
 def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -197,6 +256,7 @@ METHODS: dict[str, Method] = {
     "not_published": _not_published,
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
+    "anchored_relative_value": _anchored_relative_value,
     "metric_window_share": _metric_window_share,
     "metric_items": _metric_items,
 }

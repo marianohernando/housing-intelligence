@@ -8,7 +8,9 @@ import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
+import PriceTag from "@/components/ui/PriceTag";
 import { errorMessage } from "@/lib/errors";
+import { zonePriceOf } from "@/lib/fit";
 import { fitsButShortText, gapsHref, GROUP, inGroup, notComparable, topRows, walking, walkingText } from "@/lib/gaps";
 import { screenZone, type ZoneProperties, zoneHref, zoneTitle } from "@/lib/map/zones";
 
@@ -58,6 +60,8 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
   const pct = match?.match_pct;
+  // D-234: the approximate price, in the head; none without a price (the search's notice says why)
+  const price = result ? zonePriceOf(result, zone_key) : null;
   const rows = gaps.data?.data.rows ?? [];
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
@@ -89,6 +93,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
           </span>
         )}
       </div>
+      {price && <PriceTag price={price} variant="card" />}
       {result && stale && pct != null && <p className={styles.hint}>{TEXT.stale}</p>}
       {result ? <FitDetails result={result} zoneKey={zone_key} /> : <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
 

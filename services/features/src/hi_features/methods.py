@@ -124,13 +124,37 @@ def metric_value(obs: pd.DataFrame, dims: DimFilter, confidence: float = 1.0) ->
     return _result(out)
 
 
+def _adds_up(
+    records: list[dict[str, Any]], part: float, total: DimFilter, rest: DimFilter | None
+) -> bool:
+    """`part` plus the `rest` rows equals the `total` row: no category of the source is
+    missing from the denominator, nor a new one added (D-235)."""
+    whole, whole_reason, whole_n = _sum_selected(records, total)
+    left, left_reason, _ = _sum_selected(records, rest) if rest else (0.0, None, 0)
+    if whole_reason or left_reason or not whole_n:
+        return False
+    return abs(part + left - whole) < 0.5
+
+
 def metric_share(
-    obs: pd.DataFrame, numerator: DimFilter, denominator: DimFilter, confidence: float = 1.0
+    obs: pd.DataFrame,
+    numerator: DimFilter,
+    denominator: DimFilter,
+    confidence: float = 1.0,
+    total: DimFilter | None = None,
+    rest: DimFilter | None = None,
 ) -> pd.DataFrame:
+    """100 x numerator / denominator. With `total`, the denominator plus the `rest` rows must
+    add up to the source's total row, or the share is unknown (ESTIMATION_NOT_ALLOWED): a
+    share over an incomplete denominator would look exact and be wrong."""
     out: list[dict[str, Any]] = []
     for (code, period), records in _by_territory(obs).items():
         num, num_reason, num_n = _sum_selected(records, numerator)
         den, den_reason, den_n = _sum_selected(records, denominator)
+        incomplete = total is not None and not _adds_up(records, den, total, rest)
+        if incomplete and not den_reason and den_n:
+            out.append(_null(code, period, NullReason.ESTIMATION_NOT_ALLOWED))
+            continue
         if num_reason or den_reason or not num_n or not den_n:
             out.append(
                 _null(
@@ -284,6 +308,39 @@ def places_per_population(
     )
 
 
+def at_latest_period_of(obs: pd.DataFrame, other: pd.DataFrame) -> pd.DataFrame:
+    """The rows of `obs` dated like the latest period of `other`: a rate over the population of
+    the same year (D-235). None of that date leaves it empty: unknown, never another year's."""
+    if obs.empty or other.empty:
+        return obs.iloc[0:0]
+    newest = other["period_start"].max()
+    return obs.loc[[period == newest for period in obs["period_start"].tolist()]]
+
+
+def without_regional_reference(result: pd.DataFrame) -> pd.DataFrame:
+    """Drops the region's row: the sum of the zones a source covers is not the region when it
+    only publishes some of them (D-235)."""
+    keep = [level != REGION_LEVEL for level in result["territory_level"].tolist()]
+    return result.loc[keep].reset_index(drop=True)
+
+
+Totals = dict[str, tuple[Any, float | None, str | None]]
+
+
+def _less(totals: Totals, parts: Totals) -> Totals:
+    """Each zone's total less a part of it (offences without cybercrime, D-224 §3): unknown
+    when either is, never the total alone."""
+    out: Totals = {}
+    for code, (period, total, reason) in totals.items():
+        _, part, part_reason = parts.get(code, (period, None, NullReason.SOURCE_MISSING.value))
+        out[code] = (
+            (period, total - part, None)
+            if total is not None and part is not None
+            else (period, None, reason or part_reason)
+        )
+    return out
+
+
 def metric_ratio(
     numerator: pd.DataFrame,
     numerator_dims: DimFilter,
@@ -292,14 +349,19 @@ def metric_ratio(
     per: float,
     small_population: float = 0.0,
     confidence: float = 1.0,
+    numerator_minus: DimFilter | None = None,
 ) -> pd.DataFrame:
     """per x numerator / denominator for two metrics of the same zones (e.g. dwellings over
     90 m2 per 100 households of 4 or more). Each metric uses its own latest period and the row
-    carries the denominator's. A zone whose numerator is unknown or absent is unknown, never 0.
+    carries the denominator's (the caller may hand the denominator already cut to the
+    numerator's period, `at_latest_period_of`). A zone whose numerator is unknown or absent is
+    unknown, never 0. `numerator_minus` selects a part of the numerator that is left out.
     The regional reference adds up the zones where both are known; as in places per
     population, a zone with a 0 denominator is NOT_APPLICABLE but its numerator still counts
     for the region."""
     numerators = _population(numerator, numerator_dims)
+    if numerator_minus is not None:
+        numerators = _less(numerators, _population(numerator, numerator_minus))
     denominators = _population(denominator, denominator_dims)
     totals: dict[str, float] = {}
     for code, (period, den, den_reason) in list(denominators.items()):
@@ -322,6 +384,47 @@ def not_published(territories: pd.DataFrame) -> pd.DataFrame:
             for code, period in sorted(_by_territory(territories))
         ]
     )
+
+
+def latest_values(obs: pd.DataFrame) -> tuple[dict[str, float], Any]:
+    """Each territory's value in the metric's latest period (one row, known), and that period."""
+    values, period = _postcode_values(obs, {})
+    return values, period
+
+
+def anchored_relative_value(
+    ratio: Mapping[str, float],
+    weight: Mapping[str, float],
+    anchor: Mapping[str, float],
+    zones: Sequence[str],
+    parent_digits: int,
+    period: Any,
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """D-234: a parent's published value shared out among its zones by a relative figure.
+    zone value = parent value x zone ratio / mean ratio of the parent's zones, weighted by
+    `weight`; so the weighted mean of the zones' values is the parent's value (the anchor).
+
+    The parent of a zone is the first `parent_digits` of its code (a district's municipio, a
+    barrio's district). Every code in `zones` gets a row: without its ratio, its weight or its
+    parent's value the zone is SOURCE_MISSING, never the parent's mean and never 0; such a zone
+    is left out of the mean, which then holds over the others."""
+    by_parent: dict[str, list[str]] = {}
+    for code in zones:
+        if ratio.get(code, 0.0) > 0 and weight.get(code, 0.0) > 0:
+            by_parent.setdefault(code[:parent_digits], []).append(code)
+    mean = {
+        parent: sum(ratio[c] * weight[c] for c in codes) / sum(weight[c] for c in codes)
+        for parent, codes in by_parent.items()
+    }
+    out: list[dict[str, Any]] = []
+    for code in sorted(zones):
+        parent = code[:parent_digits]
+        if parent not in anchor or code not in by_parent.get(parent, ()):
+            out.append(_null(code, period, NullReason.SOURCE_MISSING))
+        else:
+            out.append(_ok(code, period, anchor[parent] * ratio[code] / mean[parent], confidence))
+    return _result(out)
 
 
 def _postcode_values(obs: pd.DataFrame, dims: DimFilter) -> tuple[dict[str, float], Any]:
