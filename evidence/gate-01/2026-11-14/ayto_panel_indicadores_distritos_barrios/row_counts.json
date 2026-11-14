@@ -1,0 +1,16 @@
+{
+  "ano_medio_construccion_residencial|barrio": 786,
+  "ano_medio_construccion_residencial|distrito": 126,
+  "hogares_padron|barrio": 917,
+  "hogares_padron|distrito": 147,
+  "percepcion_seguridad_barrio_dia|distrito": 126,
+  "percepcion_seguridad_barrio_dia|municipio": 6,
+  "percepcion_seguridad_barrio_noche|distrito": 126,
+  "percepcion_seguridad_barrio_noche|municipio": 6,
+  "renta_neta_media_hogar|barrio": 917,
+  "renta_neta_media_hogar|distrito": 147,
+  "tamano_medio_hogar_padron|barrio": 917,
+  "tamano_medio_hogar_padron|distrito": 147,
+  "out_of_scope": 130093,
+  "observations": 4368
+}

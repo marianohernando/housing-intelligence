@@ -1,0 +1,149 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_observations",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "observations": 586
+      }
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "unique_keys",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "municipios_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "municipios": 37
+      }
+    },
+    {
+      "name": "non_negative_counts",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "negatives": 0
+      }
+    },
+    {
+      "name": "parse_error_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "parse_errors": 0
+      }
+    },
+    {
+      "name": "missing_is_explicit_not_zero",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "source_missing": 256,
+        "ratio": 0.4369
+      }
+    },
+    {
+      "name": "municipio_coverage",
+      "critical": false,
+      "passed": false,
+      "details": {
+        "covered": 37,
+        "expected": 179
+      }
+    },
+    {
+      "name": "totals_are_additive",
+      "critical": false,
+      "passed": false,
+      "details": {
+        "groups_checked": 37,
+        "failures": 37,
+        "failures_sample": [
+          {
+            "dim": "tipologia",
+            "key": [
+              "infracciones_penales_conocidas",
+              "municipio",
+              "28005",
+              "2024-01-01"
+            ],
+            "total": 9752.0,
+            "members": 2199.0
+          },
+          {
+            "dim": "tipologia",
+            "key": [
+              "infracciones_penales_conocidas",
+              "municipio",
+              "28006",
+              "2024-01-01"
+            ],
+            "total": 5428.0,
+            "members": 1275.0
+          },
+          {
+            "dim": "tipologia",
+            "key": [
+              "infracciones_penales_conocidas",
+              "municipio",
+              "28007",
+              "2024-01-01"
+            ],
+            "total": 6970.0,
+            "members": 1049.0
+          },
+          {
+            "dim": "tipologia",
+            "key": [
+              "infracciones_penales_conocidas",
+              "municipio",
+              "28013",
+              "2024-01-01"
+            ],
+            "total": 2816.0,
+            "members": 518.0
+          },
+          {
+            "dim": "tipologia",
+            "key": [
+              "infracciones_penales_conocidas",
+              "municipio",
+              "28014",
+              "2024-01-01"
+            ],
+            "total": 3423.0,
+            "members": 718.0
+          }
+        ],
+        "share_ok": 0.0
+      }
+    },
+    {
+      "name": "expected_municipios",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "covered": 37,
+        "expected": 37
+      }
+    }
+  ]
+}

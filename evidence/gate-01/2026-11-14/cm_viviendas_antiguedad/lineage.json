@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_viviendas_antiguedad",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_viviendas_antiguedad/0ea5bbec6d64/censo-anual-comunidad-de-madrid.-viviendas-por-ano-de-antiguedad.-municipios.csv",
+      "sha256": "0ea5bbec6d64137181990d485b2181ae792d03189498e0c1bd82d8e14c57845e",
+      "bytes": 410353,
+      "url": "https://datos.comunidad.madrid/dataset/f6e02fad-70c0-40ee-a030-12f77cd59ad7/resource/64da5fc9-41f1-403b-a675-74580018c26e/download/censo-anual-comunidad-de-madrid.-viviendas-por-ano-de-antiguedad.-municipios.csv",
+      "retrieved_at": "2026-11-14T18:05:08.247138+00:00"
+    }
+  ],
+  "checksum": "cf76bf4eb9f8ab92b3155cc388b1019d73dd6acea00c4c7e162a9d7ccbbc4ad2",
+  "parser_version": "stat_tables-1.0.0",
+  "dataset_version": "2026-11-14-cf76bf4eb9f8",
+  "correlation_id": "06cd63e5b9f14e42a5d7846f173def54",
+  "silver": "data/silver/cm_viviendas_antiguedad/cf76bf4eb9f8/observations.csv.gz"
+}
