@@ -1352,7 +1352,7 @@ Feedback de usuarios del 14 nov: quien se mueve en autobús quiere ver las parad
 ## D-234 — Comprar en Madrid capital: precio estimado por distrito y barrio, y un Reality Check que no culpa al presupuesto de lo que es falta de datos (`fit-0.8`) (2026-11-14)
 Feedback de usuarios de prueba del 14 nov (W1), con la solución aprobada por Mariano. Al buscar «Comprar», ningún distrito ni barrio de Madrid tenía precio: el valor tasado del Ministerio solo cubre municipios de más de 25.000 habitantes (D-227 §3). Salían «sin datos» y el aviso proponía «+40.000 €», que no añadía ninguna zona. Es reversible: una feature nueva, tres métricas nuevas y campos opcionales. Código:
 - `hi_features/methods.py` y `compute.py` (`anchored_relative_value`);
-- `hi_contracts/catalog/feature.py` (`FitBinding.estimate`);
+- `hi_contracts/catalog/feature.py` (`FitBinding`, rol `price_m2_estimate`);
 - `hi_api/services/search.py` (`zone_price`) y `barrios.py`;
 - `hi_domain/affordability.py`, `fit.py` y `reality_check.py`;
 - la web (`lib/fit.ts`, `RealityCheck.tsx`, `SearchResults.tsx`, `SearchCard.tsx`, `FitDetails.tsx` y «Cómo lo calculamos»).
@@ -1372,15 +1372,15 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
    - **Confidence:** 0,5, que la web enseña como «Dato aproximado».
    - **Texto de la API:** la condición y el hecho dicen «Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento)», o «del barrio» en un barrio. El indicador cita los dos datasets.
    - **El valor tasado sigue siendo solo de municipios:** `valor_tasado_vivienda_m2` no se reparte. Ahora también da una fila SIN DATOS a cada barrio, como ya hacía con los distritos.
-4. **Validación** frente a los precios de oferta de idealista en 12 distritos. Es un portal privado y solo se usa para validar, nunca como dato.
+4. **Validación** frente a los precios de oferta de idealista en 12 distritos. Es un portal privado y solo se usa para validar, nunca como dato. Se puede repetir: la tabla de referencias, con su URL y fechas, está en `evidence/gate-04/2026-11-14/referencias-precio-distritos.csv`, y el cálculo en `scripts/validate_buy_estimate.py`, que falla si el Spearman baja de 0,9 o si un distrito pasa del 30 %.
    - **Orden:** Spearman 0,95.
    - **Nivel:** el estimado es de media 0,88 veces el precio de oferta, lo esperable de una tasación frente a un anuncio.
    - **Error por distrito,** quitada esa diferencia común: entre −19 y +19 %, ninguno por encima del 30 %. El agente anterior informó 0,96 en 13 distritos, pero no dejó la fuente.
    - **Sesgo declarado:** el valor catastral comprime el rango. Los distritos caros quedan algo bajos y los baratos algo altos (Villa de Vallecas, San Blas-Canillejas y Villaverde).
    - **Límites en la feature:** el catastro sale de ponencias antiguas y la superficie construida incluye zonas comunes.
 5. **Búsqueda (`fit-0.8`).**
-   - **Las dos features en la búsqueda:** las dos se enlazan como `fit: {role: price_m2}`; la estimada lleva además `estimate: true` (solo `price_m2` lo admite, validado en el contrato).
-   - **Lectura explícita:** `indicators_by_zone` tiene una rama propia para `price_m2` con `estimate`, que va a `price_estimate` y nunca pisa la publicada, lleguen en el orden que lleguen (test).
+   - **Rol propio para la estimación:** el valor tasado se enlaza como `fit: {role: price_m2}` y la estimación como `fit: {role: price_m2_estimate}` (revisión del PR #59). Un código que no conoce el rol lo ignora con un aviso en el log, en vez de leerlo como un precio publicado.
+   - **Lectura explícita:** `indicators_by_zone` tiene una rama propia para `price_m2_estimate`, que va a `price_estimate` y nunca pisa la publicada, lleguen en el orden que lleguen (test).
    - **Qué precio usa una zona:** `zone_price` toma el valor tasado publicado si lo hay, después la estimación, y si no hay ninguno, la fila que dice por qué. `ZoneData.price_estimated` lleva la nota al texto.
    - **Desempate por coste, solo en «Casi encajan» (`near_miss_key`).** Va después de la confidence y de los minutos al trabajo, y antes del código de zona.
      - **Por qué ahí:** las zonas que se pasan del presupuesto para comprar sacan todas un 0 % en él y empatan en lo demás (misma confidence 0,5 y sin trabajo). Sin el coste decidía el código de zona, y Tetuán (≈ 411.000 €) quedaba fuera de los cinco «casi» con 400.000 €. Con él, los «casi» empiezan por la zona más cercana al tope: Arganzuela (406.000 €), Tetuán, Centro, Retiro y Chamberí.
@@ -1391,6 +1391,10 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
    - **`unknown_by_constraint`** (nuevo, opcional): cuántas de las `zones_unknown` tienen cada condición UNKNOWN.
    - **Relajaciones:** no se ofrece relajar una condición que ninguna zona incumple si no añade zonas. Una que sí añade zonas, como quitar el límite de un trayecto sin calcular, se sigue ofreciendo (test).
    - **Web:** con «Comprar» dice el motivo (`rc.sin_dato.compra`: «En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes)…»). Bajo el presupuesto va `presupuesto.compra.fuente`, y la tarjeta de una zona sin datos lleva `zona.compra.sin_precio`.
+   - **Revisión del PR #59 (R-01 y R-03):**
+     - La web cuenta como «municipios» solo las zonas de `all_zones` que son municipios, no tienen precio, no fallan nada y no cumplen todo. Si entre ellas hay distritos o barrios, dice «zonas».
+     - La tarjeta da el motivo por nivel y solo si la zona no trae precio.
+     - La ayuda de «Dato aproximado» ya no dice «El dato es oficial»: «Es una aproximación: la zona tiene poca población, la fuente no está completa o el dato es una estimación. Tómalo como orientativo.»
 6b. **El precio de cada zona, a la vista** (ampliación pedida por el coordinador, por la prueba con usuarios del 14 nov: «si tuviera un precio aproximado por zona, se entendería mejor»).
    - **Contrato (aditivo y retrocompatible):** `RankedZone.estimated_cost_confidence` y, en `all_zones` (`ZoneMatch`), `estimated_cost_eur` y `estimated_cost_confidence`. La confidence es la de su precio o su alquiler: 0,5 en la estimación. Sin coste, las dos van a `null`, nunca a 0.
    - **Web:** junto al % de cada fila («Zonas que encajan», «Casi encajan» y los barrios) sale «≈ 385.000 €» o «≈ 1.101 €/mes». Bajo el nombre de la tarjeta de zona sale «Comprar ≈ 385.000 €», para cualquier zona evaluada.
@@ -1401,9 +1405,13 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
    - **400.000 €:** cumplen 41 zonas: 27 municipios y 14 distritos. Con la clave de D-239, el top 10 son 6 distritos y 4 municipios: Puente de Vallecas, Usera, Carabanchel, Latina, Villaverde, Coslada, Parla, Móstoles, San Blas-Canillejas y Leganés. Tetuán no cumple por poco (≈ 411.000 €) y sale 2.º en «casi».
    - **400.000 € dentro de Tetuán:** cumplen 4 de 6 barrios: Valdeacederas (≈ 348.000 €), Berruguete (≈ 378.000 €), Almenara y Bellas Vistas.
    - **1.000.000 € con trabajo en Cuatro Torres:** cumplen 48 y los 10 primeros son distritos (Chamberí, Tetuán, Chamartín y Fuencarral-El Pardo al 100 %). Con 45 minutos como máximo cumplen 13 y los 10 primeros también son distritos, de Chamberí a Fuencarral-El Pardo.
-8. **Despliegue: desplegar → sincronizar → smoke.** Tras el sync no hay vuelta atrás a un despliegue anterior sin retirar estas filas.
-   - **Por qué:** el código anterior a este PR lee la estimación como un `price_m2` más, igual que un valor tasado publicado. Hoy solo le salva el orden alfabético de la consulta: `precio_…` llega antes que `valor_…`, y la fila SIN DATOS del valor tasado la pisa. Nada garantiza ese orden, así que no se confía en él.
-   - **Rollback tras el sync:** borrar antes la fila `precio_compra_estimado_m2` de `feature_registry`; sus 152 filas de `feature_value` caen por CASCADE. Las 131 filas SIN DATOS de barrio del valor tasado y las tres métricas no molestan al código anterior.
+8. **Despliegue: desplegar → sincronizar → smoke.** Con el rol propio, volver a un despliegue anterior también es seguro tras el sync, sin borrar filas.
+   - **Código nuevo con los datos de antes** (desplegado y sin sincronizar): los distritos y barrios salen sin precio. Los textos no los llaman municipios ni prometen una estimación:
+     - `rc.sin_dato.compra` cuenta por nivel y dice «zonas»;
+     - la tarjeta dice que el valor tasado se publica para Madrid entero, no por distrito;
+     - la condición dice lo mismo (`PURCHASE_MISSING_IN_CITY`), nunca «solo municipios de más de 25.000 habitantes».
+   - **Código anterior con los datos nuevos** (sync antes de desplegar, o rollback a un despliegue desde `ad4a8f2`): `indicators_by_zone` no conoce `price_m2_estimate` y lo ignora con el aviso «fit bindings ignored by this version». Los distritos siguen UNKNOWN como hoy, y no hace falta borrar filas. Las 131 filas SIN DATOS de barrio del valor tasado y las tres métricas tampoco le molestan.
+   - **Corrección de una versión anterior de este texto (R-04):** decía que «nada garantiza ese orden», pero sí lo garantiza: la consulta de la búsqueda ordena por `feature_id`. Con el rol propio, ese orden ya no importa.
    - **Tablas del sync** (`make supabase-sync PROFILE=demo` copia las tablas enteras):
      - `metric_registry`: 3 filas nuevas;
      - `feature_registry`: 1 fila nueva y 1 cambiada (fuentes y nivel barrio del valor tasado);
@@ -1412,6 +1420,50 @@ Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-comp
      - Las 3.192 observaciones nuevas de `metric_observation` solo van con `PROFILE=full`; la API no las lee.
    - **Recalcular en `housing`:** los comandos están en el PR (catálogo, panel y las dos features).
 9. **Resuelto por D-239.** Antes de D-239, sin trabajo ni prioridades y comprando con 400.000 €, los 10 primeros eran municipios al 100 %: el precio publicado (confidence 0,8) desempataba antes que el estimado (0,5). Con los servicios a pie por delante de la confidence, suben los distritos (6 de 10, ver §7).
+
+## D-238 — «¿Dónde?»: toda la Comunidad, Madrid capital por barrios, alrededores o pueblos (2026-11-14)
+Decisión de Mariano (14 nov) tras la prueba con usuarios: cuatro personas pidieron buscar solo en una parte de la región. Es aditiva y reversible: un campo opcional del escenario, sin datos nuevos ni cambio de método (`fit-0.7` no cambia).
+1. **Criterio y fuente.** Las tres partes agrupan las 11 zonas estadísticas (NUTS 4) del Instituto de Estadística de la Comunidad de Madrid:
+   - «Madrid capital» es la zona 01 (Municipio de Madrid);
+   - «Alrededores de Madrid», las cuatro metropolitanas (02 Norte, 03 Este, 04 Sur y 05 Oeste Metropolitano): 40 municipios;
+   - «Pueblos», las otras seis (Sierra Norte, Nordeste, Sudeste, Sudoeste, Sierra Sur y Sierra Central): 138 municipios.
+   - Fuente: «Nomenclátor imprimible de la Comunidad de Madrid. 2025», §3.4 «Zonificación estadística y relación de municipios» (https://gestiona3.madrid.org/iestadis/fijas/estructu/general/territorio/descarga/nomenme25.pdf), consultado el 14 nov. La tabla de 2010 del mismo Instituto pone los mismos municipios en cada zona.
+   - Por qué esta: es oficial y de la Comunidad, cubre los 179 municipios sin huecos ni solapes y es la que usa el Instituto en sus propias tablas. Se descartan las coronas del Consorcio de Transportes, que son zonas de tarifa, y un radio en kilómetros, que sería un criterio nuestro.
+   - Se declara una consecuencia: Aranjuez, Ciempozuelos y Valdemoro son «alrededores» (Sur Metropolitano), y Meco o Villalbilla, «pueblos». Es la zonificación del Instituto, no la nuestra.
+2. **Mapeo estático versionado.** `data/catalog/zoning/search_scope.yaml` copia la tabla tal como se publica (código de la Comunidad y nombre de los 179 municipios) con su fuente. Está comprobada municipio a municipio contra el PDF: 179 de 179, misma zona y mismo nombre. El código de la Comunidad pasa a INE con `ine_municipality_from_cm`, y los 179 municipios de la base están en el mapeo, sin ninguno de más ni de menos.
+   - La imagen de la API no lleva `data/`, así que `scripts/export_search_scope.py` genera `hi_domain/geo/zoning_data.py`.
+   - `make lint`, la CI y `tests/data` comprueban que el módulo generado está al día.
+3. **Contrato.** `ScenarioState.scope` (`SearchScope`: `all`, `madrid`, `alrededores`, `pueblos`) es opcional y vale `all` por defecto. Esquemas JSON y tipos de la web regenerados (`make schemas`, `npm run -w apps/web contracts`).
+4. **Búsqueda** (`hi_api/services/scope.py`).
+   - `all` es la de siempre: municipios, y Madrid por distritos.
+   - `alrededores` y `pueblos` dejan solo sus municipios.
+   - `madrid` ordena los 131 barrios de la capital en lugar de los 21 distritos, con lo mismo que `/search/barrios` (D-232): `load_barrios` sin distrito, los mismos `FIT_VALUES` e `indicators_by_zone`, y el trayecto del distrito para el barrio que no tiene el suyo (D-232 §5).
+   - El Reality Check conserva el ámbito en `relaxed_scenario`. «Qué falta» sigue por distrito: `gap_highlights` va vacío en los barrios. La explicación del MCP mira toda la región, donde sea que buscó la persona.
+5. **Por qué barrios en la capital.** Con 21 distritos la capital diferencia poco: en el caso del ejemplo, los cuatro primeros empatan al 98 %. Es la fase 2 del diseño de D-232, que quedó fuera («los 131 barrios en el ranking»), acotada a «Madrid capital». Los barrios ya tienen indicadores, trayectos y nombres oficiales. En «Toda la Comunidad», Madrid sigue por distritos, para no comparar barrios con municipios enteros.
+6. **Retrocompatibilidad.** La web omite `scope` con «Toda la Comunidad», así que el ejemplo, los enlaces compartidos y la API desplegada siguen igual.
+   - **Eco del ámbito.** La API devuelve siempre `scope` (con `all` si no se envió) en cada escenario que repite: `SearchResult.scenario`, cada `relaxed_scenario` del Reality Check, `BarrioSearchResult.scenario` y `ZoneExplanation.scenario`. La web lo quita antes de reenviar. Al aplicar una opción de «¿Y si cambias algo?» quita el `all`. En «Los barrios que mejor encajan» no envía el ámbito, porque el distrito ya dice dónde buscar.
+   - **Comprobado contra producción** con el caso del ejemplo: 27 zonas; Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %, y el mismo top 10. También son idénticos los hechos, `all_zones`, los «casi» y las opciones. La única diferencia es ese eco de `scope`. Vuelto a comprobar tras D-239 (PR #56): mismo orden de `results` y de `near_misses`.
+   - No hay datos nuevos que sincronizar: basta el despliegue.
+7. **Web.**
+   - Selector «¿Dónde?» al principio de «Tu búsqueda», con radios nativos en 2 × 2.
+   - Con «Madrid capital», el mapa pide los contornos de los 131 barrios (unos 90 KB, simplificados como los distritos) y los pinta con su encaje en lugar de los distritos. Las zonas fuera del ámbito quedan sin pintar.
+   - La lista y la tarjeta dicen «Lucero · Latina»: el distrito sale de las 7 primeras cifras del código del barrio.
+   - La tarjeta de un barrio enseña el «Qué falta» de su distrito, con el aviso de que es del distrito entero, y lleva a la vista del distrito.
+   - Textos en `pitch/textos_web.md` (`donde.*`, `resultados.de.*`, `zona.barrio.*`, `mapa.aria.encaje.barrios`). Capturas en `evidence/gate-06/2026-11-14-scope-barrios/`.
+8. **Pruebas reales** (base local, solo lectura).
+   - **Ejemplo con «Madrid capital»:** 131 barrios, 78 cumplen todo. Lucero y Campamento (Latina) al 99 %; Media Legua y Vinateros (Moratalaz), Atalaya y Costillares (Ciudad Lineal), Pinar del Rey (Hortaleza), Los Cármenes (Latina), Numancia y San Diego (Puente de Vallecas) al 98 %. Son barrios de los distritos que encabezan la búsqueda por distritos. Sol sale sin datos porque no tiene alquiler (D-232 §4).
+   - **Pareja, alquiler hasta 10.000 €, transporte y salud, «Madrid capital»:** 130 de 131 cumplen y 106 empatan al 100 %, porque el transporte y el centro de salud quedan a un paseo en casi toda la capital. Con el desempate de D-239 (servicios a pie), arriba quedan barrios muy servidos: Almendrales, Embajadores, Gaztambide, Trafalgar, Argüelles, Arapiles, Lista, Prosperidad, Guindalera y Chopera. La lista avisa: «Encajan 106 barrios igual de bien…» (`resultados.empate`).
+   - **La misma pareja en «Alrededores de Madrid»:** 40 municipios, 34 cumplen. Móstoles, Parla, Torrejón de Ardoz, Alcalá de Henares, Alcorcón, Leganés, Coslada y Fuenlabrada al 100 %, Getafe al 99 % y Collado Villalba al 98 %. Los 6 restantes salen sin datos de alquiler.
+   - **En «Pueblos»:** 138 municipios y solo 2 cumplen (Navalcarnero al 94 % y Arroyomolinos al 90 %), porque 136 no tienen alquiler publicado y su presupuesto sale UNKNOWN (D-214). Sin límite de presupuesto entran los 138.
+9. **Comprar en un barrio** sale UNKNOWN, como en los distritos, hasta que llegue el precio de compra estimado de D-234.
+10. **Revisión del PR #58.** No hubo bloqueantes. Se cambió lo siguiente:
+    - **«Pueblos» con alquiler** ya no parece un fallo. La ayuda del selector avisa de que casi ningún pueblo publica su alquiler. Bajo el resultado sale cuántos pueblos dan «Sin datos» y por qué: la Comunidad solo publica el alquiler de los municipios de más de 20.000 habitantes, que son 37 de 179. La tarjeta de un municipio sin alquiler lo dice como posibilidad, igual que con «Comprar».
+    - **«Lo que más limita tu búsqueda».** `binding_constraint` cuenta como excluida toda zona donde la condición no es PASS, también si es UNKNOWN (semántica de la API, sin cambio). La web solo nombra esa condición si sus FAIL son al menos tantos como las zonas sin datos. Así, con un presupuesto de alquiler que no falla en ningún pueblo, ya no dice «Alquiler». En el ejemplo sigue saliendo «Colegio…» (151 FAIL frente a 15 sin datos).
+    - **Las palabras siguen al ámbito:** «salen 78 barrios», «salen 2 pueblos», «Encajan 106 barrios igual de bien», «El 1.º que más encaja».
+    - **Una zona fuera del ámbito** dice en su tarjeta «Fuera de tu búsqueda (Madrid capital).».
+    - **Si fallan los contornos de los barrios**, la leyenda lo dice con «Reintentar», y la siguiente búsqueda por barrios los vuelve a pedir.
+    - **Al pasar el mapa de barrios a distritos**, el barrio elegido se convierte en su distrito. Al pasar de distritos a barrios, el distrito elegido se suelta.
+    - **Otros cambios:** la ayuda del selector va en `aria-describedby`; la herramienta MCP `buscar_zonas` explica `scope` y que `explicar_zona` no explica barrios; y `==` en lugar de `is` con `SearchScope`.
 
 ## D-239 — Desempate del ranking por servicios a pie y hospitales públicos o privados (2026-11-14)
 Feedback de usuarios de prueba del 14 nov: con mucho presupuesto el buscador recomienda «siempre pueblos y en el mismo orden», y no se distinguen los hospitales públicos de los privados. Dos cambios pequeños y reversibles, sin tocar la puntuación (`fit-0.7` no cambia de versión). Evidencia: `evidence/gate-06/2026-11-14-tiebreak-hospitals/`.

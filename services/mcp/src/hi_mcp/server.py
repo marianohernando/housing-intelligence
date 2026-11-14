@@ -102,10 +102,14 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
         "Buscar zonas para vivir",
         "Ordena los municipios de la Comunidad de Madrid (Madrid capital por sus 21 distritos) "
         "para un ScenarioState: lo mismo que POST /api/v1/search y el buscador de la web. "
-        "Devuelve las 10 mejores zonas que cumplen todas las condiciones, hasta 5 que fallan "
-        "una, el Reality Check (qué añade relajar cada condición) y los datasets. Cada zona trae "
-        "su % de encaje y 3-5 hechos con su confianza. include_map=true añade all_zones (las 199 "
-        "zonas para pintar un mapa, la mitad de la respuesta).",
+        "scope (D-238) busca solo en una parte, por las zonas estadísticas de la Comunidad: "
+        "all (por defecto, toda la región), madrid (los 131 barrios de la capital en lugar de "
+        "sus distritos), alrededores (los 40 municipios metropolitanos) o pueblos (los otros "
+        "138). Devuelve las 10 mejores zonas que cumplen todas las condiciones, hasta 5 que "
+        "fallan una, el Reality Check (qué añade relajar cada condición) y los datasets. Cada "
+        "zona trae su % de encaje y 3-5 hechos con su confianza. include_map=true añade "
+        "all_zones (todas las zonas evaluadas, 199 con scope all, para pintar un mapa; la mitad "
+        "de la respuesta). Un barrio no se explica con explicar_zona: explica su distrito.",
     ),
     "que_falta": (
         "Qué falta en una zona",
@@ -121,7 +125,8 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
         "datasets con el texto que pide su licencia (attribution_text) y cuántos son de la "
         "Comunidad de Madrid. Sin scenario no se pide nada (encaje 100 %, como en el buscador) "
         "y los hechos son los minutos a pie a los servicios. Solo municipios y distritos de "
-        "Madrid (Madrid capital va por distritos).",
+        "Madrid (Madrid capital va por distritos), nunca barrios, aunque buscar_zonas con scope "
+        "madrid los devuelva; el scope del escenario no deja fuera la zona.",
     ),
     "encontrar_zona": (
         "Encontrar una zona por su nombre",

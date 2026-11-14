@@ -5,18 +5,23 @@ import { describe, expect, it } from "vitest";
 import type { RankedZone, RealityCheck, SearchResult, ZoneMatch } from "@/contracts/search_response";
 
 import {
+  byBarrio,
   constraintLabels,
   countFit,
   commuteTakes,
+  evaluatedText,
   failedLabels,
   fewZones,
   fitClass,
   hasWalkingFact,
+  limitingConstraint,
+  noneText,
   optionText,
   paintFit,
   passingText,
   rankText,
   relaxOptions,
+  rentUnknownText,
   tiedAtTop,
   tiedText,
   unknownText,
@@ -26,6 +31,7 @@ import {
   zoneKeyOf,
   zonePrice,
   zonePriceOf,
+  zoneWord,
 } from "../fit";
 import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
 
@@ -163,6 +169,65 @@ describe("zoneFit and the names of the conditions", () => {
   });
 });
 
+describe("where the search looked («¿Dónde?», D-238)", () => {
+  const compared = (scope: SearchResult["scenario"]["scope"], n: number) => ({ scenario: { scope }, reality_check: { zones_evaluated: n } });
+
+  it("says how many zones it compared, and where (resultados.de)", () => {
+    expect(evaluatedText(compared(undefined, 199))).toBe("De 199 zonas de la Comunidad de Madrid.");
+    expect(evaluatedText(compared("all", 199))).toBe("De 199 zonas de la Comunidad de Madrid.");
+    expect(evaluatedText(compared("madrid", 131))).toBe("De 131 barrios de Madrid capital.");
+    expect(evaluatedText(compared("alrededores", 40))).toBe("De 40 municipios de los alrededores de Madrid.");
+    expect(evaluatedText(compared("pueblos", 138))).toBe("De 138 pueblos de la Comunidad de Madrid.");
+  });
+
+  it("ranks Madrid capital by barrio only when the search was over the capital", () => {
+    expect(byBarrio({ scenario: { scope: "madrid" } })).toBe(true);
+    expect(byBarrio({ scenario: { scope: "alrededores" } })).toBe(false);
+    expect(byBarrio({ scenario: {} })).toBe(false);
+    expect(byBarrio(null)).toBe(false);
+  });
+
+  it("names the zones by the scope's word, with its gender", () => {
+    expect(zoneWord({ scenario: {} })).toBe("zona");
+    expect(zoneWord({ scenario: { scope: "pueblos" } })).toBe("pueblo");
+    expect(passingText(78, false, "barrio")).toBe("Con tu búsqueda tal cual salen 78 barrios.");
+    expect(passingText(2, false, "pueblo")).toBe("Con tu búsqueda tal cual salen 2 pueblos.");
+    expect(passingText(1, true, "municipio")).toBe("Con este cambio sale 1 municipio.");
+    expect(passingText(0, false, "barrio")).toBe("Con tu búsqueda tal cual no sale ningún barrio.");
+    expect(passingText(0)).toBe("Con tu búsqueda tal cual no sale ninguna zona.");
+    expect(noneText("pueblo")).toBe("Ningún pueblo cumple todo lo que pides. Mira abajo qué pasa si cambias algo.");
+    expect(unknownText(136, "pueblo")).toBe("En 136 pueblos no podemos comprobarlo todo por falta de datos. No los contamos como buenos.");
+    expect(unknownText(1, "barrio")).toBe("En 1 barrio no podemos comprobarlo todo por falta de datos. No lo contamos como bueno.");
+    expect(optionText({ label: "+150 €/mes", zones_if_relaxed: 93, added_zones: 15 }, "barrio").count).toBe("saldrían 93 barrios, 15 más");
+    expect(rankText(1, "barrio")).toBe("El 1.º que más encaja");
+    expect(rankText(3)).toBe("La 3.ª que más encaja");
+  });
+
+  it("says why the villages come out «Sin datos» when renting, and only then", () => {
+    const search = (scope: "pueblos" | "alrededores", kind: "rent" | "buy", unknown: number) => ({
+      scenario: { scope, budget: { kind } },
+      reality_check: { zones_unknown: unknown, zones_evaluated: 138 },
+    });
+    expect(rentUnknownText(search("pueblos", "rent", 136))).toBe(
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.",
+    );
+    expect(rentUnknownText(search("pueblos", "rent", 0))).toBeNull();
+    expect(rentUnknownText(search("pueblos", "buy", 136))).toBeNull();
+    expect(rentUnknownText(search("alrededores", "rent", 6))).toBeNull();
+  });
+
+  it("names what limits the search only when its FAILs, not missing data, leave the zones out", () => {
+    const limited = (failing: number, unknown: number) =>
+      limitingConstraint({
+        all_zones: [...Array.from({ length: failing }, (_, i) => match("municipio", `28${i}`, 90, false, ["budget"])), match("municipio", "28999", null, false)],
+        reality_check: { ...rc(0, []), zones_unknown: unknown, binding_constraint: "budget" },
+      });
+    expect(limited(20, 15)).toBe("budget");
+    expect(limited(0, 136)).toBeNull();
+    expect(limited(3, 6)).toBeNull();
+  });
+});
+
 describe("«¿Y si cambias algo?»", () => {
   it("offers only the options that add zones, in the API order", () => {
     const options = relaxOptions(rc(0, [["budget", 48, 48], ["near:colegio", 0, 0]]));
@@ -189,23 +254,42 @@ describe("«¿Y si cambias algo?»", () => {
   });
 
   it("says why when buying: municipios with no published purchase price (rc.sin_dato.compra, D-234)", () => {
-    expect(unknownText(151, 151)).toBe(
+    expect(unknownText(151, "zona", { n: 151, onlyMunicipios: true })).toBe(
       "En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas.",
     );
-    expect(unknownText(1, 1)).toBe(
+    expect(unknownText(1, "zona", { n: 1, onlyMunicipios: true })).toBe(
       "En 1 zona no podemos comprobarlo todo: sin precio de compra publicado en 1 municipio (solo lo tienen los de más de 25.000 habitantes). No la contamos como buena.",
     );
-    expect(unknownText(3, 0)).toBe(unknownText(3));
+    expect(unknownText(40, "pueblo", { n: 40, onlyMunicipios: true })).toContain("sin precio de compra publicado en 40 pueblos");
+    expect(unknownText(3, "zona", { n: 0, onlyMunicipios: true })).toBe(unknownText(3));
   });
 
-  it("counts the zones without a purchase price only with a budget to buy", () => {
-    const check = { ...rc(10), zones_unknown: 151, unknown_by_constraint: { budget: 151, "commute:0": 4 } };
+  it("never calls the districts municipios nor promises an estimate before the sync (D-234)", () => {
+    // The code deployed and the estimate not synced yet: 151 municipios and the 21 districts unpriced
+    expect(unknownText(172, "zona", { n: 172, onlyMunicipios: false })).toBe(
+      "En 172 zonas no podemos comprobarlo todo: sin precio de compra en 172 zonas (el valor tasado de la vivienda solo se publica por municipio, y solo en los de más de 25.000 habitantes). No las contamos como buenas.",
+    );
+    expect(unknownText(131, "barrio", { n: 131, onlyMunicipios: false })).toContain("sin precio de compra en 131 barrios");
+  });
+
+  it("counts the zones without a purchase price from all_zones, by level, only with a budget to buy", () => {
+    const priced = (z: ZoneMatch, cost: number | null): ZoneMatch => ({ ...z, estimated_cost_eur: cost });
+    const zones = [
+      priced(match("municipio", "28001", null, false), null),
+      priced(match("municipio", "28002", null, false), null),
+      priced(match("municipio", "28003", 0, false, ["budget"]), 420_000), // fails: not unknown
+      priced(match("municipio", "28004", null, false, ["near:colegio"]), null), // fails something else
+      priced(match("municipio", "28005", 100, true), 200_000),
+    ];
+    const district = priced(match("distrito", "2807906", null, false), null);
+    const check = { ...rc(10), zones_unknown: 2, unknown_by_constraint: { budget: 2 } };
     const buy = { schema_version: 2, budget: { kind: "buy", amount_eur: 400_000 } } as const;
     const rent = { schema_version: 2, budget: { kind: "rent", amount_eur: 1_200 } } as const;
-    expect(zonesWithoutPrice({ scenario: buy, reality_check: check })).toBe(151);
-    expect(zonesWithoutPrice({ scenario: rent, reality_check: check })).toBe(0);
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check, all_zones: zones })).toEqual({ n: 2, onlyMunicipios: true });
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check, all_zones: [...zones, district] })).toEqual({ n: 3, onlyMunicipios: false });
+    expect(zonesWithoutPrice({ scenario: rent, reality_check: check, all_zones: zones }).n).toBe(0);
     // An API from before D-234 has no unknown_by_constraint: the generic text stays
-    expect(zonesWithoutPrice({ scenario: buy, reality_check: rc(10) })).toBe(0);
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: rc(10), all_zones: zones }).n).toBe(0);
   });
 
   it("tells each option with the API's figures, never recomputed", () => {
@@ -287,9 +371,15 @@ describe("many zones tied at the top (resultados.empate, D-239)", () => {
   });
 
   it("says so only with more than 10, with the number of zones", () => {
-    expect(tiedText({ results: [ranked(100)], all_zones: tied(10) })).toBeNull();
-    expect(tiedText({ results: [ranked(100)], all_zones: tied(57) })).toBe(
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(10), scenario: {} })).toBeNull();
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(57), scenario: {} })).toBe(
       "Encajan 57 zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
+    );
+  });
+
+  it("names the zones of the scope: 106 barrios of Madrid capital (D-238)", () => {
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: { scope: "madrid" } })).toBe(
+      "Encajan 106 barrios igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
     );
   });
 

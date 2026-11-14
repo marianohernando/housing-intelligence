@@ -238,6 +238,10 @@ export type PriorityKey =
  */
 export type Priorities = PriorityKey[];
 export type SchemaVersion = 2;
+/**
+ * Where to search; Madrid capital is ranked by barrio instead of by district
+ */
+export type SearchScope = "all" | "madrid" | "alrededores" | "pueblos";
 export type ZonesIfRelaxed = number;
 /**
  * Sorted by added_zones, largest first
@@ -416,6 +420,7 @@ export interface ScenarioState {
   nearby?: Nearby;
   priorities?: Priorities;
   schema_version?: SchemaVersion;
+  scope?: SearchScope;
 }
 /**
  * A place the household travels to often («Trabajo en»).

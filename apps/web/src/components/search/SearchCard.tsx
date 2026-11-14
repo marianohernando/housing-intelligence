@@ -3,7 +3,7 @@
 import { Baby, Bus, ChevronDown, Cross, GraduationCap, HeartHandshake, type LucideIcon, Search, TrainFront, Trees, User, Users } from "lucide-react";
 import { useId, useState } from "react";
 
-import type { BudgetKind, PriorityKey } from "@/contracts/scenario_state";
+import type { BudgetKind, PriorityKey, SearchScope } from "@/contracts/scenario_state";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import Counter from "@/components/ui/Counter";
@@ -14,11 +14,15 @@ import { formatEuros } from "@/lib/format";
 import {
   BUDGET_RANGE,
   peopleAtHome,
+  SCOPE_LABEL,
+  SCOPES,
+  scopeOf,
   setAdults,
   setBudgetAmount,
   setBudgetKind,
   setMinors,
   setNoBudgetLimit,
+  setScope,
   setSeniors,
   togglePriority,
 } from "@/lib/scenario";
@@ -28,9 +32,10 @@ import { useScenario } from "./ScenarioProvider";
 import styles from "./SearchCard.module.css";
 import WorkField from "./WorkField";
 
-// Copy from pitch/textos_web.md (busqueda.*, hogar.*, importa.*, trabajo.*, presupuesto.*)
+// Copy from pitch/textos_web.md (busqueda.*, donde.*, hogar.*, importa.*, trabajo.*, presupuesto.*)
 const TEXT = {
   title: "Tu búsqueda",
+  where: "¿Dónde?",
   show: "Ver mi búsqueda",
   hide: "Ocultar mi búsqueda",
   home: "Tu hogar",
@@ -77,6 +82,18 @@ const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: str
   { key: "sin_escaleras", label: "Sin escaleras", icon: TrainFront, help: "Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa." },
 ];
 
+/**
+ * «¿Dónde?» (D-238): what each part of the region compares (donde.ayuda.*), by the statistical
+ * zoning of the Comunidad de Madrid. «Toda la Comunidad» is the search as it always was.
+ */
+const WHERE_HELP: Record<SearchScope, string> = {
+  all: "Madrid capital por distritos y el resto de la Comunidad por municipios.",
+  madrid: "Comparamos sus 131 barrios.",
+  alrededores: "Los 40 municipios del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid.",
+  pueblos:
+    "Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Casi ninguno publica su alquiler: si buscas alquiler, la mayoría saldrán «Sin datos».",
+};
+
 function peopleText(n: number): string {
   return n === 1 ? "1 persona en casa" : `${n} personas en casa`;
 }
@@ -97,6 +114,8 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   const priorities = scenario.priorities ?? [];
   const budget = scenario.budget ?? null;
   const range = BUDGET_RANGE[budget?.kind ?? "rent"];
+  const scope = scopeOf(scenario);
+  const whereHelpId = `${bodyId}-where-help`;
 
   return (
     <GlassCard as="section" aria-labelledby={`${bodyId}-title`} className={styles.card}>
@@ -109,9 +128,31 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
           </button>
         )}
       </div>
-      {!open && <p className={styles.summary}>{peopleText(peopleAtHome(scenario))} · {budgetText(budget)}</p>}
+      {!open && (
+        <p className={styles.summary}>
+          {peopleText(peopleAtHome(scenario))} · {budgetText(budget)}
+          {scope !== "all" && ` · ${SCOPE_LABEL[scope]}`}
+        </p>
+      )}
 
       <div id={bodyId} hidden={!open} className={styles.body}>
+        {available && (
+          <fieldset className={styles.group}>
+            <legend>{TEXT.where}</legend>
+            <Segmented
+              legend={TEXT.where}
+              columns={2}
+              describedBy={whereHelpId}
+              value={scope}
+              options={SCOPES.map((value) => ({ value, label: SCOPE_LABEL[value] }))}
+              onChange={(value) => update((s) => setScope(s, value))}
+            />
+            <p id={whereHelpId} className={styles.help}>
+              {WHERE_HELP[scope]}
+            </p>
+          </fieldset>
+        )}
+
         <fieldset className={styles.group}>
           <legend>
             {TEXT.home} <span className={styles.legendHelp}>{TEXT.homeHelp}</span>

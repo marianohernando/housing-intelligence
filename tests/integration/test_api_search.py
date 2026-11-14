@@ -206,3 +206,58 @@ def test_rent_says_it_is_the_rent_of_a_lease_signed_in_2024(client: TestClient) 
     cited = {d.dataset_id: d for d in data.datasets}
     assert "aeat_alquiler_nuevos_contratos_codigo_postal" in cited
     assert cited["aeat_alquiler_nuevos_contratos_codigo_postal"].is_cm_open_data is False
+
+
+LA_ACEBEDA = "28001"  # Sierra Norte: a village (D-238)
+
+
+def _zones(client: TestClient, scope: str | None) -> dict[str, str]:
+    """Code and level of every zone the search evaluates in a scope (None: not sent)."""
+    scenario = _family() if scope is None else _family() | {"scope": scope}
+    data = _search(client, scenario).data
+    assert data.reality_check.zones_evaluated == len(data.all_zones)
+    assert data.scenario.scope == (scope or "all")
+    return {z.zone.code: z.zone.level.value for z in data.all_zones}
+
+
+def test_a_search_without_scope_is_the_whole_region_as_before(client: TestClient) -> None:
+    """D-238: the example and every shared link send no scope and must not change."""
+    plain = _search(client, _family()).data
+    explicit = _search(client, _family() | {"scope": "all"}).data
+    assert plain.model_dump(exclude={"scenario"}) == explicit.model_dump(exclude={"scenario"})
+    assert set(_zones(client, None).values()) == {"municipio", "distrito"}
+
+
+def test_surroundings_and_villages_split_the_municipios_outside_madrid(
+    client: TestClient,
+) -> None:
+    everywhere = _zones(client, None)
+    around, villages = _zones(client, "alrededores"), _zones(client, "pueblos")
+    assert around == {AJALVIR: "municipio"}  # Este Metropolitano
+    assert villages == {LA_ACEBEDA: "municipio"}
+    municipios = {code for code, level in everywhere.items() if level == "municipio"}
+    assert set(around) | set(villages) == municipios
+
+
+def test_madrid_capital_is_ranked_by_barrio(client: TestClient) -> None:
+    everywhere = _zones(client, None)
+    capital = _zones(client, "madrid")
+    assert capital and set(capital.values()) == {"barrio"}
+    districts = {code for code, level in everywhere.items() if level == "distrito"}
+    assert {code[:7] for code in capital} <= districts  # each barrio inside a ranked district
+    assert {"28079011", "28079016"} <= set(capital)  # Palacio and Sol
+    data = _search(client, _family() | {"scope": "madrid"}).data
+    for ranked in [*data.results, *data.near_misses]:
+        assert ranked.gap_highlights == []  # «Qué falta» stays by district (D-232)
+        assert ranked.zone.municipio_ine == "28079"
+
+
+def test_a_relaxed_scenario_keeps_its_scope(client: TestClient) -> None:
+    scenario = _family() | {"budget": {"kind": "rent", "amount_eur": 600}, "scope": "madrid"}
+    check = _search(client, scenario).data.reality_check
+    assert check.relaxations
+    for option in check.relaxations:
+        assert option.relaxed_scenario.scope == "madrid"
+        again = _search(client, option.relaxed_scenario.model_dump(mode="json")).data
+        assert again.reality_check.zones_passing == option.zones_if_relaxed
+        assert {z.zone.level.value for z in again.all_zones} == {"barrio"}
