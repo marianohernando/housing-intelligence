@@ -1,0 +1,351 @@
+{
+  "hospitales_1440": {
+    "recuento": "6 hospitales en Moncloa-Aravaca",
+    "que_significa_plegado": true,
+    "lista": [
+      "Público Hospital Universitario Clínico San Carlos 861 861 camas instaladas",
+      "Público Hospital Universitario Fundación Jiménez Díaz gestión privada 651 651 camas instaladas",
+      "Privado Clínica López Ibor Hospital de salud mental 67 67 camas instaladas",
+      "Privado Hospital Ha Universitario Moncloa 235 235 camas instaladas",
+      "Privado Hospital Pardo de Aravaca 88 88 camas instaladas",
+      "Privado Hospital Universitario La Zarzuela 116 116 camas instaladas"
+    ],
+    "lectores": [
+      "861 camas instaladas",
+      "651 camas instaladas",
+      "67 camas instaladas",
+      "235 camas instaladas",
+      "88 camas instaladas",
+      "116 camas instaladas"
+    ],
+    "que_significa": "Público: de la red del Servicio Madrileño de Salud, aunque lo gestione una empresa («gestión privada»). Privado: el resto. Según el registro de centros sanitarios y la red de hospitales públicos de la Comunidad de Madrid.",
+    "axe": [],
+    "overflow_px": 0,
+    "etiqueta_mapa": "Privado Hospital de salud mental Clínica López Ibor · 67 67 camas instaladas",
+    "puntos": 1,
+    "clics": [
+      [
+        900,
+        338,
+        26,
+        [
+          "Privado Hospital de salud mental Clínica López Ibor · 67 67 camas instaladas",
+          "6 hospitales en Moncloa-Aravaca"
+        ]
+      ]
+    ],
+    "consola": []
+  },
+  "m2_1440": {
+    "ejemplo_envia": null,
+    "linea_ejemplo": "Para unos 77 m² (cámbialo)",
+    "opciones": [
+      "Lo normal para tu hogar (77 m²)",
+      "40 m²",
+      "45 m²",
+      "50 m²",
+      "55 m²",
+      "60 m²",
+      "65 m²",
+      "70 m²",
+      "75 m²",
+      "80 m²",
+      "85 m²",
+      "90 m²",
+      "95 m²",
+      "100 m²",
+      "105 m²",
+      "110 m²",
+      "115 m²",
+      "120 m²",
+      "125 m²",
+      "130 m²",
+      "135 m²",
+      "140 m²",
+      "145 m²",
+      "150 m²"
+    ],
+    "linea_60": "Para 60 m² (cámbialo)",
+    "axe_selector": [],
+    "envia": 60,
+    "api_primera": [
+      "Fuencarral-El Pardo",
+      994,
+      "Alquiler hasta 1.500 €/mes para 60 m²"
+    ],
+    "fila_1": "1 Fuencarral-El Pardo Distrito de Madrid 100 % de encaje ≈ 994 €/mes por 60 m² Alquiler: unos 994 € al mes por 60 m² Dato aproximado",
+    "tarjeta_precio": "Alquiler ≈ 994 €/mes por 60 m² Alquiler: unos 994 € al mes por 60 m² Dato aproximado",
+    "tarjeta_hecho_alquiler": "Alquiler ≈ 994 €/mes por 60 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "axe_tarjeta": [],
+    "overflow_px": 0,
+    "consola": [],
+    "axe": []
+  },
+  "cerca_pocas_1440": {
+    "api": [
+      4,
+      98,
+      6.3
+    ],
+    "ayuda": "Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.",
+    "linea": "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
+    "seccion": "Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles. Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA. Escuelas infantiles A pie: 6 min FALTA Colegios A pie: 4 min CUBIERTO Centros de salud A pie: 8 min CUBIERTO Ver todo lo que falta",
+    "axe": [],
+    "overflow_px": 0,
+    "consola": []
+  },
+  "ambito_1440": {
+    "aria_antes": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
+    "aria_ejemplo": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
+    "leyenda": "¿Qué quieres ver? Encaje con tu búsqueda Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Encaje con tu búsqueda Encaja menos Encaja más Cumple todo 78 barrios No cumple todo 52 barrios Sin datos 1 barrio",
+    "api": {
+      "zones_passing": 78,
+      "zones_unknown": 1,
+      "zones_evaluated": 131
+    },
+    "aria_madrid": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus barrios. Cada barrio tiene el color de su encaje con tu búsqueda y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.",
+    "axe": [],
+    "overflow_px": 0,
+    "consola": []
+  },
+  "ocio_1440": {
+    "casillas": [
+      [
+        "Bares y cafeterías",
+        19.5,
+        19.5
+      ],
+      [
+        "Restaurantes",
+        19.5,
+        19.5
+      ],
+      [
+        "Gimnasios y deporte",
+        19.5,
+        19.5
+      ],
+      [
+        "Cultura",
+        19.5,
+        19.5
+      ],
+      [
+        "Imprescindible",
+        19.5,
+        19.5
+      ]
+    ],
+    "lineas": [
+      [
+        "Bares y cafeterías",
+        47
+      ],
+      [
+        "Restaurantes",
+        47
+      ],
+      [
+        "Gimnasios y deporte",
+        47
+      ],
+      [
+        "Cultura",
+        47
+      ],
+      [
+        "Imprescindible",
+        47
+      ]
+    ],
+    "axe": [],
+    "overflow_px": 0,
+    "consola": []
+  },
+  "pie_1440": {
+    "tarjetas": 1,
+    "pies_visibles_sola": [
+      true
+    ],
+    "pies_visibles_con_otra_detras": [
+      false,
+      true
+    ],
+    "consola": []
+  },
+  "hospitales_390": {
+    "recuento": "6 hospitales en Moncloa-Aravaca",
+    "que_significa_plegado": true,
+    "lista": [
+      "Público Hospital Universitario Clínico San Carlos 861 861 camas instaladas",
+      "Público Hospital Universitario Fundación Jiménez Díaz gestión privada 651 651 camas instaladas",
+      "Privado Clínica López Ibor Hospital de salud mental 67 67 camas instaladas",
+      "Privado Hospital Ha Universitario Moncloa 235 235 camas instaladas",
+      "Privado Hospital Pardo de Aravaca 88 88 camas instaladas",
+      "Privado Hospital Universitario La Zarzuela 116 116 camas instaladas"
+    ],
+    "lectores": [
+      "861 camas instaladas",
+      "651 camas instaladas",
+      "67 camas instaladas",
+      "235 camas instaladas",
+      "88 camas instaladas",
+      "116 camas instaladas"
+    ],
+    "que_significa": "Público: de la red del Servicio Madrileño de Salud, aunque lo gestione una empresa («gestión privada»). Privado: el resto. Según el registro de centros sanitarios y la red de hospitales públicos de la Comunidad de Madrid.",
+    "axe": [],
+    "overflow_px": 0,
+    "etiqueta_mapa": "Privado Hospital de salud mental",
+    "puntos": 1,
+    "clics": [
+      [
+        330,
+        236,
+        124,
+        [
+          "Privado Hospital de salud mental",
+          "6 hospitales en Moncloa-Aravaca"
+        ]
+      ]
+    ],
+    "consola": []
+  },
+  "m2_390": {
+    "ejemplo_envia": null,
+    "linea_ejemplo": "Para unos 77 m² (cámbialo)",
+    "opciones": [
+      "Lo normal para tu hogar (77 m²)",
+      "40 m²",
+      "45 m²",
+      "50 m²",
+      "55 m²",
+      "60 m²",
+      "65 m²",
+      "70 m²",
+      "75 m²",
+      "80 m²",
+      "85 m²",
+      "90 m²",
+      "95 m²",
+      "100 m²",
+      "105 m²",
+      "110 m²",
+      "115 m²",
+      "120 m²",
+      "125 m²",
+      "130 m²",
+      "135 m²",
+      "140 m²",
+      "145 m²",
+      "150 m²"
+    ],
+    "linea_60": "Para 60 m² (cámbialo)",
+    "axe_selector": [],
+    "envia": 60,
+    "api_primera": [
+      "Fuencarral-El Pardo",
+      994,
+      "Alquiler hasta 1.500 €/mes para 60 m²"
+    ],
+    "fila_1": "1 Fuencarral-El Pardo Distrito de Madrid 100 % de encaje ≈ 994 €/mes por 60 m² Alquiler: unos 994 € al mes por 60 m² Dato aproximado",
+    "tarjeta_precio": "Alquiler ≈ 994 €/mes por 60 m² Alquiler: unos 994 € al mes por 60 m² Dato aproximado",
+    "tarjeta_hecho_alquiler": "Alquiler ≈ 994 €/mes por 60 m² (16,6 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "axe_tarjeta": [],
+    "overflow_px": 0,
+    "consola": [],
+    "axe": []
+  },
+  "cerca_pocas_390": {
+    "api": [
+      4,
+      98,
+      6.3
+    ],
+    "ayuda": "Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.",
+    "linea": "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
+    "seccion": "Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles. Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA. Escuelas infantiles A pie: 6 min FALTA Colegios A pie: 4 min CUBIERTO Centros de salud A pie: 8 min CUBIERTO Ver todo lo que falta",
+    "axe": [],
+    "overflow_px": 0,
+    "consola": []
+  },
+  "ambito_390": {
+    "aria_antes": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos.",
+    "aria_ejemplo": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
+    "leyenda": "¿Qué quieres ver?Encaje con tu búsquedaEscuelas infantilesColegiosCentros de saludCentros de mayoresFarmaciasVivienda para familiasEncaje con tu búsquedaEncaja menosEncaja másCumple todo78 barriosNo cumple todo52 barriosSin datos1 barrio",
+    "api": {
+      "zones_passing": 78,
+      "zones_unknown": 1,
+      "zones_evaluated": 131
+    },
+    "aria_madrid": "Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus barrios. Cada barrio tiene el color de su encaje con tu búsqueda y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.",
+    "axe": [],
+    "overflow_px": 0,
+    "consola": []
+  },
+  "ocio_390": {
+    "casillas": [
+      [
+        "Bares y cafeterías",
+        19.5,
+        19.5
+      ],
+      [
+        "Restaurantes",
+        19.5,
+        19.5
+      ],
+      [
+        "Gimnasios y deporte",
+        19.5,
+        19.5
+      ],
+      [
+        "Cultura",
+        19.5,
+        19.5
+      ],
+      [
+        "Imprescindible",
+        19.5,
+        19.5
+      ]
+    ],
+    "lineas": [
+      [
+        "Bares y cafeterías",
+        47
+      ],
+      [
+        "Restaurantes",
+        47
+      ],
+      [
+        "Gimnasios y deporte",
+        47
+      ],
+      [
+        "Cultura",
+        47
+      ],
+      [
+        "Imprescindible",
+        47
+      ]
+    ],
+    "axe": [],
+    "overflow_px": 0,
+    "consola": []
+  },
+  "pie_390": {
+    "tarjetas": 1,
+    "pies_visibles_sola": [
+      true
+    ],
+    "pies_visibles_con_otra_detras": [
+      false,
+      true
+    ],
+    "consola": []
+  },
+  "fallos": []
+}
