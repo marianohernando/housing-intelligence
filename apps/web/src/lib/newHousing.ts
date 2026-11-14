@@ -62,7 +62,7 @@ const QUARTERS = ["1.er", "2.º", "3.er", "4.º"];
 export const TEXT = {
   city: "En toda la ciudad de Madrid, ",
   cityNote: "La fuente no lo da por distritos.",
-  provisional: " El último trimestre aún es provisional.",
+  provisional: " Incluye datos aún provisionales.",
   salesSource: "Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de datos abiertos de la Comunidad de Madrid",
   valueSource: "Valor tasado medio de {año} del Ministerio de Vivienda y Agenda Urbana, en el portal de datos abiertos de la Comunidad de Madrid; «usada» es la de más de 5 años.",
   planViveSource: "Página del Plan Vive de la Comunidad de Madrid, consultada el {fecha}.",

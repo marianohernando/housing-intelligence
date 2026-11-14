@@ -25,6 +25,7 @@ from hi_ingestion.pipelines.zone_context.normalize import (
 )
 from hi_ingestion.pipelines.zone_context.run import (
     MANUAL_DIR,
+    areas_quality,
     every_municipio_published,
     load_table,
 )
@@ -267,3 +268,22 @@ def test_the_versioned_plan_vive_table_is_the_pages() -> None:
     assert [d.code for d in madrid.districts] == ["2807916", "2807919"]
     raw = yaml.safe_load((MANUAL_DIR / spec.table).read_text(encoding="utf-8"))
     assert raw["url"] == "https://www.comunidad.madrid/plan-vive"
+
+
+def test_a_register_with_two_dates_blocks() -> None:
+    """An area left with an older date would drop out of its district in silence."""
+    older = _area("A2", "Residencial", ["Finalizado", "Finalizado", "Finalizado", "En Ejecución"])
+    older["Estado del desarrollo a fecha"] = "2026-01-01 00:00:00"
+    frame = pd.DataFrame(
+        [
+            _area("A1", "Residencial", ["Finalizado", "Finalizado", "Finalizado", "En Ejecución"]),
+            older,
+        ]
+    )
+    result = normalize_development_areas(frame, AREAS)
+    assert result.dates == frozenset({date(2026, 7, 1), date(2026, 1, 1)})
+    metrics = {m: load_catalog().metrics[m] for m in AREAS.metric_ids()}
+    spec = AREAS.model_copy(update={"expected_districts": 1})
+    report = areas_quality(result, spec, metrics, {"2807919"})
+    failed = [c.name for c in report.checks if c.critical and not c.passed]
+    assert failed == ["one_register_date"]

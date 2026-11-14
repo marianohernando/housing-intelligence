@@ -452,3 +452,18 @@ def test_new_housing_figures_come_from_the_cm_portal(catalog: Catalog) -> None:
     plan_vive = catalog.datasets["cm_plan_vive_promociones"]
     assert plan_vive.source_id == "comunidad_madrid_web"  # a web page, not the open data portal
     assert catalog.sources["comunidad_madrid_web"].attribution_text
+
+
+def test_plan_vive_citation_carries_the_date_it_was_typed(catalog: Catalog) -> None:
+    """The page's notice asks for the date of extraction: the citation must be the table's own
+    `consulted` date, so refreshing one without the other fails here (D-241)."""
+    import yaml
+
+    from hi_contracts.catalog.manual import ZoneItemsTable
+
+    spec = catalog.pipelines["cm_plan_vive_promociones"]
+    assert spec.kind == "curated_zone_items"
+    path = catalog.paths["cm_plan_vive_promociones"].parents[1] / "manual" / spec.table
+    table = ZoneItemsTable.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+    citation = catalog.sources["comunidad_madrid_web"].attribution_text or ""
+    assert table.consulted.strftime("%d/%m/%Y") in citation

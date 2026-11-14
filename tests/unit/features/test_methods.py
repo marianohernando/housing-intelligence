@@ -497,6 +497,7 @@ QUARTER_END = {
     Q[1]: date(2025, 12, 31),
     Q[2]: date(2026, 3, 31),
     Q[3]: date(2026, 6, 30),
+    date(2026, 7, 1): date(2026, 9, 30),
 }
 
 
@@ -616,3 +617,20 @@ def test_items_can_add_up_their_values_and_keep_a_note() -> None:
     assert first["detail"]["items"][0]["note"] == "Sin reparto entre los dos sitios."
     with pytest.raises(ValueError, match="count or sum"):
         methods.metric_items(obs, [], value="max")
+
+
+def test_window_share_with_a_quarter_missing_from_the_series_has_no_window() -> None:
+    """Four quarters with a gap would span more than a year; no window, never a wrong one."""
+    gap = [Q[0], Q[1], Q[3], date(2026, 7, 1)]
+    rows = [r for q in gap for r in _sales("28079", q, 300, 9000)]
+    assert _share(rows).empty
+
+
+def test_items_tie_by_code_and_a_missing_value_makes_the_sum_unknown() -> None:
+    obs = _areas([("28079", "b", "obras", 5.0), ("28079", "a", "obras", 5.0)])
+    out = methods.metric_items(obs, ["28079"], value="count").set_index("territory_code")
+    assert [i["code"] for i in out.loc["28079", "detail"]["items"]] == ["a", "b"]
+    obs.loc[0, "value"] = None
+    out = methods.metric_items(obs, ["28079"], value="sum").set_index("territory_code")
+    assert out.loc["28079", "null_reason"] == "UNKNOWN"
+    assert len(out.loc["28079", "detail"]["items"]) == 2

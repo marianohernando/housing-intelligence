@@ -1556,3 +1556,10 @@ Feedback de usuarios de prueba del 14 nov: «¿las casas son nuevas o viejas?» 
     - Leer la página del Plan Vive en cada carga (scraping): cambia sin aviso y su aviso legal pide la fecha de extracción.
     - Contar viviendas en los ámbitos de VEDA: el fichero no las trae.
     - Usar VEDA para puntuar «dónde habrá más vivienda»: sería una predicción sin dato de cuándo ni cuántas.
+11. **Revisión (`reviewer`).** Sin bloqueantes. Aplicado:
+    - VEDA: un check crítico exige una sola fecha en todo el registro (`one_register_date`). Con dos fechas, los ámbitos de la más antigua saldrían del recuento de su distrito sin avisar.
+    - Compraventas: si a la serie le falta un trimestre, no hay ventana (todas las zonas sin dato), porque «los 4 últimos» abarcarían más de un año.
+    - `metric_items`: un ítem sin valor deja la suma desconocida, nunca más corta, y los empates se ordenan por código (mismo orden en cada cálculo).
+    - Web: un fallo de red puntual no se guarda para toda la visita (la tarjeta se vuelve a pedir en la siguiente zona), y el aviso dice «Incluye datos aún provisionales», que vale aunque sea más de un trimestre.
+    - El mínimo de `pydantic` sube a 2.12 (`exclude_if`), y un test exige que la fecha de la cita del Plan Vive sea la `consulted` de su tabla.
+    - Queda como está, declarado: `inputs.counts` e `inputs.detail` repiten las dos cuentas (D-213 lee la primera, la API la segunda).

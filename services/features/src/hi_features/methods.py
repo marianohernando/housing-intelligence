@@ -8,6 +8,7 @@ not at the feature's own level (the regional reference), territory_level.
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from typing import Any
 
 import numpy as np
@@ -639,9 +640,23 @@ def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -
 
 def _window(obs: pd.DataFrame, periods: int) -> list[Any]:
     """The last `periods` periods published by the metric, oldest first (the same window for
-    every zone, so a zone that misses one of them is unknown, not a shorter year)."""
+    every zone, so a zone that misses one of them is unknown, not a shorter year). A period
+    missing from the whole series breaks the window: with gaps, the last four quarters would
+    span more than a year, so there is no window (every zone unknown) rather than a wrong one."""
     published = sorted(set(obs["period_start"].tolist()))
-    return published[-periods:] if len(published) >= periods else []
+    window = published[-periods:] if len(published) >= periods else []
+    return window if _consecutive(obs, window) else []
+
+
+def _consecutive(obs: pd.DataFrame, window: list[Any]) -> bool:
+    """Each period starts the day after the previous one ends (needs `period_end`)."""
+    if "period_end" not in obs:
+        return True
+    ends: dict[Any, Any] = {}
+    for start, end in zip(obs["period_start"].tolist(), obs["period_end"].tolist(), strict=True):
+        if start in window and end is not None and not pd.isna(end):
+            ends[start] = max(end, ends.get(start, end))
+    return all(prev in ends and (nxt - ends[prev]).days == 1 for prev, nxt in pairwise(window))
 
 
 def _window_detail(records: list[dict[str, Any]], status_dim: str | None, provisional: str) -> bool:
@@ -748,7 +763,14 @@ def metric_items(
     rank = {stage: i for i, stage in enumerate(stage_order)}
     out: list[dict[str, Any]] = []
     for code, items in sorted(groups.items()):
-        items.sort(key=lambda i: (rank.get(i["stage"], len(rank)), -(i["value"] or 0)))
-        total = len(items) if value == "count" else sum(i["value"] or 0 for i in items)
-        out.append(_ok(code, period, total, confidence) | {"detail": {"items": items}})
+        # Stage, then largest first, then code: the same order on every recomputation
+        items.sort(
+            key=lambda i: (rank.get(i["stage"], len(rank)), -(i["value"] or 0), i["code"] or "")
+        )
+        detail = {"detail": {"items": items}}
+        if value == "sum" and any(i["value"] is None for i in items):
+            out.append(_null(code, period, NullReason.UNKNOWN) | detail)  # never a short sum
+            continue
+        total = len(items) if value == "count" else sum(i["value"] for i in items)
+        out.append(_ok(code, period, total, confidence) | detail)
     return _result(out)

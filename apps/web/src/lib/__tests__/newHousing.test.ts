@@ -110,7 +110,7 @@ describe("newHousingLines", () => {
   it("in a municipio: sales, appraisal and Plan Vive, each with its source and date", () => {
     const lines = newHousingLines({ level: "municipio", code: "28065" }, rows);
     expect(lines.map((l) => l.key)).toEqual(["sales"]);
-    expect(lines[0]?.text).toBe("650 de las 2.311 compraventas de vivienda del último año fueron de obra nueva (28 %). El último trimestre aún es provisional.");
+    expect(lines[0]?.text).toBe("650 de las 2.311 compraventas de vivienda del último año fueron de obra nueva (28 %). Incluye datos aún provisionales.");
     expect(lines[0]?.source).toContain("del 3.er trimestre de 2025 al 2.º trimestre de 2026");
     const alcobendas = newHousingLines({ level: "municipio", code: "28006" }, rows);
     expect(alcobendas.map((l) => l.key)).toEqual(["plan-vive-alcobendas"]);
@@ -122,7 +122,7 @@ describe("newHousingLines", () => {
 
   it("never a 0 where the source publishes nothing: Parla has no new-home appraisal, so no line", () => {
     expect(newHousingLines({ level: "municipio", code: "28106" }, rows)).toEqual([]);
-    expect(newHousingLines({ level: "municipio", code: "28001" }, rows)[0]?.text).toBe("No hubo compraventas de vivienda en el último año. El último trimestre aún es provisional.");
+    expect(newHousingLines({ level: "municipio", code: "28001" }, rows)[0]?.text).toBe("No hubo compraventas de vivienda en el último año. Incluye datos aún provisionales.");
   });
 
   it("in a district: the city's figures said as such, its Plan Vive with the shared note, and its areas", () => {

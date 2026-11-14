@@ -18,19 +18,21 @@ const TEXT = {
 
 const TIMEOUT_MS = 15_000;
 // One small answer per feature and level for the whole visit: every zone of the level is in it
-const cache = new Map<string, Promise<readonly FeatureValueRow[] | undefined>>();
+const cache = new Map<string, Promise<readonly FeatureValueRow[]>>();
 
-/** A feature the API does not have yet (404), or a boundary failure, only hides its lines. */
+/**
+ * A feature the API does not have yet (404), or a boundary failure, only hides its lines. The
+ * failure is caught outside `once`, so it is forgotten and the next zone asks again.
+ */
 function loadFeature({ featureId, level }: NewHousingRequest): Promise<readonly FeatureValueRow[] | undefined> {
   return once(cache, `${featureId}|${level}`, () =>
     createApi()
       .featureValues(featureId, level, { timeoutMs: TIMEOUT_MS })
-      .then((body) => body.data.values)
-      .catch((exc: unknown) => {
-        console.warn(`Dato de vivienda nueva no disponible (${featureId}):`, exc);
-        return undefined;
-      }),
-  );
+      .then((body) => body.data.values),
+  ).catch((exc: unknown) => {
+    console.warn(`Dato de vivienda nueva no disponible (${featureId}):`, exc);
+    return undefined;
+  });
 }
 
 async function loadRows(level: NewHousingLevel): Promise<NewHousingRows> {

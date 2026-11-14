@@ -149,12 +149,13 @@ def normalize_municipio_names(
 
 @dataclass(frozen=True)
 class AreaObservations:
-    """The kept areas, plus what the whole register says (its size and districts)."""
+    """The kept areas, plus what the whole register says (its size, districts and dates)."""
 
     obs: Observations
     areas: int
     districts: frozenset[str]
     out_of_scope: int
+    dates: frozenset[date] = frozenset()
 
 
 def _area_state(raw: Any, spec: MadridDevelopmentAreasPipeline) -> DevelopmentReading:
@@ -234,9 +235,11 @@ def normalize_development_areas(
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, Any]] = []
     districts: set[str] = set()
+    dates: set[date] = set()
     for index, row in enumerate(records):
         try:
             districts.add(district_code(spec.municipio_ine, row.get(spec.district_column)))
+            dates.add(_area_date(row.get(spec.date_column)))
             kept = _area_row(row, spec)
         except (RowError, KeyError) as exc:
             bad.append({"source_row": index, "reason": str(exc), "raw": str(row)[:300]})
@@ -248,7 +251,9 @@ def normalize_development_areas(
         pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
         len(records),
     )
-    return AreaObservations(obs, len(records), frozenset(districts), len(records) - len(rows))
+    return AreaObservations(
+        obs, len(records), frozenset(districts), len(records) - len(rows), frozenset(dates)
+    )
 
 
 def _item_rows(item: ZoneItem, metric_id: str, observed: date) -> list[dict[str, Any]]:

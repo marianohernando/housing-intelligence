@@ -4,7 +4,8 @@
 # and the contract rejects an entry whose municipio, location, homes or stage the quote does not
 # contain. Never from memory: an entry the page does not complete goes to `excluded`, with why.
 # Reuse: the page's legal notice allows it citing the source and the date of extraction.
-# To refresh: read the page again, change only what it says, and update `consulted`.
+# To refresh: read the page again, change only what it says, and update `consulted` and the date
+# of the citation in sources/comunidad_madrid_web.yaml (a test checks they match).
 title: Plan Vive — promociones de alquiler asequible por municipio
 publisher: Comunidad de Madrid
 url: https://www.comunidad.madrid/plan-vive

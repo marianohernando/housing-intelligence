@@ -151,6 +151,14 @@ def areas_quality(
         CheckResult(
             "kept_areas_resolve_to_geography", True, kept <= known, {"districts": len(kept)}
         ),
+        # The zone value is the areas of the latest date: an area left with an older date
+        # would drop out of its district's count in silence, so a mixed register blocks.
+        CheckResult(
+            "one_register_date",
+            True,
+            len(result.dates) == 1,
+            {"dates": sorted(str(d) for d in result.dates)},
+        ),
     ]
     return QualityReport([*base.checks, *extra])
 
