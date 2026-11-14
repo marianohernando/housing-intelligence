@@ -1,6 +1,6 @@
 # D-235 · Otros datos de la zona (14 nov)
 
-Base local `housing_contexto` (copia de `housing` con los datos de D-235), API local y web de producción (`next build` + `next start`) contra ella. Capturas con Chromium (Playwright) a 1440×900 y 390×844; en móvil, con la hoja abierta.
+Base local `housing_contexto` (copia de `housing` con los datos de D-235), API local y web de producción (`next build` + `next start`) contra ella. Capturas con Chromium (Playwright) a 1440×900 y 390×844; en móvil, con la hoja abierta. Rehechas tras la revisión de la PR #61 (fuentes «vía …» y «Renta neta media por hogar», R-04).
 
 ## Capturas
 
@@ -13,10 +13,10 @@ Base local `housing_contexto` (copia de `housing` con los datos de D-235), API l
 
 Texto de la tarjeta, leído de la página:
 
-- **Pozuelo de Alarcón:** Infracciones penales conocidas: 21,6 por cada 1.000 habitantes (Ministerio del Interior, 2024). · Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. · Viviendas construidas desde 2001: 32,7 % (censo anual de la Comunidad de Madrid, 2023). · Renta disponible bruta por persona: 47.217 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).
+- **Pozuelo de Alarcón:** Infracciones penales conocidas: 21,6 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). · Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. · Viviendas construidas desde 2001: 32,7 % (censo anual de la Comunidad de Madrid, 2023). · Renta disponible bruta por persona: 47.217 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).
 - **Rascafría:** Infracciones penales conocidas: sin dato. El Ministerio solo lo publica para municipios de más de 20.000 habitantes. · Viviendas construidas desde 2001: 21,6 % (…, 2023). · Renta disponible bruta por persona: 20.532 € al año (…, 2024).
-- **Usera:** Infracciones penales conocidas: 58,6 por cada 1.000 habitantes (Ministerio del Interior, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito. · (aviso) · Año medio de construcción de los edificios de viviendas: 1978 (Catastro, 2025). · Renta media por hogar: 34.651 € al año (INE, 2023).
-- **Recoletos (barrio de Salamanca):** la cifra de la ciudad, con la misma etiqueta · Año medio de construcción de los edificios de viviendas en Recoletos: 1948 (Catastro, 2025). · Renta media por hogar en Recoletos: 95.138 € al año (INE, 2023).
+- **Usera:** Infracciones penales conocidas: 58,6 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito. · (aviso) · Año medio de construcción de los edificios de viviendas: 1978 (Catastro, 2025). · Renta neta media por hogar: 34.651 € al año (INE, panel del Ayuntamiento de Madrid, 2023).
+- **Recoletos (barrio de Salamanca):** la cifra de la ciudad, con la misma etiqueta · Año medio de construcción de los edificios de viviendas en Recoletos: 1948 (Catastro, 2025). · Renta neta media por hogar en Recoletos: 95.138 € al año (INE, panel del Ayuntamiento de Madrid, 2023).
 
 Todas terminan con «Son datos informativos: no cambian el encaje ni el orden de las zonas».
 
@@ -61,7 +61,7 @@ La respuesta completa (`results`, `near_misses`, `all_zones`, `reality_check`, `
 
 ## Gates
 
-- Sobre `origin/claude/sprint-1-public` en `15393cb` (con #56, D-239): `make lint typecheck test-unit` verde (pytest 749, vitest 402).
+- Sobre `origin/claude/sprint-1-public` en `15393cb` (con #56, D-239) y con la revisión de la PR #61: `make lint typecheck test-unit` verde (pytest 753, vitest 405).
 - `make test-db` contra una base de tests vacía (`housing_contexto_test`, migrada a `0007`): 134 passed.
 - `npm run build` (apps/web): verde.
-- Gate 1 de los tres datasets: `evidence/gate-01/2026-11-14/` (PASS; los avisos no críticos son la cobertura de 37 municipios y `totals_are_additive`, porque la cibercriminalidad es una parte del total, no un reparto).
+- Gate 1 de los tres datasets: `evidence/gate-01/2026-11-14/` (PASS con `stat_tables-1.1.0`; las infracciones pasan los checks críticos `quarantine_empty` y `latest_year_complete`, con `excluded_status: 74`; los avisos no críticos son la cobertura de 37 municipios y `totals_are_additive`, porque la cibercriminalidad es una parte del total, no un reparto).
