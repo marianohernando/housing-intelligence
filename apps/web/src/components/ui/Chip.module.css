@@ -50,10 +50,12 @@
   font-weight: 600;
 }
 
-/* In a grid the label wraps instead of pushing the count out of the button */
+/* In a grid the label wraps instead of pushing the count out of the button; a long word is
+   hyphenated in Spanish («Restau-rantes 1.498»), never cut at its last letter */
 .label {
   min-width: 0;
   overflow-wrap: break-word;
+  hyphens: auto;
   text-align: start;
 }
 
