@@ -15,11 +15,15 @@ import {
   facilityCountText,
   facilityQueries,
   groupFacilities,
+  isLeisureFacility,
+  LEISURE_FACILITY_KEYS,
   leisureAvailable,
+  leisureQuery,
   offeredTypes,
   orderedTypes,
   selectedCountText,
   selectedFacilities,
+  SERVICE_FACILITY_KEYS,
 } from "../map/facilities";
 import type { PlaceFeature } from "../map/places";
 
@@ -62,7 +66,8 @@ describe("facility types", () => {
 
   it("ask /places once per category, by zone and subcategory, never a whole layer", () => {
     const queries = facilityQueries();
-    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green", "commerce", "sport", "culture"]);
+    // Leisure (D-236) is asked apart, only when one of its types is pressed (R-07)
+    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green"]);
     const health = queries.find((q) => q.category === "health");
     expect(health?.subcategories).toContain("Hospital general");
     // Pharmacies have their own category since D-216
@@ -400,22 +405,28 @@ describe("leisure from OpenStreetMap (D-236)", () => {
     expect(Object.values(groups).flat()).toHaveLength(8);
   });
 
-  it("counts them in plain words", () => {
+  it("counts them in plain words, and with none says what OpenStreetMap lacks, not what the zone lacks", () => {
     expect(facilityCountText("bares", 3, "Centro")).toBe("3 bares y cafeterías en Centro");
     expect(facilityCountText("restaurantes", 1, "Centro")).toBe("1 restaurante en Centro");
-    expect(facilityCountText("gimnasios", 0, "Patones")).toBe("Ningún gimnasio ni centro deportivo en Patones");
+    expect(facilityCountText("bares", 0, "Patones")).toBe("OpenStreetMap no tiene ningún bar ni cafetería en Patones");
+    expect(facilityCountText("restaurantes", 0, "Patones")).toBe("OpenStreetMap no tiene ningún restaurante en Patones");
+    expect(facilityCountText("gimnasios", 0, "Patones")).toBe("OpenStreetMap no tiene ningún gimnasio ni centro deportivo en Patones");
     expect(facilityCountText("cultura", 2, "Centro")).toBe("2 espacios culturales en Centro");
     expect(facilityCountText("cultura", 1, "Patones")).toBe("1 espacio cultural en Patones");
-    expect(facilityCountText("cultura", 0, "Patones")).toBe("Ningún espacio cultural en Patones");
+    expect(facilityCountText("cultura", 0, "Patones")).toBe("OpenStreetMap no tiene ningún espacio cultural en Patones");
   });
 
-  it("offers the leisure types only where the zone has some leisure place: never «Ningún bar» before the data", () => {
-    const keys = (g: typeof groups) => offeredTypes(g).map((t) => t.key);
-    expect(keys(groups).slice(-4)).toEqual(["bares", "restaurantes", "gimnasios", "cultura"]);
-    const before = groupFacilities([place("c", "pharmacy", "Farmacia", "Farmacia · CALLE Mayor 1")]);
-    expect(keys(before)).toEqual(["colegio", "escuela_infantil", "centro_salud", "hospital", "farmacia", "mayores", "parque"]);
-    // One group is enough to offer the four: the others say «Ningún…», which OSM can tell there
-    expect(keys(groupFacilities([place("b", "commerce", "Bar", "Bar")]))).toHaveLength(FACILITY_TYPES.length);
+  it("offers the leisure types once their dataset is published, and keeps them out of «Todos» and the zone's request", () => {
+    const keys = (leisure: boolean) => offeredTypes(leisure).map((t) => t.key);
+    const services = ["colegio", "escuela_infantil", "centro_salud", "hospital", "farmacia", "mayores", "parque"];
+    expect(keys(false)).toEqual(services);
+    expect(keys(true)).toEqual([...services, "bares", "restaurantes", "gimnasios", "cultura"]);
+    expect(SERVICE_FACILITY_KEYS).toEqual(services);
+    expect(LEISURE_FACILITY_KEYS.every(isLeisureFacility)).toBe(true);
+    expect(services.some((key) => isLeisureFacility(key as FacilityKey))).toBe(false);
+    expect(leisureQuery("cultura")).toEqual({ category: "culture", subcategories: ["Museo", "Biblioteca", "Teatro", "Cine", "Centro cultural"] });
+    expect(leisureQuery("bares")).toEqual({ category: "commerce", subcategories: ["Bar", "Pub", "Cafetería"] });
+    expect(FACILITY_TYPES).toHaveLength(services.length + LEISURE_FACILITY_KEYS.length);
   });
 
   it("offers «Ocio» in the search once its dataset is published", () => {

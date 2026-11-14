@@ -142,7 +142,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     chip: "Bares y cafeterías",
     one: "bar o cafetería",
     many: "bares y cafeterías",
-    none: "Ningún bar ni cafetería",
+    none: "OpenStreetMap no tiene ningún bar ni cafetería",
     classes: [
       { subcategory: "Bar", label: "Bar" },
       { subcategory: "Pub", label: "Pub" },
@@ -156,7 +156,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     chip: "Restaurantes",
     one: "restaurante",
     many: "restaurantes",
-    none: "Ningún restaurante",
+    none: "OpenStreetMap no tiene ningún restaurante",
     classes: [{ subcategory: "Restaurante", label: "Restaurante" }],
     leisure: true,
   },
@@ -166,7 +166,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     chip: "Gimnasios y deporte",
     one: "gimnasio o centro deportivo",
     many: "gimnasios y centros deportivos",
-    none: "Ningún gimnasio ni centro deportivo",
+    none: "OpenStreetMap no tiene ningún gimnasio ni centro deportivo",
     classes: [
       { subcategory: "Gimnasio", label: "Gimnasio" },
       { subcategory: "Centro deportivo", label: "Centro deportivo" },
@@ -180,7 +180,7 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     chip: "Cultura",
     one: "espacio cultural",
     many: "espacios culturales",
-    none: "Ningún espacio cultural",
+    none: "OpenStreetMap no tiene ningún espacio cultural",
     classes: [
       { subcategory: "Museo", label: "Museo" },
       { subcategory: "Biblioteca", label: "Biblioteca" },
@@ -205,10 +205,13 @@ export interface FacilityQuery {
   subcategories: string[];
 }
 
-/** What to ask /api/v1/places for a zone: one query per category with the subcategories that count. */
+/**
+ * What to ask /api/v1/places for a zone: one query per category with the subcategories that count.
+ * Leisure is left out (D-236): it goes apart, only when one of its types is pressed (leisureQuery).
+ */
 export function facilityQueries(): FacilityQuery[] {
   const byCategory = new Map<PlaceCategory, FacilityQuery>();
-  for (const type of FACILITY_TYPES) {
+  for (const type of FACILITY_TYPES.filter((t) => !t.leisure)) {
     const query = byCategory.get(type.category) ?? { category: type.category, subcategories: [] };
     query.subcategories.push(...type.classes.map((c) => c.subcategory));
     byCategory.set(type.category, query);
@@ -479,13 +482,31 @@ export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
   cultura: "fac-ocio",
 };
 
+/** The types of «Ocio» (D-236), in the order of their buttons. */
+export const LEISURE_FACILITY_KEYS: readonly LeisureFacilityKey[] = ["bares", "restaurantes", "gimnasios", "cultura"];
+
+export function isLeisureFacility(key: FacilityKey): key is LeisureFacilityKey {
+  return (LEISURE_FACILITY_KEYS as readonly FacilityKey[]).includes(key);
+}
+
 /**
- * The types «Todos los centros» offers in a zone. Leisure (D-236) only where the zone has some
- * leisure place: before its data is loaded, or where OpenStreetMap has nothing, the panel does not
- * say «Ningún bar», which it cannot know.
+ * The services «Todos» turns on: every type but leisure. A bar is not a service of the zone, and in
+ * Centro the four leisure types alone are 2.683 places (review of PR #62, R-07).
  */
-export function offeredTypes(groups: Readonly<Record<FacilityKey, readonly Facility[]>>): FacilityType[] {
-  const leisure = FACILITY_TYPES.some((t) => t.leisure && groups[t.key].length > 0);
+export const SERVICE_FACILITY_KEYS: readonly FacilityKey[] = FACILITY_TYPES.filter((t) => !t.leisure).map((t) => t.key);
+
+/** What to ask /api/v1/places for one leisure type of a zone, apart and only when its button is pressed. */
+export function leisureQuery(key: LeisureFacilityKey): FacilityQuery {
+  const type = facilityType(key);
+  return { category: type.category, subcategories: type.classes.map((c) => c.subcategory) };
+}
+
+/**
+ * The types «Todos los centros» offers: the services always; leisure once its dataset is published
+ * (GET /datasets, D-236). Its count comes when its button is pressed, and with no place the count
+ * says that OpenStreetMap has none, never that the zone has none.
+ */
+export function offeredTypes(leisure: boolean): FacilityType[] {
   return FACILITY_TYPES.filter((t) => !t.leisure || leisure);
 }
 

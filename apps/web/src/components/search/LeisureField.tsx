@@ -54,12 +54,20 @@ export default function LeisureField() {
       <div className={styles.leisureBoxes}>
         {LEISURE_KEYS.map((key) => (
           <label key={key} className={styles.check}>
-            <input type="checkbox" checked={groups.includes(key)} onChange={() => update((s) => toggleLeisureGroup(s, key))} />
+            <input
+              type="checkbox"
+              checked={groups.includes(key)}
+              // «Cultura» names a group, not a place: the line below says what it counts
+              aria-describedby={key === "cultura" ? `${id}-culture` : undefined}
+              onChange={() => update((s) => toggleLeisureGroup(s, key))}
+            />
             {LEISURE_NAME[key]}
           </label>
         ))}
       </div>
-      <p className={styles.help}>{TEXT.culture}</p>
+      <p id={`${id}-culture`} className={styles.help}>
+        {TEXT.culture}
+      </p>
       {groups.length > 0 ? (
         <div className={styles.leisureRow}>
           <span className={styles.nearMinutes}>
@@ -92,7 +100,9 @@ export default function LeisureField() {
           </span>
         </div>
       ) : (
-        <p className={styles.help}>{TEXT.none}</p>
+        <p role="status" className={styles.help}>
+          {TEXT.none}
+        </p>
       )}
       <p className={styles.help}>{TEXT.source}</p>
     </fieldset>
