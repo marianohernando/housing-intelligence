@@ -110,6 +110,19 @@ export function screenZone(zone: Pick<ZoneProperties, "level" | "code" | "distri
 }
 
 /**
+ * The zone picked (its `zone_key`), once the map changes between Madrid's districts and its
+ * barrios (D-238): a barrio becomes its district; a district has no single barrio, so it is let go.
+ */
+export function selectionAfter(key: string | null, barrios: boolean): string | null {
+  const [level = "", code = ""] = key?.split("/") ?? [];
+  if (!barrios && level === "barrio") {
+    const district = screenZone({ level: "barrio", code });
+    return `${district.level}/${district.code}`;
+  }
+  return barrios && level === "distrito" ? null : key;
+}
+
+/**
  * The barrios of the districts of the map, as zones (D-238): each with its district's name and
  * municipio. A barrio whose district is not on the map is left out.
  */

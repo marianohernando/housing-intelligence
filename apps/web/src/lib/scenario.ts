@@ -10,6 +10,14 @@ import type { Anchor, BudgetKind, NearbyNeed, NeedKey, PriorityKey, ScenarioStat
  */
 export const SCOPES: readonly SearchScope[] = ["all", "madrid", "alrededores", "pueblos"];
 
+/** donde.toda, donde.madrid, donde.alrededores, donde.pueblos */
+export const SCOPE_LABEL: Record<SearchScope, string> = {
+  all: "Toda la Comunidad",
+  madrid: "Madrid capital",
+  alrededores: "Alrededores de Madrid",
+  pueblos: "Pueblos",
+};
+
 export function scopeOf(s: Pick<ScenarioState, "scope">): SearchScope {
   return s.scope ?? "all";
 }

@@ -5,7 +5,7 @@ import { useId, useState } from "react";
 
 import type { SearchResult } from "@/contracts/search_response";
 import GlassCard from "@/components/ui/GlassCard";
-import { constraintLabels, fewZones, optionText, passingText, relaxOptions, unknownText } from "@/lib/fit";
+import { constraintLabels, fewZones, limitingConstraint, optionText, passingText, relaxOptions, unknownText, zoneWord } from "@/lib/fit";
 
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
@@ -36,7 +36,10 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
   // Unfolded by default with few zones; the choice is kept until the next result.
   const [choice, setChoice] = useState<{ for: SearchResult; open: boolean } | null>(null);
   const open = choice?.for === result ? choice.open : fewZones(rc);
-  const limit = rc.binding_constraint ? constraintLabels(result).get(rc.binding_constraint) : undefined;
+  const word = zoneWord(result);
+  // Not when what leaves zones out is missing data rather than the condition (lib/fit.ts)
+  const limiting = limitingConstraint(result);
+  const limit = limiting ? constraintLabels(result).get(limiting) : undefined;
   const shown = open ? options : options.slice(0, 1);
   const hasMore = options.length > 1 || rc.zones_unknown > 0 || Boolean(limit);
 
@@ -48,14 +51,14 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
       </h2>
       {open && (
         <p>
-          {passingText(rc.zones_passing, applied !== null)} {options.length > 0 && TEXT.intro}
+          {passingText(rc.zones_passing, applied !== null, word)} {options.length > 0 && TEXT.intro}
         </p>
       )}
       {options.length === 0 && <p className={styles.muted}>{TEXT.none}</p>}
       {shown.length > 0 && (
         <ul className={styles.options}>
           {shown.map((r) => {
-            const { label, count } = optionText(r);
+            const { label, count } = optionText(r, word);
             return (
               <li key={r.constraint_id}>
                 <button
@@ -83,7 +86,7 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
           {TEXT.limit} <strong>{limit}</strong>
         </p>
       )}
-      {open && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown)}</p>}
+      {open && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word)}</p>}
       {open && options.length > 0 && <p className={styles.note}>{TEXT.note}</p>}
       {hasMore && (
         <button type="button" className={styles.toggle} aria-expanded={open} onClick={() => setChoice({ for: result, open: !open })}>

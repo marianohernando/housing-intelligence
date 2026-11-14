@@ -10,13 +10,15 @@ interface Props<T extends string> {
   onChange: (value: T) => void;
   /** Options in a grid of this many columns instead of one row (four long labels on a phone) */
   columns?: 2;
+  /** id of the help that explains the choice, read with the group */
+  describedBy?: string;
 }
 
 /** Two to four exclusive options as native radios (arrow keys work), styled as a pill switch. */
-export default function Segmented<T extends string>({ legend, options, value, onChange, columns }: Props<T>) {
+export default function Segmented<T extends string>({ legend, options, value, onChange, columns, describedBy }: Props<T>) {
   const name = useId();
   return (
-    <fieldset className={columns ? `${styles.group} ${styles.columns}` : styles.group}>
+    <fieldset className={columns ? `${styles.group} ${styles.columns}` : styles.group} aria-describedby={describedBy}>
       <legend className="visually-hidden">{legend}</legend>
       {options.map((option) => (
         <label key={option.value} className={styles.option}>

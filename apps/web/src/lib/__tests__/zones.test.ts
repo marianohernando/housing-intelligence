@@ -18,6 +18,7 @@ import {
   regionOf,
   ringArea,
   screenZone,
+  selectionAfter,
   wholeCities,
   withBarrios,
   type ZoneCollection,
@@ -129,7 +130,15 @@ describe("Madrid capital by barrio (D-238)", () => {
     expect(keys).toEqual(["municipio/28092", "municipio/28127", "barrio/28079011", "barrio/28079056"]);
   });
 
-  it("sends a barrio to its district's screen and «Qué falta»", () => {
+  it("keeps the zone picked when the map changes between districts and barrios", () => {
+    expect(selectionAfter("barrio/28079061", false)).toBe("distrito/2807906");
+    expect(selectionAfter("distrito/2807906", true)).toBeNull();
+    expect(selectionAfter("municipio/28092", true)).toBe("municipio/28092");
+    expect(selectionAfter("barrio/28079061", true)).toBe("barrio/28079061");
+    expect(selectionAfter(null, true)).toBeNull();
+  });
+
+    it("sends a barrio to its district's screen and «Qué falta»", () => {
     expect(screenZone(barrios.features[1]!.properties)).toEqual({ level: "distrito", code: "2807905" });
     expect(screenZone({ level: "barrio", code: "28079061" })).toEqual({ level: "distrito", code: "2807906" });
     expect(screenZone({ level: "municipio", code: "28092" })).toEqual({ level: "municipio", code: "28092" });

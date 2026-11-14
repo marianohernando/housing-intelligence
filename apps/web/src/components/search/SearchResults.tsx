@@ -9,7 +9,20 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
-import { constraintLabels, evaluatedText, failedLabels, passingText, tiedText, unknownText, zoneKeyOf, zonesText } from "@/lib/fit";
+import {
+  constraintLabels,
+  evaluatedText,
+  failedLabels,
+  noneText,
+  passingText,
+  rentUnknownText,
+  tiedText,
+  unknownText,
+  zoneKeyOf,
+  zonesText,
+  type ZoneWord,
+  zoneWord,
+} from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
 import { districtOf, zoneTitle } from "@/lib/map/zones";
 
@@ -22,13 +35,12 @@ import { useScenario } from "./ScenarioProvider";
 const TEXT = {
   title: "Zonas que encajan",
   loading: "Buscando zonas que encajan…",
-  none: "Ninguna zona cumple todo lo que pides. Mira abajo qué pasa si cambias algo.",
   applied: "Ahora ves las zonas con:",
   undo: "Volver a mi búsqueda",
   stale: "Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día.",
   first: (n: number) => `Ver las ${n} primeras`,
   fewer: "Ver menos",
-  rest: (n: number) => `Y ${zonesText(n)} más en el mapa.`,
+  rest: (n: number, word: ZoneWord) => `Y ${zonesText(n, word)} más en el mapa.`,
   near: "Casi encajan",
   nearHelp: "Cumplen todo menos una cosa.",
   fails: "No cumple:",
@@ -88,7 +100,7 @@ function Ranking({ result }: { result: SearchResult }) {
           <ChevronDown size={18} aria-hidden="true" className={all ? styles.flip : undefined} />
         </button>
       )}
-      {all && rest > 0 && <p className={styles.muted}>{TEXT.rest(rest)}</p>}
+      {all && rest > 0 && <p className={styles.muted}>{TEXT.rest(rest, zoneWord(result))}</p>}
     </>
   );
 }
@@ -145,7 +157,11 @@ export default function SearchResults({ children }: { children: ReactNode }) {
 
   // One live region, always there, so screen readers hear each change of the search.
   const announce =
-    status === "loading" ? TEXT.loading : status === "done" && result ? passingText(result.reality_check.zones_passing, applied !== null) : "";
+    status === "loading"
+      ? TEXT.loading
+      : status === "done" && result
+        ? passingText(result.reality_check.zones_passing, applied !== null, zoneWord(result))
+        : "";
   const live = (
     <p role="status" className="visually-hidden">
       {announce}
@@ -195,6 +211,8 @@ export default function SearchResults({ children }: { children: ReactNode }) {
   }
 
   const rc = result.reality_check;
+  const word = zoneWord(result);
+  const rentUnknown = rentUnknownText(result);
   return (
     <div ref={ref} className={styles.stack}>
       {live}
@@ -221,10 +239,12 @@ export default function SearchResults({ children }: { children: ReactNode }) {
         )}
         {stale && status !== "loading" && <p className={styles.stale}>{TEXT.stale}</p>}
         <p className={styles.summary}>
-          <strong>{passingText(rc.zones_passing, applied !== null)}</strong> {evaluatedText(result)}
+          <strong>{passingText(rc.zones_passing, applied !== null, word)}</strong> {evaluatedText(result)}
         </p>
-        {rc.zones_passing === 0 && <p>{TEXT.none}</p>}
-        {rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown)}</p>}
+        {rc.zones_passing === 0 && <p>{noneText(word)}</p>}
+        {/* Renting in «Pueblos» most villages have no rent: why they come out «Sin datos» (D-238) */}
+        {rentUnknown && <p className={styles.muted}>{rentUnknown}</p>}
+        {!rentUnknown && rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word)}</p>}
         {rc.zones_passing > 0 && <Ranking result={result} />}
         <NearMisses result={result} />
       </GlassCard>

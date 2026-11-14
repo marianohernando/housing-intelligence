@@ -120,22 +120,50 @@ export function fewZones(rc: Pick<RealityCheck, "zones_passing">): boolean {
   return rc.zones_passing <= FEW_ZONES;
 }
 
-export function zonesText(n: number): string {
-  return n === 1 ? "1 zona" : `${n} zonas`;
+/**
+ * What the zones of a search are called («¿Dónde?», D-238): barrios in Madrid capital, municipios
+ * around it, pueblos beyond; «zonas» for the whole region, where they are of every kind.
+ */
+export type ZoneWord = "zona" | "barrio" | "municipio" | "pueblo";
+
+const WORDS: Record<ZoneWord, { many: string; feminine: boolean }> = {
+  zona: { many: "zonas", feminine: true },
+  barrio: { many: "barrios", feminine: false },
+  municipio: { many: "municipios", feminine: false },
+  pueblo: { many: "pueblos", feminine: false },
+};
+
+const WORD_OF_SCOPE: Record<SearchScope, ZoneWord> = { all: "zona", madrid: "barrio", alrededores: "municipio", pueblos: "pueblo" };
+
+/** The scope of a result: an answer without one (an API before D-238) is the whole region. */
+export function resultScope(result: { scenario: { scope?: SearchScope } }): SearchScope {
+  return result.scenario.scope ?? "all";
+}
+
+export function zoneWord(result: { scenario: { scope?: SearchScope } }): ZoneWord {
+  return WORD_OF_SCOPE[resultScope(result)];
+}
+
+export function zonesText(n: number, word: ZoneWord = "zona"): string {
+  return n === 1 ? `1 ${word}` : `${n} ${WORDS[word].many}`;
 }
 
 /**
  * rc.ninguna, rc.una, rc.varias; after applying an option of «¿Y si cambias algo?» it is no longer
- * the search «tal cual»: «Con este cambio…» (rc.cambio).
+ * the search «tal cual»: «Con este cambio…» (rc.cambio). With the word of its scope: «salen 78 barrios».
  */
-export function passingText(n: number, changed = false): string {
+export function passingText(n: number, changed = false, word: ZoneWord = "zona"): string {
   const start = changed ? "Con este cambio" : "Con tu búsqueda tal cual";
-  if (n === 0) return `${start} no sale ninguna zona.`;
-  if (n === 1) return `${start} sale 1 zona.`;
-  return `${start} salen ${n} zonas.`;
+  if (n === 0) return `${start} no sale ${WORDS[word].feminine ? "ninguna" : "ningún"} ${word}.`;
+  return `${start} ${n === 1 ? "sale" : "salen"} ${zonesText(n, word)}.`;
 }
 
-/** resultados.de: how many zones the search compared, and where («¿Dónde?», D-238). */
+/** vacio.sin_resultados, with the word of the scope. */
+export function noneText(word: ZoneWord = "zona"): string {
+  return `${WORDS[word].feminine ? "Ninguna" : "Ningún"} ${word} cumple todo lo que pides. Mira abajo qué pasa si cambias algo.`;
+}
+
+/** resultados.de: how many zones the search compared, and where (D-238). */
 const EVALUATED: Record<SearchScope, (n: number) => string> = {
   all: (n) => `De ${n} zonas de la Comunidad de Madrid.`,
   madrid: (n) => `De ${n} barrios de Madrid capital.`,
@@ -143,14 +171,26 @@ const EVALUATED: Record<SearchScope, (n: number) => string> = {
   pueblos: (n) => `De ${n} pueblos de la Comunidad de Madrid.`,
 };
 
-/** The result's own scope: an answer without one (an API before D-238) is the whole region. */
 export function evaluatedText(result: { scenario: { scope?: SearchScope }; reality_check: Pick<RealityCheck, "zones_evaluated"> }): string {
-  return EVALUATED[result.scenario.scope ?? "all"](result.reality_check.zones_evaluated);
+  return EVALUATED[resultScope(result)](result.reality_check.zones_evaluated);
+}
+
+/**
+ * resultados.pueblos_sin_alquiler (D-238): renting, the villages come out «Sin datos» because the
+ * rent is only published for municipios of more than 20.000 people; null in any other search.
+ */
+export function rentUnknownText(
+  result: { scenario: { scope?: SearchScope; budget?: { kind: string } | null }; reality_check: Pick<RealityCheck, "zones_unknown" | "zones_evaluated"> },
+): string | null {
+  const { zones_unknown: n, zones_evaluated: total } = result.reality_check;
+  if (resultScope(result) !== "pueblos" || result.scenario.budget?.kind !== "rent" || n === 0) return null;
+  const come = n === 1 ? "sale" : "salen";
+  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.`;
 }
 
 /** A search over Madrid capital ranks its barrios (D-238), not its districts. */
 export function byBarrio(result: { scenario: { scope?: SearchScope } } | null): boolean {
-  return result?.scenario.scope === "madrid";
+  return result !== null && resultScope(result) === "madrid";
 }
 
 /** More zones than this with the best % of the ranking and the web says so (resultados.empate, D-239). */
@@ -167,26 +207,40 @@ export function tiedAtTop(result: Pick<SearchResult, "results" | "all_zones">): 
  * resultados.empate: with many zones tied at the top the order says little (the API breaks the
  * tie by the services at a walk, D-239), so the person is told how to tell them apart; null otherwise.
  */
-export function tiedText(result: Pick<SearchResult, "results" | "all_zones">): string | null {
+export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "scenario">): string | null {
   const n = tiedAtTop(result);
-  return n > MANY_TIED ? `Encajan ${n} zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.` : null;
+  const word = zoneWord(result);
+  return n > MANY_TIED ? `Encajan ${zonesText(n, word)} igual de bien: marca qué te importa o dónde trabajas para afinar el orden.` : null;
 }
 
 /** rc.sin_dato: zones with some condition that could not be checked are never counted as good. */
-export function unknownText(n: number): string {
-  const them = n === 1 ? "No la contamos como buena." : "No las contamos como buenas.";
-  return `En ${zonesText(n)} no podemos comprobarlo todo por falta de datos. ${them}`;
+export function unknownText(n: number, word: ZoneWord = "zona"): string {
+  const [one, many] = WORDS[word].feminine ? ["la contamos como buena", "las contamos como buenas"] : ["lo contamos como bueno", "los contamos como buenos"];
+  return `En ${zonesText(n, word)} no podemos comprobarlo todo por falta de datos. No ${n === 1 ? one : many}.`;
 }
 
 /** One option of «¿Y si cambias algo?» (rc.opcion.cuenta): what it changes, how many zones there would be and how many more. */
-export function optionText(r: Pick<Relaxation, "label" | "zones_if_relaxed" | "added_zones">): { label: string; count: string } {
+export function optionText(r: Pick<Relaxation, "label" | "zones_if_relaxed" | "added_zones">, word: ZoneWord = "zona"): { label: string; count: string } {
   const would = r.zones_if_relaxed === 1 ? "saldría" : "saldrían";
-  return { label: r.label, count: `${would} ${zonesText(r.zones_if_relaxed)}, ${r.added_zones} más` };
+  return { label: r.label, count: `${would} ${zonesText(r.zones_if_relaxed, word)}, ${r.added_zones} más` };
 }
 
-/** zona.puesto */
-export function rankText(rank: number): string {
-  return `La ${rank}.ª que más encaja`;
+/**
+ * rc.limite: the condition that leaves out the most zones, by its FAILs. The API counts a zone it
+ * cannot check (UNKNOWN) as left out too (binding_constraint); when such zones outnumber the
+ * FAILs, what limits the search is missing data, not the condition, and nothing is named (D-238:
+ * renting in «Pueblos», where almost no village publishes its rent).
+ */
+export function limitingConstraint(result: Pick<SearchResult, "all_zones" | "reality_check">): string | null {
+  const id = result.reality_check.binding_constraint;
+  if (!id) return null;
+  const failing = result.all_zones.filter((z) => z.failed_constraints?.includes(id)).length;
+  return failing > 0 && failing >= result.reality_check.zones_unknown ? id : null;
+}
+
+/** zona.puesto: «La 3.ª que más encaja», and for a barrio, municipio or pueblo «El 3.º…» */
+export function rankText(rank: number, word: ZoneWord = "zona"): string {
+  return WORDS[word].feminine ? `La ${rank}.ª que más encaja` : `El ${rank}.º que más encaja`;
 }
 
 /**

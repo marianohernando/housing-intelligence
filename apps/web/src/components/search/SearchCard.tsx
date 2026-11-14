@@ -14,6 +14,7 @@ import { formatEuros } from "@/lib/format";
 import {
   BUDGET_RANGE,
   peopleAtHome,
+  SCOPE_LABEL,
   SCOPES,
   scopeOf,
   setAdults,
@@ -81,20 +82,15 @@ const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: str
 ];
 
 /**
- * «¿Dónde?» (D-238): the parts of the region by the statistical zoning of the Comunidad de Madrid,
- * with what each one compares. «Toda la Comunidad» is the search as it always was.
+ * «¿Dónde?» (D-238): what each part of the region compares (donde.ayuda.*), by the statistical
+ * zoning of the Comunidad de Madrid. «Toda la Comunidad» is the search as it always was.
  */
-const WHERE: Record<SearchScope, { label: string; help: string }> = {
-  all: { label: "Toda la Comunidad", help: "Madrid capital por distritos y el resto de la Comunidad por municipios." },
-  madrid: { label: "Madrid capital", help: "Comparamos sus 131 barrios." },
-  alrededores: {
-    label: "Alrededores de Madrid",
-    help: "Los 40 municipios del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid.",
-  },
-  pueblos: {
-    label: "Pueblos",
-    help: "Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid.",
-  },
+const WHERE_HELP: Record<SearchScope, string> = {
+  all: "Madrid capital por distritos y el resto de la Comunidad por municipios.",
+  madrid: "Comparamos sus 131 barrios.",
+  alrededores: "Los 40 municipios del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid.",
+  pueblos:
+    "Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Casi ninguno publica su alquiler: si buscas alquiler, la mayoría saldrán «Sin datos».",
 };
 
 function peopleText(n: number): string {
@@ -118,6 +114,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   const budget = scenario.budget ?? null;
   const range = BUDGET_RANGE[budget?.kind ?? "rent"];
   const scope = scopeOf(scenario);
+  const whereHelpId = `${bodyId}-where-help`;
 
   return (
     <GlassCard as="section" aria-labelledby={`${bodyId}-title`} className={styles.card}>
@@ -133,7 +130,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
       {!open && (
         <p className={styles.summary}>
           {peopleText(peopleAtHome(scenario))} · {budgetText(budget)}
-          {scope !== "all" && ` · ${WHERE[scope].label}`}
+          {scope !== "all" && ` · ${SCOPE_LABEL[scope]}`}
         </p>
       )}
 
@@ -144,11 +141,14 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
             <Segmented
               legend={TEXT.where}
               columns={2}
+              describedBy={whereHelpId}
               value={scope}
-              options={SCOPES.map((value) => ({ value, label: WHERE[value].label }))}
+              options={SCOPES.map((value) => ({ value, label: SCOPE_LABEL[value] }))}
               onChange={(value) => update((s) => setScope(s, value))}
             />
-            <p className={styles.help}>{WHERE[scope].help}</p>
+            <p id={whereHelpId} className={styles.help}>
+              {WHERE_HELP[scope]}
+            </p>
           </fieldset>
         )}
 
