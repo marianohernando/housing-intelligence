@@ -1348,3 +1348,66 @@ Feedback de usuarios del 14 nov: quien se mueve en autobús quiere ver las parad
    - **Rollback:** volver a un despliegue anterior a este PR, con las features ya sincronizadas, rompe `/search`. Antes hay que borrar las 2 filas de `feature_registry` (`min_a_pie_bus`, `min_a_pie_metro`); las de `feature_value` caen por CASCADE.
 4. **Sync.** Tablas `feature_registry` (2 filas) y `feature_value` (9.948 filas: 4.974 por feature, 131 de barrio, 246 de distrito, 179 de municipio, 4.417 de sección y 1 de región); `make supabase-sync` copia las tablas enteras. Valores locales: Latina bus 2,1 y Metro 8,3 min; Tetuán 2,1 y 7,0; Centro 2,1 y 4,4; Navacerrada 5,7 y 93,4.
 5. **Texto por modo y veredicto.** El texto sale de la mediana de cada modo y el veredicto de la condición, de la mediana combinada (`min_a_pie_transporte`): pueden diferir en 1 min (barrio 28079016: combinado 2,0, PASS, y «autobús a unos 3 min»). Es esperable, no un error.
+
+## D-234 — Comprar en Madrid capital: precio estimado por distrito y barrio, y un Reality Check que no culpa al presupuesto de lo que es falta de datos (`fit-0.8`) (2026-11-14)
+Feedback de usuarios de prueba del 14 nov (W1), con la solución aprobada por Mariano. Al buscar «Comprar», ningún distrito ni barrio de Madrid tenía precio: el valor tasado del Ministerio solo cubre municipios de más de 25.000 habitantes (D-227 §3). Salían «sin datos» y el aviso proponía «+40.000 €», que no añadía ninguna zona. Es reversible: una feature nueva, tres métricas nuevas y campos opcionales. Código:
+- `hi_features/methods.py` y `compute.py` (`anchored_relative_value`);
+- `hi_contracts/catalog/feature.py` (`FitBinding.estimate`);
+- `hi_api/services/search.py` (`zone_price`) y `barrios.py`;
+- `hi_domain/affordability.py`, `fit.py` y `reality_check.py`;
+- la web (`lib/fit.ts`, `RealityCheck.tsx`, `SearchResults.tsx`, `SearchCard.tsx`, `FitDetails.tsx` y «Cómo lo calculamos»).
+
+Evidencia: `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-compra-estimada.txt` (9/9), `casos-compra-estimada.txt`, `evidence/gate-01/2026-11-14/ayto_panel_indicadores_distritos_barrios/` y las capturas de `evidence/gate-06/2026-11-14-buy-estimate/`.
+1. **Método** (feature `precio_compra_estimado_m2`, método `anchored_relative_value`).
+   - **Fórmula:** €/m² de un distrito = valor tasado de Madrid (4.993,3 €/m², `cm_valor_tasado_vivienda_municipios`) × su valor catastral por m² / la media de los 21 ponderada por sus inmuebles residenciales.
+   - **Valor catastral por m²:** el valor catastral medio por inmueble residencial entre su superficie construida media.
+   - **Barrios:** se reparten igual a partir de la estimación de su distrito. La media ponderada de los distritos vuelve al valor de la ciudad, y la de los barrios a la de su distrito (test de integración).
+   - **Sin datos:** una zona sin valor catastral, sin superficie o sin inmuebles queda `SOURCE_MISSING`, nunca con la media ni con 0.
+   - **Resultado:** 21 de 21 distritos (de 2.971 €/m² en Puente de Vallecas a 7.771 en Salamanca) y 131 de 131 barrios (de 2.033 a 9.945).
+2. **Fuentes.** El nivel de precio sale del dataset CM del valor tasado; el reparto, del panel de indicadores del Ayuntamiento (complementario, no CM), que ya se cargaba (D-212, D-232).
+   - **Indicadores:** el pipeline guarda tres indicadores más del Catastro, en distrito y barrio: valor catastral medio, superficie construida media y número de inmuebles de uso residencial (métricas `valor_catastral_medio_residencial`, `superficie_construida_media_residencial` y `inmuebles_residenciales`).
+   - **Gate 1:** parser 1.4.0, mismo fichero (sha `11a758e6`), 5.584 observaciones, 0 en cuarentena y calidad superada.
+   - **Cifra de datasets CM:** no cambia.
+3. **Siempre dicho como estimación.**
+   - **Confidence:** 0,5, que la web enseña como «Dato aproximado».
+   - **Texto de la API:** la condición y el hecho dicen «Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento)», o «del barrio» en un barrio. El indicador cita los dos datasets.
+   - **El valor tasado sigue siendo solo de municipios:** `valor_tasado_vivienda_m2` no se reparte. Ahora también da una fila SIN DATOS a cada barrio, como ya hacía con los distritos.
+4. **Validación** frente a los precios de oferta de idealista en 12 distritos. Es un portal privado y solo se usa para validar, nunca como dato.
+   - **Orden:** Spearman 0,95.
+   - **Nivel:** el estimado es de media 0,88 veces el precio de oferta, lo esperable de una tasación frente a un anuncio.
+   - **Error por distrito,** quitada esa diferencia común: entre −19 y +19 %, ninguno por encima del 30 %. El agente anterior informó 0,96 en 13 distritos, pero no dejó la fuente.
+   - **Sesgo declarado:** el valor catastral comprime el rango. Los distritos caros quedan algo bajos y los baratos algo altos (Villa de Vallecas, San Blas-Canillejas y Villaverde).
+   - **Límites en la feature:** el catastro sale de ponencias antiguas y la superficie construida incluye zonas comunes.
+5. **Búsqueda (`fit-0.8`).**
+   - **Las dos features en la búsqueda:** las dos se enlazan como `fit: {role: price_m2}`; la estimada lleva además `estimate: true` (solo `price_m2` lo admite, validado en el contrato).
+   - **Lectura explícita:** `indicators_by_zone` tiene una rama propia para `price_m2` con `estimate`, que va a `price_estimate` y nunca pisa la publicada, lleguen en el orden que lleguen (test).
+   - **Qué precio usa una zona:** `zone_price` toma el valor tasado publicado si lo hay, después la estimación, y si no hay ninguno, la fila que dice por qué. `ZoneData.price_estimated` lleva la nota al texto.
+   - **Desempate:** con el mismo % sin redondear, después de la confidence y de los minutos al trabajo, va el coste más bajo; después, el código de zona. Así los «casi» por presupuesto empiezan por la zona más cercana al tope (Arganzuela, 406.000 €, antes que Tetuán, 411.000 €).
+     - **Vale para cualquier empate exacto, también de alquiler:** con 10.000 € al mes sin prioridades, las 57 zonas al 100 % van de la más barata a la más cara, ya no por orden alfabético.
+     - **El invariante del pitch no cambia:** 27 zonas, Latina 1.ª al 98 %.
+6. **Reality Check.** Una condición limita donde FALLA. Donde es UNKNOWN falta el dato, y ningún cambio de la persona lo arregla.
+   - **`binding_constraint`:** solo cuenta los FAIL. Puede ser `null` aunque no cumpla nada, si solo hay zonas sin datos.
+   - **`unknown_by_constraint`** (nuevo, opcional): cuántas de las `zones_unknown` tienen cada condición UNKNOWN.
+   - **Relajaciones:** no se ofrece relajar una condición que ninguna zona incumple si no añade zonas. Una que sí añade zonas, como quitar el límite de un trayecto sin calcular, se sigue ofreciendo (test).
+   - **Web:** con «Comprar» dice el motivo (`rc.sin_dato.compra`: «En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes)…»). Bajo el presupuesto va `presupuesto.compra.fuente`, y la tarjeta de una zona sin datos lleva `zona.compra.sin_precio`.
+6b. **El precio de cada zona, a la vista** (ampliación pedida por el coordinador, por la prueba con usuarios del 14 nov: «si tuviera un precio aproximado por zona, se entendería mejor»).
+   - **Contrato (aditivo y retrocompatible):** `RankedZone.estimated_cost_confidence` y, en `all_zones` (`ZoneMatch`), `estimated_cost_eur` y `estimated_cost_confidence`. La confidence es la de su precio o su alquiler: 0,5 en la estimación. Sin coste, las dos van a `null`, nunca a 0.
+   - **Web:** junto al % de cada fila («Zonas que encajan», «Casi encajan» y los barrios) sale «≈ 385.000 €» o «≈ 1.101 €/mes». Bajo el nombre de la tarjeta de zona sale «Comprar ≈ 385.000 €», para cualquier zona evaluada.
+   - **Fiabilidad:** si el precio no es un dato fiable, lleva las mismas palabras que la tarjeta («Dato aproximado»).
+   - **Sin precio:** no va nada.
+   - **El orden y los % no cambian:** el ejemplo del pitch sigue en 27 zonas con Latina 1.ª al 98 %.
+7. **Casos reales** (pareja, API local).
+   - **400.000 €:** cumplen 41 zonas: 27 municipios y 14 distritos. Tetuán no cumple por poco (≈ 411.000 €) y sale 2.º en «casi».
+   - **400.000 € dentro de Tetuán:** cumplen 4 de 6 barrios: Valdeacederas (≈ 348.000 €), Berruguete (≈ 378.000 €), Almenara y Bellas Vistas.
+   - **1.000.000 € con trabajo en Cuatro Torres:** cumplen 48 y los 10 primeros son distritos (Tetuán, Chamartín, Fuencarral-El Pardo y Chamberí al 100 %). Con 45 minutos como máximo cumplen 13.
+8. **Despliegue: desplegar → sincronizar → smoke.** Tras el sync no hay vuelta atrás a un despliegue anterior sin retirar estas filas.
+   - **Por qué:** el código anterior a este PR lee la estimación como un `price_m2` más, igual que un valor tasado publicado. Hoy solo le salva el orden alfabético de la consulta: `precio_…` llega antes que `valor_…`, y la fila SIN DATOS del valor tasado la pisa. Nada garantiza ese orden, así que no se confía en él.
+   - **Rollback tras el sync:** borrar antes la fila `precio_compra_estimado_m2` de `feature_registry`; sus 152 filas de `feature_value` caen por CASCADE. Las 131 filas SIN DATOS de barrio del valor tasado y las tres métricas no molestan al código anterior.
+   - **Tablas del sync** (`make supabase-sync PROFILE=demo` copia las tablas enteras):
+     - `metric_registry`: 3 filas nuevas;
+     - `feature_registry`: 1 fila nueva y 1 cambiada (fuentes y nivel barrio del valor tasado);
+     - `feature_value`: 283 filas más (152 de la estimación y 131 SIN DATOS de barrio del valor tasado);
+     - `dataset_version`: la versión del panel cambia a parser 1.4.0.
+     - Las 3.192 observaciones nuevas de `metric_observation` solo van con `PROFILE=full`; la API no las lee.
+   - **Recalcular en `housing`:** los comandos están en el PR (catálogo, panel y las dos features).
+9. **Pendiente, para decidir con Mariano.** Sin trabajo ni prioridades, comprando con 400.000 €, los 10 primeros son municipios al 100 %. Los 8 distritos que también están al 100 % quedan detrás porque el precio publicado (confidence 0,8) desempata antes que el estimado (0,5). El mapa sí los pinta como «Cumple todo». Encaja con W5 (el mejor barrio de cada distrito en el ranking).

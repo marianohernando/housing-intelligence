@@ -2,6 +2,12 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Comprar en Madrid capital (14 nov, D-234, `fit-0.8`).** Dos usuarios de prueba buscaron «Comprar» y no les salió ningún distrito ni barrio de Madrid. Ahora salen, con un precio **estimado** que la web y la API dicen siempre como estimación. Ya está en la web (líneas A y B):
+- **Nuevas:** `presupuesto.compra.fuente` (sección 2), `zona.compra.sin_precio`, `hecho.compra.estimado` (sección 4), `rc.sin_dato.compra` (sección 7). El párrafo «Compra» de «Cómo lo calculamos» sigue a `pitch/metodologia.md` §1.3.
+- **Cambian:** `presupuesto.compra.sin_datos` (ya no vale: sustituida por `presupuesto.compra.fuente`), `rc.limite` (solo cuenta las zonas que no cumplen, no las que no tienen dato) y `rc.sin_opciones`.
+- **Fiabilidad:** el precio estimado llega con fiabilidad 0,5, así que la web lo marca como «Dato aproximado» (sección 6), sin texto nuevo.
+- **Precio de cada zona a la vista (prueba con usuarios):** `zona.precio.*` (sección 4). «≈ 385.000 €» o «≈ 1.101 €/mes» junto al % de cada fila, y «Comprar ≈ 385.000 €» bajo el nombre de la zona en su tarjeta. Si es una estimación, con «Dato aproximado».
+
 **Prueba con usuarios (14 nov): lo que llega esta semana.** Claves nuevas, todas **pendiente de A** (dato o texto de la API) **o de B** (pantalla):
 - **«Tardar como mucho N min» en el trabajo:** `trabajo.max_min` y sus opciones (sección 2). B lo está haciendo.
 - **Paradas de autobús aparte del metro y de Cercanías:** `hecho.paradas*` (sección 4, tarjeta de zona). Sustituye al hecho de «Parada de transporte público».
@@ -246,7 +252,8 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `presupuesto.compra.valor` | Hasta {importe} € | Rango del slider: 10.000–5.000.000 € (`BUY_RANGE_EUR`) |
 | `presupuesto.compra.etiqueta` | Orientativo | Etiqueta junto al importe de compra, siempre visible |
 | `presupuesto.compra.ayuda` | No hay un precio oficial de compra por zona tan completo como el del alquiler. Lo usamos solo como orientación. | |
-| `presupuesto.compra.sin_datos` | Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto. | Hecho en la API: con compra, la condición sale UNKNOWN en todas las zonas (D-214, punto 5). Cambia si llega DATA-021 (19–22 nov) |
+| `presupuesto.compra.sin_datos` | ~~Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.~~ | **Retirada** (D-227, D-234): ya hay precio en 28 municipios y una estimación en los distritos y barrios de Madrid. La sustituye `presupuesto.compra.fuente` |
+| `presupuesto.compra.fuente` | Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica para los municipios de más de 25.000 habitantes. En los distritos y barrios de Madrid es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. En los municipios pequeños no podemos comprobar tu presupuesto. | **Nueva (D-234).** Bajo el presupuesto, con «Comprar» elegido (`buySource` en `SearchCard.tsx`) |
 | `presupuesto.sin_limite` | Sin límite de presupuesto | Opción del slider (`budget: null`) |
 | `presupuesto.slider.aria` | Presupuesto máximo | `aria-label` |
 | `presupuesto.fuera_rango.alquiler` | El alquiler tiene que estar entre 100 y 20.000 € al mes. | |
@@ -336,6 +343,10 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `resultados.menos` | Ver menos | |
 | `resultados.resto` | Y {n} zonas más en el mapa. | Con 1: «Y 1 zona más en el mapa.» |
 | `resultados.barrio` | Barrio que más encaja: {barrio} ({pct} %) | Segunda línea de cada distrito de Madrid en la lista, bajo su nombre. Sale del mismo cálculo que «Los barrios que mejor encajan» (D-232, `fit-0.7`). Con empate: «Barrios que más encajan: {a}, {b} y {c} ({pct} %)»; por ejemplo, San Blas-Canillejas con el caso de ejemplo, «Barrios que más encajan: Canillejas, Arcos y Simancas (97 %)» (`evidence/gate-06/2026-11-13-deploy/deploy-22-barrio.md`). Si ningún barrio cumple todo, no va la línea. Los municipios no la llevan. En pantalla nunca «ranking» ni «el mejor barrio»: es el que más se parece a lo que buscas, no una nota del barrio. Prueba con usuarios (14 nov). **Pendiente de A** (que `/search` lo devuelva, o una llamada por distrito) **y de B** |
+| `zona.precio.compra` | ≈ {importe} € | **Nueva (D-234, prueba con usuarios del 14 nov: «si tuviera un precio aproximado por zona, se entendería mejor»).** Junto al % de cada fila de «Zonas que encajan», «Casi encajan» y «Los barrios que mejor encajan», al comprar. {importe} = `estimated_cost_eur` (precio para los m² del hogar, el mismo del hecho de la tarjeta). Sin precio, no va nada: el aviso `rc.sin_dato.compra` ya dice por qué |
+| `zona.precio.alquiler` | ≈ {importe} €/mes | **Nueva (D-234).** Igual, al alquilar o sin límite de presupuesto (alquiler mensual de los m² del hogar) |
+| `zona.precio.aria.compra` | Comprar: unos {importe} € | **Nueva (D-234).** Lo que lee un lector de pantalla en lugar de «≈ {importe} €». En alquiler, `zona.precio.aria.alquiler`: «Alquiler: unos {importe} € al mes» |
+| `zona.precio.fiabilidad` | {Dato aproximado} | **Nueva (D-234).** Bajo la cifra, en pequeño, cuando no es un dato fiable: las palabras de la sección 6 con la confianza del precio (`estimated_cost_confidence`). El precio estimado de los distritos y barrios de Madrid (0,5) sale «Dato aproximado»; un alquiler de barrio con pocos datos, «Dato poco seguro». Con un dato fiable no va nada |
 | `resultados.casi.ayuda` | Cumplen todo menos una cosa. | Bajo `zona.cerca_de_encajar.titulo` («Casi encajan»). Antes, «Fallan en una sola cosa.» |
 | `resultados.cambiada` | Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día. | Los resultados son de la búsqueda anterior |
 
@@ -345,6 +356,7 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 |---|---|---|
 | `zona.encaje` | {pct} % de encaje | Chip grande. Nunca «/100» |
 | `zona.encaje.aria` | Esta zona encaja en un {pct} % con tu búsqueda | |
+| `zona.precio.cabecera.compra` | Comprar ≈ {importe} € | **Nueva (D-234).** Bajo el nombre de la zona, con «· {Dato aproximado}» si no es fiable (`zona.precio.fiabilidad`). Para cualquier zona evaluada, también la que no sale en la lista (`all_zones[].estimated_cost_eur`). En alquiler, `zona.precio.cabecera.alquiler`: «Alquiler ≈ {importe} €/mes». Sin precio, no va nada |
 | `zona.encaje.ayuda` | Cuánto se parece esta zona a lo que buscas. No es una nota de la zona. | Al tocar «?» |
 | `encaje.aviso_justo` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de {lista}. | Bajo el % de la tarjeta, si alguna fila de «Qué falta» sale JUSTO y ninguna FALTA. Ejemplo real, Latina, la 1.ª del caso de ejemplo con `fit-0.6` (98 %): «… aquí van justos de escuelas infantiles y centros de salud.» (`GET /api/v1/gaps/distrito/2807910`, 12 nov). Las filas, con `fila.lista.*`. No cuentan las filas de zona muy pequeña para comparar. Fase de mejora, **pendiente de B** |
 | `encaje.aviso_falta` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan {lista}. | Si alguna fila sale FALTA y ninguna JUSTO. Ejemplo: Puente de Vallecas, «… aquí faltan escuelas infantiles.» |
@@ -373,6 +385,8 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.cerca_de_encajar.motivo` | No cumple: {condición} | {condición} = `label` de la condición que falla |
 | `zona.condicion.cumple` | Cumple | `PASS` |
 | `zona.condicion.no_cumple` | No cumple | `FAIL` |
+| `zona.compra.sin_precio` | Con «Comprar», puede faltar el precio: el oficial (valor tasado del Ministerio de Vivienda) solo se publica para los municipios de más de 25.000 habitantes. En los distritos y barrios de Madrid lo estimamos con el valor catastral. | **Nueva (D-234).** En la tarjeta de una zona «sin datos» cuando se busca comprar (`buySource` en `FitDetails.tsx`) |
+| `hecho.compra.estimado` | Comprar ≈ {importe} € por {m2} m² ({precio} €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) | **Nueva (D-234).** Llega escrita de la API, en `facts` y en la condición del presupuesto. En un barrio dice «del barrio». Fiabilidad 0,5: «Dato aproximado». En los municipios sigue «…, valor tasado medio de la vivienda libre, no el precio de un anuncio)» |
 | `zona.condicion.sin_dato` | No lo sabemos | `UNKNOWN`. Ayuda: «Nos falta el dato para comprobarlo. No lo damos por bueno.» |
 | `zona.falta.a_pie` | A pie: {minutos} | Bajo el nombre de cada fila de la mini lista. {minutos} con `a_pie.min` (sección 5) |
 | `zona.encaje.pronto` | Muy pronto verás cuánto encaja esta zona contigo. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
@@ -579,9 +593,10 @@ Siempre visible bajo «Zonas que encajan». Va plegado a la opción que más zon
 | `rc.boton` | Probar así | En cada opción |
 | `rc.mas` | Ver todas las opciones | Con el bloque plegado |
 | `rc.menos` | Ver menos | |
-| `rc.sin_opciones` | Cambiar una sola cosa no añade zonas. | Ninguna opción añade zonas |
+| `rc.sin_opciones` | Cambiar una sola cosa no añade zonas. | Ninguna opción añade zonas. **Cambia (D-234):** la API ya no manda la opción de una condición que ninguna zona incumple y que no añade zonas (por ejemplo, «+40.000 €» cuando lo que falta es el precio) |
 | `rc.sin_dato` | En {n} zonas no podemos comprobarlo todo por falta de datos. No las contamos como buenas. | `zones_unknown` > 0 |
-| `rc.limite` | Lo que más limita tu búsqueda es: {condición} | `binding_constraint` |
+| `rc.sin_dato.compra` | En {n} zonas no podemos comprobarlo todo: sin precio de compra publicado en {m} municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas. | **Nueva (D-234).** En lugar de `rc.sin_dato` cuando se busca comprar y {m} = `unknown_by_constraint.budget` > 0. Con 1: «en 1 municipio». En la búsqueda por barrios se queda `rc.sin_dato` |
+| `rc.limite` | Lo que más limita tu búsqueda es: {condición} | `binding_constraint`. **Cambia (D-234):** es la condición que más zonas incumplen; las zonas sin dato ya no cuentan, así que puede no salir |
 | `rc.nota` | No te decimos que gastes más: te enseñamos qué cuesta cada alternativa. | Frase del mensaje de la idea (sin cifras) |
 | `rc.deshacer` | Volver a mi búsqueda | Tras aplicar una opción |
 | `rc.aplicado` | Ahora ves las zonas con: {label} | Aviso tras aplicar una opción |
