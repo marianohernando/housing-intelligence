@@ -11,7 +11,7 @@
     ],
     "ayuda_dias": 1,
     "recorte_familia_dias": {
-      "alto": 441,
+      "alto": 467,
       "cabe": true
     },
     "axe_formulario": [],
@@ -51,10 +51,29 @@
       ]
     },
     "axe_resultados": [],
+    "tarjeta": {
+      "zona": "Villaverde",
+      "hechos_api": [
+        "colegios: Colegio con primaria a unos 6 min andando",
+        "transporte: Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min",
+        "salud: Centro de salud a unos 10 min andando",
+        "trayecto: 46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+        "coste: Alquiler ≈ 1.007 €/mes por 77 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+      ],
+      "hechos_pantalla": [
+        "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+        "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min · Dato fiable Fiabilidad del dato: Dato fiable",
+        "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+        "46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+        "Alquiler ≈ 1.007 €/mes por 77 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable"
+      ]
+    },
+    "axe_tarjeta": [],
     "ayuda_teletrabajo": 1,
     "limite_trabajo_visible": true,
+    "dias_describedby": "Con teletrabajo total, el trayecto no cuenta en el encaje. Si pones un límite, lo respetamos.",
     "recorte_teletrabajo": {
-      "alto": 462,
+      "alto": 488,
       "cabe": true
     },
     "anchors_teletrabajo": [
@@ -108,7 +127,7 @@
     ],
     "ayuda_dias": 1,
     "recorte_familia_dias": {
-      "alto": 620,
+      "alto": 641,
       "cabe": true
     },
     "axe_formulario": [],
@@ -148,11 +167,30 @@
       ]
     },
     "axe_resultados": [],
+    "tarjeta": {
+      "zona": "Villaverde",
+      "hechos_api": [
+        "colegios: Colegio con primaria a unos 6 min andando",
+        "transporte: Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min",
+        "salud: Centro de salud a unos 10 min andando",
+        "trayecto: 46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+        "coste: Alquiler ≈ 1.007 €/mes por 77 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)"
+      ],
+      "hechos_pantalla": [
+        "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+        "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min · Dato fiable Fiabilidad del dato: Dato fiable",
+        "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+        "46 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+        "Alquiler ≈ 1.007 €/mes por 77 m² (13,1 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) · Dato fiable Fiabilidad del dato: Dato fiable"
+      ]
+    },
+    "axe_tarjeta": [],
     "ayuda_teletrabajo": 1,
     "limite_trabajo_visible": true,
+    "dias_describedby": "Con teletrabajo total, el trayecto no cuenta en el encaje. Si pones un límite, lo respetamos.",
     "recorte_teletrabajo": {
-      "alto": 641,
-      "cabe": true
+      "alto": 662,
+      "cabe": false
     },
     "anchors_teletrabajo": [
       {

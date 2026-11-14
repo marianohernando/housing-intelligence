@@ -2,5 +2,10 @@ local: {"passing": 27, "unknown": 15, "top": [["Latina", 98], ["Moratalaz", 98],
 prod:  {"passing": 27, "unknown": 15, "top": [["Latina", 98], ["Moratalaz", 98], ["Ciudad Lineal", 98], ["Puente de Vallecas", 98], ["Fuencarral-El Pardo", 97], ["Usera", 97], ["Carabanchel", 97], ["Hortaleza", 97], ["San Blas-Canillejas", 97], ["Villaverde", 97]], "near": [["Chamartín", 93], ["Salamanca", 93], ["Centro", 93], ["Chamberí", 93], ["Retiro", 93]]}
 summary equal: True
 methodology: fit-0.8 vs fit-0.7
-data equal except methodology_version: True
-barrios: 21 districts, differing: none
+data equal except methodology_version: False
+  differs: methodology_version
+  differs: reality_check
+  differs: scenario
+barrios: 21 districts, differing: ['2807901', '2807902', '2807903', '2807904', '2807905', '2807906', '2807907', '2807908', '2807909', '2807910', '2807911', '2807912', '2807913', '2807914', '2807915', '2807916', '2807917', '2807918', '2807919', '2807920', '2807921']
+search: data equal without methodology_version and scope: True
+barrios: 21 districts, differing without methodology_version and scope: none
