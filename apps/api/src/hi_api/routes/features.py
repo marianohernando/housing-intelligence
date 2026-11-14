@@ -29,25 +29,49 @@ class FeatureInfo(BaseModel):
 
 
 class ContextItem(BaseModel):
-    """One thing a context figure lists (D-241): a planning area, a Plan Vive promotion."""
+    """One thing a context figure lists (D-241): a Plan Vive entry or a Madrid planning area."""
 
-    code: str | None = None
-    name: str | None = None
-    stage: str | None = None
-    value: float | None = None
-    note: str | None = None
+    code: str | None = Field(
+        default=None, description="Its id in the source: the planning area's code («APR.06.02»)"
+    )
+    name: str | None = Field(
+        default=None, description="What to call it: the area's name, or where the entry is"
+    )
+    stage: str | None = Field(
+        default=None,
+        description="Planning areas: obras | tramitacion | sin_empezar. Plan Vive: its phase "
+        "as the page writes it («Entrega y construcción»)",
+    )
+    value: float | None = Field(
+        default=None, description="Plan Vive: homes. Planning areas: surface in m²"
+    )
+    note: str | None = Field(
+        default=None, description="A caveat that travels with the data, shown next to it"
+    )
 
 
 class FeatureValueDetail(BaseModel):
-    """What a context figure says besides its value (D-241), only for the features that keep
-    it: the two counts of a share, the last day of its period, whether it is provisional, and
-    the items behind a count."""
+    """What a context figure says besides its value (D-241). Only the features that keep one
+    (`feature_value.inputs.detail`) send it; any field may be absent:
 
-    numerator: float | None = None
-    denominator: float | None = None
-    period_end: date | None = None
-    provisional: bool | None = None
-    items: list[ContextItem] | None = None
+    - a share over periods (`compraventas_obra_nueva_pct`): `numerator`, `denominator`,
+      `period_end` and `provisional`;
+    - the items behind a count or a sum (`plan_vive_viviendas`,
+      `ambitos_residenciales_en_desarrollo`): `items`, empty when the zone has none (a
+      confirmed 0)."""
+
+    numerator: float | None = Field(default=None, description="Count behind the share's top")
+    denominator: float | None = Field(default=None, description="Count behind the share's base")
+    period_end: date | None = Field(
+        default=None,
+        description="Last day of the periods added up (the row's period_start is the first)",
+    )
+    provisional: bool | None = Field(
+        default=None, description="True when any value added up is marked provisional"
+    )
+    items: list[ContextItem] | None = Field(
+        default=None, description="The zone's items: stage order, then largest first"
+    )
 
 
 class FeatureValueRow(BaseModel):
@@ -59,7 +83,11 @@ class FeatureValueRow(BaseModel):
     null_reason: str | None
     confidence: float
     # Only the context features keep one; the rest leave it out (no `null` in every row)
-    detail: FeatureValueDetail | None = Field(default=None, exclude_if=lambda d: d is None)
+    detail: FeatureValueDetail | None = Field(
+        default=None,
+        exclude_if=lambda d: d is None,
+        description="Only in the rows of context features that keep one (D-241); absent otherwise",
+    )
 
 
 class FeatureValues(BaseModel):

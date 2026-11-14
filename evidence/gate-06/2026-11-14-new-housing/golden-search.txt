@@ -248,6 +248,29 @@ zonas 199 · cumplen 46 · desconocidas 142 · condición que más quita: budget
   casi: Chamberí (falla budget)
   casi: Retiro (falla budget)
 
+## golden_couple: OK
+zonas 199 · cumplen 57 · desconocidas 142 · condición que más quita: None
+  1. Chamberí · 100 % · ≈ 1531 €/mes
+       - Alquiler ≈ 1.531 €/mes por 68 m² (22,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 5 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+  2. Tetuán · 100 % · ≈ 1314 €/mes
+       - Alquiler ≈ 1.314 €/mes por 68 m² (19,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+  3. Puente de Vallecas · 100 % · ≈ 997 €/mes
+       - Alquiler ≈ 997 €/mes por 68 m² (14,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+  4. Salamanca · 100 % · ≈ 1587 €/mes
+       - Alquiler ≈ 1.587 €/mes por 68 m² (23,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 6 min (confianza 1.00)
+       - Centro de salud a unos 9 min andando (confianza 1.00)
+  5. Centro · 100 % · ≈ 1495 €/mes
+       - Alquiler ≈ 1.495 €/mes por 68 m² (22,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 4 min (confianza 1.00)
+       - Centro de salud a unos 7 min andando (confianza 1.00)
+
 ## golden_family en San Blas-Canillejas (barrios): OK
 zonas 8 · cumplen 7 · desconocidas 0 · condición que más quita: near:colegio
   Reality Check: +5 min a pie hasta colegio con primaria → +0 zonas
@@ -296,4 +319,4 @@ zonas 8 · cumplen 7 · desconocidas 0 · condición que más quita: near:colegi
   casi: Rejas (falla near:colegio)
   todos: Simancas 97 %, Hellín 93 %, Amposta 96 %, Arcos 97 %, Rosas 96 %, Rejas 55 %, Canillejas 97 %, El Salvador 95 %
 
-9 escenarios dorados · todos OK
+10 escenarios dorados · todos OK

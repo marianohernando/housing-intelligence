@@ -1,0 +1,55 @@
+POST /api/v1/search and /search/barrios against https://vidafacil-madrid.vercel.app, 2026-11-14 (UTC).
+Bodies: the demo case (data/fixtures/contracts/scenario_state.familia_castellana.fixture.json); telework = the same with anchors[0].days_per_week 0;
+buy400 = a couple (2 adults), buy up to 400.000 €, no work, no nearby needs, no priorities; Tetuán = buy400 in /search/barrios with distrito 2807906.
+
+== Before the deploy (f1b6f5a, ~22:05)
+example: fit-0.7 · 27 of 199 pass · unknown 15 · binding near:colegio
+  top: Latina 98 ≈1101, Moratalaz 98 ≈1083, Ciudad Lineal 98 ≈1230, Puente de Vallecas 98 ≈1129, Fuencarral-El Pardo 97 ≈1276, Usera 97 ≈1019, Carabanchel 97 ≈1127, Hortaleza 97 ≈1267, San Blas-Canillejas 97 ≈1181, Villaverde 97 ≈1007
+  near: Chamartín 93 ≈1590, Salamanca 93 ≈1797, Centro 93 ≈1692, Chamberí 93 ≈1733, Retiro 93 ≈1525
+  Madrid districts with a cost: 0 · relaxations: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+buy400: fit-0.7 · 27 of 199 pass · unknown 172 · binding budget
+  top: Coslada 100 ≈196000, Parla 100 ≈143000, Móstoles 100 ≈183000, Leganés 100 ≈195000, Fuenlabrada 100 ≈174000, Alcalá de Henares 100 ≈171000, Alcorcón 100 ≈209000, Torrejón de Ardoz 100 ≈180000, Tres Cantos 100 ≈263000, Collado Villalba 100 ≈178000
+  near: 
+  Madrid districts with a cost: 0 · relaxations: +40.000 € +0
+telework: HTTP 422 · [{"type":"greater_than_equal","loc":["body","anchors",0,"days_per_week"],"msg":"Input should be greater than or equal to 1","input":0,"ctx":{"ge":1}}]
+
+== d5fe735 deployed, before the sync (~22:14)
+example: fit-0.8 · 27 of 199 pass · unknown 15 · binding near:colegio
+  top: Latina 98 ≈1101, Moratalaz 98 ≈1083, Ciudad Lineal 98 ≈1230, Puente de Vallecas 98 ≈1129, Fuencarral-El Pardo 97 ≈1276, Usera 97 ≈1019, Carabanchel 97 ≈1127, Hortaleza 97 ≈1267, San Blas-Canillejas 97 ≈1181, Villaverde 97 ≈1007
+  near: Chamartín 93 ≈1590, Salamanca 93 ≈1797, Centro 93 ≈1692, Chamberí 93 ≈1733, Retiro 93 ≈1525
+  Madrid districts with a cost: 21 · relaxations: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+telework: fit-0.8 · 27 of 199 pass · unknown 15 · binding near:colegio
+  top: Usera 100 ≈1019, Latina 100 ≈1101, Moratalaz 100 ≈1083, Villaverde 100 ≈1007, Coslada 100 ≈928, Parla 100 ≈779, Móstoles 100 ≈869, Leganés 100 ≈896, Fuenlabrada 100 ≈841, Alcalá de Henares 100 ≈871
+  near: Ciempozuelos 97 ≈707, San Martín de la Vega 96 ≈646, Tres Cantos 95 ≈1052, San Sebastián de los Reyes 95 ≈1080, Mejorada del Campo 93 ≈748
+  Madrid districts with a cost: 21 · relaxations: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+buy400: fit-0.8 · 27 of 199 pass · unknown 172 · binding none
+  top: Coslada 100 ≈196000, Parla 100 ≈143000, Móstoles 100 ≈183000, Leganés 100 ≈195000, Fuenlabrada 100 ≈174000, Alcalá de Henares 100 ≈171000, Alcorcón 100 ≈209000, Torrejón de Ardoz 100 ≈180000, Tres Cantos 100 ≈263000, Collado Villalba 100 ≈178000
+  near: 
+  Madrid districts with a cost: 0 · relaxations: 
+Tetuán by barrio: fit-0.8 · 0 of 6 pass · unknown 6 · binding none
+  top: 
+  near: 
+  Madrid districts with a cost: 0 · relaxations: 
+
+== After the sync (~22:18)
+example: fit-0.8 · 27 of 199 pass · unknown 15 · binding near:colegio
+  top: Latina 98 ≈1101, Moratalaz 98 ≈1083, Ciudad Lineal 98 ≈1230, Puente de Vallecas 98 ≈1129, Fuencarral-El Pardo 97 ≈1276, Usera 97 ≈1019, Carabanchel 97 ≈1127, Hortaleza 97 ≈1267, San Blas-Canillejas 97 ≈1181, Villaverde 97 ≈1007
+  near: Chamartín 93 ≈1590, Salamanca 93 ≈1797, Centro 93 ≈1692, Chamberí 93 ≈1733, Retiro 93 ≈1525
+  Madrid districts with a cost: 21 · relaxations: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+telework: fit-0.8 · 27 of 199 pass · unknown 15 · binding near:colegio
+  top: Usera 100 ≈1019, Latina 100 ≈1101, Moratalaz 100 ≈1083, Villaverde 100 ≈1007, Coslada 100 ≈928, Parla 100 ≈779, Móstoles 100 ≈869, Leganés 100 ≈896, Fuenlabrada 100 ≈841, Alcalá de Henares 100 ≈871
+  near: Ciempozuelos 97 ≈707, San Martín de la Vega 96 ≈646, Tres Cantos 95 ≈1052, San Sebastián de los Reyes 95 ≈1080, Mejorada del Campo 93 ≈748
+  Madrid districts with a cost: 21 · relaxations: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+buy400: fit-0.8 · 41 of 199 pass · unknown 151 · binding budget
+  top: Puente de Vallecas 100 ≈202000, Usera 100 ≈207000, Carabanchel 100 ≈247000, Latina 100 ≈260000, Villaverde 100 ≈234000, Coslada 100 ≈196000, Parla 100 ≈143000, Móstoles 100 ≈183000, San Blas-Canillejas 100 ≈289000, Leganés 100 ≈195000
+  near: Arganzuela 0 ≈406000, Tetuán 0 ≈411000, Centro 0 ≈428000, Retiro 0 ≈462000, Chamberí 0 ≈477000
+  Madrid districts with a cost: 21 · relaxations: +40.000 € +3
+  Tetuán in «casi»: Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) (confidence 0.5)
+Tetuán by barrio: fit-0.8 · 4 of 6 pass · unknown 0 · binding budget
+  top: Valdeacederas 52 ≈348000, Berruguete 22 ≈378000, Almenara 10 ≈390000, Bellas Vistas 5 ≈395000
+  near: Castillejos 0 ≈468000, Cuatro Caminos 0 ≈469000
+  Madrid districts with a cost: 0 · relaxations: +40.000 € +0
+
+== The example across the three moments
+  f1b6f5a → d5fe735: same %, passes_all and failed constraints in the 199 zones; same order and facts in the top 10
+  before → after the sync: identical zones, order, %, costs and facts; datasets gains ayto_panel_indicadores_distritos_barrios (the panel the estimate comes from)

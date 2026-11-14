@@ -1,0 +1,36 @@
+feature_id: min_a_pie_bar
+version: 1
+human_name: "Minutos a pie hasta el bar, pub o cafetería más cercano (mediana de las calles de la zona)"
+domain: other
+type: derived
+unit: min
+direction: lower_is_better
+geo_level: seccion_censal
+time_semantics: current
+sources:
+  - {dataset_id: osm_red_peatonal, role: primary}
+  - {dataset_id: osm_ocio, role: primary}
+formula:
+  method: network_walk_time
+  destination_category: commerce
+  subcategories: ["Bar", "Pub", "Cafetería"]
+  statistic: median_minutes
+  speed_kmh: 4.0
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  min_street_m: 300  # less origin street than this -> confidence 0.5 at most
+  levels: {municipio: {}, distrito: {}, barrio: {}}  # barrios of Madrid: the search inside a district (D-232)
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [reachable_street_share, min_street_m]}
+public_use: true
+pro_use: true
+models: [residential_fit]
+tests: [non_negative, explicit_null_without_streets, unknown_never_near]
+limitations:
+  - "Cuenta bares, pubs y cafeterías de OpenStreetMap (amenity=bar, pub o cafe), con nombre o sin él."
+  - "Los locales son los de OpenStreetMap, que mantienen voluntarios: en Madrid y las ciudades grandes el mapa es bastante completo, pero en los pueblos pequeños faltan locales. Un tiempo largo puede querer decir «no está en el mapa», no «no hay» (D-236)."
+  - "Solo dice lo lejos que queda el local más cercano: no mide cuántos hay, su calidad, su precio ni su horario, y OSM puede tener un local que ya cerró."
+  - "Velocidad de 4 km/h para todo el mundo, la del estudio «El Madrid de los 15 minutos» del Ayuntamiento: con movilidad reducida o con carrito los minutos son más."
+  - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población."
+  - "Cada local se une a la red por su punto más cercano en línea recta: no se ven puertas, pasos de peatones ni escaleras."
+  - "Una zona sin calles residenciales en OSM queda SIN DATOS y una cuyas calles no conectan con la red queda desconocida; nunca vale 0."
+fit: {role: walk_minutes, need: bares}

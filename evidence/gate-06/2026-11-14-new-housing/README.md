@@ -19,7 +19,7 @@ El cruce de nombres de la tabla de compraventas casa 179 de 179 municipios con l
 - Vicálvaro: en toda la ciudad, 1.512 de 40.086 (3,8 %) y tasación 5.459 €/m² (+9 %); Plan Vive, 1.616 viviendas en entrega y en obras (Valdebebas y Los Ahijones, sin reparto entre los dos sitios); en desarrollo: Los Berrocales, Los Ahijones, Los Cerros y Camino Viejo de Vicálvaro (urbanización en obras).
 
 ## Invariante del pitch
-- `golden-search.txt`: `scripts/golden_search.py` contra `housing_vivienda`, **9/9 OK**, con `ranked_order` y `near_miss_order` del ejemplo (27 zonas cumplen; Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %; «Casi encajan» Chamartín, Salamanca, Centro, Chamberí y Retiro al 93 %).
+- `golden-search.txt`: `scripts/golden_search.py` contra `housing_vivienda`, **10/10 OK** en el árbol fusionado con el PR #62 (ocio añade un caso; antes, 9/9), con `ranked_order` y `near_miss_order` del ejemplo (27 zonas cumplen; Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %; «Casi encajan» Chamartín, Salamanca, Centro, Chamberí y Retiro al 93 %).
 - `invariante.txt`: `POST /search` (toda la Comunidad y Madrid capital por barrios) y `POST /search/barrios` en los 21 distritos dan la misma respuesta **byte a byte** con y sin las filas de D-241 (quitadas dentro de una transacción que se deshace).
 
 ## Capturas (1440 y 390 px)

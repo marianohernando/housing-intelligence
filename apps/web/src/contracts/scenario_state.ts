@@ -41,27 +41,42 @@ export type SeniorsInCare = number;
 export type MinFloorAreaM2 = number | null;
 export type MaxWalkMinutes = number;
 /**
- * Everyday services the search and the per-zone list both talk about.
+ * Everyday services the search and the per-zone list both talk about, and the leisure
+ * groups of «Ocio» (D-236), which only the search knows: they are never rows of the list.
+ *
+ * A leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the
+ * API or the MCP may, it is ignored with a warning: `required` is True by default, so it would
+ * otherwise filter zones by places OpenStreetMap may not have.
  */
 export type NeedKey =
-  "escuela_infantil" | "colegio" | "centro_salud" | "farmacia" | "mayores" | "transporte";
+  | "escuela_infantil"
+  | "colegio"
+  | "centro_salud"
+  | "farmacia"
+  | "mayores"
+  | "transporte"
+  | "bares"
+  | "restaurantes"
+  | "gimnasios"
+  | "cultura";
 /**
  * True = hard constraint (PASS/FAIL/UNKNOWN)
  */
 export type Required = boolean;
 /**
- * @maxItems 6
+ * @maxItems 10
  */
 export type Nearby = NearbyNeed[];
 /**
- * «Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.
+ * «Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio
+ * (D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing.
  */
 export type PriorityKey =
-  "transporte" | "salud" | "colegios" | "zonas_verdes" | "seguridad" | "sin_escaleras";
+  "transporte" | "salud" | "colegios" | "zonas_verdes" | "seguridad" | "sin_escaleras" | "ocio";
 /**
  * Most important first
  *
- * @maxItems 6
+ * @maxItems 7
  */
 export type Priorities = PriorityKey[];
 export type SchemaVersion = 2;

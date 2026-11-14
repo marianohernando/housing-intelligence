@@ -343,7 +343,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-9e34e07839c7` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro_ligero/quality_report.json)
 
-## 3. Fuentes complementarias en uso (10)
+## 3. Fuentes complementarias en uso (11)
 
 No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regional.
 
@@ -424,6 +424,16 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - No entra en la lista de lo que falta ni en el buscador: es dato de apoyo o total de la región
 - **Quality Gate 1:** PASS · 2026-11-12 · 5/5 checks críticos · versión `2026-11-12-e5148a11b523` · [quality_report.json](../evidence/gate-01/2026-11-12/ms_catalogo_nacional_hospitales/quality_report.json)
 
+### Ocio de OpenStreetMap (bares, restaurantes, gimnasios y cultura; extracto Geofabrik de la Comunidad de Madrid)
+- **Ficha:** https://download.geofabrik.de/europe/spain/madrid.html · id `osm_ocio` · publica: OpenStreetMap contributors (extracto de Geofabrik)
+- **Licencia:** [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Minutos a pie hasta el bar, pub o cafetería más cercano (mediana de las calles de la zona) (`min_a_pie_bar`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el museo, biblioteca, teatro, cine o centro cultural más cercano (mediana de las calles de la zona) (`min_a_pie_cultura`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el gimnasio o centro deportivo más cercano (mediana de las calles de la zona) (`min_a_pie_gimnasio`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el restaurante más cercano (mediana de las calles de la zona) (`min_a_pie_restaurante`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-14 · 4/4 checks críticos · versión `2026-11-14-a3206c2d1d5f` · 16.493 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/osm_ocio/quality_report.json)
+
 ### Parques de OpenStreetMap (extracto Geofabrik de la Comunidad de Madrid)
 - **Ficha:** https://download.geofabrik.de/europe/spain/madrid.html · id `osm_parques` · publica: OpenStreetMap contributors (extracto de Geofabrik)
 - **Licencia:** [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (según el registro de fuentes)
@@ -440,16 +450,20 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - «Qué falta», fila «Centros de salud»: Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes (`centros_salud_a_pie_por_10000_hab`, fuente principal)
   - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_a_pie_por_1000_ninos`, fuente principal)
   - «Qué falta», fila «Farmacias»: Farmacias al alcance a pie por cada 10.000 habitantes (`farmacias_a_pie_por_10000_hab`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el bar, pub o cafetería más cercano (mediana de las calles de la zona) (`min_a_pie_bar`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de autobús más cercana (EMT, interurbanos y urbanos; mediana de las calles de la zona) (`min_a_pie_bus`, fuente principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, fuente principal)
   - «Qué falta», fila «Colegios» (dato extra): Minutos a pie hasta el colegio de primaria más cercano (mediana de las calles de la zona) (`min_a_pie_colegio`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el museo, biblioteca, teatro, cine o centro cultural más cercano (mediana de las calles de la zona) (`min_a_pie_cultura`, fuente principal)
   - «Qué falta», fila «Escuelas infantiles» (dato extra): Minutos a pie hasta la escuela infantil más cercana (mediana de las calles de la zona) (`min_a_pie_escuela_infantil`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
   - «Qué falta», fila «Farmacias» (dato extra): Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona) (`min_a_pie_farmacia`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el gimnasio o centro deportivo más cercano (mediana de las calles de la zona) (`min_a_pie_gimnasio`, fuente principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona) (`min_a_pie_hospital`, fuente principal)
   - «Qué falta», fila «Centros de mayores» (dato extra): Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona) (`min_a_pie_mayores`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la estación de Metro, Metro Ligero o Cercanías más cercana (mediana de las calles de la zona) (`min_a_pie_metro`, fuente principal)
   - Indicador por zona: Minutos a pie hasta el borde del parque urbano de 1 ha o más más cercano (mediana de las calles de la zona) (`min_a_pie_parque`, fuente principal)
+  - Indicador por zona: Minutos a pie hasta el restaurante más cercano (mediana de las calles de la zona) (`min_a_pie_restaurante`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, fuente principal)
