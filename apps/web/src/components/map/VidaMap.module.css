@@ -176,6 +176,16 @@
   font-weight: 600;
 }
 
+/* A hospital's beds after its name: «· [cama] 966» (centros.hospital.fila) */
+.labelBeds {
+  white-space: nowrap;
+}
+
+.labelBeds svg {
+  margin-right: 0.15rem;
+  vertical-align: -0.15rem;
+}
+
 .labelPin {
   position: absolute;
   left: 50%;

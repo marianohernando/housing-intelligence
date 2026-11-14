@@ -173,6 +173,12 @@ export interface Facility {
   source: string | null;
   /** Hospitals: public (network of the Servicio Madrileño de Salud) or private (D-239); null when the API does not say. */
   dependency: Dependency | null;
+  /** Hospitals: a public one a company runs («gestión privada», D-239); never true for a private one */
+  managedPrivately: boolean;
+  /** What the register says it holds («651 camas instaladas»), also inside `detail`; null when it does not say */
+  capacity: { value: number; unit: string } | null;
+  /** Placed by its address (D-216): «ubicación aproximada», also inside `detail` */
+  approximate: boolean;
   lon: number;
   lat: number;
 }
@@ -259,28 +265,47 @@ export type Dependency = "publica" | "privada";
 /**
  * Public (the network of the Servicio Madrileño de Salud) or private (D-218, D-239): on the place
  * itself, or with its beds from an API older than D-239. A user asked to tell public from private,
- * so it leads the label («Hospital público»).
+ * so it goes as a pill before the hospital's name (hospitalLine).
  */
 function dependencyOf(place: PlaceFeature): Dependency | null {
   return place.properties.dependency ?? place.properties.capacity?.dependency ?? null;
 }
 
-const DEPENDENCY_WORD = { publica: "público", privada: "privado" } as const;
+/**
+ * centros.hospital.pastilla: the pill before a hospital's name, «Público» filled and «Privado»
+ * outlined. A word, never only a colour or a symbol (WCAG 1.4.1).
+ */
+export const DEPENDENCY_PILL: Record<Dependency, string> = { publica: "Público", privada: "Privado" };
 
-/** centros.hospital.gestion_privada: after «público» when a private company runs a hospital of the public network. */
+/** centros.hospital.gestion_privada: under the name of a hospital of the public network a private company runs. */
 const PRIVATE_MANAGEMENT = "gestión privada";
 
-/**
- * «Hospital público», «Hospital especializado privado», «Hospital público · gestión privada» (the
- * Fundación Jiménez Díaz, D-239); the type alone when the API does not say.
- */
-function hospitalLabel(label: string, dependency: Dependency | null, managedPrivately: boolean): string {
-  if (!dependency) return label;
-  const kind = `${label} ${DEPENDENCY_WORD[dependency]}`;
-  return dependency === "publica" && managedPrivately ? `${kind} · ${PRIVATE_MANAGEMENT}` : kind;
+/** A hospital as the list and its map label show it (centros.hospital.fila). */
+export interface HospitalLine {
+  /** The pill before the name; null when the API does not say */
+  dependency: Dependency | null;
+  /** Its own name, or its type when the source gives none («Hospital especializado») */
+  name: string;
+  /** Small, under the name: its type when the name does not say it, «gestión privada», «ubicación aproximada» */
+  notes: string[];
+  /** Beside a bed icon: «651», read aloud as «651 camas instaladas» */
+  beds: { short: string; full: string } | null;
 }
 
-/** centros.hospital.dependencia: what «público», «gestión privada» and «privado» mean, under the count of hospitals. */
+/**
+ * The name first, the pill before it, and the beds as a figure beside a bed icon (Mariano, 15 nov:
+ * «si tengo que leer todo eso me da algo»). «gestión privada» goes under the name, never next to
+ * «Privado» (it only goes with a public one, D-239). A general hospital's type is left out: its
+ * name already says it is a hospital.
+ */
+export function hospitalLine(f: Facility): HospitalLine {
+  const kind = f.name && f.label !== "Hospital" ? f.label : null;
+  const notes = [kind, f.dependency === "publica" && f.managedPrivately ? PRIVATE_MANAGEMENT : null, f.approximate ? GEOCODED : null];
+  const beds = f.capacity ? { short: formatNumber(f.capacity.value, 0), full: `${formatNumber(f.capacity.value, 0)} ${f.capacity.unit}` } : null;
+  return { dependency: f.dependency, name: f.name ?? f.label, notes: notes.filter((n): n is string => n !== null), beds };
+}
+
+/** centros.hospital.dependencia: what «público», «gestión privada» and «privado» mean, folded behind «¿Qué significa?». */
 export const HOSPITAL_DEPENDENCY_NOTE =
   "Público: de la red del Servicio Madrileño de Salud, aunque lo gestione una empresa («gestión privada»). Privado: el resto. Según el registro de centros sanitarios y la red de hospitales públicos de la Comunidad de Madrid.";
 
@@ -314,12 +339,26 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   const [lon = 0, lat = 0] = place.geometry.coordinates;
   const { ownership } = place.properties;
   const dependency = type.key === "hospital" ? dependencyOf(place) : null;
-  const managedPrivately = place.properties.management === "privada";
-  const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : hospitalLabel(cls.label, dependency, managedPrivately);
+  const managedPrivately = dependency === "publica" && place.properties.management === "privada";
+  const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : cls.label;
   // Only a capacity from another catalogue is cited apart (hospital beds): the places of mayores
   // carry their own register's «plazas autorizadas», which are not beds
-  const source = CAPACITY_SOURCE[type.key] ? (place.properties.capacity?.dataset_id ?? null) : null;
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, dependency, lon, lat };
+  const { capacity, coordinates } = place.properties;
+  const source = CAPACITY_SOURCE[type.key] ? (capacity?.dataset_id ?? null) : null;
+  return {
+    id: String(place.id),
+    type: type.key,
+    label,
+    name: placeName(place, type.key),
+    detail: detailText(place),
+    source,
+    dependency,
+    managedPrivately,
+    capacity: capacity ? { value: capacity.value, unit: capacity.unit } : null,
+    approximate: coordinates === "geocoded",
+    lon,
+    lat,
+  };
 }
 
 const DEPENDENCY_ORDER = { publica: 0, privada: 1 } as const;

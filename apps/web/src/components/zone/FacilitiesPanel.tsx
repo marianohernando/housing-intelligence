@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
+import { Baby, BedDouble, Cross, GraduationCap, HeartHandshake, Hospital, type LucideIcon, Pill, Trees } from "lucide-react";
 import { useId } from "react";
 
 import { useFacilityLayer } from "@/components/map/FacilityLayerProvider";
@@ -20,11 +20,13 @@ import {
   facilityType,
   FACILITY_TYPES,
   HOSPITAL_DEPENDENCY_NOTE,
+  hospitalLine,
   hospitalSplitText,
   orderedTypes,
   selectedCountText,
 } from "@/lib/map/facilities";
 
+import DependencyPill from "./DependencyPill";
 import styles from "./FacilitiesPanel.module.css";
 
 // Copy of pitch/textos_web.md, section 5b (T3), with centros.camas and centros.sin_nombre_algunos (HOSP-001).
@@ -46,6 +48,8 @@ const TEXT = {
   bedsBefore: (updated: string | null) => `Camas instaladas${updated ? ` a ${updated}` : ""}, según el `,
   bedsAfter: (publisher: string) => ` del ${publisher}.`,
   newTab: " (se abre en una pestaña nueva)",
+  // centros.hospital.que_significa: folds centros.hospital.dependencia (15 nov)
+  meaning: "¿Qué significa?",
 };
 
 /** centros.camas: «Camas instaladas a 31 de diciembre de 2024, según el Catálogo … 2025 del Ministerio de Sanidad.» */
@@ -88,6 +92,26 @@ function listLine(f: Facility): { label: string; rest: string | null } {
   return f.name && facilityType(f.type).nameFirst ? { label: f.name, rest: f.detail } : facilityLine(f);
 }
 
+/** centros.hospital.fila: «[Público] Hospital Universitario La Paz», what else to know under it, and «[cama] 966» beside it. */
+function HospitalItem({ facility }: { facility: Facility }) {
+  const { dependency, name, notes, beds } = hospitalLine(facility);
+  return (
+    <>
+      <span className={styles.hospitalName}>
+        {dependency && <DependencyPill dependency={dependency} />} <strong>{name}</strong>
+        {notes.length > 0 && <small>{notes.join(" · ")}</small>}
+      </span>
+      {beds && (
+        <span className={styles.beds}>
+          <BedDouble size={16} aria-hidden="true" />
+          <span aria-hidden="true">{beds.short}</span>
+          <span className="visually-hidden">{beds.full}</span>
+        </span>
+      )}
+    </>
+  );
+}
+
 function FacilityList({ items, count }: { items: Facility[]; count: string }) {
   return (
     <details className={styles.details}>
@@ -95,6 +119,13 @@ function FacilityList({ items, count }: { items: Facility[]; count: string }) {
       {/* Focusable, so the list can be scrolled with the keyboard */}
       <ul className={styles.list} tabIndex={0} aria-label={count}>
         {items.map((f) => {
+          if (f.type === "hospital") {
+            return (
+              <li key={f.id} className={styles.hospital}>
+                <HospitalItem facility={f} />
+              </li>
+            );
+          }
           const { label, rest } = listLine(f);
           return (
             <li key={f.id}>
@@ -120,7 +151,12 @@ function TypeSummary({ type, items, zone }: { type: FacilityKey; items: Facility
         {count}
         {split && `: ${split}`}
       </p>
-      {split && <p className={styles.muted}>{HOSPITAL_DEPENDENCY_NOTE}</p>}
+      {split && (
+        <details className={styles.meaning}>
+          <summary>{TEXT.meaning}</summary>
+          <p className={styles.muted}>{HOSPITAL_DEPENDENCY_NOTE}</p>
+        </details>
+      )}
       {type === "colegio" && items.length > 0 && <p className={styles.muted}>{TEXT.rowSchools}</p>}
       {items.some((f) => f.name === null) && (
         <p className={styles.muted}>{items.every((f) => f.name === null) ? TEXT.noName : TEXT.someNoName}</p>
