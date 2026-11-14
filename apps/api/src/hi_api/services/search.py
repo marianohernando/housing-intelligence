@@ -101,6 +101,7 @@ class Indicators(NamedTuple):
     price: dict[tuple[str, str], IndicatorValue]  # appraised value per m² to buy (D-227)
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]]
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
+    transit: dict[tuple[str, str], dict[str, IndicatorValue]]  # by mode, only words a fact (D-233)
 
 
 def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
@@ -108,6 +109,7 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     price: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
+    transit: dict[tuple[str, str], dict[str, IndicatorValue]] = {}
     rent_note: str | None = None
     for row in rows:
         key = (row["territory_level"], row["territory_code"])
@@ -117,11 +119,13 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             rent_note = fit.get("note") or rent_note
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
+        elif fit["role"] == "transit_mode":
+            transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
         elif fit.get("need"):
             walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
         else:  # a priority measured on foot: the park for «Zonas verdes» (D-222)
             priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
-    return Indicators(rent, rent_note, price, walk, priority_walk)
+    return Indicators(rent, rent_note, price, walk, priority_walk, transit)
 
 
 def _highlights(
@@ -165,6 +169,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
                 price=indicators.price.get(key),
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
+                transit=indicators.transit.get(key, {}),
                 gaps=highlights.get(key, []),
                 commute={i: by[zone_id] for i, by in trips.by_zone.items() if zone_id in by},
             )

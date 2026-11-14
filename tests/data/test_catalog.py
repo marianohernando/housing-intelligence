@@ -293,6 +293,35 @@ def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
         assert {"municipio", "distrito"} <= levels, spec.feature_id
 
 
+def test_transit_by_mode_informs_and_never_scores(catalog: Catalog) -> None:
+    """D-233: bus and Metro/Cercanías are two features that split the stops of the one that
+    scores (`min_a_pie_transporte`), with the same method; their `fit` has no need, so the
+    search never turns them into a criterion."""
+    scoring = catalog.features["min_a_pie_transporte"]
+    assert scoring.fit is not None and scoring.fit.need == "transporte"
+    expected = {
+        "min_a_pie_bus": ("bus", {"emt", "autobus_interurbano", "autobus_urbano"}),
+        "min_a_pie_metro": ("metro", {"metro", "metro_ligero", "cercanias"}),
+    }
+    for feature_id, (mode, subcategories) in expected.items():
+        spec = catalog.features[feature_id]
+        assert spec.fit is not None
+        assert (spec.fit.role, spec.fit.mode, spec.fit.need) == ("transit_mode", mode, None)
+        formula = spec.formula.model_extra or {}
+        assert set(formula["subcategories"]) == subcategories
+        for key in ("destination_category", "statistic", "speed_kmh", "levels"):
+            assert formula[key] == (scoring.formula.model_extra or {})[key]
+        assert spec.formula.method == scoring.formula.method
+        assert spec.null_policy == scoring.null_policy
+    all_modes = {s for _, subs in expected.values() for s in subs}
+    stops = {
+        str(getattr(p, "mode", ""))
+        for name, p in catalog.pipelines.items()
+        if name.startswith("crtm_gtfs_")
+    }
+    assert all_modes == stops
+
+
 def test_green_areas_are_the_walk_to_a_park(catalog: Catalog) -> None:
     """D-222: the search reads the «Zonas verdes» priority from the minutes to a park."""
     bound = [

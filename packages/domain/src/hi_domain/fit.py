@@ -162,6 +162,9 @@ class ZoneData:
     price: IndicatorValue | None = None  # appraised value per m² to buy (D-227)
     rent_note: str | None = None  # what the rent figure is, from its feature (D-228)
     rent_missing: str | None = None  # why there is no rent here, in plain words (D-232)
+    # Walking minutes to a bus stop and to a Metro/Cercanías station, by mode ("bus", "metro").
+    # They only word the transport fact, never score it (D-233); empty until the data is synced.
+    transit: Mapping[str, IndicatorValue] = field(default_factory=dict[str, IndicatorValue])
 
 
 @dataclass(frozen=True)
@@ -385,7 +388,36 @@ def constraint_checks(
     return checks
 
 
-def walk_fact(need: NeedKey, walk: IndicatorValue | None, target: int) -> Score:
+def _walk_shown(walk: IndicatorValue | None) -> float | None:
+    if walk is None or walk.value is None or walk.value > MAX_WALK_SHOWN:
+        return None
+    return walk.value
+
+
+def transit_walk_text(transit: Mapping[str, IndicatorValue], fallback: str) -> str:
+    """The transport fact by mode (D-233): «Parada de autobús a unos 2 min andando · Metro o
+    Cercanías a unos 8 min». A mode without minutes, or beyond MAX_WALK_SHOWN (the nearest
+    Metro of a village is the one in the next town: not a walk), is left out; none at all, or
+    no feature yet in the database, gives `fallback`: the text of always."""
+    bus_min, metro_min = (_walk_shown(transit.get(mode)) for mode in ("bus", "metro"))
+    if bus_min is not None and metro_min is not None:
+        return (
+            f"Parada de autobús a {about_minutes(bus_min)} andando"
+            f" · Metro o Cercanías a {about_minutes(metro_min)}"
+        )
+    if bus_min is not None:
+        return f"Parada de autobús a {about_minutes(bus_min)} andando"
+    if metro_min is not None:
+        return f"Metro o Cercanías a {about_minutes(metro_min)} andando"
+    return fallback
+
+
+def walk_fact(
+    need: NeedKey,
+    walk: IndicatorValue | None,
+    target: int,
+    transit: Mapping[str, IndicatorValue] | None = None,
+) -> Score:
     label = NEED_TEXT[need][0]
     if walk is None or walk.value is None:
         text = f"{label}: sin datos de distancia a pie en esta zona"
@@ -393,6 +425,8 @@ def walk_fact(need: NeedKey, walk: IndicatorValue | None, target: int) -> Score:
         return Score(None, 0.0, fact)
     kind = FactKind.STRENGTH if walk.value <= target else FactKind.WEAKNESS
     text = f"{label} a {about_minutes(walk.value)} andando"
+    if need is NeedKey.TRANSPORTE and transit:
+        text = transit_walk_text(transit, text)
     fact = Fact(
         kind=kind,
         topic=NEED_TOPIC[need],
@@ -521,7 +555,7 @@ def purchase_fact(price: IndicatorValue | None, area: FloorArea, budget: float) 
 def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: FloorArea) -> Score:
     if criterion.need is not None:
         target = criterion.target_minutes or DEFAULT_WALK_MINUTES[criterion.need]
-        return walk_fact(criterion.need, data.walk.get(criterion.need), target)
+        return walk_fact(criterion.need, data.walk.get(criterion.need), target, data.transit)
     if criterion.anchor is not None:
         trip = None if criterion.anchor_index is None else data.commute.get(criterion.anchor_index)
         return work_fact(criterion.anchor, data, trip)
@@ -566,7 +600,9 @@ def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
     to say whether it is good or bad for this person."""
     known = [s.fact for s in scores if s.utility is not None]
     unknown = [s.fact for s in scores if s.utility is None]
-    context = [walk_fact(n, data.walk.get(n), DEFAULT_WALK_MINUTES[n]) for n in CONTEXT_NEEDS]
+    context = [
+        walk_fact(n, data.walk.get(n), DEFAULT_WALK_MINUTES[n], data.transit) for n in CONTEXT_NEEDS
+    ]
     shown = {f.topic for f in known} | {f.topic for f in unknown}
     for extra in context:
         if len(known) + len(unknown) >= MIN_FACTS:
