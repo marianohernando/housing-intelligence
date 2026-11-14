@@ -244,9 +244,9 @@ Porque son dos preguntas distintas. El % dice cuánto se parece la zona a lo que
 - Si insiste en el colegio a 0,76: está por debajo del 80 %, pero la diferencia puede ser casual con esa población, y FALTA exige que no lo sea (pregunta 11).
 
 **43. ¿Quién lo ha usado?**
-Usuarios reales, en una prueba del 14 nov: «Se valora mucho la cercanía al puesto de trabajo» y «Muy chula la web, funciona bien». Lo que pidieron ya está entrando: un límite de tiempo hasta el trabajo y las paradas de autobús separadas del metro y de Cercanías. Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
-- Evidencia: las 2 citas de la slide 3, aprobadas por Mariano y sin nombre, como se prometió a los usuarios · `pitch/pruebas_usuarios/` (kit de la prueba) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
-- Si preguntan cuántos: **pendiente de Mariano** (el número de personas de la prueba). Nunca se dice uno de memoria.
+Cuatro personas, en una prueba del 13 y el 14 nov: «Se valora mucho la cercanía al puesto de trabajo» y «Muy chula la web, funciona bien». Lo que pidieron ya está entrando: un límite de tiempo hasta el trabajo y las paradas de autobús separadas del metro y de Cercanías. Además, comprobamos a mano 10 zonas contra las fuentes oficiales, y eso destapó errores del propio registro que ya están corregidos, como cuatro centros de salud sin número de portal y un hospital sin nombre.
+- Evidencia: 4 personas con su feedback anotado (13 y 14 nov), según las notas de Mariano, que no se versionan porque llevan frases de las personas (`pitch/pruebas_usuarios/plantilla_resultados.md`) · las 2 citas de la slide 3, aprobadas por Mariano y sin nombre, como se prometió a los usuarios · `pitch/pruebas_usuarios/` (kit de la prueba) · `pitch/revision_10_zonas.md` · D-216 y D-218 §10.
+- Si llegan más personas antes del 26 nov, se cambia el número; nunca se dice uno de memoria.
 - Lo que pidieron y no entra antes del freeze: preguntas 49 y 50.
 - Estado: el límite de tiempo hasta el trabajo, **pendiente de B**; las paradas de autobús aparte, **pendiente de A y de B** (`pitch/textos_web.md`, sección 2 y tarjeta de zona). Si el 23 nov alguno no está en producción, se quita de la respuesta.
 
