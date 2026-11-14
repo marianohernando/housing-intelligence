@@ -758,3 +758,30 @@ def test_zones_over_a_purchase_budget_come_closest_to_it_first() -> None:
     zones = [zone("1", price=7700.0), zone("2", price=4500.0), zone("3", price=6000.0)]
     outcome = run_search(scenario, zones)
     assert [r.zone.code for r in outcome.near_misses] == ["2", "3", "1"]
+
+
+def test_every_zone_carries_its_cost_and_how_sure_it_is() -> None:
+    """D-234: the price of each zone in the ranking rows and the zone card. It comes with the
+    confidence of its price or rent, for every evaluated zone (also one that fails two
+    conditions); none without a price, never 0."""
+    estimated = zone("2", colegio=40.0)
+    estimated = replace(
+        estimated, price=_value("precio_compra_estimado_m2", 5000.0, 0.5), price_estimated=True
+    )
+    zones = [zone("1", price=3000.0), estimated, zone("3", price=None)]
+    outcome = run_search(family(budget=BUY_300K, anchors=[]), zones)
+    by_code = {z.zone.code: z for z in outcome.all_zones}
+    assert (by_code["1"].estimated_cost_eur, by_code["1"].estimated_cost_confidence) == (
+        231_000,
+        0.8,
+    )
+    assert (by_code["2"].estimated_cost_eur, by_code["2"].estimated_cost_confidence) == (
+        385_000,
+        0.5,
+    )
+    assert by_code["2"].failed_constraints == ["budget", "near:colegio"]  # not ranked, not near
+    unpriced = by_code["3"]
+    assert unpriced.estimated_cost_eur is None and unpriced.estimated_cost_confidence is None
+    assert outcome.results[0].estimated_cost_confidence == 0.8
+    rent = run_search(family(anchors=[]), [zone("1")]).results[0]
+    assert (rent.estimated_cost_eur, rent.estimated_cost_confidence) == (924, 1.0)

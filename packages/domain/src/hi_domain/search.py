@@ -60,6 +60,7 @@ def _ranked(fits: Sequence[ZoneFit], limit: int) -> list[RankedZone]:
             constraints=fit.constraints,
             failed_constraints=fit.failed,
             estimated_cost_eur=fit.cost_eur,
+            estimated_cost_confidence=fit.cost_confidence,
             gap_highlights=list(fit.data.gaps),
         )
         for i, fit in enumerate(ordered[:limit], start=1)
@@ -94,6 +95,8 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
                 match_pct=painted_match(f),
                 passes_all=f.passes_all,
                 failed_constraints=f.failed,
+                estimated_cost_eur=f.cost_eur,
+                estimated_cost_confidence=f.cost_confidence,
             )
             for f in fits
         ],

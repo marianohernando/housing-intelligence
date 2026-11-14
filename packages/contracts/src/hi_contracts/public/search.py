@@ -103,6 +103,13 @@ class RankedZone(BaseModel):
     estimated_cost_eur: float | None = Field(
         default=None, ge=0, description="Monthly rent or purchase price for the needed area"
     )
+    estimated_cost_confidence: float | None = Field(
+        default=None,
+        ge=0,
+        le=1,
+        description="Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for "
+        "the estimated purchase price of D-234); None without a cost",
+    )
     gap_highlights: list[GapHighlight] = Field(default_factory=list[GapHighlight], max_length=3)
 
 
@@ -115,6 +122,15 @@ class ZoneMatch(BaseModel):
     match_pct: int | None = Field(default=None, ge=0, le=100, description="None = unknown")
     passes_all: bool
     failed_constraints: list[str] = Field(default_factory=list[str])
+    estimated_cost_eur: float | None = Field(
+        default=None,
+        ge=0,
+        description="Monthly rent or purchase price for the needed area, as in RankedZone: the "
+        "zone card shows it for any zone (D-234); None without a cost",
+    )
+    estimated_cost_confidence: float | None = Field(
+        default=None, ge=0, le=1, description="Confidence of `estimated_cost_eur`"
+    )
 
 
 class Relaxation(BaseModel):

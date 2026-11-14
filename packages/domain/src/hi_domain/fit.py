@@ -196,6 +196,7 @@ class ZoneFit:
     confidence: float
     facts: list[Fact]
     cost_eur: float | None
+    cost_confidence: float | None = None  # how sure `cost_eur` is: its price or rent's
 
     @property
     def match_pct(self) -> int | None:
@@ -636,13 +637,21 @@ def facts(scores: Sequence[Score], data: ZoneData) -> list[Fact]:
     return [*known, *unknown][:MAX_FACTS]
 
 
+def cost_indicator(scenario: ScenarioState, data: ZoneData) -> IndicatorValue | None:
+    """What the estimated cost comes from: the price per m² to buy, else the rent."""
+    if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
+        return data.price
+    return data.rent
+
+
 def estimated_cost(scenario: ScenarioState, data: ZoneData, area: FloorArea) -> float | None:
     """The purchase price to buy, else the monthly rent (also without a budget)."""
+    source = cost_indicator(scenario, data)
+    if source is None or source.value is None:
+        return None
     if scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY:
-        price = data.price.value if data.price is not None else None
-        return None if price is None else float(purchase_cost(price, area.m2))
-    rent = data.rent.value if data.rent is not None else None
-    return None if rent is None else float(round(monthly_rent(rent, area.m2)))
+        return float(purchase_cost(source.value, area.m2))
+    return float(round(monthly_rent(source.value, area.m2)))
 
 
 def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
@@ -653,6 +662,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     if not weighted:  # nothing to score: the zone is as sure as its conditions
         confidence = min((c.confidence for c in checks), default=1.0)
     cost = estimated_cost(scenario, data, area)
+    source = cost_indicator(scenario, data)
     return ZoneFit(
         data=data,
         constraints=checks,
@@ -660,6 +670,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
         confidence=confidence,
         facts=facts([s for _, s in weighted], data),
         cost_eur=cost,
+        cost_confidence=None if cost is None or source is None else source.confidence,
     )
 
 

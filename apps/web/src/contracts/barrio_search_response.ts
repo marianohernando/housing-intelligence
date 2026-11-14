@@ -4,6 +4,14 @@
  * `npm run -w apps/web contracts`.
  */
 
+/**
+ * Confidence of `estimated_cost_eur`
+ */
+export type EstimatedCostConfidence = number | null;
+/**
+ * Monthly rent or purchase price for the needed area, as in RankedZone: the zone card shows it for any zone (D-234); None without a cost
+ */
+export type EstimatedCostEur = number | null;
 export type FailedConstraints = string[];
 /**
  * None = unknown
@@ -77,9 +85,13 @@ export type Unit = string | null;
 export type Value = number | null;
 export type Constraints = ConstraintCheck[];
 /**
+ * Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for the estimated purchase price of D-234); None without a cost
+ */
+export type EstimatedCostConfidence1 = number | null;
+/**
  * Monthly rent or purchase price for the needed area
  */
-export type EstimatedCostEur = number | null;
+export type EstimatedCostEur1 = number | null;
 export type Confidence2 = number;
 export type Confidence3 = number;
 /**
@@ -278,6 +290,8 @@ export interface BarrioSearchResult {
  * Every evaluated zone, for the choropleth («Encaje con tu búsqueda»).
  */
 export interface ZoneMatch {
+  estimated_cost_confidence?: EstimatedCostConfidence;
+  estimated_cost_eur?: EstimatedCostEur;
   failed_constraints?: FailedConstraints;
   match_pct?: MatchPct;
   passes_all: PassesAll;
@@ -313,7 +327,8 @@ export interface DatasetRef {
 export interface RankedZone {
   confidence: Confidence;
   constraints: Constraints;
-  estimated_cost_eur?: EstimatedCostEur;
+  estimated_cost_confidence?: EstimatedCostConfidence1;
+  estimated_cost_eur?: EstimatedCostEur1;
   facts: Facts;
   failed_constraints?: FailedConstraints1;
   gap_highlights?: GapHighlights;
