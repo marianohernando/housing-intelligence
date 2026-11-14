@@ -1,0 +1,39 @@
+feature_id: precio_compra_estimado_m2
+version: 1
+human_name: Precio de compra estimado por metro cuadrado (valor tasado de la ciudad repartido según el valor catastral)
+domain: housing
+type: derived
+unit: EUR/m2
+direction: lower_is_better
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  # The level: the appraised value of the whole city (Ministerio de Vivienda, CM portal)
+  - {dataset_id: cm_valor_tasado_vivienda_municipios, role: primary}
+  # The share-out: Catastro value, built area and number of residential units of each zone
+  - {dataset_id: ayto_panel_indicadores_distritos_barrios, role: primary}
+formula:
+  # D-234: zone €/m² = city appraised value x (zone cadastral €/m² / mean cadastral €/m² of the
+  # city's zones, weighted by their residential units). The weighted mean of the districts is the
+  # city's appraised value; the barrios of a district are anchored to its estimate the same way.
+  method: anchored_relative_value
+  anchor_metric: valor_tasado_vivienda_m2_municipio
+  anchor_level: municipio
+  numerator_metric: valor_catastral_medio_residencial
+  denominator_metric: superficie_construida_media_residencial
+  weight_metric: inmuebles_residenciales
+  confidence: 0.5  # an estimate, never a published price: «Dato aproximado» at most (D-234)
+  levels:
+    barrio: {confidence: 0.5}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness, cadastral_share_out]}
+public_use: true
+pro_use: true
+models: [affordability, reality_check]
+tests: [positive, unknown_never_zero, anchored_to_city_value]
+limitations:
+  - "Es una estimación, no un precio publicado ni el de una venta: el valor tasado medio de la ciudad (Ministerio de Vivienda) repartido según el valor catastral por m² de cada distrito o barrio (Catastro, vía el panel de indicadores del Ayuntamiento de Madrid)."
+  - "El valor catastral sale de ponencias de valores antiguas: recoge mal los barrios que han cambiado mucho desde entonces. Frente a referencias de mercado, el error por distrito queda por debajo del 30 % (D-234)."
+  - "La superficie es la construida media del Catastro, que incluye zonas comunes; en zonas de viviendas grandes o unifamiliares el €/m² puede quedar bajo."
+  - "Solo Madrid capital: sus 21 distritos y 131 barrios. Los municipios usan su valor tasado publicado, sin estimar. Una zona sin valor catastral queda sin datos, nunca 0."
+fit: {role: price_m2, estimate: true}

@@ -92,8 +92,14 @@
     },
     "FitBinding": {
       "additionalProperties": false,
-      "description": "Where the people search (CORE-003) reads the feature: the rent or the appraised purchase\nvalue per m² of the budget condition (D-227), or the walking minutes to the nearest place\nof a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority\nmeasures (a PriorityKey: the park for «Zonas verdes», D-222), or the walk to one kind of\npublic transport (`transit_mode`, D-233): it only informs the transport fact and never\nscores. The search has no feature id written in its code.",
+      "description": "Where the people search (CORE-003) reads the feature: the rent or the appraised purchase\nvalue per m² of the budget condition (D-227; `estimate` marks an estimated one, D-234), or\nthe walking minutes to the nearest place of a kind, either a service (a ScenarioState\nNeedKey) or what a «me importa» priority measures (a PriorityKey: the park for «Zonas\nverdes», D-222), or the walk to one kind of public transport (`transit_mode`, D-233): it\nonly informs the transport fact and never scores. The search has no feature id written in\nits code.",
       "properties": {
+        "estimate": {
+          "default": false,
+          "description": "Only for price_m2: the figure is an estimate, not a published price (D-234: the city's appraised value shared out by cadastral value). The search uses it where no published price exists and says so",
+          "title": "Estimate",
+          "type": "boolean"
+        },
         "mode": {
           "anyOf": [
             {

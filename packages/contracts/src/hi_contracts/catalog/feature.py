@@ -63,11 +63,12 @@ class GapRowBinding(BaseModel):
 
 class FitBinding(BaseModel):
     """Where the people search (CORE-003) reads the feature: the rent or the appraised purchase
-    value per m² of the budget condition (D-227), or the walking minutes to the nearest place
-    of a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority
-    measures (a PriorityKey: the park for «Zonas verdes», D-222), or the walk to one kind of
-    public transport (`transit_mode`, D-233): it only informs the transport fact and never
-    scores. The search has no feature id written in its code."""
+    value per m² of the budget condition (D-227; `estimate` marks an estimated one, D-234), or
+    the walking minutes to the nearest place of a kind, either a service (a ScenarioState
+    NeedKey) or what a «me importa» priority measures (a PriorityKey: the park for «Zonas
+    verdes», D-222), or the walk to one kind of public transport (`transit_mode`, D-233): it
+    only informs the transport fact and never scores. The search has no feature id written in
+    its code."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -89,6 +90,13 @@ class FitBinding(BaseModel):
         "data never disagree on what the number means",
     )
 
+    estimate: bool = Field(
+        default=False,
+        description="Only for price_m2: the figure is an estimate, not a published price "
+        "(D-234: the city's appraised value shared out by cadastral value). The search uses it "
+        "where no published price exists and says so",
+    )
+
     @model_validator(mode="after")
     def _one_target_only_for_walking(self) -> Self:
         targets = (self.need is not None) + (self.priority is not None)
@@ -102,6 +110,9 @@ class FitBinding(BaseModel):
             raise ValueError(msg)
         if self.note is not None and self.role != "rent_m2":
             msg = "only rent_m2 takes a `note`"
+            raise ValueError(msg)
+        if self.estimate and self.role != "price_m2":
+            msg = "only price_m2 can be an `estimate`"
             raise ValueError(msg)
         return self
 
