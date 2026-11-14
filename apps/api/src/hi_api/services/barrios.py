@@ -18,6 +18,7 @@ from hi_api.services.search import (
     union_datasets,
     zone_price,
     zone_ref,
+    zone_rent,
 )
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import NullReason, TerritoryLevel
@@ -115,7 +116,7 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef | No
     borrowed = 0
     for row in rows:
         key = (level, str(row["code"]))
-        rent = indicators.rent.get(key)
+        rent = zone_rent(indicators, key)
         commute, from_district = borrowed_trips(
             trips.by_zone, str(row["admin_unit_id"]), str(row["parent_admin_unit_id"])
         )
@@ -124,9 +125,11 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef | No
         zones.append(
             ZoneData(
                 zone=zone_ref(row),
-                rent=rent,
-                rent_note=indicators.rent_note,
-                rent_missing=rent_missing(rent),
+                rent=rent.rent,
+                rent_note=rent.note,
+                rent_missing=rent_missing(rent.rent),
+                rent_range=rent.range_m2,
+                rent_source=rent.source,
                 price=price,
                 price_estimated=price_estimated,
                 walk=indicators.walk.get(key, {}),

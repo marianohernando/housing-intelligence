@@ -40,6 +40,7 @@ from hi_domain.affordability import (
     purchase_cost,
     purchase_explanation,
     rent_explanation,
+    rent_range_eur,
 )
 from hi_domain.gaps import es_number
 
@@ -176,6 +177,10 @@ class ZoneData:
     # Walking minutes to a bus stop and to a Metro/Cercanías station, by mode ("bus", "metro").
     # They only word the transport fact, never score it (D-233); empty until the data is synced.
     transit: Mapping[str, IndicatorValue] = field(default_factory=dict[str, IndicatorValue])
+    # D-242: with the Ministry's rent reference (where the CM publishes none), the 25th and 75th
+    # percentiles per m² scaled as the rent, and who publishes them and when (the card label)
+    rent_range: tuple[float, float] | None = None
+    rent_source: str | None = None
 
 
 @dataclass(frozen=True)
@@ -205,6 +210,9 @@ class ZoneFit:
     facts: list[Fact]
     cost_eur: float | None
     cost_confidence: float | None = None  # how sure `cost_eur` is: its price or rent's
+    # D-242: where half the leases fall for the household's area (€/month) and its source
+    cost_range: tuple[float, float] | None = None
+    cost_source: str | None = None
     # Index in `anchors` of the place whose minutes break ties (lead_trip, D-240); None = none
     lead_trip: int | None = 0
 
@@ -412,6 +420,7 @@ def constraint_checks(
                 data.rent_missing,
                 purchase_note(data),
                 purchase_missing(data),
+                data.rent_range,
             )
         )
     for nearby in scenario.nearby:
@@ -552,6 +561,7 @@ def cost_fact(
     budget: float | None,
     note: str | None = None,
     missing: str | None = None,
+    range_m2: tuple[float, float] | None = None,
 ) -> Score:
     if rent is None or rent.value is None:
         text = missing or "Alquiler: sin datos publicados para esta zona"
@@ -562,7 +572,7 @@ def cost_fact(
     fact = Fact(
         kind=FactKind.STRENGTH if fits else FactKind.WEAKNESS,
         topic=FactTopic.COSTE,
-        text=rent_explanation(rent.value, area, note),
+        text=rent_explanation(rent.value, area, note, range_m2),
         confidence=rent.confidence,
         indicator=rent,
     )
@@ -626,7 +636,7 @@ def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: F
             data.price, area, float(scenario.budget.amount_eur), purchase_note(data)
         )
     budget = None if scenario.budget is None else float(scenario.budget.amount_eur)
-    return cost_fact(data.rent, area, budget, data.rent_note, data.rent_missing)
+    return cost_fact(data.rent, area, budget, data.rent_note, data.rent_missing, data.rent_range)
 
 
 def match_and_confidence(
@@ -713,6 +723,17 @@ def estimated_cost(scenario: ScenarioState, data: ZoneData, area: FloorArea) -> 
     return float(round(monthly_rent(source.value, area.m2)))
 
 
+def cost_range(
+    scenario: ScenarioState, data: ZoneData, area: FloorArea
+) -> tuple[float, float] | None:
+    """Where half the leases fall for the household's area (D-242): only renting (or without a
+    budget) and only with the quartiles of the Ministry's reference."""
+    buying = scenario.budget is not None and scenario.budget.kind is BudgetKind.BUY
+    if buying or data.rent_range is None or data.rent is None or data.rent.value is None:
+        return None
+    return rent_range_eur(data.rent_range, area)
+
+
 def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     area = assumed_floor_area(scenario)
     checks = constraint_checks(scenario, data, area)
@@ -722,6 +743,7 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
         confidence = min((c.confidence for c in checks), default=1.0)
     cost = estimated_cost(scenario, data, area)
     source = cost_indicator(scenario, data)
+    spread = cost_range(scenario, data, area)
     return ZoneFit(
         data=data,
         constraints=checks,
@@ -730,6 +752,8 @@ def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
         facts=facts([s for _, s in weighted], data, limited_trips(scenario, data)),
         cost_eur=cost,
         cost_confidence=None if cost is None or source is None else source.confidence,
+        cost_range=spread,
+        cost_source=data.rent_source if spread is not None else None,
         lead_trip=lead_trip(scenario),
     )
 

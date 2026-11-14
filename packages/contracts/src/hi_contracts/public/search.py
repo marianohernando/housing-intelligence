@@ -85,6 +85,30 @@ class GapHighlight(BaseModel):
     status: GapStatus
 
 
+class CostRange(BaseModel):
+    """Where half the leases of the zone fall (D-242), for the household's m²: the 25th and 75th
+    percentiles of the rent reference, scaled as the cost itself. Only with a rent that comes
+    from the Ministry's reference (it fills the zones without the CM rent, which publishes means
+    and no spread)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    low_eur: float = Field(ge=0, description="25th percentile, € per month for the needed area")
+    high_eur: float = Field(ge=0, description="75th percentile, € per month for the needed area")
+    source: str = Field(
+        min_length=1,
+        description="Who publishes it and its year",
+        examples=["Ministerio de Vivienda (SERPAVI), 2024"],
+    )
+
+    @model_validator(mode="after")
+    def _low_is_not_above_high(self) -> Self:
+        if self.low_eur > self.high_eur:
+            msg = "low_eur must not be above high_eur"
+            raise ValueError(msg)
+        return self
+
+
 class RankedZone(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -110,6 +134,11 @@ class RankedZone(BaseModel):
         description="Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for "
         "the estimated purchase price of D-234); None without a cost",
     )
+    estimated_cost_range: CostRange | None = Field(
+        default=None,
+        description="Where half the leases fall, renting with the Ministry's rent reference "
+        "(D-242); None otherwise",
+    )
     gap_highlights: list[GapHighlight] = Field(default_factory=list[GapHighlight], max_length=3)
 
 
@@ -130,6 +159,9 @@ class ZoneMatch(BaseModel):
     )
     estimated_cost_confidence: float | None = Field(
         default=None, ge=0, le=1, description="Confidence of `estimated_cost_eur`"
+    )
+    estimated_cost_range: CostRange | None = Field(
+        default=None, description="Where half the leases fall, as in RankedZone (D-242)"
     )
 
 

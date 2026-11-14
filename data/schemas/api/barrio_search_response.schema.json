@@ -255,6 +255,40 @@
       "title": "ConstraintStatus",
       "type": "string"
     },
+    "CostRange": {
+      "additionalProperties": false,
+      "description": "Where half the leases of the zone fall (D-242), for the household's m²: the 25th and 75th\npercentiles of the rent reference, scaled as the cost itself. Only with a rent that comes\nfrom the Ministry's reference (it fills the zones without the CM rent, which publishes means\nand no spread).",
+      "properties": {
+        "high_eur": {
+          "description": "75th percentile, € per month for the needed area",
+          "minimum": 0,
+          "title": "High Eur",
+          "type": "number"
+        },
+        "low_eur": {
+          "description": "25th percentile, € per month for the needed area",
+          "minimum": 0,
+          "title": "Low Eur",
+          "type": "number"
+        },
+        "source": {
+          "description": "Who publishes it and its year",
+          "examples": [
+            "Ministerio de Vivienda (SERPAVI), 2024"
+          ],
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low_eur",
+        "high_eur",
+        "source"
+      ],
+      "title": "CostRange",
+      "type": "object"
+    },
     "DatasetRef": {
       "additionalProperties": false,
       "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
@@ -737,6 +771,18 @@
           "description": "Monthly rent or purchase price for the needed area",
           "title": "Estimated Cost Eur"
         },
+        "estimated_cost_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CostRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where half the leases fall, renting with the Ministry's rent reference (D-242); None otherwise"
+        },
         "facts": {
           "description": "Up to 5 tangible facts, most important to the person first; unknown last",
           "items": {
@@ -1020,6 +1066,18 @@
           "default": null,
           "description": "Monthly rent or purchase price for the needed area, as in RankedZone: the zone card shows it for any zone (D-234); None without a cost",
           "title": "Estimated Cost Eur"
+        },
+        "estimated_cost_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CostRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where half the leases fall, as in RankedZone (D-242)"
         },
         "failed_constraints": {
           "items": {
