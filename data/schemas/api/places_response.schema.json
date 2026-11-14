@@ -80,7 +80,7 @@
             }
           ],
           "default": null,
-          "description": "Hospitals (D-218): who runs it, from the CM register; mutuas count as private",
+          "description": "Hospitals (D-218, D-239): public network or private, as `dependency` of the place; mutuas count as private",
           "title": "Dependency"
         },
         "kind": {
@@ -263,7 +263,7 @@
             }
           ],
           "default": null,
-          "description": "Health places (D-239): who runs it, from the CM register's dependencia funcional; mutuas count as private. A private hospital may also attend public patients by agreement: the register does not say which (None elsewhere)",
+          "description": "Health places (D-239): 'publica' for the network of the Servicio Madrileño de Salud (the CM register's dependencia funcional, or a network hospital a private company runs), 'privada' for the rest; mutuas count as private (None elsewhere)",
           "title": "Dependency"
         },
         "gap_rows": {
@@ -273,6 +273,23 @@
           },
           "title": "Gap Rows",
           "type": "array"
+        },
+        "management": {
+          "anyOf": [
+            {
+              "enum": [
+                "publica",
+                "privada"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hospitals (D-239): who runs it. 'privada' for a private hospital and for a hospital of the public network run by a private company by concession or concierto singular (a versioned list with its official source), 'publica' for the rest of the public ones (None elsewhere)",
+          "title": "Management"
         },
         "municipio": {
           "anyOf": [

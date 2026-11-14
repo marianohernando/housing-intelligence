@@ -7,6 +7,7 @@ from typing import Any, NamedTuple
 from sqlalchemy import Connection, text
 
 from hi_contracts.catalog.enums import PlaceCategory
+from hi_domain.facilities import privately_managed
 
 # Vercel answers 4.5 MB at most; 5,000 places are ~1.4 MB. Larger layers (transport: 14,982
 # stops) come in pages, and the response says how to ask for the next one.
@@ -91,6 +92,8 @@ _OWNERSHIP = {
     "PRIVADO": "privada",
 }
 _DEPENDENCIES = ("publica", "privada")
+# The register's hospital types all start so: general, especializado, media y larga estancia...
+_HOSPITAL = "Hospital"
 # Capacity a register publishes per place: attribute -> (unit). Never estimated.
 _CAPACITY_ATTRIBUTES = {"plazas_autorizadas_numero": "plazas autorizadas", "camas": "camas"}
 
@@ -155,10 +158,24 @@ def _capacity(
 
 
 def _dependency(attributes: dict[str, Any]) -> str | None:
-    """Public or private as the load wrote it from the register (hi_domain.facilities); a value
+    """Public (the network of the Servicio Madrileño de Salud) or private, as the load wrote it
+    from the register; a network hospital a private company runs is public (D-239). A value
     this contract does not know is left out, never passed on."""
+    if privately_managed(attributes.get("directory")):
+        return "publica"
     value = attributes.get("dependency")
     return value if value in _DEPENDENCIES else None
+
+
+def _management(attributes: dict[str, Any], subcategory: str) -> str | None:
+    """Hospitals only (D-239): private for a private hospital and for a network hospital a
+    private company runs, public for the rest of the public ones; None without a dependency."""
+    dependency = _dependency(attributes)
+    if not subcategory.startswith(_HOSPITAL) or dependency is None:
+        return None
+    if dependency == "privada" or privately_managed(attributes.get("directory")):
+        return "privada"
+    return "publica"
 
 
 def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
@@ -176,6 +193,7 @@ def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
             "seccion": r["seccion_admin_unit_id"],
             "ownership": _OWNERSHIP.get(str(attributes.get("titularidad") or "")),
             "dependency": _dependency(attributes),
+            "management": _management(attributes, r["subcategory"]),
             "gap_rows": [
                 f.row for f in filters if f.counts(r["category"], r["subcategory"], attributes)
             ],

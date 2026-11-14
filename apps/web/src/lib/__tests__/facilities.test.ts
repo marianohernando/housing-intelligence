@@ -20,7 +20,6 @@ import {
   selectedFacilities,
 } from "../map/facilities";
 import type { PlaceFeature } from "../map/places";
-import { searchable } from "../map/zones";
 
 function place(
   id: string,
@@ -160,12 +159,12 @@ describe("groupFacilities", () => {
     const hospitals = groupFacilities(features).hospital;
     const doce = hospitals.find((f) => f.name === "Hospital Universitario 12 de Octubre");
     expect(doce).toMatchObject({ label: "Hospital público", detail: "1.161 camas instaladas", source: "ms_catalogo_nacional_hospitales" });
-    // Found with or without its tildes: the API spells it «Fundación Jiménez Díaz» since D-221, the
-    // fixture will when line A regenerates it. Private by the register, though it has an agreement
-    // with the public network: the note says so
-    const jd = hospitals.find((f) => searchable(f.name ?? "") === "hospital universitario fundacion jimenez diaz");
-    expect(jd).toMatchObject({ label: "Hospital privado", detail: "651 camas instaladas", dependency: "privada" });
-    expect(HOSPITAL_DEPENDENCY_NOTE).toMatch(/registro de centros sanitarios de la Comunidad de Madrid.*concierto/);
+    // «Privado No Benéfico» in the register, in the network of the Servicio Madrileño de Salud by
+    // concierto singular: public, run by a company (D-239). The note says what each word means
+    const jd = hospitals.find((f) => f.name === "Hospital Universitario Fundación Jiménez Díaz");
+    expect(jd).toMatchObject({ label: "Hospital público · gestión privada", detail: "651 camas instaladas", dependency: "publica" });
+    expect(hospitals.filter((f) => f.label.includes("gestión privada"))).toHaveLength(1);
+    expect(HOSPITAL_DEPENDENCY_NOTE).toMatch(/^Público: de la red del Servicio Madrileño de Salud.*«gestión privada».*Privado: el resto/);
     // The label says it once: the detail no longer repeats who runs it
     for (const f of hospitals) expect(f.detail ?? "").not.toMatch(/gestión|públic|privad/);
     // Beds only with their source, and never a made-up name: the generic «Hospital general (Madrid)» stays unnamed
@@ -193,6 +192,15 @@ describe("groupFacilities", () => {
       ["Hospital", null],
     ]);
     expect(hospitalSplitText(hospital)).toBe("2 públicos y 2 privados");
+    // A hospital of the public network a company runs is public, and says so; «gestión privada»
+    // never goes with a private one (all of them are run privately)
+    const managed = groupFacilities([
+      place("g", "health", "Hospital general", "HOSPITAL GE", -3.7, 40.4, { dependency: "publica", management: "privada" }),
+      place("p", "health", "Hospital general", "HOSPITAL PE", -3.7, 40.4, { dependency: "privada", management: "privada" }),
+      place("s", "health", "Hospital general", "HOSPITAL ESE", -3.7, 40.4, { dependency: "publica", management: "publica" }),
+    ]).hospital;
+    expect(managed.map((f) => f.label)).toEqual(["Hospital público", "Hospital público · gestión privada", "Hospital privado"]);
+    expect(hospitalSplitText(managed)).toBe("2 públicos y 1 privado");
     expect(hospitalSplitText(hospital.slice(0, 1))).toBe("1 público");
     expect(hospitalSplitText(hospital.slice(4))).toBeNull();
     expect(hospitalSplitText([])).toBeNull();
