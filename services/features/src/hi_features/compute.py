@@ -93,15 +93,24 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
 
 
 def _metric_ratio(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    return methods.metric_ratio(
-        loaders.observations(engine, f["numerator_metric"], level),
+    """`same_period`: the denominator of the numerator's year, not its own latest;
+    `regional_reference: false`: no region row, for a source that covers only some zones."""
+    numerator = loaders.observations(engine, f["numerator_metric"], level)
+    denominator = loaders.observations(engine, f["denominator_metric"], level)
+    if f.get("same_period"):
+        denominator = methods.at_latest_period_of(denominator, numerator)
+    result = methods.metric_ratio(
+        numerator,
         f["numerator_dims"],
-        loaders.observations(engine, f["denominator_metric"], level),
+        denominator,
         f["denominator_dims"],
         float(f["per"]),
         small_population=float(f.get("small_population_threshold", 0)),
         confidence=float(f.get("confidence", 1.0)),
     )
+    if f.get("regional_reference", True):
+        return result
+    return methods.without_regional_reference(result)
 
 
 def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:

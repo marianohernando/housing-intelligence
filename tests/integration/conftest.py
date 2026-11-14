@@ -12,6 +12,7 @@ from sqlalchemy import Engine, create_engine, make_url, text
 
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
+    CmMunicipioConceptPipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
     FacilityDirectoryPipeline,
@@ -219,6 +220,14 @@ def fixtures_ingested(
             src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
             result = run_metric_pipeline(
                 migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, CmMunicipioConceptPipeline):
+            # D-235: the sample has Madrid only, and the population fixture only its latest
+            # year, so the provisional year is read here (the unit tests cover leaving it out).
+            src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
+            sample = spec.model_copy(update={"expected_municipios": 1, "excluded_statuses": []})
+            result = run_metric_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )
         elif isinstance(spec, AeatRentComparisonPipeline):  # D-228: rent of new leases
             src = local_file(dataset_id, "primary", GOLDEN / "aeat_sample" / f"{dataset_id}.html")

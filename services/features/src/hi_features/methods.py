@@ -282,6 +282,22 @@ def places_per_population(
     )
 
 
+def at_latest_period_of(obs: pd.DataFrame, other: pd.DataFrame) -> pd.DataFrame:
+    """The rows of `obs` dated like the latest period of `other`: a rate over the population of
+    the same year (D-235). None of that date leaves it empty: unknown, never another year's."""
+    if obs.empty or other.empty:
+        return obs.iloc[0:0]
+    newest = other["period_start"].max()
+    return obs.loc[[period == newest for period in obs["period_start"].tolist()]]
+
+
+def without_regional_reference(result: pd.DataFrame) -> pd.DataFrame:
+    """Drops the region's row: the sum of the zones a source covers is not the region when it
+    only publishes some of them (D-235)."""
+    keep = [level != REGION_LEVEL for level in result["territory_level"].tolist()]
+    return result.loc[keep].reset_index(drop=True)
+
+
 def metric_ratio(
     numerator: pd.DataFrame,
     numerator_dims: DimFilter,
@@ -293,7 +309,9 @@ def metric_ratio(
 ) -> pd.DataFrame:
     """per x numerator / denominator for two metrics of the same zones (e.g. dwellings over
     90 m2 per 100 households of 4 or more). Each metric uses its own latest period and the row
-    carries the denominator's. A zone whose numerator is unknown or absent is unknown, never 0.
+    carries the denominator's (the caller may hand the denominator already cut to the
+    numerator's period, `at_latest_period_of`). A zone whose numerator is unknown or absent is
+    unknown, never 0.
     The regional reference adds up the zones where both are known; as in places per
     population, a zone with a 0 denominator is NOT_APPLICABLE but its numerator still counts
     for the region."""

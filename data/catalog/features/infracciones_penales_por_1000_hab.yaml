@@ -1,0 +1,32 @@
+feature_id: infracciones_penales_por_1000_hab
+version: 1
+human_name: Infracciones penales conocidas por cada 1.000 habitantes
+domain: safety
+type: derived
+unit: hechos/1000 hab
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_infracciones_penales_municipios, role: primary}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator}
+formula:
+  method: metric_ratio
+  numerator_metric: infracciones_penales_conocidas
+  numerator_dims: {}
+  denominator_metric: poblacion_censada
+  denominator_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  per: 1000
+  same_period: true  # the population of the same year as the offences (D-235)
+  regional_reference: false  # 37 municipios are not the region
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, unknown_never_zero, context_only]
+limitations:
+  - "Mide los hechos que conoce la policía (denuncias y actuaciones), contados donde se conocen: sube donde hay mucha gente de paso (trabajo, compras, ocio, estaciones) aunque no viva allí. No mide el riesgo de quien vive en la zona (D-224)."
+  - "Total de infracciones penales del último año definitivo, incluida la cibercriminalidad, entre la población residente a 1 de enero de ese mismo año (censo anual). El año provisional no se usa."
+  - "El Ministerio del Interior solo lo publica para los municipios de más de 20.000 habitantes: el resto queda sin dato, nunca 0. No se publica por distrito de Madrid: el dato de Madrid es de toda la ciudad."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta». Se muestra con su año y su aviso, sin colores de alarma ni etiquetas (D-235)."
