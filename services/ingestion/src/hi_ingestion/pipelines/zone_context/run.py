@@ -44,7 +44,7 @@ from hi_ingestion.pipelines.zone_context.normalize import (
     zone_items_frame,
 )
 
-PARSER_VERSION = "zone_context-1.0.0"
+PARSER_VERSION = "zone_context-1.1.0"
 MANUAL_DIR = REPO_ROOT / "data" / "catalog" / "manual"
 
 

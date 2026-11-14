@@ -7,12 +7,12 @@
       "sha256": "52908ce6c760bdfe95764bc0940440e1a6224489b1b81f7c9aa0f926cefadfaa",
       "bytes": 6906813,
       "url": "https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/55469ce8-f90d-4cf7-b113-12c3449f89e8/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comun.csv",
-      "retrieved_at": "2026-11-14T18:49:21.883998+00:00"
+      "retrieved_at": "2026-11-14T22:02:57.879397+00:00"
     }
   ],
   "checksum": "186273268c033363063017e779641e2db33490dd158630faaeb3f50e0dfa3225",
-  "parser_version": "zone_context-1.0.0",
+  "parser_version": "zone_context-1.1.0",
   "dataset_version": "2026-11-14-186273268c03",
-  "correlation_id": "3d7b3e2818e64681bb98117ec1c06a06",
+  "correlation_id": "b1cafc3f9f744713b55d6549fb2d8b45",
   "silver": "data/silver/cm_transacciones_nueva_usada/186273268c03/observations.csv.gz"
 }

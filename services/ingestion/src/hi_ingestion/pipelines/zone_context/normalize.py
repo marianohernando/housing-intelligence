@@ -182,6 +182,12 @@ def district_code(municipio_ine: str, raw: Any) -> str:
     return f"{municipio_ine}{int(text):02d}"
 
 
+def _without_prefix(name: str, spec: MadridDevelopmentAreasPipeline) -> str:
+    """«DESARROLLO DEL ESTE - LOS AHIJONES» -> «LOS AHIJONES»: the part that tells it apart."""
+    prefix = next((p for p in spec.drop_name_prefixes if name.startswith(p)), "")
+    return name[len(prefix) :].strip() or name
+
+
 def _area_row(row: dict[str, Any], spec: MadridDevelopmentAreasPipeline) -> dict[str, Any] | None:
     """The area's observation, or None when it is out of scope (another use, or finished)."""
     use = " ".join(str(row.get(spec.use_column) or "").split())
@@ -192,7 +198,7 @@ def _area_row(row: dict[str, Any], spec: MadridDevelopmentAreasPipeline) -> dict
         return None
     code = district_code(spec.municipio_ine, row.get(spec.district_column))
     area_code = str(row.get(spec.code_column) or "").strip()
-    raw_name = " ".join(str(row.get(spec.name_column) or "").split())
+    raw_name = _without_prefix(" ".join(str(row.get(spec.name_column) or "").split()), spec)
     if not area_code or not raw_name:
         msg = "an area without code or name"
         raise RowError(msg)

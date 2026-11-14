@@ -721,7 +721,7 @@
     },
     "MadridDevelopmentAreasPipeline": {
       "additionalProperties": false,
-      "description": "Ayuntamiento de Madrid, «PGOUM 97. Estado de desarrollo de los ámbitos» (VEDA): one row\nper planning area with its district and the state of its four phases, in order (D-241).\n\nOnly the areas whose characteristic use is in `uses` and that are not finished are kept:\nsome phase is still `in_progress` or `not_started`. A state the pipeline does not declare\nsends its row to quarantine and blocks the run (a new wording must be read by a person).\nEach kept area becomes one observation of `metric_id` in its district, its surface in m²,\nwith its code, its name and its stage as dimensions. Names come in capitals: they are shown\nin title case, with the words of `keep_upper` (acronyms such as «PMM») as written.",
+      "description": "Ayuntamiento de Madrid, «PGOUM 97. Estado de desarrollo de los ámbitos» (VEDA): one row\nper planning area with its district and the state of its four phases, in order (D-241).\n\nOnly the areas whose characteristic use is in `uses` and that are not finished are kept:\nsome phase is still `in_progress` or `not_started`. A state the pipeline does not declare\nsends its row to quarantine and blocks the run (a new wording must be read by a person).\nEach kept area becomes one observation of `metric_id` in its district, its surface in m²,\nwith its code, its name and its stage as dimensions. Names come in capitals: they are shown\nin title case, with the words of `keep_upper` (acronyms such as «PMM») as written, and\nwithout a leading `drop_name_prefixes` that several areas share («DESARROLLO DEL ESTE - »).",
       "properties": {
         "area_column": {
           "default": "Superficie (m²)",
@@ -752,6 +752,13 @@
           "default": "Distrito",
           "title": "District Name Column",
           "type": "string"
+        },
+        "drop_name_prefixes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Drop Name Prefixes",
+          "type": "array"
         },
         "expected_districts": {
           "exclusiveMinimum": 0,

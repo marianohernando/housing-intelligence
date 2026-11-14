@@ -7,12 +7,12 @@
       "sha256": "1fb51343af3e244aab4fc8f484c21d895f4d776e25b7feeeca452697e2a3a9da",
       "bytes": 184832,
       "url": "https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos/resource/203200-17-desarrollo-ambitos/download/situacionambitos_01_01_2026distritos.xls",
-      "retrieved_at": "2026-11-14T18:49:25.560822+00:00"
+      "retrieved_at": "2026-11-14T22:02:56.302120+00:00"
     }
   ],
   "checksum": "eadb48c083bcc061e44fab5fef0748e7adbe8e0a8935199193e64af68bc8e027",
-  "parser_version": "zone_context-1.0.0",
+  "parser_version": "zone_context-1.1.0",
   "dataset_version": "2026-11-14-eadb48c083bc",
-  "correlation_id": "27c456ab777e4cc09c8edb5985b94dc3",
+  "correlation_id": "32f50c1d21fb4d259c68900c25599656",
   "silver": "data/silver/ayto_pgoum_desarrollo_ambitos/eadb48c083bc/observations.csv.gz"
 }

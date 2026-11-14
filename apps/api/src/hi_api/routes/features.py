@@ -4,7 +4,7 @@ from datetime import date
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
@@ -28,6 +28,28 @@ class FeatureInfo(BaseModel):
     sources: list[dict[str, Any]]
 
 
+class ContextItem(BaseModel):
+    """One thing a context figure lists (D-241): a planning area, a Plan Vive promotion."""
+
+    code: str | None = None
+    name: str | None = None
+    stage: str | None = None
+    value: float | None = None
+    note: str | None = None
+
+
+class FeatureValueDetail(BaseModel):
+    """What a context figure says besides its value (D-241), only for the features that keep
+    it: the two counts of a share, the last day of its period, whether it is provisional, and
+    the items behind a count."""
+
+    numerator: float | None = None
+    denominator: float | None = None
+    period_end: date | None = None
+    provisional: bool | None = None
+    items: list[ContextItem] | None = None
+
+
 class FeatureValueRow(BaseModel):
     territory_code: str
     admin_unit_id: str | None
@@ -36,6 +58,8 @@ class FeatureValueRow(BaseModel):
     value: float | None
     null_reason: str | None
     confidence: float
+    # Only the context features keep one; the rest leave it out (no `null` in every row)
+    detail: FeatureValueDetail | None = Field(default=None, exclude_if=lambda d: d is None)
 
 
 class FeatureValues(BaseModel):

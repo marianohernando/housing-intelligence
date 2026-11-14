@@ -117,6 +117,7 @@ AREAS = MadridDevelopmentAreasPipeline(
         "Sin Iniciar": "not_started",
     },
     keep_upper=["UVA"],
+    drop_name_prefixes=["DESARROLLO DEL ESTE - "],
     expected_districts=21,
     min_rows=1,
     max_rows=10,
@@ -154,7 +155,7 @@ def test_only_unfinished_residential_areas_are_kept_with_their_stage() -> None:
         ("2807919", "A1", "obras"),
         ("2807901", "A4", "sin_empezar"),
     ]
-    assert rows[0]["dims"]["name"] == "Desarrollo del Este - A1"
+    assert rows[0]["dims"]["name"] == "A1"  # without the prefix the four areas share
     assert rows[0]["value"] == 5507172.0
     assert rows[0]["period_start"] == date(2026, 7, 1)
     assert result.areas == 5

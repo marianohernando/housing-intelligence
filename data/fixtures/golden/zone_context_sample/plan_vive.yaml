@@ -1,0 +1,16 @@
+# Integration fixture (D-241): the real Madrid entry of data/catalog/manual/plan_vive.yaml, without
+# its districts (Hortaleza and Vicálvaro are not in the sample geography). Every other municipio
+# of the sample has no Plan Vive entry, so its value is a confirmed 0.
+title: Plan Vive — promociones de alquiler asequible por municipio
+publisher: Comunidad de Madrid
+url: https://www.comunidad.madrid/plan-vive
+consulted: 2026-11-14
+unit: viviendas
+items:
+  - municipio_ine: "28079"
+    municipio: "Madrid"
+    item: madrid
+    name: "Valdebebas y Los Ahijones"
+    value: 1616
+    stage: "Entrega y construcción"
+    says: "Madrid · Nº viviendas: 1.616 · En fase de: Entrega y construcción · Promociones: 5 · Ubicación: Valdebebas y Los Ahijones"

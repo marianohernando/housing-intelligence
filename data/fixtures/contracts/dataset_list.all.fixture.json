@@ -1,6 +1,6 @@
 {
-  "total": 35,
-  "cm_open_data_count": 27,
+  "total": 39,
+  "cm_open_data_count": 29,
   "datasets": [
     {
       "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
@@ -157,6 +157,17 @@
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
+      "dataset_id": "cm_transacciones_nueva_usada",
+      "name": "Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-186273268c03",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
       "dataset_id": "cm_unidades_escolares",
       "name": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios",
       "publisher": "Instituto de Estadística",
@@ -164,6 +175,17 @@
       "url": "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-bdf7c1ff864a",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_valor_tasado_vivienda_antiguedad",
+      "name": "Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios",
+      "publisher": "Instituto de Estadística",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-4a293502d054",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
@@ -342,6 +364,28 @@
       "version": "2026-11-11-4726abc60a15",
       "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
       "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "ayto_pgoum_desarrollo_ambitos",
+      "name": "PGOUM 97. Estado de desarrollo de los ámbitos (julio 2026)",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-14-eadb48c083bc",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "cm_plan_vive_promociones",
+      "name": "Plan Vive — promociones de alquiler asequible por municipio (comunidad.madrid, consultado el 14 nov 2026)",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://www.comunidad.madrid/plan-vive",
+      "source_name": "Comunidad de Madrid · comunidad.madrid",
+      "version": "2026-11-14-d39c01964a06",
+      "license": "Reutilización permitida citando la fuente y la fecha de extracción, sin alterar ni desnaturalizar la información y sin dar a entender patrocinio (aviso legal de comunidad.madrid)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026."
     },
     {
       "dataset_id": "ms_catalogo_centros_atencion_primaria",

@@ -582,7 +582,8 @@ class MadridDevelopmentAreasPipeline(BaseModel):
     sends its row to quarantine and blocks the run (a new wording must be read by a person).
     Each kept area becomes one observation of `metric_id` in its district, its surface in m²,
     with its code, its name and its stage as dimensions. Names come in capitals: they are shown
-    in title case, with the words of `keep_upper` (acronyms such as «PMM») as written.
+    in title case, with the words of `keep_upper` (acronyms such as «PMM») as written, and
+    without a leading `drop_name_prefixes` that several areas share («DESARROLLO DEL ESTE - »).
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -603,6 +604,7 @@ class MadridDevelopmentAreasPipeline(BaseModel):
     uses: list[str] = Field(min_length=1)
     states: dict[str, DevelopmentReading] = Field(min_length=1)
     keep_upper: list[str] = Field(default_factory=list[str])
+    drop_name_prefixes: list[str] = Field(default_factory=list[str])
     expected_districts: int = Field(gt=0)
     min_rows: int = Field(gt=0, description="fewer areas -> the table changed or is cut")
     max_rows: int = Field(gt=0)
