@@ -1,0 +1,16 @@
+metric_id: alquiler_m2_mensual_serpavi
+human_name: Alquiler mensual por m² de la vivienda habitual, mediana y cuartiles (SERPAVI)
+description: >-
+  Mediana (estadistico=mediana) y percentiles 25 y 75 (p25, p75) del alquiler mensual por m² de
+  las viviendas alquiladas como vivienda habitual, sin arrendamientos entre parientes, en
+  vivienda colectiva (tipologia=colectiva) o unifamiliar (tipologia=unifamiliar). Ministerio de
+  Vivienda y Agenda Urbana, Sistema Estatal de Referencia del Precio del Alquiler de Vivienda,
+  a partir del IRPF y el Catastro. No se publica con menos de 10 viviendas.
+domain: housing
+unit: EUR/m2/mes
+direction: lower_is_better
+aggregation_method: none
+geo_resolution_min: seccion_censal
+temporal_resolution: annual
+dataset_id: mivau_serpavi_alquiler
+dimensions: [tipologia, estadistico]
