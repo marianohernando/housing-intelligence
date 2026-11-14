@@ -48,13 +48,21 @@ def _value(frame: pd.DataFrame, metric: str, code: str, day: date) -> float:
     return float(values[0])
 
 
+HOUSEHOLDS = {"hogares_padron", "tamano_medio_hogar_padron"}
+CADASTRE = {  # D-234: what shares out the city's appraised value
+    "valor_catastral_medio_residencial",
+    "superficie_construida_media_residencial",
+    "inmuebles_residenciales",
+}
+
+
 def test_only_declared_indicators_at_district_level(
     spec: MadridDistrictPanelPipeline, source: pd.DataFrame
 ) -> None:
     obs = normalize(source, spec)
     frame = obs.frame
     assert obs.quarantine.empty
-    assert set(frame["metric_id"]) == {"hogares_padron", "tamano_medio_hogar_padron", *PERCEPTION}
+    assert set(frame["metric_id"]) == {*HOUSEHOLDS, *CADASTRE, *PERCEPTION}
     districts = frame.loc[frame["territory_level"] == "distrito"]
     assert set(districts["territory_code"]) == SAMPLE_DISTRICTS
     assert set(districts["admin_unit_id"]) == {f"ES.28.DIS.{c}" for c in SAMPLE_DISTRICTS}
@@ -72,7 +80,10 @@ def test_barrio_rows_of_the_barrio_indicators_carry_the_barrio_name(
     barrios = frame.loc[frame["territory_level"] == "barrio"]
     assert set(barrios["territory_code"]) == SAMPLE_BARRIOS
     assert set(barrios["admin_unit_id"]) == {f"ES.28.BAR.{c}" for c in SAMPLE_BARRIOS}
-    assert set(barrios["metric_id"]) == {"hogares_padron", "tamano_medio_hogar_padron"}
+    assert set(barrios["metric_id"]) == {*HOUSEHOLDS, *CADASTRE}
+    # D-234: Tetuán's cadastral value per m² and its residential units, as published
+    assert _value(barrios, "valor_catastral_medio_residencial", "28079063", date(2025, 1, 1)) > 0
+    assert _value(barrios, "inmuebles_residenciales", "28079063", date(2025, 1, 1)) > 1000
     names = dict(zip(barrios["territory_code"], barrios["territory_name"], strict=True))
     assert names["28079011"] == "Palacio"
     assert names["28079055"] == "Nueva España"

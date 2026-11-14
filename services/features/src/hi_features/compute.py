@@ -7,6 +7,7 @@ regional reference only comes from the base level.
 """
 
 from collections.abc import Callable, Mapping
+from itertools import pairwise
 from typing import Any
 
 import pandas as pd
@@ -128,6 +129,45 @@ def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd
     )
 
 
+# D-234: the zones a published value is shared out to, each level anchored to the one above;
+# a zone's parent is a prefix of its code (28079 -> 2807906 -> 28079065).
+SHARE_OUT_CHAIN = ("municipio", "distrito", "barrio")
+CODE_DIGITS = {"municipio": 5, "distrito": 7}
+
+
+def _anchored_relative_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """The anchor metric's value (a city's appraised value) shared out level by level down to
+    `level`: districts anchored to their municipio, barrios to their district's estimate."""
+    chain = SHARE_OUT_CHAIN[SHARE_OUT_CHAIN.index(f["anchor_level"]) :]
+    if level not in chain[1:]:
+        msg = f"a {f['anchor_level']} value is shared out to {list(chain[1:])}, not to {level!r}"
+        raise ValueError(msg)
+    anchor, period = methods.latest_values(
+        loaders.observations(engine, f["anchor_metric"], f["anchor_level"])
+    )
+    result = methods.result_frame([])
+    for parent, step in pairwise(chain):
+        value, _ = methods.latest_values(loaders.observations(engine, f["numerator_metric"], step))
+        area, _ = methods.latest_values(loaders.observations(engine, f["denominator_metric"], step))
+        weight, _ = methods.latest_values(loaders.observations(engine, f["weight_metric"], step))
+        ratio = {c: value[c] / area[c] for c in value.keys() & area.keys() if area[c] > 0}
+        zones = sorted(value.keys() | area.keys() | weight.keys())
+        result = methods.anchored_relative_value(
+            ratio,
+            weight,
+            anchor,
+            zones,
+            CODE_DIGITS[parent],
+            period,
+            float(f.get("confidence", 1.0)),
+        )
+        if step == level:
+            break
+        known = result.loc[result["value"].notna()]
+        anchor = dict(zip(known["territory_code"], known["value"].astype(float), strict=True))
+    return result
+
+
 def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """CORE-005: walking access to the nearest destination of a kind, by zone."""
     version = walk.network_version(engine)
@@ -172,6 +212,7 @@ METHODS: dict[str, Method] = {
     "not_published": _not_published,
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
+    "anchored_relative_value": _anchored_relative_value,
 }
 
 

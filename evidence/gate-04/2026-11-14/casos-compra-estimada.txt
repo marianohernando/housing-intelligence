@@ -1,0 +1,90 @@
+$ python cases.py http://127.0.0.1:8044   # API local contra housing_compra, 14 nov (fit-0.8, D-234 + D-239)
+
+== Comprar 400.000 €, pareja (/search)
+  evaluated=199 passing=41 unknown=151 binding=budget unknown_by={'budget': 151}
+  relax: budget «+40.000 €» -> 44 (+3)
+  results by level: {'distrito': 6, 'municipio': 4}
+   1. Puente de Vallecas (distrito) 100% cost=202000.0 conf=0.5
+   2. Usera (distrito) 100% cost=207000.0 conf=0.5
+   3. Carabanchel (distrito) 100% cost=247000.0 conf=0.5
+   4. Latina (distrito) 100% cost=260000.0 conf=0.5
+   5. Villaverde (distrito) 100% cost=234000.0 conf=0.5
+   6. Coslada (municipio) 100% cost=196000.0 conf=0.8
+   7. Parla (municipio) 100% cost=143000.0 conf=0.8
+   8. Móstoles (municipio) 100% cost=183000.0 conf=0.8
+   9. San Blas-Canillejas (distrito) 100% cost=289000.0 conf=0.5
+  10. Leganés (municipio) 100% cost=195000.0 conf=0.8
+  Tetuán: no sale; match=0 failed=['budget']
+== Comprar 400.000 €, pareja (/search/barrios, Tetuán 2807906)
+  evaluated=6 passing=4 unknown=0 binding=budget unknown_by={}
+  relax: budget «+40.000 €» -> 4 (+0)
+  results by level: {'barrio': 4}
+   1. Valdeacederas (barrio) 52% cost=348000.0 conf=0.5
+   2. Berruguete (barrio) 22% cost=378000.0 conf=0.5
+   3. Almenara (barrio) 10% cost=390000.0 conf=0.5
+   4. Bellas Vistas (barrio) 5% cost=395000.0 conf=0.5
+  Berruguete: puesto 2, 22%, PASS «Comprar ≈ 378.000 € por 68 m² (5.555 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del barrio; Ministerio de Vivienda y Catastro vía Ayuntamiento)»
+  Valdeacederas: puesto 1, 52%, PASS «Comprar ≈ 348.000 € por 68 m² (5.111 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del barrio; Ministerio de Vivienda y Catastro vía Ayuntamiento)»
+== Comprar 1.000.000 €, pareja, trabajo Cuatro Torres, max_minutes=None
+  evaluated=199 passing=48 unknown=151 binding=None unknown_by={'budget': 151}
+  results by level: {'distrito': 10}
+   1. Chamberí (distrito) 100% cost=477000.0 conf=0.5
+   2. Tetuán (distrito) 100% cost=411000.0 conf=0.5
+   3. Chamartín (distrito) 100% cost=506000.0 conf=0.5
+   4. Fuencarral-El Pardo (distrito) 100% cost=318000.0 conf=0.5
+   5. Salamanca (distrito) 96% cost=528000.0 conf=0.5
+   6. Centro (distrito) 96% cost=428000.0 conf=0.5
+   7. Hortaleza (distrito) 94% cost=347000.0 conf=0.5
+   8. Moncloa-Aravaca (distrito) 93% cost=328000.0 conf=0.5
+   9. Retiro (distrito) 90% cost=462000.0 conf=0.5
+  10. Ciudad Lineal (distrito) 88% cost=324000.0 conf=0.5
+== Comprar 1.000.000 €, pareja, trabajo Cuatro Torres, max_minutes=45
+  evaluated=199 passing=13 unknown=46 binding=commute:0 unknown_by={'budget': 46, 'commute:0': 46}
+  relax: commute:0 «Sin límite de tiempo hasta Cuatro Torres» -> 48 (+35)
+  results by level: {'distrito': 10}
+   1. Chamberí (distrito) 100% cost=477000.0 conf=0.5
+   2. Tetuán (distrito) 100% cost=411000.0 conf=0.5
+   3. Salamanca (distrito) 100% cost=528000.0 conf=0.5
+   4. Centro (distrito) 100% cost=428000.0 conf=0.5
+   5. Arganzuela (distrito) 100% cost=406000.0 conf=0.5
+   6. Ciudad Lineal (distrito) 100% cost=324000.0 conf=0.5
+   7. Retiro (distrito) 100% cost=462000.0 conf=0.5
+   8. Chamartín (distrito) 100% cost=506000.0 conf=0.5
+   9. Hortaleza (distrito) 100% cost=347000.0 conf=0.5
+  10. Fuencarral-El Pardo (distrito) 100% cost=318000.0 conf=0.5
+== Ejemplo del pitch (alquiler 1.500 €, familia, Castellana)
+  evaluated=199 passing=27 unknown=15 binding=near:colegio unknown_by={'budget': 15}
+  relax: near:colegio «+5 min a pie hasta colegio con primaria» -> 44 (+17)
+  relax: budget «+150 €/mes» -> 30 (+3)
+  results by level: {'distrito': 10}
+   1. Latina (distrito) 98% cost=1101.0 conf=0.8
+   2. Moratalaz (distrito) 98% cost=1083.0 conf=0.8
+   3. Ciudad Lineal (distrito) 98% cost=1230.0 conf=0.8
+  methodology=fit-0.8
+
+$ python top10.py http://127.0.0.1:8044   # pareja, sin trabajo ni prioridades
+
+== buy 400000: passing=41 unknown=151 methodology=fit-0.8
+   1. Puente de Vallecas (distrito) 100% cost=202000.0 conf=0.5
+   2. Usera (distrito) 100% cost=207000.0 conf=0.5
+   3. Carabanchel (distrito) 100% cost=247000.0 conf=0.5
+   4. Latina (distrito) 100% cost=260000.0 conf=0.5
+   5. Villaverde (distrito) 100% cost=234000.0 conf=0.5
+   6. Coslada (municipio) 100% cost=196000.0 conf=0.8
+   7. Parla (municipio) 100% cost=143000.0 conf=0.8
+   8. Móstoles (municipio) 100% cost=183000.0 conf=0.8
+   9. San Blas-Canillejas (distrito) 100% cost=289000.0 conf=0.5
+  10. Leganés (municipio) 100% cost=195000.0 conf=0.8
+  casi: [('Arganzuela', 406000.0), ('Tetuán', 411000.0), ('Centro', 428000.0), ('Retiro', 462000.0), ('Chamberí', 477000.0)]
+== rent 10000: passing=57 unknown=142 methodology=fit-0.8
+   1. Chamberí (distrito) 100% cost=1531.0 conf=0.8
+   2. Tetuán (distrito) 100% cost=1314.0 conf=0.8
+   3. Puente de Vallecas (distrito) 100% cost=997.0 conf=0.8
+   4. Salamanca (distrito) 100% cost=1587.0 conf=0.8
+   5. Centro (distrito) 100% cost=1495.0 conf=0.8
+   6. Usera (distrito) 100% cost=900.0 conf=0.8
+   7. Arganzuela (distrito) 100% cost=1340.0 conf=0.8
+   8. Ciudad Lineal (distrito) 100% cost=1087.0 conf=0.8
+   9. Carabanchel (distrito) 100% cost=995.0 conf=0.8
+  10. Retiro (distrito) 100% cost=1347.0 conf=0.8
+  casi: []

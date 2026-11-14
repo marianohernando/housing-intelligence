@@ -1,0 +1,13 @@
+metric_id: valor_catastral_medio_residencial
+human_name: Valor catastral medio por inmueble de uso residencial
+description: >-
+  Valor catastral medio, en euros, de los inmuebles de uso residencial de cada distrito y barrio
+  de Madrid, a 1 de enero. Catastro, publicado por el Ayuntamiento en el panel de indicadores de
+  distritos y barrios. Es un valor administrativo que sale de ponencias de valores antiguas: no
+  es un precio. Solo se usa para repartir el valor tasado de la ciudad entre sus zonas (D-234).
+domain: housing
+unit: EUR/inmueble
+aggregation_method: weighted_mean
+geo_resolution_min: barrio
+temporal_resolution: annual
+dataset_id: ayto_panel_indicadores_distritos_barrios

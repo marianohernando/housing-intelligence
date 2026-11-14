@@ -115,6 +115,13 @@
   font-weight: 400;
 }
 
+.end {
+  display: grid;
+  flex: none;
+  justify-items: end;
+  gap: 0.15rem;
+}
+
 .pct {
   flex: none;
   padding: 0.15rem 0.55rem;

@@ -322,6 +322,47 @@ def not_published(territories: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def latest_values(obs: pd.DataFrame) -> tuple[dict[str, float], Any]:
+    """Each territory's value in the metric's latest period (one row, known), and that period."""
+    values, period = _postcode_values(obs, {})
+    return values, period
+
+
+def anchored_relative_value(
+    ratio: Mapping[str, float],
+    weight: Mapping[str, float],
+    anchor: Mapping[str, float],
+    zones: Sequence[str],
+    parent_digits: int,
+    period: Any,
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """D-234: a parent's published value shared out among its zones by a relative figure.
+    zone value = parent value x zone ratio / mean ratio of the parent's zones, weighted by
+    `weight`; so the weighted mean of the zones' values is the parent's value (the anchor).
+
+    The parent of a zone is the first `parent_digits` of its code (a district's municipio, a
+    barrio's district). Every code in `zones` gets a row: without its ratio, its weight or its
+    parent's value the zone is SOURCE_MISSING, never the parent's mean and never 0; such a zone
+    is left out of the mean, which then holds over the others."""
+    by_parent: dict[str, list[str]] = {}
+    for code in zones:
+        if ratio.get(code, 0.0) > 0 and weight.get(code, 0.0) > 0:
+            by_parent.setdefault(code[:parent_digits], []).append(code)
+    mean = {
+        parent: sum(ratio[c] * weight[c] for c in codes) / sum(weight[c] for c in codes)
+        for parent, codes in by_parent.items()
+    }
+    out: list[dict[str, Any]] = []
+    for code in sorted(zones):
+        parent = code[:parent_digits]
+        if parent not in anchor or code not in by_parent.get(parent, ()):
+            out.append(_null(code, period, NullReason.SOURCE_MISSING))
+        else:
+            out.append(_ok(code, period, anchor[parent] * ratio[code] / mean[parent], confidence))
+    return _result(out)
+
+
 def _postcode_values(obs: pd.DataFrame, dims: DimFilter) -> tuple[dict[str, float], Any]:
     """Latest published value of each postcode (exactly one matching row), and its period."""
     values: dict[str, float] = {}
