@@ -107,13 +107,24 @@ class Indicators(NamedTuple):
     transit: dict[tuple[str, str], dict[str, IndicatorValue]]  # by mode, only words a fact (D-233)
 
 
+TRANSIT_MODES = frozenset({"bus", "metro"})
+NEED_VALUES = frozenset(n.value for n in NeedKey)
+PRIORITY_VALUES = frozenset(p.value for p in PriorityKey)
+
+
+def _unknown_binding(fit: dict[str, Any]) -> str:
+    """«walk_minutes:need=bares», «transit_mode:mode=tram» or just the role."""
+    detail = next((f"{k}={fit[k]}" for k in ("need", "priority", "mode") if fit.get(k)), None)
+    return f"{fit['role']}:{detail}" if detail else str(fit["role"])
+
+
 def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     rent: dict[tuple[str, str], IndicatorValue] = {}
     price: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]] = {}
     transit: dict[tuple[str, str], dict[str, IndicatorValue]] = {}
-    unknown_roles: set[str] = set()
+    unknown: set[str] = set()
     rent_note: str | None = None
     for row in rows:
         key = (row["territory_level"], row["territory_code"])
@@ -123,17 +134,17 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             rent_note = fit.get("note") or rent_note
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
-        elif fit["role"] == "transit_mode":
+        elif fit["role"] == "transit_mode" and fit.get("mode") in TRANSIT_MODES:
             transit.setdefault(key, {})[fit["mode"]] = _indicator(row)
-        elif fit["role"] == "walk_minutes" and fit.get("need"):
+        elif fit["role"] == "walk_minutes" and fit.get("need") in NEED_VALUES:
             walk.setdefault(key, {})[NeedKey(fit["need"])] = _indicator(row)
-        elif fit["role"] == "walk_minutes" and fit.get("priority"):
+        elif fit["role"] == "walk_minutes" and fit.get("priority") in PRIORITY_VALUES:
             # a priority measured on foot: the park for «Zonas verdes» (D-222)
             priority_walk.setdefault(key, {})[PriorityKey(fit["priority"])] = _indicator(row)
-        else:  # a role this code does not know (data synced before the deploy): ignored
-            unknown_roles.add(str(fit["role"]))
-    if unknown_roles:
-        log.warning("fit roles ignored by this version: %s", sorted(unknown_roles))
+        else:  # a role, need, priority or mode this code does not know (synced before deploy)
+            unknown.add(_unknown_binding(fit))
+    if unknown:
+        log.warning("fit bindings ignored by this version: %s", sorted(unknown))
     return Indicators(rent, rent_note, price, walk, priority_walk, transit)
 
 

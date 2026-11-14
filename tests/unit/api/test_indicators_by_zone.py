@@ -54,6 +54,9 @@ def test_an_unknown_role_is_ignored_with_a_warning(caplog: pytest.LogCaptureFixt
         _row("min_a_pie_colegio", {"role": "walk_minutes", "need": "colegio"}),
         _row("futuro", {"role": "something_new", "need": None, "priority": None, "mode": None}),
         _row("futuro_2", {"role": "something_new"}),
+        _row("bares", {"role": "walk_minutes", "need": "bares"}),
+        _row("ocio", {"role": "walk_minutes", "priority": "ocio"}),
+        _row("tranvia", {"role": "transit_mode", "mode": "tram"}),
     ]
     with caplog.at_level(logging.WARNING):
         result = indicators_by_zone(rows)
@@ -61,3 +64,9 @@ def test_an_unknown_role_is_ignored_with_a_warning(caplog: pytest.LogCaptureFixt
     assert not result.priority_walk
     assert not result.transit
     assert "something_new" in caplog.text
+    for ignored in (
+        "walk_minutes:need=bares",
+        "walk_minutes:priority=ocio",
+        "transit_mode:mode=tram",
+    ):
+        assert ignored in caplog.text
