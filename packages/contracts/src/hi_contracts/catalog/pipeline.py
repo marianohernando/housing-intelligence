@@ -518,6 +518,46 @@ class OsmParksPipeline(BaseModel):
         return []
 
 
+class OsmPoiClass(BaseModel):
+    """One OSM tag (`key=value`) and the kind of place it becomes."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: str = Field(pattern=r"^[a-z_]+$", examples=["amenity"])
+    value: str = Field(pattern=r"^[a-z_]+$", examples=["bar"])
+    category: PlaceCategory
+    subcategory: str = Field(min_length=1, examples=["Bar"])
+
+
+class OsmPoisPipeline(BaseModel):
+    """OpenStreetMap extract -> points of interest as places (D-236: leisure).
+
+    A place is a node, or the area of a closed way or multipolygon (a point inside it), tagged
+    with one of `classes` and not closed to the public. Only its name and its tag are kept.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["osm_pois"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    classes: list[OsmPoiClass] = Field(min_length=1)
+    access_denied: list[str] = Field(default_factory=lambda: ["no", "private"])
+    min_places: int = Field(gt=0, description="below this the extract is truncated")
+    max_places: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _one_class_per_tag(self) -> Self:
+        tags = [(c.key, c.value) for c in self.classes]
+        if len(tags) != len(set(tags)):
+            msg = "each OSM tag can be declared once"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return []
+
+
 PipelineSpec = Annotated[
     CmStatTablePipeline
     | CmPostcodeConceptPipeline
@@ -528,6 +568,7 @@ PipelineSpec = Annotated[
     | GtfsFeedPipeline
     | OsmWalkNetworkPipeline
     | OsmParksPipeline
+    | OsmPoisPipeline
     | FacilityDirectoryPipeline
     | StationTopologyPipeline,
     Field(discriminator="kind"),

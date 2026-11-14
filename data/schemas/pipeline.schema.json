@@ -878,6 +878,103 @@
       "title": "OsmParksPipeline",
       "type": "object"
     },
+    "OsmPoiClass": {
+      "additionalProperties": false,
+      "description": "One OSM tag (`key=value`) and the kind of place it becomes.",
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/PlaceCategory"
+        },
+        "key": {
+          "examples": [
+            "amenity"
+          ],
+          "pattern": "^[a-z_]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "subcategory": {
+          "examples": [
+            "Bar"
+          ],
+          "minLength": 1,
+          "title": "Subcategory",
+          "type": "string"
+        },
+        "value": {
+          "examples": [
+            "bar"
+          ],
+          "pattern": "^[a-z_]+$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "category",
+        "subcategory"
+      ],
+      "title": "OsmPoiClass",
+      "type": "object"
+    },
+    "OsmPoisPipeline": {
+      "additionalProperties": false,
+      "description": "OpenStreetMap extract -> points of interest as places (D-236: leisure).\n\nA place is a node, or the area of a closed way or multipolygon (a point inside it), tagged\nwith one of `classes` and not closed to the public. Only its name and its tag are kept.",
+      "properties": {
+        "access_denied": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Access Denied",
+          "type": "array"
+        },
+        "classes": {
+          "items": {
+            "$ref": "#/$defs/OsmPoiClass"
+          },
+          "minItems": 1,
+          "title": "Classes",
+          "type": "array"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "osm_pois",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_places": {
+          "exclusiveMinimum": 0,
+          "title": "Max Places",
+          "type": "integer"
+        },
+        "min_places": {
+          "description": "below this the extract is truncated",
+          "exclusiveMinimum": 0,
+          "title": "Min Places",
+          "type": "integer"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "classes",
+        "min_places",
+        "max_places"
+      ],
+      "title": "OsmPoisPipeline",
+      "type": "object"
+    },
     "OsmWalkNetworkPipeline": {
       "additionalProperties": false,
       "description": "OpenStreetMap extract -> undirected walkable street graph, kept in Silver only.\n\nA way is walkable when its `highway` value is listed or it explicitly allows people on foot;\n`foot=no`, or `access=no/private` without a foot permission, removes it. One-way rules apply\nto vehicles, so the graph is undirected. Only indicators computed on it reach the database.",
@@ -1346,6 +1443,7 @@
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
       "osm_parks": "#/$defs/OsmParksPipeline",
+      "osm_pois": "#/$defs/OsmPoisPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
       "points_csv": "#/$defs/PointsPipeline",
       "station_topology": "#/$defs/StationTopologyPipeline"
@@ -1379,6 +1477,9 @@
     },
     {
       "$ref": "#/$defs/OsmParksPipeline"
+    },
+    {
+      "$ref": "#/$defs/OsmPoisPipeline"
     },
     {
       "$ref": "#/$defs/FacilityDirectoryPipeline"
