@@ -1432,7 +1432,8 @@ Motivo: feedback de usuarios de prueba. Antes de mudarse miran qué ocio tienen 
    - **Restaurantes:** `amenity=restaurant`. La comida rápida (`fast_food`) no cuenta.
    - **Gimnasios y deporte:** `leisure=fitness_centre` y `sports_centre` (polideportivos municipales incluidos).
    - **Cultura:** `tourism=museum`, `amenity=library`, `theatre`, `cinema` y `arts_centre`. Era «Cines y teatros» (cines, teatros y centros culturales) hasta el feedback de la cultura: museos y bibliotecas entraron el mismo día, antes de publicarse nada.
-   - Resultado del 14 nov (parser `osm-pois-1.1.0`): 16.507 locales; 6.201 bares y cafeterías, 7.678 restaurantes, 1.738 gimnasios y centros deportivos y 890 de cultura (196 museos, 260 bibliotecas, 259 teatros, 77 cines y 98 centros culturales). 971 sin nombre en OSM («Bar sin nombre»). Quality Gate: entre 8.000 y 60.000 locales, ids únicos, todas las etiquetas con algún local y menos del 2 % en cuarentena.
+   - Resultado del 14 nov (parser `osm-pois-1.2.0`): 16.493 locales; 6.197 bares y cafeterías, 7.670 restaurantes, 1.738 gimnasios y centros deportivos y 888 de cultura (195 museos, 260 bibliotecas, 259 teatros, 76 cines y 98 centros culturales). 971 sin nombre en OSM («Bar sin nombre»). Quality Gate: entre 8.000 y 60.000 locales, ids únicos, todas las etiquetas con algún local y menos del 2 % en cuarentena.
+   - Un local con dos etiquetas toma la primera del catálogo, que pone la cultura delante del deporte y del comer y beber: un museo con cafetería es museo. Un nodo dibujado dentro del área del mismo local (misma etiqueta y nombre, a 50 m o menos) cuenta una vez y se queda el área: 14 nodos fuera.
 3. **Cobertura.** OSM lo mantienen voluntarios y en los pueblos pequeños faltan locales.
    - Municipios con algún local: el 100 % de los de más de 20.000 habitantes tiene bares, restaurantes y gimnasios; de los de menos de 1.000, solo el 50 % tiene algún bar y el 24 % algo de cultura en OSM.
    - Contra la CM: 77 de los 97 municipios con biblioteca pública según su directorio tienen alguna en OSM (86–100 % por encima de 5.000 habitantes, 35 % entre 1.000 y 5.000). 32 de los 54 municipios con museo según la tabla de la CM tienen alguno en OSM; Madrid, 109 según la CM y 99 en OSM.
@@ -1443,22 +1444,39 @@ Motivo: feedback de usuarios de prueba. Antes de mudarse miran qué ocio tienen 
    - Es **un solo criterio** para todos sus grupos, en el puesto en que se marcó: cuatro casillas nunca pesan más que las otras prioridades. Su utilidad es la media de los grupos con dato, cada uno contra sus minutos (1 hasta la ventana, 0 al triple). Un grupo sin dato baja la confianza, nunca la nota. Un local a más del triple de la ventana puntúa 0 con confianza ≤ 0,5 (en un pueblo, OSM puede no tenerlo). Un hecho: «Ocio a pie: bares y cafeterías a unos 3 min, restaurantes a unos 4 min, cultura a unos 11 min».
    - **«Imprescindible» empieza sin marcar**: «Me importa» ordena, no filtra, y con la cobertura de §3 un filtro por defecto echaría pueblos por locales sin mapear. Marcado, cada grupo es una condición `near:<grupo>` (PASS/FAIL/UNKNOWN, se puede relajar como las demás).
    - Sin la prioridad marcada, el ocio no existe para la búsqueda: con «Ocio» y ninguna casilla no se mide nada, y una búsqueda sin ocio da lo mismo con y sin los datos (test). Los grupos no son filas de «Qué falta» ni entran en los hechos de contexto.
+   - **Grupos de ocio sin la prioridad `ocio`.** Pueden llegar desde la API o el MCP. Se ignoran (`hi_domain.fit.ignored_leisure`): no son criterio ni condición, y la respuesta lo avisa con un `warnings` `INVALID_PROFILE`. Con `required` a `True` por defecto, si no, filtrarían zonas por locales que OSM puede no tener. Lo dice el docstring de `NeedKey` y tiene tests (dominio y API).
+   - **El tipo del hecho sale solo de los grupos con dato.** Es punto fuerte si todos los que tienen dato están dentro de sus minutos; un grupo sin dato no lo convierte en punto débil.
+   - **En el Reality Check, los grupos se relajan juntos** («+5 min a pie hasta el ocio» y, al tope, «Ocio cerca como preferencia, no como requisito»), porque en la web comparten minutos e «Imprescindible». Sale una sola opción, no una por casilla. La condición de gimnasios se llama «Gimnasios y deporte», como la casilla.
+   - **El desempate de D-239 nunca lee el ocio.** `EVERYDAY_NEEDS` son los 6 servicios cotidianos (escuela infantil, colegio, centro de salud, farmacia, mayores y transporte), no `tuple(NeedKey)`. Con los 4 grupos dentro, la pareja con 10.000 €/mes y sin prioridades tenía Centro como primera en vez de Chamberí.
+     - Test: dos zonas empatadas que solo difieren en ocio conservan su orden, y cada `NeedKey` es cotidiano o de ocio.
+     - Golden: ese caso con el top 10 de D-239, 10 de 10 OK con y sin datos de ocio (`evidence/gate-04/2026-11-14/golden-search-ocio.txt`).
    - `indicators_by_zone` (API) lee los cuatro grupos como necesidades a pie, igual que el colegio, y solo acepta un `fit` con `priority` para las prioridades que se miden andando a un lugar propio (zonas verdes, sin escaleras). Un `fit` atado a `ocio` o a `seguridad` se ignora con el aviso de cualquier enlace desconocido (test).
 6. **En la web.**
    - El chip «Ocio» (icono `Wine`) solo sale cuando `osm_ocio` está en `GET /datasets`.
-   - En «Todos los centros» de la vista de zona hay 4 tipos más («Bares y cafeterías», «Restaurantes», «Gimnasios y deporte», «Cultura»). Comparten un color en el mapa (`--fac-ocio`) y solo se ofrecen en las zonas con algún local de ocio: sin datos no se dice «Ningún bar». Bajo cada recuento va «Según OpenStreetMap, un mapa hecho por voluntarios: puede faltar algún local o salir sin nombre».
+   - En «Todos los centros» de la vista de zona hay 4 tipos más: «Bares y cafeterías», «Restaurantes», «Gimnasios y deporte» y «Cultura».
+     - Comparten un color en el mapa (`--fac-ocio`) y salen cuando `osm_ocio` está en `/datasets`.
+     - **No van en la petición única de `/places` de la zona.** Cada tipo se pide aparte al pulsar su botón, y «Todos» solo enciende los 7 servicios.
+     - Medido en Centro: la petición de la zona pasa de 2.862 lugares (1,12 MB) a 179 (76 KB). «Cultura» se pide al pulsarla: 133 lugares, 53 KB.
+     - Con 0 locales, el recuento dice lo que falta en el mapa, no en la zona: «OpenStreetMap no tiene ningún bar ni cafetería en Patones».
+     - Bajo cada recuento va «Según OpenStreetMap, un mapa hecho por voluntarios: puede faltar algún local o salir sin nombre».
    - Textos en `pitch/textos_web.md` (`importa.ocio*`, `hecho.ocio*`, `centros.recuento.*`).
-7. **Invariante del pitch.** El ejemplo de la web (sin ocio) da exactamente lo mismo que producción: 27 zonas, Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %, el mismo top 10 y «Casi encajan» en el mismo orden (Chamartín, Salamanca, Centro, Chamberí, Retiro). Las 199 zonas tienen el mismo %, los mismos hechos y las mismas condiciones.
-8. **Despliegue y sync: desplegar → sincronizar → smoke; tras el sync no hay vuelta atrás a un despliegue anterior sin retirar estas filas.**
-   - Desplegar primero es seguro: sin `osm_ocio` en la base la web no ofrece el chip ni los tipos de ocio, y la búsqueda no cambia.
-   - Tablas que sincronizar (`make supabase-sync PROFILE=demo` copia las tablas enteras desde `housing`):
+7. **Invariante del pitch** (rehecho con el código fusionado sobre `1a052b1`, D-238 y D-239). El ejemplo de la web, sin ocio, da lo mismo que producción: 27 zonas; Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas al 98 %; el mismo top 10; y «Casi encajan» en el mismo orden (Chamartín, Salamanca, Centro, Chamberí, Retiro). La respuesta entera es igual salvo `methodology_version` y `datasets`, que pasa de 24 a 25 con `osm_ocio`: la lista cita los datasets de todas las features que lee la búsqueda, como ya hacía con `osm_parques`. El caso de 10.000 €/mes da el top 10 de D-239 en local y en producción.
+8. **Despliegue y sync: desplegar → sincronizar → smoke.**
+   - **Desplegar primero es seguro.** Sin `osm_ocio` en la base, la web no ofrece el chip «Ocio» ni los tipos de ocio, y la búsqueda no cambia.
+   - **Vuelta atrás con las filas ya sincronizadas.**
+     - A `ad4a8f2` o posterior es seguro: `indicators_by_zone` ignora los enlaces `need: bares|restaurantes|gimnasios|cultura` que no conoce, con el aviso de D-233, y esa web ni pide ni enseña el ocio.
+     - A un despliegue anterior a `ad4a8f2` hay que retirar antes estas filas y las 2 de D-233: ese código manda cualquier rol desconocido al caso «prioridad a pie» y `/search` da 500.
+   - **Tablas que sincronizar** (`make supabase-sync PROFILE=demo` copia las tablas enteras desde `housing`):
      - `dataset_registry`: 1 fila nueva, `osm_ocio`;
      - `dataset_version`: 1 fila;
-     - `place_master`: +16.507 filas de `osm_ocio`;
+     - `place_master`: +16.493 filas de `osm_ocio`;
      - `feature_registry`: 4 filas;
      - `feature_value`: +19.896 filas (4.974 por feature).
-   - Retirar las filas: borrar las 4 de `feature_registry` (`min_a_pie_bar`, `min_a_pie_restaurante`, `min_a_pie_gimnasio`, `min_a_pie_cultura`); las de `feature_value` caen por CASCADE. Borrar también los lugares de `place_master` con `official_dataset_id = 'osm_ocio'` y, después, la fila de `dataset_version` y la de `dataset_registry`.
-   - Cálculo en la base principal (`housing`), desde la raíz del repo, con el mismo extracto que la red peatonal:
+   - **Retirar las filas:**
+     - Borrar las 4 de `feature_registry` (`min_a_pie_bar`, `min_a_pie_restaurante`, `min_a_pie_gimnasio`, `min_a_pie_cultura`); las de `feature_value` caen por CASCADE.
+     - Después, los lugares de `place_master` con `official_dataset_id = 'osm_ocio'`, la fila de `dataset_version` y la de `dataset_registry`.
+     - Para volver antes de `ad4a8f2`, también las 2 filas de `feature_registry` de D-233 (`min_a_pie_bus`, `min_a_pie_metro`).
+   - **Cálculo en la base principal** (`housing`), desde la raíz del repo, con el mismo extracto que la red peatonal:
      ```bash
      export DATABASE_URL=postgresql+psycopg://housing:housing@localhost:5440/housing
      uv run hi-ingest catalog sync
