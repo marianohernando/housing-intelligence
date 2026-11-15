@@ -3,7 +3,18 @@
  * fit-0.1, D-215). The web never recomputes the fit: it joins the API's figures to the map, the
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
-import type { ConstraintCheck, CostRange, RankedZone, RealityCheck, Relaxation, ScenarioState, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type {
+  CostRange,
+  Fact,
+  RankedZone,
+  RealityCheck,
+  Relaxation,
+  ScenarioState,
+  SearchResult,
+  SearchScope,
+  ZoneMatch,
+  ZoneRef,
+} from "@/contracts/search_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 
 import { type ConfidenceText, confidenceText } from "./confidence";
@@ -85,6 +96,33 @@ export interface ZonePrice {
   confidence: ConfidenceText | null;
   /** D-242: where half the leases fall and who says so, in the zone card head (zona.precio.rango); null without it */
   range: PriceRange | null;
+  /** A rent: the 2024 leases it comes from, by the card's price (zona.precio.aviso_2024); null buying */
+  notice: string | null;
+}
+
+/**
+ * zona.precio.aviso_2024 and resultados.aviso_2024 (F5 of fit-0.9): every rent is the leases of
+ * 2024, and today's listings tend to ask more (16-33 % more in the formula's bench). Said by the
+ * card's price and once over the results when renting; never buying.
+ */
+export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más.";
+
+/** The same warning as the API's rent fact says it: the card says it once, by the price. */
+const RENT_FACT_NOTICE = /;\s*un anuncio de hoy puede pedir más/;
+
+/**
+ * The text of a fact as the card shows it: renting, the rent fact no longer repeats in other
+ * words what RENT_2024_NOTICE already says by the price («…, contratos firmados en 2024)»).
+ */
+export function factText(fact: Pick<Fact, "topic" | "text">, buying: boolean): string {
+  return !buying && fact.topic === "coste" ? fact.text.replace(RENT_FACT_NOTICE, "") : fact.text;
+}
+
+/** resultados.aviso_2024: over the results whose prices are rents (renting, or without a budget), with some price shown. */
+export function rentNotice(result: Pick<SearchResult, "scenario" | "results" | "near_misses">): string | null {
+  if (result.scenario.budget?.kind === "buy") return null;
+  const priced = [...result.results, ...(result.near_misses ?? [])].some((z) => z.estimated_cost_eur != null);
+  return priced ? RENT_2024_NOTICE : null;
 }
 
 /** «La mitad de los contratos, entre 510 y 820 €/mes» and «Ministerio de Vivienda (SERPAVI), 2024» (zona.precio.rango) */
@@ -121,6 +159,7 @@ export function zonePrice(
     aria: area ? `${aria} ${area}` : aria,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
     range: buying ? null : priceRange(zone.estimated_cost_range),
+    notice: buying ? null : RENT_2024_NOTICE,
   };
 }
 
@@ -160,38 +199,6 @@ export function zonePriceOf(result: SearchResult, zoneKey: string): ZonePrice | 
 export function constraintLabels(result: Pick<SearchResult, "results" | "near_misses">): Map<string, string> {
   const ranked = [...result.results, ...(result.near_misses ?? [])];
   return new Map(ranked.flatMap((z) => z.constraints.map((c) => [c.constraint_id, c.label] as const)));
-}
-
-/** The API stops giving minutes above this (MAX_COMMUTE_SHOWN of hi_domain/fit.py). */
-const MAX_COMMUTE_SHOWN = 120;
-
-/**
- * How long a failing commute takes, as the API's own fact says it (rounded to the nearest minute,
- * «más de 2 h» above 120), except that it never reads as the limit itself: 45,2 against 45 is 46.
- */
-export function commuteTakes(minutes: number, limit: number | null | undefined): string {
-  if (minutes > MAX_COMMUTE_SHOWN) return "más de 2 h";
-  const rounded = Math.round(minutes);
-  return `${limit == null ? rounded : Math.max(rounded, limit + 1)} min`;
-}
-
-/**
- * The conditions a zone fails, by name; unnamed ones are left out. With the zone's own
- * `constraints`, a commute that is too long says how long it is (trabajo.tarda): «… de 45 min como
- * mucho (tardarías 52 min)».
- */
-export function failedLabels(
-  failed: readonly string[] | undefined,
-  labels: ReadonlyMap<string, string>,
-  constraints: readonly Pick<ConstraintCheck, "constraint_id" | "status" | "value" | "threshold">[] = [],
-): string[] {
-  return (failed ?? []).flatMap((id) => {
-    const label = labels.get(id);
-    if (!label) return [];
-    const own = constraints.find((c) => c.constraint_id === id);
-    const isCommute = id.startsWith("commute:") && own?.status === "FAIL" && typeof own.value === "number";
-    return [isCommute ? `${label} (tardarías ${commuteTakes(own.value as number, own.threshold)})` : label];
-  });
 }
 
 /** Options of «¿Y si cambias algo?» that add zones, in the API order (most zones first). */
@@ -313,6 +320,21 @@ export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "s
   const n = tiedAtTop(result);
   const word = zoneWord(result);
   return n > MANY_TIED ? `Encajan ${zonesText(n, word)} igual de bien: marca qué te importa o dónde trabajas para afinar el orden.` : null;
+}
+
+/** Where «Trabajo en» and «¿Dónde?» are in «Tu búsqueda», for resultados.sin_lugar to take the person there. */
+export const FIELD_ID = { work: "busqueda-trabajo", where: "busqueda-donde" } as const;
+
+/**
+ * resultados.sin_lugar: searching the whole region with no place to go (no work, family or other),
+ * small villages well served on foot can come out first. They do fit, since nothing makes them far
+ * (with fit-0.9, Titulcia 2.ª for a couple with a baby), but it surprises: the person is asked for
+ * the work place or «Madrid capital». Only then, with zones to show and no crowd at the top
+ * (resultados.empate already asks for the work place).
+ */
+export function asksForPlace(result: Pick<SearchResult, "results" | "all_zones" | "scenario" | "reality_check">): boolean {
+  const noPlace = (result.scenario.anchors ?? []).length === 0;
+  return noPlace && resultScope(result) === "all" && result.reality_check.zones_passing > 0 && tiedText(result) === null;
 }
 
 /** The zones a search to buy could not check for lack of a purchase price (D-234). */

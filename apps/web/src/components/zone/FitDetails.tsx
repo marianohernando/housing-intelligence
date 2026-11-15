@@ -20,7 +20,7 @@ import { useDatasets } from "@/components/provenance/useDatasets";
 import { confidenceText } from "@/lib/confidence";
 import {
   constraintLabels,
-  failedLabels,
+  factText,
   hasWalkingFact,
   rankText,
   rentReferenceAvailable,
@@ -29,17 +29,17 @@ import {
   zoneFit,
   zoneWord,
 } from "@/lib/fit";
+import { tieText } from "@/lib/match";
 import { SCOPE_LABEL } from "@/lib/scenario";
+import { FAILS_UNNAMED, joinShortfalls, shortfalls } from "@/lib/shortfall";
 
 import styles from "./ZoneCard.module.css";
 
-// Copy from pitch/textos_web.md (zona.puesto, zona.hechos.titulo, zona.cerca_de_encajar.motivo,
-// zona.condicion.sin_dato, confianza.aria). «No cumple todo lo que pides» is zona.no_cumple. buySource
-// (zona.compra.sin_precio) says why a zone may have no purchase price (D-227, D-234).
+// Copy from pitch/textos_web.md (zona.puesto, zona.empate in lib/match.ts, zona.hechos.titulo, resultados.casi.* and
+// zona.no_cumple in lib/shortfall.ts, zona.condicion.sin_dato, confianza.aria). buySource (zona.compra.sin_precio) says
+// why a zone may have no purchase price (D-227, D-234).
 const TEXT = {
   facts: "Lo que tienes aquí",
-  fails: "No cumple:",
-  failsUnnamed: "No cumple todo lo que pides.",
   unknown: "No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno.",
   // zona.compra.sin_precio (D-227, D-234): why this zone has no purchase price, by its level. Never
   // a promise of an estimate: with the code deployed before the sync a district has none yet
@@ -89,17 +89,30 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
   const { match, ranked } = zoneFit(result, zoneKey);
   const scope = resultScope(result);
   if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope])}</p>;
-  const fails = failedLabels(match.failed_constraints, constraintLabels(result), ranked?.constraints);
+  // F5 of fit-0.9: what it lacks in plain words («Se pasa ≈ 120 €/mes de tu presupuesto»), as in «Casi encajan»
+  const fails = joinShortfalls(
+    shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario),
+  );
+  const word = zoneWord(result);
+  const tie = match.passes_all ? tieText(match, result.all_zones, word, result.results) : null;
   const buying = result.scenario.budget?.kind === "buy";
   const rentingInMunicipio = result.scenario.budget?.kind === "rent" && zoneKey.startsWith("municipio/");
 
   return (
     <>
-      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, zoneWord(result))}</p>}
+      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word)}</p>}
+      {tie && <p className={styles.tie}>{tie}</p>}
       {match.match_pct != null && !match.passes_all && (
         <p className={styles.fails}>
           <CircleX size={18} aria-hidden="true" />
-          <span>{fails.length > 0 ? `${TEXT.fails} ${fails.join(" · ")}` : TEXT.failsUnnamed}</span>
+          {fails ? (
+            <span>
+              <span aria-hidden="true">{fails.text}</span>
+              <span className="visually-hidden">{fails.aria}</span>
+            </span>
+          ) : (
+            <span>{FAILS_UNNAMED}</span>
+          )}
         </p>
       )}
       {match.match_pct == null && (
@@ -118,13 +131,14 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
           <h3 id={factsId}>{TEXT.facts}</h3>
           <ul>
             {ranked.facts.map((fact, i) => {
-              const Icon = TOPIC_ICON[fact.topic];
+              // A fact with a topic or kind this web does not know yet (fit-0.9 and later) still shows, with the «otro» icon
+              const Icon = TOPIC_ICON[fact.topic] ?? Info;
               const confidence = confidenceText(fact.confidence);
               return (
                 <li key={`${i}-${fact.topic}`} className={KIND_CLASS[fact.kind]}>
                   <Icon size={18} aria-hidden="true" />
                   <span>
-                    {fact.text}{" "}
+                    {factText(fact, buying)}{" "}
                     <small title={confidence.help}>
                       <span aria-hidden="true">· {confidence.label}</span>
                       <span className="visually-hidden">{TEXT.confidence(confidence.label)}</span>

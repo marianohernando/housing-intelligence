@@ -43,6 +43,47 @@
   list-style: none;
 }
 
+/*
+ * Barrios tied at the same % (resultados.empate.grupo), as in «Zonas que encajan»: «Empatan al 97 %»
+ * over the run and a bar down its left side, in the gutter every row keeps so they stay aligned.
+ */
+.list > li {
+  position: relative;
+  padding-left: var(--space-2);
+}
+
+.tied::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--violet);
+  content: "";
+}
+
+.tieFirst::before {
+  top: 1.6rem;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.tieLast::before {
+  bottom: var(--space-2);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.tie {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0 calc(-1 * var(--space-2));
+  color: var(--violet-strong);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 /* One row per barrio: its name and % (a button when it has its outline), then why it is a near miss and its first facts */
 .row {
   position: relative;
@@ -114,14 +155,25 @@ button.head:focus-visible::after {
   overflow-wrap: break-word;
 }
 
+/* «Encaja muy bien» over «94 %» (F5 of fit-0.9), as in «Zonas que encajan» */
 .pct {
+  display: grid;
   flex: none;
-  padding: 0.15rem 0.55rem;
+  justify-items: center;
+  padding: 0.15rem 0.45rem;
   border-radius: var(--radius-sm);
   background: var(--violet-soft);
   color: var(--violet-strong);
   font-family: var(--font-title);
   font-weight: 700;
+  line-height: 1.2;
+}
+
+.pct .band {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .pressed .pct {

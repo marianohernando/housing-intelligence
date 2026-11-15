@@ -122,14 +122,85 @@
   gap: 0.15rem;
 }
 
+/* «Encaja muy bien» over «94 %» (F5 of fit-0.9): the band and the figure in one pill, no wider than the price under it */
 .pct {
+  display: grid;
   flex: none;
-  padding: 0.15rem 0.55rem;
+  justify-items: center;
+  padding: 0.15rem 0.45rem;
   border-radius: var(--radius-sm);
   background: var(--violet-soft);
   color: var(--violet-strong);
   font-family: var(--font-title);
   font-weight: 700;
+  line-height: 1.2;
+}
+
+.pct .band {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* A near miss says what it lacks instead of its % («Se pasa ≈ 11.000 € de tu presupuesto») */
+.rowName .lacks {
+  color: var(--falta-ink);
+  font-weight: 500;
+}
+
+/*
+ * Rows tied at the same %: «Empatan al 94 %» over the run, and a bar down its left side (in the
+ * gutter every row keeps, so the ranks stay aligned) that holds its rows together. Each row also
+ * says it aloud with whom it ties.
+ */
+.ranking > li {
+  position: relative;
+  padding-left: var(--space-2);
+}
+
+.tied::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--violet);
+  content: "";
+}
+
+.tieFirst::before {
+  top: 1.6rem;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.tieLast::before {
+  bottom: var(--space-2);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.tie {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0 calc(-1 * var(--space-2));
+  color: var(--violet-strong);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* resultados.sin_lugar: a button that reads as a link inside its sentence */
+.inline {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--violet-strong);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
 }
 
 .toggle {

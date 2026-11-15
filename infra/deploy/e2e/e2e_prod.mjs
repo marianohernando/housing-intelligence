@@ -19,6 +19,8 @@ import { parseArgs } from "node:util";
 
 import { chromium, firefox, webkit } from "playwright";
 
+import { factAsShown, RENT_2024_NOTICE } from "./shown_text.mjs";
+
 const BROWSERS = { chromium, webkit, firefox };
 // The projector: 1280×720 at 125 % zoom is a 1024×576 CSS viewport with 1.25 device pixels per px.
 const DEVICES = {
@@ -92,6 +94,7 @@ async function journeySearch(run, page) {
   const total = await page.getByText(`De ${result.all_zones.length} zonas de la Comunidad de Madrid.`).count();
   run.check(J, "«De N zonas» = API all_zones", total > 0, result.all_zones.length);
   await checkFitLegend(run, page, rc);
+  await checkRentNotice(run, page, false);
   await run.shot(page, "j1-results");
   await checkFirstZone(run, page, result.results[0]);
   await checkRealityCheck(run, page, rc);
@@ -104,6 +107,29 @@ async function journeySearch(run, page) {
     JSON.stringify(searches.map((s) => s?.min_floor_area_m2)));
   await run.overflow(page, J);
   await checkCommuteLimit(run, page, result.reality_check.zones_passing);
+  await checkBuying(run, page);
+}
+
+/** resultados.aviso_2024 (F5 of fit-0.9): once over the results when renting, never when buying. */
+async function checkRentNotice(run, page, buying) {
+  const results = page.getByRole("region", { name: "Zonas que encajan", exact: true });
+  const n = await results.getByText(RENT_2024_NOTICE, { exact: true }).count();
+  run.check("J1 search", buying ? "buying: no 2024 rent notice" : "renting: the 2024 rent notice, once", n === (buying ? 0 : 1), `${n}`);
+}
+
+/** The same search to buy: what the API answers is on screen, without the rent notice. */
+async function checkBuying(run, page) {
+  const J = "J1 search";
+  await page.getByRole("radio", { name: "Comprar" }).check();
+  const [response] = await Promise.all([
+    page.waitForResponse(isSearch, { timeout: WAIT }),
+    page.getByRole("button", { name: "Ver zonas que encajan" }).click(),
+  ]);
+  const sent = response.request().postDataJSON();
+  run.check(J, "«Comprar» reaches /search as budget.kind buy", sent?.budget?.kind === "buy", JSON.stringify(sent?.budget));
+  const bought = (await response.json()).data.reality_check;
+  await page.getByText(passingText(bought.zones_passing)).first().waitFor({ timeout: WAIT });
+  await checkRentNotice(run, page, true);
 }
 
 const COMMUTE_LIMIT_MIN = 45;
@@ -168,9 +194,12 @@ async function checkFirstZone(run, page, top) {
   run.check(J, "card % = API match_pct", new RegExp(`(?<!\\d)${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
   const facts = card.getByRole("region", { name: "Lo que tienes aquí" }).locator("li");
   const shown = await facts.count();
-  const missing = top.facts.filter((f) => !text.includes(squash(f.text)));
+  // F5 of fit-0.9: renting, the card says RENT_2024_NOTICE by the price, so the rent fact goes without its own
+  // «; un anuncio de hoy puede pedir más» (factAsShown, as factText in apps/web/src/lib/fit.ts)
+  const missing = top.facts.filter((f) => !text.includes(squash(factAsShown(f))));
   run.check(J, "card facts = API facts", shown === top.facts.length && missing.length === 0,
     `${shown} on screen, ${top.facts.length} in the API${missing.length ? `; missing: ${missing[0].text}` : ""}`);
+  run.check(J, "card: the 2024 rent notice by the rent", text.includes(RENT_2024_NOTICE));
   await run.shot(page, "j1-card");
   await page.getByRole("button", { name: "Cerrar" }).first().click();
 }

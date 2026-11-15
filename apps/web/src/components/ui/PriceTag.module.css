@@ -62,3 +62,11 @@
 .source {
   font-size: 0.8rem;
 }
+
+/* zona.precio.aviso_2024: on its own line under the rent and its range, as quiet as the range */
+.notice {
+  flex-basis: 100%;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}

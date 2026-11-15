@@ -11,7 +11,7 @@ import Counter from "@/components/ui/Counter";
 import GlassCard from "@/components/ui/GlassCard";
 import Segmented from "@/components/ui/Segmented";
 import { errorMessage } from "@/lib/errors";
-import { rentReferenceAvailable } from "@/lib/fit";
+import { FIELD_ID, rentReferenceAvailable } from "@/lib/fit";
 import { formatEuros } from "@/lib/format";
 import { leisureAvailable } from "@/lib/map/facilities";
 import {
@@ -155,7 +155,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
 
       <div id={bodyId} hidden={!open} className={styles.body}>
         {available && (
-          <fieldset className={styles.group}>
+          <fieldset id={FIELD_ID.where} className={styles.group}>
             <legend>{TEXT.where}</legend>
             <Segmented
               legend={TEXT.where}
@@ -207,7 +207,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
         {available ? (
           <>
             <NearbyField />
-            <PlaceField kind="work" stationList={stationList} />
+            <PlaceField kind="work" stationList={stationList} id={FIELD_ID.work} />
             <PlaceField kind="family" stationList={stationList} />
           </>
         ) : (

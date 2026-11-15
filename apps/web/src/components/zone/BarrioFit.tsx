@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Equal } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { ScenarioState } from "@/contracts/scenario_state";
@@ -13,26 +13,27 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { type BarrioRow, barrioRows, barriosText, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
 import { unknownText, WALK_MEDIAN } from "@/lib/fit";
+import { rankingRows } from "@/lib/match";
 import type { ZoneProperties } from "@/lib/map/zones";
 
 import styles from "./BarrioFit.module.css";
 import { useBarrioFit } from "./useBarrioFit";
 
-// Copy from pitch/textos_web.md (zona.cerca_de_encajar.*, resultados.casi.ayuda, resultados.menos,
-// zona.no_cumple, zona.encaje.ayuda, a_pie.mediana, error.reintentar). The title is Mariano's (13 nov); the rest is
-// B's draft for line D (barrios.encajan.*).
+// Copy from pitch/textos_web.md (zona.cerca_de_encajar.*, resultados.casi.ayuda, resultados.menos, resultados.banda.*
+// in lib/match.ts, resultados.casi.* and zona.no_cumple in lib/shortfall.ts, zona.encaje.ayuda, a_pie.mediana,
+// error.reintentar). The title is Mariano's (13 nov); the rest is B's draft for line D (barrios.encajan.*).
 const TEXT = {
   title: "Los barrios que mejor encajan",
   loading: (district: string) => `Buscando los barrios de ${district} que encajan contigo…`,
   pick: "Toca uno para verlo en el mapa.",
   fitHelp: "Cuánto se parece este barrio a lo que buscas. No es una nota del barrio.",
   fit: "de encaje",
+  // zona.empate, read after the % of a tied barrio
+  tiesWith: (whom: string) => `empata con ${whom}`,
   all: (n: number) => `Ver los ${n} barrios`,
   fewer: "Ver menos",
   near: "Casi encajan",
   nearHelp: "Cumplen todo menos una cosa.",
-  fails: "No cumple:",
-  failsUnnamed: "No cumple todo lo que pides.",
   retry: "Reintentar",
 };
 
@@ -51,9 +52,16 @@ function Barrio({ row }: { row: BarrioRow }) {
       <span className={styles.name}>{row.name}</span>
       {/* The price under the %, so the name keeps its width at 390 px (D-234) */}
       <span className={styles.end}>
-        <span className={styles.pct} title={TEXT.fitHelp}>
-          {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
-        </span>
+        {row.fit && (
+          <span className={styles.pct} title={TEXT.fitHelp}>
+            <small className={styles.band}>{row.fit.band}</small>
+            <span aria-hidden="true">{row.fit.pct}</span>
+            <span className="visually-hidden">
+              {` · ${row.fit.pct} ${TEXT.fit}`}
+              {row.tie && `, ${TEXT.tiesWith(row.tie)}`}
+            </span>
+          </span>
+        )}
         {row.price && <PriceTag price={row.price} variant="row" />}
       </span>
     </>
@@ -74,8 +82,11 @@ function Barrio({ row }: { row: BarrioRow }) {
         <span className={styles.head}>{head}</span>
       )}
       <span id={detailsId} className={styles.details}>
-        {row.fails && (
-          <span className={styles.fails}>{row.fails.length > 0 ? `${TEXT.fails} ${row.fails.join(" · ")}` : TEXT.failsUnnamed}</span>
+        {row.lacks && (
+          <span className={styles.fails}>
+            <span aria-hidden="true">{row.lacks.text}</span>
+            <span className="visually-hidden">{row.lacks.aria}</span>
+          </span>
         )}
         {row.facts.map((fact, i) => (
           <span key={i} className={styles.fact}>
@@ -95,6 +106,8 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   const slow = useSlow(loading);
   const rows = data ? barrioRows(data) : null;
   const shown = rows ? (all ? rows.fits : rows.fits.slice(0, FIRST_BARRIOS)) : [];
+  // resultados.empate.grupo, as in «Zonas que encajan»: the rows in view are the first of `results`, in its order
+  const ties = data ? rankingRows(data.results.slice(0, shown.length), data.all_zones, "barrio").map((r) => r.tie) : [];
   const walking = rows ? [...shown, ...rows.near].some((row) => row.walking) : false;
 
   return (
@@ -125,11 +138,24 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
           {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown, "barrio")}</p>}
           {shown.length > 0 && (
             <ol className={styles.list}>
-              {shown.map((row) => (
-                <li key={row.code}>
-                  <Barrio row={row} />
-                </li>
-              ))}
+              {shown.map((row, i) => {
+                const tie = ties[i] ?? null;
+                return (
+                  <li
+                    key={row.code}
+                    className={tie ? [styles.tied, tie.first && styles.tieFirst, tie.last && styles.tieLast].filter(Boolean).join(" ") : undefined}
+                  >
+                    {/* Seen once over the run; each of its barrios says it aloud with whom it ties */}
+                    {tie?.first && (
+                      <p className={styles.tie} aria-hidden="true">
+                        <Equal size={16} />
+                        {tie.label}
+                      </p>
+                    )}
+                    <Barrio row={row} />
+                  </li>
+                );
+              })}
             </ol>
           )}
           {rows.fits.length > FIRST_BARRIOS && (

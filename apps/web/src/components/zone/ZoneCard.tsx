@@ -11,6 +11,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import PriceTag from "@/components/ui/PriceTag";
 import { errorMessage } from "@/lib/errors";
 import { nearbyWalks, zoneFit, zonePriceOf } from "@/lib/fit";
+import { matchText } from "@/lib/match";
 import {
   fitsButShortText,
   GAPS_HELP,
@@ -41,6 +42,8 @@ const TEXT = {
   beforeSearch: "Haz tu búsqueda para ver qué zonas encajan contigo.",
   fitSoon: "Muy pronto verás cuánto encaja esta zona contigo.", // zona.encaje.pronto
   fitHelp: "Cuánto se parece esta zona a lo que buscas. No es una nota de la zona.", // zona.encaje.ayuda
+  // zona.encaje.aria (F5 of fit-0.9): «Esta zona encaja muy bien con tu búsqueda: 94 %»
+  fitAria: (band: string, pct: string) => `Esta zona ${band.toLowerCase()} con tu búsqueda: ${pct}`,
   stale: "Este encaje es de tu búsqueda anterior.", // zona.encaje.antiguo
   missing: "Qué falta aquí",
   walk: "A pie:",
@@ -72,6 +75,8 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   const slow = useSlow(gaps.loading);
   const match = result?.all_zones.find((z) => z.zone.level === level && z.zone.code === code);
   const pct = match?.match_pct;
+  // F5 of fit-0.9: «Encaja muy bien» over «94 %»; a zone that fails something shows what it lacks, not a %
+  const fit = match?.passes_all ? matchText(match) : null;
   // D-234: the approximate price, in the head; none without a price (the search's notice says why)
   const price = result ? zonePriceOf(result, zone_key) : null;
   const rows = gaps.data?.data.rows ?? [];
@@ -101,12 +106,13 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         <h2 id={titleId} className={styles.name}>
           {zoneTitle(zone)}
         </h2>
-        {pct != null && (
+        {fit && (
           <span className={styles.pct} title={TEXT.fitHelp}>
             <span aria-hidden="true">
-              {pct} %<small> de encaje</small>
+              <small>{fit.band}</small>
+              {fit.pct}
             </span>
-            <span className="visually-hidden">Esta zona encaja en un {pct} % con tu búsqueda</span>
+            <span className="visually-hidden">{TEXT.fitAria(fit.band, fit.pct)}</span>
           </span>
         )}
       </div>

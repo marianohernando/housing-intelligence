@@ -40,6 +40,8 @@ import { join } from "node:path";
 
 import { chromium } from "playwright";
 
+import { factAsShown, NEAR_MISS_LINE } from "../../../infra/deploy/e2e/shown_text.mjs";
+
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
 const today = new Date().toLocaleDateString("sv-SE");
@@ -51,6 +53,14 @@ const MOBILE = { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, is
 mkdirSync(out, { recursive: true });
 const report = { modo: mode, como: "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)" };
 const flat = (text) => text.replace(/\s+/g, " ").trim();
+
+/** Whether `version` («fit-0.9») is `least` ([0, 8]) or later, compared as numbers, as scripts/smoke_demo.sh does. */
+function fitAtLeast(version, least) {
+  const parts = /^fit-(\d+)\.(\d+)$/.exec(version ?? "")?.slice(1).map(Number);
+  if (!parts) return false;
+  const [major, minor] = parts;
+  return major > least[0] || (major === least[0] && minor >= least[1]);
+}
 
 async function axe(page) {
   await page.addScriptTag({ path: AXE });
@@ -1162,7 +1172,8 @@ async function buying(browser) {
     entry.overflow_px = Math.max(entry.overflow_px, await overflow(z.page));
     entry.consola = [...p.errors, ...z.errors];
     await z.ctx.close();
-    if (entry.api.metodo !== "fit-0.5") failures.push(`${id}: método ${entry.api.metodo}`);
+    // Buying is fit-0.5 (D-227); the answer today is fit-0.8 or later (fit-0.9, D-243)
+    if (!fitAtLeast(entry.api.metodo, [0, 8])) failures.push(`${id}: método ${entry.api.metodo}`);
     if (entry.aun_no_tenemos > 0) failures.push(`${id}: sigue «Aún no tenemos precios»`);
     for (const [label, added] of entry.api.relajaciones) if (added > 0 && !entry.y_si_cambias.includes(label)) failures.push(`${id}: falta «${label}»`);
     if (!entry.api.relajaciones.some(([label, added]) => /€$/.test(label) && added > 0)) failures.push(`${id}: la API no propone subir el presupuesto`);
@@ -1388,7 +1399,8 @@ async function deckSearchCaptures(browser, failures) {
   await s.page.waitForTimeout(2500);
   const cardText = flat(await card.innerText());
   report.c1_c2.tarjeta = cardText;
-  for (const fact of top.facts) if (!cardText.includes(flat(fact.text))) failures.push(`C2: falta «${fact.text}»`);
+  // The rent fact goes without what the 2024 notice already says (F5 of fit-0.9): factAsShown, as the e2e
+  for (const fact of top.facts) if (!cardText.includes(flat(factAsShown(fact)))) failures.push(`C2: falta «${fact.text}»`);
   if (!cardText.includes(`${top.match_pct} %`)) failures.push("C2: % de encaje distinto de la API");
   await s.page.screenshot({ path: `${out}/deck_c1_busqueda_1440.png` });
   await card.screenshot({ path: `${out}/deck_c2_tarjeta_zona_1440.png` });
@@ -2108,9 +2120,11 @@ async function barrioFit(browser) {
       list.locator(":scope > li > div").evaluateAll((items) =>
         items.map((row) => ({
           nombre: row.firstElementChild?.firstElementChild?.textContent?.trim(),
-          pct: row.firstElementChild?.lastElementChild?.textContent?.replace(/\s*de encaje$/, "").trim(),
+          // The figure of the pill («Encaja muy bien» over «97 %», F5 of fit-0.9); a near miss has none
+          pct: row.querySelector("[class*='pct'] > [aria-hidden='true']")?.textContent?.trim() ?? null,
           boton: row.firstElementChild?.tagName === "BUTTON",
-          lineas: [...(row.lastElementChild?.children ?? [])].map((s) => s.textContent.trim()),
+          // What is seen: a near miss's line also carries its words for screen readers («unos» for «≈»)
+          lineas: [...(row.lastElementChild?.children ?? [])].map((s) => (s.querySelector("[aria-hidden='true']") ?? s).textContent.trim()),
         })),
       );
     entry.resumen = flat(await section.locator("p").first().innerText());
@@ -2156,7 +2170,10 @@ async function barrioFit(browser) {
     const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
     if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
     if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
-    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !r.lineas[0]?.startsWith("No cumple:"))) failures.push(`${id}: «casi» sin su motivo`);
+    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms (NEAR_MISS_LINE), never its %
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !NEAR_MISS_LINE.test(r.lineas[0] ?? "") || r.pct !== null)) {
+      failures.push(`${id}: «casi» sin su motivo o con %`);
+    }
     if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);
     if ([...entry.encajan, ...entry.casi].some((r) => !r.boton)) failures.push(`${id}: algún barrio sin botón`);
     if (asked.length !== 1 || beforeDistrict !== 0) failures.push(`${id}: ${asked.length} peticiones a /search/barrios (${beforeDistrict} antes del distrito)`);

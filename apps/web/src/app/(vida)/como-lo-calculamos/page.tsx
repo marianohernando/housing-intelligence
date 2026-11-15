@@ -7,6 +7,7 @@ import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
 import { ENVIRONMENT_METHOD } from "@/lib/environment";
+import { bandRanges } from "@/lib/match";
 import { CONTEXT_METHOD } from "@/lib/zoneContext";
 
 import styles from "../section.module.css";
@@ -25,6 +26,159 @@ function Section({ id, title, children }: { id: string; title: string; children:
       <h2 id={id}>{title}</h2>
       {children}
     </GlassCard>
+  );
+}
+
+/**
+ * pitch/metodologia.md §1.3 with the fit-0.9 method (FORMULA_DECISION: option A with the 1 h cap, chosen by Mariano in F5
+ * on 15 nov; «Textos que cambian» of FORMULA_ANALISIS §F4.7). Line D carries the same text to metodologia.md.
+ */
+function FitMethod() {
+  return (
+    <Section id="encaje" title="Cómo sale el % de encaje">
+      <p className={styles.para}>
+        El % de encaje dice <strong>cuánto se parece una zona a lo que tú buscas</strong>. No es una nota de la zona: la
+        misma zona puede encajar mucho con una familia con niños y poco con una persona mayor que vive sola.
+      </p>
+      <p className={styles.para}>
+        <strong>Paso 1. Lo imprescindible.</strong> Miramos tus condiciones en cada zona, por ejemplo tu presupuesto, tener
+        un colegio cerca o tardar como mucho 45 minutos en llegar al trabajo. Cada condición puede salir de tres maneras:
+      </p>
+      <ul className={styles.text}>
+        <li><strong>Cumple.</strong></li>
+        <li><strong>No cumple.</strong></li>
+        <li><strong>No lo sabemos</strong>, porque falta el dato. En ese caso no la damos por buena.</li>
+      </ul>
+      <p className={styles.para}>
+        Solo te enseñamos como «zonas que encajan» las que cumplen todo. Las que fallan en una sola cosa salen aparte, en
+        «Casi encajan», para que decidas tú. En vez de su %, te decimos lo que les falta: por ejemplo, «Se pasa ≈ 90 €/mes
+        de tu presupuesto» o «Tarda ≈ 12 min más de lo que pides».
+      </p>
+      <p className={styles.para}>
+        <strong>Paso 2. Lo que te importa.</strong> Entre las zonas que cumplen, cada cosa que te importa recibe una nota de
+        0 a 1, y pesa más lo que marcaste primero. Con 5 cosas, la primera cuenta un 33 %, la segunda un 27 %, la tercera un
+        20 %, la cuarta un 13 % y la quinta un 7 %. El % de encaje es la media de esas notas con sus pesos.
+      </p>
+      <p className={styles.para}>
+        <strong>Lo imprescindible también puntúa.</strong> Un servicio que marcas como imprescindible deja fuera las zonas
+        que no lo cumplen y, además, cuenta en el %: no es lo mismo tener la escuela infantil a 2 minutos que a 9.
+      </p>
+      <p className={styles.para}>Así se pone cada nota:</p>
+      <ul className={styles.text}>
+        <li>
+          <strong>Cada minuto a pie cuenta.</strong> Un servicio a pie (escuela infantil, colegio, centro de salud, parada…)
+          vale 1 en la puerta de casa, 0,9 justo a la distancia que consideramos cerca, y baja hasta 0 al triple de ese
+          tiempo. Para un colegio, cerca son 10 min: a 5 min vale 0,95; a 10, 0,9; a 20, 0,45, y a 30 o más, 0. Para el
+          centro de salud, cerca son 15 min, y para la parada, 5. Si pides otros minutos, cerca son los tuyos.
+        </li>
+        <li>
+          <strong>Cercanía y plazas.</strong> Un servicio no vale solo por estar cerca: también cuenta si hay bastante para
+          tanta gente, con la misma cifra de «Qué falta» (lo que hay a 15 minutos andando, repartido entre quienes lo
+          comparten, frente a zonas parecidas). La nota del servicio es un 60 % cercanía y un 40 % plazas. Las plazas valen
+          1 si la zona tiene lo mismo o más que las zonas parecidas, y bajan hasta 0 cuando tiene el 40 % o menos. En un
+          barrio de Madrid usamos la cifra de su distrito, porque «Qué falta» es por distrito. Las paradas no tienen plazas:
+          solo cuenta lo cerca que están.
+        </li>
+        <li>
+          <strong>El trabajo:</strong> contamos los minutos reales en transporte público para llegar a las 9:00, con los
+          horarios que publica el Consorcio Regional de Transportes: metro, Metro Ligero, Cercanías y autobuses. Es el tiempo
+          de puerta a puerta, contando lo que se anda hasta la parada. Aquí también cuenta cada minuto: vale 1 si lo tienes
+          al lado, 0,9 a los 30 minutos y baja hasta 0 a los 90. Si pones un límite («Tardar como mucho»), esos 30 minutos
+          son los tuyos y el 0 llega al triple. Si vas 1 o 2 días a la semana, el trayecto pesa la mitad, y con teletrabajo
+          total no cuenta.
+        </li>
+        <li>
+          <strong>El presupuesto:</strong> vale 1 si la zona te cuesta el 75 % de tu presupuesto o menos, y baja hasta 0,6
+          si te lo comes entero: una zona que cabe no sale «poco» solo por eso. Si te pasas, ya no encaja. En «Casi
+          encajan» te decimos cuánto te pasas, y su nota sigue bajando hasta 0 cuando te pasas un 25 %, para que salgan
+          antes las que se pasan menos.
+        </li>
+        <li>
+          <strong>«Sin escaleras», zonas verdes y ocio</strong> (solo si los marcas): los minutos andando hasta la estación
+          accesible, el parque o el ocio que elijas, con la misma regla de los minutos.
+        </li>
+        <li>
+          <strong>Si a una zona le falta un dato,</strong> nunca cuenta como 0: sale «sin datos» y baja la fiabilidad del %.
+        </li>
+      </ul>
+      <p className={styles.para}>
+        <strong>Tres topes, para que el % no diga una cosa y la tarjeta otra:</strong>
+      </p>
+      <ul className={styles.text}>
+        <li>
+          <strong>Si falta lo que has marcado.</strong> Si en «Qué falta» la zona sale FALTA en un servicio que has marcado,
+          su encaje no pasa del 89 %: nunca sale «encaja muy bien».
+        </li>
+        <li>
+          <strong>Más de 1 h de trayecto: como mucho 74 %.</strong> Si vas 3 días o más a la semana a un lugar que has
+          puesto (el trabajo o tu familia) y tardas más de 1 h en llegar, la zona se queda como mucho en un 74 %: nunca
+          sale «encaja bien».
+        </li>
+        <li>
+          <strong>Si no llegas.</strong> Si tardas 1 h 30 o más, o con los horarios publicados no se llega a las 9:00, el
+          encaje se queda en la mitad. También solo si vas 3 días o más a la semana.
+        </li>
+      </ul>
+      <p className={styles.para}>
+        La 1 h y la 1 h 30 valen cuando no pones un límite de tiempo. Si pones el tuyo, se cuentan sobre él: el doble y el
+        triple. Con «Tardar como mucho 45 min», serían 1 h 30 y 2 h 15.
+      </p>
+      <p className={styles.para}>
+        <strong>El % en palabras.</strong> Junto a cada % te decimos cuánto encaja la zona:
+      </p>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th scope="col">Si el % es…</th>
+            <th scope="col">Sale</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* resultados.banda.*: the thresholds and words of lib/match.ts, the same as the API's `match_band` */}
+          {bandRanges().map(([from, band]) => (
+            <tr key={band}>
+              <td>{from}</td>
+              <td>
+                <strong>{band}</strong>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className={styles.para}>
+        <strong>A igual %.</strong> Las zonas van de más a menos %. A igual %, va primero la que tiene más servicios del día a
+        día a un paseo (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte) y, si también
+        empatan, la que los tiene más cerca. La lista te dice qué zonas empatan («Empatan al 94 %»), y si más de 10 encajan
+        igual de bien, te avisa para que marques qué te importa o dónde trabajas.
+      </p>
+      <p className={styles.para}>
+        <strong>Debajo del %</strong> van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min
+        andando», y cada uno dice cuánto nos fiamos del dato. Si un tope baja el %, la tarjeta también lo dice, por ejemplo
+        «Faltan escuelas infantiles: como mucho 89 %».
+      </p>
+      {/* The fit-0.9 answer to the demo case (golden_family of data/fixtures/golden, D-243 §9; API on the lote 4 data, 15 nov) */}
+      <p className={styles.para}>
+        <strong>Ejemplo real.</strong> Una pareja con 2 hijos de 4 y 8 años trabaja en la Castellana, puede pagar 1.500 € al
+        mes y quiere un colegio a 10 min andando como mucho. Le importan, por este orden, los colegios, el transporte y la
+        salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.
+      </p>
+      <p className={styles.para}>
+        Arriba empatan dos al 94 %: Puente de Vallecas y Latina. Va primera Puente de Vallecas porque, a igual %, tiene más
+        cerca los servicios del día a día. Detrás van Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y
+        Carabanchel, Coslada y Leganés (90 %).
+      </p>
+      <p className={styles.para}>
+        En Latina hay colegio a unos 6 min, parada a unos 2 y centro de salud a unos 10, se tarda 39 min en transporte
+        público hasta la Castellana llegando a las 9:00, y el alquiler sale a unos 1.101 € al mes por 77 m². Pierde unos 6
+        puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi
+        todo por los minutos a pie. Las plazas apenas le quitan: de colegios tiene más que las zonas parecidas y de centros
+        de salud, casi lo mismo. El alquiler no le quita nada, porque no llega al 75 % de lo que puede pagar.
+      </p>
+      <p className={styles.para}>
+        Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto. Lo que más zonas
+        le quita es el colegio a 10 min: con 5 min más aparecen 49 zonas más, y con 150 € más al mes, 3.
+      </p>
+    </Section>
   );
 }
 
@@ -336,29 +490,7 @@ export default function ComoLoCalculamosPage() {
           distritos, porque no es lo mismo vivir en un distrito que en otro.
         </p>
       </Section>
-      <Section id="encaje" title="Cómo sale el % de encaje">
-        <p className={styles.para}>
-          El % de encaje dice <strong>cuánto se parece una zona a lo que tú buscas</strong>. No es una nota de la zona: la
-          misma zona puede encajar mucho con una familia con niños y poco con una persona mayor que vive sola.
-        </p>
-        <p className={styles.para}>
-          <strong>Paso 1. Lo imprescindible.</strong> Miramos tus condiciones en cada zona, por ejemplo tu presupuesto o
-            tener un colegio cerca. Cada condición puede salir de tres maneras:
-        </p>
-        <ul className={styles.text}>
-          <li><strong>Cumple.</strong></li>
-          <li><strong>No cumple.</strong></li>
-          <li><strong>No lo sabemos</strong>, porque falta el dato. En ese caso no la damos por buena.</li>
-        </ul>
-        <p className={styles.para}>
-          Solo te enseñamos como «zonas que encajan» las que cumplen todo. Las que fallan en una sola cosa salen aparte, en
-          «Casi encajan», para que decidas tú.
-        </p>
-        <p className={styles.para}>
-          <strong>Debajo del %</strong> van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min
-            andando», y cada uno dice cuánto nos fiamos del dato.
-        </p>
-      </Section>
+      <FitMethod />
       <GapMethod />
       <WalkingTimes />
       <Reliability />

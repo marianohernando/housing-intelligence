@@ -172,7 +172,7 @@ function PickedPlace({ kind, anchor, removeRef, onRemove }: PickedProps) {
  * «Trabajo en» and «Cerca de mi familia o amigos»: a combobox (ARIA 1.2) over stations and zones. The
  * place goes to the search without a minutes limit until «Tardar como mucho» sets one.
  */
-export default function PlaceField({ kind, stationList }: { kind: PlaceKind; stationList: StationList }) {
+export default function PlaceField({ kind, stationList, id: fieldId }: { kind: PlaceKind; stationList: StationList; id?: string }) {
   const { scenario, update } = useScenario();
   const { zones } = useMapZones();
   const { stations, load } = stationList;
@@ -225,7 +225,7 @@ export default function PlaceField({ kind, stationList }: { kind: PlaceKind; sta
   const status = !open || !typed ? "" : found.length === 0 ? TEXT.noMatch : TEXT.found(found.length);
 
   return (
-    <div className={`${styles.group} ${styles.work}`}>
+    <div id={fieldId} className={`${styles.group} ${styles.work}`}>
       {anchor ? (
         <p className={styles.legend}>
           {title} <span className={styles.legendHelp}>{help}</span>
