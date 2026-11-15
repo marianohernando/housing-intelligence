@@ -1115,7 +1115,7 @@ MCP-001. El producto DATA (API + MCP, CLAUDE.md §16) tenía `services/mcp/` vac
 
 ## D-226 — Seguridad en Madrid capital: lo que dicen los vecinos como contexto, la actividad policial sin el panel y sin atropellos en el buscador (2026-11-12)
 DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con las reglas de CLAUDE.md §11 y D-075: datos oficiales y agregados, sin inferencias demográficas y sin etiquetas. Evidencia: `evidence/gate-01/2026-11-12/seguridad-fuentes.md`. Las cuatro fuentes son del Ayuntamiento de Madrid (datos.madrid.es, CC BY 4.0, comprobado en CKAN el 12 nov) y solo cubren la capital: el resto de la región queda SIN DATOS, declarado.
-1. **Percepción vecinal: entra como contexto en los 21 distritos.** Es el ítem «Percepción de seguridad en el barrio o la zona donde vive», de noche y de día, de 0 a 10, de la Encuesta de calidad de vida y satisfacción con los servicios públicos de 2025: 8.893 residentes de 16 años o más, unas 400 por distrito.
+1. **Percepción vecinal: entra como contexto en los 21 distritos.** Es el ítem «Percepción de seguridad en el barrio o la zona donde vive», de noche y de día, de 0 a 10, de la Encuesta de calidad de vida y satisfacción con los servicios públicos de 2025: 8.593 residentes de 16 años o más (corregido el 15 nov: ponía 8.893; ficha técnica del informe, «Tamaño muestral»), unas 400 por distrito.
    - Es la medida más cercana a «seguridad para quien vive allí»: los vecinos valoran su propio barrio, así que no tiene el problema de denominador de D-224.
    - Se lee del panel de indicadores que ya se carga: sus valores coinciden con la encuesta en los 21 distritos. Va con la media de Madrid (6,4 de noche y 7,8 de día en 2025).
    - No puntúa, no ordena zonas y no entra en «Qué falta».
@@ -1136,7 +1136,7 @@ DATA-020 F1. Amplía D-224 a petición de Mariano («Sí, investiga eso»), con 
    - features `seguridad_percibida_noche` y `seguridad_percibida_dia`, de dominio `safety`, sin `fit` ni `gap_row` (un test lo exige para todo el dominio);
    - el panel conserva la fila de la ciudad de estos dos indicadores como el municipio 28079 (`city_indicators`), que da la referencia;
    - cuando dos ediciones del panel repiten una fecha (2019 sale en las de 2020 y 2021), se queda una observación, la de la edición más reciente (parser `madrid_district_panel-1.2.0`);
-   - confidence 0,9 por distrito (unas 400 personas) y 0,95 para la ciudad (8.893). Es un juicio editorial: el Ayuntamiento no publica el error de estas medias. No cambia ningún orden, porque no puntúan;
+   - confidence 0,9 por distrito (unas 400 personas) y 0,95 para la ciudad (8.593). Es un juicio editorial: el Ayuntamiento no publica el error de estas medias. No cambia ningún orden, porque no puntúan;
    - la API ya los sirve en `GET /features/{id}/values` sin cambiar código;
    - la Policía Municipal desde la fuente mensual queda pendiente.
 7. **Revisión (`reviewer`, F2b):**
