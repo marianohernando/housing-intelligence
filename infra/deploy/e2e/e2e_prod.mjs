@@ -168,7 +168,10 @@ async function checkFirstZone(run, page, top) {
   run.check(J, "card % = API match_pct", new RegExp(`(?<!\\d)${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
   const facts = card.getByRole("region", { name: "Lo que tienes aquí" }).locator("li");
   const shown = await facts.count();
-  const missing = top.facts.filter((f) => !text.includes(squash(f.text)));
+  // F5 of fit-0.9: renting, the card says «Precio de contratos firmados en 2024…» by the price, so the rent fact
+  // goes without its own «; un anuncio de hoy puede pedir más» (factText in apps/web/src/lib/fit.ts)
+  const asShown = (f) => (f.topic === "coste" ? f.text.replace(/;\s*un anuncio de hoy puede pedir más/, "") : f.text);
+  const missing = top.facts.filter((f) => !text.includes(squash(asShown(f))));
   run.check(J, "card facts = API facts", shown === top.facts.length && missing.length === 0,
     `${shown} on screen, ${top.facts.length} in the API${missing.length ? `; missing: ${missing[0].text}` : ""}`);
   await run.shot(page, "j1-card");

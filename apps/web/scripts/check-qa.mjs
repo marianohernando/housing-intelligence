@@ -2108,7 +2108,8 @@ async function barrioFit(browser) {
       list.locator(":scope > li > div").evaluateAll((items) =>
         items.map((row) => ({
           nombre: row.firstElementChild?.firstElementChild?.textContent?.trim(),
-          pct: row.firstElementChild?.lastElementChild?.textContent?.replace(/\s*de encaje$/, "").trim(),
+          // The figure of the pill («Encaja muy bien» over «97 %», F5 of fit-0.9); a near miss has none
+          pct: row.querySelector("[class*='pct'] > [aria-hidden='true']")?.textContent?.trim() ?? null,
           boton: row.firstElementChild?.tagName === "BUTTON",
           lineas: [...(row.lastElementChild?.children ?? [])].map((s) => s.textContent.trim()),
         })),
@@ -2156,7 +2157,8 @@ async function barrioFit(browser) {
     const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
     if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
     if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
-    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !r.lineas[0]?.startsWith("No cumple:"))) failures.push(`${id}: «casi» sin su motivo`);
+    // F5 of fit-0.9: a near miss says what it lacks («Colegio con primaria: ≈ 26 min más andando…» or «No cumple: …»), never its %
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !r.lineas[0] || r.pct !== null)) failures.push(`${id}: «casi» sin su motivo o con %`);
     if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);
     if ([...entry.encajan, ...entry.casi].some((r) => !r.boton)) failures.push(`${id}: algún barrio sin botón`);
     if (asked.length !== 1 || beforeDistrict !== 0) failures.push(`${id}: ${asked.length} peticiones a /search/barrios (${beforeDistrict} antes del distrito)`);

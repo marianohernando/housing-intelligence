@@ -1,0 +1,460 @@
+{
+ "ejemplo_1440": {
+  "api": {
+   "metodo": "fit-0.8",
+   "encajan": [
+    [
+     "Latina",
+     98
+    ],
+    [
+     "Moratalaz",
+     98
+    ],
+    [
+     "Ciudad Lineal",
+     98
+    ],
+    [
+     "Puente de Vallecas",
+     98
+    ],
+    [
+     "Fuencarral-El Pardo",
+     97
+    ],
+    [
+     "Usera",
+     97
+    ],
+    [
+     "Carabanchel",
+     97
+    ],
+    [
+     "Hortaleza",
+     97
+    ],
+    [
+     "San Blas-Canillejas",
+     97
+    ],
+    [
+     "Villaverde",
+     97
+    ]
+   ],
+   "casi": [
+    "Chamartín",
+    "Salamanca",
+    "Centro",
+    "Chamberí",
+    "Retiro"
+   ]
+  },
+  "filas": [
+   "Empatan al 98 % 1 Latina Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Puente de Vallecas, Moratalaz y Ciudad Lineal ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²",
+   "2 Moratalaz Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Latina, Puente de Vallecas y Ciudad Lineal ≈ 1.083 €/mes por 77 m² Alquiler: unos 1.083 € al mes por 77 m²",
+   "3 Ciudad Lineal Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Latina, Puente de Vallecas y Moratalaz ≈ 1.230 €/mes por 77 m² Alquiler: unos 1.230 € al mes por 77 m²",
+   "4 Puente de Vallecas Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Latina, Moratalaz y Ciudad Lineal ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "Empatan al 97 % 5 Fuencarral-El Pardo Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.276 €/mes por 77 m² Alquiler: unos 1.276 € al mes por 77 m² Dato aproximado",
+   "6 Usera Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²",
+   "7 Carabanchel Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.127 €/mes por 77 m² Alquiler: unos 1.127 € al mes por 77 m²",
+   "8 Hortaleza Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.267 €/mes por 77 m² Alquiler: unos 1.267 € al mes por 77 m²",
+   "9 San Blas-Canillejas Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.181 €/mes por 77 m² Alquiler: unos 1.181 € al mes por 77 m²",
+   "10 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.007 €/mes por 77 m² Alquiler: unos 1.007 € al mes por 77 m²"
+  ],
+  "casi": [
+   "Chamartín Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²",
+   "Salamanca Se pasa ≈ 300 €/mes de tu presupuesto Se pasa unos 300 € al mes de tu presupuesto ≈ 1.797 €/mes por 77 m² Alquiler: unos 1.797 € al mes por 77 m²",
+   "Centro Se pasa ≈ 190 €/mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²",
+   "Chamberí Se pasa ≈ 230 €/mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²",
+   "Retiro Se pasa ≈ 30 €/mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"
+  ],
+  "nombres_accesibles_ejemplo": [
+   "1LatinaDistrito de MadridEncaja muy bien98 % · 98 % de encaje, empata con Puente de Vallecas, Moratalaz y Ciudad Lineal≈ 1.101 €/mespor 77 m²Alquiler: unos 1.101 € al mes por 77 m²",
+   "2MoratalazDistrito de MadridEncaja muy bien98 % · 98 % de encaje, empata con Latina, Puente de Vallecas y Ciudad Lineal≈ 1.083 €/mespor 77 m²Alquiler: unos 1.083 € al mes por 77 m²"
+  ],
+  "axe_lista": [],
+  "desborde_px": 0,
+  "tarjeta": "DISTRITO DE MADRID Latina Encaja muy bien 98 % Esta zona encaja muy bien con tu búsqueda: 98 % Alquiler ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m² Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. La 1.ª que más encaja Empata al 98 % con Puente de Vallecas, Moratalaz y Ciudad Lineal. Lo que tienes aquí Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable 39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles. Centro de salud a unos 10 min andando, pero van justos para tanta gente: por eso sale JUSTO. Escuelas infantiles A pie: 6 min JUSTO Centros de salud A pie: 10 min JUSTO Colegios A pie: 6 min CUBIERTO Ver todo lo que falta Ver la zona",
+  "tarjeta_aria_pct": "Esta zona encaja muy bien con tu búsqueda: 98 %",
+  "axe_tarjeta": [],
+  "tarjeta_casi": "DISTRITO DE MADRID Chamartín Alquiler ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m² Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto Lo que tienes aquí Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable Parada de autobús a unos 2 min and",
+  "consola": []
+ },
+ "ejemplo_390": {
+  "api": {
+   "metodo": "fit-0.8",
+   "encajan": [
+    [
+     "Latina",
+     98
+    ],
+    [
+     "Moratalaz",
+     98
+    ],
+    [
+     "Ciudad Lineal",
+     98
+    ],
+    [
+     "Puente de Vallecas",
+     98
+    ],
+    [
+     "Fuencarral-El Pardo",
+     97
+    ],
+    [
+     "Usera",
+     97
+    ],
+    [
+     "Carabanchel",
+     97
+    ],
+    [
+     "Hortaleza",
+     97
+    ],
+    [
+     "San Blas-Canillejas",
+     97
+    ],
+    [
+     "Villaverde",
+     97
+    ]
+   ],
+   "casi": [
+    "Chamartín",
+    "Salamanca",
+    "Centro",
+    "Chamberí",
+    "Retiro"
+   ]
+  },
+  "filas": [
+   "Empatan al 98 % 1 Latina Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Puente de Vallecas, Moratalaz y Ciudad Lineal ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²",
+   "2 Moratalaz Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Latina, Puente de Vallecas y Ciudad Lineal ≈ 1.083 €/mes por 77 m² Alquiler: unos 1.083 € al mes por 77 m²",
+   "3 Ciudad Lineal Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Latina, Puente de Vallecas y Moratalaz ≈ 1.230 €/mes por 77 m² Alquiler: unos 1.230 € al mes por 77 m²",
+   "4 Puente de Vallecas Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Latina, Moratalaz y Ciudad Lineal ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "Empatan al 97 % 5 Fuencarral-El Pardo Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.276 €/mes por 77 m² Alquiler: unos 1.276 € al mes por 77 m² Dato aproximado",
+   "6 Usera Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²",
+   "7 Carabanchel Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.127 €/mes por 77 m² Alquiler: unos 1.127 € al mes por 77 m²",
+   "8 Hortaleza Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.267 €/mes por 77 m² Alquiler: unos 1.267 € al mes por 77 m²",
+   "9 San Blas-Canillejas Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.181 €/mes por 77 m² Alquiler: unos 1.181 € al mes por 77 m²",
+   "10 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 5 zonas más ≈ 1.007 €/mes por 77 m² Alquiler: unos 1.007 € al mes por 77 m²"
+  ],
+  "casi": [
+   "Chamartín Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²",
+   "Salamanca Se pasa ≈ 300 €/mes de tu presupuesto Se pasa unos 300 € al mes de tu presupuesto ≈ 1.797 €/mes por 77 m² Alquiler: unos 1.797 € al mes por 77 m²",
+   "Centro Se pasa ≈ 190 €/mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²",
+   "Chamberí Se pasa ≈ 230 €/mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²",
+   "Retiro Se pasa ≈ 30 €/mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"
+  ],
+  "nombres_accesibles_ejemplo": [
+   "1LatinaDistrito de MadridEncaja muy bien98 % · 98 % de encaje, empata con Puente de Vallecas, Moratalaz y Ciudad Lineal≈ 1.101 €/mespor 77 m²Alquiler: unos 1.101 € al mes por 77 m²",
+   "2MoratalazDistrito de MadridEncaja muy bien98 % · 98 % de encaje, empata con Latina, Puente de Vallecas y Ciudad Lineal≈ 1.083 €/mespor 77 m²Alquiler: unos 1.083 € al mes por 77 m²"
+  ],
+  "axe_lista": [],
+  "desborde_px": 0,
+  "tarjeta": "DISTRITO DE MADRID Latina Encaja muy bien 98 % Esta zona encaja muy bien con tu búsqueda: 98 % Alquiler ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m² Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. La 1.ª que más encaja Empata al 98 % con Puente de Vallecas, Moratalaz y Ciudad Lineal. Lo que tienes aquí Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min · Dato fiable Fiabilidad del dato: Dato fiable Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable 39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles. Centro de salud a unos 10 min andando, pero van justos para tanta gente: por eso sale JUSTO. Escuelas infantiles A pie: 6 min JUSTO Centros de salud A pie: 10 min JUSTO Colegios A pie: 6 min CUBIERTO Ver todo lo que falta Ver la zona",
+  "tarjeta_aria_pct": "Esta zona encaja muy bien con tu búsqueda: 98 %",
+  "axe_tarjeta": [],
+  "tarjeta_casi": "DISTRITO DE MADRID Chamartín Alquiler ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m² Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto Lo que tienes aquí Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable Parada de autobús a unos 2 min and",
+  "consola": []
+ },
+ "compra_1440": {
+  "api": {
+   "presupuesto": {
+    "kind": "buy",
+    "amount_eur": 400000
+   },
+   "casi": [
+    [
+     "Arganzuela",
+     406000
+    ],
+    [
+     "Tetuán",
+     411000
+    ],
+    [
+     "Centro",
+     428000
+    ],
+    [
+     "Retiro",
+     462000
+    ],
+    [
+     "Chamberí",
+     477000
+    ]
+   ]
+  },
+  "casi": [
+   "Arganzuela Se pasa ≈ 6.000 € de tu presupuesto Se pasa unos 6.000 € de tu presupuesto ≈ 406.000 € por 68 m² Comprar: unos 406.000 € por 68 m² Dato aproximado",
+   "Tetuán Se pasa ≈ 11.000 € de tu presupuesto Se pasa unos 11.000 € de tu presupuesto ≈ 411.000 € por 68 m² Comprar: unos 411.000 € por 68 m² Dato aproximado",
+   "Centro Se pasa ≈ 28.000 € de tu presupuesto Se pasa unos 28.000 € de tu presupuesto ≈ 428.000 € por 68 m² Comprar: unos 428.000 € por 68 m² Dato aproximado",
+   "Retiro Se pasa ≈ 62.000 € de tu presupuesto Se pasa unos 62.000 € de tu presupuesto ≈ 462.000 € por 68 m² Comprar: unos 462.000 € por 68 m² Dato aproximado",
+   "Chamberí Se pasa ≈ 77.000 € de tu presupuesto Se pasa unos 77.000 € de tu presupuesto ≈ 477.000 € por 68 m² Comprar: unos 477.000 € por 68 m² Dato aproximado"
+  ],
+  "aviso_2024": 0,
+  "desborde_px": 0,
+  "axe": [],
+  "consola": []
+ },
+ "compra_390": {
+  "api": {
+   "presupuesto": {
+    "kind": "buy",
+    "amount_eur": 400000
+   },
+   "casi": [
+    [
+     "Arganzuela",
+     406000
+    ],
+    [
+     "Tetuán",
+     411000
+    ],
+    [
+     "Centro",
+     428000
+    ],
+    [
+     "Retiro",
+     462000
+    ],
+    [
+     "Chamberí",
+     477000
+    ]
+   ]
+  },
+  "casi": [
+   "Arganzuela Se pasa ≈ 6.000 € de tu presupuesto Se pasa unos 6.000 € de tu presupuesto ≈ 406.000 € por 68 m² Comprar: unos 406.000 € por 68 m² Dato aproximado",
+   "Tetuán Se pasa ≈ 11.000 € de tu presupuesto Se pasa unos 11.000 € de tu presupuesto ≈ 411.000 € por 68 m² Comprar: unos 411.000 € por 68 m² Dato aproximado",
+   "Centro Se pasa ≈ 28.000 € de tu presupuesto Se pasa unos 28.000 € de tu presupuesto ≈ 428.000 € por 68 m² Comprar: unos 428.000 € por 68 m² Dato aproximado",
+   "Retiro Se pasa ≈ 62.000 € de tu presupuesto Se pasa unos 62.000 € de tu presupuesto ≈ 462.000 € por 68 m² Comprar: unos 462.000 € por 68 m² Dato aproximado",
+   "Chamberí Se pasa ≈ 77.000 € de tu presupuesto Se pasa unos 77.000 € de tu presupuesto ≈ 477.000 € por 68 m² Comprar: unos 477.000 € por 68 m² Dato aproximado"
+  ],
+  "aviso_2024": 0,
+  "desborde_px": 0,
+  "axe": [],
+  "consola": []
+ },
+ "trayecto_1440": {
+  "api": [
+   [
+    "Latina",
+    38.5
+   ],
+   [
+    "Moratalaz",
+    39.8
+   ],
+   [
+    "Ciudad Lineal",
+    32.5
+   ],
+   [
+    "Puente de Vallecas",
+    40.8
+   ],
+   [
+    "Usera",
+    44.2
+   ]
+  ],
+  "casi": [
+   "Latina Tarda ≈ 9 min más de lo que pides Tarda unos 9 min más de lo que pides ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²",
+   "Moratalaz Tarda ≈ 10 min más de lo que pides Tarda unos 10 min más de lo que pides ≈ 1.083 €/mes por 77 m² Alquiler: unos 1.083 € al mes por 77 m²",
+   "Ciudad Lineal Tarda ≈ 3 min más de lo que pides Tarda unos 3 min más de lo que pides ≈ 1.230 €/mes por 77 m² Alquiler: unos 1.230 € al mes por 77 m²",
+   "Puente de Vallecas Tarda ≈ 11 min más de lo que pides Tarda unos 11 min más de lo que pides ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "Usera Tarda ≈ 14 min más de lo que pides Tarda unos 14 min más de lo que pides ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²"
+  ],
+  "axe": [],
+  "desborde_px": 0,
+  "consola": []
+ },
+ "trayecto_390": {
+  "api": [
+   [
+    "Latina",
+    38.5
+   ],
+   [
+    "Moratalaz",
+    39.8
+   ],
+   [
+    "Ciudad Lineal",
+    32.5
+   ],
+   [
+    "Puente de Vallecas",
+    40.8
+   ],
+   [
+    "Usera",
+    44.2
+   ]
+  ],
+  "casi": [
+   "Latina Tarda ≈ 9 min más de lo que pides Tarda unos 9 min más de lo que pides ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²",
+   "Moratalaz Tarda ≈ 10 min más de lo que pides Tarda unos 10 min más de lo que pides ≈ 1.083 €/mes por 77 m² Alquiler: unos 1.083 € al mes por 77 m²",
+   "Ciudad Lineal Tarda ≈ 3 min más de lo que pides Tarda unos 3 min más de lo que pides ≈ 1.230 €/mes por 77 m² Alquiler: unos 1.230 € al mes por 77 m²",
+   "Puente de Vallecas Tarda ≈ 11 min más de lo que pides Tarda unos 11 min más de lo que pides ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "Usera Tarda ≈ 14 min más de lo que pides Tarda unos 14 min más de lo que pides ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²"
+  ],
+  "axe": [],
+  "desborde_px": 0,
+  "consola": []
+ },
+ "casarrubuelos_1440": {
+  "titulo": "Casarrubuelos",
+  "lineas_del_nombre": 2,
+  "hyphens": "auto",
+  "lang": "es",
+  "nombre_x": [
+   1031,
+   1222
+  ],
+  "pastilla_x": 1235,
+  "solapa": false,
+  "desborde_px": 0,
+  "axe": [],
+  "consola": []
+ },
+ "casarrubuelos_390": {
+  "titulo": "Casarrubuelos",
+  "lineas_del_nombre": 2,
+  "hyphens": "auto",
+  "lang": "es",
+  "nombre_x": [
+   44,
+   200
+  ],
+  "pastilla_x": 213,
+  "solapa": false,
+  "desborde_px": 0,
+  "axe": [],
+  "consola": []
+ },
+ "sin_lugar_1440": {
+  "api": {
+   "anchors": [],
+   "scope": "all",
+   "primeras": [
+    [
+     "Parla",
+     100
+    ],
+    [
+     "Ciudad Lineal",
+     96
+    ],
+    [
+     "Carabanchel",
+     96
+    ],
+    [
+     "Coslada",
+     95
+    ],
+    [
+     "Latina",
+     94
+    ]
+   ]
+  },
+  "aviso": "¿Trabajas fuera de casa? Dinos dónde o elige «Madrid capital» en «¿Dónde?» y afinamos el orden.",
+  "desborde_px": 0,
+  "axe": [],
+  "foco_tras_dinos_donde": "INPUT combobox Escribe una estación, un distrito o un municipio",
+  "foco_tras_donde": "INPUT radio Toda la Comunidad",
+  "consola": []
+ },
+ "sin_lugar_390": {
+  "api": {
+   "anchors": [],
+   "scope": "all",
+   "primeras": [
+    [
+     "Parla",
+     100
+    ],
+    [
+     "Ciudad Lineal",
+     96
+    ],
+    [
+     "Carabanchel",
+     96
+    ],
+    [
+     "Coslada",
+     95
+    ],
+    [
+     "Latina",
+     94
+    ]
+   ]
+  },
+  "aviso": "¿Trabajas fuera de casa? Dinos dónde o elige «Madrid capital» en «¿Dónde?» y afinamos el orden.",
+  "desborde_px": 0,
+  "axe": [],
+  "foco_tras_dinos_donde": "INPUT combobox Escribe una estación, un distrito o un municipio",
+  "foco_tras_donde": "INPUT radio Toda la Comunidad",
+  "consola": []
+ },
+ "metodo_1440": {
+  "texto": "Cómo sale el % de encaje El % de encaje dice cuánto se parece una zona a lo que tú buscas. No es una nota de la zona: la misma zona puede encajar mucho con una familia con niños y poco con una persona mayor que vive sola. Paso 1. Lo imprescindible. Miramos tus condiciones en cada zona, por ejemplo t",
+  "todo_visible": false,
+  "desborde_px": 0,
+  "axe": [],
+  "consola": []
+ },
+ "metodo_390": {
+  "texto": "Cómo sale el % de encaje El % de encaje dice cuánto se parece una zona a lo que tú buscas. No es una nota de la zona: la misma zona puede encajar mucho con una familia con niños y poco con una persona mayor que vive sola. Paso 1. Lo imprescindible. Miramos tus condiciones en cada zona, por ejemplo t",
+  "todo_visible": false,
+  "desborde_px": 0,
+  "axe": [],
+  "consola": []
+ },
+ "simulado_1440": {
+  "hechos": [
+   "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+   "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Faltan escuelas infantiles: como mucho 89 % · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Más de 1 h de trayecto: como mucho 74 % · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Tardas más de 1 h 30 en llegar: el encaje se queda en la mitad · Dato fiable Fiabilidad del dato: Dato fiable"
+  ],
+  "axe": [],
+  "consola": []
+ },
+ "simulado_390": {
+  "hechos": [
+   "Colegio con primaria a unos 6 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Centro de salud a unos 10 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+   "39 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+   "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Faltan escuelas infantiles: como mucho 89 % · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Más de 1 h de trayecto: como mucho 74 % · Dato fiable Fiabilidad del dato: Dato fiable",
+   "Tardas más de 1 h 30 en llegar: el encaje se queda en la mitad · Dato fiable Fiabilidad del dato: Dato fiable"
+  ],
+  "axe": [],
+  "consola": []
+ }
+}
