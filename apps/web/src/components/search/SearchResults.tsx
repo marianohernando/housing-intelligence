@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Undo2 } from "lucide-react";
+import { ChevronDown, Equal, Undo2 } from "lucide-react";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
 import type { RankedZone, SearchResult } from "@/contracts/search_response";
@@ -12,12 +12,14 @@ import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import {
+  asksForPlace,
   constraintLabels,
   evaluatedText,
-  failedLabels,
+  FIELD_ID,
   floorAreaOf,
   noneText,
   passingText,
+  rentNotice,
   rentReferenceAvailable,
   rentUnknownText,
   tiedText,
@@ -31,13 +33,16 @@ import {
 } from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
 import { districtOf, zoneTitle } from "@/lib/map/zones";
+import { matchText, rankingRows, tiedNames } from "@/lib/match";
+import { nearMissText, type Spoken } from "@/lib/shortfall";
 
 import RealityCheck from "./RealityCheck";
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (resultados.*, with resultados.empate in lib/fit.ts, carga.busqueda, vacio.sin_resultados, rc.aplicado,
-// rc.deshacer, zona.cerca_de_encajar.*, error.reintentar; 8c49e33).
+// Copy from pitch/textos_web.md (resultados.*, with resultados.empate, resultados.aviso_2024 and resultados.sin_lugar in
+// lib/fit.ts, resultados.banda.* and resultados.empate.grupo in lib/match.ts, resultados.casi.* in lib/shortfall.ts,
+// carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer, zona.cerca_de_encajar.*, error.reintentar; 8c49e33).
 const TEXT = {
   title: "Zonas que encajan",
   loading: "Buscando zonas que encajan…",
@@ -49,13 +54,22 @@ const TEXT = {
   rest: (n: number, word: ZoneWord) => `Y ${zonesText(n, word)} más en el mapa.`,
   near: "Casi encajan",
   nearHelp: "Cumplen todo menos una cosa.",
-  fails: "No cumple:",
   retry: "Reintentar",
   district: (city: string | null | undefined) => `Distrito de ${city ?? "Madrid"}`,
   // zona.barrio.antetitulo (D-238)
   barrio: (city: string | null | undefined) => `Barrio de ${city ?? "Madrid"}`,
   municipio: "Municipio",
   fit: "de encaje",
+  // zona.empate, read after the % of a tied row
+  tiesWith: (whom: string) => `empata con ${whom}`,
+  // resultados.sin_lugar: the two buttons take the person to «Trabajo en» and to «¿Dónde?»
+  place: {
+    ask: "¿Trabajas fuera de casa?",
+    work: "Dinos dónde",
+    or: " o elige «Madrid capital» en ",
+    where: "«¿Dónde?»",
+    end: " y afinamos el orden.",
+  },
 };
 
 /** Rows of the ranking in view before «Ver las 10 primeras». */
@@ -66,24 +80,49 @@ function levelText({ level, municipio_name }: RankedZone["zone"]): string {
   return level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio;
 }
 
-function ZoneRow({ zone, buying, m2, fails }: { zone: RankedZone; buying: boolean; m2: number | null; fails?: string[] }) {
+interface RowProps {
+  zone: RankedZone;
+  buying: boolean;
+  m2: number | null;
+  /** A near miss: what it lacks instead of its % (resultados.casi.*) */
+  lacks?: Spoken;
+  /** Read after its %: whom it ties with (`tiedNames`), for those who do not see the run's mark */
+  tie?: string | null;
+}
+
+function ZoneRow({ zone, buying, m2, lacks, tie }: RowProps) {
   const { select, zones } = useMapZones();
   const { name, level, code } = zone.zone;
   // «Berruguete · Tetuán»: a barrio's district comes from the start of its code (D-238)
   const district = level === "barrio" && zones ? districtOf(zones, code) : undefined;
   const price = zonePrice(zone, buying, m2);
+  const fit = lacks ? null : matchText(zone);
   return (
     <button type="button" className={styles.row} onClick={() => select(zoneKeyOf(zone.zone))}>
-      {!fails && <span className={styles.rank}>{zone.rank}</span>}
+      {!lacks && <span className={styles.rank}>{zone.rank}</span>}
       <span className={styles.rowName}>
         {zoneTitle({ name, district_name: district?.name })}
-        <small>{fails ? `${TEXT.fails} ${fails.join(" · ")}` : levelText(zone.zone)}</small>
+        {lacks ? (
+          <small className={styles.lacks}>
+            <span aria-hidden="true">{lacks.text}</span>
+            <span className="visually-hidden">{lacks.aria}</span>
+          </small>
+        ) : (
+          <small>{levelText(zone.zone)}</small>
+        )}
       </span>
       {/* The price under the %, not beside it: at 390 px the name keeps its width (D-234) */}
       <span className={styles.end}>
-        <span className={styles.pct}>
-          {zone.match_pct} %<span className="visually-hidden"> {TEXT.fit}</span>
-        </span>
+        {fit && (
+          <span className={styles.pct}>
+            <small className={styles.band}>{fit.band}</small>
+            <span aria-hidden="true">{fit.pct}</span>
+            <span className="visually-hidden">
+              {` · ${fit.pct} ${TEXT.fit}`}
+              {tie && `, ${TEXT.tiesWith(tie)}`}
+            </span>
+          </span>
+        )}
         {price && <PriceTag price={price} variant="row" />}
       </span>
     </button>
@@ -95,13 +134,29 @@ function Ranking({ result }: { result: SearchResult }) {
   const shown = all ? result.results : result.results.slice(0, FIRST_ROWS);
   const rest = result.reality_check.zones_passing - result.results.length;
   const tied = tiedText(result);
+  const word = zoneWord(result);
   return (
     <>
       {tied && <p className={styles.muted}>{tied}</p>}
       <ol className={styles.ranking}>
-        {shown.map((zone) => (
-          <li key={zoneKeyOf(zone.zone)}>
-            <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} m2={floorAreaOf(result)} />
+        {rankingRows(shown, result.all_zones, word).map(({ zone, tie }) => (
+          <li
+            key={zoneKeyOf(zone.zone)}
+            className={tie ? [styles.tied, tie.first && styles.tieFirst, tie.last && styles.tieLast].filter(Boolean).join(" ") : undefined}
+          >
+            {/* Seen once over the run; each of its rows says it aloud with whom it ties */}
+            {tie?.first && (
+              <p className={styles.tie} aria-hidden="true">
+                <Equal size={16} />
+                {tie.label}
+              </p>
+            )}
+            <ZoneRow
+              zone={zone}
+              buying={result.scenario.budget?.kind === "buy"}
+              m2={floorAreaOf(result)}
+              tie={tiedNames(zone, result.all_zones, word)}
+            />
           </li>
         ))}
       </ol>
@@ -122,6 +177,7 @@ function NearMisses({ result }: { result: SearchResult }) {
   const near = result.near_misses ?? [];
   if (near.length === 0) return null;
   const labels = constraintLabels(result);
+  // F5 of fit-0.9: no % here, what each one lacks («Se pasa ≈ 11.000 € de tu presupuesto»)
   return (
     <div className={styles.near}>
       <button type="button" className={styles.toggle} aria-expanded={open} aria-controls={nearId} onClick={() => setOpen((v) => !v)}>
@@ -137,13 +193,39 @@ function NearMisses({ result }: { result: SearchResult }) {
                 zone={zone}
                 buying={result.scenario.budget?.kind === "buy"}
                 m2={floorAreaOf(result)}
-                fails={failedLabels(zone.failed_constraints, labels, zone.constraints)}
+                lacks={nearMissText(zone, labels, result.scenario)}
               />
             </li>
           ))}
         </ul>
       </div>
     </div>
+  );
+}
+
+/** Takes the person to a field of «Tu búsqueda» (FIELD_ID) and puts the focus in it, as a skip link does. */
+function focusField(id: string) {
+  const field = document.getElementById(id);
+  if (!field) return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  field.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+  field.querySelector<HTMLElement>("input:checked, input, select, button")?.focus({ preventScroll: true });
+}
+
+/** resultados.sin_lugar: no place to go and the whole region, with a way to each of the two fields. */
+function PlaceHint() {
+  return (
+    <p className={styles.muted}>
+      {TEXT.place.ask}{" "}
+      <button type="button" className={styles.inline} onClick={() => focusField(FIELD_ID.work)}>
+        {TEXT.place.work}
+      </button>
+      {TEXT.place.or}
+      <button type="button" className={styles.inline} onClick={() => focusField(FIELD_ID.where)}>
+        {TEXT.place.where}
+      </button>
+      {TEXT.place.end}
+    </p>
   );
 }
 
@@ -262,6 +344,8 @@ export default function SearchResults({ children }: { children: ReactNode }) {
         {/* Renting in «Pueblos» most villages have no rent: why they come out «Sin datos» (D-238) */}
         {rentUnknown && <p className={styles.muted}>{rentUnknown}</p>}
         {!rentUnknown && rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
+        {rentNotice(result) && <p className={styles.muted}>{rentNotice(result)}</p>}
+        {asksForPlace(result) && <PlaceHint />}
         {rc.zones_passing > 0 && <Ranking result={result} />}
         <NearMisses result={result} />
       </GlassCard>

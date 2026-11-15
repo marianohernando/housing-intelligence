@@ -5,11 +5,13 @@ import { describe, expect, it } from "vitest";
 import type { RankedZone, RealityCheck, SearchResult, ZoneMatch } from "@/contracts/search_response";
 
 import {
+  asksForPlace,
   byBarrio,
   constraintLabels,
   countFit,
   commuteTakes,
   evaluatedText,
+  factText,
   failedLabels,
   fewZones,
   floorAreaOf,
@@ -23,6 +25,8 @@ import {
   passingText,
   rankText,
   relaxOptions,
+  RENT_2024_NOTICE,
+  rentNotice,
   rentReferenceAvailable,
   rentUnknownText,
   tiedAtTop,
@@ -341,6 +345,7 @@ describe("the approximate price of a zone (D-234)", () => {
       aria: "Comprar: unos 385.000 €",
       confidence: null,
       range: null,
+      notice: null,
     });
     const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
     expect([rent?.short, rent?.long, rent?.aria]).toEqual(["≈ 1.101 €/mes", "Alquiler ≈ 1.101 €/mes", "Alquiler: unos 1.101 € al mes"]);
@@ -445,5 +450,66 @@ describe("services the search found a short walk away (zona.cerca_pocas)", () =>
     } as unknown as RankedZone;
     expect(nearbyWalks(far)).toEqual({});
     expect(nearbyWalks(null)).toEqual({});
+  });
+});
+
+describe("the rent of 2024 (F5 of fit-0.9: zona.precio.aviso_2024, resultados.aviso_2024)", () => {
+  it("is said by every rent of the card, never by a purchase price", () => {
+    expect(RENT_2024_NOTICE).toBe("Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más.");
+    expect(zonePrice({ estimated_cost_eur: 1_101 }, false)?.notice).toBe(RENT_2024_NOTICE);
+    expect(zonePrice({ estimated_cost_eur: 385_000 }, true)?.notice).toBeNull();
+  });
+
+  it("is said once over the results whose prices are rents, also without a budget, and never buying", () => {
+    expect(rentNotice(fixture)).toBe(RENT_2024_NOTICE);
+    expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: null } })).toBe(RENT_2024_NOTICE);
+    expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: { kind: "buy", amount_eur: 400_000 } } })).toBeNull();
+    // No price on screen, nothing to warn about
+    const unpriced = fixture.results.map((z) => ({ ...z, estimated_cost_eur: null }));
+    expect(rentNotice({ ...fixture, results: unpriced, near_misses: [] })).toBeNull();
+  });
+
+  it("is not said again in other words by the API's rent fact", () => {
+    const rent = {
+      topic: "coste" as const,
+      text: "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+    };
+    expect(factText(rent, false)).toBe("Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024)");
+    const village = {
+      topic: "coste" as const,
+      text: "Alquiler ≈ 571 €/mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 500 y 790 €",
+    };
+    expect(factText(village, false)).toBe(
+      "Alquiler ≈ 571 €/mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 500 y 790 €",
+    );
+    // Buying the card has no rent notice, so its facts stay as the API wrote them; other facts never change
+    expect(factText(rent, true)).toBe(rent.text);
+    expect(factText({ topic: "colegios", text: "Colegio; un anuncio de hoy puede pedir más" }, false)).toBe("Colegio; un anuncio de hoy puede pedir más");
+  });
+});
+
+describe("no place to go in the whole region (resultados.sin_lugar)", () => {
+  const ranked = (pct: number) => ({ match_pct: pct }) as RankedZone;
+  const few = Array.from({ length: 3 }, (_, i) => match("municipio", `28${String(i).padStart(3, "0")}`, 98 - i, true));
+  const base = { results: [ranked(98)], all_zones: few, reality_check: rc(3), scenario: { schema_version: 2 as const, anchors: [] } };
+
+  it("asks for the work place or «Madrid capital» with no place and the whole region, with zones that fit", () => {
+    expect(asksForPlace(base)).toBe(true);
+    expect(asksForPlace({ ...base, scenario: { schema_version: 2 } })).toBe(true);
+  });
+
+  it("stays quiet with a place, with a part of the region, without zones or with a crowd at the top", () => {
+    const place = { kind: "family" as const, label: "Getafe Central (Cercanías)", lon: 0, lat: 0 };
+    expect(asksForPlace({ ...base, scenario: { ...base.scenario, anchors: [place] } })).toBe(false);
+    expect(asksForPlace({ ...base, scenario: { ...base.scenario, scope: "madrid" } })).toBe(false);
+    expect(asksForPlace({ ...base, scenario: { ...base.scenario, scope: "pueblos" } })).toBe(false);
+    expect(asksForPlace({ ...base, reality_check: rc(0) })).toBe(false);
+    // resultados.empate already asks for the work place
+    const crowd = Array.from({ length: 12 }, (_, i) => match("municipio", `28${String(i).padStart(3, "0")}`, 100, true));
+    expect(asksForPlace({ ...base, results: [ranked(100)], all_zones: crowd })).toBe(false);
+  });
+
+  it("stays quiet on line A's fixture, which has a work place", () => {
+    expect(asksForPlace(fixture)).toBe(false);
   });
 });

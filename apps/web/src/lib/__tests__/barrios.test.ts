@@ -12,33 +12,34 @@ const FIXTURE = new URL("../../../../../data/fixtures/contracts/barrio_search_re
 const sanBlas = JSON.parse(readFileSync(FIXTURE, "utf8")) as BarrioSearchResult;
 
 describe("barrioRows (D-232)", () => {
-  it("keeps the API's order of the barrios that fit, with their outline id, % and first facts", () => {
+  it("keeps the API's order of the barrios that fit, with their outline id, band, % and first facts", () => {
     const { fits } = barrioRows(sanBlas);
-    expect(fits.map((b) => [b.name, b.pct])).toEqual([
-      ["Canillejas", 97],
-      ["Arcos", 97],
-      ["Simancas", 97],
-      ["Rosas", 96],
-      ["Amposta", 96],
-      ["El Salvador", 95],
-      ["Hellín", 93],
+    expect(fits.map((b) => [b.name, b.fit?.text])).toEqual([
+      ["Canillejas", "Encaja muy bien · 97 %"],
+      ["Arcos", "Encaja muy bien · 97 %"],
+      ["Simancas", "Encaja muy bien · 97 %"],
+      ["Rosas", "Encaja muy bien · 96 %"],
+      ["Amposta", "Encaja muy bien · 96 %"],
+      ["El Salvador", "Encaja muy bien · 95 %"],
+      ["Hellín", "Encaja muy bien · 93 %"],
     ]);
-    expect(fits[2]).toMatchObject({ id: "ES.28.BAR.28079201", code: "28079201", fails: null });
+    expect(fits[2]).toMatchObject({ id: "ES.28.BAR.28079201", code: "28079201", lacks: null });
     expect(fits[0]?.facts).toEqual(["Colegio con primaria a unos 7 min andando", "Parada de transporte público a unos 3 min andando"]);
     expect(fits.every((b) => b.facts.length <= FACTS_PER_BARRIO)).toBe(true);
   });
 
-  it("names the condition a near miss fails, from the API's labels", () => {
+  it("says what a near miss lacks instead of its %, from the API's own figures (F5 of fit-0.9)", () => {
     const { near } = barrioRows(sanBlas);
     expect(near).toHaveLength(1);
-    expect(near[0]).toMatchObject({ name: "Rejas", pct: 55, fails: ["Colegio con primaria a 10 min andando como mucho"] });
+    // Rejas: a school at 35,5 min against the 10 asked
+    expect(near[0]).toMatchObject({ name: "Rejas", fit: null, lacks: { text: "Colegio con primaria: ≈ 26 min más andando de lo que pides" } });
   });
 
-  it("leaves out a failed condition without a name, and works without near misses", () => {
+  it("says «No cumple todo lo que pides» for a failed condition without a name, and works without near misses", () => {
     const [rejas] = sanBlas.near_misses ?? [];
     if (!rejas) throw new Error("fixture without near misses");
     const unnamed = { ...rejas, failed_constraints: ["no_label"], constraints: [] };
-    expect(barrioRows({ results: [], near_misses: [unnamed] }).near[0]?.fails).toEqual([]);
+    expect(barrioRows({ results: [], near_misses: [unnamed] }).near[0]?.lacks?.text).toBe("No cumple todo lo que pides.");
     expect(barrioRows({ results: sanBlas.results }).near).toEqual([]);
   });
 

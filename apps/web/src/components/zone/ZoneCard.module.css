@@ -40,10 +40,19 @@
   gap: var(--space-3);
 }
 
+/*
+ * A long name breaks between words; a single word too long for its line («Casarrubuelos» beside the
+ * pill at 1440 px) at a Spanish hyphen («Casarru-buelos»), with lang="es", never mid-syllable.
+ * Only long words are hyphenated (10 letters or more, 5 on each side), so «San Sebastián de los
+ * Reyes» still breaks by words. break-word stays as the last resort for a browser without Spanish
+ * hyphenation, so the name never runs under the %.
+ */
 .name {
   min-width: 0;
   font-size: var(--text-2xl);
   font-weight: 600;
+  hyphens: auto;
+  hyphenate-limit-chars: 10 5 5;
   overflow-wrap: break-word;
 }
 
@@ -65,13 +74,20 @@
   }
 }
 
-/* «de encaje» under the figure: beside it, the pill did not fit at 390 px and was cut («de enca…») */
+/* «Encaja muy bien» over the figure (F5 of fit-0.9), as in the rows; beside it the pill would not fit at 390 px */
 .pct small {
   display: block;
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
+  white-space: nowrap;
+}
+
+.pct > span[aria-hidden] {
+  display: grid;
+  justify-items: center;
 }
 
 .fitsButShort {
@@ -177,6 +193,14 @@
   color: var(--violet-strong);
   font-size: var(--text-sm);
   font-weight: 600;
+}
+
+/* zona.empate: «Empata al 94 % con Latina.», right under its place in the ranking */
+.tie {
+  margin-top: calc(-1 * var(--space-2));
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 
 .fails,

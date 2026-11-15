@@ -18,9 +18,9 @@ import type { ZoneProperties } from "@/lib/map/zones";
 import styles from "./BarrioFit.module.css";
 import { useBarrioFit } from "./useBarrioFit";
 
-// Copy from pitch/textos_web.md (zona.cerca_de_encajar.*, resultados.casi.ayuda, resultados.menos,
-// zona.no_cumple, zona.encaje.ayuda, a_pie.mediana, error.reintentar). The title is Mariano's (13 nov); the rest is
-// B's draft for line D (barrios.encajan.*).
+// Copy from pitch/textos_web.md (zona.cerca_de_encajar.*, resultados.casi.ayuda, resultados.menos, resultados.banda.*
+// in lib/match.ts, resultados.casi.* and zona.no_cumple in lib/shortfall.ts, zona.encaje.ayuda, a_pie.mediana,
+// error.reintentar). The title is Mariano's (13 nov); the rest is B's draft for line D (barrios.encajan.*).
 const TEXT = {
   title: "Los barrios que mejor encajan",
   loading: (district: string) => `Buscando los barrios de ${district} que encajan contigo…`,
@@ -31,8 +31,6 @@ const TEXT = {
   fewer: "Ver menos",
   near: "Casi encajan",
   nearHelp: "Cumplen todo menos una cosa.",
-  fails: "No cumple:",
-  failsUnnamed: "No cumple todo lo que pides.",
   retry: "Reintentar",
 };
 
@@ -51,9 +49,13 @@ function Barrio({ row }: { row: BarrioRow }) {
       <span className={styles.name}>{row.name}</span>
       {/* The price under the %, so the name keeps its width at 390 px (D-234) */}
       <span className={styles.end}>
-        <span className={styles.pct} title={TEXT.fitHelp}>
-          {row.pct} %<span className="visually-hidden"> {TEXT.fit}</span>
-        </span>
+        {row.fit && (
+          <span className={styles.pct} title={TEXT.fitHelp}>
+            <small className={styles.band}>{row.fit.band}</small>
+            <span aria-hidden="true">{row.fit.pct}</span>
+            <span className="visually-hidden"> · {row.fit.pct} {TEXT.fit}</span>
+          </span>
+        )}
         {row.price && <PriceTag price={row.price} variant="row" />}
       </span>
     </>
@@ -74,8 +76,11 @@ function Barrio({ row }: { row: BarrioRow }) {
         <span className={styles.head}>{head}</span>
       )}
       <span id={detailsId} className={styles.details}>
-        {row.fails && (
-          <span className={styles.fails}>{row.fails.length > 0 ? `${TEXT.fails} ${row.fails.join(" · ")}` : TEXT.failsUnnamed}</span>
+        {row.lacks && (
+          <span className={styles.fails}>
+            <span aria-hidden="true">{row.lacks.text}</span>
+            <span className="visually-hidden">{row.lacks.aria}</span>
+          </span>
         )}
         {row.facts.map((fact, i) => (
           <span key={i} className={styles.fact}>

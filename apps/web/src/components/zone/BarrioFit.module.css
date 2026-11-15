@@ -114,14 +114,25 @@ button.head:focus-visible::after {
   overflow-wrap: break-word;
 }
 
+/* «Encaja muy bien» over «94 %» (F5 of fit-0.9), as in «Zonas que encajan» */
 .pct {
+  display: grid;
   flex: none;
-  padding: 0.15rem 0.55rem;
+  justify-items: center;
+  padding: 0.15rem 0.45rem;
   border-radius: var(--radius-sm);
   background: var(--violet-soft);
   color: var(--violet-strong);
   font-family: var(--font-title);
   font-weight: 700;
+  line-height: 1.2;
+}
+
+.pct .band {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .pressed .pct {

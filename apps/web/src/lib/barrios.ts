@@ -4,7 +4,9 @@
  * the fit: it picks what the district screen shows, with the copy of pitch/textos_web.md.
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
-import { constraintLabels, failedLabels, floorAreaOf, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
+import { constraintLabels, factText, floorAreaOf, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
+import { type MatchText, matchText } from "@/lib/match";
+import { nearMissText, type Spoken } from "@/lib/shortfall";
 
 /** Facts under each barrio: the API orders them, most important to the person first. */
 export const FACTS_PER_BARRIO = 2;
@@ -17,31 +19,32 @@ export interface BarrioRow {
   id: string | null;
   code: string;
   name: string;
-  pct: number;
+  /** A barrio that fits: «Encaja muy bien» and «94 %» (F5 of fit-0.9); null for a near miss, which shows what it lacks */
+  fit: MatchText | null;
   /** Its approximate price for the household (D-234), or null without one */
   price: ZonePrice | null;
   facts: string[];
   /** Whether one of the facts is a walk (minutes on foot), to say once what those minutes are */
   walking: boolean;
-  /** Near misses only: the conditions it fails, by name (zona.cerca_de_encajar.motivo) */
-  fails: string[] | null;
+  /** Near misses only: what it lacks, as in «Casi encajan» of the list (resultados.casi.*) */
+  lacks: Spoken | null;
 }
 
-function barrioRow(zone: RankedZone, fails: string[] | null, buying: boolean, m2: number | null): BarrioRow {
+function barrioRow(zone: RankedZone, lacks: Spoken | null, buying: boolean, m2: number | null): BarrioRow {
   const facts = zone.facts.slice(0, FACTS_PER_BARRIO);
   return {
     id: zone.zone.admin_unit_id ?? null,
     code: zone.zone.code,
     name: zone.zone.name,
-    pct: zone.match_pct,
+    fit: lacks ? null : matchText(zone),
     price: zonePrice(zone, buying, m2),
-    facts: facts.map((fact) => fact.text),
+    facts: facts.map((fact) => factText(fact, buying)),
     walking: hasWalkingFact(facts),
-    fails,
+    lacks,
   };
 }
 
-/** The barrios that fit, best first, and those that fail one condition, with it by name. */
+/** The barrios that fit, best first, and those that fail one condition, with what they lack. */
 export function barrioRows(
   result: Pick<BarrioSearchResult, "results" | "near_misses"> & Partial<Pick<BarrioSearchResult, "scenario">>,
 ): { fits: BarrioRow[]; near: BarrioRow[] } {
@@ -50,9 +53,7 @@ export function barrioRows(
   const m2 = floorAreaOf(result);
   return {
     fits: result.results.map((zone) => barrioRow(zone, null, buying, m2)),
-    near: (result.near_misses ?? []).map((zone) =>
-      barrioRow(zone, failedLabels(zone.failed_constraints, labels, zone.constraints), buying, m2),
-    ),
+    near: (result.near_misses ?? []).map((zone) => barrioRow(zone, nearMissText(zone, labels, result.scenario), buying, m2)),
   };
 }
 
