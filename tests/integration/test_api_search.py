@@ -1,5 +1,6 @@
 """POST /api/v1/search on the fixture database (CORE-003): contract, UNKNOWN never PASS,
-Reality Check that the web can apply, highlights equal to GET /gaps and provenance."""
+Reality Check that the web can apply, highlights equal to GET /gaps, the rows of «Qué falta» the
+% reads (D-243) and provenance."""
 
 import json
 from pathlib import Path
@@ -11,8 +12,11 @@ from sqlalchemy import Engine, text
 
 from hi_api.deps import get_engine
 from hi_api.main import app
+from hi_api.services.barrios import load_barrios
+from hi_api.services.search import load
+from hi_contracts.public import ScenarioState
 from hi_contracts.public.responses import SearchResponse
-from hi_domain.fit import FIT_VERSION
+from hi_domain.fit import FIT_VERSION, match_band
 
 pytestmark = pytest.mark.db
 FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "contracts"
@@ -53,6 +57,8 @@ def test_demo_case_ranks_zones_that_pass_every_condition(client: TestClient) -> 
     passing = {z.zone.code for z in data.all_zones if z.passes_all}
     assert {r.zone.code for r in data.results} <= passing
     assert any(d.is_cm_open_data for d in data.datasets)
+    for zone in [*data.results, *data.near_misses, *data.all_zones]:  # D-243: the % in words
+        assert zone.match_band == match_band(zone.match_pct)
 
 
 def test_unknown_never_counts_as_pass(client: TestClient) -> None:
@@ -136,6 +142,36 @@ def test_highlights_match_the_gap_map(client: TestClient) -> None:
             gap_map = client.get("/api/v1/gaps", params=params).json()["data"]
             status = {z["code"]: z["status"] for z in gap_map["zones"]}[zone.zone.code]
             assert highlight.status == status
+
+
+def _statuses(client: TestClient, level: str, row: str) -> dict[str, tuple[str, str]]:
+    gap_map = client.get("/api/v1/gaps", params={"level": level, "row": row}).json()["data"]
+    return {z["code"]: (z["status"], z["name"]) for z in gap_map["zones"]}
+
+
+def test_the_pct_reads_the_rows_of_que_falta_and_a_barrio_its_district_s(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """D-243: every zone carries the status of every service row as GET /gaps gives it, marked or
+    not; a barrio carries its district's, with the district's name (a declared proxy)."""
+    scenario = ScenarioState.model_validate(_family())
+    with migrated_engine.connect() as conn:
+        zones = load(conn, scenario).zones
+        barrios = load_barrios(conn, scenario, None).zones
+    checked = 0
+    for data in zones:
+        for row, supply in data.supply.items():
+            status, _ = _statuses(client, data.zone.level.value, row.value)[data.zone.code]
+            assert supply.status == status and supply.district is None
+            checked += 1
+    assert checked, "no zone reads «Qué falta» on fixtures"
+    borrowed = 0
+    for data in barrios:
+        for row, supply in data.supply.items():
+            status, name = _statuses(client, "distrito", row.value)[data.zone.code[:7]]
+            assert (supply.status, supply.district) == (status, name)
+            borrowed += 1
+    assert borrowed, "no barrio reads its district's «Qué falta» on fixtures"
 
 
 def test_invalid_scenario_is_rejected(client: TestClient) -> None:

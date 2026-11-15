@@ -1,7 +1,8 @@
 """People search (CORE-003, POST /api/v1/search): loads the zones and the indicators bound to
-the search in the Feature Dictionary (`fit`), and the «Qué falta aquí» highlights from the
-same rows as GET /gaps; hi_domain.search decides. Parameterised SQL only, no feature id here.
-The entry point is hi_api.services.scope.search, which also ranks Madrid capital by barrio.
+the search in the Feature Dictionary (`fit`), and «Qué falta» from the same rows as GET /gaps:
+the card's highlights and, for the % (D-243), every service row's status and ratio;
+hi_domain.search decides. Parameterised SQL only, no feature id here. The entry point is
+hi_api.services.scope.search, which also ranks Madrid capital by barrio.
 """
 
 import logging
@@ -27,7 +28,16 @@ from hi_contracts.public import (
     ZoneRef,
 )
 from hi_domain.affordability import HOUSES_NOTE, POOLED_RANGE_NOTE, POOLED_RANGE_SOURCE
-from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData, ignored_leisure
+from hi_domain.fit import (
+    FIT_VERSION,
+    NEED_ROW,
+    PRIORITY_WALK,
+    Supply,
+    ZoneData,
+    ignored_leisure,
+    marked_rows,
+    supply,
+)
 from hi_domain.geo.names import display_name
 from hi_domain.geo.scope import in_scope
 from hi_domain.search import SPLIT_BY_DISTRICT, highlight_rows, run_search
@@ -249,25 +259,52 @@ def zone_price(indicators: Indicators, key: tuple[str, str]) -> tuple[IndicatorV
     return published or estimate, False
 
 
-def _highlights(
-    conn: Connection, rows: list[GapRowKey]
-) -> tuple[dict[tuple[str, str], list[GapHighlight]], list[DatasetRef], list[str]]:
-    """Each zone's status in the household's 3 rows, from the same map as GET /gaps."""
+SERVICE_ROWS = tuple(NEED_ROW.values())  # the rows a marked service scores with (D-243)
+
+
+class GapData(NamedTuple):
+    """«Qué falta» as the search reads it, by (level, code), from the same maps as GET /gaps."""
+
+    highlights: dict[tuple[str, str], list[GapHighlight]]  # the household's 3 rows (the card)
+    supply: dict[tuple[str, str], dict[GapRowKey, Supply]]  # every service row, for the %
+    names: dict[tuple[str, str], str]  # the zone's name in the maps (a barrio's district)
+    datasets: list[DatasetRef]
+    warnings: list[str]
+
+
+def gap_data(
+    conn: Connection,
+    scenario: ScenarioState,
+    levels: Iterable[TerritoryLevel] = LEVELS,
+    *,
+    highlights: bool = True,
+) -> GapData:
+    """Each zone's status in the household's 3 rows and, for the % (D-243), the status and ratio
+    of every service row, marked or not: cheap (the maps are cached) and a zone's data never
+    depends on the person. Only the rows the answer uses are cited (datasets, warnings): the
+    card's and those of the services the person marks."""
+    shown = highlight_rows(scenario) if highlights else []
+    used = {*shown, *marked_rows(scenario)}
     stamp = data_stamp(conn)
-    highlights: dict[tuple[str, str], list[GapHighlight]] = {}
-    datasets: list[DatasetRef] = []
-    warnings: list[str] = []
-    for row in rows:
-        for level in LEVELS:
+    out = GapData({}, {}, {}, [], [])
+    for row in dict.fromkeys([*shown, *SERVICE_ROWS]):
+        for level in levels:
             gap_map, row_warnings = cached_row_map(conn, level, row, stamp)
-            warnings += [w for w in row_warnings if w not in warnings]
+            if row in used:
+                out.warnings.extend(w for w in row_warnings if w not in out.warnings)
             if gap_map is None:
                 continue
-            datasets += gap_map.datasets
+            if row in used:
+                out.datasets.extend(gap_map.datasets)
             for zone in gap_map.zones:
-                highlight = GapHighlight(row=row, label=gap_map.label, status=zone.status)
-                highlights.setdefault((level.value, zone.code), []).append(highlight)
-    return highlights, datasets, warnings
+                key = (level.value, zone.code)
+                out.names[key] = zone.name
+                if row in shown:
+                    highlight = GapHighlight(row=row, label=gap_map.label, status=zone.status)
+                    out.highlights.setdefault(key, []).append(highlight)
+                if row in SERVICE_ROWS:
+                    out.supply.setdefault(key, {})[row] = supply(zone)
+    return out
 
 
 def load(conn: Connection, scenario: ScenarioState) -> Loaded:
@@ -280,7 +317,7 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
     levels = [level.value for level in LEVELS]
     value_rows = [dict(r) for r in conn.execute(FIT_VALUES, {"levels": levels}).mappings()]
     indicators = indicators_by_zone(value_rows)
-    highlights, gap_datasets, warnings = _highlights(conn, highlight_rows(scenario))
+    gaps = gap_data(conn, scenario)
     trips = commutes(conn, scenario.anchors)
     zones = []
     for row in zone_rows:
@@ -300,7 +337,8 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
                 transit=indicators.transit.get(key, {}),
-                gaps=highlights.get(key, []),
+                gaps=gaps.highlights.get(key, []),
+                supply=gaps.supply.get(key, {}),
                 commute={i: by[zone_id] for i, by in trips.by_zone.items() if zone_id in by},
             )
         )
@@ -309,7 +347,13 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
         versions.update(row["inputs"].get("dataset_versions", {}))
     computed = [row["computed_at"] for row in value_rows]
     return Loaded(
-        zones, versions, computed, gap_datasets, warnings, trips.unresolved, dict(trips.versions)
+        zones,
+        versions,
+        computed,
+        gaps.datasets,
+        gaps.warnings,
+        trips.unresolved,
+        dict(trips.versions),
     )
 
 

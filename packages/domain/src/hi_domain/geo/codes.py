@@ -35,6 +35,14 @@ def admin_unit_id(level: str, code: str) -> str:
     return f"ES.{MADRID_PROVINCE_CODE}.{prefix}.{code}"
 
 
+def district_of_barrio(code: str) -> str:
+    """Barrio code (8 digits) -> its Madrid district (the first 7), as the web reads it."""
+    if not re.match(r"^\d{8}$", code):
+        msg = f"Invalid barrio code {code!r}"
+        raise ValueError(msg)
+    return code[:7]
+
+
 _GSECCION = re.compile(r"^(\d{3})-(\d{2})-(\d{3})$")
 
 
