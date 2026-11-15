@@ -12,7 +12,7 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**26 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid) en la demo, todos con su control de calidad superado:**
+**35 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid) en la demo, todos con su control de calidad superado (52 contando los de apoyo):**
 - población, hogares, vivienda, renta y alquiler;
 - colegios y sus aulas, centros de salud, servicios para mayores y farmacias, y los hospitales y camas de la región;
 - las 6 redes de transporte público del Consorcio Regional de Transportes, que también publica ese portal, y la accesibilidad de las estaciones de metro, Metro Ligero y Cercanías.
