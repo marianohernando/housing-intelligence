@@ -2,6 +2,17 @@
 
 Para la línea B: estos son los textos de la web, listos para usar tal cual. Si un texto no cabe o no encaja en el diseño, cámbialo en la web y avisa en el PR #2 para que lo actualice aquí.
 
+**Claridad en el móvil, primera entrega (15 nov, línea B; auditoría `prompts/UX_AUDITORIA_MOVIL.md`, opción 1 y D-244).** Una persona mayor probó la web en el móvil: «difícil de entender, muchos datos juntos». Decidido por Mariano con el orquestador. Lo que cambia en pantalla:
+- **Letra de 16 px o más** en todo lo que se lee para decidir, y 18 px de cuerpo en el móvil (`--text-xs`, `--text-sm` a 1 rem y la raíz al 112,5 % hasta 760 px). **Botones de 44 px o más,** también «¿Dónde?», «Alquilar/Comprar», «Ver todo lo que falta» y los enlaces de la portada, que van subrayados.
+- **Lenguaje llano (§4 de la auditoría):** «encaja» sale de la vista principal y queda en «Cómo lo calculamos», que es la página del método. Cambian el botón (`busqueda.boton`), la lista (`resultados.titulo`, `rc.*`, `resultados.de*`, `resultados.casi.*`, `zona.cerca_de_encajar.titulo`), las bandas (`resultados.banda.*`), la tarjeta (`zona.*`, `encaje.aviso_*`), la leyenda (`leyenda.*`) y «¿Quieres ver más zonas?» (sección 7). «≈» pasa a «unos» en la tarjeta y en «Casi valen»; en las filas de la lista sigue «≈» hasta la entrega 2, que rehace la fila. Sin siglas sin explicar: fuera «EMT», «SERMAS», «CRTM» e «INE» de las ayudas y de la tarjeta (las atribuciones de licencia no cambian). Los valores de la API (`muy_bien`, `bien`, `regular`, `poco`) no cambian.
+- **Las explicaciones que estaban en `title`** (en el móvil no se ven) pasan a texto visible o a un botón «¿Qué es esto?» (`ayuda.que_es`): ayudas del formulario, qué cuenta cada botón de «¿Qué quieres tener cerca?», qué es el % (`zona.encaje.que_es`), qué quieren decir FALTA, JUSTO y CUBIERTO (`zona.falta.estados`, a la vista bajo las filas de la tarjeta) y la fiabilidad de los hechos (`confianza.que_es`).
+- **Formulario más corto a la vista:** «Lo quiero a un paseo», «Cerca de mi familia o amigos» y el tamaño del piso van plegados en «Más opciones» (`mas.*`), que dice cuántas cosas tiene elegidas. «Trabajo en (opcional)». Importes rápidos para el presupuesto y «Otra cantidad» (`presupuesto.importes`, `presupuesto.otra`); el deslizador se queda.
+- **«Somos mayores» (D-244):** `hogar.somos_mayores` y el segundo ejemplo de la portada (`portada.ejemplo.mayores`).
+- **Portada en el móvil:** la hoja abre desplegada, con la frase de `portada.subtitulo`, los dos ejemplos y el formulario a la vista; el mapa queda tras «Ver el mapa». En el escritorio no cambia nada de sitio (mapa primero).
+- **«Cómo lo calculamos»:** el desempate dice ahora que va primero la zona que tiene **más cerca** los servicios del día a día (cuenta cada minuto andando, no cuántos servicios hay, `fit-0.9`), las bandas con sus palabras nuevas, «Casi valen», y un espacio que no se parte entre cada cifra y su «%».
+- **Ejemplos de este documento** puestos al día con la respuesta de la API `fit-0.9` del 15 nov (lote 4): ya no quedan cifras de `fit-0.6` ni de `fit-0.7`.
+- Entrega 2, después: la fila y la tarjeta esenciales, «Volver a la lista» y el botón atrás del móvil, y plegar la pantalla de zona.
+
 **Fórmula «cerca y plazas» (15 nov, D-243, `fit-0.9`).** Mariano eligió la variante A del banco de fórmulas. Cambian el % y el orden; las zonas que encajan son las mismas. En el ejemplo, Puente de Vallecas y Latina empatan arriba al 94 % y encajan 42 zonas (antes, Latina 1.ª al 98 %).
 - **Nuevas, de la API** (sección 4, tarjeta de zona): `hecho.limite.mitad`, `hecho.limite.no_llega`, `hecho.limite.falta` y `hecho.limite.trayecto`. Son hechos como los demás: van primero en `facts` cuando fijan el %, y solo uno.
 - **De la web** (sección 4): el % con su banda, `resultados.banda.*`, en el bloque siguiente.
@@ -160,8 +171,9 @@ Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos p
 ## Reglas de escritura (D-199, D-202, D-204 y brief de diseño)
 - **Español llano, de tú, en frases cortas.** Pensado para cualquier persona, también mayores.
   - Sin anglicismos ni jerga: nunca «dataset», «score», «ranking», «match» ni «Reality Check» en pantalla.
-  - En pantalla se dice «conjunto de datos», «encaje» y «¿Y si cambias algo?».
-- **Encaje siempre en %**, con hechos debajo. Nunca «92/100» ni barras (D-202).
+  - En pantalla se dice «conjunto de datos», «zonas que te convienen» y «¿Quieres ver más zonas?». «Encaje» y el % se explican en «Cómo lo calculamos» (15 nov, UX móvil 1).
+- **Encaje siempre en %**, con su banda en palabras delante y hechos debajo. Nunca «92/100» ni barras (D-202).
+- **Letra de 16 px o más** en todo lo que se lee para decidir y **botones de 44 px o más** (15 nov, UX móvil 1). Nada de explicaciones solo en `title`: en el móvil no se ven.
 - **Números a la española:** `1.500 €`, `0,47`, `10 min`. Se formatean igual que `hi_domain.gaps.es_number`.
 - **Estados de «Qué falta»:** siempre con texto e icono, nunca solo color.
 - **Sin login ni icono de usuario.**
@@ -185,13 +197,14 @@ Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos p
 | `pestana.como` | Cómo lo calculamos | Nunca «Metodología» ni «Análisis» |
 | `a11y.saltar` | Saltar al contenido | Enlace oculto hasta recibir el foco |
 | `portada.titulo` | Encuentra tu sitio en Madrid | Ya está así en la web de B |
-| `portada.subtitulo` | Te decimos qué zonas encajan con tu vida y qué le falta a cada una, con datos oficiales. | |
+| `portada.subtitulo` | Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca. | **Cambia (15 nov, UX móvil 1).** Dice para qué sirve (auditoría §3 C5). Antes: «Te decimos qué zonas encajan con tu vida y qué le falta a cada una, con datos oficiales.» |
 | `portada.como_funciona.titulo` | Así funciona | Ya está así en la web de B |
 | `portada.paso1` | **Cuéntanos cómo es tu hogar** y lo que te importa: colegios, salud, transporte… | Ya está así en la web de B |
-| `portada.paso2` | **Mira las zonas que encajan** y por qué, con hechos que puedes comprobar. | Ya está así en la web de B |
-| `portada.paso3` | **Entra en una zona** y mira qué le falta frente a zonas parecidas. | Cambia el 11 nov por D-213: ya no se compara con toda la región |
-| `portada.ejemplo.boton` | Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana | Abre el caso precargado con un toque |
-| `portada.ejemplo.ayuda` | Rellenamos la búsqueda por ti para que veas cómo funciona. Luego puedes cambiar lo que quieras. | |
+| `portada.paso2` | **Mira las zonas que te convienen** y por qué, con hechos que puedes comprobar. | **Cambia (15 nov, UX móvil 1).** Antes «Mira las zonas que encajan» |
+| `portada.paso3` | **Entra en una zona** y mira qué le falta comparada con zonas parecidas. | Cambia el 11 nov por D-213. **Cambia (15 nov, UX móvil 1).** «frente a» pasa a «comparada con» |
+| `portada.ejemplo.boton` | Ejemplo: pareja con 2 hijos que trabaja en la Castellana | Abre el caso precargado con un toque. **Cambia (15 nov, UX móvil 1).** Sin «Ver un»: los dos ejemplos caben en el móvil |
+| `portada.ejemplo.mayores` | Ejemplo: pareja jubilada que quiere el centro de salud cerca | **Nueva (15 nov, D-244).** El caso de la auditoría (§1): 2 personas, «Somos mayores», alquiler hasta 900 € al mes y «Centro de salud», sin lugar de trabajo (`retiredExampleScenario` en `lib/scenario.ts`) |
+| `portada.ejemplo.ayuda` | Rellenamos la búsqueda por ti. Luego puedes cambiar lo que quieras. | Bajo los dos ejemplos. **Cambia (15 nov, UX móvil 1).** Antes «… por ti para que veas cómo funciona. …» |
 | `portada.empezar` | Empezar mi búsqueda | |
 
 ---
@@ -204,6 +217,7 @@ Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos p
 | `busqueda.plegar` | Ocultar mi búsqueda | Tarjeta plegable en la pantalla de zona |
 | `busqueda.desplegar` | Ver mi búsqueda | |
 | `busqueda.reiniciar` | Empezar de nuevo | |
+| `ayuda.que_es` | ¿Qué es esto? | **Nueva (15 nov, UX móvil 1).** Botón con aspecto de enlace (detalles nativos, 44 px) que despliega una ayuda. Sustituye a las ayudas siempre visibles del formulario y a los `title`, que en el móvil no se ven (auditoría §3 A5). El lector de pantalla oye de qué es: «¿Qué es esto? ¿Dónde?» |
 
 ### «¿Dónde?» (D-238)
 Primer bloque de la tarjeta. Cuatro opciones excluyentes (radios nativos en 2 × 2, `ScenarioState.scope`). Las partes son las zonas estadísticas del Instituto de Estadística de la Comunidad de Madrid: la capital, las 4 metropolitanas y el resto. Prueba con usuarios (14 nov).
@@ -215,42 +229,44 @@ Primer bloque de la tarjeta. Cuatro opciones excluyentes (radios nativos en 2 ×
 | `donde.madrid` | Madrid capital | Envía `scope: madrid`: compara los 131 barrios en lugar de los 21 distritos |
 | `donde.alrededores` | Alrededores de Madrid | `scope: alrededores` |
 | `donde.pueblos` | Pueblos | `scope: pueblos` |
-| `donde.ayuda.toda` | Madrid capital por distritos y el resto de la Comunidad por municipios. | Línea bajo el selector, según la opción marcada |
+| `donde.ayuda.toda` | Madrid capital por distritos y el resto de la Comunidad por municipios. | Según la opción marcada, tras «¿Qué es esto?» (desde el 15 nov; antes, línea siempre visible bajo el selector) y unida al selector con `aria-describedby` |
 | `donde.ayuda.madrid` | Comparamos sus 131 barrios. | |
 | `donde.ayuda.alrededores` | Los 40 municipios del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. | Aranjuez, Valdemoro o Ciempozuelos están aquí: son del Sur Metropolitano del Instituto |
 | `donde.ayuda.pueblos` | Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Su alquiler es la referencia del Ministerio de Vivienda, un dato aproximado; los que tienen muy pocas viviendas alquiladas salen «Sin datos». | **Cambia (D-242):** antes decía «Casi ninguno publica su alquiler…» (revisión del PR #58). Con la referencia del Ministerio, 122 de los 138 pueblos tienen alquiler; los 16 sin él tienen menos de 10 viviendas alquiladas |
 | `donde.resumen` | · {opción} | Tras `hogar.resumen` y el presupuesto con la tarjeta plegada, salvo con «Toda la Comunidad» |
 
-### «Tu hogar»
+### «Tu hogar» («¿Quién va a vivir en la casa?» desde el 15 nov)
 | Clave | Texto | Notas |
 |---|---|---|
-| `hogar.titulo` | Tu hogar | |
-| `hogar.ayuda` | ¿Quién va a vivir contigo? | |
+| `hogar.titulo` | ¿Quién va a vivir en la casa? | **Cambia (15 nov, UX móvil 1).** Antes «Tu hogar», con `hogar.ayuda` al lado |
+| `hogar.ayuda` | ~~¿Quién va a vivir contigo?~~ | **Retirada (15 nov):** la pregunta es ahora el título |
 | `hogar.solo` | Solo/a | Chip del brief |
 | `hogar.pareja` | En pareja | |
 | `hogar.hijos` | Con hijos | Al marcarlo aparece el contador |
 | `hogar.hijos.cuantos` | ¿Cuántos hijos? | Contador de 1 a 8 (`Household.minors`, máximo 8) |
 | `hogar.hijos.edades` | Edades (si quieres) | Opcional (`minor_ages`). Ayuda: «Nos sirve para saber si buscas escuela infantil o colegio.» Hoy no se muestra: las rellena el caso de ejemplo (4 y 8 años) y la web no deja cambiarlas |
-| `hogar.mayores` | Con mayores a cargo | Al marcarlo aparece el contador |
+| `hogar.mayores` | Con una persona mayor a la que cuidas | Al marcarlo aparece el contador. Suma una persona al hogar (`seniors_in_care`). **Cambia (15 nov, UX móvil 1).** Antes «Con mayores a cargo», que la persona mayor de la prueba leyó como su opción. Ocupa toda la fila |
 | `hogar.mayores.cuantos` | ¿Cuántas personas mayores? | Contador de 1 a 4 (`seniors_in_care`, máximo 4) |
+| `hogar.somos_mayores` | Somos mayores | **Nueva (15 nov, D-244).** La persona o la pareja tiene 65 años o más. No suma personas: va con «Solo/a» o «En pareja». Envía `household.seniors: true`. Al marcarlo se marca «Centro de salud» (que se puede quitar), «Trabajo en» pasa a «Más opciones» y no sale `resultados.sin_lugar` |
+| `hogar.somos_mayores.ayuda` | Para personas de 65 años o más. Elige también si vives solo/a o en pareja. | **Nueva.** Bajo los botones, solo con «Somos mayores» marcado |
 | `hogar.contador.menos` | Quitar uno | `aria-label` del botón «−» |
 | `hogar.contador.mas` | Añadir uno | `aria-label` del botón «+» |
 | `hogar.resumen` | {n} personas en casa | Resumen cuando la tarjeta está plegada |
 
-### «Me importa» (D-204)
-Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`priorities`, la más importante primero).
+### «¿Qué quieres tener cerca?» (antes «Me importa», D-204)
+Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`priorities`, la más importante primero). Desde el 15 nov las ayudas van en una lista tras «¿Qué es esto?» («Transporte: Paradas cerca de casa…»), no al pasar el ratón.
 
-| Clave | Chip | Ayuda (una línea, al pasar el ratón o al tocar «?») | Notas |
+| Clave | Chip | Ayuda (tras «¿Qué es esto?») | Notas |
 |---|---|---|---|
-| `importa.titulo` | Me importa | Marca lo que más te importa. Lo primero que marques cuenta más. | |
+| `importa.titulo` | ¿Qué quieres tener cerca? | Toca primero lo más importante: cuenta más. | **Cambia (15 nov, UX móvil 1).** Antes «Me importa» y «Marca lo que más te importa. Lo primero que marques cuenta más.» (auditoría §4 n.º 20) |
 | `importa.transporte` | Transporte | Paradas cerca de casa y con autobuses o trenes a menudo. | |
-| `importa.salud` | Salud | Centro de salud cerca de casa. | |
+| `importa.salud` | Centro de salud | Centro de salud cerca de casa. | **Cambia (15 nov, UX móvil 1).** Antes «Salud»: que era el centro de salud solo lo decía un `title`. Se marca solo con «Somos mayores» (D-244) |
 | `importa.colegios` | Colegios | Colegios con primaria, públicos o concertados, cerca de casa. | Los mismos que cuenta la fila de colegios (GAP-001 F2) |
 | `importa.zonas_verdes` | Zonas verdes | Parques de una hectárea o más, cerca de casa. | Cambia el 12 nov: los jardines pequeños no cuentan (D-222 §2). En la API desde `fit-0.3`, desplegado el 12 nov, con el hecho «Parque urbano a N min andando desde la mitad de sus calles». En la web desde el 12 nov (chip «Zonas verdes», icono de árboles) |
 | `importa.seguridad` | — | — | **No hay chip** (D-224): la tasa oficial de hechos conocidos cuenta dónde se denuncia, no dónde se vive, y solo cubre 36 de las 199 zonas. No se promete en `importa.pronto_lista`. La explicación va en «Cómo lo calculamos» (`metodologia.md` §1.8). Mariano abrió la opción de D-224 §3 el 14 nov (D-235): va como contexto en la vista de zona (`zona.contexto.delitos`), nunca como chip. Hecho de la API para la prioridad (D-226 §5): «Seguridad: no la puntuamos (no hay un dato oficial que la mida para quien vive en cada zona)» |
 | `zona.seguridad_vecinos` | Así valoran sus vecinos la seguridad de su barrio: {noche} de noche y {dia} de día, de 0 a 10 (en todo Madrid, {noche_madrid} y {dia_madrid}). Encuesta de calidad de vida del Ayuntamiento de Madrid, {año}, unas 400 personas por distrito. | Solo en los 21 distritos de Madrid, como contexto en la vista de zona (D-226 §1): sin colores de estado ni de alarma, y nunca «peligroso» ni «inseguro». No puntúa, no ordena y no entra en «Qué falta». Valores de `seguridad_percibida_noche` y `seguridad_percibida_dia` (`GET /features/{id}/values`); la referencia es la fila de la ciudad (28079). Con una coma decimal: «6,4». **Pendiente de B** |
 | `zona.contexto.titulo` | Otros datos de la zona | Tarjeta de contexto de la vista de zona (D-235), debajo de `zona.seguridad_vecinos`. Tres líneas cortas, cada una con su fuente y su año, en tinta normal: sin colores de estado ni de alarma, sin ranking y sin comparar zonas. Una línea cuyo dato la API no tiene todavía no sale; sin ninguna, no sale la tarjeta |
-| `zona.contexto.no_puntua` | Son datos informativos: no cambian el encaje ni el orden de las zonas. | Pie de la tarjeta. **Cambia el 15 nov:** con la tarjeta de vivienda nueva debajo (D-241), sale una sola vez, bajo la última de las dos |
+| `zona.contexto.no_puntua` | Son datos informativos: no cambian qué zonas te convienen ni su orden. | **Cambia (15 nov, UX móvil 1).** Antes «… no cambian el encaje ni el orden de las zonas.». Pie de la tarjeta. **Cambia el 15 nov:** con la tarjeta de vivienda nueva debajo (D-241), sale una sola vez, bajo la última de las dos |
 | `zona.contexto.delitos` | Infracciones penales conocidas: {tasa} por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, {año}). | Municipios de más de 20.000 habitantes. {tasa} con un decimal: criminalidad convencional, el total menos la cibercriminalidad (D-224 §3), sobre los vecinos del mismo año. Nunca «delincuencia», «peligroso» ni «inseguro» |
 | `zona.contexto.delitos.aviso` | Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. | Debajo de la cifra, siempre que hay cifra |
 | `zona.contexto.delitos.ciudad` | Dato de toda la ciudad de Madrid; no se publica por distrito. | A continuación de `zona.contexto.delitos` en los 21 distritos (y en el barrio elegido), con la cifra de Madrid |
@@ -258,8 +274,8 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `zona.contexto.antiguedad.municipio` | Viviendas construidas desde 2001: {pct} % (censo anual de la Comunidad de Madrid, {año}). | Solo municipios. {pct} con un decimal y un espacio de no separación antes de «%» (no se parte al final de la línea). Sin dato: «Viviendas construidas desde 2001: sin dato.» |
 | `zona.contexto.antiguedad.madrid` | Año medio de construcción de los edificios de viviendas: {año_medio} (Catastro, {año}). | Solo distritos de Madrid; con un barrio elegido en el mapa, «… de viviendas en {barrio}: …». {año_medio} sin punto de millar. No es comparable con el % de los municipios: nunca en la misma escala ni con la misma etiqueta |
 | `zona.contexto.renta.municipio` | Renta disponible bruta por persona: {importe} € al año (Instituto de Estadística de la Comunidad de Madrid, {año}). | Solo municipios. Nunca «zona rica» ni «zona pobre»: es una cifra con su fuente |
-| `zona.contexto.renta.madrid` | Renta neta media por hogar: {importe} € al año (INE, panel del Ayuntamiento de Madrid, {año}). | Solo distritos de Madrid; con un barrio elegido, «Renta neta media por hogar en {barrio}: …». Es la renta neta media por hogar de Urban Audit, del panel del Ayuntamiento: no es comparable con la renta por persona de los municipios |
-| `importa.sin_escaleras` | Sin escaleras | Estación de metro o tren accesible (sin escaleras) según el CRTM, cerca de casa. | Opcional y sin marcar (D-204, D-223). Definitiva el 12 nov (PR #26 de B). Icono: `TrainFront`, no la silla de ruedas. Hechos de la API: «Estación de metro o tren accesible (sin escaleras) a N min andando desde la mitad de sus calles» y «Sin estación de metro o tren accesible a un paseo (no mide autobuses, aceras ni portales)». En producción desde el 12 nov (despliegue de `2761696`). El icono, **pendiente de B** |
+| `zona.contexto.renta.madrid` | Renta neta media por hogar: {importe} € al año (Instituto Nacional de Estadística, panel del Ayuntamiento de Madrid, {año}). | **Cambia (15 nov, UX móvil 1).** Sin siglas (antes «INE»). Solo distritos de Madrid; con un barrio elegido, «Renta neta media por hogar en {barrio}: …». Es la renta neta media por hogar de Urban Audit, del panel del Ayuntamiento: no es comparable con la renta por persona de los municipios |
+| `importa.sin_escaleras` | Metro o tren sin escaleras | Estación de metro o tren accesible (sin escaleras) según el Consorcio Regional de Transportes, cerca de casa. | **Cambia (15 nov, UX móvil 1).** El botón dice qué mide (antes «Sin escaleras») y la ayuda, sin siglas (antes «según el CRTM»). Opcional y sin marcar (D-204, D-223). Definitiva el 12 nov (PR #26 de B). Icono: `TrainFront`, no la silla de ruedas. Hechos de la API: «Estación de metro o tren accesible (sin escaleras) a N min andando desde la mitad de sus calles» y «Sin estación de metro o tren accesible a un paseo (no mide autobuses, aceras ni portales)». En producción desde el 12 nov (despliegue de `2761696`). El icono, **pendiente de B** |
 | `importa.ocio` | Ocio | Bares, restaurantes, gimnasios y cultura (museos, bibliotecas, teatros y cines) cerca de casa: tú eliges cuáles. | Nuevo el 14 nov (D-236, feedback de usuarios de prueba; la cultura, a petición de un usuario de prueba). Icono: `Wine`. Solo sale cuando los datos de ocio están publicados (`osm_ocio` en `/datasets`). Al marcarlo se abre el bloque de abajo, con «Bares y cafeterías» y «Restaurantes» ya marcados |
 | `importa.ocio.titulo` | ¿Qué ocio quieres cerca? | Título del bloque que se abre bajo los chips | |
 | `importa.ocio.bares` | Bares y cafeterías | Casilla | Bares, pubs y cafeterías |
@@ -268,7 +284,7 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `importa.ocio.cultura` | Cultura | Casilla | Museos, bibliotecas, teatros, cines y centros culturales. Antes «Cines y teatros» (14 nov) |
 | `importa.ocio.cultura.ayuda` | Cultura: museos, bibliotecas, teatros, cines y centros culturales. | Línea pequeña bajo las casillas | Siempre visible: dice qué cuenta como cultura |
 | `importa.ocio.minutos` | A [{n}] min andando como mucho | Los minutos son un selector dentro de la frase (5, 10 o 15), como en `cerca.item`. Valen para todas las casillas marcadas | `aria-label` del selector: «Minutos andando hasta el ocio» |
-| `importa.ocio.obligatorio` | Imprescindible | Casilla, **sin marcar al principio** («Me importa» ordena, no filtra, y en los pueblos OSM no tiene todos los locales). Ayuda: «Si lo marcas, solo verás zonas que lo cumplen.» | Como `cerca.obligatorio`. Sin marcar, el ocio solo sube o baja el % |
+| `importa.ocio.obligatorio` | Solo zonas que lo tengan | Casilla, **sin marcar al principio** («Me importa» ordena, no filtra, y en los pueblos OSM no tiene todos los locales). Ayuda: «Si lo marcas, solo verás zonas que lo cumplen.» | **Cambia (15 nov, UX móvil 1).** Antes «Imprescindible», que se explicaba en un `title`. Como `cerca.obligatorio`. Sin marcar, el ocio solo sube o baja el % |
 | `importa.ocio.ninguna` | Marca al menos una casilla para que el ocio cuente. | Si no hay ninguna casilla marcada | Sin casillas, el ocio no puntúa |
 | `importa.ocio.fuente` | Según OpenStreetMap, un mapa hecho por voluntarios: en los pueblos pequeños puede faltar algún local. | Línea pequeña al final del bloque | La cobertura está en D-236 |
 | `importa.pronto` | Muy pronto | Etiqueta pequeña del chip desactivado. Ayuda: «Estamos añadiendo estos datos.» | |
@@ -278,13 +294,13 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 ### «Trabajo en»
 | Clave | Texto | Notas |
 |---|---|---|
-| `trabajo.titulo` | Trabajo en | |
+| `trabajo.titulo` | Trabajo en (opcional) | **Cambia (15 nov, UX móvil 1).** «(opcional)», como la familia (auditoría §3 C4). Con «Somos mayores» va plegado en «Más opciones» (D-244). La lista de lugares se sigue llamando «Trabajo en» |
 | `trabajo.placeholder` | Escribe una estación, un distrito o un municipio | Sin calles: no hay búsqueda de calles sin un geocodificador externo. Los lugares son las estaciones del CRTM (`/places`) y las zonas del mapa |
-| `trabajo.ayuda` | Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero. | **Cambia el 14 nov** (feedback de usuarios de prueba: uno se mueve en autobús y no sabía que el trayecto lo cuenta). Antes: «Miramos cuánto tardarías en transporte público para llegar a las 9:00.» La lista sale del cálculo (`services/features/src/hi_features/commute.py`): usa los seis GTFS del CRTM (metro, Cercanías, Metro Ligero, EMT, interurbanos y urbanos de otros municipios), más el paseo hasta la parada |
+| `trabajo.ayuda` | Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús, Cercanías y Metro Ligero. | **Cambia (15 nov, UX móvil 1).** Sin siglas (antes «autobús (EMT e interurbanos)») y tras «¿Qué es esto?». **Cambia el 14 nov** (feedback de usuarios de prueba: uno se mueve en autobús y no sabía que el trayecto lo cuenta). Antes: «Miramos cuánto tardarías en transporte público para llegar a las 9:00.» La lista sale del cálculo (`services/features/src/hi_features/commute.py`): usa los seis GTFS del CRTM (metro, Cercanías, Metro Ligero, EMT, interurbanos y urbanos de otros municipios), más el paseo hasta la parada |
 | `trabajo.dias` | ¿Cuántos días vas a la oficina? | **Activo el 14 nov** (D-240, feedback de usuarios de prueba). Selector bajo el lugar de trabajo, con las opciones de `trabajo.dias.opcion`. Envía `days_per_week`; hasta que la persona lo cambia no se envía y vale 5. El caso de ejemplo va 4 días y sus cifras no cambian: desde 3 días el trayecto pesa como siempre. Antes: «¿Cuántos días vas a la semana?», sin mostrarse |
 | `trabajo.dias.opcion` | 5 días · 4 días · 3 días · 2 días · 1 día · Teletrabajo total | «Teletrabajo total» envía `days_per_week: 0`. Un enlace compartido con 6 o 7 días también los ofrece |
 | `trabajo.dias.pocos` | Como vas pocos días, el trayecto cuenta la mitad. | Bajo el selector, con 1 o 2 días: el trayecto pesa la mitad en el % (D-240) |
-| `trabajo.dias.teletrabajo` | Con teletrabajo total, el trayecto no cuenta en el encaje. Si pones un límite, lo respetamos. | Bajo el selector, con «Teletrabajo total»: el trayecto no puntúa, pero `trabajo.max_min` se sigue aplicando (D-240). Con límite, la tarjeta enseña los minutos como dato, sin peso. Las dos ayudas de los días van unidas al selector con `aria-describedby` |
+| `trabajo.dias.teletrabajo` | Con teletrabajo total, el trayecto no cuenta para ordenar las zonas. Si pones un límite, lo respetamos. | **Cambia (15 nov, UX móvil 1).** Antes «… no cuenta en el encaje. …». Bajo el selector, con «Teletrabajo total»: el trayecto no puntúa, pero `trabajo.max_min` se sigue aplicando (D-240). Con límite, la tarjeta enseña los minutos como dato, sin peso. Las dos ayudas de los días van unidas al selector con `aria-describedby` |
 | `trabajo.max_min` | Tardar como mucho [{n}] min en transporte público | **Activo el 14 nov** (feedback de usuarios de prueba: «me salían sitios muy lejos»). Los minutos son un selector dentro de la frase, como en `cerca.item`: «Sin límite» (por defecto, envía `max_minutes: null`), «30 min», «45 min», «60 min» y «90 min». Solo sale cuando hay un lugar de trabajo, también con «Teletrabajo total» (D-240). Con límite, cada zona sale cumple, no cumple o sin dato (CORE-009, D-220 §8). El ejemplo de la portada va siempre sin límite: sus cifras son las del pitch |
 | `trabajo.max_min.aria` | Tardar como mucho hasta el trabajo, en transporte público | `aria-label` del selector. **Cambia el 14 nov** (revisión del PR #60): nombra el lugar, como `familia.max_min.aria`. Antes: «Tardar como mucho, en transporte público». El e2e y `check-search` buscan este texto |
 | `trabajo.sin_limite` | Sin límite | **Nueva, 14 nov** (feedback de usuarios de prueba). Primera opción del selector de `trabajo.max_min` |
@@ -297,17 +313,17 @@ Se pueden marcar varios. El orden en que se marcan es el orden de importancia (`
 | `trabajo.quitar` | Quitar este lugar | |
 
 ### «Cerca de mi familia o amigos» (D-240)
-Segundo lugar, opcional, debajo de «Trabajo en». Es el mismo campo: estaciones y zonas, con `trabajo.placeholder`, `trabajo.sin_resultados`, `trabajo.encontrados`, `trabajo.lugar.*` y `trabajo.quitar`. Sin días: cuenta como un lugar al que se va a menudo.
+Segundo lugar, opcional, en «Más opciones» desde el 15 nov. Es el mismo campo: estaciones y zonas, con `trabajo.placeholder`, `trabajo.sin_resultados`, `trabajo.encontrados`, `trabajo.lugar.*` y `trabajo.quitar`. Sin días: cuenta como un lugar al que se va a menudo.
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `familia.titulo` | Cerca de mi familia o amigos | **Nueva, 14 nov** (idea de Mariano y feedback de usuarios de prueba). Envía un lugar `kind: "family"`, siempre detrás del trabajo |
-| `familia.ayuda` | Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable. | Se mide como el trabajo, y el texto lo declara porque a la familia se suele ir a otras horas (revisión del PR #60). El hecho de la tarjeta lo dice también: «28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00». Antes: «Opcional. Miramos cuánto tardarías en llegar en transporte público.» |
+| `familia.titulo` | Cerca de mi familia o amigos (opcional) | **Cambia (15 nov, UX móvil 1).** En «Más opciones».  **Nueva, 14 nov** (idea de Mariano y feedback de usuarios de prueba). Envía un lugar `kind: "family"`, siempre detrás del trabajo |
+| `familia.ayuda` | Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable. | **Cambia (15 nov, UX móvil 1).** Sin «Opcional.», que ya dice el título, y tras «¿Qué es esto?». Se mide como el trabajo, y el texto lo declara porque a la familia se suele ir a otras horas (revisión del PR #60). El hecho de la tarjeta lo dice también: «28 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00». Antes: «Opcional. Miramos cuánto tardarías en llegar en transporte público.» |
 | `familia.max_min` | Tardar como mucho [{n}] min en transporte público | Como `trabajo.max_min`, con su propio límite y «Sin límite» por defecto. Si falla, va con `trabajo.tarda`: «Trayecto a Getafe Central (Cercanías) de 30 min como mucho (tardarías {n} min)» |
 | `familia.max_min.aria` | Tardar como mucho hasta mi familia o amigos, en transporte público | `aria-label` del selector, distinto del del trabajo |
 
 ### «Lo quiero a un paseo»
-`ScenarioState.nearby`: servicios a un paseo. El caso de ejemplo pide colegio a 10 min andando como mucho, imprescindible.
+`ScenarioState.nearby`: servicios a un paseo. El caso de ejemplo pide colegio a 10 min andando como mucho, imprescindible. Desde el 15 nov va plegado en «Más opciones».
 
 | Clave | Texto | Notas |
 |---|---|---|
@@ -319,11 +335,20 @@ Segundo lugar, opcional, debajo de «Trabajo en». Es el mismo campo: estaciones
 | `cerca.servicio.centro_salud` | Centro de salud | |
 | `cerca.servicio.farmacia` | Farmacia | |
 | `cerca.servicio.mayores` | Centro de mayores | |
-| `cerca.servicio.transporte` | Parada de transporte público | |
+| `cerca.servicio.transporte` | Parada de autobús o metro | **Cambia (15 nov, UX móvil 1).** Antes «Parada de transporte público» (auditoría §4 n.º 23) |
 | `cerca.anadir` | Añadir un servicio… | Primera opción del selector |
 | `cerca.anadir.aria` | Añadir un servicio a un paseo | `aria-label` del selector |
 | `cerca.quitar` | Quitar {servicio} | Con {servicio} en minúscula: «Quitar colegio» |
-| `cerca.obligatorio` | Imprescindible | Interruptor (`required`). Ayuda: «Si lo marcas, solo verás zonas que lo cumplen.» |
+| `cerca.obligatorio` | Solo zonas que lo tengan | Interruptor (`required`), marcado al añadir un servicio, como antes. **Cambia (15 nov, UX móvil 1).** Antes «Imprescindible», con su ayuda («Si lo marcas, solo verás zonas que lo cumplen.») en un `title`; la ayuda sigue para el lector de pantalla |
+
+### «Más opciones» (15 nov, UX móvil 1)
+Plegado bajo el presupuesto (auditoría, opción 1): lo que menos gente necesita. Nada se pierde: el botón dice qué hay dentro y cuántas cosas tiene elegidas, y «Dinos dónde» (`resultados.sin_lugar`) lo abre si hace falta.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `mas.titulo` | Más opciones | Botón (detalles nativos) |
+| `mas.que_hay` | Servicios a un paseo, familia o amigos y tamaño del piso | Bajo el título. Con «Somos mayores»: «Trabajo, servicios a un paseo, familia o amigos y tamaño del piso» |
+| `mas.elegidas` | · {n} elegidas | Detrás de `mas.que_hay` si hay algo elegido dentro: servicios a un paseo, familia, metros elegidos y, con «Somos mayores», el trabajo. Con 1: «· 1 elegida» |
 
 ### Presupuesto (D-203)
 | Clave | Texto | Notas |
@@ -333,25 +358,27 @@ Segundo lugar, opcional, debajo de «Trabajo en». Es el mismo campo: estaciones
 | `presupuesto.comprar` | Comprar | |
 | `presupuesto.alquiler.valor` | Hasta {importe} € al mes | Rango del slider: 100–20.000 € (`RENT_RANGE_EUR`) |
 | `presupuesto.compra.valor` | Hasta {importe} € | Rango del slider: 10.000–5.000.000 € (`BUY_RANGE_EUR`) |
+| `presupuesto.importes` | 600 € · 900 € · 1.200 € · 1.500 € · Otra cantidad (alquilar); 150.000 € · 250.000 € · 400.000 € · 600.000 € · Otra cantidad (comprar) | **Nueva (15 nov, UX móvil 1, auditoría A1).** Botones de opción bajo «Alquilar/Comprar» (`QUICK_BUDGETS` en `lib/scenario.ts`); el grupo se llama «¿Hasta cuánto al mes?» o «¿Hasta cuánto?». El deslizador se queda y mueve la misma cifra. «Comprar» empieza en 250.000 € (antes 300.000 €), uno de los botones |
+| `presupuesto.otra` | Escribe la cantidad, en euros al mes · Escribe la cantidad, en euros | **Nueva.** Etiqueta del campo que sale con «Otra cantidad». Acepta «900», «1.250» o «1 250 €» y lo envía tal cual, sin redondear al paso del deslizador |
 | `presupuesto.compra.etiqueta` | Orientativo | Etiqueta junto al importe de compra, siempre visible |
 | `presupuesto.compra.ayuda` | No hay un precio oficial de compra por zona tan completo como el del alquiler. Lo usamos solo como orientación. | |
 | `presupuesto.compra.sin_datos` | ~~Aún no tenemos precios oficiales de compra por zona, así que no podemos comprobar si entra en tu presupuesto.~~ | **Retirada** (D-227, D-234): ya hay precio en 28 municipios y una estimación en los distritos y barrios de Madrid. La sustituye `presupuesto.compra.fuente` |
-| `presupuesto.compra.fuente` | Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica por municipio y en los de más de 25.000 habitantes. En los distritos y barrios de Madrid, el precio que veas es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. Donde no hay precio, no podemos comprobar tu presupuesto. | **Nueva (D-234).** Bajo el presupuesto, con «Comprar» elegido (`buySource` en `SearchCard.tsx`) |
+| `presupuesto.compra.fuente` | Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica por municipio y en los de más de 25.000 habitantes. En los distritos y barrios de Madrid, el precio que veas es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. Donde no hay precio, no podemos comprobar tu presupuesto. | **Nueva (D-234).** Tras «¿Qué es esto?» (desde el 15 nov), con «Comprar» elegido (`buySource` en `SearchCard.tsx`) |
 | `presupuesto.sin_limite` | Sin límite de presupuesto | Opción del slider (`budget: null`) |
 | `presupuesto.slider.aria` | Presupuesto máximo | `aria-label` |
-| `presupuesto.fuera_rango.alquiler` | El alquiler tiene que estar entre 100 y 20.000 € al mes. | |
-| `presupuesto.fuera_rango.compra` | El precio de compra tiene que estar entre 10.000 y 5.000.000 €. | |
-| `presupuesto.m2` | Para unos {m2} m² (cámbialo) | **Nueva, 15 nov** (prueba con usuarios). Línea bajo el presupuesto: es un botón que abre el selector. {m2} son los m² que la API supone para el hogar con `min_floor_area_m2: null` (D-214: 61, 68, 71 y 77 m² para 1, 2, 3 y 4 o más personas). Si la persona elige otros, «Para {m2} m² (cámbialo)», sin «unos» |
-| `presupuesto.m2.etiqueta` | Metros cuadrados | Etiqueta del selector |
+| `presupuesto.fuera_rango.alquiler` | Escribe una cantidad entre 300 y 5.000 € al mes. | Bajo «Otra cantidad» si lo escrito no vale. **Cambia (15 nov, UX móvil 1).** El rango del deslizador, no el del contrato (antes «El alquiler tiene que estar entre 100 y 20.000 € al mes.», que no se enseñaba) |
+| `presupuesto.fuera_rango.compra` | Escribe una cantidad entre 50.000 y 2.000.000 €. | Igual al comprar. **Cambia (15 nov, UX móvil 1).** |
+| `presupuesto.m2` | Los precios son para un piso de unos {m2} metros cuadrados. | **Cambia (15 nov, UX móvil 1).** En «Más opciones», bajo el selector `presupuesto.m2.etiqueta`. Antes, una línea bajo el presupuesto, «Para unos {m2} m² (cámbialo)», que abría el selector (prueba con usuarios del 15 nov). Sin «unos» si la persona eligió los metros. {m2} son los que la API supone para el hogar con `min_floor_area_m2: null` (D-214: 61, 68, 71 y 77 m² para 1, 2, 3 y 4 o más personas) |
+| `presupuesto.m2.etiqueta` | Tamaño del piso | Etiqueta del selector. **Cambia (15 nov, UX móvil 1).** Antes «Metros cuadrados» |
 | `presupuesto.m2.normal` | Lo normal para tu hogar ({m2} m²) | Primera opción: vuelve a `min_floor_area_m2: null` |
 | `presupuesto.m2.opcion` | {m2} m² | De 40 a 150 m², de 5 en 5. Un enlace compartido con otro valor también lo ofrece |
-| `presupuesto.m2.ayuda` | Lo normal para tu hogar es la superficie habitual de las viviendas de hogares como el tuyo en la Comunidad de Madrid (Censo 2021): la mitad tiene menos metros y la otra mitad, más. El precio de cada zona es para estos metros. | Bajo el selector, unida con `aria-describedby`. Es la mediana del Censo, no la superficie más frecuente (revisión del PR #70) |
+| `presupuesto.m2.ayuda` | Lo normal para tu hogar es la superficie habitual de las viviendas de hogares como el tuyo en la Comunidad de Madrid (Censo 2021): la mitad tiene menos metros y la otra mitad, más. El precio de cada zona es para estos metros. | Tras «¿Qué es esto?» (desde el 15 nov), unida al selector con `aria-describedby`. Es la mediana del Censo, no la superficie más frecuente (revisión del PR #70) |
 | `presupuesto.m2.resumen` | · {m2} m² | Con la tarjeta plegada, tras el presupuesto, solo si la persona eligió los m² |
 
 ### Botón principal
 | Clave | Texto |
 |---|---|
-| `busqueda.boton` | Ver zonas que encajan |
+| `busqueda.boton` | Buscar zonas para mí (desde el 15 nov; antes «Ver zonas que encajan») |
 | `busqueda.boton.cargando` | Buscando zonas… |
 
 ### Si el buscador se apaga
@@ -361,8 +388,8 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `busqueda.pronto` | Muy pronto podrás ver qué zonas encajan contigo. Mientras, toca una zona del mapa para ver qué le falta. | En la tarjeta «Tu búsqueda», en lugar del botón. Sustituye a «Estamos terminando el cálculo del encaje…» |
-| `leyenda.pronto` | Muy pronto verás aquí qué zonas encajan contigo. | Leyenda del mapa |
+| `busqueda.pronto` | Muy pronto podrás ver qué zonas te convienen. Mientras, toca una zona del mapa para ver qué le falta. | En la tarjeta «Tu búsqueda», en lugar del botón. **Cambia (15 nov, UX móvil 1).** Antes «… qué zonas encajan contigo. …» |
+| `leyenda.pronto` | Muy pronto verás aquí qué zonas te convienen. | Leyenda del mapa. **Cambia (15 nov, UX móvil 1).** |
 
 ---
 
@@ -372,23 +399,23 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 |---|---|---|
 | `mapa.aria` | Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus 21 distritos. | `aria-label` del lienzo (D-200) |
 | `mapa.alternativa` | Ver las zonas en una lista | Enlace siempre visible para quien no use el mapa |
-| `leyenda.titulo` | Encaje con tu búsqueda | Del brief |
-| `leyenda.menos` | Encaja menos | Extremo claro |
-| `leyenda.mas` | Encaja más | Extremo violeta |
+| `leyenda.titulo` | Zonas que te convienen | También es la primera opción de «¿Qué quieres ver?». **Cambia (15 nov, UX móvil 1).** Antes «Encaje con tu búsqueda» |
+| `leyenda.menos` | Te conviene menos | Extremo claro. **Cambia (15 nov, UX móvil 1).** Antes «Encaja menos» |
+| `leyenda.mas` | Te conviene más | Extremo violeta. **Cambia (15 nov, UX móvil 1).** Antes «Encaja más» |
 | `leyenda.sin_datos` | Sin datos | Gris con borde discontinuo (`match_pct: null` nunca es 0) |
-| `leyenda.antes_de_buscar` | Haz tu búsqueda para ver qué zonas encajan contigo. | Antes del primer resultado |
+| `leyenda.antes_de_buscar` | Haz tu búsqueda para ver qué zonas te convienen. | Antes del primer resultado. **Cambia (15 nov, UX móvil 1).** También en la tarjeta de una zona antes de buscar |
 | `leyenda.cumple` | Cumple todo | Tras buscar: zonas con todas las condiciones en PASS |
 | `leyenda.no_cumple` | No cumple todo | Falla alguna condición |
 | `leyenda.zonas` | {n} zonas | Junto a cada clase. Con 1: «1 zona». **Cambia el 15 nov:** con «¿Dónde?» va la palabra del ámbito, como en la lista: «Cumple todo 78 barrios», «34 municipios», «2 pueblos» (D-238) |
 | `leyenda.ver` | ¿Qué quieres ver? | Selector del mapa (decisión de datamad-10). Opciones: «Encaje con tu búsqueda» y los nombres de las 6 filas (sección 5) |
-| `leyenda.fila.frente` | frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos. | Tras la definición de la fila elegida. Con los vecinos de gap-0.3 (D-217 §6): definitivo el 12 nov |
+| `leyenda.fila.frente` | comparado con los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos. | **Cambia (15 nov, UX móvil 1).** «frente a» pasa a «comparado con» (auditoría §4 n.º 11). Tras la definición de la fila elegida. Con los vecinos de gap-0.3 (D-217 §6): definitivo el 12 nov |
 | `leyenda.sin_calcular` | {n} zonas sin calcular todavía. | Con 1: «1 zona sin calcular todavía.» |
 | `leyenda.nivel_caido` | No hemos podido cargar {los municipios \| los distritos de Madrid}: salen sin calcular. | Con «Reintentar» |
 | `leyenda.barrios_caidos` | No hemos podido cargar los barrios de Madrid: la capital sale sin pintar. | Con «Reintentar», tras buscar con «Madrid capital» si fallan los contornos de los barrios (D-238). La siguiente búsqueda por barrios los vuelve a pedir |
 | `leyenda.lista` | Ver estas zonas en una lista | Abre `/zonas?fila=…` |
-| `mapa.aria.encaje` | Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa. | `aria-label` del mapa tras buscar |
+| `mapa.aria.encaje` | Cada zona tiene un color según lo que te conviene; la leyenda lo explica y la lista de zonas que te convienen está junto al mapa. | `aria-label` del mapa tras buscar. **Cambia (15 nov, UX móvil 1).** |
 | `mapa.aria.barrios` | Mapa de la Comunidad de Madrid por municipios, con Madrid capital dividida en sus barrios. | **Nueva, 15 nov.** Sustituye a `mapa.aria` cuando el mapa pinta los barrios de Madrid capital tras buscar con «Madrid capital». Antes decía «dividida en sus 21 distritos» y después «sale por barrios» |
-| `mapa.aria.encaje.barrios` | Cada barrio tiene el color de su encaje con tu búsqueda y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que encajan está junto al mapa. | `aria-label` del mapa tras buscar con «Madrid capital» (D-238), detrás de `mapa.aria.barrios`. **Cambia el 15 nov:** ya no empieza por «Madrid capital sale por barrios», que lo dice `mapa.aria.barrios`. Mientras no han cargado los contornos de los barrios (o si fallan), el mapa enseña los distritos sin pintar: van `mapa.aria` y nada más |
+| `mapa.aria.encaje.barrios` | Cada barrio tiene un color según lo que te conviene y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que te convienen está junto al mapa. | **Cambia (15 nov, UX móvil 1).** `aria-label` del mapa tras buscar con «Madrid capital» (D-238), detrás de `mapa.aria.barrios`. **Cambia el 15 nov:** ya no empieza por «Madrid capital sale por barrios», que lo dice `mapa.aria.barrios`. Mientras no han cargado los contornos de los barrios (o si fallan), el mapa enseña los distritos sin pintar: van `mapa.aria` y nada más |
 | `mapa.aria.fila` | Cada zona tiene el color de su estado en {fila} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica. | {fila} en minúscula. Definitivo el 12 nov, con los vecinos de gap-0.3 |
 | `mapa.aria.centros` | En el mapa salen, agrupados, {recuento en minúscula}; su lista está en «Todos los centros». | `aria-label` del mapa con una capa de centros (sección 5b) |
 | `mapa.atribucion` | Comunidad de Madrid · Ayuntamiento de Madrid · Powered by CRTM · Ministerio de Sanidad (catálogos a 31/12/2024 y 31/12/2025) · © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es | Atribución del mapa (MapLibre añade la del mapa base). «Powered by CRTM», «Ministerio de Sanidad…» y «CartoCiudad…» enlazados como en `pie.*`. Las pantallas con mapa no tienen pie: aquí van la fecha del Ministerio (aviso legal) y el Ayuntamiento (padrón por distrito). Revisión del PR #17. En escritorio se ve entera. En móvil va plegada tras el (i) (PR #22), con `mapa.atribucion.movil` a la vista |
@@ -409,8 +436,8 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 | `mapa.3d.etiqueta.parque` | Parque | **Pendiente de A** (DATA-018) |
 | `mapa.volver` | Volver al mapa de la región | |
 | `mapa.sin_webgl` | Tu navegador no puede mostrar el mapa. Puedes ver las zonas en una lista. | Con enlace a `mapa.alternativa` |
-| `movil.hoja.tirador` | Desliza hacia arriba para ver más | Hoja inferior en el móvil |
-| `movil.hoja.mapa` | Ver el mapa | Botón que pliega la hoja y deja el mapa a la vista |
+| `movil.hoja.tirador` | Toca aquí para ver más | Hoja inferior plegada en el móvil. **Cambia (15 nov, UX móvil 1).** Un toque, no un gesto (antes «Desliza hacia arriba para ver más», auditoría §4 n.º 37). La portada abre con la hoja desplegada: lo primero es la búsqueda |
+| `movil.hoja.mapa` | Ver el mapa | Botón que pliega la hoja y deja el mapa a la vista. **Cambia (15 nov, UX móvil 1).** En la portada del móvil es lo primero que se ve, sobre la frase y los ejemplos |
 | `zonas.buscar` | Busca una zona | Lista de zonas (alternativa al mapa y elección de zona en «Qué falta») |
 | `zonas.distritos` | Distritos de Madrid | Grupo de la lista |
 | `zonas.municipios` | Municipios | Grupo de la lista |
@@ -424,89 +451,91 @@ Producción tiene el buscador encendido desde el 11 nov (`NEXT_PUBLIC_FEATURE_SE
 
 ---
 
-## 4. Zonas que encajan y tarjeta de zona
+## 4. Zonas que te convienen y tarjeta de zona
 
-### Lista «Zonas que encajan»
+### Lista «Zonas que te convienen» (antes «Zonas que encajan»)
 Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va en la hoja inferior.
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `resultados.titulo` | Zonas que encajan | |
-| `resultados.de` | De {n} zonas de la Comunidad de Madrid. | Bajo `rc.varias` («Con tu búsqueda tal cual salen 32 zonas.»). {n} = `zones_evaluated` (hoy 199). Con «Toda la Comunidad» |
-| `resultados.de.madrid` | De {n} barrios de Madrid capital. | Con «Madrid capital» (D-238): {n} = 131 |
-| `resultados.de.alrededores` | De {n} municipios de los alrededores de Madrid. | {n} = 40 |
-| `resultados.de.pueblos` | De {n} pueblos de la Comunidad de Madrid. | {n} = 138 |
+| `resultados.titulo` | Zonas que te convienen | **Cambia (15 nov, UX móvil 1).** Antes «Zonas que encajan» (auditoría §4 n.º 1) |
+| `resultados.de` | Hemos mirado las {n} zonas de la Comunidad de Madrid. | Bajo `rc.varias` («Hemos encontrado 42 zonas para ti.»). {n} = `zones_evaluated` (hoy 199). Con «Toda la Comunidad». **Cambia (15 nov, UX móvil 1).** Antes «De {n} zonas de la Comunidad de Madrid.» |
+| `resultados.de.madrid` | Hemos mirado los {n} barrios de Madrid capital. | Con «Madrid capital» (D-238): {n} = 131 |
+| `resultados.de.alrededores` | Hemos mirado los {n} municipios de los alrededores de Madrid. | {n} = 40 |
+| `resultados.de.pueblos` | Hemos mirado los {n} pueblos de la Comunidad de Madrid. | {n} = 138 |
 | `resultados.barrio_fila` | {barrio} · {distrito} | Con «Madrid capital», cada fila de la lista; debajo, «Barrio de Madrid» (`zona.barrio.antetitulo`) en lugar de «Distrito de Madrid». El distrito sale del código del barrio |
 | `resultados.pueblos_sin_alquiler` | {n} de los {total} pueblos salen «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar tu presupuesto. | Bajo `resultados.de` con «Pueblos», presupuesto de alquiler y alguna zona sin datos (`zones_unknown`). Con 1: «1 de los 138 pueblos sale…». Sustituye a `rc.sin_dato` en ese bloque. Revisión del PR #58. **Cambia (D-242):** antes decía que el alquiler solo se publica en los municipios de más de 20.000 habitantes. Ejemplo real, pareja con 1.500 €: «16 de los 138 pueblos salen…» |
 | `resultados.primeras` | Ver las {n} primeras | Se ven 5 y el botón abre hasta 10 |
 | `resultados.menos` | Ver menos | |
 | `resultados.resto` | Y {n} zonas más en el mapa. | Con 1: «Y 1 zona más en el mapa.» Con «¿Dónde?» va la palabra del ámbito: «Y 3 barrios más en el mapa.» (D-238) |
-| `resultados.barrio` | Barrio que más encaja: {barrio} ({pct} %) | Segunda línea de cada distrito de Madrid en la lista, bajo su nombre. Sale del mismo cálculo que «Los barrios que mejor encajan» (D-232, `fit-0.7`). Con empate: «Barrios que más encajan: {a}, {b} y {c} ({pct} %)»; por ejemplo, San Blas-Canillejas con el caso de ejemplo, «Barrios que más encajan: Canillejas, Arcos y Simancas (97 %)» (`evidence/gate-06/2026-11-13-deploy/deploy-22-barrio.md`). Si ningún barrio cumple todo, no va la línea. Los municipios no la llevan. En pantalla nunca «ranking» ni «el mejor barrio»: es el que más se parece a lo que buscas, no una nota del barrio. Prueba con usuarios (14 nov). **Pendiente de A** (que `/search` lo devuelva, o una llamada por distrito) **y de B** |
+| `resultados.barrio` | Barrio que más te conviene: {barrio} ({pct} %) | Segunda línea de cada distrito de Madrid en la lista, bajo su nombre. Sale del mismo cálculo que «Los barrios que más te convienen» (D-232). Con empate: «Barrios que más te convienen: {a}, {b} y {c} ({pct} %)», y con más de tres, «{a}, {b} y {n} más». Con `fit-0.9` (API del 15 nov, lote 4), San Blas-Canillejas con el caso de ejemplo tiene cinco barrios empatados al 89 %: Arcos, Canillejas, Amposta, Simancas y Rosas. Si ningún barrio cumple todo, no va la línea. Los municipios no la llevan. En pantalla nunca «ranking» ni «el mejor barrio»: es el que más se parece a lo que buscas, no una nota del barrio. Prueba con usuarios (14 nov). **Pendiente de A** (que `/search` lo devuelva, o una llamada por distrito) **y de B** |
 | `zona.precio.compra` | ≈ {importe} € | **Nueva (D-234, prueba con usuarios del 14 nov: «si tuviera un precio aproximado por zona, se entendería mejor»).** Junto al % de cada fila de «Zonas que encajan», «Casi encajan» y «Los barrios que mejor encajan», al comprar. {importe} = `estimated_cost_eur` (precio para los m² del hogar, el mismo del hecho de la tarjeta). Sin precio, no va nada: el aviso `rc.sin_dato.compra` ya dice por qué |
 | `zona.precio.alquiler` | ≈ {importe} €/mes | **Nueva (D-234).** Igual, al alquilar o sin límite de presupuesto (alquiler mensual de los m² del hogar) |
 | `zona.precio.m2` | por {m2} m² | **Nueva, 15 nov.** Bajo la cifra de cada fila y detrás de la de la tarjeta: «Alquiler ≈ 994 €/mes por 60 m²». {m2} son los de la búsqueda (`presupuesto.m2`), los mismos con que la API calcula `estimated_cost_eur` y su hecho de coste |
 | `zona.precio.aria.compra` | Comprar: unos {importe} € por {m2} m² | **Nueva (D-234).** Lo que lee un lector de pantalla en lugar de «≈ {importe} €». En alquiler, `zona.precio.aria.alquiler`: «Alquiler: unos {importe} € al mes por {m2} m²». **Cambia el 15 nov:** suma los m² |
 | `zona.precio.fiabilidad` | {Dato aproximado} | **Nueva (D-234).** Bajo la cifra, en pequeño, cuando no es un dato fiable: las palabras de la sección 6 con la confianza del precio (`estimated_cost_confidence`). El precio estimado de los distritos y barrios de Madrid (0,5) sale «Dato aproximado»; un alquiler de barrio con pocos datos, «Dato poco seguro». Con un dato fiable no va nada |
-| `resultados.casi.ayuda` | Cumplen todo menos una cosa. | Bajo `zona.cerca_de_encajar.titulo` («Casi encajan»). Antes, «Fallan en una sola cosa.» |
-| `resultados.cambiada` | Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día. | Los resultados son de la búsqueda anterior |
-| `resultados.empate` | Encajan {n} zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden. | Sobre la lista, solo si más de 10 zonas que cumplen todo tienen el mismo % que la primera (D-239). {n} = esas zonas. Con mucho presupuesto y nada marcado todas llegan al 100 %; el orden entre ellas ya no es alfabético: primero las que tienen más servicios a un paseo. Con «Madrid capital», «Encajan 106 barrios igual de bien…» (D-238) |
-| `resultados.banda.muy_bien` | Encaja muy bien | **Nueva (F5 de `fit-0.9`).** Con 90 % o más. En cada fila de «Zonas que encajan» y de «Los barrios que mejor encajan», y en la tarjeta de zona, la banda va en pequeño encima del número, dentro de la misma pastilla («Encaja muy bien» / «94 %»). En una línea y para el lector de pantalla: «Encaja muy bien · 94 %». La banda es `match_band` de la API (`fit-0.9`, D-243 §4); con una API sin el campo (o con `null`), sale del % con los mismos umbrales (`lib/match.ts`). Solo en zonas que cumplen todo: en «Casi encajan» y en las que no cumplen, la API manda `null` y la web no la deriva (`passes_all`) |
-| `resultados.banda.bien` | Encaja bien | **Nueva.** De 75 a 89 %. Una zona con FALTA en algo que la persona marca no pasa de aquí (89 %, `hecho.limite.falta`) |
-| `resultados.banda.regular` | Encaja regular | **Nueva.** De 60 a 74 %. Con más de 1 h de trayecto 3 días o más, una zona no pasa de aquí (74 %, `hecho.limite.trayecto`) |
-| `resultados.banda.poco` | Encaja poco | **Nueva.** Por debajo del 60 %. Sin % (sin datos) no hay banda: nunca «poco». Los umbrales (90, 75 y 60) no cambian sin avisar a A y a B |
-| `resultados.empate.grupo` | Empatan al {pct} % | **Nueva (F5).** Encima de las filas a la vista con el mismo %, que además quedan unidas por una barra a la izquierda; también en «Los barrios que mejor encajan». Si el empate sigue más allá de las filas a la vista, cuenta todas las zonas empatadas, también sobre una sola fila con la lista plegada: «Empatan al 92 % (3 zonas)», «Empatan al 100 % (45 zonas)». Cada fila empatada lo dice al lector de pantalla tras su %: «…, empata con Latina» |
-| `zona.empate` | Empata al {pct} % con {zonas}. | **Nueva (F5).** En la tarjeta, bajo `zona.puesto`. {zonas}: hasta tres nombres, en el orden de la lista («Moratalaz, Ciudad Lineal y Puente de Vallecas»); con más, «12 zonas más» con la palabra del ámbito («12 barrios más»). Solo zonas que cumplen todo |
-| `resultados.casi.presupuesto` | Se pasa ≈ {importe} € de tu presupuesto | **Nueva (F5).** En «Casi encajan» (lista, barrios y tarjeta), en lugar del %. {importe} es `value − threshold` de la condición del presupuesto, en miles de euros al comprar y en decenas al alquilar: «Se pasa ≈ 11.000 € de tu presupuesto» (Tetuán, comprar con 400.000 €) o «Se pasa ≈ 90 €/mes de tu presupuesto» (Chamartín, el caso de ejemplo). En voz alta, «unos» en lugar de «≈» |
-| `resultados.casi.trayecto` | Tarda ≈ {n} min más de lo que pides | **Nueva (F5).** Con el límite del trayecto. Por debajo de 1 min, «Tarda menos de 1 min más de lo que pides»; por encima de 2 h, «Tarda más de 2 h; pides {límite} min como mucho». Con dos lugares con límite, añade «hasta {lugar}». Sustituye a `trabajo.tarda` |
-| `resultados.casi.a_pie` | {Servicio}: ≈ {n} min más andando de lo que pides | **Nueva (F5).** Con «Lo quiero a un paseo» imprescindible: «Colegio con primaria: ≈ 26 min más andando de lo que pides» (Rejas). A más de 60 min andando, que ya no es un paseo, sin minutos: «{Servicio} a más de 1 h andando; pides {n} min como mucho» |
+| `resultados.casi.ayuda` | Les falta una sola cosa de lo que pides. | Bajo `zona.cerca_de_encajar.titulo` («Casi valen»). **Cambia (15 nov, UX móvil 1).** Antes «Cumplen todo menos una cosa.» y, antes aún, «Fallan en una sola cosa.» |
+| `resultados.cambiada` | Has cambiado tu búsqueda. Pulsa «Buscar zonas para mí» para ponerla al día. | Los resultados son de la búsqueda anterior. **Cambia (15 nov, UX móvil 1).** |
+| `resultados.empate` | Hay {n} zonas igual de buenas: marca qué quieres tener cerca o dónde trabajas para afinar el orden. | Sobre la lista, solo si más de 10 zonas que cumplen todo tienen el mismo % que la primera (D-239). {n} = esas zonas. Con mucho presupuesto y nada marcado todas llegan al 100 %; el orden entre ellas ya no es alfabético: primero la que tiene **más cerca** los servicios del día a día (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte), los haya marcado o no. Con `fit-0.9` cuenta cada minuto andando, no cuántos servicios hay (`everyday_walk`, D-243). Con «Madrid capital», «Hay 106 barrios igual de buenos…» (D-238). **Cambia (15 nov, UX móvil 1).** Antes «Encajan {n} zonas igual de bien: marca qué te importa…» |
+| `resultados.banda.muy_bien` | Muy buena opción | Con 90 % o más. **Cambia (15 nov, UX móvil 1).** Antes «Encaja muy bien» (auditoría §4 n.º 3; palabras del orquestador). En cada fila de «Zonas que te convienen» y de «Los barrios que más te convienen», y en la tarjeta, la banda va encima del número, dentro de la misma pastilla («Muy buena opción» / «94 %»); en una fila, en dos líneas cortas si hace falta. En una línea y para el lector de pantalla: «Muy buena opción · 94 %». La banda es `match_band` de la API (`fit-0.9`, D-243 §4), con los valores de siempre (`muy_bien`, `bien`, `regular`, `poco`); con una API sin el campo (o con `null`), sale del % con los mismos umbrales (`lib/match.ts`). Solo en zonas que cumplen todo: en «Casi valen» y en las que no cumplen, la API manda `null` y la web no la deriva (`passes_all`) |
+| `resultados.banda.bien` | Buena opción | De 75 a 89 %. Una zona con FALTA en algo que la persona marca no pasa de aquí (89 %, `hecho.limite.falta`). **Cambia (15 nov, UX móvil 1).** Antes «Encaja bien» |
+| `resultados.banda.regular` | Opción regular | De 60 a 74 %. Con más de 1 h de trayecto 3 días o más, una zona no pasa de aquí (74 %, `hecho.limite.trayecto`). **Cambia (15 nov, UX móvil 1).** Antes «Encaja regular» |
+| `resultados.banda.poco` | Poco recomendable | Por debajo del 60 %. Sin % (sin datos) no hay banda: nunca «Poco recomendable». Los umbrales (90, 75 y 60) no cambian sin avisar a A y a B. **Cambia (15 nov, UX móvil 1).** Antes «Encaja poco» |
+| `resultados.empate.grupo` | Empatan al {pct} % | **Nueva (F5).** Encima de las filas a la vista con el mismo %, que además quedan unidas por una barra a la izquierda; también en «Los barrios que mejor encajan». Si el empate sigue más allá de las filas a la vista, cuenta todas las zonas empatadas, también sobre una sola fila con la lista plegada: «Empatan al 92 % (3 zonas)», «Empatan al 100 % (45 zonas)». Cada fila empatada lo dice al lector de pantalla tras su %: «…, empata con Latina». Sigue igual el 15 nov: la entrega 2 de la auditoría lo quita de la lista (§6) |
+| `zona.empate` | Igual de buena que {zonas} ({pct} %). | En la tarjeta, bajo `zona.puesto`. {zonas}: hasta tres nombres, en el orden de la lista («Moratalaz, Ciudad Lineal y Puente de Vallecas»); con más, «12 zonas más» con la palabra del ámbito («12 barrios más»). Un barrio, municipio o pueblo: «Igual de bueno que…». Solo zonas que cumplen todo. **Cambia (15 nov, UX móvil 1).** Antes «Empata al {pct} % con {zonas}.» (auditoría §4 n.º 4) |
+| `resultados.casi.presupuesto` | Se pasa unos {importe} € de tu presupuesto | **Nueva (F5).** En «Casi valen» (lista, barrios y tarjeta), en lugar del %. {importe} es `value − threshold` de la condición del presupuesto, en miles de euros al comprar y en decenas al alquilar: «Se pasa unos 11.000 € de tu presupuesto» (Tetuán, comprar con 400.000 €) o «Se pasa unos 90 € al mes de tu presupuesto» (Chamartín, el caso de ejemplo, `fit-0.9`). **Cambia (15 nov, UX móvil 1).** «unos» también en pantalla, no solo en voz alta (antes «≈», y «€/mes») |
+| `resultados.casi.trayecto` | Tarda unos {n} min más de lo que pides | **Nueva (F5).** Con el límite del trayecto. Por debajo de 1 min, «Tarda menos de 1 min más de lo que pides»; por encima de 2 h, «Tarda más de 2 h; pides {límite} min como mucho». Con dos lugares con límite, añade «hasta {lugar}». Sustituye a `trabajo.tarda`. **Cambia (15 nov, UX móvil 1).** «unos», no «≈» |
+| `resultados.casi.a_pie` | {Servicio}: unos {n} min más andando de lo que pides | **Nueva (F5).** Con «Lo quiero a un paseo» imprescindible: «Colegio con primaria: unos 26 min más andando de lo que pides» (Rejas, `fit-0.9`). A más de 60 min andando, que ya no es un paseo, sin minutos: «{Servicio} a más de 1 h andando; pides {n} min como mucho» |
 | `resultados.casi.varias` | {lo que falta} y otra condición | **Nueva (F5).** Si falla más de una, la primera (en el orden de la API: presupuesto, servicios, trayectos) y «y otra condición» o «y {n} condiciones más». La tarjeta las dice todas, separadas por « · »: primero las que tienen cifras y después las que van por su nombre, con un solo «No cumple:» («No cumple: A · B»). Sin cifras (falta `value` o `threshold`), la condición por su nombre, como antes: «No cumple: {condición}» (`zona.cerca_de_encajar.motivo`). Nunca se inventa una cifra |
-| `resultados.aviso_2024` | Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. | **Nueva (F5, opción b).** Una vez, bajo `resultados.de`, cuando los precios de la lista son alquileres (alquilar o sin límite de presupuesto). Al comprar no sale |
-| `resultados.sin_lugar` | ¿Trabajas fuera de casa? [Dinos dónde] o elige «Madrid capital» en [«¿Dónde?»] y afinamos el orden. | **Nueva (15 nov, orquestador).** Bajo `resultados.de`, solo con «Toda la Comunidad» y sin ningún lugar (ni trabajo ni familia), y si no sale ya `resultados.empate`, que también lo pide. Sin un lugar, la fórmula no sabe que quieres vivir cerca de Madrid y pueden salir arriba pueblos pequeños bien dotados (con `fit-0.9`, Titulcia 2.ª para una pareja con un bebé). «Dinos dónde» y «¿Dónde?» son botones con aspecto de enlace: llevan a «Trabajo en» o a «¿Dónde?» y ponen el foco en el campo |
+| `resultados.aviso_2024` | Precio orientativo: hoy puede ser algo más caro. | **Cambia (15 nov, UX móvil 1).** Antes «Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más.» (auditoría §4 n.º 17); de dónde sale el precio lo dice «Cómo lo calculamos». **Nueva (F5, opción b).** Una vez, bajo `resultados.de`, cuando los precios de la lista son alquileres (alquilar o sin límite de presupuesto). Al comprar no sale |
+| `resultados.sin_lugar` | ¿Trabajas fuera de casa? [Dinos dónde] o elige «Madrid capital» en [«¿Dónde?»] y afinamos el orden. | **Nueva (15 nov, orquestador).** Bajo `resultados.de`, solo con «Toda la Comunidad» y sin ningún lugar (ni trabajo ni familia), y si no sale ya `resultados.empate`, que también lo pide. **Desde el 15 nov, nunca con «Somos mayores»** (D-244): a una pareja jubilada le pedía un lugar que no tiene (auditoría §3 C4). Si «Trabajo en» está plegado, «Dinos dónde» abre «Más opciones». Sin un lugar, la fórmula no sabe que quieres vivir cerca de Madrid y pueden salir arriba pueblos pequeños bien dotados (con `fit-0.9`, Titulcia 2.ª para una pareja con un bebé). «Dinos dónde» y «¿Dónde?» son botones con aspecto de enlace: llevan a «Trabajo en» o a «¿Dónde?» y ponen el foco en el campo |
 
 ### Tarjeta de zona
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `zona.encaje` | {banda} / {pct} % | Chip grande. Nunca «/100». **Cambia (F5 de `fit-0.9`):** la banda (`resultados.banda.*`) va en pequeño encima del número, en lugar de «de encaje». Solo en zonas que cumplen todo: una zona de «Casi encajan» o que no cumple dice lo que le falta (`resultados.casi.*`), no su % |
-| `zona.encaje.aria` | Esta zona {banda en minúscula} con tu búsqueda: {pct} % | **Cambia (F5).** «Esta zona encaja muy bien con tu búsqueda: 94 %». Antes: «Esta zona encaja en un {pct} % con tu búsqueda» |
-| `zona.precio.aviso_2024` | Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. | **Nueva (F5, opción b).** En la tarjeta, en su propia línea bajo el alquiler (y su rango). Al comprar no sale. Como ya lo dice aquí, el hecho del alquiler de la API se enseña sin su «; un anuncio de hoy puede pedir más» (`factText` en `lib/fit.ts`) |
-| `zona.precio.rango` | La mitad de los contratos, entre {p25} y {p75} €/mes<br>{fuente} | **Nueva (D-242).** En la tarjeta de zona, en dos líneas bajo `zona.precio.cabecera.alquiler` (y su fiabilidad, que va en su propia línea desde el PR #70): primero el rango y debajo, más pequeña, la fuente. Solo cuando el alquiler es la referencia del Ministerio de Vivienda (`estimated_cost_range`). {p25} y {p75} son los percentiles 25 y 75 de los alquileres de la zona, llevados a contrato nuevo con el mismo factor de la Agencia Tributaria y para los m² del hogar, en decenas de euros; el cociente que acerca la mediana a la media de la Comunidad no los mueve (revisión R-02 del PR #71). Entre la cifra y «€/mes» va un espacio que no se parte. {fuente} viaja con el dato: «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024» y, en un barrio, «…; rango: media de sus {n} secciones censales». Ejemplo real, Casarrubuelos con 68 m²: «Alquiler ≈ 571 €/mes», «Dato aproximado», «La mitad de los contratos, entre 500 y 790 €/mes» y «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024». En las filas no va: solo «≈ 571 €/mes» con `zona.precio.fiabilidad` |
-| `zona.precio.rango.aria` | La mitad de los contratos están entre {p25} y {p75} € al mes, según {fuente} | **Nueva (D-242).** Lo que lee un lector de pantalla en lugar de la línea anterior |
-| `zona.precio.cabecera.compra` | Comprar ≈ {importe} € | **Nueva (D-234).** Bajo el nombre de la zona, con «· {Dato aproximado}» si no es fiable (`zona.precio.fiabilidad`). Para cualquier zona evaluada, también la que no sale en la lista (`all_zones[].estimated_cost_eur`). En alquiler, `zona.precio.cabecera.alquiler`: «Alquiler ≈ {importe} €/mes». Sin precio, no va nada |
-| `zona.encaje.ayuda` | Cuánto se parece esta zona a lo que buscas. No es una nota de la zona. | Al tocar «?» |
+| `zona.encaje` | {banda} / {pct} % | Chip grande. Nunca «/100». La banda (`resultados.banda.*`) va en pequeño encima del número (F5). Solo en zonas que cumplen todo: una zona de «Casi valen» o que no cumple dice lo que le falta (`resultados.casi.*`), no su %. **Cambia (15 nov, UX móvil 1).** Las palabras de la banda («Muy buena opción») |
+| `zona.encaje.aria` | {Banda} para tu búsqueda: {pct} % | «Muy buena opción para tu búsqueda: 94 %». **Cambia (15 nov, UX móvil 1).** Antes «Esta zona encaja muy bien con tu búsqueda: 94 %» |
+| `zona.precio.aviso_2024` | Precio orientativo: hoy puede ser algo más caro. | **Cambia (15 nov, UX móvil 1).** El mismo texto que `resultados.aviso_2024`. **Nueva (F5, opción b).** En la tarjeta, en su propia línea bajo el alquiler (y su rango). Al comprar no sale. Como ya lo dice aquí, el hecho del alquiler de la API se enseña sin su «; un anuncio de hoy puede pedir más» (`factText` en `lib/fit.ts`) |
+| `zona.precio.rango` | Lo normal: entre {p25} y {p75} € al mes<br>{fuente} | **Nueva (D-242).** **Cambia (15 nov, UX móvil 1).** Antes «La mitad de los contratos, entre {p25} y {p75} €/mes» (auditoría §4 n.º 18). En la tarjeta de zona, en dos líneas bajo `zona.precio.cabecera.alquiler` (y su fiabilidad, en su propia línea): primero el rango y debajo, más pequeña, la fuente. Solo cuando el alquiler es la referencia del Ministerio de Vivienda (`estimated_cost_range`). {p25} y {p75} son los percentiles 25 y 75 de los alquileres de la zona, llevados a contrato nuevo con el mismo factor de la Agencia Tributaria y para los m² del hogar, en decenas de euros; el cociente que acerca la mediana a la media de la Comunidad no los mueve (revisión R-02 del PR #71). Entre la cifra y «€» va un espacio que no se parte. {fuente} viaja con el dato: «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024» y, en un barrio, «…; rango: media de sus {n} secciones censales». Ejemplo real, Casarrubuelos con 68 m²: «Alquiler: unos 571 € al mes», «Dato aproximado», «Lo normal: entre 500 y 790 € al mes» y la fuente. En las filas no va: solo «≈ 571 €/mes» con `zona.precio.fiabilidad` |
+| `zona.precio.rango.aria` | Lo normal: entre {p25} y {p75} € al mes, según {fuente} | **Nueva (D-242).** Lo que lee un lector de pantalla en lugar de la línea anterior. **Cambia (15 nov, UX móvil 1).** |
+| `zona.precio.cabecera.compra` | Comprar: unos {importe} € | **Nueva (D-234).** Bajo el nombre de la zona, con «Dato aproximado» si no es fiable (`zona.precio.fiabilidad`). Para cualquier zona evaluada, también la que no sale en la lista (`all_zones[].estimated_cost_eur`). En alquiler, `zona.precio.cabecera.alquiler`: «Alquiler: unos {importe} € al mes». Sin precio, no va nada. **Cambia (15 nov, UX móvil 1).** «unos» y «al mes» en lugar de «≈» y «/mes» |
+| `zona.encaje.ayuda` | Cuánto se parece esta zona a lo que buscas. No es una nota de la zona. | **Cambia (15 nov, UX móvil 1).** Tras «¿Qué es el %?» (`zona.encaje.que_es`), bajo el precio; antes, un `title` sobre el %, que en el móvil no se veía |
+| `zona.encaje.que_es` | ¿Qué es el %? | **Nueva (15 nov, UX móvil 1).** Como `ayuda.que_es`, solo con el % a la vista |
 | `hecho.limite.mitad` | Tardas {duración} o más en llegar a {lugar}: el encaje se queda en la mitad | **Nueva (D-243), de la API.** Trayecto de 3 días o más a la semana que tarda 3 veces lo que se pide o más: 1 h 30 con los 30 min de siempre; con «como mucho 45 min», «2 h 15». El encaje se multiplica por 0,5. Ejemplo real, el estudiante con 500 €: «Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad» (Pinilla del Valle, 32 %). Icono del trayecto |
 | `hecho.limite.no_llega` | No llegas a {lugar} a las 9:00 en transporte público: el encaje se queda en la mitad | **Nueva (D-243), de la API.** Lo mismo cuando con los horarios publicados no se llega a las 9:00 |
-| `hecho.limite.falta` | Faltan {lista}: como mucho 89 % | **Nueva (D-243), de la API.** «Qué falta» dice FALTA en un servicio que la persona marca («Me importa» o «Lo quiero a un paseo»), y la zona habría salido por encima: se queda en 89 %, nunca «Encaja muy bien». {lista} con `fila.lista.*` («escuelas infantiles», «centros de salud y colegios»). En un barrio, «Faltan escuelas infantiles en Puente de Vallecas: como mucho 89 %»: es el «Qué falta» de su distrito. Icono del servicio |
-| `hecho.limite.trayecto` | Más de {duración} de trayecto hasta {lugar}: como mucho 74 % | **Nueva (D-243), de la API.** Trayecto de 3 días o más a la semana de más del doble de lo que se pide (1 h con los 30 min de siempre; 1 h 30 con «como mucho 45 min»): la zona se queda en 74 %, nunca «Encaja bien». Icono del trayecto |
+| `hecho.limite.falta` | Faltan {lista}: como mucho 89 % | **Nueva (D-243), de la API.** «Qué falta» dice FALTA en un servicio que la persona marca («Me importa» o «Lo quiero a un paseo»), y la zona habría salido por encima: se queda en 89 %, nunca «Muy buena opción». {lista} con `fila.lista.*` («escuelas infantiles», «centros de salud y colegios»). En un barrio, «Faltan escuelas infantiles en Puente de Vallecas: como mucho 89 %»: es el «Qué falta» de su distrito. Icono del servicio |
+| `hecho.limite.trayecto` | Más de {duración} de trayecto hasta {lugar}: como mucho 74 % | **Nueva (D-243), de la API.** Trayecto de 3 días o más a la semana de más del doble de lo que se pide (1 h con los 30 min de siempre; 1 h 30 con «como mucho 45 min»): la zona se queda en 74 %, nunca «Buena opción». Icono del trayecto |
 | `hecho.ocio` | Ocio a pie: bares y cafeterías a unos {n} min, restaurantes a unos {n} min, cultura a unos {n} min | Hecho de la API (`fit-0.8`, D-236) cuando la persona marca «Ocio»: un solo hecho con las casillas marcadas, en su orden. Ejemplo real, Latina con el caso del ejemplo más ocio: «Ocio a pie: bares y cafeterías a unos 3 min, restaurantes a unos 4 min, cultura a unos 11 min». Icono `Wine`. Un grupo sin dato sale «…: sin datos» y no convierte el hecho en punto débil; a más de una hora, «a más de 60 min» |
 | `hecho.ocio.sin_datos` | Ocio: sin datos de distancia a pie en esta zona | Si no hay dato de ninguna casilla |
 | `condicion.ocio` | Bares y cafeterías a {n} min andando como mucho · Restaurantes a… · Gimnasios y deporte a… · Cultura a… | Condición de la API por cada casilla con «Imprescindible». Explicación: «A unos 3 min andando de un bar o una cafetería (lo que tarda la mitad de la zona)». En el Reality Check, las casillas se relajan juntas: «+5 min a pie hasta el ocio» y, al tope, «Ocio cerca como preferencia, no como requisito» |
-| `encaje.aviso_justo` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de {lista}. | Bajo el % de la tarjeta, si alguna fila de «Qué falta» sale JUSTO y ninguna FALTA. Ejemplo real, Latina, la 1.ª del caso de ejemplo con `fit-0.6` (98 %): «… aquí van justos de escuelas infantiles y centros de salud.» (`GET /api/v1/gaps/distrito/2807910`, 12 nov). Las filas, con `fila.lista.*`. No cuentan las filas de zona muy pequeña para comparar. Fase de mejora, **pendiente de B** |
-| `encaje.aviso_falta` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan {lista}. | Si alguna fila sale FALTA y ninguna JUSTO. Ejemplo: Puente de Vallecas, «… aquí faltan escuelas infantiles.» |
-| `encaje.aviso_falta_justo` | Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan {lista_falta} y van justos de {lista_justo}. | Si hay filas FALTA y JUSTO. Si todas salen CUBIERTO o SIN DATOS, no va ninguna línea |
+| `encaje.aviso_justo` | Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí van justos de {lista}. | Bajo el % de la tarjeta, si alguna fila de «Qué falta» sale JUSTO y ninguna FALTA. Ejemplo real, Latina, la 2.ª del caso de ejemplo con `fit-0.9` (94 %): sus filas de escuelas infantiles y de centros de salud salen JUSTO (`GET /api/v1/gaps/distrito/2807910`, 15 nov). Como la búsqueda encontró el centro de salud a unos 10 min, esa fila la explica `zona.cerca_pocas` y la línea dice «… aquí van justos de escuelas infantiles.» **Cambia (15 nov, UX móvil 1).** Antes «Encaja con lo que pides. Aun así, frente a municipios parecidos, …». Las filas, con `fila.lista.*`. No cuentan las filas de zona muy pequeña para comparar. Fase de mejora, **pendiente de B** |
+| `encaje.aviso_falta` | Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan {lista}. | Si alguna fila sale FALTA y ninguna JUSTO. Ejemplo: Puente de Vallecas, «… aquí faltan escuelas infantiles.» |
+| `encaje.aviso_falta_justo` | Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan {lista_falta} y van justos de {lista_justo}. | Si hay filas FALTA y JUSTO. Si todas salen CUBIERTO o SIN DATOS, no va ninguna línea |
 | `fila.lista.escuela_infantil` | escuelas infantiles | Nombres de fila dentro de una frase, en minúscula. Se unen como «a», «a y b», «a, b y c» |
 | `fila.lista.colegio` | colegios | |
 | `fila.lista.centro_salud` | centros de salud | |
 | `fila.lista.mayores` | centros de mayores | |
 | `fila.lista.farmacia` | farmacias | |
 | `fila.lista.vivienda` | viviendas grandes para familias | |
-| `zona.puesto` | La {n}.ª que más encaja | Posición (`rank`). Con «Madrid capital», «Alrededores» o «Pueblos» la zona es un barrio, municipio o pueblo: «El {n}.º que más encaja» (D-238) |
+| `zona.puesto` | La {n}.ª que más te conviene | Posición (`rank`). Con «Madrid capital», «Alrededores» o «Pueblos» la zona es un barrio, municipio o pueblo: «El {n}.º que más te conviene» (D-238). **Cambia (15 nov, UX móvil 1).** Antes «La {n}.ª que más encaja» |
 | `zona.hechos.titulo` | Lo que tienes aquí | Encima de los 3–5 hechos (`facts`) |
-| `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6 |
+| `zona.hecho.confianza` | {nivel} | Junto a cada hecho, con los niveles de la sección 6. Desde el 15 nov, qué quiere decir cada nivel va tras `confianza.que_es` («¿Qué quiere decir «Dato fiable»?»), bajo los hechos, solo con los niveles que salen; antes, un `title` |
 | `hecho.paradas` | Parada de autobús a unos {n} min andando · Metro o Cercanías a unos {m} min | Texto del hecho de la API. Sustituye a «Parada de transporte público a unos {n} min andando». Prueba con usuarios (14 nov): quien va en autobús quería ver sus paradas. «Metro» incluye Metro Ligero. Los minutos, con el método de siempre: lo que tarda la mitad de la zona a 4 km/h. En producción desde el 14 nov (D-233 §2, `transit_walk_text`; despliegue de `ad4a8f2` y sync): Latina, «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min» (`evidence/gate-06/2026-11-14-deploy/deploy-27-ad4a8f2-d233.md`). La nota del transporte no cambia |
 | `hecho.paradas.un_modo` | Parada de autobús a unos {n} min andando | Como quedó en D-233 §2: si un tipo no tiene minutos o queda a más de 60 min andando, se deja fuera y sale solo el otro («Metro o Cercanías a unos {m} min andando» si falta el autobús). Sin ninguno, el texto de siempre. Ejemplo: Navacerrada, autobús a 6 min y metro a 93 → solo el autobús. Sustituye a la propuesta `hecho.paradas.sin_tren` («Sin metro ni Cercanías a un paseo»), que no se hizo. En producción desde el 14 nov |
-| `zona.coste.compra` | Precio estimado: unos {importe} € (orientativo) | Sin usar hoy: con compra no hay coste (D-214, punto 5). El alquiler llega como hecho de la API, con la cifra, los m² y el aviso («Alquiler medio ≈ 1.075 €/mes por 77 m² (14,0 €/m², media de los contratos vigentes; uno nuevo suele costar más)»), y no lleva clave aquí |
+| `zona.coste.compra` | Precio estimado: unos {importe} € (orientativo) | Sin usar hoy: con compra no hay coste (D-214, punto 5). El alquiler llega como hecho de la API, con la cifra, los m² y el aviso (con `fit-0.9`, Latina en el caso de ejemplo: «Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)»), y no lleva clave aquí |
 | `zona.coste.sin_datos` | Precio: sin datos en esta zona | Sin usar hoy, como `zona.coste.compra` |
 | `zona.no_cumple` | No cumple todo lo que pides. | Si la API no nombra la condición que falla |
 | `zona.no_sabemos` | No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno. | Zona con alguna condición `UNKNOWN` |
-| `zona.encaje.antiguo` | Este encaje es de tu búsqueda anterior. | Tarjeta abierta tras cambiar la búsqueda (`resultados.cambiada`) |
-| `zona.falta.titulo` | Qué falta aquí | Mini lista de 3 filas (`gap_highlights`) |
-| `zona.falta.ayuda` | Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. | **Nueva, 15 nov** (prueba con usuarios). Bajo `zona.falta.titulo`, siempre. «Me importa» y «Lo quiero a un paseo» miden minutos andando; «Qué falta», si alcanza para todos frente a zonas parecidas (2SFCA, D-217) |
-| `zona.cerca_pocas` | {Servicio} a unos {n} min andando, pero {hay pocas para tantos …}: por eso sale {FALTA \| JUSTO}. | **Nueva, 15 nov.** En «Qué falta aquí», encima de las filas, cuando la búsqueda encontró cerca un servicio (una condición de «Lo quiero a un paseo» que cumple o un hecho a pie de «Lo que tienes aquí»), a 15 min andando como mucho, que es lo que mide la fila (`fila.mide.*`), y su fila sale FALTA o JUSTO. Esa fila ya no se repite en `encaje.aviso_*` (revisión del PR #70): si era la única, la línea de aviso no sale. Ejemplo real, Puente de Vallecas con escuela infantil a 10 min como mucho: «Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.». Las palabras de cada fila siguen a `fila.mide.*`: escuelas infantiles «hay pocas / van justas para tantos niños de 0 a 4 años» (nadie publica sus plazas), colegios «hay pocas aulas / las aulas van justas para tantos niños de 5 a 14 años», centros de salud «hay pocos / van justos para tanta gente», mayores «hay pocas plazas / las plazas van justas para tantas personas mayores», farmacias «hay pocas / van justas para tanta gente». En la tarjeta de un barrio, «pero en {distrito} …». No sale en filas «No comparable» ni «Junto con sus vecinos»: ese estado no es el de la zona sola. Solo texto: la fórmula no cambia (se revisa el 17-18 nov) |
+| `zona.encaje.antiguo` | Esto es de tu búsqueda anterior. | Tarjeta abierta tras cambiar la búsqueda (`resultados.cambiada`). **Cambia (15 nov, UX móvil 1).** Antes «Este encaje es de tu búsqueda anterior.» |
+| `zona.falta.titulo` | Lo que le falta a esta zona | Mini lista de 3 filas (`gap_highlights`). **Cambia (15 nov, UX móvil 1).** Antes «Qué falta aquí» (auditoría §4 n.º 9). La pestaña sigue llamándose «Qué falta» |
+| `zona.falta.estados` | FALTA: hay claramente menos que en zonas parecidas. · JUSTO: hay algo menos que en zonas parecidas. · CUBIERTO: hay lo mismo o más que en zonas parecidas. · SIN DATOS: no tenemos el dato; no quiere decir que no haya. · No comparable: vive tan poca gente que no se puede comparar. · Junto con sus vecinos: es un pueblo pequeño: lo comparamos junto con los de al lado. | **Nueva (15 nov, UX móvil 1).** Bajo las filas de la tarjeta, una línea por cada etiqueta que sale en ellas (`GAP_STATUS[*].short`, `SMALL_ZONE.short`, `GROUP.short` en `lib/gaps.ts`). Antes, el significado solo estaba en un `title` (auditoría §3 A5) |
+| `zona.falta.ayuda` | Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona. | Bajo `zona.falta.titulo`, siempre. «¿Qué quieres tener cerca?» y «Lo quiero a un paseo» miden minutos andando; «Qué falta», si alcanza para todos frente a zonas parecidas (2SFCA, D-217). **Cambia (15 nov, UX móvil 1).** Antes «Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.» (auditoría §4 n.º 31) |
+| `zona.cerca_pocas` | {Servicio} a unos {n} min andando, pero {hay pocas para tantos …}: por eso sale {FALTA \| JUSTO}. | **Nueva, 15 nov.** En «Qué falta aquí», encima de las filas, cuando la búsqueda encontró cerca un servicio (una condición de «Lo quiero a un paseo» que cumple o un hecho a pie de «Lo que tienes aquí»), a 15 min andando como mucho, que es lo que mide la fila (`fila.mide.*`), y su fila sale FALTA o JUSTO. Esa fila ya no se repite en `encaje.aviso_*` (revisión del PR #70): si era la única, la línea de aviso no sale. Ejemplo real, Puente de Vallecas con escuela infantil a 10 min como mucho: «Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños: por eso sale FALTA.». **Cambia (15 nov, UX móvil 1).** Sin las edades (antes «… para tantos niños de 0 a 4 años …», auditoría §4 n.º 32). Las palabras de cada fila siguen a `fila.mide.*`: escuelas infantiles «hay pocas / van justas para tantos niños» (nadie publica sus plazas), colegios «hay pocas aulas / las aulas van justas para tantos niños», centros de salud «hay pocos / van justos para tanta gente», mayores «hay pocas plazas / las plazas van justas para tantas personas mayores», farmacias «hay pocas / van justas para tanta gente». En la tarjeta de un barrio, «pero en {distrito} …». No sale en filas «No comparable» ni «Junto con sus vecinos»: ese estado no es el de la zona sola. Solo texto: la fórmula no cambia (se revisa el 17-18 nov) |
 | `zona.falta.ver_todo` | Ver todo lo que falta | Abre la pestaña «Qué falta» con esta zona |
 | `zona.boton` | Ver la zona | Del brief |
 | `zona.fuente` | ¿De dónde sale? | Enlace que abre la procedencia (sección 9) |
-| `zona.cerca_de_encajar.titulo` | Casi encajan | Zonas que fallan una condición (`near_misses`) |
+| `zona.cerca_de_encajar.titulo` | Casi valen | Zonas que fallan una condición (`near_misses`). **Cambia (15 nov, UX móvil 1).** Antes «Casi encajan» (auditoría §4 n.º 7) |
 | `zona.cerca_de_encajar.motivo` | No cumple: {condición} | {condición} = `label` de la condición que falla. **Cambia (F5):** solo cuando la API no da cifras para decir lo que falta (`resultados.casi.*`) |
 | `zona.condicion.cumple` | Cumple | `PASS` |
 | `zona.condicion.no_cumple` | No cumple | `FAIL` |
@@ -519,12 +548,14 @@ Columna derecha tras buscar, mientras no hay una zona elegida. En el móvil va e
 | `zona.falta.a_pie` | A pie: {minutos} | Bajo el nombre de cada fila de la mini lista. {minutos} con `a_pie.min` (sección 5) |
 | `zona.barrio.antetitulo` | Barrio de Madrid | Tarjeta de un barrio tras buscar con «Madrid capital» (D-238), donde los distritos dicen «Distrito de Madrid» |
 | `zona.barrio.nombre` | {barrio} · {distrito} | Título de la tarjeta, por ejemplo «Berruguete · Tetuán» o «Lucero · Latina» |
-| `zona.barrio.falta.titulo` | Qué falta en {distrito} | En lugar de `zona.falta.titulo`: el barrio no tiene «Qué falta» propio (D-232). Sin la línea `encaje.aviso_*`, que diría «aquí» de todo el distrito |
+| `zona.barrio.falta.titulo` | Lo que le falta a {distrito} | En lugar de `zona.falta.titulo`: el barrio no tiene «Qué falta» propio (D-232). Sin la línea `encaje.aviso_*`, que diría «aquí» de todo el distrito. **Cambia (15 nov, UX móvil 1).** Antes «Qué falta en {distrito}» |
 | `zona.barrio.falta.ayuda` | Las cifras de «Qué falta» son del distrito entero. | Bajo el título. La misma frase que `barrios.ayuda` |
 | `zona.barrio.boton` | Ver el distrito | En lugar de `zona.boton`: lleva a la vista del distrito, con «Los barrios que mejor encajan» |
 | `zona.fuera` | Fuera de tu búsqueda ({ámbito}). | Tarjeta de una zona del mapa que no está en «¿Dónde?», por ejemplo Getafe tras buscar en «Madrid capital». {ámbito} es la opción elegida. Revisión del PR #58 |
 | `zona.sin_alquiler` | Con «Alquilar», puede faltar el alquiler: en los municipios con muy pocas viviendas alquiladas no se publica su precio. | Tarjeta de un municipio con encaje «No lo sabemos» y presupuesto de alquiler, como la nota de compra (D-227 §3). Dicho como posibilidad: puede faltar otra condición. Los barrios ya traen su motivo de la API (D-232 §4). **Cambia (D-242):** antes decía que la Comunidad solo lo publica en los municipios de más de 20.000 habitantes y que casi ningún pueblo lo tiene |
-| `zona.encaje.pronto` | Muy pronto verás cuánto encaja esta zona contigo. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
+| `zona.encaje.pronto` | Muy pronto verás si esta zona te conviene. | En lugar de «Haz tu búsqueda…» mientras el buscador esté apagado (`busqueda.pronto`) |
+| `zona.antetitulo` | Distrito de Madrid · Barrio de Madrid · Municipio | Encima del nombre de la tarjeta. **Cambia (15 nov, UX móvil 1):** en minúsculas, no en mayúsculas («DISTRITO DE MADRID» se lee peor y suena a alarma, auditoría M2) |
+| `zona.titulo` | {zona}: lo que hay cerca | **Nueva (15 nov, UX móvil 1).** Título de la pantalla de zona, con el nombre en violeta. Sustituye a «Explora {zona}» y a «Mira sus servicios y puntos clave, con datos oficiales.» (auditoría §4 n.º 36) |
 
 ### Contexto de la zona (no puntúa)
 Datos que se enseñan en la vista de zona para conocerla mejor. No cambian el % de encaje, no ordenan zonas y no entran en «Qué falta». Van junto a `zona.seguridad_vecinos` (sección 2), sin colores de estado ni de alarma. Prueba con usuarios (14 nov).
@@ -558,7 +589,7 @@ Bloque «Entorno» en la vista de un municipio, de un distrito de Madrid o de un
 | `zona.entorno.disuasorio` | Aparcamiento disuasorio {gratuito} ({n} plazas) en {zona}: {nombre} | Si la zona tiene uno (de «Todos los centros», tipo «Aparcamientos»). {gratuito}: «gratuito», «de pago» o «gratuito y de pago», según el CRTM. Usera tendría «Aparcamiento disuasorio gratuito (210 plazas) en Usera: Doce de Octubre» si solo tuviera ese |
 | `zona.entorno.disuasorios` | {n} aparcamientos disuasorios en {zona}, con {plazas} plazas (todos gratuitos) | Con varios. «(2 gratuitos)» solo si todos publican si son gratuitos; si alguno no lo publica, «(de 1 no consta si es gratuito)», nunca contado como de pago (segunda revisión del PR #65, R-02). Sin las plazas si alguno no las publica (los del Ayuntamiento). Getafe: «6 aparcamientos disuasorios en Getafe, con 2.446 plazas (todos gratuitos)»; Fuencarral-El Pardo: «4 aparcamientos disuasorios en Fuencarral-El Pardo (de 1 no consta si es gratuito)» |
 | `zona.entorno.aparcamiento.fuente` | Aparcamientos publicados en abierto: los de disuasión del Consorcio Regional de Transportes y los del Ayuntamiento de Madrid. Lo fácil que es aparcar en la calle no tiene dato abierto. | Bajo las líneas de aparcamiento. No se inventa la facilidad de aparcar en la calle |
-| `zona.entorno.contexto` | Datos de contexto: no cuentan en el encaje ni en «Qué falta». | Al pie del bloque |
+| `zona.entorno.contexto` | Datos de contexto: no cambian qué zonas te convienen ni «Qué falta». | **Cambia (15 nov, UX móvil 1).** Al pie del bloque |
 
 ### Vivienda nueva y lo que viene (no puntúa, D-241)
 Una tarjeta en la vista de zona, debajo de «Otros datos de la zona» (D-235), para la pregunta de la prueba con usuarios «¿las casas son nuevas o viejas?» y «¿qué se va a construir?». Cada línea dice su fuente y su fecha. No cambia el % de encaje, no ordena zonas y no entra en «Qué falta». Sin colores de estado ni de alarma. Si la API no tiene una feature, su línea no sale; si la fuente no publica el dato de una zona, tampoco: nunca un 0.
@@ -581,10 +612,10 @@ Una tarjeta en la vista de zona, debajo de «Otros datos de la zona» (D-235), p
 | `zona.vivienda_nueva.ambitos.sin_empezar` | Previstos: {ámbitos} (aún sin empezar). | Algunos llevan años así: no se dice «lo que viene» de ellos |
 | `zona.vivienda_nueva.ambitos.ninguno` | En este distrito no queda ningún ámbito de vivienda del Plan General por terminar. | Hoy, Puente de Vallecas y Moratalaz: la fuente no tiene ninguno, así que es un 0 confirmado |
 | `zona.vivienda_nueva.ambitos.fuente` | Ayuntamiento de Madrid, estado de desarrollo de los ámbitos del Plan General a {fecha}. Dice dónde se prepara suelo para vivienda, no cuántas viviendas habrá ni cuándo. | «a 1 de julio de 2026» |
-| `zona.vivienda_nueva.no_puntua` | Son datos informativos: no cambian el encaje ni el orden de las zonas. | Pie de la tarjeta: es el mismo texto que `zona.contexto.no_puntua` y, con las dos tarjetas, sale una sola vez, bajo la última (15 nov) |
+| `zona.vivienda_nueva.no_puntua` | Son datos informativos: no cambian qué zonas te convienen ni su orden. | **Cambia (15 nov, UX móvil 1).** Pie de la tarjeta: es el mismo texto que `zona.contexto.no_puntua` y, con las dos tarjetas, sale una sola vez, bajo la última (15 nov) |
 
 ### Barra de barrios (solo distritos de Madrid)
-La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), después de una búsqueda la vista de un distrito sí tiene cifras por barrio, en «Los barrios que mejor encajan» (abajo). «Qué falta» sigue siendo del distrito entero. Al pulsar un barrio de esa sección se marca también su chip de la barra.
+La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), después de una búsqueda la vista de un distrito sí tiene cifras por barrio, en «Los barrios que más te convienen» (abajo). «Qué falta» sigue siendo del distrito entero. Al pulsar un barrio de esa sección se marca también su chip de la barra.
 
 | Clave | Texto | Notas |
 |---|---|---|
@@ -592,18 +623,18 @@ La barra **mueve el mapa** a un barrio. Desde el 13 nov (D-232, `fit-0.7`), desp
 | `barrios.todo` | Todo {distrito} | Primer chip: vuelve a encuadrar el distrito entero, por ejemplo «Todo Chamartín». Marcado al entrar en la zona |
 | `barrios.ayuda` | Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. | `aria-description` de la barra, o línea pequeña si cabe. Sigue siendo cierto: el encaje por barrio va en su sección, no en «Qué falta» |
 
-### «Los barrios que mejor encajan» (vista de un distrito, tras buscar; D-232, PR #37 de B, en producción desde `e7025fb`)
-Revisión de los borradores de B (13 nov). Ejemplo real con el caso de ejemplo, comprobado en producción con `POST /api/v1/search/barrios` (`fit-0.7`, distrito 2807920): San Blas-Canillejas, 7 de 8 barrios; Canillejas, Arcos y Simancas al 97 %; Rejas «casi» (colegio).
+### «Los barrios que más te convienen» (antes «Los barrios que mejor encajan»; vista de un distrito, tras buscar; D-232, PR #37 de B, en producción desde `e7025fb`)
+Revisión de los borradores de B (13 nov). Ejemplo real con el caso de ejemplo, comprobado con `POST /api/v1/search/barrios` (`fit-0.9`, API del 15 nov sobre los datos del lote 4, distrito 2807920): San Blas-Canillejas, 7 de 8 barrios; Arcos, Canillejas, Amposta, Simancas y Rosas al 89 %, y El Salvador y Hellín al 87 %; Rejas, en «Casi valen», por el colegio (unos 26 min más andando de lo que pide).
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `barrios.encajan.titulo` | Los barrios que mejor encajan | De Mariano. Aprobado |
-| `barrios.encajan.resumen` | {n} de sus {total} barrios encajan con tu búsqueda. | Con 1: «1 de sus {total} barrios encaja con tu búsqueda.». Todos: «Sus {total} barrios encajan con tu búsqueda.». Ninguno: «Ninguno de sus {total} barrios cumple todo lo que pides.». Aprobado |
+| `barrios.encajan.titulo` | Los barrios que más te convienen | De Mariano (13 nov), con las palabras del 15 nov. **Cambia (15 nov, UX móvil 1).** Antes «Los barrios que mejor encajan» |
+| `barrios.encajan.resumen` | {n} de sus {total} barrios te convienen. | Con 1: «1 de sus {total} barrios te conviene.». Todos: «Sus {total} barrios te convienen.». Ninguno: «Ninguno de sus {total} barrios cumple todo lo que pides.». **Cambia (15 nov, UX móvil 1).** Antes «… encajan con tu búsqueda.» |
 | `barrios.encajan.pulsa` | Toca uno para verlo en el mapa. | **Cambia** «Pulsa» por «Toca», como el resto de la web («Toca un tipo de centro…», «toca una zona del mapa»). Aplicado por B y en producción desde `5101c93` |
-| `barrios.encajan.carga` | Buscando los barrios de {distrito} que encajan contigo… | Aprobado |
+| `barrios.encajan.carga` | Buscando los barrios de {distrito} que te convienen… | **Cambia (15 nov, UX móvil 1).** |
 | `barrios.encajan.todos` | Ver los {n} barrios | Aprobado |
 | `barrios.encajan.ayuda` | Cuánto se parece este barrio a lo que buscas. No es una nota del barrio. | Igual que `zona.encaje.ayuda`. Aprobado |
-| `barrios.encajan.casi` | Casi encajan | Con «No cumple: {condición}» y, si la API no la nombra, «No cumple todo lo que pides.». Aprobado |
+| `barrios.encajan.casi` | Casi valen | Con lo que le falta a cada barrio (`resultados.casi.*`) y, si la API no lo dice, «No cumple todo lo que pides.». **Cambia (15 nov, UX móvil 1).** Antes «Casi encajan» |
 
 ---
 
@@ -625,7 +656,7 @@ Desde D-217 (`gap-0.3`, 12 nov) cada fila de servicios mide **lo que la gente ti
 | `falta.resumen.falta` | Aquí falta: {lista}. | **Primera línea de «Qué falta»**, encima de las filas y en negrita. {lista} con `fila.lista.*`. Ejemplo: Puente de Vallecas, «Aquí falta: escuelas infantiles.». Fase de mejora, **pendiente de B** |
 | `falta.resumen.nada_claro` | Aquí no falta nada claro. | Sin ninguna FALTA pero con alguna JUSTO. Va seguida de `falta.resumen.justo` |
 | `falta.resumen.justo` | Van justos: {lista}. | Detrás de `falta.resumen.falta` o de `falta.resumen.nada_claro`. Ejemplo: Fuencarral-El Pardo, «Aquí no falta nada claro. Van justos: escuelas infantiles, colegios y centros de salud.» |
-| `falta.resumen.cubierto` | Aquí no falta nada frente a municipios parecidos. | Todas las filas comparables, CUBIERTO |
+| `falta.resumen.cubierto` | Aquí no falta nada, comparado con municipios parecidos. | **Cambia (15 nov, UX móvil 1).** Todas las filas comparables, CUBIERTO |
 | `falta.resumen.pequena` | Zona muy pequeña para comparar: {lista}. | Filas que no se pueden comparar ni siquiera con los vecinos (`reliable: false` y sin `comparison_group`). Esas filas no entran en «Van justos». Va con lo que haga A en «No comparable» (fase de mejora, punto 7) |
 | `falta.resumen.sin_datos` | Sin datos: {lista}. | Al final, si alguna fila sale SIN DATOS. Ejemplo: en los distritos de Madrid, «Sin datos: viviendas grandes para familias.» |
 | `falta.fila.comparacion` | Aquí hay {n} por cada 100 que hay en municipios parecidos. | **Frase principal de cada fila**, junto al estado. {n} = `ratio_to_reference` × 100, redondeado; puede pasar de 100 («Aquí hay 155 por cada 100…»). Ejemplo: Puente de Vallecas, escuelas infantiles, ratio 0,571: «Aquí hay 57 por cada 100 que hay en municipios parecidos.». Con `comparison_group`: «Junto con sus vecinos, hay {n} por cada 100…» (`grupo.frase`). Fase de mejora, **pendiente de B** |
@@ -657,7 +688,7 @@ Desde D-217 (`gap-0.3`, 12 nov) cada fila de servicios mide **lo que la gente ti
 | `a_pie.min` | {n} min | Redondeado al minuto. Menos de 1: «menos de 1 min». Más de 60: «más de 60 min». Sin valor: «Sin datos», con su motivo (`null_reason`), nunca 0 |
 | `falta.leyenda.titulo` | Cómo leer esta lista | Tarjeta con los 4 estados y su línea de explicación (`estado.*`), más la línea de `fila.zona_pequena` |
 | `falta.leyenda.a_pie` | Los minutos son andando por la calle, no en línea recta, a paso tranquilo (4 km/h). Es lo que tarda la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. | Debajo de los estados. Mismo método que `pitch/metodologia.md` §1.5. Cambia el 12 nov: fuera «desde la mitad de las calles». La misma idea, como ayuda bajo «Lo que tienes aquí» en la tarjeta (`a_pie.mediana`) |
-| `a_pie.mediana` | Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos. | Una vez, bajo los hechos de la tarjeta. A la vez, **pendiente de A**: quitar «desde la mitad de sus calles» del texto de los hechos de `/search` y dejar «Colegio con primaria a unos 9 min andando». El «unos» ya dice que es aproximado |
+| `a_pie.mediana` | Son los minutos de un vecino típico de la zona: unos lo tienen más cerca y otros más lejos. | Una vez, bajo los hechos de la tarjeta. Es la mediana, dicha en llano. **Cambia (15 nov, UX móvil 1).** Antes «Los minutos andando son los de la mitad de la zona: …» (auditoría §4 n.º 30) |
 | `hospital.distancia` | Hospital más cercano: a {n} min andando | Sustituye a «A pie hasta el hospital: {n} min». Hasta 30 min, en minutos. **Más de 30 min: «Hospital más cercano: a unos {km} km»**, con {km} = minutos × 4 / 60, con un decimal (51 min → «a unos 3,4 km»). Andar 51 minutos hasta un hospital no es un dato útil, la distancia sí. Sigue con `hospital.nota`. **Pendiente de B** |
 | `falta.filas_pendientes` | Estamos calculando el resto de servicios para esta zona. | Si la API avisa en `warnings` de filas aún no calculadas. Nunca se pintan como SIN DATOS |
 | `falta.como` | ¿Cómo lo decidimos? | Enlace a «Cómo lo calculamos», sección «Qué falta» |
@@ -668,7 +699,7 @@ Desde D-217 (`gap-0.3`, 12 nov) cada fila de servicios mide **lo que la gente ti
 |---|---|---|
 | `fila.escuela_infantil` | Escuelas infantiles | Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca |
 | `fila.colegio` | Colegios | Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca |
-| `fila.centro_salud` | Centros de salud | Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca |
+| `fila.centro_salud` | Centros de salud | Centros de salud públicos a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca |
 | `fila.mayores` | Centros de mayores | Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca |
 | `fila.farmacia` | Farmacias | Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca |
 | `fila.vivienda` | Vivienda para familias | Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas. En los distritos de Madrid, SIN DATOS (`SOURCE_MISSING`) |
@@ -767,21 +798,21 @@ Panel de la vista de zona con cada tipo de centro, su recuento, su capa en el ma
 
 ---
 
-## 7. «¿Y si cambias algo?» (Reality Check)
+## 7. «¿Quieres ver más zonas?» (antes «¿Y si cambias algo?», Reality Check)
 
 Siempre visible bajo «Zonas que encajan». Va plegado a la opción que más zonas añade y se despliega solo con 5 zonas o menos (decisión de datamad-10; `FEW_ZONES`, PR #10). No salen las opciones que añaden 0 zonas. Las cifras y las etiquetas de cada opción (`label`, por ejemplo «+150 €/mes») llegan de la API. Al tocar una opción, la web reenvía `relaxed_scenario`.
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `rc.titulo` | ¿Y si cambias algo? | |
-| `rc.ninguna` | Con tu búsqueda tal cual no sale ninguna zona. | `zones_passing = 0` |
-| `rc.una` | Con tu búsqueda tal cual sale 1 zona. | |
-| `rc.varias` | Con tu búsqueda tal cual salen {n} zonas. | Con «¿Dónde?», el nombre del ámbito: «salen 78 barrios», «salen 34 municipios», «salen 2 pueblos»; con 0, «no sale ningún barrio» (D-238). Igual en `rc.ninguna`, `rc.una`, `rc.cambio`, `rc.opcion.cuenta`, `rc.sin_dato` («No los contamos como buenos») y `vacio.sin_resultados` («Ningún pueblo cumple…») |
+| `rc.titulo` | ¿Quieres ver más zonas? | **Cambia (15 nov, UX móvil 1).** Antes «¿Y si cambias algo?» (auditoría §4 n.º 8) |
+| `rc.ninguna` | No hemos encontrado ninguna zona para ti. | `zones_passing = 0`. **Cambia (15 nov, UX móvil 1).** Antes «Con tu búsqueda tal cual no sale ninguna zona.» |
+| `rc.una` | Hemos encontrado 1 zona para ti. | **Cambia (15 nov, UX móvil 1).** |
+| `rc.varias` | Hemos encontrado {n} zonas para ti. | **Cambia (15 nov, UX móvil 1).** Antes «Con tu búsqueda tal cual salen {n} zonas.» (auditoría §4 n.º 5). Con «¿Dónde?», el nombre del ámbito: «Hemos encontrado 78 barrios para ti», «34 municipios», «2 pueblos»; con 0, «No hemos encontrado ningún barrio para ti.» (D-238). Igual en `rc.ninguna`, `rc.una`, `rc.cambio`, `rc.opcion.cuenta`, `rc.sin_dato` («No los contamos como buenos») y `vacio.sin_resultados` («Ningún pueblo cumple…») |
 | `rc.cambio` | Con este cambio salen {n} zonas. | En lugar de `rc.varias` tras aplicar una opción. Con 1: «Con este cambio sale 1 zona.»; con 0: «Con este cambio no sale ninguna zona.» |
 | `rc.intro` | Mira cuántas salen si cambias una sola cosa: | |
 | `rc.opcion` | {label} | Primera línea de cada opción |
-| `rc.opcion.cuenta` | saldrían {n} zonas, {añadidas} más | Segunda línea. {n} = `zones_if_relaxed`, {añadidas} = `added_zones`. Con 1 zona: «saldría 1 zona, 1 más». El nombre accesible de la opción es su texto visible (WCAG 2.5.3) |
-| `rc.boton` | Probar así | En cada opción |
+| `rc.opcion.cuenta` | saldrían {añadidas} más: {n} zonas en total | Segunda línea. {n} = `zones_if_relaxed`, {añadidas} = `added_zones`. Con 1 más: «saldría 1 más: 28 zonas en total». **Cambia (15 nov, UX móvil 1).** Lo que se gana, primero (antes «saldrían {n} zonas, {añadidas} más»). El nombre accesible de la opción es su texto visible (WCAG 2.5.3) |
+| `rc.boton` | Ver esas zonas | En cada opción. **Cambia (15 nov, UX móvil 1).** Antes «Probar así» |
 | `rc.mas` | Ver todas las opciones | Con el bloque plegado |
 | `rc.menos` | Ver menos | |
 | `rc.sin_opciones` | Cambiar una sola cosa no añade zonas. | Ninguna opción añade zonas. **Cambia (D-234):** la API ya no manda la opción de una condición que ninguna zona incumple y que no añade zonas (por ejemplo, «+40.000 €» cuando lo que falta es el precio) |
@@ -802,11 +833,11 @@ Siempre visible bajo «Zonas que encajan». Va plegado a la opción que más zon
 | `carga.mapa` | Cargando el mapa… | |
 | `carga.zonas` | Cargando las zonas… | Lista de zonas |
 | `carga.fuentes` | Cargando los conjuntos de datos… | Lista de «Cómo lo calculamos» (`GET /api/v1/datasets`) |
-| `carga.busqueda` | Buscando zonas que encajan… | |
+| `carga.busqueda` | Buscando zonas para ti… | **Cambia (15 nov, UX móvil 1).** Antes «Buscando zonas que encajan…» |
 | `carga.zona` | Preparando la zona… | Vuelo de cámara y 3D |
 | `carga.falta` | Calculando qué falta en {zona}… | |
 | `carga.lento` | Está tardando un poco más de lo normal. Gracias por esperar. | Más de 5 s |
-| `vacio.sin_busqueda` | Cuéntanos cómo es tu hogar y pulsa «Ver zonas que encajan». | |
+| `vacio.sin_busqueda` | Cuéntanos cómo es tu hogar y pulsa «Buscar zonas para mí». | **Cambia (15 nov, UX móvil 1).** |
 | `vacio.sin_resultados` | Ninguna zona cumple todo lo que pides. Mira abajo qué pasa si cambias algo. | Lleva al bloque de la sección 7 |
 | `error.red` | No hemos podido conectar. Comprueba tu conexión a internet e inténtalo otra vez. | Fallo de red |
 | `error.servidor` | Algo ha fallado por nuestra parte. Inténtalo de nuevo en unos minutos. | Error 5xx |
@@ -841,7 +872,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 
 | Clave | Texto | Enlace | Notas |
 |---|---|---|---|
-| `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda | Página «Cómo lo calculamos» | {n} = `cm_open_data_count` de `GET /api/v1/datasets`: 35 en producción desde el 15 nov (27 el 12 nov; 29 con D-235; 35 con D-237 y D-241). En pantalla, «Datos: 35 conjuntos…» (`evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md`). Cambia el 12 nov: los 6 del CRTM ya están dentro de {n}, y el Ministerio de Sanidad se usa desde D-218. Cambia el 12 nov: suma la Agencia Tributaria (D-228), que no cuenta en {n}; hecho en `counterText` y en producción. Cambia el 15 nov: suma el Ministerio de Vivienda (D-242, el SERPAVI), que tampoco cuenta en {n}; hecho en `counterText` |
+| `pie.contador` | Datos: {n} conjuntos de la Comunidad de Madrid (con los del Consorcio Regional de Transportes) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda | Página «Cómo lo calculamos» | **Cambia (15 nov, UX móvil 1).** Sin la sigla «CRTM». {n} = `cm_open_data_count` de `GET /api/v1/datasets`: 35 en producción desde el 15 nov (27 el 12 nov; 29 con D-235; 35 con D-237 y D-241). En pantalla, «Datos: 35 conjuntos…» (`evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md`). Cambia el 12 nov: los 6 del CRTM ya están dentro de {n}, y el Ministerio de Sanidad se usa desde D-218. Cambia el 12 nov: suma la Agencia Tributaria (D-228), que no cuenta en {n}; hecho en `counterText` y en producción. Cambia el 15 nov: suma el Ministerio de Vivienda (D-242, el SERPAVI), que tampoco cuenta en {n}; hecho en `counterText` |
 | `pie.cm` | Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0. | https://datos.comunidad.madrid | |
 | `pie.crtm` | Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas y en transporte público, que calcula Vida Fácil con sus paradas y horarios. | https://www.crtm.es | Obligatorio con enlace. La licencia (§2.2) pide decir si los datos son en bruto o explotados. El `attribution_text` del catálogo, que es lo que enseña la web, dice «Datos en bruto / explotados según el caso» y no dice cuál: **pendiente de A** cambiarlo por este texto en `data/catalog/sources/crtm_open_data.yaml`. Cambia el 12 nov (revisión del PR #22) por el trabajo en minutos de transporte público (D-220) |
 | `pie.ayto` | Fuente: Ayuntamiento de Madrid — datos.madrid.es, CC BY 4.0. | https://datos.madrid.es | En uso desde DATA-012 (padrón y panel de distritos). Condiciones vigentes: CC BY 4.0, uso comercial y no comercial (https://datos.madrid.es/pages/condiciones-de-uso, leída el 11 nov); no fijan un texto de cita, así que se usa el `attribution_text` del catálogo con la licencia añadida |

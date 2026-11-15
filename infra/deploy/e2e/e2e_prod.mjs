@@ -1,5 +1,5 @@
 // End-to-end checks of the public demo along the journeys of the pitch script (pitch/guion.md):
-//   J1 home → «Ver un ejemplo» → 1st zone → «¿Y si cambias algo?» (apply and undo)
+//   J1 home → «Ejemplo: pareja con 2 hijos…» → 1st zone → «¿Quieres ver más zonas?» (apply and undo)
 //   J2 «Qué falta» → «Madrid (toda la ciudad)»
 //   J3 map by row («¿Qué quieres ver?»)
 //   J4 the list of zones
@@ -46,10 +46,15 @@ const BASE = opts.base.replace(/\/$/, "");
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const squash = (s) => s.replace(/\s+/g, " ").trim();
 const zonesText = (n) => (n === 1 ? "1 zona" : `${n} zonas`);
+/** rc.ninguna, rc.una, rc.varias and rc.cambio, as the web writes them (apps/web/src/lib/fit.ts, passingText). */
 const passingText = (n, changed = false) => {
-  const start = changed ? "Con este cambio" : "Con tu búsqueda tal cual";
-  return n === 0 ? `${start} no sale ninguna zona.` : n === 1 ? `${start} sale 1 zona.` : `${start} salen ${n} zonas.`;
+  if (changed) return n === 0 ? "Con este cambio no sale ninguna zona." : n === 1 ? "Con este cambio sale 1 zona." : `Con este cambio salen ${n} zonas.`;
+  return n === 0 ? "No hemos encontrado ninguna zona para ti." : `Hemos encontrado ${zonesText(n)} para ti.`;
 };
+/** The names of the list and of «¿Quieres ver más zonas?» (UX mobile audit, first delivery). */
+const RESULTS = "Zonas que te convienen";
+const CHANGES = "¿Quieres ver más zonas?";
+const SEARCH_BUTTON = "Buscar zonas para mí";
 const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
 
 /** One run: a browser and a device, the four journeys, every check with its detail. */
@@ -83,7 +88,7 @@ async function journeySearch(run, page) {
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
   const [first] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),
-    page.getByRole("button", { name: /Ver un ejemplo/ }).click(),
+    page.getByRole("button", { name: /pareja con 2 hijos/ }).click(),
   ]);
   const result = (await first.json()).data;
   const rc = result.reality_check;
@@ -91,8 +96,8 @@ async function journeySearch(run, page) {
   const summary = page.getByText(passingText(rc.zones_passing)).first();
   await summary.waitFor({ timeout: WAIT });
   run.check(J, "summary = API zones_passing", true, passingText(rc.zones_passing));
-  const total = await page.getByText(`De ${result.all_zones.length} zonas de la Comunidad de Madrid.`).count();
-  run.check(J, "«De N zonas» = API all_zones", total > 0, result.all_zones.length);
+  const total = await page.getByText(`Hemos mirado las ${result.all_zones.length} zonas de la Comunidad de Madrid.`).count();
+  run.check(J, "«Hemos mirado las N zonas» = API all_zones", total > 0, result.all_zones.length);
   await checkFitLegend(run, page, rc);
   await checkRentNotice(run, page, false);
   await run.shot(page, "j1-results");
@@ -112,7 +117,7 @@ async function journeySearch(run, page) {
 
 /** resultados.aviso_2024 (F5 of fit-0.9): once over the results when renting, never when buying. */
 async function checkRentNotice(run, page, buying) {
-  const results = page.getByRole("region", { name: "Zonas que encajan", exact: true });
+  const results = page.getByRole("region", { name: RESULTS, exact: true });
   const n = await results.getByText(RENT_2024_NOTICE, { exact: true }).count();
   run.check("J1 search", buying ? "buying: no 2024 rent notice" : "renting: the 2024 rent notice, once", n === (buying ? 0 : 1), `${n}`);
 }
@@ -123,7 +128,7 @@ async function checkBuying(run, page) {
   await page.getByRole("radio", { name: "Comprar" }).check();
   const [response] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),
-    page.getByRole("button", { name: "Ver zonas que encajan" }).click(),
+    page.getByRole("button", { name: SEARCH_BUTTON }).click(),
   ]);
   const sent = response.request().postDataJSON();
   run.check(J, "«Comprar» reaches /search as budget.kind buy", sent?.budget?.kind === "buy", JSON.stringify(sent?.budget));
@@ -140,7 +145,7 @@ async function checkCommuteLimit(run, page, unlimitedPassing) {
   await page.getByLabel("Tardar como mucho hasta el trabajo, en transporte público").selectOption(String(COMMUTE_LIMIT_MIN));
   const [response] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),
-    page.getByRole("button", { name: "Ver zonas que encajan" }).click(),
+    page.getByRole("button", { name: SEARCH_BUTTON }).click(),
   ]);
   const sent = response.request().postDataJSON();
   run.check(J, `a limit of ${COMMUTE_LIMIT_MIN} min reaches /search as max_minutes`, sent?.anchors?.[0]?.max_minutes === COMMUTE_LIMIT_MIN,
@@ -206,12 +211,13 @@ async function checkFirstZone(run, page, top) {
 
 async function checkRealityCheck(run, page, rc) {
   const J = "J1 search";
-  const region = page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+  const region = page.getByRole("region", { name: CHANGES, exact: true });
   const option = rc.relaxations.find((r) => r.added_zones > 0);
-  if (!option) return run.check(J, "«¿Y si cambias algo?» has an option that adds zones", false, "none in the API");
+  if (!option) return run.check(J, "«¿Quieres ver más zonas?» has an option that adds zones", false, "none in the API");
   const text = squash(await region.innerText());
-  run.check(J, "1st option = API relaxation", text.includes(option.label) &&
-    text.includes(`saldrían ${zonesText(option.zones_if_relaxed)}`), `${option.label}: ${option.zones_if_relaxed}`);
+  // rc.opcion.cuenta: «saldrían 49 más: 91 zonas en total», both figures from the API
+  const count = `${option.added_zones === 1 ? "saldría" : "saldrían"} ${option.added_zones} más: ${zonesText(option.zones_if_relaxed)} en total`;
+  run.check(J, "1st option = API relaxation", text.includes(option.label) && text.includes(count), `${option.label}: ${count}`);
   const [applied] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),
     region.getByRole("button", { name: new RegExp(`^${escapeRe(option.label)}`) }).first().click(),
@@ -272,6 +278,9 @@ function expectedRowCounts(responses) {
 async function journeyRowMap(run, page, rows) {
   const J = "J3 map by row";
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  // On a phone the portada opens on the search (UX mobile audit, C5): the map and its legend are one tap away
+  const showMap = page.getByRole("button", { name: "Ver el mapa" });
+  if (await showMap.isVisible()) await showMap.click();
   const picker = page.getByLabel("¿Qué quieres ver?").first();
   const values = (await picker.locator("option").evaluateAll((os) => os.map((o) => o.value))).filter(Boolean);
   run.check(J, "selector lists the gap rows", values.length > 0, values.join(", "));

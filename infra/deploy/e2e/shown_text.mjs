@@ -3,8 +3,8 @@
 // cannot load the web's TypeScript. Keep it in step with apps/web/src/lib/fit.ts (factText,
 // RENT_2024_NOTICE) and apps/web/src/lib/shortfall.ts (resultados.casi.*).
 
-/** resultados.aviso_2024 and zona.precio.aviso_2024: renting, never buying (F5 of fit-0.9). */
-export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más.";
+/** resultados.aviso_2024 and zona.precio.aviso_2024: renting, never buying (F5 of fit-0.9; plain words since the UX audit). */
+export const RENT_2024_NOTICE = "Precio orientativo: hoy puede ser algo más caro.";
 
 /**
  * A fact as the card shows it: renting, the rent fact goes without its «; un anuncio de hoy puede
@@ -16,16 +16,17 @@ export function factAsShown(fact) {
 }
 
 /**
- * The line of a near miss in «Casi encajan» (resultados.casi.*): what it lacks, by its figures or by
- * its name, and «y otra condición» or «y {n} condiciones más» when it fails more. Never a %.
+ * The line of a near miss in «Casi valen» (resultados.casi.*): what it lacks, by its figures (with
+ * «unos», never «≈») or by its name, and «y otra condición» or «y {n} condiciones más» when it fails
+ * more. Never a %.
  */
 export const NEAR_MISS_LINE = new RegExp(
   "^(?:" +
     [
-      "Se pasa ≈ [\\d.]+ €(?:/mes)? de tu presupuesto",
-      "Tarda (?:≈ \\d+ min|menos de 1 min) más de lo que pides(?: hasta .+)?",
+      "Se pasa unos [\\d.]+ €(?: al mes)? de tu presupuesto",
+      "Tarda (?:unos \\d+ min|menos de 1 min) más de lo que pides(?: hasta .+)?",
       "Tarda más de 2 h(?: hasta .+)?; pides \\d+ min como mucho",
-      ".+: (?:≈ \\d+ min|menos de 1 min) más andando de lo que pides",
+      ".+: (?:unos \\d+ min|menos de 1 min) más andando de lo que pides",
       ".+ a más de 1 h andando; pides \\d+ min como mucho",
       "No cumple: .+",
       "No cumple todo lo que pides\\.",
