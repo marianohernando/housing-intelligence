@@ -7,13 +7,13 @@ import { createApi } from "@/lib/api";
 import type { FeatureValueRow } from "@/lib/features";
 import { type NewHousingLevel, newHousingLines, type NewHousingRequest, newHousingRequests, type NewHousingRows, type NewHousingZone } from "@/lib/newHousing";
 import { once } from "@/lib/once";
+import { CONTEXT_CARD } from "@/lib/zoneContext";
 
 import styles from "./NewHousing.module.css";
 
-// Copy from pitch/textos_web.md (zona.vivienda_nueva.titulo, zona.vivienda_nueva.no_puntua).
+// Copy from pitch/textos_web.md (zona.vivienda_nueva.titulo); its footer is zona.contexto.no_puntua (CONTEXT_CARD)
 const TEXT = {
   title: "Vivienda nueva y lo que viene",
-  footer: "Son datos informativos: no cambian el encaje ni el orden de las zonas.",
 };
 
 const TIMEOUT_MS = 15_000;
@@ -67,7 +67,7 @@ export default function NewHousing({ zone }: { zone: NewHousingZone }) {
   const lines = loaded?.level === zone.level ? newHousingLines(zone, loaded.rows) : [];
   if (lines.length === 0) return null;
   return (
-    <GlassCard as="section" aria-label={TEXT.title} className={styles.card}>
+    <GlassCard as="section" aria-label={TEXT.title} className={styles.card} data-context-card="">
       <h2 className={styles.title}>{TEXT.title}</h2>
       <ul className={styles.list}>
         {lines.map((line) => (
@@ -78,7 +78,10 @@ export default function NewHousing({ zone }: { zone: NewHousingZone }) {
           </li>
         ))}
       </ul>
-      <p className={styles.footer}>{TEXT.footer}</p>
+      {/* Said once under the last of the context cards (globals.css, [data-context-footer]) */}
+      <p className={styles.footer} data-context-footer="">
+        {CONTEXT_CARD.footer}
+      </p>
     </GlassCard>
   );
 }

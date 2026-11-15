@@ -85,6 +85,25 @@
   font-size: var(--text-sm);
 }
 
+/* zona.cerca_pocas: «… a unos 6 min andando, pero hay pocas…: por eso sale FALTA», above the rows */
+.nearButShort {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.nearButShort svg {
+  flex: none;
+  margin-top: 0.1rem;
+  color: var(--violet-strong);
+}
+
 .missing {
   display: grid;
   gap: var(--space-2);

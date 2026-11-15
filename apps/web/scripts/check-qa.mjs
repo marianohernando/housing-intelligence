@@ -630,8 +630,10 @@ async function hospitals(browser) {
       consola: errors,
     });
     await panel.screenshot({ path: `${out}/hosp_hospitales_fuencarral_${id}.png` });
-    if (!items.some((t) => t.includes("Hospital Universitario La Paz · 966 camas instaladas · gestión pública"))) failures.push(`${id}: sin La Paz`);
-    if (items.some((t) => /privado|(^|· )privada/.test(t))) failures.push(`${id}: «privado» a secas`);
+    // centros.hospital.fila (15 nov): the pill, the name first and the beds read aloud whole
+    if (!items.some((t) => t.startsWith("Público Hospital Universitario La Paz") && t.includes("966 camas instaladas"))) failures.push(`${id}: sin La Paz`);
+    // «gestión privada» only under a public one, never next to «Privado» (D-239)
+    if (items.some((t) => t.startsWith("Privado") && t.includes("gestión privada"))) failures.push(`${id}: «Privado» con «gestión privada»`);
     if (entry.frase.includes(NO_NAME_NOTICE) !== report.hospitales_sin_nombre_api > 0) failures.push(`${id}: aviso de nombres distinto de la API`);
     if (!entry.fuente.startsWith("Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025")) failures.push(`${id}: frase de las camas`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);

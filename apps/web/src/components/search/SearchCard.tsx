@@ -15,6 +15,7 @@ import { formatEuros } from "@/lib/format";
 import { leisureAvailable } from "@/lib/map/facilities";
 import {
   BUDGET_RANGE,
+  floorArea,
   peopleAtHome,
   SCOPE_LABEL,
   SCOPES,
@@ -29,6 +30,7 @@ import {
   togglePriority,
 } from "@/lib/scenario";
 
+import FloorAreaField from "./FloorAreaField";
 import LeisureField from "./LeisureField";
 import NearbyField from "./NearbyField";
 import PlaceField, { useStations } from "./PlaceField";
@@ -139,6 +141,8 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
       {!open && (
         <p className={styles.summary}>
           {peopleText(peopleAtHome(scenario))} · {budgetText(budget)}
+          {/* presupuesto.m2.resumen: only the m² the person chose; the usual ones go unsaid */}
+          {!floorArea(scenario).household && ` · ${floorArea(scenario).m2} m²`}
           {scope !== "all" && ` · ${SCOPE_LABEL[scope]}`}
         </p>
       )}
@@ -240,6 +244,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               onChange={(e) => update((s) => setBudgetAmount(s, Number(e.target.value)))}
             />
           )}
+          {available && <FloorAreaField />}
           {available && (
             <label className={styles.check}>
               <input type="checkbox" checked={!budget} onChange={(e) => update((s) => setNoBudgetLimit(s, e.target.checked))} />

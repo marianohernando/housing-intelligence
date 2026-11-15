@@ -1,0 +1,6 @@
+390 con el arreglo ["Bares y cafeterías: 47px alto, casilla 19.5","Restaurantes: 47px alto, casilla 19.5","Gimnasios y deporte: 47px alto, casilla 19.5","Cultura: 47px alto, casilla 19.5","Imprescindible: 47px alto, casilla 19.5"]
+390 SIN el arreglo ["Bares y cafeterías: 47px alto, casilla 15.8","Restaurantes: 47px alto, casilla 19.5","Gimnasios y deporte: 47px alto, casilla 14","Cultura: 47px alto, casilla 19.5","Imprescindible: 47px alto, casilla 19.5"]
+375 con el arreglo ["Bares y cafeterías: 47px alto, casilla 19.5","Restaurantes: 47px alto, casilla 19.5","Gimnasios y deporte: 47px alto, casilla 19.5","Cultura: 47px alto, casilla 19.5","Imprescindible: 47px alto, casilla 19.5"]
+375 SIN el arreglo ["Bares y cafeterías: 47px alto, casilla 14.7","Restaurantes: 47px alto, casilla 19.5","Gimnasios y deporte: 47px alto, casilla 13","Cultura: 47px alto, casilla 19.5","Imprescindible: 47px alto, casilla 19.5"]
+360 con el arreglo ["Bares y cafeterías: 47px alto, casilla 19.5","Restaurantes: 47px alto, casilla 19.5","Gimnasios y deporte: 47px alto, casilla 19.5","Cultura: 47px alto, casilla 19.5","Imprescindible: 47px alto, casilla 19.5"]
+360 SIN el arreglo ["Bares y cafeterías: 47px alto, casilla 13","Restaurantes: 47px alto, casilla 19.5","Gimnasios y deporte: 47px alto, casilla 13","Cultura: 47px alto, casilla 19.5","Imprescindible: 47px alto, casilla 19.5"]

@@ -225,6 +225,62 @@ export function fitsButShortText(rows: readonly SummaryRow[]): string | null {
 }
 
 /**
+ * zona.falta.ayuda: «Qué falta» measures something else than «Me importa» and «Lo quiero a un paseo»
+ * (minutes on foot): whether what is within 15 min on foot is enough for everyone who shares it,
+ * against similar zones (2SFCA, D-217).
+ */
+export const GAPS_HELP = "Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.";
+
+/**
+ * zona.cerca_pocas: what each row counts, said as «too few for so many» (FALTA) or «tight» (JUSTO).
+ * The words follow fila.mide.*: schools and pharmacies count one each, colegios count classrooms,
+ * mayores count places (nobody publishes the places of an escuela infantil, D-217).
+ */
+const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string; JUSTO: string }>> = {
+  escuela_infantil: { service: "Escuela infantil", FALTA: "hay pocas para tantos niños de 0 a 4 años", JUSTO: "van justas para tantos niños de 0 a 4 años" },
+  colegio: { service: "Colegio con primaria", FALTA: "hay pocas aulas para tantos niños de 5 a 14 años", JUSTO: "las aulas van justas para tantos niños de 5 a 14 años" },
+  centro_salud: { service: "Centro de salud", FALTA: "hay pocos para tanta gente", JUSTO: "van justos para tanta gente" },
+  mayores: { service: "Centro de mayores", FALTA: "hay pocas plazas para tantas personas mayores", JUSTO: "las plazas van justas para tantas personas mayores" },
+  farmacia: { service: "Farmacia", FALTA: "hay pocas para tanta gente", JUSTO: "van justas para tanta gente" },
+};
+
+function walkMinutesText(minutes: number): string {
+  const n = Math.round(minutes);
+  if (n < 1) return "a menos de 1 min andando";
+  return n === 1 ? "a 1 min andando" : `a unos ${formatNumber(n, 0)} min andando`;
+}
+
+type NearRow = Classified & { row: GapRowKey };
+
+/** The walk each row of services measures (fila.mide.*, 2SFCA): what is within 15 min on foot. */
+export const ROW_WALK_MIN = 15;
+
+/** One line of zona.cerca_pocas and the row of «Qué falta» it explains. */
+export interface NearButShort {
+  row: GapRowKey;
+  text: string;
+}
+
+/**
+ * zona.cerca_pocas: a service the search found within the row's own walk (`walks`, minutes by row,
+ * up to ROW_WALK_MIN) that «Qué falta» marks FALTA or JUSTO, in one line that says both are true:
+ * «Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso
+ * sale FALTA.» Further than that, the row does not count it and there is nothing to reconcile.
+ * `place` is the district when the card is a barrio's (its rows are the district's). Rows compared
+ * together with neighbours or too small to compare are left out: their status is not the zone's own.
+ */
+export function nearButShort(rows: readonly NearRow[], walks: Partial<Record<GapRowKey, number>>, place: string | null = null): NearButShort[] {
+  return sortRows(rows).flatMap((row) => {
+    const words = NEAR_BUT_SHORT[row.row];
+    const minutes = walks[row.row];
+    if (!words || minutes === undefined || minutes > ROW_WALK_MIN || (row.status !== "FALTA" && row.status !== "JUSTO")) return [];
+    if (notComparable(row) || inGroup(row)) return [];
+    const where = place ? `en ${place} ` : "";
+    return [{ row: row.row, text: `${words.service} ${walkMinutesText(minutes)}, pero ${where}${words[row.status]}: por eso sale ${row.status}.` }];
+  });
+}
+
+/**
  * Value, reference (zones of the same type) and the whole region, with the decimals of the API
  * `explanation` (hi_domain.gaps): set by the value and its reference.
  */

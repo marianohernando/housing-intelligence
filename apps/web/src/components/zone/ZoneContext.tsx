@@ -68,7 +68,7 @@ export default function ZoneContext({ zone }: { zone: ContextZone }) {
   const lines = loaded?.level === shown.level ? contextLines(shown, loaded.rows) : [];
   if (lines.length === 0) return null;
   return (
-    <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
+    <GlassCard as="section" aria-labelledby={titleId} className={styles.card} data-context-card="">
       <h2 id={titleId} className={styles.title}>
         {CONTEXT_CARD.title}
       </h2>
@@ -81,7 +81,10 @@ export default function ZoneContext({ zone }: { zone: ContextZone }) {
           </li>
         ))}
       </ul>
-      <p className={styles.footer}>{CONTEXT_CARD.footer}</p>
+      {/* Said once under the last of the context cards (globals.css, [data-context-footer]) */}
+      <p className={styles.footer} data-context-footer="">
+        {CONTEXT_CARD.footer}
+      </p>
     </GlassCard>
   );
 }

@@ -176,6 +176,43 @@
   font-weight: 600;
 }
 
+/* A hospital's label (centros.hospital.fila): a little wider on desktop for the pill and its type
+   («[Privado] Hospital de salud mental»); its first line never wraps, so on a phone the type is cut
+   with «…» and the pill stays whole */
+@media (min-width: 761px) {
+  .hospitalLabel {
+    max-width: 18rem;
+  }
+}
+
+.labelTextFit {
+  min-width: 0;
+}
+
+.labelKindRow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.labelKindText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A hospital's beds after its name: «· [cama] 966» (centros.hospital.fila) */
+.labelBeds {
+  white-space: nowrap;
+}
+
+.labelBeds svg {
+  margin-right: 0.15rem;
+  vertical-align: -0.15rem;
+}
+
 .labelPin {
   position: absolute;
   left: 50%;
