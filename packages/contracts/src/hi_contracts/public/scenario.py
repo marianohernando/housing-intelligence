@@ -98,7 +98,10 @@ class Budget(BaseModel):
 
 
 class Household(BaseModel):
-    """«Tu hogar»: adults, children and older people they look after (all live together)."""
+    """«Tu hogar»: adults, children and older people they look after (all live together).
+
+    `seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no
+    one to the household, unlike `seniors_in_care`."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -106,6 +109,7 @@ class Household(BaseModel):
     minors: int = Field(default=0, ge=0, le=8)
     minor_ages: list[int] = Field(default_factory=list[int], description="0-17, optional")
     seniors_in_care: int = Field(default=0, ge=0, le=4, description="People aged 65+ cared for")
+    seniors: bool = Field(default=False, description="Every adult is 65+ («Somos mayores»)")
 
     @model_validator(mode="after")
     def _coherent(self) -> Self:

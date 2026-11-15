@@ -1972,3 +1972,23 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
     - **Sync:** `make supabase-sync PROFILE=demo` (`source_registry`, `feature_registry` y `feature_value`).
     - **Smoke de despliegue:** `scripts/smoke_demo.sh` exigía `fit-0.8` y, con `fit-0.9`, `make deploy-demo` acababa con error tras desplegar. Ahora acepta `fit-0.8` o posterior (revisión R-01).
     - **Smoke:** `scripts/golden_search.py` contra la base sincronizada (10/10) y `/search` con el ejemplo.
+
+## D-244 — «Somos mayores»: un tipo de hogar para quien ya tiene 65 años o más (2026-11-15)
+Prueba en persona del 15 nov con una persona mayor, en el móvil: «difícil de entender, muchos datos juntos». La auditoría (`prompts/UX_AUDITORIA_MOVIL.md`, §3 C4) encontró que el formulario no tenía sitio para ella: la opción que parecía la suya, «Con mayores a cargo», suma una persona más al hogar (más m², más precio y menos zonas). Decidido por Mariano con el orquestador. Es aditivo y reversible: un campo opcional en el contrato, una línea del dominio y la web. `fit-0.9` no cambia. Código: `hi_contracts/public/scenario.py` (`Household.seniors`), `hi_domain/search.py` (`highlight_rows`), `apps/web/src/lib/scenario.ts` (`setOlderHousehold`, `retiredExampleScenario`), `components/search/SearchCard.tsx` y `ExampleButton.tsx`. Evidencia: `evidence/gate-06/2026-11-15-ux-1/`.
+
+1. **Qué es.** `Household.seniors: bool = False`, «Every adult is 65+ («Somos mayores»)». Dice quiénes son los adultos del hogar (1 o 2 personas de 65 años o más). **No suma personas:** el hogar sigue siendo el de «Solo/a» o «En pareja», con sus m² (D-214: 61 o 68 m²). Es distinto de `seniors_in_care`, que sí cuenta a una persona mayor que vive con el hogar y a la que se cuida.
+2. **Qué hace.**
+   - **Dominio:** con `seniors`, `highlight_rows` pone delante la fila de centros de mayores, como ya hacía con `seniors_in_care`. Así las 3 filas destacadas de «Qué falta» son centros de mayores, centros de salud y farmacias. Escuelas infantiles y colegios solo salen si hay menores en casa (por ejemplo, unos abuelos con un nieto: colegios, centros de mayores y centros de salud).
+   - **Web:** «Somos mayores» es un botón más de «¿Quién va a vivir en la casa?», con la línea «Para personas de 65 años o más. Elige también si vives solo/a o en pareja.». Al marcarlo:
+     - se marca «Centro de salud» en «¿Qué quieres tener cerca?» (prioridad `salud`), que la persona puede quitar;
+     - «Trabajo en» pasa a «Más opciones», plegado y opcional;
+     - la lista no enseña el aviso «¿Trabajas fuera de casa? Dinos dónde…» (`resultados.sin_lugar`).
+   - **Ejemplo de la portada:** «Ejemplo: pareja jubilada que quiere el centro de salud cerca»: 2 personas, «Somos mayores», alquiler hasta 900 € al mes y «Centro de salud», sin lugar de trabajo.
+3. **Qué no hace.**
+   - No cambia el % ni el orden: ningún criterio ni condición lee el campo. Un test lo comprueba: la misma búsqueda con y sin «Somos mayores» da las mismas zonas, los mismos % y los mismos recuentos de «¿Y si cambias algo?».
+   - No cambia los m², el precio ni los hechos de la tarjeta.
+   - No marca la farmacia ni «Lo quiero a un paseo»: «Me importa» no tiene farmacia y un servicio a un paseo entra como imprescindible, es decir, como filtro. Que la farmacia ordene o filtre es una decisión aparte (auditoría, opción 3).
+   - No es una etiqueta sobre la persona ni infiere nada de ella (CLAUDE.md §13): es una respuesta que la persona da y puede quitar.
+4. **Contrato.** Aditivo: una búsqueda guardada o compartida antes significa lo mismo (`seniors: false`). La respuesta de `/search` lo devuelve dentro de `scenario`. Una API anterior rechaza el campo (`extra="forbid"`): la web y la API van en el mismo despliegue, como siempre.
+5. **Golden.** `golden_senior` no usa el campo y no cambia: `scripts/golden_search.py`, 10 de 10 contra `housing` en solo lectura.
+6. **Cómo volver atrás:** revertir el PR. Sin el campo, la única opción de mayores vuelve a ser la de cuidar a una persona mayor («Con una persona mayor a la que cuidas», antes «Con mayores a cargo»).

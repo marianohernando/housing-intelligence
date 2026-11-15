@@ -26,7 +26,9 @@ INFANT_MAX_AGE = 2  # escuela infantil (0-3): first cycle of educación infantil
 
 
 def highlight_rows(scenario: ScenarioState) -> list[GapRowKey]:
-    """The 3 rows of «Qué falta aquí» that matter most to this household."""
+    """The 3 rows of «Qué falta aquí» that matter most to this household: older people,
+    those they look after or the household itself («Somos mayores», D-244), bring the
+    centres for older people forward."""
     household = scenario.household
     ages = household.minor_ages
     rows: list[GapRowKey] = []
@@ -34,7 +36,7 @@ def highlight_rows(scenario: ScenarioState) -> list[GapRowKey]:
         rows.append(GapRowKey.ESCUELA_INFANTIL)
     if household.minors:
         rows.append(GapRowKey.COLEGIO)
-    if household.seniors_in_care:
+    if household.seniors_in_care or household.seniors:
         rows.append(GapRowKey.MAYORES)
     rows += [GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA, GapRowKey.VIVIENDA]
     return rows[:HIGHLIGHTS]
