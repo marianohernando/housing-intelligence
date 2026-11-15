@@ -60,7 +60,8 @@ class FeatureValueDetail(BaseModel):
       `ambitos_residenciales_en_desarrollo`): `items`, empty when the zone has none (a
       confirmed 0);
     - the air quality station a value comes from (`no2_media_anual`, D-237): `station`,
-      `station_code`, `own`, `distance_km` and `traffic`."""
+      `station_code`, `own`, `distance_km` and `traffic`, left out of the other features'
+      rows."""
 
     numerator: float | None = Field(default=None, description="Count behind the share's top")
     denominator: float | None = Field(default=None, description="Count behind the share's base")
@@ -75,19 +76,31 @@ class FeatureValueDetail(BaseModel):
         default=None, description="The zone's items: stage order, then largest first"
     )
     station: str | None = Field(
-        default=None, examples=["Getafe"], description="D-237: the air quality station's name"
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["Getafe"],
+        description="D-237: the air quality station's name",
     )
     station_code: str | None = Field(
-        default=None, examples=["28065014"], description="D-237: its code in its network"
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["28065014"],
+        description="D-237: its code in its network",
     )
     own: bool | None = Field(
-        default=None, description="D-237: true when the station lies in the zone itself"
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-237: true when the station lies in the zone itself",
     )
     distance_km: float | None = Field(
-        default=None, description="D-237: from the centre of the zone's residential streets"
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-237: from the centre of the zone's residential streets",
     )
     traffic: bool | None = Field(
-        default=None, description="D-237: a traffic station (its network's type), not background"
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-237: a traffic station (its network's type), not background",
     )
 
 

@@ -65,39 +65,41 @@ zonas 199 · cumplen 39 · desconocidas 142 · condición que más quita: budget
   casi: Moncloa-Aravaca (falla budget)
 
 ## golden_couple: OK
-zonas 199 · cumplen 26 · desconocidas 172 · condición que más quita: budget
-  Reality Check: +40.000 € → +1 zonas
-  1. San Sebastián de los Reyes · 90 % · ≈ 238000 €
+zonas 199 · cumplen 36 · desconocidas 151 · condición que más quita: budget
+  Reality Check: +40.000 € → +4 zonas
+  1. Puente de Vallecas · 91 % · ≈ 202000 €
+       - Parque urbano a unos 3 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min (confianza 1.00)
+       - 24 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 68 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 202.000 € por 68 m² (2.971 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) (confianza 0.50)
+  2. Usera · 91 % · ≈ 207000 €
+       - Parque urbano a unos 3 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 11 min (confianza 1.00)
+       - 20 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 69 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 207.000 € por 68 m² (3.046 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) (confianza 0.50)
+  3. Villaverde · 91 % · ≈ 234000 €
+       - Parque urbano a unos 3 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min (confianza 1.00)
+       - 26 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 70 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 234.000 € por 68 m² (3.442 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) (confianza 0.50)
+  4. San Sebastián de los Reyes · 90 % · ≈ 238000 €
        - Parque urbano a unos 7 min andando (confianza 0.99)
        - Parada de autobús a unos 4 min andando · Metro o Cercanías a unos 21 min (confianza 0.99)
        - 59 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
        - 24 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
        - Comprar ≈ 238.000 € por 68 m² (3.496 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
-  2. Leganés · 89 % · ≈ 195000 €
-       - Parque urbano a unos 4 min andando (confianza 1.00)
-       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 13 min (confianza 1.00)
-       - 33 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
-       - 77 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
-       - Comprar ≈ 195.000 € por 68 m² (2.869 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
-  3. Alcobendas · 87 % · ≈ 294000 €
-       - Parque urbano a unos 6 min andando (confianza 0.99)
-       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 17 min (confianza 0.99)
-       - 56 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
-       - 23 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
-       - Comprar ≈ 294.000 € por 68 m² (4.327 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
-  4. Getafe · 85 % · ≈ 191000 €
-       - Parque urbano a unos 5 min andando (confianza 1.00)
-       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 15 min (confianza 1.00)
-       - 42 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
-       - 80 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
-       - Comprar ≈ 191.000 € por 68 m² (2.812 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
-  5. Coslada · 85 % · ≈ 196000 €
-       - Parque urbano a unos 5 min andando (confianza 0.99)
-       - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min (confianza 0.99)
-       - 45 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
-       - 77 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
-       - Comprar ≈ 196.000 € por 68 m² (2.875 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio) (confianza 0.80)
-  casi: Pozuelo de Alarcón (falla budget)
+  5. Carabanchel · 90 % · ≈ 247000 €
+       - Parque urbano a unos 3 min andando (confianza 1.00)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min (confianza 1.00)
+       - 27 min en transporte público hasta Méndez Álvaro, llegando a las 9:00 (confianza 0.70)
+       - 74 min en transporte público hasta Alcobendas centro, llegando a las 9:00 (confianza 0.70)
+       - Comprar ≈ 247.000 € por 68 m² (3.638 €/m², precio estimado: valor tasado de Madrid repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento) (confianza 0.50)
+  casi: Chamartín (falla budget)
+  casi: Chamberí (falla budget)
+  casi: Centro (falla budget)
 
 ## golden_single_parent_no_car: OK
 zonas 199 · cumplen 25 · desconocidas 6 · condición que más quita: near:colegio
@@ -248,6 +250,29 @@ zonas 199 · cumplen 46 · desconocidas 142 · condición que más quita: budget
   casi: Chamberí (falla budget)
   casi: Retiro (falla budget)
 
+## golden_couple: OK
+zonas 199 · cumplen 57 · desconocidas 142 · condición que más quita: None
+  1. Chamberí · 100 % · ≈ 1531 €/mes
+       - Alquiler ≈ 1.531 €/mes por 68 m² (22,5 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 5 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+  2. Tetuán · 100 % · ≈ 1314 €/mes
+       - Alquiler ≈ 1.314 €/mes por 68 m² (19,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+  3. Puente de Vallecas · 100 % · ≈ 997 €/mes
+       - Alquiler ≈ 997 €/mes por 68 m² (14,7 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min (confianza 1.00)
+       - Centro de salud a unos 8 min andando (confianza 1.00)
+  4. Salamanca · 100 % · ≈ 1587 €/mes
+       - Alquiler ≈ 1.587 €/mes por 68 m² (23,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 6 min (confianza 1.00)
+       - Centro de salud a unos 9 min andando (confianza 1.00)
+  5. Centro · 100 % · ≈ 1495 €/mes
+       - Alquiler ≈ 1.495 €/mes por 68 m² (22,0 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más) (confianza 0.80)
+       - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 4 min (confianza 1.00)
+       - Centro de salud a unos 7 min andando (confianza 1.00)
+
 ## golden_family en San Blas-Canillejas (barrios): OK
 zonas 8 · cumplen 7 · desconocidas 0 · condición que más quita: near:colegio
   Reality Check: +5 min a pie hasta colegio con primaria → +0 zonas
@@ -296,4 +321,4 @@ zonas 8 · cumplen 7 · desconocidas 0 · condición que más quita: near:colegi
   casi: Rejas (falla near:colegio)
   todos: Simancas 97 %, Hellín 93 %, Amposta 96 %, Arcos 97 %, Rosas 96 %, Rejas 55 %, Canillejas 97 %, El Salvador 95 %
 
-9 escenarios dorados · todos OK
+10 escenarios dorados · todos OK

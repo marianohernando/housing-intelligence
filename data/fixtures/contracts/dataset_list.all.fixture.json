@@ -1,6 +1,6 @@
 {
-  "total": 41,
-  "cm_open_data_count": 31,
+  "total": 51,
+  "cm_open_data_count": 35,
   "datasets": [
     {
       "dataset_id": "cm_alquiler_m2_codigo_postal_madrid",
@@ -21,6 +21,39 @@
       "url": "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000",
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-19b2da9645e3",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_calidad_aire_estaciones",
+      "name": "Red de Calidad del Aire. Estaciones",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/calidad_aire_estaciones",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-071a20075f6f",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_calidad_aire_horario_2025",
+      "name": "Red de Calidad del Aire. Datos horarios desde 2005 (año 2025)",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-b5363164c0cf",
+      "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
+      "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
+    },
+    {
+      "dataset_id": "cm_calidad_aire_zonas",
+      "name": "Red de Calidad del Aire. Municipios por zonas",
+      "publisher": "Comunidad de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/calidad_aire_zonas",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-66c035302c37",
       "license": "Creative Commons Attribution 4.0 (por dataset; CC-BY predominante)",
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
@@ -245,6 +278,17 @@
       "attribution_text": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
     },
     {
+      "dataset_id": "crtm_aparcamientos_disuasion",
+      "name": "Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid",
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "is_cm_open_data": true,
+      "url": "https://datos.comunidad.madrid/dataset/aparcamientos_disuasion",
+      "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
+      "version": "2026-11-14-dd011ca20087",
+      "license": "CRTM Licencia de datos abiertos (LDA)",
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+    },
+    {
       "dataset_id": "crtm_gtfs_autobuses_urbanos",
       "name": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid",
       "publisher": "Consorcio Regional de Transportes de Madrid",
@@ -253,7 +297,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-41f7f9c15b61",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_cercanias",
@@ -264,7 +308,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-72e73ca7b487",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_emt",
@@ -275,7 +319,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-8478ae5c9262",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_interurbanos",
@@ -286,7 +330,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-10-5bbf3c95047c",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_metro",
@@ -297,7 +341,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-840132dbc546",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_gtfs_metro_ligero",
@@ -308,7 +352,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-e6a5daaf76ec",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_topologia_cercanias",
@@ -319,7 +363,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-cbd6ab397c04",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_topologia_metro",
@@ -330,7 +374,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-c788fd9285b8",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "crtm_topologia_metro_ligero",
@@ -341,7 +385,7 @@
       "source_name": "Portal de Datos Abiertos de la Comunidad de Madrid",
       "version": "2026-11-12-9e34e07839c7",
       "license": "CRTM Licencia de datos abiertos (LDA)",
-      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
+      "attribution_text": "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad."
     },
     {
       "dataset_id": "aeat_alquiler_nuevos_contratos_codigo_postal",
@@ -364,6 +408,61 @@
       "version": "2026-11-12-f7bc11db960a",
       "license": "Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)",
       "attribution_text": "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024."
+    },
+    {
+      "dataset_id": "ayto_aparcamientos_publicos",
+      "name": "Aparcamientos públicos municipales",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/202625-0-aparcamientos-publicos",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-14-e89f9e8e3c8a",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "ayto_aparcamientos_residentes",
+      "name": "Aparcamientos municipales para residentes (PAR)",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/202584-0-aparcamientos-residentes",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-14-568c9b4e549b",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "ayto_calidad_aire_estaciones",
+      "name": "Calidad del aire. Estaciones de control",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/212629-0-estaciones-control-aire",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-14-f789e8d463c4",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "ayto_calidad_aire_horario",
+      "name": "Calidad del aire. Datos horarios desde 2001 (desde 2025)",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://datos.madrid.es/dataset/201200-0-calidad-aire-horario",
+      "source_name": "Portal de Datos Abiertos del Ayuntamiento de Madrid",
+      "version": "2026-11-14-f23086014df5",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)."
+    },
+    {
+      "dataset_id": "ayto_mapa_estrategico_ruido_2021",
+      "name": "Mapa Estratégico del Ruido 2021 (niveles de ruido del tráfico rodado)",
+      "publisher": "Ayuntamiento de Madrid",
+      "is_cm_open_data": false,
+      "url": "https://servpub.madrid.es/IDEAM_WBGEOPORTAL/dataset.iam?id=470b89af-5d64-41d3-8bdb-2fe6badd0364",
+      "source_name": "Geoportal del Ayuntamiento de Madrid",
+      "version": "2026-11-14-e2452b203eb4",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "attribution_text": "Fuente: Ayuntamiento de Madrid — Geoportal (geoportal.madrid.es), Mapa Estratégico de Ruido 2021 (CC BY 4.0). El porcentaje de calles por encima de cada nivel lo calcula Vida Fácil sobre ese mapa."
     },
     {
       "dataset_id": "ayto_padron_municipal",
@@ -430,6 +529,17 @@
       "version": "2026-11-12-e5148a11b523",
       "license": "Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)",
       "attribution_text": "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad."
+    },
+    {
+      "dataset_id": "osm_ocio",
+      "name": "Ocio de OpenStreetMap (bares, restaurantes, gimnasios y cultura; extracto Geofabrik de la Comunidad de Madrid)",
+      "publisher": "OpenStreetMap contributors (extracto de Geofabrik)",
+      "is_cm_open_data": false,
+      "url": "https://download.geofabrik.de/europe/spain/madrid.html",
+      "source_name": "OpenStreetMap (extracto Geofabrik Madrid)",
+      "version": "2026-11-14-a3206c2d1d5f",
+      "license": "Open Database License (ODbL) 1.0",
+      "attribution_text": "© OpenStreetMap contributors, ODbL."
     },
     {
       "dataset_id": "osm_parques",
