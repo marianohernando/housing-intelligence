@@ -1,6 +1,6 @@
 {
  "base": "http://localhost:3061",
- "checked_at": "2026-11-15T16:51:37.212Z",
+ "checked_at": "2026-11-15T17:54:36.175Z",
  "runs": [
   {
    "browserName": "chromium",
@@ -160,7 +160,7 @@
      "journey": "J2 Qué falta Madrid",
      "name": "«Colegios» CUBIERTO",
      "ok": true,
-     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Fi"
+     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Da"
     },
     {
      "journey": "J2 Qué falta Madrid",
@@ -184,7 +184,7 @@
      "journey": "J2 Qué falta Madrid",
      "name": "«Vivienda para familias» JUSTO",
      "ok": true,
-     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Fiabilidad del dato: Dato fiable "
+     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Dato fiable Fiabilidad del dato: "
     },
     {
      "journey": "J2 Qué falta Madrid",
@@ -445,6 +445,60 @@
      "detail": "0 px"
     },
     {
+     "journey": "J5 Somos mayores",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "household.seniors === true",
+     "ok": true,
+     "detail": "{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "priorities: salud, sin_escaleras and transporte",
+     "ok": true,
+     "detail": "[\"salud\",\"sin_escaleras\",\"transporte\"]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "scope: madrid",
+     "ok": true,
+     "detail": "madrid"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a family place, 30 min as most, 3 days",
+     "ok": true,
+     "detail": "[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "summary = API zones_passing, in barrios",
+     "ok": true,
+     "detail": "Hemos encontrado 22 barrios para ti."
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "never asks where they work",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a quick amount of 900 € reaches /search as it is",
+     "ok": true,
+     "detail": "{\"kind\":\"rent\",\"amount_eur\":900}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
      "journey": "all",
      "name": "no browser console errors",
      "ok": true,
@@ -454,7 +508,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 10
+   "seconds": 13
   },
   {
    "browserName": "chromium",
@@ -614,7 +668,7 @@
      "journey": "J2 Qué falta Madrid",
      "name": "«Colegios» CUBIERTO",
      "ok": true,
-     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Fi"
+     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Da"
     },
     {
      "journey": "J2 Qué falta Madrid",
@@ -638,7 +692,7 @@
      "journey": "J2 Qué falta Madrid",
      "name": "«Vivienda para familias» JUSTO",
      "ok": true,
-     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Fiabilidad del dato: Dato fiable "
+     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Dato fiable Fiabilidad del dato: "
     },
     {
      "journey": "J2 Qué falta Madrid",
@@ -761,6 +815,60 @@
      "detail": "0 px"
     },
     {
+     "journey": "J5 Somos mayores",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "household.seniors === true",
+     "ok": true,
+     "detail": "{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "priorities: salud, sin_escaleras and transporte",
+     "ok": true,
+     "detail": "[\"salud\",\"sin_escaleras\",\"transporte\"]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "scope: madrid",
+     "ok": true,
+     "detail": "madrid"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a family place, 30 min as most, 3 days",
+     "ok": true,
+     "detail": "[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "summary = API zones_passing, in barrios",
+     "ok": true,
+     "detail": "Hemos encontrado 22 barrios para ti."
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "never asks where they work",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a quick amount of 900 € reaches /search as it is",
+     "ok": true,
+     "detail": "{\"kind\":\"rent\",\"amount_eur\":900}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
      "journey": "all",
      "name": "no browser console errors",
      "ok": true,
@@ -770,7 +878,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 12
+   "seconds": 15
   }
  ]
 }
