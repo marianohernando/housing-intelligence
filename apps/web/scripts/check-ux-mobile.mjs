@@ -40,7 +40,7 @@ const MIN_TARGET_PX = 44;
 // Before and after the first delivery (textos_web.md)
 const NAMES = {
   search: /^Tu búsqueda$/,
-  results: /^(Zonas que encajan|Zonas que te convienen)$/,
+  results: /^(Zonas que encajan|Zonas que (te|os) convienen)$/,
   changes: /^(¿Y si cambias algo\?|¿Quieres ver más zonas\?)$/,
   family: /pareja con 2 hijos/,
   seniorsExample: /pareja jubilada/i,

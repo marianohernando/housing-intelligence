@@ -76,7 +76,8 @@ const PHONE_MAX_PX = 760;
 const zoneCard = (page) => page.locator("aside").filter({ has: page.getByRole("button", { name: /^Volver( a la lista)?$/ }) }).first();
 const zoneKeyOf = (zone) => `${zone.level}/${zone.code}`;
 /** The names of the list and of «¿Quieres ver más zonas?» (UX mobile audit, first delivery). */
-const RESULTS = "Zonas que te convienen";
+// «Zonas que os convienen» for a household of more than one (resultsTitle of apps/web/src/lib/fit.ts)
+const RESULTS = /^Zonas que (te|os) convienen$/;
 const CHANGES = "¿Quieres ver más zonas?";
 const SEARCH_BUTTON = "Buscar zonas para mí";
 /** rc.anterior: the options of the search before the person's last changes are not offered (RealityCheck.tsx). */
@@ -120,10 +121,12 @@ async function journeySearch(run, page) {
   const rc = result.reality_check;
   const many = speaksToMany(result.scenario.household);
   run.check(J, "POST /search 200", first.status() === 200, first.status());
-  const summary = page.getByRole("region", { name: RESULTS, exact: true }).getByText(/^(Hemos|No hemos) encontrado/).first();
+  const summary = page.getByRole("region", { name: RESULTS }).getByText(/^(Hemos|No hemos) encontrado/).first();
   await summary.waitFor({ timeout: WAIT });
   const said = squash(await summary.innerText());
   run.check(J, "summary = API zones_passing, «para vosotros» for a couple with children", many && said === passingText(rc.zones_passing, false, many), said);
+  run.check(J, "the list's title speaks to them too: «Zonas que os convienen»",
+    (await page.getByRole("heading", { name: "Zonas que os convienen", exact: true }).count()) === 1);
   const total = await page.getByText(`Hemos mirado las ${result.all_zones.length} zonas de la Comunidad de Madrid.`).count();
   run.check(J, "«Hemos mirado las N zonas» = API all_zones", total > 0, result.all_zones.length);
   await checkFitLegend(run, page, rc);
@@ -146,7 +149,7 @@ async function journeySearch(run, page) {
 
 /** resultados.aviso_2024 (F5 of fit-0.9): once under the results when renting, never when buying. */
 async function checkRentNotice(run, page, buying) {
-  const results = page.getByRole("region", { name: RESULTS, exact: true });
+  const results = page.getByRole("region", { name: RESULTS });
   const n = await results.getByText(RENT_LIST_NOTICE, { exact: true }).count();
   run.check("J1 search", buying ? "buying: no 2024 rent notice" : "renting: the 2024 rent notice, once", n === (buying ? 0 : 1), `${n}`);
 }
@@ -159,7 +162,7 @@ async function checkRentNotice(run, page, buying) {
 async function checkRows(run, page, ranked) {
   const J = "J1 search";
   const phone = page.viewportSize().width <= PHONE_MAX_PX;
-  const rows = page.getByRole("region", { name: RESULTS, exact: true }).locator("ol > li > button");
+  const rows = page.getByRole("region", { name: RESULTS }).locator("ol > li > button");
   const shown = Math.min(await rows.count(), 5);
   const wrong = [];
   for (let i = 0; i < shown; i += 1) {
@@ -271,7 +274,7 @@ async function checkFirstZone(run, page, top) {
   run.check(J, "«Ver más»: why the rent is orientative", text.includes(RENT_2024_NOTICE));
   await run.shot(page, "j1-card");
   await card.getByRole("button", { name: "Volver a la lista" }).click();
-  await page.getByRole("region", { name: RESULTS, exact: true }).waitFor({ timeout: WAIT });
+  await page.getByRole("region", { name: RESULTS }).waitFor({ timeout: WAIT });
   run.check(J, "«Volver a la lista» shows the list, without ?zona=", (await card.count()) === 0 && !new URL(page.url()).searchParams.has("zona"), page.url());
 }
 
@@ -410,7 +413,7 @@ async function journeyZoneAddress(run, page) {
     page.getByRole("button", { name: /pareja con 2 hijos/ }).click(),
   ]);
   const top = (await first.json()).data.results[0];
-  const list = page.getByRole("region", { name: RESULTS, exact: true });
+  const list = page.getByRole("region", { name: RESULTS });
   const row = page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first();
   await row.waitFor({ timeout: WAIT });
   await row.click();

@@ -277,6 +277,14 @@ export function speaksToMany(household: { adults?: number; minors?: number; seni
 }
 
 /**
+ * resultados.titulo: «Zonas que te convienen», «Zonas que os convienen» for a household of more
+ * than one (`many`, speaksToMany), as the line under it says «para vosotros».
+ */
+export function resultsTitle(many = false): string {
+  return many ? "Zonas que os convienen" : "Zonas que te convienen";
+}
+
+/**
  * rc.ninguna, rc.una, rc.varias: «Hemos encontrado 33 zonas para ti.» (UX mobile audit, §4 n.º 5),
  * «… para vosotros.» for a household of more than one (`many`, speaksToMany). After applying an
  * option of «¿Quieres ver más zonas?» it says the change: «Con este cambio salen 40 zonas.»

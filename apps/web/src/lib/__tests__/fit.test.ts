@@ -21,6 +21,7 @@ import {
   optionText,
   paintFit,
   passingText,
+  resultsTitle,
   speaksToMany,
   rankText,
   relaxOptions,
@@ -241,6 +242,13 @@ describe("«¿Y si cambias algo?»", () => {
     expect(passingText(32)).toBe("Hemos encontrado 32 zonas para ti.");
     expect(passingText(49, true)).toBe("Con este cambio salen 49 zonas.");
     expect(passingText(1, true)).toBe("Con este cambio sale 1 zona.");
+  });
+
+  it("titles the list for the household, as the line under it", () => {
+    expect(resultsTitle(false)).toBe("Zonas que te convienen");
+    expect(resultsTitle(true)).toBe("Zonas que os convienen");
+    expect(resultsTitle(speaksToMany(fixture.scenario.household))).toBe("Zonas que os convienen");
+    expect(resultsTitle(speaksToMany({ adults: 1 }))).toBe("Zonas que te convienen");
   });
 
   it("speaks to a household of more than one as «vosotros» (second delivery of the UX mobile audit)", () => {

@@ -22,6 +22,7 @@ import {
   rentNotice,
   rentReferenceAvailable,
   rentUnknownText,
+  resultsTitle,
   speaksToMany,
   tiedText,
   unknownText,
@@ -41,12 +42,11 @@ import RealityCheck from "./RealityCheck";
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (resultados.*, with resultados.empate, resultados.aviso_2024 and resultados.sin_lugar in
+// Copy from pitch/textos_web.md (resultados.*, with resultados.titulo, resultados.empate, resultados.aviso_2024 and resultados.sin_lugar in
 // lib/fit.ts, resultados.banda.* in lib/match.ts, resultados.casi.* in lib/shortfall.ts, resultados.fila.lugar in
 // lib/essentials.ts, carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer, zona.cerca_de_encajar.*,
 // error.reintentar).
 const TEXT = {
-  title: "Zonas que te convienen",
   loading: "Buscando zonas para ti…",
   applied: "Ahora ves las zonas con:",
   undo: "Volver a mi búsqueda",
@@ -225,7 +225,9 @@ function PlaceHint() {
  * shows `children` («Así funciona»).
  */
 export default function SearchResults({ children }: { children: ReactNode }) {
-  const { status, result, error, stale, applied, undoRelaxation, retry } = useScenario();
+  const { scenario, status, result, error, stale, applied, undoRelaxation, retry } = useScenario();
+  // The title speaks to the household of the result, or of the search on its way
+  const many = speaksToMany((result?.scenario ?? scenario).household);
   const { data: datasets } = useDatasets();
   const slow = useSlow(status === "loading");
   const titleId = useId();
@@ -282,7 +284,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
   );
   const heading = (
     <h2 id={titleId} ref={title} tabIndex={-1} className={styles.heading}>
-      {TEXT.title}
+      {resultsTitle(many)}
     </h2>
   );
 
