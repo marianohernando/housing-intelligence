@@ -40,7 +40,7 @@ import { join } from "node:path";
 
 import { chromium } from "playwright";
 
-import { factAsShown, NEAR_MISS_LINE } from "../../../infra/deploy/e2e/shown_text.mjs";
+import { factAsShown, nearMissLine, speaksToMany } from "../../../infra/deploy/e2e/shown_text.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
@@ -135,13 +135,13 @@ async function fixes(browser) {
   await page.unroute("**/api/v1/search");
 
   // A row of «Qué falta» on the map: the label of the map (D-213)
-  await page.getByLabel("¿Qué quieres ver?").selectOption("centro_salud");
+  await page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("centro_salud");
   await page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
   d.mapa_aria_fila = await page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label");
   d.overflow_px = await overflow(page);
 
   // Leaving the map while a search is in flight cancels it (the answer would go nowhere)
-  await page.getByLabel("¿Qué quieres ver?").selectOption("");
+  await page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("");
   await page.route("**/api/v1/search", async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     await route.continue().catch(() => undefined);
@@ -353,7 +353,7 @@ async function projector(browser) {
     entry.overflow_px = await overflow(home.page);
     // The map by a row of «Qué falta»: the longest legend (2SFCA label and the neighbours, gap-0.3)
     await home.page.getByRole("button", { name: "Cerrar" }).first().click().catch(() => undefined);
-    await home.page.getByLabel("¿Qué quieres ver?").selectOption("colegio");
+    await home.page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("colegio");
     await home.page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
     await home.page.waitForTimeout(1500);
     entry.mapa_fila = await overlaps(home.page);
@@ -549,7 +549,7 @@ async function gap03(browser) {
 
   // The map coloured by a row: the legend says the small towns go with their neighbours
   const h = await open(browser, DESKTOP);
-  await h.page.getByLabel("¿Qué quieres ver?").selectOption("colegio");
+  await h.page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("colegio");
   await h.page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
   await h.page.waitForTimeout(2500);
   const legend = h.page.locator("section[aria-label='Leyenda del mapa']");
@@ -2170,8 +2170,9 @@ async function barrioFit(browser) {
     const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
     if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
     if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
-    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms (NEAR_MISS_LINE), never its %
-    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !NEAR_MISS_LINE.test(r.lineas[0] ?? "") || r.pct !== null)) {
+    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms and in the household's words (nearMissLine), never its %
+    const nearLine = nearMissLine(speaksToMany(api.scenario?.household));
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !nearLine.test(r.lineas[0] ?? "") || r.pct !== null)) {
       failures.push(`${id}: «casi» sin su motivo o con %`);
     }
     if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);

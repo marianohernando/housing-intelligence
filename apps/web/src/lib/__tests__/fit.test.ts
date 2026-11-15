@@ -211,6 +211,10 @@ describe("where the search looked («¿Dónde?», D-238)", () => {
     expect(rentReferenceAvailable([{ dataset_id: "osm_ocio" }, { dataset_id: "mivau_serpavi_alquiler" }])).toBe(true);
     expect(rentReferenceAvailable([{ dataset_id: "osm_ocio" }])).toBe(false);
     expect(rentReferenceAvailable(null)).toBe(false);
+    // A couple (review M-01 of PR #81)
+    expect(rentUnknownText({ ...search("pueblos", "rent", 136), scenario: { scope: "pueblos", budget: { kind: "rent" }, household: { adults: 2 } } })).toBe(
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar vuestro presupuesto.",
+    );
     expect(rentUnknownText(search("pueblos", "rent", 0))).toBeNull();
     expect(rentUnknownText(search("pueblos", "buy", 136))).toBeNull();
     expect(rentUnknownText(search("alrededores", "rent", 6))).toBeNull();
@@ -257,6 +261,13 @@ describe("«¿Y si cambias algo?»", () => {
     expect(nearHelpText(true)).toBe("Les falta una sola cosa de lo que pedís.");
     expect(rankText(1, "zona", true)).toBe("La 1.ª que más os conviene");
     expect(rankText(3, "barrio")).toBe("El 3.º que más te conviene");
+  });
+
+  it("speaks to the household in the rest of the results too (review M-01 of PR #81)", () => {
+    expect(voice(false)).toMatchObject({ presupuesto: "tu presupuesto", tienes: "tienes", cambias: "cambias", gastes: "gastes", mira: "mira", dinos: "dinos" });
+    expect(voice(true)).toMatchObject({ presupuesto: "vuestro presupuesto", tienes: "tenéis", cambias: "cambiáis", gastes: "gastéis", mira: "mirad", dinos: "decidnos" });
+    expect(noneText("zona", true)).toBe("Ninguna zona cumple todo lo que pedís. Mirad abajo qué pasa si cambiáis algo.");
+    expect(noneText("barrio", false)).toBe("Ningún barrio cumple todo lo que pides. Mira abajo qué pasa si cambias algo.");
   });
 
   it("titles the list for the household, as the line under it", () => {
@@ -456,6 +467,11 @@ describe("many zones tied at the top (resultados.empate, D-239)", () => {
     expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: older })).toBe(
       // A couple: «vosotros» (review R-03 of PR #81)
       "Hay 106 barrios igual de buenos: marcad qué queréis tener cerca o elegid cerca de dónde queréis vivir para afinar el orden.",
+    );
+    // One person of 65 or more who lives alone: «tú» all along (review R-02 of PR #82)
+    const alone = { scope: "madrid" as const, household: { adults: 1, seniors: true } };
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: alone })).toBe(
+      "Hay 106 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde quieres vivir para afinar el orden.",
     );
   });
 

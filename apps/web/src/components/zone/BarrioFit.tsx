@@ -13,7 +13,7 @@ import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { type BarrioRow, barrioRows, barriosText, barriosTitle, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
-import { nearHelpText, speaksToMany, unknownText, voice, WALK_MEDIAN } from "@/lib/fit";
+import { forFloorArea, nearHelpText, speaksToMany, unknownText, voice, WALK_MEDIAN } from "@/lib/fit";
 import type { ZoneProperties } from "@/lib/map/zones";
 
 import styles from "./BarrioFit.module.css";
@@ -38,68 +38,62 @@ const TEXT = {
   retry: "Reintentar",
 };
 
+/** Whether the map draws this barrio's outline, so its row can outline it there. */
+function outlinedOnMap(row: BarrioRow, barrios: ReturnType<typeof useMapZones>["barrios"]): boolean {
+  return row.id !== null && (barrios?.some((b) => b.properties.admin_unit_id === row.id) ?? false);
+}
+
 /**
  * One barrio, as a row of the list (second delivery of the UX mobile audit): its name, its band in
  * words (the % small after it on a wide screen) or what it lacks, and «Unos 1.129 € al mes». The row
- * is a button that outlines the barrio on the map (pressed again, back to the whole district) and
- * then shows its first facts under it. Without its outline (the map's barrios not loaded, or no
- * admin unit), the same row without a button, with its facts.
+ * is a button that opens its panel under it: with its outline, it outlines the barrio on the map
+ * (pressed again, back to the whole district); without it (the map's barrios not loaded, or no
+ * admin unit), it only opens the panel, folded as the others (`open`, one at a time as on the map).
  */
-function Barrio({ row }: { row: BarrioRow }) {
+function Barrio({ row, open, onToggle }: { row: BarrioRow; open: boolean; onToggle: () => void }) {
   const { barrios, barrio, focusBarrio } = useMapZones();
   const detailsId = useId();
-  const outlined = row.id !== null && (barrios?.some((b) => b.properties.admin_unit_id === row.id) ?? false);
+  const outlined = outlinedOnMap(row, barrios);
   const pressed = outlined && barrio?.properties.admin_unit_id === row.id;
-  const showFacts = pressed || !outlined;
-  const head = (
-    <>
-      <span className={styles.rowText}>
-        <span className={styles.name}>{row.name}</span>
-        {row.lacks && (
-          <span className={styles.fails}>
-            <span aria-hidden="true">{row.lacks.text}</span>
-            <span className="visually-hidden">{row.lacks.aria}</span>
-          </span>
-        )}
-        {row.fit && (
-          <span className={styles.band}>
-            {row.fit.band}
-            <span className={styles.pct}>
-              {` · ${row.fit.pct}`}
-              {row.tie && <span className="visually-hidden">{`, ${TEXT.tiesWith(row.tie)}`}</span>}
-            </span>
-          </span>
-        )}
-        {row.price && <PriceTag price={row.price} variant="row" />}
-      </span>
-      {outlined && <ChevronDown size={20} aria-hidden="true" className={[styles.chevron, pressed && styles.flip].filter(Boolean).join(" ")} />}
-    </>
-  );
+  const showFacts = outlined ? pressed : open;
   return (
-    <div className={[styles.row, outlined && styles.pickable, pressed && styles.pressed].filter(Boolean).join(" ")}>
-      {outlined ? (
-        <button
-          type="button"
-          className={styles.head}
-          aria-pressed={pressed}
-          aria-describedby={showFacts ? detailsId : undefined}
-          onClick={() => focusBarrio(pressed ? null : row.id)}
-        >
-          {head}
-        </button>
-      ) : (
-        <span className={styles.head}>{head}</span>
-      )}
-      {/* Its panel, once outlined: the band with its %, whom it ties with, what the price is for and how sure, its facts (review R-05 of PR #81) */}
+    <div className={[styles.row, styles.pickable, pressed && styles.pressed].filter(Boolean).join(" ")}>
+      <button
+        type="button"
+        className={styles.head}
+        aria-pressed={outlined ? pressed : undefined}
+        aria-expanded={outlined ? undefined : open}
+        aria-describedby={showFacts ? detailsId : undefined}
+        onClick={() => (outlined ? focusBarrio(pressed ? null : row.id) : onToggle())}
+      >
+        <span className={styles.rowText}>
+          <span className={styles.name}>{row.name}</span>
+          {row.lacks && (
+            <span className={styles.fails}>
+              <span aria-hidden="true">{row.lacks.text}</span>
+              <span className="visually-hidden">{row.lacks.aria}</span>
+            </span>
+          )}
+          {row.fit && (
+            <span className={styles.band}>
+              {row.fit.band}
+              <span className={styles.pct}>
+                {` · ${row.fit.pct}`}
+                {row.tie && <span className="visually-hidden">{`, ${TEXT.tiesWith(row.tie)}`}</span>}
+              </span>
+            </span>
+          )}
+          {row.price && <PriceTag price={row.price} variant="row" />}
+        </span>
+        <ChevronDown size={20} aria-hidden="true" className={[styles.chevron, showFacts && styles.flip].filter(Boolean).join(" ")} />
+      </button>
+      {/* Its panel: only what the row leaves out (review I-03 of PR #81): the % where the row hides it, whom it ties with, what the price is for and how sure, its facts */}
       {showFacts && (
         <span id={detailsId} className={styles.details}>
-          {row.fit && <span className={styles.fact}>{row.fit.text}</span>}
+          {row.fit && <span className={`${styles.fact} ${styles.panelPct}`}>{row.fit.pct}</span>}
           {row.tieLine && <span className={styles.fact}>{row.tieLine}</span>}
-          {row.price && (
-            <span className={styles.fact}>
-              {[row.price.long, row.price.area].filter(Boolean).join(" ")}
-              {row.price.confidence && ` · ${row.price.confidence.label}`}
-            </span>
+          {row.price && (row.price.m2 !== null || row.price.confidence) && (
+            <span className={styles.fact}>{[row.price.m2 !== null && forFloorArea(row.price.m2), row.price.confidence?.label].filter(Boolean).join(" · ")}</span>
           )}
           {row.facts.map((fact, i) => (
             <span key={i} className={styles.fact}>
@@ -118,12 +112,19 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   const { loading, data, error, retry } = useBarrioFit(distrito, scenario);
   const many = speaksToMany(scenario.household);
   const { barrios, barrio } = useMapZones();
+  // The barrio without its outline whose panel is open (one at a time, as the one outlined on the map)
+  const [openCode, setOpenCode] = useState<string | null>(null);
   const slow = useSlow(loading);
   const rows = data ? barrioRows(data) : null;
   const shown = rows ? (all ? rows.fits : rows.fits.slice(0, FIRST_BARRIOS)) : [];
-  // The facts of a barrio show once it is outlined (or always without its outline): say what their minutes are only then
-  const factsShown = (row: BarrioRow) => row.id === null || !barrios?.some((b) => b.properties.admin_unit_id === row.id) || barrio?.properties.admin_unit_id === row.id;
+  // The facts of a barrio show once its panel is open: say what their minutes are only then
+  const factsShown = (row: BarrioRow) => (outlinedOnMap(row, barrios) ? barrio?.properties.admin_unit_id === row.id : openCode === row.code);
   const walking = rows ? [...shown, ...rows.near].some((row) => row.walking && factsShown(row)) : false;
+  const barrioItem = (row: BarrioRow) => (
+    <li key={row.code}>
+      <Barrio row={row} open={openCode === row.code} onToggle={() => setOpenCode((code) => (code === row.code ? null : row.code))} />
+    </li>
+  );
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
@@ -152,13 +153,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
           </p>
           {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown, "barrio")}</p>}
           {shown.length > 0 && (
-            <ol className={styles.list}>
-              {shown.map((row) => (
-                <li key={row.code}>
-                  <Barrio row={row} />
-                </li>
-              ))}
-            </ol>
+            <ol className={styles.list}>{shown.map(barrioItem)}</ol>
           )}
           {rows.fits.length > FIRST_BARRIOS && (
             <button type="button" className={styles.toggle} aria-expanded={all} onClick={() => setAll((v) => !v)}>
@@ -170,13 +165,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
             <section className={styles.near} aria-labelledby={`${titleId}-casi`}>
               <h3 id={`${titleId}-casi`}>{TEXT.near}</h3>
               <p className={styles.muted}>{nearHelpText(many)}</p>
-              <ul className={styles.list}>
-                {rows.near.map((row) => (
-                  <li key={row.code}>
-                    <Barrio row={row} />
-                  </li>
-                ))}
-              </ul>
+              <ul className={styles.list}>{rows.near.map(barrioItem)}</ul>
             </section>
           )}
           {walking && <p className={styles.muted}>{WALK_MEDIAN}</p>}

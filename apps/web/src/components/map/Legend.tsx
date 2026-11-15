@@ -6,23 +6,25 @@ import { useId } from "react";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { errorMessage } from "@/lib/errors";
-import { byBarrio, countFit, type FitClass, paintFit, zonesText, zoneWord } from "@/lib/fit";
+import { byBarrio, countFit, type FitClass, paintFit, resultsTitle, speaksToMany, voice, zonesText, zoneWord } from "@/lib/fit";
 import { GAP_STATUS, ROW_NAME, SMALL_ZONE } from "@/lib/gaps";
 import { countByStatus, isGapRow, type MapCategory, MAP_ROWS, paintZones } from "@/lib/map/gapMap";
+import { capitalize } from "@/lib/names";
 
 import { useGapLayer } from "./GapLayerProvider";
 import styles from "./Legend.module.css";
 import { useMapZones } from "./MapProvider";
 
-// Copy from pitch/textos_web.md (leyenda.*, 8c49e33).
+// Copy from pitch/textos_web.md (leyenda.*, 8c49e33). The picker, the title and the ramp speak to the household
+// of the search (`voice`): «¿Qué queréis ver?», «Zonas que os convienen», «Os conviene más»; before a search, «tú».
 const TEXT = {
-  title: "Zonas que te convienen",
-  less: "Te conviene menos",
-  more: "Te conviene más",
+  title: resultsTitle,
+  less: (many: boolean) => `${capitalize(voice(many).te)} conviene menos`,
+  more: (many: boolean) => `${capitalize(voice(many).te)} conviene más`,
   noData: "Sin datos",
   before: "Haz tu búsqueda para ver qué zonas te convienen.",
   soon: "Muy pronto verás aquí qué zonas te convienen.", // leyenda.pronto
-  show: "¿Qué quieres ver?",
+  show: (many: boolean) => `¿Qué ${voice(many).quieres} ver?`,
   legend: "Leyenda del mapa",
   missing: "Qué falta",
   loading: "Cargando el mapa…",
@@ -48,6 +50,7 @@ const categoryLabel = (c: MapCategory) => (c === "ZONA_PEQUENA" ? SMALL_ZONE.lab
 function FitLegend({ id }: { id: string }) {
   const { result, available } = useScenario();
   const { resultZones, barriosError, retryBarrios } = useMapZones();
+  const many = speaksToMany(result?.scenario.household);
   if (result && resultZones) {
     const counts = countFit(paintFit(resultZones, result.all_zones));
     // leyenda.zonas with the word of «¿Dónde?» (D-238): «78 barrios», as the list says
@@ -56,12 +59,12 @@ function FitLegend({ id }: { id: string }) {
     return (
       <figure className={styles.figure} aria-labelledby={id}>
         <figcaption id={id} className={styles.title}>
-          {TEXT.title}
+          {TEXT.title(many)}
         </figcaption>
         <div className={styles.ramp} aria-hidden="true" />
         <div className={`${styles.ends} ${styles.fitEnds}`}>
-          <span>{TEXT.less}</span>
-          <span>{TEXT.more}</span>
+          <span>{TEXT.less(many)}</span>
+          <span>{TEXT.more(many)}</span>
         </div>
         <ul className={`${styles.statuses} ${styles.fitClasses}`}>
           {FIT_CLASSES.map((c) => (
@@ -86,12 +89,12 @@ function FitLegend({ id }: { id: string }) {
   return (
     <figure className={`${styles.figure} ${result ? "" : styles.waiting}`} aria-labelledby={id}>
       <figcaption id={id} className={styles.title}>
-        {TEXT.title}
+        {TEXT.title(many)}
       </figcaption>
       <div className={styles.ramp} aria-hidden="true" />
       <div className={styles.ends}>
-        <span>{TEXT.less}</span>
-        <span>{TEXT.more}</span>
+        <span>{TEXT.less(many)}</span>
+        <span>{TEXT.more(many)}</span>
       </div>
       <p className={styles.noData}>
         <span className={styles.swatch} aria-hidden="true" />
@@ -154,16 +157,18 @@ function RowLegend({ id }: { id: string }) {
  */
 export default function Legend() {
   const { row, setRow } = useGapLayer();
+  const { result } = useScenario();
+  const many = speaksToMany(result?.scenario.household);
   const selectId = useId();
   const titleId = useId();
   return (
     <section className={`glass ${styles.legend}`} aria-label={TEXT.legend} data-map-legend="">
       <div className={styles.picker}>
         <label htmlFor={selectId} className={styles.pickerLabel}>
-          {TEXT.show}
+          {TEXT.show(many)}
         </label>
         <select id={selectId} className={styles.select} value={row ?? ""} onChange={(e) => setRow(isGapRow(e.target.value) ? e.target.value : null)}>
-          <option value="">{TEXT.title}</option>
+          <option value="">{TEXT.title(many)}</option>
           <optgroup label={TEXT.missing}>
             {MAP_ROWS.map((key) => (
               <option key={key} value={key}>

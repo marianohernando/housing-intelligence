@@ -3,9 +3,11 @@
  * (F5 of fit-0.9): it says how far the zone is from what the person asks, from the API's own
  * figures for the condition it fails (`ConstraintCheck.value` against `threshold`). Without them,
  * the condition by name, as before: a figure is never made up. «unos», not «≈» (UX mobile audit, §4).
+ * `many`: a household of more than one (speaksToMany), told «vuestro presupuesto», «lo que pedís».
  */
 import type { ConstraintCheck, RankedZone, ScenarioState } from "@/contracts/search_response";
 
+import { type Voice, voice } from "./fit";
 import { formatEuros } from "./format";
 
 type Check = Pick<ConstraintCheck, "constraint_id" | "label" | "status" | "value" | "threshold" | "unit">;
@@ -38,12 +40,12 @@ function roundTo(amount: number, step: number): number {
 }
 
 /** resultados.casi.presupuesto: «Se pasa unos 11.000 € de tu presupuesto» or «… unos 120 € al mes …». */
-function overBudget(check: Check): Spoken | null {
+function overBudget(check: Check, v: Voice): Spoken | null {
   const over = excess(check);
   const unit = check.unit === "€" || check.unit === "€/mes" ? check.unit : null;
   if (over === null || unit === null) return null;
   const amount = formatEuros(roundTo(over, EURO_STEP[unit]));
-  const text = `Se pasa unos ${amount}${unit === "€/mes" ? " al mes" : ""} de tu presupuesto`;
+  const text = `Se pasa unos ${amount}${unit === "€/mes" ? " al mes" : ""} de ${v.presupuesto}`;
   return { text, aria: text };
 }
 
@@ -59,7 +61,7 @@ function minutesOver(over: number): { text: string; aria: string } {
  * has more than one with a limit («… hasta Getafe Central (Cercanías)»). Above 2 h the API gives
  * no minutes: «Tarda más de 2 h; pides 45 min como mucho».
  */
-function tooLong(check: Check, scenario: Pick<ScenarioState, "anchors"> | undefined): Spoken | null {
+function tooLong(check: Check, scenario: Pick<ScenarioState, "anchors"> | undefined, v: Voice): Spoken | null {
   const over = excess(check);
   if (over === null) return null;
   const anchors = scenario?.anchors ?? [];
@@ -67,11 +69,11 @@ function tooLong(check: Check, scenario: Pick<ScenarioState, "anchors"> | undefi
   const limited = anchors.filter((a) => a.max_minutes != null).length;
   const where = limited > 1 && place ? ` hasta ${place.label}` : "";
   if ((check.value as number) > MAX_COMMUTE_SHOWN) {
-    const text = `Tarda más de 2 h${where}; pides ${check.threshold} min como mucho`;
+    const text = `Tarda más de 2 h${where}; ${v.pides} ${check.threshold} min como mucho`;
     return { text, aria: text };
   }
   const more = minutesOver(over);
-  return { text: `Tarda ${more.text} más de lo que pides${where}`, aria: `Tarda ${more.aria} más de lo que pides${where}` };
+  return { text: `Tarda ${more.text} más de lo que ${v.pides}${where}`, aria: `Tarda ${more.aria} más de lo que ${v.pides}${where}` };
 }
 
 /** «Colegio con primaria a 10 min andando como mucho» -> «Colegio con primaria» (the API's label of `near:*`). */
@@ -82,16 +84,16 @@ const WALK_LABEL = /^(.+) a \d+ min andando como mucho$/;
  * foot, which is no walk, the minutes are not said: «Colegio con primaria a más de 1 h andando;
  * pides 10 min como mucho».
  */
-function tooFar(check: Check): Spoken | null {
+function tooFar(check: Check, v: Voice): Spoken | null {
   const over = excess(check);
   const service = WALK_LABEL.exec(check.label)?.[1];
   if (over === null || check.unit !== "min" || !service) return null;
   if ((check.value as number) > MAX_WALK_SHOWN) {
-    const text = `${service} a más de 1 h andando; pides ${check.threshold} min como mucho`;
+    const text = `${service} a más de 1 h andando; ${v.pides} ${check.threshold} min como mucho`;
     return { text, aria: text };
   }
   const more = minutesOver(over);
-  return { text: `${service}: ${more.text} más andando de lo que pides`, aria: `${service}: ${more.aria} más andando de lo que pides` };
+  return { text: `${service}: ${more.text} más andando de lo que ${v.pides}`, aria: `${service}: ${more.aria} más andando de lo que ${v.pides}` };
 }
 
 /** As before (zona.cerca_de_encajar.motivo): «No cumple: {condición}». */
@@ -100,14 +102,17 @@ function byName(label: string): Spoken {
 }
 
 /** One failed condition in plain words; by its name when the API gives no figures to tell it. */
-export function shortfallOf(check: Check, scenario?: Pick<ScenarioState, "anchors">): Spoken {
+export function shortfallOf(check: Check, scenario?: Pick<ScenarioState, "anchors">, many = false): Spoken {
   const id = check.constraint_id;
-  const said = id === "budget" ? overBudget(check) : id.startsWith("commute:") ? tooLong(check, scenario) : tooFar(check);
+  const v = voice(many);
+  const said = id === "budget" ? overBudget(check, v) : id.startsWith("commute:") ? tooLong(check, scenario, v) : tooFar(check, v);
   return said ?? byName(check.label);
 }
 
-/** zona.no_cumple, when the API names no condition. */
-export const FAILS_UNNAMED = "No cumple todo lo que pides.";
+/** zona.no_cumple, when the API names no condition: «No cumple todo lo que pides.» / «… pedís.» */
+export function failsUnnamedText(many = false): string {
+  return `No cumple todo lo que ${voice(many).pides}.`;
+}
 
 /** A zone's failed conditions, with its own checks when it has them (a near miss, not every zone of the map). */
 type Failing = Pick<RankedZone, "failed_constraints"> & { constraints?: readonly Check[] };
@@ -115,12 +120,17 @@ type Failing = Pick<RankedZone, "failed_constraints"> & { constraints?: readonly
 /**
  * Every condition a zone fails, in the API order, in plain words. A zone without its own checks
  * (one of the map that is not a near miss) says them by name, from the labels of the search
- * (`constraintLabels`); one the search does not name is left out. Empty: FAILS_UNNAMED.
+ * (`constraintLabels`); one the search does not name is left out. Empty: failsUnnamedText.
  */
-export function shortfalls(zone: Failing, labels: ReadonlyMap<string, string> = new Map(), scenario?: Pick<ScenarioState, "anchors">): Spoken[] {
+export function shortfalls(
+  zone: Failing,
+  labels: ReadonlyMap<string, string> = new Map(),
+  scenario?: Pick<ScenarioState, "anchors">,
+  many = false,
+): Spoken[] {
   return (zone.failed_constraints ?? []).flatMap((id) => {
     const own = zone.constraints?.find((c) => c.constraint_id === id);
-    if (own) return [shortfallOf(own, scenario)];
+    if (own) return [shortfallOf(own, scenario, many)];
     const label = labels.get(id);
     return label ? [byName(label)] : [];
   });
@@ -146,9 +156,12 @@ export function joinShortfalls(list: readonly Spoken[]): Spoken | null {
  * API's order: budget, services, trips) and, if it fails more, «y otra condición» or «y 2
  * condiciones más» (resultados.casi.varias).
  */
-export function nearMissText(zone: Failing, labels?: ReadonlyMap<string, string>, scenario?: Pick<ScenarioState, "anchors">): Spoken {
-  const [first, ...rest] = shortfalls(zone, labels, scenario);
-  if (!first) return { text: FAILS_UNNAMED, aria: FAILS_UNNAMED };
+export function nearMissText(zone: Failing, labels?: ReadonlyMap<string, string>, scenario?: Pick<ScenarioState, "anchors">, many = false): Spoken {
+  const [first, ...rest] = shortfalls(zone, labels, scenario, many);
+  if (!first) {
+    const unnamed = failsUnnamedText(many);
+    return { text: unnamed, aria: unnamed };
+  }
   const more = rest.length === 0 ? "" : rest.length === 1 ? " y otra condición" : ` y ${rest.length} condiciones más`;
   return { text: `${first.text}${more}`, aria: `${first.aria}${more}` };
 }

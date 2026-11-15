@@ -3,6 +3,7 @@
  * GET /api/v1/gaps, with the copy of pitch/textos_web.md (estado.*, fila.*, falta.*).
  */
 import type { ComparisonGroup, GapRowKey, GapStatus, IndicatorValue, NullReason } from "@/contracts/zone_gap_list_response";
+import { voice } from "@/lib/fit";
 import { formatNumber } from "@/lib/format";
 import type { ZoneLevel } from "@/lib/map/zones";
 
@@ -62,6 +63,21 @@ export function notComparableText(row: GapRowKey): string {
  */
 export function notComparableReason(explanation: string): string {
   return explanation.startsWith("No comparable:") ? explanation : SMALL_ZONE.help;
+}
+
+const NOT_COMPARABLE_LEAD = "No comparable:";
+
+/**
+ * What the «No comparable» tag of one row says to screen readers, after its label (seen in
+ * production by C: it said the legend's sentence of «centros u hogares» on every row, whose
+ * visible words were already the row's). With the API's explanation, the row's reason as
+ * notComparableReason gives it, without the «No comparable:» the tag has just said; without it
+ * (the card, a list of zones by row), the row's own reason (notComparableText).
+ */
+export function notComparableHelp(row: GapRowKey, explanation?: string | null): string {
+  const reason = explanation ? notComparableReason(explanation) : notComparableText(row);
+  const said = reason.startsWith(NOT_COMPARABLE_LEAD) ? reason.slice(NOT_COMPARABLE_LEAD.length).trim() : reason;
+  return said.charAt(0).toUpperCase() + said.slice(1);
 }
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
@@ -320,13 +336,13 @@ export function gapSummary(rows: readonly SummaryRow[]): { lead: string | null; 
 /**
  * A zone that fits everything asked can still be short of something (encaje.aviso_*): from every
  * row of its «Qué falta», not only the three the card shows. Rows too small to compare do not
- * count; null when no row is FALTA or JUSTO.
+ * count; null when no row is FALTA or JUSTO. «Tiene lo que pedís» to a household of more than one.
  */
-export function fitsButShortText(rows: readonly SummaryRow[]): string | null {
+export function fitsButShortText(rows: readonly SummaryRow[], many = false): string | null {
   const { falta, justo } = rowsByStatus(rows);
   const parts = [falta.length ? `faltan ${listNames(falta)}` : null, justo.length ? `van justos de ${listNames(justo)}` : null].filter(Boolean);
   if (!parts.length) return null;
-  return `Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí ${parts.join(" y ")}.`;
+  return `Tiene lo que ${voice(many).pides}. Aun así, comparado con municipios parecidos, aquí ${parts.join(" y ")}.`;
 }
 
 /**

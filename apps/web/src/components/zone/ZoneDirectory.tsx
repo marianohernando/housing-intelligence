@@ -13,7 +13,7 @@ import type { ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
-import { GAP_STATUS, gapsHref, GROUP, inGroup, notComparable, SMALL_ZONE } from "@/lib/gaps";
+import { GAP_STATUS, gapsHref, GROUP, inGroup, notComparable, notComparableHelp, SMALL_ZONE } from "@/lib/gaps";
 import { searchable, wholeCities, zoneDirectory, type ZoneCollection, zoneHref, type ZoneProperties } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
@@ -39,11 +39,14 @@ const TEXT = {
   statusesAbout: "de la lista de zonas",
 };
 
-/** What FALTA, JUSTO, CUBIERTO, SIN DATOS, «No comparable» and «Junto con sus vecinos» mean, once over the lists. */
-function StatusesHelp() {
+/**
+ * What FALTA, JUSTO, CUBIERTO, SIN DATOS, «No comparable» and «Junto con sus vecinos» mean, once over
+ * the lists; «No comparable» in the unit of the list's row, as its tags say it to screen readers.
+ */
+function StatusesHelp({ row }: { row: GapRowKey }) {
   const lines: [string, string][] = [
     ...Object.values(GAP_STATUS).map((s) => [s.label, s.help] as [string, string]),
-    [SMALL_ZONE.label, SMALL_ZONE.help],
+    [SMALL_ZONE.label, notComparableHelp(row)],
     [GROUP.label, GROUP.help],
   ];
   return (
@@ -69,9 +72,11 @@ interface LinksProps {
   hrefFor: HrefFor;
   /** Each zone's status in a row of «Qué falta», when the list shows one */
   statuses?: ReadonlyMap<string, ZoneGapStatus> | null;
+  /** What a «No comparable» tag of the list says to screen readers: the row's reason */
+  smallZoneHelp?: string;
 }
 
-function ZoneLinks({ title, zones, hrefFor, statuses }: LinksProps) {
+function ZoneLinks({ title, zones, hrefFor, statuses, smallZoneHelp }: LinksProps) {
   const id = useId();
   if (zones.length === 0) return null;
   return (
@@ -85,7 +90,7 @@ function ZoneLinks({ title, zones, hrefFor, statuses }: LinksProps) {
           return (
             <li key={zone.zone_key}>
               <Link href={hrefFor(zone)}>{zone.name}</Link>
-              {gap && (notComparable(gap) ? <SmallZoneTag /> : <GapBadge status={gap.status} />)}
+              {gap && (notComparable(gap) ? <SmallZoneTag help={smallZoneHelp} /> : <GapBadge status={gap.status} />)}
               {gap && inGroup(gap) && <GroupTag />}
             </li>
           );
@@ -160,6 +165,8 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
     );
   }
   const { distritos, municipios } = zoneDirectory(result.zones, query);
+  // A «No comparable» tag of the list says the reason in the unit of its row («Qué falta» by row)
+  const smallZoneHelp = row ? notComparableHelp(row) : undefined;
   // A name typed in the field shows its zones at once, folded or not
   const searching = query.trim() !== "";
   // The whole city leads to its «Qué falta» list: on the map it is its districts
@@ -183,14 +190,14 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
             return (
               <li key={city.admin_unit_id}>
                 <Link href={gapsHref("municipio", city.code)}>{TEXT.wholeCity(city.name)}</Link>
-                {gap && (notComparable(gap) ? <SmallZoneTag /> : <GapBadge status={gap.status} />)}
+                {gap && (notComparable(gap) ? <SmallZoneTag help={smallZoneHelp} /> : <GapBadge status={gap.status} />)}
                 {gap && inGroup(gap) && <GroupTag />}
               </li>
             );
           })}
         </ul>
       )}
-      {row && rowMap.data && <StatusesHelp />}
+      {row && rowMap.data && <StatusesHelp row={row} />}
       {row && rowMap.loading && <p role="status">{TEXT.loadingRow}</p>}
       {row && rowMap.error && (
         <div role="alert" className={styles.error}>
@@ -207,8 +214,8 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
         </button>
       )}
       <div id={listId} className={styles.groups} hidden={folded && !all && !searching}>
-        <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
-        <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
+        <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} statuses={rowMap.data?.byZone} smallZoneHelp={smallZoneHelp} />
+        <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} statuses={rowMap.data?.byZone} smallZoneHelp={smallZoneHelp} />
       </div>
     </div>
   );

@@ -138,6 +138,13 @@ button.head:focus-visible::after {
   }
 }
 
+/* The % in a barrio's open panel: only where its row hides it, so a wide screen does not say it twice */
+@media (min-width: 761px) {
+  .panelPct {
+    display: none;
+  }
+}
+
 .chevron {
   flex: none;
   color: var(--violet-strong);

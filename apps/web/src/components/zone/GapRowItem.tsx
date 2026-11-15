@@ -86,7 +86,7 @@ function reasonOf(row: GapRow): string | null {
   if (row.indicator.null_reason === "NOT_APPLICABLE" && row.explanation) return row.explanation;
   if (row.indicator.value === null) return NULL_REASON[row.indicator.null_reason ?? "UNKNOWN"];
   if (row.status === "SIN_DATOS") return GAP_STATUS.SIN_DATOS.help;
-  // What «No comparable» really means, then the API's figures (its first sentence spoke of «muy pocas personas» also in Barajas)
+  // The API's explanation as it is: its first sentence says why, in the row's unit, then its figures (notComparableReason)
   if (notComparable(row)) return notComparableReason(row.explanation);
   return null;
 }
@@ -147,7 +147,8 @@ export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
       <div className={styles.head}>
         <h2>{row.label}</h2>
         <span className={styles.badges}>
-          {notComparable(row) ? <SmallZoneTag /> : <GapBadge status={row.status} />}
+          {/* Its reason (notComparableReason) is the row's own paragraph below: the tag does not say it again */}
+          {notComparable(row) ? <SmallZoneTag help={null} /> : <GapBadge status={row.status} />}
           {group && <GroupTag described={false} />}
         </span>
       </div>
