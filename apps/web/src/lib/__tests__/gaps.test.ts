@@ -109,6 +109,10 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
       "No comparable: aquí viven muy pocas personas (50.375) para saber si falta. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes";
     expect(notComparableReason(barajas)).toBe(`${SMALL_ZONE.help} 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes`);
     expect(notComparableReason("No comparable: la zona es demasiado pequeña para saber si falta. 3 farmacias")).toBe(`${SMALL_ZONE.help} 3 farmacias`);
+    // The API's sentence since D-245
+    const fixed =
+      "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud";
+    expect(notComparableReason(fixed)).toBe(`${SMALL_ZONE.help} 0,40 centros de salud`);
     expect(notComparableReason("Sin datos para esta zona")).toBe(SMALL_ZONE.help);
   });
 });

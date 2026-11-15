@@ -48,8 +48,9 @@ const API_NOT_COMPARABLE = /^No comparable:.*?\.\s+/;
 
 /**
  * The reason of a «No comparable» row of «Qué falta»: SMALL_ZONE.help, then the API's figures
- * without its first sentence, which says «aquí viven muy pocas personas (50.375)» also of a district
- * of 50.000 people (D-230's text, line A's). Without that sentence, SMALL_ZONE.help alone.
+ * without its first sentence. Since D-245 that sentence says the same (too few centres for the
+ * people who live there); before, «aquí viven muy pocas personas (50.375)» also of Barajas. The
+ * web keeps its own words, which add the neighbours. Without that sentence, SMALL_ZONE.help alone.
  */
 export function notComparableReason(explanation: string): string {
   const figures = API_NOT_COMPARABLE.test(explanation) ? explanation.replace(API_NOT_COMPARABLE, "").trim() : "";
