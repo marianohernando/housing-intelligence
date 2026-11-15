@@ -1,0 +1,38 @@
+feature_id: pct_calle_ruido_noche
+version: 2
+human_name: "% de calle residencial con ruido del tráfico de noche por encima de 55 dB Ln"
+domain: environment
+type: derived
+unit: "%"
+direction: lower_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_mapa_estrategico_ruido_2021, role: primary}
+  - {dataset_id: osm_red_peatonal, role: primary}
+formula:
+  method: street_share_above
+  raster_dataset: ayto_mapa_estrategico_ruido_2021
+  layer: ln
+  # dB Ln: RD 1367/2007 (annex II, table A) sets 55 dB as the night objective of residential
+  # areas (D-237); WHO (2018) only as a reference
+  above: 55
+  coverage_prefix: "28079"  # the map only covers the municipio of Madrid
+  min_covered_share: 0.5  # less street on the map than this -> unknown
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  min_street_m: 300  # less origin street than this -> confidence 0.5 at most
+  sample_step_m: 10  # read along each segment, never only at the crossings (R-03)
+  levels: {distrito: {}, barrio: {}}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [street_share_on_the_map, min_street_m]}
+public_use: true
+pro_use: true
+models: []
+tests: [range_0_100, unknown_never_zero, context_only, madrid_only]
+limitations:
+  - "Solo Madrid capital: la ciudad, sus 21 distritos y sus 131 barrios, con el Mapa Estratégico de Ruido 2021 del Ayuntamiento. El resto de la región queda sin dato, nunca 0."
+  - "Solo el ruido del tráfico rodado, calculado por el Ayuntamiento para la situación de 2021 (índice Ln, de 23 a 7 h, a 4 m de altura). No mide el ocio nocturno, las obras, los trenes ni los aviones."
+  - "Es el nivel calculado en la propia calle, leído cada 10 m a lo largo de cada tramo, no en la fachada de las casas: no es el porcentaje de vecinos expuestos, que el Ayuntamiento calcula en las fachadas y publica en la memoria del mapa (tabla 7) y que es mucho menor."
+  - "El umbral de 55 dB es el objetivo de calidad acústica de noche de las zonas residenciales en España (Real Decreto 1367/2007). La OMS recomienda niveles más bajos para el tráfico; se cita solo como referencia."
+  - "Las calles donde vive la gente se aproximan por el tipo de vía de OSM (residencial, de convivencia, sin clasificar, peatonal y terciaria), ponderadas por su longitud: no es la población. Las avenidas principales no cuentan como calle residencial."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta»."

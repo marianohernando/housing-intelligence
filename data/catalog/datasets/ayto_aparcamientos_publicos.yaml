@@ -1,0 +1,37 @@
+dataset_id: ayto_aparcamientos_publicos
+source_id: ayuntamiento_madrid_ckan
+name: Aparcamientos públicos municipales
+domain: transport
+owner: Ayuntamiento de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  crs_expected: EPSG:25830
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: daily
+landing_url: https://datos.madrid.es/dataset/202625-0-aparcamientos-publicos
+resources:
+- name: Aparcamientos públicos municipales (CSV)
+  format: CSV
+  url: https://datos.madrid.es/dataset/202625-0-aparcamientos-publicos/resource/202625-3-aparcamientos-publicos-csv/download/202625-0-aparcamientos-publicos.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 2
+  product_impact: 3
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-237. Fuente complementaria, no es dataset CM. Aparcamientos de uso público del
+    Ayuntamiento (rotación) y los disuasorios municipales; los mixtos, con plazas públicas y de
+    residentes, se cargan desde ayto_aparcamientos_residentes, que también los publica.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T13:00:00+00:00'
+notes: >-
+  Se leen las coordenadas proyectadas (COORDENADA-X/Y): la columna LONGITUD trae algún valor
+  mal escrito («--3.65»). Nunca se leen teléfono, fax ni correo.

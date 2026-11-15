@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_calidad_aire_estaciones",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_calidad_aire_estaciones/33f5d75ac712/calidad_aire_estaciones.csv",
+      "sha256": "33f5d75ac712ba137daae28aa21bb4d47b9289c082154ba122bc41c93e421840",
+      "bytes": 7333,
+      "url": "https://datos.comunidad.madrid/dataset/4cd076a3-e602-48da-b834-58de39d3125c/resource/c05f6436-783e-4b04-b0d2-47848daea984/download/calidad_aire_estaciones.csv",
+      "retrieved_at": "2026-11-14T18:40:23.068782+00:00"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+# Stations of the CM air quality network (D-237): where each one is, for the air feature. Never
+# shown in «Todos los centros».
+kind: points_csv
+dataset_id: cm_calidad_aire_estaciones
+category: other
+id_column: estacion_codigo
+name_column: estacion_municipio  # the network names each station after its municipio
+subcategory_value: Estación de calidad del aire
+csv: {decimal: ","}
+x_column: estacion_coord_UTM_ETRS89_x
+y_column: estacion_coord_UTM_ETRS89_y
+attribute_columns: [zona_calidad_aire_descripcion, estacion_tipo_area, estacion_tipo_estacion]

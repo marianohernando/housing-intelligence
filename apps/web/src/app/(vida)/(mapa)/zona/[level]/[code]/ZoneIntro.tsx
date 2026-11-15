@@ -17,6 +17,7 @@ import NewHousing from "@/components/zone/NewHousing";
 import PerceivedSafety from "@/components/zone/PerceivedSafety";
 import ZoneCard from "@/components/zone/ZoneCard";
 import ZoneContext from "@/components/zone/ZoneContext";
+import ZoneEnvironment from "@/components/zone/ZoneEnvironment";
 import { errorMessage } from "@/lib/errors";
 
 import styles from "./zone.module.css";
@@ -100,6 +101,8 @@ export default function ZoneIntro() {
         <ZoneContext zone={routeZone} />
         {/* New housing and what is coming, context that never scores (D-241); last, so arriving later moves nothing */}
         {(level === "municipio" || level === "distrito") && <NewHousing zone={{ level, code: routeZone.code }} />}
+        {/* Noise, air and car parks (D-237): context, last too */}
+        <ZoneEnvironment level={level} code={routeZone.code} zone={name} />
       </div>
       {/* Every facility of the zone, not only its key points: left column on desktop */}
       <div className={styles.centres}>

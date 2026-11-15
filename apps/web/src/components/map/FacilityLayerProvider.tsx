@@ -3,14 +3,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { ApiError } from "@/lib/api";
-import {
-  type Facility,
-  type FacilityKey,
-  groupFacilities,
-  isLeisureFacility,
-  type LeisureFacilityKey,
-  SERVICE_FACILITY_KEYS,
-} from "@/lib/map/facilities";
+import { allServicesOn, type Facility, type FacilityKey, groupFacilities, isLeisureFacility, type LeisureFacilityKey } from "@/lib/map/facilities";
 import { FACILITY_CATEGORIES } from "@/lib/map/zonePlaces";
 
 import { fetchLeisurePlaces, fetchZonePlaces } from "./fetchZones";
@@ -139,7 +132,7 @@ export default function FacilityLayerProvider({ children }: { children: ReactNod
     setPicked(null);
   }, []);
   const setAll = useCallback((on: boolean) => {
-    setTypes((current) => (on ? [...SERVICE_FACILITY_KEYS, ...current.filter(isLeisureFacility)] : []));
+    setTypes((current) => (on ? allServicesOn(current) : []));
     setPicked(null);
   }, []);
   const pick = useCallback((facility: Facility | null) => setPicked(facility && zoneId ? { zoneId, facility } : null), [zoneId]);

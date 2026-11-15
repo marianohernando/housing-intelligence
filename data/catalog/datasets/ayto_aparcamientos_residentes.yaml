@@ -1,0 +1,37 @@
+dataset_id: ayto_aparcamientos_residentes
+source_id: ayuntamiento_madrid_ckan
+name: Aparcamientos municipales para residentes (PAR)
+domain: transport
+owner: Ayuntamiento de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  crs_expected: EPSG:25830
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: daily
+landing_url: https://datos.madrid.es/dataset/202584-0-aparcamientos-residentes
+resources:
+- name: Aparcamientos municipales para residentes (CSV)
+  format: CSV
+  url: https://datos.madrid.es/dataset/202584-0-aparcamientos-residentes/resource/202584-1-aparcamientos-residentes-csv/download/202584-0-aparcamientos-residentes.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 2
+  product_impact: 3
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-237. Fuente complementaria, no es dataset CM. Aparcamientos del Programa de Aparcamientos
+    para Residentes (PAR) y los mixtos, que además tienen plazas de uso público.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T13:00:00+00:00'
+notes: >-
+  Una plaza de residentes se adjudica por lista de espera: estos aparcamientos se enseñan en el
+  mapa, pero no cuentan como aparcamiento público a pie. Se leen las coordenadas proyectadas;
+  nunca teléfono, fax ni correo.

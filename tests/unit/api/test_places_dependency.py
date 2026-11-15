@@ -96,3 +96,23 @@ def test_only_hospitals_say_who_runs_them() -> None:
     assert (properties.dependency, properties.management) == ("publica", None)
     unknown = PlaceFeature.model_validate(_feature(_row({}), [])).properties
     assert unknown.management is None
+
+
+def _car_park(attributes: dict[str, Any]) -> dict[str, Any]:
+    """FIXTURE: a made-up park-and-ride car park as the CRTM load writes it (D-237)."""
+    return _row(attributes, "Aparcamiento disuasorio") | {
+        "category": "other",
+        "canonical_name": "Aparcamiento disuasorio de prueba",
+        "official_dataset_id": "crtm_aparcamientos_disuasion",
+    }
+
+
+@pytest.mark.parametrize(
+    ("pago", "fee"), [("Libre", "free"), ("Pago", "paid"), ("Pago/Libre", "mixed"), ("Otro", None)]
+)
+def test_a_car_park_says_whether_it_is_free_and_its_spaces(pago: str, fee: str | None) -> None:
+    feature = PlaceFeature.model_validate(_feature(_car_park({"plazas": "210", "pago": pago}), []))
+    assert feature.properties.access_fee == fee
+    assert feature.properties.capacity is not None
+    assert (feature.properties.capacity.value, feature.properties.capacity.unit) == (210, "plazas")
+    assert feature.properties.dependency is None and feature.properties.management is None

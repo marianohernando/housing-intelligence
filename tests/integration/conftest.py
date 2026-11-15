@@ -1,18 +1,25 @@
 """Integration fixtures: a migrated Postgres at TEST_DATABASE_URL."""
 
+import io
 import os
+import zipfile
 from collections.abc import Iterator
 from pathlib import Path
 
+import numpy as np
 import pytest
 from alembic import command
 from alembic.config import Config
+from PIL import Image
+from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from pyproj import Transformer
 from sqlalchemy import Engine, create_engine, make_url, text
 
 from hi_contracts.catalog import FeatureSpec
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
+    AirQualityHourlyPipeline,
+    AirQualityZonesPipeline,
     CmMunicipioConceptPipeline,
     CmMunicipioNameTablePipeline,
     CmPostcodeConceptPipeline,
@@ -23,6 +30,7 @@ from hi_contracts.catalog.pipeline import (
     MadridDevelopmentAreasPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    NoiseRasterPipeline,
     OsmParksPipeline,
     OsmPoisPipeline,
     OsmWalkNetworkPipeline,
@@ -37,11 +45,16 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     run_admin_boundaries,
 )
 from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
+from hi_ingestion.pipelines.air_quality.run import (
+    run_air_quality_hourly_pipeline,
+    run_air_quality_zones_pipeline,
+)
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
+from hi_ingestion.pipelines.noise_raster.run import run_noise_raster_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
@@ -189,6 +202,62 @@ def parks_extract(path: Path) -> Path:
     return path
 
 
+# D-237: a synthetic noise map over the walking grid, 50 m cells: the western half loud (70 dB
+# Ld, 60 Ln, above both limits) and the eastern half quiet (50 and 40).
+NOISE_PIXEL_M = 50.0
+NOISE_SPLIT_X = 441_000.0
+
+
+def _tiff(levels: np.ndarray, x0: float, y1: float) -> bytes:
+    tags = ImageFileDirectory_v2()
+    tags[33550] = (NOISE_PIXEL_M, NOISE_PIXEL_M, 0.0)
+    tags[33922] = (0.0, 0.0, 0.0, x0, y1, 0.0)
+    tags[34735] = (1, 1, 0, 2, 1024, 0, 1, 1, 3072, 0, 1, 25830)
+    buffer = io.BytesIO()
+    Image.fromarray(levels.astype(np.float32)).save(buffer, format="TIFF", tiffinfo=tags)
+    return buffer.getvalue()
+
+
+def noise_extract(path: Path, spec: NoiseRasterPipeline) -> Path:
+    x0, y0, x1, y1 = WALK_GRID_BOUNDS
+    columns, rows = int((x1 - x0) // NOISE_PIXEL_M) + 2, int((y1 - y0) // NOISE_PIXEL_M) + 2
+    centre_x = (x0 - NOISE_PIXEL_M) + (np.arange(columns) + 0.5) * NOISE_PIXEL_M
+    loud = np.broadcast_to(centre_x < NOISE_SPLIT_X, (rows, columns))
+    ld = np.where(loud, 70.0, 50.0)
+    with zipfile.ZipFile(path, "w") as archive:
+        for layer, levels in (("ld", ld), ("ln", ld - 10.0)):
+            raw = _tiff(levels, x0 - NOISE_PIXEL_M, y1 + NOISE_PIXEL_M)
+            archive.writestr(f"MER/{spec.layers[layer]}", raw)
+    return path
+
+
+# D-237: a whole year of hourly NO2 (every hour valid) for the stations of the air fixtures,
+# in each network's layout: the CM's in lower case with a decimal comma, the Ayuntamiento's in
+# capitals and quoted.
+AIR_STATIONS = {
+    "cm_calidad_aire_horario_2025": {"28016001": 2.5, "28009001": 10.5, "28005002": 20.5},
+    "ayto_calidad_aire_horario": {"28079035": 23.5, "28079050": 22.0, "28079048": 19.5},
+}
+
+
+def air_hourly_extract(path: Path, spec: AirQualityHourlyPipeline) -> Path:
+    upper = spec.dataset_id.startswith("ayto")
+    keys = ["provincia", "municipio", "estacion", "magnitud", "punto_muestreo", "ano", "mes", "dia"]
+    hours = [c for h in range(1, 25) for c in (f"h{h:02d}", f"v{h:02d}")]
+    header = [c.upper() if upper else c for c in [*keys, *hours]]
+    lines = [";".join(f'"{c}"' if upper else c for c in header)]
+    days = np.arange(f"{spec.year}-01-01", f"{spec.year + 1}-01-01", dtype="datetime64[D]")
+    for code, level in AIR_STATIONS[spec.dataset_id].items():
+        value = f"{level}".replace(".", spec.csv.decimal)
+        for day in days.astype(str):
+            year, month, dom = day.split("-")
+            cells = [code[:2], code[2:5], code[5:], "8", f"{code}_8_8", year, month, dom]
+            cells += [value, "V"] * 24
+            lines.append(";".join(f'"{c}"' if upper else c for c in cells))
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
 def leisure_extract(path: Path, spec: OsmPoisPipeline) -> Path:
     """A synthetic OSM extract with one place of each leisure class (D-236) inside the walking
     grid, on a diagonal 150 m east and 300 m north apart."""
@@ -331,6 +400,29 @@ def fixtures_ingested(
             )
             result = run_panel_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, NoiseRasterPipeline):  # D-237
+            src = local_file(dataset_id, "primary", noise_extract(tmp / "noise.zip", spec))
+            sample = spec.model_copy(update={"pixel_m": NOISE_PIXEL_M, "min_cells_with_level": 1})
+            result = run_noise_raster_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, AirQualityHourlyPipeline):  # D-237
+            src = local_file(
+                dataset_id, "primary", air_hourly_extract(tmp / f"{dataset_id}.csv", spec)
+            )
+            result = run_air_quality_hourly_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_stations": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+            )
+        elif isinstance(spec, AirQualityZonesPipeline):  # D-237: the three municipios of the sample
+            src = local_file(dataset_id, "primary", GOLDEN / "air_sample" / f"{dataset_id}.csv")
+            result = run_air_quality_zones_pipeline(
+                migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
             )
         elif isinstance(spec, CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline):
             result = ingest_zone_context(migrated_engine, catalog, spec, tmp)

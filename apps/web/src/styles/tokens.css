@@ -60,6 +60,7 @@
   --fac-mayores: #6d4c41;
   /* Leisure from OSM (D-236): bars, restaurants, gyms and culture share one colour */
   --fac-ocio: #5f6f0a;
+  --fac-aparcamiento: #37526b; /* car parks (D-237): context, a quiet slate blue */
 
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
   --map-darkest: var(--violet);

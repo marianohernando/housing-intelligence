@@ -17,9 +17,9 @@ function place(id: string, category: PlaceCategory, subcategory: string, lon: nu
 describe("zonePlaceQueries", () => {
   it("asks once per category for «Todos los centros» and the key points together (EMAXCONNSESSION)", () => {
     const queries = zonePlaceQueries();
-    // Leisure (D-236) is never in this request: each type is asked apart when pressed (R-07)
-    expect([...queries.keys()]).toEqual(["education", "health", "pharmacy", "social", "green", "transport"]);
-    expect(FACILITY_CATEGORIES).toEqual(["education", "health", "pharmacy", "social", "green"]);
+    // Leisure (D-236) is never in this request: each type is asked apart when pressed (R-07); car parks (D-237) are
+    expect([...queries.keys()]).toEqual(["education", "health", "pharmacy", "social", "green", "other", "transport"]);
+    expect(FACILITY_CATEGORIES).toEqual(["education", "health", "pharmacy", "social", "green", "other"]);
     expect(KEY_POINT_CATEGORIES).toEqual(["transport", "health", "education"]);
     // Every subcategory either side asks for, once
     for (const { category, subcategories } of [...facilityQueries(), ...keyPointQueries()]) {

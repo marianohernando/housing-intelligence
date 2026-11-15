@@ -36,6 +36,8 @@ const ATTRIBUTION_LINKS: [RegExp, string][] = [
   // D-242: the Ministry's rent reference; its notice asks to cite the source and the date of its update
   [/SERPAVI/, "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi"],
   [/CRTM/, "https://www.crtm.es"],
+  // D-237: the noise map is on the Ayuntamiento's Geoportal, not on datos.madrid.es
+  [/Geoportal/, "https://geoportal.madrid.es"],
   [/Ayuntamiento de Madrid/, "https://datos.madrid.es"],
   // D-241: the Plan Vive page, typed by hand (no file); its notice asks for the source and the date of extraction
   [/Plan Vive/, "https://www.comunidad.madrid/plan-vive"],
@@ -67,14 +69,21 @@ export function attributions(refs: readonly DatasetRef[]): Attribution[] {
  */
 export const ATTRIBUTIONS_FALLBACK: readonly Attribution[] = [
   { text: "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0.", href: "https://datos.comunidad.madrid" },
+  {
+    text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones y los aparcamientos de disuasión con sus plazas. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles, hasta el aparcamiento público más cercano y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad.",
+    href: "https://www.crtm.es",
+  },
   { text: "Geocodificación: © Instituto Geográfico Nacional (CartoCiudad), CC BY 4.0 scne.es.", href: "https://www.cartociudad.es" },
-  { text: "Powered by CRTM — datos del Consorcio Regional de Transportes de Madrid (www.crtm.es). En bruto: los nombres de las estaciones. Explotados: los minutos hasta las paradas, hasta las estaciones accesibles y en transporte público, que calcula Vida Fácil con sus paradas, horarios y grados de accesibilidad.", href: "https://www.crtm.es" },
+  { text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0).", href: "https://datos.madrid.es" },
   { text: "Catálogo Nacional de Hospitales 2025 (actualizado a 31/12/2024) y Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31/12/2025). Ministerio de Sanidad.", href: "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm" },
   {
     text: "Agencia Tributaria, Estadística de viviendas declaradas en IRPF, ejercicio 2024 (metodología de 01/07/2026): alquiler medio y m² medios de todos los contratos y de los contratos formalizados en 2024.",
     href: "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html",
   },
-  { text: "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0).", href: "https://datos.madrid.es" },
+  {
+    text: "Fuente: Ayuntamiento de Madrid — Geoportal (geoportal.madrid.es), Mapa Estratégico de Ruido 2021 (CC BY 4.0). El porcentaje de calles por encima de cada nivel lo calcula Vida Fácil sobre ese mapa.",
+    href: "https://geoportal.madrid.es",
+  },
   { text: "© OpenStreetMap contributors, ODbL.", href: "https://www.openstreetmap.org/copyright" },
   { text: "Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026.", href: "https://www.comunidad.madrid/plan-vive" },
 ];

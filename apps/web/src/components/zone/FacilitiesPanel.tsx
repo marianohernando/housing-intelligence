@@ -1,6 +1,6 @@
 "use client";
 
-import { Baby, BedDouble, Cross, Dumbbell, GraduationCap, HeartHandshake, Hospital, Landmark, type LucideIcon, Pill, Trees, Utensils, Wine } from "lucide-react";
+import { Baby, BedDouble, CircleParking, Cross, Dumbbell, GraduationCap, HeartHandshake, Hospital, Landmark, type LucideIcon, Pill, Trees, Utensils, Wine } from "lucide-react";
 import { useId } from "react";
 
 import { type FacilitiesStatus, useFacilityLayer } from "@/components/map/FacilityLayerProvider";
@@ -24,6 +24,7 @@ import {
   isLeisureFacility,
   leisureAvailable,
   offeredTypes,
+  parkingAvailable,
   orderedTypes,
   selectedCountText,
   SERVICE_FACILITY_KEYS,
@@ -90,6 +91,7 @@ export const FACILITY_ICON: Record<FacilityKey, LucideIcon> = {
   restaurantes: Utensils,
   gimnasios: Dumbbell,
   cultura: Landmark,
+  aparcamiento: CircleParking,
 };
 
 /** «Hospital La Paz · 1.300 camas» when the API gives the name and the capacity; the label alone otherwise. */
@@ -216,7 +218,8 @@ export default function FacilitiesPanel({ zone }: { zone: string }) {
   const slow = useSlow(status === "loading");
   // Leisure (D-236) once its dataset is published; each type is asked when pressed, never with «Todos»
   const { data: datasets } = useDatasets();
-  const offered = offeredTypes(leisureAvailable(datasets?.datasets));
+  // Car parks (D-237) only once their datasets are published: never a false 0 before the sync
+  const offered = offeredTypes(leisureAvailable(datasets?.datasets), parkingAvailable(datasets?.datasets));
   const shown = orderedTypes(types).filter((key) => offered.some((t) => t.key === key));
   const allServices = SERVICE_FACILITY_KEYS.every((key) => types.includes(key));
   const countOf = (key: FacilityKey) =>

@@ -85,6 +85,114 @@
       "title": "AeatRentComparisonPipeline",
       "type": "object"
     },
+    "AirQualityHourlyPipeline": {
+      "additionalProperties": false,
+      "description": "Hourly levels of an air quality network (one row per station, pollutant and day, with 24\nvalues and 24 validation flags) -> the annual mean of one pollutant per station, in Silver\nonly (D-237). The CM and the Ayuntamiento de Madrid publish the same layout.\n\nOnly the hours flagged `valid_flag` count. `capture` is the share of the year's hours with a\nvalid value: Directive 2008/50/EC asks for 90 % minus calibration and maintenance.",
+      "properties": {
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "air_quality_hourly",
+          "title": "Kind",
+          "type": "string"
+        },
+        "magnitude": {
+          "description": "pollutant code of the network (8 = NO2)",
+          "exclusiveMinimum": 0,
+          "title": "Magnitude",
+          "type": "integer"
+        },
+        "max_mean": {
+          "description": "µg/m³; a higher annual mean is not plausible",
+          "exclusiveMinimum": 0,
+          "title": "Max Mean",
+          "type": "number"
+        },
+        "min_stations": {
+          "description": "fewer stations with the pollutant -> cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Stations",
+          "type": "integer"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "valid_flag": {
+          "default": "V",
+          "title": "Valid Flag",
+          "type": "string"
+        },
+        "year": {
+          "maximum": 2100,
+          "minimum": 2000,
+          "title": "Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "magnitude",
+        "year",
+        "min_stations",
+        "max_mean"
+      ],
+      "title": "AirQualityHourlyPipeline",
+      "type": "object"
+    },
+    "AirQualityZonesPipeline": {
+      "additionalProperties": false,
+      "description": "The air quality zones of the region (RD 102/2011): each municipio, by name, in one zone\n-> a municipio code to zone table in Silver only (D-237). Names are matched to the official\ngeography with the same key a person types (no case, accents or punctuation).",
+      "properties": {
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "air_quality_zones",
+          "title": "Kind",
+          "type": "string"
+        },
+        "municipio_name_column": {
+          "title": "Municipio Name Column",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "zone_code_column": {
+          "title": "Zone Code Column",
+          "type": "string"
+        },
+        "zone_name_column": {
+          "title": "Zone Name Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "zone_code_column",
+        "zone_name_column",
+        "municipio_name_column"
+      ],
+      "title": "AirQualityZonesPipeline",
+      "type": "object"
+    },
     "CmMunicipioConceptPipeline": {
       "additionalProperties": false,
       "description": "Instituto de Estadística tables without a territory code (D-235): the municipio comes\nby name and what the row counts is in a free-text 'Concepto' column.\n\nOnly the rows whose concept starts with one of the `concepts` are read, each with its value\nof `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave\nthe second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),\nso `municipios` maps each spelling to its INE code after collapsing the whitespace. Two\nblocking checks keep a figure from being lost in silence: the quarantine must be empty (a\nname that is not there fails the run, even for a single row), and in the latest year read\neach of the `municipios` must have a row of every concept (a row renamed or dropped by the\nsource fails it too). Rows whose status is in `excluded_statuses` (e.g. «Provisional») are\nleft out and counted.",
@@ -1253,6 +1361,81 @@
       "title": "MetricSplit",
       "type": "object"
     },
+    "NoiseRasterPipeline": {
+      "additionalProperties": false,
+      "description": "A strategic noise map published as one GeoTIFF per index inside a ZIP -> a compact grid\nin Silver only (D-237). Nothing reaches the database but the indicators computed on it: the\nshare of the streets where people live above a level, by zone.\n\n`layers` names the file of each index kept (e.g. ld: Madrid_Ld_2021.tif). Every layer must\nshare the declared CRS, pixel size and grid; `nodata` marks the cells without a level.",
+      "properties": {
+        "crs": {
+          "pattern": "^EPSG:\\d{4,5}$",
+          "title": "Crs",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "noise_raster",
+          "title": "Kind",
+          "type": "string"
+        },
+        "layers": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "type": "string"
+            }
+          },
+          "title": "Layers",
+          "type": "object"
+        },
+        "max_db": {
+          "default": 110.0,
+          "exclusiveMinimum": 0,
+          "title": "Max Db",
+          "type": "number"
+        },
+        "min_cells_with_level": {
+          "description": "fewer -> the raster is cut or empty",
+          "exclusiveMinimum": 0,
+          "title": "Min Cells With Level",
+          "type": "integer"
+        },
+        "nodata": {
+          "default": 0.0,
+          "title": "Nodata",
+          "type": "number"
+        },
+        "pixel_m": {
+          "exclusiveMinimum": 0,
+          "title": "Pixel M",
+          "type": "number"
+        },
+        "reference_year": {
+          "maximum": 2100,
+          "minimum": 1990,
+          "title": "Reference Year",
+          "type": "integer"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "layers",
+        "crs",
+        "pixel_m",
+        "reference_year",
+        "min_cells_with_level"
+      ],
+      "title": "NoiseRasterPipeline",
+      "type": "object"
+    },
     "OsmParksPipeline": {
       "additionalProperties": false,
       "description": "OpenStreetMap extract -> public parks as places (DATA-018, D-222).\n\nA park is an area tagged with one of `leisure` that is not closed to the public and has at\nleast `min_area_ha`. Each becomes a place (a point inside it) that also keeps the points of\nits edge every `edge_step_m` metres: walking access is measured to the edge, not the centre.",
@@ -1605,6 +1788,16 @@
           "default": null,
           "title": "District Code Column"
         },
+        "exclude_patterns": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Exclude Patterns",
+          "type": "object"
+        },
         "group_by_id": {
           "default": false,
           "title": "Group By Id",
@@ -1724,6 +1917,17 @@
           ],
           "default": null,
           "title": "Subcategory Column"
+        },
+        "subcategory_prefixes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SubcategoryPrefixes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "subcategory_value": {
           "anyOf": [
@@ -2037,6 +2241,31 @@
       "title": "StationTopologyPipeline",
       "type": "object"
     },
+    "SubcategoryPrefixes": {
+      "additionalProperties": false,
+      "description": "The kind of place is the start of a text column: «Aparcamiento mixto. Alcántara» is an\n«Aparcamiento mixto» (D-237). The first prefix that matches wins, ignoring case; a row that\nstarts with none of them is left out and counted.",
+      "properties": {
+        "column": {
+          "title": "Column",
+          "type": "string"
+        },
+        "prefixes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "prefix -> subcategory",
+          "minProperties": 1,
+          "title": "Prefixes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "column",
+        "prefixes"
+      ],
+      "title": "SubcategoryPrefixes",
+      "type": "object"
+    },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",
       "enum": [
@@ -2059,6 +2288,8 @@
   "discriminator": {
     "mapping": {
       "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
+      "air_quality_hourly": "#/$defs/AirQualityHourlyPipeline",
+      "air_quality_zones": "#/$defs/AirQualityZonesPipeline",
       "cm_municipio_concept": "#/$defs/CmMunicipioConceptPipeline",
       "cm_municipio_name_table": "#/$defs/CmMunicipioNameTablePipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
@@ -2069,6 +2300,7 @@
       "madrid_development_areas": "#/$defs/MadridDevelopmentAreasPipeline",
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
+      "noise_raster": "#/$defs/NoiseRasterPipeline",
       "osm_parks": "#/$defs/OsmParksPipeline",
       "osm_pois": "#/$defs/OsmPoisPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
@@ -2129,6 +2361,15 @@
     },
     {
       "$ref": "#/$defs/CuratedZoneItemsPipeline"
+    },
+    {
+      "$ref": "#/$defs/NoiseRasterPipeline"
+    },
+    {
+      "$ref": "#/$defs/AirQualityHourlyPipeline"
+    },
+    {
+      "$ref": "#/$defs/AirQualityZonesPipeline"
     }
   ]
 }

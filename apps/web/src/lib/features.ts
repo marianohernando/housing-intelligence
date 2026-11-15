@@ -27,6 +27,12 @@ export interface FeatureValueDetail {
   period_end?: string | null;
   provisional?: boolean | null;
   items?: ContextItem[] | null;
+  /** D-237: the air quality station a value comes from, whether it lies in the zone, how far and if it is a traffic one */
+  station?: string | null;
+  station_code?: string | null;
+  own?: boolean | null;
+  distance_km?: number | null;
+  traffic?: boolean | null;
 }
 
 export interface FeatureValueRow {

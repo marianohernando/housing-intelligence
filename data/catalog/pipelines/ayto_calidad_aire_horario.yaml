@@ -1,0 +1,8 @@
+# Annual mean of NO2 per station of the Ayuntamiento de Madrid's network in 2025 (D-237). The
+# file «desde 2025» also brings 2026 so far: only 2025 is read. Silver only.
+kind: air_quality_hourly
+dataset_id: ayto_calidad_aire_horario
+magnitude: 8  # NO2 in the network's code list
+year: 2025
+min_stations: 18  # 23 measured NO2 in 2025
+max_mean: 100.0  # µg/m³

@@ -10,6 +10,7 @@ from collections.abc import Callable, Mapping
 from itertools import pairwise
 from typing import Any
 
+import numpy as np
 import pandas as pd
 from sqlalchemy import Engine, delete, insert
 from sqlalchemy.orm import Session
@@ -17,7 +18,7 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import fca, loaders, methods, reference_rent, walk
+from hi_features import air, fca, loaders, methods, noise, reference_rent, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
@@ -292,6 +293,59 @@ def _metric_items(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame
     )
 
 
+def _street_share_above(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-237: % of the street where people live above a noise level, by zone, read every
+    `sample_step_m` along each segment (R-03). Only the zones under `coverage_prefix` (the
+    municipio the map covers) get a value."""
+    version = walk.network_version(engine)
+    origins = walk.origins(engine, version.path, tuple(f["origin_highways"]))
+    network = walk.routable(version.path).network
+    section_of_node = np.full(network.n_nodes, "", dtype=origins.section.dtype)
+    section_of_node[origins.node] = origins.section
+    prefix = str(f["coverage_prefix"])
+    samples = noise.street_samples(
+        network, f["origin_highways"], section_of_node, float(f["sample_step_m"]), prefix
+    )
+    grid = noise.grid(noise.grid_path(engine, f["raster_dataset"]))
+    levels = grid.levels_at(f["layer"], samples.x, samples.y)
+    zone = walk.zone_of_node(samples.section, level, walk.section_parents(engine, level))
+    covered = np.char.startswith(zone.astype(str), prefix)
+    settings = methods.StreetShareSettings(
+        above=float(f["above"]),
+        min_covered_share=float(f["min_covered_share"]),
+        base_confidence=float(f.get("confidence", 1.0)),
+        min_street_m=float(f["min_street_m"]),
+    )
+    return methods.street_share_above(
+        zone,
+        samples.weight,
+        np.where(covered, levels, np.nan),
+        walk.zone_codes(engine, level),
+        noise.reference_period(grid),
+        settings,
+    )
+
+
+def _nearest_station_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-237: the annual mean of the zone's own monitoring station, or of the nearest one in
+    its air quality zone, naming the station."""
+    zones = air.air_zones(engine, f["zones_dataset"])
+    codes = walk.zone_codes(engine, level)
+    settings = methods.StationSettings(
+        min_capture=float(f["min_capture"]),
+        own_confidence=float(f["own_confidence"]),
+        nearest_confidence=float(f["nearest_confidence"]),
+    )
+    return methods.nearest_station_value(
+        air.stations(engine, f, level, zones),
+        air.centres(engine, f["origin_highways"], level),
+        codes,
+        air.air_zone_of(codes, zones),
+        air.reference_period(engine, f["means_datasets"]),
+        settings,
+    )
+
+
 def _two_step_fca(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """D-217: capacity reachable on foot per person (2SFCA), by zone."""
     return fca.fca_feature(engine, f, level, walk.network_version(engine).observed)
@@ -312,6 +366,8 @@ METHODS: dict[str, Method] = {
     "reference_rent_fill": _reference_rent_fill,
     "metric_window_share": _metric_window_share,
     "metric_items": _metric_items,
+    "street_share_above": _street_share_above,
+    "nearest_station_mean": _nearest_station_mean,
 }
 
 
@@ -431,7 +487,8 @@ def _reference(record: dict[str, Any]) -> dict[str, Any]:
 
 
 def _detail(record: dict[str, Any]) -> dict[str, Any]:
-    """What a context figure says besides its value (D-241), served with it by the API."""
+    """What a context figure says besides its value (D-241) or what it cites (D-237: the air
+    quality station), served with it by the API."""
     detail = record.get("detail")
     return {"detail": detail} if isinstance(detail, dict) else {}
 

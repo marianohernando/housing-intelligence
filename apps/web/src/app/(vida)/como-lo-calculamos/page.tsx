@@ -6,6 +6,7 @@ import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
+import { ENVIRONMENT_METHOD } from "@/lib/environment";
 import { CONTEXT_METHOD } from "@/lib/zoneContext";
 
 import styles from "../section.module.css";
@@ -281,6 +282,10 @@ function Limits() {
           y, en Madrid capital, el suelo para vivienda del Plan General que aún no está terminado. Son datos para conocer la
           zona: no cambian el encaje ni el orden. Dicen dónde se vende o se prepara vivienda nueva, no cuántos pisos quedan
           libres ni cuándo estarán.
+        </li>
+        <li>
+          {/* D-237, R-07 of PR #65: street level, not the façade, and not the share of neighbours */}
+          <strong>{ENVIRONMENT_METHOD.lead}</strong> {ENVIRONMENT_METHOD.text}
         </li>
         <li>
           <strong>Ocio:</strong> los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de

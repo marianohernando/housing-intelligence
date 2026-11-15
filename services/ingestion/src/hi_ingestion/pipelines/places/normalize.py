@@ -1,5 +1,6 @@
 """Source rows -> canonical places (one per official id), with quarantine for bad coordinates."""
 
+import re
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, cast
@@ -97,7 +98,33 @@ def apply_filters(frame: pd.DataFrame, spec: PointsPipeline) -> tuple[pd.DataFra
     for column, allowed in spec.row_filters.items():
         frame, dropped = _keep(frame, column, allowed)
         removed[f"{column}_not_allowed"] = dropped
+    for column, patterns in spec.exclude_patterns.items():
+        values: list[str] = frame[column].tolist()
+        mask = [not any(re.search(p, v) for p in patterns) for v in values]
+        frame, removed[f"{column}_excluded"] = (
+            cast(pd.DataFrame, frame.loc[mask]),
+            mask.count(False),
+        )
+    if spec.subcategory_prefixes:
+        column = spec.subcategory_prefixes.column
+        values = frame[column].tolist()
+        mask = [_subcategory({column: v}, spec) is not None for v in values]
+        frame = cast(pd.DataFrame, frame.loc[mask])
+        removed[f"{column}_without_subcategory"] = mask.count(False)
     return frame, removed
+
+
+def _subcategory(row: dict[str, Any], spec: PointsPipeline) -> str | None:
+    """The kind of place: declared for the whole register, a column, or the start of one."""
+    if spec.subcategory_value:
+        return spec.subcategory_value
+    if spec.subcategory_prefixes is None:
+        return str(row[spec.subcategory_column or ""])
+    text = str(row.get(spec.subcategory_prefixes.column) or "").casefold()
+    for prefix, subcategory in spec.subcategory_prefixes.prefixes.items():
+        if text.startswith(prefix.casefold()):
+            return subcategory
+    return None
 
 
 def _group(frame: pd.DataFrame, spec: PointsPipeline) -> pd.DataFrame:
@@ -159,7 +186,7 @@ def _place(
     row: dict[str, Any], spec: PointsPipeline, lon: float, lat: float, x: float, y: float
 ) -> dict[str, Any]:
     external_id = str(row[spec.id_column])
-    subcategory = spec.subcategory_value or str(row[spec.subcategory_column or ""])
+    subcategory = _subcategory(row, spec) or ""
     municipio = _municipio(row, spec)
     name = _name(row, spec)
     attributes = {

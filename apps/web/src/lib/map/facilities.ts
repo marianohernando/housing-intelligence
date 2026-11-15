@@ -5,7 +5,7 @@
  * says that row counts (`gap_rows`), so the figures agree; hospitals and parks have no row.
  */
 import type { DatasetRef } from "@/contracts/dataset_list_response";
-import type { GapRowKey } from "@/contracts/places_response";
+import type { AccessFee, GapRowKey } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { updatedInWords } from "@/lib/provenance";
@@ -14,7 +14,7 @@ import { titleCase } from "@/lib/names";
 import type { PlaceFeature } from "./places";
 
 export type LeisureFacilityKey = "bares" | "restaurantes" | "gimnasios" | "cultura";
-export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | LeisureFacilityKey;
+export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | LeisureFacilityKey | "aparcamiento";
 
 export interface FacilityType {
   key: FacilityKey;
@@ -33,6 +33,8 @@ export interface FacilityType {
   nameFirst?: boolean;
   /** Leisure from OpenStreetMap (D-236): a map made by volunteers, said under its count */
   leisure?: boolean;
+  /** Context of the zone (D-237): offered once its datasets are published, never turned on by «Todos» */
+  context?: boolean;
 }
 
 const PUBLIC_SCHOOL = "Colegio público";
@@ -190,6 +192,25 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     ],
     leisure: true,
   },
+  {
+    // D-237: context only (it never scores). The CRTM's park-and-ride car parks next to stations
+    // (with their spaces and whether they are free) and the Ayuntamiento de Madrid's public, mixed
+    // and residents' ones. Their names already say what they are («Aparcamiento público. Usera»).
+    key: "aparcamiento",
+    category: "other",
+    chip: "Aparcamientos",
+    one: "aparcamiento",
+    many: "aparcamientos",
+    none: "Ningún aparcamiento de los publicados en abierto",
+    classes: [
+      { subcategory: "Aparcamiento disuasorio", label: "Aparcamiento disuasorio" },
+      { subcategory: "Aparcamiento público", label: "Aparcamiento público" },
+      { subcategory: "Aparcamiento mixto", label: "Aparcamiento mixto" },
+      { subcategory: "Aparcamiento para residentes", label: "Aparcamiento para residentes" },
+    ],
+    nameFirst: true,
+    context: true,
+  },
 ];
 
 const BY_KEY = new Map(FACILITY_TYPES.map((t) => [t.key, t]));
@@ -240,6 +261,9 @@ export interface Facility {
   capacity: { value: number; unit: string } | null;
   /** Placed by its address (D-216): «ubicación aproximada», also inside `detail` */
   approximate: boolean;
+  /** Car parks (D-237): whether parking is free and how many spaces, when the CRTM publishes them */
+  fee?: AccessFee;
+  spaces?: number | null;
   lon: number;
   lat: number;
 }
@@ -383,10 +407,17 @@ export function hospitalSplitText(items: readonly Pick<Facility, "dependency">[]
   return said.length ? said.join(" y ") : null;
 }
 
-/** «966 camas instaladas · ubicación aproximada»: only what the register and the API say. */
+/** Whether a car park is free (D-237), as the CRTM publishes it. */
+const ACCESS_FEE_TEXT = { free: "gratuito", paid: "de pago", mixed: "gratuito y de pago" } as const;
+
+/** «966 camas instaladas · ubicación aproximada», «210 plazas · gratuito»: only what the register and the API say. */
 function detailText(place: PlaceFeature): string | null {
-  const { capacity, coordinates } = place.properties;
-  const parts = [capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null, coordinates === "geocoded" ? GEOCODED : null];
+  const { capacity, coordinates, access_fee: fee } = place.properties;
+  const parts = [
+    capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null,
+    fee ? ACCESS_FEE_TEXT[fee] : null,
+    coordinates === "geocoded" ? GEOCODED : null,
+  ];
   return parts.filter(Boolean).join(" · ") || null;
 }
 
@@ -408,6 +439,8 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   // carry their own register's «plazas autorizadas», which are not beds
   const { capacity, coordinates } = place.properties;
   const source = CAPACITY_SOURCE[type.key] ? (capacity?.dataset_id ?? null) : null;
+  // Car parks (D-237): whether parking is free and how many spaces, when the CRTM publishes them
+  const parking = type.key === "aparcamiento" ? { fee: place.properties.access_fee ?? null, spaces: capacity?.value ?? null } : {};
   return {
     id: String(place.id),
     type: type.key,
@@ -421,6 +454,7 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
     approximate: coordinates === "geocoded",
     lon,
     lat,
+    ...parking,
   };
 }
 
@@ -519,6 +553,7 @@ export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
   restaurantes: "fac-ocio",
   gimnasios: "fac-ocio",
   cultura: "fac-ocio",
+  aparcamiento: "fac-aparcamiento",
 };
 
 /** The types of «Ocio» (D-236), in the order of their buttons. */
@@ -529,10 +564,19 @@ export function isLeisureFacility(key: FacilityKey): key is LeisureFacilityKey {
 }
 
 /**
- * The services «Todos» turns on: every type but leisure. A bar is not a service of the zone, and in
- * Centro the four leisure types alone are 2.683 places (review of PR #62, R-07).
+ * The services «Todos» turns on: every type but leisure and context. A bar is not a service of the
+ * zone, and in Centro the four leisure types alone are 2.683 places (review of PR #62, R-07); car
+ * parks are context, shown when asked for (review of PR #65, R-06).
  */
-export const SERVICE_FACILITY_KEYS: readonly FacilityKey[] = FACILITY_TYPES.filter((t) => !t.leisure).map((t) => t.key);
+export const SERVICE_FACILITY_KEYS: readonly FacilityKey[] = FACILITY_TYPES.filter((t) => !t.leisure && !t.context).map((t) => t.key);
+
+/**
+ * «Todos» on: every service, keeping the leisure and context types already pressed. It turns
+ * neither on, nor off (review of PR #65, R-01: car parks stay as the person left them).
+ */
+export function allServicesOn(current: readonly FacilityKey[]): FacilityKey[] {
+  return [...SERVICE_FACILITY_KEYS, ...current.filter((key) => isLeisureFacility(key) || facilityType(key).context)];
+}
 
 /** What to ask /api/v1/places for one leisure type of a zone, apart and only when its button is pressed. */
 export function leisureQuery(key: LeisureFacilityKey): FacilityQuery {
@@ -545,8 +589,18 @@ export function leisureQuery(key: LeisureFacilityKey): FacilityQuery {
  * (GET /datasets, D-236). Its count comes when its button is pressed, and with no place the count
  * says that OpenStreetMap has none, never that the zone has none.
  */
-export function offeredTypes(leisure: boolean): FacilityType[] {
-  return FACILITY_TYPES.filter((t) => !t.leisure || leisure);
+export function offeredTypes(leisure: boolean, parking = false): FacilityType[] {
+  return FACILITY_TYPES.filter((t) => (!t.leisure || leisure) && (!t.context || parking));
+}
+
+/**
+ * «Aparcamientos» is offered once one of its datasets is published (GET /datasets, D-237): before
+ * the data are synced its button would say a false 0 (review of PR #65, R-05).
+ */
+export const PARKING_DATASETS = ["crtm_aparcamientos_disuasion", "ayto_aparcamientos_publicos", "ayto_aparcamientos_residentes"] as const;
+
+export function parkingAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => (PARKING_DATASETS as readonly string[]).includes(d.dataset_id)) ?? false;
 }
 
 /** «Ocio» is offered in the search once its dataset is published (GET /datasets), never before (D-236). */

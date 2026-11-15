@@ -14,6 +14,10 @@ export type ContractVersion = string;
 export type Coordinates = [unknown, unknown, ...unknown[]];
 export type Type = "Point";
 export type Id = string;
+/**
+ * Car parks (D-237): 'free', 'paid' or 'mixed' (some spaces free), as the CRTM publishes it for its park-and-ride car parks (None elsewhere)
+ */
+export type AccessFee = ("free" | "paid" | "mixed") | null;
 export type DatasetId = string;
 /**
  * Hospitals (D-218): who runs it, from the CM register; mutuas count as private. Kept as the register says it: the public network is `dependency` of the place (D-239)
@@ -113,6 +117,7 @@ export interface PointGeometry {
   type?: Type;
 }
 export interface PlaceProperties {
+  access_fee?: AccessFee;
   capacity?: PlaceCapacity | null;
   category: PlaceCategory;
   confidence: Confidence;

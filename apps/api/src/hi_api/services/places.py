@@ -94,8 +94,15 @@ _OWNERSHIP = {
 _DEPENDENCIES = ("publica", "privada")
 # The register's hospital types all start so: general, especializado, media y larga estancia...
 _HOSPITAL = "Hospital"
-# Capacity a register publishes per place: attribute -> (unit). Never estimated.
-_CAPACITY_ATTRIBUTES = {"plazas_autorizadas_numero": "plazas autorizadas", "camas": "camas"}
+# Capacity a register publishes per place: attribute -> (unit). Never estimated. «plazas» are
+# the spaces of a park-and-ride car park (CRTM, D-237).
+_CAPACITY_ATTRIBUTES = {
+    "plazas_autorizadas_numero": "plazas autorizadas",
+    "camas": "camas",
+    "plazas": "plazas",
+}
+# Whether a car park is free, as the CRTM writes it (PAGO); another value is left out (D-237).
+_ACCESS_FEE = {"Libre": "free", "Pago": "paid", "Pago/Libre": "mixed"}
 
 
 class RowFilter(NamedTuple):
@@ -200,6 +207,7 @@ def _feature(r: Any, filters: list[RowFilter]) -> dict[str, Any]:
             "ownership": _OWNERSHIP.get(str(attributes.get("titularidad") or "")),
             "dependency": _dependency(attributes),
             "management": _management(attributes, r["subcategory"]),
+            "access_fee": _ACCESS_FEE.get(str(attributes.get("pago") or "")),
             "gap_rows": [
                 f.row for f in filters if f.counts(r["category"], r["subcategory"], attributes)
             ],

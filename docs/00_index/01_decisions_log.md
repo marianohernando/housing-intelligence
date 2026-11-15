@@ -1484,6 +1484,93 @@ Motivo: feedback de usuarios de prueba. Antes de mudarse miran qué ocio tienen 
      uv run hi-features compute --feature min_a_pie_bar --feature min_a_pie_restaurante --feature min_a_pie_gimnasio --feature min_a_pie_cultura
      ```
 
+## D-237 — «Entorno» de la zona: ruido de la calle, calidad del aire y aparcamientos, como contexto que no puntúa (2026-11-14)
+Viene de la prueba con usuarios del 14 nov: «pensando en comprar una casa, el ruido también importa», «facilidad de aparcar», «parking público». La calidad del aire la aprobó Mariano el mismo día.
+
+Es aditiva y reversible: nueve datasets, cuatro features sin `fit` ni `gap_row`, campos opcionales en la API y un bloque nuevo en la vista de zona. El buscador y «Qué falta» no cambian.
+
+Revisada en el PR #65 (R-01 a R-14). Evidencia:
+- `evidence/gate-01/2026-11-14/`: Gate 1 de los nueve;
+- `evidence/gate-06/2026-11-14-environment/`: capturas, buscador dorado y contraste del ruido.
+1. **Fuentes y licencias.**
+   - **Ruido:** Mapa Estratégico de Ruido 2021 del Ayuntamiento de Madrid (`ayto_mapa_estrategico_ruido_2021`).
+     - Está en el Geoportal (geoportal.madrid.es), no en datos.madrid.es. Su ficha enlaza CC BY 4.0 (fuente nueva `ayuntamiento_madrid_geoportal`, leída el 14 nov).
+     - Es un ráster de 5 m en EPSG:25830 con el ruido del tráfico rodado calculado a 4 m de altura (CNOSSOS-EU).
+     - Del ZIP (44 MB, cuatro GeoTIFF de 184 MB) se guardan Ld y Ln como una rejilla compacta en Silver (16 MB).
+     - El ZIP se queda en Bronze (CLAUDE.md §15, R-12). A la base solo llegan los indicadores.
+   - **Aparcamientos:**
+     - Los de disuasión del CRTM (`crtm_aparcamientos_disuasion`): ficha `aparcamientos_disuasion` del portal de la Comunidad, licencia CRTM-LDA. Cuenta como dato CM (D-196).
+       - Entran los 71, en 30 municipios: 31.692 plazas, 63 gratuitos.
+       - `IDFEMPLAZAMIENTO` se repite en 17 pares de aparcamientos distintos, así que la clave es `FID`.
+     - Los del Ayuntamiento (`ayto_aparcamientos_publicos` y `ayto_aparcamientos_residentes`, datos.madrid.es, CC BY 4.0): 21 públicos y disuasorios municipales, y 273 mixtos y de residentes.
+       - El tipo sale del principio del nombre.
+       - Los cerrados no entran y los mixtos van una sola vez.
+     - **Duplicados (R-10):** Aviación Española y Estadio Metropolitano los publican los dos. Se quedan las filas del CRTM, que traen plazas y si son de pago, y se excluyen las del Ayuntamiento (`exclude_patterns`). Están a 12 m y 126 m.
+     - La atribución del CRTM nombra ahora los aparcamientos: «en bruto», las plazas; «explotados», los minutos.
+   - **Aire (NO₂ de 2025):**
+     - Red de la Comunidad, tres fichas del portal CM (CC BY 4.0):
+       - estaciones (`cm_calidad_aire_estaciones`, 28);
+       - datos horarios de 2025 (`cm_calidad_aire_horario_2025`);
+       - municipios por zonas de calidad del aire (`cm_calidad_aire_zonas`, 7 zonas y 179 municipios).
+     - Madrid capital, red del Ayuntamiento (datos.madrid.es, CC BY 4.0):
+       - estaciones (`ayto_calidad_aire_estaciones`, 24, de ellas 23 con NO₂);
+       - datos horarios «desde 2025» (`ayto_calidad_aire_horario`), de los que se lee solo 2025. El nombre del fichero cambia cada día, pero la URL del recurso responde con cualquier nombre.
+     - Media anual por estación con las horas marcadas `V`. Un valor marcado válido sin número va a cuarentena.
+     - Comprobado contra el investigador: Getafe 25,6, Leganés 29,5, Coslada 27,1 y Rascafría 1,6 µg/m³.
+   - Entran 4 conjuntos CM más. Con la base del 14 nov, `/datasets` da 51, de ellos 35 CM.
+2. **Umbrales.**
+   - **Ruido (R-02, R-03):**
+     - Qué se cuenta: % de la longitud de calle residencial por encima de **65 dB Ld** (día, de 7 a 19 h) y de **55 dB Ln** (noche, de 23 a 7 h). Son los objetivos de calidad acústica de las zonas residenciales del RD 1367/2007 (anexo II, tabla A). La OMS se cita solo como referencia.
+     - Qué calles: las mismas que los minutos a pie (residencial, de convivencia, sin clasificar, peatonal y terciaria).
+     - Cómo se lee: cada 10 m a lo largo de cada tramo, ponderado por su longitud. Nunca solo en los nodos: un nodo es un cruce, donde suma el tráfico de dos calles.
+     - Contraste en `ruido-contraste.md`. Chamberí pasa de 77,5 % (Lden en los nodos) a 42,4 % de día, y Usera de 28,5 % a 14,1 %. Es el nivel calculado en la calle, no en la fachada, así que sigue muy por encima de los vecinos expuestos de la tabla 7 de la memoria (Chamberí, 6,9 %; Usera, 3,3 %).
+     - La web dice «Calles con ruido alto: X % de las calles de día, Y % de noche» y «calculado», nunca «medido» ni «vecinos» (R-07). La ayuda y «Cómo lo calculamos» explican que no es el % de vecinos.
+   - **Aire (R-08):** el texto da la media con «(límite UE: 40; 20 desde 2030)». El 40 es el límite de la Directiva 2008/50/CE y el 20, el de la Directiva (UE) 2024/2881 desde 2030.
+     - Dice «estación de tráfico» cuando lo es.
+     - Una estación cuenta si tiene un 85 % de horas válidas: el 90 % de la Directiva 2008/50/CE (anexo I) menos calibración y mantenimiento.
+   - **Aparcamiento:** por encima de 30 min andando, la web no da minutos: dice que ninguno de los publicados en abierto está a menos.
+3. **Asignación de la estación.**
+   - Un municipio, distrito o barrio con estación propia usa la suya. Si tiene varias, la más cercana al centro de sus calles residenciales.
+   - Sin estación propia, usa **la más cercana de su misma zona de calidad del aire** de la Comunidad (Madrid es la zona 1 y solo usa la red del Ayuntamiento). Dentro de la zona, **una de fondo antes que una de tráfico** (R-08): una estación prestada de tráfico mide una avenida de otra zona.
+     - Usera toma Méndez Álvaro (21,2 µg/m³, a 2,7 km) y no Plaza Elíptica (tráfico).
+     - Tetuán toma Tres Olivos y no Plaza Castilla.
+     - Acebeda toma El Atazar (23,5 km).
+   - La zona de cada municipio sale de la ficha CM por nombre. Si falla, se prueba sin artículo o con la primera parte de un nombre doble, y solo vale si señala un único municipio. Cubre 179 de 179.
+   - El valor siempre va con su estación. `detail` de `GET /features/no2_media_anual/values` trae `station`, `station_code`, `own`, `distance_km` y `traffic`, en el mismo `FeatureValueDetail` que D-241.
+   - Confidence: 0,9 con estación propia y 0,6 con la de otra zona.
+   - 16 de los 21 distritos tienen estación propia (4 de tráfico).
+4. **Cobertura.**
+   - **Ruido:** solo Madrid capital (la ciudad, 21 distritos y 131 barrios). En el resto, `SOURCE_NO_COVERAGE` y «sin dato publicado», nunca 0.
+   - **Aire:** los 179 municipios, los 246 distritos de la geografía y los 131 barrios.
+   - **Aparcamiento:** los minutos salen para todas las zonas. La facilidad de aparcar en la calle no tiene dato abierto: no se inventa y se dice.
+   - **Botón «Aparcamientos»** en «Todos los centros»:
+     - solo sale cuando `/datasets` trae sus datasets, para que no haya un 0 falso antes del sync (R-05);
+     - «Todos» no lo enciende, porque es contexto (R-06);
+     - sigue en la petición de la zona, porque el bloque «Entorno» lo necesita.
+5. **Por qué no puntúa.**
+   - El ruido mide la calle y no la vivienda, y solo existe en una de cada 179 zonas.
+   - El aire de una sola estación por zona no distingue una calle tranquila de una avenida.
+   - Los aparcamientos publicados son solo una parte de los que hay.
+   - Como la seguridad percibida (D-224, D-226) y el contexto de D-235, son contexto: `context_only`, sin `fit` ni `gap_row` (tests de `tests/data`). `search.indicators_by_zone` nunca los lee.
+6. **API (aditiva).**
+   - `GET /features/{id}/values` trae `detail` (`FeatureValueDetail`, el mismo de D-241) con los campos de la estación.
+   - `/places` (`places-1`) añade `access_fee` (`free`, `paid` o `mixed`, del `PAGO` del CRTM) y las plazas del CRTM como `capacity` («plazas»).
+   - Parser `places-1.8.1`: tipo por prefijo del nombre, filas fuera por patrón y aparcamientos deduplicados de nuevo.
+7. **Web.**
+   - Bloque «Entorno» en la vista de municipio, distrito o barrio, debajo de «Vivienda nueva y lo que viene» (D-241), con los textos `zona.entorno.*` de `pitch/textos_web.md`.
+   - Tipo «Aparcamientos» en «Todos los centros», con contador, color propio (`--fac-aparcamiento`, AA) y lista con plazas y si es gratuito.
+   - Las estaciones de calidad del aire son lugares `other` que no salen en «Todos los centros».
+8. **Desplegar → sincronizar → smoke (R-09).**
+   - Primero el código, luego `make supabase-sync PROFILE=demo` y después el smoke con `/search`.
+   - **Se puede volver a un despliegue anterior sin romper nada.** El código anterior no lee estas features (no tienen `fit` ni `gap_row`) ni pide la categoría `other` a `/places`, y los campos nuevos de la API son opcionales.
+   - Lo único que quedaría mal es el contador y la lista de fuentes, que citarían datos que la pantalla anterior no enseña. Para evitarlo, se retiran por `official_dataset_id` y `dataset_id`, nunca por categoría (en `other` puede haber más cosas):
+     - los lugares de los 5 datasets de lugares: `crtm_aparcamientos_disuasion`, `ayto_aparcamientos_publicos`, `ayto_aparcamientos_residentes`, `cm_calidad_aire_estaciones` y `ayto_calidad_aire_estaciones`;
+     - los `feature_value` y `feature_registry` de las 4 features;
+     - los 9 datasets de `dataset_registry` y `dataset_version`, y la fuente `ayuntamiento_madrid_geoportal`.
+9. **Segunda revisión del PR #65** (lista, con mejoras opcionales). R-11, R-13, R-14 y R-15 de la primera eran solo informativos: no queda nada pendiente de ellos. Además:
+   - «Todos» no enciende «Aparcamientos», pero tampoco lo apaga si ya estaba encendido, igual que el ocio (`allServicesOn`).
+   - Un disuasorio que no publica si es gratuito nunca cuenta como de pago. Con la misma regla que las plazas, «(N gratuitos)» solo sale si todos lo publican; si no, «de N no consta si es gratuito». Por ejemplo, Fuencarral-El Pardo tiene tres del CRTM gratuitos y Pitis, del Ayuntamiento, sin dato.
+
 ## D-238 — «¿Dónde?»: toda la Comunidad, Madrid capital por barrios, alrededores o pueblos (2026-11-14)
 Decisión de Mariano (14 nov) tras la prueba con usuarios: cuatro personas pidieron buscar solo en una parte de la región. Es aditiva y reversible: un campo opcional del escenario, sin datos nuevos ni cambio de método (`fit-0.7` no cambia).
 1. **Criterio y fuente.** Las tres partes agrupan las 11 zonas estadísticas (NUTS 4) del Instituto de Estadística de la Comunidad de Madrid:

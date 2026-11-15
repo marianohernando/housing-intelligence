@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "hourly_layout",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "missing_columns": []
+      }
+    },
+    {
+      "name": "year_published",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "year": 2025,
+        "rows": 65695
+      }
+    },
+    {
+      "name": "enough_stations",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "stations": 28,
+        "min": 20
+      }
+    },
+    {
+      "name": "plausible_means",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "implausible": [],
+        "max": 100.0
+      }
+    },
+    {
+      "name": "capture_by_station",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "capture": {
+          "28005002": 0.977,
+          "28006004": 0.985,
+          "28007004": 0.981,
+          "28009001": 0.982,
+          "28013002": 0.982,
+          "28014002": 0.977,
+          "28016001": 0.984,
+          "28045002": 0.977,
+          "28047002": 0.984,
+          "28049003": 0.986,
+          "28058004": 0.983,
+          "28065014": 0.981,
+          "28067001": 0.984,
+          "28074007": 0.971,
+          "28080003": 0.983,
+          "28092005": 0.981,
+          "28102001": 0.986,
+          "28106001": 0.984,
+          "28115003": 0.983,
+          "28120001": 0.983,
+          "28123002": 0.98,
+          "28127004": 0.983,
+          "28133002": 0.985,
+          "28134002": 0.97,
+          "28148004": 0.975,
+          "28161001": 0.985,
+          "28171001": 0.982,
+          "28180001": 0.981
+        }
+      }
+    },
+    {
+      "name": "unreadable_valid_hours",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "hours": 0
+      }
+    }
+  ]
+}

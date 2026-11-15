@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "every_layer_found",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "missing": []
+      }
+    },
+    {
+      "name": "one_grid_as_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "problems": []
+      }
+    },
+    {
+      "name": "levels_are_decibels",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "max_db": {
+          "ld": 86.84,
+          "ln": 81.1
+        },
+        "limit": 110.0
+      }
+    },
+    {
+      "name": "not_empty",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "cells_with_level": {
+          "ld": 13209994,
+          "ln": 13206258
+        },
+        "min": 6000000
+      }
+    }
+  ]
+}
