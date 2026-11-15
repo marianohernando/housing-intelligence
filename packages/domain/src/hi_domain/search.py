@@ -66,6 +66,7 @@ def _ranked(
             rank=i,
             zone=fit.data.zone,
             match_pct=fit.match_pct or 0,
+            match_band=fit.match_band,
             confidence=fit.confidence,
             facts=fit.facts,
             constraints=fit.constraints,
@@ -105,6 +106,7 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
             ZoneMatch(
                 zone=f.data.zone,
                 match_pct=painted_match(f),
+                match_band=f.match_band,
                 passes_all=f.passes_all,
                 failed_constraints=f.failed,
                 estimated_cost_eur=f.cost_eur,

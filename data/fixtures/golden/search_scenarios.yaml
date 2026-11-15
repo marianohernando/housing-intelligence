@@ -8,6 +8,8 @@
 # now limits: cheaper zones a few minutes further out rank first for the family (Latina, 39 min)
 # and the single person (Leganés, 43 min), so those two minute bounds move from 35/40 to 41/45, and
 # the family case checks instead that +150 EUR/month adds zones (before, it added none).
+# D-243 (fit-0.9, «cerca y plazas»): the pitch's order and its % change; Leganés (15,2 km in a
+# straight line from Azca) enters the top 10 at 90 %, so `results_within_km` moves from 15 to 16.
 scenarios:
   - profile_id: golden_family  # the demo case: a couple with two children who work on the Castellana
     scenario:
@@ -18,13 +20,16 @@ scenarios:
       priorities: [colegios, transporte, salud]
     expect:
       min_results: 10
-      results_within_km: 15
+      results_within_km: 16
       top_within_minutes: 41
       binding: "near:colegio"
       budget_step_adds_zones: 1
-      # D-239: the order the pitch reads, exactly (top 10 and «Casi encajan»)
-      ranked_order: [Latina, Moratalaz, Ciudad Lineal, Puente de Vallecas, Fuencarral-El Pardo, Usera, Carabanchel, Hortaleza, San Blas-Canillejas, Villaverde]
-      near_miss_order: [Chamartín, Salamanca, Centro, Chamberí, Retiro]
+      # D-239: the order the pitch reads, exactly (top 10 and «Casi encajan»); D-243: and its %
+      # and how many zones fit (42 since the reference rent of D-242)
+      ranked_order: [Puente de Vallecas, Latina, Usera, Moratalaz, Tetuán, Ciudad Lineal, Villaverde, Carabanchel, Coslada, Leganés]
+      ranked_pct: [94, 94, 93, 93, 92, 92, 92, 90, 90, 90]
+      near_miss_order: [Chamartín, Arganzuela, Centro, Chamberí, Retiro]
+      zones_passing: 42
   - profile_id: golden_single
     scenario:
       budget: {kind: rent, amount_eur: 900}
@@ -87,8 +92,9 @@ scenarios:
       household: {adults: 2}
     expect:
       min_results: 10
-      # D-239: the everyday services at a walk break the tie; leisure never does (D-236)
-      ranked_order: [Chamberí, Tetuán, Puente de Vallecas, Salamanca, Centro, Usera, Arganzuela, Ciudad Lineal, Carabanchel, Retiro]
+      # D-239: the everyday services at a walk break the tie; leisure never does (D-236). D-243:
+      # every minute counts, so the closer services reorder the tie a little
+      ranked_order: [Chamberí, Tetuán, Salamanca, Puente de Vallecas, Centro, Arganzuela, Usera, Ciudad Lineal, Carabanchel, Retiro]
 # D-232 (fit-0.7): the search inside one district of Madrid ranks its barrios with the same engine
 # (POST /api/v1/search/barrios). Mariano's example: San Blas-Canillejas, with Simancas. `barrios`
 # is how many are evaluated; `ranked` and `near_miss` name barrios that must be among the results

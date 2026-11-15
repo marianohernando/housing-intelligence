@@ -123,14 +123,28 @@ def test_rank_weights_follow_the_order_and_add_up_to_one() -> None:
 
 
 @given(st.floats(min_value=0, max_value=500), st.integers(min_value=1, max_value=60))
-def test_walk_utility_saturates_and_never_grows_with_minutes(minutes: float, target: int) -> None:
+def test_walk_utility_counts_every_minute_and_never_grows_with_minutes(
+    minutes: float, target: int
+) -> None:
+    """D-243: 1 at the door, 0,9 at the edge of the window, 0 from three times it."""
     u = walk_utility(minutes, target)
     assert 0.0 <= u <= 1.0
     assert walk_utility(minutes + 1, target) <= u
+    if minutes + 1 < 3 * target:
+        assert walk_utility(minutes + 1, target) < u  # every minute counts, inside or out
     if minutes <= target:
-        assert u == 1.0
+        assert u == pytest.approx(1 - 0.1 * minutes / target)
     if minutes >= 3 * target:
         assert u == 0.0
+
+
+@pytest.mark.parametrize(
+    ("minutes", "utility"), [(0.0, 1.0), (5.0, 0.95), (10.0, 0.9), (20.0, 0.45), (30.0, 0.0)]
+)
+def test_walk_utility_at_the_door_the_edge_and_three_times_the_window(
+    minutes: float, utility: float
+) -> None:
+    assert walk_utility(minutes, 10) == pytest.approx(utility)
 
 
 def test_criteria_order_priorities_then_work_then_budget() -> None:
@@ -158,13 +172,14 @@ def test_failing_one_condition_is_a_near_miss_with_its_reason() -> None:
 
 def test_match_is_the_weighted_mean_of_the_criteria_with_data() -> None:
     scenario = ScenarioState(priorities=[PriorityKey.COLEGIOS, PriorityKey.TRANSPORTE])
-    fit = evaluate(scenario, zone("1", colegio=5.0, transporte=15.0))  # utilities 1 and 0
+    fit = evaluate(scenario, zone("1", colegio=0.0, transporte=15.0))  # utilities 1 and 0
     assert fit.match_pct == 67  # weights 2/3 and 1/3
+    assert evaluate(scenario, zone("1", colegio=5.0, transporte=15.0)).match_pct == 63  # 0,95
 
 
 def test_a_criterion_without_data_lowers_confidence_not_the_match() -> None:
     scenario = ScenarioState(priorities=[PriorityKey.ZONAS_VERDES, PriorityKey.COLEGIOS])
-    fit = evaluate(scenario, zone("1", colegio=5.0))
+    fit = evaluate(scenario, zone("1", colegio=0.0))
     assert fit.match_pct == 100
     assert fit.confidence == pytest.approx(1 / 3, abs=1e-3)  # rounded to 3 decimals
     assert fit.facts[-1].kind is FactKind.UNKNOWN
@@ -508,10 +523,13 @@ def test_an_exact_tie_goes_to_the_zone_with_more_everyday_services_at_a_walk() -
 
 
 def test_zones_equally_served_go_by_fewer_walking_minutes_then_as_before() -> None:
-    close = served("28003", farmacia=2.0)
-    closer = served("28004", farmacia=1.0, colegio=2.0)
-    assert everyday_walk(close) == (1.0, pytest.approx(5.5))
-    assert _codes(PLENTY, [served("28002"), close, closer, served("28001")]) == [
+    """The pharmacy beyond the walking range (0) in all four: as served, fewer minutes first."""
+    close = served("28003", farmacia=35.0)
+    closer = served("28004", farmacia=31.0)
+    assert everyday_walk(close) == (pytest.approx(4.69 / 6), pytest.approx(11.0))
+    assert everyday_walk(closer)[0] == everyday_walk(close)[0]  # type: ignore[index]
+    far = {"farmacia": 40.0}
+    assert _codes(PLENTY, [served("28002", **far), close, closer, served("28001", **far)]) == [
         "28004",
         "28003",
         "28001",  # same services at the same minutes: the fixed id, as before D-239
@@ -545,15 +563,19 @@ def _bars(minutes: float) -> dict[NeedKey, IndicatorValue]:
     }
 
 
-def test_the_tie_break_never_outranks_a_better_fit_however_small() -> None:
-    """Only exact ties of the unrounded fit: 97.6 % and 98.4 % both read 98 %, and the worse
-    served zone still goes first."""
+def test_zones_read_at_the_same_pct_go_by_the_services_at_a_walk() -> None:
+    """D-243: two zones read at the same % are a tie for the person, so the one with more
+    everyday services at a walk goes first, even with a hair less of unrounded fit (94,8 % and
+    94,7 % both read 95 %); a higher % always goes first."""
     scenario = PLENTY.model_copy(update={"priorities": [PriorityKey.TRANSPORTE]})
-    worse_served = served("28001", farmacia=30.0, mayores=30.0, transporte=5.1)
-    better_served = served("28002", transporte=5.2)
+    worse_served = served("28001", farmacia=30.0, mayores=30.0, transporte=3.9)
+    better_served = served("28002", transporte=4.0)
     first, second = (evaluate(scenario, z) for z in (worse_served, better_served))
-    assert first.match_pct == second.match_pct and (first.utility or 0) > (second.utility or 0)
-    assert _codes(scenario, [better_served, worse_served]) == ["28001", "28002"]
+    assert first.match_pct == second.match_pct == 95
+    assert (first.utility or 0) > (second.utility or 0)
+    assert _codes(scenario, [worse_served, better_served]) == ["28002", "28001"]
+    at_the_door = served("28001", farmacia=30.0, mayores=30.0, transporte=0.0)  # 100 %
+    assert _codes(scenario, [better_served, at_the_door]) == ["28001", "28002"]
 
 
 def test_near_misses_keep_breaking_ties_by_confidence_not_by_walks() -> None:
@@ -574,12 +596,11 @@ def test_near_misses_keep_breaking_ties_by_confidence_not_by_walks() -> None:
 
 @settings(max_examples=60)
 @given(st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code))
-def test_without_exact_ties_the_order_is_the_fit_alone(zones: list[ZoneData]) -> None:
-    """The demo case has no exact tie in its top 10, so D-239 cannot move it: with different
-    unrounded fits the order is the one of the fit, whatever the walks say."""
+def test_the_order_follows_the_pct_shown(zones: list[ZoneData]) -> None:
+    """D-243: a lower % never goes before a higher one, whatever the walks say."""
     fits = [f for z in zones if (f := evaluate(family(), z)).utility is not None]
     ordered = sorted(fits, key=ranking_key)
-    assert all(a.utility >= b.utility for a, b in pairwise(ordered))  # type: ignore[operator]
+    assert all(a.match_pct >= b.match_pct for a, b in pairwise(ordered))  # type: ignore[operator]
 
 
 @settings(max_examples=40)
@@ -606,13 +627,13 @@ GREEN = ScenarioState(priorities=[PriorityKey.ZONAS_VERDES])
 
 
 def test_green_areas_score_the_walk_to_an_urban_park() -> None:
-    """D-222: utility 1 up to 10 minutes to the edge of a park of 1 ha, 0 at 30."""
+    """D-222: to the edge of a park of 1 ha, 0,9 at 10 minutes (D-243: 1 at the door), 0 at 30."""
     near = evaluate(GREEN, _park_zone(4.0))
-    assert near.match_pct == 100
+    assert near.match_pct == 96
     assert near.facts[0].kind is FactKind.STRENGTH
     assert near.facts[0].text == "Parque urbano a unos 4 min andando"
     middle = evaluate(GREEN, _park_zone(20.0))
-    assert middle.match_pct == 50
+    assert middle.match_pct == 45
     assert middle.facts[0].kind is FactKind.WEAKNESS
 
 
@@ -673,15 +694,15 @@ STEP_FREE = ScenarioState(priorities=[PriorityKey.SIN_ESCALERAS])
 
 def test_step_free_scores_the_walk_to_an_accessible_station() -> None:
     """D-223: «sin escaleras» (opt-in) reads the minutes to a metro, Metro Ligero or Cercanías
-    station that the CRTM grades as fully accessible: 1 up to 10 minutes, 0 at 30."""
+    station that the CRTM grades as fully accessible: 0,9 at 10 minutes, 0 at 30 (D-243)."""
     near = evaluate(STEP_FREE, _step_free_zone(6.0))
-    assert near.match_pct == 100
+    assert near.match_pct == 94
     assert near.facts[0].kind is FactKind.STRENGTH
     assert near.facts[0].topic is FactTopic.ACCESIBILIDAD
     assert near.facts[0].text == (
         "Estación de metro o tren accesible (sin escaleras) a unos 6 min andando"
     )
-    assert evaluate(STEP_FREE, _step_free_zone(20.0)).match_pct == 50
+    assert evaluate(STEP_FREE, _step_free_zone(20.0)).match_pct == 45
 
 
 def test_without_an_accessible_station_at_a_walk_step_free_says_buses_are_not_measured() -> None:
@@ -915,7 +936,7 @@ def test_the_cost_never_orders_the_zones_that_fit() -> None:
     scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=1_000_000), anchors=[])
     zones = [zone("1", price=4500.0), zone("2", price=3000.0)]
     outcome = run_search(scenario, zones)
-    assert [r.match_pct for r in outcome.results] == [100, 100]
+    assert [r.match_pct for r in outcome.results] == [95, 95]
     assert [r.zone.code for r in outcome.results] == ["1", "2"]
 
 
@@ -983,12 +1004,13 @@ def test_one_or_two_days_a_week_halve_the_weight_of_the_trip(days: int) -> None:
     assert {k: w for k, w in weights.items() if k != "work:0"} == {
         k: w for k, w in usual.items() if k != "work:0"
     }
-    # a school at a walk (1) and a trip of 90 min (0): 2/3 and 1/3 give 67 %; 2/3 and 1/6, 80 %
+    # a school at the door (1) and a trip of 90 min (0): 2/3 and 1/6 give 80 %; 2/3 and 1/3, 67 %,
+    # which a trip of 3 days or more that scores 0 halves (D-243)
     school_and_work = ScenarioState(priorities=[PriorityKey.COLEGIOS], anchors=[going(days)])
-    far = with_commute(zone("1"), 90.0)
+    far = with_commute(zone("1", colegio=0.0), 90.0)
     assert evaluate(school_and_work, far).match_pct == 80
     every_day = school_and_work.model_copy(update={"anchors": [CASTELLANA]})
-    assert evaluate(every_day, far).match_pct == 67
+    assert evaluate(every_day, far).match_pct == 33
 
 
 def test_a_far_zone_loses_less_when_the_trip_is_made_few_days() -> None:
@@ -1070,7 +1092,7 @@ def test_two_places_are_two_trips_each_scored_with_its_own_minutes() -> None:
     near_family = evaluate(scenario, with_trips(zone("2"), 25.0, 20.0))
     assert (near_family.utility or 0) > (fit.utility or 0)  # only the second trip changed
     near_work = evaluate(scenario, with_trips(zone("3"), 15.0, 48.0))
-    assert near_work.utility == fit.utility  # 15 and 25 min are both within the 30 that score 1
+    assert (near_work.utility or 0) > (fit.utility or 0)  # D-243: every minute counts
 
 
 def test_each_place_has_its_own_limit() -> None:
@@ -1150,9 +1172,9 @@ def test_ties_go_to_the_minutes_of_the_first_place_the_person_goes_to() -> None:
     assert lead_trip(telework_family) == 1
     assert lead_trip(family(anchors=[going(0, max_minutes=45)])) == 0
     assert lead_trip(family(anchors=[going(0)])) is None
-    # both within the 30 min that score 1 to the family: tied fit; the office does not decide
-    a = with_trips(zone("a"), 10.0, 25.0)
-    b = with_trips(zone("b"), 80.0, 20.0)
+    # both beyond the 90 min that score 0 to the family: tied fit; the office does not decide
+    a = with_trips(zone("a"), 10.0, 100.0)
+    b = with_trips(zone("b"), 80.0, 95.0)
     fits = [evaluate(telework_family, z) for z in (a, b)]
     assert (fits[0].utility, fits[0].confidence) == (fits[1].utility, fits[1].confidence)
     assert [f.data.zone.code for f in sorted(fits, key=near_miss_key)] == ["b", "a"]
@@ -1228,15 +1250,15 @@ def test_leisure_is_one_fact_and_one_criterion_whatever_the_boxes() -> None:
     assert leisure[0].kind is FactKind.WEAKNESS  # the gym is beyond the 10 minutes
     assert leisure[0].indicator is not None
     assert leisure[0].indicator.feature_id == "min_a_pie_gimnasios"  # the farthest group
-    # transporte (3 min, window 5) = 1; ocio = mean(1, 1, 0.5); weights 2/3 and 1/3
-    assert evaluation.utility == pytest.approx((2 * 1.0 + 1 * (2.5 / 3)) / 3)
+    # transporte (3 min, window 5) = 0,94; ocio = mean(0,98, 0,956, 0,45); weights 2/3 and 1/3
+    assert evaluation.utility == pytest.approx((2 * 0.94 + (0.98 + 0.956 + 0.45) / 3) / 3)
 
 
 def test_each_leisure_group_scores_against_its_own_minutes() -> None:
     near = evaluate(_ocio("bares", minutes=5), _leisure_zone(bares=10.0))
     far = evaluate(_ocio("bares", minutes=15), _leisure_zone(bares=10.0))
-    assert near.utility == pytest.approx(0.5)
-    assert far.utility == pytest.approx(1.0)
+    assert near.utility == pytest.approx(0.45)  # 10 min against 5: 0,9 x 5/10
+    assert far.utility == pytest.approx(1 - 0.1 * 10 / 15)  # 10 min against 15
 
 
 def test_leisure_without_data_is_unknown_and_never_zero() -> None:
@@ -1247,7 +1269,7 @@ def test_leisure_without_data_is_unknown_and_never_zero() -> None:
     assert fact.kind is FactKind.UNKNOWN
     assert fact.text == "Ocio: sin datos de distancia a pie en esta zona"
     half = evaluate(scenario, _leisure_zone(bares=4.0))
-    assert half.utility == pytest.approx(1.0)  # the group without data does not count as 0
+    assert half.utility == pytest.approx(0.96)  # 4 of 10 min; the group without data is no 0
     assert half.confidence == pytest.approx(0.5)  # but the zone is half as sure
     fact = next(f for f in half.facts if f.topic is FactTopic.OCIO)
     assert fact.text == "Ocio a pie: bares y cafeterías a unos 4 min, restaurantes: sin datos"

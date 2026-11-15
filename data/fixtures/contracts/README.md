@@ -19,3 +19,5 @@ Se regeneran con `uv run python scripts/build_contract_fixtures.py`, que lee la 
 Las respuestas de la API van dentro del sobre común (`data`, `meta`, `warnings`); sus JSON Schema están en `data/schemas/api/`.
 
 12 nov (D-216, D-217): `places.colegios_chamartin` (contrato `places-1`) y `zone_gap_list.el_alamo`, un municipio pequeño comparado con sus vecinos (`comparison_group`, `gap-0.3`). Todos los fixtures se regeneraron con el método 2SFCA; los tests de la web leen los estados del fixture, no los fijan.
+
+15 nov (D-243, `fit-0.9`): `match_band` (el % en palabras: `muy_bien`, `bien`, `regular` o `poco`) añadido a `search_result.familia_presupuesto` y `barrio_search_result.san_blas` a partir de su propio `match_pct`, con los umbrales de `hi_domain.fit`, y `null` en las zonas que no cumplen todo («Casi encajan» y `passes_all: false`). No se regeneran: sus % siguen siendo los de `fit-0.7`, que los tests de la web leen. Las cifras de `fit-0.9` del caso de ejemplo las fija el golden (`data/fixtures/golden/search_scenarios.yaml`).
