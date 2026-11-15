@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Equal, Undo2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Undo2 } from "lucide-react";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
 import type { RankedZone, SearchResult } from "@/contracts/search_response";
@@ -10,18 +10,19 @@ import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
+import { rowPlace } from "@/lib/essentials";
 import { errorMessage } from "@/lib/errors";
 import {
   asksForPlace,
   constraintLabels,
   evaluatedText,
   FIELD_ID,
-  floorAreaOf,
   noneText,
   passingText,
   rentNotice,
   rentReferenceAvailable,
   rentUnknownText,
+  speaksToMany,
   tiedText,
   unknownText,
   zoneKeyOf,
@@ -32,8 +33,8 @@ import {
   zoneWord,
 } from "@/lib/fit";
 import { MOBILE_QUERY } from "@/lib/map/camera";
-import { districtOf, zoneTitle } from "@/lib/map/zones";
-import { matchText, rankingRows, tiedNames } from "@/lib/match";
+import { districtOf, type ZoneCollection, zoneTitle } from "@/lib/map/zones";
+import { matchText, tiedNames } from "@/lib/match";
 import { nearMissText, type Spoken } from "@/lib/shortfall";
 
 import RealityCheck from "./RealityCheck";
@@ -41,8 +42,9 @@ import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
 // Copy from pitch/textos_web.md (resultados.*, with resultados.empate, resultados.aviso_2024 and resultados.sin_lugar in
-// lib/fit.ts, resultados.banda.* and resultados.empate.grupo in lib/match.ts, resultados.casi.* in lib/shortfall.ts,
-// carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer, zona.cerca_de_encajar.*, error.reintentar; 8c49e33).
+// lib/fit.ts, resultados.banda.* in lib/match.ts, resultados.casi.* in lib/shortfall.ts, resultados.fila.lugar in
+// lib/essentials.ts, carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer, zona.cerca_de_encajar.*,
+// error.reintentar).
 const TEXT = {
   title: "Zonas que te convienen",
   loading: "Buscando zonas para ti…",
@@ -55,11 +57,7 @@ const TEXT = {
   near: "Casi valen",
   nearHelp: "Les falta una sola cosa de lo que pides.",
   retry: "Reintentar",
-  district: (city: string | null | undefined) => `Distrito de ${city ?? "Madrid"}`,
-  // zona.barrio.antetitulo (D-238)
-  barrio: (city: string | null | undefined) => `Barrio de ${city ?? "Madrid"}`,
-  municipio: "Municipio",
-  // zona.empate, read after the % of a tied row
+  // zona.empate, read after the % of a tied row where the % shows (wide screens)
   tiesWith: (whom: string) => `empata con ${whom}`,
   // resultados.sin_lugar: the two buttons take the person to «Trabajo en» and to «¿Dónde?»
   place: {
@@ -74,86 +72,79 @@ const TEXT = {
 /** Rows of the ranking in view before «Ver las 10 primeras». */
 const FIRST_ROWS = 5;
 
-function levelText({ level, municipio_name }: RankedZone["zone"]): string {
-  if (level === "barrio") return TEXT.barrio(municipio_name);
-  return level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio;
-}
-
 interface RowProps {
   zone: RankedZone;
   buying: boolean;
-  m2: number | null;
-  /** A near miss: what it lacks instead of its % (resultados.casi.*) */
+  /** Where the zone is, only when two rows would read the same (rowPlace of lib/essentials.ts) */
+  place?: string | null;
+  /** A near miss: what it lacks instead of its band (resultados.casi.*) */
   lacks?: Spoken;
-  /** Read after its %: whom it ties with (`tiedNames`), for those who do not see the run's mark */
+  /** Read after its %: whom it ties with (`tiedNames`); the ties are told in the card's «Ver más» */
   tie?: string | null;
 }
 
-function ZoneRow({ zone, buying, m2, lacks, tie }: RowProps) {
+/**
+ * One row of the list, all of it a button that opens the zone card (second delivery of the UX
+ * mobile audit, decided by Mariano): its name, its band in words and «Unos 1.129 € al mes», with a
+ * «›». The %, the kind of zone, the m², the confidence words and the ties go to the card. On a wide
+ * screen the % stays, small, after the band.
+ */
+function ZoneRow({ zone, buying, place, lacks, tie }: RowProps) {
   const { select, zones } = useMapZones();
-  const { name, level, code } = zone.zone;
-  // «Berruguete · Tetuán»: a barrio's district comes from the start of its code (D-238)
-  const district = level === "barrio" && zones ? districtOf(zones, code) : undefined;
-  const price = zonePrice(zone, buying, m2);
+  const key = zoneKeyOf(zone.zone);
+  const price = zonePrice(zone, buying);
   const fit = lacks ? null : matchText(zone);
   return (
-    <button type="button" className={styles.row} onClick={() => select(zoneKeyOf(zone.zone))}>
+    <button type="button" className={styles.row} data-zone={key} onClick={() => select(key)}>
       {!lacks && <span className={styles.rank}>{zone.rank}</span>}
-      <span className={styles.rowName}>
-        {zoneTitle({ name, district_name: district?.name })}
-        {lacks ? (
-          <small className={styles.lacks}>
+      <span className={styles.rowText}>
+        <span className={styles.rowName}>
+          {rowTitle(zone, zones)}
+          {place && <span className={styles.place}> · {place}</span>}
+        </span>
+        {lacks && (
+          <span className={styles.lacks}>
             <span aria-hidden="true">{lacks.text}</span>
             <span className="visually-hidden">{lacks.aria}</span>
-          </small>
-        ) : (
-          <small>{levelText(zone.zone)}</small>
+          </span>
         )}
-      </span>
-      {/* The band, the % and the price on the line under the name: at 390 px the name keeps its width (D-234) */}
-      <span className={styles.end}>
         {fit && (
-          <span className={styles.pct}>
-            <small className={styles.band}>{fit.band}</small>
-            <span aria-hidden="true">{fit.pct}</span>
-            <span className="visually-hidden">
+          <span className={styles.band}>
+            {fit.band}
+            <span className={styles.pct}>
               {` · ${fit.pct}`}
-              {tie && `, ${TEXT.tiesWith(tie)}`}
+              {tie && <span className="visually-hidden">{`, ${TEXT.tiesWith(tie)}`}</span>}
             </span>
           </span>
         )}
         {price && <PriceTag price={price} variant="row" />}
       </span>
+      <ChevronRight size={20} aria-hidden="true" className={styles.chevron} />
     </button>
   );
+}
+
+/** «Berruguete · Tetuán»: a barrio's district comes from the start of its code (D-238) */
+function rowTitle({ zone }: RankedZone, zones: ZoneCollection | null): string {
+  const district = zone.level === "barrio" && zones ? districtOf(zones, zone.code) : undefined;
+  return zoneTitle({ name: zone.name, district_name: district?.name });
 }
 
 function Ranking({ result }: { result: SearchResult }) {
   const [all, setAll] = useState(false);
   const shown = all ? result.results : result.results.slice(0, FIRST_ROWS);
   const rest = result.reality_check.zones_passing - result.results.length;
-  const tied = tiedText(result);
   const word = zoneWord(result);
+  const names = shown.map((z) => z.zone.name);
   return (
     <>
-      {tied && <p className={styles.muted}>{tied}</p>}
       <ol className={styles.ranking}>
-        {rankingRows(shown, result.all_zones, word).map(({ zone, tie }) => (
-          <li
-            key={zoneKeyOf(zone.zone)}
-            className={tie ? [styles.tied, tie.first && styles.tieFirst, tie.last && styles.tieLast].filter(Boolean).join(" ") : undefined}
-          >
-            {/* Seen once over the run; each of its rows says it aloud with whom it ties */}
-            {tie?.first && (
-              <p className={styles.tie} aria-hidden="true">
-                <Equal size={16} />
-                {tie.label}
-              </p>
-            )}
+        {shown.map((zone) => (
+          <li key={zoneKeyOf(zone.zone)}>
             <ZoneRow
               zone={zone}
               buying={result.scenario.budget?.kind === "buy"}
-              m2={floorAreaOf(result)}
+              place={rowPlace(zone.zone, names)}
               tie={tiedNames(zone, result.all_zones, word, result.results)}
             />
           </li>
@@ -165,7 +156,7 @@ function Ranking({ result }: { result: SearchResult }) {
           <ChevronDown size={18} aria-hidden="true" className={all ? styles.flip : undefined} />
         </button>
       )}
-      {all && rest > 0 && <p className={styles.muted}>{TEXT.rest(rest, zoneWord(result))}</p>}
+      {all && rest > 0 && <p className={styles.muted}>{TEXT.rest(rest, word)}</p>}
     </>
   );
 }
@@ -188,12 +179,7 @@ function NearMisses({ result }: { result: SearchResult }) {
         <ul className={styles.ranking}>
           {near.map((zone) => (
             <li key={zoneKeyOf(zone.zone)}>
-              <ZoneRow
-                zone={zone}
-                buying={result.scenario.budget?.kind === "buy"}
-                m2={floorAreaOf(result)}
-                lacks={nearMissText(zone, labels, result.scenario)}
-              />
+              <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} lacks={nearMissText(zone, labels, result.scenario)} />
             </li>
           ))}
         </ul>
@@ -263,7 +249,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
     status === "loading"
       ? TEXT.loading
       : status === "done" && result
-        ? passingText(result.reality_check.zones_passing, applied !== null, zoneWord(result))
+        ? passingText(result.reality_check.zones_passing, applied !== null, zoneWord(result), speaksToMany(result.scenario.household))
         : "";
   const live = (
     <p role="status" className="visually-hidden">
@@ -316,6 +302,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
   const rc = result.reality_check;
   const word = zoneWord(result);
   const rentUnknown = rentUnknownText(result, rentReferenceAvailable(datasets?.datasets));
+  const tied = rc.zones_passing > 0 ? tiedText(result) : null;
   return (
     <div ref={ref} className={styles.stack}>
       {live}
@@ -328,29 +315,35 @@ export default function SearchResults({ children }: { children: ReactNode }) {
             <p>
               {TEXT.applied} <strong>{applied}</strong>
             </p>
-            <Button
-              variant="secondary"
-              aria-disabled={status === "loading"}
-              onClick={() => {
-                if (status !== "loading") undoRelaxation();
-              }}
-            >
-              <Undo2 size={18} aria-hidden="true" />
-              {TEXT.undo}
-            </Button>
+            {/* Not over changes made since: it would bring back what the person changed (lib/searchState.ts) */}
+            {!stale && (
+              <Button
+                variant="secondary"
+                aria-disabled={status === "loading"}
+                onClick={() => {
+                  if (status !== "loading") undoRelaxation();
+                }}
+              >
+                <Undo2 size={18} aria-hidden="true" />
+                {TEXT.undo}
+              </Button>
+            )}
           </div>
         )}
         {stale && status !== "loading" && <p className={styles.stale}>{TEXT.stale}</p>}
-        <p className={styles.summary}>
-          <strong>{passingText(rc.zones_passing, applied !== null, word)}</strong> {evaluatedText(result)}
-        </p>
+        {/* One line over the list (second delivery of the UX mobile audit): how many zones; the notes go under it */}
+        <p className={styles.summary}>{passingText(rc.zones_passing, applied !== null, word, speaksToMany(result.scenario.household))}</p>
         {rc.zones_passing === 0 && <p>{noneText(word)}</p>}
-        {/* Renting in «Pueblos» most villages have no rent: why they come out «Sin datos» (D-238) */}
-        {rentUnknown && <p className={styles.muted}>{rentUnknown}</p>}
-        {!rentUnknown && rc.zones_passing === 0 && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
-        {rentNotice(result) && <p className={styles.muted}>{rentNotice(result)}</p>}
-        {asksForPlace(result) && <PlaceHint />}
         {rc.zones_passing > 0 && <Ranking result={result} />}
+        <div className={styles.notes}>
+          {rentNotice(result) && <p>{rentNotice(result)}</p>}
+          {tied && <p>{tied}</p>}
+          {asksForPlace(result) && <PlaceHint />}
+          <p>{evaluatedText(result)}</p>
+          {/* Renting in «Pueblos» most villages have no rent: why they come out «Sin datos» (D-238) */}
+          {rentUnknown && <p>{rentUnknown}</p>}
+          {!rentUnknown && rc.zones_passing === 0 && rc.zones_unknown > 0 && <p>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
+        </div>
         <NearMisses result={result} />
       </GlassCard>
       <RealityCheck result={result} />

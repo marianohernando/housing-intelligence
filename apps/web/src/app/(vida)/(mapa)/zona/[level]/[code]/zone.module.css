@@ -29,7 +29,7 @@
 
 .crumbs {
   border-radius: var(--radius-pill);
-  padding: var(--space-2) var(--space-4);
+  padding: 0 var(--space-4);
 }
 
 .crumbs ol {
@@ -40,7 +40,11 @@
   list-style: none;
 }
 
+/* A target of 44 px, as every link of the journey (UX mobile audit, M1) */
 .crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
   color: var(--ink-soft);
   text-decoration: none;
 }
@@ -71,6 +75,44 @@
 
 .back {
   margin-top: var(--space-2);
+}
+
+/* zona.mas_datos: the context of the zone behind one button of 44 px or more, under the card */
+.more {
+  display: grid;
+  margin-top: var(--space-4);
+}
+
+.more > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--target);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  color: var(--violet-strong);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.moreIcon {
+  flex: none;
+  transition: transform var(--duration) var(--ease);
+}
+
+.more[open] .moreIcon {
+  transform: rotate(180deg);
+}
+
+/* Its blocks keep the spacing they had in the column (each brings its own margin) */
+.moreBody {
+  padding-top: var(--space-1);
 }
 
 .state {

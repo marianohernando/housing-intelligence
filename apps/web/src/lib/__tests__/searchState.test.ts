@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResult } from "@/contracts/search_response";
 
-import { defaultScenario, setAdults, setBudgetAmount, togglePriority } from "../scenario";
+import { defaultScenario, setAdults, setBudgetAmount, setOlderHousehold, togglePriority } from "../scenario";
 import {
   initialSearchState,
   isStale,
@@ -44,14 +44,14 @@ describe("searchReducer: only the latest search counts", () => {
 describe("«¿Y si cambias algo?»: apply and undo", () => {
   it("confirms the option only when its answer arrives, and goes back to the search before it", () => {
     let s = searched();
-    const attempt = relaxAttempt(s, 2, "+150 €/mes", relaxed);
+    const attempt = relaxAttempt(s, 2, "+150 €/mes", relaxed)!;
     s = searchReducer(s, { type: "start", attempt });
     expect(s.applied).toBeNull();
     expect(s.scenario).toBe(relaxed);
     s = searchReducer(s, { type: "done", id: 2, result: result(33) });
     expect(s.applied).toEqual({ label: "+150 €/mes", previous: mine });
     // A second option still goes back to the search before any option
-    expect(relaxAttempt(s, 3, "+5 min", relaxed).applied?.previous).toBe(mine);
+    expect(relaxAttempt(s, 3, "+5 min", relaxed)?.applied?.previous).toBe(mine);
     const undo = undoAttempt(s, 4);
     expect(undo?.scenario).toBe(mine);
     s = searchReducer(s, { type: "start", attempt: undo! });
@@ -62,7 +62,7 @@ describe("«¿Y si cambias algo?»: apply and undo", () => {
 
   it("on failure keeps the last result and its scenario, and retries the option as it was", () => {
     let s = searched();
-    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed)! });
     s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
     expect(s).toMatchObject({ status: "error", error: "NETWORK", applied: null, scenario: mine });
     expect(s.result?.reality_check.zones_passing).toBe(32);
@@ -86,7 +86,7 @@ describe("«¿Y si cambias algo?»: apply and undo", () => {
 
   it("retries what is on screen when the user edited the search after the attempt started", () => {
     let s = searched();
-    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed)! });
     s = searchReducer(s, { type: "edit", change: (x) => setAdults(x, 2) });
     const edited = s.scenario;
     s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
@@ -101,7 +101,7 @@ describe("«¿Y si cambias algo?»: apply and undo", () => {
 
   it("on failure of an option keeps what the user edited on top of it", () => {
     let s = searched();
-    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed) });
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed)! });
     s = searchReducer(s, { type: "edit", change: (x) => setAdults(x, 2) });
     const edited = s.scenario;
     s = searchReducer(s, { type: "fail", id: 2, error: "NETWORK" });
@@ -110,6 +110,32 @@ describe("«¿Y si cambias algo?»: apply and undo", () => {
 
   it("has nothing to retry unless the last search failed", () => {
     expect(retryAttempt(searched(), 9)).toBeNull();
+  });
+
+  it("never applies an option of a previous search: it would bring back what the person took out", () => {
+    // Production, 16 nov: «Somos mayores» unmarked after the search, then the old option applied
+    const older = setOlderHousehold(setAdults(mine, 2), true);
+    const oldOption = setBudgetAmount(older, 1650);
+    let s = initialSearchState<string>(older);
+    s = searchReducer(s, { type: "start", attempt: plainAttempt(s, 1) });
+    s = searchReducer(s, { type: "done", id: 1, result: result(22) });
+    expect(relaxAttempt(s, 2, "+150 €/mes", oldOption)).not.toBeNull();
+    s = searchReducer(s, { type: "edit", change: (x) => setOlderHousehold(x, false) });
+    expect(isStale(s)).toBe(true);
+    expect(relaxAttempt(s, 2, "+150 €/mes", oldOption)).toBeNull();
+    // Searching again gives options of the search on screen, which apply
+    s = searchReducer(s, { type: "start", attempt: plainAttempt(s, 3) });
+    s = searchReducer(s, { type: "done", id: 3, result: result(40) });
+    expect(relaxAttempt(s, 4, "+150 €/mes", setBudgetAmount(s.scenario, 1650))?.scenario.household?.seniors).not.toBe(true);
+  });
+
+  it("never undoes an option over what the person changed after it", () => {
+    let s = searched();
+    s = searchReducer(s, { type: "start", attempt: relaxAttempt(s, 2, "+150 €/mes", relaxed)! });
+    s = searchReducer(s, { type: "done", id: 2, result: result(33) });
+    expect(undoAttempt(s, 3)).not.toBeNull();
+    s = searchReducer(s, { type: "edit", change: (x) => togglePriority(x, "salud") });
+    expect(undoAttempt(s, 3)).toBeNull();
   });
 });
 

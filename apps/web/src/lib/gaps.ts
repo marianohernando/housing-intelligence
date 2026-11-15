@@ -32,13 +32,29 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string; short:
 
 /**
  * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
- * instead of its status (D-230: the API's `explanation` starts the same way). B's draft for D.
+ * instead of its status (D-230). What it means (D-213, `min_expected` of hi_domain/gaps.py): for
+ * the people who live there, the zone would have fewer than 4 centres (3,69 expected at 95 %), and
+ * with numbers that small not even none at all could be told from chance. It is not that few people
+ * live there: Barajas, with some 50.000, has too few health centres to compare (second delivery).
  */
 export const SMALL_ZONE = {
   label: "No comparable",
-  help: "Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos.",
-  short: "vive tan poca gente que no se puede comparar.",
+  help: "Para la gente que vive aquí le corresponden muy pocos centros (menos de 4) y, con números tan pequeños, no se puede saber si faltan, ni siquiera junto con sus vecinos. Por eso no la comparamos.",
+  short: "para la gente que vive aquí le corresponden tan pocos centros que no se puede saber si faltan.",
 };
+
+/** The first sentence of the API's explanation of such a row (not_comparable_text of hi_domain/gap_impact.py). */
+const API_NOT_COMPARABLE = /^No comparable:.*?\.\s+/;
+
+/**
+ * The reason of a «No comparable» row of «Qué falta»: SMALL_ZONE.help, then the API's figures
+ * without its first sentence, which says «aquí viven muy pocas personas (50.375)» also of a district
+ * of 50.000 people (D-230's text, line A's). Without that sentence, SMALL_ZONE.help alone.
+ */
+export function notComparableReason(explanation: string): string {
+  const figures = API_NOT_COMPARABLE.test(explanation) ? explanation.replace(API_NOT_COMPARABLE, "").trim() : "";
+  return figures ? `${SMALL_ZONE.help} ${figures}` : SMALL_ZONE.help;
+}
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
   return reliable === false;
@@ -311,7 +327,7 @@ export const GAPS_HELP = "Un servicio puede estar cerca y aun así ir lleno: aqu
  * The words follow fila.mide.*: schools and pharmacies count one each, colegios count classrooms,
  * mayores count places (nobody publishes the places of an escuela infantil, D-217).
  */
-const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string; JUSTO: string }>> = {
+export const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string; JUSTO: string }>> = {
   escuela_infantil: { service: "Escuela infantil", FALTA: "hay pocas para tantos niños", JUSTO: "van justas para tantos niños" },
   colegio: { service: "Colegio con primaria", FALTA: "hay pocas aulas para tantos niños", JUSTO: "las aulas van justas para tantos niños" },
   centro_salud: { service: "Centro de salud", FALTA: "hay pocos para tanta gente", JUSTO: "van justos para tanta gente" },
@@ -319,7 +335,8 @@ const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string
   farmacia: { service: "Farmacia", FALTA: "hay pocas para tanta gente", JUSTO: "van justas para tanta gente" },
 };
 
-function walkMinutesText(minutes: number): string {
+/** «a unos 6 min andando», «a 1 min andando» or «a menos de 1 min andando». */
+export function walkMinutesText(minutes: number): string {
   const n = Math.round(minutes);
   if (n < 1) return "a menos de 1 min andando";
   return n === 1 ? "a 1 min andando" : `a unos ${formatNumber(n, 0)} min andando`;

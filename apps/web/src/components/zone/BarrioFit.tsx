@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Equal } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 
 import type { ScenarioState } from "@/contracts/scenario_state";
@@ -8,12 +8,12 @@ import { useMapZones } from "@/components/map/MapProvider";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
+import Help from "@/components/ui/Help";
 import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { type BarrioRow, barrioRows, barriosText, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
 import { unknownText, WALK_MEDIAN } from "@/lib/fit";
-import { rankingRows } from "@/lib/match";
 import type { ZoneProperties } from "@/lib/map/zones";
 
 import styles from "./BarrioFit.module.css";
@@ -26,6 +26,9 @@ const TEXT = {
   title: "Los barrios que más te convienen",
   loading: (district: string) => `Buscando los barrios de ${district} que te convienen…`,
   pick: "Toca uno para verlo en el mapa.",
+  // barrios.encajan.ayuda, behind «¿Qué es el %?» where the % shows (wide screens); it was a tooltip
+  fitHelpLabel: "¿Qué es el %?",
+  fitHelpAbout: "Los barrios que más te convienen",
   fitHelp: "Cuánto se parece este barrio a lo que buscas. No es una nota del barrio.",
   // zona.empate, read after the % of a tied barrio
   tiesWith: (whom: string) => `empata con ${whom}`,
@@ -37,32 +40,40 @@ const TEXT = {
 };
 
 /**
- * One barrio: its name and % are a button that outlines it on the map (pressed again, back to the
- * whole district), and the whole row takes the tap; why it is a near miss and its facts describe it.
- * Without its outline (the map's barrios not loaded, or no admin unit), the same row without a button.
+ * One barrio, as a row of the list (second delivery of the UX mobile audit): its name, its band in
+ * words (the % small after it on a wide screen) or what it lacks, and «Unos 1.129 € al mes». The row
+ * is a button that outlines the barrio on the map (pressed again, back to the whole district) and
+ * then shows its first facts under it. Without its outline (the map's barrios not loaded, or no
+ * admin unit), the same row without a button, with its facts.
  */
 function Barrio({ row }: { row: BarrioRow }) {
   const { barrios, barrio, focusBarrio } = useMapZones();
   const detailsId = useId();
   const outlined = row.id !== null && (barrios?.some((b) => b.properties.admin_unit_id === row.id) ?? false);
   const pressed = outlined && barrio?.properties.admin_unit_id === row.id;
+  const showFacts = (pressed || !outlined) && row.facts.length > 0;
   const head = (
     <>
-      <span className={styles.name}>{row.name}</span>
-      {/* The band, the % and the price on the line under the name, as in the list (R-04 of PR #79) */}
-      <span className={styles.end}>
+      <span className={styles.rowText}>
+        <span className={styles.name}>{row.name}</span>
+        {row.lacks && (
+          <span className={styles.fails}>
+            <span aria-hidden="true">{row.lacks.text}</span>
+            <span className="visually-hidden">{row.lacks.aria}</span>
+          </span>
+        )}
         {row.fit && (
-          <span className={styles.pct} title={TEXT.fitHelp}>
-            <small className={styles.band}>{row.fit.band}</small>
-            <span aria-hidden="true">{row.fit.pct}</span>
-            <span className="visually-hidden">
+          <span className={styles.band}>
+            {row.fit.band}
+            <span className={styles.pct}>
               {` · ${row.fit.pct}`}
-              {row.tie && `, ${TEXT.tiesWith(row.tie)}`}
+              {row.tie && <span className="visually-hidden">{`, ${TEXT.tiesWith(row.tie)}`}</span>}
             </span>
           </span>
         )}
         {row.price && <PriceTag price={row.price} variant="row" />}
       </span>
+      {outlined && <ChevronDown size={20} aria-hidden="true" className={[styles.chevron, pressed && styles.flip].filter(Boolean).join(" ")} />}
     </>
   );
   return (
@@ -72,7 +83,7 @@ function Barrio({ row }: { row: BarrioRow }) {
           type="button"
           className={styles.head}
           aria-pressed={pressed}
-          aria-describedby={detailsId}
+          aria-describedby={showFacts ? detailsId : undefined}
           onClick={() => focusBarrio(pressed ? null : row.id)}
         >
           {head}
@@ -80,19 +91,15 @@ function Barrio({ row }: { row: BarrioRow }) {
       ) : (
         <span className={styles.head}>{head}</span>
       )}
-      <span id={detailsId} className={styles.details}>
-        {row.lacks && (
-          <span className={styles.fails}>
-            <span aria-hidden="true">{row.lacks.text}</span>
-            <span className="visually-hidden">{row.lacks.aria}</span>
-          </span>
-        )}
-        {row.facts.map((fact, i) => (
-          <span key={i} className={styles.fact}>
-            {fact}
-          </span>
-        ))}
-      </span>
+      {showFacts && (
+        <span id={detailsId} className={styles.details}>
+          {row.facts.map((fact, i) => (
+            <span key={i} className={styles.fact}>
+              {fact}
+            </span>
+          ))}
+        </span>
+      )}
     </div>
   );
 }
@@ -101,13 +108,13 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   const titleId = useId();
   const [all, setAll] = useState(false);
   const { loading, data, error, retry } = useBarrioFit(distrito, scenario);
-  const { barrios } = useMapZones();
+  const { barrios, barrio } = useMapZones();
   const slow = useSlow(loading);
   const rows = data ? barrioRows(data) : null;
   const shown = rows ? (all ? rows.fits : rows.fits.slice(0, FIRST_BARRIOS)) : [];
-  // resultados.empate.grupo, as in «Zonas que encajan»: the rows in view are the first of `results`, in its order
-  const ties = data ? rankingRows(data.results.slice(0, shown.length), data.all_zones, "barrio").map((r) => r.tie) : [];
-  const walking = rows ? [...shown, ...rows.near].some((row) => row.walking) : false;
+  // The facts of a barrio show once it is outlined (or always without its outline): say what their minutes are only then
+  const factsShown = (row: BarrioRow) => row.id === null || !barrios?.some((b) => b.properties.admin_unit_id === row.id) || barrio?.properties.admin_unit_id === row.id;
+  const walking = rows ? [...shown, ...rows.near].some((row) => row.walking && factsShown(row)) : false;
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
@@ -137,24 +144,11 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
           {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown, "barrio")}</p>}
           {shown.length > 0 && (
             <ol className={styles.list}>
-              {shown.map((row, i) => {
-                const tie = ties[i] ?? null;
-                return (
-                  <li
-                    key={row.code}
-                    className={tie ? [styles.tied, tie.first && styles.tieFirst, tie.last && styles.tieLast].filter(Boolean).join(" ") : undefined}
-                  >
-                    {/* Seen once over the run; each of its barrios says it aloud with whom it ties */}
-                    {tie?.first && (
-                      <p className={styles.tie} aria-hidden="true">
-                        <Equal size={16} />
-                        {tie.label}
-                      </p>
-                    )}
-                    <Barrio row={row} />
-                  </li>
-                );
-              })}
+              {shown.map((row) => (
+                <li key={row.code}>
+                  <Barrio row={row} />
+                </li>
+              ))}
             </ol>
           )}
           {rows.fits.length > FIRST_BARRIOS && (
@@ -177,6 +171,11 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
             </section>
           )}
           {walking && <p className={styles.muted}>{WALK_MEDIAN}</p>}
+          {shown.some((row) => row.fit) && (
+            <Help about={TEXT.fitHelpAbout} label={TEXT.fitHelpLabel} className={styles.pctHelp}>
+              <p>{TEXT.fitHelp}</p>
+            </Help>
+          )}
         </>
       )}
     </GlassCard>

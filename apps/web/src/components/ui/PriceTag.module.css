@@ -1,20 +1,28 @@
-/* Beside the % of a ranking row: the figure, and under it the confidence words when needed */
+/* A row of the list: «Unos 1.129 € al mes», on its own line under the band */
 .row {
-  display: grid;
-  flex: none;
-  justify-items: end;
-  line-height: 1.2;
-  text-align: right;
-}
-
-.row .amount {
   color: var(--ink);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  white-space: nowrap;
+  font-size: var(--text-base);
+  font-weight: 500;
 }
 
-/* Under the name of the zone card */
+/* The first of the card's essentials: the figure, and «Precio orientativo» under it */
+.essential {
+  display: grid;
+  line-height: 1.3;
+}
+
+.essential .amount {
+  color: var(--ink);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.essential small {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+}
+
+/* Behind «Ver más» of the zone card: the price with its m², confidence, range and notice */
 .card {
   display: flex;
   flex-wrap: wrap;

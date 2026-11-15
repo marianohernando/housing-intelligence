@@ -126,10 +126,26 @@ export const MOBILE_QUERY = "(max-width: 760px)";
 
 /** Share of the screen height the mobile bottom sheet takes when folded. */
 export const SHEET_PEEK = 0.45;
-/** Mobile header (brand and tabs) above the map. */
-const MOBILE_HEADER = 130;
-/** Height of the compact legend over the mobile overview map (select and one or two lines of statuses). */
-const MOBILE_LEGEND = 100;
+/**
+ * What covers the map on a phone, in rem: the header (brand and tabs, 130,5 px with the phone's root
+ * of 18 px, tokens.css) and the compact legend that floats over the folded sheet (125 px before a
+ * search; more with the statuses of a row). Measured on screen when the map moves (MobileChrome);
+ * these are the fallback, in rem so they grow with the root (they were px measured at 17 px).
+ */
+export const MOBILE_HEADER_REM = 7.25;
+export const MOBILE_LEGEND_REM = 7;
+/** The root font size of a phone (tokens.css: 112,5 % up to 760 px). */
+export const MOBILE_ROOT_PX = 18;
+
+/** What covers the map on a phone, measured on screen by the map (VidaMap), in px from the top. */
+export interface MobileChrome {
+  /** The bottom of the header */
+  headerBottom?: number;
+  /** The top of the legend over the sheet, when it shows (the overview) */
+  legendTop?: number;
+  /** The root font size, for the fallbacks */
+  rootPx?: number;
+}
 
 export interface Padding {
   top: number;
@@ -184,13 +200,16 @@ function oneColumnPadding(mode: "overview" | "zone" | "island", width: number): 
 export function cameraPadding(
   mode: "overview" | "zone" | "island",
   screen: { mobile: boolean; width: number; height: number },
+  chrome: MobileChrome = {},
 ): Padding {
   if (screen.mobile) {
+    const rem = chrome.rootPx ?? MOBILE_ROOT_PX;
+    const top = Math.ceil(chrome.headerBottom ?? MOBILE_HEADER_REM * rem);
     const bottom = Math.round(screen.height * SHEET_PEEK) + 16;
+    if (mode !== "overview") return { top, right: 0, bottom, left: 0 };
     // Overview: the legend («¿Qué quieres ver?» and the statuses) floats just above the sheet
-    return mode === "overview"
-      ? { top: MOBILE_HEADER, right: 16, bottom: bottom + MOBILE_LEGEND, left: 16 }
-      : { top: MOBILE_HEADER, right: 0, bottom, left: 0 };
+    const legend = chrome.legendTop !== undefined ? Math.ceil(screen.height - chrome.legendTop) : bottom + Math.ceil(MOBILE_LEGEND_REM * rem);
+    return { top, right: 16, bottom: Math.max(bottom, legend), left: 16 };
   }
   if (screen.width < THREE_COLUMNS_MIN) return fitPadding(oneColumnPadding(mode, screen.width), screen.width, screen.height);
   const pad =

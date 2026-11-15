@@ -73,7 +73,8 @@ function confidenceLevels(price: ConfidenceText | null, confidences: readonly nu
   return [...new Map(all.map((t) => [t.label, t])).values()];
 }
 
-const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
+/** The icon of each topic of a fact, also in the card's essentials. */
+export const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
   coste: Euro,
   transporte: Bus,
   salud: Cross,
@@ -87,18 +88,19 @@ const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
   otro: Info,
 };
 
-const KIND_CLASS: Record<FactKind, string | undefined> = {
+/** The colour of a fact's icon by its kind, also in the card's essentials. */
+export const KIND_CLASS: Record<FactKind, string | undefined> = {
   strength: styles.strength,
   weakness: styles.weakness,
   unknown: styles.unknownFact,
 };
 
 /**
- * What the search says about the zone: its place in the ranking, the conditions it fails or
- * cannot be checked, and its facts with their confidence in words. Everything comes from the API.
+ * What the search says of the zone before anything else, among the card's essentials: outside the
+ * search, the conditions it fails in plain words, or that some cannot be checked (and, without a
+ * price, why). Nothing for a zone that passes them all. Everything comes from the API.
  */
-export default function FitDetails({ result, zoneKey }: { result: SearchResult; zoneKey: string }) {
-  const factsId = useId();
+export function FitVerdict({ result, zoneKey }: { result: SearchResult; zoneKey: string }) {
   const { data: datasets } = useDatasets();
   const { match, ranked } = zoneFit(result, zoneKey);
   const scope = resultScope(result);
@@ -107,15 +109,10 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
   const fails = joinShortfalls(
     shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario),
   );
-  const word = zoneWord(result);
-  const tie = match.passes_all ? tieText(match, result.all_zones, word, result.results) : null;
   const buying = result.scenario.budget?.kind === "buy";
   const rentingInMunicipio = result.scenario.budget?.kind === "rent" && zoneKey.startsWith("municipio/");
-
   return (
     <>
-      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word)}</p>}
-      {tie && <p className={styles.tie}>{tie}</p>}
       {match.match_pct != null && !match.passes_all && (
         <p className={styles.fails}>
           <CircleX size={18} aria-hidden="true" />
@@ -140,6 +137,26 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
         <p className={styles.unknownWhy}>{zoneKey.startsWith("municipio/") ? TEXT.buySource.municipio : TEXT.buySource.madrid}</p>
       )}
       {match.match_pct == null && rentingInMunicipio && <p className={styles.unknownWhy}>{rentReferenceAvailable(datasets?.datasets) ? TEXT.rentSource.reference : TEXT.rentSource.cm}</p>}
+    </>
+  );
+}
+
+/**
+ * What the search says about the zone behind «Ver más» of the card: its place in the ranking, the
+ * zones it ties with, and every fact with its confidence in words. Everything comes from the API.
+ */
+export default function FitDetails({ result, zoneKey }: { result: SearchResult; zoneKey: string }) {
+  const factsId = useId();
+  const { match, ranked } = zoneFit(result, zoneKey);
+  if (!match) return null;
+  const word = zoneWord(result);
+  const tie = match.passes_all ? tieText(match, result.all_zones, word, result.results) : null;
+  const buying = result.scenario.budget?.kind === "buy";
+
+  return (
+    <>
+      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word)}</p>}
+      {tie && <p className={styles.tie}>{tie}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>
           <h3 id={factsId}>{TEXT.facts}</h3>

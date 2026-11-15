@@ -63,15 +63,15 @@ describe("barriosText (barrios.encajan.resumen)", () => {
 });
 
 describe("the price of each barrio (D-234)", () => {
-  it("goes beside its %, as a purchase price when buying and a monthly rent otherwise", () => {
+  it("goes under its band, as a purchase price when buying and a monthly rent otherwise", () => {
     const first = sanBlas.results[0]!;
     const cost = first.estimated_cost_eur ?? 0;
     const amount = new Intl.NumberFormat("es-ES", { useGrouping: "always" }).format(cost);
-    expect(barrioRows(sanBlas).fits[0]?.price?.short).toBe(`≈ ${amount} €/mes`);
+    expect(barrioRows(sanBlas).fits[0]?.price?.short).toBe(`Unos\u00a0${amount}\u00a0€ al\u00a0mes`);
     const buying = { ...sanBlas, scenario: { ...sanBlas.scenario, budget: { kind: "buy" as const, amount_eur: 400_000 } } };
     const estimate = { ...first, estimated_cost_eur: 348_000, estimated_cost_confidence: 0.5 };
     const row = barrioRows({ ...buying, results: [estimate] }).fits[0];
-    expect([row?.price?.short, row?.price?.confidence?.label]).toEqual(["≈ 348.000 €", "Dato aproximado"]);
+    expect([row?.price?.short, row?.price?.confidence?.label]).toEqual(["Unos\u00a0348.000\u00a0€", "Dato aproximado"]);
     expect(barrioRows({ results: [{ ...first, estimated_cost_eur: null }] }).fits[0]?.price).toBeNull();
   });
 });

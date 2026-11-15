@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { activeTab, type Tab, tabHref, TABS } from "../nav";
+import { activeTab, overviewHref, overviewZoneKey, type Tab, tabHref, TABS } from "../nav";
 
 describe("header tabs", () => {
   it("uses the plain-language names of the brief, in order", () => {
@@ -43,5 +43,23 @@ describe("tabHref", () => {
     expect(tabHref(falta, "/zona/seccion_censal/2807905001")).toBe("/que-falta");
     expect(tabHref(mapa, "/zona/distrito/2807905")).toBe("/");
     expect(tabHref(como, "/zona/distrito/2807905")).toBe("/como-lo-calculamos");
+  });
+});
+
+describe("the zone picked on the overview, in its address (second delivery of the UX mobile audit)", () => {
+  it("opens a zone of the map from ?zona=, and nothing else", () => {
+    expect(overviewZoneKey("distrito/2807913")).toBe("distrito/2807913");
+    expect(overviewZoneKey("municipio/28049")).toBe("municipio/28049");
+    expect(overviewZoneKey("barrio/28079211")).toBe("barrio/28079211");
+    expect(overviewZoneKey("seccion_censal/2807901001")).toBeNull();
+    expect(overviewZoneKey("distrito/")).toBeNull();
+    expect(overviewZoneKey("distrito/28<script>")).toBeNull();
+    expect(overviewZoneKey(null)).toBeNull();
+  });
+
+  it("writes the list without a zone and the card with it", () => {
+    expect(overviewHref(null)).toBe("/");
+    expect(overviewHref("distrito/2807913")).toBe("/?zona=distrito/2807913");
+    expect(overviewZoneKey(new URLSearchParams(overviewHref("barrio/28079211").slice(2)).get("zona"))).toBe("barrio/28079211");
   });
 });

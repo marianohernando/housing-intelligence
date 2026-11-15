@@ -8,12 +8,11 @@
   justify-items: start;
 }
 
+/* «Distrito de Madrid» in sentence case, as on the zone card: capitals read worse and sound louder (UX mobile audit, M2) */
 .eyebrow {
   color: var(--ink-soft);
   font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 /* falta.resumen.*: what the zone is short of, in one line over the rows */

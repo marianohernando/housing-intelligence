@@ -27,6 +27,7 @@ import {
   extentKm,
   firstViewBounds,
   islandZoom,
+  type MobileChrome,
   MOBILE_QUERY,
   projectAt,
   SHEET_PEEK,
@@ -131,8 +132,24 @@ function readPalette(): MapPalette {
   return Object.fromEntries(entries) as MapPalette;
 }
 
+/**
+ * What covers the map on a phone, as it is on screen now: the header and, on the overview, the
+ * legend over the sheet (lib/map/camera.ts, MobileChrome). With the root at 18 px fixed sizes fell
+ * short (review of PR #79).
+ */
+function mobileChrome(): MobileChrome {
+  const header = document.querySelector("header")?.getBoundingClientRect();
+  const legend = document.querySelector("[data-map-legend]")?.getBoundingClientRect();
+  return {
+    headerBottom: header && header.height > 0 ? header.bottom : undefined,
+    legendTop: legend && legend.height > 0 ? legend.top : undefined,
+    rootPx: parseFloat(getComputedStyle(document.documentElement).fontSize) || undefined,
+  };
+}
+
 function padding(mode: "overview" | "zone" | "island") {
-  return cameraPadding(mode, { mobile: matches(MOBILE), width: window.innerWidth, height: window.innerHeight });
+  const mobile = matches(MOBILE);
+  return cameraPadding(mode, { mobile, width: window.innerWidth, height: window.innerHeight }, mobile ? mobileChrome() : {});
 }
 
 /**

@@ -21,6 +21,7 @@ import {
   nearButShort,
   ROW_WALK_MIN,
   notComparable,
+  notComparableReason,
   referenceLabel,
   SMALL_ZONE,
   gapsHref,
@@ -96,6 +97,19 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
     expect(isSmallZone({ reliable: true })).toBe(false);
     expect(isSmallZone({})).toBe(false);
     expect(SMALL_ZONE.label).toBe("No comparable");
+  });
+
+  it("says what «No comparable» means: too few centres for its people to tell, not too few people (D-213, D-230)", () => {
+    // Barajas has some 50.000 people: «vive tan poca gente» was not true there
+    expect(SMALL_ZONE.short).not.toMatch(/poca gente/);
+    expect(SMALL_ZONE.short).toMatch(/tan pocos centros/);
+    expect(SMALL_ZONE.help).toMatch(/menos de 4/);
+    // The API's first sentence goes; its figures stay, after what it means
+    const barajas =
+      "No comparable: aquí viven muy pocas personas (50.375) para saber si falta. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes";
+    expect(notComparableReason(barajas)).toBe(`${SMALL_ZONE.help} 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes`);
+    expect(notComparableReason("No comparable: la zona es demasiado pequeña para saber si falta. 3 farmacias")).toBe(`${SMALL_ZONE.help} 3 farmacias`);
+    expect(notComparableReason("Sin datos para esta zona")).toBe(SMALL_ZONE.help);
   });
 });
 

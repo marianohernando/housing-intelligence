@@ -1,7 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { createContext, type ReactNode, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { useScenario } from "@/components/search/ScenarioProvider";
 import { fetchZoneGaps } from "@/components/zone/useZoneGaps";
@@ -18,6 +18,7 @@ import {
   type ZoneProperties,
   zonePropertiesOf,
 } from "@/lib/map/zones";
+import { OVERVIEW_ZONE_PARAM, overviewHref, overviewZoneKey } from "@/lib/nav";
 import { scopeOf } from "@/lib/scenario";
 
 import { fetchBarrios, fetchCapitalBarrios, fetchZones } from "./fetchZones";
@@ -50,9 +51,17 @@ interface MapContextValue {
   barriosError: ApiError | null;
   /** Asks for the barrios' outlines again (also done by the next search over the capital). */
   retryBarrios: () => void;
-  /** Zone picked on the overview map or in the list (its card shows on the right); also a barrio. */
+  /**
+   * Zone picked on the overview map or in the list (its card shows on the right); also a barrio. It
+   * lives in the address (`/?zona=…`, lib/nav.ts), so the browser's back button closes it.
+   */
   selectedZone: ZoneFeature | null;
   select: (zoneKey: string | null) => void;
+  /**
+   * «Volver a la lista»: the same as the back button when the card was opened from the overview
+   * (a step back in the history); a card opened from its link closes in place.
+   */
+  backToList: () => void;
   /** Barrios of the active district, for the «Barrios de la zona» bar: navigation only, no figures. */
   barrios: AdminFeature[] | null;
   /** Barrio the camera shows, inside the active district (null: the whole district). */
@@ -78,12 +87,49 @@ function decodedCode(code: string | undefined): string | undefined {
   }
 }
 
+/** The zone of the address, when it is the overview's. */
+function overviewZoneInAddress(): string | null | undefined {
+  if (window.location.pathname !== "/") return undefined;
+  return overviewZoneKey(new URLSearchParams(window.location.search).get(OVERVIEW_ZONE_PARAM));
+}
+
+/**
+ * Hands `?zona=` of the overview up: the only part of the map that waits for the address, so the
+ * pages around it are still rendered on the server (useSearchParams needs Suspense). The address
+ * itself is the truth, read when the router moves (useSearchParams) and on every step of the
+ * history (popstate): a back right after a pick can reach the router after its own update of that
+ * pick. On a zone screen the pick is kept: the back button returns to its card.
+ */
+function OverviewZoneParam({ onChange }: { onChange: (zoneKey: string | null) => void }) {
+  const param = useSearchParams().get(OVERVIEW_ZONE_PARAM);
+  const overview = usePathname() === "/";
+  useEffect(() => {
+    const follow = () => {
+      const key = overviewZoneInAddress();
+      if (key !== undefined) onChange(key);
+    };
+    follow();
+    window.addEventListener("popstate", follow);
+    return () => window.removeEventListener("popstate", follow);
+  }, [overview, param, onChange]);
+  return null;
+}
+
 export default function MapProvider({ children }: { children: ReactNode }) {
   const params = useParams<{ level?: string; code?: string }>();
   const [zones, setZones] = useState<ZoneCollection | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [attempt, setAttempt] = useState(0);
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  // The zone picked on the overview, as its address says it (`?zona=`, lib/nav.ts). `live` is false
+  // once the person leaves the overview: back on it, the card shows again only if its address says
+  // so (the back button), never for a moment on the way to the list («Volver a la lista»)
+  const [picked, setPicked] = useState<{ key: string | null; live: boolean }>({ key: null, live: true });
+  const overview = usePathname() === "/";
+  const [onOverview, setOnOverview] = useState(overview);
+  if (onOverview !== overview) {
+    setOnOverview(overview);
+    if (!overview && picked.live) setPicked({ key: picked.key, live: false });
+  }
   // The list remembers its district, so another zone never shows the wrong barrios.
   const [barrioList, setBarrioList] = useState<{ parent: string; features: AdminFeature[] } | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
@@ -99,13 +145,44 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     if (capitalError && byBarrio(result)) setCapitalError(null);
   }
   // The map changes between districts and barrios with the search: the zone picked follows it
-  // (a barrio becomes its district; a district, which has no single barrio, is let go)
+  // (a barrio becomes its district; a district, which has no single barrio, is let go), and so does
+  // its address (below), so a later search never brings back a card the person did not open
   const barrioMap = byBarrio(result);
-  const [pickedOn, setPickedOn] = useState(barrioMap);
-  if (pickedOn !== barrioMap) {
-    setPickedOn(barrioMap);
-    setSelectedKey((key) => selectionAfter(key, barrioMap));
-  }
+  const selectedKey = picked.live ? selectionAfter(picked.key, barrioMap) : null;
+  useEffect(() => {
+    const shown = overviewZoneInAddress();
+    if (shown === undefined) return;
+    const next = selectionAfter(shown, barrioMap);
+    // The address follows; OverviewZoneParam then hands the new pick up
+    if (next !== shown) window.history.replaceState(null, "", overviewHref(next));
+  }, [barrioMap]);
+  // Whether the card in view was opened from the overview, one step after the list in the history
+  const openedFromList = useRef(false);
+  const followAddress = useCallback((key: string | null) => {
+    if (key === null) openedFromList.current = false;
+    setPicked({ key, live: true });
+  }, []);
+  const select = useCallback((key: string | null) => {
+    const shown = overviewZoneInAddress();
+    if (shown !== undefined) {
+      // From the list, a new step in the history; from one card to another, the same step
+      if (key !== null && shown === null) {
+        window.history.pushState(null, "", overviewHref(key));
+        openedFromList.current = true;
+      } else if (key !== shown) {
+        window.history.replaceState(null, "", overviewHref(key));
+      }
+    }
+    if (key === null) openedFromList.current = false;
+    setPicked({ key, live: true });
+  }, []);
+  const backToList = useCallback(() => {
+    // Once: a second tap before the history moves closes in place instead of going back twice
+    const fromList = openedFromList.current;
+    openedFromList.current = false;
+    if (fromList) window.history.back();
+    else select(null);
+  }, [select]);
 
   const code = decodedCode(params.code);
   const level = params.level;
@@ -225,7 +302,8 @@ export default function MapProvider({ children }: { children: ReactNode }) {
       barriosError: capitalError,
       retryBarrios,
       selectedZone,
-      select: setSelectedKey,
+      select,
+      backToList,
       barrios: districtBarrios,
       barrio,
       focusBarrio,
@@ -241,6 +319,8 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     capitalError,
     retryBarrios,
     selectedKey,
+    select,
+    backToList,
     barrios,
     districtId,
     barrioList,
@@ -248,5 +328,12 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     focusBarrio,
   ]);
 
-  return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
+  return (
+    <MapContext.Provider value={value}>
+      <Suspense fallback={null}>
+        <OverviewZoneParam onChange={followAddress} />
+      </Suspense>
+      {children}
+    </MapContext.Provider>
+  );
 }
