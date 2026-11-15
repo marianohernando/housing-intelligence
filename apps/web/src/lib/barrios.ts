@@ -5,7 +5,7 @@
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
 import { constraintLabels, factText, floorAreaOf, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
-import { type MatchText, matchText } from "@/lib/match";
+import { type MatchText, matchText, tiedNames } from "@/lib/match";
 import { nearMissText, type Spoken } from "@/lib/shortfall";
 
 /** Facts under each barrio: the API orders them, most important to the person first. */
@@ -21,6 +21,8 @@ export interface BarrioRow {
   name: string;
   /** A barrio that fits: «Encaja muy bien» and «94 %» (F5 of fit-0.9); null for a near miss, which shows what it lacks */
   fit: MatchText | null;
+  /** Whom a barrio that fits ties with at its % («Arcos y Simancas»), read after it; null with none */
+  tie: string | null;
   /** Its approximate price for the household (D-234), or null without one */
   price: ZonePrice | null;
   facts: string[];
@@ -30,13 +32,14 @@ export interface BarrioRow {
   lacks: Spoken | null;
 }
 
-function barrioRow(zone: RankedZone, lacks: Spoken | null, buying: boolean, m2: number | null): BarrioRow {
+function barrioRow(zone: RankedZone, lacks: Spoken | null, buying: boolean, m2: number | null, tie: string | null = null): BarrioRow {
   const facts = zone.facts.slice(0, FACTS_PER_BARRIO);
   return {
     id: zone.zone.admin_unit_id ?? null,
     code: zone.zone.code,
     name: zone.zone.name,
     fit: lacks ? null : matchText(zone),
+    tie,
     price: zonePrice(zone, buying, m2),
     facts: facts.map((fact) => factText(fact, buying)),
     walking: hasWalkingFact(facts),
@@ -46,13 +49,15 @@ function barrioRow(zone: RankedZone, lacks: Spoken | null, buying: boolean, m2: 
 
 /** The barrios that fit, best first, and those that fail one condition, with what they lack. */
 export function barrioRows(
-  result: Pick<BarrioSearchResult, "results" | "near_misses"> & Partial<Pick<BarrioSearchResult, "scenario">>,
+  result: Pick<BarrioSearchResult, "results" | "near_misses"> & Partial<Pick<BarrioSearchResult, "scenario" | "all_zones">>,
 ): { fits: BarrioRow[]; near: BarrioRow[] } {
   const labels = constraintLabels(result);
   const buying = result.scenario?.budget?.kind === "buy";
   const m2 = floorAreaOf(result);
+  // An answer without all_zones: the barrios that fit are all in `results`
+  const all = result.all_zones ?? result.results.map((zone) => ({ ...zone, passes_all: true }));
   return {
-    fits: result.results.map((zone) => barrioRow(zone, null, buying, m2)),
+    fits: result.results.map((zone) => barrioRow(zone, null, buying, m2, tiedNames(zone, all, "barrio", result.results))),
     near: (result.near_misses ?? []).map((zone) => barrioRow(zone, nearMissText(zone, labels, result.scenario), buying, m2)),
   };
 }

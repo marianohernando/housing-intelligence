@@ -15,6 +15,8 @@ import { join } from "node:path";
 
 import { chromium } from "playwright";
 
+import { factAsShown } from "../../../infra/deploy/e2e/shown_text.mjs";
+
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
 const MOCKUP = process.env.MOCKUP_DIR ? join(process.env.MOCKUP_DIR, "mockup_1_mapa.png") : null;
@@ -75,7 +77,8 @@ async function firstZone(page, zone, where, tap = false) {
   await card.waitFor({ timeout: WAIT });
   await page.waitForTimeout(1500);
   const text = squash(await card.innerText());
-  const missing = zone.facts.filter((f) => !text.includes(squash(f.text)));
+  // The rent fact goes without what the 2024 notice already says (F5 of fit-0.9): factAsShown, as the e2e
+  const missing = zone.facts.filter((f) => !text.includes(squash(factAsShown(f))));
   if (!text.includes(zone.zone.name) || !new RegExp(`(?<!\\d)${zone.match_pct}\\s*%`).test(text) || missing.length) {
     report.fallos.push(`${where}: tarjeta de ${zone.zone.name} distinta de la API${missing.length ? ` (falta «${missing[0].text}»)` : ""}`);
   }

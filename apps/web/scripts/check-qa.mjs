@@ -40,6 +40,8 @@ import { join } from "node:path";
 
 import { chromium } from "playwright";
 
+import { factAsShown, NEAR_MISS_LINE } from "../../../infra/deploy/e2e/shown_text.mjs";
+
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
 const today = new Date().toLocaleDateString("sv-SE");
@@ -1388,7 +1390,8 @@ async function deckSearchCaptures(browser, failures) {
   await s.page.waitForTimeout(2500);
   const cardText = flat(await card.innerText());
   report.c1_c2.tarjeta = cardText;
-  for (const fact of top.facts) if (!cardText.includes(flat(fact.text))) failures.push(`C2: falta «${fact.text}»`);
+  // The rent fact goes without what the 2024 notice already says (F5 of fit-0.9): factAsShown, as the e2e
+  for (const fact of top.facts) if (!cardText.includes(flat(factAsShown(fact)))) failures.push(`C2: falta «${fact.text}»`);
   if (!cardText.includes(`${top.match_pct} %`)) failures.push("C2: % de encaje distinto de la API");
   await s.page.screenshot({ path: `${out}/deck_c1_busqueda_1440.png` });
   await card.screenshot({ path: `${out}/deck_c2_tarjeta_zona_1440.png` });
@@ -2111,7 +2114,8 @@ async function barrioFit(browser) {
           // The figure of the pill («Encaja muy bien» over «97 %», F5 of fit-0.9); a near miss has none
           pct: row.querySelector("[class*='pct'] > [aria-hidden='true']")?.textContent?.trim() ?? null,
           boton: row.firstElementChild?.tagName === "BUTTON",
-          lineas: [...(row.lastElementChild?.children ?? [])].map((s) => s.textContent.trim()),
+          // What is seen: a near miss's line also carries its words for screen readers («unos» for «≈»)
+          lineas: [...(row.lastElementChild?.children ?? [])].map((s) => (s.querySelector("[aria-hidden='true']") ?? s).textContent.trim()),
         })),
       );
     entry.resumen = flat(await section.locator("p").first().innerText());
@@ -2157,8 +2161,10 @@ async function barrioFit(browser) {
     const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
     if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
     if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
-    // F5 of fit-0.9: a near miss says what it lacks («Colegio con primaria: ≈ 26 min más andando…» or «No cumple: …»), never its %
-    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !r.lineas[0] || r.pct !== null)) failures.push(`${id}: «casi» sin su motivo o con %`);
+    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms (NEAR_MISS_LINE), never its %
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !NEAR_MISS_LINE.test(r.lineas[0] ?? "") || r.pct !== null)) {
+      failures.push(`${id}: «casi» sin su motivo o con %`);
+    }
     if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);
     if ([...entry.encajan, ...entry.casi].some((r) => !r.boton)) failures.push(`${id}: algún barrio sin botón`);
     if (asked.length !== 1 || beforeDistrict !== 0) failures.push(`${id}: ${asked.length} peticiones a /search/barrios (${beforeDistrict} antes del distrito)`);

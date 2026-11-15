@@ -33,26 +33,29 @@
   cursor: pointer;
 }
 
+/*
+ * The name and the % pill side by side; when the name's longest word and the pill do not fit on
+ * one line («Casarrubuelos» at 1440 px), the pill goes down under the name instead of the name
+ * breaking mid-word (review R-02 of PR #75).
+ */
 .titleRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
 }
 
 /*
- * A long name breaks between words; a single word too long for its line («Casarrubuelos» beside the
- * pill at 1440 px) at a Spanish hyphen («Casarru-buelos»), with lang="es", never mid-syllable.
- * Only long words are hyphenated (10 letters or more, 5 on each side), so «San Sebastián de los
- * Reyes» still breaks by words. break-word stays as the last resort for a browser without Spanish
- * hyphenation, so the name never runs under the %.
+ * The name takes the room its longest word needs (flex-basis min-content) and grows into the rest,
+ * so a name of several words breaks between them beside the pill. break-word is only the last
+ * resort for a word wider than the whole card.
  */
 .name {
+  flex: 1 1 min-content;
   min-width: 0;
   font-size: var(--text-2xl);
   font-weight: 600;
-  hyphens: auto;
-  hyphenate-limit-chars: 10 5 5;
   overflow-wrap: break-word;
 }
 

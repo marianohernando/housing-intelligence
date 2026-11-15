@@ -1,0 +1,34 @@
+// What the web shows of the API's texts where it does not show them verbatim, for the plain Node
+// checks (this e2e, apps/web/scripts/check-search.mjs and check-qa.mjs). Copied, not imported: they
+// cannot load the web's TypeScript. Keep it in step with apps/web/src/lib/fit.ts (factText,
+// RENT_2024_NOTICE) and apps/web/src/lib/shortfall.ts (resultados.casi.*).
+
+/** resultados.aviso_2024 and zona.precio.aviso_2024: renting, never buying (F5 of fit-0.9). */
+export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más.";
+
+/**
+ * A fact as the card shows it: renting, the rent fact goes without its «; un anuncio de hoy puede
+ * pedir más», which RENT_2024_NOTICE says by the price. Applied whatever the budget, the result is
+ * still contained in the API's text, so the check holds for a purchase and for an older web too.
+ */
+export function factAsShown(fact) {
+  return fact.topic === "coste" ? fact.text.replace(/;\s*un anuncio de hoy puede pedir más/, "") : fact.text;
+}
+
+/**
+ * The line of a near miss in «Casi encajan» (resultados.casi.*): what it lacks, by its figures or by
+ * its name, and «y otra condición» or «y {n} condiciones más» when it fails more. Never a %.
+ */
+export const NEAR_MISS_LINE = new RegExp(
+  "^(?:" +
+    [
+      "Se pasa ≈ [\\d.]+ €(?:/mes)? de tu presupuesto",
+      "Tarda (?:≈ \\d+ min|menos de 1 min) más de lo que pides(?: hasta .+)?",
+      "Tarda más de 2 h(?: hasta .+)?; pides \\d+ min como mucho",
+      ".+: (?:≈ \\d+ min|menos de 1 min) más andando de lo que pides",
+      ".+ a más de 1 h andando; pides \\d+ min como mucho",
+      "No cumple: .+",
+      "No cumple todo lo que pides\\.",
+    ].join("|") +
+    ")(?: y otra condición| y \\d+ condiciones más)?$",
+);

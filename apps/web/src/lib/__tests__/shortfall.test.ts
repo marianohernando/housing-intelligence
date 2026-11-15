@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { ConstraintCheck } from "@/contracts/search_response";
 
-import { FAILS_UNNAMED, nearMissText, shortfallOf, shortfalls } from "../shortfall";
+import { FAILS_UNNAMED, joinShortfalls, nearMissText, shortfallOf, shortfalls } from "../shortfall";
 
 const check = (id: string, label: string, value: number | null, threshold: number | null, unit: string, status: "PASS" | "FAIL" = "FAIL"): ConstraintCheck => ({
   constraint_id: id,
@@ -55,8 +55,21 @@ describe("what a near miss lacks (F5 of fit-0.9: «Casi encajan» without a %)",
     );
   });
 
+  it("gives no minutes beyond an hour on foot, which is no walk (review R-08)", () => {
+    // Up to MAX_WALK_SHOWN of the API (60 min) the minutes are still said
+    expect(shortfallOf(school(55.5)).text).toBe("Colegio con primaria: ≈ 46 min más andando de lo que pides");
+    expect(shortfallOf(school(75))).toEqual({
+      text: "Colegio con primaria a más de 1 h andando; pides 10 min como mucho",
+      aria: "Colegio con primaria a más de 1 h andando; pides 10 min como mucho",
+    });
+  });
+
   it("never makes up a figure: without value or limit, the condition by its name", () => {
-    expect(shortfallOf(budgetRent(Number.NaN))).toEqual({ text: "No cumple: Alquiler hasta 1.500 €/mes para 77 m²", aria: "No cumple: Alquiler hasta 1.500 €/mes para 77 m²" });
+    expect(shortfallOf(budgetRent(Number.NaN))).toEqual({
+      text: "No cumple: Alquiler hasta 1.500 €/mes para 77 m²",
+      aria: "No cumple: Alquiler hasta 1.500 €/mes para 77 m²",
+      label: "Alquiler hasta 1.500 €/mes para 77 m²",
+    });
     expect(shortfallOf(check("budget", "Compra hasta 400.000 €", null, 400_000, "€")).text).toBe("No cumple: Compra hasta 400.000 €");
     expect(shortfallOf(commute(null)).text).toBe("No cumple: Trayecto a Paseo de la Castellana (Azca) de 30 min como mucho");
     expect(shortfallOf(check("budget", "Compra hasta 400.000 €", 411_000, null, "€")).text).toBe("No cumple: Compra hasta 400.000 €");
@@ -83,6 +96,14 @@ describe("what a near miss lacks (F5 of fit-0.9: «Casi encajan» without a %)",
       "No cumple: Compra hasta 400.000 €",
       "Tarda ≈ 12 min más de lo que pides",
     ]);
+    // One line for the card: the figures first, then the names under a single «No cumple:» (review R-12)
+    const both = new Map([...labels, ["near:colegio", "Colegio con primaria a 10 min andando como mucho"]]);
+    const card = joinShortfalls(shortfalls({ failed_constraints: ["budget", "near:colegio", "commute:0"], constraints: [commute(42)] }, both));
+    expect(card).toEqual({
+      text: "Tarda ≈ 12 min más de lo que pides · No cumple: Compra hasta 400.000 € · Colegio con primaria a 10 min andando como mucho",
+      aria: "Tarda unos 12 min más de lo que pides. No cumple: Compra hasta 400.000 € · Colegio con primaria a 10 min andando como mucho",
+    });
+    expect(joinShortfalls([])).toBeNull();
     // A condition nobody names is left out, as before
     expect(shortfalls({ failed_constraints: ["sin_nombre"] }, labels)).toEqual([]);
     expect(shortfalls({ failed_constraints: undefined })).toEqual([]);

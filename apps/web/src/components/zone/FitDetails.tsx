@@ -31,7 +31,7 @@ import {
 } from "@/lib/fit";
 import { tieText } from "@/lib/match";
 import { SCOPE_LABEL } from "@/lib/scenario";
-import { FAILS_UNNAMED, shortfalls } from "@/lib/shortfall";
+import { FAILS_UNNAMED, joinShortfalls, shortfalls } from "@/lib/shortfall";
 
 import styles from "./ZoneCard.module.css";
 
@@ -90,9 +90,11 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
   const scope = resultScope(result);
   if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope])}</p>;
   // F5 of fit-0.9: what it lacks in plain words («Se pasa ≈ 120 €/mes de tu presupuesto»), as in «Casi encajan»
-  const fails = shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario);
+  const fails = joinShortfalls(
+    shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario),
+  );
   const word = zoneWord(result);
-  const tie = match.passes_all ? tieText(match, result.all_zones, word) : null;
+  const tie = match.passes_all ? tieText(match, result.all_zones, word, result.results) : null;
   const buying = result.scenario.budget?.kind === "buy";
   const rentingInMunicipio = result.scenario.budget?.kind === "rent" && zoneKey.startsWith("municipio/");
 
@@ -103,10 +105,10 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
       {match.match_pct != null && !match.passes_all && (
         <p className={styles.fails}>
           <CircleX size={18} aria-hidden="true" />
-          {fails.length > 0 ? (
+          {fails ? (
             <span>
-              <span aria-hidden="true">{fails.map((f) => f.text).join(" · ")}</span>
-              <span className="visually-hidden">{fails.map((f) => f.aria).join(". ")}</span>
+              <span aria-hidden="true">{fails.text}</span>
+              <span className="visually-hidden">{fails.aria}</span>
             </span>
           ) : (
             <span>{FAILS_UNNAMED}</span>

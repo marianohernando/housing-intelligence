@@ -103,8 +103,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
       </div>
       <div className={styles.titleRow}>
-        {/* lang + hyphens: a long name breaks between words or at a Spanish hyphen, never mid-syllable */}
-        <h2 id={titleId} lang="es" className={styles.name}>
+        <h2 id={titleId} className={styles.name}>
           {zoneTitle(zone)}
         </h2>
         {fit && (

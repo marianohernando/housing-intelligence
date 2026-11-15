@@ -14,10 +14,15 @@ type Check = Pick<ConstraintCheck, "constraint_id" | "label" | "status" | "value
 export interface Spoken {
   text: string;
   aria: string;
+  /** Said by its name only («No cumple: {condición}»): the API gave no figures to tell what is missing */
+  label?: string;
 }
 
 /** Above this many minutes the API says «más de 2 h» (MAX_COMMUTE_SHOWN of hi_domain/fit.py). */
 const MAX_COMMUTE_SHOWN = 120;
+
+/** Above this many minutes on foot the API gives no minutes, it is not a walk (MAX_WALK_SHOWN of hi_domain/fit.py). */
+const MAX_WALK_SHOWN = 60;
 
 /** «≈ 11.000 €» buying and «≈ 120 €/mes» renting: the excess rounded so the «≈» is honest. */
 const EURO_STEP = { "€": 1_000, "€/mes": 10 } as const;
@@ -74,18 +79,26 @@ function tooLong(check: Check, scenario: Pick<ScenarioState, "anchors"> | undefi
 /** «Colegio con primaria a 10 min andando como mucho» -> «Colegio con primaria» (the API's label of `near:*`). */
 const WALK_LABEL = /^(.+) a \d+ min andando como mucho$/;
 
-/** resultados.casi.a_pie: «Escuela infantil: ≈ 5 min más andando de lo que pides». */
+/**
+ * resultados.casi.a_pie: «Escuela infantil: ≈ 5 min más andando de lo que pides». Beyond an hour on
+ * foot, which is no walk, the minutes are not said: «Colegio con primaria a más de 1 h andando;
+ * pides 10 min como mucho».
+ */
 function tooFar(check: Check): Spoken | null {
   const over = excess(check);
   const service = WALK_LABEL.exec(check.label)?.[1];
   if (over === null || check.unit !== "min" || !service) return null;
+  if ((check.value as number) > MAX_WALK_SHOWN) {
+    const text = `${service} a más de 1 h andando; pides ${check.threshold} min como mucho`;
+    return { text, aria: text };
+  }
   const more = minutesOver(over);
   return { text: `${service}: ${more.text} más andando de lo que pides`, aria: `${service}: ${more.aria} más andando de lo que pides` };
 }
 
 /** As before (zona.cerca_de_encajar.motivo): «No cumple: {condición}». */
 function byName(label: string): Spoken {
-  return { text: `No cumple: ${label}`, aria: `No cumple: ${label}` };
+  return { text: `No cumple: ${label}`, aria: `No cumple: ${label}`, label };
 }
 
 /** One failed condition in plain words; by its name when the API gives no figures to tell it. */
@@ -113,6 +126,21 @@ export function shortfalls(zone: Failing, labels: ReadonlyMap<string, string> = 
     const label = labels.get(id);
     return label ? [byName(label)] : [];
   });
+}
+
+/**
+ * Every condition of the zone card in one line, separated by « · »: those with figures first, then
+ * those said by name under a single «No cumple:» («No cumple: A · B»). Null without any.
+ */
+export function joinShortfalls(list: readonly Spoken[]): Spoken | null {
+  if (list.length === 0) return null;
+  const told = list.filter((s) => s.label === undefined);
+  const named = list.flatMap((s) => (s.label === undefined ? [] : [s.label]));
+  const tail = named.length > 0 ? [`No cumple: ${named.join(" · ")}`] : [];
+  return {
+    text: [...told.map((s) => s.text), ...tail].join(" · "),
+    aria: [...told.map((s) => s.aria), ...tail].join(". "),
+  };
 }
 
 /**

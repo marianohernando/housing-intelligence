@@ -24,6 +24,8 @@ describe("barrioRows (D-232)", () => {
       ["Hellín", "Encaja muy bien · 93 %"],
     ]);
     expect(fits[2]).toMatchObject({ id: "ES.28.BAR.28079201", code: "28079201", lacks: null });
+    // Ties, named in the order of the list, for screen readers (review R-05)
+    expect(fits.map((b) => b.tie)).toEqual(["Arcos y Simancas", "Canillejas y Simancas", "Canillejas y Arcos", "Amposta", "Rosas", null, null]);
     expect(fits[0]?.facts).toEqual(["Colegio con primaria a unos 7 min andando", "Parada de transporte público a unos 3 min andando"]);
     expect(fits.every((b) => b.facts.length <= FACTS_PER_BARRIO)).toBe(true);
   });

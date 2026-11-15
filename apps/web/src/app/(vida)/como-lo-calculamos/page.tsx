@@ -7,6 +7,7 @@ import DatasetList from "@/components/provenance/DatasetList";
 import SiteFooter from "@/components/shell/SiteFooter";
 import GlassCard from "@/components/ui/GlassCard";
 import { ENVIRONMENT_METHOD } from "@/lib/environment";
+import { bandRanges } from "@/lib/match";
 import { CONTEXT_METHOD } from "@/lib/zoneContext";
 
 import styles from "../section.module.css";
@@ -27,14 +28,6 @@ function Section({ id, title, children }: { id: string; title: string; children:
     </GlassCard>
   );
 }
-
-// The bands of the % (resultados.banda.* of pitch/textos_web.md, lib/match.ts): the same thresholds as the API's `match_band`
-const BANDS: [string, string][] = [
-  ["90 % o más", "Encaja muy bien"],
-  ["De 75 a 89 %", "Encaja bien"],
-  ["De 60 a 74 %", "Encaja regular"],
-  ["Menos del 60 %", "Encaja poco"],
-];
 
 /**
  * pitch/metodologia.md §1.3 with the fit-0.9 method (FORMULA_DECISION: option A with the 1 h cap, chosen by Mariano in F5
@@ -90,8 +83,9 @@ function FitMethod() {
           <strong>El trabajo:</strong> contamos los minutos reales en transporte público para llegar a las 9:00, con los
           horarios que publica el Consorcio Regional de Transportes: metro, Metro Ligero, Cercanías y autobuses. Es el tiempo
           de puerta a puerta, contando lo que se anda hasta la parada. Aquí también cuenta cada minuto: vale 1 si lo tienes
-          al lado, 0,9 a los 30 minutos y baja hasta 0 a los 90. Si vas 1 o 2 días a la semana, el trayecto pesa la mitad, y
-          con teletrabajo total no cuenta.
+          al lado, 0,9 a los 30 minutos y baja hasta 0 a los 90. Si pones un límite («Tardar como mucho»), esos 30 minutos
+          son los tuyos y el 0 llega al triple. Si vas 1 o 2 días a la semana, el trayecto pesa la mitad, y con teletrabajo
+          total no cuenta.
         </li>
         <li>
           <strong>El presupuesto:</strong> vale 1 si la zona te cuesta el 75 % de tu presupuesto o menos, y baja hasta 0,6
@@ -116,15 +110,19 @@ function FitMethod() {
           su encaje no pasa del 89 %: nunca sale «encaja muy bien».
         </li>
         <li>
-          <strong>Más de 1 h de trayecto: como mucho 74 %.</strong> Si tardas más de una hora en llegar a un lugar que has
-          puesto (el trabajo o tu familia) y vas 3 días o más a la semana, la zona no pasa del 74 %: nunca sale «encaja
-          bien».
+          <strong>Más de 1 h de trayecto: como mucho 74 %.</strong> Si vas 3 días o más a la semana a un lugar que has
+          puesto (el trabajo o tu familia) y tardas más de 1 h en llegar, la zona se queda como mucho en un 74 %: nunca
+          sale «encaja bien».
         </li>
         <li>
           <strong>Si no llegas.</strong> Si tardas 1 h 30 o más, o con los horarios publicados no se llega a las 9:00, el
-          encaje se queda en la mitad: la zona puede cumplir todo lo demás, pero no es para ti.
+          encaje se queda en la mitad. También solo si vas 3 días o más a la semana.
         </li>
       </ul>
+      <p className={styles.para}>
+        La 1 h y la 1 h 30 valen cuando no pones un límite de tiempo. Si pones el tuyo, se cuentan sobre él: el doble y el
+        triple. Con «Tardar como mucho 45 min», serían 1 h 30 y 2 h 15.
+      </p>
       <p className={styles.para}>
         <strong>El % en palabras.</strong> Junto a cada % te decimos cuánto encaja la zona:
       </p>
@@ -136,7 +134,8 @@ function FitMethod() {
           </tr>
         </thead>
         <tbody>
-          {BANDS.map(([from, band]) => (
+          {/* resultados.banda.*: the thresholds and words of lib/match.ts, the same as the API's `match_band` */}
+          {bandRanges().map(([from, band]) => (
             <tr key={band}>
               <td>{from}</td>
               <td>

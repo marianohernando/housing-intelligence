@@ -155,7 +155,7 @@ function Ranking({ result }: { result: SearchResult }) {
               zone={zone}
               buying={result.scenario.budget?.kind === "buy"}
               m2={floorAreaOf(result)}
-              tie={tiedNames(zone, result.all_zones, word)}
+              tie={tiedNames(zone, result.all_zones, word, result.results)}
             />
           </li>
         ))}
