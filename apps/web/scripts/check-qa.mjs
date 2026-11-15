@@ -54,6 +54,14 @@ mkdirSync(out, { recursive: true });
 const report = { modo: mode, como: "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)" };
 const flat = (text) => text.replace(/\s+/g, " ").trim();
 
+/** Whether `version` («fit-0.9») is `least` ([0, 8]) or later, compared as numbers, as scripts/smoke_demo.sh does. */
+function fitAtLeast(version, least) {
+  const parts = /^fit-(\d+)\.(\d+)$/.exec(version ?? "")?.slice(1).map(Number);
+  if (!parts) return false;
+  const [major, minor] = parts;
+  return major > least[0] || (major === least[0] && minor >= least[1]);
+}
+
 async function axe(page) {
   await page.addScriptTag({ path: AXE });
   return page.evaluate(async () => {
@@ -1164,7 +1172,8 @@ async function buying(browser) {
     entry.overflow_px = Math.max(entry.overflow_px, await overflow(z.page));
     entry.consola = [...p.errors, ...z.errors];
     await z.ctx.close();
-    if (entry.api.metodo !== "fit-0.5") failures.push(`${id}: método ${entry.api.metodo}`);
+    // Buying is fit-0.5 (D-227); the answer today is fit-0.8 or later (fit-0.9, D-243)
+    if (!fitAtLeast(entry.api.metodo, [0, 8])) failures.push(`${id}: método ${entry.api.metodo}`);
     if (entry.aun_no_tenemos > 0) failures.push(`${id}: sigue «Aún no tenemos precios»`);
     for (const [label, added] of entry.api.relajaciones) if (added > 0 && !entry.y_si_cambias.includes(label)) failures.push(`${id}: falta «${label}»`);
     if (!entry.api.relajaciones.some(([label, added]) => /€$/.test(label) && added > 0)) failures.push(`${id}: la API no propone subir el presupuesto`);

@@ -1,25 +1,20 @@
 /**
  * The % of fit in words (pure, unit tested): its band («Encaja muy bien · 94 %») and the zones
  * that tie at the same shown % (F5 of the fit-0.9 formula, decided by Mariano). The web never
- * recomputes the %: it reads the band the API sends (`match_band`, fit-0.9) or, from an API that
- * does not send it yet, the same thresholds over `match_pct`.
+ * recomputes the %: it reads the band the API sends (`match_band`, fit-0.9, D-243 §4) or, from an
+ * API that does not send it, the same thresholds over `match_pct`.
  */
-import type { RankedZone, ZoneMatch } from "@/contracts/search_response";
+import type { MatchBand, RankedZone, ZoneMatch } from "@/contracts/search_response";
 
 import { type ZoneWord, zonesText } from "./fit";
 
-/** The bands of the % (resultados.banda.*): «muy bien» from 90, «bien» from 75, «regular» from 60, «poco» below. */
-export type MatchBand = "muy_bien" | "bien" | "regular" | "poco";
-
 /**
- * `match_band` of RankedZone and ZoneMatch from fit-0.9 on. Optional here so the web works with
- * the API deployed before it; once line A publishes the contract, the generated types carry it too.
+ * What a band is read from: the shown %, the API's `match_band` and, in a ZoneMatch, whether the
+ * zone passes every condition. A RankedZone of `results` carries no `passes_all`: it passes them all.
  */
-export interface WithBand {
-  match_band?: MatchBand | string | null;
-}
+type Banded = Pick<ZoneMatch, "match_pct" | "match_band"> & Partial<Pick<ZoneMatch, "passes_all">>;
 
-/** Lower bound of each band, best first: the API's thresholds (fit-0.9). */
+/** Lower bound of each band (resultados.banda.*), best first: the API's thresholds (fit-0.9). */
 export const BAND_FROM: readonly [MatchBand, number][] = [
   ["muy_bien", 90],
   ["bien", 75],
@@ -37,12 +32,14 @@ export const BAND_TEXT: Record<MatchBand, string> = {
 };
 
 /**
- * The band of a zone: the API's when it sends a known one, else from its % with the same
- * thresholds; null without a % (unknown is never «poco»).
+ * The band of a zone: none for one that fails some condition, which reads by what it lacks
+ * (D-243 §4), nor without a % (unknown is never «poco»). Otherwise the API's band or, when it comes
+ * null or missing (an API before fit-0.9), the band of its % with the same thresholds. The types
+ * are not checked at run time: a band this web does not know is also read from the %.
  */
-export function matchBand(zone: Pick<ZoneMatch, "match_pct"> & WithBand): MatchBand | null {
-  if (zone.match_pct == null) return null;
-  if (zone.match_band != null && BANDS.has(zone.match_band)) return zone.match_band as MatchBand;
+export function matchBand(zone: Banded): MatchBand | null {
+  if (zone.passes_all === false || zone.match_pct == null) return null;
+  if (zone.match_band != null && BANDS.has(zone.match_band)) return zone.match_band;
   return BAND_FROM.find(([, from]) => zone.match_pct! >= from)![0];
 }
 
@@ -66,7 +63,7 @@ export interface MatchText {
   text: string;
 }
 
-export function matchText(zone: Pick<ZoneMatch, "match_pct"> & WithBand): MatchText | null {
+export function matchText(zone: Banded): MatchText | null {
   const band = matchBand(zone);
   if (band === null) return null;
   const pct = `${zone.match_pct} %`;

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import type { RankedZone, SearchResult, ZoneMatch } from "@/contracts/search_response";
+import type { MatchBand, RankedZone, SearchResult, ZoneMatch } from "@/contracts/search_response";
 
 import { bandRanges, matchBand, matchText, rankingRows, tiedNames, tiedWith, tieText } from "../match";
 
@@ -36,8 +36,18 @@ describe("the band of the % (F5 of fit-0.9)", () => {
     expect(matchBand({ match_pct: 92, match_band: null })).toBe("muy_bien");
   });
 
+  it("gives none to a zone that fails some condition, neither the API's nor from its % (D-243 §4)", () => {
+    // Chamartín in «Casi encajan» at 92 %: it reads by what it lacks, never «muy bien»
+    expect(matchBand({ match_pct: 92, match_band: null, passes_all: false })).toBeNull();
+    expect(matchBand({ match_pct: 92, passes_all: false })).toBeNull();
+    expect(matchBand({ match_pct: 92, match_band: "muy_bien", passes_all: false })).toBeNull();
+    expect(matchText({ match_pct: 92, passes_all: false })).toBeNull();
+    expect(matchBand({ match_pct: 92, match_band: null, passes_all: true })).toBe("muy_bien");
+  });
+
   it("ignores a band it does not know, and gives none without a % (unknown is never «poco»)", () => {
-    expect(matchBand({ match_pct: 70, match_band: "excelente" })).toBe("regular");
+    // The contract's types are not checked at run time
+    expect(matchBand({ match_pct: 70, match_band: "excelente" as unknown as MatchBand })).toBe("regular");
     expect(matchBand({ match_pct: null, match_band: "poco" })).toBeNull();
     expect(matchBand({ match_pct: null })).toBeNull();
     expect(matchText({ match_pct: null })).toBeNull();
@@ -57,8 +67,16 @@ describe("the band of the % (F5 of fit-0.9)", () => {
     ]);
   });
 
-  it("gives every zone that fits in line A's fixture a band, from the API deployed before fit-0.9", () => {
-    expect(fixture.results.every((z) => matchText(z) !== null)).toBe(true);
+  it("reads line A's fixture: the band it sends for every zone that passes all, none for the rest", () => {
+    expect(fixture.results.every((z) => z.match_band != null && matchBand(z) === z.match_band)).toBe(true);
+    expect(fixture.near_misses?.every((z) => z.match_band === null)).toBe(true);
+    expect(fixture.all_zones.filter((z) => !z.passes_all).every((z) => matchBand(z) === null)).toBe(true);
+    expect(fixture.all_zones.filter((z) => z.passes_all).every((z) => matchBand(z) === z.match_band)).toBe(true);
+  });
+
+  it("derives the same bands from an API before fit-0.9, which sends no match_band", () => {
+    const before = fixture.results.map((zone) => ({ ...zone, match_band: undefined }));
+    expect(before.map((z) => matchBand(z))).toEqual(fixture.results.map((z) => z.match_band));
   });
 });
 
