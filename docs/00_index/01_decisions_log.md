@@ -1943,6 +1943,7 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
 10. **Lo que no se hace en la fórmula:**
     - **Límite duro de trayecto por defecto:** Mariano eligió el tope (más de 1 h, como mucho 74 %), no una condición que deje sin resultados al estudiante.
     - **Pendiente (producto, no se cierra aquí):** el texto de la web «Sin un lugar de trabajo también salen pueblos; dinos dónde trabajas o elige Madrid capital» (propuesta de F4.7b para Titulcia), y validar los parámetros nuevos en la 2.ª ronda con usuarios (preferencias «A mejor que B», que el banco ya carga).
+    - **Pendiente (producto, línea B):** en «Casi encajan» la banda sale del % como en el resto (en el ejemplo, Chamartín «muy bien» al 92 % sin cumplir el presupuesto). La API la envía igual; decidir si la web la enseña ahí o solo el % con «No cumple: …».
 11. **Factor de reserva de SERPAVI: 1,155** (R-03 de D-242).
     - **Antes:** ninguno de los 126 municipios rellenos tiene tabla propia de la AEAT, así que tomaban la fila de la Comunidad (1,2085), que domina Madrid.
     - **Ahora:** toman la mediana de los factores de los 37 municipios de la tabla (`fallback: {median: true}`, `factor_from: mediana_municipios`, 1,1551). Su alquiler baja un 4,4 % (1,155 / 1,2085).
