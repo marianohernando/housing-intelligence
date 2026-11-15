@@ -39,6 +39,7 @@ from hi_domain.fit import (
     ZoneData,
     about_minutes,
     as_pct,
+    commute_text,
     cost_fact,
     criteria,
     evaluate,
@@ -1127,14 +1128,38 @@ def test_two_places_are_two_trips_each_scored_with_its_own_minutes() -> None:
     assert weights["work:0"] > weights["work:1"]  # the place of work comes first
     fit = evaluate(scenario, with_trips(zone("1"), 25.0, 48.0))
     trips = [f.text for f in fit.facts if f.topic is FactTopic.TRAYECTO]
+    # The family is not a place to reach by 9:00: its trip does not say so (D-245), the work does
     assert trips == [
         "25 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
-        "48 min en transporte público hasta Getafe Central (Cercanías), llegando a las 9:00",
+        "48 min en transporte público hasta Getafe Central (Cercanías)",
     ]
     near_family = evaluate(scenario, with_trips(zone("2"), 25.0, 20.0))
     assert (near_family.utility or 0) > (fit.utility or 0)  # only the second trip changed
     near_work = evaluate(scenario, with_trips(zone("3"), 15.0, 48.0))
     assert (near_work.utility or 0) > (fit.utility or 0)  # D-243: every minute counts
+
+
+def test_only_work_and_study_trips_say_they_arrive_by_nine() -> None:
+    """D-245: «llegando a las 9:00» means something for work or study, not for the family or
+    «donde vivimos ahora». Their minutes are measured the same way, with the same timetables."""
+    home = FAMILY.model_copy(update={"kind": AnchorKind.OTHER, "label": "donde vivimos ahora"})
+    study = CASTELLANA.model_copy(update={"kind": AnchorKind.STUDY})
+    texts = {a.kind: commute_text(27.0, a) for a in (CASTELLANA, study, FAMILY, home)}
+    assert texts[AnchorKind.WORK].endswith(
+        "hasta Paseo de la Castellana (Azca), llegando a las 9:00"
+    )
+    assert texts[AnchorKind.STUDY].endswith(", llegando a las 9:00")
+    assert (
+        texts[AnchorKind.FAMILY] == "27 min en transporte público hasta Getafe Central (Cercanías)"
+    )
+    assert texts[AnchorKind.OTHER] == "27 min en transporte público hasta donde vivimos ahora"
+    # The same trip scores the same, whatever its words
+    as_work = evaluate(
+        family(anchors=[FAMILY.model_copy(update={"kind": AnchorKind.WORK})]),
+        with_trips(zone("1"), 27.0),
+    )
+    as_family = evaluate(family(anchors=[FAMILY]), with_trips(zone("1"), 27.0))
+    assert as_work.utility == as_family.utility
 
 
 def test_each_place_has_its_own_limit() -> None:

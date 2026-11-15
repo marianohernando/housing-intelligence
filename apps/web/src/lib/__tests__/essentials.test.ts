@@ -41,7 +41,7 @@ const barajas: Pick<RankedZone, "facts" | "constraints"> = {
     fact("salud", "Centro de salud a unos 9 min andando", "min_a_pie_centro_salud"),
     fact("accesibilidad", "Estación de metro o tren accesible (sin escaleras) a unos 9 min andando", "min_a_pie_estacion_sin_escaleras"),
     fact("transporte", "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min", "min_a_pie_transporte"),
-    fact("trayecto", "27 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"),
+    fact("trayecto", "27 min en transporte público hasta Ciudad Lineal (metro)"),
     fact("coste", "Alquiler ≈ 1.038 €/mes por 68 m² (15,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)", "alquiler_m2_mensual"),
   ],
 };
@@ -52,7 +52,7 @@ describe("what the person asked for, with its minutes (zona.esencial.pedido)", (
       "Centro de salud a unos 9 min andando",
       "Estación de metro o tren accesible (sin escaleras) a unos 9 min andando",
       "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min",
-      "27 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00",
+      "27 min en transporte público hasta Ciudad Lineal (metro)",
     ]);
   });
 

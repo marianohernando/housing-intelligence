@@ -19,6 +19,7 @@ from dataclasses import dataclass, field, replace
 from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import (
     Anchor,
+    AnchorKind,
     BudgetKind,
     ConstraintCheck,
     ConstraintStatus,
@@ -541,9 +542,16 @@ def near_check(nearby: NearbyNeed, walk: IndicatorValue | None) -> ConstraintChe
 MAX_COMMUTE_SHOWN = 120
 
 
-def commute_text(minutes: float, label: str, note: str | None = None) -> str:
+# The places one has to reach by a time: work and study. To family or home one goes at other
+# hours, so their trip does not say «llegando a las 9:00» (D-245), although it is measured the
+# same way, with the timetables of a weekday arriving at 9:00 (D-220, D-240 §proxy).
+ARRIVE_BY_NINE = frozenset({AnchorKind.WORK, AnchorKind.STUDY})
+
+
+def commute_text(minutes: float, anchor: Anchor, note: str | None = None) -> str:
     shown = "más de 2 h" if minutes > MAX_COMMUTE_SHOWN else f"{es_number(minutes, 0)} min"
-    return with_note(f"{shown} en transporte público hasta {label}, llegando a las 9:00", note)
+    by_nine = ", llegando a las 9:00" if anchor.kind in ARRIVE_BY_NINE else ""
+    return with_note(f"{shown} en transporte público hasta {anchor.label}{by_nine}", note)
 
 
 def with_note(text: str, note: str | None) -> str:
@@ -579,7 +587,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
             status=ConstraintStatus.UNKNOWN,
             value=round(trip.minutes, 1),
             confidence=0.0,
-            explanation=commute_text(trip.minutes, anchor.label, trip.note),
+            explanation=commute_text(trip.minutes, anchor, trip.note),
         )
     passed = anchor.max_minutes is not None and trip.minutes <= anchor.max_minutes
     return ConstraintCheck(
@@ -587,7 +595,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
         status=ConstraintStatus.PASS if passed else ConstraintStatus.FAIL,
         value=round(trip.minutes, 1),
         confidence=trip.confidence,
-        explanation=commute_text(trip.minutes, anchor.label, trip.note),
+        explanation=commute_text(trip.minutes, anchor, trip.note),
     )
 
 
@@ -789,7 +797,7 @@ def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     fact = Fact(
         kind=FactKind.STRENGTH if trip.minutes <= target else FactKind.WEAKNESS,
         topic=FactTopic.TRAYECTO,
-        text=commute_text(trip.minutes, anchor.label, trip.note),
+        text=commute_text(trip.minutes, anchor, trip.note),
         confidence=trip.confidence,
     )
     return Score(walk_utility(trip.minutes, target), trip.confidence, fact)
