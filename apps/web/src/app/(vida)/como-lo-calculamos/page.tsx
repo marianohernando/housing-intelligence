@@ -156,27 +156,27 @@ function FitMethod() {
         andando», y cada uno dice cuánto nos fiamos del dato. Si un tope baja el %, la tarjeta también lo dice, por ejemplo
         «Faltan escuelas infantiles: como mucho 89 %».
       </p>
-      {/*
-       * TODO(fit-0.9, line A): every figure of this «Ejemplo real» is still fit-0.8 (lote 4, local `housing`, 15 nov):
-       * the 42 zones, the four tied at 98 %, Latina's 1,9 points, its 39 min and 1.101 €, and the 49 and 3 zones of
-       * «¿Y si cambias algo?». Replace them with line A's fit-0.9 answer to the example (in the bench, option A gives
-       * Puente de Vallecas and Latina at 94 %, and Latina loses points for the school, the stop, the health centre and the
-       * trip). The structure stays: the search, how many fit, the top and its tie, what takes points off the first one,
-       * and what adds zones.
-       */}
+      {/* The fit-0.9 answer to the demo case (golden_family of data/fixtures/golden, D-243 §9; API on the lote 4 data, 15 nov) */}
       <p className={styles.para}>
         <strong>Ejemplo real.</strong> Una pareja con 2 hijos de 4 y 8 años trabaja en la Castellana, puede pagar 1.500 € al
         mes y quiere un colegio a 10 min andando como mucho. Le importan, por este orden, los colegios, el transporte y la
-        salud. Encajan 42 de las 199 zonas.
+        salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.
       </p>
       <p className={styles.para}>
-        Arriba empatan cuatro al 98 %: Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas. En Latina hay colegio a unos 6
-        min, parada a unos 2 y centro de salud a unos 10, se tarda 39 min en transporte público hasta la Castellana
-        llegando a las 9:00, y el alquiler sale a unos 1.101 € al mes por 77 m². Lo único que le quita puntos es el
-        trayecto: 1,9 puntos por esos 39 minutos.
+        Arriba empatan dos al 94 %: Puente de Vallecas y Latina. Va primera Puente de Vallecas porque, a igual %, tiene más
+        cerca los servicios del día a día. Detrás van Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y
+        Carabanchel, Coslada y Leganés (90 %).
       </p>
       <p className={styles.para}>
-        Lo que más zonas le quita es el colegio a 10 min: con 5 min más aparecen 49 zonas más, y con 150 € más al mes, 3.
+        En Latina hay colegio a unos 6 min, parada a unos 2 y centro de salud a unos 10, se tarda 39 min en transporte
+        público hasta la Castellana llegando a las 9:00, y el alquiler sale a unos 1.101 € al mes por 77 m². Pierde unos 6
+        puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi
+        todo por los minutos a pie. Las plazas apenas le quitan: de colegios tiene más que las zonas parecidas y de centros
+        de salud, casi lo mismo. El alquiler no le quita nada, porque no llega al 75 % de lo que puede pagar.
+      </p>
+      <p className={styles.para}>
+        Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto. Lo que más zonas
+        le quita es el colegio a 10 min: con 5 min más aparecen 49 zonas más, y con 150 € más al mes, 3.
       </p>
     </Section>
   );
