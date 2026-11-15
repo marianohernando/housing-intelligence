@@ -1,2 +1,2 @@
-ok   chromium desktop-1440  70/70 checks
-ok   chromium mobile-390    44/44 checks
+ok   chromium desktop-1440  74/74 checks
+ok   chromium mobile-390    48/48 checks
