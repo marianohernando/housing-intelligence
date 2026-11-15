@@ -23,6 +23,7 @@ import {
   passingText,
   rankText,
   relaxOptions,
+  rentReferenceAvailable,
   rentUnknownText,
   tiedAtTop,
   tiedText,
@@ -213,6 +214,13 @@ describe("where the search looked («¿Dónde?», D-238)", () => {
     expect(rentUnknownText(search("pueblos", "rent", 136))).toBe(
       "136 de los 138 pueblos salen «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar tu presupuesto.",
     );
+    // D-242: before the reference rent is synced (not in /datasets), the D-238 reason stays
+    expect(rentUnknownText(search("pueblos", "rent", 136), false)).toBe(
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.",
+    );
+    expect(rentReferenceAvailable([{ dataset_id: "osm_ocio" }, { dataset_id: "mivau_serpavi_alquiler" }])).toBe(true);
+    expect(rentReferenceAvailable([{ dataset_id: "osm_ocio" }])).toBe(false);
+    expect(rentReferenceAvailable(null)).toBe(false);
     expect(rentUnknownText(search("pueblos", "rent", 0))).toBeNull();
     expect(rentUnknownText(search("pueblos", "buy", 136))).toBeNull();
     expect(rentUnknownText(search("alrededores", "rent", 6))).toBeNull();

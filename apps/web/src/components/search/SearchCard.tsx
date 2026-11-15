@@ -11,6 +11,7 @@ import Counter from "@/components/ui/Counter";
 import GlassCard from "@/components/ui/GlassCard";
 import Segmented from "@/components/ui/Segmented";
 import { errorMessage } from "@/lib/errors";
+import { rentReferenceAvailable } from "@/lib/fit";
 import { formatEuros } from "@/lib/format";
 import { leisureAvailable } from "@/lib/map/facilities";
 import {
@@ -90,8 +91,12 @@ const PRIORITIES: { key: PriorityKey; label: string; icon: LucideIcon; help: str
 
 /**
  * «¿Dónde?» (D-238): what each part of the region compares (donde.ayuda.*), by the statistical
- * zoning of the Comunidad de Madrid. «Toda la Comunidad» is the search as it always was.
+ * zoning of the Comunidad de Madrid. «Toda la Comunidad» is the search as it always was. The
+ * villages' rent is the Ministry's reference once its dataset is published (D-242); until then,
+ * the D-238 warning that almost none has one (`VILLAGES_WITHOUT_REFERENCE`).
  */
+const VILLAGES_WITHOUT_REFERENCE =
+  "Los 138 municipios de fuera del área metropolitana, según el Instituto de Estadística de la Comunidad de Madrid. Casi ninguno publica su alquiler: si buscas alquiler, la mayoría saldrán «Sin datos».";
 const WHERE_HELP: Record<SearchScope, string> = {
   all: "Madrid capital por distritos y el resto de la Comunidad por municipios.",
   madrid: "Comparamos sus 131 barrios.",
@@ -122,6 +127,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
   // «Ocio» is offered once its data is published; a search that already carries it keeps its chip
   const { data: datasets } = useDatasets();
   const leisure = leisureAvailable(datasets?.datasets) || priorities.includes("ocio");
+  const rentReference = rentReferenceAvailable(datasets?.datasets);
   const budget = scenario.budget ?? null;
   const range = BUDGET_RANGE[budget?.kind ?? "rent"];
   const scope = scopeOf(scenario);
@@ -160,7 +166,7 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
               onChange={(value) => update((s) => setScope(s, value))}
             />
             <p id={whereHelpId} className={styles.help}>
-              {WHERE_HELP[scope]}
+              {scope === "pueblos" && !rentReference ? VILLAGES_WITHOUT_REFERENCE : WHERE_HELP[scope]}
             </p>
           </fieldset>
         )}

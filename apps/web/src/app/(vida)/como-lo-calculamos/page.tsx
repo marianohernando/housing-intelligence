@@ -253,11 +253,12 @@ function Limits() {
           metro cuadrado, y la Comunidad publica 15,1 para todo Madrid. Esa media es de todos los contratos en vigor, así que
           la ajustamos a lo que se pagó en los contratos firmados en 2024 en la misma zona, según la Agencia Tributaria: entre
           un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más. Donde la Comunidad no publica el alquiler (los
-          pueblos), usamos la referencia del Ministerio de Vivienda (SERPAVI, 2024): la mediana por metro cuadrado de los
-          contratos de vivienda habitual, que sale de las mismas declaraciones a Hacienda y del Catastro. La subimos un 4 %, lo
-          que se separan las dos cifras donde existen ambas, y la ajustamos a un contrato firmado en 2024 igual que la de la
-          Comunidad. Es un dato aproximado, y en la tarjeta te decimos entre qué precios está la mitad de los contratos. Si en
-          un pueblo se alquilan muy pocas viviendas, no se publica y sale «sin datos».
+          pueblos), partimos de la referencia del Ministerio de Vivienda (SERPAVI, 2024): la mediana por metro cuadrado de
+          los alquileres de vivienda habitual declarados a Hacienda, con el Catastro. La subimos ligeramente para llevarla al
+          nivel de la cifra de la Comunidad, porque una mediana se queda algo por debajo de una media, y la ajustamos a un
+          contrato firmado en 2024 igual que la de la Comunidad. Es una elaboración nuestra y un dato aproximado; en la
+          tarjeta te decimos entre qué precios está la mitad de los contratos. Si en un pueblo se alquilan muy pocas viviendas,
+          no se publica y sale «sin datos».
         </li>
         <li>
           <strong>Compra:</strong> usamos el valor tasado medio de la vivienda libre por metro cuadrado (Ministerio de

@@ -262,16 +262,32 @@ export function evaluatedText(result: { scenario: { scope?: SearchScope }; reali
 }
 
 /**
- * resultados.pueblos_sin_alquiler (D-238, D-242): renting, the villages that come out «Sin datos»
- * have so few rented homes that no rent is published for them; null in any other search.
+ * D-242: the villages get the Ministry's reference rent once its dataset is published (GET
+ * /datasets); before the sync the texts keep saying that only the bigger municipios have it, as
+ * the leisure chip of D-236 waits for its own dataset.
+ */
+export const RENT_REFERENCE_DATASET = "mivau_serpavi_alquiler";
+
+export function rentReferenceAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => d.dataset_id === RENT_REFERENCE_DATASET) ?? false;
+}
+
+/**
+ * resultados.pueblos_sin_alquiler (D-238, D-242): renting, why the villages come out «Sin datos»:
+ * with the reference rent, so few rented homes that none is published; without it (before the
+ * sync), the rent only published for municipios of more than 20.000 people. Null in any other search.
  */
 export function rentUnknownText(
   result: { scenario: { scope?: SearchScope; budget?: { kind: string } | null }; reality_check: Pick<RealityCheck, "zones_unknown" | "zones_evaluated"> },
+  rentReference: boolean = true,
 ): string | null {
   const { zones_unknown: n, zones_evaluated: total } = result.reality_check;
   if (resultScope(result) !== "pueblos" || result.scenario.budget?.kind !== "rent" || n === 0) return null;
   const come = n === 1 ? "sale" : "salen";
-  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar tu presupuesto.`;
+  const why = rentReference
+    ? "tienen tan pocas viviendas alquiladas que no se publica su alquiler"
+    : "el alquiler solo se publica en los municipios de más de 20.000 habitantes";
+  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque ${why}: no podemos comprobar tu presupuesto.`;
 }
 
 /** A search over Madrid capital ranks its barrios (D-238), not its districts. */
