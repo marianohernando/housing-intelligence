@@ -1911,6 +1911,7 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
 4. **El % en palabras.** Contrato aditivo: `match_band`, opcional, en `RankedZone` y `ZoneMatch` (`MatchBand`):
    - `muy_bien` desde 90, `bien` de 75 a 89, `regular` de 60 a 74 y `poco` por debajo de 60;
    - se calcula en el dominio a partir del % que se ve (`match_band`, con las constantes `MUY_BIEN_FROM`, `BIEN_FROM` y `REGULAR_FROM`); `null` si el % es desconocido;
+   - **solo para una zona que cumple todas las condiciones** (decisión del orquestador, 15 nov): una de «Casi encajan», o cualquier `ZoneMatch` con `passes_all: false`, va con `match_band: null`. Si no, Chamartín saldría «muy bien» al 92 % pasándose del presupuesto. Esas zonas se leen por lo que les falta («se pasa ≈ …»), y su `match_pct` no cambia: sigue ordenando «Casi encajan» y pintando el mapa;
    - los dos topes caen justo debajo de una banda (89 % y 74 %);
    - la web lo deriva con los mismos umbrales si no llega: **no se cambian sin avisar a la línea B**;
    - esquemas regenerados (`make schemas`). Los dos fixtures de búsqueda llevan la banda de su propio %; no se regeneran porque sus % siguen siendo de `fit-0.7` y los tests de la web los leen.
@@ -1935,7 +1936,7 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
 9. **Efecto en el ejemplo del pitch** (base local con el lote 4 y el factor 1,155):
    - Encajan las mismas 42 zonas, 157 no cumplen y ninguna sale sin dato.
    - **Top 10:** Puente de Vallecas 94, Latina 94, Usera 93, Moratalaz 93, Tetuán 92, Ciudad Lineal 92, Villaverde 92, Carabanchel 90, Coslada 90 y Leganés 90, todas «muy bien». Antes, Latina 1.ª al 98 % con cuatro empatadas.
-   - **«Casi encajan»:** Chamartín 92, Arganzuela 92, Centro 91, Chamberí 91 y Retiro 91, todas por el presupuesto (antes Chamartín, Salamanca, Centro, Chamberí y Retiro al 93 %). Quedan a 1 o 2 puntos de las que encajan por la cola del presupuesto, y la lista dice «No cumple: presupuesto».
+   - **«Casi encajan»:** Chamartín 92, Arganzuela 92, Centro 91, Chamberí 91 y Retiro 91, todas por el presupuesto (antes Chamartín, Salamanca, Centro, Chamberí y Retiro al 93 %). Quedan a 1 o 2 puntos de las que encajan por la cola del presupuesto; no llevan banda y la web dice lo que les falta.
    - **Reality Check igual:** «+5 min a pie hasta colegio» suma 49 zonas y «+150 €/mes», 3.
    - **Desglose de Latina** (94 %): colegio a 6 min −1,1 · parada a 2 min −1,1 · centro de salud a 10 min −0,9 · 39 min a la Castellana −3,0 · alquiler 0. Antes solo restaba el trayecto (98 %).
    - **Golden:** fija `ranked_order`, `ranked_pct`, `near_miss_order` y `zones_passing` del ejemplo. `results_within_km` pasa de 15 a 16 porque Leganés (a 15,2 km de Azca en línea recta) entra en el top 10. El caso con 10.000 € y nada marcado reordena un poco su empate: Chamberí, Tetuán, Salamanca, Puente de Vallecas, Centro, Arganzuela, Usera, Ciudad Lineal, Carabanchel y Retiro. Golden 10/10.
@@ -1943,7 +1944,6 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
 10. **Lo que no se hace en la fórmula:**
     - **Límite duro de trayecto por defecto:** Mariano eligió el tope (más de 1 h, como mucho 74 %), no una condición que deje sin resultados al estudiante.
     - **Pendiente (producto, no se cierra aquí):** el texto de la web «Sin un lugar de trabajo también salen pueblos; dinos dónde trabajas o elige Madrid capital» (propuesta de F4.7b para Titulcia), y validar los parámetros nuevos en la 2.ª ronda con usuarios (preferencias «A mejor que B», que el banco ya carga).
-    - **Pendiente (producto, línea B):** en «Casi encajan» la banda sale del % como en el resto (en el ejemplo, Chamartín «muy bien» al 92 % sin cumplir el presupuesto). La API la envía igual; decidir si la web la enseña ahí o solo el % con «No cumple: …».
 11. **Factor de reserva de SERPAVI: 1,155** (R-03 de D-242).
     - **Antes:** ninguno de los 126 municipios rellenos tiene tabla propia de la AEAT, así que tomaban la fila de la Comunidad (1,2085), que domina Madrid.
     - **Ahora:** toman la mediana de los factores de los 37 municipios de la tabla (`fallback: {median: true}`, `factor_from: mediana_municipios`, 1,1551). Su alquiler baja un 4,4 % (1,155 / 1,2085).

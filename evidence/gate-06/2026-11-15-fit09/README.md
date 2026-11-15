@@ -31,7 +31,7 @@ Referencia: el preset `f4_a_recomendada` del banco (A + `tope_trayecto`) sobre e
 | Top 10 | Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97 | Puente de Vallecas 94, Latina 94, Usera 93, Moratalaz 93, Tetuán 92, Ciudad Lineal 92, Villaverde 92, Carabanchel 90, Coslada 90, Leganés 90 |
 | «Casi encajan» | Chamartín, Salamanca, Centro, Chamberí, Retiro (93) | Chamartín 92, Arganzuela 92, Centro 91, Chamberí 91, Retiro 91 (presupuesto) |
 | Reality Check | +5 min de colegio: +49 · +150 €/mes: +3 | Igual |
-| Bandas (199 zonas) | – | muy bien 18 · bien 13 · regular 47 · poco 121 |
+| Bandas (solo las 42 que encajan; «Casi encajan» y las demás, sin banda) | – | muy bien 12 · bien 5 · regular 13 · poco 12 |
 
 ## Factor de reserva de SERPAVI
 

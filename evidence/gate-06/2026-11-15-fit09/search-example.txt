@@ -15,13 +15,13 @@ Zonas que encajan:
   8. Carabanchel · 90 % · muy_bien · ≈ 1127 €/mes
   9. Coslada · 90 % · muy_bien · ≈ 928 €/mes
   10. Leganés · 90 % · muy_bien · ≈ 896 €/mes
-Casi encajan:
-  Chamartín · 92 % · muy_bien · no cumple: budget
-  Arganzuela · 92 % · muy_bien · no cumple: budget
-  Centro · 91 % · muy_bien · no cumple: budget
-  Chamberí · 91 % · muy_bien · no cumple: budget
-  Retiro · 91 % · muy_bien · no cumple: budget
-Bandas en all_zones: bien 13, muy_bien 18, poco 121, regular 47
+Casi encajan (sin banda: no cumplen todo):
+  Chamartín · 92 % · None · no cumple: budget
+  Arganzuela · 92 % · None · no cumple: budget
+  Centro · 91 % · None · no cumple: budget
+  Chamberí · 91 % · None · no cumple: budget
+  Retiro · 91 % · None · no cumple: budget
+Bandas en all_zones (solo las que cumplen todo): None 157, bien 5, muy_bien 12, poco 12, regular 13
 Hechos de la 1.ª:
   - Colegio con primaria a unos 4 min andando
   - Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min
