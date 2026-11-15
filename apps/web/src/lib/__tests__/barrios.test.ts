@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BarrioSearchResult } from "@/contracts/barrio_search_response";
 
-import { barrioRows, barriosText, FACTS_PER_BARRIO } from "../barrios";
+import { barrioRows, barriosText, barriosTitle, FACTS_PER_BARRIO } from "../barrios";
 
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data:
 // San Blas-Canillejas with the demo case, fit-0.7 (D-232)
@@ -59,19 +59,33 @@ describe("barriosText (barrios.encajan.resumen)", () => {
     expect(barriosText({ zones_passing: 1, zones_evaluated: 8 })).toBe("1 de sus 8 barrios te conviene.");
     expect(barriosText({ zones_passing: 6, zones_evaluated: 6 })).toBe("Sus 6 barrios te convienen.");
     expect(barriosText({ zones_passing: 0, zones_evaluated: 6 })).toBe("Ninguno de sus 6 barrios cumple todo lo que pides.");
+    // To a household of more than one (review R-03 of PR #81)
+    expect(barriosText({ zones_passing: 7, zones_evaluated: 8 }, true)).toBe("7 de sus 8 barrios os convienen.");
+    expect(barriosText({ zones_passing: 0, zones_evaluated: 6 }, true)).toBe("Ninguno de sus 6 barrios cumple todo lo que pedís.");
+    expect(barriosTitle(true)).toBe("Los barrios que más os convienen");
+    expect(barriosTitle()).toBe("Los barrios que más te convienen");
+  });
+});
+
+describe("the panel of an outlined barrio (review R-05 of PR #81)", () => {
+  it("says whom a barrio ties with, as the card does, and nothing for one that ties with none", () => {
+    const rows = barrioRows(sanBlas).fits;
+    const tied = rows.find((row) => row.tie !== null);
+    expect(tied?.tieLine).toMatch(/^Igual de bueno que .+ \(\d+\u00a0%\)\.$/);
+    expect(rows.filter((row) => row.tie === null).every((row) => row.tieLine === null)).toBe(true);
   });
 });
 
 describe("the price of each barrio (D-234)", () => {
-  it("goes beside its %, as a purchase price when buying and a monthly rent otherwise", () => {
+  it("goes under its band, as a purchase price when buying and a monthly rent otherwise", () => {
     const first = sanBlas.results[0]!;
     const cost = first.estimated_cost_eur ?? 0;
     const amount = new Intl.NumberFormat("es-ES", { useGrouping: "always" }).format(cost);
-    expect(barrioRows(sanBlas).fits[0]?.price?.short).toBe(`≈ ${amount} €/mes`);
+    expect(barrioRows(sanBlas).fits[0]?.price?.short).toBe(`Unos\u00a0${amount}\u00a0€ al\u00a0mes`);
     const buying = { ...sanBlas, scenario: { ...sanBlas.scenario, budget: { kind: "buy" as const, amount_eur: 400_000 } } };
     const estimate = { ...first, estimated_cost_eur: 348_000, estimated_cost_confidence: 0.5 };
     const row = barrioRows({ ...buying, results: [estimate] }).fits[0];
-    expect([row?.price?.short, row?.price?.confidence?.label]).toEqual(["≈ 348.000 €", "Dato aproximado"]);
+    expect([row?.price?.short, row?.price?.confidence?.label]).toEqual(["Unos\u00a0348.000\u00a0€", "Dato aproximado"]);
     expect(barrioRows({ results: [{ ...first, estimated_cost_eur: null }] }).fits[0]?.price).toBeNull();
   });
 });

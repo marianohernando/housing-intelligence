@@ -157,7 +157,7 @@ export default function Legend() {
   const selectId = useId();
   const titleId = useId();
   return (
-    <section className={`glass ${styles.legend}`} aria-label={TEXT.legend}>
+    <section className={`glass ${styles.legend}`} aria-label={TEXT.legend} data-map-legend="">
       <div className={styles.picker}>
         <label htmlFor={selectId} className={styles.pickerLabel}>
           {TEXT.show}

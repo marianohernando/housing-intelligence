@@ -84,12 +84,17 @@ export function zoneFit(result: SearchResult, zoneKey: string): ZoneFit {
 
 /** The approximate price of a zone for the household's m² (D-234), in the rows and the zone card. */
 export interface ZonePrice {
-  /** In a ranking row, where room is short: «≈ 385.000 €» (zona.precio.compra) or «≈ 1.101 €/mes» (zona.precio.alquiler) */
+  /**
+   * In a ranking row and the card's essentials, in words (second delivery of the UX mobile audit):
+   * «Unos 385.000 €» (zona.precio.compra) or «Unos 1.101 € al mes» (zona.precio.alquiler)
+   */
   short: string;
   /** In the zone card head, in words: «Comprar: unos 385.000 €» (zona.precio.cabecera.compra) or «Alquiler: unos 1.101 € al mes» */
   long: string;
-  /** The m² the API priced (zona.precio.m2): «por 68 m²», under the row's figure and after the card's; null when unknown */
+  /** The m² the API priced (zona.precio.m2): «por 68 m²»; null when unknown */
   area: string | null;
+  /** The same m² as a number, for «Para un piso de unos 68 m²» behind «Ver más»; null when unknown */
+  m2: number | null;
   /** Read aloud instead of «≈»: «Comprar: unos 385.000 € por 68 m²» (zona.precio.aria.*) */
   aria: string;
   /** The card's words for a figure that is not a reliable one («Dato aproximado» for the D-234 estimate), else null */
@@ -101,12 +106,26 @@ export interface ZonePrice {
 }
 
 /**
- * zona.precio.aviso_2024 and resultados.aviso_2024 (F5 of fit-0.9): every rent is the leases of
- * 2024, and today's listings tend to ask more (16-33 % more in the formula's bench). Said by the
- * card's price and once over the results when renting; never buying. In plain words since the UX
- * mobile audit (§4 n.º 17); «Cómo lo calculamos» says where the price comes from.
+ * zona.precio.orientativo (second delivery of the UX mobile audit, decided by Mariano): one word by
+ * the price of the card's essentials, renting or buying. Every price is an estimate.
  */
-export const RENT_2024_NOTICE = "Precio orientativo: hoy puede ser algo más caro.";
+export const PRICE_HINT = "Precio orientativo";
+
+/**
+ * zona.precio.aviso_2024 (F5 of fit-0.9): every rent is the leases of 2024, and today's listings
+ * tend to ask more (16-33 % more in the formula's bench). Since the second delivery it is the
+ * explanation behind «Ver más» of the card, by the full price; never buying.
+ */
+export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024; los anuncios de hoy suelen pedir más.";
+
+/**
+ * resultados.aviso_2024: once under the list when its prices are rents (the line over it only
+ * says how many zones there are, second delivery); «Ver más» of each card says why.
+ */
+export const RENT_LIST_NOTICE = "Precios orientativos: hoy pueden ser algo más caros.";
+
+/** resultados.aviso_compra: buying, the same place under the list (review R-10 of PR #81): every purchase price is an estimate. */
+export const BUY_LIST_NOTICE = "Precios orientativos: son una estimación del precio de compra.";
 
 /** The same warning as the API's rent fact says it: the card says it once, by the price. */
 const RENT_FACT_NOTICE = /;\s*un anuncio de hoy puede pedir más/;
@@ -123,11 +142,14 @@ export function factText(fact: Pick<Fact, "topic" | "text">, buying: boolean): s
   return text.replace(/≈ /g, "unos ").replace(/€\/mes/g, "€ al mes");
 }
 
-/** resultados.aviso_2024: over the results whose prices are rents (renting, or without a budget), with some price shown. */
+/**
+ * resultados.aviso_2024 and resultados.aviso_compra: under the results with some price shown, the
+ * rents' (renting, or without a budget) or the purchase prices'.
+ */
 export function rentNotice(result: Pick<SearchResult, "scenario" | "results" | "near_misses">): string | null {
-  if (result.scenario.budget?.kind === "buy") return null;
   const priced = [...result.results, ...(result.near_misses ?? [])].some((z) => z.estimated_cost_eur != null);
-  return priced ? RENT_2024_NOTICE : null;
+  if (!priced) return null;
+  return result.scenario.budget?.kind === "buy" ? BUY_LIST_NOTICE : RENT_LIST_NOTICE;
 }
 
 /** «Lo normal: entre 510 y 820 € al mes» and «Ministerio de Vivienda (SERPAVI), 2024» (zona.precio.rango) */
@@ -161,10 +183,12 @@ export function zonePrice(
   const area = m2 === null ? null : `por ${m2} m²`;
   const aria = buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`;
   return {
-    short: buying ? `≈ ${amount}` : `≈ ${amount}/mes`,
+    // No-break spaces: «Unos 1.129 €» and «al mes» never split; if the row is too narrow, between the two
+    short: buying ? `Unos\u00a0${unbroken(amount)}` : `Unos\u00a0${unbroken(amount)} al\u00a0mes`,
     // No-break spaces: «1.129 € al mes» never splits at the end of a line in a narrow card
     long: buying ? `Comprar: unos ${unbroken(amount)}` : `Alquiler: unos ${unbroken(amount)}\u00a0al\u00a0mes`,
     area,
+    m2,
     aria: area ? `${aria} ${area}` : aria,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
     range: buying ? null : priceRange(zone.estimated_cost_range),
@@ -251,14 +275,71 @@ export function zonesText(n: number, word: ZoneWord = "zona"): string {
 }
 
 /**
- * rc.ninguna, rc.una, rc.varias: «Hemos encontrado 33 zonas para ti.» (UX mobile audit, §4 n.º 5).
- * After applying an option of «¿Quieres ver más zonas?» it says the change: «Con este cambio salen
- * 40 zonas.» (rc.cambio). With the word of its scope: «Hemos encontrado 78 barrios para ti.»
+ * Whether the search is for more than one person (adults, children and anyone looked after): the
+ * list and the card then say «vosotros» («para vosotros», «lo que buscáis»), else «tú» (second
+ * delivery of the UX mobile audit, decided by Mariano).
  */
-export function passingText(n: number, changed = false, word: ZoneWord = "zona"): string {
+export function speaksToMany(household: { adults?: number; minors?: number; seniors_in_care?: number } | null | undefined): boolean {
+  if (!household) return false;
+  // The API's defaults (hi_contracts Household): one adult, no children, nobody looked after
+  return (household.adults ?? 1) + (household.minors ?? 0) + (household.seniors_in_care ?? 0) > 1;
+}
+
+/**
+ * How the results speak to the household (review R-03 of PR #81): «tú» to one person, «vosotros»
+ * to more (speaksToMany), in every text about their search, list, card and barrios.
+ */
+export interface Voice {
+  /** «te convienen» / «os convienen» */
+  te: string;
+  /** «para ti» / «para vosotros» */
+  ti: string;
+  /** «tu búsqueda» / «vuestra búsqueda» */
+  tu: string;
+  buscas: string;
+  pides: string;
+  trabajas: string;
+  marca: string;
+  quieres: string;
+  elige: string;
+}
+
+const ONE: Voice = { te: "te", ti: "ti", tu: "tu", buscas: "buscas", pides: "pides", trabajas: "trabajas", marca: "marca", quieres: "quieres", elige: "elige" };
+const MANY: Voice = { te: "os", ti: "vosotros", tu: "vuestra", buscas: "buscáis", pides: "pedís", trabajas: "trabajáis", marca: "marcad", quieres: "queréis", elige: "elegid" };
+
+export function voice(many = false): Voice {
+  return many ? MANY : ONE;
+}
+
+/**
+ * resultados.titulo: «Zonas que te convienen», «Zonas que os convienen» for a household of more
+ * than one (`many`, speaksToMany), as the line under it says «para vosotros».
+ */
+export function resultsTitle(many = false): string {
+  return `Zonas que ${voice(many).te} convienen`;
+}
+
+/** carga.busqueda: «Buscando zonas para ti…» / «… para vosotros…» */
+export function loadingText(many = false): string {
+  return `Buscando zonas para ${voice(many).ti}…`;
+}
+
+/** resultados.casi.ayuda: «Les falta una sola cosa de lo que pides.» / «… pedís.» */
+export function nearHelpText(many = false): string {
+  return `Les falta una sola cosa de lo que ${voice(many).pides}.`;
+}
+
+/**
+ * rc.ninguna, rc.una, rc.varias: «Hemos encontrado 33 zonas para ti.» (UX mobile audit, §4 n.º 5),
+ * «… para vosotros.» for a household of more than one (`many`, speaksToMany). After applying an
+ * option of «¿Quieres ver más zonas?» it says the change: «Con este cambio salen 40 zonas.»
+ * (rc.cambio). With the word of its scope: «Hemos encontrado 78 barrios para ti.»
+ */
+export function passingText(n: number, changed = false, word: ZoneWord = "zona", many = false): string {
   const none = `${WORDS[word].feminine ? "ninguna" : "ningún"} ${word}`;
   if (changed) return n === 0 ? `Con este cambio no sale ${none}.` : `Con este cambio ${n === 1 ? "sale" : "salen"} ${zonesText(n, word)}.`;
-  return n === 0 ? `No hemos encontrado ${none} para ti.` : `Hemos encontrado ${zonesText(n, word)} para ti.`;
+  const whom = `para ${voice(many).ti}`;
+  return n === 0 ? `No hemos encontrado ${none} ${whom}.` : `Hemos encontrado ${zonesText(n, word)} ${whom}.`;
 }
 
 /** vacio.sin_resultados, with the word of the scope. */
@@ -331,9 +412,10 @@ export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "s
   const n = tiedAtTop(result);
   const word = zoneWord(result);
   const good = WORDS[word].feminine ? "buenas" : "buenos";
+  const v = voice(speaksToMany(result.scenario.household));
   // «Somos mayores» is asked where they want to live, never where they work (D-244, review R-13 of PR #79)
-  const place = result.scenario.household?.seniors === true ? "elige cerca de dónde queréis vivir" : "dónde trabajas";
-  return n > MANY_TIED ? `Hay ${zonesText(n, word)} igual de ${good}: marca qué quieres tener cerca o ${place} para afinar el orden.` : null;
+  const place = result.scenario.household?.seniors === true ? `${v.elige} cerca de dónde queréis vivir` : `dónde ${v.trabajas}`;
+  return n > MANY_TIED ? `Hay ${zonesText(n, word)} igual de ${good}: ${v.marca} qué ${v.quieres} tener cerca o ${place} para afinar el orden.` : null;
 }
 
 /** Where «Trabajo en» and «¿Dónde?» are in «Tu búsqueda», for resultados.sin_lugar to take the person there. */
@@ -413,9 +495,10 @@ export function limitingConstraint(result: Pick<SearchResult, "all_zones" | "rea
   return failing > 0 && failing >= result.reality_check.zones_unknown ? id : null;
 }
 
-/** zona.puesto: «La 3.ª que más te conviene», and for a barrio, municipio or pueblo «El 3.º…» */
-export function rankText(rank: number, word: ZoneWord = "zona"): string {
-  return WORDS[word].feminine ? `La ${rank}.ª que más te conviene` : `El ${rank}.º que más te conviene`;
+/** zona.puesto: «La 3.ª que más te conviene» («os conviene» to a household of more than one), and for a barrio, municipio or pueblo «El 3.º…» */
+export function rankText(rank: number, word: ZoneWord = "zona", many = false): string {
+  const te = voice(many).te;
+  return WORDS[word].feminine ? `La ${rank}.ª que más ${te} conviene` : `El ${rank}.º que más ${te} conviene`;
 }
 
 /**

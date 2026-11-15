@@ -1,12 +1,13 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { useMapZones } from "@/components/map/MapProvider";
 import ZoneListLink from "@/components/map/ZoneListLink";
 import DataCounter from "@/components/provenance/DataCounter";
 import SearchCard from "@/components/search/SearchCard";
+import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
@@ -22,10 +23,14 @@ import { errorMessage } from "@/lib/errors";
 
 import styles from "./zone.module.css";
 
-// Copy from pitch/textos_web.md (migas.*, mapa.volver, carga.zona, error.zona_no_existe).
+// Copy from pitch/textos_web.md (migas.*, mapa.volver, mapa.volver_lista, zona.mas_datos, carga.zona, error.zona_no_existe).
 const TEXT = {
   region: "Comunidad de Madrid",
   back: "Volver al mapa de la región",
+  // mapa.volver_lista: after a search the overview is the list of zones (second delivery of the UX mobile audit)
+  backToList: "Volver a la lista",
+  // zona.mas_datos: the context of the zone, folded under the card (second delivery)
+  more: "Más datos de la zona",
   loading: "Preparando la zona…",
   notFound: "No encontramos esa zona. Elige otra en el mapa.",
   retry: "Reintentar",
@@ -35,7 +40,8 @@ const TEXT = {
 
 export default function ZoneIntro() {
   // The zone by name from its small «Qué falta» answer: the screen does not wait for the outlines
-  const { status, error, retry, routeZone } = useMapZones();
+  const { status, error, retry, routeZone, backToListFromZone } = useMapZones();
+  const { result } = useScenario();
   const slow = useSlow(status === "loading");
 
   if (!routeZone) {
@@ -85,25 +91,42 @@ export default function ZoneIntro() {
           <span className={styles.accent}>{name}</span>
           {TEXT.nearby}
         </h1>
-        <Button href="/" variant="secondary" className={styles.back}>
-          {TEXT.back}
-        </Button>
+        {/* The overview is the list once there is a search: the button says so and goes back to it without a new step (second delivery) */}
+        {result ? (
+          <Button variant="secondary" className={styles.back} onClick={backToListFromZone}>
+            <ChevronLeft size={20} aria-hidden="true" />
+            {TEXT.backToList}
+          </Button>
+        ) : (
+          <Button href="/" variant="secondary" className={styles.back}>
+            {TEXT.back}
+          </Button>
+        )}
       </div>
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>
         <ZoneCard zone={routeZone} mode="zone" />
         {/* After a search, the district's barrios that fit it (D-232): under the card, so arriving later moves nothing above */}
         <BarrioFit zone={routeZone} />
-        <DataCounter />
-        <ZoneListLink />
-        {/* Context only for Madrid's districts, the survey's coverage (D-226 §1); last, so arriving later moves nothing */}
-        {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
-        {/* Context that never scores (D-235): offences, age of the dwellings and income, next to the neighbours' view */}
-        <ZoneContext zone={routeZone} />
-        {/* New housing and what is coming, context that never scores (D-241); last, so arriving later moves nothing */}
-        {(level === "municipio" || level === "distrito") && <NewHousing zone={{ level, code: routeZone.code }} />}
-        {/* Noise, air and car parks (D-237): context, last too */}
-        <ZoneEnvironment level={level} code={routeZone.code} zone={name} />
+        {/* The context, folded under the card (second delivery): it never scores and nothing of it is lost */}
+        <details className={styles.more}>
+          <summary className="glass">
+            <span>{TEXT.more}</span>
+            <ChevronDown size={20} aria-hidden="true" className={styles.moreIcon} />
+          </summary>
+          <div className={styles.moreBody}>
+            {/* Context only for Madrid's districts, the survey's coverage (D-226 §1) */}
+            {level === "distrito" && <PerceivedSafety districtCode={routeZone.code} />}
+            {/* Context that never scores (D-235): offences, age of the dwellings and income, next to the neighbours' view */}
+            <ZoneContext zone={routeZone} />
+            {/* New housing and what is coming, context that never scores (D-241) */}
+            {(level === "municipio" || level === "distrito") && <NewHousing zone={{ level, code: routeZone.code }} />}
+            {/* Noise, air and car parks (D-237) */}
+            <ZoneEnvironment level={level} code={routeZone.code} zone={name} />
+            <DataCounter />
+            <ZoneListLink />
+          </div>
+        </details>
       </div>
       {/* Every facility of the zone, not only its key points: left column on desktop */}
       <div className={styles.centres}>

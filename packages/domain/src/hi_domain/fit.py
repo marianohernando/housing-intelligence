@@ -19,6 +19,7 @@ from dataclasses import dataclass, field, replace
 from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import (
     Anchor,
+    AnchorKind,
     BudgetKind,
     ConstraintCheck,
     ConstraintStatus,
@@ -541,9 +542,21 @@ def near_check(nearby: NearbyNeed, walk: IndicatorValue | None) -> ConstraintChe
 MAX_COMMUTE_SHOWN = 120
 
 
-def commute_text(minutes: float, label: str, note: str | None = None) -> str:
+# The places one has to reach by a time: work and study. To family or home one goes at other
+# hours, so their trip does not say «llegando a las 9:00» (D-245), although it is measured the
+# same way, with the timetables of a weekday arriving at 9:00 (D-220, D-240 §proxy).
+ARRIVE_BY_NINE = frozenset({AnchorKind.WORK, AnchorKind.STUDY})
+
+
+def at_nine(anchor: Anchor) -> str:
+    """« a las 9:00» for the places one has to reach by then (work, study); nothing otherwise."""
+    return " a las 9:00" if anchor.kind in ARRIVE_BY_NINE else ""
+
+
+def commute_text(minutes: float, anchor: Anchor, note: str | None = None) -> str:
     shown = "más de 2 h" if minutes > MAX_COMMUTE_SHOWN else f"{es_number(minutes, 0)} min"
-    return with_note(f"{shown} en transporte público hasta {label}, llegando a las 9:00", note)
+    by_nine = ", llegando a las 9:00" if anchor.kind in ARRIVE_BY_NINE else ""
+    return with_note(f"{shown} en transporte público hasta {anchor.label}{by_nine}", note)
 
 
 def with_note(text: str, note: str | None) -> str:
@@ -567,7 +580,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
         why = (
             "Sin datos del trayecto en transporte público"
             if trip is None
-            else f"Con los horarios publicados no se llega a {anchor.label} a las 9:00"
+            else f"Con los horarios publicados no se llega a {anchor.label}{at_nine(anchor)}"
         )
         explanation = with_note(f"{why}{where}", None if trip is None else trip.note)
         return ConstraintCheck(
@@ -579,7 +592,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
             status=ConstraintStatus.UNKNOWN,
             value=round(trip.minutes, 1),
             confidence=0.0,
-            explanation=commute_text(trip.minutes, anchor.label, trip.note),
+            explanation=commute_text(trip.minutes, anchor, trip.note),
         )
     passed = anchor.max_minutes is not None and trip.minutes <= anchor.max_minutes
     return ConstraintCheck(
@@ -587,7 +600,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
         status=ConstraintStatus.PASS if passed else ConstraintStatus.FAIL,
         value=round(trip.minutes, 1),
         confidence=trip.confidence,
-        explanation=commute_text(trip.minutes, anchor.label, trip.note),
+        explanation=commute_text(trip.minutes, anchor, trip.note),
     )
 
 
@@ -777,7 +790,7 @@ def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:
 def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     if trip.minutes is None:
         text = with_note(
-            f"Con los horarios publicados no se llega a {anchor.label} a las 9:00 "
+            f"Con los horarios publicados no se llega a {anchor.label}{at_nine(anchor)} "
             "en transporte público",
             trip.note,
         )
@@ -789,7 +802,7 @@ def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     fact = Fact(
         kind=FactKind.STRENGTH if trip.minutes <= target else FactKind.WEAKNESS,
         topic=FactTopic.TRAYECTO,
-        text=commute_text(trip.minutes, anchor.label, trip.note),
+        text=commute_text(trip.minutes, anchor, trip.note),
         confidence=trip.confidence,
     )
     return Score(walk_utility(trip.minutes, target), trip.confidence, fact)
@@ -1065,7 +1078,7 @@ def short_rows(scenario: ScenarioState, data: ZoneData) -> list[GapRowKey]:
 
 def unreachable_fact(anchor: Anchor, trip: Commute) -> Fact:
     if trip.minutes is None:
-        why = f"No llegas a {anchor.label} a las 9:00 en transporte público"
+        why = f"No llegas a {anchor.label}{at_nine(anchor)} en transporte público"
     else:
         limit = duration_text(WALK_ZERO_AT * trip_window(anchor))
         why = f"Tardas {limit} o más en llegar a {anchor.label}"

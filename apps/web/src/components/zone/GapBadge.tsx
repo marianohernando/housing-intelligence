@@ -12,11 +12,15 @@ const ICONS: Record<GapStatus, LucideIcon> = {
   SIN_DATOS: CircleQuestionMark,
 };
 
-/** FALTA / JUSTO / CUBIERTO / SIN DATOS with icon and text (never colour alone). */
+/**
+ * FALTA / JUSTO / CUBIERTO / SIN DATOS with icon and text (never colour alone). What each means is
+ * visible where the badges show (the card's key, the legend of «Qué falta», «¿Qué quiere decir cada
+ * estado?» of the lists): a tooltip never showed on a phone (UX mobile audit, A5).
+ */
 export default function GapBadge({ status }: { status: GapStatus }) {
   const Icon = ICONS[status];
   return (
-    <span className={`${styles.badge} ${styles[status]}`} title={GAP_STATUS[status].help}>
+    <span className={`${styles.badge} ${styles[status]}`}>
       <Icon size={16} aria-hidden="true" />
       {GAP_STATUS[status].label}
     </span>

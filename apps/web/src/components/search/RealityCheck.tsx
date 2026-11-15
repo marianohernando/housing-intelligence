@@ -5,7 +5,18 @@ import { useId, useState } from "react";
 
 import type { SearchResult } from "@/contracts/search_response";
 import GlassCard from "@/components/ui/GlassCard";
-import { constraintLabels, fewZones, limitingConstraint, optionText, passingText, relaxOptions, unknownText, zonesWithoutPrice, zoneWord } from "@/lib/fit";
+import {
+  constraintLabels,
+  fewZones,
+  limitingConstraint,
+  optionText,
+  passingText,
+  relaxOptions,
+  speaksToMany,
+  unknownText,
+  zonesWithoutPrice,
+  zoneWord,
+} from "@/lib/fit";
 
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
@@ -21,15 +32,19 @@ const TEXT = {
   more: "Ver todas las opciones",
   less: "Ver menos",
   none: "Cambiar una sola cosa no añade zonas.",
+  // rc.anterior: the options were computed for the search before the person's last changes
+  stale: "Estas propuestas eran de tu búsqueda anterior. Pulsa «Buscar zonas para mí» para ver las de ahora.",
 };
 
 /**
  * «¿Quieres ver más zonas?» (Reality Check): how many zones appear when one condition is relaxed,
  * with the API's figures; each option is applied with one tap. Always there, folded to the option
  * that adds most zones, and unfolded when few zones or none come out (decision of datamad-10).
+ * Once the search on screen changes, its options are those of the previous search: they are not
+ * offered, since applying one would bring back what the person changed (lib/searchState.ts).
  */
 export default function RealityCheck({ result }: { result: SearchResult }) {
-  const { applyRelaxation, applied, status } = useScenario();
+  const { applyRelaxation, applied, status, stale } = useScenario();
   const titleId = useId();
   const rc = result.reality_check;
   const options = relaxOptions(rc);
@@ -40,8 +55,8 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
   // Not when what leaves zones out is missing data rather than the condition (lib/fit.ts)
   const limiting = limitingConstraint(result);
   const limit = limiting ? constraintLabels(result).get(limiting) : undefined;
-  const shown = open ? options : options.slice(0, 1);
-  const hasMore = options.length > 1 || rc.zones_unknown > 0 || Boolean(limit);
+  const shown = stale ? [] : open ? options : options.slice(0, 1);
+  const hasMore = !stale && (options.length > 1 || rc.zones_unknown > 0 || Boolean(limit));
 
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.rc}>
@@ -49,12 +64,13 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
         <Sparkles size={20} aria-hidden="true" />
         {TEXT.title}
       </h2>
-      {open && (
+      {stale && <p className={styles.muted}>{TEXT.stale}</p>}
+      {open && !stale && (
         <p>
-          {passingText(rc.zones_passing, applied !== null, word)} {options.length > 0 && TEXT.intro}
+          {passingText(rc.zones_passing, applied !== null, word, speaksToMany(result.scenario.household))} {options.length > 0 && TEXT.intro}
         </p>
       )}
-      {options.length === 0 && <p className={styles.muted}>{TEXT.none}</p>}
+      {!stale && options.length === 0 && <p className={styles.muted}>{TEXT.none}</p>}
       {shown.length > 0 && (
         <ul className={styles.options}>
           {shown.map((r) => {
@@ -81,13 +97,13 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
           })}
         </ul>
       )}
-      {open && limit && (
+      {open && !stale && limit && (
         <p className={styles.muted}>
           {TEXT.limit} <strong>{limit}</strong>
         </p>
       )}
-      {open && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
-      {open && options.length > 0 && <p className={styles.note}>{TEXT.note}</p>}
+      {open && !stale && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
+      {open && !stale && options.length > 0 && <p className={styles.note}>{TEXT.note}</p>}
       {hasMore && (
         <button type="button" className={styles.toggle} aria-expanded={open} onClick={() => setChoice({ for: result, open: !open })}>
           {open ? TEXT.less : TEXT.more}

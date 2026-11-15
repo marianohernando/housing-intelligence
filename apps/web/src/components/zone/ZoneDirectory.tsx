@@ -7,12 +7,13 @@ import { useEffect, useId, useState } from "react";
 import { fetchZones } from "@/components/map/fetchZones";
 import { useGapRowMap } from "@/components/map/useGapRowMap";
 import Button from "@/components/ui/Button";
+import Help from "@/components/ui/Help";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import type { ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, inGroup, notComparable } from "@/lib/gaps";
+import { GAP_STATUS, gapsHref, GROUP, inGroup, notComparable, SMALL_ZONE } from "@/lib/gaps";
 import { searchable, wholeCities, zoneDirectory, type ZoneCollection, zoneHref, type ZoneProperties } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
@@ -33,7 +34,30 @@ const TEXT = {
   // zonas.ver_todas, zonas.ver_menos: the folded list of «Qué falta»
   all: (n: number) => `Ver las ${n} zonas`,
   fewer: "Ver menos",
+  // zonas.estados: what each status of the list means, behind a «?» (they were tooltips, UX mobile audit A5)
+  statuses: "¿Qué quiere decir cada estado?",
+  statusesAbout: "de la lista de zonas",
 };
+
+/** What FALTA, JUSTO, CUBIERTO, SIN DATOS, «No comparable» and «Junto con sus vecinos» mean, once over the lists. */
+function StatusesHelp() {
+  const lines: [string, string][] = [
+    ...Object.values(GAP_STATUS).map((s) => [s.label, s.help] as [string, string]),
+    [SMALL_ZONE.label, SMALL_ZONE.help],
+    [GROUP.label, GROUP.help],
+  ];
+  return (
+    <Help about={TEXT.statusesAbout} label={TEXT.statuses}>
+      <ul>
+        {lines.map(([label, help]) => (
+          <li key={label}>
+            <strong>{label}:</strong> {help}
+          </li>
+        ))}
+      </ul>
+    </Help>
+  );
+}
 
 type Result = { zones: ZoneCollection } | { error: ApiError };
 
@@ -166,6 +190,7 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
           })}
         </ul>
       )}
+      {row && rowMap.data && <StatusesHelp />}
       {row && rowMap.loading && <p role="status">{TEXT.loadingRow}</p>}
       {row && rowMap.error && (
         <div role="alert" className={styles.error}>

@@ -4,8 +4,8 @@
  * the fit: it picks what the district screen shows, with the copy of pitch/textos_web.md.
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
-import { constraintLabels, factText, floorAreaOf, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
-import { type MatchText, matchText, tiedNames } from "@/lib/match";
+import { constraintLabels, factText, floorAreaOf, hasWalkingFact, voice, type ZonePrice, zonePrice } from "@/lib/fit";
+import { type MatchText, matchText, tiedNames, tieText } from "@/lib/match";
 import { nearMissText, type Spoken } from "@/lib/shortfall";
 
 /** Facts under each barrio: the API orders them, most important to the person first. */
@@ -23,6 +23,8 @@ export interface BarrioRow {
   fit: MatchText | null;
   /** Whom a barrio that fits ties with at its % («Arcos y Simancas»), read after it; null with none */
   tie: string | null;
+  /** The same in the barrio's panel once it is opened: «Igual de bueno que Arcos y Simancas (89 %).» (zona.empate) */
+  tieLine: string | null;
   /** Its approximate price for the household (D-234), or null without one */
   price: ZonePrice | null;
   facts: string[];
@@ -32,7 +34,14 @@ export interface BarrioRow {
   lacks: Spoken | null;
 }
 
-function barrioRow(zone: RankedZone, lacks: Spoken | null, buying: boolean, m2: number | null, tie: string | null = null): BarrioRow {
+function barrioRow(
+  zone: RankedZone,
+  lacks: Spoken | null,
+  buying: boolean,
+  m2: number | null,
+  tie: string | null = null,
+  tieLine: string | null = null,
+): BarrioRow {
   const facts = zone.facts.slice(0, FACTS_PER_BARRIO);
   return {
     id: zone.zone.admin_unit_id ?? null,
@@ -40,6 +49,7 @@ function barrioRow(zone: RankedZone, lacks: Spoken | null, buying: boolean, m2: 
     name: zone.zone.name,
     fit: lacks ? null : matchText(zone),
     tie,
+    tieLine,
     price: zonePrice(zone, buying, m2),
     facts: facts.map((fact) => factText(fact, buying)),
     walking: hasWalkingFact(facts),
@@ -57,15 +67,23 @@ export function barrioRows(
   // An answer without all_zones: the barrios that fit are all in `results`
   const all = result.all_zones ?? result.results.map((zone) => ({ ...zone, passes_all: true }));
   return {
-    fits: result.results.map((zone) => barrioRow(zone, null, buying, m2, tiedNames(zone, all, "barrio", result.results))),
+    fits: result.results.map((zone) =>
+      barrioRow(zone, null, buying, m2, tiedNames(zone, all, "barrio", result.results), tieText(zone, all, "barrio", result.results)),
+    ),
     near: (result.near_misses ?? []).map((zone) => barrioRow(zone, nearMissText(zone, labels, result.scenario), buying, m2)),
   };
 }
 
-/** «7 de sus 8 barrios te convienen.» (barrios.encajan.resumen) */
-export function barriosText(rc: Pick<RealityCheck, "zones_passing" | "zones_evaluated">): string {
+/** «7 de sus 8 barrios te convienen.» (barrios.encajan.resumen), «os convienen» to a household of more than one */
+export function barriosText(rc: Pick<RealityCheck, "zones_passing" | "zones_evaluated">, many = false): string {
   const { zones_passing: n, zones_evaluated: total } = rc;
-  if (n === 0) return `Ninguno de sus ${total} barrios cumple todo lo que pides.`;
-  if (n === total) return n === 1 ? "Su barrio te conviene." : `Sus ${total} barrios te convienen.`;
-  return `${n} de sus ${total} barrios ${n === 1 ? "te conviene" : "te convienen"}.`;
+  const v = voice(many);
+  if (n === 0) return `Ninguno de sus ${total} barrios cumple todo lo que ${v.pides}.`;
+  if (n === total) return n === 1 ? `Su barrio ${v.te} conviene.` : `Sus ${total} barrios ${v.te} convienen.`;
+  return `${n} de sus ${total} barrios ${v.te} ${n === 1 ? "conviene" : "convienen"}.`;
+}
+
+/** barrios.encajan.titulo: «Los barrios que más te convienen» / «… os convienen» */
+export function barriosTitle(many = false): string {
+  return `Los barrios que más ${voice(many).te} convienen`;
 }

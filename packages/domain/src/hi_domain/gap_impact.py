@@ -14,7 +14,7 @@ from typing import Any, NamedTuple
 from scipy.stats import chi2
 
 from hi_contracts.catalog.enums import GapRowKey
-from hi_domain.gaps import es_number
+from hi_domain.gaps import es_number, min_expected
 
 
 class RowPeople(NamedTuple):
@@ -58,9 +58,24 @@ def denominator_is_count(formula: Mapping[str, Any], level: str) -> bool:
     return people_scale(formula, level) == 1.0
 
 
-def not_comparable_text(row: GapRowKey, people: int | None, text: str) -> str:
+def not_comparable_text(
+    row: GapRowKey, people: int | None, text: str, counted_denominator: bool = False
+) -> str:
     """A zone too small to compare (`reliable: false`, not grouped): its status says nothing,
-    so the explanation starts by saying so."""
+    so the explanation starts by saying so, with the real reason (D-213, D-230, D-245).
+
+    A row of services (2SFCA, its denominator people per `per`) is unreliable when the centres
+    the zone would have at its type's rate are fewer than the floor (3,69, `min_expected`): few
+    centres for its people, not few people (Barajas has some 50.000 and 0,4 health centres per
+    10.000). A row whose denominator is a count (households of 4 or more) is unreliable when that
+    count is under the floor too: there, few households is the reason."""
+    floor = min_expected()
+    if not counted_denominator and floor is not None:
+        return (
+            "No comparable: para la gente que vive aquí le corresponden menos de "
+            f"{math.ceil(floor)} {ROW_PEOPLE[row].lack} y, con números tan pequeños, no se "
+            f"puede saber si faltan. {text}"
+        )
     if people is None:
         return f"No comparable: la zona es demasiado pequeña para saber si falta. {text}"
     words = ROW_PEOPLE[row]

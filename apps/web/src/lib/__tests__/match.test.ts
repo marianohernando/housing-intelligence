@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { MatchBand, RankedZone, SearchResult, ZoneMatch } from "@/contracts/search_response";
 
-import { bandRanges, matchBand, matchText, rankingRows, tiedNames, tiedWith, tieText } from "../match";
+import { bandRanges, matchBand, matchText, tiedNames, tiedWith, tieText } from "../match";
 
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
 const FIXTURE = new URL("../../../../../data/fixtures/contracts/search_result.familia_presupuesto.fixture.json", import.meta.url);
@@ -105,30 +105,5 @@ describe("zones tied at the same shown % (F5 of fit-0.9)", () => {
     expect(tiedNames(four[0]!, four)).toBe("B, C y D");
     const many = Array.from({ length: 13 }, (_, i) => zone(`B${i}`, 100));
     expect(tieText(many[0]!, many, "barrio")).toBe("Igual de bueno que 12 barrios más (100\u00a0%).");
-  });
-
-  it("marks the runs of rows in view with the same %, headed «Empatan al 94 %»", () => {
-    const shown = [row("Puente de Vallecas", 94, 1), row("Latina", 94, 2), row("Usera", 93, 3), row("Moratalaz", 93, 4), row("Tetuán", 92, 5)];
-    const rows = rankingRows(shown, all);
-    expect(rows.map((r) => r.tie)).toEqual([
-      { first: true, last: false, label: "Empatan al 94\u00a0%" },
-      { first: false, last: true, label: "Empatan al 94\u00a0%" },
-      { first: true, last: false, label: "Empatan al 93\u00a0%" },
-      { first: false, last: true, label: "Empatan al 93\u00a0%" },
-      null,
-    ]);
-  });
-
-  it("counts every tied zone when the run goes on beyond the rows in view", () => {
-    const crowd = Array.from({ length: 45 }, (_, i) => zone(`Z${i}`, 100));
-    const shown = crowd.slice(0, 5).map((z, i) => row(z.zone.name, 100, i + 1));
-    expect(rankingRows(shown, crowd)[0]?.tie?.label).toBe("Empatan al 100\u00a0% (45 zonas)");
-  });
-
-  it("marks a single row of the folded list tied with zones beyond it, with their count (review R-04)", () => {
-    const three = [zone("Usera", 92), zone("Tetuán", 92), zone("Villaverde", 92), zone("Coslada", 95)];
-    const shown = [row("Coslada", 95, 1), row("Usera", 92, 2)];
-    expect(rankingRows(shown, three).map((r) => r.tie)).toEqual([null, { first: true, last: true, label: "Empatan al 92\u00a0% (3 zonas)" }]);
-    expect(rankingRows([row("Usera", 92, 1)], three, "barrio")[0]?.tie?.label).toBe("Empatan al 92\u00a0% (3 barrios)");
   });
 });

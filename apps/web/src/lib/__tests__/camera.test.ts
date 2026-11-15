@@ -171,9 +171,29 @@ describe("cameraPadding", () => {
     for (const mode of ["overview", "zone"] as const) {
       const pad = cameraPadding(mode, { mobile: true, width: 390, height });
       expect(pad.bottom).toBeGreaterThanOrEqual(sheet);
-      expect(pad.top).toBeGreaterThan(100); // the header (brand and tabs)
-      expect(height - pad.top - pad.bottom).toBeGreaterThan(200); // still a usable map
+      // The header (brand and tabs) measures 130,5 px with the phone's root of 18 px (review of PR #79)
+      expect(pad.top).toBeGreaterThanOrEqual(130.5);
+      expect(height - pad.top - pad.bottom).toBeGreaterThan(180); // still a usable map
     }
+    // The zone has no legend over the sheet: a taller map
+    expect(height - cameraPadding("zone", { mobile: true, width: 390, height }).bottom).toBeGreaterThan(400);
+  });
+
+  it("on mobile the overview keeps clear of the legend over the sheet, as measured on screen", () => {
+    const height = 844;
+    // At 390 px with the root of 18 px: header down to 130,5 px, legend from 330,4 px (125 px high)
+    const fallback = cameraPadding("overview", { mobile: true, width: 390, height });
+    expect(height - fallback.bottom).toBeLessThanOrEqual(330.4);
+    const measured = cameraPadding("overview", { mobile: true, width: 390, height }, { headerBottom: 130.5, legendTop: 330.4 });
+    expect(measured.top).toBe(131);
+    expect(height - measured.bottom).toBeLessThanOrEqual(330.4);
+    // A taller legend (the statuses of a row) moves the frame up with it
+    const taller = cameraPadding("overview", { mobile: true, width: 390, height }, { headerBottom: 130.5, legendTop: 280 });
+    expect(height - taller.bottom).toBeLessThanOrEqual(280);
+    // A larger root (the phone's text setting) grows the fallbacks with it
+    const larger = cameraPadding("overview", { mobile: true, width: 390, height }, { rootPx: 22 });
+    expect(larger.top).toBeGreaterThan(fallback.top);
+    expect(larger.bottom).toBeGreaterThan(fallback.bottom);
   });
 
   it("the sheet takes a bit under half the screen", () => {

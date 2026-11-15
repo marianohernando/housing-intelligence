@@ -529,7 +529,7 @@ describe("«Somos mayores» (D-244)", () => {
     const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
     const home = setOlderPlace(defaultScenario(), "other", station);
     expect(olderPlace(home)).toEqual({ kind: "other", anchor: { kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 30, days_per_week: 3 } });
-    // Lower case: the API says it inside a sentence («… hasta donde vivimos ahora, llegando a las 9:00»)
+    // Lower case: the API says it inside a sentence («27 min en transporte público hasta donde vivimos ahora»)
     expect(HOME_LABEL).toBe("donde vivimos ahora");
     const family = setOlderPlace(home, "family", station);
     expect(family.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: station.lon, lat: station.lat, ...OLDER_TRIP }]);

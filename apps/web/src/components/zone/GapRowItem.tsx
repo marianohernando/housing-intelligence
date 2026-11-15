@@ -19,8 +19,8 @@ import {
   peopleAffectedText,
   referenceLabel,
   ROW_MEASURE,
+  notComparableReason,
   rowComparison,
-  SMALL_ZONE,
   walking,
   walkingText,
   WALK_TO,
@@ -86,7 +86,8 @@ function reasonOf(row: GapRow): string | null {
   if (row.indicator.null_reason === "NOT_APPLICABLE" && row.explanation) return row.explanation;
   if (row.indicator.value === null) return NULL_REASON[row.indicator.null_reason ?? "UNKNOWN"];
   if (row.status === "SIN_DATOS") return GAP_STATUS.SIN_DATOS.help;
-  if (notComparable(row)) return row.explanation.startsWith("No comparable") ? row.explanation : SMALL_ZONE.help;
+  // What «No comparable» really means, then the API's figures (its first sentence spoke of «muy pocas personas» also in Barajas)
+  if (notComparable(row)) return notComparableReason(row.explanation);
   return null;
 }
 

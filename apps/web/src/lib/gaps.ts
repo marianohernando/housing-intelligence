@@ -32,13 +32,37 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string; short:
 
 /**
  * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
- * instead of its status (D-230: the API's `explanation` starts the same way). B's draft for D.
+ * instead of its status (D-230). What it means (D-213, `min_expected` of hi_domain/gaps.py): for
+ * the people who live there, the zone would have fewer than 4 centres (3,69 expected at 95 %; the
+ * test counts centre-equivalents, also for the classrooms and the places, hi_features/fca.py), and
+ * with numbers that small not even none at all could be told from chance. It is not that few people
+ * live there: Barajas, with some 50.000, has too few health centres to compare. In the housing row,
+ * whose denominator counts households, few households of 4 or more is the reason. `help` is the
+ * legend's, for every row; notComparableText says it of one row.
  */
 export const SMALL_ZONE = {
   label: "No comparable",
-  help: "Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos.",
-  short: "vive tan poca gente que no se puede comparar.",
+  help: "Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.",
 };
+
+/**
+ * Why one row is «No comparable», in its own unit (review R-07 of PR #81): the same words as the
+ * API's explanation (not_comparable_text of hi_domain/gap_impact.py), without its figures.
+ */
+export function notComparableText(row: GapRowKey): string {
+  if (row === "vivienda") return "aquí viven muy pocos hogares de 4 o más personas para saber si falta.";
+  return `para la gente que vive aquí le corresponden menos de 4 ${ROW_IN_LIST[row]} y, con números tan pequeños, no se puede saber si faltan.`;
+}
+
+/**
+ * The reason of a «No comparable» row of «Qué falta»: the API's explanation as it is, which says
+ * the row's real reason and its figures since D-245 (the web cut its first sentence when it said
+ * «aquí viven muy pocas personas (50.375)» of Barajas; API and web are deployed together). Any other
+ * explanation: SMALL_ZONE.help.
+ */
+export function notComparableReason(explanation: string): string {
+  return explanation.startsWith("No comparable:") ? explanation : SMALL_ZONE.help;
+}
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
   return reliable === false;
@@ -222,9 +246,15 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
  * order. Other rows only fill in when fewer than three of the household's have data, by status;
  * those about children never do in a home without children. The household's rows without data go last.
  */
-export function topRows<T extends Classified & { row?: GapRowKey }>(rows: readonly T[], limit = 3, household?: HouseholdLike | null): T[] {
+export function topRows<T extends Classified & { row?: GapRowKey }>(
+  rows: readonly T[],
+  limit = 3,
+  household?: HouseholdLike | null,
+  marked: readonly GapRowKey[] = [],
+): T[] {
   if (!household) return sortRows(rows).slice(0, limit);
-  const mine = householdRows(household);
+  // The household's rows and then what the person marks (review R-02 of PR #81), as the essentials
+  const mine = [...new Set([...householdRows(household), ...marked])];
   const children = (household.minors ?? 0) > 0;
   const ownRank = (r: T) => (r.row === undefined ? -1 : mine.indexOf(r.row));
   const fills = (r: T) => children || r.row === undefined || !CHILD_ROWS.includes(r.row);
@@ -311,7 +341,7 @@ export const GAPS_HELP = "Un servicio puede estar cerca y aun así ir lleno: aqu
  * The words follow fila.mide.*: schools and pharmacies count one each, colegios count classrooms,
  * mayores count places (nobody publishes the places of an escuela infantil, D-217).
  */
-const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string; JUSTO: string }>> = {
+export const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string; JUSTO: string }>> = {
   escuela_infantil: { service: "Escuela infantil", FALTA: "hay pocas para tantos niños", JUSTO: "van justas para tantos niños" },
   colegio: { service: "Colegio con primaria", FALTA: "hay pocas aulas para tantos niños", JUSTO: "las aulas van justas para tantos niños" },
   centro_salud: { service: "Centro de salud", FALTA: "hay pocos para tanta gente", JUSTO: "van justos para tanta gente" },
@@ -319,7 +349,8 @@ const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string
   farmacia: { service: "Farmacia", FALTA: "hay pocas para tanta gente", JUSTO: "van justas para tanta gente" },
 };
 
-function walkMinutesText(minutes: number): string {
+/** «a unos 6 min andando», «a 1 min andando» or «a menos de 1 min andando». */
+export function walkMinutesText(minutes: number): string {
   const n = Math.round(minutes);
   if (n < 1) return "a menos de 1 min andando";
   return n === 1 ? "a 1 min andando" : `a unos ${formatNumber(n, 0)} min andando`;

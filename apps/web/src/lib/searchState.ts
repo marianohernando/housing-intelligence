@@ -72,15 +72,25 @@ export function plainAttempt(state: SearchState<unknown>, id: number, scenario: 
   return { id, scenario, applied: null, before: state.scenario };
 }
 
-/** An option of «¿Y si cambias algo?»: back always leads to the search before any option. */
-export function relaxAttempt(state: SearchState<unknown>, id: number, label: string, relaxed: ScenarioState): Attempt {
+/**
+ * An option of «¿Quieres ver más zonas?»: back always leads to the search before any option. Null
+ * once the search on screen is no longer the one the option was computed for (isStale): its
+ * scenario is that search with one change, and applying it would bring back what the person has
+ * since changed or taken out (production, 16 nov: unmarking «Somos mayores» and then «Sin límite de
+ * tiempo hasta donde vivimos ahora» marked it again, with its place).
+ */
+export function relaxAttempt(state: SearchState<unknown>, id: number, label: string, relaxed: ScenarioState): Attempt | null {
+  if (isStale(state)) return null;
   const previous = state.applied?.previous ?? state.searched ?? state.scenario;
   return { id, scenario: relaxed, applied: { label, previous }, before: state.scenario };
 }
 
-/** «Volver a mi búsqueda», or null when no option is applied. */
+/**
+ * «Volver a mi búsqueda», or null when no option is applied, or when the search on screen has
+ * changed since (it would go back over those changes, as an old option would).
+ */
 export function undoAttempt(state: SearchState<unknown>, id: number): Attempt | null {
-  return state.applied ? plainAttempt(state, id, state.applied.previous) : null;
+  return state.applied && !isStale(state) ? plainAttempt(state, id, state.applied.previous) : null;
 }
 
 /**
