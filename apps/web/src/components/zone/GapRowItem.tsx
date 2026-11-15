@@ -147,7 +147,8 @@ export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
       <div className={styles.head}>
         <h2>{row.label}</h2>
         <span className={styles.badges}>
-          {notComparable(row) ? <SmallZoneTag /> : <GapBadge status={row.status} />}
+          {/* Its reason (notComparableReason) is the row's own paragraph below: the tag does not say it again */}
+          {notComparable(row) ? <SmallZoneTag help={null} /> : <GapBadge status={row.status} />}
           {group && <GroupTag described={false} />}
         </span>
       </div>

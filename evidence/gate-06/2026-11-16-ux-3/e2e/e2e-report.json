@@ -1,6 +1,6 @@
 {
  "base": "http://localhost:3081",
- "checked_at": "2026-11-15T20:41:52.881Z",
+ "checked_at": "2026-11-15T21:00:12.847Z",
  "runs": [
   {
    "browserName": "chromium",
@@ -32,9 +32,9 @@
     },
     {
      "journey": "J1 search",
-     "name": "the legend says «Zonas que os convienen», «Os conviene más»",
+     "name": "the legend's title is «Zonas que os convienen», its ramp «Os conviene menos» and «Os conviene más»",
      "ok": true,
-     "detail": "¿Qué quieres ver? Zonas que os convienen Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivienda para familias Zonas que os conviene"
+     "detail": "Zonas que os convienen | Zonas que os convienen Os conviene menos Os conviene más Cumple todo 42 zonas No cumple todo 157 zonas Sin datos 0 zonas"
     },
     {
      "journey": "J1 search",
@@ -706,7 +706,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 22
+   "seconds": 24
   },
   {
    "browserName": "chromium",
@@ -738,9 +738,9 @@
     },
     {
      "journey": "J1 search",
-     "name": "the legend says «Zonas que os convienen», «Os conviene más»",
+     "name": "the legend's title is «Zonas que os convienen», its ramp «Os conviene menos» and «Os conviene más»",
      "ok": true,
-     "detail": "¿Qué quieres ver?Zonas que os convienenEscuelas infantilesColegiosCentros de saludCentros de mayoresFarmaciasVivienda para familiasZonas que os convienenOs conv"
+     "detail": "Zonas que os convienen | Zonas que os convienenOs conviene menosOs conviene másCumple todo42 zonasNo cumple todo157 zonasSin datos0 zonas"
     },
     {
      "journey": "J1 search",

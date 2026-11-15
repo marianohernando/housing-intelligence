@@ -33,6 +33,7 @@ import {
   inGroup,
   nearButShort,
   notComparable,
+  notComparableHelp,
   notComparableText,
   ROW_IN_LIST,
   SMALL_ZONE,
@@ -184,7 +185,7 @@ function MissingSection({ zone, gaps, mode, withStates }: { zone: ZoneProperties
                   )}
                   {inGroup(row) && <small>{GROUP.label}</small>}
                 </span>
-                {notComparable(row) ? <SmallZoneTag /> : <GapBadge status={row.status} />}
+                {notComparable(row) ? <SmallZoneTag help={notComparableHelp(row.row)} /> : <GapBadge status={row.status} />}
               </li>
             );
           })}

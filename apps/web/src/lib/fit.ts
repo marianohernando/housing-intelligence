@@ -463,7 +463,7 @@ export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "s
   const good = WORDS[word].feminine ? "buenas" : "buenos";
   const v = voice(speaksToMany(result.scenario.household));
   // «Somos mayores» is asked where they want to live, never where they work (D-244, review R-13 of PR #79)
-  const place = result.scenario.household?.seniors === true ? `${v.elige} cerca de dónde queréis vivir` : `dónde ${v.trabajas}`;
+  const place = result.scenario.household?.seniors === true ? `${v.elige} cerca de dónde ${v.quieres} vivir` : `dónde ${v.trabajas}`;
   return n > MANY_TIED ? `Hay ${zonesText(n, word)} igual de ${good}: ${v.marca} qué ${v.quieres} tener cerca o ${place} para afinar el orden.` : null;
 }
 

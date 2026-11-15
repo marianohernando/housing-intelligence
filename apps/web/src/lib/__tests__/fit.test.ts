@@ -468,6 +468,11 @@ describe("many zones tied at the top (resultados.empate, D-239)", () => {
       // A couple: «vosotros» (review R-03 of PR #81)
       "Hay 106 barrios igual de buenos: marcad qué queréis tener cerca o elegid cerca de dónde queréis vivir para afinar el orden.",
     );
+    // One person of 65 or more who lives alone: «tú» all along (review R-02 of PR #82)
+    const alone = { scope: "madrid" as const, household: { adults: 1, seniors: true } };
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: alone })).toBe(
+      "Hay 106 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde quieres vivir para afinar el orden.",
+    );
   });
 
   it("stays quiet on line A's search fixture, where the top is not a crowd", () => {

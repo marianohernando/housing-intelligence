@@ -151,7 +151,7 @@ async function district(browser, w, block) {
   await panel.waitFor({ timeout: WAIT });
   const panelText = (await panel.innerText()).replace(/\s+/g, " ").trim();
   check(w, `barrio panel (${name}): no band or price of the row again`, rowBand !== null && rowPrice !== null && !panelText.includes(rowBand) && !panelText.includes(rowPrice), `fila: ${rowText} || panel: ${panelText}`);
-  check(w, `barrio panel (${name}): the % only on the phone`, w === 390 ? /\d+\s*%/.test(panelText) : !/^\d+\s*%/.test(panelText), panelText.slice(0, 120));
+  check(w, `barrio panel (${name}): the % only on the phone`, w === 390 ? /^\d+\s*%/.test(panelText) : !/^\d+\s*%/.test(panelText), panelText.slice(0, 120));
   check(w, `barrio panel (${name}): what the price is for`, /Para un piso de unos \d+\s*m²/.test(panelText), panelText.slice(0, 160));
   if (block) {
     const state = await first.getAttribute("aria-expanded");

@@ -65,6 +65,21 @@ export function notComparableReason(explanation: string): string {
   return explanation.startsWith("No comparable:") ? explanation : SMALL_ZONE.help;
 }
 
+const NOT_COMPARABLE_LEAD = "No comparable:";
+
+/**
+ * What the «No comparable» tag of one row says to screen readers, after its label (seen in
+ * production by C: it said the legend's sentence of «centros u hogares» on every row, whose
+ * visible words were already the row's). With the API's explanation, the row's reason as
+ * notComparableReason gives it, without the «No comparable:» the tag has just said; without it
+ * (the card, a list of zones by row), the row's own reason (notComparableText).
+ */
+export function notComparableHelp(row: GapRowKey, explanation?: string | null): string {
+  const reason = explanation ? notComparableReason(explanation) : notComparableText(row);
+  const said = reason.startsWith(NOT_COMPARABLE_LEAD) ? reason.slice(NOT_COMPARABLE_LEAD.length).trim() : reason;
+  return said.charAt(0).toUpperCase() + said.slice(1);
+}
+
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
   return reliable === false;
 }

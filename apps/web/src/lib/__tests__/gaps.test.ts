@@ -21,6 +21,7 @@ import {
   nearButShort,
   ROW_WALK_MIN,
   notComparable,
+  notComparableHelp,
   notComparableReason,
   notComparableText,
   referenceLabel,
@@ -117,6 +118,26 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
     const acebeda = "No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas";
     expect(notComparableReason(acebeda)).toBe(acebeda);
     expect(notComparableReason("Sin datos para esta zona")).toBe(SMALL_ZONE.help);
+  });
+
+  it("tells screen readers the row's own reason after «No comparable», never the legend's sentence (seen in production by C)", () => {
+    // The card and a list of zones by row: the row's reason, as its visible line says it
+    expect(notComparableHelp("centro_salud")).toBe(
+      "Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+    );
+    expect(notComparableHelp("vivienda")).toBe("Aquí viven muy pocos hogares de 4 o más personas para saber si falta.");
+    // With the API's explanation: its words (notComparableReason), without the «No comparable:» the tag has just said
+    const barajas =
+      "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud";
+    expect(notComparableHelp("centro_salud", barajas)).toBe(
+      "Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud",
+    );
+    expect(notComparableHelp("mayores", "Otra explicación")).toBe(SMALL_ZONE.help);
+    // Every row says its own unit, none the common «centros u hogares» sentence
+    for (const row of ["escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia", "vivienda"] as const) {
+      expect(notComparableHelp(row)).not.toBe(SMALL_ZONE.help);
+      expect(notComparableHelp(row)).not.toMatch(/ o en la vivienda /);
+    }
   });
 });
 

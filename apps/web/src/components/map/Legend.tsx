@@ -15,8 +15,8 @@ import { useGapLayer } from "./GapLayerProvider";
 import styles from "./Legend.module.css";
 import { useMapZones } from "./MapProvider";
 
-// Copy from pitch/textos_web.md (leyenda.*, 8c49e33). The title and the ramp speak to the household of the
-// search (`voice`): «Zonas que os convienen», «Os conviene más»; before a search, «tú».
+// Copy from pitch/textos_web.md (leyenda.*, 8c49e33). The picker, the title and the ramp speak to the household
+// of the search (`voice`): «¿Qué queréis ver?», «Zonas que os convienen», «Os conviene más»; before a search, «tú».
 const TEXT = {
   title: resultsTitle,
   less: (many: boolean) => `${capitalize(voice(many).te)} conviene menos`,
@@ -24,7 +24,7 @@ const TEXT = {
   noData: "Sin datos",
   before: "Haz tu búsqueda para ver qué zonas te convienen.",
   soon: "Muy pronto verás aquí qué zonas te convienen.", // leyenda.pronto
-  show: "¿Qué quieres ver?",
+  show: (many: boolean) => `¿Qué ${voice(many).quieres} ver?`,
   legend: "Leyenda del mapa",
   missing: "Qué falta",
   loading: "Cargando el mapa…",
@@ -165,7 +165,7 @@ export default function Legend() {
     <section className={`glass ${styles.legend}`} aria-label={TEXT.legend} data-map-legend="">
       <div className={styles.picker}>
         <label htmlFor={selectId} className={styles.pickerLabel}>
-          {TEXT.show}
+          {TEXT.show(many)}
         </label>
         <select id={selectId} className={styles.select} value={row ?? ""} onChange={(e) => setRow(isGapRow(e.target.value) ? e.target.value : null)}>
           <option value="">{TEXT.title(many)}</option>

@@ -245,10 +245,14 @@ async function checkLegendCounts(run, journey, page, expected) {
 }
 
 async function checkFitLegend(run, page, rc, many) {
-  // The legend speaks to the household as the list does (review M-01 of PR #81)
-  const legend = squash(await page.locator("section[aria-label='Leyenda del mapa']").first().innerText());
-  const words = many ? ["Zonas que os convienen", "Os conviene menos", "Os conviene más"] : ["Zonas que te convienen", "Te conviene menos", "Te conviene más"];
-  run.check("J1 search", `the legend says «${words[0]}», «${words[2]}»`, words.every((w) => legend.includes(w)), legend.slice(0, 160));
+  // The legend speaks to the household as the list does (review M-01 of PR #81): its title and its
+  // ramp, in the figure, never the options of the select above it (review R-05 of PR #82)
+  const figure = page.locator("section[aria-label='Leyenda del mapa'] figure").first();
+  const title = squash(await figure.locator("figcaption").innerText());
+  const ramp = squash(await figure.innerText());
+  const [named, less, more] = many ? ["Zonas que os convienen", "Os conviene menos", "Os conviene más"] : ["Zonas que te convienen", "Te conviene menos", "Te conviene más"];
+  run.check("J1 search", `the legend's title is «${named}», its ramp «${less}» and «${more}»`, title === named && ramp.includes(less) && ramp.includes(more),
+    `${title} | ${ramp.slice(0, 120)}`);
   const failing = rc.zones_evaluated - rc.zones_passing - rc.zones_unknown;
   return checkLegendCounts(run, "J1 search", page,
     [["Cumple todo", rc.zones_passing], ["No cumple todo", failing], ["Sin datos", rc.zones_unknown]]);
