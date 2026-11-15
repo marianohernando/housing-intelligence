@@ -548,6 +548,11 @@ MAX_COMMUTE_SHOWN = 120
 ARRIVE_BY_NINE = frozenset({AnchorKind.WORK, AnchorKind.STUDY})
 
 
+def at_nine(anchor: Anchor) -> str:
+    """« a las 9:00» for the places one has to reach by then (work, study); nothing otherwise."""
+    return " a las 9:00" if anchor.kind in ARRIVE_BY_NINE else ""
+
+
 def commute_text(minutes: float, anchor: Anchor, note: str | None = None) -> str:
     shown = "más de 2 h" if minutes > MAX_COMMUTE_SHOWN else f"{es_number(minutes, 0)} min"
     by_nine = ", llegando a las 9:00" if anchor.kind in ARRIVE_BY_NINE else ""
@@ -575,7 +580,7 @@ def commute_check(i: int, anchor: Anchor, data: ZoneData) -> ConstraintCheck:
         why = (
             "Sin datos del trayecto en transporte público"
             if trip is None
-            else f"Con los horarios publicados no se llega a {anchor.label} a las 9:00"
+            else f"Con los horarios publicados no se llega a {anchor.label}{at_nine(anchor)}"
         )
         explanation = with_note(f"{why}{where}", None if trip is None else trip.note)
         return ConstraintCheck(
@@ -785,7 +790,7 @@ def work_fact(anchor: Anchor, data: ZoneData, trip: Commute | None) -> Score:
 def transit_fact(anchor: Anchor, trip: Commute) -> Score:
     if trip.minutes is None:
         text = with_note(
-            f"Con los horarios publicados no se llega a {anchor.label} a las 9:00 "
+            f"Con los horarios publicados no se llega a {anchor.label}{at_nine(anchor)} "
             "en transporte público",
             trip.note,
         )
@@ -1073,7 +1078,7 @@ def short_rows(scenario: ScenarioState, data: ZoneData) -> list[GapRowKey]:
 
 def unreachable_fact(anchor: Anchor, trip: Commute) -> Fact:
     if trip.minutes is None:
-        why = f"No llegas a {anchor.label} a las 9:00 en transporte público"
+        why = f"No llegas a {anchor.label}{at_nine(anchor)} en transporte público"
     else:
         limit = duration_text(WALK_ZERO_AT * trip_window(anchor))
         why = f"Tardas {limit} o más en llegar a {anchor.label}"

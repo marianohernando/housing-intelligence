@@ -1153,6 +1153,12 @@ def test_only_work_and_study_trips_say_they_arrive_by_nine() -> None:
         texts[AnchorKind.FAMILY] == "27 min en transporte público hasta Getafe Central (Cercanías)"
     )
     assert texts[AnchorKind.OTHER] == "27 min en transporte público hasta donde vivimos ahora"
+    # Without a trip by the timetables, the family is not said to be missed «a las 9:00» either
+    unreachable = evaluate(family(anchors=[FAMILY]), with_trips(zone("1"), None))
+    said = " ".join(f.text for f in unreachable.facts if f.topic is FactTopic.TRAYECTO)
+    assert "9:00" not in said and "Getafe Central (Cercanías)" in said
+    at_work = evaluate(family(anchors=[CASTELLANA]), with_trips(zone("1"), None))
+    assert "a las 9:00" in " ".join(f.text for f in at_work.facts if f.topic is FactTopic.TRAYECTO)
     # The same trip scores the same, whatever its words
     as_work = evaluate(
         family(anchors=[FAMILY.model_copy(update={"kind": AnchorKind.WORK})]),
