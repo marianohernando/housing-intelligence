@@ -615,6 +615,17 @@
       "title": "IndicatorValue",
       "type": "object"
     },
+    "MatchBand": {
+      "description": "The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or\n«poco». The thresholds (90, 75 and 60) live in hi_domain.fit; a web that gets no band derives\nit from `match_pct` with the same ones.",
+      "enum": [
+        "muy_bien",
+        "bien",
+        "regular",
+        "poco"
+      ],
+      "title": "MatchBand",
+      "type": "string"
+    },
     "Meta": {
       "properties": {
         "api_version": {
@@ -813,6 +824,18 @@
           "maxItems": 3,
           "title": "Gap Highlights",
           "type": "array"
+        },
+        "match_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from 60, poco below. Optional and additive: None from an API before fit-0.9"
         },
         "match_pct": {
           "description": "% of fit with the search, not a grade",
@@ -1091,6 +1114,18 @@
           },
           "title": "Failed Constraints",
           "type": "array"
+        },
+        "match_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`match_pct` in words, as in RankedZone (D-243); None when the % is unknown or from an API before fit-0.9"
         },
         "match_pct": {
           "anyOf": [

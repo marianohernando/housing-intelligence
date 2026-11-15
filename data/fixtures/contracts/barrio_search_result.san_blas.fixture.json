@@ -52,6 +52,7 @@
         "center_lat": 40.44229
       },
       "match_pct": 97,
+      "match_band": "muy_bien",
       "confidence": 0.933,
       "facts": [
         {
@@ -186,6 +187,7 @@
         "center_lat": 40.42105
       },
       "match_pct": 97,
+      "match_band": "muy_bien",
       "confidence": 0.933,
       "facts": [
         {
@@ -320,6 +322,7 @@
         "center_lat": 40.43405
       },
       "match_pct": 97,
+      "match_band": "muy_bien",
       "confidence": 0.933,
       "facts": [
         {
@@ -454,6 +457,7 @@
         "center_lat": 40.42911
       },
       "match_pct": 96,
+      "match_band": "muy_bien",
       "confidence": 0.933,
       "facts": [
         {
@@ -588,6 +592,7 @@
         "center_lat": 40.42585
       },
       "match_pct": 96,
+      "match_band": "muy_bien",
       "confidence": 0.913,
       "facts": [
         {
@@ -722,6 +727,7 @@
         "center_lat": 40.44415
       },
       "match_pct": 95,
+      "match_band": "muy_bien",
       "confidence": 0.933,
       "facts": [
         {
@@ -856,6 +862,7 @@
         "center_lat": 40.43009
       },
       "match_pct": 93,
+      "match_band": "muy_bien",
       "confidence": 0.913,
       "facts": [
         {
@@ -992,6 +999,7 @@
         "center_lat": 40.44387
       },
       "match_pct": 55,
+      "match_band": "poco",
       "confidence": 0.933,
       "facts": [
         {
@@ -1129,6 +1137,7 @@
         "center_lat": 40.43405
       },
       "match_pct": 97,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1144,6 +1153,7 @@
         "center_lat": 40.43009
       },
       "match_pct": 93,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1159,6 +1169,7 @@
         "center_lat": 40.42585
       },
       "match_pct": 96,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1174,6 +1185,7 @@
         "center_lat": 40.42105
       },
       "match_pct": 97,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1189,6 +1201,7 @@
         "center_lat": 40.42911
       },
       "match_pct": 96,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1204,6 +1217,7 @@
         "center_lat": 40.44387
       },
       "match_pct": 55,
+      "match_band": "poco",
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -1221,6 +1235,7 @@
         "center_lat": 40.44229
       },
       "match_pct": 97,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     },
@@ -1236,6 +1251,7 @@
         "center_lat": 40.44415
       },
       "match_pct": 95,
+      "match_band": "muy_bien",
       "passes_all": true,
       "failed_constraints": []
     }
