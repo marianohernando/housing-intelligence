@@ -45,7 +45,7 @@ Lo que rellena el build:
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
 | Slides 3 y 4 | C1, C2 y C3 son provisionales (`data-pending` en su `figcaption`): se rehacen tras la entrega de UX, porque cambian las palabras de las bandas y de la lista | D, tras el despliegue de B (19 nov como tarde) |
 
-Cerrada el 15 nov: **C1, C2 y C3, rehechas por D en producción con `fit-0.9`** (`pitch/capturas/`). C1 enseña la parada por tipo y «¿Dónde?»; el marcador 3 de la slide 4 baja a «Qué falta aquí» (`.s4 .m3`, `top: 581px`); los `alt` dicen Puente de Vallecas y Latina al 94 %.
+Rehechas el 15 nov, pero provisionales (fila de arriba): **C1, C2 y C3, de D en producción con `fit-0.9`** (`pitch/capturas/`). C1 enseña la parada por tipo y «¿Dónde?»; el marcador 3 de la slide 4 baja a «Qué falta aquí» (`.s4 .m3`, `top: 581px`); los `alt` dicen Puente de Vallecas y Latina al 94 %.
 
 Añadido el 14 nov (noche): en la slide 4, bajo los tres pasos, el recuadro «Probada con 7 personas» con lo que pidieron y ya está en la web (relato en `pitch/slides.md`, slide 3). Para que quepa, los pasos van con 24 px de separación en lugar de 40.
 

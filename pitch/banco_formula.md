@@ -17,7 +17,7 @@
 
 ## Resultados de la variante elegida
 
-Son cifras del banco con los datos del 15 nov. Entre paréntesis, la fórmula anterior (`fit-0.8`). Fuente: D-243 §7–9.
+Son cifras del banco con los datos del 15 nov. La columna «Antes» es la fórmula anterior (`fit-0.8`). Fuente: D-243 §7–9.
 
 | Qué | Antes | Con la elegida |
 |---|---|---|
@@ -38,13 +38,13 @@ Son cifras del banco con los datos del 15 nov. Entre paréntesis, la fórmula an
   - arriba empatan Puente de Vallecas y Latina al 94 %;
   - antes, Latina salía 1.ª al 98 %, con cuatro empatadas.
 
-**Lo que sigue sin validar.** Los parámetros nuevos (0,9 en el borde de la ventana, 0,6 en el límite del presupuesto, +25 %, la mitad, 89 % y 74 %) salen de las bandas y de umbrales que ya había. No están validados con usuarios. Habrá una segunda ronda con las mismas personas, que compare zonas de dos en dos, y el banco ya puede cargarla como preferencias «A mejor que B».
+**Lo que sigue sin validar.** Los parámetros nuevos (0,9 en el borde de la ventana, el 40 % de peso de las plazas y su cero al 40 % de la referencia, 0,6 en el límite del presupuesto, +25 %, la mitad, 89 % y 74 %) salen de las bandas y de umbrales que ya había. No están validados con usuarios. Habrá una segunda ronda con las mismas personas, que compare zonas de dos en dos, y el banco ya puede cargarla como preferencias «A mejor que B».
 
 **Lo que no arregla ninguna fórmula** (medido en el banco: son datos o producto).
 - **Alquiler de 2024 frente a los anuncios** (D10). Si todo fuera un 20 % más caro, el ejemplo del pitch pasaría de 42 a 39 zonas, y una persona sola con 900 € que trabaja en Sol, de 9 a 1. La web lo avisa en la lista y en la tarjeta.
 - **Solo transporte público** (B02, B05). Suponer coche cambiaría 3 o más zonas de las 10 primeras en el 64 % de las búsquedas con trabajo. Va a la hoja de ruta.
 - **Precio de compra estimado** (D11, D-234). Corregido el sesgo de Tetuán, a P1 (400.000 € para comprar) Tetuán le sale 5.º. Va a la hoja de ruta.
-- **Metros del piso.** P6 ve todos los distritos si busca 60 m² en lugar de los 77 que se suponen para su hogar.
+- **Metros del piso.** P6 ve todos los distritos si busca 60 m² en lugar de los 71 que se suponen para un hogar de 3 personas.
 
 ## Qué comprueba
 
