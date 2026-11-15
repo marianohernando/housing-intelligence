@@ -5,6 +5,7 @@ import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
 import type { RankedZone, SearchResult } from "@/contracts/search_response";
 import { useMapZones } from "@/components/map/MapProvider";
+import { useDatasets } from "@/components/provenance/useDatasets";
 import Button from "@/components/ui/Button";
 import GlassCard from "@/components/ui/GlassCard";
 import PriceTag from "@/components/ui/PriceTag";
@@ -17,6 +18,7 @@ import {
   floorAreaOf,
   noneText,
   passingText,
+  rentReferenceAvailable,
   rentUnknownText,
   tiedText,
   unknownText,
@@ -152,6 +154,7 @@ function NearMisses({ result }: { result: SearchResult }) {
  */
 export default function SearchResults({ children }: { children: ReactNode }) {
   const { status, result, error, stale, applied, undoRelaxation, retry } = useScenario();
+  const { data: datasets } = useDatasets();
   const slow = useSlow(status === "loading");
   const titleId = useId();
   const ref = useRef<HTMLDivElement>(null);
@@ -226,7 +229,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
 
   const rc = result.reality_check;
   const word = zoneWord(result);
-  const rentUnknown = rentUnknownText(result);
+  const rentUnknown = rentUnknownText(result, rentReferenceAvailable(datasets?.datasets));
   return (
     <div ref={ref} className={styles.stack}>
       {live}

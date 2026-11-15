@@ -25,6 +25,7 @@ from hi_contracts.catalog.pipeline import (
     OsmPoisPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
+    SerpaviRentPipeline,
     StationTopologyPipeline,
 )
 from hi_db.session import make_engine
@@ -58,6 +59,7 @@ from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
+from hi_ingestion.pipelines.serpavi.run import run_serpavi_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
 from hi_ingestion.pipelines.zone_context.run import run_zone_context_pipeline
@@ -172,6 +174,9 @@ def _run_one(
     if isinstance(spec, AeatRentComparisonPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_aeat_rent_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, SerpaviRentPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_serpavi_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, MadridPadronPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_padron_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)

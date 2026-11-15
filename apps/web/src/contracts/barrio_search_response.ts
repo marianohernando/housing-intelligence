@@ -12,6 +12,18 @@ export type EstimatedCostConfidence = number | null;
  * Monthly rent or purchase price for the needed area, as in RankedZone: the zone card shows it for any zone (D-234); None without a cost
  */
 export type EstimatedCostEur = number | null;
+/**
+ * 75th percentile, € per month for the needed area
+ */
+export type HighEur = number;
+/**
+ * 25th percentile, € per month for the needed area
+ */
+export type LowEur = number;
+/**
+ * Who publishes it and its year
+ */
+export type Source = string;
 export type FailedConstraints = string[];
 /**
  * None = unknown
@@ -315,10 +327,25 @@ export interface BarrioSearchResult {
 export interface ZoneMatch {
   estimated_cost_confidence?: EstimatedCostConfidence;
   estimated_cost_eur?: EstimatedCostEur;
+  /**
+   * Where half the leases fall, as in RankedZone (D-242)
+   */
+  estimated_cost_range?: CostRange | null;
   failed_constraints?: FailedConstraints;
   match_pct?: MatchPct;
   passes_all: PassesAll;
   zone: ZoneRef;
+}
+/**
+ * Where half the leases of the zone fall (D-242), for the household's m²: the 25th and 75th
+ * percentiles of the rent reference, scaled as the cost itself. Only with a rent that comes
+ * from the Ministry's reference (it fills the zones without the CM rent, which publishes means
+ * and no spread).
+ */
+export interface CostRange {
+  high_eur: HighEur;
+  low_eur: LowEur;
+  source: Source;
 }
 /**
  * A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.
@@ -352,6 +379,10 @@ export interface RankedZone {
   constraints: Constraints;
   estimated_cost_confidence?: EstimatedCostConfidence1;
   estimated_cost_eur?: EstimatedCostEur1;
+  /**
+   * Where half the leases fall, renting with the Ministry's rent reference (D-242); None otherwise
+   */
+  estimated_cost_range?: CostRange | null;
   facts: Facts;
   failed_constraints?: FailedConstraints1;
   gap_highlights?: GapHighlights;

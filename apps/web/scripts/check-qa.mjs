@@ -732,7 +732,7 @@ async function licences(browser) {
       await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
       for (const m of citedAll(lines, datasets)) failures.push(`${name} ${id}: falta ${m}`);
       const rest = entry.resto.join(" | ");
-      for (const must of ["del Ministerio de Sanidad ni de la Agencia Tributaria.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria"]) {
+      for (const must of ["de la Agencia Tributaria ni del Ministerio de Vivienda.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda"]) {
         if (!rest.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
       }
       if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);

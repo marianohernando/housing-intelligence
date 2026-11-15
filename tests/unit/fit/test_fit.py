@@ -1346,3 +1346,45 @@ def test_a_farther_bar_never_raises_the_match(a: float, b: float, other: float) 
     closer = evaluate(scenario, _leisure_zone(bares=near, restaurantes=other))
     farther = evaluate(scenario, _leisure_zone(bares=far, restaurantes=other))
     assert (closer.utility or 0.0) >= (farther.utility or 0.0)
+
+
+def _filled(code: str, rent: float = 9.0, spread: tuple[float, float] = (7.3, 10.6)) -> ZoneData:
+    """D-242: a zone whose rent is the Ministry's reference, with its quartiles per m²."""
+    return replace(
+        zone(code, rent=rent),
+        rent=_value("alquiler_m2_mensual_referencia", rent, 0.7),
+        rent_note="referencia del Ministerio de Vivienda para contratos firmados en 2024",
+        rent_range=spread,
+        rent_source="Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024",
+    )
+
+
+def test_a_reference_rent_carries_where_half_the_leases_fall() -> None:
+    fit = evaluate(family(anchors=[]), _filled("1"))
+    assert fit.cost_eur == 693  # 9 €/m² × 77 m²
+    assert fit.cost_range == (560.0, 820.0)
+    assert (
+        fit.cost_source == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
+    )
+    cost = next(f for f in fit.facts if f.topic is FactTopic.COSTE)
+    assert cost.text.endswith("la mitad de los contratos, entre 560 y 820 €")
+
+
+def test_the_range_is_only_for_renting_and_only_with_quartiles() -> None:
+    buying = family(budget=BUY_300K, anchors=[])
+    assert evaluate(buying, replace(_filled("1"), price=_value("p", 3000.0))).cost_range is None
+    assert evaluate(family(anchors=[]), zone("2")).cost_range is None  # the CM rent: no spread
+    result = run_search(family(anchors=[]), [_filled("1"), zone("2")])
+    ranges = {z.zone.code: z.estimated_cost_range for z in result.all_zones}
+    assert ranges["2"] is None
+    assert ranges["1"] is not None and (ranges["1"].low_eur, ranges["1"].high_eur) == (560, 820)
+    assert (
+        ranges["1"].source
+        == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
+    )
+
+
+def test_the_quartiles_never_move_the_fit() -> None:
+    """The range is shown, never scored: the same rent with or without it fits the same."""
+    plain = replace(_filled("1"), rent_range=None, rent_source=None)
+    assert evaluate(family(), _filled("1")).utility == evaluate(family(), plain).utility

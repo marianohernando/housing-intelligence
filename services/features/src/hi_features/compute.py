@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import fca, loaders, methods, walk
+from hi_features import fca, loaders, methods, reference_rent, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
@@ -187,6 +187,58 @@ def _anchored_relative_value(engine: Engine, f: dict[str, Any], level: str) -> p
     return result
 
 
+def _reference_rents(
+    engine: Engine, f: Mapping[str, Any], level: str
+) -> tuple[dict[str, dict[str, reference_rent.ReferenceRent]], Any]:
+    rent = loaders.observations(engine, f["metric"], level)
+    count = loaders.observations(engine, f["count_metric"], level)
+    return reference_rent.references_by_typology(rent, count, f["typology_dim"], f["statistic_dim"])
+
+
+def _calibration(engine: Engine, f: Mapping[str, Any]) -> reference_rent.Calibration:
+    """CM mean / reference median over the zones of `calibration.level` with both, in the
+    reference's own year (the CM figure of another year would measure a price change)."""
+    spec = f["calibration"]
+    refs, period = _reference_rents(engine, f, spec["level"])
+    reference = reference_rent.values_at(
+        loaders.observations(engine, spec["metric"], spec["level"]), spec.get("dims", {}), period
+    )
+    typologies = list(f["typologies"])
+    picked = {c: r for c, by in refs.items() if (r := reference_rent.pick(by, typologies))}
+    return reference_rent.calibration(reference, picked, int(spec["min_zones"]))
+
+
+def _reference_rent_fill(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-242: the Ministry's rent reference where the CM publishes none, scaled to the CM
+    figure (calibration) and to a lease signed in the year (D-228), quartiles included. A
+    barrio pools the census sections whose parent it is, weighted by their leases."""
+    typologies = list(f["typologies"])
+    source_level = f.get("source_level", level)
+    by_typology, period = _reference_rents(engine, f, source_level)
+    if source_level == level:
+        refs = {c: r for c, by in by_typology.items() if (r := reference_rent.pick(by, typologies))}
+    else:
+        parents = walk.section_parents(engine, level) or {}
+        refs = reference_rent.pooled(by_typology, parents, typologies)
+    zones = walk.zone_codes(engine, level)
+    within = f.get("within_municipio")
+    if within:
+        zones = [z for z in zones if z.startswith(str(within))]
+    few = f.get("few_contracts") or {}
+    confidence = reference_rent.FillConfidence(
+        base=float(f.get("confidence", 1.0)),
+        few_contracts_below=float(few.get("below", 0)),
+        few_contracts=float(few.get("max_confidence", 1.0)),
+        by_typology=f.get("typology_confidence"),
+    )
+    result = reference_rent.fill_rows(refs, zones, period, _calibration(engine, f), confidence)
+    adjust = new_contracts(engine, f)
+    if adjust is None:
+        return result
+    adjusted = methods.apply_new_contract_factors(result, *adjust)
+    return reference_rent.scale_quartiles_by_adjustment(adjusted)
+
+
 def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """CORE-005: walking access to the nearest destination of a kind, by zone."""
     version = walk.network_version(engine)
@@ -257,6 +309,7 @@ METHODS: dict[str, Method] = {
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
     "anchored_relative_value": _anchored_relative_value,
+    "reference_rent_fill": _reference_rent_fill,
     "metric_window_share": _metric_window_share,
     "metric_items": _metric_items,
 }
@@ -371,6 +424,12 @@ def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
     return {"new_contracts": adjustment} if isinstance(adjustment, dict) else {}
 
 
+def _reference(record: dict[str, Any]) -> dict[str, Any]:
+    """The reference rent behind a filled value (D-242): what the search shows as the range."""
+    reference = record.get("reference")
+    return {"reference_rent": reference} if isinstance(reference, dict) else {}
+
+
 def _detail(record: dict[str, Any]) -> dict[str, Any]:
     """What a context figure says besides its value (D-241), served with it by the API."""
     detail = record.get("detail")
@@ -399,6 +458,7 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
             }
             | _counts(r)
             | _adjustment(r)
+            | _reference(r)
             | _detail(r),
         }
         for r in records

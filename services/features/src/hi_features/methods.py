@@ -28,6 +28,7 @@ RESULT_COLUMNS = [
     "numerator",  # counts behind a per-population ratio (GAP-001 significance, D-213)
     "denominator",
     "adjustment",  # how a published value was adjusted (D-228: rent of new leases)
+    "reference",  # the reference rent behind a filled value (D-242: SERPAVI, calibration)
     "detail",  # what a context figure says besides its value (D-241): counts, period, items
 ]
 REGION_LEVEL = "ccaa"
@@ -715,6 +716,10 @@ def null_row(code: str, period: Any, reason: NullReason) -> dict[str, Any]:
 
 def result_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
     return _result(rows)
+
+
+def ok_row(code: str, period: Any, value: float, confidence: float = 1.0) -> dict[str, Any]:
+    return _ok(code, period, value, confidence)
 
 
 def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -> pd.DataFrame:

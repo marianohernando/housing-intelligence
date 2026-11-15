@@ -6,9 +6,13 @@ import styles from "./PriceTag.module.css";
  * The approximate price of a zone (D-234): «≈ 385.000 €» beside the % of a ranking row, or
  * «Comprar ≈ 385.000 €» in the zone card head, each with the m² it is for («por 68 m²»), the
  * person's or the usual for their household. Read aloud without «≈»; a figure that is not a
- * reliable one carries the card's words («Dato aproximado»), with their help as a tooltip.
+ * reliable one carries the card's words («Dato aproximado»), with their help as a tooltip. In the
+ * card, a rent from the Ministry's reference also says where half its leases fall and, on the
+ * next line, its source (D-242: «La mitad de los contratos, entre 510 y 820 €/mes» and
+ * «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024»).
  */
 export default function PriceTag({ price, variant }: { price: ZonePrice; variant: "row" | "card" }) {
+  const range = variant === "card" ? price.range : null;
   return (
     <span className={variant === "row" ? styles.row : styles.card} title={price.confidence?.help}>
       <span aria-hidden="true" className={styles.amount}>
@@ -21,6 +25,15 @@ export default function PriceTag({ price, variant }: { price: ZonePrice; variant
       )}
       <span className="visually-hidden">{price.aria}</span>
       {price.confidence && <small className={styles.mark}>{price.confidence.label}</small>}
+      {range && (
+        <small className={styles.range}>
+          <span aria-hidden="true">{range.text}</span>
+          <span aria-hidden="true" className={styles.source}>
+            {range.source}
+          </span>
+          <span className="visually-hidden">{range.aria}</span>
+        </small>
+      )}
     </span>
   );
 }

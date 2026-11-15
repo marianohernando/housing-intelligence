@@ -1,0 +1,15 @@
+{
+  "alquiler_m2_mensual_serpavi|distrito": 1476,
+  "alquiler_m2_mensual_serpavi|municipio": 1074,
+  "alquiler_m2_mensual_serpavi|seccion_censal": 26496,
+  "contratos_alquiler_serpavi|distrito": 492,
+  "contratos_alquiler_serpavi|municipio": 358,
+  "contratos_alquiler_serpavi|seccion_censal": 8832,
+  "out_of_province": 50062,
+  "territories": {
+    "distrito": 246,
+    "municipio": 179,
+    "seccion_censal": 4416
+  },
+  "observations": 38728
+}

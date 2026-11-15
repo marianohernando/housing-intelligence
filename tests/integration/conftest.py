@@ -10,6 +10,7 @@ from alembic.config import Config
 from pyproj import Transformer
 from sqlalchemy import Engine, create_engine, make_url, text
 
+from hi_contracts.catalog import FeatureSpec
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
     CmMunicipioConceptPipeline,
@@ -26,6 +27,7 @@ from hi_contracts.catalog.pipeline import (
     OsmPoisPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
+    SerpaviRentPipeline,
     StationTopologyPipeline,
 )
 from hi_db.session import make_engine
@@ -45,6 +47,7 @@ from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
+from hi_ingestion.pipelines.serpavi.run import run_serpavi_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
 from hi_ingestion.pipelines.zone_context.run import run_zone_context_pipeline
@@ -266,6 +269,16 @@ def fixtures_ingested(
                 evidence_root=None,
                 data_dir=tmp,
             )
+        elif isinstance(spec, SerpaviRentPipeline):  # D-242: the sections of the admin sample
+            src = local_file(
+                dataset_id, "primary", GOLDEN / "serpavi_sample" / f"{dataset_id}.xlsx"
+            )
+            sample = spec.model_copy(
+                update={"expected_municipios": 3, "expected_districts": 5, "min_sections": 19}
+            )
+            result = run_serpavi_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
         elif isinstance(spec, MadridPadronPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "padron_sample" / f"{dataset_id}.csv")
             sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
@@ -358,10 +371,21 @@ def ingest_zone_context(
     )
 
 
+def sample_feature(spec: FeatureSpec) -> FeatureSpec:
+    """D-242: the rent calibration needs 20 municipios with both figures; the sample has one
+    (Madrid), so it is measured on that one."""
+    formula = spec.formula.model_dump()
+    if formula["method"] != "reference_rent_fill":
+        return spec
+    formula["calibration"] = {**formula["calibration"], "min_zones": 1}
+    return spec.model_copy(update={"formula": type(spec.formula).model_validate(formula)})
+
+
 @pytest.fixture(scope="session")
 def features_computed(fixtures_ingested: None, migrated_engine: Engine) -> None:
     from hi_features.compute import METHODS, compute, persist
 
     for spec in load_catalog().features.values():
         if spec.formula.method in METHODS:
-            persist(migrated_engine, spec, compute(migrated_engine, spec))
+            sample = sample_feature(spec)
+            persist(migrated_engine, sample, compute(migrated_engine, sample))

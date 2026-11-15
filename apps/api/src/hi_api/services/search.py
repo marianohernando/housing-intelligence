@@ -26,6 +26,7 @@ from hi_contracts.public import (
     SearchResult,
     ZoneRef,
 )
+from hi_domain.affordability import HOUSES_NOTE, POOLED_RANGE_NOTE, POOLED_RANGE_SOURCE
 from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData, ignored_leisure
 from hi_domain.geo.names import display_name
 from hi_domain.geo.scope import in_scope
@@ -100,6 +101,14 @@ def _indicator(row: dict[str, Any]) -> IndicatorValue:
     )
 
 
+class FillDetail(NamedTuple):
+    """What a reference rent row says besides its value (its `inputs.reference_rent`)."""
+
+    quartiles: tuple[float, float] | None  # p25 and p75 per m², for a lease signed in the year
+    typology: str | None
+    sections: int | None = None  # pooled from this many census sections (a barrio)
+
+
 class Indicators(NamedTuple):
     rent: dict[tuple[str, str], IndicatorValue]
     rent_note: str | None  # what the rent figure is, from its feature's `fit.note` (D-228)
@@ -109,9 +118,24 @@ class Indicators(NamedTuple):
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]]
     priority_walk: dict[tuple[str, str], dict[PriorityKey, IndicatorValue]]
     transit: dict[tuple[str, str], dict[str, IndicatorValue]]  # by mode, only words a fact (D-233)
+    # D-242: the Ministry's reference rent, used only where the CM publishes none
+    rent_fill: dict[tuple[str, str], IndicatorValue]
+    rent_fill_detail: dict[tuple[str, str], FillDetail]
+    rent_fill_note: str | None
+    rent_fill_source: str | None
+
+
+class ZoneRent(NamedTuple):
+    """The rent a zone is searched with: the CM one when published, else the reference."""
+
+    rent: IndicatorValue | None
+    note: str | None
+    range_m2: tuple[float, float] | None = None
+    source: str | None = None
 
 
 TRANSIT_MODES = frozenset({"bus", "metro"})
+HOUSES_TYPOLOGY = "unifamiliar"  # the reference rent of single-family homes (D-242)
 # Every need is measured on foot, the leisure groups of «Ocio» too (D-236)
 NEED_VALUES = frozenset(n.value for n in NeedKey)
 # Only the priorities measured by walking to a place of their own (D-222, D-223): «ocio» scores
@@ -125,8 +149,23 @@ def _unknown_binding(fit: dict[str, Any]) -> str:
     return f"{fit['role']}:{detail}" if detail else str(fit["role"])
 
 
+def fill_detail(inputs: dict[str, Any]) -> FillDetail:
+    reference = inputs.get("reference_rent") or {}
+    quartiles = reference.get("quartiles") or {}
+    low, high = quartiles.get("p25"), quartiles.get("p75")
+    spread = None if low is None or high is None else (float(low), float(high))
+    sections = reference.get("sections")
+    return FillDetail(
+        spread, reference.get("typology"), None if sections is None else int(sections)
+    )
+
+
 def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
     rent: dict[tuple[str, str], IndicatorValue] = {}
+    rent_fill: dict[tuple[str, str], IndicatorValue] = {}
+    rent_fill_detail: dict[tuple[str, str], FillDetail] = {}
+    fill_note: str | None = None
+    fill_source: str | None = None
     price: dict[tuple[str, str], IndicatorValue] = {}
     price_estimate: dict[tuple[str, str], IndicatorValue] = {}
     walk: dict[tuple[str, str], dict[NeedKey, IndicatorValue]] = {}
@@ -140,6 +179,11 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
         if fit["role"] == "rent_m2":
             rent[key] = _indicator(row)
             rent_note = fit.get("note") or rent_note
+        elif fit["role"] == "rent_m2_fill":  # D-242: only where the CM publishes none
+            rent_fill[key] = _indicator(row)
+            rent_fill_detail[key] = fill_detail(row["inputs"])
+            fill_note = fit.get("note") or fill_note
+            fill_source = fit.get("source") or fill_source
         elif fit["role"] == "price_m2":
             price[key] = _indicator(row)
         elif fit["role"] == "price_m2_estimate":  # D-234: only where no price is published
@@ -155,7 +199,42 @@ def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
             unknown.add(_unknown_binding(fit))
     if unknown:
         log.warning("fit bindings ignored by this version: %s", sorted(unknown))
-    return Indicators(rent, rent_note, price, price_estimate, walk, priority_walk, transit)
+    return Indicators(
+        rent,
+        rent_note,
+        price,
+        price_estimate,
+        walk,
+        priority_walk,
+        transit,
+        rent_fill,
+        rent_fill_detail,
+        fill_note,
+        fill_source,
+    )
+
+
+def zone_rent(indicators: Indicators, key: tuple[str, str]) -> ZoneRent:
+    """D-242: the CM rent when it has a value, as always; else the Ministry's reference with
+    what it is, where half its leases fall and who publishes it; with neither, the CM row that
+    says why (or the reference's, without a CM row)."""
+    published = indicators.rent.get(key)
+    if published is not None and published.value is not None:
+        return ZoneRent(published, indicators.rent_note)
+    fill = indicators.rent_fill.get(key)
+    if fill is None or fill.value is None:
+        return ZoneRent(published or fill, indicators.rent_note)
+    detail = indicators.rent_fill_detail.get(key, FillDetail(None, None))
+    notes = [indicators.rent_fill_note] if indicators.rent_fill_note else []
+    if detail.typology == HOUSES_TYPOLOGY:
+        notes.insert(0, HOUSES_NOTE)
+    source = indicators.rent_fill_source
+    pooled = detail.sections or 0
+    if detail.quartiles is not None and pooled > 1:  # a barrio: the mean of its sections' ranges
+        notes.append(POOLED_RANGE_NOTE.format(n=pooled))
+        if source is not None:
+            source = POOLED_RANGE_SOURCE.format(source=source, n=pooled)
+    return ZoneRent(fill, "; ".join(notes) or None, detail.quartiles, source)
 
 
 def zone_price(indicators: Indicators, key: tuple[str, str]) -> tuple[IndicatorValue | None, bool]:
@@ -208,11 +287,14 @@ def load(conn: Connection, scenario: ScenarioState) -> Loaded:
         key = (row["level"], row["code"])
         zone_id = str(row["admin_unit_id"])
         price, price_estimated = zone_price(indicators, key)
+        rent = zone_rent(indicators, key)
         zones.append(
             ZoneData(
                 zone=zone_ref(row),
-                rent=indicators.rent.get(key),
-                rent_note=indicators.rent_note,
+                rent=rent.rent,
+                rent_note=rent.note,
+                rent_range=rent.range_m2,
+                rent_source=rent.source,
                 price=price,
                 price_estimated=price_estimated,
                 walk=indicators.walk.get(key, {}),

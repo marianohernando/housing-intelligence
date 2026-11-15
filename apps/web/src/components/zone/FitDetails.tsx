@@ -16,8 +16,19 @@ import {
 import { useId } from "react";
 
 import type { FactKind, FactTopic, SearchResult } from "@/contracts/search_response";
+import { useDatasets } from "@/components/provenance/useDatasets";
 import { confidenceText } from "@/lib/confidence";
-import { constraintLabels, failedLabels, hasWalkingFact, rankText, resultScope, WALK_MEDIAN, zoneFit, zoneWord } from "@/lib/fit";
+import {
+  constraintLabels,
+  failedLabels,
+  hasWalkingFact,
+  rankText,
+  rentReferenceAvailable,
+  resultScope,
+  WALK_MEDIAN,
+  zoneFit,
+  zoneWord,
+} from "@/lib/fit";
 import { SCOPE_LABEL } from "@/lib/scenario";
 
 import styles from "./ZoneCard.module.css";
@@ -37,8 +48,12 @@ const TEXT = {
       "Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda solo se publica para los municipios de más de 25.000 habitantes.",
     madrid: "Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda se publica para Madrid entero, no por distrito ni por barrio.",
   },
-  // zona.sin_alquiler (D-238): the same for renting in a municipio; districts and barrios bring their own reason
-  rentSource: "Con «Alquilar», puede faltar el alquiler: la Comunidad de Madrid solo lo publica para los municipios de más de 20.000 habitantes, y casi ningún pueblo los tiene.",
+  // zona.sin_alquiler (D-238, D-242): the same for renting in a municipio; districts and barrios bring their own reason.
+  // With the Ministry's reference published (D-242), only the municipios with very few rented homes lack it
+  rentSource: {
+    reference: "Con «Alquilar», puede faltar el alquiler: en los municipios con muy pocas viviendas alquiladas no se publica su precio.",
+    cm: "Con «Alquilar», puede faltar el alquiler: la Comunidad de Madrid solo lo publica para los municipios de más de 20.000 habitantes, y casi ningún pueblo los tiene.",
+  },
   // zona.fuera (D-238): a zone of the map outside «¿Dónde?»
   outside: (scope: string) => `Fuera de tu búsqueda (${scope}).`,
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
@@ -70,6 +85,7 @@ const KIND_CLASS: Record<FactKind, string | undefined> = {
  */
 export default function FitDetails({ result, zoneKey }: { result: SearchResult; zoneKey: string }) {
   const factsId = useId();
+  const { data: datasets } = useDatasets();
   const { match, ranked } = zoneFit(result, zoneKey);
   const scope = resultScope(result);
   if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope])}</p>;
@@ -96,7 +112,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
       {match.match_pct == null && buying && match.estimated_cost_eur == null && (
         <p className={styles.unknownWhy}>{zoneKey.startsWith("municipio/") ? TEXT.buySource.municipio : TEXT.buySource.madrid}</p>
       )}
-      {match.match_pct == null && rentingInMunicipio && <p className={styles.unknownWhy}>{TEXT.rentSource}</p>}
+      {match.match_pct == null && rentingInMunicipio && <p className={styles.unknownWhy}>{rentReferenceAvailable(datasets?.datasets) ? TEXT.rentSource.reference : TEXT.rentSource.cm}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>
           <h3 id={factsId}>{TEXT.facts}</h3>
