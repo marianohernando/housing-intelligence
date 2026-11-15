@@ -1,0 +1,44 @@
+vercel logs, deployment dpl_G26vduZvm6kATEGzMoyHjv1ftfM7, from 2026-11-15T11:07:00Z to 2026-11-15T11:25:54.793Z (UTC)
+runtime log lines: 825, more pages: false, levels:  825 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 7
+
+CDN: the full listing stops at 2,000 records (more pages), so the 4xx/5xx were asked for apart (--query 'httpStatus >= 400'):
+  43 records from 2026-11-15T11:07:00.000Z to 2026-11-15T11:26:11.000Z, more pages: false
+     2 11:12 404 /api/v1/features/ambitos_residenciales_en_desarrollo/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/compraventas_obra_nueva_pct/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/min_a_pie_aparcamiento_publico/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/no2_media_anual/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/pct_calle_ruido_dia/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/pct_calle_ruido_noche/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/plan_vive_viviendas/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/valor_tasado_vivienda_nueva_m2/values vida-facil-smoke/presync31
+     3 11:12 404 /api/v1/features/valor_tasado_vivienda_usada_m2/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/compraventas_obra_nueva_pct/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/min_a_pie_aparcamiento_publico/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/no2_media_anual/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/pct_calle_ruido_dia/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/pct_calle_ruido_noche/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/plan_vive_viviendas/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/valor_tasado_vivienda_nueva_m2/values vida-facil-smoke/presync31
+     1 11:13 404 /api/v1/features/valor_tasado_vivienda_usada_m2/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/ambitos_residenciales_en_desarrollo/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/compraventas_obra_nueva_pct/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/min_a_pie_aparcamiento_publico/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/no2_media_anual/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/pct_calle_ruido_dia/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/pct_calle_ruido_noche/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/plan_vive_viviendas/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/valor_tasado_vivienda_nueva_m2/values vida-facil-smoke/presync31
+     1 11:16 404 /api/v1/features/valor_tasado_vivienda_usada_m2/values vida-facil-smoke/presync31
+  none after 11:17 UTC; all 43 are this check's own requests before the sync (vida-facil-smoke/presync31) to the 9 features of D-237 and D-241
+First 2,000 CDN records by status: 200 × 1890 · 304 × 67 · 404 × 43
