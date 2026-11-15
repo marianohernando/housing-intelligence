@@ -12,6 +12,7 @@ import {
   gapSummary,
   GROUP,
   groupText,
+  householdRows,
   hospitalText,
   hospitalWalking,
   inGroup,
@@ -55,7 +56,7 @@ describe("rows", () => {
     for (const key of ROW_KEYS.filter((k) => k !== "vivienda")) {
       expect(ROW_MEASURE[key as keyof typeof ROW_MEASURE]).toMatch(/a 15 min andando .*repartid[oa]s entre todos los que l[oa]s tienen cerca$/);
     }
-    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud públicos/);
+    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud de la red pública de salud de la Comunidad \(SERMAS\)/);
     expect(ROW_MEASURE.vivienda).not.toMatch(/andando/);
   });
 
@@ -120,13 +121,13 @@ describe("comparison groups (gap-0.3, D-217)", () => {
     expect(text).toContain("sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles.");
     // the API: «…, tiene el 105 % de lo esperado»
     expect(health.explanation).toContain(`tiene el ${Math.round(100 * group.ratio_to_reference)} % de lo esperado`);
-    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)} % de lo que tienen de media los municipios de su tipo`);
+    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)}\u00a0% de lo que tienen de media los municipios de su tipo`);
   });
 
   it("uses the singular with one neighbour", () => {
     const text = groupText("El Álamo", { codes: ["28004", "28096"], names: ["El Álamo", "Navalcarnero"], ratio_to_reference: 1.0815 });
     expect(text).toContain("lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero.");
-    expect(text).toContain("Juntos tienen el 108 %");
+    expect(text).toContain("Juntos tienen el 108\u00a0%");
   });
 });
 
@@ -157,6 +158,28 @@ describe("sortRows and topRows", () => {
 
   it("keeps at most three rows for the zone card", () => {
     expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
+  });
+
+  // D-244, review R-01 of PR #79: a retired couple saw «Escuelas infantiles · FALTA» first
+  it("puts the rows of a household with older people first at the same status, never above what is missing", () => {
+    const allJusto = [
+      { row: "escuela_infantil", status: "JUSTO" },
+      { row: "colegio", status: "JUSTO" },
+      { row: "mayores", status: "JUSTO" },
+      { row: "farmacia", status: "CUBIERTO" },
+      { row: "centro_salud", status: "JUSTO" },
+    ] as const;
+    const older = householdRows({ seniors: true });
+    expect(older).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({ seniors_in_care: 1 })).toEqual(older);
+    expect(householdRows({ seniors: false, seniors_in_care: 0 })).toEqual([]);
+    expect(householdRows(undefined)).toEqual([]);
+    expect(topRows([...allJusto], 3, older).map((r) => r.row)).toEqual(["centro_salud", "mayores", "escuela_infantil"]);
+    // Without older people, the API order within a status, as before
+    expect(topRows([...allJusto], 3, householdRows({})).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "mayores"]);
+    // What is missing still comes first: a FALTA of another row goes above a JUSTO of the household
+    const falta = [{ row: "escuela_infantil", status: "FALTA" }, { row: "farmacia", status: "JUSTO" }, { row: "colegio", status: "JUSTO" }] as const;
+    expect(topRows([...falta], 3, older).map((r) => r.row)).toEqual(["escuela_infantil", "farmacia", "colegio"]);
   });
 });
 

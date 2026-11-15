@@ -1069,7 +1069,8 @@ def unreachable_fact(anchor: Anchor, trip: Commute) -> Fact:
     else:
         limit = duration_text(WALK_ZERO_AT * trip_window(anchor))
         why = f"Tardas {limit} o más en llegar a {anchor.label}"
-    text = f"{why}: el encaje se queda en la mitad"
+    # In plain words (review R-09 of PR #79): the card no longer says «encaje»
+    text = f"{why}: el % se queda en la mitad"
     return Fact(
         kind=FactKind.WEAKNESS, topic=FactTopic.TRAYECTO, text=text, confidence=trip.confidence
     )

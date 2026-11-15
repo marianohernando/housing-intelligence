@@ -35,7 +35,7 @@ import BudgetField, { budgetText } from "./BudgetField";
 import FloorAreaField from "./FloorAreaField";
 import LeisureField from "./LeisureField";
 import NearbyField from "./NearbyField";
-import PlaceField, { type StationList, useStations } from "./PlaceField";
+import PlaceField, { OlderPlaceField, type StationList, useStations } from "./PlaceField";
 import { useScenario } from "./ScenarioProvider";
 import styles from "./SearchCard.module.css";
 
@@ -50,7 +50,7 @@ const TEXT = {
   couple: "En pareja",
   children: "Con hijos",
   childrenCount: "¿Cuántos hijos?",
-  // hogar.mayores_somos (D-244): who the adults are, not one more person
+  // hogar.somos_mayores (D-244): who the adults are, not one more person
   older: "Somos mayores",
   olderHelp: "Para personas de 65 años o más. Elige también si vives solo/a o en pareja.",
   seniors: "Con una persona mayor a la que cuidas",
@@ -62,7 +62,7 @@ const TEXT = {
   workHelp: "Así miraremos lo lejos que te queda cada zona.",
   soon: "Muy pronto",
   more: "Más opciones",
-  moreWhat: (older: boolean) => (older ? "Trabajo, servicios a un paseo, familia o amigos y tamaño del piso" : "Servicios a un paseo, familia o amigos y tamaño del piso"),
+  moreWhat: (older: boolean) => (older ? "Trabajo, servicios a un paseo y tamaño del piso" : "Servicios a un paseo, familia o amigos y tamaño del piso"),
   moreChosen: (n: number) => (n === 1 ? "1 elegida" : `${n} elegidas`),
   submit: "Buscar zonas para mí",
   loading: "Buscando zonas…",
@@ -111,10 +111,13 @@ function peopleText(n: number): string {
   return n === 1 ? "1 persona en casa" : `${n} personas en casa`;
 }
 
-/** What the person set inside «Más opciones», so a folded choice is never a hidden one. */
+/**
+ * What the person set inside «Más opciones», so a folded choice is never a hidden one. With «Somos
+ * mayores» the work place is there, and the family goes in «¿Cerca de dónde queréis vivir?».
+ */
 function chosenInMore(s: ScenarioState, older: boolean): number {
   const work = older && placeOf(s, "work") ? 1 : 0;
-  const family = placeOf(s, "family") ? 1 : 0;
+  const family = !older && placeOf(s, "family") ? 1 : 0;
   const area = floorArea(s).household ? 0 : 1;
   return nearbyServices(s).length + work + family + area;
 }
@@ -185,7 +188,7 @@ function MattersField({ leisure }: { leisure: boolean }) {
 
 /**
  * «Más opciones», folded (UX mobile audit, option 1): what fewer people need. Nothing is lost: the
- * fold says how many choices it holds, and «Dinos dónde» opens it to reach «Trabajo en».
+ * fold says how many choices it holds. With «Somos mayores» it holds «Trabajo en».
  */
 function MoreOptions({ older, stationList }: { older: boolean; stationList: StationList }) {
   const { scenario } = useScenario();
@@ -205,7 +208,7 @@ function MoreOptions({ older, stationList }: { older: boolean; stationList: Stat
       <div className={styles.moreBody}>
         {older && <PlaceField kind="work" stationList={stationList} id={FIELD_ID.work} />}
         <NearbyField />
-        <PlaceField kind="family" stationList={stationList} />
+        {!older && <PlaceField kind="family" stationList={stationList} />}
         <FloorAreaField />
       </div>
     </details>
@@ -269,7 +272,8 @@ export default function SearchCard({ collapsible = false }: { collapsible?: bool
         <HomeField />
         <MattersField leisure={leisure} />
 
-        {available && !older && <PlaceField kind="work" stationList={stationList} id={FIELD_ID.work} />}
+        {/* «Somos mayores» (D-244): where they want to live, in view, instead of where they work */}
+        {available && (older ? <OlderPlaceField stationList={stationList} /> : <PlaceField kind="work" stationList={stationList} id={FIELD_ID.work} />)}
         {!available && (
           // Off, the search cannot use the work place yet: «Muy pronto», as before the search existed
           <div className={styles.group}>

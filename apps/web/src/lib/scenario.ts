@@ -96,10 +96,15 @@ export function isOlderHousehold(s: Pick<ScenarioState, "household">): boolean {
   return s.household?.seniors === true;
 }
 
+/** What «Somos mayores» marks in «¿Qué quieres tener cerca?» (D-244), in this order; each one can be taken away. */
+export const OLDER_PRIORITIES: readonly PriorityKey[] = ["salud", "sin_escaleras", "transporte"];
+
 /**
  * Marks or unmarks «Somos mayores» (D-244). It adds no one to the household (unlike the people
- * looked after, `seniors_in_care`). Marked, «Centro de salud» joins what matters, last, and the
- * person can take it away; unmarked, the field leaves the scenario, as it was before.
+ * looked after, `seniors_in_care`). Marked, OLDER_PRIORITIES join what matters, after what was
+ * already marked, and a search of the whole region with no place to go starts in Madrid capital
+ * (without a place, small well-served villages would come first, D-243 §13). Unmarked, the field
+ * leaves the scenario, as it was before; what it marked stays, in view, for the person to change.
  */
 export function setOlderHousehold(s: ScenarioState, on: boolean): ScenarioState {
   const home = { ...household(s) };
@@ -108,7 +113,13 @@ export function setOlderHousehold(s: ScenarioState, on: boolean): ScenarioState 
     return { ...s, household: home };
   }
   const priorities = s.priorities ?? [];
-  return { ...s, household: { ...home, seniors: true }, priorities: priorities.includes("salud") ? priorities : [...priorities, "salud"] };
+  const older: ScenarioState = {
+    ...s,
+    household: { ...home, seniors: true },
+    priorities: [...priorities, ...OLDER_PRIORITIES.filter((p) => !priorities.includes(p))],
+  };
+  const noPlace = (s.anchors ?? []).length === 0;
+  return noPlace && scopeOf(s) === "all" ? setScope(older, "madrid") : older;
 }
 
 /**
@@ -303,11 +314,14 @@ export interface Place {
   lon: number;
 }
 
-/** The places the search asks for: where the person works and, optionally, where family or friends live. */
-export type PlaceKind = "work" | "family";
+/**
+ * The places the search asks for: where the person works and, optionally, where family or friends
+ * live; with «Somos mayores», where they live now (`other`, D-244).
+ */
+export type PlaceKind = "work" | "family" | "other";
 
 /** Their order in `anchors`: the earlier a place, the more its trip weighs in the fit (the work place first). */
-const PLACE_KINDS: readonly PlaceKind[] = ["work", "family"];
+const PLACE_KINDS: readonly PlaceKind[] = ["work", "family", "other"];
 const kindOf = (a: Anchor) => a.kind ?? "work";
 /** Position of a place in `anchors`; kinds the web does not edit (from a shared link) go last. */
 const placeOrder = (a: Anchor) => (PLACE_KINDS as readonly string[]).indexOf(kindOf(a)) + 1 || PLACE_KINDS.length + 1;
@@ -396,19 +410,63 @@ export function exampleScenario(): ScenarioState {
 }
 
 /**
- * The second example of the portada (D-244): a retired couple who rent up to 900 € a month and
- * want the health centre close, with no place to go to. The audit's case (§1).
+ * The second example of the portada (D-244, Mariano's design): a retired couple renting up to
+ * 1.200 € a month who want to live near their family in Ciudad Lineal, 30 min by public transport
+ * as most, in Madrid capital, with what «Somos mayores» marks. The point is the Ciudad Lineal metro
+ * station of GET /api/v1/places, a public place, never a home address.
  */
 export function retiredExampleScenario(): ScenarioState {
   return {
     schema_version: 2,
-    budget: { kind: "rent", amount_eur: 900 },
+    scope: "madrid",
+    budget: { kind: "rent", amount_eur: 1_200 },
     min_floor_area_m2: null,
     household: { adults: 2, minors: 0, minor_ages: [], seniors_in_care: 0, seniors: true },
-    anchors: [],
+    anchors: [{ kind: "family", label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805, ...OLDER_TRIP }],
     nearby: [],
-    priorities: ["salud"],
+    priorities: [...OLDER_PRIORITIES],
   };
+}
+
+/**
+ * «¿Cerca de dónde queréis vivir?» (D-244), in place of «Trabajo en» for «Somos mayores»: where
+ * they live now (`other`, said as HOME_LABEL, never the place's own name) or near their family.
+ * The trip goes with 30 min as a limit the person can change, and 3 days a week, so it weighs as
+ * a place they go to often.
+ */
+export type OlderPlaceKind = "other" | "family";
+export const HOME_LABEL = "Donde vivimos ahora";
+export const OLDER_TRIP = { max_minutes: 30, days_per_week: 3 } as const;
+
+/** The place of «¿Cerca de dónde queréis vivir?», if the search has one. */
+export function olderPlace(s: ScenarioState): { kind: OlderPlaceKind; anchor: Anchor } | null {
+  for (const kind of ["other", "family"] as const) {
+    const anchor = placeOf(s, kind);
+    if (anchor) return { kind, anchor };
+  }
+  return null;
+}
+
+/** Sets (or with null, removes) the place of «¿Cerca de dónde queréis vivir?»: one place, of one of its two kinds. */
+export function setOlderPlace(s: ScenarioState, kind: OlderPlaceKind, place: Place | null): ScenarioState {
+  const kept = (s.anchors ?? []).filter((a) => kindOf(a) !== "other" && kindOf(a) !== "family");
+  if (!place) return { ...s, anchors: kept };
+  const label = kind === "other" ? HOME_LABEL : place.label.slice(0, LABEL_MAX);
+  const picked: Anchor = { kind, label, lat: place.lat, lon: place.lon, ...OLDER_TRIP };
+  return { ...s, anchors: [...kept, picked].sort((a, b) => placeOrder(a) - placeOrder(b)) };
+}
+
+/**
+ * The same point as the other kind: «Donde vivimos ahora» or near the family, keeping the limit.
+ * `familyLabel` names the family's place (the place picked, if the field still knows it).
+ */
+export function setOlderPlaceKind(s: ScenarioState, kind: OlderPlaceKind, familyLabel: string): ScenarioState {
+  const current = olderPlace(s);
+  if (!current || current.kind === kind) return s;
+  const label = kind === "other" ? HOME_LABEL : familyLabel.slice(0, LABEL_MAX);
+  const moved: Anchor = { ...current.anchor, kind, label };
+  const kept = (s.anchors ?? []).filter((a) => a !== current.anchor);
+  return { ...s, anchors: [...kept, moved].sort((a, b) => placeOrder(a) - placeOrder(b)) };
 }
 
 function toBase64Url(text: string): string {

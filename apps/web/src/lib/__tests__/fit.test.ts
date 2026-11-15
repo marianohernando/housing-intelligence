@@ -409,6 +409,13 @@ describe("many zones tied at the top (resultados.empate, D-239)", () => {
     );
   });
 
+  it("asks «Somos mayores» where they want to live, never where they work (D-244, R-13 of PR #79)", () => {
+    const older = { scope: "madrid" as const, household: { adults: 2, seniors: true } };
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: older })).toBe(
+      "Hay 106 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde queréis vivir para afinar el orden.",
+    );
+  });
+
   it("stays quiet on line A's search fixture, where the top is not a crowd", () => {
     expect(tiedText(fixture)).toBeNull();
   });
@@ -447,21 +454,23 @@ describe("the rent of 2024 (F5 of fit-0.9: zona.precio.aviso_2024, resultados.av
     expect(rentNotice({ ...fixture, results: unpriced, near_misses: [] })).toBeNull();
   });
 
-  it("is not said again in other words by the API's rent fact", () => {
+  it("is not said again in other words by the API's rent fact, and the cost says its figure in words (R-03)", () => {
     const rent = {
       topic: "coste" as const,
       text: "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
     };
-    expect(factText(rent, false)).toBe("Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024)");
+    expect(factText(rent, false)).toBe("Alquiler unos 1.101 € al mes por 77 m² (14,3 €/m², contratos firmados en 2024)");
     const village = {
       topic: "coste" as const,
       text: "Alquiler ≈ 571 €/mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 500 y 790 €",
     };
     expect(factText(village, false)).toBe(
-      "Alquiler ≈ 571 €/mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 500 y 790 €",
+      "Alquiler unos 571 € al mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 500 y 790 €",
     );
-    // Buying the card has no rent notice, so its facts stay as the API wrote them; other facts never change
-    expect(factText(rent, true)).toBe(rent.text);
+    // Buying the card has no rent notice, so the cost fact only says its figure in words; other facts never change
+    expect(factText(rent, true)).toBe("Alquiler unos 1.101 € al mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)");
+    const buy = { topic: "coste" as const, text: "Comprar ≈ 385.000 € por 68 m² (5.660 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)" };
+    expect(factText(buy, true)).toBe("Comprar unos 385.000 € por 68 m² (5.660 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)");
     expect(factText({ topic: "colegios", text: "Colegio; un anuncio de hoy puede pedir más" }, false)).toBe("Colegio; un anuncio de hoy puede pedir más");
   });
 });

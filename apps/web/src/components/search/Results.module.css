@@ -134,6 +134,11 @@
   display: none;
 }
 
+/* The price keeps to the right, also when it has to go under the band */
+.end > :last-child {
+  margin-left: auto;
+}
+
 /* «Muy buena opción» over «94 %» (F5 of fit-0.9): the band and the figure in one pill, beside the price */
 .pct {
   display: grid;

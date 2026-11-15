@@ -17,10 +17,14 @@ import {
   floorArea,
   floorAreaOptions,
   HOUSEHOLD_FLOOR_AREA_M2,
+  HOME_LABEL,
   isOlderHousehold,
   OFFICE_DAYS,
   officeDays,
   officeDaysOptions,
+  OLDER_PRIORITIES,
+  OLDER_TRIP,
+  olderPlace,
   LEISURE_KEYS,
   leisureConfig,
   nearbyServices,
@@ -42,6 +46,8 @@ import {
   setNearbyRequired,
   setNoBudgetLimit,
   setOlderHousehold,
+  setOlderPlace,
+  setOlderPlaceKind,
   setPlace,
   setPlaceMaxMinutes,
   setScope,
@@ -482,28 +488,62 @@ describe("«Somos mayores» (D-244)", () => {
     expect(floorArea(older)).toEqual(floorArea(couple));
   });
 
-  it("marks «Centro de salud» last, once, and the person can take it away", () => {
+  it("marks the health centre, step-free stations and transport, after what was marked, once each, and each can go", () => {
     const older = setOlderHousehold({ ...defaultScenario(), priorities: ["transporte"] }, true);
-    expect(older.priorities).toEqual(["transporte", "salud"]);
-    expect(setOlderHousehold({ ...defaultScenario(), priorities: ["salud", "colegios"] }, true).priorities).toEqual(["salud", "colegios"]);
-    expect(togglePriority(older, "salud").priorities).toEqual(["transporte"]);
+    expect(OLDER_PRIORITIES).toEqual(["salud", "sin_escaleras", "transporte"]);
+    expect(older.priorities).toEqual(["transporte", "salud", "sin_escaleras"]);
+    expect(setOlderHousehold(defaultScenario(), true).priorities).toEqual(["salud", "sin_escaleras", "transporte"]);
+    expect(togglePriority(older, "salud").priorities).toEqual(["transporte", "sin_escaleras"]);
   });
 
-  it("unmarked, leaves the household as it was before the field, and keeps what matters", () => {
+  it("starts in Madrid capital when the whole region has no place to go, and never overrides a choice", () => {
+    expect(setOlderHousehold(defaultScenario(), true).scope).toBe("madrid");
+    expect(setOlderHousehold(setScope(defaultScenario(), "alrededores"), true).scope).toBe("alrededores");
+    const withPlace = setPlace(defaultScenario(), "family", { label: "Getafe Central (Cercanías)", lon: -3.71, lat: 40.31 });
+    expect("scope" in setOlderHousehold(withPlace, true)).toBe(false);
+    // The person can go back to the whole region
+    expect("scope" in setScope(setOlderHousehold(defaultScenario(), true), "all")).toBe(false);
+  });
+
+  it("unmarked, leaves the household as it was before the field, and keeps what it marked in view", () => {
     const back = setOlderHousehold(setOlderHousehold(defaultScenario(), true), false);
     expect("seniors" in (back.household ?? {})).toBe(false);
     expect(back.household).toEqual(defaultScenario().household);
-    expect(back.priorities).toEqual(["salud"]);
+    expect(back.priorities).toEqual(["salud", "sin_escaleras", "transporte"]);
     expect(isOlderHousehold(defaultScenario())).toBe(false);
   });
 
-  it("is the second example: a retired couple renting up to 900 € who want the health centre close", () => {
+  it("asks where they want to live: where they live now (never its own name) or near their family, 30 min and 3 days", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const home = setOlderPlace(defaultScenario(), "other", station);
+    expect(olderPlace(home)).toEqual({ kind: "other", anchor: { kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 30, days_per_week: 3 } });
+    expect(HOME_LABEL).toBe("Donde vivimos ahora");
+    const family = setOlderPlace(home, "family", station);
+    expect(family.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: station.lon, lat: station.lat, ...OLDER_TRIP }]);
+    // One place: the other kind takes the same point, and keeps a limit the person changed
+    const limited = setPlaceMaxMinutes(family, "family", 45);
+    const moved = setOlderPlaceKind(limited, "other", "Ciudad Lineal (metro)");
+    expect(moved.anchors).toEqual([{ kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 45, days_per_week: 3 }]);
+    expect(setOlderPlaceKind(moved, "family", "Ciudad Lineal (metro)").anchors?.[0]?.label).toBe("Ciudad Lineal (metro)");
+    expect(setOlderPlace(moved, "other", null).anchors).toEqual([]);
+    // A work place stays, before the place to live near
+    const working = setOlderPlace(setPlace(defaultScenario(), "work", station), "other", station);
+    expect(working.anchors?.map((a) => a.kind)).toEqual(["work", "other"]);
+  });
+
+  it("is the second example: a retired couple renting up to 1.200 € near their family in Ciudad Lineal", () => {
     const retired = retiredExampleScenario();
-    expect(retired).toMatchObject({ budget: { kind: "rent", amount_eur: 900 }, household: { adults: 2, minors: 0, seniors: true }, priorities: ["salud"] });
-    expect(retired.anchors).toEqual([]);
+    expect(retired).toMatchObject({
+      scope: "madrid",
+      budget: { kind: "rent", amount_eur: 1_200 },
+      household: { adults: 2, minors: 0, seniors: true },
+      priorities: ["salud", "sin_escaleras", "transporte"],
+    });
+    // The Ciudad Lineal metro station of GET /api/v1/places: a public place, never a home address
+    expect(retired.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805, max_minutes: 30, days_per_week: 3 }]);
+    expect(olderPlace(retired)?.kind).toBe("family");
     expect(peopleAtHome(retired)).toBe(2);
     expect(floorArea(retired)).toEqual({ m2: 68, household: true });
-    expect("scope" in retired).toBe(false);
     expect(decodeScenario(encodeScenario(retired))).toEqual(retired);
   });
 });

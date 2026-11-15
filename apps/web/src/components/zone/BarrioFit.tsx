@@ -49,7 +49,7 @@ function Barrio({ row }: { row: BarrioRow }) {
   const head = (
     <>
       <span className={styles.name}>{row.name}</span>
-      {/* The price under the %, so the name keeps its width at 390 px (D-234) */}
+      {/* The band, the % and the price on the line under the name, as in the list (R-04 of PR #79) */}
       <span className={styles.end}>
         {row.fit && (
           <span className={styles.pct} title={TEXT.fitHelp}>

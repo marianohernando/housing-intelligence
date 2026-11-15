@@ -54,7 +54,8 @@ export function matchBand(zone: Banded): MatchBand | null {
 export function bandRanges(): [string, string][] {
   return BAND_FROM.map(([band, from], i) => {
     const above = BAND_FROM[i - 1]?.[1];
-    const range = above === undefined ? `${from} % o más` : from === 0 ? `Menos del ${above} %` : `De ${from} a ${above - 1} %`;
+    // A no-break space before every «%» (review R-05 of PR #79): «90 %» never splits at the end of a line
+    const range = above === undefined ? `${from}\u00a0% o más` : from === 0 ? `Menos del ${above}\u00a0%` : `De ${from} a ${above - 1}\u00a0%`;
     return [range, BAND_TEXT[band]];
   });
 }
@@ -153,7 +154,7 @@ export function rankingRows<Z extends RankedZone>(shown: readonly Z[], all: read
     const total = Math.max(tiedWith(zone, all).length + 1, shown.filter((z) => z.match_pct === zone.match_pct).length);
     if (total < 2) return { zone, tie: null };
     const inView = shown.filter((z) => z.match_pct === zone.match_pct).length;
-    const label = total > inView ? `Empatan al ${zone.match_pct} % (${zonesText(total, word)})` : `Empatan al ${zone.match_pct} %`;
+    const label = total > inView ? `Empatan al ${zone.match_pct}\u00a0% (${zonesText(total, word)})` : `Empatan al ${zone.match_pct}\u00a0%`;
     return { zone, tie: { first: !before, last: !after, label } };
   });
 }

@@ -39,6 +39,11 @@ export function budgetText(budget: { kind: BudgetKind; amount_eur: number } | nu
 
 const OTHER = "other";
 
+/** A budget as a key: «Otra cantidad» and what is typed belong to the figure they were set at. */
+function budgetKey(budget: { kind: BudgetKind; amount_eur: number } | null): string {
+  return budget ? `${budget.kind}:${budget.amount_eur}` : "none";
+}
+
 /**
  * «Presupuesto» (D-203): renting or buying, then the amount with one tap (QUICK_BUDGETS), typed
  * («Otra cantidad») or on the slider; the three move the same figure.
@@ -49,10 +54,19 @@ export default function BudgetField({ available }: { available: boolean }) {
   const budget = scenario.budget ?? null;
   const kind = budget?.kind ?? "rent";
   const range = BUDGET_RANGE[kind];
-  // «Otra cantidad» stays chosen while the person types, even through an amount that has its own button
-  const [other, setOther] = useState(false);
+  const key = budgetKey(budget);
+  // «Otra cantidad» stays chosen while the person types, even through an amount that has its own
+  // button; it and what is typed belong to a figure, so a budget changed from outside (an example,
+  // «¿Quieres ver más zonas?», «Volver a mi búsqueda») resets both (review R-07 of PR #79)
+  const [otherAt, setOtherAt] = useState<string | null>(null);
+  const [typing, setTyping] = useState<{ at: string; text: string } | null>(null);
+  const other = otherAt === key;
   // What the person is typing; null shows the amount of the search
-  const [typed, setTyped] = useState<string | null>(null);
+  const typed = typing?.at === key ? typing.text : null;
+  const reset = () => {
+    setOtherAt(null);
+    setTyping(null);
+  };
   const quick = budget !== null && !other && QUICK_BUDGETS[kind].includes(budget.amount_eur);
   const picked = quick ? String(budget.amount_eur) : OTHER;
   const wrong = typed !== null && typed.trim() !== "" && typedBudget(typed, kind) === null;
@@ -68,8 +82,7 @@ export default function BudgetField({ available }: { available: boolean }) {
           { value: "buy", label: TEXT.buy },
         ]}
         onChange={(next) => {
-          setOther(false);
-          setTyped(null);
+          reset();
           update((s) => setBudgetKind(s, next));
         }}
       />
@@ -82,11 +95,10 @@ export default function BudgetField({ available }: { available: boolean }) {
             options={[...QUICK_BUDGETS[kind].map((amount) => ({ value: String(amount), label: formatEuros(amount) })), { value: OTHER, label: TEXT.other }]}
             onChange={(value) => {
               if (value === OTHER) {
-                setOther(true);
+                setOtherAt(key);
                 return;
               }
-              setOther(false);
-              setTyped(null);
+              reset();
               update((s) => setBudgetAmount(s, Number(value)));
             }}
           />
@@ -102,16 +114,23 @@ export default function BudgetField({ available }: { available: boolean }) {
                 aria-invalid={wrong}
                 aria-describedby={wrong ? `${id}-error` : undefined}
                 onChange={(e) => {
-                  setTyped(e.target.value);
-                  const amount = typedBudget(e.target.value, kind);
-                  if (amount !== null) update((s) => setTypedBudget(s, amount));
+                  const text = e.target.value;
+                  const amount = typedBudget(text, kind);
+                  if (amount === null) {
+                    setTyping({ at: key, text });
+                    return;
+                  }
+                  const at = budgetKey({ kind, amount_eur: amount });
+                  setOtherAt(at);
+                  setTyping({ at, text });
+                  update((s) => setTypedBudget(s, amount));
                 }}
                 onBlur={() => {
-                  if (!wrong) setTyped(null);
+                  if (!wrong) setTyping(null);
                 }}
               />
               {wrong && (
-                <p id={`${id}-error`} className={styles.error}>
+                <p id={`${id}-error`} role="alert" className={styles.error}>
                   {TEXT.outOfRange(kind)}
                 </p>
               )}
@@ -131,7 +150,7 @@ export default function BudgetField({ available }: { available: boolean }) {
             aria-label={TEXT.sliderAria}
             aria-valuetext={budgetText(budget)}
             onChange={(e) => {
-              setTyped(null);
+              reset();
               update((s) => setBudgetAmount(s, Number(e.target.value)));
             }}
           />
@@ -143,8 +162,7 @@ export default function BudgetField({ available }: { available: boolean }) {
             type="checkbox"
             checked={!budget}
             onChange={(e) => {
-              setOther(false);
-              setTyped(null);
+              reset();
               update((s) => setNoBudgetLimit(s, e.target.checked));
             }}
           />

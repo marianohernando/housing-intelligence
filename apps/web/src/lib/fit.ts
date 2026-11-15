@@ -112,11 +112,15 @@ export const RENT_2024_NOTICE = "Precio orientativo: hoy puede ser algo más car
 const RENT_FACT_NOTICE = /;\s*un anuncio de hoy puede pedir más/;
 
 /**
- * The text of a fact as the card shows it: renting, the rent fact no longer repeats in other
- * words what RENT_2024_NOTICE already says by the price («…, contratos firmados en 2024)»).
+ * The text of a fact as the card shows it. The cost fact says its figure in words, as the card's
+ * head does («Alquiler unos 1.101 € al mes por 77 m²», review R-03 of PR #79: «≈» was a sign to
+ * decode); renting, it no longer repeats in other words what RENT_2024_NOTICE says by the price.
+ * infra/deploy/e2e/shown_text.mjs (factAsShown) keeps the same rule.
  */
 export function factText(fact: Pick<Fact, "topic" | "text">, buying: boolean): string {
-  return !buying && fact.topic === "coste" ? fact.text.replace(RENT_FACT_NOTICE, "") : fact.text;
+  if (fact.topic !== "coste") return fact.text;
+  const text = buying ? fact.text : fact.text.replace(RENT_FACT_NOTICE, "");
+  return text.replace(/≈ /g, "unos ").replace(/€\/mes/g, "€ al mes");
 }
 
 /** resultados.aviso_2024: over the results whose prices are rents (renting, or without a budget), with some price shown. */
@@ -327,7 +331,9 @@ export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "s
   const n = tiedAtTop(result);
   const word = zoneWord(result);
   const good = WORDS[word].feminine ? "buenas" : "buenos";
-  return n > MANY_TIED ? `Hay ${zonesText(n, word)} igual de ${good}: marca qué quieres tener cerca o dónde trabajas para afinar el orden.` : null;
+  // «Somos mayores» is asked where they want to live, never where they work (D-244, review R-13 of PR #79)
+  const place = result.scenario.household?.seniors === true ? "elige cerca de dónde queréis vivir" : "dónde trabajas";
+  return n > MANY_TIED ? `Hay ${zonesText(n, word)} igual de ${good}: marca qué quieres tener cerca o ${place} para afinar el orden.` : null;
 }
 
 /** Where «Trabajo en» and «¿Dónde?» are in «Tu búsqueda», for resultados.sin_lugar to take the person there. */

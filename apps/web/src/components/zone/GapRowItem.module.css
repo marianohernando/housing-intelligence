@@ -148,15 +148,9 @@
   font-size: var(--text-sm);
 }
 
+/* The confidence word, as a «?» button that opens what it means */
 .confidence {
   justify-self: start;
-  padding: 0 var(--space-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--ink-soft);
-  font-size: var(--text-sm);
-  font-weight: 500;
 }
 
 .note {

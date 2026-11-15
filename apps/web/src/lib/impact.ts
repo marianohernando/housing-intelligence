@@ -23,7 +23,7 @@ export function impactSentence(row: Pick<GapImpactRow, "people_label" | "row">):
 /** «El 9,8 % de toda la Comunidad, en 3 zonas.» */
 export function impactContext(row: Pick<GapImpactRow, "share_in_falta" | "zones_in_falta">): string {
   const zones = row.zones_in_falta === 1 ? "1 zona" : `${row.zones_in_falta} zonas`;
-  return `El ${formatNumber(100 * row.share_in_falta, 1)} % de toda la Comunidad, en ${zones}.`;
+  return `El ${formatNumber(100 * row.share_in_falta, 1)}\u00a0% de toda la Comunidad, en ${zones}.`;
 }
 
 /** Rows with people in FALTA, in the API order, apart from those with no zone clearly short. */

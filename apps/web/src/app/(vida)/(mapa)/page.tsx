@@ -32,7 +32,7 @@ export default function MapaPage() {
               <h2 id="como-funciona">Así funciona</h2>
               <ol className={styles.list}>
                 <li>
-                  <strong>Cuéntanos cómo es tu hogar</strong> y lo que te importa: colegios, salud, transporte…
+                  <strong>Cuéntanos cómo es tu hogar</strong> y lo que quieres tener cerca: colegios, centro de salud, transporte…
                 </li>
                 <li>
                   <strong>Mira las zonas que te convienen</strong> y por qué, con hechos que puedes comprobar.

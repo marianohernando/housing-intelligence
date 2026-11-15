@@ -12,7 +12,7 @@ const TEXT = {
   buttons: {
     family: "Ejemplo: pareja con 2 hijos que trabaja en la Castellana",
     // portada.ejemplo.mayores (D-244): the audit's case, a retired couple
-    retired: "Ejemplo: pareja jubilada que quiere el centro de salud cerca",
+    retired: "Ejemplo: pareja jubilada que quiere vivir cerca de su familia",
   } satisfies Record<Example, string>,
   help: "Rellenamos la búsqueda por ti. Luego puedes cambiar lo que quieras.",
 };

@@ -3,6 +3,7 @@
 //   J2 «Qué falta» → «Madrid (toda la ciudad)»
 //   J3 map by row («¿Qué quieres ver?»)
 //   J4 the list of zones
+//   J5 «Somos mayores» (D-244): the retired couple's example, then a quick amount of 900 €
 // Every figure on screen is compared with the API response the page itself received: no fixed
 // numbers, so the checks survive a data sync. Browser console errors and horizontal overflow fail.
 //
@@ -236,6 +237,45 @@ async function checkRealityCheck(run, page, rc) {
   run.check(J, "undone: back to the original zones", back === rc.zones_passing, back);
 }
 
+/**
+ * J5: the retired couple's example (D-244, Mariano's design) reaches /search as «Somos mayores»
+ * with what it marks and where they want to live, the list never asks where they work, and a quick
+ * amount sends its euros as they are.
+ */
+async function journeySeniors(run, page) {
+  const J = "J5 Somos mayores";
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const [first] = await Promise.all([
+    page.waitForResponse(isSearch, { timeout: WAIT }),
+    page.getByRole("button", { name: /pareja jubilada/ }).click(),
+  ]);
+  run.check(J, "POST /search 200", first.status() === 200, first.status());
+  const sent = first.request().postDataJSON();
+  run.check(J, "household.seniors === true", sent?.household?.seniors === true, JSON.stringify(sent?.household));
+  const marked = ["salud", "sin_escaleras", "transporte"];
+  run.check(J, "priorities: salud, sin_escaleras and transporte", marked.every((p) => sent?.priorities?.includes(p)), JSON.stringify(sent?.priorities));
+  run.check(J, "scope: madrid", sent?.scope === "madrid", sent?.scope);
+  run.check(J, "a family place, 30 min as most, 3 days", sent?.anchors?.length === 1 && sent.anchors[0].kind === "family" &&
+    sent.anchors[0].max_minutes === 30 && sent.anchors[0].days_per_week === 3, JSON.stringify(sent?.anchors));
+  const data = (await first.json()).data;
+  const n = data.reality_check.zones_passing;
+  const summary = n === 0 ? "No hemos encontrado ningún barrio para ti." : n === 1 ? "Hemos encontrado 1 barrio para ti." : `Hemos encontrado ${n} barrios para ti.`;
+  await page.getByText(summary).first().waitFor({ timeout: WAIT });
+  run.check(J, "summary = API zones_passing, in barrios", true, summary);
+  run.check(J, "never asks where they work", (await page.getByText("¿Trabajas fuera de casa?").count()) === 0);
+  await run.shot(page, "j5-seniors");
+  const [quick] = await Promise.all([
+    page.waitForResponse(isSearch, { timeout: WAIT }),
+    (async () => {
+      await page.getByRole("radio", { name: "900 €", exact: true }).check();
+      await page.getByRole("button", { name: SEARCH_BUTTON }).click();
+    })(),
+  ]);
+  run.check(J, "a quick amount of 900 € reaches /search as it is", quick.status() === 200 && quick.request().postDataJSON()?.budget?.amount_eur === 900,
+    JSON.stringify(quick.request().postDataJSON()?.budget));
+  await run.overflow(page, J);
+}
+
 async function journeyMadrid(run, page) {
   const J = "J2 Qué falta Madrid";
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
@@ -336,7 +376,7 @@ async function runCombination(browserName, device) {
   const started = Date.now();
   try {
     for (const [name, journey] of [["J1 search", journeySearch], ["J2 Qué falta Madrid", journeyMadrid],
-      ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList]]) {
+      ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList], ["J5 Somos mayores", journeySeniors]]) {
       const context = await browser.newContext(options);
       if (opts["block-external"]) {
         await context.route("**/*", (route) => {

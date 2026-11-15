@@ -8,11 +8,13 @@ export const RENT_2024_NOTICE = "Precio orientativo: hoy puede ser algo más car
 
 /**
  * A fact as the card shows it: renting, the rent fact goes without its «; un anuncio de hoy puede
- * pedir más», which RENT_2024_NOTICE says by the price. Applied whatever the budget, the result is
- * still contained in the API's text, so the check holds for a purchase and for an older web too.
+ * pedir más», which RENT_2024_NOTICE says by the price, and the cost fact says its figure in words
+ * («unos 1.101 € al mes», not «≈ 1.101 €/mes»). Applied whatever the budget: a purchase fact has no
+ * such warning, so it gets only the words, as in the web (factText of apps/web/src/lib/fit.ts).
  */
 export function factAsShown(fact) {
-  return fact.topic === "coste" ? fact.text.replace(/;\s*un anuncio de hoy puede pedir más/, "") : fact.text;
+  if (fact.topic !== "coste") return fact.text;
+  return fact.text.replace(/;\s*un anuncio de hoy puede pedir más/, "").replace(/≈ /g, "unos ").replace(/€\/mes/g, "€ al mes");
 }
 
 /**

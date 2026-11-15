@@ -77,7 +77,7 @@ export function groupText(zoneName: string, group: ComparisonGroup): string {
   return (
     `Comparado con municipios parecidos de la zona. ${zoneName} es demasiado pequeño para compararlo solo en este servicio, ` +
     `así que lo juntamos con ${who} más ${others.length === 1 ? "cercano" : "cercanos"} del mismo tipo: ${listNames(others)}. ` +
-    `Juntos tienen el ${formatNumber(share, 0)} % de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.`
+    `Juntos tienen el ${formatNumber(share, 0)}\u00a0% de lo que tienen de media los municipios de su tipo, y de ahí sale el estado.`
   );
 }
 
@@ -139,7 +139,7 @@ export function peopleAffectedText(row: { status: GapStatus; people?: { count: n
 export const ROW_MEASURE: Record<GapRowKey, string> = {
   escuela_infantil: "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
   colegio: "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
-  centro_salud: "Centros de salud públicos a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+  centro_salud: "Centros de salud de la red pública de salud de la Comunidad (SERMAS) a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
   mayores: "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
   farmacia: "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
   vivienda: "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
@@ -174,16 +174,35 @@ const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 
 
 type Classified = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
 
-/** What is missing first, a small zone after a comparable one; otherwise the API order. */
-export function sortRows<T extends Classified>(rows: readonly T[]): T[] {
-  // «No comparable» after CUBIERTO and before SIN DATOS, as the small zones went before (D-230)
-  const rank = (r: T) => (notComparable(r) ? 5 : STATUS_ORDER[r.status] * 2);
-  return [...rows].sort((a, b) => rank(a) - rank(b));
+/** Where a row goes by its status: «No comparable» after CUBIERTO and before SIN DATOS, as the small zones went before (D-230). */
+function statusRank(r: Classified): number {
+  return notComparable(r) ? 5 : STATUS_ORDER[r.status] * 2;
 }
 
-/** The zone card shows three rows: what is missing first. */
-export function topRows<T extends Classified>(rows: readonly T[], limit = 3): T[] {
-  return sortRows(rows).slice(0, limit);
+/** What is missing first, a small zone after a comparable one; otherwise the API order. */
+export function sortRows<T extends Classified>(rows: readonly T[]): T[] {
+  return [...rows].sort((a, b) => statusRank(a) - statusRank(b));
+}
+
+/**
+ * The rows that matter most to a household with older people, themselves («Somos mayores») or
+ * looked after (D-244, review R-01 of PR #79): the health centre, the pharmacy and the centres for
+ * older people. Empty for any other household.
+ */
+export const OLDER_ROWS: readonly GapRowKey[] = ["centro_salud", "farmacia", "mayores"];
+
+export function householdRows(household: { seniors?: boolean; seniors_in_care?: number } | null | undefined): readonly GapRowKey[] {
+  return household?.seniors === true || (household?.seniors_in_care ?? 0) > 0 ? OLDER_ROWS : [];
+}
+
+/**
+ * The zone card shows three rows: what is missing first and, at the same status, the household's
+ * own rows (`first`, in its order) before the others, which keep the API order.
+ */
+export function topRows<T extends Classified & { row?: GapRowKey }>(rows: readonly T[], limit = 3, first: readonly GapRowKey[] = []): T[] {
+  const mine = (r: T) => (r.row !== undefined && first.includes(r.row) ? first.indexOf(r.row) : first.length);
+  // A stable sort: rows with the same status and no place in `first` keep the API order
+  return [...rows].sort((a, b) => statusRank(a) - statusRank(b) || mine(a) - mine(b)).slice(0, limit);
 }
 
 type SummaryRow = Classified & { row: GapRowKey };

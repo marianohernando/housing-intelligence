@@ -192,8 +192,7 @@ def test_a_trip_that_scores_zero_three_days_a_week_halves_the_fit() -> None:
     far = evaluate(going(3), with_trip(zone("1"), 90.0))
     assert far.utility == pytest.approx(0.5 * (usual.utility or 0), abs=0.05)
     assert far.facts[0].text == (
-        "Tardas 1 h 30 o más en llegar a Paseo de la Castellana (Azca): "
-        "el encaje se queda en la mitad"
+        "Tardas 1 h 30 o más en llegar a Paseo de la Castellana (Azca): el % se queda en la mitad"
     )
     assert far.facts[0].kind is FactKind.WEAKNESS and far.facts[0].topic is FactTopic.TRAYECTO
     assert any(f.text.startswith("90 min en transporte público") for f in far.facts)
@@ -202,7 +201,7 @@ def test_a_trip_that_scores_zero_three_days_a_week_halves_the_fit() -> None:
 def test_no_arrival_by_9_halves_the_fit_and_says_so() -> None:
     fit = evaluate(going(5), with_trip(zone("1"), None))
     assert fit.facts[0].text == (
-        "No llegas a Paseo de la Castellana (Azca) a las 9:00 en transporte público: el encaje se "
+        "No llegas a Paseo de la Castellana (Azca) a las 9:00 en transporte público: el % se "
         "queda en la mitad"
     )
     # said once: the trip's own fact («Con los horarios publicados no se llega…») is replaced

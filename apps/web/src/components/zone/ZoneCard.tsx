@@ -20,6 +20,7 @@ import {
   GAPS_HELP,
   gapsHref,
   GROUP,
+  householdRows,
   inGroup,
   nearButShort,
   notComparable,
@@ -90,7 +91,7 @@ function statusLines(rows: readonly RowStatus[]): [string, string][] {
 export default function ZoneCard({ zone, mode, onClose }: Props) {
   const { level, code, name, municipio_name, zone_key } = zone;
   const titleId = useId();
-  const { result, available, stale } = useScenario();
+  const { result, available, stale, scenario } = useScenario();
   const isBarrio = level === "barrio";
   const gapsOf = screenZone(zone);
   const gaps = useZoneGaps(gapsOf.level, gapsOf.code);
@@ -102,6 +103,8 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   // D-234: the approximate price, in the head; none without a price (the search's notice says why)
   const price = result ? zonePriceOf(result, zone_key) : null;
   const rows = gaps.data?.data.rows ?? [];
+  // The three rows in view: what is missing first and, at the same status, those of the household (D-244, R-01)
+  const shown = topRows(rows, 3, householdRows(scenario.household));
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
   // rows are the whole district's, and the line says «aquí»
@@ -173,7 +176,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && (
           <ul className={styles.rows}>
-            {topRows(rows).map((row) => {
+            {shown.map((row) => {
               const walk = walking(row.extra_indicators, row.row);
               return (
                 <li key={row.row}>
@@ -194,7 +197,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && rows.length > 0 && (
           <ul className={styles.statusKey}>
-            {statusLines(topRows(rows)).map(([label, meaning]) => (
+            {statusLines(shown).map(([label, meaning]) => (
               <li key={label}>
                 <strong>{label}:</strong> {meaning}
               </li>

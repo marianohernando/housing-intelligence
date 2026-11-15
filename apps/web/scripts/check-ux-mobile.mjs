@@ -58,6 +58,8 @@ function measureInPage({ pick, minText, minTarget }) {
     results: () => document.querySelector("h2[tabindex='-1']")?.closest("section")?.parentElement ?? null,
     card: () => [...document.querySelectorAll("aside")].find((a) => a.querySelector("h2") && a.textContent.includes("Lo que tienes aquí")) ?? null,
     method: () => document.querySelector("main") ?? document.body,
+    // A district's screen after a search: «Los barrios que más te convienen» (review R-04 of PR #79)
+    district: () => [...document.querySelectorAll("section")].find((s) => /^Los barrios que (más te convienen|mejor encajan)$/.test(s.querySelector("h2")?.textContent?.trim() ?? "")) ?? null,
   };
   const search = roots.search();
   const root = pick === "portada" ? document.body : roots[pick]();
@@ -171,9 +173,20 @@ async function sizes(browser, width) {
   await page.waitForTimeout(1500);
   report.screens.tarjeta = await measure(page, "card");
   report.axe.tarjeta = await axe(page);
+  // «Ver la zona» of that card: a district of Madrid, with its barrios for the same search
+  await openDistrict(page);
+  report.screens.distrito = await measure(page, "district");
+  report.axe.distrito = await axe(page);
   report.console_errors = errors;
   await ctx.close();
   return report;
+}
+
+/** From the zone card to the district's screen, once its barrios for the search are on it. */
+async function openDistrict(page) {
+  await page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first().getByRole("link", { name: /^Ver (la zona|el distrito)/ }).click();
+  await page.getByRole("heading", { name: /^Los barrios que (más te convienen|mejor encajan)$/ }).first().waitFor({ timeout: WAIT });
+  await page.waitForTimeout(1500);
 }
 
 /** Scrolls an element into view, also inside the bottom sheet's own scroll. */
@@ -201,6 +214,12 @@ async function screenshots(browser, id, profile) {
     await seniors.click();
     await bringIntoView(page.locator("fieldset").filter({ has: seniors }).first());
     await take(page, "03-somos-mayores");
+    // Where they want to live (D-244), in place of «Trabajo en»
+    const place = page.locator("fieldset").filter({ has: page.getByText("¿Cerca de dónde queréis vivir?") }).first();
+    if ((await place.count()) > 0) {
+      await bringIntoView(place);
+      await take(page, "03b-somos-mayores-lugar");
+    }
   }
   await ctx.close();
   ({ ctx, page } = await openPage(browser, profile));
@@ -208,6 +227,14 @@ async function screenshots(browser, id, profile) {
     await runExample(page, NAMES.seniorsExample);
     await bringIntoView(page.getByRole("heading", { name: NAMES.results }).first());
     await take(page, "04-ejemplo-pareja-jubilada");
+    // Its first zone's card, at what it lacks: the household's rows first at the same status (R-01)
+    const list = page.locator("section").filter({ has: page.getByRole("heading", { name: NAMES.results }) }).first();
+    await list.locator("ol li button").first().click();
+    const card = page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
+    await card.getByText(/^Lo que le falta a /).waitFor({ timeout: WAIT });
+    await page.waitForTimeout(2500);
+    await bringIntoView(card.getByText(/^Lo que le falta a /));
+    await take(page, "04b-tarjeta-pareja-jubilada");
   }
   await ctx.close();
   ({ ctx, page } = await openPage(browser, profile));
@@ -221,6 +248,9 @@ async function screenshots(browser, id, profile) {
   await page.waitForTimeout(2500);
   if (mobile) await bringIntoView(zone);
   await take(page, "06-tarjeta");
+  await openDistrict(page);
+  await bringIntoView(page.getByRole("heading", { name: /^Los barrios que (más te convienen|mejor encajan)$/ }).first());
+  await take(page, "08-distrito-barrios");
   await ctx.close();
   ({ ctx, page } = await openPage(browser, profile));
   await page.goto(`${BASE}/como-lo-calculamos`, { waitUntil: "networkidle" });

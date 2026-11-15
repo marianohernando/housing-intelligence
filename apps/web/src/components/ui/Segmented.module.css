@@ -31,10 +31,13 @@
   display: grid;
   min-height: var(--target);
   place-items: center;
+  padding: 0 var(--space-1);
   border-radius: calc(var(--radius) - 4px);
   color: var(--ink-soft);
   font-size: var(--text-sm);
   font-weight: 500;
+  /* A label on two lines («Cerca de / nuestra familia») stays centred in its pill */
+  text-align: center;
   cursor: pointer;
 }
 

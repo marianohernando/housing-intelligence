@@ -28,6 +28,7 @@ import {
   resultScope,
   WALK_MEDIAN,
   zoneFit,
+  zonePriceOf,
   zoneWord,
 } from "@/lib/fit";
 import { tieText } from "@/lib/match";
@@ -63,9 +64,13 @@ const TEXT = {
   confidenceAbout: "Lo que tienes aquí",
 };
 
-/** The confidence words of the facts, once each, in the order they appear. */
-function confidenceLevels(confidences: readonly number[]): ConfidenceText[] {
-  return [...new Map(confidences.map((c) => confidenceText(c)).map((t) => [t.label, t])).values()];
+/**
+ * The confidence words of the card, once each, in the order they appear: the price's («Dato
+ * aproximado», review R-08 of PR #79: it was a tooltip) and then the facts'.
+ */
+function confidenceLevels(price: ConfidenceText | null, confidences: readonly number[]): ConfidenceText[] {
+  const all = [...(price ? [price] : []), ...confidences.map((c) => confidenceText(c))];
+  return [...new Map(all.map((t) => [t.label, t])).values()];
 }
 
 const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
@@ -164,7 +169,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
       {ranked && ranked.facts.length > 0 && (
         <Help about={TEXT.confidenceAbout} label={TEXT.confidenceHelp}>
           <ul>
-            {confidenceLevels(ranked.facts.map((f) => f.confidence)).map((level) => (
+            {confidenceLevels(zonePriceOf(result, zoneKey)?.confidence ?? null, ranked.facts.map((f) => f.confidence)).map((level) => (
               <li key={level.label}>
                 <strong>{level.label}:</strong> {level.help}
               </li>
