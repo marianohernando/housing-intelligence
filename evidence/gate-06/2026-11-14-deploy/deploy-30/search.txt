@@ -1,0 +1,41 @@
+POST /api/v1/search against https://vidafacil-madrid.vercel.app, 2026-11-14 (UTC). Bodies:
+  example = data/fixtures/contracts/scenario_state.familia_castellana.fixture.json; telework = the same with anchors[0].days_per_week 0;
+  buy400 = a couple, buy up to 400.000 €, nothing else; rent10k = a couple, rent up to 10.000 €/month, nothing else (D-239's feedback case).
+Three moments: d5fe735 in production (~22:33), 785bac0 deployed before the sync (~22:39), after the sync (~22:43).
+
+== example
+after the sync: fit-0.8 · 27 of 199 pass · unknown 15
+  top: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+  near: Chamartín 93, Salamanca 93, Centro 93, Chamberí 93, Retiro 93
+ d5fe735 → 785bac0 before the sync:
+  data identical
+ before → after the sync:
+  data identical apart from datasets: > osm_ocio 
+
+== buy400
+after the sync: fit-0.8 · 41 of 199 pass · unknown 151
+  top: Puente de Vallecas 100, Usera 100, Carabanchel 100, Latina 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, San Blas-Canillejas 100, Leganés 100
+  near: Arganzuela 0, Tetuán 0, Centro 0, Retiro 0, Chamberí 0
+ d5fe735 → 785bac0 before the sync:
+  data identical
+ before → after the sync:
+  data identical apart from datasets: > osm_ocio 
+
+== telework
+after the sync: fit-0.8 · 27 of 199 pass · unknown 15
+  top: Usera 100, Latina 100, Moratalaz 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, Leganés 100, Fuenlabrada 100, Alcalá de Henares 100
+  near: Ciempozuelos 97, San Martín de la Vega 96, Tres Cantos 95, San Sebastián de los Reyes 95, Mejorada del Campo 93
+ d5fe735 → 785bac0 before the sync:
+  data identical
+ before → after the sync:
+  data identical apart from datasets: > osm_ocio 
+
+== rent10k
+after the sync: fit-0.8 · 57 of 199 pass · unknown 142
+  top: Chamberí 100, Tetuán 100, Puente de Vallecas 100, Salamanca 100, Centro 100, Usera 100, Arganzuela 100, Ciudad Lineal 100, Carabanchel 100, Retiro 100
+  near: 
+ d5fe735 → 785bac0 before the sync:
+  data identical
+ before → after the sync:
+  data identical apart from datasets: > osm_ocio 
+

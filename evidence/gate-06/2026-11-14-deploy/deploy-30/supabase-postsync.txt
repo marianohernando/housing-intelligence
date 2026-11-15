@@ -1,0 +1,7 @@
+Supabase (project-scoped read-only MCP), 2026-11-14 ~22:46 UTC, after datamad-10's make supabase-sync PROFILE=demo from 785bac0
+dataset_registry 48 · metric_registry 42 · feature_registry 58 · place_master 41,269 · feature_value 115,821
+place_master with official_dataset_id osm_ocio: 16,493 · feature_value of min_a_pie_{bar,restaurante,gimnasio,cultura}: 19,896 (4 × 4,974)
+feature_value of the 4 new context features (infracciones, viviendas desde 2001, año medio, renta por hogar): 662 (179 + 179 + 152 + 152)
+
+GET /api/v1/datasets?cm_only=true: 27 before the sync, 29 after; new: cm_infracciones_penales_municipios, cm_viviendas_antiguedad
+On screen (/ and /zona/distrito/2807901): «Datos: 29 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria»

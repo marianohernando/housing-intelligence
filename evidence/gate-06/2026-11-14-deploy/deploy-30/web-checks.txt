@@ -1,0 +1,81 @@
+Checks on https://vidafacil-madrid.vercel.app (dpl_25dWq…, 785bac0), 2026-11-14, Playwright Chromium, 1440x900 and 390x844 (mobile, touch).
+Zone pages /zona/municipio/28115 (Pozuelo de Alarcón), 28106 (Parla), 28120 (Rascafría), /zona/distrito/2807904 (Salamanca) and 2807901 (Centro).
+«Ocio»: «Ver un ejemplo», «Ver mi búsqueda», the «Ocio» chip with its default groups, «Ver zonas que encajan».
+
+===== BEFORE THE SYNC (~22:40 UTC) =====
+== 1440 ==
+«Otros datos de la zona»:
+  Pozuelo de Alarcón: Renta disponible bruta por persona: 47.217 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 404 infracciones_penales_por_1000_hab?level=municipio, 404 viviendas_desde_2001_pct?level=municipio, 200 renta_per_capita?level=municipio
+  Parla: Renta disponible bruta por persona: 14.349 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 404 viviendas_desde_2001_pct?level=municipio, 404 infracciones_penales_por_1000_hab?level=municipio, 200 renta_per_capita?level=municipio
+  Rascafría: Renta disponible bruta por persona: 20.532 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 404 viviendas_desde_2001_pct?level=municipio, 404 infracciones_penales_por_1000_hab?level=municipio, 200 renta_per_capita?level=municipio
+  Salamanca (district): NO CARD
+    /features requests: 200 seguridad_percibida_noche?level=distrito, 200 seguridad_percibida_noche?level=municipio, 200 seguridad_percibida_dia?level=municipio, 200 seguridad_percibida_dia?level=distrito, 404 infracciones_penales_por_1000_hab?level=municipio, 404 renta_neta_media_hogar?level=distrito, 404 ano_medio_construccion_residencial?level=distrito
+«Todos los centros» in Centro:
+  zone request: 200 76277 B, 179 places, ?category=education,health,pharmacy,social,green,transport&admin_unit_…
+  buttons: Colegios 18 | Escuelas infantiles 12 | Centros de salud 6 | Hospitales 0 | Farmacias 104 | Mayores 9 | Parques 12 | Todos | Ninguno
+«Me importa»: no «Ocio» chip
+console errors (any other HTTP >= 400 would also be listed): 12 — all «Failed to load resource: 404», from the /features requests above
+
+== 390 ==
+«Otros datos de la zona»:
+  Pozuelo de Alarcón: Renta disponible bruta por persona: 47.217 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 404 infracciones_penales_por_1000_hab?level=municipio, 404 viviendas_desde_2001_pct?level=municipio, 200 renta_per_capita?level=municipio
+  Parla: Renta disponible bruta por persona: 14.349 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 404 viviendas_desde_2001_pct?level=municipio, 404 infracciones_penales_por_1000_hab?level=municipio, 200 renta_per_capita?level=municipio
+  Rascafría: Renta disponible bruta por persona: 20.532 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 404 viviendas_desde_2001_pct?level=municipio, 200 renta_per_capita?level=municipio, 404 infracciones_penales_por_1000_hab?level=municipio
+  Salamanca (district): NO CARD
+    /features requests: 200 seguridad_percibida_noche?level=municipio, 200 seguridad_percibida_dia?level=distrito, 200 seguridad_percibida_noche?level=distrito, 200 seguridad_percibida_dia?level=municipio, 404 ano_medio_construccion_residencial?level=distrito, 404 infracciones_penales_por_1000_hab?level=municipio, 404 renta_neta_media_hogar?level=distrito
+«Todos los centros» in Centro:
+  zone request: 200 76277 B, 179 places, ?category=education,health,pharmacy,social,green,transport&admin_unit_…
+  buttons: Colegios 18 | Escuelas infantiles 12 | Centros de salud 6 | Hospitales 0 | Farmacias 104 | Mayores 9 | Parques 12 | Todos | Ninguno
+«Me importa»: no «Ocio» chip
+console errors (any other HTTP >= 400 would also be listed): 12 — all «Failed to load resource: 404», from the /features requests above
+
+===== AFTER THE SYNC (~22:44 UTC) =====
+== 1440 ==
+«Otros datos de la zona»:
+  Pozuelo de Alarcón: Infracciones penales conocidas: 21,6 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. Viviendas construidas desde 2001: 32,7 % (censo anual de la Comunidad de Madrid, 2023). Renta disponible bruta por persona: 47.217 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 200 viviendas_desde_2001_pct?level=municipio, 200 infracciones_penales_por_1000_hab?level=municipio, 200 renta_per_capita?level=municipio
+  Parla: Infracciones penales conocidas: 47,7 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. Viviendas construidas desde 2001: 43,6 % (censo anual de la Comunidad de Madrid, 2023). Renta disponible bruta por persona: 14.349 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 200 infracciones_penales_por_1000_hab?level=municipio, 200 viviendas_desde_2001_pct?level=municipio, 200 renta_per_capita?level=municipio
+  Rascafría: Infracciones penales conocidas: sin dato. El Ministerio solo lo publica para municipios de más de 20.000 habitantes. Viviendas construidas desde 2001: 21,6 % (censo anual de la Comunidad de Madrid, 2023). Renta disponible bruta por persona: 20.532 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 200 viviendas_desde_2001_pct?level=municipio, 200 renta_per_capita?level=municipio, 200 infracciones_penales_por_1000_hab?level=municipio
+  Salamanca (district): Infracciones penales conocidas: 58,6 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito. Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. Año medio de construcción de los edificios de viviendas: 1953 (Catastro, 2025). Renta neta media por hogar: 69.147 € al año (INE, panel del Ayuntamiento de Madrid, 2023).  [+ footer «Son datos informativos…»]
+    /features requests: 200 seguridad_percibida_noche?level=distrito, 200 seguridad_percibida_noche?level=municipio, 200 seguridad_percibida_dia?level=municipio, 200 seguridad_percibida_dia?level=distrito, 200 infracciones_penales_por_1000_hab?level=municipio, 200 renta_neta_media_hogar?level=distrito, 200 ano_medio_construccion_residencial?level=distrito
+«Todos los centros» in Centro:
+  zone request: 200 76277 B, 179 places, ?category=education,health,pharmacy,social,green,transport&admin_unit_…
+  buttons: Colegios 18 | Escuelas infantiles 12 | Centros de salud 6 | Hospitales 0 | Farmacias 104 | Mayores 9 | Parques 12 | Bares y cafeterías | Restaurantes | Gimnasios y deporte | Cultura | Todos | Ninguno
+  after «Todos»: Cultura pressed=false, new /places requests: 0
+  «Cultura» pressed=true: 200 52928 B, 133 places, ?category=culture&admin_unit_id=ES.28.DIS.2807901&subcategory=Museo&subcategory=Biblioteca&subcategory=Teatro&subcategory=Cine&subcategory=Centro+cultural
+    counts: «18 colegios con primaria en Centro, 12 escuelas infantiles en Centro, 6 centros de salud y consultorios en Centro, Ningún hospital en Centro, 104 farmacias en Centro, 9 centros de mayores en Centro, 12 parques de 1 ha o más en Centro y 133 espacios culturales en Centro» · OpenStreetMap line: True
+«Ocio»: boxes ['Bares y cafeterías ✓', 'Restaurantes ✓', 'Gimnasios y deporte', 'Cultura', 'Imprescindible']
+  sent priorities ['colegios', 'transporte', 'salud', 'ocio'], nearby [('colegio', 10, True), ('bares', 10, False), ('restaurantes', 10, False)]
+  answer 200 fit-0.8, 27 of 199, top Latina 99, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 98, warnings []
+  1st result's fact: «Ocio a pie: bares y cafeterías a unos 3 min, restaurantes a unos 4 min»
+console errors (any other HTTP >= 400 would also be listed): 0
+
+== 390 ==
+«Otros datos de la zona»:
+  Pozuelo de Alarcón: Infracciones penales conocidas: 21,6 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. Viviendas construidas desde 2001: 32,7 % (censo anual de la Comunidad de Madrid, 2023). Renta disponible bruta por persona: 47.217 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 200 renta_per_capita?level=municipio, 200 viviendas_desde_2001_pct?level=municipio, 200 infracciones_penales_por_1000_hab?level=municipio
+  Parla: Infracciones penales conocidas: 47,7 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. Viviendas construidas desde 2001: 43,6 % (censo anual de la Comunidad de Madrid, 2023). Renta disponible bruta por persona: 14.349 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 200 viviendas_desde_2001_pct?level=municipio, 200 infracciones_penales_por_1000_hab?level=municipio, 200 renta_per_capita?level=municipio
+  Rascafría: Infracciones penales conocidas: sin dato. El Ministerio solo lo publica para municipios de más de 20.000 habitantes. Viviendas construidas desde 2001: 21,6 % (censo anual de la Comunidad de Madrid, 2023). Renta disponible bruta por persona: 20.532 € al año (Instituto de Estadística de la Comunidad de Madrid, 2024).  [+ footer «Son datos informativos…»]
+    /features requests: 200 renta_per_capita?level=municipio, 200 infracciones_penales_por_1000_hab?level=municipio, 200 viviendas_desde_2001_pct?level=municipio
+  Salamanca (district): Infracciones penales conocidas: 58,6 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito. Mide hechos conocidos por la policía, sin los delitos por internet; sube donde hay mucha gente de paso. Año medio de construcción de los edificios de viviendas: 1953 (Catastro, 2025). Renta neta media por hogar: 69.147 € al año (INE, panel del Ayuntamiento de Madrid, 2023).  [+ footer «Son datos informativos…»]
+    /features requests: 200 seguridad_percibida_noche?level=distrito, 200 seguridad_percibida_noche?level=municipio, 200 seguridad_percibida_dia?level=distrito, 200 seguridad_percibida_dia?level=municipio, 200 infracciones_penales_por_1000_hab?level=municipio, 200 ano_medio_construccion_residencial?level=distrito, 200 renta_neta_media_hogar?level=distrito
+«Todos los centros» in Centro:
+  zone request: 200 76277 B, 179 places, ?category=education,health,pharmacy,social,green,transport&admin_unit_…
+  buttons: Colegios 18 | Escuelas infantiles 12 | Centros de salud 6 | Hospitales 0 | Farmacias 104 | Mayores 9 | Parques 12 | Bares y cafeterías | Restaurantes | Gimnasios y deporte | Cultura | Todos | Ninguno
+  after «Todos»: Cultura pressed=false, new /places requests: 0
+  «Cultura» pressed=true: 200 52928 B, 133 places, ?category=culture&admin_unit_id=ES.28.DIS.2807901&subcategory=Museo&subcategory=Biblioteca&subcategory=Teatro&subcategory=Cine&subcategory=Centro+cultural
+    counts: «18 colegios con primaria en Centro, 12 escuelas infantiles en Centro, 6 centros de salud y consultorios en Centro, Ningún hospital en Centro, 104 farmacias en Centro, 9 centros de mayores en Centro, 12 parques de 1 ha o más en Centro y 133 espacios culturales en Centro» · OpenStreetMap line: True
+«Ocio»: boxes ['Bares y cafeterías ✓', 'Restaurantes ✓', 'Gimnasios y deporte', 'Cultura', 'Imprescindible']
+  sent priorities ['colegios', 'transporte', 'salud', 'ocio'], nearby [('colegio', 10, True), ('bares', 10, False), ('restaurantes', 10, False)]
+  answer 200 fit-0.8, 27 of 199, top Latina 99, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 98, warnings []
+  1st result's fact: «Ocio a pie: bares y cafeterías a unos 3 min, restaurantes a unos 4 min»
+console errors (any other HTTP >= 400 would also be listed): 0
