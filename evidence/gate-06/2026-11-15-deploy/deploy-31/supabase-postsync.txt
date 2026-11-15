@@ -1,0 +1,6 @@
+Supabase (project-scoped read-only MCP), 2026-11-15 ~11:22 UTC, after datamad-10's make supabase-sync PROFILE=demo from 59187f8
+source_registry 16 · dataset_registry 61 · dataset_version 73 · metric_registry 48 · feature_registry 68 · place_master 41,686 · feature_value 119,135 · database 216 MB
+
+GET /api/v1/datasets: 52 datasets (38 before the sync); ?cm_only=true: 35 (29 before)
+new: ayto_aparcamientos_publicos ayto_aparcamientos_residentes ayto_calidad_aire_estaciones ayto_calidad_aire_horario ayto_mapa_estrategico_ruido_2021 ayto_pgoum_desarrollo_ambitos cm_calidad_aire_estaciones cm_calidad_aire_horario_2025 cm_calidad_aire_zonas cm_plan_vive_promociones cm_transacciones_nueva_usada cm_valor_tasado_vivienda_antiguedad crtm_aparcamientos_disuasion mivau_serpavi_alquiler 
+mivau_serpavi_alquiler: Ministerio de Vivienda y Agenda Urbana, CM open data false
