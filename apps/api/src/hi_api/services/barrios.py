@@ -3,8 +3,11 @@ ranked by the same engine as POST /search (hi_domain.search), and the same over 
 of Madrid capital for POST /search with `scope: madrid` (D-238). Each barrio brings its own
 walking minutes and rent of its postcodes; its trip by public transport is that of its own
 sections, or its district's when the barrio is missing from the matrix (said in the fact, with
-lower confidence). Parameterised SQL only, no feature id here.
+lower confidence). «Qué falta» is by district: a barrio's % reads its district's rows (D-243,
+a declared proxy). Parameterised SQL only, no feature id here.
 """
+
+from dataclasses import replace
 
 from sqlalchemy import Connection, text
 
@@ -12,7 +15,9 @@ from hi_api.services.commute import commutes
 from hi_api.services.gaps import ZoneNotFoundError, dataset_refs
 from hi_api.services.search import (
     FIT_VALUES,
+    GapData,
     Loaded,
+    gap_data,
     indicators_by_zone,
     load_warnings,
     scenario_warnings,
@@ -22,9 +27,10 @@ from hi_api.services.search import (
     zone_rent,
 )
 from hi_contracts.api.envelope import ErrorCode
-from hi_contracts.catalog.enums import NullReason, TerritoryLevel
+from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.public import BarrioSearchResult, IndicatorValue, ScenarioState, ZoneRef
-from hi_domain.fit import FIT_VERSION, Commute, ZoneData
+from hi_domain.fit import FIT_VERSION, Commute, Supply, ZoneData
+from hi_domain.geo.codes import district_of_barrio
 from hi_domain.search import SPLIT_BY_DISTRICT, run_search
 
 # A barrio without a trip of its own takes its district's, which stands for the whole district:
@@ -89,6 +95,13 @@ def borrowed_trips(
     return trips, borrowed
 
 
+def district_supply(gaps: GapData, barrio_code: str) -> dict[GapRowKey, Supply]:
+    """The barrio's district rows of «Qué falta», named after the district (D-243 proxy)."""
+    key = (TerritoryLevel.DISTRITO.value, district_of_barrio(barrio_code))
+    name = gaps.names.get(key)
+    return {row: replace(found, district=name) for row, found in gaps.supply.get(key, {}).items()}
+
+
 def district(conn: Connection, code: str) -> ZoneRef:
     row = conn.execute(_DISTRICT, {"code": code}).mappings().first()
     if row is None:
@@ -112,6 +125,7 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef | No
         if r["territory_code"] in codes
     ]
     indicators = indicators_by_zone(value_rows)
+    gaps = gap_data(conn, scenario, [TerritoryLevel.DISTRITO], highlights=False)
     trips = commutes(conn, scenario.anchors)
     zones: list[ZoneData] = []
     borrowed = 0
@@ -137,17 +151,19 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef | No
                 priority_walk=indicators.priority_walk.get(key, {}),
                 transit=indicators.transit.get(key, {}),
                 commute=commute,
+                supply=district_supply(gaps, str(row["code"])),
             )
         )
     versions: dict[str, str] = dict(trips.versions)
     for row in value_rows:
         versions.update(row["inputs"].get("dataset_versions", {}))
+    warnings = barrio_warnings(len(rows), bool(value_rows), borrowed, whole_capital=parent is None)
     return Loaded(
         zones,
         versions,
         [row["computed_at"] for row in value_rows],
-        [],
-        barrio_warnings(len(rows), bool(value_rows), borrowed, whole_capital=parent is None),
+        gaps.datasets,
+        [*warnings, *gaps.warnings],
         trips.unresolved,
         dict(trips.versions),
     )
@@ -195,7 +211,7 @@ def search_barrios(
         near_misses=outcome.near_misses,
         all_zones=outcome.all_zones,
         reality_check=outcome.reality_check,
-        datasets=union_datasets(dataset_refs(conn, loaded.versions)),
+        datasets=union_datasets([*dataset_refs(conn, loaded.versions), *loaded.gap_datasets]),
         methodology_version=FIT_VERSION,
     )
     data_version = max(loaded.computed).date().isoformat() if loaded.computed else None

@@ -1,9 +1,9 @@
 # Datasets que usa Vida Fácil
 
 > Fichero generado: no se edita a mano. Se regenera con `uv run python pitch/build_datasets_cm.py`.
-> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-14).
+> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-15).
 
-**31 datasets del Portal de Datos Abiertos de la Comunidad de Madrid, 31 con Quality Gate 1 en PASS:** 22 publicados por la Comunidad y su Instituto de Estadística, y 9 del Consorcio Regional de Transportes que también tienen ficha en el portal.
+**35 datasets del Portal de Datos Abiertos de la Comunidad de Madrid, 35 con Quality Gate 1 en PASS:** 25 publicados por la Comunidad y su Instituto de Estadística, y 10 del Consorcio Regional de Transportes que también tienen ficha en el portal.
 
 Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.catalog.provenance.is_cm_open_data`). El resto es complementario.
 
@@ -13,37 +13,41 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 |---|---|---|---|
 | 1 | [Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid](https://datos.comunidad.madrid/dataset/1934259) | Instituto de Estadística | PASS 2026-10-22 |
 | 2 | [Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios](https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000) | Instituto de Estadística | PASS 2026-10-22 |
-| 3 | [Registro de centros de atención social](https://datos.comunidad.madrid/dataset/atencion_social_registro_centros) | Comunidad de Madrid | PASS 2026-11-12 |
-| 4 | [Centros educativos de la comunidad de Madrid](https://datos.comunidad.madrid/dataset/centros_educativos) | Comunidad de Madrid | PASS 2026-11-12 |
-| 5 | [Centros, servicios y establecimientos sanitarios](https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios) | Comunidad de Madrid | PASS 2026-11-12 |
-| 6 | [Dotación de camas por dependencia](https://datos.comunidad.madrid/dataset/1912720) | Instituto de Estadística | PASS 2026-11-12 |
-| 7 | [Recursos sanitarios. Farmacias. Municipios](https://datos.comunidad.madrid/dataset/farmacias) | Instituto de Estadística | PASS 2026-11-10 |
-| 8 | [Hogares por tamaño del hogar. Censo 2021. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo) | Instituto de Estadística | PASS 2026-10-22 |
-| 9 | [Hospitales y datos asistenciales](https://datos.comunidad.madrid/dataset/1912744) | Instituto de Estadística | PASS 2026-11-12 |
-| 10 | [Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio](https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio) | Instituto de Estadística | PASS 2026-11-14 |
-| 11 | [Nacidos vivos por lugar de residencia de la madre y sexo. Municipios](https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo) | Instituto de Estadística | PASS 2026-11-10 |
-| 12 | [Oficinas de farmacia](https://datos.comunidad.madrid/dataset/oficinas_farmacia) | Comunidad de Madrid | PASS 2026-11-12 |
-| 13 | [Población censada por edad, nacionalidad y sexo. Censo anual. Municipios](https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo) | Instituto de Estadística | PASS 2026-10-22 |
-| 14 | [Indicador de Renta Disponible Bruta Municipal. Municipios](https://datos.comunidad.madrid/dataset/irpf_indicador_renta) | Instituto de Estadística | PASS 2026-10-22 |
-| 15 | [Secciones censales](https://datos.comunidad.madrid/dataset/secciones_censales) | Comunidad de Madrid | PASS 2026-10-20 |
-| 16 | [Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid](https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio) | Instituto de Estadística | PASS 2026-11-14 |
-| 17 | [Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) | Instituto de Estadística | PASS 2026-11-10 |
-| 18 | [Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios](https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 |
-| 19 | [Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios](https://datos.comunidad.madrid/dataset/1004050) | Instituto de Estadística | PASS 2026-11-12 |
-| 20 | [Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 |
-| 21 | [Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada) | Instituto de Estadística | PASS 2026-10-22 |
-| 22 | [Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia) | Instituto de Estadística | PASS 2026-11-10 |
-| 23 | [Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 24 | [Oferta planificada de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 25 | [Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 26 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 27 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 28 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 29 | [Topología de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 30 | [Topología de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 31 | [Topología de la Red de Metro Ligero / Tranvía](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 3 | [Red de Calidad del Aire. Estaciones](https://datos.comunidad.madrid/dataset/calidad_aire_estaciones) | Comunidad de Madrid | PASS 2026-11-14 |
+| 4 | [Red de Calidad del Aire. Datos horarios desde 2005](https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico) | Comunidad de Madrid | PASS 2026-11-14 |
+| 5 | [Red de Calidad del Aire. Municipios por zonas](https://datos.comunidad.madrid/dataset/calidad_aire_zonas) | Comunidad de Madrid | PASS 2026-11-14 |
+| 6 | [Registro de centros de atención social](https://datos.comunidad.madrid/dataset/atencion_social_registro_centros) | Comunidad de Madrid | PASS 2026-11-12 |
+| 7 | [Centros educativos de la comunidad de Madrid](https://datos.comunidad.madrid/dataset/centros_educativos) | Comunidad de Madrid | PASS 2026-11-12 |
+| 8 | [Centros, servicios y establecimientos sanitarios](https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios) | Comunidad de Madrid | PASS 2026-11-12 |
+| 9 | [Dotación de camas por dependencia](https://datos.comunidad.madrid/dataset/1912720) | Instituto de Estadística | PASS 2026-11-12 |
+| 10 | [Recursos sanitarios. Farmacias. Municipios](https://datos.comunidad.madrid/dataset/farmacias) | Instituto de Estadística | PASS 2026-11-10 |
+| 11 | [Hogares por tamaño del hogar. Censo 2021. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo) | Instituto de Estadística | PASS 2026-10-22 |
+| 12 | [Hospitales y datos asistenciales](https://datos.comunidad.madrid/dataset/1912744) | Instituto de Estadística | PASS 2026-11-12 |
+| 13 | [Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio](https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio) | Instituto de Estadística | PASS 2026-11-14 |
+| 14 | [Nacidos vivos por lugar de residencia de la madre y sexo. Municipios](https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo) | Instituto de Estadística | PASS 2026-11-10 |
+| 15 | [Oficinas de farmacia](https://datos.comunidad.madrid/dataset/oficinas_farmacia) | Comunidad de Madrid | PASS 2026-11-12 |
+| 16 | [Población censada por edad, nacionalidad y sexo. Censo anual. Municipios](https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo) | Instituto de Estadística | PASS 2026-10-22 |
+| 17 | [Indicador de Renta Disponible Bruta Municipal. Municipios](https://datos.comunidad.madrid/dataset/irpf_indicador_renta) | Instituto de Estadística | PASS 2026-10-22 |
+| 18 | [Secciones censales](https://datos.comunidad.madrid/dataset/secciones_censales) | Comunidad de Madrid | PASS 2026-10-20 |
+| 19 | [Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid](https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio) | Instituto de Estadística | PASS 2026-11-14 |
+| 20 | [Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) | Instituto de Estadística | PASS 2026-11-10 |
+| 21 | [Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios](https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 |
+| 22 | [Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios](https://datos.comunidad.madrid/dataset/1004050) | Instituto de Estadística | PASS 2026-11-12 |
+| 23 | [Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 |
+| 24 | [Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada) | Instituto de Estadística | PASS 2026-10-22 |
+| 25 | [Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia) | Instituto de Estadística | PASS 2026-11-10 |
+| 26 | [Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/aparcamientos_disuasion) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-14 |
+| 27 | [Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 28 | [Oferta planificada de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 29 | [Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 30 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 31 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 32 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 33 | [Topología de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 34 | [Topología de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| 35 | [Topología de la Red de Metro Ligero / Tranvía](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
 
-## 1. Portal CM: publicados por la Comunidad de Madrid (22)
+## 1. Portal CM: publicados por la Comunidad de Madrid (25)
 
 ### Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/1934259 · id `cm_alquiler_m2_codigo_postal_madrid` · publica: Instituto de Estadística
@@ -57,7 +61,30 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
 - **Qué alimenta:**
   - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo, referencia del Ministerio de Vivienda (donde la Comunidad no lo publica) (`alquiler_m2_mensual_referencia`, fuente de apoyo)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-82cdb192ed1b` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_alquiler_m2_municipios/quality_report.json)
+
+### Red de Calidad del Aire. Estaciones
+- **Ficha:** https://datos.comunidad.madrid/dataset/calidad_aire_estaciones · id `cm_calidad_aire_estaciones` · publica: Comunidad de Madrid
+- **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
+  - Puntos del mapa (other): `GET /api/v1/places?category=other`
+- **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-071a20075f6f` · 28 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/cm_calidad_aire_estaciones/quality_report.json)
+
+### Red de Calidad del Aire. Datos horarios desde 2005
+- **Ficha:** https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico · id `cm_calidad_aire_horario_2025` · publica: Comunidad de Madrid
+- **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-14 · 4/4 checks críticos · versión `2026-11-14-b5363164c0cf` · [quality_report.json](../evidence/gate-01/2026-11-14/cm_calidad_aire_horario_2025/quality_report.json)
+
+### Red de Calidad del Aire. Municipios por zonas
+- **Ficha:** https://datos.comunidad.madrid/dataset/calidad_aire_zonas · id `cm_calidad_aire_zonas` · publica: Comunidad de Madrid
+- **Licencia:** [Creative Commons Attribution](https://creativecommons.org/licenses/by/4.0/legalcode.es) (según el portal CM)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-14 · 3/3 checks críticos · versión `2026-11-14-66c035302c37` · [quality_report.json](../evidence/gate-01/2026-11-14/cm_calidad_aire_zonas/quality_report.json)
 
 ### Registro de centros de atención social
 - **Ficha:** https://datos.comunidad.madrid/dataset/atencion_social_registro_centros · id `cm_centros_atencion_social` · publica: Comunidad de Madrid
@@ -248,7 +275,16 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Vivienda para familias» (dato extra): Viviendas principales en alquiler (%) (`viviendas_alquiler_pct`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-048892fa99bc` · 567 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_viviendas_tenencia_censo_2021/quality_report.json)
 
-## 2. Portal CM: horarios y estaciones del CRTM con ficha en el portal (9)
+## 2. Portal CM: horarios y estaciones del CRTM con ficha en el portal (10)
+
+### Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid
+- **Ficha:** https://datos.comunidad.madrid/dataset/aparcamientos_disuasion · id `crtm_aparcamientos_disuasion` · publica: Consorcio Regional de Transportes de Madrid
+- **Descarga:** https://opendata.arcgis.com/api/v3/datasets/2a2b8fcbd4fc4115a57519ef1587b011_0/downloads/data?format=csv&spatialRefId=4326 (fuente original; también tiene ficha en el portal CM)
+- **Licencia:** [CRTM Licencia de datos abiertos (LDA)](https://www.crtm.es/licencia-de-uso) (según el portal CM)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona) (`min_a_pie_aparcamiento_publico`, fuente principal)
+  - Puntos del mapa (other): `GET /api/v1/places?category=other`
+- **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-dd011ca20087` · 71 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/crtm_aparcamientos_disuasion/quality_report.json)
 
 ### Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia · id `crtm_gtfs_autobuses_urbanos` · publica: Consorcio Regional de Transportes de Madrid
@@ -343,7 +379,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-9e34e07839c7` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro_ligero/quality_report.json)
 
-## 3. Fuentes complementarias en uso (11)
+## 3. Fuentes complementarias en uso (17)
 
 No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regional.
 
@@ -359,7 +395,47 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 - **Licencia:** [Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización, sin desnaturalizar el contenido (aviso legal de la sede de la AEAT; Ley 37/2007)](https://sede.agenciatributaria.gob.es/Sede/condiciones-uso-sede-electronica/aviso-legal/utilizacion-informacion-contenida-web-aeat.html) (según el registro de fuentes)
 - **Qué alimenta:**
   - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente de apoyo)
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo, referencia del Ministerio de Vivienda (donde la Comunidad no lo publica) (`alquiler_m2_mensual_referencia`, fuente de apoyo)
 - **Quality Gate 1:** PASS · 2026-11-12 · 7/7 checks críticos · versión `2026-11-12-f7bc11db960a` · 152 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/aeat_alquiler_nuevos_contratos_municipios/quality_report.json)
+
+### Aparcamientos públicos municipales
+- **Ficha:** https://datos.madrid.es/dataset/202625-0-aparcamientos-publicos · id `ayto_aparcamientos_publicos` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona) (`min_a_pie_aparcamiento_publico`, fuente principal)
+  - Puntos del mapa (other): `GET /api/v1/places?category=other`
+- **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-e89f9e8e3c8a` · 21 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_aparcamientos_publicos/quality_report.json)
+
+### Aparcamientos municipales para residentes (PAR)
+- **Ficha:** https://datos.madrid.es/dataset/202584-0-aparcamientos-residentes · id `ayto_aparcamientos_residentes` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona) (`min_a_pie_aparcamiento_publico`, fuente principal)
+  - Puntos del mapa (other): `GET /api/v1/places?category=other`
+- **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-568c9b4e549b` · 273 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_aparcamientos_residentes/quality_report.json)
+
+### Calidad del aire. Estaciones de control
+- **Ficha:** https://datos.madrid.es/dataset/212629-0-estaciones-control-aire · id `ayto_calidad_aire_estaciones` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
+  - Puntos del mapa (other): `GET /api/v1/places?category=other`
+- **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-f789e8d463c4` · 24 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_calidad_aire_estaciones/quality_report.json)
+
+### Calidad del aire. Datos horarios desde 2001 (desde 2025)
+- **Ficha:** https://datos.madrid.es/dataset/201200-0-calidad-aire-horario · id `ayto_calidad_aire_horario` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://datos.madrid.es/pages/condiciones-de-uso) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-14 · 4/4 checks críticos · versión `2026-11-14-f23086014df5` · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_calidad_aire_horario/quality_report.json)
+
+### Mapa Estratégico del Ruido 2021 (niveles de ruido del tráfico rodado)
+- **Ficha:** https://servpub.madrid.es/IDEAM_WBGEOPORTAL/dataset.iam?id=470b89af-5d64-41d3-8bdb-2fe6badd0364 · id `ayto_mapa_estrategico_ruido_2021` · publica: Ayuntamiento de Madrid
+- **Licencia:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.es) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Dato de contexto en la vista de zona (no puntúa): % de calle residencial con ruido del tráfico de día por encima de 65 dB Ld (`pct_calle_ruido_dia`, fuente principal)
+  - Dato de contexto en la vista de zona (no puntúa): % de calle residencial con ruido del tráfico de noche por encima de 55 dB Ln (`pct_calle_ruido_noche`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-14 · 4/4 checks críticos · versión `2026-11-14-e2452b203eb4` · [quality_report.json](../evidence/gate-01/2026-11-14/ayto_mapa_estrategico_ruido_2021/quality_report.json)
 
 ### Padrón municipal
 - **Ficha:** https://datos.madrid.es/dataset/200076-0-padron · id `ayto_padron_municipal` · publica: Ayuntamiento de Madrid
@@ -410,6 +486,13 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - Dato de contexto en la vista de zona (no puntúa): Viviendas del Plan Vive de alquiler a precio asequible (`plan_vive_viviendas`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 7/7 checks críticos · versión `2026-11-14-a8a7bf2f1168` · 28 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_plan_vive_promociones/quality_report.json)
 
+### Sistema Estatal de Referencia del Precio del Alquiler de Vivienda (SERPAVI), base de datos 2011-2024
+- **Ficha:** https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi · id `mivau_serpavi_alquiler` · publica: Ministerio de Vivienda y Agenda Urbana
+- **Licencia:** [Reutilización autorizada citando la fuente y la fecha de la última actualización (aviso legal del portal del Ministerio de Vivienda y Agenda Urbana)](https://www.mivau.gob.es/aviso-legal) (según el registro de fuentes)
+- **Qué alimenta:**
+  - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo, referencia del Ministerio de Vivienda (donde la Comunidad no lo publica) (`alquiler_m2_mensual_referencia`, fuente principal)
+- **Quality Gate 1:** PASS · 2026-11-14 · 11/11 checks críticos · versión `2026-11-14-414a339570d2` · 38.728 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/mivau_serpavi_alquiler/quality_report.json)
+
 ### Catálogo de Centros de Atención Primaria del SNS 2026 (actualizado a 31 de diciembre de 2025)
 - **Ficha:** https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/centrosSalud/home.htm · id `ms_catalogo_centros_atencion_primaria` · publica: Ministerio de Sanidad
 - **Licencia:** [Reutilización autorizada con cita de la fuente y de la fecha de actualización (aviso legal del Ministerio; Ley 37/2007)](https://www.sanidad.gob.es/avisoLegal/home.htm) (según el registro de fuentes)
@@ -450,6 +533,7 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - «Qué falta», fila «Centros de salud»: Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes (`centros_salud_a_pie_por_10000_hab`, fuente principal)
   - «Qué falta», fila «Escuelas infantiles»: Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (`escuelas_infantiles_a_pie_por_1000_ninos`, fuente principal)
   - «Qué falta», fila «Farmacias»: Farmacias al alcance a pie por cada 10.000 habitantes (`farmacias_a_pie_por_10000_hab`, fuente principal)
+  - Dato de contexto en la vista de zona (no puntúa): Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona) (`min_a_pie_aparcamiento_publico`, fuente principal)
   - Indicador por zona: Minutos a pie hasta el bar, pub o cafetería más cercano (mediana de las calles de la zona) (`min_a_pie_bar`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de autobús más cercana (EMT, interurbanos y urbanos; mediana de las calles de la zona) (`min_a_pie_bus`, fuente principal)
   - «Qué falta», fila «Centros de salud» (dato extra): Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona) (`min_a_pie_centro_salud`, fuente principal)
@@ -465,12 +549,15 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - Indicador por zona: Minutos a pie hasta el borde del parque urbano de 1 ha o más más cercano (mediana de las calles de la zona) (`min_a_pie_parque`, fuente principal)
   - Indicador por zona: Minutos a pie hasta el restaurante más cercano (mediana de las calles de la zona) (`min_a_pie_restaurante`, fuente principal)
   - Indicador por zona: Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona) (`min_a_pie_transporte`, fuente principal)
+  - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente de apoyo)
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria (`pct_calle_colegio_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil (`pct_calle_escuela_infantil_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una farmacia (`pct_calle_farmacia_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores (`pct_calle_mayores_10min`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos del borde de un parque urbano de 1 ha o más (`pct_calle_parque_5min`, fuente principal)
+  - Dato de contexto en la vista de zona (no puntúa): % de calle residencial con ruido del tráfico de día por encima de 65 dB Ld (`pct_calle_ruido_dia`, fuente principal)
+  - Dato de contexto en la vista de zona (no puntúa): % de calle residencial con ruido del tráfico de noche por encima de 55 dB Ln (`pct_calle_ruido_noche`, fuente principal)
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - «Qué falta», fila «Centros de mayores»: Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más (`plazas_mayores_a_pie_por_100_mayores`, fuente principal)
   - Red peatonal para medir la distancia a pie a cada servicio

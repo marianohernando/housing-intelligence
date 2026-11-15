@@ -19,6 +19,24 @@
       "slug": "barrios_municipio_madrid",
       "title": "Barrios del Municipio de Madrid"
     },
+    "cm_calidad_aire_estaciones": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "calidad_aire_estaciones",
+      "title": "Red de Calidad del Aire. Estaciones"
+    },
+    "cm_calidad_aire_horario_2025": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "calidad_aire_datos_historico",
+      "title": "Red de Calidad del Aire. Datos horarios desde 2005"
+    },
+    "cm_calidad_aire_zonas": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "calidad_aire_zonas",
+      "title": "Red de Calidad del Aire. Municipios por zonas"
+    },
     "cm_centros_atencion_social": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -169,6 +187,12 @@
       "slug": "censo_2021_viviendas_familiares_por_tenencia",
       "title": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios"
     },
+    "crtm_aparcamientos_disuasion": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "aparcamientos_disuasion",
+      "title": "Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid"
+    },
     "crtm_gtfs_autobuses_urbanos": {
       "license_id": "CRTM-LDA",
       "license_title": "CRTM Licencia de datos abiertos (LDA)",
@@ -224,5 +248,5 @@
       "title": "Topología de la Red de Metro Ligero / Tranvía"
     }
   },
-  "fetched_at": "2026-11-14"
+  "fetched_at": "2026-11-15"
 }

@@ -85,10 +85,11 @@ check search "/api/v1/search" \
    | "\(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) zones, 1st \(.data.results[0].zone.name)"' \
   "$SEARCH_BODY" "$SEARCH_MAX_BYTES"
 # The same case with «Teletrabajo total» (D-240): days_per_week 0 is only valid from fit-0.8 (an
-# older deploy answers 422), so this also says which method answers.
+# older deploy answers 422), so this also says which method answers: fit-0.8 or later (fit-0.9,
+# D-243), compared as numbers.
 jq '.anchors[0].days_per_week = 0' "$SEARCH_BODY" >"$TMP/telework-body.json"
 check telework "/api/v1/search" \
-  'select(.meta.methodology_version == "fit-0.8")
+  'select((.meta.methodology_version | ltrimstr("fit-") | split(".") | map(tonumber)) >= [0, 8])
    | "\(.meta.methodology_version), \(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) zones"' \
   "$TMP/telework-body.json" "$SEARCH_MAX_BYTES"
 # The same case, barrio by barrio inside one Madrid district (BARRIO-001, D-232): at least one passes.

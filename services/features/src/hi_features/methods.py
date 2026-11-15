@@ -478,6 +478,22 @@ def new_contract_factors(rent: pd.DataFrame, area: pd.DataFrame) -> NewContractF
     return NewContractFactors(factors, period)
 
 
+MEDIAN_FALLBACK = "mediana_municipios"
+
+
+def with_median_fallback(factors: NewContractFactors) -> tuple[NewContractFactors, str | None]:
+    """D-243 (R-03 of D-242): the fallback for a zone without a factor of its own is the median
+    of the zones' own factors (1,155 for the 37 municipios of 2024), not the region's row (1,2085,
+    which Madrid dominates), under MEDIAN_FALLBACK. With no factor at all there is no fallback
+    and the value stays unknown, never a guessed 1."""
+    if not factors.factors:
+        return factors, None
+    median = float(np.median(list(factors.factors.values())))
+    return NewContractFactors({**factors.factors, MEDIAN_FALLBACK: median}, factors.period), (
+        MEDIAN_FALLBACK
+    )
+
+
 def _same_year(value_period: Any, factor_period: Any) -> None:
     """The factor and the value it adjusts must be of the same year: the text says «contratos
     firmados en <año>» (`fit.note`). A new edition of either stops the computation until both

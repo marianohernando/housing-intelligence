@@ -60,12 +60,11 @@ MIN_FONT_PX = 22  # ~11 pt on a standard 13.33 in slide: only for sources and fo
 MAC_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 THEMES = [
-    ("Geografía", {"geography"}),
-    ("Población y hogares", {"population"}),
+    ("Población y territorio", {"geography", "population", "income"}),
     ("Vivienda", {"housing"}),
-    ("Renta", {"income"}),
     ("Servicios", {"education", "health", "social"}),
     ("Transporte (CRTM)", {"transport"}),
+    ("Contexto de la zona", {"environment", "safety"}),
 ]
 SHORT_NAMES = {
     "cm_secciones_censales": "Secciones censales",
@@ -74,15 +73,18 @@ SHORT_NAMES = {
     "cm_nacidos_vivos_municipios": "Nacidos vivos",
     "cm_viviendas_superficie": "Viviendas por superficie",
     "cm_viviendas_tenencia_censo_2021": "Viviendas por tenencia",
-    "cm_alquiler_m2_municipios": "Alquiler €/m² por municipio",
-    "cm_alquiler_m2_codigo_postal_madrid": "Alquiler €/m² por código postal",
+    "cm_alquiler_m2_municipios": "Alquiler por municipio",
+    "cm_alquiler_m2_codigo_postal_madrid": "Alquiler por código postal",
     "cm_valor_tasado_vivienda_municipios": "Valor tasado de la vivienda",
+    "cm_valor_tasado_vivienda_antiguedad": "Valor tasado por antigüedad",
+    "cm_viviendas_antiguedad": "Viviendas por antigüedad",
+    "cm_transacciones_nueva_usada": "Compraventas nueva y usada",
     "cm_renta_disponible_municipal": "Renta disponible",
     "cm_centros_educativos": "Centros educativos",
     "cm_unidades_escolares": "Unidades escolares",
     "cm_centros_sanitarios": "Centros sanitarios",
     "cm_dotacion_camas": "Camas por dependencia",
-    "cm_hospitales_datos_asistenciales": "Hospitales (datos asistenciales)",
+    "cm_hospitales_datos_asistenciales": "Hospitales",
     "cm_centros_atencion_social": "Centros de atención social",
     "cm_oficinas_farmacia": "Oficinas de farmacia",
     "cm_farmacias_municipios": "Farmacias por municipio",
@@ -95,6 +97,11 @@ SHORT_NAMES = {
     "crtm_topologia_metro": "Accesibilidad del metro",
     "crtm_topologia_metro_ligero": "Accesibilidad del Metro Ligero",
     "crtm_topologia_cercanias": "Accesibilidad de Cercanías",
+    "crtm_aparcamientos_disuasion": "Aparcamientos de disuasión",
+    "cm_calidad_aire_estaciones": "Aire: estaciones",
+    "cm_calidad_aire_horario_2025": "Aire: datos horarios",
+    "cm_calidad_aire_zonas": "Aire: zonas",
+    "cm_infracciones_penales_municipios": "Infracciones penales",
 }
 # (text token, background, minimum ratio, where it is used). "glass@X" = glass blended over X.
 CONTRAST_CHECKS = [
