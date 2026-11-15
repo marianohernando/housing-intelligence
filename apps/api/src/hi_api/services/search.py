@@ -26,7 +26,7 @@ from hi_contracts.public import (
     SearchResult,
     ZoneRef,
 )
-from hi_domain.affordability import HOUSES_NOTE
+from hi_domain.affordability import HOUSES_NOTE, POOLED_RANGE_NOTE, POOLED_RANGE_SOURCE
 from hi_domain.fit import FIT_VERSION, PRIORITY_WALK, ZoneData, ignored_leisure
 from hi_domain.geo.names import display_name
 from hi_domain.geo.scope import in_scope
@@ -104,8 +104,9 @@ def _indicator(row: dict[str, Any]) -> IndicatorValue:
 class FillDetail(NamedTuple):
     """What a reference rent row says besides its value (its `inputs.reference_rent`)."""
 
-    quartiles: tuple[float, float] | None  # p25 and p75 per m², scaled as the value
+    quartiles: tuple[float, float] | None  # p25 and p75 per m², for a lease signed in the year
     typology: str | None
+    sections: int | None = None  # pooled from this many census sections (a barrio)
 
 
 class Indicators(NamedTuple):
@@ -153,7 +154,10 @@ def fill_detail(inputs: dict[str, Any]) -> FillDetail:
     quartiles = reference.get("quartiles") or {}
     low, high = quartiles.get("p25"), quartiles.get("p75")
     spread = None if low is None or high is None else (float(low), float(high))
-    return FillDetail(spread, reference.get("typology"))
+    sections = reference.get("sections")
+    return FillDetail(
+        spread, reference.get("typology"), None if sections is None else int(sections)
+    )
 
 
 def indicators_by_zone(rows: Iterable[dict[str, Any]]) -> Indicators:
@@ -221,10 +225,16 @@ def zone_rent(indicators: Indicators, key: tuple[str, str]) -> ZoneRent:
     if fill is None or fill.value is None:
         return ZoneRent(published or fill, indicators.rent_note)
     detail = indicators.rent_fill_detail.get(key, FillDetail(None, None))
-    note = indicators.rent_fill_note
+    notes = [indicators.rent_fill_note] if indicators.rent_fill_note else []
     if detail.typology == HOUSES_TYPOLOGY:
-        note = HOUSES_NOTE if note is None else f"{HOUSES_NOTE}; {note}"
-    return ZoneRent(fill, note, detail.quartiles, indicators.rent_fill_source)
+        notes.insert(0, HOUSES_NOTE)
+    source = indicators.rent_fill_source
+    pooled = detail.sections or 0
+    if detail.quartiles is not None and pooled > 1:  # a barrio: the mean of its sections' ranges
+        notes.append(POOLED_RANGE_NOTE.format(n=pooled))
+        if source is not None:
+            source = POOLED_RANGE_SOURCE.format(source=source, n=pooled)
+    return ZoneRent(fill, "; ".join(notes) or None, detail.quartiles, source)
 
 
 def zone_price(indicators: Indicators, key: tuple[str, str]) -> tuple[IndicatorValue | None, bool]:

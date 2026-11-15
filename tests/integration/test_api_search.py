@@ -230,7 +230,10 @@ def test_a_municipio_without_the_cm_rent_takes_the_reference_with_its_range(
     assert ajalvir.estimated_cost_range is not None
     assert ajalvir.estimated_cost_range.low_eur <= ajalvir.estimated_cost_eur
     assert ajalvir.estimated_cost_eur <= ajalvir.estimated_cost_range.high_eur
-    assert ajalvir.estimated_cost_range.source == "Ministerio de Vivienda (SERPAVI), 2024"
+    assert (
+        ajalvir.estimated_cost_range.source
+        == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
+    )
     assert acebeda.estimated_cost_eur is None and acebeda.match_pct is None
     districts = [z for z in data.all_zones if z.zone.code in with_cm_rent]
     assert districts and all(z.estimated_cost_range is None for z in districts)

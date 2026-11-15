@@ -4,8 +4,10 @@ the level of the CM figure. Pure functions over observation frames.
 The CM rent is a mean of the leases in force; SERPAVI publishes their median and quartiles per
 m² from the same tax sources (IRPF and Catastro). Where both exist, CM mean / SERPAVI median is
 measured zone by zone, and its median over those zones (the calibration) scales the SERPAVI
-figures of every other zone, quartiles included. The lease-signed-in-the-year factor of D-228
-is applied afterwards, as for the CM figure (hi_features.compute).
+median of every other zone. It moves the centre (a mean against a median), not the spread, so
+the quartiles keep their SERPAVI value (review R-02 of PR #71). The lease-signed-in-the-year
+factor of D-228 is applied afterwards to the value and to the quartiles, as for the CM figure
+(hi_features.compute).
 """
 
 import statistics
@@ -183,8 +185,9 @@ def fill_rows(
     confidence: FillConfidence,
 ) -> pd.DataFrame:
     """Every zone of `zones`: its reference median x the calibration, with its confidence and
-    the figures behind it in `reference` (quartiles scaled the same way); a zone without a
-    published median is SOURCE_MISSING, never 0 and never a neighbour's."""
+    the figures behind it in `reference` (the quartiles as published: the calibration moves the
+    centre, not the spread); a zone without a published median is SOURCE_MISSING, never 0 and
+    never a neighbour's."""
     rows: list[dict[str, Any]] = []
     for code in zones:
         ref = refs.get(code)
@@ -200,16 +203,16 @@ def fill_rows(
             "p75_m2": None if ref.p75 is None else round(ref.p75, 4),
             "sections": ref.sections,
             "calibration": scale.as_inputs(),
-            "quartiles": _scaled_quartiles(ref, scale.ratio),
+            "quartiles": _quartiles(ref),
         }
         rows.append(row)
     return result_frame(rows)
 
 
-def _scaled_quartiles(ref: ReferenceRent, factor: float) -> dict[str, float] | None:
+def _quartiles(ref: ReferenceRent) -> dict[str, float] | None:
     if ref.p25 is None or ref.p75 is None:
         return None
-    return {LOW: ref.p25 * factor, HIGH: ref.p75 * factor}
+    return {LOW: round(ref.p25, 4), HIGH: round(ref.p75, 4)}
 
 
 def scale_quartiles_by_adjustment(result: pd.DataFrame) -> pd.DataFrame:

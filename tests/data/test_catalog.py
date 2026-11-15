@@ -576,7 +576,9 @@ def test_reference_rent_only_fills_and_says_its_year(catalog: Catalog) -> None:
     )[1][:4]
     assert serpavi_year == aeat_year  # the factor and the value are of the same year (D-228)
     assert f"contratos firmados en {serpavi_year}" in spec.fit.note
-    assert spec.fit.source.endswith(serpavi_year)
+    # review R-02 of PR #71: our own work from the Ministry's figures, said as such
+    assert spec.fit.source.startswith("Elaboración propia a partir del Ministerio de Vivienda")
+    assert serpavi_year in spec.fit.source
     formula = spec.formula.model_extra or {}
     assert catalog.metrics[formula["metric"]].dataset_id == "mivau_serpavi_alquiler"
     calibration = catalog.metrics[formula["calibration"]["metric"]]

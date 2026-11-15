@@ -39,6 +39,10 @@ RENT_NOTE = "media de los contratos vigentes; uno nuevo suele costar más"
 PURCHASE_NOTE = "valor tasado medio de la vivienda libre, no el precio de un anuncio"
 # D-242: a reference rent of single-family homes, where too few flats are rented to publish one
 HOUSES_NOTE = "precio de casas unifamiliares, porque se alquilan pocos pisos"
+# A barrio pools its census sections (D-242): its range is the mean of theirs, said as such (in
+# the fact's note and after the source in the card), never passed off as the barrio's quartiles
+POOLED_RANGE_NOTE = "el rango es la media de los de sus {n} secciones censales"
+POOLED_RANGE_SOURCE = "{source}; rango: media de sus {n} secciones censales"
 RANGE_ROUND_EUR = 10  # a quartile of the leases is no more precise than this
 # D-234: what an estimated price is, in the fact and the condition; {zone} is «del distrito».
 PURCHASE_ESTIMATE_NOTE = (

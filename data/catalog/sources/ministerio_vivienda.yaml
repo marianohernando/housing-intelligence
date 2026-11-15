@@ -23,4 +23,7 @@ notes: >-
   explotación de fuentes tributarias (IRPF y Catastro) que el dato CM, pero publica la mediana y
   los cuartiles por m² y el número de viviendas alquiladas como vivienda habitual. El portal del
   Ministerio responde 403 a clientes automáticos; las condiciones de reutilización las revisó la
-  línea de investigación el 14 nov y el fichero se descarga sin restricciones del CDN.
+  línea de investigación el 14 nov (reutilización citando la fuente y la fecha de actualización,
+  Ley 37/2007) y el fichero se descarga sin restricciones del CDN. El aviso legal está pendiente
+  de verificación manual (el 15 nov tampoco se pudo leer desde aquí): hasta entonces,
+  commercial_use queda sin declarar.

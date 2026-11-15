@@ -180,23 +180,23 @@ zonas 199 · cumplen 59 · desconocidas 16 · condición que más quita: budget
   1. Villaconejos · 67 % · ≈ 306 €/mes
        - Parada de autobús a unos 5 min andando (confianza 1.00)
        - más de 2 h en transporte público hasta URJC Vicálvaro, llegando a las 9:00 (confianza 0.70)
-       - Alquiler ≈ 306 €/mes por 61 m² (5,0 €/m², referencia del Ministerio de Vivienda para contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 230 y 360 € (confianza 0.70)
+       - Alquiler ≈ 306 €/mes por 61 m² (5,0 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 230 y 350 € (confianza 0.70)
   2. Valdemaqueda · 67 % · ≈ 325 €/mes
        - Parada de autobús a unos 4 min andando (confianza 1.00)
        - 115 min en transporte público hasta URJC Vicálvaro, llegando a las 9:00 (confianza 0.70)
-       - Alquiler ≈ 325 €/mes por 61 m² (5,3 €/m², referencia del Ministerio de Vivienda para contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 190 y 420 € (confianza 0.40)
+       - Alquiler ≈ 325 €/mes por 61 m² (5,3 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 180 y 400 € (confianza 0.40)
   3. Berzosa del Lozoya · 67 % · ≈ 341 €/mes
        - Parada de autobús a unos 4 min andando (confianza 1.00)
        - Con los horarios publicados no se llega a URJC Vicálvaro a las 9:00 en transporte público (confianza 0.50)
-       - Alquiler ≈ 341 €/mes por 61 m² (5,6 €/m², precio de casas unifamiliares, porque se alquilan pocos pisos; referencia del Ministerio de Vivienda para contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 240 y 380 € (confianza 0.40)
+       - Alquiler ≈ 341 €/mes por 61 m² (5,6 €/m², precio de casas unifamiliares, porque se alquilan pocos pisos; referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 230 y 360 € (confianza 0.40)
   4. Pinilla del Valle · 67 % · ≈ 317 €/mes
        - Parada de autobús a unos 3 min andando (confianza 1.00)
        - 106 min en transporte público hasta URJC Vicálvaro, llegando a las 9:00 (confianza 0.70)
-       - Alquiler ≈ 317 €/mes por 61 m² (5,2 €/m², precio de casas unifamiliares, porque se alquilan pocos pisos; referencia del Ministerio de Vivienda para contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 260 y 410 € (confianza 0.40)
+       - Alquiler ≈ 317 €/mes por 61 m² (5,2 €/m², precio de casas unifamiliares, porque se alquilan pocos pisos; referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 250 y 390 € (confianza 0.40)
   5. Zarzalejo · 66 % · ≈ 379 €/mes
        - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 25 min (confianza 0.99)
        - Con los horarios publicados no se llega a URJC Vicálvaro a las 9:00 en transporte público (confianza 0.50)
-       - Alquiler ≈ 379 €/mes por 61 m² (6,2 €/m², referencia del Ministerio de Vivienda para contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 330 y 430 € (confianza 0.70)
+       - Alquiler ≈ 379 €/mes por 61 m² (6,2 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 310 y 410 € (confianza 0.70)
   casi: Coslada (falla budget)
   casi: Puente de Vallecas (falla budget)
   casi: Villa de Vallecas (falla budget)

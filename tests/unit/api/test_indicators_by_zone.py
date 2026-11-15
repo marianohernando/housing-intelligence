@@ -158,7 +158,7 @@ def test_leisure_in_nearby_without_ocio_comes_back_as_a_warning(
 FILL = {
     "role": "rent_m2_fill",
     "note": "referencia del Ministerio de Vivienda para contratos firmados en 2024",
-    "source": "Ministerio de Vivienda (SERPAVI), 2024",
+    "source": "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024",
 }
 REFERENCE = {"reference_rent": {"typology": "colectiva", "quartiles": {"p25": 7.3, "p75": 10.6}}}
 
@@ -194,7 +194,7 @@ def test_without_the_cm_rent_the_reference_fills_with_its_range_and_source() -> 
     assert chosen.rent.value == 9.0
     assert chosen.note == FILL["note"]
     assert chosen.range_m2 == (7.3, 10.6)
-    assert chosen.source == "Ministerio de Vivienda (SERPAVI), 2024"
+    assert chosen.source == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
 
 
 def test_houses_say_so_in_the_note() -> None:
@@ -219,3 +219,18 @@ def test_the_reference_is_read_apart_and_never_as_the_cm_rent() -> None:
     result = indicators_by_zone([_fill()])
     assert not result.rent
     assert result.rent_fill[KEY].feature_id == "alquiler_m2_mensual_referencia"
+
+
+def test_a_barrio_range_is_said_to_be_the_mean_of_its_sections() -> None:
+    """D-242, review R-02: a barrio pools its sections, so its range is the mean of theirs; the
+    note and the source say so. One section, or a municipio: nothing to add."""
+    pooled = _fill()
+    pooled["inputs"]["reference_rent"]["sections"] = 7
+    chosen = zone_rent(indicators_by_zone([pooled]), KEY)
+    assert chosen.note is not None
+    assert chosen.note.endswith("el rango es la media de los de sus 7 secciones censales")
+    assert chosen.source is not None
+    assert chosen.source.endswith("; rango: media de sus 7 secciones censales")
+    single = _fill()
+    single["inputs"]["reference_rent"]["sections"] = 1
+    assert zone_rent(indicators_by_zone([single]), KEY).source == FILL["source"]

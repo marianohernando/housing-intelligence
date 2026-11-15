@@ -105,7 +105,9 @@ SCALE = Calibration(1.04, 37, 0.97, 1.08)
 CONFIDENCE = FillConfidence(0.7, 30, 0.4, {"unifamiliar": 0.5})
 
 
-def test_fill_scales_median_and_quartiles_and_never_invents_a_zone() -> None:
+def test_fill_scales_the_median_not_the_spread_and_never_invents_a_zone() -> None:
+    """The calibration moves the centre (a mean against a median), not the spread: the
+    quartiles keep their SERPAVI value until the new-lease factor (review R-02 of PR #71)."""
     refs = {"28002": ReferenceRent("colectiva", 9.0, 7.0, 11.0, 509.0)}
     rows = fill_rows(refs, ["28001", "28002"], Y2024, SCALE, CONFIDENCE).to_dict("records")
     acebeda, ajalvir = rows
@@ -113,7 +115,7 @@ def test_fill_scales_median_and_quartiles_and_never_invents_a_zone() -> None:
     assert ajalvir["value"] == pytest.approx(9.36)
     assert ajalvir["confidence"] == 0.7
     reference = ajalvir["reference"]
-    assert reference["quartiles"] == pytest.approx({"p25": 7.28, "p75": 11.44})
+    assert reference["quartiles"] == pytest.approx({"p25": 7.0, "p75": 11.0})
     assert reference["calibration"]["ratio"] == 1.04 and reference["contracts"] == 509.0
 
 

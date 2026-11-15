@@ -417,7 +417,7 @@ def test_reference_rent_fills_from_serpavi_scaled_to_the_cm_and_new_leases(
     features_computed: None, migrated_engine: Engine
 ) -> None:
     """D-242: SERPAVI median x (CM mean / SERPAVI median, measured where both exist: here Madrid
-    alone) x the new-lease factor of D-228; quartiles scaled the same way; a municipio whose
+    alone) x the new-lease factor of D-228; the quartiles only x that factor; a municipio whose
     median is not published (La Acebeda) is SOURCE_MISSING, never 0."""
     rows = _reference_rows(migrated_engine)
     madrid, ajalvir = rows[("municipio", "28079")], rows[("municipio", "28002")]
@@ -430,9 +430,9 @@ def test_reference_rent_fills_from_serpavi_scaled_to_the_cm_and_new_leases(
     assert ajalvir.inputs["new_contracts"]["factor_from"] == "28"  # no own table: the region's
     reference = ajalvir.inputs["reference_rent"]
     assert reference["typology"] == "colectiva" and reference["contracts"] == 509
-    ratio = ajalvir.value / reference["median_m2"]
-    assert reference["quartiles"]["p25"] == pytest.approx(reference["p25_m2"] * ratio, rel=1e-3)
-    assert reference["quartiles"]["p75"] == pytest.approx(reference["p75_m2"] * ratio, rel=1e-3)
+    factor = ajalvir.inputs["new_contracts"]["factor"]  # only it moves the quartiles (R-02)
+    assert reference["quartiles"]["p25"] == pytest.approx(reference["p25_m2"] * factor, rel=1e-3)
+    assert reference["quartiles"]["p75"] == pytest.approx(reference["p75_m2"] * factor, rel=1e-3)
     assert ajalvir.confidence == pytest.approx(0.7)
     assert {"mivau_serpavi_alquiler", "cm_alquiler_m2_municipios"} <= set(
         ajalvir.inputs["dataset_versions"]
