@@ -1,0 +1,4 @@
+Supabase (project-scoped read-only MCP), 2026-11-15 ~15:53 UTC, after datamad-10's make supabase-sync PROFILE=demo from 025a4a2
+source_registry 16 · dataset_registry 61 · dataset_version 73 · metric_registry 48 · feature_registry 68 · place_master 41,686 · feature_value 119,135 · database 216 MB
+  (the same counts as after batch 4: only values change)
+alquiler_m2_mensual_referencia: feature_registry version 2; feature_value 331 rows, all of version 2, computed_at 2026-11-15 15:36:04 UTC

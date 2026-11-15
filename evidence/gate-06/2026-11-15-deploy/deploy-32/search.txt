@@ -1,0 +1,171 @@
+POST /api/v1/search against https://vidafacil-madrid.vercel.app, 2026-11-15 (UTC).
+Bodies (the same as deploy-31): example = data/fixtures/contracts/scenario_state.familia_castellana.fixture.json; telework = the same with
+  anchors[0].days_per_week 0; buy400 = a couple buying up to 400.000 €, nothing else; rent10k = a couple renting up to 10.000 €/month,
+  nothing else; couple1500 = a couple renting up to 1.500 €/month, nothing else (also with scope pueblos); student = golden_student of
+  data/fixtures/golden/search_scenarios.yaml (500 €, URJC Vicálvaro 5 days, transporte).
+Moments: 59187f8 (fit-0.8) in production before the deploy (15:38), 025a4a2 (fit-0.9) deployed before the sync (15:42),
+after datamad-10's sync with the SERPAVI reserve factor 1,155 (15:52). The sync landed between 15:49 and 15:51.
+«% changed» counts every evaluated zone (all_zones); «ties» counts the results with the 1st one's %.
+
+===== fit-0.8 (59187f8) → fit-0.9 (025a4a2), same data =====
+The contract only adds match_band (results, near_misses, all_zones); the datasets each answer cites are the same.
+  example: datasets identical (27)
+  buy400: datasets identical (28)
+  student: datasets identical (28)
+  example: the 157 zones that fail carry match_band null; the 5 near misses too.
+== example
+    fit-0.8 -> fit-0.9; pass 42 -> 42, unknown 0 -> 0; same set: true
+    % changed in 195 of 199 zones (13 up, 182 down); ties with the 1st among results: 4 -> 2
+    bands: poco 12, regular 13, muy_bien 12, bien 5; near_misses band: null
+    top10 before: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+    top10 after:  Puente de Vallecas 94, Latina 94, Usera 93, Moratalaz 93, Tetuán 92, Ciudad Lineal 92, Villaverde 92, Carabanchel 90, Coslada 90, Leganés 90
+    casi before: Chamartín 93, Salamanca 93, Centro 93, Chamberí 93, Retiro 93
+    casi after:  Chamartín 92, Arganzuela 92, Centro 91, Chamberí 91, Retiro 91
+    RC before: +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+    RC after:  +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+== buy400
+    fit-0.8 -> fit-0.9; pass 41 -> 41, unknown 151 -> 151; same set: true
+    % changed in 13 of 199 zones (13 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 38, bien 2, regular 1; near_misses band: null
+    top10 before: Puente de Vallecas 100, Usera 100, Carabanchel 100, Latina 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, San Blas-Canillejas 100, Leganés 100
+    top10 after:  Puente de Vallecas 100, Usera 100, Carabanchel 100, Latina 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, San Blas-Canillejas 100, Leganés 100
+    casi before: Arganzuela 0, Tetuán 0, Centro 0, Retiro 0, Chamberí 0
+    casi after:  Arganzuela 56, Tetuán 53, Centro 43, Retiro 23, Chamberí 14
+    RC before: +40.000 € +3
+    RC after:  +40.000 € +3
+== telework
+    fit-0.8 -> fit-0.9; pass 42 -> 42, unknown 0 -> 0; same set: true
+    % changed in 193 of 199 zones (38 up, 155 down); ties with the 1st among results: 10 -> 3
+    bands: muy_bien 31, bien 10, regular 1; near_misses band: null
+    top10 before: Usera 100, Latina 100, Moratalaz 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Parla 100, Móstoles 100, El Álamo 100, Leganés 100
+    top10 after:  Puente de Vallecas 97, Usera 97, Latina 97, Moratalaz 96, Villaverde 96, Coslada 96, Móstoles 96, Casarrubuelos 95, Parla 95, Leganés 95
+    casi before: Serranillos del Valle 99, Cobeña 98, Morata de Tajuña 98, Villanueva de Perales 97, Ciempozuelos 97
+    casi after:  Morata de Tajuña 94, Cobeña 93, Arganzuela 92, Villaconejos 92, Tres Cantos 91
+    RC before: +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+    RC after:  +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+== rent10k
+    fit-0.8 -> fit-0.9; pass 183 -> 183, unknown 16 -> 16; same set: true
+    % changed in 0 of 199 zones (0 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 183; near_misses band: (none)
+    top10 before: Chamberí 100, Tetuán 100, Puente de Vallecas 100, Salamanca 100, Centro 100, Usera 100, Arganzuela 100, Ciudad Lineal 100, Carabanchel 100, Retiro 100
+    top10 after:  Chamberí 100, Tetuán 100, Salamanca 100, Puente de Vallecas 100, Centro 100, Arganzuela 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Retiro 100
+    casi before: 
+    casi after:  
+    RC before: 
+    RC after:  
+== couple1500
+    fit-0.8 -> fit-0.9; pass 181 -> 181, unknown 16 -> 16; same set: true
+    % changed in 9 of 199 zones (9 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 175, regular 2, bien 4; near_misses band: null
+    top10 before: Puente de Vallecas 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Latina 100, Moratalaz 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Navalagamella 100
+    top10 after:  Puente de Vallecas 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Moratalaz 100, Latina 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Parla 100
+    casi before: Chamberí 0, Salamanca 0
+    casi after:  Chamberí 55, Salamanca 46
+    RC before: +150 €/mes +2
+    RC after:  +150 €/mes +2
+== couple1500-pueblos
+    fit-0.8 -> fit-0.9; pass 122 -> 122, unknown 16 -> 16; same set: true
+    % changed in 0 of 138 zones (0 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 122; near_misses band: (none)
+    top10 before: Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100, Torrejón de la Calzada 100, Quijorna 100, Talamanca de Jarama 100, Alpedrete 100, Fresnedillas de la Oliva 100
+    top10 after:  Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100, Torrejón de la Calzada 100, Quijorna 100, Talamanca de Jarama 100, Serranillos del Valle 100, Fresnedillas de la Oliva 100
+    casi before: 
+    casi after:  
+    RC before: 
+    RC after:  
+== student
+    fit-0.8 -> fit-0.9; pass 59 -> 59, unknown 16 -> 16; same set: true
+    % changed in 178 of 199 zones (8 up, 170 down); ties with the 1st among results: 4 -> 1
+    bands: poco 59; near_misses band: null
+    top10 before: Villaconejos 67, Valdemaqueda 67, Berzosa del Lozoya 67, Pinilla del Valle 67, Zarzalejo 66, Titulcia 66, Colmenar del Arroyo 61, Belmonte de Tajo 61, Torremocha de Jarama 61, Gargantilla del Lozoya y Pinilla de Buitrago 61
+    top10 after:  Carabaña 53, Valverde de Alcalá 52, Orusco de Tajuña 47, Zarzalejo 32, Pinilla del Valle 32, Villaconejos 31, Valdemaqueda 31, Berzosa del Lozoya 31, Titulcia 30, Belmonte de Tajo 30
+    casi before: Coslada 83, Puente de Vallecas 83, Villa de Vallecas 83, Retiro 83, Moratalaz 83
+    casi after:  Moratalaz 79, Puente de Vallecas 78, Vicálvaro 78, Retiro 78, Coslada 78
+    RC before: +50 €/mes +18
+    RC after:  +50 €/mes +18
+    limit facts in results: Zarzalejo 32: No llegas a URJC Vicálvaro a las 9:00 en transporte público: el encaje se queda en la mitad | Pinilla del Valle 32: Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad | Villaconejos 31: Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad | Valdemaqueda 31: Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad (+3)
+
+===== before → after the sync (fit-0.9, factor 1,2085 → 1,155) =====
+== example
+    fit-0.9 -> fit-0.9; pass 42 -> 42, unknown 0 -> 0; same set: true
+    % changed in 0 of 199 zones (0 up, 0 down); ties with the 1st among results: 2 -> 2
+    bands: poco 12, regular 13, muy_bien 12, bien 5; near_misses band: null
+    top10 before: Puente de Vallecas 94, Latina 94, Usera 93, Moratalaz 93, Tetuán 92, Ciudad Lineal 92, Villaverde 92, Carabanchel 90, Coslada 90, Leganés 90
+    top10 after:  Puente de Vallecas 94, Latina 94, Usera 93, Moratalaz 93, Tetuán 92, Ciudad Lineal 92, Villaverde 92, Carabanchel 90, Coslada 90, Leganés 90
+    casi before: Chamartín 92, Arganzuela 92, Centro 91, Chamberí 91, Retiro 91
+    casi after:  Chamartín 92, Arganzuela 92, Centro 91, Chamberí 91, Retiro 91
+    RC before: +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+    RC after:  +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+== buy400
+    fit-0.9 -> fit-0.9; pass 41 -> 41, unknown 151 -> 151; same set: true
+    % changed in 0 of 199 zones (0 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 38, bien 2, regular 1; near_misses band: null
+    top10 before: Puente de Vallecas 100, Usera 100, Carabanchel 100, Latina 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, San Blas-Canillejas 100, Leganés 100
+    top10 after:  Puente de Vallecas 100, Usera 100, Carabanchel 100, Latina 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, San Blas-Canillejas 100, Leganés 100
+    casi before: Arganzuela 56, Tetuán 53, Centro 43, Retiro 23, Chamberí 14
+    casi after:  Arganzuela 56, Tetuán 53, Centro 43, Retiro 23, Chamberí 14
+    RC before: +40.000 € +3
+    RC after:  +40.000 € +3
+== telework
+    fit-0.9 -> fit-0.9; pass 42 -> 42, unknown 0 -> 0; same set: true
+    % changed in 0 of 199 zones (0 up, 0 down); ties with the 1st among results: 3 -> 3
+    bands: muy_bien 31, bien 10, regular 1; near_misses band: null
+    top10 before: Puente de Vallecas 97, Usera 97, Latina 97, Moratalaz 96, Villaverde 96, Coslada 96, Móstoles 96, Casarrubuelos 95, Parla 95, Leganés 95
+    top10 after:  Puente de Vallecas 97, Usera 97, Latina 97, Moratalaz 96, Villaverde 96, Coslada 96, Móstoles 96, Casarrubuelos 95, Parla 95, Leganés 95
+    casi before: Morata de Tajuña 94, Cobeña 93, Arganzuela 92, Villaconejos 92, Tres Cantos 91
+    casi after:  Morata de Tajuña 94, Cobeña 93, Arganzuela 92, Villaconejos 92, Tres Cantos 91
+    RC before: +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+    RC after:  +5 min a pie hasta colegio con primaria +49; +150 €/mes +3
+== rent10k
+    fit-0.9 -> fit-0.9; pass 183 -> 183, unknown 16 -> 16; same set: true
+    % changed in 0 of 199 zones (0 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 183; near_misses band: (none)
+    top10 before: Chamberí 100, Tetuán 100, Salamanca 100, Puente de Vallecas 100, Centro 100, Arganzuela 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Retiro 100
+    top10 after:  Chamberí 100, Tetuán 100, Salamanca 100, Puente de Vallecas 100, Centro 100, Arganzuela 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Retiro 100
+    casi before: 
+    casi after:  
+    RC before: 
+    RC after:  
+== couple1500
+    fit-0.9 -> fit-0.9; pass 181 -> 181, unknown 16 -> 16; same set: true
+    % changed in 0 of 199 zones (0 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 175, regular 2, bien 4; near_misses band: null
+    top10 before: Puente de Vallecas 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Moratalaz 100, Latina 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Parla 100
+    top10 after:  Puente de Vallecas 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Moratalaz 100, Latina 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Parla 100
+    casi before: Chamberí 55, Salamanca 46
+    casi after:  Chamberí 55, Salamanca 46
+    RC before: +150 €/mes +2
+    RC after:  +150 €/mes +2
+== couple1500-pueblos
+    fit-0.9 -> fit-0.9; pass 122 -> 122, unknown 16 -> 16; same set: true
+    % changed in 0 of 138 zones (0 up, 0 down); ties with the 1st among results: 10 -> 10
+    bands: muy_bien 122; near_misses band: (none)
+    top10 before: Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100, Torrejón de la Calzada 100, Quijorna 100, Talamanca de Jarama 100, Serranillos del Valle 100, Fresnedillas de la Oliva 100
+    top10 after:  Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100, Torrejón de la Calzada 100, Quijorna 100, Talamanca de Jarama 100, Serranillos del Valle 100, Fresnedillas de la Oliva 100
+    casi before: 
+    casi after:  
+    RC before: 
+    RC after:  
+== student
+    fit-0.9 -> fit-0.9; pass 59 -> 68, unknown 16 -> 16; same set: false (only after: Bustarviejo, Casarrubuelos, Chinchón, Moraleja de Enmedio, Morata de Tajuña, Perales de Tajuña, Robledo de Chavela, Los Santos de la Humosa, Torrelaguna)
+    % changed in 61 of 199 zones (61 up, 0 down); ties with the 1st among results: 1 -> 1
+    bands: poco 67, regular 1; near_misses band: null
+    top10 before: Carabaña 53, Valverde de Alcalá 52, Orusco de Tajuña 47, Zarzalejo 32, Pinilla del Valle 32, Villaconejos 31, Valdemaqueda 31, Berzosa del Lozoya 31, Titulcia 30, Belmonte de Tajo 30
+    top10 after:  Morata de Tajuña 68, Carabaña 54, Valverde de Alcalá 53, Orusco de Tajuña 48, Zarzalejo 32, Pinilla del Valle 32, Belmonte de Tajo 31, Villaconejos 31, Valdemaqueda 31, Alameda del Valle 31
+    casi before: Moratalaz 79, Puente de Vallecas 78, Vicálvaro 78, Retiro 78, Coslada 78
+    casi after:  Moratalaz 79, Puente de Vallecas 78, Vicálvaro 78, Retiro 78, Coslada 78
+    RC before: +50 €/mes +18
+    RC after:  +50 €/mes +20
+    limit facts in results: Zarzalejo 32: No llegas a URJC Vicálvaro a las 9:00 en transporte público: el encaje se queda en la mitad | Pinilla del Valle 32: Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad | Belmonte de Tajo 31: Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad | Villaconejos 31: Tardas 1 h 30 o más en llegar a URJC Vicálvaro: el encaje se queda en la mitad (+2)
+
+== student, 6 repeats after the sync (one per request, to rule out an instance with an old cache)
+  6 × 68 zones, 1st Morata de Tajuña 68
+
+== «Pueblos», a couple renting up to 1.500 €: the rents (estimated_cost_eur and estimated_cost_range of all_zones)
+  122 villages with a rent: 120 lower by 4.2–4.6 % (median ratio 0.9558; 1,155 / 1,2085 = 0.9557),
+  2 unchanged (Arroyomolinos, Navalcarnero: their own AEAT table, no reserve factor). Zones, % and top 10 do not change: every rent stays under 75 % of 1.500 €.
+  Casarrubuelos: 571 → 546 €/month, range 500–790 → 470–750 €, source «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024»
+  Navalagamella: 630 → 602 €/month, range 460–710 → 440–680 €, source «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024»
+  Titulcia: 395 → 377 €/month, range 290–550 → 280–530 €, source «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024»
+  Zarzalejo: 422 → 404 €/month, range 350–460 → 340–440 €, source «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024»
+  Morata de Tajuña: 561 → 537 €/month, range 440–670 → 420–640 €, source «Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024»
