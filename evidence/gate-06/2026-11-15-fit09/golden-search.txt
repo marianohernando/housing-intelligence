@@ -196,7 +196,6 @@ zonas 199 · cumplen 68 · desconocidas 16 · condición que más quita: budget
   5. Zarzalejo · 32 % · ≈ 362 €/mes
        - No llegas a URJC Vicálvaro a las 9:00 en transporte público: el encaje se queda en la mitad (confianza 0.50)
        - Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 25 min (confianza 0.99)
-       - Con los horarios publicados no se llega a URJC Vicálvaro a las 9:00 en transporte público (confianza 0.50)
        - Alquiler ≈ 362 €/mes por 61 m² (5,9 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 300 y 390 € (confianza 0.70)
   casi: Moratalaz (falla budget)
   casi: Puente de Vallecas (falla budget)

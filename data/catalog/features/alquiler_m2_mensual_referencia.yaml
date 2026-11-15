@@ -1,5 +1,5 @@
 feature_id: alquiler_m2_mensual_referencia
-version: 1
+version: 2  # D-243: the new-lease reserve factor is the median of the municipios' (was the region's)
 human_name: Alquiler por metro cuadrado de un contrato nuevo, referencia del Ministerio de Vivienda (donde la Comunidad no lo publica)
 domain: housing
 type: derived

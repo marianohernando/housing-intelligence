@@ -1907,17 +1907,20 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
    - «Más de 1 h de trayecto hasta {lugar}: como mucho 74 %».
    - Las duraciones siguen a la ventana de la persona: con «como mucho 45 min» salen «Más de 1 h 30 de trayecto» y «Tardas 2 h 15 o más».
    - **Siempre caben:** el límite, el hecho del trayecto del que habla y el coste se quedan; si pasan de 5, se va el criterio menos importante, como en D-240.
+   - **Sin repetir:** cuando no se llega a las 9:00, el límite sustituye al hecho propio del trayecto («Con los horarios publicados no se llega…»), que diría lo mismo (revisión R-02).
    - Textos en `pitch/textos_web.md` (`hecho.limite.*`).
 4. **El % en palabras.** Contrato aditivo: `match_band`, opcional, en `RankedZone` y `ZoneMatch` (`MatchBand`):
    - `muy_bien` desde 90, `bien` de 75 a 89, `regular` de 60 a 74 y `poco` por debajo de 60;
    - se calcula en el dominio a partir del % que se ve (`match_band`, con las constantes `MUY_BIEN_FROM`, `BIEN_FROM` y `REGULAR_FROM`); `null` si el % es desconocido;
    - **solo para una zona que cumple todas las condiciones** (decisión del orquestador, 15 nov): una de «Casi encajan», o cualquier `ZoneMatch` con `passes_all: false`, va con `match_band: null`. Si no, Chamartín saldría «muy bien» al 92 % pasándose del presupuesto. Esas zonas se leen por lo que les falta («se pasa ≈ …»), y su `match_pct` no cambia: sigue ordenando «Casi encajan» y pintando el mapa;
+   - por eso `null` tiene dos sentidos: un % desconocido o una zona que no cumple todo. La web los distingue con `match_pct` y `passes_all`, que ya mira (revisión R-11);
    - los dos topes caen justo debajo de una banda (89 % y 74 %);
    - la web lo deriva con los mismos umbrales si no llega: **no se cambian sin avisar a la línea B**;
-   - esquemas regenerados (`make schemas`). Los dos fixtures de búsqueda llevan la banda de su propio %; no se regeneran porque sus % siguen siendo de `fit-0.7` y los tests de la web los leen.
+   - esquemas y tipos de la web regenerados (`make schemas`, `npm run -w apps/web contracts`). Los dos fixtures de búsqueda llevan la banda de su propio % donde la zona cumple todo y `null` donde no (revisión R-07); no se regeneran porque sus % siguen siendo de `fit-0.7` y los tests de la web los leen.
 5. **«Qué falta» dentro de la búsqueda** (`hi_api/services/search.py`, `gap_data`). Antes `/search` cargaba el estado de 3 filas por hogar (las de la tarjeta) y en barrios ninguna.
    - Ahora cada zona trae el estado y la ratio de las cinco filas de servicio (`ZoneData.supply`), las marque la persona o no. Los mapas ya estaban en caché (`cached_row_map`), y así los datos de una zona no dependen de quién busca.
-   - Solo se citan (datasets y avisos) las filas que usa la respuesta: las 3 de la tarjeta y las de los servicios marcados.
+   - Solo se citan (datasets y avisos) las filas que usa la respuesta: las 3 de la tarjeta y las de los servicios marcados. La explicación del MCP (`explicar_zona`) cita las mismas (revisión R-03).
+   - **Coste:** con la caché vacía (la primera búsqueda de cada proceso, o tras un sync) se leen 5 filas en lugar de 3. Medido en local con el ejemplo: 71 consultas y 0,44 s frente a 43 y 0,36 s; con la caché llena, 1 consulta. Contra Supabase, por el pooler, la primera búsqueda puede tardar alrededor de 1 s más (revisión R-10).
    - **Barrios:** toman las filas de su distrito, con su nombre, como proxy declarado, igual que su tarjeta (D-238 §7). `/search/barrios` las cita.
 6. **Estabilización de ratios: probada y descartada** (revisión F4.7b del orquestador).
    - **Qué se probó:** sustituir la ratio por una estabilizada (empirical Bayes de Poisson-gamma, (O + k)/(E + k), con k = 3,69 casos esperados, el suelo de D-213). La pregunta era si Titulcia (1.400 habitantes, 1 escuela infantil para 51 niños) salía 2.ª para el bebé por el denominador pequeño.
@@ -1949,6 +1952,7 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
     - **Ahora:** toman la mediana de los factores de los 37 municipios de la tabla (`fallback: {median: true}`, `factor_from: mediana_municipios`, 1,1551). Su alquiler baja un 4,4 % (1,155 / 1,2085).
     - **Efecto en el banco:** el ejemplo del pitch, el bebé, la compra de P1 y los barrios no cambian. En la rejilla cambia el top 10 de 97 de 1.026 búsquedas y el recuento de 78, sobre todo con alquileres de 700 a 1.000 €. El estudiante con 500 € pasa de 59 a 68 zonas.
     - `scripts/serpavi_summary.py` dice qué factor usan los rellenos.
+    - La feature pasa a la **versión 2**: cambia el método. El cálculo borra las filas de la feature antes de escribir (no quedan filas de la versión 1) y `feature_registry` tiene una fila por feature, que se actualiza (comprobado en `housing_fit09`: versión 2 en el registro y 331 filas, todas de la versión 2).
 12. **Licencia del Ministerio de Vivienda.** La línea D comprobó en el navegador el aviso legal (https://www.mivau.gob.es/ministerio/aviso-legal): permite usos comerciales y no comerciales, citando la fuente y la fecha de la última actualización y sin sugerir respaldo. En `ministerio_vivienda.yaml`, `commercial_use: true` y el enlace correcto. Cierra el pendiente de D-242 §1.
 13. **Riesgos:**
     - Es el cambio más grande a 8 días de la congelación, y cambia el guion («Puente de Vallecas y Latina, al 94 %») y las capturas.
@@ -1961,9 +1965,10 @@ Decisión de Mariano (F5, 15 nov) entre las tres finalistas del banco de fórmul
 14. **Cómo volver atrás:** revertir el PR y desplegar.
     - **Contrato:** `match_band` es opcional. La web nueva con la API vieja lo deriva de `match_pct`, y la web vieja con la API nueva lo ignora (tipos de TypeScript, sin validación en tiempo de ejecución). Los hechos nuevos son textos como los demás.
     - **Factor:** volver a `fallback: {level: ccaa, code: "28"}` y recalcular `alquiler_m2_mensual_referencia`.
-    - Cada pieza se puede apagar sola con su constante: `WALK_UTILITY_AT_WINDOW = 1`, `CAPACITY_WEIGHT = 0`, `BUDGET_UTILITY_AT_LIMIT = 0` o los topes a 1.
+    - **Por piezas, solo algunas** (revisión R-05): `WALK_UTILITY_AT_WINDOW = 1` quita «cada minuto cuenta»; `CAPACITY_WEIGHT = 0`, las plazas; `BUDGET_UTILITY_AT_LIMIT = 0`, el suelo y la cola del presupuesto; `LIMIT_DAYS = 8`, los dos límites de trayecto con sus hechos; `SHORTAGE_CAP = 1`, el tope por falta. `UNREACHABLE_FACTOR = 1` no sirve, porque el hecho seguiría diciendo «la mitad». «Lo imprescindible puntúa», el orden por el % y `match_band` no tienen constante. La vuelta atrás de verdad es revertir el PR.
 15. **Despliegue:** desplegar → recalcular → sincronizar → smoke.
     - **API nueva con los datos de antes:** funciona igual; el % ya es `fit-0.9`, y el alquiler de los pueblos sigue con 1,2085 hasta recalcular. El ejemplo del pitch no cambia con el factor.
     - **Recalcular en `housing`:** `uv run hi-features compute --feature alquiler_m2_mensual_referencia`, que sincroniza también el catálogo (la fuente del Ministerio y `limitations`). Después, `uv run python scripts/serpavi_summary.py` debe dar «126 con mediana_municipios (1.1551)» y la calibración en 1,0388.
     - **Sync:** `make supabase-sync PROFILE=demo` (`source_registry`, `feature_registry` y `feature_value`).
+    - **Smoke de despliegue:** `scripts/smoke_demo.sh` exigía `fit-0.8` y, con `fit-0.9`, `make deploy-demo` acababa con error tras desplegar. Ahora acepta `fit-0.8` o posterior (revisión R-01).
     - **Smoke:** `scripts/golden_search.py` contra la base sincronizada (10/10) y `/search` con el ejemplo.
