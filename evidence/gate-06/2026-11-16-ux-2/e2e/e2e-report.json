@@ -1,6 +1,6 @@
 {
  "base": "http://localhost:3071",
- "checked_at": "2026-11-15T19:15:59.332Z",
+ "checked_at": "2026-11-15T19:35:02.487Z",
  "runs": [
   {
    "browserName": "chromium",
@@ -17,6 +17,12 @@
      "name": "summary = API zones_passing, «para vosotros» for a couple with children",
      "ok": true,
      "detail": "Hemos encontrado 42 zonas para vosotros."
+    },
+    {
+     "journey": "J1 search",
+     "name": "the list's title speaks to them too: «Zonas que os convienen»",
+     "ok": true,
+     "detail": ""
     },
     {
      "journey": "J1 search",
@@ -634,7 +640,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 17
+   "seconds": 18
   },
   {
    "browserName": "chromium",
@@ -651,6 +657,12 @@
      "name": "summary = API zones_passing, «para vosotros» for a couple with children",
      "ok": true,
      "detail": "Hemos encontrado 42 zonas para vosotros."
+    },
+    {
+     "journey": "J1 search",
+     "name": "the list's title speaks to them too: «Zonas que os convienen»",
+     "ok": true,
+     "detail": ""
     },
     {
      "journey": "J1 search",
@@ -1130,7 +1142,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 19
+   "seconds": 20
   }
  ]
 }

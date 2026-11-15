@@ -37,7 +37,7 @@ Una «cosa» es un elemento visible con texto propio (un nombre, una banda, una 
 
 ## e2e contra la web compilada
 
-`infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3071`: **escritorio 1440 px 104/104, móvil 390 px 80/80**, dos pasadas seguidas (`e2e/e2e-report.json`). Antes: 86/86 y 62/62. Se han adaptado sin quitar ninguna comprobación (el aviso de 2024, bajo la lista; el % y los hechos de la tarjeta, tras «Ver más»; «para vosotros») y se han añadido:
+`infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3071`: **escritorio 1440 px 105/105, móvil 390 px 81/81** (con los retoques; 104/104 y 80/80 en dos pasadas antes de ellos) (`e2e/e2e-report.json`). Antes: 86/86 y 62/62. Se han adaptado sin quitar ninguna comprobación (el aviso de 2024, bajo la lista; el % y los hechos de la tarjeta, tras «Ver más»; «para vosotros») y se han añadido:
 - **Fila esencial:** cada fila a la vista dice el nombre, la banda y «Unos … € al mes» de la API; en el móvil sin %, en el escritorio con él; nunca «Distrito de», m² ni «Empatan».
 - **Tarjeta:** lo esencial sin %, con la banda y «Precio orientativo»; la zona en la dirección (`?zona=`); «Ver más» despliega el % y los hechos de la API y el aviso de 2024; «Volver a la lista» vuelve a la lista y quita `?zona=`.
 - **J5, pareja jubilada:** la tarjeta del 1.er barrio dice lo que le falta de lo suyo según el `/gaps` que pidió, o «No le falta nada de lo que buscáis»; nunca colegios ni escuelas infantiles; el botón atrás vuelve a la lista. Y el arreglo que pidió C: al desmarcar «Somos mayores» sin volver a buscar, «¿Quieres ver más zonas?» ya no ofrece las propuestas anteriores; al buscar otra vez, ninguna vuelve a marcarlo.
@@ -46,7 +46,7 @@ Una «cosa» es un elemento visible con texto propio (un nombre, una banda, una 
 ## Golden, tests y build
 
 - `scripts/golden_search.py` contra `housing` en solo lectura: **10 de 10**. La API no cambia.
-- `make lint typecheck test-unit`: Python 1030, vitest 560 (antes 542), eslint, tsc y pyright limpios.
+- `make lint typecheck test-unit`: Python 1031, vitest 561 (antes 1030 y 542), eslint, tsc y pyright limpios.
 - Builds: uno tras otro, sin borrar `.next` (el último, con los arreglos de la revisión, es el medido).
 
 ## Capturas (390, 360 y 1440 px)
@@ -63,11 +63,15 @@ Una «cosa» es un elemento visible con texto propio (un nombre, una banda, una 
 | Barrios de un distrito | `07-distrito-barrios-*.png` | `antes/08-distrito-barrios-*.png` |
 | «No comparable» (Barajas, centros de salud) | `08-no-comparable-*.png` | antes: «Aquí vive tan poca gente…» y, de la API, «aquí viven muy pocas personas (50.375)» |
 
+## Retoques tras abrir el PR
+
+- **La cabecera concuerda con el hogar:** «Zonas que os convienen» con dos o más personas, «Zonas que te convienen» con una, como la línea de debajo (`resultsTitle`, con test; el e2e lo comprueba con el ejemplo de la familia).
+- **«No comparable» en la API, en su origen** (`not_comparable_text`, `hi_domain/gap_impact.py`): Barajas, centros de salud, decía «No comparable: aquí viven muy pocas personas (50.375) para saber si falta.» y dice «No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.». En la fila de vivienda (denominador de hogares) sigue «aquí viven muy pocos hogares de 4 o más personas (1)» (La Acebeda), que ahí es el motivo. Comprobado con la API local sobre `housing` en solo lectura. Ni el contrato ni la fórmula cambian.
+- **«No sabemos si le faltan…» se queda** (decisión de Mariano, D-245 §4).
+- **El trayecto a la familia o a «donde vivimos ahora»** ya no dice «, llegando a las 9:00» (`commute_text`, `hi_domain/fit.py`): la tarjeta de la pareja jubilada dice «27 min en transporte público hasta Ciudad Lineal (metro)» (`02-tarjeta-pareja-jubilada-*.png`). El del trabajo y los estudios sigue igual, y el cálculo no cambia. Golden 10 de 10, sin tocarlo: sus escenarios con lugar son de trabajo.
+
 ## Lo que queda abierto
 
-- **Pendiente de Mariano:** bajo «No le falta nada de lo que buscáis» sale «No sabemos si le faltan centros de salud o centros de mayores.» cuando alguna fila del hogar es «No comparable» o SIN DATOS (D-245 §4). Se quita con una línea.
-- **Para A:** la frase de la API para «No comparable» (`not_comparable_text`, `hi_domain/gap_impact.py`) sigue diciendo «aquí viven muy pocas personas (50.375)»; la web ya la sustituye por lo que significa.
-- La cabecera «Zonas que te convienen» sigue en «tú»; la línea de debajo habla al hogar («para vosotros»). No estaba en las decisiones.
 - Volver con el botón atrás desde la pantalla de zona a su tarjeta enseña la lista un instante antes de la tarjeta; volver a la lista por un enlace ya no enseña la tarjeta.
 - `rankingRows` (lib/match.ts) ya no lo usa la web: la lista no marca empates. Se puede borrar si Mariano lo confirma.
 - Scripts de QA antiguos (`check-qa.mjs`, `check-search.mjs`, `count-requests.mjs`): sin adaptar ni ejecutar, como en la entrega 1. No los usa la CI.
