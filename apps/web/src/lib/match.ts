@@ -1,5 +1,5 @@
 /**
- * The % of fit in words (pure, unit tested): its band («Encaja muy bien · 94 %») and the zones
+ * The % of fit in words (pure, unit tested): its band («Muy buena opción · 94 %») and the zones
  * that tie at the same shown % (F5 of the fit-0.9 formula, decided by Mariano). The web never
  * recomputes the %: it reads the band the API sends (`match_band`, fit-0.9, D-243 §4) or, from an
  * API that does not send it, the same thresholds over `match_pct`.
@@ -24,11 +24,15 @@ export const BAND_FROM: readonly [MatchBand, number][] = [
 
 const BANDS = new Set<string>(BAND_FROM.map(([band]) => band));
 
+/**
+ * resultados.banda.*: what the band says to the person, in plain words (UX mobile audit, §4: «encaja»
+ * was a word to decode). The API's values (`muy_bien`, `bien`, `regular`, `poco`) do not change.
+ */
 export const BAND_TEXT: Record<MatchBand, string> = {
-  muy_bien: "Encaja muy bien",
-  bien: "Encaja bien",
-  regular: "Encaja regular",
-  poco: "Encaja poco",
+  muy_bien: "Muy buena opción",
+  bien: "Buena opción",
+  regular: "Opción regular",
+  poco: "Poco recomendable",
 };
 
 /**
@@ -55,18 +59,19 @@ export function bandRanges(): [string, string][] {
   });
 }
 
-/** What the % says, in its parts: «Encaja muy bien» and «94 %». */
+/** What the % says, in its parts: «Muy buena opción» and «94 %». */
 export interface MatchText {
   band: string;
   pct: string;
-  /** Read aloud and in one line: «Encaja muy bien · 94 %» */
+  /** Read aloud and in one line: «Muy buena opción · 94 %» */
   text: string;
 }
 
 export function matchText(zone: Banded): MatchText | null {
   const band = matchBand(zone);
   if (band === null) return null;
-  const pct = `${zone.match_pct} %`;
+  // A no-break space: «94 %» never splits at the end of a line
+  const pct = `${zone.match_pct}\u00a0%`;
   return { band: BAND_TEXT[band], pct, text: `${BAND_TEXT[band]} · ${pct}` };
 }
 
@@ -112,7 +117,10 @@ export function tiedNames(
   return others.length <= NAMED_TIES ? joinNames(others.map((z) => z.zone.name)) : `${zonesText(others.length, word)} más`;
 }
 
-/** zona.empate, in the zone card: «Empata al 94 % con Latina.»; null when it ties with none. */
+/**
+ * zona.empate, in the zone card: «Igual de buena que Latina (94 %).», «Igual de bueno que…» for a
+ * barrio, municipio or pueblo; null when it ties with none.
+ */
 export function tieText(
   zone: Pick<ZoneMatch, "match_pct" | "zone">,
   all: readonly Named[],
@@ -120,7 +128,8 @@ export function tieText(
   ranking: readonly Keyed[] = [],
 ): string | null {
   const whom = tiedNames(zone, all, word, ranking);
-  return whom === null ? null : `Empata al ${zone.match_pct} % con ${whom}.`;
+  const good = word === "zona" ? "buena" : "bueno";
+  return whom === null ? null : `Igual de ${good} que ${whom} (${zone.match_pct}\u00a0%).`;
 }
 
 /** One row of the ranking with where it stands in a run of rows tied at its %. */

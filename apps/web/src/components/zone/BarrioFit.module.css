@@ -80,7 +80,7 @@
   gap: var(--space-1);
   margin: var(--space-1) 0 0 calc(-1 * var(--space-2));
   color: var(--violet-strong);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
@@ -171,7 +171,7 @@ button.head:focus-visible::after {
 
 .pct .band {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   white-space: nowrap;
 }

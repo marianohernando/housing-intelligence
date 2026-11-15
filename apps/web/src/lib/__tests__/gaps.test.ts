@@ -55,7 +55,7 @@ describe("rows", () => {
     for (const key of ROW_KEYS.filter((k) => k !== "vivienda")) {
       expect(ROW_MEASURE[key as keyof typeof ROW_MEASURE]).toMatch(/a 15 min andando .*repartid[oa]s entre todos los que l[oa]s tienen cerca$/);
     }
-    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud del SERMAS/);
+    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud públicos/);
     expect(ROW_MEASURE.vivienda).not.toMatch(/andando/);
   });
 
@@ -166,16 +166,16 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
 
   it("names the rows that are JUSTO (Fuencarral-El Pardo, 12 nov)", () => {
     expect(fitsButShortText([row("escuela_infantil", "JUSTO"), row("colegio", "JUSTO"), row("centro_salud", "JUSTO")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
     );
   });
 
   it("says what is missing, and then what is tight", () => {
     expect(fitsButShortText([row("escuela_infantil", "FALTA")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
     );
     expect(fitsButShortText([row("centro_salud", "FALTA"), row("colegio", "JUSTO"), row("farmacia", "CUBIERTO")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
     );
   });
 
@@ -190,7 +190,7 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
     ];
     expect(topRows(rows)).toHaveLength(3);
     expect(fitsButShortText(rows)).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
     );
   });
 
@@ -342,7 +342,7 @@ describe("the summary over the rows (falta.resumen.*)", () => {
   });
 
   it("says nothing is missing when every comparable row is CUBIERTO", () => {
-    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada frente a municipios parecidos.", rest: [] });
+    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada, comparado con municipios parecidos.", rest: [] });
   });
 
   it("keeps rows too small to compare apart, but not those compared with their neighbours", () => {
@@ -402,7 +402,7 @@ describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () 
 
   it("says a service close by can still be short, for each FALTA or JUSTO row the search found close", () => {
     expect(nearButShortTexts(vallecas, { escuela_infantil: 6.3, colegio: 4.2, centro_salud: 7.6 })).toEqual([
-      "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
+      "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños: por eso sale FALTA.",
       "Centro de salud a unos 8 min andando, pero van justos para tanta gente: por eso sale JUSTO.",
     ]);
     // Each line says which row it explains, so the card does not repeat it in encaje.aviso_*

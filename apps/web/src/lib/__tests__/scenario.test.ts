@@ -17,6 +17,7 @@ import {
   floorArea,
   floorAreaOptions,
   HOUSEHOLD_FLOOR_AREA_M2,
+  isOlderHousehold,
   OFFICE_DAYS,
   officeDays,
   officeDaysOptions,
@@ -25,7 +26,9 @@ import {
   nearbyServices,
   peopleAtHome,
   placeOf,
+  QUICK_BUDGETS,
   removeNearby,
+  retiredExampleScenario,
   SCOPES,
   scopeOf,
   setAdults,
@@ -38,15 +41,18 @@ import {
   setNearbyMinutes,
   setNearbyRequired,
   setNoBudgetLimit,
+  setOlderHousehold,
   setPlace,
   setPlaceMaxMinutes,
   setScope,
   setSeniors,
+  setTypedBudget,
   setWorkDays,
   setWorkMaxMinutes,
   setWorkPlace,
   toggleLeisureGroup,
   togglePriority,
+  typedBudget,
   walkMinutesOptions,
   workPlace,
 } from "../scenario";
@@ -463,5 +469,76 @@ describe("m² of the home («Para unos 68 m² (cámbialo)»)", () => {
 
   it("leaves the example of the pitch with min_floor_area_m2: null", () => {
     expect(exampleScenario().min_floor_area_m2).toBeNull();
+  });
+});
+
+describe("«Somos mayores» (D-244)", () => {
+  it("says who the adults are and adds no one: the same people and the same m²", () => {
+    const couple = setAdults(defaultScenario(), 2);
+    const older = setOlderHousehold(couple, true);
+    expect(isOlderHousehold(older)).toBe(true);
+    expect(older.household?.seniors).toBe(true);
+    expect(peopleAtHome(older)).toBe(peopleAtHome(couple));
+    expect(floorArea(older)).toEqual(floorArea(couple));
+  });
+
+  it("marks «Centro de salud» last, once, and the person can take it away", () => {
+    const older = setOlderHousehold({ ...defaultScenario(), priorities: ["transporte"] }, true);
+    expect(older.priorities).toEqual(["transporte", "salud"]);
+    expect(setOlderHousehold({ ...defaultScenario(), priorities: ["salud", "colegios"] }, true).priorities).toEqual(["salud", "colegios"]);
+    expect(togglePriority(older, "salud").priorities).toEqual(["transporte"]);
+  });
+
+  it("unmarked, leaves the household as it was before the field, and keeps what matters", () => {
+    const back = setOlderHousehold(setOlderHousehold(defaultScenario(), true), false);
+    expect("seniors" in (back.household ?? {})).toBe(false);
+    expect(back.household).toEqual(defaultScenario().household);
+    expect(back.priorities).toEqual(["salud"]);
+    expect(isOlderHousehold(defaultScenario())).toBe(false);
+  });
+
+  it("is the second example: a retired couple renting up to 900 € who want the health centre close", () => {
+    const retired = retiredExampleScenario();
+    expect(retired).toMatchObject({ budget: { kind: "rent", amount_eur: 900 }, household: { adults: 2, minors: 0, seniors: true }, priorities: ["salud"] });
+    expect(retired.anchors).toEqual([]);
+    expect(peopleAtHome(retired)).toBe(2);
+    expect(floorArea(retired)).toEqual({ m2: 68, household: true });
+    expect("scope" in retired).toBe(false);
+    expect(decodeScenario(encodeScenario(retired))).toEqual(retired);
+  });
+});
+
+describe("quick amounts and «Otra cantidad» (UX mobile audit, A1)", () => {
+  it("offers amounts inside the slider, on its steps, and starts each kind on one of them", () => {
+    for (const kind of ["rent", "buy"] as const) {
+      const { min, max, step, initial } = BUDGET_RANGE[kind];
+      expect(QUICK_BUDGETS[kind]).toContain(initial);
+      for (const amount of QUICK_BUDGETS[kind]) {
+        expect(amount).toBeGreaterThanOrEqual(min);
+        expect(amount).toBeLessThanOrEqual(max);
+        expect(amount % step).toBe(0);
+      }
+    }
+    expect(QUICK_BUDGETS.rent).toEqual([600, 900, 1_200, 1_500]);
+    expect(QUICK_BUDGETS.buy).toEqual([150_000, 250_000, 400_000, 600_000]);
+    expect(setBudgetKind(defaultScenario(), "buy").budget?.amount_eur).toBe(250_000);
+  });
+
+  it("reads the euros as people type them, inside the slider's range", () => {
+    expect(typedBudget("900", "rent")).toBe(900);
+    expect(typedBudget("1.250", "rent")).toBe(1_250);
+    expect(typedBudget(" 1 250 € ", "rent")).toBe(1_250);
+    expect(typedBudget("320.000", "buy")).toBe(320_000);
+    expect(typedBudget("", "rent")).toBeNull();
+    expect(typedBudget("900,50", "rent")).toBeNull();
+    expect(typedBudget("mil", "rent")).toBeNull();
+    expect(typedBudget(String(BUDGET_RANGE.rent.min - 1), "rent")).toBeNull();
+    expect(typedBudget(String(BUDGET_RANGE.rent.max + 1), "rent")).toBeNull();
+    expect(typedBudget("900", "buy")).toBeNull();
+  });
+
+  it("keeps a typed amount as typed, not on the slider's step", () => {
+    expect(setTypedBudget(defaultScenario(), 875).budget).toEqual({ kind: "rent", amount_eur: 875 });
+    expect(setTypedBudget(setBudgetKind(defaultScenario(), "buy"), 312_500).budget).toEqual({ kind: "buy", amount_eur: 312_500 });
   });
 });

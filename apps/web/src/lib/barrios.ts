@@ -62,10 +62,10 @@ export function barrioRows(
   };
 }
 
-/** «7 de sus 8 barrios encajan con tu búsqueda.» (barrios.encajan.resumen, B's draft for line D) */
+/** «7 de sus 8 barrios te convienen.» (barrios.encajan.resumen) */
 export function barriosText(rc: Pick<RealityCheck, "zones_passing" | "zones_evaluated">): string {
   const { zones_passing: n, zones_evaluated: total } = rc;
   if (n === 0) return `Ninguno de sus ${total} barrios cumple todo lo que pides.`;
-  if (n === total) return n === 1 ? "Su barrio encaja con tu búsqueda." : `Sus ${total} barrios encajan con tu búsqueda.`;
-  return `${n} de sus ${total} barrios ${n === 1 ? "encaja" : "encajan"} con tu búsqueda.`;
+  if (n === total) return n === 1 ? "Su barrio te conviene." : `Sus ${total} barrios te convienen.`;
+  return `${n} de sus ${total} barrios ${n === 1 ? "te conviene" : "te convienen"}.`;
 }

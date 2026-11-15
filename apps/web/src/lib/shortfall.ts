@@ -1,8 +1,8 @@
 /**
- * What a near miss lacks, in plain words (pure, unit tested): «Casi encajan» no longer shows a %
+ * What a near miss lacks, in plain words (pure, unit tested): «Casi valen» no longer shows a %
  * (F5 of fit-0.9): it says how far the zone is from what the person asks, from the API's own
  * figures for the condition it fails (`ConstraintCheck.value` against `threshold`). Without them,
- * the condition by name, as before: a figure is never made up.
+ * the condition by name, as before: a figure is never made up. «unos», not «≈» (UX mobile audit, §4).
  */
 import type { ConstraintCheck, RankedZone, ScenarioState } from "@/contracts/search_response";
 
@@ -10,7 +10,7 @@ import { formatEuros } from "./format";
 
 type Check = Pick<ConstraintCheck, "constraint_id" | "label" | "status" | "value" | "threshold" | "unit">;
 
-/** One line, as seen («≈») and as read aloud («unos»). */
+/** One line, as seen and as read aloud (the same words since «≈» became «unos»). */
 export interface Spoken {
   text: string;
   aria: string;
@@ -24,7 +24,7 @@ const MAX_COMMUTE_SHOWN = 120;
 /** Above this many minutes on foot the API gives no minutes, it is not a walk (MAX_WALK_SHOWN of hi_domain/fit.py). */
 const MAX_WALK_SHOWN = 60;
 
-/** «≈ 11.000 €» buying and «≈ 120 €/mes» renting: the excess rounded so the «≈» is honest. */
+/** «unos 11.000 €» buying and «unos 120 € al mes» renting: the excess rounded so the «unos» is honest. */
 const EURO_STEP = { "€": 1_000, "€/mes": 10 } as const;
 
 function excess(check: Check): number | null {
@@ -37,27 +37,25 @@ function roundTo(amount: number, step: number): number {
   return amount >= step ? Math.round(amount / step) * step : Math.max(1, Math.round(amount));
 }
 
-/** resultados.casi.presupuesto: «Se pasa ≈ 11.000 € de tu presupuesto» or «… ≈ 120 €/mes …». */
+/** resultados.casi.presupuesto: «Se pasa unos 11.000 € de tu presupuesto» or «… unos 120 € al mes …». */
 function overBudget(check: Check): Spoken | null {
   const over = excess(check);
   const unit = check.unit === "€" || check.unit === "€/mes" ? check.unit : null;
   if (over === null || unit === null) return null;
   const amount = formatEuros(roundTo(over, EURO_STEP[unit]));
-  const monthly = unit === "€/mes";
-  return {
-    text: `Se pasa ≈ ${amount}${monthly ? "/mes" : ""} de tu presupuesto`,
-    aria: `Se pasa unos ${amount}${monthly ? " al mes" : ""} de tu presupuesto`,
-  };
+  const text = `Se pasa unos ${amount}${unit === "€/mes" ? " al mes" : ""} de tu presupuesto`;
+  return { text, aria: text };
 }
 
-/** «12 min», or «menos de 1 min» for a few seconds over (45,2 against 45 is not 0 min). */
+/** «unos 12 min», or «menos de 1 min» for a few seconds over (45,2 against 45 is not 0 min). */
 function minutesOver(over: number): { text: string; aria: string } {
   const minutes = Math.round(over);
-  return minutes < 1 ? { text: "menos de 1 min", aria: "menos de 1 min" } : { text: `≈ ${minutes} min`, aria: `unos ${minutes} min` };
+  const text = minutes < 1 ? "menos de 1 min" : `unos ${minutes} min`;
+  return { text, aria: text };
 }
 
 /**
- * resultados.casi.trayecto: «Tarda ≈ 12 min más de lo que pides», and the place when the search
+ * resultados.casi.trayecto: «Tarda unos 12 min más de lo que pides», and the place when the search
  * has more than one with a limit («… hasta Getafe Central (Cercanías)»). Above 2 h the API gives
  * no minutes: «Tarda más de 2 h; pides 45 min como mucho».
  */
@@ -80,7 +78,7 @@ function tooLong(check: Check, scenario: Pick<ScenarioState, "anchors"> | undefi
 const WALK_LABEL = /^(.+) a \d+ min andando como mucho$/;
 
 /**
- * resultados.casi.a_pie: «Escuela infantil: ≈ 5 min más andando de lo que pides». Beyond an hour on
+ * resultados.casi.a_pie: «Escuela infantil: unos 5 min más andando de lo que pides». Beyond an hour on
  * foot, which is no walk, the minutes are not said: «Colegio con primaria a más de 1 h andando;
  * pides 10 min como mucho».
  */
@@ -144,7 +142,7 @@ export function joinShortfalls(list: readonly Spoken[]): Spoken | null {
 }
 
 /**
- * The line of a near miss in «Casi encajan»: what it lacks in the first condition it fails (the
+ * The line of a near miss in «Casi valen»: what it lacks in the first condition it fails (the
  * API's order: budget, services, trips) and, if it fails more, «y otra condición» or «y 2
  * condiciones más» (resultados.casi.varias).
  */

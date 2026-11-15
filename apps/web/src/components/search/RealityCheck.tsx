@@ -10,12 +10,12 @@ import { constraintLabels, fewZones, limitingConstraint, optionText, passingText
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (rc.*, 8c49e33). Each option is named by its visible text: a
-// different name (the old rc.opcion.aria) breaks WCAG 2.5.3 (label in name).
+// Copy from pitch/textos_web.md (rc.*). Each option is named by its visible text: a different name
+// (the old rc.opcion.aria) breaks WCAG 2.5.3 (label in name).
 const TEXT = {
-  title: "¿Y si cambias algo?",
+  title: "¿Quieres ver más zonas?",
   intro: "Mira cuántas salen si cambias una sola cosa:",
-  tryIt: "Probar así",
+  tryIt: "Ver esas zonas",
   limit: "Lo que más limita tu búsqueda es:",
   note: "No te decimos que gastes más: te enseñamos qué cuesta cada alternativa.",
   more: "Ver todas las opciones",
@@ -24,7 +24,7 @@ const TEXT = {
 };
 
 /**
- * «¿Y si cambias algo?» (Reality Check): how many zones appear when one condition is relaxed,
+ * «¿Quieres ver más zonas?» (Reality Check): how many zones appear when one condition is relaxed,
  * with the API's figures; each option is applied with one tap. Always there, folded to the option
  * that adds most zones, and unfolded when few zones or none come out (decision of datamad-10).
  */

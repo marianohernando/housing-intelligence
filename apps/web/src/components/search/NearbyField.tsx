@@ -17,10 +17,11 @@ import {
 import styles from "./SearchCard.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (cerca.*, 8c49e33).
+// Copy from pitch/textos_web.md (cerca.*). «Solo zonas que lo tengan» says what «Imprescindible» did
+// in a tooltip a phone never showed (UX mobile audit, A5)
 const TEXT = {
   title: "Lo quiero a un paseo",
-  required: "Imprescindible",
+  required: "Solo zonas que lo tengan",
   requiredHelp: "Si lo marcas, solo verás zonas que lo cumplen.",
   add: "Añadir un servicio a un paseo",
   addPlaceholder: "Añadir un servicio…",
@@ -37,7 +38,7 @@ export const NEED_NAME: Record<ServiceKey, string> = {
   centro_salud: "Centro de salud",
   farmacia: "Farmacia",
   mayores: "Centro de mayores",
-  transporte: "Parada de transporte público",
+  transporte: "Parada de autobús o metro",
 };
 
 /** «Lo quiero a un paseo»: each service with its walking minutes and whether it is a must. */
@@ -82,7 +83,7 @@ export default function NearbyField() {
                     {TEXT.after}
                   </span>
                 </span>
-                <label className={styles.check} title={TEXT.requiredHelp}>
+                <label className={styles.check}>
                   <input
                     type="checkbox"
                     checked={n.required ?? true}

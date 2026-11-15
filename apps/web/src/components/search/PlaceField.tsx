@@ -4,6 +4,7 @@ import { Briefcase, Heart, type LucideIcon, X } from "lucide-react";
 import { type KeyboardEvent, type RefObject, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { useMapZones } from "@/components/map/MapProvider";
+import Help from "@/components/ui/Help";
 import type { Anchor } from "@/contracts/scenario_state";
 import { createApi } from "@/lib/api";
 import {
@@ -29,6 +30,8 @@ const TEXT = {
   noMatch: "No encontramos ese lugar. Prueba con una estación o con el nombre del municipio.",
   found: (n: number) => (n === 1 ? "1 lugar encontrado. Usa las flechas para elegirlo." : `${n} lugares encontrados. Usa las flechas para elegir uno.`),
   remove: "Quitar este lugar",
+  // Both places are optional, said by their name (UX mobile audit, C4: «Trabajo en» did not say it)
+  optional: "(opcional)",
   // trabajo.max_min, «Tardar como mucho {n} min en transporte público», with the minutes as a selector
   commuteBefore: "Tardar como mucho",
   commuteAfter: "en transporte público",
@@ -37,15 +40,15 @@ const TEXT = {
   days: "¿Cuántos días vas a la oficina?",
   daysOption: (n: number) => (n === 0 ? "Teletrabajo total" : n === 1 ? "1 día" : `${n} días`),
   fewDays: "Como vas pocos días, el trayecto cuenta la mitad.",
-  telework: "Con teletrabajo total, el trayecto no cuenta en el encaje. Si pones un límite, lo respetamos.",
+  telework: "Con teletrabajo total, el trayecto no cuenta para ordenar las zonas. Si pones un límite, lo respetamos.",
 };
 
 /** What changes from «Trabajo en» to «Cerca de mi familia o amigos»; the rest is the same field. */
 const KINDS: Record<PlaceKind, { title: string; help: string; commuteAria: string; icon: LucideIcon }> = {
   work: {
     title: "Trabajo en",
-    // trabajo.ayuda (14 nov): the commute is measured in public transport minutes (CORE-009, D-220), all the CRTM feeds
-    help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero.",
+    // trabajo.ayuda: the commute in public transport minutes (CORE-009, D-220), every CRTM feed, without acronyms
+    help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús, Cercanías y Metro Ligero.",
     // trabajo.max_min.aria: names the place, as the family one does
     commuteAria: "Tardar como mucho hasta el trabajo, en transporte público",
     icon: Briefcase,
@@ -53,7 +56,7 @@ const KINDS: Record<PlaceKind, { title: string; help: string; commuteAria: strin
   family: {
     title: "Cerca de mi familia o amigos",
     // familia.ayuda: the same trip as the work place, so it says the declared proxy (D-240)
-    help: "Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.",
+    help: "Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.",
     commuteAria: "Tardar como mucho hasta mi familia o amigos, en transporte público",
     icon: Heart,
   },
@@ -224,15 +227,18 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
 
   const status = !open || !typed ? "" : found.length === 0 ? TEXT.noMatch : TEXT.found(found.length);
 
+  const name = (
+    <>
+      {title} <span className={styles.optional}>{TEXT.optional}</span>
+    </>
+  );
   return (
-    <div id={fieldId} className={`${styles.group} ${styles.work}`}>
+    <div id={fieldId} className={styles.group}>
       {anchor ? (
-        <p className={styles.legend}>
-          {title} <span className={styles.legendHelp}>{help}</span>
-        </p>
+        <p className={styles.legend}>{name}</p>
       ) : (
         <label htmlFor={`${id}-input`} className={styles.legend}>
-          {title} <span className={styles.legendHelp}>{help}</span>
+          {name}
         </label>
       )}
       {anchor ? (
@@ -256,6 +262,7 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
             aria-controls={`${id}-list`}
             aria-autocomplete="list"
             aria-activedescendant={listed && active >= 0 ? `${id}-option-${active}` : undefined}
+            aria-describedby={`${id}-help`}
             autoComplete="off"
             placeholder={TEXT.placeholder}
             value={query}
@@ -291,6 +298,9 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
           {open && typed && found.length === 0 && <p className={styles.help}>{TEXT.noMatch}</p>}
         </div>
       )}
+      <Help about={title} id={`${id}-help`}>
+        <p>{help}</p>
+      </Help>
       {/* Always there, so screen readers hear how many places match while typing */}
       <p role="status" className="visually-hidden">
         {status}

@@ -82,14 +82,14 @@ describe("contextLines (zona.contexto.*)", () => {
     expect(texts(centro, madrid)).toEqual([
       "Infracciones penales conocidas: 68,9 por cada 1.000 habitantes (Ministerio del Interior, vía Instituto de Estadística de la Comunidad de Madrid, 2024). Dato de toda la ciudad de Madrid; no se publica por distrito.",
       "Año medio de construcción de los edificios de viviendas: 1926 (Catastro, 2025).",
-      "Renta neta media por hogar: 44.958 € al año (INE, panel del Ayuntamiento de Madrid, 2023).",
+      "Renta neta media por hogar: 44.958 € al año (Instituto Nacional de Estadística, panel del Ayuntamiento de Madrid, 2023).",
     ]);
   });
 
   it("names the barrio picked inside a district in its own age and income", () => {
     expect(texts(palacio, madrid).slice(1)).toEqual([
       "Año medio de construcción de los edificios de viviendas en Palacio: 1928 (Catastro, 2025).",
-      "Renta neta media por hogar en Palacio: 48.025 € al año (INE, panel del Ayuntamiento de Madrid, 2023).",
+      "Renta neta media por hogar en Palacio: 48.025 € al año (Instituto Nacional de Estadística, panel del Ayuntamiento de Madrid, 2023).",
     ]);
   });
 

@@ -50,14 +50,14 @@ function FitMethod() {
         <li><strong>No lo sabemos</strong>, porque falta el dato. En ese caso no la damos por buena.</li>
       </ul>
       <p className={styles.para}>
-        Solo te enseñamos como «zonas que encajan» las que cumplen todo. Las que fallan en una sola cosa salen aparte, en
-        «Casi encajan», para que decidas tú. En vez de su %, te decimos lo que les falta: por ejemplo, «Se pasa ≈ 90 €/mes
-        de tu presupuesto» o «Tarda ≈ 12 min más de lo que pides».
+        Solo te enseñamos como «zonas que te convienen» las que cumplen todo. Las que fallan en una sola cosa salen aparte,
+        en «Casi valen», para que decidas tú. En vez de su %, te decimos lo que les falta: por ejemplo, «Se pasa unos 90 € al
+        mes de tu presupuesto» o «Tarda unos 12 min más de lo que pides».
       </p>
       <p className={styles.para}>
         <strong>Paso 2. Lo que te importa.</strong> Entre las zonas que cumplen, cada cosa que te importa recibe una nota de
-        0 a 1, y pesa más lo que marcaste primero. Con 5 cosas, la primera cuenta un 33 %, la segunda un 27 %, la tercera un
-        20 %, la cuarta un 13 % y la quinta un 7 %. El % de encaje es la media de esas notas con sus pesos.
+        0 a 1, y pesa más lo que marcaste primero. Con 5 cosas, la primera cuenta un 33&nbsp;%, la segunda un 27&nbsp;%, la tercera un
+        20&nbsp;%, la cuarta un 13&nbsp;% y la quinta un 7&nbsp;%. El % de encaje es la media de esas notas con sus pesos.
       </p>
       <p className={styles.para}>
         <strong>Lo imprescindible también puntúa.</strong> Un servicio que marcas como imprescindible deja fuera las zonas
@@ -74,8 +74,8 @@ function FitMethod() {
         <li>
           <strong>Cercanía y plazas.</strong> Un servicio no vale solo por estar cerca: también cuenta si hay bastante para
           tanta gente, con la misma cifra de «Qué falta» (lo que hay a 15 minutos andando, repartido entre quienes lo
-          comparten, frente a zonas parecidas). La nota del servicio es un 60 % cercanía y un 40 % plazas. Las plazas valen
-          1 si la zona tiene lo mismo o más que las zonas parecidas, y bajan hasta 0 cuando tiene el 40 % o menos. En un
+          comparten, frente a zonas parecidas). La nota del servicio es un 60&nbsp;% cercanía y un 40&nbsp;% plazas. Las plazas valen
+          1 si la zona tiene lo mismo o más que las zonas parecidas, y bajan hasta 0 cuando tiene el 40&nbsp;% o menos. En un
           barrio de Madrid usamos la cifra de su distrito, porque «Qué falta» es por distrito. Las paradas no tienen plazas:
           solo cuenta lo cerca que están.
         </li>
@@ -88,9 +88,9 @@ function FitMethod() {
           total no cuenta.
         </li>
         <li>
-          <strong>El presupuesto:</strong> vale 1 si la zona te cuesta el 75 % de tu presupuesto o menos, y baja hasta 0,6
-          si te lo comes entero: una zona que cabe no sale «poco» solo por eso. Si te pasas, ya no encaja. En «Casi
-          encajan» te decimos cuánto te pasas, y su nota sigue bajando hasta 0 cuando te pasas un 25 %, para que salgan
+          <strong>El presupuesto:</strong> vale 1 si la zona te cuesta el 75&nbsp;% de tu presupuesto o menos, y baja hasta 0,6
+          si te lo comes entero: una zona que cabe no sale «Poco recomendable» solo por eso. Si te pasas, ya no encaja. En
+          «Casi valen» te decimos cuánto te pasas, y su nota sigue bajando hasta 0 cuando te pasas un 25&nbsp;%, para que salgan
           antes las que se pasan menos.
         </li>
         <li>
@@ -107,12 +107,12 @@ function FitMethod() {
       <ul className={styles.text}>
         <li>
           <strong>Si falta lo que has marcado.</strong> Si en «Qué falta» la zona sale FALTA en un servicio que has marcado,
-          su encaje no pasa del 89 %: nunca sale «encaja muy bien».
+          su encaje no pasa del 89&nbsp;%: nunca sale «Muy buena opción».
         </li>
         <li>
-          <strong>Más de 1 h de trayecto: como mucho 74 %.</strong> Si vas 3 días o más a la semana a un lugar que has
-          puesto (el trabajo o tu familia) y tardas más de 1 h en llegar, la zona se queda como mucho en un 74 %: nunca
-          sale «encaja bien».
+          <strong>Más de 1 h de trayecto: como mucho 74&nbsp;%.</strong> Si vas 3 días o más a la semana a un lugar que has
+          puesto (el trabajo o tu familia) y tardas más de 1 h en llegar, la zona se queda como mucho en un 74&nbsp;%: nunca
+          sale «Buena opción».
         </li>
         <li>
           <strong>Si no llegas.</strong> Si tardas 1 h 30 o más, o con los horarios publicados no se llega a las 9:00, el
@@ -124,7 +124,7 @@ function FitMethod() {
         triple. Con «Tardar como mucho 45 min», serían 1 h 30 y 2 h 15.
       </p>
       <p className={styles.para}>
-        <strong>El % en palabras.</strong> Junto a cada % te decimos cuánto encaja la zona:
+        <strong>El % en palabras.</strong> Junto a cada % te decimos, en palabras, si la zona es buena opción para ti:
       </p>
       <table className={styles.table}>
         <thead>
@@ -146,36 +146,37 @@ function FitMethod() {
         </tbody>
       </table>
       <p className={styles.para}>
-        <strong>A igual %.</strong> Las zonas van de más a menos %. A igual %, va primero la que tiene más servicios del día a
-        día a un paseo (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte) y, si también
-        empatan, la que los tiene más cerca. La lista te dice qué zonas empatan («Empatan al 94 %»), y si más de 10 encajan
-        igual de bien, te avisa para que marques qué te importa o dónde trabajas.
+        <strong>A igual %.</strong> Las zonas van de más a menos %. A igual %, va primero la que tiene más cerca los servicios
+        del día a día (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte), los hayas
+        marcado o no: cuenta cada minuto andando, no cuántos servicios hay. La lista te dice qué zonas empatan («Empatan al
+        94&nbsp;%»), y si más de 10 son igual de buenas, te avisa para que marques qué quieres tener cerca o dónde trabajas.
       </p>
       <p className={styles.para}>
         <strong>Debajo del %</strong> van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min
         andando», y cada uno dice cuánto nos fiamos del dato. Si un tope baja el %, la tarjeta también lo dice, por ejemplo
-        «Faltan escuelas infantiles: como mucho 89 %».
+        «Faltan escuelas infantiles: como mucho 89&nbsp;%».
       </p>
       {/* The fit-0.9 answer to the demo case (golden_family of data/fixtures/golden, D-243 §9; API on the lote 4 data, 15 nov) */}
       <p className={styles.para}>
         <strong>Ejemplo real.</strong> Una pareja con 2 hijos de 4 y 8 años trabaja en la Castellana, puede pagar 1.500 € al
         mes y quiere un colegio a 10 min andando como mucho. Le importan, por este orden, los colegios, el transporte y la
-        salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.
+        salud. De las 199 zonas, 42 cumplen todo: 12 salen «Muy buena opción», 5 «Buena opción», 13 «Opción regular» y 12
+        «Poco recomendable».
       </p>
       <p className={styles.para}>
-        Arriba empatan dos al 94 %: Puente de Vallecas y Latina. Va primera Puente de Vallecas porque, a igual %, tiene más
-        cerca los servicios del día a día. Detrás van Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y
-        Carabanchel, Coslada y Leganés (90 %).
+        Arriba empatan dos al 94&nbsp;%: Puente de Vallecas y Latina. Va primera Puente de Vallecas porque, a igual %, tiene más
+        cerca los servicios del día a día. Detrás van Usera y Moratalaz (93&nbsp;%); Tetuán, Ciudad Lineal y Villaverde (92&nbsp;%), y
+        Carabanchel, Coslada y Leganés (90&nbsp;%).
       </p>
       <p className={styles.para}>
         En Latina hay colegio a unos 6 min, parada a unos 2 y centro de salud a unos 10, se tarda 39 min en transporte
         público hasta la Castellana llegando a las 9:00, y el alquiler sale a unos 1.101 € al mes por 77 m². Pierde unos 6
         puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi
         todo por los minutos a pie. Las plazas apenas le quitan: de colegios tiene más que las zonas parecidas y de centros
-        de salud, casi lo mismo. El alquiler no le quita nada, porque no llega al 75 % de lo que puede pagar.
+        de salud, casi lo mismo. El alquiler no le quita nada, porque no llega al 75&nbsp;% de lo que puede pagar.
       </p>
       <p className={styles.para}>
-        Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto. Lo que más zonas
+        Casi valen Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto. Lo que más zonas
         le quita es el colegio a 10 min: con 5 min más aparecen 49 zonas más, y con 150 € más al mes, 3.
       </p>
     </Section>
@@ -184,7 +185,7 @@ function FitMethod() {
 
 // pitch/metodologia.md §1.4 (line D, gap-0.3 and D-218): estado.* and fila.zona_pequena of pitch/textos_web.md
 const STATUS_ROWS: [string, string][] = [
-  ["menos del 80 % de lo que tienen los municipios de su tipo, y la diferencia no se explica por el tamaño de la zona", "FALTA"],
+  ["menos del 80\u00a0% de lo que tienen los municipios de su tipo, y la diferencia no se explica por el tamaño de la zona", "FALTA"],
   ["menos de lo que tienen los municipios de su tipo, pero sin llegar a FALTA", "JUSTO"],
   ["lo mismo o más", "CUBIERTO"],
   ["tan poca gente que, ni junto con sus vecinos, podemos saber con seguridad si falta", "Zona pequeña para comparar (nunca sale FALTA)"],
@@ -203,7 +204,7 @@ const ROW_CAPACITY: [string, string, string][] = [
   [
     "Centros de salud",
     "todos los vecinos",
-    "cada centro de salud del SERMAS cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad.",
+    "cada centro de salud del Servicio Madrileño de Salud (SERMAS) cuenta como uno. Los consultorios locales son del mismo equipo médico: cuentan para los minutos a pie, no como más capacidad.",
   ],
   ["Mayores", "personas de 65 años o más", "plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte."],
   ["Farmacias", "todos los vecinos", "cada farmacia cuenta como una."],
@@ -407,7 +408,7 @@ function Limits() {
           una aproximación, así que cuenta con menos fiabilidad. Cuadra con la cifra oficial: con los distritos sale 14,5 € el
           metro cuadrado, y la Comunidad publica 15,1 para todo Madrid. Esa media es de todos los contratos en vigor, así que
           la ajustamos a lo que se pagó en los contratos firmados en 2024 en la misma zona, según la Agencia Tributaria: entre
-          un 5 % y un 26 % más. Aun así, un anuncio de hoy puede pedir más. Donde la Comunidad no publica el alquiler (los
+          un 5&nbsp;% y un 26&nbsp;% más. Aun así, un anuncio de hoy puede pedir más. Donde la Comunidad no publica el alquiler (los
           pueblos), partimos de la referencia del Ministerio de Vivienda (SERPAVI, 2024): la mediana por metro cuadrado de
           los alquileres de vivienda habitual declarados a Hacienda, con el Catastro. La subimos ligeramente para llevarla al
           nivel de la cifra de la Comunidad, porque una mediana se queda algo por debajo de una media, y la ajustamos a un
@@ -445,7 +446,7 @@ function Limits() {
           <strong>Ocio:</strong> los bares, restaurantes, gimnasios, museos, bibliotecas, teatros y cines salen de
           OpenStreetMap, un mapa hecho por voluntarios. En las ciudades está bastante completo; en los pueblos pequeños falta
           algún local, así que un pueblo puede tener un bar que no vemos. Por eso el ocio solo cuenta si lo marcas y no deja
-          fuera ninguna zona salvo que marques «Imprescindible».
+          fuera ninguna zona salvo que marques «Solo zonas que lo tengan».
         </li>
         <li>
           <strong>No enseñamos pisos en venta ni en alquiler.</strong> Te ayudamos a elegir zona; el piso lo buscas donde

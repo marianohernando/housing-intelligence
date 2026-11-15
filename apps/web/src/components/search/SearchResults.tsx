@@ -44,22 +44,21 @@ import { useScenario } from "./ScenarioProvider";
 // lib/fit.ts, resultados.banda.* and resultados.empate.grupo in lib/match.ts, resultados.casi.* in lib/shortfall.ts,
 // carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer, zona.cerca_de_encajar.*, error.reintentar; 8c49e33).
 const TEXT = {
-  title: "Zonas que encajan",
-  loading: "Buscando zonas que encajan…",
+  title: "Zonas que te convienen",
+  loading: "Buscando zonas para ti…",
   applied: "Ahora ves las zonas con:",
   undo: "Volver a mi búsqueda",
-  stale: "Has cambiado tu búsqueda. Pulsa «Ver zonas que encajan» para ponerla al día.",
+  stale: "Has cambiado tu búsqueda. Pulsa «Buscar zonas para mí» para ponerla al día.",
   first: (n: number) => `Ver las ${n} primeras`,
   fewer: "Ver menos",
   rest: (n: number, word: ZoneWord) => `Y ${zonesText(n, word)} más en el mapa.`,
-  near: "Casi encajan",
-  nearHelp: "Cumplen todo menos una cosa.",
+  near: "Casi valen",
+  nearHelp: "Les falta una sola cosa de lo que pides.",
   retry: "Reintentar",
   district: (city: string | null | undefined) => `Distrito de ${city ?? "Madrid"}`,
   // zona.barrio.antetitulo (D-238)
   barrio: (city: string | null | undefined) => `Barrio de ${city ?? "Madrid"}`,
   municipio: "Municipio",
-  fit: "de encaje",
   // zona.empate, read after the % of a tied row
   tiesWith: (whom: string) => `empata con ${whom}`,
   // resultados.sin_lugar: the two buttons take the person to «Trabajo en» and to «¿Dónde?»
@@ -111,14 +110,14 @@ function ZoneRow({ zone, buying, m2, lacks, tie }: RowProps) {
           <small>{levelText(zone.zone)}</small>
         )}
       </span>
-      {/* The price under the %, not beside it: at 390 px the name keeps its width (D-234) */}
+      {/* The band, the % and the price on the line under the name: at 390 px the name keeps its width (D-234) */}
       <span className={styles.end}>
         {fit && (
           <span className={styles.pct}>
             <small className={styles.band}>{fit.band}</small>
             <span aria-hidden="true">{fit.pct}</span>
             <span className="visually-hidden">
-              {` · ${fit.pct} ${TEXT.fit}`}
+              {` · ${fit.pct}`}
               {tie && `, ${TEXT.tiesWith(tie)}`}
             </span>
           </span>
@@ -177,7 +176,7 @@ function NearMisses({ result }: { result: SearchResult }) {
   const near = result.near_misses ?? [];
   if (near.length === 0) return null;
   const labels = constraintLabels(result);
-  // F5 of fit-0.9: no % here, what each one lacks («Se pasa ≈ 11.000 € de tu presupuesto»)
+  // F5 of fit-0.9: no % here, what each one lacks («Se pasa unos 11.000 € de tu presupuesto»)
   return (
     <div className={styles.near}>
       <button type="button" className={styles.toggle} aria-expanded={open} aria-controls={nearId} onClick={() => setOpen((v) => !v)}>
@@ -203,10 +202,15 @@ function NearMisses({ result }: { result: SearchResult }) {
   );
 }
 
-/** Takes the person to a field of «Tu búsqueda» (FIELD_ID) and puts the focus in it, as a skip link does. */
+/**
+ * Takes the person to a field of «Tu búsqueda» (FIELD_ID) and puts the focus in it, as a skip link
+ * does; a field folded in «Más opciones» is unfolded first.
+ */
 function focusField(id: string) {
   const field = document.getElementById(id);
   if (!field) return;
+  const fold = field.closest("details");
+  if (fold) fold.open = true;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   field.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
   field.querySelector<HTMLElement>("input:checked, input, select, button")?.focus({ preventScroll: true });

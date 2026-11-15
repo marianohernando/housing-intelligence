@@ -1,15 +1,16 @@
 "use client";
 
 import { ChevronUp } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { type CSSProperties, type PointerEvent, type ReactNode, useId, useRef, useState } from "react";
 
 import { SHEET_PEEK } from "@/lib/map/camera";
 
 import styles from "./MapSheet.module.css";
 
-// Copy from pitch/textos_web.md (movil.hoja.tirador, movil.hoja.mapa).
+// Copy from pitch/textos_web.md (movil.hoja.tirador, movil.hoja.mapa): a tap, not a gesture (UX mobile audit, §4 n.º 37)
 const TEXT = {
-  more: "Desliza hacia arriba para ver más",
+  more: "Toca aquí para ver más",
   map: "Ver el mapa",
 };
 
@@ -19,10 +20,12 @@ const SWIPE = 30;
 /**
  * Bottom sheet over the map on mobile: folded it leaves the map in view, open it shows all the
  * content. The handle is a real button (tap, keyboard) that also takes a swipe. On desktop the
- * sheet is not drawn and its content flows as usual.
+ * sheet is not drawn and its content flows as usual. The portada starts open (UX mobile audit, C5):
+ * what a person comes to do there is the search, and the map is one tap away («Ver el mapa»).
  */
 export default function MapSheet({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const portada = usePathname() === "/";
+  const [open, setOpen] = useState(portada);
   const contentId = useId();
   const startY = useRef<number | null>(null);
   const swipe = useRef(0);

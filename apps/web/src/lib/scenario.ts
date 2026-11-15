@@ -32,10 +32,22 @@ export function setScope(s: ScenarioState, scope: SearchScope): ScenarioState {
   return next;
 }
 
-/** Slider ranges, inside the contract ranges (RENT_RANGE_EUR, BUY_RANGE_EUR). */
+/**
+ * Slider ranges, inside the contract ranges (RENT_RANGE_EUR, BUY_RANGE_EUR). Each starts at one
+ * of its quick amounts, so the button of that amount shows as chosen.
+ */
 export const BUDGET_RANGE: Record<BudgetKind, { min: number; max: number; step: number; initial: number }> = {
   rent: { min: 300, max: 5_000, step: 50, initial: 1_200 },
-  buy: { min: 50_000, max: 2_000_000, step: 10_000, initial: 300_000 },
+  buy: { min: 50_000, max: 2_000_000, step: 10_000, initial: 250_000 },
+};
+
+/**
+ * The amounts offered with one tap (UX mobile audit, A1: a 94-step slider is hard to hit with an
+ * unsteady finger). The slider stays, and «Otra cantidad» takes any amount of its range.
+ */
+export const QUICK_BUDGETS: Record<BudgetKind, readonly number[]> = {
+  rent: [600, 900, 1_200, 1_500],
+  buy: [150_000, 250_000, 400_000, 600_000],
 };
 
 const LIMITS = { minors: 8, seniors: 4 } as const;
@@ -77,6 +89,26 @@ export function setMinors(s: ScenarioState, minors: number): ScenarioState {
 
 export function setSeniors(s: ScenarioState, seniors: number): ScenarioState {
   return { ...s, household: { ...household(s), seniors_in_care: clamp(Math.round(seniors), 0, LIMITS.seniors) } };
+}
+
+/** «Somos mayores» (D-244): the adults of the household are 65 or older. */
+export function isOlderHousehold(s: Pick<ScenarioState, "household">): boolean {
+  return s.household?.seniors === true;
+}
+
+/**
+ * Marks or unmarks «Somos mayores» (D-244). It adds no one to the household (unlike the people
+ * looked after, `seniors_in_care`). Marked, «Centro de salud» joins what matters, last, and the
+ * person can take it away; unmarked, the field leaves the scenario, as it was before.
+ */
+export function setOlderHousehold(s: ScenarioState, on: boolean): ScenarioState {
+  const home = { ...household(s) };
+  if (!on) {
+    delete home.seniors;
+    return { ...s, household: home };
+  }
+  const priorities = s.priorities ?? [];
+  return { ...s, household: { ...home, seniors: true }, priorities: priorities.includes("salud") ? priorities : [...priorities, "salud"] };
 }
 
 /**
@@ -166,6 +198,23 @@ export function setBudgetAmount(s: ScenarioState, amount: number): ScenarioState
   const kind = s.budget?.kind ?? "rent";
   const { min, max, step } = BUDGET_RANGE[kind];
   return { ...s, budget: { kind, amount_eur: clamp(Math.round(amount / step) * step, min, max) } };
+}
+
+/**
+ * «Otra cantidad»: the euros the person types («900», «1.250», «1 250 €»), as they are, or null
+ * when it is not a whole number inside the slider's range (the field then says which range).
+ */
+export function typedBudget(text: string, kind: BudgetKind): number | null {
+  const digits = text.replace(/[.\s€]/g, "");
+  if (!/^\d+$/.test(digits)) return null;
+  const amount = Number(digits);
+  const { min, max } = BUDGET_RANGE[kind];
+  return amount >= min && amount <= max ? amount : null;
+}
+
+/** A typed amount goes as typed, not rounded to the slider's step; `typedBudget` has checked its range. */
+export function setTypedBudget(s: ScenarioState, amount: number): ScenarioState {
+  return { ...s, budget: { kind: s.budget?.kind ?? "rent", amount_eur: amount } };
 }
 
 /**
@@ -343,6 +392,22 @@ export function exampleScenario(): ScenarioState {
     anchors: [{ kind: "work", label: "Paseo de la Castellana (Azca)", lon: -3.693, lat: 40.45, days_per_week: 4, max_minutes: null }],
     nearby: [{ need: "colegio", max_walk_minutes: 10, required: true }],
     priorities: ["colegios", "transporte", "salud"],
+  };
+}
+
+/**
+ * The second example of the portada (D-244): a retired couple who rent up to 900 € a month and
+ * want the health centre close, with no place to go to. The audit's case (§1).
+ */
+export function retiredExampleScenario(): ScenarioState {
+  return {
+    schema_version: 2,
+    budget: { kind: "rent", amount_eur: 900 },
+    min_floor_area_m2: null,
+    household: { adults: 2, minors: 0, minor_ages: [], seniors_in_care: 0, seniors: true },
+    anchors: [],
+    nearby: [],
+    priorities: ["salud"],
   };
 }
 

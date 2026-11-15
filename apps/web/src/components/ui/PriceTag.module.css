@@ -9,7 +9,7 @@
 
 .row .amount {
   color: var(--ink);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -33,7 +33,7 @@
 .area,
 .mark {
   color: var(--ink-soft);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 400;
   white-space: nowrap;
 }
@@ -47,7 +47,7 @@
 /* On its own line under «Alquiler ≈ 994 €/mes por 60 m²», which no longer leaves room beside it */
 .card .mark {
   flex-basis: 100%;
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
 }
 
 /* D-242: where half the leases fall, and who publishes it under, both below the figure */
@@ -55,18 +55,18 @@
   display: grid;
   flex-basis: 100%;
   color: var(--ink-soft);
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
   line-height: 1.35;
 }
 
 .source {
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
 }
 
 /* zona.precio.aviso_2024: on its own line under the rent and its range, as quiet as the range */
 .notice {
   flex-basis: 100%;
   color: var(--ink-soft);
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
   line-height: 1.35;
 }

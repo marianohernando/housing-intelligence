@@ -21,10 +21,15 @@
   text-align: center;
 }
 
+/* An odd last option («Otra cantidad») takes the whole row */
+.columns .option:last-of-type:nth-of-type(odd) {
+  grid-column: 1 / -1;
+}
+
 .option {
   position: relative;
   display: grid;
-  min-height: calc(var(--target) - 0.5rem);
+  min-height: var(--target);
   place-items: center;
   border-radius: calc(var(--radius) - 4px);
   color: var(--ink-soft);

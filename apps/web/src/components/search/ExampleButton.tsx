@@ -5,24 +5,30 @@ import { Sparkles } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 import styles from "./Results.module.css";
-import { useScenario } from "./ScenarioProvider";
+import { type Example, useScenario } from "./ScenarioProvider";
 
 // Copy from pitch/textos_web.md (portada.ejemplo.*)
 const TEXT = {
-  button: "Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana",
-  help: "Rellenamos la búsqueda por ti para que veas cómo funciona. Luego puedes cambiar lo que quieras.",
+  buttons: {
+    family: "Ejemplo: pareja con 2 hijos que trabaja en la Castellana",
+    // portada.ejemplo.mayores (D-244): the audit's case, a retired couple
+    retired: "Ejemplo: pareja jubilada que quiere el centro de salud cerca",
+  } satisfies Record<Example, string>,
+  help: "Rellenamos la búsqueda por ti. Luego puedes cambiar lo que quieras.",
 };
 
-/** The demo case with one tap from the portada: fills «Tu búsqueda» and runs it. Hidden while the search is off. */
+/** The examples with one tap from the portada: each fills «Tu búsqueda» and runs it. Hidden while the search is off. */
 export default function ExampleButton() {
   const { available, loadExample, status } = useScenario();
   if (!available) return null;
   return (
     <div className={styles.example}>
-      <Button variant="secondary" onClick={loadExample} disabled={status === "loading"} className={styles.exampleButton}>
-        <Sparkles size={20} aria-hidden="true" />
-        {TEXT.button}
-      </Button>
+      {(Object.keys(TEXT.buttons) as Example[]).map((example) => (
+        <Button key={example} variant="secondary" onClick={() => loadExample(example)} disabled={status === "loading"} className={styles.exampleButton}>
+          <Sparkles size={20} aria-hidden="true" />
+          {TEXT.buttons[example]}
+        </Button>
+      ))}
       <p className={styles.muted}>{TEXT.help}</p>
     </div>
   );

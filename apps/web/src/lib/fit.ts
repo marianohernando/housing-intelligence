@@ -84,9 +84,9 @@ export function zoneFit(result: SearchResult, zoneKey: string): ZoneFit {
 
 /** The approximate price of a zone for the household's m² (D-234), in the rows and the zone card. */
 export interface ZonePrice {
-  /** In a ranking row: «≈ 385.000 €» (zona.precio.compra) or «≈ 1.101 €/mes» (zona.precio.alquiler) */
+  /** In a ranking row, where room is short: «≈ 385.000 €» (zona.precio.compra) or «≈ 1.101 €/mes» (zona.precio.alquiler) */
   short: string;
-  /** In the zone card head: «Comprar ≈ 385.000 €» (zona.precio.cabecera.compra) or «Alquiler ≈ 1.101 €/mes» */
+  /** In the zone card head, in words: «Comprar: unos 385.000 €» (zona.precio.cabecera.compra) or «Alquiler: unos 1.101 € al mes» */
   long: string;
   /** The m² the API priced (zona.precio.m2): «por 68 m²», under the row's figure and after the card's; null when unknown */
   area: string | null;
@@ -103,9 +103,10 @@ export interface ZonePrice {
 /**
  * zona.precio.aviso_2024 and resultados.aviso_2024 (F5 of fit-0.9): every rent is the leases of
  * 2024, and today's listings tend to ask more (16-33 % more in the formula's bench). Said by the
- * card's price and once over the results when renting; never buying.
+ * card's price and once over the results when renting; never buying. In plain words since the UX
+ * mobile audit (§4 n.º 17); «Cómo lo calculamos» says where the price comes from.
  */
-export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más.";
+export const RENT_2024_NOTICE = "Precio orientativo: hoy puede ser algo más caro.";
 
 /** The same warning as the API's rent fact says it: the card says it once, by the price. */
 const RENT_FACT_NOTICE = /;\s*un anuncio de hoy puede pedir más/;
@@ -125,13 +126,16 @@ export function rentNotice(result: Pick<SearchResult, "scenario" | "results" | "
   return priced ? RENT_2024_NOTICE : null;
 }
 
-/** «La mitad de los contratos, entre 510 y 820 €/mes» and «Ministerio de Vivienda (SERPAVI), 2024» (zona.precio.rango) */
+/** «Lo normal: entre 510 y 820 € al mes» and «Ministerio de Vivienda (SERPAVI), 2024» (zona.precio.rango) */
 export interface PriceRange {
   text: string;
   source: string;
-  /** Read aloud: «La mitad de los contratos están entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024» */
+  /** Read aloud: «Lo normal: entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024» */
   aria: string;
 }
+
+/** «1.129 €» with a no-break space before the euro sign. */
+const unbroken = (amount: string) => amount.replace(" €", "\u00a0€");
 
 /** At or above this confidence the figure is «Dato fiable» and goes without a mark (lib/confidence.ts). */
 const RELIABLE = 0.8;
@@ -154,7 +158,8 @@ export function zonePrice(
   const aria = buying ? `Comprar: unos ${amount}` : `Alquiler: unos ${amount} al mes`;
   return {
     short: buying ? `≈ ${amount}` : `≈ ${amount}/mes`,
-    long: buying ? `Comprar ≈ ${amount}` : `Alquiler ≈ ${amount}/mes`,
+    // No-break spaces: «1.129 € al mes» never splits at the end of a line in a narrow card
+    long: buying ? `Comprar: unos ${unbroken(amount)}` : `Alquiler: unos ${unbroken(amount)}\u00a0al\u00a0mes`,
     area,
     aria: area ? `${aria} ${area}` : aria,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
@@ -169,10 +174,10 @@ export function priceRange(range: CostRange | null | undefined): PriceRange | nu
   const low = formatEuros(range.low_eur).replace(" €", "");
   const high = formatEuros(range.high_eur);
   return {
-    // A no-break space keeps «1.190 €/mes» on one line in a narrow card
-    text: `La mitad de los contratos, entre ${low} y ${high.replace(" €", "\u00a0€")}/mes`,
+    // zona.precio.rango, where half the leases fall, in plain words; a no-break space keeps «1.190 €» whole
+    text: `Lo normal: entre ${low} y ${high.replace(" €", "\u00a0€")} al mes`,
     source: range.source,
-    aria: `La mitad de los contratos están entre ${low} y ${high} al mes, según ${range.source}`,
+    aria: `Lo normal: entre ${low} y ${high} al mes, según ${range.source}`,
   };
 }
 
@@ -242,13 +247,14 @@ export function zonesText(n: number, word: ZoneWord = "zona"): string {
 }
 
 /**
- * rc.ninguna, rc.una, rc.varias; after applying an option of «¿Y si cambias algo?» it is no longer
- * the search «tal cual»: «Con este cambio…» (rc.cambio). With the word of its scope: «salen 78 barrios».
+ * rc.ninguna, rc.una, rc.varias: «Hemos encontrado 33 zonas para ti.» (UX mobile audit, §4 n.º 5).
+ * After applying an option of «¿Quieres ver más zonas?» it says the change: «Con este cambio salen
+ * 40 zonas.» (rc.cambio). With the word of its scope: «Hemos encontrado 78 barrios para ti.»
  */
 export function passingText(n: number, changed = false, word: ZoneWord = "zona"): string {
-  const start = changed ? "Con este cambio" : "Con tu búsqueda tal cual";
-  if (n === 0) return `${start} no sale ${WORDS[word].feminine ? "ninguna" : "ningún"} ${word}.`;
-  return `${start} ${n === 1 ? "sale" : "salen"} ${zonesText(n, word)}.`;
+  const none = `${WORDS[word].feminine ? "ninguna" : "ningún"} ${word}`;
+  if (changed) return n === 0 ? `Con este cambio no sale ${none}.` : `Con este cambio ${n === 1 ? "sale" : "salen"} ${zonesText(n, word)}.`;
+  return n === 0 ? `No hemos encontrado ${none} para ti.` : `Hemos encontrado ${zonesText(n, word)} para ti.`;
 }
 
 /** vacio.sin_resultados, with the word of the scope. */
@@ -258,10 +264,10 @@ export function noneText(word: ZoneWord = "zona"): string {
 
 /** resultados.de: how many zones the search compared, and where (D-238). */
 const EVALUATED: Record<SearchScope, (n: number) => string> = {
-  all: (n) => `De ${n} zonas de la Comunidad de Madrid.`,
-  madrid: (n) => `De ${n} barrios de Madrid capital.`,
-  alrededores: (n) => `De ${n} municipios de los alrededores de Madrid.`,
-  pueblos: (n) => `De ${n} pueblos de la Comunidad de Madrid.`,
+  all: (n) => `Hemos mirado las ${n} zonas de la Comunidad de Madrid.`,
+  madrid: (n) => `Hemos mirado los ${n} barrios de Madrid capital.`,
+  alrededores: (n) => `Hemos mirado los ${n} municipios de los alrededores de Madrid.`,
+  pueblos: (n) => `Hemos mirado los ${n} pueblos de la Comunidad de Madrid.`,
 };
 
 export function evaluatedText(result: { scenario: { scope?: SearchScope }; reality_check: Pick<RealityCheck, "zones_evaluated"> }): string {
@@ -314,12 +320,14 @@ export function tiedAtTop(result: Pick<SearchResult, "results" | "all_zones">): 
 
 /**
  * resultados.empate: with many zones tied at the top the order says little (the API breaks the
- * tie by the services at a walk, D-239), so the person is told how to tell them apart; null otherwise.
+ * tie by how close the everyday services are, D-239, D-243), so the person is told how to tell
+ * them apart; null otherwise.
  */
 export function tiedText(result: Pick<SearchResult, "results" | "all_zones" | "scenario">): string | null {
   const n = tiedAtTop(result);
   const word = zoneWord(result);
-  return n > MANY_TIED ? `Encajan ${zonesText(n, word)} igual de bien: marca qué te importa o dónde trabajas para afinar el orden.` : null;
+  const good = WORDS[word].feminine ? "buenas" : "buenos";
+  return n > MANY_TIED ? `Hay ${zonesText(n, word)} igual de ${good}: marca qué quieres tener cerca o dónde trabajas para afinar el orden.` : null;
 }
 
 /** Where «Trabajo en» and «¿Dónde?» are in «Tu búsqueda», for resultados.sin_lugar to take the person there. */
@@ -330,11 +338,13 @@ export const FIELD_ID = { work: "busqueda-trabajo", where: "busqueda-donde" } as
  * small villages well served on foot can come out first. They do fit, since nothing makes them far
  * (with fit-0.9, Titulcia 2.ª for a couple with a baby), but it surprises: the person is asked for
  * the work place or «Madrid capital». Only then, with zones to show and no crowd at the top
- * (resultados.empate already asks for the work place).
+ * (resultados.empate already asks for the work place), and never to «Somos mayores» (D-244): a
+ * retired couple was told it lacked a place it does not have (UX mobile audit, C4).
  */
 export function asksForPlace(result: Pick<SearchResult, "results" | "all_zones" | "scenario" | "reality_check">): boolean {
   const noPlace = (result.scenario.anchors ?? []).length === 0;
-  return noPlace && resultScope(result) === "all" && result.reality_check.zones_passing > 0 && tiedText(result) === null;
+  const older = result.scenario.household?.seniors === true;
+  return noPlace && !older && resultScope(result) === "all" && result.reality_check.zones_passing > 0 && tiedText(result) === null;
 }
 
 /** The zones a search to buy could not check for lack of a purchase price (D-234). */
@@ -375,10 +385,13 @@ export function unknownText(n: number, word: ZoneWord = "zona", withoutPrice: Wi
   return `En ${zonesText(n, word)} no podemos comprobarlo todo: ${reason}. ${them}`;
 }
 
-/** One option of «¿Y si cambias algo?» (rc.opcion.cuenta): what it changes, how many zones there would be and how many more. */
+/**
+ * One option of «¿Quieres ver más zonas?» (rc.opcion.cuenta): what it changes, how many more zones
+ * there would be first, then the total: «saldrían 49 más: 91 zonas en total».
+ */
 export function optionText(r: Pick<Relaxation, "label" | "zones_if_relaxed" | "added_zones">, word: ZoneWord = "zona"): { label: string; count: string } {
-  const would = r.zones_if_relaxed === 1 ? "saldría" : "saldrían";
-  return { label: r.label, count: `${would} ${zonesText(r.zones_if_relaxed, word)}, ${r.added_zones} más` };
+  const would = r.added_zones === 1 ? "saldría" : "saldrían";
+  return { label: r.label, count: `${would} ${r.added_zones} más: ${zonesText(r.zones_if_relaxed, word)} en total` };
 }
 
 /**
@@ -394,16 +407,17 @@ export function limitingConstraint(result: Pick<SearchResult, "all_zones" | "rea
   return failing > 0 && failing >= result.reality_check.zones_unknown ? id : null;
 }
 
-/** zona.puesto: «La 3.ª que más encaja», and for a barrio, municipio or pueblo «El 3.º…» */
+/** zona.puesto: «La 3.ª que más te conviene», and for a barrio, municipio or pueblo «El 3.º…» */
 export function rankText(rank: number, word: ZoneWord = "zona"): string {
-  return WORDS[word].feminine ? `La ${rank}.ª que más encaja` : `El ${rank}.º que más encaja`;
+  return WORDS[word].feminine ? `La ${rank}.ª que más te conviene` : `El ${rank}.º que más te conviene`;
 }
 
 /**
  * a_pie.mediana: the walking minutes of the facts («Colegio con primaria a unos 9 min andando»)
- * are the median of the zone, said once under them, when one of them is a walk.
+ * are the median of the zone, said once under them, when one of them is a walk: a typical
+ * neighbour's, which is what the median is, in plain words.
  */
-export const WALK_MEDIAN = "Los minutos andando son los de la mitad de la zona: unos vecinos lo tienen más cerca y otros más lejos.";
+export const WALK_MEDIAN = "Son los minutos de un vecino típico de la zona: unos lo tienen más cerca y otros más lejos.";
 
 /** feature_id prefix of the indicators that are minutes on foot (min_a_pie_colegio, min_a_pie_transporte…) */
 export const WALK_MINUTES_FEATURE_PREFIX = "min_a_pie_";

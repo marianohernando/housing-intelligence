@@ -6,12 +6,28 @@ import type { ComparisonGroup, GapRowKey, GapStatus, IndicatorValue, NullReason 
 import { formatNumber } from "@/lib/format";
 import type { ZoneLevel } from "@/lib/map/zones";
 
-/** estado.* (gap-0.2, D-213: each zone against the other municipios of its type). */
-export const GAP_STATUS: Record<GapStatus, { label: string; help: string }> = {
-  FALTA: { label: "FALTA", help: "Tiene claramente menos que los municipios de su tipo, y no es por el tamaño de la zona." },
-  JUSTO: { label: "JUSTO", help: "Tiene menos que los municipios de su tipo, pero no tanto como para decir que falta." },
-  CUBIERTO: { label: "CUBIERTO", help: "Tiene lo mismo o más que los municipios de su tipo." },
-  SIN_DATOS: { label: "SIN DATOS", help: "No tenemos este dato para esta zona. No quiere decir que no haya." },
+/**
+ * estado.* (gap-0.2, D-213: each zone against the other municipios of its type). `short` is the
+ * zone card's line under its rows (estado.*.corto): the card had the meaning only in a tooltip,
+ * which a phone never shows (UX mobile audit, A5).
+ */
+export const GAP_STATUS: Record<GapStatus, { label: string; help: string; short: string }> = {
+  FALTA: {
+    label: "FALTA",
+    help: "Tiene claramente menos que los municipios de su tipo, y no es por el tamaño de la zona.",
+    short: "hay claramente menos que en zonas parecidas.",
+  },
+  JUSTO: {
+    label: "JUSTO",
+    help: "Tiene menos que los municipios de su tipo, pero no tanto como para decir que falta.",
+    short: "hay algo menos que en zonas parecidas.",
+  },
+  CUBIERTO: { label: "CUBIERTO", help: "Tiene lo mismo o más que los municipios de su tipo.", short: "hay lo mismo o más que en zonas parecidas." },
+  SIN_DATOS: {
+    label: "SIN DATOS",
+    help: "No tenemos este dato para esta zona. No quiere decir que no haya.",
+    short: "no tenemos el dato; no quiere decir que no haya.",
+  },
 };
 
 /**
@@ -21,6 +37,7 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string }> = {
 export const SMALL_ZONE = {
   label: "No comparable",
   help: "Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos.",
+  short: "vive tan poca gente que no se puede comparar.",
 };
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
@@ -34,6 +51,7 @@ export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
 export const GROUP = {
   label: "Junto con sus vecinos",
   help: "Comparado con municipios parecidos de la zona: es demasiado pequeño para compararlo solo, así que lo juntamos con sus vecinos más cercanos del mismo tipo.",
+  short: "es un pueblo pequeño: lo comparamos junto con los de al lado.",
 };
 
 export function inGroup(zone: { comparison_group?: ComparisonGroup | null }): ComparisonGroup | null {
@@ -121,7 +139,7 @@ export function peopleAffectedText(row: { status: GapStatus; people?: { count: n
 export const ROW_MEASURE: Record<GapRowKey, string> = {
   escuela_infantil: "Escuelas infantiles a 15 min andando por cada 1.000 niños de 0 a 4 años, repartidas entre todos los que las tienen cerca",
   colegio: "Aulas de primaria, públicas y concertadas, a 15 min andando por cada 1.000 niños de 5 a 14 años, repartidas entre todos los que las tienen cerca",
-  centro_salud: "Centros de salud del SERMAS a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
+  centro_salud: "Centros de salud públicos a 15 min andando por cada 10.000 habitantes, repartidos entre todos los que los tienen cerca",
   mayores: "Plazas en hogares, clubes y centros de día a 15 min andando por cada 100 personas de 65 años o más, repartidas entre todos los que las tienen cerca",
   farmacia: "Farmacias a 15 min andando por cada 10.000 habitantes, repartidas entre todos los que las tienen cerca",
   vivienda: "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas",
@@ -204,7 +222,7 @@ export function gapSummary(rows: readonly SummaryRow[]): { lead: string | null; 
   let lead: string | null = null;
   if (falta.length) lead = `Aquí falta: ${listNames(falta)}.`;
   else if (justo.length) lead = "Aquí no falta nada claro.";
-  else if (cubierto.length) lead = "Aquí no falta nada frente a municipios parecidos.";
+  else if (cubierto.length) lead = "Aquí no falta nada, comparado con municipios parecidos.";
   const rest: string[] = [];
   if (justo.length) rest.push(`Van justos: ${listNames(justo)}.`);
   if (small.length) rest.push(`Zona muy pequeña para comparar: ${listNames(small)}.`);
@@ -221,15 +239,15 @@ export function fitsButShortText(rows: readonly SummaryRow[]): string | null {
   const { falta, justo } = rowsByStatus(rows);
   const parts = [falta.length ? `faltan ${listNames(falta)}` : null, justo.length ? `van justos de ${listNames(justo)}` : null].filter(Boolean);
   if (!parts.length) return null;
-  return `Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí ${parts.join(" y ")}.`;
+  return `Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí ${parts.join(" y ")}.`;
 }
 
 /**
  * zona.falta.ayuda: «Qué falta» measures something else than «Me importa» and «Lo quiero a un paseo»
  * (minutes on foot): whether what is within 15 min on foot is enough for everyone who shares it,
- * against similar zones (2SFCA, D-217).
+ * against similar zones (2SFCA, D-217). In plain words since the UX mobile audit (§4 n.º 31).
  */
-export const GAPS_HELP = "Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.";
+export const GAPS_HELP = "Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona.";
 
 /**
  * zona.cerca_pocas: what each row counts, said as «too few for so many» (FALTA) or «tight» (JUSTO).
@@ -237,8 +255,8 @@ export const GAPS_HELP = "Compara si hay bastante para toda la gente de la zona 
  * mayores count places (nobody publishes the places of an escuela infantil, D-217).
  */
 const NEAR_BUT_SHORT: Partial<Record<GapRowKey, { service: string; FALTA: string; JUSTO: string }>> = {
-  escuela_infantil: { service: "Escuela infantil", FALTA: "hay pocas para tantos niños de 0 a 4 años", JUSTO: "van justas para tantos niños de 0 a 4 años" },
-  colegio: { service: "Colegio con primaria", FALTA: "hay pocas aulas para tantos niños de 5 a 14 años", JUSTO: "las aulas van justas para tantos niños de 5 a 14 años" },
+  escuela_infantil: { service: "Escuela infantil", FALTA: "hay pocas para tantos niños", JUSTO: "van justas para tantos niños" },
+  colegio: { service: "Colegio con primaria", FALTA: "hay pocas aulas para tantos niños", JUSTO: "las aulas van justas para tantos niños" },
   centro_salud: { service: "Centro de salud", FALTA: "hay pocos para tanta gente", JUSTO: "van justos para tanta gente" },
   mayores: { service: "Centro de mayores", FALTA: "hay pocas plazas para tantas personas mayores", JUSTO: "las plazas van justas para tantas personas mayores" },
   farmacia: { service: "Farmacia", FALTA: "hay pocas para tanta gente", JUSTO: "van justas para tanta gente" },
@@ -264,8 +282,8 @@ export interface NearButShort {
 /**
  * zona.cerca_pocas: a service the search found within the row's own walk (`walks`, minutes by row,
  * up to ROW_WALK_MIN) that «Qué falta» marks FALTA or JUSTO, in one line that says both are true:
- * «Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso
- * sale FALTA.» Further than that, the row does not count it and there is nothing to reconcile.
+ * «Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños: por eso sale FALTA.»
+ * Further than that, the row does not count it and there is nothing to reconcile.
  * `place` is the district when the card is a barrio's (its rows are the district's). Rows compared
  * together with neighbours or too small to compare are left out: their status is not the zone's own.
  */

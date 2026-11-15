@@ -58,7 +58,7 @@ export interface ContextLine {
 /** The card's title and footer (zona.contexto.titulo, zona.contexto.no_puntua). */
 export const CONTEXT_CARD = {
   title: "Otros datos de la zona",
-  footer: "Son datos informativos: no cambian el encaje ni el orden de las zonas.",
+  footer: "Son datos informativos: no cambian qué zonas te convienen ni su orden.",
 } as const;
 
 /** What «Cómo lo calculamos» says about the card (pitch/metodologia.md §1.8). */
@@ -89,7 +89,7 @@ export const CONTEXT_TEXT = {
   incomePerson: "Renta disponible bruta por persona",
   incomePersonSource: "Instituto de Estadística de la Comunidad de Madrid",
   incomeHousehold: "Renta neta media por hogar",
-  incomeHouseholdSource: "INE, panel del Ayuntamiento de Madrid",
+  incomeHouseholdSource: "Instituto Nacional de Estadística, panel del Ayuntamiento de Madrid",
   none: "sin dato",
 } as const;
 const TEXT = CONTEXT_TEXT;

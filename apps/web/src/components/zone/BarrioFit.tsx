@@ -23,17 +23,16 @@ import { useBarrioFit } from "./useBarrioFit";
 // in lib/match.ts, resultados.casi.* and zona.no_cumple in lib/shortfall.ts, zona.encaje.ayuda, a_pie.mediana,
 // error.reintentar). The title is Mariano's (13 nov); the rest is B's draft for line D (barrios.encajan.*).
 const TEXT = {
-  title: "Los barrios que mejor encajan",
-  loading: (district: string) => `Buscando los barrios de ${district} que encajan contigo…`,
+  title: "Los barrios que más te convienen",
+  loading: (district: string) => `Buscando los barrios de ${district} que te convienen…`,
   pick: "Toca uno para verlo en el mapa.",
   fitHelp: "Cuánto se parece este barrio a lo que buscas. No es una nota del barrio.",
-  fit: "de encaje",
   // zona.empate, read after the % of a tied barrio
   tiesWith: (whom: string) => `empata con ${whom}`,
   all: (n: number) => `Ver los ${n} barrios`,
   fewer: "Ver menos",
-  near: "Casi encajan",
-  nearHelp: "Cumplen todo menos una cosa.",
+  near: "Casi valen",
+  nearHelp: "Les falta una sola cosa de lo que pides.",
   retry: "Reintentar",
 };
 
@@ -57,7 +56,7 @@ function Barrio({ row }: { row: BarrioRow }) {
             <small className={styles.band}>{row.fit.band}</small>
             <span aria-hidden="true">{row.fit.pct}</span>
             <span className="visually-hidden">
-              {` · ${row.fit.pct} ${TEXT.fit}`}
+              {` · ${row.fit.pct}`}
               {row.tie && `, ${TEXT.tiesWith(row.tie)}`}
             </span>
           </span>
