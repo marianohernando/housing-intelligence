@@ -1,6 +1,6 @@
 {
  "base": "http://localhost:3071",
- "checked_at": "2026-11-15T19:35:02.487Z",
+ "checked_at": "2026-11-15T19:52:48.604Z",
  "runs": [
   {
    "browserName": "chromium",
@@ -56,9 +56,21 @@
     },
     {
      "journey": "J1 search",
+     "name": "renting: no purchase notice",
+     "ok": true,
+     "detail": "0"
+    },
+    {
+     "journey": "J1 search",
      "name": "rows: name, band, % and price",
      "ok": true,
      "detail": "5 rows"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+     "ok": true,
+     "detail": "No le falta nada de lo que buscáis. | Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a uno"
     },
     {
      "journey": "J1 search",
@@ -70,7 +82,7 @@
      "journey": "J1 search",
      "name": "card essentials: band in words and «Precio orientativo», no %",
      "ok": true,
-     "detail": "Volver a la lista Puente de Vallecas Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobú"
+     "detail": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Para"
     },
     {
      "journey": "J1 search",
@@ -173,6 +185,12 @@
      "name": "buying: no 2024 rent notice",
      "ok": true,
      "detail": "0"
+    },
+    {
+     "journey": "J1 search",
+     "name": "buying: the orientative purchase notice, once",
+     "ok": true,
+     "detail": "1"
     },
     {
      "journey": "J2 Qué falta Madrid",
@@ -536,15 +554,15 @@
     },
     {
      "journey": "J5 Somos mayores",
-     "name": "card: what it lacks that matters to them, or «No le falta nada…»",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
      "ok": true,
-     "detail": "No le falta nada de lo que buscáis. | Volver a la lista Casco Histórico de Barajas · Barajas Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin esc"
+     "detail": "En Barajas, de lo que podemos comparar, no falta nada. · No sabemos si en Barajas faltan centros de salud o centros de mayores. | Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a "
     },
     {
      "journey": "J5 Somos mayores",
      "name": "card: never the schools to a retired couple",
      "ok": true,
-     "detail": "Volver a la lista Casco Histórico de Barajas · Barajas Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo "
+     "detail": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio or"
     },
     {
      "journey": "J5 Somos mayores",
@@ -596,6 +614,18 @@
     },
     {
      "journey": "J6 zone in the address",
+     "name": "the forward button opens the card again",
+     "ok": true,
+     "detail": "http://localhost:3071/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "after forward, «Volver a la lista» steps back to the list",
+     "ok": true,
+     "detail": "http://localhost:3071/"
+    },
+    {
+     "journey": "J6 zone in the address",
      "name": "«Volver a la lista» goes back to the list",
      "ok": true,
      "detail": "http://localhost:3071/"
@@ -608,9 +638,9 @@
     },
     {
      "journey": "J6 zone in the address",
-     "name": "zone screen: «Volver a la lista» goes back to the list",
+     "name": "zone screen: «Volver a la lista» goes back to the list, without a dead step",
      "ok": true,
-     "detail": ""
+     "detail": "http://localhost:3071/ · 3"
     },
     {
      "journey": "J6 zone in the address",
@@ -626,9 +656,33 @@
     },
     {
      "journey": "J6 zone in the address",
+     "name": "?zona=distrito/2800000 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3071/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona=seccion_censal/2807901001 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3071/"
+    },
+    {
+     "journey": "J6 zone in the address",
      "name": "no horizontal overflow",
      "ok": true,
      "detail": "0 px"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "a barrio's card is in the address",
+     "ok": true,
+     "detail": "http://localhost:3071/?zona=barrio/28079213"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "searching the whole region, the address and the card become its district",
+     "ok": true,
+     "detail": "http://localhost:3071/?zona=distrito/2807921"
     },
     {
      "journey": "all",
@@ -640,7 +694,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 18
+   "seconds": 21
   },
   {
    "browserName": "chromium",
@@ -696,9 +750,21 @@
     },
     {
      "journey": "J1 search",
+     "name": "renting: no purchase notice",
+     "ok": true,
+     "detail": "0"
+    },
+    {
+     "journey": "J1 search",
      "name": "rows: name, band and price, without % (phone)",
      "ok": true,
      "detail": "5 rows"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+     "ok": true,
+     "detail": "No le falta nada de lo que buscáis. | Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a uno"
     },
     {
      "journey": "J1 search",
@@ -710,7 +776,7 @@
      "journey": "J1 search",
      "name": "card essentials: band in words and «Precio orientativo», no %",
      "ok": true,
-     "detail": "Volver a la lista Puente de Vallecas Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobú"
+     "detail": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Para"
     },
     {
      "journey": "J1 search",
@@ -813,6 +879,12 @@
      "name": "buying: no 2024 rent notice",
      "ok": true,
      "detail": "0"
+    },
+    {
+     "journey": "J1 search",
+     "name": "buying: the orientative purchase notice, once",
+     "ok": true,
+     "detail": "1"
     },
     {
      "journey": "J2 Qué falta Madrid",
@@ -1038,15 +1110,15 @@
     },
     {
      "journey": "J5 Somos mayores",
-     "name": "card: what it lacks that matters to them, or «No le falta nada…»",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
      "ok": true,
-     "detail": "No le falta nada de lo que buscáis. | Volver a la lista Casco Histórico de Barajas · Barajas Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin esc"
+     "detail": "En Barajas, de lo que podemos comparar, no falta nada. · No sabemos si en Barajas faltan centros de salud o centros de mayores. | Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a "
     },
     {
      "journey": "J5 Somos mayores",
      "name": "card: never the schools to a retired couple",
      "ok": true,
-     "detail": "Volver a la lista Casco Histórico de Barajas · Barajas Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo "
+     "detail": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio or"
     },
     {
      "journey": "J5 Somos mayores",
@@ -1098,6 +1170,18 @@
     },
     {
      "journey": "J6 zone in the address",
+     "name": "the forward button opens the card again",
+     "ok": true,
+     "detail": "http://localhost:3071/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "after forward, «Volver a la lista» steps back to the list",
+     "ok": true,
+     "detail": "http://localhost:3071/"
+    },
+    {
+     "journey": "J6 zone in the address",
      "name": "«Volver a la lista» goes back to the list",
      "ok": true,
      "detail": "http://localhost:3071/"
@@ -1110,9 +1194,9 @@
     },
     {
      "journey": "J6 zone in the address",
-     "name": "zone screen: «Volver a la lista» goes back to the list",
+     "name": "zone screen: «Volver a la lista» goes back to the list, without a dead step",
      "ok": true,
-     "detail": ""
+     "detail": "http://localhost:3071/ · 3"
     },
     {
      "journey": "J6 zone in the address",
@@ -1128,9 +1212,33 @@
     },
     {
      "journey": "J6 zone in the address",
+     "name": "?zona=distrito/2800000 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3071/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona=seccion_censal/2807901001 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3071/"
+    },
+    {
+     "journey": "J6 zone in the address",
      "name": "no horizontal overflow",
      "ok": true,
      "detail": "0 px"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "a barrio's card is in the address",
+     "ok": true,
+     "detail": "http://localhost:3071/?zona=barrio/28079213"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "searching the whole region, the address and the card become its district",
+     "ok": true,
+     "detail": "http://localhost:3071/?zona=distrito/2807921"
     },
     {
      "journey": "all",
@@ -1142,7 +1250,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 20
+   "seconds": 25
   }
  ]
 }
