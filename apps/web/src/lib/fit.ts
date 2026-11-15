@@ -121,7 +121,8 @@ export function priceRange(range: CostRange | null | undefined): PriceRange | nu
   const low = formatEuros(range.low_eur).replace(" €", "");
   const high = formatEuros(range.high_eur);
   return {
-    text: `La mitad de los contratos, entre ${low} y ${high}/mes`,
+    // A no-break space keeps «1.190 €/mes» on one line in a narrow card
+    text: `La mitad de los contratos, entre ${low} y ${high.replace(" €", "\u00a0€")}/mes`,
     source: range.source,
     aria: `La mitad de los contratos están entre ${low} y ${high} al mes, según ${range.source}`,
   };

@@ -350,12 +350,12 @@ describe("the approximate price of a zone (D-234)", () => {
     expect(rent?.long).toBe("Alquiler ≈ 571 €/mes");
     expect(rent?.confidence?.label).toBe("Dato aproximado");
     expect(rent?.range).toEqual({
-      text: "La mitad de los contratos, entre 510 y 820 €/mes",
+      text: "La mitad de los contratos, entre 510 y 820\u00a0€/mes",
       source: "Ministerio de Vivienda (SERPAVI), 2024",
       aria: "La mitad de los contratos están entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024",
     });
     expect(zonePrice({ estimated_cost_eur: 1_010, estimated_cost_range: { ...range, low_eur: 1_010, high_eur: 1_500 } }, false)?.range?.text).toBe(
-      "La mitad de los contratos, entre 1.010 y 1.500 €/mes",
+      "La mitad de los contratos, entre 1.010 y 1.500\u00a0€/mes",
     );
     // Buying, or a rent from the CM (no spread published), or an API from before D-242: no range
     expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_range: range }, true)?.range).toBeNull();

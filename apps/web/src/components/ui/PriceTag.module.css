@@ -44,8 +44,9 @@
   content: "· ";
 }
 
-/* D-242: where half the leases fall and who publishes it, on its own line under the figure */
+/* D-242: where half the leases fall, and who publishes it under, both below the figure */
 .range {
+  display: grid;
   flex-basis: 100%;
   color: var(--ink-soft);
   font-size: 0.85rem;
@@ -53,5 +54,5 @@
 }
 
 .source {
-  white-space: nowrap;
+  font-size: 0.8rem;
 }
