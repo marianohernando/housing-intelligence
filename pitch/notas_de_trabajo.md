@@ -12,6 +12,19 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 ---
 
+## Pendiente tras la entrega 2 de UX (19 nov como tarde)
+
+La entrega cambia palabras de la web: las bandas pasan a «Muy buena opción», «Buena opción», «Opción regular» y «Poco recomendable»; «Casi encajan» pasa a «Casi valen»; en el móvil la lista enseña nombre, banda y precio, sin % ni empates; y hay un hogar «Somos mayores» y un ejemplo «Pareja jubilada». El método no cambia. Cuando esté desplegada, D:
+
+| Qué | Dónde | Por qué |
+|---|---|---|
+| Rehacer C1, C2 y C3 en producción y quitar sus `data-pending` | `pitch/capturas/`, `pitch/deck/deck.html` | Enseñan las bandas, el empate y la lista de hoy. `--final` no pasa hasta entonces |
+| Cambiar las etiquetas citadas | `pitch/video_respaldo.md` (plano 3: «Se ve» y «Estado»), pregunta 48, `pitch/banco_formula.md` (las bandas del ejemplo) y `pitch/metodologia.md` §1.3 (lleva aviso) | Citan «Encaja muy bien», «Empatan…», «Empata al 94 % con Latina» o las bandas de hoy. El vídeo se graba el 23 nov |
+| «Zonas que encajan», si la web lo cambia | guion, `slides.md`, `video_respaldo.md`, `metodologia.md` y `textos_web.md` | Es el título de la lista |
+| Contar como hecho lo de la persona mayor | pregunta 43, `slides.md` y guion | Hoy va «decidido, pendiente de B»: portada clara, letra de 16 px como mínimo, botones de 44 px, lenguaje llano y lo esencial primero |
+
+---
+
 ## Condiciones de publicación de `metodologia.md`
 
 Párrafos de la parte 1 que B solo publica si la web ya enseña lo que cuentan. Si el 16 nov no se cumple, B quita el párrafo entero.

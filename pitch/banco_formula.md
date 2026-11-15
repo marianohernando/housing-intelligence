@@ -1,6 +1,6 @@
 # Banco de pruebas de la fórmula de encaje
 
-> **Fórmula elegida por Mariano el 15 nov:** la variante A, «cerca y plazas», con el tope por trayecto (`f4_a_recomendada`). Sus cifras (zonas, % y orden del ejemplo) se publican al implantarla.
+> **Fórmula elegida por Mariano el 15 nov:** la variante A, «cerca y plazas», con el tope por trayecto (`f4_a_recomendada`). Está en producción desde el 15 nov como `fit-0.9` (D-243). Sus resultados están abajo.
 >
 > El banco corre fuera del repositorio, contra la base local `housing` en solo lectura. Aquí va qué comprueba y con qué evidencia externa. Lo citan las preguntas 57, 58 y 59 de `pitch/preguntas.md`.
 
@@ -14,6 +14,37 @@
 - Las zonas se ordenan por el % que se ve. A igual %, va primero la que tiene más servicios a un paseo.
 - Una zona con FALTA en algo que se marca no pasa del 89 %.
 - Con más de 60 min de trayecto 3 días o más a la semana, no pasa del 74 %.
+
+## Resultados de la variante elegida
+
+Son cifras del banco con los datos del 15 nov. La columna «Antes» es la fórmula anterior (`fit-0.8`). Fuente: D-243 §7–9.
+
+| Qué | Antes | Con la elegida |
+|---|---|---|
+| Zonas al 90 % o más con FALTA en algo marcado, en las 1.000 búsquedas | 578 | 0 |
+| Búsquedas con más de 10 zonas empatadas con la 1.ª | 29 % | 8 % |
+| Zonas con un trayecto imposible entre las 5 primeras, en las 1.000 búsquedas | 103 | 55 |
+| Expectativas cumplidas: el ejemplo del pitch | 5 de 6 | 6 de 6 |
+| Expectativas cumplidas: las personas de la prueba (ajuste) | 20 de 42 | 37 de 42 |
+| Expectativas cumplidas: control | 16 de 20 | 17 de 20 |
+| Expectativas cumplidas: evidencia externa (no se usa para ajustar) | 19 de 24 | 20 de 24 |
+
+- **El control no empeora.** Los 4 casos sintéticos sacan lo mismo con las dos fórmulas. El punto de más es del estudiante, que no cuenta como validación independiente.
+- **Robustez.** Moviendo los datos dentro de su fiabilidad, las 10 primeras conservan de media un 85 % de zonas en las personas y un 84 % en la rejilla.
+- **El precio.** Con ruido en los datos, la 1.ª del pitch cambia en casi la mitad de las réplicas, casi siempre por otra zona con el mismo %: por eso la web dice «empatan».
+- **Paridad.** La web desplegada da exactamente los mismos % y órdenes que el banco, en las 26 personas y en las 1.000 búsquedas (diferencia máxima, 0).
+- **El ejemplo del pitch, en producción:**
+  - encajan 42 de 199 zonas: 12 «encajan muy bien», 5 «bien», 13 «regular» y 12 «poco»;
+  - arriba empatan Puente de Vallecas y Latina al 94 %;
+  - antes, Latina salía 1.ª al 98 %, con cuatro empatadas.
+
+**Lo que sigue sin validar.** Los parámetros nuevos (0,9 en el borde de la ventana, el 40 % de peso de las plazas y su cero al 40 % de la referencia, 0,6 en el límite del presupuesto, +25 %, la mitad, 89 % y 74 %) salen de las bandas y de umbrales que ya había. No están validados con usuarios. Habrá una segunda ronda con las mismas personas, que compare zonas de dos en dos, y el banco ya puede cargarla como preferencias «A mejor que B».
+
+**Lo que no arregla ninguna fórmula** (medido en el banco: son datos o producto).
+- **Alquiler de 2024 frente a los anuncios** (D10). Si todo fuera un 20 % más caro, el ejemplo del pitch pasaría de 42 a 39 zonas, y una persona sola con 900 € que trabaja en Sol, de 9 a 1. La web lo avisa en la lista y en la tarjeta.
+- **Solo transporte público** (B02, B05). Suponer coche cambiaría 3 o más zonas de las 10 primeras en el 64 % de las búsquedas con trabajo. Va a la hoja de ruta.
+- **Precio de compra estimado** (D11, D-234). Corregido el sesgo de Tetuán, a P1 (400.000 € para comprar) Tetuán le sale 5.º. Va a la hoja de ruta.
+- **Metros del piso.** P6 ve todos los distritos si busca 60 m² en lugar de los 71 que se suponen para un hogar de 3 personas.
 
 ## Qué comprueba
 
