@@ -26,6 +26,12 @@ export type LowEur = number;
 export type Source = string;
 export type FailedConstraints = string[];
 /**
+ * The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or
+ * «poco». The thresholds (90, 75 and 60) live in hi_domain.fit; a web that gets no band derives
+ * it from `match_pct` with the same ones.
+ */
+export type MatchBand = "muy_bien" | "bien" | "regular" | "poco";
+/**
  * None = unknown
  */
 export type MatchPct = number | null;
@@ -326,6 +332,10 @@ export interface ZoneMatch {
    */
   estimated_cost_range?: CostRange | null;
   failed_constraints?: FailedConstraints;
+  /**
+   * `match_pct` in words, as in RankedZone (D-243); None when the % is unknown or from an API before fit-0.9
+   */
+  match_band?: MatchBand | null;
   match_pct?: MatchPct;
   passes_all: PassesAll;
   zone: ZoneRef;
@@ -380,6 +390,10 @@ export interface RankedZone {
   facts: Facts;
   failed_constraints?: FailedConstraints1;
   gap_highlights?: GapHighlights;
+  /**
+   * `match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from 60, poco below. Optional and additive: None from an API before fit-0.9
+   */
+  match_band?: MatchBand | null;
   match_pct: MatchPct1;
   rank: Rank;
   zone: ZoneRef;
