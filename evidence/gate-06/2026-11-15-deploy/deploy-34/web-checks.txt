@@ -1,0 +1,555 @@
+The web of dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm (c0e9d11) at 1440, 390 and 360 px, ~20:45–20:55 UTC, Chromium (Playwright), User-Agent vida-facil-smoke/probe2.
+Each figure is compared with the API answer the page itself received. Blocks:
+  family     the example «pareja con 2 hijos»: summary, every row in view (name, band, «Unos … € al mes», «›»; no % on a phone; never «Distrito de», m², ties, «Dato aproximado»),
+             the 1st card (essentials, then «Ver más»), back / focus / forward / «Volver a la lista»;
+  zoneScreen its zone screen (from «Ver la zona»): essentials, «Más datos de la zona» folded, «Volver a la lista»;
+  barrios    «Los barrios que más os convienen» on that screen: the row, then the 1st one tapped;
+  retired    the example «pareja jubilada»: rows, the 1st barrio's card (lines, green tick), the family trip, then «Toda la Comunidad» (barrio → district in the address);
+  colegios   «En pareja», «Alrededores de Madrid», 900 €, with «Colegios» marked and then unmarked: Parla's card (colegios JUSTO);
+  wrongZona  ?zona= that is no zone; notComparable: «Qué falta» of Barajas and La Acebeda ("tag" includes its screen-reader help).
+«errors»: console errors, page errors and HTTP ≥ 400 seen by the browser.
+
+1440 {
+ "family": {
+  "api": "42 of 199; Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien; 10th Leganés 90",
+  "rows": {
+   "n": 10,
+   "summary": "Hemos encontrado 42 zonas para vosotros.",
+   "first3": [
+    "1 Puente de Vallecas Muy buena opción · 94 % , empata con Latina Unos 1.129 € al mes",
+    "2 Latina Muy buena opción · 94 % , empata con Puente de Vallecas Unos 1.101 € al mes",
+    "3 Usera Muy buena opción · 93 % , empata con Moratalaz Unos 1.019 € al mes"
+   ],
+   "wrong": [],
+   "tieHeaders": 0
+  },
+  "url": "/?zona=distrito/2807913",
+  "card": {
+   "back": true,
+   "place": "Distrito de Madrid · Muy buena opción",
+   "lines": [
+    "Unos 1.129 € al mesPrecio orientativo",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min",
+    "Centro de salud a unos 8 min andando",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+    "No le falta nada de lo que buscáis."
+   ],
+   "greenTick": 1,
+   "text": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min Centro de salud a unos 8 min andando 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 No le falta nada de lo que buscáis.",
+   "moreSummary": "Ver más sobre Puente de Vallecas",
+   "pctInEssentials": false,
+   "trip": [
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00"
+   ],
+   "gapsZone": "Puente de Vallecas"
+  },
+  "more": {
+   "pct": true,
+   "rank": "La 1",
+   "tie": "Igual de buena que Latina (94 %)",
+   "facts": "5 on screen, 5 in the API",
+   "notice2024": true,
+   "missingRows": 4,
+   "gapsRows": 6,
+   "seeZone": 1
+  }
+ },
+ "nav": {
+  "afterBack": "/",
+  "cardAfterBack": 0,
+  "focusOnRow": true,
+  "afterForward": "/?zona=distrito/2807913",
+  "afterVolver": "/, card 0"
+ },
+ "zoneScreen": {
+  "url": "/zona/distrito/2807913",
+  "moreFolded": true,
+  "backToList": 1,
+  "essentials": "Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min Centro de salud a unos 8 min andando 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 No le falta nada de lo que buscáis.",
+  "essentialsHasPct": false,
+  "foldedHolds": "Más datos de la zona · Otros datos de la zona · Vivienda nueva y lo que viene · Entorno",
+  "order": "Puente de Vallecas · Los barrios que más os convienen · Todos los centros · Tu búsqueda · Ir a un barrio",
+  "backTo": "/",
+  "listShown": true
+ },
+ "barrios": {
+  "title": "Los barrios que más os convienen",
+  "rows": 3,
+  "first": [
+   "Palomeras Bajas Muy buena opción · 94 % , empata con San Diego, Numancia y Entrevías Unos 1.110 € al mes",
+   "San Diego Muy buena opción · 94 % , empata con Palomeras Bajas, Numancia y Entrevías Unos 1.152 € al mes",
+   "Numancia Muy buena opción · 94 % , empata con Palomeras Bajas, San Diego y Entrevías Unos 1.129 € al mes"
+  ],
+  "pctInRows": true,
+  "tapped": {
+   "pressed": "true",
+   "details": "Muy buena opción · 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Alquiler: unos 1.110 € al mes por 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  }
+ },
+ "retired": {
+  "api": "22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92",
+  "rows": {
+   "n": 10,
+   "summary": "Hemos encontrado 22 barrios para vosotros.",
+   "first3": [
+    "1 Casco Histórico de Barajas · Barajas Muy buena opción · 92 % , empata con Alameda de Osuna Unos 1.038 € al mes",
+    "2 Alameda de Osuna · Barajas Muy buena opción · 92 % , empata con Casco Histórico de Barajas Unos 1.038 € al mes",
+    "3 Quintana · Ciudad Lineal Buena opción · 89 % , empata con San Pascual, Pueblo Nuevo y Ventas Unos 1.116 € al mes"
+   ],
+   "wrong": [],
+   "tieHeaders": 0
+  },
+  "url": "/?zona=barrio/28079213",
+  "card": {
+   "back": true,
+   "place": "Barrio de Madrid · Muy buena opción",
+   "lines": [
+    "Unos 1.038 € al mesPrecio orientativo",
+    "Centro de salud a unos 9 min andando",
+    "Estación de metro o tren accesible (sin escaleras) a unos 9 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min",
+    "27 min en transporte público hasta Ciudad Lineal (metro)",
+    "En Barajas, de lo que podemos comparar, no falta nada.",
+    "No sabemos si en Barajas faltan centros de salud o centros de mayores."
+   ],
+   "greenTick": 0,
+   "text": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a unos 9 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min 27 min en transporte público hasta Ciudad Lineal (metro) En Barajas, de lo que podemos comparar, no falta nada. No sabemos si en Barajas faltan centros de salud o centros de mayores.",
+   "moreSummary": "Ver más sobre Casco Histórico de Barajas",
+   "gaps": "Barajas: centro_salud CUBIERTO (no fiable), farmacia CUBIERTO, mayores CUBIERTO (no fiable)",
+   "schools": false,
+   "nineInEssentials": false
+  },
+  "more": {
+   "trip": [
+    "27 min en transporte público hasta Ciudad Lineal (metro)"
+   ],
+   "nineAnywhere": false,
+   "tripShown": "27 min en transporte público hasta Ciudad Lineal (metro) En Barajas, de lo que podemos comparar, no falta nada"
+  },
+  "toDistrict": {
+   "status": 200,
+   "url": "/?zona=distrito/2807921",
+   "followed": true,
+   "card": 1,
+   "cardTitle": "Barajas"
+  }
+ },
+ "colegios": {
+  "marked": {
+   "sent": "household {\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}, scope alrededores, priorities [\"colegios\"], 900 €",
+   "api": "31 of 40",
+   "parla": "1 Parla; colegio JUSTO",
+   "card": {
+    "lines": [
+     "Unos 688 € al mesPrecio orientativo",
+     "Colegio con primaria a unos 6 min andando",
+     "Farmacias: hay pocas para tanta gente.",
+     "Centros de salud: van justos para tanta gente.",
+     "Colegios: las aulas van justas para tantos niños."
+    ],
+    "colegios": [
+     "Colegio con primaria a unos 6 min andando",
+     "Colegios: las aulas van justas para tantos niños."
+    ],
+    "greenTick": 0
+   }
+  },
+  "unmarked": {
+   "sent": "household {\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}, scope alrededores, priorities [], 900 €",
+   "api": "31 of 40",
+   "parla": "8 Parla; colegio (gaps cached)",
+   "card": {
+    "lines": [
+     "Unos 688 € al mesPrecio orientativo",
+     "Farmacias: hay pocas para tanta gente.",
+     "Centros de salud: van justos para tanta gente."
+    ],
+    "colegios": [],
+    "greenTick": 0
+   }
+  }
+ },
+ "wrongZona": {
+  "distrito/2800000": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "seccion_censal/2807901001": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "nada": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "valid": "distrito/2807921 opens Barajas: true"
+ },
+ "notComparable": {
+  "distrito/2807921 ^Centros de salud$": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,39 (en toda la Comunidad, 0,38)",
+  "distrito/2807921 ^Centros de mayores$": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan. 5,6 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 4,4 (en toda la Comunidad, 5,1)",
+  "municipio/28001 ^Vivienda": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios rurales de la Comunidad de Madrid, 433,2 (en toda la Comunidad, 177,6)"
+ },
+ "errors": []
+}
+390 {
+ "family": {
+  "api": "42 of 199; Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien; 10th Leganés 90",
+  "rows": {
+   "n": 10,
+   "summary": "Hemos encontrado 42 zonas para vosotros.",
+   "first3": [
+    "1 Puente de Vallecas Muy buena opción Unos 1.129 € al mes",
+    "2 Latina Muy buena opción Unos 1.101 € al mes",
+    "3 Usera Muy buena opción Unos 1.019 € al mes"
+   ],
+   "wrong": [],
+   "tieHeaders": 0
+  },
+  "url": "/?zona=distrito/2807913",
+  "card": {
+   "back": true,
+   "place": "Distrito de Madrid · Muy buena opción",
+   "lines": [
+    "Unos 1.129 € al mesPrecio orientativo",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min",
+    "Centro de salud a unos 8 min andando",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+    "No le falta nada de lo que buscáis."
+   ],
+   "greenTick": 1,
+   "text": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min Centro de salud a unos 8 min andando 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 No le falta nada de lo que buscáis.",
+   "moreSummary": "Ver más sobre Puente de Vallecas",
+   "pctInEssentials": false,
+   "trip": [
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00"
+   ],
+   "gapsZone": "Puente de Vallecas"
+  },
+  "more": {
+   "pct": true,
+   "rank": "La 1",
+   "tie": "Igual de buena que Latina (94 %)",
+   "facts": "5 on screen, 5 in the API",
+   "notice2024": true,
+   "missingRows": 4,
+   "gapsRows": 6,
+   "seeZone": 1
+  }
+ },
+ "nav": {
+  "afterBack": "/",
+  "cardAfterBack": 0,
+  "focusOnRow": true,
+  "afterForward": "/?zona=distrito/2807913",
+  "afterVolver": "/, card 0"
+ },
+ "zoneScreen": {
+  "url": "/zona/distrito/2807913",
+  "moreFolded": true,
+  "backToList": 1,
+  "essentials": "Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min Centro de salud a unos 8 min andando 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 No le falta nada de lo que buscáis.",
+  "essentialsHasPct": false,
+  "foldedHolds": "Más datos de la zona · Otros datos de la zona · Vivienda nueva y lo que viene · Entorno",
+  "order": "Puente de Vallecas · Los barrios que más os convienen · Todos los centros · Tu búsqueda · Ir a un barrio",
+  "backTo": "/",
+  "listShown": true
+ },
+ "barrios": {
+  "title": "Los barrios que más os convienen",
+  "rows": 3,
+  "first": [
+   "Palomeras Bajas Muy buena opción Unos 1.110 € al mes",
+   "San Diego Muy buena opción Unos 1.152 € al mes",
+   "Numancia Muy buena opción Unos 1.129 € al mes"
+  ],
+  "pctInRows": false,
+  "tapped": {
+   "pressed": "true",
+   "details": "Muy buena opción · 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Alquiler: unos 1.110 € al mes por 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  }
+ },
+ "retired": {
+  "api": "22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92",
+  "rows": {
+   "n": 10,
+   "summary": "Hemos encontrado 22 barrios para vosotros.",
+   "first3": [
+    "1 Casco Histórico de Barajas · Barajas Muy buena opción Unos 1.038 € al mes",
+    "2 Alameda de Osuna · Barajas Muy buena opción Unos 1.038 € al mes",
+    "3 Quintana · Ciudad Lineal Buena opción Unos 1.116 € al mes"
+   ],
+   "wrong": [],
+   "tieHeaders": 0
+  },
+  "url": "/?zona=barrio/28079213",
+  "card": {
+   "back": true,
+   "place": "Barrio de Madrid · Muy buena opción",
+   "lines": [
+    "Unos 1.038 € al mesPrecio orientativo",
+    "Centro de salud a unos 9 min andando",
+    "Estación de metro o tren accesible (sin escaleras) a unos 9 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min",
+    "27 min en transporte público hasta Ciudad Lineal (metro)",
+    "En Barajas, de lo que podemos comparar, no falta nada.",
+    "No sabemos si en Barajas faltan centros de salud o centros de mayores."
+   ],
+   "greenTick": 0,
+   "text": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a unos 9 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min 27 min en transporte público hasta Ciudad Lineal (metro) En Barajas, de lo que podemos comparar, no falta nada. No sabemos si en Barajas faltan centros de salud o centros de mayores.",
+   "moreSummary": "Ver más sobre Casco Histórico de Barajas",
+   "gaps": "Barajas: centro_salud CUBIERTO (no fiable), farmacia CUBIERTO, mayores CUBIERTO (no fiable)",
+   "schools": false,
+   "nineInEssentials": false
+  },
+  "more": {
+   "trip": [
+    "27 min en transporte público hasta Ciudad Lineal (metro)"
+   ],
+   "nineAnywhere": false,
+   "tripShown": "27 min en transporte público hasta Ciudad Lineal (metro) En Barajas, de lo que podemos comparar, no falta nada"
+  },
+  "toDistrict": {
+   "status": 200,
+   "url": "/?zona=distrito/2807921",
+   "followed": true,
+   "card": 1,
+   "cardTitle": "Barajas"
+  }
+ },
+ "colegios": {
+  "marked": {
+   "sent": "household {\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}, scope alrededores, priorities [\"colegios\"], 900 €",
+   "api": "31 of 40",
+   "parla": "1 Parla; colegio JUSTO",
+   "card": {
+    "lines": [
+     "Unos 688 € al mesPrecio orientativo",
+     "Colegio con primaria a unos 6 min andando",
+     "Farmacias: hay pocas para tanta gente.",
+     "Centros de salud: van justos para tanta gente.",
+     "Colegios: las aulas van justas para tantos niños."
+    ],
+    "colegios": [
+     "Colegio con primaria a unos 6 min andando",
+     "Colegios: las aulas van justas para tantos niños."
+    ],
+    "greenTick": 0
+   }
+  },
+  "unmarked": {
+   "sent": "household {\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}, scope alrededores, priorities [], 900 €",
+   "api": "31 of 40",
+   "parla": "8 Parla; colegio (gaps cached)",
+   "card": {
+    "lines": [
+     "Unos 688 € al mesPrecio orientativo",
+     "Farmacias: hay pocas para tanta gente.",
+     "Centros de salud: van justos para tanta gente."
+    ],
+    "colegios": [],
+    "greenTick": 0
+   }
+  }
+ },
+ "wrongZona": {
+  "distrito/2800000": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "seccion_censal/2807901001": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "nada": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "valid": "distrito/2807921 opens Barajas: true"
+ },
+ "notComparable": {
+  "distrito/2807921 ^Centros de salud$": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,39 (en toda la Comunidad, 0,38)",
+  "distrito/2807921 ^Centros de mayores$": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan. 5,6 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 4,4 (en toda la Comunidad, 5,1)",
+  "municipio/28001 ^Vivienda": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios rurales de la Comunidad de Madrid, 433,2 (en toda la Comunidad, 177,6)"
+ },
+ "errors": []
+}
+360 {
+ "family": {
+  "api": "42 of 199; Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien; 10th Leganés 90",
+  "rows": {
+   "n": 10,
+   "summary": "Hemos encontrado 42 zonas para vosotros.",
+   "first3": [
+    "1 Puente de Vallecas Muy buena opción Unos 1.129 € al mes",
+    "2 Latina Muy buena opción Unos 1.101 € al mes",
+    "3 Usera Muy buena opción Unos 1.019 € al mes"
+   ],
+   "wrong": [],
+   "tieHeaders": 0
+  },
+  "url": "/?zona=distrito/2807913",
+  "card": {
+   "back": true,
+   "place": "Distrito de Madrid · Muy buena opción",
+   "lines": [
+    "Unos 1.129 € al mesPrecio orientativo",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min",
+    "Centro de salud a unos 8 min andando",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+    "No le falta nada de lo que buscáis."
+   ],
+   "greenTick": 1,
+   "text": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min Centro de salud a unos 8 min andando 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 No le falta nada de lo que buscáis.",
+   "moreSummary": "Ver más sobre Puente de Vallecas",
+   "pctInEssentials": false,
+   "trip": [
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00"
+   ],
+   "gapsZone": "Puente de Vallecas"
+  },
+  "more": {
+   "pct": true,
+   "rank": "La 1",
+   "tie": "Igual de buena que Latina (94 %)",
+   "facts": "5 on screen, 5 in the API",
+   "notice2024": true,
+   "missingRows": 4,
+   "gapsRows": 6,
+   "seeZone": 1
+  }
+ },
+ "nav": {
+  "afterBack": "/",
+  "cardAfterBack": 0,
+  "focusOnRow": true,
+  "afterForward": "/?zona=distrito/2807913",
+  "afterVolver": "/, card 0"
+ },
+ "zoneScreen": {
+  "url": "/zona/distrito/2807913",
+  "moreFolded": true,
+  "backToList": 1,
+  "essentials": "Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min Centro de salud a unos 8 min andando 41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 No le falta nada de lo que buscáis.",
+  "essentialsHasPct": false,
+  "foldedHolds": "Más datos de la zona · Otros datos de la zona · Vivienda nueva y lo que viene · Entorno",
+  "order": "Puente de Vallecas · Los barrios que más os convienen · Todos los centros · Tu búsqueda · Ir a un barrio",
+  "backTo": "/",
+  "listShown": true
+ },
+ "barrios": {
+  "title": "Los barrios que más os convienen",
+  "rows": 3,
+  "first": [
+   "Palomeras Bajas Muy buena opción Unos 1.110 € al mes",
+   "San Diego Muy buena opción Unos 1.152 € al mes",
+   "Numancia Muy buena opción Unos 1.129 € al mes"
+  ],
+  "pctInRows": false,
+  "tapped": {
+   "pressed": "true",
+   "details": "Muy buena opción · 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Alquiler: unos 1.110 € al mes por 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  }
+ },
+ "retired": {
+  "api": "22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92",
+  "rows": {
+   "n": 10,
+   "summary": "Hemos encontrado 22 barrios para vosotros.",
+   "first3": [
+    "1 Casco Histórico de Barajas · Barajas Muy buena opción Unos 1.038 € al mes",
+    "2 Alameda de Osuna · Barajas Muy buena opción Unos 1.038 € al mes",
+    "3 Quintana · Ciudad Lineal Buena opción Unos 1.116 € al mes"
+   ],
+   "wrong": [],
+   "tieHeaders": 0
+  },
+  "url": "/?zona=barrio/28079213",
+  "card": {
+   "back": true,
+   "place": "Barrio de Madrid · Muy buena opción",
+   "lines": [
+    "Unos 1.038 € al mesPrecio orientativo",
+    "Centro de salud a unos 9 min andando",
+    "Estación de metro o tren accesible (sin escaleras) a unos 9 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min",
+    "27 min en transporte público hasta Ciudad Lineal (metro)",
+    "En Barajas, de lo que podemos comparar, no falta nada.",
+    "No sabemos si en Barajas faltan centros de salud o centros de mayores."
+   ],
+   "greenTick": 0,
+   "text": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a unos 9 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 9 min 27 min en transporte público hasta Ciudad Lineal (metro) En Barajas, de lo que podemos comparar, no falta nada. No sabemos si en Barajas faltan centros de salud o centros de mayores.",
+   "moreSummary": "Ver más sobre Casco Histórico de Barajas",
+   "gaps": "Barajas: centro_salud CUBIERTO (no fiable), farmacia CUBIERTO, mayores CUBIERTO (no fiable)",
+   "schools": false,
+   "nineInEssentials": false
+  },
+  "more": {
+   "trip": [
+    "27 min en transporte público hasta Ciudad Lineal (metro)"
+   ],
+   "nineAnywhere": false,
+   "tripShown": "27 min en transporte público hasta Ciudad Lineal (metro) En Barajas, de lo que podemos comparar, no falta nada"
+  },
+  "toDistrict": {
+   "status": 200,
+   "url": "/?zona=distrito/2807921",
+   "followed": true,
+   "card": 1,
+   "cardTitle": "Barajas"
+  }
+ },
+ "colegios": {
+  "marked": {
+   "sent": "household {\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}, scope alrededores, priorities [\"colegios\"], 900 €",
+   "api": "31 of 40",
+   "parla": "1 Parla; colegio JUSTO",
+   "card": {
+    "lines": [
+     "Unos 688 € al mesPrecio orientativo",
+     "Colegio con primaria a unos 6 min andando",
+     "Farmacias: hay pocas para tanta gente.",
+     "Centros de salud: van justos para tanta gente.",
+     "Colegios: las aulas van justas para tantos niños."
+    ],
+    "colegios": [
+     "Colegio con primaria a unos 6 min andando",
+     "Colegios: las aulas van justas para tantos niños."
+    ],
+    "greenTick": 0
+   }
+  },
+  "unmarked": {
+   "sent": "household {\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}, scope alrededores, priorities [], 900 €",
+   "api": "31 of 40",
+   "parla": "8 Parla; colegio (gaps cached)",
+   "card": {
+    "lines": [
+     "Unos 688 € al mesPrecio orientativo",
+     "Farmacias: hay pocas para tanta gente.",
+     "Centros de salud: van justos para tanta gente."
+    ],
+    "colegios": [],
+    "greenTick": 0
+   }
+  }
+ },
+ "wrongZona": {
+  "distrito/2800000": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "seccion_censal/2807901001": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "nada": "→ /, card 0, title «Vida Fácil · Encuentra tu sitio en Madrid»",
+  "valid": "distrito/2807921 opens Barajas: true"
+ },
+ "notComparable": {
+  "distrito/2807921 ^Centros de salud$": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunidad de Madrid, 0,39 (en toda la Comunidad, 0,38)",
+  "distrito/2807921 ^Centros de mayores$": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan. 5,6 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en los demás municipios urbanos de la Comunidad de Madrid, 4,4 (en toda la Comunidad, 5,1)",
+  "municipio/28001 ^Vivienda": "tag «No comparable. Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.» · No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios rurales de la Comunidad de Madrid, 433,2 (en toda la Comunidad, 177,6)"
+ },
+ "errors": []
+}
+
+## One person («Solo/a», 900 €): «para ti»
+{
+ "360": {
+  "sent": "{\"adults\":1,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}",
+  "summary": "Hemos encontrado 165 zonas para ti.",
+  "api": 165,
+  "title": "Zonas que te convienen",
+  "top": "Casarrubuelos",
+  "gapLine": [],
+  "errors": []
+ },
+ "1440": {
+  "sent": "{\"adults\":1,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0}",
+  "summary": "Hemos encontrado 165 zonas para ti.",
+  "api": 165,
+  "title": "Zonas que te convienen",
+  "top": "Casarrubuelos",
+  "gapLine": [],
+  "errors": []
+ }
+}
