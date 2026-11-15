@@ -11,9 +11,11 @@ function HospitalText({ facility }: { facility: Facility }) {
   const { dependency, name, notes, beds } = hospitalLine(facility);
   const kind = [facility.label, ...notes.filter((n) => n !== facility.label)].join(" · ");
   return (
-    <span className={styles.labelText}>
-      <span className={styles.labelKind}>
-        {dependency && <DependencyPill dependency={dependency} />} {kind}
+    <span className={`${styles.labelText} ${styles.labelTextFit}`}>
+      {/* One line: the pill whole, the type cut with «…» if the label has no room (review R-03 of PR #70) */}
+      <span className={`${styles.labelKind} ${styles.labelKindRow}`}>
+        {dependency && <DependencyPill dependency={dependency} />}
+        <span className={styles.labelKindText}>{kind}</span>
       </span>
       {facility.name && (
         <span className={styles.labelName}>
@@ -37,7 +39,7 @@ export default function FacilityLabel({ facility }: { facility: Facility }) {
   const Icon = FACILITY_ICON[facility.type];
   const { label, rest } = facilityLine(facility);
   return (
-    <div className={facility.type === "parque" ? `${styles.label} ${styles.park}` : styles.label} role="status">
+    <div className={[styles.label, facility.type === "parque" && styles.park, facility.type === "hospital" && styles.hospitalLabel].filter(Boolean).join(" ")} role="status">
       <span className={styles.labelIcon} aria-hidden="true">
         <Icon size={22} strokeWidth={2} />
       </span>
