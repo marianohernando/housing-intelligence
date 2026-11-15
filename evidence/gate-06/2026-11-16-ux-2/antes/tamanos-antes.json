@@ -1,0 +1,457 @@
+{
+ "base": "http://localhost:3071",
+ "label": "antes",
+ "checked_at": "2026-11-15T18:31:47.952Z",
+ "sizes": [
+  {
+   "width": 390,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "distrito": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  },
+  {
+   "width": 360,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "distrito": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  }
+ ],
+ "counts": [
+  {
+   "profile": "390",
+   "familia": {
+    "rows": [
+     8,
+     7,
+     8,
+     7,
+     8
+    ],
+    "row_items": [
+     "Empatan al 94 %",
+     "1",
+     "Puente de VallecasDistrito de Madrid",
+     "Distrito de Madrid",
+     "Muy buena opción",
+     "94 %",
+     "≈ 1.129 €/mes",
+     "por 77 m²"
+    ],
+    "card_first_screen": 17,
+    "card_first_screen_items": [
+     "Distrito de Madrid",
+     "Puente de Vallecas",
+     "Muy buena opción94 %",
+     "Muy buena opción",
+     "Alquiler: unos 1.129 € al mes",
+     "por 77 m²",
+     "Precio orientativo: hoy puede ser algo más caro.",
+     "¿Qué es el %? Puente de Vallecas",
+     "La 1.ª que más te conviene",
+     "Igual de buena que Latina (94 %).",
+     "Lo que tienes aquí",
+     "Colegio con primaria a unos 4 min andando · Dato f",
+     "· Dato fiable",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "· Dato fiable",
+     "Centro de salud a unos 8 min andando · Dato fiable",
+     "[button]"
+    ],
+    "card_whole": 40,
+    "card_whole_with_more": null
+   },
+   "pareja_jubilada": {
+    "rows": [
+     9,
+     8,
+     9,
+     8,
+     8
+    ],
+    "row_items": [
+     "Empatan al 92 %",
+     "1",
+     "Casco Histórico de Barajas · BarajasBarrio de Madr",
+     "Barrio de Madrid",
+     "Muy buena opción",
+     "92 %",
+     "≈ 1.038 €/mes",
+     "por 68 m²",
+     "Dato poco seguro"
+    ],
+    "card_first_screen": 16,
+    "card_first_screen_items": [
+     "Barrio de Madrid",
+     "Casco Histórico de Barajas · Barajas",
+     "Muy buena opción92 %",
+     "Muy buena opción",
+     "Alquiler: unos 1.038 € al mes",
+     "por 68 m²",
+     "Dato poco seguro",
+     "Precio orientativo: hoy puede ser algo más caro.",
+     "¿Qué es el %? Casco Histórico de Barajas · Barajas",
+     "El 1.º que más te conviene",
+     "Igual de bueno que Alameda de Osuna (92 %).",
+     "Lo que tienes aquí",
+     "Centro de salud a unos 9 min andando · Dato fiable",
+     "· Dato fiable",
+     "Estación de metro o tren accesible (sin escaleras)",
+     "[button]"
+    ],
+    "card_whole": 43,
+    "card_whole_with_more": null
+   }
+  },
+  {
+   "profile": "360",
+   "familia": {
+    "rows": [
+     8,
+     7,
+     8,
+     7,
+     8
+    ],
+    "row_items": [
+     "Empatan al 94 %",
+     "1",
+     "Puente de VallecasDistrito de Madrid",
+     "Distrito de Madrid",
+     "Muy buena opción",
+     "94 %",
+     "≈ 1.129 €/mes",
+     "por 77 m²"
+    ],
+    "card_first_screen": 15,
+    "card_first_screen_items": [
+     "Distrito de Madrid",
+     "Puente de Vallecas",
+     "Muy buena opción94 %",
+     "Muy buena opción",
+     "Alquiler: unos 1.129 € al mes",
+     "por 77 m²",
+     "Precio orientativo: hoy puede ser algo más caro.",
+     "¿Qué es el %? Puente de Vallecas",
+     "La 1.ª que más te conviene",
+     "Igual de buena que Latina (94 %).",
+     "Lo que tienes aquí",
+     "Colegio con primaria a unos 4 min andando · Dato f",
+     "· Dato fiable",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "[button]"
+    ],
+    "card_whole": 40,
+    "card_whole_with_more": null
+   },
+   "pareja_jubilada": {
+    "rows": [
+     9,
+     8,
+     9,
+     8,
+     8
+    ],
+    "row_items": [
+     "Empatan al 92 %",
+     "1",
+     "Casco Histórico de Barajas · BarajasBarrio de Madr",
+     "Barrio de Madrid",
+     "Muy buena opción",
+     "92 %",
+     "≈ 1.038 €/mes",
+     "por 68 m²",
+     "Dato poco seguro"
+    ],
+    "card_first_screen": 16,
+    "card_first_screen_items": [
+     "Barrio de Madrid",
+     "Casco Histórico de Barajas · Barajas",
+     "Muy buena opción92 %",
+     "Muy buena opción",
+     "Alquiler: unos 1.038 € al mes",
+     "por 68 m²",
+     "Dato poco seguro",
+     "Precio orientativo: hoy puede ser algo más caro.",
+     "¿Qué es el %? Casco Histórico de Barajas · Barajas",
+     "El 1.º que más te conviene",
+     "Igual de bueno que Alameda de Osuna (92 %).",
+     "Lo que tienes aquí",
+     "Centro de salud a unos 9 min andando · Dato fiable",
+     "· Dato fiable",
+     "Estación de metro o tren accesible (sin escaleras)",
+     "[button]"
+    ],
+    "card_whole": 43,
+    "card_whole_with_more": null
+   }
+  },
+  {
+   "profile": "1440",
+   "familia": {
+    "rows": [
+     8,
+     7,
+     8,
+     7,
+     8
+    ],
+    "row_items": [
+     "Empatan al 94 %",
+     "1",
+     "Puente de VallecasDistrito de Madrid",
+     "Distrito de Madrid",
+     "Muy buena opción",
+     "94 %",
+     "≈ 1.129 €/mes",
+     "por 77 m²"
+    ],
+    "card_first_screen": 24,
+    "card_first_screen_items": [
+     "Distrito de Madrid",
+     "Puente de Vallecas",
+     "Muy buena opción94 %",
+     "Muy buena opción",
+     "Alquiler: unos 1.129 € al mes",
+     "por 77 m²",
+     "Precio orientativo: hoy puede ser algo más caro.",
+     "¿Qué es el %? Puente de Vallecas",
+     "La 1.ª que más te conviene",
+     "Igual de buena que Latina (94 %).",
+     "Lo que tienes aquí",
+     "Colegio con primaria a unos 4 min andando · Dato f",
+     "· Dato fiable",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "· Dato fiable",
+     "Centro de salud a unos 8 min andando · Dato fiable",
+     "· Dato fiable",
+     "41 min en transporte público hasta Paseo de la Cas",
+     "· Dato aproximado",
+     "Alquiler unos 1.129 € al mes por 77 m² (14,7 €/m²,",
+     "· Dato fiable",
+     "Son los minutos de un vecino típico de la zona: un",
+     "¿Qué quiere decir «Dato fiable»? Lo que tienes aqu",
+     "[button]"
+    ],
+    "card_whole": 40,
+    "card_whole_with_more": null
+   },
+   "pareja_jubilada": {
+    "rows": [
+     9,
+     8,
+     9,
+     8,
+     8
+    ],
+    "row_items": [
+     "Empatan al 92 %",
+     "1",
+     "Casco Histórico de Barajas · BarajasBarrio de Madr",
+     "Barrio de Madrid",
+     "Muy buena opción",
+     "92 %",
+     "≈ 1.038 €/mes",
+     "por 68 m²",
+     "Dato poco seguro"
+    ],
+    "card_first_screen": 22,
+    "card_first_screen_items": [
+     "Barrio de Madrid",
+     "Casco Histórico de Barajas · Barajas",
+     "Muy buena opción92 %",
+     "Muy buena opción",
+     "Alquiler: unos 1.038 € al mes",
+     "por 68 m²",
+     "Dato poco seguro",
+     "Precio orientativo: hoy puede ser algo más caro.",
+     "¿Qué es el %? Casco Histórico de Barajas · Barajas",
+     "El 1.º que más te conviene",
+     "Igual de bueno que Alameda de Osuna (92 %).",
+     "Lo que tienes aquí",
+     "Centro de salud a unos 9 min andando · Dato fiable",
+     "· Dato fiable",
+     "Estación de metro o tren accesible (sin escaleras)",
+     "· Dato fiable",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "· Dato fiable",
+     "27 min en transporte público hasta Ciudad Lineal (",
+     "· Dato aproximado",
+     "Alquiler unos 1.038 € al mes por 68 m² (15,3 €/m²,",
+     "[button]"
+    ],
+    "card_whole": 43,
+    "card_whole_with_more": null
+   }
+  }
+ ],
+ "shots": [],
+ "note": "sizes: code of e0417ae in next dev, check-ux-mobile.mjs of this delivery before the folded-content fix; counts: the same code, re-counted with the fixed counter (folded content does not count)"
+}
