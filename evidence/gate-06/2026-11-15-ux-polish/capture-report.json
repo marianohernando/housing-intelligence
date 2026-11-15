@@ -23,17 +23,11 @@
     "overflow_px": 0,
     "etiqueta_mapa": "Privado Hospital de salud mental Clínica López Ibor · 67 67 camas instaladas",
     "puntos": 1,
-    "clics": [
-      [
-        900,
-        338,
-        26,
-        [
-          "Privado Hospital de salud mental Clínica López Ibor · 67 67 camas instaladas",
-          "6 hospitales en Moncloa-Aravaca"
-        ]
-      ]
-    ],
+    "etiqueta_entera": {
+      "dentro": true,
+      "sin_tapar": true,
+      "tipo_sin_recortar": true
+    },
     "consola": []
   },
   "m2_1440": {
@@ -66,6 +60,7 @@
       "150 m²"
     ],
     "linea_60": "Para 60 m² (cámbialo)",
+    "ayuda": "Lo normal para tu hogar es la superficie habitual de las viviendas de hogares como el tuyo en la Comunidad de Madrid (Censo 2021): la mitad tiene menos metros y la otra mitad, más. El precio de cada zona es para estos metros.",
     "axe_selector": [],
     "envia": 60,
     "api_primera": [
@@ -89,7 +84,7 @@
     ],
     "ayuda": "Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.",
     "linea": "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
-    "seccion": "Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles. Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA. Escuelas infantiles A pie: 6 min FALTA Colegios A pie: 4 min CUBIERTO Centros de salud A pie: 8 min CUBIERTO Ver todo lo que falta",
+    "seccion": "Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA. Escuelas infantiles A pie: 6 min FALTA Colegios A pie: 4 min CUBIERTO Centros de salud A pie: 8 min CUBIERTO Ver todo lo que falta",
     "axe": [],
     "overflow_px": 0,
     "consola": []
@@ -197,17 +192,11 @@
     "overflow_px": 0,
     "etiqueta_mapa": "Privado Hospital de salud mental",
     "puntos": 1,
-    "clics": [
-      [
-        330,
-        236,
-        124,
-        [
-          "Privado Hospital de salud mental",
-          "6 hospitales en Moncloa-Aravaca"
-        ]
-      ]
-    ],
+    "etiqueta_entera": {
+      "dentro": true,
+      "sin_tapar": true,
+      "tipo_sin_recortar": false
+    },
     "consola": []
   },
   "m2_390": {
@@ -240,6 +229,7 @@
       "150 m²"
     ],
     "linea_60": "Para 60 m² (cámbialo)",
+    "ayuda": "Lo normal para tu hogar es la superficie habitual de las viviendas de hogares como el tuyo en la Comunidad de Madrid (Censo 2021): la mitad tiene menos metros y la otra mitad, más. El precio de cada zona es para estos metros.",
     "axe_selector": [],
     "envia": 60,
     "api_primera": [
@@ -263,7 +253,7 @@
     ],
     "ayuda": "Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar.",
     "linea": "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
-    "seccion": "Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles. Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA. Escuelas infantiles A pie: 6 min FALTA Colegios A pie: 4 min CUBIERTO Centros de salud A pie: 8 min CUBIERTO Ver todo lo que falta",
+    "seccion": "Qué falta aquí Compara si hay bastante para toda la gente de la zona con lo que hay en zonas parecidas: algo puede estar cerca y aun así faltar. Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA. Escuelas infantiles A pie: 6 min FALTA Colegios A pie: 4 min CUBIERTO Centros de salud A pie: 8 min CUBIERTO Ver todo lo que falta",
     "axe": [],
     "overflow_px": 0,
     "consola": []
