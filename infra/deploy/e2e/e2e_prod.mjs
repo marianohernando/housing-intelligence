@@ -5,7 +5,8 @@
 //   J4 the list of zones
 //   J5 «Somos mayores» (D-244): the retired couple's example, its first card, then a quick amount of 900 €
 //   J6 the zone in the address (second delivery of the UX mobile audit): ?zona=, «Volver a la lista»,
-//      the back button, the zone screen folded and its «Volver a la lista»
+//      the back and forward buttons, the zone screen folded and its «Volver a la lista», a wrong ?zona=
+//   J7 a barrio's card becomes its district's, in the address too, when the search leaves the capital
 // Every figure on screen is compared with the API response the page itself received: no fixed
 // numbers, so the checks survive a data sync. Browser console errors and horizontal overflow fail.
 //
@@ -23,14 +24,12 @@ import { parseArgs } from "node:util";
 import { chromium, firefox, webkit } from "playwright";
 
 import {
+  BUY_LIST_NOTICE,
+  essentialGapLines,
   factAsShown,
-  householdCovered,
-  householdShortRows,
-  nothingMissing,
   PRICE_HINT,
   RENT_2024_NOTICE,
   RENT_LIST_NOTICE,
-  ROW_NAME,
   speaksToMany,
 } from "./shown_text.mjs";
 
@@ -133,7 +132,7 @@ async function journeySearch(run, page) {
   await checkRentNotice(run, page, false);
   await checkRows(run, page, result.results);
   await run.shot(page, "j1-results");
-  await checkFirstZone(run, page, result.results[0]);
+  await checkFirstZone(run, page, result.results[0], result);
   await checkRealityCheck(run, page, rc, many);
   // The example goes without a limit («Sin límite»): its figures are the pitch's
   run.check(J, "the example's /search sends max_minutes: null", searches.length > 0 && searches.every((s) =>
@@ -152,6 +151,9 @@ async function checkRentNotice(run, page, buying) {
   const results = page.getByRole("region", { name: RESULTS });
   const n = await results.getByText(RENT_LIST_NOTICE, { exact: true }).count();
   run.check("J1 search", buying ? "buying: no 2024 rent notice" : "renting: the 2024 rent notice, once", n === (buying ? 0 : 1), `${n}`);
+  // Buying, the purchase prices are orientative too, once (review R-10 of PR #81)
+  const bought = await results.getByText(BUY_LIST_NOTICE, { exact: true }).count();
+  run.check("J1 search", buying ? "buying: the orientative purchase notice, once" : "renting: no purchase notice", bought === (buying ? 1 : 0), `${bought}`);
 }
 
 /**
@@ -245,18 +247,44 @@ function checkFitLegend(run, page, rc) {
     [["Cumple todo", rc.zones_passing], ["No cumple todo", failing], ["Sin datos", rc.zones_unknown]]);
 }
 
+/** Opens the 1st row of the list and waits for the /gaps answer its card asks for (a barrio's: its district's). */
+async function openFirstRow(page, top) {
+  const [gaps] = await Promise.all([
+    page.waitForResponse((r) => /\/api\/v1\/gaps\/(distrito|municipio)\/\w+$/.test(r.url()), { timeout: WAIT }),
+    page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first().click(),
+  ]);
+  return (await gaps.json()).data;
+}
+
+/**
+ * What the card's essentials say it lacks, from the /gaps answer it asked for (essentialGapLines):
+ * waits for those lines (the card shows them once «Qué falta» loads, review R-08 of PR #81), then
+ * checks every one, and that the green «No le falta nada…» shows only when nothing is unknown.
+ */
+async function checkGapsLine(run, journey, card, gaps, result, top) {
+  const many = speaksToMany(result.scenario.household);
+  const place = top.zone.level === "barrio" ? gaps.zone.name : null;
+  const { lines, nothing } = essentialGapLines(gaps.rows, result.scenario, many, place);
+  if (lines.length) await card.getByText(lines[0], { exact: false }).first().waitFor({ timeout: WAIT });
+  const text = squash(await card.innerText());
+  const green = /falta nada de lo que busc/.test(text);
+  run.check(journey, "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+    lines.every((line) => text.includes(line)) && green === nothing, `${lines.join(" · ") || "(nada que decir)"} | ${text.slice(0, 220)}`);
+  return text;
+}
+
 /**
  * The card of the first zone (second delivery): its essentials say the name, the band in words and
  * «Precio orientativo», never the %; «Ver más sobre…» unfolds the % and every fact of the API, and
  * why the rent is orientative. «Volver a la lista» goes back to the list.
  */
-async function checkFirstZone(run, page, top) {
+async function checkFirstZone(run, page, top, result) {
   const J = "J1 search";
   const name = top.zone.name;
-  await page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(name)}\\b`) }).first().click();
+  const gaps = await openFirstRow(page, top);
   const card = zoneCard(page);
   await card.getByRole("heading", { name, exact: true }).waitFor({ timeout: WAIT });
-  const essentials = squash(await card.innerText());
+  const essentials = await checkGapsLine(run, J, card, gaps, result, top);
   run.check(J, "card name = API 1st zone", essentials.includes(name), name);
   run.check(J, "card essentials: band in words and «Precio orientativo», no %",
     essentials.includes(BAND_TEXT[top.match_band]) && essentials.includes(PRICE_HINT) && !/\d\s*%/.test(essentials), essentials.slice(0, 160));
@@ -378,21 +406,10 @@ async function journeySeniors(run, page) {
 async function checkSeniorsCard(run, page, data) {
   const J = "J5 Somos mayores";
   const top = data.results[0];
-  const [gaps] = await Promise.all([
-    page.waitForResponse((r) => /\/api\/v1\/gaps\/(distrito|municipio)\/\w+$/.test(r.url()), { timeout: WAIT }),
-    page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first().click(),
-  ]);
-  const rows = (await gaps.json()).data.rows;
+  const gaps = await openFirstRow(page, top);
   const card = zoneCard(page);
-  const household = data.scenario.household;
-  const short = householdShortRows(rows, household).map((r) => ROW_NAME[r.row]);
-  // What the card must say once its «Qué falta» is in: the rows short of theirs, or «No le falta nada…» when some has enough
-  const expected = short.length ? short : householdCovered(rows, household) ? [nothingMissing(true)] : [];
-  if (expected.length) await card.getByText(expected[0], { exact: false }).first().waitFor({ timeout: WAIT });
-  const text = squash(await card.innerText());
-  run.check(J, "card: what it lacks that matters to them, or «No le falta nada…»",
-    expected.every((words) => text.includes(words)) && (expected[0] === nothingMissing(true)) === text.includes(nothingMissing(true)),
-    `${expected.join(" · ") || "(nada que decir)"} | ${text.slice(0, 200)}`);
+  // Barajas for them: the pharmacies have enough, the health centres and the centres for older people cannot be compared
+  const text = await checkGapsLine(run, J, card, gaps, data, top);
   run.check(J, "card: never the schools to a retired couple", !/Colegios|Escuelas infantiles/.test(text), text.slice(0, 120));
   await page.goBack();
   await page.getByText(/^Hemos encontrado \d+ barrios? para vosotros\.$/).first().waitFor({ timeout: WAIT });
@@ -428,6 +445,15 @@ async function journeyZoneAddress(run, page) {
     .waitForFunction((key) => document.activeElement?.getAttribute("data-zone") === key, zoneKeyOf(top.zone), { timeout: 5_000 })
     .then(() => true, () => false);
   run.check(J, "the row opened takes the focus back", focused);
+  // Forward again: the card, and «Volver a la lista» still steps back to the list (its mark is in the history's state)
+  await page.goForward();
+  await card.getByRole("heading", { name: top.zone.name, exact: true }).waitFor({ timeout: WAIT });
+  run.check(J, "the forward button opens the card again", new URL(page.url()).searchParams.get("zona") === zoneKeyOf(top.zone), page.url());
+  const before = await page.evaluate(() => history.length);
+  await card.getByRole("button", { name: "Volver a la lista" }).click();
+  await list.waitFor({ timeout: WAIT });
+  run.check(J, "after forward, «Volver a la lista» steps back to the list", (await card.count()) === 0 &&
+    !new URL(page.url()).searchParams.has("zona") && (await page.evaluate(() => history.length)) === before, page.url());
   await row.click();
   await card.getByRole("button", { name: "Volver a la lista" }).click();
   await list.waitFor({ timeout: WAIT });
@@ -435,14 +461,18 @@ async function journeyZoneAddress(run, page) {
   // The zone screen: the essential card first, the context folded, and back to the list
   await row.click();
   await card.locator("summary").filter({ hasText: /^Ver más sobre / }).first().click();
+  const steps = await page.evaluate(() => history.length);
   await card.getByRole("link", { name: /^Ver (la zona|el distrito)/ }).click();
   const more = page.locator("details").filter({ has: page.locator("summary", { hasText: "Más datos de la zona" }) }).first();
   await more.waitFor({ timeout: WAIT });
   run.check(J, "zone screen: its context folded under «Más datos de la zona»", await more.evaluate((d) => !d.open));
   await run.shot(page, "j6-zone");
-  await page.getByRole("link", { name: "Volver a la lista" }).first().click();
+  await page.getByRole("button", { name: "Volver a la lista" }).first().click();
   await list.waitFor({ timeout: WAIT });
-  run.check(J, "zone screen: «Volver a la lista» goes back to the list", await page.getByText(/^Hemos encontrado \d+ zonas para vosotros\.$/).first().isVisible());
+  // Back two steps to the list it came from, without a new step on top (review R-06 of PR #81)
+  run.check(J, "zone screen: «Volver a la lista» goes back to the list, without a dead step",
+    (await page.getByText(/^Hemos encontrado \d+ zonas para vosotros\.$/).first().isVisible()) && (await page.evaluate(() => history.length)) === steps + 1 &&
+    new URL(page.url()).search === "", `${page.url()} · ${steps}`);
   // The address alone opens the zone, in a fresh page
   await page.goto(`${BASE}/?zona=${zoneKeyOf(top.zone)}`, { waitUntil: "networkidle" });
   const opened = page.locator("aside h2").filter({ hasText: top.zone.name }).first();
@@ -452,7 +482,34 @@ async function journeyZoneAddress(run, page) {
   await page.getByRole("button", { name: /^Volver( a la lista)?$/ }).first().click();
   const closed = await opened.waitFor({ state: "detached", timeout: WAIT }).then(() => true, () => false);
   run.check(J, "opened by its link, «Volver» closes it in place", closed && new URL(page.url()).pathname === "/" && !new URL(page.url()).searchParams.has("zona"), page.url());
+  // A ?zona= that is no zone of the map (a code that does not exist, another level) opens nothing and leaves the address clean
+  for (const wrong of ["distrito/2800000", "seccion_censal/2807901001"]) {
+    await page.goto(`${BASE}/?zona=${wrong}`, { waitUntil: "networkidle" });
+    const cleaned = await page.waitForFunction(() => location.search === "", undefined, { timeout: WAIT }).then(() => true, () => false);
+    run.check(J, `?zona=${wrong} opens nothing and goes back to the plain address`, cleaned && (await zoneCard(page).count()) === 0, page.url());
+  }
   await run.overflow(page, J);
+}
+
+/**
+ * J7: the map changes from barrios to districts with the search, and the address follows the card:
+ * a barrio of the retired couple's search becomes its district (review R-08 of PR #81).
+ */
+async function journeyBarrioToDistrict(run, page) {
+  const J = "J7 barrio to district";
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const [first] = await Promise.all([page.waitForResponse(isSearch, { timeout: WAIT }), page.getByRole("button", { name: /pareja jubilada/ }).click()]);
+  const top = (await first.json()).data.results[0];
+  await openFirstRow(page, top);
+  const barrio = zoneKeyOf(top.zone);
+  run.check(J, "a barrio's card is in the address", top.zone.level === "barrio" && new URL(page.url()).searchParams.get("zona") === barrio, page.url());
+  await page.getByRole("radio", { name: "Toda la Comunidad" }).check();
+  await Promise.all([page.waitForResponse(isSearch, { timeout: WAIT }), page.getByRole("button", { name: SEARCH_BUTTON }).click()]);
+  const district = `distrito/${top.zone.code.slice(0, 7)}`;
+  const followed = await page
+    .waitForFunction((key) => new URLSearchParams(location.search).get("zona") === key, district, { timeout: WAIT })
+    .then(() => true, () => false);
+  run.check(J, "searching the whole region, the address and the card become its district", followed && (await zoneCard(page).count()) === 1, page.url());
 }
 
 async function journeyMadrid(run, page) {
@@ -556,7 +613,7 @@ async function runCombination(browserName, device) {
   try {
     for (const [name, journey] of [["J1 search", journeySearch], ["J2 Qué falta Madrid", journeyMadrid],
       ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList], ["J5 Somos mayores", journeySeniors],
-      ["J6 zone in the address", journeyZoneAddress]]) {
+      ["J6 zone in the address", journeyZoneAddress], ["J7 barrio to district", journeyBarrioToDistrict]]) {
       const context = await browser.newContext(options);
       if (opts["block-external"]) {
         await context.route("**/*", (route) => {

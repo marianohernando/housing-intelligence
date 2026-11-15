@@ -66,7 +66,7 @@ function measureInPage({ pick, minText, minTarget }) {
     // The rows of «Qué falta» (No comparable): what the person reads there, without the shared footer
     gaps: () => document.querySelector("ul[class*='rows']") ?? null,
     // A district's screen after a search: «Los barrios que más te convienen» (review R-04 of PR #79)
-    district: () => [...document.querySelectorAll("section")].find((s) => /^Los barrios que (más te convienen|mejor encajan)$/.test(s.querySelector("h2")?.textContent?.trim() ?? "")) ?? null,
+    district: () => [...document.querySelectorAll("section")].find((s) => /^Los barrios que (más (te|os) convienen|mejor encajan)$/.test(s.querySelector("h2")?.textContent?.trim() ?? "")) ?? null,
   };
   const search = roots.search();
   const root = pick === "portada" ? document.body : roots[pick]();
@@ -288,6 +288,11 @@ async function sizes(browser, width) {
   report.screens.distrito = await measure(page, "district");
   report.screens.pantalla_zona = await measure(page, "zone");
   report.axe.distrito = await axe(page);
+  // «Más datos de la zona» opened: the context it folds, measured and checked too (review R-08 of PR #81)
+  if (await openZoneFold(page)) {
+    report.screens.pantalla_zona_abierta = await measure(page, "zone");
+    report.axe.pantalla_zona_abierta = await axe(page);
+  }
   // «No comparable» in «Qué falta» (Barajas, its health centre: debt of the first delivery)
   await page.goto(`${BASE}${NOT_COMPARABLE_PATH}`, { waitUntil: "networkidle" });
   await page.getByText(/^Para la gente que vive aquí/).first().waitFor({ timeout: WAIT });
@@ -313,6 +318,37 @@ async function olderWithPlace(page) {
   await page.getByRole("button", { name: /^Quitar este lugar/ }).first().waitFor({ timeout: WAIT });
 }
 
+/** Opens «Más datos de la zona» of a zone screen, once its blocks have loaded. */
+async function openZoneFold(page) {
+  const fold = page.locator("summary").filter({ hasText: "Más datos de la zona" }).first();
+  if ((await fold.count()) === 0) return false;
+  await fold.click();
+  await page.waitForTimeout(2500);
+  return true;
+}
+
+/**
+ * axe at 1440 px too (review R-08 of PR #81): the list, the card with «Ver más» and the zone screen
+ * with «Más datos de la zona» open, after the family's example.
+ */
+async function wideAxe(browser) {
+  const { ctx, page, errors } = await openPage(browser, DESKTOP);
+  const out = {};
+  await runExample(page, NAMES.family);
+  out.lista = await axe(page);
+  const list = page.locator("section").filter({ has: page.getByRole("heading", { name: NAMES.results }) }).first();
+  await list.locator("ol li button").first().click();
+  await zoneCard(page).waitFor({ timeout: WAIT });
+  await page.waitForTimeout(1500);
+  await openMore(page);
+  out.tarjeta_ver_mas = await axe(page);
+  await openDistrict(page);
+  await openZoneFold(page);
+  out.pantalla_zona_abierta = await axe(page);
+  await ctx.close();
+  return { width: 1440, screens: {}, axe: out, console_errors: errors };
+}
+
 /** «Qué falta» of Barajas, whose health centre is «No comparable» (D-230), for its new words. */
 const NOT_COMPARABLE_PATH = "/que-falta?zona=distrito/2807921";
 
@@ -322,7 +358,7 @@ async function openDistrict(page) {
   const more = card.locator("summary").filter({ hasText: /^Ver más sobre/ }).first();
   if ((await more.count()) > 0 && !(await more.evaluate((s) => s.parentElement.open))) await more.click();
   await card.getByRole("link", { name: /^Ver (la zona|el distrito)/ }).click();
-  await page.getByRole("heading", { name: /^Los barrios que (más te convienen|mejor encajan)$/ }).first().waitFor({ timeout: WAIT });
+  await page.getByRole("heading", { name: /^Los barrios que (más (te|os) convienen|mejor encajan)$/ }).first().waitFor({ timeout: WAIT });
   await page.waitForTimeout(1500);
 }
 
@@ -399,7 +435,7 @@ async function screenshots(browser, id, profile) {
     await fold.evaluate((el) => el.scrollIntoView({ block: "center" }));
     await take(page, "06b-pantalla-zona-plegada");
   }
-  await bringIntoView(page.getByRole("heading", { name: /^Los barrios que (más te convienen|mejor encajan)$/ }).first());
+  await bringIntoView(page.getByRole("heading", { name: /^Los barrios que (más (te|os) convienen|mejor encajan)$/ }).first());
   await take(page, "07-distrito-barrios");
   await ctx.close();
   ({ ctx, page } = await openPage(browser, profile));
@@ -409,6 +445,29 @@ async function screenshots(browser, id, profile) {
   await bringIntoView(reason);
   await take(page, "08-no-comparable");
   await ctx.close();
+  // The screens of the first delivery, again (review R-13 of PR #81): portada, formulario, «Somos mayores» and «Cómo lo calculamos»
+  ({ ctx, page } = await openPage(browser, profile));
+  await take(page, "09-portada");
+  await bringIntoView(page.locator("section").filter({ has: page.getByRole("heading", { name: NAMES.search }) }).first());
+  await take(page, "10-formulario");
+  const seniors = page.getByRole("button", { name: NAMES.seniors });
+  if ((await seniors.count()) > 0) {
+    await page.getByRole("button", { name: /^En pareja/ }).click();
+    await seniors.click();
+    await bringIntoView(page.locator("fieldset").filter({ has: seniors }).first());
+    await take(page, "11-somos-mayores");
+  }
+  await ctx.close();
+  ({ ctx, page } = await openPage(browser, profile));
+  if ((await page.getByRole("button", { name: NAMES.seniors }).count()) > 0) {
+    await olderWithPlace(page);
+    await bringIntoView(page.getByRole("group", { name: /^¿Cerca de dónde queréis vivir\?/ }).first());
+    await take(page, "11b-somos-mayores-lugar");
+  }
+  await page.goto(`${BASE}/como-lo-calculamos`, { waitUntil: "networkidle" });
+  await page.getByText(/^A igual %\./).first().evaluate((el) => el.closest("p").scrollIntoView({ block: "start" }));
+  await take(page, "12-como-lo-calculamos");
+  await ctx.close();
   return files;
 }
 
@@ -417,6 +476,7 @@ const report = { base: BASE, label: opts.label, checked_at: new Date().toISOStri
 const profileOf = (id) => (id === "1440" ? DESKTOP : phone(Number(id)));
 try {
   for (const width of opts.widths.split(",").filter(Boolean).map(Number)) report.sizes.push(await sizes(browser, width));
+  if (opts.widths) report.sizes.push(await wideAxe(browser));
   for (const id of opts.counts.split(",").filter(Boolean)) report.counts.push(await counts(browser, id, profileOf(id)));
   if (opts.shots) {
     for (const id of opts.profiles.split(",")) report.shots.push(...(await screenshots(browser, id, profileOf(id))));
