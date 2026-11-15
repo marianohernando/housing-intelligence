@@ -3,7 +3,9 @@
 //   J2 «Qué falta» → «Madrid (toda la ciudad)»
 //   J3 map by row («¿Qué quieres ver?»)
 //   J4 the list of zones
-//   J5 «Somos mayores» (D-244): the retired couple's example, then a quick amount of 900 €
+//   J5 «Somos mayores» (D-244): the retired couple's example, its first card, then a quick amount of 900 €
+//   J6 the zone in the address (second delivery of the UX mobile audit): ?zona=, «Volver a la lista»,
+//      the back button, the zone screen folded and its «Volver a la lista»
 // Every figure on screen is compared with the API response the page itself received: no fixed
 // numbers, so the checks survive a data sync. Browser console errors and horizontal overflow fail.
 //
@@ -20,7 +22,17 @@ import { parseArgs } from "node:util";
 
 import { chromium, firefox, webkit } from "playwright";
 
-import { factAsShown, RENT_2024_NOTICE } from "./shown_text.mjs";
+import {
+  factAsShown,
+  householdCovered,
+  householdShortRows,
+  nothingMissing,
+  PRICE_HINT,
+  RENT_2024_NOTICE,
+  RENT_LIST_NOTICE,
+  ROW_NAME,
+  speaksToMany,
+} from "./shown_text.mjs";
 
 const BROWSERS = { chromium, webkit, firefox };
 // The projector: 1280×720 at 125 % zoom is a 1024×576 CSS viewport with 1.25 device pixels per px.
@@ -47,15 +59,28 @@ const BASE = opts.base.replace(/\/$/, "");
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const squash = (s) => s.replace(/\s+/g, " ").trim();
 const zonesText = (n) => (n === 1 ? "1 zona" : `${n} zonas`);
-/** rc.ninguna, rc.una, rc.varias and rc.cambio, as the web writes them (apps/web/src/lib/fit.ts, passingText). */
-const passingText = (n, changed = false) => {
+/**
+ * rc.ninguna, rc.una, rc.varias and rc.cambio, as the web writes them (apps/web/src/lib/fit.ts,
+ * passingText): «para vosotros» for a household of more than one (`many`), «para ti» otherwise.
+ */
+const passingText = (n, changed = false, many = false) => {
   if (changed) return n === 0 ? "Con este cambio no sale ninguna zona." : n === 1 ? "Con este cambio sale 1 zona." : `Con este cambio salen ${n} zonas.`;
-  return n === 0 ? "No hemos encontrado ninguna zona para ti." : `Hemos encontrado ${zonesText(n)} para ti.`;
+  const whom = many ? "para vosotros" : "para ti";
+  return n === 0 ? `No hemos encontrado ninguna zona ${whom}.` : `Hemos encontrado ${zonesText(n)} ${whom}.`;
 };
+/** resultados.banda.*: the band in words (apps/web/src/lib/match.ts, BAND_TEXT). */
+const BAND_TEXT = { muy_bien: "Muy buena opción", bien: "Buena opción", regular: "Opción regular", poco: "Poco recomendable" };
+/** Up to this width the list rows go without their % (Results.module.css, MOBILE_QUERY). */
+const PHONE_MAX_PX = 760;
+/** The zone card of the overview: its «Volver a la lista» or the essentials of a zone (second delivery). */
+const zoneCard = (page) => page.locator("aside").filter({ has: page.getByRole("button", { name: /^Volver( a la lista)?$/ }) }).first();
+const zoneKeyOf = (zone) => `${zone.level}/${zone.code}`;
 /** The names of the list and of «¿Quieres ver más zonas?» (UX mobile audit, first delivery). */
 const RESULTS = "Zonas que te convienen";
 const CHANGES = "¿Quieres ver más zonas?";
 const SEARCH_BUTTON = "Buscar zonas para mí";
+/** rc.anterior: the options of the search before the person's last changes are not offered (RealityCheck.tsx). */
+const STALE_OPTIONS = "Estas propuestas eran de tu búsqueda anterior. Pulsa «Buscar zonas para mí» para ver las de ahora.";
 const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
 
 /** One run: a browser and a device, the four journeys, every check with its detail. */
@@ -93,17 +118,20 @@ async function journeySearch(run, page) {
   ]);
   const result = (await first.json()).data;
   const rc = result.reality_check;
+  const many = speaksToMany(result.scenario.household);
   run.check(J, "POST /search 200", first.status() === 200, first.status());
-  const summary = page.getByText(passingText(rc.zones_passing)).first();
+  const summary = page.getByRole("region", { name: RESULTS, exact: true }).getByText(/^(Hemos|No hemos) encontrado/).first();
   await summary.waitFor({ timeout: WAIT });
-  run.check(J, "summary = API zones_passing", true, passingText(rc.zones_passing));
+  const said = squash(await summary.innerText());
+  run.check(J, "summary = API zones_passing, «para vosotros» for a couple with children", many && said === passingText(rc.zones_passing, false, many), said);
   const total = await page.getByText(`Hemos mirado las ${result.all_zones.length} zonas de la Comunidad de Madrid.`).count();
   run.check(J, "«Hemos mirado las N zonas» = API all_zones", total > 0, result.all_zones.length);
   await checkFitLegend(run, page, rc);
   await checkRentNotice(run, page, false);
+  await checkRows(run, page, result.results);
   await run.shot(page, "j1-results");
   await checkFirstZone(run, page, result.results[0]);
-  await checkRealityCheck(run, page, rc);
+  await checkRealityCheck(run, page, rc, many);
   // The example goes without a limit («Sin límite»): its figures are the pitch's
   run.check(J, "the example's /search sends max_minutes: null", searches.length > 0 && searches.every((s) =>
     Array.isArray(s?.anchors) && s.anchors.length > 0 && s.anchors.every((a) => a.max_minutes === null)),
@@ -112,19 +140,44 @@ async function journeySearch(run, page) {
   run.check(J, "the example's /search sends min_floor_area_m2: null", searches.length > 0 && searches.every((s) => s?.min_floor_area_m2 === null),
     JSON.stringify(searches.map((s) => s?.min_floor_area_m2)));
   await run.overflow(page, J);
-  await checkCommuteLimit(run, page, result.reality_check.zones_passing);
-  await checkBuying(run, page);
+  await checkCommuteLimit(run, page, result.reality_check.zones_passing, many);
+  await checkBuying(run, page, many);
 }
 
-/** resultados.aviso_2024 (F5 of fit-0.9): once over the results when renting, never when buying. */
+/** resultados.aviso_2024 (F5 of fit-0.9): once under the results when renting, never when buying. */
 async function checkRentNotice(run, page, buying) {
   const results = page.getByRole("region", { name: RESULTS, exact: true });
-  const n = await results.getByText(RENT_2024_NOTICE, { exact: true }).count();
+  const n = await results.getByText(RENT_LIST_NOTICE, { exact: true }).count();
   run.check("J1 search", buying ? "buying: no 2024 rent notice" : "renting: the 2024 rent notice, once", n === (buying ? 0 : 1), `${n}`);
 }
 
+/**
+ * The essential row (second delivery of the UX mobile audit): each row in view says its name, its
+ * band in words and its price as «Unos … € al mes», all from the API; on a phone without its %, on a
+ * wide screen with it after the band. Never «Distrito de Madrid», the m² or a tie.
+ */
+async function checkRows(run, page, ranked) {
+  const J = "J1 search";
+  const phone = page.viewportSize().width <= PHONE_MAX_PX;
+  const rows = page.getByRole("region", { name: RESULTS, exact: true }).locator("ol > li > button");
+  const shown = Math.min(await rows.count(), 5);
+  const wrong = [];
+  for (let i = 0; i < shown; i += 1) {
+    const zone = ranked[i];
+    const text = squash(await rows.nth(i).innerText());
+    // As formatEuros of apps/web/src/lib/format.ts
+    const amount = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0, useGrouping: "always" }).format(zone.estimated_cost_eur);
+    const pct = new RegExp(`(?<!\\d)${zone.match_pct}\\s*%`).test(text);
+    const ok = text.includes(zone.zone.name) && text.includes(BAND_TEXT[zone.match_band]) && text.includes(`Unos ${amount} € al mes`) &&
+      pct === !phone && !/%/.test(phone ? text : "") && !/Distrito de|m²|Empatan/.test(text);
+    if (!ok) wrong.push(text);
+  }
+  run.check(J, phone ? "rows: name, band and price, without % (phone)" : "rows: name, band, % and price", shown > 0 && wrong.length === 0,
+    wrong[0] ?? `${shown} rows`);
+}
+
 /** The same search to buy: what the API answers is on screen, without the rent notice. */
-async function checkBuying(run, page) {
+async function checkBuying(run, page, many) {
   const J = "J1 search";
   await page.getByRole("radio", { name: "Comprar" }).check();
   const [response] = await Promise.all([
@@ -134,14 +187,14 @@ async function checkBuying(run, page) {
   const sent = response.request().postDataJSON();
   run.check(J, "«Comprar» reaches /search as budget.kind buy", sent?.budget?.kind === "buy", JSON.stringify(sent?.budget));
   const bought = (await response.json()).data.reality_check;
-  await page.getByText(passingText(bought.zones_passing)).first().waitFor({ timeout: WAIT });
+  await page.getByText(passingText(bought.zones_passing, false, many)).first().waitFor({ timeout: WAIT });
   await checkRentNotice(run, page, true);
 }
 
 const COMMUTE_LIMIT_MIN = 45;
 
 /** «Tardar como mucho»: the minutes picked reach the request, and the search says no more zones than without a limit. */
-async function checkCommuteLimit(run, page, unlimitedPassing) {
+async function checkCommuteLimit(run, page, unlimitedPassing, many) {
   const J = "J1 search";
   await page.getByLabel("Tardar como mucho hasta el trabajo, en transporte público").selectOption(String(COMMUTE_LIMIT_MIN));
   const [response] = await Promise.all([
@@ -152,8 +205,8 @@ async function checkCommuteLimit(run, page, unlimitedPassing) {
   run.check(J, `a limit of ${COMMUTE_LIMIT_MIN} min reaches /search as max_minutes`, sent?.anchors?.[0]?.max_minutes === COMMUTE_LIMIT_MIN,
     JSON.stringify(sent?.anchors?.map((a) => a.max_minutes)));
   const limited = (await response.json()).data.reality_check;
-  await page.getByText(passingText(limited.zones_passing)).first().waitFor({ timeout: WAIT });
-  run.check(J, "summary with a limit = API zones_passing", true, `${passingText(limited.zones_passing)} (without limit: ${unlimitedPassing})`);
+  await page.getByText(passingText(limited.zones_passing, false, many)).first().waitFor({ timeout: WAIT });
+  run.check(J, "summary with a limit = API zones_passing", true, `${passingText(limited.zones_passing, false, many)} (without limit: ${unlimitedPassing})`);
   run.check(J, "a limit never adds zones", limited.zones_passing <= unlimitedPassing, `${limited.zones_passing} <= ${unlimitedPassing}`);
 }
 
@@ -189,28 +242,40 @@ function checkFitLegend(run, page, rc) {
     [["Cumple todo", rc.zones_passing], ["No cumple todo", failing], ["Sin datos", rc.zones_unknown]]);
 }
 
+/**
+ * The card of the first zone (second delivery): its essentials say the name, the band in words and
+ * «Precio orientativo», never the %; «Ver más sobre…» unfolds the % and every fact of the API, and
+ * why the rent is orientative. «Volver a la lista» goes back to the list.
+ */
 async function checkFirstZone(run, page, top) {
   const J = "J1 search";
   const name = top.zone.name;
   await page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(name)}\\b`) }).first().click();
-  const card = page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first();
-  await card.waitFor({ timeout: WAIT });
+  const card = zoneCard(page);
+  await card.getByRole("heading", { name, exact: true }).waitFor({ timeout: WAIT });
+  const essentials = squash(await card.innerText());
+  run.check(J, "card name = API 1st zone", essentials.includes(name), name);
+  run.check(J, "card essentials: band in words and «Precio orientativo», no %",
+    essentials.includes(BAND_TEXT[top.match_band]) && essentials.includes(PRICE_HINT) && !/\d\s*%/.test(essentials), essentials.slice(0, 160));
+  run.check(J, "card in the address (?zona=)", new URL(page.url()).searchParams.get("zona") === zoneKeyOf(top.zone), page.url());
+  await card.locator("summary").filter({ hasText: /^Ver más sobre / }).first().click();
   const text = squash(await card.innerText());
-  run.check(J, "card name = API 1st zone", text.includes(name), name);
-  run.check(J, "card % = API match_pct", new RegExp(`(?<!\\d)${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
+  run.check(J, "«Ver más»: card % = API match_pct", new RegExp(`(?<!\\d)${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
   const facts = card.getByRole("region", { name: "Lo que tienes aquí" }).locator("li");
   const shown = await facts.count();
   // F5 of fit-0.9: renting, the card says RENT_2024_NOTICE by the price, so the rent fact goes without its own
   // «; un anuncio de hoy puede pedir más» (factAsShown, as factText in apps/web/src/lib/fit.ts)
   const missing = top.facts.filter((f) => !text.includes(squash(factAsShown(f))));
-  run.check(J, "card facts = API facts", shown === top.facts.length && missing.length === 0,
+  run.check(J, "«Ver más»: card facts = API facts", shown === top.facts.length && missing.length === 0,
     `${shown} on screen, ${top.facts.length} in the API${missing.length ? `; missing: ${missing[0].text}` : ""}`);
-  run.check(J, "card: the 2024 rent notice by the rent", text.includes(RENT_2024_NOTICE));
+  run.check(J, "«Ver más»: why the rent is orientative", text.includes(RENT_2024_NOTICE));
   await run.shot(page, "j1-card");
-  await page.getByRole("button", { name: "Cerrar" }).first().click();
+  await card.getByRole("button", { name: "Volver a la lista" }).click();
+  await page.getByRole("region", { name: RESULTS, exact: true }).waitFor({ timeout: WAIT });
+  run.check(J, "«Volver a la lista» shows the list, without ?zona=", (await card.count()) === 0 && !new URL(page.url()).searchParams.has("zona"), page.url());
 }
 
-async function checkRealityCheck(run, page, rc) {
+async function checkRealityCheck(run, page, rc, many) {
   const J = "J1 search";
   const region = page.getByRole("region", { name: CHANGES, exact: true });
   const option = rc.relaxations.find((r) => r.added_zones > 0);
@@ -233,7 +298,7 @@ async function checkRealityCheck(run, page, rc) {
     page.getByRole("button", { name: "Volver a mi búsqueda" }).first().click(),
   ]);
   const back = (await undone.json()).data.reality_check.zones_passing;
-  await page.getByText(passingText(back)).first().waitFor({ timeout: WAIT });
+  await page.getByText(passingText(back, false, many)).first().waitFor({ timeout: WAIT });
   run.check(J, "undone: back to the original zones", back === rc.zones_passing, back);
 }
 
@@ -259,9 +324,10 @@ async function journeySeniors(run, page) {
     sent.anchors[0].max_minutes === 30 && sent.anchors[0].days_per_week === 3, JSON.stringify(sent?.anchors));
   const data = (await first.json()).data;
   const n = data.reality_check.zones_passing;
-  const summary = n === 0 ? "No hemos encontrado ningún barrio para ti." : n === 1 ? "Hemos encontrado 1 barrio para ti." : `Hemos encontrado ${n} barrios para ti.`;
+  // A couple: «para vosotros» (second delivery of the UX mobile audit)
+  const summary = n === 0 ? "No hemos encontrado ningún barrio para vosotros." : n === 1 ? "Hemos encontrado 1 barrio para vosotros." : `Hemos encontrado ${n} barrios para vosotros.`;
   await page.getByText(summary).first().waitFor({ timeout: WAIT });
-  run.check(J, "summary = API zones_passing, in barrios", true, summary);
+  run.check(J, "summary = API zones_passing, in barrios, «para vosotros»", true, summary);
   run.check(J, "never asks where they work", (await page.getByText("¿Trabajas fuera de casa?").count()) === 0);
   // What the person sees (review H4 of PR #79): «Somos mayores» marked, where they want to live with
   // the family's station, and «Trabajo en» folded in «Más opciones»
@@ -274,6 +340,14 @@ async function journeySeniors(run, page) {
   const folded = await more.evaluate((d) => !d.open && (d.textContent ?? "").includes("Trabajo en"));
   run.check(J, "«Trabajo en» folded in «Más opciones»", folded && !(await page.getByText(/^Trabajo en/).first().isVisible()));
   await run.shot(page, "j5-seniors");
+  if (data.results.length > 0) await checkSeniorsCard(run, page, data);
+  // Production, 16 nov: unmarking «Somos mayores» without searching again, the options of the old
+  // search («Sin límite de tiempo hasta donde vivimos ahora») marked it again when applied
+  const changes = page.getByRole("region", { name: CHANGES, exact: true });
+  await older.click();
+  await changes.getByText(STALE_OPTIONS).waitFor({ timeout: WAIT });
+  run.check(J, "options of the previous search are not offered once the search changes",
+    (await changes.getByRole("button", { name: /Ver esas zonas/ }).count()) === 0 && (await older.getAttribute("aria-pressed")) === "false");
   const [quick] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),
     (async () => {
@@ -283,6 +357,98 @@ async function journeySeniors(run, page) {
   ]);
   run.check(J, "a quick amount of 900 € reaches /search as it is", quick.status() === 200 && quick.request().postDataJSON()?.budget?.amount_eur === 900,
     JSON.stringify(quick.request().postDataJSON()?.budget));
+  // Searched again: the options are those of the search on screen, and none brings «Somos mayores» back
+  const answer = (await quick.json()).data;
+  await page.getByText(/^Hemos encontrado|^No hemos encontrado/).first().waitFor({ timeout: WAIT });
+  const offered = answer.reality_check.relaxations.filter((r) => r.added_zones > 0);
+  run.check(J, "after searching again, the options of the search on screen",
+    (await changes.getByText(STALE_OPTIONS).count()) === 0 && offered.every((r) => r.relaxed_scenario?.household?.seniors !== true),
+    `${offered.length} options`);
+  await run.overflow(page, J);
+}
+
+/**
+ * The first barrio's card for the retired couple (second delivery): what it lacks that matters to
+ * them, from the /gaps answer the card asked for (its district's), or «No le falta nada de lo que
+ * buscáis»; then the browser's back button goes back to the list.
+ */
+async function checkSeniorsCard(run, page, data) {
+  const J = "J5 Somos mayores";
+  const top = data.results[0];
+  const [gaps] = await Promise.all([
+    page.waitForResponse((r) => /\/api\/v1\/gaps\/(distrito|municipio)\/\w+$/.test(r.url()), { timeout: WAIT }),
+    page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first().click(),
+  ]);
+  const rows = (await gaps.json()).data.rows;
+  const card = zoneCard(page);
+  const household = data.scenario.household;
+  const short = householdShortRows(rows, household).map((r) => ROW_NAME[r.row]);
+  // What the card must say once its «Qué falta» is in: the rows short of theirs, or «No le falta nada…» when some has enough
+  const expected = short.length ? short : householdCovered(rows, household) ? [nothingMissing(true)] : [];
+  if (expected.length) await card.getByText(expected[0], { exact: false }).first().waitFor({ timeout: WAIT });
+  const text = squash(await card.innerText());
+  run.check(J, "card: what it lacks that matters to them, or «No le falta nada…»",
+    expected.every((words) => text.includes(words)) && (expected[0] === nothingMissing(true)) === text.includes(nothingMissing(true)),
+    `${expected.join(" · ") || "(nada que decir)"} | ${text.slice(0, 200)}`);
+  run.check(J, "card: never the schools to a retired couple", !/Colegios|Escuelas infantiles/.test(text), text.slice(0, 120));
+  await page.goBack();
+  await page.getByText(/^Hemos encontrado \d+ barrios? para vosotros\.$/).first().waitFor({ timeout: WAIT });
+  run.check(J, "the back button goes back to the list", (await card.count()) === 0 && !new URL(page.url()).searchParams.has("zona"), page.url());
+}
+
+/**
+ * J6: the zone in the address (second delivery of the UX mobile audit). Opening a row adds
+ * ?zona= and the back button returns to the list; «Volver a la lista» too; the zone screen keeps its
+ * context folded under «Más datos de la zona» and its button goes back to the list; and the address
+ * opens the zone by itself.
+ */
+async function journeyZoneAddress(run, page) {
+  const J = "J6 zone in the address";
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const [first] = await Promise.all([
+    page.waitForResponse(isSearch, { timeout: WAIT }),
+    page.getByRole("button", { name: /pareja con 2 hijos/ }).click(),
+  ]);
+  const top = (await first.json()).data.results[0];
+  const list = page.getByRole("region", { name: RESULTS, exact: true });
+  const row = page.getByRole("button", { name: new RegExp(`^1 ${escapeRe(top.zone.name)}\\b`) }).first();
+  await row.waitFor({ timeout: WAIT });
+  await row.click();
+  const card = zoneCard(page);
+  await card.getByRole("heading", { name: top.zone.name, exact: true }).waitFor({ timeout: WAIT });
+  const address = new URL(page.url());
+  run.check(J, "a row puts the zone in the address", address.pathname === "/" && address.searchParams.get("zona") === zoneKeyOf(top.zone), page.url());
+  await page.evaluate(() => history.back());
+  await list.waitFor({ timeout: WAIT });
+  run.check(J, "history.back() goes back to the list", (await card.count()) === 0 && !new URL(page.url()).searchParams.has("zona"), page.url());
+  const focused = await page
+    .waitForFunction((key) => document.activeElement?.getAttribute("data-zone") === key, zoneKeyOf(top.zone), { timeout: 5_000 })
+    .then(() => true, () => false);
+  run.check(J, "the row opened takes the focus back", focused);
+  await row.click();
+  await card.getByRole("button", { name: "Volver a la lista" }).click();
+  await list.waitFor({ timeout: WAIT });
+  run.check(J, "«Volver a la lista» goes back to the list", (await card.count()) === 0 && !new URL(page.url()).searchParams.has("zona"), page.url());
+  // The zone screen: the essential card first, the context folded, and back to the list
+  await row.click();
+  await card.locator("summary").filter({ hasText: /^Ver más sobre / }).first().click();
+  await card.getByRole("link", { name: /^Ver (la zona|el distrito)/ }).click();
+  const more = page.locator("details").filter({ has: page.locator("summary", { hasText: "Más datos de la zona" }) }).first();
+  await more.waitFor({ timeout: WAIT });
+  run.check(J, "zone screen: its context folded under «Más datos de la zona»", await more.evaluate((d) => !d.open));
+  await run.shot(page, "j6-zone");
+  await page.getByRole("link", { name: "Volver a la lista" }).first().click();
+  await list.waitFor({ timeout: WAIT });
+  run.check(J, "zone screen: «Volver a la lista» goes back to the list", await page.getByText(/^Hemos encontrado \d+ zonas para vosotros\.$/).first().isVisible());
+  // The address alone opens the zone, in a fresh page
+  await page.goto(`${BASE}/?zona=${zoneKeyOf(top.zone)}`, { waitUntil: "networkidle" });
+  const opened = page.locator("aside h2").filter({ hasText: top.zone.name }).first();
+  const shownByAddress = await opened.waitFor({ timeout: WAIT }).then(() => true, () => false);
+  run.check(J, "?zona= opens the zone", shownByAddress, zoneKeyOf(top.zone));
+  // Opened by its link, there is no list before it in the history: «Volver» closes it in place
+  await page.getByRole("button", { name: /^Volver( a la lista)?$/ }).first().click();
+  const closed = await opened.waitFor({ state: "detached", timeout: WAIT }).then(() => true, () => false);
+  run.check(J, "opened by its link, «Volver» closes it in place", closed && new URL(page.url()).pathname === "/" && !new URL(page.url()).searchParams.has("zona"), page.url());
   await run.overflow(page, J);
 }
 
@@ -386,7 +552,8 @@ async function runCombination(browserName, device) {
   const started = Date.now();
   try {
     for (const [name, journey] of [["J1 search", journeySearch], ["J2 Qué falta Madrid", journeyMadrid],
-      ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList], ["J5 Somos mayores", journeySeniors]]) {
+      ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList], ["J5 Somos mayores", journeySeniors],
+      ["J6 zone in the address", journeyZoneAddress]]) {
       const context = await browser.newContext(options);
       if (opts["block-external"]) {
         await context.route("**/*", (route) => {
