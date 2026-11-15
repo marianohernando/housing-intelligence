@@ -34,7 +34,8 @@ def new_contracts(
     engine: Engine, f: Mapping[str, Any]
 ) -> tuple[methods.NewContractFactors, str | None] | None:
     """D-228: the factors of the leases signed in the year, plus the fallback territory's under
-    its own code (e.g. the region «28» for a municipio without a table of its own)."""
+    its own code (e.g. Madrid «28079» for a district without its postcodes), or with
+    `fallback: {median: true}` the median of the zones' own factors (D-243)."""
     spec = f.get("new_contracts")
     if not spec:
         return None
@@ -42,6 +43,8 @@ def new_contracts(
     fallback = spec.get("fallback")
     if not fallback:
         return factors, None
+    if fallback.get("median"):
+        return methods.with_median_fallback(factors)
     other = _factors(engine, {**spec, **fallback})
     code = str(fallback["code"])
     merged = dict(factors.factors)

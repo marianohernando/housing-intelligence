@@ -451,6 +451,26 @@ def test_rent_of_new_leases_uses_the_zone_factor_or_the_declared_fallback() -> N
     assert math.isnan(cast(float, out["28007"]["value"]))  # unknown stays unknown
 
 
+def test_the_median_fallback_is_the_median_of_the_zones_own_factors() -> None:
+    """D-243 (R-03 of D-242): a municipio without a table of its own takes the median of the
+    municipios' factors, not the region's row, which Madrid dominates."""
+    rent = _irpf([("28079", 1012.0, 1167.0), ("28005", 735.0, 840.0), ("28006", 800.0, 840.0)])
+    m2 = _irpf([("28079", 71.0, 68.0), ("28005", 77.0, 77.0), ("28006", 80.0, 80.0)])
+    factors, fallback = methods.with_median_fallback(methods.new_contract_factors(rent, m2))
+    assert fallback == methods.MEDIAN_FALLBACK
+    assert factors.factors[fallback] == pytest.approx(840 / 735)  # 1,05 < 1,14 < 1,20
+    base = methods.metric_value(
+        _obs([("28001", {"tipo_vivienda": "viviendas_habituales"}, 10.0)]),
+        {"tipo_vivienda": "viviendas_habituales"},
+        0.9,
+    )
+    row = methods.apply_new_contract_factors(base, factors, fallback).iloc[0]
+    assert row["value"] == pytest.approx(10.0 * 840 / 735)
+    assert cast(dict[str, Any], row["adjustment"])["factor_from"] == "mediana_municipios"
+    empty = methods.NewContractFactors({}, None)
+    assert methods.with_median_fallback(empty) == (empty, None)  # never a guessed 1
+
+
 def test_without_own_factor_or_fallback_the_rent_of_new_leases_is_unknown() -> None:
     rent = _obs([("28006", {}, 12.7)])
     base = methods.metric_value(rent, {})

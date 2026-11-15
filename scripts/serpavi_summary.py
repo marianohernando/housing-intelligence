@@ -2,7 +2,9 @@
 
 Usage: uv run python scripts/serpavi_summary.py [--csv calibration.csv]
 Prints how many zones get the Ministry's reference rent and how many keep the CM rent, by level,
-and the CM mean / SERPAVI median of every municipio with both (the calibration the feature uses).
+the CM mean / SERPAVI median of every municipio with both (the calibration the feature uses) and
+the new-lease factor of the filled municipios without a table of their own (D-243: the median of
+the municipios' factors, 1,155 in 2024).
 """
 
 import argparse
@@ -10,6 +12,7 @@ import csv
 import os
 import statistics
 import sys
+from collections import Counter
 from pathlib import Path
 
 from sqlalchemy import create_engine, text
@@ -24,6 +27,7 @@ _ROWS = text(
     """
     SELECT f.territory_level AS level, f.territory_code AS code, u.name,
            f.value AS fill, f.confidence, f.inputs->'reference_rent' AS ref,
+           f.inputs->'new_contracts' AS new_contracts,
            c.value AS cm
       FROM feature_value f
       LEFT JOIN feature_value c
@@ -71,6 +75,18 @@ def main() -> int:
         )
         if level != "municipio" and used:
             print(f"  rellenas: {', '.join(str(r['name']) for r in used)}")
+    filled = [
+        r for r in rows if r["level"] == "municipio" and r["fill"] is not None and r["cm"] is None
+    ]
+    factors = Counter(
+        (str(r["new_contracts"].get("factor_from")), r["new_contracts"].get("factor"))
+        for r in filled
+        if r["new_contracts"]
+    )
+    print(
+        "factor de contratos nuevos de los rellenos: "
+        + " · ".join(f"{n} con {src} ({factor})" for (src, factor), n in factors.most_common())
+    )
     medians = {
         r["code"]: (r["ref"] or {}).get("median_m2") for r in rows if r["level"] == "municipio"
     }

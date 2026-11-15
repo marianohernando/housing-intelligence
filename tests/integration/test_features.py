@@ -427,7 +427,8 @@ def test_reference_rent_fills_from_serpavi_scaled_to_the_cm_and_new_leases(
     assert calibration["ratio"] == pytest.approx(15.1 / 13.968, rel=1e-3)
     madrid_factor = madrid.inputs["new_contracts"]["factor"]
     assert madrid.value == pytest.approx(15.1 * madrid_factor, rel=1e-3)  # Madrid: back to the CM
-    assert ajalvir.inputs["new_contracts"]["factor_from"] == "28"  # no own table: the region's
+    # no own table: the median of the municipios' own factors (D-243), not the region's row
+    assert ajalvir.inputs["new_contracts"]["factor_from"] == "mediana_municipios"
     reference = ajalvir.inputs["reference_rent"]
     assert reference["typology"] == "colectiva" and reference["contracts"] == 509
     factor = ajalvir.inputs["new_contracts"]["factor"]  # only it moves the quartiles (R-02)

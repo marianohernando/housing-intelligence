@@ -34,9 +34,10 @@ formula:
     rent_metric: alquiler_mensual_irpf_municipio
     area_metric: m2_alquiler_irpf_municipio
     level: municipio
-    # the region's row, as the CM rent of D-228: every filled municipio takes it (none has a table
-    # of its own); 1.2085, weighted by Madrid, above the median municipio (1.155) (review R-03)
-    fallback: {level: ccaa, code: "28"}
+    # D-243 (review R-03 of D-242): no filled municipio has a table of its own, so they take the
+    # median of the municipios' own factors (1.155 in 2024), not the region's row (1.2085, which
+    # Madrid dominates)
+    fallback: {median: true}
   confidence: 0.7  # another statistic of the same tax sources, scaled: «Dato aproximado»
   few_contracts: {below: 30, max_confidence: 0.4}  # «Dato poco seguro»
   typology_confidence: {unifamiliar: 0.5}  # houses: the cost for the household's m² falls short
@@ -65,7 +66,7 @@ tests: [positive, unknown_never_zero, calibrated_to_cm, quartiles_scaled_with_th
 limitations:
   - "Solo rellena: donde la Comunidad de Madrid publica el alquiler (alquiler_m2_mensual), manda ese dato. La búsqueda usa este solo en las zonas sin él."
   - "Es la mediana del alquiler por m² de los alquileres de vivienda habitual vigentes declarados en el IRPF (Sistema Estatal de Referencia del Precio del Alquiler de Vivienda, Ministerio de Vivienda, con el Catastro), no una media ni un contrato del año: se lleva al nivel del dato de la Comunidad con el cociente medio de las dos cifras donde existen ambas (mediana de los cocientes, entre 0,97 y 1,08 en 2024), y a un contrato firmado en el año con el factor de la Agencia Tributaria (D-228). Es una elaboración propia a partir del dato del Ministerio. Los percentiles 25 y 75 solo se multiplican por el factor de contratos nuevos: el cociente corrige el centro (media frente a mediana), no la dispersión."
-  - "Factor de contratos nuevos: ningún municipio rellenado tiene tabla propia de la Agencia Tributaria, así que todos usan el de reserva, la fila de la Comunidad (1,2085 en 2024). Esa fila suma los 37 municipios de la tabla y la domina Madrid: la mediana de sus factores es 1,155, así que el alquiler de esos municipios sale entre un 4 y un 5 % más alto que con un factor mediano. Queda así a propósito y se revisa en el banco de fórmulas (F4)."
+  - "Factor de contratos nuevos: ningún municipio rellenado tiene tabla propia de la Agencia Tributaria, así que todos usan el de reserva, la mediana de los factores de los 37 municipios de la tabla (1,155 en 2024; D-243). Hasta el 15 nov era la fila de la Comunidad (1,2085), que suma esos 37 municipios y la domina Madrid: daba un alquiler entre un 4 y un 5 % más alto. Es un factor común: no dice cuánto sube el alquiler de un contrato nuevo en cada pueblo."
   - "Pisos (vivienda colectiva) y, si no hay bastantes pisos alquilados, casas unifamiliares: su €/m² es más bajo y el coste de los m² del hogar se queda corto (confidence 0,5 como máximo)."
   - "Con menos de 30 contratos detrás de la mediana, confidence 0,4 como máximo. La fuente no publica la mediana con menos de 10 viviendas: esas zonas quedan SIN DATOS, nunca 0."
   - "Barrios de Madrid: media de las secciones censales del barrio ponderada por sus contratos (una media de medianas, no la mediana del barrio), y su rango, la media de los rangos de sus secciones, dicho así en el texto. La sección se asigna a su barrio con la geografía de la base (seccionado de la Comunidad); el SERPAVI usa el seccionado de 2021."
