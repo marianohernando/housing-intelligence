@@ -17,7 +17,7 @@ import {
   gapsHref,
   GROUP,
   inGroup,
-  nearButShortTexts,
+  nearButShort,
   notComparable,
   topRows,
   walking,
@@ -78,10 +78,12 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
   // rows are the whole district's, and the line says «aquí»
-  const fitsButShort = pct != null && match?.passes_all && !isBarrio ? fitsButShortText(rows) : null;
   // A service the search found close that «Qué falta» marks FALTA or JUSTO: both are true, and one
   // line says why (zona.cerca_pocas). For a barrio, its walks against its district's rows
-  const nearButShort = result ? nearButShortTexts(rows, nearbyWalks(zoneFit(result, zone_key).ranked), isBarrio ? (zone.district_name ?? null) : null) : [];
+  const nearLines = result ? nearButShort(rows, nearbyWalks(zoneFit(result, zone_key).ranked), isBarrio ? (zone.district_name ?? null) : null) : [];
+  // The rows those lines explain are not said again in encaje.aviso_* (review R-06 of PR #70)
+  const explained = new Set(nearLines.map((line) => line.row));
+  const fitsButShort = pct != null && match?.passes_all && !isBarrio ? fitsButShortText(rows.filter((r) => !explained.has(r.row))) : null;
   const eyebrow = isBarrio ? TEXT.barrio(municipio_name) : level === "distrito" ? `Distrito de ${municipio_name}` : TEXT.municipio;
   const missingTitle = isBarrio ? TEXT.barrioMissing(zone.district_name ?? municipio_name) : TEXT.missing;
 
@@ -117,10 +119,10 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         <p className={styles.hint}>{GAPS_HELP}</p>
         {isBarrio && <p className={styles.hint}>{TEXT.barrioMissingHelp}</p>}
         {fitsButShort && <p className={styles.fitsButShort}>{fitsButShort}</p>}
-        {nearButShort.map((line) => (
-          <p key={line} className={styles.nearButShort}>
+        {nearLines.map((line) => (
+          <p key={line.row} className={styles.nearButShort}>
             <Footprints size={18} aria-hidden="true" />
-            <span>{line}</span>
+            <span>{line.text}</span>
           </p>
         ))}
         {gaps.loading && (

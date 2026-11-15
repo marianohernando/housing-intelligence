@@ -447,6 +447,13 @@ describe("m² of the home («Para unos 68 m² (cámbialo)»)", () => {
     expect(setFloorArea(defaultScenario(), 900).min_floor_area_m2).toBe(400);
   });
 
+  it("keeps the m² picked when the household changes: only «Lo normal para tu hogar» follows it", () => {
+    const withChildren = setMinors(setFloorArea(defaultScenario(), 60), 2);
+    expect(withChildren.min_floor_area_m2).toBe(60);
+    expect(floorArea(withChildren)).toEqual({ m2: 60, household: false });
+    expect(floorArea(setMinors(defaultScenario(), 2))).toEqual({ m2: 71, household: true });
+  });
+
   it("offers 40 to 150 m² by 5, and a value from a shared link outside them too", () => {
     const options = floorAreaOptions(null);
     expect([options[0], options.at(-1), options.length]).toEqual([FLOOR_AREA_RANGE.min, FLOOR_AREA_RANGE.max, 23]);

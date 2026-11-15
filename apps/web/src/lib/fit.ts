@@ -356,7 +356,8 @@ const WALK_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio", "centro_
 /**
  * The services the search found a short walk away in a zone, in minutes by row of «Qué falta»: a
  * service of «Lo quiero a un paseo» it meets (`near:<row>` PASS), else a walking fact the API
- * counts as a strength («Centro de salud a unos 8 min andando»). For zona.cerca_pocas (gaps.ts).
+ * counts as a strength («Centro de salud a unos 8 min andando»). For zona.cerca_pocas, which only
+ * keeps those within the row's own walk (ROW_WALK_MIN in gaps.ts).
  */
 export function nearbyWalks(ranked: Pick<RankedZone, "constraints" | "facts"> | null): Partial<Record<GapRowKey, number>> {
   const walks: Partial<Record<GapRowKey, number>> = {};

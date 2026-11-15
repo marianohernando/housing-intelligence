@@ -252,21 +252,31 @@ function walkMinutesText(minutes: number): string {
 
 type NearRow = Classified & { row: GapRowKey };
 
+/** The walk each row of services measures (fila.mide.*, 2SFCA): what is within 15 min on foot. */
+export const ROW_WALK_MIN = 15;
+
+/** One line of zona.cerca_pocas and the row of «Qué falta» it explains. */
+export interface NearButShort {
+  row: GapRowKey;
+  text: string;
+}
+
 /**
- * zona.cerca_pocas: a service the search found a short walk away (`walks`, minutes by row) that
- * «Qué falta» marks FALTA or JUSTO, in one line that says both are true: «Escuela infantil a unos
- * 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.» `place` is
- * the district when the card is a barrio's (its rows are the district's). Rows compared together
- * with neighbours or too small to compare are left out: their status is not the zone's own.
+ * zona.cerca_pocas: a service the search found within the row's own walk (`walks`, minutes by row,
+ * up to ROW_WALK_MIN) that «Qué falta» marks FALTA or JUSTO, in one line that says both are true:
+ * «Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso
+ * sale FALTA.» Further than that, the row does not count it and there is nothing to reconcile.
+ * `place` is the district when the card is a barrio's (its rows are the district's). Rows compared
+ * together with neighbours or too small to compare are left out: their status is not the zone's own.
  */
-export function nearButShortTexts(rows: readonly NearRow[], walks: Partial<Record<GapRowKey, number>>, place: string | null = null): string[] {
+export function nearButShort(rows: readonly NearRow[], walks: Partial<Record<GapRowKey, number>>, place: string | null = null): NearButShort[] {
   return sortRows(rows).flatMap((row) => {
     const words = NEAR_BUT_SHORT[row.row];
     const minutes = walks[row.row];
-    if (!words || minutes === undefined || (row.status !== "FALTA" && row.status !== "JUSTO")) return [];
+    if (!words || minutes === undefined || minutes > ROW_WALK_MIN || (row.status !== "FALTA" && row.status !== "JUSTO")) return [];
     if (notComparable(row) || inGroup(row)) return [];
     const where = place ? `en ${place} ` : "";
-    return [`${words.service} ${walkMinutesText(minutes)}, pero ${where}${words[row.status]}: por eso sale ${row.status}.`];
+    return [{ row: row.row, text: `${words.service} ${walkMinutesText(minutes)}, pero ${where}${words[row.status]}: por eso sale ${row.status}.` }];
   });
 }
 

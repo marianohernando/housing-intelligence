@@ -17,7 +17,8 @@ import {
   inGroup,
   isSmallZone,
   listNames,
-  nearButShortTexts,
+  nearButShort,
+  ROW_WALK_MIN,
   notComparable,
   referenceLabel,
   SMALL_ZONE,
@@ -395,6 +396,7 @@ describe("rows that are not comparable (D-230)", () => {
 
 describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () => {
   const row = (key: GapRowKey, status: GapStatus, extra: object = {}) => ({ row: key, status, reliable: true, comparison_group: null, ...extra });
+  const nearButShortTexts = (...args: Parameters<typeof nearButShort>) => nearButShort(...args).map((line) => line.text);
   // Puente de Vallecas, 14 nov: escuelas infantiles FALTA (57 por cada 100), a 6,3 min andando
   const vallecas = [row("colegio", "CUBIERTO"), row("escuela_infantil", "FALTA"), row("centro_salud", "JUSTO"), row("vivienda", "SIN_DATOS")];
 
@@ -403,6 +405,14 @@ describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () 
       "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
       "Centro de salud a unos 8 min andando, pero van justos para tanta gente: por eso sale JUSTO.",
     ]);
+    // Each line says which row it explains, so the card does not repeat it in encaje.aviso_*
+    expect(nearButShort(vallecas, { escuela_infantil: 6.3, centro_salud: 7.6 }).map((line) => line.row)).toEqual(["escuela_infantil", "centro_salud"]);
+  });
+
+  it("only within the 15 min the row measures (fila.mide.*): further, the row does not count it", () => {
+    expect(ROW_WALK_MIN).toBe(15);
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 20 })).toEqual([]);
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 15 })).toHaveLength(1);
   });
 
   it("names the district when the card is a barrio's, whose rows are the district's", () => {
@@ -414,6 +424,7 @@ describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () 
   it("says nothing when the service is not close, the row is fine, or the status is not the zone's own", () => {
     expect(nearButShortTexts(vallecas, {})).toEqual([]);
     expect(nearButShortTexts(vallecas, { colegio: 4 })).toEqual([]);
+    expect(nearButShortTexts([row("farmacia", "SIN_DATOS")], { farmacia: 3 })).toEqual([]);
     expect(nearButShortTexts([row("farmacia", "FALTA", { reliable: false })], { farmacia: 3 })).toEqual([]);
     const group = { names: ["El Álamo", "Batres", "Serranillos del Valle"], ratio_to_reference: 0.4 };
     expect(nearButShortTexts([row("farmacia", "FALTA", { comparison_group: group })], { farmacia: 3 })).toEqual([]);
