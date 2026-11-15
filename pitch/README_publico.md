@@ -1,7 +1,7 @@
 <!--
-INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b) y lo puso al día con los conjuntos CM de ese momento,
-la capacidad a 15 minutos andando (D-217) y los catálogos del Ministerio de Sanidad (D-218). Este borrador ya no se
-mantiene y sus cifras son del 11 nov: el texto vigente es README.md, y los cambios se le piden a A.
+INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b). El texto vigente es README.md.
+Este fichero se conserva como registro: solo se ponen al día sus cifras de datos (35 conjuntos CM y 52 en total el 15 nov,
+como README.md y pitch/datasets_cm.md). El resto del texto es del 11 nov.
 
 Borrador de la línea D para el README.md de la raíz (lo integra la línea A, que es su dueña).
 - Los enlaces son relativos a la raíz del repo, como quedarán en README.md; desde pitch/ no funcionan.
@@ -9,7 +9,7 @@ Borrador de la línea D para el README.md de la raíz (lo integra la línea A, q
 - Antes de integrarlo: quitar las marcas «pendiente» y revisar las cifras con `uv run python pitch/build_datasets_cm.py`.
 -->
 
-> **Borrador ya integrado: el texto vigente es el [README.md de la raíz](../README.md).** Este fichero se conserva como registro. Las cifras de datos se han puesto al día el 12 nov con [`datasets_cm.md`](datasets_cm.md), que es la fuente de la lista; los enlaces de abajo son relativos a la raíz del repo y desde aquí no funcionan.
+> **Borrador ya integrado: el texto vigente es el [README.md de la raíz](../README.md).** Este fichero se conserva como registro. Las cifras de datos se han puesto al día el 15 nov con [`datasets_cm.md`](datasets_cm.md), que es la fuente de la lista; el resto del texto es del 11 nov; los enlaces de abajo son relativos a la raíz del repo y desde aquí no funcionan.
 
 # Vida Fácil · Encuentra tu sitio en Madrid
 
