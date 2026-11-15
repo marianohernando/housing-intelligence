@@ -8,7 +8,7 @@ Rama `claude/s1-ux-mobile`, desde `0c6ce28` (producción con `fit-0.9`). Origen:
 node apps/web/scripts/check-ux-mobile.mjs --base http://localhost:3061 --out evidence/gate-06/2026-11-15-ux-1 --label despues --widths 390,360 --shots
 ```
 
-Para cada pantalla lista cada texto por debajo de 16 px y cada objetivo táctil por debajo de 44 px (alto o ancho), sin contar lo que solo es para el lector de pantalla. Una casilla o una opción cuenta por su etiqueta, que es lo que se toca. «Formulario abierto» es el formulario con todas sus ayudas y «Más opciones» desplegadas; «formulario con el ejemplo», el que deja el ejemplo de la familia (lugar de trabajo, días, límite, servicio a un paseo y contador). «Distrito» es la pantalla del distrito de esa tarjeta, con «Los barrios que más te convienen» para la misma búsqueda (revisión R-04; no se midió antes).
+Para cada pantalla lista cada texto por debajo de 16 px y cada objetivo táctil por debajo de 44 px (alto o ancho), sin contar lo que solo es para el lector de pantalla. Una casilla o una opción cuenta por su etiqueta, que es lo que se toca. «Formulario abierto» es el formulario con todas sus ayudas y «Más opciones» desplegadas; «formulario con el ejemplo», el que deja el ejemplo de la familia (lugar de trabajo, días, límite, servicio a un paseo y contador). «Distrito» es la pantalla del distrito de esa tarjeta, con «Los barrios que más te convienen» para la misma búsqueda (revisión R-04; no se midió antes). «Somos mayores» con un lugar elegido es el formulario con «En pareja», «Somos mayores» y la estación de Ciudad Lineal en «¿Dónde vivís ahora?», con el selector de minutos y «Quitar» (revisión H6).
 
 ## Antes y después (texto < 16 px · objetivos < 44 px)
 
@@ -21,6 +21,7 @@ Para cada pantalla lista cada texto por debajo de 16 px y cada objetivo táctil 
 | Lista | 36 · 0 | **0 · 0** | 36 · 0 | **0 · 0** |
 | Tarjeta | 25 · 1 | **0 · 0** | 25 · 1 | **0 · 0** |
 | Distrito (barrios) | — | **0 · 0** | — | **0 · 0** |
+| «Somos mayores» con un lugar elegido | — | **0 · 0** | — | **0 · 0** |
 
 - **Antes:** textos de 12,2 a 15,3 px: la banda («Encaja muy bien», 12,2), «por 77 m²» (12,8), «· Dato fiable» y FALTA/JUSTO/CUBIERTO (13,3), «Distrito de Madrid», «Empatan al 94 %» y «Probar así» (13,6), y las opciones, chips, ayudas y avisos (14,9). Objetivos: «Alquilar» y «Comprar» (38 px), «Ver las zonas en una lista» (39 px) y «Ver todo lo que falta» (24 px).
 - **Después:** el texto más pequeño mide 16 px en el escritorio y 16,9 px en el móvil (`--text-xs`); el cuerpo, 17 y 18 px. Todos los objetivos miden 44 px o más.
@@ -29,11 +30,11 @@ Para cada pantalla lista cada texto por debajo de 16 px y cada objetivo táctil 
 
 ## axe (WCAG 2.2 AA)
 
-0 incidencias después, a 390 y a 360 px, en la portada, el formulario abierto, la lista, la tarjeta y la pantalla del distrito (`tamanos-despues.json`, campo `axe`). Antes: 0 en la primera pasada y 1 `target-size` intermitente en la segunda (la línea «Para unos 77 m² (cámbialo)», que ya no existe).
+0 incidencias después, a 390 y a 360 px, en la portada, el formulario abierto, la lista, la tarjeta, la pantalla del distrito y el formulario de «Somos mayores» con un lugar (`tamanos-despues.json`, campo `axe`). Antes: 0 en la primera pasada y 1 `target-size` intermitente en la segunda (la línea «Para unos 77 m² (cámbialo)», que ya no existe).
 
 ## e2e contra la web compilada
 
-`infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3061`: escritorio 1440 px **83/83**, móvil 390 px **59/59** (`e2e/e2e-report.json`). El recorrido nuevo J5 (revisión R-06) carga el ejemplo de los jubilados y comprueba que `/search` responde 200 con `household.seniors: true`, `salud`, `sin_escaleras` y `transporte`, `scope: madrid` y un lugar `family` de 30 min y 3 días; que el resumen da los barrios de la API y que no sale «¿Trabajas fuera de casa?»; y que el importe rápido de 900 € llega como `amount_eur: 900`. Los textos que comprueba se han adaptado sin quitar ninguna comprobación: el resumen («Hemos encontrado 42 zonas para ti.»), «Hemos mirado las 199 zonas…», el aviso del alquiler, «¿Quieres ver más zonas?» con las dos cifras de la API («saldrían 49 más: 91 zonas en total»), «Buscar zonas para mí» y el ejemplo de la familia por su nombre. En el móvil, el recorrido del mapa por filas toca antes «Ver el mapa», porque la portada abre ahora con la búsqueda.
+`infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3061`: escritorio 1440 px **86/86**, móvil 390 px **62/62** (`e2e/e2e-report.json`). El recorrido nuevo J5 (revisión R-06) carga el ejemplo de los jubilados y comprueba que `/search` responde 200 con `household.seniors: true`, `salud`, `sin_escaleras` y `transporte`, `scope: madrid` y un lugar `family` de 30 min y 3 días; que el resumen da los barrios de la API y que no sale «¿Trabajas fuera de casa?»; que se ve «Somos mayores» marcado, «¿Cerca de dónde queréis vivir?» con «Ciudad Lineal (metro)» y «Trabajo en» plegado (revisión H4); y que el importe rápido de 900 € llega como `amount_eur: 900`. Los textos que comprueba se han adaptado sin quitar ninguna comprobación: el resumen («Hemos encontrado 42 zonas para ti.»), «Hemos mirado las 199 zonas…», el aviso del alquiler, «¿Quieres ver más zonas?» con las dos cifras de la API («saldrían 49 más: 91 zonas en total»), «Buscar zonas para mí» y el ejemplo de la familia por su nombre. En el móvil, el recorrido del mapa por filas toca antes «Ver el mapa», porque la portada abre ahora con la búsqueda.
 
 ## Golden y contrato
 
@@ -51,7 +52,7 @@ Para cada pantalla lista cada texto por debajo de 16 px y cada objetivo táctil 
 | Ejemplo «Pareja jubilada» | `04-ejemplo-pareja-jubilada-390.png` | `04-ejemplo-pareja-jubilada-360.png` | `04-ejemplo-pareja-jubilada-1440.png` |
 | Lista (ejemplo de la familia) | `05-lista-390.png` | `05-lista-360.png` | `05-lista-1440.png` |
 | Tarjeta (la 1.ª de la lista) | `06-tarjeta-390.png` | `06-tarjeta-360.png` | `06-tarjeta-1440.png` |
-| «Somos mayores»: «¿Cerca de dónde queréis vivir?» | `03b-somos-mayores-lugar-390.png` | `03b-somos-mayores-lugar-360.png` | `03b-somos-mayores-lugar-1440.png` |
+| «Somos mayores»: «¿Cerca de dónde queréis vivir?», con un lugar elegido | `03b-somos-mayores-lugar-390.png` | `03b-somos-mayores-lugar-360.png` | `03b-somos-mayores-lugar-1440.png` |
 | Tarjeta del ejemplo de los jubilados («Lo que le falta…») | `04b-tarjeta-pareja-jubilada-390.png` | `04b-tarjeta-pareja-jubilada-360.png` | `04b-tarjeta-pareja-jubilada-1440.png` |
 | «Cómo lo calculamos» (desempate y ejemplo real) | `07-como-lo-calculamos-390.png` | `07-como-lo-calculamos-360.png` | `07-como-lo-calculamos-1440.png` |
 | Distrito: «Los barrios que más te convienen» | `08-distrito-barrios-390.png` | `08-distrito-barrios-360.png` | `08-distrito-barrios-1440.png` |

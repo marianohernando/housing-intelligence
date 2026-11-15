@@ -104,13 +104,16 @@ export const OLDER_PRIORITIES: readonly PriorityKey[] = ["salud", "sin_escaleras
  * looked after, `seniors_in_care`). Marked, OLDER_PRIORITIES join what matters, after what was
  * already marked, and a search of the whole region with no place to go starts in Madrid capital
  * (without a place, small well-served villages would come first, D-243 §13). Unmarked, the field
- * leaves the scenario, as it was before; what it marked stays, in view, for the person to change.
+ * leaves the scenario, as it was before, and so does «Donde vivimos ahora» (an `other` place only
+ * this flow makes, which no field shows without it: it would filter unseen, review H1 of PR #79).
+ * What stays, in view for the person to change: Madrid capital, what it marked and a family place,
+ * which «Más opciones» shows.
  */
 export function setOlderHousehold(s: ScenarioState, on: boolean): ScenarioState {
   const home = { ...household(s) };
   if (!on) {
     delete home.seniors;
-    return { ...s, household: home };
+    return { ...s, household: home, anchors: (s.anchors ?? []).filter((a) => kindOf(a) !== "other") };
   }
   const priorities = s.priorities ?? [];
   const older: ScenarioState = {
@@ -435,7 +438,8 @@ export function retiredExampleScenario(): ScenarioState {
  * a place they go to often.
  */
 export type OlderPlaceKind = "other" | "family";
-export const HOME_LABEL = "Donde vivimos ahora";
+/** Lower case: the API says it inside a sentence («27 min en transporte público hasta donde vivimos ahora…», H7) */
+export const HOME_LABEL = "donde vivimos ahora";
 export const OLDER_TRIP = { max_minutes: 30, days_per_week: 3 } as const;
 
 /** The place of «¿Cerca de dónde queréis vivir?», if the search has one. */

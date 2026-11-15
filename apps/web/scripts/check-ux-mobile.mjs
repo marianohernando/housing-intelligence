@@ -179,7 +179,22 @@ async function sizes(browser, width) {
   report.axe.distrito = await axe(page);
   report.console_errors = errors;
   await ctx.close();
+  if ((await sizesOlder(browser, width, report)) === false) report.screens.formulario_mayores = { error: "no «Somos mayores»" };
   return report;
+}
+
+/**
+ * «Somos mayores» with a place picked (review H6 of PR #79): «En pareja», «Somos mayores» and the
+ * Ciudad Lineal metro station in «¿Dónde vivís ahora?», so the minutes selector and «Quitar» show.
+ */
+async function olderWithPlace(page) {
+  await page.getByRole("button", { name: /^En pareja/ }).click();
+  await page.getByRole("button", { name: NAMES.seniors }).click();
+  const field = page.getByRole("combobox", { name: /^¿Dónde vivís ahora\?/ });
+  await field.click();
+  await field.fill("Ciudad Lineal");
+  await page.getByRole("option", { name: /^Ciudad Lineal \(metro\)/ }).first().click({ timeout: WAIT });
+  await page.getByRole("button", { name: /^Quitar este lugar/ }).first().waitFor({ timeout: WAIT });
 }
 
 /** From the zone card to the district's screen, once its barrios for the search are on it. */
@@ -187,6 +202,21 @@ async function openDistrict(page) {
   await page.locator("aside").filter({ hasText: "Lo que tienes aquí" }).first().getByRole("link", { name: /^Ver (la zona|el distrito)/ }).click();
   await page.getByRole("heading", { name: /^Los barrios que (más te convienen|mejor encajan)$/ }).first().waitFor({ timeout: WAIT });
   await page.waitForTimeout(1500);
+}
+
+/** The search card of «Somos mayores» with a place picked, measured and checked with axe. */
+async function sizesOlder(browser, width, report) {
+  const { ctx, page, errors } = await openPage(browser, phone(width));
+  if ((await page.getByRole("button", { name: NAMES.seniors }).count()) === 0) {
+    await ctx.close();
+    return false;
+  }
+  await olderWithPlace(page);
+  report.screens.formulario_mayores = await measure(page, "search");
+  report.axe.formulario_mayores = await axe(page);
+  report.console_errors.push(...errors);
+  await ctx.close();
+  return true;
 }
 
 /** Scrolls an element into view, also inside the bottom sheet's own scroll. */
@@ -214,12 +244,14 @@ async function screenshots(browser, id, profile) {
     await seniors.click();
     await bringIntoView(page.locator("fieldset").filter({ has: seniors }).first());
     await take(page, "03-somos-mayores");
-    // Where they want to live (D-244), in place of «Trabajo en»
-    const place = page.locator("fieldset").filter({ has: page.getByText("¿Cerca de dónde queréis vivir?") }).first();
-    if ((await place.count()) > 0) {
-      await bringIntoView(place);
-      await take(page, "03b-somos-mayores-lugar");
-    }
+  }
+  await ctx.close();
+  // Where they want to live (D-244), in place of «Trabajo en», with a place picked (review H6 of PR #79)
+  ({ ctx, page } = await openPage(browser, profile));
+  if ((await page.getByRole("button", { name: NAMES.seniors }).count()) > 0) {
+    await olderWithPlace(page);
+    await bringIntoView(page.getByRole("group", { name: /^¿Cerca de dónde queréis vivir\?/ }).first());
+    await take(page, "03b-somos-mayores-lugar");
   }
   await ctx.close();
   ({ ctx, page } = await openPage(browser, profile));

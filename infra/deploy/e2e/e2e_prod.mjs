@@ -263,6 +263,16 @@ async function journeySeniors(run, page) {
   await page.getByText(summary).first().waitFor({ timeout: WAIT });
   run.check(J, "summary = API zones_passing, in barrios", true, summary);
   run.check(J, "never asks where they work", (await page.getByText("¿Trabajas fuera de casa?").count()) === 0);
+  // What the person sees (review H4 of PR #79): «Somos mayores» marked, where they want to live with
+  // the family's station, and «Trabajo en» folded in «Más opciones»
+  const older = page.getByRole("button", { name: /^Somos mayores/ }).first();
+  run.check(J, "«Somos mayores» is marked", (await older.getAttribute("aria-pressed")) === "true");
+  const place = page.getByRole("group", { name: /^¿Cerca de dónde queréis vivir\?/ }).first();
+  const placeText = (await place.isVisible()) ? squash(await place.innerText()) : "";
+  run.check(J, "«¿Cerca de dónde queréis vivir?» shows «Ciudad Lineal (metro)»", placeText.includes("Ciudad Lineal (metro)"), placeText.slice(0, 120));
+  const more = page.locator("details").filter({ hasText: "Más opciones" }).first();
+  const folded = await more.evaluate((d) => !d.open && (d.textContent ?? "").includes("Trabajo en"));
+  run.check(J, "«Trabajo en» folded in «Más opciones»", folded && !(await page.getByText(/^Trabajo en/).first().isVisible()));
   await run.shot(page, "j5-seniors");
   const [quick] = await Promise.all([
     page.waitForResponse(isSearch, { timeout: WAIT }),

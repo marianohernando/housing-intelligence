@@ -1,7 +1,7 @@
 {
  "base": "http://localhost:3061",
  "label": "despues",
- "checked_at": "2026-11-15T18:05:17.843Z",
+ "checked_at": "2026-11-15T18:10:52.779Z",
  "sizes": [
   {
    "width": 390,
@@ -77,6 +77,10 @@
     "distrito": {
      "texts": [],
      "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
     }
    },
    "axe": {
@@ -84,7 +88,8 @@
     "formulario_abierto": [],
     "lista": [],
     "tarjeta": [],
-    "distrito": []
+    "distrito": [],
+    "formulario_mayores": []
    },
    "console_errors": []
   },
@@ -162,6 +167,10 @@
     "distrito": {
      "texts": [],
      "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
     }
    },
    "axe": {
@@ -169,7 +178,8 @@
     "formulario_abierto": [],
     "lista": [],
     "tarjeta": [],
-    "distrito": []
+    "distrito": [],
+    "formulario_mayores": []
    },
    "console_errors": []
   }

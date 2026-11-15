@@ -49,6 +49,8 @@ const TEXT = {
   // lugar.* (D-244): «Somos mayores» is asked where they want to live, in place of «Trabajo en»
   older: {
     title: "¿Cerca de dónde queréis vivir?",
+    // The name of the two options, not the question again (review H7 of PR #79)
+    which: "Vuestra casa de ahora o vuestra familia",
     options: { other: "Donde vivimos ahora", family: "Cerca de nuestra familia" } satisfies Record<OlderPlaceKind, string>,
     search: { other: "¿Dónde vivís ahora?", family: "¿Dónde vive vuestra familia?" } satisfies Record<OlderPlaceKind, string>,
     help: "Miramos cuánto se tarda en transporte público hasta ese sitio, llegando a las 9:00 de un día laborable, y contamos el trayecto como si fuerais 3 días a la semana. Ponemos 30 min como mucho: puedes cambiarlo o quitarlo.",
@@ -176,10 +178,14 @@ interface PickedProps {
   onRemove: () => void;
 }
 
+/** «donde vivimos ahora», the label the API puts inside a sentence, at the start of its own line. */
+const capitalised = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
 /** The place picked, with its selectors: the days (work only) and its limit, which applies whatever the days. */
 function PickedPlace({ kind, anchor, placeName, removeRef, onRemove }: PickedProps) {
   const Icon = KINDS[kind].icon;
-  const name = placeName && placeName !== anchor.label ? `${anchor.label}: ${placeName}` : anchor.label;
+  const label = capitalised(anchor.label);
+  const name = placeName && placeName !== anchor.label ? `${label}: ${placeName}` : label;
   return (
     <>
       <p className={styles.place}>
@@ -378,8 +384,11 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
   // Which of the two before a place is picked; then, the kind of the place
   const [chosen, setChosen] = useState<OlderPlaceKind>("other");
   const kind = current?.kind ?? chosen;
-  // The name of the place picked, kept to show it beside «Donde vivimos ahora» and to name the family's
-  const [placeName, setPlaceName] = useState<string | null>(null);
+  // The name of the place picked, to show it beside «Donde vivimos ahora» and to name the family's.
+  // A family place carries it as its label, so it survives a change of option, a new mount and the
+  // example (review H2 of PR #79); the field only has to remember it for «Donde vivimos ahora»
+  const [pickedName, setPickedName] = useState<string | null>(null);
+  const placeName = current?.kind === "family" ? current.anchor.label : pickedName;
   const { input, remove, focusNext } = useSwapFocus(current?.anchor ?? null);
 
   return (
@@ -388,11 +397,12 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
         {TEXT.older.title} <span className={styles.optional}>{TEXT.optional}</span>
       </legend>
       <Segmented
-        legend={TEXT.older.title}
+        legend={TEXT.older.which}
         value={kind}
         options={(["other", "family"] as const).map((value) => ({ value, label: TEXT.older.options[value] }))}
         onChange={(next) => {
           setChosen(next);
+          setPickedName(placeName);
           if (current) update((s) => setOlderPlaceKind(s, next, placeName ?? TEXT.older.family));
         }}
       />
@@ -404,8 +414,10 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
           removeRef={remove}
           onRemove={() => {
             focusNext("input");
-            setPlaceName(null);
-            update((s) => setOlderPlace(s, kind, null));
+            // The option stays where it was (review H3 of PR #79)
+            setChosen(current.kind);
+            setPickedName(null);
+            update((s) => setOlderPlace(s, current.kind, null));
           }}
         />
       ) : (
@@ -421,7 +433,7 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
             inputRef={input}
             onPick={(place) => {
               focusNext("remove");
-              setPlaceName(place.label);
+              setPickedName(place.label);
               update((s) => setOlderPlace(s, kind, place));
             }}
           />

@@ -510,14 +510,27 @@ describe("«Somos mayores» (D-244)", () => {
     expect("seniors" in (back.household ?? {})).toBe(false);
     expect(back.household).toEqual(defaultScenario().household);
     expect(back.priorities).toEqual(["salud", "sin_escaleras", "transporte"]);
+    expect(back.scope).toBe("madrid");
     expect(isOlderHousehold(defaultScenario())).toBe(false);
+  });
+
+  // Review H1 of PR #79: no field shows «Donde vivimos ahora» without «Somos mayores», so it must not filter unseen
+  it("unmarked, takes «Donde vivimos ahora» away and keeps a family place and a work place, which other fields show", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const home = setOlderPlace(setOlderHousehold(setAdults(defaultScenario(), 2), true), "other", station);
+    expect(setOlderHousehold(home, false).anchors).toEqual([]);
+    const family = setOlderPlace(setOlderHousehold(defaultScenario(), true), "family", station);
+    expect(setOlderHousehold(family, false).anchors?.map((a) => a.kind)).toEqual(["family"]);
+    const working = setPlace(home, "work", station);
+    expect(setOlderHousehold(working, false).anchors?.map((a) => a.kind)).toEqual(["work"]);
   });
 
   it("asks where they want to live: where they live now (never its own name) or near their family, 30 min and 3 days", () => {
     const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
     const home = setOlderPlace(defaultScenario(), "other", station);
     expect(olderPlace(home)).toEqual({ kind: "other", anchor: { kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 30, days_per_week: 3 } });
-    expect(HOME_LABEL).toBe("Donde vivimos ahora");
+    // Lower case: the API says it inside a sentence («… hasta donde vivimos ahora, llegando a las 9:00»)
+    expect(HOME_LABEL).toBe("donde vivimos ahora");
     const family = setOlderPlace(home, "family", station);
     expect(family.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: station.lon, lat: station.lat, ...OLDER_TRIP }]);
     // One place: the other kind takes the same point, and keeps a limit the person changed

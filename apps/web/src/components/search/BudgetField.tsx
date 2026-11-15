@@ -14,6 +14,8 @@ import styles from "./SearchCard.module.css";
 // Copy from pitch/textos_web.md (presupuesto.*)
 const TEXT = {
   title: "Presupuesto",
+  // The two options' own name, not «Presupuesto» again (review H7 of PR #79)
+  kind: "¿Alquilar o comprar?",
   rent: "Alquilar",
   buy: "Comprar",
   indicative: "Orientativo",
@@ -75,7 +77,7 @@ export default function BudgetField({ available }: { available: boolean }) {
     <fieldset className={styles.group}>
       <legend>{TEXT.title}</legend>
       <Segmented
-        legend={TEXT.title}
+        legend={TEXT.kind}
         value={budget?.kind ?? null}
         options={[
           { value: "rent", label: TEXT.rent },

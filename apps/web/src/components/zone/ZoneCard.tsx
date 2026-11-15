@@ -90,7 +90,7 @@ function statusLines(rows: readonly RowStatus[]): [string, string][] {
 export default function ZoneCard({ zone, mode, onClose }: Props) {
   const { level, code, name, municipio_name, zone_key } = zone;
   const titleId = useId();
-  const { result, available, stale, scenario } = useScenario();
+  const { result, available, stale } = useScenario();
   const isBarrio = level === "barrio";
   const gapsOf = screenZone(zone);
   const gaps = useZoneGaps(gapsOf.level, gapsOf.code);
@@ -102,8 +102,9 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   // D-234: the approximate price, in the head; none without a price (the search's notice says why)
   const price = result ? zonePriceOf(result, zone_key) : null;
   const rows = gaps.data?.data.rows ?? [];
-  // The three rows in view: what matters to the household first, then what is missing (D-244, review of PR #79)
-  const shown = topRows(rows, 3, scenario.household);
+  // The three rows in view: what matters to the household of the search first, the one the list
+  // answers to, then what is missing (D-244, review H5 of PR #79); before a search, by status
+  const shown = topRows(rows, 3, result?.scenario.household ?? null);
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
   // rows are the whole district's, and the line says «aquí»

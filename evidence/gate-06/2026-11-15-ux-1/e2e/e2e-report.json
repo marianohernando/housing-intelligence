@@ -1,6 +1,6 @@
 {
  "base": "http://localhost:3061",
- "checked_at": "2026-11-15T18:05:17.588Z",
+ "checked_at": "2026-11-15T18:10:52.525Z",
  "runs": [
   {
    "browserName": "chromium",
@@ -488,6 +488,24 @@
     },
     {
      "journey": "J5 Somos mayores",
+     "name": "«Somos mayores» is marked",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«¿Cerca de dónde queréis vivir?» shows «Ciudad Lineal (metro)»",
+     "ok": true,
+     "detail": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra f"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Trabajo en» folded in «Más opciones»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
      "name": "a quick amount of 900 € reaches /search as it is",
      "ok": true,
      "detail": "{\"kind\":\"rent\",\"amount_eur\":900}"
@@ -508,7 +526,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 13
+   "seconds": 12
   },
   {
    "browserName": "chromium",
@@ -853,6 +871,24 @@
     {
      "journey": "J5 Somos mayores",
      "name": "never asks where they work",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Somos mayores» is marked",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«¿Cerca de dónde queréis vivir?» shows «Ciudad Lineal (metro)»",
+     "ok": true,
+     "detail": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra f"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Trabajo en» folded in «Más opciones»",
      "ok": true,
      "detail": ""
     },
