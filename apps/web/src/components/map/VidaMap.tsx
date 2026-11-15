@@ -16,7 +16,7 @@ import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { parseColor } from "@/lib/color";
 import { errorMessage } from "@/lib/errors";
-import { byBarrio, paintFit } from "@/lib/fit";
+import { byBarrio, paintFit, speaksToMany, voice } from "@/lib/fit";
 import { facilitiesGeoJSON, selectedCountText, selectedFacilities } from "@/lib/map/facilities";
 import { paintZones, PATTERN_IMAGE, patternPixels, type Rgba8 } from "@/lib/map/gapMap";
 import { type KeyPoint, type KeyPointOptions, type PlaceFeature, pickKeyPoints } from "@/lib/map/places";
@@ -107,10 +107,12 @@ const TEXT = {
   // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3
   ariaRow: (label: string) =>
     `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
-  ariaFit: "Cada zona tiene un color según lo que te conviene; la leyenda lo explica y la lista de zonas que te convienen está junto al mapa.",
+  // mapa.aria.encaje, «os conviene» to a household of more than one (`voice`)
+  ariaFit: (many: boolean) =>
+    `Cada zona tiene un color según lo que ${voice(many).te} conviene; la leyenda lo explica y la lista de zonas que ${voice(many).te} convienen está junto al mapa.`,
   // mapa.aria.encaje.barrios (D-238), after mapa.aria.barrios: it no longer says the capital is by barrios
-  ariaFitBarrios:
-    "Cada barrio tiene un color según lo que te conviene y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que te convienen está junto al mapa.",
+  ariaFitBarrios: (many: boolean) =>
+    `Cada barrio tiene un color según lo que ${voice(many).te} conviene y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que ${voice(many).te} convienen está junto al mapa.`,
   // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };
@@ -441,7 +443,8 @@ export default function VidaMap() {
   // The capital is drawn by barrios only on the overview with the fit, once their outlines are in;
   // until then (or if they fail) it keeps its districts, unpainted, and the label says nothing of barrios
   const barriosShown = byBarrio(result) && resultZones !== null && resultZones !== zones;
-  const fitAria = byBarrio(result) ? (barriosShown ? TEXT.ariaFitBarrios : null) : TEXT.ariaFit;
+  const many = speaksToMany(result?.scenario.household);
+  const fitAria = byBarrio(result) ? (barriosShown ? TEXT.ariaFitBarrios(many) : null) : TEXT.ariaFit(many);
   const paintedAria = !overview || painted === zones ? null : row && gapData ? TEXT.ariaRow(gapData.info.label) : fitAria;
   const baseAria = overview && !row && barriosShown ? TEXT.ariaBarrios : TEXT.aria;
   // The zone's facilities of the types pressed in «Todos los centros» (several at once), or none

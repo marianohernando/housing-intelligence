@@ -3,6 +3,7 @@
  * GET /api/v1/gaps, with the copy of pitch/textos_web.md (estado.*, fila.*, falta.*).
  */
 import type { ComparisonGroup, GapRowKey, GapStatus, IndicatorValue, NullReason } from "@/contracts/zone_gap_list_response";
+import { voice } from "@/lib/fit";
 import { formatNumber } from "@/lib/format";
 import type { ZoneLevel } from "@/lib/map/zones";
 
@@ -320,13 +321,13 @@ export function gapSummary(rows: readonly SummaryRow[]): { lead: string | null; 
 /**
  * A zone that fits everything asked can still be short of something (encaje.aviso_*): from every
  * row of its «Qué falta», not only the three the card shows. Rows too small to compare do not
- * count; null when no row is FALTA or JUSTO.
+ * count; null when no row is FALTA or JUSTO. «Tiene lo que pedís» to a household of more than one.
  */
-export function fitsButShortText(rows: readonly SummaryRow[]): string | null {
+export function fitsButShortText(rows: readonly SummaryRow[], many = false): string | null {
   const { falta, justo } = rowsByStatus(rows);
   const parts = [falta.length ? `faltan ${listNames(falta)}` : null, justo.length ? `van justos de ${listNames(justo)}` : null].filter(Boolean);
   if (!parts.length) return null;
-  return `Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí ${parts.join(" y ")}.`;
+  return `Tiene lo que ${voice(many).pides}. Aun así, comparado con municipios parecidos, aquí ${parts.join(" y ")}.`;
 }
 
 /**

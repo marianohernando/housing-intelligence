@@ -273,6 +273,15 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
     );
   });
 
+  it("says «Tiene lo que pedís» to a household of more than one (review M-01 of PR #81)", () => {
+    expect(fitsButShortText([row("escuela_infantil", "FALTA")], true)).toBe(
+      "Tiene lo que pedís. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
+    );
+    expect(fitsButShortText([row("escuela_infantil", "FALTA")], false)).toBe(
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
+    );
+  });
+
   it("says nothing when no row is FALTA or JUSTO, and leaves out rows too small to compare", () => {
     expect(fitsButShortText([row("colegio", "CUBIERTO"), row("farmacia", "SIN_DATOS")])).toBeNull();
     expect(fitsButShortText([row("farmacia", "JUSTO", false)])).toBeNull();

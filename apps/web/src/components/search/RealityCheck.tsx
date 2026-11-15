@@ -14,21 +14,27 @@ import {
   relaxOptions,
   speaksToMany,
   unknownText,
+  voice,
   zonesWithoutPrice,
   zoneWord,
 } from "@/lib/fit";
+import { capitalize } from "@/lib/names";
 
 import styles from "./Results.module.css";
 import { useScenario } from "./ScenarioProvider";
 
 // Copy from pitch/textos_web.md (rc.*). Each option is named by its visible text: a different name
-// (the old rc.opcion.aria) breaks WCAG 2.5.3 (label in name).
+// (the old rc.opcion.aria) breaks WCAG 2.5.3 (label in name). What speaks of the search says «tú» or
+// «vosotros» by its household (`voice`); rc.anterior speaks to whoever changed the form, as its button.
 const TEXT = {
-  title: "¿Quieres ver más zonas?",
-  intro: "Mira cuántas salen si cambias una sola cosa:",
+  title: (many: boolean) => `¿${capitalize(voice(many).quieres)} ver más zonas?`,
+  intro: (many: boolean) => `${capitalize(voice(many).mira)} cuántas salen si ${voice(many).cambias} una sola cosa:`,
   tryIt: "Ver esas zonas",
-  limit: "Lo que más limita tu búsqueda es:",
-  note: "No te decimos que gastes más: te enseñamos qué cuesta cada alternativa.",
+  limit: (many: boolean) => `Lo que más limita ${voice(many).tu} búsqueda es:`,
+  note: (many: boolean) => {
+    const v = voice(many);
+    return `No ${v.te} decimos que ${v.gastes} más: ${v.te} enseñamos qué cuesta cada alternativa.`;
+  },
   more: "Ver todas las opciones",
   less: "Ver menos",
   none: "Cambiar una sola cosa no añade zonas.",
@@ -55,6 +61,7 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
   // Not when what leaves zones out is missing data rather than the condition (lib/fit.ts)
   const limiting = limitingConstraint(result);
   const limit = limiting ? constraintLabels(result).get(limiting) : undefined;
+  const many = speaksToMany(result.scenario.household);
   const shown = stale ? [] : open ? options : options.slice(0, 1);
   const hasMore = !stale && (options.length > 1 || rc.zones_unknown > 0 || Boolean(limit));
 
@@ -62,12 +69,12 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
     <GlassCard as="section" aria-labelledby={titleId} className={styles.rc}>
       <h2 id={titleId} className={styles.rcTitle}>
         <Sparkles size={20} aria-hidden="true" />
-        {TEXT.title}
+        {TEXT.title(many)}
       </h2>
       {stale && <p className={styles.muted}>{TEXT.stale}</p>}
       {open && !stale && (
         <p>
-          {passingText(rc.zones_passing, applied !== null, word, speaksToMany(result.scenario.household))} {options.length > 0 && TEXT.intro}
+          {passingText(rc.zones_passing, applied !== null, word, many)} {options.length > 0 && TEXT.intro(many)}
         </p>
       )}
       {!stale && options.length === 0 && <p className={styles.muted}>{TEXT.none}</p>}
@@ -99,11 +106,11 @@ export default function RealityCheck({ result }: { result: SearchResult }) {
       )}
       {open && !stale && limit && (
         <p className={styles.muted}>
-          {TEXT.limit} <strong>{limit}</strong>
+          {TEXT.limit(many)} <strong>{limit}</strong>
         </p>
       )}
       {open && !stale && rc.zones_unknown > 0 && <p className={styles.muted}>{unknownText(rc.zones_unknown, word, zonesWithoutPrice(result))}</p>}
-      {open && !stale && options.length > 0 && <p className={styles.note}>{TEXT.note}</p>}
+      {open && !stale && options.length > 0 && <p className={styles.note}>{TEXT.note(many)}</p>}
       {hasMore && (
         <button type="button" className={styles.toggle} aria-expanded={open} onClick={() => setChoice({ for: result, open: !open })}>
           {open ? TEXT.less : TEXT.more}

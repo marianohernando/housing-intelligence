@@ -1,7 +1,7 @@
 // What the web shows of the API's texts where it does not show them verbatim, for the plain Node
 // checks (this e2e, apps/web/scripts/check-search.mjs and check-qa.mjs). Copied, not imported: they
 // cannot load the web's TypeScript. Keep it in step with apps/web/src/lib/fit.ts (factText,
-// PRICE_HINT, RENT_2024_NOTICE, RENT_LIST_NOTICE, passingText, speaksToMany), apps/web/src/lib/shortfall.ts
+// PRICE_HINT, RENT_2024_NOTICE, RENT_LIST_NOTICE, passingText, speaksToMany, voice), apps/web/src/lib/shortfall.ts
 // (resultados.casi.*) and apps/web/src/lib/essentials.ts with lib/gaps.ts (householdGaps, householdRows).
 
 /** zona.precio.orientativo: by the price of the card's essentials (second delivery of the UX mobile audit). */
@@ -112,18 +112,28 @@ export function factAsShown(fact) {
 /**
  * The line of a near miss in «Casi valen» (resultados.casi.*): what it lacks, by its figures (with
  * «unos», never «≈») or by its name, and «y otra condición» or «y {n} condiciones más» when it fails
- * more. Never a %.
+ * more. Never a %. In the household's words (voice of apps/web/src/lib/fit.ts): «vuestro presupuesto»
+ * and «pedís» to a household of more than one (`many`), «tu presupuesto» and «pides» to one person.
  */
-export const NEAR_MISS_LINE = new RegExp(
-  "^(?:" +
-    [
-      "Se pasa unos [\\d.]+ €(?: al mes)? de tu presupuesto",
-      "Tarda (?:unos \\d+ min|menos de 1 min) más de lo que pides(?: hasta .+)?",
-      "Tarda más de 2 h(?: hasta .+)?; pides \\d+ min como mucho",
-      ".+: (?:unos \\d+ min|menos de 1 min) más andando de lo que pides",
-      ".+ a más de 1 h andando; pides \\d+ min como mucho",
-      "No cumple: .+",
-      "No cumple todo lo que pides\\.",
-    ].join("|") +
-    ")(?: y otra condición| y \\d+ condiciones más)?$",
-);
+export function nearMissLine(many) {
+  const [presupuesto, pides] = many ? ["vuestro presupuesto", "pedís"] : ["tu presupuesto", "pides"];
+  return new RegExp(
+    "^(?:" +
+      [
+        `Se pasa unos [\\d.]+ €(?: al mes)? de ${presupuesto}`,
+        `Tarda (?:unos \\d+ min|menos de 1 min) más de lo que ${pides}(?: hasta .+)?`,
+        `Tarda más de 2 h(?: hasta .+)?; ${pides} \\d+ min como mucho`,
+        `.+: (?:unos \\d+ min|menos de 1 min) más andando de lo que ${pides}`,
+        `.+ a más de 1 h andando; ${pides} \\d+ min como mucho`,
+        "No cumple: .+",
+        `No cumple todo lo que ${pides}\\.`,
+      ].join("|") +
+      ")(?: y otra condición| y \\d+ condiciones más)?$",
+  );
+}
+
+/** rc.titulo: «¿Quieres ver más zonas?», «¿Queréis…?» to a household of more than one (RealityCheck.tsx). */
+export const changesTitle = (many) => (many ? "¿Queréis ver más zonas?" : "¿Quieres ver más zonas?");
+
+/** zona.hechos.titulo: «Lo que tienes aquí», «Lo que tenéis aquí» to a household of more than one (FitDetails.tsx). */
+export const factsTitle = (many) => (many ? "Lo que tenéis aquí" : "Lo que tienes aquí");

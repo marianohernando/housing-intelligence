@@ -4,7 +4,7 @@
  * the fit: it picks what the district screen shows, with the copy of pitch/textos_web.md.
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
-import { constraintLabels, factText, floorAreaOf, hasWalkingFact, voice, type ZonePrice, zonePrice } from "@/lib/fit";
+import { constraintLabels, factText, floorAreaOf, hasWalkingFact, speaksToMany, voice, type ZonePrice, zonePrice } from "@/lib/fit";
 import { type MatchText, matchText, tiedNames, tieText } from "@/lib/match";
 import { nearMissText, type Spoken } from "@/lib/shortfall";
 
@@ -62,6 +62,7 @@ export function barrioRows(
   result: Pick<BarrioSearchResult, "results" | "near_misses"> & Partial<Pick<BarrioSearchResult, "scenario" | "all_zones">>,
 ): { fits: BarrioRow[]; near: BarrioRow[] } {
   const labels = constraintLabels(result);
+  const many = speaksToMany(result.scenario?.household);
   const buying = result.scenario?.budget?.kind === "buy";
   const m2 = floorAreaOf(result);
   // An answer without all_zones: the barrios that fit are all in `results`
@@ -70,7 +71,7 @@ export function barrioRows(
     fits: result.results.map((zone) =>
       barrioRow(zone, null, buying, m2, tiedNames(zone, all, "barrio", result.results), tieText(zone, all, "barrio", result.results)),
     ),
-    near: (result.near_misses ?? []).map((zone) => barrioRow(zone, nearMissText(zone, labels, result.scenario), buying, m2)),
+    near: (result.near_misses ?? []).map((zone) => barrioRow(zone, nearMissText(zone, labels, result.scenario, many), buying, m2)),
   };
 }
 

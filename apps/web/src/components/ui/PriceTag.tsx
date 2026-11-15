@@ -1,4 +1,4 @@
-import { PRICE_HINT, type ZonePrice } from "@/lib/fit";
+import { forFloorArea, PRICE_HINT, type ZonePrice } from "@/lib/fit";
 
 import styles from "./PriceTag.module.css";
 
@@ -25,7 +25,7 @@ export default function PriceTag({ price, variant }: { price: ZonePrice; variant
   }
   return (
     <span className={styles.card}>
-      {price.m2 !== null && <span className={styles.forArea}>{`Para un piso de unos ${price.m2}\u00a0m²`}</span>}
+      {price.m2 !== null && <span className={styles.forArea}>{forFloorArea(price.m2)}</span>}
       {price.confidence && <small className={styles.mark}>{price.confidence.label}</small>}
       {price.range && (
         <small className={styles.range}>

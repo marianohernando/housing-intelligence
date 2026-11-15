@@ -33,8 +33,11 @@ describe("barrioRows (D-232)", () => {
   it("says what a near miss lacks instead of its %, from the API's own figures (F5 of fit-0.9)", () => {
     const { near } = barrioRows(sanBlas);
     expect(near).toHaveLength(1);
-    // Rejas: a school at 35,5 min against the 10 asked
-    expect(near[0]).toMatchObject({ name: "Rejas", fit: null, lacks: { text: "Colegio con primaria: unos 26 min más andando de lo que pides" } });
+    // Rejas: a school at 35,5 min against the 10 asked; the demo case is a family, told «lo que pedís» (review M-01 of PR #81)
+    expect(near[0]).toMatchObject({ name: "Rejas", fit: null, lacks: { text: "Colegio con primaria: unos 26 min más andando de lo que pedís" } });
+    // The same search for one person: «lo que pides»
+    const alone = barrioRows({ ...sanBlas, scenario: { ...sanBlas.scenario, household: { adults: 1, minors: 0 } } }).near;
+    expect(alone[0]?.lacks?.text).toBe("Colegio con primaria: unos 26 min más andando de lo que pides");
   });
 
   it("says «No cumple todo lo que pides» for a failed condition without a name, and works without near misses", () => {

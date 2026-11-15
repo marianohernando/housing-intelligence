@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { ConstraintCheck } from "@/contracts/search_response";
 
-import { FAILS_UNNAMED, joinShortfalls, nearMissText, shortfallOf, shortfalls } from "../shortfall";
+import { failsUnnamedText, joinShortfalls, nearMissText, shortfallOf, shortfalls } from "../shortfall";
 
 const check = (id: string, label: string, value: number | null, threshold: number | null, unit: string, status: "PASS" | "FAIL" = "FAIL"): ConstraintCheck => ({
   constraint_id: id,
@@ -87,7 +87,7 @@ describe("what a near miss lacks (F5 of fit-0.9: «Casi valen» without a %)", (
     expect(nearMissText({ failed_constraints: ["budget", "near:colegio", "commute:0"], constraints }).aria).toBe(
       "Se pasa unos 120 € al mes de tu presupuesto y 2 condiciones más",
     );
-    expect(nearMissText({ failed_constraints: [], constraints }).text).toBe(FAILS_UNNAMED);
+    expect(nearMissText({ failed_constraints: [], constraints }).text).toBe("No cumple todo lo que pides.");
   });
 
   it("says every condition in the zone card, by name for a zone of the map without its own checks", () => {
@@ -107,5 +107,36 @@ describe("what a near miss lacks (F5 of fit-0.9: «Casi valen» without a %)", (
     // A condition nobody names is left out, as before
     expect(shortfalls({ failed_constraints: ["sin_nombre"] }, labels)).toEqual([]);
     expect(shortfalls({ failed_constraints: undefined })).toEqual([]);
+  });
+
+  it("says «vuestro presupuesto» and «lo que pedís» to a household of more than one, «tu» and «pides» to one person (review M-01 of PR #81)", () => {
+    const anchors = [
+      { kind: "work" as const, label: "Paseo de la Castellana (Azca)", lon: 0, lat: 0, max_minutes: 30 },
+      { kind: "family" as const, label: "Getafe Central (Cercanías)", lon: 0, lat: 0, max_minutes: 45 },
+    ];
+    const constraints = [budgetRent(1_620), school(14.8), commute(42), commute(50, 1)];
+    // A couple in «Casi valen»: the first condition it fails, in their words
+    expect(nearMissText({ failed_constraints: ["budget", "commute:0"], constraints }, undefined, undefined, true)).toEqual({
+      text: "Se pasa unos 120 € al mes de vuestro presupuesto y otra condición",
+      aria: "Se pasa unos 120 € al mes de vuestro presupuesto y otra condición",
+    });
+    expect(nearMissText({ failed_constraints: ["near:colegio"], constraints }, undefined, undefined, true).text).toBe(
+      "Colegio con primaria: unos 5 min más andando de lo que pedís",
+    );
+    expect(nearMissText({ failed_constraints: [], constraints }, undefined, undefined, true).text).toBe("No cumple todo lo que pedís.");
+    // A couple in the zone card (FitVerdict): every condition in one line, also beyond 2 h and an hour on foot
+    const card = joinShortfalls(
+      shortfalls({ failed_constraints: ["commute:1", "near:colegio"], constraints: [commute(50, 1), school(75)] }, new Map(), { anchors }, true),
+    );
+    expect(card?.text).toBe(
+      "Tarda unos 20 min más de lo que pedís hasta Getafe Central (Cercanías) · Colegio con primaria a más de 1 h andando; pedís 10 min como mucho",
+    );
+    expect(shortfallOf(commute(150), undefined, true).text).toBe("Tarda más de 2 h; pedís 30 min como mucho");
+    expect(failsUnnamedText(true)).toBe("No cumple todo lo que pedís.");
+    // One person, as before
+    expect(nearMissText({ failed_constraints: ["budget"], constraints }, undefined, undefined, false).text).toBe("Se pasa unos 120 € al mes de tu presupuesto");
+    expect(shortfallOf(budgetBuy(411_000), undefined, false).text).toBe("Se pasa unos 11.000 € de tu presupuesto");
+    expect(failsUnnamedText(false)).toBe("No cumple todo lo que pides.");
+    expect(failsUnnamedText()).toBe("No cumple todo lo que pides.");
   });
 });

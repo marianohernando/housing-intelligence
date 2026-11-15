@@ -9,7 +9,7 @@
 import type { ConstraintCheck, Fact, FactKind, FactTopic, NeedKey, PriorityKey, RankedZone, ScenarioState } from "@/contracts/search_response";
 import type { ComparisonGroup, GapRowKey, GapStatus } from "@/contracts/zone_gap_list_response";
 
-import { WALK_MINUTES_FEATURE_PREFIX } from "./fit";
+import { voice, WALK_MINUTES_FEATURE_PREFIX } from "./fit";
 import { householdRows, NEAR_BUT_SHORT, notComparable, ROW_IN_LIST, ROW_NAME, walkMinutesText } from "./gaps";
 
 /** «Me importa» measured by walking to a service (PRIORITY_NEED of hi_domain/fit.py). */
@@ -183,7 +183,7 @@ export function householdGaps(rows: readonly GapRowLike[], scenario: Pertinent, 
  * the rows are its district's: «En Barajas no falta nada de lo que buscáis.»
  */
 export function nothingMissingText(many: boolean, place: string | null = null): string {
-  const buscas = many ? "buscáis" : "buscas";
+  const { buscas } = voice(many);
   return place ? `En ${place} no falta nada de lo que ${buscas}.` : `No le falta nada de lo que ${buscas}.`;
 }
 

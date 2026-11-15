@@ -152,7 +152,8 @@ function MissingSection({ zone, gaps, mode, withStates }: { zone: ZoneProperties
   // The rows those lines explain are not said again in encaje.aviso_* (review R-06 of PR #70); not
   // for a barrio either: its rows are the whole district's, and the line says «aquí»
   const explained = new Set(nearLines.map((line) => line.row));
-  const fitsButShort = match?.match_pct != null && match.passes_all && !isBarrio ? fitsButShortText(rows.filter((r) => !explained.has(r.row))) : null;
+  const many = speaksToMany(result?.scenario.household);
+  const fitsButShort = match?.match_pct != null && match.passes_all && !isBarrio ? fitsButShortText(rows.filter((r) => !explained.has(r.row)), many) : null;
   const district = districtOfBarrio(zone);
 
   return (

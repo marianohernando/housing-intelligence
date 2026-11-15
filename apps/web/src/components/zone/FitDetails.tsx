@@ -27,6 +27,7 @@ import {
   rentReferenceAvailable,
   resultScope,
   speaksToMany,
+  voice,
   WALK_MEDIAN,
   zoneFit,
   zonePriceOf,
@@ -34,16 +35,16 @@ import {
 } from "@/lib/fit";
 import { tieText } from "@/lib/match";
 import { SCOPE_LABEL } from "@/lib/scenario";
-import { FAILS_UNNAMED, joinShortfalls, shortfalls } from "@/lib/shortfall";
+import { failsUnnamedText, joinShortfalls, shortfalls } from "@/lib/shortfall";
 
 import styles from "./ZoneCard.module.css";
 
 // Copy from pitch/textos_web.md (zona.puesto, zona.empate in lib/match.ts, zona.hechos.titulo, resultados.casi.* and
 // zona.no_cumple in lib/shortfall.ts, zona.condicion.sin_dato, confianza.aria). buySource (zona.compra.sin_precio) says
-// why a zone may have no purchase price (D-227, D-234).
+// why a zone may have no purchase price (D-227, D-234). «tú» or «vosotros» by the household of the search (`voice`).
 const TEXT = {
-  facts: "Lo que tienes aquí",
-  unknown: "No lo sabemos: nos falta el dato para comprobar lo que pides. No lo damos por bueno.",
+  facts: (many: boolean) => `Lo que ${voice(many).tienes} aquí`,
+  unknown: (many: boolean) => `No lo sabemos: nos falta el dato para comprobar lo que ${voice(many).pides}. No lo damos por bueno.`,
   // zona.compra.sin_precio (D-227, D-234): why this zone has no purchase price, by its level. Never
   // a promise of an estimate: with the code deployed before the sync a district has none yet
   buySource: {
@@ -58,11 +59,10 @@ const TEXT = {
     cm: "Con «Alquilar», puede faltar el alquiler: la Comunidad de Madrid solo lo publica para los municipios de más de 20.000 habitantes, y casi ningún pueblo los tiene.",
   },
   // zona.fuera (D-238): a zone of the map outside «¿Dónde?»
-  outside: (scope: string) => `Fuera de tu búsqueda (${scope}).`,
+  outside: (scope: string, many: boolean) => `Fuera de ${voice(many).tu} búsqueda (${scope}).`,
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
   // confianza.ayuda: what «Dato fiable» and the others mean, behind a button instead of a tooltip
   confidenceHelp: "¿Qué quiere decir «Dato fiable»?",
-  confidenceAbout: "Lo que tienes aquí",
 };
 
 /**
@@ -105,10 +105,11 @@ export function FitVerdict({ result, zoneKey }: { result: SearchResult; zoneKey:
   const { data: datasets } = useDatasets();
   const { match, ranked } = zoneFit(result, zoneKey);
   const scope = resultScope(result);
-  if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope])}</p>;
+  const many = speaksToMany(result.scenario.household);
+  if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope], many)}</p>;
   // F5 of fit-0.9: what it lacks in plain words («Se pasa unos 120 € al mes de tu presupuesto»), as in «Casi valen»
   const fails = joinShortfalls(
-    shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario),
+    shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario, many),
   );
   const buying = result.scenario.budget?.kind === "buy";
   const rentingInMunicipio = result.scenario.budget?.kind === "rent" && zoneKey.startsWith("municipio/");
@@ -123,14 +124,14 @@ export function FitVerdict({ result, zoneKey }: { result: SearchResult; zoneKey:
               <span className="visually-hidden">{fails.aria}</span>
             </span>
           ) : (
-            <span>{FAILS_UNNAMED}</span>
+            <span>{failsUnnamedText(many)}</span>
           )}
         </p>
       )}
       {match.match_pct == null && (
         <p className={styles.unknown}>
           <CircleQuestionMark size={18} aria-hidden="true" />
-          <span>{TEXT.unknown}</span>
+          <span>{TEXT.unknown(many)}</span>
         </p>
       )}
       {/* Buying, only a zone with no price says why (D-234): one with its price may be unknown for another condition */}
@@ -153,14 +154,15 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
   const word = zoneWord(result);
   const tie = match.passes_all ? tieText(match, result.all_zones, word, result.results) : null;
   const buying = result.scenario.budget?.kind === "buy";
+  const many = speaksToMany(result.scenario.household);
 
   return (
     <>
-      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word, speaksToMany(result.scenario.household))}</p>}
+      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word, many)}</p>}
       {tie && <p className={styles.tie}>{tie}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>
-          <h3 id={factsId}>{TEXT.facts}</h3>
+          <h3 id={factsId}>{TEXT.facts(many)}</h3>
           <ul>
             {ranked.facts.map((fact, i) => {
               // A fact with a topic or kind this web does not know yet (fit-0.9 and later) still shows, with the «otro» icon
@@ -185,7 +187,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
       )}
       {/* After the facts, outside their list: what each confidence word means */}
       {ranked && ranked.facts.length > 0 && (
-        <Help about={TEXT.confidenceAbout} label={TEXT.confidenceHelp}>
+        <Help about={TEXT.facts(many)} label={TEXT.confidenceHelp}>
           <ul>
             {confidenceLevels(zonePriceOf(result, zoneKey)?.confidence ?? null, ranked.facts.map((f) => f.confidence)).map((level) => (
               <li key={level.label}>

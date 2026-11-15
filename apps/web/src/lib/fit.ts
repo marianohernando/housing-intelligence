@@ -19,6 +19,7 @@ import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 
 import { type ConfidenceText, confidenceText } from "./confidence";
 import { formatEuros } from "./format";
+import { capitalize } from "./names";
 import { floorArea } from "./scenario";
 import type { ZoneCollection, ZoneGeometry, ZoneProperties } from "./map/zones";
 
@@ -110,6 +111,12 @@ export interface ZonePrice {
  * the price of the card's essentials, renting or buying. Every price is an estimate.
  */
 export const PRICE_HINT = "Precio orientativo";
+
+/** zona.precio.desglose (review R-10 of PR #81): what the price is for, without the figure again. */
+export function forFloorArea(m2: number): string {
+  // A no-break space: «68 m²» never splits at the end of a line
+  return `Para un piso de unos ${m2}\u00a0m²`;
+}
 
 /**
  * zona.precio.aviso_2024 (F5 of fit-0.9): every rent is the leases of 2024, and today's listings
@@ -296,16 +303,54 @@ export interface Voice {
   ti: string;
   /** «tu búsqueda» / «vuestra búsqueda» */
   tu: string;
+  presupuesto: string;
   buscas: string;
   pides: string;
-  trabajas: string;
-  marca: string;
+  tienes: string;
   quieres: string;
+  trabajas: string;
+  cambias: string;
+  gastes: string;
+  marca: string;
   elige: string;
+  mira: string;
+  dinos: string;
 }
 
-const ONE: Voice = { te: "te", ti: "ti", tu: "tu", buscas: "buscas", pides: "pides", trabajas: "trabajas", marca: "marca", quieres: "quieres", elige: "elige" };
-const MANY: Voice = { te: "os", ti: "vosotros", tu: "vuestra", buscas: "buscáis", pides: "pedís", trabajas: "trabajáis", marca: "marcad", quieres: "queréis", elige: "elegid" };
+const ONE: Voice = {
+  te: "te",
+  ti: "ti",
+  tu: "tu",
+  presupuesto: "tu presupuesto",
+  buscas: "buscas",
+  pides: "pides",
+  tienes: "tienes",
+  quieres: "quieres",
+  trabajas: "trabajas",
+  cambias: "cambias",
+  gastes: "gastes",
+  marca: "marca",
+  elige: "elige",
+  mira: "mira",
+  dinos: "dinos",
+};
+const MANY: Voice = {
+  te: "os",
+  ti: "vosotros",
+  tu: "vuestra",
+  presupuesto: "vuestro presupuesto",
+  buscas: "buscáis",
+  pides: "pedís",
+  tienes: "tenéis",
+  quieres: "queréis",
+  trabajas: "trabajáis",
+  cambias: "cambiáis",
+  gastes: "gastéis",
+  marca: "marcad",
+  elige: "elegid",
+  mira: "mirad",
+  dinos: "decidnos",
+};
 
 export function voice(many = false): Voice {
   return many ? MANY : ONE;
@@ -342,9 +387,10 @@ export function passingText(n: number, changed = false, word: ZoneWord = "zona",
   return n === 0 ? `No hemos encontrado ${none} ${whom}.` : `Hemos encontrado ${zonesText(n, word)} ${whom}.`;
 }
 
-/** vacio.sin_resultados, with the word of the scope. */
-export function noneText(word: ZoneWord = "zona"): string {
-  return `${WORDS[word].feminine ? "Ninguna" : "Ningún"} ${word} cumple todo lo que pides. Mira abajo qué pasa si cambias algo.`;
+/** vacio.sin_resultados, with the word of the scope; «lo que pedís… Mirad abajo…» to a household of more than one. */
+export function noneText(word: ZoneWord = "zona", many = false): string {
+  const v = voice(many);
+  return `${WORDS[word].feminine ? "Ninguna" : "Ningún"} ${word} cumple todo lo que ${v.pides}. ${capitalize(v.mira)} abajo qué pasa si ${v.cambias} algo.`;
 }
 
 /** resultados.de: how many zones the search compared, and where (D-238). */
@@ -376,7 +422,10 @@ export function rentReferenceAvailable(datasets: readonly { dataset_id: string }
  * sync), the rent only published for municipios of more than 20.000 people. Null in any other search.
  */
 export function rentUnknownText(
-  result: { scenario: { scope?: SearchScope; budget?: { kind: string } | null }; reality_check: Pick<RealityCheck, "zones_unknown" | "zones_evaluated"> },
+  result: {
+    scenario: { scope?: SearchScope; budget?: { kind: string } | null; household?: ScenarioState["household"] };
+    reality_check: Pick<RealityCheck, "zones_unknown" | "zones_evaluated">;
+  },
   rentReference: boolean = true,
 ): string | null {
   const { zones_unknown: n, zones_evaluated: total } = result.reality_check;
@@ -385,7 +434,7 @@ export function rentUnknownText(
   const why = rentReference
     ? "tienen tan pocas viviendas alquiladas que no se publica su alquiler"
     : "el alquiler solo se publica en los municipios de más de 20.000 habitantes";
-  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque ${why}: no podemos comprobar tu presupuesto.`;
+  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque ${why}: no podemos comprobar ${voice(speaksToMany(result.scenario.household)).presupuesto}.`;
 }
 
 /** A search over Madrid capital ranks its barrios (D-238), not its districts. */

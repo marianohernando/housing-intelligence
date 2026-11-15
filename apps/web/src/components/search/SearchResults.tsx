@@ -28,6 +28,7 @@ import {
   speaksToMany,
   tiedText,
   unknownText,
+  voice,
   zoneKeyOf,
   zonePrice,
   zonesText,
@@ -38,6 +39,7 @@ import {
 import { MOBILE_QUERY } from "@/lib/map/camera";
 import { districtOf, type ZoneCollection, zoneTitle } from "@/lib/map/zones";
 import { matchText, tiedNames } from "@/lib/match";
+import { capitalize } from "@/lib/names";
 import { nearMissText, type Spoken } from "@/lib/shortfall";
 
 import RealityCheck from "./RealityCheck";
@@ -59,11 +61,11 @@ const TEXT = {
   retry: "Reintentar",
   // zona.empate, read after the % of a tied row where the % shows (wide screens)
   tiesWith: (whom: string) => `empata con ${whom}`,
-  // resultados.sin_lugar: the two buttons take the person to «Trabajo en» and to «¿Dónde?»
+  // resultados.sin_lugar: the two buttons take the person to «Trabajo en» and to «¿Dónde?»; «¿Trabajáis…?» to a household of more than one
   place: {
-    ask: "¿Trabajas fuera de casa?",
-    work: "Dinos dónde",
-    or: " o elige «Madrid capital» en ",
+    ask: (many: boolean) => `¿${capitalize(voice(many).trabajas)} fuera de casa?`,
+    work: (many: boolean) => `${capitalize(voice(many).dinos)} dónde`,
+    or: (many: boolean) => ` o ${voice(many).elige} «Madrid capital» en `,
     where: "«¿Dónde?»",
     end: " y afinamos el orden.",
   },
@@ -167,6 +169,7 @@ function NearMisses({ result }: { result: SearchResult }) {
   const near = result.near_misses ?? [];
   if (near.length === 0) return null;
   const labels = constraintLabels(result);
+  const many = speaksToMany(result.scenario.household);
   // F5 of fit-0.9: no % here, what each one lacks («Se pasa unos 11.000 € de tu presupuesto»)
   return (
     <div className={styles.near}>
@@ -175,11 +178,11 @@ function NearMisses({ result }: { result: SearchResult }) {
         <ChevronDown size={18} aria-hidden="true" className={open ? styles.flip : undefined} />
       </button>
       <div id={nearId} hidden={!open}>
-        <p className={styles.muted}>{nearHelpText(speaksToMany(result.scenario.household))}</p>
+        <p className={styles.muted}>{nearHelpText(many)}</p>
         <ul className={styles.ranking}>
           {near.map((zone) => (
             <li key={zoneKeyOf(zone.zone)}>
-              <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} lacks={nearMissText(zone, labels, result.scenario)} />
+              <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} lacks={nearMissText(zone, labels, result.scenario, many)} />
             </li>
           ))}
         </ul>
@@ -203,14 +206,14 @@ function focusField(id: string) {
 }
 
 /** resultados.sin_lugar: no place to go and the whole region, with a way to each of the two fields. */
-function PlaceHint() {
+function PlaceHint({ many }: { many: boolean }) {
   return (
     <p className={styles.muted}>
-      {TEXT.place.ask}{" "}
+      {TEXT.place.ask(many)}{" "}
       <button type="button" className={styles.inline} onClick={() => focusField(FIELD_ID.work)}>
-        {TEXT.place.work}
+        {TEXT.place.work(many)}
       </button>
-      {TEXT.place.or}
+      {TEXT.place.or(many)}
       <button type="button" className={styles.inline} onClick={() => focusField(FIELD_ID.where)}>
         {TEXT.place.where}
       </button>
@@ -303,6 +306,8 @@ export default function SearchResults({ children }: { children: ReactNode }) {
 
   const rc = result.reality_check;
   const word = zoneWord(result);
+  // Everything about the results speaks to the household of the result («para vosotros», «lo que pedís»)
+  const resultMany = speaksToMany(result.scenario.household);
   const rentUnknown = rentUnknownText(result, rentReferenceAvailable(datasets?.datasets));
   const tied = rc.zones_passing > 0 ? tiedText(result) : null;
   return (
@@ -334,13 +339,13 @@ export default function SearchResults({ children }: { children: ReactNode }) {
         )}
         {stale && status !== "loading" && <p className={styles.stale}>{TEXT.stale}</p>}
         {/* One line over the list (second delivery of the UX mobile audit): how many zones; the notes go under it */}
-        <p className={styles.summary}>{passingText(rc.zones_passing, applied !== null, word, speaksToMany(result.scenario.household))}</p>
-        {rc.zones_passing === 0 && <p>{noneText(word)}</p>}
+        <p className={styles.summary}>{passingText(rc.zones_passing, applied !== null, word, resultMany)}</p>
+        {rc.zones_passing === 0 && <p>{noneText(word, resultMany)}</p>}
         {rc.zones_passing > 0 && <Ranking result={result} />}
         <div className={styles.notes}>
           {rentNotice(result) && <p>{rentNotice(result)}</p>}
           {tied && <p>{tied}</p>}
-          {asksForPlace(result) && <PlaceHint />}
+          {asksForPlace(result) && <PlaceHint many={resultMany} />}
           <p>{evaluatedText(result)}</p>
           {/* Renting in «Pueblos» most villages have no rent: why they come out «Sin datos» (D-238) */}
           {rentUnknown && <p>{rentUnknown}</p>}

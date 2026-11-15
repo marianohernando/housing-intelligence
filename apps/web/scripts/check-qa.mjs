@@ -40,7 +40,7 @@ import { join } from "node:path";
 
 import { chromium } from "playwright";
 
-import { factAsShown, NEAR_MISS_LINE } from "../../../infra/deploy/e2e/shown_text.mjs";
+import { factAsShown, nearMissLine, speaksToMany } from "../../../infra/deploy/e2e/shown_text.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
@@ -2170,8 +2170,9 @@ async function barrioFit(browser) {
     const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
     if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
     if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
-    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms (NEAR_MISS_LINE), never its %
-    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !NEAR_MISS_LINE.test(r.lineas[0] ?? "") || r.pct !== null)) {
+    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms and in the household's words (nearMissLine), never its %
+    const nearLine = nearMissLine(speaksToMany(api.scenario?.household));
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !nearLine.test(r.lineas[0] ?? "") || r.pct !== null)) {
       failures.push(`${id}: «casi» sin su motivo o con %`);
     }
     if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);

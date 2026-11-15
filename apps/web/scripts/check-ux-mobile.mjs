@@ -41,7 +41,7 @@ const MIN_TARGET_PX = 44;
 const NAMES = {
   search: /^Tu búsqueda$/,
   results: /^(Zonas que encajan|Zonas que (te|os) convienen)$/,
-  changes: /^(¿Y si cambias algo\?|¿Quieres ver más zonas\?)$/,
+  changes: /^(¿Y si cambias algo\?|¿(Quieres|Queréis) ver más zonas\?)$/,
   family: /pareja con 2 hijos/,
   seniorsExample: /pareja jubilada/i,
   seniors: /^Somos mayores/,
@@ -59,7 +59,7 @@ function measureInPage({ pick, minText, minTarget }) {
   const roots = {
     search: () => [...document.querySelectorAll("section")].find((s) => /^Tu búsqueda$/.test(s.querySelector("h2")?.textContent?.trim() ?? "")),
     results: () => document.querySelector("h2[tabindex='-1']")?.closest("section")?.parentElement ?? null,
-    card: () => [...document.querySelectorAll("aside")].find((a) => a.querySelector("h2") && /Lo que tienes aquí|Ver más sobre/.test(a.textContent)) ?? null,
+    card: () => [...document.querySelectorAll("aside")].find((a) => a.querySelector("h2") && /Lo que (tienes|tenéis) aquí|Ver más sobre/.test(a.textContent)) ?? null,
     // The zone screen (second delivery): its intro, the card, the barrios and «Más datos de la zona»
     zone: () => document.querySelector("main") ?? document.body,
     method: () => document.querySelector("main") ?? document.body,
@@ -144,7 +144,7 @@ function countInPage({ rows: rowCount }) {
   };
   const list = document.querySelector("h2[tabindex='-1']")?.closest("section")?.querySelector("ol");
   const rows = list ? [...list.querySelectorAll(":scope > li")].slice(0, rowCount).map((li) => things(li)) : [];
-  const card = [...document.querySelectorAll("aside")].find((a) => a.querySelector("h2") && /Lo que tienes aquí|Ver más sobre/.test(a.textContent)) ?? null;
+  const card = [...document.querySelectorAll("aside")].find((a) => a.querySelector("h2") && /Lo que (tienes|tenéis) aquí|Ver más sobre/.test(a.textContent)) ?? null;
   if (!card) return { rows, card: null };
   // The area in view: the screen, and on a phone the scrolling content of the bottom sheet
   let clip = { top: 0, bottom: window.innerHeight };
@@ -164,7 +164,7 @@ function countInPage({ rows: rowCount }) {
 }
 
 /** The zone card of the overview, before and after the second delivery («Ver más sobre…»). */
-const zoneCard = (page) => page.locator("aside").filter({ has: page.getByRole("heading", { level: 2 }) }).filter({ hasText: /Lo que tienes aquí|Ver más sobre/ }).first();
+const zoneCard = (page) => page.locator("aside").filter({ has: page.getByRole("heading", { level: 2 }) }).filter({ hasText: /Lo que (tienes|tenéis) aquí|Ver más sobre/ }).first();
 
 /** The «Ver más sobre…» of the card, when it has one (second delivery), opened. */
 async function openMore(page) {

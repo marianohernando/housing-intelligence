@@ -25,8 +25,11 @@ import { chromium, firefox, webkit } from "playwright";
 
 import {
   BUY_LIST_NOTICE,
+  changesTitle,
   essentialGapLines,
   factAsShown,
+  factsTitle,
+  nearMissLine,
   PRICE_HINT,
   RENT_2024_NOTICE,
   RENT_LIST_NOTICE,
@@ -74,10 +77,9 @@ const PHONE_MAX_PX = 760;
 /** The zone card of the overview: its «Volver a la lista» or the essentials of a zone (second delivery). */
 const zoneCard = (page) => page.locator("aside").filter({ has: page.getByRole("button", { name: /^Volver( a la lista)?$/ }) }).first();
 const zoneKeyOf = (zone) => `${zone.level}/${zone.code}`;
-/** The names of the list and of «¿Quieres ver más zonas?» (UX mobile audit, first delivery). */
+/** The name of the list (UX mobile audit, first delivery); «¿Quieres ver más zonas?» is changesTitle of shown_text.mjs. */
 // «Zonas que os convienen» for a household of more than one (resultsTitle of apps/web/src/lib/fit.ts)
 const RESULTS = /^Zonas que (te|os) convienen$/;
-const CHANGES = "¿Quieres ver más zonas?";
 const SEARCH_BUTTON = "Buscar zonas para mí";
 /** rc.anterior: the options of the search before the person's last changes are not offered (RealityCheck.tsx). */
 const STALE_OPTIONS = "Estas propuestas eran de tu búsqueda anterior. Pulsa «Buscar zonas para mí» para ver las de ahora.";
@@ -128,9 +130,10 @@ async function journeySearch(run, page) {
     (await page.getByRole("heading", { name: "Zonas que os convienen", exact: true }).count()) === 1);
   const total = await page.getByText(`Hemos mirado las ${result.all_zones.length} zonas de la Comunidad de Madrid.`).count();
   run.check(J, "«Hemos mirado las N zonas» = API all_zones", total > 0, result.all_zones.length);
-  await checkFitLegend(run, page, rc);
+  await checkFitLegend(run, page, rc, many);
   await checkRentNotice(run, page, false);
   await checkRows(run, page, result.results);
+  await checkNearMisses(run, page, result, many);
   await run.shot(page, "j1-results");
   await checkFirstZone(run, page, result.results[0], result);
   await checkRealityCheck(run, page, rc, many);
@@ -241,10 +244,37 @@ async function checkLegendCounts(run, journey, page, expected) {
   }
 }
 
-function checkFitLegend(run, page, rc) {
+async function checkFitLegend(run, page, rc, many) {
+  // The legend speaks to the household as the list does (review M-01 of PR #81)
+  const legend = squash(await page.locator("section[aria-label='Leyenda del mapa']").first().innerText());
+  const words = many ? ["Zonas que os convienen", "Os conviene menos", "Os conviene más"] : ["Zonas que te convienen", "Te conviene menos", "Te conviene más"];
+  run.check("J1 search", `the legend says «${words[0]}», «${words[2]}»`, words.every((w) => legend.includes(w)), legend.slice(0, 160));
   const failing = rc.zones_evaluated - rc.zones_passing - rc.zones_unknown;
   return checkLegendCounts(run, "J1 search", page,
     [["Cumple todo", rc.zones_passing], ["No cumple todo", failing], ["Sin datos", rc.zones_unknown]]);
+}
+
+/**
+ * «Casi valen» (F5 of fit-0.9): each near miss says what it lacks, never a %, in the household's
+ * words: «Se pasa unos 120 € al mes de vuestro presupuesto» to a couple (review M-01 of PR #81).
+ */
+async function checkNearMisses(run, page, result, many) {
+  const J = "J1 search";
+  const near = result.near_misses ?? [];
+  if (near.length === 0) return run.skip(J, "«Casi valen» in the household's words", "no near misses in the API");
+  const results = page.getByRole("region", { name: RESULTS });
+  await results.getByRole("button", { name: /^Casi valen/ }).click();
+  const rows = results.locator("ul > li > button");
+  const line = nearMissLine(many);
+  const wrong = [];
+  for (let i = 0; i < near.length; i += 1) {
+    // The row: its name, then what it lacks (its aria-hidden text), then its price
+    const lacks = squash(await rows.nth(i).locator("span[aria-hidden='true']").first().innerText());
+    if (!(await rows.nth(i).innerText()).includes(near[i].zone.name) || !line.test(lacks) || /%/.test(lacks)) wrong.push(lacks);
+  }
+  run.check(J, `«Casi valen»: what each lacks, ${many ? "«vuestro presupuesto», «pedís»" : "«tu presupuesto», «pides»"}, never a %`,
+    wrong.length === 0, wrong[0] ?? `${near.length} rows`);
+  await results.getByRole("button", { name: /^Casi valen/ }).click();
 }
 
 /** Opens the 1st row of the list and waits for the /gaps answer its card asks for (a barrio's: its district's). */
@@ -292,7 +322,7 @@ async function checkFirstZone(run, page, top, result) {
   await card.locator("summary").filter({ hasText: /^Ver más sobre / }).first().click();
   const text = squash(await card.innerText());
   run.check(J, "«Ver más»: card % = API match_pct", new RegExp(`(?<!\\d)${top.match_pct}\\s*%`).test(text), `${top.match_pct} %`);
-  const facts = card.getByRole("region", { name: "Lo que tienes aquí" }).locator("li");
+  const facts = card.getByRole("region", { name: factsTitle(speaksToMany(result.scenario.household)) }).locator("li");
   const shown = await facts.count();
   // F5 of fit-0.9: renting, the card says RENT_2024_NOTICE by the price, so the rent fact goes without its own
   // «; un anuncio de hoy puede pedir más» (factAsShown, as factText in apps/web/src/lib/fit.ts)
@@ -308,7 +338,7 @@ async function checkFirstZone(run, page, top, result) {
 
 async function checkRealityCheck(run, page, rc, many) {
   const J = "J1 search";
-  const region = page.getByRole("region", { name: CHANGES, exact: true });
+  const region = page.getByRole("region", { name: changesTitle(many), exact: true });
   const option = rc.relaxations.find((r) => r.added_zones > 0);
   if (!option) return run.check(J, "«¿Quieres ver más zonas?» has an option that adds zones", false, "none in the API");
   const text = squash(await region.innerText());
@@ -359,7 +389,7 @@ async function journeySeniors(run, page) {
   const summary = n === 0 ? "No hemos encontrado ningún barrio para vosotros." : n === 1 ? "Hemos encontrado 1 barrio para vosotros." : `Hemos encontrado ${n} barrios para vosotros.`;
   await page.getByText(summary).first().waitFor({ timeout: WAIT });
   run.check(J, "summary = API zones_passing, in barrios, «para vosotros»", true, summary);
-  run.check(J, "never asks where they work", (await page.getByText("¿Trabajas fuera de casa?").count()) === 0);
+  run.check(J, "never asks where they work", (await page.getByText(/^¿Trabaj(as|áis) fuera de casa\?/).count()) === 0);
   // What the person sees (review H4 of PR #79): «Somos mayores» marked, where they want to live with
   // the family's station, and «Trabajo en» folded in «Más opciones»
   const older = page.getByRole("button", { name: /^Somos mayores/ }).first();
@@ -374,7 +404,8 @@ async function journeySeniors(run, page) {
   if (data.results.length > 0) await checkSeniorsCard(run, page, data);
   // Production, 16 nov: unmarking «Somos mayores» without searching again, the options of the old
   // search («Sin límite de tiempo hasta donde vivimos ahora») marked it again when applied
-  const changes = page.getByRole("region", { name: CHANGES, exact: true });
+  // A couple: «¿Queréis ver más zonas?» (changesTitle)
+  const changes = page.getByRole("region", { name: changesTitle(speaksToMany(data.scenario.household)), exact: true });
   await older.click();
   await changes.getByText(STALE_OPTIONS).waitFor({ timeout: WAIT });
   run.check(J, "options of the previous search are not offered once the search changes",
