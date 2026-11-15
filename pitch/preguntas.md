@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov) y de la 51 a la 53 (lo que cambió tras la prueba, 14 nov).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov) de la 51 a la 53 (lo que cambió tras la prueba, 14 nov) y de la 54 a la 59 (contexto de la zona, alquiler de los anuncios, coche y validación de la fórmula, 15 nov).
 
 ---
 
@@ -52,7 +52,7 @@ Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, re
   - para las personas es gratis, y la API y el MCP también, sin uso comercial.
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
-Por el trabajo que hay encima: cruzar 29 conjuntos con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
+Por el trabajo que hay encima: cruzar 35 conjuntos de la Comunidad, y 52 con los de apoyo, con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
 - Evidencia: `pitch/datasets_cm.md` · `evidence/gate-01/2026-11-10/summary.md` · `evidence/gate-01/2026-11-10/idempotent-rerun.txt`.
 
 **8. ¿La licencia de los datos permite un uso comercial?**
@@ -118,8 +118,10 @@ Primero, las condiciones: cada una sale PASS, FAIL o «sin dato», y «sin dato�
 - Estado: hecho en la API (CORE-003) y en producción desde el 11 nov (buscador de B, PR #10, encendido por C en el PR #11). Con `fit-0.6` (12 nov: trabajo en minutos de transporte, D-220, y alquiler de contratos nuevos, D-228), `POST /api/v1/search` con el caso de la Castellana da 27 de 199 zonas, con Latina, Moratalaz, Ciudad Lineal y Puente de Vallecas empatadas al 98 %. Con `fit-0.7` (barrios, D-232) y tras el desempate (D-239), sale lo mismo (`evidence/gate-06/2026-11-14-deploy/deploy-28-f1b6f5a.md`).
 
 **19. El alquiler solo está publicado para municipios grandes. ¿Qué hacéis en el resto?**
-Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto, la condición de presupuesto sale «sin dato», se dice y nunca se da por buena. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
-- Evidencia: D-214 (puntos 3 y 4) · `data/catalog/features/alquiler_m2_mensual.yaml` v2 · `evidence/gate-04/2026-11-11/phase-core006-f1.txt` (14,46 frente a 15,10) · `CLAUDE.md` §14 (UNKNOWN nunca equivale a PASS).
+Así es: la Comunidad publica el alquiler de 37 municipios, los de más de 20.000 habitantes con contratos suficientes, y el de los códigos postales de Madrid capital. En el resto usamos la referencia de precios de alquiler del Ministerio de Vivienda, la mediana de cada municipio llevada al nivel de la cifra de la Comunidad y a los contratos firmados en 2024: la marcamos como dato aproximado, damos el rango en el que está la mitad de los contratos y, en los 16 pueblos donde casi no se alquila, decimos que no hay dato y nunca lo damos por bueno. En los distritos de Madrid hacemos la media de sus códigos postales, ponderada por dónde están los colegios, centros de salud y centros sociales, y lo declaramos como aproximación: sale 14,5 €/m², y la Comunidad publica 15,1 para todo Madrid.
+- Evidencia: D-214 (puntos 3 y 4) · D-242 (SERPAVI, base de datos 2011-2024 del Ministerio de Vivienda; 126 municipios y Sol rellenos) · `data/catalog/features/alquiler_m2_mensual.yaml` v2 · `evidence/gate-04/2026-11-11/phase-core006-f1.txt` (14,46 frente a 15,10) · `CLAUDE.md` §14 (UNKNOWN nunca equivale a PASS) · producción, 15 nov: con «Pueblos», 122 de 138 cumplen y 16 salen sin dato; Casarrubuelos, «Alquiler ≈ 571 €/mes» y «La mitad de los contratos, entre 500 y 790 €/mes» (`evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md`).
+- Si insiste en la licencia del Ministerio: permite reutilizar citando la fuente y la fecha de actualización, y la web la cita así; la página del aviso legal no se deja leer desde un programa, así que la comprueba Mariano a mano (**pendiente de Mariano**, D-242 §1).
+- Estado: en producción desde el 15 nov.
 
 **20. Vuestro alquiler estimado parece bajo. ¿Es real?**
 Es una estimación y lo decimos en cada resultado: el precio por metro de la Comunidad, corregido con lo que cuestan de más los contratos firmados en 2024 según la Agencia Tributaria, por los metros del hogar. Sigue sin ser el precio de un anuncio, y los m² son construidos, del Catastro, así que el piso real es algo menor que el que suponemos (77 m² para 4 personas, la vivienda mediana de ese hogar en el Censo 2021). Por eso la tarjeta dice «un anuncio de hoy puede pedir más».
@@ -143,9 +145,9 @@ Por las calles de verdad, no en línea recta, a 4 km/h: el mismo paso que el est
 ## Ricardo Curto · Universidad de Oviedo (calidad, licencias y cita de fuentes)
 
 **23. ¿Qué datasets del portal usáis exactamente y con qué licencia?**
-29 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad. La lista se genera desde el catálogo, no se escribe a mano.
-- Evidencia: `pitch/datasets_cm.md` · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` (27 en producción desde la noche del 12 nov; el formulario se envió ese mismo día con 26).
-- Si insiste en cuáles se ven: 25 alimentan la lista o el buscador (el 27.º, el valor tasado de la vivienda, da el precio de compra en 28 municipios, D-227); los 2 de camas (12 nov) dan el total de la región: ya los sirve la API (85 hospitales y 3,0 camas por 1.000 habitantes, sincronizado y verificado por A); B los enseña en la nota del hospital en su próximo PR (**pendiente de B**). Si no llega al freeze del 23 nov, se cuentan 25 y no 27 (decisión de datamad-10). De esos 25, los 3 de accesibilidad de las estaciones (12 nov, D-223) se usan con «sin escaleras», en producción desde el 12 nov.
+35 datasets con ficha en el Portal de Datos Abiertos de la Comunidad de Madrid, cada uno con su enlace, licencia, qué alimenta y su informe de calidad, y 17 más de apoyo que no contamos como datos de la Comunidad. La lista se genera desde el catálogo, no se escribe a mano.
+- Evidencia: `pitch/datasets_cm.md` (regenerado el 15 nov) · `pitch/build_datasets_cm.py` · `GET /api/v1/datasets?cm_only=true` en producción: 35, y 52 en total (15 nov). Eran 27 la noche del 12 nov, cuando se envió el formulario con 26; 29 con D-235 y 35 con D-237 y D-241.
+- Si insiste en cuáles se ven: todos se ven en la web. 9 son contexto de la zona y no puntúan: las infracciones penales, la antigüedad de las viviendas, la renta, las 3 fichas del aire, los aparcamientos de disuasión, las compraventas de vivienda nueva y el valor tasado por antigüedad (D-235, D-237 y D-241). Los 2 de camas dan el total de la región bajo la nota del hospital (D-231). El resto alimenta el buscador o «Qué falta», o da la geografía y la población de base; entre ellos, los 3 de accesibilidad de las estaciones, que se usan con «Sin escaleras» (D-223).
 
 **24. Los GTFS son del Consorcio. ¿Por qué los contáis como datos de la Comunidad?**
 Porque el propio portal de la Comunidad los publica con su ficha y su licencia. Aun así, los separamos en la lista y damos también la descarga original del CRTM, para que se vea claro.
@@ -207,8 +209,8 @@ Porque no hacemos scraping: sus condiciones no lo permiten y las bases exigen re
 **36. ¿Incluís seguridad? Es delicado.**
 No la puntuamos, y es una decisión. El dato oficial que evaluamos, los hechos conocidos de infracciones penales por cada 1.000 habitantes, cuenta dónde se denuncia o dónde actúa la policía, no dónde se vive: en 2024, Humanes de Madrid daba 116,2 y Madrid 58,6, frente a 47,9 de referencia, y ordenar zonas así señalaría municipios por la actividad que reciben. Además, solo cubre 36 de las 199 zonas y ninguno de los distritos de Madrid.
 - Evidencia: D-224 · D-226 · `evidence/gate-01/2026-11-12/seguridad-evaluacion.md` y `seguridad-fuentes.md` · D-204 y D-205 (nunca nacionalidad ni etiquetas como «peligroso»).
-- Si insiste: en los 21 distritos de Madrid sí damos contexto, que no puntúa ni ordena. Es cómo valoran los vecinos la seguridad de su barrio, de 0 a 10, según la Encuesta de calidad de vida de 2025 del Ayuntamiento, con unas 400 personas por distrito; la media de Madrid es 6,4 de noche y 7,8 de día (D-226 §1). En la web se ve en dos barras: por ejemplo, Villaverde da 4,9 de noche y 6,8 de día. Las actuaciones de la Policía Municipal miden la actividad policial, no el riesgo de vivir allí. Los atropellos, sin saber cuánta gente camina por cada calle, señalan los barrios con más vida. Ninguno de los dos puntúa (D-226 §2–3). Enseñar la tasa de criminalidad como contexto en esos 36 municipios sigue abierto (D-224 §3).
-- Estado: decidido (D-224 y D-226). La prioridad «Seguridad» no puntúa. La percepción vecinal está en la API y en la vista de zona de los distritos de Madrid.
+- Si insiste: en los 21 distritos de Madrid sí damos contexto, que no puntúa ni ordena. Es cómo valoran los vecinos la seguridad de su barrio, de 0 a 10, según la Encuesta de calidad de vida de 2025 del Ayuntamiento, con unas 400 personas por distrito; la media de Madrid es 6,4 de noche y 7,8 de día (D-226 §1). En la web se ve en dos barras: por ejemplo, Villaverde da 4,9 de noche y 6,8 de día. Las actuaciones de la Policía Municipal miden la actividad policial, no el riesgo de vivir allí. Los atropellos, sin saber cuánta gente camina por cada calle, señalan los barrios con más vida. Ninguno de los dos puntúa (D-226 §2–3). Y desde el 15 nov la vista de cada zona enseña, solo como contexto, las infracciones penales conocidas por 1.000 habitantes, sin los delitos por internet y con el aviso «sube donde hay mucha gente de paso»; en los distritos, la cifra de toda la ciudad (D-235; pregunta 54).
+- Estado: decidido (D-224, D-226 y D-235). La prioridad «Seguridad» no puntúa. La percepción vecinal está en la vista de zona de los distritos de Madrid, y las infracciones penales, como contexto en todas las zonas (en producción).
 
 **37. ¿Sirve para alguien que no puede subir escaleras?**
 Sí, si lo marca: «Sin escaleras» puntúa los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el Consorcio da como totalmente accesible, y nunca se deduce ni se etiqueta a nadie. Es una aproximación declarada: no mide autobuses, aceras, portales ni ascensores, y la tarjeta lo dice cuando no hay ninguna estación así a un paseo. En Madrid capital va de 6,8 minutos en Chamberí a 25,5 en Usera.
@@ -303,26 +305,28 @@ Entre distritos se parecen porque esta familia pide cosas que Madrid cumple casi
 - Estado: en producción, en la API y en la web: la vista de un distrito enseña «Los barrios que mejor encajan» tras buscar (PR #37, desplegado en `e7025fb`), y «¿Dónde?» desde el 14 nov (D-238, despliegue de `f1b6f5a`).
 
 ## Dos más, de la prueba con usuarios (14 nov)
-No entran antes del freeze del 23 nov: se responden con la hoja de ruta.
+Se responden con lo que ya enseña la web desde el 15 nov y con la hoja de ruta.
 
 **49. ¿Y los proyectos futuros de Madrid, como el metro nuevo o los nuevos desarrollos?**
-Hoy medimos lo que ya existe: una línea o una estación nueva entra en cuanto el Consorcio la publica en sus horarios, que recargamos cada trimestre. Lo que aún está en obras o en proyecto iría como un escenario aparte («si abre esta estación…»), nunca mezclado con el dato de hoy. Para los desarrollos, el portal de la Comunidad publica las ventas de vivienda nueva por municipio; el planeamiento urbanístico no está en el portal, así que habría que pedirlo a cada ayuntamiento.
+Hoy medimos lo que ya existe, y enseñamos lo que viene como contexto: las promociones del Plan Vive de la Comunidad y, en Madrid capital, los desarrollos residenciales del Plan General que están en obras o en trámite, como Los Berrocales o Los Ahijones en Vicálvaro. Una línea o una estación nueva entra en cuanto el Consorcio la publica en sus horarios, que recargamos cada trimestre; lo que aún está en proyecto iría como un escenario aparte, nunca mezclado con el dato de hoy. Nada de eso puntúa: dice dónde se prepara suelo, no cuántas viviendas habrá ni cuándo.
 - Evidencia:
+  - lo que viene: D-241 (Plan Vive, transcrito de la web de la Comunidad con su fecha de extracción; «PGOUM 97. Estado de desarrollo de los ámbitos», datos.madrid.es, CC BY 4.0) · producción, 15 nov: Getafe, Plan Vive con 864 viviendas, y los distritos de Madrid con sus ámbitos (`evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md`);
+  - por qué no puntúa: D-241 §4 y §10 (puntuar «dónde habrá más vivienda» sería una predicción sin dato de cuándo ni cuántas);
   - horarios: los 6 GTFS del CRTM (D-196) y los minutos al trabajo calculados con ellos (D-220); recarga trimestral en `pitch/modelo_negocio.md` («Mantenimiento con una sola persona»);
-  - escenario frente a dato: `docs/03_intelligence/21_temporal_and_forecasting_strategy.md` («Forecast» y «Scenario»; «nuevas estaciones» y «obra/promoción» entre las señales de zona emergente) y `CLAUDE.md` §11 (observado, estimado, forecast y escenario, siempre separados);
-  - vivienda nueva: «Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid» (`transacciones_vivienda_nueva_usada_municipio`, portal CM, CC BY 4.0; ya listado en `docs/02_data/08_initial_madrid_dataset_map.md`, P1-04);
-  - planeamiento: en el portal CM no sale ningún conjunto al buscar «planeamiento» (14 nov); sigue abierto en `docs/00_index/02_open_questions.md`.
-- Estado: hoja de ruta.
+  - escenario frente a dato: `docs/03_intelligence/21_temporal_and_forecasting_strategy.md` («Forecast» y «Scenario») y `CLAUDE.md` §11 (observado, estimado, forecast y escenario, siempre separados).
+- Si insiste en los pueblos: fuera de Madrid no hay un registro abierto del planeamiento como el del Ayuntamiento (en el portal CM no sale ningún conjunto al buscar «planeamiento», 14 nov). Lo que sí hay es la parte de compraventas de vivienda nueva de cada municipio (pregunta 50).
+- Estado: «Vivienda nueva y lo que viene», en producción desde el 15 nov (D-241); las líneas de metro en proyecto, hoja de ruta.
 
 **50. ¿Puedo filtrar por vivienda nueva o por metros?**
-Hoy no filtramos pisos concretos, porque no usamos anuncios: Vida Fácil elige zonas. Lo que sí damos es contexto de la zona: los metros del alquiler medio (77 m² en Latina), cuántas viviendas de más de 90 m² hay por cada 100 hogares de 4 o más personas («Vivienda para familias») y, desde esta semana, cuántas viviendas son posteriores al año 2000. Filtrar pisos por metros o por obra nueva queda en la hoja de ruta, con datos que se puedan reutilizar legalmente.
+Hoy no filtramos pisos concretos, porque no usamos anuncios: Vida Fácil elige zonas. Lo que sí damos es contexto de la zona: los metros del alquiler medio (77 m² en Latina), cuántas viviendas de más de 90 m² hay por cada 100 hogares de 4 o más personas, qué parte de las viviendas se construyó desde 2001 (en los distritos de Madrid, su año medio de construcción) y qué parte de las compraventas del último año fue de obra nueva. Filtrar pisos por metros o por obra nueva queda en la hoja de ruta, con datos que se puedan reutilizar legalmente.
 - Evidencia:
   - sin anuncios: pregunta 35 · `CLAUDE.md` §15;
   - metros: el hecho del alquiler («Alquiler ≈ 1.101 €/mes por 77 m²», Latina, `evidence/gate-06/2026-11-12-deploy/caso-demo-fit06.md`) y la fila de vivienda (`data/catalog/features/viviendas_grandes_por_100_hogares_grandes.yaml`; en los distritos de Madrid, SIN DATOS);
-  - antigüedad: «Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios» (`censo_anual_vivienda_por_antiguedad`, portal CM, CC BY 4.0, años 2022 y 2023; no trae los distritos de Madrid). Cálculo de D con 2023, consultado el 14 nov: el 24,6 % de las viviendas de la Comunidad son posteriores a 2000; en Madrid capital, el 16,5 %;
+  - antigüedad: D-235 §3. En los municipios, el censo anual de la Comunidad de 2023 (`censo_anual_vivienda_por_antiguedad`; Madrid, 16,5 % desde 2001). En los distritos y barrios de Madrid, el año medio de construcción del Catastro, del panel del Ayuntamiento (de 1926 en Centro a 1999 en Vicálvaro);
+  - obra nueva: D-241 §5 («Compraventas de vivienda nueva y de segunda mano, por municipio», portal CM; en los 4 últimos trimestres, Getafe 28 % y Madrid 3,8 %);
   - hoja de ruta: D-069 (superficie, antigüedad y obra nueva o usada «cuando exista información fiable y legalmente reutilizable»).
-- Si insiste en la obra nueva: las ventas de vivienda nueva por municipio (pregunta 49) dicen dónde se construye, no qué piso comprar.
-- Estado: los metros, en producción; la antigüedad, **pendiente de A y de B** (si el 23 nov no está, se quita «y, desde esta semana, …» de la respuesta); el filtro por vivienda, hoja de ruta.
+- Si insiste en la obra nueva: la parte de compraventas nuevas dice dónde se construye, no qué piso queda libre ni a qué precio.
+- Estado: los metros, la antigüedad y la obra nueva, en producción (15 nov); el filtro por vivienda, hoja de ruta.
 
 ## Tres más, de lo que cambió tras la prueba con usuarios (14 nov)
 
@@ -349,3 +353,41 @@ Del registro de centros sanitarios de la Comunidad de Madrid, que publica de qui
 - Si pregunta por los hospitales de los contratos de obra (Henares, Infanta Cristina, Infanta Leonor…): son públicos de gestión pública. La empresa construyó el edificio y lleva los servicios no sanitarios, pero la asistencia es del Servicio Madrileño de Salud.
 - Si pregunta por un hospital con convenio, como la Fundación Instituto San José: sale privado. Puede recibir pacientes derivados, pero no es el hospital de referencia de la tarjeta sanitaria.
 - Estado: en producción desde el 14 nov (despliegue de `f1b6f5a`). El Rey Juan Carlos sale aún sin nombre, como «Hospital público · gestión privada», hasta la próxima carga del registro (D-239).
+
+## Seis más: contexto de la zona y preguntas difíciles de la fórmula (15 nov)
+
+**54. Enseñáis delitos y renta por zona. ¿No estigmatiza eso a algunos barrios?**
+Por eso no puntúan, no ordenan ni filtran: son datos informativos con su fuente, su año y su aviso, sin colores ni palabras como «peligroso» o «rica». Los delitos van sin los de internet y con el aviso de que suben donde hay mucha gente de paso, porque se cuentan donde se conocen, no donde vive quien los sufre; en Madrid damos la cifra de toda la ciudad, porque no se publica por distrito y repartirla sería inventar. La renta la pidieron los usuarios, pero ordenar por ella empujaría a las familias según el dinero de sus vecinos.
+- Evidencia: D-235 §1–5 (`context_only`, sin `fit` ni `gap_row`, y el test `test_zone_context_never_scores_filters_or_enters_the_gaps`) · D-224 · D-226 · `zona.contexto.*` en `pitch/textos_web.md`.
+- Si insiste: los propios vecinos no ven tanta diferencia. En la Encuesta de Calidad de Vida y Satisfacción con los Servicios Públicos 2025 del Ayuntamiento de Madrid, la percepción general de seguridad va de 7,5 en Chamberí a 6,4 en Villaverde: 1,1 puntos sobre 10.
+- Estado: en producción (D-235).
+
+**55. ¿Por qué el ruido solo en Madrid?**
+Porque el dato es el Mapa Estratégico de Ruido 2021 del Ayuntamiento de Madrid, que se publica en abierto (Geoportal, CC BY 4.0) con detalle de calle. Contamos qué parte de las calles residenciales pasa de 65 decibelios de día o de 55 de noche, los objetivos de calidad acústica de las zonas residenciales: en Usera, el 14 % de las calles de día y el 32 % de noche. Es el ruido del tráfico calculado en la calle, no medido en la ventana; fuera de Madrid sale «sin dato publicado», nunca 0, y en ningún sitio puntúa.
+- Evidencia: D-237 §1, §2 y §4–5 · Real Decreto 1367/2007, anexo II, tabla A · producción, 15 nov: Usera, «14 % de las calles de día, 32 % de noche»; Getafe, «sin dato publicado» (`evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md`).
+- Si insiste en los demás municipios: la ley obliga a las aglomeraciones de más de 100.000 habitantes a hacer su propio mapa estratégico de ruido (Directiva 2002/49/CE). No hemos cargado ninguno más: buscarlos en abierto es el siguiente paso.
+- Si pregunta por qué importa: el 27,7 % de los hogares de la Comunidad dice sufrir ruidos de los vecinos o de la calle, frente al 22,1 % en España (INE, Encuesta de Condiciones de Vida, 2020).
+- Si pregunta por el aire: sí está en toda la región. Es la media de dióxido de nitrógeno de 2025 en la estación de la zona o en la más cercana de su misma zona de calidad del aire, con el límite europeo al lado; en Getafe, 25,6 µg/m³ en su estación de tráfico (D-237 §2–3). Tampoco puntúa.
+
+**56. El ocio sale de OpenStreetMap. ¿Por qué no de datos de la Comunidad?**
+Porque el portal de la Comunidad no publica un censo con coordenadas de bares, restaurantes, gimnasios, cines ni museos de toda la región; sí publica las bibliotecas y los museos por municipio, y los usamos para comprobar OpenStreetMap. En las ciudades está bastante completo, pero en los pueblos falta algún local: de los 97 municipios con biblioteca pública según la Comunidad, 77 la tienen en el mapa. Por eso el ocio solo cuenta si lo marcas y no deja fuera ninguna zona salvo que marques «Imprescindible».
+- Evidencia: D-236 §1, §3 y §5 · `evidence/gate-01/2026-11-14/ocio.md` · licencia ODbL («© OpenStreetMap contributors»), que no cuenta como dato CM.
+- Estado: en producción (D-236, `fit-0.8`).
+
+**57. Vuestros alquileres son de 2024. Los anuncios de hoy están entre un 16 % y un 33 % más altos.**
+Es cierto, y lo decimos en cada resultado: nuestra cifra es lo que se pagó en los contratos firmados en 2024 según Hacienda, no lo que se pide hoy en un anuncio. Parte de la diferencia es la subida desde entonces (en Madrid, un 9,7 % en 2025 y un 4,5 % interanual en octubre de 2026, según idealista), y otra parte, que un anuncio es un precio pedido, no un contrato firmado. Donde usamos la referencia del Ministerio damos también el rango de la mitad de los contratos, y la distancia con los anuncios es uno de los casos con los que revisamos la fórmula el 18 nov.
+- Evidencia: D-228 (contratos firmados en 2024, Agencia Tributaria) · D-242 (rango) · el aviso de cada resultado: «un anuncio de hoy puede pedir más» · contraste hecho para el banco de la fórmula (15 nov), con los precios de anuncio de idealista (septiembre y octubre de 2026, en parte a través de Housfy) y de Fotocasa (Madrid capital, 23,11 €/m² en octubre de 2026). Son fuentes de anuncios, con fiabilidad media.
+- Si insiste: la distancia no es igual en todas partes. En las zonas baratas el anuncio sale entre 1,28 y 1,33 veces nuestra cifra (Puente de Vallecas, Leganés, Colmenar Viejo); en las caras, entre 1,16 y 1,19 (Chamberí, Centro). Así que una zona que entra justa en el presupuesto puede no entrar con los precios de hoy, y más si es barata.
+- Estado: **provisional.** Qué se hace con esa distancia se decide el 18 nov, con la fórmula (**pendiente de datamad-10 y Mariano**). Hasta entonces, la respuesta es la de arriba sin la última frase.
+
+**58. ¿Y si voy en coche?**
+Hoy no lo medimos: el trayecto es en transporte público, porque es lo que se puede calcular con datos abiertos de la Comunidad, los horarios del Consorcio, y lo decimos. Sabemos que pesa: según la Encuesta Domiciliaria de Movilidad de 2018 del Consorcio, el 52,7 % de los viajes al trabajo en la región se hace en vehículo privado, y desde la corona metropolitana el transporte público tarda de media 47 minutos y el coche entre 22 y 27, así que para quien conduce los municipios salen peor de lo que son. El tiempo en coche está en la hoja de ruta; mientras, enseñamos el aparcamiento de disuasión o público más cercano.
+- Evidencia: Consorcio Regional de Transportes de Madrid, Encuesta Domiciliaria de Movilidad 2018 (síntesis, pp. 24–25, y documento III, tabla 102; 13.009 hogares) · D-220 (trayecto en transporte público) · D-237 (aparcamientos) · `pitch/metodologia.md` §1.8 («Medimos lo que tienes andando…») · `CLAUDE.md` §11 (movilidad multimodal).
+- Si insiste: el límite «Tardar como mucho N min» también es en transporte público. La encuesta es de antes de la pandemia y del teletrabajo.
+- Estado: hoja de ruta.
+
+**59. ¿Cómo validasteis la fórmula del encaje?**
+Con un banco de pruebas en cuatro capas: perfiles sacados de la prueba con usuarios y casos de control, cada uno con lo que esperaba ver; una rejilla de 1.000 búsquedas sintéticas (hogar, presupuesto, trabajo, días de oficina, prioridades, ámbito y metros); pruebas de coherencia, como que más presupuesto nunca quite zonas o que menos minutos de trayecto nunca bajen el %; y la robustez frente al error de los datos, moviendo cada valor dentro de su fiabilidad. Además comparamos los resultados con fuentes externas: las encuestas de Fotocasa y del CIS sobre qué se valora al elegir casa y la Encuesta Domiciliaria de Movilidad del Consorcio sobre cuánto se tarda al trabajo. Esas fuentes no ajustan la fórmula: solo sirven para comprobarla.
+- Evidencia: el banco de fórmulas (F4) y su evidencia externa: CIS, Barómetro de la Vivienda y el Alquiler (estudio 3212, 2018); Fotocasa Research, «Experiencia en compraventa en 2024»; Consorcio Regional de Transportes, Encuesta Domiciliaria de Movilidad 2018. Cada fuente lleva su fecha, su muestra y su sesgo declarado: por ejemplo, Fotocasa son usuarios de un portal, y el CIS es de 2018 y de toda España. La evidencia del banco entra en el repositorio con la decisión del 18 nov (**pendiente de datamad-10**).
+- Si insiste en un caso: con mucho presupuesto, las zonas empataban al 100 % y salían pueblos por orden alfabético; lo vio la prueba con usuarios y lo arregló el desempate (pregunta 51).
+- Estado: **provisional.** La fórmula se decide el 18 nov; después se cambia esta respuesta con lo que salga.
