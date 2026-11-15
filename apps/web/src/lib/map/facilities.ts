@@ -368,7 +368,7 @@ export function hospitalLine(f: Facility): HospitalLine {
   return { dependency: f.dependency, name: f.name ?? f.label, notes: notes.filter((n): n is string => n !== null), beds };
 }
 
-/** centros.hospital.dependencia: what «público», «gestión privada» and «privado» mean, folded behind «¿Qué significa?». */
+/** centros.hospital.dependencia: what «público», «gestión privada» and «privado» mean, folded behind «¿Qué significa público y privado?». */
 export const HOSPITAL_DEPENDENCY_NOTE =
   "Público: de la red del Servicio Madrileño de Salud, aunque lo gestione una empresa («gestión privada»). Privado: el resto. Según el registro de centros sanitarios y la red de hospitales públicos de la Comunidad de Madrid.";
 

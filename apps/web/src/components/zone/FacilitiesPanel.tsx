@@ -56,7 +56,7 @@ const TEXT = {
   bedsAfter: (publisher: string) => ` del ${publisher}.`,
   newTab: " (se abre en una pestaña nueva)",
   // centros.hospital.que_significa: folds centros.hospital.dependencia (15 nov)
-  meaning: "¿Qué significa?",
+  meaning: "¿Qué significa público y privado?",
 };
 
 /** centros.camas: «Camas instaladas a 31 de diciembre de 2024, según el Catálogo … 2025 del Ministerio de Sanidad.» */

@@ -15,7 +15,7 @@ const TEXT = {
   label: "Metros cuadrados",
   usual: (m2: number) => `Lo normal para tu hogar (${m2} m²)`,
   option: (m2: number) => `${m2} m²`,
-  help: "Lo normal para tu hogar es la superficie más común de las viviendas de hogares como el tuyo en la Comunidad de Madrid (Censo 2021). El precio de cada zona es para estos metros.",
+  help: "Lo normal para tu hogar es la superficie habitual de las viviendas de hogares como el tuyo en la Comunidad de Madrid (Censo 2021): la mitad tiene menos metros y la otra mitad, más. El precio de cada zona es para estos metros.",
 };
 
 /**
