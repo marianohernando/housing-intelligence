@@ -43,6 +43,7 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
+| Slides 3 y 4 | C1, C2 y C3 son provisionales (`data-pending` en su `figcaption`): se rehacen tras la entrega de UX, porque cambian las palabras de las bandas y de la lista | D, tras el despliegue de B (19 nov como tarde) |
 
 Cerrada el 15 nov: **C1, C2 y C3, rehechas por D en producción con `fit-0.9`** (`pitch/capturas/`). C1 enseña la parada por tipo y «¿Dónde?»; el marcador 3 de la slide 4 baja a «Qué falta aquí» (`.s4 .m3`, `top: 581px`); los `alt` dicen Puente de Vallecas y Latina al 94 %.
 

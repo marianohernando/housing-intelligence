@@ -8,6 +8,7 @@
   for b in 1 2 2s 3 4 5; do printf "b$b "; awk -v b=$b '$0 ~ "^<!-- habla:b"b":fin"{f=0} f; $0 ~ "^<!-- habla:b"b":inicio"{f=1}' pitch/guion.md | wc -w; done
   ```
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
+- **Textos de la web:** la entrega de UX (19 nov como tarde, decisión de Mariano tras la prueba con la persona mayor) cambia las palabras de las bandas, la lista del móvil y «Casi encajan». Por eso el guion no cita esas etiquetas: describe lo que se ve, y en pantalla se lee lo que salga.
 - **Textos de los botones:** son los de producción, comprobados en las capturas del 11 nov:
   - buscador: `evidence/gate-06/2026-11-11-deploy/prod-buscador-*.png` y `prod-buscador-check.json` (PR #11);
   - «Qué falta»: `evidence/map-004/2026-11-11/prod_c4_*`. La de Puente de Vallecas con gap-0.3 la hizo B en el PR #17 (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`).
@@ -62,19 +63,19 @@ Con el buscador, encendido en producción desde el 11 nov. Si la demo vuelve a e
 
 **Resultado en producción** (15 nov, `fit-0.9`, D-243). Sale de `POST /api/v1/search` con el fixture y de la web, comprobados por D. Se lee en pantalla, nunca de memoria. El 25 nov se vuelve a comprobar en producción:
 - encajan **42 de las 199 zonas** (178 municipios y los 21 distritos de Madrid), 157 no cumplen todo y ninguna sale sin datos. Eran 27 y 15 sin datos hasta que el alquiler de referencia del Ministerio rellenó los pueblos (D-242);
-- **todas cumplen lo que pide la familia; el % dice cuánto encaja todo lo demás.** De las 42, 12 «encajan muy bien» (90 % o más), 5 «bien», 13 «regular» y 12 «poco»;
-- **arriba empatan Puente de Vallecas y Latina al 94 %.** La web pone 1.ª a Puente de Vallecas porque, a igual %, tiene más cerca los servicios del día a día, y lo dice: «Empata al 94 % con Latina». Siguen Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y Carabanchel, Coslada y Leganés (90 %);
+- **todas cumplen lo que pide la familia; el % dice cuánto encaja todo lo demás.** Junto al %, la web lo dice en palabras, en cuatro bandas: de las 42, 12 están en la más alta (90 % o más), 5 en la segunda (75–89), 13 en la tercera (60–74) y 12 en la última;
+- **arriba empatan Puente de Vallecas y Latina al 94 %.** La web pone 1.ª a Puente de Vallecas porque, a igual %, tiene más cerca los servicios del día a día, y avisa del empate. Siguen Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y Carabanchel, Coslada y Leganés (90 %);
 - **en Puente de Vallecas** (la tarjeta que se abre):
   - «Colegio con primaria a unos 4 min andando» («Dato fiable»), «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min» y «Centro de salud a unos 8 min andando»;
   - «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» («Dato aproximado»);
   - «Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024)»;
-  - en «Qué falta aquí», «Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles.»: es el puente con el bloque 3;
+  - debajo, su resumen de lo que falta dice que faltan escuelas infantiles: es el puente con el bloque 3;
 - **en Latina** (por si se abre): colegio a unos 6 min, parada a unos 2, centro de salud a unos 10, 39 min hasta la Castellana y ≈ 1.101 €/mes. Pierde unos 6 puntos: 3 por el trayecto, 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, que va justo de plazas (D-243 §9);
 - **«¿Y si cambias algo?»:**
   - «+5 min a pie hasta colegio con primaria: saldrían 91 zonas, 49 más»;
   - «+150 €/mes: saldrían 45 zonas, 3 más»;
   - lo que más limita sigue siendo el colegio a 10 min;
-- **casi encajan, por el presupuesto,** Chamartín, Arganzuela, Centro, Chamberí y Retiro. La web ya no les pone %: dice cuánto se pasan, por ejemplo Chamartín, «Se pasa ≈ 90 € de tu presupuesto» (≈ 1.590 €/mes);
+- **se quedan cerca, por el presupuesto,** Chamartín, Arganzuela, Centro, Chamberí y Retiro. La web no les pone %: dice cuánto se pasan; Chamartín, unos 90 € al mes (≈ 1.590 €/mes);
 - **antes** (`fit-0.6`, 12 nov): Latina 1.ª al 98 %, con cuatro empatadas; y con la distancia en línea recta (`fit-0.1`), Ciudad Lineal al 99 %.
 
 <!-- habla:b2:inicio -->
@@ -83,9 +84,9 @@ Abro el caso de ejemplo: una pareja con dos hijos de cuatro y ocho años. Trabaj
 
 | # | Acción | Qué tiene que verse | Si falla |
 |---|---|---|---|
-| 2.1 | Clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (portada) | Se rellena «Tu búsqueda» y la búsqueda sale sola: el mapa en violetas y, a la derecha, «Zonas que encajan» con «Con tu búsqueda tal cual salen 42 zonas.» y «Empatan al 94 %» sobre las dos primeras | Si tarda más de 3 s, seguir hablando del mapa; si no llega, pasar al vídeo (plan B) |
-| 2.2 | Señalar el mapa y su leyenda | «Cumple todo: 42 zonas · No cumple todo: 157 zonas · Sin datos: 0 zonas» | — |
-| 2.3 | Clic en la 1.ª de «Zonas que encajan» y leer dos hechos | Tarjeta de Puente de Vallecas, «Encaja muy bien» y «94 %», «La 1.ª que más encaja» y «Empata al 94 % con Latina.». En «Lo que tienes aquí», «Colegio con primaria a unos 4 min andando» («Dato fiable») y «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» («Dato aproximado»: confianza 0,7, horarios programados de un día laborable). Si sale otra zona, se leen los corchetes tal como salgan | Leer solo el % de encaje, su banda y la fiabilidad |
+| 2.1 | Clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (portada) | Se rellena «Tu búsqueda» y la búsqueda sale sola: el mapa en violetas y, a la derecha, la lista de zonas que encajan: 42, con las dos primeras empatadas al 94 % | Si tarda más de 3 s, seguir hablando del mapa; si no llega, pasar al vídeo (plan B) |
+| 2.2 | Señalar el mapa y su leyenda | La leyenda cuenta 42 zonas que cumplen todo, 157 que no y 0 sin datos | — |
+| 2.3 | Clic en la 1.ª de «Zonas que encajan» y leer dos hechos | Tarjeta de Puente de Vallecas: el 94 %, su banda en palabras, que es la 1.ª y que empata con Latina. En «Lo que tienes aquí», «Colegio con primaria a unos 4 min andando» («Dato fiable») y «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» («Dato aproximado»: confianza 0,7, horarios programados de un día laborable). Si sale otra zona, se leen los corchetes tal como salgan | Leer solo el % de encaje, su banda y la fiabilidad |
 | 2.4 | Cerrar la tarjeta (×), bajar hasta «¿Y si cambias algo?» y pulsar «Ver todas las opciones» | «+5 min a pie hasta colegio con primaria: saldrían 91 zonas, 49 más» y «+150 €/mes: saldrían 45 zonas, 3 más», y «Lo que más limita tu búsqueda es: Colegio con primaria a 10 min andando como mucho» | Leer solo la opción, que se ve aunque el bloque esté plegado |
 
 **«¿Y si cambias algo?» sale siempre.** Va plegado a la opción que más zonas suma y se despliega solo con 5 zonas o menos (decisión de datamad-10; PR #10). Con 42 zonas sale plegado: por eso el paso 2.4 pulsa «Ver todas las opciones» (comprobado en producción el 15 nov, `RealityCheck.tsx`). Si las cifras de la pantalla cambian, la frase hablada se ajusta a lo que se lea.
@@ -165,7 +166,7 @@ Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vi
 <!-- habla:b5:fin -->
 
 **Prueba con usuarios (13 y 14 nov):** la frase «La probaron siete personas…» sustituye a «Funciona con datos reales y oficiales de toda la Comunidad de Madrid.», para no bajar de 30 s de margen; los datos oficiales ya se dicen en el bloque 4. Tiene una palabra menos que la versión del 14 nov, que nombraba las paradas de autobús: «buscar por barrios» va en su lugar porque lo pidieron 4 de las 6 personas (D-238). Las citas están en la slide 3, el recuadro «Probada con 7 personas» en la slide 4, que está en pantalla, y la respuesta larga en la pregunta 43.
-- **Siete personas:** seis de 26 a 55 años y una persona mayor, que la probó el 15 nov en el móvil y a la que le costó (letra y botones pequeños, palabras técnicas, demasiado a la vez). Se ha auditado y la mejora de claridad va ahora; su alcance lo decide Mariano (**pendiente de Mariano**), y no se dice como hecho hasta que esté en producción. Lo dicho está en producción desde el 14 nov: «¿Dónde?» con Madrid capital por barrios (D-238, despliegue de `f1b6f5a`) y el límite de tiempo al trabajo (PR #53, despliegue de `ad4a8f2`).
+- **Siete personas:** seis de 26 a 55 años y una persona mayor, que la probó el 15 nov en el móvil y a la que le costó (letra y botones pequeños, palabras técnicas, demasiado a la vez). Se ha auditado y Mariano ha decidido el alcance (portada clara, letra de 16 px como mínimo, botones de 44 px, lenguaje llano y lo esencial primero); llega con la entrega de UX, el 19 nov como tarde (**pendiente de B**), y no se dice como hecho hasta que esté desplegado. Lo dicho está en producción desde el 14 nov: «¿Dónde?» con Madrid capital por barrios (D-238, despliegue de `f1b6f5a`) y el límite de tiempo al trabajo (PR #53, despliegue de `ad4a8f2`).
 
 **Fuente de la frase de reserva:** «toda la Comunidad» = los 179 municipios de `evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json`. El buscador cubre las 199 zonas: 178 municipios y los 21 distritos de Madrid, que sustituyen al municipio (D-215, punto 1). La lista de lo que falta responde en municipios y distritos.
 
