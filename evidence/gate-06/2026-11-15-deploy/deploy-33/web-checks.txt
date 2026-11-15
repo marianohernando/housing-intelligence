@@ -1,0 +1,296 @@
+Checks on https://vidafacil-madrid.vercel.app (dpl_ByScL…, e0417ae, UX mobile 1 and D-244), 2026-11-15 18:29–18:36 UTC, Playwright Chromium,
+1440x900, 390x844 and 360x800 (mobile: touch, devicePixelRatio 2), es-ES. «errors» lists console errors, page errors and every HTTP >= 400
+the page saw.
+
+===== 1. Mobile clarity: apps/web/scripts/check-ux-mobile.mjs --widths 390,360 --shots (detail: tamanos-produccion.json) =====
+produccion · 390 px
+  portada             texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +3 del mapa)
+  formulario          texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  formulario_abierto  texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  formulario_ejemplo  texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  lista               texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  tarjeta             texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  distrito            texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  formulario_mayores  texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+produccion · 360 px
+  portada             texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +3 del mapa)
+  formulario          texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  formulario_abierto  texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  formulario_ejemplo  texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  lista               texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  tarjeta             texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  distrito            texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+  formulario_mayores  texto < 16 px: 0 · objetivos < 44 px: 0 (+0 dentro de una frase, +0 del mapa)
+axe: 0 incidencias
+The «+3 del mapa» of the portada are MapLibre's attribution controls, required by the licences: the (i) «Fuentes y licencias de los datos»
+(24x24) and the links «© OpenStreetMap» and «Powered by CRTM» (14 px high); their 3 texts are also the only ones under 16 px.
+
+===== 2. probe A: portada, plain texts and the family example, «Somos mayores», the retired couple's example =====
+portada: boxes in CSS px from the top of the first screen. formInFirstScreen = «Tu búsqueda» and «¿Dónde?» start inside it.
+texts.state / older.*.state: the search card's checked options («fieldset → option»), pressed buttons, visible selects and folds.
+older: «En pareja» + «Somos mayores», then «¿Dónde vivís ahora?» = Ciudad Lineal (metro), search, unmark «Somos mayores», search.
+(Its «amounts» block failed on a click of mine, a label over a hidden radio; probe B redoes it with check().)
+--- 1440
+portada:
+  sentence: "Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca."
+  sentenceBox: {"top":163,"bottom":239,"left":45,"w":459,"h":77}
+  examples: ["Ejemplo: pareja con 2 hijos que trabaja en la Castellana","Ejemplo: pareja jubilada que quiere vivir cerca de su familia"]
+  examplesBoxes: [{"top":248,"bottom":311,"left":45,"w":459,"h":63},{"top":319,"bottom":382,"left":45,"w":459,"h":63}]
+  heading: {"top":473,"bottom":496,"left":67,"w":123,"h":23}
+  where: {"top":504,"bottom":712,"left":67,"w":415,"h":208}
+  submit: {"top":1866,"bottom":1912,"left":67,"w":415,"h":47}
+  map: {"box":{"top":0,"bottom":900,"left":0,"w":1440,"h":900},"visible":true}
+  verMapa: false
+  formInFirstScreen: true
+texts:
+  workLegend: "Trabajo en (opcional)"
+  moreOptions: {"open":false,"summary":"Más opcionesServicios a un paseo, familia o amigos y tamaño del piso"}
+  helpsVisible: "3 of 5"
+  state: {"checked":["¿Dónde? → Toda la Comunidad","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["Solo/a"],"selects":[": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? Trabajo en: closed","Más opcionesServicios a un paseo, familia o amigos y tamaño : closed","¿Qué es esto? Cerca de mi familia o amigos: closed","¿Qué es esto? Tamaño del piso: closed"]}
+example:
+  api: "42 of 199, unknown 0; top 2 Puente de Vallecas 94, Latina 94; 10th Leganés 90"
+  summary: "Hemos encontrado 42 zonas para ti."
+  bands: {"Muy buena opción":5,"Buena opción":0,"Opción regular":0,"Poco recomendable":0}
+  oldBands: false
+  firstRows: ["1 Puente de Vallecas Distrito de Madrid Muy buena opción 94 % · 94 %, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²","2 Latina Distrito de Madrid Muy buena opción 94 % · 94 %, empata con Puente de Vallecas ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²","3 Usera Distrito de Madrid Muy buena opción 93 % · 93 %, empata con Moratalaz ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²"]
+  casi: "Casi valen (5)"
+  casiRows: ["Chamartín Se pasa unos 90 € al mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²","Arganzuela Se pasa unos 20 € al mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²","Centro Se pasa unos 190 € al mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²","Chamberí Se pasa unos 230 € al mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²","Retiro Se pasa unos 30 € al mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"]
+  card: {"zone":"Puente de Vallecas","unos":"unos 1.129 € al mes por 77 m² Alquiler: unos 1","approx":false,"band":"Muy buena opción"}
+older:
+  pressed: "true"
+  group: true
+  options: ["Donde vivimos ahora ✓","Cerca de nuestra familia"]
+  workVisible: false
+  afterMark: {"checked":["¿Dónde? → Madrid capital","Vuestra casa de ahora o vuestra familia → Donde vivimos ahora","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Somos mayores","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":[": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? ¿Cerca de dónde queréis vivir?: closed","Más opcionesTrabajo, servicios a un paseo y tamaño del piso: closed","¿Qué es esto? Trabajo en: closed","¿Qué es esto? Tamaño del piso: closed"]}
+  afterPlace: {"checked":["¿Dónde? → Madrid capital","Vuestra casa de ahora o vuestra familia → Donde vivimos ahora","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Somos mayores","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":["Tardar como mucho hasta donde vivimos ahora, en transporte público: 30","Añadir un servicio a un paseo: ",": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? ¿Cerca de dónde queréis vivir?: closed","Más opcionesTrabajo, servicios a un paseo y tamaño del piso: closed","¿Qué es esto? Trabajo en: closed","¿Qué es esto? Tamaño del piso: closed"]}
+  placeText: "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra familia Donde vivimos ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 3"
+  sentMarked: {"status":200,"household":{"adults":2,"minors":0,"minor_ages":[],"seniors_in_care":0,"seniors":true},"scope":"madrid","anchors":[{"kind":"other","label":"donde vivimos ahora","lat":40.43805,"lon":-3.63816,"max_minutes":30,"days_per_week":3}],"priorities":["salud","sin_escaleras","transporte"],"nearby":[],"api":"22 of 131"}
+  never: 0
+  unmarked: {"pressed":"false","group":0,"dondeVivimos":["Sin límite de tiempo hasta donde vivimos ahora"],"state":{"checked":["¿Dónde? → Madrid capital","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":["Añadir un servicio a un paseo: ",": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? Trabajo en: closed","Más opcionesServicios a un paseo, familia o amigos y tamaño : closed","¿Qué es esto? Cerca de mi familia o amigos: closed","¿Qué es esto? Tamaño del piso: closed"]}}
+  sentUnmarked: {"status":200,"household":{"adults":2,"minors":0,"minor_ages":[],"seniors_in_care":0},"scope":"madrid","anchors":[],"priorities":["salud","sin_escaleras","transporte"],"nearby":[],"api":"84 of 131"}
+retired:
+  status: 200
+  sent: "{\"schema_version\":2,\"scope\":\"madrid\",\"budget\":{\"kind\":\"rent\",\"amount_eur\":1200},\"min_floor_area_m2\":null,\"household\":{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true},\"anchors\":[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}],\"nearby\":[],\"priorities\":[\"salud\",\"sin_escaleras\",\"transporte\"]}"
+  api: "22 of 131, unknown 0, binding commute:0"
+  top10: "Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89, San Pascual 89, Pueblo Nuevo 89, Ventas 89, La Concepción 88, Arcos 87, Rosas 87, Amposta 79"
+  summary: "Hemos encontrado 22 barrios para ti."
+  firstRows: ["1 Casco Histórico de Barajas · Barajas Barrio de Madrid Muy buena opción 92 % · 92 %, empata con Alameda de Osuna ≈ 1.038 €/mes por 68 m² Alquiler: unos 1.038 € al mes por 68 m² Dato poco seguro","2 Alameda de Osuna · Barajas Barrio de Madrid Muy buena opción 92 % · 92 %, empata con Casco Histórico de Barajas ≈ 1.038 €/mes por 68 m² Alquiler: unos 1.038 € al mes por 68 m² Dato aproximado","3 Quintana · Ciudad Lineal Barrio de Madrid Buena opción 89 % · 89 %, empata con San Pascual, Pueblo Nuevo y Ventas ≈ 1.116 €/mes por 68 m² Alquiler: unos 1.116 € al mes por 68 m² Dato aproximado","4 San Pascual · Ciudad Lineal Barrio de Madrid Buena opción 89 % · 89 %, empata con Quintana, Pueblo Nuevo y Ventas ≈ 1.116 €/mes por 68 m² Alquiler: unos 1.116 € al mes por 68 m² Dato aproximado"]
+  sinLugar: 0
+  card: {"zone":"Casco Histórico de Barajas","heading":"Lo que le falta a Barajas","section":"Lo que le falta a Barajas Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona. Las cifras de «Qué falta» son del distrito entero. Centros de salud A pie: 20 min No comparable . Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. Farmacias A pie: 9 min CUBIERTO Centros de mayores A pie: 18 min No comparable . Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. No comparable: vive tan poca gente que no se puede comp","has":{"centro de salud":false,"centros de salud":true,"farmacia":true,"centros de mayores":true,"colegio":false,"escuela infantil":false,"escuelas infantiles":false},"cardHas":{"colegio":false,"escuela infantil":false,"escuelas infantiles":false},"unos":"unos 1.038 € al mes por 68 m² Alquiler: unos 1"}
+errors: []
+--- 390
+portada:
+  sentence: "Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca."
+  sentenceBox: {"top":291,"bottom":399,"left":18,"w":354,"h":108}
+  examples: ["Ejemplo: pareja con 2 hijos que trabaja en la Castellana","Ejemplo: pareja jubilada que quiere vivir cerca de su familia"]
+  examplesBoxes: [{"top":413,"bottom":479,"left":18,"w":354,"h":66},{"top":488,"bottom":554,"left":18,"w":354,"h":66}]
+  heading: {"top":663,"bottom":687,"left":46,"w":130,"h":25}
+  where: {"top":701,"bottom":937,"left":46,"w":298,"h":236}
+  submit: {"top":2416,"bottom":2466,"left":46,"w":298,"h":50}
+  map: {"box":{"top":0,"bottom":844,"left":0,"w":390,"h":844},"visible":true}
+  verMapa: true
+  formInFirstScreen: true
+texts:
+  workLegend: "Trabajo en (opcional)"
+  moreOptions: {"open":false,"summary":"Más opcionesServicios a un paseo, familia o amigos y tamaño del piso"}
+  helpsVisible: "3 of 5"
+  state: {"checked":["¿Dónde? → Toda la Comunidad","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["Solo/a"],"selects":[": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? Trabajo en: closed","Más opcionesServicios a un paseo, familia o amigos y tamaño : closed","¿Qué es esto? Cerca de mi familia o amigos: closed","¿Qué es esto? Tamaño del piso: closed"]}
+example:
+  api: "42 of 199, unknown 0; top 2 Puente de Vallecas 94, Latina 94; 10th Leganés 90"
+  summary: "Hemos encontrado 42 zonas para ti."
+  bands: {"Muy buena opción":5,"Buena opción":0,"Opción regular":0,"Poco recomendable":0}
+  oldBands: false
+  firstRows: ["1 Puente de Vallecas Distrito de Madrid Muy buena opción 94 % · 94 %, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²","2 Latina Distrito de Madrid Muy buena opción 94 % · 94 %, empata con Puente de Vallecas ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²","3 Usera Distrito de Madrid Muy buena opción 93 % · 93 %, empata con Moratalaz ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²"]
+  casi: "Casi valen (5)"
+  casiRows: ["Chamartín Se pasa unos 90 € al mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²","Arganzuela Se pasa unos 20 € al mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²","Centro Se pasa unos 190 € al mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²","Chamberí Se pasa unos 230 € al mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²","Retiro Se pasa unos 30 € al mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"]
+  card: {"zone":"Puente de Vallecas","unos":"unos 1.129 € al mes por 77 m² Alquiler: unos 1","approx":false,"band":"Muy buena opción"}
+older:
+  pressed: "true"
+  group: true
+  options: ["Donde vivimos ahora ✓","Cerca de nuestra familia"]
+  workVisible: false
+  afterMark: {"checked":["¿Dónde? → Madrid capital","Vuestra casa de ahora o vuestra familia → Donde vivimos ahora","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Somos mayores","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":[": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? ¿Cerca de dónde queréis vivir?: closed","Más opcionesTrabajo, servicios a un paseo y tamaño del piso: closed","¿Qué es esto? Trabajo en: closed","¿Qué es esto? Tamaño del piso: closed"]}
+  afterPlace: {"checked":["¿Dónde? → Madrid capital","Vuestra casa de ahora o vuestra familia → Donde vivimos ahora","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Somos mayores","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":["Tardar como mucho hasta donde vivimos ahora, en transporte público: 30","Añadir un servicio a un paseo: ",": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? ¿Cerca de dónde queréis vivir?: closed","Más opcionesTrabajo, servicios a un paseo y tamaño del piso: closed","¿Qué es esto? Trabajo en: closed","¿Qué es esto? Tamaño del piso: closed"]}
+  placeText: "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra familia Donde vivimos ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 3"
+  sentMarked: {"status":200,"household":{"adults":2,"minors":0,"minor_ages":[],"seniors_in_care":0,"seniors":true},"scope":"madrid","anchors":[{"kind":"other","label":"donde vivimos ahora","lat":40.43805,"lon":-3.63816,"max_minutes":30,"days_per_week":3}],"priorities":["salud","sin_escaleras","transporte"],"nearby":[],"api":"22 of 131"}
+  never: 0
+  unmarked: {"pressed":"false","group":0,"dondeVivimos":["Sin límite de tiempo hasta donde vivimos ahora"],"state":{"checked":["¿Dónde? → Madrid capital","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":["Añadir un servicio a un paseo: ",": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? Trabajo en: closed","Más opcionesServicios a un paseo, familia o amigos y tamaño : closed","¿Qué es esto? Cerca de mi familia o amigos: closed","¿Qué es esto? Tamaño del piso: closed"]}}
+  sentUnmarked: {"status":200,"household":{"adults":2,"minors":0,"minor_ages":[],"seniors_in_care":0},"scope":"madrid","anchors":[],"priorities":["salud","sin_escaleras","transporte"],"nearby":[],"api":"84 of 131"}
+retired:
+  status: 200
+  sent: "{\"schema_version\":2,\"scope\":\"madrid\",\"budget\":{\"kind\":\"rent\",\"amount_eur\":1200},\"min_floor_area_m2\":null,\"household\":{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true},\"anchors\":[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}],\"nearby\":[],\"priorities\":[\"salud\",\"sin_escaleras\",\"transporte\"]}"
+  api: "22 of 131, unknown 0, binding commute:0"
+  top10: "Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89, San Pascual 89, Pueblo Nuevo 89, Ventas 89, La Concepción 88, Arcos 87, Rosas 87, Amposta 79"
+  summary: "Hemos encontrado 22 barrios para ti."
+  firstRows: ["1 Casco Histórico de Barajas · Barajas Barrio de Madrid Muy buena opción 92 % · 92 %, empata con Alameda de Osuna ≈ 1.038 €/mes por 68 m² Alquiler: unos 1.038 € al mes por 68 m² Dato poco seguro","2 Alameda de Osuna · Barajas Barrio de Madrid Muy buena opción 92 % · 92 %, empata con Casco Histórico de Barajas ≈ 1.038 €/mes por 68 m² Alquiler: unos 1.038 € al mes por 68 m² Dato aproximado","3 Quintana · Ciudad Lineal Barrio de Madrid Buena opción 89 % · 89 %, empata con San Pascual, Pueblo Nuevo y Ventas ≈ 1.116 €/mes por 68 m² Alquiler: unos 1.116 € al mes por 68 m² Dato aproximado","4 San Pascual · Ciudad Lineal Barrio de Madrid Buena opción 89 % · 89 %, empata con Quintana, Pueblo Nuevo y Ventas ≈ 1.116 €/mes por 68 m² Alquiler: unos 1.116 € al mes por 68 m² Dato aproximado"]
+  sinLugar: 0
+  card: {"zone":"Casco Histórico de Barajas","heading":"Lo que le falta a Barajas","section":"Lo que le falta a Barajas Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona. Las cifras de «Qué falta» son del distrito entero. Centros de salud A pie: 20 min No comparable . Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. Farmacias A pie: 9 min CUBIERTO Centros de mayores A pie: 18 min No comparable . Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. No comparable: vive tan poca gente que no se puede comp","has":{"centro de salud":false,"centros de salud":true,"farmacia":true,"centros de mayores":true,"colegio":false,"escuela infantil":false,"escuelas infantiles":false},"cardHas":{"colegio":false,"escuela infantil":false,"escuelas infantiles":false},"unos":"unos 1.038 € al mes por 68 m² Alquiler: unos 1"}
+errors: []
+--- 360
+portada:
+  sentence: "Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca."
+  sentenceBox: {"top":291,"bottom":399,"left":18,"w":324,"h":108}
+  examples: ["Ejemplo: pareja con 2 hijos que trabaja en la Castellana","Ejemplo: pareja jubilada que quiere vivir cerca de su familia"]
+  examplesBoxes: [{"top":413,"bottom":479,"left":18,"w":324,"h":66},{"top":488,"bottom":554,"left":18,"w":324,"h":66}]
+  heading: {"top":663,"bottom":687,"left":46,"w":130,"h":25}
+  where: {"top":701,"bottom":937,"left":46,"w":268,"h":236}
+  submit: {"top":2456,"bottom":2506,"left":46,"w":268,"h":50}
+  map: {"box":{"top":0,"bottom":800,"left":0,"w":360,"h":800},"visible":true}
+  verMapa: true
+  formInFirstScreen: true
+texts:
+  workLegend: "Trabajo en (opcional)"
+  moreOptions: {"open":false,"summary":"Más opcionesServicios a un paseo, familia o amigos y tamaño del piso"}
+  helpsVisible: "3 of 5"
+  state: {"checked":["¿Dónde? → Toda la Comunidad","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["Solo/a"],"selects":[": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? Trabajo en: closed","Más opcionesServicios a un paseo, familia o amigos y tamaño : closed","¿Qué es esto? Cerca de mi familia o amigos: closed","¿Qué es esto? Tamaño del piso: closed"]}
+example:
+  api: "42 of 199, unknown 0; top 2 Puente de Vallecas 94, Latina 94; 10th Leganés 90"
+  summary: "Hemos encontrado 42 zonas para ti."
+  bands: {"Muy buena opción":5,"Buena opción":0,"Opción regular":0,"Poco recomendable":0}
+  oldBands: false
+  firstRows: ["1 Puente de Vallecas Distrito de Madrid Muy buena opción 94 % · 94 %, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²","2 Latina Distrito de Madrid Muy buena opción 94 % · 94 %, empata con Puente de Vallecas ≈ 1.101 €/mes por 77 m² Alquiler: unos 1.101 € al mes por 77 m²","3 Usera Distrito de Madrid Muy buena opción 93 % · 93 %, empata con Moratalaz ≈ 1.019 €/mes por 77 m² Alquiler: unos 1.019 € al mes por 77 m²"]
+  casi: "Casi valen (5)"
+  casiRows: ["Chamartín Se pasa unos 90 € al mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²","Arganzuela Se pasa unos 20 € al mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²","Centro Se pasa unos 190 € al mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²","Chamberí Se pasa unos 230 € al mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²","Retiro Se pasa unos 30 € al mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"]
+  card: {"zone":"Puente de Vallecas","unos":"unos 1.129 € al mes por 77 m² Alquiler: unos 1","approx":false,"band":"Muy buena opción"}
+older:
+  pressed: "true"
+  group: true
+  options: ["Donde vivimos ahora ✓","Cerca de nuestra familia"]
+  workVisible: false
+  afterMark: {"checked":["¿Dónde? → Madrid capital","Vuestra casa de ahora o vuestra familia → Donde vivimos ahora","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Somos mayores","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":[": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? ¿Cerca de dónde queréis vivir?: closed","Más opcionesTrabajo, servicios a un paseo y tamaño del piso: closed","¿Qué es esto? Trabajo en: closed","¿Qué es esto? Tamaño del piso: closed"]}
+  afterPlace: {"checked":["¿Dónde? → Madrid capital","Vuestra casa de ahora o vuestra familia → Donde vivimos ahora","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Somos mayores","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":["Tardar como mucho hasta donde vivimos ahora, en transporte público: 30","Añadir un servicio a un paseo: ",": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? ¿Cerca de dónde queréis vivir?: closed","Más opcionesTrabajo, servicios a un paseo y tamaño del piso: closed","¿Qué es esto? Trabajo en: closed","¿Qué es esto? Tamaño del piso: closed"]}
+  placeText: "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra familia Donde vivimos ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 3"
+  sentMarked: {"status":200,"household":{"adults":2,"minors":0,"minor_ages":[],"seniors_in_care":0,"seniors":true},"scope":"madrid","anchors":[{"kind":"other","label":"donde vivimos ahora","lat":40.43805,"lon":-3.63816,"max_minutes":30,"days_per_week":3}],"priorities":["salud","sin_escaleras","transporte"],"nearby":[],"api":"22 of 131"}
+  never: 0
+  unmarked: {"pressed":"false","group":0,"dondeVivimos":["Sin límite de tiempo hasta donde vivimos ahora"],"state":{"checked":["¿Dónde? → Madrid capital","¿Alquilar o comprar? → Alquilar","¿Hasta cuánto al mes? → 1.200 €"],"pressed":["En pareja","Transporte3, importancia 3","Centro de salud1, importancia 1","Metro o tren sin escaleras2, importancia"],"selects":["Añadir un servicio a un paseo: ",": "],"details":["¿Qué es esto? ¿Dónde?: closed","¿Qué es esto? ¿Qué quieres tener cerca?: closed","¿Qué es esto? Trabajo en: closed","Más opcionesServicios a un paseo, familia o amigos y tamaño : closed","¿Qué es esto? Cerca de mi familia o amigos: closed","¿Qué es esto? Tamaño del piso: closed"]}}
+  sentUnmarked: {"status":200,"household":{"adults":2,"minors":0,"minor_ages":[],"seniors_in_care":0},"scope":"madrid","anchors":[],"priorities":["salud","sin_escaleras","transporte"],"nearby":[],"api":"84 of 131"}
+retired:
+  status: 200
+  sent: "{\"schema_version\":2,\"scope\":\"madrid\",\"budget\":{\"kind\":\"rent\",\"amount_eur\":1200},\"min_floor_area_m2\":null,\"household\":{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true},\"anchors\":[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}],\"nearby\":[],\"priorities\":[\"salud\",\"sin_escaleras\",\"transporte\"]}"
+  api: "22 of 131, unknown 0, binding commute:0"
+  top10: "Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89, San Pascual 89, Pueblo Nuevo 89, Ventas 89, La Concepción 88, Arcos 87, Rosas 87, Amposta 79"
+  summary: "Hemos encontrado 22 barrios para ti."
+  firstRows: ["1 Casco Histórico de Barajas · Barajas Barrio de Madrid Muy buena opción 92 % · 92 %, empata con Alameda de Osuna ≈ 1.038 €/mes por 68 m² Alquiler: unos 1.038 € al mes por 68 m² Dato poco seguro","2 Alameda de Osuna · Barajas Barrio de Madrid Muy buena opción 92 % · 92 %, empata con Casco Histórico de Barajas ≈ 1.038 €/mes por 68 m² Alquiler: unos 1.038 € al mes por 68 m² Dato aproximado","3 Quintana · Ciudad Lineal Barrio de Madrid Buena opción 89 % · 89 %, empata con San Pascual, Pueblo Nuevo y Ventas ≈ 1.116 €/mes por 68 m² Alquiler: unos 1.116 € al mes por 68 m² Dato aproximado","4 San Pascual · Ciudad Lineal Barrio de Madrid Buena opción 89 % · 89 %, empata con Quintana, Pueblo Nuevo y Ventas ≈ 1.116 €/mes por 68 m² Alquiler: unos 1.116 € al mes por 68 m² Dato aproximado"]
+  sinLugar: 0
+  card: {"zone":"Casco Histórico de Barajas","heading":"Lo que le falta a Barajas","section":"Lo que le falta a Barajas Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona. Las cifras de «Qué falta» son del distrito entero. Centros de salud A pie: 20 min No comparable . Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. Farmacias A pie: 9 min CUBIERTO Centros de mayores A pie: 18 min No comparable . Aquí vive tan poca gente que, ni siquiera junto con sus vecinos, podemos saber si falta. Por eso no la comparamos. No comparable: vive tan poca gente que no se puede comp","has":{"centro de salud":false,"centros de salud":true,"farmacia":true,"centros de mayores":true,"colegio":false,"escuela infantil":false,"escuelas infantiles":false},"cardHas":{"colegio":false,"escuela infantil":false,"escuelas infantiles":false},"unos":"unos 1.038 € al mes por 68 m² Alquiler: unos 1"}
+errors: []
+
+===== 3. probe B: quick amounts, bands against match_band, «donde vivimos ahora» after unmarking =====
+bands*: each visible row (after «Ver las 10 primeras») carries exactly one band label, the one of its match_band
+(muy_bien «Muy buena opción», bien «Buena opción», regular «Opción regular», poco «Poco recomendable»).
+bandsStudent: «Solo/a», 600 €, «Trabajo en» Vicálvaro (Cercanías). method: the four labels in «Cómo lo calculamos», none of the old ones.
+unmark: every visible «donde vivimos ahora», with the section it is in.
+--- 1440
+amounts:
+  rent: ["600 €","900 €","1.200 € ✓","1.500 €","Otra cantidad"]
+  otherChecked: ["600 €","900 €","1.200 €","1.500 €","Otra cantidad ✓"]
+  otherField: true
+  typed750Slider: "750"
+  buy: ["150.000 €","250.000 € ✓","400.000 €","600.000 €","Otra cantidad"]
+  buySlider: "250000"
+  buySent: "{\"kind\":\"buy\",\"amount_eur\":250000}"
+bandsRetired:
+  rows: 10
+  mismatches: []
+  bands: {"muy_bien":2,"bien":8,"regular":0,"poco":0}
+bandsStudent:
+  sent: "600 €, Vicálvaro (Cercanías)"
+  api: "105 of 199; top10 Arganda del Rey 75, Loeches 60, Campo Real 59, Tielmes 58, Mejorada del Campo 58, Perales de Tajuña 56, Morata de Tajuña 55, Carabaña 52, Orusco de Tajuña 51, Torres de la Alameda 51"
+  rows: 10
+  mismatches: []
+  bands: {"muy_bien":0,"bien":1,"regular":1,"poco":8}
+  halfFact: "none in the top 10"
+method:
+  Muy buena opción: true
+  Buena opción: true
+  Opción regular: true
+  Poco recomendable: true
+  oldBands: false
+unmark:
+  afterMarkedSearch: ["Donde vivimos ahora [in «Tu búsqueda»]","Donde vivimos ahora: Ciudad Lineal (metro) [in «Tu búsqueda»]","Sin límite de tiempo hasta donde vivimos ahora [in «¿Quieres ver más zonas?»]"]
+  beforeSearchingAgain: ["Sin límite de tiempo hasta donde vivimos ahora [in «¿Quieres ver más zonas?»]"]
+  afterSearchingAgain: []
+  sent: "seniors undefined, anchors [], scope madrid, priorities [\"salud\",\"sin_escaleras\",\"transporte\"]"
+  relaxations: ["+150 €/mes"]
+errors: []
+--- 390
+amounts:
+  rent: ["600 €","900 €","1.200 € ✓","1.500 €","Otra cantidad"]
+  otherChecked: ["600 €","900 €","1.200 €","1.500 €","Otra cantidad ✓"]
+  otherField: true
+  typed750Slider: "750"
+  buy: ["150.000 €","250.000 € ✓","400.000 €","600.000 €","Otra cantidad"]
+  buySlider: "250000"
+  buySent: "{\"kind\":\"buy\",\"amount_eur\":250000}"
+bandsRetired:
+  rows: 10
+  mismatches: []
+  bands: {"muy_bien":2,"bien":8,"regular":0,"poco":0}
+bandsStudent:
+  sent: "600 €, Vicálvaro (Cercanías)"
+  api: "105 of 199; top10 Arganda del Rey 75, Loeches 60, Campo Real 59, Tielmes 58, Mejorada del Campo 58, Perales de Tajuña 56, Morata de Tajuña 55, Carabaña 52, Orusco de Tajuña 51, Torres de la Alameda 51"
+  rows: 10
+  mismatches: []
+  bands: {"muy_bien":0,"bien":1,"regular":1,"poco":8}
+  halfFact: "none in the top 10"
+method:
+  Muy buena opción: true
+  Buena opción: true
+  Opción regular: true
+  Poco recomendable: true
+  oldBands: false
+unmark:
+  afterMarkedSearch: ["Donde vivimos ahora [in «Tu búsqueda»]","Donde vivimos ahora: Ciudad Lineal (metro) [in «Tu búsqueda»]","Sin límite de tiempo hasta donde vivimos ahora [in «¿Quieres ver más zonas?»]"]
+  beforeSearchingAgain: ["Sin límite de tiempo hasta donde vivimos ahora [in «¿Quieres ver más zonas?»]"]
+  afterSearchingAgain: []
+  sent: "seniors undefined, anchors [], scope madrid, priorities [\"salud\",\"sin_escaleras\",\"transporte\"]"
+  relaxations: ["+150 €/mes"]
+errors: []
+--- 360
+amounts:
+  rent: ["600 €","900 €","1.200 € ✓","1.500 €","Otra cantidad"]
+  otherChecked: ["600 €","900 €","1.200 €","1.500 €","Otra cantidad ✓"]
+  otherField: true
+  typed750Slider: "750"
+  buy: ["150.000 €","250.000 € ✓","400.000 €","600.000 €","Otra cantidad"]
+  buySlider: "250000"
+  buySent: "{\"kind\":\"buy\",\"amount_eur\":250000}"
+bandsRetired:
+  rows: 10
+  mismatches: []
+  bands: {"muy_bien":2,"bien":8,"regular":0,"poco":0}
+bandsStudent:
+  sent: "600 €, Vicálvaro (Cercanías)"
+  api: "105 of 199; top10 Arganda del Rey 75, Loeches 60, Campo Real 59, Tielmes 58, Mejorada del Campo 58, Perales de Tajuña 56, Morata de Tajuña 55, Carabaña 52, Orusco de Tajuña 51, Torres de la Alameda 51"
+  rows: 10
+  mismatches: []
+  bands: {"muy_bien":0,"bien":1,"regular":1,"poco":8}
+  halfFact: "none in the top 10"
+method:
+  Muy buena opción: true
+  Buena opción: true
+  Opción regular: true
+  Poco recomendable: true
+  oldBands: false
+unmark:
+  afterMarkedSearch: ["Donde vivimos ahora [in «Tu búsqueda»]","Donde vivimos ahora: Ciudad Lineal (metro) [in «Tu búsqueda»]","Sin límite de tiempo hasta donde vivimos ahora [in «¿Quieres ver más zonas?»]"]
+  beforeSearchingAgain: ["Sin límite de tiempo hasta donde vivimos ahora [in «¿Quieres ver más zonas?»]"]
+  afterSearchingAgain: []
+  sent: "seniors undefined, anchors [], scope madrid, priorities [\"salud\",\"sin_escaleras\",\"transporte\"]"
+  relaxations: ["+150 €/mes"]
+errors: []
+
+===== 4. probe C (390): after unmarking «Somos mayores», before searching again, tap the previous search's option
+«Sin límite de tiempo hasta donde vivimos ahora» in «¿Quieres ver más zonas?» (screenshot 390-10-opcion-anterior.jpg)
+{
+ "optionShown": 1,
+ "sent": "seniors true, anchors [{\"kind\":\"other\",\"label\":\"donde vivimos ahora\",\"lon\":-3.63816,\"lat\":40.43805,\"days_per_week\":3,\"max_minutes\":null}], scope madrid",
+ "olderPressed": "true",
+ "placeVisible": false,
+ "groupVisible": true,
+ "groupText": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra familia Donde vivimos ahora Tardar como mucho Sin límite 30 min 45 min 60 min 90 min en transporte público ¿Qué es esto? ¿Cerca de dónde queréis vivir?",
+ "selects": [
+  "Tardar como mucho hasta donde vivimos ahora, en transporte público: "
+ ],
+ "errors": []
+}

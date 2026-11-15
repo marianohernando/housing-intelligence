@@ -1,0 +1,59 @@
+POST /api/v1/search against https://vidafacil-madrid.vercel.app, 2026-11-15 (UTC): 025a4a2 (dpl_8tDBN…, fit-0.9) just before the deploy
+(18:23), e0417ae (dpl_ByScL…, fit-0.9 with D-244) right after it (18:28). No data sync in between.
+Bodies: example = data/fixtures/contracts/scenario_state.familia_castellana.fixture.json; telework = the same with anchors[0].days_per_week 0;
+  pueblos = the example with scope pueblos; buy400 = a couple buying up to 400.000 €; rent10k = a couple renting up to 10.000 €/month;
+  couple1500 = a couple renting up to 1.500 €/month, nothing else (also with scope madrid and pueblos); student = golden_student of
+  data/fixtures/golden/search_scenarios.yaml (500 €, URJC Vicálvaro 5 days, transporte);
+  retired = the web's second example, retiredExampleScenario() of apps/web/src/lib/scenario.ts (scope madrid, a couple renting up to
+  1.200 €, household.seniors true, a family place at the Ciudad Lineal metro station, 30 min as most, 3 days, salud, sin_escaleras
+  and transporte); retired-noflag = the same without household.seniors.
+
+===== Zones before and after =====
+  example             025a4a2: 42 of 199, unknown 0; top 3 Puente de Vallecas 94, Latina 94, Usera 93
+                      e0417ae: 42 of 199, unknown 0; top 3 Puente de Vallecas 94, Latina 94, Usera 93
+  telework            025a4a2: 42 of 199, unknown 0; top 3 Puente de Vallecas 97, Usera 97, Latina 97
+                      e0417ae: 42 of 199, unknown 0; top 3 Puente de Vallecas 97, Usera 97, Latina 97
+  buy400              025a4a2: 41 of 199, unknown 151; top 3 Puente de Vallecas 100, Usera 100, Carabanchel 100
+                      e0417ae: 41 of 199, unknown 151; top 3 Puente de Vallecas 100, Usera 100, Carabanchel 100
+  rent10k             025a4a2: 183 of 199, unknown 16; top 3 Chamberí 100, Tetuán 100, Salamanca 100
+                      e0417ae: 183 of 199, unknown 16; top 3 Chamberí 100, Tetuán 100, Salamanca 100
+  couple1500          025a4a2: 181 of 199, unknown 16; top 3 Puente de Vallecas 100, Usera 100, Ciudad Lineal 100
+                      e0417ae: 181 of 199, unknown 16; top 3 Puente de Vallecas 100, Usera 100, Ciudad Lineal 100
+  couple1500-madrid   025a4a2: 121 of 131, unknown 0; top 3 Almendrales 100, Palomeras Bajas 100, Comillas 100
+                      e0417ae: 121 of 131, unknown 0; top 3 Almendrales 100, Palomeras Bajas 100, Comillas 100
+  couple1500-pueblos  025a4a2: 122 of 138, unknown 16; top 3 Casarrubuelos 100, Navalagamella 100, Tielmes 100
+                      e0417ae: 122 of 138, unknown 16; top 3 Casarrubuelos 100, Navalagamella 100, Tielmes 100
+  pueblos             025a4a2: 15 of 138, unknown 0; top 3 Navalagamella 74, Navalcarnero 74, Villanueva del Pardillo 74
+                      e0417ae: 15 of 138, unknown 0; top 3 Navalagamella 74, Navalcarnero 74, Villanueva del Pardillo 74
+  student             025a4a2: 68 of 199, unknown 16; top 3 Morata de Tajuña 68, Carabaña 54, Valverde de Alcalá 53
+                      e0417ae: 68 of 199, unknown 16; top 3 Morata de Tajuña 68, Carabaña 54, Valverde de Alcalá 53
+  retired-noflag      025a4a2: 22 of 131, unknown 0; top 3 Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89
+                      e0417ae: 22 of 131, unknown 0; top 3 Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89
+  retired             025a4a2: HTTP 422 ["body","household","seniors"] Extra inputs are not permitted
+                      e0417ae: 22 of 131, unknown 0; top 3 Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89
+
+===== Whole answers, after undoing the two expected changes =====
+The two expected changes: the echoed scenario (and each relaxed_scenario of the Reality Check) now carries household.seniors: false
+(the field is additive, D-244), and the commute fact «…: el encaje se queda en la mitad» reads «…: el % se queda en la mitad»
+(review R-09 of PR #79). With both undone, every answer is byte for byte the one 025a4a2 gave: zones, %, match_band, order, facts,
+near_misses, all_zones, Reality Check and datasets.
+buy400: identical after normalising true (facts with «el %»: 0)
+couple1500-madrid: identical after normalising true (facts with «el %»: 0)
+couple1500-pueblos: identical after normalising true (facts with «el %»: 0)
+couple1500: identical after normalising true (facts with «el %»: 0)
+example: identical after normalising true (facts with «el %»: 0)
+pueblos: identical after normalising true (facts with «el %»: 6)
+rent10k: identical after normalising true (facts with «el %»: 0)
+retired-noflag: identical after normalising true (facts with «el %»: 0)
+retired: base 422, post 200
+student: identical after normalising true (facts with «el %»: 6)
+telework: identical after normalising true (facts with «el %»: 0)
+retired with vs without seniors: same results/near/all/rc true; top: Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89, San Pascual 89, Pueblo Nuevo 89, Ventas 89, La Concepción 88, Arcos 87, Rosas 87, Amposta 79
+
+===== «Somos mayores» in the API =====
+- 025a4a2 answers 422 to household.seniors (extra_forbidden), so the web and the API had to go together.
+- e0417ae: the retired example with and without household.seniors gives the same results, near_misses, all_zones and Reality Check
+  (22 of the 131 barrios): the flag only changes which rows of «Qué falta» the card highlights (highlight_rows, D-244).
+- The order at the top is the same as in the build PR #79 measured (evidence/gate-06/2026-11-15-ux-1/04-ejemplo-pareja-jubilada-1440.png):
+  Casco Histórico de Barajas 92, Alameda de Osuna 92 (tied), then Quintana, San Pascual, Pueblo Nuevo and Ventas at 89 (tied),
+  La Concepción 88, Arcos 87, Rosas 87 and Amposta 79. What limits most: the 30 min trip (binding_constraint commute:0).
