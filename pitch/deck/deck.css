@@ -191,16 +191,20 @@ a {
 /* Recortes de las capturas de producción (build.py, EVIDENCE_CAPTURES). Cada hueco enseña la parte
    que cuenta, con la proporción del hueco, y deja fuera los textos anteriores al despliegue del PR #9
    (pitch/slides.md, «Capturas necesarias») */
-/* C2: la cabecera de la tarjeta, entera; el fondo blanco del hueco rellena lo que sobra */
+/* C2 (15 nov, D, fit-0.9, pitch/capturas/C2.png a 1440 × 900): la lista «Zonas que encajan» con
+   «Empatan al 94 %», Puente de Vallecas y Latina, cada una con «Encaja muy bien» */
 .shot[data-shot="C2"] img {
-  object-view-box: inset(4% 5.1% 78% 5.1%);
+  object-view-box: inset(31.7% 5.6% 45.6% 69.4%);
   object-fit: contain;
   object-position: center;
 }
 
-/* C3 (12 nov, B, fit-0.6): «Con tu búsqueda tal cual salen 27 zonas» y la opción «+5 min…: saldrían 44 zonas, 17 más» */
+/* C3 (15 nov, D, fit-0.9, pitch/capturas/C3.png a 1440 × 900): «¿Y si cambias algo?» con 42 zonas,
+   «+5 min…: saldrían 91 zonas, 49 más» y «+150 €/mes: saldrían 45 zonas, 3 más» */
 .shot[data-shot="C3"] img {
-  object-view-box: inset(12.8% 4.6% 50.6% 4.6%);
+  object-view-box: inset(0 4.9% 70% 69.4%);
+  object-fit: contain;
+  object-position: center;
 }
 
 /* C4 (12 nov, B): la fila de escuelas infantiles de Puente de Vallecas, las dos cifras (2,8 frente a 4,9) */
@@ -638,8 +642,9 @@ a {
   font-size: 34px;
 }
 
-/* Sobre la captura C1 de producción: 1 junto a «Tu búsqueda», 2 en la cabecera de la tarjeta de
-   zona (% de encaje y hechos) y 3 en su «Qué falta aquí». Se revisan si cambia la captura. */
+/* Sobre la captura C1 de producción (15 nov, fit-0.9, pitch/capturas/C1.png): 1 junto a «Tu búsqueda»,
+   2 en la cabecera de la tarjeta de zona (% de encaje y hechos) y 3 en su «Qué falta aquí». Se revisan si
+   cambia la captura. */
 .s4 .m1 {
   left: 328px;
   top: 260px;
@@ -652,7 +657,7 @@ a {
 
 .s4 .m3 {
   left: 692px;
-  top: 514px;
+  top: 581px;
 }
 
 /* Móvil 390 × 844 superpuesto al escritorio */

@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Opcional y sin versionar: una captura aquí sustituye a la de la evidencia. Si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`, que es la misma ruta que lleva cada `<img>` de `deck.html`, recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`). C1–C3 son de B con `fit-0.6` (PR #32, `evidence/map-004/2026-11-12/deck/`). Si no hay ninguna, el hueco sale con borde discontinuo |
+| `../capturas/C1.png`… | Una captura aquí sustituye a la de la evidencia; si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`. C1, C2 y C3 están aquí y versionadas: las hizo D en producción el 15 nov con `fit-0.9`, a 1440 × 900 (C1, la tarjeta de Puente de Vallecas; C2, la lista con «Empatan al 94 %» y las bandas; C3, «¿Y si cambias algo?»). Sus recortes están en `deck.css`. C4–C7 siguen siendo las de B (`evidence/map-004/`) |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -44,7 +44,7 @@ Lo que rellena el build:
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
 
-Sin marca en `deck.html`, pero hay que rehacerla: **C1 (slide 4) está desfasada desde el 14 nov.** Su tarjeta dice «Parada de transporte público a unos 2 min andando», que hoy es «Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min» (D-233), y «Tu búsqueda» no enseña «¿Dónde?» (D-238). Las cifras del caso no cambian. B la rehace con las demás capturas tras revisar la fórmula, el 17 y el 18 nov (`pitch/slides.md`, slide 4).
+Cerrada el 15 nov: **C1, C2 y C3, rehechas por D en producción con `fit-0.9`** (`pitch/capturas/`). C1 enseña la parada por tipo y «¿Dónde?»; el marcador 3 de la slide 4 baja a «Qué falta aquí» (`.s4 .m3`, `top: 581px`); los `alt` dicen Puente de Vallecas y Latina al 94 %.
 
 Añadido el 14 nov (noche): en la slide 4, bajo los tres pasos, el recuadro «Probada con 7 personas» con lo que pidieron y ya está en la web (relato en `pitch/slides.md`, slide 3). Para que quepa, los pasos van con 24 px de separación en lugar de 40.
 
