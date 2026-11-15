@@ -6,7 +6,7 @@ hi_api.services.scope.search, which also ranks Madrid capital by barrio.
 """
 
 import logging
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from datetime import datetime
 from typing import Any, NamedTuple
 
@@ -275,7 +275,7 @@ class GapData(NamedTuple):
 def gap_data(
     conn: Connection,
     scenario: ScenarioState,
-    levels: Iterable[TerritoryLevel] = LEVELS,
+    levels: Sequence[TerritoryLevel] = LEVELS,
     *,
     highlights: bool = True,
 ) -> GapData:

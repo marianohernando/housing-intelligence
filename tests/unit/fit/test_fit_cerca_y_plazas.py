@@ -205,6 +205,9 @@ def test_no_arrival_by_9_halves_the_fit_and_says_so() -> None:
         "No llegas a Paseo de la Castellana (Azca) a las 9:00 en transporte público: el encaje se "
         "queda en la mitad"
     )
+    # said once: the trip's own fact («Con los horarios publicados no se llega…») is replaced
+    assert not any("horarios publicados" in f.text for f in fit.facts)
+    assert sum(f.topic is FactTopic.TRAYECTO for f in fit.facts) == 1
 
 
 @pytest.mark.parametrize("days", [0, 1, 2])

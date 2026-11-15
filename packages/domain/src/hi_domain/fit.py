@@ -79,7 +79,8 @@ WALK_ZERO_AT = 3.0  # utility falls linearly to 0 at three times the window
 WALK_UTILITY_AT_WINDOW = 0.9
 NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 0 from 20 km
 STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
-# Public transport (CORE-009, D-220): full utility up to 30 min, none from 90 (3x, as walking).
+# Public transport (CORE-009, D-220): its window is 30 min (or the person's limit), scored as a
+# walk: 0,9 at the window and none from 90 (3x); D-243: every minute counts below it too.
 DEFAULT_COMMUTE_MINUTES = 30
 # Telework (D-240): a trip made 1-2 days a week weighs half in the % of fit; from 3 days it
 # weighs as always. A place never gone to (0 days) is not scored, but its limit still applies.
@@ -165,8 +166,9 @@ ROW_IN_TEXT: dict[GapRowKey, str] = {
 @dataclass(frozen=True)
 class PriorityWalk:
     """A priority measured by walking to a kind of place (D-222): what the fact calls it, the
-    window that scores 1 and what to say beyond the walking range (WALK_ZERO_AT x window),
-    where the place is not at a walk but what the person means may be (the countryside)."""
+    window (WALK_UTILITY_AT_WINDOW at its edge, D-243) and what to say beyond the walking range
+    (WALK_ZERO_AT x window), where the place is not at a walk but what the person means may be
+    (the countryside)."""
 
     name: str  # the priority, as the web says it
     label: str  # the place
@@ -307,11 +309,13 @@ class Score:
 @dataclass(frozen=True)
 class Limit:
     """What limited the % of a zone (D-243), said first on its card. `pinned`: the facts that
-    must stay with it (itself, and the trip it speaks of)."""
+    must stay with it (itself, and the trip it speaks of); `replaces`: a fact it says again,
+    left out (the trip that does not arrive by 9:00)."""
 
     utility: float
     fact: Fact
     pinned: tuple[Fact, ...] = ()
+    replaces: tuple[Fact, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -669,9 +673,10 @@ OUT_OF_RANGE_CONFIDENCE = 0.5
 
 
 def priority_walk_fact(measured: PriorityWalk, walk: IndicatorValue | None) -> Score:
-    """Walking minutes to the place a priority measures: 1 up to the window, 0 at the walking
-    range (WALK_ZERO_AT x window). Beyond it, 0 with `out_of_range` as the fact and low
-    confidence; never UNKNOWN, which would rank a zone without the place above one with it far."""
+    """Walking minutes to the place a priority measures, as any walk (walk_utility): 0,9 at the
+    window and 0 at the walking range (WALK_ZERO_AT x window). Beyond it, 0 with `out_of_range`
+    as the fact and low confidence; never UNKNOWN, which would rank a zone without the place
+    above one with it far."""
     if walk is None or walk.value is None:
         text = f"{measured.name}: sin datos de distancia a pie en esta zona"
         fact = Fact(kind=FactKind.UNKNOWN, topic=measured.topic, text=text, confidence=0.0)
@@ -969,7 +974,8 @@ def facts(
             shown.add(extra.fact.topic)
     if limit is None:
         return capped([*known, *unknown])
-    return capped([limit.fact, *known, *unknown], limit.pinned)
+    kept = [f for f in [*known, *unknown] if not any(f is r for r in limit.replaces)]
+    return capped([limit.fact, *kept], limit.pinned)
 
 
 def cost_indicator(scenario: ScenarioState, data: ZoneData) -> IndicatorValue | None:
@@ -1097,8 +1103,12 @@ Scored = Sequence[tuple[Criterion, Score]]
 def trip_limit(
     found: tuple[int, Anchor, Commute], utility: float, fact: Fact, scored: Scored
 ) -> Limit:
-    """A limit set by a trip keeps on the card the fact with its minutes (its place's score)."""
+    """A limit set by a trip keeps on the card the fact with its minutes (its place's score).
+    Without minutes (no arrival by 9:00) that fact would say the same again: the limit replaces
+    it."""
     own = tuple(s.fact for c, s in scored if c.anchor_index == found[0])
+    if found[2].minutes is None:
+        return Limit(utility, fact, (fact,), own)
     return Limit(utility, fact, (fact, *own))
 
 
@@ -1189,8 +1199,8 @@ def lead_trip(scenario: ScenarioState) -> int | None:
 def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, float, str]:
     """«Casi encajan»: best unrounded fit first; ties: more confidence, fewer minutes by public
     transport to the lead place (`lead_trip`: the first one the person goes to; D-220, D-240),
-    the lower cost (D-234: the zones over a budget to buy all score 0 % on it, so the one
-    closest to it comes first), then the zone id. Every near miss fails something, so the
+    the lower cost (D-234: from 25 % over a budget to buy, the zones all score 0 on it, so the
+    one closest to it comes first), then the zone id. Every near miss fails something, so the
     services at a walk do not reorder them (D-239). Never depends on the order the zones arrive
     in."""
     trip = None if fit.lead_trip is None else fit.data.commute.get(fit.lead_trip)
