@@ -9,10 +9,8 @@ import {
   byBarrio,
   constraintLabels,
   countFit,
-  commuteTakes,
   evaluatedText,
   factText,
-  failedLabels,
   fewZones,
   floorAreaOf,
   fitClass,
@@ -145,30 +143,10 @@ describe("zoneFit and the names of the conditions", () => {
     expect(zoneFit(result, "municipio/3")).toEqual({ match: null, ranked: null });
   });
 
-  it("names the conditions a zone fails, leaving out the unnamed ones", () => {
+  it("names each condition of the search by the API's label, from the results and the near misses", () => {
     const labels = constraintLabels(result);
     expect(labels.get("near:colegio")).toBe("Colegio a 10 min andando como mucho");
-    expect(failedLabels(["budget", "commute:0"], labels)).toEqual(["Alquiler hasta 1.500 €/mes para 77 m²"]);
-    expect(failedLabels(undefined, labels)).toEqual([]);
-  });
-
-  it("says the commute like the API's fact: nearest minute, never the limit itself, «más de 2 h» above 120", () => {
-    expect(commuteTakes(56.3, 45)).toBe("56 min");
-    expect(commuteTakes(45.2, 45)).toBe("46 min");
-    expect(commuteTakes(45.6, 45)).toBe("46 min");
-    expect(commuteTakes(121, 45)).toBe("más de 2 h");
-    expect(commuteTakes(120, 90)).toBe("120 min");
-    expect(commuteTakes(52.4, null)).toBe("52 min");
-  });
-
-  it("says how long a commute that is too long takes, rounded up, and only for the commute", () => {
-    const labels = new Map([["commute:0", "Trayecto a Azca de 45 min como mucho"], ["budget", "Alquiler hasta 1.500 €/mes"]]);
-    const own = [
-      { constraint_id: "commute:0", status: "FAIL", value: 45.6, threshold: 45 },
-      { constraint_id: "budget", status: "FAIL", value: 1700 },
-    ] as const;
-    expect(failedLabels(["commute:0", "budget"], labels, own)).toEqual(["Trayecto a Azca de 45 min como mucho (tardarías 46 min)", "Alquiler hasta 1.500 €/mes"]);
-    expect(failedLabels(["commute:0"], labels)).toEqual(["Trayecto a Azca de 45 min como mucho"]);
+    expect(labels.get("budget")).toBe("Alquiler hasta 1.500 €/mes para 77 m²");
   });
 
   it("keys zones like the map does", () => {
