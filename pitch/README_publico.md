@@ -27,20 +27,21 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**29 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
-- población, hogares, vivienda, renta y alquiler;
+**35 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
+- población, hogares, vivienda y su antigüedad, compraventas de vivienda nueva, renta, alquiler y valor tasado;
 - colegios, centros de salud, servicios para mayores y farmacias;
-- las 6 redes de transporte público del Consorcio Regional de Transportes y la accesibilidad de sus estaciones de metro, Metro Ligero y Cercanías, que también publica ese portal.
+- la calidad del aire y las infracciones penales conocidas, como contexto de cada zona;
+- las 6 redes de transporte público del Consorcio Regional de Transportes, la accesibilidad de sus estaciones de metro, Metro Ligero y Cercanías y sus aparcamientos de disuasión, que también publica ese portal.
 
 → **[Lista completa, con el enlace a cada ficha, su licencia, para qué la usamos y su informe de calidad](pitch/datasets_cm.md)**
 
 **Los cubrimos todos:** los 179 municipios de la región, y Madrid capital dividida en sus 21 distritos para que no sea un solo bloque.
 
-Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón y el panel de distritos del Ayuntamiento de Madrid (población y hogares por distrito) y el mapa de calles de OpenStreetMap (distancias a pie).
+Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón, el panel de distritos, el mapa de ruido y otros datos del Ayuntamiento de Madrid; el mapa de calles, los parques y el ocio de OpenStreetMap; los catálogos de hospitales y centros de salud del Ministerio de Sanidad; el alquiler de la Agencia Tributaria y del Ministerio de Vivienda. En total, 52 conjuntos.
 
 <!--
 Fuentes:
-- 29 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov y 29 el 14 nov, con D-235). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
+- 35 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov, 29 el 14 nov con D-235 y 35 el 15 nov con D-237 y D-241). En producción, GET /api/v1/datasets?cm_only=true da 35, y 52 en total (15 nov; evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
 - Los 6 GTFS del CRTM cuentan como datos CM porque el portal los publica: D-196.
 - 179 municipios: evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json.
 - 21 distritos: D-200 y D-209 (población por distrito del padrón municipal del Ayuntamiento). DATA-012 hecha (be40c2f); GET /api/v1/gaps/distrito/2807905 (Chamartín) responde con datos reales.

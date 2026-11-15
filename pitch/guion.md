@@ -101,7 +101,7 @@ Esta es Vida Fácil: el mapa de toda la Comunidad de Madrid, con sus ciento sete
 | 2s.1 | Señalar el mapa de la región | Los 179 municipios y los 21 distritos | — |
 | 2s.2 | Clic en un distrito (propuesta: Chamartín, el de la captura C5) | Vuelo de cámara y zona en 3D con etiquetas de cristal; tarjeta «Qué falta aquí» con «A pie: N min» | Sin 3D: seguir en 2D y quitar «en tres dimensiones» |
 | 2s.3 | Leer los minutos a pie del centro de salud en la tarjeta | «A pie: [N] min» (`zona.falta.a_pie`; mediana de las calles a 4 km/h, D-211) | Saltar la frase de los minutos |
-| 2s.4 | Clic en «Cómo lo calculamos» o en la fuente de una fila | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: 27 conjuntos de la Comunidad de Madrid…» |
+| 2s.4 | Clic en «Cómo lo calculamos» o en la fuente de una fila | Nombre del dataset y enlace a la ficha del portal CM | Enseñar el pie «Datos: 35 conjuntos de la Comunidad de Madrid…» (producción, 15 nov) |
 
 **Fuentes:** 179 municipios y 21 distritos: D-200 · D-209. Paso de 4 km/h, el del estudio «El Madrid de los 15 minutos» del Ayuntamiento: D-211. Captura de referencia: `evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png` (producción, MAP-004).
 
@@ -139,17 +139,18 @@ Ahora cambio de usuario: un ayuntamiento. Para esta familia, Puente de Vallecas 
 ---
 
 ## Bloque 4 · 3:40–4:30 · Datos, código abierto y quién paga
-**Pantalla:** la slide 2 en «Veintisiete conjuntos…» y la slide 3 en «¿Quién paga?».
+**Pantalla:** la slide 2 en «Treinta y cinco conjuntos…» y la slide 3 en «¿Quién paga?».
 
 **«¿Quién paga?»:** el modelo que eligió Mariano el 12 nov (`pitch/modelo_negocio.md`). Ayuntamientos: informe de 990–1.500 € por contrato menor. Promotoras y consultoras: estudios de 490 a 1.500 €. Las cifras no se dicen en voz alta; si preguntan, pregunta 6 de `pitch/preguntas.md`.
 
 <!-- habla:b4:inicio -->
-¿Con qué datos? Veintisiete conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias, las seis redes de transporte del Consorcio y la accesibilidad de sus estaciones. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Los ayuntamientos, por el informe de lo que les falta, y las promotoras, por estudios de zona. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
+¿Con qué datos? Treinta y cinco conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid: población, hogares, vivienda, renta, alquiler, colegios, salud, mayores, farmacias, aire, el transporte del Consorcio y la accesibilidad de sus estaciones. Todos pasan un control de calidad antes de entrar, y cada cifra guarda de dónde viene. El código es abierto y cualquiera puede reproducirlo. ¿Quién paga? Los ayuntamientos, por el informe de lo que les falta, y las promotoras, por estudios de zona. Para las personas es gratis. Y nunca vendemos datos de personas: solo zonas, siempre sumadas.
 <!-- habla:b4:fin -->
 
 **Fuentes de lo que se dice:**
-- «Veintisiete conjuntos» y «control de calidad»: `pitch/datasets_cm.md` (27 con Gate 1 en PASS: el 12 nov entra el valor tasado de la vivienda, D-227) y `GET /api/v1/datasets?cm_only=true` en producción (`cm_open_data_count: 27`). El 23 nov se regenera y, si cambia el número, se cambia la frase.
-- «Seis redes del Consorcio»: D-196.
+- «Treinta y cinco conjuntos» y «control de calidad»: `pitch/datasets_cm.md` (35 con Gate 1 en PASS, regenerado el 15 nov) y `GET /api/v1/datasets?cm_only=true` en producción (`cm_open_data_count: 35`, comprobado el 15 nov; 52 conjuntos en total). Eran 27 el 12 nov; suben a 29 con D-235 (infracciones penales y antigüedad de las viviendas) y a 35 con D-237 (los aparcamientos de disuasión del Consorcio y las 3 fichas de la red de calidad del aire) y D-241 (compraventas de vivienda nueva y usada, y valor tasado por antigüedad). El 23 nov se regenera y, si cambia el número, se cambia la frase.
+- «El transporte del Consorcio»: sus 6 redes, las 3 topologías con la accesibilidad de las estaciones y los aparcamientos de disuasión, todos con ficha en el portal (D-196, D-223, D-237).
+- «Aire»: las 3 fichas de la red de calidad del aire de la Comunidad (D-237). Es contexto de la zona: no puntúa.
 - «Código abierto»: `LICENSE` (Apache-2.0, D-191).
 - «Quién paga»: modelo del documento de la idea, `docs/09_datamad/25_plan_competicion.md` §1.
 

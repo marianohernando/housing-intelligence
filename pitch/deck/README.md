@@ -64,7 +64,8 @@ Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes n
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
-- la slide 2 cuenta 29 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov; las infracciones penales y la antigüedad de las viviendas, del 14 nov, D-235) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- la slide 2 cuenta 35 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov; las infracciones penales y la antigüedad de las viviendas, del 14 nov, D-235; los aparcamientos de disuasión y las 3 fichas del aire, D-237, y las compraventas de vivienda nueva y el valor tasado por antigüedad, D-241, del 15 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- el 15 nov, para que quepan las 35, la tabla junta geografía, población y renta en «Población y territorio», añade «Contexto de la zona» (aire e infracciones) y acorta tres nombres en `SHORT_NAMES`; la línea de apoyo pasa a «OpenStreetMap, Ayuntamiento, Sanidad, Vivienda y Hacienda».
 
 Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias», con la lista de lo que se rehace tras gap-0.3).
 
