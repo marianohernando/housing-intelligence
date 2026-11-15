@@ -4,17 +4,17 @@ provider: Ministerio de Vivienda y Agenda Urbana (MIVAU)
 source_type: official_statistics
 api_type: download
 base_url: https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi
-license_name: Reutilización autorizada citando la fuente y la fecha de la última actualización (aviso legal del portal del Ministerio de Vivienda y Agenda Urbana)
-license_url: https://www.mivau.gob.es/aviso-legal
+license_name: Reutilización autorizada, también comercial, citando la fuente y la fecha de la última actualización y sin sugerir respaldo del Ministerio (aviso legal del portal del Ministerio de Vivienda y Agenda Urbana)
+license_url: https://www.mivau.gob.es/ministerio/aviso-legal
 license_status: CLEAR
 attribution_text: "Ministerio de Vivienda y Agenda Urbana, Sistema Estatal de Referencia del Precio del Alquiler de Vivienda (SERPAVI), base de datos 2011-2024, actualizada el 9 de marzo de 2026."
-commercial_use: null
+commercial_use: true
 redistribution_allowed: true
 trust_tier: A_OFFICIAL
 default_confidence: 0.9
 update_frequency: annual
 geographic_scope: España (territorio fiscal común)
-terms_reviewed_at: 2026-11-14T00:00:00Z
+terms_reviewed_at: 2026-11-15T00:00:00Z
 robots_status: download
 active: true
 notes: >-
@@ -22,8 +22,7 @@ notes: >-
   publica (municipios de menos de 20.000 habitantes, barrios sin código postal). Es la misma
   explotación de fuentes tributarias (IRPF y Catastro) que el dato CM, pero publica la mediana y
   los cuartiles por m² y el número de viviendas alquiladas como vivienda habitual. El portal del
-  Ministerio responde 403 a clientes automáticos; las condiciones de reutilización las revisó la
-  línea de investigación el 14 nov (reutilización citando la fuente y la fecha de actualización,
-  Ley 37/2007) y el fichero se descarga sin restricciones del CDN. El aviso legal está pendiente
-  de verificación manual (el 15 nov tampoco se pudo leer desde aquí): hasta entonces,
-  commercial_use queda sin declarar.
+  Ministerio responde 403 a clientes automáticos; el fichero se descarga sin restricciones del
+  CDN. El aviso legal se comprobó en el navegador el 15 nov (línea D): permite usos comerciales y
+  no comerciales citando la fuente y la fecha de la última actualización y sin sugerir respaldo
+  del Ministerio (Ley 37/2007).
