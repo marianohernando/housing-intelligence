@@ -10,7 +10,22 @@ function row(code: string, value: number | null, detail: FeatureValueRow["detail
 }
 
 function park(id: string, name: string, spaces: number | null, fee: Facility["fee"]): Facility {
-  return { id, type: "aparcamiento", label: "Aparcamiento disuasorio", name, detail: null, source: null, dependency: null, lon: 0, lat: 0, spaces, fee };
+  return {
+    id,
+    type: "aparcamiento",
+    label: "Aparcamiento disuasorio",
+    name,
+    detail: null,
+    source: null,
+    dependency: null,
+    managedPrivately: false,
+    capacity: spaces === null ? null : { value: spaces, unit: "plazas" },
+    approximate: false,
+    lon: 0,
+    lat: 0,
+    spaces,
+    fee,
+  };
 }
 
 const ALARM = /peligr|alarm|grave|malo|tóxic|nociv|insalubre|medid/i;
@@ -67,7 +82,23 @@ describe("parkingText and parkAndRideText (zona.entorno.aparcamiento)", () => {
 
   it("leaves out the spaces when one does not say them, and the zones without any", () => {
     const mixed = [park("a", "Aparcamiento disuasorio X", 100, "free"), park("b", "Aparcamiento disuasorio Aviación Española", null, null)];
-    expect(parkAndRideText(mixed, "Latina")).toBe("2 aparcamientos disuasorios en Latina (1 gratuito)");
+    expect(parkAndRideText(mixed, "Latina")).toBe("2 aparcamientos disuasorios en Latina (de 1 no consta si es gratuito)");
+  });
+
+  it("never counts as paid one that does not publish its fee (R-02 of PR #65)", () => {
+    // Fuencarral-El Pardo: three of the CRTM, free, and Pitis of the Ayuntamiento, without fee or spaces
+    const fuencarral = [
+      park("a", "Aparcamiento disuasorio Fuencarral", 70, "free"),
+      park("b", "Aparcamiento disuasorio Ronda de la Comunicación", 485, "free"),
+      park("c", "Aparcamiento disuasorio El Goloso", 45, "free"),
+      park("d", "Aparcamiento disuasorio Pitis", null, undefined),
+    ];
+    expect(parkAndRideText(fuencarral, "Fuencarral-El Pardo")).toBe("4 aparcamientos disuasorios en Fuencarral-El Pardo (de 1 no consta si es gratuito)");
+    expect(parkAndRideText(fuencarral.slice(0, 3), "Fuencarral-El Pardo")).toBe("3 aparcamientos disuasorios en Fuencarral-El Pardo, con 600 plazas (todos gratuitos)");
+    const twoUnknown = [park("x", "Aparcamiento disuasorio X", null, undefined), park("y", "Aparcamiento disuasorio Y", null, undefined)];
+    expect(parkAndRideText(twoUnknown, "Z")).toBe("2 aparcamientos disuasorios en Z (de 2 no consta si son gratuitos)");
+    const paid = [park("p", "Aparcamiento disuasorio P", 10, "paid"), park("q", "Aparcamiento disuasorio Q", 20, "free")];
+    expect(parkAndRideText(paid, "Z")).toBe("2 aparcamientos disuasorios en Z, con 30 plazas (1 gratuito)");
     expect(parkAndRideText([], "Pinto")).toBeNull();
   });
 });

@@ -1567,7 +1567,9 @@ Revisada en el PR #65 (R-01 a R-14). Evidencia:
      - los lugares de los 5 datasets de lugares: `crtm_aparcamientos_disuasion`, `ayto_aparcamientos_publicos`, `ayto_aparcamientos_residentes`, `cm_calidad_aire_estaciones` y `ayto_calidad_aire_estaciones`;
      - los `feature_value` y `feature_registry` de las 4 features;
      - los 9 datasets de `dataset_registry` y `dataset_version`, y la fuente `ayuntamiento_madrid_geoportal`.
-9. **Pendiente de anotar.** Los puntos R-11 y R-14 de la revisión no llegaron con su texto a esta sesión. Se anotan aquí cuando lleguen.
+9. **Segunda revisión del PR #65** (lista, con mejoras opcionales). R-11, R-13, R-14 y R-15 de la primera eran solo informativos: no queda nada pendiente de ellos. Además:
+   - «Todos» no enciende «Aparcamientos», pero tampoco lo apaga si ya estaba encendido, igual que el ocio (`allServicesOn`).
+   - Un disuasorio que no publica si es gratuito nunca cuenta como de pago. Con la misma regla que las plazas, «(N gratuitos)» solo sale si todos lo publican; si no, «de N no consta si es gratuito». Por ejemplo, Fuencarral-El Pardo tiene tres del CRTM gratuitos y Pitis, del Ayuntamiento, sin dato.
 
 ## D-238 — «¿Dónde?»: toda la Comunidad, Madrid capital por barrios, alrededores o pueblos (2026-11-14)
 Decisión de Mariano (14 nov) tras la prueba con usuarios: cuatro personas pidieron buscar solo en una parte de la región. Es aditiva y reversible: un campo opcional del escenario, sin datos nuevos ni cambio de método (`fit-0.7` no cambia).

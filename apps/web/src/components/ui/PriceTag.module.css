@@ -29,6 +29,8 @@
   font-weight: 600;
 }
 
+/* «por 68 m²»: the area the price is for, as quiet as the confidence words */
+.area,
 .mark {
   color: var(--ink-soft);
   font-size: 0.75rem;
@@ -36,10 +38,14 @@
   white-space: nowrap;
 }
 
-.card .mark {
-  font-size: 0.85rem;
+.card .area {
+  color: var(--ink);
+  font-size: var(--text-base);
+  font-weight: 500;
 }
 
-.card .mark::before {
-  content: "· ";
+/* On its own line under «Alquiler ≈ 994 €/mes por 60 m²», which no longer leaves room beside it */
+.card .mark {
+  flex-basis: 100%;
+  font-size: 0.85rem;
 }

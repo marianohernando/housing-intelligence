@@ -92,10 +92,21 @@ export function parkingText(row: FeatureValueRow | null): string | null {
 const FEE_WORD = { free: "gratuito", paid: "de pago", mixed: "gratuito y de pago" } as const;
 const DISUASORIO = "Aparcamiento disuasorio";
 
+/** « (todos gratuitos)», « (2 gratuitos)», or « (de 1 no consta si es gratuito)» when some do not say it. */
+function feeNote(fees: readonly (Facility["fee"] | null)[]): string {
+  const unknown = fees.filter((f) => !f).length;
+  if (unknown) return ` (de ${formatNumber(unknown, 0)} no consta si ${unknown === 1 ? "es gratuito" : "son gratuitos"})`;
+  const free = fees.filter((f) => f === "free").length;
+  if (free === fees.length) return " (todos gratuitos)";
+  return free ? ` (${formatNumber(free, 0)} ${free === 1 ? "gratuito" : "gratuitos"})` : "";
+}
+
 /**
  * The park-and-ride car parks of the zone, from «Todos los centros»: «Aparcamiento disuasorio
  * gratuito (210 plazas) en Usera: Doce de Octubre», or «3 aparcamientos disuasorios en Getafe, con
- * 1.519 plazas (todos gratuitos)». Spaces and fee only when every one says them; null without any.
+ * 1.519 plazas (todos gratuitos)». Spaces and how many are free only when every one says them; a
+ * car park that does not publish its fee is never counted as paid: «de 1 no consta si es
+ * gratuito» (review of PR #65, R-02). Null without any.
  */
 export function parkAndRideText(items: readonly Facility[], zone: string): string | null {
   const parks = items.filter((f) => f.label === DISUASORIO);
@@ -109,10 +120,8 @@ export function parkAndRideText(items: readonly Facility[], zone: string): strin
     const name = park.name?.replace(/^Aparcamiento disuasorio\s*/i, "").trim();
     return `${DISUASORIO}${fee}${size} en ${zone}${name ? `: ${name}` : ""}`;
   }
-  const free = fees.filter((f) => f === "free").length;
-  const freeText = free === parks.length ? "todos gratuitos" : free ? `${formatNumber(free, 0)} ${free === 1 ? "gratuito" : "gratuitos"}` : null;
   const size = spaces === null ? "" : `, con ${formatNumber(spaces, 0)} plazas`;
-  return `${formatNumber(parks.length, 0)} aparcamientos disuasorios en ${zone}${size}${freeText ? ` (${freeText})` : ""}`;
+  return `${formatNumber(parks.length, 0)} aparcamientos disuasorios en ${zone}${size}${feeNote(fees)}`;
 }
 
 export interface EnvironmentFacts {

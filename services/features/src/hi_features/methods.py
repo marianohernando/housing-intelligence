@@ -888,7 +888,7 @@ class StreetShareSettings:
 
 
 def street_share_above(
-    zone_of_node: NDArray[np.str_],
+    zone_of_sample: NDArray[np.str_],
     weight: NDArray[np.float64],
     level: NDArray[np.float64],
     zones: Sequence[str],
@@ -896,11 +896,13 @@ def street_share_above(
     settings: StreetShareSettings,
 ) -> pd.DataFrame:
     """Per zone: % of the street where people live whose level is above `settings.above`
-    (D-237: the noise map read at each street node). `level` is NaN where the map gives none;
-    those metres leave the percentage and lower the confidence. A zone without origin streets,
-    or with too little of them on the map, is SOURCE_NO_COVERAGE: never 0."""
+    (D-237). Each sample is a point along a residential segment (`hi_features.noise.
+    street_samples`, every 10 m at most, R-03 of PR #65) with the street metres it stands for in
+    `weight` and the map's level there in `level`, NaN where the map gives none; those metres
+    leave the percentage and lower the confidence. A zone without residential streets, or with
+    too little of them on the map, is SOURCE_NO_COVERAGE: never 0."""
     index = {code: i for i, code in enumerate(zones)}
-    zone = np.array([index.get(str(c), -1) for c in zone_of_node], dtype=np.int64)
+    zone = np.array([index.get(str(c), -1) for c in zone_of_sample], dtype=np.int64)
     placed = zone >= 0
     known = placed & ~np.isnan(level)
     above = known & (np.nan_to_num(level, nan=-np.inf) > settings.above)

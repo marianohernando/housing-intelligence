@@ -14,6 +14,7 @@ import {
   constraintLabels,
   evaluatedText,
   failedLabels,
+  floorAreaOf,
   noneText,
   passingText,
   rentUnknownText,
@@ -63,12 +64,12 @@ function levelText({ level, municipio_name }: RankedZone["zone"]): string {
   return level === "distrito" ? TEXT.district(municipio_name) : TEXT.municipio;
 }
 
-function ZoneRow({ zone, buying, fails }: { zone: RankedZone; buying: boolean; fails?: string[] }) {
+function ZoneRow({ zone, buying, m2, fails }: { zone: RankedZone; buying: boolean; m2: number | null; fails?: string[] }) {
   const { select, zones } = useMapZones();
   const { name, level, code } = zone.zone;
   // «Berruguete · Tetuán»: a barrio's district comes from the start of its code (D-238)
   const district = level === "barrio" && zones ? districtOf(zones, code) : undefined;
-  const price = zonePrice(zone, buying);
+  const price = zonePrice(zone, buying, m2);
   return (
     <button type="button" className={styles.row} onClick={() => select(zoneKeyOf(zone.zone))}>
       {!fails && <span className={styles.rank}>{zone.rank}</span>}
@@ -98,7 +99,7 @@ function Ranking({ result }: { result: SearchResult }) {
       <ol className={styles.ranking}>
         {shown.map((zone) => (
           <li key={zoneKeyOf(zone.zone)}>
-            <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} />
+            <ZoneRow zone={zone} buying={result.scenario.budget?.kind === "buy"} m2={floorAreaOf(result)} />
           </li>
         ))}
       </ol>
@@ -133,6 +134,7 @@ function NearMisses({ result }: { result: SearchResult }) {
               <ZoneRow
                 zone={zone}
                 buying={result.scenario.budget?.kind === "buy"}
+                m2={floorAreaOf(result)}
                 fails={failedLabels(zone.failed_constraints, labels, zone.constraints)}
               />
             </li>
