@@ -166,13 +166,13 @@
 
 .labelKind {
   color: var(--ink-soft);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 500;
 }
 
 .labelName {
   font-family: var(--font-title);
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 

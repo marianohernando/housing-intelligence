@@ -36,7 +36,7 @@ describe("choropleth helpers", () => {
 describe("wording", () => {
   it("formats values with units in Spanish", () => {
     expect(formatValue(15.1, "EUR/m2/mes")).toBe("15,1 EUR/m2/mes");
-    expect(formatValue(20.19, "%")).toBe("20,2 %");
+    expect(formatValue(20.19, "%")).toBe("20,2\u00a0%");
   });
 
   it("explains unknown and low-confidence values in plain language", () => {

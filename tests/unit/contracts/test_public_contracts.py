@@ -144,7 +144,8 @@ def test_leisure_is_additive_and_a_scenario_without_it_reads_the_same() -> None:
     }
     scenario = ScenarioState.model_validate(old)
     dumped = scenario.model_dump(mode="json")
-    assert {k: dumped[k] for k in old} == old
+    # D-244 adds «Somos mayores» to the household, False unless the person says so
+    assert {k: dumped[k] for k in old} == old | {"household": old["household"] | {"seniors": False}}
     assert set(dumped) == {*old, "min_floor_area_m2", "anchors", "scope"}  # scope: D-238
     everything = ScenarioState.model_validate(
         {
@@ -173,6 +174,21 @@ def test_default_scenario_and_household_size() -> None:
     buy = ScenarioState.model_validate({"budget": {"kind": "buy", "amount_eur": 320_000}})
     assert buy.budget is not None
     assert buy.budget.kind == "buy"
+
+
+def test_somos_mayores_is_additive_and_adds_no_one() -> None:
+    """D-244: `seniors` («Somos mayores») is optional and False by default, so a household saved
+    before it means the same; it says who the adults are and never adds a person."""
+    old = {"adults": 2, "minors": 0, "minor_ages": [], "seniors_in_care": 0}
+    household = ScenarioState.model_validate({"household": old}).household
+    assert household.seniors is False
+    assert household.model_dump(mode="json") == old | {"seniors": False}
+    retired = ScenarioState.model_validate({"household": old | {"seniors": True}}).household
+    assert retired.seniors is True
+    assert retired.people == household.people == 2
+    schema = ScenarioState.model_json_schema()["$defs"]["Household"]["properties"]["seniors"]
+    assert schema["default"] is False
+    assert schema["description"] == "Every adult is 65+ («Somos mayores»)"
 
 
 def test_a_scenario_without_scope_searches_the_whole_region() -> None:

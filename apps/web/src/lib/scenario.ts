@@ -32,10 +32,22 @@ export function setScope(s: ScenarioState, scope: SearchScope): ScenarioState {
   return next;
 }
 
-/** Slider ranges, inside the contract ranges (RENT_RANGE_EUR, BUY_RANGE_EUR). */
+/**
+ * Slider ranges, inside the contract ranges (RENT_RANGE_EUR, BUY_RANGE_EUR). Each starts at one
+ * of its quick amounts, so the button of that amount shows as chosen.
+ */
 export const BUDGET_RANGE: Record<BudgetKind, { min: number; max: number; step: number; initial: number }> = {
   rent: { min: 300, max: 5_000, step: 50, initial: 1_200 },
-  buy: { min: 50_000, max: 2_000_000, step: 10_000, initial: 300_000 },
+  buy: { min: 50_000, max: 2_000_000, step: 10_000, initial: 250_000 },
+};
+
+/**
+ * The amounts offered with one tap (UX mobile audit, A1: a 94-step slider is hard to hit with an
+ * unsteady finger). The slider stays, and «Otra cantidad» takes any amount of its range.
+ */
+export const QUICK_BUDGETS: Record<BudgetKind, readonly number[]> = {
+  rent: [600, 900, 1_200, 1_500],
+  buy: [150_000, 250_000, 400_000, 600_000],
 };
 
 const LIMITS = { minors: 8, seniors: 4 } as const;
@@ -77,6 +89,40 @@ export function setMinors(s: ScenarioState, minors: number): ScenarioState {
 
 export function setSeniors(s: ScenarioState, seniors: number): ScenarioState {
   return { ...s, household: { ...household(s), seniors_in_care: clamp(Math.round(seniors), 0, LIMITS.seniors) } };
+}
+
+/** «Somos mayores» (D-244): the adults of the household are 65 or older. */
+export function isOlderHousehold(s: Pick<ScenarioState, "household">): boolean {
+  return s.household?.seniors === true;
+}
+
+/** What «Somos mayores» marks in «¿Qué quieres tener cerca?» (D-244), in this order; each one can be taken away. */
+export const OLDER_PRIORITIES: readonly PriorityKey[] = ["salud", "sin_escaleras", "transporte"];
+
+/**
+ * Marks or unmarks «Somos mayores» (D-244). It adds no one to the household (unlike the people
+ * looked after, `seniors_in_care`). Marked, OLDER_PRIORITIES join what matters, after what was
+ * already marked, and a search of the whole region with no place to go starts in Madrid capital
+ * (without a place, small well-served villages would come first, D-243 §13). Unmarked, the field
+ * leaves the scenario, as it was before, and so does «Donde vivimos ahora» (an `other` place only
+ * this flow makes, which no field shows without it: it would filter unseen, review H1 of PR #79).
+ * What stays, in view for the person to change: Madrid capital, what it marked and a family place,
+ * which «Más opciones» shows.
+ */
+export function setOlderHousehold(s: ScenarioState, on: boolean): ScenarioState {
+  const home = { ...household(s) };
+  if (!on) {
+    delete home.seniors;
+    return { ...s, household: home, anchors: (s.anchors ?? []).filter((a) => kindOf(a) !== "other") };
+  }
+  const priorities = s.priorities ?? [];
+  const older: ScenarioState = {
+    ...s,
+    household: { ...home, seniors: true },
+    priorities: [...priorities, ...OLDER_PRIORITIES.filter((p) => !priorities.includes(p))],
+  };
+  const noPlace = (s.anchors ?? []).length === 0;
+  return noPlace && scopeOf(s) === "all" ? setScope(older, "madrid") : older;
 }
 
 /**
@@ -169,6 +215,23 @@ export function setBudgetAmount(s: ScenarioState, amount: number): ScenarioState
 }
 
 /**
+ * «Otra cantidad»: the euros the person types («900», «1.250», «1 250 €»), as they are, or null
+ * when it is not a whole number inside the slider's range (the field then says which range).
+ */
+export function typedBudget(text: string, kind: BudgetKind): number | null {
+  const digits = text.replace(/[.\s€]/g, "");
+  if (!/^\d+$/.test(digits)) return null;
+  const amount = Number(digits);
+  const { min, max } = BUDGET_RANGE[kind];
+  return amount >= min && amount <= max ? amount : null;
+}
+
+/** A typed amount goes as typed, not rounded to the slider's step; `typedBudget` has checked its range. */
+export function setTypedBudget(s: ScenarioState, amount: number): ScenarioState {
+  return { ...s, budget: { kind: s.budget?.kind ?? "rent", amount_eur: amount } };
+}
+
+/**
  * What the API assumes with `min_floor_area_m2: null` (D-214): the median useful floor area of the
  * homes of households of each size in the Comunidad de Madrid (Censo 2021), 5 or more people as
  * 5. A copy of MEDIAN_FLOOR_AREA_M2 in hi_domain/affordability.py, checked by a test.
@@ -254,11 +317,14 @@ export interface Place {
   lon: number;
 }
 
-/** The places the search asks for: where the person works and, optionally, where family or friends live. */
-export type PlaceKind = "work" | "family";
+/**
+ * The places the search asks for: where the person works and, optionally, where family or friends
+ * live; with «Somos mayores», where they live now (`other`, D-244).
+ */
+export type PlaceKind = "work" | "family" | "other";
 
 /** Their order in `anchors`: the earlier a place, the more its trip weighs in the fit (the work place first). */
-const PLACE_KINDS: readonly PlaceKind[] = ["work", "family"];
+const PLACE_KINDS: readonly PlaceKind[] = ["work", "family", "other"];
 const kindOf = (a: Anchor) => a.kind ?? "work";
 /** Position of a place in `anchors`; kinds the web does not edit (from a shared link) go last. */
 const placeOrder = (a: Anchor) => (PLACE_KINDS as readonly string[]).indexOf(kindOf(a)) + 1 || PLACE_KINDS.length + 1;
@@ -344,6 +410,67 @@ export function exampleScenario(): ScenarioState {
     nearby: [{ need: "colegio", max_walk_minutes: 10, required: true }],
     priorities: ["colegios", "transporte", "salud"],
   };
+}
+
+/**
+ * The second example of the portada (D-244, Mariano's design): a retired couple renting up to
+ * 1.200 € a month who want to live near their family in Ciudad Lineal, 30 min by public transport
+ * as most, in Madrid capital, with what «Somos mayores» marks. The point is the Ciudad Lineal metro
+ * station of GET /api/v1/places, a public place, never a home address.
+ */
+export function retiredExampleScenario(): ScenarioState {
+  return {
+    schema_version: 2,
+    scope: "madrid",
+    budget: { kind: "rent", amount_eur: 1_200 },
+    min_floor_area_m2: null,
+    household: { adults: 2, minors: 0, minor_ages: [], seniors_in_care: 0, seniors: true },
+    anchors: [{ kind: "family", label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805, ...OLDER_TRIP }],
+    nearby: [],
+    priorities: [...OLDER_PRIORITIES],
+  };
+}
+
+/**
+ * «¿Cerca de dónde queréis vivir?» (D-244), in place of «Trabajo en» for «Somos mayores»: where
+ * they live now (`other`, said as HOME_LABEL, never the place's own name) or near their family.
+ * The trip goes with 30 min as a limit the person can change, and 3 days a week, so it weighs as
+ * a place they go to often.
+ */
+export type OlderPlaceKind = "other" | "family";
+/** Lower case: the API says it inside a sentence («27 min en transporte público hasta donde vivimos ahora…», H7) */
+export const HOME_LABEL = "donde vivimos ahora";
+export const OLDER_TRIP = { max_minutes: 30, days_per_week: 3 } as const;
+
+/** The place of «¿Cerca de dónde queréis vivir?», if the search has one. */
+export function olderPlace(s: ScenarioState): { kind: OlderPlaceKind; anchor: Anchor } | null {
+  for (const kind of ["other", "family"] as const) {
+    const anchor = placeOf(s, kind);
+    if (anchor) return { kind, anchor };
+  }
+  return null;
+}
+
+/** Sets (or with null, removes) the place of «¿Cerca de dónde queréis vivir?»: one place, of one of its two kinds. */
+export function setOlderPlace(s: ScenarioState, kind: OlderPlaceKind, place: Place | null): ScenarioState {
+  const kept = (s.anchors ?? []).filter((a) => kindOf(a) !== "other" && kindOf(a) !== "family");
+  if (!place) return { ...s, anchors: kept };
+  const label = kind === "other" ? HOME_LABEL : place.label.slice(0, LABEL_MAX);
+  const picked: Anchor = { kind, label, lat: place.lat, lon: place.lon, ...OLDER_TRIP };
+  return { ...s, anchors: [...kept, picked].sort((a, b) => placeOrder(a) - placeOrder(b)) };
+}
+
+/**
+ * The same point as the other kind: «Donde vivimos ahora» or near the family, keeping the limit.
+ * `familyLabel` names the family's place (the place picked, if the field still knows it).
+ */
+export function setOlderPlaceKind(s: ScenarioState, kind: OlderPlaceKind, familyLabel: string): ScenarioState {
+  const current = olderPlace(s);
+  if (!current || current.kind === kind) return s;
+  const label = kind === "other" ? HOME_LABEL : familyLabel.slice(0, LABEL_MAX);
+  const moved: Anchor = { ...current.anchor, kind, label };
+  const kept = (s.anchors ?? []).filter((a) => a !== current.anchor);
+  return { ...s, anchors: [...kept, moved].sort((a, b) => placeOrder(a) - placeOrder(b)) };
 }
 
 function toBase64Url(text: string): string {

@@ -160,7 +160,7 @@
 .hospitalName small {
   display: block;
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   line-height: 1.3;
 }
 

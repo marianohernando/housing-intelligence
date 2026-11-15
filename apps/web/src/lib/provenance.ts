@@ -9,7 +9,7 @@ export const PORTAL_CM = "Portal de Datos Abiertos de la Comunidad de Madrid";
 
 /** `n` is cm_open_data_count, the CRTM's included (D-196): the other publishers are named, not counted (pie.contador, 13 nov; the Ministerio de Vivienda's rent reference, D-242). */
 export function counterText(n: number): string {
-  return `Datos: ${n.toLocaleString("es-ES")} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda`;
+  return `Datos: ${n.toLocaleString("es-ES")} conjuntos de la Comunidad de Madrid (con los del Consorcio Regional de Transportes) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda`;
 }
 
 const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];

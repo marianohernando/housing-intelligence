@@ -4,6 +4,7 @@ import { ExternalLink, Footprints, Hospital } from "lucide-react";
 import { useState } from "react";
 
 import type { GapRow, IndicatorValue } from "@/contracts/zone_gap_list_response";
+import Help from "@/components/ui/Help";
 import { confidenceText } from "@/lib/confidence";
 import {
   GAP_STATUS,
@@ -161,12 +162,11 @@ export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
       )}
 
       {reason && <p className={styles.reason}>{reason}</p>}
+      {/* The confidence word opens what it means (review R-08 of PR #79: it was a tooltip a phone never shows) */}
       {row.indicator.value !== null && (
-        <p className={styles.confidence} title={confidence.help}>
-          <span className="visually-hidden">{TEXT.confidence}</span>
-          {confidence.label}
-          <span className="visually-hidden">. {confidence.help}</span>
-        </p>
+        <Help about={`${TEXT.confidence}${row.label}`} label={confidence.label} className={styles.confidence}>
+          <p>{confidence.help}</p>
+        </Help>
       )}
       {row.proxy_note && (
         <p className={styles.note}>

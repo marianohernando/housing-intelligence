@@ -102,7 +102,7 @@
     },
     "Household": {
       "additionalProperties": false,
-      "description": "«Tu hogar»: adults, children and older people they look after (all live together).",
+      "description": "«Tu hogar»: adults, children and older people they look after (all live together).\n\n`seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no\none to the household, unlike `seniors_in_care`.",
       "properties": {
         "adults": {
           "default": 1,
@@ -125,6 +125,12 @@
           "minimum": 0,
           "title": "Minors",
           "type": "integer"
+        },
+        "seniors": {
+          "default": false,
+          "description": "Every adult is 65+ («Somos mayores»)",
+          "title": "Seniors",
+          "type": "boolean"
         },
         "seniors_in_care": {
           "default": 0,

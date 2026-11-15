@@ -227,6 +227,10 @@ export type Adults = number;
 export type MinorAges = number[];
 export type Minors = number;
 /**
+ * Every adult is 65+ («Somos mayores»)
+ */
+export type Seniors = boolean;
+/**
  * People aged 65+ cared for
  */
 export type SeniorsInCare = number;
@@ -500,11 +504,15 @@ export interface Budget {
 }
 /**
  * «Tu hogar»: adults, children and older people they look after (all live together).
+ *
+ * `seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no
+ * one to the household, unlike `seniors_in_care`.
  */
 export interface Household {
   adults?: Adults;
   minor_ages?: MinorAges;
   minors?: Minors;
+  seniors?: Seniors;
   seniors_in_care?: SeniorsInCare;
 }
 /**

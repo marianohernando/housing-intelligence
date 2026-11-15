@@ -92,7 +92,7 @@ export function colorFor(value: number | null, breaks: number[]): string {
 export function formatValue(value: number, unit: string): string {
   const digits = Math.abs(value) >= 1000 ? 0 : Math.abs(value) >= 10 ? 1 : 2;
   const number = value.toLocaleString("es-ES", { maximumFractionDigits: digits });
-  return unit === "%" ? `${number} %` : `${number} ${unit}`;
+  return unit === "%" ? `${number}\u00a0%` : `${number} ${unit}`;
 }
 
 export function describeValue(row: FeatureValueRow, info: FeatureInfo): string {

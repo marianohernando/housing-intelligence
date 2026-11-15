@@ -106,10 +106,10 @@ const TEXT = {
   // mapa.aria.fila of pitch/textos_web.md (D-213), with the neighbours of gap-0.3
   ariaRow: (label: string) =>
     `Cada zona tiene el color de su estado en ${label.toLowerCase()} frente a los municipios de su tipo (los pueblos muy pequeños, junto con sus vecinos); la leyenda lo explica.`,
-  ariaFit: "Cada zona tiene el color de su encaje con tu búsqueda; la leyenda lo explica y la lista de zonas que encajan está junto al mapa.",
+  ariaFit: "Cada zona tiene un color según lo que te conviene; la leyenda lo explica y la lista de zonas que te convienen está junto al mapa.",
   // mapa.aria.encaje.barrios (D-238), after mapa.aria.barrios: it no longer says the capital is by barrios
   ariaFitBarrios:
-    "Cada barrio tiene el color de su encaje con tu búsqueda y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que encajan está junto al mapa.",
+    "Cada barrio tiene un color según lo que te conviene y el resto de la Comunidad queda sin pintar; la leyenda lo explica y la lista de barrios que te convienen está junto al mapa.",
   // mapa.aria.centros of pitch/textos_web.md (T3)
   ariaFacilities: (count: string) => `En el mapa salen, agrupados, ${count.charAt(0).toLowerCase()}${count.slice(1)}; su lista está en «Todos los centros».`,
 };

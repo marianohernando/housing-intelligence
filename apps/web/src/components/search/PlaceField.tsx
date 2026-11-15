@@ -1,18 +1,24 @@
 "use client";
 
-import { Briefcase, Heart, type LucideIcon, X } from "lucide-react";
+import { Briefcase, Heart, House, type LucideIcon, X } from "lucide-react";
 import { type KeyboardEvent, type RefObject, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { useMapZones } from "@/components/map/MapProvider";
 import type { Anchor } from "@/contracts/scenario_state";
+import Help from "@/components/ui/Help";
+import Segmented from "@/components/ui/Segmented";
 import { createApi } from "@/lib/api";
 import {
   commuteMinutesOptions,
   FEW_OFFICE_DAYS,
   officeDays,
   officeDaysOptions,
+  type OlderPlaceKind,
+  olderPlace,
   type PlaceKind,
   placeOf,
+  setOlderPlace,
+  setOlderPlaceKind,
   setPlace,
   setPlaceMaxMinutes,
   setWorkDays,
@@ -29,6 +35,8 @@ const TEXT = {
   noMatch: "No encontramos ese lugar. Prueba con una estación o con el nombre del municipio.",
   found: (n: number) => (n === 1 ? "1 lugar encontrado. Usa las flechas para elegirlo." : `${n} lugares encontrados. Usa las flechas para elegir uno.`),
   remove: "Quitar este lugar",
+  // Both places are optional, said by their name (UX mobile audit, C4: «Trabajo en» did not say it)
+  optional: "(opcional)",
   // trabajo.max_min, «Tardar como mucho {n} min en transporte público», with the minutes as a selector
   commuteBefore: "Tardar como mucho",
   commuteAfter: "en transporte público",
@@ -37,15 +45,26 @@ const TEXT = {
   days: "¿Cuántos días vas a la oficina?",
   daysOption: (n: number) => (n === 0 ? "Teletrabajo total" : n === 1 ? "1 día" : `${n} días`),
   fewDays: "Como vas pocos días, el trayecto cuenta la mitad.",
-  telework: "Con teletrabajo total, el trayecto no cuenta en el encaje. Si pones un límite, lo respetamos.",
+  telework: "Con teletrabajo total, el trayecto no cuenta para ordenar las zonas. Si pones un límite, lo respetamos.",
+  // lugar.* (D-244): «Somos mayores» is asked where they want to live, in place of «Trabajo en»
+  older: {
+    title: "¿Cerca de dónde queréis vivir?",
+    // The name of the two options, not the question again (review H7 of PR #79)
+    which: "Vuestra casa de ahora o vuestra familia",
+    options: { other: "Donde vivimos ahora", family: "Cerca de nuestra familia" } satisfies Record<OlderPlaceKind, string>,
+    search: { other: "¿Dónde vivís ahora?", family: "¿Dónde vive vuestra familia?" } satisfies Record<OlderPlaceKind, string>,
+    help: "Miramos cuánto se tarda en transporte público hasta ese sitio, llegando a las 9:00 de un día laborable, y contamos el trayecto como si fuerais 3 días a la semana. Ponemos 30 min como mucho: puedes cambiarlo o quitarlo.",
+    // A family place picked before this field knew its name (a shared link): said in plain words
+    family: "Vuestra familia",
+  },
 };
 
-/** What changes from «Trabajo en» to «Cerca de mi familia o amigos»; the rest is the same field. */
+/** What changes from «Trabajo en» to «Cerca de mi familia o amigos» and «Donde vivimos ahora»; the rest is the same field. */
 const KINDS: Record<PlaceKind, { title: string; help: string; commuteAria: string; icon: LucideIcon }> = {
   work: {
     title: "Trabajo en",
-    // trabajo.ayuda (14 nov): the commute is measured in public transport minutes (CORE-009, D-220), all the CRTM feeds
-    help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús (EMT e interurbanos), Cercanías y Metro Ligero.",
+    // trabajo.ayuda: the commute in public transport minutes (CORE-009, D-220), every CRTM feed, without acronyms
+    help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús, Cercanías y Metro Ligero.",
     // trabajo.max_min.aria: names the place, as the family one does
     commuteAria: "Tardar como mucho hasta el trabajo, en transporte público",
     icon: Briefcase,
@@ -53,9 +72,16 @@ const KINDS: Record<PlaceKind, { title: string; help: string; commuteAria: strin
   family: {
     title: "Cerca de mi familia o amigos",
     // familia.ayuda: the same trip as the work place, so it says the declared proxy (D-240)
-    help: "Opcional. Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.",
+    help: "Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.",
     commuteAria: "Tardar como mucho hasta mi familia o amigos, en transporte público",
     icon: Heart,
+  },
+  // lugar.ahora (D-244): where a retired household lives now, only with «Somos mayores»
+  other: {
+    title: "Donde vivimos ahora",
+    help: "Miramos cuánto se tarda en transporte público hasta donde vivís ahora, llegando a las 9:00 de un día laborable.",
+    commuteAria: "Tardar como mucho hasta donde vivimos ahora, en transporte público",
+    icon: House,
   },
 };
 
@@ -146,18 +172,25 @@ function OfficeDays({ anchor }: { anchor: Anchor }) {
 interface PickedProps {
   kind: PlaceKind;
   anchor: Anchor;
+  /** The name of the place picked, when the anchor is called otherwise («Donde vivimos ahora») */
+  placeName?: string | null;
   removeRef: RefObject<HTMLButtonElement | null>;
   onRemove: () => void;
 }
 
+/** «donde vivimos ahora», the label the API puts inside a sentence, at the start of its own line. */
+const capitalised = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
 /** The place picked, with its selectors: the days (work only) and its limit, which applies whatever the days. */
-function PickedPlace({ kind, anchor, removeRef, onRemove }: PickedProps) {
+function PickedPlace({ kind, anchor, placeName, removeRef, onRemove }: PickedProps) {
   const Icon = KINDS[kind].icon;
+  const label = capitalised(anchor.label);
+  const name = placeName && placeName !== anchor.label ? `${label}: ${placeName}` : label;
   return (
     <>
       <p className={styles.place}>
         <Icon size={18} aria-hidden="true" />
-        <span className={styles.placeName}>{anchor.label}</span>
+        <span className={styles.placeName}>{name}</span>
         <button ref={removeRef} type="button" className={styles.remove} aria-label={`${TEXT.remove}: ${anchor.label}`} onClick={onRemove}>
           <X size={18} aria-hidden="true" />
         </button>
@@ -168,24 +201,23 @@ function PickedPlace({ kind, anchor, removeRef, onRemove }: PickedProps) {
   );
 }
 
-/**
- * «Trabajo en» and «Cerca de mi familia o amigos»: a combobox (ARIA 1.2) over stations and zones. The
- * place goes to the search without a minutes limit until «Tardar como mucho» sets one.
- */
-export default function PlaceField({ kind, stationList, id: fieldId }: { kind: PlaceKind; stationList: StationList; id?: string }) {
-  const { scenario, update } = useScenario();
+interface SearchProps {
+  /** id of the text field, for its label */
+  inputId: string;
+  /** Name of the list of places («Trabajo en») */
+  listLabel: string;
+  helpId: string;
+  stationList: StationList;
+  inputRef: RefObject<HTMLInputElement | null>;
+  onPick: (place: WorkPlace) => void;
+}
+
+/** The combobox (ARIA 1.2) over stations and zones that every place field shares. */
+function PlaceSearch({ inputId, listLabel, helpId, stationList, inputRef, onPick }: SearchProps) {
   const { zones } = useMapZones();
   const { stations, load } = stationList;
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const id = useId();
-  const anchor = placeOf(scenario, kind);
-  const { title, help } = KINDS[kind];
-  const input = useRef<HTMLInputElement>(null);
-  const remove = useRef<HTMLButtonElement>(null);
-  // Where the focus goes once the field and the picked place swap places
-  const focusNext = useRef<"input" | "remove" | null>(null);
-
   const places = useMemo(() => [...stations, ...(zones ? zonePlaces(zones) : [])], [stations, zones]);
   const found = useMemo(() => findPlaces(places, query), [places, query]);
   // No option is active until the arrows move into the list; a new list starts again from none
@@ -194,15 +226,8 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
   const listed = open && found.length > 0;
   const typed = query.trim().length >= 2;
 
-  useEffect(() => {
-    if (focusNext.current === "remove") remove.current?.focus();
-    if (focusNext.current === "input") input.current?.focus();
-    focusNext.current = null;
-  }, [anchor]);
-
   const pick = (place: WorkPlace) => {
-    focusNext.current = "remove";
-    update((s) => setPlace(s, kind, place));
+    onPick(place);
     setQuery("");
     setOpen(false);
   };
@@ -223,16 +248,98 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
   };
 
   const status = !open || !typed ? "" : found.length === 0 ? TEXT.noMatch : TEXT.found(found.length);
-
   return (
-    <div id={fieldId} className={`${styles.group} ${styles.work}`}>
+    <div className={styles.combo}>
+      <input
+        ref={inputRef}
+        id={inputId}
+        className={styles.input}
+        role="combobox"
+        aria-expanded={listed}
+        aria-controls={`${inputId}-list`}
+        aria-autocomplete="list"
+        aria-activedescendant={listed && active >= 0 ? `${inputId}-option-${active}` : undefined}
+        aria-describedby={helpId}
+        autoComplete="off"
+        placeholder={TEXT.placeholder}
+        value={query}
+        onFocus={() => {
+          load();
+          setOpen(true);
+        }}
+        onBlur={() => setOpen(false)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+        }}
+        onKeyDown={onKeyDown}
+      />
+      <ul id={`${inputId}-list`} role="listbox" aria-label={listLabel} className={styles.options} hidden={!listed}>
+        {listed &&
+          found.map((place, i) => (
+            <li
+              key={place.id}
+              id={`${inputId}-option-${i}`}
+              role="option"
+              aria-selected={i === active}
+              className={styles.option}
+              // Keep the focus in the field: the option is picked on click, not on blur
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => pick(place)}
+            >
+              <span>{place.label}</span>
+              <small>{place.kind}</small>
+            </li>
+          ))}
+      </ul>
+      {open && typed && found.length === 0 && <p className={styles.help}>{TEXT.noMatch}</p>}
+      {/* Always there, so screen readers hear how many places match while typing */}
+      <p role="status" className="visually-hidden">
+        {status}
+      </p>
+    </div>
+  );
+}
+
+/** Where the focus goes once the field and the picked place swap places, after the anchor changes. */
+function useSwapFocus(anchor: Anchor | null) {
+  const input = useRef<HTMLInputElement>(null);
+  const remove = useRef<HTMLButtonElement>(null);
+  const next = useRef<"input" | "remove" | null>(null);
+  useEffect(() => {
+    if (next.current === "remove") remove.current?.focus();
+    if (next.current === "input") input.current?.focus();
+    next.current = null;
+  }, [anchor]);
+  const focusNext = (where: "input" | "remove") => {
+    next.current = where;
+  };
+  return { input, remove, focusNext };
+}
+
+/**
+ * «Trabajo en» and «Cerca de mi familia o amigos»: the place search, then the place picked. It goes
+ * to the search without a minutes limit until «Tardar como mucho» sets one.
+ */
+export default function PlaceField({ kind, stationList, id: fieldId }: { kind: PlaceKind; stationList: StationList; id?: string }) {
+  const { scenario, update } = useScenario();
+  const id = useId();
+  const anchor = placeOf(scenario, kind);
+  const { title, help } = KINDS[kind];
+  const { input, remove, focusNext } = useSwapFocus(anchor);
+
+  const name = (
+    <>
+      {title} <span className={styles.optional}>{TEXT.optional}</span>
+    </>
+  );
+  return (
+    <div id={fieldId} className={styles.group}>
       {anchor ? (
-        <p className={styles.legend}>
-          {title} <span className={styles.legendHelp}>{help}</span>
-        </p>
+        <p className={styles.legend}>{name}</p>
       ) : (
         <label htmlFor={`${id}-input`} className={styles.legend}>
-          {title} <span className={styles.legendHelp}>{help}</span>
+          {name}
         </label>
       )}
       {anchor ? (
@@ -241,60 +348,100 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
           anchor={anchor}
           removeRef={remove}
           onRemove={() => {
-            focusNext.current = "input";
+            focusNext("input");
             update((s) => setPlace(s, kind, null));
           }}
         />
       ) : (
-        <div className={styles.combo}>
-          <input
-            ref={input}
-            id={`${id}-input`}
-            className={styles.input}
-            role="combobox"
-            aria-expanded={listed}
-            aria-controls={`${id}-list`}
-            aria-autocomplete="list"
-            aria-activedescendant={listed && active >= 0 ? `${id}-option-${active}` : undefined}
-            autoComplete="off"
-            placeholder={TEXT.placeholder}
-            value={query}
-            onFocus={() => {
-              load();
-              setOpen(true);
-            }}
-            onBlur={() => setOpen(false)}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setOpen(true);
-            }}
-            onKeyDown={onKeyDown}
-          />
-          <ul id={`${id}-list`} role="listbox" aria-label={title} className={styles.options} hidden={!listed}>
-            {listed &&
-              found.map((place, i) => (
-                <li
-                  key={place.id}
-                  id={`${id}-option-${i}`}
-                  role="option"
-                  aria-selected={i === active}
-                  className={styles.option}
-                  // Keep the focus in the field: the option is picked on click, not on blur
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => pick(place)}
-                >
-                  <span>{place.label}</span>
-                  <small>{place.kind}</small>
-                </li>
-              ))}
-          </ul>
-          {open && typed && found.length === 0 && <p className={styles.help}>{TEXT.noMatch}</p>}
-        </div>
+        <PlaceSearch
+          inputId={`${id}-input`}
+          listLabel={title}
+          helpId={`${id}-help`}
+          stationList={stationList}
+          inputRef={input}
+          onPick={(place) => {
+            focusNext("remove");
+            update((s) => setPlace(s, kind, place));
+          }}
+        />
       )}
-      {/* Always there, so screen readers hear how many places match while typing */}
-      <p role="status" className="visually-hidden">
-        {status}
-      </p>
+      <Help about={title} id={`${id}-help`}>
+        <p>{help}</p>
+      </Help>
     </div>
+  );
+}
+
+/**
+ * «¿Cerca de dónde queréis vivir?» (D-244, Mariano's design), in place of «Trabajo en» with «Somos
+ * mayores»: where they live now or near their family, picked with the same place search, and
+ * 30 min as most by public transport, which the person can change. Optional, and always in view.
+ */
+export function OlderPlaceField({ stationList, id: fieldId }: { stationList: StationList; id?: string }) {
+  const { scenario, update } = useScenario();
+  const id = useId();
+  const current = olderPlace(scenario);
+  // Which of the two before a place is picked; then, the kind of the place
+  const [chosen, setChosen] = useState<OlderPlaceKind>("other");
+  const kind = current?.kind ?? chosen;
+  // The name of the place picked, to show it beside «Donde vivimos ahora» and to name the family's.
+  // A family place carries it as its label, so it survives a change of option, a new mount and the
+  // example (review H2 of PR #79); the field only has to remember it for «Donde vivimos ahora»
+  const [pickedName, setPickedName] = useState<string | null>(null);
+  const placeName = current?.kind === "family" ? current.anchor.label : pickedName;
+  const { input, remove, focusNext } = useSwapFocus(current?.anchor ?? null);
+
+  return (
+    <fieldset id={fieldId} className={styles.group}>
+      <legend>
+        {TEXT.older.title} <span className={styles.optional}>{TEXT.optional}</span>
+      </legend>
+      <Segmented
+        legend={TEXT.older.which}
+        value={kind}
+        options={(["other", "family"] as const).map((value) => ({ value, label: TEXT.older.options[value] }))}
+        onChange={(next) => {
+          setChosen(next);
+          setPickedName(placeName);
+          if (current) update((s) => setOlderPlaceKind(s, next, placeName ?? TEXT.older.family));
+        }}
+      />
+      {current ? (
+        <PickedPlace
+          kind={current.kind}
+          anchor={current.anchor}
+          placeName={placeName}
+          removeRef={remove}
+          onRemove={() => {
+            focusNext("input");
+            // The option stays where it was (review H3 of PR #79)
+            setChosen(current.kind);
+            setPickedName(null);
+            update((s) => setOlderPlace(s, current.kind, null));
+          }}
+        />
+      ) : (
+        <>
+          <label htmlFor={`${id}-input`} className={styles.areaPick}>
+            {TEXT.older.search[kind]}
+          </label>
+          <PlaceSearch
+            inputId={`${id}-input`}
+            listLabel={TEXT.older.search[kind]}
+            helpId={`${id}-help`}
+            stationList={stationList}
+            inputRef={input}
+            onPick={(place) => {
+              focusNext("remove");
+              setPickedName(place.label);
+              update((s) => setOlderPlace(s, kind, place));
+            }}
+          />
+        </>
+      )}
+      <Help about={TEXT.older.title} id={`${id}-help`}>
+        <p>{TEXT.older.help}</p>
+      </Help>
+    </fieldset>
   );
 }

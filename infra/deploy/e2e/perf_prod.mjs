@@ -91,18 +91,18 @@ async function measurePage(browser, profile, path) {
     total_kb: kb(Object.values(bytes).reduce((a, b) => a + b, 0)) };
 }
 
-/** From the click on «Ver un ejemplo» to the results on screen, and the /search response. */
+/** From the click on the family example to the results on screen, and the /search response. */
 async function measureSearch(browser, profile) {
   const { context, page } = await open(browser, profile);
   await page.goto(`${BASE}/`, { waitUntil: "networkidle", timeout: 180_000 });
   const started = Date.now();
   const [response] = await Promise.all([
     page.waitForResponse((r) => r.url().endsWith("/api/v1/search"), { timeout: 120_000 }),
-    page.getByRole("button", { name: /Ver un ejemplo/ }).click(),
+    page.getByRole("button", { name: /pareja con 2 hijos/ }).click(),
   ]);
   const body = await response.body();
   const apiMs = Date.now() - started;
-  await page.getByText(/Con tu búsqueda tal cual (salen|sale|no sale)/).first().waitFor({ timeout: 120_000 });
+  await page.getByText(/^(Hemos encontrado|No hemos encontrado) /).first().waitFor({ timeout: 120_000 });
   const screenMs = Date.now() - started;
   await context.close();
   return { click_to_response_ms: apiMs, click_to_results_ms: screenMs, search_body_kb: kb(body.length) };

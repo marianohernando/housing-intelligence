@@ -57,7 +57,11 @@
   font-weight: 600;
 }
 
-/* The ranking: one button per zone (it opens the zone card and outlines it on the map) */
+/*
+ * The ranking: one button per zone (it opens the zone card and outlines it on the map). With text of
+ * 16 px or more (UX mobile audit, C1) the name and its kind take the whole first line, and the band,
+ * the % and the price the line below, so «Distrito de Madrid» never breaks word by word beside them.
+ */
 .ranking {
   display: grid;
   gap: var(--space-1);
@@ -68,11 +72,12 @@
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
   width: 100%;
   min-height: var(--target);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: none;
@@ -111,18 +116,30 @@
 
 .rowName small {
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 400;
 }
 
+/* On the line below the name: the band and its % on the left, the price on the right */
 .end {
-  display: grid;
-  flex: none;
-  justify-items: end;
-  gap: 0.15rem;
+  display: flex;
+  flex: 1 0 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
 }
 
-/* «Encaja muy bien» over «94 %» (F5 of fit-0.9): the band and the figure in one pill, no wider than the price under it */
+.end:empty {
+  display: none;
+}
+
+/* The price keeps to the right, also when it has to go under the band */
+.end > :last-child {
+  margin-left: auto;
+}
+
+/* «Muy buena opción» over «94 %» (F5 of fit-0.9): the band and the figure in one pill, beside the price */
 .pct {
   display: grid;
   flex: none;
@@ -136,11 +153,14 @@
   line-height: 1.2;
 }
 
+/* The band at 16 px wraps in two short lines («Muy buena / opción») so the price keeps its room at 360 px */
 .pct .band {
+  max-width: 6.5em;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 600;
-  white-space: nowrap;
+  line-height: 1.15;
+  text-align: center;
 }
 
 /* A near miss says what it lacks instead of its % («Se pasa ≈ 11.000 € de tu presupuesto») */
@@ -187,13 +207,17 @@
   gap: var(--space-1);
   margin: var(--space-1) 0 0 calc(-1 * var(--space-2));
   color: var(--violet-strong);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
-/* resultados.sin_lugar: a button that reads as a link inside its sentence */
+/*
+ * resultados.sin_lugar: a button that reads as a link inside its sentence. Its padding reaches past
+ * the line (44 px to touch) while its negative margin keeps the sentence's line height.
+ */
 .inline {
-  padding: 0;
+  padding: 0.65rem 0;
+  margin: -0.65rem 0;
   border: 0;
   background: none;
   color: var(--violet-strong);
@@ -325,28 +349,27 @@
   border-radius: var(--radius-pill);
   background: var(--violet-strong);
   color: var(--on-violet);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
 .note {
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-style: italic;
 }
 
-/* portada.ejemplo: the demo case with one tap */
+/* portada.ejemplo: the two examples, each with one tap */
 .example {
   display: grid;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .example .exampleButton {
   justify-content: flex-start;
   min-height: var(--target);
   height: auto;
-  padding-top: var(--space-2);
-  padding-bottom: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   text-align: left;
   white-space: normal;
 }

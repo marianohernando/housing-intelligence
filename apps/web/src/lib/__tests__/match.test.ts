@@ -53,17 +53,17 @@ describe("the band of the % (F5 of fit-0.9)", () => {
     expect(matchText({ match_pct: null })).toBeNull();
   });
 
-  it("says it with the figure: «Encaja muy bien · 94 %» (resultados.banda.*)", () => {
-    expect(matchText({ match_pct: 94 })).toEqual({ band: "Encaja muy bien", pct: "94 %", text: "Encaja muy bien · 94 %" });
-    expect([80, 65, 40].map((pct) => matchText({ match_pct: pct })?.text)).toEqual(["Encaja bien · 80 %", "Encaja regular · 65 %", "Encaja poco · 40 %"]);
+  it("says it with the figure: «Muy buena opción · 94 %» (resultados.banda.*)", () => {
+    expect(matchText({ match_pct: 94 })).toEqual({ band: "Muy buena opción", pct: "94\u00a0%", text: "Muy buena opción · 94\u00a0%" });
+    expect([80, 65, 40].map((pct) => matchText({ match_pct: pct })?.text)).toEqual(["Buena opción · 80\u00a0%", "Opción regular · 65\u00a0%", "Poco recomendable · 40\u00a0%"]);
   });
 
   it("writes the table of «Cómo lo calculamos» from the same thresholds and words", () => {
     expect(bandRanges()).toEqual([
-      ["90 % o más", "Encaja muy bien"],
-      ["De 75 a 89 %", "Encaja bien"],
-      ["De 60 a 74 %", "Encaja regular"],
-      ["Menos del 60 %", "Encaja poco"],
+      ["90\u00a0% o más", "Muy buena opción"],
+      ["De 75 a 89\u00a0%", "Buena opción"],
+      ["De 60 a 74\u00a0%", "Opción regular"],
+      ["Menos del 60\u00a0%", "Poco recomendable"],
     ]);
   });
 
@@ -93,28 +93,28 @@ describe("zones tied at the same shown % (F5 of fit-0.9)", () => {
     const four = [zone("Puente de Vallecas", 98), zone("Latina", 98), zone("Moratalaz", 98), zone("Ciudad Lineal", 98)];
     const ranking = [row("Latina", 98, 1), row("Moratalaz", 98, 2), row("Ciudad Lineal", 98, 3)];
     expect(tiedNames(four[1]!, four, "zona", ranking)).toBe("Moratalaz, Ciudad Lineal y Puente de Vallecas");
-    expect(tieText(four[0]!, four, "zona", ranking)).toBe("Empata al 98 % con Latina, Moratalaz y Ciudad Lineal.");
+    expect(tieText(four[0]!, four, "zona", ranking)).toBe("Igual de buena que Latina, Moratalaz y Ciudad Lineal (98\u00a0%).");
     // Without the ranking, the order of all_zones
     expect(tiedNames(four[1]!, four)).toBe("Puente de Vallecas, Moratalaz y Ciudad Lineal");
   });
 
   it("names up to three, then counts them in the scope's word (zona.empate)", () => {
-    expect(tieText(all[1]!, all)).toBe("Empata al 94 % con Puente de Vallecas.");
+    expect(tieText(all[1]!, all)).toBe("Igual de buena que Puente de Vallecas (94\u00a0%).");
     expect(tieText(all[4]!, all)).toBeNull();
     const four = ["A", "B", "C", "D"].map((n) => zone(n, 100));
     expect(tiedNames(four[0]!, four)).toBe("B, C y D");
     const many = Array.from({ length: 13 }, (_, i) => zone(`B${i}`, 100));
-    expect(tieText(many[0]!, many, "barrio")).toBe("Empata al 100 % con 12 barrios más.");
+    expect(tieText(many[0]!, many, "barrio")).toBe("Igual de bueno que 12 barrios más (100\u00a0%).");
   });
 
   it("marks the runs of rows in view with the same %, headed «Empatan al 94 %»", () => {
     const shown = [row("Puente de Vallecas", 94, 1), row("Latina", 94, 2), row("Usera", 93, 3), row("Moratalaz", 93, 4), row("Tetuán", 92, 5)];
     const rows = rankingRows(shown, all);
     expect(rows.map((r) => r.tie)).toEqual([
-      { first: true, last: false, label: "Empatan al 94 %" },
-      { first: false, last: true, label: "Empatan al 94 %" },
-      { first: true, last: false, label: "Empatan al 93 %" },
-      { first: false, last: true, label: "Empatan al 93 %" },
+      { first: true, last: false, label: "Empatan al 94\u00a0%" },
+      { first: false, last: true, label: "Empatan al 94\u00a0%" },
+      { first: true, last: false, label: "Empatan al 93\u00a0%" },
+      { first: false, last: true, label: "Empatan al 93\u00a0%" },
       null,
     ]);
   });
@@ -122,13 +122,13 @@ describe("zones tied at the same shown % (F5 of fit-0.9)", () => {
   it("counts every tied zone when the run goes on beyond the rows in view", () => {
     const crowd = Array.from({ length: 45 }, (_, i) => zone(`Z${i}`, 100));
     const shown = crowd.slice(0, 5).map((z, i) => row(z.zone.name, 100, i + 1));
-    expect(rankingRows(shown, crowd)[0]?.tie?.label).toBe("Empatan al 100 % (45 zonas)");
+    expect(rankingRows(shown, crowd)[0]?.tie?.label).toBe("Empatan al 100\u00a0% (45 zonas)");
   });
 
   it("marks a single row of the folded list tied with zones beyond it, with their count (review R-04)", () => {
     const three = [zone("Usera", 92), zone("Tetuán", 92), zone("Villaverde", 92), zone("Coslada", 95)];
     const shown = [row("Coslada", 95, 1), row("Usera", 92, 2)];
-    expect(rankingRows(shown, three).map((r) => r.tie)).toEqual([null, { first: true, last: true, label: "Empatan al 92 % (3 zonas)" }]);
-    expect(rankingRows([row("Usera", 92, 1)], three, "barrio")[0]?.tie?.label).toBe("Empatan al 92 % (3 barrios)");
+    expect(rankingRows(shown, three).map((r) => r.tie)).toEqual([null, { first: true, last: true, label: "Empatan al 92\u00a0% (3 zonas)" }]);
+    expect(rankingRows([row("Usera", 92, 1)], three, "barrio")[0]?.tie?.label).toBe("Empatan al 92\u00a0% (3 barrios)");
   });
 });

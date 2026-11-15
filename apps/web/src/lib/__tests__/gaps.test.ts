@@ -12,6 +12,7 @@ import {
   gapSummary,
   GROUP,
   groupText,
+  householdRows,
   hospitalText,
   hospitalWalking,
   inGroup,
@@ -55,7 +56,7 @@ describe("rows", () => {
     for (const key of ROW_KEYS.filter((k) => k !== "vivienda")) {
       expect(ROW_MEASURE[key as keyof typeof ROW_MEASURE]).toMatch(/a 15 min andando .*repartid[oa]s entre todos los que l[oa]s tienen cerca$/);
     }
-    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud del SERMAS/);
+    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud de la red pública de salud de la Comunidad \(SERMAS\)/);
     expect(ROW_MEASURE.vivienda).not.toMatch(/andando/);
   });
 
@@ -120,13 +121,13 @@ describe("comparison groups (gap-0.3, D-217)", () => {
     expect(text).toContain("sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles.");
     // the API: «…, tiene el 105 % de lo esperado»
     expect(health.explanation).toContain(`tiene el ${Math.round(100 * group.ratio_to_reference)} % de lo esperado`);
-    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)} % de lo que tienen de media los municipios de su tipo`);
+    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)}\u00a0% de lo que tienen de media los municipios de su tipo`);
   });
 
   it("uses the singular with one neighbour", () => {
     const text = groupText("El Álamo", { codes: ["28004", "28096"], names: ["El Álamo", "Navalcarnero"], ratio_to_reference: 1.0815 });
     expect(text).toContain("lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero.");
-    expect(text).toContain("Juntos tienen el 108 %");
+    expect(text).toContain("Juntos tienen el 108\u00a0%");
   });
 });
 
@@ -158,6 +159,63 @@ describe("sortRows and topRows", () => {
   it("keeps at most three rows for the zone card", () => {
     expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
   });
+
+  // Review of PR #79: «lo que le falta que le afecte», the household's rows first for every home
+  it("knows which rows matter to each home, as highlight_rows of hi_domain/search.py", () => {
+    expect(householdRows({ minors: 1, minor_ages: [1] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ minors: 2, minor_ages: [4, 8] })).toEqual(["colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ minors: 1, minor_ages: [] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ seniors: true })).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({ seniors_in_care: 1 })).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({})).toEqual(["centro_salud", "farmacia"]);
+  });
+
+  // Barajas for the retired couple of the example (GET /gaps/distrito/2807921, 15 nov): the health
+  // centre and the centres for older people are too small to compare, the colegio is JUSTO
+  const barajas = [
+    { row: "escuela_infantil", status: "CUBIERTO" },
+    { row: "colegio", status: "JUSTO" },
+    { row: "centro_salud", status: "CUBIERTO", reliable: false },
+    { row: "mayores", status: "CUBIERTO", reliable: false },
+    { row: "farmacia", status: "CUBIERTO" },
+    { row: "vivienda", status: "SIN_DATOS" },
+  ] as const;
+
+  it("shows a retired couple the health centre first, then the pharmacy and the centres for older people, never schools", () => {
+    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "farmacia", "mayores"]);
+    // Without a household, by status, as before: the colegio JUSTO first
+    expect(topRows([...barajas]).map((r) => r.row)[0]).toBe("colegio");
+  });
+
+  it("keeps the escuela infantil up for a family with a baby, and what is short of theirs first", () => {
+    const baby = { minors: 1, minor_ages: [1] };
+    const rows = [
+      { row: "mayores", status: "FALTA" },
+      { row: "escuela_infantil", status: "JUSTO" },
+      { row: "colegio", status: "CUBIERTO" },
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "farmacia", status: "CUBIERTO" },
+    ] as const;
+    expect(topRows([...rows], 3, baby).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "centro_salud"]);
+    const healthShort = [...rows.slice(0, 3), { row: "centro_salud", status: "FALTA" }, rows[4]] as const;
+    expect(topRows([...healthShort], 3, baby).map((r) => r.row)).toEqual(["centro_salud", "escuela_infantil", "colegio"]);
+  });
+
+  it("never shows a couple without children the escuela infantil, even when it is the zone's FALTA", () => {
+    const rows = [
+      { row: "escuela_infantil", status: "FALTA" },
+      { row: "colegio", status: "FALTA" },
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "mayores", status: "CUBIERTO" },
+      { row: "farmacia", status: "JUSTO" },
+      { row: "vivienda", status: "SIN_DATOS" },
+    ] as const;
+    const top = topRows([...rows], 3, { minors: 0 });
+    expect(top.map((r) => r.row)).toEqual(["farmacia", "centro_salud", "mayores"]);
+    // Rows of the household without data go after the others with data
+    const noHealthData = rows.map((r) => (r.row === "centro_salud" ? { ...r, status: "SIN_DATOS" as const } : r));
+    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["farmacia", "mayores", "centro_salud"]);
+  });
 });
 
 describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something)", () => {
@@ -166,16 +224,16 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
 
   it("names the rows that are JUSTO (Fuencarral-El Pardo, 12 nov)", () => {
     expect(fitsButShortText([row("escuela_infantil", "JUSTO"), row("colegio", "JUSTO"), row("centro_salud", "JUSTO")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
     );
   });
 
   it("says what is missing, and then what is tight", () => {
     expect(fitsButShortText([row("escuela_infantil", "FALTA")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
     );
     expect(fitsButShortText([row("centro_salud", "FALTA"), row("colegio", "JUSTO"), row("farmacia", "CUBIERTO")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
     );
   });
 
@@ -190,7 +248,7 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
     ];
     expect(topRows(rows)).toHaveLength(3);
     expect(fitsButShortText(rows)).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
     );
   });
 
@@ -342,7 +400,7 @@ describe("the summary over the rows (falta.resumen.*)", () => {
   });
 
   it("says nothing is missing when every comparable row is CUBIERTO", () => {
-    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada frente a municipios parecidos.", rest: [] });
+    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada, comparado con municipios parecidos.", rest: [] });
   });
 
   it("keeps rows too small to compare apart, but not those compared with their neighbours", () => {
@@ -402,7 +460,7 @@ describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () 
 
   it("says a service close by can still be short, for each FALTA or JUSTO row the search found close", () => {
     expect(nearButShortTexts(vallecas, { escuela_infantil: 6.3, colegio: 4.2, centro_salud: 7.6 })).toEqual([
-      "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
+      "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños: por eso sale FALTA.",
       "Centro de salud a unos 8 min andando, pero van justos para tanta gente: por eso sale JUSTO.",
     ]);
     // Each line says which row it explains, so the card does not repeat it in encaje.aviso_*

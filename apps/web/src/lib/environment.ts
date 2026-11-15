@@ -27,7 +27,7 @@ export const PARKING_MAX_MINUTES = 30;
 
 export const ENVIRONMENT_TEXT = {
   title: "Entorno",
-  context: "Datos de contexto: no cuentan en el encaje ni en «Qué falta».",
+  context: "Datos de contexto: no cambian qué zonas te convienen ni «Qué falta».",
   noiseSource: "Mapa Estratégico de Ruido 2021, Ayuntamiento de Madrid",
   noiseHint:
     "Ruido del tráfico calculado por el Ayuntamiento en la propia calle, no en la fachada de las casas: no es el porcentaje de vecinos expuestos. Cuenta la calle por encima de 65 dB de día o de 55 dB de noche, los objetivos de calidad acústica de las zonas residenciales.",

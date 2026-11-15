@@ -1138,7 +1138,7 @@ async function buying(browser) {
     const press = (locator) => (touch ? locator.tap() : locator.click());
     const entry = (report[id] = {});
     if (touch) await press(p.page.getByRole("button", { name: /Desliza hacia arriba/ }));
-    // A couple buying up to 300.000 € (the golden_couple of D-227 §5): the budget is what limits most
+    // A couple buying with the amount «Comprar» starts at: 300.000 € when written (the golden_couple of D-227 §5), 250.000 € since the UX delivery of 15 nov; the budget is what limits most
     await press(p.page.getByRole("button", { name: "En pareja" }));
     await press(p.page.getByRole("radio", { name: "Comprar" }));
     entry.nota = flat(await p.page.getByText(/^Precio de compra: el valor tasado medio/).first().innerText());

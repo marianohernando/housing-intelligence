@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
@@ -83,5 +83,19 @@ describe("design tokens (src/styles/tokens.css)", () => {
 
   it("keeps touch targets at 44 px or more", () => {
     expect(token("target")).toMatch(/^max\(44px,/);
+  });
+
+  // UX mobile audit, C1: everything a person reads to decide at 16 px or more, 18 px of body text on phones
+  it("keeps every text at 16 px or more: tokens, and no fixed size under 1rem in any stylesheet", () => {
+    expect(token("text-xs")).toMatch(/^max\(16px,/);
+    expect(token("text-sm")).toBe("1rem");
+    expect(CSS).toMatch(/@media \(max-width: 760px\)\s*\{\s*:root\s*\{\s*font-size:\s*112\.5%;/);
+    const src = new URL("../../", import.meta.url);
+    const sheets = readdirSync(src, { recursive: true, encoding: "utf8" }).filter((file) => file.endsWith(".css"));
+    expect(sheets.length).toBeGreaterThan(20);
+    const small = sheets.flatMap((file) =>
+      [...readFileSync(new URL(file, src), "utf8").matchAll(/font-size:\s*(0?\.\d+rem|1[0-5](\.\d+)?px|[0-9](\.\d+)?px)/g)].map((m) => `${file}: ${m[0]}`),
+    );
+    expect(small).toEqual([]);
   });
 });

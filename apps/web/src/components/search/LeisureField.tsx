@@ -23,7 +23,7 @@ const TEXT = {
   before: "A",
   after: "min andando como mucho",
   minutesAria: "Minutos andando hasta el ocio",
-  required: "Imprescindible",
+  required: "Solo zonas que lo tengan",
   requiredHelp: "Si lo marcas, solo verás zonas que lo cumplen.",
   none: "Marca al menos una casilla para que el ocio cuente.",
   // importa.ocio.cultura.ayuda: what «Cultura» counts, asked for by test users
@@ -86,7 +86,7 @@ export default function LeisureField() {
             </select>
             {TEXT.after}
           </span>
-          <label className={styles.check} title={TEXT.requiredHelp}>
+          <label className={styles.check}>
             <input
               type="checkbox"
               checked={required}

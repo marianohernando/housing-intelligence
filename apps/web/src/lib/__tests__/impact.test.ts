@@ -27,14 +27,14 @@ describe("where to invest first (D-229)", () => {
   it("matches the API summary: same people, same share and same number of zones", () => {
     for (const r of impact.rows.filter((x) => x.people_in_falta > 0)) {
       expect(r.summary).toContain(impactFigure(r));
-      const share = impactContext(r).match(/^El ([\d,]+) %/)?.[1];
+      const share = impactContext(r).match(/^El ([\d,]+)\u00a0%/)?.[1];
       expect(r.summary).toContain(`(el ${share} %)`);
       expect(impactContext(r)).toContain(`en ${r.zones_in_falta} zona`);
     }
   });
 
   it("uses the singular for a single zone", () => {
-    expect(impactContext({ share_in_falta: 0.012, zones_in_falta: 1 })).toBe("El 1,2 % de toda la Comunidad, en 1 zona.");
+    expect(impactContext({ share_in_falta: 0.012, zones_in_falta: 1 })).toBe("El 1,2\u00a0% de toda la Comunidad, en 1 zona.");
     expect(moreZonesText(1)).toBe("Ver 1 zona más");
     expect(moreZonesText(22)).toBe("Ver 22 zonas más");
   });

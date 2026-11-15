@@ -17,15 +17,22 @@ import {
   floorArea,
   floorAreaOptions,
   HOUSEHOLD_FLOOR_AREA_M2,
+  HOME_LABEL,
+  isOlderHousehold,
   OFFICE_DAYS,
   officeDays,
   officeDaysOptions,
+  OLDER_PRIORITIES,
+  OLDER_TRIP,
+  olderPlace,
   LEISURE_KEYS,
   leisureConfig,
   nearbyServices,
   peopleAtHome,
   placeOf,
+  QUICK_BUDGETS,
   removeNearby,
+  retiredExampleScenario,
   SCOPES,
   scopeOf,
   setAdults,
@@ -38,15 +45,20 @@ import {
   setNearbyMinutes,
   setNearbyRequired,
   setNoBudgetLimit,
+  setOlderHousehold,
+  setOlderPlace,
+  setOlderPlaceKind,
   setPlace,
   setPlaceMaxMinutes,
   setScope,
   setSeniors,
+  setTypedBudget,
   setWorkDays,
   setWorkMaxMinutes,
   setWorkPlace,
   toggleLeisureGroup,
   togglePriority,
+  typedBudget,
   walkMinutesOptions,
   workPlace,
 } from "../scenario";
@@ -463,5 +475,123 @@ describe("m² of the home («Para unos 68 m² (cámbialo)»)", () => {
 
   it("leaves the example of the pitch with min_floor_area_m2: null", () => {
     expect(exampleScenario().min_floor_area_m2).toBeNull();
+  });
+});
+
+describe("«Somos mayores» (D-244)", () => {
+  it("says who the adults are and adds no one: the same people and the same m²", () => {
+    const couple = setAdults(defaultScenario(), 2);
+    const older = setOlderHousehold(couple, true);
+    expect(isOlderHousehold(older)).toBe(true);
+    expect(older.household?.seniors).toBe(true);
+    expect(peopleAtHome(older)).toBe(peopleAtHome(couple));
+    expect(floorArea(older)).toEqual(floorArea(couple));
+  });
+
+  it("marks the health centre, step-free stations and transport, after what was marked, once each, and each can go", () => {
+    const older = setOlderHousehold({ ...defaultScenario(), priorities: ["transporte"] }, true);
+    expect(OLDER_PRIORITIES).toEqual(["salud", "sin_escaleras", "transporte"]);
+    expect(older.priorities).toEqual(["transporte", "salud", "sin_escaleras"]);
+    expect(setOlderHousehold(defaultScenario(), true).priorities).toEqual(["salud", "sin_escaleras", "transporte"]);
+    expect(togglePriority(older, "salud").priorities).toEqual(["transporte", "sin_escaleras"]);
+  });
+
+  it("starts in Madrid capital when the whole region has no place to go, and never overrides a choice", () => {
+    expect(setOlderHousehold(defaultScenario(), true).scope).toBe("madrid");
+    expect(setOlderHousehold(setScope(defaultScenario(), "alrededores"), true).scope).toBe("alrededores");
+    const withPlace = setPlace(defaultScenario(), "family", { label: "Getafe Central (Cercanías)", lon: -3.71, lat: 40.31 });
+    expect("scope" in setOlderHousehold(withPlace, true)).toBe(false);
+    // The person can go back to the whole region
+    expect("scope" in setScope(setOlderHousehold(defaultScenario(), true), "all")).toBe(false);
+  });
+
+  it("unmarked, leaves the household as it was before the field, and keeps what it marked in view", () => {
+    const back = setOlderHousehold(setOlderHousehold(defaultScenario(), true), false);
+    expect("seniors" in (back.household ?? {})).toBe(false);
+    expect(back.household).toEqual(defaultScenario().household);
+    expect(back.priorities).toEqual(["salud", "sin_escaleras", "transporte"]);
+    expect(back.scope).toBe("madrid");
+    expect(isOlderHousehold(defaultScenario())).toBe(false);
+  });
+
+  // Review H1 of PR #79: no field shows «Donde vivimos ahora» without «Somos mayores», so it must not filter unseen
+  it("unmarked, takes «Donde vivimos ahora» away and keeps a family place and a work place, which other fields show", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const home = setOlderPlace(setOlderHousehold(setAdults(defaultScenario(), 2), true), "other", station);
+    expect(setOlderHousehold(home, false).anchors).toEqual([]);
+    const family = setOlderPlace(setOlderHousehold(defaultScenario(), true), "family", station);
+    expect(setOlderHousehold(family, false).anchors?.map((a) => a.kind)).toEqual(["family"]);
+    const working = setPlace(home, "work", station);
+    expect(setOlderHousehold(working, false).anchors?.map((a) => a.kind)).toEqual(["work"]);
+  });
+
+  it("asks where they want to live: where they live now (never its own name) or near their family, 30 min and 3 days", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const home = setOlderPlace(defaultScenario(), "other", station);
+    expect(olderPlace(home)).toEqual({ kind: "other", anchor: { kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 30, days_per_week: 3 } });
+    // Lower case: the API says it inside a sentence («… hasta donde vivimos ahora, llegando a las 9:00»)
+    expect(HOME_LABEL).toBe("donde vivimos ahora");
+    const family = setOlderPlace(home, "family", station);
+    expect(family.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: station.lon, lat: station.lat, ...OLDER_TRIP }]);
+    // One place: the other kind takes the same point, and keeps a limit the person changed
+    const limited = setPlaceMaxMinutes(family, "family", 45);
+    const moved = setOlderPlaceKind(limited, "other", "Ciudad Lineal (metro)");
+    expect(moved.anchors).toEqual([{ kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 45, days_per_week: 3 }]);
+    expect(setOlderPlaceKind(moved, "family", "Ciudad Lineal (metro)").anchors?.[0]?.label).toBe("Ciudad Lineal (metro)");
+    expect(setOlderPlace(moved, "other", null).anchors).toEqual([]);
+    // A work place stays, before the place to live near
+    const working = setOlderPlace(setPlace(defaultScenario(), "work", station), "other", station);
+    expect(working.anchors?.map((a) => a.kind)).toEqual(["work", "other"]);
+  });
+
+  it("is the second example: a retired couple renting up to 1.200 € near their family in Ciudad Lineal", () => {
+    const retired = retiredExampleScenario();
+    expect(retired).toMatchObject({
+      scope: "madrid",
+      budget: { kind: "rent", amount_eur: 1_200 },
+      household: { adults: 2, minors: 0, seniors: true },
+      priorities: ["salud", "sin_escaleras", "transporte"],
+    });
+    // The Ciudad Lineal metro station of GET /api/v1/places: a public place, never a home address
+    expect(retired.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805, max_minutes: 30, days_per_week: 3 }]);
+    expect(olderPlace(retired)?.kind).toBe("family");
+    expect(peopleAtHome(retired)).toBe(2);
+    expect(floorArea(retired)).toEqual({ m2: 68, household: true });
+    expect(decodeScenario(encodeScenario(retired))).toEqual(retired);
+  });
+});
+
+describe("quick amounts and «Otra cantidad» (UX mobile audit, A1)", () => {
+  it("offers amounts inside the slider, on its steps, and starts each kind on one of them", () => {
+    for (const kind of ["rent", "buy"] as const) {
+      const { min, max, step, initial } = BUDGET_RANGE[kind];
+      expect(QUICK_BUDGETS[kind]).toContain(initial);
+      for (const amount of QUICK_BUDGETS[kind]) {
+        expect(amount).toBeGreaterThanOrEqual(min);
+        expect(amount).toBeLessThanOrEqual(max);
+        expect(amount % step).toBe(0);
+      }
+    }
+    expect(QUICK_BUDGETS.rent).toEqual([600, 900, 1_200, 1_500]);
+    expect(QUICK_BUDGETS.buy).toEqual([150_000, 250_000, 400_000, 600_000]);
+    expect(setBudgetKind(defaultScenario(), "buy").budget?.amount_eur).toBe(250_000);
+  });
+
+  it("reads the euros as people type them, inside the slider's range", () => {
+    expect(typedBudget("900", "rent")).toBe(900);
+    expect(typedBudget("1.250", "rent")).toBe(1_250);
+    expect(typedBudget(" 1 250 € ", "rent")).toBe(1_250);
+    expect(typedBudget("320.000", "buy")).toBe(320_000);
+    expect(typedBudget("", "rent")).toBeNull();
+    expect(typedBudget("900,50", "rent")).toBeNull();
+    expect(typedBudget("mil", "rent")).toBeNull();
+    expect(typedBudget(String(BUDGET_RANGE.rent.min - 1), "rent")).toBeNull();
+    expect(typedBudget(String(BUDGET_RANGE.rent.max + 1), "rent")).toBeNull();
+    expect(typedBudget("900", "buy")).toBeNull();
+  });
+
+  it("keeps a typed amount as typed, not on the slider's step", () => {
+    expect(setTypedBudget(defaultScenario(), 875).budget).toEqual({ kind: "rent", amount_eur: 875 });
+    expect(setTypedBudget(setBudgetKind(defaultScenario(), "buy"), 312_500).budget).toEqual({ kind: "buy", amount_eur: 312_500 });
   });
 });

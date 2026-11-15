@@ -16,19 +16,19 @@ import { useMapZones } from "./MapProvider";
 
 // Copy from pitch/textos_web.md (leyenda.*, 8c49e33).
 const TEXT = {
-  title: "Encaje con tu búsqueda",
-  less: "Encaja menos",
-  more: "Encaja más",
+  title: "Zonas que te convienen",
+  less: "Te conviene menos",
+  more: "Te conviene más",
   noData: "Sin datos",
-  before: "Haz tu búsqueda para ver qué zonas encajan contigo.",
-  soon: "Muy pronto verás aquí qué zonas encajan contigo.", // leyenda.pronto
+  before: "Haz tu búsqueda para ver qué zonas te convienen.",
+  soon: "Muy pronto verás aquí qué zonas te convienen.", // leyenda.pronto
   show: "¿Qué quieres ver?",
   legend: "Leyenda del mapa",
   missing: "Qué falta",
   loading: "Cargando el mapa…",
   retry: "Reintentar",
   // leyenda against D-213, with the neighbours of gap-0.3 (leyenda.fila.frente)
-  against: "frente a los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos.",
+  against: "comparado con los municipios de su tipo (urbanos o rurales); los pueblos muy pequeños, junto con sus vecinos.",
   zones: (n: number) => (n === 1 ? "1 zona" : `${n} zonas`),
   pending: (n: number) => `${n === 1 ? "1 zona" : `${n} zonas`} sin calcular todavía.`,
   failedLevel: { municipio: "los municipios", distrito: "los distritos de Madrid" } as const,

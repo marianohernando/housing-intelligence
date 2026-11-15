@@ -4,22 +4,26 @@ import { ArrowRight, Footprints, X } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
 
+import type { ComparisonGroup, GapStatus } from "@/contracts/zone_gap_list_response";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
+import Help from "@/components/ui/Help";
 import PriceTag from "@/components/ui/PriceTag";
 import { errorMessage } from "@/lib/errors";
 import { nearbyWalks, zoneFit, zonePriceOf } from "@/lib/fit";
 import { matchText } from "@/lib/match";
 import {
   fitsButShortText,
+  GAP_STATUS,
   GAPS_HELP,
   gapsHref,
   GROUP,
   inGroup,
   nearButShort,
   notComparable,
+  SMALL_ZONE,
   topRows,
   walking,
   walkingText,
@@ -39,20 +43,22 @@ import { useZoneGaps } from "./useZoneGaps";
 const TEXT = {
   municipio: "Municipio",
   close: "Cerrar",
-  beforeSearch: "Haz tu búsqueda para ver qué zonas encajan contigo.",
-  fitSoon: "Muy pronto verás cuánto encaja esta zona contigo.", // zona.encaje.pronto
-  fitHelp: "Cuánto se parece esta zona a lo que buscas. No es una nota de la zona.", // zona.encaje.ayuda
-  // zona.encaje.aria (F5 of fit-0.9): «Esta zona encaja muy bien con tu búsqueda: 94 %»
-  fitAria: (band: string, pct: string) => `Esta zona ${band.toLowerCase()} con tu búsqueda: ${pct}`,
-  stale: "Este encaje es de tu búsqueda anterior.", // zona.encaje.antiguo
-  missing: "Qué falta aquí",
+  beforeSearch: "Haz tu búsqueda para ver qué zonas te convienen.",
+  fitSoon: "Muy pronto verás si esta zona te conviene.", // zona.encaje.pronto
+  // zona.encaje.ayuda, behind «¿Qué es el %?» (a tooltip never showed on a phone)
+  fitHelpLabel: "¿Qué es el %?",
+  fitHelp: "Cuánto se parece esta zona a lo que buscas. No es una nota de la zona.",
+  // zona.encaje.aria: «Muy buena opción para tu búsqueda: 94 %»
+  fitAria: (band: string, pct: string) => `${band} para tu búsqueda: ${pct}`,
+  stale: "Esto es de tu búsqueda anterior.", // zona.encaje.antiguo
+  missing: "Lo que le falta a esta zona",
   walk: "A pie:",
   retry: "Reintentar",
   open: "Ver la zona",
   all: "Ver todo lo que falta",
   // A barrio of a search over Madrid capital (D-238): its «Qué falta» and screen are its district's
   barrio: (city: string) => `Barrio de ${city}`, // zona.barrio.antetitulo
-  barrioMissing: (district: string) => `Qué falta en ${district}`, // zona.barrio.falta.titulo
+  barrioMissing: (district: string) => `Lo que le falta a ${district}`, // zona.barrio.falta.titulo
   barrioMissingHelp: "Las cifras de «Qué falta» son del distrito entero.", // zona.barrio.falta.ayuda
   openDistrict: "Ver el distrito", // zona.barrio.boton
 };
@@ -64,7 +70,23 @@ interface Props {
   onClose?: () => void;
 }
 
-/** Zone card of the mockups: name, % of fit once there is a search, and «Qué falta aquí». */
+type RowStatus = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
+
+/**
+ * What each label of the card's rows means, for the labels on view (estado.*.corto): visible text,
+ * since the tooltips never showed on a phone (UX mobile audit, A5).
+ */
+function statusLines(rows: readonly RowStatus[]): [string, string][] {
+  const lines = new Map<string, string>();
+  for (const row of rows) {
+    if (notComparable(row)) lines.set(SMALL_ZONE.label, SMALL_ZONE.short);
+    else lines.set(GAP_STATUS[row.status].label, GAP_STATUS[row.status].short);
+    if (inGroup(row)) lines.set(GROUP.label, GROUP.short);
+  }
+  return [...lines];
+}
+
+/** Zone card of the mockups: name, % of fit once there is a search, and «Lo que le falta a esta zona». */
 export default function ZoneCard({ zone, mode, onClose }: Props) {
   const { level, code, name, municipio_name, zone_key } = zone;
   const titleId = useId();
@@ -80,6 +102,9 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   // D-234: the approximate price, in the head; none without a price (the search's notice says why)
   const price = result ? zonePriceOf(result, zone_key) : null;
   const rows = gaps.data?.data.rows ?? [];
+  // The three rows in view: what matters to the household of the search first, the one the list
+  // answers to, then what is missing (D-244, review H5 of PR #79); before a search, by status
+  const shown = topRows(rows, 3, result?.scenario.household ?? null);
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
   // rows are the whole district's, and the line says «aquí»
@@ -107,7 +132,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
           {zoneTitle(zone)}
         </h2>
         {fit && (
-          <span className={styles.pct} title={TEXT.fitHelp}>
+          <span className={styles.pct}>
             <span aria-hidden="true">
               <small>{fit.band}</small>
               {fit.pct}
@@ -117,6 +142,11 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
       </div>
       {price && <PriceTag price={price} variant="card" />}
+      {fit && (
+        <Help about={zoneTitle(zone)} label={TEXT.fitHelpLabel} className={styles.fitHelp}>
+          <p>{TEXT.fitHelp}</p>
+        </Help>
+      )}
       {result && stale && pct != null && <p className={styles.hint}>{TEXT.stale}</p>}
       {result ? <FitDetails result={result} zoneKey={zone_key} /> : <p className={styles.hint}>{available ? TEXT.beforeSearch : TEXT.fitSoon}</p>}
 
@@ -146,7 +176,7 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
         )}
         {gaps.data && (
           <ul className={styles.rows}>
-            {topRows(rows).map((row) => {
+            {shown.map((row) => {
               const walk = walking(row.extra_indicators, row.row);
               return (
                 <li key={row.row}>
@@ -157,12 +187,21 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
                         {TEXT.walk} {walkingText(walk)}
                       </small>
                     )}
-                    {inGroup(row) && <small title={GROUP.help}>{GROUP.label}</small>}
+                    {inGroup(row) && <small>{GROUP.label}</small>}
                   </span>
                   {notComparable(row) ? <SmallZoneTag /> : <GapBadge status={row.status} />}
                 </li>
               );
             })}
+          </ul>
+        )}
+        {gaps.data && rows.length > 0 && (
+          <ul className={styles.statusKey}>
+            {statusLines(shown).map(([label, meaning]) => (
+              <li key={label}>
+                <strong>{label}:</strong> {meaning}
+              </li>
+            ))}
           </ul>
         )}
         {gaps.data && <PendingRows warnings={gaps.data.warnings} className={styles.pending} />}

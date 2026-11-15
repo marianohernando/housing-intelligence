@@ -30,7 +30,7 @@ from hi_contracts.public import (
     ZoneRef,
 )
 from hi_contracts.public.scenario import LEISURE_NEEDS
-from hi_domain.affordability import FloorArea
+from hi_domain.affordability import FloorArea, assumed_floor_area
 from hi_domain.fit import (
     EVERYDAY_NEEDS,
     FEW_DAYS_WEIGHT,
@@ -310,6 +310,48 @@ def test_highlights_follow_the_household() -> None:
     assert highlight_rows(baby)[:2] == [GapRowKey.ESCUELA_INFANTIL, GapRowKey.COLEGIO]
     carer = family(household=Household(adults=1, seniors_in_care=1))
     assert highlight_rows(carer) == [GapRowKey.MAYORES, GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA]
+
+
+def test_somos_mayores_brings_the_centres_for_older_people_forward() -> None:
+    """D-244: «Somos mayores» highlights the centres for older people, the health centre and the
+    pharmacy, never nurseries or schools unless there are children at home."""
+    retired = family(household=Household(adults=2, seniors=True))
+    assert highlight_rows(retired) == [
+        GapRowKey.MAYORES,
+        GapRowKey.CENTRO_SALUD,
+        GapRowKey.FARMACIA,
+    ]
+    alone = family(household=Household(adults=1, seniors=True))
+    assert highlight_rows(alone) == highlight_rows(retired)
+    with_grandchild = family(household=Household(adults=2, minors=1, minor_ages=[8], seniors=True))
+    assert highlight_rows(with_grandchild) == [
+        GapRowKey.COLEGIO,
+        GapRowKey.MAYORES,
+        GapRowKey.CENTRO_SALUD,
+    ]
+
+
+def test_somos_mayores_adds_no_one_and_leaves_the_fit_as_it_was() -> None:
+    """D-244: the flag only changes which rows are highlighted. The household, its m², the
+    conditions and the % are those of the same household without it."""
+    couple = family(household=Household(adults=2))
+    retired = family(household=Household(adults=2, seniors=True))
+    assert retired.household.people == couple.household.people == 2
+    assert assumed_floor_area(retired) == assumed_floor_area(couple)
+    zones = [zone("1"), zone("2", rent=20.0), zone("3", colegio=14.0), zone("4", transporte=None)]
+    plain, older = run_search(couple, zones), run_search(retired, zones)
+    assert plain.results == older.results
+    assert plain.near_misses == older.near_misses
+    # Each option echoes its own scenario (`relaxed_scenario`): compare what it adds
+    same = [
+        (r.constraint_id, r.label, r.zones_if_relaxed, r.added_zones)
+        for r in plain.reality_check.relaxations
+    ]
+    assert same == [
+        (r.constraint_id, r.label, r.zones_if_relaxed, r.added_zones)
+        for r in older.reality_check.relaxations
+    ]
+    assert plain.reality_check.zones_passing == older.reality_check.zones_passing
 
 
 scenario_strategy = st.builds(

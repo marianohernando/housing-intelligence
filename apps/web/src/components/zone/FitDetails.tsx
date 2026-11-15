@@ -17,7 +17,8 @@ import { useId } from "react";
 
 import type { FactKind, FactTopic, SearchResult } from "@/contracts/search_response";
 import { useDatasets } from "@/components/provenance/useDatasets";
-import { confidenceText } from "@/lib/confidence";
+import Help from "@/components/ui/Help";
+import { type ConfidenceText, confidenceText } from "@/lib/confidence";
 import {
   constraintLabels,
   factText,
@@ -27,6 +28,7 @@ import {
   resultScope,
   WALK_MEDIAN,
   zoneFit,
+  zonePriceOf,
   zoneWord,
 } from "@/lib/fit";
 import { tieText } from "@/lib/match";
@@ -57,7 +59,19 @@ const TEXT = {
   // zona.fuera (D-238): a zone of the map outside «¿Dónde?»
   outside: (scope: string) => `Fuera de tu búsqueda (${scope}).`,
   confidence: (label: string) => `Fiabilidad del dato: ${label}`,
+  // confianza.ayuda: what «Dato fiable» and the others mean, behind a button instead of a tooltip
+  confidenceHelp: "¿Qué quiere decir «Dato fiable»?",
+  confidenceAbout: "Lo que tienes aquí",
 };
+
+/**
+ * The confidence words of the card, once each, in the order they appear: the price's («Dato
+ * aproximado», review R-08 of PR #79: it was a tooltip) and then the facts'.
+ */
+function confidenceLevels(price: ConfidenceText | null, confidences: readonly number[]): ConfidenceText[] {
+  const all = [...(price ? [price] : []), ...confidences.map((c) => confidenceText(c))];
+  return [...new Map(all.map((t) => [t.label, t])).values()];
+}
 
 const TOPIC_ICON: Record<FactTopic, LucideIcon> = {
   coste: Euro,
@@ -89,7 +103,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
   const { match, ranked } = zoneFit(result, zoneKey);
   const scope = resultScope(result);
   if (!match) return scope === "all" ? null : <p className={styles.hint}>{TEXT.outside(SCOPE_LABEL[scope])}</p>;
-  // F5 of fit-0.9: what it lacks in plain words («Se pasa ≈ 120 €/mes de tu presupuesto»), as in «Casi encajan»
+  // F5 of fit-0.9: what it lacks in plain words («Se pasa unos 120 € al mes de tu presupuesto»), as in «Casi valen»
   const fails = joinShortfalls(
     shortfalls({ failed_constraints: match.failed_constraints, constraints: ranked?.constraints }, constraintLabels(result), result.scenario),
   );
@@ -139,7 +153,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
                   <Icon size={18} aria-hidden="true" />
                   <span>
                     {factText(fact, buying)}{" "}
-                    <small title={confidence.help}>
+                    <small>
                       <span aria-hidden="true">· {confidence.label}</span>
                       <span className="visually-hidden">{TEXT.confidence(confidence.label)}</span>
                     </small>
@@ -150,6 +164,18 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
           </ul>
           {hasWalkingFact(ranked.facts) && <p className={styles.hint}>{WALK_MEDIAN}</p>}
         </section>
+      )}
+      {/* After the facts, outside their list: what each confidence word means */}
+      {ranked && ranked.facts.length > 0 && (
+        <Help about={TEXT.confidenceAbout} label={TEXT.confidenceHelp}>
+          <ul>
+            {confidenceLevels(zonePriceOf(result, zoneKey)?.confidence ?? null, ranked.facts.map((f) => f.confidence)).map((level) => (
+              <li key={level.label}>
+                <strong>{level.label}:</strong> {level.help}
+              </li>
+            ))}
+          </ul>
+        </Help>
       )}
     </>
   );

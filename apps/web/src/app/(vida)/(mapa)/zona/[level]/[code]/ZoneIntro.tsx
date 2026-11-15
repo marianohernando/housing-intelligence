@@ -29,7 +29,8 @@ const TEXT = {
   loading: "Preparando la zona…",
   notFound: "No encontramos esa zona. Elige otra en el mapa.",
   retry: "Reintentar",
-  lead: "Mira sus servicios y puntos clave, con datos oficiales.",
+  // zona.titulo (UX mobile audit, §4 n.º 36): «Latina: lo que hay cerca», instead of «Explora Latina» and a lead
+  nearby: ": lo que hay cerca",
 };
 
 export default function ZoneIntro() {
@@ -81,9 +82,9 @@ export default function ZoneIntro() {
           </ol>
         </nav>
         <h1 className={styles.title}>
-          Explora <span className={styles.accent}>{name}</span>
+          <span className={styles.accent}>{name}</span>
+          {TEXT.nearby}
         </h1>
-        <p className={styles.lead}>{TEXT.lead}</p>
         <Button href="/" variant="secondary" className={styles.back}>
           {TEXT.back}
         </Button>

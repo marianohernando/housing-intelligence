@@ -15,13 +15,13 @@ describe("barrioRows (D-232)", () => {
   it("keeps the API's order of the barrios that fit, with their outline id, band, % and first facts", () => {
     const { fits } = barrioRows(sanBlas);
     expect(fits.map((b) => [b.name, b.fit?.text])).toEqual([
-      ["Canillejas", "Encaja muy bien · 97 %"],
-      ["Arcos", "Encaja muy bien · 97 %"],
-      ["Simancas", "Encaja muy bien · 97 %"],
-      ["Rosas", "Encaja muy bien · 96 %"],
-      ["Amposta", "Encaja muy bien · 96 %"],
-      ["El Salvador", "Encaja muy bien · 95 %"],
-      ["Hellín", "Encaja muy bien · 93 %"],
+      ["Canillejas", "Muy buena opción · 97\u00a0%"],
+      ["Arcos", "Muy buena opción · 97\u00a0%"],
+      ["Simancas", "Muy buena opción · 97\u00a0%"],
+      ["Rosas", "Muy buena opción · 96\u00a0%"],
+      ["Amposta", "Muy buena opción · 96\u00a0%"],
+      ["El Salvador", "Muy buena opción · 95\u00a0%"],
+      ["Hellín", "Muy buena opción · 93\u00a0%"],
     ]);
     expect(fits[2]).toMatchObject({ id: "ES.28.BAR.28079201", code: "28079201", lacks: null });
     // Ties, named in the order of the list, for screen readers (review R-05)
@@ -34,7 +34,7 @@ describe("barrioRows (D-232)", () => {
     const { near } = barrioRows(sanBlas);
     expect(near).toHaveLength(1);
     // Rejas: a school at 35,5 min against the 10 asked
-    expect(near[0]).toMatchObject({ name: "Rejas", fit: null, lacks: { text: "Colegio con primaria: ≈ 26 min más andando de lo que pides" } });
+    expect(near[0]).toMatchObject({ name: "Rejas", fit: null, lacks: { text: "Colegio con primaria: unos 26 min más andando de lo que pides" } });
   });
 
   it("says «No cumple todo lo que pides» for a failed condition without a name, and works without near misses", () => {
@@ -55,9 +55,9 @@ describe("barrioRows (D-232)", () => {
 
 describe("barriosText (barrios.encajan.resumen)", () => {
   it("says how many of the district's barrios fit", () => {
-    expect(barriosText(sanBlas.reality_check)).toBe("7 de sus 8 barrios encajan con tu búsqueda.");
-    expect(barriosText({ zones_passing: 1, zones_evaluated: 8 })).toBe("1 de sus 8 barrios encaja con tu búsqueda.");
-    expect(barriosText({ zones_passing: 6, zones_evaluated: 6 })).toBe("Sus 6 barrios encajan con tu búsqueda.");
+    expect(barriosText(sanBlas.reality_check)).toBe("7 de sus 8 barrios te convienen.");
+    expect(barriosText({ zones_passing: 1, zones_evaluated: 8 })).toBe("1 de sus 8 barrios te conviene.");
+    expect(barriosText({ zones_passing: 6, zones_evaluated: 6 })).toBe("Sus 6 barrios te convienen.");
     expect(barriosText({ zones_passing: 0, zones_evaluated: 6 })).toBe("Ninguno de sus 6 barrios cumple todo lo que pides.");
   });
 });

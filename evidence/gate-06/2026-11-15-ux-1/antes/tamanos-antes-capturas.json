@@ -1,0 +1,1087 @@
+{
+ "base": "http://localhost:3061",
+ "label": "antes-capturas",
+ "checked_at": "2026-11-15T16:17:05.061Z",
+ "sizes": [
+  {
+   "width": 390,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 14.9,
+       "tag": "a",
+       "text": "Mapa",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "a",
+       "text": "Qué falta",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "a",
+       "text": "Cómo lo calculamos",
+       "where": "página"
+      },
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Desliza hacia arriba para ver más",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Rellenamos la búsqueda por ti para que veas cómo funciona. Luego puede",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "a",
+       "text": "Datos: 35 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayu",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "a",
+       "text": "Ver las zonas en una lista",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "p",
+       "text": "Haz tu búsqueda para ver qué zonas encajan contigo.",
+       "where": "página"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 204,
+       "h": 39,
+       "tag": "a",
+       "name": "Ver las zonas en una lista",
+       "where": "página",
+       "inline": false
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Toda la Comunidad",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Madrid capital",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alrededores de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Pueblos",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Madrid capital por distritos y el resto de la Comunidad por municipios",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "¿Quién va a vivir contigo?",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Solo/a",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "En pareja",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Con hijos",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Con mayores a cargo",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Marca lo que más te importa. Lo primero que marques cuenta más.",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Transporte",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Salud",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Colegios",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Zonas verdes",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Sin escaleras",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Ocio",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: m",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Opcional. Miramos cuánto tardarías en transporte público llegando a la",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alquilar",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Comprar",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Para unos 61 m²",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "(cámbialo)",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "label",
+       "text": "Sin límite de presupuesto",
+       "where": "página"
+      }
+     ],
+     "targets": [
+      {
+       "w": 144,
+       "h": 38,
+       "tag": "label",
+       "name": "Alquilar",
+       "where": "página",
+       "inline": false
+      },
+      {
+       "w": 144,
+       "h": 38,
+       "tag": "label",
+       "name": "Comprar",
+       "where": "página",
+       "inline": false
+      }
+     ]
+    },
+    "formulario_abierto": {
+     "texts": [
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Toda la Comunidad",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Madrid capital",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alrededores de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Pueblos",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Madrid capital por distritos y el resto de la Comunidad por municipios",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "¿Quién va a vivir contigo?",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Solo/a",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "En pareja",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Con hijos",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Con mayores a cargo",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Marca lo que más te importa. Lo primero que marques cuenta más.",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Transporte",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Salud",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Colegios",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Zonas verdes",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Sin escaleras",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Ocio",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: m",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Opcional. Miramos cuánto tardarías en transporte público llegando a la",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alquilar",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Comprar",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Para unos 61 m²",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "(cámbialo)",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "label",
+       "text": "Metros cuadrados",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Lo normal para tu hogar es la superficie habitual de las viviendas de ",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "label",
+       "text": "Sin límite de presupuesto",
+       "where": "página"
+      }
+     ],
+     "targets": [
+      {
+       "w": 144,
+       "h": 38,
+       "tag": "label",
+       "name": "Alquilar",
+       "where": "página",
+       "inline": false
+      },
+      {
+       "w": 144,
+       "h": 38,
+       "tag": "label",
+       "name": "Comprar",
+       "where": "página",
+       "inline": false
+      }
+     ]
+    },
+    "formulario_ejemplo": {
+     "texts": [
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Toda la Comunidad",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Madrid capital",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alrededores de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Pueblos",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Madrid capital por distritos y el resto de la Comunidad por municipios",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "¿Quién va a vivir contigo?",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Solo/a",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "En pareja",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Con hijos",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Con mayores a cargo",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "¿Cuántos hijos?",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Marca lo que más te importa. Lo primero que marques cuenta más.",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Transporte",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "span",
+       "text": "2",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Salud",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "span",
+       "text": "3",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Colegios",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "span",
+       "text": "1",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Zonas verdes",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Sin escaleras",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Ocio",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "a min andando como mucho",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "label",
+       "text": "Imprescindible",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: m",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "¿Cuántos días vas a la oficina?",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Tardar como mucho en transporte público",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Opcional. Miramos cuánto tardarías en transporte público llegando a la",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alquilar",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Comprar",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Para unos 77 m²",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "(cámbialo)",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "label",
+       "text": "Sin límite de presupuesto",
+       "where": "página"
+      }
+     ],
+     "targets": [
+      {
+       "w": 144,
+       "h": 38,
+       "tag": "label",
+       "name": "Alquilar",
+       "where": "página",
+       "inline": false
+      },
+      {
+       "w": 144,
+       "h": 38,
+       "tag": "label",
+       "name": "Comprar",
+       "where": "página",
+       "inline": false
+      }
+     ]
+    },
+    "lista": {
+     "texts": [
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "De 199 zonas de la Comunidad de Madrid.",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "p",
+       "text": "Empatan al 94 %",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "1",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "Distrito de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 12.2,
+       "tag": "small",
+       "text": "Encaja muy bien",
+       "where": "página"
+      },
+      {
+       "px": 15.3,
+       "tag": "span",
+       "text": "≈ 1.129 €/mes",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "small",
+       "text": "por 77 m²",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "2",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "Distrito de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 12.2,
+       "tag": "small",
+       "text": "Encaja muy bien",
+       "where": "página"
+      },
+      {
+       "px": 15.3,
+       "tag": "span",
+       "text": "≈ 1.101 €/mes",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "small",
+       "text": "por 77 m²",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "p",
+       "text": "Empatan al 93 %",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "3",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "Distrito de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 12.2,
+       "tag": "small",
+       "text": "Encaja muy bien",
+       "where": "página"
+      },
+      {
+       "px": 15.3,
+       "tag": "span",
+       "text": "≈ 1.019 €/mes",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "small",
+       "text": "por 77 m²",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "4",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "Distrito de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 12.2,
+       "tag": "small",
+       "text": "Encaja muy bien",
+       "where": "página"
+      },
+      {
+       "px": 15.3,
+       "tag": "span",
+       "text": "≈ 1.083 €/mes",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "small",
+       "text": "por 77 m²",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "p",
+       "text": "Empatan al 92 % (3 zonas)",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "5",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "Distrito de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 12.2,
+       "tag": "small",
+       "text": "Encaja muy bien",
+       "where": "página"
+      },
+      {
+       "px": 15.3,
+       "tag": "span",
+       "text": "≈ 1.488 €/mes",
+       "where": "página"
+      },
+      {
+       "px": 12.8,
+       "tag": "small",
+       "text": "por 77 m²",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "button",
+       "text": "Ver las 10 primeras",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "button",
+       "text": "Casi encajan ( 5 )",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "strong",
+       "text": "+5 min a pie hasta colegio con primaria",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "saldrían 91 zonas, 49 más",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "span",
+       "text": "Probar así",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "button",
+       "text": "Ver todas las opciones",
+       "where": "página"
+      }
+     ],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [
+      {
+       "px": 13.6,
+       "tag": "p",
+       "text": "Distrito de Madrid",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "Encaja muy bien",
+       "where": "página"
+      },
+      {
+       "px": 14.5,
+       "tag": "small",
+       "text": "Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "La 1.ª que más encaja",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Empata al 94 % con Latina.",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Colegio con primaria a unos 4 min andando",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "· Dato fiable",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 m",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "· Dato fiable",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Centro de salud a unos 8 min andando",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "· Dato fiable",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "41 min en transporte público hasta Paseo de la Castellana (Azca), lleg",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "· Dato aproximado",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "span",
+       "text": "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 202",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "· Dato fiable",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Los minutos andando son los de la mitad de la zona: unos vecinos lo ti",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Compara si hay bastante para toda la gente de la zona con lo que hay e",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "p",
+       "text": "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí ",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "A pie: 6 min",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "FALTA",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "A pie: 4 min",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "CUBIERTO",
+       "where": "página"
+      },
+      {
+       "px": 13.6,
+       "tag": "small",
+       "text": "A pie: 8 min",
+       "where": "página"
+      },
+      {
+       "px": 13.3,
+       "tag": "span",
+       "text": "CUBIERTO",
+       "where": "página"
+      },
+      {
+       "px": 14.9,
+       "tag": "a",
+       "text": "Ver todo lo que falta",
+       "where": "página"
+      }
+     ],
+     "targets": [
+      {
+       "w": 142,
+       "h": 24,
+       "tag": "a",
+       "name": "Ver todo lo que falta",
+       "where": "página",
+       "inline": false
+      }
+     ]
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [
+     {
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 1,
+      "ejemplo": [
+       ".SearchCard-module__IKlQva__areaToggle"
+      ]
+     }
+    ],
+    "tarjeta": []
+   },
+   "console_errors": []
+  }
+ ],
+ "shots": [
+  "01-portada-390.png",
+  "02-formulario-390.png",
+  "05-lista-390.png",
+  "06-tarjeta-390.png",
+  "07-como-lo-calculamos-390.png",
+  "01-portada-1440.png",
+  "02-formulario-1440.png",
+  "05-lista-1440.png",
+  "06-tarjeta-1440.png",
+  "07-como-lo-calculamos-1440.png"
+ ]
+}
