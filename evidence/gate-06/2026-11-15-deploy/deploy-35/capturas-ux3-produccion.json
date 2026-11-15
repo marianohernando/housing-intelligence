@@ -1,0 +1,353 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "checks": [
+  {
+   "width": 390,
+   "name": "«Casi valen» says «vuestro presupuesto» or «pedís»",
+   "ok": true,
+   "detail": "Se pasa unos 90 € al mes de vuestro presupuesto | Se pasa unos 20 € al mes de vuestro presupuesto | Se pasa unos 190 € al mes de vuestro presupuesto | Se pasa unos 230 € al mes de vuestro presupuesto | Se pasa unos 30 € al mes de vuestro presupuesto"
+  },
+  {
+   "width": 390,
+   "name": "«¿Queréis ver más zonas?» with «Mirad… cambiáis», «vuestra búsqueda» and «No os decimos que gastéis…»",
+   "ok": true,
+   "detail": "¿Queréis ver más zonas? Hemos encontrado 42 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: +5 min a pie hasta colegio con primaria saldrían 49 más: 91 zonas en total Ver esas zonas +150 €/mes saldrían 3 más: 45 zonas en total Ver esas zonas Lo que más limita vuestra búsqueda es:"
+  },
+  {
+   "width": 390,
+   "name": "card of a near miss: «… de vuestro presupuesto» / «pedís»",
+   "ok": true,
+   "detail": "Volver a la lista Chamartín Distrito de Madrid Se pasa unos 90 € al mes de vuestro presupuesto Se pasa unos 90 € al mes de vuestro presupuesto Unos 1.590 € al mes Precio orientativo Colegio con primar"
+  },
+  {
+   "width": 390,
+   "name": "card «Ver más»: no «tú» about the search",
+   "ok": true,
+   "detail": "Volver a la lista Chamartín Distrito de Madrid Se pasa unos 90 € al mes de vuestro presupuesto Se pasa unos 90 € al mes de vuestro presupuesto Unos 1.590 € al mes Precio orientativo Colegio con primar"
+  },
+  {
+   "width": 390,
+   "name": "axe, card of a near miss with «Ver más»",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 390,
+   "name": "card: no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 390,
+   "name": "barrio panel (con contorno): no band or price of the row again",
+   "ok": true,
+   "detail": "fila: Palomeras Bajas / Muy buena opción / Unos 1.110 € al mes || panel: 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  },
+  {
+   "width": 390,
+   "name": "barrio panel (con contorno): the % only on the phone",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con"
+  },
+  {
+   "width": 390,
+   "name": "barrio panel (con contorno): what the price is for",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de"
+  },
+  {
+   "width": 390,
+   "name": "axe, district with a barrio panel open (con contorno)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 390,
+   "name": "barrios (con contorno): no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 390,
+   "name": "barrios without outline: rows are buttons, all folded (aria-expanded=false)",
+   "ok": true,
+   "detail": "false,false,false"
+  },
+  {
+   "width": 390,
+   "name": "barrios without outline: no panel open at first",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "width": 390,
+   "name": "barrio panel (sin contorno): no band or price of the row again",
+   "ok": true,
+   "detail": "fila: Palomeras Bajas / Muy buena opción / Unos 1.110 € al mes || panel: 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  },
+  {
+   "width": 390,
+   "name": "barrio panel (sin contorno): the % only on the phone",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con"
+  },
+  {
+   "width": 390,
+   "name": "barrio panel (sin contorno): what the price is for",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de"
+  },
+  {
+   "width": 390,
+   "name": "barrio without outline: opens with aria-expanded=true",
+   "ok": true,
+   "detail": "true"
+  },
+  {
+   "width": 390,
+   "name": "axe, district with a barrio panel open (sin contorno)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 390,
+   "name": "barrios (sin contorno): no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 360,
+   "name": "«Casi valen» says «vuestro presupuesto» or «pedís»",
+   "ok": true,
+   "detail": "Se pasa unos 90 € al mes de vuestro presupuesto | Se pasa unos 20 € al mes de vuestro presupuesto | Se pasa unos 190 € al mes de vuestro presupuesto | Se pasa unos 230 € al mes de vuestro presupuesto | Se pasa unos 30 € al mes de vuestro presupuesto"
+  },
+  {
+   "width": 360,
+   "name": "«¿Queréis ver más zonas?» with «Mirad… cambiáis», «vuestra búsqueda» and «No os decimos que gastéis…»",
+   "ok": true,
+   "detail": "¿Queréis ver más zonas? Hemos encontrado 42 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: +5 min a pie hasta colegio con primaria saldrían 49 más: 91 zonas en total Ver esas zonas +150 €/mes saldrían 3 más: 45 zonas en total Ver esas zonas Lo que más limita vuestra búsqueda es:"
+  },
+  {
+   "width": 360,
+   "name": "card of a near miss: «… de vuestro presupuesto» / «pedís»",
+   "ok": true,
+   "detail": "Volver a la lista Chamartín Distrito de Madrid Se pasa unos 90 € al mes de vuestro presupuesto Se pasa unos 90 € al mes de vuestro presupuesto Unos 1.590 € al mes Precio orientativo Colegio con primar"
+  },
+  {
+   "width": 360,
+   "name": "card «Ver más»: no «tú» about the search",
+   "ok": true,
+   "detail": "Volver a la lista Chamartín Distrito de Madrid Se pasa unos 90 € al mes de vuestro presupuesto Se pasa unos 90 € al mes de vuestro presupuesto Unos 1.590 € al mes Precio orientativo Colegio con primar"
+  },
+  {
+   "width": 360,
+   "name": "axe, card of a near miss with «Ver más»",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 360,
+   "name": "card: no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 360,
+   "name": "barrio panel (con contorno): no band or price of the row again",
+   "ok": true,
+   "detail": "fila: Palomeras Bajas / Muy buena opción / Unos 1.110 € al mes || panel: 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  },
+  {
+   "width": 360,
+   "name": "barrio panel (con contorno): the % only on the phone",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con"
+  },
+  {
+   "width": 360,
+   "name": "barrio panel (con contorno): what the price is for",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de"
+  },
+  {
+   "width": 360,
+   "name": "axe, district with a barrio panel open (con contorno)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 360,
+   "name": "barrios (con contorno): no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 360,
+   "name": "barrios without outline: rows are buttons, all folded (aria-expanded=false)",
+   "ok": true,
+   "detail": "false,false,false"
+  },
+  {
+   "width": 360,
+   "name": "barrios without outline: no panel open at first",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "width": 360,
+   "name": "barrio panel (sin contorno): no band or price of the row again",
+   "ok": true,
+   "detail": "fila: Palomeras Bajas / Muy buena opción / Unos 1.110 € al mes || panel: 94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+  },
+  {
+   "width": 360,
+   "name": "barrio panel (sin contorno): the % only on the phone",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con"
+  },
+  {
+   "width": 360,
+   "name": "barrio panel (sin contorno): what the price is for",
+   "ok": true,
+   "detail": "94 % Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de"
+  },
+  {
+   "width": 360,
+   "name": "barrio without outline: opens with aria-expanded=true",
+   "ok": true,
+   "detail": "true"
+  },
+  {
+   "width": 360,
+   "name": "axe, district with a barrio panel open (sin contorno)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 360,
+   "name": "barrios (sin contorno): no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 1440,
+   "name": "«Casi valen» says «vuestro presupuesto» or «pedís»",
+   "ok": true,
+   "detail": "Se pasa unos 90 € al mes de vuestro presupuesto | Se pasa unos 20 € al mes de vuestro presupuesto | Se pasa unos 190 € al mes de vuestro presupuesto | Se pasa unos 230 € al mes de vuestro presupuesto | Se pasa unos 30 € al mes de vuestro presupuesto"
+  },
+  {
+   "width": 1440,
+   "name": "legend: «Zonas que os convienen», «Os conviene menos», «Os conviene más»",
+   "ok": true,
+   "detail": "¿Qué queréis ver? Zonas que os convienen Escuelas infantiles Colegios Centros de salud Centros de mayores Farmacias Vivi"
+  },
+  {
+   "width": 1440,
+   "name": "«¿Queréis ver más zonas?» with «Mirad… cambiáis», «vuestra búsqueda» and «No os decimos que gastéis…»",
+   "ok": true,
+   "detail": "¿Queréis ver más zonas? Hemos encontrado 42 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: +5 min a pie hasta colegio con primaria saldrían 49 más: 91 zonas en total Ver esas zonas +150 €/mes saldrían 3 más: 45 zonas en total Ver esas zonas Lo que más limita vuestra búsqueda es:"
+  },
+  {
+   "width": 1440,
+   "name": "card of a near miss: «… de vuestro presupuesto» / «pedís»",
+   "ok": true,
+   "detail": "Volver a la lista Chamartín Distrito de Madrid Se pasa unos 90 € al mes de vuestro presupuesto Se pasa unos 90 € al mes de vuestro presupuesto Unos 1.590 € al mes Precio orientativo Colegio con primar"
+  },
+  {
+   "width": 1440,
+   "name": "card «Ver más»: no «tú» about the search",
+   "ok": true,
+   "detail": "Volver a la lista Chamartín Distrito de Madrid Se pasa unos 90 € al mes de vuestro presupuesto Se pasa unos 90 € al mes de vuestro presupuesto Unos 1.590 € al mes Precio orientativo Colegio con primar"
+  },
+  {
+   "width": 1440,
+   "name": "axe, card of a near miss with «Ver más»",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 1440,
+   "name": "card: no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 1440,
+   "name": "barrio panel (con contorno): no band or price of the row again",
+   "ok": true,
+   "detail": "fila: Palomeras Bajas / Muy buena opción · 94 % / , empata con San Diego, Numancia y Entrevías / Unos 1.110 € al mes || panel: Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 "
+  },
+  {
+   "width": 1440,
+   "name": "barrio panel (con contorno): the % only on the phone",
+   "ok": true,
+   "detail": "Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con prim"
+  },
+  {
+   "width": 1440,
+   "name": "barrio panel (con contorno): what the price is for",
+   "ok": true,
+   "detail": "Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de auto"
+  },
+  {
+   "width": 1440,
+   "name": "axe, district with a barrio panel open (con contorno)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 1440,
+   "name": "barrios (con contorno): no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 1440,
+   "name": "barrios without outline: rows are buttons, all folded (aria-expanded=false)",
+   "ok": true,
+   "detail": "false,false,false"
+  },
+  {
+   "width": 1440,
+   "name": "barrios without outline: no panel open at first",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "width": 1440,
+   "name": "barrio panel (sin contorno): no band or price of the row again",
+   "ok": true,
+   "detail": "fila: Palomeras Bajas / Muy buena opción · 94 % / , empata con San Diego, Numancia y Entrevías / Unos 1.110 € al mes || panel: Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 "
+  },
+  {
+   "width": 1440,
+   "name": "barrio panel (sin contorno): the % only on the phone",
+   "ok": true,
+   "detail": "Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con prim"
+  },
+  {
+   "width": 1440,
+   "name": "barrio panel (sin contorno): what the price is for",
+   "ok": true,
+   "detail": "Igual de bueno que San Diego, Numancia y Entrevías (94 %). Para un piso de unos 77 m² · Dato aproximado Colegio con primaria a unos 4 min andando Parada de auto"
+  },
+  {
+   "width": 1440,
+   "name": "barrio without outline: opens with aria-expanded=true",
+   "ok": true,
+   "detail": "true"
+  },
+  {
+   "width": 1440,
+   "name": "axe, district with a barrio panel open (sin contorno)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "width": 1440,
+   "name": "barrios (sin contorno): no text < 16 px, no button < 44 px",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

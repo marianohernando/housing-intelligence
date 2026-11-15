@@ -1,0 +1,49 @@
+vercel logs (CLI 65.12.1), deployment dpl_F5vfeRz1uNGfYD8f7XZ3b31qDZb3 (55651c2), 21:12–21:28 UTC: smoke, searches, golden, e2e, probes, #82's capture script and measurement.
+The CDN listing stops at 2,000 records; a separate --query 'httpStatus >= 400' over the same window (to 21:28:19) returned nothing.
+The previous deployment (dpl_7paGtjUZ…) since 21:05 UTC: 95 requests, all 200 (the baseline); no request after 21:13:21.
+The barrios' outlines that #82's script blocks on purpose (level=barrio) are aborted in the browser and never reach the server.
+
+vercel logs, deployment dpl_F5vfeRz1uNGfYD8f7XZ3b31qDZb3, from 2026-11-15T21:12:00Z to 2026-11-15T21:28:12.729Z (UTC)
+runtime log lines: 1007, more pages: false, levels: 1007 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 7
+
+CDN request records: 2000, more pages: true
+by status: 200 × 1798 · 304 × 202
+API by path and status:
+   140 GET /api/v1/geo/admin-units 200
+    62 POST /api/v1/search 200
+    62 GET /api/v1/datasets 200
+    21 GET /api/v1/gaps/distrito/2807913 200
+    18 GET /api/v1/gaps 200
+    18 GET /api/v1/features/seguridad_percibida_noche/values 200
+    18 GET /api/v1/features/seguridad_percibida_dia/values 200
+    12 GET /api/v1/features/renta_neta_media_hogar/values 200
+    12 GET /api/v1/features/ano_medio_construccion_residencial/values 200
+    11 GET /api/v1/places 200
+    11 GET /api/v1/gaps/distrito/2807921 200
+    10 POST /api/v1/search/barrios 200
+     9 GET /api/v1/features/valor_tasado_vivienda_usada_m2/values 200
+     9 GET /api/v1/features/valor_tasado_vivienda_nueva_m2/values 200
+     9 GET /api/v1/features/plan_vive_viviendas/values 200
+     9 GET /api/v1/features/pct_calle_ruido_noche/values 200
+     9 GET /api/v1/features/pct_calle_ruido_dia/values 200
+     9 GET /api/v1/features/no2_media_anual/values 200
+     9 GET /api/v1/features/min_a_pie_aparcamiento_publico/values 200
+     9 GET /api/v1/features/infracciones_penales_por_1000_hab/values 200
+     9 GET /api/v1/features/compraventas_obra_nueva_pct/values 200
+     9 GET /api/v1/features/ambitos_residenciales_en_desarrollo/values 200
+     5 GET /api/v1/features/hospitales_total/values 200
+     5 GET /api/v1/features/camas_instaladas_por_1000_hab/values 200
+     3 GET /api/v1/gaps/distrito/2807905 200
+every 4xx/5xx:
+  (none)

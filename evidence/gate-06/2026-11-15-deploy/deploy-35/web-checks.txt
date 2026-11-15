@@ -1,0 +1,604 @@
+The web of dpl_F5vfeRz1uNGfYD8f7XZ3b31qDZb3 (55651c2) at 1440, 390 and 360 px, ~21:17–21:27 UTC, Chromium (Playwright), User-Agent vida-facil-smoke/probe3.
+Part 1 (probe_ux3): what the household is told around the list, for
+  couple   the family example; then «Tardar como mucho» 45 min (near misses by the trip); then 30 min, the least; and a couple at 300 € in «Madrid capital» (0 barrios);
+  single   «Solo/a» at 900 €, and at 300 € in «Madrid capital»;
+  seniorAlone  «Solo/a» + «Somos mayores», its three priorities unmarked, no place, «Madrid capital», 1.200 €: the tie notice;
+  notComparable  what each «No comparable» tag says to screen readers (its .visually-hidden text; no tag uses aria-describedby): the retired couple's
+           Barajas card («Ver más»), /zonas?fila=centro_salud with «¿Qué quiere decir cada estado?», /zonas?fila=vivienda, and «Qué falta» of Barajas.
+  title, legendSelect (the label of the map's select), legendFigure (its title and ramp), changes (the region's name) and near («Casi valen», each row's visible line).
+Part 2 (probe_ux3b): «Ningún … cumple todo lo que pedís / pides» with 0 results, and every «No comparable» tag of /zonas?fila=centro_salud grouped by what it says.
+  Typing 200 € is below the field's 300 € minimum: the field says «Escribe una cantidad entre 300 y 5.000 € al mes.» and the search keeps 1.200 € (as since delivery 1),
+  so with the form's minimum the whole region always has zones for a couple (300 €: 2): only «Ningún barrio …» (Madrid capital) can be reached.
+«errors»: console errors, page errors and HTTP ≥ 400 seen by the browser.
+
+## Part 1
+1440 {
+ "couple": {
+  "example": {
+   "api": "42 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 42 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo42 zonasNo cumple todo157 zonasSin datos0 zonas",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? +5 min a pie hasta colegio con primaria saldrían 49 más: 91 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Se pasa unos 90 € al mes de vuestro presupuesto",
+    "Se pasa unos 20 € al mes de vuestro presupuesto",
+    "Se pasa unos 190 € al mes de vuestro presupuesto",
+    "Se pasa unos 230 € al mes de vuestro presupuesto",
+    "Se pasa unos 30 € al mes de vuestro presupuesto"
+   ]
+  },
+  "limit45": {
+   "api": "10 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 10 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo10 zonasNo cumple todo188 zonasSin datos1 zona",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? Sin límite de tiempo hasta Paseo de la Castellana (Azca) saldrían 32 más: 42 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Tarda unos 1 min más de lo que pedís",
+    "Tarda unos 6 min más de lo que pedís",
+    "Tarda unos 11 min más de lo que pedís",
+    "Tarda unos 8 min más de lo que pedís",
+    "Tarda unos 6 min más de lo que pedís"
+   ]
+  },
+  "limit30": {
+   "api": "2 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 2 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo2 zonasNo cumple todo196 zonasSin datos1 zona",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? Hemos encontrado 2 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: Sin límite de tiempo hasta Paseo de la Castellana (Azca) saldrían 40 más: 42 zonas en total Ver esas zonas +150 €/mes saldría 1 más: 3 zonas en total",
+   "near": [
+    "Tarda unos 11 min más de lo que pedís",
+    "Tarda unos 9 min más de lo que pedís",
+    "Tarda unos 10 min más de lo que pedís",
+    "Tarda unos 14 min más de lo que pedís",
+    "Se pasa unos 90 € al mes de vuestro presupuesto"
+   ]
+  },
+  "madrid300": {
+   "sent": "300 €, madrid, adults 2",
+   "api": "0 of 131, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "No hemos encontrado ningún barrio para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo0 barriosNo cumple todo131 barriosSin datos0 barrios",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? No hemos encontrado ningún barrio para vosotros. Cambiar una sola cosa no añade zonas. Lo que más limita vuestra búsqueda es: Alquiler hasta 300 €/mes para 68 m² Ver menos",
+   "near": [
+    "Se pasa unos 1.190 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 560 € al mes de vuestro presupuesto"
+   ]
+  }
+ },
+ "single": {
+  "rent900": {
+   "api": "165 of 199, near 5",
+   "title": "Zonas que te convienen",
+   "summary": "Hemos encontrado 165 zonas para ti.",
+   "legendSelect": "¿Qué quieres ver?",
+   "legendFigure": "Zonas que te convienenTe conviene menosTe conviene másCumple todo165 zonasNo cumple todo18 zonasSin datos16 zonas",
+   "changes": "¿Quieres ver más zonas?",
+   "changesText": "¿Quieres ver más zonas? +100 €/mes saldrían 8 más: 173 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Se pasa unos 30 € al mes de tu presupuesto",
+    "Se pasa unos 40 € al mes de tu presupuesto",
+    "Se pasa unos 40 € al mes de tu presupuesto",
+    "Se pasa unos 50 € al mes de tu presupuesto",
+    "Se pasa unos 60 € al mes de tu presupuesto"
+   ]
+  },
+  "madrid300": {
+   "api": "0 of 131, near 5",
+   "title": "Zonas que te convienen",
+   "summary": "No hemos encontrado ningún barrio para ti.",
+   "legendSelect": "¿Qué quieres ver?",
+   "legendFigure": "Zonas que te convienenTe conviene menosTe conviene másCumple todo0 barriosNo cumple todo131 barriosSin datos0 barrios",
+   "changes": "¿Quieres ver más zonas?",
+   "changesText": "¿Quieres ver más zonas? No hemos encontrado ningún barrio para ti. Cambiar una sola cosa no añade zonas. Lo que más limita tu búsqueda es: Alquiler hasta 300 €/mes para 61 m² Ver menos",
+   "near": [
+    "Se pasa unos 1.040 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 470 € al mes de tu presupuesto"
+   ]
+  }
+ },
+ "seniorAlone": {
+  "sent": "adults 1, seniors true, scope madrid, priorities [], anchors 0, 1200 €",
+  "api": "97 pass, 35 tied at 100",
+  "place": "¿Cerca de dónde queréis vivir? (opcional)",
+  "tie": "Hay 35 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde quieres vivir para afinar el orden."
+ },
+ "notComparable": {
+  "card": {
+   "rows": [
+    "Centros de saludA pie: 20 minN",
+    "Centros de mayoresA pie: 18 mi"
+   ],
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    }
+   ]
+  },
+  "zonasSalud": {
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    }
+   ],
+   "tagCount": 98,
+   "statesHelp": "No comparable: Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. · Junto con sus vecinos: Comparado con municipios parecidos de la zona: es demasiado pequeño para compararlo solo, así que lo juntamos con sus vecinos más cercanos del mismo tipo."
+  },
+  "zonasVivienda": {
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Aquí viven muy pocos hogares de 4 o más personas para saber si falta.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Aquí viven muy pocos hogares de 4 o más personas para saber si falta.",
+     "describedBy": ""
+    }
+   ],
+   "tagCount": 2
+  },
+  "queFalta": [
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   }
+  ]
+ },
+ "errors": []
+}
+390 {
+ "couple": {
+  "example": {
+   "api": "42 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 42 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo42 zonasNo cumple todo157 zonasSin datos0 zonas",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? +5 min a pie hasta colegio con primaria saldrían 49 más: 91 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Se pasa unos 90 € al mes de vuestro presupuesto",
+    "Se pasa unos 20 € al mes de vuestro presupuesto",
+    "Se pasa unos 190 € al mes de vuestro presupuesto",
+    "Se pasa unos 230 € al mes de vuestro presupuesto",
+    "Se pasa unos 30 € al mes de vuestro presupuesto"
+   ]
+  },
+  "limit45": {
+   "api": "10 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 10 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo10 zonasNo cumple todo188 zonasSin datos1 zona",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? Sin límite de tiempo hasta Paseo de la Castellana (Azca) saldrían 32 más: 42 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Tarda unos 1 min más de lo que pedís",
+    "Tarda unos 6 min más de lo que pedís",
+    "Tarda unos 11 min más de lo que pedís",
+    "Tarda unos 8 min más de lo que pedís",
+    "Tarda unos 6 min más de lo que pedís"
+   ]
+  },
+  "limit30": {
+   "api": "2 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 2 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo2 zonasNo cumple todo196 zonasSin datos1 zona",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? Hemos encontrado 2 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: Sin límite de tiempo hasta Paseo de la Castellana (Azca) saldrían 40 más: 42 zonas en total Ver esas zonas +150 €/mes saldría 1 más: 3 zonas en total",
+   "near": [
+    "Tarda unos 11 min más de lo que pedís",
+    "Tarda unos 9 min más de lo que pedís",
+    "Tarda unos 10 min más de lo que pedís",
+    "Tarda unos 14 min más de lo que pedís",
+    "Se pasa unos 90 € al mes de vuestro presupuesto"
+   ]
+  },
+  "madrid300": {
+   "sent": "300 €, madrid, adults 2",
+   "api": "0 of 131, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "No hemos encontrado ningún barrio para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo0 barriosNo cumple todo131 barriosSin datos0 barrios",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? No hemos encontrado ningún barrio para vosotros. Cambiar una sola cosa no añade zonas. Lo que más limita vuestra búsqueda es: Alquiler hasta 300 €/mes para 68 m² Ver menos",
+   "near": [
+    "Se pasa unos 1.190 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 560 € al mes de vuestro presupuesto"
+   ]
+  }
+ },
+ "single": {
+  "rent900": {
+   "api": "165 of 199, near 5",
+   "title": "Zonas que te convienen",
+   "summary": "Hemos encontrado 165 zonas para ti.",
+   "legendSelect": "¿Qué quieres ver?",
+   "legendFigure": "Zonas que te convienenTe conviene menosTe conviene másCumple todo165 zonasNo cumple todo18 zonasSin datos16 zonas",
+   "changes": "¿Quieres ver más zonas?",
+   "changesText": "¿Quieres ver más zonas? +100 €/mes saldrían 8 más: 173 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Se pasa unos 30 € al mes de tu presupuesto",
+    "Se pasa unos 40 € al mes de tu presupuesto",
+    "Se pasa unos 40 € al mes de tu presupuesto",
+    "Se pasa unos 50 € al mes de tu presupuesto",
+    "Se pasa unos 60 € al mes de tu presupuesto"
+   ]
+  },
+  "madrid300": {
+   "api": "0 of 131, near 5",
+   "title": "Zonas que te convienen",
+   "summary": "No hemos encontrado ningún barrio para ti.",
+   "legendSelect": "¿Qué quieres ver?",
+   "legendFigure": "Zonas que te convienenTe conviene menosTe conviene másCumple todo0 barriosNo cumple todo131 barriosSin datos0 barrios",
+   "changes": "¿Quieres ver más zonas?",
+   "changesText": "¿Quieres ver más zonas? No hemos encontrado ningún barrio para ti. Cambiar una sola cosa no añade zonas. Lo que más limita tu búsqueda es: Alquiler hasta 300 €/mes para 61 m² Ver menos",
+   "near": [
+    "Se pasa unos 1.040 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 470 € al mes de tu presupuesto"
+   ]
+  }
+ },
+ "seniorAlone": {
+  "sent": "adults 1, seniors true, scope madrid, priorities [], anchors 0, 1200 €",
+  "api": "97 pass, 35 tied at 100",
+  "place": "¿Cerca de dónde queréis vivir? (opcional)",
+  "tie": "Hay 35 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde quieres vivir para afinar el orden."
+ },
+ "notComparable": {
+  "card": {
+   "rows": [
+    "Centros de saludA pie: 20 minN",
+    "Centros de mayoresA pie: 18 mi"
+   ],
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    }
+   ]
+  },
+  "zonasSalud": {
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    }
+   ],
+   "tagCount": 98,
+   "statesHelp": "No comparable: Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. · Junto con sus vecinos: Comparado con municipios parecidos de la zona: es demasiado pequeño para compararlo solo, así que lo juntamos con sus vecinos más cercanos del mismo tipo."
+  },
+  "zonasVivienda": {
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Aquí viven muy pocos hogares de 4 o más personas para saber si falta.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Aquí viven muy pocos hogares de 4 o más personas para saber si falta.",
+     "describedBy": ""
+    }
+   ],
+   "tagCount": 2
+  },
+  "queFalta": [
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   }
+  ]
+ },
+ "errors": []
+}
+360 {
+ "couple": {
+  "example": {
+   "api": "42 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 42 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo42 zonasNo cumple todo157 zonasSin datos0 zonas",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? +5 min a pie hasta colegio con primaria saldrían 49 más: 91 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Se pasa unos 90 € al mes de vuestro presupuesto",
+    "Se pasa unos 20 € al mes de vuestro presupuesto",
+    "Se pasa unos 190 € al mes de vuestro presupuesto",
+    "Se pasa unos 230 € al mes de vuestro presupuesto",
+    "Se pasa unos 30 € al mes de vuestro presupuesto"
+   ]
+  },
+  "limit45": {
+   "api": "10 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 10 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo10 zonasNo cumple todo188 zonasSin datos1 zona",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? Sin límite de tiempo hasta Paseo de la Castellana (Azca) saldrían 32 más: 42 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Tarda unos 1 min más de lo que pedís",
+    "Tarda unos 6 min más de lo que pedís",
+    "Tarda unos 11 min más de lo que pedís",
+    "Tarda unos 8 min más de lo que pedís",
+    "Tarda unos 6 min más de lo que pedís"
+   ]
+  },
+  "limit30": {
+   "api": "2 of 199, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "Hemos encontrado 2 zonas para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo2 zonasNo cumple todo196 zonasSin datos1 zona",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? Hemos encontrado 2 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: Sin límite de tiempo hasta Paseo de la Castellana (Azca) saldrían 40 más: 42 zonas en total Ver esas zonas +150 €/mes saldría 1 más: 3 zonas en total",
+   "near": [
+    "Tarda unos 11 min más de lo que pedís",
+    "Tarda unos 9 min más de lo que pedís",
+    "Tarda unos 10 min más de lo que pedís",
+    "Tarda unos 14 min más de lo que pedís",
+    "Se pasa unos 90 € al mes de vuestro presupuesto"
+   ]
+  },
+  "madrid300": {
+   "sent": "300 €, madrid, adults 2",
+   "api": "0 of 131, near 5",
+   "title": "Zonas que os convienen",
+   "summary": "No hemos encontrado ningún barrio para vosotros.",
+   "legendSelect": "¿Qué queréis ver?",
+   "legendFigure": "Zonas que os convienenOs conviene menosOs conviene másCumple todo0 barriosNo cumple todo131 barriosSin datos0 barrios",
+   "changes": "¿Queréis ver más zonas?",
+   "changesText": "¿Queréis ver más zonas? No hemos encontrado ningún barrio para vosotros. Cambiar una sola cosa no añade zonas. Lo que más limita vuestra búsqueda es: Alquiler hasta 300 €/mes para 68 m² Ver menos",
+   "near": [
+    "Se pasa unos 1.190 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 550 € al mes de vuestro presupuesto",
+    "Se pasa unos 560 € al mes de vuestro presupuesto"
+   ]
+  }
+ },
+ "single": {
+  "rent900": {
+   "api": "165 of 199, near 5",
+   "title": "Zonas que te convienen",
+   "summary": "Hemos encontrado 165 zonas para ti.",
+   "legendSelect": "¿Qué quieres ver?",
+   "legendFigure": "Zonas que te convienenTe conviene menosTe conviene másCumple todo165 zonasNo cumple todo18 zonasSin datos16 zonas",
+   "changes": "¿Quieres ver más zonas?",
+   "changesText": "¿Quieres ver más zonas? +100 €/mes saldrían 8 más: 173 zonas en total Ver esas zonas Ver todas las opciones",
+   "near": [
+    "Se pasa unos 30 € al mes de tu presupuesto",
+    "Se pasa unos 40 € al mes de tu presupuesto",
+    "Se pasa unos 40 € al mes de tu presupuesto",
+    "Se pasa unos 50 € al mes de tu presupuesto",
+    "Se pasa unos 60 € al mes de tu presupuesto"
+   ]
+  },
+  "madrid300": {
+   "api": "0 of 131, near 5",
+   "title": "Zonas que te convienen",
+   "summary": "No hemos encontrado ningún barrio para ti.",
+   "legendSelect": "¿Qué quieres ver?",
+   "legendFigure": "Zonas que te convienenTe conviene menosTe conviene másCumple todo0 barriosNo cumple todo131 barriosSin datos0 barrios",
+   "changes": "¿Quieres ver más zonas?",
+   "changesText": "¿Quieres ver más zonas? No hemos encontrado ningún barrio para ti. Cambiar una sola cosa no añade zonas. Lo que más limita tu búsqueda es: Alquiler hasta 300 €/mes para 61 m² Ver menos",
+   "near": [
+    "Se pasa unos 1.040 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 460 € al mes de tu presupuesto",
+    "Se pasa unos 470 € al mes de tu presupuesto"
+   ]
+  }
+ },
+ "seniorAlone": {
+  "sent": "adults 1, seniors true, scope madrid, priorities [], anchors 0, 1200 €",
+  "api": "97 pass, 35 tied at 100",
+  "place": "¿Cerca de dónde queréis vivir? (opcional)",
+  "tie": "Hay 35 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde quieres vivir para afinar el orden."
+ },
+ "notComparable": {
+  "card": {
+   "rows": [
+    "Centros de saludA pie: 20 minN",
+    "Centros de mayoresA pie: 18 mi"
+   ],
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    }
+   ]
+  },
+  "zonasSalud": {
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+     "describedBy": ""
+    }
+   ],
+   "tagCount": 98,
+   "statesHelp": "No comparable: Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. · Junto con sus vecinos: Comparado con municipios parecidos de la zona: es demasiado pequeño para compararlo solo, así que lo juntamos con sus vecinos más cercanos del mismo tipo."
+  },
+  "zonasVivienda": {
+   "tags": [
+    {
+     "visible": "No comparable",
+     "hidden": ". Aquí viven muy pocos hogares de 4 o más personas para saber si falta.",
+     "describedBy": ""
+    },
+    {
+     "visible": "No comparable",
+     "hidden": ". Aquí viven muy pocos hogares de 4 o más personas para saber si falta.",
+     "describedBy": ""
+    }
+   ],
+   "tagCount": 2
+  },
+  "queFalta": [
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   },
+   {
+    "visible": "No comparable",
+    "hidden": "(nothing)",
+    "describedBy": ""
+   }
+  ]
+ },
+ "errors": []
+}
+
+## Part 2
+1440 {
+ "none": {
+  "En pareja, Toda la Comunidad, 200 €": "typed 200 (min -), sent 1200 €, 175 pass · (no line)",
+  "En pareja, Madrid capital, 300 €": "typed 300 (min -), sent 300 €, 0 pass · Ningún barrio cumple todo lo que pedís. Mirad abajo qué pasa si cambiáis algo.",
+  "Solo/a, Toda la Comunidad, 200 €": "typed 200 (min -), sent 1200 €, 177 pass · (no line)",
+  "Solo/a, Madrid capital, 300 €": "typed 300 (min -), sent 300 €, 0 pass · Ningún barrio cumple todo lo que pides. Mira abajo qué pasa si cambias algo."
+ },
+ "zonasSaludTags": {
+  "list: . Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.": 98
+ },
+ "errors": []
+}
+360 {
+ "none": {
+  "En pareja, Toda la Comunidad, 200 €": "typed 200 (min -), sent 1200 €, 175 pass · (no line)",
+  "En pareja, Madrid capital, 300 €": "typed 300 (min -), sent 300 €, 0 pass · Ningún barrio cumple todo lo que pedís. Mirad abajo qué pasa si cambiáis algo.",
+  "Solo/a, Toda la Comunidad, 200 €": "typed 200 (min -), sent 1200 €, 177 pass · (no line)",
+  "Solo/a, Madrid capital, 300 €": "typed 300 (min -), sent 300 €, 0 pass · Ningún barrio cumple todo lo que pides. Mira abajo qué pasa si cambias algo."
+ },
+ "zonasSaludTags": {
+  "list: . Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.": 98
+ },
+ "errors": []
+}
