@@ -39,7 +39,9 @@ export default function OverviewSide({ children, className }: { children: ReactN
     if (!left) return;
     const active = document.activeElement;
     if (active && active !== document.body && document.contains(active)) return;
-    const row = ref.current?.querySelector<HTMLElement>(`[data-zone="${left.key}"]`) ?? ref.current?.querySelector<HTMLElement>("h2[tabindex='-1']");
+    // The row, if it is in view (not folded under «Ver las 10 primeras»), else the list's title (review R-09 of PR #81)
+    const shown = (el: HTMLElement | null | undefined) => (el && (el.checkVisibility?.() ?? el.getClientRects().length > 0) ? el : null);
+    const row = shown(ref.current?.querySelector<HTMLElement>(`[data-zone="${left.key}"]`)) ?? ref.current?.querySelector<HTMLElement>("h2[tabindex='-1']");
     const mobile = window.matchMedia(MOBILE_QUERY).matches;
     row?.focus({ preventScroll: mobile });
     // In the bottom sheet the focus alone would leave it at an edge

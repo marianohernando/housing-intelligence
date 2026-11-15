@@ -7,13 +7,13 @@ import styles from "./PriceTag.module.css";
  * - `row`, in a row of the list: «Unos 1.129 € al mes», nothing else (the m² and the confidence
  *   words wait in the card);
  * - `essential`, the first of the card's essentials: the same words and «Precio orientativo»;
- * - `card`, behind «Ver más» of the card: «Alquiler: unos 1.129 € al mes por 77 m²», with the
+ * - `breakdown`, behind «Ver más» of the card, without the figure again (review R-10 of PR #81: it
+ *   was said three times, with the cost fact): what it is for («Para un piso de unos 77 m²»), the
  *   confidence words when it is not a reliable figure («Dato aproximado», explained with the card's
- *   facts, never in a tooltip), where half the leases fall and who publishes it (D-242: «Lo normal:
- *   entre 510 y 820 € al mes», «Ministerio de Vivienda (SERPAVI), 2024») and, renting, why it is
+ *   facts), where half the leases fall and who publishes it (D-242) and, renting, why it is
  *   orientative (zona.precio.aviso_2024).
  */
-export default function PriceTag({ price, variant }: { price: ZonePrice; variant: "row" | "essential" | "card" }) {
+export default function PriceTag({ price, variant }: { price: ZonePrice; variant: "row" | "essential" | "breakdown" }) {
   if (variant === "row") return <span className={styles.row}>{price.short}</span>;
   if (variant === "essential") {
     return (
@@ -25,15 +25,7 @@ export default function PriceTag({ price, variant }: { price: ZonePrice; variant
   }
   return (
     <span className={styles.card}>
-      <span aria-hidden="true" className={styles.amount}>
-        {price.long}
-      </span>
-      {price.area && (
-        <small aria-hidden="true" className={styles.area}>
-          {price.area}
-        </small>
-      )}
-      <span className="visually-hidden">{price.aria}</span>
+      {price.m2 !== null && <span className={styles.forArea}>{`Para un piso de unos ${price.m2}\u00a0m²`}</span>}
       {price.confidence && <small className={styles.mark}>{price.confidence.label}</small>}
       {price.range && (
         <small className={styles.range}>

@@ -20,11 +20,15 @@ import {
   noneText,
   optionText,
   paintFit,
+  loadingText,
+  nearHelpText,
   passingText,
+  rankText,
   resultsTitle,
   speaksToMany,
-  rankText,
+  voice,
   relaxOptions,
+  BUY_LIST_NOTICE,
   PRICE_HINT,
   RENT_2024_NOTICE,
   RENT_LIST_NOTICE,
@@ -244,6 +248,17 @@ describe("«¿Y si cambias algo?»", () => {
     expect(passingText(1, true)).toBe("Con este cambio sale 1 zona.");
   });
 
+  it("speaks to one person as «tú» and to more as «vosotros», in one place (review R-03 of PR #81)", () => {
+    expect(voice(false)).toMatchObject({ te: "te", ti: "ti", tu: "tu", buscas: "buscas", pides: "pides", trabajas: "trabajas" });
+    expect(voice(true)).toMatchObject({ te: "os", ti: "vosotros", tu: "vuestra", buscas: "buscáis", pides: "pedís", trabajas: "trabajáis" });
+    expect(loadingText(false)).toBe("Buscando zonas para ti…");
+    expect(loadingText(true)).toBe("Buscando zonas para vosotros…");
+    expect(nearHelpText(false)).toBe("Les falta una sola cosa de lo que pides.");
+    expect(nearHelpText(true)).toBe("Les falta una sola cosa de lo que pedís.");
+    expect(rankText(1, "zona", true)).toBe("La 1.ª que más os conviene");
+    expect(rankText(3, "barrio")).toBe("El 3.º que más te conviene");
+  });
+
   it("titles the list for the household, as the line under it", () => {
     expect(resultsTitle(false)).toBe("Zonas que te convienen");
     expect(resultsTitle(true)).toBe("Zonas que os convienen");
@@ -345,6 +360,7 @@ describe("the approximate price of a zone (D-234)", () => {
       short: "Unos\u00a0385.000\u00a0€",
       long: "Comprar: unos 385.000\u00a0€",
       area: null,
+      m2: null,
       aria: "Comprar: unos 385.000 €",
       confidence: null,
       range: null,
@@ -438,7 +454,8 @@ describe("many zones tied at the top (resultados.empate, D-239)", () => {
   it("asks «Somos mayores» where they want to live, never where they work (D-244, R-13 of PR #79)", () => {
     const older = { scope: "madrid" as const, household: { adults: 2, seniors: true } };
     expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: older })).toBe(
-      "Hay 106 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde queréis vivir para afinar el orden.",
+      // A couple: «vosotros» (review R-03 of PR #81)
+      "Hay 106 barrios igual de buenos: marcad qué queréis tener cerca o elegid cerca de dónde queréis vivir para afinar el orden.",
     );
   });
 
@@ -477,7 +494,9 @@ describe("the rent of 2024 (F5 of fit-0.9: zona.precio.aviso_2024, resultados.av
     expect(RENT_LIST_NOTICE).toBe("Precios orientativos: hoy pueden ser algo más caros.");
     expect(rentNotice(fixture)).toBe(RENT_LIST_NOTICE);
     expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: null } })).toBe(RENT_LIST_NOTICE);
-    expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: { kind: "buy", amount_eur: 400_000 } } })).toBeNull();
+    // Buying, the purchase prices are orientative too (review R-10 of PR #81)
+    expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: { kind: "buy", amount_eur: 400_000 } } })).toBe(BUY_LIST_NOTICE);
+    expect(BUY_LIST_NOTICE).toBe("Precios orientativos: son una estimación del precio de compra.");
     // No price on screen, nothing to warn about
     const unpriced = fixture.results.map((z) => ({ ...z, estimated_cost_eur: null }));
     expect(rentNotice({ ...fixture, results: unpriced, near_misses: [] })).toBeNull();

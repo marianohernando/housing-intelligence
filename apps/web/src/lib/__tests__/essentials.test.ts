@@ -4,7 +4,17 @@ import { describe, expect, it } from "vitest";
 
 import type { ConstraintCheck, Fact, RankedZone, ScenarioState, SearchResult } from "@/contracts/search_response";
 
-import { askedLines, cityOf, householdGaps, nothingMissingText, rowPlace, unknownRowsText } from "../essentials";
+import {
+  askedLines,
+  cityOf,
+  comparableFineText,
+  householdGaps,
+  markedRows,
+  nothingMissingText,
+  pertinentRows,
+  rowPlace,
+  unknownRowsText,
+} from "../essentials";
 
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
 const FIXTURE = new URL("../../../../../data/fixtures/contracts/search_result.familia_presupuesto.fixture.json", import.meta.url);
@@ -62,7 +72,7 @@ describe("what the person asked for, with its minutes (zona.esencial.pedido)", (
     expect(lines.at(-1)).toMatchObject({ kind: "weakness", text: expect.stringContaining("hasta Paseo de la Castellana (Azca)") });
   });
 
-  it("leaves the facts about the % and the walks nobody asked for to «Ver más»", () => {
+  it("says the limits without their % and leaves the walks nobody asked for to «Ver más»", () => {
     const zone = {
       constraints: [],
       facts: [
@@ -75,8 +85,16 @@ describe("what the person asked for, with its minutes (zona.esencial.pedido)", (
         fact("colegios", "Colegio con primaria a unos 5 min andando", "min_a_pie_colegio"),
       ],
     };
-    const lines = askedLines(zone, { priorities: ["salud"], nearby: [], anchors: [] }).map((l) => l.text);
-    expect(lines).toEqual(["Centro de salud a unos 8 min andando"]);
+    const lines = askedLines(zone, { priorities: ["salud"], nearby: [], anchors: [] });
+    // The limits keep their sentence without the tail about the % (review R-04 of PR #81); the shortage names its rows
+    expect(lines.map((l) => l.text)).toEqual([
+      "Más de 1 h de trayecto hasta Getafe",
+      "No llegas a Getafe a las 9:00 en transporte público",
+      "Faltan colegios",
+      "Centro de salud a unos 8 min andando",
+    ]);
+    expect(lines[2]?.rows).toEqual(["colegio"]);
+    expect(lines[0]?.rows).toBeUndefined();
     // Any other figure with a «%» is not about the fit and stays
     const green = { constraints: [], facts: [fact("zonas_verdes", "Parque urbano a unos 4 min andando (el 12 % de la zona)")] };
     expect(askedLines(green, { priorities: ["zonas_verdes"], nearby: [], anchors: [] })).toHaveLength(1);
@@ -121,17 +139,50 @@ const barajasGaps = [
   { row: "vivienda", status: "SIN_DATOS" },
 ] as const;
 
+/** A search with only a household: nothing marked */
+const home = (household: object): Pick<ScenarioState, "household" | "priorities" | "nearby"> => ({ household, priorities: [], nearby: [] });
+
 describe("what the zone lacks that matters to the home (zona.esencial.falta)", () => {
   it("never tells a retired couple about the colegio, and says what nobody can compare", () => {
-    const gaps = householdGaps([...barajasGaps], { seniors: true });
+    const gaps = householdGaps([...barajasGaps], home({ seniors: true }));
     expect(gaps.short).toEqual([]);
-    // The pharmacies have enough: «No le falta nada…», and what nobody can tell said under it
+    // The pharmacies have enough, but two rows cannot be compared: no green «No le falta nada» (review R-01 of PR #81)
     expect(gaps.covered).toBe(true);
     expect(gaps.unknown).toEqual(["centro_salud", "mayores"]);
-    expect(nothingMissingText(true)).toBe("No le falta nada de lo que buscáis.");
-    expect(nothingMissingText(false)).toBe("No le falta nada de lo que buscas.");
+    expect(comparableFineText()).toBe("De lo que podemos comparar, no le falta nada.");
     expect(unknownRowsText(gaps.unknown)).toBe("No sabemos si le faltan centros de salud o centros de mayores.");
     expect(unknownRowsText([])).toBeNull();
+    expect(nothingMissingText(true)).toBe("No le falta nada de lo que buscáis.");
+    expect(nothingMissingText(false)).toBe("No le falta nada de lo que buscas.");
+  });
+
+  it("says it of the district for a barrio, whose rows are the district's", () => {
+    expect(nothingMissingText(true, "Barajas")).toBe("En Barajas no falta nada de lo que buscáis.");
+    expect(comparableFineText("Barajas")).toBe("En Barajas, de lo que podemos comparar, no falta nada.");
+    expect(unknownRowsText(["centro_salud", "mayores"], "Barajas")).toBe("No sabemos si en Barajas faltan centros de salud o centros de mayores.");
+  });
+
+  it("counts what the person marks too: a couple without children who marks «Colegios» (review R-02 of PR #81)", () => {
+    const couple = { household: { adults: 2 }, priorities: ["colegios" as const], nearby: [] };
+    const rows = [
+      { row: "colegio", status: "FALTA" },
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "farmacia", status: "CUBIERTO" },
+    ] as const;
+    expect(householdGaps([...rows], couple).short.map((s) => s.text)).toEqual(["Colegios: hay pocas aulas para tantos niños."]);
+    // Unmarked, the colegios are not theirs
+    expect(householdGaps([...rows], home({ adults: 2 })).short).toEqual([]);
+    expect(markedRows({ priorities: ["colegios", "transporte", "salud"], nearby: [{ need: "mayores", max_walk_minutes: 10, required: false }] })).toEqual([
+      "colegio",
+      "centro_salud",
+      "mayores",
+    ]);
+    expect(pertinentRows({ household: { adults: 2 }, priorities: ["colegios"], nearby: [{ need: "escuela_infantil", max_walk_minutes: 10, required: true }] })).toEqual([
+      "centro_salud",
+      "farmacia",
+      "colegio",
+      "escuela_infantil",
+    ]);
   });
 
   it("says what is short of the home's, FALTA first, in plain words", () => {
@@ -143,7 +194,7 @@ describe("what the zone lacks that matters to the home (zona.esencial.falta)", (
       { row: "centro_salud", status: "FALTA" },
       { row: "farmacia", status: "CUBIERTO" },
     ] as const;
-    expect(householdGaps([...rows], baby).short.map((s) => s.text)).toEqual([
+    expect(householdGaps([...rows], home(baby)).short.map((s) => s.text)).toEqual([
       "Centros de salud: hay pocos para tanta gente.",
       "Escuelas infantiles: van justas para tantos niños.",
     ]);
@@ -151,23 +202,23 @@ describe("what the zone lacks that matters to the home (zona.esencial.falta)", (
 
   it("says where for a barrio, whose rows are its district's", () => {
     const rows = [{ row: "farmacia", status: "JUSTO" }] as const;
-    expect(householdGaps([...rows], { adults: 2 } as never, "Barajas").short[0]?.text).toBe("Farmacias en Barajas: van justas para tanta gente.");
+    expect(householdGaps([...rows], home({ adults: 2 }), "Barajas").short[0]?.text).toBe("Farmacias en Barajas: van justas para tanta gente.");
   });
 
   it("never counts a row too small to compare as short, nor as fine", () => {
     const rows = [{ row: "centro_salud", status: "JUSTO", reliable: false }] as const;
-    expect(householdGaps([...rows], {})).toEqual({ short: [], covered: false, unknown: ["centro_salud"] });
+    expect(householdGaps([...rows], home({}))).toEqual({ short: [], covered: false, unknown: ["centro_salud"] });
     // Nothing of the home's to compare (no rows, or none of its rows yet): never «No le falta nada»
-    expect(householdGaps([], { seniors: true }).covered).toBe(false);
-    expect(householdGaps([{ row: "colegio", status: "CUBIERTO" }], { seniors: true }).covered).toBe(false);
+    expect(householdGaps([], home({ seniors: true })).covered).toBe(false);
+    expect(householdGaps([{ row: "colegio", status: "CUBIERTO" }], home({ seniors: true })).covered).toBe(false);
     // Compared together with its neighbours it has a status: the group's
     const grouped = [{ row: "farmacia", status: "FALTA", reliable: false, comparison_group: { names: ["A", "B"], ratio_to_reference: 0.4 } }];
-    expect(householdGaps(grouped as never, {}).short.map((s) => s.row)).toEqual(["farmacia"]);
+    expect(householdGaps(grouped as never, home({})).short.map((s) => s.row)).toEqual(["farmacia"]);
   });
 });
 
 describe("where the zone is", () => {
-  it("names the city of a district or a barrio beside its band, nothing for a municipio", () => {
+  it("names the city of a district or a barrio, nothing for a municipio", () => {
     expect(cityOf({ level: "distrito", municipio_name: "Madrid" })).toBe("Madrid");
     expect(cityOf({ level: "barrio", municipio_name: "Madrid" })).toBe("Madrid");
     expect(cityOf({ level: "municipio", municipio_name: "Coslada" })).toBeNull();

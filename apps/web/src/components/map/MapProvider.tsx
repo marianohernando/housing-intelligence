@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createContext, type ReactNode, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { useScenario } from "@/components/search/ScenarioProvider";
@@ -62,6 +62,8 @@ interface MapContextValue {
    * (a step back in the history); a card opened from its link closes in place.
    */
   backToList: () => void;
+  /** «‹ Volver a la lista» of a zone screen after a search: back to the list without a new step. */
+  backToListFromZone: () => void;
   /** Barrios of the active district, for the «Barrios de la zona» bar: navigation only, no figures. */
   barrios: AdminFeature[] | null;
   /** Barrio the camera shows, inside the active district (null: the whole district). */
@@ -85,6 +87,13 @@ function decodedCode(code: string | undefined): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+/** The mark in the history's state of a card opened over the list: a step back is the list. */
+const LIST_BEHIND = "vfList";
+
+function listBehind(): boolean {
+  return (window.history.state as Record<string, unknown> | null)?.[LIST_BEHIND] === true;
 }
 
 /** The zone of the address, when it is the overview's. */
@@ -154,35 +163,50 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     if (shown === undefined) return;
     const next = selectionAfter(shown, barrioMap);
     // The address follows; OverviewZoneParam then hands the new pick up
-    if (next !== shown) window.history.replaceState(null, "", overviewHref(next));
+    if (next !== shown) window.history.replaceState({ [LIST_BEHIND]: next !== null && listBehind() }, "", overviewHref(next));
   }, [barrioMap]);
-  // Whether the card in view was opened from the overview, one step after the list in the history
-  const openedFromList = useRef(false);
+  // A card on the overview that was opened over the list, kept to leave the zone screen well
+  const cardOverList = useRef(false);
+  // Set by «Volver a la lista» until the history answers: a second tap never goes back twice
+  const leaving = useRef(false);
   const followAddress = useCallback((key: string | null) => {
-    if (key === null) openedFromList.current = false;
+    leaving.current = false;
+    cardOverList.current = key !== null && listBehind();
     setPicked({ key, live: true });
   }, []);
   const select = useCallback((key: string | null) => {
     const shown = overviewZoneInAddress();
     if (shown !== undefined) {
-      // From the list, a new step in the history; from one card to another, the same step
+      // From the list, a new step in the history, marked in its state; from one card to another, the same step
       if (key !== null && shown === null) {
-        window.history.pushState(null, "", overviewHref(key));
-        openedFromList.current = true;
+        window.history.pushState({ [LIST_BEHIND]: true }, "", overviewHref(key));
       } else if (key !== shown) {
-        window.history.replaceState(null, "", overviewHref(key));
+        window.history.replaceState({ [LIST_BEHIND]: key !== null && listBehind() }, "", overviewHref(key));
       }
     }
-    if (key === null) openedFromList.current = false;
+    cardOverList.current = key !== null && listBehind();
     setPicked({ key, live: true });
   }, []);
   const backToList = useCallback(() => {
-    // Once: a second tap before the history moves closes in place instead of going back twice
-    const fromList = openedFromList.current;
-    openedFromList.current = false;
-    if (fromList) window.history.back();
-    else select(null);
+    if (leaving.current) return;
+    if (listBehind()) {
+      leaving.current = true;
+      window.history.back();
+    } else select(null);
   }, [select]);
+  // Where the person left the overview for a zone screen, and whether a card over the list was open
+  const exit = useRef<{ path: string; overList: boolean } | null>(null);
+  useEffect(() => {
+    exit.current = overview ? null : { path: window.location.pathname, overList: cardOverList.current };
+  }, [overview]);
+  const router = useRouter();
+  // «‹ Volver a la lista» of a zone screen: two steps back to the list when it came from a card
+  // over it, never a new step on top (review R-06 of PR #81); otherwise the list in place of the zone
+  const backToListFromZone = useCallback(() => {
+    const from = exit.current;
+    if (from?.overList && from.path === window.location.pathname) window.history.go(-2);
+    else router.replace("/");
+  }, [router]);
 
   const code = decodedCode(params.code);
   const level = params.level;
@@ -283,11 +307,25 @@ export default function MapProvider({ children }: { children: ReactNode }) {
   const focusBarrio = useCallback((id: string | null) => setFocus(id), []);
   const retryBarrios = useCallback(() => setCapitalError(null), []);
 
-  const value = useMemo<MapContextValue>(() => {
-    const status: ZonesStatus = error ? "error" : zones ? "ready" : "loading";
+  const selectedZone = useMemo(() => {
     const [level = "", selectedCode = ""] = selectedKey?.split("/") ?? [];
     const pickedIn = (from: ZoneCollection | null) => (from && selectedKey ? findZone(from, level, selectedCode) : undefined);
-    const selectedZone = pickedIn(zones) ?? pickedIn(barrios) ?? null;
+    return pickedIn(zones) ?? pickedIn(barrios) ?? null;
+  }, [zones, barrios, selectedKey]);
+  // A ?zona= that is no zone of the map (another level, a code that does not exist) is no pick:
+  // the address goes back to the list, so the next row opens over it (review R-06 of PR #81)
+  useEffect(() => {
+    if (!zones || !overview || !picked.live) return;
+    const raw = new URLSearchParams(window.location.search).get(OVERVIEW_ZONE_PARAM);
+    // Nothing to check, or the address not followed yet
+    if (raw === null || overviewZoneKey(raw) !== picked.key) return;
+    // A barrio's outline is still on its way
+    if (selectedKey?.startsWith("barrio/") && !barrios && !capitalError) return;
+    if (selectedZone === null) window.history.replaceState({ [LIST_BEHIND]: false }, "", overviewHref(null));
+  }, [zones, overview, picked, selectedKey, barrios, capitalError, selectedZone]);
+
+  const value = useMemo<MapContextValue>(() => {
+    const status: ZonesStatus = error ? "error" : zones ? "ready" : "loading";
     const districtBarrios = districtId && barrioList?.parent === districtId ? barrioList.features : null;
     const barrio = focus ? (districtBarrios?.find((b) => b.properties.admin_unit_id === focus) ?? null) : null;
     return {
@@ -304,6 +342,7 @@ export default function MapProvider({ children }: { children: ReactNode }) {
       selectedZone,
       select,
       backToList,
+      backToListFromZone,
       barrios: districtBarrios,
       barrio,
       focusBarrio,
@@ -318,10 +357,10 @@ export default function MapProvider({ children }: { children: ReactNode }) {
     resultZones,
     capitalError,
     retryBarrios,
-    selectedKey,
+    selectedZone,
     select,
     backToList,
-    barrios,
+    backToListFromZone,
     districtId,
     barrioList,
     focus,

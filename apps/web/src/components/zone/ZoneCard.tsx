@@ -5,16 +5,24 @@ import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 
 import type { SearchResult } from "@/contracts/search_response";
-import type { ComparisonGroup, GapStatus } from "@/contracts/zone_gap_list_response";
+import type { ComparisonGroup, GapRowKey, GapStatus } from "@/contracts/zone_gap_list_response";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import GlassCard from "@/components/ui/GlassCard";
 import Help from "@/components/ui/Help";
 import PriceTag from "@/components/ui/PriceTag";
-import { askedLines, cityOf, householdGaps, nothingMissingText, unknownRowsText } from "@/lib/essentials";
+import {
+  askedLines,
+  comparableFineText,
+  type HouseholdGaps,
+  householdGaps,
+  markedRows,
+  nothingMissingText,
+  unknownRowsText,
+} from "@/lib/essentials";
 import { errorMessage } from "@/lib/errors";
-import { nearbyWalks, speaksToMany, zoneFit, zonePriceOf } from "@/lib/fit";
+import { nearbyWalks, speaksToMany, voice, zoneFit, zonePriceOf } from "@/lib/fit";
 import { matchText } from "@/lib/match";
 import {
   fitsButShortText,
@@ -25,6 +33,8 @@ import {
   inGroup,
   nearButShort,
   notComparable,
+  notComparableText,
+  ROW_IN_LIST,
   SMALL_ZONE,
   topRows,
   walking,
@@ -49,11 +59,11 @@ const TEXT = {
   backNoList: "Volver", // zona.volver: before a search there is no list to go back to
   beforeSearch: "Haz tu búsqueda para ver qué zonas te convienen.",
   fitSoon: "Muy pronto verás si esta zona te conviene.", // zona.encaje.pronto
-  // zona.encaje.ayuda, behind «¿Qué es el %?» (a tooltip never showed on a phone)
+  // zona.encaje.ayuda, behind «¿Qué es el %?» (a tooltip never showed on a phone); «buscáis» to a household of more than one
   fitHelpLabel: "¿Qué es el %?",
-  fitHelp: "Cuánto se parece esta zona a lo que buscas. No es una nota de la zona.",
-  // zona.encaje.aria: «Muy buena opción para tu búsqueda: 94 %»
-  fitAria: (band: string, pct: string) => `${band} para tu búsqueda: ${pct}`,
+  fitHelp: (many: boolean) => `Cuánto se parece esta zona a lo que ${voice(many).buscas}. No es una nota de la zona.`,
+  // zona.encaje.aria: «Muy buena opción para tu búsqueda: 94 %» («vuestra búsqueda»)
+  fitAria: (band: string, pct: string, many: boolean) => `${band} para ${voice(many).tu} búsqueda: ${pct}`,
   stale: "Esto es de tu búsqueda anterior.", // zona.encaje.antiguo
   essentials: (zone: string) => `Lo esencial de ${zone}`, // zona.esencial.aria
   more: (zone: string) => `Ver más sobre ${zone}`, // zona.ver_mas
@@ -78,17 +88,18 @@ interface Props {
   onBack?: () => void;
 }
 
-type RowStatus = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
+type RowStatus = { row: GapRowKey; status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
 type Gaps = ReturnType<typeof useZoneGaps>;
 
 /**
  * What each label of the card's rows means, for the labels on view (estado.*.corto): visible text,
- * since the tooltips never showed on a phone (UX mobile audit, A5).
+ * since the tooltips never showed on a phone (UX mobile audit, A5). «No comparable» is said of each
+ * row in its own unit (review R-07 of PR #81).
  */
 function statusLines(rows: readonly RowStatus[]): [string, string][] {
   const lines = new Map<string, string>();
   for (const row of rows) {
-    if (notComparable(row)) lines.set(SMALL_ZONE.label, SMALL_ZONE.short);
+    if (notComparable(row)) lines.set(`${SMALL_ZONE.label} (${ROW_IN_LIST[row.row]})`, notComparableText(row.row));
     else lines.set(GAP_STATUS[row.status].label, GAP_STATUS[row.status].short);
     if (inGroup(row)) lines.set(GROUP.label, GROUP.short);
   }
@@ -133,7 +144,8 @@ function MissingSection({ zone, gaps, mode, withStates }: { zone: ZoneProperties
   const gapsOf = screenZone(zone);
   const rows = gaps.data?.data.rows ?? [];
   const match = result?.all_zones.find((z) => z.zone.level === zone.level && z.zone.code === zone.code);
-  const shown = topRows(rows, 3, result?.scenario.household ?? null);
+  // What matters to the household and what the person marks first (review R-02 of PR #81)
+  const shown = topRows(rows, 3, result?.scenario.household ?? null, result ? markedRows(result.scenario) : []);
   // A service the search found close that «Qué falta» marks FALTA or JUSTO: both are true, and one
   // line says why (zona.cerca_pocas). For a barrio, its walks against its district's rows
   const nearLines = result ? nearButShort(rows, nearbyWalks(zoneFit(result, zone.zone_key).ranked), districtOfBarrio(zone)) : [];
@@ -215,17 +227,54 @@ function CardAction({ zone, mode }: { zone: ZoneProperties; mode: Props["mode"] 
   );
 }
 
+/** The essentials' line of what is missing: what is short of what matters, or that nothing is, or that we cannot tell. */
+function HomeGaps({ home, many, place }: { home: HouseholdGaps; many: boolean; place: string | null }) {
+  const unsure = unknownRowsText(home.unknown, place);
+  const nothing = home.short.length === 0 && home.covered;
+  return (
+    <>
+      {home.short.map((line) => (
+        <li key={line.row} className={styles.short}>
+          <CircleAlert size={20} aria-hidden="true" />
+          <span>{line.text}</span>
+        </li>
+      ))}
+      {/* The green tick only when every row that matters can be compared (review R-01 of PR #81) */}
+      {nothing && home.unknown.length === 0 && (
+        <li className={styles.fine}>
+          <CircleCheck size={20} aria-hidden="true" />
+          <span>{nothingMissingText(many, place)}</span>
+        </li>
+      )}
+      {nothing && home.unknown.length > 0 && (
+        <li className={styles.partly}>
+          <Info size={20} aria-hidden="true" />
+          <span>{comparableFineText(place)}</span>
+        </li>
+      )}
+      {unsure && (
+        <li className={styles.unsure}>
+          <CircleQuestionMark size={20} aria-hidden="true" />
+          <span>{unsure}</span>
+        </li>
+      )}
+    </>
+  );
+}
+
 /**
  * The three essentials of the second delivery (decided by Mariano): what it costs, what the person
- * asked for with its minutes, and what it lacks that matters to the home, or «No le falta nada de lo
- * que buscáis» (lib/essentials.ts). Before them, what the zone fails, if anything (FitVerdict).
+ * asked for with its minutes, and what it lacks that matters to the home or the person marked
+ * (lib/essentials.ts). Before them, what the zone fails, if anything (FitVerdict).
  */
 function Essentials({ zone, result, gaps }: { zone: ZoneProperties; result: SearchResult; gaps: Gaps }) {
   const { ranked } = zoneFit(result, zone.zone_key);
   const price = zonePriceOf(result, zone.zone_key);
-  const asked = askedLines(ranked, result.scenario);
-  const home = householdGaps(gaps.data?.data.rows ?? [], result.scenario.household, districtOfBarrio(zone));
-  const unsure = home.short.length === 0 ? unknownRowsText(home.unknown) : null;
+  const place = districtOfBarrio(zone);
+  const home = householdGaps(gaps.data?.data.rows ?? [], result.scenario, place);
+  // A shortage the API caps the % for («Faltan colegios») goes once the home's gaps say it themselves
+  const said = new Set(gaps.data ? home.short.map((line) => line.row) : []);
+  const asked = askedLines(ranked, result.scenario).filter((line) => !line.rows?.length || !line.rows.every((row) => said.has(row)));
   return (
     <>
       <FitVerdict result={result} zoneKey={zone.zone_key} />
@@ -246,25 +295,7 @@ function Essentials({ zone, result, gaps }: { zone: ZoneProperties; result: Sear
             </li>
           );
         })}
-        {gaps.data &&
-          home.short.map((line) => (
-            <li key={line.row} className={styles.short}>
-              <CircleAlert size={20} aria-hidden="true" />
-              <span>{line.text}</span>
-            </li>
-          ))}
-        {gaps.data && home.short.length === 0 && home.covered && (
-          <li className={styles.fine}>
-            <CircleCheck size={20} aria-hidden="true" />
-            <span>{nothingMissingText(speaksToMany(result.scenario.household))}</span>
-          </li>
-        )}
-        {gaps.data && unsure && (
-          <li className={styles.unsure}>
-            <CircleQuestionMark size={20} aria-hidden="true" />
-            <span>{unsure}</span>
-          </li>
-        )}
+        {gaps.data && <HomeGaps home={home} many={speaksToMany(result.scenario.household)} place={place} />}
       </ul>
       <GapsState zone={zone} gaps={gaps} />
     </>
@@ -281,6 +312,7 @@ function MoreAbout({ zone, result, gaps, mode }: { zone: ZoneProperties; result:
   // F5 of fit-0.9: «Muy buena opción» over «94 %»; a zone that fails something shows what it lacks, not a %
   const fit = match?.passes_all ? matchText(match) : null;
   const price = zonePriceOf(result, zone.zone_key);
+  const many = speaksToMany(result.scenario.household);
   return (
     <details className={styles.more}>
       <summary>
@@ -294,16 +326,17 @@ function MoreAbout({ zone, result, gaps, mode }: { zone: ZoneProperties; result:
               <small>{fit.band}</small>
               {fit.pct}
             </span>
-            <span className="visually-hidden">{TEXT.fitAria(fit.band, fit.pct)}</span>
+            <span className="visually-hidden">{TEXT.fitAria(fit.band, fit.pct, many)}</span>
           </span>
         )}
         {fit && (
           <Help about={zoneTitle(zone)} label={TEXT.fitHelpLabel} className={styles.fitHelp}>
-            <p>{TEXT.fitHelp}</p>
+            <p>{TEXT.fitHelp(many)}</p>
           </Help>
         )}
         <FitDetails result={result} zoneKey={zone.zone_key} />
-        {price && <PriceTag price={price} variant="card" />}
+        {/* The price is said once among the essentials and in the cost fact above: here, only what it is for and why it is orientative */}
+        {price && <PriceTag price={price} variant="breakdown" />}
         <MissingSection zone={zone} gaps={gaps} mode={mode} withStates={false} />
         <CardAction zone={zone} mode={mode} />
       </div>
@@ -325,7 +358,6 @@ export default function ZoneCard({ zone, mode, onBack }: Props) {
   const gaps = useZoneGaps(gapsOf.level, gapsOf.code);
   const match = result ? zoneFit(result, zone.zone_key).match : null;
   const band = match?.passes_all ? matchText(match)?.band : null;
-  const city = cityOf(zone);
   const eyebrow = level === "barrio" ? TEXT.barrio(municipio_name) : level === "distrito" ? `Distrito de ${municipio_name}` : TEXT.municipio;
 
   useEffect(() => {
@@ -347,10 +379,11 @@ export default function ZoneCard({ zone, mode, onBack }: Props) {
       <h2 id={titleId} ref={title} tabIndex={-1} className={styles.name}>
         {zoneTitle(zone)}
       </h2>
-      {result && (city || band) && (
+      {/* zona.esencial.lugar: what kind of zone it is and its band (review R-10 of PR #81) */}
+      {result && (
         <p className={styles.place}>
-          {city}
-          {city && band && " · "}
+          {eyebrow}
+          {band && " · "}
           {band && <strong>{band}</strong>}
         </p>
       )}

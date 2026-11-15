@@ -17,6 +17,8 @@ import {
   constraintLabels,
   evaluatedText,
   FIELD_ID,
+  loadingText,
+  nearHelpText,
   noneText,
   passingText,
   rentNotice,
@@ -47,7 +49,6 @@ import { useScenario } from "./ScenarioProvider";
 // lib/essentials.ts, carga.busqueda, vacio.sin_resultados, rc.aplicado, rc.deshacer, zona.cerca_de_encajar.*,
 // error.reintentar).
 const TEXT = {
-  loading: "Buscando zonas para ti…",
   applied: "Ahora ves las zonas con:",
   undo: "Volver a mi búsqueda",
   stale: "Has cambiado tu búsqueda. Pulsa «Buscar zonas para mí» para ponerla al día.",
@@ -55,7 +56,6 @@ const TEXT = {
   fewer: "Ver menos",
   rest: (n: number, word: ZoneWord) => `Y ${zonesText(n, word)} más en el mapa.`,
   near: "Casi valen",
-  nearHelp: "Les falta una sola cosa de lo que pides.",
   retry: "Reintentar",
   // zona.empate, read after the % of a tied row where the % shows (wide screens)
   tiesWith: (whom: string) => `empata con ${whom}`,
@@ -175,7 +175,7 @@ function NearMisses({ result }: { result: SearchResult }) {
         <ChevronDown size={18} aria-hidden="true" className={open ? styles.flip : undefined} />
       </button>
       <div id={nearId} hidden={!open}>
-        <p className={styles.muted}>{TEXT.nearHelp}</p>
+        <p className={styles.muted}>{nearHelpText(speaksToMany(result.scenario.household))}</p>
         <ul className={styles.ranking}>
           {near.map((zone) => (
             <li key={zoneKeyOf(zone.zone)}>
@@ -249,7 +249,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
   // One live region, always there, so screen readers hear each change of the search.
   const announce =
     status === "loading"
-      ? TEXT.loading
+      ? loadingText(many)
       : status === "done" && result
         ? passingText(result.reality_check.zones_passing, applied !== null, zoneWord(result), speaksToMany(result.scenario.household))
         : "";
@@ -270,7 +270,7 @@ export default function SearchResults({ children }: { children: ReactNode }) {
 
   const loading = status === "loading" && (
     <p className={styles.muted}>
-      {TEXT.loading}
+      {loadingText(many)}
       {slow && ` ${SLOW_TEXT}`}
     </p>
   );

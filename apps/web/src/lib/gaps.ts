@@ -33,28 +33,35 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string; short:
 /**
  * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
  * instead of its status (D-230). What it means (D-213, `min_expected` of hi_domain/gaps.py): for
- * the people who live there, the zone would have fewer than 4 centres (3,69 expected at 95 %), and
+ * the people who live there, the zone would have fewer than 4 centres (3,69 expected at 95 %; the
+ * test counts centre-equivalents, also for the classrooms and the places, hi_features/fca.py), and
  * with numbers that small not even none at all could be told from chance. It is not that few people
- * live there: Barajas, with some 50.000, has too few health centres to compare (second delivery).
+ * live there: Barajas, with some 50.000, has too few health centres to compare. In the housing row,
+ * whose denominator counts households, few households of 4 or more is the reason. `help` is the
+ * legend's, for every row; notComparableText says it of one row.
  */
 export const SMALL_ZONE = {
   label: "No comparable",
-  help: "Para la gente que vive aquí le corresponden muy pocos centros (menos de 4) y, con números tan pequeños, no se puede saber si faltan, ni siquiera junto con sus vecinos. Por eso no la comparamos.",
-  short: "para la gente que vive aquí le corresponden tan pocos centros que no se puede saber si faltan.",
+  help: "Para la gente que vive aquí le corresponden muy pocos centros (menos de 4), o en la vivienda viven muy pocos hogares de 4 o más personas, y con números tan pequeños no se puede saber si falta, ni siquiera junto con sus vecinos. Por eso no la comparamos.",
 };
 
-/** The first sentence of the API's explanation of such a row (not_comparable_text of hi_domain/gap_impact.py). */
-const API_NOT_COMPARABLE = /^No comparable:.*?\.\s+/;
+/**
+ * Why one row is «No comparable», in its own unit (review R-07 of PR #81): the same words as the
+ * API's explanation (not_comparable_text of hi_domain/gap_impact.py), without its figures.
+ */
+export function notComparableText(row: GapRowKey): string {
+  if (row === "vivienda") return "aquí viven muy pocos hogares de 4 o más personas para saber si falta.";
+  return `para la gente que vive aquí le corresponden menos de 4 ${ROW_IN_LIST[row]} y, con números tan pequeños, no se puede saber si faltan.`;
+}
 
 /**
- * The reason of a «No comparable» row of «Qué falta»: SMALL_ZONE.help, then the API's figures
- * without its first sentence. Since D-245 that sentence says the same (too few centres for the
- * people who live there); before, «aquí viven muy pocas personas (50.375)» also of Barajas. The
- * web keeps its own words, which add the neighbours. Without that sentence, SMALL_ZONE.help alone.
+ * The reason of a «No comparable» row of «Qué falta»: the API's explanation as it is, which says
+ * the row's real reason and its figures since D-245 (the web cut its first sentence when it said
+ * «aquí viven muy pocas personas (50.375)» of Barajas; API and web are deployed together). Any other
+ * explanation: SMALL_ZONE.help.
  */
 export function notComparableReason(explanation: string): string {
-  const figures = API_NOT_COMPARABLE.test(explanation) ? explanation.replace(API_NOT_COMPARABLE, "").trim() : "";
-  return figures ? `${SMALL_ZONE.help} ${figures}` : SMALL_ZONE.help;
+  return explanation.startsWith("No comparable:") ? explanation : SMALL_ZONE.help;
 }
 
 export function isSmallZone({ reliable }: { reliable?: boolean }): boolean {
@@ -239,9 +246,15 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
  * order. Other rows only fill in when fewer than three of the household's have data, by status;
  * those about children never do in a home without children. The household's rows without data go last.
  */
-export function topRows<T extends Classified & { row?: GapRowKey }>(rows: readonly T[], limit = 3, household?: HouseholdLike | null): T[] {
+export function topRows<T extends Classified & { row?: GapRowKey }>(
+  rows: readonly T[],
+  limit = 3,
+  household?: HouseholdLike | null,
+  marked: readonly GapRowKey[] = [],
+): T[] {
   if (!household) return sortRows(rows).slice(0, limit);
-  const mine = householdRows(household);
+  // The household's rows and then what the person marks (review R-02 of PR #81), as the essentials
+  const mine = [...new Set([...householdRows(household), ...marked])];
   const children = (household.minors ?? 0) > 0;
   const ownRank = (r: T) => (r.row === undefined ? -1 : mine.indexOf(r.row));
   const fills = (r: T) => children || r.row === undefined || !CHILD_ROWS.includes(r.row);

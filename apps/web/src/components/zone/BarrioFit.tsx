@@ -11,9 +11,9 @@ import GlassCard from "@/components/ui/GlassCard";
 import Help from "@/components/ui/Help";
 import PriceTag from "@/components/ui/PriceTag";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
-import { type BarrioRow, barrioRows, barriosText, FIRST_BARRIOS } from "@/lib/barrios";
+import { type BarrioRow, barrioRows, barriosText, barriosTitle, FIRST_BARRIOS } from "@/lib/barrios";
 import { errorMessage } from "@/lib/errors";
-import { unknownText, WALK_MEDIAN } from "@/lib/fit";
+import { nearHelpText, speaksToMany, unknownText, voice, WALK_MEDIAN } from "@/lib/fit";
 import type { ZoneProperties } from "@/lib/map/zones";
 
 import styles from "./BarrioFit.module.css";
@@ -22,20 +22,19 @@ import { useBarrioFit } from "./useBarrioFit";
 // Copy from pitch/textos_web.md (zona.cerca_de_encajar.*, resultados.casi.ayuda, resultados.menos, resultados.banda.*
 // in lib/match.ts, resultados.casi.* and zona.no_cumple in lib/shortfall.ts, zona.encaje.ayuda, a_pie.mediana,
 // error.reintentar). The title is Mariano's (13 nov); the rest is B's draft for line D (barrios.encajan.*).
+// «tú» or «vosotros» by the household of the search (voice of lib/fit.ts, review R-03 of PR #81)
 const TEXT = {
-  title: "Los barrios que más te convienen",
-  loading: (district: string) => `Buscando los barrios de ${district} que te convienen…`,
+  loading: (district: string, many: boolean) => `Buscando los barrios de ${district} que ${voice(many).te} convienen…`,
   pick: "Toca uno para verlo en el mapa.",
   // barrios.encajan.ayuda, behind «¿Qué es el %?» where the % shows (wide screens); it was a tooltip
   fitHelpLabel: "¿Qué es el %?",
-  fitHelpAbout: "Los barrios que más te convienen",
-  fitHelp: "Cuánto se parece este barrio a lo que buscas. No es una nota del barrio.",
+  fitHelpAbout: "de los barrios",
+  fitHelp: (many: boolean) => `Cuánto se parece este barrio a lo que ${voice(many).buscas}. No es una nota del barrio.`,
   // zona.empate, read after the % of a tied barrio
   tiesWith: (whom: string) => `empata con ${whom}`,
   all: (n: number) => `Ver los ${n} barrios`,
   fewer: "Ver menos",
   near: "Casi valen",
-  nearHelp: "Les falta una sola cosa de lo que pides.",
   retry: "Reintentar",
 };
 
@@ -51,7 +50,7 @@ function Barrio({ row }: { row: BarrioRow }) {
   const detailsId = useId();
   const outlined = row.id !== null && (barrios?.some((b) => b.properties.admin_unit_id === row.id) ?? false);
   const pressed = outlined && barrio?.properties.admin_unit_id === row.id;
-  const showFacts = (pressed || !outlined) && row.facts.length > 0;
+  const showFacts = pressed || !outlined;
   const head = (
     <>
       <span className={styles.rowText}>
@@ -91,8 +90,17 @@ function Barrio({ row }: { row: BarrioRow }) {
       ) : (
         <span className={styles.head}>{head}</span>
       )}
+      {/* Its panel, once outlined: the band with its %, whom it ties with, what the price is for and how sure, its facts (review R-05 of PR #81) */}
       {showFacts && (
         <span id={detailsId} className={styles.details}>
+          {row.fit && <span className={styles.fact}>{row.fit.text}</span>}
+          {row.tieLine && <span className={styles.fact}>{row.tieLine}</span>}
+          {row.price && (
+            <span className={styles.fact}>
+              {[row.price.long, row.price.area].filter(Boolean).join(" ")}
+              {row.price.confidence && ` · ${row.price.confidence.label}`}
+            </span>
+          )}
           {row.facts.map((fact, i) => (
             <span key={i} className={styles.fact}>
               {fact}
@@ -108,6 +116,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   const titleId = useId();
   const [all, setAll] = useState(false);
   const { loading, data, error, retry } = useBarrioFit(distrito, scenario);
+  const many = speaksToMany(scenario.household);
   const { barrios, barrio } = useMapZones();
   const slow = useSlow(loading);
   const rows = data ? barrioRows(data) : null;
@@ -119,11 +128,11 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   return (
     <GlassCard as="section" aria-labelledby={titleId} className={styles.card}>
       <h2 id={titleId} className={styles.title}>
-        {TEXT.title}
+        {barriosTitle(many)}
       </h2>
       {loading && (
         <p role="status" className={styles.muted}>
-          {TEXT.loading(name)}
+          {TEXT.loading(name, many)}
           {slow && ` ${SLOW_TEXT}`}
         </p>
       )}
@@ -138,7 +147,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
       {data && rows && (
         <>
           <p className={styles.summary}>
-            <strong>{barriosText(data.reality_check)}</strong>
+            <strong>{barriosText(data.reality_check, many)}</strong>
             {barrios && (rows.fits.length > 0 || rows.near.length > 0) && ` ${TEXT.pick}`}
           </p>
           {data.reality_check.zones_unknown > 0 && <p className={styles.muted}>{unknownText(data.reality_check.zones_unknown, "barrio")}</p>}
@@ -160,7 +169,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
           {rows.near.length > 0 && (
             <section className={styles.near} aria-labelledby={`${titleId}-casi`}>
               <h3 id={`${titleId}-casi`}>{TEXT.near}</h3>
-              <p className={styles.muted}>{TEXT.nearHelp}</p>
+              <p className={styles.muted}>{nearHelpText(many)}</p>
               <ul className={styles.list}>
                 {rows.near.map((row) => (
                   <li key={row.code}>
@@ -173,7 +182,7 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
           {walking && <p className={styles.muted}>{WALK_MEDIAN}</p>}
           {shown.some((row) => row.fit) && (
             <Help about={TEXT.fitHelpAbout} label={TEXT.fitHelpLabel} className={styles.pctHelp}>
-              <p>{TEXT.fitHelp}</p>
+              <p>{TEXT.fitHelp(many)}</p>
             </Help>
           )}
         </>

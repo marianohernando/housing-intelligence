@@ -4,7 +4,7 @@
  * recomputes the %: it reads the band the API sends (`match_band`, fit-0.9, D-243 §4) or, from an
  * API that does not send it, the same thresholds over `match_pct`.
  */
-import type { MatchBand, RankedZone, ZoneMatch } from "@/contracts/search_response";
+import type { MatchBand, ZoneMatch } from "@/contracts/search_response";
 
 import { type ZoneWord, zonesText } from "./fit";
 
@@ -131,30 +131,4 @@ export function tieText(
   const whom = tiedNames(zone, all, word, ranking);
   const good = word === "zona" ? "buena" : "bueno";
   return whom === null ? null : `Igual de ${good} que ${whom} (${zone.match_pct}\u00a0%).`;
-}
-
-/** One row of the ranking with where it stands in a run of rows tied at its %. */
-export interface RankingRow<Z extends RankedZone = RankedZone> {
-  zone: Z;
-  /** The run of rows in view with this row's %, when it ties with some zone (null otherwise) */
-  tie: { first: boolean; last: boolean; label: string } | null;
-}
-
-/**
- * The rows of the ranking in view, with their ties marked (resultados.empate.grupo): consecutive
- * rows with the same shown % form a run headed «Empatan al 94 %». When the tie goes on beyond the
- * rows in view, the label counts them all, also over a single row of the folded list: «Empatan al
- * 92 % (3 zonas)».
- */
-export function rankingRows<Z extends RankedZone>(shown: readonly Z[], all: readonly Named[], word: ZoneWord = "zona"): RankingRow<Z>[] {
-  return shown.map((zone, i) => {
-    const same = (other: RankedZone | undefined) => other !== undefined && other.match_pct === zone.match_pct;
-    const before = same(shown[i - 1]);
-    const after = same(shown[i + 1]);
-    const total = Math.max(tiedWith(zone, all).length + 1, shown.filter((z) => z.match_pct === zone.match_pct).length);
-    if (total < 2) return { zone, tie: null };
-    const inView = shown.filter((z) => z.match_pct === zone.match_pct).length;
-    const label = total > inView ? `Empatan al ${zone.match_pct}\u00a0% (${zonesText(total, word)})` : `Empatan al ${zone.match_pct}\u00a0%`;
-    return { zone, tie: { first: !before, last: !after, label } };
-  });
 }

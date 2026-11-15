@@ -22,6 +22,7 @@ import {
   ROW_WALK_MIN,
   notComparable,
   notComparableReason,
+  notComparableText,
   referenceLabel,
   SMALL_ZONE,
   gapsHref,
@@ -99,20 +100,22 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
     expect(SMALL_ZONE.label).toBe("No comparable");
   });
 
-  it("says what «No comparable» means: too few centres for its people to tell, not too few people (D-213, D-230)", () => {
+  it("says what «No comparable» means, of each row in its unit: too few centres for its people, not too few people (D-213, D-230)", () => {
     // Barajas has some 50.000 people: «vive tan poca gente» was not true there
-    expect(SMALL_ZONE.short).not.toMatch(/poca gente/);
-    expect(SMALL_ZONE.short).toMatch(/tan pocos centros/);
+    expect(SMALL_ZONE.help).not.toMatch(/poca gente/);
     expect(SMALL_ZONE.help).toMatch(/menos de 4/);
-    // The API's first sentence goes; its figures stay, after what it means
+    expect(notComparableText("centro_salud")).toBe(
+      "para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+    );
+    expect(notComparableText("mayores")).toMatch(/menos de 4 centros de mayores/);
+    // The housing row: few households of 4 or more is its reason (review R-07 of PR #81)
+    expect(notComparableText("vivienda")).toBe("aquí viven muy pocos hogares de 4 o más personas para saber si falta.");
+    // The API's explanation says the real reason since D-245: shown as it is, the housing row's too
     const barajas =
-      "No comparable: aquí viven muy pocas personas (50.375) para saber si falta. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes";
-    expect(notComparableReason(barajas)).toBe(`${SMALL_ZONE.help} 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes`);
-    expect(notComparableReason("No comparable: la zona es demasiado pequeña para saber si falta. 3 farmacias")).toBe(`${SMALL_ZONE.help} 3 farmacias`);
-    // The API's sentence since D-245
-    const fixed =
       "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud";
-    expect(notComparableReason(fixed)).toBe(`${SMALL_ZONE.help} 0,40 centros de salud`);
+    expect(notComparableReason(barajas)).toBe(barajas);
+    const acebeda = "No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas";
+    expect(notComparableReason(acebeda)).toBe(acebeda);
     expect(notComparableReason("Sin datos para esta zona")).toBe(SMALL_ZONE.help);
   });
 });

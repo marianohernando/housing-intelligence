@@ -40,7 +40,7 @@ const TEXT = {
 
 export default function ZoneIntro() {
   // The zone by name from its small «Qué falta» answer: the screen does not wait for the outlines
-  const { status, error, retry, routeZone } = useMapZones();
+  const { status, error, retry, routeZone, backToListFromZone } = useMapZones();
   const { result } = useScenario();
   const slow = useSlow(status === "loading");
 
@@ -91,11 +91,17 @@ export default function ZoneIntro() {
           <span className={styles.accent}>{name}</span>
           {TEXT.nearby}
         </h1>
-        {/* The overview is the list once there is a search: the button says so (second delivery) */}
-        <Button href="/" variant="secondary" className={styles.back}>
-          {result && <ChevronLeft size={20} aria-hidden="true" />}
-          {result ? TEXT.backToList : TEXT.back}
-        </Button>
+        {/* The overview is the list once there is a search: the button says so and goes back to it without a new step (second delivery) */}
+        {result ? (
+          <Button variant="secondary" className={styles.back} onClick={backToListFromZone}>
+            <ChevronLeft size={20} aria-hidden="true" />
+            {TEXT.backToList}
+          </Button>
+        ) : (
+          <Button href="/" variant="secondary" className={styles.back}>
+            {TEXT.back}
+          </Button>
+        )}
       </div>
       {/* What the zone is missing comes before the search: first on mobile, right column on desktop */}
       <div className={styles.side}>

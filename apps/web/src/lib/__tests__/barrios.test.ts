@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BarrioSearchResult } from "@/contracts/barrio_search_response";
 
-import { barrioRows, barriosText, FACTS_PER_BARRIO } from "../barrios";
+import { barrioRows, barriosText, barriosTitle, FACTS_PER_BARRIO } from "../barrios";
 
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data:
 // San Blas-Canillejas with the demo case, fit-0.7 (D-232)
@@ -59,6 +59,20 @@ describe("barriosText (barrios.encajan.resumen)", () => {
     expect(barriosText({ zones_passing: 1, zones_evaluated: 8 })).toBe("1 de sus 8 barrios te conviene.");
     expect(barriosText({ zones_passing: 6, zones_evaluated: 6 })).toBe("Sus 6 barrios te convienen.");
     expect(barriosText({ zones_passing: 0, zones_evaluated: 6 })).toBe("Ninguno de sus 6 barrios cumple todo lo que pides.");
+    // To a household of more than one (review R-03 of PR #81)
+    expect(barriosText({ zones_passing: 7, zones_evaluated: 8 }, true)).toBe("7 de sus 8 barrios os convienen.");
+    expect(barriosText({ zones_passing: 0, zones_evaluated: 6 }, true)).toBe("Ninguno de sus 6 barrios cumple todo lo que pedís.");
+    expect(barriosTitle(true)).toBe("Los barrios que más os convienen");
+    expect(barriosTitle()).toBe("Los barrios que más te convienen");
+  });
+});
+
+describe("the panel of an outlined barrio (review R-05 of PR #81)", () => {
+  it("says whom a barrio ties with, as the card does, and nothing for one that ties with none", () => {
+    const rows = barrioRows(sanBlas).fits;
+    const tied = rows.find((row) => row.tie !== null);
+    expect(tied?.tieLine).toMatch(/^Igual de bueno que .+ \(\d+\u00a0%\)\.$/);
+    expect(rows.filter((row) => row.tie === null).every((row) => row.tieLine === null)).toBe(true);
   });
 });
 

@@ -26,6 +26,7 @@ import {
   rankText,
   rentReferenceAvailable,
   resultScope,
+  speaksToMany,
   WALK_MEDIAN,
   zoneFit,
   zonePriceOf,
@@ -155,7 +156,7 @@ export default function FitDetails({ result, zoneKey }: { result: SearchResult; 
 
   return (
     <>
-      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word)}</p>}
+      {match.passes_all && ranked && <p className={styles.rank}>{rankText(ranked.rank, word, speaksToMany(result.scenario.household))}</p>}
       {tie && <p className={styles.tie}>{tie}</p>}
       {ranked && ranked.facts.length > 0 && (
         <section className={styles.facts} aria-labelledby={factsId}>

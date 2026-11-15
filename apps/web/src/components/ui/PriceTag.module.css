@@ -22,7 +22,7 @@
   font-size: var(--text-xs);
 }
 
-/* Behind «Ver más» of the zone card: the price with its m², confidence, range and notice */
+/* Behind «Ver más» of the zone card: what the price is for, its confidence, range and notice */
 .card {
   display: flex;
   flex-wrap: wrap;
@@ -31,14 +31,7 @@
   margin-top: var(--space-1);
 }
 
-.card .amount {
-  color: var(--ink);
-  font-size: var(--text-lg);
-  font-weight: 600;
-}
-
-/* «por 68 m²»: the area the price is for, as quiet as the confidence words */
-.area,
+/* «Dato aproximado», as quiet as the range */
 .mark {
   color: var(--ink-soft);
   font-size: var(--text-xs);
@@ -46,13 +39,7 @@
   white-space: nowrap;
 }
 
-.card .area {
-  color: var(--ink);
-  font-size: var(--text-base);
-  font-weight: 500;
-}
-
-/* On its own line under «Alquiler ≈ 994 €/mes por 60 m²», which no longer leaves room beside it */
+/* On its own line under what the price is for */
 .card .mark {
   flex-basis: 100%;
   font-size: var(--text-xs);
@@ -77,4 +64,11 @@
   color: var(--ink-soft);
   font-size: var(--text-xs);
   line-height: 1.35;
+}
+
+/* «Para un piso de unos 77 m²», the first line of the breakdown */
+.forArea {
+  flex-basis: 100%;
+  color: var(--ink);
+  font-weight: 500;
 }

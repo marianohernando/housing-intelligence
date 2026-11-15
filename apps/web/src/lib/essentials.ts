@@ -10,7 +10,7 @@ import type { ConstraintCheck, Fact, FactKind, FactTopic, NeedKey, PriorityKey, 
 import type { ComparisonGroup, GapRowKey, GapStatus } from "@/contracts/zone_gap_list_response";
 
 import { WALK_MINUTES_FEATURE_PREFIX } from "./fit";
-import { type HouseholdLike, householdRows, NEAR_BUT_SHORT, notComparable, ROW_IN_LIST, ROW_NAME, walkMinutesText } from "./gaps";
+import { householdRows, NEAR_BUT_SHORT, notComparable, ROW_IN_LIST, ROW_NAME, walkMinutesText } from "./gaps";
 
 /** «Me importa» measured by walking to a service (PRIORITY_NEED of hi_domain/fit.py). */
 const PRIORITY_NEED: Partial<Record<PriorityKey, NeedKey>> = { transporte: "transporte", salud: "centro_salud", colegios: "colegio" };
@@ -22,10 +22,24 @@ const PRIORITY_NEED: Partial<Record<PriorityKey, NeedKey>> = { transporte: "tran
 const CONTEXT_NEEDS: readonly NeedKey[] = ["transporte", "centro_salud", "colegio", "farmacia"];
 
 /**
- * A fact about the % (D-243's limits, hi_domain/fit.py: «… el % se queda en la mitad», «… como
- * mucho 74 %», «Faltan colegios: como mucho 89 %»): the % is in «Ver más».
+ * The tail of a fact about the % (D-243's limits, hi_domain/fit.py: «No llegas a Getafe a las 9:00
+ * en transporte público: el % se queda en la mitad», «Más de 1 h de trayecto hasta Getafe: como
+ * mucho 74 %», «Faltan colegios: como mucho 89 %»). The essentials keep the sentence and drop
+ * only that tail: the % is in «Ver más» (review R-04 of PR #81).
  */
-const ABOUT_PCT = /el % se queda|como mucho \d+\s*%/;
+const ABOUT_PCT = /:\s*(el % se queda en la mitad|como mucho \d+\s*%)\s*$/;
+
+/** shortage_fact of hi_domain/fit.py: «Faltan colegios y farmacias en Barajas: como mucho 89 %». */
+const SHORTAGE = /^Faltan /;
+
+/** The rows of «Qué falta» of the services the person marks (NEED_ROW of hi_domain/fit.py). */
+const NEED_ROW: Partial<Record<NeedKey, GapRowKey>> = {
+  escuela_infantil: "escuela_infantil",
+  colegio: "colegio",
+  centro_salud: "centro_salud",
+  farmacia: "farmacia",
+  mayores: "mayores",
+};
 
 /** «Colegio con primaria a 10 min andando como mucho» -> «Colegio con primaria» (the API's label of `near:*`). */
 const NEAR_LABEL = /^(.+) a \d+ min andando como mucho$/;
@@ -35,6 +49,8 @@ export interface AskedLine {
   kind: FactKind;
   topic: FactTopic;
   text: string;
+  /** A shortage the API caps the % for («Faltan colegios»): the rows it names, said again by the home's gaps once they load */
+  rows?: GapRowKey[];
 }
 
 type Asked = Pick<ScenarioState, "priorities" | "nearby" | "anchors">;
@@ -78,20 +94,45 @@ function tripLine(check: ConstraintCheck, ranked: Ranked, scenario: Asked): Aske
   return { kind: "strength", topic: "trayecto", text: `${Math.round(check.value)} min en transporte público hasta ${place.label}` };
 }
 
+/** A fact as the essentials say it: without the tail about the %, and with the rows of a shortage. */
+function factLine({ kind, topic, text }: Pick<Fact, "kind" | "topic" | "text">): AskedLine {
+  const said = text.replace(ABOUT_PCT, "");
+  if (!SHORTAGE.test(said)) return { kind, topic, text: said };
+  const rows = (Object.keys(ROW_IN_LIST) as GapRowKey[]).filter((row) => said.includes(ROW_IN_LIST[row]));
+  return { kind, topic, text: said, rows };
+}
+
 /**
  * What the person asked for, with its minutes: the API's facts in their order (most important
- * first) without the cost (said apart), those about the % and the walks it adds as context; then
- * the walks of «Lo quiero a un paseo» and the trips with a limit that the zone meets and no fact
- * says (the API keeps at most five facts). Nothing for a zone the search did not rank.
+ * first) without the cost (said apart) and the walks it adds as context, those about the % without
+ * their tail; then the walks of «Lo quiero a un paseo» and the trips with a limit that the zone
+ * meets and no fact says (the API keeps at most five facts). Nothing for a zone the search did not rank.
  */
 export function askedLines(ranked: Ranked | null, scenario: Asked): AskedLine[] {
   if (!ranked) return [];
   const asked = askedNeeds(scenario);
-  const facts = ranked.facts.filter((f) => f.topic !== "coste" && !ABOUT_PCT.test(f.text) && !isContext(f, asked));
+  const facts = ranked.facts.filter((f) => f.topic !== "coste" && !isContext(f, asked));
   const met = ranked.constraints.filter((c) => c.status === "PASS");
   const nears = met.filter((c) => c.constraint_id.startsWith("near:")).map((c) => nearLine(c, ranked));
   const trips = met.filter((c) => c.constraint_id.startsWith("commute:")).map((c) => tripLine(c, ranked, scenario));
-  return [...facts.map(({ kind, topic, text }) => ({ kind, topic, text })), ...[...nears, ...trips].filter((line) => line !== null)];
+  return [...facts.map(factLine), ...[...nears, ...trips].filter((line) => line !== null)];
+}
+
+/**
+ * The rows of «Qué falta» of what the person marks in «¿Qué quieres tener cerca?» or «Lo quiero a
+ * un paseo» (marked_rows of hi_domain/fit.py), in their order: a couple without children who marks
+ * «Colegios» cares about the colegios (review R-02 of PR #81).
+ */
+export function markedRows(scenario: Pick<ScenarioState, "priorities" | "nearby">): GapRowKey[] {
+  const needs = [...(scenario.priorities ?? []).flatMap((p) => PRIORITY_NEED[p] ?? []), ...(scenario.nearby ?? []).map((n) => n.need)];
+  return [...new Set(needs.flatMap((need) => NEED_ROW[need] ?? []))];
+}
+
+type Pertinent = Pick<ScenarioState, "household" | "priorities" | "nearby">;
+
+/** The rows that matter to the search: the household's (householdRows, D-244) and then what the person marks. */
+export function pertinentRows(scenario: Pertinent): GapRowKey[] {
+  return [...new Set([...householdRows(scenario.household), ...markedRows(scenario)])];
 }
 
 type GapRowLike = { row: GapRowKey; status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
@@ -115,12 +156,12 @@ export interface HouseholdGaps {
 const isShort = (status: GapStatus): status is "FALTA" | "JUSTO" => status === "FALTA" || status === "JUSTO";
 
 /**
- * What the zone lacks that matters to the home: the rows of `householdRows` (the rule of the first
- * delivery, D-244) that «Qué falta» marks FALTA or JUSTO, in plain words (zona.esencial.falta).
+ * What the zone lacks that matters: the rows of pertinentRows (the household's, D-244, and what the
+ * person marks) that «Qué falta» marks FALTA or JUSTO, in plain words (zona.esencial.falta).
  * `place` is the district when the card is a barrio's: its rows are the whole district's.
  */
-export function householdGaps(rows: readonly GapRowLike[], household: HouseholdLike | null | undefined, place: string | null = null): HouseholdGaps {
-  const own = householdRows(household).flatMap((key) => rows.filter((r) => r.row === key));
+export function householdGaps(rows: readonly GapRowLike[], scenario: Pertinent, place: string | null = null): HouseholdGaps {
+  const own = pertinentRows(scenario).flatMap((key) => rows.filter((r) => r.row === key));
   const where = place ? ` en ${place}` : "";
   const short = own
     .filter((r) => isShort(r.status) && !notComparable(r))
@@ -137,11 +178,18 @@ export function householdGaps(rows: readonly GapRowLike[], household: HouseholdL
 }
 
 /**
- * zona.esencial.nada: none of the home's rows is short and some has enough (`covered`): never said
- * of rows that are all unknown or missing. `many`: a home of more than one (speaksToMany).
+ * zona.esencial.nada: none of the rows that matter is short, some has enough (`covered`) and none
+ * is unknown (review R-01 of PR #81). `many`: a home of more than one (speaksToMany). In a barrio,
+ * the rows are its district's: «En Barajas no falta nada de lo que buscáis.»
  */
-export function nothingMissingText(many: boolean): string {
-  return `No le falta nada de lo que ${many ? "buscáis" : "buscas"}.`;
+export function nothingMissingText(many: boolean, place: string | null = null): string {
+  const buscas = many ? "buscáis" : "buscas";
+  return place ? `En ${place} no falta nada de lo que ${buscas}.` : `No le falta nada de lo que ${buscas}.`;
+}
+
+/** zona.esencial.comparable: none short, some has enough, and some cannot be told: no green tick. */
+export function comparableFineText(place: string | null = null): string {
+  return place ? `En ${place}, de lo que podemos comparar, no falta nada.` : "De lo que podemos comparar, no le falta nada.";
 }
 
 /** «a», «a o b», «a, b o c». */
@@ -150,11 +198,13 @@ function joinOr(names: readonly string[]): string {
 }
 
 /**
- * zona.esencial.no_sabemos: said under «No le falta nada…» when some of the home's rows cannot be
- * told («No comparable» or SIN DATOS), so «no falta» never stands for «no lo sabemos». Null with none.
+ * zona.esencial.no_sabemos (decided by Mariano: it stays): the rows that matter and cannot be told
+ * («No comparable» or SIN DATOS), so «no falta» never stands for «no lo sabemos». Null with none.
  */
-export function unknownRowsText(rows: readonly GapRowKey[]): string | null {
-  return rows.length ? `No sabemos si le faltan ${joinOr(rows.map((r) => ROW_IN_LIST[r]))}.` : null;
+export function unknownRowsText(rows: readonly GapRowKey[], place: string | null = null): string | null {
+  if (!rows.length) return null;
+  const names = joinOr(rows.map((r) => ROW_IN_LIST[r]));
+  return place ? `No sabemos si en ${place} faltan ${names}.` : `No sabemos si le faltan ${names}.`;
 }
 
 /**
