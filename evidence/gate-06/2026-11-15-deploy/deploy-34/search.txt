@@ -1,0 +1,108 @@
+The API before (dpl_ByScLXFa2ixyreAQMsbQWf6tf4ZG, e0417ae, 2026-11-15T20:25:51Z) and after (dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm, c0e9d11, ~20:33Z), the same requests:
+11 POST /api/v1/search bodies (deploy-33's, the retired couple's example with and without seniors included) and GET /api/v1/gaps of the 21 districts and 10 municipios.
+Compared without `meta`; every difference must be one of D-245's two text changes (§7 «No comparable», §9 the trip to family or home without «a las 9:00»).
+
+## Searches: zones passing and the first ones, before → after
+buy400: 41 of 199; Puente de Vallecas 100, Usera 100, Carabanchel 100  →  41 of 199; Puente de Vallecas 100, Usera 100, Carabanchel 100
+couple1500-madrid: 121 of 131; Almendrales 100, Palomeras Bajas 100, Comillas 100  →  121 of 131; Almendrales 100, Palomeras Bajas 100, Comillas 100
+couple1500-pueblos: 122 of 138; Casarrubuelos 100, Navalagamella 100, Tielmes 100  →  122 of 138; Casarrubuelos 100, Navalagamella 100, Tielmes 100
+couple1500: 181 of 199; Puente de Vallecas 100, Usera 100, Ciudad Lineal 100  →  181 of 199; Puente de Vallecas 100, Usera 100, Ciudad Lineal 100
+example: 42 of 199; Puente de Vallecas 94, Latina 94, Usera 93  →  42 of 199; Puente de Vallecas 94, Latina 94, Usera 93
+pueblos: 15 of 138; Navalagamella 74, Navalcarnero 74, Villanueva del Pardillo 74  →  15 of 138; Navalagamella 74, Navalcarnero 74, Villanueva del Pardillo 74
+rent10k: 183 of 199; Chamberí 100, Tetuán 100, Salamanca 100  →  183 of 199; Chamberí 100, Tetuán 100, Salamanca 100
+retired-noflag: 22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89  →  22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89
+retired: 22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89  →  22 of 131; Casco Histórico de Barajas 92, Alameda de Osuna 92, Quintana 89
+student: 68 of 199; Morata de Tajuña 68, Carabaña 54, Valverde de Alcalá 53  →  68 of 199; Morata de Tajuña 68, Carabaña 54, Valverde de Alcalá 53
+telework: 42 of 199; Puente de Vallecas 97, Usera 97, Latina 97  →  42 of 199; Puente de Vallecas 97, Usera 97, Latina 97
+
+## Every difference, classified
+buy400: identical
+couple1500-madrid: identical
+couple1500-pueblos: identical
+couple1500: identical
+example: identical
+gaps-distrito-2807901: identical
+gaps-distrito-2807902: identical
+gaps-distrito-2807903: identical
+gaps-distrito-2807904: identical
+gaps-distrito-2807905: identical
+gaps-distrito-2807906: identical
+gaps-distrito-2807907: identical
+gaps-distrito-2807908: identical
+gaps-distrito-2807909: identical
+gaps-distrito-2807910: identical
+gaps-distrito-2807911: identical
+gaps-distrito-2807912: identical
+gaps-distrito-2807913: identical
+gaps-distrito-2807914: 0 «9:00», 1 «No comparable», 0 other
+   no comparable .rows.2.explanation
+     - "No comparable: aquí viven muy pocas personas (93.188) para saber si falta. 0,35 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunida
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,35 centros de salud del SERMAS al alcance a pie por 
+gaps-distrito-2807915: identical
+gaps-distrito-2807916: identical
+gaps-distrito-2807917: identical
+gaps-distrito-2807918: identical
+gaps-distrito-2807919: identical
+gaps-distrito-2807920: identical
+gaps-distrito-2807921: 0 «9:00», 2 «No comparable», 0 other
+   no comparable .rows.2.explanation
+     - "No comparable: aquí viven muy pocas personas (50.375) para saber si falta. 0,40 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios urbanos de la Comunida
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud del SERMAS al alcance a pie por 
+   no comparable .rows.3.explanation
+     - "No comparable: aquí viven muy pocas personas de 65 años o más (9.983) para saber si falta. 5,6 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en l
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan. 5,6 plazas en hogares, clubes y centros de día al al
+gaps-municipio-28001: 0 «9:00», 4 «No comparable», 0 other
+   no comparable .rows.1.explanation
+     - "No comparable: aquí viven muy pocos niños de 5 a 14 años (3) para saber si falta. 0,0 aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años; en los demás mun
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 colegios y, con números tan pequeños, no se puede saber si faltan. 0,0 aulas de primaria (públicas y concertadas) al alcance a pi
+   no comparable .rows.2.explanation
+     - "No comparable: aquí viven muy pocas personas (70) para saber si falta. 0,00 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios rurales de la Comunidad de
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,00 centros de salud del SERMAS al alcance a pie por 
+   no comparable .rows.3.explanation
+     - "No comparable: aquí viven muy pocas personas de 65 años o más (36) para saber si falta. 0,0 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en los 
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan. 0,0 plazas en hogares, clubes y centros de día al al
+gaps-municipio-28005: identical
+gaps-municipio-28006: identical
+gaps-municipio-28049: identical
+gaps-municipio-28074: identical
+gaps-municipio-28092: identical
+gaps-municipio-28106: identical
+gaps-municipio-28148: identical
+gaps-municipio-28161: identical
+gaps-municipio-28180: 0 «9:00», 2 «No comparable», 0 other
+   no comparable .rows.2.explanation
+     - "No comparable: aquí viven muy pocas personas (8.035) para saber si falta. 1,2 centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; en los demás municipios rurales de la Comunidad 
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 1,2 centros de salud del SERMAS al alcance a pie por c
+   no comparable .rows.3.explanation
+     - "No comparable: aquí viven muy pocas personas de 65 años o más (1.482) para saber si falta. 3,4 plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; en l
+     + "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de mayores y, con números tan pequeños, no se puede saber si faltan. 3,4 plazas en hogares, clubes y centros de día al al
+pueblos: identical
+rent10k: identical
+retired-noflag: 30 «9:00», 0 «No comparable», 0 other
+   9:00 .results.0.facts.3.text
+     - "27 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"
+     + "27 min en transporte público hasta Ciudad Lineal (metro)"
+   9:00 .results.0.constraints.1.explanation
+     - "27 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"
+     + "27 min en transporte público hasta Ciudad Lineal (metro)"
+   9:00 .results.1.facts.3.text
+     - "19 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"
+     + "19 min en transporte público hasta Ciudad Lineal (metro)"
+retired: 30 «9:00», 0 «No comparable», 0 other
+   9:00 .results.0.facts.3.text
+     - "27 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"
+     + "27 min en transporte público hasta Ciudad Lineal (metro)"
+   9:00 .results.0.constraints.1.explanation
+     - "27 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"
+     + "27 min en transporte público hasta Ciudad Lineal (metro)"
+   9:00 .results.1.facts.3.text
+     - "19 min en transporte público hasta Ciudad Lineal (metro), llegando a las 9:00"
+     + "19 min en transporte público hasta Ciudad Lineal (metro)"
+student: identical
+telework: identical
+
+unexpected differences: 0
+
+## La Acebeda, vivienda (its denominator is households: the sentence stays)
+base CUBIERTO reliable False · No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas de más de 90
+post CUBIERTO reliable False · No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas de más de 90
