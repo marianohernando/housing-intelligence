@@ -15,7 +15,7 @@ from hi_contracts.public import (
     ScenarioState,
     ZoneMatch,
 )
-from hi_domain.fit import ZoneData, ZoneFit, evaluate, near_miss_key, ranking_key
+from hi_domain.fit import ZoneData, ZoneFit, evaluate, match_band, near_miss_key, ranking_key
 from hi_domain.reality_check import reality_check
 
 RESULT_LIMIT, NEAR_MISS_LIMIT = 10, 5
@@ -66,6 +66,7 @@ def _ranked(
             rank=i,
             zone=fit.data.zone,
             match_pct=fit.match_pct or 0,
+            match_band=fit.match_band,
             confidence=fit.confidence,
             facts=fit.facts,
             constraints=fit.constraints,
@@ -105,6 +106,7 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
             ZoneMatch(
                 zone=f.data.zone,
                 match_pct=painted_match(f),
+                match_band=match_band(painted_match(f)),
                 passes_all=f.passes_all,
                 failed_constraints=f.failed,
                 estimated_cost_eur=f.cost_eur,

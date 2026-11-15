@@ -2,18 +2,21 @@
 
 Pipeline (CLAUDE.md §14): every zone gets its conditions checked as PASS / FAIL / UNKNOWN
 (UNKNOWN never counts as PASS), then a % of fit from what the person asked for: their «Me
-importa» priorities in their order, where they work and the budget margin. Each criterion
-has a utility from 0 to 1 that saturates (piecewise linear), the weights follow the order
-(rank sum: the first of n weighs n, the last 1) and the % is the weighted mean over the
-criteria the zone has data for. Criteria without data never count as 0: they lower the
-confidence and show up as «sin datos» facts. The personal % is kept apart from the
-territorial reference (the gap highlights come from GAP-001).
+importa» priorities in their order, where they work, the services they want at a walk and the
+budget margin. Each criterion has a utility from 0 to 1 (piecewise linear), the weights follow
+the order (rank sum: the first of n weighs n, the last 1) and the % is the weighted mean over
+the criteria the zone has data for. Criteria without data never count as 0: they lower the
+confidence and show up as «sin datos» facts. A marked service scores its nearness and its
+capacity as «Qué falta» measures it (D-243), and three limits keep the % from contradicting
+the card: an impossible trip halves it, a FALTA in a marked service keeps it under «muy
+bien» and a trip of more than an hour under «bien».
 """
 
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 
+from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import (
     Anchor,
     BudgetKind,
@@ -23,11 +26,14 @@ from hi_contracts.public import (
     FactKind,
     FactTopic,
     GapHighlight,
+    GapStatus,
     IndicatorValue,
+    MatchBand,
     NearbyNeed,
     NeedKey,
     PriorityKey,
     ScenarioState,
+    ZoneGapStatus,
     ZoneRef,
 )
 from hi_contracts.public.scenario import LEISURE_NEEDS
@@ -50,8 +56,10 @@ from hi_domain.gaps import es_number
 # trip measured for the whole district and the reason for an unknown rent said (D-232); 0.8: a
 # trip made 1-2 days a week weighs half and one never made is not scored (D-240), buying
 # inside Madrid with an estimated price, said as such (D-234), and leisure, scored only when
-# «Ocio» is chosen (D-236): one version for the whole batch
-FIT_VERSION = "fit-0.8"
+# «Ocio» is chosen (D-236): one version for the whole batch. 0.9: «cerca y plazas» (D-243): every
+# minute counts, a must scores too, a service scores its nearness and its capacity, the budget
+# keeps a floor and a tail, three limits, and the list goes by the % shown
+FIT_VERSION = "fit-0.9"
 # Walking windows of CORE-005 (D-210): what «cerca» means for each service by default.
 DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.ESCUELA_INFANTIL: 10,
@@ -66,6 +74,9 @@ DEFAULT_WALK_MINUTES: dict[NeedKey, int] = {
     NeedKey.CULTURA: 10,
 }
 WALK_ZERO_AT = 3.0  # utility falls linearly to 0 at three times the window
+# D-243: every minute counts, also inside the window: 1 at the door, this at its edge, 0 at
+# WALK_ZERO_AT times it. The same curve scores the trip by public transport against its window.
+WALK_UTILITY_AT_WINDOW = 0.9
 NEAR_KM, FAR_KM = 2.0, 20.0  # straight line to a place of work: 1 within 2 km, 0 from 20 km
 STRAIGHT_LINE_CONFIDENCE = 0.5  # declared proxy: distance is not travel time
 # Public transport (CORE-009, D-220): full utility up to 30 min, none from 90 (3x, as walking).
@@ -75,6 +86,29 @@ DEFAULT_COMMUTE_MINUTES = 30
 FEW_DAYS_PER_WEEK = 2
 FEW_DAYS_WEIGHT = 0.5
 BUDGET_MARGIN_SHARE = 0.25  # full utility when the cost is 75 % of the budget or less
+# D-243: spending the whole budget scores this (0,6, where «regular» starts), not 0; past the
+# budget the score falls from it to 0 at BUDGET_OVERRUN_TO_ZERO more. The budget condition
+# already leaves those zones out, so the tail only orders «Casi encajan».
+BUDGET_UTILITY_AT_LIMIT = 0.6
+BUDGET_OVERRUN_TO_ZERO = 0.25
+# D-243: a marked service with a row in «Qué falta» scores (1 - CAPACITY_WEIGHT) x its nearness
+# + CAPACITY_WEIGHT x its capacity: 0 at CAPACITY_RATIO_ZERO times the reference of the row, 1
+# from the reference up, linear in between. The ratio is the one the row shows (D-217).
+CAPACITY_WEIGHT = 0.4
+CAPACITY_RATIO_ZERO = 0.4
+# D-243: the % in words (MatchBand), from the % shown. The web derives the same band when an older
+# API sends none: change these only together with it.
+MUY_BIEN_FROM, BIEN_FROM, REGULAR_FROM = 90, 75, 60
+# D-243: what limits the % whatever the rest scores. A trip made LIMIT_DAYS days a week or more
+# that scores 0 (WALK_ZERO_AT times its window or more, or no arrival by 9:00) halves the fit; one
+# over LONG_TRIP_WINDOWS times its window (60 min with the default 30) keeps it at LONG_TRIP_CAP,
+# shown as 74 %, never «bien». FALTA in «Qué falta» for a service the person marks keeps it at
+# SHORTAGE_CAP, shown as 89 %, never «muy bien».
+LIMIT_DAYS = 3
+UNREACHABLE_FACTOR = 0.5
+LONG_TRIP_WINDOWS = 2.0
+LONG_TRIP_CAP = 0.744
+SHORTAGE_CAP = 0.894
 MAX_WALK_SHOWN = 60
 
 NEED_TEXT: dict[NeedKey, tuple[str, str]] = {  # (fact label, «de …» in a sentence)
@@ -108,6 +142,23 @@ PRIORITY_NEED: dict[PriorityKey, NeedKey] = {
     PriorityKey.TRANSPORTE: NeedKey.TRANSPORTE,
     PriorityKey.SALUD: NeedKey.CENTRO_SALUD,
     PriorityKey.COLEGIOS: NeedKey.COLEGIO,
+}
+# D-243: the row of «Qué falta» that measures the capacity of each service (D-217). Transport and
+# leisure have none.
+NEED_ROW: dict[NeedKey, GapRowKey] = {
+    NeedKey.ESCUELA_INFANTIL: GapRowKey.ESCUELA_INFANTIL,
+    NeedKey.COLEGIO: GapRowKey.COLEGIO,
+    NeedKey.CENTRO_SALUD: GapRowKey.CENTRO_SALUD,
+    NeedKey.FARMACIA: GapRowKey.FARMACIA,
+    NeedKey.MAYORES: GapRowKey.MAYORES,
+}
+# Each row inside a sentence, as `fila.lista.*` of pitch/textos_web.md
+ROW_IN_TEXT: dict[GapRowKey, str] = {
+    GapRowKey.ESCUELA_INFANTIL: "escuelas infantiles",
+    GapRowKey.COLEGIO: "colegios",
+    GapRowKey.CENTRO_SALUD: "centros de salud",
+    GapRowKey.FARMACIA: "farmacias",
+    GapRowKey.MAYORES: "centros de mayores",
 }
 
 
@@ -181,6 +232,30 @@ class Commute:
 
 
 @dataclass(frozen=True)
+class Supply:
+    """One service's row of «Qué falta» in the zone, as the % reads it (D-243): its status and
+    the ratio to the reference that scores its capacity. `district`: a barrio has no row of its
+    own and takes its district's, named here (a declared proxy, as on its card, D-238 §7)."""
+
+    status: GapStatus
+    ratio: float | None  # None: too small to compare, with no group of neighbours (never 0)
+    confidence: float = 1.0
+    district: str | None = None
+
+
+def supply(row: ZoneGapStatus, district: str | None = None) -> Supply:
+    """The ratio the row's status comes from: its group's when the zone is compared with its
+    neighbours (D-217); none when the zone alone is too small to compare (D-213), so that only
+    its nearness counts. The same ratio «Qué falta» shows, so the % and the card agree."""
+    ratio = row.ratio_to_reference
+    if ratio is not None and row.comparison_group is not None:
+        ratio = row.comparison_group.ratio_to_reference
+    elif not row.reliable:
+        ratio = None
+    return Supply(row.status, None if ratio is None else float(ratio), row.confidence, district)
+
+
+@dataclass(frozen=True)
 class ZoneData:
     """What the search knows about one zone: rent and appraised purchase value per m², walking
     minutes by service and, per place of work (index in `anchors`), the trip by public
@@ -206,6 +281,9 @@ class ZoneData:
     # percentiles per m² scaled as the rent, and who publishes them and when (the card label)
     rent_range: tuple[float, float] | None = None
     rent_source: str | None = None
+    # D-243: «Qué falta» of every service row (NEED_ROW), whether the person marks it or not: the
+    # capacity of a marked service and FALTA in it shape the %. Empty: nearness alone, no limit.
+    supply: Mapping[GapRowKey, Supply] = field(default_factory=dict[GapRowKey, Supply])
 
 
 @dataclass(frozen=True)
@@ -224,6 +302,16 @@ class Score:
     utility: float | None  # None = no data, never 0
     confidence: float
     fact: Fact
+
+
+@dataclass(frozen=True)
+class Limit:
+    """What limited the % of a zone (D-243), said first on its card. `pinned`: the facts that
+    must stay with it (itself, and the trip it speaks of)."""
+
+    utility: float
+    fact: Fact
+    pinned: tuple[Fact, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -246,6 +334,10 @@ class ZoneFit:
         return as_pct(self.utility)
 
     @property
+    def match_band(self) -> MatchBand | None:
+        return match_band(self.match_pct)
+
+    @property
     def failed(self) -> list[str]:
         return [c.constraint_id for c in self.constraints if c.status is ConstraintStatus.FAIL]
 
@@ -259,7 +351,13 @@ def clamp01(value: float) -> float:
 
 
 def walk_utility(minutes: float, target: float) -> float:
-    return clamp01((WALK_ZERO_AT * target - minutes) / ((WALK_ZERO_AT - 1) * target))
+    """D-243: 1 at the door, WALK_UTILITY_AT_WINDOW at the edge of the window and 0 at
+    WALK_ZERO_AT times it, linear in between: every minute counts, so zones within the window
+    no longer all tie at 1."""
+    if minutes <= target:
+        return 1 - (1 - WALK_UTILITY_AT_WINDOW) * max(minutes, 0.0) / target
+    zero_at = WALK_ZERO_AT * target
+    return clamp01(WALK_UTILITY_AT_WINDOW * (zero_at - minutes) / ((WALK_ZERO_AT - 1) * target))
 
 
 def distance_utility(km: float) -> float:
@@ -267,7 +365,30 @@ def distance_utility(km: float) -> float:
 
 
 def budget_utility(cost: float, budget: float) -> float:
-    return clamp01((budget - cost) / (BUDGET_MARGIN_SHARE * budget))
+    """1 up to the budget minus its margin (a cheaper zone is not better, D-239), down to
+    BUDGET_UTILITY_AT_LIMIT spending all of it, then to 0 at BUDGET_OVERRUN_TO_ZERO more (D-243):
+    a zone just over the budget is a near miss, not a 0 %."""
+    share = cost / budget
+    knee = 1 - BUDGET_MARGIN_SHARE
+    if share <= knee:
+        return 1.0
+    if share <= 1:
+        return 1 - (1 - BUDGET_UTILITY_AT_LIMIT) * (share - knee) / (1 - knee)
+    return clamp01(BUDGET_UTILITY_AT_LIMIT * (1 - (share - 1) / BUDGET_OVERRUN_TO_ZERO))
+
+
+def match_band(pct: int | None) -> MatchBand | None:
+    """The % shown in words (D-243): muy bien from 90, bien from 75, regular from 60, else
+    poco. None for an unknown %."""
+    if pct is None:
+        return None
+    if pct >= MUY_BIEN_FROM:
+        return MatchBand.MUY_BIEN
+    if pct >= BIEN_FROM:
+        return MatchBand.BIEN
+    if pct >= REGULAR_FROM:
+        return MatchBand.REGULAR
+    return MatchBand.POCO
 
 
 def km_between(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
@@ -337,9 +458,11 @@ def counted_nearby(scenario: ScenarioState) -> list[NearbyNeed]:
 
 
 def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
-    """The person's criteria in order of importance, before weighting. «Ocio» is one criterion
-    for all its groups (D-236), so four boxes never outweigh the other priorities; without a
-    group there is nothing to measure and it adds no criterion."""
+    """The person's criteria in order of importance, before weighting: priorities, places, the
+    services wished at a walk, those marked as a must (D-243: they score too, not only filter)
+    and the budget. «Ocio» is one criterion for all its groups (D-236), so four boxes never
+    outweigh the other priorities, also as a must; without a group there is nothing to measure
+    and it adds no criterion."""
     keys: list[Criterion] = []
     covered: set[NeedKey] = set()
     nearby_counted = counted_nearby(scenario)
@@ -361,10 +484,10 @@ def _criteria_keys(scenario: ScenarioState) -> list[Criterion]:
     for i, anchor in enumerate(scenario.anchors):
         if counts(anchor):
             keys.append(Criterion(f"work:{i}", 0.0, anchor=anchor, anchor_index=i))
-    for nearby in nearby_counted:  # a wished service not already among the priorities
-        if not nearby.required and nearby.need not in covered:
-            target = nearby.max_walk_minutes
-            keys.append(Criterion(f"need:{nearby.need.value}", 0.0, nearby.need, target))
+    wished = [n for n in nearby_counted if n.need not in covered]  # not among the priorities
+    for nearby in [*(n for n in wished if not n.required), *(n for n in wished if n.required)]:
+        target = nearby.max_walk_minutes
+        keys.append(Criterion(f"need:{nearby.need.value}", 0.0, nearby.need, target))
     if scenario.budget is not None:
         keys.append(Criterion("budget", 0.0))
     return keys
@@ -726,10 +849,29 @@ def purchase_fact(
     return Score(budget_utility(cost, budget), price.confidence, fact)
 
 
+def capacity_utility(ratio: float) -> float:
+    """0 at CAPACITY_RATIO_ZERO times the reference, 1 from the reference up (D-243)."""
+    return clamp01((ratio - CAPACITY_RATIO_ZERO) / (1 - CAPACITY_RATIO_ZERO))
+
+
+def with_capacity(walked: Score, need: NeedKey, data: ZoneData) -> Score:
+    """A service scores its nearness and its capacity (D-243), when its row of «Qué falta»
+    gives a ratio; otherwise its nearness alone. The fact still says the walking minutes."""
+    row = NEED_ROW.get(need)
+    found = None if row is None else data.supply.get(row)
+    if walked.utility is None or found is None or found.ratio is None:
+        return walked
+    capacity = capacity_utility(found.ratio)
+    return replace(
+        walked, utility=(1 - CAPACITY_WEIGHT) * walked.utility + CAPACITY_WEIGHT * capacity
+    )
+
+
 def score(criterion: Criterion, scenario: ScenarioState, data: ZoneData, area: FloorArea) -> Score:
     if criterion.need is not None:
         target = criterion.target_minutes or DEFAULT_WALK_MINUTES[criterion.need]
-        return walk_fact(criterion.need, data.walk.get(criterion.need), target, data.transit)
+        walked = walk_fact(criterion.need, data.walk.get(criterion.need), target, data.transit)
+        return with_capacity(walked, criterion.need, data)
     if criterion.anchor is not None:
         trip = None if criterion.anchor_index is None else data.commute.get(criterion.anchor_index)
         return work_fact(criterion.anchor, data, trip)
@@ -784,22 +926,30 @@ def limited_trips(scenario: ScenarioState, data: ZoneData) -> list[Fact]:
     ]
 
 
-def capped(ordered: list[Fact]) -> list[Fact]:
-    """At most MAX_FACTS, in order of importance. The cost always stays when there is one (it
-    only exists with a budget): if it would fall, the least important of the others goes
-    instead (D-240: with three priorities, work and family it was the sixth)."""
+def capped(ordered: list[Fact], pinned: Sequence[Fact] = ()) -> list[Fact]:
+    """At most MAX_FACTS, in order of importance. The cost (it only exists with a budget) and
+    the `pinned` facts always stay: if they would fall, the least important of the others go
+    instead (D-240: with three priorities, work and family the cost was the sixth)."""
     cost = next((i for i, f in enumerate(ordered) if f.topic is FactTopic.COSTE), None)
-    if cost is None or cost < MAX_FACTS:
-        return ordered[:MAX_FACTS]
-    return [*ordered[: MAX_FACTS - 1], ordered[cost]]
+    keep = {i for i, f in enumerate(ordered) if any(f is p for p in pinned)}
+    keep |= set() if cost is None else {cost}
+    others = [i for i in range(len(ordered)) if i not in keep]
+    chosen = keep | set(others[: max(MAX_FACTS - len(keep), 0)])
+    return [ordered[i] for i in sorted(chosen)]
 
 
-def facts(scores: Sequence[Score], data: ZoneData, trips: Sequence[Fact] = ()) -> list[Fact]:
-    """3-5 facts: the criteria with data in order of importance, the minutes to a limited
-    place nobody goes to (`trips`, without weight), then context (walking minutes) when the
-    person asked for fewer than three things, then the criteria without data («sin datos»).
-    Rent only shows up with a rent budget: without one there is nothing to say whether it is
-    good or bad for this person."""
+def facts(
+    scores: Sequence[Score],
+    data: ZoneData,
+    trips: Sequence[Fact] = (),
+    limit: Limit | None = None,
+) -> list[Fact]:
+    """3-5 facts: what limits the % (D-243), the criteria with data in order of importance,
+    the minutes to a limited place nobody goes to (`trips`, without weight), then context
+    (walking minutes) when the person asked for fewer than three things, then the criteria
+    without data («sin datos»). The limit and the trip it speaks of always stay. Rent only
+    shows up with a rent budget: without one there is nothing to say whether it is good or bad
+    for this person."""
     known = [s.fact for s in scores if s.utility is not None]
     known += trips
     unknown = [s.fact for s in scores if s.utility is None]
@@ -813,7 +963,9 @@ def facts(scores: Sequence[Score], data: ZoneData, trips: Sequence[Fact] = ()) -
         if extra.fact.kind is not FactKind.UNKNOWN and extra.fact.topic not in shown:
             known.append(extra.fact)
             shown.add(extra.fact.topic)
-    return capped([*known, *unknown])
+    if limit is None:
+        return capped([*known, *unknown])
+    return capped([limit.fact, *known, *unknown], limit.pinned)
 
 
 def cost_indicator(scenario: ScenarioState, data: ZoneData) -> IndicatorValue | None:
@@ -844,22 +996,153 @@ def cost_range(
     return rent_range_eur(data.rent_range, area)
 
 
+def es_list(items: Sequence[str]) -> str:
+    """«a», «a y b», «a, b y c»."""
+    if len(items) <= 1:
+        return "".join(items)
+    return f"{', '.join(items[:-1])} y {items[-1]}"
+
+
+def duration_text(minutes: float) -> str:
+    """«45 min», «1 h», «1 h 30»."""
+    hours, rest = divmod(round(minutes), 60)
+    if not hours:
+        return f"{rest} min"
+    return f"{hours} h" if not rest else f"{hours} h {rest}"
+
+
+def trip_window(anchor: Anchor) -> int:
+    """The minutes a trip is measured against: the person's limit, else 30 (D-220)."""
+    return anchor.max_minutes or DEFAULT_COMMUTE_MINUTES
+
+
+def frequent_trips(scenario: ScenarioState, data: ZoneData) -> list[tuple[int, Anchor, Commute]]:
+    """The computed trips to the places gone to LIMIT_DAYS days a week or more: only they limit
+    the % (D-243). A place without a computed trip limits nothing (never read as a 0)."""
+    return [
+        (i, anchor, trip)
+        for i, anchor in enumerate(scenario.anchors)
+        if anchor.days_per_week >= LIMIT_DAYS and (trip := data.commute.get(i)) is not None
+    ]
+
+
+def unreachable(anchor: Anchor, trip: Commute) -> bool:
+    """The trip scores 0: no arrival by 9:00, or WALK_ZERO_AT times its window or more."""
+    return trip.minutes is None or trip.minutes >= WALK_ZERO_AT * trip_window(anchor)
+
+
+def too_long(anchor: Anchor, trip: Commute) -> bool:
+    """More than LONG_TRIP_WINDOWS times its window: over an hour with the default 30 min."""
+    return trip.minutes is None or trip.minutes > LONG_TRIP_WINDOWS * trip_window(anchor)
+
+
+def marked_rows(scenario: ScenarioState) -> list[GapRowKey]:
+    """The rows of «Qué falta» of the services the person marks, in «Me importa» or at a walk
+    (a must or not), in the person's order (D-243)."""
+    needs = [PRIORITY_NEED[p] for p in scenario.priorities if p in PRIORITY_NEED]
+    needs += [n.need for n in counted_nearby(scenario)]
+    return list(dict.fromkeys(NEED_ROW[n] for n in needs if n in NEED_ROW))
+
+
+def short_rows(scenario: ScenarioState, data: ZoneData) -> list[GapRowKey]:
+    """The marked rows where «Qué falta» says FALTA (a barrio: its district's)."""
+    return [
+        row
+        for row in marked_rows(scenario)
+        if (found := data.supply.get(row)) is not None and found.status is GapStatus.FALTA
+    ]
+
+
+def unreachable_fact(anchor: Anchor, trip: Commute) -> Fact:
+    if trip.minutes is None:
+        why = f"No llegas a {anchor.label} a las 9:00 en transporte público"
+    else:
+        limit = duration_text(WALK_ZERO_AT * trip_window(anchor))
+        why = f"Tardas {limit} o más en llegar a {anchor.label}"
+    text = f"{why}: el encaje se queda en la mitad"
+    return Fact(
+        kind=FactKind.WEAKNESS, topic=FactTopic.TRAYECTO, text=text, confidence=trip.confidence
+    )
+
+
+def long_trip_fact(anchor: Anchor, trip: Commute) -> Fact:
+    over = duration_text(LONG_TRIP_WINDOWS * trip_window(anchor))
+    text = f"Más de {over} de trayecto hasta {anchor.label}: como mucho {as_pct(LONG_TRIP_CAP)} %"
+    return Fact(
+        kind=FactKind.WEAKNESS, topic=FactTopic.TRAYECTO, text=text, confidence=trip.confidence
+    )
+
+
+def shortage_fact(rows: Sequence[GapRowKey], data: ZoneData) -> Fact:
+    found = [data.supply[row] for row in rows]
+    district = found[0].district
+    where = "" if district is None else f" en {district}"
+    names = es_list([ROW_IN_TEXT[row] for row in rows])
+    first = next(need for need, row in NEED_ROW.items() if row == rows[0])
+    return Fact(
+        kind=FactKind.WEAKNESS,
+        topic=NEED_TOPIC[first],
+        text=f"Faltan {names}{where}: como mucho {as_pct(SHORTAGE_CAP)} %",
+        confidence=min(s.confidence for s in found),
+    )
+
+
+Scored = Sequence[tuple[Criterion, Score]]
+
+
+def trip_limit(
+    found: tuple[int, Anchor, Commute], utility: float, fact: Fact, scored: Scored
+) -> Limit:
+    """A limit set by a trip keeps on the card the fact with its minutes (its place's score)."""
+    own = tuple(s.fact for c, s in scored if c.anchor_index == found[0])
+    return Limit(utility, fact, (fact, *own))
+
+
+def limit(
+    scenario: ScenarioState, data: ZoneData, utility: float | None, scored: Scored
+) -> Limit | None:
+    """D-243, in this order: a trip of LIMIT_DAYS days or more that scores 0 halves the fit; FALTA
+    in a marked service keeps it at SHORTAGE_CAP; a trip of LIMIT_DAYS days or more over
+    LONG_TRIP_WINDOWS times its window keeps it at LONG_TRIP_CAP. The card says the one that sets
+    the % (once halved, no cap is reached). None when nothing limits it."""
+    if utility is None:
+        return None
+    trips = frequent_trips(scenario, data)
+    found: Limit | None = None
+    far = next((t for t in trips if unreachable(t[1], t[2])), None)
+    if far is not None:
+        utility *= UNREACHABLE_FACTOR
+        found = trip_limit(far, utility, unreachable_fact(far[1], far[2]), scored)
+    short = short_rows(scenario, data)
+    if short and utility > SHORTAGE_CAP:
+        utility = SHORTAGE_CAP
+        fact = shortage_fact(short, data)
+        found = Limit(utility, fact, (fact,))
+    long = next((t for t in trips if too_long(t[1], t[2])), None)
+    if long is not None and utility > LONG_TRIP_CAP:
+        utility = LONG_TRIP_CAP
+        found = trip_limit(long, utility, long_trip_fact(long[1], long[2]), scored)
+    return found
+
+
 def evaluate(scenario: ScenarioState, data: ZoneData) -> ZoneFit:
     area = assumed_floor_area(scenario)
     checks = constraint_checks(scenario, data, area)
-    weighted = [(c.weight, score(c, scenario, data, area)) for c in criteria(scenario)]
-    utility, confidence = match_and_confidence(weighted)
-    if not weighted:  # nothing to score: the zone is as sure as its conditions
+    scored = [(c, score(c, scenario, data, area)) for c in criteria(scenario)]
+    utility, confidence = match_and_confidence([(c.weight, s) for c, s in scored])
+    if not scored:  # nothing to score: the zone is as sure as its conditions
         confidence = min((c.confidence for c in checks), default=1.0)
+    scores = [s for _, s in scored]
+    limited = limit(scenario, data, utility, scored)
     cost = estimated_cost(scenario, data, area)
     source = cost_indicator(scenario, data)
     spread = cost_range(scenario, data, area)
     return ZoneFit(
         data=data,
         constraints=checks,
-        utility=utility,
+        utility=utility if limited is None else limited.utility,
         confidence=confidence,
-        facts=facts([s for _, s in weighted], data, limited_trips(scenario, data)),
+        facts=facts(scores, data, limited_trips(scenario, data), limited),
         cost_eur=cost,
         cost_confidence=None if cost is None or source is None else source.confidence,
         cost_range=spread,
@@ -918,12 +1201,13 @@ def near_miss_key(fit: ZoneFit) -> tuple[float, float, float, float, str]:
     )
 
 
-def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, str]:
-    """«Zonas que encajan»: best unrounded fit first. Only exact ties of it go on (D-239): more
-    everyday services at a walk, then fewer walking minutes to them and, after them, as
-    near_miss_key (confidence, minutes to the lead place, zone id) without the cost: with plenty
-    of budget the cheapest zones would be the towns again (D-239), and after the walk no tie is
-    left for it to break (D-234)."""
+def ranking_key(fit: ZoneFit) -> tuple[float, float, float, float, float, float, str]:
+    """«Zonas que encajan»: the best % shown first (D-243: two zones read at the same % are a
+    tie, so a hair of unrounded fit no longer puts a less served zone ahead). Ties go on (D-239):
+    more everyday services at a walk, fewer walking minutes to them, then the unrounded fit and,
+    as near_miss_key, confidence, minutes to the lead place and zone id, without the cost: with
+    plenty of budget the cheapest zones would be the towns again (D-239)."""
     utility, confidence, minutes, _cost, zone_id = near_miss_key(fit)
     served, walk_minutes = everyday_walk(fit.data) or (-1.0, math.inf)
-    return (utility, -served, walk_minutes, confidence, minutes, zone_id)
+    pct = -(fit.match_pct if fit.match_pct is not None else -1)
+    return (pct, -served, walk_minutes, utility, confidence, minutes, zone_id)
