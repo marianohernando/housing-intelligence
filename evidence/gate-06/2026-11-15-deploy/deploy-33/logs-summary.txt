@@ -1,0 +1,48 @@
+vercel logs (CLI 65.12.1), deployment dpl_ByScLXFa2ixyreAQMsbQWf6tf4ZG (e0417ae), 18:26–18:39 UTC: smoke, searches, e2e, probes and measurement.
+The CDN listing stops at 2,000 records; a separate --query 'httpStatus >= 400' over the same window returned nothing.
+The previous deployment (dpl_8tDBN…) since 18:20 UTC: one 4xx, the deliberate 422 of the baseline (18:23:57, POST /api/v1/search, User-Agent vida-facil-smoke/base), and no request after 18:27:30.
+
+vercel logs, deployment dpl_ByScLXFa2ixyreAQMsbQWf6tf4ZG, from 2026-11-15T18:26:00Z to 2026-11-15T18:39:03.454Z (UTC)
+runtime log lines: 639, more pages: false, levels:  639 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 8
+
+CDN request records: 2000, more pages: true
+by status: 200 × 1810 · 304 × 190
+API by path and status:
+   142 GET /api/v1/geo/admin-units 200
+    62 GET /api/v1/datasets 200
+    58 POST /api/v1/search 200
+    24 GET /api/v1/gaps 200
+    19 GET /api/v1/places 200
+    15 GET /api/v1/gaps/distrito/2807913 200
+    10 GET /api/v1/features/seguridad_percibida_noche/values 200
+    10 GET /api/v1/features/seguridad_percibida_dia/values 200
+     6 POST /api/v1/search/barrios 200
+     6 GET /api/v1/gaps/distrito/2807921 200
+     5 GET /api/v1/features/valor_tasado_vivienda_usada_m2/values 200
+     5 GET /api/v1/features/valor_tasado_vivienda_nueva_m2/values 200
+     5 GET /api/v1/features/renta_neta_media_hogar/values 200
+     5 GET /api/v1/features/plan_vive_viviendas/values 200
+     5 GET /api/v1/features/pct_calle_ruido_noche/values 200
+     5 GET /api/v1/features/pct_calle_ruido_dia/values 200
+     5 GET /api/v1/features/no2_media_anual/values 200
+     5 GET /api/v1/features/min_a_pie_aparcamiento_publico/values 200
+     5 GET /api/v1/features/infracciones_penales_por_1000_hab/values 200
+     5 GET /api/v1/features/compraventas_obra_nueva_pct/values 200
+     5 GET /api/v1/features/ano_medio_construccion_residencial/values 200
+     5 GET /api/v1/features/ambitos_residenciales_en_desarrollo/values 200
+     2 GET /api/v1/gaps/municipio/28079 200
+     2 GET /api/v1/gaps/impact 200
+     2 GET /api/v1/features/hospitales_total/values 200
+     2 GET /api/v1/features/camas_instaladas_por_1000_hab/values 200
+every 4xx/5xx:
