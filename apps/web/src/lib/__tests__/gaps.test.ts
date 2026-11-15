@@ -17,6 +17,8 @@ import {
   inGroup,
   isSmallZone,
   listNames,
+  nearButShort,
+  ROW_WALK_MIN,
   notComparable,
   referenceLabel,
   SMALL_ZONE,
@@ -389,5 +391,42 @@ describe("rows that are not comparable (D-230)", () => {
     expect(notComparable({ status: "JUSTO", reliable: false, comparison_group: group })).toBe(false);
     expect(notComparable({ status: "JUSTO", reliable: true })).toBe(false);
     expect(notComparable({ status: "SIN_DATOS", reliable: false })).toBe(false);
+  });
+});
+
+describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () => {
+  const row = (key: GapRowKey, status: GapStatus, extra: object = {}) => ({ row: key, status, reliable: true, comparison_group: null, ...extra });
+  const nearButShortTexts = (...args: Parameters<typeof nearButShort>) => nearButShort(...args).map((line) => line.text);
+  // Puente de Vallecas, 14 nov: escuelas infantiles FALTA (57 por cada 100), a 6,3 min andando
+  const vallecas = [row("colegio", "CUBIERTO"), row("escuela_infantil", "FALTA"), row("centro_salud", "JUSTO"), row("vivienda", "SIN_DATOS")];
+
+  it("says a service close by can still be short, for each FALTA or JUSTO row the search found close", () => {
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 6.3, colegio: 4.2, centro_salud: 7.6 })).toEqual([
+      "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños de 0 a 4 años: por eso sale FALTA.",
+      "Centro de salud a unos 8 min andando, pero van justos para tanta gente: por eso sale JUSTO.",
+    ]);
+    // Each line says which row it explains, so the card does not repeat it in encaje.aviso_*
+    expect(nearButShort(vallecas, { escuela_infantil: 6.3, centro_salud: 7.6 }).map((line) => line.row)).toEqual(["escuela_infantil", "centro_salud"]);
+  });
+
+  it("only within the 15 min the row measures (fila.mide.*): further, the row does not count it", () => {
+    expect(ROW_WALK_MIN).toBe(15);
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 20 })).toEqual([]);
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 15 })).toHaveLength(1);
+  });
+
+  it("names the district when the card is a barrio's, whose rows are the district's", () => {
+    expect(nearButShortTexts([row("mayores", "FALTA")], { mayores: 0.4 }, "Latina")).toEqual([
+      "Centro de mayores a menos de 1 min andando, pero en Latina hay pocas plazas para tantas personas mayores: por eso sale FALTA.",
+    ]);
+  });
+
+  it("says nothing when the service is not close, the row is fine, or the status is not the zone's own", () => {
+    expect(nearButShortTexts(vallecas, {})).toEqual([]);
+    expect(nearButShortTexts(vallecas, { colegio: 4 })).toEqual([]);
+    expect(nearButShortTexts([row("farmacia", "SIN_DATOS")], { farmacia: 3 })).toEqual([]);
+    expect(nearButShortTexts([row("farmacia", "FALTA", { reliable: false })], { farmacia: 3 })).toEqual([]);
+    const group = { names: ["El Álamo", "Batres", "Serranillos del Valle"], ratio_to_reference: 0.4 };
+    expect(nearButShortTexts([row("farmacia", "FALTA", { comparison_group: group })], { farmacia: 3 })).toEqual([]);
   });
 });

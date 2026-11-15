@@ -4,7 +4,7 @@
  * the fit: it picks what the district screen shows, with the copy of pitch/textos_web.md.
  */
 import type { BarrioSearchResult, RankedZone, RealityCheck } from "@/contracts/barrio_search_response";
-import { constraintLabels, failedLabels, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
+import { constraintLabels, failedLabels, floorAreaOf, hasWalkingFact, type ZonePrice, zonePrice } from "@/lib/fit";
 
 /** Facts under each barrio: the API orders them, most important to the person first. */
 export const FACTS_PER_BARRIO = 2;
@@ -27,14 +27,14 @@ export interface BarrioRow {
   fails: string[] | null;
 }
 
-function barrioRow(zone: RankedZone, fails: string[] | null, buying: boolean): BarrioRow {
+function barrioRow(zone: RankedZone, fails: string[] | null, buying: boolean, m2: number | null): BarrioRow {
   const facts = zone.facts.slice(0, FACTS_PER_BARRIO);
   return {
     id: zone.zone.admin_unit_id ?? null,
     code: zone.zone.code,
     name: zone.zone.name,
     pct: zone.match_pct,
-    price: zonePrice(zone, buying),
+    price: zonePrice(zone, buying, m2),
     facts: facts.map((fact) => fact.text),
     walking: hasWalkingFact(facts),
     fails,
@@ -47,10 +47,11 @@ export function barrioRows(
 ): { fits: BarrioRow[]; near: BarrioRow[] } {
   const labels = constraintLabels(result);
   const buying = result.scenario?.budget?.kind === "buy";
+  const m2 = floorAreaOf(result);
   return {
-    fits: result.results.map((zone) => barrioRow(zone, null, buying)),
+    fits: result.results.map((zone) => barrioRow(zone, null, buying, m2)),
     near: (result.near_misses ?? []).map((zone) =>
-      barrioRow(zone, failedLabels(zone.failed_constraints, labels, zone.constraints), buying),
+      barrioRow(zone, failedLabels(zone.failed_constraints, labels, zone.constraints), buying, m2),
     ),
   };
 }

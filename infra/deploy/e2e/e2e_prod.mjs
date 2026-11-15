@@ -99,6 +99,9 @@ async function journeySearch(run, page) {
   run.check(J, "the example's /search sends max_minutes: null", searches.length > 0 && searches.every((s) =>
     Array.isArray(s?.anchors) && s.anchors.length > 0 && s.anchors.every((a) => a.max_minutes === null)),
   `${searches.length} requests`);
+  // ...and with the household's usual m² (min_floor_area_m2: null, D-214), whatever the m² selector offers
+  run.check(J, "the example's /search sends min_floor_area_m2: null", searches.length > 0 && searches.every((s) => s?.min_floor_area_m2 === null),
+    JSON.stringify(searches.map((s) => s?.min_floor_area_m2)));
   await run.overflow(page, J);
   await checkCommuteLimit(run, page, result.reality_check.zones_passing);
 }

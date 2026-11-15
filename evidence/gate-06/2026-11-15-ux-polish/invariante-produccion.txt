@@ -1,0 +1,9 @@
+Ejemplo del pitch (scenario_state.familia_castellana sin límite de trayecto), min_floor_area_m2: None
+API local (esta rama, base housing en solo lectura): {"metodo": "fit-0.8", "cumplen": 27, "sin_dato": 15, "top10": [["Latina", 98, 1101.0], ["Moratalaz", 98, 1083.0], ["Ciudad Lineal", 98, 1230.0], ["Puente de Vallecas", 98, 1129.0], ["Fuencarral-El Pardo", 97, 1276.0], ["Usera", 97, 1019.0], ["Carabanchel", 97, 1127.0], ["Hortaleza", 97, 1267.0], ["San Blas-Canillejas", 97, 1181.0], ["Villaverde", 97, 1007.0]], "casi": ["Chamartín", "Salamanca", "Centro", "Chamberí", "Retiro"], "m2_enviado": null}
+API de producción: {"metodo": "fit-0.8", "cumplen": 27, "sin_dato": 15, "top10": [["Latina", 98, 1101.0], ["Moratalaz", 98, 1083.0], ["Ciudad Lineal", 98, 1230.0], ["Puente de Vallecas", 98, 1129.0], ["Fuencarral-El Pardo", 97, 1276.0], ["Usera", 97, 1019.0], ["Carabanchel", 97, 1127.0], ["Hortaleza", 97, 1267.0], ["San Blas-Canillejas", 97, 1181.0], ["Villaverde", 97, 1007.0]], "casi": ["Chamartín", "Salamanca", "Centro", "Chamberí", "Retiro"], "m2_enviado": null}
+data igual salvo methodology_version: True
+  cumplen: igual
+  sin_dato: igual
+  top10: igual
+  casi: igual
+  m2_enviado: igual

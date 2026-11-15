@@ -91,6 +91,14 @@ a {
   border: 0;
 }
 
+/*
+ * zona.contexto.no_puntua: the context cards of a zone (D-235, D-241) end with the same «Son datos
+ * informativos…»; one after another, it is said only under the last one that shows.
+ */
+[data-context-card]:has(~ [data-context-card]) [data-context-footer] {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

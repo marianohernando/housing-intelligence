@@ -6,7 +6,7 @@ import { useId } from "react";
 import { useScenario } from "@/components/search/ScenarioProvider";
 import Button from "@/components/ui/Button";
 import { errorMessage } from "@/lib/errors";
-import { byBarrio, countFit, type FitClass, paintFit } from "@/lib/fit";
+import { byBarrio, countFit, type FitClass, paintFit, zonesText, zoneWord } from "@/lib/fit";
 import { GAP_STATUS, ROW_NAME, SMALL_ZONE } from "@/lib/gaps";
 import { countByStatus, isGapRow, type MapCategory, MAP_ROWS, paintZones } from "@/lib/map/gapMap";
 
@@ -50,6 +50,8 @@ function FitLegend({ id }: { id: string }) {
   const { resultZones, barriosError, retryBarrios } = useMapZones();
   if (result && resultZones) {
     const counts = countFit(paintFit(resultZones, result.all_zones));
+    // leyenda.zonas with the word of «¿Dónde?» (D-238): «78 barrios», as the list says
+    const word = zoneWord(result);
     const barriosFailed = byBarrio(result) && barriosError !== null;
     return (
       <figure className={styles.figure} aria-labelledby={id}>
@@ -66,7 +68,7 @@ function FitLegend({ id }: { id: string }) {
             <li key={c}>
               <span className={`${styles.patch} ${styles[`fit_${c}`]}`} aria-hidden="true" />
               <span className={styles.small}>{TEXT.fit[c]}</span>
-              <span className={styles.count}>{TEXT.zones(counts[c])}</span>
+              <span className={styles.count}>{zonesText(counts[c], word)}</span>
             </li>
           ))}
         </ul>

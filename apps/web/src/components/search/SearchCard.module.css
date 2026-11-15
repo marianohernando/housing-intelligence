@@ -228,7 +228,9 @@
   cursor: pointer;
 }
 
+/* flex: none, so a box whose label takes two lines («Bares y cafeterías» at 390 px) keeps its size */
 .check input {
+  flex: none;
   width: 1.15rem;
   height: 1.15rem;
   accent-color: var(--violet-strong);
@@ -370,6 +372,56 @@
 .option:hover {
   background: var(--violet-soft);
   color: var(--violet-strong);
+}
+
+/* presupuesto.m2: «Para unos 68 m² (cámbialo)», a line that opens the m² selector */
+.area {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.areaToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.areaToggle svg {
+  flex: none;
+  color: var(--violet-strong);
+}
+
+.areaChange {
+  color: var(--violet-strong);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.areaBody {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.areaBody[hidden] {
+  display: none;
+}
+
+.areaPick {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 
 /* «Ocio» (D-236): its boxes open under the chips of «Me importa», set apart as one block */
