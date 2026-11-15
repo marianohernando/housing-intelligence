@@ -1,0 +1,39 @@
+dataset_id: mivau_serpavi_alquiler
+source_id: ministerio_vivienda
+name: Sistema Estatal de Referencia del Precio del Alquiler de Vivienda (SERPAVI), base de datos 2011-2024
+domain: housing
+owner: Ministerio de Vivienda y Agenda Urbana
+format: XLSX
+geography: table
+geo:
+  resolution: seccion_censal
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi
+resources:
+- name: Base de datos del SERPAVI 2011-2024 (publicada el 9 de marzo de 2026)
+  format: XLSX
+  url: https://cdn.mivau.gob.es/portal-web-mivau/vivienda/serpavi/2026-03_09_bd_SERPAVI_2011-2024%20-%20DEFINITIVO%20WEB_v2.xlsx
+  file_name: mivau_serpavi_alquiler.xlsx
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 3
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 4
+  license_clarity: 4
+  ingestion_ease: 3
+  notes: >-
+    D-242. Fuente complementaria, no es dataset CM. Una hoja por nivel (CCAA, provincias,
+    municipios, distritos censales y secciones censales del seccionado de 2021) con códigos INE y,
+    por año (sufijo _AA), el número de viviendas alquiladas como vivienda habitual y la mediana
+    y los percentiles 25 y 75 del alquiler mensual por m², en vivienda colectiva (pisos) y
+    unifamiliar. XLSX de 68 MB: se borra de Bronze tras procesarlo y queda su manifest con el
+    checksum.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T23:30:00+00:00'
+notes: >-
+  En 2024: 163 de 179 municipios con mediana (137 de pisos y 26 solo de unifamiliares), los 21
+  distritos de Madrid y 2.428 de sus 2.442 secciones. Solo se carga desde 2024 (period_min).

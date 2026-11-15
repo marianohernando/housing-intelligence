@@ -9,7 +9,8 @@ per m² of free-market housing (feature `valor_tasado_vivienda_m2`, Ministerio d
 the CM portal) times the same area; only municipios of more than 25.000 inhabitants have it.
 A zone inside a city may bring an estimate instead (D-234: the city's appraised value shared
 out by cadastral value), said as such in every text; without either the condition is UNKNOWN
-and says so.
+and says so. A zone without the CM rent may bring the Ministry's rent reference (D-242), with
+where half of its leases fall («la mitad de los contratos, entre 560 y 820 €»).
 """
 
 from typing import NamedTuple
@@ -36,6 +37,13 @@ FLOOR_AREA_SOURCE = (
 # mean of the leases in force, as in the rent feature before version 3.
 RENT_NOTE = "media de los contratos vigentes; uno nuevo suele costar más"
 PURCHASE_NOTE = "valor tasado medio de la vivienda libre, no el precio de un anuncio"
+# D-242: a reference rent of single-family homes, where too few flats are rented to publish one
+HOUSES_NOTE = "precio de casas unifamiliares, porque se alquilan pocos pisos"
+# A barrio pools its census sections (D-242): its range is the mean of theirs, said as such (in
+# the fact's note and after the source in the card), never passed off as the barrio's quartiles
+POOLED_RANGE_NOTE = "el rango es la media de los de sus {n} secciones censales"
+POOLED_RANGE_SOURCE = "{source}; rango: media de sus {n} secciones censales"
+RANGE_ROUND_EUR = 10  # a quartile of the leases is no more precise than this
 # D-234: what an estimated price is, in the fact and the condition; {zone} is «del distrito».
 PURCHASE_ESTIMATE_NOTE = (
     "precio estimado: valor tasado de {city} repartido según el valor catastral {zone}; "
@@ -82,15 +90,31 @@ def budget_label(budget: Budget, area: FloorArea) -> str:
     return f"Alquiler hasta {euros(budget.amount_eur)}/mes para {area.m2} m²"
 
 
-def rent_explanation(rent_m2: float, area: FloorArea, note: str | None = None) -> str:
+def rent_range_eur(range_m2: tuple[float, float], area: FloorArea) -> tuple[float, float]:
+    """The quartiles per m² for the household's area, rounded to tens of euros (D-242)."""
+    low, high = (round(v * area.m2 / RANGE_ROUND_EUR) * RANGE_ROUND_EUR for v in range_m2)
+    return float(low), float(high)
+
+
+def rent_explanation(
+    rent_m2: float,
+    area: FloorArea,
+    note: str | None = None,
+    range_m2: tuple[float, float] | None = None,
+) -> str:
     """«Alquiler ≈ 1.270 €/mes por 77 m² (16,5 €/m², contratos firmados en 2024; …)»; without a
-    note from the data, the old mean of the leases in force."""
+    note from the data, the old mean of the leases in force. With the quartiles of the Ministry's
+    reference (D-242): «…; la mitad de los contratos, entre 560 y 820 €»."""
     cost = monthly_rent(rent_m2, area.m2)
     head = "Alquiler medio" if note is None else "Alquiler"
-    return (
+    text = (
         f"{head} ≈ {euros(cost)}/mes por {area.m2} m² "
         f"({es_number(rent_m2, 1)} €/m², {note or RENT_NOTE})"
     )
+    if range_m2 is None:
+        return text
+    low, high = rent_range_eur(range_m2, area)
+    return f"{text}; la mitad de los contratos, entre {es_number(low, 0)} y {euros(high)}"
 
 
 def purchase_cost(price_m2: float, area_m2: int) -> int:
@@ -147,11 +171,13 @@ def budget_check(
     rent_missing: str | None = None,
     price_note: str | None = None,
     price_missing: str | None = None,
+    rent_range: tuple[float, float] | None = None,
 ) -> ConstraintCheck:
     """`rent_missing`: why this zone has no rent, when the data says (D-232: a barrio with no
     place carrying a postcode); else the generic reason. `price_note`: what the purchase price
     is when it is an estimate (D-234); `price_missing`, why there is none when the reason is not
-    the usual one of a municipio (D-234: a district or barrio of Madrid)."""
+    the usual one of a municipio (D-234: a district or barrio of Madrid). `rent_range`: the
+    quartiles per m² of the Ministry's reference rent (D-242)."""
     if budget.kind is BudgetKind.BUY:
         return _purchase_check(budget, price, area, price_note, price_missing)
     if rent is None or rent.value is None:
@@ -177,5 +203,5 @@ def budget_check(
         threshold=float(budget.amount_eur),
         unit="€/mes",
         confidence=rent.confidence,
-        explanation=rent_explanation(rent.value, area, rent_note),
+        explanation=rent_explanation(rent.value, area, rent_note, rent_range),
     )

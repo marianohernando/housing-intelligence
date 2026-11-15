@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import (
     ConstraintStatus,
+    CostRange,
     RankedZone,
     RealityCheck,
     ScenarioState,
@@ -48,6 +49,14 @@ class SearchOutcome:
     unscored_passing: int  # zones passing every condition with no data to score them
 
 
+def cost_range(fit: ZoneFit) -> CostRange | None:
+    """Where half the leases fall (D-242), when the zone's rent is the Ministry's reference."""
+    if fit.cost_range is None or fit.cost_source is None:
+        return None
+    low, high = fit.cost_range
+    return CostRange(low_eur=low, high_eur=high, source=fit.cost_source)
+
+
 def _ranked(
     fits: Sequence[ZoneFit], limit: int, key: Callable[[ZoneFit], tuple[float | str, ...]]
 ) -> list[RankedZone]:
@@ -63,6 +72,7 @@ def _ranked(
             failed_constraints=fit.failed,
             estimated_cost_eur=fit.cost_eur,
             estimated_cost_confidence=fit.cost_confidence,
+            estimated_cost_range=cost_range(fit),
             gap_highlights=list(fit.data.gaps),
         )
         for i, fit in enumerate(ordered[:limit], start=1)
@@ -99,6 +109,7 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
                 failed_constraints=f.failed,
                 estimated_cost_eur=f.cost_eur,
                 estimated_cost_confidence=f.cost_confidence,
+                estimated_cost_range=cost_range(f),
             )
             for f in fits
         ],

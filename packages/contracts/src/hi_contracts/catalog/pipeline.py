@@ -195,6 +195,71 @@ class AeatRentComparisonPipeline(BaseModel):
         return [self.rent_metric_id, self.area_metric_id]
 
 
+class SerpaviSheet(BaseModel):
+    """One sheet of the SERPAVI workbook: its territories and the column with their INE code."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    sheet: str
+    code_column: str
+    name_column: str | None = None
+
+
+SerpaviLevel = Literal["municipio", "distrito", "seccion_censal"]
+
+
+class SerpaviRentPipeline(BaseModel):
+    """Ministerio de Vivienda, Sistema Estatal de Referencia del Precio del Alquiler de Vivienda
+    (SERPAVI, D-242): one XLSX sheet per level, one row per territory and, for every year (the
+    column suffix `_YY`), the number of homes rented as a main residence and the median and
+    quartiles of their monthly rent per m², for blocks of flats (VC) and for single-family
+    homes (VU). The column names follow `rent_column` and `count_column`; a year read without
+    one of them stops the pipeline. Only the rows of `province_code` are kept."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["serpavi_rent"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    province_code: str = Field(pattern=r"^\d{2}$")
+    province_column: str = "CPRO"
+    sheets: dict[SerpaviLevel, SerpaviSheet] = Field(min_length=1)
+    period_min: int = Field(ge=2011, le=2100, description="years before it are left out")
+    typologies: dict[str, Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]*$")]] = Field(
+        default_factory=lambda: {"VC": "colectiva", "VU": "unifamiliar"}, min_length=1
+    )
+    statistics: dict[str, Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]*$")]] = Field(
+        default_factory=lambda: {"M": "mediana", "25": "p25", "75": "p75"}, min_length=1
+    )
+    rent_column: str = "ALQM2_LV_{statistic}_{typology}_{yy}"
+    count_column: str = "BI_ALVHEPCO_T{typology}_{yy}"
+    rent_metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    count_metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    typology_dim: str = "tipologia"
+    statistic_dim: str = "estadistico"
+    expected_municipios: int = Field(gt=0)
+    expected_districts: int | None = Field(default=None, gt=0)
+    min_sections: int | None = Field(default=None, gt=0)
+
+    @model_validator(mode="after")
+    def _columns_name_every_part(self) -> Self:
+        for name, template, needed in (
+            ("rent_column", self.rent_column, {"statistic", "typology", "yy"}),
+            ("count_column", self.count_column, {"typology", "yy"}),
+        ):
+            fields = set(_template_columns(template))
+            if fields != needed:
+                msg = f"{self.dataset_id}: {name} must use exactly {sorted(needed)}"
+                raise ValueError(msg)
+        if "municipio" not in self.sheets:
+            msg = f"{self.dataset_id}: the municipio sheet is required"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.rent_metric_id, self.count_metric_id]
+
+
 class MadridPadronPipeline(BaseModel):
     """Ayuntamiento de Madrid padrón: one row per census section and single year of age.
 
@@ -845,6 +910,7 @@ PipelineSpec = Annotated[
     | CmPostcodeConceptPipeline
     | CmMunicipioConceptPipeline
     | AeatRentComparisonPipeline
+    | SerpaviRentPipeline
     | MadridPadronPipeline
     | MadridDistrictPanelPipeline
     | PointsPipeline

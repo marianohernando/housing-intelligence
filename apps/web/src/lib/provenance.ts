@@ -7,9 +7,9 @@ import type { DatasetRef } from "@/contracts/dataset_list_response";
 
 export const PORTAL_CM = "Portal de Datos Abiertos de la Comunidad de Madrid";
 
-/** `n` is cm_open_data_count, the CRTM's included (D-196): the other publishers are named, not counted (pie.contador, 13 nov). */
+/** `n` is cm_open_data_count, the CRTM's included (D-196): the other publishers are named, not counted (pie.contador, 13 nov; the Ministerio de Vivienda's rent reference, D-242). */
 export function counterText(n: number): string {
-  return `Datos: ${n.toLocaleString("es-ES")} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria`;
+  return `Datos: ${n.toLocaleString("es-ES")} conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda`;
 }
 
 const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -33,6 +33,8 @@ const ATTRIBUTION_LINKS: [RegExp, string][] = [
   [/Ministerio de Sanidad/, "https://www.sanidad.gob.es/estadEstudios/estadisticas/sisInfSanSNS/ofertaRecursos/hospitales/home.htm"],
   // fit-0.6 (D-228): rent of the leases signed in 2024; the licence asks to cite the source and its date
   [/Agencia Tributaria/, "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html"],
+  // D-242: the Ministry's rent reference; its notice asks to cite the source and the date of its update
+  [/SERPAVI/, "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi"],
   [/CRTM/, "https://www.crtm.es"],
   // D-237: the noise map is on the Ayuntamiento's Geoportal, not on datos.madrid.es
   [/Geoportal/, "https://geoportal.madrid.es"],

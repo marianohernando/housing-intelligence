@@ -1961,6 +1961,182 @@
       "title": "PointsPipeline",
       "type": "object"
     },
+    "SerpaviRentPipeline": {
+      "additionalProperties": false,
+      "description": "Ministerio de Vivienda, Sistema Estatal de Referencia del Precio del Alquiler de Vivienda\n(SERPAVI, D-242): one XLSX sheet per level, one row per territory and, for every year (the\ncolumn suffix `_YY`), the number of homes rented as a main residence and the median and\nquartiles of their monthly rent per m², for blocks of flats (VC) and for single-family\nhomes (VU). The column names follow `rent_column` and `count_column`; a year read without\none of them stops the pipeline. Only the rows of `province_code` are kept.",
+      "properties": {
+        "count_column": {
+          "default": "BI_ALVHEPCO_T{typology}_{yy}",
+          "title": "Count Column",
+          "type": "string"
+        },
+        "count_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Count Metric Id",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "expected_districts": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Districts"
+        },
+        "expected_municipios": {
+          "exclusiveMinimum": 0,
+          "title": "Expected Municipios",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "serpavi_rent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "min_sections": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Sections"
+        },
+        "period_min": {
+          "description": "years before it are left out",
+          "maximum": 2100,
+          "minimum": 2011,
+          "title": "Period Min",
+          "type": "integer"
+        },
+        "province_code": {
+          "pattern": "^\\d{2}$",
+          "title": "Province Code",
+          "type": "string"
+        },
+        "province_column": {
+          "default": "CPRO",
+          "title": "Province Column",
+          "type": "string"
+        },
+        "rent_column": {
+          "default": "ALQM2_LV_{statistic}_{typology}_{yy}",
+          "title": "Rent Column",
+          "type": "string"
+        },
+        "rent_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Rent Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "sheets": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SerpaviSheet"
+          },
+          "minProperties": 1,
+          "propertyNames": {
+            "enum": [
+              "municipio",
+              "distrito",
+              "seccion_censal"
+            ]
+          },
+          "title": "Sheets",
+          "type": "object"
+        },
+        "statistic_dim": {
+          "default": "estadistico",
+          "title": "Statistic Dim",
+          "type": "string"
+        },
+        "statistics": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Statistics",
+          "type": "object"
+        },
+        "typologies": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Typologies",
+          "type": "object"
+        },
+        "typology_dim": {
+          "default": "tipologia",
+          "title": "Typology Dim",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "province_code",
+        "sheets",
+        "period_min",
+        "rent_metric_id",
+        "count_metric_id",
+        "expected_municipios"
+      ],
+      "title": "SerpaviRentPipeline",
+      "type": "object"
+    },
+    "SerpaviSheet": {
+      "additionalProperties": false,
+      "description": "One sheet of the SERPAVI workbook: its territories and the column with their INE code.",
+      "properties": {
+        "code_column": {
+          "title": "Code Column",
+          "type": "string"
+        },
+        "name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Column"
+        },
+        "sheet": {
+          "title": "Sheet",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet",
+        "code_column"
+      ],
+      "title": "SerpaviSheet",
+      "type": "object"
+    },
     "StationAccessibilityLink": {
       "additionalProperties": false,
       "description": "A GTFS feed's stations take their accessibility from a station topology (D-223). The key\nof a stop is group 1 of `stop_id_pattern`, compared with the topology's `match` column.",
@@ -2129,6 +2305,7 @@
       "osm_pois": "#/$defs/OsmPoisPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
       "points_csv": "#/$defs/PointsPipeline",
+      "serpavi_rent": "#/$defs/SerpaviRentPipeline",
       "station_topology": "#/$defs/StationTopologyPipeline"
     },
     "propertyName": "kind"
@@ -2145,6 +2322,9 @@
     },
     {
       "$ref": "#/$defs/AeatRentComparisonPipeline"
+    },
+    {
+      "$ref": "#/$defs/SerpaviRentPipeline"
     },
     {
       "$ref": "#/$defs/MadridPadronPipeline"

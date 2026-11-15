@@ -37,7 +37,7 @@ const osm: DatasetRef = {
 describe("counterText (pie.contador)", () => {
   it("counts the CM portal datasets and names the other publishers", () => {
     expect(counterText(23)).toBe(
-      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria",
+      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda",
     );
   });
 });
@@ -69,6 +69,15 @@ describe("attributions (attribution_text of /datasets, from the source catalogue
     const cited = attributions([...datasets, aeat("aeat_alquiler_nuevos_contratos_municipios"), aeat("aeat_alquiler_nuevos_contratos_codigo_postal")]);
     expect(cited.filter((c) => c.text === text)).toEqual([
       { text, href: "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html" },
+    ]);
+  });
+
+  it("cites the Ministry's rent reference with its date and links it (D-242; the text is the catalogue's)", () => {
+    const text =
+      "Ministerio de Vivienda y Agenda Urbana, Sistema Estatal de Referencia del Precio del Alquiler de Vivienda (SERPAVI), base de datos 2011-2024, actualizada el 9 de marzo de 2026.";
+    const serpavi: DatasetRef = { ...osm, dataset_id: "mivau_serpavi_alquiler", name: "SERPAVI", publisher: "Ministerio de Vivienda y Agenda Urbana", attribution_text: text };
+    expect(attributions([...datasets, serpavi]).filter((c) => c.text === text)).toEqual([
+      { text, href: "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi" },
     ]);
   });
 

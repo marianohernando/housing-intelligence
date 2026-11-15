@@ -8,7 +8,11 @@ from sqlalchemy import Engine, RowMapping, text
 
 from hi_features.compute import METHODS, compute, persist
 from hi_ingestion.catalog.loader import load_catalog
-from tests.integration.conftest import MADRID_SAMPLE_BARRIOS, MADRID_SAMPLE_DISTRICTS
+from tests.integration.conftest import (
+    MADRID_SAMPLE_BARRIOS,
+    MADRID_SAMPLE_DISTRICTS,
+    sample_feature,
+)
 
 pytestmark = pytest.mark.db
 GOLDEN = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "golden"
@@ -29,6 +33,7 @@ def test_features_satisfy_declared_invariants(
     for spec in catalog.features.values():
         if spec.formula.method not in METHODS:
             continue
+        spec = sample_feature(spec)  # the sample's calibration (D-242)
         result = compute(migrated_engine, spec)
         persist(migrated_engine, spec, result)
         computed += 1
@@ -395,3 +400,55 @@ def test_rent_is_that_of_a_lease_signed_in_the_year(
         assert "aeat_alquiler_nuevos_contratos_codigo_postal" in inputs["dataset_versions"]
         counted = inputs["new_contracts"]
         assert counted["postcodes_with_own_factor"] + counted["postcodes_with_fallback"] >= 1
+
+
+def _reference_rows(engine: Engine) -> dict[tuple[str, str], Any]:
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT territory_level, territory_code, value, null_reason, confidence, inputs "
+                "FROM feature_value WHERE feature_id = 'alquiler_m2_mensual_referencia'"
+            )
+        ).all()
+    return {(r.territory_level, r.territory_code): r for r in rows}
+
+
+def test_reference_rent_fills_from_serpavi_scaled_to_the_cm_and_new_leases(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """D-242: SERPAVI median x (CM mean / SERPAVI median, measured where both exist: here Madrid
+    alone) x the new-lease factor of D-228; the quartiles only x that factor; a municipio whose
+    median is not published (La Acebeda) is SOURCE_MISSING, never 0."""
+    rows = _reference_rows(migrated_engine)
+    madrid, ajalvir = rows[("municipio", "28079")], rows[("municipio", "28002")]
+    acebeda = rows[("municipio", "28001")]
+    calibration = madrid.inputs["reference_rent"]["calibration"]
+    assert calibration["zones"] == 1
+    assert calibration["ratio"] == pytest.approx(15.1 / 13.968, rel=1e-3)
+    madrid_factor = madrid.inputs["new_contracts"]["factor"]
+    assert madrid.value == pytest.approx(15.1 * madrid_factor, rel=1e-3)  # Madrid: back to the CM
+    assert ajalvir.inputs["new_contracts"]["factor_from"] == "28"  # no own table: the region's
+    reference = ajalvir.inputs["reference_rent"]
+    assert reference["typology"] == "colectiva" and reference["contracts"] == 509
+    factor = ajalvir.inputs["new_contracts"]["factor"]  # only it moves the quartiles (R-02)
+    assert reference["quartiles"]["p25"] == pytest.approx(reference["p25_m2"] * factor, rel=1e-3)
+    assert reference["quartiles"]["p75"] == pytest.approx(reference["p75_m2"] * factor, rel=1e-3)
+    assert ajalvir.confidence == pytest.approx(0.7)
+    assert {"mivau_serpavi_alquiler", "cm_alquiler_m2_municipios"} <= set(
+        ajalvir.inputs["dataset_versions"]
+    )
+    assert acebeda.value is None and acebeda.null_reason == "SOURCE_MISSING"
+
+
+def test_reference_rent_of_a_barrio_pools_its_sections(
+    features_computed: None, migrated_engine: Engine
+) -> None:
+    """Sol has no CM rent (no place carries a postcode, D-232): its sections' SERPAVI figures,
+    weighted by their leases, fill it. Districts read their own SERPAVI row; only Madrid's."""
+    rows = _reference_rows(migrated_engine)
+    sol = rows[("barrio", "28079016")]
+    assert sol.value is not None
+    assert sol.inputs["reference_rent"]["sections"] == 5
+    assert sol.inputs["new_contracts"]["factor_from"] == "28079"
+    districts = {code for level, code in rows if level == "distrito"}
+    assert districts and all(code.startswith("28079") for code in districts)

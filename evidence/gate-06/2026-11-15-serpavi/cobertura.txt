@@ -1,0 +1,5 @@
+municipio: 179 zonas · 163 con referencia (26 solo de casas, 38 con menos de 30 contratos) · 37 con el dato CM, que manda · 126 rellenas con la referencia · 16 sin ninguno
+distrito: 21 zonas · 21 con referencia (0 solo de casas, 0 con menos de 30 contratos) · 21 con el dato CM, que manda · 0 rellenas con la referencia · 0 sin ninguno
+barrio: 131 zonas · 131 con referencia (0 solo de casas, 0 con menos de 30 contratos) · 130 con el dato CM, que manda · 1 rellenas con la referencia · 0 sin ninguno
+  rellenas: Sol
+calibración: 37 municipios · mediana 1.0388 · media 1.0310 · de 0.969 a 1.081

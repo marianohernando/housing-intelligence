@@ -3,7 +3,7 @@
  * fit-0.1, D-215). The web never recomputes the fit: it joins the API's figures to the map, the
  * list and the zone card, with the copy of pitch/textos_web.md (zona.*, rc.*, leyenda.*).
  */
-import type { ConstraintCheck, RankedZone, RealityCheck, Relaxation, ScenarioState, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
+import type { ConstraintCheck, CostRange, RankedZone, RealityCheck, Relaxation, ScenarioState, SearchResult, SearchScope, ZoneMatch, ZoneRef } from "@/contracts/search_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 
 import { type ConfidenceText, confidenceText } from "./confidence";
@@ -83,6 +83,16 @@ export interface ZonePrice {
   aria: string;
   /** The card's words for a figure that is not a reliable one («Dato aproximado» for the D-234 estimate), else null */
   confidence: ConfidenceText | null;
+  /** D-242: where half the leases fall and who says so, in the zone card head (zona.precio.rango); null without it */
+  range: PriceRange | null;
+}
+
+/** «La mitad de los contratos, entre 510 y 820 €/mes» and «Ministerio de Vivienda (SERPAVI), 2024» (zona.precio.rango) */
+export interface PriceRange {
+  text: string;
+  source: string;
+  /** Read aloud: «La mitad de los contratos están entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024» */
+  aria: string;
 }
 
 /** At or above this confidence the figure is «Dato fiable» and goes without a mark (lib/confidence.ts). */
@@ -94,7 +104,7 @@ const RELIABLE = 0.8;
  * area the API priced it for (`floorAreaOf` the result's scenario), said with it.
  */
 export function zonePrice(
-  zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence">,
+  zone: Pick<ZoneMatch, "estimated_cost_eur" | "estimated_cost_confidence" | "estimated_cost_range">,
   buying: boolean,
   m2: number | null = null,
 ): ZonePrice | null {
@@ -110,6 +120,20 @@ export function zonePrice(
     area,
     aria: area ? `${aria} ${area}` : aria,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
+    range: buying ? null : priceRange(zone.estimated_cost_range),
+  };
+}
+
+/** D-242: the quartiles of the Ministry's reference rent for the household's m², as the API gives them. */
+export function priceRange(range: CostRange | null | undefined): PriceRange | null {
+  if (!range) return null;
+  const low = formatEuros(range.low_eur).replace(" €", "");
+  const high = formatEuros(range.high_eur);
+  return {
+    // A no-break space keeps «1.190 €/mes» on one line in a narrow card
+    text: `La mitad de los contratos, entre ${low} y ${high.replace(" €", "\u00a0€")}/mes`,
+    source: range.source,
+    aria: `La mitad de los contratos están entre ${low} y ${high} al mes, según ${range.source}`,
   };
 }
 
@@ -238,16 +262,32 @@ export function evaluatedText(result: { scenario: { scope?: SearchScope }; reali
 }
 
 /**
- * resultados.pueblos_sin_alquiler (D-238): renting, the villages come out «Sin datos» because the
- * rent is only published for municipios of more than 20.000 people; null in any other search.
+ * D-242: the villages get the Ministry's reference rent once its dataset is published (GET
+ * /datasets); before the sync the texts keep saying that only the bigger municipios have it, as
+ * the leisure chip of D-236 waits for its own dataset.
+ */
+export const RENT_REFERENCE_DATASET = "mivau_serpavi_alquiler";
+
+export function rentReferenceAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => d.dataset_id === RENT_REFERENCE_DATASET) ?? false;
+}
+
+/**
+ * resultados.pueblos_sin_alquiler (D-238, D-242): renting, why the villages come out «Sin datos»:
+ * with the reference rent, so few rented homes that none is published; without it (before the
+ * sync), the rent only published for municipios of more than 20.000 people. Null in any other search.
  */
 export function rentUnknownText(
   result: { scenario: { scope?: SearchScope; budget?: { kind: string } | null }; reality_check: Pick<RealityCheck, "zones_unknown" | "zones_evaluated"> },
+  rentReference: boolean = true,
 ): string | null {
   const { zones_unknown: n, zones_evaluated: total } = result.reality_check;
   if (resultScope(result) !== "pueblos" || result.scenario.budget?.kind !== "rent" || n === 0) return null;
   const come = n === 1 ? "sale" : "salen";
-  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.`;
+  const why = rentReference
+    ? "tienen tan pocas viviendas alquiladas que no se publica su alquiler"
+    : "el alquiler solo se publica en los municipios de más de 20.000 habitantes";
+  return `${n} de los ${total} pueblos ${come} «Sin datos», sobre todo porque ${why}: no podemos comprobar tu presupuesto.`;
 }
 
 /** A search over Madrid capital ranks its barrios (D-238), not its districts. */
