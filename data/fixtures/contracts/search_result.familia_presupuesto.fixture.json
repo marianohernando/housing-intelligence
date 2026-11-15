@@ -1564,7 +1564,7 @@
         "center_lat": 40.46066
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "confidence": 0.947,
       "facts": [
         {
@@ -1717,7 +1717,7 @@
         "center_lat": 40.43155
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "confidence": 0.947,
       "facts": [
         {
@@ -1870,7 +1870,7 @@
         "center_lat": 40.4178
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "confidence": 0.945,
       "facts": [
         {
@@ -2023,7 +2023,7 @@
         "center_lat": 40.43619
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "confidence": 0.943,
       "facts": [
         {
@@ -2176,7 +2176,7 @@
         "center_lat": 40.40813
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "confidence": 0.943,
       "facts": [
         {
@@ -2330,7 +2330,7 @@
         "center_lat": 41.09507
       },
       "match_pct": 41,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2348,7 +2348,7 @@
         "center_lat": 40.52764
       },
       "match_pct": 70,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2366,7 +2366,7 @@
         "center_lat": 40.91561
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2416,7 +2416,7 @@
         "center_lat": 40.54503
       },
       "match_pct": 77,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2450,7 +2450,7 @@
         "center_lat": 40.30947
       },
       "match_pct": 41,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2468,7 +2468,7 @@
         "center_lat": 40.61846
       },
       "match_pct": 80,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2486,7 +2486,7 @@
         "center_lat": 40.65818
       },
       "match_pct": 82,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2504,7 +2504,7 @@
         "center_lat": 40.34148
       },
       "match_pct": 26,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2554,7 +2554,7 @@
         "center_lat": 40.30031
       },
       "match_pct": 83,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2572,7 +2572,7 @@
         "center_lat": 40.28047
       },
       "match_pct": 79,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2590,7 +2590,7 @@
         "center_lat": 40.93795
       },
       "match_pct": 43,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2608,7 +2608,7 @@
         "center_lat": 40.22377
       },
       "match_pct": 29,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2626,7 +2626,7 @@
         "center_lat": 40.72893
       },
       "match_pct": 67,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2660,7 +2660,7 @@
         "center_lat": 40.97204
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2678,7 +2678,7 @@
         "center_lat": 40.87838
       },
       "match_pct": 27,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2696,7 +2696,7 @@
         "center_lat": 40.41704
       },
       "match_pct": 53,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2714,7 +2714,7 @@
         "center_lat": 40.72286
       },
       "match_pct": 71,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2732,7 +2732,7 @@
         "center_lat": 41.05929
       },
       "match_pct": 44,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2750,7 +2750,7 @@
         "center_lat": 40.24301
       },
       "match_pct": 42,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2768,7 +2768,7 @@
         "center_lat": 40.39766
       },
       "match_pct": 81,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2786,7 +2786,7 @@
         "center_lat": 40.98917
       },
       "match_pct": 79,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2804,7 +2804,7 @@
         "center_lat": 40.83762
       },
       "match_pct": 35,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2822,7 +2822,7 @@
         "center_lat": 40.82635
       },
       "match_pct": 69,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2840,7 +2840,7 @@
         "center_lat": 40.8643
       },
       "match_pct": 63,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2858,7 +2858,7 @@
         "center_lat": 40.29533
       },
       "match_pct": 23,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2876,7 +2876,7 @@
         "center_lat": 40.56606
       },
       "match_pct": 39,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2894,7 +2894,7 @@
         "center_lat": 40.3145
       },
       "match_pct": 77,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2912,7 +2912,7 @@
         "center_lat": 40.89428
       },
       "match_pct": 19,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2930,7 +2930,7 @@
         "center_lat": 40.25825
       },
       "match_pct": 77,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2964,7 +2964,7 @@
         "center_lat": 40.24088
       },
       "match_pct": 10,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -2982,7 +2982,7 @@
         "center_lat": 40.75384
       },
       "match_pct": 61,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3000,7 +3000,7 @@
         "center_lat": 40.91671
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3018,7 +3018,7 @@
         "center_lat": 40.15248
       },
       "match_pct": 86,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3036,7 +3036,7 @@
         "center_lat": 40.56705
       },
       "match_pct": 89,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3054,7 +3054,7 @@
         "center_lat": 40.40147
       },
       "match_pct": 82,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3072,7 +3072,7 @@
         "center_lat": 40.08498
       },
       "match_pct": 4,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3090,7 +3090,7 @@
         "center_lat": 40.53489
       },
       "match_pct": 80,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3124,7 +3124,7 @@
         "center_lat": 40.69057
       },
       "match_pct": 63,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3158,7 +3158,7 @@
         "center_lat": 40.41895
       },
       "match_pct": 37,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3192,7 +3192,7 @@
         "center_lat": 40.19133
       },
       "match_pct": 76,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3210,7 +3210,7 @@
         "center_lat": 40.36898
       },
       "match_pct": 52,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3228,7 +3228,7 @@
         "center_lat": 40.1581
       },
       "match_pct": 65,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3246,7 +3246,7 @@
         "center_lat": 40.56311
       },
       "match_pct": 84,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3264,7 +3264,7 @@
         "center_lat": 40.57809
       },
       "match_pct": 33,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3282,7 +3282,7 @@
         "center_lat": 40.14213
       },
       "match_pct": 17,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3300,7 +3300,7 @@
         "center_lat": 40.47346
       },
       "match_pct": 76,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3318,7 +3318,7 @@
         "center_lat": 40.60898
       },
       "match_pct": 47,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3352,7 +3352,7 @@
         "center_lat": 40.64138
       },
       "match_pct": 76,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3370,7 +3370,7 @@
         "center_lat": 40.11161
       },
       "match_pct": 0,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3388,7 +3388,7 @@
         "center_lat": 40.57005
       },
       "match_pct": 54,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3406,7 +3406,7 @@
         "center_lat": 40.92898
       },
       "match_pct": 43,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3424,7 +3424,7 @@
         "center_lat": 40.96519
       },
       "match_pct": 47,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3442,7 +3442,7 @@
         "center_lat": 41.0383
       },
       "match_pct": 34,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3476,7 +3476,7 @@
         "center_lat": 40.21878
       },
       "match_pct": 78,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3494,7 +3494,7 @@
         "center_lat": 40.76465
       },
       "match_pct": 63,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3512,7 +3512,7 @@
         "center_lat": 40.67716
       },
       "match_pct": 41,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3530,7 +3530,7 @@
         "center_lat": 41.06898
       },
       "match_pct": 21,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3548,7 +3548,7 @@
         "center_lat": 41.07889
       },
       "match_pct": 32,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3566,7 +3566,7 @@
         "center_lat": 41.08713
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3584,7 +3584,7 @@
         "center_lat": 40.61953
       },
       "match_pct": 47,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3602,7 +3602,7 @@
         "center_lat": 40.25235
       },
       "match_pct": 81,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3636,7 +3636,7 @@
         "center_lat": 40.3878
       },
       "match_pct": 80,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3670,7 +3670,7 @@
         "center_lat": 41.04028
       },
       "match_pct": 19,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3688,7 +3688,7 @@
         "center_lat": 40.47175
       },
       "match_pct": 83,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3706,7 +3706,7 @@
         "center_lat": 40.74608
       },
       "match_pct": 38,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3724,7 +3724,7 @@
         "center_lat": 40.561
       },
       "match_pct": 69,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3742,7 +3742,7 @@
         "center_lat": 40.39987
       },
       "match_pct": 84,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3760,7 +3760,7 @@
         "center_lat": 40.78863
       },
       "match_pct": 40,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3778,7 +3778,7 @@
         "center_lat": 40.69694
       },
       "match_pct": 62,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3796,7 +3796,7 @@
         "center_lat": 40.72335
       },
       "match_pct": 70,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3814,7 +3814,7 @@
         "center_lat": 41.09942
       },
       "match_pct": 10,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3832,7 +3832,7 @@
         "center_lat": 40.25755
       },
       "match_pct": 82,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3850,7 +3850,7 @@
         "center_lat": 40.65761
       },
       "match_pct": 68,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3868,7 +3868,7 @@
         "center_lat": 40.22733
       },
       "match_pct": 84,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3902,7 +3902,7 @@
         "center_lat": 40.74959
       },
       "match_pct": 67,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3920,7 +3920,7 @@
         "center_lat": 40.81645
       },
       "match_pct": 32,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3970,7 +3970,7 @@
         "center_lat": 41.00553
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -3988,7 +3988,7 @@
         "center_lat": 40.37733
       },
       "match_pct": 65,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4006,7 +4006,7 @@
         "center_lat": 40.37462
       },
       "match_pct": 49,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4024,7 +4024,7 @@
         "center_lat": 40.36765
       },
       "match_pct": 26,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4058,7 +4058,7 @@
         "center_lat": 40.52211
       },
       "match_pct": 75,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4092,7 +4092,7 @@
         "center_lat": 40.88244
       },
       "match_pct": 0,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4110,7 +4110,7 @@
         "center_lat": 40.74322
       },
       "match_pct": 33,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4128,7 +4128,7 @@
         "center_lat": 40.35995
       },
       "match_pct": 59,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4146,7 +4146,7 @@
         "center_lat": 40.22578
       },
       "match_pct": 3,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4164,7 +4164,7 @@
         "center_lat": 40.40726
       },
       "match_pct": 24,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4182,7 +4182,7 @@
         "center_lat": 40.93535
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4200,7 +4200,7 @@
         "center_lat": 40.24585
       },
       "match_pct": 87,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4218,7 +4218,7 @@
         "center_lat": 41.03499
       },
       "match_pct": 22,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4236,7 +4236,7 @@
         "center_lat": 40.42921
       },
       "match_pct": 81,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4254,7 +4254,7 @@
         "center_lat": 40.36488
       },
       "match_pct": 46,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4272,7 +4272,7 @@
         "center_lat": 41.03923
       },
       "match_pct": 1,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4290,7 +4290,7 @@
         "center_lat": 41.00637
       },
       "match_pct": 0,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4308,7 +4308,7 @@
         "center_lat": 40.41843
       },
       "match_pct": 76,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4326,7 +4326,7 @@
         "center_lat": 40.87318
       },
       "match_pct": 81,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4344,7 +4344,7 @@
         "center_lat": 40.81635
       },
       "match_pct": 17,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4362,7 +4362,7 @@
         "center_lat": 40.66136
       },
       "match_pct": 36,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4396,7 +4396,7 @@
         "center_lat": 40.94987
       },
       "match_pct": 18,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4414,7 +4414,7 @@
         "center_lat": 40.48218
       },
       "match_pct": 33,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4432,7 +4432,7 @@
         "center_lat": 41.12372
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4450,7 +4450,7 @@
         "center_lat": 40.52482
       },
       "match_pct": 77,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4468,7 +4468,7 @@
         "center_lat": 40.3055
       },
       "match_pct": 36,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4486,7 +4486,7 @@
         "center_lat": 40.68273
       },
       "match_pct": 80,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4504,7 +4504,7 @@
         "center_lat": 40.43973
       },
       "match_pct": 78,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4522,7 +4522,7 @@
         "center_lat": 40.6088
       },
       "match_pct": 72,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4540,7 +4540,7 @@
         "center_lat": 40.24299
       },
       "match_pct": 83,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4558,7 +4558,7 @@
         "center_lat": 40.36024
       },
       "match_pct": 19,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4576,7 +4576,7 @@
         "center_lat": 40.58161
       },
       "match_pct": 92,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4594,7 +4594,7 @@
         "center_lat": 40.58043
       },
       "match_pct": 32,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4628,7 +4628,7 @@
         "center_lat": 40.51413
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4646,7 +4646,7 @@
         "center_lat": 41.04186
       },
       "match_pct": 38,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4664,7 +4664,7 @@
         "center_lat": 40.21172
       },
       "match_pct": 85,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4682,7 +4682,7 @@
         "center_lat": 40.35671
       },
       "match_pct": 84,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4700,7 +4700,7 @@
         "center_lat": 41.13996
       },
       "match_pct": 6,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4718,7 +4718,7 @@
         "center_lat": 40.75935
       },
       "match_pct": 46,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4736,7 +4736,7 @@
         "center_lat": 40.73962
       },
       "match_pct": 73,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4754,7 +4754,7 @@
         "center_lat": 40.22737
       },
       "match_pct": 82,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4836,7 +4836,7 @@
         "center_lat": 40.82624
       },
       "match_pct": 78,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4854,7 +4854,7 @@
         "center_lat": 40.5727
       },
       "match_pct": 69,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4872,7 +4872,7 @@
         "center_lat": 40.8364
       },
       "match_pct": 48,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4890,7 +4890,7 @@
         "center_lat": 40.41141
       },
       "match_pct": 59,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4908,7 +4908,7 @@
         "center_lat": 40.2018
       },
       "match_pct": 72,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4926,7 +4926,7 @@
         "center_lat": 40.62588
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4944,7 +4944,7 @@
         "center_lat": 40.17696
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4962,7 +4962,7 @@
         "center_lat": 40.86247
       },
       "match_pct": 16,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4980,7 +4980,7 @@
         "center_lat": 40.49856
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -4998,7 +4998,7 @@
         "center_lat": 40.50673
       },
       "match_pct": 22,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5032,7 +5032,7 @@
         "center_lat": 40.63784
       },
       "match_pct": 72,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5050,7 +5050,7 @@
         "center_lat": 40.76347
       },
       "match_pct": 19,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5068,7 +5068,7 @@
         "center_lat": 40.69637
       },
       "match_pct": 40,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5086,7 +5086,7 @@
         "center_lat": 40.29729
       },
       "match_pct": 46,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5104,7 +5104,7 @@
         "center_lat": 40.40246
       },
       "match_pct": 45,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5138,7 +5138,7 @@
         "center_lat": 40.76336
       },
       "match_pct": 46,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5156,7 +5156,7 @@
         "center_lat": 40.79757
       },
       "match_pct": 29,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5174,7 +5174,7 @@
         "center_lat": 40.11253
       },
       "match_pct": 82,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5192,7 +5192,7 @@
         "center_lat": 40.27249
       },
       "match_pct": 71,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5210,7 +5210,7 @@
         "center_lat": 40.44508
       },
       "match_pct": 75,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5228,7 +5228,7 @@
         "center_lat": 40.07933
       },
       "match_pct": 50,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5278,7 +5278,7 @@
         "center_lat": 40.44623
       },
       "match_pct": 81,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5312,7 +5312,7 @@
         "center_lat": 40.36913
       },
       "match_pct": 83,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5330,7 +5330,7 @@
         "center_lat": 40.33106
       },
       "match_pct": 11,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5348,7 +5348,7 @@
         "center_lat": 40.134
       },
       "match_pct": 78,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5366,7 +5366,7 @@
         "center_lat": 40.35765
       },
       "match_pct": 47,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5384,7 +5384,7 @@
         "center_lat": 41.02768
       },
       "match_pct": 15,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5402,7 +5402,7 @@
         "center_lat": 40.54131
       },
       "match_pct": 65,
-      "match_band": "regular",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5420,7 +5420,7 @@
         "center_lat": 40.92016
       },
       "match_pct": 34,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5438,7 +5438,7 @@
         "center_lat": 40.9688
       },
       "match_pct": 15,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5456,7 +5456,7 @@
         "center_lat": 40.61376
       },
       "match_pct": 91,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5474,7 +5474,7 @@
         "center_lat": 40.4178
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "budget"
@@ -5492,7 +5492,7 @@
         "center_lat": 40.39861
       },
       "match_pct": 92,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "budget"
@@ -5510,7 +5510,7 @@
         "center_lat": 40.40813
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "budget"
@@ -5528,7 +5528,7 @@
         "center_lat": 40.43155
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "budget"
@@ -5546,7 +5546,7 @@
         "center_lat": 40.46066
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "budget"
@@ -5580,7 +5580,7 @@
         "center_lat": 40.43619
       },
       "match_pct": 93,
-      "match_band": "muy_bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "budget"
@@ -5614,7 +5614,7 @@
         "center_lat": 40.43932
       },
       "match_pct": 86,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5776,7 +5776,7 @@
         "center_lat": 40.39115
       },
       "match_pct": 83,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"
@@ -5810,7 +5810,7 @@
         "center_lat": 40.47932
       },
       "match_pct": 85,
-      "match_band": "bien",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"

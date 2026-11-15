@@ -78,8 +78,8 @@ class Fact(BaseModel):
 
 class MatchBand(StrEnum):
     """The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or
-    «poco». The thresholds (90, 75 and 60) live in hi_domain.fit; a web that gets no band derives
-    it from `match_pct` with the same ones."""
+    «poco», only for a zone that passes every condition. The thresholds (90, 75 and 60) live in
+    hi_domain.fit; a web that gets no band derives it from `match_pct` with the same ones."""
 
     MUY_BIEN = "muy_bien"
     BIEN = "bien"
@@ -130,7 +130,8 @@ class RankedZone(BaseModel):
     match_band: MatchBand | None = Field(
         default=None,
         description="`match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from "
-        "60, poco below. Optional and additive: None from an API before fit-0.9",
+        "60, poco below. None for a zone that does not pass every condition (near misses): it "
+        "reads by what it misses. Optional and additive: None from an API before fit-0.9",
     )
     confidence: float = Field(ge=0, le=1)
     facts: list[Fact] = Field(
@@ -168,8 +169,8 @@ class ZoneMatch(BaseModel):
     match_pct: int | None = Field(default=None, ge=0, le=100, description="None = unknown")
     match_band: MatchBand | None = Field(
         default=None,
-        description="`match_pct` in words, as in RankedZone (D-243); None when the % is unknown "
-        "or from an API before fit-0.9",
+        description="`match_pct` in words, as in RankedZone (D-243); None unless `passes_all`, "
+        "and from an API before fit-0.9",
     )
     passes_all: bool
     failed_constraints: list[str] = Field(default_factory=list[str])

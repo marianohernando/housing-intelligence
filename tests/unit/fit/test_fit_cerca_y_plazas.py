@@ -336,13 +336,21 @@ def test_the_pct_in_words(pct: int | None, band: MatchBand | None) -> None:
     assert match_band(pct) is band
 
 
-def test_every_zone_of_the_answer_carries_its_band() -> None:
-    zones = [zone("1"), zone("2", rent=30.0), zone("3", rent=None)]
-    outcome = run_search(family(anchors=[]), zones)
-    ranked = [*outcome.results, *outcome.near_misses]
-    assert ranked and all(r.match_band is match_band(r.match_pct) for r in ranked)
-    assert all(z.match_band is match_band(z.match_pct) for z in outcome.all_zones)
-    assert next(z for z in outcome.all_zones if z.zone.code == "3").match_band is None
+def test_only_a_zone_that_passes_everything_reads_in_words() -> None:
+    """D-243: a near miss (or a zone with a condition that cannot be checked) has no band, so it
+    never reads «muy bien» while over the budget; its % stays, for the order and the API."""
+    zones = [zone("1"), zone("2", rent=13.0), zone("3", rent=None)]  # 2: 1.001 € for 1.000 €
+    outcome = run_search(family(budget=1000, anchors=[]), zones)
+    assert [r.match_band for r in outcome.results] == [match_band(outcome.results[0].match_pct)]
+    assert outcome.results[0].match_band is not None
+    near = outcome.near_misses[0]
+    assert near.failed_constraints == ["budget"] and near.match_pct >= 60
+    assert near.match_band is None
+    bands = {z.zone.code: (z.match_pct, z.match_band) for z in outcome.all_zones}
+    assert bands["1"][1] is match_band(bands["1"][0])
+    assert bands["2"] == (near.match_pct, None)
+    assert bands["3"] == (None, None)
+    assert all(z.match_band is None for z in outcome.all_zones if not z.passes_all)
 
 
 def test_an_answer_without_bands_still_reads() -> None:

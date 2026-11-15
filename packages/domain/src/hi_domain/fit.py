@@ -335,7 +335,10 @@ class ZoneFit:
 
     @property
     def match_band(self) -> MatchBand | None:
-        return match_band(self.match_pct)
+        """The % in words, only for a zone that passes every condition (D-243): one that fails
+        (a near miss) or cannot be checked reads by what it misses, never «muy bien». Its
+        `match_pct` stays, for the order and the API."""
+        return match_band(self.match_pct) if self.passes_all else None
 
     @property
     def failed(self) -> list[str]:
@@ -379,7 +382,8 @@ def budget_utility(cost: float, budget: float) -> float:
 
 def match_band(pct: int | None) -> MatchBand | None:
     """The % shown in words (D-243): muy bien from 90, bien from 75, regular from 60, else
-    poco. None for an unknown %."""
+    poco. None for an unknown %. A zone gets it only when it passes every condition
+    (ZoneFit.match_band)."""
     if pct is None:
         return None
     if pct >= MUY_BIEN_FROM:

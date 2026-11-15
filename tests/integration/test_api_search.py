@@ -57,8 +57,12 @@ def test_demo_case_ranks_zones_that_pass_every_condition(client: TestClient) -> 
     passing = {z.zone.code for z in data.all_zones if z.passes_all}
     assert {r.zone.code for r in data.results} <= passing
     assert any(d.is_cm_open_data for d in data.datasets)
-    for zone in [*data.results, *data.near_misses, *data.all_zones]:  # D-243: the % in words
+    # D-243: the % in words, only for a zone that passes every condition
+    for zone in data.results:
         assert zone.match_band == match_band(zone.match_pct)
+    assert all(zone.match_band is None for zone in data.near_misses)
+    for match in data.all_zones:
+        assert match.match_band == (match_band(match.match_pct) if match.passes_all else None)
 
 
 def test_unknown_never_counts_as_pass(client: TestClient) -> None:

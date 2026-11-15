@@ -999,7 +999,7 @@
         "center_lat": 40.44387
       },
       "match_pct": 55,
-      "match_band": "poco",
+      "match_band": null,
       "confidence": 0.933,
       "facts": [
         {
@@ -1217,7 +1217,7 @@
         "center_lat": 40.44387
       },
       "match_pct": 55,
-      "match_band": "poco",
+      "match_band": null,
       "passes_all": false,
       "failed_constraints": [
         "near:colegio"

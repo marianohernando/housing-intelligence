@@ -554,7 +554,7 @@
       "type": "object"
     },
     "MatchBand": {
-      "description": "The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or\n«poco». The thresholds (90, 75 and 60) live in hi_domain.fit; a web that gets no band derives\nit from `match_pct` with the same ones.",
+      "description": "The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or\n«poco», only for a zone that passes every condition. The thresholds (90, 75 and 60) live in\nhi_domain.fit; a web that gets no band derives it from `match_pct` with the same ones.",
       "enum": [
         "muy_bien",
         "bien",
@@ -773,7 +773,7 @@
             }
           ],
           "default": null,
-          "description": "`match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from 60, poco below. Optional and additive: None from an API before fit-0.9"
+          "description": "`match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from 60, poco below. None for a zone that does not pass every condition (near misses): it reads by what it misses. Optional and additive: None from an API before fit-0.9"
         },
         "match_pct": {
           "description": "% of fit with the search, not a grade",
@@ -1120,7 +1120,7 @@
             }
           ],
           "default": null,
-          "description": "`match_pct` in words, as in RankedZone (D-243); None when the % is unknown or from an API before fit-0.9"
+          "description": "`match_pct` in words, as in RankedZone (D-243); None unless `passes_all`, and from an API before fit-0.9"
         },
         "match_pct": {
           "anyOf": [
