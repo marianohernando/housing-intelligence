@@ -13,7 +13,7 @@ formula:
   method: metric_value
   metric: percepcion_seguridad_barrio_dia
   dims: {}
-  confidence: 0.95  # the city value (8.893 residents); editorial judgement, D-226 §6
+  confidence: 0.95  # the city value (8.593 residents); editorial judgement, D-226 §6
   levels:
     distrito:
       confidence: 0.9  # about 400 residents per district; editorial judgement, D-226 §6
