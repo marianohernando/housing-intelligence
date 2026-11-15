@@ -20,7 +20,6 @@ import {
   GAPS_HELP,
   gapsHref,
   GROUP,
-  householdRows,
   inGroup,
   nearButShort,
   notComparable,
@@ -103,8 +102,8 @@ export default function ZoneCard({ zone, mode, onClose }: Props) {
   // D-234: the approximate price, in the head; none without a price (the search's notice says why)
   const price = result ? zonePriceOf(result, zone_key) : null;
   const rows = gaps.data?.data.rows ?? [];
-  // The three rows in view: what is missing first and, at the same status, those of the household (D-244, R-01)
-  const shown = topRows(rows, 3, householdRows(scenario.household));
+  // The three rows in view: what matters to the household first, then what is missing (D-244, review of PR #79)
+  const shown = topRows(rows, 3, scenario.household);
   // A zone that fits everything asked, with FALTA or JUSTO rows: one line says both are true, with
   // every such row of the API, also those beyond the three the card shows. Not for a barrio: its
   // rows are the whole district's, and the line says «aquí»

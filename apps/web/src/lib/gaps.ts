@@ -184,25 +184,63 @@ export function sortRows<T extends Classified>(rows: readonly T[]): T[] {
   return [...rows].sort((a, b) => statusRank(a) - statusRank(b));
 }
 
-/**
- * The rows that matter most to a household with older people, themselves («Somos mayores») or
- * looked after (D-244, review R-01 of PR #79): the health centre, the pharmacy and the centres for
- * older people. Empty for any other household.
- */
-export const OLDER_ROWS: readonly GapRowKey[] = ["centro_salud", "farmacia", "mayores"];
+/** Who lives in the home, as far as «Qué falta» cares (ScenarioState.household). */
+export interface HouseholdLike {
+  minors?: number;
+  minor_ages?: readonly number[];
+  seniors_in_care?: number;
+  seniors?: boolean;
+}
 
-export function householdRows(household: { seniors?: boolean; seniors_in_care?: number } | null | undefined): readonly GapRowKey[] {
-  return household?.seniors === true || (household?.seniors_in_care ?? 0) > 0 ? OLDER_ROWS : [];
+/** Up to this age a child goes to an escuela infantil (INFANT_MAX_AGE of hi_domain/search.py). */
+const INFANT_MAX_AGE = 2;
+/** The rows about children: they never stand in for another row in a home without children. */
+const CHILD_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio"];
+
+/**
+ * The rows of «Qué falta» that matter to this household, in the card's order (D-244 and review of
+ * PR #79: «lo que le falta que le afecte»): the same rule as highlight_rows of hi_domain/search.py,
+ * which feeds `gap_highlights`, without the housing row. Escuela infantil with a child of 0 to 2
+ * (or ages not given), colegio with any child, the health centre and the pharmacy always, and the
+ * centres for older people with «Somos mayores» or someone older looked after.
+ */
+export function householdRows(household: HouseholdLike | null | undefined): GapRowKey[] {
+  const minors = household?.minors ?? 0;
+  const ages = household?.minor_ages ?? [];
+  const rows: GapRowKey[] = [];
+  if (minors > 0 && (ages.length === 0 || Math.min(...ages) <= INFANT_MAX_AGE)) rows.push("escuela_infantil");
+  if (minors > 0) rows.push("colegio");
+  rows.push("centro_salud", "farmacia");
+  if (household?.seniors === true || (household?.seniors_in_care ?? 0) > 0) rows.push("mayores");
+  return rows;
 }
 
 /**
- * The zone card shows three rows: what is missing first and, at the same status, the household's
- * own rows (`first`, in its order) before the others, which keep the API order.
+ * The three rows of the zone card. Without a household, by status (what is missing first, then
+ * the API order). With one, what matters to it first (householdRows), whatever its status, a «No
+ * comparable» one included: among them, what is short (FALTA, then JUSTO) and then the household's
+ * order. Other rows only fill in when fewer than three of the household's have data, by status;
+ * those about children never do in a home without children. The household's rows without data go last.
  */
-export function topRows<T extends Classified & { row?: GapRowKey }>(rows: readonly T[], limit = 3, first: readonly GapRowKey[] = []): T[] {
-  const mine = (r: T) => (r.row !== undefined && first.includes(r.row) ? first.indexOf(r.row) : first.length);
-  // A stable sort: rows with the same status and no place in `first` keep the API order
-  return [...rows].sort((a, b) => statusRank(a) - statusRank(b) || mine(a) - mine(b)).slice(0, limit);
+export function topRows<T extends Classified & { row?: GapRowKey }>(rows: readonly T[], limit = 3, household?: HouseholdLike | null): T[] {
+  if (!household) return sortRows(rows).slice(0, limit);
+  const mine = householdRows(household);
+  const children = (household.minors ?? 0) > 0;
+  const ownRank = (r: T) => (r.row === undefined ? -1 : mine.indexOf(r.row));
+  const fills = (r: T) => children || r.row === undefined || !CHILD_ROWS.includes(r.row);
+  const known = (r: T) => r.status !== "SIN_DATOS";
+  // 0: the household's with data · 1: others with data · 2: the household's without · 3: others without
+  const group = (r: T) => (ownRank(r) >= 0 ? (known(r) ? 0 : 2) : known(r) ? 1 : 3);
+  const short = (r: T) => (notComparable(r) ? 2 : r.status === "FALTA" ? 0 : r.status === "JUSTO" ? 1 : 2);
+  const order = (a: T, b: T) => {
+    const g = group(a) - group(b);
+    if (g !== 0) return g;
+    if (group(a) === 0) return short(a) - short(b) || ownRank(a) - ownRank(b);
+    if (group(a) === 2) return ownRank(a) - ownRank(b);
+    return statusRank(a) - statusRank(b);
+  };
+  // A stable sort: other rows of the same status keep the API order
+  return rows.filter((r) => ownRank(r) >= 0 || fills(r)).sort(order).slice(0, limit);
 }
 
 type SummaryRow = Classified & { row: GapRowKey };

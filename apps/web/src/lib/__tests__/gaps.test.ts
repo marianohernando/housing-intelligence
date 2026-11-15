@@ -160,26 +160,61 @@ describe("sortRows and topRows", () => {
     expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
   });
 
-  // D-244, review R-01 of PR #79: a retired couple saw «Escuelas infantiles · FALTA» first
-  it("puts the rows of a household with older people first at the same status, never above what is missing", () => {
-    const allJusto = [
+  // Review of PR #79: «lo que le falta que le afecte», the household's rows first for every home
+  it("knows which rows matter to each home, as highlight_rows of hi_domain/search.py", () => {
+    expect(householdRows({ minors: 1, minor_ages: [1] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ minors: 2, minor_ages: [4, 8] })).toEqual(["colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ minors: 1, minor_ages: [] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ seniors: true })).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({ seniors_in_care: 1 })).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({})).toEqual(["centro_salud", "farmacia"]);
+  });
+
+  // Barajas for the retired couple of the example (GET /gaps/distrito/2807921, 15 nov): the health
+  // centre and the centres for older people are too small to compare, the colegio is JUSTO
+  const barajas = [
+    { row: "escuela_infantil", status: "CUBIERTO" },
+    { row: "colegio", status: "JUSTO" },
+    { row: "centro_salud", status: "CUBIERTO", reliable: false },
+    { row: "mayores", status: "CUBIERTO", reliable: false },
+    { row: "farmacia", status: "CUBIERTO" },
+    { row: "vivienda", status: "SIN_DATOS" },
+  ] as const;
+
+  it("shows a retired couple the health centre first, then the pharmacy and the centres for older people, never schools", () => {
+    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "farmacia", "mayores"]);
+    // Without a household, by status, as before: the colegio JUSTO first
+    expect(topRows([...barajas]).map((r) => r.row)[0]).toBe("colegio");
+  });
+
+  it("keeps the escuela infantil up for a family with a baby, and what is short of theirs first", () => {
+    const baby = { minors: 1, minor_ages: [1] };
+    const rows = [
+      { row: "mayores", status: "FALTA" },
       { row: "escuela_infantil", status: "JUSTO" },
-      { row: "colegio", status: "JUSTO" },
-      { row: "mayores", status: "JUSTO" },
+      { row: "colegio", status: "CUBIERTO" },
+      { row: "centro_salud", status: "CUBIERTO" },
       { row: "farmacia", status: "CUBIERTO" },
-      { row: "centro_salud", status: "JUSTO" },
     ] as const;
-    const older = householdRows({ seniors: true });
-    expect(older).toEqual(["centro_salud", "farmacia", "mayores"]);
-    expect(householdRows({ seniors_in_care: 1 })).toEqual(older);
-    expect(householdRows({ seniors: false, seniors_in_care: 0 })).toEqual([]);
-    expect(householdRows(undefined)).toEqual([]);
-    expect(topRows([...allJusto], 3, older).map((r) => r.row)).toEqual(["centro_salud", "mayores", "escuela_infantil"]);
-    // Without older people, the API order within a status, as before
-    expect(topRows([...allJusto], 3, householdRows({})).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "mayores"]);
-    // What is missing still comes first: a FALTA of another row goes above a JUSTO of the household
-    const falta = [{ row: "escuela_infantil", status: "FALTA" }, { row: "farmacia", status: "JUSTO" }, { row: "colegio", status: "JUSTO" }] as const;
-    expect(topRows([...falta], 3, older).map((r) => r.row)).toEqual(["escuela_infantil", "farmacia", "colegio"]);
+    expect(topRows([...rows], 3, baby).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "centro_salud"]);
+    const healthShort = [...rows.slice(0, 3), { row: "centro_salud", status: "FALTA" }, rows[4]] as const;
+    expect(topRows([...healthShort], 3, baby).map((r) => r.row)).toEqual(["centro_salud", "escuela_infantil", "colegio"]);
+  });
+
+  it("never shows a couple without children the escuela infantil, even when it is the zone's FALTA", () => {
+    const rows = [
+      { row: "escuela_infantil", status: "FALTA" },
+      { row: "colegio", status: "FALTA" },
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "mayores", status: "CUBIERTO" },
+      { row: "farmacia", status: "JUSTO" },
+      { row: "vivienda", status: "SIN_DATOS" },
+    ] as const;
+    const top = topRows([...rows], 3, { minors: 0 });
+    expect(top.map((r) => r.row)).toEqual(["farmacia", "centro_salud", "mayores"]);
+    // Rows of the household without data go after the others with data
+    const noHealthData = rows.map((r) => (r.row === "centro_salud" ? { ...r, status: "SIN_DATOS" as const } : r));
+    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["farmacia", "mayores", "centro_salud"]);
   });
 });
 

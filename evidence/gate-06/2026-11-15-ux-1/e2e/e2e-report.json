@@ -1,6 +1,6 @@
 {
  "base": "http://localhost:3061",
- "checked_at": "2026-11-15T17:54:36.175Z",
+ "checked_at": "2026-11-15T18:05:17.588Z",
  "runs": [
   {
    "browserName": "chromium",
@@ -878,7 +878,7 @@
    "shots": [],
    "consoleErrors": [],
    "blocked": [],
-   "seconds": 15
+   "seconds": 14
   }
  ]
 }
