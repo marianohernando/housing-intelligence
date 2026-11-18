@@ -1,0 +1,69 @@
+The API before the deploy (dpl_F5vfeRz1uNGfYD8f7XZ3b31qDZb3, 55651c2, 2026-11-18T22:00:47Z), after it with the old data (dpl_9KhiCQnJ8yVQdM8mQxUe4PGLBEZz, 747cb65, ~22:05Z)
+and after datamad-10 synced D-246 (~22:16Z), the same 51 requests, compared without `meta`:
+deploy-34/35's 11 POST /api/v1/search bodies, GET /api/v1/gaps of the 21 districts and 10 municipios, GET /api/v1/features?level= municipio | distrito | barrio,
+and GET /api/v1/features/{id}/values of plan_vive_viviendas (municipio, distrito), ambitos_residenciales_en_desarrollo (distrito), compraventas_obra_nueva_pct (municipio)
+and suelo_publico_vivienda_m2 (municipio, distrito). #89 only adds optional item fields that are left out when empty (exclude_if), so the other items keep their bytes.
+
+file | before → after the deploy | before → after the sync
+buy400 | identical | identical
+couple1500-madrid | identical | identical
+couple1500-pueblos | identical | identical
+couple1500 | identical | identical
+example | identical | identical
+feat-ambitos_residenciales_en_desarrollo-distrito | identical | identical
+feat-compraventas_obra_nueva_pct-municipio | identical | identical
+feat-list-barrio | identical | identical
+feat-list-distrito | identical | identical
+feat-list-municipio | identical | changes
+feat-plan_vive_viviendas-distrito | identical | identical
+feat-plan_vive_viviendas-municipio | identical | identical
+feat-suelo_publico_vivienda_m2-distrito | identical | changes
+feat-suelo_publico_vivienda_m2-municipio | identical | changes
+gaps-distrito-2807901 | identical | identical
+gaps-distrito-2807902 | identical | identical
+gaps-distrito-2807903 | identical | identical
+gaps-distrito-2807904 | identical | identical
+gaps-distrito-2807905 | identical | identical
+gaps-distrito-2807906 | identical | identical
+gaps-distrito-2807907 | identical | identical
+gaps-distrito-2807908 | identical | identical
+gaps-distrito-2807909 | identical | identical
+gaps-distrito-2807910 | identical | identical
+gaps-distrito-2807911 | identical | identical
+gaps-distrito-2807912 | identical | identical
+gaps-distrito-2807913 | identical | identical
+gaps-distrito-2807914 | identical | identical
+gaps-distrito-2807915 | identical | identical
+gaps-distrito-2807916 | identical | identical
+gaps-distrito-2807917 | identical | identical
+gaps-distrito-2807918 | identical | identical
+gaps-distrito-2807919 | identical | identical
+gaps-distrito-2807920 | identical | identical
+gaps-distrito-2807921 | identical | identical
+gaps-municipio-28001 | identical | identical
+gaps-municipio-28005 | identical | identical
+gaps-municipio-28006 | identical | identical
+gaps-municipio-28049 | identical | identical
+gaps-municipio-28074 | identical | identical
+gaps-municipio-28092 | identical | identical
+gaps-municipio-28106 | identical | identical
+gaps-municipio-28148 | identical | identical
+gaps-municipio-28161 | identical | identical
+gaps-municipio-28180 | identical | identical
+pueblos | identical | identical
+rent10k | identical | identical
+retired-noflag | identical | identical
+retired | identical | identical
+student | identical | identical
+telework | identical | identical
+
+suelo_publico_vivienda_m2/values: before 404 NOT_FOUND (municipio) and 404 NOT_FOUND (distrito), the same after the deploy; 200 after the sync.
+features?level=municipio: 39 → 40 features after the sync; added: suelo_publico_vivienda_m2 ; none removed: true
+
+After the sync, municipio: 179 rows (suelo_publico_vivienda_m2@metric_items, data 2026-11-18-b96deb8ff739), 29 with parcels, 291 parcels, 150 confirmed 0, 1 null.
+  28080 Majadahonda: value 29312 m², 101 items, 0 without m², 101 with the viewer link, regimes {"venta":101}
+  28079 Madrid: value 137579.74 m², 38 items, 0 without m², 38 with the viewer link, regimes {"venta":24,"(none)":6,"concesion":8}
+  28091 Morata de Tajuña: value null m², 1 items, 1 without m², 1 with the viewer link, regimes {"venta":1}
+After the sync, distrito: 21 rows (suelo_publico_vivienda_m2@metric_items, data 2026-11-18-b96deb8ff739), 7 with parcels, 38 parcels, 14 confirmed 0, 0 null.
+  2807919 Vicálvaro: value 67808.3 m², 16 items, 0 without m², 16 with the viewer link, regimes {"concesion":8,"(none)":2,"venta":6}
+  2807913 Puente de Vallecas: value 0 m², 0 items

@@ -1,0 +1,182 @@
+The web of dpl_9KhiCQnJ8yVQdM8mQxUe4PGLBEZz (747cb65), Chromium (Playwright), User-Agent vida-facil-smoke/<tag>.
+
+Part 1, before the sync (probe_747, tag probe747pre, ~22:12–22:14 UTC), at 1440, 390 and 360 px:
+  limit45      the family example with «Tardar como mucho» 45 min: «Casi valen» (#88: «Tarda 1 min más», never «unos 1 min»);
+  seniorAlone  «Solo/a» + «Somos mayores»: the place question and its options (#88: one person, «quieres», «Donde vivo ahora», «Cerca de mi familia»);
+  zones        «Vivienda nueva y lo que viene» of Vicálvaro, Majadahonda and Puente de Vallecas: no land line yet ("land": null), the rest of the card as before;
+  errors       every 4xx and console error: only the 404 of suelo_publico_vivienda_m2, which has no rows until the sync.
+
+1440 {
+ "limit45": {
+  "api": "10 pass, near 5",
+  "near": [
+   "Tarda 1 min más de lo que pedís",
+   "Tarda unos 6 min más de lo que pedís",
+   "Tarda unos 11 min más de lo que pedís",
+   "Tarda unos 8 min más de lo que pedís",
+   "Tarda unos 6 min más de lo que pedís"
+  ],
+  "unos1": false
+ },
+ "seniorAlone": {
+  "place": "¿Cerca de dónde quieres vivir? (opcional)",
+  "options": [
+   "Donde vivo ahora",
+   "Cerca de mi familia",
+   "¿Dónde vives ahora?"
+  ]
+ },
+ "zones": {
+  "vicalvaro": {
+   "heading": "Vicálvaro: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  },
+  "majadahonda": {
+   "heading": "Majadahonda: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  },
+  "puente-vallecas": {
+   "heading": "Puente de Vallecas: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  }
+ },
+ "errors": [
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=distrito",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=municipio",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=distrito",
+  "console: Failed to load resource: the server responded with a status of 404 ()"
+ ]
+}
+390 {
+ "limit45": {
+  "api": "10 pass, near 5",
+  "near": [
+   "Tarda 1 min más de lo que pedís",
+   "Tarda unos 6 min más de lo que pedís",
+   "Tarda unos 11 min más de lo que pedís",
+   "Tarda unos 8 min más de lo que pedís",
+   "Tarda unos 6 min más de lo que pedís"
+  ],
+  "unos1": false
+ },
+ "seniorAlone": {
+  "place": "¿Cerca de dónde quieres vivir? (opcional)",
+  "options": [
+   "Donde vivo ahora",
+   "Cerca de mi familia",
+   "¿Dónde vives ahora?"
+  ]
+ },
+ "zones": {
+  "vicalvaro": {
+   "heading": "Vicálvaro: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  },
+  "majadahonda": {
+   "heading": "Majadahonda: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  },
+  "puente-vallecas": {
+   "heading": "Puente de Vallecas: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  }
+ },
+ "errors": [
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=distrito",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=municipio",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=distrito",
+  "console: Failed to load resource: the server responded with a status of 404 ()"
+ ]
+}
+360 {
+ "limit45": {
+  "api": "10 pass, near 5",
+  "near": [
+   "Tarda 1 min más de lo que pedís",
+   "Tarda unos 6 min más de lo que pedís",
+   "Tarda unos 11 min más de lo que pedís",
+   "Tarda unos 8 min más de lo que pedís",
+   "Tarda unos 6 min más de lo que pedís"
+  ],
+  "unos1": false
+ },
+ "seniorAlone": {
+  "place": "¿Cerca de dónde quieres vivir? (opcional)",
+  "options": [
+   "Donde vivo ahora",
+   "Cerca de mi familia",
+   "¿Dónde vives ahora?"
+  ]
+ },
+ "zones": {
+  "vicalvaro": {
+   "heading": "Vicálvaro: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  },
+  "majadahonda": {
+   "heading": "Majadahonda: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  },
+  "puente-vallecas": {
+   "heading": "Puente de Vallecas: lo que hay cerca",
+   "land": null,
+   "lines": [
+    "Son datos informativos: no cambian qué zonas te convienen ni su orden."
+   ]
+  }
+ },
+ "errors": [
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=distrito",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=municipio",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "HTTP 404 /api/v1/features/suelo_publico_vivienda_m2/values?level=distrito",
+  "console: Failed to load resource: the server responded with a status of 404 ()"
+ ]
+}
+
+Part 2, after the sync: #89's capture-portal-suelo.mjs against production (web and API the same URL), with 360 px added to its 1440 and 390
+and the User-Agent vida-facil-smoke/capture-suelo (capturas-suelo-produccion.json). 82/84; the 2 that fail:
+FAIL 360 Majadahonda · «Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text: 77, 77, 77
+FAIL 360 Vicálvaro · «Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text: 77, 77, 77
+
+The first «Ver en el visor de la Comunidad» link of Vicálvaro's open list (probe_visor360, tag visor360): at 360 px it wraps into two lines
+(«Ver en el visor de la / Comunidad ↗»), 268 × 77 px; at 390 px it is one line, 289 × 50 px. Its accessible name is the same at both widths:
+360 {"w":268,"h":77,"text":"Ver en el visor de la Comunidad: UZPp 2.04 Desarrollo del Este–Los Berrocales · Parcela RC.5.4.1 (se abre en una pestaña nueva)","font":"18px","itemWidth":268}
+390 {"w":289,"h":50,"text":"Ver en el visor de la Comunidad: UZPp 2.04 Desarrollo del Este–Los Berrocales · Parcela RC.5.4.1 (se abre en una pestaña nueva)","font":"18px","itemWidth":298}
+
+Part 3, after the sync: Morata de Tajuña (28091), the only zone whose parcel has no buildable m² published (probe_morata, tag morata), 390 px:
+{
+ "line": "Suelo público para vivienda: 1 parcela. Parcelas que la Comunidad de Madrid o los ayuntamientos ofrecen en venta o en concesión para construir vivienda. No dice cuántas viviendas caben. De alguna parcela no se publica la superficie edificable. Portal del Suelo 4.0 de la Comunidad de Madrid, en su portal de datos abiertos, a 18 de noviembre de 2026. Ver la parcela",
+ "toggle": "Ver la parcela",
+ "open": "Suelo público para vivienda: 1 parcela. Parcelas que la Comunidad de Madrid o los ayuntamientos ofrecen en venta o en concesión para construir vivienda. No dice cuántas viviendas caben. De alguna parcela no se publica la superficie edificable. Portal del Suelo 4.0 de la Comunidad de Madrid, en su portal de datos abiertos, a 18 de noviembre de 2026. Ver la parcela UA-24 CALLE JOSÉ MARÍA RODELGO 32 · Parcela VPP-BA Superficie edificable sin publicar · En venta · Ayuntamiento de Morata de Tajuña Ver en el visor de la Comunidad : UA-24 CALLE JOSÉ MARÍA RODELGO 32 · Parcela VPP-BA (se abre en una p",
+ "errors": []
+}
