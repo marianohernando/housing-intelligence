@@ -12,16 +12,27 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 ---
 
-## Pendiente tras la entrega 2 de UX (19 nov como tarde)
+## Tras la entrega 2 de UX: hecho el 18 nov
 
-La entrega cambia palabras de la web: las bandas pasan a «Muy buena opción», «Buena opción», «Opción regular» y «Poco recomendable»; «Casi encajan» pasa a «Casi valen»; en el móvil la lista enseña nombre, banda y precio, sin % ni empates; y hay un hogar «Somos mayores» y un ejemplo «Pareja jubilada». El método no cambia. Cuando esté desplegada, D:
+La claridad en el móvil (D-244 y D-245) está en producción desde el 15 nov (`55651c2`, PR #84) y D la comprobó el 18 nov. Las palabras de la web cambiaron: las bandas son «Muy buena opción», «Buena opción», «Opción regular» y «Poco recomendable»; la lista se llama «Zonas que te convienen» («os» con más de una persona); «Casi encajan» pasa a «Casi valen» y «¿Y si cambias algo?», a «¿Queréis ver más zonas?». La lista enseña la zona, la banda y el precio (en escritorio, el % pequeño), sin «Empatan»; la tarjeta, lo esencial y lo demás tras «Ver más». El método no cambia.
 
-| Qué | Dónde | Por qué |
+| Qué | Dónde | Estado |
 |---|---|---|
-| Rehacer C1, C2 y C3 en producción y quitar sus `data-pending` | `pitch/capturas/`, `pitch/deck/deck.html` | Enseñan las bandas, el empate y la lista de hoy. `--final` no pasa hasta entonces |
-| Cambiar las etiquetas citadas | `pitch/video_respaldo.md` (plano 3: «Se ve» y «Estado»), pregunta 48, `pitch/banco_formula.md` (las bandas del ejemplo) y `pitch/metodologia.md` §1.3 (lleva aviso) | Citan «Encaja muy bien», «Empatan…», «Empata al 94 % con Latina» o las bandas de hoy. El vídeo se graba el 23 nov |
-| «Zonas que encajan», si la web lo cambia | guion, `slides.md`, `video_respaldo.md`, `metodologia.md` y `textos_web.md` | Es el título de la lista |
-| Contar como hecho lo de la persona mayor | pregunta 43, `slides.md` y guion | Hoy va «decidido, pendiente de B»: portada clara, letra de 16 px como mínimo, botones de 44 px, lenguaje llano y lo esencial primero |
+| Rehacer C1, C2 y C3 en producción y quitar sus `data-pending` | `pitch/capturas/`, `pitch/deck/deck.html` y `deck.css` | **Hecho el 18 nov.** También C6, la lista del móvil a 390 px. Recortes de C2 y C3 y marcadores de la slide 4 al día |
+| Cambiar las etiquetas citadas | `pitch/video_respaldo.md` (planos 2 a 5), preguntas 43 y 48, `pitch/banco_formula.md` y `pitch/metodologia.md` §1.3 (sin el aviso) | **Hecho el 18 nov** |
+| «Zonas que encajan» → «Zonas que te/os convienen» | guion, `slides.md`, `video_respaldo.md`, `metodologia.md` y el deck | **Hecho el 18 nov.** `textos_web.md` ya lo tenía (B) |
+| Contar como hecho lo de la persona mayor | pregunta 43, `slides.md`, guion (bloque 5) y el recuadro de la slide 4 | **Hecho el 18 nov**, con las medidas (0 textos < 16 px y 0 botones < 44 px a 390 y 360 px; 4 cosas por fila en vez de 7 a 9). **Sin segunda prueba todavía:** no se dice que ya le resulta fácil |
+| Que el guion quepa en 5 minutos | guion | **Hecho el 18 nov:** 496 palabras y unos 28 s de margen, con el clic en «Ver más» |
+| «Cómo lo calculamos» dice todavía que la lista pone «Empatan al 94 %» | web (B) | Avisado a datamad-10 el 18 nov; va a la deuda de la web |
+
+## El siguiente paso: de dónde vivir a dónde construir (18 nov)
+
+Aprobado por Mariano el 18 nov. Está en el guion (bloque 4), en la slide 3 («Viabilidad», en el sitio de la miniatura C7) y en la pregunta 60. En las slides, sin nombres de empresas; en la pregunta 60, Nestra y Sitescope como validación de mercado.
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| La capa del suelo público (Portal del Suelo 4.0 de la Comunidad: 291 parcelas residenciales en 29 municipios, unos 394.000 m² edificables en el CSV del 18 nov) | otra línea, en la web | **Pendiente de que datamad-10 confirme que está en producción.** Hasta entonces no se cita como hecha |
+| Cuando se confirme: +1 en `pitch/datasets_cm.md`, la frase de reserva del bloque 4 del guion (y quitar la lista de datos del bloque para no bajar del margen) y, si cabe, «Ya enseñamos el suelo público para vivienda.» en la slide 3 | `datasets_cm.md`, guion, deck | Pendiente |
 
 ---
 

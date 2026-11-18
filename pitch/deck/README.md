@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Una captura aquí sustituye a la de la evidencia; si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`. C1, C2 y C3 están aquí y versionadas: las hizo D en producción el 15 nov con `fit-0.9`, a 1440 × 900 (C1, la tarjeta de Puente de Vallecas; C2, la lista con «Empatan al 94 %» y las bandas; C3, «¿Y si cambias algo?»). Sus recortes están en `deck.css`. C4–C7 siguen siendo las de B (`evidence/map-004/`) |
+| `../capturas/C1.png`… | Una captura aquí sustituye a la de la evidencia; si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`. C1, C2, C3 y C6 están aquí y versionadas: las rehízo D en producción el 18 nov, con la claridad en el móvil desplegada (`55651c2`). C1, C2 y C3, a 1440 × 900 (C1, la tarjeta esencial de Puente de Vallecas; C2, «Zonas que os convienen» con «Muy buena opción · 94 %»; C3, «¿Queréis ver más zonas?»); C6, la lista del móvil a 390 × 844. Sus recortes están en `deck.css`. C4, C5 y C7 siguen siendo las de B (`evidence/map-004/`); C4 y C7 no van en ninguna slide |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -43,9 +43,10 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slides 3 y 4 | C1, C2 y C3 son provisionales (`data-pending` en su `figcaption`): se rehacen tras la entrega de UX, porque cambian las palabras de las bandas y de la lista | D, tras el despliegue de B (19 nov como tarde) |
 
-Rehechas el 15 nov, pero provisionales (fila de arriba): **C1, C2 y C3, de D en producción con `fit-0.9`** (`pitch/capturas/`). C1 enseña la parada por tipo y «¿Dónde?»; el marcador 3 de la slide 4 baja a «Qué falta aquí» (`.s4 .m3`, `top: 581px`); los `alt` dicen Puente de Vallecas y Latina al 94 %.
+Rehechas el 18 nov, ya sin `data-pending`: **C1, C2, C3 y C6, de D en producción con `55651c2`** (`pitch/capturas/`). Los marcadores de la slide 4 van a «Tu búsqueda» (`.s4 .m1`, `top: 340px`), a la cabecera de la tarjeta (`.m2`, `top: 136px`) y a «No le falta nada de lo que buscáis.» (`.m3`, `top: 428px`). Los recortes de C2 y C3 están en `deck.css`.
+
+Añadido el 18 nov: en la slide 3, al pie de «Viabilidad», el siguiente paso («dónde construir, según la vivienda que falta»), en el sitio de la miniatura C7, que no cabía con él y queda de reserva. En la slide 4, el recuadro «Probada con 7 personas» dice también «Y, para una persona mayor, más sencilla en el móvil.»; las paradas de autobús salen del recuadro para que quepa.
 
 Añadido el 14 nov (noche): en la slide 4, bajo los tres pasos, el recuadro «Probada con 7 personas» con lo que pidieron y ya está en la web (relato en `pitch/slides.md`, slide 3). Para que quepa, los pasos van con 24 px de separación en lugar de 40.
 

@@ -33,13 +33,13 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 |---|---|---|---|---|
 | 1 | 0:00–0:08 | 8 s | 14 (≤ 15) | 6 s |
 | 2 | 0:08–0:20 | 12 s | 24 (≤ 26) | 11 s |
-| 3 | 0:20–0:38 | 18 s | 32 (≤ 39) | 15 s |
-| 4 | 0:38–0:55 | 17 s | 28 (≤ 37) | 13 s |
+| 3 | 0:20–0:38 | 18 s | 31 (≤ 39) | 14 s |
+| 4 | 0:38–0:55 | 17 s | 26 (≤ 37) | 12 s |
 | 5 | 0:55–1:07 | 12 s | 24 (≤ 26) | 11 s |
 | 6 | 1:07–1:22 | 15 s | 21 (≤ 32) | 10 s |
 | 7 | 1:22–1:44 | 22 s | 35 (≤ 47) | 16 s |
 | 8 | 1:44–1:58 | 14 s | 24 (≤ 30) | 11 s |
-| **Total** | | **118 s** | **202** | **93 s de voz + pausas para mirar** |
+| **Total** | | **118 s** | **199** | **92 s de voz + pausas para mirar** |
 
 **Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
@@ -66,8 +66,8 @@ Vida Fácil te ayuda a encontrar tu sitio en Madrid con datos abiertos oficiales
 <!-- voz:p1:fin -->
 
 ### Plano 2 · 0:08–0:20 · El caso de ejemplo
-- **Acción:** clic en «Ver un ejemplo: pareja con 2 hijos que trabaja en la Castellana» (`textos_web.md`, `portada.ejemplo.boton`). Rellena la búsqueda y la lanza.
-- **Se ve:** la tarjeta «Tu búsqueda» rellena con el caso. Se recorre con el cursor: «En pareja», «Con hijos» (2), «Colegios», «Transporte» y «Salud», «Colegio a 10 min andando», «Trabajo en» y el alquiler de hasta 1.500 € al mes.
+- **Acción:** clic en «Ejemplo: pareja con 2 hijos que trabaja en la Castellana» (`textos_web.md`, `portada.ejemplo.boton`; así en producción el 18 nov). Rellena la búsqueda y la lanza.
+- **Se ve:** la tarjeta «Tu búsqueda» rellena con el caso. Se recorre con el cursor: «En pareja», «Con hijos» (2), «Colegios», «Transporte» y «Centro de salud», «Trabajo en» y «Hasta 1.500 € al mes». El colegio a 10 min va en «Más opciones», plegado.
 - **Rótulo:** «Pareja con 2 hijos · alquiler hasta 1.500 €/mes · trabajo en la Castellana».
 - **Fuente:** `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`. Si A cambia el caso precargado, se cambian la locución y el rótulo.
 
@@ -75,28 +75,32 @@ Vida Fácil te ayuda a encontrar tu sitio en Madrid con datos abiertos oficiales
 Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar hasta mil quinientos euros al mes y quieren un colegio cerca.
 <!-- voz:p2:fin -->
 
-### Plano 3 · 0:20–0:38 · Zonas que encajan
-- **Acción:** señalar el mapa ya coloreado y la lista «Zonas que encajan». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio.
-- **Se ve:** el mapa con la escala de violetas y la leyenda «Encaje con tu búsqueda», la lista con «Empatan al [pct] %» y, en la tarjeta de la zona, su banda («Encaja muy bien»), «[pct] %», «La 1.ª que más encaja», con quién empata y 5 hechos con su fiabilidad.
-- **Rótulo:** «[zona] · [pct] % de encaje».
-- **Estado:** hecho en producción. Desde el 15 nov (`fit-0.9`, D-243) encajan 42 zonas, y arriba empatan Puente de Vallecas y Latina al 94 %. La 1.ª es Puente de Vallecas, con «Encaja muy bien», «Empata al 94 % con Latina» y «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» (`POST /api/v1/search` con el fixture y la web, comprobado por D). Se graba el 23 nov con lo que salga en pantalla.
+### Plano 3 · 0:20–0:38 · Zonas que os convienen
+- **Acción:** señalar el mapa ya coloreado y la lista «Zonas que os convienen». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio. Al final, clic en «Ver más sobre [zona]» y señalar la fiabilidad de un hecho.
+- **Se ve:**
+  - el mapa con la escala de violetas y su leyenda, «Zonas que os convienen», de «Os conviene menos» a «Os conviene más», con las zonas que cumplen todo, las que no y las que no tienen datos;
+  - la lista, con «Hemos encontrado [N] zonas para vosotros.» y, en cada fila, la zona, su banda en palabras, el % pequeño detrás (en escritorio) y «Unos … € al mes». La lista no dice «Empatan»;
+  - la tarjeta de la 1.ª, con lo esencial: «‹ Volver a la lista», «Distrito de Madrid · [banda]», «Unos … € al mes» con «Precio orientativo», lo que pide la familia con sus minutos y «No le falta nada de lo que buscáis.» (o lo que le falta);
+  - en «Ver más sobre [zona]», «[banda] · [pct] %», «La 1.ª que más os conviene», con quién empata («Igual de buena que [zona] ([pct] %).») y, en «Lo que tenéis aquí», cada hecho con su fiabilidad.
+- **Rótulo:** «[zona] · [banda]».
+- **Estado:** hecho en producción. Desde el 15 nov (`fit-0.9`, D-243, y la claridad en el móvil, D-244 y D-245, desplegada con `55651c2`) salen 42 zonas, y arriba Puente de Vallecas y Latina, las dos «Muy buena opción · 94 %». La tarjeta de Puente de Vallecas dice «Colegio con primaria a unos 4 min andando», «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «No le falta nada de lo que buscáis.»; en «Ver más», «Igual de buena que Latina (94 %).» y «Dato aproximado» en los 41 min (`POST /api/v1/search` con el fixture y la web, comprobado por D el 18 nov). Se graba el 23 nov con lo que salga en pantalla.
 
 <!-- voz:p3:inicio -->
-La búsqueda sale sola. El mapa se colorea según cuánto encaja cada zona con esta familia. La primera encaja en un [pct] por ciento, y debajo vemos por qué, dato a dato.
+La búsqueda sale sola. El mapa se colorea según cuánto le conviene cada zona a esta familia. La primera es una [muy buena opción], y vemos por qué, dato a dato.
 <!-- voz:p3:fin -->
 
-### Plano 4 · 0:38–0:55 · ¿Y si cambias algo?
-- **Acción:** cerrar la tarjeta (×) y bajar hasta «¿Y si cambias algo?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Probar así» en la primera. El mapa se recalcula y sale «Ahora ves las zonas con: [opción]».
-- **Se ve:** «Con tu búsqueda tal cual salen [N] zonas» y las opciones con sus cifras de la API.
-- **Rótulo:** «Con tu búsqueda: [N] zonas · [opción]: [N] zonas».
-- **Estado:** hecho en producción. El 15 nov (`fit-0.9`): «Con tu búsqueda tal cual salen 42 zonas» y dos opciones, «+5 min a pie hasta colegio con primaria: saldrían 91 zonas, 49 más» y «+150 €/mes: saldrían 45 zonas, 3 más» (`POST /api/v1/search` con el fixture y la web).
+### Plano 4 · 0:38–0:55 · ¿Queréis ver más zonas?
+- **Acción:** «‹ Volver a la lista» y bajar hasta «¿Queréis ver más zonas?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Ver esas zonas» en la primera. El mapa se recalcula y sale «Ahora ves las zonas con: [opción]».
+- **Se ve:** «Hemos encontrado [N] zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa:» y las opciones con sus cifras de la API.
+- **Rótulo:** «Con vuestra búsqueda: [N] zonas · [opción]: [N] zonas».
+- **Estado:** hecho en producción. El 18 nov (`fit-0.9`, `55651c2`): «Hemos encontrado 42 zonas para vosotros» y dos opciones, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total» y «+150 €/mes · saldrían 3 más: 45 zonas en total», cada una con «Ver esas zonas» (`POST /api/v1/search` con el fixture y la web; captura C3).
 
 <!-- voz:p4:inicio -->
-¿Y si quieren más opciones? Con su búsqueda tal cual salen [N] zonas. Si cambian una sola cosa, por ejemplo [opción], salen [N]. Un toque y se aplica.
+¿Y si quieren más zonas? Hemos encontrado [N] para ellos. Si cambian una sola cosa, por ejemplo [opción], salen [N] más. Un toque y se aplica.
 <!-- voz:p4:fin -->
 
 ### Plano 5 · 0:55–1:07 · De dónde sale cada dato
-- **Acción:** «Volver a mi búsqueda», abrir otra vez la tarjeta de la 1.ª zona y pulsar «Ver todo lo que falta». En una fila, «De dónde sale: [N] conjuntos de datos» y clic en uno. Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve. En el montaje se corta entre clics: en 12 s no cabe el recorrido entero.
+- **Acción:** «Volver a mi búsqueda», abrir otra vez la tarjeta de la 1.ª zona, «Ver más sobre [zona]» y «Ver todo lo que falta» (comprobado en producción el 18 nov: lleva a `/que-falta?zona=distrito/2807913`). En una fila, «De dónde sale: [N] conjuntos de datos» y clic en uno. Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve. En el montaje se corta entre clics: en 12 s no cabe el recorrido entero.
 - **Se ve:** los nombres de los conjuntos de datos de la fila, cada uno enlazado, y luego la ficha del portal CM con su licencia.
 - **Rótulo:** «Cada dato enlaza a su fuente oficial».
 - **Estado:** hecho en producción: la lista de «Qué falta» enlaza cada conjunto a su ficha (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`, de Madrid capital y anterior a gap-0.3; el enlace a la ficha no cambia). La tarjeta del buscador no tiene enlace a la fuente: por eso se pasa por «Qué falta».
