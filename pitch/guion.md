@@ -153,7 +153,7 @@ Ahora cambio de usuario: un ayuntamiento. A esta familia no le falta nada en Pue
 
 ---
 
-## Bloque 4 · 3:30–4:25 · Datos, código abierto, quién paga y el siguiente paso
+## Bloque 4 · 3:30–4:25 · Datos, código abierto, quién paga, el suelo público y el siguiente paso
 **Pantalla:** la slide 2 en «Treinta y seis conjuntos…» y la slide 3 en «¿Quién paga?» (la columna «Viabilidad», que acaba con el siguiente paso).
 
 **«¿Quién paga?»:** el modelo que eligió Mariano el 12 nov (`pitch/modelo_negocio.md`). Ayuntamientos: informe de 990–1.500 € por contrato menor. Promotoras y consultoras: estudios de 490 a 1.500 €. Las cifras no se dicen en voz alta; si preguntan, pregunta 6 de `pitch/preguntas.md`.
