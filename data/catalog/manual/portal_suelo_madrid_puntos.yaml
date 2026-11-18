@@ -1,0 +1,165 @@
+# D-246: a point inside each parcel of Madrid in «Parcelas publicadas en el Portal del Suelo
+# 4.0» (Comunidad de Madrid, CC BY 4.0). The CSV has no coordinates; these come from the CM's
+# own map layer of the same parcels (IDEM, WFS), read once on `consulted` by
+# scripts/portal_suelo_points.py, so the pipeline places each parcel in its district and barrio
+# without network. Do not edit by hand: run the script again.
+title: 'Parcelas del Portal del Suelo 4.0: un punto dentro de cada parcela'
+publisher: Comunidad de Madrid (IDEM, Dirección General de Suelo)
+url: https://idem.comunidad.madrid/geoidem/UsoDelSuelo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=UsoDelSuelo:IDEM_V_SUELO_PARCELA&outputFormat=application/json
+layer: UsoDelSuelo:IDEM_V_SUELO_PARCELA
+crs: EPSG:25830
+consulted: '2026-11-18'
+method: Punto interior del polígono de la parcela (shapely representative_point), redondeado al metro
+  y comprobado dentro del polígono.
+municipio_ine: '28079'
+points:
+- ref: 00000002M
+  x: 443851
+  y: 4475732
+- ref: 00000005N
+  x: 445879
+  y: 4477404
+- ref: 00000008S
+  x: 441283
+  y: 4482399
+- ref: 00000043S
+  x: 447961
+  y: 4472738
+- ref: 00000044S
+  x: 447969
+  y: 4472732
+- ref: 00000045S
+  x: 447977
+  y: 4472726
+- ref: 00000046S
+  x: 447987
+  y: 4472723
+- ref: 00000047S
+  x: 447975
+  y: 4472704
+- ref: 00000048S
+  x: 447963
+  y: 4472710
+- ref: 00000061S
+  x: 450173
+  y: 4471310
+- ref: 00000062S
+  x: 450318
+  y: 4471484
+- ref: 00000063S
+  x: 449182
+  y: 4471671
+- ref: 00000591I
+  x: 449915
+  y: 4467377
+- ref: 00000592I
+  x: 450635
+  y: 4468394
+- ref: 00000593I
+  x: 444776
+  y: 4480742
+- ref: 00000594I
+  x: 444760
+  y: 4480776
+- ref: 00000595I
+  x: 444682
+  y: 4480780
+- ref: 00000596I
+  x: 447431
+  y: 4475047
+- ref: 00000597I
+  x: 450026
+  y: 4469236
+- ref: 00000598I
+  x: 451079
+  y: 4468799
+- ref: 07900131Y
+  x: 441179
+  y: 4468608
+- ref: 07900133Y
+  x: 438853
+  y: 4465342
+- ref: 07900134Y
+  x: 438843
+  y: 4465259
+- ref: 07900136Y
+  x: 449633
+  y: 4472335
+- ref: 07900138Y
+  x: 450144
+  y: 4471582
+- ref: 07900139Y
+  x: 450282
+  y: 4471501
+- ref: 07900144Y
+  x: 439468
+  y: 4468600
+- ref: 07900150Y
+  x: 437803
+  y: 4481127
+- ref: 07900151Y
+  x: 438356
+  y: 4481322
+- ref: 07900152Y
+  x: 438370
+  y: 4481327
+- ref: 07900153Y
+  x: 438384
+  y: 4481328
+- ref: 07900154Y
+  x: 438301
+  y: 4481212
+- ref: 07900155Y
+  x: 438289
+  y: 4481203
+- ref: 07900157Y
+  x: 436985
+  y: 4481048
+- ref: 07900158Y
+  x: 444666
+  y: 4479877
+- ref: 07900159Y
+  x: 444869
+  y: 4479622
+- ref: 07900161Y
+  x: 444943
+  y: 4479629
+- ref: 07900162Y
+  x: 444973
+  y: 4479632
+- ref: 07900163Y
+  x: 444958
+  y: 4479631
+- ref: 07900164Y
+  x: 444918
+  y: 4479623
+- ref: 07900165Y
+  x: 438674
+  y: 4480027
+- ref: 07900166Y
+  x: 447946
+  y: 4477504
+- ref: 07900172Y
+  x: 450403
+  y: 4469542
+- ref: 07900173Y
+  x: 450340
+  y: 4469530
+- ref: 07900174Y
+  x: 450399
+  y: 4469367
+- ref: 07900175Y
+  x: 450282
+  y: 4469440
+- ref: 07900176Y
+  x: 451339
+  y: 4468569
+- ref: 07900177Y
+  x: 451394
+  y: 4468596
+- ref: 07900178Y
+  x: 451463
+  y: 4468640
+- ref: 07900179Y
+  x: 451520
+  y: 4468674

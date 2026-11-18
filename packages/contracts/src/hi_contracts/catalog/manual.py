@@ -1,9 +1,11 @@
-"""Tables typed by hand from an official page that publishes no file (D-241: Plan Vive).
+"""Versioned inputs a run reads instead of the network: tables typed by hand from an official
+page that publishes no file (D-241: Plan Vive) and the points of the Portal del Suelo parcels
+of Madrid, read once from the CM map layer (D-246, `ParcelPointsTable`).
 
-They live in data/catalog/manual/. Every entry quotes the page (`says`, its exact text), and the
-contract rejects an entry whose name, figure or stage the quote does not contain: nothing is
-typed from memory. An entry the page does not complete is not loaded; it is listed in
-`excluded` with the reason, so it is never lost in silence.
+They live in data/catalog/manual/. Every typed entry quotes the page (`says`, its exact text),
+and the contract rejects an entry whose name, figure or stage the quote does not contain:
+nothing is typed from memory. An entry the page does not complete is not loaded; it is listed
+in `excluded` with the reason, so it is never lost in silence.
 """
 
 from datetime import date
@@ -97,4 +99,45 @@ class ZoneItemsTable(BaseModel):
         ids = [i.item for i in self.items]
         if len(ids) != len(set(ids)):
             raise ValueError("one entry per item")
+        return self
+
+
+# EPSG:25830 bounds of the Comunidad de Madrid, with a margin: a point outside is not one of
+# its parcels (a swapped or degree-valued coordinate).
+REGION_X = (350_000, 510_000)
+REGION_Y = (4_400_000, 4_570_000)
+
+
+class ParcelPoint(BaseModel):
+    """A point inside one parcel of the layer, in metres (EPSG:25830)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ref: str = Field(pattern=r"^[0-9A-Z]{9}$", description="the portal's referencia_codigo")
+    x: int = Field(ge=REGION_X[0], le=REGION_X[1])
+    y: int = Field(ge=REGION_Y[0], le=REGION_Y[1])
+
+
+class ParcelPointsTable(BaseModel):
+    """D-246: where the parcels of a municipio are, read once from the CM's own map layer and
+    versioned, so the run that places them in districts and barrios needs no network. The
+    point is inside the parcel's polygon (not its centroid, which can fall outside it)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=3)
+    publisher: str = Field(min_length=3)
+    url: HttpUrl
+    layer: str = Field(min_length=3)
+    crs: str = Field(pattern=r"^EPSG:25830$")
+    consulted: date
+    method: str = Field(min_length=10)
+    municipio_ine: str = Field(pattern=INE_MUNICIPIO)
+    points: list[ParcelPoint] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _one_point_per_parcel(self) -> Self:
+        refs = [p.ref for p in self.points]
+        if len(refs) != len(set(refs)):
+            raise ValueError("one point per parcel")
         return self

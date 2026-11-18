@@ -2,28 +2,29 @@
 
 import uuid
 from collections.abc import Callable
-from datetime import UTC, datetime, time
+from datetime import UTC, date, datetime, time
 from pathlib import Path
 
 import pandas as pd
 import yaml
-from sqlalchemy import Engine, select
+from sqlalchemy import Engine, select, text
 from sqlalchemy.orm import Session
 
 from hi_contracts.catalog import MetricSpec
-from hi_contracts.catalog.manual import ZoneItemsTable
+from hi_contracts.catalog.manual import ParcelPointsTable, ZoneItemsTable
 from hi_contracts.catalog.pipeline import (
     CmMunicipioNameTablePipeline,
     CsvFormat,
     CuratedZoneItemsPipeline,
     MadridDevelopmentAreasPipeline,
+    PublicLandParcelsPipeline,
 )
 from hi_db.models import GeoAdminUnit
 from hi_ingestion.bronze import REPO_ROOT, sha256_file
 from hi_ingestion.catalog.loader import Catalog
 from hi_ingestion.pipelines.common import DATA_DIR, RunSummary
-from hi_ingestion.pipelines.fetch import FetchedFile
-from hi_ingestion.pipelines.padron.run import known_districts
+from hi_ingestion.pipelines.fetch import FetchedFile, fetch_role
+from hi_ingestion.pipelines.padron.run import known_barrios, known_districts
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
 from hi_ingestion.pipelines.stat_tables.normalize import Observations
 from hi_ingestion.pipelines.stat_tables.publish import replace_observations
@@ -43,19 +44,30 @@ from hi_ingestion.pipelines.zone_context.normalize import (
     normalize_zone_items,
     zone_items_frame,
 )
+from hi_ingestion.pipelines.zone_context.parcels import (
+    ParcelObservations,
+    Placement,
+    normalize_parcels,
+)
 
 PARSER_VERSION = "zone_context-1.1.0"
+PARCELS_PARSER_VERSION = "public_land_parcels-1.0.0"  # D-246
 MANUAL_DIR = REPO_ROOT / "data" / "catalog" / "manual"
 
 
-def geography_names(engine: Engine) -> MunicipioNames:
+def municipio_names_by_code(engine: Engine) -> dict[str, str]:
+    """INE code -> the municipio's name in the geography."""
     with Session(engine) as session:
         rows = session.execute(
             select(GeoAdminUnit.code_official, GeoAdminUnit.name).where(
                 GeoAdminUnit.level == "municipio"
             )
         ).all()
-    return municipio_names({str(code): str(name) for code, name in rows})
+    return {str(code): str(name) for code, name in rows}
+
+
+def geography_names(engine: Engine) -> MunicipioNames:
+    return municipio_names(municipio_names_by_code(engine))
 
 
 def _metrics(catalog: Catalog, metric_ids: list[str]) -> dict[str, MetricSpec]:
@@ -244,6 +256,158 @@ def items_steps(
         counts=lambda obs: row_counts(obs.frame) | {"entries": len(table.items)},
         write_silver=write_silver,
         publish=_publish(spec.metric_ids()),
+    )
+
+
+def load_points(
+    spec: PublicLandParcelsPipeline, manual_dir: Path = MANUAL_DIR
+) -> ParcelPointsTable:
+    path = manual_dir / spec.points
+    return ParcelPointsTable.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def points_input(
+    spec: PublicLandParcelsPipeline, table: ParcelPointsTable, manual_dir: Path = MANUAL_DIR
+) -> FetchedFile:
+    """The versioned points as an input of the run: they enter its checksum and its lineage,
+    with the map layer's URL and the day it was read, never a local path."""
+    path = manual_dir / spec.points
+    consulted = datetime.combine(table.consulted, time(), tzinfo=UTC)
+    return FetchedFile(
+        dataset_id=spec.dataset_id,
+        role="points",
+        path=path,
+        sha256=sha256_file(path),
+        bytes=path.stat().st_size,
+        url=str(table.url),
+        retrieved_at=consulted.isoformat(),
+    )
+
+
+_LOCATE = text(
+    """
+    SELECT p.ref,
+           (SELECT d.code_official FROM geo_admin_unit d
+             WHERE d.level = 'distrito' AND d.code_official LIKE :prefix
+               AND ST_Contains(d.geom_25830, p.geom)) AS distrito,
+           (SELECT b.code_official FROM geo_admin_unit b
+             WHERE b.level = 'barrio' AND b.code_official LIKE :prefix
+               AND ST_Contains(b.geom_25830, p.geom)) AS barrio
+      FROM (SELECT ref, ST_SetSRID(ST_MakePoint(x, y), 25830) AS geom
+              FROM unnest(CAST(:refs AS text[]), CAST(:xs AS float8[]), CAST(:ys AS float8[]))
+                   AS t(ref, x, y)) AS p
+    """
+)
+
+
+def locate_points(engine: Engine, table: ParcelPointsTable) -> dict[str, Placement]:
+    """District and barrio of each point, in the canonical geography of its municipio."""
+    params = {
+        "prefix": f"{table.municipio_ine}%",
+        "refs": [p.ref for p in table.points],
+        "xs": [float(p.x) for p in table.points],
+        "ys": [float(p.y) for p in table.points],
+    }
+    with engine.connect() as conn:
+        rows = conn.execute(_LOCATE, params).all()
+    return {str(r.ref): Placement(r.distrito, r.barrio) for r in rows}
+
+
+def parcels_quality(
+    result: ParcelObservations,
+    spec: PublicLandParcelsPipeline,
+    metrics: dict[str, MetricSpec],
+    known: set[str],
+    zones: set[str],
+) -> QualityReport:
+    """`known`: municipios of the geography; `zones`: districts and barrios of the split one."""
+    base = run_quality(result.obs, metrics, known)
+    frame = result.obs.frame
+    placed = set(frame.loc[frame["territory_level"].isin(["distrito", "barrio"]), "territory_code"])
+    extra = [
+        nothing_quarantined(result.obs.quarantine),
+        CheckResult(
+            "file_size",
+            True,
+            spec.min_rows <= result.parcels <= spec.max_rows,
+            {"parcels": result.parcels, "min": spec.min_rows, "max": spec.max_rows},
+        ),
+        CheckResult(
+            "districts_and_barrios_resolve_to_geography",
+            True,
+            placed <= zones,
+            {"zones": len(placed), "unknown": sorted(placed - zones)},
+        ),
+    ]
+    return QualityReport([*base.checks, *extra])
+
+
+def parcel_steps(
+    engine: Engine,
+    catalog: Catalog,
+    spec: PublicLandParcelsPipeline,
+    points: ParcelPointsTable,
+    observed: date,
+) -> PipelineSteps[ParcelObservations]:
+    metrics = _metrics(catalog, spec.metric_ids())
+    publish = _publish(spec.metric_ids())
+    split = spec.split_municipio_ine
+
+    def normalize(frame: pd.DataFrame) -> ParcelObservations:
+        names = municipio_names_by_code(engine)
+        return normalize_parcels(frame, spec, names, locate_points(engine, points), observed)
+
+    return PipelineSteps(
+        parser_version=PARCELS_PARSER_VERSION,
+        csv=spec.csv,
+        resource_role=spec.resource_role,
+        normalize=normalize,
+        quarantine=lambda result: result.obs.quarantine,
+        quality=lambda result: parcels_quality(
+            result,
+            spec,
+            metrics,
+            known_municipios(engine),
+            known_districts(engine, split) | known_barrios(engine, split),
+        ).to_dict(),
+        counts=lambda result: (
+            row_counts(result.obs.frame)
+            | {
+                "parcels": result.parcels,
+                "out_of_scope": result.out_of_scope,
+                "municipios": len(result.municipios),
+                "points": len(points.points),
+            }
+        ),
+        write_silver=lambda result, directory: write_silver(result.obs, directory),
+        publish=lambda session, result, version_id: publish(session, result.obs, version_id),
+    )
+
+
+def run_parcels_pipeline(
+    engine: Engine,
+    catalog: Catalog,
+    spec: PublicLandParcelsPipeline,
+    source: FetchedFile | None = None,
+    *,
+    evidence_root: Path | None,
+    data_dir: Path = DATA_DIR,
+    manual_dir: Path = MANUAL_DIR,
+) -> RunSummary:
+    """The file is a daily snapshot without a date column: its observations are dated the day
+    it was downloaded (`retrieved_at`, which a Bronze file keeps)."""
+    source = source or fetch_role(catalog.datasets[spec.dataset_id], spec.resource_role)
+    points = load_points(spec, manual_dir)
+    observed = date.fromisoformat(source.retrieved_at[:10])
+    return run_pipeline(
+        engine,
+        catalog,
+        spec.dataset_id,
+        parcel_steps(engine, catalog, spec, points, observed),
+        source,
+        evidence_root=evidence_root,
+        data_dir=data_dir,
+        extra_inputs=[points_input(spec, points, manual_dir)],
     )
 
 

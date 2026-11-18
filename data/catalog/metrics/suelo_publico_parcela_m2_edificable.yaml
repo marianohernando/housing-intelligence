@@ -1,0 +1,15 @@
+metric_id: suelo_publico_parcela_m2_edificable
+human_name: Parcela pública de uso residencial en el Portal del Suelo (m² edificables)
+description: >-
+  Una parcela de uso principal residencial que la Comunidad de Madrid o un Ayuntamiento adherido
+  ofrecen en el Portal del Suelo 4.0, en su municipio y, en Madrid, también en su distrito y su
+  barrio: su superficie edificable en m², con su referencia, su localización, su parcela, su
+  régimen de disposición (solo si la Comunidad publica qué significa el código), su gestor, su
+  grado de urbanización y el enlace al visor de la Comunidad.
+domain: urbanism
+unit: m2
+aggregation_method: sum
+geo_resolution_min: barrio
+temporal_resolution: snapshot
+dataset_id: cm_parcelas_portal_suelo
+dimensions: [item, name, parcel, regime, manager, url, stage]

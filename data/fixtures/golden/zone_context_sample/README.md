@@ -13,3 +13,13 @@ Madrid, los distritos de Centro, Chamartín y Tetuán):
 
 La tabla del valor tasado por antigüedad está en `stat_sample/cm_valor_tasado_vivienda_antiguedad.csv`
 (Madrid, La Acebeda y Ajalvir, 2024 y 2025).
+
+Suelo público para vivienda (D-246):
+
+- `cm_parcelas_portal_suelo.csv`: cinco filas reales de «Parcelas publicadas en el Portal del
+  Suelo 4.0» (portal de datos abiertos de la CM, CC BY 4.0, 18 nov 2026): tres residenciales de
+  Madrid (venta, concesión y el régimen «D», que la Comunidad no explica), una terciaria de Madrid
+  (fuera de alcance) y una residencial de Morata de Tajuña sin superficie edificable, pasada a
+  Ajalvir para que caiga en la geografía de muestra.
+- `portal_suelo_madrid_puntos.yaml`: los puntos de las tres de Madrid, puestos en secciones de la
+  muestra (Almenara y Castillejos, en Tetuán), no donde están de verdad.
