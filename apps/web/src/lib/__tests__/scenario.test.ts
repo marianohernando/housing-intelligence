@@ -571,6 +571,23 @@ describe("«Somos mayores» (D-244)", () => {
     expect(setAdults(alone, 1).anchors).toBe(alone.anchors);
   });
 
+  it("says where they live now in the household's words when a shared link is opened (decodeScenario)", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const alone = setOlderPlace(setOlderHousehold(defaultScenario(), true), "other", station);
+    // A link of one person made before F7 (or by hand) carries «donde vivimos ahora»
+    const old = { ...alone, anchors: alone.anchors?.map((a) => ({ ...a, label: HOME_LABEL.many })) };
+    expect(decodeScenario(encodeScenario(old))?.anchors?.[0]).toEqual({ ...alone.anchors?.[0], label: "donde vivo ahora" });
+    // A couple's link the other way round, and a link already right, unchanged
+    const couple = setAdults(alone, 2);
+    const wrong = { ...couple, anchors: couple.anchors?.map((a) => ({ ...a, label: HOME_LABEL.one })) };
+    expect(decodeScenario(encodeScenario(wrong))?.anchors?.[0]?.label).toBe("donde vivimos ahora");
+    expect(decodeScenario(encodeScenario(alone))).toEqual(alone);
+    // Another label of an `other` place and a family place keep their names
+    const shared = { ...alone, anchors: [{ kind: "other" as const, label: "casa de mis padres", lon: station.lon, lat: station.lat }] };
+    expect(decodeScenario(encodeScenario(shared))?.anchors?.[0]?.label).toBe("casa de mis padres");
+    expect(decodeScenario(encodeScenario(retiredExampleScenario()))).toEqual(retiredExampleScenario());
+  });
+
   it("is the second example: a retired couple renting up to 1.200 € near their family in Ciudad Lineal", () => {
     const retired = retiredExampleScenario();
     expect(retired).toMatchObject({

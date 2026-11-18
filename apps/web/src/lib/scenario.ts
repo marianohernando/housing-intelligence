@@ -454,8 +454,9 @@ export function homeLabel(s: ScenarioState): string {
 const HOME_LABELS: readonly string[] = Object.values(HOME_LABEL);
 
 /**
- * Once the household changes, «donde vivo ahora» says «vivimos» (and back), so the field, the facts
- * and «¿Quieres ver más zonas?» of the API keep the household's words. Only the labels this flow
+ * Once the household changes, or a shared link is opened (decodeScenario), «donde vivo ahora» says
+ * «vivimos» (and back), so the field, the facts and «¿Quieres ver más zonas?» of the API keep the
+ * household's words. Only the labels this flow
  * gives: another `other` place (from a shared link) keeps its own.
  */
 function relabelHome(s: ScenarioState): ScenarioState {
@@ -528,7 +529,8 @@ function isScenario(value: unknown): value is ScenarioState {
 export function decodeScenario(text: string): ScenarioState | null {
   try {
     const value: unknown = JSON.parse(fromBase64Url(text));
-    return isScenario(value) ? value : null;
+    // A link made before «donde vivo ahora» (or by hand) says the place in the household's words too
+    return isScenario(value) ? relabelHome(value) : null;
   } catch {
     return null;
   }

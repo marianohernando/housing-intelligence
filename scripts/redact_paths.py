@@ -33,7 +33,7 @@ PATTERNS = [
     (re.compile(rf"{START}{re.escape(WORKSPACE)}{END}"), "<workspace>"),
     (re.compile(rf"{START}{re.escape(DESKTOP)}{END}"), "<desktop>"),
     # Anywhere else (a scratchpad has already taken its own): ~/.claude/projects/<slug>/memory
-    (re.compile(rf"(?<!\w){SLUG}[^/\s]+"), "<project-slug>"),
+    (re.compile(rf"(?<!\w){SLUG}{NAME}"), "<project-slug>"),
 ]
 
 

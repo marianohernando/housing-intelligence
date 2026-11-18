@@ -76,7 +76,12 @@ def test_redact_replaces_a_project_slug_outside_a_scratchpad() -> None:
     assert redact(memory) == "~/.claude/projects/<project-slug>/memory/MEMORY.md"
     projects = "~/.claude/projects/"
     assert redact(projects + SLUG + "x-Desktop-a") == projects + "<project-slug>"
-    assert redact(f"slug {SLUG}jane-Desktop.") == "slug <project-slug>"
+    # The punctuation after it stays: a full stop, and the quotes and commas of compact JSON
+    assert redact(f"slug {SLUG}jane-Desktop.") == "slug <project-slug>."
+    compact = '{"cwd": "' + SLUG + 'x", "n": 1}'
+    assert redact(compact) == '{"cwd": "<project-slug>", "n": 1}'
+    pair = '["' + SLUG + 'x-Desktop-a","' + SLUG + 'y"]'
+    assert redact(pair) == '["<project-slug>","<project-slug>"]'
     # Not inside a longer word, and a scratchpad still reads as one
     untouched = f"see-also{SLUG}guide and Users-x"
     assert redact(untouched) == untouched
