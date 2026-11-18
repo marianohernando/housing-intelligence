@@ -22,7 +22,7 @@ La claridad en el móvil (D-244 y D-245) está en producción desde el 15 nov (`
 | Cambiar las etiquetas citadas | `pitch/video_respaldo.md` (planos 2 a 5), preguntas 43 y 48, `pitch/banco_formula.md` y `pitch/metodologia.md` §1.3 (sin el aviso) | **Hecho el 18 nov** |
 | «Zonas que encajan» → «Zonas que te/os convienen» | guion, `slides.md`, `video_respaldo.md`, `metodologia.md` y el deck | **Hecho el 18 nov.** `textos_web.md` ya lo tenía (B) |
 | Contar como hecho lo de la persona mayor | pregunta 43, `slides.md`, guion (bloque 5) y el recuadro de la slide 4 | **Hecho el 18 nov**, con las medidas (0 textos < 16 px y 0 botones < 44 px a 390 y 360 px; 4 cosas por fila en vez de 7 a 9). **Sin segunda prueba todavía:** no se dice que ya le resulta fácil |
-| Que el guion quepa en 5 minutos | guion | **Hecho el 18 nov:** 497 palabras y unos 28 s de margen, con el clic en «Ver más». Esa noche, con la frase del suelo público, 501 y unos 26 s |
+| Que el guion quepa en 5 minutos | guion | **Hecho el 18 nov:** 497 palabras y unos 28 s de margen, con el clic en «Ver más». Esa noche, con la frase del suelo público sin cifra (decisión de Mariano), 496 y unos 28 s |
 | «Cómo lo calculamos» dice todavía que la lista pone «Empatan al 94 %» | web (B) | Avisado a datamad-10 el 18 nov; va a la deuda de la web |
 
 ## El siguiente paso: de dónde vivir a dónde construir (18 nov)
@@ -32,8 +32,8 @@ Aprobado por Mariano el 18 nov. Está en el guion (bloque 4), en la slide 3 («V
 | Qué | Dónde | Estado |
 |---|---|---|
 | La capa del suelo público (Portal del Suelo 4.0 de la Comunidad, D-246) | otra línea, en la web | **En producción desde el 18 nov** (despliegue de `747cb65` y sync, `evidence/gate-06/2026-11-18-deploy/deploy-36-747cb65-suelo.md`, PR #90; confirmado por datamad-10). D lo leyó en la API ese día: 291 parcelas en 29 municipios, 394.298 m² edificables; 38 en 7 distritos de Madrid (`pitch/comprobacion_produccion_18nov.md`) |
-| +1 en `pitch/datasets_cm.md` (36 CM, 53 en total, igual que el README y la API), la frase del suelo en el bloque 4 del guion (sin la lista de datos: 106 palabras, unos 26 s de margen) y la pregunta 60 sin «pendiente» | `datasets_cm.md`, guion, preguntas, slides, metodología | **Hecho el 18 nov** |
-| «Ya enseñamos el suelo público para vivienda.» en la slide 3, o una captura de la capa | deck | **Lo decide Mariano** (datamad-10, 18 nov: no se rehace ninguna slide ni captura sin su visto bueno). La slide 2 ya cuenta 36: su número y su tabla salen del catálogo (`pitch/deck/build.py`) |
+| +1 en `pitch/datasets_cm.md` (36 CM, 53 en total, igual que el README y la API), la frase del suelo en el bloque 4 del guion, sin cifra (sin la lista de datos: 101 palabras, unos 28 s de margen) y la pregunta 60 sin «pendiente» | `datasets_cm.md`, guion, preguntas, slides, metodología | **Hecho el 18 nov** |
+| «Ya enseñamos el suelo público para vivienda.» en la slide 3, o una captura de la capa | deck | **Hecho el 18 nov, por decisión de Mariano:** la frase va en la línea del siguiente paso de la slide 3 y cabe a 1920 × 1080; sin captura de la capa. Mariano también quitó la cifra (291) del bloque 4 del guion: no está en pantalla. La slide 2 ya cuenta 36: su número y su tabla salen del catálogo (`pitch/deck/build.py`) |
 
 ---
 
