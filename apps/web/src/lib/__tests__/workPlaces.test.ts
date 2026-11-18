@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import type { PlaceFeature } from "../map/places";
 import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
-import { centroidOf, findPlaces, stationPlaces, stepActive, zonePlaces } from "../workPlaces";
+import { defaultScenario, setAdults, setOlderHousehold, setOlderPlace, setSeniors } from "../scenario";
+import { centroidOf, findPlaces, olderPlaceText, stationPlaces, stepActive, zonePlaces } from "../workPlaces";
 
 function station(name: string, subcategory: string, lon = -3.69, lat = 40.45): PlaceFeature {
   return {
@@ -105,5 +106,42 @@ describe("stepActive (arrows in the list of places)", () => {
     expect(stepActive(0, -1, 3)).toBe(2);
     expect(stepActive(1, 1, 3)).toBe(2);
     expect(stepActive(0, 1, 0)).toBe(-1);
+  });
+});
+
+// «Solo/a» + «Somos mayores» was asked «¿Cerca de dónde queréis vivir?» (debt of the UX mobile reviews, D-245 §10)
+describe("olderPlaceText (lugar.*, D-244): in the household's words", () => {
+  const alone = setOlderHousehold(defaultScenario(), true);
+
+  it("speaks to an older person who lives alone as «tú»: quieres, vivo, mi familia", () => {
+    expect(olderPlaceText(alone)).toEqual({
+      title: "¿Cerca de dónde quieres vivir?",
+      which: "Tu casa de ahora o tu familia",
+      options: { other: "Donde vivo ahora", family: "Cerca de mi familia" },
+      search: { other: "¿Dónde vives ahora?", family: "¿Dónde vive tu familia?" },
+      help: "Miramos cuánto se tarda en transporte público hasta ese sitio, llegando a las 9:00 de un día laborable, y contamos el trayecto como si fueras 3 días a la semana. Ponemos 30 min como mucho: puedes cambiarlo o quitarlo.",
+      family: "Tu familia",
+    });
+  });
+
+  it("speaks to a couple, or to one adult who looks after someone, as «vosotros», as before", () => {
+    const couple = olderPlaceText(setAdults(alone, 2));
+    expect(couple).toMatchObject({
+      title: "¿Cerca de dónde queréis vivir?",
+      which: "Vuestra casa de ahora o vuestra familia",
+      options: { other: "Donde vivimos ahora", family: "Cerca de nuestra familia" },
+      search: { other: "¿Dónde vivís ahora?", family: "¿Dónde vive vuestra familia?" },
+      family: "Vuestra familia",
+    });
+    expect(couple.help).toContain("como si fuerais 3 días a la semana");
+    expect(olderPlaceText(setSeniors(alone, 1)).title).toBe("¿Cerca de dónde queréis vivir?");
+  });
+
+  it("names the option as the place it creates, so the form and the API's facts say the same", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    for (const scenario of [alone, setAdults(alone, 2)]) {
+      const label = setOlderPlace(scenario, "other", station).anchors?.[0]?.label ?? "";
+      expect(olderPlaceText(scenario).options.other).toBe(label.charAt(0).toUpperCase() + label.slice(1));
+    }
   });
 });

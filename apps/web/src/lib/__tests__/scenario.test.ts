@@ -18,6 +18,7 @@ import {
   floorAreaOptions,
   HOUSEHOLD_FLOOR_AREA_M2,
   HOME_LABEL,
+  homeLabel,
   isOlderHousehold,
   OFFICE_DAYS,
   officeDays,
@@ -527,21 +528,64 @@ describe("«Somos mayores» (D-244)", () => {
 
   it("asks where they want to live: where they live now (never its own name) or near their family, 30 min and 3 days", () => {
     const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
-    const home = setOlderPlace(defaultScenario(), "other", station);
-    expect(olderPlace(home)).toEqual({ kind: "other", anchor: { kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 30, days_per_week: 3 } });
+    const home = setOlderPlace(setAdults(defaultScenario(), 2), "other", station);
+    expect(olderPlace(home)).toEqual({ kind: "other", anchor: { kind: "other", label: HOME_LABEL.many, lon: station.lon, lat: station.lat, max_minutes: 30, days_per_week: 3 } });
     // Lower case: the API says it inside a sentence («27 min en transporte público hasta donde vivimos ahora»)
-    expect(HOME_LABEL).toBe("donde vivimos ahora");
+    expect(HOME_LABEL).toEqual({ one: "donde vivo ahora", many: "donde vivimos ahora" });
     const family = setOlderPlace(home, "family", station);
     expect(family.anchors).toEqual([{ kind: "family", label: "Ciudad Lineal (metro)", lon: station.lon, lat: station.lat, ...OLDER_TRIP }]);
     // One place: the other kind takes the same point, and keeps a limit the person changed
     const limited = setPlaceMaxMinutes(family, "family", 45);
     const moved = setOlderPlaceKind(limited, "other", "Ciudad Lineal (metro)");
-    expect(moved.anchors).toEqual([{ kind: "other", label: HOME_LABEL, lon: station.lon, lat: station.lat, max_minutes: 45, days_per_week: 3 }]);
+    expect(moved.anchors).toEqual([{ kind: "other", label: HOME_LABEL.many, lon: station.lon, lat: station.lat, max_minutes: 45, days_per_week: 3 }]);
     expect(setOlderPlaceKind(moved, "family", "Ciudad Lineal (metro)").anchors?.[0]?.label).toBe("Ciudad Lineal (metro)");
     expect(setOlderPlace(moved, "other", null).anchors).toEqual([]);
     // A work place stays, before the place to live near
     const working = setOlderPlace(setPlace(defaultScenario(), "work", station), "other", station);
     expect(working.anchors?.map((a) => a.kind)).toEqual(["work", "other"]);
+  });
+
+  // An older person who lives alone is told «vivo», not «vivimos» (debt of the UX mobile reviews, D-245 §10)
+  it("names where they live now in the household's words, when the place is picked and when the household changes", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const alone = setOlderHousehold(defaultScenario(), true);
+    expect(homeLabel(alone)).toBe("donde vivo ahora");
+    expect(homeLabel(setAdults(alone, 2))).toBe("donde vivimos ahora");
+    // One adult with someone looked after or a child is more than one at home, as speaksToMany says
+    expect(homeLabel(setSeniors(alone, 1))).toBe("donde vivimos ahora");
+    expect(homeLabel(setMinors(alone, 1))).toBe("donde vivimos ahora");
+    const home = setOlderPlace(alone, "other", station);
+    expect(home.anchors?.[0]?.label).toBe("donde vivo ahora");
+    expect(setOlderPlaceKind(setOlderPlace(alone, "family", station), "other", "Ciudad Lineal (metro)").anchors?.[0]?.label).toBe("donde vivo ahora");
+    // The label follows the household, so the facts and the proposals of the API say the same words as the form
+    const couple = setAdults(home, 2);
+    expect(couple.anchors).toEqual([{ kind: "other", label: "donde vivimos ahora", lon: station.lon, lat: station.lat, ...OLDER_TRIP }]);
+    expect(setAdults(couple, 1).anchors?.[0]?.label).toBe("donde vivo ahora");
+    expect(setSeniors(home, 1).anchors?.[0]?.label).toBe("donde vivimos ahora");
+    expect(setMinors(setMinors(home, 2), 0).anchors?.[0]?.label).toBe("donde vivo ahora");
+    // Nothing else changes: a family place keeps its name, and a household change without a place to rename is the same object
+    const family = setOlderPlace(alone, "family", station);
+    expect(setAdults(family, 2).anchors?.[0]?.label).toBe("Ciudad Lineal (metro)");
+    const shared = { ...alone, anchors: [{ kind: "other" as const, label: "casa de mis padres", lon: station.lon, lat: station.lat }] };
+    expect(setAdults(shared, 2).anchors?.[0]?.label).toBe("casa de mis padres");
+    expect(setAdults(alone, 1).anchors).toBe(alone.anchors);
+  });
+
+  it("says where they live now in the household's words when a shared link is opened (decodeScenario)", () => {
+    const station = { label: "Ciudad Lineal (metro)", lon: -3.63816, lat: 40.43805 };
+    const alone = setOlderPlace(setOlderHousehold(defaultScenario(), true), "other", station);
+    // A link of one person made before F7 (or by hand) carries «donde vivimos ahora»
+    const old = { ...alone, anchors: alone.anchors?.map((a) => ({ ...a, label: HOME_LABEL.many })) };
+    expect(decodeScenario(encodeScenario(old))?.anchors?.[0]).toEqual({ ...alone.anchors?.[0], label: "donde vivo ahora" });
+    // A couple's link the other way round, and a link already right, unchanged
+    const couple = setAdults(alone, 2);
+    const wrong = { ...couple, anchors: couple.anchors?.map((a) => ({ ...a, label: HOME_LABEL.one })) };
+    expect(decodeScenario(encodeScenario(wrong))?.anchors?.[0]?.label).toBe("donde vivimos ahora");
+    expect(decodeScenario(encodeScenario(alone))).toEqual(alone);
+    // Another label of an `other` place and a family place keep their names
+    const shared = { ...alone, anchors: [{ kind: "other" as const, label: "casa de mis padres", lon: station.lon, lat: station.lat }] };
+    expect(decodeScenario(encodeScenario(shared))?.anchors?.[0]?.label).toBe("casa de mis padres");
+    expect(decodeScenario(encodeScenario(retiredExampleScenario()))).toEqual(retiredExampleScenario());
   });
 
   it("is the second example: a retired couple renting up to 1.200 € near their family in Ciudad Lineal", () => {

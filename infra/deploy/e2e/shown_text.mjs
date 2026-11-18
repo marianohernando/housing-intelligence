@@ -109,6 +109,9 @@ export function factAsShown(fact) {
   return fact.text.replace(/;\s*un anuncio de hoy puede pedir más/, "").replace(/≈ /g, "unos ").replace(/€\/mes/g, "€ al mes");
 }
 
+/** «unos 12 min», «1 min» or «menos de 1 min» (minutesOver of apps/web/src/lib/shortfall.ts): never «unos 1 min» nor «unos 0 min». */
+const MINUTES_OVER = "(?:unos (?:[2-9]|\\d{2,}) min|1 min|menos de 1 min)";
+
 /**
  * The line of a near miss in «Casi valen» (resultados.casi.*): what it lacks, by its figures (with
  * «unos», never «≈») or by its name, and «y otra condición» or «y {n} condiciones más» when it fails
@@ -121,9 +124,9 @@ export function nearMissLine(many) {
     "^(?:" +
       [
         `Se pasa unos [\\d.]+ €(?: al mes)? de ${presupuesto}`,
-        `Tarda (?:unos \\d+ min|menos de 1 min) más de lo que ${pides}(?: hasta .+)?`,
+        `Tarda ${MINUTES_OVER} más de lo que ${pides}(?: hasta .+)?`,
         `Tarda más de 2 h(?: hasta .+)?; ${pides} \\d+ min como mucho`,
-        `.+: (?:unos \\d+ min|menos de 1 min) más andando de lo que ${pides}`,
+        `.+: ${MINUTES_OVER} más andando de lo que ${pides}`,
         `.+ a más de 1 h andando; ${pides} \\d+ min como mucho`,
         "No cumple: .+",
         `No cumple todo lo que ${pides}\\.`,

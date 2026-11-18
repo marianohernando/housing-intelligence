@@ -23,7 +23,7 @@ import {
   setPlaceMaxMinutes,
   setWorkDays,
 } from "@/lib/scenario";
-import { findPlaces, STATION_KINDS, stationPlaces, stepActive, type WorkPlace, zonePlaces } from "@/lib/workPlaces";
+import { findPlaces, olderPlaceText, STATION_KINDS, stationPlaces, stepActive, type WorkPlace, zonePlaces } from "@/lib/workPlaces";
 
 import styles from "./SearchCard.module.css";
 import { useScenario } from "./ScenarioProvider";
@@ -46,43 +46,37 @@ const TEXT = {
   daysOption: (n: number) => (n === 0 ? "Teletrabajo total" : n === 1 ? "1 día" : `${n} días`),
   fewDays: "Como vas pocos días, el trayecto cuenta la mitad.",
   telework: "Con teletrabajo total, el trayecto no cuenta para ordenar las zonas. Si pones un límite, lo respetamos.",
-  // lugar.* (D-244): «Somos mayores» is asked where they want to live, in place of «Trabajo en»
-  older: {
-    title: "¿Cerca de dónde queréis vivir?",
-    // The name of the two options, not the question again (review H7 of PR #79)
-    which: "Vuestra casa de ahora o vuestra familia",
-    options: { other: "Donde vivimos ahora", family: "Cerca de nuestra familia" } satisfies Record<OlderPlaceKind, string>,
-    search: { other: "¿Dónde vivís ahora?", family: "¿Dónde vive vuestra familia?" } satisfies Record<OlderPlaceKind, string>,
-    help: "Miramos cuánto se tarda en transporte público hasta ese sitio, llegando a las 9:00 de un día laborable, y contamos el trayecto como si fuerais 3 días a la semana. Ponemos 30 min como mucho: puedes cambiarlo o quitarlo.",
-    // A family place picked before this field knew its name (a shared link): said in plain words
-    family: "Vuestra familia",
-  },
 };
 
-/** What changes from «Trabajo en» to «Cerca de mi familia o amigos» and «Donde vivimos ahora»; the rest is the same field. */
-const KINDS: Record<PlaceKind, { title: string; help: string; commuteAria: string; icon: LucideIcon }> = {
+/** «donde vivo ahora», the label the API puts inside a sentence, at the start of its own line. */
+const capitalised = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+/** «Trabajo en» and «Cerca de mi familia o amigos»: the fields of PlaceField. */
+type FieldKind = Exclude<PlaceKind, "other">;
+
+/** What changes from «Trabajo en» to «Cerca de mi familia o amigos»; the rest is the same field. */
+const FIELDS: Record<FieldKind, { title: string; help: string }> = {
   work: {
     title: "Trabajo en",
     // trabajo.ayuda: the commute in public transport minutes (CORE-009, D-220), every CRTM feed, without acronyms
     help: "Miramos cuánto tardarías en llegar a las 9:00 en transporte público: metro, autobús, Cercanías y Metro Ligero.",
-    // trabajo.max_min.aria: names the place, as the family one does
-    commuteAria: "Tardar como mucho hasta el trabajo, en transporte público",
-    icon: Briefcase,
   },
   family: {
     title: "Cerca de mi familia o amigos",
     // familia.ayuda: the same trip as the work place, so it says the declared proxy (D-240)
     help: "Miramos cuánto tardarías en transporte público llegando a las 9:00 de un día laborable.",
-    commuteAria: "Tardar como mucho hasta mi familia o amigos, en transporte público",
-    icon: Heart,
   },
-  // lugar.ahora (D-244): where a retired household lives now, only with «Somos mayores»
-  other: {
-    title: "Donde vivimos ahora",
-    help: "Miramos cuánto se tarda en transporte público hasta donde vivís ahora, llegando a las 9:00 de un día laborable.",
-    commuteAria: "Tardar como mucho hasta donde vivimos ahora, en transporte público",
-    icon: House,
-  },
+};
+
+/**
+ * The picked place of every kind, also «Donde vivo ahora» (lugar.ahora, D-244, only with «Somos
+ * mayores»): its icon and the name of its «Tardar como mucho» (trabajo.max_min.aria), which names
+ * the place; «donde vivo ahora» by its own label, in the household's words.
+ */
+const PICKED: Record<PlaceKind, { icon: LucideIcon; commuteAria: (label: string) => string }> = {
+  work: { icon: Briefcase, commuteAria: () => "Tardar como mucho hasta el trabajo, en transporte público" },
+  family: { icon: Heart, commuteAria: () => "Tardar como mucho hasta mi familia o amigos, en transporte público" },
+  other: { icon: House, commuteAria: (label) => `Tardar como mucho hasta ${label}, en transporte público` },
 };
 
 type Stations = WorkPlace[] | "loading" | "failed" | null;
@@ -120,7 +114,7 @@ function TripLimit({ kind, anchor }: { kind: PlaceKind; anchor: Anchor }) {
       {TEXT.commuteBefore}
       <select
         className={styles.select}
-        aria-label={KINDS[kind].commuteAria}
+        aria-label={PICKED[kind].commuteAria(anchor.label)}
         value={anchor.max_minutes ?? ""}
         onChange={(e) => update((s) => setPlaceMaxMinutes(s, kind, e.target.value === "" ? null : Number(e.target.value)))}
       >
@@ -178,12 +172,9 @@ interface PickedProps {
   onRemove: () => void;
 }
 
-/** «donde vivimos ahora», the label the API puts inside a sentence, at the start of its own line. */
-const capitalised = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
-
 /** The place picked, with its selectors: the days (work only) and its limit, which applies whatever the days. */
 function PickedPlace({ kind, anchor, placeName, removeRef, onRemove }: PickedProps) {
-  const Icon = KINDS[kind].icon;
+  const Icon = PICKED[kind].icon;
   const label = capitalised(anchor.label);
   const name = placeName && placeName !== anchor.label ? `${label}: ${placeName}` : label;
   return (
@@ -321,11 +312,11 @@ function useSwapFocus(anchor: Anchor | null) {
  * «Trabajo en» and «Cerca de mi familia o amigos»: the place search, then the place picked. It goes
  * to the search without a minutes limit until «Tardar como mucho» sets one.
  */
-export default function PlaceField({ kind, stationList, id: fieldId }: { kind: PlaceKind; stationList: StationList; id?: string }) {
+export default function PlaceField({ kind, stationList, id: fieldId }: { kind: FieldKind; stationList: StationList; id?: string }) {
   const { scenario, update } = useScenario();
   const id = useId();
   const anchor = placeOf(scenario, kind);
-  const { title, help } = KINDS[kind];
+  const { title, help } = FIELDS[kind];
   const { input, remove, focusNext } = useSwapFocus(anchor);
 
   const name = (
@@ -373,20 +364,21 @@ export default function PlaceField({ kind, stationList, id: fieldId }: { kind: P
 }
 
 /**
- * «¿Cerca de dónde queréis vivir?» (D-244, Mariano's design), in place of «Trabajo en» with «Somos
- * mayores»: where they live now or near their family, picked with the same place search, and
- * 30 min as most by public transport, which the person can change. Optional, and always in view.
+ * «¿Cerca de dónde quieres vivir?» / «… queréis …» (D-244, Mariano's design), in place of «Trabajo
+ * en» with «Somos mayores»: where they live now or near their family, picked with the same place
+ * search, and 30 min as most by public transport, which the person can change. Optional, and always in view.
  */
 export function OlderPlaceField({ stationList, id: fieldId }: { stationList: StationList; id?: string }) {
   const { scenario, update } = useScenario();
   const id = useId();
+  const words = olderPlaceText(scenario);
   const current = olderPlace(scenario);
   // Which of the two before a place is picked; then, the kind of the place
   const [chosen, setChosen] = useState<OlderPlaceKind>("other");
   const kind = current?.kind ?? chosen;
-  // The name of the place picked, to show it beside «Donde vivimos ahora» and to name the family's.
+  // The name of the place picked, to show it beside «Donde vivo ahora» and to name the family's.
   // A family place carries it as its label, so it survives a change of option, a new mount and the
-  // example (review H2 of PR #79); the field only has to remember it for «Donde vivimos ahora»
+  // example (review H2 of PR #79); the field only has to remember it for «Donde vivo ahora»
   const [pickedName, setPickedName] = useState<string | null>(null);
   const placeName = current?.kind === "family" ? current.anchor.label : pickedName;
   const { input, remove, focusNext } = useSwapFocus(current?.anchor ?? null);
@@ -394,16 +386,16 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
   return (
     <fieldset id={fieldId} className={styles.group}>
       <legend>
-        {TEXT.older.title} <span className={styles.optional}>{TEXT.optional}</span>
+        {words.title} <span className={styles.optional}>{TEXT.optional}</span>
       </legend>
       <Segmented
-        legend={TEXT.older.which}
+        legend={words.which}
         value={kind}
-        options={(["other", "family"] as const).map((value) => ({ value, label: TEXT.older.options[value] }))}
+        options={(["other", "family"] as const).map((value) => ({ value, label: words.options[value] }))}
         onChange={(next) => {
           setChosen(next);
           setPickedName(placeName);
-          if (current) update((s) => setOlderPlaceKind(s, next, placeName ?? TEXT.older.family));
+          if (current) update((s) => setOlderPlaceKind(s, next, placeName ?? words.family));
         }}
       />
       {current ? (
@@ -423,11 +415,11 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
       ) : (
         <>
           <label htmlFor={`${id}-input`} className={styles.areaPick}>
-            {TEXT.older.search[kind]}
+            {words.search[kind]}
           </label>
           <PlaceSearch
             inputId={`${id}-input`}
-            listLabel={TEXT.older.search[kind]}
+            listLabel={words.search[kind]}
             helpId={`${id}-help`}
             stationList={stationList}
             inputRef={input}
@@ -439,8 +431,8 @@ export function OlderPlaceField({ stationList, id: fieldId }: { stationList: Sta
           />
         </>
       )}
-      <Help about={TEXT.older.title} id={`${id}-help`}>
-        <p>{TEXT.older.help}</p>
+      <Help about={words.title} id={`${id}-help`}>
+        <p>{words.help}</p>
       </Help>
     </fieldset>
   );

@@ -1,0 +1,469 @@
+{
+ "modo": "barrios",
+ "como": "Playwright contra la web http://localhost:3091 (next build + start) y la API http://localhost:8091 (datos reales)",
+ "desktop": {
+  "distrito": {
+   "name": "Puente de Vallecas",
+   "code": "2807913",
+   "puesto": 1
+  },
+  "ms_hasta_los_barrios": 903,
+  "resumen": "Sus 6 barrios os convienen.",
+  "antes_de_los_contornos": {
+   "nombre": "Palomeras Bajas",
+   "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+   "boton": true,
+   "pulsado": null,
+   "abierto": "false",
+   "falta": null,
+   "panel": []
+  },
+  "panel_sin_contornos": {
+   "nombre": "Palomeras Bajas",
+   "texto": "Palomeras BajasMuy buena opción · 94 %Unos 1.110 € al mes",
+   "boton": true,
+   "pulsado": null,
+   "abierto": "true",
+   "falta": null,
+   "panel": [
+    "94 %",
+    "Igual de bueno que San Diego, Numancia y Entrevías (94 %).",
+    "Para un piso de unos 77 m² · Dato aproximado",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+   ]
+  },
+  "panel_con_contornos": {
+   "nombre": "Palomeras Bajas",
+   "texto": "Palomeras BajasMuy buena opción · 94 %Unos 1.110 € al mes",
+   "boton": true,
+   "pulsado": null,
+   "abierto": "true",
+   "falta": null,
+   "panel": [
+    "94 %",
+    "Igual de bueno que San Diego, Numancia y Entrevías (94 %).",
+    "Para un piso de unos 77 m² · Dato aproximado",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+   ]
+  },
+  "otro_pulsado": [
+   {
+    "nombre": "Palomeras Bajas",
+    "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "San Diego",
+    "texto": "San DiegoMuy buena opción · 94 %Unos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "true",
+    "abierto": null,
+    "falta": null,
+    "panel": [
+     "94 %",
+     "Igual de bueno que Palomeras Bajas, Numancia y Entrevías (94 %).",
+     "Para un piso de unos 77 m² · Dato aproximado",
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min"
+    ]
+   },
+   {
+    "nombre": "Numancia",
+    "texto": "NumanciaMuy buena opción · 94 %, empata con Palomeras Bajas, San Diego y EntrevíasUnos 1.129 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   }
+  ],
+  "chip_pulsado": [
+   {
+    "nombre": "Palomeras Bajas",
+    "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "San Diego",
+    "texto": "San DiegoMuy buena opción · 94 %, empata con Palomeras Bajas, Numancia y EntrevíasUnos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Numancia",
+    "texto": "NumanciaMuy buena opción · 94 %Unos 1.129 € al mes",
+    "boton": true,
+    "pulsado": "true",
+    "abierto": null,
+    "falta": null,
+    "panel": [
+     "94 %",
+     "Igual de bueno que Palomeras Bajas, San Diego y Entrevías (94 %).",
+     "Para un piso de unos 77 m² · Dato aproximado",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+    ]
+   }
+  ],
+  "encajan": [
+   {
+    "nombre": "Palomeras Bajas",
+    "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "San Diego",
+    "texto": "San DiegoMuy buena opción · 94 %, empata con Palomeras Bajas, Numancia y EntrevíasUnos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Numancia",
+    "texto": "NumanciaMuy buena opción · 94 %Unos 1.129 € al mes",
+    "boton": true,
+    "pulsado": "true",
+    "abierto": null,
+    "falta": null,
+    "panel": [
+     "94 %",
+     "Igual de bueno que Palomeras Bajas, San Diego y Entrevías (94 %).",
+     "Para un piso de unos 77 m² · Dato aproximado",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+    ]
+   },
+   {
+    "nombre": "Entrevías",
+    "texto": "EntrevíasMuy buena opción · 94 %, empata con Palomeras Bajas, San Diego y NumanciaUnos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Portazgo",
+    "texto": "PortazgoMuy buena opción · 93 %, empata con Palomeras SuresteUnos 1.126 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Palomeras Sureste",
+    "texto": "Palomeras SuresteMuy buena opción · 93 %, empata con PortazgoUnos 1.120 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   }
+  ],
+  "casi": [],
+  "api": {
+   "encajan": [
+    [
+     "Palomeras Bajas",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "San Diego",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "Numancia",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "Entrevías",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "Portazgo",
+     "muy_bien",
+     "93 %"
+    ],
+    [
+     "Palomeras Sureste",
+     "muy_bien",
+     "93 %"
+    ]
+   ],
+   "casi": [],
+   "zonas": "6 de 6"
+  },
+  "peticiones_barrios": 1,
+  "peticiones_antes_del_distrito": 0,
+  "peticion": {
+   "url": "/api/v1/search/barrios",
+   "distrito": "2807913"
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "mobile": {
+  "distrito": {
+   "name": "Puente de Vallecas",
+   "code": "2807913",
+   "puesto": 1
+  },
+  "ms_hasta_los_barrios": 690,
+  "resumen": "Sus 6 barrios os convienen.",
+  "antes_de_los_contornos": {
+   "nombre": "Palomeras Bajas",
+   "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+   "boton": true,
+   "pulsado": null,
+   "abierto": "false",
+   "falta": null,
+   "panel": []
+  },
+  "panel_sin_contornos": {
+   "nombre": "Palomeras Bajas",
+   "texto": "Palomeras BajasMuy buena opción · 94 %Unos 1.110 € al mes",
+   "boton": true,
+   "pulsado": null,
+   "abierto": "true",
+   "falta": null,
+   "panel": [
+    "94 %",
+    "Igual de bueno que San Diego, Numancia y Entrevías (94 %).",
+    "Para un piso de unos 77 m² · Dato aproximado",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+   ]
+  },
+  "panel_con_contornos": {
+   "nombre": "Palomeras Bajas",
+   "texto": "Palomeras BajasMuy buena opción · 94 %Unos 1.110 € al mes",
+   "boton": true,
+   "pulsado": null,
+   "abierto": "true",
+   "falta": null,
+   "panel": [
+    "94 %",
+    "Igual de bueno que San Diego, Numancia y Entrevías (94 %).",
+    "Para un piso de unos 77 m² · Dato aproximado",
+    "Colegio con primaria a unos 4 min andando",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+   ]
+  },
+  "otro_pulsado": [
+   {
+    "nombre": "Palomeras Bajas",
+    "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "San Diego",
+    "texto": "San DiegoMuy buena opción · 94 %Unos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "true",
+    "abierto": null,
+    "falta": null,
+    "panel": [
+     "94 %",
+     "Igual de bueno que Palomeras Bajas, Numancia y Entrevías (94 %).",
+     "Para un piso de unos 77 m² · Dato aproximado",
+     "Colegio con primaria a unos 5 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min"
+    ]
+   },
+   {
+    "nombre": "Numancia",
+    "texto": "NumanciaMuy buena opción · 94 %, empata con Palomeras Bajas, San Diego y EntrevíasUnos 1.129 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   }
+  ],
+  "chip_pulsado": [
+   {
+    "nombre": "Palomeras Bajas",
+    "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "San Diego",
+    "texto": "San DiegoMuy buena opción · 94 %, empata con Palomeras Bajas, Numancia y EntrevíasUnos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Numancia",
+    "texto": "NumanciaMuy buena opción · 94 %Unos 1.129 € al mes",
+    "boton": true,
+    "pulsado": "true",
+    "abierto": null,
+    "falta": null,
+    "panel": [
+     "94 %",
+     "Igual de bueno que Palomeras Bajas, San Diego y Entrevías (94 %).",
+     "Para un piso de unos 77 m² · Dato aproximado",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+    ]
+   }
+  ],
+  "encajan": [
+   {
+    "nombre": "Palomeras Bajas",
+    "texto": "Palomeras BajasMuy buena opción · 94 %, empata con San Diego, Numancia y EntrevíasUnos 1.110 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "San Diego",
+    "texto": "San DiegoMuy buena opción · 94 %, empata con Palomeras Bajas, Numancia y EntrevíasUnos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Numancia",
+    "texto": "NumanciaMuy buena opción · 94 %Unos 1.129 € al mes",
+    "boton": true,
+    "pulsado": "true",
+    "abierto": null,
+    "falta": null,
+    "panel": [
+     "94 %",
+     "Igual de bueno que Palomeras Bajas, San Diego y Entrevías (94 %).",
+     "Para un piso de unos 77 m² · Dato aproximado",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min"
+    ]
+   },
+   {
+    "nombre": "Entrevías",
+    "texto": "EntrevíasMuy buena opción · 94 %, empata con Palomeras Bajas, San Diego y NumanciaUnos 1.152 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Portazgo",
+    "texto": "PortazgoMuy buena opción · 93 %, empata con Palomeras SuresteUnos 1.126 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   },
+   {
+    "nombre": "Palomeras Sureste",
+    "texto": "Palomeras SuresteMuy buena opción · 93 %, empata con PortazgoUnos 1.120 € al mes",
+    "boton": true,
+    "pulsado": "false",
+    "abierto": null,
+    "falta": null,
+    "panel": []
+   }
+  ],
+  "casi": [],
+  "api": {
+   "encajan": [
+    [
+     "Palomeras Bajas",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "San Diego",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "Numancia",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "Entrevías",
+     "muy_bien",
+     "94 %"
+    ],
+    [
+     "Portazgo",
+     "muy_bien",
+     "93 %"
+    ],
+    [
+     "Palomeras Sureste",
+     "muy_bien",
+     "93 %"
+    ]
+   ],
+   "casi": [],
+   "zonas": "6 de 6"
+  },
+  "peticiones_barrios": 1,
+  "peticiones_antes_del_distrito": 0,
+  "peticion": {
+   "url": "/api/v1/search/barrios",
+   "distrito": "2807913"
+  },
+  "axe": [],
+  "overflow_px": 0,
+  "consola": []
+ },
+ "lcp_distrito_slow4g": [
+  {
+   "ms": 760,
+   "en_atribucion": false,
+   "texto": "Toca aquí para ver más"
+  },
+  {
+   "ms": 2396,
+   "en_atribucion": false,
+   "texto": "Puente de Vallecas: lo que hay cerca"
+  }
+ ],
+ "fallos": []
+}

@@ -32,7 +32,7 @@ Como apoyo, sin contarlos como datos de la Comunidad, usamos:
 ## Cómo funciona
 
 1. **Cuéntanos cómo es tu hogar:** quién vive contigo, cuánto puedes pagar de alquiler, dónde trabajas y qué te importa: transporte, salud, colegios, zonas verdes o estaciones sin escaleras.
-2. **Mira las zonas que encajan contigo,** con su % de encaje y, debajo, hechos que puedes comprobar, como «colegio con primaria a 5 min andando» o los minutos en transporte público hasta tu trabajo, llegando a las 9:00. Cada hecho dice cuánto nos fiamos del dato.
+2. **Mira las zonas que te convienen,** cada una con lo que cuesta al mes y su valoración en palabras, de «Muy buena opción» a «Poco recomendable», y, al abrirla, hechos que puedes comprobar, como «colegio con primaria a 5 min andando» o los minutos en transporte público hasta tu trabajo, llegando a las 9:00. Cada hecho dice cuánto nos fiamos del dato.
    - **Comprar:** el código ya usa el valor tasado medio por municipio. En la demo, hasta su próxima actualización, comprar sale «sin datos».
    - **Seguridad:** no la puntuamos, porque no hay un dato oficial que la mida para quien vive en cada zona (D-224 y D-226).
 3. **¿Salen pocas?** Te enseñamos cuántas zonas aparecen si cambias una sola cosa, por ejemplo 150 € más al mes o el colegio a 5 minutos más.

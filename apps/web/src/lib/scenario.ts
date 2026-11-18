@@ -79,16 +79,16 @@ export function peopleAtHome(s: ScenarioState): number {
 }
 
 export function setAdults(s: ScenarioState, adults: 1 | 2): ScenarioState {
-  return { ...s, household: { ...household(s), adults } };
+  return relabelHome({ ...s, household: { ...household(s), adults } });
 }
 
 export function setMinors(s: ScenarioState, minors: number): ScenarioState {
   // Ages must list every child or be empty: a new count forgets the old ages.
-  return { ...s, household: { ...household(s), minors: clamp(Math.round(minors), 0, LIMITS.minors), minor_ages: [] } };
+  return relabelHome({ ...s, household: { ...household(s), minors: clamp(Math.round(minors), 0, LIMITS.minors), minor_ages: [] } });
 }
 
 export function setSeniors(s: ScenarioState, seniors: number): ScenarioState {
-  return { ...s, household: { ...household(s), seniors_in_care: clamp(Math.round(seniors), 0, LIMITS.seniors) } };
+  return relabelHome({ ...s, household: { ...household(s), seniors_in_care: clamp(Math.round(seniors), 0, LIMITS.seniors) } });
 }
 
 /** «Somos mayores» (D-244): the adults of the household are 65 or older. */
@@ -438,9 +438,33 @@ export function retiredExampleScenario(): ScenarioState {
  * a place they go to often.
  */
 export type OlderPlaceKind = "other" | "family";
-/** Lower case: the API says it inside a sentence («27 min en transporte público hasta donde vivimos ahora…», H7) */
-export const HOME_LABEL = "donde vivimos ahora";
+/**
+ * Lower case: the API says it inside a sentence («27 min en transporte público hasta donde vivo
+ * ahora…», H7). In the household's words, as `voice` of lib/fit.ts: «vivo» when one person lives at
+ * home, «vivimos» when more (speaksToMany, the same count as peopleAtHome).
+ */
+export const HOME_LABEL = { one: "donde vivo ahora", many: "donde vivimos ahora" } as const;
 export const OLDER_TRIP = { max_minutes: 30, days_per_week: 3 } as const;
+
+/** The label of «Donde vivo ahora» / «Donde vivimos ahora» for this household. */
+export function homeLabel(s: ScenarioState): string {
+  return peopleAtHome(s) > 1 ? HOME_LABEL.many : HOME_LABEL.one;
+}
+
+const HOME_LABELS: readonly string[] = Object.values(HOME_LABEL);
+
+/**
+ * Once the household changes, or a shared link is opened (decodeScenario), «donde vivo ahora» says
+ * «vivimos» (and back), so the field, the facts and «¿Quieres ver más zonas?» of the API keep the
+ * household's words. Only the labels this flow
+ * gives: another `other` place (from a shared link) keeps its own.
+ */
+function relabelHome(s: ScenarioState): ScenarioState {
+  const label = homeLabel(s);
+  const stale = (a: Anchor) => kindOf(a) === "other" && HOME_LABELS.includes(a.label) && a.label !== label;
+  if (!(s.anchors ?? []).some(stale)) return s;
+  return { ...s, anchors: (s.anchors ?? []).map((a) => (stale(a) ? { ...a, label } : a)) };
+}
 
 /** The place of «¿Cerca de dónde queréis vivir?», if the search has one. */
 export function olderPlace(s: ScenarioState): { kind: OlderPlaceKind; anchor: Anchor } | null {
@@ -455,7 +479,7 @@ export function olderPlace(s: ScenarioState): { kind: OlderPlaceKind; anchor: An
 export function setOlderPlace(s: ScenarioState, kind: OlderPlaceKind, place: Place | null): ScenarioState {
   const kept = (s.anchors ?? []).filter((a) => kindOf(a) !== "other" && kindOf(a) !== "family");
   if (!place) return { ...s, anchors: kept };
-  const label = kind === "other" ? HOME_LABEL : place.label.slice(0, LABEL_MAX);
+  const label = kind === "other" ? homeLabel(s) : place.label.slice(0, LABEL_MAX);
   const picked: Anchor = { kind, label, lat: place.lat, lon: place.lon, ...OLDER_TRIP };
   return { ...s, anchors: [...kept, picked].sort((a, b) => placeOrder(a) - placeOrder(b)) };
 }
@@ -467,7 +491,7 @@ export function setOlderPlace(s: ScenarioState, kind: OlderPlaceKind, place: Pla
 export function setOlderPlaceKind(s: ScenarioState, kind: OlderPlaceKind, familyLabel: string): ScenarioState {
   const current = olderPlace(s);
   if (!current || current.kind === kind) return s;
-  const label = kind === "other" ? HOME_LABEL : familyLabel.slice(0, LABEL_MAX);
+  const label = kind === "other" ? homeLabel(s) : familyLabel.slice(0, LABEL_MAX);
   const moved: Anchor = { ...current.anchor, kind, label };
   const kept = (s.anchors ?? []).filter((a) => a !== current.anchor);
   return { ...s, anchors: [...kept, moved].sort((a, b) => placeOrder(a) - placeOrder(b)) };
@@ -505,7 +529,8 @@ function isScenario(value: unknown): value is ScenarioState {
 export function decodeScenario(text: string): ScenarioState | null {
   try {
     const value: unknown = JSON.parse(fromBase64Url(text));
-    return isScenario(value) ? value : null;
+    // A link made before «donde vivo ahora» (or by hand) says the place in the household's words too
+    return isScenario(value) ? relabelHome(value) : null;
   } catch {
     return null;
   }
