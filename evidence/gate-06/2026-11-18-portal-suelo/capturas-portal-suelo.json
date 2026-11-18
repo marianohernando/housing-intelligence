@@ -1,0 +1,371 @@
+{
+  "web": "http://localhost:3092",
+  "api": "http://localhost:8092",
+  "checks": [
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "never «0 parcelas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "the line says the API's parcels and m² («Suelo público para vivienda: 101 parcelas, 29.312 m² edificables.»)",
+      "ok": true,
+      "detail": "Vivienda nueva y lo que viene 26 de las 593 compraventas de vivienda del último año fueron de obra nueva (4,4 %). Incluye datos aún provisionales. Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de datos abiertos de la Comunidad de Madrid, del 3.er trimestre de 2025 al 2.º trimest"
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "with its source and date",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "the list is folded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "one «Ver en el visor de la Comunidad» link per parcel, in a new tab",
+      "ok": true,
+      "detail": "101 of 101"
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "a regime only when the Comunidad explains its code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "card: no text < 16 px, no target < 44 px",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "no alarm (red) colour",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "axe, zone screen with the context and the list open",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
+      "name": "not in the essential card",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "never «0 parcelas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "the line says the API's parcels and m² («Suelo público para vivienda: 16 parcelas, 67.808 m² edificables.»)",
+      "ok": true,
+      "detail": "Vivienda nueva y lo que viene En toda la ciudad de Madrid, 1.512 de las 40.086 compraventas de vivienda del último año fueron de obra nueva (3,8 %). Incluye datos aún provisionales. La fuente no lo da por distritos. Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de datos abiertos"
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "with its source and date",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "the list is folded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "one «Ver en el visor de la Comunidad» link per parcel, in a new tab",
+      "ok": true,
+      "detail": "16 of 16"
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "a regime only when the Comunidad explains its code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "card: no text < 16 px, no target < 44 px",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "no alarm (red) colour",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "axe, zone screen with the context and the list open",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "not in the essential card",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Puente de Vallecas",
+      "name": "never «0 parcelas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Puente de Vallecas",
+      "name": "a zone without parcels shows no line",
+      "ok": true,
+      "detail": "Vivienda nueva y lo que viene En toda la ciudad de Madrid, 1.512 de las 40.086 compraventas de vivienda del último año fueron de obra nueva (3,8 %). Incluye datos aún provisionales. La fuente no lo da"
+    },
+    {
+      "width": 1440,
+      "zone": "Puente de Vallecas",
+      "name": "card: no text < 16 px, no target < 44 px",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Puente de Vallecas",
+      "name": "no alarm (red) colour",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Puente de Vallecas",
+      "name": "axe, zone screen with the context and the list open",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 1440,
+      "zone": "Puente de Vallecas",
+      "name": "not in the essential card",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "never «0 parcelas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "the line says the API's parcels and m² («Suelo público para vivienda: 101 parcelas, 29.312 m² edificables.»)",
+      "ok": true,
+      "detail": "Vivienda nueva y lo que viene 26 de las 593 compraventas de vivienda del último año fueron de obra nueva (4,4 %). Incluye datos aún provisionales. Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de datos abiertos de la Comunidad de Madrid, del 3.er trimestre de 2025 al 2.º trimest"
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "with its source and date",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "the list is folded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "one «Ver en el visor de la Comunidad» link per parcel, in a new tab",
+      "ok": true,
+      "detail": "101 of 101"
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "a regime only when the Comunidad explains its code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "card: no text < 16 px, no target < 44 px",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "no alarm (red) colour",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "axe, zone screen with the context and the list open",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
+      "name": "not in the essential card",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "never «0 parcelas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "the line says the API's parcels and m² («Suelo público para vivienda: 16 parcelas, 67.808 m² edificables.»)",
+      "ok": true,
+      "detail": "Vivienda nueva y lo que viene En toda la ciudad de Madrid, 1.512 de las 40.086 compraventas de vivienda del último año fueron de obra nueva (3,8 %). Incluye datos aún provisionales. La fuente no lo da por distritos. Ministerio de Transportes, Movilidad y Agenda Urbana, en el portal de datos abiertos"
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "with its source and date",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "the list is folded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "one «Ver en el visor de la Comunidad» link per parcel, in a new tab",
+      "ok": true,
+      "detail": "16 of 16"
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "a regime only when the Comunidad explains its code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "card: no text < 16 px, no target < 44 px",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "no alarm (red) colour",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "axe, zone screen with the context and the list open",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "not in the essential card",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Puente de Vallecas",
+      "name": "never «0 parcelas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Puente de Vallecas",
+      "name": "a zone without parcels shows no line",
+      "ok": true,
+      "detail": "Vivienda nueva y lo que viene En toda la ciudad de Madrid, 1.512 de las 40.086 compraventas de vivienda del último año fueron de obra nueva (3,8 %). Incluye datos aún provisionales. La fuente no lo da"
+    },
+    {
+      "width": 390,
+      "zone": "Puente de Vallecas",
+      "name": "card: no text < 16 px, no target < 44 px",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Puente de Vallecas",
+      "name": "no alarm (red) colour",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Puente de Vallecas",
+      "name": "axe, zone screen with the context and the list open",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": 390,
+      "zone": "Puente de Vallecas",
+      "name": "not in the essential card",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "summary": "52/52"
+}

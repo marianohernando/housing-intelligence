@@ -1,15 +1,16 @@
 /**
  * «Vivienda nueva y lo que viene» of a zone (pure, unit tested): D-241. How much of what is sold
- * is new, what a new home is appraised at next to an older one, the Plan Vive homes and, in a
- * Madrid district, the planning areas for housing not yet finished. Context only: none of it
- * scores, filters or ranks, it is not part of «Qué falta» and it never takes status or alarm
- * colours. Copy from pitch/textos_web.md (zona.vivienda_nueva.*).
+ * is new, what a new home is appraised at next to an older one, the Plan Vive homes, in a Madrid
+ * district the planning areas for housing not yet finished and, since D-246, the public land
+ * offered to build housing (Portal del Suelo), parcel by parcel. Context only: none of it scores,
+ * filters or ranks, it is not part of «Qué falta» and it never takes status or alarm colours.
+ * Copy from pitch/textos_web.md (zona.vivienda_nueva.*).
  */
 import type { ContextItem, FeatureValueRow } from "@/lib/features";
 import { formatNumber } from "@/lib/format";
 
 export type NewHousingLevel = "municipio" | "distrito";
-export type NewHousingKey = "sales" | "newValue" | "usedValue" | "planVive" | "areas";
+export type NewHousingKey = "sales" | "newValue" | "usedValue" | "planVive" | "areas" | "land";
 
 export interface NewHousingZone {
   level: NewHousingLevel;
@@ -29,16 +30,19 @@ const FEATURES: Record<NewHousingKey, string> = {
   usedValue: "valor_tasado_vivienda_usada_m2",
   planVive: "plan_vive_viviendas",
   areas: "ambitos_residenciales_en_desarrollo",
+  land: "suelo_publico_vivienda_m2",
 };
 
 /**
  * The answers a zone's lines come from. Sales and appraisals are only published by municipio, so
- * a district asks for the city's; Plan Vive and the planning areas have their own district rows.
+ * a district asks for the city's; Plan Vive, the planning areas and the public land have their own district rows.
  */
 export function newHousingRequests(level: NewHousingLevel): NewHousingRequest[] {
   const at = (key: NewHousingKey, own: NewHousingLevel): NewHousingRequest => ({ key, featureId: FEATURES[key], level: own });
   const city = [at("sales", "municipio"), at("newValue", "municipio"), at("usedValue", "municipio")];
-  return level === "municipio" ? [...city, at("planVive", "municipio")] : [...city, at("planVive", "distrito"), at("areas", "distrito")];
+  return level === "municipio"
+    ? [...city, at("planVive", "municipio"), at("land", "municipio")]
+    : [...city, at("planVive", "distrito"), at("areas", "distrito"), at("land", "distrito")];
 }
 
 /** Rows of each answer; a key is missing when the API does not have that feature (its line is not shown). */
@@ -52,6 +56,30 @@ export interface NewHousingLine {
   note: string | null;
   /** Who publishes it and when */
   source: string;
+  /** D-246: the public parcels behind the line, listed under it (folded) */
+  parcels?: LandParcels | null;
+}
+
+/** One public parcel for housing (D-246): where, its buildable m², how it is offered and by whom. */
+export interface LandParcel {
+  key: string;
+  /** «UZPp 2.04 Desarrollo del Este–Los Berrocales · Parcela RC.5.3.1» */
+  place: string;
+  /** «9.685 m² edificables», or that the portal does not publish them */
+  area: string;
+  /** Only when the Comunidad publishes what its code means (venta, concesión); null otherwise */
+  regime: string | null;
+  manager: string | null;
+  /** The parcel in the Comunidad's map viewer */
+  url: string | null;
+}
+
+export interface LandParcels {
+  /** «Ver las 16 parcelas» */
+  toggle: string;
+  /** zona.vivienda_nueva.suelo.visor */
+  viewer: string;
+  items: LandParcel[];
 }
 
 // The figure and its unit never part at the end of a line on a phone («28 %», «5.432 €/m²»)
@@ -68,7 +96,23 @@ export const TEXT = {
   planViveSource: "Página del Plan Vive de la Comunidad de Madrid, consultada el {fecha}.",
   areasSource: "Ayuntamiento de Madrid, estado de desarrollo de los ámbitos del Plan General a {fecha}. Dice dónde se prepara suelo para vivienda, no cuántas viviendas habrá ni cuándo.",
   areasNone: "En este distrito no queda ningún ámbito de vivienda del Plan General por terminar.",
+  land: "Suelo público para vivienda: {parcelas}, {m2} m² edificables.",
+  landNoArea: "Suelo público para vivienda: {parcelas}.",
+  landNote: "Parcelas que la Comunidad de Madrid o los ayuntamientos ofrecen en venta o en concesión para construir vivienda. No dice cuántas viviendas caben.",
+  landNoAreaNote: " De alguna parcela no se publica la superficie edificable.",
+  landSource: "Portal del Suelo 4.0 de la Comunidad de Madrid, en su portal de datos abiertos, a {fecha}.",
+  landToggle: "Ver las {n} parcelas",
+  landToggleOne: "Ver la parcela",
+  landArea: "{m2} m² edificables",
+  landAreaMissing: "Superficie edificable sin publicar",
+  landViewer: "Ver en el visor de la Comunidad",
 } as const;
+
+/** D-246: only the codes whose meaning the Comunidad publishes (V and C); the rest come without a regime. */
+const REGIMES: Record<string, string> = {
+  venta: "En venta",
+  concesion: "En concesión, derecho de superficie o alquiler",
+};
 
 const STAGES: Record<string, { label: string; tail: string }> = {
   obras: { label: "En desarrollo", tail: "urbanización en obras" },
@@ -200,10 +244,49 @@ function areaLines(zone: NewHousingZone, rows: readonly FeatureValueRow[]): NewH
   return areasSentences(items).map(({ stage, text }) => ({ key: `areas-${stage}`, text, note: null, source }));
 }
 
+const parcelsInWords = (n: number) => (n === 1 ? "1 parcela" : `${count(n)} parcelas`);
+const m2 = (value: number) => count(Math.round(value));
+
+function landParcel(item: ContextItem, i: number): LandParcel {
+  const place = [item.name, item.parcel].filter(Boolean).join(" · ") || TEXT.landViewer;
+  return {
+    key: item.code ?? String(i),
+    place,
+    area: item.value == null ? TEXT.landAreaMissing : TEXT.landArea.replace("{m2}", m2(item.value)),
+    regime: item.regime ? (REGIMES[item.regime] ?? null) : null,
+    manager: item.manager ?? null,
+    url: item.url ?? null,
+  };
+}
+
+/**
+ * «Suelo público para vivienda: 16 parcelas, 67.808 m² edificables.» (D-246), with the parcels
+ * under it. A zone without parcels says nothing (never «0 parcelas»); when a parcel does not
+ * publish its buildable m², the sum is unknown and the line gives the parcels alone.
+ */
+export function landLine(zone: NewHousingZone, rows: readonly FeatureValueRow[]): NewHousingLine | null {
+  const row = latest(rows, zone.code);
+  const items = row?.detail?.items ?? [];
+  if (!row || items.length === 0) return null;
+  const parcels = parcelsInWords(items.length);
+  const total = row.value;
+  return {
+    key: "land",
+    text: total == null ? TEXT.landNoArea.replace("{parcelas}", parcels) : TEXT.land.replace("{parcelas}", parcels).replace("{m2}", m2(total)),
+    note: total == null ? `${TEXT.landNote}${TEXT.landNoAreaNote}` : TEXT.landNote,
+    source: TEXT.landSource.replace("{fecha}", dateInWords(row.period_start)),
+    parcels: {
+      toggle: items.length === 1 ? TEXT.landToggleOne : TEXT.landToggle.replace("{n}", count(items.length)),
+      viewer: TEXT.landViewer,
+      items: items.map(landParcel),
+    },
+  };
+}
+
 /**
  * One short line per figure, in a fixed order: what is sold, what it is appraised at, then what is
- * coming. A feature the API does not have gives no line; a figure the source does not publish for
- * the zone gives none either, never a 0.
+ * coming and the public land to build on. A feature the API does not have gives no line; a figure
+ * the source does not publish for the zone gives none either, never a 0.
  */
 export function newHousingLines(zone: NewHousingZone, rows: NewHousingRows): NewHousingLine[] {
   const lines: (NewHousingLine | null)[] = [
@@ -211,6 +294,7 @@ export function newHousingLines(zone: NewHousingZone, rows: NewHousingRows): New
     rows.newValue && rows.usedValue ? valueLine(zone, rows.newValue, rows.usedValue) : null,
     ...(rows.planVive ? planViveLines(zone, rows.planVive) : []),
     ...(rows.areas && zone.level === "distrito" ? areaLines(zone, rows.areas) : []),
+    rows.land ? landLine(zone, rows.land) : null,
   ];
   return lines.filter((line): line is NewHousingLine => line !== null);
 }
