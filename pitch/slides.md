@@ -93,25 +93,26 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
 - Captura: la tarjeta de zona con «A pie: N min» (recorte de C5) en lugar de C2 y C3.
 
 Versión con buscador (la que vale):
-- Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben zonas con su **% de encaje** y, debajo, hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, cada minuto cuenta y lo que no tiene datos nunca cuenta como 0. El % va con su banda en palabras, cuatro niveles (D-215, D-243; `pitch/metodologia.md` §1.3).
-- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 15 nov (`POST /api/v1/search` con ese fixture y la web, `fit-0.9`, D-243):
-  - encajan **42 de las 199 zonas**, 157 no cumplen todo y ninguna sale sin datos. Eran 27, y 15 sin datos, hasta que el alquiler de referencia del Ministerio rellenó los pueblos (D-242);
-  - todas cumplen lo que pide la familia; el % dice cuánto encaja todo lo demás: 12 en la banda más alta (90 % o más), 5 en la segunda, 13 en la tercera y 12 en la última;
-  - **arriba empatan Puente de Vallecas y Latina al 94 %**. La web pone 1.ª a Puente de Vallecas, porque a igual % tiene más cerca los servicios del día a día, y avisa del empate. Siguen Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y Carabanchel, Coslada y Leganés (90 %);
-  - la tarjeta de Puente de Vallecas: colegio a unos 4 min, «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00», «Alquiler ≈ 1.129 €/mes por 77 m²» y, en su resumen de lo que falta, que faltan escuelas infantiles. La familia no marca escuela infantil, así que esa falta no le baja el %; si la marcara, se quedaría en el 89 %;
+- **Título de la tarjeta:** «Encuentra la zona que te conviene», con las palabras de la web desde D-245. Debajo, una línea: «Cada zona, en palabras y con su %, con hechos que se pueden comprobar y su fiabilidad.»
+- Cuentan su hogar, su alquiler máximo y dónde trabajan. Reciben «Zonas que te convienen» («os» con más de una persona): cada una con su banda en palabras («Muy buena opción», «Buena opción», «Opción regular» o «Poco recomendable») y su precio al mes; en escritorio, también el **% de encaje**, pequeño. La tarjeta enseña lo esencial y, en «Ver más», el % y hechos que se entienden, cada uno con su nivel de confianza en palabras. Lo que marcan primero pesa más, cada minuto cuenta y lo que no tiene datos nunca cuenta como 0 (D-215, D-243, D-245; `pitch/metodologia.md` §1.3).
+- **Caso demo real** (`data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`): pareja con 2 hijos de 4 y 8 años, 1.500 €/mes, colegio a 10 min como requisito y trabajo en la Castellana. Resultado en producción el 15 nov (`POST /api/v1/search` con ese fixture y la web, `fit-0.9`, D-243), con las palabras de la web comprobadas por D el 18 nov (`55651c2`):
+  - «Hemos encontrado 42 zonas para vosotros»: **42 de las 199 zonas** cumplen todo, 157 no y ninguna sale sin datos. Eran 27, y 15 sin datos, hasta que el alquiler de referencia del Ministerio rellenó los pueblos (D-242);
+  - todas cumplen lo que pide la familia; el % dice cuánto le conviene todo lo demás: 12 «Muy buena opción» (90 % o más), 5 «Buena opción», 13 «Opción regular» y 12 «Poco recomendable»;
+  - **arriba, Puente de Vallecas y Latina, las dos «Muy buena opción · 94 %»**. La web pone 1.ª a Puente de Vallecas, porque a igual % tiene más cerca los servicios del día a día. La lista ya no dice «Empatan»: lo dice la tarjeta, en «Ver más» («Igual de buena que Latina (94 %).»). Siguen Usera y Moratalaz (93 %); Tetuán, Ciudad Lineal y Villaverde (92 %), y Carabanchel, Coslada y Leganés (90 %);
+  - la tarjeta de Puente de Vallecas: «Unos 1.129 € al mes» («Precio orientativo»), colegio a unos 4 min, «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «No le falta nada de lo que buscáis.». En «Ver más», «Tiene lo que pedís. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.»: la familia no marca escuela infantil, así que esa falta no le baja el %; si la marcara, se quedaría en el 89 %;
   - **antes** (`fit-0.6`, 12 nov): Latina 1.ª al 98 %, con cuatro empatadas.
-- **«¿Y si cambias algo?»** (Reality Check): cuántas zonas aparecen al cambiar una sola condición. En el caso demo:
-  - «+5 min a pie hasta colegio con primaria: saldrían 91 zonas, 49 más»;
-  - «+150 €/mes: saldrían 45 zonas, 3 más»;
-  - lo que más limita sigue siendo el colegio a 10 min;
-  - se quedan cerca, por el presupuesto, Chamartín, Arganzuela, Centro, Chamberí y Retiro. Sin %: la web dice cuánto se pasan (Chamartín, unos 90 € al mes).
+- **«¿Queréis ver más zonas?»** (Reality Check; antes «¿Y si cambias algo?»): cuántas zonas aparecen al cambiar una sola condición. En el caso demo:
+  - «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total»;
+  - «+150 €/mes · saldrían 3 más: 45 zonas en total»;
+  - «Lo que más limita vuestra búsqueda es: Colegio con primaria a 10 min andando como mucho»;
+  - en «Casi valen» (antes «Casi encajan») se quedan, por el presupuesto, Chamartín, Arganzuela, Centro, Chamberí y Retiro. Sin %: la web dice cuánto se pasan (Chamartín, «Se pasa unos 90 € al mes de vuestro presupuesto»).
 
-  Capturas **C2** (la lista con el empate y las bandas) y **C3** (este bloque), de producción el 15 nov (`pitch/capturas/`). **Provisionales:** C1, C2 y C3 se rehacen tras la entrega de UX (19 nov como tarde), porque cambian las palabras de las bandas y de la lista.
+  Capturas **C2** (las dos primeras filas de «Zonas que os convienen») y **C3** (este bloque, con su primera opción), rehechas por D en producción el 18 nov, con la claridad en el móvil ya desplegada (`55651c2`, `pitch/capturas/`).
 - **Coste:** alquiler medio por m² × m² del hogar (77 m² para 4 personas, Censo 2021 del INE). Es orientativo y tira a la baja: son contratos vigentes declarados en el IRPF, no anuncios (D-214). En la slide no va ninguna cifra de coste sin la palabra «unos».
 - **Trabajo:** cuenta los minutos de puerta a puerta en transporte público para llegar a las 9:00, con los horarios publicados de las 6 redes del CRTM (CORE-009, D-220). En producción desde el 12 nov. **Límite que se dice si preguntan:** son horarios programados de un día laborable, no tiempos reales, y en 45–50 zonas de la Sierra Norte y del sureste no se llega a las 9:00 (D-220 §6).
 - **«Sin escaleras»** (opcional, D-223): quien lo marca ve los minutos andando hasta la estación de metro, Metro Ligero o Cercanías que el CRTM da como totalmente accesible. Nunca se deduce de nada ni se etiqueta a nadie, y la tarjeta dice lo que no mide (autobuses, aceras y portales). En producción desde el 12 nov (despliegue de `2761696`). En la slide va una línea, solo si cabe.
 - **Seguridad: no va en la slide.** No puntúa (D-224, D-226), y si preguntan la respuesta es la 36 de `pitch/preguntas.md`.
-- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas C1, C2 y C3: las hizo D en producción el 15 nov con `fit-0.9`, a 1440 × 900 (`pitch/capturas/`).
+- **Antes de maquetar** se vuelven a comprobar las cifras en la demo, por si cambian los datos. Capturas C1, C2 y C3: las rehízo D en producción el 18 nov con `fit-0.9` y la claridad en el móvil (`55651c2`), a 1440 × 900; C6, a 390 × 844 (`pitch/capturas/`).
 
 ### Impacto: ayuntamientos que deciden dónde invertir
 **Fase de mejora (12–14 nov)**, ya en `deck.html`:
@@ -135,8 +136,16 @@ Versión con buscador (la que vale):
     - el % no cuadraba con «Qué falta» y empataban muchas zonas → la fórmula «cerca y plazas», elegida con el banco de pruebas (D-243, `pitch/banco_formula.md`);
     - no se distinguían los hospitales públicos de los privados → cada hospital lo dice (D-239).
   - **Qué no entra antes del freeze:** los proyectos futuros y filtrar pisos por metros u obra nueva (preguntas 49 y 50).
-  - **La persona mayor** la probó el 15 nov en el móvil y le costó: la letra y los botones, pequeños; palabras técnicas; y demasiado a la vez. Se ha auditado y Mariano ha decidido el alcance de la mejora: portada clara, letra de 16 px como mínimo, botones de 44 px, lenguaje llano y lo esencial primero. Llega con la entrega de UX, el 19 nov como tarde (**pendiente de B**), y hasta que esté desplegada no se cuenta como hecho, ni en la slide ni en voz alta.
-  - Fuentes: D-233, D-238 («cuatro personas pidieron buscar solo en una parte de la región»), D-239, `trabajo.max_min` y `trabajo.ayuda` en `pitch/textos_web.md`, y las notas de Mariano, que no se versionan.
+  - **La persona mayor** la probó el 15 nov en el móvil y le costó: la letra y los botones, pequeños; palabras técnicas; y demasiado a la vez. **Lo que se cambió por eso está en producción desde el 15 nov** (D-244 y D-245, despliegues de `e0417ae`, `c0e9d11` y `55651c2`; comprobado por D el 18 nov):
+    - letra de 16 px o más y botones de 44 px o más en todo el móvil: medido a 390 y a 360 px en todas las pantallas, 0 textos y 0 botones por debajo (`evidence/gate-06/2026-11-15-ux-1/ux-movil-1.md` y `2026-11-16-ux-2/ux-movil-2.md`);
+    - lenguaje llano;
+    - una portada que dice para qué sirve;
+    - «Somos mayores», con «¿Cerca de dónde queréis vivir?»;
+    - una lista con 4 cosas por fila en el móvil, en vez de 7 a 9;
+    - una tarjeta con lo esencial y lo demás en «Ver más»;
+    - «No sabemos si…» cuando falta el dato.
+  - **En la slide 4**, el recuadro dice «Y, para una persona mayor, más sencilla en el móvil.». **No hay segunda prueba con personas todavía:** Mariano manda ahora la segunda ronda. Hasta que vuelva, se dice lo que se ha cambiado y medido, nunca que a la persona mayor ya le resulta fácil.
+  - Fuentes: D-233, D-238 («cuatro personas pidieron buscar solo en una parte de la región»), D-239, D-244, D-245, `trabajo.max_min` y `trabajo.ayuda` en `pitch/textos_web.md`, y las notas de Mariano, que no se versionan.
 
 - Para cada zona, la lista **FALTA / JUSTO / CUBIERTO / SIN DATOS**. Tiene 6 filas, por municipio y por los 21 distritos (D-194; GAP-001 F1–F3b). Desde el 12 nov (D-217, `gap-0.3`) las cinco de servicios miden **lo que la gente tiene a 15 minutos andando, repartido entre todos los que lo comparten** (2SFCA; en llano, `pitch/metodologia.md` §1.4):
   - escuela infantil: escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años (cada escuela cuenta como una: nadie publica sus plazas);
@@ -177,6 +186,11 @@ Versión con buscador (la que vale):
   - añadir un dataset es añadir un YAML de pipeline (`data/catalog/pipelines/`);
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
+- **Siguiente paso** (aprobado por Mariano el 18 nov): de «dónde vivir» a «dónde construir». En la slide, al pie de la tarjeta, con el borde violeta de las citas: «**Siguiente paso:** dónde construir, según la vivienda que falta.». Ocupa el sitio de la miniatura C7, que no cabía con él (ver «Capturas necesarias»). **En la slide no se nombra ninguna empresa.**
+  - **Después del concurso:** el análisis por parcela («¿qué se puede construir aquí?») cruzado con la vivienda que le falta a cada zona y para quién (Housing Gap: `docs/03_intelligence/16_housing_gap_product_recommender.md` y `51_housing_gap_math_spec.md`; capa PRO: `docs/01_product/05_pro_layer.md`; el análisis por parcela quedó fuera del concurso con D-192). Es un plan: se dice en futuro.
+  - **Hoy, pendiente de confirmar en producción** (otra línea la está metiendo en la web; no se cita como hecha hasta que datamad-10 lo confirme): una capa con el suelo público para vivienda del Portal del Suelo 4.0 de la Comunidad ([ficha del portal](https://datos.comunidad.madrid/dataset/parcelas_portal_suelo)). En el CSV del portal, descargado el 18 nov: 291 parcelas residenciales en 29 municipios, unos 394.000 m² edificables. Cuando se confirme, se puede añadir a la línea de la slide («Ya enseñamos el suelo público para vivienda.»), se suma a `pitch/datasets_cm.md` y entra la frase de reserva del bloque 4 del guion.
+  - **La validación de mercado, solo en las respuestas** (pregunta 60): Nestra (España) y Sitescope (Polonia) ya venden el «¿se puede construir?» a promotores, pero ninguna lo cruza con la demanda de los hogares. Ese es el hueco de Vida Fácil.
+
 ### Banda de enlaces (con QR)
 - Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
 - Código: https://github.com/marianohernando/housing-intelligence
@@ -187,16 +201,16 @@ Versión con buscador (la que vale):
 **Composición:**
 - Captura **C1** (mapa con la búsqueda del caso demo, 1440 px) a sangre en un marco de cristal.
 - Encima, abajo a la derecha, la captura **C6** (móvil, 390 px) en un marco de teléfono sencillo, sin marca de fabricante.
-- Tres notas de cristal numeradas que apuntan a la captura:
+- Tres pasos numerados, con números que apuntan a la captura:
   1. «Cuéntanos tu hogar, tu presupuesto y dónde trabajas»: tarjeta «Tu búsqueda».
-  2. «Zonas que encajan, con el porqué»: cabecera de la tarjeta de zona (% de encaje y hechos).
-  3. «Qué falta en cada zona, con su fuente»: mini lista «Qué falta aquí» de la tarjeta.
-- Bajo los tres pasos, con un borde violeta como las citas de la slide 3: «**Probada con 7 personas.** Lo que pidieron, ya en la web: buscar por barrios, un límite de tiempo al trabajo y las paradas de autobús.». Se ve durante el cierre del guion (bloque 5), que dice lo mismo en voz alta.
+  2. «Mira las zonas que te convienen y por qué»: cabecera de la tarjeta de zona (nombre y «Distrito de Madrid · Muy buena opción»).
+  3. «Entra en una zona y mira qué le falta, con su fuente»: «No le falta nada de lo que buscáis.» en la tarjeta.
+- Bajo los tres pasos, con un borde violeta como las citas de la slide 3: «**Probada con 7 personas.** Lo que pidieron, ya en la web: buscar por barrios y un límite de tiempo al trabajo. Y, para una persona mayor, más sencilla en el móvil.». Se ve durante el cierre del guion (bloque 5), que lo resume en voz alta. Las paradas de autobús, que también pidieron, salen del recuadro para que quepa la persona mayor: siguen en la pregunta 43.
 - Pie: «Demo en vivo: vidafacil-madrid.vercel.app».
 
 **Fuentes en la slide:** ninguna cifra nueva salvo las 7 personas (relato de la slide 3). Si la captura muestra cifras, son las de la API en ese momento.
 
-**C1 rehecha el 15 nov** (D, producción, `fit-0.9`, `pitch/capturas/C1.png`): el caso de ejemplo con la tarjeta de Puente de Vallecas abierta, el 94 %, su banda y el empate con Latina, la parada por tipo (D-233) y «¿Dónde?» en «Tu búsqueda» (D-238). El marcador 3 de la slide 4 baja a «Qué falta aquí» (`.s4 .m3`, `top: 581px`).
+**C1 rehecha el 18 nov** (D, producción con `55651c2`, `pitch/capturas/C1.png`): el caso de ejemplo con la tarjeta esencial de Puente de Vallecas («Muy buena opción», «Unos 1.129 € al mes», sus minutos a pie y «No le falta nada de lo que buscáis.»), el contorno de la zona en el mapa y «¿Dónde?» en «Tu búsqueda» (D-238). Marcadores (`.s4 .m1`–`.m3`): 1 en «Tu búsqueda» (`top: 340px`), 2 en la cabecera de la tarjeta (`top: 136px`) y 3 en «No le falta nada de lo que buscáis.» (`top: 428px`). **C6 rehecha el 18 nov** a 390 × 844 (`pitch/capturas/C6.png`): la lista del móvil, «Zonas que os convienen», con «Hemos encontrado 42 zonas para vosotros.» y 5 filas con la zona, su banda y su precio al mes.
 
 ---
 
@@ -229,29 +243,30 @@ Fuente única: `DISENO_VIDA_FACIL.md`. Los valores de la tabla son los que B ya 
 ## Capturas necesarias
 Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440 × 900 (escritorio) y 390 × 844 (móvil) y con densidad 2×. Se guardan en `pitch/capturas/` con estos nombres. B puede adelantarlas en `evidence/map-004/<fecha>/`.
 
-El deck usa las capturas de producción del 11 nov. `pitch/deck/build.py` las toma de la evidencia si no hay una con el mismo id en `pitch/capturas/`:
-- C4–C7 son de B (`evidence/map-004/2026-11-11/prod_*`), con `gap-0.2`. Se hicieron antes de desplegar el PR #9, así que algunos textos son anteriores. Los recortes los dejan fuera; ver cada fila.
-- C1–C3 son de C (`evidence/gate-06/2026-11-11-deploy/prod-buscador-*`, PR #11, fusionado el 12 nov).
+`pitch/deck/build.py` usa la captura de `pitch/capturas/` si hay una con el mismo id y, si no, la de la evidencia:
+- **C1, C2, C3 y C6** están en `pitch/capturas/`: las rehízo D en producción el 18 nov, con la claridad en el móvil ya desplegada (`55651c2`).
+- **C4, C5 y C7** son de B (`evidence/map-004/2026-11-11/prod_*` y, la C4, `evidence/map-004/2026-11-12/deck/`). C5 se hizo antes de desplegar el PR #9, así que algunos textos son anteriores; el recorte los deja fuera. C4 y C7 no van en ninguna slide: quedan de reserva.
 
 **Recaptura tras gap-0.3 (12 nov).** Las del 11 nov son anteriores a gap-0.3 y D-216. B ya rehízo C3 y C4 (PR #17, `evidence/map-004/2026-11-12/deck/`, en local a 1440 px con datos reales y las mismas cifras que producción), y el deck las toma de ahí (el #17 se fusionó el 12 nov). Con ellas y `DECK_INTEGRANTES`, `build.py --final` genera sin fallos (12 nov). Las demás valen como borrador, pero se rehacen antes del 24 nov:
 
 | Id | Qué cambia | Dónde |
 |---|---|---|
-| C3 | Rehecha por D el 15 nov en producción (`fit-0.9`, `pitch/capturas/C3.png`): «Con tu búsqueda tal cual salen 42 zonas», «+5 min a pie hasta colegio con primaria: saldrían 91 zonas, 49 más» y «+150 €/mes: saldrían 45 zonas, 3 más» | Portada → «Ver un ejemplo…» → «Ver todas las opciones» |
+| C3 | Rehecha por D el 18 nov en producción (`55651c2`, `pitch/capturas/C3.png`): «¿Queréis ver más zonas?», «Hemos encontrado 42 zonas para vosotros», «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total» y «+150 €/mes · saldrían 3 más: 45 zonas en total» | Portada → «Ejemplo: pareja con 2 hijos…» → «Ver todas las opciones» |
 | C4 | Hecha por B: `deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, la fila de escuelas infantiles de **Puente de Vallecas** en FALTA (2,8 frente a 4,9) con «A pie: 6 min». El hueco enseña las dos cifras | `/que-falta?zona=distrito/2807913` |
 | C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
-| C1, C2 | Rehechas por D el 15 nov en producción (`fit-0.9`, `pitch/capturas/`): C1, el mapa con la tarjeta de Puente de Vallecas (94 %, su banda y el empate con Latina); C2, la lista con el empate al 94 % y las bandas de Puente de Vallecas y Latina. **Provisionales hasta la entrega de UX** | Portada → «Ver un ejemplo…», la lista y la tarjeta de la 1.ª |
-| C7 | «Cómo lo calculamos» ya explica el 2SFCA; el hueco puede volver a enseñar las reglas | `/como-lo-calculamos` |
+| C1, C2 | Rehechas por D el 18 nov en producción (`55651c2`, `pitch/capturas/`): C1, el mapa con la tarjeta esencial de Puente de Vallecas («Muy buena opción», «Unos 1.129 € al mes» y «No le falta nada de lo que buscáis.»); C2, «Zonas que os convienen» con Puente de Vallecas y Latina, «Muy buena opción · 94 %» | Portada → «Ejemplo: pareja con 2 hijos…», la lista y la tarjeta de la 1.ª |
+| C6 | Rehecha por D el 18 nov en producción a 390 × 844 (`pitch/capturas/C6.png`): la lista del móvil con 5 filas esenciales | Portada → «Ejemplo: pareja con 2 hijos…», en el móvil |
+| C7 | Desde el 18 nov no va en la slide 3: su sitio lo ocupa el siguiente paso. Queda de reserva | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
-| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Hecha por D en producción el 15 nov (`fit-0.9`, `pitch/capturas/C1.png`): la tarjeta de Puente de Vallecas (94 %, con su banda, empatada con Latina). **Provisional:** se rehace tras la entrega de UX (19 nov como tarde). El marcador 3 de la slide 4 va a «Qué falta aquí» (`.s4 .m3`) |
-| C2 | Recorte de la lista «Zonas que encajan»: el empate al 94 % de Puente de Vallecas y Latina, con su banda | 1440 | 3 | Hecha por D en producción el 15 nov (`fit-0.9`, `pitch/capturas/C2.png`). Sustituye al recorte de la tarjeta de Latina al 98 %. **Provisional:** se rehace tras la entrega de UX |
-| C3 | Bloque «¿Y si cambias algo?» con cifras reales de la API | 1440 | 3 | Hecha por D en producción el 15 nov (`fit-0.9`, `pitch/capturas/C3.png`): 42 zonas, «+5 min…: saldrían 91 zonas, 49 más» y «+150 €/mes: saldrían 45 zonas, 3 más». **Provisional:** se rehace tras la entrega de UX |
+| C1 | «Mapa» con «Tu búsqueda» rellena con el caso demo, coropleta de encaje y tarjeta de zona abierta | 1440 | 4 | Rehecha por D en producción el 18 nov (`55651c2`, `pitch/capturas/C1.png`): la tarjeta esencial de Puente de Vallecas, con «Muy buena opción», «Unos 1.129 € al mes», sus minutos a pie y «No le falta nada de lo que buscáis.». Los marcadores de la slide 4 (`.s4 .m1`–`.m3`) van a «Tu búsqueda», a la cabecera de la tarjeta y a esa última línea |
+| C2 | Recorte de «Zonas que os convienen»: las dos primeras filas, Puente de Vallecas y Latina, «Muy buena opción · 94 %» y «Unos … € al mes» | 1440 | 3 | Rehecha por D en producción el 18 nov (`55651c2`, `pitch/capturas/C2.png`). El recorte tiene la proporción del hueco |
+| C3 | Bloque «¿Queréis ver más zonas?» con cifras reales de la API | 1440 | 3 | Rehecha por D en producción el 18 nov (`55651c2`, `pitch/capturas/C3.png`): «Hemos encontrado 42 zonas para vosotros», «+5 min… · saldrían 49 más: 91 zonas en total» y «+150 €/mes · saldrían 3 más: 45 zonas en total». El recorte enseña el titular y la primera opción |
 | C4 | Pestaña «Qué falta» de la zona del ejemplo (**Puente de Vallecas**): 6 filas con valor, referencia, confianza, minutos a pie y datasets enlazados | 1440 | 3 | Hecha por B el 12 nov (`evidence/map-004/2026-11-12/deck/deck_c4_puente_de_vallecas_escuelas_infantiles_1440.png`, PR #17; la página entera, en `deck_c4_puente_de_vallecas_que_falta_1440.png`). El hueco enseña las dos cifras de la fila de escuelas infantiles: 2,8 en Puente de Vallecas y 4,9 en los otros municipios urbanos |
 | C5 | Zona en 3D: inclinación de unos 60°, contorno violeta y etiquetas de colegios, centros de salud y estaciones | 1440 | 1 | Hecha por B en producción con `gap-0.2` (`prod_c5_chamartin_3d_desktop.png`, Chamartín). El recorte deja fuera el título de la barra, «Barrios de la zona», que hoy se llama «Ir a un barrio»; se ven solo los barrios |
-| C6 | Móvil: mapa a pantalla completa con la hoja inferior de la tarjeta de zona | 390 | 4 | Hecha por B en producción (`prod_c5_chamartin_3d_mobile.png`). No enseña estados |
-| C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | 3 (Viabilidad) | Hecha por B en producción (`prod_c7_como_lo_calculamos_desktop.png`). El hueco enseña «Cómo sale el % de encaje»: la primera de las «Tres reglas» aún compara con toda la Comunidad, también en producción. Cuando B la cambie (`pitch/metodologia.md` 1.1), se puede rehacer y volver a enseñar las reglas |
+| C6 | Móvil: la lista «Zonas que os convienen» con sus filas esenciales | 390 | 4 | Rehecha por D en producción el 18 nov (`55651c2`, `pitch/capturas/C6.png`): «Hemos encontrado 42 zonas para vosotros.» y 5 filas con la zona, «Muy buena opción» y «Unos … € al mes». Sustituye a la de B con Chamartín en 3D (`prod_c5_chamartin_3d_mobile.png`), del 11 nov |
+| C7 | «Cómo lo calculamos» o panel de procedencia de un dato, con el enlace a la ficha del portal | 1440 | — (reserva) | Hecha por B en producción (`prod_c7_como_lo_calculamos_desktop.png`). **Desde el 18 nov no va en la slide 3:** el siguiente paso no cabía con ella en «Viabilidad», y a 100 px de alto no se leía. Además enseña un texto anterior de «Cómo lo calculamos». Si vuelve, se rehace en producción |
 | QR | Códigos QR de la demo (https://vidafacil-madrid.vercel.app) y del repo | — | 3 | Se generan el 24 nov, cuando la demo esté verificada |
 
 ## Checklist del 24 nov (maquetar)

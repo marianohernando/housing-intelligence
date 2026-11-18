@@ -31,11 +31,11 @@ Son cifras del banco con los datos del 15 nov. La columna «Antes» es la fórmu
 
 - **El control no empeora.** Los 4 casos sintéticos sacan lo mismo con las dos fórmulas. El punto de más es del estudiante, que no cuenta como validación independiente.
 - **Robustez.** Moviendo los datos dentro de su fiabilidad, las 10 primeras conservan de media un 85 % de zonas en las personas y un 84 % en la rejilla.
-- **El precio.** Con ruido en los datos, la 1.ª del pitch cambia en casi la mitad de las réplicas, casi siempre por otra zona con el mismo %: por eso la web dice «empatan».
+- **El precio.** Con ruido en los datos, la 1.ª del pitch cambia en casi la mitad de las réplicas, casi siempre por otra zona con el mismo %: por eso la web dice con quién empata cada una («Igual de buena que…», en «Ver más» de la tarjeta).
 - **Paridad.** La web desplegada da exactamente los mismos % y órdenes que el banco, en las 26 personas y en las 1.000 búsquedas (diferencia máxima, 0).
 - **El ejemplo del pitch, en producción:**
-  - encajan 42 de 199 zonas: 12 «encajan muy bien», 5 «bien», 13 «regular» y 12 «poco»;
-  - arriba empatan Puente de Vallecas y Latina al 94 %;
+  - cumplen todo 42 de 199 zonas: 12 «Muy buena opción», 5 «Buena opción», 13 «Opción regular» y 12 «Poco recomendable» (las palabras de la web desde D-245; antes, «encaja muy bien», «bien», «regular» y «poco»);
+  - arriba empatan Puente de Vallecas y Latina al 94 % (desde D-245 la lista no lo dice: lo dice la tarjeta, en «Ver más», «Igual de buena que Latina (94 %).»);
   - antes, Latina salía 1.ª al 98 %, con cuatro empatadas.
 
 **Lo que sigue sin validar.** Los parámetros nuevos (0,9 en el borde de la ventana, el 40 % de peso de las plazas y su cero al 40 % de la referencia, 0,6 en el límite del presupuesto, +25 %, la mitad, 89 % y 74 %) salen de las bandas y de umbrales que ya había. No están validados con usuarios. Habrá una segunda ronda con las mismas personas, que compare zonas de dos en dos, y el banco ya puede cargarla como preferencias «A mejor que B».

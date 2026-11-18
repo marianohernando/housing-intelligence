@@ -191,18 +191,20 @@ a {
 /* Recortes de las capturas de producción (build.py, EVIDENCE_CAPTURES). Cada hueco enseña la parte
    que cuenta, con la proporción del hueco, y deja fuera los textos anteriores al despliegue del PR #9
    (pitch/slides.md, «Capturas necesarias») */
-/* C2 (15 nov, D, fit-0.9, pitch/capturas/C2.png a 1440 × 900): la lista «Zonas que encajan» con
-   «Empatan al 94 %», Puente de Vallecas y Latina, cada una con «Encaja muy bien» */
+/* C2 (18 nov, D, producción con 55651c2, pitch/capturas/C2.png a 1440 × 900): las dos primeras filas
+   de «Zonas que os convienen», Puente de Vallecas y Latina, cada una con «Muy buena opción · 94 %» y
+   «Unos … € al mes» (x 1000–1379, y 236–403: la proporción del hueco) */
 .shot[data-shot="C2"] img {
-  object-view-box: inset(31.7% 5.6% 45.6% 69.4%);
+  object-view-box: inset(26.2% 4.2% 55.2% 69.4%);
   object-fit: contain;
   object-position: center;
 }
 
-/* C3 (15 nov, D, fit-0.9, pitch/capturas/C3.png a 1440 × 900): «¿Y si cambias algo?» con 42 zonas,
-   «+5 min…: saldrían 91 zonas, 49 más» y «+150 €/mes: saldrían 45 zonas, 3 más» */
+/* C3 (18 nov, D, producción con 55651c2, pitch/capturas/C3.png a 1440 × 900): «¿Queréis ver más
+   zonas?» y su primera opción, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en
+   total» (x 1000–1370, y 100–372) */
 .shot[data-shot="C3"] img {
-  object-view-box: inset(0 4.9% 70% 69.4%);
+  object-view-box: inset(11.1% 4.9% 58.7% 69.4%);
   object-fit: contain;
   object-position: center;
 }
@@ -544,6 +546,20 @@ a {
   color: var(--ink-soft);
 }
 
+/* Viabilidad: el siguiente paso (de dónde vivir a dónde construir), con el borde de las citas y abajo,
+   en el sitio de la antigua miniatura C7 */
+.s3 .next {
+  margin: auto 0 0;
+  padding: 4px 0 4px 18px;
+  border-left: 6px solid var(--violet);
+  font-size: 26px;
+  line-height: 1.3;
+}
+
+.s3 .next strong {
+  color: var(--violet-strong);
+}
+
 .s3 .band {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -642,22 +658,23 @@ a {
   font-size: 34px;
 }
 
-/* Sobre la captura C1 de producción (15 nov, fit-0.9, pitch/capturas/C1.png): 1 junto a «Tu búsqueda»,
-   2 en la cabecera de la tarjeta de zona (% de encaje y hechos) y 3 en su «Qué falta aquí». Se revisan si
-   cambia la captura. */
+/* Sobre la captura C1 de producción (18 nov, 55651c2, pitch/capturas/C1.png): 1 junto a «Tu búsqueda»,
+   2 en la cabecera de la tarjeta de zona (nombre y banda) y 3 en «No le falta nada de lo que buscáis».
+   En la slide, y = 16 + 0,7333 × y de la captura, menos 32 para centrar el círculo. Se revisan si cambia
+   la captura. */
 .s4 .m1 {
   left: 328px;
-  top: 260px;
+  top: 340px;
 }
 
 .s4 .m2 {
   left: 692px;
-  top: 142px;
+  top: 136px;
 }
 
 .s4 .m3 {
   left: 692px;
-  top: 581px;
+  top: 428px;
 }
 
 /* Móvil 390 × 844 superpuesto al escritorio */

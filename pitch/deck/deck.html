@@ -2,9 +2,10 @@
 <!--
   Plantilla de las 4 slides de DATAMAD 2026 (bases §8). No se abre directamente: build.py la rellena
   ({{…}}) y escribe pitch/deck/build/index.html y el PDF. Contenido: pitch/slides.md.
-  Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero en evidence/, relativa a
+  Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero (capturas/ o evidence/), relativa a
   esta plantilla. build.py la vuelve a resolver al construir: gana pitch/capturas/Cn.png si existe
-  (no se versiona) y, si no, la de EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
+  (C1, C2, C3 y C6 están ahí y versionadas: las hizo D en producción) y, si no, la de
+  EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
 -->
 <html lang="es">
 <head>
@@ -80,9 +81,9 @@
   <div class="cols">
     <div class="glass col">
       <p class="kicker">Utilidad · personas</p>
-      <h3>Encuentra la zona que encaja contigo</h3>
+      <h3>Encuentra la zona que te conviene</h3>
       <ul>
-        <li>% de encaje con hechos que se pueden comprobar, cada uno con su fiabilidad.</li>
+        <li>Cada zona, en palabras y con su %, con hechos que se pueden comprobar y su fiabilidad.</li>
       </ul>
       <blockquote class="quote">
         <p>«Se valora mucho la cercanía al puesto de trabajo.»</p>
@@ -91,12 +92,12 @@
       </blockquote>
       <div class="shots">
         <figure class="shot" data-shot="C2">
-          <img src="../capturas/C2.png" alt="Lista de zonas que encajan: Puente de Vallecas y Latina, empatadas al 94 %, con su banda en palabras">
-          <figcaption class="ph" data-pending="C2 provisional: rehacer tras la entrega de UX (19 nov)">C2 · Lista con bandas y empate</figcaption>
+          <img src="../capturas/C2.png" alt="«Zonas que os convienen»: Puente de Vallecas y Latina, «Muy buena opción · 94 %», unos 1.129 y 1.101 € al mes">
+          <figcaption class="ph">C2 · Zonas que os convienen</figcaption>
         </figure>
         <figure class="shot" data-shot="C3">
-          <img src="../capturas/C3.png" alt="«¿Y si cambias algo?»: con 5 minutos más a pie hasta el colegio saldrían 91 zonas, 49 más; con 150 € más al mes, 45 zonas, 3 más">
-          <figcaption class="ph" data-pending="C3 provisional: rehacer tras la entrega de UX (19 nov)">C3 · ¿Y si cambias algo?</figcaption>
+          <img src="../capturas/C3.png" alt="«¿Queréis ver más zonas?»: con 5 minutos más a pie hasta el colegio saldrían 49 más, 91 en total; con 150 € más al mes, 3 más, 45 en total">
+          <figcaption class="ph">C3 · ¿Queréis ver más zonas?</figcaption>
         </figure>
       </div>
     </div>
@@ -121,12 +122,9 @@
         <li>0 € hoy; unos 45 $/mes para uso comercial.</li>
         <li>Código abierto: cualquiera puede repetir los cálculos.</li>
       </ul>
-      <div class="shots one">
-        <figure class="shot" data-shot="C7">
-          <img src="../../evidence/map-004/2026-11-11/prod_c7_como_lo_calculamos_desktop.png" alt="«Cómo lo calculamos»: cómo sale el % de encaje">
-          <figcaption class="ph">C7 · Cómo lo calculamos</figcaption>
-        </figure>
-      </div>
+      <!-- 18 nov: el siguiente paso ocupa el sitio de la miniatura C7 («Cómo lo calculamos»), que no cabía
+           con él y queda de reserva (pitch/slides.md, «Capturas necesarias») -->
+      <p class="next"><strong>Siguiente paso:</strong> dónde construir, según la vivienda que falta.</p>
     </div>
   </div>
   <div class="band">
@@ -156,8 +154,8 @@
   <div class="stage">
     <div class="glass desktop">
       <figure class="shot" data-shot="C1">
-        <img src="../capturas/C1.png" alt="Mapa con la búsqueda de ejemplo y la tarjeta de Puente de Vallecas, al 94 %, empatada con Latina">
-        <figcaption class="ph" data-pending="C1 provisional: rehacer tras la entrega de UX (19 nov)">C1 · Mapa con la búsqueda de ejemplo (1440 × 900)</figcaption>
+        <img src="../capturas/C1.png" alt="Mapa con la búsqueda de ejemplo y la tarjeta de Puente de Vallecas: «Muy buena opción», unos 1.129 € al mes, sus minutos a pie y «No le falta nada de lo que buscáis»">
+        <figcaption class="ph">C1 · Mapa con la búsqueda de ejemplo (1440 × 900)</figcaption>
       </figure>
     </div>
     <span class="marker m1"><span class="num">1</span></span>
@@ -165,18 +163,18 @@
     <span class="marker m3"><span class="num">3</span></span>
     <div class="phone">
       <figure class="shot" data-shot="C6">
-        <img src="../../evidence/map-004/2026-11-11/prod_c5_chamartin_3d_mobile.png" alt="Vida Fácil en el móvil: Chamartín en 3D, con la zona en una hoja inferior">
+        <img src="../capturas/C6.png" alt="Vida Fácil en el móvil: «Zonas que os convienen», «Hemos encontrado 42 zonas para vosotros» y cada zona con su banda en palabras y su precio al mes">
         <figcaption class="ph">C6 · Móvil (390 × 844)</figcaption>
       </figure>
     </div>
     <ol class="steps">
       <li><span class="num">1</span>Cuéntanos tu hogar, tu presupuesto y dónde trabajas</li>
-      <li><span class="num">2</span>Mira las zonas que encajan contigo y por qué</li>
+      <li><span class="num">2</span>Mira las zonas que te convienen y por qué</li>
       <li><span class="num">3</span>Entra en una zona y mira qué le falta, con su fuente</li>
     </ol>
     <div class="tested">
       <p class="who">Probada con 7 personas</p>
-      <p>Lo que pidieron, ya en la web: buscar por barrios, un límite de tiempo al trabajo y las paradas de autobús.</p>
+      <p>Lo que pidieron, ya en la web: buscar por barrios y un límite de tiempo al trabajo. Y, para una persona mayor, más sencilla en el móvil.</p>
     </div>
   </div>
   <p class="live">Demo en vivo: <a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
