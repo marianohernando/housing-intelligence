@@ -27,15 +27,16 @@ def _redact_paths() -> ModuleType:
 USERS, TMP = "/Users", "/tmp/claude-"  # noqa: S108 (test data, not a temporary file)
 DESKTOP = "~/" + "Desktop"
 WORKSPACE = DESKTOP + "/DATAMAD"
+SLUG = "-" + "Users" + "-"  # a project slug starts so: the home folder with hyphens for slashes
 
 
 def test_redact_replaces_home_and_scratchpad() -> None:
     redact = _redact_paths().redact
     home = USERS + "/jane.doe-1/code/repo/apps/web"
-    scratch = "/private" + TMP + "501/-Users-jane-Desktop-repo/abc/tasks/x.txt"
+    scratch = "/private" + TMP + "501/" + SLUG + "jane-Desktop-repo/abc/tasks/x.txt"
     assert redact(f" RUN  v5.0.5 {home}\n") == " RUN  v5.0.5 ~/code/repo/apps/web\n"
     assert redact(f"see {scratch}") == "see <scratchpad>/abc/tasks/x.txt"
-    assert redact(TMP + "501/-Users-jane-x/f") == "<scratchpad>/f"
+    assert redact(TMP + "501/" + SLUG + "jane-x/f") == "<scratchpad>/f"
     bare = USERS + "/bob"
     assert redact(f'"{bare}" ({bare}) {bare}:12, {bare}, {bare}.') == '"~" (~) ~:12, ~, ~.'
     untouched = f"~/code and {USERS}/<usuario>/ and /usr/bin and /opt{bare}/x and Docker Desktop"
@@ -68,10 +69,26 @@ def test_redact_replaces_any_other_desktop_path() -> None:
     assert redact(f"{WORKSPACE}x/y") == "<desktop>/DATAMADx/y"
 
 
+def test_redact_replaces_a_project_slug_outside_a_scratchpad() -> None:
+    """Claude Code's project folders (`~/.claude/projects/<slug>`) carry the Mac's user name."""
+    redact = _redact_paths().redact
+    memory = USERS + "/jane/.claude/projects/" + SLUG + "jane-Desktop-DATAMAD/memory/MEMORY.md"
+    assert redact(memory) == "~/.claude/projects/<project-slug>/memory/MEMORY.md"
+    projects = "~/.claude/projects/"
+    assert redact(projects + SLUG + "x-Desktop-a") == projects + "<project-slug>"
+    assert redact(f"slug {SLUG}jane-Desktop.") == "slug <project-slug>"
+    # Not inside a longer word, and a scratchpad still reads as one
+    untouched = f"see-also{SLUG}guide and Users-x"
+    assert redact(untouched) == untouched
+    assert redact(TMP + "501/" + SLUG + "jane-x/abc") == "<scratchpad>/abc"
+
+
 def test_redact_leaves_its_own_output_alone() -> None:
     redact = _redact_paths().redact
-    once = redact(f"{USERS}/jane {DESKTOP}/a {WORKSPACE}/b {WORKSPACE}/housing-intelligence/c")
-    assert once == "~ <desktop>/a <workspace>/b <repo>/c"
+    slug = f"~/.claude/projects/{SLUG}jane-Desktop/m"
+    repo = WORKSPACE + "/housing-intelligence"
+    once = redact(f"{USERS}/jane {DESKTOP}/a {WORKSPACE}/b {repo}/c {slug}")
+    assert once == "~ <desktop>/a <workspace>/b <repo>/c ~/.claude/projects/<project-slug>/m"
     assert redact(once) == once
 
 
