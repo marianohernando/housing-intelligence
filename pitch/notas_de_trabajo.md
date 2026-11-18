@@ -22,7 +22,7 @@ La claridad en el móvil (D-244 y D-245) está en producción desde el 15 nov (`
 | Cambiar las etiquetas citadas | `pitch/video_respaldo.md` (planos 2 a 5), preguntas 43 y 48, `pitch/banco_formula.md` y `pitch/metodologia.md` §1.3 (sin el aviso) | **Hecho el 18 nov** |
 | «Zonas que encajan» → «Zonas que te/os convienen» | guion, `slides.md`, `video_respaldo.md`, `metodologia.md` y el deck | **Hecho el 18 nov.** `textos_web.md` ya lo tenía (B) |
 | Contar como hecho lo de la persona mayor | pregunta 43, `slides.md`, guion (bloque 5) y el recuadro de la slide 4 | **Hecho el 18 nov**, con las medidas (0 textos < 16 px y 0 botones < 44 px a 390 y 360 px; 4 cosas por fila en vez de 7 a 9). **Sin segunda prueba todavía:** no se dice que ya le resulta fácil |
-| Que el guion quepa en 5 minutos | guion | **Hecho el 18 nov:** 496 palabras y unos 28 s de margen, con el clic en «Ver más» |
+| Que el guion quepa en 5 minutos | guion | **Hecho el 18 nov:** 497 palabras y unos 28 s de margen, con el clic en «Ver más» |
 | «Cómo lo calculamos» dice todavía que la lista pone «Empatan al 94 %» | web (B) | Avisado a datamad-10 el 18 nov; va a la deuda de la web |
 
 ## El siguiente paso: de dónde vivir a dónde construir (18 nov)
