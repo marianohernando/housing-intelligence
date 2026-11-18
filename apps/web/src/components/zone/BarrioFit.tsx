@@ -44,27 +44,30 @@ function outlinedOnMap(row: BarrioRow, barrios: ReturnType<typeof useMapZones>["
 }
 
 /**
+ * How a row opens (review R-06 of PR #82): `outline` outlines its barrio on the map, and its panel
+ * shows while it is outlined; `panel` only opens its panel, folded as the others. A barrio without its
+ * outline on the map (the map's barrios not loaded, or no admin unit) opens a panel; so does one
+ * whose panel was open when the outlines arrived, until it is closed, so the panel stays where it was.
+ */
+type Opens = "outline" | "panel";
+
+/**
  * One barrio, as a row of the list (second delivery of the UX mobile audit): its name, its band in
  * words (the % small after it on a wide screen) or what it lacks, and «Unos 1.129 € al mes». The row
- * is a button that opens its panel under it: with its outline, it outlines the barrio on the map
- * (pressed again, back to the whole district); without it (the map's barrios not loaded, or no
- * admin unit), it only opens the panel, folded as the others (`open`, one at a time as on the map).
+ * is a button that opens its panel under it (`opens`): pressed again, it closes it (with an outline,
+ * back to the whole district). One panel at a time, as on the map.
  */
-function Barrio({ row, open, onToggle }: { row: BarrioRow; open: boolean; onToggle: () => void }) {
-  const { barrios, barrio, focusBarrio } = useMapZones();
+function Barrio({ row, opens, shown, onPress }: { row: BarrioRow; opens: Opens; shown: boolean; onPress: () => void }) {
   const detailsId = useId();
-  const outlined = outlinedOnMap(row, barrios);
-  const pressed = outlined && barrio?.properties.admin_unit_id === row.id;
-  const showFacts = outlined ? pressed : open;
   return (
-    <div className={[styles.row, styles.pickable, pressed && styles.pressed].filter(Boolean).join(" ")}>
+    <div className={[styles.row, styles.pickable, opens === "outline" && shown && styles.pressed].filter(Boolean).join(" ")}>
       <button
         type="button"
         className={styles.head}
-        aria-pressed={outlined ? pressed : undefined}
-        aria-expanded={outlined ? undefined : open}
-        aria-describedby={showFacts ? detailsId : undefined}
-        onClick={() => (outlined ? focusBarrio(pressed ? null : row.id) : onToggle())}
+        aria-pressed={opens === "outline" ? shown : undefined}
+        aria-expanded={opens === "panel" ? shown : undefined}
+        aria-describedby={shown ? detailsId : undefined}
+        onClick={onPress}
       >
         <span className={styles.rowText}>
           <span className={styles.name}>{row.name}</span>
@@ -79,16 +82,17 @@ function Barrio({ row, open, onToggle }: { row: BarrioRow; open: boolean; onTogg
               {row.fit.band}
               <span className={styles.pct}>
                 {` · ${row.fit.pct}`}
-                {row.tie && <span className="visually-hidden">{`, ${TEXT.tiesWith(row.tie)}`}</span>}
+                {/* Whom it ties with, after the % of a wide screen; with the panel open, its line says it (aria-describedby), not twice */}
+                {row.tie && !shown && <span className="visually-hidden">{`, ${TEXT.tiesWith(row.tie)}`}</span>}
               </span>
             </span>
           )}
           {row.price && <PriceTag price={row.price} variant="row" />}
         </span>
-        <ChevronDown size={20} aria-hidden="true" className={[styles.chevron, showFacts && styles.flip].filter(Boolean).join(" ")} />
+        <ChevronDown size={20} aria-hidden="true" className={[styles.chevron, shown && styles.flip].filter(Boolean).join(" ")} />
       </button>
       {/* Its panel: only what the row leaves out (review I-03 of PR #81): the % where the row hides it, whom it ties with, what the price is for and how sure, its facts */}
-      {showFacts && (
+      {shown && (
         <span id={detailsId} className={styles.details}>
           {row.fit && <span className={`${styles.fact} ${styles.panelPct}`}>{row.fit.pct}</span>}
           {row.tieLine && <span className={styles.fact}>{row.tieLine}</span>}
@@ -111,18 +115,39 @@ function BarrioList({ distrito, name, scenario }: { distrito: string; name: stri
   const [all, setAll] = useState(false);
   const { loading, data, error, retry } = useBarrioFit(distrito, scenario);
   const many = speaksToMany(scenario.household);
-  const { barrios, barrio } = useMapZones();
-  // The barrio without its outline whose panel is open (one at a time, as the one outlined on the map)
+  const { barrios, barrio, focusBarrio } = useMapZones();
+  const picked = barrio?.properties.admin_unit_id ?? null;
+  // The barrio whose panel is open without outlining it on the map (`panel`)
   const [openCode, setOpenCode] = useState<string | null>(null);
+  // A barrio outlined on the map (from a row, «Ir a un barrio» or the map itself) closes that panel:
+  // never two open at once (review R-06 of PR #82)
+  const [seenPick, setSeenPick] = useState(picked);
+  if (seenPick !== picked) {
+    setSeenPick(picked);
+    if (picked !== null) setOpenCode(null);
+  }
   const slow = useSlow(loading);
   const rows = data ? barrioRows(data) : null;
   const shown = rows ? (all ? rows.fits : rows.fits.slice(0, FIRST_BARRIOS)) : [];
+  const opensOf = (row: BarrioRow): Opens => (row.code !== openCode && outlinedOnMap(row, barrios) ? "outline" : "panel");
+  const panelShown = (row: BarrioRow) => (opensOf(row) === "outline" ? picked === row.id : openCode === row.code);
   // The facts of a barrio show once its panel is open: say what their minutes are only then
-  const factsShown = (row: BarrioRow) => (outlinedOnMap(row, barrios) ? barrio?.properties.admin_unit_id === row.id : openCode === row.code);
-  const walking = rows ? [...shown, ...rows.near].some((row) => row.walking && factsShown(row)) : false;
+  const walking = rows ? [...shown, ...rows.near].some((row) => row.walking && panelShown(row)) : false;
+  const press = (row: BarrioRow) => {
+    if (opensOf(row) === "outline") {
+      setOpenCode(null);
+      focusBarrio(picked === row.id ? null : row.id);
+    } else if (openCode === row.code) {
+      setOpenCode(null);
+    } else {
+      // Opening a panel lets go of the barrio outlined on the map, whose panel was the open one
+      if (picked !== null) focusBarrio(null);
+      setOpenCode(row.code);
+    }
+  };
   const barrioItem = (row: BarrioRow) => (
     <li key={row.code}>
-      <Barrio row={row} open={openCode === row.code} onToggle={() => setOpenCode((code) => (code === row.code ? null : row.code))} />
+      <Barrio row={row} opens={opensOf(row)} shown={panelShown(row)} onPress={() => press(row)} />
     </li>
   );
 

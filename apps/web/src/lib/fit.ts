@@ -90,11 +90,7 @@ export interface ZonePrice {
    * «Unos 385.000 €» (zona.precio.compra) or «Unos 1.101 € al mes» (zona.precio.alquiler)
    */
   short: string;
-  /** In the zone card head, in words: «Comprar: unos 385.000 €» (zona.precio.cabecera.compra) or «Alquiler: unos 1.101 € al mes» */
-  long: string;
-  /** The m² the API priced (zona.precio.m2): «por 68 m²»; null when unknown */
-  area: string | null;
-  /** The same m² as a number, for «Para un piso de unos 68 m²» behind «Ver más»; null when unknown */
+  /** The m² the API priced, for «Para un piso de unos 68 m²» behind «Ver más»; null when unknown */
   m2: number | null;
   /** Read aloud instead of «≈»: «Comprar: unos 385.000 € por 68 m²» (zona.precio.aria.*) */
   aria: string;
@@ -192,9 +188,6 @@ export function zonePrice(
   return {
     // No-break spaces: «Unos 1.129 €» and «al mes» never split; if the row is too narrow, between the two
     short: buying ? `Unos\u00a0${unbroken(amount)}` : `Unos\u00a0${unbroken(amount)} al\u00a0mes`,
-    // No-break spaces: «1.129 € al mes» never splits at the end of a line in a narrow card
-    long: buying ? `Comprar: unos ${unbroken(amount)}` : `Alquiler: unos ${unbroken(amount)}\u00a0al\u00a0mes`,
-    area,
     m2,
     aria: area ? `${aria} ${area}` : aria,
     confidence: confidence != null && confidence < RELIABLE ? confidenceText(confidence) : null,
@@ -315,6 +308,12 @@ export interface Voice {
   elige: string;
   mira: string;
   dinos: string;
+  /** «mi familia» / «nuestra familia» (lugar.familia, D-244) */
+  mi: string;
+  /** «¿Dónde vives ahora?» / «¿Dónde vivís ahora?» (lugar.buscar) */
+  vives: string;
+  /** «como si fueras 3 días» / «como si fuerais 3 días» (lugar.ayuda) */
+  fueras: string;
 }
 
 const ONE: Voice = {
@@ -333,6 +332,9 @@ const ONE: Voice = {
   elige: "elige",
   mira: "mira",
   dinos: "dinos",
+  mi: "mi",
+  vives: "vives",
+  fueras: "fueras",
 };
 const MANY: Voice = {
   te: "os",
@@ -350,6 +352,9 @@ const MANY: Voice = {
   elige: "elegid",
   mira: "mirad",
   dinos: "decidnos",
+  mi: "nuestra",
+  vives: "vivís",
+  fueras: "fuerais",
 };
 
 export function voice(many = false): Voice {

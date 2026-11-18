@@ -270,6 +270,11 @@ describe("«¿Y si cambias algo?»", () => {
     expect(noneText("barrio", false)).toBe("Ningún barrio cumple todo lo que pides. Mira abajo qué pasa si cambias algo.");
   });
 
+  it("has the words of «¿Cerca de dónde quieres vivir?» for one person and for more (lugar.*, D-244)", () => {
+    expect(voice(false)).toMatchObject({ quieres: "quieres", mi: "mi", vives: "vives", fueras: "fueras" });
+    expect(voice(true)).toMatchObject({ quieres: "queréis", mi: "nuestra", vives: "vivís", fueras: "fuerais" });
+  });
+
   it("titles the list for the household, as the line under it", () => {
     expect(resultsTitle(false)).toBe("Zonas que te convienen");
     expect(resultsTitle(true)).toBe("Zonas que os convienen");
@@ -369,8 +374,6 @@ describe("the approximate price of a zone (D-234)", () => {
   it("says the purchase price or the monthly rent the API gives, never recomputed", () => {
     expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_confidence: 0.8 }, true)).toEqual({
       short: "Unos\u00a0385.000\u00a0€",
-      long: "Comprar: unos 385.000\u00a0€",
-      area: null,
       m2: null,
       aria: "Comprar: unos 385.000 €",
       confidence: null,
@@ -379,19 +382,19 @@ describe("the approximate price of a zone (D-234)", () => {
     });
     const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
     // The row and the card's essentials say it in words, without «≈» (second delivery of the UX mobile audit)
-    expect([rent?.short, rent?.long, rent?.aria]).toEqual(["Unos\u00a01.101\u00a0€ al\u00a0mes", "Alquiler: unos 1.101\u00a0€\u00a0al\u00a0mes", "Alquiler: unos 1.101 € al mes"]);
+    expect([rent?.short, rent?.aria]).toEqual(["Unos\u00a01.101\u00a0€ al\u00a0mes", "Alquiler: unos 1.101 € al mes"]);
   });
 
   it("says the m² the price is for, the person's or the household's usual (zona.precio.m2)", () => {
     const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false, 68);
-    expect([rent?.short, rent?.long, rent?.area, rent?.aria]).toEqual(["Unos\u00a01.101\u00a0€ al\u00a0mes", "Alquiler: unos 1.101\u00a0€\u00a0al\u00a0mes", "por 68 m²", "Alquiler: unos 1.101 € al mes por 68 m²"]);
+    expect([rent?.short, rent?.m2, rent?.aria]).toEqual(["Unos\u00a01.101\u00a0€ al\u00a0mes", 68, "Alquiler: unos 1.101 € al mes por 68 m²"]);
     expect(zonePrice({ estimated_cost_eur: 385_000 }, true, 90)?.aria).toBe("Comprar: unos 385.000 € por 90 m²");
     // The example (2 adults and 2 children, min_floor_area_m2 null) is priced for 77 m², as its facts say
     expect(floorAreaOf(fixture)).toBe(77);
     expect(fixture.results[0]?.constraints.find((c) => c.constraint_id === "budget")?.label).toContain("77 m²");
     expect(floorAreaOf({ scenario: { ...fixture.scenario, min_floor_area_m2: 55 } })).toBe(55);
     expect(floorAreaOf({})).toBeNull();
-    expect(zonePriceOf(fixture, zoneKeyOf(fixture.results[0]!.zone))?.area).toBe("por 77 m²");
+    expect(zonePriceOf(fixture, zoneKeyOf(fixture.results[0]!.zone))?.m2).toBe(77);
   });
 
   it("marks an estimate with the card's words, and shows nothing without a price", () => {
@@ -406,7 +409,7 @@ describe("the approximate price of a zone (D-234)", () => {
   it("says where half the leases fall and who publishes it, renting with the Ministry's reference (D-242)", () => {
     const range = { low_eur: 510, high_eur: 820, source: "Ministerio de Vivienda (SERPAVI), 2024" };
     const rent = zonePrice({ estimated_cost_eur: 571, estimated_cost_confidence: 0.7, estimated_cost_range: range }, false);
-    expect(rent?.long).toBe("Alquiler: unos 571\u00a0€\u00a0al\u00a0mes");
+    expect(rent?.short).toBe("Unos\u00a0571\u00a0€ al\u00a0mes");
     expect(rent?.confidence?.label).toBe("Dato aproximado");
     expect(rent?.range).toEqual({
       text: "Lo normal: entre 510 y 820\u00a0€ al mes",
@@ -431,7 +434,7 @@ describe("the approximate price of a zone (D-234)", () => {
         zoneKeyOf(z.zone) === key ? { ...z, estimated_cost_eur: 1_234, estimated_cost_confidence: 0.8 } : z,
       ),
     };
-    expect(zonePriceOf(withAll, key)?.long).toBe("Alquiler: unos 1.234\u00a0€\u00a0al\u00a0mes");
+    expect(zonePriceOf(withAll, key)?.short).toBe("Unos\u00a01.234\u00a0€ al\u00a0mes");
     const older: SearchResult = { ...fixture, all_zones: fixture.all_zones.map((z) => ({ ...z, estimated_cost_eur: undefined })) };
     const cost = first.estimated_cost_eur;
     expect(zonePriceOf(older, key)?.short).toBe(cost == null ? undefined : zonePrice(first, false)?.short);

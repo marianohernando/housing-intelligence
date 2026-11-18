@@ -8,7 +8,7 @@
   for b in 1 2 2s 3 4 5; do printf "b$b "; awk -v b=$b '$0 ~ "^<!-- habla:b"b":fin"{f=0} f; $0 ~ "^<!-- habla:b"b":inicio"{f=1}' pitch/guion.md | wc -w; done
   ```
 - **Lo que va entre corchetes** (`[N]`, `[zona]`…) se lee en la pantalla en directo. Nunca se dice una cifra de memoria.
-- **Textos de la web:** son los de la claridad en el móvil (D-244 y D-245), en producción desde el 15 nov con `55651c2` (`evidence/gate-06/2026-11-15-deploy/deploy-35-55651c2-ux3.md`, PR #84). Los comprobó D en producción el 18 nov, a 1440 px, con el caso de ejemplo; son los de las capturas C1, C2, C3 y C6 (`pitch/capturas/`):
+- **Textos de la web:** son los de la claridad en el móvil (D-244 y D-245), en producción desde el 15 nov con `55651c2` (`evidence/gate-06/2026-11-15-deploy/deploy-35-55651c2-ux3.md`, PR #84). Los comprobó D en producción el 18 nov, a 1440 px, con el caso de ejemplo; son los de las capturas C1, C2, C3 y C6 (`pitch/capturas/`), y lo que se vio, con sus cifras, está en `pitch/comprobacion_produccion_18nov.md`:
   - la lista se llama «Zonas que os convienen» («te» con una persona) y cada fila dice la zona, su banda en palabras («Muy buena opción», «Buena opción», «Opción regular» o «Poco recomendable») y «Unos … € al mes». En escritorio el % va pequeño detrás de la banda. La lista ya no dice «Empatan»: el empate sale dentro de «Ver más»;
   - «Casi encajan» pasa a «Casi valen» y «¿Y si cambias algo?» a «¿Queréis ver más zonas?»;
   - la tarjeta enseña lo esencial y lo demás va tras «Ver más sobre {zona}».
@@ -26,10 +26,10 @@
 | 2 sin buscador (reserva) | 0:40–2:15 | 95 s | Demo: el mapa, una zona en 3D y sus minutos a pie | 136 | 63 s + unos 15 s de clics |
 | 3 | 2:15–3:30 | 75 s | Puente de Vallecas, su lista de lo que falta y a cuántos niños afecta | 125 | 58 s + unos 15 s de clics |
 | 4 | 3:30–4:25 | 55 s | Datos CM, código abierto, quién paga y el siguiente paso | 102 | 47 s |
-| 5 | 4:25–5:00 | 35 s | Impacto, prueba con usuarios (también la persona mayor) y cierre | 65 | 30 s |
-| **Total** | | **300 s** | | **496 con buscador; 502 sin él** | **Con buscador: 229 s + unos 43 s de clics = unos 28 s de margen. Sin buscador: 232 s + unos 30 s de clics = unos 38 s de margen** |
+| 5 | 4:25–5:00 | 35 s | Impacto, prueba con usuarios (también la persona mayor) y cierre | 66 | 30 s |
+| **Total** | | **300 s** | | **497 con buscador; 503 sin él** | **Con buscador: 229 s + unos 43 s de clics = unos 28 s de margen. Sin buscador: 232 s + unos 30 s de clics = unos 38 s de margen** |
 
-**Recuento del 18 nov** (comando de arriba): b1 74, b2 130, b2s 136, b3 125, b4 102 y b5 65. El bloque 2 gana un clic («Ver más», unos 3 s) y pierde 12 palabras; el bloque 4 suma el siguiente paso (de dónde vivir a dónde construir) y el 5, la persona mayor como hecho. El margen baja de unos 31 s a unos 28 s. Si se añade la frase del suelo público (bloque 4, en reserva), baja a unos 21 s: entonces se quita «población, vivienda, renta, colegios, salud, farmacias y el transporte del Consorcio» del bloque 4 (12 palabras, unos 6 s).
+**Recuento del 18 nov** (comando de arriba): b1 74, b2 130, b2s 136, b3 125, b4 102 y b5 66 («letra más grande», revisión del #86). El bloque 2 gana un clic («Ver más», unos 3 s) y pierde 12 palabras; el bloque 4 suma el siguiente paso (de dónde vivir a dónde construir) y el 5, la persona mayor como hecho. El margen baja de unos 31 s a unos 28 s. Si se añade la frase del suelo público (bloque 4, en reserva), baja a unos 21 s: entonces se quita «población, vivienda, renta, colegios, salud, farmacias y el transporte del Consorcio» del bloque 4 (12 palabras, unos 6 s).
 
 ---
 
@@ -176,7 +176,7 @@ Ahora cambio de usuario: un ayuntamiento. A esta familia no le falta nada en Pue
 **Pantalla:** la slide 4 (pantallazo) con la URL y los QR.
 
 <!-- habla:b5:inicio -->
-Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. La probaron siete personas, y ya tiene lo que pidieron. A una persona mayor le costó, y ya es más sencilla: letra grande y lo esencial primero. Encuentra tu sitio en Madrid. Gracias.
+Vida Fácil cambia la pregunta. No es solo dónde hay pisos: es dónde puedes vivir bien con lo que necesitas, y qué le falta a cada zona para que más gente pueda. La probaron siete personas, y ya tiene lo que pidieron. A una persona mayor le costó, y ya es más sencilla: letra más grande y lo esencial primero. Encuentra tu sitio en Madrid. Gracias.
 <!-- habla:b5:fin -->
 
 **Prueba con usuarios (del 13 al 15 nov):** la frase «La probaron siete personas…» sustituye a «Funciona con datos reales y oficiales de toda la Comunidad de Madrid.»; los datos oficiales ya se dicen en el bloque 4. Lo que pidieron no se enumera en voz alta: está en el recuadro «Probada con 7 personas» de la slide 4, en pantalla: «Lo que pidieron, ya en la web: buscar por barrios y un límite de tiempo al trabajo. Y, para una persona mayor, más sencilla en el móvil.» (lo de los barrios lo pidieron 4 de las 6 personas, D-238; las paradas de autobús, que también pidieron, salen de la slide para que quepa la persona mayor y siguen en la pregunta 43). Las citas están en la slide 3 y la respuesta larga en la pregunta 43.

@@ -1,0 +1,100 @@
+{
+ "base": "http://localhost:3091",
+ "checks": [
+  {
+   "name": "390: alone, «¿Cerca de dónde quieres vivir?», «Donde vivo ahora», «Cerca de mi familia»",
+   "ok": true,
+   "detail": "¿Cerca de dónde quieres vivir? (opcional) Tu casa de ahora o tu familia Donde vivo ahora Cerca de mi familia ¿Dónde vives ahora? ¿Qué es esto? ¿Cerca de dónde quieres vivir?"
+  },
+  {
+   "name": "390: the place picked reads «Donde vivo ahora: Ciudad Lineal (metro)»",
+   "ok": true,
+   "detail": "¿Cerca de dónde quieres vivir? (opcional) Tu casa de ahora o tu familia Donde vivo ahora Cerca de mi familia Donde vivo ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 30 min 45 min 60 min 90 min en transporte público ¿Qué es esto? ¿Cerca de dónde quieres vivir?"
+  },
+  {
+   "name": "390: its limit is called «… hasta donde vivo ahora…»",
+   "ok": true,
+   "detail": "1"
+  },
+  {
+   "name": "390: axe 0 with «Solo/a» and the place",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "390: /search gets the place as «donde vivo ahora»",
+   "ok": true,
+   "detail": "[{\"kind\":\"other\",\"label\":\"donde vivo ahora\",\"lat\":40.43805,\"lon\":-3.63816,\"max_minutes\":30,\"days_per_week\":3}]"
+  },
+  {
+   "name": "390: the API's trips say «hasta donde vivo ahora»",
+   "ok": true,
+   "detail": "27 min en transporte público hasta donde vivo ahora"
+  },
+  {
+   "name": "390: a couple reads «queréis» and «Donde vivimos ahora: Ciudad Lineal (metro)»",
+   "ok": true,
+   "detail": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra familia Donde vivimos ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 30 min 45 min 60 min 90 min en transporte público ¿Qué es esto? ¿Cerca de dónde queréis vivir?"
+  },
+  {
+   "name": "390: no console errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "390: «Cómo lo calculamos» says where the tie is, without «Empatan al»",
+   "ok": true,
+   "detail": "A igual %. Las zonas van de más a menos %. A igual %, va primero la que tiene más cerca los servicios del día a día (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte), los hayas marcado o no: cuenta cada minuto andando, no cuántos servicios hay. Con quién empata c"
+  },
+  {
+   "name": "1440: alone, «¿Cerca de dónde quieres vivir?», «Donde vivo ahora», «Cerca de mi familia»",
+   "ok": true,
+   "detail": "¿Cerca de dónde quieres vivir? (opcional) Tu casa de ahora o tu familia Donde vivo ahora Cerca de mi familia ¿Dónde vives ahora? ¿Qué es esto? ¿Cerca de dónde quieres vivir?"
+  },
+  {
+   "name": "1440: the place picked reads «Donde vivo ahora: Ciudad Lineal (metro)»",
+   "ok": true,
+   "detail": "¿Cerca de dónde quieres vivir? (opcional) Tu casa de ahora o tu familia Donde vivo ahora Cerca de mi familia Donde vivo ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 30 min 45 min 60 min 90 min en transporte público ¿Qué es esto? ¿Cerca de dónde quieres vivir?"
+  },
+  {
+   "name": "1440: its limit is called «… hasta donde vivo ahora…»",
+   "ok": true,
+   "detail": "1"
+  },
+  {
+   "name": "1440: axe 0 with «Solo/a» and the place",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "1440: /search gets the place as «donde vivo ahora»",
+   "ok": true,
+   "detail": "[{\"kind\":\"other\",\"label\":\"donde vivo ahora\",\"lat\":40.43805,\"lon\":-3.63816,\"max_minutes\":30,\"days_per_week\":3}]"
+  },
+  {
+   "name": "1440: the API's trips say «hasta donde vivo ahora»",
+   "ok": true,
+   "detail": "27 min en transporte público hasta donde vivo ahora"
+  },
+  {
+   "name": "1440: a couple reads «queréis» and «Donde vivimos ahora: Ciudad Lineal (metro)»",
+   "ok": true,
+   "detail": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra familia Donde vivimos ahora: Ciudad Lineal (metro) Tardar como mucho Sin límite 30 min 45 min 60 min 90 min en transporte público ¿Qué es esto? ¿Cerca de dónde queréis vivir?"
+  },
+  {
+   "name": "1440: no console errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "1440: «Cómo lo calculamos» says where the tie is, without «Empatan al»",
+   "ok": true,
+   "detail": "A igual %. Las zonas van de más a menos %. A igual %, va primero la que tiene más cerca los servicios del día a día (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte), los hayas marcado o no: cuenta cada minuto andando, no cuántos servicios hay. Con quién empata c"
+  }
+ ],
+ "axe_solo_390": [],
+ "consola_390": [],
+ "axe_solo_1440": [],
+ "consola_1440": [],
+ "summary": "18/18"
+}

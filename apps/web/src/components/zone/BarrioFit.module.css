@@ -43,7 +43,11 @@
   list-style: none;
 }
 
-/* One row per barrio (a button when it has its outline), and its first facts once it is outlined */
+/*
+ * One row per barrio: always a button, and its panel under it once open (the % on a phone, the tie,
+ * the m² and its facts). With its outline on the map, opening it also outlines the barrio there;
+ * without it, it only opens the panel. One panel at a time.
+ */
 .row {
   position: relative;
   display: grid;

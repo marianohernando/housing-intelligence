@@ -1,6 +1,6 @@
 {
-  "version": "0.5.80",
-  "updated": "2026-11-18T21:13:18.645039+00:00",
+  "version": "0.5.81",
+  "updated": "2026-11-18T21:37:31.036709+00:00",
   "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
@@ -8,8 +8,8 @@
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "a817596caabbe980dd0527375ae1acf6e316a522e5d05aabd4d33fb2c77cec55",
-      "bytes": 319003
+      "sha256": "cf63f3f5134d30b53dfc6f4de61825ac0ba556b469ac5f4d5d3e169da5251bb1",
+      "bytes": 322146
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -1104,8 +1104,8 @@
       "bytes": 22861
     },
     "CLAUDE.md": {
-      "sha256": "e9854fb76206715bdfa94b62361d4cc3d0fb2119434718709a5184fb1c53897a",
-      "bytes": 13937
+      "sha256": "070bb402d34b3c85150d84abf8d049606c0c03231e3d21da300483662c27ab1a",
+      "bytes": 14262
     },
     "README.md": {
       "sha256": "9173eb2acbe65fcd1062e72d4799de50baf4076ae4ec80986a5454b188c8a033",

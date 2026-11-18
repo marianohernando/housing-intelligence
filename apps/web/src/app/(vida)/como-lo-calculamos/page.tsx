@@ -148,8 +148,9 @@ function FitMethod() {
       <p className={styles.para}>
         <strong>A igual %.</strong> Las zonas van de más a menos %. A igual %, va primero la que tiene más cerca los servicios
         del día a día (escuela infantil, colegio, centro de salud, farmacia, centro de mayores y transporte), los hayas
-        marcado o no: cuenta cada minuto andando, no cuántos servicios hay. La lista te dice qué zonas empatan («Empatan al
-        94&nbsp;%»), y si más de 10 son igual de buenas, te avisa para que marques qué quieres tener cerca o dónde trabajas.
+        marcado o no: cuenta cada minuto andando, no cuántos servicios hay. Con quién empata cada zona te lo dice su tarjeta,
+        en «Ver más sobre…» («Igual de buena que Latina (94&nbsp;%)»), y si más de 10 son igual de buenas, la lista te avisa para que
+        marques qué quieres tener cerca o dónde trabajas.
       </p>
       <p className={styles.para}>
         <strong>Debajo del %</strong> van entre 3 y 5 hechos que puedes comprobar, como «Colegio con primaria a 5 min

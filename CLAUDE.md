@@ -257,6 +257,7 @@ Estamos en **fase de competición DATAMAD 2026** (hasta el 26 nov 2026).
 - Every significant task must identify which tests/gate it affects.
 - Critical invariant, tenant isolation, privacy or data-lineage failure blocks progress.
 - Evidence for completed gates goes under `evidence/gate-XX/`.
+- Evidence carries no local paths (`scripts/redact_paths.py`). Its markers: `~` the home folder, `<repo>` the repo checkout, `<workspace>` the folder that holds it with its sibling worktrees, `<desktop>` any other Desktop folder, `<scratchpad>` a session's temporary folder and `<project-slug>` a Claude Code project folder.
 - “Works on my machine” is not acceptance.
 
 ## 19. Cross-cutting production rules

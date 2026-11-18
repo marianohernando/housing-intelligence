@@ -2,8 +2,11 @@
  * Places for «Trabajo en» (pure, unit tested): CRTM stations (metro, Cercanías, Metro Ligero)
  * from /api/v1/places and the zones of the map, found by name without an external geocoder.
  */
+import type { ScenarioState } from "@/contracts/scenario_state";
+import { speaksToMany, voice } from "@/lib/fit";
 import { titleCase } from "@/lib/names";
 import type { PlaceFeature } from "@/lib/map/places";
+import { homeLabel, type OlderPlaceKind } from "@/lib/scenario";
 import { type ZoneCollection, type ZoneGeometry, ringArea, searchable } from "@/lib/map/zones";
 
 /** Station subcategories of /api/v1/places, with the word that goes after their name. */
@@ -93,4 +96,27 @@ export function stepActive(current: number, step: 1 | -1, length: number): numbe
   if (length === 0) return -1;
   if (current < 0) return step === 1 ? 0 : length - 1;
   return (current + step + length) % length;
+}
+
+/**
+ * lugar.* of pitch/textos_web.md (D-244): «Somos mayores» is asked where they want to live, in place
+ * of «Trabajo en», in the household's words (`voice`): «¿Cerca de dónde quieres vivir?», «Donde vivo
+ * ahora» and «Cerca de mi familia» to one person who lives alone; «queréis», «vivimos» and «nuestra»
+ * to more. «Puedes cambiarlo» stays: it speaks to whoever fills in the form, as the rest of it does
+ * (D-245 §11).
+ */
+export function olderPlaceText(scenario: ScenarioState) {
+  const v = voice(speaksToMany(scenario.household));
+  const tu = capitalize(v.tu);
+  return {
+    title: `¿Cerca de dónde ${v.quieres} vivir?`,
+    // The name of the two options, not the question again (review H7 of PR #79)
+    which: `${tu} casa de ahora o ${v.tu} familia`,
+    // «Donde vivo ahora» is the label the place takes (homeLabel), so the option and the place say the same
+    options: { other: capitalize(homeLabel(scenario)), family: `Cerca de ${v.mi} familia` } satisfies Record<OlderPlaceKind, string>,
+    search: { other: `¿Dónde ${v.vives} ahora?`, family: `¿Dónde vive ${v.tu} familia?` } satisfies Record<OlderPlaceKind, string>,
+    help: `Miramos cuánto se tarda en transporte público hasta ese sitio, llegando a las 9:00 de un día laborable, y contamos el trayecto como si ${v.fueras} 3 días a la semana. Ponemos 30 min como mucho: puedes cambiarlo o quitarlo.`,
+    // A family place picked before this field knew its name (a shared link): said in plain words
+    family: `${tu} familia`,
+  };
 }

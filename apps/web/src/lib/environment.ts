@@ -81,12 +81,15 @@ export function airText(row: FeatureValueRow | null): string {
   return `Aire: NO₂ medio ${year}, ${formatNumber(row.value, 1)} µg/m³ ${where} (límite UE: ${EU_NO2_LIMIT}; ${EU_NO2_LIMIT_2030} desde 2030)`;
 }
 
-/** «Aparcamiento público a unos 12 min andando»; past 30 min, that none of the published ones is near. */
+/**
+ * «Aparcamiento público a unos 12 min andando», «… a 1 min andando» (never «unos 1 min», as
+ * walkMinutesText of lib/gaps.ts); past 30 min, that none of the published ones is near.
+ */
 export function parkingText(row: FeatureValueRow | null): string | null {
   if (row?.value == null) return null;
   const minutes = Math.max(1, Math.round(row.value));
   if (minutes > PARKING_MAX_MINUTES) return `Ningún aparcamiento público de los publicados en abierto a menos de ${PARKING_MAX_MINUTES} min andando`;
-  return `Aparcamiento público a unos ${formatNumber(minutes, 0)} min andando`;
+  return minutes === 1 ? "Aparcamiento público a 1 min andando" : `Aparcamiento público a unos ${formatNumber(minutes, 0)} min andando`;
 }
 
 const FEE_WORD = { free: "gratuito", paid: "de pago", mixed: "gratuito y de pago" } as const;
