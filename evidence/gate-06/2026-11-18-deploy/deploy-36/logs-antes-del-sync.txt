@@ -1,0 +1,71 @@
+vercel logs (CLI 65.12.1), deployment dpl_9KhiCQnJ8yVQdM8mQxUe4PGLBEZz (747cb65), before the sync: smoke, API comparison, golden, e2e, measurement and probes.
+The CDN listing stops at 2,000 records; a separate --query 'httpStatus >= 400' over the same window gave 24 records, all 404 GET /api/v1/features/suelo_publico_vivienda_m2/values (the feature has no rows until the sync).
+
+vercel logs, deployment dpl_9KhiCQnJ8yVQdM8mQxUe4PGLBEZz, from 2026-11-18T22:02:00Z to 2026-11-18T22:14:29.114Z (UTC)
+runtime log lines: 1090, more pages: false, levels: 1090 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 7
+
+CDN request records: 2000, more pages: true
+by status: 200 × 1868 · 304 × 111 · 404 × 21
+API by path and status:
+   132 GET /api/v1/geo/admin-units 200
+    54 GET /api/v1/datasets 200
+    32 GET /api/v1/features/seguridad_percibida_noche/values 200
+    32 GET /api/v1/features/seguridad_percibida_dia/values 200
+    28 POST /api/v1/search 200
+    24 GET /api/v1/places 200
+    24 GET /api/v1/gaps/distrito/2807913 200
+    21 GET /api/v1/features/valor_tasado_vivienda_usada_m2/values 200
+    21 GET /api/v1/features/valor_tasado_vivienda_nueva_m2/values 200
+    21 GET /api/v1/features/suelo_publico_vivienda_m2/values 404
+    21 GET /api/v1/features/plan_vive_viviendas/values 200
+    21 GET /api/v1/features/pct_calle_ruido_noche/values 200
+    21 GET /api/v1/features/pct_calle_ruido_dia/values 200
+    21 GET /api/v1/features/no2_media_anual/values 200
+    21 GET /api/v1/features/min_a_pie_aparcamiento_publico/values 200
+    21 GET /api/v1/features/infracciones_penales_por_1000_hab/values 200
+    21 GET /api/v1/features/compraventas_obra_nueva_pct/values 200
+    16 GET /api/v1/features/renta_neta_media_hogar/values 200
+    16 GET /api/v1/features/ano_medio_construccion_residencial/values 200
+    16 GET /api/v1/features/ambitos_residenciales_en_desarrollo/values 200
+    11 GET /api/v1/gaps/distrito/2807921 200
+    10 GET /api/v1/gaps 200
+     6 POST /api/v1/search/barrios 200
+     5 GET /api/v1/gaps/municipio/28080 200
+     5 GET /api/v1/gaps/distrito/2807919 200
+     5 GET /api/v1/features/viviendas_desde_2001_pct/values 200
+     5 GET /api/v1/features/renta_per_capita/values 200
+     3 GET /api/v1/features/hospitales_total/values 200
+     3 GET /api/v1/features/camas_instaladas_por_1000_hab/values 200
+every 4xx/5xx:
+  2026-11-18T22:13:57.850Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:13:51.705Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:13:46.447Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:13:28.888Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:13:22.245Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:13:16.754Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:12:56.076Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:12:46.206Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:12:39.045Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe747pre
+  2026-11-18T22:10:40.479Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · Mozilla/5.0 (Macintosh; Intel Mac OS X 1
+  2026-11-18T22:10:22.408Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · Mozilla/5.0 (Macintosh; Intel Mac OS X 1
+  2026-11-18T22:10:03.908Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · Mozilla/5.0 (Macintosh; Intel Mac OS X 1
+  2026-11-18T22:08:59.872Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · Mozilla/5.0 (Macintosh; Intel Mac OS X 1
+  2026-11-18T22:08:41.589Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · Mozilla/5.0 (Macintosh; Intel Mac OS X 1
+  2026-11-18T22:08:13.139Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe404
+  2026-11-18T22:08:06.120Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe404
+  2026-11-18T22:08:00.870Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe404
+  2026-11-18T22:07:54.424Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe404
+  2026-11-18T22:07:47.778Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe404
+  2026-11-18T22:07:43.724Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · vida-facil-smoke/probe404
+  2026-11-18T22:07:14.413Z 404 GET /api/v1/features/suelo_publico_vivienda_m2/values · Mozilla/5.0 (Macintosh; Intel Mac OS X 1
