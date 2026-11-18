@@ -850,7 +850,7 @@ def _window_row(
     return _ok(code, window[0], 100.0 * num / den, confidence) | counts
 
 
-def _item(record: dict[str, Any]) -> dict[str, Any]:
+def _item(record: dict[str, Any], extra: Sequence[str] = ()) -> dict[str, Any]:
     dims: Mapping[str, str] = record["dims"]
     item = {
         "code": dims.get("item"),
@@ -858,7 +858,8 @@ def _item(record: dict[str, Any]) -> dict[str, Any]:
         "stage": dims.get("stage"),
         "value": None if pd.isna(record["value"]) else float(record["value"]),
     }
-    return item | ({"note": dims["note"]} if dims.get("note") else {})
+    kept = ["note", *extra]
+    return item | {key: dims[key] for key in kept if dims.get(key)}
 
 
 def metric_items(
@@ -867,12 +868,15 @@ def metric_items(
     *,
     value: str,
     stage_order: Sequence[str] = (),
+    item_dims: Sequence[str] = (),
     confidence: float = 1.0,
 ) -> pd.DataFrame:
-    """D-241: a zone's items of the latest period (planning areas, Plan Vive promotions), each
-    with its code, name, stage and value; the zone's value is their number (`count`) or the sum
-    of their values (`sum`). The source lists every item of its scope, so a zone of `zones`
-    without any is a confirmed 0, with no items. Items go by `stage_order`, then largest first.
+    """D-241: a zone's items of the latest period (planning areas, Plan Vive promotions, public
+    parcels), each with its code, name, stage and value, plus the dimensions of `item_dims` it
+    has (D-246: a parcel's régimen, manager and viewer link); the zone's value is their number
+    (`count`) or the sum of their values (`sum`). The source lists every item of its scope, so
+    a zone of `zones` without any is a confirmed 0, with no items. Items go by `stage_order`,
+    then largest first.
     """
     if value not in {"count", "sum"}:
         msg = f"metric_items: value must be count or sum, got {value!r}"
@@ -883,7 +887,7 @@ def metric_items(
         return _result([])
     groups: dict[str, list[dict[str, Any]]] = {str(code): [] for code in zones}
     for record in _rows(newest):
-        groups.setdefault(str(record["territory_code"]), []).append(_item(record))
+        groups.setdefault(str(record["territory_code"]), []).append(_item(record, item_dims))
     rank = {stage: i for i, stage in enumerate(stage_order)}
     out: list[dict[str, Any]] = []
     for code, items in sorted(groups.items()):

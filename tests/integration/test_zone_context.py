@@ -74,6 +74,37 @@ def test_plan_vive_is_in_its_municipio_and_a_zero_elsewhere(client: TestClient) 
     assert rows["28002"]["value"] == 0.0 and rows["28002"]["detail"]["items"] == []
 
 
+def test_public_land_for_housing_lists_each_parcel_in_its_zones(client: TestClient) -> None:
+    """D-246: the sample's three residential parcels of Madrid, placed by their points in
+    Tetuán (two in Castillejos, one in Almenara); the terciary one is left out. A régimen is
+    only named when the CM publishes what its code means (not «D»)."""
+    tetuan = _values(client, "suelo_publico_vivienda_m2", "distrito")["2807906"]
+    assert tetuan["value"] == pytest.approx(377 + 9684.66 + 12192)
+    items = tetuan["detail"]["items"]
+    assert [i["code"] for i in items] == ["00000595I", "07900174Y", "07900151Y"]  # largest first
+    largest, concession, sale = items
+    assert "regime" not in largest  # «D»: the CM does not say what it means
+    assert concession["regime"] == "concesion" and sale["regime"] == "venta"
+    assert sale["manager"] == "Ayuntamiento de Madrid"
+    assert sale["url"].startswith("https://idem.comunidad.madrid/visor/")
+    assert sale["parcel"] and sale["name"] == "C/ BASILIO DEL PRADO 16"
+    barrios = _values(client, "suelo_publico_vivienda_m2", "barrio")
+    assert barrios["28079063"]["value"] == pytest.approx(9684.66 + 12192)  # Castillejos
+    assert barrios["28079064"]["value"] == 377  # Almenara
+    assert barrios["28079011"]["value"] == 0 and barrios["28079011"]["detail"]["items"] == []
+    municipios = _values(client, "suelo_publico_vivienda_m2", "municipio")
+    assert municipios["28079"]["value"] == tetuan["value"]
+    assert municipios["28001"]["value"] == 0  # La Acebeda: no parcel in the portal
+    ajalvir = municipios["28002"]  # one parcel without its buildable m²: never a short sum
+    assert ajalvir["value"] is None and len(ajalvir["detail"]["items"]) == 1
+
+
+def test_other_items_keep_their_fields(client: TestClient) -> None:
+    """The parcel fields are left out of the other items (D-241 answers do not change)."""
+    item = _values(client, "plan_vive_viviendas", "municipio")["28079"]["detail"]["items"][0]
+    assert set(item) == {"code", "name", "stage", "value", "note"}
+
+
 def test_other_features_carry_no_detail(client: TestClient) -> None:
     rows = _values(client, "alquiler_m2_mensual", "municipio")
     assert all("detail" not in r for r in rows.values())
@@ -82,7 +113,7 @@ def test_other_features_carry_no_detail(client: TestClient) -> None:
 def test_context_never_reaches_the_search_or_the_gap_list(
     client: TestClient, migrated_engine: Engine
 ) -> None:
-    """No `fit` and no `gap_row`: the search reads none of these features."""
+    """No `fit` and no `gap_row`: the search reads none of these features (D-241, D-246)."""
     with migrated_engine.connect() as conn:
         bound = conn.execute(
             text(
@@ -97,6 +128,7 @@ def test_context_never_reaches_the_search_or_the_gap_list(
                     "valor_tasado_vivienda_usada_m2",
                     "plan_vive_viviendas",
                     "ambitos_residenciales_en_desarrollo",
+                    "suelo_publico_vivienda_m2",
                 ]
             },
         ).all()

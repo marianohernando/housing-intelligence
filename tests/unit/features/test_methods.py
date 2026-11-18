@@ -639,6 +639,21 @@ def test_items_can_add_up_their_values_and_keep_a_note() -> None:
         methods.metric_items(obs, [], value="max")
 
 
+def test_items_keep_only_the_declared_dimensions_they_have() -> None:
+    """D-246: a parcel's régimen, manager and link travel with it; a dimension it lacks (an
+    unexplained régimen) is left out, and an undeclared one is never passed on."""
+    obs = _areas([("2807919", "a", "urbanizado", 9.0), ("2807919", "b", "urbanizado", 5.0)])
+    obs.loc[0, "dims"].update({"regime": "venta", "manager": "Ayuntamiento", "other": "x"})
+    obs.loc[1, "dims"]["manager"] = "AVS"
+    out = methods.metric_items(
+        obs, ["2807919"], value="sum", item_dims=["regime", "manager"]
+    ).set_index("territory_code")
+    first, second = out.loc["2807919", "detail"]["items"]
+    assert (first["regime"], first["manager"]) == ("venta", "Ayuntamiento")
+    assert "other" not in first and "regime" not in second
+    assert out.loc["2807919", "value"] == 14.0
+
+
 def test_window_share_with_a_quarter_missing_from_the_series_has_no_window() -> None:
     """Four quarters with a gap would span more than a year; no window, never a wrong one."""
     gap = [Q[0], Q[1], Q[3], date(2026, 7, 1)]

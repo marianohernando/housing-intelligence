@@ -35,6 +35,7 @@ from hi_contracts.catalog.pipeline import (
     OsmPoisPipeline,
     OsmWalkNetworkPipeline,
     PointsPipeline,
+    PublicLandParcelsPipeline,
     SerpaviRentPipeline,
     StationTopologyPipeline,
 )
@@ -63,7 +64,10 @@ from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.serpavi.run import run_serpavi_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
-from hi_ingestion.pipelines.zone_context.run import run_zone_context_pipeline
+from hi_ingestion.pipelines.zone_context.run import (
+    run_parcels_pipeline,
+    run_zone_context_pipeline,
+)
 
 ALEMBIC_INI = Path(__file__).resolve().parents[2] / "infra" / "migrations" / "alembic.ini"
 
@@ -431,6 +435,17 @@ def fixtures_ingested(
                 migrated_engine,
                 catalog,
                 spec,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=ZONE_CONTEXT_SAMPLE,
+            )
+        elif isinstance(spec, PublicLandParcelsPipeline):  # D-246: five rows, three in Tetuán
+            src = local_file(dataset_id, "primary", ZONE_CONTEXT_SAMPLE / f"{dataset_id}.csv")
+            result = run_parcels_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_rows": 1}),
+                src,
                 evidence_root=None,
                 data_dir=tmp,
                 manual_dir=ZONE_CONTEXT_SAMPLE,
