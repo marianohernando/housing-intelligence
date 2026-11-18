@@ -1,0 +1,1280 @@
+{
+ "base": "http://localhost:3091",
+ "checked_at": "2026-11-18T21:11:18.496Z",
+ "runs": [
+  {
+   "browserName": "chromium",
+   "device": "desktop-1440",
+   "checks": [
+    {
+     "journey": "J1 search",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary = API zones_passing, «para vosotros» for a couple with children",
+     "ok": true,
+     "detail": "Hemos encontrado 42 zonas para vosotros."
+    },
+    {
+     "journey": "J1 search",
+     "name": "the list's title speaks to them too: «Zonas que os convienen»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Hemos mirado las N zonas» = API all_zones",
+     "ok": true,
+     "detail": "199"
+    },
+    {
+     "journey": "J1 search",
+     "name": "the legend's title is «Zonas que os convienen», its ramp «Os conviene menos» and «Os conviene más»",
+     "ok": true,
+     "detail": "Zonas que os convienen | Zonas que os convienen Os conviene menos Os conviene más Cumple todo 42 zonas No cumple todo 157 zonas Sin datos 0 zonas"
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Cumple todo» = 42 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «No cumple todo» = 157 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Sin datos» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "renting: the 2024 rent notice, once",
+     "ok": true,
+     "detail": "1"
+    },
+    {
+     "journey": "J1 search",
+     "name": "renting: no purchase notice",
+     "ok": true,
+     "detail": "0"
+    },
+    {
+     "journey": "J1 search",
+     "name": "rows: name, band, % and price",
+     "ok": true,
+     "detail": "5 rows"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Casi valen»: what each lacks, «vuestro presupuesto», «pedís», never a %",
+     "ok": true,
+     "detail": "5 rows"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+     "ok": true,
+     "detail": "No le falta nada de lo que buscáis. | Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a uno"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card name = API 1st zone",
+     "ok": true,
+     "detail": "Puente de Vallecas"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card essentials: band in words and «Precio orientativo», no %",
+     "ok": true,
+     "detail": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Para"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card in the address (?zona=)",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Ver más»: card % = API match_pct",
+     "ok": true,
+     "detail": "94 %"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Ver más»: card facts = API facts",
+     "ok": true,
+     "detail": "5 on screen, 5 in the API"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Ver más»: why the rent is orientative",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Volver a la lista» shows the list, without ?zona=",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J1 search",
+     "name": "1st option = API relaxation",
+     "ok": true,
+     "detail": "+5 min a pie hasta colegio con primaria: saldrían 49 más: 91 zonas en total"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: API zones = the option's zones_if_relaxed",
+     "ok": true,
+     "detail": "91"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: summary on screen",
+     "ok": true,
+     "detail": "Con este cambio salen 91 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "undone: back to the original zones",
+     "ok": true,
+     "detail": "42"
+    },
+    {
+     "journey": "J1 search",
+     "name": "the example's /search sends max_minutes: null",
+     "ok": true,
+     "detail": "3 requests"
+    },
+    {
+     "journey": "J1 search",
+     "name": "the example's /search sends min_floor_area_m2: null",
+     "ok": true,
+     "detail": "[null,null,null]"
+    },
+    {
+     "journey": "J1 search",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J1 search",
+     "name": "a limit of 45 min reaches /search as max_minutes",
+     "ok": true,
+     "detail": "[45]"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary with a limit = API zones_passing",
+     "ok": true,
+     "detail": "Hemos encontrado 10 zonas para vosotros. (without limit: 42)"
+    },
+    {
+     "journey": "J1 search",
+     "name": "a limit never adds zones",
+     "ok": true,
+     "detail": "10 <= 42"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Comprar» reaches /search as budget.kind buy",
+     "ok": true,
+     "detail": "{\"kind\":\"buy\",\"amount_eur\":250000}"
+    },
+    {
+     "journey": "J1 search",
+     "name": "buying: no 2024 rent notice",
+     "ok": true,
+     "detail": "0"
+    },
+    {
+     "journey": "J1 search",
+     "name": "buying: the orientative purchase notice, once",
+     "ok": true,
+     "detail": "1"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "rows on screen = API rows",
+     "ok": true,
+     "detail": "6"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Escuelas infantiles» JUSTO",
+     "ok": true,
+     "detail": "Escuelas infantiles JUSTO Aquí hay 87 por cada 100 que hay en municipios parecidos. A pie hasta la escuela infantil más "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Colegios» CUBIERTO",
+     "ok": true,
+     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Da"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de salud» JUSTO",
+     "ok": true,
+     "detail": "Centros de salud JUSTO Aquí hay 95 por cada 100 que hay en municipios parecidos. A pie hasta el centro de salud más cerc"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de mayores» CUBIERTO",
+     "ok": true,
+     "detail": "Centros de mayores CUBIERTO Aquí hay 130 por cada 100 que hay en municipios parecidos. A pie hasta el centro de mayores "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Farmacias» CUBIERTO",
+     "ok": true,
+     "detail": "Farmacias CUBIERTO Aquí hay 171 por cada 100 que hay en municipios parecidos. A pie hasta la farmacia más cercana 3 min "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Vivienda para familias» JUSTO",
+     "ok": true,
+     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Dato fiable Fiabilidad del dato: "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "selector lists the gap rows",
+     "ok": true,
+     "detail": "escuela_infantil, colegio, centro_salud, mayores, farmacia, vivienda"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«escuela_infantil» legend caption = API indicator",
+     "ok": true,
+     "detail": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 3 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 65 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 93 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 37 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 1 zona",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«colegio» legend caption = API indicator",
+     "ok": true,
+     "detail": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 75 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 59 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 65 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«centro_salud» legend caption = API indicator",
+     "ok": true,
+     "detail": "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 57 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 44 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 98 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«mayores» legend caption = API indicator",
+     "ok": true,
+     "detail": "Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 6 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 59 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 40 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 94 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«farmacia» legend caption = API indicator",
+     "ok": true,
+     "detail": "Farmacias al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 5 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 114 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 62 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 18 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«vivienda» legend caption = API indicator",
+     "ok": true,
+     "detail": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «FALTA» = 25 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «JUSTO» = 19 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «CUBIERTO» = 132 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «No comparable» = 2 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend «SIN DATOS» = 21 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Distritos de Madrid» = API distritos",
+     "ok": true,
+     "detail": "21 in the title, 21 links, 21 in the API"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Municipios» = API municipios",
+     "ok": true,
+     "detail": "178 in the title, 178 links, 178 in the API (1 split into districts)"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Madrid (toda la ciudad)» listed",
+     "ok": true,
+     "detail": "28079"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "household.seniors === true",
+     "ok": true,
+     "detail": "{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "priorities: salud, sin_escaleras and transporte",
+     "ok": true,
+     "detail": "[\"salud\",\"sin_escaleras\",\"transporte\"]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "scope: madrid",
+     "ok": true,
+     "detail": "madrid"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a family place, 30 min as most, 3 days",
+     "ok": true,
+     "detail": "[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "summary = API zones_passing, in barrios, «para vosotros»",
+     "ok": true,
+     "detail": "Hemos encontrado 22 barrios para vosotros."
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "never asks where they work",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Somos mayores» is marked",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«¿Cerca de dónde queréis vivir?» shows «Ciudad Lineal (metro)»",
+     "ok": true,
+     "detail": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra f"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Trabajo en» folded in «Más opciones»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+     "ok": true,
+     "detail": "En Barajas, de lo que podemos comparar, no falta nada. · No sabemos si en Barajas faltan centros de salud o centros de mayores. | Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a "
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "card: never the schools to a retired couple",
+     "ok": true,
+     "detail": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio or"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "the back button goes back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "options of the previous search are not offered once the search changes",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a quick amount of 900 € reaches /search as it is",
+     "ok": true,
+     "detail": "{\"kind\":\"rent\",\"amount_eur\":900}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "after searching again, the options of the search on screen",
+     "ok": true,
+     "detail": "1 options"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "a row puts the zone in the address",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "history.back() goes back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "the row opened takes the focus back",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "the forward button opens the card again",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "after forward, «Volver a la lista» steps back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "«Volver a la lista» goes back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "zone screen: its context folded under «Más datos de la zona»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "zone screen: «Volver a la lista» goes back to the list, without a dead step",
+     "ok": true,
+     "detail": "http://localhost:3091/ · 3"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona= opens the zone",
+     "ok": true,
+     "detail": "distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "opened by its link, «Volver» closes it in place",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona=distrito/2800000 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona=seccion_censal/2807901001 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "a barrio's card is in the address",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=barrio/28079213"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "searching the whole region, the address and the card become its district",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807921"
+    },
+    {
+     "journey": "all",
+     "name": "no browser console errors",
+     "ok": true,
+     "detail": ""
+    }
+   ],
+   "shots": [],
+   "consoleErrors": [],
+   "blocked": [],
+   "seconds": 26
+  },
+  {
+   "browserName": "chromium",
+   "device": "mobile-390",
+   "checks": [
+    {
+     "journey": "J1 search",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary = API zones_passing, «para vosotros» for a couple with children",
+     "ok": true,
+     "detail": "Hemos encontrado 42 zonas para vosotros."
+    },
+    {
+     "journey": "J1 search",
+     "name": "the list's title speaks to them too: «Zonas que os convienen»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Hemos mirado las N zonas» = API all_zones",
+     "ok": true,
+     "detail": "199"
+    },
+    {
+     "journey": "J1 search",
+     "name": "the legend's title is «Zonas que os convienen», its ramp «Os conviene menos» and «Os conviene más»",
+     "ok": true,
+     "detail": "Zonas que os convienen | Zonas que os convienenOs conviene menosOs conviene másCumple todo42 zonasNo cumple todo157 zonasSin datos0 zonas"
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Cumple todo» = 42 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «No cumple todo» = 157 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "legend «Sin datos» = 0 zonas",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "renting: the 2024 rent notice, once",
+     "ok": true,
+     "detail": "1"
+    },
+    {
+     "journey": "J1 search",
+     "name": "renting: no purchase notice",
+     "ok": true,
+     "detail": "0"
+    },
+    {
+     "journey": "J1 search",
+     "name": "rows: name, band and price, without % (phone)",
+     "ok": true,
+     "detail": "5 rows"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Casi valen»: what each lacks, «vuestro presupuesto», «pedís», never a %",
+     "ok": true,
+     "detail": "5 rows"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+     "ok": true,
+     "detail": "No le falta nada de lo que buscáis. | Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Parada de autobús a unos 2 min andando · Metro o Cercanías a uno"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card name = API 1st zone",
+     "ok": true,
+     "detail": "Puente de Vallecas"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card essentials: band in words and «Precio orientativo», no %",
+     "ok": true,
+     "detail": "Volver a la lista Puente de Vallecas Distrito de Madrid · Muy buena opción Unos 1.129 € al mes Precio orientativo Colegio con primaria a unos 4 min andando Para"
+    },
+    {
+     "journey": "J1 search",
+     "name": "card in the address (?zona=)",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Ver más»: card % = API match_pct",
+     "ok": true,
+     "detail": "94 %"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Ver más»: card facts = API facts",
+     "ok": true,
+     "detail": "5 on screen, 5 in the API"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Ver más»: why the rent is orientative",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Volver a la lista» shows the list, without ?zona=",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J1 search",
+     "name": "1st option = API relaxation",
+     "ok": true,
+     "detail": "+5 min a pie hasta colegio con primaria: saldrían 49 más: 91 zonas en total"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: API zones = the option's zones_if_relaxed",
+     "ok": true,
+     "detail": "91"
+    },
+    {
+     "journey": "J1 search",
+     "name": "applied: summary on screen",
+     "ok": true,
+     "detail": "Con este cambio salen 91 zonas."
+    },
+    {
+     "journey": "J1 search",
+     "name": "undone: back to the original zones",
+     "ok": true,
+     "detail": "42"
+    },
+    {
+     "journey": "J1 search",
+     "name": "the example's /search sends max_minutes: null",
+     "ok": true,
+     "detail": "3 requests"
+    },
+    {
+     "journey": "J1 search",
+     "name": "the example's /search sends min_floor_area_m2: null",
+     "ok": true,
+     "detail": "[null,null,null]"
+    },
+    {
+     "journey": "J1 search",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J1 search",
+     "name": "a limit of 45 min reaches /search as max_minutes",
+     "ok": true,
+     "detail": "[45]"
+    },
+    {
+     "journey": "J1 search",
+     "name": "summary with a limit = API zones_passing",
+     "ok": true,
+     "detail": "Hemos encontrado 10 zonas para vosotros. (without limit: 42)"
+    },
+    {
+     "journey": "J1 search",
+     "name": "a limit never adds zones",
+     "ok": true,
+     "detail": "10 <= 42"
+    },
+    {
+     "journey": "J1 search",
+     "name": "«Comprar» reaches /search as budget.kind buy",
+     "ok": true,
+     "detail": "{\"kind\":\"buy\",\"amount_eur\":250000}"
+    },
+    {
+     "journey": "J1 search",
+     "name": "buying: no 2024 rent notice",
+     "ok": true,
+     "detail": "0"
+    },
+    {
+     "journey": "J1 search",
+     "name": "buying: the orientative purchase notice, once",
+     "ok": true,
+     "detail": "1"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "rows on screen = API rows",
+     "ok": true,
+     "detail": "6"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Escuelas infantiles» JUSTO",
+     "ok": true,
+     "detail": "Escuelas infantiles JUSTO Aquí hay 87 por cada 100 que hay en municipios parecidos. A pie hasta la escuela infantil más "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Colegios» CUBIERTO",
+     "ok": true,
+     "detail": "Colegios CUBIERTO Aquí hay 101 por cada 100 que hay en municipios parecidos. A pie hasta el colegio más cercano 7 min Da"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de salud» JUSTO",
+     "ok": true,
+     "detail": "Centros de salud JUSTO Aquí hay 95 por cada 100 que hay en municipios parecidos. A pie hasta el centro de salud más cerc"
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Centros de mayores» CUBIERTO",
+     "ok": true,
+     "detail": "Centros de mayores CUBIERTO Aquí hay 130 por cada 100 que hay en municipios parecidos. A pie hasta el centro de mayores "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Farmacias» CUBIERTO",
+     "ok": true,
+     "detail": "Farmacias CUBIERTO Aquí hay 171 por cada 100 que hay en municipios parecidos. A pie hasta la farmacia más cercana 3 min "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "«Vivienda para familias» JUSTO",
+     "ok": true,
+     "detail": "Vivienda para familias JUSTO Aquí hay 91 por cada 100 que hay en municipios parecidos. Dato fiable Fiabilidad del dato: "
+    },
+    {
+     "journey": "J2 Qué falta Madrid",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "selector lists the gap rows",
+     "ok": true,
+     "detail": "escuela_infantil, colegio, centro_salud, mayores, farmacia, vivienda"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«escuela_infantil» legend caption = API indicator",
+     "ok": true,
+     "detail": "Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«colegio» legend caption = API indicator",
+     "ok": true,
+     "detail": "Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«centro_salud» legend caption = API indicator",
+     "ok": true,
+     "detail": "Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«mayores» legend caption = API indicator",
+     "ok": true,
+     "detail": "Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«farmacia» legend caption = API indicator",
+     "ok": true,
+     "detail": "Farmacias al alcance a pie por cada 10.000 habitantes"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "«vivienda» legend caption = API indicator",
+     "ok": true,
+     "detail": "Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "legend counts = API",
+     "ok": true,
+     "skipped": true,
+     "detail": "counts hidden at this width"
+    },
+    {
+     "journey": "J3 map by row",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Distritos de Madrid» = API distritos",
+     "ok": true,
+     "detail": "21 in the title, 21 links, 21 in the API"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Municipios» = API municipios",
+     "ok": true,
+     "detail": "178 in the title, 178 links, 178 in the API (1 split into districts)"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "«Madrid (toda la ciudad)» listed",
+     "ok": true,
+     "detail": "28079"
+    },
+    {
+     "journey": "J4 zone list",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "POST /search 200",
+     "ok": true,
+     "detail": "200"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "household.seniors === true",
+     "ok": true,
+     "detail": "{\"adults\":2,\"minors\":0,\"minor_ages\":[],\"seniors_in_care\":0,\"seniors\":true}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "priorities: salud, sin_escaleras and transporte",
+     "ok": true,
+     "detail": "[\"salud\",\"sin_escaleras\",\"transporte\"]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "scope: madrid",
+     "ok": true,
+     "detail": "madrid"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a family place, 30 min as most, 3 days",
+     "ok": true,
+     "detail": "[{\"kind\":\"family\",\"label\":\"Ciudad Lineal (metro)\",\"lon\":-3.63816,\"lat\":40.43805,\"max_minutes\":30,\"days_per_week\":3}]"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "summary = API zones_passing, in barrios, «para vosotros»",
+     "ok": true,
+     "detail": "Hemos encontrado 22 barrios para vosotros."
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "never asks where they work",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Somos mayores» is marked",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«¿Cerca de dónde queréis vivir?» shows «Ciudad Lineal (metro)»",
+     "ok": true,
+     "detail": "¿Cerca de dónde queréis vivir? (opcional) Vuestra casa de ahora o vuestra familia Donde vivimos ahora Cerca de nuestra f"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "«Trabajo en» folded in «Más opciones»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "card: what it lacks that matters, from its /gaps; «No le falta nada» only with nothing unknown",
+     "ok": true,
+     "detail": "En Barajas, de lo que podemos comparar, no falta nada. · No sabemos si en Barajas faltan centros de salud o centros de mayores. | Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio orientativo Centro de salud a unos 9 min andando Estación de metro o tren accesible (sin escaleras) a "
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "card: never the schools to a retired couple",
+     "ok": true,
+     "detail": "Volver a la lista Casco Histórico de Barajas · Barajas Barrio de Madrid · Muy buena opción Unos 1.038 € al mes Precio or"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "the back button goes back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "options of the previous search are not offered once the search changes",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "a quick amount of 900 € reaches /search as it is",
+     "ok": true,
+     "detail": "{\"kind\":\"rent\",\"amount_eur\":900}"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "after searching again, the options of the search on screen",
+     "ok": true,
+     "detail": "1 options"
+    },
+    {
+     "journey": "J5 Somos mayores",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "a row puts the zone in the address",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "history.back() goes back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "the row opened takes the focus back",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "the forward button opens the card again",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "after forward, «Volver a la lista» steps back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "«Volver a la lista» goes back to the list",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "zone screen: its context folded under «Más datos de la zona»",
+     "ok": true,
+     "detail": ""
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "zone screen: «Volver a la lista» goes back to the list, without a dead step",
+     "ok": true,
+     "detail": "http://localhost:3091/ · 3"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona= opens the zone",
+     "ok": true,
+     "detail": "distrito/2807913"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "opened by its link, «Volver» closes it in place",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona=distrito/2800000 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "?zona=seccion_censal/2807901001 opens nothing and goes back to the plain address",
+     "ok": true,
+     "detail": "http://localhost:3091/"
+    },
+    {
+     "journey": "J6 zone in the address",
+     "name": "no horizontal overflow",
+     "ok": true,
+     "detail": "0 px"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "a barrio's card is in the address",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=barrio/28079213"
+    },
+    {
+     "journey": "J7 barrio to district",
+     "name": "searching the whole region, the address and the card become its district",
+     "ok": true,
+     "detail": "http://localhost:3091/?zona=distrito/2807921"
+    },
+    {
+     "journey": "all",
+     "name": "no browser console errors",
+     "ok": true,
+     "detail": ""
+    }
+   ],
+   "shots": [],
+   "consoleErrors": [],
+   "blocked": [],
+   "seconds": 27
+  }
+ ]
+}

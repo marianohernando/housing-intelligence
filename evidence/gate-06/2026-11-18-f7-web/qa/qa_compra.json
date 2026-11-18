@@ -1,0 +1,67 @@
+{
+ "modo": "compra",
+ "como": "Playwright contra la web http://localhost:3091 (next build + start) y la API http://localhost:8091 (datos reales)",
+ "desktop": {
+  "nota": "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica por municipio y en los de más de 25.000 habitantes. En los distritos y barrios de Madrid, el precio que veas es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. Donde no hay precio, no podemos comprobar tu presupuesto.",
+  "aun_no_tenemos": 0,
+  "api": {
+   "metodo": "fit-0.9",
+   "presupuesto": {
+    "kind": "buy",
+    "amount_eur": 250000
+   },
+   "relajaciones": [
+    [
+     "+30.000 €",
+     5
+    ]
+   ]
+  },
+  "mas_zonas": "¿Queréis ver más zonas? Hemos encontrado 26 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: +30.000 € saldrían 5 más: 31 zonas en total Ver esas zonas En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas. No os decimos que gastéis más: os enseñamos qué cuesta cada alternativa. Ver menos",
+  "aviso_lista": 1,
+  "axe_resultados": [],
+  "overflow_px": 0,
+  "chamartin": {
+   "api": {
+    "precio": 506000,
+    "fiabilidad": 0.5,
+    "pct": 0
+   },
+   "texto": "© OpenStreetMap (se abre en una pestaña nueva) · Powered by CRTM (se abre en una pestaña nueva) Madrid Chamartín Chamartín: lo que hay cerca Volver a la lista Chamartín Distrito de Madrid No cumple: Compra hasta 250.000 € No cumple: Compra hasta 250.000 € Unos 506.000 € Precio orientativo No le falta nada de lo que buscáis. Ver más sobre Chamartín Para un piso de unos 68 m² Dato aproximado Lo que le falta a esta zona Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona. Centros de salud A pie: 9 min CUBIERTO Farmacias A pie: 3 min CUBIERTO Centros de mayores A pie: 10 min JUSTO CUBIERTO: hay lo mismo o más que en zonas parecidas. JUSTO: hay algo menos que en zonas parecidas. Ver todo lo que falta Los barrios que más os convienen Ninguno de sus 6 barrios cumple todo lo que pedís. Toca uno para verlo en el mapa. Casi valen Les falta una sola cosa de lo que pedís. Castilla Se pasa unos 179.000 € de vuestro presupuesto Se pasa unos 179.000 € de vuestro presupuesto Unos 429.000 € Prosperidad Se pasa unos 204.000 € de vuestro presupuesto Se pasa unos 204.000 € de vuestro presupuesto Unos 454.000 € Ciudad Jardín Se pasa unos 214.000 € de vuestro presupuesto Se pasa unos 214.000 € de vuestro presupuesto Unos 464.000 € Hispanoamérica Se pasa unos 278.000 € de vuestro presupuesto Se pasa unos 278.000 € de vuestro presupuesto Unos 528.000 € Nueva España Se pasa unos 302.000 € de vuestro presupuesto Se pasa unos 302.000 € de vuestro presupuesto Unos 552.000 € Más datos de la zona Todos los centros Ver en el mapa Colegios 25 Escuelas infantiles 33 Centros de salud 7 Hospitales 5 Farmacias 114 Mayores 9 Parques 10 Bares y cafeterías Restaurantes Gimnasios y deporte Cultura Aparcamientos 22 Todos Ninguno 25 colegios con primaria en Chamartín 25 colegios con primaria en Chamartín Públicos y concertados: los mismos que cuenta «Qué falta». Ver la lista (25) Tu búsqueda Ocultar mi búsqueda ¿Dónde? ¿Dónde? Toda la Comunidad Madrid capital Alrededores de Madrid Pueblos ¿Qué es esto? ¿Dónde? ¿Quién va a vivir en la casa? Solo/a En pareja Con hijos Somos mayores Con una persona mayor a la que cuidas ¿Qué quieres tener cerca? Toca primero lo más importante: cuenta más. Transporte Centro de salud Colegios Zonas verdes Metro o tren sin escaleras Ocio ¿Qué es esto? ¿Qué quieres tener cerca? Trabajo en (opcional) ¿Qué es esto? Trabajo en Presupuesto ¿Alquilar o comprar? Alquilar Comprar ¿Hasta cuánto? 150.000 € 250.000 € 400.000 € 600.000 € Otra cantidad Hasta 250.000 € Orientativo Sin límite de presupuesto ¿Qué es esto? Precio de compra Más opciones Servicios a un paseo, familia o amigos y tamaño del piso Buscar zonas para mí Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. Ir a un barrio Todo Chamartín El Viso Prosperidad Ciudad Jardín Hispanoamérica Nueva España Castilla"
+  },
+  "axe_zona": [],
+  "consola": []
+ },
+ "mobile": {
+  "nota": "Precio de compra: el valor tasado medio de la vivienda libre (Ministerio de Vivienda), que solo se publica por municipio y en los de más de 25.000 habitantes. En los distritos y barrios de Madrid, el precio que veas es una estimación: el valor tasado de Madrid repartido según el valor catastral de cada zona. Donde no hay precio, no podemos comprobar tu presupuesto.",
+  "aun_no_tenemos": 0,
+  "api": {
+   "metodo": "fit-0.9",
+   "presupuesto": {
+    "kind": "buy",
+    "amount_eur": 250000
+   },
+   "relajaciones": [
+    [
+     "+30.000 €",
+     5
+    ]
+   ]
+  },
+  "mas_zonas": "¿Queréis ver más zonas? Hemos encontrado 26 zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa: +30.000 € saldrían 5 más: 31 zonas en total Ver esas zonas En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas. No os decimos que gastéis más: os enseñamos qué cuesta cada alternativa. Ver menos",
+  "aviso_lista": 1,
+  "axe_resultados": [],
+  "overflow_px": 0,
+  "chamartin": {
+   "api": {
+    "precio": 506000,
+    "fiabilidad": 0.5,
+    "pct": 0
+   },
+   "texto": "© OpenStreetMap (se abre en una pestaña nueva) · Powered by CRTM (se abre en una pestaña nueva) Toca aquí para ver más Madrid Chamartín Chamartín: lo que hay cerca Volver a la lista Chamartín Distrito de Madrid No cumple: Compra hasta 250.000 € No cumple: Compra hasta 250.000 € Unos 506.000 € Precio orientativo No le falta nada de lo que buscáis. Ver más sobre Chamartín Para un piso de unos 68 m² Dato aproximado Lo que le falta a esta zona Un servicio puede estar cerca y aun así ir lleno: aquí miramos si hay bastante para toda la gente de la zona. Centros de salud A pie: 9 min CUBIERTO Farmacias A pie: 3 min CUBIERTO Centros de mayores A pie: 10 min JUSTO CUBIERTO: hay lo mismo o más que en zonas parecidas. JUSTO: hay algo menos que en zonas parecidas. Ver todo lo que falta Los barrios que más os convienen Ninguno de sus 6 barrios cumple todo lo que pedís. Toca uno para verlo en el mapa. Casi valen Les falta una sola cosa de lo que pedís. Castilla Se pasa unos 179.000 € de vuestro presupuesto Se pasa unos 179.000 € de vuestro presupuesto Unos 429.000 € Prosperidad Se pasa unos 204.000 € de vuestro presupuesto Se pasa unos 204.000 € de vuestro presupuesto Unos 454.000 € Ciudad Jardín Se pasa unos 214.000 € de vuestro presupuesto Se pasa unos 214.000 € de vuestro presupuesto Unos 464.000 € Hispanoamérica Se pasa unos 278.000 € de vuestro presupuesto Se pasa unos 278.000 € de vuestro presupuesto Unos 528.000 € Nueva España Se pasa unos 302.000 € de vuestro presupuesto Se pasa unos 302.000 € de vuestro presupuesto Unos 552.000 € Más datos de la zona Todos los centros Ver en el mapa Colegios 25 Escuelas infantiles 33 Centros de salud 7 Hospitales 5 Farmacias 114 Mayores 9 Parques 10 Bares y cafeterías Restaurantes Gimnasios y deporte Cultura Aparcamientos 22 Todos Ninguno 25 colegios con primaria en Chamartín 25 colegios con primaria en Chamartín Públicos y concertados: los mismos que cuenta «Qué falta». Ver la lista (25) Tu búsqueda Ocultar mi búsqueda ¿Dónde? ¿Dónde? Toda la Comunidad Madrid capital Alrededores de Madrid Pueblos ¿Qué es esto? ¿Dónde? ¿Quién va a vivir en la casa? Solo/a En pareja Con hijos Somos mayores Con una persona mayor a la que cuidas ¿Qué quieres tener cerca? Toca primero lo más importante: cuenta más. Transporte Centro de salud Colegios Zonas verdes Metro o tren sin escaleras Ocio ¿Qué es esto? ¿Qué quieres tener cerca? Trabajo en (opcional) ¿Qué es esto? Trabajo en Presupuesto ¿Alquilar o comprar? Alquilar Comprar ¿Hasta cuánto? 150.000 € 250.000 € 400.000 € 600.000 € Otra cantidad Hasta 250.000 € Orientativo Sin límite de presupuesto ¿Qué es esto? Precio de compra Más opciones Servicios a un paseo, familia o amigos y tamaño del piso Buscar zonas para mí Mueve el mapa a ese barrio. Las cifras de «Qué falta» son del distrito entero. Ir a un barrio Todo Chamartín El Viso Prosperidad Ciudad Jardín Hispanoamérica Nueva España Castilla"
+  },
+  "axe_zona": [],
+  "consola": []
+ },
+ "fallos": []
+}
