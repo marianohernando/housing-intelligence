@@ -54,13 +54,14 @@ Título: **«Nadie te dice qué le falta a cada zona»**.
 Cierre de la columna: «Otros te enseñan lo que hay. Nosotros, lo que falta.»
 
 ### Columna derecha: los datos
-Titular: **«35 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 15 nov, con 35 en Gate 1 PASS, y producción: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 35`, y 52 conjuntos en total (15 nov). Se revisa el 23 nov regenerando `datasets_cm.md`.
-- **De dónde salen los 8 desde el 12 nov** (Gate 1 en `evidence/gate-01/2026-11-14/`):
+Titular: **«36 conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid, todos con control de calidad superado»**. Fuente: `pitch/datasets_cm.md`, regenerado el 18 nov, con 36 en Gate 1 PASS, y producción: `GET /api/v1/datasets?cm_only=true` da `cm_open_data_count: 36`, y 53 conjuntos en total (comprobado por D el 18 nov). El número de la slide lo pone `pitch/deck/build.py` desde el mismo catálogo. Se revisa el 23 nov regenerando `datasets_cm.md`.
+- **De dónde salen los 9 desde el 12 nov** (Gate 1 en `evidence/gate-01/2026-11-14/` y, el del suelo, en `evidence/gate-01/2026-11-18/`):
   - D-235, contexto de la zona: las infracciones penales conocidas (`cm_infracciones_penales_municipios`) y la antigüedad de las viviendas (`cm_viviendas_antiguedad`). Con ellos, 29;
   - D-237, entorno: los aparcamientos de disuasión del Consorcio (`crtm_aparcamientos_disuasion`) y las 3 fichas de la red de calidad del aire de la Comunidad (`cm_calidad_aire_estaciones`, `cm_calidad_aire_horario_2025` y `cm_calidad_aire_zonas`);
-  - D-241, vivienda nueva: las compraventas de vivienda nueva y usada (`cm_transacciones_nueva_usada`) y el valor tasado por antigüedad (`cm_valor_tasado_vivienda_antiguedad`).
+  - D-241, vivienda nueva: las compraventas de vivienda nueva y usada (`cm_transacciones_nueva_usada`) y el valor tasado por antigüedad (`cm_valor_tasado_vivienda_antiguedad`);
+  - D-246, suelo público para vivienda: las parcelas del Portal del Suelo 4.0 (`cm_parcelas_portal_suelo`), en producción desde el 18 nov.
 - **Matiz, si preguntan:**
-  - Los 8 nuevos son contexto de la zona: se ven en su vista, pero no cambian el % de encaje ni «Qué falta».
+  - Los 9 nuevos son contexto de la zona: se ven en su vista, pero no cambian el % de encaje ni «Qué falta».
   - Las 3 topologías se usan con «Sin escaleras».
   - Los dos de camas (Dotación de camas y Hospitales y datos asistenciales) dan el total de la región: demuestran que el portal no publica camas por hospital, y por eso las de cada hospital salen del Catálogo Nacional de Hospitales (D-217 §4, D-218). La web los enseña bajo la nota del hospital (D-231, en producción).
 
@@ -188,8 +189,8 @@ Versión con buscador (la que vale):
 
 - **Siguiente paso** (aprobado por Mariano el 18 nov): de «dónde vivir» a «dónde construir». En la slide, al pie de la tarjeta, con el borde violeta de las citas: «**Siguiente paso:** dónde construir, según la vivienda que falta.». Ocupa el sitio de la miniatura C7, que no cabía con él (ver «Capturas necesarias»). **En la slide no se nombra ninguna empresa.**
   - **Después del concurso:** el análisis por parcela («¿qué se puede construir aquí?») cruzado con la vivienda que le falta a cada zona y para quién (Housing Gap: `docs/03_intelligence/16_housing_gap_product_recommender.md` y `51_housing_gap_math_spec.md`; capa PRO: `docs/01_product/05_pro_layer.md`; el análisis por parcela quedó fuera del concurso con D-192). Es un plan: se dice en futuro.
-  - **Hoy, pendiente de confirmar en producción** (otra línea la está metiendo en la web; no se cita como hecha hasta que datamad-10 lo confirme): una capa con el suelo público para vivienda del Portal del Suelo 4.0 de la Comunidad ([ficha del portal](https://datos.comunidad.madrid/dataset/parcelas_portal_suelo)). En el CSV del portal, descargado el 18 nov: 291 parcelas residenciales en 29 municipios, unos 394.000 m² edificables. Cuando se confirme, se puede añadir a la línea de la slide («Ya enseñamos el suelo público para vivienda.»), se suma a `pitch/datasets_cm.md` y entra la frase de reserva del bloque 4 del guion.
-  - **La validación de mercado, solo en las respuestas** (pregunta 60): Nestra (España) y Sitescope (Polonia) ya venden el «¿se puede construir?» a promotores, pero ninguna lo cruza con la demanda de los hogares. Ese es el hueco de Vida Fácil.
+  - **Hoy, en producción desde el 18 nov** (D-246, despliegue de `747cb65` y sync: `evidence/gate-06/2026-11-18-deploy/deploy-36-747cb65-suelo.md`, PR #90): el suelo público para vivienda del Portal del Suelo 4.0 de la Comunidad ([ficha del portal](https://datos.comunidad.madrid/dataset/parcelas_portal_suelo)), en «Vivienda nueva y lo que viene» de cada municipio o distrito. En producción el 18 nov (API, leída por D): 291 parcelas en 29 municipios y 394.298 m² edificables. Ya está en `pitch/datasets_cm.md` (36) y en el bloque 4 del guion. **La slide no cambia:** si debe enseñarlo («Ya enseñamos el suelo público para vivienda.» en la línea del siguiente paso, o una captura), lo decide Mariano.
+  - **La validación de mercado, solo en las respuestas** (pregunta 60): Nestra (España) y Sitescope (Polonia) ya venden el «¿se puede construir?» a promotores. En sus webs, ninguna lo cruza con la demanda de los hogares. Ese es el hueco de Vida Fácil.
 
 ### Banda de enlaces (con QR)
 - Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).

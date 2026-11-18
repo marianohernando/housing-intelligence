@@ -1,6 +1,6 @@
 <!--
 INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b). El texto vigente es README.md.
-Este fichero se conserva como registro: solo se ponen al día sus cifras de datos (35 conjuntos CM y 52 en total el 15 nov,
+Este fichero se conserva como registro: solo se ponen al día sus cifras de datos (36 conjuntos CM y 53 en total el 18 nov,
 como README.md y pitch/datasets_cm.md). El resto del texto es del 11 nov.
 
 Borrador de la línea D para el README.md de la raíz (lo integra la línea A, que es su dueña).
@@ -27,8 +27,8 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**35 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
-- población, hogares, vivienda y su antigüedad, compraventas de vivienda nueva, renta, alquiler y valor tasado;
+**36 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado:**
+- población, hogares, vivienda y su antigüedad, compraventas de vivienda nueva, renta, alquiler y valor tasado, y el suelo público para vivienda;
 - colegios, centros de salud, servicios para mayores y farmacias;
 - la calidad del aire y las infracciones penales conocidas, como contexto de cada zona;
 - las 6 redes de transporte público del Consorcio Regional de Transportes, la accesibilidad de sus estaciones de metro, Metro Ligero y Cercanías y sus aparcamientos de disuasión, que también publica ese portal.
@@ -37,11 +37,11 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 **Los cubrimos todos:** los 179 municipios de la región, y Madrid capital dividida en sus 21 distritos para que no sea un solo bloque.
 
-Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón, el panel de distritos, el mapa de ruido y otros datos del Ayuntamiento de Madrid; el mapa de calles, los parques y el ocio de OpenStreetMap; los catálogos de hospitales y centros de salud del Ministerio de Sanidad; el alquiler de la Agencia Tributaria y del Ministerio de Vivienda. En total, 52 conjuntos.
+Como apoyo, sin contarlos como datos de la Comunidad, usamos el padrón, el panel de distritos, el mapa de ruido y otros datos del Ayuntamiento de Madrid; el mapa de calles, los parques y el ocio de OpenStreetMap; los catálogos de hospitales y centros de salud del Ministerio de Sanidad; el alquiler de la Agencia Tributaria y del Ministerio de Vivienda. En total, 53 conjuntos.
 
 <!--
 Fuentes:
-- 35 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov, 29 el 14 nov con D-235 y 35 el 15 nov con D-237 y D-241). En producción, GET /api/v1/datasets?cm_only=true da 35, y 52 en total (15 nov; evidence/gate-06/2026-11-15-deploy/deploy-31-59187f8-lote4.md). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
+- 36 conjuntos y control de calidad: pitch/datasets_cm.md (generado desde data/catalog/ y evidence/gate-01/; 27 PASS el 12 nov, 29 el 14 nov con D-235, 35 el 15 nov con D-237 y D-241, y 36 el 18 nov con D-246). En producción, GET /api/v1/datasets?cm_only=true da 36, y 53 en total (18 nov; evidence/gate-06/2026-11-18-deploy/deploy-36-747cb65-suelo.md, PR #90). Los 21 primeros, en evidence/gate-01/2026-11-10/real-run-quality.txt.
 - Los 6 GTFS del CRTM cuentan como datos CM porque el portal los publica: D-196.
 - 179 municipios: evidence/gate-01/2026-10-20/cm_secciones_censales/row_counts.json.
 - 21 distritos: D-200 y D-209 (población por distrito del padrón municipal del Ayuntamiento). DATA-012 hecha (be40c2f); GET /api/v1/gaps/distrito/2807905 (Chamartín) responde con datos reales.

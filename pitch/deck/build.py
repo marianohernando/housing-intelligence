@@ -62,7 +62,7 @@ MAC_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 THEMES = [
     ("Población y territorio", {"geography", "population", "income"}),
-    ("Vivienda", {"housing"}),
+    ("Vivienda", {"housing", "urbanism"}),
     ("Servicios", {"education", "health", "social"}),
     ("Transporte (CRTM)", {"transport"}),
     ("Contexto de la zona", {"environment", "safety"}),
@@ -80,6 +80,7 @@ SHORT_NAMES = {
     "cm_valor_tasado_vivienda_antiguedad": "Valor tasado por antigüedad",
     "cm_viviendas_antiguedad": "Viviendas por antigüedad",
     "cm_transacciones_nueva_usada": "Compraventas nueva y usada",
+    "cm_parcelas_portal_suelo": "Suelo público (Portal del Suelo)",
     "cm_renta_disponible_municipal": "Renta disponible",
     "cm_centros_educativos": "Centros educativos",
     "cm_unidades_escolares": "Unidades escolares",
