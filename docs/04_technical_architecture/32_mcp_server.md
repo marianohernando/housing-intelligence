@@ -43,7 +43,7 @@ uv run python scripts/mcp_smoke.py   # se conecta como un cliente y hace las pre
 ```bash
 claude mcp add vida-facil \
   -e DATABASE_URL=postgresql+psycopg://housing:housing@localhost:5440/housing \
-  -- uv run --quiet --directory ~/Desktop/DATAMAD/housing-intelligence hi-mcp
+  -- uv run --quiet --directory /ruta/a/housing-intelligence hi-mcp
 ```
 
 **Claude Desktop** (`claude_desktop_config.json`; la ruta tiene que ser absoluta y `uv` tiene que estar en el PATH de la aplicación, o con su ruta completa):

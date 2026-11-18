@@ -1,7 +1,7 @@
 # Board — Vida Fácil · Sprint 1 comprimido (10–18 nov 2026) · Demo para el formulario
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
-Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
+Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `<workspace>/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
 Última actualización: 2026-11-13 (A v15: D-232 barrios dentro de un distrito, `fit-0.7`, `POST /api/v1/search/barrios`; pendiente: sync y despliegue, y decidir con Mariano la fase 2 de barrios). **Formulario enviado (12 nov).**
 
 ## Líneas paralelas (LINEAS.md)
@@ -173,7 +173,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - **Mariano y `datamad-10`:** decidir la fase 2 del diseño (los 131 barrios en el ranking regional) antes del 18 nov. «Qué falta» por barrio, después del freeze.
 - **Next (línea A):** nada de barrios sin decisión. Lo que mande `datamad-10`.
 - **Gate status:** `make lint typecheck test` en verde en `01fbf1e`: 704 unit, 354 web y 133 integración. Golden de búsqueda 9/9 (8 regionales sin cambios + San Blas).
-- **Relevo:** A v15 cierra tras BARRIO-001. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v15 cierra tras BARRIO-001. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (madrugada, línea A v14)
 - **Done (A v14), las 4 fases de `FASE_MEJORA.md` para A:**
@@ -204,7 +204,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - **Fase 2** (ranking de los 131 barrios) solo si la fase 1 queda en verde y desplegada antes del 18 nov.
   - «Qué falta» por barrio, no antes del freeze.
 - **Gate status:** `make lint typecheck test` en verde en `c269100`: 670 unit, 308 web y 126 integración. Golden de búsqueda 8/8.
-- **Relevo:** A v14 cierra aquí por contexto, tras 4 fases. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v14 cierra aquí por contexto, tras 4 fases. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (noche, línea A v13)
 - **Done (A v13):**
@@ -243,7 +243,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
      - script de comparación de parques sin versionar;
      - `make help` muestra «Makefile» como nombre de cada objetivo cuando existe `.env` (el `grep` recibe dos ficheros).
 - **Gate status:** `make lint typecheck test` en verde en `f29ebec`: 623 unit, 286 web y 119 integración. Golden de búsqueda 8/8. Smoke del MCP por stdio en `evidence/gate-11/2026-11-12/mcp-smoke.txt`.
-- **Relevo:** A v13 cierra aquí tras 3 cards. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v13 cierra aquí tras 3 cards. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (tarde-noche, línea A v12)
 - **Done (A v12):**
@@ -266,7 +266,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
      - script de comparación de parques sin versionar;
      - los recuentos del GTFS de autobuses siguen con la versión de `gtfs-1.2.0` recargada desde Bronze (mismos lugares).
 - **Gate status:** `make lint typecheck test` en verde en `d6c6f0f`: 570 unit, 282 web y 102 integración. Tras el rebase, `555c2b4`: 571 unit y 286 web. Golden de búsqueda 8/8.
-- **Relevo:** A v12 cierra aquí por contexto, tras 2 cards. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v12 cierra aquí por contexto, tras 2 cards. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (tarde, línea A v11)
 - **Done (A v11):**
@@ -282,13 +282,13 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   3. DATA-021 precio de compra y MCP-001 (3–5 herramientas).
   4. Deuda: `drop_off_type` del GTFS (M-3 de CORE-009); la segunda pasada de osmium para inclusiones ensambla todas las áreas (unos 2 s, aceptado); el script de comparación con la lista del Ayuntamiento no está versionado (resultado en `evidence/gate-01/2026-11-12/parques.md`); Gate 3 completo tras las correcciones.
 - **Gate status:** `make lint typecheck test` en verde en `8330771`: 553 unit, 282 web y 102 integración. Golden de búsqueda 7/7.
-- **Relevo:** A v11 cierra aquí tras 2 cards; continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v11 cierra aquí tras 2 cards; continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (mañana, línea A v10)
 - **Done (A v10):** D-219 (pooler en modo transacción, `de9ad4b`); HOSP-001 F3–F4 (nombres de atención primaria y fichero de correcciones, D-218 §9–§10); CORE-009 F1–F3c (transporte público al trabajo, D-220, `fit-0.2`, desempates estables); API para B (`attribution_text`, `/places` con varias categorías); CI de nuevo en verde (`9cb54fe`).
 - **Next (línea A), en orden:** (1) confirmar el sync de `2ef95ca` por MCP; (2) DATA-018 a DATA-021 (zonas verdes, accesibilidad, seguridad con salvaguardas, precio de compra), cada una con su fase; (3) MCP-001: 3–5 herramientas sobre los servicios de dominio; (4) deuda: `drop_off_type` en el GTFS (M-3 de la revisión de CORE-009), matriz con aristas por pareja evento-footpath (memoria) si se amplía la ventana, y Gate 3 completo tras las correcciones.
 - **Gate status:** `make lint typecheck test` verde en `2ef95ca` (531 unit, 277 web, 102 integración); CI verde en `9cb54fe`; golden de búsqueda 6/6 con orden estable.
-- **Relevo:** la sesión A v10 cierra aquí por contexto; continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** la sesión A v10 cierra aquí por contexto; continuar con `<workspace>/prompts/RELEVO.md`.
 - **Variables de la API en Vercel (para C, D-219).** C las documenta en `infra/deploy/README.md`:
   | Variable | Valor en producción | Cuándo |
   |---|---|---|
