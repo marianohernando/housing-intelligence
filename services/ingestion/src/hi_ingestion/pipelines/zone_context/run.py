@@ -51,7 +51,8 @@ from hi_ingestion.pipelines.zone_context.parcels import (
 )
 
 PARSER_VERSION = "zone_context-1.1.0"
-PARCELS_PARSER_VERSION = "public_land_parcels-1.0.0"  # D-246
+# D-246; 1.1: undeclared uses, links off the CM viewer and dotted surfaces are quarantined
+PARCELS_PARSER_VERSION = "public_land_parcels-1.1.0"
 MANUAL_DIR = REPO_ROOT / "data" / "catalog" / "manual"
 
 

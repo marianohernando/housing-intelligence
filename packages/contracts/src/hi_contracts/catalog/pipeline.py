@@ -842,7 +842,9 @@ class PublicLandParcelsPipeline(BaseModel):
     public parcel offered by the CM or a member Ayuntamiento, with its municipio code inside the
     province, its main use, its buildable surface and the link to the CM map viewer.
 
-    Only the parcels whose main use is in `uses` are kept. Each one becomes an observation of
+    Only the parcels whose main use is in `uses` are kept; those of `other_uses` are counted.
+    A use in neither is quarantined, so a new code never makes a parcel vanish in silence. Each
+    kept parcel becomes an observation of
     `metric_id` in its municipio (`28` + the 3-digit code; the name must be the geography's), its
     buildable m² as the value. The parcels of `split_municipio_ine` (Madrid) are also placed in
     their district and barrio: the CSV has no coordinates, so a versioned table of points inside
@@ -853,7 +855,10 @@ class PublicLandParcelsPipeline(BaseModel):
     Codes are shown only with a meaning the CM publishes: `regimes` and `urbanization` map
     those codes to a slug. The codes the CM uses without publishing what they mean are declared
     in `undocumented_*` and kept without a label; any other code is quarantined, so a new one is
-    read by a person before it is shown.
+    read by a person before it is shown. The viewer link must start with `viewer_prefix` (the
+    CM's map viewer) or the parcel is quarantined: the web turns it into a link. The buildable
+    surface uses a decimal comma; a dot (a thousands separator or a decimal point) is
+    quarantined, never read as another number.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -865,6 +870,8 @@ class PublicLandParcelsPipeline(BaseModel):
     metric_id: str = Field(pattern=METRIC_ID_PATTERN)
     province_ine: str = Field(default="28", pattern=r"^\d{2}$")
     uses: list[str] = Field(min_length=1, description="uso_principal_codigo values kept")
+    other_uses: list[str] = Field(default_factory=list[str], description="known, not kept")
+    viewer_prefix: str = Field(pattern=r"^https://[a-z0-9.\-]+/$")
     split_municipio_ine: str = Field(pattern=r"^28\d{3}$")
     points: str = Field(pattern=r"^[a-z0-9_]+\.yaml$", description="file in data/catalog/manual")
     regimes: dict[str, Annotated[str, Field(pattern=CODE_SLUG)]] = Field(min_length=1)
@@ -880,11 +887,12 @@ class PublicLandParcelsPipeline(BaseModel):
             msg = f"{self.dataset_id}: max_rows must be >= min_rows"
             raise ValueError(msg)
         for known, unknown in (
+            (set(self.uses), self.other_uses),
             (self.regimes, self.undocumented_regimes),
             (self.urbanization, self.undocumented_urbanization),
         ):
             if set(known) & set(unknown):
-                msg = f"{self.dataset_id}: a code is either documented or not"
+                msg = f"{self.dataset_id}: a code is declared once (kept or not, explained or not)"
                 raise ValueError(msg)
         return self
 

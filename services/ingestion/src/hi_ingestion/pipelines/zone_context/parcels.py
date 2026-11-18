@@ -90,6 +90,25 @@ def municipio_code(
     return code
 
 
+def viewer_url(row: Mapping[str, Any], spec: PublicLandParcelsPipeline) -> str:
+    """The parcel in the CM's map viewer, or "" without one; any other site is quarantined (the
+    web makes it a link)."""
+    url = clean(row.get(VIEWER))
+    if url and not url.startswith(spec.viewer_prefix):
+        msg = f"viewer link {url[:60]!r} is not on {spec.viewer_prefix}"
+        raise RowError(msg)
+    return url
+
+
+def buildable_m2(raw: str, spec: PublicLandParcelsPipeline) -> tuple[float | None, str | None]:
+    """«13475,8» -> 13475.8 (decimal comma). «12.192» is quarantined: a thousands dot would be
+    read as 12.192 m², and a decimal point cannot be told from it."""
+    if "." in raw:
+        msg = f"buildable surface {raw!r} has a dot (thousands or decimal point): read it"
+        raise RowError(msg)
+    return parse_value(raw, MISSING, spec.csv.decimal)
+
+
 def _dims(row: Mapping[str, Any], spec: PublicLandParcelsPipeline) -> dict[str, str]:
     ref = clean(row.get(REF))
     if not ref:
@@ -103,7 +122,7 @@ def _dims(row: Mapping[str, Any], spec: PublicLandParcelsPipeline) -> dict[str, 
         "parcel": clean(row.get(PARCEL)),
         "regime": regime,
         "manager": clean(row.get(MANAGER)),
-        "url": clean(row.get(VIEWER)),
+        "url": viewer_url(row, spec),
         "stage": stage,
     }
     return {k: v for k, v in dims.items() if v}  # a dimension the parcel does not have is absent
@@ -135,7 +154,7 @@ def _parcel_rows(
     code = municipio_code(row, spec, names)
     dims = _dims(row, spec)
     raw = clean(row.get(BUILDABLE))
-    value, null_reason = parse_value(raw, MISSING, spec.csv.decimal)
+    value, null_reason = buildable_m2(raw, spec)
     return [
         observation(
             metric_id=spec.metric_id,
@@ -164,11 +183,18 @@ def normalize_parcels(
     observed: date,
 ) -> ParcelObservations:
     """`names`: INE code -> the geography's name. `placed`: Madrid's parcels by reference.
-    Parcels of other uses are counted, never quarantined; a repeated reference is."""
+    Parcels of the other declared uses are counted; an undeclared use and a repeated reference
+    are quarantined."""
     records: list[dict[str, Any]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
+    known = {*spec.uses, *spec.other_uses}
     kept = [(i, r) for i, r in enumerate(records) if clean(r.get(USE)) in spec.uses]
     rows: list[dict[str, Any]] = []
-    bad: list[dict[str, Any]] = []
+    bad: list[dict[str, Any]] = [
+        {"source_row": i, "reason": f"use code {clean(r.get(USE))!r} is not declared", "raw": ref}
+        for i, r in enumerate(records)
+        if clean(r.get(USE)) not in known
+        for ref in [clean(r.get(REF))]
+    ]
     seen: set[str] = set()
     for index, row in kept:
         try:

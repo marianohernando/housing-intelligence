@@ -203,6 +203,14 @@ describe("landLine (zona.vivienda_nueva.suelo, D-246)", () => {
     expect(line?.parcels?.items[0]?.regime).toBe("En venta");
   });
 
+  it("names a parcel without location or parcel name by its reference, and links only to the Comunidad's viewer", () => {
+    const odd = [row("28080", 100, "2026-11-18", { items: [{ code: "08000001Y", value: 60, url: "https://example.com/visor" }, { code: "08000002Y", value: 40, url: VIEWER }] })];
+    const [first, second] = landLine({ level: "municipio", code: "28080" }, odd)?.parcels?.items ?? [];
+    expect(first?.place).toBe("Referencia 08000001Y");
+    expect(first?.url).toBeNull();
+    expect(second?.url).toBe(VIEWER);
+  });
+
   it("goes last, after what is coming, and never with alarm or ranking words", () => {
     const lines = newHousingLines({ level: "distrito", code: "2807919" }, { ...rows, planVive: planViveDistricts, land });
     expect(lines.at(-1)?.key).toBe("land");

@@ -660,11 +660,11 @@ Una tarjeta en la vista de zona, debajo de «Otros datos de la zona» (D-235), p
 | `zona.vivienda_nueva.suelo.nota` | Parcelas que la Comunidad de Madrid o los ayuntamientos ofrecen en venta o en concesión para construir vivienda. No dice cuántas viviendas caben. | Debajo de la línea. Con `suelo.sin_m2`, sigue «De alguna parcela no se publica la superficie edificable.» |
 | `zona.vivienda_nueva.suelo.fuente` | Portal del Suelo 4.0 de la Comunidad de Madrid, en su portal de datos abiertos, a {fecha}. | {fecha}: el día de la descarga (el fichero se actualiza a diario y no trae fecha), «a 18 de noviembre de 2026» |
 | `zona.vivienda_nueva.suelo.ver` | Ver las {n} parcelas | Desplegable bajo la fuente, cerrado. Con una: «Ver la parcela» |
-| `zona.vivienda_nueva.suelo.parcela` | {localización} · {parcela} | Tal como las escribe el portal (algunas en mayúsculas), en negrita. Debajo: «{m2} m² edificables · {régimen} · {gestor}», de mayor a menor superficie |
+| `zona.vivienda_nueva.suelo.parcela` | {localización} · {parcela} | Tal como las escribe el portal (algunas en mayúsculas), en negrita. Sin ninguna de las dos, «Referencia {referencia}» (`zona.vivienda_nueva.suelo.referencia`). Debajo: «{m2} m² edificables · {régimen} · {gestor}», de mayor a menor superficie |
 | `zona.vivienda_nueva.suelo.sin_superficie` | Superficie edificable sin publicar | En lugar de «{m2} m² edificables» |
 | `zona.vivienda_nueva.suelo.venta` | En venta | Régimen V. Solo los códigos que la Comunidad explica en su capa de la IDEM: V «Venta» y C «Concesión / derecho de superficie / alquiler». D y A no tienen explicación: la parcela sale sin régimen |
 | `zona.vivienda_nueva.suelo.concesion` | En concesión, derecho de superficie o alquiler | Régimen C |
-| `zona.vivienda_nueva.suelo.visor` | Ver en el visor de la Comunidad | Enlace de cada parcela (`url_visor`, visor del Portal del Suelo en la IDEM), en una pestaña nueva. Para el lector de pantalla sigue «: {localización} · {parcela} (se abre en una pestaña nueva)» |
+| `zona.vivienda_nueva.suelo.visor` | Ver en el visor de la Comunidad | Enlace de cada parcela (`url_visor`, visor del Portal del Suelo en la IDEM), en una pestaña nueva, con su icono tras la última palabra. Solo si empieza por `https://idem.comunidad.madrid/` (la carga pone en cuarentena cualquier otro). Para el lector de pantalla sigue «: {localización} · {parcela} (se abre en una pestaña nueva)» |
 | `zona.vivienda_nueva.no_puntua` | Son datos informativos: no cambian qué zonas te convienen ni su orden. | **Cambia (15 nov, UX móvil 1).** Pie de la tarjeta: es el mismo texto que `zona.contexto.no_puntua` y, con las dos tarjetas, sale una sola vez, bajo la última (15 nov) |
 
 ### Barra de barrios (solo distritos de Madrid)

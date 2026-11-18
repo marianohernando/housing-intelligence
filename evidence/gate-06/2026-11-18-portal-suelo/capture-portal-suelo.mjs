@@ -100,6 +100,8 @@ async function zoneScreen(browser, w, zone) {
     await page.waitForTimeout(500);
     const links = card.locator("a[href^='https://idem.comunidad.madrid/visor/']");
     check(w, label, "one «Ver en el visor de la Comunidad» link per parcel, in a new tab", (await links.count()) === items.length && (await links.first().getAttribute("target")) === "_blank", `${await links.count()} of ${items.length}`);
+    const heights = await links.evaluateAll((all) => all.map((l) => l.getBoundingClientRect().height));
+    check(w, label, "«Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text", heights.every((h) => h >= 43.5 && h < 60), heights.slice(0, 3).map(Math.round).join(", "));
     const regimes = await card.locator("li li").allInnerTexts();
     check(w, label, "a regime only when the Comunidad explains its code", items.every((item, i) => (item.regime ? /En venta|En concesión/.test(regimes[i]) : !/En venta|En concesión/.test(regimes[i]))), "");
     await land.evaluate((el) => el.scrollIntoView({ block: "start" }));

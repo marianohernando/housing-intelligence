@@ -1963,7 +1963,7 @@
     },
     "PublicLandParcelsPipeline": {
       "additionalProperties": false,
-      "description": "Comunidad de Madrid, «Parcelas publicadas en el Portal del Suelo 4.0» (D-246): one row per\npublic parcel offered by the CM or a member Ayuntamiento, with its municipio code inside the\nprovince, its main use, its buildable surface and the link to the CM map viewer.\n\nOnly the parcels whose main use is in `uses` are kept. Each one becomes an observation of\n`metric_id` in its municipio (`28` + the 3-digit code; the name must be the geography's), its\nbuildable m² as the value. The parcels of `split_municipio_ine` (Madrid) are also placed in\ntheir district and barrio: the CSV has no coordinates, so a versioned table of points inside\neach parcel, read once from the CM's own map layer (`points`, in data/catalog/manual), is\nlocated in the canonical geography. A Madrid parcel without a point, or with a point in no\ndistrict, goes to quarantine and blocks the run (the points must be read again).\n\nCodes are shown only with a meaning the CM publishes: `regimes` and `urbanization` map\nthose codes to a slug. The codes the CM uses without publishing what they mean are declared\nin `undocumented_*` and kept without a label; any other code is quarantined, so a new one is\nread by a person before it is shown.",
+      "description": "Comunidad de Madrid, «Parcelas publicadas en el Portal del Suelo 4.0» (D-246): one row per\npublic parcel offered by the CM or a member Ayuntamiento, with its municipio code inside the\nprovince, its main use, its buildable surface and the link to the CM map viewer.\n\nOnly the parcels whose main use is in `uses` are kept; those of `other_uses` are counted.\nA use in neither is quarantined, so a new code never makes a parcel vanish in silence. Each\nkept parcel becomes an observation of\n`metric_id` in its municipio (`28` + the 3-digit code; the name must be the geography's), its\nbuildable m² as the value. The parcels of `split_municipio_ine` (Madrid) are also placed in\ntheir district and barrio: the CSV has no coordinates, so a versioned table of points inside\neach parcel, read once from the CM's own map layer (`points`, in data/catalog/manual), is\nlocated in the canonical geography. A Madrid parcel without a point, or with a point in no\ndistrict, goes to quarantine and blocks the run (the points must be read again).\n\nCodes are shown only with a meaning the CM publishes: `regimes` and `urbanization` map\nthose codes to a slug. The codes the CM uses without publishing what they mean are declared\nin `undocumented_*` and kept without a label; any other code is quarantined, so a new one is\nread by a person before it is shown. The viewer link must start with `viewer_prefix` (the\nCM's map viewer) or the parcel is quarantined: the web turns it into a link. The buildable\nsurface uses a decimal comma; a dot (a thousands separator or a decimal point) is\nquarantined, never read as another number.",
       "properties": {
         "csv": {
           "$ref": "#/$defs/CsvFormat"
@@ -1993,6 +1993,14 @@
           "exclusiveMinimum": 0,
           "title": "Min Rows",
           "type": "integer"
+        },
+        "other_uses": {
+          "description": "known, not kept",
+          "items": {
+            "type": "string"
+          },
+          "title": "Other Uses",
+          "type": "array"
         },
         "points": {
           "description": "file in data/catalog/manual",
@@ -2056,6 +2064,11 @@
           "minItems": 1,
           "title": "Uses",
           "type": "array"
+        },
+        "viewer_prefix": {
+          "pattern": "^https://[a-z0-9.\\-]+/$",
+          "title": "Viewer Prefix",
+          "type": "string"
         }
       },
       "required": [
@@ -2063,6 +2076,7 @@
         "dataset_id",
         "metric_id",
         "uses",
+        "viewer_prefix",
         "split_municipio_ine",
         "points",
         "regimes",

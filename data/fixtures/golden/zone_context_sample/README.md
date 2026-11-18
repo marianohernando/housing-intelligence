@@ -20,6 +20,7 @@ Suelo público para vivienda (D-246):
   Suelo 4.0» (portal de datos abiertos de la CM, CC BY 4.0, 18 nov 2026): tres residenciales de
   Madrid (venta, concesión y el régimen «D», que la Comunidad no explica), una terciaria de Madrid
   (fuera de alcance) y una residencial de Morata de Tajuña sin superficie edificable, pasada a
-  Ajalvir para que caiga en la geografía de muestra.
+  Ajalvir para que caiga en la geografía de muestra. La columna `contacto_direccion` va vacía: trae
+  nombres, teléfonos y correos de personas, y el pipeline no la lee.
 - `portal_suelo_madrid_puntos.yaml`: los puntos de las tres de Madrid, puestos en secciones de la
   muestra (Almenara y Castillejos, en Tetuán), no donde están de verdad.

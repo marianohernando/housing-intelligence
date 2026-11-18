@@ -18,6 +18,8 @@ SPEC = PublicLandParcelsPipeline(
     dataset_id="cm_parcelas_portal_suelo",
     metric_id="suelo_publico_parcela_m2_edificable",
     uses=["R"],
+    other_uses=["T", "I", "O", "C"],
+    viewer_prefix="https://idem.comunidad.madrid/",
     split_municipio_ine="28079",
     points="portal_suelo_madrid_puntos.yaml",
     regimes={"V": "venta", "C": "concesion"},
@@ -90,6 +92,35 @@ def test_texts_are_one_line_and_codes_are_labelled_only_when_the_cm_says_what_th
     assert "regime" not in _dims(result, "3") and "stage" not in _dims(result, "3")
 
 
+def test_an_undeclared_use_is_quarantined_never_dropped_in_silence() -> None:
+    result = _run(
+        _parcel("1"), _parcel("2", uso_principal_codigo="T"), _parcel("3", uso_principal_codigo="Z")
+    )
+    assert list(result.obs.frame["territory_code"]) == ["28080"]
+    assert result.obs.quarantine["reason"].tolist() == ["use code 'Z' is not declared"]
+    assert result.obs.quarantine["raw"].tolist() == ["3"]
+
+
+def test_a_dot_in_the_buildable_surface_is_quarantined_never_another_number() -> None:
+    """«12.192» (thousands dot) would read as 12.192 m²; the file uses a decimal comma."""
+    result = _run(
+        _parcel("1", superficie_edificable="12.192"), _parcel("2", superficie_edificable="12192")
+    )
+    assert result.obs.frame["value"].tolist() == [12192.0]
+    assert "has a dot" in result.obs.quarantine["reason"].iloc[0]
+
+
+def test_only_links_to_the_cm_viewer_are_kept() -> None:
+    """The web makes a link of it: another site is quarantined; no link is no dimension."""
+    result = _run(
+        _parcel("1", url_visor="https://example.com/idem.comunidad.madrid/"),
+        _parcel("2", url_visor="javascript:alert(1)"),
+        _parcel("3", url_visor=""),
+    )
+    assert len(result.obs.quarantine) == 2
+    assert "url" not in _dims(result, "3")
+
+
 def test_a_code_nobody_declared_is_quarantined() -> None:
     result = _run(_parcel("1", regimen_codigo="X"))
     assert result.obs.frame.empty
@@ -156,6 +187,8 @@ def test_a_code_is_documented_or_not() -> None:
         PublicLandParcelsPipeline.model_validate(
             SPEC.model_dump() | {"undocumented_regimes": ["V"]}
         )
+    with pytest.raises(ValidationError):
+        PublicLandParcelsPipeline.model_validate(SPEC.model_dump() | {"other_uses": ["R", "T"]})
 
 
 def _points(**changes: Any) -> dict[str, Any]:

@@ -40,6 +40,13 @@
     {
       "width": 1440,
       "zone": "Majadahonda",
+      "name": "«Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text",
+      "ok": true,
+      "detail": "47, 47, 47"
+    },
+    {
+      "width": 1440,
+      "zone": "Majadahonda",
       "name": "a regime only when the Comunidad explains its code",
       "ok": true,
       "detail": ""
@@ -106,6 +113,13 @@
       "name": "one «Ver en el visor de la Comunidad» link per parcel, in a new tab",
       "ok": true,
       "detail": "16 of 16"
+    },
+    {
+      "width": 1440,
+      "zone": "Vicálvaro",
+      "name": "«Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text",
+      "ok": true,
+      "detail": "47, 47, 47"
     },
     {
       "width": 1440,
@@ -222,6 +236,13 @@
     {
       "width": 390,
       "zone": "Majadahonda",
+      "name": "«Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text",
+      "ok": true,
+      "detail": "50, 50, 50"
+    },
+    {
+      "width": 390,
+      "zone": "Majadahonda",
       "name": "a regime only when the Comunidad explains its code",
       "ok": true,
       "detail": ""
@@ -288,6 +309,13 @@
       "name": "one «Ver en el visor de la Comunidad» link per parcel, in a new tab",
       "ok": true,
       "detail": "16 of 16"
+    },
+    {
+      "width": 390,
+      "zone": "Vicálvaro",
+      "name": "«Ver en el visor de la Comunidad» in one line of 44 px at least, its icon after the text",
+      "ok": true,
+      "detail": "50, 50, 50"
     },
     {
       "width": 390,
@@ -367,5 +395,5 @@
       "detail": ""
     }
   ],
-  "summary": "52/52"
+  "summary": "56/56"
 }

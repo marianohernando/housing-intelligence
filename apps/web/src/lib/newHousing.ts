@@ -106,6 +106,7 @@ export const TEXT = {
   landArea: "{m2} m² edificables",
   landAreaMissing: "Superficie edificable sin publicar",
   landViewer: "Ver en el visor de la Comunidad",
+  landReference: "Referencia {ref}",
 } as const;
 
 /** D-246: only the codes whose meaning the Comunidad publishes (V and C); the rest come without a regime. */
@@ -247,15 +248,19 @@ function areaLines(zone: NewHousingZone, rows: readonly FeatureValueRow[]): NewH
 const parcelsInWords = (n: number) => (n === 1 ? "1 parcela" : `${count(n)} parcelas`);
 const m2 = (value: number) => count(Math.round(value));
 
+/** Only links to the Comunidad's map viewer become links (the pipeline quarantines any other, D-246). */
+export const VIEWER_PREFIX = "https://idem.comunidad.madrid/";
+
 function landParcel(item: ContextItem, i: number): LandParcel {
-  const place = [item.name, item.parcel].filter(Boolean).join(" · ") || TEXT.landViewer;
+  // Without a location or a parcel name, its reference in the portal; never the link's text
+  const place = [item.name, item.parcel].filter(Boolean).join(" · ") || TEXT.landReference.replace("{ref}", item.code ?? String(i + 1));
   return {
     key: item.code ?? String(i),
     place,
     area: item.value == null ? TEXT.landAreaMissing : TEXT.landArea.replace("{m2}", m2(item.value)),
     regime: item.regime ? (REGIMES[item.regime] ?? null) : null,
     manager: item.manager ?? null,
-    url: item.url ?? null,
+    url: item.url?.startsWith(VIEWER_PREFIX) ? item.url : null,
   };
 }
 

@@ -20,8 +20,8 @@
     }
   ],
   "checksum": "b96deb8ff7397e484de0616f938483cb62595b4440bc62be2a562ff8f786ac68",
-  "parser_version": "public_land_parcels-1.0.0",
+  "parser_version": "public_land_parcels-1.1.0",
   "dataset_version": "2026-11-18-b96deb8ff739",
-  "correlation_id": "1d9212b2d4ba4509970ed8acaaa9b0b8",
+  "correlation_id": "00b4425d43ca48948d71b8719f8be61b",
   "silver": "data/silver/cm_parcelas_portal_suelo/b96deb8ff739/observations.csv.gz"
 }
