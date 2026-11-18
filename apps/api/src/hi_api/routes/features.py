@@ -29,24 +29,55 @@ class FeatureInfo(BaseModel):
 
 
 class ContextItem(BaseModel):
-    """One thing a context figure lists (D-241): a Plan Vive entry or a Madrid planning area."""
+    """One thing a context figure lists (D-241): a Plan Vive entry, a Madrid planning area or a
+    public parcel for housing of the Portal del Suelo (D-246, which adds the last four fields;
+    the other items leave them out)."""
 
     code: str | None = Field(
-        default=None, description="Its id in the source: the planning area's code («APR.06.02»)"
+        default=None,
+        description="Its id in the source: the planning area's code («APR.06.02»), the "
+        "parcel's reference («07900151Y»)",
     )
     name: str | None = Field(
-        default=None, description="What to call it: the area's name, or where the entry is"
+        default=None,
+        description="What to call it: the area's name, or where the entry or the parcel is",
     )
     stage: str | None = Field(
         default=None,
         description="Planning areas: obras | tramitacion | sin_empezar. Plan Vive: its phase "
-        "as the page writes it («Entrega y construcción»)",
+        "as the page writes it («Entrega y construcción»). Parcels: urbanizado | "
+        "sin_urbanizar, absent when the CM does not publish what its code means",
     )
     value: float | None = Field(
-        default=None, description="Plan Vive: homes. Planning areas: surface in m²"
+        default=None,
+        description="Plan Vive: homes. Planning areas: surface in m². Parcels: buildable m² "
+        "(null when the portal does not publish it)",
     )
     note: str | None = Field(
         default=None, description="A caveat that travels with the data, shown next to it"
+    )
+    parcel: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["Parcela RC.5.3.1"],
+        description="D-246: the parcel as the portal names it",
+    )
+    regime: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-246: venta | concesion («Concesión / derecho de superficie / alquiler»); "
+        "absent when the CM does not publish what its code means",
+    )
+    manager: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["Ayuntamiento de Madrid"],
+        description="D-246: who offers it",
+    )
+    url: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-246: the parcel in the Comunidad de Madrid's map viewer",
     )
 
 
@@ -57,8 +88,9 @@ class FeatureValueDetail(BaseModel):
     - a share over periods (`compraventas_obra_nueva_pct`): `numerator`, `denominator`,
       `period_end` and `provisional`;
     - the items behind a count or a sum (`plan_vive_viviendas`,
-      `ambitos_residenciales_en_desarrollo`): `items`, empty when the zone has none (a
-      confirmed 0);
+      `ambitos_residenciales_en_desarrollo`, `suelo_publico_vivienda_m2`): `items`, empty when
+      the zone has none (a confirmed 0); D-246: the zone's public parcels for housing are its
+      items, and the value is the sum of their buildable m²;
     - the air quality station a value comes from (`no2_media_anual`, D-237): `station`,
       `station_code`, `own`, `distance_km` and `traffic`, left out of the other features'
       rows."""

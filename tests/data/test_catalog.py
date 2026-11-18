@@ -566,6 +566,7 @@ NEW_HOUSING_CONTEXT = {
     "valor_tasado_vivienda_usada_m2",
     "plan_vive_viviendas",
     "ambitos_residenciales_en_desarrollo",
+    "suelo_publico_vivienda_m2",  # D-246
 }
 
 
@@ -588,6 +589,18 @@ def test_new_housing_figures_come_from_the_cm_portal(catalog: Catalog) -> None:
     plan_vive = catalog.datasets["cm_plan_vive_promociones"]
     assert plan_vive.source_id == "comunidad_madrid_web"  # a web page, not the open data portal
     assert catalog.sources["comunidad_madrid_web"].attribution_text
+
+
+def test_public_land_for_housing_comes_from_the_cm_portal(catalog: Catalog) -> None:
+    """D-246: the parcels are CM open data, by municipio and, in Madrid, by district and
+    barrio; the value is the parcels' buildable m², never homes."""
+    spec = catalog.features["suelo_publico_vivienda_m2"]
+    assert {s.dataset_id for s in spec.sources} == {"cm_parcelas_portal_suelo"}
+    assert catalog.datasets["cm_parcelas_portal_suelo"].source_id == CM_SOURCE
+    assert catalog.datasets["cm_parcelas_portal_suelo"].license_status == "CLEAR"
+    formula = spec.formula.model_extra or {}
+    assert {spec.geo_level, *formula["levels"]} == {"municipio", "distrito", "barrio"}
+    assert spec.unit == "m2" and formula["value"] == "sum"
 
 
 def test_plan_vive_citation_carries_the_date_it_was_typed(catalog: Catalog) -> None:

@@ -4,6 +4,7 @@ import type { FeatureValueDetail, FeatureValueRow } from "../features";
 import {
   areasSentences,
   dateInWords,
+  landLine,
   listInWords,
   newHousingLines,
   newHousingRequests,
@@ -51,8 +52,8 @@ const rows: NewHousingRows = { sales, newValue, usedValue, planVive, areas };
 
 describe("newHousingRequests (D-241)", () => {
   it("asks a district for the city's sales and appraisals, and for its own Plan Vive and planning areas", () => {
-    expect(newHousingRequests("municipio").map((r) => `${r.key}@${r.level}`)).toEqual(["sales@municipio", "newValue@municipio", "usedValue@municipio", "planVive@municipio"]);
-    expect(newHousingRequests("distrito").map((r) => `${r.key}@${r.level}`)).toEqual(["sales@municipio", "newValue@municipio", "usedValue@municipio", "planVive@distrito", "areas@distrito"]);
+    expect(newHousingRequests("municipio").map((r) => `${r.key}@${r.level}`)).toEqual(["sales@municipio", "newValue@municipio", "usedValue@municipio", "planVive@municipio", "land@municipio"]);
+    expect(newHousingRequests("distrito").map((r) => `${r.key}@${r.level}`)).toEqual(["sales@municipio", "newValue@municipio", "usedValue@municipio", "planVive@distrito", "areas@distrito", "land@distrito"]);
   });
 });
 
@@ -152,5 +153,68 @@ describe("newHousingLines", () => {
       .join(" ")
       .toLowerCase();
     for (const word of ["mejor", "peor", "riesgo", "alerta", "cuidado", "caro", "barato"]) expect(text).not.toContain(word);
+  });
+});
+
+// D-246: rows of suelo_publico_vivienda_m2 as the API gives them (values of 18 nov, Vicálvaro shortened to two parcels)
+const VIEWER = "https://idem.comunidad.madrid/visor/?v=suelo&&f=,,CD_REFERENCIA=%2707900175Y%27";
+const land = [
+  row("2807919", 67808.3, "2026-11-18", {
+    items: [
+      { code: "07900175Y", name: "UZPp 2.04 Desarrollo del Este–Los Berrocales", stage: "urbanizado", value: 9684.66, parcel: "Parcela RC.5.3.1", regime: "concesion", manager: "Ayuntamiento de Madrid", url: VIEWER },
+      { code: "00000598I", name: "CALLE PROVISIONAL LOS BERROCALES 71, 77", stage: "urbanizado", value: 6653.2, parcel: "RC 4.12.3 LOS BERROCALES", manager: "AVS- Agencia de Vivienda Social (antes, IVIMA)", url: VIEWER },
+    ],
+  }),
+  row("2807913", 0, "2026-11-18", { items: [] }),
+  row("28091", null, "2026-11-18", { items: [{ code: "09100001Y", name: "UA-24 CALLE JOSÉ MARÍA RODELGO 32", value: null, regime: "venta", manager: "Ayuntamiento de Morata de Tajuña", url: VIEWER }] }),
+];
+
+describe("landLine (zona.vivienda_nueva.suelo, D-246)", () => {
+  it("says the parcels and their buildable m², with its source and date, and lists each parcel", () => {
+    const line = landLine({ level: "distrito", code: "2807919" }, land);
+    expect(line?.text).toBe("Suelo público para vivienda: 2 parcelas, 67.808 m² edificables.");
+    expect(line?.note).toBe("Parcelas que la Comunidad de Madrid o los ayuntamientos ofrecen en venta o en concesión para construir vivienda. No dice cuántas viviendas caben.");
+    expect(line?.source).toBe("Portal del Suelo 4.0 de la Comunidad de Madrid, en su portal de datos abiertos, a 18 de noviembre de 2026.");
+    expect(line?.parcels?.toggle).toBe("Ver las 2 parcelas");
+    const [first, second] = line?.parcels?.items ?? [];
+    expect(first).toEqual({
+      key: "07900175Y",
+      place: "UZPp 2.04 Desarrollo del Este–Los Berrocales · Parcela RC.5.3.1",
+      area: "9.685 m² edificables",
+      regime: "En concesión, derecho de superficie o alquiler",
+      manager: "Ayuntamiento de Madrid",
+      url: VIEWER,
+    });
+    expect(second?.regime).toBeNull(); // a code the Comunidad does not explain is not named
+  });
+
+  it("says nothing for a zone without parcels, never «0 parcelas»", () => {
+    expect(landLine({ level: "distrito", code: "2807913" }, land)).toBeNull();
+    expect(landLine({ level: "distrito", code: "2807901" }, land)).toBeNull();
+    expect(newHousingLines({ level: "distrito", code: "2807913" }, { land }).map((l) => l.key)).toEqual([]);
+  });
+
+  it("without the buildable m² of a parcel, the parcels alone: never a shorter sum", () => {
+    const line = landLine({ level: "municipio", code: "28091" }, land);
+    expect(line?.text).toBe("Suelo público para vivienda: 1 parcela.");
+    expect(line?.note).toContain("De alguna parcela no se publica la superficie edificable.");
+    expect(line?.parcels?.toggle).toBe("Ver la parcela");
+    expect(line?.parcels?.items[0]?.area).toBe("Superficie edificable sin publicar");
+    expect(line?.parcels?.items[0]?.regime).toBe("En venta");
+  });
+
+  it("names a parcel without location or parcel name by its reference, and links only to the Comunidad's viewer", () => {
+    const odd = [row("28080", 100, "2026-11-18", { items: [{ code: "08000001Y", value: 60, url: "https://example.com/visor" }, { code: "08000002Y", value: 40, url: VIEWER }] })];
+    const [first, second] = landLine({ level: "municipio", code: "28080" }, odd)?.parcels?.items ?? [];
+    expect(first?.place).toBe("Referencia 08000001Y");
+    expect(first?.url).toBeNull();
+    expect(second?.url).toBe(VIEWER);
+  });
+
+  it("goes last, after what is coming, and never with alarm or ranking words", () => {
+    const lines = newHousingLines({ level: "distrito", code: "2807919" }, { ...rows, planVive: planViveDistricts, land });
+    expect(lines.at(-1)?.key).toBe("land");
+    const text = lines.map((l) => `${l.text} ${l.note ?? ""}`).join(" ").toLowerCase();
+    for (const word of ["mejor", "peor", "riesgo", "alerta", "oportunidad"]) expect(text).not.toContain(word);
   });
 });

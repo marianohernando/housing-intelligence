@@ -292,6 +292,7 @@ def _metric_items(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame
         [z for z in walk.zone_codes(engine, level) if z.startswith(scope)],
         value=str(f["value"]),
         stage_order=list(f.get("stage_order") or []),
+        item_dims=list(f.get("item_dims") or []),
         confidence=float(f.get("confidence", 1.0)),
     )
 

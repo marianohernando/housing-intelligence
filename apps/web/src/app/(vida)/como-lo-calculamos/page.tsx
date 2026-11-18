@@ -435,9 +435,12 @@ function Limits() {
         <li>
           <strong>Vivienda nueva y lo que viene:</strong> en cada zona contamos cuántas compraventas del último año fueron
           de obra nueva, cuánto se tasa una vivienda de menos de 5 años frente a una más antigua, las viviendas del Plan Vive
-          y, en Madrid capital, el suelo para vivienda del Plan General que aún no está terminado. Son datos para conocer la
-          zona: no cambian el encaje ni el orden. Dicen dónde se vende o se prepara vivienda nueva, no cuántos pisos quedan
-          libres ni cuándo estarán.
+          y, en Madrid capital, el suelo para vivienda del Plan General que aún no está terminado. También el suelo público
+          para vivienda: las parcelas de uso residencial que la Comunidad de Madrid y los ayuntamientos ofrecen en venta o en
+          concesión en el Portal del Suelo 4.0 (portal de datos abiertos de la Comunidad, se actualiza cada día), con sus
+          metros edificables; en Madrid capital, cada parcela va a su distrito por su sitio en el mapa de la Comunidad. Son
+          datos para conocer la zona: no cambian el encaje ni el orden. Dicen dónde se vende o se prepara vivienda nueva y
+          dónde hay suelo para construirla, no cuántos pisos quedan libres, cuántos caben ni cuándo estarán.
         </li>
         <li>
           {/* D-237, R-07 of PR #65: street level, not the façade, and not the share of neighbours */}

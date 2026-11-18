@@ -10,13 +10,18 @@ export interface FeatureInfo {
   limitations: string[];
 }
 
-/** One thing a context figure lists (D-241): a planning area, a Plan Vive promotion. */
+/** One thing a context figure lists (D-241): a planning area, a Plan Vive promotion, a public parcel for housing (D-246). */
 export interface ContextItem {
   code?: string | null;
   name?: string | null;
   stage?: string | null;
   value?: number | null;
   note?: string | null;
+  /** D-246, public parcels only: the parcel as the portal names it, its regime (venta | concesion, absent when unexplained), who offers it and its link in the Comunidad's map viewer */
+  parcel?: string | null;
+  regime?: string | null;
+  manager?: string | null;
+  url?: string | null;
 }
 
 /** What a context figure says besides its value (D-241); only the features that keep one send it. */
