@@ -1172,7 +1172,7 @@ DATA-021. Sustituye D-214 §5, donde comprar salía UNKNOWN en todas las zonas. 
    - pendiente de la web (línea B): las tarjetas aún dicen «Aún no tenemos precios oficiales de compra por zona» (`SearchCard.tsx`, `FitDetails.tsx`). Deberían decirlo solo donde la condición sale UNKNOWN, por ejemplo: «Solo hay precio en los municipios de más de 25.000 habitantes; los distritos de Madrid no lo tienen».
 
 ## D-228 — Alquiler de contratos nuevos: el índice CM 1934428 no permite ajustar el nivel; propuesta con la tabla de nuevos contratos de la Agencia Tributaria (2026-11-12)
-Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano decidió «Ajustar con el índice CM».** Este ADR registra por qué ese índice no sirve y la alternativa. **Mariano eligió la opción A el 12 nov** (a través de `datamad-10`), y se implanta en `fit-0.6` (§6). Evidencia: `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/evaluacion.md`.
+Fase de mejora, punto 8 (`<workspace>/prompts/FASE_MEJORA.md`). **Mariano decidió «Ajustar con el índice CM».** Este ADR registra por qué ese índice no sirve y la alternativa. **Mariano eligió la opción A el 12 nov** (a través de `datamad-10`), y se implanta en `fit-0.6` (§6). Evidencia: `evidence/gate-01/2026-11-12/alquiler-contratos-nuevos/evaluacion.md`.
 1. **Qué publica el dataset 1934428** (comprobado el 12 nov; CC BY; actualizado el 02-06-2026):
    - dos índices anuales del IPVA del INE (2015 = 100), contrato nuevo y contrato existente, de 2021 a 2024, sin código de territorio;
    - los valores coinciden con los de la Comunidad de Madrid en la tabla 59004 del INE, aunque los metadatos digan «Toda España»;
@@ -1226,7 +1226,7 @@ Fase de mejora, punto 8 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`). **Mariano 
 
 
 ## D-229 — Cifras de impacto: gente que vive donde falta y «dónde invertir primero» (2026-11-12)
-Fase de mejora, punto 3 (`~/Desktop/DATAMAD/prompts/FASE_MEJORA.md`): es lo que más puntos da según el jurado simulado. Método `impact-0.1`. Código:
+Fase de mejora, punto 3 (`<workspace>/prompts/FASE_MEJORA.md`): es lo que más puntos da según el jurado simulado. Método `impact-0.1`. Código:
 - `hi_domain/gap_impact.py`;
 - `hi_api/services/gap_impact.py`;
 - ruta `GET /api/v1/gaps/impact`;

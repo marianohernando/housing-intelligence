@@ -1,4 +1,4 @@
-"""No tracked file carries a local home or session scratchpad path (they contain the user's name).
+"""No tracked file carries a local path: home, session scratchpad or Desktop folder layout.
 
 The patterns live in scripts/redact_paths.py, which also cleans command output before it is saved
 as evidence: `make test 2>&1 | uv run python scripts/redact_paths.py > evidence/...`.
@@ -25,19 +25,54 @@ def _redact_paths() -> ModuleType:
 
 # Built in pieces so that this file holds no path the tree test below would flag.
 USERS, TMP = "/Users", "/tmp/claude-"  # noqa: S108 (test data, not a temporary file)
+DESKTOP = "~/" + "Desktop"
+WORKSPACE = DESKTOP + "/DATAMAD"
 
 
 def test_redact_replaces_home_and_scratchpad() -> None:
     redact = _redact_paths().redact
-    home = USERS + "/jane.doe-1/Desktop/repo/apps/web"
+    home = USERS + "/jane.doe-1/code/repo/apps/web"
     scratch = "/private" + TMP + "501/-Users-jane-Desktop-repo/abc/tasks/x.txt"
-    assert redact(f" RUN  v5.0.5 {home}\n") == " RUN  v5.0.5 ~/Desktop/repo/apps/web\n"
+    assert redact(f" RUN  v5.0.5 {home}\n") == " RUN  v5.0.5 ~/code/repo/apps/web\n"
     assert redact(f"see {scratch}") == "see <scratchpad>/abc/tasks/x.txt"
     assert redact(TMP + "501/-Users-jane-x/f") == "<scratchpad>/f"
     bare = USERS + "/bob"
     assert redact(f'"{bare}" ({bare}) {bare}:12, {bare}, {bare}.') == '"~" (~) ~:12, ~, ~.'
-    untouched = f"~/Desktop and {USERS}/<usuario>/ and /usr/bin and /opt{bare}/x"
+    untouched = f"~/code and {USERS}/<usuario>/ and /usr/bin and /opt{bare}/x and Docker Desktop"
     assert redact(untouched) == untouched
+
+
+def test_redact_replaces_the_repo_checkout() -> None:
+    redact = _redact_paths().redact
+    repo = WORKSPACE + "/housing-intelligence"
+    assert redact(f" RUN  v5.0.5 {repo}/apps/web\n") == " RUN  v5.0.5 <repo>/apps/web\n"
+    from_home = USERS + "/jane/Desktop/DATAMAD/housing-intelligence"
+    assert redact(f"--directory {from_home} hi-mcp") == "--directory <repo> hi-mcp"
+    assert redact(f"`{repo}`, {repo}.") == "`<repo>`, <repo>."
+
+
+def test_redact_replaces_the_workspace_and_its_sibling_folders() -> None:
+    redact = _redact_paths().redact
+    assert redact(f"{WORKSPACE}/hi-web/apps/web") == "<workspace>/hi-web/apps/web"
+    assert redact(f"DIR={WORKSPACE}/prompts/ref npm") == "DIR=<workspace>/prompts/ref npm"
+    assert redact(f"en `{WORKSPACE}` y") == "en `<workspace>` y"
+    archive = WORKSPACE + "/housing-intelligence-archive"
+    assert redact(archive) == "<workspace>/housing-intelligence-archive"
+
+
+def test_redact_replaces_any_other_desktop_path() -> None:
+    redact = _redact_paths().redact
+    assert redact(f"{DESKTOP}/repo/apps/web") == "<desktop>/repo/apps/web"
+    assert redact(f"en {DESKTOP}.") == "en <desktop>."
+    assert redact(USERS + "/jane/Desktop") == "<desktop>"
+    assert redact(f"{WORKSPACE}x/y") == "<desktop>/DATAMADx/y"
+
+
+def test_redact_leaves_its_own_output_alone() -> None:
+    redact = _redact_paths().redact
+    once = redact(f"{USERS}/jane {DESKTOP}/a {WORKSPACE}/b {WORKSPACE}/housing-intelligence/c")
+    assert once == "~ <desktop>/a <workspace>/b <repo>/c"
+    assert redact(once) == once
 
 
 def test_no_tracked_file_has_a_local_path() -> None:
