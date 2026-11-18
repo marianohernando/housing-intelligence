@@ -72,6 +72,12 @@ describe("parkingText and parkAndRideText (zona.entorno.aparcamiento)", () => {
     expect(parkingText(null)).toBeNull();
   });
 
+  it("says one minute without «unos», also under a minute (never «unos 1 min»)", () => {
+    expect(parkingText(row("2807901", 1.3))).toBe("Aparcamiento público a 1 min andando");
+    expect(parkingText(row("2807901", 0.2))).toBe("Aparcamiento público a 1 min andando");
+    expect(parkingText(row("2807901", 1.6))).toBe("Aparcamiento público a unos 2 min andando");
+  });
+
   it("names one park-and-ride with its spaces and fee, and sums several", () => {
     expect(parkAndRideText([park("a", "Aparcamiento disuasorio Doce de Octubre", 210, "free")], "Usera")).toBe(
       "Aparcamiento disuasorio gratuito (210 plazas) en Usera: Doce de Octubre",

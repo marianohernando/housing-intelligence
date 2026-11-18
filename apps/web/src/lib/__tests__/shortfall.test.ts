@@ -39,6 +39,14 @@ describe("what a near miss lacks (F5 of fit-0.9: «Casi valen» without a %)", (
     expect(shortfallOf(commute(150)).text).toBe("Tarda más de 2 h; pides 30 min como mucho");
   });
 
+  it("says one minute in the singular, without «unos»: never «unos 1 min» (review of the UX mobile debt)", () => {
+    expect(shortfallOf(commute(31.2))).toEqual({ text: "Tarda 1 min más de lo que pides", aria: "Tarda 1 min más de lo que pides" });
+    expect(shortfallOf(commute(30.6)).text).toBe("Tarda 1 min más de lo que pides");
+    expect(shortfallOf(commute(31.5)).text).toBe("Tarda unos 2 min más de lo que pides");
+    expect(shortfallOf(school(11)).text).toBe("Colegio con primaria: 1 min más andando de lo que pides");
+    expect(shortfallOf(school(11), undefined, true).text).toBe("Colegio con primaria: 1 min más andando de lo que pedís");
+  });
+
   it("names the place only when the search has more than one with a limit", () => {
     const anchors = [
       { kind: "work" as const, label: "Paseo de la Castellana (Azca)", lon: 0, lat: 0, max_minutes: 30 },

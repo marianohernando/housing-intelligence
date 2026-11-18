@@ -49,10 +49,13 @@ function overBudget(check: Check, v: Voice): Spoken | null {
   return { text, aria: text };
 }
 
-/** «unos 12 min», or «menos de 1 min» for a few seconds over (45,2 against 45 is not 0 min). */
+/**
+ * «unos 12 min», «1 min» (one minute is no estimate to round: never «unos 1 min», as walkMinutesText
+ * of lib/gaps.ts), or «menos de 1 min» for a few seconds over (45,2 against 45 is not 0 min).
+ */
 function minutesOver(over: number): { text: string; aria: string } {
   const minutes = Math.round(over);
-  const text = minutes < 1 ? "menos de 1 min" : `unos ${minutes} min`;
+  const text = minutes < 1 ? "menos de 1 min" : minutes === 1 ? "1 min" : `unos ${minutes} min`;
   return { text, aria: text };
 }
 
