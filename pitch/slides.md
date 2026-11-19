@@ -15,6 +15,7 @@ Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_ofic
   - ayuntamientos (planifican): «¿Qué le falta a cada zona y dónde invierto primero?»;
   - empresas (pagan): «¿Qué hace falta aquí?».
 - **Modelo:** las empresas pagan por saber qué falta, y eso financia que sea gratis para las personas. Nunca se venden datos de personas: solo se ven zonas, siempre sumadas y anónimas.
+- **Desde el 19 nov** (decisión de Mariano, `pitch/modelo_negocio.md`): también es gratis para los ayuntamientos, y las empresas que pagan son los inversores y los promotores privados.
 
 **Del PDF no se usa:**
 - ninguna de sus cifras de ejemplo: zonas del Reality Check, 4.000–4.500 €/mes ni «10 conjuntos de datos»;
@@ -173,7 +174,10 @@ Versión con buscador (la que vale):
   - 14.982 paradas y estaciones con su frecuencia: suma de `places` en `evidence/gate-01/2026-11-10/crtm_gtfs_*/row_counts.json`.
 
 ### Viabilidad: se sostiene
-- **Quién paga** (decisión de Mariano, 12 nov; `pitch/modelo_negocio.md`): en la slide, «Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.». Las cifras no van en la slide: un informe para un ayuntamiento cuesta 990–1.500 € (contrato menor) y un estudio, 490–1.500 €. Si preguntan, pregunta 6 de `pitch/preguntas.md`.
+- **Quién paga** (decisión de Mariano del 19 nov, que sustituye a la del 12 nov; `pitch/modelo_negocio.md`): en la slide, «Gratis para personas y ayuntamientos. Pagan inversores y promotores.».
+  - **Los ayuntamientos**, gratis: ven qué le falta a su municipio frente a municipios parecidos y a cuánta gente afecta («Qué falta», en producción en los 179 municipios y los 21 distritos de Madrid). La columna «Impacto · ayuntamientos» de la misma slide lo enseña.
+  - **Los inversores y promotores privados** pagan con un plan de precios. Su versión, con qué le falta a una zona y si una operación es viable, todavía no está en la web.
+  - **Los precios no van en la slide** porque son hipótesis por validar: plan Inversor de unos 99–199 €/mes, Equipo de unos 399 €/mes y estudio a medida de 490–1.500 €. Si preguntan, pregunta 6 de `pitch/preguntas.md`.
 - **Privacidad:**
   - solo agregados por zona y nunca datos personales;
   - se excluyen equipamientos que expondrían a personas vulnerables (D-186);

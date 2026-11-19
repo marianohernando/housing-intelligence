@@ -44,12 +44,14 @@ Cada ingesta compara la huella (sha256) del fichero. Si no cambia, se salta; si 
 ## Olga Quirós · ASEDIE (sector infomediario, negocio)
 
 **6. ¿Quién paga?**
-Las empresas que necesitan saber qué falta en una zona (promotoras, cadenas, residencias, comercios) pagan por análisis agregados y por la API. Las personas lo usan gratis y los ayuntamientos lo usan para planificar.
-- Evidencia: `docs/09_datamad/25_plan_competicion.md` §1 · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas).
-- Si piden concretar (decisión de Mariano, 12 nov; `pitch/modelo_negocio.md`):
-  - un ayuntamiento paga 990–1.500 € por el informe de lo que falta en su municipio, que cabe en un contrato menor;
-  - las promotoras y consultoras pagan estudios de zona de 490 a 1.500 €, y son los primeros ingresos;
-  - para las personas es gratis, y la API y el MCP también, sin uso comercial.
+Pagan los inversores y los promotores privados, con un plan de precios: quieren saber qué le falta a una zona antes de construir allí y, más adelante, si la operación sale. Para las personas y los ayuntamientos es gratis. Un ayuntamiento ve qué le falta a su municipio frente a otros parecidos y a cuánta gente afecta, para decidir dónde invertir primero, sin contrato ni licitación.
+- Evidencia: `pitch/modelo_negocio.md` (decisión de Mariano del 19 nov, que sustituye a la del 12 nov) · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas) · «Qué falta» en producción en 179 municipios y 21 distritos (`GET /api/v1/gaps?level=municipio` y `?level=distrito`, 19 nov).
+- Si piden precios (hipótesis por validar, `pitch/modelo_negocio.md`):
+  - plan Inversor, unos 99–199 €/mes; Equipo, unos 399 €/mes;
+  - estudio a medida, de 490 a 1.500 €;
+  - de referencia, Nestra, que analiza la normativa de parcelas en España, cobra 175, 437,50 y 1.050 €/mes, sin IVA y con pago anual ([precios](https://www.nestra.es/precios), consultados el 19 nov);
+  - antes de fijarlos, entrevistas de disposición a pagar (`docs/08_validation/09_pricing_validation.md`).
+- Si insiste en que aún no cobráis: es verdad. Hoy no hay cuentas ni cobro, y la versión para inversores todavía no está en la web; lo que ya existe es la base que van a usar: las fichas de zona, «Qué falta» y el suelo público (D-246).
 
 **7. Si los datos son abiertos, ¿por qué pagaría alguien?**
 Por el trabajo que hay encima: cruzar 36 conjuntos de la Comunidad, y 53 con los de apoyo, con formatos distintos, controlar su calidad, comparar cada zona con otras parecidas y explicarlo con su fuente. Hacer eso a mano para cada estudio cuesta semanas; aquí está hecho, se recarga con un comando y detecta qué fuente ha cambiado.
@@ -413,7 +415,7 @@ Aprobado por Mariano el 18 nov. En las slides va sin nombres de empresas; aquí 
 El siguiente paso es pasar de dónde vivir a dónde construir: después del concurso, analizar cada parcela («¿qué se puede construir aquí?») y cruzarlo con la vivienda que le falta a su zona y para quién. El «¿se puede construir?» ya se vende a promotores, y eso nos dice que hay mercado: Nestra, en España, lee la normativa urbanística de una parcela y calcula lo que admite, y Sitescope, en Polonia, hace lo mismo con el planeamiento polaco. En sus webs, ninguna lo cruza con la demanda de los hogares, y ese es nuestro hueco: no solo si se puede construir, sino qué hace falta construir ahí.
 - Si preguntan qué hay hoy: el primer paso ya está en la web, **en producción desde el 18 nov** (D-246). En la pantalla de un municipio o de un distrito de Madrid, en «Más datos de la zona» → «Vivienda nueva y lo que viene», el suelo público para vivienda del Portal del Suelo 4.0 de la Comunidad: las parcelas de uso residencial que la Comunidad y los ayuntamientos ofrecen en venta o en concesión, con sus m² edificables y, plegada, la lista de parcelas, cada una con su gestor y su enlace al visor de la Comunidad. En toda la región, 291 parcelas en 29 municipios, con 394.298 m² edificables; en Madrid capital, 38 en 7 distritos (Vicálvaro, 16 parcelas y 67.808 m²); Majadahonda, 101. Es contexto: no puntúa ni ordena zonas, y no dice cuántas viviendas caben.
 - Límite, si insiste: hoy no leemos la normativa de ninguna parcela ni decimos qué se puede construir en ella; eso es después del concurso. En normativa, Nestra y Sitescope van muy por delante: no competimos ahí, sino en la demanda, que es lo que ya hace Vida Fácil.
-- Si preguntan quién lo pagaría: los mismos de la slide 3 (pregunta 6). En ese modelo, las promotoras pagan por un estudio de zona; con la parcela, sería un estudio de suelo.
+- Si preguntan quién lo pagaría: los inversores y los promotores de la slide 3, con el plan de precios (pregunta 6). Para las personas y los ayuntamientos sigue siendo gratis.
 - Evidencia:
   - Nestra: [nestra.es](https://www.nestra.es), consultada el 18 nov: entrada por referencia catastral, dirección o punto en el mapa; normativa con el artículo de cada cifra, edificabilidad, usos permitidos y número de viviendas; para promotores, arquitectos, inversores, propietarios de suelo, ayuntamientos y bancos. No habla de la demanda de los hogares;
   - Sitescope: [sitescope.ai](https://sitescope.ai/), consultada el 18 nov: informes de parcela, un espacio de trabajo con IA sobre planeamiento y normativa local, y una API en desarrollo; usa la fuente oficial polaca (GUGiK). Tampoco habla de la demanda de los hogares;
