@@ -325,7 +325,7 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
       <BuildabilitySection sheet={sheet} />
       <Context sheet={sheet} />
       <Section id="viabilidad" title={TEXT.sections.viability}>
-        <Calculator defaults={sheet.defaults} parcels={[]} remaining={[]} parcel={start} />
+        <Calculator defaults={sheet.defaults} parcels={[]} remaining={[]} parcel={start} methodLink={false} />
       </Section>
       <Sources sheet={sheet} version={version} />
       <p className={styles.printOnly}>{`Datos de la parcela consultados el ${isoInWords(sheet.parcel.observed_at)}.`}</p>

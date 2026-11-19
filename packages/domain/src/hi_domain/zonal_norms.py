@@ -54,6 +54,7 @@ class ZoneRule:
 
 
 # NZ 8 grado 6º: 0,7 m²/m² up to 500 m² of parcel and 0,5 on what exceeds it (art. 8.8.9.1.f)
+NZ8_G6 = (8, 6)  # (norma zonal, grado) with that split
 NZ8_G6_LIMIT_M2 = 500.0
 NZ8_G6_EXCESS = 0.5
 # NZ 1: E = S × Z × C (art. 8.1.10, BOCM 2023); C by grado. Grado 5º keeps what is built.
@@ -142,6 +143,6 @@ def coefficient_area(nz: int, grado: int, area_m2: float) -> float | None:
     coefficient = None if rule is None else rule.coefficients.get(grado)
     if coefficient is None:
         return None
-    if nz == 8 and grado == 6 and area_m2 > NZ8_G6_LIMIT_M2:
+    if (nz, grado) == NZ8_G6 and area_m2 > NZ8_G6_LIMIT_M2:
         return coefficient * NZ8_G6_LIMIT_M2 + NZ8_G6_EXCESS * (area_m2 - NZ8_G6_LIMIT_M2)
     return coefficient * area_m2

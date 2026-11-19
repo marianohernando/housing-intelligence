@@ -221,10 +221,12 @@ interface Props {
   parcels: LandItem[];
   remaining: LandItem[];
   parcel?: ParcelStart;
+  /** «Cómo lo calculamos» under the results; off where the sheet already has it (a parcel's) */
+  methodLink?: boolean;
 }
 
 /** The viability v0 (D-248): the land, the editable inputs with their sources, three scenarios and the demand check. */
-export default function Calculator({ defaults, parcels, remaining, parcel }: Props) {
+export default function Calculator({ defaults, parcels, remaining, parcel, methodLink = true }: Props) {
   const firstLand = defaultLand(parcels, remaining);
   const initial = useMemo(() => {
     const fields = initialFields(defaults, firstLand);
@@ -347,7 +349,7 @@ export default function Calculator({ defaults, parcels, remaining, parcel }: Pro
           {ready && state.result && <Results result={state.result} />}
         </div>
       </section>
-      <MethodLink />
+      {methodLink && <MethodLink />}
     </div>
   );
 }

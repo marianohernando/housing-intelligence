@@ -25,7 +25,14 @@ import yaml
 
 from hi_domain import viability as v
 from hi_domain.parcels import LOOKUP_BUDGET_S
-from hi_domain.zonal_norms import NNUU_CITATION, NZ1_FACTORS, NZ8_G6_EXCESS, NZ8_G6_LIMIT_M2, RULES
+from hi_domain.zonal_norms import (
+    NNUU_CITATION,
+    NZ1_FACTORS,
+    NZ8_G6,
+    NZ8_G6_EXCESS,
+    NZ8_G6_LIMIT_M2,
+    RULES,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 MANUAL = ROOT / "data" / "catalog" / "manual"
@@ -203,7 +210,15 @@ def method_figures(
             }
             for r in rules
         ],
-        "nz8Grado6": {"limitM2": NZ8_G6_LIMIT_M2, "excess": NZ8_G6_EXCESS},
+        # The grado whose coefficient changes past a parcel size (art. 8.8.9.1.f)
+        "split": {
+            "nz": NZ8_G6[0],
+            "grado": NZ8_G6[1],
+            "limitM2": NZ8_G6_LIMIT_M2,
+            "excess": NZ8_G6_EXCESS,
+        },
+        # The normas zonales whose text fixes no coefficient: the person types the m²
+        "withoutCoefficient": [r.nz for r in RULES.values() if not r.coefficients and r.nz != 1],
         "nz1": {
             "article": RULES[1].article.number,
             "url": RULES[1].article.url,

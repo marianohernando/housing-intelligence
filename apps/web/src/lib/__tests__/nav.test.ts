@@ -22,7 +22,9 @@ describe("header tabs", () => {
     expect(activeTab("/inversores")).toBe("/inversores");
     expect(activeTab("/inversores/28079164")).toBe("/inversores");
     expect(activeTab("/inversores/parcela/2122202VK4722A")).toBe("/inversores");
+    expect(activeTab("/inversores/")).toBe("/inversores");
     expect(activeTab("/inversoresx")).toBeNull();
+    expect(activeTab("/desarrolladores")).toBeNull();
   });
 
   it("marks nothing outside the product pages", () => {

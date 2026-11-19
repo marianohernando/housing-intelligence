@@ -18,7 +18,8 @@ export default function MapaLayout({ children }: Readonly<{ children: ReactNode 
       <GapLayerProvider>
         <FacilityLayerProvider>
           <VidaMap />
-          <div className={styles.overlay}>
+          {/* data-map-layout: the header knows it is over the map (SiteHeader.module.css, D-251) */}
+          <div className={styles.overlay} data-map-layout>
             <MapSheet>{children}</MapSheet>
           </div>
         </FacilityLayerProvider>

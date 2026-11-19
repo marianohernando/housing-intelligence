@@ -178,10 +178,20 @@ export const INVESTOR_METHOD = {
       ]
     }
   ],
-  "nz8Grado6": {
+  "split": {
+    "nz": 8,
+    "grado": 6,
     "limitM2": 500.0,
     "excess": 0.5
   },
+  "withoutCoefficient": [
+    2,
+    3,
+    4,
+    6,
+    10,
+    11
+  ],
   "nz1": {
     "article": "8.1.10",
     "url": "https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150",
