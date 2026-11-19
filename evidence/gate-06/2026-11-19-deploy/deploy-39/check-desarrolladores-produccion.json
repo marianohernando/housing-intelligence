@@ -1,0 +1,294 @@
+{
+  "base": "production",
+  "report": [
+    {
+      "name": "360-desarrolladores",
+      "texts": 0,
+      "targets": 0,
+      "footerCitations": 1,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [
+          {
+            "w": 244,
+            "h": 21,
+            "tag": "a",
+            "name": "Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+            "inline": true,
+            "ours": false
+          }
+        ],
+        "overflow": false,
+        "wider": [
+          "{\n  \"data\": { … },\n  \"meta\": {\n    \"request_id\": \"",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "git clone --branch claude/sprint-1-public https://",
+          "claude mcp add vida-facil \\\n  -e DATABASE_URL=post",
+          "{\n  \"mcpServers\": {\n    \"vida-facil\": {\n      \"com"
+        ],
+        "violations": []
+      }
+    },
+    {
+      "name": "360-copiado",
+      "texts": 0,
+      "targets": 0,
+      "footerCitations": 1,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [
+          {
+            "w": 244,
+            "h": 21,
+            "tag": "a",
+            "name": "Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+            "inline": true,
+            "ours": false
+          }
+        ],
+        "overflow": false,
+        "wider": [
+          "{\n  \"data\": { … },\n  \"meta\": {\n    \"request_id\": \"",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "git clone --branch claude/sprint-1-public https://",
+          "claude mcp add vida-facil \\\n  -e DATABASE_URL=post",
+          "{\n  \"mcpServers\": {\n    \"vida-facil\": {\n      \"com"
+        ],
+        "violations": []
+      }
+    },
+    {
+      "name": "390-desarrolladores",
+      "texts": 0,
+      "targets": 0,
+      "footerCitations": 2,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [
+          {
+            "w": 327,
+            "h": 21,
+            "tag": "a",
+            "name": "© OpenStreetMap contributors, ODbL. (se abre en una pestaña ",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 244,
+            "h": 21,
+            "tag": "a",
+            "name": "Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+            "inline": true,
+            "ours": false
+          }
+        ],
+        "overflow": false,
+        "wider": [
+          "{\n  \"data\": { … },\n  \"meta\": {\n    \"request_id\": \"",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "git clone --branch claude/sprint-1-public https://",
+          "claude mcp add vida-facil \\\n  -e DATABASE_URL=post",
+          "{\n  \"mcpServers\": {\n    \"vida-facil\": {\n      \"com"
+        ],
+        "violations": []
+      }
+    },
+    {
+      "name": "390-copiado",
+      "texts": 0,
+      "targets": 0,
+      "footerCitations": 2,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [
+          {
+            "w": 327,
+            "h": 21,
+            "tag": "a",
+            "name": "© OpenStreetMap contributors, ODbL. (se abre en una pestaña ",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 244,
+            "h": 21,
+            "tag": "a",
+            "name": "Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+            "inline": true,
+            "ours": false
+          }
+        ],
+        "overflow": false,
+        "wider": [
+          "{\n  \"data\": { … },\n  \"meta\": {\n    \"request_id\": \"",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s \"https://vidafacil-madrid.vercel.app/api/v",
+          "curl -s -X POST https://vidafacil-madrid.vercel.ap",
+          "git clone --branch claude/sprint-1-public https://",
+          "claude mcp add vida-facil \\\n  -e DATABASE_URL=post",
+          "{\n  \"mcpServers\": {\n    \"vida-facil\": {\n      \"com"
+        ],
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-desarrolladores",
+      "texts": 0,
+      "targets": 0,
+      "footerCitations": 4,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [
+          {
+            "w": 678,
+            "h": 20,
+            "tag": "a",
+            "name": "Geocodificación: © Instituto Geográfico Nacional (CartoCiuda",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 521,
+            "h": 20,
+            "tag": "a",
+            "name": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 309,
+            "h": 20,
+            "tag": "a",
+            "name": "© OpenStreetMap contributors, ODbL. (se abre en una pestaña ",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 230,
+            "h": 20,
+            "tag": "a",
+            "name": "Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+            "inline": true,
+            "ours": false
+          }
+        ],
+        "overflow": false,
+        "wider": [],
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-copiado",
+      "texts": 0,
+      "targets": 0,
+      "footerCitations": 4,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [
+          {
+            "w": 678,
+            "h": 20,
+            "tag": "a",
+            "name": "Geocodificación: © Instituto Geográfico Nacional (CartoCiuda",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 521,
+            "h": 20,
+            "tag": "a",
+            "name": "Fuente: Ayuntamiento de Madrid — datos.madrid.es (CC BY 4.0)",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 309,
+            "h": 20,
+            "tag": "a",
+            "name": "© OpenStreetMap contributors, ODbL. (se abre en una pestaña ",
+            "inline": false,
+            "ours": false
+          },
+          {
+            "w": 230,
+            "h": 20,
+            "tag": "a",
+            "name": "Código abierto (Apache-2.0) (se abre en una pestaña nueva)",
+            "inline": true,
+            "ours": false
+          }
+        ],
+        "overflow": false,
+        "wider": [],
+        "violations": []
+      }
+    }
+  ],
+  "consoleErrors": []
+}
