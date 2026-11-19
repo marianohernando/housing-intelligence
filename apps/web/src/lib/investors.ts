@@ -457,6 +457,7 @@ export const SHEET_TEXT = {
   parcels: (n: number) =>
     n === 0 ? "Parcelas públicas para vivienda" : n === 1 ? "1 parcela pública para vivienda" : `${n} parcelas públicas para vivienda`,
   noParcels: "El Portal del Suelo no ofrece ahora ninguna parcela residencial en este barrio.",
+  parcelsUnknown: "Aún sin dato de las parcelas públicas de este barrio.",
   remaining: "Edificabilidad residencial que queda en los ámbitos del Plan General",
   remainingUnknown: "Aún sin dato para este barrio.",
   noRemaining: "Ningún ámbito del barrio tiene edificabilidad residencial disponible.",
@@ -484,4 +485,14 @@ export const COMMERCE_LABEL: Record<string, string> = {
 export function uniqueDatasets<T extends Pick<DatasetRef, "dataset_id">>(datasets: T[]): T[] {
   const seen = new Set<string>();
   return datasets.filter((d) => !seen.has(d.dataset_id) && Boolean(seen.add(d.dataset_id)));
+}
+
+/**
+ * What an empty list of land says. A null figure is data not loaded yet (e.g. right after a deploy,
+ * before the sync): «sin dato», never «ninguna». A 0 with an empty list is a real «ninguna».
+ */
+export function emptyLandText(value: number | null | undefined, kind: "parcelas" | "ambitos"): string {
+  const unknown = value === null || value === undefined;
+  if (kind === "parcelas") return unknown ? SHEET_TEXT.parcelsUnknown : SHEET_TEXT.noParcels;
+  return unknown ? SHEET_TEXT.remainingUnknown : SHEET_TEXT.noRemaining;
 }

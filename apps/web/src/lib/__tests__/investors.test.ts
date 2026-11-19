@@ -9,6 +9,7 @@ import {
   adminUnitId,
   areaFacts,
   defaultLand,
+  emptyLandText,
   FIELD_LIMITS,
   fieldErrors,
   LAND_LIMITS,
@@ -211,6 +212,15 @@ describe("the calculator", () => {
     expect(SHEET_TEXT.parcels(0)).toBe("Parcelas públicas para vivienda");
     expect(SHEET_TEXT.parcels(1)).toBe("1 parcela pública para vivienda");
     expect(SHEET_TEXT.parcels(4)).toBe("4 parcelas públicas para vivienda");
+  });
+
+  it("says «sin dato» for land not loaded yet, and «ninguna» only for a real 0", () => {
+    // null: the feature is not in the database yet (after a deploy, before the sync)
+    expect(emptyLandText(null, "parcelas")).toBe("Aún sin dato de las parcelas públicas de este barrio.");
+    expect(emptyLandText(undefined, "parcelas")).toBe("Aún sin dato de las parcelas públicas de este barrio.");
+    expect(emptyLandText(0, "parcelas")).toBe("El Portal del Suelo no ofrece ahora ninguna parcela residencial en este barrio.");
+    expect(emptyLandText(null, "ambitos")).toBe("Aún sin dato para este barrio.");
+    expect(emptyLandText(0, "ambitos")).toBe("Ningún ámbito del barrio tiene edificabilidad residencial disponible.");
   });
 
   it("lists each dataset once", () => {

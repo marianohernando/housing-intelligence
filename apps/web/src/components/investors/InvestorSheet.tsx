@@ -15,6 +15,7 @@ import { notComparable, peopleAffectedText, rowComparison } from "@/lib/gaps";
 import {
   areaFacts,
   COMMERCE_LABEL,
+  emptyLandText,
   uniqueDatasets,
   INVESTOR_TEXT as TEXT,
   landArea,
@@ -143,13 +144,13 @@ function Land({ sheet }: { sheet: InvestorZone }) {
     <Section id="suelo" title={TEXT.sections.land}>
       <p className={styles.lead}>{SHEET_TEXT.landIntro}</p>
       <h3 className={styles.subhead}>{SHEET_TEXT.parcels(land.parcels.length)}</h3>
-      {land.parcels.length > 0 ? <LandList items={land.parcels} /> : <p>{SHEET_TEXT.noParcels}</p>}
+      {land.parcels.length > 0 ? <LandList items={land.parcels} /> : <p>{emptyLandText(land.parcels_m2.value, "parcelas")}</p>}
       <p className={styles.source}>Fuente: {land.parcels_m2.source.text}</p>
       <h3 className={styles.subhead}>{SHEET_TEXT.remaining}</h3>
       {land.remaining.length > 0 ? (
         <LandList items={land.remaining} />
       ) : (
-        <p>{land.remaining_m2.value === null ? SHEET_TEXT.remainingUnknown : SHEET_TEXT.noRemaining}</p>
+        <p>{emptyLandText(land.remaining_m2.value, "ambitos")}</p>
       )}
       {land.remaining.length > 0 && <p className={styles.source}>Fuente: {land.remaining_m2.source.text}</p>}
       <dl className={styles.figures}>

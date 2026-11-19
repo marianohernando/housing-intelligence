@@ -1,4 +1,4 @@
-# Para inversores y promotores (20 nov, D-248)
+# Para inversores y promotores (19 nov, D-248)
 
 Rama `claude/f9-investor-app`, rebasada sobre `claude/sprint-1-public` con la línea A fusionada (#95, D-247). La sección `/inversores` lista los 108 barrios piloto (Madrid capital dentro de la M-40) y `/inversores/{barrio}` da la ficha de un barrio con la calculadora de viabilidad v0. Lleva la etiqueta «Plan Inversor (acceso libre durante el concurso)», sin cobro ni login. Decisión: D-248. Textos: `pitch/textos_web.md` §11.
 
