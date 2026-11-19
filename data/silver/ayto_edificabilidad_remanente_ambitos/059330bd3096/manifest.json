@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ayto_edificabilidad_remanente_ambitos",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_edificabilidad_remanente_ambitos/8aab3114713f/edificabilidad-remanente-01_07_2026_datos-abiertos.xls",
+      "sha256": "8aab3114713f983fa1bef6be4975877e9b0648ac6959127468af90facdb92f37",
+      "bytes": 99840,
+      "url": "https://datos.madrid.es/dataset/203182-0-ambitos-remanente/resource/203182-16-ambitos-remanente/download/edificabilidad-remanente-01_07_2026_datos-abiertos.xls",
+      "retrieved_at": "2026-11-19T00:33:30.446955+00:00"
+    },
+    {
+      "dataset_id": "ayto_edificabilidad_remanente_ambitos",
+      "role": "points",
+      "path": "data/catalog/manual/veda_remanente_puntos.yaml",
+      "sha256": "293c277fab2813d9990b8ed0d8f0059559134abe3e6e06053b3aaeb6336d7eb5",
+      "bytes": 14616,
+      "url": "https://sigma.madrid.es/hosted/rest/services/ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual/FeatureServer/2/query?where=1%3D1&outFields=AMB_TX_ETI&outSR=25830&f=geojson",
+      "retrieved_at": "2026-11-19T00:00:00+00:00"
+    }
+  ],
+  "checksum": "059330bd3096b6118fbb025b5237ada1e428cbb57a7183163f473a0a81e59e10",
+  "parser_version": "madrid_buildable_areas-1.0.0"
+}

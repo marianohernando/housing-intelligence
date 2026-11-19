@@ -265,6 +265,8 @@ class MadridPadronPipeline(BaseModel):
 
     Districts get the CM census 5-year age bands plus their total, so ratios over this
     population compare like with like. The count columns (nationality x sex) are only summed.
+    With `barrio_column` (the district and barrio number, «205»), each barrio also gets its
+    total as `barrio_metric_id` (D-247); a row without a barrio counts in its district only.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -283,9 +285,20 @@ class MadridPadronPipeline(BaseModel):
     expected_districts: int = Field(gt=0)
     # Its municipio total (every dimension 'total') is compared with the padrón total; warning only.
     census_metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
+    barrio_column: str | None = None
+    barrio_name_column: str | None = None
+    barrio_metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
+    expected_barrios: int | None = Field(default=None, gt=0)
+
+    @model_validator(mode="after")
+    def _barrios_need_their_metric(self) -> Self:
+        if (self.barrio_column is None) != (self.barrio_metric_id is None):
+            msg = f"{self.dataset_id}: barrio_column and barrio_metric_id go together"
+            raise ValueError(msg)
+        return self
 
     def metric_ids(self) -> list[str]:
-        return [self.metric_id]
+        return [self.metric_id, *([self.barrio_metric_id] if self.barrio_metric_id else [])]
 
 
 class MadridDistrictPanelPipeline(BaseModel):
@@ -900,6 +913,212 @@ class PublicLandParcelsPipeline(BaseModel):
         return [self.metric_id]
 
 
+class PilotZonesPipeline(BaseModel):
+    """D-247: the pilot barrios of the investor version (Madrid inside the M-40), from their
+    versioned table in data/catalog/manual (`PilotZonesTable`, built from OpenStreetMap by
+    scripts/m40_barrios.py). Each pilot barrio becomes one observation of `metric_id` (value 1)
+    with its name, whether it is on the edge of the ring and the note of its review. The run
+    reads the versioned file, never the network; its lineage keeps the query and the day it was
+    read. Every barrio of the geography must be accounted for by the table, or the run blocks.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["pilot_zones"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    table: str = Field(pattern=r"^[a-z0-9_]+\.yaml$", description="file in data/catalog/manual")
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
+class CmDistrictConceptPipeline(BaseModel):
+    """Instituto de Estadística tables whose only territory is a Madrid district named inside a
+    free-text concept («Inmuebles para uso comercial del distrito Chamartín del municipio de
+    Madrid», D-247): `district_pattern` captures the name (group `district`), which resolves to
+    the district of the geography with the same name (no case, accents or signs). Rows that
+    match `unassigned_pattern` («sin asignar distrito») are counted, never read. A row that is
+    neither, or whose name is no district, goes to quarantine and blocks the run; in the latest
+    year read, every district must be published.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["cm_district_concept"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=CsvFormat)
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    period_column: str = "Año"
+    period_min: int | None = Field(default=None, ge=1900, le=2100)
+    value_column: str = "Valor"
+    unit_column: str | None = "Unidad"
+    concept_column: str = "Concepto"
+    district_pattern: str = Field(min_length=10)
+    unassigned_pattern: str = Field(min_length=5)
+    dimension_columns: dict[str, Annotated[str, Field(pattern=DIM_PATTERN)]] = Field(min_length=1)
+    expected_districts: int = Field(gt=0)
+    missing_markers: list[str] = Field(default_factory=lambda: list(DEFAULT_MISSING_MARKERS))
+
+    @model_validator(mode="after")
+    def _pattern_names_the_district(self) -> Self:
+        if "(?P<district>" not in self.district_pattern:
+            msg = f"{self.dataset_id}: district_pattern needs a (?P<district>...) group"
+            raise ValueError(msg)
+        re.compile(self.district_pattern)
+        re.compile(self.unassigned_pattern)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
+class MadridBuildableAreasPipeline(BaseModel):
+    """Ayuntamiento de Madrid, «PGOUM 97. Edificabilidad remanente en ámbitos» (VEDA, D-247):
+    one row per planning area (or per stage of one, `stage_column`) with its district, its
+    situation and the buildable area left, in m², for each use.
+
+    Each area with residential area left (the sum of `residential_columns`, by type of
+    building) becomes one observation of `metric_id` in its district and in its barrio. The
+    register has no coordinates: a versioned table of points inside each area, read once from
+    the Ayuntamiento's own layer of the areas in force (`points`, in data/catalog/manual), is
+    located in the canonical geography; an area without a point, or whose point is in no barrio
+    of its district, goes to quarantine and blocks the run (the points must be read again).
+
+    A blank cell is not a 0. An area whose residential cells are all blank but that has area
+    left for another use (`other_use_columns`) is not residential (counted apart); one with
+    every use blank is kept with an unknown value, so its zone's sum is unknown, never shorter.
+    The register's number of homes (its m² divided by 100) is not read: m² are never homes. A
+    situation the pipeline does not declare is quarantined and blocks the run.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_buildable_areas"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    district_column: str = "COD_DISTRITO"
+    code_column: str = "COD_AMBITO"
+    name_column: str = "AMBITO"
+    state_column: str = "SITUACION DEL ÁMBITO"
+    stage_column: str = "Etapa"
+    date_column: str = "ESTADO DEL DESARROLLO A FECHA"
+    residential_columns: dict[str, Annotated[str, Field(pattern=CODE_SLUG)]] = Field(min_length=1)
+    other_use_columns: list[str] = Field(default_factory=list[str])
+    states: dict[str, Annotated[str, Field(pattern=CODE_SLUG)]] = Field(min_length=1)
+    keep_upper: list[str] = Field(default_factory=list[str])
+    points: str = Field(pattern=r"^[a-z0-9_]+\.yaml$", description="file in data/catalog/manual")
+    whole_area_pct: int = Field(
+        default=90, ge=50, le=100, description="below this share in its barrio, a note says so"
+    )
+    expected_districts: int = Field(default=21, gt=0, description="districts of the register")
+    min_rows: int = Field(gt=0, description="fewer rows -> the register changed or is cut")
+    max_rows: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _rows_are_a_range(self) -> Self:
+        if self.max_rows < self.min_rows:
+            msg = f"{self.dataset_id}: max_rows must be >= min_rows"
+            raise ValueError(msg)
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
+class PremiseCode(BaseModel):
+    """A code of the census of premises with the literal the file must carry next to it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    label: str = Field(min_length=2)
+    slug: str = Field(pattern=CODE_SLUG)
+
+
+class MadridPremisesCensusPipeline(BaseModel):
+    """Ayuntamiento de Madrid, «Censo de locales, sus actividades y terrazas» (D-247): the file
+    of activities, one row per premise and epígrafe (a premise without activity comes once,
+    with an empty epígrafe), with its district, barrio, access type and situation.
+
+    A premise counts when the slug of its access type is in `counted_access` and that of its
+    situation in `counted_states`; the other codes of `access` and `states` are known and counted
+    apart, never quarantined. A code whose literal is not the declared one, an undeclared code or an
+    epígrafe that does not read as one (6 or 8 digits starting with its division) goes to
+    quarantine and blocks the run: a new code is read by a person before it is counted. The
+    epígrafes the file itself marks as not coded yet (`pending_epigrafes`, with their literal:
+    «PTE. CODIFICAR», «SIN ASIGNAR») are listed in quarantine without blocking: their premise
+    counts by its situation, but its activity is unknown, never a proximity shop nor a 0. A
+    counted premise without a district or barrio is quarantined too; up to `max_unplaced` of
+    them do not block (they are listed, never counted as 0 anywhere).
+
+    Each zone (district and barrio of `municipio_ine`) gets `premises_metric_id`, the counted
+    premises by situation (0 included: the census is exhaustive), and `proximity_metric_id`, the
+    open premises with at least one epígrafe of each group of `proximity` (`grupo`) and of any
+    of them (`grupo: proximidad`; not their sum: a shop may be in two groups), plus the open
+    premises whose activity cannot be read (`grupo: sin_actividad`). Every epígrafe of
+    `proximity` is declared with the file's own description: one that changes blocks the run.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["madrid_premises_census"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    csv: CsvFormat = Field(default_factory=lambda: CsvFormat(encodings=["utf-8-sig"]))
+    municipio_ine: str = Field(pattern=r"^28\d{3}$")
+    premises_metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    proximity_metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    premise_column: str = "id_local"
+    district_column: str = "id_distrito_local"
+    barrio_column: str = "cod_barrio_local"
+    access_column: str = "id_tipo_acceso_local"
+    access_label_column: str = "desc_tipo_acceso_local"
+    state_column: str = "id_situacion_local"
+    state_label_column: str = "desc_situacion_local"
+    division_column: str = "id_division"
+    epigrafe_column: str = "id_epigrafe"
+    epigrafe_label_column: str = "desc_epigrafe"
+    date_column: str = "fx_carga"
+    access: dict[str, PremiseCode] = Field(min_length=1)
+    counted_access: list[str] = Field(min_length=1, description="access slugs that count")
+    states: dict[str, PremiseCode] = Field(min_length=1)
+    counted_states: list[str] = Field(min_length=1, description="state slugs that count")
+    proximity: dict[
+        Annotated[str, Field(pattern=CODE_SLUG)],
+        dict[Annotated[str, Field(pattern=r"^\d{6}(\d{2})?$")], str],
+    ] = Field(min_length=1)
+    pending_epigrafes: dict[str, str] = Field(default_factory=dict[str, str])
+    max_unplaced: int = Field(ge=0)
+    expected_districts: int = Field(default=21, gt=0)
+    expected_barrios: int | None = Field(default=131, gt=0)
+    min_rows: int = Field(gt=0, description="fewer rows -> the file changed or is cut")
+    max_rows: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _declared_once(self) -> Self:
+        if self.max_rows < self.min_rows:
+            msg = f"{self.dataset_id}: max_rows must be >= min_rows"
+            raise ValueError(msg)
+        if not set(self.counted_access) <= {c.slug for c in self.access.values()}:
+            raise ValueError(f"{self.dataset_id}: counted_access names a declared access slug")
+        if not set(self.counted_states) <= {c.slug for c in self.states.values()}:
+            raise ValueError(f"{self.dataset_id}: counted_states names a declared state slug")
+        if {"proximidad", "sin_actividad"} & set(self.proximity):
+            raise ValueError(f"{self.dataset_id}: «proximidad» and «sin_actividad» are reserved")
+        codes = [code for group in self.proximity.values() for code in group]
+        if len(codes) != len(set(codes)):
+            raise ValueError(f"{self.dataset_id}: an epígrafe is in one proximity group")
+        return self
+
+    def metric_ids(self) -> list[str]:
+        return [self.premises_metric_id, self.proximity_metric_id]
+
+
 class NoiseRasterPipeline(BaseModel):
     """A strategic noise map published as one GeoTIFF per index inside a ZIP -> a compact grid
     in Silver only (D-237). Nothing reaches the database but the indicators computed on it: the
@@ -990,6 +1209,10 @@ PipelineSpec = Annotated[
     | MadridDevelopmentAreasPipeline
     | CuratedZoneItemsPipeline
     | PublicLandParcelsPipeline
+    | MadridPremisesCensusPipeline
+    | MadridBuildableAreasPipeline
+    | CmDistrictConceptPipeline
+    | PilotZonesPipeline
     | NoiseRasterPipeline
     | AirQualityHourlyPipeline
     | AirQualityZonesPipeline,

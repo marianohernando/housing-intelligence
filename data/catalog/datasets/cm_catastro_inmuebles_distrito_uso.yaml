@@ -1,0 +1,47 @@
+dataset_id: cm_catastro_inmuebles_distrito_uso
+source_id: comunidad_madrid_ckan
+name: Catastro Inmobiliario. Inmuebles por distrito y uso
+domain: urbanism
+owner: Instituto de Estadística de la Comunidad de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/catastro_inmuebles_por_distrito_y_uso
+resources:
+- name: Catastro Inmobiliario. Inmuebles por distrito y uso.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/bfe645b6-79c7-487e-8615-e9c95eb556da/resource/da59a208-17ef-4eeb-bef9-0403e967c278/download/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.csv
+- name: Catastro Inmobiliario. Inmuebles por distrito y uso.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/bfe645b6-79c7-487e-8615-e9c95eb556da/resource/dbcd252b-875c-463f-b502-214f1d51c9b7/download/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.json
+  role: cross_check
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 3
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 3
+  notes: >-
+    D-247. Portal de datos abiertos de la CM (CC BY 4.0: «license_url» de la 4.0 en su CKAN,
+    comprobado el 19 nov; «Fecha Actualización 06-10-2026»). Fuente: Dirección General del
+    Catastro, titularidad del IBI de cada año. Inmuebles de los 21 distritos de Madrid por uso
+    (viviendas colectivas y unifamiliares, aparcamientos, comercial, industrial, oficinas y
+    «resto de usos», que agrupa el suelo vacante), 2011 a 2026. Sin código de territorio: el
+    distrito sale del texto del concepto y casa por nombre con la geografía. Las filas «sin
+    asignar distrito» no se cargan.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T03:45:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: catastro_inmuebles_por_distrito_y_uso
+  harvested_at: '2026-11-19T03:45:00+00:00'
+notes: >-
+  D-247: inmuebles de uso comercial por 1.000 habitantes en los distritos de Madrid, como
+  contexto CM de la versión para inversores (no puntúa en el buscador).

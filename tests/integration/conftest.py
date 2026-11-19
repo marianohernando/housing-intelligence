@@ -27,13 +27,16 @@ from hi_contracts.catalog.pipeline import (
     CuratedZoneItemsPipeline,
     FacilityDirectoryPipeline,
     GtfsFeedPipeline,
+    MadridBuildableAreasPipeline,
     MadridDevelopmentAreasPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    MadridPremisesCensusPipeline,
     NoiseRasterPipeline,
     OsmParksPipeline,
     OsmPoisPipeline,
     OsmWalkNetworkPipeline,
+    PilotZonesPipeline,
     PointsPipeline,
     PublicLandParcelsPipeline,
     SerpaviRentPipeline,
@@ -50,6 +53,7 @@ from hi_ingestion.pipelines.air_quality.run import (
     run_air_quality_hourly_pipeline,
     run_air_quality_zones_pipeline,
 )
+from hi_ingestion.pipelines.buildable.run import run_buildable_areas_pipeline
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
@@ -60,7 +64,9 @@ from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
+from hi_ingestion.pipelines.pilot.run import run_pilot_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
+from hi_ingestion.pipelines.premises.run import run_premises_pipeline
 from hi_ingestion.pipelines.serpavi.run import run_serpavi_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
@@ -354,7 +360,10 @@ def fixtures_ingested(
             )
         elif isinstance(spec, MadridPadronPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "padron_sample" / f"{dataset_id}.csv")
-            sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
+            # D-247: the sample's barrios are four of the admin sample's, not the city's 131
+            sample = spec.model_copy(
+                update={"expected_districts": MADRID_SAMPLE_DISTRICTS, "expected_barrios": None}
+            )
             result = run_padron_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )
@@ -450,9 +459,51 @@ def fixtures_ingested(
                 data_dir=tmp,
                 manual_dir=ZONE_CONTEXT_SAMPLE,
             )
+        elif isinstance(spec, MadridPremisesCensusPipeline):  # D-247: Palacio and Castillejos
+            src = local_file(dataset_id, "primary", premises_sample(tmp))
+            sample = spec.model_copy(
+                update={"min_rows": 1, "expected_districts": 2, "expected_barrios": None}
+            )
+            result = run_premises_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, MadridBuildableAreasPipeline):  # D-247: the rows of Tetuán
+            src = local_file(dataset_id, "primary", INVESTOR_SAMPLE / f"{dataset_id}.xlsx")
+            result = run_buildable_areas_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_rows": 1, "expected_districts": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=INVESTOR_SAMPLE,
+            )
+        elif isinstance(spec, PilotZonesPipeline):  # D-247: a sample ring around Tetuán
+            result = run_pilot_pipeline(
+                migrated_engine,
+                catalog,
+                spec,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=INVESTOR_SAMPLE,
+            )
         else:
             continue
         assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
+
+
+INVESTOR_SAMPLE = GOLDEN / "investor_sample"
+
+
+def premises_sample(tmp: Path) -> Path:
+    """D-247: the sample premises of the barrios the admin sample has (Palacio, Castillejos)."""
+    source = INVESTOR_SAMPLE / "ayto_censo_locales_actividades.csv"
+    lines = source.read_text(encoding="utf-8-sig").splitlines()
+    column = [c.strip('"') for c in lines[0].split(";")].index("id_barrio_local")
+    kept = [line for line in lines[1:] if line.split(";")[column].strip('"') in {"101", "603"}]
+    path = tmp / "premises_sample.csv"
+    path.write_text("\n".join([lines[0], *kept]) + "\n", encoding="utf-8-sig")
+    return path
 
 
 ZONE_CONTEXT_SAMPLE = GOLDEN / "zone_context_sample"

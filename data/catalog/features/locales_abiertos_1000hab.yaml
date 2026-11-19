@@ -1,0 +1,33 @@
+feature_id: locales_abiertos_1000hab
+version: 1
+human_name: Locales abiertos por cada 1.000 habitantes
+domain: economy
+type: derived
+unit: locales/1000 hab
+direction: neutral
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_censo_locales_actividades, role: primary}
+  - {dataset_id: ayto_padron_municipal, role: denominator}
+formula:
+  method: metric_ratio
+  numerator_metric: locales_censo
+  numerator_dims: {situacion: [abierto]}
+  denominator_metric: poblacion_padron
+  denominator_dims: {edad: [total]}
+  per: 1000
+  regional_reference: false  # the 21 districts are not the region
+  levels:
+    # D-247: the investor pilot is by barrio (padrón by barrio, same monthly snapshot)
+    barrio: {denominator_metric: poblacion_padron_barrio}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Locales abiertos según el censo de locales y actividades del Ayuntamiento de Madrid (foto diaria): los que tienen acceso desde la calle o están en una agrupación (mercado, centro o galería comercial). No cuenta los interiores, los «puerta de calle asociado» ni los dados de baja. Es una situación administrativa que el Ayuntamiento mantiene como puede: su ficha avisa de que no siempre sabe cuándo cierra un local."
+  - "Entre la población empadronada del distrito o del barrio (padrón municipal, último mes publicado). Un barrio con mucha actividad y poca gente (el centro, un polígono) sale alto aunque no lo usen sus vecinos."
+  - "Solo Madrid capital, por distrito y por barrio. Dato de contexto para la versión para inversores: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-247)."

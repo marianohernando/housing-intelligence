@@ -1,0 +1,45 @@
+dataset_id: cm_catastro_unidades_urbanas_uso
+source_id: comunidad_madrid_ckan
+name: Catastro Inmobiliario. Unidades urbanas por uso. Municipios
+domain: urbanism
+owner: Instituto de Estadística de la Comunidad de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/unidades_urbanas_por_uso
+resources:
+- name: Catastro Inmobiliario. Unidades urbanas por uso.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/01d38f5f-2277-491b-a2b2-ee6b64c44fbd/resource/73066586-6e8c-4fb8-ac64-3e04885cdc39/download/catastro-inmobiliario.-unidades-urbanas-por-uso.-municipios.csv
+- name: Catastro Inmobiliario. Unidades urbanas por uso. Municipios.json
+  format: JSON
+  url: https://datos.comunidad.madrid/dataset/01d38f5f-2277-491b-a2b2-ee6b64c44fbd/resource/8743bb9b-0fab-4b09-89d2-e2011e35957c/download/catastro-inmobiliario.-unidades-urbanas-por-uso.-municipios.json
+  role: cross_check
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 3
+  geographic_granularity: 3
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-247. Portal de datos abiertos de la CM (CC BY 4.0: «license_url» de la 4.0 en su CKAN,
+    comprobado el 19 nov; «Fecha Actualización 25-06-2026»). Fuente: Dirección General del
+    Catastro. Unidades urbanas por uso (13 usos, entre ellos Comercial y Suelo vacante), en número
+    y en porcentaje, por municipio, zona estadística y la Comunidad, de 2003 a 2026; se cargan
+    desde 2024. Los 179 municipios casan por código.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T03:30:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: unidades_urbanas_por_uso
+  harvested_at: '2026-11-19T03:30:00+00:00'
+notes: >-
+  D-247: unidades comerciales por 1.000 habitantes y unidades de suelo vacante por municipio, como
+  contexto CM de la versión para inversores (no puntúa en el buscador).

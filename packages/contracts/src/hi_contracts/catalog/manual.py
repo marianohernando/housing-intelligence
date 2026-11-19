@@ -1,6 +1,8 @@
 """Versioned inputs a run reads instead of the network: tables typed by hand from an official
-page that publishes no file (D-241: Plan Vive) and the points of the Portal del Suelo parcels
-of Madrid, read once from the CM map layer (D-246, `ParcelPointsTable`).
+page that publishes no file (D-241: Plan Vive), the points of the Portal del Suelo parcels of
+Madrid, read once from the CM map layer (D-246, `ParcelPointsTable`), and, for the investor
+version (D-247), the points of the planning areas with buildable area left (`AreaPointsTable`)
+and the pilot barrios inside the M-40 of OpenStreetMap (`PilotZonesTable`).
 
 They live in data/catalog/manual/. Every typed entry quotes the page (`says`, its exact text),
 and the contract rejects an entry whose name, figure or stage the quote does not contain:
@@ -8,6 +10,7 @@ nothing is typed from memory. An entry the page does not complete is not loaded;
 in `excluded` with the reason, so it is never lost in silence.
 """
 
+import hashlib
 from datetime import date
 from typing import Self
 
@@ -141,3 +144,146 @@ class ParcelPointsTable(BaseModel):
         if len(refs) != len(set(refs)):
             raise ValueError("one point per parcel")
         return self
+
+
+class AreaPoint(BaseModel):
+    """A point inside one planning area of Madrid and inside the district the register gives it
+    (D-247), in metres (EPSG:25830), with the share of the area in the barrio of the point."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ref: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9.\-/]{2,30}$", description="COD_AMBITO")
+    x: int = Field(ge=REGION_X[0], le=REGION_X[1])
+    y: int = Field(ge=REGION_Y[0], le=REGION_Y[1])
+    share_pct: int = Field(ge=0, le=100, description="% of the area in the barrio of the point")
+
+
+class AreaPointsTable(BaseModel):
+    """D-247: where the planning areas of the register of buildable area left (VEDA) are, read
+    once from the Ayuntamiento's own map layer of the areas in force and versioned, so the run
+    that places each area in a barrio needs no network. The point is inside the area and inside
+    the district the register names (an area across two districts stays in the register's)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=3)
+    publisher: str = Field(min_length=3)
+    url: HttpUrl
+    layer: str = Field(min_length=3)
+    crs: str = Field(pattern=r"^EPSG:25830$")
+    consulted: date
+    method: str = Field(min_length=10)
+    municipio_ine: str = Field(pattern=INE_MUNICIPIO)
+    points: list[AreaPoint] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _one_point_per_area(self) -> Self:
+        refs = [p.ref for p in self.points]
+        if len(refs) != len(set(refs)):
+            raise ValueError("one point per area")
+        return self
+
+
+class PilotRing(BaseModel):
+    """The closed polygon of a ring road, in metres (EPSG:25830), with the checksum of its
+    coordinates: a hand edit that changes one vertex no longer matches it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ways: int = Field(gt=0, description="OSM ways of the road that close the ring")
+    area_km2: float = Field(gt=0)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    coordinates: list[tuple[int, int]] = Field(min_length=4)
+
+    @model_validator(mode="after")
+    def _closed_and_unchanged(self) -> Self:
+        if self.coordinates[0] != self.coordinates[-1]:
+            raise ValueError("the ring is closed: its last vertex is its first")
+        for x, y in self.coordinates:
+            if not (REGION_X[0] <= x <= REGION_X[1] and REGION_Y[0] <= y <= REGION_Y[1]):
+                msg = f"vertex ({x}, {y}) is outside the Comunidad de Madrid"
+                raise ValueError(msg)
+        if ring_checksum(self.coordinates) != self.sha256:
+            raise ValueError("the ring's coordinates do not match its sha256")
+        return self
+
+
+def ring_checksum(coordinates: list[tuple[int, int]]) -> str:
+    """sha256 of the vertices as «x,y» lines: the same ring always gives the same checksum."""
+    text = "\n".join(f"{x},{y}" for x, y in coordinates)
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+class PilotBarrio(BaseModel):
+    """A barrio and where it is from the ring: `margin_m` is the distance from its centroid to
+    the ring, positive inside and negative outside, and `area_inside_pct` the share of its
+    surface inside. A barrio on the edge (`PilotZonesTable.on_edge`) carries the note of the
+    person who reviewed it (`review`)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str = Field(pattern=r"^28079\d{3}$")
+    name: str = Field(min_length=2)
+    distrito: str = Field(min_length=2)
+    margin_m: int
+    area_inside_pct: int = Field(ge=0, le=100)
+    review: str | None = Field(default=None, min_length=10)
+
+
+class PilotZonesTable(BaseModel):
+    """D-247: the barrios of the pilot of the investor version, Madrid inside the M-40. A barrio
+    is in when its centroid is inside the ring of the road (OpenStreetMap, ODbL), read once by
+    scripts/m40_barrios.py and versioned with its query, the OSM timestamp and the ring's
+    checksum. The barrios on the edge, in or out (a centroid nearer the ring than `edge_m`, or
+    a barrio the ring crosses: between `crossing_pct` and 100 - `crossing_pct` % of it inside),
+    are reviewed by hand: the contract rejects one without its note, so an edge barrio never
+    enters or leaves in silence."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=3)
+    publisher: str = Field(min_length=3)
+    license: str = Field(min_length=3)
+    url: HttpUrl
+    query: str = Field(min_length=10, description="the Overpass query, as sent")
+    osm_timestamp: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+    consulted: date
+    crs: str = Field(pattern=r"^EPSG:25830$")
+    method: str = Field(min_length=10)
+    municipio_ine: str = Field(pattern=INE_MUNICIPIO)
+    edge_m: int = Field(gt=0, description="a centroid nearer the ring than this is reviewed")
+    crossing_pct: int = Field(ge=0, lt=50, description="a barrio the ring crosses is reviewed")
+    ring: PilotRing
+    barrios: list[PilotBarrio] = Field(min_length=1, description="inside: the pilot")
+    reviewed_outside: list[PilotBarrio] = Field(
+        default_factory=list[PilotBarrio], description="outside, on the edge: reviewed, not in"
+    )
+    outside: int = Field(ge=0, description="the other barrios of the municipio, off the edge")
+
+    def on_edge(self, barrio: PilotBarrio) -> bool:
+        crossed = self.crossing_pct < barrio.area_inside_pct < 100 - self.crossing_pct
+        return abs(barrio.margin_m) < self.edge_m or crossed
+
+    @model_validator(mode="after")
+    def _sides_and_reviews(self) -> Self:
+        codes = [b.code for b in [*self.barrios, *self.reviewed_outside]]
+        if len(codes) != len(set(codes)):
+            raise ValueError("one entry per barrio")
+        if any(not c.startswith(self.municipio_ine) for c in codes):
+            raise ValueError("every barrio is of the table's municipio")
+        for barrio in self.barrios:
+            if barrio.margin_m <= 0:
+                msg = f"{barrio.code}: a pilot barrio has its centroid inside the ring"
+                raise ValueError(msg)
+        for barrio in self.reviewed_outside:
+            if barrio.margin_m > 0 or not self.on_edge(barrio):
+                msg = f"{barrio.code}: reviewed_outside lists the outside barrios on the edge"
+                raise ValueError(msg)
+        for barrio in [*self.barrios, *self.reviewed_outside]:
+            if self.on_edge(barrio) and barrio.review is None:
+                msg = f"{barrio.code} ({barrio.name}) is on the edge of the ring: review it"
+                raise ValueError(msg)
+        return self
+
+    def codes(self) -> list[str]:
+        return [b.code for b in self.barrios]

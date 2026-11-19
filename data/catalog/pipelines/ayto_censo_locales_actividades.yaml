@@ -1,0 +1,80 @@
+kind: madrid_premises_census
+dataset_id: ayto_censo_locales_actividades
+# The file of activities: one row per premise and epígrafe; a premise without activity comes
+# once with an empty epígrafe (checked on 19 Nov 2026: every premise of the file of premises is
+# in it, with the same situation).
+resource_role: primary
+municipio_ine: "28079"
+premises_metric_id: locales_censo
+proximity_metric_id: locales_comercio_proximidad
+# Access types, with the file's literal. The structure document (estructura_ds_ficherocla.pdf,
+# version mar/2022) says to count the premises «Puerta de calle» and «Agrupado» (markets,
+# shopping centres, galleries) and never the «Puerta de calle asociado» (not a physical
+# premise). «Interior» is in the file but not in the document: it is not counted (premises with
+# no access from the street; 53 of the 12.552 open proximity shops on 17 Nov 2026).
+access:
+  "1": {label: Puerta Calle, slug: puerta_calle}
+  "0": {label: Agrupado, slug: agrupado}
+  "12": {label: PC Asociado, slug: puerta_calle_asociado}
+  "3": {label: Interior, slug: interior}
+counted_access: [puerta_calle, agrupado]
+# Situations, with the file's literal (the document writes «Baja R»; the file «Baja
+# Reunificación»). «Baja» and «Baja Reunificación» are premises that no longer exist: the
+# document says not to count them. «Obras» is in the document; not in the file of 17 Nov 2026.
+states:
+  "1": {label: Abierto, slug: abierto}
+  "4": {label: Cerrado, slug: cerrado}
+  "7": {label: Obras, slug: obras}
+  "5": {label: Uso vivienda, slug: uso_vivienda}
+  "8": {label: Baja, slug: baja}
+  "9": {label: Baja Reunificación, slug: baja_reunificacion}
+counted_states: [abierto, cerrado, obras, uso_vivienda]
+# Comercio de proximidad (D-247): the shops for the daily shopping of a household, with the
+# epígrafes and descriptions of the file itself (17 Nov 2026). Not included: large food stores
+# (471102, «grandes superficies»), ready meals, wine cellars, tobacco, ice cream, sweets, nuts,
+# herbalists, perfumery, street stalls and every non-food shop.
+proximity:
+  autoservicio:
+    "471101": "COMERCIO AL POR MENOR EN ESTABLECIMIENTOS NO ESPECIALIZADOS, CON PREDOMINIO EN PRODUCTOS ALIMENTICIOS, BEBIDAS Y TABACO (AUTOSERVICIO)"
+    "471103": "TIENDA DE CONVENIENCIA (24H)"
+    "471104": "COMERCIO AL POR MENOR DE PRODUCTOS ALIMENTICIOS NO PERECEDEROS ENVASADOS"
+  fruteria:
+    "472101": "COMERCIO AL POR MENOR DE FRUTAS Y HORTALIZAS CON OBRADOR"
+    "472102": "COMERCIO AL POR MENOR DE FRUTAS Y HORTALIZAS SIN OBRADOR"
+  carniceria:
+    "472201": "COMERCIO AL POR MENOR DE CARNICERIA"
+    "472202": "COMERCIO AL POR MENOR DE CHARCUTERIA"
+    "472203": "COMERCIO AL POR MENOR DE CARNICERIA-CHARCUTERIA"
+    "472204": "COMERCIO AL POR MENOR DE CARNICERIA-SALCHICHERIA"
+    "472205": "COMERCIO AL POR MENOR DE AVES, HUEVOS Y CAZA CON OBRADOR"
+    "472206": "COMERCIO AL POR MENOR DE AVES, HUEVOS Y CAZA SIN OBRADOR"
+    "472207": "COMERCIO AL POR MENOR DE CASQUERIA"
+  pescaderia:
+    "472301": "COMERCIO AL POR MENOR DE PESCADOS Y MARISCOS CON OBRADOR (INCLUYE COCCION)"
+    "472302": "COMERCIO AL POR MENOR DE PESCADOS Y MARISCOS SIN OBRADOR"
+    "472303": "COMERCIO AL POR MENOR DE BACALAO Y SALAZONES"
+  panaderia:
+    "472401": "COMERCIO AL POR MENOR DE PAN Y PRODUCTOS DE PANADERIA Y BOLLERIA CON OBRADOR"
+    "472402": "COMERCIO AL POR MENOR DE PAN Y PRODUCTOS DE PANADERIA Y BOLLERIA SIN OBRADOR"
+    "472403": "COMERCIO AL POR MENOR DE PASTELERIA, CONFITERIA, REPOSTERIA CON OBRADOR-BARRA DEGUSTACION"
+    "472404": "COMERCIO AL POR MENOR DE  PASTELERIA, CONFITERIA, REPOSTERIA CON OBRADOR-SIN BARRA DEGUSTACION"
+    "472405": "COMERCIO AL POR MENOR DE PASTELERIA, CONFITERIA, REPOSTERIA SIN OBRADOR"
+  otra_alimentacion:
+    "472501": "COMERCIO AL POR MENOR DE LECHE, PRODUCTOS LACTEOS Y BEBIDAS REFRESCANTES"
+    "472905": "COMERCIO AL POR MENOR DE CONGELADOS"
+    "472911": "OTRO COMERCIO AL POR MENOR DE PRODUCTOS ALIMENTICIOS (PERECEDEROS Y NO PERECEDEROS) CON VENDEDOR N.C.O.P."
+  farmacia:
+    "477301": "FARMACIA"
+  drogueria:
+    "477801": "COMERCIO AL POR MENOR DE PRODUCTOS DE DROGUERIA"
+# Epígrafes the file marks as not coded yet: the premise counts by its situation, its activity
+# is unknown (listed in quarantine, not blocking).
+pending_epigrafes:
+  "PTECO1": "PTE. CODIFICAR (ACTIV. EMPRESARIALES:INDUST,COMERCIAL,DE SERVICIOS Y MINERAS)"
+  "PTECO2": "PTE. CODIFICAR (OTROS PROF. RELACIONADOS CON SERVICIOS)"
+  "999": "SIN ASIGNAR"
+# 1 counted premise without district or barrio on 17 Nov 2026
+max_unplaced: 50
+# 225.941 rows on 17 Nov 2026
+min_rows: 150000
+max_rows: 400000

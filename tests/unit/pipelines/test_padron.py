@@ -29,10 +29,17 @@ def catalog() -> Catalog:
 
 
 @pytest.fixture(scope="module")
-def spec(catalog: Catalog) -> MadridPadronPipeline:
+def barrio_spec(catalog: Catalog) -> MadridPadronPipeline:
     pipeline = catalog.pipelines[DATASET]
     assert isinstance(pipeline, MadridPadronPipeline)
     return pipeline
+
+
+@pytest.fixture(scope="module")
+def spec(barrio_spec: MadridPadronPipeline) -> MadridPadronPipeline:
+    """The districts alone, as before D-247 (the barrio totals are tested below)."""
+    off = {"barrio_column": None, "barrio_metric_id": None, "expected_barrios": None}
+    return barrio_spec.model_copy(update=off)
 
 
 @pytest.fixture(scope="module")
@@ -178,3 +185,85 @@ def test_census_comparison_is_reported_not_blocking(
     assert not check.critical
     assert not check.passed
     assert report.passed
+
+
+def _barrio_rows(frame: pd.DataFrame) -> pd.DataFrame:
+    return frame.loc[frame["territory_level"] == "barrio"]
+
+
+def test_barrios_get_their_total_and_add_up_to_their_district(
+    barrio_spec: MadridPadronPipeline, spec: MadridPadronPipeline, source: pd.DataFrame
+) -> None:
+    """D-247: each barrio's total, as its own metric; the district rows do not change."""
+    frame = normalize(source, barrio_spec).frame
+    barrios = _barrio_rows(frame)
+    assert set(barrios["metric_id"]) == {"poblacion_padron_barrio"}
+    assert all(d == {"edad": TOTAL_AGE} for d in barrios["dims"])
+    assert set(barrios["admin_unit_id"]) == {f"ES.28.BAR.{c}" for c in barrios["territory_code"]}
+    districts = frame.loc[frame["territory_level"] == "distrito"].reset_index(drop=True)
+    assert districts.equals(normalize(source, spec).frame.reset_index(drop=True))
+    added: dict[str, float] = {}
+    for code, value in zip(barrios["territory_code"], barrios["value"], strict=True):
+        added[code[:7]] = added.get(code[:7], 0.0) + value
+    totals = districts.loc[[d["edad"] == TOTAL_AGE for d in districts["dims"]]]
+    assert added == dict(zip(totals["territory_code"], totals["value"], strict=True))
+    tetuan = {
+        str(r["COD_DIST_BARRIO"]) for r in source.to_dict("records") if r["COD_DISTRITO"] == "6"
+    }
+    assert {c for c in barrios["territory_code"] if c.startswith("2807906")} == {
+        f"2807906{int(b) % 100}" for b in tetuan
+    }
+
+
+def test_a_row_without_barrio_counts_in_its_district_only(
+    barrio_spec: MadridPadronPipeline, source: pd.DataFrame
+) -> None:
+    rows = source.loc[source["COD_DISTRITO"] == "6"].head(2).copy()
+    rows.loc[rows.index[0], "COD_DIST_BARRIO"] = ""
+    obs = normalize(rows, barrio_spec)
+    assert obs.quarantine.empty
+    total = obs.frame.loc[
+        [
+            d["edad"] == TOTAL_AGE and lvl == "distrito"
+            for d, lvl in zip(obs.frame["dims"], obs.frame["territory_level"], strict=True)
+        ],
+        "value",
+    ]
+    assert total.tolist() == [
+        _people(rows.iloc[0], barrio_spec) + _people(rows.iloc[1], barrio_spec)
+    ]
+    assert _barrio_rows(obs.frame)["value"].tolist() == [_people(rows.iloc[1], barrio_spec)]
+
+
+def test_a_barrio_of_another_district_is_listed_and_still_counts_in_its_district(
+    barrio_spec: MadridPadronPipeline, spec: MadridPadronPipeline, source: pd.DataFrame
+) -> None:
+    """The district population never depends on the barrio column (review R-01 of #93)."""
+    rows = source.loc[source["COD_DISTRITO"] == "6"].head(1).copy()
+    rows.loc[rows.index[0], "COD_DIST_BARRIO"] = "501"
+    obs = normalize(rows, barrio_spec)
+    assert len(obs.quarantine) == 1
+    assert "district only" in obs.quarantine["reason"].iloc[0]
+    assert _barrio_rows(obs.frame).empty
+    districts = obs.frame.loc[obs.frame["territory_level"] == "distrito"].reset_index(drop=True)
+    assert districts.equals(normalize(rows, spec).frame.reset_index(drop=True))
+
+
+def test_barrios_that_do_not_add_up_block_publication(
+    barrio_spec: MadridPadronPipeline, source: pd.DataFrame
+) -> None:
+    """A broken barrio column would leave the barrios short: beyond 0.1 % it blocks."""
+    metrics = load_catalog().metrics
+    sample = barrio_spec.model_copy(update={"expected_districts": 3, "expected_barrios": None})
+    obs = normalize(source, sample)
+    known = set(_barrio_rows(obs.frame)["territory_code"])
+    ok = run_padron_quality(obs, sample, metrics, SAMPLE_DISTRICTS, None, None, known)
+    assert ok.passed
+    broken = source.copy()
+    broken.loc[broken["COD_DISTRITO"] == "1", "COD_DIST_BARRIO"] = ""
+    report = run_padron_quality(
+        normalize(broken, sample), sample, metrics, SAMPLE_DISTRICTS, None, None, known
+    )
+    check = next(c for c in report.checks if c.name == "barrios_add_up_to_districts")
+    assert check.critical and not check.passed
+    assert check.details["broken"] == ["2807901"]

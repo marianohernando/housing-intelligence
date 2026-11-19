@@ -1,0 +1,53 @@
+dataset_id: ayto_edificabilidad_remanente_ambitos
+source_id: ayuntamiento_madrid_ckan
+name: PGOUM 97. Edificabilidad remanente en ámbitos (VEDA Madrid, julio de 2026)
+domain: urbanism
+owner: Ayuntamiento de Madrid
+format: XLS
+geography: table
+geo:
+  resolution: distrito
+temporal_resolution: semestral
+refresh_policy: semestral
+landing_url: https://datos.madrid.es/dataset/203182-0-ambitos-remanente
+resources:
+- name: PGOUM 97. Edificabilidad remanente en ámbitos. Julio 2026.
+  format: XLS
+  url: https://datos.madrid.es/dataset/203182-0-ambitos-remanente/resource/203182-16-ambitos-remanente/download/edificabilidad-remanente-01_07_2026_datos-abiertos.xls
+- name: PGOUM 97. Edificabilidad remanente en ámbitos. Contenido y estructura del fichero (julio 2026)
+  format: PDF
+  url: https://datos.madrid.es/dataset/203182-0-ambitos-remanente/resource/203182-17-ambitos-remanente/download/estructura_conjuntodatos_pgoum_remanente.pdf
+  role: docs
+- name: Ámbitos vigentes a julio de 2026 (VEDA Madrid, servicio del Departamento de Análisis Urbano, EPSG:25830)
+  format: GeoJSON
+  url: https://sigma.madrid.es/hosted/rest/services/ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual/FeatureServer/2/query?where=1%3D1&outFields=AMB_TX_ETI&outSR=25830&f=geojson
+  role: points
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 2
+  product_impact: 4
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-247. Portal de datos abiertos del Ayuntamiento de Madrid (CC BY 4.0: «license_url» de la
+    4.0 en su CKAN, comprobado el 19 nov). Semestral: el fichero de julio de 2026 trae 229 filas
+    (225 ámbitos; cuatro en dos etapas) con su distrito, su situación y la edificabilidad
+    disponible en m² para residencial colectiva y unifamiliar, industrial y terciario. No trae
+    coordenadas: cada ámbito se sitúa en un barrio con un punto dentro de su polígono, leído una
+    vez de la capa de ámbitos vigentes del propio visor VEDA (cuyas condiciones remiten al aviso
+    legal de datos.madrid.es). El «Nº de viviendas» del fichero es la edificabilidad entre 100: no
+    se usa.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T03:00:00+00:00'
+discovery:
+  harvested_from: ayuntamiento_madrid_ckan
+  external_id: 203182-0-ambitos-remanente
+  harvested_at: '2026-11-19T03:00:00+00:00'
+notes: >-
+  D-247: edificabilidad residencial disponible por barrio para la versión para inversores
+  (contexto que no puntúa). Complementario: es del Ayuntamiento, no del portal de la Comunidad.
+  Completa el estado de desarrollo de los ámbitos (ayto_pgoum_desarrollo_ambitos, D-241).

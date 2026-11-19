@@ -1,0 +1,13 @@
+metric_id: barrio_piloto_inversores
+human_name: Barrio piloto de la versión para inversores (dentro de la M-40)
+description: >-
+  Un barrio de Madrid cuyo centroide cae dentro del anillo de la M-40 de OpenStreetMap: el piloto
+  de la versión para inversores (D-247). Lleva su nombre, si está en el borde del anillo (centroide
+  a menos de 500 m o barrio que la M-40 cruza) y la nota de su revisión a mano.
+domain: urbanism
+unit: barrio
+aggregation_method: count
+geo_resolution_min: barrio
+temporal_resolution: snapshot
+dataset_id: osm_m40
+dimensions: [item, name, stage, note]

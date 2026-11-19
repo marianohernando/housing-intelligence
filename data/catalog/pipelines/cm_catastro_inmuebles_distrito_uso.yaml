@@ -1,0 +1,12 @@
+kind: cm_district_concept
+dataset_id: cm_catastro_inmuebles_distrito_uso
+metric_id: inmuebles_por_distrito_uso
+municipio_ine: "28079"
+# «Inmuebles para uso comercial del distrito Chamartín del municipio de Madrid»
+district_pattern: "del distrito (?P<district>.+) del municipio de Madrid$"
+# «… sin asignar distrito del municipio de Madrid», with «-» as its value: counted, not read
+unassigned_pattern: "sin asignar distrito"
+dimension_columns: {"Uso": uso}
+expected_districts: 21
+# 2011 to 2026 in the file; the last three years are kept
+period_min: 2024

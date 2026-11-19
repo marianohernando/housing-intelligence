@@ -1,0 +1,25 @@
+feature_id: suelo_vacante_unidades
+version: 1
+human_name: Unidades urbanas de suelo vacante del Catastro
+domain: urbanism
+type: raw
+unit: unidades
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_catastro_unidades_urbanas_uso, role: primary}
+formula:
+  method: metric_value
+  metric: unidades_urbanas_por_uso
+  dims: {uso: suelo_vacante, medida: unidades}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Número de unidades urbanas del Catastro de uso «suelo vacante» del último año publicado por la Comunidad de Madrid (2026): solares sin edificar inscritos como tales. Es un recuento, no una superficie: un solar pequeño y uno grande cuentan uno cada uno. No dice si están en venta, su calificación ni cuánto se puede construir."
+  - "Por municipio; la Comunidad no lo publica por distrito (la tabla por distrito agrupa el suelo vacante en «resto de usos»)."
+  - "Dato de contexto de la Comunidad de Madrid para la versión para inversores: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-247)."

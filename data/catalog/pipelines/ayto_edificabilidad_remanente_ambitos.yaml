@@ -1,0 +1,24 @@
+kind: madrid_buildable_areas
+dataset_id: ayto_edificabilidad_remanente_ambitos
+metric_id: edificabilidad_remanente_residencial_ambito_m2
+municipio_ine: "28079"
+# Homes, by type of building (m² left). The register's «Nº Viviendas» columns are these m²
+# divided by 100: not read (m² are never turned into homes).
+residential_columns:
+  "Colectiva. Edif. Residencial": colectiva
+  "Unifamiliar. Edif. Residencial": unifamiliar
+other_use_columns: ["Edif. Industrial", "Edif. Terciario"]
+# The situations of the structure document (version July 2026), as the register writes them.
+states:
+  "FASE DE EDIFICACION": edificacion
+  "FASE GESTION Y/O URBANIZACION": gestion_urbanizacion
+  "PENDIENTE PLANEAMIENTO DESARROLLO": pendiente_planeamiento
+  "PENDIENTE PLAN SECTORIZACION": pendiente_sectorizacion
+# Names come in capitals; these words stay as written (as for the areas of D-241).
+keep_upper: ["PMM", "ONCE", "UVA", "RENFE", "EMT", "S.A.", "M-30", "M-40", "II", "III", "IV", "AZCA"]
+# A point inside each area, read from the VEDA layer (scripts/veda_remanente_points.py)
+points: veda_remanente_puntos.yaml
+whole_area_pct: 90
+# 229 rows on 1 Jul 2026 (225 areas, four in two stages)
+min_rows: 150
+max_rows: 400

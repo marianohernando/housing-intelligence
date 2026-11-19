@@ -1,0 +1,37 @@
+dataset_id: osm_m40
+source_id: openstreetmap
+name: Autovía M-40 de OpenStreetMap (anillo) y barrios de Madrid dentro de él
+domain: urbanism
+owner: OpenStreetMap contributors (Overpass API)
+format: JSON
+geography: polygon
+geo:
+  resolution: barrio
+  crs_expected: EPSG:25830
+temporal_resolution: null
+refresh_policy: manual
+landing_url: https://www.openstreetmap.org/
+resources:
+- name: Vías highway=motorway con ref=M-40 (Overpass API)
+  format: JSON
+  url: https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A120%5D%3Barea%5B%22ISO3166-2%22%3D%22ES-MD%22%5D-%3E.a%3Bway%5B%22highway%22%3D%22motorway%22%5D%5B%22ref%22~%22%28%5E%7C%3B%29M-40%28%3B%7C%24%29%22%5D%28area.a%29%3Bout+geom%3B
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 1
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 4
+  license_clarity: 4
+  ingestion_ease: 5
+  notes: >-
+    D-247. La zona piloto de la versión para inversores (decisión de Mariano, 19 nov): los
+    barrios de Madrid cuyo centroide cae dentro de la M-40. El anillo sale de las vías de la
+    M-40 de OpenStreetMap (ODbL), leídas una vez con scripts/m40_barrios.py; la carga lee la
+    tabla versionada data/catalog/manual/inversores_barrios_m40.yaml, sin red.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T04:00:00+00:00'
+notes: >-
+  D-247: no es un dato de la Comunidad ni puntúa: delimita los barrios piloto (108 de 131) de la
+  versión para inversores.

@@ -1,0 +1,16 @@
+{
+  "locales_censo|barrio": 524,
+  "locales_censo|distrito": 84,
+  "locales_comercio_proximidad|barrio": 1310,
+  "locales_comercio_proximidad|distrito": 210,
+  "rows": 225941,
+  "premises": 203816,
+  "counted": 142211,
+  "pending_epigrafe_rows": 185,
+  "unplaced": 1,
+  "not_counted|access:interior": 51587,
+  "not_counted|access:puerta_calle_asociado": 2889,
+  "not_counted|state:baja": 3487,
+  "not_counted|state:baja_reunificacion": 3641,
+  "observations": 2128
+}

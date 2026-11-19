@@ -1,0 +1,16 @@
+metric_id: locales_comercio_proximidad
+human_name: Locales abiertos de comercio de proximidad
+description: >-
+  Locales abiertos de Madrid (con acceso desde la calle o en una agrupación) con al menos un
+  epígrafe de comercio de proximidad (alimentación, farmacia y droguería, D-247), por distrito y
+  barrio: por grupo (autoservicio, frutería, carnicería, pescadería, panadería, otra
+  alimentación, farmacia y droguería) y de cualquiera de ellos (`proximidad`, que no es su suma: un
+  local puede estar en dos). `sin_actividad` cuenta
+  los locales abiertos cuya actividad no se puede leer (sin epígrafe o pendiente de codificar).
+domain: economy
+unit: locales
+aggregation_method: count
+geo_resolution_min: barrio
+temporal_resolution: daily snapshot
+dataset_id: ayto_censo_locales_actividades
+dimensions: [grupo]

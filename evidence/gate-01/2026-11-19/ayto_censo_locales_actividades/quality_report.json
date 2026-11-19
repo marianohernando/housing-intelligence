@@ -1,0 +1,174 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "has_observations",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "observations": 2128
+      }
+    },
+    {
+      "name": "quarantine_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "quarantined": 0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "unique_keys",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "duplicates": 0
+      }
+    },
+    {
+      "name": "municipios_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "municipios": 0
+      }
+    },
+    {
+      "name": "non_negative_counts",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "negatives": 0
+      }
+    },
+    {
+      "name": "parse_error_ratio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "parse_errors": 0
+      }
+    },
+    {
+      "name": "missing_is_explicit_not_zero",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "source_missing": 0,
+        "ratio": 0.0
+      }
+    },
+    {
+      "name": "municipio_coverage",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "covered": 0,
+        "expected": 0
+      }
+    },
+    {
+      "name": "totals_are_additive",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "groups_checked": 0,
+        "failures": 0,
+        "failures_sample": [],
+        "share_ok": 1.0
+      }
+    },
+    {
+      "name": "file_size",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "rows": 225941,
+        "min": 150000,
+        "max": 400000
+      }
+    },
+    {
+      "name": "one_load_date",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "dates": [
+          "2026-11-17"
+        ]
+      }
+    },
+    {
+      "name": "no_undeclared_code",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "rows": 0,
+        "reasons": {}
+      }
+    },
+    {
+      "name": "few_premises_without_barrio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unplaced": 1,
+        "max": 50
+      }
+    },
+    {
+      "name": "proximity_epigrafes_as_declared",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "changed": {}
+      }
+    },
+    {
+      "name": "proximity_epigrafes_in_the_file",
+      "critical": false,
+      "passed": true,
+      "details": {
+        "absent": []
+      }
+    },
+    {
+      "name": "districts_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "districts": 21
+      }
+    },
+    {
+      "name": "district_coverage",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "covered": 21,
+        "expected": 21
+      }
+    },
+    {
+      "name": "barrios_resolve_to_geography",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "unknown": [],
+        "barrios": 131
+      }
+    },
+    {
+      "name": "barrio_coverage",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "covered": 131,
+        "expected": 131
+      }
+    }
+  ]
+}

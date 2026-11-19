@@ -1,0 +1,26 @@
+feature_id: piloto_inversores_m40
+version: 1
+human_name: Barrio del piloto para inversores (Madrid dentro de la M-40)
+domain: urbanism
+type: raw
+unit: barrio
+direction: neutral
+geo_level: barrio
+time_semantics: snapshot
+sources:
+  - {dataset_id: osm_m40, role: primary}
+formula:
+  method: metric_items
+  metric: barrio_piloto_inversores
+  value: count
+  scope: "28079"
+  stage_order: [dentro, borde]
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "1 si el barrio está en el piloto de la versión para inversores (su centroide cae dentro del anillo de la M-40 de OpenStreetMap), 0 si no: 108 de los 131 barrios de Madrid. Su elemento dice si está en el borde del anillo (centroide a menos de 500 m o barrio que la M-40 cruza) y la nota de su revisión a mano."
+  - "Delimita la zona piloto; no es un dato de la zona, no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-247)."

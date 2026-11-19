@@ -1,0 +1,35 @@
+feature_id: edificabilidad_remanente_residencial_m2
+version: 1
+human_name: Edificabilidad residencial que queda en los ámbitos del Plan General (m²)
+domain: urbanism
+type: aggregate
+unit: m2
+direction: neutral
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_edificabilidad_remanente_ambitos, role: primary}
+formula:
+  method: metric_items
+  metric: edificabilidad_remanente_residencial_ambito_m2
+  value: sum
+  scope: "28079"
+  # First what can be built now, then what still waits for management or planning
+  stage_order: [edificacion, gestion_urbanizacion, pendiente_planeamiento, pendiente_sectorizacion]
+  # The type of home of each area (colectiva, unifamiliar or both), next to its m²
+  item_dims: [use]
+  confidence: 1.0
+  levels:
+    # D-247: each area in the barrio of a point inside it (scripts/veda_remanente_points.py)
+    barrio: {scope: "28079"}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Metros cuadrados edificables para vivienda (colectiva y unifamiliar) que quedan en los ámbitos de ordenación del Plan General de Madrid según el registro VEDA del Ayuntamiento (semestral; el de julio de 2026). Cada ámbito sale con su situación: en fase de edificación (se puede construir ya), en gestión o urbanización, o pendiente de planeamiento. El valor los suma todos; sus elementos dicen cuánto hay en cada situación."
+  - "Son m², no viviendas: no se convierten. El número de viviendas del fichero es la edificabilidad entre 100 y no se usa. Una celda vacía no es un 0: un ámbito sin ningún uso con dato dejaría la suma de su zona desconocida."
+  - "El fichero da el distrito de cada ámbito, no su sitio: se sitúa en el barrio de un punto dentro de su polígono (capa de ámbitos vigentes del visor VEDA, dentro del distrito del fichero). Un ámbito que ocupa varios barrios cuenta entero en ese y lo avisa su nota."
+  - "Solo Madrid capital, por distrito y por barrio. Dato de contexto para la versión para inversores: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-247)."

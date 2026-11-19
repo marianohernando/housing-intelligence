@@ -1,0 +1,32 @@
+feature_id: comercio_proximidad_1000hab
+version: 1
+human_name: Comercio de proximidad abierto por cada 1.000 habitantes
+domain: economy
+type: derived
+unit: locales/1000 hab
+direction: neutral
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_censo_locales_actividades, role: primary}
+  - {dataset_id: ayto_padron_municipal, role: denominator}
+formula:
+  method: metric_ratio
+  numerator_metric: locales_comercio_proximidad
+  numerator_dims: {grupo: [proximidad]}
+  denominator_metric: poblacion_padron
+  denominator_dims: {edad: [total]}
+  per: 1000
+  regional_reference: false  # the 21 districts are not the region
+  levels:
+    barrio: {denominator_metric: poblacion_padron_barrio}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Locales abiertos con al menos un epígrafe de comercio de proximidad del censo de locales y actividades del Ayuntamiento de Madrid: supermercados y autoservicios, tiendas de conveniencia, fruterías, carnicerías y charcuterías, pescaderías, panaderías y pastelerías, lácteos, congelados y otras tiendas de alimentación con vendedor, farmacias y droguerías (los epígrafes exactos, en D-247). No cuenta las grandes superficies de alimentación."
+  - "Los locales abiertos sin actividad legible (sin epígrafe, o «pendiente de codificar» y «sin asignar» en el propio fichero; unos 2.000 en toda la ciudad) no cuentan como comercio de proximidad: la cifra es un mínimo."
+  - "Entre la población empadronada del distrito o del barrio (padrón municipal, último mes publicado). Solo Madrid capital. Dato de contexto para la versión para inversores: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-247)."

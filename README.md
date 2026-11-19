@@ -81,7 +81,7 @@ El progreso, fase a fase, está en [`board/BOARD.md`](board/BOARD.md).
   - Comunidad de Madrid, CC BY 4.0;
   - Consorcio Regional de Transportes de Madrid, licencia de datos abiertos del CRTM («Powered by CRTM»);
   - Ayuntamiento de Madrid, CC BY 4.0;
-  - OpenStreetMap, ODbL;
+  - OpenStreetMap, ODbL (también el anillo de la M-40 que delimita los barrios piloto de la versión para inversores, `data/catalog/manual/inversores_barrios_m40.yaml`, que es un derivado de OSM y conserva la ODbL aunque el resto del catálogo sea CC BY 4.0);
   - CartoCiudad (IGN), CC BY 4.0 scne.es;
   - Ministerio de Sanidad, reutilización autorizada citando la fuente y la fecha de actualización («Catálogo Nacional de Hospitales 2025, actualizado a 31/12/2024» y «Catálogo de Centros de Atención Primaria del SNS 2026, actualizado a 31/12/2025». Ministerio de Sanidad).
 

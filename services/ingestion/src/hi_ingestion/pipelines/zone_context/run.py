@@ -11,7 +11,7 @@ from sqlalchemy import Engine, select, text
 from sqlalchemy.orm import Session
 
 from hi_contracts.catalog import MetricSpec
-from hi_contracts.catalog.manual import ParcelPointsTable, ZoneItemsTable
+from hi_contracts.catalog.manual import AreaPointsTable, ParcelPointsTable, ZoneItemsTable
 from hi_contracts.catalog.pipeline import (
     CmMunicipioNameTablePipeline,
     CsvFormat,
@@ -301,8 +301,11 @@ _LOCATE = text(
 )
 
 
-def locate_points(engine: Engine, table: ParcelPointsTable) -> dict[str, Placement]:
-    """District and barrio of each point, in the canonical geography of its municipio."""
+def locate_points(
+    engine: Engine, table: ParcelPointsTable | AreaPointsTable
+) -> dict[str, Placement]:
+    """District and barrio of each point, in the canonical geography of its municipio (the
+    parcels of D-246 and the planning areas of D-247)."""
     params = {
         "prefix": f"{table.municipio_ine}%",
         "refs": [p.ref for p in table.points],

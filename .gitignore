@@ -41,3 +41,5 @@ data/catalog/candidates/*.jsonl
 .vercel
 # Offline demo package (dump, logs, pid): regenerated with make demo-offline-prepare
 data/offline/
+# D-247: the draft scripts/m40_barrios.py leaves while an edge barrio waits for its review
+data/catalog/manual/*.draft.yaml
