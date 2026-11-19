@@ -1,0 +1,15 @@
+smoke: https://vidafacil-madrid.vercel.app (2026-11-19T09:48:43Z)
+OK   web           0.19s     45863 B  /  
+OK   health        0.13s       225 B  /api/v1/health  process up
+OK   ready         0.15s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone          0.79s     35701 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography     0.98s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer         0.38s   1761089 B  /api/v1/places?category=education  3866 places
+OK   largest       1.00s   2112252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search        1.20s    160402 B  /api/v1/search  42 of 199 zones, 1st Puente de Vallecas
+OK   telework      0.59s    158347 B  /api/v1/search  fit-0.9, 42 of 199 zones
+OK   barrios       0.27s     48521 B  /api/v1/search/barrios  7 of 8 barrios, 1st Arcos
+OK   madrid        0.32s    116108 B  /api/v1/search  78 of 131 barrios, 1st Puerta del Ángel
+OK   alrededores   0.58s     82875 B  /api/v1/search  15 of 40 municipios, 1st Coslada
+OK   pueblos       0.51s    136152 B  /api/v1/search  15 of 138 municipios, 1st Navalagamella
+smoke: 13/13 OK
