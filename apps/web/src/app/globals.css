@@ -109,3 +109,27 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Printing a page (D-248: «Guardar como PDF» of an investor sheet): its content on white, without
+ * the header, the skip link or the buttons (`.no-print`). Each page says what it prints.
+ */
+@media print {
+  [data-site-header],
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .glass {
+    background: #fff;
+    border-color: var(--line);
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

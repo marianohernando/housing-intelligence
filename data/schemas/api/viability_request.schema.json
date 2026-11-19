@@ -1,0 +1,180 @@
+{
+  "$defs": {
+    "DemandRequest": {
+      "additionalProperties": false,
+      "description": "The demand check: a typical new home against the barrio's mean household income.",
+      "properties": {
+        "effort_threshold_pct": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 5,
+          "title": "Effort Threshold Pct",
+          "type": "number"
+        },
+        "home_m2": {
+          "default": 80,
+          "maximum": 300,
+          "minimum": 20,
+          "title": "Home M2",
+          "type": "number"
+        },
+        "household_income": {
+          "description": "€ net a year",
+          "maximum": 500000,
+          "minimum": 5000,
+          "title": "Household Income",
+          "type": "number"
+        },
+        "loan_rate_pct": {
+          "default": 3,
+          "maximum": 15,
+          "minimum": 0,
+          "title": "Loan Rate Pct",
+          "type": "number"
+        },
+        "loan_years": {
+          "default": 30,
+          "maximum": 40,
+          "minimum": 5,
+          "title": "Loan Years",
+          "type": "integer"
+        },
+        "ltv_pct": {
+          "default": 80,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Ltv Pct",
+          "type": "number"
+        }
+      },
+      "required": [
+        "household_income"
+      ],
+      "title": "DemandRequest",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/viability_request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "POST /api/v1/investors/viability. Per built m² and in euros; percentages as 20 = 20 %.\nLand as a total or per m² buildable, not both; without it, the result is the residual land\nvalue (the most the land can cost).",
+  "properties": {
+    "adjust_floor_pct": {
+      "default": 10,
+      "description": "Lowered to the target margin when above it",
+      "maximum": 50,
+      "minimum": 0,
+      "title": "Adjust Floor Pct",
+      "type": "number"
+    },
+    "buildable_m2": {
+      "description": "m² built; 50 at least",
+      "maximum": 500000,
+      "minimum": 50,
+      "title": "Buildable M2",
+      "type": "number"
+    },
+    "cost_coefficient": {
+      "default": 1.36,
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Cost Coefficient",
+      "type": "number"
+    },
+    "demand": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DemandRequest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "land_eur": {
+      "anyOf": [
+        {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Land Eur"
+    },
+    "land_eur_m2": {
+      "anyOf": [
+        {
+          "maximum": 30000,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "€ per m² buildable",
+      "title": "Land Eur M2"
+    },
+    "new_build_premium_pct": {
+      "default": 0,
+      "maximum": 50,
+      "minimum": -20,
+      "title": "New Build Premium Pct",
+      "type": "number"
+    },
+    "pem_m2": {
+      "maximum": 5000,
+      "minimum": 200,
+      "title": "Pem M2",
+      "type": "number"
+    },
+    "rent_m2_month": {
+      "anyOf": [
+        {
+          "maximum": 100,
+          "minimum": 1,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rent M2 Month"
+    },
+    "sale_price_m2": {
+      "description": "€/m², before the premium",
+      "maximum": 30000,
+      "minimum": 500,
+      "title": "Sale Price M2",
+      "type": "number"
+    },
+    "sales_costs_pct": {
+      "default": 8,
+      "maximum": 30,
+      "minimum": 0,
+      "title": "Sales Costs Pct",
+      "type": "number"
+    },
+    "target_margin_pct": {
+      "default": 20,
+      "maximum": 50,
+      "minimum": 1,
+      "title": "Target Margin Pct",
+      "type": "number"
+    }
+  },
+  "required": [
+    "buildable_m2",
+    "sale_price_m2",
+    "pem_m2"
+  ],
+  "title": "ViabilityRequest",
+  "type": "object"
+}

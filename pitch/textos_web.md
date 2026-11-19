@@ -942,3 +942,92 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 | `pie.proyecto` | Vida Fácil · Proyecto para DATAMAD 2026 | | Cambia el 12 nov: un solo nombre visible, «Vida Fácil» (jurado simulado). «Housing Intelligence» solo queda en el nombre del repositorio, que se ve en el enlace del código. **Pendiente de B** (`SiteFooter.tsx`, `TEXT.project`) |
 | `pie.codigo` | Código abierto (Apache-2.0) | https://github.com/marianohernando/housing-intelligence | D-191 |
 | `pie.como` | Cómo lo calculamos | Pestaña | |
+
+---
+
+## 11. Para inversores y promotores (D-248)
+
+**Nueva (19 nov, línea B).** Una sección propia, `/inversores` (la lista) y `/inversores/{código del barrio}` (la ficha), para quien construye o invierte: qué le falta a cada barrio, dónde hay suelo y si una promoción sale. Modelo de tres patas (decisión de Mariano, 19 nov): las personas y los ayuntamientos usan Vida Fácil gratis; inversores y promotores, con un plan de pago, «Inversor». **Durante el concurso solo se ve la etiqueta: sin cobro ni login.** Piloto: los barrios de Madrid capital dentro de la M-40 (D-247). Mismas reglas que el resto: letra de 16 px o más, botones de 44 px, «sin dato» nunca es 0 y cada cifra con su fuente. **Sin colores de estado ni de alarma salvo en el semáforo,** y el semáforo siempre con icono y palabra. Los textos no se dirigen al hogar: sin `voice()`.
+
+### Enlace y cabecera
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `inversores.enlace` | Para inversores y promotores | En el pie de las páginas sin mapa (`SiteFooter`), discreto; no se imprime |
+| `inversores.plan` | Plan Inversor (acceso libre durante el concurso) | Etiqueta arriba de la lista y de la ficha. Sin precio ni botón de pago |
+| `inversores.titulo` | Para inversores y promotores | Título de la lista |
+| `inversores.intro` | Qué le falta a cada barrio, dónde hay suelo y si una promoción sale. Con datos abiertos y la fuente de cada cifra. | |
+| `inversores.piloto` | Piloto: los barrios de Madrid capital dentro de la M-40. | |
+| `inversores.modelo` | Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro. | |
+
+### Lista de barrios
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `inversores.lista.titulo` | Barrios del piloto | Agrupados por distrito: «Hortaleza (5 barrios)» |
+| `inversores.lista.resumen` | {n} barrios. {m} tienen suelo público para vivienda en el Portal del Suelo. Lo que falta es dato del distrito de cada barrio: «Qué falta» no se calcula por barrio. | Con una: «1 tiene» |
+| `inversores.lista.solo_suelo` | Solo barrios con suelo público | Botón que se queda pulsado (`aria-pressed`) |
+| `inversores.lista.falta` | Falta en el distrito de {distrito}: {filas}; justo: {filas}. | FALTA primero y después JUSTO, como en «Qué falta». Solo JUSTO: «Justo en el distrito de {distrito}: {filas}.»; ninguna: «En el distrito de {distrito} no falta nada de lo que medimos.»; sin lista: «Sin datos de lo que falta en el distrito de {distrito}.» Siempre nombra el distrito: el dato no es del barrio |
+| `inversores.lista.vacia` | La lista de barrios del piloto aún no está cargada. Vuelve a intentarlo en un rato. | Mientras la API no tenga la lista de D-247 |
+| `inversores.lista.suelo` | {n} parcelas públicas, {m2} m² edificables · {m2} m² edificables en ámbitos del Plan General · Unos {precio} €/m² (estimado) | Una: «1 parcela pública». Sin parcelas ni ámbitos no se dice nada, ni «0 parcelas». Si algún ámbito ocupa también otros barrios: «(alguno ocupa también otros barrios y cuenta entero aquí)» (revisión del #95) |
+
+### Ficha de un barrio
+
+En este orden: 1. Quién vive aquí; 2. Precios; 3. Qué falta; 4. Suelo; 5. ¿Sale la promoción?; Fuentes y avisos. Cada cifra lleva su etiqueta **«Dato»**, **«Supuesto»** o **«Lo pones tú»** (texto, nunca solo color) y debajo «Fuente: {publica} · {año} · dato del barrio / del distrito / de toda la ciudad» con «Ver la fuente».
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `inversores.ficha.lugar` | Barrio de Madrid · distrito de {distrito} | Encima del nombre |
+| `inversores.ficha.pdf` | Guardar como PDF | Botón con icono de impresora; abre el cuadro de impresión del navegador |
+| `inversores.ficha.pdf.ayuda` | Abre la versión para imprimir; en el cuadro de impresión, elige «Guardar como PDF». | |
+| `inversores.ficha.generado` | Generado el {fecha} con los datos del {versión} · Vida Fácil, proyecto para DATAMAD 2026 | Solo en papel |
+| `inversores.ficha.demanda.titulo` | 1. Quién vive aquí | Renta neta media de los hogares; personas por hogar; hogares de una persona; hogares de 5 personas o más; personas de 65 años o más; menores de 15 años; población |
+| `inversores.ficha.demanda.nota` | Cada cifra es de la zona más pequeña que la publica: el barrio, su distrito o toda la ciudad. Lo dice su fuente. | |
+| `inversores.ficha.precios.titulo` | 2. Precios | Precio de venta estimado; prima de la vivienda nueva; precio de venta de vivienda nueva; alquiler de un contrato nuevo |
+| `inversores.ficha.precios.estimacion` | Es una estimación del precio de la vivienda usada, no el de un anuncio ni el de una venta. | Bajo el precio (D-234) |
+| `inversores.ficha.precios.rango` | La mitad de los contratos, entre {p25} y {p75} €/m² al mes. | Bajo el alquiler, si la fuente da el rango (D-242) |
+| `inversores.ficha.falta.titulo` | 3. Qué falta | |
+| `inversores.ficha.falta.intro` | Lo que falta se calcula por distrito, no por barrio: estas son las filas de {distrito}, comparado con los municipios de su tipo. | Filas con su estado (icono y palabra) y la frase de «Qué falta» |
+| `inversores.ficha.falta.nivel` | Dato del distrito de {distrito} | En cada fila, debajo de su frase |
+| `inversores.ficha.falta.comercio` | Comercio de proximidad | Las cifras del censo de locales y del Catastro (D-247). Mientras no estén: «Sin dato» y «Fuente: Aún sin cargar» |
+| `inversores.ficha.falta.mas` | Ver «Qué falta» en {distrito}, con sus cifras y fuentes | Enlace a `/que-falta?zona=distrito/{código}` |
+| `inversores.ficha.suelo.titulo` | 4. Suelo | |
+| `inversores.ficha.suelo.intro` | Contexto urbanístico, no qué se puede construir: los m² edificables son los que publica la fuente, y la normativa de cada parcela manda. No los pasamos a viviendas. | |
+| `inversores.ficha.suelo.parcelas` | {n} parcelas públicas para vivienda | Sin ninguna, el encabezado es «Parcelas públicas para vivienda» (nunca «0 parcelas», D-246). Cada una como en `zona.vivienda_nueva.suelo.parcela` (D-246), con «Ver en el visor de la Comunidad». Sin ninguna (un 0 confirmado): «El Portal del Suelo no ofrece ahora ninguna parcela residencial en este barrio.»; sin el dato cargado (`null`, p. ej. tras desplegar y antes de sincronizar): «Aún sin dato de las parcelas públicas de este barrio.», nunca «ninguna» |
+| `inversores.ficha.suelo.remanente` | Edificabilidad residencial que queda en los ámbitos del Plan General | D-247. Sin el dato: «Aún sin dato para este barrio.»; con 0: «Ningún ámbito del barrio tiene edificabilidad residencial disponible.» Cada ámbito con su situación en palabras («En fase de edificación: se puede construir ya», «En gestión o urbanización», «Pendiente de planeamiento de desarrollo», «Pendiente de plan de sectorización»), su tipo de vivienda («vivienda colectiva»), su nota y «Ver la ficha oficial». La nota de un ámbito que ocupa varios barrios viene de la API («El ámbito ocupa también otros barrios: aquí está el 32 % de su superficie.»), y la fuente de la suma dice «Incluye N ámbitos que ocupan también otros barrios: cuentan enteros aquí; la nota de cada uno dice qué parte está en este barrio» |
+| `inversores.ficha.suelo.vacante` | Suelo vacante (Catastro) | D-247, contexto |
+| `inversores.ficha.fuera` | Ese barrio no está en el piloto (Madrid capital dentro de la M-40). | Con el botón «‹ Todos los barrios» |
+| `inversores.ficha.fuentes.titulo` | Fuentes y avisos | Los avisos fijos, la fecha de los datos y la lista de conjuntos de datos (en papel, con su dirección) |
+
+### Calculadora (viabilidad v0)
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `inversores.calc.titulo` | 5. ¿Sale la promoción? | |
+| `inversores.calc.intro` | Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar: cada cifra dice si es un dato, un supuesto nuestro o lo has puesto tú. Los m² son construidos, como los del precio y los del coste. | |
+| `inversores.calc.suelo` | ¿Sobre qué suelo? | Una opción por parcela o ámbito con m² («Parcela pública · 12.192 m² edificables») y «Otra superficie: la pongo yo». Empieza en la mayor |
+| `inversores.calc.suelo.protegido` | Es de la Agencia de Vivienda Social: suele ir a vivienda protegida, con precio máximo de venta o alquiler. · Se ofrece en concesión, derecho de superficie o alquiler: el suelo no se compra. · El precio libre y el valor residual del suelo de esta cuenta no valen para vivienda protegida ni para una concesión: tómalos solo como referencia de mercado. | Bajo «¿Sobre qué suelo?», al elegir una parcela de la AVS (su gestor) o en concesión (su régimen). Las frases que tocan, en ese orden, y siempre la última |
+| `inversores.calc.campos` | Superficie edificable residencial · Precio de venta (vivienda usada) · Prima de la vivienda nueva · Alquiler · Coste de ejecución material (PEM) · Coeficiente sobre el PEM · Comercialización y otros gastos · Precio del suelo (opcional) · Margen objetivo sobre ventas · Renta media de los hogares · Vivienda tipo · Parte del precio que financia el banco · Plazo de la hipoteca · Tipo de interés | Etiquetas de los campos, en tres grupos: «Superficie y precios», «Costes y objetivo» y «Comprobación de demanda». Decimales con coma |
+| `inversores.calc.editado` | Has cambiado este valor | Con «Lo pones tú», en lugar de la fuente |
+| `inversores.calc.sin_dato` | Sin dato | Etiqueta de un valor por defecto cuya cifra no existe para el barrio (en lugar de «Dato»); el campo queda vacío para que lo pongas tú |
+| `inversores.calc.rango` | Pon un número entre {mín} y {máx}. | Bajo el campo, en negrita y sin colores de alarma, cuando el valor está fuera de su rango. Los rangos son los de la API (un test lo comprueba): superficie de 50 a 500.000 m², precio de 500 a 30.000 €/m², prima de −20 a 50 %, alquiler de 1 a 100 €/m², PEM de 200 a 5.000 €/m², coeficiente de 1 a 3, comercialización de 0 a 30 %, margen objetivo de 1 a 50 %, renta de 5.000 a 500.000 €, vivienda de 20 a 300 m², financiación de 0 a 100 %, tipo de 0 a 15 % y suelo de 0 a 1.000 millones de € en total o de 0 a 30.000 €/m² |
+| `inversores.calc.rango.entero` | Pon un número entero entre {mín} y {máx}. | El plazo de la hipoteca, de 5 a 40 años |
+| `inversores.calc.revisa` | Revisa los campos marcados: hay alguno fuera de su rango. | En el resultado, en lugar de calcular |
+| `inversores.calc.suelo.ayuda` | Sin él, te decimos lo máximo que podrías pagar por el suelo | El precio del suelo, «en total» o «por m² edificable» |
+| `inversores.calc.desglose` | Ver de qué se compone el coeficiente · Ver de qué se componen estos gastos | Desplegables con cada parte, su % y su fuente (en papel, abiertos) |
+| `inversores.calc.falta` | Pon la superficie edificable, el precio de venta y el PEM para calcular. | |
+| `inversores.calc.coste.aviso` | Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente. Además, el PEM del visado se reparte entre toda la superficie a construir (probablemente con sótanos y garajes) y aquí se multiplica solo por la edificable sobre rasante. | Junto al PEM, a la vista, con un icono de información y sin colores de alarma (decisiones del 19 nov) |
+| `inversores.calc.resultado` | Resultado: tres escenarios | Base; Optimista (+10 % precio, −5 % coste); Pesimista (−10 % precio, +5 % coste) |
+| `inversores.calc.sin_suelo` | Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale. La rentabilidad del alquiler cuenta el suelo a ese valor máximo, así que sale igual en los tres escenarios: compara el alquiler con el precio de venta. | **Decisión del 19 nov:** sin suelo no hay semáforo. El titular de cada escenario es la frase de la API: «Lo máximo que se puede pagar por el suelo: 1,90 millones de € (1.900 € por m² edificable), para un margen del 20 %.»; si ni gratis llega, «Ni con el suelo gratis se llega al margen objetivo del 20 %: se queda en el 15,0 %.» |
+| `inversores.calc.con_suelo` | Con el precio del suelo que has puesto: margen sobre ventas, antes de financiación e impuestos. | |
+| `inversores.calc.semaforo` | Sale · Ajustar · No sale | Solo con precio del suelo. Icono y palabra, con el color de CUBIERTO, JUSTO y FALTA. Al lado, la frase de la API: «Sale: margen del 22,5 % sobre ventas (objetivo, 20 %).», «Ajustar: margen del 12,5 %, por debajo del 20 % objetivo.», «No sale: pierde el 2,5 % de lo que vende.» |
+| `inversores.calc.umbrales` | Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %. | Con un objetivo por debajo del 10 %, el suelo de «Ajustar» baja al objetivo y no hay franja de «Ajustar» (revisión del #94) |
+| `inversores.calc.cifras` | Ingresos por ventas · Construcción (PEM × coeficiente) · Comercialización y otros · Suelo · Beneficio · Margen sobre ventas · Lo máximo que se puede pagar por el suelo · Rentabilidad bruta si se alquila | Sin suelo: «Sin precio». **La rentabilidad nunca se da sin suelo** (revisión del #94): sin precio, «Rentabilidad bruta si se alquila, pagando por el suelo lo máximo que deja el margen objetivo»; si ni con el suelo gratis se llega al objetivo, «Rentabilidad bruta si se alquila: ni con el suelo gratis se llega al margen objetivo, así que no hay precio de suelo con el que calcularla» y «—» |
+| `inversores.calc.demanda` | ¿Lo pueden pagar los hogares del barrio? | Las líneas de la API: precio de la vivienda tipo, cuota de la hipoteca y alquiler en % de la renta media frente al 30 %, la entrada en años de renta, y «Es la renta media: no dice cuántos hogares ganan más o menos que ella.», y «Solo cuenta la cuota o el alquiler, sin gastos ni suministros: la cuenta es optimista.» antes de la de la renta media |
+
+### Avisos fijos (vienen de la API, `notices`)
+- No es una tasación ni un informe vinculante ni una garantía de rentabilidad.
+- Contexto urbanístico, no qué se puede construir: los m² edificables son los que publica la fuente; la normativa de cada parcela manda.
+- Sin dato no es 0: lo que no sabemos se dice, nunca se rellena.
+- La financiación (intereses y comisiones del préstamo) no entra en esta versión: el margen es antes de financiación e impuestos.
+- El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. Ajusta el coeficiente si tienes un presupuesto.

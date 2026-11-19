@@ -1,6 +1,7 @@
 """Named response envelopes, so generated TypeScript types get readable names."""
 
 from hi_contracts.api.envelope import Envelope
+from hi_contracts.pro.investors import InvestorZone, InvestorZoneList, ViabilityResult
 from hi_contracts.public.common import DatasetList
 from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
 from hi_contracts.public.gaps import GapImpact, GapRowMap, ZoneGapList
@@ -42,3 +43,15 @@ class ZoneExplanationResponse(Envelope[ZoneExplanation]):
 
 class ZoneLookupResponse(Envelope[ZoneLookup]):
     """MCP tool encontrar_zona (MCP-001)"""
+
+
+class InvestorZoneListResponse(Envelope[InvestorZoneList]):
+    """GET /api/v1/investors/zones (D-248)"""
+
+
+class InvestorZoneResponse(Envelope[InvestorZone]):
+    """GET /api/v1/investors/zones/{admin_unit_id} (D-248)"""
+
+
+class ViabilityResponse(Envelope[ViabilityResult]):
+    """POST /api/v1/investors/viability (D-248)"""

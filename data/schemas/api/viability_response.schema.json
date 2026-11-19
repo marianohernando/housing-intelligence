@@ -1,0 +1,399 @@
+{
+  "$defs": {
+    "DemandOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "down_payment": {
+          "title": "Down Payment",
+          "type": "number"
+        },
+        "down_payment_years": {
+          "title": "Down Payment Years",
+          "type": "number"
+        },
+        "home_price": {
+          "title": "Home Price",
+          "type": "number"
+        },
+        "lines": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "loan": {
+          "title": "Loan",
+          "type": "number"
+        },
+        "monthly_payment": {
+          "title": "Monthly Payment",
+          "type": "number"
+        },
+        "monthly_rent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Monthly Rent"
+        },
+        "purchase_effort_pct": {
+          "title": "Purchase Effort Pct",
+          "type": "number"
+        },
+        "purchase_within": {
+          "title": "Purchase Within",
+          "type": "boolean"
+        },
+        "rent_effort_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rent Effort Pct"
+        },
+        "rent_within": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rent Within"
+        },
+        "threshold_pct": {
+          "title": "Threshold Pct",
+          "type": "number"
+        }
+      },
+      "required": [
+        "home_price",
+        "loan",
+        "down_payment",
+        "down_payment_years",
+        "monthly_payment",
+        "purchase_effort_pct",
+        "monthly_rent",
+        "rent_effort_pct",
+        "threshold_pct",
+        "purchase_within",
+        "rent_within",
+        "lines"
+      ],
+      "title": "DemandOutcome",
+      "type": "object"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "ScenarioOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "annual_rent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Annual Rent"
+        },
+        "construction": {
+          "title": "Construction",
+          "type": "number"
+        },
+        "cost_factor": {
+          "title": "Cost Factor",
+          "type": "number"
+        },
+        "headline": {
+          "examples": [
+            "Sale: margen del 22,5 % sobre ventas (objetivo, 20 %).",
+            "Lo máximo que se puede pagar por el suelo: 1,90 millones de € (1.900 € por m² edificable), para un margen del 20 %."
+          ],
+          "title": "Headline",
+          "type": "string"
+        },
+        "key": {
+          "examples": [
+            "base",
+            "optimista",
+            "pesimista"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "land": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Land"
+        },
+        "margin_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Margin Pct"
+        },
+        "price_factor": {
+          "title": "Price Factor",
+          "type": "number"
+        },
+        "profit": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Profit"
+        },
+        "rental_yield_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Annual rent over construction plus land; null without rent or when not even free land reaches the target margin",
+          "title": "Rental Yield Pct"
+        },
+        "residual_land_value": {
+          "title": "Residual Land Value",
+          "type": "number"
+        },
+        "residual_land_value_m2": {
+          "title": "Residual Land Value M2",
+          "type": "number"
+        },
+        "revenue": {
+          "title": "Revenue",
+          "type": "number"
+        },
+        "sales_costs": {
+          "title": "Sales Costs",
+          "type": "number"
+        },
+        "total_cost": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null without a land price",
+          "title": "Total Cost"
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Verdict"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Only with a land price; without it, null: the headline is the residual land value"
+        },
+        "yield_land": {
+          "anyOf": [
+            {
+              "enum": [
+                "precio",
+                "valor_residual"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The land the yield counts: the price given, or without one the residual land value (paying the most the target margin allows); never no land",
+          "title": "Yield Land"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "price_factor",
+        "cost_factor",
+        "revenue",
+        "construction",
+        "sales_costs",
+        "land",
+        "total_cost",
+        "profit",
+        "margin_pct",
+        "residual_land_value",
+        "residual_land_value_m2",
+        "annual_rent",
+        "rental_yield_pct",
+        "yield_land",
+        "verdict",
+        "headline"
+      ],
+      "title": "ScenarioOutcome",
+      "type": "object"
+    },
+    "Verdict": {
+      "enum": [
+        "sale",
+        "ajustar",
+        "no_sale"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "ViabilityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "demand": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DemandOutcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "land_known": {
+          "title": "Land Known",
+          "type": "boolean"
+        },
+        "notices": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notices",
+          "type": "array"
+        },
+        "sale_price_m2_new": {
+          "description": "The sale price with the new-build premium",
+          "title": "Sale Price M2 New",
+          "type": "number"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/ScenarioOutcome"
+          },
+          "title": "Scenarios",
+          "type": "array"
+        },
+        "version": {
+          "examples": [
+            "viability-0.1"
+          ],
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "land_known",
+        "sale_price_m2_new",
+        "scenarios",
+        "demand",
+        "notices"
+      ],
+      "title": "ViabilityResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/viability_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "POST /api/v1/investors/viability (D-248)",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/ViabilityResult"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "ViabilityResponse",
+  "type": "object"
+}

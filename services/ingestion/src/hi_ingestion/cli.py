@@ -30,6 +30,7 @@ from hi_contracts.catalog.pipeline import (
     OsmParksPipeline,
     OsmPoisPipeline,
     OsmWalkNetworkPipeline,
+    PermitBudgetPipeline,
     PilotZonesPipeline,
     PointsPipeline,
     PublicLandParcelsPipeline,
@@ -73,6 +74,7 @@ from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
 from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
+from hi_ingestion.pipelines.permits.run import run_permit_budget_pipeline
 from hi_ingestion.pipelines.pilot.run import run_pilot_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
 from hi_ingestion.pipelines.premises.run import run_premises_pipeline
@@ -237,6 +239,8 @@ def _run_one(
         return run_air_quality_zones_pipeline(
             engine, catalog, spec, source, evidence_root=evidence_root
         )
+    if isinstance(spec, PermitBudgetPipeline):  # D-248: always its versioned table
+        return run_permit_budget_pipeline(engine, catalog, spec, evidence_root=evidence_root)
     if isinstance(spec, CuratedZoneItemsPipeline):  # D-241: always its versioned table
         return run_zone_context_pipeline(engine, catalog, spec, evidence_root=evidence_root)
     if isinstance(spec, CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline):

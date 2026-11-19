@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import DataCounter from "@/components/provenance/DataCounter";
 import SourceAttributions from "@/components/provenance/SourceAttributions";
 
@@ -12,6 +14,7 @@ const TEXT = {
   project: "Vida Fácil · Proyecto para DATAMAD 2026", // pie.proyecto (13 nov): one visible name
   code: "Código abierto (Apache-2.0)",
   codeHref: "https://github.com/marianohernando/housing-intelligence",
+  investors: "Para inversores y promotores", // inversores.enlace (D-248)
   // For screen readers only: the links open in a new tab (review of PR #16)
   newTab: " (se abre en una pestaña nueva)",
 };
@@ -23,6 +26,11 @@ export default function SiteFooter() {
       <DataCounter className={styles.counter} />
       <SourceAttributions className={styles.attributions} />
       <p>{TEXT.independent}</p>
+      <p className="no-print">
+        <Link href="/inversores" className={styles.link}>
+          {TEXT.investors}
+        </Link>
+      </p>
       <p>
         {TEXT.project} ·{" "}
         <a href={TEXT.codeHref} target="_blank" rel="noopener noreferrer">

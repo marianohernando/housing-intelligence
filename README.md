@@ -12,12 +12,12 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**36 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid) en la demo, todos con su control de calidad superado (53 contando los de apoyo):**
+**39 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado (59 contando los de apoyo):**
 - población, hogares, vivienda, renta y alquiler;
 - colegios y sus aulas, centros de salud, servicios para mayores y farmacias, y los hospitales y camas de la región;
 - las 6 redes de transporte público del Consorcio Regional de Transportes, que también publica ese portal, y la accesibilidad de las estaciones de metro, Metro Ligero y Cercanías.
 
-El código ya incluye uno más, el valor tasado de la vivienda para comprar (27 en total), que llegará a la demo en su próxima actualización.
+Son los del código: 36 (53) en la demo de hoy, más los de la versión para inversores, que llegan a la demo en su próxima actualización: el Catastro por uso de la Comunidad (D-247) y los visados con el presupuesto de las obras (D-248).
 
 → **[Ficha de cada conjunto, con su enlace, su licencia y para qué lo usamos](data/catalog/datasets/)** (también en la API: `GET /api/v1/datasets?cm_only=true`).
 

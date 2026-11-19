@@ -1,0 +1,15 @@
+metric_id: pem_visado_m2
+human_name: Presupuesto de ejecución material por m² de los visados de obra nueva de vivienda
+description: >-
+  Presupuesto de ejecución material (PEM) de dirección de obra nueva entre la superficie a
+  construir de los visados del año, por tipo de edificio de vivienda (en bloque, unifamiliar
+  adosada y aislada). Total de la Comunidad de Madrid. Estadística de Obras en Edificación del
+  Ministerio de Vivienda y Agenda Urbana, publicada en el portal de la CM (D-248).
+domain: housing
+unit: EUR/m2
+direction: neutral
+aggregation_method: none
+geo_resolution_min: ccaa
+temporal_resolution: annual
+dataset_id: cm_visados_presupuesto_obra
+dimensions: [tipo]

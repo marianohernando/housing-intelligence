@@ -1,0 +1,46 @@
+dataset_id: cm_visados_presupuesto_obra
+source_id: comunidad_madrid_ckan
+name: Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y
+  características de los edificios
+domain: housing
+owner: Comunidad de Madrid
+format: CSV
+geography: table
+geo:
+  resolution: ccaa
+temporal_resolution: annual
+refresh_policy: anual
+landing_url: https://datos.comunidad.madrid/dataset/1006022
+resources:
+- name: Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y
+    características de los edificios.csv
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/6f917bba-b8cd-448b-997a-c3710b96480c/resource/073b9a57-8d89-4e5f-b496-4db418e8af09/download/visados-superficie-y-presupuesto-de-direccion-de-obra-de-edificios-por-tipo-de-obra-y-caracteris.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 4
+  product_impact: 4
+  geographic_granularity: 1
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-248. CM portal (CC BY 4.0, «Fecha Actualización 05-03-2026»; fuente: Estadística de Obras
+    en Edificación, Ministerio de Vivienda y Agenda Urbana). Por año y concepto: presupuesto de
+    ejecución material (miles de €), superficie a construir (m²) y número de visados de
+    dirección de obra. Sin territorio en el fichero (Tipo territorio «Otros»): la escala es la
+    de la región (1.641 visados de obra nueva en 2025). PEM de las viviendas en bloque en 2025:
+    1.712.790 miles de € / 2.658.184 m² = 644 €/m².
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T12:00:00+00:00'
+discovery:
+  harvested_from: comunidad_madrid_ckan
+  external_id: '1006022'
+  harvested_at: '2026-11-19T12:00:00+00:00'
+notes: >-
+  D-248: el coste de partida de la viabilidad v0 (PEM visado × un coeficiente editable). Las
+  cifras pasan por data/catalog/manual/pem_visados_cm.yaml, que scripts/pem_visados_cm.py
+  calcula del CSV oficial (con su sha256); la carga lee ese fichero, nunca el portal. Es un PEM
+  declarado en el visado, no el coste total de la obra, y suele declararse a la baja.
